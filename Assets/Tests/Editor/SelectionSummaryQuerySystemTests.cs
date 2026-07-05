@@ -36,7 +36,8 @@ public sealed class SelectionSummaryQuerySystemTests
             RunCase(test => test.FocusedResourceHaulerSelectionPanelUsesEcsCargoStorage());
             RunCase(test => test.SelectedBuildingSelectionPanelShowsOilFuelStorageChips());
             RunCase(test => test.SelectedBuildingSelectionPanelReplacesStaleOilFuelStorageValues());
-            Debug.Log("[SelectionSummaryFocusedValidation] result=Passed tests=14");
+            RunCase(test => test.SelectedBuildingResourceStoragePanelSkipsApplyUntilVersionChanges());
+            Debug.Log("[SelectionSummaryFocusedValidation] result=Passed tests=15");
         }
         catch (System.Exception ex)
         {
@@ -422,6 +423,7 @@ public sealed class SelectionSummaryQuerySystemTests
                 null,
                 null,
                 null,
+                null,
                 null);
 
             Assert.IsTrue(panel.AppliedModel.Visible);
@@ -484,6 +486,7 @@ public sealed class SelectionSummaryQuerySystemTests
             lifecycle,
             readModel,
             new List<MatchHudSelectionPanelPassengerItemModel>(),
+            null,
             null,
             null,
             null,
@@ -609,6 +612,77 @@ public sealed class SelectionSummaryQuerySystemTests
                 () => title,
                 TryGetStorage,
                 null,
+                null,
+                null);
+        }
+    }
+
+    [Test]
+    public void SelectedBuildingResourceStoragePanelSkipsApplyUntilVersionChanges()
+    {
+        EntityManager em = _world.EntityManager;
+        var selectionState = new SelectionStateCompositionSystemHelper();
+        var lifecycle = new FocusedUnitLifecycleCompositionSystemHelper();
+        var panel = new RecordingSelectionPanelView(null);
+        var feedback = new SelectionHudFeedbackUiSystemHelper();
+        feedback.BindMatchHudSelectionPanel(panel);
+
+        var context = new SelectionHudFeedbackUiSystemHelper.Context(new SelectionUiReadModelLookup(), TryGetEntityManager);
+        uint storageVersion = 4u;
+        int oilCurrent = 18;
+        int oilCapacity = 80;
+
+        ApplyBuildingSelection();
+        ApplyBuildingSelection();
+
+        Assert.AreEqual(1, panel.ApplyCount);
+        Assert.AreEqual(1, panel.ApplyTransportPassengersCount);
+        Assert.AreEqual(18, panel.AppliedTransportPassengers.OilCurrent);
+
+        storageVersion++;
+        oilCurrent = 21;
+        ApplyBuildingSelection();
+
+        Assert.AreEqual(1, panel.ApplyCount);
+        Assert.AreEqual(2, panel.ApplyTransportPassengersCount);
+        Assert.AreEqual(21, panel.AppliedTransportPassengers.OilCurrent);
+
+        bool TryGetEntityManager(out EntityManager entityManager)
+        {
+            entityManager = em;
+            return true;
+        }
+
+        bool TryGetStorageSnapshot(out SelectedBuildingResourceStorageSnapshot snapshot)
+        {
+            snapshot = new SelectedBuildingResourceStorageSnapshot(
+                91,
+                oilCurrent,
+                oilCapacity,
+                0,
+                0,
+                storageVersion);
+            return true;
+        }
+
+        void ApplyBuildingSelection()
+        {
+            feedback.UpdateMatchHudSelectionPanel(
+                context,
+                selectionState,
+                lifecycle,
+                null,
+                new List<MatchHudSelectionPanelPassengerItemModel>(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                () => true,
+                () => "Oil Pump",
+                null,
+                TryGetStorageSnapshot,
+                null,
                 null);
         }
     }
@@ -642,6 +716,7 @@ public sealed class SelectionSummaryQuerySystemTests
             () => true,
             () => "Storage Building",
             TryGetStorage,
+            null,
             null,
             null);
 
@@ -712,6 +787,8 @@ public sealed class SelectionSummaryQuerySystemTests
 
         public MatchHudSelectionPanelModel AppliedModel { get; private set; }
         public MatchHudTransportPassengersModel AppliedTransportPassengers { get; private set; }
+        public int ApplyCount { get; private set; }
+        public int ApplyTransportPassengersCount { get; private set; }
 
         public void BindActions(System.Action returnRequested, System.Action destroyRequested, System.Action boardRequested)
         {
@@ -762,11 +839,13 @@ public sealed class SelectionSummaryQuerySystemTests
         public void Apply(MatchHudSelectionPanelModel model)
         {
             AppliedModel = model;
+            ApplyCount++;
         }
 
         public void ApplyTransportPassengers(MatchHudTransportPassengersModel model)
         {
             AppliedTransportPassengers = model;
+            ApplyTransportPassengersCount++;
         }
     }
 }

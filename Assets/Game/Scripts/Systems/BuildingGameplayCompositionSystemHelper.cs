@@ -523,7 +523,11 @@ namespace Game.Runtime
                             out oilCurrent,
                             out oilCapacity,
                             out fuelCurrent,
-                            out fuelCapacity)));
+                            out fuelCapacity),
+                    (out SelectedBuildingResourceStorageSnapshot snapshot) =>
+                        childSystems.BuildingPlacementQueryUiSystemHelper.TryGetSelectedBuildingResourceStorageSnapshot(
+                            createPlacementQueryContext(childSystems),
+                            out snapshot)));
             BuildingRuntimeContextFactoryCompositionSystemHelper.Source buildingRuntimeContextSource =
                 createBuildingRuntimeContextSource(childSystems, interactionContext, markerPropertyBlock);
             CitizenPopulationCompositionSystemHelper citizenPopulationCompositionBoundary =

@@ -172,6 +172,8 @@ namespace Game.Runtime
             System.Func<string> selectedBuildingLabelAction = SelectedBuildingLabel;
             SelectionHudFeedbackUiSystemHelper.TryGetSelectedBuildingResourceStorageDelegate tryGetSelectedBuildingResourceStorageAction =
                 TryGetSelectedBuildingResourceStorage;
+            SelectionHudFeedbackUiSystemHelper.TryGetSelectedBuildingResourceStorageSnapshotDelegate tryGetSelectedBuildingResourceStorageSnapshotAction =
+                TryGetSelectedBuildingResourceStorageSnapshot;
             SelectionHudFeedbackUiSystemHelper.IsBoardCommandAvailableDelegate isBoardCommandAvailableAction =
                 IsBoardCommandAvailable;
             SelectionHudFeedbackUiSystemHelper.HasSelectedBoardActionDelegate hasSelectedBoardAction =
@@ -434,6 +436,7 @@ namespace Game.Runtime
                             hasSelectedBuildingAction,
                             selectedBuildingLabelAction,
                             tryGetSelectedBuildingResourceStorageAction,
+                            tryGetSelectedBuildingResourceStorageSnapshotAction,
                             isBoardCommandAvailableAction,
                             hasSelectedBoardAction);
                     }
@@ -1161,6 +1164,15 @@ namespace Game.Runtime
                            out oilCapacity,
                            out fuelCurrent,
                            out fuelCapacity);
+            }
+
+            bool TryGetSelectedBuildingResourceStorageSnapshot(out SelectedBuildingResourceStorageSnapshot snapshot)
+            {
+                snapshot = default;
+                return buildingPlacementInteractionSystem != null &&
+                       buildingPlacementInteractionSystem.TryGetSelectedBuildingResourceStorageSnapshot(
+                           buildingPlacementInteractionContext,
+                           out snapshot);
             }
 
             bool IsBoardCommandAvailable(EntityManager em, Entity entity)

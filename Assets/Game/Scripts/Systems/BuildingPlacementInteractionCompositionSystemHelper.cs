@@ -5,6 +5,32 @@ using UnityEngine;
 
 namespace Game.Runtime
 {
+    public readonly struct SelectedBuildingResourceStorageSnapshot
+    {
+        public readonly int RuntimeBuildingId;
+        public readonly int OilCurrent;
+        public readonly int OilCapacity;
+        public readonly int FuelCurrent;
+        public readonly int FuelCapacity;
+        public readonly uint Version;
+
+        public SelectedBuildingResourceStorageSnapshot(
+            int runtimeBuildingId,
+            int oilCurrent,
+            int oilCapacity,
+            int fuelCurrent,
+            int fuelCapacity,
+            uint version)
+        {
+            RuntimeBuildingId = runtimeBuildingId;
+            OilCurrent = oilCurrent;
+            OilCapacity = oilCapacity;
+            FuelCurrent = fuelCurrent;
+            FuelCapacity = fuelCapacity;
+            Version = version;
+        }
+    }
+
     public sealed class BuildingPlacementInteractionCompositionSystemHelper
     {
         public delegate bool TryResolveSelectedBuildingFollowTargetDelegate(out Vector3 worldPosition, out float boundsRadius);
@@ -13,6 +39,8 @@ namespace Game.Runtime
             out int oilCapacity,
             out int fuelCurrent,
             out int fuelCapacity);
+        public delegate bool TryGetSelectedBuildingResourceStorageSnapshotDelegate(
+            out SelectedBuildingResourceStorageSnapshot snapshot);
 
         public delegate bool TryResolveBaseBreachTargetDelegate(
             byte attackerFactionId,
@@ -44,6 +72,7 @@ namespace Game.Runtime
             public readonly TryResolveBaseBreachTargetDelegate TryResolveBaseBreachTarget;
             public readonly TryResolveSelectedBuildingFollowTargetDelegate TryResolveSelectedBuildingFollowTarget;
             public readonly TryGetSelectedBuildingResourceStorageDelegate TryGetSelectedBuildingResourceStorage;
+            public readonly TryGetSelectedBuildingResourceStorageSnapshotDelegate TryGetSelectedBuildingResourceStorageSnapshot;
 
             public Context(
                 Func<bool> hasPendingBuildingPlacement,
@@ -63,7 +92,8 @@ namespace Game.Runtime
                 Action<int, Entity, GameObject> handleRuntimeBuildingEntityDestroyed,
                 TryResolveBaseBreachTargetDelegate tryResolveBaseBreachTarget,
                 TryResolveSelectedBuildingFollowTargetDelegate tryResolveSelectedBuildingFollowTarget = null,
-                TryGetSelectedBuildingResourceStorageDelegate tryGetSelectedBuildingResourceStorage = null)
+                TryGetSelectedBuildingResourceStorageDelegate tryGetSelectedBuildingResourceStorage = null,
+                TryGetSelectedBuildingResourceStorageSnapshotDelegate tryGetSelectedBuildingResourceStorageSnapshot = null)
             {
                 HasPendingBuildingPlacement = hasPendingBuildingPlacement;
                 CanConfirmBuildingPlacement = canConfirmBuildingPlacement;
@@ -83,6 +113,7 @@ namespace Game.Runtime
                 TryResolveBaseBreachTarget = tryResolveBaseBreachTarget;
                 TryResolveSelectedBuildingFollowTarget = tryResolveSelectedBuildingFollowTarget;
                 TryGetSelectedBuildingResourceStorage = tryGetSelectedBuildingResourceStorage;
+                TryGetSelectedBuildingResourceStorageSnapshot = tryGetSelectedBuildingResourceStorageSnapshot;
             }
         }
 
@@ -219,6 +250,37 @@ namespace Game.Runtime
                        out oilCapacity,
                        out fuelCurrent,
                        out fuelCapacity);
+        }
+
+        public bool TryGetSelectedBuildingResourceStorageSnapshot(
+            Context context,
+            out SelectedBuildingResourceStorageSnapshot snapshot)
+        {
+            snapshot = default;
+            if (context.TryGetSelectedBuildingResourceStorageSnapshot != null &&
+                context.TryGetSelectedBuildingResourceStorageSnapshot(out snapshot))
+            {
+                return true;
+            }
+
+            if (!TryGetSelectedBuildingResourceStorage(
+                    context,
+                    out int oilCurrent,
+                    out int oilCapacity,
+                    out int fuelCurrent,
+                    out int fuelCapacity))
+            {
+                return false;
+            }
+
+            snapshot = new SelectedBuildingResourceStorageSnapshot(
+                0,
+                oilCurrent,
+                oilCapacity,
+                fuelCurrent,
+                fuelCapacity,
+                0u);
+            return true;
         }
     }
 }

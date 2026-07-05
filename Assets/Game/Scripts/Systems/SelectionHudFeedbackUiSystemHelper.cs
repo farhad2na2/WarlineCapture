@@ -23,6 +23,8 @@ namespace Game.Runtime
             out int oilCapacity,
             out int fuelCurrent,
             out int fuelCapacity);
+        public delegate bool TryGetSelectedBuildingResourceStorageSnapshotDelegate(
+            out SelectedBuildingResourceStorageSnapshot snapshot);
 
         public readonly struct Context
         {
@@ -97,6 +99,8 @@ namespace Game.Runtime
         private SelectionSummaryPanelCacheKey _lastSummaryPanelKey;
         private bool _hasLastTransportKey;
         private TransportPanelCacheKey _lastTransportKey;
+        private bool _hasLastSelectedBuildingPanelKey;
+        private SelectedBuildingPanelCacheKey _lastSelectedBuildingPanelKey;
         private bool _selectionPanelHiddenApplied;
 
         public void ResetViewCache()
@@ -313,6 +317,7 @@ namespace Game.Runtime
             System.Func<bool> hasSelectedBuilding,
             System.Func<string> selectedBuildingLabel,
             TryGetSelectedBuildingResourceStorageDelegate tryGetSelectedBuildingResourceStorage,
+            TryGetSelectedBuildingResourceStorageSnapshotDelegate tryGetSelectedBuildingResourceStorageSnapshot,
             IsBoardCommandAvailableDelegate isBoardCommandAvailable,
             HasSelectedBoardActionDelegate hasSelectedBoardAction)
         {
@@ -439,12 +444,31 @@ namespace Game.Runtime
             if (hasSelectedBuilding != null && hasSelectedBuilding())
             {
                 MarkSelectionPanelVisible();
-                ClearPanelCache();
-                _matchHudSelectionPanelView.Apply(BuildSelectedBuildingPanelModel(
-                    selectedBuildingLabel,
-                    resolveSelectedBuildingPortraitSprite));
-                _matchHudSelectionPanelView.ApplyTransportPassengers(
-                    BuildSelectedBuildingResourceStoragePanelModel(tryGetSelectedBuildingResourceStorage));
+                string buildingLabel = selectedBuildingLabel?.Invoke();
+                SelectedBuildingPanelCacheKey selectedBuildingPanelKey = new(StableStringHash(buildingLabel));
+                if (!_hasLastSelectedBuildingPanelKey || !_lastSelectedBuildingPanelKey.Equals(selectedBuildingPanelKey))
+                {
+                    ClearFocusedPanelCache();
+                    ClearSummaryPanelCache();
+                    _matchHudSelectionPanelView.Apply(BuildSelectedBuildingPanelModel(
+                        buildingLabel,
+                        resolveSelectedBuildingPortraitSprite));
+                    _lastSelectedBuildingPanelKey = selectedBuildingPanelKey;
+                    _hasLastSelectedBuildingPanelKey = true;
+                }
+
+                MatchHudTransportPassengersModel storageModel =
+                    BuildSelectedBuildingResourceStoragePanelModel(
+                        tryGetSelectedBuildingResourceStorage,
+                        tryGetSelectedBuildingResourceStorageSnapshot,
+                        out TransportPanelCacheKey storageKey);
+                if (!_hasLastTransportKey || !_lastTransportKey.Equals(storageKey))
+                {
+                    _matchHudSelectionPanelView.ApplyTransportPassengers(storageModel);
+                    _lastTransportKey = storageKey;
+                    _hasLastTransportKey = true;
+                }
+
                 return;
             }
 
@@ -770,6 +794,8 @@ namespace Game.Runtime
             _lastPanelKey = default;
             _hasLastTransportKey = false;
             _lastTransportKey = default;
+            _hasLastSelectedBuildingPanelKey = false;
+            _lastSelectedBuildingPanelKey = default;
         }
 
         private void ApplyTransportPassengersHiddenCached()
@@ -1015,42 +1041,76 @@ namespace Game.Runtime
         }
 
         private static MatchHudTransportPassengersModel BuildSelectedBuildingResourceStoragePanelModel(
-            TryGetSelectedBuildingResourceStorageDelegate tryGetSelectedBuildingResourceStorage)
+            TryGetSelectedBuildingResourceStorageDelegate tryGetSelectedBuildingResourceStorage,
+            TryGetSelectedBuildingResourceStorageSnapshotDelegate tryGetSelectedBuildingResourceStorageSnapshot,
+            out TransportPanelCacheKey cacheKey)
         {
-            if (tryGetSelectedBuildingResourceStorage == null ||
-                !tryGetSelectedBuildingResourceStorage(
-                    out int oilCurrent,
-                    out int oilCapacity,
-                    out int fuelCurrent,
-                    out int fuelCapacity))
+            SelectedBuildingResourceStorageSnapshot snapshot;
+            if (tryGetSelectedBuildingResourceStorageSnapshot == null ||
+                !tryGetSelectedBuildingResourceStorageSnapshot(out snapshot))
             {
-                return MatchHudTransportPassengersModel.Hidden;
+                if (tryGetSelectedBuildingResourceStorage == null ||
+                    !tryGetSelectedBuildingResourceStorage(
+                        out int fallbackOilCurrent,
+                        out int fallbackOilCapacity,
+                        out int fallbackFuelCurrent,
+                        out int fallbackFuelCapacity))
+                {
+                    cacheKey = new TransportPanelCacheKey(UiEntityHandle.Null, false);
+                    return MatchHudTransportPassengersModel.Hidden;
+                }
+
+                snapshot = new SelectedBuildingResourceStorageSnapshot(
+                    0,
+                    fallbackOilCurrent,
+                    fallbackOilCapacity,
+                    fallbackFuelCurrent,
+                    fallbackFuelCapacity,
+                    0u);
             }
 
-            bool hasOil = oilCapacity > 0 || oilCurrent > 0;
-            bool hasFuel = fuelCapacity > 0 || fuelCurrent > 0;
+            bool hasOil = snapshot.OilCapacity > 0 || snapshot.OilCurrent > 0;
+            bool hasFuel = snapshot.FuelCapacity > 0 || snapshot.FuelCurrent > 0;
             if (!hasOil && !hasFuel)
+            {
+                cacheKey = new TransportPanelCacheKey(UiEntityHandle.Null, false);
                 return MatchHudTransportPassengersModel.Hidden;
+            }
 
             MatchHudStorageChipKind kind = hasOil && hasFuel
                 ? MatchHudStorageChipKind.OilAndFuel
                 : hasOil
                     ? MatchHudStorageChipKind.OilBarrels
                     : MatchHudStorageChipKind.FuelBarrels;
+            cacheKey = new TransportPanelCacheKey(
+                UiEntityHandle.Null,
+                true,
+                kind,
+                snapshot.OilCurrent + snapshot.FuelCurrent,
+                snapshot.OilCapacity + snapshot.FuelCapacity,
+                0,
+                0,
+                0,
+                0,
+                snapshot.OilCurrent,
+                snapshot.OilCapacity,
+                snapshot.FuelCurrent,
+                snapshot.FuelCapacity,
+                unchecked((int)snapshot.Version));
 
             return new MatchHudTransportPassengersModel(
                 true,
                 false,
                 UiEntityHandle.Null,
-                oilCurrent + fuelCurrent,
-                oilCapacity + fuelCapacity,
+                snapshot.OilCurrent + snapshot.FuelCurrent,
+                snapshot.OilCapacity + snapshot.FuelCapacity,
                 false,
                 null,
                 storageKind: kind,
-                oilCurrent: oilCurrent,
-                oilCapacity: oilCapacity,
-                fuelCurrent: fuelCurrent,
-                fuelCapacity: fuelCapacity);
+                oilCurrent: snapshot.OilCurrent,
+                oilCapacity: snapshot.OilCapacity,
+                fuelCurrent: snapshot.FuelCurrent,
+                fuelCapacity: snapshot.FuelCapacity);
         }
 
         private string ResolvePassengerRoleText(Context context, EntityManager em, Entity passenger)
@@ -1107,15 +1167,14 @@ namespace Game.Runtime
         }
 
         private MatchHudSelectionPanelModel BuildSelectedBuildingPanelModel(
-            System.Func<string> selectedBuildingLabel,
+            string selectedBuildingLabel,
             System.Func<Sprite> resolveSelectedBuildingPortraitSprite)
         {
-            string label = selectedBuildingLabel?.Invoke();
             Sprite portraitSprite = resolveSelectedBuildingPortraitSprite?.Invoke();
             portraitSprite ??= _matchHudSelectionPanelView.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.Buildings);
             return new MatchHudSelectionPanelModel(
                 true,
-                string.IsNullOrWhiteSpace(label) ? "Selected Building" : label,
+                string.IsNullOrWhiteSpace(selectedBuildingLabel) ? "Selected Building" : selectedBuildingLabel,
                 "Base Structure",
                 "Structure selected",
                 "-",
@@ -1361,6 +1420,21 @@ namespace Game.Runtime
                        _hasAttackModeOrder == other._hasAttackModeOrder &&
                        _attackModeOrderHash == other._attackModeOrderHash &&
                        _boardAvailable == other._boardAvailable;
+            }
+        }
+
+        private readonly struct SelectedBuildingPanelCacheKey : System.IEquatable<SelectedBuildingPanelCacheKey>
+        {
+            private readonly int _labelHash;
+
+            public SelectedBuildingPanelCacheKey(int labelHash)
+            {
+                _labelHash = labelHash;
+            }
+
+            public bool Equals(SelectedBuildingPanelCacheKey other)
+            {
+                return _labelHash == other._labelHash;
             }
         }
 

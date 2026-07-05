@@ -221,6 +221,52 @@ namespace Game.Runtime
             return oilCapacity > 0 || fuelCapacity > 0 || oilCurrent > 0 || fuelCurrent > 0;
         }
 
+        public bool TryGetSelectedBuildingResourceStorageSnapshot(
+            Context context,
+            out SelectedBuildingResourceStorageSnapshot snapshot)
+        {
+            snapshot = default;
+            if (!TryGetActiveBuilding(context, out RuntimeBuildingEntity building) || building?.Definition == null)
+                return false;
+
+            int oilCapacity = Mathf.Max(0, building.OilStorageCapacity);
+            int fuelCapacity = Mathf.Max(0, building.FuelStorageCapacity);
+            int oilCurrent;
+            int fuelCurrent;
+            uint version = 0u;
+            if (TryGetSelectedBuildingResourceStorage(context, building, out BuildingResourceStorageComponent storage))
+            {
+                oilCapacity = Mathf.Max(0, storage.OilStorageCapacity);
+                fuelCapacity = Mathf.Max(0, storage.FuelStorageCapacity);
+                oilCurrent = Mathf.RoundToInt(Mathf.Max(0f, storage.StoredOilBarrels));
+                fuelCurrent = Mathf.RoundToInt(Mathf.Max(0f, storage.StoredFuelBarrels));
+                version = storage.Version;
+            }
+            else
+            {
+                oilCurrent = Mathf.RoundToInt(Mathf.Max(0f, building.StoredOilBarrels));
+                fuelCurrent = Mathf.RoundToInt(Mathf.Max(0f, building.StoredFuelBarrels));
+            }
+
+            if (oilCapacity > 0)
+                oilCurrent = Mathf.Min(oilCurrent, oilCapacity);
+            if (fuelCapacity > 0)
+                fuelCurrent = Mathf.Min(fuelCurrent, fuelCapacity);
+
+            bool visible = oilCapacity > 0 || fuelCapacity > 0 || oilCurrent > 0 || fuelCurrent > 0;
+            if (!visible)
+                return false;
+
+            snapshot = new SelectedBuildingResourceStorageSnapshot(
+                building.Id,
+                oilCurrent,
+                oilCapacity,
+                fuelCurrent,
+                fuelCapacity,
+                version);
+            return true;
+        }
+
         private static bool TryGetSelectedBuildingResourceStorage(
             Context context,
             RuntimeBuildingEntity building,

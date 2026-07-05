@@ -27,6 +27,7 @@ namespace Game.Runtime
             public readonly BuildingPlacementInteractionCompositionSystemHelper.TryResolveBaseBreachTargetDelegate TryResolveBaseBreachTarget;
             public readonly BuildingPlacementInteractionCompositionSystemHelper.TryResolveSelectedBuildingFollowTargetDelegate TryResolveSelectedBuildingFollowTarget;
             public readonly BuildingPlacementInteractionCompositionSystemHelper.TryGetSelectedBuildingResourceStorageDelegate TryGetSelectedBuildingResourceStorage;
+            public readonly BuildingPlacementInteractionCompositionSystemHelper.TryGetSelectedBuildingResourceStorageSnapshotDelegate TryGetSelectedBuildingResourceStorageSnapshot;
 
             public Source(
                 Func<bool> hasPendingBuildingPlacement,
@@ -46,7 +47,8 @@ namespace Game.Runtime
                 Action<int, Entity, GameObject> handleRuntimeBuildingEntityDestroyed,
                 BuildingPlacementInteractionCompositionSystemHelper.TryResolveBaseBreachTargetDelegate tryResolveBaseBreachTarget,
                 BuildingPlacementInteractionCompositionSystemHelper.TryResolveSelectedBuildingFollowTargetDelegate tryResolveSelectedBuildingFollowTarget = null,
-                BuildingPlacementInteractionCompositionSystemHelper.TryGetSelectedBuildingResourceStorageDelegate tryGetSelectedBuildingResourceStorage = null)
+                BuildingPlacementInteractionCompositionSystemHelper.TryGetSelectedBuildingResourceStorageDelegate tryGetSelectedBuildingResourceStorage = null,
+                BuildingPlacementInteractionCompositionSystemHelper.TryGetSelectedBuildingResourceStorageSnapshotDelegate tryGetSelectedBuildingResourceStorageSnapshot = null)
             {
                 HasPendingBuildingPlacement = hasPendingBuildingPlacement;
                 CanConfirmBuildingPlacement = canConfirmBuildingPlacement;
@@ -66,6 +68,7 @@ namespace Game.Runtime
                 TryResolveBaseBreachTarget = tryResolveBaseBreachTarget;
                 TryResolveSelectedBuildingFollowTarget = tryResolveSelectedBuildingFollowTarget;
                 TryGetSelectedBuildingResourceStorage = tryGetSelectedBuildingResourceStorage;
+                TryGetSelectedBuildingResourceStorageSnapshot = tryGetSelectedBuildingResourceStorageSnapshot;
             }
         }
 
@@ -87,7 +90,8 @@ namespace Game.Runtime
             Action<int, Entity, GameObject> handleRuntimeBuildingEntityDestroyed,
             BuildingPlacementInteractionCompositionSystemHelper.TryResolveBaseBreachTargetDelegate tryResolveBaseBreachTarget,
             BuildingPlacementInteractionCompositionSystemHelper.TryResolveSelectedBuildingFollowTargetDelegate tryResolveSelectedBuildingFollowTarget = null,
-            BuildingPlacementInteractionCompositionSystemHelper.TryGetSelectedBuildingResourceStorageDelegate tryGetSelectedBuildingResourceStorage = null)
+            BuildingPlacementInteractionCompositionSystemHelper.TryGetSelectedBuildingResourceStorageDelegate tryGetSelectedBuildingResourceStorage = null,
+            BuildingPlacementInteractionCompositionSystemHelper.TryGetSelectedBuildingResourceStorageSnapshotDelegate tryGetSelectedBuildingResourceStorageSnapshot = null)
         {
             return new Source(
                 hasPendingBuildingPlacement,
@@ -107,7 +111,8 @@ namespace Game.Runtime
                 handleRuntimeBuildingEntityDestroyed,
                 tryResolveBaseBreachTarget,
                 tryResolveSelectedBuildingFollowTarget,
-                tryGetSelectedBuildingResourceStorage);
+                tryGetSelectedBuildingResourceStorage,
+                tryGetSelectedBuildingResourceStorageSnapshot);
         }
 
         public BuildingPlacementInteractionCompositionSystemHelper.Context CreateContext(Source source)
@@ -130,7 +135,8 @@ namespace Game.Runtime
                 source.HandleRuntimeBuildingEntityDestroyed,
                 source.TryResolveBaseBreachTarget,
                 source.TryResolveSelectedBuildingFollowTarget,
-                source.TryGetSelectedBuildingResourceStorage);
+                source.TryGetSelectedBuildingResourceStorage,
+                source.TryGetSelectedBuildingResourceStorageSnapshot);
         }
     }
 }

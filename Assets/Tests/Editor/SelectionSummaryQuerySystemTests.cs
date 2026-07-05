@@ -604,6 +604,7 @@ public sealed class SelectionSummaryQuerySystemTests
                 null,
                 null,
                 null,
+                null,
                 () => true,
                 () => title,
                 TryGetStorage,

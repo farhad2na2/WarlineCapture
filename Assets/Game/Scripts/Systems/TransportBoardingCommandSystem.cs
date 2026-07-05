@@ -861,10 +861,12 @@ namespace Game.Runtime
                 }
 
                 boardingOrders.Add(boardingOrder);
-                if (passengerKind == UnitTransportPassengerKind.Vehicle)
-                    plannedVehicleSlots++;
-                else
-                    plannedSoldierSeats++;
+                TransportBoardingOrderPlanningSystemHelper.TryReservePlannedBoardingSlot(
+                    passengerKind,
+                    slotAvailability.AvailableSoldierSeats,
+                    slotAvailability.AvailableVehicleSlots,
+                    ref plannedSoldierSeats,
+                    ref plannedVehicleSlots);
             }
 
             if (boardingOrders.Count <= 0)
@@ -1457,10 +1459,12 @@ namespace Game.Runtime
                 }
 
                 plannedOrders.Add(boardingOrder);
-                if (passengerKind == UnitTransportPassengerKind.Vehicle)
-                    plannedVehicleSlots++;
-                else
-                    plannedSoldierSeats++;
+                TransportBoardingOrderPlanningSystemHelper.TryReservePlannedBoardingSlot(
+                    passengerKind,
+                    slotAvailability.AvailableSoldierSeats,
+                    slotAvailability.AvailableVehicleSlots,
+                    ref plannedSoldierSeats,
+                    ref plannedVehicleSlots);
             }
 
             if (plannedOrders.Count <= 0)

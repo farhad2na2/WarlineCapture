@@ -259,6 +259,52 @@ public sealed class UnitTransportBoardingSystemExtractionTests
         Assert.AreEqual(13, fallbackResults[0].RequestId);
     }
 
+    [Test]
+    public void OrderPlanningHelper_ReservesSoldierAndVehicleSlots()
+    {
+        int plannedSoldierSeats = 0;
+        int plannedVehicleSlots = 0;
+
+        Assert.IsTrue(TransportBoardingOrderPlanningSystemHelper.TryReservePlannedBoardingSlot(
+            UnitTransportPassengerKind.Soldier,
+            availableSoldierSeats: 2,
+            availableVehicleSlots: 1,
+            ref plannedSoldierSeats,
+            ref plannedVehicleSlots));
+        Assert.IsTrue(TransportBoardingOrderPlanningSystemHelper.TryReservePlannedBoardingSlot(
+            UnitTransportPassengerKind.Vehicle,
+            availableSoldierSeats: 2,
+            availableVehicleSlots: 1,
+            ref plannedSoldierSeats,
+            ref plannedVehicleSlots));
+
+        Assert.AreEqual(1, plannedSoldierSeats);
+        Assert.AreEqual(1, plannedVehicleSlots);
+    }
+
+    [Test]
+    public void OrderPlanningHelper_RejectsFullPlannedSlotsWithoutIncrementing()
+    {
+        int plannedSoldierSeats = 1;
+        int plannedVehicleSlots = 1;
+
+        Assert.IsFalse(TransportBoardingOrderPlanningSystemHelper.TryReservePlannedBoardingSlot(
+            UnitTransportPassengerKind.Soldier,
+            availableSoldierSeats: 1,
+            availableVehicleSlots: 1,
+            ref plannedSoldierSeats,
+            ref plannedVehicleSlots));
+        Assert.IsFalse(TransportBoardingOrderPlanningSystemHelper.TryReservePlannedBoardingSlot(
+            UnitTransportPassengerKind.Vehicle,
+            availableSoldierSeats: 1,
+            availableVehicleSlots: 1,
+            ref plannedSoldierSeats,
+            ref plannedVehicleSlots));
+
+        Assert.AreEqual(1, plannedSoldierSeats);
+        Assert.AreEqual(1, plannedVehicleSlots);
+    }
+
     private static Entity CreateBoardingCandidate(EntityManager entityManager, string sourceName)
     {
         Entity entity = entityManager.CreateEntity(

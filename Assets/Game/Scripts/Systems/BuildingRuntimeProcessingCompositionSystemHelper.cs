@@ -726,6 +726,10 @@ namespace Game.Runtime
                         FactionId = factionId,
                         StoredOilBarrels = usableStorage.StoredOilBarrels,
                         StoredFuelBarrels = usableStorage.StoredFuelBarrels,
+                        CurrentFuelBarrels = usableStorage.CurrentFuelBarrels,
+                        FuelProducedBarrels = usableStorage.FuelProducedBarrels,
+                        FuelDeliveredBarrels = usableStorage.FuelDeliveredBarrels,
+                        FuelSpentBarrels = usableStorage.FuelSpentBarrels,
                         OilStorageCapacity = usableStorage.OilStorageCapacity,
                         FuelStorageCapacity = usableStorage.FuelStorageCapacity,
                         Version = usableStorage.Version

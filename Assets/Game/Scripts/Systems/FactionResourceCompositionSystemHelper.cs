@@ -57,6 +57,10 @@ namespace Game.Runtime
         {
             public readonly float StoredOilBarrels;
             public readonly float StoredFuelBarrels;
+            public readonly float CurrentFuelBarrels;
+            public readonly float FuelProducedBarrels;
+            public readonly float FuelDeliveredBarrels;
+            public readonly float FuelSpentBarrels;
             public readonly int OilStorageCapacity;
             public readonly int FuelStorageCapacity;
             public readonly uint Version;
@@ -67,11 +71,17 @@ namespace Game.Runtime
                 float storedFuelBarrels,
                 int oilStorageCapacity,
                 int fuelStorageCapacity,
+                float fuelProducedBarrels,
+                float fuelSpentBarrels,
                 uint version,
                 int storageBuildingCount)
             {
                 StoredOilBarrels = storedOilBarrels;
                 StoredFuelBarrels = storedFuelBarrels;
+                CurrentFuelBarrels = storedFuelBarrels;
+                FuelProducedBarrels = fuelProducedBarrels;
+                FuelDeliveredBarrels = storedFuelBarrels;
+                FuelSpentBarrels = fuelSpentBarrels;
                 OilStorageCapacity = oilStorageCapacity;
                 FuelStorageCapacity = fuelStorageCapacity;
                 Version = version;
@@ -307,7 +317,15 @@ namespace Game.Runtime
                 }
             }
 
-            snapshot = new UsableStorageSnapshot(oil, fuel, oilCapacity, fuelCapacity, version, storageBuildingCount);
+            snapshot = new UsableStorageSnapshot(
+                oil,
+                fuel,
+                oilCapacity,
+                fuelCapacity,
+                fuelProducedBarrels: 0f,
+                fuelSpentBarrels: 0f,
+                version: version,
+                storageBuildingCount: storageBuildingCount);
             return storageBuildingCount > 0;
         }
 

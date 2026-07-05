@@ -3422,6 +3422,10 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
 
             Assert.AreEqual(expectedOilBarrels, summary.StoredOilBarrels);
             Assert.AreEqual(expectedFuelBarrels, summary.StoredFuelBarrels);
+            Assert.AreEqual(expectedFuelBarrels, summary.CurrentFuelBarrels);
+            Assert.AreEqual(0f, summary.FuelProducedBarrels);
+            Assert.AreEqual(expectedFuelBarrels, summary.FuelDeliveredBarrels);
+            Assert.AreEqual(0f, summary.FuelSpentBarrels);
             Assert.AreEqual(expectedOilCapacity, summary.OilStorageCapacity);
             Assert.AreEqual(expectedFuelCapacity, summary.FuelStorageCapacity);
             Assert.AreNotEqual(0u, summary.Version);

@@ -139,6 +139,10 @@ namespace Game.Components
         public byte FactionId;
         public float StoredOilBarrels;
         public float StoredFuelBarrels;
+        public float CurrentFuelBarrels;
+        public float FuelProducedBarrels;
+        public float FuelDeliveredBarrels;
+        public float FuelSpentBarrels;
         public int OilStorageCapacity;
         public int FuelStorageCapacity;
         public uint Version;

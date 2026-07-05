@@ -23,14 +23,14 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 42% (42/99 checklist items complete).
+Overall implementation progress: 43% (43/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
 | Phase | Status | Complete | Total | Progress | Notes |
 |---|---|---:|---:|---:|---|
 | 0. Inventory and baseline | In Progress | 5 | 8 | 63% | Audit current Oil/Fuel components, building runtime summaries, resource hauler code, seeded trucks, and HUD header data. |
-| 1. Data model | In Progress | 7 | 11 | 64% | Add or adapt ECS components/buffers, capacities, reservations, cargo, seeded logistics validation, and faction usable Fuel. |
+| 1. Data model | In Progress | 8 | 11 | 73% | Add or adapt ECS components/buffers, capacities, reservations, cargo, seeded logistics validation, and faction usable Fuel. |
 | 2. Oil extraction and refinery buffers | Pending | 0 | 8 | 0% | Ensure Oil Pump and Refinery buffers are ECS-owned and versioned. |
 | 3. Tray truck automation | In Progress | 5 | 13 | 38% | Auto-assign Oil pickup/delivery without manual target commands. |
 | 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
@@ -63,7 +63,7 @@ Exit criteria:
 - [x] Define storage buffer data for buildings: current amount, capacity, reserved inbound, reserved outbound, and version.
 - [x] Define logistics cargo data for tray/tanker trucks: carried resource, amount, capacity, source, destination, task state, and reservation id.
 - [x] Define logistics role tags: oil hauler, fuel hauler, source, refinery input, refinery output, fuel storage.
-- [ ] Define faction usable Fuel summary: current, capacity, produced, delivered, spent, version.
+- [x] Define faction usable Fuel summary: current, capacity, produced, delivered, spent, version.
 - [ ] Define typed blocked/status reason codes for UI and command validation.
 - [x] Define scenario/map authoring requirement for seeded tray/tanker pairs at each fuel-enabled faction military base.
 - [x] Add baker/config mapping only where needed; do not duplicate balance data already owned by configs.
@@ -647,3 +647,16 @@ Use this section during implementation. Each completed batch should add:
   - Unity focused validation was not rerun because the prior focused Unity run is blocked by the recurring licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
 - Next action:
   - Continue Phase 1 faction usable Fuel summary produced/delivered/spent fields and typed status/reason codes after this slice validates and is pushed.
+- Slice: explicit faction usable Fuel summary accounting fields.
+- Files changed: `Assets/Game/Scripts/Components/BuildingRuntimeEcsComponents.cs`, `Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs`, `Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs`, `Assets/Tests/Editor/BuildingProductionSystemTests.cs`, and this tracker.
+- Behavior intent:
+  - Extended `BuildingRuntimeFactionUsableFuelSummary` with explicit `CurrentFuelBarrels`, `FuelProducedBarrels`, `FuelDeliveredBarrels`, and `FuelSpentBarrels` fields while preserving the existing `StoredFuelBarrels` field used by current UI callers.
+  - Populated current and delivered Fuel from delivered usable storage, keeping refinery output excluded from the header-facing pool.
+  - Left produced/spent counters at zero until later production/consumption accounting slices own those mutations, avoiding invented totals.
+  - Extended the existing delivered-storage summary test to assert the new current/delivered/spent/produced fields.
+- Validation:
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Unity focused validation was not rerun because the prior focused Unity run is blocked by the recurring licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
+- Next action:
+  - Continue Phase 1 typed logistics status/reason codes, then close the Phase 1 validation row with focused storage/summary tests.

@@ -67,6 +67,80 @@ public sealed class VehicleFuelConsumptionSystemTests
         Assert.AreEqual(14f, storageAfterMove.StoredFuelBarrels);
     }
 
+    [Test]
+    public void AircraftFuelSafetyReturn_ZeroFuelClearsOrdersAndReturnsHome()
+    {
+        using World world = new(nameof(AircraftFuelSafetyReturn_ZeroFuelClearsOrdersAndReturnsHome));
+        EntityManager em = world.EntityManager;
+        SystemHandle system = world.CreateSystem<AircraftFuelSafetyReturnSystem>();
+        CreateFuelStorage(em, storedFuel: 0f, fuelRate: 0f);
+        Entity aircraft = CreateFuelUsingUnit(em, new int2(4, 5), groundFuelPerCell: 0f, airFuelPerCell: 1f);
+        em.AddComponentData(aircraft, new UnitAirMovement { CruiseHeight = 12f, RunwayTaxiSpeed = 4f });
+        em.AddComponentData(aircraft, new UnitAirComponent
+        {
+            HomeInitialized = 1,
+            HomeCell = new int2(1, 2),
+            HomePosition = new float3(1f, 0f, 2f),
+            Airborne = 1,
+            ReturningHome = 0,
+            AttackRunActive = 1,
+            ReturnApproachInitialized = 1
+        });
+        em.AddComponentData(aircraft, new UnitTarget { Cell = new int2(10, 11) });
+        em.AddComponentData(aircraft, new EngageTarget { Target = Entity.Null, Cell = new int2(12, 13), IsCommanded = 1 });
+        em.AddComponentData(aircraft, new UnitPathRequest { Goal = new int2(14, 15) });
+        em.AddComponentData<ManualMoveOrderTag>(aircraft);
+        em.AddComponentData<UnitScanOrder>(aircraft);
+        em.AddComponentData<UnitTransportAirdropRequest>(aircraft);
+        em.AddComponentData<UnitTransportRopeDisembarkRequest>(aircraft);
+
+        world.Unmanaged.UpdateSystem(system);
+
+        UnitAirComponent airState = em.GetComponentData<UnitAirComponent>(aircraft);
+        Assert.AreEqual(1, airState.ReturningHome);
+        Assert.AreEqual(0, airState.AttackRunActive);
+        Assert.AreEqual(0, airState.ReturnApproachInitialized);
+        Assert.IsFalse(em.HasComponent<UnitTarget>(aircraft));
+        Assert.IsFalse(em.HasComponent<EngageTarget>(aircraft));
+        Assert.IsFalse(em.HasComponent<UnitPathRequest>(aircraft));
+        Assert.IsFalse(em.HasComponent<ManualMoveOrderTag>(aircraft));
+        Assert.IsFalse(em.HasComponent<UnitScanOrder>(aircraft));
+        Assert.IsFalse(em.HasComponent<UnitTransportAirdropRequest>(aircraft));
+        Assert.IsFalse(em.HasComponent<UnitTransportRopeDisembarkRequest>(aircraft));
+    }
+
+    [Test]
+    public void AircraftFuelSafetyReturn_WithUsableFuelKeepsActiveOrders()
+    {
+        using World world = new(nameof(AircraftFuelSafetyReturn_WithUsableFuelKeepsActiveOrders));
+        EntityManager em = world.EntityManager;
+        SystemHandle system = world.CreateSystem<AircraftFuelSafetyReturnSystem>();
+        CreateFuelStorage(em, storedFuel: 10f, fuelRate: 0f);
+        Entity aircraft = CreateFuelUsingUnit(em, new int2(4, 5), groundFuelPerCell: 0f, airFuelPerCell: 1f);
+        em.AddComponentData(aircraft, new UnitAirMovement { CruiseHeight = 12f, RunwayTaxiSpeed = 4f });
+        em.AddComponentData(aircraft, new UnitAirComponent
+        {
+            HomeInitialized = 1,
+            HomeCell = new int2(1, 2),
+            HomePosition = new float3(1f, 0f, 2f),
+            Airborne = 1,
+            ReturningHome = 0,
+            AttackRunActive = 1,
+            ReturnApproachInitialized = 1
+        });
+        em.AddComponentData(aircraft, new UnitTarget { Cell = new int2(10, 11) });
+        em.AddComponentData<ManualMoveOrderTag>(aircraft);
+
+        world.Unmanaged.UpdateSystem(system);
+
+        UnitAirComponent airState = em.GetComponentData<UnitAirComponent>(aircraft);
+        Assert.AreEqual(0, airState.ReturningHome);
+        Assert.AreEqual(1, airState.AttackRunActive);
+        Assert.AreEqual(1, airState.ReturnApproachInitialized);
+        Assert.IsTrue(em.HasComponent<UnitTarget>(aircraft));
+        Assert.IsTrue(em.HasComponent<ManualMoveOrderTag>(aircraft));
+    }
+
     private static Entity CreateFuelUsingUnit(
         EntityManager em,
         int2 cell,

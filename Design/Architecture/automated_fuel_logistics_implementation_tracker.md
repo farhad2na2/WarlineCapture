@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 26% (26/99 checklist items complete).
+Overall implementation progress: 28% (28/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -35,7 +35,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 3. Tray truck automation | In Progress | 5 | 13 | 38% | Auto-assign Oil pickup/delivery without manual target commands. |
 | 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
 | 5. Tanker automation and usable Fuel | In Progress | 4 | 12 | 33% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
-| 6. Vehicle fuel spending | In Progress | 4 | 11 | 36% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
+| 6. Vehicle fuel spending | In Progress | 5 | 11 | 45% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
 | 7. UI read models and feedback | In Progress | 1 | 10 | 10% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
 | 8. AI and enemy support | Pending | 0 | 7 | 0% | Let AI understand fuel economy after player loop is validated. |
 | 9. Validation and profiling | In Progress | 1 | 10 | 10% | Focused tests, seeded-map checks, guardrails, GC checks, and Android profiling. |
@@ -152,7 +152,7 @@ Validation:
 - [x] Implement `VehicleFuelConsumptionSystem` or equivalent unmanaged `ISystem` for active fuel drains.
 - [x] Aggregate consumption by faction and vehicle class to avoid per-entity UI churn.
 - [x] Block new movement/launch/support commands when usable Fuel is below required threshold.
-- [ ] Add aircraft-safe behavior: new launches blocked when fuel is short; active aircraft return to base or use emergency reserve, never stop midair.
+- [x] Add aircraft-safe behavior: new launches blocked when fuel is short; active aircraft return to base or use emergency reserve, never stop midair.
 - [ ] Add ground-vehicle no-fuel behavior: reject new long moves, finish committed segment, return, or hold by policy.
 - [ ] Publish warning/read-model updates only when fuel state or blocked reasons change.
 
@@ -160,7 +160,7 @@ Validation:
 
 - [x] Ground vehicle movement spends Fuel.
 - [x] New ground vehicle movement is blocked at 0 usable Fuel with a typed reason.
-- [ ] Aircraft at 0 usable Fuel returns/lands safely and does not freeze midair.
+- [x] Aircraft at 0 usable Fuel returns/lands safely and does not freeze midair.
 - [ ] UI command buttons update only on fuel/version changes.
 
 ## Phase 7: UI Read Models And Feedback
@@ -446,6 +446,22 @@ Use this section during implementation. Each completed batch should add:
   - Unity focused validation was not rerun in this slice because the previous focused Unity run is blocked by the same licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
 - Next action:
   - Add aircraft-safe low-fuel behavior: block new aircraft launch/move at 0 usable Fuel, but allow/issue return-to-base or emergency reserve policy for active aircraft.
+- Slice: aircraft zero-Fuel safety return.
+- Files changed: `Assets/Game/Scripts/Systems/AircraftFuelSafetyReturnSystem.cs`, `Assets/Game/Scripts/Systems/AircraftFuelSafetyReturnSystem.cs.meta`, `Assets/Tests/Editor/VehicleFuelConsumptionSystemTests.cs`, and this tracker.
+- Behavior intent:
+  - Added unmanaged `AircraftFuelSafetyReturnSystem` before `UnitAirMovementSystem`.
+  - The system aggregates delivered usable Fuel by faction once per update.
+  - Active aircraft with `UnitFuelConsumption` and no usable faction Fuel now clear conflicting move/attack/scan/drop orders and enter the existing `UnitAirComponent.ReturningHome` landing path.
+  - Positive usable Fuel leaves active aircraft orders untouched.
+  - Return-to-base/internal safety movement stays outside the manual fuel gate so aircraft are not stranded.
+- Validation:
+  - Added `AircraftFuelSafetyReturn_ZeroFuelClearsOrdersAndReturnsHome`.
+  - Added `AircraftFuelSafetyReturn_WithUsableFuelKeepsActiveOrders`.
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Unity focused validation was not rerun because the prior focused Unity run is blocked by the recurring licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
+- Next action:
+  - Add ground-vehicle no-fuel policy beyond initial rejection: preserve committed segment semantics and publish warning/read-model updates only when fuel state changes.
 
 - Created design and implementation tracker.
 - Started implementation with seeded logistics verification fixture.

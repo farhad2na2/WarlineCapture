@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 16% (16/99 checklist items complete).
+Overall implementation progress: 17% (17/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -34,7 +34,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 2. Oil extraction and refinery buffers | Pending | 0 | 8 | 0% | Ensure Oil Pump and Refinery buffers are ECS-owned and versioned. |
 | 3. Tray truck automation | In Progress | 5 | 13 | 38% | Auto-assign Oil pickup/delivery without manual target commands. |
 | 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
-| 5. Tanker automation and usable Fuel | In Progress | 1 | 12 | 8% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
+| 5. Tanker automation and usable Fuel | In Progress | 2 | 12 | 17% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
 | 6. Vehicle fuel spending | Pending | 0 | 11 | 0% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
 | 7. UI read models and feedback | Pending | 0 | 10 | 0% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
 | 8. AI and enemy support | Pending | 0 | 7 | 0% | Let AI understand fuel economy after player loop is validated. |
@@ -132,7 +132,7 @@ Validation:
 
 - [ ] Implement `FuelTankerLogisticsAssignmentSystem` as unmanaged `ISystem` where practical.
 - [x] Reserve refinery output Fuel and storage capacity before tanker pickup.
-- [ ] Deliver Fuel into Fuel Bladder/base storage, not directly into the header.
+- [x] Deliver Fuel into Fuel Bladder/base storage, not directly into the header.
 - [ ] Update faction usable Fuel and capacity from storage state.
 - [ ] Keep header Fuel sourced from faction usable Fuel summary.
 - [ ] Stall tankers when no output Fuel, no storage, full storage, no route, or no available tanker exists.
@@ -364,6 +364,18 @@ Use this section during implementation. Each completed batch should add:
   - Focused Unity batchmode validation remains blocked by the already-open Unity editor for this project.
 - Next action:
   - Add focused tanker delivery validation from refinery output Fuel into Fuel Bladder/base Fuel storage.
+- Slice: focused Fuel tanker delivery cycle validation.
+- Files changed: `Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs` and this tracker.
+- Behavior intent:
+  - Added a direct ECS-side validation for one Refinery with Fuel output, one Fuel Bladder/storage building, and one idle `Unit_Veh_Truck_Tanker`.
+  - The test drives automatic assignment, refinery Fuel outbound reservation, Fuel Bladder inbound reservation, pickup, destination travel, drop-off, reservation release, and order cleanup.
+  - The test verifies Fuel lands in the Fuel Bladder/storage component, not a header shortcut.
+- Validation:
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Focused Unity batchmode validation remains blocked by the already-open Unity editor for this project.
+- Next action:
+  - Wire/update faction usable Fuel summary and header source from delivered Fuel storage with version gating.
 
 - Created design and implementation tracker.
 - Started implementation with seeded logistics verification fixture.

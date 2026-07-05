@@ -26,7 +26,8 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.AutomaticFuelLogisticsSignature_ChangesOnlyWhenRelevantStateChanges();
             tests.AutomaticFuelLogisticsReservation_ReservesSourceAndDestinationCapacity();
             tests.AutomaticFuelLogisticsCycle_TrayTransfersOilWithoutManualCommand();
-            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=12");
+            tests.AutomaticFuelLogisticsCycle_TankerTransfersFuelWithoutManualCommand();
+            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=13");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -647,6 +648,102 @@ public sealed class BuildingResourceProductionEcsSystemTests
             Assert.AreEqual(0f, cargo.CargoOilBarrels);
             Assert.AreEqual(8f, destinationStorage.StoredOilBarrels);
             Assert.AreEqual(0f, destinationStorage.ReservedOilInboundBarrels);
+            Assert.IsFalse(em.HasComponent<UnitResourceHaulOrder>(hauler));
+            Assert.IsFalse(em.HasComponent<UnitResourceHaulReservation>(hauler));
+        }
+        finally
+        {
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (occupied.IsCreated)
+                occupied.Dispose();
+            world.Dispose();
+        }
+    }
+
+    [Test]
+    public void AutomaticFuelLogisticsCycle_TankerTransfersFuelWithoutManualCommand()
+    {
+        var world = new World(nameof(AutomaticFuelLogisticsCycle_TankerTransfersFuelWithoutManualCommand));
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        try
+        {
+            EntityManager em = world.EntityManager;
+            Entity gridEntity = CreateTestGridEntity(em, 32, 32, out blocked, out occupied);
+            RuntimeBuildingEntity refinery = CreateResourceBuilding(
+                em,
+                51,
+                1,
+                new Vector2Int(8, 8),
+                oilCapacity: 100,
+                fuelCapacity: 100,
+                oilRate: 0f,
+                fuelRate: 40f,
+                storedOil: 0f,
+                storedFuel: 40f);
+            RuntimeBuildingEntity fuelBladder = CreateResourceBuilding(
+                em,
+                52,
+                1,
+                new Vector2Int(16, 8),
+                oilCapacity: 0,
+                fuelCapacity: 100,
+                oilRate: 0f,
+                fuelRate: 0f,
+                storedOil: 0f,
+                storedFuel: 0f);
+            var runtimeBuildings = new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity>
+            {
+                { refinery.Id, refinery },
+                { fuelBladder.Id, fuelBladder }
+            };
+            Entity hauler = CreateFuelLogisticsHauler(
+                em,
+                "Unit_Veh_Truck_Tanker",
+                1,
+                new int2(0, 0));
+            var bridge = new BuildingResourceHaulerBridgeCompositionSystemHelper();
+            BuildingResourceHaulerBridgeCompositionSystemHelper.Context context =
+                CreateBridgeCycleContext(em, gridEntity, runtimeBuildings);
+
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 0f);
+
+            Assert.IsTrue(em.HasComponent<UnitResourceHaulOrder>(hauler));
+            Assert.IsTrue(em.HasComponent<UnitResourceHaulReservation>(hauler));
+            UnitResourceHaulOrder order = em.GetComponentData<UnitResourceHaulOrder>(hauler);
+            Assert.AreEqual(refinery.Id, order.SourceBuildingId);
+            Assert.AreEqual(fuelBladder.Id, order.DestinationBuildingId);
+            Assert.AreEqual((byte)ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Fuel, order.ResourceKind);
+            Assert.AreEqual((byte)ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.ToSource, order.Phase);
+            MoveHaulerToOrderTarget(em, hauler, order);
+
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 0.1f);
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 0.2f);
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 1.3f);
+
+            UnitResourceHauler cargo = em.GetComponentData<UnitResourceHauler>(hauler);
+            BuildingResourceStorageComponent sourceStorage =
+                em.GetComponentData<BuildingResourceStorageComponent>(refinery.CombatEntity);
+            BuildingResourceStorageComponent destinationStorage =
+                em.GetComponentData<BuildingResourceStorageComponent>(fuelBladder.CombatEntity);
+            order = em.GetComponentData<UnitResourceHaulOrder>(hauler);
+            Assert.AreEqual(8f, cargo.CargoFuelBarrels);
+            Assert.AreEqual(32f, sourceStorage.StoredFuelBarrels);
+            Assert.AreEqual(0f, sourceStorage.ReservedFuelOutboundBarrels);
+            Assert.AreEqual(8f, destinationStorage.ReservedFuelInboundBarrels);
+            Assert.AreEqual((byte)ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.ToDestination, order.Phase);
+            MoveHaulerToOrderTarget(em, hauler, order);
+
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 1.4f);
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 1.5f);
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 2.6f);
+
+            cargo = em.GetComponentData<UnitResourceHauler>(hauler);
+            destinationStorage = em.GetComponentData<BuildingResourceStorageComponent>(fuelBladder.CombatEntity);
+            Assert.AreEqual(0f, cargo.CargoFuelBarrels);
+            Assert.AreEqual(8f, destinationStorage.StoredFuelBarrels);
+            Assert.AreEqual(0f, destinationStorage.ReservedFuelInboundBarrels);
             Assert.IsFalse(em.HasComponent<UnitResourceHaulOrder>(hauler));
             Assert.IsFalse(em.HasComponent<UnitResourceHaulReservation>(hauler));
         }

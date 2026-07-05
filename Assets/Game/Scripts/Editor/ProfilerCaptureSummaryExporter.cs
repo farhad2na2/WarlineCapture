@@ -17,6 +17,11 @@ namespace Game.Editor
         private const string RenderThreadActiveTimeCounterName = "CPU Render Thread Active Time";
         private const string GpuFrameTimeCounterName = "GPU Frame Time";
         private const string GcAllocatedInFrameCounterName = "GC Allocated In Frame";
+        private const string DrawCallsCounterName = "Draw Calls Count";
+        private const string BatchesCounterName = "Batches Count";
+        private const string SetPassCallsCounterName = "SetPass Calls Count";
+        private const string TrianglesCounterName = "Triangles Count";
+        private const string VerticesCounterName = "Vertices Count";
         private const float MsPerNs = 0.000001f;
         private const float DefaultFrameBudgetMs = 16.6667f;
 
@@ -156,7 +161,12 @@ namespace Game.Editor
                 RenderThreadActiveMs = renderActiveNs * MsPerNs,
                 CpuActiveMs = Math.Max(mainActiveNs, renderActiveNs) * MsPerNs,
                 GpuTimeMs = gpuNs * MsPerNs,
-                GcBytes = ReadCounter(mainThread, GcAllocatedInFrameCounterName)
+                GcBytes = ReadCounter(mainThread, GcAllocatedInFrameCounterName),
+                DrawCalls = ReadCounter(mainThread, DrawCallsCounterName),
+                Batches = ReadCounter(mainThread, BatchesCounterName),
+                SetPassCalls = ReadCounter(mainThread, SetPassCallsCounterName),
+                Triangles = ReadCounter(mainThread, TrianglesCounterName),
+                Vertices = ReadCounter(mainThread, VerticesCounterName)
             };
         }
 
@@ -337,6 +347,11 @@ namespace Game.Editor
             double p95CpuActiveMs = Percentile(frameTimeAscending, 95, static frame => frame.CpuActiveMs);
             double avgGpuMs = Average(frameTimeAscending, static frame => frame.GpuTimeMs);
             double p95GpuMs = Percentile(frameTimeAscending, 95, static frame => frame.GpuTimeMs);
+            CounterStats drawCallsStats = ComputeCounterStats(analysis.Frames, static frame => frame.DrawCalls);
+            CounterStats batchesStats = ComputeCounterStats(analysis.Frames, static frame => frame.Batches);
+            CounterStats setPassStats = ComputeCounterStats(analysis.Frames, static frame => frame.SetPassCalls);
+            CounterStats trianglesStats = ComputeCounterStats(analysis.Frames, static frame => frame.Triangles);
+            CounterStats verticesStats = ComputeCounterStats(analysis.Frames, static frame => frame.Vertices);
             ulong totalGcBytes = 0;
             int overBudgetFrames = 0;
             for (int i = 0; i < frameTimeAscending.Count; i++)
@@ -371,6 +386,7 @@ namespace Game.Editor
             builder.AppendLine($"| P95 GPU time | {p95GpuMs:0.00} ms |");
             builder.AppendLine($"| Total GC allocated | {totalGcBytes} bytes |");
             builder.AppendLine();
+            AppendRenderCounterTable(builder, drawCallsStats, batchesStats, setPassStats, trianglesStats, verticesStats);
             AppendMarkerTable(builder, "Top Priority Markers By Total Time", analysis.PriorityMarkers, 40, frameCount);
             AppendMarkerTable(builder, "Top Main Thread Markers By Self Time", FilterAndSort(analysis.AllMarkers, "Main Thread", bySelf: true), 30, frameCount);
             AppendMarkerTable(builder, "Top Render Thread Markers By Self Time", FilterAndSort(analysis.AllMarkers, "Render Thread", bySelf: true), 20, frameCount);
@@ -393,6 +409,55 @@ namespace Game.Editor
 
             result.Sort(bySelf ? MarkerAggregate.CompareBySelfDescending : MarkerAggregate.CompareByTotalDescending);
             return result;
+        }
+
+        private static CounterStats ComputeCounterStats(IReadOnlyList<FrameSummary> frames, Func<FrameSummary, ulong> selector)
+        {
+            List<double> values = new(frames.Count);
+            for (int i = 0; i < frames.Count; i++)
+                values.Add(selector(frames[i]));
+
+            values.Sort();
+            if (values.Count == 0)
+                return default;
+
+            double total = 0;
+            for (int i = 0; i < values.Count; i++)
+                total += values[i];
+
+            return new CounterStats
+            {
+                Average = total / values.Count,
+                P50 = Percentile(values, 50, static value => value),
+                P95 = Percentile(values, 95, static value => value),
+                Max = values[^1]
+            };
+        }
+
+        private static void AppendRenderCounterTable(
+            StringBuilder builder,
+            CounterStats drawCalls,
+            CounterStats batches,
+            CounterStats setPassCalls,
+            CounterStats triangles,
+            CounterStats vertices)
+        {
+            builder.AppendLine("## Render Counters");
+            builder.AppendLine();
+            builder.AppendLine("| Counter | Avg | P50 | P95 | Max |");
+            builder.AppendLine("|---|---:|---:|---:|---:|");
+            AppendCounterRow(builder, "Draw calls", drawCalls);
+            AppendCounterRow(builder, "Batches", batches);
+            AppendCounterRow(builder, "SetPass calls", setPassCalls);
+            AppendCounterRow(builder, "Triangles", triangles);
+            AppendCounterRow(builder, "Vertices", vertices);
+            builder.AppendLine();
+        }
+
+        private static void AppendCounterRow(StringBuilder builder, string label, CounterStats stats)
+        {
+            builder.AppendLine(
+                $"| {label} | {stats.Average:0} | {stats.P50:0} | {stats.P95:0} | {stats.Max:0} |");
         }
 
         private static void AppendMarkerTable(StringBuilder builder, string title, IReadOnlyList<MarkerAggregate> markers, int limit, int frameCount)
@@ -502,6 +567,11 @@ namespace Game.Editor
             public float RenderThreadActiveMs;
             public float GpuTimeMs;
             public ulong GcBytes;
+            public ulong DrawCalls;
+            public ulong Batches;
+            public ulong SetPassCalls;
+            public ulong Triangles;
+            public ulong Vertices;
 
             public static int CompareByFrameTimeAscending(FrameSummary left, FrameSummary right)
             {
@@ -512,6 +582,14 @@ namespace Game.Editor
             {
                 return right.FrameTimeMs.CompareTo(left.FrameTimeMs);
             }
+        }
+
+        private struct CounterStats
+        {
+            public double Average;
+            public double P50;
+            public double P95;
+            public double Max;
         }
 
         private sealed class MarkerAggregate

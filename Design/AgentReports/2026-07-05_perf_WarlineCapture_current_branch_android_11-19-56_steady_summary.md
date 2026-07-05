@@ -1,6 +1,6 @@
 # Android Profiler Capture Summary
 
-Date: 2026-07-05 11:30:10 +02:00
+Date: 2026-07-05 12:00:14 +02:00
 Capture: `/Users/farhad/Projects/WarlineCapture/ProfilerCaptures/WarlineCapture_2026-07-05_11-19-56.data.raw`
 Profiler frames: `300..1999`
 Scanned frames: `1700`
@@ -21,6 +21,16 @@ Frame budget: `16.667ms`
 | Avg GPU time | 5.31 ms |
 | P95 GPU time | 5.74 ms |
 | Total GC allocated | 84780 bytes |
+
+## Render Counters
+
+| Counter | Avg | P50 | P95 | Max |
+|---|---:|---:|---:|---:|
+| Draw calls | 0 | 0 | 0 | 0 |
+| Batches | 0 | 0 | 0 | 0 |
+| SetPass calls | 12 | 12 | 13 | 13 |
+| Triangles | 983 | 983 | 985 | 985 |
+| Vertices | 1967 | 1967 | 1971 | 1971 |
 
 ## Top Priority Markers By Total Time
 

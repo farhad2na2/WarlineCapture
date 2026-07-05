@@ -56,7 +56,6 @@ namespace Game.Runtime
                 ComponentType.ReadOnly<UnitMove>());
             _haulerUnitsQuery = em.CreateEntityQuery(
                 ComponentType.ReadOnly<UnitResourceHauler>(),
-                ComponentType.ReadOnly<UnitResourceHaulOrder>(),
                 ComponentType.ReadOnly<UnitGrid>(),
                 ComponentType.ReadOnly<UnitMove>());
             _livePlayerUnitsQuery = em.CreateEntityQuery(

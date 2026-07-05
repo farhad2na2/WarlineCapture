@@ -10,6 +10,8 @@ namespace Game.Runtime
     internal sealed class BuildingResourceHaulerBridgeCompositionSystemHelper
     {
         private static readonly bool VerboseResourceHaulerLogs = false;
+        private static readonly FixedString64Bytes TrayTruckSourceKey = new("Unit_Veh_Truck_Tray");
+        private static readonly FixedString64Bytes TankerTruckSourceKey = new("Unit_Veh_Truck_Tanker");
         private readonly HashSet<Entity> _invalidCapacityWarningEntities = new();
 
         public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
@@ -89,7 +91,13 @@ namespace Game.Runtime
                 return;
 
             for (int i = 0; i < haulerQuery.Length; i++)
-                UpdateResourceHauler(context, em, grid, haulerQuery[i], now);
+            {
+                Entity hauler = haulerQuery[i];
+                if (em.HasComponent<UnitResourceHaulOrder>(hauler))
+                    UpdateResourceHauler(context, em, grid, hauler, now);
+                else
+                    TryAssignAutomaticHaulerOrder(context, em, grid, hauler);
+            }
         }
 
         public bool TryAssignSelectedHaulerOrders(Context context, int clickedBuildingId)
@@ -171,6 +179,255 @@ namespace Game.Runtime
             }
 
             return assignedAny;
+        }
+
+        private bool TryAssignAutomaticHaulerOrder(Context context, EntityManager em, GridConfig grid, Entity unit)
+        {
+            if (context.ResourceHaulerUtilitySystemHelper == null ||
+                context.FactionResourceCompositionSystemHelper == null ||
+                !em.Exists(unit) ||
+                !em.HasComponent<UnitResourceHauler>(unit) ||
+                !em.HasComponent<UnitSourcePrefabKey>(unit) ||
+                !em.HasComponent<Faction>(unit) ||
+                em.HasComponent<UnitAirMovement>(unit) ||
+                context.RuntimeBuildings == null)
+            {
+                return false;
+            }
+
+            UnitSourcePrefabKey sourceKey = em.GetComponentData<UnitSourcePrefabKey>(unit);
+            ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind;
+            if (sourceKey.Value.Equals(TrayTruckSourceKey))
+            {
+                resourceKind = ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil;
+            }
+            else if (sourceKey.Value.Equals(TankerTruckSourceKey))
+            {
+                resourceKind = ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Fuel;
+            }
+            else
+            {
+                return false;
+            }
+
+            UnitResourceHauler hauler = em.GetComponentData<UnitResourceHauler>(unit);
+            float loadAmount = context.ResourceHaulerUtilitySystemHelper.GetLoadAmount(hauler);
+            if (loadAmount <= 0f)
+                return false;
+
+            byte factionId = em.GetComponentData<Faction>(unit).Id;
+            int2 unitCell = em.GetComponentData<UnitGrid>(unit).Cell;
+            if (!TryFindAutomaticHaulerRoute(
+                    context,
+                    em,
+                    grid,
+                    factionId,
+                    unitCell,
+                    resourceKind,
+                    loadAmount,
+                    out RuntimeBuildingEntity source,
+                    out RuntimeBuildingEntity destination))
+            {
+                return false;
+            }
+
+            if (!TryIssueHaulerMoveToBuilding(context, em, unit, source, out int2 sourceGoal))
+                return false;
+
+            UnitResourceHaulOrder order = context.ResourceHaulerUtilitySystemHelper.CreateOrder(
+                source.Id,
+                destination.Id,
+                sourceGoal,
+                resourceKind);
+            em.AddComponentData(unit, order);
+            return true;
+        }
+
+        private static bool TryFindAutomaticHaulerRoute(
+            Context context,
+            EntityManager em,
+            GridConfig grid,
+            byte factionId,
+            int2 unitCell,
+            ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind,
+            float loadAmount,
+            out RuntimeBuildingEntity source,
+            out RuntimeBuildingEntity destination)
+        {
+            source = null;
+            destination = null;
+            if (context.RuntimeBuildings == null)
+                return false;
+
+            if (!TryFindNearestAutomaticSourceToCell(
+                    context,
+                    em,
+                    grid,
+                    factionId,
+                    unitCell,
+                    resourceKind,
+                    loadAmount,
+                    out source))
+            {
+                return false;
+            }
+
+            return TryFindNearestAutomaticDestination(
+                context,
+                em,
+                source,
+                factionId,
+                resourceKind,
+                loadAmount,
+                out destination);
+        }
+
+        private static bool TryFindNearestAutomaticSourceToCell(
+            Context context,
+            EntityManager em,
+            GridConfig grid,
+            byte factionId,
+            int2 originCell,
+            ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind,
+            float loadAmount,
+            out RuntimeBuildingEntity result)
+        {
+            result = null;
+            if (context.RuntimeBuildings == null || context.ResolveBuildingFocusWorldPosition == null)
+                return false;
+
+            Vector3 origin = grid.Origin + new float3(
+                (originCell.x + 0.5f) * grid.CellSize,
+                0f,
+                (originCell.y + 0.5f) * grid.CellSize);
+            float bestDistanceSq = float.MaxValue;
+
+            foreach (var pair in context.RuntimeBuildings)
+            {
+                RuntimeBuildingEntity candidate = pair.Value;
+                if (candidate == null ||
+                    candidate.IsDestroyed ||
+                    !IsAutomaticSource(context, em, candidate, factionId, resourceKind, loadAmount))
+                {
+                    continue;
+                }
+
+                Vector3 candidatePosition = context.ResolveBuildingFocusWorldPosition(candidate);
+                float distanceSq = (candidatePosition - origin).sqrMagnitude;
+                if (distanceSq >= bestDistanceSq)
+                    continue;
+
+                bestDistanceSq = distanceSq;
+                result = candidate;
+            }
+
+            return result != null;
+        }
+
+        private static bool TryFindNearestAutomaticDestination(
+            Context context,
+            EntityManager em,
+            RuntimeBuildingEntity source,
+            byte factionId,
+            ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind,
+            float loadAmount,
+            out RuntimeBuildingEntity result)
+        {
+            result = null;
+            if (source == null || context.RuntimeBuildings == null || context.ResolveBuildingFocusWorldPosition == null)
+                return false;
+
+            Vector3 origin = context.ResolveBuildingFocusWorldPosition(source);
+            float bestDistanceSq = float.MaxValue;
+
+            foreach (var pair in context.RuntimeBuildings)
+            {
+                RuntimeBuildingEntity candidate = pair.Value;
+                if (candidate == null ||
+                    candidate == source ||
+                    candidate.IsDestroyed ||
+                    !IsAutomaticDestination(context, em, candidate, factionId, resourceKind, loadAmount))
+                {
+                    continue;
+                }
+
+                Vector3 candidatePosition = context.ResolveBuildingFocusWorldPosition(candidate);
+                float distanceSq = (candidatePosition - origin).sqrMagnitude;
+                if (distanceSq >= bestDistanceSq)
+                    continue;
+
+                bestDistanceSq = distanceSq;
+                result = candidate;
+            }
+
+            return result != null;
+        }
+
+        private static bool IsAutomaticSource(
+            Context context,
+            EntityManager em,
+            RuntimeBuildingEntity candidate,
+            byte factionId,
+            ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind,
+            float loadAmount)
+        {
+            if (!IsSameFactionResourceBuilding(candidate, factionId))
+                return false;
+
+            if (resourceKind == ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil)
+            {
+                return context.ResourceHaulerUtilitySystemHelper.IsOilSourceBuilding(candidate) &&
+                       context.ResourceHaulerUtilitySystemHelper.HasEnoughSourceResource(
+                           em,
+                           candidate,
+                           resourceKind,
+                           loadAmount);
+            }
+
+            return context.ResourceHaulerUtilitySystemHelper.IsFuelStorageSourceBuilding(candidate) &&
+                   context.ResourceHaulerUtilitySystemHelper.HasEnoughSourceResource(
+                       em,
+                       candidate,
+                       resourceKind,
+                       loadAmount);
+        }
+
+        private static bool IsAutomaticDestination(
+            Context context,
+            EntityManager em,
+            RuntimeBuildingEntity candidate,
+            byte factionId,
+            ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind,
+            float loadAmount)
+        {
+            if (!IsSameFactionResourceBuilding(candidate, factionId))
+                return false;
+
+            if (resourceKind == ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil)
+            {
+                return context.ResourceHaulerUtilitySystemHelper.IsFuelBuilding(candidate) &&
+                       context.ResourceHaulerUtilitySystemHelper.HasReceivingCapacity(
+                           em,
+                           candidate,
+                           resourceKind,
+                           loadAmount);
+            }
+
+            return context.FactionResourceCompositionSystemHelper.IsResourceStorageBuilding(candidate) &&
+                   candidate.FuelStorageCapacity > 0 &&
+                   context.ResourceHaulerUtilitySystemHelper.HasReceivingCapacity(
+                       em,
+                       candidate,
+                       resourceKind,
+                       loadAmount);
+        }
+
+        private static bool IsSameFactionResourceBuilding(RuntimeBuildingEntity building, byte factionId)
+        {
+            return building != null &&
+                   !building.IsDestroyed &&
+                   building.HasOwnerFaction &&
+                   building.OwnerFactionId == factionId;
         }
 
         public bool TryGetRuntimeBuildingApproachCell(
@@ -263,7 +520,7 @@ namespace Game.Runtime
                 return;
 
             context.ResourceHaulerUtilitySystemHelper.SetTravelPhase(ref order, ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.ToSource, goal);
-            em.SetComponentData(entity, order);
+            SetOrAddResourceHaulOrder(em, entity, order);
         }
 
         private static void UpdateTravelToSourcePhase(
@@ -284,7 +541,8 @@ namespace Game.Runtime
                 {
                     if (VerboseResourceHaulerLogs)
                         Debug.Log($"[ResourceHauler] entity={entity} reissuing-source-move source={source.Id}");
-                    TryIssueHaulerMoveToBuilding(context, em, entity, source, out _);
+                    if (TryIssueHaulerMoveToBuilding(context, em, entity, source, out _))
+                        SetOrAddResourceHaulOrder(em, entity, order);
                 }
                 return;
             }
@@ -292,7 +550,7 @@ namespace Game.Runtime
             if (VerboseResourceHaulerLogs)
                 Debug.Log($"[ResourceHauler] entity={entity} arrived-source source={source.Id} current={currentCell}");
             context.ResourceHaulerUtilitySystemHelper.SetPhase(ref order, ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.Loading);
-            em.SetComponentData(entity, order);
+            SetOrAddResourceHaulOrder(em, entity, order);
         }
 
         private void UpdateLoadingPhase(
@@ -368,7 +626,7 @@ namespace Game.Runtime
             }
 
             context.ResourceHaulerUtilitySystemHelper.SetTravelPhase(ref order, ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.ToDestination, destinationGoal);
-            em.SetComponentData(entity, order);
+            SetOrAddResourceHaulOrder(em, entity, order);
             if (VerboseResourceHaulerLogs)
                 Debug.Log($"[ResourceHauler] entity={entity} to-destination destination={destination.Id} target={destinationGoal}");
         }
@@ -386,7 +644,10 @@ namespace Game.Runtime
             if (!IsHaulerAtBuildingApproach(context, currentCell, footprintSize, destination, grid))
             {
                 if (!HasGoalOrPathRequest(em, entity, order.TargetCell))
-                    TryIssueHaulerMoveToBuilding(context, em, entity, destination, out _);
+                {
+                    if (TryIssueHaulerMoveToBuilding(context, em, entity, destination, out _))
+                        SetOrAddResourceHaulOrder(em, entity, order);
+                }
                 return;
             }
 
@@ -443,7 +704,7 @@ namespace Game.Runtime
             }
 
             context.ResourceHaulerUtilitySystemHelper.SetTravelPhase(ref order, ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.ToSource, sourceGoal);
-            em.SetComponentData(entity, order);
+            SetOrAddResourceHaulOrder(em, entity, order);
         }
 
         private static bool IsHaulerAtBuildingApproach(Context context, int2 currentCell, int2 footprintSize, RuntimeBuildingEntity building, GridConfig grid)
@@ -542,6 +803,14 @@ namespace Game.Runtime
             bool sameTarget = em.HasComponent<UnitTarget>(entity) && em.GetComponentData<UnitTarget>(entity).Cell.Equals(goal);
             bool sameRequest = em.HasComponent<UnitPathRequest>(entity) && em.GetComponentData<UnitPathRequest>(entity).Goal.Equals(goal);
             return sameTarget || sameRequest;
+        }
+
+        private static void SetOrAddResourceHaulOrder(EntityManager em, Entity entity, UnitResourceHaulOrder order)
+        {
+            if (em.HasComponent<UnitResourceHaulOrder>(entity))
+                em.SetComponentData(entity, order);
+            else
+                em.AddComponentData(entity, order);
         }
 
         private static bool TryFindBuildingApproachCell(

@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 8% (8/98 checklist items complete).
+Overall implementation progress: 9% (9/98 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -32,7 +32,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 0. Inventory and baseline | In Progress | 5 | 8 | 63% | Audit current Oil/Fuel components, building runtime summaries, resource hauler code, seeded trucks, and HUD header data. |
 | 1. Data model | In Progress | 3 | 11 | 27% | Add or adapt ECS components/buffers for buffers, capacities, reservations, cargo, seeded logistics validation, and faction usable Fuel. |
 | 2. Oil extraction and refinery buffers | Pending | 0 | 8 | 0% | Ensure Oil Pump and Refinery buffers are ECS-owned and versioned. |
-| 3. Tray truck automation | Pending | 0 | 12 | 0% | Auto-assign Oil pickup/delivery without manual target commands. |
+| 3. Tray truck automation | In Progress | 1 | 12 | 8% | Auto-assign Oil pickup/delivery without manual target commands. |
 | 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
 | 5. Tanker automation and usable Fuel | Pending | 0 | 12 | 0% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
 | 6. Vehicle fuel spending | Pending | 0 | 11 | 0% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
@@ -100,7 +100,7 @@ Validation:
 - [ ] Use dirty/version gates so assignment work only runs when source availability, destination capacity, route validity, or truck availability changes.
 - [ ] Reserve source Oil and refinery input capacity before a truck starts a task.
 - [ ] Avoid all-truck/all-building scans every frame; use cached queries and versioned candidate buffers where practical.
-- [ ] Reuse existing movement/order data path for truck travel rather than adding a new movement loop.
+- [x] Reuse existing movement/order data path for truck travel rather than adding a new movement loop.
 - [ ] Transfer cargo at pickup/drop-off through ECS mutation systems.
 - [ ] Clear reservations on truck death, source/destination death, route invalidation, or task cancellation.
 
@@ -280,6 +280,22 @@ Use this section during implementation. Each completed batch should add:
   - Live editor log check found no `error CS`, compiler error, build-failed, or exception matches after the asset import; editor log still contains existing Unity cloud/licensing entitlement warnings unrelated to this slice.
 - Next action:
   - Add the first assignment gate for automatic tray/tanker work without replacing the existing movement path.
+- Slice: initial idle hauler auto-assignment through the existing hauler bridge.
+- Files changed: `Assets/Game/Scripts/Systems/BuildingGameplayEcsQueryCompositionSystemHelper.cs`, `Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs`, and this tracker.
+- Behavior intent:
+  - Resource hauler query now includes idle haulers, not only haulers that already have `UnitResourceHaulOrder`.
+  - Idle `Unit_Veh_Truck_Tray` haulers can receive Oil routes from a same-faction Oil Pump with enough Oil to a same-faction Refinery with Oil input capacity.
+  - Idle `Unit_Veh_Truck_Tanker` haulers can receive Fuel routes from a same-faction Refinery with enough Fuel to a same-faction Fuel Bladder/base storage with Fuel capacity.
+  - Assignment reuses `UnitMoveOrderRequestSystem.EnqueueAndProcessTargetPathMoveOrder` and `UnitResourceHaulOrder`; no new update loop or MonoBehaviour was added.
+  - Internal logistics movement now restores `UnitResourceHaulOrder` after the shared move-order processor clears movement-related orders, preserving existing manual hauler behavior and new automatic assignments.
+  - Automatic route search uses direct loops instead of captured predicates to avoid steady-tick delegate allocations.
+- Validation:
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Focused Unity batchmode validation remains blocked by the already-open Unity editor for this project.
+- Next action:
+  - Add focused edit-mode validation for idle tray/tanker route assignment and same-faction filtering.
+  - Then add dirty/version gates so idle assignment does not scan all idle haulers/buildings when no relevant resource/capacity state changed.
 
 - Created design and implementation tracker.
 - Started implementation with seeded logistics verification fixture.

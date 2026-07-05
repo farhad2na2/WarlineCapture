@@ -186,6 +186,45 @@ public sealed class UiShellEcsGatewayResourceHeaderTests
     }
 
     [Test]
+    public void MatchHudHeader_CachedVersionedUsableFuelSummaryReadDoesNotAllocate()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        using World world = new(nameof(MatchHudHeader_CachedVersionedUsableFuelSummaryReadDoesNotAllocate));
+        try
+        {
+            World.DefaultGameObjectInjectionWorld = world;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+            EntityManager em = world.EntityManager;
+            Entity boundary = em.CreateEntity(typeof(UiShellRootComponent));
+            DynamicBuffer<BuildingRuntimeFactionUsableFuelSummary> summaries =
+                em.AddBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundary);
+            summaries.Add(new BuildingRuntimeFactionUsableFuelSummary
+            {
+                FactionId = FactionIdentity.PlayerFactionId,
+                StoredOilBarrels = 2f,
+                StoredFuelBarrels = 15f,
+                OilStorageCapacity = 200,
+                FuelStorageCapacity = 100,
+                Version = 7u
+            });
+
+            Assert.IsTrue(UiShellEcsGateway.TryReadMatchHudHeader(out _));
+
+            long before = System.GC.GetAllocatedBytesForCurrentThread();
+            for (int i = 0; i < 128; i++)
+                Assert.IsTrue(UiShellEcsGateway.TryReadMatchHudHeader(out _));
+
+            long allocated = System.GC.GetAllocatedBytesForCurrentThread() - before;
+            Assert.AreEqual(0L, allocated);
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+        }
+    }
+
+    [Test]
     public void MatchHudHeader_EmptyUsableFuelSummaryDoesNotFallbackToRefineryOutput()
     {
         World previousWorld = World.DefaultGameObjectInjectionWorld;

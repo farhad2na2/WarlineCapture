@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 38% (38/99 checklist items complete).
+Overall implementation progress: 39% (39/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -36,7 +36,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
 | 5. Tanker automation and usable Fuel | In Progress | 4 | 12 | 33% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
 | 6. Vehicle fuel spending | In Progress | 8 | 11 | 73% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
-| 7. UI read models and feedback | In Progress | 8 | 10 | 80% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
+| 7. UI read models and feedback | In Progress | 9 | 10 | 90% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
 | 8. AI and enemy support | Pending | 0 | 7 | 0% | Let AI understand fuel economy after player loop is validated. |
 | 9. Validation and profiling | In Progress | 1 | 10 | 10% | Focused tests, seeded-map checks, guardrails, GC checks, and Android profiling. |
 
@@ -177,7 +177,7 @@ Validation:
 - [x] Header fuel changes only after storage delivery or spending.
 - [x] Selection panel updates for two different pumps/refineries/storage buildings without stale values.
 - [x] UI click blocking remains intact on Android and Editor.
-- [ ] No new GC allocations in steady-state HUD updates.
+- [x] No new GC allocations in steady-state HUD updates.
 
 ## Phase 8: AI And Enemy Support
 
@@ -595,3 +595,16 @@ Use this section during implementation. Each completed batch should add:
   - Unity focused validation was not rerun because the prior focused Unity run is blocked by the recurring licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
 - Next action:
   - Add or run explicit no-GC allocation validation for steady-state HUD updates, then close the remaining Phase 7 Canvas-boundary item if no simulation logic drift is found.
+- Slice: no-GC cached match HUD header validation.
+- Files changed: `Assets/Tests/Editor/UiShellEcsGatewayResourceHeaderTests.cs` and this tracker.
+- Behavior intent:
+  - Added focused steady-state allocation coverage for the cached versioned match HUD header read path.
+  - The test warms `UiShellEcsGateway.TryReadMatchHudHeader` once, then performs repeated reads with unchanged usable Fuel summary version/value and asserts zero managed allocations through `System.GC.GetAllocatedBytesForCurrentThread`.
+  - This validates the Phase 7 requirement that steady-state HUD resource reads do not allocate while the ECS read model is unchanged.
+- Validation:
+  - Added `MatchHudHeader_CachedVersionedUsableFuelSummaryReadDoesNotAllocate`.
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Unity focused validation was not rerun because the prior focused Unity run is blocked by the recurring licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
+- Next action:
+  - Close the remaining Phase 7 Canvas-boundary item after confirming logistics simulation remains outside Canvas/UI classes, then continue into the next tracker phase.

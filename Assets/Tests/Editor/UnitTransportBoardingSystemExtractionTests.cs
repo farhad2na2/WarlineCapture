@@ -333,6 +333,51 @@ public sealed class UnitTransportBoardingSystemExtractionTests
     }
 
     [Test]
+    public void OrderPlanningHelper_AppendsPlannedOrdersAndReservesSlots()
+    {
+        List<PendingTransportBoardingOrder> plannedOrders = new();
+        TransportBoardingPlannedSlotCounts plannedSlots = default;
+        PendingTransportBoardingOrder soldierOrder = new()
+        {
+            Passenger = new Entity { Index = 21, Version = 1 },
+            PassengerKind = UnitTransportPassengerKind.Soldier
+        };
+        PendingTransportBoardingOrder vehicleOrder = new()
+        {
+            Passenger = new Entity { Index = 22, Version = 1 },
+            PassengerKind = UnitTransportPassengerKind.Vehicle
+        };
+
+        Assert.IsTrue(TransportBoardingOrderPlanningSystemHelper.TryAppendPlannedBoardingOrder(
+            plannedOrders,
+            soldierOrder,
+            UnitTransportPassengerKind.Soldier,
+            availableSoldierSeats: 1,
+            availableVehicleSlots: 1,
+            ref plannedSlots));
+        Assert.IsTrue(TransportBoardingOrderPlanningSystemHelper.TryAppendPlannedBoardingOrder(
+            plannedOrders,
+            vehicleOrder,
+            UnitTransportPassengerKind.Vehicle,
+            availableSoldierSeats: 1,
+            availableVehicleSlots: 1,
+            ref plannedSlots));
+        Assert.IsFalse(TransportBoardingOrderPlanningSystemHelper.TryAppendPlannedBoardingOrder(
+            plannedOrders,
+            vehicleOrder,
+            UnitTransportPassengerKind.Vehicle,
+            availableSoldierSeats: 1,
+            availableVehicleSlots: 1,
+            ref plannedSlots));
+
+        Assert.AreEqual(2, plannedOrders.Count);
+        Assert.AreEqual(1, plannedSlots.SoldierSeats);
+        Assert.AreEqual(1, plannedSlots.VehicleSlots);
+        Assert.AreEqual(21, plannedOrders[0].Passenger.Index);
+        Assert.AreEqual(22, plannedOrders[1].Passenger.Index);
+    }
+
+    [Test]
     public void OrderPlanningHelper_ReportsAvailabilityByPassengerKind()
     {
         Assert.IsTrue(TransportBoardingOrderPlanningSystemHelper.HasPlannedBoardingSlot(

@@ -1,4 +1,5 @@
 using Game.Components;
+using System.Collections.Generic;
 using Unity.Entities;
 using Unity.Mathematics;
 
@@ -185,6 +186,27 @@ namespace Game.Runtime
             else
                 plannedSlots.SoldierSeats++;
 
+            return true;
+        }
+
+        public static bool TryAppendPlannedBoardingOrder(
+            List<PendingTransportBoardingOrder> plannedOrders,
+            PendingTransportBoardingOrder boardingOrder,
+            byte passengerKind,
+            int availableSoldierSeats,
+            int availableVehicleSlots,
+            ref TransportBoardingPlannedSlotCounts plannedSlots)
+        {
+            if (!TryReservePlannedBoardingSlot(
+                    passengerKind,
+                    availableSoldierSeats,
+                    availableVehicleSlots,
+                    ref plannedSlots))
+            {
+                return false;
+            }
+
+            plannedOrders.Add(boardingOrder);
             return true;
         }
 

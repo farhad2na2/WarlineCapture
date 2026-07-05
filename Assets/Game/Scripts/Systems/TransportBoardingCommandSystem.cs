@@ -806,8 +806,9 @@ namespace Game.Runtime
                     continue;
                 }
 
-                boardingOrders.Add(boardingOrder);
-                TransportBoardingOrderPlanningSystemHelper.TryReservePlannedBoardingSlot(
+                TransportBoardingOrderPlanningSystemHelper.TryAppendPlannedBoardingOrder(
+                    boardingOrders,
+                    boardingOrder,
                     passengerKind,
                     slotAvailability.AvailableSoldierSeats,
                     slotAvailability.AvailableVehicleSlots,
@@ -1378,8 +1379,9 @@ namespace Game.Runtime
                     continue;
                 }
 
-                plannedOrders.Add(boardingOrder);
-                TransportBoardingOrderPlanningSystemHelper.TryReservePlannedBoardingSlot(
+                TransportBoardingOrderPlanningSystemHelper.TryAppendPlannedBoardingOrder(
+                    plannedOrders,
+                    boardingOrder,
                     passengerKind,
                     slotAvailability.AvailableSoldierSeats,
                     slotAvailability.AvailableVehicleSlots,

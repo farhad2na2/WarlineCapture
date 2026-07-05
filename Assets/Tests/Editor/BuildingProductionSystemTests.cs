@@ -3,6 +3,7 @@ using Game.Configs;
 using Game.Authoring;
 using Game.Runtime;
 using Game.Composition;
+using Game.Tactical.Contracts;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System;
 using System.Collections.Generic;
@@ -1851,6 +1852,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                 out BuildingUiProductionCommandResultElement result));
             Assert.AreEqual(0, result.Accepted);
             Assert.AreEqual(BuildingUiProductionCommandResultElement.QueueFull, result.ResultCode);
+            Assert.AreEqual((int)TacticalCommandReasonCode.CommandUnavailable, result.ReasonCode);
             Assert.AreEqual(0, producer.PendingProductions.Count);
         }
         finally
@@ -2006,6 +2008,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                 out BuildingUiCampItemCommandResultElement result));
             Assert.AreEqual(1, result.Accepted);
             Assert.AreEqual(BuildingUiCampItemCommandResultElement.ProductionQueued, result.ResultCode);
+            Assert.AreEqual((int)TacticalCommandReasonCode.None, result.ReasonCode);
             Assert.AreEqual(5678, result.Price);
             Assert.AreEqual(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(unitPrefab.name), result.ItemId.ToString());
             Assert.AreEqual(1, producer.PendingProductions.Count);
@@ -2070,6 +2073,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                 out BuildingUiCampItemCommandResultElement result));
             Assert.AreEqual(0, result.Accepted);
             Assert.AreEqual(BuildingUiCampItemCommandResultElement.ProductionQueueFull, result.ResultCode);
+            Assert.AreEqual((int)TacticalCommandReasonCode.CommandUnavailable, result.ReasonCode);
             Assert.AreEqual("Soldier Tent", result.RequiredBuildingDisplayName.ToString());
             Assert.AreEqual(10000, dollars);
             Assert.AreEqual(0, producer.PendingProductions.Count);

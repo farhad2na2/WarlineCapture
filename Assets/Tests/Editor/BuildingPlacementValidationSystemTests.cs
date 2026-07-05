@@ -1,5 +1,6 @@
 using Game.Components;
 using Game.Runtime;
+using Game.Tactical.Contracts;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System;
 using System.Collections.Generic;
@@ -118,6 +119,11 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
                 BuildingUiPlacementCommandRequestElement.KindConfirmPlacement,
                 accepted: false,
                 BuildingUiPlacementCommandResultElement.BlockedPlacement);
+            Assert.IsTrue(commandSystem.TryGetUiPlacementCommandResult(
+                world.EntityManager,
+                requestId,
+                out BuildingUiPlacementCommandResultElement typedResult));
+            Assert.AreEqual((int)TacticalCommandReasonCode.TargetBlocked, typedResult.ReasonCode);
         }
         finally
         {
@@ -197,6 +203,11 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
                 BuildingUiPlacementCommandRequestElement.KindConfirmPlacement,
                 accepted: false,
                 BuildingUiPlacementCommandResultElement.NotEnoughMoney);
+            Assert.IsTrue(commandSystem.TryGetUiPlacementCommandResult(
+                world.EntityManager,
+                requestId,
+                out BuildingUiPlacementCommandResultElement typedResult));
+            Assert.AreEqual((int)TacticalCommandReasonCode.InsufficientResources, typedResult.ReasonCode);
         }
         finally
         {

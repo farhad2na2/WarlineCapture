@@ -3,6 +3,7 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 using Game.Components;
+using Game.Tactical.Contracts;
 
 namespace Game.Runtime
 {
@@ -302,7 +303,8 @@ namespace Game.Runtime
                     ProductionIndex = request.ProductionIndex,
                     RequestKind = request.RequestKind,
                     Accepted = queued ? (byte)1 : (byte)0,
-                    ResultCode = resultCode
+                    ResultCode = resultCode,
+                    ReasonCode = (int)ToProductionReasonCode(resultCode)
                 });
             }
         }
@@ -652,7 +654,8 @@ namespace Game.Runtime
                     RequiredBuildingDisplayName = requiredBuildingDisplayName,
                     Price = request.Price,
                     Accepted = accepted ? (byte)1 : (byte)0,
-                    ResultCode = resultCode
+                    ResultCode = resultCode,
+                    ReasonCode = (int)ToCampItemReasonCode(resultCode)
                 });
             }
         }
@@ -1229,6 +1232,36 @@ namespace Game.Runtime
                 BuildingUiCampItemCommandResultElement.ProductionQueueFull => CampRequestFailure.ProductionQueueFull,
                 BuildingUiCampItemCommandResultElement.GlobalProductionQueueFull => CampRequestFailure.GlobalProductionQueueFull,
                 _ => CampRequestFailure.InvalidSelection
+            };
+        }
+
+        private static TacticalCommandReasonCode ToProductionReasonCode(byte resultCode)
+        {
+            return resultCode switch
+            {
+                BuildingUiProductionCommandResultElement.Queued => TacticalCommandReasonCode.None,
+                BuildingUiProductionCommandResultElement.Cancelled => TacticalCommandReasonCode.None,
+                BuildingUiProductionCommandResultElement.MissingActiveBuilding => TacticalCommandReasonCode.NoSelection,
+                BuildingUiProductionCommandResultElement.MissingProducerBuilding => TacticalCommandReasonCode.BuildUnavailable,
+                BuildingUiProductionCommandResultElement.MissingUnitConfig => TacticalCommandReasonCode.BuildUnavailable,
+                BuildingUiProductionCommandResultElement.UnavailablePrefab => TacticalCommandReasonCode.BuildUnavailable,
+                BuildingUiProductionCommandResultElement.QueueFull => TacticalCommandReasonCode.CommandUnavailable,
+                BuildingUiProductionCommandResultElement.GlobalQueueFull => TacticalCommandReasonCode.CommandUnavailable,
+                _ => TacticalCommandReasonCode.CommandUnavailable
+            };
+        }
+
+        private static TacticalCommandReasonCode ToCampItemReasonCode(byte resultCode)
+        {
+            return resultCode switch
+            {
+                BuildingUiCampItemCommandResultElement.PlacementStarted => TacticalCommandReasonCode.None,
+                BuildingUiCampItemCommandResultElement.ProductionQueued => TacticalCommandReasonCode.None,
+                BuildingUiCampItemCommandResultElement.NotEnoughMoney => TacticalCommandReasonCode.InsufficientResources,
+                BuildingUiCampItemCommandResultElement.MissingProducerBuilding => TacticalCommandReasonCode.BuildUnavailable,
+                BuildingUiCampItemCommandResultElement.ProductionQueueFull => TacticalCommandReasonCode.CommandUnavailable,
+                BuildingUiCampItemCommandResultElement.GlobalProductionQueueFull => TacticalCommandReasonCode.CommandUnavailable,
+                _ => TacticalCommandReasonCode.CommandUnavailable
             };
         }
 

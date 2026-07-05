@@ -3,6 +3,7 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 using Game.Components;
+using Game.Tactical.Contracts;
 
 namespace Game.Runtime
 {
@@ -198,7 +199,8 @@ namespace Game.Runtime
                     RequestId = request.RequestId,
                     RequestKind = request.RequestKind,
                     Accepted = accepted ? (byte)1 : (byte)0,
-                    ResultCode = resultCode
+                    ResultCode = resultCode,
+                    ReasonCode = (int)ToReasonCode(resultCode)
                 });
             }
         }
@@ -316,6 +318,20 @@ namespace Game.Runtime
                 BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.NotEnoughMoney =>
                     BuildingUiPlacementCommandResultElement.NotEnoughMoney,
                 _ => BuildingUiPlacementCommandResultElement.Rejected
+            };
+        }
+
+        private static TacticalCommandReasonCode ToReasonCode(byte resultCode)
+        {
+            return resultCode switch
+            {
+                BuildingUiPlacementCommandResultElement.Completed => TacticalCommandReasonCode.None,
+                BuildingUiPlacementCommandResultElement.BlockedPlacement => TacticalCommandReasonCode.TargetBlocked,
+                BuildingUiPlacementCommandResultElement.InvalidPlacement => TacticalCommandReasonCode.TargetUnreachable,
+                BuildingUiPlacementCommandResultElement.NotEnoughMoney => TacticalCommandReasonCode.InsufficientResources,
+                BuildingUiPlacementCommandResultElement.MissingActivePlacement => TacticalCommandReasonCode.BuildUnavailable,
+                BuildingUiPlacementCommandResultElement.MissingConfig => TacticalCommandReasonCode.BuildUnavailable,
+                _ => TacticalCommandReasonCode.CommandUnavailable
             };
         }
 

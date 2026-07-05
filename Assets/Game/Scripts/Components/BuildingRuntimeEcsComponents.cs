@@ -229,6 +229,7 @@ namespace Game.Components
         public byte RequestKind;
         public byte Accepted;
         public byte ResultCode;
+        public int ReasonCode;
     }
 
     public struct BuildingUiPlacementCommandQueueComponent : IComponentData
@@ -265,6 +266,7 @@ namespace Game.Components
         public byte RequestKind;
         public byte Accepted;
         public byte ResultCode;
+        public int ReasonCode;
     }
 
     public struct BuildingUiCampItemCommandQueueComponent : IComponentData
@@ -296,6 +298,7 @@ namespace Game.Components
         public int Price;
         public byte Accepted;
         public byte ResultCode;
+        public int ReasonCode;
     }
 
     public struct BuildingUiSelectionCommandQueueComponent : IComponentData

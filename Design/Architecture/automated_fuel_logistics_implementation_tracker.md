@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 31% (31/99 checklist items complete).
+Overall implementation progress: 32% (32/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -36,7 +36,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
 | 5. Tanker automation and usable Fuel | In Progress | 4 | 12 | 33% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
 | 6. Vehicle fuel spending | In Progress | 8 | 11 | 73% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
-| 7. UI read models and feedback | In Progress | 1 | 10 | 10% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
+| 7. UI read models and feedback | In Progress | 2 | 10 | 20% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
 | 8. AI and enemy support | Pending | 0 | 7 | 0% | Let AI understand fuel economy after player loop is validated. |
 | 9. Validation and profiling | In Progress | 1 | 10 | 10% | Focused tests, seeded-map checks, guardrails, GC checks, and Android profiling. |
 
@@ -168,7 +168,7 @@ Validation:
 - [x] Header Fuel reads faction usable Fuel and capacity, not refinery output.
 - [ ] Oil can be shown only when the active mission/skirmish preset teaches extraction.
 - [ ] Selection panel supports Oil Pump, Refinery, Fuel Bladder, tray truck, and tanker logistics state.
-- [ ] Disabled command/build/production rows use typed reason ids.
+- [x] Disabled command/build/production rows use typed reason ids.
 - [ ] Avoid per-frame string formatting; cache labels or update TMP text only on read-model version changes.
 - [ ] Keep Canvas work inside existing UI helper boundaries and do not add simulation logic to UI classes.
 
@@ -504,6 +504,20 @@ Use this section during implementation. Each completed batch should add:
   - Unity focused validation was not rerun because the prior focused Unity run is blocked by the recurring licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
 - Next action:
   - Continue Phase 7 UI read-model work: selected logistics state for Oil Pump, Refinery, Fuel Bladder, tray truck, and tanker, followed by typed disabled rows.
+- Slice: typed building UI command result reasons.
+- Files changed: `Assets/Game/Scripts/Components/BuildingRuntimeEcsComponents.cs`, `Assets/Game/Scripts/Systems/BuildingPlacementCommandRequestCompositionSystemHelper.cs`, `Assets/Game/Scripts/Systems/BuildingProductionRequestSystemHelper.cs`, `Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs`, `Assets/Tests/Editor/BuildingProductionSystemTests.cs`, and this tracker.
+- Behavior intent:
+  - Added shared `ReasonCode` fields to building placement, selected-building production, and camp-item command result buffers.
+  - Preserved existing local byte `ResultCode` values for compatibility while publishing shared `TacticalCommandReasonCode` ids for UI feedback rows.
+  - Placement failures now map blocked placement to `TargetBlocked` and resource shortage to `InsufficientResources`.
+  - Production/camp item queue failures now carry typed `CommandUnavailable`; successful rows carry `None`.
+- Validation:
+  - Added focused assertions in existing building placement and production tests.
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Unity focused validation was not rerun because the prior focused Unity run is blocked by the recurring licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
+- Next action:
+  - Continue Phase 7 selection panel logistics read models for Oil Pump, Refinery, Fuel Bladder, tray truck, and tanker.
 
 - Created design and implementation tracker.
 - Started implementation with seeded logistics verification fixture.

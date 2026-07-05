@@ -19,6 +19,7 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.CreateBuildingCombatEntity_UsesSameResourceStorageForMapAndRuntimeOilPumps();
             tests.ApplyStorageQuery_WritesOilToEcsStorageWithCapacityAndVersion();
             tests.ApplyStorageQuery_ConvertsRefineryOilIntoFuelWithEfficiencyAndCapacity();
+            tests.ApplyStorageQuery_ConvertsStandardAndLargeRefineriesWithDifferentRates();
             tests.ApplyTick_ConvertsOilIntoFuel();
             tests.ApplyTick_DoesNotConvertOilWhenFuelStorageIsFull();
             tests.UpdateResourceProduction_PrefersLiveEcsStorageWhenRuntimeMirrorIsStale();
@@ -39,7 +40,7 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.AutomaticFuelLogisticsSteadyState_DoesNotAllocateManagedMemory();
             tests.AutomaticFuelLogisticsCycle_TrayTransfersOilWithoutManualCommand();
             tests.AutomaticFuelLogisticsCycle_TankerTransfersFuelWithoutManualCommand();
-            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=25");
+            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=26");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -325,6 +326,60 @@ public sealed class BuildingResourceProductionEcsSystemTests
             Assert.AreEqual(7u, fullOutput.Version);
             Assert.AreEqual(0f, result.OilExtractedBarrels);
             Assert.AreEqual(1f, result.FuelProducedBarrels);
+        }
+        finally
+        {
+            world.Dispose();
+        }
+    }
+
+    [Test]
+    public void ApplyStorageQuery_ConvertsStandardAndLargeRefineriesWithDifferentRates()
+    {
+        var world = new World(nameof(ApplyStorageQuery_ConvertsStandardAndLargeRefineriesWithDifferentRates));
+        try
+        {
+            EntityManager em = world.EntityManager;
+            Entity standardRefinery = em.CreateEntity(typeof(BuildingResourceStorageComponent));
+            em.SetComponentData(standardRefinery, new BuildingResourceStorageComponent
+            {
+                RuntimeBuildingId = 61,
+                OwnerFactionId = FactionIdentity.PlayerFactionId,
+                OilStorageCapacity = 5000,
+                FuelStorageCapacity = 5000,
+                FuelBarrelsPerDay = 100f,
+                StoredOilBarrels = 1000f
+            });
+            Entity largeRefinery = em.CreateEntity(typeof(BuildingResourceStorageComponent));
+            em.SetComponentData(largeRefinery, new BuildingResourceStorageComponent
+            {
+                RuntimeBuildingId = 62,
+                OwnerFactionId = FactionIdentity.PlayerFactionId,
+                OilStorageCapacity = 10000,
+                FuelStorageCapacity = 10000,
+                FuelBarrelsPerDay = 200f,
+                StoredOilBarrels = 1000f
+            });
+            using EntityQuery storageQuery = em.CreateEntityQuery(
+                ComponentType.ReadWrite<BuildingResourceStorageComponent>());
+
+            BuildingResourceProductionEcsSystem.TickResult result =
+                BuildingResourceProductionEcsSystem.ApplyStorageQuery(
+                    em,
+                    storageQuery,
+                    secondsPerDay: 100f,
+                    deltaTime: 1f,
+                    oilBarrelsPerFuelBarrel: 2f);
+
+            BuildingResourceStorageComponent standard =
+                em.GetComponentData<BuildingResourceStorageComponent>(standardRefinery);
+            BuildingResourceStorageComponent large =
+                em.GetComponentData<BuildingResourceStorageComponent>(largeRefinery);
+            Assert.AreEqual(998f, standard.StoredOilBarrels);
+            Assert.AreEqual(1f, standard.StoredFuelBarrels);
+            Assert.AreEqual(996f, large.StoredOilBarrels);
+            Assert.AreEqual(2f, large.StoredFuelBarrels);
+            Assert.AreEqual(3f, result.FuelProducedBarrels);
         }
         finally
         {

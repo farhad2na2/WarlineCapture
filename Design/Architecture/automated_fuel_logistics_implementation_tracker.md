@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 68% (68/99 checklist items complete).
+Overall implementation progress: 69% (69/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -33,7 +33,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 1. Data model | Complete | 11 | 11 | 100% | Add or adapt ECS components/buffers, capacities, reservations, cargo, seeded logistics validation, and faction usable Fuel. |
 | 2. Oil extraction and refinery buffers | Complete | 8 | 8 | 100% | Oil Pump and Refinery storage mutation is ECS-owned and versioned. |
 | 3. Tray truck automation | In Progress | 12 | 13 | 92% | Auto-assign Oil pickup/delivery without manual target commands. |
-| 4. Refinery conversion | In Progress | 7 | 9 | 78% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
+| 4. Refinery conversion | In Progress | 8 | 9 | 89% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
 | 5. Tanker automation and usable Fuel | In Progress | 4 | 12 | 33% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
 | 6. Vehicle fuel spending | In Progress | 8 | 11 | 73% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
 | 7. UI read models and feedback | Complete | 10 | 10 | 100% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
@@ -120,7 +120,7 @@ Validation:
 - [x] Stall when Oil input is empty.
 - [x] Stall when Fuel output buffer is full.
 - [x] Publish selected Refinery read model only on version changes.
-- [ ] Support Large Refinery with the same system and different config data.
+- [x] Support Large Refinery with the same system and different config data.
 
 Validation:
 
@@ -856,3 +856,16 @@ Use this section during implementation. Each completed batch should add:
   - Unity focused validation remains blocked by the recurring licensing client mismatch/reconnect loop unless the editor/license state is reset. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
 - Next action:
   - Continue Phase 4 with Large Refinery config/data coverage and selected-building blocked-reason accuracy.
+- Slice: Large Refinery conversion data coverage.
+- Files changed: `Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs` and this tracker.
+- Behavior intent:
+  - Added a focused ECS storage query test for standard and large refinery data in the same conversion pass.
+  - The test mirrors the configured refinery capacities/rates: standard refinery data produces at 100 Fuel/day and large refinery data produces at 200 Fuel/day through the same `BuildingResourceProductionEcsSystem.ApplyStorageQuery` path.
+  - This closes Large Refinery support without adding prefab-specific logic or a duplicate system.
+- Validation:
+  - Added `ApplyStorageQuery_ConvertsStandardAndLargeRefineriesWithDifferentRates`.
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Unity focused validation remains blocked by the recurring licensing client mismatch/reconnect loop unless the editor/license state is reset. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
+- Next action:
+  - Continue Phase 4 by deciding how selected-building blocked reasons should expose refinery empty-input/full-output states, then close or implement that final row.

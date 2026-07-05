@@ -25,6 +25,11 @@ namespace Game.Runtime
         private const int MaxAutoProfilerMarkerRecorders = 200;
         private const int MaxTopSystemProfilerMarkers = 8;
         private const int MaxLastStepSamples = 16;
+        private static readonly string[] DrawCallsProfilerCounterNames = { "Draw Calls Count", "Draw Calls", "DrawCalls Count", "DrawCalls" };
+        private static readonly string[] BatchesProfilerCounterNames = { "Batches Count", "Batches" };
+        private static readonly string[] SetPassCallsProfilerCounterNames = { "SetPass Calls Count", "SetPass Calls", "SetPassCalls Count", "SetPassCalls" };
+        private static readonly string[] TrianglesProfilerCounterNames = { "Triangles Count", "Triangles" };
+        private static readonly string[] VerticesProfilerCounterNames = { "Vertices Count", "Vertices" };
         private static readonly string[] PriorityProfilerMarkerNameFragments =
         {
             "UnitEngagementSystem",
@@ -287,11 +292,11 @@ namespace Game.Runtime
 
         private void StartProfilerRecorders()
         {
-            _drawCallsRecorder = StartProfilerRecorder(ProfilerCategory.Render, "Draw Calls Count");
-            _batchesRecorder = StartProfilerRecorder(ProfilerCategory.Render, "Batches Count");
-            _setPassCallsRecorder = StartProfilerRecorder(ProfilerCategory.Render, "SetPass Calls Count");
-            _trianglesRecorder = StartProfilerRecorder(ProfilerCategory.Render, "Triangles Count");
-            _verticesRecorder = StartProfilerRecorder(ProfilerCategory.Render, "Vertices Count");
+            _drawCallsRecorder = StartRenderProfilerRecorder(DrawCallsProfilerCounterNames);
+            _batchesRecorder = StartRenderProfilerRecorder(BatchesProfilerCounterNames);
+            _setPassCallsRecorder = StartRenderProfilerRecorder(SetPassCallsProfilerCounterNames);
+            _trianglesRecorder = StartRenderProfilerRecorder(TrianglesProfilerCounterNames);
+            _verticesRecorder = StartRenderProfilerRecorder(VerticesProfilerCounterNames);
             if (!_enableProfilerMarkerDiagnostics)
                 return;
 
@@ -352,6 +357,68 @@ namespace Game.Runtime
             {
                 return default;
             }
+        }
+
+        private ProfilerRecorder StartRenderProfilerRecorder(IReadOnlyList<string> candidateNames)
+        {
+            for (int i = 0; i < candidateNames.Count; i++)
+            {
+                ProfilerRecorder recorder = StartProfilerRecorder(ProfilerCategory.Render, candidateNames[i]);
+                if (recorder.Valid)
+                    return recorder;
+            }
+
+            try
+            {
+                List<ProfilerRecorderHandle> handles = new();
+                ProfilerRecorderHandle.GetAvailable(handles);
+                for (int i = 0; i < handles.Count; i++)
+                {
+                    ProfilerRecorderHandle handle = handles[i];
+                    ProfilerRecorderDescription description = ProfilerRecorderHandle.GetDescription(handle);
+                    if (description.Category != ProfilerCategory.Render)
+                        continue;
+
+                    string name = description.Name.ToString();
+                    if (!MatchesProfilerCounterName(name, candidateNames))
+                        continue;
+
+                    ProfilerRecorder recorder = StartProfilerRecorder(description.Category, name);
+                    if (recorder.Valid)
+                        return recorder;
+                }
+            }
+            catch
+            {
+                // Render counter names vary by Unity version and platform; diagnostics must degrade gracefully.
+            }
+
+            return default;
+        }
+
+        private static bool MatchesProfilerCounterName(string name, IReadOnlyList<string> candidateNames)
+        {
+            if (string.IsNullOrEmpty(name))
+                return false;
+
+            string normalizedName = NormalizeProfilerCounterName(name);
+            for (int i = 0; i < candidateNames.Count; i++)
+            {
+                string normalizedCandidate = NormalizeProfilerCounterName(candidateNames[i]);
+                if (string.Equals(normalizedName, normalizedCandidate, StringComparison.OrdinalIgnoreCase) ||
+                    normalizedName.Contains(normalizedCandidate, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static string NormalizeProfilerCounterName(string name)
+        {
+            return name
+                .Replace(" ", string.Empty)
+                .Replace("-", string.Empty)
+                .Replace("_", string.Empty);
         }
 
         private void AddProfilerMarkerRecorder(ProfilerCategory category, string statName)

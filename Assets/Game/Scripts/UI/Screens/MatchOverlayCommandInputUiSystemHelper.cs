@@ -18,7 +18,8 @@ namespace Game.UI.Runtime
             Action showBuildDrawer = null,
             Action closeBuildDrawer = null,
             ISelectionDiagnosticsSink diagnosticsSink = null,
-            ISelectionUiReadModel selectionUiReadModel = null)
+            ISelectionUiReadModel selectionUiReadModel = null,
+            Action captureGameplayUiClick = null)
         {
             if (view == null)
                 return;
@@ -33,7 +34,8 @@ namespace Game.UI.Runtime
                 showBuildDrawer,
                 closeBuildDrawer,
                 diagnosticsSink,
-                selectionUiReadModel);
+                selectionUiReadModel,
+                captureGameplayUiClick);
             binding.Bind();
             _bindings.Add(view, binding);
         }
@@ -87,6 +89,7 @@ namespace Game.UI.Runtime
             private readonly Action _closeBuildDrawer;
             private readonly ISelectionDiagnosticsSink _diagnosticsSink;
             private readonly ISelectionUiReadModel _selectionUiReadModel;
+            private readonly Action _captureGameplayUiClick;
             private readonly List<(Button Button, UnityEngine.Events.UnityAction Action)> _commandTabRuntimeListeners = new();
             private bool _buildDrawerOpen;
 
@@ -97,7 +100,8 @@ namespace Game.UI.Runtime
                 Action showBuildDrawer,
                 Action closeBuildDrawer,
                 ISelectionDiagnosticsSink diagnosticsSink,
-                ISelectionUiReadModel selectionUiReadModel)
+                ISelectionUiReadModel selectionUiReadModel,
+                Action captureGameplayUiClick)
             {
                 _view = view;
                 _selectionUiCommandSystem = selectionUiCommandSystem;
@@ -106,6 +110,7 @@ namespace Game.UI.Runtime
                 _closeBuildDrawer = closeBuildDrawer;
                 _diagnosticsSink = diagnosticsSink;
                 _selectionUiReadModel = selectionUiReadModel;
+                _captureGameplayUiClick = captureGameplayUiClick;
             }
 
             public void Bind()
@@ -186,6 +191,7 @@ namespace Game.UI.Runtime
 
             private void OnSelectButtonClicked()
             {
+                CaptureCommandUiClick();
                 bool enterSelectionMode = !IsCommandModePresented(TacticalCommandMode.Select);
                 bool queued = _selectionUiCommandSystem != null &&
                     (enterSelectionMode
@@ -200,6 +206,7 @@ namespace Game.UI.Runtime
 
             private void OnBuildButtonClicked()
             {
+                CaptureCommandUiClick();
                 if (_showBuildDrawer != null)
                 {
                     _showBuildDrawer.Invoke();
@@ -215,6 +222,7 @@ namespace Game.UI.Runtime
 
             private void OnMoveButtonClicked()
             {
+                CaptureCommandUiClick();
                 LogMoveCommandTrace(
                     $"moveButtonClicked view={_view.name} hasSelectionUi={_selectionUiCommandSystem != null}");
                 bool queued = _selectionUiCommandSystem != null &&
@@ -229,6 +237,7 @@ namespace Game.UI.Runtime
 
             private void OnAttackButtonClicked()
             {
+                CaptureCommandUiClick();
                 bool queued = _selectionUiCommandSystem != null &&
                     _selectionUiCommandSystem.RequestAttackCommandMode();
 
@@ -240,6 +249,7 @@ namespace Game.UI.Runtime
 
             private void OnScanButtonClicked()
             {
+                CaptureCommandUiClick();
                 if (!TryAcceptCapability(CommandCapability.Scan))
                     return;
 
@@ -255,6 +265,7 @@ namespace Game.UI.Runtime
 
             private void OnBoardButtonClicked()
             {
+                CaptureCommandUiClick();
                 CloseBuildDrawerIfOpen();
                 bool queued = _selectionUiCommandSystem != null &&
                     _selectionUiCommandSystem.RequestBoardTargetMode();
@@ -295,8 +306,14 @@ namespace Game.UI.Runtime
 
             private void OnCommandTabRuntimeClick(Button button, bool scanAlias)
             {
+                CaptureCommandUiClick();
                 if (scanAlias)
                     OnScanButtonClicked();
+            }
+
+            private void CaptureCommandUiClick()
+            {
+                _captureGameplayUiClick?.Invoke();
             }
 
             private bool IsKnownCommandButton(Button button)
@@ -341,6 +358,7 @@ namespace Game.UI.Runtime
 
             private void OnHoldButtonClicked()
             {
+                CaptureCommandUiClick();
                 if (!TryAcceptCapability(CommandCapability.Hold))
                     return;
 
@@ -355,6 +373,7 @@ namespace Game.UI.Runtime
 
             private void OnStopButtonClicked()
             {
+                CaptureCommandUiClick();
                 if (!TryAcceptCapability(CommandCapability.Stop))
                     return;
 
@@ -369,6 +388,7 @@ namespace Game.UI.Runtime
 
             private void OnCommandWheelStopButtonClicked()
             {
+                CaptureCommandUiClick();
                 if (!TryAcceptCapability(CommandCapability.Stop))
                     return;
 

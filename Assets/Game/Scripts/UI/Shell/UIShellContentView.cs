@@ -387,7 +387,8 @@ namespace Game.UI.Runtime
                     () => InstallBuildDrawerPopup(),
                     CloseBuildDrawerPopup,
                     _selectionDiagnosticsSink,
-                    _selectionUiReadModelSystem);
+                    _selectionUiReadModelSystem,
+                    _mainMenuPlayUi != null ? _mainMenuPlayUi.CaptureGameplayUiClickSequence : null);
                 _mainMenuPlayUi?.BindMatchHudCommandControls(view);
                 RefreshMatchHudCommandControlState();
             }

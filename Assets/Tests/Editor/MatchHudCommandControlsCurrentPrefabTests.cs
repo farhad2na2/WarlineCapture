@@ -63,6 +63,22 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
         }
     }
 
+    public static void RunWorldInputBlockValidation()
+    {
+        try
+        {
+            RunValidationStep(nameof(MatchHudCommandControlsBlockGameplayWorldInput), tests => tests.MatchHudCommandControlsBlockGameplayWorldInput());
+            Debug.Log("[MatchHudWorldInputBlockValidation] result=Passed tests=1");
+            ValidationExit.Exit(0);
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[MatchHudWorldInputBlockValidation] result=Failed");
+            ValidationExit.Exit(1);
+        }
+    }
+
     private static void RunValidationStep(string name, System.Action<MatchHudCommandControlsCurrentPrefabTests> step)
     {
         var tests = new MatchHudCommandControlsCurrentPrefabTests();
@@ -406,6 +422,76 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
         AssertClickQueues(supportButton, RtsSelectionCommandIntentKind.EnterScanTargetMode);
 
         inputSystem.Unbind(controls);
+    }
+
+    [Test]
+    public void MatchHudCommandControlsBlockGameplayWorldInput()
+    {
+        GameObject eventSystemObject = new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
+        GameObject canvasObject = new GameObject("Test Canvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+        GameObject instance = null;
+        try
+        {
+            Canvas canvas = canvasObject.GetComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            RectTransform canvasRect = canvasObject.GetComponent<RectTransform>();
+            canvasRect.sizeDelta = new Vector2(1920f, 1080f);
+
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(MatchHudContentPrefabPath);
+            Assert.NotNull(prefab, MatchHudContentPrefabPath);
+            instance = Object.Instantiate(prefab, canvasRect, false);
+            RectTransform instanceRect = instance.transform as RectTransform;
+            Assert.NotNull(instanceRect);
+            instanceRect.anchorMin = Vector2.zero;
+            instanceRect.anchorMax = Vector2.one;
+            instanceRect.offsetMin = Vector2.zero;
+            instanceRect.offsetMax = Vector2.zero;
+
+            MatchOverlayCommandControlsView controls = instance.GetComponentInChildren<MatchOverlayCommandControlsView>(true);
+            Assert.NotNull(controls, "SCN08_MatchHudContent must expose command controls.");
+            Button moveButton = controls.MoveButton;
+            Assert.NotNull(moveButton, "Move command must be available for UI blocking validation.");
+            ActivateHierarchy(moveButton.transform);
+
+            RectTransform moveRect = moveButton.transform as RectTransform;
+            Assert.NotNull(moveRect);
+            Vector2 moveCenter = RectTransformUtility.WorldToScreenPoint(
+                null,
+                moveRect.TransformPoint(moveRect.rect.center));
+
+            MainMenuPlayUI mainMenu = new();
+            mainMenu.BindMatchHudCommandControls(controls);
+
+            Assert.IsTrue(
+                mainMenu.IsPointerOverAnyGameplayUi(moveCenter, out string gameplaySource),
+                "Match HUD command buttons must block gameplay/world selection input.");
+            StringAssert.StartsWith("MatchHudCommandControls", gameplaySource);
+            Assert.IsFalse(
+                mainMenu.ShouldIgnoreBuildingSelectionThisFrame(),
+                "Building selection should not be globally blocked until a gameplay UI click is captured.");
+
+            var inputSystem = new MatchOverlayCommandInputUiSystemHelper();
+            inputSystem.Bind(
+                controls,
+                new SelectionUiCommandUiSystemHelper(),
+                captureGameplayUiClick: mainMenu.CaptureGameplayUiClickSequence);
+            ClearCommandRequests();
+            moveButton.onClick.Invoke();
+            Assert.IsTrue(
+                mainMenu.ShouldIgnoreBuildingSelectionThisFrame(),
+                "Command button clicks must guard building/world selection for the same Android tap.");
+            Assert.IsTrue(TryGetCommandRequests(out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests));
+            Assert.AreEqual(1, requests.Length, "Move button click must still queue the command request while blocking world selection.");
+            Assert.AreEqual(RtsSelectionCommandIntentKind.EnterMoveTargetMode, requests[0].Kind);
+            inputSystem.Unbind(controls);
+        }
+        finally
+        {
+            if (instance != null)
+                Object.DestroyImmediate(instance);
+            Object.DestroyImmediate(canvasObject);
+            Object.DestroyImmediate(eventSystemObject);
+        }
     }
 
     private MatchOverlayCommandControlsView LoadControls()

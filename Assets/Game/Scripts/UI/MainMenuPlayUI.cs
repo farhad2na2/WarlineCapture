@@ -3,6 +3,7 @@ using TMPro;
 using Unity.Profiling;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using Game.Tactical.Contracts;
 using Game.UI.Contracts;
 
@@ -50,6 +51,7 @@ namespace Game.UI.Runtime
         private EventSystem _raycastEventSystem;
         private PointerEventData _raycastPointerData;
         private readonly List<RaycastResult> _raycastResults = new(16);
+        private int _lastGameplayUiClickFrame = -1000;
 
         public void Init(
             ISelectionUiCommand selectionUiCommandSystem,
@@ -510,6 +512,9 @@ namespace Game.UI.Runtime
             if (eventSystem == null)
                 return false;
 
+            if (IsCurrentEventSystemPointerOverUi(eventSystem, out source))
+                return true;
+
             if (_raycastPointerData == null || _raycastEventSystem != eventSystem)
             {
                 _raycastEventSystem = eventSystem;
@@ -537,6 +542,46 @@ namespace Game.UI.Runtime
             return false;
         }
 
+        private static bool IsCurrentEventSystemPointerOverUi(EventSystem eventSystem, out string source)
+        {
+            source = null;
+            if (eventSystem == null)
+                return false;
+
+            if (TryGetPrimaryTouchPointerId(out int touchPointerId) &&
+                eventSystem.IsPointerOverGameObject(touchPointerId))
+            {
+                source = "EventSystemPrimaryPointer";
+                return true;
+            }
+
+            if (eventSystem.IsPointerOverGameObject())
+            {
+                source = "EventSystemCurrentPointer";
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool TryGetPrimaryTouchPointerId(out int pointerId)
+        {
+            pointerId = -1;
+            Touchscreen touchscreen = Touchscreen.current;
+            if (touchscreen == null)
+                return false;
+
+            var touch = touchscreen.primaryTouch;
+            bool active = touch.press.isPressed ||
+                          touch.press.wasPressedThisFrame ||
+                          touch.press.wasReleasedThisFrame;
+            if (!active)
+                return false;
+
+            pointerId = touch.touchId.ReadValue();
+            return true;
+        }
+
         public bool IsPointerOverSelectionCancelUi(Vector2 screenPosition)
         {
             return false;
@@ -560,7 +605,15 @@ namespace Game.UI.Runtime
 
         public bool ShouldIgnoreBuildingSelectionThisFrame()
         {
-            return false;
+            return Time.frameCount <= _lastGameplayUiClickFrame + 1;
+        }
+
+        public void CaptureGameplayUiClickSequence()
+        {
+            _lastGameplayUiClickFrame = Time.frameCount;
+            _selectionUiCommandSystem?.CaptureUiClickSequence();
+            if (_runtimeGameplayStateSystem != null)
+                _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
         }
 
         public bool CanTriggerSelectionModeFromHold()
@@ -643,9 +696,7 @@ namespace Game.UI.Runtime
 
         private void CaptureZoomUiClick()
         {
-            _selectionUiCommandSystem?.CaptureUiClickSequence();
-            if (_runtimeGameplayStateSystem != null)
-                _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
+            CaptureGameplayUiClickSequence();
         }
 
         private void SetMatchHudThreatWarningVisible(bool visible)

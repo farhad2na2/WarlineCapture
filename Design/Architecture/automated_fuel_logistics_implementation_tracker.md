@@ -23,14 +23,14 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 7% (7/98 checklist items complete).
+Overall implementation progress: 8% (8/98 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
 | Phase | Status | Complete | Total | Progress | Notes |
 |---|---|---:|---:|---:|---|
 | 0. Inventory and baseline | In Progress | 5 | 8 | 63% | Audit current Oil/Fuel components, building runtime summaries, resource hauler code, seeded trucks, and HUD header data. |
-| 1. Data model | In Progress | 2 | 11 | 18% | Add or adapt ECS components/buffers for buffers, capacities, reservations, cargo, seeded logistics validation, and faction usable Fuel. |
+| 1. Data model | In Progress | 3 | 11 | 27% | Add or adapt ECS components/buffers for buffers, capacities, reservations, cargo, seeded logistics validation, and faction usable Fuel. |
 | 2. Oil extraction and refinery buffers | Pending | 0 | 8 | 0% | Ensure Oil Pump and Refinery buffers are ECS-owned and versioned. |
 | 3. Tray truck automation | Pending | 0 | 12 | 0% | Auto-assign Oil pickup/delivery without manual target commands. |
 | 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
@@ -66,7 +66,7 @@ Exit criteria:
 - [ ] Define faction usable Fuel summary: current, capacity, produced, delivered, spent, version.
 - [ ] Define typed blocked/status reason codes for UI and command validation.
 - [x] Define scenario/map authoring requirement for seeded tray/tanker pairs at each fuel-enabled faction military base.
-- [ ] Add baker/config mapping only where needed; do not duplicate balance data already owned by configs.
+- [x] Add baker/config mapping only where needed; do not duplicate balance data already owned by configs.
 
 Performance notes:
 
@@ -267,6 +267,19 @@ Use this section during implementation. Each completed batch should add:
   - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed before commit `1c346b401`.
   - Full solution build remains blocked by existing generated solution issue: duplicate `Unity.ProBuilder` project name.
   - Unity batchmode was blocked by an already-open Unity editor for this project; live editor log showed Tundra build success with no compiler error matches.
+- Slice: config mapping correction for automated fuel storage and tanker hauling.
+- Files changed: `Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Fuel_Bladder_Config.asset`, `Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Truck_Tanker.asset`, `Assets/Tests/Editor/InitialFactionBaseValidationTests.cs`, and this tracker.
+- Behavior intent:
+  - Fuel Bladder now has `fuelStorageCapacity: 5000`, so it can receive delivered Fuel and contribute to the usable faction Fuel pool through the existing `BuildingResourceStorageComponent` path.
+  - Tanker Truck now has `resourceHaulerBarrelCapacity: 8`, so `UnitGridAuthoring.Baker` adds `UnitResourceHauler` and existing/future fuel hauling code can assign cargo.
+  - Added `FuelLogisticsConfigs_HaveUsableStorageAndHaulerCapacity` to prevent storage/cargo capacity from drifting back to zero.
+- Validation:
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Focused Unity batchmode validation was not launched because Unity is already open on this project.
+  - Live editor log check found no `error CS`, compiler error, build-failed, or exception matches after the asset import; editor log still contains existing Unity cloud/licensing entitlement warnings unrelated to this slice.
+- Next action:
+  - Add the first assignment gate for automatic tray/tanker work without replacing the existing movement path.
 
 - Created design and implementation tracker.
 - Started implementation with seeded logistics verification fixture.

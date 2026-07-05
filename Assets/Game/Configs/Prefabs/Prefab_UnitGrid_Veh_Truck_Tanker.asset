@@ -48,7 +48,7 @@ MonoBehaviour:
   vehicleSelectionMarkerPrefab: {fileID: 7141789922891347094, guid: d2834fbab75454c99b0b283a44cef502, type: 3}
   vehicleHealthBarPrefab: {fileID: 4330714435077561203, guid: b6790ac587427481c8b1718ba9b38a3f, type: 3}
   tintVehicleModelRenderers: 1
-  resourceHaulerBarrelCapacity: 0
+  resourceHaulerBarrelCapacity: 8
   resourceHaulerFillDurationSeconds: 2
   resourceHaulerUnloadDurationSeconds: 1.5
   threatDetectionKind: 0

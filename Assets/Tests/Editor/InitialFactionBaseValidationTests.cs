@@ -16,6 +16,8 @@ public sealed class InitialFactionBaseValidationTests
     private const string SceneConfigPath = "Assets/Game/Configs/Scene/MatchSubScene_InitialUnitsSpawner_Config.asset";
     private const string RuntimeCityConfigPath = "Assets/Game/Configs/Scene/Game_RuntimeCitySpawner_Config.asset";
     private const string BuildingPlacementConfigPath = "Assets/Game/Configs/Scene/Game_BuildingPlacement_Config.asset";
+    private const string FuelBladderConfigPath = "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Fuel_Bladder_Config.asset";
+    private const string TankerTruckConfigPath = "Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Truck_Tanker.asset";
     private static readonly string[] RequiredInitialGroundVehiclePrefabs =
     {
         "Unit_Veh_APC_Fast",
@@ -39,6 +41,7 @@ public sealed class InitialFactionBaseValidationTests
             tests.InitialFactionBaseLayoutPlanner_BuildsExactBaseRecipe();
             tests.SceneInitialUnitsConfig_DisablesAutomaticFactionBasesAndKeepsConfiguredStarts();
             tests.SceneInitialUnitsConfig_SeedsFuelLogisticsTrucksNearFactionBases();
+            tests.FuelLogisticsConfigs_HaveUsableStorageAndHaulerCapacity();
             tests.BuildingPlacementConfig_ResolvesEveryInitialBasePrefab();
             tests.InitialBaseAirPlatformPrefabs_HaveProductionSpawnPoints();
             tests.RuntimeHelipad_DoesNotCreateStaticPathBlocker();
@@ -259,6 +262,26 @@ public sealed class InitialFactionBaseValidationTests
             AssertSeededLogisticsTruck(faction, "Unit_Veh_Truck_Tray");
             AssertSeededLogisticsTruck(faction, "Unit_Veh_Truck_Tanker");
         }
+    }
+
+    [Test]
+    public void FuelLogisticsConfigs_HaveUsableStorageAndHaulerCapacity()
+    {
+        BuildingDefinitionAuthoringConfig fuelBladder =
+            AssetDatabase.LoadAssetAtPath<BuildingDefinitionAuthoringConfig>(FuelBladderConfigPath);
+        UnitGridAuthoringConfig tanker =
+            AssetDatabase.LoadAssetAtPath<UnitGridAuthoringConfig>(TankerTruckConfigPath);
+
+        Assert.NotNull(fuelBladder, $"Missing fuel bladder config at {FuelBladderConfigPath}.");
+        Assert.NotNull(tanker, $"Missing tanker truck config at {TankerTruckConfigPath}.");
+        Assert.Greater(
+            fuelBladder.FuelStorageCapacity,
+            0,
+            "Fuel Bladder must contribute usable Fuel storage so delivered Fuel can enter the faction header pool.");
+        Assert.Greater(
+            tanker.ResourceHaulerBarrelCapacity,
+            0,
+            "Tanker Truck must bake UnitResourceHauler so fuel automation can assign and transfer cargo.");
     }
 
     [Test]

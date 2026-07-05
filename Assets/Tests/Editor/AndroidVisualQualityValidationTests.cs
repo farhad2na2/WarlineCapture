@@ -28,7 +28,7 @@ public sealed class AndroidVisualQualityValidationTests
         {
             int passed = 0;
             RunCase(() => MobileRenderPipelineUsesBalancedScaleAndMsaa(), ref passed);
-            RunCase(() => MobileRendererUsesForwardPathForSingleLightMobile(), ref passed);
+            RunCase(() => MobileRendererUsesForwardPlusForEntitiesGraphics(), ref passed);
             RunCase(() => VisualQualityProfileUsesBalancedAndroidMatchRendering(), ref passed);
             RunCase(() => HighModeKeepsCameraPostProcessingDisabled(), ref passed);
             RunCase(() => MobileQualityTierUsesBalancedMsaaAndShadows(), ref passed);
@@ -80,7 +80,7 @@ public sealed class AndroidVisualQualityValidationTests
     }
 
     [Test]
-    public static void MobileRendererUsesForwardPathForSingleLightMobile()
+    public static void MobileRendererUsesForwardPlusForEntitiesGraphics()
     {
         UnityEngine.Object asset =
             AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(MobileRendererPath);
@@ -90,9 +90,9 @@ public sealed class AndroidVisualQualityValidationTests
         SerializedProperty renderingMode = serializedAsset.FindProperty("m_RenderingMode");
         Assert.NotNull(renderingMode, "Mobile renderer asset is missing serialized m_RenderingMode.");
         Assert.AreEqual(
-            0,
+            2,
             renderingMode.intValue,
-            "Android/mobile renderer should use plain Forward because additional lights are disabled; Forward+ adds clustered-light overhead without visible benefit here.");
+            "Android/mobile renderer should use URP Forward+ so Entities Graphics remains on its supported compatibility path.");
     }
 
     [Test]

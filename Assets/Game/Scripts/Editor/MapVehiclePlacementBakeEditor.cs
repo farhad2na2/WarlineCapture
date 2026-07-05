@@ -1,6 +1,7 @@
 using Game.Configs;
 using Game.Runtime;
 using Game.Composition;
+using Game.Authoring;
 
 namespace Game.Editor
 {
@@ -102,9 +103,7 @@ namespace Game.Editor
                     for (int childIndex = 0; childIndex < categoryRoot.childCount; childIndex++)
                     {
                         Transform placementRoot = categoryRoot.GetChild(childIndex);
-                        Vector3 center = TryGetObjectBounds(placementRoot.gameObject) is { } bounds
-                            ? bounds.center
-                            : placementRoot.position;
+                        Vector3 center = ResolvePlacementCenter(prefab, placementRoot);
                         byte factionId = ResolveFactionId(center, faction1, faction2, placementRoot, report);
                         placements.Add(new MapVehiclePlacementConfigEntry(
                             GetHierarchyPath(placementRoot),
@@ -188,6 +187,29 @@ namespace Game.Editor
                 return 1;
 
             return inFaction2 ? (byte)2 : (byte)0;
+        }
+
+        private static Vector3 ResolvePlacementCenter(GameObject prefab, Transform placementRoot)
+        {
+            if (placementRoot == null)
+                return Vector3.zero;
+
+            return ShouldUseRootPositionAsPlacementCenter(prefab)
+                ? placementRoot.position
+                : TryGetObjectBounds(placementRoot.gameObject) is { } bounds
+                    ? bounds.center
+                    : placementRoot.position;
+        }
+
+        private static bool ShouldUseRootPositionAsPlacementCenter(GameObject prefab)
+        {
+            if (prefab == null)
+                return false;
+
+            UnitGridAuthoring unit = prefab.GetComponent<UnitGridAuthoring>();
+            return unit != null &&
+                   unit.IsAirUnit &&
+                   unit.ProductionTransportRequiresAirportRunway;
         }
 
         private static void AssignMatchSceneViewReferences(

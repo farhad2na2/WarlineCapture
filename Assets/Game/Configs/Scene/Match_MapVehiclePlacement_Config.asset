@@ -306,7 +306,7 @@ MonoBehaviour:
     vehiclePrefab: {fileID: 5616646512338707422, guid: c0213638ba0c6466fadcd5bbe8fe0149, type: 3}
     vehicleSourceKey: unit_veh_plane_transport
     factionId: 1
-    worldCenter: {x: 1003.74927, y: 7.8444467, z: 335.3463}
+    worldCenter: {x: 994.4, y: 0.25, z: 328.79996}
     worldPosition: {x: 994.4, y: 0.25, z: 328.79996}
     worldEulerAngles: {x: 1.2900031, y: 235, z: 0}
     worldScale: {x: 1.0000008, y: 1, z: 1.0000007}
@@ -315,7 +315,7 @@ MonoBehaviour:
     vehiclePrefab: {fileID: 5616646512338707422, guid: c0213638ba0c6466fadcd5bbe8fe0149, type: 3}
     vehicleSourceKey: unit_veh_plane_transport
     factionId: 2
-    worldCenter: {x: 1906.3494, y: 10.444447, z: 245.64624}
+    worldCenter: {x: 1897.0001, y: 2.8500004, z: 239.09985}
     worldPosition: {x: 1897.0001, y: 2.8500004, z: 239.09985}
     worldEulerAngles: {x: 1.2900031, y: 235, z: 0}
     worldScale: {x: 1.0000008, y: 1, z: 1.0000007}

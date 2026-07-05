@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 87% (87/99 checklist items complete).
+Overall implementation progress: 90% (90/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -38,7 +38,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 6. Vehicle fuel spending | Complete | 11 | 11 | 100% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
 | 7. UI read models and feedback | Complete | 10 | 10 | 100% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
 | 8. AI and enemy support | Complete | 7 | 7 | 100% | Let AI understand fuel economy after player loop is validated. |
-| 9. Validation and profiling | In Progress | 1 | 10 | 10% | Focused tests, seeded-map checks, guardrails, GC checks, and Android profiling. |
+| 9. Validation and profiling | In Progress | 3 | 10 | 30% | Focused tests, seeded-map checks, guardrails, GC checks, and Android profiling. |
 
 ## Phase 0: Inventory And Baseline
 
@@ -194,8 +194,8 @@ Validation:
 
 ## Phase 9: Performance, Tests, And Rollout
 
-- [ ] Run `git diff --check`.
-- [ ] Run compile validation after each implementation batch.
+- [x] Run `git diff --check`.
+- [x] Run compile validation after each implementation batch.
 - [ ] Run focused oil/fuel logistics edit-mode tests.
 - [ ] Run focused building production/resource validation.
 - [ ] Run focused vehicle movement and aircraft return validation.
@@ -203,7 +203,7 @@ Validation:
 - [ ] Run architecture guardrails, including Burst/ECS hot-path checks.
 - [ ] Run steady-state match profiler capture with fuel logistics active.
 - [ ] Run Android profiling if the feature affects match performance.
-- [ ] Update this tracker with command names, log paths, pass/fail result, and next action after each batch.
+- [x] Update this tracker with command names, log paths, pass/fail result, and next action after each batch.
 
 Performance acceptance targets:
 
@@ -1038,3 +1038,15 @@ Use this section during implementation. Each completed batch should add:
   - Unity focused validation remains blocked by the recurring licensing client mismatch/reconnect loop unless the editor/license state is reset. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
 - Next action:
   - Continue Phase 9 validation/profiling rows, starting with recording the safe validation commands already used across this implementation batch.
+- Slice: Phase 9 safe validation accounting.
+- Files changed: this tracker.
+- Behavior intent:
+  - Closed the Phase 9 rows for safe validation commands that were run successfully after the latest implementation batches.
+  - Kept Unity focused validation, seeded fixture validation, architecture guardrails, and profiler rows open because Unity batch validation remains blocked by the licensing client mismatch unless the editor/license state is reset.
+- Validation:
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed with 0 warnings and 0 errors.
+  - Checklist count command returned `90/99`.
+  - Unity focused validation remains blocked by the recurring licensing client mismatch/reconnect loop unless the editor/license state is reset. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
+- Next action:
+  - Run the remaining Unity focused validation rows after the licensing/client issue is cleared, starting with oil/fuel logistics and building production/resource validation.

@@ -36,6 +36,24 @@ namespace Game.Runtime
 
     internal static class TransportBoardingOrderPlanningSystemHelper
     {
+        public static PendingTransportBoardingOrder CreatePendingBoardingOrder(
+            Entity passenger,
+            int2 passengerCell,
+            int2 goal,
+            byte passengerKind,
+            int cargoWeight)
+        {
+            return new PendingTransportBoardingOrder
+            {
+                Passenger = passenger,
+                PassengerCell = passengerCell,
+                Goal = goal,
+                PassengerKind = passengerKind,
+                CargoWeight = cargoWeight,
+                DirectBoarding = goal.Equals(passengerCell)
+            };
+        }
+
         public static string ResolveBoardingAcceptedMessage(
             bool cargoPlaneTransport,
             int plannedSoldierSeats,

@@ -1219,15 +1219,12 @@ namespace Game.Runtime
                 return false;
             }
 
-            order = new PendingTransportBoardingOrder
-            {
-                Passenger = passenger,
-                PassengerCell = passengerCell,
-                Goal = goal,
-                PassengerKind = passengerKind,
-                CargoWeight = cargoWeight,
-                DirectBoarding = goal.Equals(passengerCell)
-            };
+            order = TransportBoardingOrderPlanningSystemHelper.CreatePendingBoardingOrder(
+                passenger,
+                passengerCell,
+                goal,
+                passengerKind,
+                cargoWeight);
             ReserveFootprintCells(grid, goal, passengerFootprint, reservedBoardingCells);
             return true;
         }

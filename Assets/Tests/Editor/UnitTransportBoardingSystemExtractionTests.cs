@@ -378,6 +378,38 @@ public sealed class UnitTransportBoardingSystemExtractionTests
     }
 
     [Test]
+    public void OrderPlanningHelper_CreatesPendingBoardingOrderWithDirectFlag()
+    {
+        Entity passenger = new() { Index = 31, Version = 1 };
+
+        PendingTransportBoardingOrder directOrder =
+            TransportBoardingOrderPlanningSystemHelper.CreatePendingBoardingOrder(
+                passenger,
+                passengerCell: new int2(2, 3),
+                goal: new int2(2, 3),
+                passengerKind: UnitTransportPassengerKind.Soldier,
+                cargoWeight: 0);
+        PendingTransportBoardingOrder movingOrder =
+            TransportBoardingOrderPlanningSystemHelper.CreatePendingBoardingOrder(
+                passenger,
+                passengerCell: new int2(2, 3),
+                goal: new int2(4, 3),
+                passengerKind: UnitTransportPassengerKind.Vehicle,
+                cargoWeight: 2);
+
+        Assert.AreEqual(passenger, directOrder.Passenger);
+        Assert.AreEqual(new int2(2, 3), directOrder.PassengerCell);
+        Assert.AreEqual(new int2(2, 3), directOrder.Goal);
+        Assert.AreEqual(UnitTransportPassengerKind.Soldier, directOrder.PassengerKind);
+        Assert.AreEqual(0, directOrder.CargoWeight);
+        Assert.IsTrue(directOrder.DirectBoarding);
+        Assert.AreEqual(new int2(4, 3), movingOrder.Goal);
+        Assert.AreEqual(UnitTransportPassengerKind.Vehicle, movingOrder.PassengerKind);
+        Assert.AreEqual(2, movingOrder.CargoWeight);
+        Assert.IsFalse(movingOrder.DirectBoarding);
+    }
+
+    [Test]
     public void OrderPlanningHelper_ReportsAvailabilityByPassengerKind()
     {
         Assert.IsTrue(TransportBoardingOrderPlanningSystemHelper.HasPlannedBoardingSlot(

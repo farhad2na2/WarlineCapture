@@ -1340,8 +1340,7 @@ namespace Game.Runtime
                 ignoredBoardingEntities,
                 ignoredBoardingOccupiedCells);
             List<PendingTransportBoardingOrder> plannedOrders = new(math.min(candidates.Count, slotAvailability.TotalAvailableSlots));
-            int plannedSoldierSeats = 0;
-            int plannedVehicleSlots = 0;
+            TransportBoardingPlannedSlotCounts plannedSlots = default;
 
             for (int i = 0; i < candidates.Count; i++)
             {
@@ -1356,8 +1355,7 @@ namespace Game.Runtime
                         passengerKind,
                         slotAvailability.AvailableSoldierSeats,
                         slotAvailability.AvailableVehicleSlots,
-                        plannedSoldierSeats,
-                        plannedVehicleSlots) != TransportBoardingPlannedSlotRejectionKind.None)
+                        plannedSlots) != TransportBoardingPlannedSlotRejectionKind.None)
                 {
                     continue;
                 }
@@ -1395,8 +1393,7 @@ namespace Game.Runtime
                     passengerKind,
                     slotAvailability.AvailableSoldierSeats,
                     slotAvailability.AvailableVehicleSlots,
-                    ref plannedSoldierSeats,
-                    ref plannedVehicleSlots);
+                    ref plannedSlots);
             }
 
             if (plannedOrders.Count <= 0)

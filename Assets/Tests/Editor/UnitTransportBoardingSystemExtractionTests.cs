@@ -391,6 +391,32 @@ public sealed class UnitTransportBoardingSystemExtractionTests
     }
 
     [Test]
+    public void OrderPlanningHelper_ReportsStructPlannedSlotRejectionAndAcceptedMessage()
+    {
+        TransportBoardingPlannedSlotCounts plannedSlots = new(soldierSeats: 1, vehicleSlots: 1);
+
+        Assert.AreEqual(
+            TransportBoardingPlannedSlotRejectionKind.NoSoldierSeats,
+            TransportBoardingOrderPlanningSystemHelper.ResolvePlannedSlotRejection(
+                UnitTransportPassengerKind.Soldier,
+                availableSoldierSeats: 1,
+                availableVehicleSlots: 2,
+                plannedSlots));
+        Assert.AreEqual(
+            TransportBoardingPlannedSlotRejectionKind.NoVehicleSlots,
+            TransportBoardingOrderPlanningSystemHelper.ResolvePlannedSlotRejection(
+                UnitTransportPassengerKind.Vehicle,
+                availableSoldierSeats: 2,
+                availableVehicleSlots: 1,
+                plannedSlots));
+        Assert.AreEqual(
+            "Loading troops and cargo.",
+            TransportBoardingOrderPlanningSystemHelper.ResolveBoardingAcceptedMessage(
+                cargoPlaneTransport: true,
+                plannedSlots));
+    }
+
+    [Test]
     public void OrderPlanningHelper_ResolvesBatchAcceptedMessages()
     {
         Assert.AreEqual(

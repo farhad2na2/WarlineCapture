@@ -309,19 +309,28 @@ namespace Game.Runtime
         {
             float usableFuel = 0f;
             using EntityQuery storageQuery = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingResourceStorageComponent>());
-            using NativeArray<BuildingResourceStorageComponent> storages = storageQuery.ToComponentDataArray<BuildingResourceStorageComponent>(Allocator.Temp);
-            for (int i = 0; i < storages.Length; i++)
-            {
-                BuildingResourceStorageComponent storage = storages[i];
-                if (storage.OwnerFactionId != factionId ||
-                    storage.FuelStorageCapacity <= 0 ||
-                    storage.FuelBarrelsPerDay > 0f ||
-                    storage.OilBarrelsPerDay > 0f)
-                {
-                    continue;
-                }
+            if (storageQuery.IsEmptyIgnoreFilter)
+                return 0f;
 
-                usableFuel += math.max(0f, storage.StoredFuelBarrels - storage.ReservedFuelOutboundBarrels);
+            ComponentTypeHandle<BuildingResourceStorageComponent> storageType =
+                em.GetComponentTypeHandle<BuildingResourceStorageComponent>(true);
+            using NativeArray<ArchetypeChunk> chunks = storageQuery.ToArchetypeChunkArray(Allocator.Temp);
+            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+            {
+                NativeArray<BuildingResourceStorageComponent> storages = chunks[chunkIndex].GetNativeArray(ref storageType);
+                for (int i = 0; i < storages.Length; i++)
+                {
+                    BuildingResourceStorageComponent storage = storages[i];
+                    if (storage.OwnerFactionId != factionId ||
+                        storage.FuelStorageCapacity <= 0 ||
+                        storage.FuelBarrelsPerDay > 0f ||
+                        storage.OilBarrelsPerDay > 0f)
+                    {
+                        continue;
+                    }
+
+                    usableFuel += math.max(0f, storage.StoredFuelBarrels - storage.ReservedFuelOutboundBarrels);
+                }
             }
 
             return usableFuel;

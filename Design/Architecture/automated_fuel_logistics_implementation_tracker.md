@@ -23,13 +23,13 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 94% (94/99 checklist items complete).
+Overall implementation progress: 96% (96/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
 | Phase | Status | Complete | Total | Progress | Notes |
 |---|---|---:|---:|---:|---|
-| 0. Inventory and baseline | In Progress | 6 | 8 | 75% | Audit current Oil/Fuel components, building runtime summaries, resource hauler code, seeded trucks, and HUD header data. |
+| 0. Inventory and baseline | In Progress | 7 | 8 | 88% | Audit current Oil/Fuel components, building runtime summaries, resource hauler code, seeded trucks, and HUD header data. |
 | 1. Data model | Complete | 11 | 11 | 100% | Add or adapt ECS components/buffers, capacities, reservations, cargo, seeded logistics validation, and faction usable Fuel. |
 | 2. Oil extraction and refinery buffers | Complete | 8 | 8 | 100% | Oil Pump and Refinery storage mutation is ECS-owned and versioned. |
 | 3. Tray truck automation | Complete | 13 | 13 | 100% | Auto-assign Oil pickup/delivery without manual target commands. |
@@ -38,7 +38,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 6. Vehicle fuel spending | Complete | 11 | 11 | 100% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
 | 7. UI read models and feedback | Complete | 10 | 10 | 100% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
 | 8. AI and enemy support | Complete | 7 | 7 | 100% | Let AI understand fuel economy after player loop is validated. |
-| 9. Validation and profiling | In Progress | 6 | 10 | 60% | Focused tests, seeded-map checks, guardrails, GC checks, and Android profiling. |
+| 9. Validation and profiling | In Progress | 8 | 10 | 80% | Focused tests, seeded-map checks, guardrails, GC checks, and Android profiling. |
 
 ## Phase 0: Inventory And Baseline
 
@@ -199,8 +199,8 @@ Validation:
 - [x] Run focused oil/fuel logistics edit-mode tests.
 - [x] Run focused building production/resource validation.
 - [x] Run focused vehicle movement and aircraft return validation.
-- [ ] Run seeded logistics fixture validation for Faction 1 and Faction 2 military base tray/tanker pairs.
-- [ ] Run architecture guardrails, including Burst/ECS hot-path checks.
+- [x] Run seeded logistics fixture validation for Faction 1 and Faction 2 military base tray/tanker pairs.
+- [x] Run architecture guardrails, including Burst/ECS hot-path checks.
 - [ ] Run steady-state match profiler capture with fuel logistics active.
 - [ ] Run Android profiling if the feature affects match performance.
 - [x] Update this tracker with command names, log paths, pass/fail result, and next action after each batch.
@@ -1082,3 +1082,22 @@ Use this section during implementation. Each completed batch should add:
   - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
 - Next action:
   - Continue with seeded Faction 1/Faction 2 fixture validation, architecture guardrails, steady-state profiler capture, Android profiling, and the Phase 0 profiler marker baseline.
+- Slice: seeded fixture and architecture guardrail closure.
+- Files changed: `Assets/Game/Scripts/Systems/BuildingResourceProductionEcsSystem.cs`, `Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs`, `Assets/Game/Scripts/Systems/UnitMoveOrderRequestSystem.cs`, `Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs`, and this tracker.
+- Behavior intent:
+  - Removed the remaining fuel-logistics `ToEntityArray` / `ToComponentDataArray` hot-path snapshot debt from production ticks, runtime building mirror sync, and move-order usable-Fuel checks.
+  - `BuildingResourceProductionEcsSystem.ApplyStorageQuery` now mutates storage through chunk component arrays.
+  - `FactionResourceCompositionSystemHelper` mirrors ECS-authored storage values back to runtime building mirrors by reading each building combat entity instead of snapshotting the whole storage query.
+  - `UnitMoveOrderRequestSystem` calculates usable Fuel through chunk component reads, preserving the delivered-storage-only command gate.
+  - Added a narrow architecture classification for `AIProductionSystem` as a budgeted managed production orchestration boundary; no debt ceiling was raised.
+- Validation:
+  - `Tools/CI/invoke_unity_macos.sh --timeout 300 --log /private/tmp/warline-fuel-seeded-fixture-validation.log -- -quit -executeMethod InitialFactionBaseValidationTests.RunSceneInitialUnitsConfigValidation` passed with `[InitialFactionSceneConfigValidation] result=Passed`.
+  - `Tools/CI/invoke_unity_macos.sh --timeout 300 --log /private/tmp/warline-fuel-building-resource-validation-wrapper-7.log -- -quit -executeMethod BuildingResourceProductionEcsSystemTests.RunFocusedValidation` passed with `[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=34`.
+  - `Tools/CI/invoke_unity_macos.sh --timeout 300 --log /private/tmp/warline-fuel-unit-move-order-validation.log -- -quit -executeMethod UnitMoveOrderSystemTests.RunFocusedValidation` passed with `[UnitMoveOrderFocusedValidation] result=Passed tests=18`.
+  - `Tools/CI/invoke_unity_macos.sh --timeout 300 --log /private/tmp/warline-fuel-vehicle-consumption-validation.log -- -quit -executeMethod VehicleFuelConsumptionSystemTests.RunFocusedValidation` passed with `[VehicleFuelConsumptionFocusedValidation] result=Passed tests=7`.
+  - `Tools/CI/invoke_unity_macos.sh --timeout 300 --log /private/tmp/warline-fuel-ecs-burst-architecture-validation-4.log -- -quit -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation` passed with `[EcsBurstHotPathArchitectureValidation] result=Passed tests=10`.
+  - `Tools/CI/invoke_unity_macos.sh --timeout 300 --log /private/tmp/warline-fuel-script-architecture-boundary-validation.log -- -quit -executeMethod ScriptArchitectureAlignmentContractTests.RunAssemblyBoundaryValidation` passed with `[ScriptArchitectureBoundaryValidation] result=Passed tests=31`.
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+- Next action:
+  - Remaining work is the Phase 0/9 steady-state profiler capture with fuel logistics active and Android profiling if the feature affects match performance.

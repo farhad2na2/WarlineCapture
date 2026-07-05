@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Game.Components;
-using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
@@ -461,7 +460,7 @@ namespace Game.Runtime
                         secondsPerDay,
                         deltaTime,
                         oilBarrelsPerFuelBarrel);
-                SyncRuntimeBuildingsFromEcsStorage(storageQuery, buildings);
+                SyncRuntimeBuildingsFromEcsStorage(entityManager, buildings);
                 return new ResourceProductionTickResult(
                     queryResult.OilExtractedBarrels,
                     queryResult.FuelProducedBarrels);
@@ -776,27 +775,39 @@ namespace Game.Runtime
         }
 
         private static void SyncRuntimeBuildingsFromEcsStorage(
-            EntityQuery storageQuery,
+            EntityManager entityManager,
             IReadOnlyDictionary<int, RuntimeBuildingEntity> buildings)
         {
             if (buildings == null || buildings.Count == 0)
                 return;
 
-            using NativeArray<BuildingResourceStorageComponent> storages =
-                storageQuery.ToComponentDataArray<BuildingResourceStorageComponent>(Allocator.Temp);
-            for (int i = 0; i < storages.Length; i++)
+            if (buildings is Dictionary<int, RuntimeBuildingEntity> buildingMap)
             {
-                BuildingResourceStorageComponent storage = storages[i];
-                if (storage.RuntimeBuildingId == 0 ||
-                    !buildings.TryGetValue(storage.RuntimeBuildingId, out RuntimeBuildingEntity building) ||
-                    building == null)
-                {
-                    continue;
-                }
-
-                building.StoredOilBarrels = storage.StoredOilBarrels;
-                building.StoredFuelBarrels = storage.StoredFuelBarrels;
+                foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in buildingMap)
+                    SyncRuntimeBuildingFromEcsStorage(entityManager, pair.Value);
+                return;
             }
+
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in buildings)
+                SyncRuntimeBuildingFromEcsStorage(entityManager, pair.Value);
+        }
+
+        private static void SyncRuntimeBuildingFromEcsStorage(
+            EntityManager entityManager,
+            RuntimeBuildingEntity building)
+        {
+            if (building == null ||
+                building.CombatEntity == Entity.Null ||
+                !entityManager.Exists(building.CombatEntity) ||
+                !entityManager.HasComponent<BuildingResourceStorageComponent>(building.CombatEntity))
+            {
+                return;
+            }
+
+            BuildingResourceStorageComponent storage =
+                entityManager.GetComponentData<BuildingResourceStorageComponent>(building.CombatEntity);
+            building.StoredOilBarrels = storage.StoredOilBarrels;
+            building.StoredFuelBarrels = storage.StoredFuelBarrels;
         }
 
         private static void SyncResourceStorageMetadata(

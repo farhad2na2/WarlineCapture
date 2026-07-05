@@ -49,32 +49,30 @@ namespace Game.Runtime
 
             float oilExtracted = 0f;
             float fuelProduced = 0f;
-            using NativeArray<Entity> entities = storageQuery.ToEntityArray(Allocator.Temp);
-            for (int i = 0; i < entities.Length; i++)
+            ComponentTypeHandle<BuildingResourceStorageComponent> storageType =
+                entityManager.GetComponentTypeHandle<BuildingResourceStorageComponent>(false);
+            using NativeArray<ArchetypeChunk> chunks = storageQuery.ToArchetypeChunkArray(Allocator.Temp);
+            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
             {
-                Entity entity = entities[i];
-                if (!entityManager.Exists(entity) ||
-                    !entityManager.HasComponent<BuildingResourceStorageComponent>(entity))
+                NativeArray<BuildingResourceStorageComponent> storages = chunks[chunkIndex].GetNativeArray(ref storageType);
+                for (int i = 0; i < storages.Length; i++)
                 {
-                    continue;
+                    BuildingResourceStorageComponent storage = storages[i];
+                    if (!HasProductionOrConversion(storage))
+                        continue;
+
+                    uint previousVersion = storage.Version;
+                    TickResult result = ApplyTick(
+                        ref storage,
+                        secondsPerDay,
+                        deltaTime,
+                        oilBarrelsPerFuelBarrel);
+                    if (storage.Version != previousVersion)
+                        storages[i] = storage;
+
+                    oilExtracted += result.OilExtractedBarrels;
+                    fuelProduced += result.FuelProducedBarrels;
                 }
-
-                BuildingResourceStorageComponent storage =
-                    entityManager.GetComponentData<BuildingResourceStorageComponent>(entity);
-                if (!HasProductionOrConversion(storage))
-                    continue;
-
-                uint previousVersion = storage.Version;
-                TickResult result = ApplyTick(
-                    ref storage,
-                    secondsPerDay,
-                    deltaTime,
-                    oilBarrelsPerFuelBarrel);
-                if (storage.Version != previousVersion)
-                    entityManager.SetComponentData(entity, storage);
-
-                oilExtracted += result.OilExtractedBarrels;
-                fuelProduced += result.FuelProducedBarrels;
             }
 
             return new TickResult(oilExtracted, fuelProduced);

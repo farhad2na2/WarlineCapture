@@ -130,6 +130,7 @@ public sealed class EcsBurstHotPathArchitectureTests
     {
         ["Assets/Game/Scripts/Systems/AttackOrderCommandSystem.cs"] = "selection command boundary; consumes low-cardinality attack command requests and writes command state.",
         ["Assets/Game/Scripts/Systems/AICombatOrderSystem.cs"] = "budgeted AI combat orchestration boundary; owns diagnostics, breach targeting, command-buffer order writes, and caps work by interval, squads, and unit writes.",
+        ["Assets/Game/Scripts/Systems/AIProductionSystem.cs"] = "budgeted AI production orchestration boundary; interval-gated production planning, economy writes, production requests, and diagnostics stay managed.",
         ["Assets/Game/Scripts/Systems/BuildingEntityManagerAccessSystem.cs"] = "building composition bridge; provides managed EntityManager access to non-ECS building runtime code.",
         ["Assets/Game/Scripts/Systems/BuildingGameplayChildSystem.cs"] = "building composition bridge; coordinates child gameplay systems through managed runtime context.",
         ["Assets/Game/Scripts/Systems/BuildingGridCompositionSystem.cs"] = "building composition bridge; exposes grid data to managed building placement/runtime code.",

@@ -218,7 +218,15 @@ namespace Game.Runtime
             UnitResourceHauler hauler = em.GetComponentData<UnitResourceHauler>(unit);
             float loadAmount = context.ResourceHaulerUtilitySystemHelper.GetLoadAmount(hauler);
             if (loadAmount <= 0f)
+            {
+                SetResourceHaulStatus(
+                    em,
+                    unit,
+                    FuelLogisticsTaskStatusCode.Blocked,
+                    FuelLogisticsBlockReasonCode.HaulerUnavailable,
+                    resourceKind);
                 return false;
+            }
 
             byte factionId = em.GetComponentData<Faction>(unit).Id;
             int2 unitCell = em.GetComponentData<UnitGrid>(unit).Cell;
@@ -233,15 +241,35 @@ namespace Game.Runtime
                     out RuntimeBuildingEntity source,
                     out RuntimeBuildingEntity destination))
             {
+                SetResourceHaulStatus(
+                    em,
+                    unit,
+                    FuelLogisticsTaskStatusCode.Blocked,
+                    ResolveAutomaticAssignmentBlockReason(context, em, grid, factionId, unitCell, resourceKind, loadAmount),
+                    resourceKind);
                 return false;
             }
 
             if (!TryReserveHaulCapacity(context, em, source, destination, resourceKind, loadAmount, out UnitResourceHaulReservation reservation))
+            {
+                SetResourceHaulStatus(
+                    em,
+                    unit,
+                    FuelLogisticsTaskStatusCode.Blocked,
+                    FuelLogisticsBlockReasonCode.ReservationFailed,
+                    resourceKind);
                 return false;
+            }
 
             if (!TryIssueHaulerMoveToBuilding(context, em, unit, source, out int2 sourceGoal))
             {
                 ReleaseReservation(context, em, reservation);
+                SetResourceHaulStatus(
+                    em,
+                    unit,
+                    FuelLogisticsTaskStatusCode.Blocked,
+                    FuelLogisticsBlockReasonCode.RouteUnavailable,
+                    resourceKind);
                 return false;
             }
 
@@ -252,6 +280,12 @@ namespace Game.Runtime
                 resourceKind);
             em.AddComponentData(unit, order);
             SetOrAddResourceHaulReservation(em, unit, reservation);
+            SetResourceHaulStatus(
+                em,
+                unit,
+                FuelLogisticsTaskStatusCode.Assigned,
+                FuelLogisticsBlockReasonCode.None,
+                resourceKind);
             return true;
         }
 
@@ -473,6 +507,46 @@ namespace Game.Runtime
                 out destination);
         }
 
+        private static FuelLogisticsBlockReasonCode ResolveAutomaticAssignmentBlockReason(
+            Context context,
+            EntityManager em,
+            GridConfig grid,
+            byte factionId,
+            int2 unitCell,
+            ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind,
+            float loadAmount)
+        {
+            if (!TryFindNearestAutomaticSourceToCell(
+                    context,
+                    em,
+                    grid,
+                    factionId,
+                    unitCell,
+                    resourceKind,
+                    loadAmount,
+                    out RuntimeBuildingEntity source))
+            {
+                return FuelLogisticsBlockReasonCode.SourceUnavailable;
+            }
+
+            if (!HasAutomaticDestinationCandidate(context, em, source, factionId, resourceKind))
+                return FuelLogisticsBlockReasonCode.DestinationUnavailable;
+
+            if (!TryFindNearestAutomaticDestination(
+                    context,
+                    em,
+                    source,
+                    factionId,
+                    resourceKind,
+                    loadAmount,
+                    out _))
+            {
+                return FuelLogisticsBlockReasonCode.DestinationFull;
+            }
+
+            return FuelLogisticsBlockReasonCode.RouteUnavailable;
+        }
+
 #if UNITY_INCLUDE_TESTS
         internal static bool TryFindAutomaticHaulerRouteForTests(
             Context context,
@@ -636,6 +710,44 @@ namespace Game.Runtime
                        candidate,
                        resourceKind,
                        loadAmount);
+        }
+
+        private static bool HasAutomaticDestinationCandidate(
+            Context context,
+            EntityManager em,
+            RuntimeBuildingEntity source,
+            byte factionId,
+            ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind)
+        {
+            if (source == null || context.RuntimeBuildings == null)
+                return false;
+
+            foreach (var pair in context.RuntimeBuildings)
+            {
+                RuntimeBuildingEntity candidate = pair.Value;
+                if (candidate == null ||
+                    candidate == source ||
+                    candidate.IsDestroyed ||
+                    !IsSameFactionResourceBuilding(candidate, factionId))
+                {
+                    continue;
+                }
+
+                if (resourceKind == ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil)
+                {
+                    if (context.ResourceHaulerUtilitySystemHelper.IsFuelBuilding(candidate))
+                        return true;
+                    continue;
+                }
+
+                if (context.FactionResourceCompositionSystemHelper.IsResourceStorageBuilding(candidate) &&
+                    candidate.FuelStorageCapacity > 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static bool IsSameFactionResourceBuilding(RuntimeBuildingEntity building, byte factionId)
@@ -1071,6 +1183,25 @@ namespace Game.Runtime
                 em.SetComponentData(entity, reservation);
             else
                 em.AddComponentData(entity, reservation);
+        }
+
+        private static void SetResourceHaulStatus(
+            EntityManager em,
+            Entity entity,
+            FuelLogisticsTaskStatusCode statusCode,
+            FuelLogisticsBlockReasonCode reasonCode,
+            ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind)
+        {
+            UnitResourceHaulStatus status = new()
+            {
+                StatusCode = (byte)statusCode,
+                ReasonCode = (byte)reasonCode,
+                ResourceKind = (byte)resourceKind
+            };
+            if (em.HasComponent<UnitResourceHaulStatus>(entity))
+                em.SetComponentData(entity, status);
+            else
+                em.AddComponentData(entity, status);
         }
 
         private bool TryReserveHaulCapacity(

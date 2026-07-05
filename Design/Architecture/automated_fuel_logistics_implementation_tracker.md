@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 55% (55/99 checklist items complete).
+Overall implementation progress: 56% (56/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -32,7 +32,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 0. Inventory and baseline | In Progress | 5 | 8 | 63% | Audit current Oil/Fuel components, building runtime summaries, resource hauler code, seeded trucks, and HUD header data. |
 | 1. Data model | Complete | 11 | 11 | 100% | Add or adapt ECS components/buffers, capacities, reservations, cargo, seeded logistics validation, and faction usable Fuel. |
 | 2. Oil extraction and refinery buffers | Complete | 8 | 8 | 100% | Oil Pump and Refinery storage mutation is ECS-owned and versioned. |
-| 3. Tray truck automation | In Progress | 6 | 13 | 46% | Auto-assign Oil pickup/delivery without manual target commands. |
+| 3. Tray truck automation | In Progress | 7 | 13 | 54% | Auto-assign Oil pickup/delivery without manual target commands. |
 | 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
 | 5. Tanker automation and usable Fuel | In Progress | 4 | 12 | 33% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
 | 6. Vehicle fuel spending | In Progress | 8 | 11 | 73% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
@@ -109,7 +109,7 @@ Validation:
 - [x] Focused route resolver test covers same-faction tray Oil pairing and tanker Fuel pairing.
 - [x] One pump, one refinery, one tray truck transfers Oil without manual command.
 - [x] Seeded faction-base tray truck can start Oil hauling without building a truck at runtime.
-- [ ] No refinery capacity causes tray truck idle with a typed reason.
+- [x] No refinery capacity causes tray truck idle with a typed reason.
 - [ ] Destroyed source/destination clears reservations.
 - [ ] Steady-state automation produces 0 B/frame GC.
 
@@ -753,3 +753,16 @@ Use this section during implementation. Each completed batch should add:
   - Unity focused validation remains blocked by the recurring licensing client mismatch/reconnect loop unless the editor/license state is reset. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
 - Next action:
   - Continue Phase 3 with the no-refinery-capacity typed idle reason, then reservation cleanup when source/destination entities disappear.
+- Slice: typed tray idle reason for full refinery input.
+- Files changed: `Assets/Game/Scripts/Components/UnitCombatComponents.cs`, `Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs`, `Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs`, and this tracker.
+- Behavior intent:
+  - Added `UnitResourceHaulStatus` as a small ECS status component on resource haulers.
+  - Automatic assignment now writes typed status/reason data when a hauler cannot be assigned: source unavailable, destination unavailable, destination full, route unavailable, reservation failed, or hauler unavailable.
+  - A tray truck with available Oil but a full Refinery input buffer stays idle without an order/reservation and reports `FuelLogisticsBlockReasonCode.DestinationFull`.
+- Validation:
+  - Added `AutomaticFuelLogisticsTray_NoRefineryCapacitySetsTypedIdleReason`.
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Unity focused validation remains blocked by the recurring licensing client mismatch/reconnect loop unless the editor/license state is reset. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
+- Next action:
+  - Continue Phase 3 with destroyed source/destination reservation cleanup, then no-GC steady-state validation.

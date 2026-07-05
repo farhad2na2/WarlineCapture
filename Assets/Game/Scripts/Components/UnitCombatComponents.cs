@@ -192,6 +192,13 @@ namespace Game.Components
         public float CargoFuelBarrels;
     }
 
+    public struct UnitResourceHaulStatus : IComponentData
+    {
+        public byte StatusCode;
+        public byte ReasonCode;
+        public byte ResourceKind;
+    }
+
     public struct FuelLogisticsOilHaulerTag : IComponentData
     {
     }

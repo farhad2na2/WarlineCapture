@@ -4,6 +4,18 @@ namespace Game.Runtime
 {
     internal static class TransportBoardingOrderPlanningSystemHelper
     {
+        public static bool HasPlannedBoardingSlot(
+            byte passengerKind,
+            int availableSoldierSeats,
+            int availableVehicleSlots,
+            int plannedSoldierSeats,
+            int plannedVehicleSlots)
+        {
+            return passengerKind == UnitTransportPassengerKind.Vehicle
+                ? plannedVehicleSlots < availableVehicleSlots
+                : plannedSoldierSeats < availableSoldierSeats;
+        }
+
         public static bool TryReservePlannedBoardingSlot(
             byte passengerKind,
             int availableSoldierSeats,
@@ -11,19 +23,21 @@ namespace Game.Runtime
             ref int plannedSoldierSeats,
             ref int plannedVehicleSlots)
         {
-            if (passengerKind == UnitTransportPassengerKind.Vehicle)
+            if (!HasPlannedBoardingSlot(
+                    passengerKind,
+                    availableSoldierSeats,
+                    availableVehicleSlots,
+                    plannedSoldierSeats,
+                    plannedVehicleSlots))
             {
-                if (plannedVehicleSlots >= availableVehicleSlots)
-                    return false;
-
-                plannedVehicleSlots++;
-                return true;
+                return false;
             }
 
-            if (plannedSoldierSeats >= availableSoldierSeats)
-                return false;
+            if (passengerKind == UnitTransportPassengerKind.Vehicle)
+                plannedVehicleSlots++;
+            else
+                plannedSoldierSeats++;
 
-            plannedSoldierSeats++;
             return true;
         }
     }

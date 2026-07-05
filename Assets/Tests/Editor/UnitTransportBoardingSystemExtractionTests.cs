@@ -305,6 +305,35 @@ public sealed class UnitTransportBoardingSystemExtractionTests
         Assert.AreEqual(1, plannedVehicleSlots);
     }
 
+    [Test]
+    public void OrderPlanningHelper_ReportsAvailabilityByPassengerKind()
+    {
+        Assert.IsTrue(TransportBoardingOrderPlanningSystemHelper.HasPlannedBoardingSlot(
+            UnitTransportPassengerKind.Soldier,
+            availableSoldierSeats: 2,
+            availableVehicleSlots: 0,
+            plannedSoldierSeats: 1,
+            plannedVehicleSlots: 0));
+        Assert.IsFalse(TransportBoardingOrderPlanningSystemHelper.HasPlannedBoardingSlot(
+            UnitTransportPassengerKind.Soldier,
+            availableSoldierSeats: 1,
+            availableVehicleSlots: 1,
+            plannedSoldierSeats: 1,
+            plannedVehicleSlots: 0));
+        Assert.IsTrue(TransportBoardingOrderPlanningSystemHelper.HasPlannedBoardingSlot(
+            UnitTransportPassengerKind.Vehicle,
+            availableSoldierSeats: 0,
+            availableVehicleSlots: 2,
+            plannedSoldierSeats: 0,
+            plannedVehicleSlots: 1));
+        Assert.IsFalse(TransportBoardingOrderPlanningSystemHelper.HasPlannedBoardingSlot(
+            UnitTransportPassengerKind.Vehicle,
+            availableSoldierSeats: 1,
+            availableVehicleSlots: 1,
+            plannedSoldierSeats: 0,
+            plannedVehicleSlots: 1));
+    }
+
     private static Entity CreateBoardingCandidate(EntityManager entityManager, string sourceName)
     {
         Entity entity = entityManager.CreateEntity(

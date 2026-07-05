@@ -807,19 +807,23 @@ namespace Game.Runtime
                     continue;
                 }
 
-                if (passengerKind == UnitTransportPassengerKind.Vehicle)
+                if (!TransportBoardingOrderPlanningSystemHelper.HasPlannedBoardingSlot(
+                        passengerKind,
+                        slotAvailability.AvailableSoldierSeats,
+                        slotAvailability.AvailableVehicleSlots,
+                        plannedSoldierSeats,
+                        plannedVehicleSlots))
                 {
-                    if (plannedVehicleSlots >= slotAvailability.AvailableVehicleSlots)
+                    if (passengerKind == UnitTransportPassengerKind.Vehicle)
                     {
                         if (shouldLogTransportBoarding)
                             TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=SkipPassenger reason=NoVehicleSlots passenger={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, passenger)} transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)} vehicles={slotAvailability.OccupiedVehicleSlots + plannedVehicleSlots}/{slotAvailability.VehicleCapacity}");
-                        continue;
                     }
-                }
-                else if (plannedSoldierSeats >= slotAvailability.AvailableSoldierSeats)
-                {
-                    if (shouldLogTransportBoarding)
+                    else if (shouldLogTransportBoarding)
+                    {
                         TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=SkipPassenger reason=NoSoldierSeats passenger={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, passenger)} transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)} soldiers={slotAvailability.OccupiedSoldierSeats + plannedSoldierSeats}/{slotAvailability.SoldierCapacity}");
+                    }
+
                     continue;
                 }
 
@@ -1420,12 +1424,12 @@ namespace Game.Runtime
                     continue;
                 }
 
-                if (passengerKind == UnitTransportPassengerKind.Vehicle)
-                {
-                    if (plannedVehicleSlots >= slotAvailability.AvailableVehicleSlots)
-                        continue;
-                }
-                else if (plannedSoldierSeats >= slotAvailability.AvailableSoldierSeats)
+                if (!TransportBoardingOrderPlanningSystemHelper.HasPlannedBoardingSlot(
+                        passengerKind,
+                        slotAvailability.AvailableSoldierSeats,
+                        slotAvailability.AvailableVehicleSlots,
+                        plannedSoldierSeats,
+                        plannedVehicleSlots))
                 {
                     continue;
                 }
@@ -1686,19 +1690,14 @@ namespace Game.Runtime
                     continue;
                 }
 
-                if (passengerKind == UnitTransportPassengerKind.Vehicle)
+                if (!TransportBoardingOrderPlanningSystemHelper.TryReservePlannedBoardingSlot(
+                        passengerKind,
+                        availableSoldierSeats,
+                        availableVehicleSlots,
+                        ref plannedSoldierSeats,
+                        ref plannedVehicleSlots))
                 {
-                    if (plannedVehicleSlots >= availableVehicleSlots)
-                        continue;
-
-                    plannedVehicleSlots++;
-                }
-                else
-                {
-                    if (plannedSoldierSeats >= availableSoldierSeats)
-                        continue;
-
-                    plannedSoldierSeats++;
+                    continue;
                 }
 
                 ignoredEntities.Add(passenger);

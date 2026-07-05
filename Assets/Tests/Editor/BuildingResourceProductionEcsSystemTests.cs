@@ -17,6 +17,7 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.ApplyTick_ExtractsOilUpToCapacity();
             tests.ApplyTick_FullOilStorageDoesNotOverflowVersionOrAllocate();
             tests.CreateBuildingCombatEntity_UsesSameResourceStorageForMapAndRuntimeOilPumps();
+            tests.CreateBuildingCombatEntity_UsesSameResourceStorageForMapAndRuntimeFuelBladders();
             tests.ApplyStorageQuery_WritesOilToEcsStorageWithCapacityAndVersion();
             tests.ApplyStorageQuery_ConvertsRefineryOilIntoFuelWithEfficiencyAndCapacity();
             tests.ApplyStorageQuery_ConvertsStandardAndLargeRefineriesWithDifferentRates();
@@ -45,7 +46,7 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.AutomaticFuelLogisticsTanker_FullFuelStorageSetsTypedIdleReason();
             tests.AutomaticFuelLogisticsTanker_NoRouteSetsTypedIdleReason();
             tests.AutomaticFuelLogisticsTanker_NoAvailableTankerDoesNotReserveFuel();
-            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=31");
+            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=32");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -170,6 +171,106 @@ public sealed class BuildingResourceProductionEcsSystemTests
             Assert.AreEqual(0, runtimeStorage.FuelStorageCapacity);
             Assert.AreEqual(0f, mapStorage.StoredOilBarrels);
             Assert.AreEqual(0f, runtimeStorage.StoredOilBarrels);
+
+            bool TryGetEntityManager(out EntityManager entityManager)
+            {
+                entityManager = em;
+                return true;
+            }
+
+            bool TryGetGridData(
+                out Entity entity,
+                out GridConfig grid,
+                out DynamicBuffer<GridRoad> roads,
+                out DynamicBlockerComponent blockerData)
+            {
+                entity = gridEntity;
+                grid = em.GetComponentData<GridConfig>(gridEntity);
+                roads = em.GetBuffer<GridRoad>(gridEntity);
+                blockerData = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
+                return true;
+            }
+
+            static Vector3 GetFootprintCenter(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid)
+            {
+                return new Vector3(
+                    grid.Origin.x + (originCell.x + footprintCells.x * 0.5f) * grid.CellSize,
+                    grid.Origin.y,
+                    grid.Origin.z + (originCell.y + footprintCells.y * 0.5f) * grid.CellSize);
+            }
+        }
+        finally
+        {
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (occupied.IsCreated)
+                occupied.Dispose();
+            world.Dispose();
+        }
+    }
+
+    [Test]
+    public void CreateBuildingCombatEntity_UsesSameResourceStorageForMapAndRuntimeFuelBladders()
+    {
+        var world = new World(nameof(CreateBuildingCombatEntity_UsesSameResourceStorageForMapAndRuntimeFuelBladders));
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        try
+        {
+            EntityManager em = world.EntityManager;
+            Entity gridEntity = CreateTestGridEntity(em, 32, 32, out blocked, out occupied);
+            var helper = new BuildingRuntimeEntityCompositionSystemHelper();
+            var context = new BuildingRuntimeEntityCompositionSystemHelper.Context(
+                TryGetEntityManager,
+                TryGetGridData,
+                GetFootprintCenter,
+                null,
+                default,
+                null,
+                0f);
+            var mapDefinition = new BuildingDefinition
+            {
+                DisplayName = "Map Fuel Bladder",
+                MaxHealth = 250,
+                FootprintCells = new Vector2Int(2, 2),
+                FuelStorageCapacity = 120
+            };
+            BuildingDefinition runtimeDefinition =
+                BuildingRuntimeSpawnCompositionSystemHelper.CloneDefinitionWithFootprint(
+                    mapDefinition,
+                    new Vector2Int(3, 2));
+
+            Entity mapEntity = helper.CreateBuildingCombatEntity(
+                context,
+                runtimeBuildingId: 311,
+                originCell: new Vector2Int(4, 6),
+                mapDefinition,
+                FactionIdentity.PlayerFactionId,
+                Quaternion.identity);
+            Entity runtimeEntity = helper.CreateBuildingCombatEntity(
+                context,
+                runtimeBuildingId: 312,
+                originCell: new Vector2Int(10, 6),
+                runtimeDefinition,
+                FactionIdentity.PlayerFactionId,
+                Quaternion.identity);
+
+            Assert.IsTrue(em.HasComponent<BuildingResourceStorageComponent>(mapEntity));
+            Assert.IsTrue(em.HasComponent<BuildingResourceStorageComponent>(runtimeEntity));
+            BuildingResourceStorageComponent mapStorage =
+                em.GetComponentData<BuildingResourceStorageComponent>(mapEntity);
+            BuildingResourceStorageComponent runtimeStorage =
+                em.GetComponentData<BuildingResourceStorageComponent>(runtimeEntity);
+            Assert.AreEqual(311, mapStorage.RuntimeBuildingId);
+            Assert.AreEqual(312, runtimeStorage.RuntimeBuildingId);
+            Assert.AreEqual(FactionIdentity.PlayerFactionId, mapStorage.OwnerFactionId);
+            Assert.AreEqual(FactionIdentity.PlayerFactionId, runtimeStorage.OwnerFactionId);
+            Assert.AreEqual(0, mapStorage.OilStorageCapacity);
+            Assert.AreEqual(0, runtimeStorage.OilStorageCapacity);
+            Assert.AreEqual(120, mapStorage.FuelStorageCapacity);
+            Assert.AreEqual(mapStorage.FuelStorageCapacity, runtimeStorage.FuelStorageCapacity);
+            Assert.AreEqual(0f, mapStorage.StoredFuelBarrels);
+            Assert.AreEqual(0f, runtimeStorage.StoredFuelBarrels);
 
             bool TryGetEntityManager(out EntityManager entityManager)
             {

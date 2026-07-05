@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 35% (35/99 checklist items complete).
+Overall implementation progress: 36% (36/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -36,7 +36,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
 | 5. Tanker automation and usable Fuel | In Progress | 4 | 12 | 33% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
 | 6. Vehicle fuel spending | In Progress | 8 | 11 | 73% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
-| 7. UI read models and feedback | In Progress | 5 | 10 | 50% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
+| 7. UI read models and feedback | In Progress | 6 | 10 | 60% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
 | 8. AI and enemy support | Pending | 0 | 7 | 0% | Let AI understand fuel economy after player loop is validated. |
 | 9. Validation and profiling | In Progress | 1 | 10 | 10% | Focused tests, seeded-map checks, guardrails, GC checks, and Android profiling. |
 
@@ -175,7 +175,7 @@ Validation:
 Validation:
 
 - [x] Header fuel changes only after storage delivery or spending.
-- [ ] Selection panel updates for two different pumps/refineries/storage buildings without stale values.
+- [x] Selection panel updates for two different pumps/refineries/storage buildings without stale values.
 - [ ] UI click blocking remains intact on Android and Editor.
 - [ ] No new GC allocations in steady-state HUD updates.
 
@@ -557,3 +557,16 @@ Use this section during implementation. Each completed batch should add:
   - Unity focused validation was not rerun because the prior focused Unity run is blocked by the recurring licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
 - Next action:
   - Continue Phase 7 no-GC/versioned HUD update validation, then finish remaining selected-panel stale-value/UI click-blocking validation items.
+- Slice: selected storage panel stale-value validation.
+- Files changed: `Assets/Tests/Editor/SelectionSummaryQuerySystemTests.cs` and this tracker.
+- Behavior intent:
+  - Added focused coverage for switching the same match HUD selection panel from an Oil Pump-style storage model to a Fuel Bladder-style storage model.
+  - The test verifies Oil current/capacity are cleared and Fuel current/capacity are replaced on the second update, preventing stale logistics values when changing selected buildings.
+  - The existing focused validation runner now includes this test in its selection summary suite.
+- Validation:
+  - Added `SelectedBuildingSelectionPanelReplacesStaleOilFuelStorageValues`.
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Unity focused validation was not rerun because the prior focused Unity run is blocked by the recurring licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
+- Next action:
+  - Continue Phase 7 no-GC/versioned HUD update validation, then verify UI click blocking remains intact on Android and Editor.

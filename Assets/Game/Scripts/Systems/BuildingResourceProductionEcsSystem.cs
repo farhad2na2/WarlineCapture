@@ -50,8 +50,12 @@ namespace Game.Runtime
                 deltaTime,
                 oilBarrelsPerFuelBarrel);
 
+            bool changed = storage.StoredOilBarrels != result.StoredOilBarrels ||
+                           storage.StoredFuelBarrels != result.StoredFuelBarrels;
             storage.StoredOilBarrels = result.StoredOilBarrels;
             storage.StoredFuelBarrels = result.StoredFuelBarrels;
+            if (changed)
+                storage.Version = storage.Version == uint.MaxValue ? 1u : storage.Version + 1u;
             return new TickResult(result.OilExtractedBarrels, result.FuelProducedBarrels);
         }
     }

@@ -52,6 +52,7 @@ public sealed class BuildingResourceProductionEcsSystemTests
         Assert.AreEqual(0f, storage.StoredFuelBarrels);
         Assert.AreEqual(1f, result.OilExtractedBarrels);
         Assert.AreEqual(0f, result.FuelProducedBarrels);
+        Assert.AreEqual(1u, storage.Version);
     }
 
     [Test]

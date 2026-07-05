@@ -23,14 +23,14 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 11% (11/99 checklist items complete).
+Overall implementation progress: 12% (12/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
 | Phase | Status | Complete | Total | Progress | Notes |
 |---|---|---:|---:|---:|---|
 | 0. Inventory and baseline | In Progress | 5 | 8 | 63% | Audit current Oil/Fuel components, building runtime summaries, resource hauler code, seeded trucks, and HUD header data. |
-| 1. Data model | In Progress | 3 | 11 | 27% | Add or adapt ECS components/buffers for buffers, capacities, reservations, cargo, seeded logistics validation, and faction usable Fuel. |
+| 1. Data model | In Progress | 4 | 11 | 36% | Add or adapt ECS components/buffers for buffers, capacities, reservations, cargo, seeded logistics validation, and faction usable Fuel. |
 | 2. Oil extraction and refinery buffers | Pending | 0 | 8 | 0% | Ensure Oil Pump and Refinery buffers are ECS-owned and versioned. |
 | 3. Tray truck automation | In Progress | 3 | 13 | 23% | Auto-assign Oil pickup/delivery without manual target commands. |
 | 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
@@ -60,7 +60,7 @@ Exit criteria:
 ## Phase 1: ECS Data Model
 
 - [ ] Define or adapt a `ResourceKind` representation for Oil and Fuel that can be used by Burst-compatible systems.
-- [ ] Define storage buffer data for buildings: current amount, capacity, reserved inbound, reserved outbound, and version.
+- [x] Define storage buffer data for buildings: current amount, capacity, reserved inbound, reserved outbound, and version.
 - [ ] Define logistics cargo data for tray/tanker trucks: carried resource, amount, capacity, source, destination, task state, and reservation id.
 - [ ] Define logistics role tags: oil hauler, fuel hauler, source, refinery input, refinery output, fuel storage.
 - [ ] Define faction usable Fuel summary: current, capacity, produced, delivered, spent, version.
@@ -322,6 +322,20 @@ Use this section during implementation. Each completed batch should add:
   - Focused Unity batchmode validation remains blocked by the already-open Unity editor for this project.
 - Next action:
   - Move Oil/Fuel storage and transfer semantics toward explicit reservations/capacity accounting so multiple trucks cannot overclaim the same source or destination.
+- Slice: storage reservation and version data model.
+- Files changed: `Assets/Game/Scripts/Components/BuildingRuntimeEcsComponents.cs`, `Assets/Game/Scripts/Systems/BuildingResourceStorageTransferSystemHelper.cs`, `Assets/Game/Scripts/Systems/BuildingResourceProductionEcsSystem.cs`, `Assets/Tests/Editor/ResourceHaulerUtilitySystemHelperTests.cs`, `Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs`, and this tracker.
+- Behavior intent:
+  - `BuildingResourceStorageComponent` now has reserved inbound/outbound Oil/Fuel fields and a storage `Version`.
+  - Transfer helper capacity checks account for reservations, and reservation add/release helpers mutate versioned storage state.
+  - Existing load/unload/revert paths now increment storage version when they mutate stored Oil/Fuel.
+  - Production ticks increment storage version when extraction or conversion changes stored Oil/Fuel.
+  - This slice adds the data contract and pure helper semantics only; assignment-time reservation ownership will be wired in a later validated slice.
+- Validation:
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Focused Unity batchmode validation remains blocked by the already-open Unity editor for this project.
+- Next action:
+  - Add reservation ownership to automatic tray/tanker orders and release reservations on cancellation, death, or completed transfer.
 
 - Created design and implementation tracker.
 - Started implementation with seeded logistics verification fixture.

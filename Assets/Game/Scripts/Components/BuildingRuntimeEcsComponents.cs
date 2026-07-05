@@ -122,6 +122,11 @@ namespace Game.Components
         public float FuelBarrelsPerDay;
         public float StoredOilBarrels;
         public float StoredFuelBarrels;
+        public float ReservedOilInboundBarrels;
+        public float ReservedOilOutboundBarrels;
+        public float ReservedFuelInboundBarrels;
+        public float ReservedFuelOutboundBarrels;
+        public uint Version;
     }
 
     public struct BuildingRuntimeOwnedBuildingSummary : IBufferElementData

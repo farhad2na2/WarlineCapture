@@ -34,7 +34,10 @@ public sealed class ResourceHaulerUtilitySystemHelperTests
             tests.LiveEcsStorage_TryCompleteUnload_PrefersCombatEntityStorage();
             tests.LiveEcsStorage_GetStoredResource_PrefersCombatEntityStorage();
             tests.LiveEcsStorage_HasAvailableFuelForHauler_PrefersCombatEntityStorage();
-            Debug.Log("[ResourceHaulerFocusedValidation] result=Passed tests=20");
+            tests.StorageReservation_SourceReservationReducesAvailableResource();
+            tests.StorageReservation_DestinationReservationReducesFreeCapacity();
+            tests.StorageTransfer_MutationsIncrementVersion();
+            Debug.Log("[ResourceHaulerFocusedValidation] result=Passed tests=23");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -264,6 +267,111 @@ public sealed class ResourceHaulerUtilitySystemHelperTests
         Assert.AreEqual(17f, source.StoredOilBarrels);
         Assert.AreEqual(0f, hauler.CargoOilBarrels);
         Assert.AreEqual(3f, hauler.CargoFuelBarrels);
+    }
+
+    [Test]
+    public void StorageReservation_SourceReservationReducesAvailableResource()
+    {
+        var storage = new BuildingResourceStorageComponent
+        {
+            OilStorageCapacity = 100,
+            StoredOilBarrels = 20f
+        };
+
+        bool reserved = BuildingResourceStorageTransferSystemHelper.TryReserveSource(
+            ref storage,
+            BuildingResourceStorageTransferSystemHelper.OilResourceKind,
+            12f);
+
+        Assert.IsTrue(reserved);
+        Assert.AreEqual(12f, storage.ReservedOilOutboundBarrels);
+        Assert.AreEqual(8f, BuildingResourceStorageTransferSystemHelper.GetAvailableSourceResource(
+            storage,
+            BuildingResourceStorageTransferSystemHelper.OilResourceKind));
+        Assert.IsFalse(BuildingResourceStorageTransferSystemHelper.HasEnoughSourceResource(
+            storage,
+            BuildingResourceStorageTransferSystemHelper.OilResourceKind,
+            10f));
+        Assert.AreEqual(1u, storage.Version);
+
+        BuildingResourceStorageTransferSystemHelper.ReleaseSourceReservation(
+            ref storage,
+            BuildingResourceStorageTransferSystemHelper.OilResourceKind,
+            5f);
+
+        Assert.AreEqual(7f, storage.ReservedOilOutboundBarrels);
+        Assert.AreEqual(13f, BuildingResourceStorageTransferSystemHelper.GetAvailableSourceResource(
+            storage,
+            BuildingResourceStorageTransferSystemHelper.OilResourceKind));
+        Assert.AreEqual(2u, storage.Version);
+    }
+
+    [Test]
+    public void StorageReservation_DestinationReservationReducesFreeCapacity()
+    {
+        var storage = new BuildingResourceStorageComponent
+        {
+            FuelStorageCapacity = 25,
+            StoredFuelBarrels = 10f
+        };
+
+        bool reserved = BuildingResourceStorageTransferSystemHelper.TryReserveDestination(
+            ref storage,
+            BuildingResourceStorageTransferSystemHelper.FuelResourceKind,
+            12f);
+
+        Assert.IsTrue(reserved);
+        Assert.AreEqual(12f, storage.ReservedFuelInboundBarrels);
+        Assert.AreEqual(3f, BuildingResourceStorageTransferSystemHelper.GetFuelReceivingFreeCapacity(storage));
+        Assert.IsFalse(BuildingResourceStorageTransferSystemHelper.HasReceivingCapacity(
+            storage,
+            BuildingResourceStorageTransferSystemHelper.FuelResourceKind,
+            4f));
+        Assert.AreEqual(1u, storage.Version);
+
+        BuildingResourceStorageTransferSystemHelper.ReleaseDestinationReservation(
+            ref storage,
+            BuildingResourceStorageTransferSystemHelper.FuelResourceKind,
+            5f);
+
+        Assert.AreEqual(7f, storage.ReservedFuelInboundBarrels);
+        Assert.AreEqual(8f, BuildingResourceStorageTransferSystemHelper.GetFuelReceivingFreeCapacity(storage));
+        Assert.AreEqual(2u, storage.Version);
+    }
+
+    [Test]
+    public void StorageTransfer_MutationsIncrementVersion()
+    {
+        var source = new BuildingResourceStorageComponent
+        {
+            FuelStorageCapacity = 50,
+            FuelBarrelsPerDay = 10f,
+            StoredFuelBarrels = 20f
+        };
+        var destination = new BuildingResourceStorageComponent
+        {
+            FuelStorageCapacity = 50,
+            StoredFuelBarrels = 5f
+        };
+        UnitResourceHauler hauler = default;
+
+        bool loaded = BuildingResourceStorageTransferSystemHelper.TryCompleteLoad(
+            ref source,
+            BuildingResourceStorageTransferSystemHelper.FuelResourceKind,
+            8f,
+            ref hauler);
+        bool unloaded = BuildingResourceStorageTransferSystemHelper.TryCompleteUnload(
+            ref destination,
+            BuildingResourceStorageTransferSystemHelper.FuelResourceKind,
+            ref hauler);
+
+        Assert.IsTrue(loaded);
+        Assert.IsTrue(unloaded);
+        Assert.AreEqual(1u, source.Version);
+        Assert.AreEqual(1u, destination.Version);
+        Assert.AreEqual(12f, source.StoredFuelBarrels);
+        Assert.AreEqual(13f, destination.StoredFuelBarrels);
+        Assert.AreEqual(0f, hauler.CargoFuelBarrels);
     }
 
     [Test]

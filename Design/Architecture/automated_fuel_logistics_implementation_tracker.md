@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 17% (17/99 checklist items complete).
+Overall implementation progress: 18% (18/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -36,7 +36,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
 | 5. Tanker automation and usable Fuel | In Progress | 2 | 12 | 17% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
 | 6. Vehicle fuel spending | Pending | 0 | 11 | 0% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
-| 7. UI read models and feedback | Pending | 0 | 10 | 0% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
+| 7. UI read models and feedback | In Progress | 1 | 10 | 10% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
 | 8. AI and enemy support | Pending | 0 | 7 | 0% | Let AI understand fuel economy after player loop is validated. |
 | 9. Validation and profiling | Pending | 0 | 10 | 0% | Focused tests, seeded-map checks, guardrails, GC checks, and Android profiling. |
 
@@ -165,7 +165,7 @@ Validation:
 
 ## Phase 7: UI Read Models And Feedback
 
-- [ ] Header Fuel reads faction usable Fuel and capacity, not refinery output.
+- [x] Header Fuel reads faction usable Fuel and capacity, not refinery output.
 - [ ] Oil can be shown only when the active mission/skirmish preset teaches extraction.
 - [ ] Selection panel supports Oil Pump, Refinery, Fuel Bladder, tray truck, and tanker logistics state.
 - [ ] Disabled command/build/production rows use typed reason ids.
@@ -376,6 +376,18 @@ Use this section during implementation. Each completed batch should add:
   - Focused Unity batchmode validation remains blocked by the already-open Unity editor for this project.
 - Next action:
   - Wire/update faction usable Fuel summary and header source from delivered Fuel storage with version gating.
+- Slice: match HUD header uses delivered fuel storage, not refinery output.
+- Files changed: `Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs`, `Assets/Tests/Editor/UiShellEcsGatewayResourceHeaderTests.cs`, and this tracker.
+- Behavior intent:
+  - The live ECS match HUD header now sums only player-owned storage buildings that have Oil/Fuel capacity and no Oil/Fuel production role.
+  - Refinery-held output Fuel no longer appears in the header before tanker delivery to Fuel Bladder/base storage.
+  - Added a focused regression test where a player refinery holds Fuel and a player storage building holds delivered Fuel; the HUD shows only the storage value.
+- Validation:
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Focused Unity batchmode validation remains blocked by the already-open Unity editor for this project.
+- Next action:
+  - Add a versioned faction usable Fuel summary from delivered storage so the HUD can avoid live query/string work during steady-state frames.
 
 - Created design and implementation tracker.
 - Started implementation with seeded logistics verification fixture.

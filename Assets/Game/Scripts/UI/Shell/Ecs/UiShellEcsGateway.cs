@@ -696,12 +696,7 @@ namespace Game.UI.Shell.Ecs
                     continue;
 
                 BuildingResourceStorageComponent storage = storages[i];
-                bool hasResourceRole =
-                    storage.OilStorageCapacity > 0 ||
-                    storage.FuelStorageCapacity > 0 ||
-                    storage.OilBarrelsPerDay > 0f ||
-                    storage.FuelBarrelsPerDay > 0f;
-                if (!hasResourceRole)
+                if (!IsUsableHeaderResourceStorage(storage))
                     continue;
 
                 foundPlayerStorage = true;
@@ -715,6 +710,13 @@ namespace Game.UI.Shell.Ecs
             oilText = FormatCompact(Mathf.Max(0, Mathf.RoundToInt(oil)));
             fuelText = FormatCompact(Mathf.Max(0, Mathf.RoundToInt(fuel)));
             return true;
+        }
+
+        private static bool IsUsableHeaderResourceStorage(in BuildingResourceStorageComponent storage)
+        {
+            bool hasStorage = storage.OilStorageCapacity > 0 || storage.FuelStorageCapacity > 0;
+            bool producesResource = storage.OilBarrelsPerDay > 0f || storage.FuelBarrelsPerDay > 0f;
+            return hasStorage && !producesResource;
         }
 
         private static bool TryFormatPlayerResourceSummary(

@@ -28,7 +28,6 @@ public sealed class UiShellEcsGatewayResourceHeaderTests
                 OwnerFactionId = FactionIdentity.PlayerFactionId,
                 OilStorageCapacity = 200,
                 FuelStorageCapacity = 100,
-                OilBarrelsPerDay = 50f,
                 StoredOilBarrels = 12.4f,
                 StoredFuelBarrels = 3.6f
             });
@@ -36,6 +35,52 @@ public sealed class UiShellEcsGatewayResourceHeaderTests
             Assert.IsTrue(UiShellEcsGateway.TryReadMatchHudHeader(out UiMatchHudHeaderModel header));
             Assert.AreEqual("12", header.OilText);
             Assert.AreEqual("4", header.FuelText);
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+        }
+    }
+
+    [Test]
+    public void MatchHudHeader_IgnoresRefineryOutputUntilFuelIsDeliveredToStorage()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        using World world = new(nameof(MatchHudHeader_IgnoresRefineryOutputUntilFuelIsDeliveredToStorage));
+        try
+        {
+            World.DefaultGameObjectInjectionWorld = world;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+            EntityManager em = world.EntityManager;
+            em.CreateEntity(typeof(UiShellRootComponent));
+            Entity refinery = em.CreateEntity(
+                typeof(BuildingResourceStorageComponent),
+                typeof(Faction));
+            em.SetComponentData(refinery, new Faction { Id = FactionIdentity.PlayerFactionId });
+            em.SetComponentData(refinery, new BuildingResourceStorageComponent
+            {
+                RuntimeBuildingId = 21,
+                OwnerFactionId = FactionIdentity.PlayerFactionId,
+                FuelStorageCapacity = 100,
+                FuelBarrelsPerDay = 40f,
+                StoredFuelBarrels = 33f
+            });
+            Entity fuelStorage = em.CreateEntity(
+                typeof(BuildingResourceStorageComponent),
+                typeof(Faction));
+            em.SetComponentData(fuelStorage, new Faction { Id = FactionIdentity.PlayerFactionId });
+            em.SetComponentData(fuelStorage, new BuildingResourceStorageComponent
+            {
+                RuntimeBuildingId = 22,
+                OwnerFactionId = FactionIdentity.PlayerFactionId,
+                FuelStorageCapacity = 100,
+                StoredFuelBarrels = 8f
+            });
+
+            Assert.IsTrue(UiShellEcsGateway.TryReadMatchHudHeader(out UiMatchHudHeaderModel header));
+            Assert.AreEqual("0", header.OilText);
+            Assert.AreEqual("8", header.FuelText);
         }
         finally
         {

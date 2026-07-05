@@ -23,13 +23,13 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 3% (3/98 checklist items complete).
+Overall implementation progress: 7% (7/98 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
 | Phase | Status | Complete | Total | Progress | Notes |
 |---|---|---:|---:|---:|---|
-| 0. Inventory and baseline | In Progress | 1 | 8 | 13% | Audit current Oil/Fuel components, building runtime summaries, resource hauler code, seeded trucks, and HUD header data. |
+| 0. Inventory and baseline | In Progress | 5 | 8 | 63% | Audit current Oil/Fuel components, building runtime summaries, resource hauler code, seeded trucks, and HUD header data. |
 | 1. Data model | In Progress | 2 | 11 | 18% | Add or adapt ECS components/buffers for buffers, capacities, reservations, cargo, seeded logistics validation, and faction usable Fuel. |
 | 2. Oil extraction and refinery buffers | Pending | 0 | 8 | 0% | Ensure Oil Pump and Refinery buffers are ECS-owned and versioned. |
 | 3. Tray truck automation | Pending | 0 | 12 | 0% | Auto-assign Oil pickup/delivery without manual target commands. |
@@ -42,14 +42,14 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 
 ## Phase 0: Inventory And Baseline
 
-- [ ] Inventory existing Oil Pump, Refinery, Large Refinery, Fuel Bladder, tray truck, and tanker configs.
+- [x] Inventory existing Oil Pump, Refinery, Large Refinery, Fuel Bladder, tray truck, and tanker configs.
 - [x] Inventory each faction military base and verify fuel-enabled maps have at least one `Unit_Veh_Truck_Tray` and one `Unit_Veh_Truck_Tanker` near each faction base.
-- [ ] Inventory current ECS components and authoring bakers for building resources, production, storage, vehicle movement, and resource hauling.
-- [ ] Identify current header Fuel source and all systems that mutate tactical Oil/Fuel.
-- [ ] Identify current selected-building panel fields for production/resource state.
+- [x] Inventory current ECS components and authoring bakers for building resources, production, storage, vehicle movement, and resource hauling.
+- [x] Identify current header Fuel source and all systems that mutate tactical Oil/Fuel.
+- [x] Identify current selected-building panel fields for production/resource state.
 - [ ] Capture baseline behavior: oil pump production, refinery conversion if present, fuel header update, tray/tanker command behavior, and vehicle Fuel usage.
 - [ ] Capture baseline profiler markers for match steady state with fuel logistics active.
-- [ ] Document exact files touched before implementation starts.
+- [x] Document exact files touched before implementation starts.
 
 Exit criteria:
 
@@ -238,6 +238,35 @@ Use this section during implementation. Each completed batch should add:
 - remaining blocker or next slice
 
 ### 2026-07-05
+
+- Slice: seeded logistics fixture and inventory baseline.
+- Files changed before implementation code: `Assets/Game/Configs/Scene/MatchSubScene_InitialUnitsSpawner_Config.asset`, `Assets/Tests/Editor/InitialFactionBaseValidationTests.cs`, and this tracker.
+- Existing config inventory:
+  - `Prefab_BuildingDefinition_OilPump_Config.asset`: Oil Pump produces 50 Oil barrels/day and stores 200 Oil barrels.
+  - `Prefab_BuildingDefinition_OilRefinery_Config.asset`: Refinery stores 5000 Oil, converts at 100 Fuel barrels/day, and stores 5000 Fuel.
+  - `Prefab_BuildingDefinition_OilRefinery_Big_Config.asset`: Large Refinery stores 10000 Oil, converts at 200 Fuel barrels/day, and stores 10000 Fuel.
+  - `Prefab_BuildingDefinition_Fuel_Bladder_Config.asset`: currently has no serialized Oil/Fuel capacity fields, so it cannot contribute usable Fuel storage until configured.
+  - `Prefab_UnitGrid_Veh_Truck_Tray.asset`: resource hauler capacity is 8 barrels; baker adds `UnitResourceHauler`.
+  - `Prefab_UnitGrid_Veh_Truck_Tanker.asset`: resource hauler capacity is 0, so the baker does not add `UnitResourceHauler`; this blocks tanker automation until corrected.
+- Existing ECS/data inventory:
+  - `BuildingResourceStorageComponent` owns runtime Oil/Fuel capacity, rates, stored Oil, and stored Fuel on building combat entities.
+  - `BuildingRuntimeEntityCompositionSystemHelper.AddResourceStorageComponent` adds storage for any building definition with Oil/Fuel capacity or rate.
+  - `BuildingResourceProductionEcsSystem.ApplyTick` and `BuildingResourceProductionSystemHelper.Tick` provide the Burst-compatible production/conversion math, but `BuildingResourceProductionEcsSystem.OnUpdate` is disabled and currently used as a static helper from managed composition.
+  - `UnitResourceHauler` owns hauler capacity, fill/unload timings, and cargo; `UnitResourceHaulOrder` owns source/destination/phase/resource kind for the existing manual order path.
+  - `UnitGridAuthoring.Baker` adds `UnitResourceHauler` only when `resourceHaulerBarrelCapacity > 0`.
+  - `BuildingResourceHaulerBridgeCompositionSystemHelper` is the current managed hauler bridge: it scans ordered haulers every 0.25s, advances load/travel/unload phases, and reuses existing movement requests.
+  - `BuildingResourceHaulerTransferEcsSystem` contains static ECS-compatible load/unload helpers, but `OnUpdate` is disabled.
+- Header/UI inventory:
+  - `BuildingRuntimeProcessingCompositionSystemHelper.PublishFactionSummariesReadModel` publishes `BuildingRuntimeFactionSummary` from `BuildingResourceStorageComponent`/runtime building mirrors.
+  - `FactionResourceCompositionSystemHelper` mutates Oil/Fuel through production ticks, drains/sell requests, and storage sync.
+  - `BuildingPlacementQueryUiSystemHelper.TryGetSelectedBuildingResourceStorage` reads selected building Oil/Fuel state for the selection panel.
+  - `SelectionUiReadModelLookup` reads `UnitResourceHauler` cargo for focused unit panel state.
+  - Header Fuel is backed by the match HUD header model path and current faction resource summary; the next fuel loop must keep header Fuel sourced from delivered storage, not refinery output.
+- Validation:
+  - `git diff --check` passed before commit `1c346b401 Seed fuel logistics verification trucks`.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed before commit `1c346b401`.
+  - Full solution build remains blocked by existing generated solution issue: duplicate `Unity.ProBuilder` project name.
+  - Unity batchmode was blocked by an already-open Unity editor for this project; live editor log showed Tundra build success with no compiler error matches.
 
 - Created design and implementation tracker.
 - Started implementation with seeded logistics verification fixture.

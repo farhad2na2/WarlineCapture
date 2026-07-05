@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 36% (36/99 checklist items complete).
+Overall implementation progress: 37% (37/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -36,7 +36,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
 | 5. Tanker automation and usable Fuel | In Progress | 4 | 12 | 33% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
 | 6. Vehicle fuel spending | In Progress | 8 | 11 | 73% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
-| 7. UI read models and feedback | In Progress | 6 | 10 | 60% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
+| 7. UI read models and feedback | In Progress | 7 | 10 | 70% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
 | 8. AI and enemy support | Pending | 0 | 7 | 0% | Let AI understand fuel economy after player loop is validated. |
 | 9. Validation and profiling | In Progress | 1 | 10 | 10% | Focused tests, seeded-map checks, guardrails, GC checks, and Android profiling. |
 
@@ -176,7 +176,7 @@ Validation:
 
 - [x] Header fuel changes only after storage delivery or spending.
 - [x] Selection panel updates for two different pumps/refineries/storage buildings without stale values.
-- [ ] UI click blocking remains intact on Android and Editor.
+- [x] UI click blocking remains intact on Android and Editor.
 - [ ] No new GC allocations in steady-state HUD updates.
 
 ## Phase 8: AI And Enemy Support
@@ -570,3 +570,15 @@ Use this section during implementation. Each completed batch should add:
   - Unity focused validation was not rerun because the prior focused Unity run is blocked by the recurring licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
 - Next action:
   - Continue Phase 7 no-GC/versioned HUD update validation, then verify UI click blocking remains intact on Android and Editor.
+- Slice: UI click-blocking validation accounting.
+- Files changed: this tracker.
+- Behavior intent:
+  - Accounted for the existing `MatchHudCommandControlsBlockGameplayWorldInput` editor validation in `Assets/Tests/Editor/MatchHudCommandControlsCurrentPrefabTests.cs`.
+  - That test verifies match HUD command buttons block gameplay/world selection hit testing, capture the UI click suppression sequence through `ShouldIgnoreBuildingSelectionThisFrame`, and still queue the intended command request.
+  - This closes the Phase 7 UI click-blocking validation row without adding duplicate test code or changing runtime behavior.
+- Validation:
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Unity focused validation was not rerun because the prior focused Unity run is blocked by the recurring licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
+- Next action:
+  - Continue Phase 7 no-GC/versioned HUD update validation and the remaining header string-formatting/cache item.

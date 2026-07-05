@@ -741,6 +741,7 @@ namespace Game.Runtime
             List<PendingTransportBoardingOrder> boardingOrders = new(DefaultBoardingOrderCapacity);
             HashSet<int> reservedBoardingCells = new();
             TransportBoardingPlannedSlotCounts plannedSlots = default;
+            int directBoardingCells = GetTransportBoardingDirectCells(em, transport);
             for (int i = 0; i < selectedCount; i++)
             {
                 Entity passenger = selectedBoardingSourceEntities[i];
@@ -779,7 +780,6 @@ namespace Game.Runtime
                     continue;
                 }
 
-                int directBoardingCells = GetTransportBoardingDirectCells(em, transport);
                 if (!TryCreateTransportBoardingGoalOrder(
                         em,
                         grid,

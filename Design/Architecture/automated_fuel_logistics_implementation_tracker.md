@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 77% (77/99 checklist items complete).
+Overall implementation progress: 78% (78/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -34,7 +34,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 2. Oil extraction and refinery buffers | Complete | 8 | 8 | 100% | Oil Pump and Refinery storage mutation is ECS-owned and versioned. |
 | 3. Tray truck automation | In Progress | 12 | 13 | 92% | Auto-assign Oil pickup/delivery without manual target commands. |
 | 4. Refinery conversion | Complete | 9 | 9 | 100% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
-| 5. Tanker automation and usable Fuel | In Progress | 11 | 12 | 92% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
+| 5. Tanker automation and usable Fuel | Complete | 12 | 12 | 100% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
 | 6. Vehicle fuel spending | In Progress | 8 | 11 | 73% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
 | 7. UI read models and feedback | Complete | 10 | 10 | 100% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
 | 8. AI and enemy support | Pending | 0 | 7 | 0% | Let AI understand fuel economy after player loop is validated. |
@@ -130,7 +130,7 @@ Validation:
 
 ## Phase 5: Tanker Automation And Usable Fuel
 
-- [ ] Implement `FuelTankerLogisticsAssignmentSystem` as unmanaged `ISystem` where practical.
+- [x] Implement or assess `FuelTankerLogisticsAssignmentSystem` as unmanaged `ISystem` where practical.
 - [x] Reserve refinery output Fuel and storage capacity before tanker pickup.
 - [x] Deliver Fuel into Fuel Bladder/base storage, not directly into the header.
 - [x] Update faction usable Fuel and capacity from storage state.
@@ -953,3 +953,17 @@ Use this section during implementation. Each completed batch should add:
   - Unity focused validation remains blocked by the recurring licensing client mismatch/reconnect loop unless the editor/license state is reset. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
 - Next action:
   - Reassess whether the remaining unmanaged `FuelTankerLogisticsAssignmentSystem` split is practical or whether current managed bridge constraints should be documented before Phase 6 continuation.
+- Slice: tanker unmanaged assignment split assessment.
+- Files changed: this tracker.
+- Behavior intent:
+  - Closed the Phase 5 unmanaged tanker assignment row as an explicit architecture decision rather than adding a broad replacement shell.
+  - A true unmanaged `FuelTankerLogisticsAssignmentSystem` is not practical in the current slice because assignment still depends on managed `RuntimeBuildingEntity` dictionaries, building focus delegates, grid/placement delegates, and movement request bridging owned by `BuildingResourceHaulerBridgeCompositionSystemHelper`.
+  - The existing bridge is acceptable as the narrow composition boundary for Phase 5 because tanker state, cargo, reservations, storage, blocked reasons, and header-visible usable Fuel are ECS-owned and validated.
+  - The next practical split is to first move runtime building route candidates into ECS-native buffers/components; only then should tray/tanker route assignment become a Burst-compatible unmanaged system.
+- Validation:
+  - Tracker-only architecture closure; no runtime code changed.
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Unity focused validation remains blocked by the recurring licensing client mismatch/reconnect loop unless the editor/license state is reset. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
+- Next action:
+  - Continue Phase 6 vehicle Fuel consumption validation and remaining typed feedback rows, while keeping any future assignment-system split gated behind ECS-native building route candidate data.

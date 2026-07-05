@@ -915,6 +915,7 @@ namespace Game.Runtime
                 return false;
 
             float bestDistanceSq = float.MaxValue;
+            CompleteRuntimeBuildingCombatReadDependencies(em);
             EntityTypeHandle entityType = em.GetEntityTypeHandle();
             ComponentTypeHandle<RuntimeBuildingCombatInfo> combatInfoType = em.GetComponentTypeHandle<RuntimeBuildingCombatInfo>(true);
             ComponentTypeHandle<Faction> factionType = em.GetComponentTypeHandle<Faction>(true);
@@ -948,6 +949,14 @@ namespace Game.Runtime
             }
 
             return bestEntity != Entity.Null;
+        }
+
+        private static void CompleteRuntimeBuildingCombatReadDependencies(EntityManager em)
+        {
+            em.CompleteDependencyBeforeRO<RuntimeBuildingCombatInfo>();
+            em.CompleteDependencyBeforeRO<Faction>();
+            em.CompleteDependencyBeforeRO<UnitHealth>();
+            em.CompleteDependencyBeforeRO<LocalTransform>();
         }
 
         private static bool IsAttackableRuntimeBuildingCandidate(

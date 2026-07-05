@@ -84,7 +84,8 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.BoardAllSelectedTransport_ClearsCommandFeedbackActionsOnSuccess());
             RunCase(test => test.BoardCommandResult_PreservesAcceptedTargetTransportEntity());
             RunCase(test => test.TransportFirstBoarding_PreservesSelectedTransportAfterSuccess());
-            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=59");
+            RunCase(test => test.AttackTargetLookup_CompletesSelectionMarkerTransformWriteBeforeRuntimeBuildingRead());
+            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=60");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -3254,6 +3255,92 @@ public sealed class RtsSelectionInputSystemTests
     public void AttackTargetLookup_ReturnsRuntimeBuildingFromScreenClick()
     {
         EntityManager em = _testWorld.EntityManager;
+        CreateGridConfig(em);
+        Entity building = CreateRuntimeBuildingCombatTarget(em);
+
+        GameObject cameraObject = new("RtsSelectionInputSystemTests_Camera");
+        Camera camera = cameraObject.AddComponent<Camera>();
+        try
+        {
+            camera.orthographic = true;
+            camera.orthographicSize = 24f;
+            camera.pixelRect = new Rect(0f, 0f, 800f, 600f);
+            camera.transform.position = new Vector3(16f, 50f, 16f);
+            camera.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+            Vector3 screen = camera.WorldToScreenPoint(new Vector3(11.5f, 0f, 11.5f));
+
+            var pointerSystem = new RtsSelectionPointerTargetCommandCompositionSystemHelper();
+            var context = CreatePointerTargetContext(camera);
+
+            bool hit = pointerSystem.TryGetClickedAttackTargetEntity(
+                context,
+                new Vector2(screen.x, screen.y),
+                em,
+                out Entity selectedTarget);
+
+            Assert.IsTrue(hit);
+            Assert.AreEqual(building, selectedTarget);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(cameraObject);
+        }
+    }
+
+    [Test]
+    public void AttackTargetLookup_CompletesSelectionMarkerTransformWriteBeforeRuntimeBuildingRead()
+    {
+        EntityManager em = _testWorld.EntityManager;
+        CreateGridConfig(em);
+        Entity building = CreateRuntimeBuildingCombatTarget(em);
+
+        Entity selectedUnit = em.CreateEntity(typeof(SelectedUnitTag), typeof(UnitHealth));
+        em.SetComponentData(selectedUnit, new UnitHealth { Current = 100, Max = 100 });
+        Entity outline = em.CreateEntity(
+            typeof(SelectionObjectOutlineTag),
+            typeof(SelectionMarkerOwner),
+            typeof(SelectionObjectOutlineVisibleScale),
+            typeof(LocalTransform));
+        em.SetComponentData(outline, new SelectionMarkerOwner { Value = selectedUnit });
+        em.SetComponentData(outline, new SelectionObjectOutlineVisibleScale { Value = 1f });
+        em.SetComponentData(outline, LocalTransform.Identity);
+        em.CreateEntity(typeof(SelectionMarkerTag));
+
+        SystemHandle visibilitySystem = _testWorld.CreateSystem<SelectionMarkerVisibilitySystem>();
+        visibilitySystem.Update(_testWorld.Unmanaged);
+
+        GameObject cameraObject = new("RtsSelectionInputSystemTests_DependencyCamera");
+        Camera camera = cameraObject.AddComponent<Camera>();
+        try
+        {
+            camera.orthographic = true;
+            camera.orthographicSize = 24f;
+            camera.pixelRect = new Rect(0f, 0f, 800f, 600f);
+            camera.transform.position = new Vector3(16f, 50f, 16f);
+            camera.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+            Vector3 screen = camera.WorldToScreenPoint(new Vector3(11.5f, 0f, 11.5f));
+
+            var pointerSystem = new RtsSelectionPointerTargetCommandCompositionSystemHelper();
+            var context = CreatePointerTargetContext(camera);
+
+            bool hit = pointerSystem.TryGetClickedAttackTargetEntity(
+                context,
+                new Vector2(screen.x, screen.y),
+                em,
+                out Entity selectedTarget);
+
+            Assert.IsTrue(hit);
+            Assert.AreEqual(building, selectedTarget);
+        }
+        finally
+        {
+            em.CompleteAllTrackedJobs();
+            UnityEngine.Object.DestroyImmediate(cameraObject);
+        }
+    }
+
+    private static void CreateGridConfig(EntityManager em)
+    {
         Entity gridEntity = em.CreateEntity(typeof(GridConfig));
         em.SetComponentData(gridEntity, new GridConfig
         {
@@ -3262,7 +3349,10 @@ public sealed class RtsSelectionInputSystemTests
             CellSize = 1f,
             Origin = float3.zero
         });
+    }
 
+    private static Entity CreateRuntimeBuildingCombatTarget(EntityManager em)
+    {
         Entity building = em.CreateEntity(
             typeof(RuntimeBuildingCombatTag),
             typeof(RuntimeBuildingCombatInfo),
@@ -3279,64 +3369,42 @@ public sealed class RtsSelectionInputSystemTests
         em.SetComponentData(building, new Faction { Id = FactionIdentity.EnemyFactionId });
         em.SetComponentData(building, new UnitHealth { Current = 100, Max = 100 });
         em.SetComponentData(building, LocalTransform.FromPosition(new float3(11.5f, 0f, 11.5f)));
+        return building;
+    }
 
-        GameObject cameraObject = new("RtsSelectionInputSystemTests_Camera");
-        Camera camera = cameraObject.AddComponent<Camera>();
-        try
-        {
-            camera.orthographic = true;
-            camera.orthographicSize = 24f;
-            camera.pixelRect = new Rect(0f, 0f, 800f, 600f);
-            camera.transform.position = new Vector3(16f, 50f, 16f);
-            camera.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
-            Vector3 screen = camera.WorldToScreenPoint(new Vector3(11.5f, 0f, 11.5f));
-
-            var pointerSystem = new RtsSelectionPointerTargetCommandCompositionSystemHelper();
-            var context = new RtsSelectionPointerTargetCommandCompositionSystemHelper.Context(
-                runtimeGameplayStateSystem: new RuntimeGameplayStateSystem(),
-                inputSystem: null,
-                selectionStateSystem: new SelectionStateCompositionSystemHelper(),
-                focusedUnitLifecycleSystem: null,
-                focusableUnitLookupSystem: new FocusableUnitLookupCameraSystemHelper(),
-                transportBoardingCommandSystem: default,
-                unitTransportCapacitySystem: default,
-                unitTransportAirPickupSystem: default,
-                buildingTargetMoveOrderSystem: default,
-                buildingPlacementInteractionSystem: null,
-                buildingPlacementInteractionContext: default,
-                worldCamera: camera,
-                tryGetEntityManager: null,
-                tryGetPointerPosition: null,
-                getExplicitAttackTargetModeActive: null,
-                setExplicitAttackTargetModeActive: null,
-                applyHudCommandMode: null,
-                applyHudCommandResult: null,
-                clearHudSelection: null,
-                clearHudCommandMode: null,
-                applyHudSelection: null,
-                clearCurrentSelection: null,
-                requestMoveOrderScreenMarker: null,
-                setCameraDragging: null,
-                processAttackCommandRequests: null,
-                processScanCommandRequests: null,
-                processTransportCommandRequests: null,
-                processMoveCommandRequests: null,
-                logSelectionDiagnostic: null,
-                describeEntity: null);
-
-            bool hit = pointerSystem.TryGetClickedAttackTargetEntity(
-                context,
-                new Vector2(screen.x, screen.y),
-                em,
-                out Entity selectedTarget);
-
-            Assert.IsTrue(hit);
-            Assert.AreEqual(building, selectedTarget);
-        }
-        finally
-        {
-            UnityEngine.Object.DestroyImmediate(cameraObject);
-        }
+    private static RtsSelectionPointerTargetCommandCompositionSystemHelper.Context CreatePointerTargetContext(Camera camera)
+    {
+        return new RtsSelectionPointerTargetCommandCompositionSystemHelper.Context(
+            runtimeGameplayStateSystem: new RuntimeGameplayStateSystem(),
+            inputSystem: null,
+            selectionStateSystem: new SelectionStateCompositionSystemHelper(),
+            focusedUnitLifecycleSystem: null,
+            focusableUnitLookupSystem: new FocusableUnitLookupCameraSystemHelper(),
+            transportBoardingCommandSystem: default,
+            unitTransportCapacitySystem: default,
+            unitTransportAirPickupSystem: default,
+            buildingTargetMoveOrderSystem: default,
+            buildingPlacementInteractionSystem: null,
+            buildingPlacementInteractionContext: default,
+            worldCamera: camera,
+            tryGetEntityManager: null,
+            tryGetPointerPosition: null,
+            getExplicitAttackTargetModeActive: null,
+            setExplicitAttackTargetModeActive: null,
+            applyHudCommandMode: null,
+            applyHudCommandResult: null,
+            clearHudSelection: null,
+            clearHudCommandMode: null,
+            applyHudSelection: null,
+            clearCurrentSelection: null,
+            requestMoveOrderScreenMarker: null,
+            setCameraDragging: null,
+            processAttackCommandRequests: null,
+            processScanCommandRequests: null,
+            processTransportCommandRequests: null,
+            processMoveCommandRequests: null,
+            logSelectionDiagnostic: null,
+            describeEntity: null);
     }
 
     [Test]

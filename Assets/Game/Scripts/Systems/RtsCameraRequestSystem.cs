@@ -9,9 +9,15 @@ namespace Game.Runtime
     public sealed partial class RtsCameraRequestSystem : SystemBase
     {
         private Entity _cameraEntity;
+        private EntityQuery _cameraQueueQuery;
+        private EntityQuery _gridConfigQuery;
+        private EntityQuery _tacticalFollowPoseQuery;
 
         protected override void OnCreate()
         {
+            _cameraQueueQuery = GetEntityQuery(ComponentType.ReadOnly<RtsCameraRequestQueueComponent>());
+            _gridConfigQuery = GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
+            _tacticalFollowPoseQuery = GetEntityQuery(ComponentType.ReadOnly<TacticalFollowCameraPoseComponent>());
             Enabled = false;
         }
 
@@ -29,10 +35,9 @@ namespace Game.Runtime
                 return _cameraEntity;
             }
 
-            using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<RtsCameraRequestQueueComponent>());
-            if (!query.IsEmptyIgnoreFilter)
+            if (!_cameraQueueQuery.IsEmptyIgnoreFilter)
             {
-                _cameraEntity = query.GetSingletonEntity();
+                _cameraEntity = _cameraQueueQuery.GetSingletonEntity();
                 EnsureCameraComponents(entityManager, _cameraEntity);
                 return _cameraEntity;
             }
@@ -288,18 +293,17 @@ namespace Game.Runtime
                    kind == RtsCameraRequestKind.UpdateSmoothFocus;
         }
 
-        private static bool HasValidTacticalFollowPose(EntityManager entityManager)
+        private bool HasValidTacticalFollowPose(EntityManager entityManager)
         {
-            using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<TacticalFollowCameraPoseComponent>());
-            if (query.IsEmptyIgnoreFilter)
+            if (_tacticalFollowPoseQuery.IsEmptyIgnoreFilter)
                 return false;
 
             TacticalFollowCameraPoseComponent pose =
-                entityManager.GetComponentData<TacticalFollowCameraPoseComponent>(query.GetSingletonEntity());
+                entityManager.GetComponentData<TacticalFollowCameraPoseComponent>(_tacticalFollowPoseQuery.GetSingletonEntity());
             return pose.Valid != 0;
         }
 
-        private static void SyncGroundBoundary(EntityManager entityManager, RtsCameraSystem cameraSystem, Camera worldCamera, bool skipClamp)
+        private void SyncGroundBoundary(EntityManager entityManager, RtsCameraSystem cameraSystem, Camera worldCamera, bool skipClamp)
         {
             if (TryGetGridConfig(entityManager, out GridConfig grid))
             {
@@ -313,14 +317,13 @@ namespace Game.Runtime
             }
         }
 
-        private static bool TryGetGridConfig(EntityManager entityManager, out GridConfig grid)
+        private bool TryGetGridConfig(EntityManager entityManager, out GridConfig grid)
         {
             grid = default;
-            using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
-            if (query.IsEmptyIgnoreFilter)
+            if (_gridConfigQuery.IsEmptyIgnoreFilter)
                 return false;
 
-            grid = entityManager.GetComponentData<GridConfig>(query.GetSingletonEntity());
+            grid = entityManager.GetComponentData<GridConfig>(_gridConfigQuery.GetSingletonEntity());
             return grid.Width > 0 && grid.Height > 0 && grid.CellSize > 0.01f;
         }
 

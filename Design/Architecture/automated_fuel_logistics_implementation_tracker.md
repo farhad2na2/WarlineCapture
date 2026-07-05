@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 61% (61/99 checklist items complete).
+Overall implementation progress: 67% (67/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -33,7 +33,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 1. Data model | Complete | 11 | 11 | 100% | Add or adapt ECS components/buffers, capacities, reservations, cargo, seeded logistics validation, and faction usable Fuel. |
 | 2. Oil extraction and refinery buffers | Complete | 8 | 8 | 100% | Oil Pump and Refinery storage mutation is ECS-owned and versioned. |
 | 3. Tray truck automation | In Progress | 12 | 13 | 92% | Auto-assign Oil pickup/delivery without manual target commands. |
-| 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
+| 4. Refinery conversion | In Progress | 6 | 9 | 67% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
 | 5. Tanker automation and usable Fuel | In Progress | 4 | 12 | 33% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
 | 6. Vehicle fuel spending | In Progress | 8 | 11 | 73% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
 | 7. UI read models and feedback | Complete | 10 | 10 | 100% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
@@ -115,17 +115,17 @@ Validation:
 
 ## Phase 4: Refinery Conversion
 
-- [ ] Implement or adapt a Burst-compatible refinery conversion `ISystem`.
-- [ ] Consume Oil input and produce Fuel output using config rate and efficiency.
-- [ ] Stall when Oil input is empty.
-- [ ] Stall when Fuel output buffer is full.
+- [x] Adapt `BuildingResourceProductionEcsSystem` ECS storage path for refinery conversion.
+- [x] Consume Oil input and produce Fuel output using config rate and efficiency.
+- [x] Stall when Oil input is empty.
+- [x] Stall when Fuel output buffer is full.
 - [ ] Publish selected Refinery read model only on version changes.
 - [ ] Support Large Refinery with the same system and different config data.
 
 Validation:
 
-- [ ] Deterministic conversion test covers Oil input, Fuel output, efficiency, and capacity.
-- [ ] Full output buffer does not consume Oil.
+- [x] Deterministic conversion test covers Oil input, Fuel output, efficiency, and capacity.
+- [x] Full output buffer does not consume Oil.
 - [ ] Selected-building panel shows conversion and blocked reason accurately.
 
 ## Phase 5: Tanker Automation And Usable Fuel
@@ -831,3 +831,16 @@ Use this section during implementation. Each completed batch should add:
   - Unity focused validation remains blocked by the recurring licensing client mismatch/reconnect loop unless the editor/license state is reset. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
 - Next action:
   - Decide whether to split the remaining tray assignment bridge into a dedicated unmanaged `OilTrayLogisticsAssignmentSystem` now, or defer that architectural split until refinery conversion and tanker automation are complete.
+- Slice: ECS query-path refinery conversion validation.
+- Files changed: `Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs` and this tracker.
+- Behavior intent:
+  - Added a focused `ApplyStorageQuery` refinery conversion test so Phase 4 is validated through the same ECS storage mutation path used by runtime production updates.
+  - The test covers Oil input consumption, Fuel output production, Oil-to-Fuel efficiency, Fuel output capacity clamping, empty Oil input stall, full Fuel output stall, and version changes only when storage mutates.
+  - Updated Phase 4 progress for the existing `BuildingResourceProductionEcsSystem` ECS storage conversion path; selected-building read-model gating and Large Refinery config verification remain open.
+- Validation:
+  - Added `ApplyStorageQuery_ConvertsRefineryOilIntoFuelWithEfficiencyAndCapacity`.
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Unity focused validation remains blocked by the recurring licensing client mismatch/reconnect loop unless the editor/license state is reset. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
+- Next action:
+  - Continue Phase 4 with selected Refinery read-model version gating and Large Refinery config coverage, then return to the remaining Phase 3 unmanaged-assignment decision once tanker/refinery data ownership is complete.

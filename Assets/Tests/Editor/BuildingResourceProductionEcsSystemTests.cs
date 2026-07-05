@@ -18,6 +18,7 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.ApplyTick_FullOilStorageDoesNotOverflowVersionOrAllocate();
             tests.CreateBuildingCombatEntity_UsesSameResourceStorageForMapAndRuntimeOilPumps();
             tests.ApplyStorageQuery_WritesOilToEcsStorageWithCapacityAndVersion();
+            tests.ApplyStorageQuery_ConvertsRefineryOilIntoFuelWithEfficiencyAndCapacity();
             tests.ApplyTick_ConvertsOilIntoFuel();
             tests.ApplyTick_DoesNotConvertOilWhenFuelStorageIsFull();
             tests.UpdateResourceProduction_PrefersLiveEcsStorageWhenRuntimeMirrorIsStale();
@@ -38,7 +39,7 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.AutomaticFuelLogisticsSteadyState_DoesNotAllocateManagedMemory();
             tests.AutomaticFuelLogisticsCycle_TrayTransfersOilWithoutManualCommand();
             tests.AutomaticFuelLogisticsCycle_TankerTransfersFuelWithoutManualCommand();
-            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=24");
+            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=25");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -249,6 +250,81 @@ public sealed class BuildingResourceProductionEcsSystemTests
             Assert.AreEqual(8u, fullStorage.Version);
             Assert.AreEqual(1f, result.OilExtractedBarrels);
             Assert.AreEqual(0f, result.FuelProducedBarrels);
+        }
+        finally
+        {
+            world.Dispose();
+        }
+    }
+
+    [Test]
+    public void ApplyStorageQuery_ConvertsRefineryOilIntoFuelWithEfficiencyAndCapacity()
+    {
+        var world = new World(nameof(ApplyStorageQuery_ConvertsRefineryOilIntoFuelWithEfficiencyAndCapacity));
+        try
+        {
+            EntityManager em = world.EntityManager;
+            Entity refinery = em.CreateEntity(typeof(BuildingResourceStorageComponent));
+            em.SetComponentData(refinery, new BuildingResourceStorageComponent
+            {
+                RuntimeBuildingId = 51,
+                OwnerFactionId = FactionIdentity.PlayerFactionId,
+                FuelStorageCapacity = 10,
+                FuelBarrelsPerDay = 20f,
+                StoredOilBarrels = 12f,
+                StoredFuelBarrels = 9f,
+                Version = 5u
+            });
+            Entity emptyInputRefinery = em.CreateEntity(typeof(BuildingResourceStorageComponent));
+            em.SetComponentData(emptyInputRefinery, new BuildingResourceStorageComponent
+            {
+                RuntimeBuildingId = 52,
+                OwnerFactionId = FactionIdentity.PlayerFactionId,
+                FuelStorageCapacity = 10,
+                FuelBarrelsPerDay = 20f,
+                StoredOilBarrels = 0f,
+                StoredFuelBarrels = 4f,
+                Version = 6u
+            });
+            Entity fullOutputRefinery = em.CreateEntity(typeof(BuildingResourceStorageComponent));
+            em.SetComponentData(fullOutputRefinery, new BuildingResourceStorageComponent
+            {
+                RuntimeBuildingId = 53,
+                OwnerFactionId = FactionIdentity.PlayerFactionId,
+                FuelStorageCapacity = 6,
+                FuelBarrelsPerDay = 60f,
+                StoredOilBarrels = 20f,
+                StoredFuelBarrels = 6f,
+                Version = 7u
+            });
+            using EntityQuery storageQuery = em.CreateEntityQuery(
+                ComponentType.ReadWrite<BuildingResourceStorageComponent>());
+
+            BuildingResourceProductionEcsSystem.TickResult result =
+                BuildingResourceProductionEcsSystem.ApplyStorageQuery(
+                    em,
+                    storageQuery,
+                    secondsPerDay: 10f,
+                    deltaTime: 1f,
+                    oilBarrelsPerFuelBarrel: 2f);
+
+            BuildingResourceStorageComponent converted =
+                em.GetComponentData<BuildingResourceStorageComponent>(refinery);
+            BuildingResourceStorageComponent emptyInput =
+                em.GetComponentData<BuildingResourceStorageComponent>(emptyInputRefinery);
+            BuildingResourceStorageComponent fullOutput =
+                em.GetComponentData<BuildingResourceStorageComponent>(fullOutputRefinery);
+            Assert.AreEqual(10f, converted.StoredOilBarrels);
+            Assert.AreEqual(10f, converted.StoredFuelBarrels);
+            Assert.AreEqual(6u, converted.Version);
+            Assert.AreEqual(0f, emptyInput.StoredOilBarrels);
+            Assert.AreEqual(4f, emptyInput.StoredFuelBarrels);
+            Assert.AreEqual(6u, emptyInput.Version);
+            Assert.AreEqual(20f, fullOutput.StoredOilBarrels);
+            Assert.AreEqual(6f, fullOutput.StoredFuelBarrels);
+            Assert.AreEqual(7u, fullOutput.Version);
+            Assert.AreEqual(0f, result.OilExtractedBarrels);
+            Assert.AreEqual(1f, result.FuelProducedBarrels);
         }
         finally
         {

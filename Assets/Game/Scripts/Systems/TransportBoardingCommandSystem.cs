@@ -19,11 +19,6 @@ namespace Game.Runtime
         private const int GroundTransportClickPaddingExtraCells = 4;
         private const int PlaneRampSearchMinRadius = 8;
         private const int PlaneRampSearchFootprintPadding = 4;
-        private const int PlaneRampRolloutMinDistance = 2;
-        private const int PlaneRampRolloutFootprintPadding = 1;
-        private const int PlaneRampRolloutDistancePadding = 6;
-        private const int PlaneRampRolloutMinMaxDistance = 12;
-        private const int PlaneRampRolloutFallbackFootprintPadding = 6;
         private const float RopeDisembarkMinimumTakeoffHeight = 3f;
         private const float RopeDisembarkDropIntervalSeconds = 0.8f;
         private const float PlaneDoorOpenSeconds = 2.5f;
@@ -2291,12 +2286,6 @@ namespace Game.Runtime
                    math.abs(passengerDelta.x) + math.abs(passengerDelta.y);
         }
 
-        private static int ScorePlaneRampDistanceCandidate(int2 candidate, int2 rampCell)
-        {
-            int2 delta = candidate - rampCell;
-            return math.abs(delta.x) + math.abs(delta.y);
-        }
-
         internal static int2 ResolvePlaneRampApproachCell(EntityManager em, in GridConfig grid, Entity transport)
         {
             if (TryResolvePlaneRampApproachCell(em, grid, transport, out int2 rampCell))
@@ -2407,187 +2396,6 @@ namespace Game.Runtime
                 transportSize,
                 referenceCell,
                 out goal);
-        }
-
-        private static bool TryFindPlaneRampDisembarkCell(
-            in GridConfig grid,
-            in NativeArray<GridWalkable> walkable,
-            in NativeBitArray blocked,
-            in NativeBitArray occupied,
-            HashSet<int> reservedCells,
-            int2 rampCell,
-            int2 passengerFootprint,
-            out int2 goal)
-        {
-            goal = default;
-            int2 footprint = UnitFootprintUtility.ClampSize(passengerFootprint);
-            int maxRadius = CalculatePlaneRampSearchRadius(footprint);
-            int bestScore = int.MaxValue;
-            bool found = false;
-
-            for (int radius = 0; radius <= maxRadius; radius++)
-            {
-                int minX = rampCell.x - radius;
-                int minY = rampCell.y - radius;
-                int maxX = rampCell.x + radius;
-                int maxY = rampCell.y + radius;
-
-                for (int y = minY; y <= maxY; y++)
-                {
-                    for (int x = minX; x <= maxX; x++)
-                    {
-                        if (!IsPlaneRampSearchRingCandidate(radius, x, y, minX, minY, maxX, maxY))
-                            continue;
-
-                        int2 candidate = new int2(x, y);
-                        if (!CanPlaceDisembarkedFootprint(grid, walkable, blocked, occupied, reservedCells, candidate, footprint))
-                            continue;
-
-                        int score = ScorePlaneRampDistanceCandidate(candidate, rampCell);
-                        if (score >= bestScore)
-                            continue;
-
-                        bestScore = score;
-                        goal = candidate;
-                        found = true;
-                    }
-                }
-
-                if (found)
-                    return true;
-            }
-
-            return false;
-        }
-
-        private static bool TryFindPlaneRampRolloutCell(
-            in GridConfig grid,
-            in NativeArray<GridWalkable> walkable,
-            in NativeBitArray blocked,
-            in NativeBitArray occupied,
-            HashSet<int> reservedCells,
-            int2 rampCell,
-            int2 transportCell,
-            int2 passengerFootprint,
-            out int2 goal)
-        {
-            goal = default;
-            int2 footprint = UnitFootprintUtility.ClampSize(passengerFootprint);
-            int2 forward = ResolvePlaneRampOutDirection(rampCell, transportCell);
-            int2 lateral = new int2(-forward.y, forward.x);
-            int minDistance = math.max(
-                PlaneRampRolloutMinDistance,
-                math.max(footprint.x, footprint.y) + PlaneRampRolloutFootprintPadding);
-            int maxDistance = math.max(
-                minDistance + PlaneRampRolloutDistancePadding,
-                PlaneRampRolloutMinMaxDistance);
-            int maxLateral = math.max(1, math.max(footprint.x, footprint.y));
-
-            for (int distance = minDistance; distance <= maxDistance; distance++)
-            {
-                for (int lateralStep = 0; lateralStep <= maxLateral; lateralStep++)
-                {
-                    int candidateCount = lateralStep == 0 ? 1 : 2;
-                    for (int candidateIndex = 0; candidateIndex < candidateCount; candidateIndex++)
-                    {
-                        int lateralSign = candidateIndex == 0 ? 1 : -1;
-                        int2 candidate = rampCell + forward * distance + lateral * lateralStep * lateralSign;
-                        if (!CanPlaceDisembarkedFootprint(grid, walkable, blocked, occupied, reservedCells, candidate, footprint))
-                            continue;
-
-                        goal = candidate;
-                        return true;
-                    }
-                }
-            }
-
-            int maxRadius = math.max(
-                PlaneRampSearchMinRadius,
-                math.max(footprint.x, footprint.y) + PlaneRampRolloutFallbackFootprintPadding);
-            int bestScore = int.MaxValue;
-            bool found = false;
-            for (int radius = 1; radius <= maxRadius; radius++)
-            {
-                int minX = rampCell.x - radius;
-                int minY = rampCell.y - radius;
-                int maxX = rampCell.x + radius;
-                int maxY = rampCell.y + radius;
-
-                for (int y = minY; y <= maxY; y++)
-                {
-                    for (int x = minX; x <= maxX; x++)
-                    {
-                        bool onRing = x == minX || x == maxX || y == minY || y == maxY;
-                        if (!onRing)
-                            continue;
-
-                        int2 candidate = new int2(x, y);
-                        if (!CanPlaceDisembarkedFootprint(grid, walkable, blocked, occupied, reservedCells, candidate, footprint))
-                            continue;
-
-                        int2 delta = candidate - rampCell;
-                        int forwardScore = math.max(0, math.abs(delta.x) + math.abs(delta.y));
-                        int directionPenalty = math.dot(delta, forward) < 0 ? 1000 : 0;
-                        int score = directionPenalty + forwardScore;
-                        if (score >= bestScore)
-                            continue;
-
-                        bestScore = score;
-                        goal = candidate;
-                        found = true;
-                    }
-                }
-
-                if (found)
-                    return true;
-            }
-
-            return false;
-        }
-
-        private static int2 ResolvePlaneRampOutDirection(int2 rampCell, int2 transportCell)
-        {
-            int2 delta = rampCell - transportCell;
-            if (math.abs(delta.x) >= math.abs(delta.y) && delta.x != 0)
-                return new int2(delta.x > 0 ? 1 : -1, 0);
-            if (delta.y != 0)
-                return new int2(0, delta.y > 0 ? 1 : -1);
-            return new int2(0, -1);
-        }
-
-        private static bool CanPlaceDisembarkedFootprint(
-            in GridConfig grid,
-            in NativeArray<GridWalkable> walkable,
-            in NativeBitArray blocked,
-            in NativeBitArray occupied,
-            HashSet<int> reservedCells,
-            int2 cell,
-            int2 footprint)
-        {
-            int2 clamped = UnitFootprintUtility.ClampSize(footprint);
-            int2 min = UnitFootprintUtility.GetMinCell(cell, clamped);
-            int2 max = min + clamped;
-            if (min.x < 0 || min.y < 0 || max.x > grid.Width || max.y > grid.Height)
-                return false;
-
-            for (int y = min.y; y < max.y; y++)
-            {
-                int row = y * grid.Width;
-                for (int x = min.x; x < max.x; x++)
-                {
-                    int index = row + x;
-                    if ((uint)index >= (uint)walkable.Length || walkable[index].Value == 0)
-                        return false;
-                    if (blocked.IsCreated && blocked.IsSet(index))
-                        return false;
-                    if (occupied.IsCreated && occupied.IsSet(index))
-                        return false;
-                    if (reservedCells != null && reservedCells.Contains(index))
-                        return false;
-                }
-            }
-
-            return true;
         }
 
         private static string ResolveSourceName(EntityManager em, Entity entity)
@@ -3078,7 +2886,7 @@ namespace Game.Runtime
             out int2 rolloutCell)
         {
             bool foundDisembarkCell = usePlaneRampDisembark
-                ? TryFindPlaneRampDisembarkCell(
+                ? TransportBoardingApproachSystemHelper.TryFindPlaneRampDisembarkCell(
                     grid,
                     walkable,
                     blocked,
@@ -3106,7 +2914,7 @@ namespace Game.Runtime
             ReserveFootprintCells(grid, disembarkCell, passengerFootprint, reservedDisembarkCells);
             rolloutCell = disembarkCell;
             if (usePlaneRampDisembark &&
-                TryFindPlaneRampRolloutCell(
+                TransportBoardingApproachSystemHelper.TryFindPlaneRampRolloutCell(
                     grid,
                     walkable,
                     blocked,

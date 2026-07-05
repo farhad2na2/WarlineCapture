@@ -192,6 +192,14 @@ namespace Game.Components
         public float CargoFuelBarrels;
     }
 
+    public struct FuelLogisticsOilHaulerTag : IComponentData
+    {
+    }
+
+    public struct FuelLogisticsFuelHaulerTag : IComponentData
+    {
+    }
+
     public struct UnitResourceHaulOrder : IComponentData
     {
         public int SourceBuildingId;

@@ -37,7 +37,8 @@ public sealed class ResourceHaulerUtilitySystemHelperTests
             tests.StorageReservation_SourceReservationReducesAvailableResource();
             tests.StorageReservation_DestinationReservationReducesFreeCapacity();
             tests.StorageTransfer_MutationsIncrementVersion();
-            Debug.Log("[ResourceHaulerFocusedValidation] result=Passed tests=23");
+            tests.FuelLogisticsRoleTags_AreQueryableEcsTags();
+            Debug.Log("[ResourceHaulerFocusedValidation] result=Passed tests=24");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -663,6 +664,42 @@ public sealed class ResourceHaulerUtilitySystemHelperTests
         {
             world.Dispose();
         }
+    }
+
+    [Test]
+    public void FuelLogisticsRoleTags_AreQueryableEcsTags()
+    {
+        using World world = new(nameof(FuelLogisticsRoleTags_AreQueryableEcsTags));
+        EntityManager em = world.EntityManager;
+
+        Entity oilHauler = em.CreateEntity(typeof(UnitResourceHauler), typeof(FuelLogisticsOilHaulerTag));
+        Entity fuelHauler = em.CreateEntity(typeof(UnitResourceHauler), typeof(FuelLogisticsFuelHaulerTag));
+        Entity oilSource = em.CreateEntity(typeof(BuildingResourceStorageComponent), typeof(FuelLogisticsOilSourceTag));
+        Entity refinery = em.CreateEntity(
+            typeof(BuildingResourceStorageComponent),
+            typeof(FuelLogisticsRefineryInputTag),
+            typeof(FuelLogisticsRefineryOutputTag));
+        Entity fuelStorage = em.CreateEntity(typeof(BuildingResourceStorageComponent), typeof(FuelLogisticsFuelStorageTag));
+
+        using EntityQuery oilHaulerQuery = em.CreateEntityQuery(ComponentType.ReadOnly<FuelLogisticsOilHaulerTag>());
+        using EntityQuery fuelHaulerQuery = em.CreateEntityQuery(ComponentType.ReadOnly<FuelLogisticsFuelHaulerTag>());
+        using EntityQuery oilSourceQuery = em.CreateEntityQuery(ComponentType.ReadOnly<FuelLogisticsOilSourceTag>());
+        using EntityQuery refineryQuery = em.CreateEntityQuery(
+            ComponentType.ReadOnly<FuelLogisticsRefineryInputTag>(),
+            ComponentType.ReadOnly<FuelLogisticsRefineryOutputTag>());
+        using EntityQuery fuelStorageQuery = em.CreateEntityQuery(ComponentType.ReadOnly<FuelLogisticsFuelStorageTag>());
+
+        Assert.IsTrue(em.HasComponent<FuelLogisticsOilHaulerTag>(oilHauler));
+        Assert.IsTrue(em.HasComponent<FuelLogisticsFuelHaulerTag>(fuelHauler));
+        Assert.IsTrue(em.HasComponent<FuelLogisticsOilSourceTag>(oilSource));
+        Assert.IsTrue(em.HasComponent<FuelLogisticsRefineryInputTag>(refinery));
+        Assert.IsTrue(em.HasComponent<FuelLogisticsRefineryOutputTag>(refinery));
+        Assert.IsTrue(em.HasComponent<FuelLogisticsFuelStorageTag>(fuelStorage));
+        Assert.AreEqual(1, oilHaulerQuery.CalculateEntityCount());
+        Assert.AreEqual(1, fuelHaulerQuery.CalculateEntityCount());
+        Assert.AreEqual(1, oilSourceQuery.CalculateEntityCount());
+        Assert.AreEqual(1, refineryQuery.CalculateEntityCount());
+        Assert.AreEqual(1, fuelStorageQuery.CalculateEntityCount());
     }
 
     private sealed class TestHaulerBuilding : FactionResourceCompositionSystemHelper.IResourceBuilding

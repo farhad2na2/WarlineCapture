@@ -23,14 +23,14 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 41% (41/99 checklist items complete).
+Overall implementation progress: 42% (42/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
 | Phase | Status | Complete | Total | Progress | Notes |
 |---|---|---:|---:|---:|---|
 | 0. Inventory and baseline | In Progress | 5 | 8 | 63% | Audit current Oil/Fuel components, building runtime summaries, resource hauler code, seeded trucks, and HUD header data. |
-| 1. Data model | In Progress | 6 | 11 | 55% | Add or adapt ECS components/buffers, capacities, reservations, cargo, seeded logistics validation, and faction usable Fuel. |
+| 1. Data model | In Progress | 7 | 11 | 64% | Add or adapt ECS components/buffers, capacities, reservations, cargo, seeded logistics validation, and faction usable Fuel. |
 | 2. Oil extraction and refinery buffers | Pending | 0 | 8 | 0% | Ensure Oil Pump and Refinery buffers are ECS-owned and versioned. |
 | 3. Tray truck automation | In Progress | 5 | 13 | 38% | Auto-assign Oil pickup/delivery without manual target commands. |
 | 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
@@ -62,7 +62,7 @@ Exit criteria:
 - [x] Define or adapt a `ResourceKind` representation for Oil and Fuel that can be used by Burst-compatible systems.
 - [x] Define storage buffer data for buildings: current amount, capacity, reserved inbound, reserved outbound, and version.
 - [x] Define logistics cargo data for tray/tanker trucks: carried resource, amount, capacity, source, destination, task state, and reservation id.
-- [ ] Define logistics role tags: oil hauler, fuel hauler, source, refinery input, refinery output, fuel storage.
+- [x] Define logistics role tags: oil hauler, fuel hauler, source, refinery input, refinery output, fuel storage.
 - [ ] Define faction usable Fuel summary: current, capacity, produced, delivered, spent, version.
 - [ ] Define typed blocked/status reason codes for UI and command validation.
 - [x] Define scenario/map authoring requirement for seeded tray/tanker pairs at each fuel-enabled faction military base.
@@ -634,3 +634,16 @@ Use this section during implementation. Each completed batch should add:
   - Unity focused validation was not rerun because the prior focused Unity run is blocked by the recurring licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
 - Next action:
   - Continue Phase 1 role tags/status reason codes and faction usable Fuel summary fields after this slice validates and is pushed.
+- Slice: explicit fuel logistics ECS role tags.
+- Files changed: `Assets/Game/Scripts/Components/BuildingRuntimeEcsComponents.cs`, `Assets/Game/Scripts/Components/UnitCombatComponents.cs`, `Assets/Tests/Editor/ResourceHaulerUtilitySystemHelperTests.cs`, and this tracker.
+- Behavior intent:
+  - Added zero-sized ECS role tags for Oil haulers, Fuel haulers, Oil sources, refinery Oil input, refinery Fuel output, and usable Fuel storage.
+  - Kept this slice data-model-only; existing runtime inference from prefab keys/storage fields is unchanged until baker/runtime mapping is handled in a later slice.
+  - The tags give future unmanaged systems stable query surfaces instead of string/source-key checks in hot assignment and transfer paths.
+- Validation:
+  - Added `FuelLogisticsRoleTags_AreQueryableEcsTags` to verify the tags can be attached and queried through ECS.
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Unity focused validation was not rerun because the prior focused Unity run is blocked by the recurring licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
+- Next action:
+  - Continue Phase 1 faction usable Fuel summary produced/delivered/spent fields and typed status/reason codes after this slice validates and is pushed.

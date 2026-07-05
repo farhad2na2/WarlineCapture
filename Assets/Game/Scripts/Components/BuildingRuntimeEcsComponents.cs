@@ -10,6 +10,22 @@ namespace Game.Components
         Fuel = 1
     }
 
+    public struct FuelLogisticsOilSourceTag : IComponentData
+    {
+    }
+
+    public struct FuelLogisticsRefineryInputTag : IComponentData
+    {
+    }
+
+    public struct FuelLogisticsRefineryOutputTag : IComponentData
+    {
+    }
+
+    public struct FuelLogisticsFuelStorageTag : IComponentData
+    {
+    }
+
     public struct BuildingRuntimeStateTag : IComponentData
     {
     }

@@ -415,10 +415,11 @@ namespace Game.Editor
             int playerRelevantSamples = 0;
             List<AllocationSite> playerRelevantSites = new(rankedSites.Count);
             List<AllocationSite> editorToolingSites = new(rankedSites.Count);
+            AllocationClassificationContext classificationContext = CreateAllocationClassificationContext();
             for (int i = 0; i < rankedSites.Count; i++)
             {
                 AllocationSite site = rankedSites[i];
-                if (IsEditorToolingAllocation(site))
+                if (IsExcludedFromPlayerRelevantAllocation(site, classificationContext))
                 {
                     editorToolingBytes += site.Bytes;
                     editorToolingSamples += site.Samples;
@@ -519,7 +520,7 @@ namespace Game.Editor
             else
                 builder.AppendLine("- This automated pass covers steady-state Match HUD/runtime after the shell completes the Menu -> Match transition.");
             builder.AppendLine("- Spike-frame call stacks still require an interactive Profiler capture with Call Stacks -> GC.Alloc enabled unless a deterministic spike driver is added.");
-            builder.AppendLine("- Editor/tooling/diagnostic rows include Burst compiler threads, Unity AI/MCP/Tracing frames, and diagnostic logging from `PerformanceDiagnosticsSystemHelper.LogNoStackTrace`. Do not treat those raw rows as gameplay work unless they also appear in the player-relevant table.");
+            builder.AppendLine("- Editor/tooling/diagnostic rows include Burst compiler threads, Unity AI/MCP/Tracing frames, diagnostic logging from `PerformanceDiagnosticsSystemHelper.LogNoStackTrace`, and probe-contradicted Mono JIT attribution rows. Do not treat those raw rows as gameplay work unless they also appear in the player-relevant table.");
             builder.AppendLine("- Do not use this report to edit unrelated files unless they appear in the call stacks above.");
             return builder.ToString();
         }
@@ -556,6 +557,31 @@ namespace Game.Editor
                 builder.AppendLine("| 0 | 0 | 0 | 0 | n/a | n/a | No GC.Alloc samples found in this automated capture. | n/a |");
         }
 
+        private readonly struct AllocationClassificationContext
+        {
+            public readonly bool SelectionRuntimeProbeRecordedZeroBytes;
+
+            public AllocationClassificationContext(bool selectionRuntimeProbeRecordedZeroBytes)
+            {
+                SelectionRuntimeProbeRecordedZeroBytes = selectionRuntimeProbeRecordedZeroBytes;
+            }
+        }
+
+        private static AllocationClassificationContext CreateAllocationClassificationContext()
+        {
+            SelectionRuntimeDiagnosticsSystemHelper.EditorSelectionAllocationProbeSnapshot selectionProbe =
+                SelectionRuntimeDiagnosticsSystemHelper.GetEditorSelectionAllocationProbe();
+            return new AllocationClassificationContext(selectionProbe.TotalBytes == 0);
+        }
+
+        private static bool IsExcludedFromPlayerRelevantAllocation(
+            AllocationSite site,
+            AllocationClassificationContext context)
+        {
+            return IsEditorToolingAllocation(site) ||
+                   IsProbeContradictedMonoJitAttribution(site, context);
+        }
+
         private static bool IsEditorToolingAllocation(AllocationSite site)
         {
             if (site == null)
@@ -568,6 +594,29 @@ namespace Game.Editor
             return ContainsEditorToolingFrame(site.Callstack) ||
                    ContainsEditorToolingFrame(site.HierarchyPath) ||
                    ContainsDiagnosticLoggingFrame(site.Callstack);
+        }
+
+        private static bool IsProbeContradictedMonoJitAttribution(
+            AllocationSite site,
+            AllocationClassificationContext context)
+        {
+            return site != null &&
+                   context.SelectionRuntimeProbeRecordedZeroBytes &&
+                   ContainsMonoJitFrame(site.Callstack) &&
+                   ContainsSelectionRuntimePhaseFrame(site.Callstack);
+        }
+
+        private static bool ContainsMonoJitFrame(string value)
+        {
+            return !string.IsNullOrEmpty(value) &&
+                   value.Contains("(Mono JIT Code)", StringComparison.Ordinal);
+        }
+
+        private static bool ContainsSelectionRuntimePhaseFrame(string value)
+        {
+            return !string.IsNullOrEmpty(value) &&
+                   value.Contains("SelectionGameplayStartupSystemHelper/<>c__DisplayClass", StringComparison.Ordinal) &&
+                   value.Contains("<Initialize>g__UpdateSelectionRuntimePhases", StringComparison.Ordinal);
         }
 
         private static bool ContainsEditorToolingFrame(string value)

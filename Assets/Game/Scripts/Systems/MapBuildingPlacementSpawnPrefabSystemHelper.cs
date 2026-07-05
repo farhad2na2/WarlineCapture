@@ -59,6 +59,19 @@ namespace Game.Runtime
 
         public bool IsComplete => _queued && _authoringHidden;
 
+        public bool IsCompleteFor(MapBuildingPlacementConfig config, Transform authoringRoot)
+        {
+            if (config == null || !config.SpawnOnMatchStart)
+                return true;
+
+            bool authoringHidden =
+                !config.HideAuthoringVisualsAfterSpawn ||
+                authoringRoot == null ||
+                _authoringHidden ||
+                !authoringRoot.gameObject.activeInHierarchy;
+            return _queued && authoringHidden;
+        }
+
         public void Update(Context context)
         {
             if (context.Config == null || !context.Config.SpawnOnMatchStart || IsComplete)
@@ -695,10 +708,18 @@ namespace Game.Runtime
 
         private void HideAuthoringVisuals(Context context)
         {
-            if (_authoringHidden || !context.Config.HideAuthoringVisualsAfterSpawn || context.AuthoringBuildingsRoot == null)
+            if (_authoringHidden)
                 return;
 
-            context.AuthoringBuildingsRoot.gameObject.SetActive(false);
+            if (!context.Config.HideAuthoringVisualsAfterSpawn || context.AuthoringBuildingsRoot == null)
+            {
+                _authoringHidden = true;
+                return;
+            }
+
+            if (context.AuthoringBuildingsRoot.gameObject.activeSelf)
+                context.AuthoringBuildingsRoot.gameObject.SetActive(false);
+
             _authoringHidden = true;
         }
 

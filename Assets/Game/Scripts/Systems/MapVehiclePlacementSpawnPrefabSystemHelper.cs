@@ -75,10 +75,25 @@ namespace Game.Runtime
         private bool _warnedMissingConfig;
         private bool _warnedMissingPrefab;
         private int _lastClearedBlockerCells;
+        private bool _isQueued;
+        private bool _authoringHidden;
         private bool _isComplete;
 
         internal int LastClearedBlockerCells => _lastClearedBlockerCells;
         public bool IsComplete => _isComplete;
+
+        public bool IsCompleteFor(MapVehiclePlacementConfig config, Transform authoringRoot)
+        {
+            if (config == null || !config.SpawnOnMatchStart)
+                return true;
+
+            bool authoringHidden =
+                !config.HideAuthoringVisualsAfterSpawn ||
+                authoringRoot == null ||
+                _authoringHidden ||
+                !authoringRoot.gameObject.activeInHierarchy;
+            return _isQueued && authoringHidden;
+        }
 
         public void Update(Context context)
         {
@@ -479,15 +494,18 @@ namespace Game.Runtime
 
         private void HideAuthoringVisuals(Context context, ref MapVehiclePlacementProgressState progress)
         {
-            if (progress.AuthoringHidden != 0 ||
-                context.Config == null ||
-                !context.Config.HideAuthoringVisualsAfterSpawn ||
-                context.AuthoringVehiclesRoot == null)
+            if (progress.AuthoringHidden != 0 || context.Config == null)
             {
                 return;
             }
 
-            context.AuthoringVehiclesRoot.gameObject.SetActive(false);
+            if (context.Config.HideAuthoringVisualsAfterSpawn &&
+                context.AuthoringVehiclesRoot != null &&
+                context.AuthoringVehiclesRoot.gameObject.activeSelf)
+            {
+                context.AuthoringVehiclesRoot.gameObject.SetActive(false);
+            }
+
             progress.AuthoringHidden = 1;
         }
 
@@ -541,7 +559,9 @@ namespace Game.Runtime
         private void SyncProgressSnapshot(MapVehiclePlacementProgressState progress)
         {
             _lastClearedBlockerCells = progress.LastClearedBlockerCells;
-            _isComplete = progress.Queued != 0 && progress.AuthoringHidden != 0;
+            _isQueued = progress.Queued != 0;
+            _authoringHidden = progress.AuthoringHidden != 0;
+            _isComplete = _isQueued && _authoringHidden;
         }
 
         private static void WarnOnce(ref bool flag, Context context, string message)

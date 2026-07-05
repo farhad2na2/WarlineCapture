@@ -205,6 +205,7 @@ namespace Game.Runtime
                 if (gameplayStartPending && IsGameplayStartComplete(
                         gameplayInitialized,
                         runtimeGameplayStateSystem,
+                        buildingRuntimeUpdateContext,
                         runtimeCity,
                         runtimeGridBlockers,
                         runtimeDecorations))
@@ -339,11 +340,14 @@ namespace Game.Runtime
         private bool IsGameplayStartComplete(
             bool gameplayInitialized,
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
+            BuildingRuntimeUpdateCompositionSystemHelper.Context buildingRuntimeUpdateContext,
             RuntimeCityCompositionSystemHelper runtimeCity,
             RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers,
             RuntimeDecorationSpawnerPresentationSystemHelper runtimeDecorations)
         {
             if (!gameplayInitialized || !runtimeGameplayStateSystem.PlayRequested)
+                return false;
+            if (!buildingRuntimeUpdateContext.StartupComplete)
                 return false;
             if (runtimeCity != null && !runtimeCity.HasSpawned)
                 return false;

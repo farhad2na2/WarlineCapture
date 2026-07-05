@@ -682,6 +682,15 @@ namespace Game.Runtime
                 if (EnsureRuntimeTickContext())
                     childSystems.BuildingPlacementRuntimeTickCompositionSystemHelper.UpdateSimulation(runtimeTickContext);
             }
+            bool IsBuildingStartupComplete()
+            {
+                return childSystems.MapBuildingPlacementSpawnPrefabSystemHelper.IsCompleteFor(
+                        mapBuildingPlacementConfig,
+                        mapBuildingAuthoringRoot) &&
+                    childSystems.MapVehiclePlacementSpawnPrefabSystemHelper.IsCompleteFor(
+                        mapVehiclePlacementConfig,
+                        mapVehicleAuthoringRoot);
+            }
             return _resultSystem.Create(
                 childSystems.BuildingSelectionClickUtilitySystemHelper,
                 childSystems.BuildingSelectionClickCompositionHelper.Create(
@@ -693,7 +702,8 @@ namespace Game.Runtime
                 new BuildingRuntimeUpdateCompositionSystemHelper.Context(
                     UpdateBuildingStartupTick,
                     UpdateBuildingSimulationTick,
-                    childSystems.RuntimeBuildingEntityLinkRegistry),
+                    childSystems.RuntimeBuildingEntityLinkRegistry,
+                    IsBuildingStartupComplete),
                 childSystems.BuildingRuntimeCitySpawnBridgeCompositionSystemHelper,
                 childSystems.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateCitySpawnContext(
                     buildingRuntimeContextSource,

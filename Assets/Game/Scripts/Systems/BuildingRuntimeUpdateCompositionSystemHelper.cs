@@ -9,15 +9,20 @@ namespace Game.Runtime
             public readonly Action UpdateBuildingStartupTick;
             public readonly Action UpdateBuildingSimulationTick;
             public readonly RuntimeBuildingEntityLinkRegistry RuntimeBuildingEntityLinks;
+            public readonly Func<bool> IsStartupComplete;
+
+            public bool StartupComplete => IsStartupComplete == null || IsStartupComplete();
 
             public Context(
                 Action updateBuildingStartupTick,
                 Action updateBuildingSimulationTick,
-                RuntimeBuildingEntityLinkRegistry runtimeBuildingEntityLinks)
+                RuntimeBuildingEntityLinkRegistry runtimeBuildingEntityLinks,
+                Func<bool> isStartupComplete = null)
             {
                 UpdateBuildingStartupTick = updateBuildingStartupTick;
                 UpdateBuildingSimulationTick = updateBuildingSimulationTick;
                 RuntimeBuildingEntityLinks = runtimeBuildingEntityLinks;
+                IsStartupComplete = isStartupComplete;
             }
         }
 

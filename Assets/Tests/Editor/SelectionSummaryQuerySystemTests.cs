@@ -37,7 +37,8 @@ public sealed class SelectionSummaryQuerySystemTests
             RunCase(test => test.SelectedBuildingSelectionPanelShowsOilFuelStorageChips());
             RunCase(test => test.SelectedBuildingSelectionPanelReplacesStaleOilFuelStorageValues());
             RunCase(test => test.SelectedBuildingResourceStoragePanelSkipsApplyUntilVersionChanges());
-            Debug.Log("[SelectionSummaryFocusedValidation] result=Passed tests=15");
+            RunCase(test => test.SelectedBuildingRefineryStoragePanelReportsConversionStatus());
+            Debug.Log("[SelectionSummaryFocusedValidation] result=Passed tests=16");
         }
         catch (System.Exception ex)
         {
@@ -680,6 +681,81 @@ public sealed class SelectionSummaryQuerySystemTests
                 null,
                 () => true,
                 () => "Oil Pump",
+                null,
+                TryGetStorageSnapshot,
+                null,
+                null);
+        }
+    }
+
+    [Test]
+    public void SelectedBuildingRefineryStoragePanelReportsConversionStatus()
+    {
+        EntityManager em = _world.EntityManager;
+        var selectionState = new SelectionStateCompositionSystemHelper();
+        var lifecycle = new FocusedUnitLifecycleCompositionSystemHelper();
+        var panel = new RecordingSelectionPanelView(null);
+        var feedback = new SelectionHudFeedbackUiSystemHelper();
+        feedback.BindMatchHudSelectionPanel(panel);
+
+        var context = new SelectionHudFeedbackUiSystemHelper.Context(new SelectionUiReadModelLookup(), TryGetEntityManager);
+        uint storageVersion = 1u;
+        int oilCurrent = 0;
+        int fuelCurrent = 4;
+        const int oilCapacity = 80;
+        const int fuelCapacity = 100;
+        const float fuelBarrelsPerDay = 20f;
+
+        ApplyBuildingSelection();
+        Assert.AreEqual("WAITING OIL", panel.AppliedTransportPassengers.StatusText);
+
+        oilCurrent = 8;
+        fuelCurrent = fuelCapacity;
+        storageVersion++;
+        ApplyBuildingSelection();
+        Assert.AreEqual("FUEL FULL", panel.AppliedTransportPassengers.StatusText);
+
+        fuelCurrent = 40;
+        storageVersion++;
+        ApplyBuildingSelection();
+        Assert.AreEqual("CONVERTING", panel.AppliedTransportPassengers.StatusText);
+        Assert.AreEqual(3, panel.ApplyTransportPassengersCount);
+
+        bool TryGetEntityManager(out EntityManager entityManager)
+        {
+            entityManager = em;
+            return true;
+        }
+
+        bool TryGetStorageSnapshot(out SelectedBuildingResourceStorageSnapshot snapshot)
+        {
+            snapshot = new SelectedBuildingResourceStorageSnapshot(
+                92,
+                oilCurrent,
+                oilCapacity,
+                fuelCurrent,
+                fuelCapacity,
+                storageVersion,
+                oilBarrelsPerDay: 0f,
+                fuelBarrelsPerDay: fuelBarrelsPerDay);
+            return true;
+        }
+
+        void ApplyBuildingSelection()
+        {
+            feedback.UpdateMatchHudSelectionPanel(
+                context,
+                selectionState,
+                lifecycle,
+                null,
+                new List<MatchHudSelectionPanelPassengerItemModel>(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                () => true,
+                () => "Oil Refinery",
                 null,
                 TryGetStorageSnapshot,
                 null,

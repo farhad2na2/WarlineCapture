@@ -119,6 +119,7 @@ namespace Game.UI.Contracts
         public readonly int VehicleCapacity;
         public readonly bool ExitAllEnabled;
         public readonly IReadOnlyList<MatchHudSelectionPanelPassengerItemModel> Passengers;
+        public readonly string StatusText;
 
         public MatchHudTransportPassengersModel(
             bool visible,
@@ -136,7 +137,8 @@ namespace Game.UI.Contracts
             int oilCurrent = 0,
             int oilCapacity = 0,
             int fuelCurrent = 0,
-            int fuelCapacity = 0)
+            int fuelCapacity = 0,
+            string statusText = null)
         {
             Visible = visible;
             DrawerOpen = drawerOpen;
@@ -154,6 +156,7 @@ namespace Game.UI.Contracts
             VehicleCapacity = vehicleCapacity;
             ExitAllEnabled = exitAllEnabled;
             Passengers = passengers;
+            StatusText = statusText;
         }
 
         public static MatchHudTransportPassengersModel Hidden => new(false, false, UiEntityHandle.Null, 0, 0, false, null);

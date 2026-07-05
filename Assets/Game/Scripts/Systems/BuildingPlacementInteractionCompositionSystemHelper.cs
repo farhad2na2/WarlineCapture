@@ -13,6 +13,8 @@ namespace Game.Runtime
         public readonly int FuelCurrent;
         public readonly int FuelCapacity;
         public readonly uint Version;
+        public readonly float OilBarrelsPerDay;
+        public readonly float FuelBarrelsPerDay;
 
         public SelectedBuildingResourceStorageSnapshot(
             int runtimeBuildingId,
@@ -20,7 +22,9 @@ namespace Game.Runtime
             int oilCapacity,
             int fuelCurrent,
             int fuelCapacity,
-            uint version)
+            uint version,
+            float oilBarrelsPerDay = 0f,
+            float fuelBarrelsPerDay = 0f)
         {
             RuntimeBuildingId = runtimeBuildingId;
             OilCurrent = oilCurrent;
@@ -28,6 +32,8 @@ namespace Game.Runtime
             FuelCurrent = fuelCurrent;
             FuelCapacity = fuelCapacity;
             Version = version;
+            OilBarrelsPerDay = oilBarrelsPerDay;
+            FuelBarrelsPerDay = fuelBarrelsPerDay;
         }
     }
 

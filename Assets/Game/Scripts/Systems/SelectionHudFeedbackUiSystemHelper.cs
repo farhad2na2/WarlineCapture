@@ -1069,6 +1069,7 @@ namespace Game.Runtime
                     0u);
             }
 
+            string statusText = ResolveSelectedBuildingResourceStorageStatusText(snapshot);
             bool hasOil = snapshot.OilCapacity > 0 || snapshot.OilCurrent > 0;
             bool hasFuel = snapshot.FuelCapacity > 0 || snapshot.FuelCurrent > 0;
             if (!hasOil && !hasFuel)
@@ -1096,7 +1097,7 @@ namespace Game.Runtime
                 snapshot.OilCapacity,
                 snapshot.FuelCurrent,
                 snapshot.FuelCapacity,
-                unchecked((int)snapshot.Version));
+                unchecked(((int)snapshot.Version * 397) ^ StableStringHash(statusText)));
 
             return new MatchHudTransportPassengersModel(
                 true,
@@ -1110,7 +1111,20 @@ namespace Game.Runtime
                 oilCurrent: snapshot.OilCurrent,
                 oilCapacity: snapshot.OilCapacity,
                 fuelCurrent: snapshot.FuelCurrent,
-                fuelCapacity: snapshot.FuelCapacity);
+                fuelCapacity: snapshot.FuelCapacity,
+                statusText: statusText);
+        }
+
+        private static string ResolveSelectedBuildingResourceStorageStatusText(
+            SelectedBuildingResourceStorageSnapshot snapshot)
+        {
+            if (snapshot.FuelBarrelsPerDay <= 0f)
+                return null;
+            if (snapshot.OilCurrent <= 0)
+                return "WAITING OIL";
+            if (snapshot.FuelCapacity > 0 && snapshot.FuelCurrent >= snapshot.FuelCapacity)
+                return "FUEL FULL";
+            return "CONVERTING";
         }
 
         private string ResolvePassengerRoleText(Context context, EntityManager em, Entity passenger)

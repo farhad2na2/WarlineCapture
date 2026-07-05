@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 69% (69/99 checklist items complete).
+Overall implementation progress: 70% (70/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -33,7 +33,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 1. Data model | Complete | 11 | 11 | 100% | Add or adapt ECS components/buffers, capacities, reservations, cargo, seeded logistics validation, and faction usable Fuel. |
 | 2. Oil extraction and refinery buffers | Complete | 8 | 8 | 100% | Oil Pump and Refinery storage mutation is ECS-owned and versioned. |
 | 3. Tray truck automation | In Progress | 12 | 13 | 92% | Auto-assign Oil pickup/delivery without manual target commands. |
-| 4. Refinery conversion | In Progress | 8 | 9 | 89% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
+| 4. Refinery conversion | Complete | 9 | 9 | 100% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
 | 5. Tanker automation and usable Fuel | In Progress | 4 | 12 | 33% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
 | 6. Vehicle fuel spending | In Progress | 8 | 11 | 73% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
 | 7. UI read models and feedback | Complete | 10 | 10 | 100% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
@@ -126,7 +126,7 @@ Validation:
 
 - [x] Deterministic conversion test covers Oil input, Fuel output, efficiency, and capacity.
 - [x] Full output buffer does not consume Oil.
-- [ ] Selected-building panel shows conversion and blocked reason accurately.
+- [x] Selected-building panel shows conversion and blocked reason accurately.
 
 ## Phase 5: Tanker Automation And Usable Fuel
 
@@ -869,3 +869,17 @@ Use this section during implementation. Each completed batch should add:
   - Unity focused validation remains blocked by the recurring licensing client mismatch/reconnect loop unless the editor/license state is reset. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
 - Next action:
   - Continue Phase 4 by deciding how selected-building blocked reasons should expose refinery empty-input/full-output states, then close or implement that final row.
+- Slice: selected refinery conversion status feedback.
+- Files changed: `Assets/Game/Scripts/UI/Contracts/MatchHudSelectionPanelModels.cs`, `Assets/Game/Scripts/Systems/BuildingPlacementInteractionCompositionSystemHelper.cs`, `Assets/Game/Scripts/Systems/BuildingPlacementQueryUiSystemHelper.cs`, `Assets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs`, `Assets/Game/Scripts/UI/Components/MatchHudSelectionPanelView.cs`, `Assets/Tests/Editor/SelectionSummaryQuerySystemTests.cs`, and this tracker.
+- Behavior intent:
+  - Extended selected-building resource snapshots with production/conversion rates from live ECS storage.
+  - Added an optional status text to the existing selected-building resource chip instead of creating a new panel surface.
+  - Refineries now display compact conversion state on the selected-building resource chip: `CONVERTING`, `WAITING OIL`, or `FUEL FULL`.
+  - Included the status text in the selection panel cache key so unchanged refinery status does not reapply the UI.
+- Validation:
+  - Added `SelectedBuildingRefineryStoragePanelReportsConversionStatus`.
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Unity focused validation remains blocked by the recurring licensing client mismatch/reconnect loop unless the editor/license state is reset. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
+- Next action:
+  - Continue Phase 5 tanker automation and usable Fuel rows, starting with typed tanker stall reasons and seeded tanker hauling validation gaps.

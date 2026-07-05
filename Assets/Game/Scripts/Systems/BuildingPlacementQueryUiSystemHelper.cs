@@ -234,6 +234,8 @@ namespace Game.Runtime
             int oilCurrent;
             int fuelCurrent;
             uint version = 0u;
+            float oilBarrelsPerDay = Mathf.Max(0f, building.OilBarrelsPerDay);
+            float fuelBarrelsPerDay = Mathf.Max(0f, building.FuelBarrelsPerDay);
             if (TryGetSelectedBuildingResourceStorage(context, building, out BuildingResourceStorageComponent storage))
             {
                 oilCapacity = Mathf.Max(0, storage.OilStorageCapacity);
@@ -241,6 +243,8 @@ namespace Game.Runtime
                 oilCurrent = Mathf.RoundToInt(Mathf.Max(0f, storage.StoredOilBarrels));
                 fuelCurrent = Mathf.RoundToInt(Mathf.Max(0f, storage.StoredFuelBarrels));
                 version = storage.Version;
+                oilBarrelsPerDay = Mathf.Max(0f, storage.OilBarrelsPerDay);
+                fuelBarrelsPerDay = Mathf.Max(0f, storage.FuelBarrelsPerDay);
             }
             else
             {
@@ -263,7 +267,9 @@ namespace Game.Runtime
                 oilCapacity,
                 fuelCurrent,
                 fuelCapacity,
-                version);
+                version,
+                oilBarrelsPerDay,
+                fuelBarrelsPerDay);
             return true;
         }
 

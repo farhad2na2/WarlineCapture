@@ -281,7 +281,8 @@ namespace Game.UI.Runtime
                 model.OilCurrent,
                 model.OilCapacity,
                 model.FuelCurrent,
-                model.FuelCapacity));
+                model.FuelCapacity,
+                model.StatusText));
         }
 
         public void SetBoardActionSelected(bool selected)
@@ -501,16 +502,29 @@ namespace Game.UI.Runtime
             return model.StorageKind switch
             {
                 MatchHudStorageChipKind.OilBarrels =>
-                    $"OIL BARRELS {Mathf.Max(0, model.OilCurrent)}/{Mathf.Max(0, model.OilCapacity)}",
+                    AppendStatus(
+                        $"OIL BARRELS {Mathf.Max(0, model.OilCurrent)}/{Mathf.Max(0, model.OilCapacity)}",
+                        model.StatusText),
                 MatchHudStorageChipKind.FuelBarrels =>
-                    $"FUEL {Mathf.Max(0, model.FuelCurrent)}/{Mathf.Max(0, model.FuelCapacity)}",
+                    AppendStatus(
+                        $"FUEL {Mathf.Max(0, model.FuelCurrent)}/{Mathf.Max(0, model.FuelCapacity)}",
+                        model.StatusText),
                 MatchHudStorageChipKind.OilAndFuel =>
-                    $"OIL {Mathf.Max(0, model.OilCurrent)}/{Mathf.Max(0, model.OilCapacity)} | FUEL {Mathf.Max(0, model.FuelCurrent)}/{Mathf.Max(0, model.FuelCapacity)}",
+                    AppendStatus(
+                        $"OIL {Mathf.Max(0, model.OilCurrent)}/{Mathf.Max(0, model.OilCapacity)} | FUEL {Mathf.Max(0, model.FuelCurrent)}/{Mathf.Max(0, model.FuelCapacity)}",
+                        model.StatusText),
                 MatchHudStorageChipKind.ResourceCargo =>
                     ResolveResourceCargoChipLabel(model),
                 _ =>
                     $"PASSENGERS {Mathf.Max(0, model.PassengerCount)}/{Mathf.Max(0, model.Capacity)}"
             };
+        }
+
+        private static string AppendStatus(string label, string statusText)
+        {
+            return string.IsNullOrEmpty(statusText)
+                ? label
+                : $"{label} | {statusText}";
         }
 
         private static string ResolveResourceCargoChipLabel(MatchHudTransportPassengersModel model)

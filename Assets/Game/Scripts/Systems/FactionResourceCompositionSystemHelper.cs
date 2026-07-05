@@ -59,6 +59,32 @@ namespace Game.Runtime
             }
         }
 
+        public readonly struct UsableStorageSnapshot
+        {
+            public readonly float StoredOilBarrels;
+            public readonly float StoredFuelBarrels;
+            public readonly int OilStorageCapacity;
+            public readonly int FuelStorageCapacity;
+            public readonly uint Version;
+            public readonly int StorageBuildingCount;
+
+            public UsableStorageSnapshot(
+                float storedOilBarrels,
+                float storedFuelBarrels,
+                int oilStorageCapacity,
+                int fuelStorageCapacity,
+                uint version,
+                int storageBuildingCount)
+            {
+                StoredOilBarrels = storedOilBarrels;
+                StoredFuelBarrels = storedFuelBarrels;
+                OilStorageCapacity = oilStorageCapacity;
+                FuelStorageCapacity = fuelStorageCapacity;
+                Version = version;
+                StorageBuildingCount = storageBuildingCount;
+            }
+        }
+
         public readonly struct ResourceProductionTickResult
         {
             public readonly float OilExtractedBarrels;
@@ -236,6 +262,59 @@ namespace Game.Runtime
 
             snapshot = new ResourceEconomySnapshot(oil, fuel, oilRate, fuelRate, resourceBuildingCount);
             return resourceBuildingCount > 0;
+        }
+
+        internal bool TryGetFactionUsableStorageSummary(
+            EntityManager entityManager,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> buildings,
+            byte factionId,
+            out UsableStorageSnapshot snapshot)
+        {
+            float oil = 0f;
+            float fuel = 0f;
+            int oilCapacity = 0;
+            int fuelCapacity = 0;
+            uint version = 0;
+            int storageBuildingCount = 0;
+
+            if (buildings != null)
+            {
+                if (buildings is Dictionary<int, RuntimeBuildingEntity> buildingMap)
+                {
+                    foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in buildingMap)
+                    {
+                        AddFactionUsableStorageSummary(
+                            entityManager,
+                            entry.Value,
+                            factionId,
+                            ref oil,
+                            ref fuel,
+                            ref oilCapacity,
+                            ref fuelCapacity,
+                            ref version,
+                            ref storageBuildingCount);
+                    }
+                }
+                else
+                {
+                    foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in buildings)
+                    {
+                        AddFactionUsableStorageSummary(
+                            entityManager,
+                            entry.Value,
+                            factionId,
+                            ref oil,
+                            ref fuel,
+                            ref oilCapacity,
+                            ref fuelCapacity,
+                            ref version,
+                            ref storageBuildingCount);
+                    }
+                }
+            }
+
+            snapshot = new UsableStorageSnapshot(oil, fuel, oilCapacity, fuelCapacity, version, storageBuildingCount);
+            return storageBuildingCount > 0;
         }
 
         public float DrainFactionResource<TBuilding>(
@@ -474,6 +553,38 @@ namespace Game.Runtime
             fuelRate += Mathf.Max(0f, building.FuelBarrelsPerDay);
         }
 
+        private void AddFactionUsableStorageSummary(
+            EntityManager entityManager,
+            RuntimeBuildingEntity building,
+            byte factionId,
+            ref float oil,
+            ref float fuel,
+            ref int oilCapacity,
+            ref int fuelCapacity,
+            ref uint version,
+            ref int storageBuildingCount)
+        {
+            if (!IsFactionUsableStorageBuilding(building, factionId))
+                return;
+
+            storageBuildingCount++;
+            if (TryGetEntityResourceStorage(entityManager, building, out BuildingResourceStorageComponent storage))
+            {
+                oil += Mathf.Max(0f, storage.StoredOilBarrels);
+                fuel += Mathf.Max(0f, storage.StoredFuelBarrels);
+                oilCapacity += Mathf.Max(0, storage.OilStorageCapacity);
+                fuelCapacity += Mathf.Max(0, storage.FuelStorageCapacity);
+                version = CombineVersion(version, storage.Version);
+                return;
+            }
+
+            oil += Mathf.Max(0f, building.StoredOilBarrels);
+            fuel += Mathf.Max(0f, building.StoredFuelBarrels);
+            oilCapacity += Mathf.Max(0, building.OilStorageCapacity);
+            fuelCapacity += Mathf.Max(0, building.FuelStorageCapacity);
+            version = CombineVersion(version, (uint)Mathf.Max(0, building.Id));
+        }
+
         private void DrainFactionResource<TBuilding>(
             TBuilding building,
             byte factionId,
@@ -667,6 +778,22 @@ namespace Game.Runtime
                    building.FuelStorageCapacity > 0 ||
                    building.OilBarrelsPerDay > 0f ||
                    building.FuelBarrelsPerDay > 0f;
+        }
+
+        private bool IsFactionUsableStorageBuilding(IResourceBuilding building, byte factionId)
+        {
+            if (building == null || !IsFactionResourceBuilding(building, factionId))
+                return false;
+
+            return IsResourceStorageBuilding(building);
+        }
+
+        private static uint CombineVersion(uint current, uint value)
+        {
+            unchecked
+            {
+                return (current * 16777619u) ^ value;
+            }
         }
     }
 }

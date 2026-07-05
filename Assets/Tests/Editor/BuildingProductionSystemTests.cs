@@ -2529,6 +2529,108 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     }
 
     [Test]
+    public void BuildingRuntimeState_PublishesUsableFuelSummaryFromDeliveredStorageOnly()
+    {
+        using World world = new("BuildingRuntimeState_PublishesUsableFuelSummaryFromDeliveredStorageOnly");
+        EntityManager em = world.EntityManager;
+        var requestSystem = new BuildingProductionRequestSystemHelper();
+        var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
+        var boundarySystem = new BuildingRuntimeProcessingCompositionSystemHelper();
+        var runtimeQuerySystem = new BuildingRuntimeReadModelCompositionSystemHelper();
+        GameObject unitPrefab = new("Runtime Usable Fuel Summary Unit");
+        try
+        {
+            Entity refineryEntity = em.CreateEntity(typeof(BuildingResourceStorageComponent));
+            em.SetComponentData(refineryEntity, new BuildingResourceStorageComponent
+            {
+                RuntimeBuildingId = 104,
+                OwnerFactionId = FactionIdentity.PlayerFactionId,
+                FuelStorageCapacity = 100,
+                FuelBarrelsPerDay = 20f,
+                StoredFuelBarrels = 33f,
+                Version = 3u
+            });
+            RuntimeBuildingEntity refinery = CreateProducerBuilding(
+                id: 104,
+                displayName: "Runtime Refinery",
+                unitPrefab,
+                hasOwnerFaction: true,
+                ownerFactionId: FactionIdentity.PlayerFactionId);
+            refinery.CombatEntity = refineryEntity;
+            refinery.Definition.FuelStorageCapacity = 100;
+            refinery.Definition.FuelBarrelsPerDay = 20f;
+
+            Entity storageEntity = em.CreateEntity(typeof(BuildingResourceStorageComponent));
+            em.SetComponentData(storageEntity, new BuildingResourceStorageComponent
+            {
+                RuntimeBuildingId = 105,
+                OwnerFactionId = FactionIdentity.PlayerFactionId,
+                OilStorageCapacity = 50,
+                FuelStorageCapacity = 200,
+                StoredOilBarrels = 4f,
+                StoredFuelBarrels = 8f,
+                Version = 9u
+            });
+            RuntimeBuildingEntity storage = CreateProducerBuilding(
+                id: 105,
+                displayName: "Runtime Fuel Storage",
+                unitPrefab,
+                hasOwnerFaction: true,
+                ownerFactionId: FactionIdentity.PlayerFactionId);
+            storage.CombatEntity = storageEntity;
+            storage.Definition.OilStorageCapacity = 50;
+            storage.Definition.FuelStorageCapacity = 200;
+
+            Dictionary<int, RuntimeBuildingEntity> runtimeBuildings = new()
+            {
+                [refinery.Id] = refinery,
+                [storage.Id] = storage
+            };
+            Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeStateTag));
+            using EntityQuery boundaryQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<BuildingRuntimeStateTag>());
+            BuildingProductionRequestSystemHelper.Context productionContext = CreateProducerSelectionContext(
+                runtimeBuildings,
+                productionSystem,
+                unitPrefab,
+                em);
+            BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext = CreateRuntimeQueryContext(
+                runtimeBuildings,
+                em,
+                productionSystem,
+                boundaryEntity);
+
+            boundarySystem.Update(
+                new BuildingDefinitionPrefabSystemHelper(),
+                new BuildingRuntimeSpawnCompositionSystemHelper(),
+                default,
+                requestSystem,
+                productionContext,
+                runtimeQuerySystem,
+                runtimeQueryContext,
+                new FactionResourceCompositionSystemHelper(),
+                em,
+                boundaryQuery,
+                runtimeBuildings,
+                now: 30f,
+                frameCount: 0);
+
+            AssertUsableFuelSummary(
+                em,
+                boundaryEntity,
+                FactionIdentity.PlayerFactionId,
+                expectedOilBarrels: 4f,
+                expectedFuelBarrels: 8f,
+                expectedOilCapacity: 50,
+                expectedFuelCapacity: 200);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
     public void TryQueuePlayerUnitFromBuilding_UsesProducedUnitReadModelSlotOccupancy()
     {
         using World world = new("TryQueuePlayerUnitFromBuilding_UsesProducedUnitReadModelSlotOccupancy");
@@ -3295,6 +3397,34 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         }
 
         Assert.Fail($"Missing faction summary for faction={factionId}.");
+    }
+
+    private static void AssertUsableFuelSummary(
+        EntityManager em,
+        Entity boundaryEntity,
+        byte factionId,
+        float expectedOilBarrels,
+        float expectedFuelBarrels,
+        int expectedOilCapacity,
+        int expectedFuelCapacity)
+    {
+        DynamicBuffer<BuildingRuntimeFactionUsableFuelSummary> summaries =
+            em.GetBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundaryEntity, true);
+        for (int i = 0; i < summaries.Length; i++)
+        {
+            BuildingRuntimeFactionUsableFuelSummary summary = summaries[i];
+            if (summary.FactionId != factionId)
+                continue;
+
+            Assert.AreEqual(expectedOilBarrels, summary.StoredOilBarrels);
+            Assert.AreEqual(expectedFuelBarrels, summary.StoredFuelBarrels);
+            Assert.AreEqual(expectedOilCapacity, summary.OilStorageCapacity);
+            Assert.AreEqual(expectedFuelCapacity, summary.FuelStorageCapacity);
+            Assert.AreNotEqual(0u, summary.Version);
+            return;
+        }
+
+        Assert.Fail($"Missing usable fuel summary for faction={factionId}.");
     }
 
     private static FieldInfo FindPrivateField(System.Type type, string fieldName)

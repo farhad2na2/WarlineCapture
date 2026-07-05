@@ -44,6 +44,7 @@ namespace Game.Composition
             EnsureBuffer<BuildingProducedUnitReadModel>(em, entity);
             EnsureBuffer<MapVehiclePlacementReadModel>(em, entity);
             EnsureBuffer<BuildingRuntimeFactionSummary>(em, entity);
+            EnsureBuffer<BuildingRuntimeFactionUsableFuelSummary>(em, entity);
             EnsureBuffer<BuildingRuntimeOwnedBuildingSummary>(em, entity);
             EnsureBuffer<BuildingRuntimeUnitProductionSummary>(em, entity);
             EnsureBuffer<BuildingFactionProductionSpawnPointReadModel>(em, entity);

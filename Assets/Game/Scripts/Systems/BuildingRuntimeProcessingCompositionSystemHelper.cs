@@ -693,6 +693,9 @@ namespace Game.Runtime
             DynamicBuffer<BuildingRuntimeFactionSummary> buffer =
                 EnsureBoundaryBuffer<BuildingRuntimeFactionSummary>(em, boundaryEntity);
             buffer.Clear();
+            DynamicBuffer<BuildingRuntimeFactionUsableFuelSummary> usableFuelBuffer =
+                EnsureBoundaryBuffer<BuildingRuntimeFactionUsableFuelSummary>(em, boundaryEntity);
+            usableFuelBuffer.Clear();
 
             for (int i = 0; i < _factionIds.Count; i++)
             {
@@ -711,6 +714,23 @@ namespace Game.Runtime
                     OilBarrelsPerDay = economy.OilBarrelsPerDay,
                     FuelBarrelsPerDay = economy.FuelBarrelsPerDay
                 });
+
+                if (factionResourceSystem.TryGetFactionUsableStorageSummary(
+                        em,
+                        runtimeBuildings,
+                        factionId,
+                        out FactionResourceCompositionSystemHelper.UsableStorageSnapshot usableStorage))
+                {
+                    usableFuelBuffer.Add(new BuildingRuntimeFactionUsableFuelSummary
+                    {
+                        FactionId = factionId,
+                        StoredOilBarrels = usableStorage.StoredOilBarrels,
+                        StoredFuelBarrels = usableStorage.StoredFuelBarrels,
+                        OilStorageCapacity = usableStorage.OilStorageCapacity,
+                        FuelStorageCapacity = usableStorage.FuelStorageCapacity,
+                        Version = usableStorage.Version
+                    });
+                }
             }
         }
 
@@ -1371,18 +1391,23 @@ namespace Game.Runtime
 
             float storedOilBarrels = building.StoredOilBarrels;
             float storedFuelBarrels = building.StoredFuelBarrels;
+            uint storageVersion = 0;
             if (TryGetBuildingResourceStorage(em, building, out BuildingResourceStorageComponent storage))
             {
                 storedOilBarrels = storage.StoredOilBarrels;
                 storedFuelBarrels = storage.StoredFuelBarrels;
+                storageVersion = storage.Version;
             }
 
             hash = (hash * 31) + (building.IsDestroyed ? 1 : 0);
             hash = (hash * 31) + (building.HasOwnerFaction ? building.OwnerFactionId : 255);
+            hash = (hash * 31) + Mathf.Max(0, building.OilStorageCapacity);
+            hash = (hash * 31) + Mathf.Max(0, building.FuelStorageCapacity);
             hash = AddFloatSignature(hash, storedOilBarrels);
             hash = AddFloatSignature(hash, storedFuelBarrels);
             hash = AddFloatSignature(hash, building.OilBarrelsPerDay);
             hash = AddFloatSignature(hash, building.FuelBarrelsPerDay);
+            hash = (hash * 31) + unchecked((int)storageVersion);
             return hash;
         }
 

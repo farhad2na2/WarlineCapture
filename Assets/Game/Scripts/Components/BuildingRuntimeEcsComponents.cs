@@ -112,6 +112,16 @@ namespace Game.Components
         public float FuelBarrelsPerDay;
     }
 
+    public struct BuildingRuntimeFactionUsableFuelSummary : IBufferElementData
+    {
+        public byte FactionId;
+        public float StoredOilBarrels;
+        public float StoredFuelBarrels;
+        public int OilStorageCapacity;
+        public int FuelStorageCapacity;
+        public uint Version;
+    }
+
     public struct BuildingResourceStorageComponent : IComponentData
     {
         public int RuntimeBuildingId;

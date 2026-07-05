@@ -649,7 +649,12 @@ namespace Game.UI.Shell.Ecs
             UiMatchHudHeaderComponent component = entityManager.GetComponentData<UiMatchHudHeaderComponent>(boundary);
             string oilText = "0";
             string fuelText = component.FuelText.ToString();
-            if (TryFormatLivePlayerResourceStorage(entityManager, out string liveOilText, out string liveFuelText))
+            if (TryFormatPlayerUsableFuelSummary(entityManager, boundary, out string usableOilText, out string usableFuelText))
+            {
+                oilText = usableOilText;
+                fuelText = usableFuelText;
+            }
+            else if (TryFormatLivePlayerResourceStorage(entityManager, out string liveOilText, out string liveFuelText))
             {
                 oilText = liveOilText;
                 fuelText = liveFuelText;
@@ -668,6 +673,35 @@ namespace Game.UI.Shell.Ecs
                 component.SupplyText.ToString(),
                 component.CivilianRiskText.ToString(),
                 oilText);
+            return true;
+        }
+
+        private static bool TryFormatPlayerUsableFuelSummary(
+            EntityManager entityManager,
+            Entity boundary,
+            out string oilText,
+            out string fuelText)
+        {
+            oilText = string.Empty;
+            fuelText = string.Empty;
+            if (!entityManager.HasBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundary))
+                return false;
+
+            DynamicBuffer<BuildingRuntimeFactionUsableFuelSummary> summaries =
+                entityManager.GetBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundary, true);
+            for (int i = 0; i < summaries.Length; i++)
+            {
+                BuildingRuntimeFactionUsableFuelSummary summary = summaries[i];
+                if (!FactionIdentity.IsPlayerControlled(summary.FactionId))
+                    continue;
+
+                oilText = FormatCompact(Mathf.Max(0, Mathf.RoundToInt(summary.StoredOilBarrels)));
+                fuelText = FormatCompact(Mathf.Max(0, Mathf.RoundToInt(summary.StoredFuelBarrels)));
+                return true;
+            }
+
+            oilText = "0";
+            fuelText = "0";
             return true;
         }
 

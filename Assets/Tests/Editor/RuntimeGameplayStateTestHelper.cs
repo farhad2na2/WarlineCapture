@@ -152,6 +152,7 @@ internal static class RuntimeGameplayStateTestHelper
         EnsureBuffer<BuildingProducedUnitReadModel>(entityManager, entity);
         EnsureBuffer<MapVehiclePlacementReadModel>(entityManager, entity);
         EnsureBuffer<BuildingRuntimeFactionSummary>(entityManager, entity);
+        EnsureBuffer<BuildingRuntimeFactionUsableFuelSummary>(entityManager, entity);
         EnsureBuffer<BuildingRuntimeOwnedBuildingSummary>(entityManager, entity);
         EnsureBuffer<BuildingRuntimeUnitProductionSummary>(entityManager, entity);
         EnsureBuffer<BuildingFactionProductionSpawnPointReadModel>(entityManager, entity);

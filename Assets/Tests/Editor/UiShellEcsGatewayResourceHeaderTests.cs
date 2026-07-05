@@ -35,6 +35,7 @@ public sealed class UiShellEcsGatewayResourceHeaderTests
             Assert.IsTrue(UiShellEcsGateway.TryReadMatchHudHeader(out UiMatchHudHeaderModel header));
             Assert.AreEqual("12", header.OilText);
             Assert.AreEqual("4", header.FuelText);
+            Assert.IsTrue(header.ShowOil);
         }
         finally
         {
@@ -81,6 +82,7 @@ public sealed class UiShellEcsGatewayResourceHeaderTests
             Assert.IsTrue(UiShellEcsGateway.TryReadMatchHudHeader(out UiMatchHudHeaderModel header));
             Assert.AreEqual("0", header.OilText);
             Assert.AreEqual("8", header.FuelText);
+            Assert.IsFalse(header.ShowOil);
         }
         finally
         {
@@ -127,6 +129,7 @@ public sealed class UiShellEcsGatewayResourceHeaderTests
             Assert.IsTrue(UiShellEcsGateway.TryReadMatchHudHeader(out UiMatchHudHeaderModel header));
             Assert.AreEqual("2", header.OilText);
             Assert.AreEqual("15", header.FuelText);
+            Assert.IsTrue(header.ShowOil);
         }
         finally
         {
@@ -160,6 +163,40 @@ public sealed class UiShellEcsGatewayResourceHeaderTests
             Assert.IsTrue(UiShellEcsGateway.TryReadMatchHudHeader(out UiMatchHudHeaderModel header));
             Assert.AreEqual("0", header.OilText);
             Assert.AreEqual("0", header.FuelText);
+            Assert.IsFalse(header.ShowOil);
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+        }
+    }
+
+    [Test]
+    public void MatchHudHeader_ShowsOilWhenActiveSummaryTeachesExtraction()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        using World world = new(nameof(MatchHudHeader_ShowsOilWhenActiveSummaryTeachesExtraction));
+        try
+        {
+            World.DefaultGameObjectInjectionWorld = world;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+            EntityManager em = world.EntityManager;
+            Entity boundary = em.CreateEntity(typeof(UiShellRootComponent));
+            em.AddBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundary);
+            DynamicBuffer<BuildingRuntimeFactionSummary> economySummaries =
+                em.AddBuffer<BuildingRuntimeFactionSummary>(boundary);
+            economySummaries.Add(new BuildingRuntimeFactionSummary
+            {
+                FactionId = FactionIdentity.PlayerFactionId,
+                BuildingCount = 1,
+                OilBarrelsPerDay = 25f
+            });
+
+            Assert.IsTrue(UiShellEcsGateway.TryReadMatchHudHeader(out UiMatchHudHeaderModel header));
+            Assert.AreEqual("0", header.OilText);
+            Assert.AreEqual("0", header.FuelText);
+            Assert.IsTrue(header.ShowOil);
         }
         finally
         {

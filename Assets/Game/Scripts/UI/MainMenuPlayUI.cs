@@ -33,12 +33,15 @@ namespace Game.UI.Runtime
         private GameObject _matchHudThreatJumpPanel;
         private TMP_Text _matchHudThreatTitle;
         private float _matchHudThreatVisibleUntil = float.NegativeInfinity;
+        private GameObject _matchHudOilSlotRoot;
         private TMP_Text _matchHudOilSlotLabel;
         private TMP_Text _matchHudOilSlotValue;
         private TMP_Text _matchHudFuelSlotLabel;
         private TMP_Text _matchHudFuelSlotValue;
         private string _lastMatchHudOilText;
         private string _lastMatchHudFuelText;
+        private bool _lastMatchHudShowOil;
+        private bool _matchHudOilVisibilityApplied;
         private bool _matchHudResourceLabelsApplied;
         private float _nextCompactMinimapUpdateTime;
         private float _nextHeaderResourceRefreshTime;
@@ -264,12 +267,15 @@ namespace Game.UI.Runtime
             _matchHudThreatJumpPanel = null;
             _matchHudThreatTitle = null;
             _matchHudThreatVisibleUntil = float.NegativeInfinity;
+            _matchHudOilSlotRoot = null;
             _matchHudOilSlotLabel = null;
             _matchHudOilSlotValue = null;
             _matchHudFuelSlotLabel = null;
             _matchHudFuelSlotValue = null;
             _lastMatchHudOilText = null;
             _lastMatchHudFuelText = null;
+            _lastMatchHudShowOil = false;
+            _matchHudOilVisibilityApplied = false;
             _matchHudResourceLabelsApplied = false;
             _nextHeaderResourceRefreshTime = 0f;
 
@@ -307,6 +313,7 @@ namespace Game.UI.Runtime
                 oilSlot = CreateOilResourceSlot(resourceStrip, fuelSlot);
 
             ArrangeMatchHudResourceSlots(resourceStrip);
+            _matchHudOilSlotRoot = oilSlot.gameObject;
             BindMatchHudResourceSlot(oilSlot, out _matchHudOilSlotLabel, out _matchHudOilSlotValue);
             BindMatchHudResourceSlot(fuelSlot, out _matchHudFuelSlotLabel, out _matchHudFuelSlotValue);
             ApplyMatchHudHeaderResourceState();
@@ -371,13 +378,24 @@ namespace Game.UI.Runtime
             if (!UiShellRuntimeGateway.TryReadMatchHudHeader(out UiMatchHudHeaderModel header))
                 return;
 
-            if (!_matchHudResourceLabelsApplied && _matchHudOilSlotLabel != null && _matchHudOilSlotLabel.text != "Oil")
-                _matchHudOilSlotLabel.text = "Oil";
-            string oilText = string.IsNullOrWhiteSpace(header.OilText) ? "0" : header.OilText;
-            if (_matchHudOilSlotValue != null && _lastMatchHudOilText != oilText)
+            if (_matchHudOilSlotRoot != null &&
+                (!_matchHudOilVisibilityApplied || _lastMatchHudShowOil != header.ShowOil))
             {
-                _matchHudOilSlotValue.text = oilText;
-                _lastMatchHudOilText = oilText;
+                _matchHudOilSlotRoot.SetActive(header.ShowOil);
+                _lastMatchHudShowOil = header.ShowOil;
+                _matchHudOilVisibilityApplied = true;
+            }
+
+            if (header.ShowOil)
+            {
+                if (!_matchHudResourceLabelsApplied && _matchHudOilSlotLabel != null && _matchHudOilSlotLabel.text != "Oil")
+                    _matchHudOilSlotLabel.text = "Oil";
+                string oilText = string.IsNullOrWhiteSpace(header.OilText) ? "0" : header.OilText;
+                if (_matchHudOilSlotValue != null && _lastMatchHudOilText != oilText)
+                {
+                    _matchHudOilSlotValue.text = oilText;
+                    _lastMatchHudOilText = oilText;
+                }
             }
 
             if (!_matchHudResourceLabelsApplied && _matchHudFuelSlotLabel != null && _matchHudFuelSlotLabel.text != "Fuel")

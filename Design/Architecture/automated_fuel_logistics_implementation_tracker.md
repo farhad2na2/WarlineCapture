@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 33% (33/99 checklist items complete).
+Overall implementation progress: 35% (35/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -36,7 +36,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
 | 5. Tanker automation and usable Fuel | In Progress | 4 | 12 | 33% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
 | 6. Vehicle fuel spending | In Progress | 8 | 11 | 73% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
-| 7. UI read models and feedback | In Progress | 3 | 10 | 30% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
+| 7. UI read models and feedback | In Progress | 5 | 10 | 50% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
 | 8. AI and enemy support | Pending | 0 | 7 | 0% | Let AI understand fuel economy after player loop is validated. |
 | 9. Validation and profiling | In Progress | 1 | 10 | 10% | Focused tests, seeded-map checks, guardrails, GC checks, and Android profiling. |
 
@@ -166,7 +166,7 @@ Validation:
 ## Phase 7: UI Read Models And Feedback
 
 - [x] Header Fuel reads faction usable Fuel and capacity, not refinery output.
-- [ ] Oil can be shown only when the active mission/skirmish preset teaches extraction.
+- [x] Oil can be shown only when the active mission/skirmish preset teaches extraction.
 - [x] Selection panel supports Oil Pump, Refinery, Fuel Bladder, tray truck, and tanker logistics state.
 - [x] Disabled command/build/production rows use typed reason ids.
 - [ ] Avoid per-frame string formatting; cache labels or update TMP text only on read-model version changes.
@@ -174,7 +174,7 @@ Validation:
 
 Validation:
 
-- [ ] Header fuel changes only after storage delivery or spending.
+- [x] Header fuel changes only after storage delivery or spending.
 - [ ] Selection panel updates for two different pumps/refineries/storage buildings without stale values.
 - [ ] UI click blocking remains intact on Android and Editor.
 - [ ] No new GC allocations in steady-state HUD updates.
@@ -543,3 +543,17 @@ Use this section during implementation. Each completed batch should add:
   - `dotnet build WarlineCapture-Clone.sln --no-restore` blocked by pre-existing generated solution issue: duplicate `Unity.ProBuilder` project name.
   - Unity focused validation command blocked because another Unity instance has `/Users/farhad/Projects/WarlineCapture-Clone` open:
     `/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod InitialFactionBaseValidationTests.RunSceneInitialUnitsConfigValidation -logFile /private/tmp/warline-fuel-logistics-seeded-units.log`
+- Slice: active oil HUD visibility gating.
+- Files changed: `Assets/Game/Scripts/UI/Contracts/UiShellComponents.cs`, `Assets/Game/Scripts/UI/MainMenuPlayUI.cs`, `Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs`, `Assets/Tests/Editor/UiShellEcsGatewayResourceHeaderTests.cs`, and this tracker.
+- Behavior intent:
+  - Added `UiMatchHudHeaderModel.ShowOil` so the header read model decides whether Oil is visible.
+  - The ECS gateway sets `ShowOil` only when player-side oil logistics are present through usable Fuel summaries, live storage, or faction resource summaries.
+  - The Canvas helper only activates the Oil slot when the read model says it is visible, and caches the last visibility/text state.
+  - Fuel-only storage still drives the header Fuel value without forcing the Oil slot visible.
+- Validation:
+  - Extended `UiShellEcsGatewayResourceHeaderTests` to cover oil-enabled storage, fuel-only storage, versioned usable Fuel summary, empty usable summary, and extraction-teaching resource summary visibility.
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Unity focused validation was not rerun because the prior focused Unity run is blocked by the recurring licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
+- Next action:
+  - Continue Phase 7 no-GC/versioned HUD update validation, then finish remaining selected-panel stale-value/UI click-blocking validation items.

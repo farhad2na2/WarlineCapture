@@ -837,6 +837,7 @@ namespace Game.UI.Contracts
         public readonly string FuelText;
         public readonly string SupplyText;
         public readonly string CivilianRiskText;
+        public readonly bool ShowOil;
 
         public UiMatchHudHeaderModel(
             string orderText,
@@ -845,7 +846,8 @@ namespace Game.UI.Contracts
             string fuelText,
             string supplyText,
             string civilianRiskText,
-            string oilText = "")
+            string oilText = "",
+            bool showOil = false)
         {
             OrderText = orderText;
             SquadText = squadText;
@@ -854,6 +856,7 @@ namespace Game.UI.Contracts
             FuelText = fuelText;
             SupplyText = supplyText;
             CivilianRiskText = civilianRiskText;
+            ShowOil = showOil;
         }
 
         public static UiMatchHudHeaderModel Default =>

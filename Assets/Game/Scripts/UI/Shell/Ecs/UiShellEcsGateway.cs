@@ -649,21 +649,42 @@ namespace Game.UI.Shell.Ecs
             UiMatchHudHeaderComponent component = entityManager.GetComponentData<UiMatchHudHeaderComponent>(boundary);
             string oilText = "0";
             string fuelText = component.FuelText.ToString();
-            if (TryFormatPlayerUsableFuelSummary(entityManager, boundary, out string usableOilText, out string usableFuelText))
+            bool showOil = false;
+            if (TryFormatPlayerUsableFuelSummary(
+                    entityManager,
+                    boundary,
+                    out string usableOilText,
+                    out string usableFuelText,
+                    out bool usableOilVisible))
             {
                 oilText = usableOilText;
                 fuelText = usableFuelText;
+                showOil = usableOilVisible;
             }
-            else if (TryFormatLivePlayerResourceStorage(entityManager, out string liveOilText, out string liveFuelText))
+            else if (TryFormatLivePlayerResourceStorage(
+                         entityManager,
+                         out string liveOilText,
+                         out string liveFuelText,
+                         out bool liveOilVisible))
             {
                 oilText = liveOilText;
                 fuelText = liveFuelText;
+                showOil = liveOilVisible;
             }
-            else if (TryFormatPlayerResourceSummary(entityManager, boundary, out string resourceOilText, out string resourceFuelText))
+            else if (TryFormatPlayerResourceSummary(
+                         entityManager,
+                         boundary,
+                         out string resourceOilText,
+                         out string resourceFuelText,
+                         out bool resourceOilVisible))
             {
                 oilText = resourceOilText;
                 fuelText = resourceFuelText;
+                showOil = resourceOilVisible;
             }
+
+            if (!showOil)
+                showOil = TryHasPlayerOilResourceSummary(entityManager, boundary);
 
             header = new UiMatchHudHeaderModel(
                 component.OrderText.ToString(),
@@ -672,7 +693,8 @@ namespace Game.UI.Shell.Ecs
                 fuelText,
                 component.SupplyText.ToString(),
                 component.CivilianRiskText.ToString(),
-                oilText);
+                oilText,
+                showOil);
             return true;
         }
 
@@ -680,10 +702,12 @@ namespace Game.UI.Shell.Ecs
             EntityManager entityManager,
             Entity boundary,
             out string oilText,
-            out string fuelText)
+            out string fuelText,
+            out bool showOil)
         {
             oilText = string.Empty;
             fuelText = string.Empty;
+            showOil = false;
             if (!entityManager.HasBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundary))
                 return false;
 
@@ -697,6 +721,7 @@ namespace Game.UI.Shell.Ecs
 
                 oilText = FormatCompact(Mathf.Max(0, Mathf.RoundToInt(summary.StoredOilBarrels)));
                 fuelText = FormatCompact(Mathf.Max(0, Mathf.RoundToInt(summary.StoredFuelBarrels)));
+                showOil = summary.OilStorageCapacity > 0 || summary.StoredOilBarrels > 0.001f;
                 return true;
             }
 
@@ -708,10 +733,12 @@ namespace Game.UI.Shell.Ecs
         private static bool TryFormatLivePlayerResourceStorage(
             EntityManager entityManager,
             out string oilText,
-            out string fuelText)
+            out string fuelText,
+            out bool showOil)
         {
             oilText = string.Empty;
             fuelText = string.Empty;
+            showOil = false;
             EnsureResourceStorageQuery(entityManager);
             if (resourceStorageQuery.IsEmptyIgnoreFilter)
                 return false;
@@ -736,6 +763,7 @@ namespace Game.UI.Shell.Ecs
                 foundPlayerStorage = true;
                 oil += Mathf.Max(0f, storage.StoredOilBarrels);
                 fuel += Mathf.Max(0f, storage.StoredFuelBarrels);
+                showOil |= storage.OilStorageCapacity > 0 || storage.StoredOilBarrels > 0.001f;
             }
 
             if (!foundPlayerStorage)
@@ -757,10 +785,12 @@ namespace Game.UI.Shell.Ecs
             EntityManager entityManager,
             Entity boundary,
             out string oilText,
-            out string fuelText)
+            out string fuelText,
+            out bool showOil)
         {
             oilText = string.Empty;
             fuelText = string.Empty;
+            showOil = false;
             if (!entityManager.HasBuffer<BuildingRuntimeFactionSummary>(boundary))
                 return false;
 
@@ -776,7 +806,27 @@ namespace Game.UI.Shell.Ecs
                 int fuel = Mathf.Max(0, Mathf.RoundToInt(summary.StoredFuelBarrels));
                 oilText = FormatCompact(oil);
                 fuelText = FormatCompact(fuel);
+                showOil = oil > 0 || summary.OilBarrelsPerDay > 0f;
                 return true;
+            }
+
+            return false;
+        }
+
+        private static bool TryHasPlayerOilResourceSummary(EntityManager entityManager, Entity boundary)
+        {
+            if (!entityManager.HasBuffer<BuildingRuntimeFactionSummary>(boundary))
+                return false;
+
+            DynamicBuffer<BuildingRuntimeFactionSummary> summaries =
+                entityManager.GetBuffer<BuildingRuntimeFactionSummary>(boundary, true);
+            for (int i = 0; i < summaries.Length; i++)
+            {
+                BuildingRuntimeFactionSummary summary = summaries[i];
+                if (!FactionIdentity.IsPlayerControlled(summary.FactionId))
+                    continue;
+
+                return summary.StoredOilBarrels > 0.001f || summary.OilBarrelsPerDay > 0f;
             }
 
             return false;

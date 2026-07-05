@@ -1124,3 +1124,14 @@ Use this section during implementation. Each completed batch should add:
   - Active match `PerfDiag` marker evidence in the same log: `total=27.6ms`, `gc=0/0/0`, `BuildingPlacement=9.9ms`, `Selection=15.0ms`, `MainMenu=0.0ms`, `topSystems=...AIFactionControlSystem=7.8ms|...AISquadSystem=3.3ms|...AIEconomySystem=2.7ms|...AIProductionSystem=1.9ms|...AIBuildPlannerSystem=1.5ms|...AICombatOrderSystem=1.2ms|...AITargetingSystem=1.0ms`, and `markers=PlayerLoop=38.2ms|BehaviourUpdate=8.6ms|LateBehaviourUpdate=7.9ms|...`.
 - Next action:
   - Remaining checklist work is Android profiling if this feature affects match performance; run a device capture/build profile when the phone/build path is available.
+- Slice: Android profiling availability check.
+- Files changed: this tracker.
+- Behavior intent:
+  - Checked the remaining Android profiling path before launching a profiler APK build.
+  - ADB is installed and starts successfully when allowed outside the sandbox, but no Android device is currently attached/authorized, so the Android profiler row remains open.
+  - No build or install was attempted without a visible target device.
+- Validation:
+  - `adb devices -l` initially failed in the sandbox with `could not install *smartsocket* listener: Operation not permitted`.
+  - Escalated `adb devices -l` started the daemon successfully and returned an empty device list.
+- Next action:
+  - Connect/authorize an Android device, then run the existing `BuildScript.BuildAndroidProfilerApk` path and capture/export the device profiler data.

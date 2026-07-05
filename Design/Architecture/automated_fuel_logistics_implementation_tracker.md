@@ -1,6 +1,6 @@
 # Automated Fuel Logistics Implementation Tracker
 
-Date: 2026-07-05
+Date: 2026-07-06
 Status: In progress
 Design source: `../Automated_Fuel_Logistics_Design.md`
 
@@ -23,13 +23,13 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 96% (96/99 checklist items complete).
+Overall implementation progress: 98% (98/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
 | Phase | Status | Complete | Total | Progress | Notes |
 |---|---|---:|---:|---:|---|
-| 0. Inventory and baseline | In Progress | 7 | 8 | 88% | Audit current Oil/Fuel components, building runtime summaries, resource hauler code, seeded trucks, and HUD header data. |
+| 0. Inventory and baseline | Complete | 8 | 8 | 100% | Audit current Oil/Fuel components, building runtime summaries, resource hauler code, seeded trucks, and HUD header data. |
 | 1. Data model | Complete | 11 | 11 | 100% | Add or adapt ECS components/buffers, capacities, reservations, cargo, seeded logistics validation, and faction usable Fuel. |
 | 2. Oil extraction and refinery buffers | Complete | 8 | 8 | 100% | Oil Pump and Refinery storage mutation is ECS-owned and versioned. |
 | 3. Tray truck automation | Complete | 13 | 13 | 100% | Auto-assign Oil pickup/delivery without manual target commands. |
@@ -38,7 +38,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 6. Vehicle fuel spending | Complete | 11 | 11 | 100% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
 | 7. UI read models and feedback | Complete | 10 | 10 | 100% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
 | 8. AI and enemy support | Complete | 7 | 7 | 100% | Let AI understand fuel economy after player loop is validated. |
-| 9. Validation and profiling | In Progress | 8 | 10 | 80% | Focused tests, seeded-map checks, guardrails, GC checks, and Android profiling. |
+| 9. Validation and profiling | In Progress | 9 | 10 | 90% | Focused tests, seeded-map checks, guardrails, GC checks, and Android profiling. |
 
 ## Phase 0: Inventory And Baseline
 
@@ -48,7 +48,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 - [x] Identify current header Fuel source and all systems that mutate tactical Oil/Fuel.
 - [x] Identify current selected-building panel fields for production/resource state.
 - [x] Capture baseline behavior: oil pump production, refinery conversion if present, fuel header update, tray/tanker command behavior, and vehicle Fuel usage.
-- [ ] Capture baseline profiler markers for match steady state with fuel logistics active.
+- [x] Capture baseline profiler markers for match steady state with fuel logistics active.
 - [x] Document exact files touched before implementation starts.
 
 Exit criteria:
@@ -201,7 +201,7 @@ Validation:
 - [x] Run focused vehicle movement and aircraft return validation.
 - [x] Run seeded logistics fixture validation for Faction 1 and Faction 2 military base tray/tanker pairs.
 - [x] Run architecture guardrails, including Burst/ECS hot-path checks.
-- [ ] Run steady-state match profiler capture with fuel logistics active.
+- [x] Run steady-state match profiler capture with fuel logistics active.
 - [ ] Run Android profiling if the feature affects match performance.
 - [x] Update this tracker with command names, log paths, pass/fail result, and next action after each batch.
 
@@ -1112,3 +1112,15 @@ Use this section during implementation. Each completed batch should add:
   - Latest steady-state slow-update diagnostic in the same log reported `gc=0/0/0`, `BuildingPlacement=11.1ms`, `Selection=16.2ms`, and `MainMenu=0.0ms` on the activation sample frame.
 - Next action:
   - Capture/export an actual Unity profiler `.data` or marker-backed profiler summary for the Phase 0/9 profiler rows, then run Android profiling when a device/build capture path is available.
+- Slice: marker-backed steady-state profiler summary.
+- Files changed: this tracker.
+- Behavior intent:
+  - Reran the existing Canvas match FPS probe with the project profiler-marker diagnostics switch enabled.
+  - The marker-enabled run reached an active Match simulation and emitted marker-backed `PerfDiag` evidence with non-empty `topSystems` and `markers` fields.
+  - This closes the Phase 0 baseline profiler-marker row and the Phase 9 steady-state match profiler summary row without adding new profiler tooling or changing gameplay code.
+  - Android profiling remains open because this batch-mode editor probe is not a device capture.
+- Validation:
+  - `Tools/CI/invoke_unity_macos.sh --timeout 300 --log /private/tmp/warline-fuel-canvas-match-fps-markers.log -- -executeMethod Game.Editor.CanvasMatchFpsValidation.Run -warlineProfilerMarkers` passed with `[CanvasMatchFpsValidation] result=Passed variant=Normal samples=240 warmupFrames=120 avgMs=4.338 fps=230.5 medianMs=3.637 medianFps=275.0 p95Ms=5.397 minMs=3.378 maxMs=109.955`.
+  - Active match `PerfDiag` marker evidence in the same log: `total=27.6ms`, `gc=0/0/0`, `BuildingPlacement=9.9ms`, `Selection=15.0ms`, `MainMenu=0.0ms`, `topSystems=...AIFactionControlSystem=7.8ms|...AISquadSystem=3.3ms|...AIEconomySystem=2.7ms|...AIProductionSystem=1.9ms|...AIBuildPlannerSystem=1.5ms|...AICombatOrderSystem=1.2ms|...AITargetingSystem=1.0ms`, and `markers=PlayerLoop=38.2ms|BehaviourUpdate=8.6ms|LateBehaviourUpdate=7.9ms|...`.
+- Next action:
+  - Remaining checklist work is Android profiling if this feature affects match performance; run a device capture/build profile when the phone/build path is available.

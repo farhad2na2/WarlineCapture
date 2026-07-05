@@ -210,13 +210,12 @@ namespace Game.Runtime
         public static bool TryAppendPlannedBoardingOrder(
             List<PendingTransportBoardingOrder> plannedOrders,
             PendingTransportBoardingOrder boardingOrder,
-            byte passengerKind,
             int availableSoldierSeats,
             int availableVehicleSlots,
             ref TransportBoardingPlannedSlotCounts plannedSlots)
         {
             if (!TryReservePlannedBoardingSlot(
-                    passengerKind,
+                    boardingOrder.PassengerKind,
                     availableSoldierSeats,
                     availableVehicleSlots,
                     ref plannedSlots))

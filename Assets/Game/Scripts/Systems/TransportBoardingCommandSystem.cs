@@ -809,7 +809,6 @@ namespace Game.Runtime
                 TransportBoardingOrderPlanningSystemHelper.TryAppendPlannedBoardingOrder(
                     boardingOrders,
                     boardingOrder,
-                    passengerKind,
                     slotAvailability.AvailableSoldierSeats,
                     slotAvailability.AvailableVehicleSlots,
                     ref plannedSlots);
@@ -1379,7 +1378,6 @@ namespace Game.Runtime
                 TransportBoardingOrderPlanningSystemHelper.TryAppendPlannedBoardingOrder(
                     plannedOrders,
                     boardingOrder,
-                    passengerKind,
                     slotAvailability.AvailableSoldierSeats,
                     slotAvailability.AvailableVehicleSlots,
                     ref plannedSlots);

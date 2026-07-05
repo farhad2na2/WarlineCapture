@@ -351,21 +351,18 @@ public sealed class UnitTransportBoardingSystemExtractionTests
         Assert.IsTrue(TransportBoardingOrderPlanningSystemHelper.TryAppendPlannedBoardingOrder(
             plannedOrders,
             soldierOrder,
-            UnitTransportPassengerKind.Soldier,
             availableSoldierSeats: 1,
             availableVehicleSlots: 1,
             ref plannedSlots));
         Assert.IsTrue(TransportBoardingOrderPlanningSystemHelper.TryAppendPlannedBoardingOrder(
             plannedOrders,
             vehicleOrder,
-            UnitTransportPassengerKind.Vehicle,
             availableSoldierSeats: 1,
             availableVehicleSlots: 1,
             ref plannedSlots));
         Assert.IsFalse(TransportBoardingOrderPlanningSystemHelper.TryAppendPlannedBoardingOrder(
             plannedOrders,
             vehicleOrder,
-            UnitTransportPassengerKind.Vehicle,
             availableSoldierSeats: 1,
             availableVehicleSlots: 1,
             ref plannedSlots));

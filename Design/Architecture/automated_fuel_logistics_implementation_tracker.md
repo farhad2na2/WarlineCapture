@@ -23,13 +23,13 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 90% (90/99 checklist items complete).
+Overall implementation progress: 91% (91/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
 | Phase | Status | Complete | Total | Progress | Notes |
 |---|---|---:|---:|---:|---|
-| 0. Inventory and baseline | In Progress | 5 | 8 | 63% | Audit current Oil/Fuel components, building runtime summaries, resource hauler code, seeded trucks, and HUD header data. |
+| 0. Inventory and baseline | In Progress | 6 | 8 | 75% | Audit current Oil/Fuel components, building runtime summaries, resource hauler code, seeded trucks, and HUD header data. |
 | 1. Data model | Complete | 11 | 11 | 100% | Add or adapt ECS components/buffers, capacities, reservations, cargo, seeded logistics validation, and faction usable Fuel. |
 | 2. Oil extraction and refinery buffers | Complete | 8 | 8 | 100% | Oil Pump and Refinery storage mutation is ECS-owned and versioned. |
 | 3. Tray truck automation | Complete | 13 | 13 | 100% | Auto-assign Oil pickup/delivery without manual target commands. |
@@ -47,7 +47,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 - [x] Inventory current ECS components and authoring bakers for building resources, production, storage, vehicle movement, and resource hauling.
 - [x] Identify current header Fuel source and all systems that mutate tactical Oil/Fuel.
 - [x] Identify current selected-building panel fields for production/resource state.
-- [ ] Capture baseline behavior: oil pump production, refinery conversion if present, fuel header update, tray/tanker command behavior, and vehicle Fuel usage.
+- [x] Capture baseline behavior: oil pump production, refinery conversion if present, fuel header update, tray/tanker command behavior, and vehicle Fuel usage.
 - [ ] Capture baseline profiler markers for match steady state with fuel logistics active.
 - [x] Document exact files touched before implementation starts.
 
@@ -1050,3 +1050,20 @@ Use this section during implementation. Each completed batch should add:
   - Unity focused validation remains blocked by the recurring licensing client mismatch/reconnect loop unless the editor/license state is reset. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
 - Next action:
   - Run the remaining Unity focused validation rows after the licensing/client issue is cleared, starting with oil/fuel logistics and building production/resource validation.
+- Slice: Phase 0 behavior baseline evidence closure.
+- Files changed: this tracker.
+- Behavior intent:
+  - Closed the Phase 0 baseline behavior row from focused evidence now recorded in the tracker.
+  - Oil pump production is covered by `ApplyTick_ExtractsOilUpToCapacity` and storage-capacity coverage.
+  - Refinery conversion is covered by `ApplyStorageQuery_ConvertsRefineryOilIntoFuelWithEfficiencyAndCapacity` and Large Refinery coverage.
+  - Header Fuel source/update behavior is covered by usable-Fuel summary/header validation rows and `UiShellEcsGatewayResourceHeaderTests` evidence.
+  - Tray/tanker command behavior is covered by automatic route, seeded hauler, full-cycle transfer, blocked reason, and selected status validation.
+  - Vehicle Fuel usage is covered by `VehicleFuelConsumptionSystemTests` and aircraft/ground no-Fuel behavior rows.
+  - Match steady-state profiler baseline remains open because it needs Unity/profiler access.
+- Validation:
+  - `git diff --check` passed.
+  - Checklist count command returned `91/99`.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Unity focused validation/profiling remains blocked by the recurring licensing client mismatch/reconnect loop unless the editor/license state is reset. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
+- Next action:
+  - Remaining work is Phase 9 Unity validation/profiling plus Phase 0 profiler marker capture after the licensing/profiler path is available.

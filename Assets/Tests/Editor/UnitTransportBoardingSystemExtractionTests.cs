@@ -219,6 +219,46 @@ public sealed class UnitTransportBoardingSystemExtractionTests
         Assert.AreEqual(0, entityManager.GetBuffer<RtsSelectionCommandResultElement>(fallbackEntity).Length);
     }
 
+    [Test]
+    public void CommandRoutingHelper_RefreshCommandBuffersReacquiresLiveBuffers()
+    {
+        using var world = new World("UnitTransportBoardingSystemExtractionTests");
+        EntityManager entityManager = world.EntityManager;
+        Entity commandEntity = entityManager.CreateEntity();
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests =
+            entityManager.AddBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        DynamicBuffer<RtsSelectionCommandResultElement> commandResults =
+            entityManager.AddBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        commandRequests.Add(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.BoardTransport,
+            RequestId = 12
+        });
+        Entity fallbackEntity = entityManager.CreateEntity();
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> fallbackRequests =
+            entityManager.AddBuffer<RtsSelectionCommandIntentRequestElement>(fallbackEntity);
+        DynamicBuffer<RtsSelectionCommandResultElement> fallbackResults =
+            entityManager.AddBuffer<RtsSelectionCommandResultElement>(fallbackEntity);
+
+        TransportBoardingCommandRoutingSystemHelper.RefreshCommandBuffers(
+            entityManager,
+            commandEntity,
+            ref fallbackRequests,
+            ref fallbackResults);
+
+        Assert.AreEqual(1, fallbackRequests.Length);
+        Assert.AreEqual(12, fallbackRequests[0].RequestId);
+        Assert.AreEqual(0, fallbackResults.Length);
+        commandResults.Add(new RtsSelectionCommandResultElement { RequestId = 13 });
+        TransportBoardingCommandRoutingSystemHelper.RefreshCommandBuffers(
+            entityManager,
+            commandEntity,
+            ref fallbackRequests,
+            ref fallbackResults);
+        Assert.AreEqual(1, fallbackResults.Length);
+        Assert.AreEqual(13, fallbackResults[0].RequestId);
+    }
+
     private static Entity CreateBoardingCandidate(EntityManager entityManager, string sourceName)
     {
         Entity entity = entityManager.CreateEntity(

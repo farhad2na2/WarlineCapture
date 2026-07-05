@@ -329,13 +329,7 @@ namespace Game.Runtime
                         moveOrderSystem)
                 };
                 AddCommandResult(em, commandEntity, commandResults, result);
-                if (commandEntity != Entity.Null && em.Exists(commandEntity))
-                {
-                    if (em.HasBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity))
-                        commandRequests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
-                    if (em.HasBuffer<RtsSelectionCommandResultElement>(commandEntity))
-                        commandResults = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
-                }
+                RefreshCommandBuffers(em, commandEntity, ref commandRequests, ref commandResults);
             }
 
 #if UNITY_EDITOR
@@ -406,13 +400,7 @@ namespace Game.Runtime
                 };
 
                 AddCommandResult(em, commandEntity, commandResults, result);
-                if (em.Exists(commandEntity))
-                {
-                    if (em.HasBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity))
-                        commandRequests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
-                    if (em.HasBuffer<RtsSelectionCommandResultElement>(commandEntity))
-                        commandResults = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
-                }
+                RefreshCommandBuffers(em, commandEntity, ref commandRequests, ref commandResults);
             }
 
             return handledAny;
@@ -435,6 +423,19 @@ namespace Game.Runtime
             RtsSelectionCommandResultElement result)
         {
             TransportBoardingCommandRoutingSystemHelper.AddCommandResult(em, commandEntity, fallbackResults, result);
+        }
+
+        private static void RefreshCommandBuffers(
+            EntityManager em,
+            Entity commandEntity,
+            ref DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
+            ref DynamicBuffer<RtsSelectionCommandResultElement> commandResults)
+        {
+            TransportBoardingCommandRoutingSystemHelper.RefreshCommandBuffers(
+                em,
+                commandEntity,
+                ref commandRequests,
+                ref commandResults);
         }
 
         private RtsSelectionCommandResultElement ProcessBoardTransportRequest(

@@ -47,6 +47,21 @@ namespace Game.Runtime
             fallbackResults.Add(result);
         }
 
+        public static void RefreshCommandBuffers(
+            EntityManager em,
+            Entity commandEntity,
+            ref DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
+            ref DynamicBuffer<RtsSelectionCommandResultElement> commandResults)
+        {
+            if (commandEntity == Entity.Null || !em.Exists(commandEntity))
+                return;
+
+            if (em.HasBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity))
+                commandRequests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+            if (em.HasBuffer<RtsSelectionCommandResultElement>(commandEntity))
+                commandResults = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        }
+
         public static RtsSelectionCommandResultElement ToBoardingCommandResultElement(
             RtsSelectionCommandIntentRequestElement request,
             TransportBoardingCommandSystem.Result result)

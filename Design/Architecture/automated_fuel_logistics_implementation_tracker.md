@@ -1,7 +1,7 @@
 # Automated Fuel Logistics Implementation Tracker
 
 Date: 2026-07-05
-Status: Not started
+Status: In progress
 Design source: `../Automated_Fuel_Logistics_Design.md`
 
 ## Objective
@@ -23,14 +23,14 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 0% (0/98 checklist items complete).
+Overall implementation progress: 3% (3/98 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
 | Phase | Status | Complete | Total | Progress | Notes |
 |---|---|---:|---:|---:|---|
-| 0. Inventory and baseline | Pending | 0 | 8 | 0% | Audit current Oil/Fuel components, building runtime summaries, resource hauler code, seeded trucks, and HUD header data. |
-| 1. Data model | Pending | 0 | 11 | 0% | Add or adapt ECS components/buffers for buffers, capacities, reservations, cargo, seeded logistics validation, and faction usable Fuel. |
+| 0. Inventory and baseline | In Progress | 1 | 8 | 13% | Audit current Oil/Fuel components, building runtime summaries, resource hauler code, seeded trucks, and HUD header data. |
+| 1. Data model | In Progress | 2 | 11 | 18% | Add or adapt ECS components/buffers for buffers, capacities, reservations, cargo, seeded logistics validation, and faction usable Fuel. |
 | 2. Oil extraction and refinery buffers | Pending | 0 | 8 | 0% | Ensure Oil Pump and Refinery buffers are ECS-owned and versioned. |
 | 3. Tray truck automation | Pending | 0 | 12 | 0% | Auto-assign Oil pickup/delivery without manual target commands. |
 | 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
@@ -43,7 +43,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 ## Phase 0: Inventory And Baseline
 
 - [ ] Inventory existing Oil Pump, Refinery, Large Refinery, Fuel Bladder, tray truck, and tanker configs.
-- [ ] Inventory each faction military base and verify fuel-enabled maps have at least one `Unit_Veh_Truck_Tray` and one `Unit_Veh_Truck_Tanker` near each faction base.
+- [x] Inventory each faction military base and verify fuel-enabled maps have at least one `Unit_Veh_Truck_Tray` and one `Unit_Veh_Truck_Tanker` near each faction base.
 - [ ] Inventory current ECS components and authoring bakers for building resources, production, storage, vehicle movement, and resource hauling.
 - [ ] Identify current header Fuel source and all systems that mutate tactical Oil/Fuel.
 - [ ] Identify current selected-building panel fields for production/resource state.
@@ -65,7 +65,7 @@ Exit criteria:
 - [ ] Define logistics role tags: oil hauler, fuel hauler, source, refinery input, refinery output, fuel storage.
 - [ ] Define faction usable Fuel summary: current, capacity, produced, delivered, spent, version.
 - [ ] Define typed blocked/status reason codes for UI and command validation.
-- [ ] Define scenario/map authoring requirement for seeded tray/tanker pairs at each fuel-enabled faction military base.
+- [x] Define scenario/map authoring requirement for seeded tray/tanker pairs at each fuel-enabled faction military base.
 - [ ] Add baker/config mapping only where needed; do not duplicate balance data already owned by configs.
 
 Performance notes:
@@ -77,7 +77,7 @@ Performance notes:
 Validation:
 
 - [ ] Editor tests cover storage capacity, reservation accounting, and faction usable Fuel summary.
-- [ ] Authoring validation warns or fails when a fuel-enabled map lacks one tray truck or one tanker near each faction military base.
+- [x] Authoring validation warns or fails when a fuel-enabled map lacks one tray truck or one tanker near each faction military base.
 - [ ] `git diff --check` passes.
 
 ## Phase 2: Oil Extraction And Building Buffers
@@ -240,4 +240,12 @@ Use this section during implementation. Each completed batch should add:
 ### 2026-07-05
 
 - Created design and implementation tracker.
-- Implementation not started.
+- Started implementation with seeded logistics verification fixture.
+- Added one `Unit_Veh_Truck_Tray` and one `Unit_Veh_Truck_Tanker` to each configured faction in `Assets/Game/Configs/Scene/MatchSubScene_InitialUnitsSpawner_Config.asset`.
+- Added `SceneInitialUnitsConfig_SeedsFuelLogisticsTrucksNearFactionBases` to `Assets/Tests/Editor/InitialFactionBaseValidationTests.cs`.
+- Validation:
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - `dotnet build WarlineCapture-Clone.sln --no-restore` blocked by pre-existing generated solution issue: duplicate `Unity.ProBuilder` project name.
+  - Unity focused validation command blocked because another Unity instance has `/Users/farhad/Projects/WarlineCapture-Clone` open:
+    `/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod InitialFactionBaseValidationTests.RunSceneInitialUnitsConfigValidation -logFile /private/tmp/warline-fuel-logistics-seeded-units.log`

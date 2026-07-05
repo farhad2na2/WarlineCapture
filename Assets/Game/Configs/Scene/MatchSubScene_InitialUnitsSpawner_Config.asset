@@ -34,6 +34,12 @@ MonoBehaviour:
     - prefab: {fileID: 5616646512338707422, guid: e540888d7cd8a489f9472b3456bf2406, type: 3}
       count: 1
       spawnOffset: {x: 0, y: -50}
+    - prefab: {fileID: 8579631638336695248, guid: 57f2dccc00faf49bca391aa1cc44d70a, type: 3}
+      count: 1
+      spawnOffset: {x: 24, y: -42}
+    - prefab: {fileID: 8579631638336695248, guid: e9015a8d3f0294ca6ac7bf8614ac2e7e, type: 3}
+      count: 1
+      spawnOffset: {x: 36, y: -42}
     buildings:
     - prefab: {fileID: 3689421368615084249, guid: 37ac92ce4e0e7473891bdb9b135724f2, type: 3}
       originOffset: {x: -30, y: 55}
@@ -43,6 +49,12 @@ MonoBehaviour:
     - prefab: {fileID: 3282182154612916099, guid: df81751e398174cd2bbc879d76a72b94, type: 3}
       count: 25
       spawnOffset: {x: -150, y: -250}
+    - prefab: {fileID: 8579631638336695248, guid: 57f2dccc00faf49bca391aa1cc44d70a, type: 3}
+      count: 1
+      spawnOffset: {x: 24, y: -42}
+    - prefab: {fileID: 8579631638336695248, guid: e9015a8d3f0294ca6ac7bf8614ac2e7e, type: 3}
+      count: 1
+      spawnOffset: {x: 36, y: -42}
     buildings:
     - prefab: {fileID: 3297871969661906962, guid: 772ca690e3298408b98dffdf84c31019, type: 3}
       originOffset: {x: 0, y: 0}

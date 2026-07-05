@@ -38,6 +38,7 @@ public sealed class InitialFactionBaseValidationTests
             var tests = new InitialFactionBaseValidationTests();
             tests.InitialFactionBaseLayoutPlanner_BuildsExactBaseRecipe();
             tests.SceneInitialUnitsConfig_DisablesAutomaticFactionBasesAndKeepsConfiguredStarts();
+            tests.SceneInitialUnitsConfig_SeedsFuelLogisticsTrucksNearFactionBases();
             tests.BuildingPlacementConfig_ResolvesEveryInitialBasePrefab();
             tests.InitialBaseAirPlatformPrefabs_HaveProductionSpawnPoints();
             tests.RuntimeHelipad_DoesNotCreateStaticPathBlocker();
@@ -60,6 +61,7 @@ public sealed class InitialFactionBaseValidationTests
         {
             var tests = new InitialFactionBaseValidationTests();
             tests.SceneInitialUnitsConfig_DisablesAutomaticFactionBasesAndKeepsConfiguredStarts();
+            tests.SceneInitialUnitsConfig_SeedsFuelLogisticsTrucksNearFactionBases();
             Debug.Log("[InitialFactionSceneConfigValidation] result=Passed");
             ValidationExit.Exit(0);
         }
@@ -238,6 +240,24 @@ public sealed class InitialFactionBaseValidationTests
             InitialUnitsSpawnerAuthoringConfig.FactionEntry faction = config.Factions[i];
             float distance = Vector2Int.Distance(cityConfig.StartCell, faction.SpawnCell);
             Assert.GreaterOrEqual(distance, 300f, $"Runtime city start cell should stay away from faction {faction.FactionId} base.");
+        }
+    }
+
+    [Test]
+    public void SceneInitialUnitsConfig_SeedsFuelLogisticsTrucksNearFactionBases()
+    {
+        InitialUnitsSpawnerAuthoringConfig config =
+            AssetDatabase.LoadAssetAtPath<InitialUnitsSpawnerAuthoringConfig>(SceneConfigPath);
+
+        Assert.NotNull(config);
+        Assert.GreaterOrEqual(config.Factions.Count, 2);
+
+        for (int i = 0; i < config.Factions.Count; i++)
+        {
+            InitialUnitsSpawnerAuthoringConfig.FactionEntry faction = config.Factions[i];
+            Assert.NotNull(faction);
+            AssertSeededLogisticsTruck(faction, "Unit_Veh_Truck_Tray");
+            AssertSeededLogisticsTruck(faction, "Unit_Veh_Truck_Tanker");
         }
     }
 
@@ -931,6 +951,30 @@ public sealed class InitialFactionBaseValidationTests
         }
 
         Assert.GreaterOrEqual(CountDistinctGroundVehiclePrefabs(faction), RequiredInitialGroundVehiclePrefabs.Length, $"Faction {faction.FactionId} should start with every configured ground vehicle type.");
+    }
+
+    private static void AssertSeededLogisticsTruck(InitialUnitsSpawnerAuthoringConfig.FactionEntry faction, string prefabName)
+    {
+        int count = 0;
+        for (int i = 0; i < faction.Units.Count; i++)
+        {
+            InitialUnitsSpawnerAuthoringConfig.FactionUnitEntry unit = faction.Units[i];
+            if (GetUnitPrefabName(unit) != prefabName)
+                continue;
+
+            count += unit.Count;
+            Vector2Int offset = unit.SpawnOffset;
+            Assert.GreaterOrEqual(
+                offset.x,
+                18,
+                $"Faction {faction.FactionId} {prefabName} should be seeded near the fuel/logistics side of the military base.");
+            Assert.LessOrEqual(
+                offset.y,
+                -42,
+                $"Faction {faction.FactionId} {prefabName} should be seeded near the fuel/logistics side of the military base.");
+        }
+
+        Assert.GreaterOrEqual(count, 1, $"Faction {faction.FactionId} should seed at least one {prefabName} for fuel logistics verification.");
     }
 
     private static int CountUnitPrefab(InitialUnitsSpawnerAuthoringConfig.FactionEntry faction, string prefabName)

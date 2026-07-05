@@ -44,6 +44,8 @@ namespace Game.Authoring
         [SerializeField, HideInInspector, Min(1f)] private float roadSpeedMultiplier = 1.2f;
         [SerializeField, HideInInspector, Min(0.001f)] private float arriveDistance = 0.05f;
         [SerializeField, HideInInspector] private float groundOffset;
+        [SerializeField, HideInInspector, Min(0f)] private float groundFuelPerCell;
+        [SerializeField, HideInInspector, Min(0f)] private float airFuelPerCell;
         [SerializeField, HideInInspector, Min(0)] private int resourceHaulerBarrelCapacity;
         [SerializeField, HideInInspector, Min(0.01f)] private float resourceHaulerFillDurationSeconds = 2f;
         [SerializeField, HideInInspector, Min(0.01f)] private float resourceHaulerUnloadDurationSeconds = 1.5f;
@@ -138,6 +140,8 @@ namespace Game.Authoring
             roadSpeedMultiplier = config.RoadSpeedMultiplier;
             arriveDistance = config.ArriveDistance;
             groundOffset = config.GroundOffset;
+            groundFuelPerCell = config.GroundFuelPerCell;
+            airFuelPerCell = config.AirFuelPerCell;
             displayName = config.DisplayName;
             description = config.Description;
             portraitSprite = config.PortraitSprite;
@@ -207,6 +211,8 @@ namespace Game.Authoring
         public int Price => Mathf.Max(0, price);
         public bool ConfiguredAllowIdleWander => config != null ? config.AllowIdleWander : allowIdleWander;
         public float ConfiguredSpeed => Mathf.Max(0f, config != null ? config.Speed : speed);
+        public float GroundFuelPerCell => Mathf.Max(0f, config != null ? config.GroundFuelPerCell : groundFuelPerCell);
+        public float AirFuelPerCell => Mathf.Max(0f, config != null ? config.AirFuelPerCell : airFuelPerCell);
         public int ConfiguredResourceHaulerBarrelCapacity => Mathf.Max(0, config != null ? config.ResourceHaulerBarrelCapacity : resourceHaulerBarrelCapacity);
         public bool ConfiguredCanAttack => config != null ? config.CanAttack : canAttack;
         public bool ConfiguredAllowAutoEngage => config != null ? config.AllowAutoEngage : allowAutoEngage;
@@ -299,6 +305,22 @@ namespace Game.Authoring
                     AllowIdleWander = (byte)(authoring.allowIdleWander ? 1 : 0),
                     UsesVehicleMotion = (byte)(authoring.UsesVehicleMotion ? 1 : 0)
                 });
+                float groundFuelPerCell = math.max(0f, authoring.GroundFuelPerCell);
+                float airFuelPerCell = math.max(0f, authoring.AirFuelPerCell);
+                if ((authoring.UsesVehicleMotion || authoring.IsAirUnit) && (groundFuelPerCell > 0f || airFuelPerCell > 0f))
+                {
+                    AddComponent(entity, new UnitFuelConsumption
+                    {
+                        Enabled = 1,
+                        GroundFuelPerCell = groundFuelPerCell,
+                        AirFuelPerCell = airFuelPerCell
+                    });
+                    AddComponent(entity, new UnitFuelConsumptionState
+                    {
+                        LastCell = int2.zero,
+                        Initialized = 0
+                    });
+                }
                 AddComponent(entity, vehicleMovement);
                 AddComponent(entity, new UnitVehicleKinematics { CurrentSpeed = 0f, StallSeconds = 0f });
                 AddComponent(entity, new UnitSurfaceComponent

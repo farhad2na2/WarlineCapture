@@ -81,6 +81,23 @@ public sealed class UnitMovementConfigValidationTests
             Assert.That(config.RunwayTaxiSpeed, Is.EqualTo(expected.RunwayTaxiSpeed).Within(0.001f), path);
             Assert.That(config.IsAirUnit, Is.EqualTo(expected.IsAirUnit), path);
             Assert.That(config.SoldierTransportCapacity, Is.EqualTo(expected.SoldierCapacity), path);
+
+            bool isVehicleConfig = pair.Key.Contains("_Veh_");
+            if (expected.IsAirUnit)
+            {
+                Assert.That(config.GroundFuelPerCell, Is.EqualTo(0f).Within(0.001f), path);
+                Assert.That(config.AirFuelPerCell, Is.GreaterThan(0f), path);
+            }
+            else if (isVehicleConfig)
+            {
+                Assert.That(config.GroundFuelPerCell, Is.GreaterThan(0f), path);
+                Assert.That(config.AirFuelPerCell, Is.EqualTo(0f).Within(0.001f), path);
+            }
+            else
+            {
+                Assert.That(config.GroundFuelPerCell, Is.EqualTo(0f).Within(0.001f), path);
+                Assert.That(config.AirFuelPerCell, Is.EqualTo(0f).Within(0.001f), path);
+            }
         }
     }
 

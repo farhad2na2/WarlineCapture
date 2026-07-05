@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 23% (23/99 checklist items complete).
+Overall implementation progress: 24% (24/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -35,7 +35,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 3. Tray truck automation | In Progress | 5 | 13 | 38% | Auto-assign Oil pickup/delivery without manual target commands. |
 | 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
 | 5. Tanker automation and usable Fuel | In Progress | 4 | 12 | 33% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
-| 6. Vehicle fuel spending | In Progress | 2 | 11 | 18% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
+| 6. Vehicle fuel spending | In Progress | 3 | 11 | 27% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
 | 7. UI read models and feedback | In Progress | 1 | 10 | 10% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
 | 8. AI and enemy support | Pending | 0 | 7 | 0% | Let AI understand fuel economy after player loop is validated. |
 | 9. Validation and profiling | Pending | 0 | 10 | 0% | Focused tests, seeded-map checks, guardrails, GC checks, and Android profiling. |
@@ -148,7 +148,7 @@ Validation:
 
 ## Phase 6: Vehicle Fuel Consumption
 
-- [ ] Add fuel-cost config for vehicle/air movement-heavy or operation-heavy actions if missing.
+- [x] Add fuel-cost config for vehicle/air movement-heavy or operation-heavy actions if missing.
 - [x] Implement `VehicleFuelConsumptionSystem` or equivalent unmanaged `ISystem` for active fuel drains.
 - [x] Aggregate consumption by faction and vehicle class to avoid per-entity UI churn.
 - [ ] Block new movement/launch/support commands when usable Fuel is below required threshold.
@@ -414,6 +414,22 @@ Use this section during implementation. Each completed batch should add:
   - Focused Unity batchmode validation remains blocked because Unity is already open on `/Users/farhad/Projects/WarlineCapture-Clone`.
 - Next action:
   - Wire fuel-consumption authoring/config defaults onto vehicle/air unit prefabs, then add command blocking when usable Fuel is empty.
+- Slice: authored vehicle and air Fuel consumption defaults.
+- Files changed: `Assets/Game/Scripts/Configs/GameplayConfigModels.cs`, `Assets/Game/Scripts/Authorings/UnitGridAuthoring.cs`, `Assets/Tests/Editor/UnitMovementConfigValidationTests.cs`, and this tracker.
+- Behavior intent:
+  - `UnitGridAuthoringConfig` now exposes defaulted fuel costs: ground vehicles consume a small ground Fuel amount per grid-cell movement, air units consume an air Fuel amount, and character units remain free.
+  - `UnitGridAuthoring` copies those config values and the baker adds `UnitFuelConsumption` plus `UnitFuelConsumptionState` to baked vehicle/air unit entities when either fuel cost is non-zero.
+  - The existing unmanaged `VehicleFuelConsumptionSystem` can now operate on authored vehicle and air prefabs without scene-specific manual component edits.
+  - Config validation now asserts the intended authoring rule across all covered character and vehicle unit configs.
+- Validation:
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Focused Unity edit-mode validation command was attempted:
+    `/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/MacOS/Unity -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -runTests -testPlatform EditMode -testFilter UnitMovementConfigValidationTests,VehicleFuelConsumptionSystemTests -logFile /private/tmp/warline-fuel-authoring-tests.log -testResults /private/tmp/warline-fuel-authoring-tests.xml`
+  - First Unity attempt was sandbox-blocked by Package Manager IPC: `listen EPERM: operation not permitted /tmp/Unity-Upm-43515.sock`.
+  - Escalated Unity attempt was blocked before tests by licensing client mismatch/reconnect loop: `Unsupported protocol version '1.18.1'`, `com.unity.editor.headless was not found`; stopped the hung batch process. Log: `/private/tmp/warline-fuel-authoring-tests.log`.
+- Next action:
+  - Add command gating for new movement/launch/support requests when usable Fuel is empty, including typed blocked reasons and safe aircraft return policy.
 
 - Created design and implementation tracker.
 - Started implementation with seeded logistics verification fixture.

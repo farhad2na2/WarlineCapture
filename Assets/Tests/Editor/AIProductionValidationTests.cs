@@ -36,7 +36,8 @@ public sealed class AIProductionValidationTests
         {
             InitialUnitsRuntimeState.VerboseAILogs = true;
             AssertQueuesAndProcessesAcceptedRequestFromBoundary();
-            UnityEngine.Debug.Log("[AIProductionFocusedValidation] result=Passed tests=1");
+            AssertVehicleProductionWaitsForUsableFuelOrExpectedProduction();
+            UnityEngine.Debug.Log("[AIProductionFocusedValidation] result=Passed tests=2");
         }
         catch (System.Exception ex)
         {
@@ -269,6 +270,94 @@ public sealed class AIProductionValidationTests
 
         AIProductionPlan plan = em.GetComponentData<AIProductionPlan>(planEntity);
         Assert.AreEqual(1, plan.NextUnitIndex);
+    }
+
+    private static void AssertVehicleProductionWaitsForUsableFuelOrExpectedProduction()
+    {
+        using var world = new World(nameof(AssertVehicleProductionWaitsForUsableFuelOrExpectedProduction));
+        EntityManager em = world.EntityManager;
+
+        Entity boundaryEntity = em.CreateEntity(typeof(BuildingRuntimeStateTag));
+        DynamicBuffer<BuildingConfiguredUnitReadModel> units = em.AddBuffer<BuildingConfiguredUnitReadModel>(boundaryEntity);
+        units.Add(new BuildingConfiguredUnitReadModel
+        {
+            UnitId = new FixedString128Bytes("Armor"),
+            DisplayName = new FixedString128Bytes("Armor"),
+            Price = 10000,
+            CanRequest = 1,
+            IsVehicle = 1
+        });
+        DynamicBuffer<BuildingRuntimeFactionSummary> factionSummaries = em.AddBuffer<BuildingRuntimeFactionSummary>(boundaryEntity);
+        factionSummaries.Add(new BuildingRuntimeFactionSummary
+        {
+            FactionId = FactionIdentity.EnemyFactionId,
+            StoredFuelBarrels = 0f,
+            FuelBarrelsPerDay = 0f
+        });
+        DynamicBuffer<BuildingRuntimeFactionUsableFuelSummary> usableFuelSummaries =
+            em.AddBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundaryEntity);
+        usableFuelSummaries.Add(new BuildingRuntimeFactionUsableFuelSummary
+        {
+            FactionId = FactionIdentity.EnemyFactionId,
+            CurrentFuelBarrels = 0f,
+            FuelStorageCapacity = 0
+        });
+        DynamicBuffer<BuildingRuntimeUnitProductionSummary> summaries =
+            em.AddBuffer<BuildingRuntimeUnitProductionSummary>(boundaryEntity);
+        summaries.Add(new BuildingRuntimeUnitProductionSummary
+        {
+            FactionId = FactionIdentity.EnemyFactionId,
+            UnitId = new FixedString128Bytes("Armor"),
+            ProducedCount = 0,
+            QueuedCount = 0
+        });
+        DynamicBuffer<BuildingFactionUnitProductionRequest> requests =
+            em.AddBuffer<BuildingFactionUnitProductionRequest>(boundaryEntity);
+
+        Entity economyEntity = em.CreateEntity(typeof(FactionEconomy));
+        em.SetComponentData(economyEntity, new FactionEconomy
+        {
+            FactionId = FactionIdentity.EnemyFactionId,
+            Money = 50000,
+            LastLogTime = -999f
+        });
+
+        Entity controlEntity = em.CreateEntity(typeof(FactionControlConfigTag));
+        DynamicBuffer<FactionControlEntry> controls = em.AddBuffer<FactionControlEntry>(controlEntity);
+        controls.Add(new FactionControlEntry { FactionId = FactionIdentity.EnemyFactionId, AIControlled = 1 });
+
+        Entity planEntity = em.CreateEntity(typeof(AIProductionPlan));
+        em.SetComponentData(planEntity, new AIProductionPlan
+        {
+            FactionId = FactionIdentity.EnemyFactionId,
+            Enabled = 1,
+            TargetProducedUnits = 3,
+            MaxQueuedUnits = 3,
+            UnitProductionIntervalSeconds = 1f,
+            LastProductionTime = -999f,
+            LastLogTime = -999f
+        });
+        DynamicBuffer<AIProductionPlanEntry> entries = em.AddBuffer<AIProductionPlanEntry>(planEntity);
+        entries.Add(new AIProductionPlanEntry { UnitId = new FixedString64Bytes("Armor") });
+
+        RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
+        SystemHandle system = world.CreateSystem<AIProductionSystem>();
+
+        system.Update(world.Unmanaged);
+        Assert.AreEqual(0, requests.Length);
+        AIProductionPlan blockedPlan = em.GetComponentData<AIProductionPlan>(planEntity);
+        Assert.GreaterOrEqual(blockedPlan.LastProductionTime, 0f);
+
+        BuildingRuntimeFactionSummary expectedProduction = factionSummaries[0];
+        expectedProduction.FuelBarrelsPerDay = 20f;
+        factionSummaries[0] = expectedProduction;
+        blockedPlan.LastProductionTime = -999f;
+        em.SetComponentData(planEntity, blockedPlan);
+
+        system.Update(world.Unmanaged);
+        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(FactionIdentity.EnemyFactionId, requests[0].FactionId);
+        Assert.IsTrue(requests[0].UnitId.Equals(new FixedString128Bytes("Armor")));
     }
 
     private void TickBuildingRuntime()

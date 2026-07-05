@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 82% (82/99 checklist items complete).
+Overall implementation progress: 84% (84/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -37,7 +37,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 5. Tanker automation and usable Fuel | Complete | 12 | 12 | 100% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
 | 6. Vehicle fuel spending | Complete | 11 | 11 | 100% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
 | 7. UI read models and feedback | Complete | 10 | 10 | 100% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
-| 8. AI and enemy support | In Progress | 2 | 7 | 29% | Let AI understand fuel economy after player loop is validated. |
+| 8. AI and enemy support | In Progress | 4 | 7 | 57% | Let AI understand fuel economy after player loop is validated. |
 | 9. Validation and profiling | In Progress | 1 | 10 | 10% | Focused tests, seeded-map checks, guardrails, GC checks, and Android profiling. |
 
 ## Phase 0: Inventory And Baseline
@@ -182,14 +182,14 @@ Validation:
 ## Phase 8: AI And Enemy Support
 
 - [x] Enable the same storage/conversion/hauling data model for non-player factions.
-- [ ] Gate AI production of fuel-cost units by available usable Fuel or expected production.
+- [x] Gate AI production of fuel-cost units by available usable Fuel or expected production.
 - [ ] Let AI target logistics infrastructure according to existing targeting architecture.
 - [ ] Keep AI logistics choices ECS/data-driven; no managed per-frame planner scans.
 
 Validation:
 
 - [x] Enemy faction can produce/deliver Fuel in a fuel-enabled test setup.
-- [ ] AI does not spam fuel-cost units at 0 usable Fuel.
+- [x] AI does not spam fuel-cost units at 0 usable Fuel.
 - [ ] AI targeting can prioritize pump/refinery/storage/truck targets when scenario tags allow it.
 
 ## Phase 9: Performance, Tests, And Rollout
@@ -1007,3 +1007,19 @@ Use this section during implementation. Each completed batch should add:
   - Unity focused validation remains blocked by the recurring licensing client mismatch/reconnect loop unless the editor/license state is reset. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
 - Next action:
   - Continue Phase 8 by gating AI production of fuel-cost units against usable Fuel or expected production.
+- Slice: AI vehicle production fuel gate.
+- Files changed: `Assets/Game/Scripts/Systems/AIProductionSystem.cs`, `Assets/Tests/Editor/AIProductionValidationTests.cs`, and this tracker.
+- Behavior intent:
+  - AI vehicle production now reads existing ECS boundary buffers before requesting vehicle units.
+  - Vehicle requests are blocked when the faction has zero usable Fuel, no stored Fuel, and no positive Fuel production rate.
+  - The same request is allowed when expected Fuel production exists, so AI can recover instead of permanently starving after logistics come online.
+  - Infantry/non-vehicle production is unaffected.
+- Validation:
+  - Added `AssertVehicleProductionWaitsForUsableFuelOrExpectedProduction`.
+  - Updated `AIProductionFocusedValidation` count to 2.
+  - `git diff --check` passed.
+  - Checklist count command returned `84/99`.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Unity focused validation remains blocked by the recurring licensing client mismatch/reconnect loop unless the editor/license state is reset. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
+- Next action:
+  - Continue Phase 8 targeting support for logistics infrastructure while keeping target selection ECS/data-driven.

@@ -26,7 +26,8 @@ namespace Game.Runtime
             Pending = 1,
             MissingConfig = 2,
             InsufficientFunds = 3,
-            Request = 4
+            InsufficientFuel = 4,
+            Request = 5
         }
 
         private struct ProductionDecision
@@ -208,6 +209,12 @@ namespace Game.Runtime
                         EnqueueDiagnostic(ref state, $"[AIProduction] faction={plan.FactionId} unit={decision.Unit.DisplayName.ToString()} cost={decision.Cost} result=InsufficientFunds money={economy.Money}");
                     break;
 
+                case ProductionDecisionResult.InsufficientFuel:
+                    plan.LastProductionTime = now;
+                    if (shouldLog)
+                        EnqueueDiagnostic(ref state, $"[AIProduction] faction={plan.FactionId} unit={decision.Unit.DisplayName.ToString()} result=InsufficientFuel");
+                    break;
+
                 case ProductionDecisionResult.Request:
                     EnqueueProductionRequest(ref state, boundaryEntity, plan.FactionId, decision.UnitId);
                     plan.LastProductionTime = now;
@@ -246,6 +253,12 @@ namespace Game.Runtime
             DynamicBuffer<BuildingConfiguredUnitReadModel> units = em.HasBuffer<BuildingConfiguredUnitReadModel>(boundaryEntity)
                 ? em.GetBuffer<BuildingConfiguredUnitReadModel>(boundaryEntity, true)
                 : default;
+            DynamicBuffer<BuildingRuntimeFactionSummary> factionSummaries = em.HasBuffer<BuildingRuntimeFactionSummary>(boundaryEntity)
+                ? em.GetBuffer<BuildingRuntimeFactionSummary>(boundaryEntity, true)
+                : default;
+            DynamicBuffer<BuildingRuntimeFactionUsableFuelSummary> usableFuelSummaries = em.HasBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundaryEntity)
+                ? em.GetBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundaryEntity, true)
+                : default;
             DynamicBuffer<BuildingRuntimeUnitProductionSummary> summaries = em.HasBuffer<BuildingRuntimeUnitProductionSummary>(boundaryEntity)
                 ? em.GetBuffer<BuildingRuntimeUnitProductionSummary>(boundaryEntity, true)
                 : default;
@@ -253,12 +266,14 @@ namespace Game.Runtime
                 ? em.GetBuffer<BuildingFactionUnitProductionRequest>(boundaryEntity, true)
                 : default;
 
-            return SelectProductionDecision(entries, units, summaries, requests, plan, economyMoney);
+            return SelectProductionDecision(entries, units, factionSummaries, usableFuelSummaries, summaries, requests, plan, economyMoney);
         }
 
         private static ProductionDecision SelectProductionDecision(
             DynamicBuffer<AIProductionPlanEntry> entries,
             DynamicBuffer<BuildingConfiguredUnitReadModel> units,
+            DynamicBuffer<BuildingRuntimeFactionSummary> factionSummaries,
+            DynamicBuffer<BuildingRuntimeFactionUsableFuelSummary> usableFuelSummaries,
             DynamicBuffer<BuildingRuntimeUnitProductionSummary> summaries,
             DynamicBuffer<BuildingFactionUnitProductionRequest> requests,
             AIProductionPlan plan,
@@ -308,6 +323,12 @@ namespace Game.Runtime
                 int cost = math.max(0, unit.Price);
                 decision.Unit = unit;
                 decision.Cost = cost;
+                if (!HasFuelSupportForProduction(unit, plan.FactionId, factionSummaries, usableFuelSummaries))
+                {
+                    decision.Result = ProductionDecisionResult.InsufficientFuel;
+                    break;
+                }
+
                 if (economyMoney < cost)
                 {
                     decision.Result = ProductionDecisionResult.InsufficientFunds;
@@ -319,6 +340,44 @@ namespace Game.Runtime
             }
 
             return decision;
+        }
+
+        private static bool HasFuelSupportForProduction(
+            BuildingConfiguredUnitReadModel unit,
+            byte factionId,
+            DynamicBuffer<BuildingRuntimeFactionSummary> factionSummaries,
+            DynamicBuffer<BuildingRuntimeFactionUsableFuelSummary> usableFuelSummaries)
+        {
+            if (unit.IsVehicle == 0)
+                return true;
+
+            if (usableFuelSummaries.IsCreated)
+            {
+                for (int i = 0; i < usableFuelSummaries.Length; i++)
+                {
+                    BuildingRuntimeFactionUsableFuelSummary summary = usableFuelSummaries[i];
+                    if (summary.FactionId != factionId)
+                        continue;
+
+                    if (summary.CurrentFuelBarrels > 0f)
+                        return true;
+                    break;
+                }
+            }
+
+            if (!factionSummaries.IsCreated)
+                return false;
+
+            for (int i = 0; i < factionSummaries.Length; i++)
+            {
+                BuildingRuntimeFactionSummary summary = factionSummaries[i];
+                if (summary.FactionId != factionId)
+                    continue;
+
+                return summary.StoredFuelBarrels > 0f || summary.FuelBarrelsPerDay > 0f;
+            }
+
+            return false;
         }
 
         private static bool TryResolveUnitReadModel(

@@ -334,6 +334,55 @@ public sealed class UnitTransportBoardingSystemExtractionTests
             plannedVehicleSlots: 1));
     }
 
+    [Test]
+    public void OrderPlanningHelper_ResolvesBatchAcceptedMessages()
+    {
+        Assert.AreEqual(
+            "Boarding transport.",
+            TransportBoardingOrderPlanningSystemHelper.ResolveBoardingAcceptedMessage(
+                cargoPlaneTransport: false,
+                plannedSoldierSeats: 1,
+                plannedVehicleSlots: 1));
+        Assert.AreEqual(
+            "Loading troops and cargo.",
+            TransportBoardingOrderPlanningSystemHelper.ResolveBoardingAcceptedMessage(
+                cargoPlaneTransport: true,
+                plannedSoldierSeats: 1,
+                plannedVehicleSlots: 1));
+        Assert.AreEqual(
+            "Loading cargo.",
+            TransportBoardingOrderPlanningSystemHelper.ResolveBoardingAcceptedMessage(
+                cargoPlaneTransport: true,
+                plannedSoldierSeats: 0,
+                plannedVehicleSlots: 1));
+        Assert.AreEqual(
+            "Boarding transport plane.",
+            TransportBoardingOrderPlanningSystemHelper.ResolveBoardingAcceptedMessage(
+                cargoPlaneTransport: true,
+                plannedSoldierSeats: 1,
+                plannedVehicleSlots: 0));
+    }
+
+    [Test]
+    public void OrderPlanningHelper_ResolvesSinglePassengerAcceptedMessages()
+    {
+        Assert.AreEqual(
+            "Loading transport.",
+            TransportBoardingOrderPlanningSystemHelper.ResolveBoardingAcceptedMessage(
+                cargoPlaneTransport: false,
+                passengerKind: UnitTransportPassengerKind.Soldier));
+        Assert.AreEqual(
+            "Loading cargo.",
+            TransportBoardingOrderPlanningSystemHelper.ResolveBoardingAcceptedMessage(
+                cargoPlaneTransport: true,
+                passengerKind: UnitTransportPassengerKind.Vehicle));
+        Assert.AreEqual(
+            "Boarding transport plane.",
+            TransportBoardingOrderPlanningSystemHelper.ResolveBoardingAcceptedMessage(
+                cargoPlaneTransport: true,
+                passengerKind: UnitTransportPassengerKind.Soldier));
+    }
+
     private static Entity CreateBoardingCandidate(EntityManager entityManager, string sourceName)
     {
         Entity entity = entityManager.CreateEntity(

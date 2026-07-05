@@ -943,7 +943,7 @@ namespace Game.Runtime
                 transportCell,
                 markerPosition,
                 0,
-                ResolveBoardingAcceptedMessage(cargoPlaneTransport, plannedSoldierSeats, plannedVehicleSlots));
+                TransportBoardingOrderPlanningSystemHelper.ResolveBoardingAcceptedMessage(cargoPlaneTransport, plannedSoldierSeats, plannedVehicleSlots));
         }
 
         public Result TryIssueBoardSelectedTransportOrderToClickedPassenger(
@@ -1165,7 +1165,7 @@ namespace Game.Runtime
                 transportCell,
                 markerPosition,
                 0,
-                ResolveBoardingAcceptedMessage(cargoPlaneTransport, passengerKind));
+                TransportBoardingOrderPlanningSystemHelper.ResolveBoardingAcceptedMessage(cargoPlaneTransport, passengerKind));
         }
 
         private static bool TryValidateBoardingTransport(
@@ -1325,29 +1325,6 @@ namespace Game.Runtime
             }
 
             return false;
-        }
-
-        private static string ResolveBoardingAcceptedMessage(bool cargoPlaneTransport, int plannedSoldierSeats, int plannedVehicleSlots)
-        {
-            if (!cargoPlaneTransport)
-                return "Boarding transport.";
-
-            if (plannedVehicleSlots > 0 && plannedSoldierSeats > 0)
-                return "Loading troops and cargo.";
-
-            return plannedVehicleSlots > 0
-                ? "Loading cargo."
-                : "Boarding transport plane.";
-        }
-
-        private static string ResolveBoardingAcceptedMessage(bool cargoPlaneTransport, byte passengerKind)
-        {
-            if (!cargoPlaneTransport)
-                return "Loading transport.";
-
-            return passengerKind == UnitTransportPassengerKind.Vehicle
-                ? "Loading cargo."
-                : "Boarding transport plane.";
         }
 
         private bool TryIssueBoardNearestSoldierOrders(

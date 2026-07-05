@@ -16,6 +16,7 @@ namespace Game.Runtime
         private const float ClickScreenFallbackTorsoHeight = 0.85f;
         private const float SelectionHitboxScreenPaddingPixels = 8f;
         private const float MinimumSelectionHitboxExtent = 0.05f;
+        private const int MaxAirSelectionHitboxPaddingCells = 32;
 
         private struct FocusableUnitCoverage
         {
@@ -84,15 +85,27 @@ namespace Game.Runtime
 
                 int2 cell = em.GetComponentData<UnitGrid>(entity).Cell;
                 int2 footprint = em.GetComponentData<UnitFootprint>(entity).Size;
-                int padding = GetFocusablePadding(em, entity);
+                int padding = GetFocusablePadding(em, entity, grid);
                 if (!UnitFootprintUtility.ContainsCellWithPadding(cell, footprint, clickedCell, padding))
                 {
                     RefreshLookupEntry(em, grid, entity);
                     continue;
                 }
 
-                Vector3 screen = worldCamera.WorldToScreenPoint(em.GetComponentData<LocalToWorld>(entity).Position);
+                LocalToWorld localToWorld = em.GetComponentData<LocalToWorld>(entity);
+                Vector3 screen = worldCamera.WorldToScreenPoint(localToWorld.Position);
                 float distanceSq = (new Vector2(screen.x, screen.y) - screenPosition).sqrMagnitude;
+                if (em.HasComponent<UnitSelectionHitbox>(entity) &&
+                    TryGetSelectionHitboxScreenDistanceSq(
+                        worldCamera,
+                        localToWorld.Value,
+                        em.GetComponentData<UnitSelectionHitbox>(entity),
+                        screenPosition,
+                        out float hitboxDistanceSq))
+                {
+                    distanceSq = math.min(distanceSq, hitboxDistanceSq);
+                }
+
                 if (distanceSq < bestDistanceSq)
                 {
                     bestDistanceSq = distanceSq;
@@ -297,7 +310,7 @@ namespace Game.Runtime
 
         private void AddLookupEntry(EntityManager em, GridConfig grid, Entity entity, int2 cell, int2 size)
         {
-            int padding = GetFocusablePadding(em, entity);
+            int padding = GetFocusablePadding(em, entity, grid);
             GetPaddedFocusableBounds(grid, cell, size, padding, out int2 min, out int2 max);
 
             for (int y = min.y; y < max.y; y++)
@@ -354,9 +367,22 @@ namespace Game.Runtime
             max = new int2(math.clamp(paddedMax.x, 0, grid.Width), math.clamp(paddedMax.y, 0, grid.Height));
         }
 
-        private static int GetFocusablePadding(EntityManager em, Entity entity)
+        private static int GetFocusablePadding(EntityManager em, Entity entity, GridConfig grid)
         {
-            return em.HasComponent<UnitAirMovement>(entity) ? 4 : 1;
+            int padding = em.HasComponent<UnitAirMovement>(entity) ? 4 : 1;
+            if (!em.HasComponent<UnitAirMovement>(entity) || !em.HasComponent<UnitSelectionHitbox>(entity))
+                return padding;
+
+            UnitSelectionHitbox hitbox = em.GetComponentData<UnitSelectionHitbox>(entity);
+            float horizontalRadius = math.max(
+                math.abs(hitbox.Center.x) + math.abs(hitbox.Extents.x),
+                math.abs(hitbox.Center.z) + math.abs(hitbox.Extents.z));
+            if (horizontalRadius <= MinimumSelectionHitboxExtent)
+                return padding;
+
+            float cellSize = math.max(0.01f, grid.CellSize);
+            int visualPadding = (int)math.ceil(horizontalRadius / cellSize) + 1;
+            return math.min(MaxAirSelectionHitboxPaddingCells, math.max(padding, visualPadding));
         }
 
         private static float ScreenDistanceSq(Camera worldCamera, Vector3 worldPosition, Vector2 screenPosition)

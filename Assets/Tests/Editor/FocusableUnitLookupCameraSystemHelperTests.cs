@@ -19,7 +19,8 @@ public sealed class FocusableUnitLookupCameraSystemHelperTests
             RunCase(test => test.LookupRefreshesWhenGridOrFootprintChangesWithoutCountChange());
             RunCase(test => test.ScreenDistanceFallback_SkipsActiveTransitAirUnits());
             RunCase(test => test.ScreenDistanceFallback_UsesVisualHitboxForLargeAircraft());
-            UnityEngine.Debug.Log("[FocusableUnitLookupFocusedValidation] result=Passed tests=3");
+            RunCase(test => test.GridLookup_UsesAirSelectionHitboxPaddingForLargeMapAircraft());
+            UnityEngine.Debug.Log("[FocusableUnitLookupFocusedValidation] result=Passed tests=4");
         }
         catch (System.Exception ex)
         {
@@ -192,6 +193,43 @@ public sealed class FocusableUnitLookupCameraSystemHelperTests
                 camera,
                 new Vector2(80f, 50f),
                 10f,
+                out Entity focused));
+            Assert.AreEqual(aircraft, focused);
+        }
+        finally
+        {
+            Object.DestroyImmediate(cameraObject);
+        }
+    }
+
+    [Test]
+    public void GridLookup_UsesAirSelectionHitboxPaddingForLargeMapAircraft()
+    {
+        GameObject cameraObject = new("FocusableUnitMapAircraftCamera");
+        Camera camera = cameraObject.AddComponent<Camera>();
+        camera.orthographic = true;
+        camera.orthographicSize = 16f;
+        camera.pixelRect = new Rect(0f, 0f, 100f, 100f);
+        camera.transform.position = new Vector3(0f, 0f, -10f);
+
+        try
+        {
+            CreateGrid(64, 64);
+            Entity aircraft = CreateFocusableUnit(new int2(0, 0), new int2(1, 1));
+            _entityManager.AddComponentData(aircraft, new UnitAirMovement());
+            _entityManager.AddComponentData(aircraft, new UnitSelectionHitbox
+            {
+                Center = float3.zero,
+                Extents = new float3(12f, 1f, 1f)
+            });
+
+            Vector3 screen = camera.WorldToScreenPoint(new Vector3(12f, 0f, 0f));
+            var lookup = new FocusableUnitLookupCameraSystemHelper();
+            Assert.IsTrue(lookup.TryGetClickedUnitEntity(
+                _entityManager,
+                camera,
+                new int2(12, 0),
+                new Vector2(screen.x, screen.y),
                 out Entity focused));
             Assert.AreEqual(aircraft, focused);
         }

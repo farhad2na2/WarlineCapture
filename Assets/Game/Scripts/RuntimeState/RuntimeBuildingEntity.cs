@@ -82,6 +82,8 @@ namespace Game.Runtime
         public GameObject DestroyedVisualInstance;
         public Transform[] AliveVisualRoots;
         public BuildingVisualSystem.AnimatedPart[] AnimatedParts;
+        public bool ResourceVisualAnimationActive;
+        public float NextResourceVisualStateRefreshAt;
         public Vector3[] ProductionSpawnLocalPositions;
         public Entity[] ProducedUnitSlots;
         public List<Entity> ProducedUnits;

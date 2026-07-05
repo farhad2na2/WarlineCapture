@@ -11,14 +11,24 @@ namespace Game.Runtime
         private const string LegacyColorProperty = "_Color";
         private const string EmissionColorProperty = "_EmissionColor";
         private const string AccentColorProperty = "_AccentColor";
+        private const string LegacyOilPumpArmName = "SM_Prop_Pipline_OilPump_Arm_01";
+        private const string LegacyOilPumpWheelName = "SM_Prop_Pipline_Wheel_01";
+        private const float OilPumpArmAngleLimit = 15f;
+        private const float OilPumpWheelAngleLimit = 365f;
+        private const float OscillationRadiansPerSecond = 1.5f;
+        private const float AnimationAngleEpsilon = 0.05f;
 
         public sealed class AnimatedPart
         {
             public Transform Transform;
             public Vector3 BaseLocalEulerAngles;
+            public Quaternion BaseLocalRotation;
             public Vector3 Axis;
             public float AngleLimit;
             public float PhaseOffset;
+            public bool ContinuousRotation;
+            public bool IsAtRest = true;
+            public float LastAppliedAngle = float.NaN;
         }
 
         protected override void OnCreate()
@@ -94,17 +104,13 @@ namespace Game.Runtime
                 if (!TryParseAnimatedPartName(child.name, out Vector3 axis, out float angleLimit))
                     continue;
 
-                matches ??= new List<AnimatedPart>();
-                matches.Add(new AnimatedPart
-                {
-                    Transform = child,
-                    BaseLocalEulerAngles = child.localEulerAngles,
-                    Axis = axis,
-                    AngleLimit = angleLimit,
-                    PhaseOffset = matches.Count * 0.35f
-                });
+                AddAnimatedPart(ref matches, child, axis, angleLimit, angleLimit >= 360f);
             }
 
+            if (matches != null)
+                return matches.ToArray();
+
+            matches = FindLegacyOilPumpAnimatedParts(root);
             return matches?.ToArray();
         }
 
@@ -119,14 +125,29 @@ namespace Game.Runtime
                 if (part?.Transform == null)
                     continue;
 
-                Vector3 localEuler = part.BaseLocalEulerAngles;
-                if (active)
+                if (!active)
                 {
-                    float angle = Mathf.Sin((time * 1.5f) + part.PhaseOffset) * part.AngleLimit;
-                    localEuler += part.Axis * angle;
+                    if (part.IsAtRest)
+                        continue;
+
+                    part.Transform.localRotation = part.BaseLocalRotation;
+                    part.IsAtRest = true;
+                    part.LastAppliedAngle = float.NaN;
+                    continue;
                 }
 
-                part.Transform.localEulerAngles = localEuler;
+                float angle = part.ContinuousRotation
+                    ? time * part.AngleLimit
+                    : Mathf.Sin((time * OscillationRadiansPerSecond) + part.PhaseOffset) * part.AngleLimit;
+                if (!float.IsNaN(part.LastAppliedAngle) &&
+                    Mathf.Abs(Mathf.DeltaAngle(part.LastAppliedAngle, angle)) < AnimationAngleEpsilon)
+                {
+                    continue;
+                }
+
+                part.Transform.localRotation = part.BaseLocalRotation * Quaternion.AngleAxis(angle, part.Axis);
+                part.IsAtRest = false;
+                part.LastAppliedAngle = angle;
             }
         }
 
@@ -159,6 +180,61 @@ namespace Game.Runtime
             };
 
             return axis != Vector3.zero && angleLimit > 0f;
+        }
+
+        private static List<AnimatedPart> FindLegacyOilPumpAnimatedParts(Transform root)
+        {
+            List<AnimatedPart> matches = null;
+            foreach (Transform child in root.GetComponentsInChildren<Transform>(true))
+            {
+                if (!TryResolveLegacyOilPumpPart(child.name, out Vector3 axis, out float angleLimit))
+                    continue;
+
+                AddAnimatedPart(ref matches, child, axis, angleLimit, angleLimit >= 360f);
+            }
+
+            return matches;
+        }
+
+        private static void AddAnimatedPart(
+            ref List<AnimatedPart> matches,
+            Transform transform,
+            Vector3 axis,
+            float angleLimit,
+            bool continuousRotation)
+        {
+            matches ??= new List<AnimatedPart>();
+            matches.Add(new AnimatedPart
+            {
+                Transform = transform,
+                BaseLocalEulerAngles = transform.localEulerAngles,
+                BaseLocalRotation = transform.localRotation,
+                Axis = axis,
+                AngleLimit = angleLimit,
+                PhaseOffset = matches.Count * 0.35f,
+                ContinuousRotation = continuousRotation
+            });
+        }
+
+        private static bool TryResolveLegacyOilPumpPart(string name, out Vector3 axis, out float angleLimit)
+        {
+            axis = Vector3.zero;
+            angleLimit = 0f;
+            if (name == LegacyOilPumpArmName)
+            {
+                axis = Vector3.right;
+                angleLimit = OilPumpArmAngleLimit;
+                return true;
+            }
+
+            if (name == LegacyOilPumpWheelName)
+            {
+                axis = Vector3.right;
+                angleLimit = OilPumpWheelAngleLimit;
+                return true;
+            }
+
+            return false;
         }
     }
 }

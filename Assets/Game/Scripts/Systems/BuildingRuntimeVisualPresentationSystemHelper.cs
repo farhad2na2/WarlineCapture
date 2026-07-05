@@ -10,6 +10,7 @@ namespace Game.Runtime
     internal sealed class BuildingRuntimeVisualPresentationSystemHelper
     {
         private const float RoadBarrierArmOpenEulerZ = 70f;
+        private const float ResourceVisualStateRefreshIntervalSeconds = 0.25f;
 
         public readonly struct Context
         {
@@ -113,6 +114,17 @@ namespace Game.Runtime
             if (building == null || building.IsDestroyed || building.AnimatedParts == null || building.AnimatedParts.Length == 0 || building.Definition == null)
                 return;
 
+            if (time >= building.NextResourceVisualStateRefreshAt)
+            {
+                building.ResourceVisualAnimationActive = ResolveResourceVisualAnimationActive(context, building);
+                building.NextResourceVisualStateRefreshAt = time + ResourceVisualStateRefreshIntervalSeconds;
+            }
+
+            context.VisualSystem.UpdateAnimatedBuildingParts(building.AnimatedParts, building.ResourceVisualAnimationActive, time);
+        }
+
+        private static bool ResolveResourceVisualAnimationActive(Context context, RuntimeBuildingEntity building)
+        {
             float storedOilBarrels = Mathf.Max(0f, building.StoredOilBarrels);
             float storedFuelBarrels = Mathf.Max(0f, building.StoredFuelBarrels);
             if (TryGetResourceStorage(context, building, out BuildingResourceStorageComponent storage))
@@ -128,7 +140,7 @@ namespace Game.Runtime
                                    building.Definition.FuelBarrelsPerDay > 0f &&
                                    storedOilBarrels > 0f &&
                                    storedFuelBarrels < building.Definition.FuelStorageCapacity;
-            context.VisualSystem.UpdateAnimatedBuildingParts(building.AnimatedParts, isProducingOil || isProducingFuel, time);
+            return isProducingOil || isProducingFuel;
         }
 
         private static bool TryGetResourceStorage(

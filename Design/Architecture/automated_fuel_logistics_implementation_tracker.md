@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 32% (32/99 checklist items complete).
+Overall implementation progress: 33% (33/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -36,7 +36,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
 | 5. Tanker automation and usable Fuel | In Progress | 4 | 12 | 33% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
 | 6. Vehicle fuel spending | In Progress | 8 | 11 | 73% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
-| 7. UI read models and feedback | In Progress | 2 | 10 | 20% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
+| 7. UI read models and feedback | In Progress | 3 | 10 | 30% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
 | 8. AI and enemy support | Pending | 0 | 7 | 0% | Let AI understand fuel economy after player loop is validated. |
 | 9. Validation and profiling | In Progress | 1 | 10 | 10% | Focused tests, seeded-map checks, guardrails, GC checks, and Android profiling. |
 
@@ -167,7 +167,7 @@ Validation:
 
 - [x] Header Fuel reads faction usable Fuel and capacity, not refinery output.
 - [ ] Oil can be shown only when the active mission/skirmish preset teaches extraction.
-- [ ] Selection panel supports Oil Pump, Refinery, Fuel Bladder, tray truck, and tanker logistics state.
+- [x] Selection panel supports Oil Pump, Refinery, Fuel Bladder, tray truck, and tanker logistics state.
 - [x] Disabled command/build/production rows use typed reason ids.
 - [ ] Avoid per-frame string formatting; cache labels or update TMP text only on read-model version changes.
 - [ ] Keep Canvas work inside existing UI helper boundaries and do not add simulation logic to UI classes.
@@ -518,6 +518,20 @@ Use this section during implementation. Each completed batch should add:
   - Unity focused validation was not rerun because the prior focused Unity run is blocked by the recurring licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
 - Next action:
   - Continue Phase 7 selection panel logistics read models for Oil Pump, Refinery, Fuel Bladder, tray truck, and tanker.
+- Slice: selection panel logistics storage coverage.
+- Files changed: `Assets/Tests/Editor/SelectionSummaryQuerySystemTests.cs` and this tracker.
+- Behavior intent:
+  - Verified the existing match HUD selection panel path for selected resource buildings.
+  - Added focused coverage for oil-only storage, fuel-only storage, and combined oil/fuel storage chips, matching Oil Pump, Fuel Bladder, and Refinery-style storage states.
+  - Existing focused hauler coverage in the same suite continues to validate tray/tanker cargo state through `UnitResourceHauler` and ECS cargo read models.
+  - This marks the Phase 7 selection-panel logistics state item complete without adding simulation logic to UI classes.
+- Validation:
+  - Added `SelectedBuildingSelectionPanelShowsOilFuelStorageChips`.
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Unity focused validation was not rerun because the prior focused Unity run is blocked by the recurring licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
+- Next action:
+  - Add active mission/skirmish gating for Oil display, then continue no-GC/versioned UI update validation.
 
 - Created design and implementation tracker.
 - Started implementation with seeded logistics verification fixture.

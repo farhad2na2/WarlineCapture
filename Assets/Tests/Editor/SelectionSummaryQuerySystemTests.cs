@@ -34,7 +34,8 @@ public sealed class SelectionSummaryQuerySystemTests
             RunCase(test => test.MixedSelectedOrdersDisplaysMixedOrders());
             RunCase(test => test.FocusedTransportPlaneSelectionPanelUsesResolvedPortrait());
             RunCase(test => test.FocusedResourceHaulerSelectionPanelUsesEcsCargoStorage());
-            Debug.Log("[SelectionSummaryFocusedValidation] result=Passed tests=12");
+            RunCase(test => test.SelectedBuildingSelectionPanelShowsOilFuelStorageChips());
+            Debug.Log("[SelectionSummaryFocusedValidation] result=Passed tests=13");
         }
         catch (System.Exception ex)
         {
@@ -506,6 +507,88 @@ public sealed class SelectionSummaryQuerySystemTests
         bool TryGetEntityManager(out EntityManager entityManager)
         {
             entityManager = em;
+            return true;
+        }
+    }
+
+    [Test]
+    public void SelectedBuildingSelectionPanelShowsOilFuelStorageChips()
+    {
+        AssertSelectedBuildingStorageChip(
+            oilCurrent: 23,
+            oilCapacity: 80,
+            fuelCurrent: 0,
+            fuelCapacity: 0,
+            MatchHudStorageChipKind.OilBarrels);
+        AssertSelectedBuildingStorageChip(
+            oilCurrent: 0,
+            oilCapacity: 0,
+            fuelCurrent: 37,
+            fuelCapacity: 120,
+            MatchHudStorageChipKind.FuelBarrels);
+        AssertSelectedBuildingStorageChip(
+            oilCurrent: 12,
+            oilCapacity: 70,
+            fuelCurrent: 31,
+            fuelCapacity: 90,
+            MatchHudStorageChipKind.OilAndFuel);
+    }
+
+    private void AssertSelectedBuildingStorageChip(
+        int oilCurrent,
+        int oilCapacity,
+        int fuelCurrent,
+        int fuelCapacity,
+        MatchHudStorageChipKind expectedKind)
+    {
+        EntityManager em = _world.EntityManager;
+        var selectionState = new SelectionStateCompositionSystemHelper();
+        var lifecycle = new FocusedUnitLifecycleCompositionSystemHelper();
+        var panel = new RecordingSelectionPanelView(null);
+        var feedback = new SelectionHudFeedbackUiSystemHelper();
+        feedback.BindMatchHudSelectionPanel(panel);
+
+        var context = new SelectionHudFeedbackUiSystemHelper.Context(new SelectionUiReadModelLookup(), TryGetEntityManager);
+        feedback.UpdateMatchHudSelectionPanel(
+            context,
+            selectionState,
+            lifecycle,
+            null,
+            new List<MatchHudSelectionPanelPassengerItemModel>(),
+            null,
+            null,
+            null,
+            null,
+            null,
+            () => true,
+            () => "Storage Building",
+            TryGetStorage,
+            null,
+            null);
+
+        Assert.IsTrue(panel.AppliedModel.Visible);
+        Assert.AreEqual("Storage Building", panel.AppliedModel.Title);
+        Assert.IsTrue(panel.AppliedTransportPassengers.Visible);
+        Assert.AreEqual(expectedKind, panel.AppliedTransportPassengers.StorageKind);
+        Assert.AreEqual(oilCurrent + fuelCurrent, panel.AppliedTransportPassengers.PassengerCount);
+        Assert.AreEqual(oilCapacity + fuelCapacity, panel.AppliedTransportPassengers.Capacity);
+        Assert.AreEqual(oilCurrent, panel.AppliedTransportPassengers.OilCurrent);
+        Assert.AreEqual(oilCapacity, panel.AppliedTransportPassengers.OilCapacity);
+        Assert.AreEqual(fuelCurrent, panel.AppliedTransportPassengers.FuelCurrent);
+        Assert.AreEqual(fuelCapacity, panel.AppliedTransportPassengers.FuelCapacity);
+
+        bool TryGetEntityManager(out EntityManager entityManager)
+        {
+            entityManager = em;
+            return true;
+        }
+
+        bool TryGetStorage(out int storageOilCurrent, out int storageOilCapacity, out int storageFuelCurrent, out int storageFuelCapacity)
+        {
+            storageOilCurrent = oilCurrent;
+            storageOilCapacity = oilCapacity;
+            storageFuelCurrent = fuelCurrent;
+            storageFuelCapacity = fuelCapacity;
             return true;
         }
     }

@@ -35,6 +35,7 @@ namespace Game.Components
         public int ResourceCargoOilBarrels;
         public int ResourceCargoFuelBarrels;
         public int ResourceCargoCapacity;
+        public FixedString32Bytes ResourceCargoStatusText;
         public int Status;
         public FixedString64Bytes Label;
         public FixedString128Bytes Description;

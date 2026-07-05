@@ -900,7 +900,7 @@ namespace Game.Runtime
                     focusedModel.ResourceCargoCapacity,
                     focusedModel.ResourceCargoFuelBarrels,
                     focusedModel.ResourceCargoCapacity,
-                    0);
+                    focusedModel.ResourceCargoStatusText.GetHashCode());
             }
 
             return true;
@@ -1037,7 +1037,10 @@ namespace Game.Runtime
                 oilCurrent: focusedModel.ResourceCargoOilBarrels,
                 oilCapacity: focusedModel.ResourceCargoCapacity,
                 fuelCurrent: focusedModel.ResourceCargoFuelBarrels,
-                fuelCapacity: focusedModel.ResourceCargoCapacity);
+                fuelCapacity: focusedModel.ResourceCargoCapacity,
+                statusText: focusedModel.ResourceCargoStatusText.Length > 0
+                    ? focusedModel.ResourceCargoStatusText.ToString()
+                    : null);
         }
 
         private static MatchHudTransportPassengersModel BuildSelectedBuildingResourceStoragePanelModel(

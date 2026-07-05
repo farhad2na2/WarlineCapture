@@ -110,6 +110,7 @@ namespace Game.Runtime
                 model.ResourceCargoOilBarrels = resourceOilBarrels;
                 model.ResourceCargoFuelBarrels = resourceFuelBarrels;
                 model.ResourceCargoCapacity = resourceCapacity;
+                model.ResourceCargoStatusText = ResolveResourceCargoStatusText(em, focusedUnit);
             }
 
             if (selectionUiReadModelLookup.TryGetTransportPassengerBreakdown(
@@ -216,6 +217,52 @@ namespace Game.Runtime
                    previous.StopDisabledReason != current.StopDisabledReason ||
                    previous.CanScan != current.CanScan ||
                    previous.ScanDisabledReason != current.ScanDisabledReason;
+        }
+
+        private static FixedString32Bytes ResolveResourceCargoStatusText(EntityManager em, Entity focusedUnit)
+        {
+            if (!em.HasComponent<UnitResourceHaulStatus>(focusedUnit))
+                return default;
+
+            UnitResourceHaulStatus status = em.GetComponentData<UnitResourceHaulStatus>(focusedUnit);
+            FuelLogisticsTaskStatusCode statusCode = (FuelLogisticsTaskStatusCode)status.StatusCode;
+            FuelLogisticsBlockReasonCode reasonCode = (FuelLogisticsBlockReasonCode)status.ReasonCode;
+            ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind =
+                (ResourceHaulerUtilitySystemHelper.ResourceHaulKind)status.ResourceKind;
+
+            if (statusCode == FuelLogisticsTaskStatusCode.Blocked)
+                return ResolveResourceCargoBlockText(reasonCode, resourceKind);
+
+            return statusCode switch
+            {
+                FuelLogisticsTaskStatusCode.Idle => ToFixed32("IDLE"),
+                FuelLogisticsTaskStatusCode.Assigned => ToFixed32("ASSIGNED"),
+                FuelLogisticsTaskStatusCode.ToSource => ToFixed32("TO SOURCE"),
+                FuelLogisticsTaskStatusCode.Loading => ToFixed32("LOADING"),
+                FuelLogisticsTaskStatusCode.ToDestination => ToFixed32("TO STORAGE"),
+                FuelLogisticsTaskStatusCode.Unloading => ToFixed32("UNLOADING"),
+                _ => default
+            };
+        }
+
+        private static FixedString32Bytes ResolveResourceCargoBlockText(
+            FuelLogisticsBlockReasonCode reasonCode,
+            ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind)
+        {
+            return reasonCode switch
+            {
+                FuelLogisticsBlockReasonCode.SourceUnavailable =>
+                    resourceKind == ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Fuel
+                        ? ToFixed32("WAITING FUEL")
+                        : ToFixed32("WAITING OIL"),
+                FuelLogisticsBlockReasonCode.DestinationUnavailable => ToFixed32("NO STORAGE"),
+                FuelLogisticsBlockReasonCode.DestinationFull => ToFixed32("STORAGE FULL"),
+                FuelLogisticsBlockReasonCode.RouteUnavailable => ToFixed32("NO ROUTE"),
+                FuelLogisticsBlockReasonCode.ReservationFailed => ToFixed32("RESERVATION"),
+                FuelLogisticsBlockReasonCode.HaulerUnavailable => ToFixed32("UNAVAILABLE"),
+                FuelLogisticsBlockReasonCode.InsufficientUsableFuel => ToFixed32("NO FUEL"),
+                _ => ToFixed32("BLOCKED")
+            };
         }
 
         private static uint NextVersion(uint version)

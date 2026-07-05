@@ -34,11 +34,12 @@ public sealed class SelectionSummaryQuerySystemTests
             RunCase(test => test.MixedSelectedOrdersDisplaysMixedOrders());
             RunCase(test => test.FocusedTransportPlaneSelectionPanelUsesResolvedPortrait());
             RunCase(test => test.FocusedResourceHaulerSelectionPanelUsesEcsCargoStorage());
+            RunCase(test => test.FocusedResourceHaulerSelectionPanelShowsTypedLogisticsStatus());
             RunCase(test => test.SelectedBuildingSelectionPanelShowsOilFuelStorageChips());
             RunCase(test => test.SelectedBuildingSelectionPanelReplacesStaleOilFuelStorageValues());
             RunCase(test => test.SelectedBuildingResourceStoragePanelSkipsApplyUntilVersionChanges());
             RunCase(test => test.SelectedBuildingRefineryStoragePanelReportsConversionStatus());
-            Debug.Log("[SelectionSummaryFocusedValidation] result=Passed tests=16");
+            Debug.Log("[SelectionSummaryFocusedValidation] result=Passed tests=17");
         }
         catch (System.Exception ex)
         {
@@ -508,6 +509,75 @@ public sealed class SelectionSummaryQuerySystemTests
         Assert.AreEqual(40, panel.AppliedTransportPassengers.OilCapacity);
         Assert.AreEqual(17, panel.AppliedTransportPassengers.FuelCurrent);
         Assert.AreEqual(40, panel.AppliedTransportPassengers.FuelCapacity);
+
+        bool TryGetEntityManager(out EntityManager entityManager)
+        {
+            entityManager = em;
+            return true;
+        }
+    }
+
+    [Test]
+    public void FocusedResourceHaulerSelectionPanelShowsTypedLogisticsStatus()
+    {
+        EntityManager em = _world.EntityManager;
+        Entity hauler = CreatePlayerUnit(em, "Fuel Truck", new int2(6, 3), 100);
+        em.SetComponentData(hauler, new Faction { Id = FactionIdentity.PlayerFactionId });
+        em.AddComponent<SelectedUnitTag>(hauler);
+        em.AddComponentData(hauler, new UnitMovementBehavior { UsesVehicleMotion = 1 });
+        em.AddComponentData(hauler, new UnitSourcePrefabKey { Value = new FixedString64Bytes("Unit_Veh_Transport_FuelTruck") });
+        em.AddComponentData(hauler, new UnitResourceHauler
+        {
+            BarrelCapacity = 40,
+            CargoOilBarrels = 0f,
+            CargoFuelBarrels = 0f
+        });
+        em.AddComponentData(hauler, new UnitResourceHaulStatus
+        {
+            StatusCode = (byte)FuelLogisticsTaskStatusCode.Blocked,
+            ReasonCode = (byte)FuelLogisticsBlockReasonCode.SourceUnavailable,
+            ResourceKind = (byte)ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Fuel
+        });
+
+        var selectionState = new SelectionStateCompositionSystemHelper();
+        selectionState.SetFocusedUnit(hauler);
+        var lifecycle = new FocusedUnitLifecycleCompositionSystemHelper();
+        var readModel = new FocusedUnitUiReadModelUiSystemHelper();
+        var panel = new RecordingSelectionPanelView(null);
+        var feedback = new SelectionHudFeedbackUiSystemHelper();
+        feedback.BindMatchHudSelectionPanel(panel);
+
+        var context = new SelectionHudFeedbackUiSystemHelper.Context(new SelectionUiReadModelLookup(), TryGetEntityManager);
+        feedback.RefreshFocusedSelectionReadModels(
+            context,
+            selectionState,
+            readModel,
+            new UnitTransportCapacitySystem(),
+            null,
+            null,
+            0f);
+
+        feedback.UpdateMatchHudSelectionPanel(
+            context,
+            selectionState,
+            lifecycle,
+            readModel,
+            new List<MatchHudSelectionPanelPassengerItemModel>(),
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null);
+
+        Assert.IsTrue(panel.AppliedTransportPassengers.Visible);
+        Assert.AreEqual(MatchHudStorageChipKind.ResourceCargo, panel.AppliedTransportPassengers.StorageKind);
+        Assert.AreEqual("WAITING FUEL", panel.AppliedTransportPassengers.StatusText);
 
         bool TryGetEntityManager(out EntityManager entityManager)
         {

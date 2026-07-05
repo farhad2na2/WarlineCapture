@@ -532,13 +532,16 @@ namespace Game.UI.Runtime
             int capacity = Mathf.Max(0, model.Capacity);
             int oil = Mathf.Max(0, model.OilCurrent);
             int fuel = Mathf.Max(0, model.FuelCurrent);
+            string label;
             if (oil > 0 && fuel > 0)
-                return $"OIL {oil}/{capacity} | FUEL {fuel}/{capacity}";
-            if (fuel > 0)
-                return $"FUEL {fuel}/{capacity}";
-            if (oil > 0)
-                return $"OIL {oil}/{capacity}";
-            return $"CARGO 0/{capacity}";
+                label = $"OIL {oil}/{capacity} | FUEL {fuel}/{capacity}";
+            else if (fuel > 0)
+                label = $"FUEL {fuel}/{capacity}";
+            else if (oil > 0)
+                label = $"OIL {oil}/{capacity}";
+            else
+                label = $"CARGO 0/{capacity}";
+            return AppendStatus(label, model.StatusText);
         }
 
         private void SetHealthFill(float health01)

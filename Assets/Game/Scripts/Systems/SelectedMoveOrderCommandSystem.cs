@@ -223,6 +223,7 @@ namespace Game.Runtime
             int structuralRemoves = 0;
             int uniqueGoalCount = 0;
             int groundPathCandidateCount = 0;
+            TacticalCommandReasonCode firstMoveRejectionReason = TacticalCommandReasonCode.None;
             for (int i = 0; i < entities.Length; i++)
             {
                 Entity entity = entities[i];
@@ -300,6 +301,17 @@ namespace Game.Runtime
                         $"pathRequestNow={(em.HasComponent<UnitPathRequest>(entity) ? em.GetComponentData<UnitPathRequest>(entity).Goal.ToString() : "none")}");
                 }
 
+                if (!commandResult.Issued)
+                {
+                    if (firstMoveRejectionReason == TacticalCommandReasonCode.None &&
+                        commandResult.RejectionReasonCode != 0)
+                    {
+                        firstMoveRejectionReason = (TacticalCommandReasonCode)commandResult.RejectionReasonCode;
+                    }
+
+                    continue;
+                }
+
                 structuralAdds += commandResult.StructuralAdds;
                 structuralRemoves += commandResult.StructuralRemoves;
                 pathRequestCount += commandResult.PathRequests;
@@ -315,14 +327,17 @@ namespace Game.Runtime
 
             if (!issuedMoveOrder)
             {
+                TacticalCommandReasonCode rejectionReason = firstMoveRejectionReason != TacticalCommandReasonCode.None
+                    ? firstMoveRejectionReason
+                    : TacticalCommandReasonCode.TargetBlocked;
                 if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
                 {
                     SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
-                        $"selectedMoveRejected reason=TargetBlocked selected={entities.Length} desiredGoal={goal} " +
+                        $"selectedMoveRejected reason={rejectionReason} selected={entities.Length} desiredGoal={goal} " +
                         $"skippedAlreadyMoving={skippedAlreadyMovingCount} groundCandidates={groundPathCandidateCount}");
                 }
 
-                return Result.Rejected(TacticalCommandReasonCode.TargetBlocked);
+                return Result.Rejected(rejectionReason);
             }
 
             if (EnableGroupMoveValidationLog && entities.Length > 1)
@@ -360,7 +375,8 @@ namespace Game.Runtime
                 PathRequests = result.PathRequests,
                 StaggeredPathRequests = result.StaggeredPathRequests,
                 MaxStaggerDelayFrames = result.MaxStaggerDelayFrames,
-                AirUnits = result.AirUnits
+                AirUnits = result.AirUnits,
+                RejectionReasonCode = result.RejectionReasonCode
             };
         }
 

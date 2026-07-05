@@ -1,6 +1,7 @@
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using Game.Tactical.Contracts;
 using Game.Components;
 
 namespace Game.Runtime
@@ -220,6 +221,16 @@ namespace Game.Runtime
             UnitMoveOrderSystem moveOrderSystem,
             UnitMoveOrderRequestElement request)
         {
+            if (request.Kind == UnitMoveOrderRequestKind.GroupedManual &&
+                ShouldRejectManualMoveForFuel(em, request.Entity, request.Goal, out TacticalCommandReasonCode fuelReason))
+            {
+                return new UnitMoveOrderSystem.MoveOrderCommandResult
+                {
+                    Issued = false,
+                    RejectionReasonCode = (int)fuelReason
+                };
+            }
+
             switch (request.Kind)
             {
                 case UnitMoveOrderRequestKind.GroupedManual:
@@ -245,6 +256,75 @@ namespace Game.Runtime
                 default:
                     return default;
             }
+        }
+
+        private static bool ShouldRejectManualMoveForFuel(
+            EntityManager em,
+            Entity entity,
+            int2 goal,
+            out TacticalCommandReasonCode reason)
+        {
+            reason = TacticalCommandReasonCode.None;
+            if (entity == Entity.Null ||
+                !em.Exists(entity) ||
+                !em.HasComponent<UnitFuelConsumption>(entity))
+            {
+                return false;
+            }
+
+            UnitFuelConsumption consumption = em.GetComponentData<UnitFuelConsumption>(entity);
+            if (consumption.Enabled == 0)
+                return false;
+
+            bool isAirUnit = em.HasComponent<UnitAirMovement>(entity);
+            float fuelPerCell = isAirUnit
+                ? math.max(0f, consumption.AirFuelPerCell)
+                : math.max(0f, consumption.GroundFuelPerCell);
+            if (fuelPerCell <= 0f)
+                return false;
+
+            int movedCells = 1;
+            if (em.HasComponent<UnitGrid>(entity))
+            {
+                int2 currentCell = em.GetComponentData<UnitGrid>(entity).Cell;
+                int2 delta = goal - currentCell;
+                movedCells = math.abs(delta.x) + math.abs(delta.y);
+                if (movedCells <= 0)
+                    return false;
+            }
+
+            byte factionId = em.HasComponent<Faction>(entity)
+                ? em.GetComponentData<Faction>(entity).Id
+                : FactionIdentity.NeutralFactionId;
+            float requiredFuel = movedCells * fuelPerCell;
+            float usableFuel = CalculateUsableFuel(em, factionId);
+            if (usableFuel + 0.001f >= requiredFuel)
+                return false;
+
+            reason = TacticalCommandReasonCode.InsufficientFuel;
+            return true;
+        }
+
+        private static float CalculateUsableFuel(EntityManager em, byte factionId)
+        {
+            float usableFuel = 0f;
+            using EntityQuery storageQuery = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingResourceStorageComponent>());
+            using NativeArray<BuildingResourceStorageComponent> storages = storageQuery.ToComponentDataArray<BuildingResourceStorageComponent>(Allocator.Temp);
+            for (int i = 0; i < storages.Length; i++)
+            {
+                BuildingResourceStorageComponent storage = storages[i];
+                if (storage.OwnerFactionId != factionId ||
+                    storage.FuelStorageCapacity <= 0 ||
+                    storage.FuelBarrelsPerDay > 0f ||
+                    storage.OilBarrelsPerDay > 0f)
+                {
+                    continue;
+                }
+
+                usableFuel += math.max(0f, storage.StoredFuelBarrels - storage.ReservedFuelOutboundBarrels);
+            }
+
+            return usableFuel;
         }
 
         private static void ClearMovementOrderComponents(EntityManager em, Entity entity)
@@ -325,7 +405,8 @@ namespace Game.Runtime
                 PathRequests = commandResult.PathRequests,
                 StaggeredPathRequests = commandResult.StaggeredPathRequests,
                 MaxStaggerDelayFrames = commandResult.MaxStaggerDelayFrames,
-                AirUnits = commandResult.AirUnits
+                AirUnits = commandResult.AirUnits,
+                RejectionReasonCode = commandResult.RejectionReasonCode
             };
         }
 

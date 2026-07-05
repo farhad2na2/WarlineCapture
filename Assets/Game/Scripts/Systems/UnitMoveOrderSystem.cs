@@ -26,6 +26,7 @@ namespace Game.Runtime
             public int StaggeredPathRequests;
             public int MaxStaggerDelayFrames;
             public int AirUnits;
+            public int RejectionReasonCode;
         }
 
         public void OnCreate(ref SystemState state)

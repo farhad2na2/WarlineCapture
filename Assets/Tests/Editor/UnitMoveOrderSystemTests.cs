@@ -32,6 +32,7 @@ public sealed class UnitMoveOrderSystemTests
             RunCase(test => test.IssueGroupedManualMoveOrder_StaggeredGroundUnitUsesRetryCooldownInsteadOfPathRequest());
             RunCase(test => test.IssueGroupedManualMoveOrder_StaggeredGroundUnitReplacesExistingRetryCooldown());
             RunCase(test => test.UnitMoveOrderRequestSystem_GroupedManualRequestWritesResultAndMoveComponents());
+            RunCase(test => test.UnitMoveOrderRequestSystem_GroupedManualFuelConsumerRejectsAtZeroUsableFuel());
             RunCase(test => test.UnitMoveOrderRequestSystem_TargetPathRequestWritesOnlyTargetAndPath());
             RunCase(test => test.ClearMovementOrderComponents_RemovesSharedMoveOrderComponents());
             RunCase(test => test.UnitMoveOrderRequestSystem_ClearMovementRequestRemovesSharedMoveOrderComponents());
@@ -42,7 +43,7 @@ public sealed class UnitMoveOrderSystemTests
             RunCase(test => test.SelectedMoveOrderCommand_PreResolvedRequestPathfindsAndMovesSelectedUnit());
             RunCase(test => test.SelectedMoveOrderCommand_RefreshesCommandBuffersAfterStructuralMoveOrder());
             RunCase(test => test.BuildingTargetMoveOrder_IssuesApproachCellMoveOrderForSelectedUnit());
-            UnityEngine.Debug.Log("[UnitMoveOrderFocusedValidation] result=Passed tests=17");
+            UnityEngine.Debug.Log("[UnitMoveOrderFocusedValidation] result=Passed tests=18");
         }
         catch (System.Exception ex)
         {
@@ -278,6 +279,56 @@ public sealed class UnitMoveOrderSystemTests
         Assert.AreEqual(42, _entityManager.GetComponentData<UnitPathRetryCooldown>(unit).ResumeFrame);
         Assert.IsTrue(_entityManager.HasComponent<ManualMoveGroupMemberTag>(unit));
         Assert.IsTrue(_entityManager.HasComponent<ManualMoveOrderTag>(unit));
+    }
+
+    [Test]
+    public void UnitMoveOrderRequestSystem_GroupedManualFuelConsumerRejectsAtZeroUsableFuel()
+    {
+        Entity unit = _entityManager.CreateEntity(
+            typeof(UnitGrid),
+            typeof(Faction),
+            typeof(UnitMovementBehavior),
+            typeof(UnitFuelConsumption),
+            typeof(UnitFuelConsumptionState));
+        _entityManager.SetComponentData(unit, new UnitGrid { Cell = new int2(1, 1) });
+        _entityManager.SetComponentData(unit, new Faction { Id = FactionIdentity.PlayerFactionId });
+        _entityManager.SetComponentData(unit, new UnitMovementBehavior { UsesVehicleMotion = 1 });
+        _entityManager.SetComponentData(unit, new UnitFuelConsumption
+        {
+            Enabled = 1,
+            GroundFuelPerCell = 1f,
+            AirFuelPerCell = 2f
+        });
+        _entityManager.SetComponentData(unit, new UnitFuelConsumptionState());
+        int2 goal = new(3, 1);
+        SystemHandle requestSystem = _world.CreateSystem<UnitMoveOrderRequestSystem>();
+
+        int requestId = UnitMoveOrderRequestSystem.EnqueueGroupedManualMoveOrder(
+            _entityManager,
+            unit,
+            goal,
+            issueGroundPathNow: true,
+            useGroundPathRetryCooldown: false,
+            resumeFrame: 0,
+            currentFrame: 0);
+        requestSystem.Update(_world.Unmanaged);
+
+        using EntityQuery queueQuery = _entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<UnitMoveOrderQueueComponent>(),
+            ComponentType.ReadOnly<UnitMoveOrderRequestElement>(),
+            ComponentType.ReadOnly<UnitMoveOrderResultElement>());
+        Entity queueEntity = queueQuery.GetSingletonEntity();
+        DynamicBuffer<UnitMoveOrderResultElement> results =
+            _entityManager.GetBuffer<UnitMoveOrderResultElement>(queueEntity);
+
+        Assert.AreEqual(1, results.Length);
+        Assert.AreEqual(requestId, results[0].RequestId);
+        Assert.AreEqual(0, results[0].Issued);
+        Assert.AreEqual((int)TacticalCommandReasonCode.InsufficientFuel, results[0].RejectionReasonCode);
+        Assert.IsFalse(_entityManager.HasComponent<UnitTarget>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<UnitPathRequest>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<ManualMoveGroupMemberTag>(unit));
+        Assert.IsFalse(_entityManager.HasComponent<ManualMoveOrderTag>(unit));
     }
 
     [Test]

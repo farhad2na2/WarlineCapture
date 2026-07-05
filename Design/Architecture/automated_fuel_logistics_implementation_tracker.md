@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 24% (24/99 checklist items complete).
+Overall implementation progress: 26% (26/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -35,10 +35,10 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 3. Tray truck automation | In Progress | 5 | 13 | 38% | Auto-assign Oil pickup/delivery without manual target commands. |
 | 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
 | 5. Tanker automation and usable Fuel | In Progress | 4 | 12 | 33% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
-| 6. Vehicle fuel spending | In Progress | 3 | 11 | 27% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
+| 6. Vehicle fuel spending | In Progress | 4 | 11 | 36% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
 | 7. UI read models and feedback | In Progress | 1 | 10 | 10% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
 | 8. AI and enemy support | Pending | 0 | 7 | 0% | Let AI understand fuel economy after player loop is validated. |
-| 9. Validation and profiling | Pending | 0 | 10 | 0% | Focused tests, seeded-map checks, guardrails, GC checks, and Android profiling. |
+| 9. Validation and profiling | In Progress | 1 | 10 | 10% | Focused tests, seeded-map checks, guardrails, GC checks, and Android profiling. |
 
 ## Phase 0: Inventory And Baseline
 
@@ -151,7 +151,7 @@ Validation:
 - [x] Add fuel-cost config for vehicle/air movement-heavy or operation-heavy actions if missing.
 - [x] Implement `VehicleFuelConsumptionSystem` or equivalent unmanaged `ISystem` for active fuel drains.
 - [x] Aggregate consumption by faction and vehicle class to avoid per-entity UI churn.
-- [ ] Block new movement/launch/support commands when usable Fuel is below required threshold.
+- [x] Block new movement/launch/support commands when usable Fuel is below required threshold.
 - [ ] Add aircraft-safe behavior: new launches blocked when fuel is short; active aircraft return to base or use emergency reserve, never stop midair.
 - [ ] Add ground-vehicle no-fuel behavior: reject new long moves, finish committed segment, return, or hold by policy.
 - [ ] Publish warning/read-model updates only when fuel state or blocked reasons change.
@@ -159,7 +159,7 @@ Validation:
 Validation:
 
 - [x] Ground vehicle movement spends Fuel.
-- [ ] New ground vehicle movement is blocked at 0 usable Fuel with a typed reason.
+- [x] New ground vehicle movement is blocked at 0 usable Fuel with a typed reason.
 - [ ] Aircraft at 0 usable Fuel returns/lands safely and does not freeze midair.
 - [ ] UI command buttons update only on fuel/version changes.
 
@@ -430,6 +430,22 @@ Use this section during implementation. Each completed batch should add:
   - Escalated Unity attempt was blocked before tests by licensing client mismatch/reconnect loop: `Unsupported protocol version '1.18.1'`, `com.unity.editor.headless was not found`; stopped the hung batch process. Log: `/private/tmp/warline-fuel-authoring-tests.log`.
 - Next action:
   - Add command gating for new movement/launch/support requests when usable Fuel is empty, including typed blocked reasons and safe aircraft return policy.
+- Slice: manual move Fuel gate and typed rejection.
+- Files changed: `Assets/Game/Scripts/Contracts/TacticalCommandContracts.cs`, `Assets/Game/Scripts/Components/UnitMoveOrderRequestComponents.cs`, `Assets/Game/Scripts/Systems/UnitMoveOrderSystem.cs`, `Assets/Game/Scripts/Systems/UnitMoveOrderRequestSystem.cs`, `Assets/Game/Scripts/Systems/SelectedMoveOrderCommandSystem.cs`, `Assets/Tests/Editor/UnitMoveOrderSystemTests.cs`, and this tracker.
+- Behavior intent:
+  - Added `TacticalCommandReasonCode.InsufficientFuel` and display text for command feedback.
+  - Grouped/manual move requests now estimate fuel from current cell to issued goal for entities with `UnitFuelConsumption`.
+  - Fuel availability is read from delivered usable Fuel storage only, excluding refinery output and respecting outbound reservations.
+  - Manual moves for fuel-consuming ground/air units reject before writing target/path/manual-order components when usable Fuel is below the estimated requirement.
+  - Selected move command mode propagates the typed fuel rejection instead of reporting a generic blocked target.
+  - Clear movement, return/internal movement, and existing active movement are intentionally not blocked in this slice so units are not stranded.
+- Validation:
+  - Added `UnitMoveOrderRequestSystem_GroupedManualFuelConsumerRejectsAtZeroUsableFuel`.
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Unity focused validation was not rerun in this slice because the previous focused Unity run is blocked by the same licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
+- Next action:
+  - Add aircraft-safe low-fuel behavior: block new aircraft launch/move at 0 usable Fuel, but allow/issue return-to-base or emergency reserve policy for active aircraft.
 
 - Created design and implementation tracker.
 - Started implementation with seeded logistics verification fixture.

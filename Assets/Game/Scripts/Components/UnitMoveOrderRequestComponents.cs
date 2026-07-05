@@ -41,5 +41,6 @@ namespace Game.Components
         public int StaggeredPathRequests;
         public int MaxStaggerDelayFrames;
         public int AirUnits;
+        public int RejectionReasonCode;
     }
 }

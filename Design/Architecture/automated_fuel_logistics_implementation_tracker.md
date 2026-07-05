@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 30% (30/99 checklist items complete).
+Overall implementation progress: 31% (31/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -35,7 +35,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 3. Tray truck automation | In Progress | 5 | 13 | 38% | Auto-assign Oil pickup/delivery without manual target commands. |
 | 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
 | 5. Tanker automation and usable Fuel | In Progress | 4 | 12 | 33% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
-| 6. Vehicle fuel spending | In Progress | 7 | 11 | 64% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
+| 6. Vehicle fuel spending | In Progress | 8 | 11 | 73% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
 | 7. UI read models and feedback | In Progress | 1 | 10 | 10% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
 | 8. AI and enemy support | Pending | 0 | 7 | 0% | Let AI understand fuel economy after player loop is validated. |
 | 9. Validation and profiling | In Progress | 1 | 10 | 10% | Focused tests, seeded-map checks, guardrails, GC checks, and Android profiling. |
@@ -161,7 +161,7 @@ Validation:
 - [x] Ground vehicle movement spends Fuel.
 - [x] New ground vehicle movement is blocked at 0 usable Fuel with a typed reason.
 - [x] Aircraft at 0 usable Fuel returns/lands safely and does not freeze midair.
-- [ ] UI command buttons update only on fuel/version changes.
+- [x] UI command buttons update only on fuel/version changes.
 
 ## Phase 7: UI Read Models And Feedback
 
@@ -491,6 +491,19 @@ Use this section during implementation. Each completed batch should add:
   - Unity focused validation was not rerun because the prior focused Unity run is blocked by the recurring licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
 - Next action:
   - Surface typed fuel reasons in disabled command/build/production rows and selected logistics UI, then add no-GC UI update validation where possible.
+- Slice: focused command-state version validation.
+- Files changed: `Assets/Tests/Editor/SelectionUiReadModelLookupTests.cs` and this tracker.
+- Behavior intent:
+  - Added focused validation for the command read-model version introduced in the prior slice.
+  - The test publishes a focused player unit twice and verifies `CommandStateVersion` stays unchanged when command capability/reason state is stable.
+  - The test then changes the unit into a command-blocked passenger state and verifies the version advances with a typed `CommandUnavailable` reason.
+  - This closes the Phase 6 validation row for command buttons updating only when fuel/command read-model versions change.
+- Validation:
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Unity focused validation was not rerun because the prior focused Unity run is blocked by the recurring licensing client mismatch/reconnect loop. Prior log: `/private/tmp/warline-fuel-authoring-tests.log`.
+- Next action:
+  - Continue Phase 7 UI read-model work: selected logistics state for Oil Pump, Refinery, Fuel Bladder, tray truck, and tanker, followed by typed disabled rows.
 
 - Created design and implementation tracker.
 - Started implementation with seeded logistics verification fixture.

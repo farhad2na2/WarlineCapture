@@ -33,6 +33,8 @@ public sealed class SelectionUiReadModelLookupTests
             passed++;
             RunCase(test => test.CommandCapabilities_ReturnTypedReasonsForHoldStopAndScan());
             passed++;
+            RunCase(test => test.FocusedUnitCommandStateVersion_ChangesOnlyWhenCommandStateChanges());
+            passed++;
 
             Debug.Log($"[SelectionUiReadModelLookupValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -206,6 +208,35 @@ public sealed class SelectionUiReadModelLookupTests
 
         Assert.IsFalse(_lookup.CanHoldPosition(_entityManager, Entity.Null, out TacticalCommandReasonCode noSelectionReason));
         Assert.AreEqual(TacticalCommandReasonCode.NoSelection, noSelectionReason);
+    }
+
+    [Test]
+    public void FocusedUnitCommandStateVersion_ChangesOnlyWhenCommandStateChanges()
+    {
+        Entity soldier = CreateCommandableUnit("Unit_Chr_Rifle_Squad", "Rifle Squad", typeof(UnitCombat));
+        _entityManager.SetComponentData(soldier, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
+        var selectionState = new SelectionStateCompositionSystemHelper();
+        selectionState.SetFocusedUnit(soldier);
+        var readModelSystem = new FocusedUnitUiReadModelUiSystemHelper();
+        var transportCapacity = new UnitTransportCapacitySystem();
+
+        readModelSystem.Publish(_entityManager, selectionState, _lookup, transportCapacity, 1f);
+        Assert.IsTrue(readModelSystem.TryRead(_entityManager, out FocusedUnitUiReadModelComponent first, out _));
+        uint firstVersion = first.CommandStateVersion;
+        Assert.Greater(firstVersion, 0u);
+        Assert.AreEqual(1, first.CanHold);
+        Assert.AreEqual((int)TacticalCommandReasonCode.None, first.HoldDisabledReason);
+
+        readModelSystem.Publish(_entityManager, selectionState, _lookup, transportCapacity, 2f);
+        Assert.IsTrue(readModelSystem.TryRead(_entityManager, out FocusedUnitUiReadModelComponent steady, out _));
+        Assert.AreEqual(firstVersion, steady.CommandStateVersion);
+
+        _entityManager.AddComponentData(soldier, new UnitTransportPassenger());
+        readModelSystem.Publish(_entityManager, selectionState, _lookup, transportCapacity, 3f);
+        Assert.IsTrue(readModelSystem.TryRead(_entityManager, out FocusedUnitUiReadModelComponent blocked, out _));
+        Assert.AreNotEqual(firstVersion, blocked.CommandStateVersion);
+        Assert.AreEqual(0, blocked.CanHold);
+        Assert.AreEqual((int)TacticalCommandReasonCode.CommandUnavailable, blocked.HoldDisabledReason);
     }
 
     private Entity CreatePoseEntity(float3 position)

@@ -306,6 +306,33 @@ public sealed class UnitTransportBoardingSystemExtractionTests
     }
 
     [Test]
+    public void OrderPlanningHelper_ReservesStructPlannedSlotsAndReportsOccupancy()
+    {
+        TransportBoardingPlannedSlotCounts plannedSlots = default;
+
+        Assert.IsTrue(TransportBoardingOrderPlanningSystemHelper.TryReservePlannedBoardingSlot(
+            UnitTransportPassengerKind.Soldier,
+            availableSoldierSeats: 2,
+            availableVehicleSlots: 1,
+            ref plannedSlots));
+        Assert.IsTrue(TransportBoardingOrderPlanningSystemHelper.TryReservePlannedBoardingSlot(
+            UnitTransportPassengerKind.Vehicle,
+            availableSoldierSeats: 2,
+            availableVehicleSlots: 1,
+            ref plannedSlots));
+        Assert.IsFalse(TransportBoardingOrderPlanningSystemHelper.TryReservePlannedBoardingSlot(
+            UnitTransportPassengerKind.Vehicle,
+            availableSoldierSeats: 2,
+            availableVehicleSlots: 1,
+            ref plannedSlots));
+
+        Assert.AreEqual(1, plannedSlots.SoldierSeats);
+        Assert.AreEqual(1, plannedSlots.VehicleSlots);
+        Assert.AreEqual(4, TransportBoardingOrderPlanningSystemHelper.ResolvePlannedSoldierOccupancy(3, plannedSlots));
+        Assert.AreEqual(3, TransportBoardingOrderPlanningSystemHelper.ResolvePlannedVehicleOccupancy(2, plannedSlots));
+    }
+
+    [Test]
     public void OrderPlanningHelper_ReportsAvailabilityByPassengerKind()
     {
         Assert.IsTrue(TransportBoardingOrderPlanningSystemHelper.HasPlannedBoardingSlot(

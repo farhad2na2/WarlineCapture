@@ -740,8 +740,7 @@ namespace Game.Runtime
 
             List<PendingTransportBoardingOrder> boardingOrders = new(DefaultBoardingOrderCapacity);
             HashSet<int> reservedBoardingCells = new();
-            int plannedSoldierSeats = 0;
-            int plannedVehicleSlots = 0;
+            TransportBoardingPlannedSlotCounts plannedSlots = default;
             for (int i = 0; i < selectedCount; i++)
             {
                 Entity passenger = selectedBoardingSourceEntities[i];
@@ -764,18 +763,17 @@ namespace Game.Runtime
                         passengerKind,
                         slotAvailability.AvailableSoldierSeats,
                         slotAvailability.AvailableVehicleSlots,
-                        plannedSoldierSeats,
-                        plannedVehicleSlots);
+                        plannedSlots);
                 if (slotRejection != TransportBoardingPlannedSlotRejectionKind.None)
                 {
                     if (slotRejection == TransportBoardingPlannedSlotRejectionKind.NoVehicleSlots)
                     {
                         if (shouldLogTransportBoarding)
-                            TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=SkipPassenger reason=NoVehicleSlots passenger={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, passenger)} transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)} vehicles={slotAvailability.OccupiedVehicleSlots + plannedVehicleSlots}/{slotAvailability.VehicleCapacity}");
+                            TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=SkipPassenger reason=NoVehicleSlots passenger={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, passenger)} transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)} vehicles={TransportBoardingOrderPlanningSystemHelper.ResolvePlannedVehicleOccupancy(slotAvailability.OccupiedVehicleSlots, plannedSlots)}/{slotAvailability.VehicleCapacity}");
                     }
                     else if (shouldLogTransportBoarding)
                     {
-                        TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=SkipPassenger reason=NoSoldierSeats passenger={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, passenger)} transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)} soldiers={slotAvailability.OccupiedSoldierSeats + plannedSoldierSeats}/{slotAvailability.SoldierCapacity}");
+                        TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=SkipPassenger reason=NoSoldierSeats passenger={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, passenger)} transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)} soldiers={TransportBoardingOrderPlanningSystemHelper.ResolvePlannedSoldierOccupancy(slotAvailability.OccupiedSoldierSeats, plannedSlots)}/{slotAvailability.SoldierCapacity}");
                     }
 
                     continue;
@@ -823,8 +821,7 @@ namespace Game.Runtime
                     passengerKind,
                     slotAvailability.AvailableSoldierSeats,
                     slotAvailability.AvailableVehicleSlots,
-                    ref plannedSoldierSeats,
-                    ref plannedVehicleSlots);
+                    ref plannedSlots);
             }
 
             if (boardingOrders.Count <= 0)
@@ -881,7 +878,7 @@ namespace Game.Runtime
                             em,
                             $"[TransportBoard] result=Order passenger={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, passenger)} transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)} " +
                             $"from={boardingOrders[i].PassengerCell} goal={goal} kind={boardingOrders[i].PassengerKind} direct={(boardingOrders[i].DirectBoarding ? 1 : 0)} usedCache={(usedCachedSelection ? 1 : 0)} " +
-                            $"soldiers={slotAvailability.OccupiedSoldierSeats + plannedSoldierSeats}/{slotAvailability.SoldierCapacity} vehicles={slotAvailability.OccupiedVehicleSlots + plannedVehicleSlots}/{slotAvailability.VehicleCapacity}");
+                            $"soldiers={TransportBoardingOrderPlanningSystemHelper.ResolvePlannedSoldierOccupancy(slotAvailability.OccupiedSoldierSeats, plannedSlots)}/{slotAvailability.SoldierCapacity} vehicles={TransportBoardingOrderPlanningSystemHelper.ResolvePlannedVehicleOccupancy(slotAvailability.OccupiedVehicleSlots, plannedSlots)}/{slotAvailability.VehicleCapacity}");
                     }
                 }
 
@@ -897,7 +894,7 @@ namespace Game.Runtime
                 transportCell,
                 markerPosition,
                 0,
-                TransportBoardingOrderPlanningSystemHelper.ResolveBoardingAcceptedMessage(cargoPlaneTransport, plannedSoldierSeats, plannedVehicleSlots));
+                TransportBoardingOrderPlanningSystemHelper.ResolveBoardingAcceptedMessage(cargoPlaneTransport, plannedSlots));
         }
 
         public Result TryIssueBoardSelectedTransportOrderToClickedPassenger(

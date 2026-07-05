@@ -9,6 +9,18 @@ namespace Game.Runtime
         NoVehicleSlots
     }
 
+    internal struct TransportBoardingPlannedSlotCounts
+    {
+        public int SoldierSeats;
+        public int VehicleSlots;
+
+        public TransportBoardingPlannedSlotCounts(int soldierSeats, int vehicleSlots)
+        {
+            SoldierSeats = soldierSeats;
+            VehicleSlots = vehicleSlots;
+        }
+    }
+
     internal static class TransportBoardingOrderPlanningSystemHelper
     {
         public static string ResolveBoardingAcceptedMessage(
@@ -25,6 +37,16 @@ namespace Game.Runtime
             return plannedVehicleSlots > 0
                 ? "Loading cargo."
                 : "Boarding transport plane.";
+        }
+
+        public static string ResolveBoardingAcceptedMessage(
+            bool cargoPlaneTransport,
+            in TransportBoardingPlannedSlotCounts plannedSlots)
+        {
+            return ResolveBoardingAcceptedMessage(
+                cargoPlaneTransport,
+                plannedSlots.SoldierSeats,
+                plannedSlots.VehicleSlots);
         }
 
         public static string ResolveBoardingAcceptedMessage(bool cargoPlaneTransport, byte passengerKind)
@@ -56,6 +78,20 @@ namespace Game.Runtime
                 : plannedSoldierSeats < availableSoldierSeats;
         }
 
+        public static bool HasPlannedBoardingSlot(
+            byte passengerKind,
+            int availableSoldierSeats,
+            int availableVehicleSlots,
+            in TransportBoardingPlannedSlotCounts plannedSlots)
+        {
+            return HasPlannedBoardingSlot(
+                passengerKind,
+                availableSoldierSeats,
+                availableVehicleSlots,
+                plannedSlots.SoldierSeats,
+                plannedSlots.VehicleSlots);
+        }
+
         public static TransportBoardingPlannedSlotRejectionKind ResolvePlannedSlotRejection(
             byte passengerKind,
             int availableSoldierSeats,
@@ -76,6 +112,20 @@ namespace Game.Runtime
             return passengerKind == UnitTransportPassengerKind.Vehicle
                 ? TransportBoardingPlannedSlotRejectionKind.NoVehicleSlots
                 : TransportBoardingPlannedSlotRejectionKind.NoSoldierSeats;
+        }
+
+        public static TransportBoardingPlannedSlotRejectionKind ResolvePlannedSlotRejection(
+            byte passengerKind,
+            int availableSoldierSeats,
+            int availableVehicleSlots,
+            in TransportBoardingPlannedSlotCounts plannedSlots)
+        {
+            return ResolvePlannedSlotRejection(
+                passengerKind,
+                availableSoldierSeats,
+                availableVehicleSlots,
+                plannedSlots.SoldierSeats,
+                plannedSlots.VehicleSlots);
         }
 
         public static bool TryReservePlannedBoardingSlot(
@@ -101,6 +151,43 @@ namespace Game.Runtime
                 plannedSoldierSeats++;
 
             return true;
+        }
+
+        public static bool TryReservePlannedBoardingSlot(
+            byte passengerKind,
+            int availableSoldierSeats,
+            int availableVehicleSlots,
+            ref TransportBoardingPlannedSlotCounts plannedSlots)
+        {
+            if (!HasPlannedBoardingSlot(
+                    passengerKind,
+                    availableSoldierSeats,
+                    availableVehicleSlots,
+                    plannedSlots))
+            {
+                return false;
+            }
+
+            if (passengerKind == UnitTransportPassengerKind.Vehicle)
+                plannedSlots.VehicleSlots++;
+            else
+                plannedSlots.SoldierSeats++;
+
+            return true;
+        }
+
+        public static int ResolvePlannedSoldierOccupancy(
+            int occupiedSoldierSeats,
+            in TransportBoardingPlannedSlotCounts plannedSlots)
+        {
+            return occupiedSoldierSeats + plannedSlots.SoldierSeats;
+        }
+
+        public static int ResolvePlannedVehicleOccupancy(
+            int occupiedVehicleSlots,
+            in TransportBoardingPlannedSlotCounts plannedSlots)
+        {
+            return occupiedVehicleSlots + plannedSlots.VehicleSlots;
         }
     }
 }

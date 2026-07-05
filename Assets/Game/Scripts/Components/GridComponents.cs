@@ -60,6 +60,19 @@ namespace Game.Components
         public byte UsesVehicleMotion;
     }
 
+    public struct UnitFuelConsumption : IComponentData
+    {
+        public float GroundFuelPerCell;
+        public float AirFuelPerCell;
+        public byte Enabled;
+    }
+
+    public struct UnitFuelConsumptionState : IComponentData
+    {
+        public int2 LastCell;
+        public byte Initialized;
+    }
+
     public struct UnitVehicleMovement : IComponentData
     {
         public float TurnSpeedDegrees;

@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 20% (20/99 checklist items complete).
+Overall implementation progress: 23% (23/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -35,7 +35,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 3. Tray truck automation | In Progress | 5 | 13 | 38% | Auto-assign Oil pickup/delivery without manual target commands. |
 | 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
 | 5. Tanker automation and usable Fuel | In Progress | 4 | 12 | 33% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
-| 6. Vehicle fuel spending | Pending | 0 | 11 | 0% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
+| 6. Vehicle fuel spending | In Progress | 2 | 11 | 18% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
 | 7. UI read models and feedback | In Progress | 1 | 10 | 10% | Header, selection panel, disabled reasons, and truck task feedback from versioned data. |
 | 8. AI and enemy support | Pending | 0 | 7 | 0% | Let AI understand fuel economy after player loop is validated. |
 | 9. Validation and profiling | Pending | 0 | 10 | 0% | Focused tests, seeded-map checks, guardrails, GC checks, and Android profiling. |
@@ -149,8 +149,8 @@ Validation:
 ## Phase 6: Vehicle Fuel Consumption
 
 - [ ] Add fuel-cost config for vehicle/air movement-heavy or operation-heavy actions if missing.
-- [ ] Implement `VehicleFuelConsumptionSystem` or equivalent unmanaged `ISystem` for active fuel drains.
-- [ ] Aggregate consumption by faction and vehicle class to avoid per-entity UI churn.
+- [x] Implement `VehicleFuelConsumptionSystem` or equivalent unmanaged `ISystem` for active fuel drains.
+- [x] Aggregate consumption by faction and vehicle class to avoid per-entity UI churn.
 - [ ] Block new movement/launch/support commands when usable Fuel is below required threshold.
 - [ ] Add aircraft-safe behavior: new launches blocked when fuel is short; active aircraft return to base or use emergency reserve, never stop midair.
 - [ ] Add ground-vehicle no-fuel behavior: reject new long moves, finish committed segment, return, or hold by policy.
@@ -158,7 +158,7 @@ Validation:
 
 Validation:
 
-- [ ] Ground vehicle movement spends Fuel.
+- [x] Ground vehicle movement spends Fuel.
 - [ ] New ground vehicle movement is blocked at 0 usable Fuel with a typed reason.
 - [ ] Aircraft at 0 usable Fuel returns/lands safely and does not freeze midair.
 - [ ] UI command buttons update only on fuel/version changes.
@@ -401,6 +401,19 @@ Use this section during implementation. Each completed batch should add:
   - Focused Unity batchmode validation remains blocked because Unity is already open on `/Users/farhad/Projects/WarlineCapture-Clone`.
 - Next action:
   - Add vehicle fuel consumption data/config and the first guarded consumption path for active vehicle movement.
+- Slice: opt-in vehicle Fuel consumption system.
+- Files changed: `Assets/Game/Scripts/Components/GridComponents.cs`, `Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs`, `Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs.meta`, `Assets/Tests/Editor/VehicleFuelConsumptionSystemTests.cs`, `Assets/Tests/Editor/VehicleFuelConsumptionSystemTests.cs.meta`, and this tracker.
+- Behavior intent:
+  - Added `UnitFuelConsumption` and `UnitFuelConsumptionState` ECS components.
+  - Added unmanaged `VehicleFuelConsumptionSystem` that skips unmoved units, aggregates requested Fuel by faction, and drains delivered Fuel storage only.
+  - Fuel storage `Version` increments when movement drains usable Fuel, so existing summary/header publishing can refresh.
+  - Added focused tests for initialization/no-drain, ground vehicle movement spending Fuel, air units using air Fuel cost, and refinery output not being drained.
+- Validation:
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Focused Unity batchmode validation remains blocked because Unity is already open on `/Users/farhad/Projects/WarlineCapture-Clone`.
+- Next action:
+  - Wire fuel-consumption authoring/config defaults onto vehicle/air unit prefabs, then add command blocking when usable Fuel is empty.
 
 - Created design and implementation tracker.
 - Started implementation with seeded logistics verification fixture.

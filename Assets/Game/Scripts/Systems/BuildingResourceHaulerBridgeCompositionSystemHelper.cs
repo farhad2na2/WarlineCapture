@@ -12,7 +12,11 @@ namespace Game.Runtime
         private static readonly bool VerboseResourceHaulerLogs = false;
         private static readonly FixedString64Bytes TrayTruckSourceKey = new("Unit_Veh_Truck_Tray");
         private static readonly FixedString64Bytes TankerTruckSourceKey = new("Unit_Veh_Truck_Tanker");
+        private const float AutomaticAssignmentStableRefreshSeconds = 2f;
         private readonly HashSet<Entity> _invalidCapacityWarningEntities = new();
+        private uint _lastAutomaticAssignmentSignature;
+        private float _nextAutomaticAssignmentRefreshAt;
+        private bool _hasAutomaticAssignmentSignature;
 
         public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
         public delegate bool TryGetGridDataDelegate(out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData);
@@ -90,12 +94,13 @@ namespace Game.Runtime
             if (haulerQuery.Length == 0)
                 return;
 
+            bool runAutomaticAssignment = ShouldRunAutomaticAssignmentScan(context, em, grid, haulerQuery, now);
             for (int i = 0; i < haulerQuery.Length; i++)
             {
                 Entity hauler = haulerQuery[i];
                 if (em.HasComponent<UnitResourceHaulOrder>(hauler))
                     UpdateResourceHauler(context, em, grid, hauler, now);
-                else
+                else if (runAutomaticAssignment)
                     TryAssignAutomaticHaulerOrder(context, em, grid, hauler);
             }
         }
@@ -185,27 +190,8 @@ namespace Game.Runtime
         {
             if (context.ResourceHaulerUtilitySystemHelper == null ||
                 context.FactionResourceCompositionSystemHelper == null ||
-                !em.Exists(unit) ||
-                !em.HasComponent<UnitResourceHauler>(unit) ||
-                !em.HasComponent<UnitSourcePrefabKey>(unit) ||
-                !em.HasComponent<Faction>(unit) ||
-                em.HasComponent<UnitAirMovement>(unit) ||
-                context.RuntimeBuildings == null)
-            {
-                return false;
-            }
-
-            UnitSourcePrefabKey sourceKey = em.GetComponentData<UnitSourcePrefabKey>(unit);
-            ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind;
-            if (sourceKey.Value.Equals(TrayTruckSourceKey))
-            {
-                resourceKind = ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil;
-            }
-            else if (sourceKey.Value.Equals(TankerTruckSourceKey))
-            {
-                resourceKind = ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Fuel;
-            }
-            else
+                context.RuntimeBuildings == null ||
+                !TryGetAutomaticHaulerKind(em, unit, out ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind))
             {
                 return false;
             }
@@ -241,6 +227,174 @@ namespace Game.Runtime
                 resourceKind);
             em.AddComponentData(unit, order);
             return true;
+        }
+
+        private bool ShouldRunAutomaticAssignmentScan(
+            Context context,
+            EntityManager em,
+            GridConfig grid,
+            NativeList<Entity> haulers,
+            float now)
+        {
+            if (context.ResourceHaulerUtilitySystemHelper == null ||
+                context.FactionResourceCompositionSystemHelper == null ||
+                context.RuntimeBuildings == null ||
+                haulers.Length == 0)
+            {
+                return false;
+            }
+
+            uint signature = CalculateAutomaticAssignmentSignature(context, em, grid, haulers);
+            if (signature == 0u)
+            {
+                _hasAutomaticAssignmentSignature = false;
+                _lastAutomaticAssignmentSignature = 0u;
+                _nextAutomaticAssignmentRefreshAt = 0f;
+                return false;
+            }
+
+            if (_hasAutomaticAssignmentSignature &&
+                signature == _lastAutomaticAssignmentSignature &&
+                now < _nextAutomaticAssignmentRefreshAt)
+            {
+                return false;
+            }
+
+            _hasAutomaticAssignmentSignature = true;
+            _lastAutomaticAssignmentSignature = signature;
+            _nextAutomaticAssignmentRefreshAt = now + AutomaticAssignmentStableRefreshSeconds;
+            return true;
+        }
+
+        private static uint CalculateAutomaticAssignmentSignature(
+            Context context,
+            EntityManager em,
+            GridConfig grid,
+            NativeList<Entity> haulers)
+        {
+            uint hash = 2166136261u;
+            int idleCandidateCount = 0;
+            for (int i = 0; i < haulers.Length; i++)
+            {
+                Entity haulerEntity = haulers[i];
+                if (em.HasComponent<UnitResourceHaulOrder>(haulerEntity) ||
+                    !TryGetAutomaticHaulerKind(em, haulerEntity, out ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind))
+                {
+                    continue;
+                }
+
+                UnitResourceHauler hauler = em.GetComponentData<UnitResourceHauler>(haulerEntity);
+                float loadAmount = context.ResourceHaulerUtilitySystemHelper.GetLoadAmount(hauler);
+                if (loadAmount <= 0f)
+                    continue;
+
+                idleCandidateCount++;
+                hash = AppendHash(hash, haulerEntity.Index);
+                hash = AppendHash(hash, haulerEntity.Version);
+                hash = AppendHash(hash, (int)resourceKind);
+                hash = AppendHash(hash, em.GetComponentData<Faction>(haulerEntity).Id);
+                hash = AppendHash(hash, QuantizeResource(loadAmount));
+                if (em.HasComponent<UnitGrid>(haulerEntity))
+                {
+                    int2 cell = em.GetComponentData<UnitGrid>(haulerEntity).Cell;
+                    hash = AppendHash(hash, cell.x);
+                    hash = AppendHash(hash, cell.y);
+                }
+            }
+
+            if (idleCandidateCount == 0)
+                return 0u;
+
+            hash = AppendHash(hash, idleCandidateCount);
+            hash = AppendHash(hash, grid.Width);
+            hash = AppendHash(hash, grid.Height);
+            hash = AppendHash(hash, QuantizeResource(grid.CellSize));
+            foreach (var pair in context.RuntimeBuildings)
+            {
+                RuntimeBuildingEntity building = pair.Value;
+                if (building == null || building.IsDestroyed || !building.HasOwnerFaction)
+                    continue;
+                if (building.OilStorageCapacity <= 0 &&
+                    building.FuelStorageCapacity <= 0 &&
+                    building.OilBarrelsPerDay <= 0f &&
+                    building.FuelBarrelsPerDay <= 0f)
+                {
+                    continue;
+                }
+
+                hash = AppendHash(hash, building.Id);
+                hash = AppendHash(hash, building.OwnerFactionId);
+                hash = AppendHash(hash, building.OilStorageCapacity);
+                hash = AppendHash(hash, building.FuelStorageCapacity);
+                hash = AppendHash(hash, QuantizeResource(building.OilBarrelsPerDay));
+                hash = AppendHash(hash, QuantizeResource(building.FuelBarrelsPerDay));
+                hash = AppendHash(hash, QuantizeResource(context.ResourceHaulerUtilitySystemHelper.GetStoredResource(
+                    em,
+                    building,
+                    ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil)));
+                hash = AppendHash(hash, QuantizeResource(context.ResourceHaulerUtilitySystemHelper.GetStoredResource(
+                    em,
+                    building,
+                    ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Fuel)));
+            }
+
+            return hash;
+        }
+
+#if UNITY_INCLUDE_TESTS
+        internal static uint CalculateAutomaticAssignmentSignatureForTests(
+            Context context,
+            EntityManager em,
+            GridConfig grid,
+            NativeList<Entity> haulers)
+        {
+            return CalculateAutomaticAssignmentSignature(context, em, grid, haulers);
+        }
+#endif
+
+        private static bool TryGetAutomaticHaulerKind(
+            EntityManager em,
+            Entity unit,
+            out ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind)
+        {
+            resourceKind = default;
+            if (!em.Exists(unit) ||
+                !em.HasComponent<UnitResourceHauler>(unit) ||
+                !em.HasComponent<UnitSourcePrefabKey>(unit) ||
+                !em.HasComponent<Faction>(unit) ||
+                !em.HasComponent<UnitGrid>(unit) ||
+                em.HasComponent<UnitAirMovement>(unit))
+            {
+                return false;
+            }
+
+            UnitSourcePrefabKey sourceKey = em.GetComponentData<UnitSourcePrefabKey>(unit);
+            if (sourceKey.Value.Equals(TrayTruckSourceKey))
+            {
+                resourceKind = ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil;
+                return true;
+            }
+
+            if (sourceKey.Value.Equals(TankerTruckSourceKey))
+            {
+                resourceKind = ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Fuel;
+                return true;
+            }
+
+            return false;
+        }
+
+        private static uint AppendHash(uint hash, int value)
+        {
+            unchecked
+            {
+                return (hash ^ (uint)value) * 16777619u;
+            }
+        }
+
+        private static int QuantizeResource(float value)
+        {
+            return Mathf.RoundToInt(Mathf.Max(0f, value) * 100f);
         }
 
         private static bool TryFindAutomaticHaulerRoute(

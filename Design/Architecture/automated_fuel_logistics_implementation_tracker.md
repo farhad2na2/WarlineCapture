@@ -23,7 +23,7 @@ Implement the automated Oil -> Fuel logistics model without drifting from the cu
 
 ## Progress Summary
 
-Overall implementation progress: 10% (10/99 checklist items complete).
+Overall implementation progress: 11% (11/99 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -32,7 +32,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 0. Inventory and baseline | In Progress | 5 | 8 | 63% | Audit current Oil/Fuel components, building runtime summaries, resource hauler code, seeded trucks, and HUD header data. |
 | 1. Data model | In Progress | 3 | 11 | 27% | Add or adapt ECS components/buffers for buffers, capacities, reservations, cargo, seeded logistics validation, and faction usable Fuel. |
 | 2. Oil extraction and refinery buffers | Pending | 0 | 8 | 0% | Ensure Oil Pump and Refinery buffers are ECS-owned and versioned. |
-| 3. Tray truck automation | In Progress | 2 | 13 | 15% | Auto-assign Oil pickup/delivery without manual target commands. |
+| 3. Tray truck automation | In Progress | 3 | 13 | 23% | Auto-assign Oil pickup/delivery without manual target commands. |
 | 4. Refinery conversion | Pending | 0 | 9 | 0% | Convert Oil input buffer into Fuel output buffer with cap/stall reasons. |
 | 5. Tanker automation and usable Fuel | Pending | 0 | 12 | 0% | Deliver refinery output Fuel into Fuel Bladder/base storage and update header pool. |
 | 6. Vehicle fuel spending | Pending | 0 | 11 | 0% | Consume usable Fuel for ground/air mobility and block/redirect orders safely. |
@@ -97,7 +97,7 @@ Validation:
 ## Phase 3: Tray Truck Automation
 
 - [ ] Implement `OilTrayLogisticsAssignmentSystem` as unmanaged `ISystem` where practical.
-- [ ] Use dirty/version gates so assignment work only runs when source availability, destination capacity, route validity, or truck availability changes.
+- [x] Use dirty/version gates so assignment work only runs when source availability, destination capacity, route validity, or truck availability changes.
 - [ ] Reserve source Oil and refinery input capacity before a truck starts a task.
 - [ ] Avoid all-truck/all-building scans every frame; use cached queries and versioned candidate buffers where practical.
 - [x] Reuse existing movement/order data path for truck travel rather than adding a new movement loop.
@@ -309,6 +309,19 @@ Use this section during implementation. Each completed batch should add:
   - Focused Unity batchmode validation remains blocked by the already-open Unity editor for this project.
 - Next action:
   - Add dirty/version gates so idle assignment skips all-truck/all-building scans when no relevant Oil/Fuel availability or capacity changed.
+- Slice: dirty/signature gate for idle automatic assignment scans.
+- Files changed: `Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs`, `Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs`, and this tracker.
+- Behavior intent:
+  - Automatic logistics assignment now calculates one compact signature from idle logistics haulers plus relevant Oil/Fuel building capacity and stored resource state.
+  - If the signature is unchanged, the bridge skips the expensive idle-hauler route assignment scans while still advancing existing `UnitResourceHaulOrder` work.
+  - A stable refresh interval keeps assignment recoverable even if an edge state fails to alter the signature.
+  - Added a focused signature regression test proving unchanged logistics state keeps the same signature and a source storage change alters it.
+- Validation:
+  - `git diff --check` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - Focused Unity batchmode validation remains blocked by the already-open Unity editor for this project.
+- Next action:
+  - Move Oil/Fuel storage and transfer semantics toward explicit reservations/capacity accounting so multiple trucks cannot overclaim the same source or destination.
 
 - Created design and implementation tracker.
 - Started implementation with seeded logistics verification fixture.

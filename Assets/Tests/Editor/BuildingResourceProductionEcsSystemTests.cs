@@ -2,6 +2,7 @@ using Game.Components;
 using Game.Runtime;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using NUnit.Framework;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -22,7 +23,8 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.ProductionRuntimeTick_SyncsResourceStorageMirrorAfterHaulerUpdate();
             tests.AutomaticFuelLogisticsRoute_PairsTrayWithFactionOilAndRefinery();
             tests.AutomaticFuelLogisticsRoute_PairsTankerWithFactionRefineryAndFuelStorage();
-            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=9");
+            tests.AutomaticFuelLogisticsSignature_ChangesOnlyWhenRelevantStateChanges();
+            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=10");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -411,6 +413,84 @@ public sealed class BuildingResourceProductionEcsSystemTests
         }
     }
 
+    [Test]
+    public void AutomaticFuelLogisticsSignature_ChangesOnlyWhenRelevantStateChanges()
+    {
+        var world = new World(nameof(AutomaticFuelLogisticsSignature_ChangesOnlyWhenRelevantStateChanges));
+        NativeList<Entity> haulers = default;
+        try
+        {
+            EntityManager em = world.EntityManager;
+            RuntimeBuildingEntity oilPump = CreateResourceBuilding(
+                em,
+                21,
+                1,
+                new Vector2Int(8, 8),
+                oilCapacity: 100,
+                fuelCapacity: 0,
+                oilRate: 80f,
+                fuelRate: 0f,
+                storedOil: 40f,
+                storedFuel: 0f);
+            RuntimeBuildingEntity refinery = CreateResourceBuilding(
+                em,
+                22,
+                1,
+                new Vector2Int(16, 8),
+                oilCapacity: 100,
+                fuelCapacity: 100,
+                oilRate: 0f,
+                fuelRate: 40f,
+                storedOil: 0f,
+                storedFuel: 0f);
+            var runtimeBuildings = new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity>
+            {
+                { oilPump.Id, oilPump },
+                { refinery.Id, refinery }
+            };
+
+            Entity hauler = CreateFuelLogisticsHauler(
+                em,
+                "Unit_Veh_Truck_Tray",
+                1,
+                new int2(0, 0));
+            haulers = new NativeList<Entity>(1, Allocator.Temp);
+            haulers.Add(hauler);
+            BuildingResourceHaulerBridgeCompositionSystemHelper.Context context =
+                CreateAutomaticRouteContext(runtimeBuildings);
+            GridConfig grid = CreateTestGrid();
+
+            uint first = BuildingResourceHaulerBridgeCompositionSystemHelper.CalculateAutomaticAssignmentSignatureForTests(
+                context,
+                em,
+                grid,
+                haulers);
+            uint unchanged = BuildingResourceHaulerBridgeCompositionSystemHelper.CalculateAutomaticAssignmentSignatureForTests(
+                context,
+                em,
+                grid,
+                haulers);
+            BuildingResourceStorageComponent storage = em.GetComponentData<BuildingResourceStorageComponent>(oilPump.CombatEntity);
+            storage.StoredOilBarrels += 1f;
+            em.SetComponentData(oilPump.CombatEntity, storage);
+            uint changed = BuildingResourceHaulerBridgeCompositionSystemHelper.CalculateAutomaticAssignmentSignatureForTests(
+                context,
+                em,
+                grid,
+                haulers);
+
+            Assert.AreNotEqual(0u, first);
+            Assert.AreEqual(first, unchanged);
+            Assert.AreNotEqual(first, changed);
+        }
+        finally
+        {
+            if (haulers.IsCreated)
+                haulers.Dispose();
+            world.Dispose();
+        }
+    }
+
     private static BuildingResourceHaulerBridgeCompositionSystemHelper.Context CreateAutomaticRouteContext(
         System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
     {
@@ -471,6 +551,32 @@ public sealed class BuildingResourceProductionEcsSystemTests
                 FuelBarrelsPerDay = fuelRate
             }
         };
+    }
+
+    private static Entity CreateFuelLogisticsHauler(
+        EntityManager em,
+        string sourceKey,
+        byte factionId,
+        int2 cell)
+    {
+        Entity entity = em.CreateEntity(
+            typeof(UnitResourceHauler),
+            typeof(UnitSourcePrefabKey),
+            typeof(Faction),
+            typeof(UnitGrid));
+        em.SetComponentData(entity, new UnitResourceHauler
+        {
+            BarrelCapacity = 8,
+            FillDurationSeconds = 1f,
+            UnloadDurationSeconds = 1f
+        });
+        em.SetComponentData(entity, new UnitSourcePrefabKey
+        {
+            Value = new FixedString64Bytes(sourceKey)
+        });
+        em.SetComponentData(entity, new Faction { Id = factionId });
+        em.SetComponentData(entity, new UnitGrid { Cell = cell });
+        return entity;
     }
 
     private static GridConfig CreateTestGrid()

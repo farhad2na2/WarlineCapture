@@ -2298,7 +2298,13 @@ namespace Game.Runtime
             if (!TryValidateAirdropReferenceCell(grid, walkable, dropReferenceCell, out TacticalCommandReasonCode dropCellReason))
                 return DisembarkResult.Rejected(dropCellReason, message: ResolveAirdropRejectedMessage(dropCellReason));
 
-            CountAirdropPassengers(em, transport, passengers, dropCount, out int soldierDropCount, out int vehicleDropCount);
+            TransportBoardingCapacitySystemHelper.CountLoadedPassengerKinds(
+                em,
+                transport,
+                passengers,
+                dropCount,
+                out int soldierDropCount,
+                out int vehicleDropCount);
             if (soldierDropCount <= 0 && vehicleDropCount <= 0)
                 return DisembarkResult.Rejected(TacticalCommandReasonCode.TransportPassengerMissing);
 
@@ -2573,28 +2579,6 @@ namespace Game.Runtime
             return reasonCode == TacticalCommandReasonCode.TargetBlocked
                 ? "Cargo drop blocked."
                 : TacticalCommandFeedbackText.ToDisplayText(reasonCode);
-        }
-
-        private static void CountAirdropPassengers(
-            EntityManager em,
-            Entity transport,
-            DynamicBuffer<UnitTransportPassengerElement> passengers,
-            int dropCount,
-            out int soldierDropCount,
-            out int vehicleDropCount)
-        {
-            soldierDropCount = 0;
-            vehicleDropCount = 0;
-            int count = math.min(dropCount, passengers.Length);
-            for (int i = 0; i < count; i++)
-            {
-                Entity passenger = passengers[i].Passenger;
-                byte passengerKind = TransportBoardingCapacitySystemHelper.ResolveLoadedPassengerKind(em, transport, passenger);
-                if (passengerKind == UnitTransportPassengerKind.Vehicle)
-                    vehicleDropCount++;
-                else
-                    soldierDropCount++;
-            }
         }
 
         private static void SetPlaneAirdropRequest(

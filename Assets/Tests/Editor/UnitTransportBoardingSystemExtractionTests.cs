@@ -135,6 +135,54 @@ public sealed class UnitTransportBoardingSystemExtractionTests
     }
 
     [Test]
+    public void CapacityHelper_CountsLoadedPassengerKindsWithinLimit()
+    {
+        using var world = new World("UnitTransportBoardingSystemExtractionTests");
+        EntityManager entityManager = world.EntityManager;
+        Entity transport = entityManager.CreateEntity();
+        DynamicBuffer<UnitTransportPassengerElement> passengers =
+            entityManager.AddBuffer<UnitTransportPassengerElement>(transport);
+        Entity soldierPassenger = entityManager.CreateEntity();
+        Entity firstVehiclePassenger = entityManager.CreateEntity(typeof(UnitTransportCargoPassenger));
+        Entity secondVehiclePassenger = entityManager.CreateEntity(typeof(UnitTransportCargoPassenger));
+        entityManager.SetComponentData(firstVehiclePassenger, new UnitTransportCargoPassenger
+        {
+            Transport = transport,
+            PassengerKind = UnitTransportPassengerKind.Vehicle,
+            CargoWeight = 1
+        });
+        entityManager.SetComponentData(secondVehiclePassenger, new UnitTransportCargoPassenger
+        {
+            Transport = transport,
+            PassengerKind = UnitTransportPassengerKind.Vehicle,
+            CargoWeight = 1
+        });
+        passengers.Add(new UnitTransportPassengerElement { Passenger = soldierPassenger });
+        passengers.Add(new UnitTransportPassengerElement { Passenger = firstVehiclePassenger });
+        passengers.Add(new UnitTransportPassengerElement { Passenger = secondVehiclePassenger });
+
+        TransportBoardingCapacitySystemHelper.CountLoadedPassengerKinds(
+            entityManager,
+            transport,
+            passengers,
+            countLimit: 2,
+            out int limitedSoldierCount,
+            out int limitedVehicleCount);
+        TransportBoardingCapacitySystemHelper.CountLoadedPassengerKinds(
+            entityManager,
+            transport,
+            passengers,
+            countLimit: 10,
+            out int allSoldierCount,
+            out int allVehicleCount);
+
+        Assert.AreEqual(1, limitedSoldierCount);
+        Assert.AreEqual(1, limitedVehicleCount);
+        Assert.AreEqual(1, allSoldierCount);
+        Assert.AreEqual(2, allVehicleCount);
+    }
+
+    [Test]
     public void ResolveTransportCargoCapacity_PreservesAuthoredCargoCapacity()
     {
         using var world = new World("UnitTransportBoardingSystemExtractionTests");

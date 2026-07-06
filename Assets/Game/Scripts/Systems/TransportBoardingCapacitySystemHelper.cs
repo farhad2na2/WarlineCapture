@@ -212,6 +212,28 @@ namespace Game.Runtime
             return UnitTransportPassengerKind.Soldier;
         }
 
+        public static void CountLoadedPassengerKinds(
+            EntityManager em,
+            Entity transport,
+            DynamicBuffer<UnitTransportPassengerElement> passengers,
+            int countLimit,
+            out int soldierCount,
+            out int vehicleCount)
+        {
+            soldierCount = 0;
+            vehicleCount = 0;
+            int count = math.min(countLimit, passengers.Length);
+            for (int i = 0; i < count; i++)
+            {
+                Entity passenger = passengers[i].Passenger;
+                byte passengerKind = ResolveLoadedPassengerKind(em, transport, passenger);
+                if (passengerKind == UnitTransportPassengerKind.Vehicle)
+                    vehicleCount++;
+                else
+                    soldierCount++;
+            }
+        }
+
         public static bool IsSoldierBoardingCandidate(EntityManager em, Entity entity)
         {
             if (!em.Exists(entity) ||

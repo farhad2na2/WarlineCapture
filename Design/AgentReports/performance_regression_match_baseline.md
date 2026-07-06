@@ -5,13 +5,13 @@ Source: `Game.Editor.MatchRuntimeShellSmokeValidation.RunPerformanceRegressionBa
 | Metric | Value |
 |---|---:|
 | Observation seconds | 4.00 |
-| Frame count | 874 |
-| Average frame ms | 4.59 |
-| P95 frame ms | 6.24 |
+| Frame count | 897 |
+| Average frame ms | 4.47 |
+| P95 frame ms | 6.44 |
 | Editor P95 frame budget ms | 50.00 |
 | Editor P95 frame budget passed | yes |
-| P99 frame ms | 7.65 |
-| Max frame ms | 20.06 |
+| P99 frame ms | 7.95 |
+| Max frame ms | 18.37 |
 | Current-thread allocated bytes | 0 |
 | Units | 740 |
 | Runtime buildings | 630 |
@@ -21,6 +21,7 @@ Source: `Game.Editor.MatchRuntimeShellSmokeValidation.RunPerformanceRegressionBa
 
 ## Runtime Status
 
+- Metrics artifact: `Design/AgentReports/performance_regression_match_baseline.json`
 - Ready: `mode=MatchHud route=Match phase=MatchHudReady transition=0 playRequested=1 matchIntro=Complete inputLocked=0 matchSceneLoaded=1 hudLoaded=1 curtainHidden=1`
 - Stable: `playRequested=1 spawnConfigs=1/1 progressing=0 sourceKeys=740`
 

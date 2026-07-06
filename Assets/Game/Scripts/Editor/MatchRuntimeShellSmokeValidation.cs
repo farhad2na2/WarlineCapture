@@ -44,6 +44,7 @@ namespace Game.Editor
         private const string PreviousEnterPlayModeOptionsKey = "MatchRuntimeShellSmokeValidation.PreviousEnterPlayModeOptions";
         private const string BaselineMetricsReportPath = "/private/tmp/warlinecapture-match-runtime-baseline-metrics.json";
         private const string PerformanceRegressionReportPath = "Design/AgentReports/performance_regression_match_baseline.md";
+        private const string PerformanceRegressionMetricsArtifactPath = "Design/AgentReports/performance_regression_match_baseline.json";
         private const double PerformanceRegressionEditorP95FrameBudgetMs = 50d;
         private const double AirMissileSmokeTimeoutSeconds = 20d;
         private const double TimeoutSeconds = 120d;
@@ -886,35 +887,21 @@ namespace Game.Editor
                 double maxMs = Max(BaselineFrameTimesMs);
                 BaselineEntityCounts counts = CaptureBaselineEntityCounts();
 
-                StringBuilder builder = new();
-                builder.AppendLine("{");
-                AppendJson(builder, "observationSeconds", elapsedSeconds, trailingComma: true);
-                AppendJson(builder, "frameCount", BaselineFrameTimesMs.Count, trailingComma: true);
-                AppendJson(builder, "averageFrameMs", averageMs, trailingComma: true);
-                AppendJson(builder, "p95FrameMs", p95Ms, trailingComma: true);
-                AppendJson(builder, "p99FrameMs", p99Ms, trailingComma: true);
-                AppendJson(builder, "maxFrameMs", maxMs, trailingComma: true);
-                AppendJson(builder, "allocatedBytesCurrentThread", allocatedBytes, trailingComma: true);
-                AppendJson(builder, "unitCount", counts.UnitCount, trailingComma: true);
-                AppendJson(builder, "runtimeBuildingCount", counts.RuntimeBuildingCount, trailingComma: true);
-                AppendJson(builder, "groundMissileProjectileCount", counts.GroundMissileProjectileCount, trailingComma: true);
-                AppendJson(builder, "airMissileProjectileCount", counts.AirMissileProjectileCount, trailingComma: true);
-                AppendJson(builder, "projectileCount", counts.ProjectileCount, trailingComma: true);
-                AppendJson(builder, "selectionMarkerEntityCount", counts.SelectionMarkerEntityCount, trailingComma: true);
-                AppendJson(builder, "minimapMarkerCount", counts.MinimapMarkerCount, trailingComma: true);
-                AppendJson(builder, "markerCount", counts.MarkerCount, trailingComma: true);
-                AppendJson(builder, "unitModelInstanceCount", counts.UnitModelInstanceCount, trailingComma: true);
-                AppendJson(builder, "culledUnitCount", counts.CulledUnitCount, trailingComma: true);
-                AppendJson(builder, "visibleRenderStateCount", counts.VisibleRenderStateCount, trailingComma: true);
-                AppendJson(builder, "visibleModelEstimate", counts.VisibleModelEstimate, trailingComma: true);
-                AppendJson(builder, "renderVisualStateCount", counts.RenderVisualStateCount, trailingComma: true);
-                AppendJson(builder, "readyStatus", readyStatus, trailingComma: true);
-                AppendJson(builder, "stableStatus", stableStatus, trailingComma: false);
-                builder.AppendLine("}");
-                File.WriteAllText(BaselineMetricsReportPath, builder.ToString());
+                string metricsJson = BuildBaselineMetricsJson(
+                    readyStatus,
+                    stableStatus,
+                    elapsedSeconds,
+                    allocatedBytes,
+                    averageMs,
+                    p95Ms,
+                    p99Ms,
+                    maxMs,
+                    counts);
+                File.WriteAllText(BaselineMetricsReportPath, metricsJson);
 
                 if (SessionState.GetBool(RequirePerformanceRegressionReportKey, false))
                 {
+                    WritePerformanceRegressionMetricsArtifact(metricsJson);
                     WritePerformanceRegressionReport(
                         readyStatus,
                         stableStatus,
@@ -948,6 +935,55 @@ namespace Game.Editor
                 status = $"[MatchRuntimeBaselineMetrics] result=Failed {exception.Message}";
                 return false;
             }
+        }
+
+        private static string BuildBaselineMetricsJson(
+            string readyStatus,
+            string stableStatus,
+            double elapsedSeconds,
+            long allocatedBytes,
+            double averageMs,
+            double p95Ms,
+            double p99Ms,
+            double maxMs,
+            BaselineEntityCounts counts)
+        {
+            StringBuilder builder = new();
+            builder.AppendLine("{");
+            AppendJson(builder, "source", "Game.Editor.MatchRuntimeShellSmokeValidation.RunPerformanceRegressionBaseline", trailingComma: true);
+            AppendJson(builder, "observationSeconds", elapsedSeconds, trailingComma: true);
+            AppendJson(builder, "frameCount", BaselineFrameTimesMs.Count, trailingComma: true);
+            AppendJson(builder, "averageFrameMs", averageMs, trailingComma: true);
+            AppendJson(builder, "p95FrameMs", p95Ms, trailingComma: true);
+            AppendJson(builder, "editorP95FrameBudgetMs", PerformanceRegressionEditorP95FrameBudgetMs, trailingComma: true);
+            AppendJson(builder, "editorP95FrameBudgetPassed", p95Ms <= PerformanceRegressionEditorP95FrameBudgetMs, trailingComma: true);
+            AppendJson(builder, "p99FrameMs", p99Ms, trailingComma: true);
+            AppendJson(builder, "maxFrameMs", maxMs, trailingComma: true);
+            AppendJson(builder, "allocatedBytesCurrentThread", allocatedBytes, trailingComma: true);
+            AppendJson(builder, "unitCount", counts.UnitCount, trailingComma: true);
+            AppendJson(builder, "runtimeBuildingCount", counts.RuntimeBuildingCount, trailingComma: true);
+            AppendJson(builder, "groundMissileProjectileCount", counts.GroundMissileProjectileCount, trailingComma: true);
+            AppendJson(builder, "airMissileProjectileCount", counts.AirMissileProjectileCount, trailingComma: true);
+            AppendJson(builder, "projectileCount", counts.ProjectileCount, trailingComma: true);
+            AppendJson(builder, "selectionMarkerEntityCount", counts.SelectionMarkerEntityCount, trailingComma: true);
+            AppendJson(builder, "minimapMarkerCount", counts.MinimapMarkerCount, trailingComma: true);
+            AppendJson(builder, "markerCount", counts.MarkerCount, trailingComma: true);
+            AppendJson(builder, "unitModelInstanceCount", counts.UnitModelInstanceCount, trailingComma: true);
+            AppendJson(builder, "culledUnitCount", counts.CulledUnitCount, trailingComma: true);
+            AppendJson(builder, "visibleRenderStateCount", counts.VisibleRenderStateCount, trailingComma: true);
+            AppendJson(builder, "visibleModelEstimate", counts.VisibleModelEstimate, trailingComma: true);
+            AppendJson(builder, "renderVisualStateCount", counts.RenderVisualStateCount, trailingComma: true);
+            AppendJson(builder, "readyStatus", readyStatus, trailingComma: true);
+            AppendJson(builder, "stableStatus", stableStatus, trailingComma: false);
+            builder.AppendLine("}");
+            return builder.ToString();
+        }
+
+        private static void WritePerformanceRegressionMetricsArtifact(string metricsJson)
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(PerformanceRegressionMetricsArtifactPath) ?? ".");
+            File.WriteAllText(PerformanceRegressionMetricsArtifactPath, metricsJson);
+            Debug.Log($"[PerformanceRegressionBaseline] wroteMetricsArtifact {PerformanceRegressionMetricsArtifactPath}");
         }
 
         private static void WritePerformanceRegressionReport(
@@ -987,6 +1023,7 @@ namespace Game.Editor
             builder.AppendLine();
             builder.AppendLine("## Runtime Status");
             builder.AppendLine();
+            builder.AppendLine($"- Metrics artifact: `{PerformanceRegressionMetricsArtifactPath}`");
             builder.AppendLine($"- Ready: `{readyStatus}`");
             builder.AppendLine($"- Stable: `{stableStatus}`");
             builder.AppendLine();
@@ -1471,6 +1508,12 @@ namespace Game.Editor
                 .Append(name)
                 .Append("\": ")
                 .Append(value.ToString("0.###", CultureInfo.InvariantCulture));
+            builder.AppendLine(trailingComma ? "," : string.Empty);
+        }
+
+        private static void AppendJson(StringBuilder builder, string name, bool value, bool trailingComma)
+        {
+            builder.Append("  \"").Append(name).Append("\": ").Append(value ? "true" : "false");
             builder.AppendLine(trailingComma ? "," : string.Empty);
         }
 

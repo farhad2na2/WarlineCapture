@@ -22,7 +22,8 @@ namespace Game.Components
         UnitGroup = 2,
         Building = 3,
         GroundMissile = 4,
-        AirMissile = 5
+        AirMissile = 5,
+        AttackImpact = 6
     }
 
     public enum TacticalFollowCameraPoseSource : byte

@@ -1281,7 +1281,8 @@ namespace Game.Runtime
             }
 
             return target.TargetKind == TacticalFollowCameraTargetKind.GroundMissile ||
-                   target.TargetKind == TacticalFollowCameraTargetKind.AirMissile;
+                   target.TargetKind == TacticalFollowCameraTargetKind.AirMissile ||
+                   target.TargetKind == TacticalFollowCameraTargetKind.AttackImpact;
         }
 
         private float3 TryReadCurrentTemporaryForward(EntityManager em, TacticalFollowCameraModeComponent mode)

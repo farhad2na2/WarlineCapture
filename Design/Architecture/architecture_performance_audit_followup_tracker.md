@@ -72,6 +72,8 @@ Turn `Design/AgentReports/2026-07-02_audit_architecture-performance-followup.md`
 | Checklist complete | 104 / 138 |
 | Checklist percent complete | 75.4% |
 | Current phase | Phase 9 - TransportBoardingCommandSystem Decomposition |
+| Phase 9 sub-progress | 25 / 31 micro-slices complete; 6 remain before the Phase 9 top-level guardrail checkboxes can close. |
+| Next top-level movement | `104 / 138` moves only after the Phase 9 closeout gates pass: stable responsibility split, ECS ownership preserved, tests-before-each-extraction verified, public behavior unchanged, and boarding ScenarioLab validation rerun. Expected movement when Phase 9 closes: `104 -> 109`. |
 | Quick wins complete | 6 / 6 |
 | Current target | Phase 9 inventory slice documented the current `TransportBoardingCommandSystem` responsibilities, test coverage, extraction risks, and recommended decomposition order at `Design/AgentReports/2026-07-05_transport_boarding_command_system_phase9_inventory.md`. The current low-risk extraction set is complete through diagnostic description/queue plumbing, passenger classification/capacity implementation, reusable approach/ring-cell search, plane-ramp disembark/rollout search, command-routing predicates/result-buffer/result-element mapping, repeated live command-buffer refresh, direct command-routing helper callsites, planned boarding slot reservation/availability, accepted-message resolution, Board All count-message resolution, planned-slot rejection classification, selected-transport planned-slot count state, Board All planned-slot count state, selected-transport direct-boarding cell hoisting, helper-owned pending boarding-order DTO placement, shared planned-order append/reserve helper routing, helper-owned pending boarding-order creation, order-driven append/reserve routing, helper-owned planned-order list capacity/allocation, helper-owned Board All candidate DTO ordering, helper-owned slot-availability DTO/count accessors, slot-availability helper overload routing, capacity-helper slot-availability construction, capacity-helper loaded-passenger kind resolution, and capacity-helper loaded-passenger kind counting. These now live in stateless `TransportBoardingDiagnosticSystemHelper`, `TransportBoardingCapacitySystemHelper`, `TransportBoardingApproachSystemHelper`, `TransportBoardingCommandRoutingSystemHelper`, and `TransportBoardingOrderPlanningSystemHelper` while production ECS command/movement/deploy/rope/airdrop ownership remains unchanged. Focused command-routing and order-planning helper safety-net tests are added. The next low-risk non-device target is continuing remaining boarding-order batch construction extraction after another focused safety-net; the next device-dependent target remains the controlled 10-minute Android foreground soak. |
 | Compiler status | Latest Phase 9 loaded-passenger kind counting slice passed `git diff --check`, `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly`, `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`, and `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` with 0 errors. Parallel build attempts can contend on `obj/Debug/Game.Runtime.dll`; affected gates passed when rerun sequentially. Unity 6.5.2 focused validation last passed through the fetched `Tools/CI/invoke_unity_macos.sh` licensing workaround on a temp project copy: `/private/tmp/warline-arch-followup-composition-helper-ledger-only-validation-post-second-rebase.log` records `[RuntimeCompositionHelperLedgerValidation] result=Passed tests=1`. |
@@ -457,6 +459,44 @@ Structural work after quick wins and measured baselines.
 - [ ] Keep public command behavior unchanged.
 - [ ] Re-run boarding ScenarioLab validation after each extraction.
 
+### Phase 9 Sub-Progress
+
+This sub-progress is intentionally separate from the top-level checklist so the `104 / 138` count does not inflate while Phase 9 is still inside one decomposition phase. The main count moves only when the Phase 9 guardrail items above can be closed.
+
+| # | Micro-slice | Status |
+|---:|---|---|
+| 1 | Inventory command-system responsibilities, test coverage, extraction risk, and order | done |
+| 2 | Extract diagnostic description and queue plumbing | done |
+| 3 | Extract passenger classification and capacity implementation | done |
+| 4 | Extract reusable approach and ring-cell search | done |
+| 5 | Extract plane-ramp disembark and rollout search | done |
+| 6 | Extract command-routing predicates, result-buffer plumbing, and result-element mapping | done |
+| 7 | Extract repeated live command-buffer refresh routing | done |
+| 8 | Route direct command-routing helper callsites | done |
+| 9 | Extract planned boarding slot reservation and availability checks | done |
+| 10 | Extract accepted-message resolution | done |
+| 11 | Extract Board All count-message resolution | done |
+| 12 | Extract planned-slot rejection classification | done |
+| 13 | Move selected-transport planned-slot count state to helper-owned data | done |
+| 14 | Move Board All planned-slot count state to helper-owned data | done |
+| 15 | Hoist selected-transport direct-boarding cell resolution | done |
+| 16 | Move pending boarding-order DTO to the planning helper | done |
+| 17 | Route shared planned-order append and reservation through the helper | done |
+| 18 | Move pending boarding-order creation into the helper | done |
+| 19 | Route append/reserve through the order-driven pending-order DTO | done |
+| 20 | Move planned-order list capacity/allocation into the helper | done |
+| 21 | Move Board All candidate DTO and ordering into the helper | done |
+| 22 | Move slot-availability DTO and count accessors into the helper | done |
+| 23 | Route slot-availability overloads through the helper-owned DTO | done |
+| 24 | Move slot-availability construction into the capacity helper | done |
+| 25 | Move loaded-passenger kind resolution/counting into the capacity helper | done |
+| 26 | Isolate remaining selected-transport planned-order candidate-loop decisions | open |
+| 27 | Isolate remaining Board All planned-order candidate-loop decisions | open |
+| 28 | Decide whether planned-order replay can move to a helper without stealing ECS command ownership; apply or document as intentional owner | open |
+| 29 | Run final source guard scan for no command-ownership, movement, deploy, rope, or airdrop drift | open |
+| 30 | Run focused compile/tests after Phase 9 closeout | open |
+| 31 | Re-run boarding ScenarioLab/manual visual validation gate | open |
+
 ## Phase 10 - Game.Runtime Domain Split
 Longer-term compile and ownership improvement.
 
@@ -543,6 +583,7 @@ Make the gains durable.
 - 2026-07-06: Moved transport slot availability construction into `TransportBoardingCapacitySystemHelper.ResolveTransportSlotAvailability` and removed the now-unused command-system capacity/count wrappers. `TransportBoardingCommandSystem` still owns command flow, movement enqueueing, passenger state mutation, pathfinding, deploy, rope, and airdrop; the helper only assembles the capacity/occupancy read model from existing ECS components and buffers. Added focused ECS read-model coverage for mixed soldier/vehicle passengers and authored cargo capacity. Validation passed: `git diff --check`, `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly`, `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`, and `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`.
 - 2026-07-06: Moved loaded passenger-kind resolution into `TransportBoardingCapacitySystemHelper.ResolveLoadedPassengerKind` and routed airdrop validation/counting through it. This keeps command flow, airdrop requests, movement, and passenger state mutation in `TransportBoardingCommandSystem` while moving a read-only passenger classifier to the existing capacity helper. Added focused ECS coverage for explicit vehicle cargo passengers, invalid passenger-kind normalization, and missing-passenger fallback. Validation passed: `git diff --check`, `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly`, `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`, and `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`.
 - 2026-07-06: Added `TransportBoardingCapacitySystemHelper.CountLoadedPassengerKinds` and routed plane airdrop passenger counting through it. This moves the read-only loaded-passenger summary out of `TransportBoardingCommandSystem` while leaving airdrop request creation, validation flow, movement, deploy, rope, and passenger state mutation unchanged. Added focused ECS coverage for soldier/vehicle counts and drop-count limiting. Validation passed: `git diff --check`, `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly`, `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`, and `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`.
+- 2026-07-06: Added explicit Phase 9 sub-progress tracking so `104 / 138` stays a stable top-level checklist count while the tracker still shows `25 / 31` boarding decomposition micro-slices complete and the 6 remaining steps before the next top-level movement. Validation passed: `git diff --check`.
 - 2026-07-03: Added Fuel/Oil behavior safety-net tests before ECS ownership migration. `FactionResourceCompositionSystemHelperTests` now locks oil extraction clamps, refinery conversion clamps, full fuel storage no-conversion behavior, and destroyed-building skips. `ResourceHaulerUtilitySystemHelperTests` now locks fuel/oil cargo switching, blocked oil unload preservation, and matching-resource load reverts. `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly`, `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`, `git diff --check`, Unity 6.5.2 focused validation `/private/tmp/warline-arch-followup-fuel-oil-faction-validation.log`, and Unity 6.5.2 focused validation `/private/tmp/warline-arch-followup-fuel-oil-hauler-validation.log` passed.
 - 2026-07-03: Extracted oil extraction/refinery conversion math from `FactionResourceCompositionSystemHelper` into `BuildingResourceProductionSystemHelper`, a pure `Unity.Mathematics` system-helper surface suitable for reuse by a future Burst-capable ECS owner. The existing managed helper still owns applying results to runtime-building state, so no parallel gameplay owner was introduced. Unity import/compile `/private/tmp/warline-arch-followup-fuel-oil-systemhelper-import-compile.log`, `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly`, `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`, `git diff --check`, `/private/tmp/warline-arch-followup-fuel-oil-systemhelper-faction-validation.log`, and `/private/tmp/warline-arch-followup-fuel-oil-systemhelper-hauler-validation.log` passed.
 - 2026-07-03: Wired the allocated runtime building id through `BuildingRuntimeCreationCompositionSystemHelper` into `BuildingRuntimeEntityCompositionSystemHelper.CreateBuildingCombatEntity`, so runtime-created building combat entities now populate `RuntimeBuildingCombatInfo.RuntimeBuildingId`. This keeps the next Fuel/Oil ECS ownership slice tied to existing runtime-building identity instead of creating a parallel owner. `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly`, `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`, `git diff --check`, and Unity 6.5.2 batchmode compile `/private/tmp/warline-arch-followup-runtime-building-id-compile.log` passed with 0 compiler errors.

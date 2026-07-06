@@ -1285,16 +1285,18 @@ namespace Game.Runtime
             for (int i = 0; i < candidates.Count; i++)
             {
                 Entity passenger = candidates[i].Entity;
-                if (!em.Exists(passenger) ||
-                    !TryResolveBoardingPassengerKind(em, transport, passenger, out byte passengerKind, out int cargoWeight))
-                {
-                    continue;
-                }
-
-                if (TransportBoardingOrderPlanningSystemHelper.ResolvePlannedSlotRejection(
+                byte passengerKind = default;
+                int cargoWeight = 0;
+                bool hasPassengerKind =
+                    em.Exists(passenger) &&
+                    TryResolveBoardingPassengerKind(em, transport, passenger, out passengerKind, out cargoWeight);
+                BoardAllTransportBoardingCandidateDecisionKind candidateDecision =
+                    TransportBoardingOrderPlanningSystemHelper.ResolveBoardAllTransportCandidateDecision(
+                        hasPassengerKind,
                         passengerKind,
                         slotAvailability,
-                        plannedSlots) != TransportBoardingPlannedSlotRejectionKind.None)
+                        plannedSlots);
+                if (candidateDecision != BoardAllTransportBoardingCandidateDecisionKind.Accept)
                 {
                     continue;
                 }

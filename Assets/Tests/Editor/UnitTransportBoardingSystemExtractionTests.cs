@@ -758,6 +758,45 @@ public sealed class UnitTransportBoardingSystemExtractionTests
     }
 
     [Test]
+    public void OrderPlanningHelper_ResolvesBoardAllTransportCandidateDecisions()
+    {
+        TransportSlotAvailability availability = new(
+            occupiedSoldierSeats: 0,
+            soldierCapacity: 1,
+            occupiedVehicleSlots: 0,
+            vehicleCapacity: 1);
+
+        Assert.AreEqual(
+            BoardAllTransportBoardingCandidateDecisionKind.SkipNotBoardingCandidate,
+            TransportBoardingOrderPlanningSystemHelper.ResolveBoardAllTransportCandidateDecision(
+                hasPassengerKind: false,
+                passengerKind: UnitTransportPassengerKind.Soldier,
+                availability,
+                default));
+        Assert.AreEqual(
+            BoardAllTransportBoardingCandidateDecisionKind.Accept,
+            TransportBoardingOrderPlanningSystemHelper.ResolveBoardAllTransportCandidateDecision(
+                hasPassengerKind: true,
+                passengerKind: UnitTransportPassengerKind.Soldier,
+                availability,
+                default));
+        Assert.AreEqual(
+            BoardAllTransportBoardingCandidateDecisionKind.SkipNoSoldierSeats,
+            TransportBoardingOrderPlanningSystemHelper.ResolveBoardAllTransportCandidateDecision(
+                hasPassengerKind: true,
+                passengerKind: UnitTransportPassengerKind.Soldier,
+                availability,
+                new TransportBoardingPlannedSlotCounts(soldierSeats: 1, vehicleSlots: 0)));
+        Assert.AreEqual(
+            BoardAllTransportBoardingCandidateDecisionKind.SkipNoVehicleSlots,
+            TransportBoardingOrderPlanningSystemHelper.ResolveBoardAllTransportCandidateDecision(
+                hasPassengerKind: true,
+                passengerKind: UnitTransportPassengerKind.Vehicle,
+                availability,
+                new TransportBoardingPlannedSlotCounts(soldierSeats: 0, vehicleSlots: 1)));
+    }
+
+    [Test]
     public void OrderPlanningHelper_ReportsStructPlannedSlotRejectionAndAcceptedMessage()
     {
         TransportBoardingPlannedSlotCounts plannedSlots = new(soldierSeats: 1, vehicleSlots: 1);

@@ -45,6 +45,7 @@ namespace Game.Editor
         private const string BaselineMetricsReportPath = "/private/tmp/warlinecapture-match-runtime-baseline-metrics.json";
         private const string PerformanceRegressionReportPath = "Design/AgentReports/performance_regression_match_baseline.md";
         private const string PerformanceRegressionMetricsArtifactPath = "Design/AgentReports/performance_regression_match_baseline.json";
+        private const string PerformanceRegressionAcceptedBaselinePath = "Design/Architecture/performance_regression_accepted_baseline.json";
         private const double PerformanceRegressionEditorP95FrameBudgetMs = 50d;
         private const double AirMissileSmokeTimeoutSeconds = 20d;
         private const double TimeoutSeconds = 120d;
@@ -886,6 +887,23 @@ namespace Game.Editor
                 double p99Ms = Percentile(BaselineFrameTimesMs, 0.99d);
                 double maxMs = Max(BaselineFrameTimesMs);
                 BaselineEntityCounts counts = CaptureBaselineEntityCounts();
+                bool requirePerformanceRegressionReport = SessionState.GetBool(RequirePerformanceRegressionReportKey, false);
+                PerformanceRegressionAcceptedBaseline acceptedBaseline = default;
+                double editorP95BudgetMs = PerformanceRegressionEditorP95FrameBudgetMs;
+                string performanceBaselineStatus = string.Empty;
+
+                if (requirePerformanceRegressionReport)
+                {
+                    if (!TryLoadPerformanceRegressionAcceptedBaseline(out acceptedBaseline, out string baselineStatus))
+                    {
+                        status =
+                            $"[PerformanceRegressionBaseline] result=Failed acceptedBaseline={PerformanceRegressionAcceptedBaselinePath} " +
+                            baselineStatus;
+                        return false;
+                    }
+
+                    editorP95BudgetMs = acceptedBaseline.EditorP95FrameBudgetMs;
+                }
 
                 string metricsJson = BuildBaselineMetricsJson(
                     readyStatus,
@@ -896,10 +914,11 @@ namespace Game.Editor
                     p95Ms,
                     p99Ms,
                     maxMs,
+                    editorP95BudgetMs,
                     counts);
                 File.WriteAllText(BaselineMetricsReportPath, metricsJson);
 
-                if (SessionState.GetBool(RequirePerformanceRegressionReportKey, false))
+                if (requirePerformanceRegressionReport)
                 {
                     WritePerformanceRegressionMetricsArtifact(metricsJson);
                     WritePerformanceRegressionReport(
@@ -911,15 +930,23 @@ namespace Game.Editor
                         p95Ms,
                         p99Ms,
                         maxMs,
+                        acceptedBaseline,
                         counts);
 
-                    if (p95Ms > PerformanceRegressionEditorP95FrameBudgetMs)
+                    if (!TryValidatePerformanceRegressionAcceptedBaseline(
+                            acceptedBaseline,
+                            allocatedBytes,
+                            p95Ms,
+                            counts,
+                            out string acceptedStatus))
                     {
                         status =
                             $"[PerformanceRegressionBaseline] result=Failed report={PerformanceRegressionReportPath} " +
-                            $"p95={p95Ms:F2}ms budget={PerformanceRegressionEditorP95FrameBudgetMs:F2}ms";
+                            acceptedStatus;
                         return false;
                     }
+
+                    performanceBaselineStatus = acceptedStatus;
                 }
 
                 status =
@@ -927,7 +954,7 @@ namespace Game.Editor
                     $"frames={BaselineFrameTimesMs.Count} avg={averageMs:F2}ms p95={p95Ms:F2}ms " +
                     $"p99={p99Ms:F2}ms max={maxMs:F2}ms alloc={allocatedBytes} " +
                     $"units={counts.UnitCount} buildings={counts.RuntimeBuildingCount} projectiles={counts.ProjectileCount} " +
-                    $"markers={counts.MarkerCount} visibleModels={counts.VisibleModelEstimate}";
+                    $"markers={counts.MarkerCount} visibleModels={counts.VisibleModelEstimate} {performanceBaselineStatus}".TrimEnd();
                 return true;
             }
             catch (Exception exception)
@@ -946,6 +973,7 @@ namespace Game.Editor
             double p95Ms,
             double p99Ms,
             double maxMs,
+            double editorP95BudgetMs,
             BaselineEntityCounts counts)
         {
             StringBuilder builder = new();
@@ -955,8 +983,8 @@ namespace Game.Editor
             AppendJson(builder, "frameCount", BaselineFrameTimesMs.Count, trailingComma: true);
             AppendJson(builder, "averageFrameMs", averageMs, trailingComma: true);
             AppendJson(builder, "p95FrameMs", p95Ms, trailingComma: true);
-            AppendJson(builder, "editorP95FrameBudgetMs", PerformanceRegressionEditorP95FrameBudgetMs, trailingComma: true);
-            AppendJson(builder, "editorP95FrameBudgetPassed", p95Ms <= PerformanceRegressionEditorP95FrameBudgetMs, trailingComma: true);
+            AppendJson(builder, "editorP95FrameBudgetMs", editorP95BudgetMs, trailingComma: true);
+            AppendJson(builder, "editorP95FrameBudgetPassed", p95Ms <= editorP95BudgetMs, trailingComma: true);
             AppendJson(builder, "p99FrameMs", p99Ms, trailingComma: true);
             AppendJson(builder, "maxFrameMs", maxMs, trailingComma: true);
             AppendJson(builder, "allocatedBytesCurrentThread", allocatedBytes, trailingComma: true);
@@ -995,6 +1023,7 @@ namespace Game.Editor
             double p95Ms,
             double p99Ms,
             double maxMs,
+            PerformanceRegressionAcceptedBaseline acceptedBaseline,
             BaselineEntityCounts counts)
         {
             Directory.CreateDirectory(Path.GetDirectoryName(PerformanceRegressionReportPath) ?? ".");
@@ -1010,19 +1039,24 @@ namespace Game.Editor
             builder.AppendLine($"| Frame count | {BaselineFrameTimesMs.Count.ToString(CultureInfo.InvariantCulture)} |");
             builder.AppendLine($"| Average frame ms | {averageMs.ToString("F2", CultureInfo.InvariantCulture)} |");
             builder.AppendLine($"| P95 frame ms | {p95Ms.ToString("F2", CultureInfo.InvariantCulture)} |");
-            builder.AppendLine($"| Editor P95 frame budget ms | {PerformanceRegressionEditorP95FrameBudgetMs.ToString("F2", CultureInfo.InvariantCulture)} |");
-            builder.AppendLine($"| Editor P95 frame budget passed | {(p95Ms <= PerformanceRegressionEditorP95FrameBudgetMs ? "yes" : "no")} |");
+            builder.AppendLine($"| Editor P95 frame budget ms | {acceptedBaseline.EditorP95FrameBudgetMs.ToString("F2", CultureInfo.InvariantCulture)} |");
+            builder.AppendLine($"| Editor P95 frame budget passed | {(p95Ms <= acceptedBaseline.EditorP95FrameBudgetMs ? "yes" : "no")} |");
             builder.AppendLine($"| P99 frame ms | {p99Ms.ToString("F2", CultureInfo.InvariantCulture)} |");
             builder.AppendLine($"| Max frame ms | {maxMs.ToString("F2", CultureInfo.InvariantCulture)} |");
             builder.AppendLine($"| Current-thread allocated bytes | {allocatedBytes.ToString(CultureInfo.InvariantCulture)} |");
+            builder.AppendLine($"| Current-thread allocation budget bytes | {acceptedBaseline.CurrentThreadAllocatedBytesBudget.ToString(CultureInfo.InvariantCulture)} |");
             builder.AppendLine($"| Units | {counts.UnitCount.ToString(CultureInfo.InvariantCulture)} |");
+            builder.AppendLine($"| Minimum units | {acceptedBaseline.MinimumUnitCount.ToString(CultureInfo.InvariantCulture)} |");
             builder.AppendLine($"| Runtime buildings | {counts.RuntimeBuildingCount.ToString(CultureInfo.InvariantCulture)} |");
+            builder.AppendLine($"| Minimum runtime buildings | {acceptedBaseline.MinimumRuntimeBuildingCount.ToString(CultureInfo.InvariantCulture)} |");
             builder.AppendLine($"| Projectiles | {counts.ProjectileCount.ToString(CultureInfo.InvariantCulture)} |");
             builder.AppendLine($"| Markers | {counts.MarkerCount.ToString(CultureInfo.InvariantCulture)} |");
             builder.AppendLine($"| Visible model estimate | {counts.VisibleModelEstimate.ToString(CultureInfo.InvariantCulture)} |");
+            builder.AppendLine($"| Minimum visible model estimate | {acceptedBaseline.MinimumVisibleModelEstimate.ToString(CultureInfo.InvariantCulture)} |");
             builder.AppendLine();
             builder.AppendLine("## Runtime Status");
             builder.AppendLine();
+            builder.AppendLine($"- Accepted baseline: `{PerformanceRegressionAcceptedBaselinePath}`");
             builder.AppendLine($"- Metrics artifact: `{PerformanceRegressionMetricsArtifactPath}`");
             builder.AppendLine($"- Ready: `{readyStatus}`");
             builder.AppendLine($"- Stable: `{stableStatus}`");
@@ -1031,6 +1065,93 @@ namespace Game.Editor
 
             File.WriteAllText(PerformanceRegressionReportPath, builder.ToString());
             Debug.Log($"[PerformanceRegressionBaseline] wroteReport {PerformanceRegressionReportPath}");
+        }
+
+        private static bool TryLoadPerformanceRegressionAcceptedBaseline(
+            out PerformanceRegressionAcceptedBaseline acceptedBaseline,
+            out string status)
+        {
+            acceptedBaseline = default;
+            status = "acceptedBaseline=missing";
+
+            if (!File.Exists(PerformanceRegressionAcceptedBaselinePath))
+                return false;
+
+            try
+            {
+                acceptedBaseline = JsonUtility.FromJson<PerformanceRegressionAcceptedBaseline>(
+                    File.ReadAllText(PerformanceRegressionAcceptedBaselinePath));
+            }
+            catch (Exception exception)
+            {
+                status = $"acceptedBaseline=parseFailed message=\"{exception.Message}\"";
+                return false;
+            }
+
+            if (acceptedBaseline.EditorP95FrameBudgetMs <= 0d)
+            {
+                status = "acceptedBaseline=invalid editorP95FrameBudgetMs<=0";
+                return false;
+            }
+
+            if (acceptedBaseline.MinimumFrameCount <= 0)
+            {
+                status = "acceptedBaseline=invalid minimumFrameCount<=0";
+                return false;
+            }
+
+            status = "acceptedBaseline=loaded";
+            return true;
+        }
+
+        private static bool TryValidatePerformanceRegressionAcceptedBaseline(
+            PerformanceRegressionAcceptedBaseline acceptedBaseline,
+            long allocatedBytes,
+            double p95Ms,
+            BaselineEntityCounts counts,
+            out string status)
+        {
+            if (p95Ms > acceptedBaseline.EditorP95FrameBudgetMs)
+            {
+                status = $"p95={p95Ms:F2}ms budget={acceptedBaseline.EditorP95FrameBudgetMs:F2}ms";
+                return false;
+            }
+
+            if (BaselineFrameTimesMs.Count < acceptedBaseline.MinimumFrameCount)
+            {
+                status = $"frames={BaselineFrameTimesMs.Count} minimum={acceptedBaseline.MinimumFrameCount}";
+                return false;
+            }
+
+            if (allocatedBytes > acceptedBaseline.CurrentThreadAllocatedBytesBudget)
+            {
+                status = $"allocatedBytes={allocatedBytes} budget={acceptedBaseline.CurrentThreadAllocatedBytesBudget}";
+                return false;
+            }
+
+            if (counts.UnitCount < acceptedBaseline.MinimumUnitCount)
+            {
+                status = $"units={counts.UnitCount} minimum={acceptedBaseline.MinimumUnitCount}";
+                return false;
+            }
+
+            if (counts.RuntimeBuildingCount < acceptedBaseline.MinimumRuntimeBuildingCount)
+            {
+                status = $"buildings={counts.RuntimeBuildingCount} minimum={acceptedBaseline.MinimumRuntimeBuildingCount}";
+                return false;
+            }
+
+            if (counts.VisibleModelEstimate < acceptedBaseline.MinimumVisibleModelEstimate)
+            {
+                status = $"visibleModels={counts.VisibleModelEstimate} minimum={acceptedBaseline.MinimumVisibleModelEstimate}";
+                return false;
+            }
+
+            status =
+                $"acceptedBaseline=passed p95={p95Ms:F2}ms/{acceptedBaseline.EditorP95FrameBudgetMs:F2}ms " +
+                $"alloc={allocatedBytes}/{acceptedBaseline.CurrentThreadAllocatedBytesBudget} " +
+                $"frames={BaselineFrameTimesMs.Count}/{acceptedBaseline.MinimumFrameCount}";
+            return true;
         }
 
         private static BaselineEntityCounts CaptureBaselineEntityCounts()
@@ -1541,6 +1662,27 @@ namespace Game.Editor
             _baselineMetricsStartedAt = 0d;
             _baselineMetricsAllocatedBytesAtStart = 0;
             _baselineMetricsLastFrame = -1;
+        }
+
+        [Serializable]
+        private struct PerformanceRegressionAcceptedBaseline
+        {
+            public int acceptedBaselineVersion;
+            public string acceptedAtUtc;
+            public string source;
+            public double editorP95FrameBudgetMs;
+            public long currentThreadAllocatedBytesBudget;
+            public int minimumFrameCount;
+            public int minimumUnitCount;
+            public int minimumRuntimeBuildingCount;
+            public int minimumVisibleModelEstimate;
+
+            public double EditorP95FrameBudgetMs => editorP95FrameBudgetMs;
+            public long CurrentThreadAllocatedBytesBudget => currentThreadAllocatedBytesBudget;
+            public int MinimumFrameCount => minimumFrameCount;
+            public int MinimumUnitCount => minimumUnitCount;
+            public int MinimumRuntimeBuildingCount => minimumRuntimeBuildingCount;
+            public int MinimumVisibleModelEstimate => minimumVisibleModelEstimate;
         }
 
         private struct BaselineEntityCounts

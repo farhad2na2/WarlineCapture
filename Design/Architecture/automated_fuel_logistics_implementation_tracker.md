@@ -1151,3 +1151,22 @@ Use this section during implementation. Each completed batch should add:
   - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed with 0 warnings and 0 errors.
 - Next action:
   - Automated fuel logistics tracker is complete; future Android profiling should be tracked as a separate mobile performance validation task if requested.
+- Slice: configured initial usable fuel startup fix.
+- Files changed: `Assets/Game/Configs/Scene/MatchSubScene_InitialUnitsSpawner_Config.asset`, `Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs`, `Assets/Tests/Editor/InitialUnitsSpawnFocusedTests.cs`, and this tracker.
+- Behavior intent:
+  - Increased the Match scene configured startup Fuel reserve to `10000` for playtesting long vehicle and air-unit movement.
+  - Fixed startup fuel seeding so configured Fuel is not marked applied before player usable Fuel storage exists.
+  - The spawner now waits for a usable player Fuel storage entity, then applies the configured startup Fuel through the existing Fuel Bladder/storage path.
+  - This keeps the header/command-gate source of truth as delivered usable Fuel storage instead of bypassing the automated logistics design.
+- Validation:
+  - `dotnet build Assembly-CSharp.csproj --no-restore` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed with warnings only.
+  - `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed with warnings only.
+  - `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed with warnings only.
+  - `git diff --check` passed.
+  - Sandboxed Unity focused validation timed out on the known `LicenseClient-farhad` licensing channel failure in `/private/tmp/warline-initial-fuel-storage-wait-validation.log`.
+  - Applied the documented out-of-sandbox licensing workaround from `Design/Agent_Coordination_Workflow.md`, then `Tools/CI/invoke_unity_macos.sh --timeout 300 --log /private/tmp/warline-initial-fuel-storage-wait-validation-escalated.log -- -quit -executeMethod InitialUnitsSpawnFocusedTests.RunResourceBuildingSourceKeyBatchValidation` passed with `[InitialUnitsSpawnFocusedValidation] result=Passed group=ResourceBuildingSourceKey methods=10`.
+  - After rebasing on remote `main`, reran `Tools/CI/invoke_unity_macos.sh --timeout 300 --log /private/tmp/warline-initial-fuel-storage-wait-validation-rebased.log -- -quit -executeMethod InitialUnitsSpawnFocusedTests.RunResourceBuildingSourceKeyBatchValidation`; it passed with `[InitialUnitsSpawnFocusedValidation] result=Passed group=ResourceBuildingSourceKey methods=10`.
+- Next action:
+  - Test in the Match scene: the transport plane and other fuel-consuming vehicles should start with a large usable Fuel pool and should no longer immediately show the no-Fuel move rejection.

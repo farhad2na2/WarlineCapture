@@ -64,7 +64,7 @@ MonoBehaviour:
   randomSeed: 1
   initialDollars: 30000000
   initialOil: 50
-  initialFuel: 500
+  initialFuel: 10000
   createFactionBases: 0
   baseWallPrefab: {fileID: 154980996532723225, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
   baseGatePrefab: {fileID: 3689421368615084249, guid: f37001b3891c2408b882eed3ce395d9c, type: 3}

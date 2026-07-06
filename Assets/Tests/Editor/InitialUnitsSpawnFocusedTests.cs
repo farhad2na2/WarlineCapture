@@ -17,6 +17,7 @@ public sealed class InitialUnitsSpawnFocusedTests
             nameof(InitialUnitsSpawnSystem_CreatesPlayerEconomyWithConfiguredDollars),
             nameof(InitialUnitsSpawnSystem_AppliesConfiguredInitialFuelToPlayerUsableStorage),
             nameof(InitialUnitsSpawnSystem_ClampsConfiguredInitialFuelToPlayerUsableStorageCapacity),
+            nameof(InitialUnitsSpawnSystem_DoesNotMarkConfiguredInitialFuelAppliedBeforeStorageExists),
             nameof(InitialUnitsSpawnSystem_QueuesConfiguredRuntimeSpawnRequestFromReadModel),
             nameof(InitialUnitsSpawnSystem_QueuesConfiguredKeyOnlyRuntimeSpawnRequestFromLegacyConfig),
             nameof(InitialUnitsSpawnSystem_QueuesFactionBaseRuntimeSpawnRequests),
@@ -145,6 +146,31 @@ public sealed class InitialUnitsSpawnFocusedTests
         Assert.AreEqual(50f, addedFuel, 0.001f);
         Assert.AreEqual(40f, em.GetComponentData<BuildingResourceStorageComponent>(smallStorage).StoredFuelBarrels, 0.001f);
         Assert.AreEqual(25f, em.GetComponentData<BuildingResourceStorageComponent>(secondStorage).StoredFuelBarrels, 0.001f);
+    }
+
+    [Test]
+    public void InitialUnitsSpawnSystem_DoesNotMarkConfiguredInitialFuelAppliedBeforeStorageExists()
+    {
+        using var world = new World("InitialUnitsSpawnFuelStorageWaitTest");
+        EntityManager em = world.EntityManager;
+
+        bool appliedWithoutStorage = InitialUnitsSpawnSystem.TryApplyInitialUsableFuelStorage(
+            em,
+            initialFuel: 10000,
+            out float addedWithoutStorage);
+
+        Assert.IsFalse(appliedWithoutStorage);
+        Assert.AreEqual(0f, addedWithoutStorage, 0.001f);
+
+        Entity storage = CreateFuelStorage(em, FactionIdentity.PlayerFactionId, capacity: 10000, storedFuel: 0f);
+        bool appliedWithStorage = InitialUnitsSpawnSystem.TryApplyInitialUsableFuelStorage(
+            em,
+            initialFuel: 10000,
+            out float addedWithStorage);
+
+        Assert.IsTrue(appliedWithStorage);
+        Assert.AreEqual(10000f, addedWithStorage, 0.001f);
+        Assert.AreEqual(10000f, em.GetComponentData<BuildingResourceStorageComponent>(storage).StoredFuelBarrels, 0.001f);
     }
 
     [Test]

@@ -270,9 +270,11 @@ namespace Game.Runtime
 
                 if (progress.InitialFuelStorageApplied == 0 && CanApplyInitialFuelStorage(em, entity, config, progress))
                 {
-                    ApplyInitialUsableFuelStorage(em, config.InitialFuel);
-                    progress.InitialFuelStorageApplied = 1;
-                    em.SetComponentData(entity, progress);
+                    if (TryApplyInitialUsableFuelStorage(em, config.InitialFuel, out _))
+                    {
+                        progress.InitialFuelStorageApplied = 1;
+                        em.SetComponentData(entity, progress);
+                    }
                 }
 
                 if (!TryCreateInitialSpawnGridContext(em, _gridContextQuery, Allocator.Temp, out InitialSpawnGridContext gridContext))
@@ -898,6 +900,41 @@ namespace Game.Runtime
             }
 
             return addedFuel;
+        }
+
+        internal static bool TryApplyInitialUsableFuelStorage(EntityManager em, int initialFuel, out float addedFuel)
+        {
+            addedFuel = 0f;
+            if (initialFuel <= 0)
+                return true;
+
+            if (!HasInitialUsablePlayerFuelStorage(em))
+                return false;
+
+            addedFuel = ApplyInitialUsableFuelStorage(em, initialFuel);
+            return true;
+        }
+
+        private static bool HasInitialUsablePlayerFuelStorage(EntityManager em)
+        {
+            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingResourceStorageComponent>());
+            if (query.IsEmptyIgnoreFilter)
+                return false;
+
+            ComponentTypeHandle<BuildingResourceStorageComponent> storageType =
+                em.GetComponentTypeHandle<BuildingResourceStorageComponent>(true);
+            using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+            {
+                NativeArray<BuildingResourceStorageComponent> storages = chunks[chunkIndex].GetNativeArray(ref storageType);
+                for (int i = 0; i < storages.Length; i++)
+                {
+                    if (IsInitialUsablePlayerFuelStorage(storages[i]))
+                        return true;
+                }
+            }
+
+            return false;
         }
 
         private static bool CanApplyInitialFuelStorage(

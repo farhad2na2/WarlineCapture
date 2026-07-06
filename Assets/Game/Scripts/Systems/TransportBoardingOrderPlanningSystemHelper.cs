@@ -194,6 +194,18 @@ namespace Game.Runtime
                 plannedSlots.VehicleSlots);
         }
 
+        public static bool HasPlannedBoardingSlot(
+            byte passengerKind,
+            in TransportSlotAvailability slotAvailability,
+            in TransportBoardingPlannedSlotCounts plannedSlots)
+        {
+            return HasPlannedBoardingSlot(
+                passengerKind,
+                slotAvailability.AvailableSoldierSeats,
+                slotAvailability.AvailableVehicleSlots,
+                plannedSlots);
+        }
+
         public static TransportBoardingPlannedSlotRejectionKind ResolvePlannedSlotRejection(
             byte passengerKind,
             int availableSoldierSeats,
@@ -228,6 +240,18 @@ namespace Game.Runtime
                 availableVehicleSlots,
                 plannedSlots.SoldierSeats,
                 plannedSlots.VehicleSlots);
+        }
+
+        public static TransportBoardingPlannedSlotRejectionKind ResolvePlannedSlotRejection(
+            byte passengerKind,
+            in TransportSlotAvailability slotAvailability,
+            in TransportBoardingPlannedSlotCounts plannedSlots)
+        {
+            return ResolvePlannedSlotRejection(
+                passengerKind,
+                slotAvailability.AvailableSoldierSeats,
+                slotAvailability.AvailableVehicleSlots,
+                plannedSlots);
         }
 
         public static bool TryReservePlannedBoardingSlot(
@@ -278,6 +302,18 @@ namespace Game.Runtime
             return true;
         }
 
+        public static bool TryReservePlannedBoardingSlot(
+            byte passengerKind,
+            in TransportSlotAvailability slotAvailability,
+            ref TransportBoardingPlannedSlotCounts plannedSlots)
+        {
+            return TryReservePlannedBoardingSlot(
+                passengerKind,
+                slotAvailability.AvailableSoldierSeats,
+                slotAvailability.AvailableVehicleSlots,
+                ref plannedSlots);
+        }
+
         public static bool TryAppendPlannedBoardingOrder(
             List<PendingTransportBoardingOrder> plannedOrders,
             PendingTransportBoardingOrder boardingOrder,
@@ -296,6 +332,20 @@ namespace Game.Runtime
 
             plannedOrders.Add(boardingOrder);
             return true;
+        }
+
+        public static bool TryAppendPlannedBoardingOrder(
+            List<PendingTransportBoardingOrder> plannedOrders,
+            PendingTransportBoardingOrder boardingOrder,
+            in TransportSlotAvailability slotAvailability,
+            ref TransportBoardingPlannedSlotCounts plannedSlots)
+        {
+            return TryAppendPlannedBoardingOrder(
+                plannedOrders,
+                boardingOrder,
+                slotAvailability.AvailableSoldierSeats,
+                slotAvailability.AvailableVehicleSlots,
+                ref plannedSlots);
         }
 
         public static int ResolvePlannedSoldierOccupancy(

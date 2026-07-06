@@ -692,8 +692,7 @@ namespace Game.Runtime
                 TransportBoardingPlannedSlotRejectionKind slotRejection =
                     TransportBoardingOrderPlanningSystemHelper.ResolvePlannedSlotRejection(
                         passengerKind,
-                        slotAvailability.AvailableSoldierSeats,
-                        slotAvailability.AvailableVehicleSlots,
+                        slotAvailability,
                         plannedSlots);
                 if (slotRejection != TransportBoardingPlannedSlotRejectionKind.None)
                 {
@@ -749,8 +748,7 @@ namespace Game.Runtime
                 TransportBoardingOrderPlanningSystemHelper.TryAppendPlannedBoardingOrder(
                     boardingOrders,
                     boardingOrder,
-                    slotAvailability.AvailableSoldierSeats,
-                    slotAvailability.AvailableVehicleSlots,
+                    slotAvailability,
                     ref plannedSlots);
             }
 
@@ -1284,8 +1282,7 @@ namespace Game.Runtime
 
                 if (TransportBoardingOrderPlanningSystemHelper.ResolvePlannedSlotRejection(
                         passengerKind,
-                        slotAvailability.AvailableSoldierSeats,
-                        slotAvailability.AvailableVehicleSlots,
+                        slotAvailability,
                         plannedSlots) != TransportBoardingPlannedSlotRejectionKind.None)
                 {
                     continue;
@@ -1322,8 +1319,7 @@ namespace Game.Runtime
                 TransportBoardingOrderPlanningSystemHelper.TryAppendPlannedBoardingOrder(
                     plannedOrders,
                     boardingOrder,
-                    slotAvailability.AvailableSoldierSeats,
-                    slotAvailability.AvailableVehicleSlots,
+                    slotAvailability,
                     ref plannedSlots);
             }
 

@@ -375,6 +375,46 @@ public sealed class UnitTransportBoardingSystemExtractionTests
     }
 
     [Test]
+    public void OrderPlanningHelper_AppendsPlannedOrdersWithSlotAvailability()
+    {
+        List<PendingTransportBoardingOrder> plannedOrders = new();
+        TransportBoardingPlannedSlotCounts plannedSlots = default;
+        TransportSlotAvailability availability = new(
+            occupiedSoldierSeats: 0,
+            soldierCapacity: 1,
+            occupiedVehicleSlots: 0,
+            vehicleCapacity: 0);
+        PendingTransportBoardingOrder soldierOrder = new()
+        {
+            Passenger = new Entity { Index = 31, Version = 1 },
+            PassengerKind = UnitTransportPassengerKind.Soldier
+        };
+
+        Assert.AreEqual(
+            TransportBoardingPlannedSlotRejectionKind.None,
+            TransportBoardingOrderPlanningSystemHelper.ResolvePlannedSlotRejection(
+                soldierOrder.PassengerKind,
+                availability,
+                plannedSlots));
+        Assert.IsTrue(TransportBoardingOrderPlanningSystemHelper.TryAppendPlannedBoardingOrder(
+            plannedOrders,
+            soldierOrder,
+            availability,
+            ref plannedSlots));
+        Assert.AreEqual(
+            TransportBoardingPlannedSlotRejectionKind.NoSoldierSeats,
+            TransportBoardingOrderPlanningSystemHelper.ResolvePlannedSlotRejection(
+                soldierOrder.PassengerKind,
+                availability,
+                plannedSlots));
+
+        Assert.AreEqual(1, plannedOrders.Count);
+        Assert.AreEqual(1, plannedSlots.SoldierSeats);
+        Assert.AreEqual(0, plannedSlots.VehicleSlots);
+        Assert.AreEqual(31, plannedOrders[0].Passenger.Index);
+    }
+
+    [Test]
     public void OrderPlanningHelper_CreatesPlannedOrderListWithResolvedCapacity()
     {
         int capacity = TransportBoardingOrderPlanningSystemHelper.ResolvePlannedOrderCapacity(

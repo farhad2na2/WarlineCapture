@@ -213,6 +213,40 @@ public sealed class ScriptArchitectureAlignmentContractTests
         "Assets/Game/Scripts/Utilities/UnitTransportVisualUtility.cs|VisualEntities",
     };
 
+    private static readonly string[] RuntimeInstantiateOwnershipScanRoots =
+    {
+        "Assets/Game/Scripts/Systems",
+        "Assets/Game/Scripts/Environment",
+        "Assets/Game/Scripts/Rendering/Systems",
+        "Assets/Game/Scripts/UI/Shell/Ecs",
+    };
+
+    private static readonly HashSet<string> ClassifiedRuntimeGameObjectInstantiateCalls = new(StringComparer.Ordinal)
+    {
+        "Assets/Game/Scripts/Environment/DayNightSystem.cs|_runtimeSkyboxMaterial = Object.Instantiate(RenderSettings.skybox);",
+        "Assets/Game/Scripts/Environment/RuntimeCityVisualPresentationSystemHelper.cs|visual = UnityEngine.Object.Instantiate(combinedMesh.gameObject, wrapper.transform);",
+        "Assets/Game/Scripts/Environment/RuntimeCityVisualPresentationSystemHelper.cs|visual = UnityEngine.Object.Instantiate(prefab, wrapper.transform);",
+        "Assets/Game/Scripts/Environment/RuntimeDecorationSpawnerPresentationSystemHelper.cs|GameObject instance = Object.Instantiate(prefab, _rootTransform);",
+        "Assets/Game/Scripts/Environment/RuntimeGridBlockerPresentationSystemHelper.cs|GameObject visual = Object.Instantiate(prefab, root.transform);",
+        "Assets/Game/Scripts/Systems/BuildingDefinitionPrefabSystemHelper.cs|? Object.Instantiate(definition.VisualTemplate)",
+        "Assets/Game/Scripts/Systems/BuildingDefinitionPrefabSystemHelper.cs|: Object.Instantiate(definition.Prefab);",
+        "Assets/Game/Scripts/Systems/BuildingDestroyedVisualPresentationSystemHelper.cs|GameObject instance = Object.Instantiate(prefab, parent, false);",
+        "Assets/Game/Scripts/Systems/BuildingPlacementVisualPresentationSystemHelper.cs|visual = Object.Instantiate(definition.Prefab, wrapper.transform);",
+        "Assets/Game/Scripts/Systems/BuildingProductionTransportPresentationSystemHelper.cs|? Instantiate(prefab, runtimeRoot, false)",
+        "Assets/Game/Scripts/Systems/BuildingProductionTransportPresentationSystemHelper.cs|: Instantiate(prefab);",
+        "Assets/Game/Scripts/Systems/BuildingSelectionMarkerPresentationSystemHelper.cs|_markerInstance = UnityEngine.Object.Instantiate(context.MarkerPrefab, context.MarkerParent);",
+        "Assets/Game/Scripts/Systems/MapBuildingPlacementSpawnPrefabSystemHelper.cs|GameObject visual = UnityEngine.Object.Instantiate(source.gameObject, wrapper.transform);",
+        "Assets/Game/Scripts/Systems/RoadBuildBuildingPlacementCompositionSystemHelper.cs|Instantiate(definition.Prefab, context.BuildingRoot),",
+        "Assets/Game/Scripts/Systems/RoadBuildDefinitionProjectionSystem.cs|GameObject temp = UnityEngine.Object.Instantiate(definition.Prefab);",
+        "Assets/Game/Scripts/Systems/RoadSpecialVisualSystem.cs|GameObject intersectionObject = UnityEngine.Object.Instantiate(",
+        "Assets/Game/Scripts/Systems/RoadSpecialVisualSystem.cs|GameObject roadObject = UnityEngine.Object.Instantiate(",
+        "Assets/Game/Scripts/Systems/RoadSpecialVisualSystem.cs|roadObject = UnityEngine.Object.Instantiate(prefab, parent);",
+        "Assets/Game/Scripts/Systems/RoadVisualVariantSystem.cs|GameObject temp = Instantiate(prefab);",
+        "Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs|UnityEngine.Object markerInstance = UnityEngine.Object.Instantiate((UnityEngine.Object)_attackOrderMarkerPrefab);",
+        "Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs|UnityEngine.Object markerInstance = UnityEngine.Object.Instantiate((UnityEngine.Object)_moveOrderMarkerPrefab);",
+        "Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs|_attackTargetSelectionMarker = UnityEngine.Object.Instantiate(_attackTargetMarkerPrefab, _runtimeRoot);",
+    };
+
     private static readonly Regex StaticMutableCollectionFieldRegex = new(
         @"\bstatic\s+(?:readonly\s+)?(?:(?:System\.Collections\.Generic\.)?(?:List|Dictionary|HashSet)|(?:Unity\.Collections\.)?Native(?:List|HashMap|HashSet|ParallelHashMap|ParallelHashSet))\s*<[^>\r\n]+>\s+(?<name>[A-Za-z_]\w*)\s*(?:=|;)",
         RegexOptions.CultureInvariant);
@@ -1374,6 +1408,38 @@ public sealed class ScriptArchitectureAlignmentContractTests
             UIShellContentSectionId.Footer);
     }
 
+    [Test]
+    public void RuntimeInstantiateCallsMustStayEntityOwnedOrClassifiedPresentation()
+    {
+        List<string> violations = new();
+
+        foreach (string root in RuntimeInstantiateOwnershipScanRoots)
+        {
+            foreach (string path in EnumerateSourceFiles(root))
+            {
+                if (IsEditorPath(path))
+                    continue;
+
+                string normalizedPath = NormalizePath(path);
+                string[] lines = File.ReadAllLines(path);
+                for (int lineIndex = 0; lineIndex < lines.Length; lineIndex++)
+                {
+                    string normalizedLine = NormalizeSourceLine(lines[lineIndex]);
+                    if (!IsUnityObjectInstantiateCall(normalizedLine))
+                        continue;
+
+                    string signature = normalizedPath + "|" + normalizedLine;
+                    if (!ClassifiedRuntimeGameObjectInstantiateCalls.Contains(signature))
+                        violations.Add($"{normalizedPath}:{lineIndex + 1} has unclassified Unity object instantiate: {normalizedLine}");
+                }
+            }
+        }
+
+        AssertNoViolations(
+            violations,
+            "Runtime ECS/system code must not add gameplay GameObject spawn paths. Use entity prefab/ECB ownership for gameplay spawns, or classify presentation/probe/material instantiates explicitly in this test.");
+    }
+
     private static IEnumerable<string> EnumerateRuntimeSourceFiles()
     {
         foreach (string path in EnumerateSourceFiles(GameScriptsRoot))
@@ -1710,6 +1776,28 @@ public sealed class ScriptArchitectureAlignmentContractTests
     private static bool IsCompositionPath(string path)
     {
         return NormalizePath(path).Contains("/Composition/", StringComparison.Ordinal);
+    }
+
+    private static bool IsUnityObjectInstantiateCall(string normalizedLine)
+    {
+        if (!normalizedLine.Contains("Instantiate(", StringComparison.Ordinal))
+            return false;
+
+        if (normalizedLine.Contains("ecb.Instantiate(", StringComparison.Ordinal) ||
+            normalizedLine.Contains("em.Instantiate(", StringComparison.Ordinal) ||
+            normalizedLine.Contains("EntityManager.Instantiate(", StringComparison.Ordinal) ||
+            normalizedLine.Contains(".EntityManager.Instantiate(", StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        return normalizedLine.Contains("Object.Instantiate(", StringComparison.Ordinal) ||
+               Regex.IsMatch(normalizedLine, @"(?:^|[=?:,(]\s*)Instantiate\(", RegexOptions.CultureInvariant);
+    }
+
+    private static string NormalizeSourceLine(string line)
+    {
+        return Regex.Replace(line.Trim(), @"\s+", " ", RegexOptions.CultureInvariant);
     }
 
     private static string NormalizePath(string path)

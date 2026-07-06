@@ -375,6 +375,21 @@ public sealed class UnitTransportBoardingSystemExtractionTests
     }
 
     [Test]
+    public void OrderPlanningHelper_CreatesPlannedOrderListWithResolvedCapacity()
+    {
+        int capacity = TransportBoardingOrderPlanningSystemHelper.ResolvePlannedOrderCapacity(
+            candidateCount: 5,
+            totalAvailableSlots: 3);
+        List<PendingTransportBoardingOrder> plannedOrders =
+            TransportBoardingOrderPlanningSystemHelper.CreatePlannedBoardingOrderList(capacity);
+
+        Assert.AreEqual(3, capacity);
+        Assert.AreEqual(0, TransportBoardingOrderPlanningSystemHelper.ResolvePlannedOrderCapacity(-2, 3));
+        Assert.AreEqual(0, plannedOrders.Count);
+        Assert.AreEqual(3, plannedOrders.Capacity);
+    }
+
+    [Test]
     public void OrderPlanningHelper_CreatesPendingBoardingOrderWithDirectFlag()
     {
         Entity passenger = new() { Index = 31, Version = 1 };

@@ -728,7 +728,8 @@ namespace Game.Runtime
                 hasPendingAirPickupLanding = true;
             }
 
-            List<PendingTransportBoardingOrder> boardingOrders = new(DefaultBoardingOrderCapacity);
+            List<PendingTransportBoardingOrder> boardingOrders =
+                TransportBoardingOrderPlanningSystemHelper.CreatePlannedBoardingOrderList(DefaultBoardingOrderCapacity);
             HashSet<int> reservedBoardingCells = new();
             TransportBoardingPlannedSlotCounts plannedSlots = default;
             int directBoardingCells = GetTransportBoardingDirectCells(em, transport);
@@ -1326,7 +1327,11 @@ namespace Game.Runtime
                 slotAvailability.AvailableVehicleSlots,
                 ignoredBoardingEntities,
                 ignoredBoardingOccupiedCells);
-            List<PendingTransportBoardingOrder> plannedOrders = new(math.min(candidates.Count, slotAvailability.TotalAvailableSlots));
+            List<PendingTransportBoardingOrder> plannedOrders =
+                TransportBoardingOrderPlanningSystemHelper.CreatePlannedBoardingOrderList(
+                    TransportBoardingOrderPlanningSystemHelper.ResolvePlannedOrderCapacity(
+                        candidates.Count,
+                        slotAvailability.TotalAvailableSlots));
             TransportBoardingPlannedSlotCounts plannedSlots = default;
 
             for (int i = 0; i < candidates.Count; i++)

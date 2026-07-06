@@ -36,6 +36,16 @@ namespace Game.Runtime
 
     internal static class TransportBoardingOrderPlanningSystemHelper
     {
+        public static int ResolvePlannedOrderCapacity(int candidateCount, int totalAvailableSlots)
+        {
+            return math.max(0, math.min(candidateCount, totalAvailableSlots));
+        }
+
+        public static List<PendingTransportBoardingOrder> CreatePlannedBoardingOrderList(int capacity)
+        {
+            return new List<PendingTransportBoardingOrder>(math.max(0, capacity));
+        }
+
         public static PendingTransportBoardingOrder CreatePendingBoardingOrder(
             Entity passenger,
             int2 passengerCell,

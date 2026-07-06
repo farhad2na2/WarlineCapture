@@ -64,6 +64,15 @@ namespace Game.Runtime
                    HasAvailableTransportBoardingSlot(em, transport, UnitTransportPassengerKind.Vehicle, out _, out _);
         }
 
+        public static TransportSlotAvailability ResolveTransportSlotAvailability(EntityManager em, Entity transport)
+        {
+            return new TransportSlotAvailability(
+                CountTransportPassengerOccupancy(em, transport, UnitTransportPassengerKind.Soldier),
+                ResolveTransportPassengerCapacity(em, transport, UnitTransportPassengerKind.Soldier),
+                CountTransportPassengerOccupancy(em, transport, UnitTransportPassengerKind.Vehicle),
+                ResolveTransportPassengerCapacity(em, transport, UnitTransportPassengerKind.Vehicle));
+        }
+
         public static bool IsPotentialVehicleCargoPassenger(EntityManager em, Entity entity, bool allowLoadedPassenger = false)
         {
             if (!em.Exists(entity) ||

@@ -64,6 +64,45 @@ public sealed class UnitTransportBoardingSystemExtractionTests
     }
 
     [Test]
+    public void CapacityHelper_ResolvesTransportSlotAvailabilityFromPassengersAndCapacity()
+    {
+        using var world = new World("UnitTransportBoardingSystemExtractionTests");
+        EntityManager entityManager = world.EntityManager;
+        Entity transport = entityManager.CreateEntity(
+            typeof(UnitTransportCapacity),
+            typeof(UnitTransportCargoCapacity));
+        entityManager.SetComponentData(transport, new UnitTransportCapacity { SoldierCapacity = 4 });
+        entityManager.SetComponentData(transport, new UnitTransportCargoCapacity
+        {
+            SoldierCapacity = 5,
+            VehicleCapacity = 2,
+            CargoWeightCapacity = 0
+        });
+        DynamicBuffer<UnitTransportPassengerElement> passengers =
+            entityManager.AddBuffer<UnitTransportPassengerElement>(transport);
+        Entity soldierPassenger = entityManager.CreateEntity();
+        Entity vehiclePassenger = entityManager.CreateEntity(typeof(UnitTransportCargoPassenger));
+        entityManager.SetComponentData(vehiclePassenger, new UnitTransportCargoPassenger
+        {
+            Transport = transport,
+            PassengerKind = UnitTransportPassengerKind.Vehicle,
+            CargoWeight = 1
+        });
+        passengers.Add(new UnitTransportPassengerElement { Passenger = soldierPassenger });
+        passengers.Add(new UnitTransportPassengerElement { Passenger = vehiclePassenger });
+
+        TransportSlotAvailability availability =
+            TransportBoardingCapacitySystemHelper.ResolveTransportSlotAvailability(entityManager, transport);
+
+        Assert.AreEqual(1, availability.OccupiedSoldierSeats);
+        Assert.AreEqual(5, availability.SoldierCapacity);
+        Assert.AreEqual(4, availability.AvailableSoldierSeats);
+        Assert.AreEqual(1, availability.OccupiedVehicleSlots);
+        Assert.AreEqual(2, availability.VehicleCapacity);
+        Assert.AreEqual(1, availability.AvailableVehicleSlots);
+    }
+
+    [Test]
     public void ResolveTransportCargoCapacity_PreservesAuthoredCargoCapacity()
     {
         using var world = new World("UnitTransportBoardingSystemExtractionTests");

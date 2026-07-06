@@ -568,7 +568,8 @@ namespace Game.Runtime
                 return rejectedTransportResult;
             }
 
-            TransportSlotAvailability slotAvailability = ResolveTransportSlotAvailability(em, transport);
+            TransportSlotAvailability slotAvailability =
+                TransportBoardingCapacitySystemHelper.ResolveTransportSlotAvailability(em, transport);
             if (!slotAvailability.HasAnyAvailableSlot)
             {
                 if (shouldLogTransportBoarding)
@@ -898,7 +899,8 @@ namespace Game.Runtime
                 return Result.Rejected(TacticalCommandReasonCode.InvalidPassenger);
             }
 
-            TransportSlotAvailability slotAvailability = ResolveTransportSlotAvailability(em, transport);
+            TransportSlotAvailability slotAvailability =
+                TransportBoardingCapacitySystemHelper.ResolveTransportSlotAvailability(em, transport);
             slotAvailability.GetPassengerKindCounts(passengerKind, out int occupiedSlots, out int slotCapacity, out int availableSlots);
             if (availableSlots <= 0)
             {
@@ -1218,7 +1220,8 @@ namespace Game.Runtime
             if (!transportLanded || !transportCapacitySystem.TryEnsureTransportCapacity(em, transport))
                 return false;
 
-            TransportSlotAvailability slotAvailability = ResolveTransportSlotAvailability(em, transport);
+            TransportSlotAvailability slotAvailability =
+                TransportBoardingCapacitySystemHelper.ResolveTransportSlotAvailability(em, transport);
             if (!slotAvailability.HasAnyAvailableSlot || _gridPathingQuery.IsEmptyIgnoreFilter)
                 return false;
 
@@ -1796,16 +1799,6 @@ namespace Game.Runtime
         public static bool IsCargoPlaneTransport(EntityManager em, Entity transport)
         {
             return TransportBoardingCapacitySystemHelper.IsCargoPlaneTransport(em, transport);
-        }
-
-        private static int ResolveTransportPassengerCapacity(EntityManager em, Entity transport, byte passengerKind)
-        {
-            return TransportBoardingCapacitySystemHelper.ResolveTransportPassengerCapacity(em, transport, passengerKind);
-        }
-
-        private static int CountTransportPassengerOccupancy(EntityManager em, Entity transport, byte passengerKind)
-        {
-            return TransportBoardingCapacitySystemHelper.CountTransportPassengerOccupancy(em, transport, passengerKind);
         }
 
         private static byte ResolvePassengerKind(byte passengerKind)
@@ -3075,15 +3068,6 @@ namespace Game.Runtime
             }
 
             return -1;
-        }
-
-        private TransportSlotAvailability ResolveTransportSlotAvailability(EntityManager em, Entity transport)
-        {
-            return new TransportSlotAvailability(
-                CountTransportPassengerOccupancy(em, transport, UnitTransportPassengerKind.Soldier),
-                ResolveTransportPassengerCapacity(em, transport, UnitTransportPassengerKind.Soldier),
-                CountTransportPassengerOccupancy(em, transport, UnitTransportPassengerKind.Vehicle),
-                ResolveTransportPassengerCapacity(em, transport, UnitTransportPassengerKind.Vehicle));
         }
 
         private static bool IsKnownPersonnelTransport(EntityManager em, Entity entity)

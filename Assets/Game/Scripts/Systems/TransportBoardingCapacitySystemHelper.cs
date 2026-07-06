@@ -192,6 +192,26 @@ namespace Game.Runtime
             return count;
         }
 
+        public static byte ResolveLoadedPassengerKind(EntityManager em, Entity transport, Entity passenger)
+        {
+            if (!em.Exists(passenger))
+                return UnitTransportPassengerKind.Soldier;
+
+            if (em.HasComponent<UnitTransportCargoPassenger>(passenger) &&
+                em.GetComponentData<UnitTransportCargoPassenger>(passenger).Transport == transport)
+            {
+                return ResolvePassengerKind(em.GetComponentData<UnitTransportCargoPassenger>(passenger).PassengerKind);
+            }
+
+            if (IsCargoPlaneTransport(em, transport) &&
+                IsPotentialVehicleCargoPassenger(em, passenger, true))
+            {
+                return UnitTransportPassengerKind.Vehicle;
+            }
+
+            return UnitTransportPassengerKind.Soldier;
+        }
+
         public static bool IsSoldierBoardingCandidate(EntityManager em, Entity entity)
         {
             if (!em.Exists(entity) ||

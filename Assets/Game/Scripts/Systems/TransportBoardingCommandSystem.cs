@@ -1801,13 +1801,6 @@ namespace Game.Runtime
             return TransportBoardingCapacitySystemHelper.IsCargoPlaneTransport(em, transport);
         }
 
-        private static byte ResolvePassengerKind(byte passengerKind)
-        {
-            return passengerKind == UnitTransportPassengerKind.Vehicle
-                ? UnitTransportPassengerKind.Vehicle
-                : UnitTransportPassengerKind.Soldier;
-        }
-
         public static bool IsSoldierBoardingCandidate(EntityManager em, Entity entity)
         {
             return TransportBoardingCapacitySystemHelper.IsSoldierBoardingCandidate(em, entity);
@@ -2521,7 +2514,7 @@ namespace Game.Runtime
         {
             reasonCode = TacticalCommandReasonCode.None;
             message = null;
-            byte passengerKind = ResolveLoadedPassengerKind(em, transport, passenger);
+            byte passengerKind = TransportBoardingCapacitySystemHelper.ResolveLoadedPassengerKind(em, transport, passenger);
             if (!UnitTransportAirdropSystem.HasResolvableDropVisualPrefab(em, transport, passengerKind))
             {
                 reasonCode = TacticalCommandReasonCode.CommandUnavailable;
@@ -2596,32 +2589,12 @@ namespace Game.Runtime
             for (int i = 0; i < count; i++)
             {
                 Entity passenger = passengers[i].Passenger;
-                byte passengerKind = ResolveLoadedPassengerKind(em, transport, passenger);
+                byte passengerKind = TransportBoardingCapacitySystemHelper.ResolveLoadedPassengerKind(em, transport, passenger);
                 if (passengerKind == UnitTransportPassengerKind.Vehicle)
                     vehicleDropCount++;
                 else
                     soldierDropCount++;
             }
-        }
-
-        private static byte ResolveLoadedPassengerKind(EntityManager em, Entity transport, Entity passenger)
-        {
-            if (!em.Exists(passenger))
-                return UnitTransportPassengerKind.Soldier;
-
-            if (em.HasComponent<UnitTransportCargoPassenger>(passenger) &&
-                em.GetComponentData<UnitTransportCargoPassenger>(passenger).Transport == transport)
-            {
-                return ResolvePassengerKind(em.GetComponentData<UnitTransportCargoPassenger>(passenger).PassengerKind);
-            }
-
-            if (IsCargoPlaneTransport(em, transport) &&
-                IsPotentialVehicleCargoPassenger(em, passenger, true))
-            {
-                return UnitTransportPassengerKind.Vehicle;
-            }
-
-            return UnitTransportPassengerKind.Soldier;
         }
 
         private static void SetPlaneAirdropRequest(
@@ -2978,7 +2951,7 @@ namespace Game.Runtime
                     passengers.Insert(0, selected);
                 }
 
-                byte passengerKind = ResolveLoadedPassengerKind(em, transport, passenger);
+                byte passengerKind = TransportBoardingCapacitySystemHelper.ResolveLoadedPassengerKind(em, transport, passenger);
                 if (!TryValidatePlaneAirdropPassenger(
                         em,
                         transport,

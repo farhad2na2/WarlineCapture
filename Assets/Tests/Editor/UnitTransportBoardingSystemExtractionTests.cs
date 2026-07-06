@@ -103,6 +103,38 @@ public sealed class UnitTransportBoardingSystemExtractionTests
     }
 
     [Test]
+    public void CapacityHelper_ResolvesLoadedPassengerKindFromCargoPassenger()
+    {
+        using var world = new World("UnitTransportBoardingSystemExtractionTests");
+        EntityManager entityManager = world.EntityManager;
+        Entity transport = entityManager.CreateEntity();
+        Entity vehiclePassenger = entityManager.CreateEntity(typeof(UnitTransportCargoPassenger));
+        Entity soldierPassenger = entityManager.CreateEntity(typeof(UnitTransportCargoPassenger));
+        entityManager.SetComponentData(vehiclePassenger, new UnitTransportCargoPassenger
+        {
+            Transport = transport,
+            PassengerKind = UnitTransportPassengerKind.Vehicle,
+            CargoWeight = 1
+        });
+        entityManager.SetComponentData(soldierPassenger, new UnitTransportCargoPassenger
+        {
+            Transport = transport,
+            PassengerKind = 99,
+            CargoWeight = 0
+        });
+
+        Assert.AreEqual(
+            UnitTransportPassengerKind.Vehicle,
+            TransportBoardingCapacitySystemHelper.ResolveLoadedPassengerKind(entityManager, transport, vehiclePassenger));
+        Assert.AreEqual(
+            UnitTransportPassengerKind.Soldier,
+            TransportBoardingCapacitySystemHelper.ResolveLoadedPassengerKind(entityManager, transport, soldierPassenger));
+        Assert.AreEqual(
+            UnitTransportPassengerKind.Soldier,
+            TransportBoardingCapacitySystemHelper.ResolveLoadedPassengerKind(entityManager, transport, Entity.Null));
+    }
+
+    [Test]
     public void ResolveTransportCargoCapacity_PreservesAuthoredCargoCapacity()
     {
         using var world = new World("UnitTransportBoardingSystemExtractionTests");

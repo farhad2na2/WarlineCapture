@@ -407,6 +407,49 @@ public sealed class UnitTransportBoardingSystemExtractionTests
     }
 
     [Test]
+    public void OrderPlanningHelper_TransportSlotAvailabilityReportsCountsByPassengerKind()
+    {
+        TransportSlotAvailability availability = new(
+            occupiedSoldierSeats: 3,
+            soldierCapacity: 10,
+            occupiedVehicleSlots: 1,
+            vehicleCapacity: 2);
+
+        availability.GetPassengerKindCounts(
+            UnitTransportPassengerKind.Soldier,
+            out int occupiedSoldierSeats,
+            out int soldierCapacity,
+            out int availableSoldierSeats);
+        availability.GetPassengerKindCounts(
+            UnitTransportPassengerKind.Vehicle,
+            out int occupiedVehicleSlots,
+            out int vehicleCapacity,
+            out int availableVehicleSlots);
+
+        Assert.IsTrue(availability.HasAnyAvailableSlot);
+        Assert.AreEqual(8, availability.TotalAvailableSlots);
+        Assert.AreEqual(3, occupiedSoldierSeats);
+        Assert.AreEqual(10, soldierCapacity);
+        Assert.AreEqual(7, availableSoldierSeats);
+        Assert.AreEqual(1, occupiedVehicleSlots);
+        Assert.AreEqual(2, vehicleCapacity);
+        Assert.AreEqual(1, availableVehicleSlots);
+    }
+
+    [Test]
+    public void OrderPlanningHelper_TransportSlotAvailabilityKeepsMinimumTotalCapacity()
+    {
+        TransportSlotAvailability availability = new(
+            occupiedSoldierSeats: 10,
+            soldierCapacity: 10,
+            occupiedVehicleSlots: 2,
+            vehicleCapacity: 2);
+
+        Assert.IsFalse(availability.HasAnyAvailableSlot);
+        Assert.AreEqual(1, availability.TotalAvailableSlots);
+    }
+
+    [Test]
     public void OrderPlanningHelper_CreatesPendingBoardingOrderWithDirectFlag()
     {
         Entity passenger = new() { Index = 31, Version = 1 };

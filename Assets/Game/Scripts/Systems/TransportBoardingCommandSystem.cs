@@ -94,49 +94,6 @@ namespace Game.Runtime
             }
         }
 
-        private readonly struct TransportSlotAvailability
-        {
-            public readonly int OccupiedSoldierSeats;
-            public readonly int SoldierCapacity;
-            public readonly int AvailableSoldierSeats;
-            public readonly int OccupiedVehicleSlots;
-            public readonly int VehicleCapacity;
-            public readonly int AvailableVehicleSlots;
-
-            public TransportSlotAvailability(
-                int occupiedSoldierSeats,
-                int soldierCapacity,
-                int occupiedVehicleSlots,
-                int vehicleCapacity)
-            {
-                OccupiedSoldierSeats = occupiedSoldierSeats;
-                SoldierCapacity = soldierCapacity;
-                AvailableSoldierSeats = soldierCapacity - occupiedSoldierSeats;
-                OccupiedVehicleSlots = occupiedVehicleSlots;
-                VehicleCapacity = vehicleCapacity;
-                AvailableVehicleSlots = vehicleCapacity - occupiedVehicleSlots;
-            }
-
-            public bool HasAnyAvailableSlot => AvailableSoldierSeats > 0 || AvailableVehicleSlots > 0;
-
-            public int TotalAvailableSlots => math.max(1, AvailableSoldierSeats + AvailableVehicleSlots);
-
-            public void GetPassengerKindCounts(byte passengerKind, out int occupiedSlots, out int slotCapacity, out int availableSlots)
-            {
-                if (passengerKind == UnitTransportPassengerKind.Vehicle)
-                {
-                    occupiedSlots = OccupiedVehicleSlots;
-                    slotCapacity = VehicleCapacity;
-                    availableSlots = AvailableVehicleSlots;
-                    return;
-                }
-
-                occupiedSlots = OccupiedSoldierSeats;
-                slotCapacity = SoldierCapacity;
-                availableSlots = AvailableSoldierSeats;
-            }
-        }
-
         private bool _queriesInitialized;
         private EntityQuery _commandQueueQuery;
         private EntityQuery _selectedMoveQuery;

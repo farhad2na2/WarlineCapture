@@ -44,6 +44,18 @@ public sealed class ScriptArchitectureAlignmentContractTests
         "UIShellEcsPresentationSystem",
     };
 
+    private static readonly string[] UiMonoBehaviourForbiddenEcsAccessTokens =
+    {
+        "EntityManager",
+        "World.DefaultGameObjectInjectionWorld",
+        "GetOrCreateSystem",
+        "SystemAPI",
+        "EntityCommandBuffer",
+        "AddComponentData",
+        "SetComponentData",
+        "DestroyEntity",
+    };
+
     private static readonly HashSet<string> BroadNameDebtAllowlist = new(StringComparer.Ordinal)
     {
         "AIControllerConfig",
@@ -1324,6 +1336,35 @@ public sealed class ScriptArchitectureAlignmentContractTests
         AssertNoViolations(
             violations,
             "New UI MonoBehaviours must use `*View` naming or move flow/state behavior into ECS/shell systems.");
+    }
+
+    [Test]
+    public void UiMonoBehavioursMustNotOwnDirectEcsAccess()
+    {
+        List<string> violations = new();
+
+        foreach (string path in EnumerateSourceFiles("Assets/Game/Scripts/UI"))
+        {
+            string source = File.ReadAllText(path);
+            if (!ExtractClassDeclarations(source).Any(IsUiMonoBehaviourDeclaration))
+                continue;
+
+            string normalized = NormalizePath(path);
+            string[] lines = File.ReadAllLines(path);
+            for (int lineIndex = 0; lineIndex < lines.Length; lineIndex++)
+            {
+                string token = UiMonoBehaviourForbiddenEcsAccessTokens.FirstOrDefault(candidate =>
+                    lines[lineIndex].Contains(candidate, StringComparison.Ordinal));
+                if (token == null)
+                    continue;
+
+                violations.Add($"{normalized}:{lineIndex + 1} uses direct ECS access token `{token}`: {lines[lineIndex].Trim()}");
+            }
+        }
+
+        AssertNoViolations(
+            violations,
+            "Canvas/UI MonoBehaviours must remain serialized-reference binders and visual-state applicators. Route ECS reads/writes through the UI shell ECS edge or contract models.");
     }
 
     [Test]

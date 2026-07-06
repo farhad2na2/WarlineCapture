@@ -177,7 +177,9 @@ namespace Game.Runtime
                     int2 engageCell = targetCell;
                     float3 engagePosition = targetTransform.Position;
                     bool issuedBreachOrder = false;
-                    bool canResolveBaseBreach = !entityManager.HasComponent<GroundMissileLauncherComponent>(entity);
+                    bool canResolveBaseBreach =
+                        !entityManager.HasComponent<GroundMissileLauncherComponent>(entity) &&
+                        !entityManager.HasComponent<UnitAirMovement>(entity);
                     if (canResolveBaseBreach &&
                         tryResolveBaseBreachTarget != null &&
                         entityManager.HasComponent<Faction>(entity) &&

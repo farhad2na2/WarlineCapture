@@ -402,6 +402,7 @@ namespace Game.Runtime
                    sourceEntity != Entity.Null &&
                    em.Exists(sourceEntity) &&
                    !em.HasComponent<GroundMissileLauncherComponent>(sourceEntity) &&
+                   !em.HasComponent<UnitAirMovement>(sourceEntity) &&
                    em.HasComponent<Faction>(sourceEntity) &&
                    em.HasComponent<UnitGrid>(sourceEntity) &&
                    tryResolveBaseBreachTarget(

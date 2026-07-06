@@ -427,7 +427,8 @@ namespace Game.Runtime
             float3 engagePosition = targetPosition;
             bool issuedBreachOrder = false;
 
-            if (em.HasComponent<Faction>(unit) &&
+            if (!em.HasComponent<UnitAirMovement>(unit) &&
+                em.HasComponent<Faction>(unit) &&
                 em.HasComponent<UnitGrid>(unit))
             {
                 byte attackerFaction = em.GetComponentData<Faction>(unit).Id;

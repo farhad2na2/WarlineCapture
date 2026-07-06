@@ -69,11 +69,11 @@ Turn `Design/AgentReports/2026-07-02_audit_architecture-performance-followup.md`
 
 | Field | Status |
 |---|---|
-| Checklist complete | 127 / 138 |
-| Checklist percent complete | 92.0% |
+| Checklist complete | 127 / 132 active, 6 skipped |
+| Checklist percent complete | 96.2% active |
 | Current phase | Phase 8 Canvas/MonoBehaviour serialized-reference binder guardrail closed; Phase 10 skipped/on hold |
 | Phase 9 sub-progress | 31 / 31 micro-slices complete; Phase 9 top-level guardrails are closed. |
-| Next top-level movement | `127 / 138` now excludes the skipped Phase 10 assembly split work. The next non-skipped movement is expected from Phase 6 remaining visual-pooling ownership/event tests or Phase 8 selection/focused-test closeout decisions. |
+| Next top-level movement | `127 / 132 active` excludes the skipped Phase 10 assembly split work. The next non-skipped movement is expected from Phase 6 remaining visual-pooling ownership/event tests or Phase 8 selection/focused-test closeout decisions. |
 | Quick wins complete | 6 / 6 |
 | Current target | Phase 8 now prevents Canvas/UI MonoBehaviour drift by contract: view MonoBehaviours must stay serialized-reference binders/visual-state applicators and cannot introduce direct ECS gameplay access tokens. Next target is the fastest remaining non-skipped Phase 6 event-ownership/test closeout or Phase 8 selection/focused-test decision. |
 | Compiler status | Latest Phase 8 Canvas/MonoBehaviour binder guardrail slice passed `git diff --check`, `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly`, and `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`. The local generated `Game.Runtime.csproj` was refreshed for validation so the existing `TacticalFollowAttackCinematicSystem.cs` runtime source resolved correctly; generated `.csproj` files are not tracked in this repo. Latest code-bearing Phase 6 placement-visual pool cleanup slice passed `git diff --check`, `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly`, `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`, and `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`. Focused Unity EditMode validation was attempted at `/private/tmp/warline-unity-20260706-placement-visual-dispose.log` but Unity `6000.5.2f1` failed during licensing initialization before compilation/test execution; no Unity compile result was produced for that slice. Previous accepted-baseline Unity validation remains `/private/tmp/warline-unity-20260706-baseline-accepted-gate-final.log` with `[MatchRuntimeShellSmokeValidation] result=Passed [MatchRuntimeBaselineMetrics] result=Passed ... acceptedBaseline=passed p95=7.19ms/50.00ms alloc=0/0 frames=800/180`. |
@@ -554,14 +554,14 @@ Reason: the replay paths clear and enqueue movement orders through `UnitMoveOrde
 ## Phase 10 - Game.Runtime Domain Split
 Longer-term compile and ownership improvement.
 
-Status: On hold / skipped by user request on 2026-07-06. Do not start this phase unless it is explicitly reopened.
+Status: On hold / skipped by user request on 2026-07-06. Do not start this phase unless it is explicitly reopened. These six items are intentionally excluded from active checklist totals.
 
-- [ ] Confirm compiler is clean and tests are stable before assembly splitting.
-- [ ] Draft target domain asmdefs: Combat, Buildings, Transport, Selection/Camera, Pathfinding.
-- [ ] Keep Contracts assemblies as the only cross-domain currency.
-- [ ] Split one domain per PR/slice.
-- [ ] Run full compile and focused tests after each split.
-- [ ] Update architecture docs after each domain split.
+- Skipped: Confirm compiler is clean and tests are stable before assembly splitting.
+- Skipped: Draft target domain asmdefs: Combat, Buildings, Transport, Selection/Camera, Pathfinding.
+- Skipped: Keep Contracts assemblies as the only cross-domain currency.
+- Skipped: Split one domain per PR/slice.
+- Skipped: Run full compile and focused tests after each split.
+- Skipped: Update architecture docs after each domain split.
 
 ## Phase 11 - CI Performance Regression Gate
 Make the gains durable.

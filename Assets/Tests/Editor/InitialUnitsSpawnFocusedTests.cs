@@ -15,6 +15,8 @@ public sealed class InitialUnitsSpawnFocusedTests
         string[] methodNames =
         {
             nameof(InitialUnitsSpawnSystem_CreatesPlayerEconomyWithConfiguredDollars),
+            nameof(InitialUnitsSpawnSystem_AppliesConfiguredInitialFuelToPlayerUsableStorage),
+            nameof(InitialUnitsSpawnSystem_ClampsConfiguredInitialFuelToPlayerUsableStorageCapacity),
             nameof(InitialUnitsSpawnSystem_QueuesConfiguredRuntimeSpawnRequestFromReadModel),
             nameof(InitialUnitsSpawnSystem_QueuesConfiguredKeyOnlyRuntimeSpawnRequestFromLegacyConfig),
             nameof(InitialUnitsSpawnSystem_QueuesFactionBaseRuntimeSpawnRequests),
@@ -106,6 +108,43 @@ public sealed class InitialUnitsSpawnFocusedTests
         Assert.IsFalse(policyQuery.IsEmptyIgnoreFilter);
         FactionEconomyPolicy policy = em.GetComponentData<FactionEconomyPolicy>(policyQuery.GetSingletonEntity());
         Assert.AreEqual(0, policy.Enabled);
+    }
+
+    [Test]
+    public void InitialUnitsSpawnSystem_AppliesConfiguredInitialFuelToPlayerUsableStorage()
+    {
+        using var world = new World("InitialUnitsSpawnFuelStorageTest");
+        EntityManager em = world.EntityManager;
+
+        Entity playerStorage = CreateFuelStorage(em, FactionIdentity.PlayerFactionId, capacity: 1000, storedFuel: 12f);
+        Entity enemyStorage = CreateFuelStorage(em, FactionIdentity.EnemyFactionId, capacity: 1000, storedFuel: 7f);
+        Entity playerRefinery = CreateFuelStorage(em, FactionIdentity.PlayerFactionId, capacity: 1000, storedFuel: 9f, fuelBarrelsPerDay: 10f);
+
+        float addedFuel = InitialUnitsSpawnSystem.ApplyInitialUsableFuelStorage(em, initialFuel: 500);
+
+        Assert.AreEqual(488f, addedFuel, 0.001f);
+        BuildingResourceStorageComponent playerStorageAfter =
+            em.GetComponentData<BuildingResourceStorageComponent>(playerStorage);
+        Assert.AreEqual(500f, playerStorageAfter.StoredFuelBarrels, 0.001f);
+        Assert.AreEqual(1u, playerStorageAfter.Version);
+        Assert.AreEqual(7f, em.GetComponentData<BuildingResourceStorageComponent>(enemyStorage).StoredFuelBarrels, 0.001f);
+        Assert.AreEqual(9f, em.GetComponentData<BuildingResourceStorageComponent>(playerRefinery).StoredFuelBarrels, 0.001f);
+    }
+
+    [Test]
+    public void InitialUnitsSpawnSystem_ClampsConfiguredInitialFuelToPlayerUsableStorageCapacity()
+    {
+        using var world = new World("InitialUnitsSpawnFuelStorageCapacityTest");
+        EntityManager em = world.EntityManager;
+
+        Entity smallStorage = CreateFuelStorage(em, FactionIdentity.PlayerFactionId, capacity: 40, storedFuel: 10f);
+        Entity secondStorage = CreateFuelStorage(em, FactionIdentity.PlayerFactionId, capacity: 25, storedFuel: 5f);
+
+        float addedFuel = InitialUnitsSpawnSystem.ApplyInitialUsableFuelStorage(em, initialFuel: 500);
+
+        Assert.AreEqual(50f, addedFuel, 0.001f);
+        Assert.AreEqual(40f, em.GetComponentData<BuildingResourceStorageComponent>(smallStorage).StoredFuelBarrels, 0.001f);
+        Assert.AreEqual(25f, em.GetComponentData<BuildingResourceStorageComponent>(secondStorage).StoredFuelBarrels, 0.001f);
     }
 
     [Test]
@@ -553,6 +592,7 @@ public sealed class InitialUnitsSpawnFocusedTests
         Assert.AreEqual(1u, progress.RandomState);
         Assert.AreEqual(0, progress.BlockersSpawned);
         Assert.AreEqual(0, progress.InitialResourcesApplied);
+        Assert.AreEqual(0, progress.InitialFuelStorageApplied);
 
         DynamicBuffer<InitialUnitsFactionUnitSpawnProgress> progressBuffer =
             em.GetBuffer<InitialUnitsFactionUnitSpawnProgress>(configEntity);
@@ -805,5 +845,24 @@ public sealed class InitialUnitsSpawnFocusedTests
         {
             ecb.Dispose();
         }
+    }
+
+    private static Entity CreateFuelStorage(
+        EntityManager em,
+        byte factionId,
+        int capacity,
+        float storedFuel,
+        float fuelBarrelsPerDay = 0f)
+    {
+        Entity entity = em.CreateEntity(typeof(BuildingResourceStorageComponent));
+        em.SetComponentData(entity, new BuildingResourceStorageComponent
+        {
+            OwnerFactionId = factionId,
+            FuelStorageCapacity = capacity,
+            FuelBarrelsPerDay = fuelBarrelsPerDay,
+            StoredFuelBarrels = storedFuel
+        });
+
+        return entity;
     }
 }

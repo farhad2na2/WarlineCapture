@@ -61,6 +61,7 @@ namespace Game.Components
         public uint RandomState;
         public int BlockersSpawned;
         public byte InitialResourcesApplied;
+        public byte InitialFuelStorageApplied;
         public byte InitialBuildingRequestsIssued;
         public byte InitialBuildingsSpawned;
         public int InitialBuildingCompletionWaitFrames;

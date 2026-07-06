@@ -268,6 +268,13 @@ namespace Game.Runtime
                     em.SetComponentData(entity, progress);
                 }
 
+                if (progress.InitialFuelStorageApplied == 0 && CanApplyInitialFuelStorage(em, entity, config, progress))
+                {
+                    ApplyInitialUsableFuelStorage(em, config.InitialFuel);
+                    progress.InitialFuelStorageApplied = 1;
+                    em.SetComponentData(entity, progress);
+                }
+
                 if (!TryCreateInitialSpawnGridContext(em, _gridContextQuery, Allocator.Temp, out InitialSpawnGridContext gridContext))
                 {
                     PlaybackAndDisposeInitialSpawnStructuralChanges(em, ref ecb);
@@ -840,6 +847,78 @@ namespace Game.Runtime
             });
         }
 
+        internal static float ApplyInitialUsableFuelStorage(EntityManager em, int initialFuel)
+        {
+            float targetFuel = math.max(0, initialFuel);
+            if (targetFuel <= 0f)
+                return 0f;
+
+            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<BuildingResourceStorageComponent>());
+            ComponentTypeHandle<BuildingResourceStorageComponent> storageType =
+                em.GetComponentTypeHandle<BuildingResourceStorageComponent>(false);
+            using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+
+            float currentUsableFuel = 0f;
+            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+            {
+                NativeArray<BuildingResourceStorageComponent> storages = chunks[chunkIndex].GetNativeArray(ref storageType);
+                for (int i = 0; i < storages.Length; i++)
+                {
+                    BuildingResourceStorageComponent storage = storages[i];
+                    if (IsInitialUsablePlayerFuelStorage(storage))
+                        currentUsableFuel += math.max(0f, storage.StoredFuelBarrels);
+                }
+            }
+
+            float remainingFuel = math.max(0f, targetFuel - currentUsableFuel);
+            if (remainingFuel <= 0.001f)
+                return 0f;
+
+            float addedFuel = 0f;
+            for (int chunkIndex = 0; chunkIndex < chunks.Length && remainingFuel > 0.001f; chunkIndex++)
+            {
+                NativeArray<BuildingResourceStorageComponent> storages = chunks[chunkIndex].GetNativeArray(ref storageType);
+                for (int i = 0; i < storages.Length && remainingFuel > 0.001f; i++)
+                {
+                    BuildingResourceStorageComponent storage = storages[i];
+                    if (!IsInitialUsablePlayerFuelStorage(storage))
+                        continue;
+
+                    float freeCapacity = math.max(0f, storage.FuelStorageCapacity - storage.StoredFuelBarrels);
+                    float added = math.min(freeCapacity, remainingFuel);
+                    if (added <= 0f)
+                        continue;
+
+                    storage.StoredFuelBarrels = math.min(storage.FuelStorageCapacity, storage.StoredFuelBarrels + added);
+                    storage.Version++;
+                    storages[i] = storage;
+                    addedFuel += added;
+                    remainingFuel -= added;
+                }
+            }
+
+            return addedFuel;
+        }
+
+        private static bool CanApplyInitialFuelStorage(
+            EntityManager em,
+            Entity configEntity,
+            InitialUnitsSpawnConfig config,
+            InitialUnitsSpawnProgress progress)
+        {
+            return config.InitialFuel <= 0 ||
+                   progress.InitialBuildingsSpawned != 0 ||
+                   !RequiresInitialBuildingCompletion(em, configEntity, config);
+        }
+
+        private static bool IsInitialUsablePlayerFuelStorage(in BuildingResourceStorageComponent storage)
+        {
+            return FactionIdentity.IsPlayerControlled(storage.OwnerFactionId) &&
+                   storage.FuelStorageCapacity > 0 &&
+                   storage.FuelBarrelsPerDay <= 0f &&
+                   storage.OilBarrelsPerDay <= 0f;
+        }
+
         internal static void InitializeInitialSpawnProgress(EntityManager em, EntityQuery pendingInitQuery)
         {
             EntityTypeHandle entityType = em.GetEntityTypeHandle();
@@ -861,6 +940,7 @@ namespace Game.Runtime
                     RandomState = math.max(1u, config.RandomSeed),
                     BlockersSpawned = 0,
                     InitialResourcesApplied = 0,
+                    InitialFuelStorageApplied = 0,
                     InitialBuildingRequestsIssued = 0,
                     InitialBuildingsSpawned = 0,
                     InitialBuildingCompletionWaitFrames = 0
@@ -1496,8 +1576,9 @@ namespace Game.Runtime
             InitialUnitsSpawnConfig config,
             InitialUnitsSpawnProgress progress)
         {
-            return progress.InitialBuildingsSpawned != 0 ||
-                   !RequiresInitialBuildingCompletion(em, configEntity, config);
+            return (progress.InitialBuildingsSpawned != 0 ||
+                    !RequiresInitialBuildingCompletion(em, configEntity, config)) &&
+                   progress.InitialFuelStorageApplied != 0;
         }
 
         private static bool RequiresInitialBuildingCompletion(EntityManager em, Entity configEntity, InitialUnitsSpawnConfig config)

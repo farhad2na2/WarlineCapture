@@ -186,6 +186,15 @@ namespace Game.Runtime
                    offset.y > halfHeightCells;
         }
 
+        public static bool IsFootprintInsideGrid(Vector2Int origin, Vector2Int footprintCells, int gridWidth, int gridHeight)
+        {
+            footprintCells = ClampFootprint(footprintCells);
+            return origin.x >= 0 &&
+                   origin.y >= 0 &&
+                   origin.x + footprintCells.x <= gridWidth &&
+                   origin.y + footprintCells.y <= gridHeight;
+        }
+
         public static int CalculateGateHalfGap(Vector2Int bottomGateFootprint, Vector2Int sideGateFootprint)
         {
             int bottomLength = Mathf.Max(1, bottomGateFootprint.x);

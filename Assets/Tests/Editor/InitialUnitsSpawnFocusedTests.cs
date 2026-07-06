@@ -4,6 +4,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using UnityEngine;
 using Game.Components;
 using Game.Runtime;
 
@@ -17,6 +18,7 @@ public sealed class InitialUnitsSpawnFocusedTests
             nameof(InitialUnitsSpawnSystem_QueuesConfiguredRuntimeSpawnRequestFromReadModel),
             nameof(InitialUnitsSpawnSystem_QueuesConfiguredKeyOnlyRuntimeSpawnRequestFromLegacyConfig),
             nameof(InitialUnitsSpawnSystem_QueuesFactionBaseRuntimeSpawnRequests),
+            nameof(InitialUnitsSpawnSystem_SkipsFactionBaseRequestsOutsideGrid),
             nameof(InitialUnitsSpawnSystem_SkipsUnresolvedSourceKeyWithoutFallback),
             nameof(InitialUnitSpawnApplySystem_InstantiatesConvertedPrefabBackedUnit)
         };
@@ -269,6 +271,7 @@ public sealed class InitialUnitsSpawnFocusedTests
                     BaseHalfHeightCells = 80
                 },
                 factionSpawns,
+                new GridConfig { Width = 2400, Height = 3200, CellSize = 1f },
                 coreRequestEntryIndex,
                 out int requestCount);
 
@@ -331,6 +334,71 @@ public sealed class InitialUnitsSpawnFocusedTests
         }
     }
 
+    [Test]
+    public void InitialUnitsSpawnSystem_SkipsFactionBaseRequestsOutsideGrid()
+    {
+        using var world = new World("InitialUnitsSpawnFactionBaseBoundsRequestTest");
+        EntityManager em = world.EntityManager;
+        Entity boundary = em.CreateEntity(typeof(BuildingRuntimeStateTag));
+        em.AddBuffer<BuildingRuntimeSpawnRequest>(boundary);
+        DynamicBuffer<BuildingConfiguredSpawnableReadModel> readModels =
+            em.AddBuffer<BuildingConfiguredSpawnableReadModel>(boundary);
+        AddInitialBaseSpawnableReadModel(readModels, "Wall_Dirt_Straight", new int2(4, 2));
+        AddInitialBaseSpawnableReadModel(readModels, "Building_Road_Barrier", new int2(10, 4));
+        for (int i = 0; i < InitialFactionBaseLayoutPlanner.RequiredBuildingKeys.Length; i++)
+            AddInitialBaseSpawnableReadModel(readModels, InitialFactionBaseLayoutPlanner.RequiredBuildingKeys[i], new int2(6, 6));
+        for (int i = 0; i < InitialFactionBaseLayoutPlanner.TentKeys.Length; i++)
+            AddInitialBaseSpawnableReadModel(readModels, InitialFactionBaseLayoutPlanner.TentKeys[i], new int2(3, 3));
+
+        Entity configEntity = em.CreateEntity();
+        var factionSpawns = new NativeArray<InitialUnitsFactionSpawnEntry>(1, Allocator.Temp);
+        try
+        {
+            factionSpawns[0] = new InitialUnitsFactionSpawnEntry
+            {
+                FactionId = FactionIdentity.EnemyFactionId,
+                SpawnCell = new int2(150, 50)
+            };
+
+            var grid = new GridConfig { Width = 512, Height = 512, CellSize = 1f };
+            bool issued = InitialUnitsSpawnSystem.EnqueueInitialFactionBaseRequests(
+                em,
+                boundary,
+                configEntity,
+                new InitialUnitsSpawnConfig
+                {
+                    CreateFactionBases = 1,
+                    BaseCoreBuildingPrefabLookupKey = new FixedString128Bytes("Building_Ammunition_Depot"),
+                    BaseHalfWidthCells = 120,
+                    BaseHalfHeightCells = 80
+                },
+                factionSpawns,
+                grid,
+                -77,
+                out int requestCount);
+
+            Assert.IsTrue(issued);
+            DynamicBuffer<BuildingRuntimeSpawnRequest> requests =
+                em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary);
+            Assert.AreEqual(requests.Length, requestCount);
+            Assert.Greater(requests.Length, 0);
+
+            for (int i = 0; i < requests.Length; i++)
+            {
+                BuildingRuntimeSpawnRequest request = requests[i];
+                Vector2Int footprint = ResolveInitialBaseRequestFootprint(request);
+                Vector2Int origin = new(request.PreferredOrigin.x, request.PreferredOrigin.y);
+                Assert.IsTrue(
+                    InitialFactionBaseLayoutPlanner.IsFootprintInsideGrid(origin, footprint, grid.Width, grid.Height),
+                    $"Generated request {i} should stay inside grid. kind={request.RequestKind} id={request.BuildingId.ToString()} origin={origin} footprint={footprint}");
+            }
+        }
+        finally
+        {
+            factionSpawns.Dispose();
+        }
+    }
+
     private static void AddInitialBaseSpawnableReadModel(
         DynamicBuffer<BuildingConfiguredSpawnableReadModel> readModels,
         string buildingId,
@@ -343,6 +411,19 @@ public sealed class InitialUnitsSpawnFocusedTests
             FootprintCells = footprint,
             CanRequest = 1
         });
+    }
+
+    private static Vector2Int ResolveInitialBaseRequestFootprint(BuildingRuntimeSpawnRequest request)
+    {
+        string buildingId = request.BuildingId.ToString();
+        Vector2Int footprint = buildingId == BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey("Wall_Dirt_Straight")
+            ? new Vector2Int(4, 2)
+            : buildingId == BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey("Building_Road_Barrier")
+                ? new Vector2Int(10, 4)
+                : new Vector2Int(6, 6);
+        return request.RotateVertical != 0
+            ? new Vector2Int(footprint.y, footprint.x)
+            : footprint;
     }
 
     [Test]

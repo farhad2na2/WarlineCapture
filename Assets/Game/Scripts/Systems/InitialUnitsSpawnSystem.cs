@@ -221,7 +221,7 @@ namespace Game.Runtime
                             bool issuedInitialBuildingRequests = true;
                             int baseRequestCount = 0;
                             if (config.CreateFactionBases != 0 &&
-                                !EnqueueInitialFactionBaseRequests(state.EntityManager, boundaryEntity, entity, config, factionSpawns, InitialBaseCoreRequestEntryIndex, out baseRequestCount))
+                                !EnqueueInitialFactionBaseRequests(state.EntityManager, boundaryEntity, entity, config, factionSpawns, baseGrid, InitialBaseCoreRequestEntryIndex, out baseRequestCount))
                             {
                                 issuedInitialBuildingRequests = false;
                             }
@@ -1094,6 +1094,7 @@ namespace Game.Runtime
             Entity configEntity,
             InitialUnitsSpawnConfig config,
             NativeArray<InitialUnitsFactionSpawnEntry> factionSpawns,
+            GridConfig grid,
             int initialBaseCoreRequestEntryIndex,
             out int requestCount)
         {
@@ -1170,19 +1171,25 @@ namespace Game.Runtime
                         new int2(anchor.x + run.StartOffset.x, anchor.y + run.StartOffset.y),
                         new int2(anchor.x + run.EndOffset.x, anchor.y + run.EndOffset.y),
                         bottomWallFootprint,
-                        sideWallFootprint);
+                        sideWallFootprint,
+                        grid);
                 }
 
                 for (int flankIndex = 0; flankIndex < gateFlankWalls.Count; flankIndex++)
                 {
                     InitialFactionBaseGateFlankWall flank = gateFlankWalls[flankIndex];
+                    Vector2Int origin = anchor + flank.OriginOffset;
+                    Vector2Int footprint = flank.RotateVertical ? sideWallFootprint : bottomWallFootprint;
+                    if (!InitialFactionBaseLayoutPlanner.IsFootprintInsideGrid(origin, footprint, grid.Width, grid.Height))
+                        continue;
+
                     EnqueueInitialFactionBaseBuildingSpawnRequest(
                         em,
                         boundaryEntity,
                         configEntity,
                         factionSpawn.FactionId,
                         wallId,
-                        new int2(anchor.x + flank.OriginOffset.x, anchor.y + flank.OriginOffset.y),
+                        new int2(origin.x, origin.y),
                         flank.RotateVertical,
                         BuildingRuntimeSpawnRequest.KindWallSegment,
                         default,
@@ -1211,6 +1218,9 @@ namespace Game.Runtime
 
                     Vector2Int footprint = ToInitialFactionBaseFootprint(model.FootprintCells, placement.RotateVertical);
                     Vector2Int origin = InitialFactionBaseLayoutPlanner.ResolvePlacementOrigin(anchor, placement, footprint);
+                    if (!InitialFactionBaseLayoutPlanner.IsFootprintInsideGrid(origin, footprint, grid.Width, grid.Height))
+                        continue;
+
                     EnqueueInitialFactionBaseBuildingSpawnRequest(
                         em,
                         boundaryEntity,
@@ -1241,7 +1251,8 @@ namespace Game.Runtime
             int2 startOrigin,
             int2 endOrigin,
             Vector2Int bottomWallFootprint,
-            Vector2Int sideWallFootprint)
+            Vector2Int sideWallFootprint,
+            GridConfig grid)
         {
             Vector2Int start = new(startOrigin.x, startOrigin.y);
             Vector2Int end = new(endOrigin.x, endOrigin.y);
@@ -1253,9 +1264,13 @@ namespace Game.Runtime
 
             Vector2Int footprint = vertical ? sideWallFootprint : bottomWallFootprint;
             List<Vector2Int> origins = BuildingPlacementCommitCompositionSystemHelper.BuildWallRunOrigins(start, end, footprint, vertical);
+            int enqueued = 0;
             for (int i = 0; i < origins.Count; i++)
             {
                 Vector2Int origin = origins[i];
+                if (!InitialFactionBaseLayoutPlanner.IsFootprintInsideGrid(origin, footprint, grid.Width, grid.Height))
+                    continue;
+
                 EnqueueInitialFactionBaseBuildingSpawnRequest(
                     em,
                     boundaryEntity,
@@ -1265,9 +1280,10 @@ namespace Game.Runtime
                     new int2(origin.x, origin.y),
                     vertical,
                     BuildingRuntimeSpawnRequest.KindWallSegment);
+                enqueued++;
             }
 
-            return origins.Count;
+            return enqueued;
         }
 
         private static bool TryResolveInitialFactionBaseSpawnableId(

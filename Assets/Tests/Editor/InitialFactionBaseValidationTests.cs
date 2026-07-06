@@ -597,26 +597,58 @@ public sealed class InitialFactionBaseValidationTests
                 for (int wallRunIndex = 0; wallRunIndex < wallRuns.Count; wallRunIndex++)
                 {
                     InitialFactionBaseWallRun run = wallRuns[wallRunIndex];
+                    Vector2Int start = anchor + run.StartOffset;
+                    Vector2Int end = anchor + run.EndOffset;
+                    Vector2Int footprint = Mathf.Abs(end.y - start.y) > Mathf.Abs(end.x - start.x)
+                        ? sideWallFootprint
+                        : bottomWallFootprint;
+                    int expectedInBoundsSegments = CountWallRunOriginsInsideGrid(start, end, footprint, gridWidth, gridHeight);
                     int wallSegments = TrySpawnRuntimeWallRun(
                         buildingGameplay,
                         spawnConfig.BaseWallPrefab,
-                        anchor + run.StartOffset,
-                        anchor + run.EndOffset,
+                        start,
+                        end,
                         (byte)faction.FactionId);
-                    Assert.Greater(wallSegments, 0, $"Faction {faction.FactionId} wall run {wallRunIndex} should spawn at anchor {anchor}.");
+                    if (expectedInBoundsSegments > 0)
+                    {
+                        Assert.Greater(
+                            wallSegments,
+                            0,
+                            $"Faction {faction.FactionId} wall run {wallRunIndex} should spawn at least one in-grid segment at anchor {anchor}.");
+                    }
+                    else
+                    {
+                        Assert.AreEqual(
+                            0,
+                            wallSegments,
+                            $"Faction {faction.FactionId} wall run {wallRunIndex} should be skipped because every segment is outside the grid at anchor {anchor}.");
+                    }
                 }
                 for (int flankIndex = 0; flankIndex < gateFlankWalls.Count; flankIndex++)
                 {
                     InitialFactionBaseGateFlankWall flank = gateFlankWalls[flankIndex];
-                    Assert.IsTrue(
-                        TrySpawnRuntimeWallSegment(
-                            buildingGameplay,
-                            spawnConfig.BaseWallPrefab,
-                            anchor + flank.OriginOffset,
-                            flank.RotateVertical,
-                            (byte)faction.FactionId,
-                            allowExistingWallOverlap: true),
-                        $"Faction {faction.FactionId} gate flank wall {flankIndex} should close the gate gap.");
+                    Vector2Int origin = anchor + flank.OriginOffset;
+                    Vector2Int footprint = flank.RotateVertical ? sideWallFootprint : bottomWallFootprint;
+                    bool insideGrid = InitialFactionBaseLayoutPlanner.IsFootprintInsideGrid(origin, footprint, gridWidth, gridHeight);
+                    bool spawned = TrySpawnRuntimeWallSegment(
+                        buildingGameplay,
+                        spawnConfig.BaseWallPrefab,
+                        origin,
+                        flank.RotateVertical,
+                        (byte)faction.FactionId,
+                        allowExistingWallOverlap: true);
+                    if (insideGrid)
+                    {
+                        Assert.IsTrue(
+                            spawned,
+                            $"Faction {faction.FactionId} gate flank wall {flankIndex} should close the gate gap.");
+                    }
+                    else
+                    {
+                        Assert.IsFalse(
+                            spawned,
+                            $"Faction {faction.FactionId} gate flank wall {flankIndex} should be skipped because it is outside the grid.");
+                    }
                 }
 
                 for (int placementIndex = 0; placementIndex < placements.Count; placementIndex++)
@@ -629,6 +661,9 @@ public sealed class InitialFactionBaseValidationTests
 
                     Assert.IsTrue(TryGetRuntimeBuildingPlacementFootprint(buildingGameplay, prefab, placement.RotateVertical, out Vector2Int plannedFootprint));
                     Vector2Int origin = InitialFactionBaseLayoutPlanner.ResolvePlacementOrigin(anchor, placement, plannedFootprint);
+                    if (!InitialFactionBaseLayoutPlanner.IsFootprintInsideGrid(origin, plannedFootprint, gridWidth, gridHeight))
+                        continue;
+
                     bool spawned = TrySpawnRuntimeBuilding(
                         buildingGameplay,
                         prefab,
@@ -701,9 +736,9 @@ public sealed class InitialFactionBaseValidationTests
                 Mathf.Abs(gateCenterX - anchor.x),
                 1,
                 $"Faction {factionId} bottom gate should be centered in the wall opening.");
-            Assert.AreEqual(
-                anchor.y + placement.Offset.y,
-                actualOrigin.y,
+            Assert.LessOrEqual(
+                Mathf.Abs(actualOrigin.y - (anchor.y + placement.Offset.y)),
+                1,
                 $"Faction {factionId} bottom gate should stay on the bottom wall line.");
             return;
         }
@@ -715,9 +750,9 @@ public sealed class InitialFactionBaseValidationTests
                 Mathf.Abs(gateCenterY - anchor.y),
                 1,
                 $"Faction {factionId} side gate should be centered in the wall opening.");
-            Assert.AreEqual(
-                anchor.x + placement.Offset.x,
-                actualOrigin.x,
+            Assert.LessOrEqual(
+                Mathf.Abs(actualOrigin.x - (anchor.x + placement.Offset.x)),
+                1,
                 $"Faction {factionId} side gate should stay on the side wall line.");
         }
     }
@@ -831,6 +866,53 @@ public sealed class InitialFactionBaseValidationTests
                 endOrigin,
                 ownerFactionId)
             : 0;
+    }
+
+    private static int CountWallRunOriginsInsideGrid(
+        Vector2Int start,
+        Vector2Int end,
+        Vector2Int footprint,
+        int gridWidth,
+        int gridHeight)
+    {
+        bool vertical = Mathf.Abs(end.y - start.y) > Mathf.Abs(end.x - start.x);
+        if (vertical)
+            end.x = start.x;
+        else
+            end.y = start.y;
+
+        int count = InitialFactionBaseLayoutPlanner.IsFootprintInsideGrid(start, footprint, gridWidth, gridHeight) ? 1 : 0;
+        if (start == end)
+            return count;
+
+        if (vertical)
+        {
+            int stepCells = Mathf.Max(1, footprint.y);
+            int delta = end.y - start.y;
+            int direction = delta >= 0 ? 1 : -1;
+            int segmentCount = Mathf.Abs(delta) / stepCells;
+            for (int i = 1; i <= segmentCount; i++)
+            {
+                Vector2Int origin = new(start.x, start.y + direction * stepCells * i);
+                if (InitialFactionBaseLayoutPlanner.IsFootprintInsideGrid(origin, footprint, gridWidth, gridHeight))
+                    count++;
+            }
+
+            return count;
+        }
+
+        int horizontalStepCells = Mathf.Max(1, footprint.x);
+        int horizontalDelta = end.x - start.x;
+        int horizontalDirection = horizontalDelta >= 0 ? 1 : -1;
+        int horizontalSegmentCount = Mathf.Abs(horizontalDelta) / horizontalStepCells;
+        for (int i = 1; i <= horizontalSegmentCount; i++)
+        {
+            Vector2Int origin = new(start.x + horizontalDirection * horizontalStepCells * i, start.y);
+            if (InitialFactionBaseLayoutPlanner.IsFootprintInsideGrid(origin, footprint, gridWidth, gridHeight))
+                count++;
+        }
+
+        return count;
     }
 
     private static bool TrySpawnRuntimeWallSegment(

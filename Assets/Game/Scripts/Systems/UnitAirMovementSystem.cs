@@ -12,11 +12,15 @@ namespace Game.Runtime
     [UpdateBefore(typeof(UnitGridMovementSystem))]
     public partial struct UnitAirMovementSystem : ISystem
     {
+        private const float AirborneSurfaceLookaheadSeconds = 1.35f;
+
         private EntityQuery _gridQuery;
+        private EntityQuery _surfaceQuery;
 
         public void OnCreate(ref SystemState state)
         {
             _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
+            _surfaceQuery = state.GetEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
             state.RequireForUpdate(_gridQuery);
             state.RequireForUpdate<UnitAirMovement>();
         }
@@ -26,6 +30,14 @@ namespace Game.Runtime
         {
             Entity gridEntity = _gridQuery.GetSingletonEntity();
             GridConfig grid = state.EntityManager.GetComponentData<GridConfig>(gridEntity);
+            MapSurfaceComponent surface = default;
+            bool hasSurface = !_surfaceQuery.IsEmptyIgnoreFilter;
+            if (hasSurface)
+            {
+                surface = _surfaceQuery.GetSingleton<MapSurfaceComponent>();
+                hasSurface = surface.HasSurfaceData != 0 && surface.SurfaceBlob.IsCreated;
+            }
+
             float dt = SystemAPI.Time.DeltaTime;
             var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
             var targetLookup = SystemAPI.GetComponentLookup<UnitTarget>(true);
@@ -79,7 +91,17 @@ namespace Game.Runtime
 
                 if (ropeDisembarkLookup.HasComponent(entity))
                 {
-                    float hoverY = groundY + airMovement.ValueRO.CruiseHeight;
+                    float hoverY = ResolveAirCruiseY(
+                        surface,
+                        hasSurface,
+                        grid,
+                        transform.ValueRO.Position,
+                        transform.ValueRO.Position,
+                        move.ValueRO.Speed,
+                        dt,
+                        groundY,
+                        airMovement.ValueRO.CruiseHeight,
+                        stateRw.UsesRunway != 0);
                     float3 hoverPosition = transform.ValueRO.Position;
                     if (hoverPosition.y < hoverY)
                     {
@@ -116,7 +138,9 @@ namespace Game.Runtime
                         move.ValueRO,
                         airMovement.ValueRO,
                         dt,
-                        groundY);
+                        groundY,
+                        surface,
+                        hasSurface);
                     airdropLookup[entity] = airdrop;
 
                     if (targetLookup.HasComponent(entity))
@@ -215,7 +239,17 @@ namespace Game.Runtime
                         continue;
                     }
 
-                    float cruiseY = groundY + airMovement.ValueRO.CruiseHeight;
+                    float cruiseY = ResolveAirCruiseY(
+                        surface,
+                        hasSurface,
+                        grid,
+                        transform.ValueRO.Position,
+                        engageTargetPosition,
+                        move.ValueRO.Speed,
+                        dt,
+                        groundY,
+                        airMovement.ValueRO.CruiseHeight,
+                        stateRw.UsesRunway != 0);
                     if (stateRw.UsesRunway != 0)
                     {
                         float3 horizontalToTarget = engageTargetPosition - transform.ValueRO.Position;
@@ -369,7 +403,17 @@ namespace Game.Runtime
                         }
                         else
                         {
-                            float cruiseY = groundY + airMovement.ValueRO.CruiseHeight;
+                            float cruiseY = ResolveAirCruiseY(
+                                surface,
+                                hasSurface,
+                                grid,
+                                transform.ValueRO.Position,
+                                targetWorld,
+                                move.ValueRO.Speed,
+                                dt,
+                                groundY,
+                                airMovement.ValueRO.CruiseHeight,
+                                stateRw.UsesRunway != 0);
                             float3 movePassTarget = new float3(targetWorld.x, cruiseY, targetWorld.z);
                             if (stateRw.AttackRunActive == 0)
                             {
@@ -440,7 +484,19 @@ namespace Game.Runtime
                             grid,
                             isSpawnTransit ? math.max(0.01f, airMovement.ValueRO.RunwayTaxiSpeed) : move.ValueRO.Speed,
                             dt,
-                            isSpawnTransit ? groundY : groundY + airMovement.ValueRO.CruiseHeight,
+                            isSpawnTransit
+                                ? groundY
+                                : ResolveAirCruiseY(
+                                    surface,
+                                    hasSurface,
+                                    grid,
+                                    transform.ValueRO.Position,
+                                    targetWorld,
+                                    move.ValueRO.Speed,
+                                    dt,
+                                    groundY,
+                                    airMovement.ValueRO.CruiseHeight,
+                                    stateRw.UsesRunway != 0),
                             targetWorld,
                             !isSpawnTransit);
                     }
@@ -514,7 +570,17 @@ namespace Game.Runtime
                         float runwayGroundY = ResolveRunwayGroundY(stateRw, groundY);
                         if (stateRw.Airborne != 0)
                         {
-                            float cruiseY = groundY + airMovement.ValueRO.CruiseHeight;
+                            float cruiseY = ResolveAirCruiseY(
+                                surface,
+                                hasSurface,
+                                grid,
+                                transform.ValueRO.Position,
+                                stateRw.RunwayTakeoffPosition,
+                                move.ValueRO.Speed,
+                                dt,
+                                groundY,
+                                airMovement.ValueRO.CruiseHeight,
+                                stateRw.UsesRunway != 0);
                             float3 runwayDirection = stateRw.RunwayLandingPosition - stateRw.RunwayTakeoffPosition;
                             runwayDirection.y = 0f;
                             runwayDirection = math.normalizesafe(runwayDirection, new float3(0f, 0f, 1f));
@@ -623,7 +689,18 @@ namespace Game.Runtime
                     }
                     else
                     {
-                        bool reachedHome = FlyTowards(ref transform.ValueRW, ref unitGrid.ValueRW, grid, move.ValueRO.Speed, dt, groundY, stateRw.HomePosition, false);
+                        float homeDesiredY = ResolveReturnHomeY(
+                            surface,
+                            hasSurface,
+                            grid,
+                            transform.ValueRO.Position,
+                            stateRw.HomePosition,
+                            move.ValueRO.Speed,
+                            dt,
+                            groundY,
+                            airMovement.ValueRO.CruiseHeight,
+                            stateRw.UsesRunway != 0);
+                        bool reachedHome = FlyTowards(ref transform.ValueRW, ref unitGrid.ValueRW, grid, move.ValueRO.Speed, dt, homeDesiredY, stateRw.HomePosition, false);
                         if (reachedHome)
                         {
                             stateRw.ReturningHome = 0;
@@ -647,7 +724,9 @@ namespace Game.Runtime
             in UnitMove move,
             in UnitAirMovement airMovement,
             float deltaTime,
-            float groundY)
+            float groundY,
+            MapSurfaceComponent surface,
+            bool hasSurface)
         {
             state.ReturningHome = 0;
             state.ReturnApproachInitialized = 0;
@@ -709,8 +788,18 @@ namespace Game.Runtime
                 return;
             }
 
-            float cruiseY = groundY + airMovement.CruiseHeight;
             float3 dropWorld = GridUtils.CellToWorldCenter(grid, request.DropReferenceCell);
+            float cruiseY = ResolveAirCruiseY(
+                surface,
+                hasSurface,
+                grid,
+                transform.Position,
+                dropWorld,
+                move.Speed,
+                deltaTime,
+                groundY,
+                airMovement.CruiseHeight,
+                state.UsesRunway != 0);
             dropWorld.y = cruiseY;
 
             if (state.AttackRunActive == 0)
@@ -781,6 +870,138 @@ namespace Game.Runtime
                     state.AttackRunExitPosition.z + passForward.z * extendDistance);
                 state.AttackRunActive = 1;
             }
+        }
+
+        private static float ResolveAirCruiseY(
+            MapSurfaceComponent surface,
+            bool hasSurface,
+            in GridConfig grid,
+            float3 currentWorld,
+            float3 targetWorld,
+            float speed,
+            float deltaTime,
+            float fallbackGroundY,
+            float cruiseHeight,
+            bool fixedWing)
+        {
+            float groundY = ResolveAirReferenceGroundY(
+                surface,
+                hasSurface,
+                grid,
+                currentWorld,
+                targetWorld,
+                speed,
+                deltaTime,
+                fallbackGroundY,
+                fixedWing);
+            return groundY + ResolveAirClearance(cruiseHeight, fixedWing);
+        }
+
+        private static float ResolveReturnHomeY(
+            MapSurfaceComponent surface,
+            bool hasSurface,
+            in GridConfig grid,
+            float3 currentWorld,
+            float3 homeWorld,
+            float speed,
+            float deltaTime,
+            float fallbackGroundY,
+            float cruiseHeight,
+            bool fixedWing)
+        {
+            float3 toHome = homeWorld - currentWorld;
+            toHome.y = 0f;
+            float descendDistance = math.max(grid.CellSize * 2f, math.max(0.01f, speed) * math.max(deltaTime, 1f / 30f) * 2f);
+            if (math.lengthsq(toHome) <= descendDistance * descendDistance)
+                return homeWorld.y;
+
+            return ResolveAirCruiseY(
+                surface,
+                hasSurface,
+                grid,
+                currentWorld,
+                homeWorld,
+                speed,
+                deltaTime,
+                fallbackGroundY,
+                cruiseHeight,
+                fixedWing);
+        }
+
+        private static float ResolveAirReferenceGroundY(
+            MapSurfaceComponent surface,
+            bool hasSurface,
+            in GridConfig grid,
+            float3 currentWorld,
+            float3 targetWorld,
+            float speed,
+            float deltaTime,
+            float fallbackGroundY,
+            bool fixedWing)
+        {
+            if (!hasSurface ||
+                surface.HasSurfaceData == 0 ||
+                !surface.SurfaceBlob.IsCreated ||
+                surface.CellSize <= 0f)
+            {
+                return fallbackGroundY;
+            }
+
+            float bestHeight = fallbackGroundY;
+            bool found = false;
+            SampleMaxSurfaceHeight(surface, currentWorld, ref bestHeight, ref found);
+            SampleMaxSurfaceHeight(surface, targetWorld, ref bestHeight, ref found);
+
+            float3 horizontalDelta = targetWorld - currentWorld;
+            horizontalDelta.y = 0f;
+            float horizontalDistance = math.length(horizontalDelta);
+            if (horizontalDistance > 1e-4f)
+            {
+                float3 direction = horizontalDelta / horizontalDistance;
+                float lookaheadDistance = math.min(
+                    horizontalDistance,
+                    math.max(grid.CellSize * (fixedWing ? 6f : 3f),
+                        math.max(0.01f, speed) * AirborneSurfaceLookaheadSeconds * (fixedWing ? 1.75f : 1f)));
+                SampleMaxSurfaceHeight(surface, currentWorld + direction * lookaheadDistance, ref bestHeight, ref found);
+                SampleMaxSurfaceHeight(surface, currentWorld + direction * (lookaheadDistance * 0.5f), ref bestHeight, ref found);
+            }
+
+            return found ? bestHeight : fallbackGroundY;
+        }
+
+        private static void SampleMaxSurfaceHeight(
+            MapSurfaceComponent surface,
+            float3 worldPosition,
+            ref float bestHeight,
+            ref bool found)
+        {
+            int2 cell = SurfaceWorldToCell(surface, worldPosition);
+            ref MapSurfaceBlob blob = ref surface.SurfaceBlob.Value;
+            if (!MapSurfaceBlobAccess.TryGetSurfaceRange(ref blob, cell, out MapSurfaceCellSurfaceRange range))
+                return;
+
+            for (int i = 0; i < range.SurfaceCount; i++)
+            {
+                if (!MapSurfaceBlobAccess.TryGetSurface(ref blob, range, i, out MapSurfaceSample sample))
+                    continue;
+
+                bestHeight = found ? math.max(bestHeight, sample.Height) : sample.Height;
+                found = true;
+            }
+        }
+
+        private static int2 SurfaceWorldToCell(MapSurfaceComponent surface, float3 worldPosition)
+        {
+            int2 cell = (int2)math.floor(new float2(
+                (worldPosition.x - surface.GridOrigin.x) / surface.CellSize,
+                (worldPosition.z - surface.GridOrigin.z) / surface.CellSize));
+            return math.clamp(cell, int2.zero, surface.Dimensions - 1);
+        }
+
+        private static float ResolveAirClearance(float cruiseHeight, bool fixedWing)
+        {
+            float minimumClearance = fixedWing ? 28f : 8f;
+            return math.max(minimumClearance, math.max(0f, cruiseHeight));
         }
 
         private static float ResolveRunwayGroundY(in UnitAirComponent state, float fallbackY)

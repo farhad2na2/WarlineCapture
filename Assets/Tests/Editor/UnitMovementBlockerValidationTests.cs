@@ -24,6 +24,8 @@ public sealed class UnitMovementBlockerValidationTests
             tests.EngagedCombatMovementDoesNotMoveTowardDebugFireTarget();
             tests.AirMovementDoesNotMoveTowardDebugFireTarget();
             tests.AirMovementDoesNotMoveDuringDebugFireStateWithoutEngageTarget();
+            tests.AirMovementClimbsAboveElevatedMapSurfaceForDirectTarget();
+            tests.FixedWingAirMovementUsesTerrainLookaheadClearance();
             tests.InfantryMovementDoesNotStallOnOwnPreviousOccupancySnapshot();
             tests.VehicleConfiguredFootprintOverridesRenderedBounds();
             tests.AuthoredUsaTankPlacementsAreVehicleWalkableInBakedSurface();
@@ -83,6 +85,24 @@ public sealed class UnitMovementBlockerValidationTests
         {
             Debug.LogException(ex);
             Debug.LogError("[MapVehiclePlacementValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
+    public static void RunAirSurfaceClearanceFocusedValidation()
+    {
+        try
+        {
+            var tests = new UnitMovementBlockerValidationTests();
+            tests.AirMovementClimbsAboveElevatedMapSurfaceForDirectTarget();
+            tests.FixedWingAirMovementUsesTerrainLookaheadClearance();
+            Debug.Log("[AirSurfaceClearanceValidation] result=Passed tests=2");
+            ValidationExit.Passed();
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[AirSurfaceClearanceValidation] result=Failed");
             ValidationExit.Failed();
         }
     }
@@ -539,6 +559,141 @@ public sealed class UnitMovementBlockerValidationTests
         }
         finally
         {
+            if (friendlyPassFactionIds.IsCreated)
+                friendlyPassFactionIds.Dispose();
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (blockerCounts.IsCreated)
+                blockerCounts.Dispose();
+        }
+    }
+
+    [Test]
+    public void AirMovementClimbsAboveElevatedMapSurfaceForDirectTarget()
+    {
+        using var world = new World("AirMovementElevatedSurfaceValidation");
+        EntityManager em = world.EntityManager;
+
+        NativeArray<int> blockerCounts = default;
+        NativeBitArray blocked = default;
+        NativeArray<byte> friendlyPassFactionIds = default;
+        BlobAssetReference<MapSurfaceBlob> surfaceBlob = default;
+
+        try
+        {
+            const int width = 16;
+            const int height = 8;
+            CreateGrid(em, width, height, out blockerCounts, out blocked, out friendlyPassFactionIds);
+            surfaceBlob = CreateSingleLayerSurfaceBlob(width, height, defaultHeight: 0f, elevatedCell: new int2(7, 3), elevatedHeight: 24f);
+            AddMapSurface(em, surfaceBlob, width, height);
+
+            Entity helicopter = em.CreateEntity(
+                typeof(UnitGrid),
+                typeof(UnitMove),
+                typeof(UnitAirMovement),
+                typeof(UnitAirComponent),
+                typeof(UnitTarget),
+                typeof(LocalTransform));
+
+            float3 startPosition = new(1.5f, 6f, 3.5f);
+            em.SetComponentData(helicopter, new UnitGrid { Cell = new int2(1, 3) });
+            em.SetComponentData(helicopter, new UnitMove { Speed = 40f, WalkSpeed = 40f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.05f });
+            em.SetComponentData(helicopter, new UnitAirMovement { CruiseHeight = 6f, RunwayTaxiSpeed = 0f });
+            em.SetComponentData(helicopter, new UnitAirComponent
+            {
+                HomePosition = new float3(1.5f, 0f, 3.5f),
+                HomeCell = new int2(1, 3),
+                HomeInitialized = 1,
+                Airborne = 1
+            });
+            em.SetComponentData(helicopter, new UnitTarget { Cell = new int2(7, 3) });
+            em.SetComponentData(helicopter, LocalTransform.FromPosition(startPosition));
+
+            SystemHandle airMovementSystem = world.CreateSystem<UnitAirMovementSystem>();
+            world.SetTime(new TimeData(0.5d, 0.5f));
+            airMovementSystem.Update(world.Unmanaged);
+            em.CompleteAllTrackedJobs();
+
+            float3 position = em.GetComponentData<LocalTransform>(helicopter).Position;
+            Assert.Greater(
+                position.y,
+                20f,
+                "Helicopters must cruise relative to the elevated map surface instead of the home-base ground Y.");
+        }
+        finally
+        {
+            if (surfaceBlob.IsCreated)
+                surfaceBlob.Dispose();
+            if (friendlyPassFactionIds.IsCreated)
+                friendlyPassFactionIds.Dispose();
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (blockerCounts.IsCreated)
+                blockerCounts.Dispose();
+        }
+    }
+
+    [Test]
+    public void FixedWingAirMovementUsesTerrainLookaheadClearance()
+    {
+        using var world = new World("FixedWingAirTerrainLookaheadValidation");
+        EntityManager em = world.EntityManager;
+
+        NativeArray<int> blockerCounts = default;
+        NativeBitArray blocked = default;
+        NativeArray<byte> friendlyPassFactionIds = default;
+        BlobAssetReference<MapSurfaceBlob> surfaceBlob = default;
+
+        try
+        {
+            const int width = 16;
+            const int height = 8;
+            CreateGrid(em, width, height, out blockerCounts, out blocked, out friendlyPassFactionIds);
+            surfaceBlob = CreateSingleLayerSurfaceBlob(width, height, defaultHeight: 0f, elevatedCell: new int2(6, 3), elevatedHeight: 20f);
+            AddMapSurface(em, surfaceBlob, width, height);
+
+            Entity jet = em.CreateEntity(
+                typeof(UnitGrid),
+                typeof(UnitMove),
+                typeof(UnitAirMovement),
+                typeof(UnitAirComponent),
+                typeof(UnitTarget),
+                typeof(LocalTransform));
+
+            float3 startPosition = new(1.5f, 6f, 3.5f);
+            em.SetComponentData(jet, new UnitGrid { Cell = new int2(1, 3) });
+            em.SetComponentData(jet, new UnitMove { Speed = 32f, WalkSpeed = 32f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.05f });
+            em.SetComponentData(jet, new UnitAirMovement { CruiseHeight = 6f, RunwayTaxiSpeed = 4f });
+            em.SetComponentData(jet, new UnitAirComponent
+            {
+                HomePosition = new float3(1.5f, 0f, 3.5f),
+                HomeCell = new int2(1, 3),
+                HomeInitialized = 1,
+                Airborne = 1,
+                UsesRunway = 1,
+                RunwayTakeoffPosition = new float3(1.5f, 0f, 3.5f),
+                RunwayTakeoffCell = new int2(1, 3),
+                RunwayLandingPosition = new float3(4.5f, 0f, 3.5f),
+                RunwayLandingCell = new int2(4, 3)
+            });
+            em.SetComponentData(jet, new UnitTarget { Cell = new int2(10, 3) });
+            em.SetComponentData(jet, LocalTransform.FromPosition(startPosition));
+
+            SystemHandle airMovementSystem = world.CreateSystem<UnitAirMovementSystem>();
+            world.SetTime(new TimeData(0.5d, 0.5f));
+            airMovementSystem.Update(world.Unmanaged);
+            em.CompleteAllTrackedJobs();
+
+            float3 position = em.GetComponentData<LocalTransform>(jet).Position;
+            Assert.Greater(
+                position.y,
+                14f,
+                "Fixed-wing aircraft must climb using terrain lookahead before crossing raised terrain or mountains.");
+        }
+        finally
+        {
+            if (surfaceBlob.IsCreated)
+                surfaceBlob.Dispose();
             if (friendlyPassFactionIds.IsCreated)
                 friendlyPassFactionIds.Dispose();
             if (blocked.IsCreated)
@@ -1733,6 +1888,78 @@ public sealed class UnitMovementBlockerValidationTests
             sidewalks[i] = new GridRoadSidewalk { Value = 0 };
             dirtRoads[i] = new GridRoadDirt { Value = 0 };
         }
+    }
+
+    private static void AddMapSurface(
+        EntityManager em,
+        BlobAssetReference<MapSurfaceBlob> surfaceBlob,
+        int width,
+        int height)
+    {
+        Entity surfaceEntity = em.CreateEntity(typeof(MapSurfaceComponent));
+        em.SetComponentData(surfaceEntity, new MapSurfaceComponent
+        {
+            SurfaceBlob = surfaceBlob,
+            GridOrigin = float3.zero,
+            CellSize = 1f,
+            Dimensions = new int2(width, height),
+            HasSurfaceData = 1
+        });
+    }
+
+    private static BlobAssetReference<MapSurfaceBlob> CreateSingleLayerSurfaceBlob(
+        int width,
+        int height,
+        float defaultHeight,
+        int2 elevatedCell,
+        float elevatedHeight)
+    {
+        using BlobBuilder builder = new(Allocator.Temp);
+        ref MapSurfaceBlob root = ref builder.ConstructRoot<MapSurfaceBlob>();
+        root.GridOrigin = float3.zero;
+        root.CellSize = 1f;
+        root.Dimensions = new int2(width, height);
+        root.RuntimeEncoding = MapSurfaceRuntimeEncoding.Full;
+        root.CompactMinHeight = 0f;
+        root.CompactHeightStep = 1f;
+
+        int cellCount = width * height;
+        BlobBuilderArray<MapSurfaceCell> cells = builder.Allocate(ref root.Cells, cellCount);
+        BlobBuilderArray<MapSurfaceSample> samples = builder.Allocate(ref root.Samples, cellCount);
+        builder.Allocate(ref root.Connections, 0);
+        builder.Allocate(ref root.CompactSamples, 0);
+
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                int index = x + y * width;
+                int2 cell = new(x, y);
+                float heightValue = math.all(cell == elevatedCell) ? elevatedHeight : defaultHeight;
+                cells[index] = new MapSurfaceCell
+                {
+                    FirstSurfaceIndex = index,
+                    SurfaceCount = 1,
+                    InlineSurfaceIndex = 0
+                };
+                samples[index] = new MapSurfaceSample
+                {
+                    Cell = cell,
+                    SurfaceId = index,
+                    LayerId = 0,
+                    Height = heightValue,
+                    Normal = math.up(),
+                    SlopeDegrees = 0f,
+                    SurfaceType = MapSurfaceType.Terrain,
+                    MovementMask = MapSurfaceMovementMask.AllGroundUnits | MapSurfaceMovementMask.AirGrounded | MapSurfaceMovementMask.BuildingPlacement,
+                    Flags = MapSurfaceFlags.None,
+                    FirstConnectionIndex = 0,
+                    ConnectionCount = 0
+                };
+            }
+        }
+
+        return builder.CreateBlobAssetReference<MapSurfaceBlob>(Allocator.Persistent);
     }
 
     private static void SetPrivateField<T>(object target, string fieldName, T value)

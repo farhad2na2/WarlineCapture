@@ -676,36 +676,44 @@ namespace Game.Runtime
             for (int i = 0; i < selectedCount; i++)
             {
                 Entity passenger = selectedBoardingSourceEntities[i];
-                if (passenger == transport)
+                byte passengerKind = default;
+                int cargoWeight = 0;
+                bool hasPassengerKind =
+                    passenger != transport &&
+                    TryResolveBoardingPassengerKind(em, transport, passenger, out passengerKind, out cargoWeight);
+                SelectedTransportBoardingCandidateDecisionKind candidateDecision =
+                    TransportBoardingOrderPlanningSystemHelper.ResolveSelectedTransportCandidateDecision(
+                        passenger,
+                        transport,
+                        hasPassengerKind,
+                        passengerKind,
+                        slotAvailability,
+                        plannedSlots);
+                if (candidateDecision == SelectedTransportBoardingCandidateDecisionKind.SkipTransport)
                 {
                     if (shouldLogTransportBoarding)
                         TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=SkipPassenger reason=IsTransport passenger={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, passenger)} transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)}");
                     continue;
                 }
 
-                if (!TryResolveBoardingPassengerKind(em, transport, passenger, out byte passengerKind, out int cargoWeight))
+                if (candidateDecision == SelectedTransportBoardingCandidateDecisionKind.SkipNotBoardingCandidate)
                 {
                     if (shouldLogTransportBoarding)
                         TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=SkipPassenger reason=NotBoardingCandidate passenger={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, passenger)} transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)}");
                     continue;
                 }
 
-                TransportBoardingPlannedSlotRejectionKind slotRejection =
-                    TransportBoardingOrderPlanningSystemHelper.ResolvePlannedSlotRejection(
-                        passengerKind,
-                        slotAvailability,
-                        plannedSlots);
-                if (slotRejection != TransportBoardingPlannedSlotRejectionKind.None)
+                if (candidateDecision == SelectedTransportBoardingCandidateDecisionKind.SkipNoVehicleSlots)
                 {
-                    if (slotRejection == TransportBoardingPlannedSlotRejectionKind.NoVehicleSlots)
-                    {
-                        if (shouldLogTransportBoarding)
-                            TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=SkipPassenger reason=NoVehicleSlots passenger={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, passenger)} transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)} vehicles={TransportBoardingOrderPlanningSystemHelper.ResolvePlannedVehicleOccupancy(slotAvailability.OccupiedVehicleSlots, plannedSlots)}/{slotAvailability.VehicleCapacity}");
-                    }
-                    else if (shouldLogTransportBoarding)
-                    {
+                    if (shouldLogTransportBoarding)
+                        TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=SkipPassenger reason=NoVehicleSlots passenger={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, passenger)} transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)} vehicles={TransportBoardingOrderPlanningSystemHelper.ResolvePlannedVehicleOccupancy(slotAvailability.OccupiedVehicleSlots, plannedSlots)}/{slotAvailability.VehicleCapacity}");
+                    continue;
+                }
+
+                if (candidateDecision == SelectedTransportBoardingCandidateDecisionKind.SkipNoSoldierSeats)
+                {
+                    if (shouldLogTransportBoarding)
                         TransportBoardingDiagnosticSystemHelper.EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=SkipPassenger reason=NoSoldierSeats passenger={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, passenger)} transport={TransportBoardingDiagnosticSystemHelper.DescribeTransportBoardingEntity(em, transport)} soldiers={TransportBoardingOrderPlanningSystemHelper.ResolvePlannedSoldierOccupancy(slotAvailability.OccupiedSoldierSeats, plannedSlots)}/{slotAvailability.SoldierCapacity}");
-                    }
 
                     continue;
                 }

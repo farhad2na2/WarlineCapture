@@ -699,6 +699,65 @@ public sealed class UnitTransportBoardingSystemExtractionTests
     }
 
     [Test]
+    public void OrderPlanningHelper_ResolvesSelectedTransportCandidateDecisions()
+    {
+        Entity transport = new() { Index = 10, Version = 1 };
+        Entity soldier = new() { Index = 20, Version = 1 };
+        Entity vehicle = new() { Index = 30, Version = 1 };
+        TransportSlotAvailability availability = new(
+            occupiedSoldierSeats: 0,
+            soldierCapacity: 1,
+            occupiedVehicleSlots: 0,
+            vehicleCapacity: 1);
+
+        Assert.AreEqual(
+            SelectedTransportBoardingCandidateDecisionKind.SkipTransport,
+            TransportBoardingOrderPlanningSystemHelper.ResolveSelectedTransportCandidateDecision(
+                transport,
+                transport,
+                hasPassengerKind: false,
+                passengerKind: UnitTransportPassengerKind.Soldier,
+                availability,
+                default));
+        Assert.AreEqual(
+            SelectedTransportBoardingCandidateDecisionKind.SkipNotBoardingCandidate,
+            TransportBoardingOrderPlanningSystemHelper.ResolveSelectedTransportCandidateDecision(
+                soldier,
+                transport,
+                hasPassengerKind: false,
+                passengerKind: UnitTransportPassengerKind.Soldier,
+                availability,
+                default));
+        Assert.AreEqual(
+            SelectedTransportBoardingCandidateDecisionKind.Accept,
+            TransportBoardingOrderPlanningSystemHelper.ResolveSelectedTransportCandidateDecision(
+                soldier,
+                transport,
+                hasPassengerKind: true,
+                passengerKind: UnitTransportPassengerKind.Soldier,
+                availability,
+                default));
+        Assert.AreEqual(
+            SelectedTransportBoardingCandidateDecisionKind.SkipNoSoldierSeats,
+            TransportBoardingOrderPlanningSystemHelper.ResolveSelectedTransportCandidateDecision(
+                soldier,
+                transport,
+                hasPassengerKind: true,
+                passengerKind: UnitTransportPassengerKind.Soldier,
+                availability,
+                new TransportBoardingPlannedSlotCounts(soldierSeats: 1, vehicleSlots: 0)));
+        Assert.AreEqual(
+            SelectedTransportBoardingCandidateDecisionKind.SkipNoVehicleSlots,
+            TransportBoardingOrderPlanningSystemHelper.ResolveSelectedTransportCandidateDecision(
+                vehicle,
+                transport,
+                hasPassengerKind: true,
+                passengerKind: UnitTransportPassengerKind.Vehicle,
+                availability,
+                new TransportBoardingPlannedSlotCounts(soldierSeats: 0, vehicleSlots: 1)));
+    }
+
+    [Test]
     public void OrderPlanningHelper_ReportsStructPlannedSlotRejectionAndAcceptedMessage()
     {
         TransportBoardingPlannedSlotCounts plannedSlots = new(soldierSeats: 1, vehicleSlots: 1);

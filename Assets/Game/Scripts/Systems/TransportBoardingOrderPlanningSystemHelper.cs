@@ -12,6 +12,15 @@ namespace Game.Runtime
         NoVehicleSlots
     }
 
+    internal enum SelectedTransportBoardingCandidateDecisionKind
+    {
+        Accept,
+        SkipTransport,
+        SkipNotBoardingCandidate,
+        SkipNoSoldierSeats,
+        SkipNoVehicleSlots
+    }
+
     internal struct TransportBoardingPlannedSlotCounts
     {
         public int SoldierSeats;
@@ -122,6 +131,32 @@ namespace Game.Runtime
                 PassengerKind = passengerKind,
                 CargoWeight = cargoWeight,
                 DirectBoarding = goal.Equals(passengerCell)
+            };
+        }
+
+        public static SelectedTransportBoardingCandidateDecisionKind ResolveSelectedTransportCandidateDecision(
+            Entity passenger,
+            Entity transport,
+            bool hasPassengerKind,
+            byte passengerKind,
+            in TransportSlotAvailability slotAvailability,
+            in TransportBoardingPlannedSlotCounts plannedSlots)
+        {
+            if (passenger == transport)
+                return SelectedTransportBoardingCandidateDecisionKind.SkipTransport;
+
+            if (!hasPassengerKind)
+                return SelectedTransportBoardingCandidateDecisionKind.SkipNotBoardingCandidate;
+
+            TransportBoardingPlannedSlotRejectionKind slotRejection =
+                ResolvePlannedSlotRejection(passengerKind, slotAvailability, plannedSlots);
+            return slotRejection switch
+            {
+                TransportBoardingPlannedSlotRejectionKind.NoVehicleSlots =>
+                    SelectedTransportBoardingCandidateDecisionKind.SkipNoVehicleSlots,
+                TransportBoardingPlannedSlotRejectionKind.NoSoldierSeats =>
+                    SelectedTransportBoardingCandidateDecisionKind.SkipNoSoldierSeats,
+                _ => SelectedTransportBoardingCandidateDecisionKind.Accept
             };
         }
 

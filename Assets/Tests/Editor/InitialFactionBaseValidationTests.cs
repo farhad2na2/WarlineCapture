@@ -8,6 +8,7 @@ using UnityEditor;
 using UnityEngine;
 using Game.Components;
 using Game.Configs;
+using Game.Editor;
 using Game.Runtime;
 using Game.Composition;
 
@@ -45,6 +46,7 @@ public sealed class InitialFactionBaseValidationTests
             tests.BuildingPlacementConfig_ResolvesEveryInitialBasePrefab();
             tests.InitialBaseAirPlatformPrefabs_HaveProductionSpawnPoints();
             tests.RuntimeHelipad_DoesNotCreateStaticPathBlocker();
+            tests.MapSurfaceBake_SkipsHelipadBlockerSources();
             tests.InitialBaseRuntimePlacement_SpawnsRequiredBaseBuildings();
             tests.HelipadSpawnResolver_SkipsOccupiedPadForInitialTransportHelicopter();
             Debug.Log("[InitialFactionBaseValidation] result=Passed");
@@ -72,6 +74,24 @@ public sealed class InitialFactionBaseValidationTests
         {
             Debug.LogException(ex);
             Debug.LogError("[InitialFactionSceneConfigValidation] result=Failed");
+            ValidationExit.Exit(1);
+        }
+    }
+
+    public static void RunHelipadPathingValidation()
+    {
+        try
+        {
+            var tests = new InitialFactionBaseValidationTests();
+            tests.RuntimeHelipad_DoesNotCreateStaticPathBlocker();
+            tests.MapSurfaceBake_SkipsHelipadBlockerSources();
+            Debug.Log("[InitialFactionBaseHelipadPathingValidation] result=Passed tests=2");
+            ValidationExit.Exit(0);
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[InitialFactionBaseHelipadPathingValidation] result=Failed");
             ValidationExit.Exit(1);
         }
     }
@@ -375,6 +395,46 @@ public sealed class InitialFactionBaseValidationTests
                 occupied.Dispose();
             if (friendlyPassFactionIds.IsCreated)
                 friendlyPassFactionIds.Dispose();
+        }
+    }
+
+    [Test]
+    public void MapSurfaceBake_SkipsHelipadBlockerSources()
+    {
+        GameObject root = null;
+        try
+        {
+            root = new GameObject("Map");
+            Transform buildings = new GameObject("Buildings").transform;
+            buildings.SetParent(root.transform);
+            Transform helipad = new GameObject("Building_Helipad").transform;
+            helipad.SetParent(buildings);
+            Transform helipadMesh = new GameObject("SM_Env_Helipad_01").transform;
+            helipadMesh.SetParent(helipad);
+
+            Transform wallMesh = new GameObject("SM_Bld_Wall_01").transform;
+            wallMesh.SetParent(buildings);
+
+            Assert.IsTrue(
+                MapSurfaceAuthoringEditor.ShouldSkipBlockedSurfaceSourceForPathing(
+                    MapSurfaceType.Blocked,
+                    helipadMesh),
+                "Authored helipad meshes must not bake blocked cells because soldiers need to board landed helicopters from pads.");
+            Assert.IsFalse(
+                MapSurfaceAuthoringEditor.ShouldSkipBlockedSurfaceSourceForPathing(
+                    MapSurfaceType.Terrain,
+                    helipadMesh),
+                "Only blocked-source classification should be skipped; terrain/road surfaces may still provide height.");
+            Assert.IsFalse(
+                MapSurfaceAuthoringEditor.ShouldSkipBlockedSurfaceSourceForPathing(
+                    MapSurfaceType.Blocked,
+                    wallMesh),
+                "Ordinary authored buildings still need to bake blockers.");
+        }
+        finally
+        {
+            if (root != null)
+                Object.DestroyImmediate(root);
         }
     }
 

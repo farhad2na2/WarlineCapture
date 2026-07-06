@@ -5,6 +5,7 @@ using Game.Authoring;
 namespace Game.Editor
 {
     #if UNITY_EDITOR
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using Unity.Collections;
@@ -404,6 +405,8 @@ namespace Game.Editor
 
                 if (!IsOwnedByGroup(filter, ownerGroup))
                     continue;
+                if (ShouldSkipBlockedSurfaceSourceForPathing(surfaceType, filter.transform))
+                    continue;
 
                 sources.Add(new MapSurfaceMeshBakeSource(
                     filter.sharedMesh,
@@ -422,6 +425,25 @@ namespace Game.Editor
 
             MapBakeGroupAuthoring nearestGroup = filter.GetComponentInParent<MapBakeGroupAuthoring>(true);
             return nearestGroup == ownerGroup;
+        }
+
+        public static bool ShouldSkipBlockedSurfaceSourceForPathing(MapSurfaceType surfaceType, Transform source)
+        {
+            return surfaceType == MapSurfaceType.Blocked && IsNonBlockingAirPlatform(source);
+        }
+
+        private static bool IsNonBlockingAirPlatform(Transform source)
+        {
+            for (Transform current = source; current != null; current = current.parent)
+            {
+                if (current.name.IndexOf("Building_Helipad", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                    current.name.IndexOf("Helipad", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
     #endif

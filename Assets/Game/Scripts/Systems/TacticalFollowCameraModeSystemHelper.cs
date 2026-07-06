@@ -181,6 +181,15 @@ namespace Game.Runtime
             mode.HasBaseTarget = 1;
             mode.BaseTargetKind = target.TargetKind;
             mode.BaseTargetEntity = target.TargetEntity;
+            if (mode.HasTemporaryTarget != 0 &&
+                mode.TemporaryTargetKind == TacticalFollowCameraTargetKind.AttackImpact &&
+                HasActiveAttackCinematic(em))
+            {
+                em.SetComponentData(modeEntity, mode);
+                PublishUiReadModel(em, modeEntity, TacticalCommandReasonCode.None, context);
+                return true;
+            }
+
             bool temporaryHoldExpired =
                 mode.HasTemporaryTarget != 0 &&
                 mode.ReturnHoldUntilTime > 0f &&
@@ -968,6 +977,14 @@ namespace Game.Runtime
             Context context,
             float currentTime)
         {
+            if (mode.HasTemporaryTarget != 0 &&
+                mode.TemporaryTargetKind == TacticalFollowCameraTargetKind.AttackImpact &&
+                HasActiveAttackCinematic(em))
+            {
+                PublishUiReadModel(em, modeEntity, TacticalCommandReasonCode.None, context);
+                return true;
+            }
+
             bool temporaryHoldExpired =
                 mode.ReturnHoldUntilTime > 0f &&
                 currentTime >= mode.ReturnHoldUntilTime;
@@ -1009,6 +1026,18 @@ namespace Game.Runtime
             }
 
             return false;
+        }
+
+        private static bool HasActiveAttackCinematic(EntityManager em)
+        {
+            using EntityQuery query = em.CreateEntityQuery(
+                ComponentType.ReadOnly<TacticalFollowAttackCinematicStateComponent>());
+            if (query.IsEmptyIgnoreFilter)
+                return false;
+
+            TacticalFollowAttackCinematicStateComponent cinematic =
+                em.GetComponentData<TacticalFollowAttackCinematicStateComponent>(query.GetSingletonEntity());
+            return cinematic.Active != 0;
         }
 
         private static bool TryResolveTemporaryMissileTarget(

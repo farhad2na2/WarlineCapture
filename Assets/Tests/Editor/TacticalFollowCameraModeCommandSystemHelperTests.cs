@@ -1073,14 +1073,25 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
         Assert.AreEqual(1, mode.HasTemporaryTarget);
         Assert.AreEqual(TacticalFollowCameraTargetKind.AttackImpact, mode.TemporaryTargetKind);
         Assert.AreEqual(target, mode.TemporaryTargetEntity);
-        Assert.Greater(mode.ReturnHoldUntilTime, 10.1f);
+        Assert.AreEqual(0f, mode.ReturnHoldUntilTime);
+        using (EntityQuery cinematicQuery =
+               _em.CreateEntityQuery(ComponentType.ReadOnly<TacticalFollowAttackCinematicStateComponent>()))
+        {
+            Assert.IsFalse(cinematicQuery.IsEmptyIgnoreFilter);
+            TacticalFollowAttackCinematicStateComponent cinematic =
+                _em.GetComponentData<TacticalFollowAttackCinematicStateComponent>(cinematicQuery.GetSingletonEntity());
+            Assert.AreEqual(1, cinematic.Active);
+        }
+
         Assert.IsTrue(_system.TryReadTarget(_em, out TacticalFollowCameraTargetComponent followTarget));
         Assert.AreEqual(TacticalFollowCameraTargetKind.AttackImpact, followTarget.TargetKind);
         Assert.AreEqual(targetPosition, followTarget.Center);
         Assert.IsTrue(_system.TryReadPose(_em, out TacticalFollowCameraPoseComponent pose));
         Assert.AreEqual(TacticalFollowCameraPoseSource.TemporaryMissile, pose.Source);
 
-        Assert.IsTrue(_system.RefreshActiveTargetAndPose(_em, default, 12f));
+        _world.SetTime(new TimeData(15d, 5f));
+        cinematicSystem.Update(_world.Unmanaged);
+        Assert.IsTrue(_system.RefreshActiveTargetAndPose(_em, default, 15.1f));
 
         Assert.IsTrue(_system.TryReadMode(_em, out mode));
         Assert.AreEqual(0, mode.HasTemporaryTarget);
@@ -1118,6 +1129,17 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
         Assert.IsTrue(_system.TryReadMode(_em, out TacticalFollowCameraModeComponent mode));
         Assert.AreEqual(0, mode.HasTemporaryTarget);
         Assert.AreEqual(TacticalFollowCameraTargetKind.None, mode.TemporaryTargetKind);
+        using (EntityQuery cinematicQuery =
+               _em.CreateEntityQuery(ComponentType.ReadOnly<TacticalFollowAttackCinematicStateComponent>()))
+        {
+            if (!cinematicQuery.IsEmptyIgnoreFilter)
+            {
+                TacticalFollowAttackCinematicStateComponent cinematic =
+                    _em.GetComponentData<TacticalFollowAttackCinematicStateComponent>(cinematicQuery.GetSingletonEntity());
+                Assert.AreEqual(0, cinematic.Active);
+            }
+        }
+
         Assert.IsTrue(_system.TryReadPose(_em, out TacticalFollowCameraPoseComponent pose));
         Assert.AreEqual(TacticalFollowCameraPoseSource.BaseTarget, pose.Source);
     }

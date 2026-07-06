@@ -84,6 +84,30 @@ namespace Game.Components
         public byte RestoreOrthographic;
     }
 
+    public enum TacticalFollowAttackCinematicPhase : byte
+    {
+        None = 0,
+        Launch = 1,
+        Impact = 2,
+        Flyover = 3
+    }
+
+    public struct TacticalFollowAttackCinematicStateComponent : IComponentData
+    {
+        public byte Active;
+        public TacticalFollowAttackCinematicPhase LastAppliedPhase;
+        public float ElapsedUnscaledSeconds;
+        public Entity SourceEntity;
+        public Entity TargetEntity;
+        public float3 LaunchPosition;
+        public float3 ImpactPosition;
+        public float3 AttackDirection;
+        public byte TimeScaleApplied;
+        public float SavedTimeScale;
+        public float LastEndedElapsedTime;
+        public byte HasEnded;
+    }
+
     public struct TacticalFollowCameraTargetComponent : IComponentData
     {
         public byte Valid;

@@ -1,0 +1,309 @@
+using Unity.Entities;
+using Unity.Mathematics;
+using Game.Components;
+
+namespace Game.Runtime
+{
+    /// <summary>
+    /// Pure evaluation for the followed-jet attack cinematic: phase timing,
+    /// slow-motion curve, and per-phase camera shots. Time inputs are
+    /// unscaled seconds since the cinematic started.
+    /// </summary>
+    public static class TacticalFollowAttackCinematicHelper
+    {
+        public const float LaunchDurationSeconds = 1.15f;
+        public const float ImpactDurationSeconds = 1.45f;
+        public const float FlyoverDurationSeconds = 1.7f;
+        public const float TotalDurationSeconds =
+            LaunchDurationSeconds + ImpactDurationSeconds + FlyoverDurationSeconds;
+        public const float SlowMotionTimeScale = 0.3f;
+        public const float TimeScaleRampSeconds = 0.35f;
+        public const float RetriggerCooldownSeconds = 6f;
+
+        private const float LaunchCameraBackDistance = 8f;
+        private const float LaunchCameraSideDistance = 4.5f;
+        private const float LaunchCameraDropBelowJet = 1.2f;
+        private const float LaunchPushInScale = 0.82f;
+        private const float LaunchLookAheadDistance = 16f;
+        private const float LaunchLookImpactBlend = 0.2f;
+        private const float LaunchFieldOfView = 30f;
+        private const float LaunchDampingSeconds = 0.12f;
+
+        private const float ImpactCameraForwardDistance = 11f;
+        private const float ImpactCameraSideDistance = 7f;
+        private const float ImpactCameraHeight = 4.5f;
+        private const float ImpactOrbitDegrees = 16f;
+        private const float ImpactLookHeight = 1.8f;
+        private const float ImpactLookBackDistance = 2f;
+        private const float ImpactFieldOfView = 36f;
+        private const float ImpactDampingSeconds = 0.15f;
+
+        private const float FlyoverCameraBackDistance = 9f;
+        private const float FlyoverCameraSideDistance = 8f;
+        private const float FlyoverCameraHeight = 5.5f;
+        private const float FlyoverLookRampNormalized = 0.45f;
+        private const float FlyoverLookJetWeight = 0.85f;
+        private const float FlyoverExitBlendStartNormalized = 0.6f;
+        private const float FlyoverExitBlendWeight = 0.65f;
+        private const float FlyoverFollowBackDistance = 12f;
+        private const float FlyoverFollowHeight = 6f;
+        private const float FlyoverFieldOfView = 42f;
+        private const float FlyoverDampingSeconds = 0.28f;
+
+        private const float MinCameraClearanceAboveImpact = 2.5f;
+        private const float CinematicTargetRadius = 3f;
+        private const float CinematicDesiredDistance = 14f;
+        private const float CinematicDesiredHeight = 6f;
+        private const float FollowMaxTransitionSpeed = 80f;
+
+        public readonly struct ShotContext
+        {
+            public readonly float3 LaunchPosition;
+            public readonly float3 ImpactPosition;
+            public readonly float3 AttackDirection;
+            public readonly float3 JetPosition;
+            public readonly bool HasJet;
+
+            public ShotContext(
+                float3 launchPosition,
+                float3 impactPosition,
+                float3 attackDirection,
+                float3 jetPosition,
+                bool hasJet)
+            {
+                LaunchPosition = launchPosition;
+                ImpactPosition = impactPosition;
+                AttackDirection = NormalizeFlatOrFallback(attackDirection);
+                JetPosition = jetPosition;
+                HasJet = hasJet;
+            }
+        }
+
+        public struct Shot
+        {
+            public float3 CameraPosition;
+            public float3 LookAt;
+            public float FieldOfView;
+            public float PositionDampingSeconds;
+        }
+
+        public static bool IsFinished(float elapsedSeconds)
+        {
+            return elapsedSeconds >= TotalDurationSeconds;
+        }
+
+        public static TacticalFollowAttackCinematicPhase EvaluatePhase(
+            float elapsedSeconds,
+            out float phaseElapsedSeconds)
+        {
+            if (elapsedSeconds < LaunchDurationSeconds)
+            {
+                phaseElapsedSeconds = math.max(0f, elapsedSeconds);
+                return TacticalFollowAttackCinematicPhase.Launch;
+            }
+
+            if (elapsedSeconds < LaunchDurationSeconds + ImpactDurationSeconds)
+            {
+                phaseElapsedSeconds = elapsedSeconds - LaunchDurationSeconds;
+                return TacticalFollowAttackCinematicPhase.Impact;
+            }
+
+            if (elapsedSeconds < TotalDurationSeconds)
+            {
+                phaseElapsedSeconds = elapsedSeconds - LaunchDurationSeconds - ImpactDurationSeconds;
+                return TacticalFollowAttackCinematicPhase.Flyover;
+            }
+
+            phaseElapsedSeconds = 0f;
+            return TacticalFollowAttackCinematicPhase.None;
+        }
+
+        public static float EvaluateTimeScale(float elapsedSeconds)
+        {
+            float rampEnd = LaunchDurationSeconds + ImpactDurationSeconds;
+            float rampStart = rampEnd - TimeScaleRampSeconds;
+            if (elapsedSeconds < rampStart)
+                return SlowMotionTimeScale;
+
+            if (elapsedSeconds < rampEnd)
+            {
+                float t = (elapsedSeconds - rampStart) / TimeScaleRampSeconds;
+                return math.lerp(SlowMotionTimeScale, 1f, math.smoothstep(0f, 1f, t));
+            }
+
+            return 1f;
+        }
+
+        public static Shot EvaluateShot(
+            TacticalFollowAttackCinematicPhase phase,
+            float phaseElapsedSeconds,
+            in ShotContext context)
+        {
+            switch (phase)
+            {
+                case TacticalFollowAttackCinematicPhase.Launch:
+                    return EvaluateLaunchShot(phaseElapsedSeconds, context);
+                case TacticalFollowAttackCinematicPhase.Impact:
+                    return EvaluateImpactShot(phaseElapsedSeconds, context);
+                default:
+                    return EvaluateFlyoverShot(phaseElapsedSeconds, context);
+            }
+        }
+
+        public static TacticalFollowCameraPoseComponent BuildPose(in Shot shot, bool snapToShot)
+        {
+            float damping = snapToShot ? 0f : math.max(0f, shot.PositionDampingSeconds);
+            return new TacticalFollowCameraPoseComponent
+            {
+                Valid = 1,
+                Source = TacticalFollowCameraPoseSource.TemporaryMissile,
+                DesiredPosition = shot.CameraPosition,
+                DesiredRotation = quaternion.LookRotationSafe(
+                    math.normalizesafe(shot.LookAt - shot.CameraPosition, new float3(0f, 0f, 1f)),
+                    new float3(0f, 1f, 0f)),
+                LookAt = shot.LookAt,
+                FieldOfView = shot.FieldOfView,
+                OrthographicSize = 0f,
+                Orthographic = 0,
+                PositionDampingSeconds = damping,
+                RotationDampingSeconds = damping,
+                MaxTransitionSpeed = FollowMaxTransitionSpeed
+            };
+        }
+
+        public static TacticalFollowCameraTargetComponent BuildTarget(
+            Entity targetEntity,
+            float3 impactPosition,
+            float3 attackDirection)
+        {
+            return new TacticalFollowCameraTargetComponent
+            {
+                Valid = 1,
+                TargetKind = TacticalFollowCameraTargetKind.AttackImpact,
+                TargetEntity = targetEntity,
+                Center = impactPosition,
+                LookAt = impactPosition + new float3(0f, CinematicTargetRadius * 0.5f, 0f),
+                ForwardHint = NormalizeFlatOrFallback(attackDirection),
+                BoundsRadius = CinematicTargetRadius,
+                DesiredDistance = CinematicDesiredDistance,
+                DesiredHeight = CinematicDesiredHeight
+            };
+        }
+
+        private static Shot EvaluateLaunchShot(float phaseElapsedSeconds, in ShotContext context)
+        {
+            float3 dir = context.AttackDirection;
+            float3 right = math.normalizesafe(
+                math.cross(new float3(0f, 1f, 0f), dir),
+                new float3(1f, 0f, 0f));
+            float3 anchor = context.HasJet ? context.JetPosition : context.LaunchPosition;
+
+            float pushIn = math.lerp(
+                1f,
+                LaunchPushInScale,
+                math.smoothstep(0f, 1f, phaseElapsedSeconds / LaunchDurationSeconds));
+            float3 cameraPosition = anchor
+                - dir * (LaunchCameraBackDistance * pushIn)
+                + right * (LaunchCameraSideDistance * pushIn)
+                - new float3(0f, LaunchCameraDropBelowJet, 0f);
+            cameraPosition.y = math.max(
+                cameraPosition.y,
+                context.ImpactPosition.y + MinCameraClearanceAboveImpact);
+
+            float3 lookAhead = anchor + dir * LaunchLookAheadDistance;
+            float3 lookAt = math.lerp(lookAhead, context.ImpactPosition, LaunchLookImpactBlend);
+
+            return new Shot
+            {
+                CameraPosition = cameraPosition,
+                LookAt = lookAt,
+                FieldOfView = LaunchFieldOfView,
+                PositionDampingSeconds = LaunchDampingSeconds
+            };
+        }
+
+        private static Shot EvaluateImpactShot(float phaseElapsedSeconds, in ShotContext context)
+        {
+            float3 dir = context.AttackDirection;
+            float3 right = math.normalizesafe(
+                math.cross(new float3(0f, 1f, 0f), dir),
+                new float3(1f, 0f, 0f));
+
+            // Camera sits past the target, off to the side, looking back into the
+            // explosion with the jet approaching in the background; a slow orbital
+            // drift keeps the shot alive.
+            float driftRadians = math.radians(
+                math.lerp(0f, ImpactOrbitDegrees, math.saturate(phaseElapsedSeconds / ImpactDurationSeconds)));
+            float3 flatOffset = dir * ImpactCameraForwardDistance + right * ImpactCameraSideDistance;
+            float3 rotatedOffset = math.rotate(quaternion.RotateY(driftRadians), flatOffset);
+            float3 cameraPosition = context.ImpactPosition + rotatedOffset + new float3(0f, ImpactCameraHeight, 0f);
+
+            float3 lookAt = context.ImpactPosition
+                + new float3(0f, ImpactLookHeight, 0f)
+                - dir * ImpactLookBackDistance;
+
+            return new Shot
+            {
+                CameraPosition = cameraPosition,
+                LookAt = lookAt,
+                FieldOfView = ImpactFieldOfView,
+                PositionDampingSeconds = ImpactDampingSeconds
+            };
+        }
+
+        private static Shot EvaluateFlyoverShot(float phaseElapsedSeconds, in ShotContext context)
+        {
+            float3 dir = context.AttackDirection;
+            float3 right = math.normalizesafe(
+                math.cross(new float3(0f, 1f, 0f), dir),
+                new float3(1f, 0f, 0f));
+            float normalized = math.saturate(phaseElapsedSeconds / FlyoverDurationSeconds);
+
+            float3 jetLook = context.HasJet
+                ? context.JetPosition
+                : context.ImpactPosition + dir * 30f + new float3(0f, 8f, 0f);
+
+            // Pan up from the wreck to track the jet passing over it.
+            float lookBlend = math.smoothstep(0f, FlyoverLookRampNormalized, normalized) * FlyoverLookJetWeight;
+            float3 wreckLook = context.ImpactPosition + new float3(0f, 1.5f, 0f);
+            float3 lookAt = math.lerp(wreckLook, jetLook, lookBlend);
+
+            float3 cameraPosition = context.ImpactPosition
+                - dir * FlyoverCameraBackDistance
+                + right * FlyoverCameraSideDistance
+                + new float3(0f, FlyoverCameraHeight, 0f);
+
+            // Ease toward the follow pose near the end so the hand-back to the
+            // third-person camera has a short distance to cover.
+            if (normalized > FlyoverExitBlendStartNormalized)
+            {
+                float exitBlend = math.smoothstep(FlyoverExitBlendStartNormalized, 1f, normalized) * FlyoverExitBlendWeight;
+                float3 followPosition = jetLook
+                    - dir * FlyoverFollowBackDistance
+                    + new float3(0f, FlyoverFollowHeight, 0f);
+                cameraPosition = math.lerp(cameraPosition, followPosition, exitBlend);
+            }
+
+            cameraPosition.y = math.max(
+                cameraPosition.y,
+                context.ImpactPosition.y + MinCameraClearanceAboveImpact);
+
+            return new Shot
+            {
+                CameraPosition = cameraPosition,
+                LookAt = lookAt,
+                FieldOfView = FlyoverFieldOfView,
+                PositionDampingSeconds = FlyoverDampingSeconds
+            };
+        }
+
+        private static float3 NormalizeFlatOrFallback(float3 direction)
+        {
+            direction.y = 0f;
+            float lengthSq = math.lengthsq(direction);
+            return lengthSq <= 0.0001f
+                ? new float3(0f, 0f, 1f)
+                : direction * math.rsqrt(lengthSq);
+        }
+    }
+}

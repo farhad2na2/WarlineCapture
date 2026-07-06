@@ -34,6 +34,24 @@ namespace Game.Runtime
         public bool DirectBoarding;
     }
 
+    internal readonly struct BoardAllTransportCandidate : System.IComparable<BoardAllTransportCandidate>
+    {
+        public readonly Entity Entity;
+        public readonly int Distance;
+
+        public BoardAllTransportCandidate(Entity entity, int distance)
+        {
+            Entity = entity;
+            Distance = distance;
+        }
+
+        public int CompareTo(BoardAllTransportCandidate other)
+        {
+            int distanceCompare = Distance.CompareTo(other.Distance);
+            return distanceCompare != 0 ? distanceCompare : Entity.Index.CompareTo(other.Entity.Index);
+        }
+    }
+
     internal static class TransportBoardingOrderPlanningSystemHelper
     {
         public static int ResolvePlannedOrderCapacity(int candidateCount, int totalAvailableSlots)

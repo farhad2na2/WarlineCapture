@@ -390,6 +390,23 @@ public sealed class UnitTransportBoardingSystemExtractionTests
     }
 
     [Test]
+    public void OrderPlanningHelper_BoardAllCandidatesSortByDistanceThenEntityIndex()
+    {
+        List<BoardAllTransportCandidate> candidates = new()
+        {
+            new BoardAllTransportCandidate(new Entity { Index = 12, Version = 1 }, distance: 4),
+            new BoardAllTransportCandidate(new Entity { Index = 9, Version = 1 }, distance: 4),
+            new BoardAllTransportCandidate(new Entity { Index = 30, Version = 1 }, distance: 2)
+        };
+
+        candidates.Sort();
+
+        Assert.AreEqual(30, candidates[0].Entity.Index);
+        Assert.AreEqual(9, candidates[1].Entity.Index);
+        Assert.AreEqual(12, candidates[2].Entity.Index);
+    }
+
+    [Test]
     public void OrderPlanningHelper_CreatesPendingBoardingOrderWithDirectFlag()
     {
         Entity passenger = new() { Index = 31, Version = 1 };

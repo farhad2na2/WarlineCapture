@@ -137,24 +137,6 @@ namespace Game.Runtime
             }
         }
 
-        private readonly struct BoardAllTransportCandidate : System.IComparable<BoardAllTransportCandidate>
-        {
-            public readonly Entity Entity;
-            public readonly int Distance;
-
-            public BoardAllTransportCandidate(Entity entity, int distance)
-            {
-                Entity = entity;
-                Distance = distance;
-            }
-
-            public int CompareTo(BoardAllTransportCandidate other)
-            {
-                int distanceCompare = Distance.CompareTo(other.Distance);
-                return distanceCompare != 0 ? distanceCompare : Entity.Index.CompareTo(other.Entity.Index);
-            }
-        }
-
         private bool _queriesInitialized;
         private EntityQuery _commandQueueQuery;
         private EntityQuery _selectedMoveQuery;

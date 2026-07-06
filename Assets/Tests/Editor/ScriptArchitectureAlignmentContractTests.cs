@@ -56,6 +56,17 @@ public sealed class ScriptArchitectureAlignmentContractTests
         "DestroyEntity",
     };
 
+    private static readonly HashSet<string> RuntimeDomainAllowedGameAssemblyReferences = new(StringComparer.Ordinal)
+    {
+        "Game.Catalog.Contracts",
+        "Game.Components",
+        "Game.Configs",
+        "Game.Rendering.Contracts",
+        "Game.Tactical.Contracts",
+        "Game.UI.Contracts",
+        "Game.UI.Shell.Contracts.Ecs",
+    };
+
     private static readonly HashSet<string> BroadNameDebtAllowlist = new(StringComparer.Ordinal)
     {
         "AIControllerConfig",
@@ -479,6 +490,45 @@ public sealed class ScriptArchitectureAlignmentContractTests
         Assert.IsFalse(
             asmdef.Contains("\"Game.Authoring\"", StringComparison.Ordinal),
             "`Game.Runtime` must not reference `Game.Authoring`. Composition and authoring assemblies own prefab authoring reads.");
+    }
+
+    [Test]
+    public void RuntimeDomainAssembliesMustUseOnlyContractOrDataGameReferences()
+    {
+        List<string> violations = new();
+
+        foreach (string asmdefPath in Directory.GetFiles(GameScriptsRoot, "*.asmdef", SearchOption.AllDirectories))
+        {
+            string asmdef = File.ReadAllText(asmdefPath);
+            string assemblyName = ReadAsmdefStringValue(asmdef, "name");
+            if (!assemblyName.StartsWith("Game.Runtime.", StringComparison.Ordinal))
+                continue;
+
+            foreach (Match match in Regex.Matches(asmdef, "\"(?<reference>Game\\.[^\"]+)\""))
+            {
+                string reference = match.Groups["reference"].Value;
+                if (reference == assemblyName)
+                    continue;
+
+                bool referencesRuntimeDomain =
+                    reference == "Game.Runtime" ||
+                    reference.StartsWith("Game.Runtime.", StringComparison.Ordinal);
+                bool referencesDisallowedGameAssembly =
+                    reference.StartsWith("Game.", StringComparison.Ordinal) &&
+                    !RuntimeDomainAllowedGameAssemblyReferences.Contains(reference);
+
+                if (referencesRuntimeDomain || referencesDisallowedGameAssembly)
+                {
+                    violations.Add(
+                        $"{NormalizePath(asmdefPath)} ({assemblyName}) references `{reference}`. " +
+                        "Runtime domain assemblies must communicate through contract/data assemblies, not parent runtime, sibling domains, UI, rendering, authoring, editor, or composition assemblies.");
+                }
+            }
+        }
+
+        AssertNoViolations(
+            violations,
+            "Game.Runtime domain splits must keep contract/data assemblies as the only first-party cross-domain currency.");
     }
 
     [Test]

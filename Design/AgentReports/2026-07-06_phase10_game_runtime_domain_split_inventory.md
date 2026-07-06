@@ -66,6 +66,11 @@ Contracts and data assemblies are the only intended cross-domain currency:
 
 Domain assemblies should not call into each other through managed helper shortcuts unless a later slice explicitly documents and validates that dependency. If a dependency is genuinely shared, move the shared type to a contract/data assembly only when it is a data contract rather than gameplay ownership.
 
+Guardrail added:
+
+- `ScriptArchitectureAlignmentContractTests.RuntimeDomainAssembliesMustUseOnlyContractOrDataGameReferences` fails future `Game.Runtime.*` domain asmdefs that reference parent `Game.Runtime`, sibling runtime domains, concrete UI/runtime, rendering, authoring, editor, or composition assemblies.
+- A tiny `TacticalFollowAttackCinematicSystem` split was rejected before commit because it would require the new domain assembly to reference parent `Game.Runtime` for attack-system ordering and request types.
+
 ## First Split Risk Finding
 
 The apparent quick split, `Assets/Game/Scripts/Systems/Pathfinding/PathfindBatchJob.cs`, is not actually safe as a one-file assembly split:

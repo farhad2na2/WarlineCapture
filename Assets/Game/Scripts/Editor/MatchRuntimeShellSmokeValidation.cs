@@ -44,6 +44,7 @@ namespace Game.Editor
         private const string PreviousEnterPlayModeOptionsKey = "MatchRuntimeShellSmokeValidation.PreviousEnterPlayModeOptions";
         private const string BaselineMetricsReportPath = "/private/tmp/warlinecapture-match-runtime-baseline-metrics.json";
         private const string PerformanceRegressionReportPath = "Design/AgentReports/performance_regression_match_baseline.md";
+        private const double PerformanceRegressionEditorP95FrameBudgetMs = 50d;
         private const double AirMissileSmokeTimeoutSeconds = 20d;
         private const double TimeoutSeconds = 120d;
         private const double ProgressLogIntervalSeconds = 5d;
@@ -924,6 +925,14 @@ namespace Game.Editor
                         p99Ms,
                         maxMs,
                         counts);
+
+                    if (p95Ms > PerformanceRegressionEditorP95FrameBudgetMs)
+                    {
+                        status =
+                            $"[PerformanceRegressionBaseline] result=Failed report={PerformanceRegressionReportPath} " +
+                            $"p95={p95Ms:F2}ms budget={PerformanceRegressionEditorP95FrameBudgetMs:F2}ms";
+                        return false;
+                    }
                 }
 
                 status =
@@ -965,6 +974,8 @@ namespace Game.Editor
             builder.AppendLine($"| Frame count | {BaselineFrameTimesMs.Count.ToString(CultureInfo.InvariantCulture)} |");
             builder.AppendLine($"| Average frame ms | {averageMs.ToString("F2", CultureInfo.InvariantCulture)} |");
             builder.AppendLine($"| P95 frame ms | {p95Ms.ToString("F2", CultureInfo.InvariantCulture)} |");
+            builder.AppendLine($"| Editor P95 frame budget ms | {PerformanceRegressionEditorP95FrameBudgetMs.ToString("F2", CultureInfo.InvariantCulture)} |");
+            builder.AppendLine($"| Editor P95 frame budget passed | {(p95Ms <= PerformanceRegressionEditorP95FrameBudgetMs ? "yes" : "no")} |");
             builder.AppendLine($"| P99 frame ms | {p99Ms.ToString("F2", CultureInfo.InvariantCulture)} |");
             builder.AppendLine($"| Max frame ms | {maxMs.ToString("F2", CultureInfo.InvariantCulture)} |");
             builder.AppendLine($"| Current-thread allocated bytes | {allocatedBytes.ToString(CultureInfo.InvariantCulture)} |");
@@ -979,7 +990,7 @@ namespace Game.Editor
             builder.AppendLine($"- Ready: `{readyStatus}`");
             builder.AppendLine($"- Stable: `{stableStatus}`");
             builder.AppendLine();
-            builder.AppendLine("Budget assertions are intentionally deferred to the next Phase 11 slice after this capture path is accepted.");
+            builder.AppendLine("The editor P95 budget is intentionally lenient and catches large regressions only; Android device development/release lanes remain the mobile rendering-performance gates.");
 
             File.WriteAllText(PerformanceRegressionReportPath, builder.ToString());
             Debug.Log($"[PerformanceRegressionBaseline] wroteReport {PerformanceRegressionReportPath}");

@@ -1,5 +1,6 @@
 using Unity.Entities;
 using Game.Components;
+using Game.Runtime.Pathfinding;
 
 namespace Game.Runtime
 {

@@ -5,6 +5,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Debug = UnityEngine.Debug;
 using Game.Components;
+using Game.Runtime.Pathfinding;
 
 namespace Game.Runtime
 {

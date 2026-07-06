@@ -1,7 +1,7 @@
 # Phase 10 Game.Runtime Domain Split Inventory
 
 ## Purpose
-Reopen Phase 10 of `Design/Architecture/architecture_performance_audit_followup_tracker.md` and identify a compiler-safe first assembly split. This inventory is behavior-preserving: it does not move files, change gameplay ownership, or add new runtime logic.
+Reopen Phase 10 of `Design/Architecture/architecture_performance_audit_followup_tracker.md`, identify a compiler-safe first assembly split, and record the first physical split. This work is behavior-preserving: it changes assembly ownership for a cohesive set of pathfinding surface-policy helpers without changing gameplay ownership or adding new runtime logic.
 
 ## Current Assembly Surface
 
@@ -79,6 +79,50 @@ The apparent quick split, `Assets/Game/Scripts/Systems/Pathfinding/PathfindBatch
 - A child asmdef for that single file would either fail compilation, force those helper types public prematurely, or create an assembly reference cycle.
 - The correct first pathfinding split is a cohesive owner-set split that includes the scheduler/apply/request/snapshot/helper types needed by `PathfindBatchJob`.
 
+## First Physical Split
+
+Completed split: `Game.Runtime.Pathfinding`.
+
+New assembly:
+
+- Path: `Assets/Game/Scripts/Systems/Pathfinding/Surface/Game.Runtime.Pathfinding.asmdef`
+- Root namespace: `Game.Runtime.Pathfinding`
+- References: `Game.Components`, `Unity.Collections`, `Unity.Entities`, `Unity.Mathematics`
+- Explicitly does not reference parent `Game.Runtime`, sibling `Game.Runtime.*` assemblies, concrete UI/runtime, rendering, authoring, editor, or composition assemblies.
+
+Moved public helper types:
+
+| Type | New owner |
+|---|---|
+| `MapSurfacePathCost` | `Game.Runtime.Pathfinding` |
+| `MapSurfaceRoadPriorityPolicy` | `Game.Runtime.Pathfinding` |
+| `MapSurfaceSlopeClassifier` | `Game.Runtime.Pathfinding` |
+| `MapSurfaceTraversalValidation` | `Game.Runtime.Pathfinding` |
+
+Consumers updated with explicit `using Game.Runtime.Pathfinding;` imports:
+
+- Runtime pathfinding and command code:
+  - `Assets/Game/Scripts/Systems/Pathfinding/PathfindBatchJob.cs`
+  - `Assets/Game/Scripts/Systems/MapSurfacePathfindingSnapshot.cs`
+  - `Assets/Game/Scripts/Systems/UnitPathGoalAssignment.cs`
+  - `Assets/Game/Scripts/Systems/UnitPathfindingScheduler.cs`
+  - `Assets/Game/Scripts/Systems/UnitMoveOrderSystem.cs`
+  - `Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandCompositionSystemHelper.cs`
+- Editor bake/preview code:
+  - `Assets/Game/Scripts/Editor/MapSurfaceBakeSystem.cs`
+  - `Assets/Game/Scripts/Editor/MapSurfaceBridgeBakeSystem.cs`
+  - `Assets/Game/Scripts/Editor/MapSurfacePreviewOverlaySystem.cs`
+  - `Assets/Game/Scripts/Editor/MapSurfaceEditorOverlaySystem.cs`
+- Editor tests:
+  - `Assets/Tests/Editor/MapSurfaceLayeredGridFocusedTests.cs`
+  - `Assets/Tests/Editor/UnitMovementBlockerValidationTests.cs`
+
+Asmdef consumers updated:
+
+- `Game.Runtime` references `Game.Runtime.Pathfinding`.
+- `Game.Editor` references `Game.Runtime.Pathfinding`.
+- `Game.Tests.Editor` references `Game.Runtime.Pathfinding`.
+
 ## Validation Baseline
 
 Before physical Phase 10 splits, the local compiler baseline is clean:
@@ -87,11 +131,15 @@ Before physical Phase 10 splits, the local compiler baseline is clean:
 - `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`: passed, 0 errors.
 - `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`: passed, 0 errors.
 
+After the first physical split, validation is clean:
+
+- Unity architecture validation `/private/tmp/warline-phase10-pathfinding-surface-split-r5.log`: `[ScriptArchitectureBoundaryValidation] result=Passed tests=31`.
+- `git diff --check`: passed.
+- `dotnet build Game.Runtime.Pathfinding.csproj --no-restore -v:q -clp:ErrorsOnly`: passed, 0 errors.
+- `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly`: passed, 0 errors.
+- `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`: passed, 0 errors.
+- `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`: passed, 0 errors.
+
 ## Next Slice
 
-Choose one first physical split:
-
-1. Pathfinding cohesive owner-set split, if the moved type set can be kept internal to `Game.Runtime.Pathfinding` and referenced from `Game.Runtime` only through a minimal public system/job surface.
-2. A smaller non-pathfinding domain where all required types already sit together and depend only on contracts/data assemblies.
-
-After the asmdef/reference change, immediately run `git diff --check`, runtime/editor/editor-test dotnet builds, and the focused Unity validation for that domain when Unity is available.
+The fixed tracker checklist is complete at `138 / 138 active, 0 skipped`. Do not automatically add new Phase 10 tasks or increase the total task count. If more domain splitting is requested, open a new explicit follow-up slice and repeat the same pattern: inventory dependencies first, move only a cohesive owner set, keep child domains away from parent `Game.Runtime`, and immediately run Unity architecture validation plus generated-project builds.

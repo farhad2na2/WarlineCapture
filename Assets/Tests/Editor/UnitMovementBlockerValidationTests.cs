@@ -11,6 +11,7 @@ using Game.Components;
 using Game.Configs;
 using Game.Authoring;
 using Game.Runtime;
+using Game.Runtime.Pathfinding;
 
 public sealed class UnitMovementBlockerValidationTests
 {

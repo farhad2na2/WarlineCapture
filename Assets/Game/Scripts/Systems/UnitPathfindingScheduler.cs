@@ -4,6 +4,7 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 using Game.Components;
+using Game.Runtime.Pathfinding;
 
 namespace Game.Runtime
 {

@@ -7,6 +7,7 @@ using Unity.Transforms;
 using UnityEngine;
 using Game.Tactical.Contracts;
 using Game.Components;
+using Game.Runtime.Pathfinding;
 
 namespace Game.Runtime
 {

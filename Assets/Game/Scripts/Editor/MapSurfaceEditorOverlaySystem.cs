@@ -1,5 +1,6 @@
 using Game.Components;
 using Game.Runtime;
+using Game.Runtime.Pathfinding;
 using Game.Composition;
 
 namespace Game.Editor

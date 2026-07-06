@@ -1,6 +1,7 @@
 using Game.Components;
 using Game.Configs;
 using Game.Runtime;
+using Game.Runtime.Pathfinding;
 using Game.Editor;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System;

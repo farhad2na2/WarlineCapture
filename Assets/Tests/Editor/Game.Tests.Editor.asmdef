@@ -16,6 +16,7 @@
         "Game.UI.Shell.Ecs",
         "Game.UI.Runtime",
         "Game.Runtime",
+        "Game.Runtime.Pathfinding",
         "sniveler-code.gpu-animation",
         "Unity.Collections",
         "Unity.Entities",

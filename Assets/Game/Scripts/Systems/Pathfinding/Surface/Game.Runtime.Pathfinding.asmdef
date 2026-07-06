@@ -1,0 +1,19 @@
+{
+    "name": "Game.Runtime.Pathfinding",
+    "rootNamespace": "Game.Runtime.Pathfinding",
+    "references": [
+        "Game.Components",
+        "Unity.Collections",
+        "Unity.Entities",
+        "Unity.Mathematics"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

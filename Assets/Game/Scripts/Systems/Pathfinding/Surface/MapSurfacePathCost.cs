@@ -1,7 +1,7 @@
 using Unity.Mathematics;
 using Game.Components;
 
-namespace Game.Runtime
+namespace Game.Runtime.Pathfinding
 {
     public readonly struct MapSurfacePathCost
     {

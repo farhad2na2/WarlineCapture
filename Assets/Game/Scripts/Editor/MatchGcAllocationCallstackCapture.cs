@@ -39,6 +39,7 @@ namespace Game.Editor
         private const int BattleCaptureTargetHealth = 1_000_000_000;
         private const int BattleVfxPrewarmCount = 64;
         private const int TopSiteCount = 15;
+        private const long SteadyStatePlayerRelevantGcBudgetBytes = 1024;
         private const double TimeoutSeconds = 360d;
 
         private const string ActiveKey = "MatchGcAllocationCallstackCapture.Active";
@@ -253,8 +254,14 @@ namespace Game.Editor
 
             StopProfilerCapture();
             string loadStatus = LoadRawProfileForAnalysis();
-            string report = BuildReport(loadStatus);
+            string report = BuildReport(loadStatus, out long playerRelevantBytes);
             WriteReport(report);
+            if (!TryValidateSteadyStateGcBudget(playerRelevantBytes, out string gcBudgetStatus))
+            {
+                Finish(false, $"[MatchGcAllocationCallstackCapture] result=Failed frames={CaptureFrameCount} report={ReportPath} raw={ProfilerRawPath} {gcBudgetStatus}");
+                return;
+            }
+
             if (!TryValidateRuntimeAllocationProbes(out string allocationProbeStatus))
             {
                 Finish(false, $"[MatchGcAllocationCallstackCapture] result=Failed frames={CaptureFrameCount} report={ReportPath} raw={ProfilerRawPath} {allocationProbeStatus}");
@@ -350,7 +357,7 @@ namespace Game.Editor
                 : $"rawLoadFailed path={ProfilerRawPath}";
         }
 
-        private static string BuildReport(string loadStatus)
+        private static string BuildReport(string loadStatus, out long playerRelevantBytes)
         {
             CaptureMode mode = GetCaptureMode();
             Dictionary<string, AllocationSite> sites = new(StringComparer.Ordinal);
@@ -411,7 +418,7 @@ namespace Game.Editor
 
             long editorToolingBytes = 0;
             int editorToolingSamples = 0;
-            long playerRelevantBytes = 0;
+            playerRelevantBytes = 0;
             int playerRelevantSamples = 0;
             List<AllocationSite> playerRelevantSites = new(rankedSites.Count);
             List<AllocationSite> editorToolingSites = new(rankedSites.Count);
@@ -450,6 +457,12 @@ namespace Game.Editor
             builder.AppendLine($"- GC.Alloc bytes from hierarchy column: {totalBytes}");
             builder.AppendLine($"- GC.Alloc samples excluding editor/tooling/diagnostic rows: {playerRelevantSamples}");
             builder.AppendLine($"- GC.Alloc bytes excluding editor/tooling/diagnostic rows: {playerRelevantBytes}");
+            if (mode == CaptureMode.SteadyState)
+            {
+                string budgetStatus = playerRelevantBytes <= SteadyStatePlayerRelevantGcBudgetBytes ? "Passed" : "Failed";
+                builder.AppendLine($"- Steady-state player-relevant GC budget: {budgetStatus} ({playerRelevantBytes} / {SteadyStatePlayerRelevantGcBudgetBytes} bytes)");
+            }
+
             builder.AppendLine($"- Editor/tooling/diagnostic GC.Alloc samples excluded from player-relevant rows: {editorToolingSamples}");
             builder.AppendLine($"- Editor/tooling/diagnostic GC.Alloc bytes excluded from player-relevant rows: {editorToolingBytes}");
             builder.AppendLine($"- Raw load status: `{loadStatus}`");
@@ -863,6 +876,24 @@ namespace Game.Editor
                 .Append(" allocating updates / ")
                 .Append(counter.UpdateSamples)
                 .AppendLine(" total updates.");
+        }
+
+        private static bool TryValidateSteadyStateGcBudget(long playerRelevantBytes, out string status)
+        {
+            if (GetCaptureMode() != CaptureMode.SteadyState)
+            {
+                status = "steadyStateGcBudget=Skipped";
+                return true;
+            }
+
+            if (playerRelevantBytes <= SteadyStatePlayerRelevantGcBudgetBytes)
+            {
+                status = $"steadyStateGcBudget=Passed playerRelevantBytes={playerRelevantBytes} budgetBytes={SteadyStatePlayerRelevantGcBudgetBytes}";
+                return true;
+            }
+
+            status = $"steadyStateGcBudget=Failed playerRelevantBytes={playerRelevantBytes} budgetBytes={SteadyStatePlayerRelevantGcBudgetBytes}";
+            return false;
         }
 
         private static bool TryValidateRuntimeAllocationProbes(out string status)

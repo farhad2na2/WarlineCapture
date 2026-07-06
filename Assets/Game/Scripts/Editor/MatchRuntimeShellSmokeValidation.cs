@@ -33,6 +33,7 @@ namespace Game.Editor
         private const string RequireFrameDiagKey = "MatchRuntimeShellSmokeValidation.RequireFrameDiag";
         private const string RequireAirMissileSmokeKey = "MatchRuntimeShellSmokeValidation.RequireAirMissileSmoke";
         private const string RequireBaselineMetricsKey = "MatchRuntimeShellSmokeValidation.RequireBaselineMetrics";
+        private const string RequirePerformanceRegressionReportKey = "MatchRuntimeShellSmokeValidation.RequirePerformanceRegressionReport";
         private const string RequireInitialBuildingSmokeKey = "MatchRuntimeShellSmokeValidation.RequireInitialBuildingSmoke";
         private const string InitialBuildingImmediateStatusKey = "MatchRuntimeShellSmokeValidation.InitialBuildingImmediateStatus";
         private const string FrameDiagKey = "MatchRuntimeShellSmokeValidation.FrameDiag";
@@ -42,6 +43,7 @@ namespace Game.Editor
         private const string PreviousEnterPlayModeOptionsEnabledKey = "MatchRuntimeShellSmokeValidation.PreviousEnterPlayModeOptionsEnabled";
         private const string PreviousEnterPlayModeOptionsKey = "MatchRuntimeShellSmokeValidation.PreviousEnterPlayModeOptions";
         private const string BaselineMetricsReportPath = "/private/tmp/warlinecapture-match-runtime-baseline-metrics.json";
+        private const string PerformanceRegressionReportPath = "Design/AgentReports/performance_regression_match_baseline.md";
         private const double AirMissileSmokeTimeoutSeconds = 20d;
         private const double TimeoutSeconds = 120d;
         private const double ProgressLogIntervalSeconds = 5d;
@@ -102,6 +104,16 @@ namespace Game.Editor
             RunInternal(requireFrameDiag: false, requireAirMissileSmoke: false, requireBaselineMetrics: true);
         }
 
+        public static void RunPerformanceRegressionBaseline()
+        {
+            RunInternal(
+                requireFrameDiag: false,
+                requireAirMissileSmoke: false,
+                requireBaselineMetrics: true,
+                requirePerformanceRegressionReport: true,
+                requireInitialBuildingSmoke: false);
+        }
+
         public static void RunInitialBuildingSmoke()
         {
             RunInternal(
@@ -132,6 +144,21 @@ namespace Game.Editor
             bool requireBaselineMetrics,
             bool requireInitialBuildingSmoke)
         {
+            RunInternal(
+                requireFrameDiag,
+                requireAirMissileSmoke,
+                requireBaselineMetrics,
+                requirePerformanceRegressionReport: false,
+                requireInitialBuildingSmoke);
+        }
+
+        private static void RunInternal(
+            bool requireFrameDiag,
+            bool requireAirMissileSmoke,
+            bool requireBaselineMetrics,
+            bool requirePerformanceRegressionReport,
+            bool requireInitialBuildingSmoke)
+        {
             try
             {
                 ResetAirMissileSmokeState();
@@ -143,6 +170,7 @@ namespace Game.Editor
                 SessionState.SetBool(RequireFrameDiagKey, requireFrameDiag);
                 SessionState.SetBool(RequireAirMissileSmokeKey, requireAirMissileSmoke);
                 SessionState.SetBool(RequireBaselineMetricsKey, requireBaselineMetrics);
+                SessionState.SetBool(RequirePerformanceRegressionReportKey, requirePerformanceRegressionReport);
                 SessionState.SetBool(RequireInitialBuildingSmokeKey, requireInitialBuildingSmoke);
                 SessionState.EraseString(FrameDiagKey);
                 SessionState.EraseString(InitialBuildingImmediateStatusKey);
@@ -884,6 +912,20 @@ namespace Game.Editor
                 builder.AppendLine("}");
                 File.WriteAllText(BaselineMetricsReportPath, builder.ToString());
 
+                if (SessionState.GetBool(RequirePerformanceRegressionReportKey, false))
+                {
+                    WritePerformanceRegressionReport(
+                        readyStatus,
+                        stableStatus,
+                        elapsedSeconds,
+                        allocatedBytes,
+                        averageMs,
+                        p95Ms,
+                        p99Ms,
+                        maxMs,
+                        counts);
+                }
+
                 status =
                     $"[MatchRuntimeBaselineMetrics] result=Passed report={BaselineMetricsReportPath} " +
                     $"frames={BaselineFrameTimesMs.Count} avg={averageMs:F2}ms p95={p95Ms:F2}ms " +
@@ -897,6 +939,50 @@ namespace Game.Editor
                 status = $"[MatchRuntimeBaselineMetrics] result=Failed {exception.Message}";
                 return false;
             }
+        }
+
+        private static void WritePerformanceRegressionReport(
+            string readyStatus,
+            string stableStatus,
+            double elapsedSeconds,
+            long allocatedBytes,
+            double averageMs,
+            double p95Ms,
+            double p99Ms,
+            double maxMs,
+            BaselineEntityCounts counts)
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(PerformanceRegressionReportPath) ?? ".");
+
+            StringBuilder builder = new();
+            builder.AppendLine("# Performance Regression Match Baseline");
+            builder.AppendLine();
+            builder.AppendLine("Source: `Game.Editor.MatchRuntimeShellSmokeValidation.RunPerformanceRegressionBaseline`.");
+            builder.AppendLine();
+            builder.AppendLine("| Metric | Value |");
+            builder.AppendLine("|---|---:|");
+            builder.AppendLine($"| Observation seconds | {elapsedSeconds.ToString("F2", CultureInfo.InvariantCulture)} |");
+            builder.AppendLine($"| Frame count | {BaselineFrameTimesMs.Count.ToString(CultureInfo.InvariantCulture)} |");
+            builder.AppendLine($"| Average frame ms | {averageMs.ToString("F2", CultureInfo.InvariantCulture)} |");
+            builder.AppendLine($"| P95 frame ms | {p95Ms.ToString("F2", CultureInfo.InvariantCulture)} |");
+            builder.AppendLine($"| P99 frame ms | {p99Ms.ToString("F2", CultureInfo.InvariantCulture)} |");
+            builder.AppendLine($"| Max frame ms | {maxMs.ToString("F2", CultureInfo.InvariantCulture)} |");
+            builder.AppendLine($"| Current-thread allocated bytes | {allocatedBytes.ToString(CultureInfo.InvariantCulture)} |");
+            builder.AppendLine($"| Units | {counts.UnitCount.ToString(CultureInfo.InvariantCulture)} |");
+            builder.AppendLine($"| Runtime buildings | {counts.RuntimeBuildingCount.ToString(CultureInfo.InvariantCulture)} |");
+            builder.AppendLine($"| Projectiles | {counts.ProjectileCount.ToString(CultureInfo.InvariantCulture)} |");
+            builder.AppendLine($"| Markers | {counts.MarkerCount.ToString(CultureInfo.InvariantCulture)} |");
+            builder.AppendLine($"| Visible model estimate | {counts.VisibleModelEstimate.ToString(CultureInfo.InvariantCulture)} |");
+            builder.AppendLine();
+            builder.AppendLine("## Runtime Status");
+            builder.AppendLine();
+            builder.AppendLine($"- Ready: `{readyStatus}`");
+            builder.AppendLine($"- Stable: `{stableStatus}`");
+            builder.AppendLine();
+            builder.AppendLine("Budget assertions are intentionally deferred to the next Phase 11 slice after this capture path is accepted.");
+
+            File.WriteAllText(PerformanceRegressionReportPath, builder.ToString());
+            Debug.Log($"[PerformanceRegressionBaseline] wroteReport {PerformanceRegressionReportPath}");
         }
 
         private static BaselineEntityCounts CaptureBaselineEntityCounts()
@@ -1588,6 +1674,7 @@ namespace Game.Editor
             SessionState.EraseBool(RequireFrameDiagKey);
             SessionState.EraseBool(RequireAirMissileSmokeKey);
             SessionState.EraseBool(RequireBaselineMetricsKey);
+            SessionState.EraseBool(RequirePerformanceRegressionReportKey);
             SessionState.EraseBool(RequireInitialBuildingSmokeKey);
             SessionState.EraseString(FrameDiagKey);
             SessionState.EraseString(InitialBuildingImmediateStatusKey);

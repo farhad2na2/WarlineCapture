@@ -13,6 +13,13 @@ namespace Game.Runtime
     public partial struct UnitAirMovementSystem : ISystem
     {
         private const float AirborneSurfaceLookaheadSeconds = 1.35f;
+        private const float RunwayTakeoffLiftoffFraction = 0.65f;
+        private const float RunwayTakeoffMinGroundRollFraction = 0.35f;
+        private const float RunwayTakeoffEndSafetyFraction = 0.2f;
+        private const float RunwayTakeoffEndSafetyCells = 2f;
+        private const float RunwayTakeoffRotationStartFraction = 0.45f;
+        private const float RunwayTakeoffPitchDegrees = 14f;
+        private const float RunwayTakeoffInitialClearance = 1.25f;
 
         private EntityQuery _gridQuery;
         private EntityQuery _surfaceQuery;
@@ -217,23 +224,14 @@ namespace Game.Runtime
                         }
                         else
                         {
-                            bool reachedLiftoffPoint = SteerTowards(
+                            RunwayTakeoffRoll(
                                 ref transform.ValueRW,
                                 ref unitGrid.ValueRW,
+                                ref stateRw,
                                 grid,
-                                math.max(0.01f, move.ValueRO.Speed),
+                                move.ValueRO,
                                 dt,
-                                runwayGroundY,
-                                stateRw.RunwayLandingPosition,
-                                false,
-                                3.25f);
-
-                            if (reachedLiftoffPoint)
-                            {
-                                stateRw.TakeoffRolling = 0;
-                                stateRw.Airborne = 1;
-                                unitGrid.ValueRW.Cell = stateRw.RunwayLandingCell;
-                            }
+                                runwayGroundY);
                         }
 
                         continue;
@@ -380,23 +378,14 @@ namespace Game.Runtime
                             }
                             else
                             {
-                                bool reachedLiftoffPoint = SteerTowards(
+                                RunwayTakeoffRoll(
                                     ref transform.ValueRW,
                                     ref unitGrid.ValueRW,
+                                    ref stateRw,
                                     grid,
-                                    math.max(0.01f, move.ValueRO.Speed),
+                                    move.ValueRO,
                                     dt,
-                                    runwayGroundY,
-                                    stateRw.RunwayLandingPosition,
-                                    false,
-                                    3.25f);
-
-                                if (reachedLiftoffPoint)
-                                {
-                                    stateRw.TakeoffRolling = 0;
-                                    stateRw.Airborne = 1;
-                                    unitGrid.ValueRW.Cell = stateRw.RunwayLandingCell;
-                                }
+                                    runwayGroundY);
 
                                 reached = false;
                             }
@@ -764,23 +753,14 @@ namespace Game.Runtime
                 }
                 else
                 {
-                    bool reachedLiftoffPoint = SteerTowards(
+                    RunwayTakeoffRoll(
                         ref transform,
                         ref unitGrid,
+                        ref state,
                         grid,
-                        math.max(0.01f, move.Speed),
+                        move,
                         deltaTime,
-                        runwayGroundY,
-                        state.RunwayLandingPosition,
-                        false,
-                        3.25f);
-
-                    if (reachedLiftoffPoint)
-                    {
-                        state.TakeoffRolling = 0;
-                        state.Airborne = 1;
-                        unitGrid.Cell = state.RunwayLandingCell;
-                    }
+                        runwayGroundY);
                 }
 
                 request.PassReady = 0;
@@ -967,6 +947,123 @@ namespace Game.Runtime
             }
 
             return found ? bestHeight : fallbackGroundY;
+        }
+
+        private static bool RunwayTakeoffRoll(
+            ref LocalTransform transform,
+            ref UnitGrid unitGrid,
+            ref UnitAirComponent state,
+            in GridConfig grid,
+            in UnitMove move,
+            float deltaTime,
+            float runwayGroundY)
+        {
+            bool reachedLiftoffPoint = SteerTowards(
+                ref transform,
+                ref unitGrid,
+                grid,
+                math.max(0.01f, move.Speed),
+                deltaTime,
+                runwayGroundY,
+                ResolveRunwayLiftoffPosition(state, grid),
+                false,
+                3.25f);
+
+            ApplyRunwayTakeoffPitch(ref transform, state, grid, reachedLiftoffPoint ? 1f : 0f);
+            if (reachedLiftoffPoint)
+                CompleteRunwayLiftoff(ref transform, ref unitGrid, ref state, grid, runwayGroundY);
+
+            return reachedLiftoffPoint;
+        }
+
+        private static float3 ResolveRunwayLiftoffPosition(in UnitAirComponent state, in GridConfig grid)
+        {
+            if (!TryResolveRunwayDirection(state, out float3 runwayDirection, out float runwayLength))
+                return state.RunwayLandingPosition;
+
+            float endSafetyDistance = math.min(
+                runwayLength * 0.4f,
+                math.max(grid.CellSize * RunwayTakeoffEndSafetyCells, runwayLength * RunwayTakeoffEndSafetyFraction));
+            float minGroundRollDistance = runwayLength * RunwayTakeoffMinGroundRollFraction;
+            float maxGroundRollDistance = math.max(minGroundRollDistance, runwayLength - endSafetyDistance);
+            float liftoffDistance = math.clamp(
+                runwayLength * RunwayTakeoffLiftoffFraction,
+                minGroundRollDistance,
+                maxGroundRollDistance);
+
+            return state.RunwayTakeoffPosition + runwayDirection * liftoffDistance;
+        }
+
+        private static void CompleteRunwayLiftoff(
+            ref LocalTransform transform,
+            ref UnitGrid unitGrid,
+            ref UnitAirComponent state,
+            in GridConfig grid,
+            float runwayGroundY)
+        {
+            state.TakeoffRolling = 0;
+            state.Airborne = 1;
+            transform.Position.y = math.max(transform.Position.y, runwayGroundY + RunwayTakeoffInitialClearance);
+            ApplyRunwayTakeoffPitch(ref transform, state, grid, 1f);
+
+            int2 currentCell = GridUtils.WorldToCell(grid, transform.Position);
+            if (GridUtils.InBounds(currentCell, grid.Width, grid.Height))
+                unitGrid.Cell = currentCell;
+        }
+
+        private static void ApplyRunwayTakeoffPitch(
+            ref LocalTransform transform,
+            in UnitAirComponent state,
+            in GridConfig grid,
+            float minimumPitchProgress)
+        {
+            if (!TryResolveRunwayDirection(state, out float3 runwayDirection, out _))
+                return;
+
+            float3 liftoffPosition = ResolveRunwayLiftoffPosition(state, grid);
+            float liftoffDistance = math.max(
+                0.01f,
+                math.dot(new float3(
+                    liftoffPosition.x - state.RunwayTakeoffPosition.x,
+                    0f,
+                    liftoffPosition.z - state.RunwayTakeoffPosition.z), runwayDirection));
+            float travelled = math.dot(
+                new float3(
+                    transform.Position.x - state.RunwayTakeoffPosition.x,
+                    0f,
+                    transform.Position.z - state.RunwayTakeoffPosition.z),
+                runwayDirection);
+            float progressToLiftoff = math.saturate(travelled / liftoffDistance);
+            float pitchProgress = math.max(
+                math.saturate(minimumPitchProgress),
+                math.smoothstep(RunwayTakeoffRotationStartFraction, 1f, progressToLiftoff));
+            if (pitchProgress <= 0f)
+            {
+                transform.Rotation = quaternion.LookRotationSafe(runwayDirection, math.up());
+                return;
+            }
+
+            float pitchRadians = math.radians(RunwayTakeoffPitchDegrees * pitchProgress);
+            float3 pitchedForward = runwayDirection * math.cos(pitchRadians) + new float3(0f, math.sin(pitchRadians), 0f);
+            transform.Rotation = quaternion.LookRotationSafe(pitchedForward, math.up());
+        }
+
+        private static bool TryResolveRunwayDirection(
+            in UnitAirComponent state,
+            out float3 runwayDirection,
+            out float runwayLength)
+        {
+            float3 runwayDelta = state.RunwayLandingPosition - state.RunwayTakeoffPosition;
+            runwayDelta.y = 0f;
+            runwayLength = math.length(runwayDelta);
+            if (runwayLength <= 1e-4f)
+            {
+                runwayDirection = new float3(0f, 0f, 1f);
+                return false;
+            }
+
+            runwayDirection = runwayDelta / runwayLength;
+            return true;
         }
 
         private static void SampleMaxSurfaceHeight(

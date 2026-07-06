@@ -52,6 +52,8 @@ public sealed class SelectionCommandRequestResultContractTests
             tests.UnitScanOrderExecutionSystem_RevealsWhenScannerReachesScanArea();
             tests.UnitScanOrderExecutionSystem_GroundScannerPatrolsScanAreaAfterArrival();
             tests.UnitAirMovementSystem_LandedRunwayScannerBeginsTakeoffBeforeRecon();
+            tests.UnitAirMovementSystem_RunwayTakeoffRollPitchesNoseUp();
+            tests.UnitAirMovementSystem_RunwayTakeoffLiftsOffBeforeRunwayEnd();
             tests.UnitAirMovementSystem_AirborneScannerLoitersInsteadOfLandingDuringActiveScan();
             tests.UnitScanOrderExecutionSystem_ReturnsAirScannerHomeWhenScanExpires();
             tests.UnitEngagementSystem_ScanOrderAcquiresOnlyTargetsInsideScanArea();
@@ -84,7 +86,7 @@ public sealed class SelectionCommandRequestResultContractTests
             tests.MoveTargetModeFlush_AppliesAcceptedPresentationCleanup();
             tests.MoveTargetModeFlush_AppliesRejectedPresentationCleanup();
             tests.DeselectAllFlush_ClearsManagedSelectionCacheAndPresentation();
-            UnityEngine.Debug.Log("[SelectionCommandRequestResultContractValidation] result=Passed tests=48");
+            UnityEngine.Debug.Log("[SelectionCommandRequestResultContractValidation] result=Passed tests=50");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -3214,6 +3216,93 @@ public sealed class SelectionCommandRequestResultContractTests
         Assert.AreEqual(0, air.ReturningHome);
         Assert.IsTrue(em.HasComponent<UnitTarget>(scanner));
         Assert.IsTrue(em.HasComponent<UnitScanOrder>(scanner));
+    }
+
+    [Test]
+    public void UnitAirMovementSystem_RunwayTakeoffRollPitchesNoseUp()
+    {
+        using World world = new("UnitAirMovementSystem_RunwayTakeoffRollPitchesNoseUp");
+        EntityManager em = world.EntityManager;
+        world.SetTime(new TimeData(1d, 0.25f));
+        CreateAirMovementGrid(em);
+
+        Entity aircraft = CreateSelectedScanCapableUnit(em, new int2(5, 3));
+        em.SetComponentData(aircraft, new UnitMove { Speed = 4f, WalkSpeed = 4f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
+        em.AddComponentData(aircraft, new UnitAirMovement { CruiseHeight = 12f, RunwayTaxiSpeed = 5f });
+        em.AddComponentData(aircraft, new UnitAirComponent
+        {
+            HomePosition = new float3(2.5f, 0f, 3.5f),
+            HomeCell = new int2(2, 3),
+            HomeInitialized = 1,
+            UsesRunway = 1,
+            Airborne = 0,
+            TakeoffRolling = 1,
+            RunwayTakeoffPosition = new float3(2.5f, 0f, 3.5f),
+            RunwayTakeoffCell = new int2(2, 3),
+            RunwayLandingPosition = new float3(12.5f, 0f, 3.5f),
+            RunwayLandingCell = new int2(12, 3)
+        });
+        em.SetComponentData(
+            aircraft,
+            LocalTransform.FromPositionRotationScale(
+                new float3(5.5f, 0f, 3.5f),
+                quaternion.LookRotationSafe(new float3(1f, 0f, 0f), math.up()),
+                1f));
+        em.AddComponentData(aircraft, new UnitTarget { Cell = new int2(20, 20) });
+        em.AddComponent<ManualMoveOrderTag>(aircraft);
+
+        SystemHandle airMovementSystem = world.CreateSystem<UnitAirMovementSystem>();
+        airMovementSystem.Update(world.Unmanaged);
+
+        UnitAirComponent air = em.GetComponentData<UnitAirComponent>(aircraft);
+        LocalTransform transform = em.GetComponentData<LocalTransform>(aircraft);
+        float3 forward = math.forward(transform.Rotation);
+        Assert.AreEqual(1, air.TakeoffRolling);
+        Assert.AreEqual(0, air.Airborne);
+        Assert.Greater(forward.y, 0.025f, "Fixed-wing runway roll should visibly pitch the nose up before liftoff.");
+        Assert.Greater(transform.Position.x, 5.5f);
+        Assert.AreEqual(0f, transform.Position.y, 0.001f);
+    }
+
+    [Test]
+    public void UnitAirMovementSystem_RunwayTakeoffLiftsOffBeforeRunwayEnd()
+    {
+        using World world = new("UnitAirMovementSystem_RunwayTakeoffLiftsOffBeforeRunwayEnd");
+        EntityManager em = world.EntityManager;
+        world.SetTime(new TimeData(1d, 1f));
+        CreateAirMovementGrid(em);
+
+        Entity aircraft = CreateSelectedScanCapableUnit(em, new int2(2, 3));
+        em.SetComponentData(aircraft, new UnitMove { Speed = 50f, WalkSpeed = 50f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
+        em.AddComponentData(aircraft, new UnitAirMovement { CruiseHeight = 12f, RunwayTaxiSpeed = 5f });
+        em.AddComponentData(aircraft, new UnitAirComponent
+        {
+            HomePosition = new float3(2.5f, 0f, 3.5f),
+            HomeCell = new int2(2, 3),
+            HomeInitialized = 1,
+            UsesRunway = 1,
+            Airborne = 0,
+            TakeoffRolling = 1,
+            RunwayTakeoffPosition = new float3(2.5f, 0f, 3.5f),
+            RunwayTakeoffCell = new int2(2, 3),
+            RunwayLandingPosition = new float3(12.5f, 0f, 3.5f),
+            RunwayLandingCell = new int2(12, 3)
+        });
+        em.SetComponentData(aircraft, LocalTransform.FromPosition(new float3(2.5f, 0f, 3.5f)));
+        em.AddComponentData(aircraft, new UnitTarget { Cell = new int2(20, 20) });
+        em.AddComponent<ManualMoveOrderTag>(aircraft);
+
+        SystemHandle airMovementSystem = world.CreateSystem<UnitAirMovementSystem>();
+        airMovementSystem.Update(world.Unmanaged);
+
+        UnitAirComponent air = em.GetComponentData<UnitAirComponent>(aircraft);
+        LocalTransform transform = em.GetComponentData<LocalTransform>(aircraft);
+        float3 forward = math.forward(transform.Rotation);
+        Assert.AreEqual(0, air.TakeoffRolling);
+        Assert.AreEqual(1, air.Airborne);
+        Assert.Less(transform.Position.x, 10.5f, "Fixed-wing aircraft should lift off with runway still remaining, not at the far threshold.");
+        Assert.Greater(transform.Position.y, 1f);
+        Assert.Greater(forward.y, 0.2f, "Liftoff should keep the nose pitched up.");
     }
 
     [Test]

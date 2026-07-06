@@ -136,6 +136,30 @@ namespace Game.Runtime
             pool.Push(instance);
         }
 
+        public void Dispose()
+        {
+            foreach (GameObject activeInstance in _activeDefinitions.Keys)
+                DestroyRuntimeObject(activeInstance);
+
+            _activeDefinitions.Clear();
+
+            if (_poolRoot != null)
+            {
+                DestroyRuntimeObject(_poolRoot.gameObject);
+            }
+            else
+            {
+                foreach (Stack<GameObject> pool in _pooledByDefinition.Values)
+                {
+                    while (pool.Count > 0)
+                        DestroyRuntimeObject(pool.Pop());
+                }
+            }
+
+            _pooledByDefinition.Clear();
+            _poolRoot = null;
+        }
+
         public void PositionBuildingObject(
             GameObject instance,
             Vector2Int originCell,

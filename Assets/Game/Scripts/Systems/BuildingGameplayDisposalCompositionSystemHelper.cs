@@ -20,6 +20,7 @@ namespace Game.Runtime
                 source.BuildingPlacementStartupSystemHelper,
                 source.BuildingDefinitionPrefabSystemHelper,
                 source.BuildingPlacementPreviewPresentationSystemHelper,
+                source.BuildingPlacementVisualPresentationSystemHelper,
                 source.RuntimeObjectPresentationHelper,
                 source.UnitPathfindingPendingStateReader,
                 () => ExitBuildModeWithoutEntityManager(createPlacementCommandContext()));

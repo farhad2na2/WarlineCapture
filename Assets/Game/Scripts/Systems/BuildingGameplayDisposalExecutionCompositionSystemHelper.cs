@@ -11,6 +11,7 @@ namespace Game.Runtime
             public readonly BuildingPlacementStartupSystemHelper PlacementStartupSystem;
             public readonly BuildingDefinitionPrefabSystemHelper DefinitionSystem;
             public readonly BuildingPlacementPreviewPresentationSystemHelper PlacementPreviewSystem;
+            public readonly BuildingPlacementVisualPresentationSystemHelper PlacementVisualPresentationSystem;
             public readonly BuildingRuntimeObjectPresentationSystemHelper RuntimeObjectPresentationHelper;
             public readonly UnitPathfindingPendingStateReader UnitPathfindingPendingStateReader;
             public readonly Action ExitBuildMode;
@@ -20,6 +21,7 @@ namespace Game.Runtime
                 BuildingPlacementStartupSystemHelper placementStartupSystem,
                 BuildingDefinitionPrefabSystemHelper definitionSystem,
                 BuildingPlacementPreviewPresentationSystemHelper placementPreviewSystem,
+                BuildingPlacementVisualPresentationSystemHelper placementVisualPresentationSystem,
                 BuildingRuntimeObjectPresentationSystemHelper runtimeObjectPresentationHelper,
                 UnitPathfindingPendingStateReader unitPathfindingPendingStateReadSystem,
                 Action exitBuildMode)
@@ -28,6 +30,7 @@ namespace Game.Runtime
                 PlacementStartupSystem = placementStartupSystem;
                 DefinitionSystem = definitionSystem;
                 PlacementPreviewSystem = placementPreviewSystem;
+                PlacementVisualPresentationSystem = placementVisualPresentationSystem;
                 RuntimeObjectPresentationHelper = runtimeObjectPresentationHelper;
                 UnitPathfindingPendingStateReader = unitPathfindingPendingStateReadSystem;
                 ExitBuildMode = exitBuildMode;
@@ -60,6 +63,7 @@ namespace Game.Runtime
                 source.RuntimeBuildingSystem.Clear();
             }
 
+            source.PlacementVisualPresentationSystem?.Dispose();
             source.PlacementStartupSystem?.Dispose(
                 source.DefinitionSystem,
                 source.PlacementPreviewSystem,

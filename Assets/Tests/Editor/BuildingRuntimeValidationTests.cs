@@ -149,6 +149,40 @@ public sealed class BuildingRuntimeValidationTests
     }
 
     [Test]
+    public void PlacementVisualPresentationDisposeDestroysPooledInstances()
+    {
+        var helper = new BuildingPlacementVisualPresentationSystemHelper();
+        var parent = new GameObject("PlacementVisualDisposeParent");
+        var prefab = new GameObject("PlacementVisualDisposePrefab");
+        var definition = new BuildingDefinition
+        {
+            DisplayName = "PlacementVisualDispose",
+            Prefab = prefab,
+        };
+
+        try
+        {
+            GameObject instance = helper.CreateBuildingVisualInstance(definition, parent.transform);
+            Assert.NotNull(instance);
+
+            helper.ReleaseBuildingVisualInstance(instance);
+            Transform poolRoot = parent.transform.Find("BuildingPlacementVisualPool");
+            Assert.NotNull(poolRoot, "Release should move the visual instance under the inactive placement visual pool root.");
+
+            helper.Dispose();
+
+            Assert.IsTrue(poolRoot == null, "Dispose should destroy the inactive placement visual pool root and its pooled instances.");
+            Assert.AreEqual(0, parent.transform.childCount, "Dispose should leave no pooled placement visual children under the parent root.");
+        }
+        finally
+        {
+            helper.Dispose();
+            Object.DestroyImmediate(parent);
+            Object.DestroyImmediate(prefab);
+        }
+    }
+
+    [Test]
     public void MapAuthoredFaction2PlacementsDoNotSpawnOilPumpOverInitialTent()
     {
         MapBuildingPlacementConfig mapConfig =

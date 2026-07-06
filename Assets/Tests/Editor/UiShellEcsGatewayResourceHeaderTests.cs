@@ -259,6 +259,42 @@ public sealed class UiShellEcsGatewayResourceHeaderTests
     }
 
     [Test]
+    public void MatchHudHeader_EmptyUsableFuelSummaryFallsBackToLiveUsableStorage()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        using World world = new(nameof(MatchHudHeader_EmptyUsableFuelSummaryFallsBackToLiveUsableStorage));
+        try
+        {
+            World.DefaultGameObjectInjectionWorld = world;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+            EntityManager em = world.EntityManager;
+            Entity boundary = em.CreateEntity(typeof(UiShellRootComponent));
+            em.AddBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundary);
+            Entity fuelStorage = em.CreateEntity(
+                typeof(BuildingResourceStorageComponent),
+                typeof(Faction));
+            em.SetComponentData(fuelStorage, new Faction { Id = FactionIdentity.PlayerFactionId });
+            em.SetComponentData(fuelStorage, new BuildingResourceStorageComponent
+            {
+                RuntimeBuildingId = 73,
+                OwnerFactionId = FactionIdentity.PlayerFactionId,
+                FuelStorageCapacity = 100,
+                StoredFuelBarrels = 42f
+            });
+
+            Assert.IsTrue(UiShellEcsGateway.TryReadMatchHudHeader(out UiMatchHudHeaderModel header));
+            Assert.AreEqual("0", header.OilText);
+            Assert.AreEqual("42", header.FuelText);
+            Assert.IsFalse(header.ShowOil);
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+        }
+    }
+
+    [Test]
     public void MatchHudHeader_ShowsOilWhenActiveSummaryTeachesExtraction()
     {
         World previousWorld = World.DefaultGameObjectInjectionWorld;

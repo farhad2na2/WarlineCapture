@@ -675,6 +675,8 @@ namespace Game.UI.Shell.Ecs
             uint resourceVersion = 0u;
             int resourceOil = 0;
             int resourceFuel = 0;
+            bool hasUsableFuelSummaryBuffer =
+                entityManager.HasBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundary);
             if (TryReadPlayerUsableFuelSummary(
                     entityManager,
                     boundary,
@@ -716,7 +718,8 @@ namespace Game.UI.Shell.Ecs
                 fuelText = liveFuelText;
                 showOil = liveOilVisible;
             }
-            else if (TryFormatPlayerResourceSummary(
+            else if (!hasUsableFuelSummaryBuffer &&
+                     TryFormatPlayerResourceSummary(
                          entityManager,
                          boundary,
                          out string resourceOilText,
@@ -851,7 +854,7 @@ namespace Game.UI.Shell.Ecs
                 return true;
             }
 
-            return true;
+            return false;
         }
 
         private static bool TryFormatLivePlayerResourceStorage(

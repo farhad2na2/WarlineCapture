@@ -1186,3 +1186,22 @@ Use this section during implementation. Each completed batch should add:
   - `Tools/CI/invoke_unity_macos.sh --timeout 420 --log /private/tmp/warline-match-load-fuel-gate-smoke-3.log -- -executeMethod Game.Editor.MatchRuntimeShellSmokeValidation.Run` passed with `[LoadingGate] ready frame=5497 gameplayInitialized=1 playRequested=1 simulationActive=1` and `[MatchRuntimeShellSmokeValidation] result=Passed mode=MatchHud route=Match phase=MatchHudReady transition=0 playRequested=1 matchIntro=Complete inputLocked=0 matchSceneLoaded=1 hudLoaded=1 curtainHidden=1`.
 - Next action:
   - In editor play mode, load Match and confirm the HUD reaches Match ready. Once the map-authored Fuel Bladders/storage are available, the pending initial Fuel seed should fill the player usable Fuel pool for long transport-plane movement tests.
+- Slice: Match initial Fuel storage/header/move-readiness regression fix.
+- Files changed: `Assets/Game/Scripts/Systems/BuildingProductionTickCompositionSystemHelper.cs`, `Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs`, `Assets/Game/Scripts/Editor/MatchRuntimeShellSmokeValidation.cs`, `Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs`, `Assets/Tests/Editor/UiShellEcsGatewayResourceHeaderTests.cs`, and this tracker.
+- Behavior intent:
+  - Added a real Match runtime fuel-readiness validation that waits for Match HUD readiness, reads configured initial Fuel, inspects player usable Fuel storage, reads the HUD header, and issues a synthetic fuel-consuming move command.
+  - The first real validation reproduced the user-facing bug: `playerStoredFuel=0`, `headerFuelText='0'`, and `syntheticMoveIssued=0` in `/private/tmp/warline-match-fuel-readiness-2.log`.
+  - Root cause was the production tick mirror sync overwriting live ECS `BuildingResourceStorageComponent.StoredFuelBarrels` with stale managed `RuntimeBuildingEntity.StoredFuelBarrels=0` after the initial seed filled usable storage.
+  - Storage sync now keeps ECS stored Oil/Fuel as authoritative and refreshes the managed mirror from ECS, while still syncing ownership/capacity/rate metadata from the runtime building definition.
+  - The HUD header gateway now treats an empty usable-Fuel summary buffer as missing data and falls back to live usable Fuel storage instead of hiding real storage behind an empty summary.
+- Validation:
+  - `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed with warnings only.
+  - `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed with warnings only.
+  - `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed with warnings only.
+  - `Tools/CI/invoke_unity_macos.sh --timeout 180 --log /private/tmp/warline-resource-production-focused-1.log -- -executeMethod BuildingResourceProductionEcsSystemTests.RunFocusedValidation` passed with `[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=34`.
+  - Sandboxed Unity Match fuel-readiness retry was blocked before project load by the known `LicenseClient-farhad` startup failure in `/private/tmp/warline-match-fuel-readiness-final.log`.
+  - Applied the documented out-of-sandbox Unity validation workaround. A first escalated run reached Match but hit the smoke validator startup timeout before gameplay flipped to ready in `/private/tmp/warline-match-fuel-readiness-final-escalated-900.log`; rerunning the same current-code command passed.
+  - `Tools/CI/invoke_unity_macos.sh --timeout 900 --log /private/tmp/warline-match-fuel-readiness-final-current.log -- -executeMethod Game.Editor.MatchRuntimeShellSmokeValidation.RunFuelReadiness` passed with `[MatchFuelReadiness] result=Passed configuredInitialFuel=10000 pendingFuelSeeds=0 playerUsableStorageCount=2 playerFuelCapacity=10000 playerStoredFuel=10000 ... headerRead=1 headerFuelText='10K' ... syntheticMoveIssued=1 syntheticMoveReject=0`.
+  - `git diff --check` passed.
+- Next action:
+  - Reopen Match in the editor: the header should show `10K` Fuel and fuel-consuming vehicles/aircraft should accept movement commands instead of reporting no Fuel.

@@ -39,6 +39,20 @@ namespace Game.Runtime
                 building == null ||
                 building.CombatEntity == Entity.Null ||
                 !source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager) ||
+                !entityManager.Exists(building.CombatEntity))
+            {
+                return;
+            }
+
+            SyncBuildingResourceStorageFromEcs(entityManager, building);
+        }
+
+        internal static void SyncBuildingResourceStorageFromEcs(
+            EntityManager entityManager,
+            RuntimeBuildingEntity building)
+        {
+            if (building == null ||
+                building.CombatEntity == Entity.Null ||
                 !entityManager.Exists(building.CombatEntity) ||
                 !entityManager.HasComponent<BuildingResourceStorageComponent>(building.CombatEntity))
             {
@@ -53,9 +67,10 @@ namespace Game.Runtime
             storage.FuelStorageCapacity = Math.Max(0, building.FuelStorageCapacity);
             storage.OilBarrelsPerDay = Math.Max(0f, building.OilBarrelsPerDay);
             storage.FuelBarrelsPerDay = Math.Max(0f, building.FuelBarrelsPerDay);
-            storage.StoredOilBarrels = Math.Max(0f, building.StoredOilBarrels);
-            storage.StoredFuelBarrels = Math.Max(0f, building.StoredFuelBarrels);
             entityManager.SetComponentData(building.CombatEntity, storage);
+
+            building.StoredOilBarrels = Math.Max(0f, storage.StoredOilBarrels);
+            building.StoredFuelBarrels = Math.Max(0f, storage.StoredFuelBarrels);
         }
     }
 }

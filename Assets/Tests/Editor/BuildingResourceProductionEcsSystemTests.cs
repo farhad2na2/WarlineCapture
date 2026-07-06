@@ -25,6 +25,7 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.ApplyTick_DoesNotConvertOilWhenFuelStorageIsFull();
             tests.UpdateResourceProduction_PrefersLiveEcsStorageWhenRuntimeMirrorIsStale();
             tests.ProductionRuntimeTick_UsesProvidedDeltaTimeForThrottledResourceProduction();
+            tests.ProductionTickSync_PreservesLiveEcsFuelWhenManagedMirrorIsStale();
             tests.ProductionRuntimeTick_SyncsResourceStorageMirrorAfterProductionUpdate();
             tests.ProductionRuntimeTick_SyncsResourceStorageMirrorAfterHaulerUpdate();
             tests.AutomaticFuelLogisticsRoute_PairsTrayWithFactionOilAndRefinery();
@@ -625,6 +626,53 @@ public sealed class BuildingResourceProductionEcsSystemTests
 
         Assert.AreEqual(2f, building.StoredOilBarrels);
         Assert.AreEqual(2f, recordedOil);
+    }
+
+    [Test]
+    public void ProductionTickSync_PreservesLiveEcsFuelWhenManagedMirrorIsStale()
+    {
+        var world = new World(nameof(ProductionTickSync_PreservesLiveEcsFuelWhenManagedMirrorIsStale));
+        try
+        {
+            EntityManager em = world.EntityManager;
+            Entity storageEntity = em.CreateEntity(typeof(BuildingResourceStorageComponent));
+            em.SetComponentData(storageEntity, new BuildingResourceStorageComponent
+            {
+                RuntimeBuildingId = 12,
+                OwnerFactionId = FactionIdentity.PlayerFactionId,
+                FuelStorageCapacity = 100,
+                StoredOilBarrels = 3f,
+                StoredFuelBarrels = 42f,
+                Version = 7u
+            });
+            var building = new RuntimeBuildingEntity
+            {
+                Id = 12,
+                HasOwnerFaction = true,
+                OwnerFactionId = FactionIdentity.PlayerFactionId,
+                CombatEntity = storageEntity,
+                StoredOilBarrels = 0f,
+                StoredFuelBarrels = 0f,
+                Definition = new BuildingDefinition
+                {
+                    FuelStorageCapacity = 100
+                }
+            };
+
+            BuildingProductionTickCompositionSystemHelper.SyncBuildingResourceStorageFromEcs(em, building);
+
+            BuildingResourceStorageComponent storageAfter =
+                em.GetComponentData<BuildingResourceStorageComponent>(storageEntity);
+            Assert.AreEqual(3f, storageAfter.StoredOilBarrels);
+            Assert.AreEqual(42f, storageAfter.StoredFuelBarrels);
+            Assert.AreEqual(7u, storageAfter.Version);
+            Assert.AreEqual(3f, building.StoredOilBarrels);
+            Assert.AreEqual(42f, building.StoredFuelBarrels);
+        }
+        finally
+        {
+            world.Dispose();
+        }
     }
 
     [Test]

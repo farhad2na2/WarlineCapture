@@ -12,6 +12,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Game.UI.Contracts;
+using Game.UI.Shell.Ecs;
 using Game.UI.Shell.Contracts.Ecs;
 using Game.Components;
 using Game.Configs;
@@ -35,6 +36,7 @@ namespace Game.Editor
         private const string RequireBaselineMetricsKey = "MatchRuntimeShellSmokeValidation.RequireBaselineMetrics";
         private const string RequirePerformanceRegressionReportKey = "MatchRuntimeShellSmokeValidation.RequirePerformanceRegressionReport";
         private const string RequireInitialBuildingSmokeKey = "MatchRuntimeShellSmokeValidation.RequireInitialBuildingSmoke";
+        private const string RequireFuelReadinessKey = "MatchRuntimeShellSmokeValidation.RequireFuelReadiness";
         private const string InitialBuildingImmediateStatusKey = "MatchRuntimeShellSmokeValidation.InitialBuildingImmediateStatus";
         private const string FrameDiagKey = "MatchRuntimeShellSmokeValidation.FrameDiag";
         private const string ReadyAtKey = "MatchRuntimeShellSmokeValidation.ReadyAt";
@@ -53,6 +55,7 @@ namespace Game.Editor
         private const double StableFrameDiagObservationSeconds = 4d;
         private const double BaselineMetricsObservationSeconds = 4d;
         private const double InitialBuildingPostAiObservationSeconds = 10d;
+        private const double FuelReadinessObservationSeconds = 8d;
         private const int BaselineMetricsFrameTarget = 180;
         private const string AirLauncherConfigPath = "Assets/Game/Configs/Weapons/AirMissileLauncher_Air_Config.asset";
 
@@ -65,7 +68,8 @@ namespace Game.Editor
             WaitingForFrameDiag = 4,
             WaitingForAirMissileSmoke = 5,
             WaitingForBaselineMetrics = 6,
-            WaitingForInitialBuildingPostAi = 7
+            WaitingForInitialBuildingPostAi = 7,
+            WaitingForFuelReadiness = 8
         }
 
         private static Entity _airSmokeLauncher = Entity.Null;
@@ -126,6 +130,17 @@ namespace Game.Editor
                 requireInitialBuildingSmoke: true);
         }
 
+        public static void RunFuelReadiness()
+        {
+            RunInternal(
+                requireFrameDiag: false,
+                requireAirMissileSmoke: false,
+                requireBaselineMetrics: false,
+                requirePerformanceRegressionReport: false,
+                requireInitialBuildingSmoke: false,
+                requireFuelReadiness: true);
+        }
+
         private static void RunInternal(bool requireFrameDiag)
         {
             RunInternal(requireFrameDiag, requireAirMissileSmoke: false, requireBaselineMetrics: false);
@@ -160,7 +175,8 @@ namespace Game.Editor
             bool requireAirMissileSmoke,
             bool requireBaselineMetrics,
             bool requirePerformanceRegressionReport,
-            bool requireInitialBuildingSmoke)
+            bool requireInitialBuildingSmoke,
+            bool requireFuelReadiness = false)
         {
             try
             {
@@ -175,6 +191,7 @@ namespace Game.Editor
                 SessionState.SetBool(RequireBaselineMetricsKey, requireBaselineMetrics);
                 SessionState.SetBool(RequirePerformanceRegressionReportKey, requirePerformanceRegressionReport);
                 SessionState.SetBool(RequireInitialBuildingSmokeKey, requireInitialBuildingSmoke);
+                SessionState.SetBool(RequireFuelReadinessKey, requireFuelReadiness);
                 SessionState.EraseString(FrameDiagKey);
                 SessionState.EraseString(InitialBuildingImmediateStatusKey);
                 SessionState.EraseFloat(ReadyAtKey);
@@ -353,6 +370,38 @@ namespace Game.Editor
                 return;
             }
 
+            if (phase == Phase.WaitingForFuelReadiness)
+            {
+                bool passed = ValidateFuelReadiness(out string fuelStatus);
+                if (passed)
+                {
+                    Finish(true, fuelStatus);
+                    return;
+                }
+
+                int fuelErrorCount = SessionState.GetInt(ErrorCountKey, 0);
+                if (fuelErrorCount > 0)
+                {
+                    Finish(false, $"Fuel readiness logged {fuelErrorCount} runtime error(s). {fuelStatus}");
+                    return;
+                }
+
+                float readyAt = SessionState.GetFloat(ReadyAtKey, 0f);
+                if (readyAt <= 0f)
+                {
+                    SessionState.SetFloat(ReadyAtKey, (float)EditorApplication.timeSinceStartup);
+                    return;
+                }
+
+                if (EditorApplication.timeSinceStartup - readyAt >= FuelReadinessObservationSeconds)
+                {
+                    Finish(false, fuelStatus);
+                    return;
+                }
+
+                return;
+            }
+
             if (phase != Phase.WaitingForMatchReady)
                 return;
 
@@ -408,7 +457,234 @@ namespace Game.Editor
                 return;
             }
 
+            if (SessionState.GetBool(RequireFuelReadinessKey, false))
+            {
+                Debug.Log($"[MatchRuntimeShellSmokeValidation] runtimeReady checkingFuelReadiness {status}");
+                SessionState.SetFloat(ReadyAtKey, (float)EditorApplication.timeSinceStartup);
+                SessionState.SetInt(PhaseKey, (int)Phase.WaitingForFuelReadiness);
+                return;
+            }
+
             Finish(true, status);
+        }
+
+        private static bool ValidateFuelReadiness(out string status)
+        {
+            status = "[MatchFuelReadiness] result=Failed world=missing";
+            World world = World.DefaultGameObjectInjectionWorld;
+            if (world == null || !world.IsCreated)
+                return false;
+
+            EntityManager em = world.EntityManager;
+            int configuredInitialFuel = LoadConfiguredInitialFuel();
+            int pendingFuelSeedCount = CountEntities<InitialUsableFuelStorageSeedPending>(em);
+            CapturePlayerUsableFuelStorage(
+                em,
+                out int playerUsableStorageCount,
+                out int playerFuelStorageCapacity,
+                out float playerStoredFuel,
+                out float playerReservedFuel,
+                out uint playerStorageVersion);
+            CapturePlayerUsableFuelSummary(
+                em,
+                out bool hasUsableFuelSummaryBuffer,
+                out bool hasPlayerUsableFuelSummary,
+                out int usableFuelSummaryCount,
+                out float summaryStoredFuel,
+                out int summaryFuelCapacity,
+                out uint summaryVersion);
+
+            bool headerRead = UiShellEcsGateway.TryReadMatchHudHeader(out UiMatchHudHeaderModel header);
+            int headerFuel = headerRead ? ParsePositiveIntText(header.FuelText) : 0;
+            bool moveAccepted = TryValidateSyntheticFuelMove(em, out string moveStatus);
+
+            bool expectsFuel = configuredInitialFuel > 0;
+            bool passed =
+                (!expectsFuel || playerStoredFuel > 0.5f) &&
+                (!expectsFuel || headerFuel > 0) &&
+                (!expectsFuel || moveAccepted);
+            status =
+                "[MatchFuelReadiness] " +
+                $"result={(passed ? "Passed" : "Failed")} " +
+                $"configuredInitialFuel={configuredInitialFuel} pendingFuelSeeds={pendingFuelSeedCount} " +
+                $"playerUsableStorageCount={playerUsableStorageCount} playerFuelCapacity={playerFuelStorageCapacity} " +
+                $"playerStoredFuel={playerStoredFuel.ToString("0.###", CultureInfo.InvariantCulture)} " +
+                $"playerReservedFuel={playerReservedFuel.ToString("0.###", CultureInfo.InvariantCulture)} " +
+                $"playerStorageVersion={playerStorageVersion} " +
+                $"summaryBuffer={(hasUsableFuelSummaryBuffer ? 1 : 0)} summaryEntries={usableFuelSummaryCount} " +
+                $"playerSummary={(hasPlayerUsableFuelSummary ? 1 : 0)} " +
+                $"summaryFuel={summaryStoredFuel.ToString("0.###", CultureInfo.InvariantCulture)} " +
+                $"summaryFuelCapacity={summaryFuelCapacity} summaryVersion={summaryVersion} " +
+                $"headerRead={(headerRead ? 1 : 0)} headerFuelText='{header.FuelText}' headerFuel={headerFuel} " +
+                moveStatus;
+            return passed;
+        }
+
+        private static int LoadConfiguredInitialFuel()
+        {
+            InitialUnitsSpawnerAuthoringConfig config =
+                AssetDatabase.LoadAssetAtPath<InitialUnitsSpawnerAuthoringConfig>(InitialUnitsConfigPath);
+            return config != null ? config.InitialFuel : 0;
+        }
+
+        private static int CountEntities<T>(EntityManager em)
+            where T : unmanaged, IComponentData
+        {
+            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<T>());
+            return query.CalculateEntityCount();
+        }
+
+        private static void CapturePlayerUsableFuelStorage(
+            EntityManager em,
+            out int count,
+            out int capacity,
+            out float storedFuel,
+            out float reservedFuel,
+            out uint version)
+        {
+            count = 0;
+            capacity = 0;
+            storedFuel = 0f;
+            reservedFuel = 0f;
+            version = 0u;
+            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingResourceStorageComponent>());
+            if (query.IsEmptyIgnoreFilter)
+                return;
+
+            using NativeArray<BuildingResourceStorageComponent> storages =
+                query.ToComponentDataArray<BuildingResourceStorageComponent>(Allocator.Temp);
+            for (int i = 0; i < storages.Length; i++)
+            {
+                BuildingResourceStorageComponent storage = storages[i];
+                if (!IsPlayerUsableFuelStorage(storage))
+                    continue;
+
+                count++;
+                capacity += Math.Max(0, storage.FuelStorageCapacity);
+                storedFuel += Math.Max(0f, storage.StoredFuelBarrels);
+                reservedFuel += Math.Max(0f, storage.ReservedFuelOutboundBarrels);
+                version = CombineValidationVersion(version, storage.Version);
+            }
+        }
+
+        private static bool IsPlayerUsableFuelStorage(in BuildingResourceStorageComponent storage)
+        {
+            return FactionIdentity.IsPlayerControlled(storage.OwnerFactionId) &&
+                   storage.FuelStorageCapacity > 0 &&
+                   storage.FuelBarrelsPerDay <= 0f &&
+                   storage.OilBarrelsPerDay <= 0f;
+        }
+
+        private static void CapturePlayerUsableFuelSummary(
+            EntityManager em,
+            out bool hasBuffer,
+            out bool hasPlayerSummary,
+            out int entryCount,
+            out float storedFuel,
+            out int fuelCapacity,
+            out uint version)
+        {
+            hasBuffer = false;
+            hasPlayerSummary = false;
+            entryCount = 0;
+            storedFuel = 0f;
+            fuelCapacity = 0;
+            version = 0u;
+            using EntityQuery boundaryQuery = em.CreateEntityQuery(ComponentType.ReadOnly<UiShellRootComponent>());
+            if (boundaryQuery.IsEmptyIgnoreFilter)
+                return;
+
+            using NativeArray<Entity> boundaries = boundaryQuery.ToEntityArray(Allocator.Temp);
+            for (int boundaryIndex = 0; boundaryIndex < boundaries.Length; boundaryIndex++)
+            {
+                Entity boundary = boundaries[boundaryIndex];
+                if (!em.HasBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundary))
+                    continue;
+
+                hasBuffer = true;
+                DynamicBuffer<BuildingRuntimeFactionUsableFuelSummary> summaries =
+                    em.GetBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundary, true);
+                entryCount += summaries.Length;
+                for (int i = 0; i < summaries.Length; i++)
+                {
+                    BuildingRuntimeFactionUsableFuelSummary summary = summaries[i];
+                    if (!FactionIdentity.IsPlayerControlled(summary.FactionId))
+                        continue;
+
+                    hasPlayerSummary = true;
+                    storedFuel += Math.Max(0f, summary.StoredFuelBarrels);
+                    fuelCapacity += Math.Max(0, summary.FuelStorageCapacity);
+                    version = CombineValidationVersion(version, summary.Version);
+                }
+            }
+        }
+
+        private static bool TryValidateSyntheticFuelMove(EntityManager em, out string status)
+        {
+            Entity testUnit = em.CreateEntity(
+                typeof(UnitGrid),
+                typeof(Faction),
+                typeof(UnitMovementBehavior),
+                typeof(UnitFuelConsumption),
+                typeof(UnitFuelConsumptionState));
+            try
+            {
+                em.SetComponentData(testUnit, new UnitGrid { Cell = new int2(4, 4) });
+                em.SetComponentData(testUnit, new Faction { Id = FactionIdentity.PlayerFactionId });
+                em.SetComponentData(testUnit, new UnitMovementBehavior { UsesVehicleMotion = 1 });
+                em.SetComponentData(testUnit, new UnitFuelConsumption
+                {
+                    Enabled = 1,
+                    GroundFuelPerCell = 1f,
+                    AirFuelPerCell = 1f
+                });
+                em.SetComponentData(testUnit, new UnitFuelConsumptionState());
+                int requestId = UnitMoveOrderRequestSystem.EnqueueGroupedManualMoveOrder(
+                    em,
+                    testUnit,
+                    new int2(5, 4),
+                    issueGroundPathNow: false,
+                    useGroundPathRetryCooldown: false,
+                    resumeFrame: 0,
+                    currentFrame: Time.frameCount);
+                UnitMoveOrderRequestSystem.ProcessPendingRequests(em);
+                bool found = UnitMoveOrderRequestSystem.TryGetResult(em, requestId, out UnitMoveOrderResultElement result);
+                status =
+                    $"syntheticMoveResult={(found ? 1 : 0)} syntheticMoveIssued={(found && result.Issued != 0 ? 1 : 0)} " +
+                    $"syntheticMoveReject={result.RejectionReasonCode}";
+                return found && result.Issued != 0;
+            }
+            finally
+            {
+                if (em.Exists(testUnit))
+                    em.DestroyEntity(testUnit);
+            }
+        }
+
+        private static int ParsePositiveIntText(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return 0;
+
+            int result = 0;
+            for (int i = 0; i < value.Length; i++)
+            {
+                char c = value[i];
+                if (c < '0' || c > '9')
+                    continue;
+
+                result = checked((result * 10) + (c - '0'));
+            }
+
+            return result;
+        }
+
+        private static uint CombineValidationVersion(uint current, uint value)
+        {
+            unchecked
+            {
+                return (current * 16777619u) ^ value;
+            }
         }
 
         private static bool TryEnqueueMatchRoute(out string error)
@@ -1872,6 +2148,7 @@ namespace Game.Editor
             SessionState.EraseBool(RequireBaselineMetricsKey);
             SessionState.EraseBool(RequirePerformanceRegressionReportKey);
             SessionState.EraseBool(RequireInitialBuildingSmokeKey);
+            SessionState.EraseBool(RequireFuelReadinessKey);
             SessionState.EraseString(FrameDiagKey);
             SessionState.EraseString(InitialBuildingImmediateStatusKey);
             SessionState.EraseFloat(ReadyAtKey);

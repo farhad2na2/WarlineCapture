@@ -40,9 +40,7 @@ MonoBehaviour:
     - prefab: {fileID: 8579631638336695248, guid: e9015a8d3f0294ca6ac7bf8614ac2e7e, type: 3}
       count: 1
       spawnOffset: {x: 36, y: -42}
-    buildings:
-    - prefab: {fileID: 3689421368615084249, guid: 37ac92ce4e0e7473891bdb9b135724f2, type: 3}
-      originOffset: {x: -30, y: 55}
+    buildings: []
   - factionId: 2
     spawnCell: {x: 150, y: 50}
     units:
@@ -55,9 +53,7 @@ MonoBehaviour:
     - prefab: {fileID: 8579631638336695248, guid: e9015a8d3f0294ca6ac7bf8614ac2e7e, type: 3}
       count: 1
       spawnOffset: {x: 36, y: -42}
-    buildings:
-    - prefab: {fileID: 3297871969661906962, guid: 772ca690e3298408b98dffdf84c31019, type: 3}
-      originOffset: {x: 0, y: 0}
+    buildings: []
   blockerCount: 0
   spawnRadiusCells: 10
   respawnDelaySeconds: 1

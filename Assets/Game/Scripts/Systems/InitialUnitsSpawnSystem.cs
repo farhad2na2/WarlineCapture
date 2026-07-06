@@ -29,6 +29,7 @@ namespace Game.Runtime
         private EntityQuery _activeConfigQuery;
         private EntityQuery _pendingInitQuery;
         private EntityQuery _progressQuery;
+        private EntityQuery _pendingFuelSeedQuery;
         private InitialUnitSpawnApplySystem _unitSpawnApplySystem;
         private InitialUnitSpawnResetSystem _unitSpawnResetSystem;
         private InitialSpawnDiagnosticLogWriter _diagnosticLogWriter;
@@ -152,17 +153,24 @@ namespace Game.Runtime
                 }
             });
 
+            _pendingFuelSeedQuery = state.GetEntityQuery(ComponentType.ReadOnly<InitialUsableFuelStorageSeedPending>());
+
             _diagnosticLogWriter.EnsureQueue(state.EntityManager);
             _progressEntityType = state.GetEntityTypeHandle();
             state.RequireForUpdate(_buildingRuntimeBoundaryQuery);
             state.RequireForUpdate(_gridContextQuery);
-            state.RequireForUpdate(_activeConfigQuery);
             state.RequireForUpdate<DynamicOccupancyComponent>();
             state.RequireForUpdate<RuntimeGameplayStateComponent>();
         }
 
         public void OnUpdate(ref SystemState state)
         {
+            if (_activeConfigQuery.IsEmptyIgnoreFilter &&
+                _pendingFuelSeedQuery.IsEmptyIgnoreFilter)
+            {
+                return;
+            }
+
             double startTime = BeginInitialSpawnFrame();
             int spawnedUnitsForLog = 0;
             int spawnedBlockersForLog = 0;
@@ -174,6 +182,8 @@ namespace Game.Runtime
             var queueEntity = RespawnQueueUtility.GetOrCreateQueue(ref state);
             var em = state.EntityManager;
             Entity boundaryEntity = startupGate.BoundaryEntity;
+
+            ProcessPendingInitialFuelStorageSeeds(em, _pendingFuelSeedQuery);
 
             InitializeInitialSpawnProgress(em, _pendingInitQuery);
 
@@ -268,7 +278,7 @@ namespace Game.Runtime
                     em.SetComponentData(entity, progress);
                 }
 
-                if (progress.InitialFuelStorageApplied == 0 && CanApplyInitialFuelStorage(em, entity, config, progress))
+                if (progress.InitialFuelStorageApplied == 0 && CanApplyInitialFuelStorage(em, config))
                 {
                     if (TryApplyInitialUsableFuelStorage(em, config.InitialFuel, out _))
                     {
@@ -915,6 +925,29 @@ namespace Game.Runtime
             return true;
         }
 
+        internal static void ProcessPendingInitialFuelStorageSeeds(EntityManager em, EntityQuery pendingFuelSeedQuery)
+        {
+            if (pendingFuelSeedQuery.IsEmptyIgnoreFilter)
+                return;
+
+            using NativeArray<Entity> entities = pendingFuelSeedQuery.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity entity = entities[i];
+                if (!em.Exists(entity) ||
+                    !em.HasComponent<InitialUsableFuelStorageSeedPending>(entity))
+                {
+                    continue;
+                }
+
+                InitialUsableFuelStorageSeedPending pending = em.GetComponentData<InitialUsableFuelStorageSeedPending>(entity);
+                if (!TryApplyInitialUsableFuelStorage(em, pending.InitialFuel, out _))
+                    continue;
+
+                em.RemoveComponent<InitialUsableFuelStorageSeedPending>(entity);
+            }
+        }
+
         private static bool HasInitialUsablePlayerFuelStorage(EntityManager em)
         {
             using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingResourceStorageComponent>());
@@ -937,15 +970,10 @@ namespace Game.Runtime
             return false;
         }
 
-        private static bool CanApplyInitialFuelStorage(
-            EntityManager em,
-            Entity configEntity,
-            InitialUnitsSpawnConfig config,
-            InitialUnitsSpawnProgress progress)
+        internal static bool CanApplyInitialFuelStorage(EntityManager em, InitialUnitsSpawnConfig config)
         {
             return config.InitialFuel <= 0 ||
-                   progress.InitialBuildingsSpawned != 0 ||
-                   !RequiresInitialBuildingCompletion(em, configEntity, config);
+                   HasInitialUsablePlayerFuelStorage(em);
         }
 
         private static bool IsInitialUsablePlayerFuelStorage(in BuildingResourceStorageComponent storage)
@@ -1598,6 +1626,16 @@ namespace Game.Runtime
                 canCompleteInitialSpawn &&
                 allBlockersSpawned)
             {
+                if (config.InitialFuel > 0 &&
+                    progress.InitialFuelStorageApplied == 0 &&
+                    !em.HasComponent<InitialUsableFuelStorageSeedPending>(configEntity))
+                {
+                    ecb.AddComponent(configEntity, new InitialUsableFuelStorageSeedPending
+                    {
+                        InitialFuel = config.InitialFuel
+                    });
+                }
+
                 ecb.AddComponent<InitialUnitsSpawnInitialized>(configEntity);
                 ecb.RemoveComponent<InitialUnitsSpawnProgress>(configEntity);
                 ecb.RemoveComponent<InitialUnitsFactionUnitSpawnProgress>(configEntity);
@@ -1613,9 +1651,8 @@ namespace Game.Runtime
             InitialUnitsSpawnConfig config,
             InitialUnitsSpawnProgress progress)
         {
-            return (progress.InitialBuildingsSpawned != 0 ||
-                    !RequiresInitialBuildingCompletion(em, configEntity, config)) &&
-                   progress.InitialFuelStorageApplied != 0;
+            return progress.InitialBuildingsSpawned != 0 ||
+                   !RequiresInitialBuildingCompletion(em, configEntity, config);
         }
 
         private static bool RequiresInitialBuildingCompletion(EntityManager em, Entity configEntity, InitialUnitsSpawnConfig config)

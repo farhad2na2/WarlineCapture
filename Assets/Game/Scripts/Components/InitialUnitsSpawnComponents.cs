@@ -67,6 +67,11 @@ namespace Game.Components
         public int InitialBuildingCompletionWaitFrames;
     }
 
+    public struct InitialUsableFuelStorageSeedPending : IComponentData
+    {
+        public int InitialFuel;
+    }
+
     public struct InitialUnitsBlockerChurnConfig : IComponentData
     {
         public bool Enabled;

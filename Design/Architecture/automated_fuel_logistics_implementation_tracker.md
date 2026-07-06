@@ -1170,3 +1170,19 @@ Use this section during implementation. Each completed batch should add:
   - After rebasing on remote `main`, reran `Tools/CI/invoke_unity_macos.sh --timeout 300 --log /private/tmp/warline-initial-fuel-storage-wait-validation-rebased.log -- -quit -executeMethod InitialUnitsSpawnFocusedTests.RunResourceBuildingSourceKeyBatchValidation`; it passed with `[InitialUnitsSpawnFocusedValidation] result=Passed group=ResourceBuildingSourceKey methods=10`.
 - Next action:
   - Test in the Match scene: the transport plane and other fuel-consuming vehicles should start with a large usable Fuel pool and should no longer immediately show the no-Fuel move rejection.
+- Slice: match loading gate fuel seed follow-up.
+- Files changed: `Assets/Game/Configs/Scene/MatchSubScene_InitialUnitsSpawner_Config.asset`, `Assets/Game/Scripts/Components/InitialUnitsSpawnComponents.cs`, `Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs`, `Assets/Tests/Editor/InitialUnitsSpawnFocusedTests.cs`, and this tracker.
+- Behavior intent:
+  - Investigated the editor log after Match failed to become playable. The project log showed repeated `[LoadingGate] waiting ... initialSpawn=configs:1,initialized:0,progress:1` and `[InitialSpawn] waiting initial building completion ... configuredBuildings=2` messages.
+  - Removed duplicate startup `Building_Airport` and `Tent_Regular` initial-building requests from `MatchSubScene_InitialUnitsSpawner_Config.asset`; those buildings are map-authored through `Match_MapBuildingPlacement_Config.asset` and should not block unit startup.
+  - Changed configured initial Fuel from a hard loading-gate prerequisite into a deferred ECS seed. If usable storage is not available when initial spawn completes, the config entity receives `InitialUsableFuelStorageSeedPending` and the initial-spawn system fills storage when it appears.
+  - This preserves the usable Fuel storage source of truth while preventing Match load from waiting forever for storage that only appears after startup opens.
+- Validation:
+  - `dotnet build Assembly-CSharp.csproj --no-restore` passed.
+  - `dotnet build Assembly-CSharp-Editor.csproj --no-restore` passed.
+  - `git diff --check` passed.
+  - `Tools/CI/invoke_unity_macos.sh --timeout 300 --log /private/tmp/warline-initial-fuel-gate-resource-3.log -- -quit -executeMethod InitialUnitsSpawnFocusedTests.RunResourceBuildingSourceKeyBatchValidation` passed with `[InitialUnitsSpawnFocusedValidation] result=Passed group=ResourceBuildingSourceKey methods=11`.
+  - `Tools/CI/invoke_unity_macos.sh --timeout 300 --log /private/tmp/warline-initial-fuel-gate-progress-3.log -- -quit -executeMethod InitialUnitsSpawnFocusedTests.RunSpawnProgressCompletionBatchValidation` passed with `[InitialUnitsSpawnFocusedValidation] result=Passed group=SpawnProgressCompletion methods=8`.
+  - `Tools/CI/invoke_unity_macos.sh --timeout 420 --log /private/tmp/warline-match-load-fuel-gate-smoke-3.log -- -executeMethod Game.Editor.MatchRuntimeShellSmokeValidation.Run` passed with `[LoadingGate] ready frame=5497 gameplayInitialized=1 playRequested=1 simulationActive=1` and `[MatchRuntimeShellSmokeValidation] result=Passed mode=MatchHud route=Match phase=MatchHudReady transition=0 playRequested=1 matchIntro=Complete inputLocked=0 matchSceneLoaded=1 hudLoaded=1 curtainHidden=1`.
+- Next action:
+  - In editor play mode, load Match and confirm the HUD reaches Match ready. Once the map-authored Fuel Bladders/storage are available, the pending initial Fuel seed should fill the player usable Fuel pool for long transport-plane movement tests.

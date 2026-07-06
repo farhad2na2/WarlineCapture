@@ -18,6 +18,7 @@ public sealed class InitialUnitsSpawnFocusedTests
             nameof(InitialUnitsSpawnSystem_AppliesConfiguredInitialFuelToPlayerUsableStorage),
             nameof(InitialUnitsSpawnSystem_ClampsConfiguredInitialFuelToPlayerUsableStorageCapacity),
             nameof(InitialUnitsSpawnSystem_DoesNotMarkConfiguredInitialFuelAppliedBeforeStorageExists),
+            nameof(InitialUnitsSpawnSystem_AllowsConfiguredInitialFuelBeforeInitialBuildingsComplete),
             nameof(InitialUnitsSpawnSystem_QueuesConfiguredRuntimeSpawnRequestFromReadModel),
             nameof(InitialUnitsSpawnSystem_QueuesConfiguredKeyOnlyRuntimeSpawnRequestFromLegacyConfig),
             nameof(InitialUnitsSpawnSystem_QueuesFactionBaseRuntimeSpawnRequests),
@@ -60,7 +61,9 @@ public sealed class InitialUnitsSpawnFocusedTests
             nameof(InitialUnitsSpawnSystem_RejectsReservedFootprint),
             nameof(InitialUnitsSpawnSystem_ResolvesConfiguredHelipadSlot),
             nameof(InitialUnitsSpawnSystem_PreservesBlockerProgressIncrement),
-            nameof(InitialUnitsSpawnSystem_WaitsForInitialBuildingCompletionWithoutFailOpen)
+            nameof(InitialUnitsSpawnSystem_WaitsForInitialBuildingCompletionWithoutFailOpen),
+            nameof(InitialUnitsSpawnSystem_QueuesPendingFuelSeedWhenStorageIsUnavailableAtCompletion),
+            nameof(InitialUnitsSpawnSystem_AppliesPendingFuelSeedWhenStorageAppears)
         };
 
         try
@@ -171,6 +174,23 @@ public sealed class InitialUnitsSpawnFocusedTests
         Assert.IsTrue(appliedWithStorage);
         Assert.AreEqual(10000f, addedWithStorage, 0.001f);
         Assert.AreEqual(10000f, em.GetComponentData<BuildingResourceStorageComponent>(storage).StoredFuelBarrels, 0.001f);
+    }
+
+    [Test]
+    public void InitialUnitsSpawnSystem_AllowsConfiguredInitialFuelBeforeInitialBuildingsComplete()
+    {
+        using var world = new World("InitialUnitsSpawnFuelStorageBeforeBuildingsTest");
+        EntityManager em = world.EntityManager;
+        CreateFuelStorage(em, FactionIdentity.PlayerFactionId, capacity: 10000, storedFuel: 0f);
+
+        bool canApply = InitialUnitsSpawnSystem.CanApplyInitialFuelStorage(
+            em,
+            new InitialUnitsSpawnConfig
+            {
+                InitialFuel = 10000
+            });
+
+        Assert.IsTrue(canApply);
     }
 
     [Test]
@@ -871,6 +891,69 @@ public sealed class InitialUnitsSpawnFocusedTests
         {
             ecb.Dispose();
         }
+    }
+
+    [Test]
+    public void InitialUnitsSpawnSystem_QueuesPendingFuelSeedWhenStorageIsUnavailableAtCompletion()
+    {
+        using var world = new World("InitialUnitsSpawnPendingFuelCompletionTest");
+        EntityManager em = world.EntityManager;
+        Entity configEntity = em.CreateEntity(typeof(InitialUnitsSpawnConfig), typeof(InitialUnitsSpawnProgress));
+        em.SetComponentData(configEntity, new InitialUnitsSpawnConfig { InitialFuel = 10000 });
+        em.SetComponentData(configEntity, new InitialUnitsSpawnProgress { InitialBuildingsSpawned = 1 });
+        em.AddBuffer<InitialUnitsFactionUnitSpawnProgress>(configEntity);
+
+        var diagnosticLogWriter = new InitialUnitsSpawnSystem.InitialSpawnDiagnosticLogWriter();
+        diagnosticLogWriter.EnsureQueue(em);
+        var ecb = new EntityCommandBuffer(Allocator.Temp);
+        InitialUnitsSpawnProgress progress = em.GetComponentData<InitialUnitsSpawnProgress>(configEntity);
+        try
+        {
+            bool completed = InitialUnitsSpawnSystem.UpdateInitialSpawnCompletion(
+                em,
+                ecb,
+                configEntity,
+                new InitialUnitsSpawnConfig { InitialFuel = 10000 },
+                ref progress,
+                allUnitsSpawned: true,
+                allBlockersSpawned: true,
+                maxInitialBuildingCompletionWaitFrames: 2,
+                ref diagnosticLogWriter,
+                out bool progressChanged);
+
+            Assert.IsTrue(completed);
+            Assert.IsFalse(progressChanged);
+
+            ecb.Playback(em);
+            Assert.IsTrue(em.HasComponent<InitialUnitsSpawnInitialized>(configEntity));
+            Assert.IsFalse(em.HasComponent<InitialUnitsSpawnProgress>(configEntity));
+            Assert.IsFalse(em.HasBuffer<InitialUnitsFactionUnitSpawnProgress>(configEntity));
+            Assert.IsTrue(em.HasComponent<InitialUsableFuelStorageSeedPending>(configEntity));
+            Assert.AreEqual(10000, em.GetComponentData<InitialUsableFuelStorageSeedPending>(configEntity).InitialFuel);
+        }
+        finally
+        {
+            ecb.Dispose();
+        }
+    }
+
+    [Test]
+    public void InitialUnitsSpawnSystem_AppliesPendingFuelSeedWhenStorageAppears()
+    {
+        using var world = new World("InitialUnitsSpawnPendingFuelApplyTest");
+        EntityManager em = world.EntityManager;
+        Entity configEntity = em.CreateEntity(typeof(InitialUsableFuelStorageSeedPending));
+        em.SetComponentData(configEntity, new InitialUsableFuelStorageSeedPending { InitialFuel = 10000 });
+        using EntityQuery pendingFuelQuery = em.CreateEntityQuery(ComponentType.ReadOnly<InitialUsableFuelStorageSeedPending>());
+
+        InitialUnitsSpawnSystem.ProcessPendingInitialFuelStorageSeeds(em, pendingFuelQuery);
+        Assert.IsTrue(em.HasComponent<InitialUsableFuelStorageSeedPending>(configEntity));
+
+        Entity storage = CreateFuelStorage(em, FactionIdentity.PlayerFactionId, capacity: 10000, storedFuel: 0f);
+        InitialUnitsSpawnSystem.ProcessPendingInitialFuelStorageSeeds(em, pendingFuelQuery);
+
+        Assert.IsFalse(em.HasComponent<InitialUsableFuelStorageSeedPending>(configEntity));
+        Assert.AreEqual(10000f, em.GetComponentData<BuildingResourceStorageComponent>(storage).StoredFuelBarrels, 0.001f);
     }
 
     private static Entity CreateFuelStorage(

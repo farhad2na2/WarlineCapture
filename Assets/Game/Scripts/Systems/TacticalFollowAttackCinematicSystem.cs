@@ -75,6 +75,10 @@ namespace Game.Runtime
             UnitAttackVfxRequest selectedRequest = default;
             float3 launchPosition = default;
             float3 impactPosition = default;
+            UnityObjectRef<GameObject> launchVfxPrefab = default;
+            UnityObjectRef<GameObject> impactVfxPrefab = default;
+            quaternion launchVfxRotation = quaternion.identity;
+            quaternion impactVfxRotation = quaternion.identity;
             foreach (RefRO<UnitAttackVfxRequest> requestRef in SystemAPI.Query<RefRO<UnitAttackVfxRequest>>())
             {
                 UnitAttackVfxRequest request = requestRef.ValueRO;
@@ -95,6 +99,16 @@ namespace Game.Runtime
                         : request.SourcePosition;
                     impactPosition = ResolveImpactPosition(request);
                     hasLaunch = kind == UnitAttackVfxRequestKind.MuzzleFlash;
+                    if (kind == UnitAttackVfxRequestKind.MuzzleFlash)
+                    {
+                        launchVfxPrefab = request.Prefab;
+                        launchVfxRotation = request.PlaybackRotation;
+                    }
+                    else if (kind == UnitAttackVfxRequestKind.Impact)
+                    {
+                        impactVfxPrefab = request.Prefab;
+                        impactVfxRotation = request.PlaybackRotation;
+                    }
                     continue;
                 }
 
@@ -107,11 +121,15 @@ namespace Game.Runtime
                     launchPosition = math.lengthsq(request.PlaybackPosition) > 0.0001f
                         ? request.PlaybackPosition
                         : request.SourcePosition;
+                    launchVfxPrefab = request.Prefab;
+                    launchVfxRotation = request.PlaybackRotation;
                     hasLaunch = true;
                 }
                 else if (kind == UnitAttackVfxRequestKind.Impact)
                 {
                     impactPosition = ResolveImpactPosition(request);
+                    impactVfxPrefab = request.Prefab;
+                    impactVfxRotation = request.PlaybackRotation;
                     if (selectedRequest.Target == Entity.Null)
                         selectedRequest.Target = request.Target;
                 }
@@ -126,6 +144,10 @@ namespace Game.Runtime
                 launchPosition,
                 impactPosition,
                 impactPosition - launchPosition,
+                launchVfxPrefab,
+                impactVfxPrefab,
+                launchVfxRotation,
+                impactVfxRotation,
                 now,
                 cinematic.LastEndedElapsedTime);
 
@@ -186,10 +208,14 @@ namespace Game.Runtime
             }
 
             cinematic.ElapsedUnscaledSeconds += SystemAPI.Time.DeltaTime / divisor;
+            byte previousLaunchTriggered = cinematic.LaunchEventTriggered;
+            byte previousImpactTriggered = cinematic.ImpactEventTriggered;
             cinematic = TacticalFollowAttackCinematicHelper.EvaluateStateProgress(cinematic);
+            PlayTimelineVfx(cinematicEntity, cinematic, previousLaunchTriggered, previousImpactTriggered);
             if (TacticalFollowAttackCinematicHelper.IsFinished(cinematic.ElapsedUnscaledSeconds))
             {
                 RestoreTimeScale(ref cinematic);
+                TacticalFollowAttackCinematicVfxSystemHelper.ReleaseProjectile(cinematicEntity);
                 cinematic.Active = 0;
                 cinematic.HasEnded = 1;
                 cinematic.Completed = 1;
@@ -256,11 +282,35 @@ namespace Game.Runtime
             TacticalFollowAttackCinematicAbortReason reason)
         {
             RestoreTimeScale(ref cinematic);
+            TacticalFollowAttackCinematicVfxSystemHelper.ReleaseProjectile(cinematicEntity);
             cinematic.Active = 0;
             cinematic.HasEnded = 1;
             cinematic.AbortReason = reason;
             cinematic.LastEndedElapsedTime = now;
             em.SetComponentData(cinematicEntity, cinematic);
+        }
+
+        private static void PlayTimelineVfx(
+            Entity cinematicEntity,
+            TacticalFollowAttackCinematicStateComponent cinematic,
+            byte previousLaunchTriggered,
+            byte previousImpactTriggered)
+        {
+            if (previousLaunchTriggered == 0 &&
+                cinematic.LaunchEventTriggered != 0)
+            {
+                TacticalFollowAttackCinematicVfxSystemHelper.PlayLaunch(cinematic);
+            }
+
+            if (cinematic.ProjectileActive != 0)
+                TacticalFollowAttackCinematicVfxSystemHelper.SyncProjectile(cinematicEntity, cinematic);
+
+            if (previousImpactTriggered == 0 &&
+                cinematic.ImpactEventTriggered != 0)
+            {
+                TacticalFollowAttackCinematicVfxSystemHelper.ReleaseProjectile(cinematicEntity);
+                TacticalFollowAttackCinematicVfxSystemHelper.PlayImpact(cinematic);
+            }
         }
 
         private static void ApplyTimeScale(

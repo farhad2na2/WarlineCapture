@@ -83,7 +83,7 @@ The current implementation is not accepted because it is too close, too fast, fr
 
 ## Progress Summary
 
-Overall implementation progress: 35% (29/84 implementation checklist items complete).
+Overall implementation progress: 46% (39/84 implementation checklist items complete).
 
 Progress is checklist-based. Each implementation or validation checkbox below counts as one item. Documentation creation and index links are not counted as implementation progress.
 
@@ -92,10 +92,10 @@ Progress is checklist-based. Each implementation or validation checkbox below co
 | 0. Baseline and proof capture | In progress | 7 | 8 | 88% | User screenshots plus code inspection confirm current failure path; Unity reproduction still required. |
 | 1. ECS event and data contract | In progress | 8 | 10 | 80% | ECS state now owns typed attack kind, request start, projectile progress, launch/impact/flyover triggers, completion, and abort reason. |
 | 2. Timeline and phase sequencing | In progress | 8 | 10 | 80% | Timeline now has explicit Launch, MissilePath, Impact, and Flyover phases plus projectile progress beats. |
-| 3. Cinematic missile and impact VFX | Not started | 0 | 10 | 0% | Make launch, missile travel, and impact visible even when gameplay damage is instant. |
+| 3. Cinematic missile and impact VFX | In progress | 8 | 10 | 80% | ECS timeline now replays launch, missile trail, and impact VFX through existing pooled presentation views; Unity visual acceptance still open. |
 | 4. Shot solver and obstruction safety | Not started | 0 | 12 | 0% | Solve wide readable camera positions and prevent clipping. |
 | 5. Follow-camera/time-scale integration | Not started | 0 | 9 | 0% | Preserve normal follow camera ownership and restore time scale reliably. |
-| 6. Tests and architecture guardrails | In progress | 6 | 13 | 46% | Pure helper tests now cover phase, time-scale, launch, missile-path, impact, and flyover math. |
+| 6. Tests and architecture guardrails | In progress | 8 | 13 | 62% | Pure helper tests cover phase/shot math; runtime, editor, and editor-test assemblies compile for the VFX slice. |
 | 7. Unity visual validation | Not started | 0 | 8 | 0% | Validate in-editor with screenshots/logs, not only tests. |
 | 8. Rollout and documentation | Not started | 0 | 4 | 0% | Update docs and final acceptance notes after the feature works. |
 
@@ -232,20 +232,35 @@ Phase 2 notes, 2026-07-07:
 
 ## Phase 3: Cinematic Missile And Impact VFX
 
-- [ ] Inventory current missile/tracer and impact VFX prefabs/views available for jet attacks.
-- [ ] Decide whether to reuse existing `MissileTrailVfxView`, existing attack VFX, or add a narrow pooled cinematic VFX view.
-- [ ] Add a pooled VFX presentation boundary if existing VFX cannot replay launch/travel/impact on demand.
-- [ ] Spawn or activate a visible projectile/tracer at the launch beat.
-- [ ] Update projectile/tracer movement from ECS timeline data without per-frame allocation.
-- [ ] Trigger impact/explosion at the impact beat even if gameplay damage happened earlier.
+- [x] Inventory current missile/tracer and impact VFX prefabs/views available for jet attacks.
+- [x] Decide whether to reuse existing `MissileTrailVfxView`, existing attack VFX, or add a narrow pooled cinematic VFX view.
+- [x] Add a pooled VFX presentation boundary if existing VFX cannot replay launch/travel/impact on demand.
+- [x] Spawn or activate a visible projectile/tracer at the launch beat.
+- [x] Update projectile/tracer movement from ECS timeline data without per-frame allocation.
+- [x] Trigger impact/explosion at the impact beat even if gameplay damage happened earlier.
 - [ ] Ensure VFX playback works with slow motion or explicitly controls playback speed.
-- [ ] Return VFX instances to the pool on completion/abort.
-- [ ] Avoid GameObject instantiate/destroy during steady-state cinematic playback after warmup.
+- [x] Return VFX instances to the pool on completion/abort.
+- [x] Avoid GameObject instantiate/destroy during steady-state cinematic playback after warmup.
 - [ ] Add diagnostics gates for optional cinematic debug logging without per-frame string allocation.
 
 Exit criteria:
 
 - The cinematic can show launch, travel, and impact as visible events under camera control.
+
+Phase 3 notes, 2026-07-07:
+
+- Reused existing pooled presentation views:
+  - `MissileTrailVfxView` for cinematic projectile/tracer travel.
+  - `UnitAttackImpactVfxView` for launch and delayed impact/explosion playback.
+- Added narrow managed boundary `TacticalFollowAttackCinematicVfxSystemHelper` with approved `VfxSystemHelper` suffix. It has no lifecycle and no update loop; ECS state remains the timeline owner.
+- Extended `TacticalFollowAttackCinematicStateComponent` with captured launch/impact prefab references and rotations from the original `UnitAttackVfxRequest`.
+- `TacticalFollowAttackCinematicSystem` now triggers launch VFX at the launch event edge, updates missile trail position from ECS projectile data while active, releases the trail on impact/completion/abort, and replays impact VFX at the cinematic impact beat.
+- This slice does not yet solve camera readability, obstruction avoidance, or Unity visual acceptance. Those remain Phase 4 and Phase 7 work.
+- Validation:
+  - `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
+  - `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
+  - `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
+  - `git diff --check` passed.
 
 ## Phase 4: Shot Solver And Obstruction Safety
 
@@ -294,9 +309,9 @@ Exit criteria:
 - [ ] Add ECS-system tests for unfollowed attack requests being ignored.
 - [ ] Add ECS-system tests for retrigger cooldown.
 - [ ] Add ECS-system tests for abort/finish cleanup.
-- [ ] Run compile validation for runtime, editor, and tests.
+- [x] Run compile validation for runtime, editor, and tests.
 - [ ] Run architecture validation for naming, assembly boundaries, and Burst/hot-path classification.
-- [ ] Run `git diff --check`.
+- [x] Run `git diff --check`.
 
 Exit criteria:
 

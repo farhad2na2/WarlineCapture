@@ -44,6 +44,14 @@ namespace Game.Runtime
             _instance.ClearAllInternal();
         }
 
+        public static void Release(Entity projectile)
+        {
+            if (_instance == null)
+                return;
+
+            _instance.ReleaseInternal(projectile);
+        }
+
         private static void EnsureInstance()
         {
             if (_instance != null)
@@ -116,6 +124,19 @@ namespace Game.Runtime
 
             _active.Clear();
             _releaseScratch.Clear();
+        }
+
+        private void ReleaseInternal(Entity projectile)
+        {
+            if (!_active.TryGetValue(projectile, out TrailInstance trail) ||
+                trail.Releasing)
+            {
+                return;
+            }
+
+            trail.Releasing = true;
+            trail.ReleaseTime = Time.time + SmokeTrailSeconds;
+            SetEmitting(trail, false);
         }
 
         private TrailInstance GetOrCreateTrail()

@@ -225,6 +225,10 @@ public sealed class TacticalFollowAttackCinematicHelperTests
                 launchPosition,
                 impactPosition,
                 impactPosition - launchPosition,
+                default,
+                default,
+                quaternion.identity,
+                quaternion.identity,
                 requestedStartTime: 42f,
                 lastEndedElapsedTime: 7f);
 
@@ -255,6 +259,10 @@ public sealed class TacticalFollowAttackCinematicHelperTests
                 new float3(0f, 10f, 0f),
                 new float3(30f, 0f, 5f),
                 new float3(1f, 0f, 0.1f),
+                default,
+                default,
+                quaternion.identity,
+                quaternion.identity,
                 requestedStartTime: 0f,
                 lastEndedElapsedTime: 0f);
 

@@ -1,5 +1,6 @@
 using Unity.Entities;
 using Unity.Mathematics;
+using UnityEngine;
 
 namespace Game.Components
 {
@@ -124,6 +125,10 @@ namespace Game.Components
         public float ProjectileProgress;
         public float3 ProjectilePosition;
         public float3 ProjectileDirection;
+        public UnityObjectRef<GameObject> LaunchVfxPrefab;
+        public UnityObjectRef<GameObject> ImpactVfxPrefab;
+        public quaternion LaunchVfxRotation;
+        public quaternion ImpactVfxRotation;
         public byte LaunchEventTriggered;
         public byte ProjectileActive;
         public byte ImpactEventTriggered;

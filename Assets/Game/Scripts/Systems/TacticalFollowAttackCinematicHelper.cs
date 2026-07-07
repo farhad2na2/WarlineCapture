@@ -103,6 +103,10 @@ namespace Game.Runtime
             float3 launchPosition,
             float3 impactPosition,
             float3 attackDirection,
+            UnityObjectRef<UnityEngine.GameObject> launchVfxPrefab,
+            UnityObjectRef<UnityEngine.GameObject> impactVfxPrefab,
+            quaternion launchVfxRotation,
+            quaternion impactVfxRotation,
             float requestedStartTime,
             float lastEndedElapsedTime)
         {
@@ -122,6 +126,10 @@ namespace Game.Runtime
                 ProjectileProgress = 0f,
                 ProjectilePosition = launchPosition,
                 ProjectileDirection = normalizedDirection,
+                LaunchVfxPrefab = launchVfxPrefab,
+                ImpactVfxPrefab = impactVfxPrefab,
+                LaunchVfxRotation = launchVfxRotation,
+                ImpactVfxRotation = impactVfxRotation,
                 LaunchEventTriggered = 0,
                 ProjectileActive = 0,
                 ImpactEventTriggered = 0,

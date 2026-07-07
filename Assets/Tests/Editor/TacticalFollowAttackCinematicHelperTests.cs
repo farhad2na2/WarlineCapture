@@ -28,6 +28,10 @@ public sealed class TacticalFollowAttackCinematicHelperTests
             passed++;
             RunCase(test => test.BuildTarget_UsesAttackImpactTarget());
             passed++;
+            RunCase(test => test.BuildInitialState_UsesTypedCinematicContract());
+            passed++;
+            RunCase(test => test.EvaluateStateProgress_TriggersProjectileImpactAndFlyover());
+            passed++;
             UnityEngine.Debug.Log($"[TacticalFollowAttackCinematicHelperValidation] result=Passed tests={passed}");
             ValidationExit.Passed();
         }
@@ -174,6 +178,82 @@ public sealed class TacticalFollowAttackCinematicHelperTests
         Assert.AreEqual(TacticalFollowCameraTargetKind.AttackImpact, cameraTarget.TargetKind);
         Assert.AreEqual(target, cameraTarget.TargetEntity);
         AssertFloat3(impactPosition, cameraTarget.Center);
+    }
+
+    [Test]
+    public void BuildInitialState_UsesTypedCinematicContract()
+    {
+        Entity source = new Entity { Index = 2, Version = 1 };
+        Entity target = new Entity { Index = 12, Version = 1 };
+        float3 launchPosition = new(0f, 10f, 0f);
+        float3 impactPosition = new(30f, 0f, 5f);
+
+        TacticalFollowAttackCinematicStateComponent state =
+            TacticalFollowAttackCinematicHelper.BuildInitialState(
+                source,
+                target,
+                launchPosition,
+                impactPosition,
+                impactPosition - launchPosition,
+                requestedStartTime: 42f,
+                lastEndedElapsedTime: 7f);
+
+        Assert.AreEqual(1, state.Active);
+        Assert.AreEqual(TacticalFollowAttackCinematicAttackKind.FollowedAirInstantHit, state.AttackKind);
+        Assert.AreEqual(TacticalFollowAttackCinematicPhase.Launch, state.LastAppliedPhase);
+        Assert.AreEqual(42f, state.RequestedStartTime, 0.0001f);
+        Assert.AreEqual(source, state.SourceEntity);
+        Assert.AreEqual(target, state.TargetEntity);
+        AssertFloat3(launchPosition, state.ProjectilePosition);
+        Assert.AreEqual(0f, state.ProjectileProgress, 0.0001f);
+        Assert.AreEqual(0, state.LaunchEventTriggered);
+        Assert.AreEqual(0, state.ProjectileActive);
+        Assert.AreEqual(0, state.ImpactEventTriggered);
+        Assert.AreEqual(0, state.FlyoverEventTriggered);
+        Assert.AreEqual(0, state.Completed);
+        Assert.AreEqual(TacticalFollowAttackCinematicAbortReason.None, state.AbortReason);
+        Assert.AreEqual(7f, state.LastEndedElapsedTime, 0.0001f);
+    }
+
+    [Test]
+    public void EvaluateStateProgress_TriggersProjectileImpactAndFlyover()
+    {
+        TacticalFollowAttackCinematicStateComponent state =
+            TacticalFollowAttackCinematicHelper.BuildInitialState(
+                new Entity { Index = 2, Version = 1 },
+                new Entity { Index = 12, Version = 1 },
+                new float3(0f, 10f, 0f),
+                new float3(30f, 0f, 5f),
+                new float3(1f, 0f, 0.1f),
+                requestedStartTime: 0f,
+                lastEndedElapsedTime: 0f);
+
+        state.ElapsedUnscaledSeconds = TacticalFollowAttackCinematicHelper.ProjectileLaunchBeatSeconds + 0.05f;
+        state = TacticalFollowAttackCinematicHelper.EvaluateStateProgress(state);
+        Assert.AreEqual(1, state.LaunchEventTriggered);
+        Assert.AreEqual(1, state.ProjectileActive);
+        Assert.AreEqual(0, state.ImpactEventTriggered);
+        Assert.Greater(state.ProjectileProgress, 0f);
+        Assert.Less(state.ProjectileProgress, 1f);
+
+        state.ElapsedUnscaledSeconds = TacticalFollowAttackCinematicHelper.ImpactEventBeatSeconds;
+        state = TacticalFollowAttackCinematicHelper.EvaluateStateProgress(state);
+        Assert.AreEqual(1, state.ImpactEventTriggered);
+        Assert.AreEqual(0, state.ProjectileActive);
+        Assert.AreEqual(1f, state.ProjectileProgress, 0.0001f);
+        AssertFloat3(state.ImpactPosition, state.ProjectilePosition);
+
+        state.ElapsedUnscaledSeconds =
+            TacticalFollowAttackCinematicHelper.LaunchDurationSeconds +
+            TacticalFollowAttackCinematicHelper.ImpactDurationSeconds +
+            0.01f;
+        state = TacticalFollowAttackCinematicHelper.EvaluateStateProgress(state);
+        Assert.AreEqual(1, state.FlyoverEventTriggered);
+
+        state.ElapsedUnscaledSeconds = TacticalFollowAttackCinematicHelper.TotalDurationSeconds;
+        state = TacticalFollowAttackCinematicHelper.EvaluateStateProgress(state);
+        Assert.AreEqual(1, state.Completed);
+        Assert.AreEqual(TacticalFollowAttackCinematicAbortReason.Completed, state.AbortReason);
     }
 
     private static TacticalFollowAttackCinematicHelper.ShotContext CreateContext(bool hasJet)

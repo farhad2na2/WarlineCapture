@@ -92,16 +92,43 @@ namespace Game.Components
         Flyover = 3
     }
 
+    public enum TacticalFollowAttackCinematicAttackKind : byte
+    {
+        None = 0,
+        FollowedAirInstantHit = 1
+    }
+
+    public enum TacticalFollowAttackCinematicAbortReason : byte
+    {
+        None = 0,
+        FollowModeExited = 1,
+        TemporaryTargetCleared = 2,
+        SourceLost = 3,
+        TargetLost = 4,
+        Completed = 5
+    }
+
     public struct TacticalFollowAttackCinematicStateComponent : IComponentData
     {
         public byte Active;
+        public TacticalFollowAttackCinematicAttackKind AttackKind;
         public TacticalFollowAttackCinematicPhase LastAppliedPhase;
         public float ElapsedUnscaledSeconds;
+        public float RequestedStartTime;
         public Entity SourceEntity;
         public Entity TargetEntity;
         public float3 LaunchPosition;
         public float3 ImpactPosition;
         public float3 AttackDirection;
+        public float ProjectileProgress;
+        public float3 ProjectilePosition;
+        public float3 ProjectileDirection;
+        public byte LaunchEventTriggered;
+        public byte ProjectileActive;
+        public byte ImpactEventTriggered;
+        public byte FlyoverEventTriggered;
+        public byte Completed;
+        public TacticalFollowAttackCinematicAbortReason AbortReason;
         public byte TimeScaleApplied;
         public float SavedTimeScale;
         public float LastEndedElapsedTime;

@@ -83,14 +83,14 @@ The current implementation is not accepted because it is too close, too fast, fr
 
 ## Progress Summary
 
-Overall implementation progress: 8% (7/84 implementation checklist items complete).
+Overall implementation progress: 18% (15/84 implementation checklist items complete).
 
 Progress is checklist-based. Each implementation or validation checkbox below counts as one item. Documentation creation and index links are not counted as implementation progress.
 
 | Phase | Status | Complete | Total | Progress | Notes |
 |---|---|---:|---:|---:|---|
 | 0. Baseline and proof capture | In progress | 7 | 8 | 88% | User screenshots plus code inspection confirm current failure path; Unity reproduction still required. |
-| 1. ECS event and data contract | Not started | 0 | 10 | 0% | Define the accepted data ownership for cinematic request, phase, projectile, impact, and abort state. |
+| 1. ECS event and data contract | In progress | 8 | 10 | 80% | ECS state now owns typed attack kind, request start, projectile progress, launch/impact/flyover triggers, completion, and abort reason. |
 | 2. Timeline and phase sequencing | Not started | 0 | 10 | 0% | Replace instant camera cut behavior with a staged sequence. |
 | 3. Cinematic missile and impact VFX | Not started | 0 | 10 | 0% | Make launch, missile travel, and impact visible even when gameplay damage is instant. |
 | 4. Shot solver and obstruction safety | Not started | 0 | 12 | 0% | Solve wide readable camera positions and prevent clipping. |
@@ -152,20 +152,49 @@ Baseline notes, 2026-07-07:
 
 ## Phase 1: ECS Event And Data Contract
 
-- [ ] Decide whether to extend `TacticalFollowAttackCinematicStateComponent` or add separate request/projectile/impact components.
-- [ ] Add or adapt a typed cinematic request component for source entity, target entity, launch position, impact position, attack direction, attack kind, and requested start time.
-- [ ] Add or adapt a typed cinematic phase component/state for phase, elapsed unscaled time, last applied phase, launch-fired flag, impact-fired flag, flyover-fired flag, abort reason, and completion state.
-- [ ] Add or adapt a typed cinematic projectile component for current projectile position/progress if projectile timing is ECS-owned.
-- [ ] Ensure all new runtime data uses component/buffer naming that follows the architecture contract.
+- [x] Decide whether to extend `TacticalFollowAttackCinematicStateComponent` or add separate request/projectile/impact components.
+- [x] Add or adapt a typed cinematic request component for source entity, target entity, launch position, impact position, attack direction, attack kind, and requested start time.
+- [x] Add or adapt a typed cinematic phase component/state for phase, elapsed unscaled time, last applied phase, launch-fired flag, impact-fired flag, flyover-fired flag, abort reason, and completion state.
+- [x] Add or adapt a typed cinematic projectile component for current projectile position/progress if projectile timing is ECS-owned.
+- [x] Ensure all new runtime data uses component/buffer naming that follows the architecture contract.
 - [ ] Keep target/source entity liveness checks ECS-owned and deterministic.
-- [ ] Keep gameplay damage application independent from cinematic visual playback.
+- [x] Keep gameplay damage application independent from cinematic visual playback.
 - [ ] Define fallback behavior for missing jet, missing target, invalid attack direction, and destroyed target.
-- [ ] Define retrigger rules so repeated attack frames do not spam cinematic restarts.
-- [ ] Update architecture tests/classification if a new non-Burst ECS system is intentionally managed.
+- [x] Define retrigger rules so repeated attack frames do not spam cinematic restarts.
+- [x] Update architecture tests/classification if a new non-Burst ECS system is intentionally managed.
 
 Exit criteria:
 
 - The cinematic has a clear ECS data contract that can be tested without Unity scene objects.
+
+Phase 1 notes, 2026-07-07:
+
+- Data owner decision: extend `TacticalFollowAttackCinematicStateComponent` instead of introducing a separate request/projection component in this slice. The active cinematic already has a singleton state entity, and the next VFX slice needs the same source/target/launch/impact/timeline data without adding another query or lifecycle owner.
+- Added typed data:
+  - `TacticalFollowAttackCinematicAttackKind`
+  - `TacticalFollowAttackCinematicAbortReason`
+  - `RequestedStartTime`
+  - `ProjectileProgress`
+  - `ProjectilePosition`
+  - `ProjectileDirection`
+  - `LaunchEventTriggered`
+  - `ProjectileActive`
+  - `ImpactEventTriggered`
+  - `FlyoverEventTriggered`
+  - `Completed`
+  - `AbortReason`
+- Added pure helper contract:
+  - `BuildInitialState(...)`
+  - `EvaluateStateProgress(...)`
+  - `EvaluateProjectileProgress(...)`
+  - `ProjectileLaunchBeatSeconds`
+  - `ImpactEventBeatSeconds`
+- Existing retrigger cooldown remains in `TacticalFollowAttackCinematicSystem` and is now carried by the typed state path.
+- No new ECS system was added; the existing `TacticalFollowAttackCinematicSystem` remains covered by the current architecture classification.
+- Validation:
+  - `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
+  - `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
+  - `git diff --check` passed.
 
 ## Phase 2: Timeline And Phase Sequencing
 

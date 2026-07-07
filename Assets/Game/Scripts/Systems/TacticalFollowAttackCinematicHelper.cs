@@ -19,6 +19,8 @@ namespace Game.Runtime
         public const float SlowMotionTimeScale = 0.3f;
         public const float TimeScaleRampSeconds = 0.35f;
         public const float RetriggerCooldownSeconds = 6f;
+        public const float ProjectileLaunchBeatSeconds = 0.15f;
+        public const float ImpactEventBeatSeconds = LaunchDurationSeconds + ImpactDurationSeconds;
 
         private const float LaunchCameraBackDistance = 8f;
         private const float LaunchCameraSideDistance = 4.5f;
@@ -85,6 +87,90 @@ namespace Game.Runtime
             public float3 LookAt;
             public float FieldOfView;
             public float PositionDampingSeconds;
+        }
+
+        public static TacticalFollowAttackCinematicStateComponent BuildInitialState(
+            Entity sourceEntity,
+            Entity targetEntity,
+            float3 launchPosition,
+            float3 impactPosition,
+            float3 attackDirection,
+            float requestedStartTime,
+            float lastEndedElapsedTime)
+        {
+            float3 normalizedDirection = NormalizeFlatOrFallback(attackDirection);
+            return new TacticalFollowAttackCinematicStateComponent
+            {
+                Active = 1,
+                AttackKind = TacticalFollowAttackCinematicAttackKind.FollowedAirInstantHit,
+                LastAppliedPhase = TacticalFollowAttackCinematicPhase.Launch,
+                ElapsedUnscaledSeconds = 0f,
+                RequestedStartTime = requestedStartTime,
+                SourceEntity = sourceEntity,
+                TargetEntity = targetEntity,
+                LaunchPosition = launchPosition,
+                ImpactPosition = impactPosition,
+                AttackDirection = normalizedDirection,
+                ProjectileProgress = 0f,
+                ProjectilePosition = launchPosition,
+                ProjectileDirection = normalizedDirection,
+                LaunchEventTriggered = 0,
+                ProjectileActive = 0,
+                ImpactEventTriggered = 0,
+                FlyoverEventTriggered = 0,
+                Completed = 0,
+                AbortReason = TacticalFollowAttackCinematicAbortReason.None,
+                TimeScaleApplied = 0,
+                SavedTimeScale = 1f,
+                LastEndedElapsedTime = lastEndedElapsedTime,
+                HasEnded = 0
+            };
+        }
+
+        public static TacticalFollowAttackCinematicStateComponent EvaluateStateProgress(
+            TacticalFollowAttackCinematicStateComponent state)
+        {
+            state.ProjectileProgress = EvaluateProjectileProgress(state.ElapsedUnscaledSeconds);
+            state.ProjectilePosition = math.lerp(state.LaunchPosition, state.ImpactPosition, state.ProjectileProgress);
+            state.ProjectileDirection = NormalizeFlatOrFallback(state.ImpactPosition - state.LaunchPosition);
+
+            if (state.ElapsedUnscaledSeconds >= ProjectileLaunchBeatSeconds)
+            {
+                state.LaunchEventTriggered = 1;
+                state.ProjectileActive = state.ImpactEventTriggered == 0 ? (byte)1 : (byte)0;
+            }
+
+            if (state.ElapsedUnscaledSeconds >= ImpactEventBeatSeconds)
+            {
+                state.ImpactEventTriggered = 1;
+                state.ProjectileActive = 0;
+            }
+
+            TacticalFollowAttackCinematicPhase phase =
+                EvaluatePhase(state.ElapsedUnscaledSeconds, out _);
+            if (phase == TacticalFollowAttackCinematicPhase.Flyover)
+                state.FlyoverEventTriggered = 1;
+
+            if (IsFinished(state.ElapsedUnscaledSeconds))
+            {
+                state.Completed = 1;
+                state.AbortReason = TacticalFollowAttackCinematicAbortReason.Completed;
+            }
+
+            return state;
+        }
+
+        public static float EvaluateProjectileProgress(float elapsedSeconds)
+        {
+            if (elapsedSeconds <= ProjectileLaunchBeatSeconds)
+                return 0f;
+
+            if (elapsedSeconds >= ImpactEventBeatSeconds)
+                return 1f;
+
+            float t = (elapsedSeconds - ProjectileLaunchBeatSeconds) /
+                      (ImpactEventBeatSeconds - ProjectileLaunchBeatSeconds);
+            return math.smoothstep(0f, 1f, t);
         }
 
         public static bool IsFinished(float elapsedSeconds)

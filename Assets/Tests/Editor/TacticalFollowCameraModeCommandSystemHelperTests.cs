@@ -1081,6 +1081,11 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
             TacticalFollowAttackCinematicStateComponent cinematic =
                 _em.GetComponentData<TacticalFollowAttackCinematicStateComponent>(cinematicQuery.GetSingletonEntity());
             Assert.AreEqual(1, cinematic.Active);
+            Assert.AreEqual(TacticalFollowAttackCinematicAttackKind.FollowedAirInstantHit, cinematic.AttackKind);
+            Assert.AreEqual(10f, cinematic.RequestedStartTime, 0.0001f);
+            Assert.AreEqual(0f, cinematic.ProjectileProgress, 0.0001f);
+            Assert.AreEqual(0, cinematic.ImpactEventTriggered);
+            Assert.AreEqual(TacticalFollowAttackCinematicAbortReason.None, cinematic.AbortReason);
         }
 
         Assert.IsTrue(_system.TryReadTarget(_em, out TacticalFollowCameraTargetComponent followTarget));

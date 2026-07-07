@@ -120,21 +120,14 @@ namespace Game.Runtime
             if (!found)
                 return;
 
-            cinematic = new TacticalFollowAttackCinematicStateComponent
-            {
-                Active = 1,
-                LastAppliedPhase = TacticalFollowAttackCinematicPhase.Launch,
-                ElapsedUnscaledSeconds = 0f,
-                SourceEntity = selectedRequest.Source,
-                TargetEntity = selectedRequest.Target,
-                LaunchPosition = launchPosition,
-                ImpactPosition = impactPosition,
-                AttackDirection = NormalizeFlatOrFallback(impactPosition - launchPosition),
-                TimeScaleApplied = 0,
-                SavedTimeScale = 1f,
-                LastEndedElapsedTime = cinematic.LastEndedElapsedTime,
-                HasEnded = 0
-            };
+            cinematic = TacticalFollowAttackCinematicHelper.BuildInitialState(
+                selectedRequest.Source,
+                selectedRequest.Target,
+                launchPosition,
+                impactPosition,
+                impactPosition - launchPosition,
+                now,
+                cinematic.LastEndedElapsedTime);
 
             TacticalFollowAttackCinematicHelper.ShotContext context = BuildShotContext(em, cinematic);
             TacticalFollowAttackCinematicHelper.Shot shot = TacticalFollowAttackCinematicHelper.EvaluateShot(
@@ -175,7 +168,10 @@ namespace Game.Runtime
                 mode.HasTemporaryTarget == 0 ||
                 mode.TemporaryTargetKind != TacticalFollowCameraTargetKind.AttackImpact)
             {
-                EndCinematicWithoutTouchingMode(em, cinematicEntity, ref cinematic, now);
+                TacticalFollowAttackCinematicAbortReason reason = mode.Enabled == 0
+                    ? TacticalFollowAttackCinematicAbortReason.FollowModeExited
+                    : TacticalFollowAttackCinematicAbortReason.TemporaryTargetCleared;
+                EndCinematicWithoutTouchingMode(em, cinematicEntity, ref cinematic, now, reason);
                 return;
             }
 
@@ -190,11 +186,14 @@ namespace Game.Runtime
             }
 
             cinematic.ElapsedUnscaledSeconds += SystemAPI.Time.DeltaTime / divisor;
+            cinematic = TacticalFollowAttackCinematicHelper.EvaluateStateProgress(cinematic);
             if (TacticalFollowAttackCinematicHelper.IsFinished(cinematic.ElapsedUnscaledSeconds))
             {
                 RestoreTimeScale(ref cinematic);
                 cinematic.Active = 0;
                 cinematic.HasEnded = 1;
+                cinematic.Completed = 1;
+                cinematic.AbortReason = TacticalFollowAttackCinematicAbortReason.Completed;
                 cinematic.LastEndedElapsedTime = now;
                 em.SetComponentData(cinematicEntity, cinematic);
 
@@ -253,11 +252,13 @@ namespace Game.Runtime
             EntityManager em,
             Entity cinematicEntity,
             ref TacticalFollowAttackCinematicStateComponent cinematic,
-            float now)
+            float now,
+            TacticalFollowAttackCinematicAbortReason reason)
         {
             RestoreTimeScale(ref cinematic);
             cinematic.Active = 0;
             cinematic.HasEnded = 1;
+            cinematic.AbortReason = reason;
             cinematic.LastEndedElapsedTime = now;
             em.SetComponentData(cinematicEntity, cinematic);
         }

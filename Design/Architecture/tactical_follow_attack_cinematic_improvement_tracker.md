@@ -83,7 +83,7 @@ The current implementation is not accepted because it is too close, too fast, fr
 
 ## Progress Summary
 
-Overall implementation progress: 69% (58/84 implementation checklist items complete).
+Overall implementation progress: 70% (59/84 implementation checklist items complete).
 
 Progress is checklist-based. Each implementation or validation checkbox below counts as one item. Documentation creation and index links are not counted as implementation progress.
 
@@ -93,7 +93,7 @@ Progress is checklist-based. Each implementation or validation checkbox below co
 | 1. ECS event and data contract | In progress | 8 | 10 | 80% | ECS state now owns typed attack kind, request start, projectile progress, launch/impact/flyover triggers, completion, and abort reason. |
 | 2. Timeline and phase sequencing | In progress | 8 | 10 | 80% | Timeline now has explicit Launch, MissilePath, Impact, and Flyover phases plus projectile progress beats. |
 | 3. Cinematic missile and impact VFX | In progress | 8 | 10 | 80% | ECS timeline now replays launch, missile trail, and impact VFX through existing pooled presentation views; Unity visual acceptance still open. |
-| 4. Shot solver and obstruction safety | In progress | 11 | 12 | 92% | Pure shot solver now uses wider, higher launch/path/impact/flyover shots with minimum action clearance, distance clamps, HUD-safe aim bias, FOV clamps, explicit phase-entry snap rules, and deterministic fallback candidates. |
+| 4. Shot solver and obstruction safety | Complete | 12 | 12 | 100% | Pure shot solver now uses wider, higher launch/path/impact/flyover shots with safety clamps, HUD-safe aim bias, FOV clamps, explicit phase-entry snap rules, deterministic fallback candidates, and non-alloc obstruction probes at the managed camera boundary. |
 | 5. Follow-camera/time-scale integration | In progress | 3 | 9 | 33% | Active attack pose ownership, completion handback, and temporary-target abort cleanup are covered by focused tests. |
 | 6. Tests and architecture guardrails | Complete | 13 | 13 | 100% | Pure helper tests cover phase/shot math; ECS tests cover followed/unfollowed request behavior, retrigger cooldown, abort cleanup, and architecture guardrails. |
 | 7. Unity visual validation | Not started | 0 | 8 | 0% | Validate in-editor with screenshots/logs, not only tests. |
@@ -272,7 +272,7 @@ Phase 3 notes, 2026-07-07:
 - [x] Add safe-area framing so primary action is not hidden under left selection panel, bottom command bar, or minimap when practical.
 - [x] Add minimum camera height above terrain/map surface.
 - [x] Add minimum distance from target, jet, and impact point to avoid extreme closeups.
-- [ ] Add obstruction probes from camera to look-at using non-alloc Physics APIs where required.
+- [x] Add obstruction probes from camera to look-at using non-alloc Physics APIs where required.
 - [x] Add fallback offsets if a preferred shot is blocked.
 - [x] Clamp FOV and roll/bank presentation to readable cinematic values.
 - [x] Add shot-to-shot snap or blend rules deliberately instead of accidental SmoothDamp behavior.
@@ -294,7 +294,10 @@ Phase 4 notes, 2026-07-07:
 - Added `ShouldSnapToShot_SnapsOnlyOnFirstShotOrPhaseEntry` coverage for explicit snap/blend behavior.
 - Added `EvaluateFallbackShot` and `ObstructionFallbackCandidateCount` so future non-alloc obstruction probes can choose from deterministic alternate camera offsets without managed policy drift.
 - Added `FallbackShots_ProvideDistinctSafeCandidates` coverage for safe, finite, distinct fallback camera positions.
-- Open work: non-alloc scene obstruction probes and Unity visual validation.
+- Added narrow managed boundary `TacticalFollowAttackCinematicCameraSystemHelper` with approved `CameraSystemHelper` suffix. It uses a preallocated hit buffer and `Physics.SphereCastNonAlloc` to probe camera-to-look-at visibility only while the attack cinematic is selecting a shot.
+- Routed active cinematic shot selection through the obstruction-safe resolver so blocked primary shots choose deterministic fallback offsets without altering pure shot math or adding a new update loop.
+- Added `ObstructionFallback_UsesAlternateShotWhenPrimaryLineBlocked` coverage with a temporary collider blocking the primary impact shot.
+- Open work: Unity visual validation.
 - Validation:
   - `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
   - `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
@@ -303,6 +306,8 @@ Phase 4 notes, 2026-07-07:
   - `Tools/CI/invoke_unity_macos.sh --timeout 240 --log /private/tmp/warline-attack-cinematic-helper-validation-6.log -- -quit -nographics -executeMethod TacticalFollowAttackCinematicHelperTests.RunFocusedValidation` passed with `[TacticalFollowAttackCinematicHelperValidation] result=Passed tests=12`.
   - `Tools/CI/invoke_unity_macos.sh --timeout 240 --log /private/tmp/warline-attack-cinematic-helper-validation-7.log -- -quit -nographics -executeMethod TacticalFollowAttackCinematicHelperTests.RunFocusedValidation` passed with `[TacticalFollowAttackCinematicHelperValidation] result=Passed tests=13`.
   - `Tools/CI/invoke_unity_macos.sh --timeout 240 --log /private/tmp/warline-attack-cinematic-helper-validation-8.log -- -quit -nographics -executeMethod TacticalFollowAttackCinematicHelperTests.RunFocusedValidation` passed with `[TacticalFollowAttackCinematicHelperValidation] result=Passed tests=14`.
+  - `Tools/CI/invoke_unity_macos.sh --timeout 300 --log /private/tmp/warline-attack-cinematic-helper-validation-9.log -- -quit -nographics -executeMethod TacticalFollowAttackCinematicHelperTests.RunFocusedValidation` passed with `[TacticalFollowAttackCinematicHelperValidation] result=Passed tests=15`.
+  - `Tools/CI/invoke_unity_macos.sh --timeout 420 --log /private/tmp/warline-attack-cinematic-architecture-validation-9.log -- -quit -nographics -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation` passed with `[EcsBurstHotPathArchitectureValidation] result=Passed tests=10`.
   - `git diff --check` passed.
 
 ## Phase 5: Follow-Camera And Time-Scale Integration

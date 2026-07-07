@@ -6,6 +6,7 @@ using System;
 using NUnit.Framework;
 using Unity.Entities;
 using Unity.Mathematics;
+using UnityEngine;
 
 public sealed class TacticalFollowAttackCinematicHelperTests
 {
@@ -31,6 +32,8 @@ public sealed class TacticalFollowAttackCinematicHelperTests
             RunCase(test => test.CinematicShots_ClampFovAndUseHudSafeImpactAim());
             passed++;
             RunCase(test => test.FallbackShots_ProvideDistinctSafeCandidates());
+            passed++;
+            RunCase(test => test.ObstructionFallback_UsesAlternateShotWhenPrimaryLineBlocked());
             passed++;
             RunCase(test => test.BuildPose_UsesSnapDampingOnlyForPhaseEntry());
             passed++;
@@ -301,6 +304,37 @@ public sealed class TacticalFollowAttackCinematicHelperTests
                 context,
                 TacticalFollowAttackCinematicHelper.ObstructionFallbackCandidateCount);
         AssertFloat3(lastCandidate.CameraPosition, unclamped.CameraPosition);
+    }
+
+    [Test]
+    public void ObstructionFallback_UsesAlternateShotWhenPrimaryLineBlocked()
+    {
+        TacticalFollowAttackCinematicHelper.ShotContext context = CreateContext(hasJet: true);
+        TacticalFollowAttackCinematicPhase phase = TacticalFollowAttackCinematicPhase.Impact;
+        float phaseElapsed = TacticalFollowAttackCinematicHelper.ImpactDurationSeconds * 0.45f;
+        TacticalFollowAttackCinematicHelper.Shot primary =
+            TacticalFollowAttackCinematicHelper.EvaluateShot(phase, phaseElapsed, context);
+
+        GameObject blocker = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        try
+        {
+            blocker.name = "AttackCinematicPrimaryShotBlocker";
+            blocker.transform.position = (Vector3)math.lerp(primary.CameraPosition, primary.LookAt, 0.5f);
+            blocker.transform.localScale = new Vector3(4f, 4f, 4f);
+            Physics.SyncTransforms();
+
+            TacticalFollowAttackCinematicHelper.Shot resolved =
+                TacticalFollowAttackCinematicCameraSystemHelper.EvaluateShotWithObstructionFallback(
+                    phase,
+                    phaseElapsed,
+                    context);
+
+            Assert.Greater(math.distance(resolved.CameraPosition, primary.CameraPosition), 1f);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(blocker);
+        }
     }
 
     [Test]

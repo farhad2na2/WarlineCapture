@@ -151,10 +151,11 @@ namespace Game.Runtime
                 cinematic.LastEndedElapsedTime);
 
             TacticalFollowAttackCinematicHelper.ShotContext context = BuildShotContext(em, cinematic);
-            TacticalFollowAttackCinematicHelper.Shot shot = TacticalFollowAttackCinematicHelper.EvaluateShot(
-                TacticalFollowAttackCinematicPhase.Launch,
-                0f,
-                context);
+            TacticalFollowAttackCinematicHelper.Shot shot =
+                TacticalFollowAttackCinematicCameraSystemHelper.EvaluateShotWithObstructionFallback(
+                    TacticalFollowAttackCinematicPhase.Launch,
+                    0f,
+                    context);
 
             ApplyTimeScale(ref cinematic, 0f);
             em.SetComponentData(cinematicEntity, cinematic);
@@ -240,7 +241,10 @@ namespace Game.Runtime
                 phase);
             TacticalFollowAttackCinematicHelper.ShotContext context = BuildShotContext(em, cinematic);
             TacticalFollowAttackCinematicHelper.Shot shot =
-                TacticalFollowAttackCinematicHelper.EvaluateShot(phase, phaseElapsed, context);
+                TacticalFollowAttackCinematicCameraSystemHelper.EvaluateShotWithObstructionFallback(
+                    phase,
+                    phaseElapsed,
+                    context);
 
             em.SetComponentData(
                 EnsureTargetEntity(em, _targetQuery),

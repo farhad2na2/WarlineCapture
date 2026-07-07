@@ -83,7 +83,7 @@ The current implementation is not accepted because it is too close, too fast, fr
 
 ## Progress Summary
 
-Overall implementation progress: 46% (39/84 implementation checklist items complete).
+Overall implementation progress: 55% (46/84 implementation checklist items complete).
 
 Progress is checklist-based. Each implementation or validation checkbox below counts as one item. Documentation creation and index links are not counted as implementation progress.
 
@@ -93,7 +93,7 @@ Progress is checklist-based. Each implementation or validation checkbox below co
 | 1. ECS event and data contract | In progress | 8 | 10 | 80% | ECS state now owns typed attack kind, request start, projectile progress, launch/impact/flyover triggers, completion, and abort reason. |
 | 2. Timeline and phase sequencing | In progress | 8 | 10 | 80% | Timeline now has explicit Launch, MissilePath, Impact, and Flyover phases plus projectile progress beats. |
 | 3. Cinematic missile and impact VFX | In progress | 8 | 10 | 80% | ECS timeline now replays launch, missile trail, and impact VFX through existing pooled presentation views; Unity visual acceptance still open. |
-| 4. Shot solver and obstruction safety | Not started | 0 | 12 | 0% | Solve wide readable camera positions and prevent clipping. |
+| 4. Shot solver and obstruction safety | In progress | 7 | 12 | 58% | Pure shot solver now uses wider, higher launch/path/impact/flyover shots with minimum action clearance and distance clamps. |
 | 5. Follow-camera/time-scale integration | Not started | 0 | 9 | 0% | Preserve normal follow camera ownership and restore time scale reliably. |
 | 6. Tests and architecture guardrails | In progress | 8 | 13 | 62% | Pure helper tests cover phase/shot math; runtime, editor, and editor-test assemblies compile for the VFX slice. |
 | 7. Unity visual validation | Not started | 0 | 8 | 0% | Validate in-editor with screenshots/logs, not only tests. |
@@ -264,22 +264,35 @@ Phase 3 notes, 2026-07-07:
 
 ## Phase 4: Shot Solver And Obstruction Safety
 
-- [ ] Redesign launch shot to frame jet, launch side, and target direction with minimum distance from the jet mesh.
-- [ ] Redesign missile-path shot to show lateral travel or chase motion with enough world scale to read speed.
-- [ ] Redesign impact shot to frame target and incoming path without clipping into target/buildings.
-- [ ] Redesign flyover shot so the jet crosses over or past the target after impact.
+- [x] Redesign launch shot to frame jet, launch side, and target direction with minimum distance from the jet mesh.
+- [x] Redesign missile-path shot to show lateral travel or chase motion with enough world scale to read speed.
+- [x] Redesign impact shot to frame target and incoming path without clipping into target/buildings.
+- [x] Redesign flyover shot so the jet crosses over or past the target after impact.
 - [ ] Add safe-area framing so primary action is not hidden under left selection panel, bottom command bar, or minimap when practical.
-- [ ] Add minimum camera height above terrain/map surface.
-- [ ] Add minimum distance from target, jet, and impact point to avoid extreme closeups.
+- [x] Add minimum camera height above terrain/map surface.
+- [x] Add minimum distance from target, jet, and impact point to avoid extreme closeups.
 - [ ] Add obstruction probes from camera to look-at using non-alloc Physics APIs where required.
 - [ ] Add fallback offsets if a preferred shot is blocked.
 - [ ] Clamp FOV and roll/bank presentation to readable cinematic values.
 - [ ] Add shot-to-shot snap or blend rules deliberately instead of accidental SmoothDamp behavior.
-- [ ] Add pure shot-solver tests for distances, look direction, FOV, and fallback behavior.
+- [x] Add pure shot-solver tests for distances, look direction, FOV, and fallback behavior.
 
 Exit criteria:
 
 - The camera solver prefers readable wide shots and has a deterministic fallback when the preferred shot is blocked.
+
+Phase 4 notes, 2026-07-07:
+
+- Replaced the too-close launch camera with a higher, wider side/rear shot. The camera no longer intentionally drops below the jet, which was the main source of under-wing closeups.
+- Widened missile-path, impact, and flyover shots so the projectile travel, explosion, and jet flyover have enough world scale to read.
+- Added pure shot safety clamps for minimum height above launch/impact/jet action, minimum camera-to-look-at distance, minimum camera-to-impact distance, and minimum camera-to-jet distance.
+- Added `CinematicShots_StayWideAndAboveAction` coverage so future tuning cannot silently return to close/low shots.
+- Open work: UI safe-area composition, non-alloc scene obstruction probes, blocked-shot fallback offsets, and Unity visual validation.
+- Validation:
+  - `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
+  - `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
+  - `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
+  - `git diff --check` passed.
 
 ## Phase 5: Follow-Camera And Time-Scale Integration
 

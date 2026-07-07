@@ -26,6 +26,8 @@ public sealed class TacticalFollowAttackCinematicHelperTests
             passed++;
             RunCase(test => test.FlyoverShot_TracksJetThenFallsBackWithoutNaN());
             passed++;
+            RunCase(test => test.CinematicShots_StayWideAndAboveAction());
+            passed++;
             RunCase(test => test.BuildPose_UsesSnapDampingOnlyForPhaseEntry());
             passed++;
             RunCase(test => test.BuildTarget_UsesAttackImpactTarget());
@@ -124,9 +126,9 @@ public sealed class TacticalFollowAttackCinematicHelperTests
             TacticalFollowAttackCinematicPhase.Launch,
             0f,
             context);
-        Assert.Less(math.distance(shot.CameraPosition, context.JetPosition), 15f);
+        Assert.Greater(math.distance(shot.CameraPosition, context.JetPosition), 18f);
         Assert.Greater(math.dot(math.normalizesafe(shot.LookAt - context.JetPosition), context.AttackDirection), 0f);
-        Assert.AreEqual(30f, shot.FieldOfView, 0.0001f);
+        Assert.AreEqual(46f, shot.FieldOfView, 0.0001f);
     }
 
     [Test]
@@ -142,9 +144,9 @@ public sealed class TacticalFollowAttackCinematicHelperTests
         float projectileProgress = TacticalFollowAttackCinematicHelper.EvaluateProjectileProgress(
             TacticalFollowAttackCinematicHelper.LaunchDurationSeconds + phaseElapsed);
         float3 expectedProjectile = math.lerp(context.LaunchPosition, context.ImpactPosition, projectileProgress);
-        Assert.Less(math.distance(shot.CameraPosition, expectedProjectile), 20f);
+        Assert.Greater(math.distance(shot.CameraPosition, expectedProjectile), 20f);
         Assert.Greater(math.dot(math.normalizesafe(shot.LookAt - expectedProjectile), context.AttackDirection), 0f);
-        Assert.AreEqual(38f, shot.FieldOfView, 0.0001f);
+        Assert.AreEqual(48f, shot.FieldOfView, 0.0001f);
     }
 
     [Test]
@@ -155,9 +157,9 @@ public sealed class TacticalFollowAttackCinematicHelperTests
             TacticalFollowAttackCinematicPhase.Impact,
             TacticalFollowAttackCinematicHelper.ImpactDurationSeconds * 0.5f,
             context);
-        Assert.Less(math.distance(shot.CameraPosition, context.ImpactPosition), 15f);
+        Assert.Greater(math.distance(shot.CameraPosition, context.ImpactPosition), 25f);
         Assert.Less(math.distance(shot.LookAt, context.ImpactPosition), 4f);
-        Assert.AreEqual(36f, shot.FieldOfView, 0.0001f);
+        Assert.AreEqual(48f, shot.FieldOfView, 0.0001f);
     }
 
     [Test]
@@ -179,6 +181,40 @@ public sealed class TacticalFollowAttackCinematicHelperTests
             fallback);
         Assert.IsTrue(math.all(math.isfinite(fallbackShot.CameraPosition)));
         Assert.IsTrue(math.all(math.isfinite(fallbackShot.LookAt)));
+    }
+
+    [Test]
+    public void CinematicShots_StayWideAndAboveAction()
+    {
+        TacticalFollowAttackCinematicHelper.ShotContext context = CreateContext(hasJet: true);
+        float actionY = math.max(
+            math.max(context.LaunchPosition.y, context.ImpactPosition.y),
+            context.JetPosition.y);
+
+        AssertReadableShot(TacticalFollowAttackCinematicPhase.Launch, 0.4f);
+        AssertReadableShot(TacticalFollowAttackCinematicPhase.MissilePath, 0.5f);
+        AssertReadableShot(TacticalFollowAttackCinematicPhase.Impact, 0.6f);
+        AssertReadableShot(TacticalFollowAttackCinematicPhase.Flyover, 0.7f);
+
+        void AssertReadableShot(TacticalFollowAttackCinematicPhase phase, float normalizedPhaseTime)
+        {
+            float phaseDuration = phase switch
+            {
+                TacticalFollowAttackCinematicPhase.Launch => TacticalFollowAttackCinematicHelper.LaunchDurationSeconds,
+                TacticalFollowAttackCinematicPhase.MissilePath => TacticalFollowAttackCinematicHelper.MissilePathDurationSeconds,
+                TacticalFollowAttackCinematicPhase.Impact => TacticalFollowAttackCinematicHelper.ImpactDurationSeconds,
+                _ => TacticalFollowAttackCinematicHelper.FlyoverDurationSeconds
+            };
+            TacticalFollowAttackCinematicHelper.Shot shot = TacticalFollowAttackCinematicHelper.EvaluateShot(
+                phase,
+                phaseDuration * normalizedPhaseTime,
+                context);
+
+            Assert.GreaterOrEqual(shot.CameraPosition.y, actionY + 5.5f);
+            Assert.GreaterOrEqual(math.distance(shot.CameraPosition, shot.LookAt), 14f);
+            Assert.GreaterOrEqual(math.distance(shot.CameraPosition, context.ImpactPosition), 14f);
+            Assert.GreaterOrEqual(math.distance(shot.CameraPosition, context.JetPosition), 12f);
+        }
     }
 
     [Test]

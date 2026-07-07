@@ -23,44 +23,47 @@ namespace Game.Runtime
         public const float ProjectileLaunchBeatSeconds = 0.15f;
         public const float ImpactEventBeatSeconds = LaunchDurationSeconds + MissilePathDurationSeconds;
 
-        private const float LaunchCameraBackDistance = 8f;
-        private const float LaunchCameraSideDistance = 4.5f;
-        private const float LaunchCameraDropBelowJet = 1.2f;
-        private const float LaunchPushInScale = 0.82f;
-        private const float LaunchLookAheadDistance = 16f;
-        private const float LaunchLookImpactBlend = 0.2f;
-        private const float LaunchFieldOfView = 30f;
-        private const float LaunchDampingSeconds = 0.12f;
+        private const float LaunchCameraBackDistance = 18f;
+        private const float LaunchCameraSideDistance = 10f;
+        private const float LaunchCameraHeightAboveJet = 6.5f;
+        private const float LaunchPushInScale = 0.9f;
+        private const float LaunchLookAheadDistance = 22f;
+        private const float LaunchLookImpactBlend = 0.15f;
+        private const float LaunchFieldOfView = 46f;
+        private const float LaunchDampingSeconds = 0.16f;
 
-        private const float MissilePathCameraBackDistance = 8f;
-        private const float MissilePathCameraSideDistance = 13f;
-        private const float MissilePathCameraHeight = 6.5f;
-        private const float MissilePathLookAheadDistance = 7f;
-        private const float MissilePathFieldOfView = 38f;
-        private const float MissilePathDampingSeconds = 0.08f;
+        private const float MissilePathCameraBackDistance = 12f;
+        private const float MissilePathCameraSideDistance = 20f;
+        private const float MissilePathCameraHeight = 9f;
+        private const float MissilePathLookAheadDistance = 11f;
+        private const float MissilePathFieldOfView = 48f;
+        private const float MissilePathDampingSeconds = 0.12f;
 
-        private const float ImpactCameraForwardDistance = 11f;
-        private const float ImpactCameraSideDistance = 7f;
-        private const float ImpactCameraHeight = 4.5f;
-        private const float ImpactOrbitDegrees = 16f;
-        private const float ImpactLookHeight = 1.8f;
-        private const float ImpactLookBackDistance = 2f;
-        private const float ImpactFieldOfView = 36f;
+        private const float ImpactCameraForwardDistance = 23f;
+        private const float ImpactCameraSideDistance = 16f;
+        private const float ImpactCameraHeight = 10f;
+        private const float ImpactOrbitDegrees = 10f;
+        private const float ImpactLookHeight = 2.4f;
+        private const float ImpactLookBackDistance = 4f;
+        private const float ImpactFieldOfView = 48f;
         private const float ImpactDampingSeconds = 0.15f;
 
-        private const float FlyoverCameraBackDistance = 9f;
-        private const float FlyoverCameraSideDistance = 8f;
-        private const float FlyoverCameraHeight = 5.5f;
+        private const float FlyoverCameraBackDistance = 18f;
+        private const float FlyoverCameraSideDistance = 14f;
+        private const float FlyoverCameraHeight = 10f;
         private const float FlyoverLookRampNormalized = 0.45f;
         private const float FlyoverLookJetWeight = 0.85f;
         private const float FlyoverExitBlendStartNormalized = 0.6f;
         private const float FlyoverExitBlendWeight = 0.65f;
-        private const float FlyoverFollowBackDistance = 12f;
-        private const float FlyoverFollowHeight = 6f;
-        private const float FlyoverFieldOfView = 42f;
+        private const float FlyoverFollowBackDistance = 18f;
+        private const float FlyoverFollowHeight = 9f;
+        private const float FlyoverFieldOfView = 50f;
         private const float FlyoverDampingSeconds = 0.28f;
 
-        private const float MinCameraClearanceAboveImpact = 2.5f;
+        private const float MinCameraClearanceAboveAction = 5.5f;
+        private const float MinCameraDistanceFromLookAt = 14f;
+        private const float MinCameraDistanceFromJet = 12f;
+        private const float MinCameraDistanceFromImpact = 14f;
         private const float CinematicTargetRadius = 3f;
         private const float CinematicDesiredDistance = 14f;
         private const float CinematicDesiredHeight = 6f;
@@ -319,14 +322,13 @@ namespace Game.Runtime
                 - dir * MissilePathCameraBackDistance
                 + right * MissilePathCameraSideDistance
                 + new float3(0f, MissilePathCameraHeight, 0f);
-            cameraPosition.y = math.max(
-                cameraPosition.y,
-                math.max(context.LaunchPosition.y, context.ImpactPosition.y) + MinCameraClearanceAboveImpact);
+            cameraPosition = ApplyCommonShotSafety(cameraPosition, lookAt: projectilePosition, context);
 
             float3 lookAt = math.lerp(
                 projectilePosition + dir * MissilePathLookAheadDistance,
                 context.ImpactPosition + new float3(0f, 1.2f, 0f),
                 math.smoothstep(0.65f, 1f, projectileProgress));
+            cameraPosition = ApplyCommonShotSafety(cameraPosition, lookAt, context);
 
             return new Shot
             {
@@ -352,13 +354,11 @@ namespace Game.Runtime
             float3 cameraPosition = anchor
                 - dir * (LaunchCameraBackDistance * pushIn)
                 + right * (LaunchCameraSideDistance * pushIn)
-                - new float3(0f, LaunchCameraDropBelowJet, 0f);
-            cameraPosition.y = math.max(
-                cameraPosition.y,
-                context.ImpactPosition.y + MinCameraClearanceAboveImpact);
+                + new float3(0f, LaunchCameraHeightAboveJet, 0f);
 
             float3 lookAhead = anchor + dir * LaunchLookAheadDistance;
             float3 lookAt = math.lerp(lookAhead, context.ImpactPosition, LaunchLookImpactBlend);
+            cameraPosition = ApplyCommonShotSafety(cameraPosition, lookAt, context);
 
             return new Shot
             {
@@ -388,6 +388,7 @@ namespace Game.Runtime
             float3 lookAt = context.ImpactPosition
                 + new float3(0f, ImpactLookHeight, 0f)
                 - dir * ImpactLookBackDistance;
+            cameraPosition = ApplyCommonShotSafety(cameraPosition, lookAt, context);
 
             return new Shot
             {
@@ -431,9 +432,7 @@ namespace Game.Runtime
                 cameraPosition = math.lerp(cameraPosition, followPosition, exitBlend);
             }
 
-            cameraPosition.y = math.max(
-                cameraPosition.y,
-                context.ImpactPosition.y + MinCameraClearanceAboveImpact);
+            cameraPosition = ApplyCommonShotSafety(cameraPosition, lookAt, context);
 
             return new Shot
             {
@@ -451,6 +450,36 @@ namespace Game.Runtime
             return lengthSq <= 0.0001f
                 ? new float3(0f, 0f, 1f)
                 : direction * math.rsqrt(lengthSq);
+        }
+
+        private static float3 ApplyCommonShotSafety(
+            float3 cameraPosition,
+            float3 lookAt,
+            in ShotContext context)
+        {
+            float actionY = math.max(context.LaunchPosition.y, context.ImpactPosition.y);
+            if (context.HasJet)
+                actionY = math.max(actionY, context.JetPosition.y);
+            cameraPosition.y = math.max(cameraPosition.y, actionY + MinCameraClearanceAboveAction);
+
+            cameraPosition = PushAwayFrom(cameraPosition, lookAt, MinCameraDistanceFromLookAt);
+            cameraPosition = PushAwayFrom(cameraPosition, context.ImpactPosition, MinCameraDistanceFromImpact);
+            if (context.HasJet)
+                cameraPosition = PushAwayFrom(cameraPosition, context.JetPosition, MinCameraDistanceFromJet);
+
+            return cameraPosition;
+        }
+
+        private static float3 PushAwayFrom(float3 cameraPosition, float3 anchor, float minDistance)
+        {
+            float3 offset = cameraPosition - anchor;
+            float distanceSq = math.lengthsq(offset);
+            float minDistanceSq = minDistance * minDistance;
+            if (distanceSq >= minDistanceSq)
+                return cameraPosition;
+
+            float3 direction = math.normalizesafe(offset, new float3(0f, 1f, -1f));
+            return anchor + direction * minDistance;
         }
     }
 }

@@ -354,7 +354,8 @@ namespace Game.Runtime
         {
             TacticalFollowCameraModeComponent mode =
                 em.GetComponentData<TacticalFollowCameraModeComponent>(modeEntity);
-            bool hasSelection = HasFollowableBaseTarget(em, context);
+            bool hasSelection = HasActiveAttackCinematicTemporaryTarget(em, mode) ||
+                                HasFollowableBaseTarget(em, context);
             Entity readModelEntity = EnsureUiReadModelEntity(em);
             TacticalFollowCameraUiReadModelComponent previous =
                 em.GetComponentData<TacticalFollowCameraUiReadModelComponent>(readModelEntity);
@@ -370,6 +371,16 @@ namespace Game.Runtime
                 FeedbackCode = hasFeedback ? (int)feedbackCode : previous.FeedbackCode,
                 FeedbackSequence = hasFeedback ? previous.FeedbackSequence + 1 : previous.FeedbackSequence
             });
+        }
+
+        private static bool HasActiveAttackCinematicTemporaryTarget(
+            EntityManager em,
+            TacticalFollowCameraModeComponent mode)
+        {
+            return mode.Enabled != 0 &&
+                   mode.HasTemporaryTarget != 0 &&
+                   mode.TemporaryTargetKind == TacticalFollowCameraTargetKind.AttackImpact &&
+                   HasActiveAttackCinematic(em);
         }
 
         private static bool TryResolveBaseTarget(

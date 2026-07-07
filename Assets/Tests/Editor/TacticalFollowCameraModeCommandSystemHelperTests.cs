@@ -97,6 +97,8 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
             passed++;
             RunCase(test => test.ActiveAttackCinematicPreservesTemporaryPoseDuringBaseRefresh());
             passed++;
+            RunCase(test => test.ActiveAttackCinematicKeepsUiReadModelSelectedWithoutSelectionResolve());
+            passed++;
             RunCase(test => test.CompletedAttackCinematicRespectsRetriggerCooldown());
             passed++;
             RunCase(test => test.AttackCinematicAbortCleansStateWhenTemporaryTargetCleared());
@@ -1153,6 +1155,49 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
         Assert.AreEqual(TacticalFollowCameraPoseSource.TemporaryMissile, preservedPose.Source);
         Assert.That(math.distance(cinematicPose.DesiredPosition, preservedPose.DesiredPosition), Is.LessThan(0.001f));
         Assert.That(math.distance(cinematicPose.LookAt, preservedPose.LookAt), Is.LessThan(0.001f));
+    }
+
+    [Test]
+    public void ActiveAttackCinematicKeepsUiReadModelSelectedWithoutSelectionResolve()
+    {
+        Entity aircraft = CreateSelectedAirUnit(new float3(0f, 12f, 0f), quaternion.identity);
+        Entity target = _em.CreateEntity(typeof(LocalTransform));
+        float3 targetPosition = new float3(24f, 0f, 10f);
+        _em.SetComponentData(target, LocalTransform.FromPosition(targetPosition));
+        QueueRequest(TacticalFollowCameraRequestKind.ToggleFollowMode);
+        Assert.IsTrue(_system.ProcessPendingRequests(_em));
+        Entity request = _em.CreateEntity(typeof(UnitAttackVfxRequest));
+        _em.SetComponentData(request, new UnitAttackVfxRequest
+        {
+            Kind = (byte)UnitAttackVfxRequestKind.MuzzleFlash,
+            Source = aircraft,
+            Target = target,
+            SourcePosition = new float3(0f, 12f, 0f),
+            TargetPosition = targetPosition,
+            PlaybackPosition = new float3(0f, 12f, 1f),
+            PlaybackRotation = quaternion.identity
+        });
+        SystemHandle cinematicSystem = _world.CreateSystem<TacticalFollowAttackCinematicSystem>();
+        _world.SetTime(new TimeData(10d, 0.016f));
+        cinematicSystem.Update(_world.Unmanaged);
+        _em.RemoveComponent<SelectedUnitTag>(aircraft);
+
+        bool ResolveSelectedBuildingTarget(out Vector3 worldPosition, out float boundsRadius)
+        {
+            Assert.Fail("Active attack cinematics must not resolve selection/building targets while publishing UI.");
+            worldPosition = default;
+            boundsRadius = default;
+            return false;
+        }
+
+        var context = new TacticalFollowCameraModeSystemHelper.Context(ResolveSelectedBuildingTarget);
+        Assert.IsTrue(_system.RefreshActiveTargetAndPose(_em, context, 10.1f));
+
+        Assert.IsTrue(_system.TryReadUiReadModel(_em, out TacticalFollowCameraUiReadModelComponent readModel));
+        Assert.AreEqual(1, readModel.Visible);
+        Assert.AreEqual(1, readModel.Enabled);
+        Assert.AreEqual(1, readModel.Selected);
+        Assert.AreEqual((int)TacticalCommandReasonCode.None, readModel.ReasonCode);
     }
 
     [Test]

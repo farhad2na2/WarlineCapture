@@ -83,7 +83,7 @@ The current implementation is not accepted because it is too close, too fast, fr
 
 ## Progress Summary
 
-Overall implementation progress: 76% (64/84 implementation checklist items complete).
+Overall implementation progress: 79% (66/84 implementation checklist items complete).
 
 Progress is checklist-based. Each implementation or validation checkbox below counts as one item. Documentation creation and index links are not counted as implementation progress.
 
@@ -94,7 +94,7 @@ Progress is checklist-based. Each implementation or validation checkbox below co
 | 2. Timeline and phase sequencing | In progress | 8 | 10 | 80% | Timeline now has explicit Launch, MissilePath, Impact, and Flyover phases plus projectile progress beats. |
 | 3. Cinematic missile and impact VFX | In progress | 8 | 10 | 80% | ECS timeline now replays launch, missile trail, and impact VFX through existing pooled presentation views; Unity visual acceptance still open. |
 | 4. Shot solver and obstruction safety | Complete | 12 | 12 | 100% | Pure shot solver now uses wider, higher launch/path/impact/flyover shots with safety clamps, HUD-safe aim bias, FOV clamps, explicit phase-entry snap rules, deterministic fallback candidates, and non-alloc obstruction probes at the managed camera boundary. |
-| 5. Follow-camera/time-scale integration | In progress | 8 | 9 | 89% | Active attack pose ownership, completion handback, temporary-target abort cleanup, time-scale apply/restore, paused-time restoration, and destroyed source/target fallback behavior are covered by focused tests. |
+| 5. Follow-camera/time-scale integration | Complete | 9 | 9 | 100% | Active attack pose ownership, completion handback, temporary-target abort cleanup, time-scale apply/restore, paused-time restoration, destroyed source/target fallback behavior, and active-cinematic UI stability are covered by focused tests. |
 | 6. Tests and architecture guardrails | Complete | 13 | 13 | 100% | Pure helper tests cover phase/shot math; ECS tests cover followed/unfollowed request behavior, retrigger cooldown, abort cleanup, and architecture guardrails. |
 | 7. Unity visual validation | Not started | 0 | 8 | 0% | Validate in-editor with screenshots/logs, not only tests. |
 | 8. Rollout and documentation | Not started | 0 | 4 | 0% | Update docs and final acceptance notes after the feature works. |
@@ -318,8 +318,8 @@ Phase 4 notes, 2026-07-07:
 - [x] Store and restore the previous `Time.timeScale` on completion, abort, destroy, and follow-mode exit.
 - [x] Ensure pausing or scene shutdown cannot leave the game in slow motion.
 - [x] Ensure target/jet destruction mid-cinematic uses the documented fallback and still restores time scale.
-- [ ] Keep UI read-model/follow-mode status stable while the cinematic temporary target is active.
-- [ ] Avoid new sync points or job completions in camera integration.
+- [x] Keep UI read-model/follow-mode status stable while the cinematic temporary target is active.
+- [x] Avoid new sync points or job completions in camera integration.
 - [x] Add tests for time-scale restoration and temporary-target ownership.
 
 Exit criteria:
@@ -339,7 +339,9 @@ Phase 5 notes, 2026-07-07:
 - Added `TimeScalePresentation_PreservesPausedTimeScale` coverage for pause/shutdown leak prevention.
 - Added active-cinematic fallback for destroyed source/target entities: the system clears dead entity references, keeps cached launch/impact positions, and lets the cinematic complete through the normal cleanup/time-scale restoration path.
 - Added `AttackCinematicContinuesWithCachedImpactWhenTargetIsDestroyed` and `AttackCinematicContinuesWithCachedLaunchWhenSourceIsDestroyed` focused ECS coverage.
-- Open work: UI read-model stability checks.
+- Active attack-cinematic temporary targets now publish follow UI state without resolving current selection/building targets. This keeps the follow button selected/enabled during the cutaway and avoids adding selection/base-target read work to the camera integration path.
+- Added `ActiveAttackCinematicKeepsUiReadModelSelectedWithoutSelectionResolve` coverage to guard against future selection/building resolver calls while an active `AttackImpact` cinematic owns the temporary target.
+- Open work: Unity visual validation.
 - Validation:
   - `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
   - `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
@@ -352,6 +354,12 @@ Phase 5 notes, 2026-07-07:
   - `Tools/CI/invoke_unity_macos.sh --timeout 360 --log /private/tmp/warline-attack-cinematic-follow-mode-validation-4.log -- -quit -nographics -executeMethod TacticalFollowCameraModeCommandSystemHelperTests.RunFocusedValidation` passed with `[TacticalFollowCameraModeCommandValidation] result=Passed tests=42`.
   - `Tools/CI/invoke_unity_macos.sh --timeout 420 --log /private/tmp/warline-attack-cinematic-architecture-validation-11.log -- -quit -nographics -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation` passed with `[EcsBurstHotPathArchitectureValidation] result=Passed tests=10`.
   - `Tools/CI/invoke_unity_macos.sh --timeout 300 --log /private/tmp/warline-attack-cinematic-helper-validation-11.log -- -quit -nographics -executeMethod TacticalFollowAttackCinematicHelperTests.RunFocusedValidation` passed with `[TacticalFollowAttackCinematicHelperValidation] result=Passed tests=18`.
+  - `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed for the UI stability slice.
+  - `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed for the UI stability slice.
+  - `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed for the UI stability slice.
+  - `git diff --check` passed for the UI stability slice.
+  - `Tools/CI/invoke_unity_macos.sh --timeout 420 --log /private/tmp/warline-attack-cinematic-architecture-validation-12.log -- -quit -nographics -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation` passed with `[EcsBurstHotPathArchitectureValidation] result=Passed tests=10`.
+  - `Tools/CI/invoke_unity_macos.sh --timeout 360 --log /private/tmp/warline-attack-cinematic-follow-mode-validation-5.log -- -quit -nographics -executeMethod TacticalFollowCameraModeCommandSystemHelperTests.RunFocusedValidation` passed with `[TacticalFollowCameraModeCommandValidation] result=Passed tests=43`.
   - `git diff --check` passed.
 
 ## Phase 6: Tests And Architecture Guardrails

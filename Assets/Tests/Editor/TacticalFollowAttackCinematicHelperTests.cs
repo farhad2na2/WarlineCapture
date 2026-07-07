@@ -30,6 +30,8 @@ public sealed class TacticalFollowAttackCinematicHelperTests
             passed++;
             RunCase(test => test.CinematicShots_ClampFovAndUseHudSafeImpactAim());
             passed++;
+            RunCase(test => test.FallbackShots_ProvideDistinctSafeCandidates());
+            passed++;
             RunCase(test => test.BuildPose_UsesSnapDampingOnlyForPhaseEntry());
             passed++;
             RunCase(test => test.ShouldSnapToShot_SnapsOnlyOnFirstShotOrPhaseEntry());
@@ -254,6 +256,51 @@ public sealed class TacticalFollowAttackCinematicHelperTests
             Assert.GreaterOrEqual(shot.FieldOfView, 42f);
             Assert.LessOrEqual(shot.FieldOfView, 54f);
         }
+    }
+
+    [Test]
+    public void FallbackShots_ProvideDistinctSafeCandidates()
+    {
+        TacticalFollowAttackCinematicHelper.ShotContext context = CreateContext(hasJet: true);
+        TacticalFollowAttackCinematicHelper.Shot primary = TacticalFollowAttackCinematicHelper.EvaluateShot(
+            TacticalFollowAttackCinematicPhase.Impact,
+            TacticalFollowAttackCinematicHelper.ImpactDurationSeconds * 0.45f,
+            context);
+        float actionY = math.max(
+            math.max(context.LaunchPosition.y, context.ImpactPosition.y),
+            context.JetPosition.y);
+
+        for (int i = 1; i <= TacticalFollowAttackCinematicHelper.ObstructionFallbackCandidateCount; i++)
+        {
+            TacticalFollowAttackCinematicHelper.Shot fallback =
+                TacticalFollowAttackCinematicHelper.EvaluateFallbackShot(
+                    TacticalFollowAttackCinematicPhase.Impact,
+                    TacticalFollowAttackCinematicHelper.ImpactDurationSeconds * 0.45f,
+                    context,
+                    i);
+
+            Assert.IsTrue(math.all(math.isfinite(fallback.CameraPosition)));
+            Assert.IsTrue(math.all(math.isfinite(fallback.LookAt)));
+            Assert.Greater(math.distance(fallback.CameraPosition, primary.CameraPosition), 5f);
+            Assert.GreaterOrEqual(fallback.CameraPosition.y, actionY + 5.5f);
+            Assert.GreaterOrEqual(math.distance(fallback.CameraPosition, fallback.LookAt), 14f);
+            Assert.GreaterOrEqual(fallback.FieldOfView, 42f);
+            Assert.LessOrEqual(fallback.FieldOfView, 54f);
+        }
+
+        TacticalFollowAttackCinematicHelper.Shot unclamped =
+            TacticalFollowAttackCinematicHelper.EvaluateFallbackShot(
+                TacticalFollowAttackCinematicPhase.Impact,
+                0.1f,
+                context,
+                TacticalFollowAttackCinematicHelper.ObstructionFallbackCandidateCount + 7);
+        TacticalFollowAttackCinematicHelper.Shot lastCandidate =
+            TacticalFollowAttackCinematicHelper.EvaluateFallbackShot(
+                TacticalFollowAttackCinematicPhase.Impact,
+                0.1f,
+                context,
+                TacticalFollowAttackCinematicHelper.ObstructionFallbackCandidateCount);
+        AssertFloat3(lastCandidate.CameraPosition, unclamped.CameraPosition);
     }
 
     [Test]

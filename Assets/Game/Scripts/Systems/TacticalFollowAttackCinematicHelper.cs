@@ -22,6 +22,7 @@ namespace Game.Runtime
         public const float RetriggerCooldownSeconds = 6f;
         public const float ProjectileLaunchBeatSeconds = 0.15f;
         public const float ImpactEventBeatSeconds = LaunchDurationSeconds + MissilePathDurationSeconds;
+        public const int ObstructionFallbackCandidateCount = 3;
 
         private const float LaunchCameraBackDistance = 18f;
         private const float LaunchCameraSideDistance = 10f;
@@ -68,6 +69,9 @@ namespace Game.Runtime
         private const float MinCameraDistanceFromLookAt = 14f;
         private const float MinCameraDistanceFromJet = 12f;
         private const float MinCameraDistanceFromImpact = 14f;
+        private const float FallbackSideStepDistance = 18f;
+        private const float FallbackLiftDistance = 6f;
+        private const float FallbackBackStepDistance = 10f;
         private const float CinematicTargetRadius = 3f;
         private const float CinematicDesiredDistance = 14f;
         private const float CinematicDesiredHeight = 6f;
@@ -267,6 +271,33 @@ namespace Game.Runtime
                 default:
                     return EvaluateFlyoverShot(phaseElapsedSeconds, context);
             }
+        }
+
+        public static Shot EvaluateFallbackShot(
+            TacticalFollowAttackCinematicPhase phase,
+            float phaseElapsedSeconds,
+            in ShotContext context,
+            int fallbackIndex)
+        {
+            Shot shot = EvaluateShot(phase, phaseElapsedSeconds, context);
+            if (fallbackIndex <= 0)
+                return shot;
+
+            int clampedIndex = math.clamp(fallbackIndex, 1, ObstructionFallbackCandidateCount);
+            float3 dir = context.AttackDirection;
+            float3 right = math.normalizesafe(
+                math.cross(new float3(0f, 1f, 0f), dir),
+                new float3(1f, 0f, 0f));
+            float3 offset = clampedIndex switch
+            {
+                1 => -right * FallbackSideStepDistance + new float3(0f, FallbackLiftDistance, 0f),
+                2 => right * FallbackSideStepDistance + new float3(0f, FallbackLiftDistance * 1.35f, 0f) -
+                     dir * (FallbackBackStepDistance * 0.5f),
+                _ => new float3(0f, FallbackLiftDistance * 1.8f, 0f) - dir * FallbackBackStepDistance
+            };
+
+            float3 cameraPosition = ApplyCommonShotSafety(shot.CameraPosition + offset, shot.LookAt, context);
+            return BuildShot(cameraPosition, shot.LookAt, shot.FieldOfView, shot.PositionDampingSeconds);
         }
 
         public static TacticalFollowCameraPoseComponent BuildPose(in Shot shot, bool snapToShot)

@@ -930,22 +930,31 @@ namespace Game.Runtime
             if (pendingFuelSeedQuery.IsEmptyIgnoreFilter)
                 return;
 
-            using NativeArray<Entity> entities = pendingFuelSeedQuery.ToEntityArray(Allocator.Temp);
-            for (int i = 0; i < entities.Length; i++)
+            EntityTypeHandle entityType = em.GetEntityTypeHandle();
+            using NativeArray<ArchetypeChunk> chunks = pendingFuelSeedQuery.ToArchetypeChunkArray(Allocator.Temp);
+            using var appliedEntities = new NativeList<Entity>(Allocator.Temp);
+            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
             {
-                Entity entity = entities[i];
-                if (!em.Exists(entity) ||
-                    !em.HasComponent<InitialUsableFuelStorageSeedPending>(entity))
+                NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+                for (int i = 0; i < entities.Length; i++)
                 {
-                    continue;
+                    Entity entity = entities[i];
+                    if (!em.Exists(entity) ||
+                        !em.HasComponent<InitialUsableFuelStorageSeedPending>(entity))
+                    {
+                        continue;
+                    }
+
+                    InitialUsableFuelStorageSeedPending pending = em.GetComponentData<InitialUsableFuelStorageSeedPending>(entity);
+                    if (!TryApplyInitialUsableFuelStorage(em, pending.InitialFuel, out _))
+                        continue;
+
+                    appliedEntities.Add(entity);
                 }
-
-                InitialUsableFuelStorageSeedPending pending = em.GetComponentData<InitialUsableFuelStorageSeedPending>(entity);
-                if (!TryApplyInitialUsableFuelStorage(em, pending.InitialFuel, out _))
-                    continue;
-
-                em.RemoveComponent<InitialUsableFuelStorageSeedPending>(entity);
             }
+
+            for (int i = 0; i < appliedEntities.Length; i++)
+                em.RemoveComponent<InitialUsableFuelStorageSeedPending>(appliedEntities[i]);
         }
 
         private static bool HasInitialUsablePlayerFuelStorage(EntityManager em)

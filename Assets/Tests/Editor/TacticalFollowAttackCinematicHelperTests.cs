@@ -28,6 +28,8 @@ public sealed class TacticalFollowAttackCinematicHelperTests
             passed++;
             RunCase(test => test.CinematicShots_StayWideAndAboveAction());
             passed++;
+            RunCase(test => test.CinematicShots_ClampFovAndUseHudSafeImpactAim());
+            passed++;
             RunCase(test => test.BuildPose_UsesSnapDampingOnlyForPhaseEntry());
             passed++;
             RunCase(test => test.BuildTarget_UsesAttackImpactTarget());
@@ -214,6 +216,41 @@ public sealed class TacticalFollowAttackCinematicHelperTests
             Assert.GreaterOrEqual(math.distance(shot.CameraPosition, shot.LookAt), 14f);
             Assert.GreaterOrEqual(math.distance(shot.CameraPosition, context.ImpactPosition), 14f);
             Assert.GreaterOrEqual(math.distance(shot.CameraPosition, context.JetPosition), 12f);
+        }
+    }
+
+    [Test]
+    public void CinematicShots_ClampFovAndUseHudSafeImpactAim()
+    {
+        TacticalFollowAttackCinematicHelper.ShotContext context = CreateContext(hasJet: true);
+        TacticalFollowAttackCinematicHelper.Shot launch = TacticalFollowAttackCinematicHelper.EvaluateShot(
+            TacticalFollowAttackCinematicPhase.Launch,
+            0.35f,
+            context);
+        TacticalFollowAttackCinematicHelper.Shot missile = TacticalFollowAttackCinematicHelper.EvaluateShot(
+            TacticalFollowAttackCinematicPhase.MissilePath,
+            0.45f,
+            context);
+        TacticalFollowAttackCinematicHelper.Shot impact = TacticalFollowAttackCinematicHelper.EvaluateShot(
+            TacticalFollowAttackCinematicPhase.Impact,
+            0.6f,
+            context);
+        TacticalFollowAttackCinematicHelper.Shot flyover = TacticalFollowAttackCinematicHelper.EvaluateShot(
+            TacticalFollowAttackCinematicPhase.Flyover,
+            0.05f,
+            context);
+
+        AssertClampedFov(launch);
+        AssertClampedFov(missile);
+        AssertClampedFov(impact);
+        AssertClampedFov(flyover);
+        Assert.LessOrEqual(impact.LookAt.y, context.ImpactPosition.y + 1.3f);
+        Assert.LessOrEqual(flyover.LookAt.y, context.ImpactPosition.y + 0.7f);
+
+        static void AssertClampedFov(TacticalFollowAttackCinematicHelper.Shot shot)
+        {
+            Assert.GreaterOrEqual(shot.FieldOfView, 42f);
+            Assert.LessOrEqual(shot.FieldOfView, 54f);
         }
     }
 

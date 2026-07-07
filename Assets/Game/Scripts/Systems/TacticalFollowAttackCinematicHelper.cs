@@ -60,6 +60,10 @@ namespace Game.Runtime
         private const float FlyoverFieldOfView = 50f;
         private const float FlyoverDampingSeconds = 0.28f;
 
+        private const float MinCinematicFieldOfView = 42f;
+        private const float MaxCinematicFieldOfView = 54f;
+        private const float ImpactHudSafeLookDrop = 1.15f;
+        private const float FlyoverHudSafeLookDrop = 1.1f;
         private const float MinCameraClearanceAboveAction = 5.5f;
         private const float MinCameraDistanceFromLookAt = 14f;
         private const float MinCameraDistanceFromJet = 12f;
@@ -330,13 +334,7 @@ namespace Game.Runtime
                 math.smoothstep(0.65f, 1f, projectileProgress));
             cameraPosition = ApplyCommonShotSafety(cameraPosition, lookAt, context);
 
-            return new Shot
-            {
-                CameraPosition = cameraPosition,
-                LookAt = lookAt,
-                FieldOfView = MissilePathFieldOfView,
-                PositionDampingSeconds = MissilePathDampingSeconds
-            };
+            return BuildShot(cameraPosition, lookAt, MissilePathFieldOfView, MissilePathDampingSeconds);
         }
 
         private static Shot EvaluateLaunchShot(float phaseElapsedSeconds, in ShotContext context)
@@ -360,13 +358,7 @@ namespace Game.Runtime
             float3 lookAt = math.lerp(lookAhead, context.ImpactPosition, LaunchLookImpactBlend);
             cameraPosition = ApplyCommonShotSafety(cameraPosition, lookAt, context);
 
-            return new Shot
-            {
-                CameraPosition = cameraPosition,
-                LookAt = lookAt,
-                FieldOfView = LaunchFieldOfView,
-                PositionDampingSeconds = LaunchDampingSeconds
-            };
+            return BuildShot(cameraPosition, lookAt, LaunchFieldOfView, LaunchDampingSeconds);
         }
 
         private static Shot EvaluateImpactShot(float phaseElapsedSeconds, in ShotContext context)
@@ -386,17 +378,11 @@ namespace Game.Runtime
             float3 cameraPosition = context.ImpactPosition + rotatedOffset + new float3(0f, ImpactCameraHeight, 0f);
 
             float3 lookAt = context.ImpactPosition
-                + new float3(0f, ImpactLookHeight, 0f)
+                + new float3(0f, ImpactLookHeight - ImpactHudSafeLookDrop, 0f)
                 - dir * ImpactLookBackDistance;
             cameraPosition = ApplyCommonShotSafety(cameraPosition, lookAt, context);
 
-            return new Shot
-            {
-                CameraPosition = cameraPosition,
-                LookAt = lookAt,
-                FieldOfView = ImpactFieldOfView,
-                PositionDampingSeconds = ImpactDampingSeconds
-            };
+            return BuildShot(cameraPosition, lookAt, ImpactFieldOfView, ImpactDampingSeconds);
         }
 
         private static Shot EvaluateFlyoverShot(float phaseElapsedSeconds, in ShotContext context)
@@ -413,7 +399,7 @@ namespace Game.Runtime
 
             // Pan up from the wreck to track the jet passing over it.
             float lookBlend = math.smoothstep(0f, FlyoverLookRampNormalized, normalized) * FlyoverLookJetWeight;
-            float3 wreckLook = context.ImpactPosition + new float3(0f, 1.5f, 0f);
+            float3 wreckLook = context.ImpactPosition + new float3(0f, 1.5f - FlyoverHudSafeLookDrop, 0f);
             float3 lookAt = math.lerp(wreckLook, jetLook, lookBlend);
 
             float3 cameraPosition = context.ImpactPosition
@@ -434,12 +420,21 @@ namespace Game.Runtime
 
             cameraPosition = ApplyCommonShotSafety(cameraPosition, lookAt, context);
 
+            return BuildShot(cameraPosition, lookAt, FlyoverFieldOfView, FlyoverDampingSeconds);
+        }
+
+        private static Shot BuildShot(
+            float3 cameraPosition,
+            float3 lookAt,
+            float fieldOfView,
+            float dampingSeconds)
+        {
             return new Shot
             {
                 CameraPosition = cameraPosition,
                 LookAt = lookAt,
-                FieldOfView = FlyoverFieldOfView,
-                PositionDampingSeconds = FlyoverDampingSeconds
+                FieldOfView = math.clamp(fieldOfView, MinCinematicFieldOfView, MaxCinematicFieldOfView),
+                PositionDampingSeconds = dampingSeconds
             };
         }
 

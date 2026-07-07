@@ -33,7 +33,6 @@ namespace Game.Runtime
             TacticalFollowAttackCinematicStateComponent cinematic =
                 state.EntityManager.GetComponentData<TacticalFollowAttackCinematicStateComponent>(cinematicEntity);
             RestoreTimeScale(ref cinematic);
-            state.EntityManager.SetComponentData(cinematicEntity, cinematic);
         }
 
         public void OnUpdate(ref SystemState state)

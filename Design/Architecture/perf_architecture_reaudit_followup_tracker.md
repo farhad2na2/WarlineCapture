@@ -47,18 +47,18 @@ Turn the 2026-07-06 re-audit and work order into a fast, measurable implementati
 
 | Field | Status |
 |---|---|
-| Checklist complete | 27 / 67 active, 0 skipped |
-| Checklist percent complete | 40.3% active |
+| Checklist complete | 28 / 67 active, 0 skipped |
+| Checklist percent complete | 41.8% active |
 | Optional backlog | 0 / 5, not counted in active total |
 | Current phase | Phase 3 - Mobile Visual Quality Verification |
 | Current target | Capture current/candidate mobile screenshots and Android profiler evidence using the documented Phase 3 verification plan before changing defaults. |
 | Quick wins status | Baseline sync complete; Burst inventory and guardrail ledger updated and validated; log-gating inventory complete with no hoist targets; mobile visual verification next; night floor not started. |
 | Burst status | Refreshed inventory: 130 runtime `ISystem` files, 57 with `[BurstCompile]`, 73 without `[BurstCompile]`, 0 unclassified. `TacticalFollowAttackCinematicSystem` is now explicitly classified as managed camera cinematic orchestration. |
-| Mobile visual status | Current mobile tier is performance-safe but may be over-corrected visually. Phase 3 evidence plan added in `Design/AgentReports/2026-07-07_mobile_visual_quality_verification_plan.md`; current settings are `runtimeMode=High`, render scale `0.5`, shadow distance `16`, one cascade, HDR off, MSAA off/effectively 1x. No defaults changed; screenshots, Android profiler evidence, and user sign-off remain required. |
+| Mobile visual status | Current mobile tier is performance-safe but may be over-corrected visually. Phase 3 evidence plan added in `Design/AgentReports/2026-07-07_mobile_visual_quality_verification_plan.md`; current settings are `runtimeMode=High`, render scale `0.5`, shadow distance `16`, one cascade, HDR off, MSAA off/effectively 1x. Candidate config `Assets/Game/Rendering/VisualQualityConfig_MobileCandidate.asset` exists for deliberate capture/testing only with render-scale overrides `0.75`; Match remains bound to the production config. Screenshots, Android profiler evidence, and user sign-off remain required before default changes. |
 | Transport status | Phase 9 continuation is not part of the quick-win start; keep pending until Burst/log/visual gates are handled. |
 | Selection HUD status | Inventory first; no extraction until method clusters and validation coverage are mapped. |
 | Compiler status | Phase 0 baseline green. After rebase to `c218b124a`, `Game.Runtime.csproj` and `Game.Tests.Editor.csproj` build with 0 errors; `Game.Runtime.csproj` needed the fetched `TacticalFollowAttackCinematicHelper.cs` include synced. |
-| Validation status | Phase 0 `git diff --check` passed before rebase. Phase 1 rebased validation: `git diff --check` passed, `Game.Tests.Editor.csproj` passed with 0 errors, `Game.Runtime.csproj` passed with 0 errors, Unity no-Burst classification validation passed with `noBurst=73 classified=73 unclassified=0`. Phase 2 inventory found no code-change hoist targets. Phase 3 current-setting inventory/report slice is documentation-only; `git diff --check` passed. |
+| Validation status | Phase 0 `git diff --check` passed before rebase. Phase 1 rebased validation: `git diff --check` passed, `Game.Tests.Editor.csproj` passed with 0 errors, `Game.Runtime.csproj` passed with 0 errors, Unity no-Burst classification validation passed with `noBurst=73 classified=73 unclassified=0`. Phase 2 inventory found no code-change hoist targets. Phase 3 current-setting inventory/report slice passed `git diff --check`; candidate-config slice passed `git diff --check`. |
 | Still wrong / next iteration | Fetched/rebased onto `origin/main` at `c218b124a` after the Burst inventory slice. No low-risk `Burstable as-is` no-Burst systems were found. Phase 2 found 26 direct interpolated Debug calls, all already gated, editor/development-only, warning/error, or intentional one-shot startup markers. Next iteration should capture current and candidate screenshots, then run a candidate Android profiler capture before any visual-quality default is changed. |
 
 ## Phase 0 - Baseline Sync
@@ -104,7 +104,7 @@ Mechanical hygiene after Burst. Do not delete useful diagnostics.
 P0 quality/performance check. This phase has a user visual sign-off gate before changing defaults.
 
 - [ ] Capture current mobile settings at three fixed device viewpoints: gameplay zoom, max zoom-out, and night phase.
-- [ ] Prepare a recommended visual tier variant in config/assets without committing it as default.
+- [x] Prepare a recommended visual tier variant in config/assets without committing it as default: `Assets/Game/Rendering/VisualQualityConfig_MobileCandidate.asset`.
 - [ ] Recommended starting point: renderScale `0.7-0.8`, shadowDistance `40-60`, 1-2 cascades, still no HDR/MSAA unless evidence supports it.
 - [ ] Capture the same three viewpoints for the recommended tier.
 - [ ] Run an Android profiler capture for the recommended tier.

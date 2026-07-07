@@ -31,6 +31,11 @@ Verify whether the current mobile render tier is too aggressive visually before 
 ## Recommended Candidate For Sign-off
 Do not make this default until screenshots and Android metrics pass.
 
+Candidate asset prepared for deliberate capture/testing only:
+- `Assets/Game/Rendering/VisualQualityConfig_MobileCandidate.asset`
+
+The Match scene remains bound to `Assets/Game/Rendering/VisualQualityConfig.asset`.
+
 | Setting | Candidate value | Reason |
 |---|---:|---|
 | Medium/High render scale override | `0.75` | First visual recovery step from `0.5` while staying below full resolution. |
@@ -98,4 +103,3 @@ No default mobile visual-quality value should change until:
 - Android profiler summary exists for the candidate.
 - Candidate p95/p99/GPU/GC remain acceptable against the accepted mobile baseline.
 - User approves the visual tradeoff.
-

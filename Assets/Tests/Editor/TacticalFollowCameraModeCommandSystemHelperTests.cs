@@ -97,6 +97,8 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
             passed++;
             RunCase(test => test.ActiveAttackCinematicPreservesTemporaryPoseDuringBaseRefresh());
             passed++;
+            RunCase(test => test.CompletedAttackCinematicRespectsRetriggerCooldown());
+            passed++;
             RunCase(test => test.UnfollowedAirUnitAttackVfxDoesNotCreateImpactCutaway());
             passed++;
             UnityEngine.Debug.Log($"[TacticalFollowCameraModeCommandValidation] result=Passed tests={passed}");
@@ -1148,6 +1150,36 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
     }
 
     [Test]
+    public void CompletedAttackCinematicRespectsRetriggerCooldown()
+    {
+        Entity aircraft = CreateSelectedAirUnit(new float3(0f, 12f, 0f), quaternion.identity);
+        Entity target = _em.CreateEntity(typeof(LocalTransform));
+        float3 targetPosition = new float3(24f, 0f, 10f);
+        _em.SetComponentData(target, LocalTransform.FromPosition(targetPosition));
+        QueueRequest(TacticalFollowCameraRequestKind.ToggleFollowMode);
+        Assert.IsTrue(_system.ProcessPendingRequests(_em));
+
+        Entity request = CreateAttackVfxRequest(aircraft, target, targetPosition);
+        SystemHandle cinematicSystem = _world.CreateSystem<TacticalFollowAttackCinematicSystem>();
+        _world.SetTime(new TimeData(10d, 0.016f));
+        cinematicSystem.Update(_world.Unmanaged);
+        AssertActiveCinematic(active: 1);
+
+        _world.SetTime(new TimeData(15d, 5f));
+        cinematicSystem.Update(_world.Unmanaged);
+        AssertActiveCinematic(active: 0);
+
+        _em.DestroyEntity(request);
+        CreateAttackVfxRequest(aircraft, target, targetPosition);
+        _world.SetTime(new TimeData(15.5d, 0.016f));
+        cinematicSystem.Update(_world.Unmanaged);
+
+        AssertActiveCinematic(active: 0);
+        Assert.IsTrue(_system.TryReadMode(_em, out TacticalFollowCameraModeComponent mode));
+        Assert.AreEqual(0, mode.HasTemporaryTarget);
+    }
+
+    [Test]
     public void UnfollowedAirUnitAttackVfxDoesNotCreateImpactCutaway()
     {
         CreateSelectedAirUnit(new float3(0f, 12f, 0f), quaternion.identity);
@@ -1189,6 +1221,32 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
 
         Assert.IsTrue(_system.TryReadPose(_em, out TacticalFollowCameraPoseComponent pose));
         Assert.AreEqual(TacticalFollowCameraPoseSource.BaseTarget, pose.Source);
+    }
+
+    private Entity CreateAttackVfxRequest(Entity aircraft, Entity target, float3 targetPosition)
+    {
+        Entity request = _em.CreateEntity(typeof(UnitAttackVfxRequest));
+        _em.SetComponentData(request, new UnitAttackVfxRequest
+        {
+            Kind = (byte)UnitAttackVfxRequestKind.MuzzleFlash,
+            Source = aircraft,
+            Target = target,
+            SourcePosition = new float3(0f, 12f, 0f),
+            TargetPosition = targetPosition,
+            PlaybackPosition = new float3(0f, 12f, 1f),
+            PlaybackRotation = quaternion.identity
+        });
+        return request;
+    }
+
+    private void AssertActiveCinematic(byte active)
+    {
+        using EntityQuery cinematicQuery =
+            _em.CreateEntityQuery(ComponentType.ReadOnly<TacticalFollowAttackCinematicStateComponent>());
+        Assert.IsFalse(cinematicQuery.IsEmptyIgnoreFilter);
+        TacticalFollowAttackCinematicStateComponent cinematic =
+            _em.GetComponentData<TacticalFollowAttackCinematicStateComponent>(cinematicQuery.GetSingletonEntity());
+        Assert.AreEqual(active, cinematic.Active);
     }
 
     private Entity CreateSelectedUnit(float3 position, quaternion rotation)

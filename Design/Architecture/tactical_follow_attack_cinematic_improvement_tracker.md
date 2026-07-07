@@ -83,7 +83,7 @@ The current implementation is not accepted because it is too close, too fast, fr
 
 ## Progress Summary
 
-Overall implementation progress: 80% (67/84 implementation checklist items complete).
+Overall implementation progress: 81% (68/84 implementation checklist items complete).
 
 Progress is checklist-based. Each implementation or validation checkbox below counts as one item. Documentation creation and index links are not counted as implementation progress.
 
@@ -96,7 +96,7 @@ Progress is checklist-based. Each implementation or validation checkbox below co
 | 4. Shot solver and obstruction safety | Complete | 12 | 12 | 100% | Pure shot solver now uses wider, higher launch/path/impact/flyover shots with safety clamps, HUD-safe aim bias, FOV clamps, explicit phase-entry snap rules, deterministic fallback candidates, and non-alloc obstruction probes at the managed camera boundary. |
 | 5. Follow-camera/time-scale integration | Complete | 9 | 9 | 100% | Active attack pose ownership, completion handback, temporary-target abort cleanup, time-scale apply/restore, paused-time restoration, destroyed source/target fallback behavior, and active-cinematic UI stability are covered by focused tests. |
 | 6. Tests and architecture guardrails | Complete | 13 | 13 | 100% | Pure helper tests cover phase/shot math; ECS tests cover followed/unfollowed request behavior, retrigger cooldown, abort cleanup, and architecture guardrails. |
-| 7. Unity visual validation | In progress | 1 | 8 | 13% | Synthetic editor shot-capture harness now records launch/path/impact/flyover frames; real in-match acceptance remains open. |
+| 7. Unity visual validation | In progress | 2 | 8 | 25% | Synthetic and real Match playmode capture harnesses now record launch/path/impact/flyover/return frames; flyover readability is still not accepted. |
 | 8. Rollout and documentation | Not started | 0 | 4 | 0% | Update docs and final acceptance notes after the feature works. |
 
 ## Phase 0: Baseline And Proof Capture
@@ -394,7 +394,7 @@ Phase 6 notes, 2026-07-07:
 ## Phase 7: Unity Visual Validation
 
 - [ ] Validate a jet attack from third-person follow mode in the Unity editor.
-- [ ] Capture screenshots or a short video of launch, missile path, impact, flyover, and return.
+- [x] Capture screenshots or a short video of launch, missile path, impact, flyover, and return.
 - [ ] Verify the missile/tracer is visible from the launch shot.
 - [ ] Verify explosion/impact is centered and visible from the impact shot.
 - [ ] Verify the jet flies over or past the destroyed target after impact.
@@ -415,12 +415,27 @@ Phase 7 notes, 2026-07-07:
   - `/private/tmp/warline-attack-cinematic-visual/03-impact.png`
   - `/private/tmp/warline-attack-cinematic-visual/04-flyover.png`
 - This is only visual-support evidence. It does not replace the required in-match third-person follow jet-attack validation because it uses synthetic geometry and does not prove real unit/VFX/UI timing in the match scene.
+- Added editor-only in-match capture harness `Game.Editor.TacticalFollowAttackCinematicPlayModeValidation.RunInMatchAttackCinematicProof`.
+- The in-match harness loads the real Menu -> Match flow, waits for Match HUD/world readiness, arms tactical follow mode on a player air unit, injects the same `UnitAttackVfxRequest` data that `UnitAttackSystem` emits, and records the real Match camera during launch, missile path, impact, flyover, and return.
+- In-match capture output:
+  - `/private/tmp/warline-attack-cinematic-playmode/01-launch.png`
+  - `/private/tmp/warline-attack-cinematic-playmode/02-missile-path.png`
+  - `/private/tmp/warline-attack-cinematic-playmode/03-impact.png`
+  - `/private/tmp/warline-attack-cinematic-playmode/04-flyover.png`
+  - `/private/tmp/warline-attack-cinematic-playmode/05-return.png`
+- Current acceptance read from the in-match captures:
+  - Launch framing is readable and no longer an under-wing closeup.
+  - Impact/explosion is visible and readable.
+  - Missile path and flyover still need tuning before final acceptance. The flyover capture does not clearly show the jet crossing past the destroyed target, so the acceptance checkbox remains open.
+- Licensing/tooling note: the first sandboxed Unity run timed out before project load on `LicenseClient-farhad`; the documented out-of-sandbox Unity workaround was required. The first escalated `-quit` run exited before asynchronous Play Mode validation, so the accepted command omits `-quit` and lets the validation method exit Unity after Play Mode.
 - Validation:
   - `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
   - `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
   - `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
   - `Tools/CI/invoke_unity_macos.sh --timeout 300 --log /private/tmp/warline-attack-cinematic-visual-validation-4.log -- -quit -executeMethod Game.Editor.TacticalFollowAttackCinematicVisualValidation.RunShotSequenceCapture` passed with `[AttackCinematicVisualValidation] result=Passed captures=4`.
+  - `Tools/CI/invoke_unity_macos.sh --timeout 420 --log /private/tmp/warline-attack-cinematic-playmode-validation-escalated-5.log -- -executeMethod Game.Editor.TacticalFollowAttackCinematicPlayModeValidation.RunInMatchAttackCinematicProof` passed with `[TacticalFollowAttackCinematicPlayModeValidation] result=Passed`.
   - `Tools/CI/invoke_unity_macos.sh --timeout 420 --log /private/tmp/warline-attack-cinematic-architecture-validation-13.log -- -quit -nographics -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation` passed with `[EcsBurstHotPathArchitectureValidation] result=Passed tests=10`.
+  - `Tools/CI/invoke_unity_macos.sh --timeout 420 --log /private/tmp/warline-attack-cinematic-architecture-validation-14.log -- -quit -nographics -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation` passed with `[EcsBurstHotPathArchitectureValidation] result=Passed tests=10`.
   - `git diff --check` passed.
 
 ## Phase 8: Rollout And Documentation

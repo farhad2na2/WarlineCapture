@@ -33,13 +33,14 @@ Do not make this default until screenshots and Android metrics pass.
 
 Candidate asset prepared for deliberate capture/testing only:
 - `Assets/Game/Rendering/VisualQualityConfig_MobileCandidate.asset`
+- `Assets/Game/Rendering/Mobile_RPAsset_MobileCandidate.asset`
 
 The Match scene remains bound to `Assets/Game/Rendering/VisualQualityConfig.asset`.
 
 | Setting | Candidate value | Reason |
 |---|---:|---|
 | Medium/High render scale override | `0.75` | First visual recovery step from `0.5` while staying below full resolution. |
-| Mobile URP render scale | `0.75` while testing | Match runtime override for direct asset capture. |
+| Mobile URP render scale | `0.75` while testing | Candidate URP asset and runtime override agree. |
 | Shadow distance | `48` | Inside the tracker recommendation of `40-60`; likely enough for RTS zoom readability. |
 | Shadow cascades | `1` first, optional `2` second pass | Keep first test close to current GPU cost; test `2` only if shadow cutoff is visible. |
 | Main light shadowmap | `512` first, optional `1024` second pass | Avoid increasing atlas cost until screenshots prove `512` is visibly insufficient. |

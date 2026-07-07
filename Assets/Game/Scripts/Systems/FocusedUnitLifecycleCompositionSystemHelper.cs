@@ -163,10 +163,21 @@ namespace Game.Runtime
             if (!em.Exists(entity) || !em.HasComponent<Faction>(entity))
                 return false;
 
-            ClearCurrentSelection(em, selectionStateSystem, clearReason, logSelectionDiagnostic, clearHudSelection);
             byte factionId = em.GetComponentData<Faction>(entity).Id;
             bool playerControlled = FactionIdentity.IsPlayerControlled(factionId);
-            if (playerControlled && !em.HasComponent<SelectedUnitTag>(entity))
+            if (!playerControlled)
+            {
+                string rejectedDescription = describeEntity != null ? describeEntity(em, entity) : entity.ToString();
+                SelectionRuntimeDiagnosticsSystemHelper.LogSelectionClickDebug(
+                    $"[SelectionClick] ONE_SELECTION_DEBUG action=RejectFocus source={diagnosticSource} reason=NonPlayer frame={UnityEngine.Time.frameCount} " +
+                    $"entity={rejectedDescription} faction={factionId}");
+                logSelectionDiagnostic?.Invoke(
+                    $"result=RejectFocus source={diagnosticSource} reason=NonPlayer entity={rejectedDescription} faction={factionId}");
+                return false;
+            }
+
+            ClearCurrentSelection(em, selectionStateSystem, clearReason, logSelectionDiagnostic, clearHudSelection);
+            if (!em.HasComponent<SelectedUnitTag>(entity))
                 em.AddComponent<SelectedUnitTag>(entity);
 
             bool selectedAfterAdd = em.HasComponent<SelectedUnitTag>(entity);

@@ -368,7 +368,7 @@ namespace Game.Runtime
 
         public void SelectAndFocusBuilding(Context context, RuntimeBuildingEntity building)
         {
-            if (building == null)
+            if (!IsSelectablePlayerBuilding(building))
                 return;
 
             context.RuntimeBuildingSystem?.SelectBuilding(building.Id);
@@ -420,6 +420,8 @@ namespace Game.Runtime
                 RuntimeBuildingEntity building = pair.Value;
                 if (building == null || building.IsDestroyed || building.Instance == null || !building.Instance.activeInHierarchy)
                     continue;
+                if (!IsSelectablePlayerBuilding(building))
+                    continue;
 
                 Vector3 screen = camera.WorldToScreenPoint(ResolveBuildingFocusWorldPosition(context, building));
                 if (screen.z > 0f && screenRect.Contains(new Vector2(screen.x, screen.y)))
@@ -438,6 +440,8 @@ namespace Game.Runtime
             {
                 RuntimeBuildingEntity building = entry.Value;
                 if (building?.Definition == null || building.IsDestroyed || building.Instance == null || !building.Instance.activeInHierarchy)
+                    continue;
+                if (!IsSelectablePlayerBuilding(building))
                     continue;
 
                 if (!TryGetBuildingScreenRect(context.WorldCamera, building, out Rect buildingRect, out _))
@@ -469,6 +473,8 @@ namespace Game.Runtime
                 RuntimeBuildingEntity building = entry.Value;
                 if (building?.Definition == null)
                     continue;
+                if (!IsSelectablePlayerBuilding(building))
+                    continue;
 
                 Vector2Int min = building.OriginCell;
                 Vector2Int size = building.Definition.FootprintCells;
@@ -494,6 +500,13 @@ namespace Game.Runtime
             Vector2Int min,
             Vector2Int size)
         {
+            RuntimeBuildingEntity selectedBuilding = context.RuntimeBuildings != null &&
+                                                   context.RuntimeBuildings.TryGetValue(buildingId, out RuntimeBuildingEntity building)
+                ? building
+                : null;
+            if (!IsSelectablePlayerBuilding(selectedBuilding))
+                return false;
+
             if (context.TryAssignSelectedHaulerOrders != null &&
                 context.TryAssignSelectedHaulerOrders(buildingId))
             {
@@ -506,10 +519,6 @@ namespace Game.Runtime
             context.SuppressNextWorldClick?.Invoke();
             context.RefreshMarkers?.Invoke();
             context.ClearFocusedUnit?.Invoke();
-            RuntimeBuildingEntity selectedBuilding = context.RuntimeBuildings != null &&
-                                                   context.RuntimeBuildings.TryGetValue(buildingId, out RuntimeBuildingEntity building)
-                ? building
-                : null;
             context.ShowHudSelection?.Invoke(selectedBuilding);
             return true;
         }
@@ -528,6 +537,8 @@ namespace Game.Runtime
             {
                 RuntimeBuildingEntity building = entry.Value;
                 if (building == null || building.IsDestroyed || building.Instance == null || !building.Instance.activeInHierarchy)
+                    continue;
+                if (!IsSelectablePlayerBuilding(building))
                     continue;
 
                 if (!TryGetBuildingScreenRect(context.WorldCamera, building, out Rect rect, out float depth))
@@ -560,6 +571,14 @@ namespace Game.Runtime
             }
 
             return SelectBuildingCandidate(context, bestBuildingId, min, size);
+        }
+
+        private static bool IsSelectablePlayerBuilding(RuntimeBuildingEntity building)
+        {
+            return building != null &&
+                   !building.IsDestroyed &&
+                   building.HasOwnerFaction &&
+                   FactionIdentity.IsPlayerControlled(building.OwnerFactionId);
         }
 
         private static bool TryGetBuildingScreenRect(Camera camera, RuntimeBuildingEntity building, out Rect rect, out float depth)

@@ -24,8 +24,9 @@ public sealed class SelectionStateCompositionSystemHelperTests
             RunCase(test => test.VisibleUnitSelectionCandidateSystem_PublishesCandidateSnapshot());
             RunCase(test => test.FocusedUnitLifecycle_ClearCurrentSelection_RemovesSelectedTagsAndClearsCache());
             RunCase(test => test.FocusedUnitLifecycle_RefreshFocusedUnit_FocusesSingleSelectedPlayerUnit());
+            RunCase(test => test.FocusedUnitLifecycle_RejectsEnemyFocusWithoutClearingCurrentSelection());
             RunCase(test => test.FocusedUnitLifecycle_FocusAirUnitClearsAccidentalSelectionMoveThroughRequest());
-            UnityEngine.Debug.Log("[SelectionStateFocusedValidation] result=Passed tests=9");
+            UnityEngine.Debug.Log("[SelectionStateFocusedValidation] result=Passed tests=10");
         }
         catch (System.Exception ex)
         {
@@ -320,6 +321,40 @@ public sealed class SelectionStateCompositionSystemHelperTests
         Assert.IsTrue(result);
         Assert.AreEqual(unit, selectionState.FocusedUnit);
         Assert.AreEqual(unit, applied);
+    }
+
+    [Test]
+    public void FocusedUnitLifecycle_RejectsEnemyFocusWithoutClearingCurrentSelection()
+    {
+        var selectionState = new SelectionStateCompositionSystemHelper();
+        var lifecycle = new FocusedUnitLifecycleCompositionSystemHelper();
+        Entity playerUnit = CreateMoveUnit(FactionIdentity.PlayerFactionId);
+        Entity enemyUnit = CreateMoveUnit(FactionIdentity.EnemyFactionId);
+        _entityManager.AddComponent<SelectedUnitTag>(playerUnit);
+        selectionState.SetFocusedUnit(playerUnit);
+        selectionState.CacheSelectedMoveEntity(_entityManager, playerUnit);
+
+        bool hudCleared = false;
+        Entity applied = Entity.Null;
+        bool focused = lifecycle.FocusUnitEntity(
+            _entityManager,
+            enemyUnit,
+            selectionState,
+            "EnemyClick",
+            "EnemyClick",
+            _ => { },
+            null,
+            () => hudCleared = true,
+            (_, entity) => applied = entity);
+
+        Assert.IsFalse(focused);
+        Assert.IsTrue(_entityManager.HasComponent<SelectedUnitTag>(playerUnit));
+        Assert.IsFalse(_entityManager.HasComponent<SelectedUnitTag>(enemyUnit));
+        Assert.AreEqual(playerUnit, selectionState.FocusedUnit);
+        Assert.AreEqual(1, selectionState.CachedSelectedMoveEntities.Count);
+        Assert.AreEqual(playerUnit, selectionState.CachedSelectedMoveEntities[0]);
+        Assert.IsFalse(hudCleared);
+        Assert.AreEqual(Entity.Null, applied);
     }
 
     [Test]

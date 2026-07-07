@@ -16,9 +16,10 @@ public sealed class RuntimeBuildingSystemTests
             tests.AllocateId_IsSequentialAndResetsOnClear();
             tests.SelectionTracksOnlyExistingBuildings();
             tests.RemovingOtherBuilding_PreservesCurrentSelection();
+            tests.RuntimeBuildingSelection_SelectAndFocusIgnoresEnemyBuilding();
             tests.BuildingUiSelectionCommandRequest_DeletesSelectedBuildingAndWritesResult();
             tests.BuildingUiSelectionCommandRequest_ClearsSelectionAndWritesResult();
-            Debug.Log("[RuntimeBuildingSystemFocusedValidation] result=Passed tests=5");
+            Debug.Log("[RuntimeBuildingSystemFocusedValidation] result=Passed tests=6");
             ValidationExit.Exit(0);
         }
         catch (Exception ex)
@@ -72,6 +73,45 @@ public sealed class RuntimeBuildingSystemTests
 
         Assert.IsTrue(system.HasSelectedBuilding());
         Assert.AreEqual(2, system.CurrentActiveBuildingId);
+    }
+
+    [Test]
+    public void RuntimeBuildingSelection_SelectAndFocusIgnoresEnemyBuilding()
+    {
+        var runtimeBuildings = new RuntimeBuildingCollection<RuntimeBuildingEntity>();
+        RuntimeBuildingEntity friendlyBuilding = new()
+        {
+            Id = 1,
+            HasOwnerFaction = true,
+            OwnerFactionId = FactionIdentity.PlayerFactionId
+        };
+        RuntimeBuildingEntity enemyBuilding = new()
+        {
+            Id = 2,
+            HasOwnerFaction = true,
+            OwnerFactionId = FactionIdentity.EnemyFactionId
+        };
+        runtimeBuildings.AddBuilding(friendlyBuilding.Id, friendlyBuilding);
+        runtimeBuildings.AddBuilding(enemyBuilding.Id, enemyBuilding);
+        var selectionSystem = new BuildingSelectionRuntimeCompositionSystemHelper();
+        int hudSelectionCount = 0;
+        int clearFocusedCount = 0;
+        BuildingSelectionRuntimeCompositionSystemHelper.Context context = CreateSelectionContext(
+            runtimeBuildings,
+            clearFocusedUnit: () => clearFocusedCount++,
+            showHudSelection: _ => hudSelectionCount++);
+
+        selectionSystem.SelectAndFocusBuilding(context, enemyBuilding);
+
+        Assert.IsFalse(runtimeBuildings.CurrentActiveBuildingId.HasValue);
+        Assert.AreEqual(0, hudSelectionCount);
+        Assert.AreEqual(0, clearFocusedCount);
+
+        selectionSystem.SelectAndFocusBuilding(context, friendlyBuilding);
+
+        Assert.AreEqual(friendlyBuilding.Id, runtimeBuildings.CurrentActiveBuildingId);
+        Assert.AreEqual(1, hudSelectionCount);
+        Assert.AreEqual(1, clearFocusedCount);
     }
 
     [Test]
@@ -137,7 +177,9 @@ public sealed class RuntimeBuildingSystemTests
 
     private static BuildingSelectionRuntimeCompositionSystemHelper.Context CreateSelectionContext(
         RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildings,
-        BuildingSelectionRuntimeCompositionSystemHelper.RuntimeAction refreshMarkers = null)
+        BuildingSelectionRuntimeCompositionSystemHelper.RuntimeAction refreshMarkers = null,
+        BuildingSelectionRuntimeCompositionSystemHelper.RuntimeAction clearFocusedUnit = null,
+        BuildingSelectionRuntimeCompositionSystemHelper.BuildingHudSelectionAction showHudSelection = null)
     {
         var selectionSystem = new BuildingSelectionRuntimeCompositionSystemHelper();
         return selectionSystem.CreateContext(
@@ -148,8 +190,8 @@ public sealed class RuntimeBuildingSystemTests
             null,
             null,
             refreshMarkers,
-            null,
-            null,
+            clearFocusedUnit,
+            showHudSelection,
             null,
             null,
             null,

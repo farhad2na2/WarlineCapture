@@ -24,7 +24,8 @@ public sealed class SelectionCommandRequestResultContractTests
             tests.UnitAirMovementSystem_FixedWingMoveOrderCompletesPassInsteadOfFlyingStraight();
             tests.UnitAirMovementSystem_FixedWingMoveOrderFromParkedTakesOffAndCompletes();
             tests.UnitAirMovementSystem_FixedWingReturnHomeCompletesRunwayApproach();
-            UnityEngine.Debug.Log("[FixedWingManeuverValidation] result=Passed tests=5");
+            tests.UnitAirMovementSystem_FixedWingReturnHomeGoesAroundFromAirportOrbitBox();
+            UnityEngine.Debug.Log("[FixedWingManeuverValidation] result=Passed tests=6");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -79,6 +80,7 @@ public sealed class SelectionCommandRequestResultContractTests
             tests.UnitAirMovementSystem_FixedWingAttackManeuverTransitionsToFinalPass();
             tests.UnitAirMovementSystem_FixedWingMoveOrderCompletesPassInsteadOfFlyingStraight();
             tests.UnitAirMovementSystem_FixedWingReturnHomeCompletesRunwayApproach();
+            tests.UnitAirMovementSystem_FixedWingReturnHomeGoesAroundFromAirportOrbitBox();
             tests.UnitAirMovementSystem_AirborneScannerLoitersInsteadOfLandingDuringActiveScan();
             tests.UnitScanOrderExecutionSystem_ReturnsAirScannerHomeWhenScanExpires();
             tests.UnitEngagementSystem_ScanOrderAcquiresOnlyTargetsInsideScanArea();
@@ -111,7 +113,7 @@ public sealed class SelectionCommandRequestResultContractTests
             tests.MoveTargetModeFlush_AppliesAcceptedPresentationCleanup();
             tests.MoveTargetModeFlush_AppliesRejectedPresentationCleanup();
             tests.DeselectAllFlush_ClearsManagedSelectionCacheAndPresentation();
-            UnityEngine.Debug.Log("[SelectionCommandRequestResultContractValidation] result=Passed tests=54");
+            UnityEngine.Debug.Log("[SelectionCommandRequestResultContractValidation] result=Passed tests=55");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -3622,7 +3624,14 @@ public sealed class SelectionCommandRequestResultContractTests
         bool capturedFinalApproach = false;
         float finalCaptureRemaining = -1f;
         float finalCaptureLateral = float.MaxValue;
-        for (int i = 0; i < 1800; i++)
+        int goAroundTicks = 0;
+        int rejoinTicks = 0;
+        int finalTurnTicks = 0;
+        float3 firstRejoinPosition = default;
+        float3 firstFinalTurnPosition = default;
+        float minRejoinLateral = float.MaxValue;
+        float minFinalTurnLateral = float.MaxValue;
+        for (int i = 0; i < 4000; i++)
         {
             UnitAirComponent tickAir = em.GetComponentData<UnitAirComponent>(aircraft);
             if (tickAir.ReturningHome == 0 && tickAir.Airborne == 0 && tickAir.LandingRolling == 0)
@@ -3636,6 +3645,31 @@ public sealed class SelectionCommandRequestResultContractTests
             farthestFromHome = math.max(farthestFromHome, math.length(new float2(fromHome.x, fromHome.z)));
 
             tickAir = em.GetComponentData<UnitAirComponent>(aircraft);
+            if (tickAir.AttackRunActive == 4)
+                goAroundTicks++;
+            if (tickAir.AttackRunActive == 5)
+            {
+                if (rejoinTicks == 0)
+                    firstRejoinPosition = tickTransform.Position;
+                rejoinTicks++;
+            }
+            if (tickAir.AttackRunActive == 6)
+            {
+                if (finalTurnTicks == 0)
+                    firstFinalTurnPosition = tickTransform.Position;
+                finalTurnTicks++;
+            }
+
+            float3 tickToRunwayStart = home - tickTransform.Position;
+            tickToRunwayStart.y = 0f;
+            float tickCaptureRemaining = math.dot(tickToRunwayStart, runwayDirection);
+            float3 tickLateralVector = tickToRunwayStart - runwayDirection * tickCaptureRemaining;
+            float tickLateral = math.length(new float2(tickLateralVector.x, tickLateralVector.z));
+            if (tickAir.AttackRunActive == 5)
+                minRejoinLateral = math.min(minRejoinLateral, tickLateral);
+            if (tickAir.AttackRunActive == 6)
+                minFinalTurnLateral = math.min(minFinalTurnLateral, tickLateral);
+
             if (!capturedFinalApproach && tickAir.ReturnApproachInitialized != 0)
             {
                 capturedFinalApproach = true;
@@ -3650,7 +3684,8 @@ public sealed class SelectionCommandRequestResultContractTests
         UnitAirComponent air = em.GetComponentData<UnitAirComponent>(aircraft);
         LocalTransform transform = em.GetComponentData<LocalTransform>(aircraft);
         float3 homeDelta = transform.Position - home;
-        string finalState = $"pos={transform.Position} returning={air.ReturningHome} airborne={air.Airborne} landing={air.LandingRolling} approach={air.ReturnApproachInitialized} pass={air.AttackRunActive} farthest={farthestFromHome} captureRemaining={finalCaptureRemaining} captureLateral={finalCaptureLateral}";
+        float3 finalForward = math.mul(transform.Rotation, new float3(0f, 0f, 1f));
+        string finalState = $"pos={transform.Position} forward={finalForward} forwardRunwayDot={math.dot(finalForward, runwayDirection)} returning={air.ReturningHome} airborne={air.Airborne} landing={air.LandingRolling} approach={air.ReturnApproachInitialized} pass={air.AttackRunActive} goAroundTicks={goAroundTicks} rejoinTicks={rejoinTicks} finalTurnTicks={finalTurnTicks} firstRejoin={firstRejoinPosition} firstFinalTurn={firstFinalTurnPosition} minRejoinLateral={minRejoinLateral} minFinalTurnLateral={minFinalTurnLateral} farthest={farthestFromHome} captureRemaining={finalCaptureRemaining} captureLateral={finalCaptureLateral}";
         Assert.IsTrue(capturedFinalApproach, $"Fixed-wing aircraft must enter a final approach before runway touchdown. {finalState}");
         Assert.GreaterOrEqual(finalCaptureRemaining, 8f, $"Fixed-wing final approach must start before the runway threshold, not above the airport. {finalState}");
         Assert.LessOrEqual(finalCaptureLateral, 4f, $"Fixed-wing final approach must be aligned with the runway centerline. {finalState}");
@@ -3661,6 +3696,82 @@ public sealed class SelectionCommandRequestResultContractTests
         Assert.AreEqual(0, air.ReturnApproachInitialized);
         Assert.Less(math.length(new float2(homeDelta.x, homeDelta.z)), 1.5f);
         Assert.Less(farthestFromHome, 100f, "Return-home maneuver should stay near the runway area instead of spiraling away.");
+    }
+
+    [Test]
+    public void UnitAirMovementSystem_FixedWingReturnHomeGoesAroundFromAirportOrbitBox()
+    {
+        using World world = new("UnitAirMovementSystem_FixedWingReturnHomeGoesAroundFromAirportOrbitBox");
+        EntityManager em = world.EntityManager;
+        CreateAirMovementGrid(em);
+
+        Entity aircraft = CreateSelectedScanCapableUnit(em, new int2(30, 38));
+        float3 home = new(24.5f, 0f, 32.5f);
+        float3 runwayEnd = new(40.5f, 0f, 32.5f);
+        em.SetComponentData(aircraft, new UnitMove { Speed = 12f, WalkSpeed = 12f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
+        em.AddComponentData(aircraft, new UnitAirMovement { CruiseHeight = 12f, RunwayTaxiSpeed = 8f });
+        em.AddComponentData(aircraft, new UnitAirComponent
+        {
+            HomePosition = home,
+            HomeCell = new int2(24, 32),
+            HomeInitialized = 1,
+            UsesRunway = 1,
+            Airborne = 1,
+            ReturningHome = 1,
+            TakeoffRolling = 0,
+            LandingRolling = 0,
+            ReturnApproachInitialized = 0,
+            AttackRunActive = 0,
+            RunwayTakeoffPosition = home,
+            RunwayTakeoffCell = new int2(24, 32),
+            RunwayLandingPosition = runwayEnd,
+            RunwayLandingCell = new int2(40, 32)
+        });
+
+        quaternion orbitHeading = quaternion.LookRotationSafe(new float3(0f, 0f, 1f), math.up());
+        em.SetComponentData(
+            aircraft,
+            LocalTransform.FromPositionRotationScale(new float3(30.5f, 28f, 38.5f), orbitHeading, 1f));
+
+        SystemHandle airMovementSystem = world.CreateSystem<UnitAirMovementSystem>();
+        bool capturedFinalApproach = false;
+        float farthestFromHome = 0f;
+        float3 runwayDirection = runwayEnd - home;
+        runwayDirection.y = 0f;
+        runwayDirection = math.normalizesafe(runwayDirection, new float3(1f, 0f, 0f));
+        float maxBeyondRunwayEnd = 0f;
+        for (int i = 0; i < 2500; i++)
+        {
+            UnitAirComponent tickAir = em.GetComponentData<UnitAirComponent>(aircraft);
+            if (tickAir.ReturningHome == 0 && tickAir.Airborne == 0 && tickAir.LandingRolling == 0)
+                break;
+
+            world.SetTime(new TimeData(2d + i * 0.1d, 0.1f));
+            airMovementSystem.Update(world.Unmanaged);
+
+            tickAir = em.GetComponentData<UnitAirComponent>(aircraft);
+            capturedFinalApproach |= tickAir.ReturnApproachInitialized != 0 || tickAir.LandingRolling != 0;
+            LocalTransform tickTransform = em.GetComponentData<LocalTransform>(aircraft);
+            float3 fromHome = tickTransform.Position - home;
+            farthestFromHome = math.max(farthestFromHome, math.length(new float2(fromHome.x, fromHome.z)));
+            float3 beyondRunwayEnd = tickTransform.Position - runwayEnd;
+            beyondRunwayEnd.y = 0f;
+            maxBeyondRunwayEnd = math.max(maxBeyondRunwayEnd, math.dot(beyondRunwayEnd, runwayDirection));
+        }
+
+        UnitAirComponent air = em.GetComponentData<UnitAirComponent>(aircraft);
+        LocalTransform transform = em.GetComponentData<LocalTransform>(aircraft);
+        float3 homeDelta = transform.Position - home;
+        string finalState = $"pos={transform.Position} returning={air.ReturningHome} airborne={air.Airborne} landing={air.LandingRolling} approach={air.ReturnApproachInitialized} pass={air.AttackRunActive} farthest={farthestFromHome} maxBeyondRunwayEnd={maxBeyondRunwayEnd}";
+        Assert.Greater(maxBeyondRunwayEnd, 20f, $"Fixed-wing aircraft too close to land must fly beyond the runway before turning back. {finalState}");
+        Assert.IsTrue(capturedFinalApproach, $"Fixed-wing aircraft must capture final after the go-around instead of orbiting forever. {finalState}");
+        Assert.AreEqual(0, air.ReturningHome, $"Fixed-wing aircraft must finish go-around landing and taxi home. {finalState}");
+        Assert.AreEqual(0, air.Airborne);
+        Assert.AreEqual(0, air.LandingRolling);
+        Assert.AreEqual(0, air.AttackRunActive);
+        Assert.AreEqual(0, air.ReturnApproachInitialized);
+        Assert.Less(math.length(new float2(homeDelta.x, homeDelta.z)), 1.5f);
+        Assert.Less(farthestFromHome, 100f, "Go-around should extend beyond the runway but still stay near the airport.");
     }
 
     [Test]

@@ -37,6 +37,9 @@ namespace Game.Runtime
         private const byte FixedWingPassFinalPhase = 1;
         private const byte FixedWingPassManeuverPhase = 2;
         private const byte FixedWingPassExtendPhase = 3;
+        private const byte FixedWingReturnGoAroundPhase = 4;
+        private const byte FixedWingReturnRejoinPhase = 5;
+        private const byte FixedWingReturnFinalTurnPhase = 6;
 
         private EntityQuery _gridQuery;
         private EntityQuery _surfaceQuery;
@@ -331,7 +334,7 @@ namespace Game.Runtime
                 bool hasDirectTarget = targetLookup.HasComponent(entity);
                 // A move order owns its pass state across frames; command systems reset it when a
                 // new order is issued. Only clear it here once no order remains.
-                if (!hasDirectTarget)
+                if (!hasDirectTarget && stateRw.ReturningHome == 0)
                     stateRw.AttackRunActive = 0;
                 if (hasDirectTarget)
                 {
@@ -575,6 +578,7 @@ namespace Game.Runtime
                             float3 runwayDirection = stateRw.RunwayLandingPosition - stateRw.RunwayTakeoffPosition;
                             runwayDirection.y = 0f;
                             runwayDirection = math.normalizesafe(runwayDirection, new float3(0f, 0f, 1f));
+                            float runwayLength = math.distance(stateRw.RunwayTakeoffPosition, stateRw.RunwayLandingPosition);
                             float requiredStraightInDistance = math.max(
                                 grid.CellSize * FixedWingReturnFinalStraightCells,
                                 move.ValueRO.Speed * 1.5f);
@@ -582,7 +586,7 @@ namespace Game.Runtime
                             float approachDistance = math.max(
                                 math.max(
                                     grid.CellSize * FixedWingReturnApproachMinCells,
-                                    math.distance(stateRw.RunwayTakeoffPosition, stateRw.RunwayLandingPosition) * 1.25f),
+                                    runwayLength * 1.25f),
                                 requiredStraightInDistance + requiredLineupDistance + grid.CellSize * FixedWingReturnLineupSlackCells);
                             float3 approachPoint = new float3(
                                 stateRw.RunwayTakeoffPosition.x - runwayDirection.x * approachDistance,
@@ -603,17 +607,187 @@ namespace Game.Runtime
                                 float finalCaptureEnd = math.max(
                                     grid.CellSize * 1f,
                                     approachDistance - math.min(requiredStraightInDistance, approachDistance * 0.75f));
-                                float finalCaptureLimit = finalCaptureEnd + approachCaptureRadius;
+                                float finalCaptureLimit = finalCaptureEnd + math.max(approachCaptureRadius, grid.CellSize * 6f);
                                 bool laterallyCaptured = math.lengthsq(approachLateralVector) <= approachCaptureRadius * approachCaptureRadius;
+                                float goAroundDistance = math.max(
+                                    requiredStraightInDistance,
+                                    ResolveFixedWingTurnRadius(move.ValueRO.Speed) * 3.25f);
+                                float3 goAroundPoint = new float3(
+                                    stateRw.RunwayLandingPosition.x + runwayDirection.x * goAroundDistance,
+                                    cruiseY,
+                                    stateRw.RunwayLandingPosition.z + runwayDirection.z * goAroundDistance);
+                                float rejoinBacktrackDistance = math.max(
+                                    grid.CellSize * 14f,
+                                    ResolveFixedWingTurnRadius(move.ValueRO.Speed) * 2.45f);
+                                float3 rejoinWaypoint = new float3(
+                                    approachPoint.x - runwayDirection.x * rejoinBacktrackDistance,
+                                    cruiseY,
+                                    approachPoint.z - runwayDirection.z * rejoinBacktrackDistance);
+                                float3 finalCaptureTarget = new float3(
+                                    stateRw.RunwayTakeoffPosition.x,
+                                    cruiseY,
+                                    stateRw.RunwayTakeoffPosition.z);
+
+                                if (stateRw.AttackRunActive == FixedWingReturnGoAroundPhase)
+                                {
+                                    float3 beyondRunwayBeforeSteer = transform.ValueRO.Position - stateRw.RunwayLandingPosition;
+                                    beyondRunwayBeforeSteer.y = 0f;
+                                    if (math.dot(beyondRunwayBeforeSteer, runwayDirection) >= goAroundDistance)
+                                    {
+                                        float3 toRejoin = rejoinWaypoint - transform.ValueRO.Position;
+                                        toRejoin.y = 0f;
+                                        float signedTurn = UnitVehicleMovementUtility.SignedAngleY(
+                                            returnForward,
+                                            math.normalizesafe(toRejoin, -runwayDirection));
+                                        stateRw.AttackRunActive = FixedWingReturnRejoinPhase;
+                                        stateRw.AttackRunExitPosition = rejoinWaypoint;
+                                        stateRw.AttackManeuverTurnSign = (sbyte)(signedTurn < 0f ? -1 : 1);
+                                    }
+                                    else
+                                    {
+                                        float maxYawStep = math.radians(FixedWingManeuverTurnRateDegreesPerSecond) * math.max(0f, dt);
+                                        float signedYawToRunway = UnitVehicleMovementUtility.SignedAngleY(returnForward, runwayDirection);
+                                        float yawStep = math.clamp(signedYawToRunway, -maxYawStep, maxYawStep);
+                                        ApplyFixedWingFlight(
+                                            ref transform.ValueRW,
+                                            ref unitGrid.ValueRW,
+                                            grid,
+                                            move.ValueRO.Speed,
+                                            dt,
+                                            cruiseY,
+                                            yawStep,
+                                            maxYawStep);
+                                        float3 beyondRunway = transform.ValueRW.Position - stateRw.RunwayLandingPosition;
+                                        beyondRunway.y = 0f;
+                                        if (math.dot(beyondRunway, runwayDirection) >= goAroundDistance)
+                                        {
+                                            stateRw.AttackRunActive = FixedWingReturnRejoinPhase;
+                                            stateRw.AttackRunExitPosition = rejoinWaypoint;
+                                            stateRw.AttackManeuverTurnSign = 1;
+                                        }
+
+                                        continue;
+                                    }
+                                }
+
                                 bool insideEntryWindow =
                                     alongApproach >= -approachCaptureRadius &&
                                     alongApproach <= finalCaptureLimit &&
                                     laterallyCaptured &&
                                     returnRunwayAlignment >= 0.95f;
 
+                                if (stateRw.AttackRunActive == FixedWingReturnRejoinPhase)
+                                {
+                                    float rejoinLookahead = math.max(
+                                        grid.CellSize * 12f,
+                                        move.ValueRO.Speed * 2.5f);
+                                    float rejoinTargetAlong = math.max(
+                                        alongApproach - rejoinLookahead,
+                                        -rejoinBacktrackDistance);
+                                    float3 dynamicRejoinTarget = new float3(
+                                        approachPoint.x + runwayDirection.x * rejoinTargetAlong,
+                                        cruiseY,
+                                        approachPoint.z + runwayDirection.z * rejoinTargetAlong);
+
+                                    SteerFixedWingTowards(
+                                        ref transform.ValueRW,
+                                        ref unitGrid.ValueRW,
+                                        grid,
+                                        move.ValueRO.Speed,
+                                        dt,
+                                        cruiseY,
+                                        dynamicRejoinTarget);
+                                    if (alongApproach <= -rejoinBacktrackDistance + approachCaptureRadius &&
+                                        laterallyCaptured &&
+                                        returnRunwayAlignment <= -0.65f)
+                                    {
+                                        stateRw.AttackRunActive = FixedWingReturnFinalTurnPhase;
+                                        stateRw.AttackRunExitPosition = finalCaptureTarget;
+                                    }
+
+                                    continue;
+                                }
+
+                                if (stateRw.AttackRunActive == FixedWingReturnFinalTurnPhase)
+                                {
+                                    if (insideEntryWindow)
+                                    {
+                                        transform.ValueRW.Rotation = quaternion.LookRotationSafe(runwayDirection, math.up());
+                                        stateRw.AttackRunActive = 0;
+                                        stateRw.AttackRunExitPosition = default;
+                                        stateRw.ReturnApproachInitialized = 1;
+                                    }
+                                    else if (alongApproach > finalCaptureLimit)
+                                    {
+                                        stateRw.AttackRunActive = FixedWingReturnGoAroundPhase;
+                                        stateRw.AttackRunExitPosition = goAroundPoint;
+                                        float maxYawStep = math.radians(FixedWingManeuverTurnRateDegreesPerSecond) * math.max(0f, dt);
+                                        float signedYawToRunway = UnitVehicleMovementUtility.SignedAngleY(returnForward, runwayDirection);
+                                        float yawStep = math.clamp(signedYawToRunway, -maxYawStep, maxYawStep);
+                                        ApplyFixedWingFlight(
+                                            ref transform.ValueRW,
+                                            ref unitGrid.ValueRW,
+                                            grid,
+                                            move.ValueRO.Speed,
+                                            dt,
+                                            cruiseY,
+                                            yawStep,
+                                            maxYawStep);
+                                        continue;
+                                    }
+                                    else
+                                    {
+                                        float finalLookahead = math.max(
+                                            grid.CellSize * 12f,
+                                            move.ValueRO.Speed * 2.5f);
+                                        float finalTargetAlong = math.min(
+                                            alongApproach + finalLookahead,
+                                            finalCaptureLimit);
+                                        float3 dynamicFinalTarget = new float3(
+                                            approachPoint.x + runwayDirection.x * finalTargetAlong,
+                                            cruiseY,
+                                            approachPoint.z + runwayDirection.z * finalTargetAlong);
+                                        SteerFixedWingTowards(
+                                            ref transform.ValueRW,
+                                            ref unitGrid.ValueRW,
+                                            grid,
+                                            move.ValueRO.Speed,
+                                            dt,
+                                            cruiseY,
+                                            dynamicFinalTarget);
+                                        continue;
+                                    }
+                                }
+
                                 if (!insideEntryWindow)
                                 {
-                                    stateRw.AttackRunActive = 0;
+                                    if (alongApproach > finalCaptureEnd)
+                                    {
+                                        stateRw.AttackRunActive = FixedWingReturnGoAroundPhase;
+                                        stateRw.AttackRunExitPosition = goAroundPoint;
+                                        float maxYawStep = math.radians(FixedWingManeuverTurnRateDegreesPerSecond) * math.max(0f, dt);
+                                        float signedYawToRunway = UnitVehicleMovementUtility.SignedAngleY(returnForward, runwayDirection);
+                                        float yawStep = math.clamp(signedYawToRunway, -maxYawStep, maxYawStep);
+                                        ApplyFixedWingFlight(
+                                            ref transform.ValueRW,
+                                            ref unitGrid.ValueRW,
+                                            grid,
+                                            move.ValueRO.Speed,
+                                            dt,
+                                            cruiseY,
+                                            yawStep,
+                                            maxYawStep);
+                                        float3 beyondRunway = transform.ValueRW.Position - stateRw.RunwayLandingPosition;
+                                        beyondRunway.y = 0f;
+                                        if (math.dot(beyondRunway, runwayDirection) >= goAroundDistance)
+                                        {
+                                            stateRw.AttackRunActive = FixedWingReturnRejoinPhase;
+                                            stateRw.AttackRunExitPosition = rejoinWaypoint;
+                                            stateRw.AttackManeuverTurnSign = 1;
+                                        }
+                                        continue;
+                                    }
+
                                     if (laterallyCaptured &&
                                         alongApproach >= -approachCaptureRadius &&
                                         alongApproach <= finalCaptureLimit)
@@ -632,17 +806,15 @@ namespace Game.Runtime
                                             maxYawStep);
                                         continue;
                                     }
-
                                     float lineLookahead = math.max(
                                         grid.CellSize * 8f,
                                         move.ValueRO.Speed * 1.5f);
-                                    float targetAlong = alongApproach > finalCaptureEnd
-                                        ? 0f
-                                        : math.clamp(alongApproach + lineLookahead, 0f, finalCaptureEnd);
+                                    float targetAlong = math.clamp(alongApproach + lineLookahead, 0f, finalCaptureEnd);
                                     float3 lineCaptureTarget = new float3(
                                         approachPoint.x + runwayDirection.x * targetAlong,
                                         cruiseY,
                                         approachPoint.z + runwayDirection.z * targetAlong);
+
                                     SteerFixedWingTowards(
                                         ref transform.ValueRW,
                                         ref unitGrid.ValueRW,
@@ -686,6 +858,8 @@ namespace Game.Runtime
                                 stateRw.Airborne = 0;
                                 stateRw.LandingRolling = 1;
                                 stateRw.ReturnApproachInitialized = 0;
+                                stateRw.AttackRunActive = 0;
+                                stateRw.AttackRunExitPosition = default;
                                 unitGrid.ValueRW.Cell = stateRw.RunwayTakeoffCell;
                             }
                         }
@@ -1405,6 +1579,8 @@ namespace Game.Runtime
                 float focusDistance = math.length(toFocus);
                 float3 focusDirection = math.normalizesafe(toFocus, forward);
                 float signedToFocus = UnitVehicleMovementUtility.SignedAngleY(forward, focusDirection);
+                if (math.dot(forward, focusDirection) < -0.999f && math.abs(signedToFocus) < 1e-5f)
+                    signedToFocus = math.PI;
                 float toFocusDegrees = math.degrees(math.abs(signedToFocus));
 
                 if (toFocusDegrees <= FixedWingManeuverLineupAngleDegrees)
@@ -1516,6 +1692,8 @@ namespace Game.Runtime
             float3 currentForward = UnitVehicleMovementUtility.Forward(transform.Rotation);
             float3 desiredForward = math.normalizesafe(horizontalToTarget, currentForward);
             float signedYawAngle = UnitVehicleMovementUtility.SignedAngleY(currentForward, desiredForward);
+            if (math.dot(currentForward, desiredForward) < -0.999f && math.abs(signedYawAngle) < 1e-5f)
+                signedYawAngle = math.PI;
             float maxYawStep = math.radians(FixedWingManeuverTurnRateDegreesPerSecond) * math.max(0f, deltaTime);
             float yawStep = math.clamp(signedYawAngle, -maxYawStep, maxYawStep);
             ApplyFixedWingFlight(ref transform, ref unitGrid, grid, speed, deltaTime, desiredY, yawStep, maxYawStep);

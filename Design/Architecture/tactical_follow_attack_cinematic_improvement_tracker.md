@@ -83,7 +83,7 @@ The current implementation is not accepted because it is too close, too fast, fr
 
 ## Progress Summary
 
-Overall implementation progress: 79% (66/84 implementation checklist items complete).
+Overall implementation progress: 80% (67/84 implementation checklist items complete).
 
 Progress is checklist-based. Each implementation or validation checkbox below counts as one item. Documentation creation and index links are not counted as implementation progress.
 
@@ -96,7 +96,7 @@ Progress is checklist-based. Each implementation or validation checkbox below co
 | 4. Shot solver and obstruction safety | Complete | 12 | 12 | 100% | Pure shot solver now uses wider, higher launch/path/impact/flyover shots with safety clamps, HUD-safe aim bias, FOV clamps, explicit phase-entry snap rules, deterministic fallback candidates, and non-alloc obstruction probes at the managed camera boundary. |
 | 5. Follow-camera/time-scale integration | Complete | 9 | 9 | 100% | Active attack pose ownership, completion handback, temporary-target abort cleanup, time-scale apply/restore, paused-time restoration, destroyed source/target fallback behavior, and active-cinematic UI stability are covered by focused tests. |
 | 6. Tests and architecture guardrails | Complete | 13 | 13 | 100% | Pure helper tests cover phase/shot math; ECS tests cover followed/unfollowed request behavior, retrigger cooldown, abort cleanup, and architecture guardrails. |
-| 7. Unity visual validation | Not started | 0 | 8 | 0% | Validate in-editor with screenshots/logs, not only tests. |
+| 7. Unity visual validation | In progress | 1 | 8 | 13% | Synthetic editor shot-capture harness now records launch/path/impact/flyover frames; real in-match acceptance remains open. |
 | 8. Rollout and documentation | Not started | 0 | 4 | 0% | Update docs and final acceptance notes after the feature works. |
 
 ## Phase 0: Baseline And Proof Capture
@@ -297,6 +297,8 @@ Phase 4 notes, 2026-07-07:
 - Added narrow managed boundary `TacticalFollowAttackCinematicCameraSystemHelper` with approved `CameraSystemHelper` suffix. It uses a preallocated hit buffer and `Physics.SphereCastNonAlloc` to probe camera-to-look-at visibility only while the attack cinematic is selecting a shot.
 - Routed active cinematic shot selection through the obstruction-safe resolver so blocked primary shots choose deterministic fallback offsets without altering pure shot math or adding a new update loop.
 - Added `ObstructionFallback_UsesAlternateShotWhenPrimaryLineBlocked` coverage with a temporary collider blocking the primary impact shot.
+- Tuned the launch and missile-path shots wider and higher after synthetic capture showed the launch angle was still too close and the missile-path framing was too target-heavy.
+- Tuned flyover look solving so, when the real jet has not yet crossed the target, the camera tracks the projected post-impact flyover corridor instead of looking back toward the launch-side jet position.
 - Open work: Unity visual validation.
 - Validation:
   - `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
@@ -308,6 +310,7 @@ Phase 4 notes, 2026-07-07:
   - `Tools/CI/invoke_unity_macos.sh --timeout 240 --log /private/tmp/warline-attack-cinematic-helper-validation-8.log -- -quit -nographics -executeMethod TacticalFollowAttackCinematicHelperTests.RunFocusedValidation` passed with `[TacticalFollowAttackCinematicHelperValidation] result=Passed tests=14`.
   - `Tools/CI/invoke_unity_macos.sh --timeout 300 --log /private/tmp/warline-attack-cinematic-helper-validation-9.log -- -quit -nographics -executeMethod TacticalFollowAttackCinematicHelperTests.RunFocusedValidation` passed with `[TacticalFollowAttackCinematicHelperValidation] result=Passed tests=15`.
   - `Tools/CI/invoke_unity_macos.sh --timeout 420 --log /private/tmp/warline-attack-cinematic-architecture-validation-9.log -- -quit -nographics -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation` passed with `[EcsBurstHotPathArchitectureValidation] result=Passed tests=10`.
+  - `Tools/CI/invoke_unity_macos.sh --timeout 300 --log /private/tmp/warline-attack-cinematic-helper-validation-12.log -- -quit -nographics -executeMethod TacticalFollowAttackCinematicHelperTests.RunFocusedValidation` passed with `[TacticalFollowAttackCinematicHelperValidation] result=Passed tests=18`.
   - `git diff --check` passed.
 
 ## Phase 5: Follow-Camera And Time-Scale Integration
@@ -397,11 +400,28 @@ Phase 6 notes, 2026-07-07:
 - [ ] Verify the jet flies over or past the destroyed target after impact.
 - [ ] Verify no camera shot clips into terrain, buildings, tents, hangars, the target, or the jet.
 - [ ] Verify frame time and GC do not regress during the cinematic sequence.
-- [ ] Record validation logs, screenshots, or profiler notes in this tracker.
+- [x] Record validation logs, screenshots, or profiler notes in this tracker.
 
 Exit criteria:
 
 - The sequence is visually accepted in Unity before any Android validation is considered.
+
+Phase 7 notes, 2026-07-07:
+
+- Added editor-only synthetic capture harness `Game.Editor.TacticalFollowAttackCinematicVisualValidation.RunShotSequenceCapture`.
+- The harness renders the pure shot solver against temporary validation geometry and writes phase screenshots to `/private/tmp/warline-attack-cinematic-visual`:
+  - `/private/tmp/warline-attack-cinematic-visual/01-launch.png`
+  - `/private/tmp/warline-attack-cinematic-visual/02-missile-path.png`
+  - `/private/tmp/warline-attack-cinematic-visual/03-impact.png`
+  - `/private/tmp/warline-attack-cinematic-visual/04-flyover.png`
+- This is only visual-support evidence. It does not replace the required in-match third-person follow jet-attack validation because it uses synthetic geometry and does not prove real unit/VFX/UI timing in the match scene.
+- Validation:
+  - `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
+  - `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
+  - `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
+  - `Tools/CI/invoke_unity_macos.sh --timeout 300 --log /private/tmp/warline-attack-cinematic-visual-validation-4.log -- -quit -executeMethod Game.Editor.TacticalFollowAttackCinematicVisualValidation.RunShotSequenceCapture` passed with `[AttackCinematicVisualValidation] result=Passed captures=4`.
+  - `Tools/CI/invoke_unity_macos.sh --timeout 420 --log /private/tmp/warline-attack-cinematic-architecture-validation-13.log -- -quit -nographics -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation` passed with `[EcsBurstHotPathArchitectureValidation] result=Passed tests=10`.
+  - `git diff --check` passed.
 
 ## Phase 8: Rollout And Documentation
 

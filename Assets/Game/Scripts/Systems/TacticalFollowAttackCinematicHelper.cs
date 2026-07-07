@@ -11,9 +11,9 @@ namespace Game.Runtime
     /// </summary>
     public static class TacticalFollowAttackCinematicHelper
     {
-        public const float LaunchDurationSeconds = 1.1f;
-        public const float MissilePathDurationSeconds = 1f;
-        public const float ImpactDurationSeconds = 1.3f;
+        public const float LaunchDurationSeconds = 1.15f;
+        public const float MissilePathDurationSeconds = 1.2f;
+        public const float ImpactDurationSeconds = 1.4f;
         public const float FlyoverDurationSeconds = 1.45f;
         public const float TotalDurationSeconds =
             LaunchDurationSeconds + MissilePathDurationSeconds + ImpactDurationSeconds + FlyoverDurationSeconds;
@@ -24,20 +24,20 @@ namespace Game.Runtime
         public const float ImpactEventBeatSeconds = LaunchDurationSeconds + MissilePathDurationSeconds;
         public const int ObstructionFallbackCandidateCount = 3;
 
-        private const float LaunchCameraBackDistance = 18f;
-        private const float LaunchCameraSideDistance = 10f;
-        private const float LaunchCameraHeightAboveJet = 6.5f;
+        private const float LaunchCameraBackDistance = 28f;
+        private const float LaunchCameraSideDistance = 17f;
+        private const float LaunchCameraHeightAboveJet = 10f;
         private const float LaunchPushInScale = 0.9f;
-        private const float LaunchLookAheadDistance = 22f;
-        private const float LaunchLookImpactBlend = 0.15f;
-        private const float LaunchFieldOfView = 46f;
+        private const float LaunchLookAheadDistance = 34f;
+        private const float LaunchLookImpactBlend = 0.28f;
+        private const float LaunchFieldOfView = 52f;
         private const float LaunchDampingSeconds = 0.16f;
 
-        private const float MissilePathCameraBackDistance = 12f;
-        private const float MissilePathCameraSideDistance = 20f;
-        private const float MissilePathCameraHeight = 9f;
-        private const float MissilePathLookAheadDistance = 11f;
-        private const float MissilePathFieldOfView = 48f;
+        private const float MissilePathCameraBackDistance = 18f;
+        private const float MissilePathCameraSideDistance = 30f;
+        private const float MissilePathCameraHeight = 13f;
+        private const float MissilePathLookAheadDistance = 18f;
+        private const float MissilePathFieldOfView = 52f;
         private const float MissilePathDampingSeconds = 0.12f;
 
         private const float ImpactCameraForwardDistance = 23f;
@@ -49,20 +49,23 @@ namespace Game.Runtime
         private const float ImpactFieldOfView = 48f;
         private const float ImpactDampingSeconds = 0.15f;
 
-        private const float FlyoverCameraBackDistance = 18f;
-        private const float FlyoverCameraSideDistance = 14f;
-        private const float FlyoverCameraHeight = 10f;
+        private const float FlyoverCameraBackDistance = 24f;
+        private const float FlyoverCameraSideDistance = 20f;
+        private const float FlyoverCameraHeight = 12f;
         private const float FlyoverLookRampNormalized = 0.45f;
-        private const float FlyoverLookJetWeight = 0.85f;
+        private const float FlyoverLookJetWeight = 0.9f;
         private const float FlyoverExitBlendStartNormalized = 0.6f;
         private const float FlyoverExitBlendWeight = 0.65f;
-        private const float FlyoverFollowBackDistance = 18f;
-        private const float FlyoverFollowHeight = 9f;
-        private const float FlyoverFieldOfView = 50f;
+        private const float FlyoverFollowBackDistance = 24f;
+        private const float FlyoverFollowHeight = 11f;
+        private const float FlyoverFieldOfView = 52f;
         private const float FlyoverDampingSeconds = 0.28f;
+        private const float FlyoverProjectedEntryDistance = 8f;
+        private const float FlyoverProjectedExitDistance = 46f;
+        private const float FlyoverProjectedHeight = 13f;
 
         private const float MinCinematicFieldOfView = 42f;
-        private const float MaxCinematicFieldOfView = 54f;
+        private const float MaxCinematicFieldOfView = 58f;
         private const float ImpactHudSafeLookDrop = 1.15f;
         private const float FlyoverHudSafeLookDrop = 1.1f;
         private const float MinCameraClearanceAboveAction = 5.5f;
@@ -435,9 +438,15 @@ namespace Game.Runtime
                 new float3(1f, 0f, 0f));
             float normalized = math.saturate(phaseElapsedSeconds / FlyoverDurationSeconds);
 
-            float3 jetLook = context.HasJet
+            float3 projectedJetLook = context.ImpactPosition
+                + dir * math.lerp(-FlyoverProjectedEntryDistance, FlyoverProjectedExitDistance, normalized)
+                + new float3(0f, FlyoverProjectedHeight, 0f);
+            float actualJetForwardDistance = context.HasJet
+                ? math.dot(context.JetPosition - context.ImpactPosition, dir)
+                : float.MinValue;
+            float3 jetLook = context.HasJet && actualJetForwardDistance >= -FlyoverProjectedEntryDistance
                 ? context.JetPosition
-                : context.ImpactPosition + dir * 30f + new float3(0f, 8f, 0f);
+                : projectedJetLook;
 
             // Pan up from the wreck to track the jet passing over it.
             float lookBlend = math.smoothstep(0f, FlyoverLookRampNormalized, normalized) * FlyoverLookJetWeight;

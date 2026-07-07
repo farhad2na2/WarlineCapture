@@ -234,9 +234,9 @@ public sealed class TacticalFollowAttackCinematicHelperTests
             TacticalFollowAttackCinematicPhase.Launch,
             0f,
             context);
-        Assert.Greater(math.distance(shot.CameraPosition, context.JetPosition), 18f);
+        Assert.Greater(math.distance(shot.CameraPosition, context.JetPosition), 30f);
         Assert.Greater(math.dot(math.normalizesafe(shot.LookAt - context.JetPosition), context.AttackDirection), 0f);
-        Assert.AreEqual(46f, shot.FieldOfView, 0.0001f);
+        Assert.AreEqual(52f, shot.FieldOfView, 0.0001f);
     }
 
     [Test]
@@ -252,9 +252,9 @@ public sealed class TacticalFollowAttackCinematicHelperTests
         float projectileProgress = TacticalFollowAttackCinematicHelper.EvaluateProjectileProgress(
             TacticalFollowAttackCinematicHelper.LaunchDurationSeconds + phaseElapsed);
         float3 expectedProjectile = math.lerp(context.LaunchPosition, context.ImpactPosition, projectileProgress);
-        Assert.Greater(math.distance(shot.CameraPosition, expectedProjectile), 20f);
+        Assert.Greater(math.distance(shot.CameraPosition, expectedProjectile), 34f);
         Assert.Greater(math.dot(math.normalizesafe(shot.LookAt - expectedProjectile), context.AttackDirection), 0f);
-        Assert.AreEqual(48f, shot.FieldOfView, 0.0001f);
+        Assert.AreEqual(52f, shot.FieldOfView, 0.0001f);
     }
 
     [Test]
@@ -278,9 +278,8 @@ public sealed class TacticalFollowAttackCinematicHelperTests
             TacticalFollowAttackCinematicPhase.Flyover,
             TacticalFollowAttackCinematicHelper.FlyoverDurationSeconds * 0.9f,
             context);
-        Assert.Less(
-            math.distance(shot.LookAt, context.JetPosition),
-            math.distance(shot.LookAt, context.ImpactPosition));
+        Assert.Greater(math.dot(shot.LookAt - context.ImpactPosition, context.AttackDirection), 20f);
+        Assert.Greater(shot.LookAt.y, context.ImpactPosition.y + 8f);
 
         TacticalFollowAttackCinematicHelper.ShotContext fallback = CreateContext(hasJet: false);
         TacticalFollowAttackCinematicHelper.Shot fallbackShot = TacticalFollowAttackCinematicHelper.EvaluateShot(
@@ -356,7 +355,7 @@ public sealed class TacticalFollowAttackCinematicHelperTests
         static void AssertClampedFov(TacticalFollowAttackCinematicHelper.Shot shot)
         {
             Assert.GreaterOrEqual(shot.FieldOfView, 42f);
-            Assert.LessOrEqual(shot.FieldOfView, 54f);
+            Assert.LessOrEqual(shot.FieldOfView, 58f);
         }
     }
 

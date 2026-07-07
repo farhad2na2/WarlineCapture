@@ -292,6 +292,7 @@ Phase 4 notes, 2026-07-07:
   - `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
   - `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
   - `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
+  - `Tools/CI/invoke_unity_macos.sh --timeout 240 --log /private/tmp/warline-attack-cinematic-helper-validation-2.log -- -quit -nographics -executeMethod TacticalFollowAttackCinematicHelperTests.RunFocusedValidation` passed with `[TacticalFollowAttackCinematicHelperValidation] result=Passed tests=11`.
   - `git diff --check` passed.
 
 ## Phase 5: Follow-Camera And Time-Scale Integration

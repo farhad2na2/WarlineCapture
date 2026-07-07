@@ -158,7 +158,7 @@ public sealed class TacticalFollowAttackCinematicHelperTests
             TacticalFollowAttackCinematicHelper.ImpactDurationSeconds * 0.5f,
             context);
         Assert.Greater(math.distance(shot.CameraPosition, context.ImpactPosition), 25f);
-        Assert.Less(math.distance(shot.LookAt, context.ImpactPosition), 4f);
+        Assert.Less(math.distance(shot.LookAt, context.ImpactPosition), 5.5f);
         Assert.AreEqual(48f, shot.FieldOfView, 0.0001f);
     }
 

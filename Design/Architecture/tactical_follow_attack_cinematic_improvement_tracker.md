@@ -83,7 +83,7 @@ The current implementation is not accepted because it is too close, too fast, fr
 
 ## Progress Summary
 
-Overall implementation progress: 61% (51/84 implementation checklist items complete).
+Overall implementation progress: 63% (53/84 implementation checklist items complete).
 
 Progress is checklist-based. Each implementation or validation checkbox below counts as one item. Documentation creation and index links are not counted as implementation progress.
 
@@ -94,8 +94,8 @@ Progress is checklist-based. Each implementation or validation checkbox below co
 | 2. Timeline and phase sequencing | In progress | 8 | 10 | 80% | Timeline now has explicit Launch, MissilePath, Impact, and Flyover phases plus projectile progress beats. |
 | 3. Cinematic missile and impact VFX | In progress | 8 | 10 | 80% | ECS timeline now replays launch, missile trail, and impact VFX through existing pooled presentation views; Unity visual acceptance still open. |
 | 4. Shot solver and obstruction safety | In progress | 7 | 12 | 58% | Pure shot solver now uses wider, higher launch/path/impact/flyover shots with minimum action clearance and distance clamps. |
-| 5. Follow-camera/time-scale integration | In progress | 2 | 9 | 22% | Active attack pose ownership and completion handback are covered by focused tests. |
-| 6. Tests and architecture guardrails | In progress | 11 | 13 | 85% | Pure helper tests cover phase/shot math; ECS tests cover followed/unfollowed request behavior and retrigger cooldown. |
+| 5. Follow-camera/time-scale integration | In progress | 3 | 9 | 33% | Active attack pose ownership, completion handback, and temporary-target abort cleanup are covered by focused tests. |
+| 6. Tests and architecture guardrails | In progress | 12 | 13 | 92% | Pure helper tests cover phase/shot math; ECS tests cover followed/unfollowed request behavior, retrigger cooldown, and abort cleanup. |
 | 7. Unity visual validation | Not started | 0 | 8 | 0% | Validate in-editor with screenshots/logs, not only tests. |
 | 8. Rollout and documentation | Not started | 0 | 4 | 0% | Update docs and final acceptance notes after the feature works. |
 
@@ -190,6 +190,7 @@ Phase 1 notes, 2026-07-07:
   - `ProjectileLaunchBeatSeconds`
   - `ImpactEventBeatSeconds`
 - Existing retrigger cooldown remains in `TacticalFollowAttackCinematicSystem` and is now carried by the typed state path.
+- Partial fallback behavior is now explicit in code/tests: missing jet transform falls back to launch-position shot context, temporary-target removal aborts with `TemporaryTargetCleared`, follow-mode exit aborts with `FollowModeExited`, invalid attack direction normalizes to a stable forward fallback, and completed/aborted cinematics retain `HasEnded`/`LastEndedElapsedTime` for cooldown. Destroyed-target visual fallback still needs explicit validation.
 - No new ECS system was added; the existing `TacticalFollowAttackCinematicSystem` remains covered by the current architecture classification.
 - Validation:
   - `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
@@ -316,13 +317,15 @@ Phase 5 notes, 2026-07-07:
 - `TacticalFollowCameraModeSystemHelper.RefreshActiveTargetAndPose` preserves active `AttackImpact` cinematic pose ownership when an active `TacticalFollowAttackCinematicStateComponent` exists.
 - Added `ActiveAttackCinematicPreservesTemporaryPoseDuringBaseRefresh` coverage so moving the base aircraft during an active cinematic cannot cause normal follow refresh to overwrite the temporary missile/cinematic pose.
 - `FollowedAirUnitAttackVfxCreatesImpactCutawayThenReturns` covers normal base-target pose restoration after the attack cinematic completes.
-- Open work: explicit time-scale restoration tests, pause/shutdown leak coverage, target-loss fallback tests, and UI read-model stability checks.
+- Added `AttackCinematicAbortCleansStateWhenTemporaryTargetCleared` coverage for temporary-target abort cleanup.
+- Open work: explicit time-scale restoration tests, pause/shutdown leak coverage, and UI read-model stability checks.
 - Validation:
   - `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
   - `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
   - `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
   - `Tools/CI/invoke_unity_macos.sh --timeout 300 --log /private/tmp/warline-attack-cinematic-follow-mode-validation.log -- -quit -nographics -executeMethod TacticalFollowCameraModeCommandSystemHelperTests.RunFocusedValidation` passed with `[TacticalFollowCameraModeCommandValidation] result=Passed tests=38`.
   - `Tools/CI/invoke_unity_macos.sh --timeout 300 --log /private/tmp/warline-attack-cinematic-follow-mode-validation-2.log -- -quit -nographics -executeMethod TacticalFollowCameraModeCommandSystemHelperTests.RunFocusedValidation` passed with `[TacticalFollowCameraModeCommandValidation] result=Passed tests=39`.
+  - `Tools/CI/invoke_unity_macos.sh --timeout 300 --log /private/tmp/warline-attack-cinematic-follow-mode-validation-3.log -- -quit -nographics -executeMethod TacticalFollowCameraModeCommandSystemHelperTests.RunFocusedValidation` passed with `[TacticalFollowCameraModeCommandValidation] result=Passed tests=40`.
   - `git diff --check` passed.
 
 ## Phase 6: Tests And Architecture Guardrails
@@ -336,7 +339,7 @@ Phase 5 notes, 2026-07-07:
 - [x] Add ECS-system tests for followed-air-unit request capture.
 - [x] Add ECS-system tests for unfollowed attack requests being ignored.
 - [x] Add ECS-system tests for retrigger cooldown.
-- [ ] Add ECS-system tests for abort/finish cleanup.
+- [x] Add ECS-system tests for abort/finish cleanup.
 - [x] Run compile validation for runtime, editor, and tests.
 - [ ] Run architecture validation for naming, assembly boundaries, and Burst/hot-path classification.
 - [x] Run `git diff --check`.

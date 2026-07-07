@@ -32,6 +32,8 @@ public sealed class TacticalFollowAttackCinematicHelperTests
             passed++;
             RunCase(test => test.BuildPose_UsesSnapDampingOnlyForPhaseEntry());
             passed++;
+            RunCase(test => test.ShouldSnapToShot_SnapsOnlyOnFirstShotOrPhaseEntry());
+            passed++;
             RunCase(test => test.BuildTarget_UsesAttackImpactTarget());
             passed++;
             RunCase(test => test.BuildInitialState_UsesTypedCinematicContract());
@@ -268,6 +270,26 @@ public sealed class TacticalFollowAttackCinematicHelperTests
         Assert.AreEqual(TacticalFollowCameraPoseSource.TemporaryMissile, snapPose.Source);
         Assert.AreEqual(0f, snapPose.PositionDampingSeconds);
         Assert.Greater(dampedPose.PositionDampingSeconds, 0f);
+    }
+
+    [Test]
+    public void ShouldSnapToShot_SnapsOnlyOnFirstShotOrPhaseEntry()
+    {
+        Assert.IsTrue(TacticalFollowAttackCinematicHelper.ShouldSnapToShot(
+            TacticalFollowAttackCinematicPhase.None,
+            TacticalFollowAttackCinematicPhase.Launch));
+        Assert.IsTrue(TacticalFollowAttackCinematicHelper.ShouldSnapToShot(
+            TacticalFollowAttackCinematicPhase.Launch,
+            TacticalFollowAttackCinematicPhase.MissilePath));
+        Assert.IsTrue(TacticalFollowAttackCinematicHelper.ShouldSnapToShot(
+            TacticalFollowAttackCinematicPhase.Impact,
+            TacticalFollowAttackCinematicPhase.Flyover));
+        Assert.IsFalse(TacticalFollowAttackCinematicHelper.ShouldSnapToShot(
+            TacticalFollowAttackCinematicPhase.MissilePath,
+            TacticalFollowAttackCinematicPhase.MissilePath));
+        Assert.IsFalse(TacticalFollowAttackCinematicHelper.ShouldSnapToShot(
+            TacticalFollowAttackCinematicPhase.Flyover,
+            TacticalFollowAttackCinematicPhase.None));
     }
 
     [Test]

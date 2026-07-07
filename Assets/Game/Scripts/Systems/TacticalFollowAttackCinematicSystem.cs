@@ -235,7 +235,9 @@ namespace Game.Runtime
                 TacticalFollowAttackCinematicHelper.EvaluatePhase(
                     cinematic.ElapsedUnscaledSeconds,
                     out float phaseElapsed);
-            bool snapToShot = phase != cinematic.LastAppliedPhase;
+            bool snapToShot = TacticalFollowAttackCinematicHelper.ShouldSnapToShot(
+                cinematic.LastAppliedPhase,
+                phase);
             TacticalFollowAttackCinematicHelper.ShotContext context = BuildShotContext(em, cinematic);
             TacticalFollowAttackCinematicHelper.Shot shot =
                 TacticalFollowAttackCinematicHelper.EvaluateShot(phase, phaseElapsed, context);

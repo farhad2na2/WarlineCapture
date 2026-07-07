@@ -290,6 +290,17 @@ namespace Game.Runtime
             };
         }
 
+        public static bool ShouldSnapToShot(
+            TacticalFollowAttackCinematicPhase previousPhase,
+            TacticalFollowAttackCinematicPhase currentPhase)
+        {
+            if (currentPhase == TacticalFollowAttackCinematicPhase.None)
+                return false;
+
+            return previousPhase == TacticalFollowAttackCinematicPhase.None ||
+                   previousPhase != currentPhase;
+        }
+
         public static TacticalFollowCameraTargetComponent BuildTarget(
             Entity targetEntity,
             float3 impactPosition,

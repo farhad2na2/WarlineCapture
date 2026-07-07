@@ -1,5 +1,7 @@
 # Handoff: Jet Attack Cinematic Camera (3rd-person follow mode)
 
+> Current acceptance note, 2026-07-07: this handoff is historical context only. The user-visible result was rejected as too fast, too close, and not showing launch, impact, explosion, or flyover reliably. Use `Architecture/tactical_follow_attack_cinematic_improvement_tracker.md` as the active corrective plan and progress tracker.
+
 ## Goal
 When the player follows a jet in 3rd-person mode (`ToggleFollowMode`) and it attacks, play a
 satisfying multi-phase cinematic instead of the current 1.15s static cut to the impact point:

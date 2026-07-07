@@ -23,6 +23,8 @@ public sealed class TacticalFollowAttackCinematicHelperTests
             passed++;
             RunCase(test => test.TimeScalePresentation_SavesAndRestoresPreviousScaleWhenPlaying());
             passed++;
+            RunCase(test => test.TimeScalePresentation_PreservesPausedTimeScale());
+            passed++;
             RunCase(test => test.LaunchShot_FramesJetAndTargetDirection());
             passed++;
             RunCase(test => test.MissilePathShot_FramesProjectileTravel());
@@ -187,6 +189,36 @@ public sealed class TacticalFollowAttackCinematicHelperTests
                 isPlaying: true);
             Assert.AreEqual(0, state.TimeScaleApplied);
             Assert.AreEqual(0.75f, Time.timeScale, 0.0001f);
+        }
+        finally
+        {
+            Time.timeScale = previousTimeScale;
+        }
+    }
+
+    [Test]
+    public void TimeScalePresentation_PreservesPausedTimeScale()
+    {
+        float previousTimeScale = Time.timeScale;
+        try
+        {
+            Time.timeScale = 0f;
+            TacticalFollowAttackCinematicStateComponent state = default;
+
+            TacticalFollowAttackCinematicPresentationSystemHelper.ApplyTimeScale(
+                ref state,
+                0f,
+                isPlaying: true);
+
+            Assert.AreEqual(1, state.TimeScaleApplied);
+            Assert.AreEqual(0f, state.SavedTimeScale, 0.0001f);
+            Assert.AreEqual(0f, Time.timeScale, 0.0001f);
+
+            TacticalFollowAttackCinematicPresentationSystemHelper.RestoreTimeScale(
+                ref state,
+                isPlaying: true);
+            Assert.AreEqual(0, state.TimeScaleApplied);
+            Assert.AreEqual(0f, Time.timeScale, 0.0001f);
         }
         finally
         {

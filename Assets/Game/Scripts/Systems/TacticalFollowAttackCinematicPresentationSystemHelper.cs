@@ -20,6 +20,12 @@ namespace Game.Runtime
                 cinematic.TimeScaleApplied = 1;
             }
 
+            if (cinematic.SavedTimeScale <= 0f)
+            {
+                Time.timeScale = 0f;
+                return;
+            }
+
             Time.timeScale = math.max(
                 0.01f,
                 cinematic.SavedTimeScale *
@@ -36,7 +42,7 @@ namespace Game.Runtime
                 return;
             }
 
-            Time.timeScale = math.max(0.01f, cinematic.SavedTimeScale);
+            Time.timeScale = math.max(0f, cinematic.SavedTimeScale);
             cinematic.TimeScaleApplied = 0;
         }
     }

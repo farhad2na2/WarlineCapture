@@ -20,6 +20,8 @@ public sealed class TacticalFollowAttackCinematicHelperTests
             passed++;
             RunCase(test => test.LaunchShot_FramesJetAndTargetDirection());
             passed++;
+            RunCase(test => test.MissilePathShot_FramesProjectileTravel());
+            passed++;
             RunCase(test => test.ImpactShot_FramesExplosionNearTarget());
             passed++;
             RunCase(test => test.FlyoverShot_TracksJetThenFallsBackWithoutNaN());
@@ -52,9 +54,17 @@ public sealed class TacticalFollowAttackCinematicHelperTests
         Assert.AreEqual(0f, launchElapsed);
 
         Assert.AreEqual(
-            TacticalFollowAttackCinematicPhase.Impact,
+            TacticalFollowAttackCinematicPhase.MissilePath,
             TacticalFollowAttackCinematicHelper.EvaluatePhase(
                 TacticalFollowAttackCinematicHelper.LaunchDurationSeconds,
+                out float missileElapsed));
+        Assert.AreEqual(0f, missileElapsed, 0.0001f);
+
+        Assert.AreEqual(
+            TacticalFollowAttackCinematicPhase.Impact,
+            TacticalFollowAttackCinematicHelper.EvaluatePhase(
+                TacticalFollowAttackCinematicHelper.LaunchDurationSeconds +
+                TacticalFollowAttackCinematicHelper.MissilePathDurationSeconds,
                 out float impactElapsed));
         Assert.AreEqual(0f, impactElapsed, 0.0001f);
 
@@ -62,6 +72,7 @@ public sealed class TacticalFollowAttackCinematicHelperTests
             TacticalFollowAttackCinematicPhase.Flyover,
             TacticalFollowAttackCinematicHelper.EvaluatePhase(
                 TacticalFollowAttackCinematicHelper.LaunchDurationSeconds +
+                TacticalFollowAttackCinematicHelper.MissilePathDurationSeconds +
                 TacticalFollowAttackCinematicHelper.ImpactDurationSeconds,
                 out float flyoverElapsed));
         Assert.AreEqual(0f, flyoverElapsed, 0.0001f);
@@ -81,6 +92,7 @@ public sealed class TacticalFollowAttackCinematicHelperTests
     {
         float rampEnd =
             TacticalFollowAttackCinematicHelper.LaunchDurationSeconds +
+            TacticalFollowAttackCinematicHelper.MissilePathDurationSeconds +
             TacticalFollowAttackCinematicHelper.ImpactDurationSeconds;
         float rampStart = rampEnd - TacticalFollowAttackCinematicHelper.TimeScaleRampSeconds;
         Assert.AreEqual(
@@ -115,6 +127,24 @@ public sealed class TacticalFollowAttackCinematicHelperTests
         Assert.Less(math.distance(shot.CameraPosition, context.JetPosition), 15f);
         Assert.Greater(math.dot(math.normalizesafe(shot.LookAt - context.JetPosition), context.AttackDirection), 0f);
         Assert.AreEqual(30f, shot.FieldOfView, 0.0001f);
+    }
+
+    [Test]
+    public void MissilePathShot_FramesProjectileTravel()
+    {
+        TacticalFollowAttackCinematicHelper.ShotContext context = CreateContext(hasJet: true);
+        float phaseElapsed = TacticalFollowAttackCinematicHelper.MissilePathDurationSeconds * 0.5f;
+        TacticalFollowAttackCinematicHelper.Shot shot = TacticalFollowAttackCinematicHelper.EvaluateShot(
+            TacticalFollowAttackCinematicPhase.MissilePath,
+            phaseElapsed,
+            context);
+
+        float projectileProgress = TacticalFollowAttackCinematicHelper.EvaluateProjectileProgress(
+            TacticalFollowAttackCinematicHelper.LaunchDurationSeconds + phaseElapsed);
+        float3 expectedProjectile = math.lerp(context.LaunchPosition, context.ImpactPosition, projectileProgress);
+        Assert.Less(math.distance(shot.CameraPosition, expectedProjectile), 20f);
+        Assert.Greater(math.dot(math.normalizesafe(shot.LookAt - expectedProjectile), context.AttackDirection), 0f);
+        Assert.AreEqual(38f, shot.FieldOfView, 0.0001f);
     }
 
     [Test]
@@ -245,6 +275,7 @@ public sealed class TacticalFollowAttackCinematicHelperTests
 
         state.ElapsedUnscaledSeconds =
             TacticalFollowAttackCinematicHelper.LaunchDurationSeconds +
+            TacticalFollowAttackCinematicHelper.MissilePathDurationSeconds +
             TacticalFollowAttackCinematicHelper.ImpactDurationSeconds +
             0.01f;
         state = TacticalFollowAttackCinematicHelper.EvaluateStateProgress(state);

@@ -83,7 +83,7 @@ The current implementation is not accepted because it is too close, too fast, fr
 
 ## Progress Summary
 
-Overall implementation progress: 18% (15/84 implementation checklist items complete).
+Overall implementation progress: 35% (29/84 implementation checklist items complete).
 
 Progress is checklist-based. Each implementation or validation checkbox below counts as one item. Documentation creation and index links are not counted as implementation progress.
 
@@ -91,11 +91,11 @@ Progress is checklist-based. Each implementation or validation checkbox below co
 |---|---|---:|---:|---:|---|
 | 0. Baseline and proof capture | In progress | 7 | 8 | 88% | User screenshots plus code inspection confirm current failure path; Unity reproduction still required. |
 | 1. ECS event and data contract | In progress | 8 | 10 | 80% | ECS state now owns typed attack kind, request start, projectile progress, launch/impact/flyover triggers, completion, and abort reason. |
-| 2. Timeline and phase sequencing | Not started | 0 | 10 | 0% | Replace instant camera cut behavior with a staged sequence. |
+| 2. Timeline and phase sequencing | In progress | 8 | 10 | 80% | Timeline now has explicit Launch, MissilePath, Impact, and Flyover phases plus projectile progress beats. |
 | 3. Cinematic missile and impact VFX | Not started | 0 | 10 | 0% | Make launch, missile travel, and impact visible even when gameplay damage is instant. |
 | 4. Shot solver and obstruction safety | Not started | 0 | 12 | 0% | Solve wide readable camera positions and prevent clipping. |
 | 5. Follow-camera/time-scale integration | Not started | 0 | 9 | 0% | Preserve normal follow camera ownership and restore time scale reliably. |
-| 6. Tests and architecture guardrails | Not started | 0 | 13 | 0% | Cover pure math, state transitions, no drift, and compile validation. |
+| 6. Tests and architecture guardrails | In progress | 6 | 13 | 46% | Pure helper tests now cover phase, time-scale, launch, missile-path, impact, and flyover math. |
 | 7. Unity visual validation | Not started | 0 | 8 | 0% | Validate in-editor with screenshots/logs, not only tests. |
 | 8. Rollout and documentation | Not started | 0 | 4 | 0% | Update docs and final acceptance notes after the feature works. |
 
@@ -198,20 +198,37 @@ Phase 1 notes, 2026-07-07:
 
 ## Phase 2: Timeline And Phase Sequencing
 
-- [ ] Split current one-shot impact hold into explicit establish/launch, missile path, impact, flyover, and return phases.
-- [ ] Drive phase progression from unscaled cinematic time so slow motion does not shorten the sequence.
-- [ ] Use deterministic phase constants in a pure helper instead of scattered magic values.
-- [ ] Start launch phase only after the followed attacking jet is confirmed.
+- [x] Split current one-shot impact hold into explicit establish/launch, missile path, impact, flyover, and return phases.
+- [x] Drive phase progression from unscaled cinematic time so slow motion does not shorten the sequence.
+- [x] Use deterministic phase constants in a pure helper instead of scattered magic values.
+- [x] Start launch phase only after the followed attacking jet is confirmed.
 - [ ] Fire the cinematic projectile/tracer at a defined launch beat.
-- [ ] Trigger impact visuals only when the cinematic projectile reaches impact beat.
+- [x] Trigger impact visuals only when the cinematic projectile reaches impact beat.
 - [ ] Hold the explosion/destruction beat long enough for the camera to read it.
-- [ ] Delay flyover until impact visuals have begun.
-- [ ] Prevent the same attack request from starting multiple overlapping cinematics.
-- [ ] Cleanly finish, abort, or hand back camera ownership on all exit paths.
+- [x] Delay flyover until impact visuals have begun.
+- [x] Prevent the same attack request from starting multiple overlapping cinematics.
+- [x] Cleanly finish, abort, or hand back camera ownership on all exit paths.
 
 Exit criteria:
 
 - A simulated timeline can prove the expected phase order and event beats without requiring the full scene.
+
+Phase 2 notes, 2026-07-07:
+
+- Added `TacticalFollowAttackCinematicPhase.MissilePath` so the timeline is no longer Launch -> Impact -> Flyover only.
+- Updated deterministic timing constants:
+  - `LaunchDurationSeconds = 1.1`
+  - `MissilePathDurationSeconds = 1.0`
+  - `ImpactDurationSeconds = 1.3`
+  - `FlyoverDurationSeconds = 1.45`
+  - `TotalDurationSeconds = 4.85`
+- `ImpactEventBeatSeconds` now starts after launch plus missile-path travel instead of at the old launch-plus-impact boundary.
+- Added a pure missile-path shot that frames projected missile travel from the launch position toward the target.
+- The timeline owns launch/impact/flyover event flags in ECS state, but actual visual projectile/tracer playback is still open for Phase 3.
+- Validation:
+  - `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
+  - `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
+  - `git diff --check` passed.
 
 ## Phase 3: Cinematic Missile And Impact VFX
 
@@ -267,12 +284,12 @@ Exit criteria:
 
 ## Phase 6: Tests And Architecture Guardrails
 
-- [ ] Add or update pure helper tests for phase boundaries.
-- [ ] Add or update pure helper tests for time-scale ramp values.
-- [ ] Add or update pure helper tests for launch shot framing.
-- [ ] Add or update pure helper tests for missile-path shot framing.
-- [ ] Add or update pure helper tests for impact shot framing.
-- [ ] Add or update pure helper tests for flyover shot framing.
+- [x] Add or update pure helper tests for phase boundaries.
+- [x] Add or update pure helper tests for time-scale ramp values.
+- [x] Add or update pure helper tests for launch shot framing.
+- [x] Add or update pure helper tests for missile-path shot framing.
+- [x] Add or update pure helper tests for impact shot framing.
+- [x] Add or update pure helper tests for flyover shot framing.
 - [ ] Add ECS-system tests for followed-air-unit request capture.
 - [ ] Add ECS-system tests for unfollowed attack requests being ignored.
 - [ ] Add ECS-system tests for retrigger cooldown.

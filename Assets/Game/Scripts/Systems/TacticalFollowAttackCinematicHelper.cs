@@ -11,16 +11,17 @@ namespace Game.Runtime
     /// </summary>
     public static class TacticalFollowAttackCinematicHelper
     {
-        public const float LaunchDurationSeconds = 1.15f;
-        public const float ImpactDurationSeconds = 1.45f;
-        public const float FlyoverDurationSeconds = 1.7f;
+        public const float LaunchDurationSeconds = 1.1f;
+        public const float MissilePathDurationSeconds = 1f;
+        public const float ImpactDurationSeconds = 1.3f;
+        public const float FlyoverDurationSeconds = 1.45f;
         public const float TotalDurationSeconds =
-            LaunchDurationSeconds + ImpactDurationSeconds + FlyoverDurationSeconds;
+            LaunchDurationSeconds + MissilePathDurationSeconds + ImpactDurationSeconds + FlyoverDurationSeconds;
         public const float SlowMotionTimeScale = 0.3f;
         public const float TimeScaleRampSeconds = 0.35f;
         public const float RetriggerCooldownSeconds = 6f;
         public const float ProjectileLaunchBeatSeconds = 0.15f;
-        public const float ImpactEventBeatSeconds = LaunchDurationSeconds + ImpactDurationSeconds;
+        public const float ImpactEventBeatSeconds = LaunchDurationSeconds + MissilePathDurationSeconds;
 
         private const float LaunchCameraBackDistance = 8f;
         private const float LaunchCameraSideDistance = 4.5f;
@@ -30,6 +31,13 @@ namespace Game.Runtime
         private const float LaunchLookImpactBlend = 0.2f;
         private const float LaunchFieldOfView = 30f;
         private const float LaunchDampingSeconds = 0.12f;
+
+        private const float MissilePathCameraBackDistance = 8f;
+        private const float MissilePathCameraSideDistance = 13f;
+        private const float MissilePathCameraHeight = 6.5f;
+        private const float MissilePathLookAheadDistance = 7f;
+        private const float MissilePathFieldOfView = 38f;
+        private const float MissilePathDampingSeconds = 0.08f;
 
         private const float ImpactCameraForwardDistance = 11f;
         private const float ImpactCameraSideDistance = 7f;
@@ -188,15 +196,23 @@ namespace Game.Runtime
                 return TacticalFollowAttackCinematicPhase.Launch;
             }
 
-            if (elapsedSeconds < LaunchDurationSeconds + ImpactDurationSeconds)
+            float missilePathEnd = LaunchDurationSeconds + MissilePathDurationSeconds;
+            if (elapsedSeconds < missilePathEnd)
             {
                 phaseElapsedSeconds = elapsedSeconds - LaunchDurationSeconds;
+                return TacticalFollowAttackCinematicPhase.MissilePath;
+            }
+
+            float impactEnd = missilePathEnd + ImpactDurationSeconds;
+            if (elapsedSeconds < impactEnd)
+            {
+                phaseElapsedSeconds = elapsedSeconds - missilePathEnd;
                 return TacticalFollowAttackCinematicPhase.Impact;
             }
 
             if (elapsedSeconds < TotalDurationSeconds)
             {
-                phaseElapsedSeconds = elapsedSeconds - LaunchDurationSeconds - ImpactDurationSeconds;
+                phaseElapsedSeconds = elapsedSeconds - impactEnd;
                 return TacticalFollowAttackCinematicPhase.Flyover;
             }
 
@@ -206,7 +222,7 @@ namespace Game.Runtime
 
         public static float EvaluateTimeScale(float elapsedSeconds)
         {
-            float rampEnd = LaunchDurationSeconds + ImpactDurationSeconds;
+            float rampEnd = ImpactEventBeatSeconds + ImpactDurationSeconds;
             float rampStart = rampEnd - TimeScaleRampSeconds;
             if (elapsedSeconds < rampStart)
                 return SlowMotionTimeScale;
@@ -229,6 +245,8 @@ namespace Game.Runtime
             {
                 case TacticalFollowAttackCinematicPhase.Launch:
                     return EvaluateLaunchShot(phaseElapsedSeconds, context);
+                case TacticalFollowAttackCinematicPhase.MissilePath:
+                    return EvaluateMissilePathShot(phaseElapsedSeconds, context);
                 case TacticalFollowAttackCinematicPhase.Impact:
                     return EvaluateImpactShot(phaseElapsedSeconds, context);
                 default:
@@ -273,6 +291,41 @@ namespace Game.Runtime
                 BoundsRadius = CinematicTargetRadius,
                 DesiredDistance = CinematicDesiredDistance,
                 DesiredHeight = CinematicDesiredHeight
+            };
+        }
+
+        private static Shot EvaluateMissilePathShot(float phaseElapsedSeconds, in ShotContext context)
+        {
+            float3 dir = context.AttackDirection;
+            float3 right = math.normalizesafe(
+                math.cross(new float3(0f, 1f, 0f), dir),
+                new float3(1f, 0f, 0f));
+            float globalElapsed = LaunchDurationSeconds + math.max(0f, phaseElapsedSeconds);
+            float projectileProgress = EvaluateProjectileProgress(globalElapsed);
+            float3 projectilePosition = math.lerp(
+                context.LaunchPosition,
+                context.ImpactPosition,
+                projectileProgress);
+
+            float3 cameraPosition = projectilePosition
+                - dir * MissilePathCameraBackDistance
+                + right * MissilePathCameraSideDistance
+                + new float3(0f, MissilePathCameraHeight, 0f);
+            cameraPosition.y = math.max(
+                cameraPosition.y,
+                math.max(context.LaunchPosition.y, context.ImpactPosition.y) + MinCameraClearanceAboveImpact);
+
+            float3 lookAt = math.lerp(
+                projectilePosition + dir * MissilePathLookAheadDistance,
+                context.ImpactPosition + new float3(0f, 1.2f, 0f),
+                math.smoothstep(0.65f, 1f, projectileProgress));
+
+            return new Shot
+            {
+                CameraPosition = cameraPosition,
+                LookAt = lookAt,
+                FieldOfView = MissilePathFieldOfView,
+                PositionDampingSeconds = MissilePathDampingSeconds
             };
         }
 

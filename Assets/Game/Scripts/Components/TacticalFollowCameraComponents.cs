@@ -88,8 +88,9 @@ namespace Game.Components
     {
         None = 0,
         Launch = 1,
-        Impact = 2,
-        Flyover = 3
+        MissilePath = 2,
+        Impact = 3,
+        Flyover = 4
     }
 
     public enum TacticalFollowAttackCinematicAttackKind : byte

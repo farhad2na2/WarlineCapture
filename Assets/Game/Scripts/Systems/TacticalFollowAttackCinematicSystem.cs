@@ -186,6 +186,7 @@ namespace Game.Runtime
             Entity modeEntity = _modeQuery.GetSingletonEntity();
             TacticalFollowCameraModeComponent mode = em.GetComponentData<TacticalFollowCameraModeComponent>(modeEntity);
             float now = (float)SystemAPI.Time.ElapsedTime;
+            bool modeChanged = ClearMissingCinematicEntities(em, ref cinematic, ref mode);
             if (mode.Enabled == 0 ||
                 mode.HasTemporaryTarget == 0 ||
                 mode.TemporaryTargetKind != TacticalFollowCameraTargetKind.AttackImpact)
@@ -196,6 +197,9 @@ namespace Game.Runtime
                 EndCinematicWithoutTouchingMode(em, cinematicEntity, ref cinematic, now, reason);
                 return;
             }
+
+            if (modeChanged)
+                em.SetComponentData(modeEntity, mode);
 
             float previousElapsed = cinematic.ElapsedUnscaledSeconds;
             float divisor = 1f;
@@ -259,6 +263,33 @@ namespace Game.Runtime
             cinematic.LastAppliedPhase = phase;
             ApplyTimeScale(ref cinematic, cinematic.ElapsedUnscaledSeconds);
             em.SetComponentData(cinematicEntity, cinematic);
+        }
+
+        private static bool ClearMissingCinematicEntities(
+            EntityManager em,
+            ref TacticalFollowAttackCinematicStateComponent cinematic,
+            ref TacticalFollowCameraModeComponent mode)
+        {
+            bool modeChanged = false;
+            if (cinematic.SourceEntity != Entity.Null &&
+                !em.Exists(cinematic.SourceEntity))
+            {
+                cinematic.SourceEntity = Entity.Null;
+            }
+
+            if (cinematic.TargetEntity != Entity.Null &&
+                !em.Exists(cinematic.TargetEntity))
+            {
+                if (mode.TemporaryTargetEntity == cinematic.TargetEntity)
+                {
+                    mode.TemporaryTargetEntity = Entity.Null;
+                    modeChanged = true;
+                }
+
+                cinematic.TargetEntity = Entity.Null;
+            }
+
+            return modeChanged;
         }
 
         private static TacticalFollowAttackCinematicHelper.ShotContext BuildShotContext(

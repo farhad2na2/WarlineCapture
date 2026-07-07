@@ -101,6 +101,10 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
             passed++;
             RunCase(test => test.AttackCinematicAbortCleansStateWhenTemporaryTargetCleared());
             passed++;
+            RunCase(test => test.AttackCinematicContinuesWithCachedImpactWhenTargetIsDestroyed());
+            passed++;
+            RunCase(test => test.AttackCinematicContinuesWithCachedLaunchWhenSourceIsDestroyed());
+            passed++;
             RunCase(test => test.UnfollowedAirUnitAttackVfxDoesNotCreateImpactCutaway());
             passed++;
             UnityEngine.Debug.Log($"[TacticalFollowCameraModeCommandValidation] result=Passed tests={passed}");
@@ -1213,6 +1217,81 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
         Assert.AreEqual(10.25f, cinematic.LastEndedElapsedTime, 0.001f);
         Assert.IsTrue(_system.TryReadMode(_em, out mode));
         Assert.AreEqual(0, mode.HasTemporaryTarget);
+    }
+
+    [Test]
+    public void AttackCinematicContinuesWithCachedImpactWhenTargetIsDestroyed()
+    {
+        Entity aircraft = CreateSelectedAirUnit(new float3(0f, 12f, 0f), quaternion.identity);
+        Entity target = _em.CreateEntity(typeof(LocalTransform));
+        float3 targetPosition = new float3(24f, 0f, 10f);
+        _em.SetComponentData(target, LocalTransform.FromPosition(targetPosition));
+        QueueRequest(TacticalFollowCameraRequestKind.ToggleFollowMode);
+        Assert.IsTrue(_system.ProcessPendingRequests(_em));
+
+        CreateAttackVfxRequest(aircraft, target, targetPosition);
+        SystemHandle cinematicSystem = _world.CreateSystem<TacticalFollowAttackCinematicSystem>();
+        _world.SetTime(new TimeData(10d, 0.016f));
+        cinematicSystem.Update(_world.Unmanaged);
+        AssertActiveCinematic(active: 1);
+
+        _em.DestroyEntity(target);
+        _world.SetTime(new TimeData(10.25d, 0.016f));
+        cinematicSystem.Update(_world.Unmanaged);
+
+        TacticalFollowAttackCinematicStateComponent cinematic = ReadCinematicState();
+        Assert.AreEqual(1, cinematic.Active);
+        Assert.AreEqual(Entity.Null, cinematic.TargetEntity);
+        Assert.AreEqual(TacticalFollowAttackCinematicAbortReason.None, cinematic.AbortReason);
+        Assert.AreEqual(targetPosition, cinematic.ImpactPosition);
+        Assert.IsTrue(_system.TryReadMode(_em, out TacticalFollowCameraModeComponent mode));
+        Assert.AreEqual(1, mode.HasTemporaryTarget);
+        Assert.AreEqual(TacticalFollowCameraTargetKind.AttackImpact, mode.TemporaryTargetKind);
+        Assert.AreEqual(Entity.Null, mode.TemporaryTargetEntity);
+        Assert.IsTrue(_system.TryReadTarget(_em, out TacticalFollowCameraTargetComponent followTarget));
+        Assert.AreEqual(Entity.Null, followTarget.TargetEntity);
+        Assert.AreEqual(targetPosition, followTarget.Center);
+
+        _world.SetTime(new TimeData(15d, 5f));
+        cinematicSystem.Update(_world.Unmanaged);
+        cinematic = ReadCinematicState();
+        Assert.AreEqual(0, cinematic.Active);
+        Assert.AreEqual(TacticalFollowAttackCinematicAbortReason.Completed, cinematic.AbortReason);
+    }
+
+    [Test]
+    public void AttackCinematicContinuesWithCachedLaunchWhenSourceIsDestroyed()
+    {
+        Entity aircraft = CreateSelectedAirUnit(new float3(0f, 12f, 0f), quaternion.identity);
+        Entity target = _em.CreateEntity(typeof(LocalTransform));
+        float3 targetPosition = new float3(24f, 0f, 10f);
+        _em.SetComponentData(target, LocalTransform.FromPosition(targetPosition));
+        QueueRequest(TacticalFollowCameraRequestKind.ToggleFollowMode);
+        Assert.IsTrue(_system.ProcessPendingRequests(_em));
+
+        CreateAttackVfxRequest(aircraft, target, targetPosition);
+        SystemHandle cinematicSystem = _world.CreateSystem<TacticalFollowAttackCinematicSystem>();
+        _world.SetTime(new TimeData(10d, 0.016f));
+        cinematicSystem.Update(_world.Unmanaged);
+        AssertActiveCinematic(active: 1);
+
+        _em.DestroyEntity(aircraft);
+        _world.SetTime(new TimeData(10.25d, 0.016f));
+        cinematicSystem.Update(_world.Unmanaged);
+
+        TacticalFollowAttackCinematicStateComponent cinematic = ReadCinematicState();
+        Assert.AreEqual(1, cinematic.Active);
+        Assert.AreEqual(Entity.Null, cinematic.SourceEntity);
+        Assert.AreEqual(TacticalFollowAttackCinematicAbortReason.None, cinematic.AbortReason);
+        Assert.AreEqual(new float3(0f, 12f, 1f), cinematic.LaunchPosition);
+        Assert.IsTrue(_system.TryReadPose(_em, out TacticalFollowCameraPoseComponent pose));
+        Assert.AreEqual(TacticalFollowCameraPoseSource.TemporaryMissile, pose.Source);
+
+        _world.SetTime(new TimeData(15d, 5f));
+        cinematicSystem.Update(_world.Unmanaged);
+        cinematic = ReadCinematicState();
+        Assert.AreEqual(0, cinematic.Active);
+        Assert.AreEqual(TacticalFollowAttackCinematicAbortReason.Completed, cinematic.AbortReason);
     }
 
     [Test]

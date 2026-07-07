@@ -340,6 +340,8 @@ namespace Game.Components
         public byte TakeoffRolling;
         public byte LandingRolling;
         public byte AttackRunActive;
+        public sbyte AttackManeuverTurnSign;
+        public int2 AttackPassGoalCell;
         public byte ReturnApproachInitialized;
         public float3 RunwayTakeoffPosition;
         public int2 RunwayTakeoffCell;

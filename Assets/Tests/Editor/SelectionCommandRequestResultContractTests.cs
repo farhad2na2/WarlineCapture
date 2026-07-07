@@ -21,7 +21,9 @@ public sealed class SelectionCommandRequestResultContractTests
             var tests = new SelectionCommandRequestResultContractTests();
             tests.UnitAirMovementSystem_FixedWingAttackAfterTakeoffUsesGradualTurn();
             tests.UnitAirMovementSystem_FixedWingAttackManeuverTransitionsToFinalPass();
-            UnityEngine.Debug.Log("[FixedWingManeuverValidation] result=Passed tests=2");
+            tests.UnitAirMovementSystem_FixedWingMoveOrderCompletesPassInsteadOfFlyingStraight();
+            tests.UnitAirMovementSystem_FixedWingMoveOrderFromParkedTakesOffAndCompletes();
+            UnityEngine.Debug.Log("[FixedWingManeuverValidation] result=Passed tests=4");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -74,6 +76,7 @@ public sealed class SelectionCommandRequestResultContractTests
             tests.UnitAirMovementSystem_RunwayTakeoffLiftsOffBeforeRunwayEnd();
             tests.UnitAirMovementSystem_FixedWingAttackAfterTakeoffUsesGradualTurn();
             tests.UnitAirMovementSystem_FixedWingAttackManeuverTransitionsToFinalPass();
+            tests.UnitAirMovementSystem_FixedWingMoveOrderCompletesPassInsteadOfFlyingStraight();
             tests.UnitAirMovementSystem_AirborneScannerLoitersInsteadOfLandingDuringActiveScan();
             tests.UnitScanOrderExecutionSystem_ReturnsAirScannerHomeWhenScanExpires();
             tests.UnitEngagementSystem_ScanOrderAcquiresOnlyTargetsInsideScanArea();
@@ -106,7 +109,7 @@ public sealed class SelectionCommandRequestResultContractTests
             tests.MoveTargetModeFlush_AppliesAcceptedPresentationCleanup();
             tests.MoveTargetModeFlush_AppliesRejectedPresentationCleanup();
             tests.DeselectAllFlush_ClearsManagedSelectionCacheAndPresentation();
-            UnityEngine.Debug.Log("[SelectionCommandRequestResultContractValidation] result=Passed tests=52");
+            UnityEngine.Debug.Log("[SelectionCommandRequestResultContractValidation] result=Passed tests=53");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -3373,9 +3376,27 @@ public sealed class SelectionCommandRequestResultContractTests
         float turnDegrees = math.degrees(math.abs(UnitVehicleMovementUtility.SignedAngleY(new float3(1f, 0f, 0f), forward)));
 
         Assert.AreEqual(1, air.Airborne);
-        Assert.AreEqual(2, air.AttackRunActive, "A target behind the aircraft should begin with a wide setup maneuver before the final pass.");
+        Assert.AreEqual(3, air.AttackRunActive, "A target behind the aircraft should begin by extending the climb-out before turning back.");
         Assert.Less(turnDegrees, 30f, "Fixed-wing aircraft must bank into a post-takeoff target instead of snapping into a 180-degree turn.");
         Assert.Greater(transform.Position.x, startPosition.x, "A fixed-wing aircraft should keep climbing out while starting the turn, not reverse in one frame.");
+
+        // The whole approach must respect the turn-rate limit: 45 deg/s at dt 0.25 is 11.25 deg
+        // per tick; anything above signals a rotation snap.
+        float3 previousForward = forward;
+        float maxTickTurnDegrees = 0f;
+        for (int i = 0; i < 200 && em.HasComponent<EngageTarget>(aircraft); i++)
+        {
+            world.SetTime(new TimeData(2.25d + i * 0.25d, 0.25f));
+            airMovementSystem.Update(world.Unmanaged);
+
+            float3 tickForward = UnitVehicleMovementUtility.Forward(em.GetComponentData<LocalTransform>(aircraft).Rotation);
+            float tickTurnDegrees = math.degrees(math.abs(UnitVehicleMovementUtility.SignedAngleY(previousForward, tickForward)));
+            maxTickTurnDegrees = math.max(maxTickTurnDegrees, tickTurnDegrees);
+            previousForward = tickForward;
+        }
+
+        Assert.IsFalse(em.HasComponent<EngageTarget>(aircraft), "The attack pass should complete instead of maneuvering forever.");
+        Assert.Less(maxTickTurnDegrees, 13f, "Every frame of the attack approach must stay under the fixed-wing turn-rate limit.");
     }
 
     [Test]
@@ -3433,9 +3454,125 @@ public sealed class SelectionCommandRequestResultContractTests
         }
 
         UnitAirComponent air = em.GetComponentData<UnitAirComponent>(aircraft);
-        Assert.AreNotEqual(2, lastAttackRunState, "Fixed-wing setup maneuver must transition to a final pass instead of orbiting forever.");
+        Assert.AreNotEqual(2, lastAttackRunState, "Fixed-wing approach arc must transition to a final pass instead of orbiting forever.");
+        Assert.AreNotEqual(3, lastAttackRunState, "Fixed-wing climb-out extension must hand over to the approach arc instead of flying away forever.");
         Assert.Less(closestDistance, 8f, "Fixed-wing aircraft should line up and pass close to the target after the setup maneuver.");
         Assert.IsFalse(em.HasComponent<EngageTarget>(aircraft), "Completed fixed-wing attack pass should clear the commanded target and return home.");
+        Assert.AreEqual(0, air.AttackRunActive);
+        Assert.AreEqual(1, air.ReturningHome);
+    }
+
+    [Test]
+    public void UnitAirMovementSystem_FixedWingMoveOrderFromParkedTakesOffAndCompletes()
+    {
+        using World world = new("UnitAirMovementSystem_FixedWingMoveOrderFromParkedTakesOffAndCompletes");
+        EntityManager em = world.EntityManager;
+        CreateAirMovementGrid(em);
+
+        Entity aircraft = CreateSelectedScanCapableUnit(em, new int2(2, 3));
+        em.SetComponentData(aircraft, new UnitMove { Speed = 10f, WalkSpeed = 10f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
+        em.AddComponentData(aircraft, new UnitAirMovement { CruiseHeight = 12f, RunwayTaxiSpeed = 5f });
+        em.AddComponentData(aircraft, new UnitAirComponent
+        {
+            HomePosition = new float3(2.5f, 0f, 3.5f),
+            HomeCell = new int2(2, 3),
+            HomeInitialized = 1,
+            UsesRunway = 1,
+            Airborne = 0,
+            TakeoffRolling = 0,
+            RunwayTakeoffPosition = new float3(2.5f, 0f, 3.5f),
+            RunwayTakeoffCell = new int2(2, 3),
+            RunwayLandingPosition = new float3(12.5f, 0f, 3.5f),
+            RunwayLandingCell = new int2(12, 3)
+        });
+        em.SetComponentData(aircraft, LocalTransform.FromPosition(new float3(2.5f, 0f, 3.5f)));
+
+        float3 moveTargetWorld = new(6.5f, 0f, 24.5f);
+        em.AddComponentData(aircraft, new UnitTarget { Cell = new int2(6, 24) });
+        em.AddComponent<ManualMoveOrderTag>(aircraft);
+
+        SystemHandle airMovementSystem = world.CreateSystem<UnitAirMovementSystem>();
+        bool becameAirborne = false;
+        float closestDistance = float.MaxValue;
+        float farthestFromHome = 0f;
+        for (int i = 0; i < 600 && em.HasComponent<UnitTarget>(aircraft); i++)
+        {
+            world.SetTime(new TimeData(2d + i * 0.1d, 0.1f));
+            airMovementSystem.Update(world.Unmanaged);
+
+            UnitAirComponent tickAir = em.GetComponentData<UnitAirComponent>(aircraft);
+            becameAirborne |= tickAir.Airborne != 0;
+            LocalTransform transform = em.GetComponentData<LocalTransform>(aircraft);
+            float3 toTarget = transform.Position - moveTargetWorld;
+            closestDistance = math.min(closestDistance, math.length(new float2(toTarget.x, toTarget.z)));
+            float3 fromHome = transform.Position - new float3(2.5f, 0f, 3.5f);
+            farthestFromHome = math.max(farthestFromHome, math.length(new float2(fromHome.x, fromHome.z)));
+        }
+
+        UnitAirComponent air = em.GetComponentData<UnitAirComponent>(aircraft);
+        Assert.IsTrue(becameAirborne, "A parked fixed-wing plane must take off to serve a move order.");
+        Assert.IsFalse(
+            em.HasComponent<UnitTarget>(aircraft),
+            "A move order issued to a parked fixed-wing plane must complete after takeoff instead of rolling or flying forever.");
+        Assert.Less(farthestFromHome, 120f, "The move pattern must stay near the map instead of running away.");
+        Assert.Less(closestDistance, 8f, "Fixed-wing aircraft should fly over the ordered move target after takeoff.");
+        Assert.AreEqual(1, air.ReturningHome);
+    }
+
+    [Test]
+    public void UnitAirMovementSystem_FixedWingMoveOrderCompletesPassInsteadOfFlyingStraight()
+    {
+        using World world = new("UnitAirMovementSystem_FixedWingMoveOrderCompletesPassInsteadOfFlyingStraight");
+        EntityManager em = world.EntityManager;
+        CreateAirMovementGrid(em);
+
+        Entity aircraft = CreateSelectedScanCapableUnit(em, new int2(32, 32));
+        em.SetComponentData(aircraft, new UnitMove { Speed = 10f, WalkSpeed = 10f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.1f });
+        em.AddComponentData(aircraft, new UnitAirMovement { CruiseHeight = 12f, RunwayTaxiSpeed = 5f });
+        em.AddComponentData(aircraft, new UnitAirComponent
+        {
+            HomePosition = new float3(24.5f, 0f, 32.5f),
+            HomeCell = new int2(24, 32),
+            HomeInitialized = 1,
+            UsesRunway = 1,
+            Airborne = 1,
+            TakeoffRolling = 0,
+            RunwayTakeoffPosition = new float3(24.5f, 0f, 32.5f),
+            RunwayTakeoffCell = new int2(24, 32),
+            RunwayLandingPosition = new float3(40.5f, 0f, 32.5f),
+            RunwayLandingCell = new int2(40, 32)
+        });
+
+        quaternion takeoffHeading = quaternion.LookRotationSafe(new float3(1f, 0f, 0f), math.up());
+        em.SetComponentData(
+            aircraft,
+            LocalTransform.FromPositionRotationScale(new float3(32.5f, 2f, 32.5f), takeoffHeading, 1f));
+
+        float3 moveTargetWorld = new(20.5f, 0f, 32.5f);
+        em.AddComponentData(aircraft, new UnitTarget { Cell = new int2(20, 32) });
+
+        SystemHandle airMovementSystem = world.CreateSystem<UnitAirMovementSystem>();
+        float closestDistance = float.MaxValue;
+        float farthestX = float.MinValue;
+        for (int i = 0; i < 220 && em.HasComponent<UnitTarget>(aircraft); i++)
+        {
+            world.SetTime(new TimeData(2d + i * 0.1d, 0.1f));
+            airMovementSystem.Update(world.Unmanaged);
+
+            LocalTransform transform = em.GetComponentData<LocalTransform>(aircraft);
+            float3 toTarget = transform.Position - moveTargetWorld;
+            closestDistance = math.min(closestDistance, math.length(new float2(toTarget.x, toTarget.z)));
+            farthestX = math.max(farthestX, transform.Position.x);
+        }
+
+        UnitAirComponent air = em.GetComponentData<UnitAirComponent>(aircraft);
+        Assert.IsFalse(
+            em.HasComponent<UnitTarget>(aircraft),
+            "A fixed-wing move order must complete its pass instead of flying straight off the map.");
+        // Extend ends ~20 units past the start, plus the banked turn bulges one turn radius
+        // (~13) further; a runaway straight flight would exceed 250.
+        Assert.Less(farthestX, 75f, "The climb-out extension must turn back near the map instead of flying away forever.");
+        Assert.Less(closestDistance, 8f, "Fixed-wing aircraft should fly over the ordered move target.");
         Assert.AreEqual(0, air.AttackRunActive);
         Assert.AreEqual(1, air.ReturningHome);
     }

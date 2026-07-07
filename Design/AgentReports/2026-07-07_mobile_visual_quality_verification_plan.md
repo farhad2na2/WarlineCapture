@@ -63,6 +63,30 @@ Screenshot acceptance criteria:
 - Night view is readable without flattening the scene.
 - UI remains unchanged and legible.
 
+## Capture Utility
+Editor-only capture utility prepared:
+
+- `Assets/Game/Scripts/Editor/MobileVisualQualityPlayModeCapture.cs`
+- Current tier method: `Game.Editor.MobileVisualQualityPlayModeCapture.CaptureCurrent`
+- Candidate tier method: `Game.Editor.MobileVisualQualityPlayModeCapture.CaptureCandidate`
+- Environment-dispatched method: `Game.Editor.MobileVisualQualityPlayModeCapture.CaptureFromEnvironment`
+- Default output directory: `Design/AgentReports/Captures/MobileVisualQuality`
+
+The utility drives the existing Menu -> Match path, keeps the HUD in Canvas mode, applies the selected `VisualQualityProfileAsset` to the loaded Match scene instance before gameplay visual-quality initialization, requests the existing Match HUD max-zoom-out path, and uses the existing `DayNightSystem` visual owner for the night proof state. It does not save scene or prefab bindings.
+
+## Capture Status
+Current-tier capture passed through the existing Menu -> Match route:
+
+- Log: `/private/tmp/warline-mobile-visual-current-capture.log`
+- Result marker: `[MobileVisualQualityPlayModeCapture] result=Passed profile=current`
+- Manifest: `Design/AgentReports/Captures/MobileVisualQuality/current_manifest.md`
+- Screenshots:
+  - `Design/AgentReports/Captures/MobileVisualQuality/current_gameplay_zoom.png`
+  - `Design/AgentReports/Captures/MobileVisualQuality/current_max_zoom_out.png`
+  - `Design/AgentReports/Captures/MobileVisualQuality/current_night_phase.png`
+
+Candidate-tier capture is still pending. The first attempt was blocked before the capture method ran because another Unity editor instance had `/Users/farhad/Projects/WarlineCapture` open. Re-run the candidate command after that editor releases the project lock.
+
 ## Android Metrics Required
 Use a current-branch Android profiler APK and compare the recommended candidate against the existing accepted mobile evidence.
 
@@ -86,6 +110,13 @@ Build or refresh a profiler APK when the Android device path is available:
 
 ```bash
 Tools/CI/invoke_unity_macos.sh --timeout 1200 --log /private/tmp/warline-visual-quality-android-profiler-apk.log -- -quit -executeMethod Game.Editor.BuildScript.BuildAndroidProfilerApk
+```
+
+Capture current and candidate screenshots with graphics enabled:
+
+```bash
+Tools/CI/invoke_unity_macos.sh --timeout 600 --log /private/tmp/warline-mobile-visual-current-capture.log -- -executeMethod Game.Editor.MobileVisualQualityPlayModeCapture.CaptureCurrent
+Tools/CI/invoke_unity_macos.sh --timeout 600 --log /private/tmp/warline-mobile-visual-candidate-capture.log -- -executeMethod Game.Editor.MobileVisualQualityPlayModeCapture.CaptureCandidate
 ```
 
 Run local editor baseline after any committed code/config change:

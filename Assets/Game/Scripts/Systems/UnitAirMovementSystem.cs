@@ -20,6 +20,13 @@ namespace Game.Runtime
         private const float RunwayTakeoffRotationStartFraction = 0.45f;
         private const float RunwayTakeoffPitchDegrees = 14f;
         private const float RunwayTakeoffInitialClearance = 1.25f;
+        private const float FixedWingManeuverTurnRateDegreesPerSecond = 55f;
+        private const float FixedWingManeuverDirectPassAngleDegrees = 12f;
+        private const float FixedWingManeuverLineupAngleDegrees = 12f;
+        private const float FixedWingManeuverBankMaxDegrees = 18f;
+        private const float FixedWingFinalPassLookaheadCells = 6f;
+        private const byte FixedWingPassFinalPhase = 1;
+        private const byte FixedWingPassManeuverPhase = 2;
 
         private EntityQuery _gridQuery;
         private EntityQuery _surfaceQuery;
@@ -250,57 +257,55 @@ namespace Game.Runtime
                         stateRw.UsesRunway != 0);
                     if (stateRw.UsesRunway != 0)
                     {
-                        float3 horizontalToTarget = engageTargetPosition - transform.ValueRO.Position;
-                        horizontalToTarget.y = 0f;
+                        float3 attackPassTarget = new float3(engageTargetPosition.x, cruiseY, engageTargetPosition.z);
                         float attackRange = attackLookup.HasComponent(entity)
                             ? math.max(0.01f, attackLookup[entity].Range)
                             : math.max(grid.CellSize * 12f, 30f);
+                        float overshootDistance = math.max(attackRange * 8f, grid.CellSize * 40f);
                         if (stateRw.AttackRunActive == 0)
                         {
-                            float3 passDirection = math.normalizesafe(horizontalToTarget);
-                            if (math.lengthsq(passDirection) <= 1e-6f)
-                            {
-                                passDirection = math.mul(transform.ValueRO.Rotation, new float3(0f, 0f, 1f));
-                                passDirection.y = 0f;
-                                passDirection = math.normalizesafe(passDirection, new float3(0f, 0f, 1f));
-                            }
-
-                            float overshootDistance = math.max(attackRange * 8f, grid.CellSize * 40f);
-                            stateRw.AttackRunActive = 1;
-                            stateRw.AttackRunExitPosition = new float3(
-                                engageTargetPosition.x + passDirection.x * overshootDistance,
+                            StartFixedWingPass(
+                                ref stateRw,
+                                transform.ValueRO,
+                                grid,
+                                attackPassTarget,
                                 cruiseY,
-                                engageTargetPosition.z + passDirection.z * overshootDistance);
+                                move.ValueRO.Speed,
+                                overshootDistance);
                         }
 
-                        bool completedAttackRun = SteerTowards(
+                        float3 attackSteerTarget = stateRw.AttackRunActive == FixedWingPassFinalPhase
+                            ? ResolveFixedWingFinalSteerTarget(attackPassTarget, stateRw.AttackRunExitPosition, transform.ValueRO.Position, grid, move.ValueRO.Speed)
+                            : stateRw.AttackRunExitPosition;
+                        bool completedAttackRun = SteerFixedWingTowards(
                             ref transform.ValueRW,
                             ref unitGrid.ValueRW,
                             grid,
                             move.ValueRO.Speed,
                             dt,
                             cruiseY,
-                            stateRw.AttackRunExitPosition,
-                            true,
-                            1.15f);
+                            attackSteerTarget,
+                            true);
 
-                        if (stateRw.AttackRunActive != 0)
+                        if (stateRw.AttackRunActive == FixedWingPassManeuverPhase)
                         {
-                            completedAttackRun = FlyTowards(
-                                ref transform.ValueRW,
-                                ref unitGrid.ValueRW,
-                                grid,
-                                move.ValueRO.Speed,
-                                dt,
-                                cruiseY,
-                                stateRw.AttackRunExitPosition,
-                                true);
+                            if (completedAttackRun ||
+                                IsFixedWingReadyForFinalPass(transform.ValueRO, grid, attackPassTarget, move.ValueRO.Speed))
+                            {
+                                StartFixedWingFinalPass(
+                                    ref stateRw,
+                                    transform.ValueRO,
+                                    attackPassTarget,
+                                    cruiseY,
+                                    overshootDistance);
+                                completedAttackRun = false;
+                            }
                         }
 
-                        if (stateRw.AttackRunActive != 0)
+                        if (stateRw.AttackRunActive == FixedWingPassFinalPhase)
                         {
-                            float3 exitVector = stateRw.AttackRunExitPosition - new float3(engageTargetPosition.x, cruiseY, engageTargetPosition.z);
-                            float3 progressedVector = transform.ValueRO.Position - new float3(engageTargetPosition.x, cruiseY, engageTargetPosition.z);
+                            float3 exitVector = stateRw.AttackRunExitPosition - attackPassTarget;
+                            float3 progressedVector = transform.ValueRO.Position - attackPassTarget;
                             exitVector.y = 0f;
                             progressedVector.y = 0f;
                             float exitLengthSq = math.lengthsq(exitVector);
@@ -308,7 +313,7 @@ namespace Game.Runtime
                                 completedAttackRun = true;
                         }
 
-                        if (stateRw.AttackRunActive != 0 && completedAttackRun)
+                        if (stateRw.AttackRunActive == FixedWingPassFinalPhase && completedAttackRun)
                         {
                             stateRw.AttackRunActive = 0;
                             stateRw.ReturningHome = 1;
@@ -406,53 +411,60 @@ namespace Game.Runtime
                             float3 movePassTarget = new float3(targetWorld.x, cruiseY, targetWorld.z);
                             if (stateRw.AttackRunActive == 0)
                             {
-                                float3 passDirection = math.normalizesafe(movePassTarget - transform.ValueRO.Position);
-                                if (math.lengthsq(passDirection) <= 1e-6f)
-                                {
-                                    passDirection = math.mul(transform.ValueRO.Rotation, new float3(0f, 0f, 1f));
-                                    passDirection.y = 0f;
-                                    passDirection = math.normalizesafe(passDirection, new float3(0f, 0f, 1f));
-                                }
-
                                 float overshootDistance = math.max(grid.CellSize * 10f, move.ValueRO.Speed * 1.5f);
-                                stateRw.AttackRunActive = 1;
-                                stateRw.AttackRunExitPosition = new float3(
-                                    movePassTarget.x + passDirection.x * overshootDistance,
+                                StartFixedWingPass(
+                                    ref stateRw,
+                                    transform.ValueRO,
+                                    grid,
+                                    movePassTarget,
                                     cruiseY,
-                                    movePassTarget.z + passDirection.z * overshootDistance);
+                                    move.ValueRO.Speed,
+                                    overshootDistance);
                             }
+                            float moveOvershootDistance = math.max(grid.CellSize * 10f, move.ValueRO.Speed * 1.5f);
 
-                            bool completedPass = SteerTowards(
+                            float3 moveSteerTarget = stateRw.AttackRunActive == FixedWingPassFinalPhase
+                                ? ResolveFixedWingFinalSteerTarget(movePassTarget, stateRw.AttackRunExitPosition, transform.ValueRO.Position, grid, move.ValueRO.Speed)
+                                : stateRw.AttackRunExitPosition;
+                            bool completedPass = SteerFixedWingTowards(
                                 ref transform.ValueRW,
                                 ref unitGrid.ValueRW,
                                 grid,
                                 move.ValueRO.Speed,
                                 dt,
                                 cruiseY,
-                                stateRw.AttackRunExitPosition,
-                                true,
-                                1.15f);
+                                moveSteerTarget,
+                                true);
 
-                            if (stateRw.AttackRunActive != 0)
+                            if (stateRw.AttackRunActive == FixedWingPassManeuverPhase)
                             {
-                                completedPass = FlyTowards(
-                                    ref transform.ValueRW,
-                                    ref unitGrid.ValueRW,
-                                    grid,
-                                    move.ValueRO.Speed,
-                                    dt,
-                                    cruiseY,
-                                    stateRw.AttackRunExitPosition,
-                                    true);
+                                if (completedPass ||
+                                    IsFixedWingReadyForFinalPass(transform.ValueRO, grid, movePassTarget, move.ValueRO.Speed))
+                                {
+                                    StartFixedWingFinalPass(
+                                        ref stateRw,
+                                        transform.ValueRO,
+                                        movePassTarget,
+                                        cruiseY,
+                                        moveOvershootDistance);
+                                    completedPass = false;
+                                }
                             }
 
-                            float3 exitVector = stateRw.AttackRunExitPosition - movePassTarget;
-                            float3 progressedVector = transform.ValueRO.Position - movePassTarget;
-                            exitVector.y = 0f;
-                            progressedVector.y = 0f;
-                            float exitLengthSq = math.lengthsq(exitVector);
-                            if (exitLengthSq > 1e-6f && math.dot(progressedVector, exitVector) >= exitLengthSq * 0.85f)
-                                completedPass = true;
+                            if (stateRw.AttackRunActive == FixedWingPassFinalPhase)
+                            {
+                                float3 exitVector = stateRw.AttackRunExitPosition - movePassTarget;
+                                float3 progressedVector = transform.ValueRO.Position - movePassTarget;
+                                exitVector.y = 0f;
+                                progressedVector.y = 0f;
+                                float exitLengthSq = math.lengthsq(exitVector);
+                                if (exitLengthSq > 1e-6f && math.dot(progressedVector, exitVector) >= exitLengthSq * 0.85f)
+                                    completedPass = true;
+                            }
+                            else
+                            {
+                                completedPass = false;
+                            }
 
                             reached = completedPass;
 
@@ -782,26 +794,45 @@ namespace Game.Runtime
                 state.UsesRunway != 0);
             dropWorld.y = cruiseY;
 
+            float sequenceSeconds = math.max(2f, math.max(0.1f, request.DropIntervalSeconds) * math.max(1, request.DropCount));
+            float overshootDistance = math.max(grid.CellSize * 24f, math.max(0.01f, move.Speed) * (sequenceSeconds + 1.5f));
             if (state.AttackRunActive == 0)
             {
-                float3 passDirection = dropWorld - transform.Position;
-                passDirection.y = 0f;
-                passDirection = math.normalizesafe(passDirection);
-                if (math.lengthsq(passDirection) <= 1e-6f)
+                StartFixedWingPass(
+                    ref state,
+                    transform,
+                    grid,
+                    dropWorld,
+                    cruiseY,
+                    move.Speed,
+                    overshootDistance);
+                request.PassReady = 0;
+            }
+
+            if (state.AttackRunActive == FixedWingPassManeuverPhase)
+            {
+                bool completedManeuver = SteerFixedWingTowards(
+                    ref transform,
+                    ref unitGrid,
+                    grid,
+                    math.max(0.01f, move.Speed),
+                    deltaTime,
+                    cruiseY,
+                    state.AttackRunExitPosition,
+                    true);
+
+                if (completedManeuver || IsFixedWingReadyForFinalPass(transform, grid, dropWorld, move.Speed))
                 {
-                    passDirection = math.mul(transform.Rotation, new float3(0f, 0f, 1f));
-                    passDirection.y = 0f;
-                    passDirection = math.normalizesafe(passDirection, new float3(0f, 0f, 1f));
+                    StartFixedWingFinalPass(
+                        ref state,
+                        transform,
+                        dropWorld,
+                        cruiseY,
+                        overshootDistance);
                 }
 
-                float sequenceSeconds = math.max(2f, math.max(0.1f, request.DropIntervalSeconds) * math.max(1, request.DropCount));
-                float overshootDistance = math.max(grid.CellSize * 24f, math.max(0.01f, move.Speed) * (sequenceSeconds + 1.5f));
-                state.AttackRunActive = 1;
-                state.AttackRunExitPosition = new float3(
-                    dropWorld.x + passDirection.x * overshootDistance,
-                    cruiseY,
-                    dropWorld.z + passDirection.z * overshootDistance);
                 request.PassReady = 0;
+                return;
             }
 
             float3 exitVector = state.AttackRunExitPosition - dropWorld;
@@ -825,14 +856,15 @@ namespace Game.Runtime
                 request.NextDropAt = 0f;
             }
 
-            bool completedPass = FlyTowards(
+            float3 airdropSteerTarget = ResolveFixedWingFinalSteerTarget(dropWorld, state.AttackRunExitPosition, transform.Position, grid, move.Speed);
+            bool completedPass = SteerFixedWingTowards(
                 ref transform,
                 ref unitGrid,
                 grid,
                 math.max(0.01f, move.Speed),
                 deltaTime,
                 cruiseY,
-                state.AttackRunExitPosition,
+                airdropSteerTarget,
                 true);
 
             float exitLengthSq = math.lengthsq(exitVector);
@@ -1227,6 +1259,169 @@ namespace Game.Runtime
             float3 steeredForward = math.mul(transform.Rotation, new float3(0f, 0f, 1f));
             steeredForward.y = 0f;
             steeredForward = math.normalizesafe(steeredForward, desiredForward);
+            transform.Position += steeredForward * stepDistance;
+
+            float yStep = math.min(stepDistance, verticalDistance);
+            if (target.y > transform.Position.y)
+                transform.Position.y += yStep;
+            else if (target.y < transform.Position.y)
+                transform.Position.y -= yStep;
+
+            if (!stayAirborne && verticalDistance <= yStep)
+                transform.Position.y = desiredY;
+
+            int2 movedCell = GridUtils.WorldToCell(grid, transform.Position);
+            if (GridUtils.InBounds(movedCell, grid.Width, grid.Height))
+                unitGrid.Cell = movedCell;
+            return false;
+        }
+
+        private static void StartFixedWingPass(
+            ref UnitAirComponent state,
+            in LocalTransform transform,
+            in GridConfig grid,
+            float3 passFocus,
+            float cruiseY,
+            float speed,
+            float overshootDistance)
+        {
+            float3 currentForward = UnitVehicleMovementUtility.Forward(transform.Rotation);
+            float3 toFocus = passFocus - transform.Position;
+            toFocus.y = 0f;
+            float3 focusDirection = math.normalizesafe(toFocus, currentForward);
+            float setupTurnDegrees = math.degrees(math.abs(UnitVehicleMovementUtility.SignedAngleY(currentForward, focusDirection)));
+            if (setupTurnDegrees > FixedWingManeuverDirectPassAngleDegrees)
+            {
+                float signedTurn = UnitVehicleMovementUtility.SignedAngleY(currentForward, focusDirection);
+                float turnSign = signedTurn < 0f ? -1f : 1f;
+                float3 right = new float3(currentForward.z, 0f, -currentForward.x);
+                float entryDistance = math.max(
+                    math.max(grid.CellSize * 28f, math.max(0.01f, speed) * 4f),
+                    overshootDistance * 0.55f);
+                float lateralDistance = math.max(
+                    math.max(grid.CellSize * 10f, math.max(0.01f, speed) * 1.2f),
+                    overshootDistance * 0.2f);
+                float3 setupWaypoint = passFocus - focusDirection * entryDistance + right * turnSign * lateralDistance;
+                setupWaypoint.y = cruiseY;
+                state.AttackRunActive = FixedWingPassManeuverPhase;
+                state.AttackRunExitPosition = setupWaypoint;
+                return;
+            }
+
+            StartFixedWingFinalPass(ref state, transform, passFocus, cruiseY, overshootDistance);
+        }
+
+        private static void StartFixedWingFinalPass(
+            ref UnitAirComponent state,
+            in LocalTransform transform,
+            float3 passFocus,
+            float cruiseY,
+            float overshootDistance)
+        {
+            float3 focus = passFocus;
+            focus.y = cruiseY;
+            float3 passDirection = focus - transform.Position;
+            passDirection.y = 0f;
+            passDirection = math.normalizesafe(passDirection, UnitVehicleMovementUtility.Forward(transform.Rotation));
+
+            state.AttackRunActive = FixedWingPassFinalPhase;
+            state.AttackRunExitPosition = new float3(
+                focus.x + passDirection.x * overshootDistance,
+                cruiseY,
+                focus.z + passDirection.z * overshootDistance);
+        }
+
+        private static bool IsFixedWingReadyForFinalPass(
+            in LocalTransform transform,
+            in GridConfig grid,
+            float3 passFocus,
+            float speed)
+        {
+            float3 toFocus = passFocus - transform.Position;
+            toFocus.y = 0f;
+            float3 currentForward = UnitVehicleMovementUtility.Forward(transform.Rotation);
+            float3 focusDirection = math.normalizesafe(toFocus, currentForward);
+            float turnDegrees = math.degrees(math.abs(UnitVehicleMovementUtility.SignedAngleY(currentForward, focusDirection)));
+            return turnDegrees <= FixedWingManeuverLineupAngleDegrees;
+        }
+
+        private static float3 ResolveFixedWingFinalSteerTarget(
+            float3 passFocus,
+            float3 passExit,
+            float3 currentPosition,
+            in GridConfig grid,
+            float speed)
+        {
+            float3 exitVector = passExit - passFocus;
+            exitVector.y = 0f;
+            float exitLength = math.length(exitVector);
+            if (exitLength <= 1e-5f)
+                return passExit;
+
+            float3 passDirection = exitVector / exitLength;
+            float3 progressedVector = currentPosition - passFocus;
+            progressedVector.y = 0f;
+            float passProgress = math.dot(progressedVector, passDirection);
+            if (passProgress >= exitLength * 0.08f)
+                return passExit;
+
+            float lookaheadDistance = math.max(grid.CellSize * FixedWingFinalPassLookaheadCells, math.max(0.01f, speed) * 1.2f);
+            float targetProgress = math.clamp(passProgress + lookaheadDistance, 0f, exitLength);
+            return new float3(
+                passFocus.x + passDirection.x * targetProgress,
+                passExit.y,
+                passFocus.z + passDirection.z * targetProgress);
+        }
+
+        private static bool SteerFixedWingTowards(
+            ref LocalTransform transform,
+            ref UnitGrid unitGrid,
+            in GridConfig grid,
+            float speed,
+            float deltaTime,
+            float desiredY,
+            float3 targetWorld,
+            bool stayAirborne)
+        {
+            float3 target = targetWorld;
+            target.y = desiredY;
+            float3 toTarget = target - transform.Position;
+            float3 horizontalToTarget = new float3(toTarget.x, 0f, toTarget.z);
+            float horizontalDistance = math.length(horizontalToTarget);
+            float verticalDistance = math.abs(target.y - transform.Position.y);
+            float stepDistance = math.max(0.01f, speed) * deltaTime;
+
+            if (horizontalDistance <= math.max(0.05f, stepDistance) &&
+                verticalDistance <= math.max(0.05f, stepDistance))
+            {
+                transform.Position = target;
+                if (!stayAirborne)
+                    transform.Position.y = desiredY;
+                int2 currentCell = GridUtils.WorldToCell(grid, transform.Position);
+                if (GridUtils.InBounds(currentCell, grid.Width, grid.Height))
+                    unitGrid.Cell = currentCell;
+                return true;
+            }
+
+            float3 currentForward = UnitVehicleMovementUtility.Forward(transform.Rotation);
+            float3 desiredForward = math.normalizesafe(horizontalToTarget, currentForward);
+            float signedYawAngle = UnitVehicleMovementUtility.SignedAngleY(currentForward, desiredForward);
+            float yawAngle = math.abs(signedYawAngle);
+            float maxTurnRadians = math.radians(FixedWingManeuverTurnRateDegreesPerSecond) * math.max(0f, deltaTime);
+            float turnBlend = yawAngle > 1e-5f
+                ? math.saturate(maxTurnRadians / yawAngle)
+                : math.saturate(1.15f * deltaTime);
+
+            float bankRadians = -math.clamp(
+                signedYawAngle * 0.45f,
+                -math.radians(FixedWingManeuverBankMaxDegrees),
+                math.radians(FixedWingManeuverBankMaxDegrees));
+            quaternion desiredRotation = math.mul(
+                quaternion.LookRotationSafe(desiredForward, math.up()),
+                quaternion.RotateZ(bankRadians));
+            transform.Rotation = math.slerp(transform.Rotation, desiredRotation, turnBlend);
+
+            float3 steeredForward = UnitVehicleMovementUtility.Forward(transform.Rotation);
             transform.Position += steeredForward * stepDistance;
 
             float yStep = math.min(stepDistance, verticalDistance);

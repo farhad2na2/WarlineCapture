@@ -31,6 +31,8 @@ namespace Game.Runtime
         private const int HelicopterDropProducedVehicleBufferCells = 8;
         private const int HelicopterDropProducedGroundUnitBufferCells = 2;
         private const float HelicopterDropMaxNonRoadLandingHeightDelta = 0.75f;
+        private const float BladeSpinDegreesPerSecond = 15000f;
+        private const float DropVisualPoseSample01 = 0.35f;
         private const int DefaultTransportPoolPrewarmCount = 2;
         private const int DefaultTransportStatePoolPrewarmCount = 32;
         private static readonly int SnivelerModelShownId = Shader.PropertyToID("_SnivelerModelShown");
@@ -41,6 +43,8 @@ namespace Game.Runtime
         private readonly Dictionary<GameObject, Stack<GameObject>> _transportPoolByPrefab = new();
         private readonly Dictionary<GameObject, Stack<GameObject>> _dropVisualPoolByPrefab = new();
         private readonly Dictionary<GameObject, Renderer[]> _transportRenderersByInstance = new();
+        private readonly Dictionary<GameObject, Renderer[]> _dropVisualRenderersByInstance = new();
+        private readonly Dictionary<Renderer, int> _dropVisualMaterialCountByRenderer = new();
         private readonly Dictionary<GameObject, Transform> _transportDoorByInstance = new();
         private readonly HashSet<GameObject> _transportDoorLookupCompleted = new();
         private readonly Dictionary<GameObject, List<Transform>> _transportBladeTransformsByInstance = new();
@@ -49,6 +53,7 @@ namespace Game.Runtime
         private readonly Stack<RuntimeBuildingEntity.PendingDropVisual> _dropVisualStatePool = new();
         private readonly Stack<LineRenderer> _dropRopePool = new();
         private readonly List<Transform> _transformSearchBuffer = new(64);
+        private readonly MaterialPropertyBlock _dropVisualPosePropertyBlock = new();
         private IReadOnlyList<GameObject> _configuredPoolSourcePrefabs;
         private IReadOnlyDictionary<string, GameObject> _configuredPoolSourcePrefabsByKey;
         private Transform _runtimeRoot;
@@ -668,9 +673,9 @@ namespace Game.Runtime
             transport.ActiveDrop = drop;
         }
 
-        private static void ApplyTemporaryCharacterIdlePose(GameObject visual)
+        private void ApplyTemporaryCharacterIdlePose(GameObject visual)
         {
-            if (visual == null || !visual.name.StartsWith("Unit_Chr_", System.StringComparison.Ordinal))
+            if (visual == null)
                 return;
 
             MaterialAnimatorIndexAuthoring indexAuthoring = visual.GetComponentInChildren<MaterialAnimatorIndexAuthoring>(true);
@@ -678,39 +683,69 @@ namespace Game.Runtime
                 return;
 
             MaterialAnimatorAuthoring animatorAuthoring = indexAuthoring.animator.GetComponent<MaterialAnimatorAuthoring>();
-            if (animatorAuthoring == null || animatorAuthoring.animations == null || animatorAuthoring.animations.Count < 2)
+            if (animatorAuthoring == null || animatorAuthoring.animations == null || animatorAuthoring.animations.Count == 0)
                 return;
 
-            MaterialAnimatorBake idleAnimation = animatorAuthoring.animations[1];
-            int startPixel = idleAnimation.start;
-            int endPixel = startPixel + Mathf.Max(1, idleAnimation.frames);
-            Transform animatedRoot = indexAuthoring.transform;
-            LODGroup lodGroup = animatedRoot.GetComponentInChildren<LODGroup>(true);
-            if (lodGroup == null)
+            int animationIndex = Mathf.Clamp(indexAuthoring.animationIndex, 0, animatorAuthoring.animations.Count - 1);
+            if (animationIndex == 0 && animatorAuthoring.animations.Count > 1)
+                animationIndex = 1;
+            MaterialAnimatorBake idleAnimation = animatorAuthoring.animations[animationIndex];
+            int frameCount = Mathf.Max(1, idleAnimation.frames);
+            int boneCount = Mathf.Max(1, animatorAuthoring.bonesCount);
+            int chosenFrame = Mathf.Clamp(Mathf.FloorToInt(frameCount * DropVisualPoseSample01), 0, frameCount - 1);
+            int startPixel = idleAnimation.start + chosenFrame * boneCount;
+            Vector4 renderPixel = new(startPixel, startPixel, 0f, 0f);
+
+            Renderer[] renderers = GetTransportDropVisualRenderers(visual, indexAuthoring);
+            if (renderers == null || renderers.Length == 0)
                 return;
 
-            MaterialPropertyBlock propertyBlock = new();
-            var lods = lodGroup.GetLODs();
-            for (int i = 0; i < lods.Length; ++i)
+            MaterialPropertyBlock propertyBlock = _dropVisualPosePropertyBlock;
+            for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
             {
-                if (lods[i].renderers == null)
+                Renderer renderer = renderers[rendererIndex];
+                if (renderer == null)
                     continue;
 
-                for (int rendererIndex = 0; rendererIndex < lods[i].renderers.Length; rendererIndex++)
+                int materialCount = GetTransportDropVisualMaterialCount(renderer);
+                for (int materialIndex = 0; materialIndex < materialCount; materialIndex++)
                 {
-                    Renderer lodRenderer = lods[i].renderers[rendererIndex];
-                    if (lodRenderer == null)
-                        continue;
-
-                    for (int materialIndex = 0; materialIndex < lodRenderer.sharedMaterials.Length; materialIndex++)
-                    {
-                        lodRenderer.GetPropertyBlock(propertyBlock, materialIndex);
-                        propertyBlock.SetFloat(SnivelerModelShownId, 1f);
-                        propertyBlock.SetVector(SnivelerRenderPixelId, new Vector4(startPixel, endPixel, 0f, 0f));
-                        lodRenderer.SetPropertyBlock(propertyBlock, materialIndex);
-                    }
+                    propertyBlock.Clear();
+                    renderer.GetPropertyBlock(propertyBlock, materialIndex);
+                    propertyBlock.SetFloat(SnivelerModelShownId, 1f);
+                    propertyBlock.SetVector(SnivelerRenderPixelId, renderPixel);
+                    renderer.SetPropertyBlock(propertyBlock, materialIndex);
                 }
             }
+        }
+
+        private Renderer[] GetTransportDropVisualRenderers(
+            GameObject visual,
+            MaterialAnimatorIndexAuthoring indexAuthoring)
+        {
+            if (visual == null || indexAuthoring == null)
+                return null;
+
+            if (_dropVisualRenderersByInstance.TryGetValue(visual, out Renderer[] renderers) && renderers != null)
+                return renderers;
+
+            renderers = indexAuthoring.GetComponentsInChildren<Renderer>(true);
+            _dropVisualRenderersByInstance[visual] = renderers;
+            return renderers;
+        }
+
+        private int GetTransportDropVisualMaterialCount(Renderer renderer)
+        {
+            if (renderer == null)
+                return 0;
+
+            if (_dropVisualMaterialCountByRenderer.TryGetValue(renderer, out int materialCount))
+                return materialCount;
+
+            Material[] sharedMaterials = renderer.sharedMaterials;
+            materialCount = sharedMaterials != null ? sharedMaterials.Length : 0;
+            _dropVisualMaterialCountByRenderer[renderer] = materialCount;
+            return materialCount;
         }
 
         private GameObject AcquireTransportDropVisual(
@@ -740,6 +775,7 @@ namespace Game.Runtime
             visualTransform.localRotation = Quaternion.identity;
             visualTransform.localScale = Vector3.one;
             visual.SetActive(true);
+            ApplyTemporaryCharacterIdlePose(visual);
             return visual;
 #if UNITY_EDITOR
             }
@@ -1583,7 +1619,7 @@ namespace Game.Runtime
             if (instance == null)
                 return;
 
-            float degrees = 1440f * deltaTime;
+            float degrees = BladeSpinDegreesPerSecond * deltaTime;
             List<Transform> bladeTransforms = GetProductionTransportBladeTransforms(instance);
             for (int i = 0; i < bladeTransforms.Count; i++)
             {

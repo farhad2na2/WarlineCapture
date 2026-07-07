@@ -778,7 +778,7 @@ MonoBehaviour:
   - sourcePath: Map/Buildings/Building_Refinery/SM_Bld_GasStation_01
     category: Building_Refinery
     buildingPrefab: {fileID: 7546298519455943663, guid: 93f73d4f2fb8e428c887ae423fbfe4f3, type: 3}
-    factionId: 0
+    factionId: 1
     worldCenter: {x: 723.6837, y: 2.521535, z: 393.2708}
     worldPosition: {x: 722.88, y: 0.77, z: 398.41998}
     worldEulerAngles: {x: -0, y: 0.000013660377, z: -0}
@@ -788,7 +788,7 @@ MonoBehaviour:
   - sourcePath: Map/Buildings/Building_Refinery/SM_Bld_GasStation_01 (1)
     category: Building_Refinery
     buildingPrefab: {fileID: 7546298519455943663, guid: 93f73d4f2fb8e428c887ae423fbfe4f3, type: 3}
-    factionId: 0
+    factionId: 2
     worldCenter: {x: 1373.9941, y: 2.521535, z: 226.81067}
     worldPosition: {x: 1373.1904, y: 0.77, z: 231.95984}
     worldEulerAngles: {x: -0, y: 0.000013660377, z: -0}

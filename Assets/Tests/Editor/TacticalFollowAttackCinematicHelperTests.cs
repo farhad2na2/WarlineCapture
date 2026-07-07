@@ -19,6 +19,10 @@ public sealed class TacticalFollowAttackCinematicHelperTests
             passed++;
             RunCase(test => test.TimeScale_RampsOutOfSlowMotionAtImpactEnd());
             passed++;
+            RunCase(test => test.TimeScalePresentation_DoesNotMutateWhenNotPlaying());
+            passed++;
+            RunCase(test => test.TimeScalePresentation_SavesAndRestoresPreviousScaleWhenPlaying());
+            passed++;
             RunCase(test => test.LaunchShot_FramesJetAndTargetDirection());
             passed++;
             RunCase(test => test.MissilePathShot_FramesProjectileTravel());
@@ -125,6 +129,69 @@ public sealed class TacticalFollowAttackCinematicHelperTests
             TacticalFollowAttackCinematicHelper.EvaluateTimeScale(
                 TacticalFollowAttackCinematicHelper.TotalDurationSeconds + 1f),
             0.0001f);
+    }
+
+    [Test]
+    public void TimeScalePresentation_DoesNotMutateWhenNotPlaying()
+    {
+        float previousTimeScale = Time.timeScale;
+        try
+        {
+            Time.timeScale = 1.25f;
+            TacticalFollowAttackCinematicStateComponent state = default;
+
+            TacticalFollowAttackCinematicPresentationSystemHelper.ApplyTimeScale(
+                ref state,
+                0f,
+                isPlaying: false);
+            Assert.AreEqual(0, state.TimeScaleApplied);
+            Assert.AreEqual(1.25f, Time.timeScale, 0.0001f);
+
+            state.TimeScaleApplied = 1;
+            state.SavedTimeScale = 0.75f;
+            TacticalFollowAttackCinematicPresentationSystemHelper.RestoreTimeScale(
+                ref state,
+                isPlaying: false);
+            Assert.AreEqual(1, state.TimeScaleApplied);
+            Assert.AreEqual(1.25f, Time.timeScale, 0.0001f);
+        }
+        finally
+        {
+            Time.timeScale = previousTimeScale;
+        }
+    }
+
+    [Test]
+    public void TimeScalePresentation_SavesAndRestoresPreviousScaleWhenPlaying()
+    {
+        float previousTimeScale = Time.timeScale;
+        try
+        {
+            Time.timeScale = 0.75f;
+            TacticalFollowAttackCinematicStateComponent state = default;
+
+            TacticalFollowAttackCinematicPresentationSystemHelper.ApplyTimeScale(
+                ref state,
+                0f,
+                isPlaying: true);
+
+            Assert.AreEqual(1, state.TimeScaleApplied);
+            Assert.AreEqual(0.75f, state.SavedTimeScale, 0.0001f);
+            Assert.AreEqual(
+                0.75f * TacticalFollowAttackCinematicHelper.SlowMotionTimeScale,
+                Time.timeScale,
+                0.0001f);
+
+            TacticalFollowAttackCinematicPresentationSystemHelper.RestoreTimeScale(
+                ref state,
+                isPlaying: true);
+            Assert.AreEqual(0, state.TimeScaleApplied);
+            Assert.AreEqual(0.75f, Time.timeScale, 0.0001f);
+        }
+        finally
+        {
+            Time.timeScale = previousTimeScale;
+        }
     }
 
     [Test]

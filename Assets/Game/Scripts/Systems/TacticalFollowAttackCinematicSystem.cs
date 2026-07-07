@@ -322,31 +322,17 @@ namespace Game.Runtime
             ref TacticalFollowAttackCinematicStateComponent cinematic,
             float elapsedSeconds)
         {
-            if (!Application.isPlaying)
-                return;
-
-            if (cinematic.TimeScaleApplied == 0)
-            {
-                cinematic.SavedTimeScale = Time.timeScale;
-                cinematic.TimeScaleApplied = 1;
-            }
-
-            Time.timeScale = math.max(
-                0.01f,
-                cinematic.SavedTimeScale *
-                TacticalFollowAttackCinematicHelper.EvaluateTimeScale(elapsedSeconds));
+            TacticalFollowAttackCinematicPresentationSystemHelper.ApplyTimeScale(
+                ref cinematic,
+                elapsedSeconds,
+                Application.isPlaying);
         }
 
         private static void RestoreTimeScale(ref TacticalFollowAttackCinematicStateComponent cinematic)
         {
-            if (!Application.isPlaying ||
-                cinematic.TimeScaleApplied == 0)
-            {
-                return;
-            }
-
-            Time.timeScale = math.max(0.01f, cinematic.SavedTimeScale);
-            cinematic.TimeScaleApplied = 0;
+            TacticalFollowAttackCinematicPresentationSystemHelper.RestoreTimeScale(
+                ref cinematic,
+                Application.isPlaying);
         }
 
         private static bool IsTemporaryCutawayActive(TacticalFollowCameraModeComponent mode, float now)

@@ -31,6 +31,9 @@ namespace Game.Runtime
         private const float FixedWingManeuverGoAroundRadii = 1.4f;
         private const float FixedWingManeuverMinExtendSeconds = 1.25f;
         private const float FixedWingFinalPassLookaheadCells = 6f;
+        private const float FixedWingReturnApproachMinCells = 24f;
+        private const float FixedWingReturnFinalStraightCells = 10f;
+        private const float FixedWingReturnLineupSlackCells = 6f;
         private const byte FixedWingPassFinalPhase = 1;
         private const byte FixedWingPassManeuverPhase = 2;
         private const byte FixedWingPassExtendPhase = 3;
@@ -572,7 +575,15 @@ namespace Game.Runtime
                             float3 runwayDirection = stateRw.RunwayLandingPosition - stateRw.RunwayTakeoffPosition;
                             runwayDirection.y = 0f;
                             runwayDirection = math.normalizesafe(runwayDirection, new float3(0f, 0f, 1f));
-                            float approachDistance = math.max(grid.CellSize * 18f, math.distance(stateRw.RunwayTakeoffPosition, stateRw.RunwayLandingPosition) * 0.75f);
+                            float requiredStraightInDistance = math.max(
+                                grid.CellSize * FixedWingReturnFinalStraightCells,
+                                move.ValueRO.Speed * 1.5f);
+                            float requiredLineupDistance = ResolveFixedWingTurnRadius(move.ValueRO.Speed) * 1.5f;
+                            float approachDistance = math.max(
+                                math.max(
+                                    grid.CellSize * FixedWingReturnApproachMinCells,
+                                    math.distance(stateRw.RunwayTakeoffPosition, stateRw.RunwayLandingPosition) * 1.25f),
+                                requiredStraightInDistance + requiredLineupDistance + grid.CellSize * FixedWingReturnLineupSlackCells);
                             float3 approachPoint = new float3(
                                 stateRw.RunwayTakeoffPosition.x - runwayDirection.x * approachDistance,
                                 cruiseY,
@@ -580,46 +591,73 @@ namespace Game.Runtime
 
                             if (stateRw.ReturnApproachInitialized == 0)
                             {
-                                bool reachedApproachPoint = SteerFixedWingTowards(
-                                    ref transform.ValueRW,
-                                    ref unitGrid.ValueRW,
-                                    grid,
-                                    move.ValueRO.Speed,
-                                    dt,
-                                    cruiseY,
-                                    approachPoint);
-                                if (!reachedApproachPoint)
+                                float3 approachProgressVector = transform.ValueRO.Position - approachPoint;
+                                approachProgressVector.y = 0f;
+                                float alongApproach = math.dot(approachProgressVector, runwayDirection);
+                                float3 approachLateralVector = approachProgressVector - runwayDirection * alongApproach;
+                                float3 returnForward = UnitVehicleMovementUtility.Forward(transform.ValueRO.Rotation);
+                                float returnRunwayAlignment = math.dot(returnForward, runwayDirection);
+                                float approachCaptureRadius = math.max(
+                                    grid.CellSize * 3f,
+                                    move.ValueRO.Speed * math.max(dt, 1f / 30f) * 2f);
+                                float finalCaptureEnd = math.max(
+                                    grid.CellSize * 1f,
+                                    approachDistance - math.min(requiredStraightInDistance, approachDistance * 0.75f));
+                                float finalCaptureLimit = finalCaptureEnd + approachCaptureRadius;
+                                bool laterallyCaptured = math.lengthsq(approachLateralVector) <= approachCaptureRadius * approachCaptureRadius;
+                                bool insideEntryWindow =
+                                    alongApproach >= -approachCaptureRadius &&
+                                    alongApproach <= finalCaptureLimit &&
+                                    laterallyCaptured &&
+                                    returnRunwayAlignment >= 0.95f;
+
+                                if (!insideEntryWindow)
                                 {
-                                    // Close enough to roll onto the runway heading; a rate-limited
-                                    // turn cannot converge on a point inside its own turn circle.
-                                    float3 toApproachPoint = approachPoint - transform.ValueRO.Position;
-                                    toApproachPoint.y = 0f;
-                                    float approachRollOutRadius = ResolveFixedWingTurnRadius(move.ValueRO.Speed);
-                                    reachedApproachPoint = math.lengthsq(toApproachPoint) <=
-                                        approachRollOutRadius * approachRollOutRadius;
+                                    stateRw.AttackRunActive = 0;
+                                    if (laterallyCaptured &&
+                                        alongApproach >= -approachCaptureRadius &&
+                                        alongApproach <= finalCaptureLimit)
+                                    {
+                                        float maxYawStep = math.radians(FixedWingManeuverTurnRateDegreesPerSecond) * math.max(0f, dt);
+                                        float signedYawToRunway = UnitVehicleMovementUtility.SignedAngleY(returnForward, runwayDirection);
+                                        float yawStep = math.clamp(signedYawToRunway, -maxYawStep, maxYawStep);
+                                        ApplyFixedWingFlight(
+                                            ref transform.ValueRW,
+                                            ref unitGrid.ValueRW,
+                                            grid,
+                                            move.ValueRO.Speed,
+                                            dt,
+                                            cruiseY,
+                                            yawStep,
+                                            maxYawStep);
+                                        continue;
+                                    }
+
+                                    float lineLookahead = math.max(
+                                        grid.CellSize * 8f,
+                                        move.ValueRO.Speed * 1.5f);
+                                    float targetAlong = alongApproach > finalCaptureEnd
+                                        ? 0f
+                                        : math.clamp(alongApproach + lineLookahead, 0f, finalCaptureEnd);
+                                    float3 lineCaptureTarget = new float3(
+                                        approachPoint.x + runwayDirection.x * targetAlong,
+                                        cruiseY,
+                                        approachPoint.z + runwayDirection.z * targetAlong);
+                                    SteerFixedWingTowards(
+                                        ref transform.ValueRW,
+                                        ref unitGrid.ValueRW,
+                                        grid,
+                                        move.ValueRO.Speed,
+                                        dt,
+                                        cruiseY,
+                                        lineCaptureTarget);
+                                    continue;
                                 }
 
-                                if (!reachedApproachPoint)
-                                    continue;
-
                                 transform.ValueRW.Rotation = quaternion.LookRotationSafe(runwayDirection, math.up());
+                                stateRw.AttackRunActive = 0;
                                 stateRw.ReturnApproachInitialized = 1;
                             }
-
-                            float3 currentForward = math.mul(transform.ValueRO.Rotation, new float3(0f, 0f, 1f));
-                            currentForward.y = 0f;
-                            currentForward = math.normalizesafe(currentForward, runwayDirection);
-                            float runwayAlignment = math.dot(currentForward, runwayDirection);
-
-                            float3 toRunwayStart = stateRw.RunwayTakeoffPosition - transform.ValueRO.Position;
-                            float alongRunway = math.dot(new float3(toRunwayStart.x, 0f, toRunwayStart.z), runwayDirection);
-                            float3 lateralVector = new float3(toRunwayStart.x, 0f, toRunwayStart.z) - runwayDirection * alongRunway;
-                            bool canDescendToRunway = runwayAlignment >= 0.995f && math.lengthsq(lateralVector) <= grid.CellSize * grid.CellSize * 2f && alongRunway >= 0f;
-
-                            float3 airborneTarget = canDescendToRunway
-                                ? stateRw.RunwayTakeoffPosition
-                                : approachPoint;
-                            float airborneTargetY = canDescendToRunway ? runwayGroundY : cruiseY;
 
                             bool reachedTouchdown = SteerTowards(
                                 ref transform.ValueRW,
@@ -627,12 +665,23 @@ namespace Game.Runtime
                                 grid,
                                 move.ValueRO.Speed,
                                 dt,
-                                airborneTargetY,
-                                airborneTarget,
-                                !canDescendToRunway,
+                                runwayGroundY,
+                                stateRw.RunwayTakeoffPosition,
+                                false,
                                 1.15f);
+                            if (!reachedTouchdown)
+                            {
+                                float3 touchdownDelta = transform.ValueRO.Position - stateRw.RunwayTakeoffPosition;
+                                touchdownDelta.y = 0f;
+                                float touchdownCaptureRadius = math.max(
+                                    grid.CellSize * 8f,
+                                    move.ValueRO.Speed * math.max(dt, 1f / 30f) * 2f);
+                                reachedTouchdown =
+                                    math.abs(transform.ValueRO.Position.y - runwayGroundY) <= grid.CellSize &&
+                                    math.lengthsq(touchdownDelta) <= touchdownCaptureRadius * touchdownCaptureRadius;
+                            }
 
-                            if (canDescendToRunway && reachedTouchdown)
+                            if (reachedTouchdown)
                             {
                                 stateRw.Airborne = 0;
                                 stateRw.LandingRolling = 1;
@@ -1380,11 +1429,8 @@ namespace Game.Runtime
                     return false;
                 }
 
-                int turnSign = state.AttackManeuverTurnSign >= 0 ? 1 : -1;
                 float maxYawStep = math.radians(FixedWingManeuverTurnRateDegreesPerSecond) * math.max(0f, deltaTime);
-                float yawStep = math.sign(signedToFocus) == turnSign
-                    ? turnSign * math.min(maxYawStep, math.abs(signedToFocus))
-                    : turnSign * maxYawStep;
+                float yawStep = math.clamp(signedToFocus, -maxYawStep, maxYawStep);
                 ApplyFixedWingFlight(ref transform, ref unitGrid, grid, speed, deltaTime, cruiseY, yawStep, maxYawStep);
                 return false;
             }

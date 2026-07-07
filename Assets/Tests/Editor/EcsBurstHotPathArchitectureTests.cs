@@ -167,6 +167,7 @@ public sealed class EcsBurstHotPathArchitectureTests
         ["Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs"] = "runtime state boundary; owns low-cardinality match/input state for managed UI and systems.",
         ["Assets/Game/Scripts/Systems/ScanIntelCommandSystem.cs"] = "tactical command boundary; consumes low-cardinality scan requests and writes command state.",
         ["Assets/Game/Scripts/Systems/SelectedMoveOrderCommandSystem.cs"] = "selection command boundary; expands one selected-move request into unit move requests.",
+        ["Assets/Game/Scripts/Systems/TacticalFollowAttackCinematicSystem.cs"] = "camera cinematic orchestration edge; consumes low-cardinality attack VFX requests and writes temporary tactical-follow camera target state through EntityManager.",
         ["Assets/Game/Scripts/Systems/TransportBoardingCommandSystem.cs"] = "transport command boundary; consumes low-cardinality board requests and writes boarding command state.",
         ["Assets/Game/Scripts/Systems/UnitAttackOrderRequestSystem.cs"] = "selection command boundary; expands low-cardinality attack requests into unit attack order state.",
         ["Assets/Game/Scripts/Systems/UnitMoveOrderRequestSystem.cs"] = "selection command boundary; consumes queued move requests before pathfinding.",

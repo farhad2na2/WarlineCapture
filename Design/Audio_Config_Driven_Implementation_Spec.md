@@ -323,14 +323,14 @@ Use this section as the work checklist. Update status after each implementation 
 
 ### Current Completion
 
-Overall tracked completion: **40%**.
+Overall tracked completion: **45%**.
 
-- Completed steps: 8 / 20.
+- Completed steps: 9 / 20.
 - Asset and placeholder catalog preparation: **Done**.
-- Runtime playback implementation: **Not Started**.
+- Runtime playback implementation: **In Progress**.
 - UI/gameplay wiring: **Not Started**.
 - Validation/performance test coverage: **Not Started**.
-- Latest stable slice: audio import profiles passed focused Unity validation.
+- Latest stable slice: ECS audio request/settings/music/listener data contracts passed focused Unity validation.
 
 Status legend:
 
@@ -348,7 +348,7 @@ Status legend:
 | 5. Create placeholder audio generator | Done | Audio/Tools | `Tools/Audio/generate_placeholder_audio.py`. | Script outputs first batch WAV files and data-only catalog. |
 | 6. Generate first placeholder clip batch | Done | Audio/Tools | UI, command, alert, music placeholder clips. | 44 events assigned; catalog WAV headers validated. |
 | 7. Create Unity import profile rules | Done | UI/Audio | Import settings for UI, gameplay, alerts, music, ambience. | `AudioConfigContractTests.RunFocusedValidation` passed with importer profile checks. |
-| 8. Create ECS request components | Not Started | Gameplay | `AudioPlaybackRequestComponent`, settings/music state components. | Compile and component tests. |
+| 8. Create ECS request components | Done | Gameplay | `AudioPlaybackRequestComponent`, settings/music state components. | `AudioEcsDataContractTests.RunFocusedValidation` passed. |
 | 9. Create request systems | Not Started | Gameplay | `AudioEventRequestSystem`, `AudioCooldownSystem`, `AudioMusicStateSystem`, `AudioSettingsSystem`. | Unit/EditMode tests for requests/cooldowns. |
 | 10. Create playback presentation helper | Not Started | UI/Audio | Pooled `AudioSource` playback helper and mixer application helper. | Pool reuse test; no instantiate/destroy during steady playback. |
 | 11. Wire settings UI | Not Started | UI | Master/Music/SFX/Voice/Alerts volume controls update audio settings. | Settings persist and immediately affect playback. |
@@ -465,6 +465,13 @@ Current import profile pass:
 - Latest validation: 44 catalog WAVs checked through Unity `AudioImporter`; UI/gameplay/alerts use mono decompressed preload, music/ambience use stereo streaming background load.
 
 ### Step 8-10: ECS Request And Playback
+
+Current Step 8 data contract pass:
+
+- Components: `Assets/Game/Scripts/Components/AudioComponents.cs`
+- Validation: `AudioEcsDataContractTests.RunFocusedValidation`
+- Latest validation: unmanaged `IComponentData` and `IBufferElementData` request/result/settings/music/listener contracts passed focused Unity validation.
+- Runtime implementation status: playback systems and presentation helper are still not implemented.
 
 Required data flow:
 

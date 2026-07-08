@@ -78,6 +78,7 @@ public sealed class AudioEcsDataContractTests
     {
         AssertBuffer<AudioPlaybackRequestElement>();
         AssertBuffer<AudioPlaybackResultElement>();
+        AssertBuffer<AudioCooldownStateElement>();
 
         Entity audioEntity = _entityManager.CreateEntity(
             typeof(AudioPlaybackRequestQueueComponent),
@@ -147,9 +148,15 @@ public sealed class AudioEcsDataContractTests
             EventId = new FixedString64Bytes(AudioEventIds.GameplayCommandMoveAccepted),
             Reason = new FixedString64Bytes("Accepted")
         });
+        _entityManager.AddBuffer<AudioCooldownStateElement>(audioEntity).Add(new AudioCooldownStateElement
+        {
+            EventHash = AudioEventIds.GameplayCommandMoveAcceptedHash,
+            LastAcceptedAt = 12.5f
+        });
 
         Assert.AreEqual(1, _entityManager.GetBuffer<AudioPlaybackRequestElement>(audioEntity).Length);
         Assert.AreEqual(1, _entityManager.GetBuffer<AudioPlaybackResultElement>(audioEntity).Length);
+        Assert.AreEqual(1, _entityManager.GetBuffer<AudioCooldownStateElement>(audioEntity).Length);
         Assert.AreEqual(AudioEventIds.GameplayCommandMoveAcceptedHash, _entityManager.GetBuffer<AudioPlaybackRequestElement>(audioEntity)[0].EventHash);
     }
 

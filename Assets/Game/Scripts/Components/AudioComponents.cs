@@ -44,6 +44,7 @@ namespace Game.Components
         public int Frame;
         public AudioPlaybackRequestKind Kind;
         public AudioPlaybackPriority Priority;
+        public AudioPlaybackRequestStatus Status;
         public uint EventHash;
         public FixedString64Bytes EventId;
         public FixedString32Bytes BusId;
@@ -52,9 +53,16 @@ namespace Game.Components
         public float VolumeDecibels;
         public float PitchMultiplier;
         public float RequestedAt;
+        public float CooldownSeconds;
         public byte HasWorldPosition;
         public byte Spatial;
         public byte InterruptsLowerPriority;
+    }
+
+    public struct AudioCooldownStateElement : IBufferElementData
+    {
+        public uint EventHash;
+        public float LastAcceptedAt;
     }
 
     public struct AudioPlaybackResultElement : IBufferElementData

@@ -323,14 +323,14 @@ Use this section as the work checklist. Update status after each implementation 
 
 ### Current Completion
 
-Overall tracked completion: **45%**.
+Overall tracked completion: **50%**.
 
-- Completed steps: 9 / 20.
+- Completed steps: 10 / 20.
 - Asset and placeholder catalog preparation: **Done**.
 - Runtime playback implementation: **In Progress**.
 - UI/gameplay wiring: **Not Started**.
 - Validation/performance test coverage: **Not Started**.
-- Latest stable slice: ECS audio request/settings/music/listener data contracts passed focused Unity validation.
+- Latest stable slice: ECS audio request systems, cooldown filtering, music state application, and settings normalization passed focused Unity validation.
 
 Status legend:
 
@@ -349,7 +349,7 @@ Status legend:
 | 6. Generate first placeholder clip batch | Done | Audio/Tools | UI, command, alert, music placeholder clips. | 44 events assigned; catalog WAV headers validated. |
 | 7. Create Unity import profile rules | Done | UI/Audio | Import settings for UI, gameplay, alerts, music, ambience. | `AudioConfigContractTests.RunFocusedValidation` passed with importer profile checks. |
 | 8. Create ECS request components | Done | Gameplay | `AudioPlaybackRequestComponent`, settings/music state components. | `AudioEcsDataContractTests.RunFocusedValidation` passed. |
-| 9. Create request systems | Not Started | Gameplay | `AudioEventRequestSystem`, `AudioCooldownSystem`, `AudioMusicStateSystem`, `AudioSettingsSystem`. | Unit/EditMode tests for requests/cooldowns. |
+| 9. Create request systems | Done | Gameplay | `AudioEventRequestSystem`, `AudioCooldownSystem`, `AudioMusicStateSystem`, `AudioSettingsSystem`. | `AudioRequestSystemTests.RunFocusedValidation` passed. |
 | 10. Create playback presentation helper | Not Started | UI/Audio | Pooled `AudioSource` playback helper and mixer application helper. | Pool reuse test; no instantiate/destroy during steady playback. |
 | 11. Wire settings UI | Not Started | UI | Master/Music/SFX/Voice/Alerts volume controls update audio settings. | Settings persist and immediately affect playback. |
 | 12. Wire common UI button audio | Not Started | UI | Shared button/tab/card/toggle/slider audio event views. | Changing catalog click clip affects all migrated buttons. |
@@ -466,11 +466,12 @@ Current import profile pass:
 
 ### Step 8-10: ECS Request And Playback
 
-Current Step 8 data contract pass:
+Current Step 8-9 data/request system pass:
 
 - Components: `Assets/Game/Scripts/Components/AudioComponents.cs`
-- Validation: `AudioEcsDataContractTests.RunFocusedValidation`
-- Latest validation: unmanaged `IComponentData` and `IBufferElementData` request/result/settings/music/listener contracts passed focused Unity validation.
+- Request systems: `Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs`
+- Validation: `AudioEcsDataContractTests.RunFocusedValidation`, `AudioRequestSystemTests.RunFocusedValidation`
+- Latest validation: unmanaged request/result/settings/music/listener contracts and request system bootstrap/cooldown/music/settings behavior passed focused Unity validation.
 - Runtime implementation status: playback systems and presentation helper are still not implemented.
 
 Required data flow:
@@ -478,7 +479,7 @@ Required data flow:
 ```text
 Gameplay ECS event/request
   -> AudioEventRequestSystem
-  -> AudioPlaybackRequestComponent buffer
+  -> AudioPlaybackRequestElement buffer
   -> AudioCooldownSystem / priority filtering
   -> AudioPlaybackPresentationSystemHelper
   -> AudioEventCatalogConfig lookup
@@ -490,7 +491,7 @@ UI edge data flow:
 ```text
 UiAudioEventView/ButtonAudioEventView
   -> audio request boundary
-  -> AudioPlaybackRequestComponent buffer or shell-edge queue
+  -> AudioPlaybackRequestElement buffer or shell-edge queue
   -> same playback helper/catalog
 ```
 

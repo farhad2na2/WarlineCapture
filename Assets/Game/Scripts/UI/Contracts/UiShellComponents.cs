@@ -969,6 +969,7 @@ namespace Game.UI.Contracts
         public readonly bool CanStop;
         public readonly bool CanTakeControl;
         public readonly string OwnershipText;
+        public readonly string OwnershipDetailText;
 
         public UiAssistantPanelModel(
             uint version,
@@ -984,7 +985,8 @@ namespace Game.UI.Contracts
             bool canExecute,
             bool canStop,
             bool canTakeControl,
-            string ownershipText)
+            string ownershipText,
+            string ownershipDetailText)
         {
             Version = version;
             GoalsText = goalsText;
@@ -1000,6 +1002,7 @@ namespace Game.UI.Contracts
             CanStop = canStop;
             CanTakeControl = canTakeControl;
             OwnershipText = ownershipText;
+            OwnershipDetailText = ownershipDetailText;
         }
 
         public static UiAssistantPanelModel Empty =>
@@ -1017,7 +1020,8 @@ namespace Game.UI.Contracts
                 false,
                 false,
                 false,
-                "PLAYER CONTROL");
+                "PLAYER CONTROL",
+                "You are issuing orders directly.");
     }
 
     public readonly struct UiAssistantHighlightModel

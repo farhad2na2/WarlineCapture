@@ -1224,6 +1224,18 @@ namespace Game.UI.Shell.Ecs
             };
         }
 
+        private static string ControlStateDetailText(AssistantControlState state)
+        {
+            return state switch
+            {
+                AssistantControlState.Guided => "ARIA is guiding the next action. You keep final control.",
+                AssistantControlState.AssistantPreview => "ARIA is previewing a recommendation. STOP clears the preview.",
+                AssistantControlState.AssistantTakeover => "ARIA is executing a bounded action. STOP returns control.",
+                AssistantControlState.PlayerOverridePending => "Player input detected. ARIA is returning control.",
+                _ => "You are issuing orders directly."
+            };
+        }
+
         private static bool CanStopAssistantControl(AssistantControlState state)
         {
             return state == AssistantControlState.Guided ||
@@ -1326,7 +1338,8 @@ namespace Game.UI.Shell.Ecs
                 topRecommendation.CanExecute != 0,
                 CanStopAssistantControl(assistantState.ControlState),
                 topRecommendation.CanTakeControl != 0,
-                ControlStateText(assistantState.ControlState));
+                ControlStateText(assistantState.ControlState),
+                ControlStateDetailText(assistantState.ControlState));
 
             hasCachedAssistantPanel = true;
             cachedAssistantPanelWorld = entityManager.World;

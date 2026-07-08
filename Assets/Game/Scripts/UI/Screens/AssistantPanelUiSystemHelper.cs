@@ -71,7 +71,9 @@ namespace Game.UI.Runtime
             if (_stateText != null)
                 _stateText.text = string.IsNullOrWhiteSpace(model.OwnershipText) ? "PLAYER CONTROL" : model.OwnershipText;
             if (_ownershipBodyText != null)
-                _ownershipBodyText.text = string.IsNullOrWhiteSpace(model.OwnershipText) ? "PLAYER CONTROL" : model.OwnershipText;
+                _ownershipBodyText.text = string.IsNullOrWhiteSpace(model.OwnershipDetailText)
+                    ? (string.IsNullOrWhiteSpace(model.OwnershipText) ? "You are issuing orders directly." : model.OwnershipText)
+                    : model.OwnershipDetailText;
             if (_goalsBodyText != null)
                 _goalsBodyText.text = string.IsNullOrWhiteSpace(model.GoalsText) ? "No active objectives" : model.GoalsText;
             if (_alertsBodyText != null)

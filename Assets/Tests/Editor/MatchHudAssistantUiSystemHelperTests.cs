@@ -123,7 +123,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             true,
             true,
             false,
-            "ARIA CONTROL"),
+            "ARIA CONTROL",
+            "ARIA is executing a bounded action. STOP returns control."),
             new UiAssistantHighlightModel(88, true, 7, 3101, 1, 12f, 3f, 9f, 1f));
         UiShellRuntimeGateway.Register(assistantGateway);
 
@@ -152,7 +153,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.NotNull(giveControlLabel);
         Assert.AreEqual("- Neutralize hostile patrol\n[x] Protect civilians", goals.text);
         Assert.AreEqual("HIGH: Fuel reserves empty", alerts.text);
-        Assert.AreEqual("ARIA CONTROL", ownership.text);
+        Assert.AreEqual("ARIA is executing a bounded action. STOP returns control.", ownership.text);
         StringAssert.Contains("HIGH: Review objective", recommendation.text);
         Assert.IsTrue(previewPulse.gameObject.activeSelf);
         Assert.Greater(previewPulse.color.a, 0.4f);

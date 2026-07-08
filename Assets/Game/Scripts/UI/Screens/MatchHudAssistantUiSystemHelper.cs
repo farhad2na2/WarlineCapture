@@ -130,7 +130,7 @@ namespace Game.UI.Runtime
 
             CreateText("Title", root, "ARIA COMMAND ASSISTANT", 28, TextAlignmentOptions.Left, new Vector2(28f, -24f), new Vector2(460f, 38f), new Color(0.92f, 0.96f, 0.95f, 1f));
             CreateText("OwnershipTitle", root, "CONTROL STATE", 14, TextAlignmentOptions.Right, new Vector2(404f, -18f), new Vector2(192f, 20f), new Color(1f, 0.80f, 0.34f, 1f));
-            TMP_Text ownershipBodyText = CreateText("OwnershipBody", root, "PLAYER CONTROL", 18, TextAlignmentOptions.Right, new Vector2(404f, -42f), new Vector2(192f, 24f), new Color(0.45f, 0.95f, 1f, 1f));
+            TMP_Text ownershipBodyText = CreateText("OwnershipBody", root, "You are issuing orders directly.", 14, TextAlignmentOptions.Right, new Vector2(384f, -42f), new Vector2(212f, 58f), new Color(0.45f, 0.95f, 1f, 1f));
             CreateText("GoalsTitle", root, "CURRENT GOALS", 18, TextAlignmentOptions.Left, new Vector2(28f, -88f), new Vector2(240f, 28f), new Color(1f, 0.80f, 0.34f, 1f));
             TMP_Text goalsBodyText = CreateText("GoalsBody", root, "No active objectives", 20, TextAlignmentOptions.Left, new Vector2(28f, -124f), new Vector2(286f, 104f), new Color(0.80f, 0.86f, 0.84f, 1f));
             CreateText("AlertsTitle", root, "ALERTS & REPORTS", 18, TextAlignmentOptions.Left, new Vector2(350f, -88f), new Vector2(240f, 28f), new Color(1f, 0.80f, 0.34f, 1f));

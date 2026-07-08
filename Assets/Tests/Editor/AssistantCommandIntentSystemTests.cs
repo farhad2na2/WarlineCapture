@@ -28,6 +28,8 @@ public sealed class AssistantCommandIntentSystemTests
             passed++;
             RunCase(test => test.AssistantCommandIntentSystem_QueuesFocusUnitFromEntityDoIt());
             passed++;
+            RunCase(test => test.AssistantCommandIntentSystem_WritesRecoveryMessageForInvalidSelectTarget());
+            passed++;
 
             Debug.Log($"[AssistantCommandIntentSystemValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -66,6 +68,49 @@ public sealed class AssistantCommandIntentSystemTests
     public void TearDown()
     {
         _world?.Dispose();
+    }
+
+    [Test]
+    public void AssistantCommandIntentSystem_WritesRecoveryMessageForInvalidSelectTarget()
+    {
+        Entity boundary = CreateBoundary();
+        Entity destroyedTarget = CreateTarget(new float3(2f, 0f, 5f));
+        _entityManager.DestroyEntity(destroyedTarget);
+        DynamicBuffer<AssistantCommandIntentRequestElement> requests =
+            _entityManager.GetBuffer<AssistantCommandIntentRequestElement>(boundary);
+        requests.Add(new AssistantCommandIntentRequestElement
+        {
+            RequestId = 15,
+            Frame = 31,
+            RecommendationId = 3202,
+            Kind = AssistantCommandIntentKind.SelectEntity,
+            TargetKind = AssistantTargetKind.Entity,
+            TargetEntity = destroyedTarget
+        });
+
+        _intentSystem.Update(_world.Unmanaged);
+
+        Assert.AreEqual(0, _entityManager.GetBuffer<AssistantCommandIntentRequestElement>(boundary).Length);
+
+        DynamicBuffer<AssistantCommandIntentResultElement> results =
+            _entityManager.GetBuffer<AssistantCommandIntentResultElement>(boundary);
+        Assert.AreEqual(1, results.Length);
+        Assert.AreEqual(15, results[0].RequestId);
+        Assert.AreEqual(AssistantCommandIntentStatus.Rejected, results[0].Status);
+        Assert.AreEqual("No selectable target is available.", results[0].Message.ToString());
+
+        DynamicBuffer<AssistantMessageElement> messages =
+            _entityManager.GetBuffer<AssistantMessageElement>(boundary);
+        Assert.AreEqual(1, messages.Length);
+        Assert.AreEqual(700015, messages[0].MessageId);
+        Assert.AreEqual(AssistantMessagePriority.High, messages[0].Priority);
+        Assert.AreEqual(AssistantRecommendationKind.Explain, messages[0].RelatedKind);
+        Assert.AreEqual("ARIA could not find a selectable unit for that action.", messages[0].Text.ToString());
+        Assert.AreEqual(0, messages[0].Acknowledged);
+
+        AssistantStateComponent assistantState =
+            _entityManager.GetComponentData<AssistantStateComponent>(boundary);
+        Assert.AreEqual(1, assistantState.UiDirty);
     }
 
     [Test]

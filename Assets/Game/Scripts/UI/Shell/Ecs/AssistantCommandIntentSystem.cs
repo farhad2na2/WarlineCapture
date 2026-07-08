@@ -12,10 +12,12 @@ namespace Game.UI.Shell.Ecs
     public partial struct AssistantCommandIntentSystem : ISystem
     {
         private const int MaxResultRows = 16;
+        private const int MaxMessageRows = 16;
         private const int ReasonAccepted = 0;
         private const int ReasonUnsupportedIntent = 1;
         private const int ReasonMissingPreviewTarget = 2;
         private const int ReasonMissingSelectionTarget = 3;
+        private const int RecoveryMessageBaseId = 700000;
 
         private EntityQuery boundaryQuery;
         private EntityQuery cameraRequestQuery;
@@ -84,6 +86,8 @@ namespace Game.UI.Shell.Ecs
                 state.EntityManager.GetComponentData<AssistantStateComponent>(boundary);
             DynamicBuffer<AssistantCommandIntentResultElement> results =
                 state.EntityManager.GetBuffer<AssistantCommandIntentResultElement>(boundary);
+            DynamicBuffer<AssistantMessageElement> messages =
+                state.EntityManager.GetBuffer<AssistantMessageElement>(boundary);
             DynamicBuffer<AssistantPreviewHighlightElement> highlights =
                 state.EntityManager.GetBuffer<AssistantPreviewHighlightElement>(boundary);
 
@@ -96,7 +100,14 @@ namespace Game.UI.Shell.Ecs
                     ClearPreviewHighlight(highlights);
                     if (!TryQueueSelectionCommand(ref state, request))
                     {
-                        AddResult(results, request, AssistantCommandIntentStatus.Rejected, ReasonMissingSelectionTarget, new FixedString64Bytes("No selectable target is available."));
+                        AddRejectedResult(
+                            results,
+                            messages,
+                            request,
+                            ReasonMissingSelectionTarget,
+                            new FixedString64Bytes("No selectable target is available."));
+                        assistantState.UiDirty = 1;
+                        assistantStateChanged = true;
                         continue;
                     }
 
@@ -111,14 +122,28 @@ namespace Game.UI.Shell.Ecs
                 if (!IsPreviewIntent(request.Kind))
                 {
                     ClearPreviewHighlight(highlights);
-                    AddResult(results, request, AssistantCommandIntentStatus.Rejected, ReasonUnsupportedIntent, new FixedString64Bytes("Intent is not available yet."));
+                    AddRejectedResult(
+                        results,
+                        messages,
+                        request,
+                        ReasonUnsupportedIntent,
+                        new FixedString64Bytes("Intent is not available yet."));
+                    assistantState.UiDirty = 1;
+                    assistantStateChanged = true;
                     continue;
                 }
 
                 if (!TryResolvePreviewTarget(ref state, request, out float3 focusWorldPosition))
                 {
                     ClearPreviewHighlight(highlights);
-                    AddResult(results, request, AssistantCommandIntentStatus.Rejected, ReasonMissingPreviewTarget, new FixedString64Bytes("No preview target is available."));
+                    AddRejectedResult(
+                        results,
+                        messages,
+                        request,
+                        ReasonMissingPreviewTarget,
+                        new FixedString64Bytes("No preview target is available."));
+                    assistantState.UiDirty = 1;
+                    assistantStateChanged = true;
                     continue;
                 }
 
@@ -134,6 +159,7 @@ namespace Game.UI.Shell.Ecs
 
             requests.Clear();
             TrimResults(results);
+            TrimMessages(messages);
 
             if (assistantStateChanged)
                 state.EntityManager.SetComponentData(boundary, assistantState);
@@ -345,6 +371,44 @@ namespace Game.UI.Shell.Ecs
             });
         }
 
+        private static void AddRejectedResult(
+            DynamicBuffer<AssistantCommandIntentResultElement> results,
+            DynamicBuffer<AssistantMessageElement> messages,
+            AssistantCommandIntentRequestElement request,
+            int reasonCode,
+            FixedString64Bytes resultMessage)
+        {
+            AddResult(results, request, AssistantCommandIntentStatus.Rejected, reasonCode, resultMessage);
+            AddRecoveryMessage(messages, request, reasonCode);
+        }
+
+        private static void AddRecoveryMessage(
+            DynamicBuffer<AssistantMessageElement> messages,
+            AssistantCommandIntentRequestElement request,
+            int reasonCode)
+        {
+            FixedString128Bytes text = reasonCode switch
+            {
+                ReasonMissingPreviewTarget => new FixedString128Bytes("ARIA needs a map target before it can show that action."),
+                ReasonMissingSelectionTarget => new FixedString128Bytes("ARIA could not find a selectable unit for that action."),
+                ReasonUnsupportedIntent => new FixedString128Bytes("That ARIA action is not available yet. Try Show Me first."),
+                _ => new FixedString128Bytes("ARIA could not complete that action.")
+            };
+
+            messages.Add(new AssistantMessageElement
+            {
+                MessageId = RecoveryMessageBaseId + math.max(0, request.RequestId),
+                SourceVersion = request.Frame,
+                Priority = AssistantMessagePriority.High,
+                RelatedKind = AssistantRecommendationKind.Explain,
+                SuppressionKey = new FixedString64Bytes("assistant.intent.recovery"),
+                Text = text,
+                CreatedAt = request.Frame,
+                RequiresNarration = 0,
+                Acknowledged = 0
+            });
+        }
+
         private static void ClearPreviewHighlight(DynamicBuffer<AssistantPreviewHighlightElement> highlights)
         {
             if (highlights.Length > 0)
@@ -376,6 +440,12 @@ namespace Game.UI.Shell.Ecs
         {
             while (results.Length > MaxResultRows)
                 results.RemoveAt(0);
+        }
+
+        private static void TrimMessages(DynamicBuffer<AssistantMessageElement> messages)
+        {
+            while (messages.Length > MaxMessageRows)
+                messages.RemoveAt(0);
         }
     }
 }

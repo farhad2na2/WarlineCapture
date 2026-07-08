@@ -1,12 +1,12 @@
 # ARIA Assistant ECS Implementation Tracker
 
 Date: 2026-07-08
-Status: Phase 4 safe Do It selection command implemented
+Status: Phase 4 rejected-intent recovery messaging implemented
 Source design: `Design/ARIA_Assistant_ECS_Design.md`
 
 ## Progress
 
-Overall progress: 51% complete, 35 of 68 checklist items complete.
+Overall progress: 54% complete, 37 of 68 checklist items complete.
 
 | Phase | Scope | Items | Complete | Status |
 |---|---|---:|---:|---|
@@ -14,7 +14,7 @@ Overall progress: 51% complete, 35 of 68 checklist items complete.
 | 1 | ECS data contract | 8 | 8 | Complete |
 | 2 | Match header and panel shell | 8 | 8 | Complete |
 | 3 | Goal and recommendation read models | 8 | 8 | Complete |
-| 4 | Show Me and Do It command intents | 8 | 5 | In progress |
+| 4 | Show Me and Do It command intents | 8 | 7 | In progress |
 | 5 | Give Control ownership | 8 | 0 | Not started |
 | 6 | Message, narration, and audio | 8 | 0 | Not started |
 | 7 | Settings, save, and accessibility | 6 | 0 | Not started |
@@ -124,8 +124,8 @@ Phase 3 notes:
 - [x] Add `AssistantHighlightPresentationSystemHelper` for UI pulse, world highlight, and camera nudge from ECS read models.
 - [x] Add one safe `Do It` command through existing ECS command boundaries.
 - [ ] Add result rows for accepted, rejected, completed, cancelled, and timed-out intents.
-- [ ] Add recovery message when a command intent is rejected.
-- [ ] Add focused tests for intent request/result routing and invalid target recovery.
+- [x] Add recovery message when a command intent is rejected.
+- [x] Add focused tests for intent request/result routing and invalid target recovery.
 
 Exit criteria: `Show Me` previews without committing gameplay and `Do It` executes one safe command through ECS request/result data.
 
@@ -139,6 +139,7 @@ Phase 4 notes:
 - Added `AssistantPreviewHighlightElement` as the ECS preview read model for accepted Show Me / focus-preview requests. `AssistantCommandIntentSystem` now writes one active highlight row on accepted preview and clears stale rows on rejected or unsupported preview requests.
 - Added `UiAssistantHighlightModel`, gateway conversion/caching, and `AssistantHighlightPresentationSystemHelper`. The match HUD panel consumes the model through the existing refresh path, displays a bounded cyan pulse behind the recommendation area, and shows a pooled overlay world ring at the preview target. Camera preview nudge continues through the existing `RtsCameraRequestElement` smooth-focus request.
 - Added the first safe `DO IT` route through the existing RTS selection command queue. ARIA `SelectEntity` intents now enqueue `EnterSelectionMode` for the no-selection UI-surface recommendation, or enqueue `FocusUnit` with a pre-resolved entity target when one is available. The existing selection focus command helper now accepts entity-target `FocusUnit` requests by using its existing runtime entity focus path.
+- Rejected command intents now write a bounded high-priority `AssistantMessageElement` recovery row beside the rejected result row. The existing ARIA panel alert binding can surface the recovery text without a new UI path, and the focused command-intent validation covers invalid-target recovery.
 
 ## Phase 5: Give Control Ownership
 
@@ -210,6 +211,7 @@ Exit criteria: feature is playable, validated, documented, and does not regress 
 | 2026-07-08 | Phase 4 assistant preview highlight UI pulse | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; sandboxed Unity attempt `/private/tmp/aria-assistant-highlight-data-contract-unity.log`; escalated workaround validations `/private/tmp/aria-assistant-highlight-data-contract-unity-escalated.log`, `/private/tmp/aria-assistant-highlight-intent-system-unity.log`, `/private/tmp/aria-assistant-highlight-ui-unity.log`, and `/private/tmp/aria-assistant-highlight-gateway-unity.log` | Passed | Sandboxed Unity hit the documented `LicenseClient-farhad` licensing initialization failure. Workaround reruns passed with `[AssistantEcsDataContractValidation] result=Passed tests=3`, `[AssistantCommandIntentSystemValidation] result=Passed tests=2`, `[MatchHudAssistantUiValidation] result=Passed tests=2`, and `[AssistantCommandIntentGatewayValidation] result=Passed tests=3`. Validates ECS preview highlight rows, stale highlight clearing on rejection, gateway conversion, and HUD panel pulse binding. World-space highlight remains for the next stable slice. |
 | 2026-07-08 | Phase 4 assistant preview world highlight | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-world-highlight-ui-unity.log --timeout 420 -- -quit -executeMethod MatchHudAssistantUiSystemHelperTests.RunFocusedValidation` | Passed | Focused Unity validation reported `[MatchHudAssistantUiValidation] result=Passed tests=2`. Validates the panel pulse plus pooled `AriaAssistantPreviewHighlightRuntime` world ring from `UiAssistantHighlightModel`, including target position and renderer setup. |
 | 2026-07-08 | Phase 4 safe Do It selection command | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-safe-select-intent-unity.log --timeout 420 -- -quit -executeMethod AssistantCommandIntentSystemTests.RunFocusedValidation`; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-safe-select-read-model-unity.log --timeout 420 -- -quit -executeMethod AssistantReadModelSystemTests.RunFocusedValidation` | Passed | Focused Unity validation reported `[AssistantCommandIntentSystemValidation] result=Passed tests=4` and `[AssistantReadModelValidation] result=Passed tests=6`. Validates Show Me preview routing, rejected no-target preview recovery, no-selection `DO IT` selection-mode queueing, pre-resolved entity `DO IT` focus-unit queueing through existing RTS selection command buffers, and the executable no-selection recommendation contract. |
+| 2026-07-08 | Phase 4 rejected-intent recovery message | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-rejected-intent-recovery-unity.log --timeout 420 -- -quit -executeMethod AssistantCommandIntentSystemTests.RunFocusedValidation` | Passed | Focused Unity validation reported `[AssistantCommandIntentSystemValidation] result=Passed tests=5`. Validates accepted preview routing, safe Do It selection routing, rejected no-target preview recovery, and invalid select-target recovery message rows for the ARIA panel alert stream. |
 
 ## Open Decisions
 

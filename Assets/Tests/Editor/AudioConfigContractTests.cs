@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Game.Configs;
 using NUnit.Framework;
 using UnityEditor;
@@ -22,6 +21,42 @@ public sealed class AudioConfigContractTests
     private const string CatalogJsonPath = "Assets/Game/Audio/Config/audio_event_catalog_v0_1.json";
     private const string ImportProfileJsonPath = "Assets/Game/Audio/Config/audio_import_profiles_v0_1.json";
 
+    private static readonly string[] RequiredCoreEventIds =
+    {
+        AudioEventIds.UIButtonPrimaryClick,
+        AudioEventIds.UIButtonSecondaryClick,
+        AudioEventIds.UIButtonNegativeClick,
+        AudioEventIds.UIButtonDisabledTap,
+        AudioEventIds.UITabSelect,
+        AudioEventIds.UICardSelect,
+        AudioEventIds.UIPopupOpen,
+        AudioEventIds.UIPopupClose,
+        AudioEventIds.UIFeedbackToastError,
+        AudioEventIds.UIScreenForward,
+        AudioEventIds.UIScreenBack,
+        AudioEventIds.UIDrawerOpen,
+        AudioEventIds.UIDrawerClose,
+        AudioEventIds.GameplayCommandMoveAccepted,
+        AudioEventIds.GameplayCommandAttackAccepted,
+        AudioEventIds.GameplayCommandHoldAccepted,
+        AudioEventIds.GameplayCommandStopReturning,
+        AudioEventIds.GameplayCommandScanAccepted,
+        AudioEventIds.GameplayCommandScanTargeting,
+        AudioEventIds.GameplayCommandRejected,
+        AudioEventIds.GameplayBuildPlaceValid,
+        AudioEventIds.GameplayBuildPlaceInvalid,
+        AudioEventIds.GameplayProductionQueued,
+        AudioEventIds.AlertThreatMinor,
+        AudioEventIds.AlertThreatCritical,
+        AudioEventIds.AlertUnitUnderAttack,
+        AudioEventIds.AlertBaseBreached,
+        AudioEventIds.GameplayObjectiveProgress,
+        AudioEventIds.GameplayObjectiveComplete,
+        AudioEventIds.GameplayObjectiveFailed,
+        AudioEventIds.MusicMenuLoop,
+        AudioEventIds.MusicMatchCalmLoop
+    };
+
     public static void RunFocusedValidation()
     {
         try
@@ -35,9 +70,12 @@ public sealed class AudioConfigContractTests
             tests.AudioConfigAssetsCreateWithEmptyCollections();
             tests.AudioEventIdsMatchCatalogJson();
             tests.AudioEventHashesAreStableAndUnique();
+            tests.AudioCatalogRequiredEventsHaveEntries();
+            tests.AudioCatalogEntriesReferenceValidBusesAndClips();
+            tests.AudioCatalogEntriesUseRuntimeSafePlaybackRules();
             tests.AudioImportProfileConfigExists();
             tests.CatalogAudioImportSettingsMatchProfiles();
-            Debug.Log("[AudioConfigContractValidation] result=Passed tests=10");
+            Debug.Log("[AudioConfigContractValidation] result=Passed tests=13");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -150,9 +188,9 @@ public sealed class AudioConfigContractTests
         string[] catalogEventIds = ReadCatalogEventIds();
 
         CollectionAssert.AreEqual(catalogEventIds, AudioEventIds.AllEventIds);
-        Assert.AreEqual(48, AudioEventIds.AllEventIds.Length);
+        Assert.GreaterOrEqual(AudioEventIds.AllEventIds.Length, 48);
         Assert.AreEqual(AudioEventIds.UIButtonPrimaryClick, catalogEventIds[0]);
-        Assert.AreEqual(AudioEventIds.AmbienceBaseDistantLoop, catalogEventIds[catalogEventIds.Length - 1]);
+        CollectionAssert.Contains(catalogEventIds, AudioEventIds.AmbienceBaseDistantLoop);
     }
 
     [Test]
@@ -175,10 +213,72 @@ public sealed class AudioConfigContractTests
     }
 
     [Test]
+    public void AudioCatalogRequiredEventsHaveEntries()
+    {
+        CatalogJson catalog = ReadCatalog();
+        HashSet<string> eventIds = new(catalog.events.Select(entry => entry.eventId));
+
+        for (int i = 0; i < RequiredCoreEventIds.Length; i++)
+            CollectionAssert.Contains(eventIds, RequiredCoreEventIds[i]);
+    }
+
+    [Test]
+    public void AudioCatalogEntriesReferenceValidBusesAndClips()
+    {
+        CatalogJson catalog = ReadCatalog();
+        HashSet<string> busIds = new(catalog.buses.Select(bus => bus.busId));
+        var eventIds = new HashSet<string>();
+        var clipPaths = new HashSet<string>();
+
+        for (int i = 0; i < catalog.events.Length; i++)
+        {
+            AudioEventJson entry = catalog.events[i];
+            Assert.IsFalse(string.IsNullOrWhiteSpace(entry.eventId), $"Catalog event at index {i} must have an event id.");
+            Assert.IsTrue(eventIds.Add(entry.eventId), $"Duplicate audio event id: {entry.eventId}");
+            Assert.IsTrue(busIds.Contains(entry.busId), $"{entry.eventId} references unknown bus {entry.busId}.");
+            Assert.NotNull(entry.clips, $"{entry.eventId} must declare clips.");
+            Assert.Greater(entry.clips.Length, 0, $"{entry.eventId} must have at least one clip or fallback.");
+
+            for (int clipIndex = 0; clipIndex < entry.clips.Length; clipIndex++)
+            {
+                AudioClipJson clip = entry.clips[clipIndex];
+                Assert.IsFalse(string.IsNullOrWhiteSpace(clip.assetPath), $"{entry.eventId} clip {clipIndex} must have an asset path.");
+                StringAssert.StartsWith("Assets/Game/Audio/", clip.assetPath, clip.assetPath);
+                StringAssert.EndsWith(".wav", clip.assetPath, clip.assetPath);
+                Assert.IsTrue(File.Exists(clip.assetPath), $"{entry.eventId} references missing clip {clip.assetPath}.");
+                Assert.Greater(clip.weight, 0, $"{entry.eventId} clip {clip.assetPath} must have positive weight.");
+                Assert.IsTrue(clipPaths.Add(clip.assetPath), $"Duplicate catalog clip path: {clip.assetPath}");
+            }
+        }
+    }
+
+    [Test]
+    public void AudioCatalogEntriesUseRuntimeSafePlaybackRules()
+    {
+        CatalogJson catalog = ReadCatalog();
+        var validPriorities = new HashSet<string> { "Low", "Medium", "High", "Critical" };
+
+        for (int i = 0; i < catalog.events.Length; i++)
+        {
+            AudioEventJson entry = catalog.events[i];
+            Assert.IsTrue(validPriorities.Contains(entry.priority), $"{entry.eventId} has invalid priority {entry.priority}.");
+            Assert.GreaterOrEqual(entry.cooldownMs, 0, $"{entry.eventId} cooldown must be non-negative.");
+            Assert.NotNull(entry.playback, $"{entry.eventId} must have playback settings.");
+            Assert.Greater(entry.playback.maxInstances, 0, $"{entry.eventId} maxInstances must be positive.");
+            Assert.IsFalse(entry.playback.allowRuntimeLoad, $"{entry.eventId} must not allow runtime loading.");
+            Assert.GreaterOrEqual(entry.pitchVariance.max, entry.pitchVariance.min, $"{entry.eventId} pitch variance min/max is invalid.");
+
+            bool isLoopBus = entry.busId == "Music" || entry.busId == "Ambience";
+            if (entry.playback.loop)
+                Assert.IsTrue(isLoopBus, $"{entry.eventId} loops must stay on Music or Ambience buses.");
+        }
+    }
+
+    [Test]
     public void CatalogAudioImportSettingsMatchProfiles()
     {
         string[] clipPaths = ReadCatalogClipPaths();
-        Assert.AreEqual(48, clipPaths.Length);
+        Assert.GreaterOrEqual(clipPaths.Length, 48);
 
         for (int i = 0; i < clipPaths.Length; i++)
         {
@@ -212,20 +312,32 @@ public sealed class AudioConfigContractTests
 
     private static string[] ReadCatalogEventIds()
     {
-        string json = File.ReadAllText(CatalogJsonPath);
-        MatchCollection matches = Regex.Matches(json, "\"eventId\"\\s*:\\s*\"([^\"]+)\"");
-        return matches
-            .Select(match => match.Groups[1].Value)
+        return ReadCatalog()
+            .events
+            .Select(entry => entry.eventId)
             .ToArray();
     }
 
     private static string[] ReadCatalogClipPaths()
     {
-        string json = File.ReadAllText(CatalogJsonPath);
-        MatchCollection matches = Regex.Matches(json, "\"assetPath\"\\s*:\\s*\"([^\"]+\\.wav)\"");
-        return matches
-            .Select(match => match.Groups[1].Value)
+        return ReadCatalog()
+            .events
+            .SelectMany(entry => entry.clips ?? Array.Empty<AudioClipJson>())
+            .Select(clip => clip.assetPath)
+            .Where(path => !string.IsNullOrWhiteSpace(path))
             .ToArray();
+    }
+
+    private static CatalogJson ReadCatalog()
+    {
+        Assert.IsTrue(File.Exists(CatalogJsonPath), $"Missing audio event catalog: {CatalogJsonPath}");
+        CatalogJson catalog = JsonUtility.FromJson<CatalogJson>(File.ReadAllText(CatalogJsonPath));
+        Assert.NotNull(catalog);
+        Assert.NotNull(catalog.buses);
+        Assert.NotNull(catalog.events);
+        Assert.Greater(catalog.buses.Length, 0);
+        Assert.Greater(catalog.events.Length, 0);
+        return catalog;
     }
 
     private static string ReadAudioCategory(string assetPath)
@@ -236,5 +348,55 @@ public sealed class AudioConfigContractTests
         Assert.AreEqual("Game", parts[1], assetPath);
         Assert.AreEqual("Audio", parts[2], assetPath);
         return parts[3];
+    }
+
+    [Serializable]
+    private sealed class CatalogJson
+    {
+        public BusJson[] buses;
+        public AudioEventJson[] events;
+    }
+
+    [Serializable]
+    private sealed class BusJson
+    {
+        public string busId;
+        public string parentBusId;
+    }
+
+    [Serializable]
+    private sealed class AudioEventJson
+    {
+        public string eventId;
+        public string busId;
+        public string priority;
+        public int cooldownMs;
+        public PitchVarianceJson pitchVariance;
+        public PlaybackJson playback;
+        public AudioClipJson[] clips;
+    }
+
+    [Serializable]
+    private sealed class PitchVarianceJson
+    {
+        public float min;
+        public float max;
+    }
+
+    [Serializable]
+    private sealed class PlaybackJson
+    {
+        public bool loop;
+        public bool spatial;
+        public int maxInstances;
+        public bool allowRuntimeLoad;
+    }
+
+    [Serializable]
+    private sealed class AudioClipJson
+    {
+        public string assetPath;
+        public string status;
+        public int weight;
     }
 }

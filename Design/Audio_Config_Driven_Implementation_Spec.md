@@ -323,14 +323,14 @@ Use this section as the work checklist. Update status after each implementation 
 
 ### Current Completion
 
-Overall tracked completion: **90%**.
+Overall tracked completion: **92%**.
 
-- Completed steps: 14 / 20.
+- Completed steps: 15 / 20.
 - Asset and placeholder catalog preparation: **Done**.
 - Runtime playback implementation: **In Progress**.
 - UI/gameplay wiring: **In Progress**.
 - Validation/performance test coverage: **In Progress**.
-- Latest stable slice: UI shell route transitions request menu and match music states through the ECS audio music state path.
+- Latest stable slice: audio catalog validation now enforces required events, valid buses, clip paths, runtime-safe playback rules, import profiles, and generated id/hash alignment.
 
 Status legend:
 
@@ -357,7 +357,7 @@ Status legend:
 | 14. Wire match command audio | In Progress | Gameplay/UI | Select, move, attack, hold, stop/return, scan, build valid/invalid. | `BuildingAudioFeedbackTests.RunFocusedValidation`, `SelectionAudioFeedbackTests.RunFocusedValidation`, `MatchCommandAudioFeedbackTests.RunFocusedValidation`, and `FocusedUnitCommandSystemTests.RunFocusedValidation` passed for current match/build command audio. |
 | 15. Wire alert/objective audio | Blocked | Gameplay/UI | Threat, objective, unit under attack, base breached events. | `AlertObjectiveAudioFeedbackTests.RunFocusedValidation` passed for threat warning, unit-under-attack, and base-breached alert audio. Objective audio is blocked until mission/objective result state exists beyond seeded HUD text/icons. |
 | 16. Wire music state system | In Progress | Gameplay/UI | Splash/menu/briefing/match/result music state transitions. | `UiShellAudioRoutePopupTests.RunFocusedValidation` passed for menu and match route music requests. Result music pending until result route/model is implemented. |
-| 17. Add audio catalog validation tests | Not Started | QA | Missing clip, duplicate id, invalid bus, cooldown, import profile tests. | EditMode pass. |
+| 17. Add audio catalog validation tests | Done | QA | Missing clip, duplicate id, invalid bus, cooldown, import profile tests. | `AudioConfigContractTests.RunFocusedValidation` passed with required event, bus, clip, cooldown, runtime-load, import profile, and hash alignment checks. |
 | 18. Add performance validation | Not Started | QA/Perf | Audio stress test for UI spam and match alerts. | No recurring GC after warmup; no runtime loading; pool size stable. |
 | 19. Update `Audio_Design_Guidelines.md` handoff | Done | Designer | Cross-link implementation spec and mark event set source. | Docs aligned. |
 | 20. Production audio replacement plan | Not Started | Audio/Designer | Final audio asset sourcing/composition plan. | Catalog entries marked final/placeholder. |
@@ -698,6 +698,19 @@ Required tests:
 - No runtime `Resources.Load` in gameplay frames.
 - No direct `AudioSource.PlayOneShot` from gameplay ECS systems.
 - No new singleton/static audio manager.
+
+Current Step 17 catalog validation pass:
+
+- Source: `Assets/Tests/Editor/AudioConfigContractTests.cs`.
+- Validation: `AudioConfigContractTests.RunFocusedValidation`.
+- Required core UI, command, alert, objective, and route music event ids must exist in the catalog.
+- Catalog event ids must align with generated `AudioEventIds.AllEventIds`, and hashes must align with `AudioEventIds.AllEventHashes`.
+- Event ids must be unique.
+- Every event must reference a known bus.
+- Every event must have at least one WAV clip entry with a valid `Assets/Game/Audio/...` path and positive weight.
+- Every event must use a valid priority, non-negative cooldown, positive max instance count, valid pitch variance, and `allowRuntimeLoad=false`.
+- Looping events must stay on Music or Ambience buses.
+- Unity import settings must match the configured profile: UI/gameplay/alerts/voice one-shots are mono/decompressed/preloaded, while music/ambience clips are streamed/background-loaded.
 
 Performance scenario:
 

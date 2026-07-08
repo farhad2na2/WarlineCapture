@@ -293,9 +293,9 @@ Generate first-pass WAV clips for:
 - 14 UI one-shots.
 - 14 match command/gameplay one-shots.
 - 7 alert/objective cues.
-- 5 short music/ambience placeholders.
+- 9 short music/ambience placeholders.
 
-Total first batch: about 40 clips.
+Total first batch: 44 catalog event assignments.
 
 ### Generation Methods
 
@@ -321,6 +321,17 @@ Music recommendation:
 
 Use this section as the work checklist. Update status after each implementation pass.
 
+### Current Completion
+
+Overall tracked completion: **30%**.
+
+- Completed steps: 6 / 20.
+- Asset and placeholder catalog preparation: **Done**.
+- Runtime playback implementation: **Not Started**.
+- UI/gameplay wiring: **Not Started**.
+- Validation/performance test coverage: **Not Started**.
+- Latest stable slice: audio config ScriptableObject contracts passed focused Unity validation.
+
 Status legend:
 
 - `Not Started`
@@ -331,11 +342,11 @@ Status legend:
 | Step | Status | Owner | Deliverable | Validation |
 |---|---|---|---|---|
 | 1. Confirm audio architecture scope | Done | Designer | This spec created and linked. | Review against audio guide, ECS contract, performance contract. |
-| 2. Create audio folders | Not Started | UI/Audio | `Assets/Game/Audio/*` folder layout. | Folders exist; `.meta` files preserved. |
-| 3. Create catalog config types | Not Started | Gameplay/UI | `AudioEventCatalogConfig`, entry structs, bus config, music state config. | EditMode config validation tests. |
+| 2. Create audio folders | Done | UI/Audio | `Assets/Game/Audio/*` folder layout. | Folders exist; `.meta` files preserved. |
+| 3. Create catalog config types | Done | Gameplay/UI | `AudioEventCatalogConfig`, entry structs, bus config, music state config. | `AudioConfigContractTests.RunFocusedValidation` passed. |
 | 4. Create generated event constants | Not Started | Gameplay | Event id constants/hash generation path. | No string lookup in hot path; duplicate ids fail validation. |
-| 5. Create placeholder audio generator | Not Started | Audio/Tools | `Tools/Audio/generate_placeholder_audio.py`. | Script outputs first batch WAV files. |
-| 6. Generate first placeholder clip batch | Not Started | Audio/Tools | UI, command, alert, music placeholder clips. | Files import in Unity; names match catalog. |
+| 5. Create placeholder audio generator | Done | Audio/Tools | `Tools/Audio/generate_placeholder_audio.py`. | Script outputs first batch WAV files and data-only catalog. |
+| 6. Generate first placeholder clip batch | Done | Audio/Tools | UI, command, alert, music placeholder clips. | 44 events assigned; catalog WAV headers validated. |
 | 7. Create Unity import profile rules | Not Started | UI/Audio | Import settings for UI, gameplay, alerts, music, ambience. | Editor validation confirms compression/load type. |
 | 8. Create ECS request components | Not Started | Gameplay | `AudioPlaybackRequestComponent`, settings/music state components. | Compile and component tests. |
 | 9. Create request systems | Not Started | Gameplay | `AudioEventRequestSystem`, `AudioCooldownSystem`, `AudioMusicStateSystem`, `AudioSettingsSystem`. | Unit/EditMode tests for requests/cooldowns. |
@@ -404,6 +415,14 @@ Rules:
 - If generated, keep the generator under `Tools/Audio` or editor-only tooling.
 
 ### Step 5-6: Placeholder Clip Generation
+
+Current asset/config pass:
+
+- Generator: `Tools/Audio/generate_placeholder_audio.py`
+- Data-only catalog: `Assets/Game/Audio/Config/audio_event_catalog_v0_1.json`
+- Generation manifest: `Assets/Game/Audio/GeneratedSource/audio_placeholder_manifest_v0_1.json`
+- Runtime implementation status: not implemented. The JSON catalog assigns event ids to clips only.
+- Latest validation: 44 unique event ids, 44 catalog WAVs, no missing clip references.
 
 Recommended script behavior:
 

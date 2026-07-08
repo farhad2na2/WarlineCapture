@@ -1,0 +1,1095 @@
+{
+  "schema": "WarlineCapture.AudioEventCatalog.Placeholder.v0.1",
+  "status": "placeholder-data-only",
+  "generatedBy": "Tools/Audio/generate_placeholder_audio.py",
+  "implementationNote": "This file assigns audio event ids to placeholder WAV assets. It does not implement playback, ECS systems, UI wiring, or prefab changes.",
+  "buses": [
+    {
+      "busId": "UI",
+      "parentBusId": "Master",
+      "defaultVolumeDb": 0.0
+    },
+    {
+      "busId": "SFX",
+      "parentBusId": "Master",
+      "defaultVolumeDb": 0.0
+    },
+    {
+      "busId": "Alerts",
+      "parentBusId": "Master",
+      "defaultVolumeDb": 0.0,
+      "ducks": [
+        "Music",
+        "Ambience"
+      ]
+    },
+    {
+      "busId": "Music",
+      "parentBusId": "Master",
+      "defaultVolumeDb": -4.0
+    },
+    {
+      "busId": "Ambience",
+      "parentBusId": "Master",
+      "defaultVolumeDb": -8.0
+    }
+  ],
+  "events": [
+    {
+      "eventId": "UI.Button.Primary.Click",
+      "busId": "UI",
+      "priority": "Medium",
+      "cooldownMs": 35,
+      "volumeDb": -10.0,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/UI/ui_button_primary_click_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "UI.Button.Secondary.Click",
+      "busId": "UI",
+      "priority": "Medium",
+      "cooldownMs": 35,
+      "volumeDb": -11.0,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/UI/ui_button_secondary_click_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "UI.Button.Negative.Click",
+      "busId": "UI",
+      "priority": "Medium",
+      "cooldownMs": 35,
+      "volumeDb": -10.5,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/UI/ui_button_negative_click_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "UI.Button.Disabled.Tap",
+      "busId": "UI",
+      "priority": "Low",
+      "cooldownMs": 120,
+      "volumeDb": -13.0,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/UI/ui_button_disabled_tap_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "UI.Tab.Select",
+      "busId": "UI",
+      "priority": "Medium",
+      "cooldownMs": 45,
+      "volumeDb": -11.0,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/UI/ui_tab_select_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "UI.Card.Select",
+      "busId": "UI",
+      "priority": "Medium",
+      "cooldownMs": 45,
+      "volumeDb": -10.5,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/UI/ui_card_select_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "UI.Card.Locked",
+      "busId": "UI",
+      "priority": "Low",
+      "cooldownMs": 120,
+      "volumeDb": -13.0,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/UI/ui_card_locked_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "UI.Popup.Open",
+      "busId": "UI",
+      "priority": "Medium",
+      "cooldownMs": 80,
+      "volumeDb": -12.0,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/UI/ui_popup_open_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "UI.Popup.Close",
+      "busId": "UI",
+      "priority": "Medium",
+      "cooldownMs": 80,
+      "volumeDb": -12.0,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/UI/ui_popup_close_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "UI.Slider.Tick",
+      "busId": "UI",
+      "priority": "Low",
+      "cooldownMs": 35,
+      "volumeDb": -16.0,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 2,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/UI/ui_slider_tick_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "UI.Toggle.On",
+      "busId": "UI",
+      "priority": "Medium",
+      "cooldownMs": 50,
+      "volumeDb": -11.5,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/UI/ui_toggle_on_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "UI.Toggle.Off",
+      "busId": "UI",
+      "priority": "Medium",
+      "cooldownMs": 50,
+      "volumeDb": -12.0,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/UI/ui_toggle_off_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "UI.Feedback.Toast.Error",
+      "busId": "UI",
+      "priority": "High",
+      "cooldownMs": 160,
+      "volumeDb": -9.5,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/UI/ui_feedback_toast_error_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "UI.Feedback.Toast.Positive",
+      "busId": "UI",
+      "priority": "Medium",
+      "cooldownMs": 120,
+      "volumeDb": -10.5,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/UI/ui_feedback_toast_positive_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Unit.Select.Infantry",
+      "busId": "SFX",
+      "priority": "Medium",
+      "cooldownMs": 80,
+      "volumeDb": -10.0,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": true,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_unit_select_infantry_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Unit.Select.Vehicle",
+      "busId": "SFX",
+      "priority": "Medium",
+      "cooldownMs": 80,
+      "volumeDb": -10.0,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": true,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_unit_select_vehicle_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Unit.Select.Air",
+      "busId": "SFX",
+      "priority": "Medium",
+      "cooldownMs": 80,
+      "volumeDb": -10.0,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": true,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_unit_select_air_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Command.Move.Accepted",
+      "busId": "SFX",
+      "priority": "Medium",
+      "cooldownMs": 90,
+      "volumeDb": -10.0,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": true,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_command_move_accepted_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Command.Attack.Accepted",
+      "busId": "SFX",
+      "priority": "High",
+      "cooldownMs": 90,
+      "volumeDb": -9.0,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": true,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_command_attack_accepted_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Command.Hold.Accepted",
+      "busId": "SFX",
+      "priority": "Medium",
+      "cooldownMs": 90,
+      "volumeDb": -10.0,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": true,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_command_hold_accepted_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Command.Stop.Returning",
+      "busId": "SFX",
+      "priority": "High",
+      "cooldownMs": 120,
+      "volumeDb": -9.0,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": true,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_command_stop_returning_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Command.Scan.Targeting",
+      "busId": "SFX",
+      "priority": "Medium",
+      "cooldownMs": 120,
+      "volumeDb": -11.0,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": true,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_command_scan_targeting_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Command.Scan.Accepted",
+      "busId": "SFX",
+      "priority": "Medium",
+      "cooldownMs": 120,
+      "volumeDb": -10.0,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": true,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_command_scan_accepted_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Command.Rejected",
+      "busId": "SFX",
+      "priority": "High",
+      "cooldownMs": 180,
+      "volumeDb": -9.5,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_command_rejected_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Build.Place.Valid",
+      "busId": "SFX",
+      "priority": "Medium",
+      "cooldownMs": 120,
+      "volumeDb": -9.5,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": true,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_build_place_valid_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Build.Place.Invalid",
+      "busId": "SFX",
+      "priority": "High",
+      "cooldownMs": 180,
+      "volumeDb": -9.5,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_build_place_invalid_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Production.Queued",
+      "busId": "SFX",
+      "priority": "Medium",
+      "cooldownMs": 100,
+      "volumeDb": -10.0,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_production_queued_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Production.Complete",
+      "busId": "SFX",
+      "priority": "High",
+      "cooldownMs": 250,
+      "volumeDb": -9.0,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_production_complete_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Alert.Threat.Minor",
+      "busId": "Alerts",
+      "priority": "Medium",
+      "cooldownMs": 1200,
+      "volumeDb": -8.5,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Alerts/alert_threat_minor_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Alert.Threat.Critical",
+      "busId": "Alerts",
+      "priority": "Critical",
+      "cooldownMs": 2500,
+      "volumeDb": -7.0,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Alerts/alert_threat_critical_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Alert.Unit.UnderAttack",
+      "busId": "Alerts",
+      "priority": "High",
+      "cooldownMs": 1800,
+      "volumeDb": -8.0,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Alerts/alert_unit_under_attack_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Alert.Base.Breached",
+      "busId": "Alerts",
+      "priority": "Critical",
+      "cooldownMs": 3500,
+      "volumeDb": -7.0,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Alerts/alert_base_breached_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Objective.Progress",
+      "busId": "SFX",
+      "priority": "Medium",
+      "cooldownMs": 500,
+      "volumeDb": -10.0,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_objective_progress_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Objective.Complete",
+      "busId": "SFX",
+      "priority": "High",
+      "cooldownMs": 800,
+      "volumeDb": -8.5,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_objective_complete_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Objective.Failed",
+      "busId": "SFX",
+      "priority": "Critical",
+      "cooldownMs": 1000,
+      "volumeDb": -7.5,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_objective_failed_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Music.Splash.Intro",
+      "busId": "Music",
+      "priority": "Critical",
+      "cooldownMs": 0,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Music/music_splash_intro_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Music.Menu.Loop",
+      "busId": "Music",
+      "priority": "Critical",
+      "cooldownMs": 0,
+      "volumeDb": -8.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": true,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Music/music_menu_loop_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Music.Briefing.Loop",
+      "busId": "Music",
+      "priority": "Critical",
+      "cooldownMs": 0,
+      "volumeDb": -9.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": true,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Music/music_briefing_loop_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Music.Match.CalmLoop",
+      "busId": "Music",
+      "priority": "Critical",
+      "cooldownMs": 0,
+      "volumeDb": -10.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": true,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Music/music_match_calm_loop_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Music.Match.CombatLoop",
+      "busId": "Music",
+      "priority": "Critical",
+      "cooldownMs": 0,
+      "volumeDb": -8.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": true,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Music/music_match_combat_loop_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Music.Result.Victory",
+      "busId": "Music",
+      "priority": "Critical",
+      "cooldownMs": 0,
+      "volumeDb": -7.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Music/music_result_victory_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Music.Result.Defeat",
+      "busId": "Music",
+      "priority": "Critical",
+      "cooldownMs": 0,
+      "volumeDb": -7.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Music/music_result_defeat_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Ambience.City.DayLoop",
+      "busId": "Ambience",
+      "priority": "Low",
+      "cooldownMs": 0,
+      "volumeDb": -16.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": true,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Ambience/amb_city_day_loop_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Ambience.Base.DistantLoop",
+      "busId": "Ambience",
+      "priority": "Low",
+      "cooldownMs": 0,
+      "volumeDb": -17.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": true,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Ambience/amb_base_distant_loop_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    }
+  ]
+}

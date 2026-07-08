@@ -1,0 +1,674 @@
+{
+  "schema": "WarlineCapture.AudioPlaceholderManifest.v0.1",
+  "generatedBy": "Tools/Audio/generate_placeholder_audio.py",
+  "eventCount": 44,
+  "generatedClipCount": 0,
+  "preservedClipCount": 44,
+  "catalogPath": "Assets/Game/Audio/Config/audio_event_catalog_v0_1.json",
+  "note": "Prototype clips for wiring and UX timing only; replace with final mastered/licensed assets before release.",
+  "generated": [],
+  "preserved": [
+    {
+      "eventId": "UI.Button.Primary.Click",
+      "assetPath": "Assets/Game/Audio/UI/ui_button_primary_click_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.14
+    },
+    {
+      "eventId": "UI.Button.Secondary.Click",
+      "assetPath": "Assets/Game/Audio/UI/ui_button_secondary_click_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.14
+    },
+    {
+      "eventId": "UI.Button.Negative.Click",
+      "assetPath": "Assets/Game/Audio/UI/ui_button_negative_click_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.14
+    },
+    {
+      "eventId": "UI.Button.Disabled.Tap",
+      "assetPath": "Assets/Game/Audio/UI/ui_button_disabled_tap_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.16
+    },
+    {
+      "eventId": "UI.Tab.Select",
+      "assetPath": "Assets/Game/Audio/UI/ui_tab_select_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.12
+    },
+    {
+      "eventId": "UI.Card.Select",
+      "assetPath": "Assets/Game/Audio/UI/ui_card_select_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.2
+    },
+    {
+      "eventId": "UI.Card.Locked",
+      "assetPath": "Assets/Game/Audio/UI/ui_card_locked_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.22
+    },
+    {
+      "eventId": "UI.Popup.Open",
+      "assetPath": "Assets/Game/Audio/UI/ui_popup_open_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.3
+    },
+    {
+      "eventId": "UI.Popup.Close",
+      "assetPath": "Assets/Game/Audio/UI/ui_popup_close_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.24
+    },
+    {
+      "eventId": "UI.Slider.Tick",
+      "assetPath": "Assets/Game/Audio/UI/ui_slider_tick_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.045
+    },
+    {
+      "eventId": "UI.Toggle.On",
+      "assetPath": "Assets/Game/Audio/UI/ui_toggle_on_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.13
+    },
+    {
+      "eventId": "UI.Toggle.Off",
+      "assetPath": "Assets/Game/Audio/UI/ui_toggle_off_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.13
+    },
+    {
+      "eventId": "UI.Feedback.Toast.Error",
+      "assetPath": "Assets/Game/Audio/UI/ui_feedback_toast_error_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.34
+    },
+    {
+      "eventId": "UI.Feedback.Toast.Positive",
+      "assetPath": "Assets/Game/Audio/UI/ui_feedback_toast_positive_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.52
+    },
+    {
+      "eventId": "Gameplay.Unit.Select.Infantry",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_unit_select_infantry_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.26
+    },
+    {
+      "eventId": "Gameplay.Unit.Select.Vehicle",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_unit_select_vehicle_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.3
+    },
+    {
+      "eventId": "Gameplay.Unit.Select.Air",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_unit_select_air_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.32
+    },
+    {
+      "eventId": "Gameplay.Command.Move.Accepted",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_command_move_accepted_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.25
+    },
+    {
+      "eventId": "Gameplay.Command.Attack.Accepted",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_command_attack_accepted_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.28
+    },
+    {
+      "eventId": "Gameplay.Command.Hold.Accepted",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_command_hold_accepted_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.28
+    },
+    {
+      "eventId": "Gameplay.Command.Stop.Returning",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_command_stop_returning_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.44
+    },
+    {
+      "eventId": "Gameplay.Command.Scan.Targeting",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_command_scan_targeting_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.42
+    },
+    {
+      "eventId": "Gameplay.Command.Scan.Accepted",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_command_scan_accepted_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.48
+    },
+    {
+      "eventId": "Gameplay.Command.Rejected",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_command_rejected_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.32
+    },
+    {
+      "eventId": "Gameplay.Build.Place.Valid",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_build_place_valid_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.55
+    },
+    {
+      "eventId": "Gameplay.Build.Place.Invalid",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_build_place_invalid_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.3
+    },
+    {
+      "eventId": "Gameplay.Production.Queued",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_production_queued_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.22
+    },
+    {
+      "eventId": "Gameplay.Production.Complete",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_production_complete_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.85
+    },
+    {
+      "eventId": "Alert.Threat.Minor",
+      "assetPath": "Assets/Game/Audio/Alerts/alert_threat_minor_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.9
+    },
+    {
+      "eventId": "Alert.Threat.Critical",
+      "assetPath": "Assets/Game/Audio/Alerts/alert_threat_critical_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 1.5
+    },
+    {
+      "eventId": "Alert.Unit.UnderAttack",
+      "assetPath": "Assets/Game/Audio/Alerts/alert_unit_under_attack_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.95
+    },
+    {
+      "eventId": "Alert.Base.Breached",
+      "assetPath": "Assets/Game/Audio/Alerts/alert_base_breached_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 1.55
+    },
+    {
+      "eventId": "Gameplay.Objective.Progress",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_objective_progress_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.42
+    },
+    {
+      "eventId": "Gameplay.Objective.Complete",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_objective_complete_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 1.05
+    },
+    {
+      "eventId": "Gameplay.Objective.Failed",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_objective_failed_01.wav",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 1.0
+    },
+    {
+      "eventId": "Music.Splash.Intro",
+      "assetPath": "Assets/Game/Audio/Music/music_splash_intro_01.wav",
+      "channels": 2,
+      "sampleRate": 48000,
+      "durationSeconds": 4.0
+    },
+    {
+      "eventId": "Music.Menu.Loop",
+      "assetPath": "Assets/Game/Audio/Music/music_menu_loop_01.wav",
+      "channels": 2,
+      "sampleRate": 48000,
+      "durationSeconds": 24.0
+    },
+    {
+      "eventId": "Music.Briefing.Loop",
+      "assetPath": "Assets/Game/Audio/Music/music_briefing_loop_01.wav",
+      "channels": 2,
+      "sampleRate": 48000,
+      "durationSeconds": 24.0
+    },
+    {
+      "eventId": "Music.Match.CalmLoop",
+      "assetPath": "Assets/Game/Audio/Music/music_match_calm_loop_01.wav",
+      "channels": 2,
+      "sampleRate": 48000,
+      "durationSeconds": 24.0
+    },
+    {
+      "eventId": "Music.Match.CombatLoop",
+      "assetPath": "Assets/Game/Audio/Music/music_match_combat_loop_01.wav",
+      "channels": 2,
+      "sampleRate": 48000,
+      "durationSeconds": 24.0
+    },
+    {
+      "eventId": "Music.Result.Victory",
+      "assetPath": "Assets/Game/Audio/Music/music_result_victory_01.wav",
+      "channels": 2,
+      "sampleRate": 48000,
+      "durationSeconds": 5.0
+    },
+    {
+      "eventId": "Music.Result.Defeat",
+      "assetPath": "Assets/Game/Audio/Music/music_result_defeat_01.wav",
+      "channels": 2,
+      "sampleRate": 48000,
+      "durationSeconds": 5.0
+    },
+    {
+      "eventId": "Ambience.City.DayLoop",
+      "assetPath": "Assets/Game/Audio/Ambience/amb_city_day_loop_01.wav",
+      "channels": 2,
+      "sampleRate": 48000,
+      "durationSeconds": 24.0
+    },
+    {
+      "eventId": "Ambience.Base.DistantLoop",
+      "assetPath": "Assets/Game/Audio/Ambience/amb_base_distant_loop_01.wav",
+      "channels": 2,
+      "sampleRate": 48000,
+      "durationSeconds": 24.0
+    }
+  ],
+  "clips": [
+    {
+      "eventId": "UI.Button.Primary.Click",
+      "assetPath": "Assets/Game/Audio/UI/ui_button_primary_click_01.wav",
+      "category": "ui",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.14
+    },
+    {
+      "eventId": "UI.Button.Secondary.Click",
+      "assetPath": "Assets/Game/Audio/UI/ui_button_secondary_click_01.wav",
+      "category": "ui",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.14
+    },
+    {
+      "eventId": "UI.Button.Negative.Click",
+      "assetPath": "Assets/Game/Audio/UI/ui_button_negative_click_01.wav",
+      "category": "ui",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.14
+    },
+    {
+      "eventId": "UI.Button.Disabled.Tap",
+      "assetPath": "Assets/Game/Audio/UI/ui_button_disabled_tap_01.wav",
+      "category": "ui",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.16
+    },
+    {
+      "eventId": "UI.Tab.Select",
+      "assetPath": "Assets/Game/Audio/UI/ui_tab_select_01.wav",
+      "category": "ui",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.12
+    },
+    {
+      "eventId": "UI.Card.Select",
+      "assetPath": "Assets/Game/Audio/UI/ui_card_select_01.wav",
+      "category": "ui",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.2
+    },
+    {
+      "eventId": "UI.Card.Locked",
+      "assetPath": "Assets/Game/Audio/UI/ui_card_locked_01.wav",
+      "category": "ui",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.22
+    },
+    {
+      "eventId": "UI.Popup.Open",
+      "assetPath": "Assets/Game/Audio/UI/ui_popup_open_01.wav",
+      "category": "ui",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.3
+    },
+    {
+      "eventId": "UI.Popup.Close",
+      "assetPath": "Assets/Game/Audio/UI/ui_popup_close_01.wav",
+      "category": "ui",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.24
+    },
+    {
+      "eventId": "UI.Slider.Tick",
+      "assetPath": "Assets/Game/Audio/UI/ui_slider_tick_01.wav",
+      "category": "ui",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.045
+    },
+    {
+      "eventId": "UI.Toggle.On",
+      "assetPath": "Assets/Game/Audio/UI/ui_toggle_on_01.wav",
+      "category": "ui",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.13
+    },
+    {
+      "eventId": "UI.Toggle.Off",
+      "assetPath": "Assets/Game/Audio/UI/ui_toggle_off_01.wav",
+      "category": "ui",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.13
+    },
+    {
+      "eventId": "UI.Feedback.Toast.Error",
+      "assetPath": "Assets/Game/Audio/UI/ui_feedback_toast_error_01.wav",
+      "category": "ui",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.34
+    },
+    {
+      "eventId": "UI.Feedback.Toast.Positive",
+      "assetPath": "Assets/Game/Audio/UI/ui_feedback_toast_positive_01.wav",
+      "category": "ui",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.52
+    },
+    {
+      "eventId": "Gameplay.Unit.Select.Infantry",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_unit_select_infantry_01.wav",
+      "category": "gameplay",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.26
+    },
+    {
+      "eventId": "Gameplay.Unit.Select.Vehicle",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_unit_select_vehicle_01.wav",
+      "category": "gameplay",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.3
+    },
+    {
+      "eventId": "Gameplay.Unit.Select.Air",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_unit_select_air_01.wav",
+      "category": "gameplay",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.32
+    },
+    {
+      "eventId": "Gameplay.Command.Move.Accepted",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_command_move_accepted_01.wav",
+      "category": "gameplay",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.25
+    },
+    {
+      "eventId": "Gameplay.Command.Attack.Accepted",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_command_attack_accepted_01.wav",
+      "category": "gameplay",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.28
+    },
+    {
+      "eventId": "Gameplay.Command.Hold.Accepted",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_command_hold_accepted_01.wav",
+      "category": "gameplay",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.28
+    },
+    {
+      "eventId": "Gameplay.Command.Stop.Returning",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_command_stop_returning_01.wav",
+      "category": "gameplay",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.44
+    },
+    {
+      "eventId": "Gameplay.Command.Scan.Targeting",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_command_scan_targeting_01.wav",
+      "category": "gameplay",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.42
+    },
+    {
+      "eventId": "Gameplay.Command.Scan.Accepted",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_command_scan_accepted_01.wav",
+      "category": "gameplay",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.48
+    },
+    {
+      "eventId": "Gameplay.Command.Rejected",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_command_rejected_01.wav",
+      "category": "gameplay",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.32
+    },
+    {
+      "eventId": "Gameplay.Build.Place.Valid",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_build_place_valid_01.wav",
+      "category": "gameplay",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.55
+    },
+    {
+      "eventId": "Gameplay.Build.Place.Invalid",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_build_place_invalid_01.wav",
+      "category": "gameplay",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.3
+    },
+    {
+      "eventId": "Gameplay.Production.Queued",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_production_queued_01.wav",
+      "category": "gameplay",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.22
+    },
+    {
+      "eventId": "Gameplay.Production.Complete",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_production_complete_01.wav",
+      "category": "gameplay",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.85
+    },
+    {
+      "eventId": "Alert.Threat.Minor",
+      "assetPath": "Assets/Game/Audio/Alerts/alert_threat_minor_01.wav",
+      "category": "alert",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.9
+    },
+    {
+      "eventId": "Alert.Threat.Critical",
+      "assetPath": "Assets/Game/Audio/Alerts/alert_threat_critical_01.wav",
+      "category": "alert",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 1.5
+    },
+    {
+      "eventId": "Alert.Unit.UnderAttack",
+      "assetPath": "Assets/Game/Audio/Alerts/alert_unit_under_attack_01.wav",
+      "category": "alert",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.95
+    },
+    {
+      "eventId": "Alert.Base.Breached",
+      "assetPath": "Assets/Game/Audio/Alerts/alert_base_breached_01.wav",
+      "category": "alert",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 1.55
+    },
+    {
+      "eventId": "Gameplay.Objective.Progress",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_objective_progress_01.wav",
+      "category": "gameplay",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 0.42
+    },
+    {
+      "eventId": "Gameplay.Objective.Complete",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_objective_complete_01.wav",
+      "category": "gameplay",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 1.05
+    },
+    {
+      "eventId": "Gameplay.Objective.Failed",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_objective_failed_01.wav",
+      "category": "gameplay",
+      "channels": 1,
+      "sampleRate": 48000,
+      "durationSeconds": 1.0
+    },
+    {
+      "eventId": "Music.Splash.Intro",
+      "assetPath": "Assets/Game/Audio/Music/music_splash_intro_01.wav",
+      "category": "music",
+      "channels": 2,
+      "sampleRate": 48000,
+      "durationSeconds": 4.0
+    },
+    {
+      "eventId": "Music.Menu.Loop",
+      "assetPath": "Assets/Game/Audio/Music/music_menu_loop_01.wav",
+      "category": "music",
+      "channels": 2,
+      "sampleRate": 48000,
+      "durationSeconds": 24.0
+    },
+    {
+      "eventId": "Music.Briefing.Loop",
+      "assetPath": "Assets/Game/Audio/Music/music_briefing_loop_01.wav",
+      "category": "music",
+      "channels": 2,
+      "sampleRate": 48000,
+      "durationSeconds": 24.0
+    },
+    {
+      "eventId": "Music.Match.CalmLoop",
+      "assetPath": "Assets/Game/Audio/Music/music_match_calm_loop_01.wav",
+      "category": "music",
+      "channels": 2,
+      "sampleRate": 48000,
+      "durationSeconds": 24.0
+    },
+    {
+      "eventId": "Music.Match.CombatLoop",
+      "assetPath": "Assets/Game/Audio/Music/music_match_combat_loop_01.wav",
+      "category": "music",
+      "channels": 2,
+      "sampleRate": 48000,
+      "durationSeconds": 24.0
+    },
+    {
+      "eventId": "Music.Result.Victory",
+      "assetPath": "Assets/Game/Audio/Music/music_result_victory_01.wav",
+      "category": "music",
+      "channels": 2,
+      "sampleRate": 48000,
+      "durationSeconds": 5.0
+    },
+    {
+      "eventId": "Music.Result.Defeat",
+      "assetPath": "Assets/Game/Audio/Music/music_result_defeat_01.wav",
+      "category": "music",
+      "channels": 2,
+      "sampleRate": 48000,
+      "durationSeconds": 5.0
+    },
+    {
+      "eventId": "Ambience.City.DayLoop",
+      "assetPath": "Assets/Game/Audio/Ambience/amb_city_day_loop_01.wav",
+      "category": "ambience",
+      "channels": 2,
+      "sampleRate": 48000,
+      "durationSeconds": 24.0
+    },
+    {
+      "eventId": "Ambience.Base.DistantLoop",
+      "assetPath": "Assets/Game/Audio/Ambience/amb_base_distant_loop_01.wav",
+      "category": "ambience",
+      "channels": 2,
+      "sampleRate": 48000,
+      "durationSeconds": 24.0
+    }
+  ]
+}

@@ -85,11 +85,13 @@ namespace Game.Composition
 
         private void Awake()
         {
+            ApplyAudioListenerAuthority();
             EnsureMatchRuntimeBound();
         }
 
         private void OnEnable()
         {
+            ApplyAudioListenerAuthority();
             EnsureMatchRuntimeBound();
         }
 
@@ -146,6 +148,28 @@ namespace Game.Composition
 
             matchBootstrapSystem.OnDestroy();
             matchRuntimeBound = false;
+        }
+
+        private void ApplyAudioListenerAuthority()
+        {
+            AudioListener listener = worldCamera != null ? worldCamera.GetComponent<AudioListener>() : null;
+            if (listener == null)
+                return;
+
+            listener.enabled = !HasOtherEnabledActiveAudioListener(listener);
+        }
+
+        private static bool HasOtherEnabledActiveAudioListener(AudioListener self)
+        {
+            AudioListener[] listeners = FindObjectsByType<AudioListener>(FindObjectsInactive.Exclude);
+            for (int i = 0; i < listeners.Length; i++)
+            {
+                AudioListener listener = listeners[i];
+                if (listener != null && listener != self && listener.enabled)
+                    return true;
+            }
+
+            return false;
         }
     }
 }

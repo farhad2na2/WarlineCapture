@@ -3,6 +3,8 @@ using Game.Components;
 using Game.Composition;
 using Game.Configs;
 using Game.Runtime;
+using Game.UI.Contracts;
+using Game.UI.Shell.Contracts.Ecs;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
@@ -29,6 +31,8 @@ public sealed class AudioPlaybackPresentationSceneBindingTests
             passed++;
             tests.MenuAndMatchScenes_HaveExactlyOneEnabledAudioListener();
             passed++;
+            tests.MatchAdditiveLoad_KeepsExactlyOneAudioListener();
+            passed++;
 
             Debug.Log($"[AudioPlaybackPresentationSceneBindingValidation] result=Passed tests={passed}");
             ValidationExit.Passed();
@@ -46,6 +50,44 @@ public sealed class AudioPlaybackPresentationSceneBindingTests
     {
         AssertSceneHasExactlyOneEnabledAudioListener(MenuScenePath);
         AssertSceneHasExactlyOneEnabledAudioListener(MatchScenePath);
+    }
+
+    [Test]
+    public void MatchAdditiveLoad_KeepsExactlyOneAudioListener()
+    {
+        EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
+
+        MenuBootstrapView bootstrap =
+            UnityEngine.Object.FindAnyObjectByType<MenuBootstrapView>(FindObjectsInactive.Include);
+        Assert.NotNull(bootstrap, "Menu scene must contain MenuBootstrapView.");
+
+        AudioListener menuListener = bootstrap.UiCamera != null
+            ? bootstrap.UiCamera.GetComponent<AudioListener>()
+            : null;
+        Assert.NotNull(menuListener, "Menu UI camera must have an AudioListener for menu-only screens.");
+        Assert.IsTrue(menuListener.enabled, "Menu AudioListener should start enabled before match is loaded.");
+
+        EditorSceneManager.OpenScene(MatchScenePath, OpenSceneMode.Additive);
+
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        World world = new("AudioListenerAdditiveMatchSceneTests");
+        World.DefaultGameObjectInjectionWorld = world;
+
+        try
+        {
+            bootstrap.SendMessage("Awake", SendMessageOptions.DontRequireReceiver);
+            CreateMatchRouteShellBoundary(world.EntityManager);
+            bootstrap.SendMessage("Update", SendMessageOptions.DontRequireReceiver);
+
+            Assert.IsTrue(menuListener.enabled, "Menu AudioListener must remain enabled while the shell owns additive Match audio.");
+            Assert.AreEqual(1, CountEnabledActiveAudioListeners(), "Menu + additive Match scenes must have exactly one enabled active AudioListener.");
+        }
+        finally
+        {
+            if (World.DefaultGameObjectInjectionWorld == world)
+                World.DefaultGameObjectInjectionWorld = previousWorld;
+            world.Dispose();
+        }
     }
 
     [Test]
@@ -154,9 +196,12 @@ public sealed class AudioPlaybackPresentationSceneBindingTests
     {
         EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
 
-        AudioListener[] listeners = UnityEngine.Object.FindObjectsByType<AudioListener>(
-            FindObjectsInactive.Include,
-            FindObjectsSortMode.None);
+        Assert.AreEqual(1, CountEnabledActiveAudioListeners(), $"{scenePath} must contain exactly one enabled active AudioListener.");
+    }
+
+    private static int CountEnabledActiveAudioListeners()
+    {
+        AudioListener[] listeners = UnityEngine.Object.FindObjectsByType<AudioListener>(FindObjectsInactive.Include);
 
         int enabledCount = 0;
         for (int i = 0; i < listeners.Length; i++)
@@ -166,6 +211,33 @@ public sealed class AudioPlaybackPresentationSceneBindingTests
                 enabledCount++;
         }
 
-        Assert.AreEqual(1, enabledCount, $"{scenePath} must contain exactly one enabled active AudioListener.");
+        return enabledCount;
+    }
+
+    private static void CreateMatchRouteShellBoundary(EntityManager entityManager)
+    {
+        Entity boundary = entityManager.CreateEntity(
+            typeof(UiShellRootComponent),
+            typeof(UiShellStateComponent),
+            typeof(UiShellLoadingProgressComponent),
+            typeof(MatchIntroTransitionComponent));
+        entityManager.AddBuffer<UiShellRouteRequestComponent>(boundary);
+        entityManager.AddBuffer<UiShellPopupRequestComponent>(boundary);
+        entityManager.AddBuffer<UiShellPresentationCommandComponent>(boundary);
+        entityManager.AddBuffer<UiShellTransitionCompleteComponent>(boundary);
+        entityManager.SetComponentData(boundary, new UiShellStateComponent
+        {
+            CurrentMode = UiShellMode.Loading,
+            ActiveRoute = UIRoute.Match,
+            Phase = UiShellTransitionPhase.Idle,
+            TransitionSequenceId = 1,
+            IsTransitionRunning = 0
+        });
+        entityManager.SetComponentData(boundary, new UiShellLoadingProgressComponent
+        {
+            Progress01 = 0f,
+            Status = new FixedString64Bytes("Loading match"),
+            IsComplete = 0
+        });
     }
 }

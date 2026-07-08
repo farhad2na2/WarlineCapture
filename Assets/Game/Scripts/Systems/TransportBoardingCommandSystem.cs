@@ -467,6 +467,8 @@ namespace Game.Runtime
                     request.TargetCell,
                     request.HasTargetCell)
                 : DisembarkResult.Rejected(TacticalCommandReasonCode.InvalidTransport, showFeedback: false);
+            if (result.Accepted && request.HasTargetEntity != 0)
+                CancelDeployAttackForManualDisembark(em, request.TargetEntity);
             return ToDisembarkCommandResultElement(request, result);
         }
 
@@ -487,6 +489,8 @@ namespace Game.Runtime
                     request.TargetCell,
                     request.HasTargetCell)
                 : DisembarkResult.Rejected(TacticalCommandReasonCode.TransportPassengerMissing, showFeedback: false);
+            if (result.Accepted && request.HasTargetEntity != 0)
+                CancelDeployAttackForManualDisembark(em, request.TargetEntity, request.SecondaryTargetEntity);
             return ToDisembarkCommandResultElement(request, result);
         }
 
@@ -2225,7 +2229,8 @@ namespace Game.Runtime
             EntityManager em,
             Entity transport,
             int2 referenceCell,
-            UnitMoveOrderSystem moveOrderSystem)
+            UnitMoveOrderSystem moveOrderSystem,
+            int totalDropCount = 0)
         {
             if (!em.Exists(transport) || !em.HasBuffer<UnitTransportPassengerElement>(transport))
                 return false;
@@ -2262,7 +2267,8 @@ namespace Game.Runtime
             {
                 ReferenceCell = referenceCell,
                 NextDropAt = 0f,
-                DropIntervalSeconds = RopeDisembarkDropIntervalSeconds
+                DropIntervalSeconds = RopeDisembarkDropIntervalSeconds,
+                TotalDropCount = math.max(0, totalDropCount)
             };
 
             if (em.HasComponent<UnitTransportRopeDisembarkRequest>(transport))
@@ -2362,8 +2368,24 @@ namespace Game.Runtime
 
             DynamicBuffer<UnitTransportPassengerElement> passengers = em.GetBuffer<UnitTransportPassengerElement>(transport);
             List<Entity> passengerSnapshot = new(passengers.Length);
-            for (int i = 0; i < passengers.Length; i++)
-                passengerSnapshot.Add(passengers[i].Passenger);
+            List<Entity> attackDeployPassengers = attackAfterDeploy != 0
+                ? CollectAttackDeployPassengers(em, passengers)
+                : null;
+            if (attackAfterDeploy != 0)
+            {
+                if (attackDeployPassengers == null || attackDeployPassengers.Count <= 0)
+                {
+                    reasonCode = TacticalCommandReasonCode.TargetNotAttackable;
+                    return false;
+                }
+
+                passengerSnapshot.AddRange(attackDeployPassengers);
+            }
+            else
+            {
+                for (int i = 0; i < passengers.Length; i++)
+                    passengerSnapshot.Add(passengers[i].Passenger);
+            }
 
             DisembarkResult result = TryDisembarkTransport(
                 em,
@@ -2372,7 +2394,8 @@ namespace Game.Runtime
                 moveOrderSystem,
                 gridPathingQuery,
                 requestedDropCell,
-                hasRequestedDropCell: 1);
+                hasRequestedDropCell: 1,
+                allowedPassengers: attackDeployPassengers);
 
             reasonCode = result.ReasonCode;
             if (!result.Accepted)
@@ -2423,6 +2446,111 @@ namespace Game.Runtime
                     em.SetComponentData(passenger, attack);
                 else
                     em.AddComponentData(passenger, attack);
+            }
+        }
+
+        private static List<Entity> CollectAttackDeployPassengers(
+            EntityManager em,
+            DynamicBuffer<UnitTransportPassengerElement> passengers)
+        {
+            List<Entity> attackDeployPassengers = new();
+            for (int i = 0; i < passengers.Length; i++)
+            {
+                Entity passenger = passengers[i].Passenger;
+                if (UnitTransportAttackPayloadUtility.IsAttackDeployPassenger(em, passenger))
+                    attackDeployPassengers.Add(passenger);
+            }
+
+            return attackDeployPassengers;
+        }
+
+        private static int FilterTransportPassengerBuffer(
+            EntityManager em,
+            DynamicBuffer<UnitTransportPassengerElement> passengers,
+            List<Entity> allowedPassengers)
+        {
+            if (allowedPassengers == null || allowedPassengers.Count <= 0)
+                return 0;
+
+            List<Entity> allowed = new();
+            List<Entity> deferred = new();
+            for (int i = 0; i < passengers.Length; i++)
+            {
+                Entity passenger = passengers[i].Passenger;
+                if (!em.Exists(passenger))
+                    continue;
+
+                if (ContainsEntity(allowedPassengers, passenger))
+                    allowed.Add(passenger);
+                else
+                    deferred.Add(passenger);
+            }
+
+            passengers.Clear();
+            AddPassengers(passengers, allowed);
+            AddPassengers(passengers, deferred);
+
+            return allowed.Count;
+        }
+
+        private static void AddPassengers(DynamicBuffer<UnitTransportPassengerElement> passengers, List<Entity> entities)
+        {
+            for (int i = 0; i < entities.Count; i++)
+                passengers.Add(new UnitTransportPassengerElement { Passenger = entities[i] });
+        }
+
+        private static bool ContainsEntity(List<Entity> entities, Entity entity)
+        {
+            for (int i = 0; i < entities.Count; i++)
+            {
+                if (entities[i] == entity)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static void CancelDeployAttackForManualDisembark(EntityManager em, Entity transport, Entity passenger = default)
+        {
+            if (!em.Exists(transport))
+                return;
+
+            ClearDeployAttackIntent(em, transport);
+            if (passenger != Entity.Null)
+                ClearDeployAttackIntent(em, passenger);
+
+            if (em.HasBuffer<UnitTransportPassengerElement>(transport))
+            {
+                DynamicBuffer<UnitTransportPassengerElement> passengers = em.GetBuffer<UnitTransportPassengerElement>(transport);
+                for (int i = 0; i < passengers.Length; i++)
+                    ClearDeployAttackIntent(em, passengers[i].Passenger);
+            }
+
+            if (em.HasComponent<UnitAirComponent>(transport))
+            {
+                UnitAirComponent airState = em.GetComponentData<UnitAirComponent>(transport);
+                airState.AttackRunActive = 0;
+                airState.ReturnApproachInitialized = 0;
+                if (airState.Airborne != 0)
+                    airState.ReturningHome = 1;
+                em.SetComponentData(transport, airState);
+            }
+        }
+
+        private static void ClearDeployAttackIntent(EntityManager em, Entity entity)
+        {
+            if (entity == Entity.Null || !em.Exists(entity))
+                return;
+
+            if (em.HasComponent<UnitTransportDeployOrder>(entity))
+                em.RemoveComponent<UnitTransportDeployOrder>(entity);
+            if (em.HasComponent<UnitTransportDeployAttackTarget>(entity))
+                em.RemoveComponent<UnitTransportDeployAttackTarget>(entity);
+            if (em.HasBuffer<UnitTransportPassengerElement>(entity))
+            {
+                DynamicBuffer<UnitTransportPassengerElement> passengers = em.GetBuffer<UnitTransportPassengerElement>(entity);
+                for (int i = 0; i < passengers.Length; i++)
+                    ClearDeployAttackIntent(em, passengers[i].Passenger);
             }
         }
 
@@ -2709,7 +2837,8 @@ namespace Game.Runtime
             UnitMoveOrderSystem moveOrderSystem,
             EntityQuery gridPathingQuery,
             int2 requestedDropCell,
-            byte hasRequestedDropCell)
+            byte hasRequestedDropCell,
+            List<Entity> allowedPassengers = null)
         {
             if (!em.Exists(transport) ||
                 !transportCapacitySystem.TryEnsureTransportCapacity(em, transport) ||
@@ -2735,7 +2864,18 @@ namespace Game.Runtime
 
             if (IsRopeDisembarkTransport(em, transport))
             {
-                return StartRopeDisembarkTransport(em, transport, referenceCell, moveOrderSystem)
+                int totalDropCount = 0;
+                if (allowedPassengers != null)
+                {
+                    totalDropCount = FilterTransportPassengerBuffer(
+                        em,
+                        passengers,
+                        allowedPassengers);
+                    if (totalDropCount <= 0)
+                        return DisembarkResult.Rejected(TacticalCommandReasonCode.TransportPassengerMissing);
+                }
+
+                return StartRopeDisembarkTransport(em, transport, referenceCell, moveOrderSystem, totalDropCount)
                     ? DisembarkResult.Success()
                     : DisembarkResult.Rejected(TacticalCommandReasonCode.NoDisembarkCell);
             }
@@ -2743,6 +2883,15 @@ namespace Game.Runtime
             bool cargoPlaneTransport = IsCargoPlaneTransport(em, transport);
             if (cargoPlaneTransport && (hasRequestedDropCell != 0 || !IsTransportLandedForBoarding(em, transport)))
             {
+                int maxDropCount = passengers.Length;
+                if (allowedPassengers != null)
+                {
+                    maxDropCount = FilterTransportPassengerBuffer(
+                        em,
+                        passengers,
+                        allowedPassengers);
+                }
+
                 return TryStartPlaneAirdrop(
                     em,
                     transport,
@@ -2754,7 +2903,7 @@ namespace Game.Runtime
                     referenceCell,
                     requestedDropCell,
                     hasRequestedDropCell,
-                    passengers.Length);
+                    maxDropCount);
             }
 
             int2 rampReferenceCell = default;
@@ -2768,14 +2917,21 @@ namespace Game.Runtime
                 referenceCell = rampReferenceCell;
 
             List<Entity> passengerSnapshot = new(passengers.Length);
+            List<Entity> deferredPassengers = allowedPassengers != null ? new List<Entity>() : null;
             for (int i = 0; i < passengers.Length; i++)
-                passengerSnapshot.Add(passengers[i].Passenger);
+            {
+                Entity passenger = passengers[i].Passenger;
+                if (allowedPassengers == null || ContainsEntity(allowedPassengers, passenger))
+                    passengerSnapshot.Add(passenger);
+                else
+                    deferredPassengers.Add(passenger);
+            }
             if (passengerSnapshot.Count == 0)
                 return DisembarkResult.Rejected(TacticalCommandReasonCode.TransportPassengerMissing);
 
             passengers.Clear();
             HashSet<int> reservedDisembarkCells = new();
-            List<Entity> remainingPassengers = new();
+            List<Entity> remainingPassengers = deferredPassengers ?? new List<Entity>();
             List<Entity> disembarkingPassengers = new();
             List<int2> disembarkCells = new();
             List<int2> rolloutCells = new();

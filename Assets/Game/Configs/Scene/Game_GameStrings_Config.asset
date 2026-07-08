@@ -106,6 +106,8 @@ MonoBehaviour:
     audioEventId: VO.ARIA.Message.TacticalCommandReasonTargetNotAttackable
     audioEventId: VO.ARIA.Message.TacticalCommandReasonTargetNotAttackable
     audioEventId: VO.ARIA.Message.TacticalCommandReasonTargetNotAttackable
+  - key: tactical.transport.attack_payload_missing
+    value: Transport has no weapons or attack-capable passengers.
   - key: tactical.command.reason.command_unavailable
     value: Command unavailable.
     audioEventId: VO.ARIA.Message.TacticalCommandReasonCommandUnavailable

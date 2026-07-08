@@ -242,6 +242,7 @@ namespace Game.Components
         public float NextDropAt;
         public float DropIntervalSeconds;
         public int DropCount;
+        public int TotalDropCount;
     }
 
     public struct UnitTransportRopeDropComponent : IComponentData

@@ -71,6 +71,14 @@ namespace Game.Runtime
                     continue;
                 }
 
+                if (request.ValueRO.TotalDropCount > 0 &&
+                    request.ValueRO.DropCount >= request.ValueRO.TotalDropCount)
+                {
+                    if (IsRopeLandingClear(_landingClearanceQuery, transport, ref _landingClearanceType, ref _landingGridType))
+                        ecb.RemoveComponent<UnitTransportRopeDisembarkRequest>(transport);
+                    continue;
+                }
+
                 if (!IsRopeLandingClear(_landingClearanceQuery, transport, ref _landingClearanceType, ref _landingGridType))
                     continue;
 
@@ -102,7 +110,7 @@ namespace Game.Runtime
                         out int2 dropCell,
                         out float3 endPosition))
                 {
-                    passengers.Add(new UnitTransportPassengerElement { Passenger = passenger });
+                    passengers.Insert(passengerIndex, new UnitTransportPassengerElement { Passenger = passenger });
                     request.ValueRW.NextDropAt = now + 0.25f;
                     continue;
                 }

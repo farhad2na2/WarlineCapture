@@ -30,7 +30,9 @@ namespace Game.Runtime
                     UnitPathRequestLookup = SystemAPI.GetComponentLookup<UnitPathRequest>(true),
                     UnitPathFollowLookup = SystemAPI.GetComponentLookup<UnitPathFollow>(true),
                     UnitPathRangeLookup = SystemAPI.GetComponentLookup<UnitPathRange>(true),
-                    ManualMoveOrderLookup = SystemAPI.GetComponentLookup<ManualMoveOrderTag>(true)
+                    ManualMoveOrderLookup = SystemAPI.GetComponentLookup<ManualMoveOrderTag>(true),
+                    DeployOrderLookup = SystemAPI.GetComponentLookup<UnitTransportDeployOrder>(true),
+                    PassengerLookup = SystemAPI.GetBufferLookup<UnitTransportPassengerElement>(true)
                 }.ScheduleParallel(state.Dependency);
 
                 state.Dependency.Complete();
@@ -62,6 +64,8 @@ namespace Game.Runtime
             [ReadOnly] public ComponentLookup<UnitPathFollow> UnitPathFollowLookup;
             [ReadOnly] public ComponentLookup<UnitPathRange> UnitPathRangeLookup;
             [ReadOnly] public ComponentLookup<ManualMoveOrderTag> ManualMoveOrderLookup;
+            [ReadOnly] public ComponentLookup<UnitTransportDeployOrder> DeployOrderLookup;
+            [ReadOnly] public BufferLookup<UnitTransportPassengerElement> PassengerLookup;
 
             private void Execute(
                 [ChunkIndexInQuery] int sortKey,
@@ -70,6 +74,27 @@ namespace Game.Runtime
             {
                 if (!CanPassengerAttack(entity) || !IsLiveAttackTarget(target.TargetEntity))
                 {
+                    if (IsLiveAttackTarget(target.TargetEntity) && HasAttackCapablePayload(entity))
+                    {
+                        UnitTransportDeployOrder deployOrder = new()
+                        {
+                            TargetEntity = target.TargetEntity,
+                            TargetCell = target.TargetCell,
+                            TargetPosition = target.TargetPosition,
+                            AttackAfterDeploy = 1
+                        };
+                        if (DeployOrderLookup.HasComponent(entity))
+                            Ecb.SetComponent(sortKey, entity, deployOrder);
+                        else
+                            Ecb.AddComponent(sortKey, entity, deployOrder);
+
+                        RemoveIfPresent(UnitTargetLookup, sortKey, entity);
+                        RemoveIfPresent(UnitPathRequestLookup, sortKey, entity);
+                        RemoveIfPresent(UnitPathFollowLookup, sortKey, entity);
+                        RemoveIfPresent(UnitPathRangeLookup, sortKey, entity);
+                        RemoveIfPresent(ManualMoveOrderLookup, sortKey, entity);
+                    }
+
                     Ecb.RemoveComponent<UnitTransportDeployAttackTarget>(sortKey, entity);
                     return;
                 }
@@ -119,6 +144,54 @@ namespace Game.Runtime
 
                 return !UnitHealthLookup.HasComponent(target) ||
                        UnitHealthLookup[target].Current > 0;
+            }
+
+            private bool HasAttackCapablePayload(Entity transport)
+            {
+                FixedList128Bytes<Entity> stack = default;
+                if (!TryPush(ref stack, transport))
+                    return false;
+
+                int cursor = 0;
+                while (cursor < stack.Length)
+                {
+                    Entity current = stack[cursor++];
+                    if (!PassengerLookup.HasBuffer(current))
+                        continue;
+
+                    DynamicBuffer<UnitTransportPassengerElement> passengers = PassengerLookup[current];
+                    for (int i = 0; i < passengers.Length; i++)
+                    {
+                        Entity passenger = passengers[i].Passenger;
+                        if (CanPassengerAttack(passenger))
+                            return true;
+
+                        if (PassengerLookup.HasBuffer(passenger) && !Contains(stack, passenger))
+                            TryPush(ref stack, passenger);
+                    }
+                }
+
+                return false;
+            }
+
+            private static bool TryPush(ref FixedList128Bytes<Entity> stack, Entity entity)
+            {
+                if (stack.Length >= stack.Capacity)
+                    return false;
+
+                stack.Add(entity);
+                return true;
+            }
+
+            private static bool Contains(FixedList128Bytes<Entity> stack, Entity entity)
+            {
+                for (int i = 0; i < stack.Length; i++)
+                {
+                    if (stack[i] == entity)
+                        return true;
+                }
+
+                return false;
             }
 
             private void RemoveIfPresent<T>(

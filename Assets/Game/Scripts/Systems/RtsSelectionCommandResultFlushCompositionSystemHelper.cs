@@ -993,14 +993,16 @@ namespace Game.Runtime
                 sources.Contains(entity) ||
                 em.HasComponent<Disabled>(entity) ||
                 em.HasComponent<UnitTransportPassenger>(entity) ||
-                !em.HasComponent<UnitAttack>(entity) ||
                 !em.HasComponent<LocalTransform>(entity))
             {
                 return false;
             }
 
-            if (!IsAttackSourceEntity(em, entity))
+            if (!IsAttackSourceEntity(em, entity) &&
+                !UnitTransportAttackPayloadUtility.IsPlayerControlledMovableTransport(em, entity))
+            {
                 return false;
+            }
 
             sources.Add(entity);
             return true;

@@ -157,6 +157,7 @@ namespace Game.Runtime
                 : default;
             int issuedCount = 0;
             bool issuedGroundMissileOrder = false;
+            bool sawTransportWithoutAttackPayload = false;
             TacticalCommandResult missileRangeRejection = default;
             EntityCommandBuffer orderEcb = new(Allocator.Temp);
             try
@@ -166,7 +167,11 @@ namespace Game.Runtime
                     Entity entity = selectedEntities[i];
                     bool loadedTransportDeploySource = IsLoadedTransportDeploySource(entityManager, entity);
                     if (!loadedTransportDeploySource && !ValidateAttackSource(entityManager, entity).Accepted)
+                    {
+                        sawTransportWithoutAttackPayload |=
+                            UnitTransportAttackPayloadUtility.IsPlayerControlledMovableTransport(entityManager, entity);
                         continue;
+                    }
                     bool isGroundMissileLauncher = entityManager.HasComponent<GroundMissileLauncherComponent>(entity);
                     if (!ValidateGroundMissileLauncherRange(entityManager, entity, targetTransform.Position, out TacticalCommandResult missileRangeResult))
                     {
@@ -268,6 +273,10 @@ namespace Game.Runtime
                 ? TacticalCommandResult.Success(issuedGroundMissileOrder ? GameText.Get("tactical.feedback.missile_launched", "Missile launched.") : string.Empty)
                 : missileRangeRejection.ReasonCode != TacticalCommandReasonCode.None
                     ? missileRangeRejection
+                    : sawTransportWithoutAttackPayload
+                        ? TacticalCommandResult.Rejected(
+                            TacticalCommandReasonCode.TargetNotAttackable,
+                            UnitTransportAttackPayloadUtility.ResolveNoAttackPayloadFeedback())
                     : TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
             return new AttackOrderIssueResult(result, issuedCount, issuedCount > 0 ? targetEntity : Entity.Null, targetTransform.Position);
         }
@@ -402,7 +411,8 @@ namespace Game.Runtime
                 return false;
             }
 
-            return entityManager.GetBuffer<UnitTransportPassengerElement>(entity).Length > 0;
+            return entityManager.GetBuffer<UnitTransportPassengerElement>(entity).Length > 0 &&
+                   UnitTransportAttackPayloadUtility.HasAttackCapablePayload(entityManager, entity);
         }
 
         public bool IsInFriendlyDetectorRadius(EntityManager entityManager, NativeArray<Entity> detectors, byte factionId, int detectorKind, int2 targetCell)

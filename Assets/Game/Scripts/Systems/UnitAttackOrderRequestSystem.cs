@@ -22,8 +22,6 @@ namespace Game.Runtime
             _selectedAttackQuery = state.GetEntityQuery(
                 ComponentType.ReadOnly<SelectedUnitTag>(),
                 ComponentType.ReadOnly<UnitMove>(),
-                ComponentType.ReadOnly<UnitCombat>(),
-                ComponentType.ReadOnly<UnitAttack>(),
                 ComponentType.ReadOnly<LocalTransform>());
             _entityType = state.GetEntityTypeHandle();
             EnsureCommandEntity(state.EntityManager, _queueQuery);
@@ -228,8 +226,6 @@ namespace Game.Runtime
             using EntityQuery selectedAttackQuery = em.CreateEntityQuery(
                 ComponentType.ReadOnly<SelectedUnitTag>(),
                 ComponentType.ReadOnly<UnitMove>(),
-                ComponentType.ReadOnly<UnitCombat>(),
-                ComponentType.ReadOnly<UnitAttack>(),
                 ComponentType.ReadOnly<LocalTransform>());
             EntityTypeHandle entityType = em.GetEntityTypeHandle();
             ProcessPendingRequests(em, queueQuery, selectedAttackQuery, entityType);

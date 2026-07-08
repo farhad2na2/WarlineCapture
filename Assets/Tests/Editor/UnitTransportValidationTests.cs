@@ -76,8 +76,13 @@ public sealed class UnitTransportValidationTests
             RunTest(test => test.TransportPlaneAirdropSystem_SoldierSettlesAfterTouchdown());
             RunTest(test => test.TransportPlaneAirdropSystem_VehicleRollsOutAfterCargoTouchdown());
             RunTest(test => test.LoadedTransportAttackOrder_CreatesDeployOrderInsteadOfEngageTarget());
+            RunTest(test => test.LoadedTransportAttackOrder_RejectsTransportWithoutAttackPayload());
+            RunTest(test => test.LoadedTransportAttackOrder_AcceptsNestedAttackPayloadCarrier());
             RunTest(test => test.TransportDeployOrderSystem_CargoPlaneStartsAirdropNearBlockedTarget());
+            RunTest(test => test.TransportDeployOrderSystem_AttackDeployAirdropsOnlyAttackPayload());
+            RunTest(test => test.TransportDeployOrderSystem_AttackDeployHelicopterRopesOnlyAttackPayload());
             RunTest(test => test.TransportDeployAttackSystem_WaitsUntilPassengerSettledBeforeEngage());
+            RunTest(test => test.TransportDeployAttackSystem_NestedCarrierReceivesDeployOrderForArmedPayload());
             RunTest(test => test.InitialUnitSpawnApplySystem_CopiesTransportAirdropVisualPrefabRefs());
             RunTest(test => test.TransportPlanePureEcs_StaticGuardRejectsManagedRuntimeBridgePatterns());
             RunTest(test => test.GroundPersonnelTransport_BoardOrderCapsAtAvailableSeats());
@@ -104,7 +109,7 @@ public sealed class UnitTransportValidationTests
             RunTest(test => test.SelectionFallback_FindsNearbyTransportHelicopterWhenHelipadCellWasClicked());
             RunTest(test => test.FocusedTransportReadModel_PublishesPassengerCapacityAndRows());
             RunTest(test => test.FocusedTransportReadModel_PublishesPlaneCargoCapacityBreakdown());
-            Debug.Log("[UnitTransportValidation] result=Passed tests=73");
+            Debug.Log("[UnitTransportValidation] result=Passed tests=78");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -1938,6 +1943,7 @@ public sealed class UnitTransportValidationTests
         PrepareRunwayTransportPlaneForAirdropMovement(em, transport, airborne: false);
         em.AddComponentData(transport, new UnitCombat { CanAttack = 0, AutoEngage = 0 });
         Entity passenger = CreateLoadedPassenger(em, transport);
+        AddAttackCapability(em, passenger);
         em.GetBuffer<UnitTransportPassengerElement>(transport).Add(new UnitTransportPassengerElement { Passenger = passenger });
         Entity target = CreateHostileTarget(em, new int2(20, 20));
 
@@ -1965,6 +1971,75 @@ public sealed class UnitTransportValidationTests
     }
 
     [Test]
+    public void LoadedTransportAttackOrder_RejectsTransportWithoutAttackPayload()
+    {
+        using var world = new World("LoadedTransportAttackOrder_RejectsTransportWithoutAttackPayload");
+        EntityManager em = world.EntityManager;
+
+        Entity transport = CreateTransportPlane(em, new int2(12, 12));
+        PrepareRunwayTransportPlaneForAirdropMovement(em, transport, airborne: false);
+        em.AddComponentData(transport, new UnitCombat { CanAttack = 0, AutoEngage = 0 });
+        Entity passenger = CreateLoadedPassenger(em, transport);
+        em.GetBuffer<UnitTransportPassengerElement>(transport).Add(new UnitTransportPassengerElement { Passenger = passenger });
+        Entity target = CreateHostileTarget(em, new int2(20, 20));
+
+        NativeArray<Entity> selected = new(1, Allocator.Temp);
+        UnitTargetOrderSystem.AttackOrderIssueResult result;
+        try
+        {
+            selected[0] = transport;
+            var targetOrderSystem = new UnitTargetOrderSystem();
+            result = targetOrderSystem.IssueAttackTarget(em, selected, target);
+        }
+        finally
+        {
+            selected.Dispose();
+        }
+
+        Assert.IsFalse(result.CommandResult.Accepted);
+        Assert.AreEqual(TacticalCommandReasonCode.TargetNotAttackable, result.CommandResult.ReasonCode);
+        Assert.AreEqual(UnitTransportAttackPayloadUtility.ResolveNoAttackPayloadFeedback(), result.CommandResult.Message);
+        Assert.IsFalse(em.HasComponent<UnitTransportDeployOrder>(transport));
+        Assert.IsFalse(em.HasComponent<EngageTarget>(transport));
+    }
+
+    [Test]
+    public void LoadedTransportAttackOrder_AcceptsNestedAttackPayloadCarrier()
+    {
+        using var world = new World("LoadedTransportAttackOrder_AcceptsNestedAttackPayloadCarrier");
+        EntityManager em = world.EntityManager;
+
+        Entity transport = CreateTransportPlane(em, new int2(12, 12));
+        PrepareRunwayTransportPlaneForAirdropMovement(em, transport, airborne: false);
+        em.AddComponentData(transport, new UnitCombat { CanAttack = 0, AutoEngage = 0 });
+        Entity carrier = CreateLoadedVehiclePassenger(em, transport);
+        em.AddComponentData(carrier, new UnitTransportCapacity { SoldierCapacity = 4 });
+        em.AddBuffer<UnitTransportPassengerElement>(carrier);
+        Entity nestedSoldier = CreateLoadedPassenger(em, carrier);
+        AddAttackCapability(em, nestedSoldier);
+        em.GetBuffer<UnitTransportPassengerElement>(carrier).Add(new UnitTransportPassengerElement { Passenger = nestedSoldier });
+        em.GetBuffer<UnitTransportPassengerElement>(transport).Add(new UnitTransportPassengerElement { Passenger = carrier });
+        Entity target = CreateHostileTarget(em, new int2(20, 20));
+
+        NativeArray<Entity> selected = new(1, Allocator.Temp);
+        UnitTargetOrderSystem.AttackOrderIssueResult result;
+        try
+        {
+            selected[0] = transport;
+            var targetOrderSystem = new UnitTargetOrderSystem();
+            result = targetOrderSystem.IssueAttackTarget(em, selected, target);
+        }
+        finally
+        {
+            selected.Dispose();
+        }
+
+        Assert.IsTrue(result.CommandResult.Accepted);
+        Assert.AreEqual(1, result.IssuedCount);
+        Assert.IsTrue(em.HasComponent<UnitTransportDeployOrder>(transport), "The top-level transport should deploy the carrier because it contains an attack-capable passenger.");
+    }
+
+    [Test]
     public void TransportDeployOrderSystem_CargoPlaneStartsAirdropNearBlockedTarget()
     {
         using var world = new World("TransportDeployOrderSystem_CargoPlaneStartsAirdropNearBlockedTarget");
@@ -1975,6 +2050,7 @@ public sealed class UnitTransportValidationTests
         PrepareRunwayTransportPlaneForAirdropMovement(em, transport, airborne: false);
         AddAirdropVisualPrefabs(em, transport);
         Entity passenger = CreateLoadedPassenger(em, transport);
+        AddAttackCapability(em, passenger);
         em.GetBuffer<UnitTransportPassengerElement>(transport).Add(new UnitTransportPassengerElement { Passenger = passenger });
         Entity target = CreateHostileTarget(em, new int2(20, 20));
 
@@ -2003,6 +2079,109 @@ public sealed class UnitTransportValidationTests
         walkable = em.GetBuffer<GridWalkable>(gridEntity);
         Assert.AreEqual(1, walkable[GridUtils.CellToIndex(request.DropReferenceCell, 32)].Value);
         Assert.IsTrue(em.HasComponent<UnitTransportDeployAttackTarget>(passenger));
+    }
+
+    [Test]
+    public void TransportDeployOrderSystem_AttackDeployAirdropsOnlyAttackPayload()
+    {
+        using var world = new World("TransportDeployOrderSystem_AttackDeployAirdropsOnlyAttackPayload");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em, 32, 32);
+
+        Entity transport = CreateTransportPlane(em, new int2(12, 12));
+        PrepareRunwayTransportPlaneForAirdropMovement(em, transport, airborne: false);
+        AddAirdropVisualPrefabs(em, transport);
+        Entity unarmedVehicle = CreateLoadedVehiclePassenger(em, transport);
+        Entity soldier = CreateLoadedPassenger(em, transport);
+        AddAttackCapability(em, soldier);
+        DynamicBuffer<UnitTransportPassengerElement> passengers = em.GetBuffer<UnitTransportPassengerElement>(transport);
+        passengers.Add(new UnitTransportPassengerElement { Passenger = unarmedVehicle });
+        passengers.Add(new UnitTransportPassengerElement { Passenger = soldier });
+        Entity target = CreateHostileTarget(em, new int2(20, 20));
+
+        em.AddComponentData(transport, new UnitTransportDeployOrder
+        {
+            TargetEntity = target,
+            TargetCell = new int2(20, 20),
+            TargetPosition = em.GetComponentData<LocalTransform>(target).Position,
+            AttackAfterDeploy = 1
+        });
+
+        SystemHandle deploySystem = world.CreateSystem<UnitTransportDeployOrderSystem>();
+        world.SetTime(new TimeData(1d, 0.1f));
+        deploySystem.Update(world.Unmanaged);
+
+        Assert.IsTrue(em.HasComponent<UnitTransportAirdropRequest>(transport));
+        UnitTransportAirdropRequest request = em.GetComponentData<UnitTransportAirdropRequest>(transport);
+        Assert.AreEqual(1, request.DropCount);
+        Assert.AreEqual(1, request.SoldierDropCount);
+        Assert.AreEqual(0, request.VehicleDropCount);
+        passengers = em.GetBuffer<UnitTransportPassengerElement>(transport);
+        Assert.AreEqual(soldier, passengers[0].Passenger, "Attack payload should be first so the airdrop system releases it before deferred cargo.");
+        Assert.AreEqual(unarmedVehicle, passengers[1].Passenger, "Unarmed cargo with no attack payload should stay loaded after the attack payload.");
+        Assert.IsTrue(em.HasComponent<UnitTransportDeployAttackTarget>(soldier));
+        Assert.IsFalse(em.HasComponent<UnitTransportDeployAttackTarget>(unarmedVehicle));
+    }
+
+    [Test]
+    public void TransportDeployOrderSystem_AttackDeployHelicopterRopesOnlyAttackPayload()
+    {
+        using var world = new World("TransportDeployOrderSystem_AttackDeployHelicopterRopesOnlyAttackPayload");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em, 32, 32);
+
+        Entity transport = CreateTransport(em, new int2(12, 12), air: true, airborne: true, "Unit_Veh_Helicopter_Transport");
+        em.AddComponentData(transport, new UnitMove { Speed = 12f, WalkSpeed = 1.5f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.05f });
+        Entity unarmedPassenger = CreateLoadedPassenger(em, transport);
+        Entity soldier = CreateLoadedPassenger(em, transport);
+        AddAttackCapability(em, soldier);
+        DynamicBuffer<UnitTransportPassengerElement> passengers = em.GetBuffer<UnitTransportPassengerElement>(transport);
+        passengers.Add(new UnitTransportPassengerElement { Passenger = unarmedPassenger });
+        passengers.Add(new UnitTransportPassengerElement { Passenger = soldier });
+        Entity target = CreateHostileTarget(em, new int2(13, 12));
+
+        em.AddComponentData(transport, new UnitTransportDeployOrder
+        {
+            TargetEntity = target,
+            TargetCell = new int2(13, 12),
+            TargetPosition = em.GetComponentData<LocalTransform>(target).Position,
+            AttackAfterDeploy = 1
+        });
+
+        SystemHandle deploySystem = world.CreateSystem<UnitTransportDeployOrderSystem>();
+        world.SetTime(new TimeData(1d, 0.1f));
+        deploySystem.Update(world.Unmanaged);
+
+        Assert.IsFalse(em.HasComponent<UnitTransportDeployOrder>(transport));
+        Assert.IsTrue(em.HasComponent<UnitTransportRopeDisembarkRequest>(transport));
+        UnitTransportRopeDisembarkRequest request = em.GetComponentData<UnitTransportRopeDisembarkRequest>(transport);
+        Assert.AreEqual(1, request.TotalDropCount);
+        passengers = em.GetBuffer<UnitTransportPassengerElement>(transport);
+        Assert.AreEqual(soldier, passengers[0].Passenger, "Attack payload should be first so the rope system releases it before deferred cargo.");
+        Assert.AreEqual(unarmedPassenger, passengers[1].Passenger, "Unarmed cargo should stay loaded after the attack payload.");
+        Assert.IsTrue(em.HasComponent<UnitTransportDeployAttackTarget>(soldier));
+        Assert.IsFalse(em.HasComponent<UnitTransportDeployAttackTarget>(unarmedPassenger));
+
+        SystemHandle disembarkSystem = world.CreateSystem<UnitTransportRopeDisembarkSystem>();
+        SystemHandle dropSystem = world.CreateSystem<UnitTransportRopeDropSystem>();
+        world.SetTime(new TimeData(1.2d, 0.1f));
+        disembarkSystem.Update(world.Unmanaged);
+
+        passengers = em.GetBuffer<UnitTransportPassengerElement>(transport);
+        Assert.AreEqual(1, passengers.Length);
+        Assert.AreEqual(unarmedPassenger, passengers[0].Passenger, "The deferred unarmed passenger should remain loaded.");
+        Assert.IsTrue(em.HasComponent<UnitTransportRopeDropComponent>(soldier));
+        Assert.IsFalse(em.HasComponent<UnitTransportRopeDropComponent>(unarmedPassenger));
+
+        UnitTransportRopeDropComponent dropState = em.GetComponentData<UnitTransportRopeDropComponent>(soldier);
+        world.SetTime(new TimeData(dropState.StartedAt + dropState.DurationSeconds + 0.1f, 0.1f));
+        dropSystem.Update(world.Unmanaged);
+        disembarkSystem.Update(world.Unmanaged);
+
+        Assert.IsFalse(em.HasComponent<UnitTransportRopeDisembarkRequest>(transport));
+        passengers = em.GetBuffer<UnitTransportPassengerElement>(transport);
+        Assert.AreEqual(1, passengers.Length);
+        Assert.AreEqual(unarmedPassenger, passengers[0].Passenger);
     }
 
     [Test]
@@ -2043,6 +2222,36 @@ public sealed class UnitTransportValidationTests
         Assert.IsFalse(em.HasComponent<UnitTransportDeployAttackTarget>(passenger));
         Assert.IsTrue(em.HasComponent<EngageTarget>(passenger));
         Assert.AreEqual(target, em.GetComponentData<EngageTarget>(passenger).Target);
+    }
+
+    [Test]
+    public void TransportDeployAttackSystem_NestedCarrierReceivesDeployOrderForArmedPayload()
+    {
+        using var world = new World("TransportDeployAttackSystem_NestedCarrierReceivesDeployOrderForArmedPayload");
+        EntityManager em = world.EntityManager;
+        Entity target = CreateHostileTarget(em, new int2(20, 20));
+        Entity carrier = CreateTransport(em, new int2(18, 20), air: false, airborne: false);
+        em.SetComponentData(carrier, new UnitTransportCapacity { SoldierCapacity = 4 });
+        Entity nestedSoldier = CreateLoadedPassenger(em, carrier);
+        AddAttackCapability(em, nestedSoldier);
+        em.GetBuffer<UnitTransportPassengerElement>(carrier).Add(new UnitTransportPassengerElement { Passenger = nestedSoldier });
+        em.AddComponentData(carrier, new UnitTransportDeployAttackTarget
+        {
+            TargetEntity = target,
+            TargetCell = new int2(20, 20),
+            TargetPosition = em.GetComponentData<LocalTransform>(target).Position
+        });
+
+        SystemHandle deployAttackSystem = world.CreateSystem<UnitTransportDeployAttackSystem>();
+        world.SetTime(new TimeData(1d, 0.1f));
+        deployAttackSystem.Update(world.Unmanaged);
+
+        Assert.IsFalse(em.HasComponent<UnitTransportDeployAttackTarget>(carrier));
+        Assert.IsFalse(em.HasComponent<EngageTarget>(carrier), "An unarmed carrier should not attack directly.");
+        Assert.IsTrue(em.HasComponent<UnitTransportDeployOrder>(carrier), "An unarmed carrier with armed cargo should continue the deploy attack chain.");
+        UnitTransportDeployOrder deployOrder = em.GetComponentData<UnitTransportDeployOrder>(carrier);
+        Assert.AreEqual(target, deployOrder.TargetEntity);
+        Assert.AreEqual(1, deployOrder.AttackAfterDeploy);
     }
 
     [Test]
@@ -3641,6 +3850,29 @@ public sealed class UnitTransportValidationTests
             CargoWeight = 9
         });
         return entity;
+    }
+
+    private static void AddAttackCapability(EntityManager em, Entity entity)
+    {
+        UnitCombat combat = em.HasComponent<UnitCombat>(entity)
+            ? em.GetComponentData<UnitCombat>(entity)
+            : new UnitCombat { AggroRangeCells = 8, ChaseBreakDistance = 16f, AutoEngage = 0 };
+        combat.CanAttack = 1;
+        if (em.HasComponent<UnitCombat>(entity))
+            em.SetComponentData(entity, combat);
+        else
+            em.AddComponentData(entity, combat);
+
+        UnitAttack attack = new()
+        {
+            Range = 8f,
+            CooldownSeconds = 1f,
+            Damage = 10
+        };
+        if (em.HasComponent<UnitAttack>(entity))
+            em.SetComponentData(entity, attack);
+        else
+            em.AddComponentData(entity, attack);
     }
 
     private static Entity CreateSelectablePassenger(EntityManager em, int2 cell)

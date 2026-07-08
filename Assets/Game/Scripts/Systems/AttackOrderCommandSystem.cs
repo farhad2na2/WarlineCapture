@@ -70,8 +70,6 @@ namespace Game.Runtime
             _selectedAttackQuery = state.GetEntityQuery(
                 ComponentType.ReadOnly<SelectedUnitTag>(),
                 ComponentType.ReadOnly<UnitMove>(),
-                ComponentType.ReadOnly<UnitCombat>(),
-                ComponentType.ReadOnly<UnitAttack>(),
                 ComponentType.ReadOnly<LocalTransform>());
             _entityType = state.GetEntityTypeHandle();
             UnitAttackOrderRequestSystem.EnsureCommandEntity(state.EntityManager);
@@ -470,8 +468,6 @@ namespace Game.Runtime
             return em.CreateEntityQuery(
                 ComponentType.ReadOnly<SelectedUnitTag>(),
                 ComponentType.ReadOnly<UnitMove>(),
-                ComponentType.ReadOnly<UnitCombat>(),
-                ComponentType.ReadOnly<UnitAttack>(),
                 ComponentType.ReadOnly<LocalTransform>());
         }
 

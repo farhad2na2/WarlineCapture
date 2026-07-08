@@ -168,7 +168,7 @@ namespace Game.UI.Shell.Ecs
                     WarningVisible = availability == ResourceExchangeReason.None ? (byte)0 : (byte)1,
                     Tab = uiState.ActiveTab,
                     RecipeId = recipe.RecipeId,
-                    Title = recipe.DisplayName,
+                    Title = ToFixed64(recipe.DisplayName),
                     InputText = ToFixed32(FormatResourceAmount(recipe.InputResource, amount)),
                     OutputText = ToFixed32(FormatResourceAmount(recipe.OutputResource, outputAmount)),
                     DurationText = ToFixed32(FormatDuration(CalculateDuration(recipe, amount))),
@@ -206,7 +206,7 @@ namespace Game.UI.Shell.Ecs
             return new UiResourceExchangeDetailComponent
             {
                 RecipeId = recipe.RecipeId,
-                Name = recipe.DisplayName,
+                Name = ToFixed64(recipe.DisplayName),
                 RouteText = ToFixed32(recipe.RouteType == ResourceExchangeRouteType.Export ? "EXPORT" : "IMPORT"),
                 RateText = ToFixed64(FormatRate(recipe)),
                 AmountText = ToFixed32(amount.ToString(CultureInfo.InvariantCulture)),
@@ -254,7 +254,7 @@ namespace Game.UI.Shell.Ecs
                     QueueItemId = item.QueueItemId,
                     State = ToUiQueueState(item.State),
                     NumberText = ToFixed32((i + 1).ToString(CultureInfo.InvariantCulture)),
-                    Name = recipe.DisplayName.Length > 0 ? recipe.DisplayName : item.RecipeId,
+                    Name = recipe.DisplayName.Length > 0 ? ToFixed64(recipe.DisplayName) : ToFixed64(item.RecipeId),
                     InputText = ToFixed32(FormatResourceAmount(item.InputResource, item.InputAmount)),
                     OutputText = ToFixed32(FormatResourceAmount(item.OutputResource, item.OutputAmount)),
                     TimeText = ToFixed32(FormatDuration(item.RemainingSeconds)),
@@ -654,6 +654,11 @@ namespace Game.UI.Shell.Ecs
         private static FixedString64Bytes ToFixed64(string value)
         {
             return new FixedString64Bytes(Trim(value, 60));
+        }
+
+        private static FixedString64Bytes ToFixed64(FixedString128Bytes value)
+        {
+            return new FixedString64Bytes(Trim(value.ToString(), 60));
         }
 
         private static FixedString128Bytes ToFixed128(string value)

@@ -323,19 +323,18 @@ Use this section as the work checklist. Update status after each implementation 
 
 ### Current Completion
 
-Overall tracked completion: **96%**.
+Overall tracked completion: **97%**.
 
 - Completed steps: 17 / 20.
 - Asset and placeholder catalog preparation: **Done**.
 - Runtime playback implementation: **In Progress**.
 - UI/gameplay wiring: **In Progress**.
 - Validation/performance test coverage: **In Progress**.
-- Latest stable slice: runtime playback blocker audit confirmed the missing bridge inputs before scene wiring work.
+- Latest stable slice: runtime audio catalog/mixer asset generation now converts the validated JSON catalog into ScriptableObject assets with loaded `AudioClip` references.
 
 Active blocker before 100%:
 
-- `AudioPlaybackPresentationSystemHelper` exists and is tested, but no authored `AudioEventCatalogConfig` or `AudioMixerBusConfig` asset currently references the generated clip catalog. A playback presentation system cannot safely resolve accepted ECS requests to real `AudioClip` references until those assets are generated/authored and assigned to a scene/runtime bootstrap.
-- The JSON catalog remains the data source for validation and generated constants only. It must either generate ScriptableObject catalog assets in editor tooling or be converted into authored assets before runtime playback can be smoke-tested in M01.
+- `AudioPlaybackPresentationSystemHelper` exists and is tested, and runtime catalog/mixer assets now exist. The next runtime blocker is the managed scene/bootstrap presentation system that owns those assets, drains accepted ECS playback requests, calls the helper, and records playback results without gameplay systems touching Unity audio objects.
 - Remaining objective/result/splash/briefing/combat-intensity audio is still blocked on the gameplay/route state boundaries listed in Steps 15 and 16.
 
 Status legend:
@@ -477,10 +476,14 @@ Current Step 8-10 data/request/playback-helper pass:
 - Components: `Assets/Game/Scripts/Components/AudioComponents.cs`
 - Request systems: `Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs`
 - Playback helper: `Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationSystemHelper.cs`
+- Runtime asset builder: `Assets/Game/Scripts/Editor/AudioRuntimeConfigAssetBuilder.cs`
+- Runtime event catalog asset: `Assets/Game/Audio/Events/AudioEventCatalogConfig.asset`
+- Runtime mixer bus asset: `Assets/Game/Audio/Mixers/AudioMixerBusConfig.asset`
 - Validation: `AudioEcsDataContractTests.RunFocusedValidation`, `AudioRequestSystemTests.RunFocusedValidation`
 - Latest validation: unmanaged request/result/settings/music/listener contracts, request system bootstrap/cooldown/music/settings behavior, and pooled playback helper behavior passed focused Unity validation.
-- Runtime implementation status: playback presentation helper exists; ECS-to-helper playback system wiring is still not implemented.
-- Blocker audit: no project asset currently references the `AudioEventCatalogConfig` or `AudioMixerBusConfig` ScriptableObject script GUIDs, so the runtime has no authored clip/bus asset to feed into the playback helper.
+- Runtime asset validation: `AudioRuntimeConfigAssetBuilderTests.RunFocusedValidation` passed and confirmed generated catalog/bus assets with loaded clip references and bus ducking targets.
+- Runtime implementation status: playback presentation helper and catalog/bus assets exist; ECS-to-helper playback system wiring is still not implemented.
+- Remaining bridge blocker: create a managed scene/bootstrap presentation system that references `AudioEventCatalogConfig` and `AudioMixerBusConfig`, drains accepted `AudioPlaybackRequestElement` data, and calls `AudioPlaybackPresentationSystemHelper` outside gameplay ECS hot paths.
 
 Required data flow:
 
@@ -621,7 +624,7 @@ Current Step 14 match feedback pass:
 
 Remaining Step 14 work:
 
-- Manual M01 smoke once playback presentation is connected in-scene through authored/generated `AudioEventCatalogConfig` and `AudioMixerBusConfig` assets.
+- Manual M01 smoke once playback presentation is connected in-scene through the generated `AudioEventCatalogConfig` and `AudioMixerBusConfig` assets.
 
 ### Step 15: Alerts And Objective Audio
 

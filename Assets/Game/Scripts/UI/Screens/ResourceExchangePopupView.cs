@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Game.UI.Contracts;
 
 namespace Game.UI.Runtime
 {
@@ -173,12 +174,121 @@ namespace Game.UI.Runtime
                 confirmButton.interactable = confirmEnabled;
         }
 
+        public void ApplyModel(UiResourceExchangeModel model)
+        {
+            ApplyHeader(
+                model.QueueCapacityText,
+                model.CreditsText,
+                model.MaterialsText,
+                model.OilText,
+                model.FuelText,
+                model.RushTicketsText);
+            ApplyTabs(
+                model.ActiveTab == UiResourceExchangeTabKind.Export,
+                model.ExportRecipeCount,
+                model.ImportRecipeCount);
+            ApplyRecipeCards(model);
+            ApplyDetail(
+                model.Detail.Name,
+                model.Detail.RouteText,
+                model.Detail.RateText,
+                model.Detail.AmountText,
+                model.Detail.InputCostText,
+                model.Detail.OutputPreviewText,
+                model.Detail.DurationText,
+                model.Detail.RequirementsText,
+                model.Detail.InstructionText,
+                model.Detail.ConfirmEnabled,
+                model.Detail.WarningVisible,
+                ResolveRecipeThumbnail(model.SelectedRecipeSlot));
+            ApplyQueueRows(model);
+            ApplyQueueControls(model.RushAllEnabled, model.ClearCompletedEnabled);
+        }
+
+        public void ApplyRecipeCards(UiResourceExchangeModel model)
+        {
+            ResourceExchangeRecipeCardView[] cards = staticRecipeCards;
+            if (cards == null)
+                return;
+
+            for (int i = 0; i < cards.Length; i++)
+            {
+                ResourceExchangeRecipeCardView cardView = cards[i];
+                if (cardView == null)
+                    continue;
+
+                bool visible = i < model.RecipeCardCount;
+                cardView.gameObject.SetActive(visible);
+                if (!visible)
+                    continue;
+
+                UiResourceExchangeRecipeCardModel card = model.GetRecipeCard(i);
+                cardView.Bind(
+                    card.Title,
+                    card.InputText,
+                    card.OutputText,
+                    card.DurationText,
+                    card.ReasonText,
+                    ResolveRecipeThumbnail(i),
+                    card.Selected,
+                    card.Enabled,
+                    card.Locked,
+                    card.WarningVisible,
+                    defaultRecipeCardFrameSprite,
+                    selectedRecipeCardFrameSprite,
+                    lockedRecipeCardFrameSprite);
+            }
+        }
+
+        public void ApplyQueueRows(UiResourceExchangeModel model)
+        {
+            ResourceExchangeQueueItemView[] rows = staticQueueRows;
+            if (rows == null)
+                return;
+
+            for (int i = 0; i < rows.Length; i++)
+            {
+                ResourceExchangeQueueItemView rowView = rows[i];
+                if (rowView == null)
+                    continue;
+
+                bool visible = i < model.QueueRowCount;
+                rowView.gameObject.SetActive(visible);
+                if (!visible)
+                    continue;
+
+                UiResourceExchangeQueueRowModel row = model.GetQueueRow(i);
+                rowView.Bind(
+                    row.NumberText,
+                    row.Name,
+                    row.InputText,
+                    row.OutputText,
+                    row.TimeText,
+                    row.PercentText,
+                    row.StateText,
+                    row.Progress01,
+                    ResolveRecipeThumbnail(i),
+                    row.RushEnabled,
+                    row.CancelEnabled,
+                    row.CompletedVisible,
+                    row.WarningVisible);
+            }
+        }
+
         public void ApplyQueueControls(bool rushAllEnabled, bool clearCompletedEnabled)
         {
             if (rushAllButton != null)
                 rushAllButton.interactable = rushAllEnabled;
             if (clearCompletedButton != null)
                 clearCompletedButton.interactable = clearCompletedEnabled;
+        }
+
+        public Sprite ResolveRecipeThumbnail(int index)
+        {
+            if (recipeThumbnailSprites == null || recipeThumbnailSprites.Length == 0)
+                return null;
+
+            return recipeThumbnailSprites[Mathf.Clamp(index, 0, recipeThumbnailSprites.Length - 1)];
         }
 
         private void ApplyTab(Image image, bool selected)

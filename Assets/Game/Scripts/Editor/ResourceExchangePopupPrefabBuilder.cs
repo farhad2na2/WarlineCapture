@@ -44,6 +44,9 @@ namespace Game.Editor
             ResourceExchangePopupView view = prefab.GetComponent<ResourceExchangePopupView>();
             if (view == null)
                 throw new System.InvalidOperationException("Resource Exchange popup is missing ResourceExchangePopupView.");
+            ResourceExchangePopupRuntimeView runtimeView = prefab.GetComponent<ResourceExchangePopupRuntimeView>();
+            if (runtimeView == null || runtimeView.View == null)
+                throw new System.InvalidOperationException("Resource Exchange popup is missing ResourceExchangePopupRuntimeView.");
             if (view.CloseButton == null || view.ExportTabButton == null || view.ImportTabButton == null)
                 throw new System.InvalidOperationException("Resource Exchange popup is missing required header/tab buttons.");
             if (view.ConfirmButton == null || view.AmountDecreaseButton == null || view.AmountIncreaseButton == null)
@@ -79,6 +82,7 @@ namespace Game.Editor
                 root.AddComponent<CanvasGroup>();
                 UIPopupMotionView.Ensure(root);
                 ResourceExchangePopupView popupView = root.AddComponent<ResourceExchangePopupView>();
+                ResourceExchangePopupRuntimeView runtimeView = root.AddComponent<ResourceExchangePopupRuntimeView>();
 
                 Image blocker = root.AddComponent<Image>();
                 blocker.color = new Color(0f, 0f, 0f, 0.50f);
@@ -144,6 +148,10 @@ namespace Game.Editor
                 SetObject(serialized, "clearCompletedButton", queue.ClearCompletedButton);
                 SetObject(serialized, "instructionText", instruction);
                 serialized.ApplyModifiedPropertiesWithoutUndo();
+
+                var runtimeSerialized = new SerializedObject(runtimeView);
+                SetObject(runtimeSerialized, "view", popupView);
+                runtimeSerialized.ApplyModifiedPropertiesWithoutUndo();
 
                 cards[0].Bind("EXPORT OIL", "100 OIL", "46 CREDITS", "00:30", string.Empty, sprites.Thumbnails[0], true, true, false, false, sprites.CardDefault, sprites.CardSelected, sprites.CardLocked);
                 cards[1].Bind("EXPORT MATERIALS", "75 MATERIALS", "90 CREDITS", "00:40", string.Empty, sprites.Thumbnails[1], false, true, false, false, sprites.CardDefault, sprites.CardSelected, sprites.CardLocked);

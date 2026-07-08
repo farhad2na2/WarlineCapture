@@ -109,7 +109,16 @@ namespace Game.UI.Contracts
         ToggleDiagnosticsOverlay,
         CloseDiagnosticsOverlay,
         OpenResourceExchange,
-        CloseResourceExchange
+        CloseResourceExchange,
+        ResourceExchangeTab,
+        ResourceExchangeRecipe,
+        ResourceExchangeAmountDecrease,
+        ResourceExchangeAmountIncrease,
+        ResourceExchangeConfirm,
+        ResourceExchangeRushAll,
+        ResourceExchangeClearCompleted,
+        ResourceExchangeQueueRush,
+        ResourceExchangeQueueCancel
     }
 
     public enum UiBuildProductionActionKind : byte
@@ -118,6 +127,22 @@ namespace Game.UI.Contracts
         Clear,
         CancelActive,
         CancelQueued
+    }
+
+    public enum UiResourceExchangeTabKind : byte
+    {
+        Export = 0,
+        Import = 1
+    }
+
+    public enum UiResourceExchangeQueueStateKind : byte
+    {
+        None = 0,
+        Pending = 1,
+        InProgress = 2,
+        Completed = 3,
+        Cancelled = 4,
+        Blocked = 5
     }
 
     public readonly struct UiBuildPlacementConfirmationBarModel
@@ -826,6 +851,334 @@ namespace Game.UI.Contracts
             {
                 0 => QueueRow0,
                 1 => QueueRow1,
+                _ => default
+            };
+        }
+    }
+
+    public readonly struct UiResourceExchangeDetailModel
+    {
+        public readonly string RecipeId;
+        public readonly string Name;
+        public readonly string RouteText;
+        public readonly string RateText;
+        public readonly string AmountText;
+        public readonly string InputCostText;
+        public readonly string OutputPreviewText;
+        public readonly string DurationText;
+        public readonly string RequirementsText;
+        public readonly string InstructionText;
+        public readonly bool ConfirmEnabled;
+        public readonly bool WarningVisible;
+
+        public UiResourceExchangeDetailModel(
+            string recipeId,
+            string name,
+            string routeText,
+            string rateText,
+            string amountText,
+            string inputCostText,
+            string outputPreviewText,
+            string durationText,
+            string requirementsText,
+            string instructionText,
+            bool confirmEnabled,
+            bool warningVisible)
+        {
+            RecipeId = recipeId;
+            Name = name;
+            RouteText = routeText;
+            RateText = rateText;
+            AmountText = amountText;
+            InputCostText = inputCostText;
+            OutputPreviewText = outputPreviewText;
+            DurationText = durationText;
+            RequirementsText = requirementsText;
+            InstructionText = instructionText;
+            ConfirmEnabled = confirmEnabled;
+            WarningVisible = warningVisible;
+        }
+
+        public static UiResourceExchangeDetailModel Empty =>
+            new(
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                false,
+                false);
+    }
+
+    public readonly struct UiResourceExchangeRecipeCardModel
+    {
+        public readonly bool Visible;
+        public readonly bool Enabled;
+        public readonly bool Selected;
+        public readonly bool Locked;
+        public readonly bool WarningVisible;
+        public readonly int SlotIndex;
+        public readonly string RecipeId;
+        public readonly string Title;
+        public readonly string InputText;
+        public readonly string OutputText;
+        public readonly string DurationText;
+        public readonly string ReasonText;
+
+        public UiResourceExchangeRecipeCardModel(
+            bool visible,
+            bool enabled,
+            bool selected,
+            bool locked,
+            bool warningVisible,
+            int slotIndex,
+            string recipeId,
+            string title,
+            string inputText,
+            string outputText,
+            string durationText,
+            string reasonText)
+        {
+            Visible = visible;
+            Enabled = enabled;
+            Selected = selected;
+            Locked = locked;
+            WarningVisible = warningVisible;
+            SlotIndex = slotIndex;
+            RecipeId = recipeId;
+            Title = title;
+            InputText = inputText;
+            OutputText = outputText;
+            DurationText = durationText;
+            ReasonText = reasonText;
+        }
+    }
+
+    public readonly struct UiResourceExchangeQueueRowModel
+    {
+        public readonly bool Visible;
+        public readonly bool RushEnabled;
+        public readonly bool CancelEnabled;
+        public readonly bool CompletedVisible;
+        public readonly bool WarningVisible;
+        public readonly int QueueItemId;
+        public readonly int SlotIndex;
+        public readonly UiResourceExchangeQueueStateKind State;
+        public readonly string NumberText;
+        public readonly string Name;
+        public readonly string InputText;
+        public readonly string OutputText;
+        public readonly string TimeText;
+        public readonly string PercentText;
+        public readonly string StateText;
+        public readonly float Progress01;
+
+        public UiResourceExchangeQueueRowModel(
+            bool visible,
+            bool rushEnabled,
+            bool cancelEnabled,
+            bool completedVisible,
+            bool warningVisible,
+            int queueItemId,
+            int slotIndex,
+            UiResourceExchangeQueueStateKind state,
+            string numberText,
+            string name,
+            string inputText,
+            string outputText,
+            string timeText,
+            string percentText,
+            string stateText,
+            float progress01)
+        {
+            Visible = visible;
+            RushEnabled = rushEnabled;
+            CancelEnabled = cancelEnabled;
+            CompletedVisible = completedVisible;
+            WarningVisible = warningVisible;
+            QueueItemId = queueItemId;
+            SlotIndex = slotIndex;
+            State = state;
+            NumberText = numberText;
+            Name = name;
+            InputText = inputText;
+            OutputText = outputText;
+            TimeText = timeText;
+            PercentText = percentText;
+            StateText = stateText;
+            Progress01 = progress01;
+        }
+    }
+
+    public readonly struct UiResourceExchangeModel
+    {
+        public const int MaxRecipeCards = 7;
+        public const int MaxQueueRows = 4;
+
+        public readonly uint Version;
+        public readonly UiResourceExchangeTabKind ActiveTab;
+        public readonly int SelectedRecipeSlot;
+        public readonly int ExportRecipeCount;
+        public readonly int ImportRecipeCount;
+        public readonly int QueueCount;
+        public readonly int ActiveCount;
+        public readonly int CompletedCount;
+        public readonly int MaxQueueItems;
+        public readonly string QueueCapacityText;
+        public readonly string CreditsText;
+        public readonly string MaterialsText;
+        public readonly string OilText;
+        public readonly string FuelText;
+        public readonly string RushTicketsText;
+        public readonly bool ExchangeEnabled;
+        public readonly bool RushAllEnabled;
+        public readonly bool ClearCompletedEnabled;
+        public readonly UiResourceExchangeDetailModel Detail;
+        public readonly int RecipeCardCount;
+        public readonly UiResourceExchangeRecipeCardModel RecipeCard0;
+        public readonly UiResourceExchangeRecipeCardModel RecipeCard1;
+        public readonly UiResourceExchangeRecipeCardModel RecipeCard2;
+        public readonly UiResourceExchangeRecipeCardModel RecipeCard3;
+        public readonly UiResourceExchangeRecipeCardModel RecipeCard4;
+        public readonly UiResourceExchangeRecipeCardModel RecipeCard5;
+        public readonly UiResourceExchangeRecipeCardModel RecipeCard6;
+        public readonly int QueueRowCount;
+        public readonly UiResourceExchangeQueueRowModel QueueRow0;
+        public readonly UiResourceExchangeQueueRowModel QueueRow1;
+        public readonly UiResourceExchangeQueueRowModel QueueRow2;
+        public readonly UiResourceExchangeQueueRowModel QueueRow3;
+
+        public UiResourceExchangeModel(
+            uint version,
+            UiResourceExchangeTabKind activeTab,
+            int selectedRecipeSlot,
+            int exportRecipeCount,
+            int importRecipeCount,
+            int queueCount,
+            int activeCount,
+            int completedCount,
+            int maxQueueItems,
+            string queueCapacityText,
+            string creditsText,
+            string materialsText,
+            string oilText,
+            string fuelText,
+            string rushTicketsText,
+            bool exchangeEnabled,
+            bool rushAllEnabled,
+            bool clearCompletedEnabled,
+            UiResourceExchangeDetailModel detail,
+            int recipeCardCount,
+            UiResourceExchangeRecipeCardModel recipeCard0,
+            UiResourceExchangeRecipeCardModel recipeCard1,
+            UiResourceExchangeRecipeCardModel recipeCard2,
+            UiResourceExchangeRecipeCardModel recipeCard3,
+            UiResourceExchangeRecipeCardModel recipeCard4,
+            UiResourceExchangeRecipeCardModel recipeCard5,
+            UiResourceExchangeRecipeCardModel recipeCard6,
+            int queueRowCount,
+            UiResourceExchangeQueueRowModel queueRow0,
+            UiResourceExchangeQueueRowModel queueRow1,
+            UiResourceExchangeQueueRowModel queueRow2,
+            UiResourceExchangeQueueRowModel queueRow3)
+        {
+            Version = version;
+            ActiveTab = activeTab;
+            SelectedRecipeSlot = selectedRecipeSlot;
+            ExportRecipeCount = exportRecipeCount;
+            ImportRecipeCount = importRecipeCount;
+            QueueCount = queueCount;
+            ActiveCount = activeCount;
+            CompletedCount = completedCount;
+            MaxQueueItems = maxQueueItems;
+            QueueCapacityText = queueCapacityText;
+            CreditsText = creditsText;
+            MaterialsText = materialsText;
+            OilText = oilText;
+            FuelText = fuelText;
+            RushTicketsText = rushTicketsText;
+            ExchangeEnabled = exchangeEnabled;
+            RushAllEnabled = rushAllEnabled;
+            ClearCompletedEnabled = clearCompletedEnabled;
+            Detail = detail;
+            RecipeCardCount = recipeCardCount;
+            RecipeCard0 = recipeCard0;
+            RecipeCard1 = recipeCard1;
+            RecipeCard2 = recipeCard2;
+            RecipeCard3 = recipeCard3;
+            RecipeCard4 = recipeCard4;
+            RecipeCard5 = recipeCard5;
+            RecipeCard6 = recipeCard6;
+            QueueRowCount = queueRowCount;
+            QueueRow0 = queueRow0;
+            QueueRow1 = queueRow1;
+            QueueRow2 = queueRow2;
+            QueueRow3 = queueRow3;
+        }
+
+        public static UiResourceExchangeModel Empty =>
+            new(
+                0,
+                UiResourceExchangeTabKind.Export,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                "0/0",
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                false,
+                false,
+                false,
+                UiResourceExchangeDetailModel.Empty,
+                0,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                0,
+                default,
+                default,
+                default,
+                default);
+
+        public UiResourceExchangeRecipeCardModel GetRecipeCard(int index)
+        {
+            return index switch
+            {
+                0 => RecipeCard0,
+                1 => RecipeCard1,
+                2 => RecipeCard2,
+                3 => RecipeCard3,
+                4 => RecipeCard4,
+                5 => RecipeCard5,
+                6 => RecipeCard6,
+                _ => default
+            };
+        }
+
+        public UiResourceExchangeQueueRowModel GetQueueRow(int index)
+        {
+            return index switch
+            {
+                0 => QueueRow0,
+                1 => QueueRow1,
+                2 => QueueRow2,
+                3 => QueueRow3,
                 _ => default
             };
         }

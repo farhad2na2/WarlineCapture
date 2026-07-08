@@ -17,6 +17,9 @@ public sealed class ResourceExchangePopupPrefabTests
 
         ResourceExchangePopupView view = prefab.GetComponent<ResourceExchangePopupView>();
         Assert.NotNull(view, "Resource Exchange popup must own ResourceExchangePopupView.");
+        ResourceExchangePopupRuntimeView runtimeView = prefab.GetComponent<ResourceExchangePopupRuntimeView>();
+        Assert.NotNull(runtimeView, "Resource Exchange popup must own ResourceExchangePopupRuntimeView.");
+        Assert.AreSame(view, runtimeView.View, "Runtime presenter must target the serialized Resource Exchange view.");
         Assert.NotNull(view.CloseButton, "Close button must be serialized.");
         Assert.NotNull(view.ExportTabButton, "Export tab must be serialized.");
         Assert.NotNull(view.ImportTabButton, "Import tab must be serialized.");

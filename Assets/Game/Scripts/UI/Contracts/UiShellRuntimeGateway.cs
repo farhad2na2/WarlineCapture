@@ -52,6 +52,8 @@ namespace Game.UI.Contracts
 
         bool TryReadBuildDrawer(out UiBuildDrawerModel drawer);
 
+        bool TryReadResourceExchange(out UiResourceExchangeModel exchange);
+
         bool TryReadBuildPlacementConfirmationBar(out UiBuildPlacementConfirmationBarModel placementBar);
 
         bool TryReadArmoryCategory(out ArmoryCatalogCategory category);

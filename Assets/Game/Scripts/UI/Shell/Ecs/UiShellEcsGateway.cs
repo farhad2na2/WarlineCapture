@@ -1722,6 +1722,134 @@ namespace Game.UI.Shell.Ecs
             return true;
         }
 
+        public static bool TryReadResourceExchange(out UiResourceExchangeModel exchange)
+        {
+            exchange = UiResourceExchangeModel.Empty;
+            if (!TryGetBoundary(out EntityManager entityManager, out Entity boundary))
+                return false;
+
+            EnsureResourceExchangeUiState(entityManager, boundary);
+            UiResourceExchangeStateComponent state =
+                entityManager.GetComponentData<UiResourceExchangeStateComponent>(boundary);
+            UiResourceExchangeDetailComponent detail =
+                entityManager.GetComponentData<UiResourceExchangeDetailComponent>(boundary);
+            DynamicBuffer<UiResourceExchangeRecipeCardComponent> cards =
+                entityManager.GetBuffer<UiResourceExchangeRecipeCardComponent>(boundary, true);
+            DynamicBuffer<UiResourceExchangeQueueRowComponent> queue =
+                entityManager.GetBuffer<UiResourceExchangeQueueRowComponent>(boundary, true);
+
+            UiResourceExchangeRecipeCardModel card0 = default;
+            UiResourceExchangeRecipeCardModel card1 = default;
+            UiResourceExchangeRecipeCardModel card2 = default;
+            UiResourceExchangeRecipeCardModel card3 = default;
+            UiResourceExchangeRecipeCardModel card4 = default;
+            UiResourceExchangeRecipeCardModel card5 = default;
+            UiResourceExchangeRecipeCardModel card6 = default;
+            int cardCount = Mathf.Min(cards.Length, UiResourceExchangeModel.MaxRecipeCards);
+            for (int i = 0; i < cardCount; i++)
+            {
+                UiResourceExchangeRecipeCardModel card = ToResourceExchangeRecipeCard(cards[i], i);
+                switch (i)
+                {
+                    case 0:
+                        card0 = card;
+                        break;
+                    case 1:
+                        card1 = card;
+                        break;
+                    case 2:
+                        card2 = card;
+                        break;
+                    case 3:
+                        card3 = card;
+                        break;
+                    case 4:
+                        card4 = card;
+                        break;
+                    case 5:
+                        card5 = card;
+                        break;
+                    case 6:
+                        card6 = card;
+                        break;
+                }
+            }
+
+            UiResourceExchangeQueueRowModel row0 = default;
+            UiResourceExchangeQueueRowModel row1 = default;
+            UiResourceExchangeQueueRowModel row2 = default;
+            UiResourceExchangeQueueRowModel row3 = default;
+            int rowCount = Mathf.Min(queue.Length, UiResourceExchangeModel.MaxQueueRows);
+            for (int i = 0; i < rowCount; i++)
+            {
+                UiResourceExchangeQueueRowModel row = ToResourceExchangeQueueRow(queue[i], i);
+                switch (i)
+                {
+                    case 0:
+                        row0 = row;
+                        break;
+                    case 1:
+                        row1 = row;
+                        break;
+                    case 2:
+                        row2 = row;
+                        break;
+                    case 3:
+                        row3 = row;
+                        break;
+                }
+            }
+
+            exchange = new UiResourceExchangeModel(
+                state.Version,
+                state.ActiveTab == UiResourceExchangeTab.Import
+                    ? UiResourceExchangeTabKind.Import
+                    : UiResourceExchangeTabKind.Export,
+                state.SelectedRecipeSlot,
+                state.ExportRecipeCount,
+                state.ImportRecipeCount,
+                state.QueueCount,
+                state.ActiveCount,
+                state.CompletedCount,
+                state.MaxQueueItems,
+                state.QueueCapacityText.ToString(),
+                state.CreditsText.ToString(),
+                state.MaterialsText.ToString(),
+                state.OilText.ToString(),
+                state.FuelText.ToString(),
+                state.RushTicketsText.ToString(),
+                state.ExchangeEnabled != 0,
+                state.RushAllEnabled != 0,
+                state.ClearCompletedEnabled != 0,
+                new UiResourceExchangeDetailModel(
+                    detail.RecipeId.ToString(),
+                    detail.Name.ToString(),
+                    detail.RouteText.ToString(),
+                    detail.RateText.ToString(),
+                    detail.AmountText.ToString(),
+                    detail.InputCostText.ToString(),
+                    detail.OutputPreviewText.ToString(),
+                    detail.DurationText.ToString(),
+                    detail.RequirementsText.ToString(),
+                    detail.InstructionText.ToString(),
+                    detail.ConfirmEnabled != 0,
+                    detail.WarningVisible != 0),
+                cardCount,
+                card0,
+                card1,
+                card2,
+                card3,
+                card4,
+                card5,
+                card6,
+                rowCount,
+                row0,
+                row1,
+                row2,
+                row3);
+            return true;
+        }
+
         public static bool TryReadBuildPlacementConfirmationBar(out UiBuildPlacementConfirmationBarModel placementBar)
         {
             placementBar = UiBuildPlacementConfirmationBarModel.Hidden;
@@ -1875,6 +2003,68 @@ namespace Game.UI.Shell.Ecs
                 row.NumberText.ToString(),
                 row.Name.ToString(),
                 row.TimeText.ToString());
+        }
+
+        private static UiResourceExchangeRecipeCardModel ToResourceExchangeRecipeCard(
+            UiResourceExchangeRecipeCardComponent card,
+            int slotIndex)
+        {
+            return new UiResourceExchangeRecipeCardModel(
+                card.Visible != 0,
+                card.Enabled != 0,
+                card.Selected != 0,
+                card.Locked != 0,
+                card.WarningVisible != 0,
+                slotIndex,
+                card.RecipeId.ToString(),
+                card.Title.ToString(),
+                card.InputText.ToString(),
+                card.OutputText.ToString(),
+                card.DurationText.ToString(),
+                card.ReasonText.ToString());
+        }
+
+        private static UiResourceExchangeQueueRowModel ToResourceExchangeQueueRow(
+            UiResourceExchangeQueueRowComponent row,
+            int slotIndex)
+        {
+            return new UiResourceExchangeQueueRowModel(
+                row.Visible != 0,
+                row.RushEnabled != 0,
+                row.CancelEnabled != 0,
+                row.CompletedVisible != 0,
+                row.State == UiResourceExchangeQueueState.Blocked,
+                row.QueueItemId,
+                slotIndex,
+                ToResourceExchangeQueueStateKind(row.State),
+                row.NumberText.ToString(),
+                row.Name.ToString(),
+                row.InputText.ToString(),
+                row.OutputText.ToString(),
+                row.TimeText.ToString(),
+                row.PercentText.ToString(),
+                row.StateText.ToString(),
+                row.Progress01);
+        }
+
+        private static UiResourceExchangeQueueStateKind ToResourceExchangeQueueStateKind(
+            UiResourceExchangeQueueState state)
+        {
+            switch (state)
+            {
+                case UiResourceExchangeQueueState.Pending:
+                    return UiResourceExchangeQueueStateKind.Pending;
+                case UiResourceExchangeQueueState.InProgress:
+                    return UiResourceExchangeQueueStateKind.InProgress;
+                case UiResourceExchangeQueueState.Completed:
+                    return UiResourceExchangeQueueStateKind.Completed;
+                case UiResourceExchangeQueueState.Cancelled:
+                    return UiResourceExchangeQueueStateKind.Cancelled;
+                case UiResourceExchangeQueueState.Blocked:
+                    return UiResourceExchangeQueueStateKind.Blocked;
+                default:
+                    return UiResourceExchangeQueueStateKind.None;
+            }
         }
 
         private static Sprite ResolveBuildDrawerSprite(FixedString64Bytes spriteKey)
@@ -2097,6 +2287,41 @@ namespace Game.UI.Shell.Ecs
             }
         }
 
+        private static void EnsureResourceExchangeUiState(EntityManager entityManager, Entity boundary)
+        {
+            if (!entityManager.HasComponent<UiResourceExchangeStateComponent>(boundary))
+            {
+                entityManager.AddComponentData(boundary, new UiResourceExchangeStateComponent
+                {
+                    ActiveTab = UiResourceExchangeTab.Export,
+                    SelectedRecipeSlot = 0,
+                    QueueCapacityText = new FixedString32Bytes("0/0"),
+                    CreditsText = new FixedString32Bytes("0"),
+                    MaterialsText = new FixedString32Bytes("0"),
+                    OilText = new FixedString32Bytes("0"),
+                    FuelText = new FixedString32Bytes("0"),
+                    RushTicketsText = new FixedString32Bytes("0")
+                });
+            }
+
+            if (!entityManager.HasComponent<UiResourceExchangeDetailComponent>(boundary))
+            {
+                entityManager.AddComponentData(boundary, new UiResourceExchangeDetailComponent
+                {
+                    Name = new FixedString64Bytes("RESOURCE EXCHANGE"),
+                    RouteText = new FixedString32Bytes("EXPORT"),
+                    RequirementsText = new FixedString64Bytes("Exchange unavailable."),
+                    InstructionText = new FixedString128Bytes("Resource Exchange is not enabled for this scenario.")
+                });
+            }
+
+            if (!entityManager.HasBuffer<UiResourceExchangeRecipeCardComponent>(boundary))
+                entityManager.AddBuffer<UiResourceExchangeRecipeCardComponent>(boundary);
+
+            if (!entityManager.HasBuffer<UiResourceExchangeQueueRowComponent>(boundary))
+                entityManager.AddBuffer<UiResourceExchangeQueueRowComponent>(boundary);
+        }
+
         private static void EnsureBuildPlacementConfirmationBarState(EntityManager entityManager, Entity boundary)
         {
             if (entityManager.HasComponent<UiBuildPlacementConfirmationBarComponent>(boundary))
@@ -2315,6 +2540,11 @@ namespace Game.UI.Shell.Ecs
         bool IUiShellRuntimeGateway.TryReadBuildDrawer(out UiBuildDrawerModel drawer)
         {
             return TryReadBuildDrawer(out drawer);
+        }
+
+        bool IUiShellRuntimeGateway.TryReadResourceExchange(out UiResourceExchangeModel exchange)
+        {
+            return TryReadResourceExchange(out exchange);
         }
 
         bool IUiShellRuntimeGateway.TryReadBuildPlacementConfirmationBar(out UiBuildPlacementConfirmationBarModel placementBar)

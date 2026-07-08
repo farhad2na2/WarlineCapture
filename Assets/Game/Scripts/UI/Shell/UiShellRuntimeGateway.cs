@@ -114,6 +114,11 @@ namespace Game.UI.Runtime
             return current.TryReadBuildDrawer(out drawer);
         }
 
+        public static bool TryReadResourceExchange(out UiResourceExchangeModel exchange)
+        {
+            return current.TryReadResourceExchange(out exchange);
+        }
+
         public static bool TryReadBuildPlacementConfirmationBar(out UiBuildPlacementConfirmationBarModel placementBar)
         {
             return current.TryReadBuildPlacementConfirmationBar(out placementBar);
@@ -256,6 +261,12 @@ namespace Game.UI.Runtime
             public bool TryReadBuildDrawer(out UiBuildDrawerModel drawer)
             {
                 drawer = UiBuildDrawerModel.Empty;
+                return false;
+            }
+
+            public bool TryReadResourceExchange(out UiResourceExchangeModel exchange)
+            {
+                exchange = UiResourceExchangeModel.Empty;
                 return false;
             }
 

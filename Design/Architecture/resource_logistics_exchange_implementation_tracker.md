@@ -23,7 +23,7 @@ Implement the timed Resource Logistics Exchange without drifting from WarlineCap
 
 ## Progress Summary
 
-Overall implementation progress: 63% (58/92 checklist items complete).
+Overall implementation progress: 63% (59/93 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -34,7 +34,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 2. Request validation and queue start | Complete | 10 | 10 | 100% | Added ISystem request validation, ECS wallet boundary, input reservation, queue item creation, economy event row, and typed results. |
 | 3. Queue ticking, completion, cancel, refund | Complete | 11 | 11 | 100% | Timed queue, output grant once, cancel/refund rules, mission-end cancel/refund policy. |
 | 4. Rush Tickets | Complete | 7 | 7 | 100% | Rush eligible jobs with ticket spend, per-item caps, rush-all budget, and feedback. |
-| 5. UI popup and header routing | In progress | 10 | 13 | 77% | ECS-backed UI read-model, target-lock reference, separated layer pack, Canvas popup prefab, serialized view refs, cards, details, amount stepper, queue panel, enabled-gated resource header tap route, and popup input restoration complete; captures and live binding remain. |
+| 5. UI popup and header routing | In progress | 11 | 14 | 79% | ECS-backed UI read-model, target-lock reference, separated layer pack, Canvas popup prefab, serialized view refs, cards, details, amount stepper, queue panel, enabled-gated resource header tap route, popup input restoration, and live read-model binding complete; captures and full button request backend remain. |
 | 6. World presentation | Not started | 0 | 8 | 0% | Non-authoritative pooled truck/plane presentation and fallback behavior. |
 | 7. Audio, VFX, feedback, ARIA | Not started | 0 | 7 | 0% | Config-driven audio, resource flyouts, completion/reject feedback, optional ARIA copy. |
 | 8. AI, balance, telemetry | Not started | 0 | 6 | 0% | Economy events, balancing reports, AI awareness if enabled for AI factions. |
@@ -165,6 +165,7 @@ Exit criteria:
 - [x] Add exchange queue panel rows with progress, ETA, rush, cancel, and complete state.
 - [x] Route match `ResourceBar` tap/click to popup only when exchange is enabled.
 - [x] Ensure popup blocks world input and restores prior match HUD state on close.
+- [x] Bind installed POP-12 popup to the ECS read model and typed tab/card/control UI actions.
 - [ ] Ensure all runtime text uses TMP/Oxanium rules from UI docs.
 - [ ] Validate 16:9 and 20:9 layout with captures.
 - [ ] Add focused UI/prefab tests for object ids, button wiring, disabled reasons, and input suppression.
@@ -644,3 +645,48 @@ Remaining blocker or next slice:
 
 - Next slice should bind the installed POP-12 popup to the ECS read model and its typed recipe/tab/amount/queue button requests.
 - TMP/Oxanium validation and 16:9/20:9 captures remain required before this popup is player-facing.
+
+### 2026-07-08 - Phase 5H POP-12 Live Read-Model Binding
+
+Files changed:
+
+- `Assets/Game/Prefabs/UI/Shell/Popups/POP12_ResourceExchangePopup.prefab`
+- `Assets/Game/Scripts/Editor/ResourceExchangePopupPrefabBuilder.cs`
+- `Assets/Game/Scripts/UI/Contracts/UiShellComponents.cs`
+- `Assets/Game/Scripts/UI/Contracts/UiShellRuntimeGateway.cs`
+- `Assets/Game/Scripts/UI/Screens/ResourceExchangePopupRuntimeView.cs`
+- `Assets/Game/Scripts/UI/Screens/ResourceExchangePopupView.cs`
+- `Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs`
+- `Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs`
+- `Assets/Game/Scripts/UI/Shell/UiShellRuntimeGateway.cs`
+- `Assets/Tests/Editor/MatchHudAssistantUiSystemHelperTests.cs`
+- `Assets/Tests/Editor/ResourceExchangeHeaderRoutingTests.cs`
+- `Assets/Tests/Editor/ResourceExchangePopupPrefabTests.cs`
+- `Assets/Tests/Editor/UiResourceExchangeReadModelSystemTests.cs`
+- `Design/Architecture/resource_logistics_exchange_implementation_tracker.md`
+
+Behavior changed:
+
+- Added `UiResourceExchangeModel`, detail, card, and queue row UI contract models so POP-12 can read an ECS-published snapshot through the same UI gateway pattern used by other shell screens.
+- Added `UiShellRuntimeGateway.TryReadResourceExchange` and `UiShellEcsGateway.TryReadResourceExchange`, converting `UiResourceExchange*Component` ECS data into managed UI strings and bounded card/queue row structs.
+- Added `ResourceExchangePopupRuntimeView`, a managed presentation-only component that applies the read model to `ResourceExchangePopupView` on version changes and never owns resource policy, conversion math, or queue authority.
+- Extended `ResourceExchangePopupView` with `ApplyModel`, recipe-card application, queue-row application, and thumbnail resolution helpers while keeping art references serialized on the view.
+- Regenerated `POP12_ResourceExchangePopup.prefab` from `ResourceExchangePopupPrefabBuilder` so the prefab owns both `ResourceExchangePopupView` and `ResourceExchangePopupRuntimeView`.
+- Added append-only typed UI actions for Resource Exchange tab, recipe, amount, confirm, rush-all, clear-completed, row rush, and row cancel controls.
+- `UiActionRequestSystem` now consumes Resource Exchange tab/card actions, suppresses matching world input for all POP-12 controls, updates ECS UI tab/selected-card state, and leaves amount/confirm/queue gameplay request handling for the next backend-wiring slice.
+- Fixed an existing `UiResourceExchangeReadModelSystemTests` ECS buffer lifetime issue by reacquiring the recipe buffer after the test creates a second entity.
+
+Validation:
+
+- `git diff --check` passed after trimming Unity YAML trailing spaces from the regenerated prefab.
+- `dotnet build Game.UI.Contracts.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 4 warnings and 0 errors.
+- `dotnet build Game.UI.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 6 warnings and 0 errors.
+- `dotnet build Game.UI.Shell.Ecs.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 7 warnings and 0 errors.
+- `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 10 warnings and 0 errors.
+- Unity batchmode POP-12 prefab rebuild passed: `/private/tmp/warline-resource-exchange-popup-livebinding-build.log`.
+- Unity EditMode focused ResourceExchange tests passed 33/33: `/private/tmp/warline-resource-exchange-popup-livebinding-tests.xml` and `/private/tmp/warline-resource-exchange-popup-livebinding-tests.log`.
+
+Remaining blocker or next slice:
+
+- Next slice should route `ResourceExchangeConfirm`, amount stepper changes, row rush/cancel, rush-all, and clear-completed actions into the existing `ResourceExchangeRequestComponent` buffers without adding UI-owned economy policy.
+- TMP/Oxanium validation and 16:9/20:9 layout captures remain required before this popup is player-facing.

@@ -1,5 +1,6 @@
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 using Game.Tactical.Contracts;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
@@ -81,6 +82,11 @@ namespace Game.UI.Shell.Ecs
                 state.EntityManager.GetComponentData<UiMatchHudSquadTrayStateComponent>(boundary);
             UiBuildDrawerStateComponent buildDrawerState =
                 state.EntityManager.GetComponentData<UiBuildDrawerStateComponent>(boundary);
+            bool hasResourceExchangeState =
+                state.EntityManager.HasComponent<UiResourceExchangeStateComponent>(boundary);
+            UiResourceExchangeStateComponent resourceExchangeState = hasResourceExchangeState
+                ? state.EntityManager.GetComponentData<UiResourceExchangeStateComponent>(boundary)
+                : default;
             UiDiagnosticsOverlayComponent diagnosticsOverlay =
                 state.EntityManager.GetComponentData<UiDiagnosticsOverlayComponent>(boundary);
             RtsSelectionInputStateComponent inputState =
@@ -114,6 +120,8 @@ namespace Game.UI.Shell.Ecs
                     ref passengerDrawerState,
                     ref squadTrayState,
                     ref buildDrawerState,
+                    ref resourceExchangeState,
+                    hasResourceExchangeState,
                     ref placementQueue,
                     resourceExchangeEnabled,
                     frame,
@@ -124,6 +132,8 @@ namespace Game.UI.Shell.Ecs
             state.EntityManager.SetComponentData(boundary, passengerDrawerState);
             state.EntityManager.SetComponentData(boundary, squadTrayState);
             state.EntityManager.SetComponentData(boundary, buildDrawerState);
+            if (hasResourceExchangeState)
+                state.EntityManager.SetComponentData(boundary, resourceExchangeState);
             state.EntityManager.SetComponentData(boundary, diagnosticsOverlay);
             state.EntityManager.SetComponentData(selectionInput, inputState);
             state.EntityManager.SetComponentData(selectionInput, queue);
@@ -233,6 +243,8 @@ namespace Game.UI.Shell.Ecs
             ref UiMatchHudPassengerDrawerStateComponent passengerDrawerState,
             ref UiMatchHudSquadTrayStateComponent squadTrayState,
             ref UiBuildDrawerStateComponent buildDrawerState,
+            ref UiResourceExchangeStateComponent resourceExchangeState,
+            bool hasResourceExchangeState,
             ref BuildingUiPlacementCommandQueueComponent placementQueue,
             bool resourceExchangeEnabled,
             int frame,
@@ -290,6 +302,33 @@ namespace Game.UI.Shell.Ecs
                         buildDrawerState.ActiveCategory = category;
                         buildDrawerState.SelectedCatalogSlot = 0;
                     }
+                    break;
+                case UiActionKind.ResourceExchangeTab:
+                    CaptureUiClickSequence(ref inputState, commandRequests, frame);
+                    if (hasResourceExchangeState &&
+                        TryResolveResourceExchangeTab(request.PayloadId, out UiResourceExchangeTab exchangeTab))
+                    {
+                        resourceExchangeState.ActiveTab = exchangeTab;
+                        resourceExchangeState.SelectedRecipeSlot = 0;
+                        resourceExchangeState.Version++;
+                    }
+                    break;
+                case UiActionKind.ResourceExchangeRecipe:
+                    CaptureUiClickSequence(ref inputState, commandRequests, frame);
+                    if (hasResourceExchangeState)
+                    {
+                        resourceExchangeState.SelectedRecipeSlot = math.max(0, request.PayloadId);
+                        resourceExchangeState.Version++;
+                    }
+                    break;
+                case UiActionKind.ResourceExchangeAmountDecrease:
+                case UiActionKind.ResourceExchangeAmountIncrease:
+                case UiActionKind.ResourceExchangeConfirm:
+                case UiActionKind.ResourceExchangeRushAll:
+                case UiActionKind.ResourceExchangeClearCompleted:
+                case UiActionKind.ResourceExchangeQueueRush:
+                case UiActionKind.ResourceExchangeQueueCancel:
+                    CaptureUiClickSequence(ref inputState, commandRequests, frame);
                     break;
                 case UiActionKind.BuildDrawerPrimaryBuild:
                     CaptureUiClickSequence(ref inputState, commandRequests, frame);
@@ -551,6 +590,24 @@ namespace Game.UI.Shell.Ecs
             }
 
             category = BuildDrawerCategory.Buildings;
+            return false;
+        }
+
+        private static bool TryResolveResourceExchangeTab(int payloadId, out UiResourceExchangeTab tab)
+        {
+            if (payloadId == (int)UiResourceExchangeTab.Import)
+            {
+                tab = UiResourceExchangeTab.Import;
+                return true;
+            }
+
+            if (payloadId == (int)UiResourceExchangeTab.Export)
+            {
+                tab = UiResourceExchangeTab.Export;
+                return true;
+            }
+
+            tab = UiResourceExchangeTab.Export;
             return false;
         }
 

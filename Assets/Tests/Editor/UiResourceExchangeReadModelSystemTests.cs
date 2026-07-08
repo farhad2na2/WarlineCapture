@@ -49,7 +49,7 @@ public sealed class UiResourceExchangeReadModelSystemTests
                 CompletedCount = 0,
                 Version = 7
             },
-            recipes,
+            em.GetBuffer<ResourceExchangeRecipeComponent>(exchange),
             em.GetBuffer<ResourceExchangeQueueComponent>(exchange),
             ref state,
             ref detail,

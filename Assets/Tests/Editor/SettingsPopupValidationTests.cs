@@ -315,8 +315,11 @@ public sealed class SettingsPopupValidationTests
 
         SettingsPanelView panel = popupView.SettingsPanel;
         Assert.GreaterOrEqual(panel.GetComponentsInChildren<UISliderRowView>(true).Length, 4, $"{prefabPath} must expose audio and camera sliders.");
-        Assert.GreaterOrEqual(panel.GetComponentsInChildren<UIToggleRowView>(true).Length, 3, $"{prefabPath} must expose notification and accessibility toggles.");
-        Assert.GreaterOrEqual(panel.GetComponentsInChildren<UISegmentedControlView>(true).Length, 5, $"{prefabPath} must expose graphics, framerate, assistant, color, and language segments.");
+        Assert.GreaterOrEqual(panel.GetComponentsInChildren<UIToggleRowView>(true).Length, 5, $"{prefabPath} must expose notification, accessibility, and ARIA toggles.");
+        Assert.GreaterOrEqual(panel.GetComponentsInChildren<UISegmentedControlView>(true).Length, 6, $"{prefabPath} must expose graphics, framerate, ARIA, color, and language segments.");
+        Assert.NotNull(FindChild(prefab.transform, "NarrationModeControl"), $"{prefabPath} must expose ARIA narration mode control.");
+        Assert.NotNull(FindChild(prefab.transform, "AssistantTakeoverRow"), $"{prefabPath} must expose ARIA takeover toggle.");
+        Assert.NotNull(FindChild(prefab.transform, "AssistantSubtitlesRow"), $"{prefabPath} must expose ARIA subtitle toggle.");
     }
 
     private static void AssertSettingsPopupInstance(GameObject popup, SettingsPopupContext expectedContext)
@@ -346,11 +349,14 @@ public sealed class SettingsPopupValidationTests
         AssertTextPairDoesNotOverlap(prefab.transform, "SfxVolumeRow", "Label", "Value", prefabPath);
         AssertTextPairDoesNotOverlap(prefab.transform, "CameraSensitivityRow", "Label", "Value", prefabPath);
         AssertTextPairDoesNotOverlap(prefab.transform, "ThreatWarningsRow", "Label", "State", prefabPath);
+        AssertTextPairDoesNotOverlap(prefab.transform, "AssistantTakeoverRow", "Label", "State", prefabPath);
         AssertTextPairDoesNotOverlap(prefab.transform, "HighContrastRow", "Label", "State", prefabPath);
         AssertTextPairDoesNotOverlap(prefab.transform, "LargeTextRow", "Label", "State", prefabPath);
+        AssertTextPairDoesNotOverlap(prefab.transform, "AssistantSubtitlesRow", "Label", "State", prefabPath);
         AssertSegmentLabelsFit(prefab.transform, "GraphicsQualityControl", prefabPath);
         AssertSegmentLabelsFit(prefab.transform, "FrameRateControl", prefabPath);
         AssertSegmentLabelsFit(prefab.transform, "AssistanceLevelControl", prefabPath);
+        AssertSegmentLabelsFit(prefab.transform, "NarrationModeControl", prefabPath);
         AssertSegmentLabelsFit(prefab.transform, "ColorblindModeControl", prefabPath);
         AssertSegmentLabelsFit(prefab.transform, "LanguageControl", prefabPath);
     }

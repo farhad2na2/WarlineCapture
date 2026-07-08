@@ -49,6 +49,7 @@ namespace Game.Editor
         private static readonly string[] GraphicsQualityLabels = { "LOW", "MEDIUM", "HIGH", "ULTRA" };
         private static readonly string[] FrameRateLabels = { "30 FPS", "60 FPS", "120 FPS" };
         private static readonly string[] AssistanceLevelLabels = { "FULL", "HINTS", "MINIMAL", "OFF" };
+        private static readonly string[] NarrationModeLabels = { "OFF", "CRITICAL", "IMPORTANT", "ALL" };
         private static readonly string[] ColorblindModeLabels = { "OFF", "PRO", "DEU", "TRI" };
         private static readonly string[] LanguageLabels = { "EN", "DE", "FR", "ES" };
 
@@ -140,26 +141,29 @@ namespace Game.Editor
 
             SettingsPanelView panelView = panel.gameObject.AddComponent<SettingsPanelView>();
             RectTransform content = CreateRect("Content", panel, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(1540f, 720f), new Vector2(0f, -470f));
-            RectTransform audioSection = CreateSection("AudioSection", content, "AUDIO", new Vector2(-395f, 190f), new Vector2(750f, 300f));
-            RectTransform controlSection = CreateSection("ControlSection", content, "GAMEPLAY", new Vector2(-395f, -170f), new Vector2(750f, 330f));
-            RectTransform displaySection = CreateSection("DisplaySection", content, "VIDEO", new Vector2(395f, 190f), new Vector2(750f, 280f));
-            RectTransform accessSection = CreateSection("AccessibilitySection", content, "ACCESSIBILITY", new Vector2(395f, -150f), new Vector2(750f, 380f));
+            RectTransform audioSection = CreateSection("AudioSection", content, "AUDIO", new Vector2(-395f, 210f), new Vector2(750f, 280f));
+            RectTransform controlSection = CreateSection("ControlSection", content, "GAMEPLAY", new Vector2(-395f, -160f), new Vector2(750f, 400f));
+            RectTransform displaySection = CreateSection("DisplaySection", content, "VIDEO", new Vector2(395f, 220f), new Vector2(750f, 250f));
+            RectTransform accessSection = CreateSection("AccessibilitySection", content, "ACCESSIBILITY", new Vector2(395f, -150f), new Vector2(750f, 420f));
 
             UISliderRowView master = CreateSliderRow("MasterVolumeRow", audioSection, "MASTER VOLUME", 52f, 72f);
             UISliderRowView music = CreateSliderRow("MusicVolumeRow", audioSection, "MUSIC", 130f, 72f);
             UISliderRowView sfx = CreateSliderRow("SfxVolumeRow", audioSection, "SFX", 208f, 72f);
 
-            UISliderRowView camera = CreateSliderRow("CameraSensitivityRow", controlSection, "CAMERA SENSITIVITY", 52f, 72f);
-            UIToggleRowView threat = CreateToggleRow("ThreatWarningsRow", controlSection, "THREAT WARNINGS", "Show tactical warnings during missions.", 130f, 70f);
-            UISegmentedControlView assistance = CreateSegmentRow("AssistanceLevelControl", controlSection, "ASSISTANT GUIDANCE", 208f, AssistanceLevelLabels, 84f);
+            UISliderRowView camera = CreateSliderRow("CameraSensitivityRow", controlSection, "CAMERA SENSITIVITY", 46f, 62f);
+            UIToggleRowView threat = CreateToggleRow("ThreatWarningsRow", controlSection, "THREAT WARNINGS", "Show tactical warnings during missions.", 112f, 58f);
+            UISegmentedControlView assistance = CreateSegmentRow("AssistanceLevelControl", controlSection, "ASSISTANT GUIDANCE", 174f, AssistanceLevelLabels, 78f);
+            UISegmentedControlView narration = CreateSegmentRow("NarrationModeControl", controlSection, "NARRATION", 254f, NarrationModeLabels, 78f);
+            UIToggleRowView takeover = CreateToggleRow("AssistantTakeoverRow", controlSection, "ASSISTANT TAKEOVER", "Allow assistant-guided bounded actions.", 336f, 58f);
 
             UISegmentedControlView quality = CreateSegmentRow("GraphicsQualityControl", displaySection, "GRAPHICS QUALITY", 52f, GraphicsQualityLabels, 84f);
             UISegmentedControlView frameRate = CreateSegmentRow("FrameRateControl", displaySection, "FRAME RATE", 144f, FrameRateLabels, 84f);
 
-            UIToggleRowView contrast = CreateToggleRow("HighContrastRow", accessSection, "HIGH CONTRAST UI", "Increase panel and text contrast.", 52f, 70f);
-            UIToggleRowView largeText = CreateToggleRow("LargeTextRow", accessSection, "LARGE TEXT", "Increase UI text scale for readability.", 124f, 70f);
-            UISegmentedControlView colorblind = CreateSegmentRow("ColorblindModeControl", accessSection, "COLORBLIND MODE", 200f, ColorblindModeLabels, 84f);
-            UISegmentedControlView language = CreateSegmentRow("LanguageControl", accessSection, "LANGUAGE", 282f, LanguageLabels, 84f);
+            UIToggleRowView contrast = CreateToggleRow("HighContrastRow", accessSection, "HIGH CONTRAST UI", "Increase panel and text contrast.", 48f, 58f);
+            UIToggleRowView largeText = CreateToggleRow("LargeTextRow", accessSection, "LARGE TEXT", "Increase UI text scale for readability.", 110f, 58f);
+            UIToggleRowView subtitles = CreateToggleRow("AssistantSubtitlesRow", accessSection, "ASSISTANT SUBTITLES", "Show narration subtitles in the assistant panel.", 172f, 58f);
+            UISegmentedControlView colorblind = CreateSegmentRow("ColorblindModeControl", accessSection, "COLORBLIND MODE", 238f, ColorblindModeLabels, 78f);
+            UISegmentedControlView language = CreateSegmentRow("LanguageControl", accessSection, "LANGUAGE", 320f, LanguageLabels, 78f);
 
             SetObject(panelView, "masterVolumeRow", master);
             SetObject(panelView, "musicVolumeRow", music);
@@ -171,6 +175,9 @@ namespace Game.Editor
             SetObject(panelView, "highContrastRow", contrast);
             SetObject(panelView, "largeTextRow", largeText);
             SetObject(panelView, "assistanceLevelControl", assistance);
+            SetObject(panelView, "narrationModeControl", narration);
+            SetObject(panelView, "assistantTakeoverRow", takeover);
+            SetObject(panelView, "assistantSubtitlesRow", subtitles);
             SetObject(panelView, "colorblindModeControl", colorblind);
             SetObject(panelView, "languageControl", language);
 

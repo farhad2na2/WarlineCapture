@@ -10,6 +10,7 @@ namespace Game.UI.Runtime
         private static readonly string[] GraphicsQualityLabels = { "LOW", "MEDIUM", "HIGH", "ULTRA" };
         private static readonly string[] FrameRateLabels = { "30 FPS", "60 FPS", "120 FPS" };
         private static readonly string[] AssistanceLevelLabels = { "FULL", "HINTS", "MINIMAL", "OFF" };
+        private static readonly string[] NarrationModeLabels = { "OFF", "CRITICAL", "IMPORTANT", "ALL" };
         private static readonly string[] ColorblindModeLabels = { "OFF", "PRO", "DEU", "TRI" };
         private static readonly string[] LanguageLabels = { "EN", "DE", "FR", "ES" };
 
@@ -25,6 +26,9 @@ namespace Game.UI.Runtime
         [SerializeField] private UIToggleRowView highContrastRow;
         [SerializeField] private UIToggleRowView largeTextRow;
         [SerializeField] private UISegmentedControlView assistanceLevelControl;
+        [SerializeField] private UISegmentedControlView narrationModeControl;
+        [SerializeField] private UIToggleRowView assistantTakeoverRow;
+        [SerializeField] private UIToggleRowView assistantSubtitlesRow;
         [SerializeField] private UISegmentedControlView colorblindModeControl;
         [SerializeField] private UISegmentedControlView languageControl;
         [SerializeField] private TMP_Dropdown colorblindModeDropdown;
@@ -59,6 +63,9 @@ namespace Game.UI.Runtime
             highContrastRow?.Bind("High Contrast UI", "Increase panel and text contrast.", model.Accessibility.HighContrastUi);
             largeTextRow?.Bind("Large Text", "Increase UI text scale for readability.", model.Accessibility.LargeText);
             assistanceLevelControl?.Bind(AssistanceLevelLabels, (int)model.Assistant.AssistanceLevel);
+            narrationModeControl?.Bind(NarrationModeLabels, (int)model.Assistant.NarrationMode);
+            assistantTakeoverRow?.Bind("Assistant Takeover", "Allow assistant-guided bounded actions.", model.Assistant.AllowTakeover);
+            assistantSubtitlesRow?.Bind("Assistant Subtitles", "Show narration subtitles in the assistant panel.", model.Assistant.SubtitlesEnabled);
             colorblindModeControl?.Bind(ColorblindModeLabels, (int)model.Accessibility.ColorblindMode);
             languageControl?.Bind(LanguageLabels, (int)model.Localization.Language);
             SetDropdownValue(colorblindModeDropdown, (int)model.Accessibility.ColorblindMode);
@@ -85,6 +92,9 @@ namespace Game.UI.Runtime
                 ? (UILanguage)GetDropdownValue(languageDropdown, (int)_model.Localization.Language)
                 : _model.Localization.Language;
             model.Assistant.AssistanceLevel = _model.Assistant.AssistanceLevel;
+            model.Assistant.NarrationMode = _model.Assistant.NarrationMode;
+            model.Assistant.AllowTakeover = GetToggleValue(assistantTakeoverRow, _model.Assistant.AllowTakeover);
+            model.Assistant.SubtitlesEnabled = GetToggleValue(assistantSubtitlesRow, _model.Assistant.SubtitlesEnabled);
             return model;
         }
 
@@ -104,9 +114,12 @@ namespace Game.UI.Runtime
             AddToggleListener(threatWarningsRow, OnThreatWarningsChanged);
             AddToggleListener(highContrastRow, OnHighContrastChanged);
             AddToggleListener(largeTextRow, OnLargeTextChanged);
+            AddToggleListener(assistantTakeoverRow, OnAssistantTakeoverChanged);
+            AddToggleListener(assistantSubtitlesRow, OnAssistantSubtitlesChanged);
             AddSegmentListeners(graphicsQualityControl, OnGraphicsQualityChanged);
             AddSegmentListeners(frameRateControl, OnFrameRateChanged);
             AddSegmentListeners(assistanceLevelControl, OnAssistanceLevelChanged);
+            AddSegmentListeners(narrationModeControl, OnNarrationModeChanged);
             AddSegmentListeners(colorblindModeControl, OnColorblindModeChanged);
             AddSegmentListeners(languageControl, OnLanguageChanged);
 
@@ -127,6 +140,8 @@ namespace Game.UI.Runtime
             RemoveToggleListener(threatWarningsRow, OnThreatWarningsChanged);
             RemoveToggleListener(highContrastRow, OnHighContrastChanged);
             RemoveToggleListener(largeTextRow, OnLargeTextChanged);
+            RemoveToggleListener(assistantTakeoverRow, OnAssistantTakeoverChanged);
+            RemoveToggleListener(assistantSubtitlesRow, OnAssistantSubtitlesChanged);
 
             if (colorblindModeDropdown != null)
                 colorblindModeDropdown.onValueChanged.RemoveListener(OnColorblindModeChanged);
@@ -143,6 +158,8 @@ namespace Game.UI.Runtime
         private void OnThreatWarningsChanged(bool value) => _model.Notifications.ThreatWarnings = value;
         private void OnHighContrastChanged(bool value) => _model.Accessibility.HighContrastUi = value;
         private void OnLargeTextChanged(bool value) => _model.Accessibility.LargeText = value;
+        private void OnAssistantTakeoverChanged(bool value) => _model.Assistant.AllowTakeover = value;
+        private void OnAssistantSubtitlesChanged(bool value) => _model.Assistant.SubtitlesEnabled = value;
 
         private void OnGraphicsQualityChanged(int index)
         {
@@ -160,6 +177,12 @@ namespace Game.UI.Runtime
         {
             _model.Assistant.AssistanceLevel = (UIAssistanceLevel)index;
             assistanceLevelControl?.Bind(AssistanceLevelLabels, (int)_model.Assistant.AssistanceLevel);
+        }
+
+        private void OnNarrationModeChanged(int index)
+        {
+            _model.Assistant.NarrationMode = (UIAssistantNarrationMode)index;
+            narrationModeControl?.Bind(NarrationModeLabels, (int)_model.Assistant.NarrationMode);
         }
 
         private void OnColorblindModeChanged(int value)

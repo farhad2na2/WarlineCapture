@@ -78,11 +78,11 @@ namespace Game.UI.Runtime
             if (_nextActionButton != null)
                 _nextActionButton.interactable = model.CanShow;
             if (_giveControlButton != null)
-                _giveControlButton.interactable = model.CanTakeControl;
+                _giveControlButton.interactable = model.CanExecute;
             if (_nextActionLabelText != null)
                 _nextActionLabelText.text = string.IsNullOrWhiteSpace(model.RecommendationActionLabel) ? "SHOW ME" : model.RecommendationActionLabel;
             if (_giveControlLabelText != null)
-                _giveControlLabelText.text = model.CanTakeControl ? "GIVE CONTROL" : "CONTROL LOCKED";
+                _giveControlLabelText.text = model.CanExecute ? "DO IT" : "CONTROL LOCKED";
         }
     }
 }

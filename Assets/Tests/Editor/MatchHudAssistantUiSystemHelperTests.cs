@@ -117,7 +117,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             "HIGH",
             "SHOW ME",
             true,
-            false,
+            true,
             false,
             "ARIA CONTROL"));
         UiShellRuntimeGateway.Register(assistantGateway);
@@ -132,6 +132,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         TMP_Text recommendation = panel.Find("RecommendationBody")?.GetComponent<TMP_Text>();
         Button showMe = panel.Find("NextActionButton")?.GetComponent<Button>();
         Button giveControl = panel.Find("GiveControlButton")?.GetComponent<Button>();
+        TMP_Text giveControlLabel = panel.Find("GiveControlButton/Label")?.GetComponent<TMP_Text>();
 
         Assert.NotNull(goals);
         Assert.NotNull(alerts);
@@ -139,17 +140,25 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.NotNull(recommendation);
         Assert.NotNull(showMe);
         Assert.NotNull(giveControl);
+        Assert.NotNull(giveControlLabel);
         Assert.AreEqual("- Neutralize hostile patrol\n[x] Protect civilians", goals.text);
         Assert.AreEqual("HIGH: Fuel reserves empty", alerts.text);
         Assert.AreEqual("ARIA CONTROL", ownership.text);
         StringAssert.Contains("HIGH: Review objective", recommendation.text);
         Assert.IsTrue(showMe.interactable);
-        Assert.IsFalse(giveControl.interactable);
+        Assert.IsTrue(giveControl.interactable);
+        Assert.AreEqual("DO IT", giveControlLabel.text);
 
         showMe.onClick.Invoke();
 
         Assert.AreEqual(1, assistantGateway.AssistantIntentRequestCount);
         Assert.AreEqual(UiAssistantCommandIntentKind.ShowRecommendation, assistantGateway.LastAssistantIntentKind);
+        Assert.IsFalse(assistantGateway.LastAssistantIntentFromTakeover);
+
+        giveControl.onClick.Invoke();
+
+        Assert.AreEqual(2, assistantGateway.AssistantIntentRequestCount);
+        Assert.AreEqual(UiAssistantCommandIntentKind.ExecuteRecommendation, assistantGateway.LastAssistantIntentKind);
         Assert.IsFalse(assistantGateway.LastAssistantIntentFromTakeover);
 
         ui.Dispose();

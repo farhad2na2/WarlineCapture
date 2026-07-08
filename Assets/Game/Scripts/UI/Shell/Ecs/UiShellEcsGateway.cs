@@ -139,8 +139,7 @@ namespace Game.UI.Shell.Ecs
             UiAssistantCommandIntentKind kind,
             bool fromTakeover)
         {
-            AssistantCommandIntentKind ecsKind = ToAssistantCommandIntentKind(kind);
-            if (ecsKind == AssistantCommandIntentKind.None ||
+            if (kind == UiAssistantCommandIntentKind.None ||
                 !TryGetBoundary(out EntityManager entityManager, out Entity boundary) ||
                 !entityManager.HasBuffer<AssistantRecommendationElement>(boundary))
             {
@@ -153,7 +152,13 @@ namespace Game.UI.Shell.Ecs
                 return false;
 
             AssistantRecommendationElement recommendation = recommendations[0];
+            AssistantCommandIntentKind ecsKind = ToAssistantCommandIntentKind(kind, recommendation.Kind);
+            if (ecsKind == AssistantCommandIntentKind.None)
+                return false;
+
             if (ecsKind == AssistantCommandIntentKind.ShowRecommendation && recommendation.CanShow == 0)
+                return false;
+            if (kind == UiAssistantCommandIntentKind.ExecuteRecommendation && recommendation.CanExecute == 0)
                 return false;
 
             EnsureAssistantCommandIntentBuffers(entityManager, boundary);
@@ -177,13 +182,28 @@ namespace Game.UI.Shell.Ecs
             return true;
         }
 
-        private static AssistantCommandIntentKind ToAssistantCommandIntentKind(UiAssistantCommandIntentKind kind)
+        private static AssistantCommandIntentKind ToAssistantCommandIntentKind(
+            UiAssistantCommandIntentKind kind,
+            AssistantRecommendationKind recommendationKind)
         {
             return kind switch
             {
                 UiAssistantCommandIntentKind.ShowRecommendation => AssistantCommandIntentKind.ShowRecommendation,
-                UiAssistantCommandIntentKind.ExecuteRecommendation => AssistantCommandIntentKind.AttackEntity,
+                UiAssistantCommandIntentKind.ExecuteRecommendation => ToExecutableIntentKind(recommendationKind),
                 UiAssistantCommandIntentKind.StopAssistantControl => AssistantCommandIntentKind.StopAssistantControl,
+                _ => AssistantCommandIntentKind.None
+            };
+        }
+
+        private static AssistantCommandIntentKind ToExecutableIntentKind(AssistantRecommendationKind recommendationKind)
+        {
+            return recommendationKind switch
+            {
+                AssistantRecommendationKind.Select => AssistantCommandIntentKind.SelectEntity,
+                AssistantRecommendationKind.Move => AssistantCommandIntentKind.MoveToWorldPosition,
+                AssistantRecommendationKind.Attack => AssistantCommandIntentKind.AttackEntity,
+                AssistantRecommendationKind.CameraFocus => AssistantCommandIntentKind.FocusCamera,
+                AssistantRecommendationKind.Stop => AssistantCommandIntentKind.StopAssistantControl,
                 _ => AssistantCommandIntentKind.None
             };
         }

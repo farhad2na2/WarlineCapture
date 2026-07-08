@@ -18,6 +18,8 @@ public sealed class AssistantCommandIntentGatewayTests
         {
             RunCase(test => test.TryEnqueueAssistantCommandIntent_CopiesTopRecommendationIntoRequest());
             passed++;
+            RunCase(test => test.TryEnqueueAssistantCommandIntent_MapsExecutableRecommendationKind());
+            passed++;
 
             Debug.Log($"[AssistantCommandIntentGatewayValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -106,5 +108,36 @@ public sealed class AssistantCommandIntentGatewayTests
         Assert.AreEqual(new int2(4, 5), requests[0].TargetCell);
         Assert.AreEqual(new float3(12f, 3f, 9f), requests[0].WorldPosition);
         Assert.AreEqual(0, requests[0].FromTakeover);
+    }
+
+    [Test]
+    public void TryEnqueueAssistantCommandIntent_MapsExecutableRecommendationKind()
+    {
+        Entity boundary = _entityManager.CreateEntity(typeof(UiShellRootComponent));
+        Entity source = _entityManager.CreateEntity();
+        Entity target = _entityManager.CreateEntity();
+        DynamicBuffer<AssistantRecommendationElement> recommendations =
+            _entityManager.AddBuffer<AssistantRecommendationElement>(boundary);
+        recommendations.Add(new AssistantRecommendationElement
+        {
+            RecommendationId = 3101,
+            Kind = AssistantRecommendationKind.Attack,
+            TargetKind = AssistantTargetKind.Entity,
+            SourceEntity = source,
+            TargetEntity = target,
+            ActionLabel = new FixedString64Bytes("SHOW ME"),
+            CanShow = 1,
+            CanExecute = 1
+        });
+
+        Assert.IsTrue(UiShellEcsGateway.TryEnqueueAssistantCommandIntent(UiAssistantCommandIntentKind.ExecuteRecommendation, false));
+
+        DynamicBuffer<AssistantCommandIntentRequestElement> requests =
+            _entityManager.GetBuffer<AssistantCommandIntentRequestElement>(boundary);
+        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(AssistantCommandIntentKind.AttackEntity, requests[0].Kind);
+        Assert.AreEqual(3101, requests[0].RecommendationId);
+        Assert.AreEqual(source, requests[0].SourceEntity);
+        Assert.AreEqual(target, requests[0].TargetEntity);
     }
 }

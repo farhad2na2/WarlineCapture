@@ -43,7 +43,7 @@ namespace Game.UI.Runtime
             UnbindButton(_button, TogglePanel);
             UnbindButton(_closeButton, ClosePanel);
             UnbindButton(_nextActionButton, ShowRecommendation);
-            UnbindButton(_giveControlButton, CaptureUiOnly);
+            UnbindButton(_giveControlButton, ExecuteRecommendation);
 
             DestroyObject(_buttonRoot != null ? _buttonRoot.gameObject : null);
             DestroyObject(_panelRoot != null ? _panelRoot.gameObject : null);
@@ -132,7 +132,7 @@ namespace Game.UI.Runtime
             _giveControlButton.interactable = false;
 
             _nextActionButton.onClick.AddListener(ShowRecommendation);
-            _giveControlButton.onClick.AddListener(CaptureUiOnly);
+            _giveControlButton.onClick.AddListener(ExecuteRecommendation);
             _closeButton.onClick.AddListener(ClosePanel);
             TMP_Text stateText = _buttonRoot != null ? _buttonRoot.Find("State")?.GetComponent<TMP_Text>() : null;
             _panelUiSystem.Bind(
@@ -217,6 +217,12 @@ namespace Game.UI.Runtime
         {
             CaptureUiOnly();
             UiShellRuntimeGateway.TryEnqueueAssistantCommandIntent(UiAssistantCommandIntentKind.ShowRecommendation);
+        }
+
+        private void ExecuteRecommendation()
+        {
+            CaptureUiOnly();
+            UiShellRuntimeGateway.TryEnqueueAssistantCommandIntent(UiAssistantCommandIntentKind.ExecuteRecommendation);
         }
 
         private void CaptureUiOnly()

@@ -2,6 +2,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Game.Tactical.Contracts;
 using Game.UI.Contracts;
+using Game.UI.Runtime;
 using Game.UI.Shell.Contracts.Ecs;
 using Game.Components;
 
@@ -41,13 +42,24 @@ namespace Game.UI.Shell.Ecs
         public void OnUpdate(ref SystemState state)
         {
             Entity boundary = ResolveFirstEntity(boundaryQuery);
+            if (!TryResolveSelectionInputEntity(ref state, out Entity selectionInput))
+                return;
+
             DynamicBuffer<UiActionRequestComponent> actionRequests = state.EntityManager.GetBuffer<UiActionRequestComponent>(boundary);
             if (actionRequests.Length == 0)
                 return;
 
-            if (!TryResolveSelectionInputEntity(ref state, out Entity selectionInput))
+            bool needsPlacementCommandQueue = HasBuildPlacementAction(actionRequests);
+            Entity placementCommand = Entity.Null;
+            if (needsPlacementCommandQueue &&
+                !TryResolveBuildingPlacementCommandEntity(ref state, out placementCommand))
+            {
                 return;
+            }
 
+            Game.Runtime.AudioEventRequestSystem.EnsureAudioEntity(state.EntityManager);
+
+            actionRequests = state.EntityManager.GetBuffer<UiActionRequestComponent>(boundary);
             DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests =
                 state.EntityManager.GetBuffer<RtsSelectionCommandIntentRequestElement>(selectionInput);
             DynamicBuffer<UiShellPopupRequestComponent> popupRequests =
@@ -72,15 +84,10 @@ namespace Game.UI.Shell.Ecs
                 state.EntityManager.GetComponentData<RtsSelectionInputStateComponent>(selectionInput);
             RtsSelectionInputRequestQueueComponent queue =
                 state.EntityManager.GetComponentData<RtsSelectionInputRequestQueueComponent>(selectionInput);
-            bool needsPlacementCommandQueue = HasBuildPlacementAction(actionRequests);
-            Entity placementCommand = Entity.Null;
             DynamicBuffer<BuildingUiPlacementCommandRequestElement> placementRequests = default;
             BuildingUiPlacementCommandQueueComponent placementQueue = default;
             if (needsPlacementCommandQueue)
             {
-                if (!TryResolveBuildingPlacementCommandEntity(ref state, out placementCommand))
-                    return;
-
                 placementRequests = state.EntityManager.GetBuffer<BuildingUiPlacementCommandRequestElement>(placementCommand);
                 placementQueue = state.EntityManager.GetComponentData<BuildingUiPlacementCommandQueueComponent>(placementCommand);
             }
@@ -104,7 +111,8 @@ namespace Game.UI.Shell.Ecs
                     ref squadTrayState,
                     ref buildDrawerState,
                     ref placementQueue,
-                    frame);
+                    frame,
+                    state.World);
             }
 
             actionRequests.Clear();
@@ -202,7 +210,8 @@ namespace Game.UI.Shell.Ecs
             ref UiMatchHudSquadTrayStateComponent squadTrayState,
             ref UiBuildDrawerStateComponent buildDrawerState,
             ref BuildingUiPlacementCommandQueueComponent placementQueue,
-            int frame)
+            int frame,
+            World world)
         {
             switch (request.Kind)
             {
@@ -351,14 +360,17 @@ namespace Game.UI.Shell.Ecs
                 case UiActionKind.TogglePassengerDrawer:
                     CaptureUiClickSequence(ref inputState, commandRequests, frame);
                     passengerDrawerState.Visible = passengerDrawerState.Visible == 0 ? (byte)1 : (byte)0;
+                    EmitDrawerAudio(world, passengerDrawerState.Visible != 0);
                     break;
                 case UiActionKind.ClosePassengerDrawer:
                     CaptureUiClickSequence(ref inputState, commandRequests, frame);
                     passengerDrawerState.Visible = 0;
+                    EmitDrawerAudio(world, open: false);
                     break;
                 case UiActionKind.ExitAllPassengers:
                     CaptureUiClickSequence(ref inputState, commandRequests, frame);
                     passengerDrawerState.Visible = 0;
+                    EmitDrawerAudio(world, open: false);
                     EnqueueSelectionIntent(ref queue, commandRequests, RtsSelectionCommandIntentKind.DisembarkTransportPassenger, frame);
                     break;
                 case UiActionKind.BoardAll:
@@ -376,6 +388,13 @@ namespace Game.UI.Shell.Ecs
                     diagnosticsOverlay.LogVisible = 0;
                     break;
             }
+        }
+
+        private static void EmitDrawerAudio(World world, bool open)
+        {
+            UIAudioEventKind kind = open ? UIAudioEventKind.DrawerOpen : UIAudioEventKind.DrawerClose;
+            if (UIAudioEventGateway.TryCreateRequest(kind, out UIAudioEventRequest request))
+                UiAudioEventBridgeSystem.TryEnqueue(world, request);
         }
 
         private static void CaptureUiClickSequence(

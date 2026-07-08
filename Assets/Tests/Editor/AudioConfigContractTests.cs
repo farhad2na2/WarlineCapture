@@ -150,7 +150,7 @@ public sealed class AudioConfigContractTests
         string[] catalogEventIds = ReadCatalogEventIds();
 
         CollectionAssert.AreEqual(catalogEventIds, AudioEventIds.AllEventIds);
-        Assert.AreEqual(44, AudioEventIds.AllEventIds.Length);
+        Assert.AreEqual(48, AudioEventIds.AllEventIds.Length);
         Assert.AreEqual(AudioEventIds.UIButtonPrimaryClick, catalogEventIds[0]);
         Assert.AreEqual(AudioEventIds.AmbienceBaseDistantLoop, catalogEventIds[catalogEventIds.Length - 1]);
     }
@@ -178,7 +178,7 @@ public sealed class AudioConfigContractTests
     public void CatalogAudioImportSettingsMatchProfiles()
     {
         string[] clipPaths = ReadCatalogClipPaths();
-        Assert.AreEqual(44, clipPaths.Length);
+        Assert.AreEqual(48, clipPaths.Length);
 
         for (int i = 0; i < clipPaths.Length; i++)
         {

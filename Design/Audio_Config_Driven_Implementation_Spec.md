@@ -323,14 +323,14 @@ Use this section as the work checklist. Update status after each implementation 
 
 ### Current Completion
 
-Overall tracked completion: **65%**.
+Overall tracked completion: **70%**.
 
-- Completed steps: 13 / 20.
+- Completed steps: 14 / 20.
 - Asset and placeholder catalog preparation: **Done**.
 - Runtime playback implementation: **In Progress**.
 - UI/gameplay wiring: **In Progress**.
-- Validation/performance test coverage: **Not Started**.
-- Latest stable slice: shared UI audio event views emit semantic event ids and bridge to ECS audio requests through focused Unity validation.
+- Validation/performance test coverage: **In Progress**.
+- Latest stable slice: shell route, popup, and drawer requests emit semantic UI audio events through the ECS audio request buffer.
 
 Status legend:
 
@@ -353,7 +353,7 @@ Status legend:
 | 10. Create playback presentation helper | Done | UI/Audio | Pooled `AudioSource` playback helper and mixer application helper. | `AudioPlaybackPresentationSystemHelperTests.RunFocusedValidation` passed. |
 | 11. Wire settings UI | Done | UI | Master/Music/SFX/Voice/Alerts volume controls update audio settings. | `AudioSettingsUiProjectionTests.RunFocusedValidation` passed. |
 | 12. Wire common UI button audio | Done | UI | Shared button/tab/card/toggle/slider audio event views. | `UiAudioEventViewTests.RunFocusedValidation` passed. |
-| 13. Wire shell route/popup audio | Not Started | UI | Screen forward/back, popup open/close, drawer open/close. | UI route smoke test. |
+| 13. Wire shell route/popup audio | Done | UI | Screen forward/back, popup open/close, drawer open/close. | `UiShellAudioRoutePopupTests.RunFocusedValidation` passed. |
 | 14. Wire match command audio | Not Started | Gameplay/UI | Select, move, attack, hold, stop/return, scan, build valid/invalid. | Match command tests and manual M01 smoke. |
 | 15. Wire alert/objective audio | Not Started | Gameplay/UI | Threat, objective, unit under attack, base breached events. | Cooldown and priority tests. |
 | 16. Wire music state system | Not Started | Gameplay/UI | Splash/menu/briefing/match/result music state transitions. | Route transition test; no overlapping unintended loops. |
@@ -422,7 +422,7 @@ Current asset/config pass:
 - Data-only catalog: `Assets/Game/Audio/Config/audio_event_catalog_v0_1.json`
 - Generation manifest: `Assets/Game/Audio/GeneratedSource/audio_placeholder_manifest_v0_1.json`
 - Runtime implementation status: not implemented. The JSON catalog assigns event ids to clips only.
-- Latest validation: 44 unique event ids, 44 catalog WAVs, no missing clip references.
+- Latest validation: 48 unique event ids, 48 catalog WAVs, no missing clip references.
 
 Recommended script behavior:
 
@@ -462,7 +462,7 @@ Current import profile pass:
 - Profile config: `Assets/Game/Audio/Config/audio_import_profiles_v0_1.json`
 - Apply tool: `Tools/Audio/apply_audio_import_profiles.py`
 - Validation: `AudioConfigContractTests.RunFocusedValidation`
-- Latest validation: 44 catalog WAVs checked through Unity `AudioImporter`; UI/gameplay/alerts use mono decompressed preload, music/ambience use stereo streaming background load.
+- Latest validation: 48 catalog WAVs checked through Unity `AudioImporter`; UI/gameplay/alerts use mono decompressed preload, music/ambience use stereo streaming background load.
 
 ### Step 8-10: ECS Request And Playback
 
@@ -551,6 +551,24 @@ Rule:
 
 - Do not assign final clip references to each button.
 - Assign semantic style/event ids once through shared button/audio views.
+
+### Step 13: Shell Route And Popup Audio
+
+Current shell route/popup audio pass:
+
+- Catalog events: `UI.Screen.Forward`, `UI.Screen.Back`, `UI.Drawer.Open`, `UI.Drawer.Close`.
+- Existing popup events reused: `UI.Popup.Open`, `UI.Popup.Close`.
+- Gateway: `Assets/Game/Scripts/UI/Components/UIAudioEventGateway.cs`.
+- Shell route/popup source: `Assets/Game/Scripts/UI/Shell/Ecs/UiShellFlowSystem.cs`.
+- HUD drawer source: `Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs`.
+- Validation: `UiShellAudioRoutePopupTests.RunFocusedValidation`, `AudioConfigContractTests.RunFocusedValidation`, `UiAudioEventViewTests.RunFocusedValidation`.
+- Latest validation: forward/back menu routes, settings popup open/close, build drawer open, and passenger drawer open enqueue semantic audio requests into the ECS audio request buffer.
+
+Implementation rule:
+
+- Route transitions emit screen forward/back audio from route intent, not from individual screen prefabs.
+- Build drawer and passenger drawer use drawer open/close events; normal modal overlays use popup open/close events.
+- Shell/HUD systems must finish required ECS structural setup before processing request buffers, so audio enqueue stays data-only during command handling.
 
 ### Step 14: Match Command Audio
 

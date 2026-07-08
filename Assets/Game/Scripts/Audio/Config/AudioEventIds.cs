@@ -34,6 +34,18 @@ namespace Game.Configs
         public const string UIPopupClose = "UI.Popup.Close";
         public const uint UIPopupCloseHash = 3024952377u;
 
+        public const string UIScreenForward = "UI.Screen.Forward";
+        public const uint UIScreenForwardHash = 805571044u;
+
+        public const string UIScreenBack = "UI.Screen.Back";
+        public const uint UIScreenBackHash = 4116222400u;
+
+        public const string UIDrawerOpen = "UI.Drawer.Open";
+        public const uint UIDrawerOpenHash = 1202804760u;
+
+        public const string UIDrawerClose = "UI.Drawer.Close";
+        public const uint UIDrawerCloseHash = 63668116u;
+
         public const string UISliderTick = "UI.Slider.Tick";
         public const uint UISliderTickHash = 1305878613u;
 
@@ -150,6 +162,10 @@ namespace Game.Configs
             UICardLocked,
             UIPopupOpen,
             UIPopupClose,
+            UIScreenForward,
+            UIScreenBack,
+            UIDrawerOpen,
+            UIDrawerClose,
             UISliderTick,
             UIToggleOn,
             UIToggleOff,
@@ -198,6 +214,10 @@ namespace Game.Configs
             UICardLockedHash,
             UIPopupOpenHash,
             UIPopupCloseHash,
+            UIScreenForwardHash,
+            UIScreenBackHash,
+            UIDrawerOpenHash,
+            UIDrawerCloseHash,
             UISliderTickHash,
             UIToggleOnHash,
             UIToggleOffHash,

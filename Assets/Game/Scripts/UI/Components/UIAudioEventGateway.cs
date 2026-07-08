@@ -14,7 +14,13 @@ namespace Game.UI.Runtime
         CardLocked = 7,
         ToggleOn = 8,
         ToggleOff = 9,
-        SliderTick = 10
+        SliderTick = 10,
+        ScreenForward = 11,
+        ScreenBack = 12,
+        PopupOpen = 13,
+        PopupClose = 14,
+        DrawerOpen = 15,
+        DrawerClose = 16
     }
 
     public readonly struct UIAudioEventRequest
@@ -81,6 +87,12 @@ namespace Game.UI.Runtime
                 UIAudioEventKind.ToggleOn => "UI.Toggle.On",
                 UIAudioEventKind.ToggleOff => "UI.Toggle.Off",
                 UIAudioEventKind.SliderTick => "UI.Slider.Tick",
+                UIAudioEventKind.ScreenForward => "UI.Screen.Forward",
+                UIAudioEventKind.ScreenBack => "UI.Screen.Back",
+                UIAudioEventKind.PopupOpen => "UI.Popup.Open",
+                UIAudioEventKind.PopupClose => "UI.Popup.Close",
+                UIAudioEventKind.DrawerOpen => "UI.Drawer.Open",
+                UIAudioEventKind.DrawerClose => "UI.Drawer.Close",
                 _ => string.Empty
             };
         }
@@ -91,6 +103,12 @@ namespace Game.UI.Runtime
             {
                 UIAudioEventKind.SliderTick => 0.04f,
                 UIAudioEventKind.ButtonDisabledTap => 0.08f,
+                UIAudioEventKind.ScreenForward => 0.08f,
+                UIAudioEventKind.ScreenBack => 0.08f,
+                UIAudioEventKind.PopupOpen => 0.08f,
+                UIAudioEventKind.PopupClose => 0.08f,
+                UIAudioEventKind.DrawerOpen => 0.08f,
+                UIAudioEventKind.DrawerClose => 0.08f,
                 _ => 0f
             };
         }

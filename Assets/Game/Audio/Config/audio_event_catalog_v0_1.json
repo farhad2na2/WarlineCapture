@@ -252,6 +252,102 @@
       ]
     },
     {
+      "eventId": "UI.Screen.Forward",
+      "busId": "UI",
+      "priority": "Medium",
+      "cooldownMs": 80,
+      "volumeDb": -12.0,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/UI/ui_screen_forward_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "UI.Screen.Back",
+      "busId": "UI",
+      "priority": "Medium",
+      "cooldownMs": 80,
+      "volumeDb": -12.0,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/UI/ui_screen_back_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "UI.Drawer.Open",
+      "busId": "UI",
+      "priority": "Medium",
+      "cooldownMs": 80,
+      "volumeDb": -12.0,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/UI/ui_drawer_open_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "UI.Drawer.Close",
+      "busId": "UI",
+      "priority": "Medium",
+      "cooldownMs": 80,
+      "volumeDb": -12.0,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/UI/ui_drawer_close_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
       "eventId": "UI.Slider.Tick",
       "busId": "UI",
       "priority": "Low",

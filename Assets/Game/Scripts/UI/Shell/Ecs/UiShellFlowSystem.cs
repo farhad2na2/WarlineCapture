@@ -1,5 +1,6 @@
 using Unity.Entities;
 using Game.UI.Contracts;
+using Game.UI.Runtime;
 using Game.UI.Shell.Contracts.Ecs;
 
 namespace Game.UI.Shell.Ecs
@@ -73,6 +74,7 @@ namespace Game.UI.Shell.Ecs
             if (TryConsumePopupRequest(popupRequests, out UiShellPopupRequestComponent popupRequest))
             {
                 ProcessPopupRequest(ref shellState, ref activePopup, commands, popupRequest);
+                EmitPopupAudio(state.World, popupRequest);
                 state.EntityManager.SetComponentData(boundary, shellState);
                 state.EntityManager.SetComponentData(boundary, activePopup);
                 state.EntityManager.SetComponentData(boundary, matchIntro);
@@ -82,6 +84,7 @@ namespace Game.UI.Shell.Ecs
             if (TryConsumeRouteRequest(routeRequests, out UiShellRouteRequestComponent routeRequest))
             {
                 ProcessRouteRequest(ref shellState, ref matchIntro, commands, routeHistory, routeRequest);
+                EmitRouteAudio(state.World, routeRequest);
                 if (routeRequest.Intent == UiShellRouteIntent.EnterMatch ||
                     routeRequest.Intent == UiShellRouteIntent.ReturnToMainMenu)
                 {
@@ -341,6 +344,29 @@ namespace Game.UI.Shell.Ecs
                 PopupKind = popupKind,
                 SequenceId = shellState.TransitionSequenceId
             });
+        }
+
+        private static void EmitRouteAudio(World world, UiShellRouteRequestComponent request)
+        {
+            UIAudioEventKind kind = request.Intent == UiShellRouteIntent.BackMenuRoute
+                ? UIAudioEventKind.ScreenBack
+                : UIAudioEventKind.ScreenForward;
+            EmitShellAudio(world, kind);
+        }
+
+        private static void EmitPopupAudio(World world, UiShellPopupRequestComponent request)
+        {
+            bool isClosing = request.Intent == UiShellPopupIntent.Hide;
+            UIAudioEventKind kind = request.PopupKind == UiShellPopupKind.BuildDrawer
+                ? (isClosing ? UIAudioEventKind.DrawerClose : UIAudioEventKind.DrawerOpen)
+                : (isClosing ? UIAudioEventKind.PopupClose : UIAudioEventKind.PopupOpen);
+            EmitShellAudio(world, kind);
+        }
+
+        private static void EmitShellAudio(World world, UIAudioEventKind kind)
+        {
+            if (UIAudioEventGateway.TryCreateRequest(kind, out UIAudioEventRequest request))
+                UiAudioEventBridgeSystem.TryEnqueue(world, request);
         }
 
         private static void ConsumeCompletions(

@@ -10,7 +10,6 @@ namespace Game.UI.Runtime
         private TMP_Text _ownershipBodyText;
         private TMP_Text _goalsBodyText;
         private TMP_Text _alertsBodyText;
-        private TMP_Text _narrationSubtitleText;
         private TMP_Text _recommendationBodyText;
         private TMP_Text _nextActionLabelText;
         private TMP_Text _giveControlLabelText;
@@ -18,6 +17,7 @@ namespace Game.UI.Runtime
         private Button _nextActionButton;
         private Button _giveControlButton;
         private Button _stopButton;
+        private readonly AssistantNarrationPresentationSystemHelper _narrationPresentationSystem = new();
         private uint _lastAppliedReadModelVersion = uint.MaxValue;
 
         public void Bind(
@@ -38,7 +38,6 @@ namespace Game.UI.Runtime
             _ownershipBodyText = ownershipBodyText;
             _goalsBodyText = goalsBodyText;
             _alertsBodyText = alertsBodyText;
-            _narrationSubtitleText = narrationSubtitleText;
             _recommendationBodyText = recommendationBodyText;
             _nextActionButton = nextActionButton;
             _giveControlButton = giveControlButton;
@@ -46,6 +45,7 @@ namespace Game.UI.Runtime
             _nextActionLabelText = nextActionLabelText;
             _giveControlLabelText = giveControlLabelText;
             _stopLabelText = stopLabelText;
+            _narrationPresentationSystem.Bind(narrationSubtitleText);
             _lastAppliedReadModelVersion = uint.MaxValue;
         }
 
@@ -55,7 +55,6 @@ namespace Game.UI.Runtime
             _ownershipBodyText = null;
             _goalsBodyText = null;
             _alertsBodyText = null;
-            _narrationSubtitleText = null;
             _recommendationBodyText = null;
             _nextActionLabelText = null;
             _giveControlLabelText = null;
@@ -63,6 +62,7 @@ namespace Game.UI.Runtime
             _nextActionButton = null;
             _giveControlButton = null;
             _stopButton = null;
+            _narrationPresentationSystem.Unbind();
             _lastAppliedReadModelVersion = uint.MaxValue;
         }
 
@@ -82,10 +82,7 @@ namespace Game.UI.Runtime
                 _goalsBodyText.text = string.IsNullOrWhiteSpace(model.GoalsText) ? "No active objectives" : model.GoalsText;
             if (_alertsBodyText != null)
                 _alertsBodyText.text = string.IsNullOrWhiteSpace(model.AlertsText) ? "No priority alerts" : model.AlertsText;
-            if (_narrationSubtitleText != null)
-                _narrationSubtitleText.text = string.IsNullOrWhiteSpace(model.NarrationSubtitleText)
-                    ? "No active narration"
-                    : model.NarrationSubtitleText;
+            _narrationPresentationSystem.ApplySubtitle(model.NarrationSubtitleText);
             if (_recommendationBodyText != null)
             {
                 _recommendationBodyText.text = model.HasRecommendation

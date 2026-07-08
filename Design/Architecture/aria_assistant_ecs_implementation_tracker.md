@@ -1,12 +1,12 @@
 # ARIA Assistant ECS Implementation Tracker
 
 Date: 2026-07-08
-Status: Phase 6 priority-level validation complete
+Status: Phase 6 narration presentation fallback complete
 Source design: `Design/ARIA_Assistant_ECS_Design.md`
 
 ## Progress
 
-Overall progress: 78% complete, 53 of 68 checklist items complete.
+Overall progress: 79% complete, 54 of 68 checklist items complete.
 
 | Phase | Scope | Items | Complete | Status |
 |---|---|---:|---:|---|
@@ -16,7 +16,7 @@ Overall progress: 78% complete, 53 of 68 checklist items complete.
 | 3 | Goal and recommendation read models | 8 | 8 | Complete |
 | 4 | Show Me and Do It command intents | 8 | 8 | Complete |
 | 5 | Give Control ownership | 8 | 8 | Complete |
-| 6 | Message, narration, and audio | 8 | 7 | In progress |
+| 6 | Message, narration, and audio | 8 | 8 | Complete |
 | 7 | Settings, save, and accessibility | 6 | 0 | Not started |
 | 8 | Validation, performance, and rollout | 8 | 0 | Not started |
 
@@ -176,7 +176,7 @@ Phase 5 notes:
 - [x] Add cooldown, coalescing, and duplicate suppression.
 - [x] Add `AssistantNarrationRequestSystem` to create narration requests from eligible messages.
 - [x] Add subtitle/text display for all narration requests.
-- [ ] Add `AssistantNarrationPresentationSystemHelper` for pre-authored clip playback or silent fallback.
+- [x] Add `AssistantNarrationPresentationSystemHelper` for pre-authored clip playback or silent fallback.
 - [x] Add narration settings gate: Off, CriticalOnly, Important, All.
 - [x] Add tests for spam suppression and priority interruption.
 
@@ -188,8 +188,9 @@ Phase 6 notes:
 - Added unmanaged `AssistantNarrationRequestSystem` as a data-only narration queue. It selects the highest-priority eligible unacknowledged message, applies the narration mode gate (`Off`, `CriticalOnly`, `Important`, `All`), writes bounded `AssistantNarrationRequestElement` rows, suppresses duplicate requests for the same message, updates `AssistantNarrationStateComponent`, and leaves clip playback/subtitle presentation to the narrow managed presentation boundary.
 - Added narration spam controls: low/normal priority narration uses the existing `LowPriorityCooldownUntil` gate, matching suppression keys coalesce repeated reports across message ids, and high/critical messages can still enqueue interruption-capable requests during lower-priority cooldowns.
 - Added narration subtitle display through the existing assistant panel read model. `UiShellEcsGateway` now converts bounded `AssistantNarrationRequestElement` rows into panel subtitle text, folds narration request count/version into the cached model, and `AssistantPanelUiSystemHelper` applies the text without a new update loop.
+- Added `AssistantNarrationPresentationSystemHelper` as the narrow managed presentation fallback boundary. The helper binds the panel subtitle text, applies the "No active narration" silent fallback, and skips unchanged subtitle writes; pre-authored voice clip asset lookup remains a future asset-pipeline decision.
 - Added focused data-contract coverage for stable `AssistantMessagePriority` values: Low, Normal, High, and Critical.
-- Remaining Phase 6 work still needs broader message sources for objectives, resources, fuel logistics, and match reports, plus audio playback or silent fallback.
+- Phase 6 is complete for the current ECS/UI contract. Future assistant content expansion can add broader objective/resource/fuel/match-report source rows to `AssistantMessagePrioritySystem`, and future audio work can add pre-authored clip resolution behind the existing presentation helper.
 
 ## Phase 7: Settings, Save, And Accessibility
 
@@ -249,6 +250,7 @@ Exit criteria: feature is playable, validated, documented, and does not regress 
 | 2026-07-08 | Phase 6 narration cooldown/coalescing controls | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-narration-spam-controls-unity.log --timeout 420 -- -quit -executeMethod AssistantNarrationRequestSystemTests.RunFocusedValidation` | Passed | Focused Unity validation reported `[AssistantNarrationRequestSystemValidation] result=Passed tests=5`. Validates duplicate suppression, suppression-key coalescing, low/normal cooldown throttling, and critical interruption over active low-priority cooldown. |
 | 2026-07-08 | Phase 6 narration subtitle panel display | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; initial Unity compile surfaced the latest remote `ResourceExchangeRequestValidationSystem` query arity blocker; after the minimal compile fix, `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-narration-subtitle-ui-rerun2.log --timeout 420 -- -quit -executeMethod MatchHudAssistantUiSystemHelperTests.RunFocusedValidation` | Passed | Focused Unity validation reported `[MatchHudAssistantUiValidation] result=Passed tests=2`. Validates the ARIA panel subtitle row receives `UiAssistantPanelModel.NarrationSubtitleText`, while preserving panel command buttons, ownership detail, alert text, and preview highlight binding. |
 | 2026-07-08 | Phase 6 assistant priority-level validation | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-priority-levels-unity.log --timeout 420 -- -quit -executeMethod AssistantEcsDataContractTests.RunFocusedValidation` | Passed | Focused Unity validation reported `[AssistantEcsDataContractValidation] result=Passed tests=3`. Validates stable Low, Normal, High, and Critical message priority values in the ECS data contract. |
+| 2026-07-08 | Phase 6 narration presentation silent fallback | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-narration-presentation-ui-unity.log --timeout 420 -- -quit -executeMethod MatchHudAssistantUiSystemHelperTests.RunFocusedValidation` | Passed | Focused Unity validation reported `[MatchHudAssistantUiValidation] result=Passed tests=2`. Validates `AssistantNarrationPresentationSystemHelper` as the managed silent-fallback boundary for narration subtitle presentation without adding a new update loop. |
 
 ## Open Decisions
 

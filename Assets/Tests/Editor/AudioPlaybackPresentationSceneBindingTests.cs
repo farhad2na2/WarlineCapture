@@ -13,6 +13,7 @@ using UnityEngine;
 public sealed class AudioPlaybackPresentationSceneBindingTests
 {
     private const string MenuScenePath = "Assets/Game/Scenes/Menu.unity";
+    private const string MatchScenePath = "Assets/Game/Scenes/Match.unity";
     private const string EventCatalogPath = "Assets/Game/Audio/Events/AudioEventCatalogConfig.asset";
     private const string MixerBusConfigPath = "Assets/Game/Audio/Mixers/AudioMixerBusConfig.asset";
 
@@ -26,6 +27,8 @@ public sealed class AudioPlaybackPresentationSceneBindingTests
             passed++;
             tests.MenuSceneAudioRuntime_DrainsUiRequestThroughPooledPlayback();
             passed++;
+            tests.MenuAndMatchScenes_HaveExactlyOneEnabledAudioListener();
+            passed++;
 
             Debug.Log($"[AudioPlaybackPresentationSceneBindingValidation] result=Passed tests={passed}");
             ValidationExit.Passed();
@@ -36,6 +39,13 @@ public sealed class AudioPlaybackPresentationSceneBindingTests
             Debug.Log($"[AudioPlaybackPresentationSceneBindingValidation] result=Failed passed={passed}");
             ValidationExit.Failed();
         }
+    }
+
+    [Test]
+    public void MenuAndMatchScenes_HaveExactlyOneEnabledAudioListener()
+    {
+        AssertSceneHasExactlyOneEnabledAudioListener(MenuScenePath);
+        AssertSceneHasExactlyOneEnabledAudioListener(MatchScenePath);
     }
 
     [Test]
@@ -138,5 +148,24 @@ public sealed class AudioPlaybackPresentationSceneBindingTests
         }
 
         return false;
+    }
+
+    private static void AssertSceneHasExactlyOneEnabledAudioListener(string scenePath)
+    {
+        EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
+
+        AudioListener[] listeners = UnityEngine.Object.FindObjectsByType<AudioListener>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None);
+
+        int enabledCount = 0;
+        for (int i = 0; i < listeners.Length; i++)
+        {
+            AudioListener listener = listeners[i];
+            if (listener != null && listener.enabled && listener.gameObject.activeInHierarchy)
+                enabledCount++;
+        }
+
+        Assert.AreEqual(1, enabledCount, $"{scenePath} must contain exactly one enabled active AudioListener.");
     }
 }

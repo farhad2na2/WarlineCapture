@@ -1,5 +1,6 @@
 using System;
 using Game.Components;
+using Game.UI.Contracts;
 using Game.UI.Shell.Contracts.Ecs;
 using Game.UI.Shell.Ecs;
 using NUnit.Framework;
@@ -33,6 +34,12 @@ public sealed class AssistantControlOwnerSystemTests
             RunCase(test => test.AssistantControlOwnerSystem_CancelsTakeoverOnRejectedIntentResult());
             passed++;
             RunCase(test => test.AssistantControlOwnerSystem_CancelsTakeoverOnTimedOutIntentResult());
+            passed++;
+            RunCase(test => test.AssistantControlOwnerSystem_CancelsTakeoverOnRouteChange());
+            passed++;
+            RunCase(test => test.AssistantControlOwnerSystem_CancelsTakeoverOnPausePopup());
+            passed++;
+            RunCase(test => test.AssistantControlOwnerSystem_KeepsTakeoverOnThreatAlertPopup());
             passed++;
 
             Debug.Log($"[AssistantControlOwnerSystemValidation] result=Passed tests={passed}");
@@ -316,6 +323,47 @@ public sealed class AssistantControlOwnerSystemTests
         AssertTakeoverReturnedToPlayer(boundary);
     }
 
+    [Test]
+    public void AssistantControlOwnerSystem_CancelsTakeoverOnRouteChange()
+    {
+        Entity boundary = CreateActiveTakeoverBoundary();
+        AddShellState(boundary, UIRoute.MainMenu, UiShellMode.Loading);
+
+        _ownerSystem.Update(_world.Unmanaged);
+
+        AssertTakeoverReturnedToPlayer(boundary);
+    }
+
+    [Test]
+    public void AssistantControlOwnerSystem_CancelsTakeoverOnPausePopup()
+    {
+        Entity boundary = CreateActiveTakeoverBoundary();
+        AddShellState(boundary, UIRoute.Match, UiShellMode.PopupOnly);
+        AddActivePopup(boundary, UiShellPopupKind.Pause);
+
+        _ownerSystem.Update(_world.Unmanaged);
+
+        AssertTakeoverReturnedToPlayer(boundary);
+    }
+
+    [Test]
+    public void AssistantControlOwnerSystem_KeepsTakeoverOnThreatAlertPopup()
+    {
+        Entity boundary = CreateActiveTakeoverBoundary();
+        AddShellState(boundary, UIRoute.Match, UiShellMode.PopupOnly);
+        AddActivePopup(boundary, UiShellPopupKind.ThreatAlert);
+
+        _ownerSystem.Update(_world.Unmanaged);
+
+        AssistantStateComponent assistantState =
+            _entityManager.GetComponentData<AssistantStateComponent>(boundary);
+        AssistantControlOwnerComponent owner =
+            _entityManager.GetComponentData<AssistantControlOwnerComponent>(boundary);
+        Assert.AreEqual(AssistantControlState.AssistantTakeover, assistantState.ControlState);
+        Assert.AreEqual(AssistantControlState.AssistantTakeover, owner.State);
+        Assert.AreEqual(4101, owner.ActiveRecommendationId);
+    }
+
     private Entity CreateBoundary(AssistantStateComponent assistantState)
     {
         Entity boundary = _entityManager.CreateEntity(typeof(UiShellRootComponent));
@@ -363,5 +411,24 @@ public sealed class AssistantControlOwnerSystemTests
         Assert.AreEqual(0, owner.ActiveRecommendationId);
         Assert.AreEqual(0, owner.ActiveIntentRequestId);
         Assert.AreEqual(0, owner.ActionCount);
+    }
+
+    private void AddShellState(Entity boundary, UIRoute route, UiShellMode mode)
+    {
+        _entityManager.AddComponentData(boundary, new UiShellStateComponent
+        {
+            ActiveRoute = route,
+            CurrentMode = mode,
+            Phase = UiShellTransitionPhase.MatchHudReady
+        });
+    }
+
+    private void AddActivePopup(Entity boundary, UiShellPopupKind popupKind)
+    {
+        _entityManager.AddComponentData(boundary, new UiShellActivePopupComponent
+        {
+            PopupKind = popupKind,
+            Visible = 1
+        });
     }
 }

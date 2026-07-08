@@ -1,4 +1,5 @@
 using Game.Components;
+using Game.UI.Contracts;
 using Game.UI.Shell.Contracts.Ecs;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -78,18 +79,27 @@ namespace Game.UI.Shell.Ecs
 
                     if (owner.State == AssistantControlState.AssistantTakeover)
                     {
-                        TakeoverResultConsumption resultConsumption =
-                            ConsumeTakeoverActionResults(ref owner, results);
-                        if (resultConsumption != TakeoverResultConsumption.Unchanged)
-                            ownerChanged = true;
-
-                        if (resultConsumption == TakeoverResultConsumption.Cancelled ||
-                            HasTakeoverExpired(owner, now) ||
-                            HasReachedActionLimit(owner))
+                        if (ShellBlocksTakeover(em, boundary))
                         {
                             ResetToPlayer(ref assistantState, ref owner);
                             assistantStateChanged = true;
                             ownerChanged = true;
+                        }
+                        else
+                        {
+                            TakeoverResultConsumption resultConsumption =
+                                ConsumeTakeoverActionResults(ref owner, results);
+                            if (resultConsumption != TakeoverResultConsumption.Unchanged)
+                                ownerChanged = true;
+
+                            if (resultConsumption == TakeoverResultConsumption.Cancelled ||
+                                HasTakeoverExpired(owner, now) ||
+                                HasReachedActionLimit(owner))
+                            {
+                                ResetToPlayer(ref assistantState, ref owner);
+                                assistantStateChanged = true;
+                                ownerChanged = true;
+                            }
                         }
                     }
                 }
@@ -268,6 +278,33 @@ namespace Game.UI.Shell.Ecs
             return owner.State == AssistantControlState.AssistantTakeover &&
                    owner.MaxActionCount > 0 &&
                    owner.ActionCount >= owner.MaxActionCount;
+        }
+
+        private static bool ShellBlocksTakeover(EntityManager em, Entity boundary)
+        {
+            if (em.HasComponent<UiShellStateComponent>(boundary))
+            {
+                UiShellStateComponent shellState = em.GetComponentData<UiShellStateComponent>(boundary);
+                if (shellState.ActiveRoute != UIRoute.Match)
+                    return true;
+
+                if (shellState.CurrentMode != UiShellMode.MatchHud &&
+                    shellState.CurrentMode != UiShellMode.PopupOnly)
+                    return true;
+            }
+
+            if (!em.HasComponent<UiShellActivePopupComponent>(boundary))
+                return false;
+
+            UiShellActivePopupComponent activePopup = em.GetComponentData<UiShellActivePopupComponent>(boundary);
+            return activePopup.Visible != 0 && PopupBlocksTakeover(activePopup.PopupKind);
+        }
+
+        private static bool PopupBlocksTakeover(UiShellPopupKind popupKind)
+        {
+            return popupKind == UiShellPopupKind.Pause ||
+                   popupKind == UiShellPopupKind.Settings ||
+                   popupKind == UiShellPopupKind.RewardUnlock;
         }
 
         private static int LatestResultRequestId(DynamicBuffer<AssistantCommandIntentResultElement> results)

@@ -43,6 +43,15 @@ namespace Game.UI.Shell.Ecs
         private static int cachedMatchHudHeaderFuel;
         private static bool cachedMatchHudHeaderShowOil;
         private static UiMatchHudHeaderModel cachedMatchHudHeader;
+        private static bool hasCachedAssistantPanel;
+        private static World cachedAssistantPanelWorld;
+        private static Entity cachedAssistantPanelBoundary;
+        private static uint cachedAssistantPanelSourceVersion;
+        private static uint cachedAssistantPanelRecommendationVersion;
+        private static int cachedAssistantPanelGoalCount;
+        private static int cachedAssistantPanelRecommendationCount;
+        private static AssistantControlState cachedAssistantPanelControlState;
+        private static UiAssistantPanelModel cachedAssistantPanel;
 
         private UiShellEcsGateway()
         {
@@ -73,6 +82,15 @@ namespace Game.UI.Shell.Ecs
             cachedMatchHudHeaderFuel = 0;
             cachedMatchHudHeaderShowOil = false;
             cachedMatchHudHeader = UiMatchHudHeaderModel.Default;
+            hasCachedAssistantPanel = false;
+            cachedAssistantPanelWorld = null;
+            cachedAssistantPanelBoundary = Entity.Null;
+            cachedAssistantPanelSourceVersion = 0;
+            cachedAssistantPanelRecommendationVersion = 0;
+            cachedAssistantPanelGoalCount = 0;
+            cachedAssistantPanelRecommendationCount = 0;
+            cachedAssistantPanelControlState = AssistantControlState.Player;
+            cachedAssistantPanel = UiAssistantPanelModel.Empty;
             cachedDiagnosticsLogFixedText = default;
             cachedDiagnosticsLogText = string.Empty;
             UiShellRuntimeGateway.Register(Shared);
@@ -988,6 +1006,57 @@ namespace Game.UI.Shell.Ecs
             return value.ToString();
         }
 
+        private static uint CombineAssistantPanelVersion(uint sourceVersion, uint recommendationVersion)
+        {
+            uint combined = sourceVersion * 397u ^ recommendationVersion;
+            return combined == 0u ? 1u : combined;
+        }
+
+        private static string BuildAssistantGoalsText(DynamicBuffer<AssistantGoalReadModelElement> goals)
+        {
+            if (goals.Length == 0)
+                return "No active objectives";
+
+            string text = string.Empty;
+            for (int i = 0; i < goals.Length; i++)
+            {
+                AssistantGoalReadModelElement goal = goals[i];
+                if (goal.Title.Length == 0)
+                    continue;
+
+                if (text.Length > 0)
+                    text += "\n";
+
+                text += goal.State == AssistantGoalState.Complete ? "[x] " : "- ";
+                text += goal.Title.ToString();
+            }
+
+            return text.Length > 0 ? text : "No active objectives";
+        }
+
+        private static string PriorityText(AssistantMessagePriority priority)
+        {
+            return priority switch
+            {
+                AssistantMessagePriority.Critical => "CRITICAL",
+                AssistantMessagePriority.High => "HIGH",
+                AssistantMessagePriority.Normal => "NORMAL",
+                _ => "LOW"
+            };
+        }
+
+        private static string ControlStateText(AssistantControlState state)
+        {
+            return state switch
+            {
+                AssistantControlState.Guided => "GUIDED",
+                AssistantControlState.AssistantPreview => "PREVIEW",
+                AssistantControlState.AssistantTakeover => "ARIA CONTROL",
+                AssistantControlState.PlayerOverridePending => "PLAYER OVERRIDE",
+                _ => "PLAYER CONTROL"
+            };
+        }
+
         public static bool TryReadMatchHudStatusSurfaces(out UiMatchHudStatusSurfacesModel statusSurfaces)
         {
             statusSurfaces = UiMatchHudStatusSurfacesModel.Default;
@@ -1013,6 +1082,72 @@ namespace Game.UI.Shell.Ecs
                 component.BoardAllEnabled != 0,
                 component.CancelVisible != 0,
                 component.CancelEnabled != 0);
+            return true;
+        }
+
+        public static bool TryReadMatchHudAssistantPanel(out UiAssistantPanelModel assistantPanel)
+        {
+            assistantPanel = UiAssistantPanelModel.Empty;
+            if (!TryGetBoundary(out EntityManager entityManager, out Entity boundary))
+                return false;
+
+            if (!entityManager.HasComponent<AssistantStateComponent>(boundary) ||
+                !entityManager.HasComponent<AssistantRecommendationReadModelComponent>(boundary) ||
+                !entityManager.HasBuffer<AssistantGoalReadModelElement>(boundary) ||
+                !entityManager.HasBuffer<AssistantRecommendationElement>(boundary))
+            {
+                return false;
+            }
+
+            AssistantStateComponent assistantState =
+                entityManager.GetComponentData<AssistantStateComponent>(boundary);
+            AssistantRecommendationReadModelComponent recommendationReadModel =
+                entityManager.GetComponentData<AssistantRecommendationReadModelComponent>(boundary);
+            DynamicBuffer<AssistantGoalReadModelElement> goals =
+                entityManager.GetBuffer<AssistantGoalReadModelElement>(boundary, true);
+            DynamicBuffer<AssistantRecommendationElement> recommendations =
+                entityManager.GetBuffer<AssistantRecommendationElement>(boundary, true);
+
+            if (hasCachedAssistantPanel &&
+                cachedAssistantPanelWorld == entityManager.World &&
+                cachedAssistantPanelBoundary == boundary &&
+                cachedAssistantPanelSourceVersion == assistantState.SourceVersion &&
+                cachedAssistantPanelRecommendationVersion == recommendationReadModel.Version &&
+                cachedAssistantPanelGoalCount == goals.Length &&
+                cachedAssistantPanelRecommendationCount == recommendations.Length &&
+                cachedAssistantPanelControlState == assistantState.ControlState)
+            {
+                assistantPanel = cachedAssistantPanel;
+                return true;
+            }
+
+            AssistantRecommendationElement topRecommendation =
+                recommendations.Length > 0 ? recommendations[0] : default;
+            uint modelVersion = CombineAssistantPanelVersion(assistantState.SourceVersion, recommendationReadModel.Version);
+            assistantPanel = new UiAssistantPanelModel(
+                modelVersion,
+                BuildAssistantGoalsText(goals),
+                topRecommendation.RecommendationId != 0,
+                topRecommendation.RecommendationId != 0 ? topRecommendation.Title.ToString() : "No recommendation",
+                topRecommendation.RecommendationId != 0
+                    ? topRecommendation.Reason.ToString()
+                    : "ARIA is waiting for live battlefield context.",
+                topRecommendation.RecommendationId != 0 ? PriorityText(topRecommendation.Priority) : "LOW",
+                topRecommendation.RecommendationId != 0 ? topRecommendation.ActionLabel.ToString() : "SHOW ME",
+                topRecommendation.CanShow != 0,
+                topRecommendation.CanExecute != 0,
+                topRecommendation.CanTakeControl != 0,
+                ControlStateText(assistantState.ControlState));
+
+            hasCachedAssistantPanel = true;
+            cachedAssistantPanelWorld = entityManager.World;
+            cachedAssistantPanelBoundary = boundary;
+            cachedAssistantPanelSourceVersion = assistantState.SourceVersion;
+            cachedAssistantPanelRecommendationVersion = recommendationReadModel.Version;
+            cachedAssistantPanelGoalCount = goals.Length;
+            cachedAssistantPanelRecommendationCount = recommendations.Length;
+            cachedAssistantPanelControlState = assistantState.ControlState;
+            cachedAssistantPanel = assistantPanel;
             return true;
         }
 
@@ -1812,6 +1947,11 @@ namespace Game.UI.Shell.Ecs
         bool IUiShellRuntimeGateway.TryReadMatchHudStatusSurfaces(out UiMatchHudStatusSurfacesModel statusSurfaces)
         {
             return TryReadMatchHudStatusSurfaces(out statusSurfaces);
+        }
+
+        bool IUiShellRuntimeGateway.TryReadMatchHudAssistantPanel(out UiAssistantPanelModel assistantPanel)
+        {
+            return TryReadMatchHudAssistantPanel(out assistantPanel);
         }
 
         bool IUiShellRuntimeGateway.TryReadMatchHudMinimap(out UiMatchHudMinimapModel minimap)

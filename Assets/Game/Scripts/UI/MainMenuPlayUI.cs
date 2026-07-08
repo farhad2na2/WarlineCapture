@@ -134,6 +134,7 @@ namespace Game.UI.Runtime
             _selectionUiCameraSystem?.UpdateZoomTransition();
             RefreshZoomControlsIfDue(now);
             ApplyMatchHudHeaderResourceStateIfDue(now);
+            ApplyMatchHudAssistantPanelReadModel();
             TickMatchHudThreatWarning(now);
         }
 
@@ -424,6 +425,12 @@ namespace Game.UI.Runtime
 
             _nextHeaderResourceRefreshTime = now + HeaderResourceRefreshIntervalSeconds;
             ApplyMatchHudHeaderResourceState();
+        }
+
+        private void ApplyMatchHudAssistantPanelReadModel()
+        {
+            if (UiShellRuntimeGateway.TryReadMatchHudAssistantPanel(out UiAssistantPanelModel assistantPanel))
+                _matchHudAssistantUiSystem.ApplyReadModel(assistantPanel);
         }
 
         public bool TryShowMatchHudThreatWarning(string title, float visibleUntilTime)

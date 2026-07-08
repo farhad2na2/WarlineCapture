@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
 using NUnit.Framework;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,6 +15,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         try
         {
             RunCase(test => test.BindMatchHudAssistant_CreatesButtonPanelAndBlocksWorldClicks());
+            passed++;
+            RunCase(test => test.BindMatchHudAssistant_AppliesAssistantPanelReadModel());
             passed++;
 
             Debug.Log($"[MatchHudAssistantUiValidation] result=Passed tests={passed}");
@@ -42,6 +46,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
     [TearDown]
     public void TearDown()
     {
+        UiShellRuntimeGateway.Register(null);
         GameObject[] roots = GameObject.FindGameObjectsWithTag("Untagged");
         for (int i = roots.Length - 1; i >= 0; i--)
         {
@@ -87,6 +92,55 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         UnityEngine.Object.DestroyImmediate(overlay.gameObject);
     }
 
+    [Test]
+    public void BindMatchHudAssistant_AppliesAssistantPanelReadModel()
+    {
+        RectTransform overlay = CreateRectRoot("AssistantUiTestOverlay", new Vector2(1920f, 1080f));
+        RectTransform header = CreateRect("HeaderContent", overlay);
+        header.anchorMin = new Vector2(0f, 1f);
+        header.anchorMax = new Vector2(0f, 1f);
+        header.pivot = new Vector2(0f, 1f);
+        header.anchoredPosition = Vector2.zero;
+        header.sizeDelta = new Vector2(1920f, 160f);
+
+        var ui = new MainMenuPlayUI();
+        ui.Init(null, new FakeMatchRuntimeState());
+        ui.BindMatchHudAssistant(header.gameObject, overlay);
+        UiShellRuntimeGateway.Register(new FakeAssistantPanelGateway(new UiAssistantPanelModel(
+            42,
+            "- Neutralize hostile patrol\n[x] Protect civilians",
+            true,
+            "Review objective",
+            "Focus the active objective before choosing the next order.",
+            "HIGH",
+            "SHOW ME",
+            true,
+            false,
+            false,
+            "PLAYER CONTROL")));
+
+        ui.Update();
+
+        RectTransform panel = overlay.Find("AriaAssistantPanel") as RectTransform;
+        Assert.NotNull(panel);
+        TMP_Text goals = panel.Find("GoalsBody")?.GetComponent<TMP_Text>();
+        TMP_Text recommendation = panel.Find("RecommendationBody")?.GetComponent<TMP_Text>();
+        Button showMe = panel.Find("NextActionButton")?.GetComponent<Button>();
+        Button giveControl = panel.Find("GiveControlButton")?.GetComponent<Button>();
+
+        Assert.NotNull(goals);
+        Assert.NotNull(recommendation);
+        Assert.NotNull(showMe);
+        Assert.NotNull(giveControl);
+        Assert.AreEqual("- Neutralize hostile patrol\n[x] Protect civilians", goals.text);
+        StringAssert.Contains("HIGH: Review objective", recommendation.text);
+        Assert.IsTrue(showMe.interactable);
+        Assert.IsFalse(giveControl.interactable);
+
+        ui.Dispose();
+        UnityEngine.Object.DestroyImmediate(overlay.gameObject);
+    }
+
     private static RectTransform CreateRectRoot(string name, Vector2 size)
     {
         var root = new GameObject(name, typeof(RectTransform), typeof(Canvas));
@@ -121,5 +175,39 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         public bool ZoomInHeld { get; set; }
         public bool ZoomOutHeld { get; set; }
         public bool SuppressNextWorldClick { get; set; }
+    }
+
+    private sealed class FakeAssistantPanelGateway : IUiShellRuntimeGateway
+    {
+        private readonly UiAssistantPanelModel _assistantPanel;
+
+        public FakeAssistantPanelGateway(UiAssistantPanelModel assistantPanel)
+        {
+            _assistantPanel = assistantPanel;
+        }
+
+        public bool TryEnqueueRouteRequest(UiShellRouteIntent intent, UIRoute route, bool pushHistory) => false;
+        public bool TryEnqueueUiAction(UiActionKind kind, int payloadId) => false;
+        public bool TryReadLoadingProgress(out UiShellLoadingProgressModel loading) { loading = default; return false; }
+        public bool TrySetLoadingProgress(float progress01, string status, bool complete) => false;
+        public bool TryReadDiagnosticsOverlay(out UiDiagnosticsOverlayModel diagnostics) { diagnostics = default; return false; }
+        public bool TryReadShellState(out UiShellStateModel state) { state = default; return false; }
+        public bool TryReadCommanderProfile(out UiShellCommanderProfileModel profile) { profile = default; return false; }
+        public bool TryReadMainMenuResources(out UiShellMainMenuResourcesModel resources) { resources = default; return false; }
+        public bool TryReadMissionResult(out UiMissionResultPopupModel result) { result = default; return false; }
+        public bool TryReadMatchHudSelection(out UiMatchHudSelectionPanelModel selection) { selection = UiMatchHudSelectionPanelModel.Hidden; return false; }
+        public bool TryReadMatchHudCommandState(out UiMatchHudCommandStateModel commandState) { commandState = default; return false; }
+        public bool TryReadMatchHudHeader(out UiMatchHudHeaderModel header) { header = UiMatchHudHeaderModel.Default; return false; }
+        public bool TryReadMatchHudStatusSurfaces(out UiMatchHudStatusSurfacesModel statusSurfaces) { statusSurfaces = UiMatchHudStatusSurfacesModel.Default; return false; }
+        public bool TryReadMatchHudAssistantPanel(out UiAssistantPanelModel assistantPanel) { assistantPanel = _assistantPanel; return true; }
+        public bool TryReadMatchHudMinimap(out UiMatchHudMinimapModel minimap) { minimap = UiMatchHudMinimapModel.Default; return false; }
+        public bool TryReadMatchHudPassengerDrawer(out UiMatchHudPassengerDrawerModel passengerDrawer) { passengerDrawer = UiMatchHudPassengerDrawerModel.Hidden; return false; }
+        public bool TryReadMatchHudSquadTray(out UiMatchHudSquadTrayModel squadTray) { squadTray = UiMatchHudSquadTrayModel.Default; return false; }
+        public bool TryReadBuildDrawer(out UiBuildDrawerModel drawer) { drawer = UiBuildDrawerModel.Empty; return false; }
+        public bool TryReadBuildPlacementConfirmationBar(out UiBuildPlacementConfirmationBarModel placementBar) { placementBar = UiBuildPlacementConfirmationBarModel.Hidden; return false; }
+        public bool TryReadArmoryCategory(out ArmoryCatalogCategory category) { category = ArmoryCatalogCategory.Characters; return false; }
+        public bool TryEnqueueArmoryCategory(ArmoryCatalogCategory category) => false;
+        public bool TryConsumePresentationCommands(List<UiShellPresentationCommandModel> commands) => false;
+        public bool TryEnqueueTransitionComplete(UiShellTransitionCompleteModel completion) => false;
     }
 }

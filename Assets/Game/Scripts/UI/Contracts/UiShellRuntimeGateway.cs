@@ -30,6 +30,8 @@ namespace Game.UI.Contracts
 
         bool TryReadMatchHudStatusSurfaces(out UiMatchHudStatusSurfacesModel statusSurfaces);
 
+        bool TryReadMatchHudAssistantPanel(out UiAssistantPanelModel assistantPanel);
+
         bool TryReadMatchHudMinimap(out UiMatchHudMinimapModel minimap);
 
         bool TryReadMatchHudPassengerDrawer(out UiMatchHudPassengerDrawerModel passengerDrawer);

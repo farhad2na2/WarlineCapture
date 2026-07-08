@@ -953,6 +953,61 @@ namespace Game.UI.Contracts
                 true);
     }
 
+    public readonly struct UiAssistantPanelModel
+    {
+        public readonly uint Version;
+        public readonly string GoalsText;
+        public readonly bool HasRecommendation;
+        public readonly string RecommendationTitle;
+        public readonly string RecommendationBody;
+        public readonly string RecommendationPriorityText;
+        public readonly string RecommendationActionLabel;
+        public readonly bool CanShow;
+        public readonly bool CanExecute;
+        public readonly bool CanTakeControl;
+        public readonly string OwnershipText;
+
+        public UiAssistantPanelModel(
+            uint version,
+            string goalsText,
+            bool hasRecommendation,
+            string recommendationTitle,
+            string recommendationBody,
+            string recommendationPriorityText,
+            string recommendationActionLabel,
+            bool canShow,
+            bool canExecute,
+            bool canTakeControl,
+            string ownershipText)
+        {
+            Version = version;
+            GoalsText = goalsText;
+            HasRecommendation = hasRecommendation;
+            RecommendationTitle = recommendationTitle;
+            RecommendationBody = recommendationBody;
+            RecommendationPriorityText = recommendationPriorityText;
+            RecommendationActionLabel = recommendationActionLabel;
+            CanShow = canShow;
+            CanExecute = canExecute;
+            CanTakeControl = canTakeControl;
+            OwnershipText = ownershipText;
+        }
+
+        public static UiAssistantPanelModel Empty =>
+            new(
+                0,
+                "No active objectives",
+                false,
+                "No recommendation",
+                "ARIA is waiting for live battlefield context.",
+                "LOW",
+                "SHOW ME",
+                false,
+                false,
+                false,
+                "PLAYER CONTROL");
+    }
+
     public readonly struct UiMatchHudMinimapMarkerModel
     {
         public readonly bool Visible;

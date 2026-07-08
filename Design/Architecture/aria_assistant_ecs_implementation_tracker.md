@@ -1,18 +1,18 @@
 # ARIA Assistant ECS Implementation Tracker
 
 Date: 2026-07-08
-Status: Phase 3 objective read-model base implemented
+Status: Phase 2/3 live assistant panel read-model binding implemented
 Source design: `Design/ARIA_Assistant_ECS_Design.md`
 
 ## Progress
 
-Overall progress: 32% complete, 22 of 68 checklist items complete.
+Overall progress: 35% complete, 24 of 68 checklist items complete.
 
 | Phase | Scope | Items | Complete | Status |
 |---|---|---:|---:|---|
 | 0 | Contract reconciliation | 6 | 6 | Complete |
 | 1 | ECS data contract | 8 | 8 | Complete |
-| 2 | Match header and panel shell | 8 | 3 | In progress |
+| 2 | Match header and panel shell | 8 | 5 | In progress |
 | 3 | Goal and recommendation read models | 8 | 5 | In progress |
 | 4 | Show Me and Do It command intents | 8 | 0 | Not started |
 | 5 | Give Control ownership | 8 | 0 | Not started |
@@ -77,8 +77,8 @@ Phase 1 notes:
 - [x] Ensure ARIA header button blocks world pointer/touch selection behind UI on desktop and Android.
 - [x] Add panel open/close binding through `MatchHudAssistantUiSystemHelper`.
 - [ ] Add panel binding through `AssistantPanelUiSystemHelper` without assistant policy in the UI helper.
-- [ ] Show current goals area from read-model rows.
-- [ ] Show top recommendation area with title, reason, risk/status chip, and action buttons.
+- [x] Show current goals area from read-model rows.
+- [x] Show top recommendation area with title, reason, risk/status chip, and action buttons.
 - [ ] Show alert/report list from prioritized message rows.
 - [ ] Add visible ownership state when ARIA preview/takeover is active.
 
@@ -88,8 +88,9 @@ Phase 2 notes:
 
 - Added `MatchHudAssistantUiSystemHelper` as a narrow managed UI boundary. It creates the ARIA header button and a lightweight panel shell when the match HUD header installs, and destroys both with the header lifecycle.
 - ARIA button and panel clicks call `MainMenuPlayUI.CaptureGameplayUiClickSequence()` so Android/desktop UI touches suppress world selection behind the HUD.
-- The panel currently contains static shell sections for current goals and recommended action. Phase 3 must replace static rows with ECS read-model buffers and may extract `AssistantPanelUiSystemHelper` if the binding grows beyond shell creation.
+- The panel shell now consumes live `UiAssistantPanelModel` rows for current goals and the top recommendation. It may still extract `AssistantPanelUiSystemHelper` if future alert/report and ownership-state binding grows beyond the current helper.
 - The shell includes `NEXT ACTION` and `GIVE CONTROL` buttons as non-executing UI affordances. Command intent wiring remains Phase 4/5.
+- Added `UiAssistantPanelModel` and runtime gateway binding so `MainMenuPlayUI` applies live goal/recommendation rows to the panel without the UI helper querying ECS. The gateway caches converted strings by assistant source/recommendation versions, and the helper only updates text when the model version changes.
 
 ## Phase 3: Goal And Recommendation Read Models
 
@@ -181,6 +182,7 @@ Exit criteria: feature is playable, validated, documented, and does not regress 
 | 2026-07-08 | Phase 0 inventory and Phase 1 ECS data contract | `git diff --check`; forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-data-contract-unity-rerun.log --timeout 420 -- -quit -executeMethod AssistantEcsDataContractTests.RunFocusedValidation` | Passed | Focused Unity validation reported `[AssistantEcsDataContractValidation] result=Passed tests=3`. Earlier dotnet revalidation attempts cancelled at 5:00 with 0 warnings/errors, so Unity wrapper validation is the authoritative compile/test evidence for this slice. |
 | 2026-07-08 | Phase 2 match HUD assistant shell | `git diff --check`; forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-match-hud-assistant-ui-unity-final.log --timeout 420 -- -quit -executeMethod MatchHudAssistantUiSystemHelperTests.RunFocusedValidation` | Passed | Focused Unity validation reported `[MatchHudAssistantUiValidation] result=Passed tests=1`. Validates ARIA button/panel creation, panel open, world-click suppression, and match HUD helper cleanup. |
 | 2026-07-08 | Phase 3 objective goals and recommendation read-model base | `git diff --check`; forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-read-models-unity.log --timeout 420 -- -quit -executeMethod AssistantReadModelSystemTests.RunFocusedValidation` | Passed | Focused Unity validation reported `[AssistantReadModelValidation] result=Passed tests=3`. Validates objective goal publishing, objective recommendation publishing, and no republish/version bump when sources are unchanged. |
+| 2026-07-08 | Phase 2/3 live assistant panel read-model binding | `git diff --check`; forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-match-hud-assistant-ui-live-model-unity.log --timeout 420 -- -quit -executeMethod MatchHudAssistantUiSystemHelperTests.RunFocusedValidation`; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-read-models-live-binding-rerun-unity.log --timeout 420 -- -quit -executeMethod AssistantReadModelSystemTests.RunFocusedValidation` | Passed | UI validation reported `[MatchHudAssistantUiValidation] result=Passed tests=2`; read-model rerun reported `[AssistantReadModelValidation] result=Passed tests=3`. Validates live panel text/button binding through `UiAssistantPanelModel` and keeps ECS read-model tests green. |
 
 ## Open Decisions
 

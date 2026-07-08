@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Game.UI.Contracts;
 
 namespace Game.UI.Runtime
 {
@@ -17,7 +18,13 @@ namespace Game.UI.Runtime
         private Button _closeButton;
         private Button _nextActionButton;
         private Button _giveControlButton;
+        private TMP_Text _stateText;
+        private TMP_Text _goalsBodyText;
+        private TMP_Text _recommendationBodyText;
+        private TMP_Text _nextActionLabelText;
+        private TMP_Text _giveControlLabelText;
         private Action _captureGameplayUiClick;
+        private uint _lastAppliedReadModelVersion = uint.MaxValue;
 
         public bool IsPanelOpen => _panelRoot != null && _panelRoot.gameObject.activeSelf;
 
@@ -53,6 +60,39 @@ namespace Game.UI.Runtime
             _nextActionButton = null;
             _giveControlButton = null;
             _captureGameplayUiClick = null;
+            _stateText = null;
+            _goalsBodyText = null;
+            _recommendationBodyText = null;
+            _nextActionLabelText = null;
+            _giveControlLabelText = null;
+            _lastAppliedReadModelVersion = uint.MaxValue;
+        }
+
+        public void ApplyReadModel(UiAssistantPanelModel model)
+        {
+            if (_buttonRoot == null || _lastAppliedReadModelVersion == model.Version)
+                return;
+
+            _lastAppliedReadModelVersion = model.Version;
+            if (_stateText != null)
+                _stateText.text = string.IsNullOrWhiteSpace(model.OwnershipText) ? "PLAYER CONTROL" : model.OwnershipText;
+            if (_goalsBodyText != null)
+                _goalsBodyText.text = string.IsNullOrWhiteSpace(model.GoalsText) ? "No active objectives" : model.GoalsText;
+            if (_recommendationBodyText != null)
+            {
+                _recommendationBodyText.text = model.HasRecommendation
+                    ? $"{model.RecommendationPriorityText}: {model.RecommendationTitle}\n{model.RecommendationBody}"
+                    : model.RecommendationBody;
+            }
+
+            if (_nextActionButton != null)
+                _nextActionButton.interactable = model.CanShow;
+            if (_giveControlButton != null)
+                _giveControlButton.interactable = model.CanTakeControl;
+            if (_nextActionLabelText != null)
+                _nextActionLabelText.text = string.IsNullOrWhiteSpace(model.RecommendationActionLabel) ? "SHOW ME" : model.RecommendationActionLabel;
+            if (_giveControlLabelText != null)
+                _giveControlLabelText.text = model.CanTakeControl ? "GIVE CONTROL" : "CONTROL LOCKED";
         }
 
         public bool ContainsScreenPoint(Vector2 screenPosition)
@@ -82,7 +122,7 @@ namespace Game.UI.Runtime
             _button.onClick.AddListener(TogglePanel);
 
             CreateText("Label", root, "ARIA", 28, TextAlignmentOptions.Left, new Vector2(18f, -8f), new Vector2(94f, 34f));
-            CreateText("State", root, "READY", 18, TextAlignmentOptions.Left, new Vector2(18f, -42f), new Vector2(96f, 24f), new Color(0.45f, 0.95f, 1f, 1f));
+            _stateText = CreateText("State", root, "PLAYER CONTROL", 18, TextAlignmentOptions.Left, new Vector2(18f, -42f), new Vector2(144f, 24f), new Color(0.45f, 0.95f, 1f, 1f));
             CreateText("Cue", root, ">", 42, TextAlignmentOptions.Center, new Vector2(-55f, -18f), new Vector2(44f, 48f), new Color(1f, 0.78f, 0.32f, 1f));
 
             return root;
@@ -105,13 +145,15 @@ namespace Game.UI.Runtime
 
             CreateText("Title", root, "ARIA COMMAND ASSISTANT", 28, TextAlignmentOptions.Left, new Vector2(28f, -24f), new Vector2(460f, 38f), new Color(0.92f, 0.96f, 0.95f, 1f));
             CreateText("GoalsTitle", root, "CURRENT GOALS", 18, TextAlignmentOptions.Left, new Vector2(28f, -88f), new Vector2(240f, 28f), new Color(1f, 0.80f, 0.34f, 1f));
-            CreateText("GoalsBody", root, "Protect civilians\nNeutralize hostile patrol\nKeep losses low", 20, TextAlignmentOptions.Left, new Vector2(28f, -124f), new Vector2(310f, 104f), new Color(0.80f, 0.86f, 0.84f, 1f));
+            _goalsBodyText = CreateText("GoalsBody", root, "No active objectives", 20, TextAlignmentOptions.Left, new Vector2(28f, -124f), new Vector2(310f, 104f), new Color(0.80f, 0.86f, 0.84f, 1f));
             CreateText("RecommendationTitle", root, "RECOMMENDED NEXT ACTION", 18, TextAlignmentOptions.Left, new Vector2(28f, -258f), new Vector2(330f, 28f), new Color(0.45f, 0.95f, 1f, 1f));
-            CreateText("RecommendationBody", root, "Assistant read models will populate this panel in the next ECS slice.", 20, TextAlignmentOptions.Left, new Vector2(28f, -294f), new Vector2(520f, 72f), new Color(0.78f, 0.84f, 0.82f, 1f));
+            _recommendationBodyText = CreateText("RecommendationBody", root, "ARIA is waiting for live battlefield context.", 20, TextAlignmentOptions.Left, new Vector2(28f, -294f), new Vector2(520f, 72f), new Color(0.78f, 0.84f, 0.82f, 1f));
 
-            _nextActionButton = CreatePanelButton("NextActionButton", root, "NEXT ACTION", new Vector2(28f, -398f));
-            _giveControlButton = CreatePanelButton("GiveControlButton", root, "GIVE CONTROL", new Vector2(246f, -398f));
-            _closeButton = CreatePanelButton("CloseButton", root, "CLOSE", new Vector2(464f, -398f));
+            _nextActionButton = CreatePanelButton("NextActionButton", root, "SHOW ME", new Vector2(28f, -398f), out _nextActionLabelText);
+            _giveControlButton = CreatePanelButton("GiveControlButton", root, "CONTROL LOCKED", new Vector2(246f, -398f), out _giveControlLabelText);
+            _closeButton = CreatePanelButton("CloseButton", root, "CLOSE", new Vector2(464f, -398f), out _);
+            _nextActionButton.interactable = false;
+            _giveControlButton.interactable = false;
 
             _nextActionButton.onClick.AddListener(CaptureUiOnly);
             _giveControlButton.onClick.AddListener(CaptureUiOnly);
@@ -119,7 +161,7 @@ namespace Game.UI.Runtime
             return root;
         }
 
-        private Button CreatePanelButton(string name, RectTransform parent, string label, Vector2 anchoredPosition)
+        private Button CreatePanelButton(string name, RectTransform parent, string label, Vector2 anchoredPosition, out TMP_Text labelText)
         {
             RectTransform root = CreateRect(name, parent);
             root.anchorMin = new Vector2(0f, 1f);
@@ -134,7 +176,7 @@ namespace Game.UI.Runtime
 
             Button button = root.gameObject.AddComponent<Button>();
             button.targetGraphic = background;
-            CreateText("Label", root, label, 18, TextAlignmentOptions.Center, Vector2.zero, root.sizeDelta, new Color(0.94f, 0.86f, 0.62f, 1f));
+            labelText = CreateText("Label", root, label, 18, TextAlignmentOptions.Center, Vector2.zero, root.sizeDelta, new Color(0.94f, 0.86f, 0.62f, 1f));
             return button;
         }
 

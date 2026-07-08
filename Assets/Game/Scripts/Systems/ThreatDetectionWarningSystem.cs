@@ -4,6 +4,7 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Game.Components;
+using Game.Configs;
 
 namespace Game.Runtime
 {
@@ -144,18 +145,96 @@ namespace Game.Runtime
             ThreatScanResult scan = result[0];
             if (scan.HasNewGroundThreat != 0 && (scan.HasNewAirThreat == 0 || scan.BestGroundEtaSeconds <= scan.BestAirEtaSeconds))
             {
+                float etaSeconds = scan.BestGroundEtaSeconds == float.MaxValue ? 0f : scan.BestGroundEtaSeconds;
+                int threatCount = currentGroundThreatList.Length;
                 ThreatWarningRuntimeState.RequestWarning(
                     ThreatWarningType.Ground,
-                    scan.BestGroundEtaSeconds == float.MaxValue ? 0f : scan.BestGroundEtaSeconds,
-                    currentGroundThreatList.Length);
+                    etaSeconds,
+                    threatCount);
+                TryEmitThreatWarningAudio(
+                    state.EntityManager,
+                    ThreatWarningType.Ground,
+                    etaSeconds,
+                    threatCount,
+                    (float)SystemAPI.Time.ElapsedTime);
             }
             else if (scan.HasNewAirThreat != 0)
             {
+                float etaSeconds = scan.BestAirEtaSeconds == float.MaxValue ? 0f : scan.BestAirEtaSeconds;
+                int threatCount = currentAirThreatList.Length;
                 ThreatWarningRuntimeState.RequestWarning(
                     ThreatWarningType.Air,
-                    scan.BestAirEtaSeconds == float.MaxValue ? 0f : scan.BestAirEtaSeconds,
-                    currentAirThreatList.Length);
+                    etaSeconds,
+                    threatCount);
+                TryEmitThreatWarningAudio(
+                    state.EntityManager,
+                    ThreatWarningType.Air,
+                    etaSeconds,
+                    threatCount,
+                    (float)SystemAPI.Time.ElapsedTime);
             }
+        }
+
+        public static bool TryEmitThreatWarningAudio(
+            EntityManager em,
+            ThreatWarningType warningType,
+            float etaSeconds,
+            int threatCount,
+            float requestedAt)
+        {
+            if (!TryResolveThreatWarningAudioEvent(
+                    warningType,
+                    etaSeconds,
+                    threatCount,
+                    out string eventId,
+                    out uint eventHash,
+                    out AudioPlaybackPriority priority,
+                    out float cooldownSeconds))
+            {
+                return false;
+            }
+
+            AudioEventRequestSystem.EnqueueOneShot(
+                em,
+                new FixedString64Bytes(eventId),
+                eventHash,
+                new FixedString32Bytes("Alerts"),
+                priority,
+                requestedAt,
+                cooldownSeconds);
+            return true;
+        }
+
+        public static bool TryResolveThreatWarningAudioEvent(
+            ThreatWarningType warningType,
+            float etaSeconds,
+            int threatCount,
+            out string eventId,
+            out uint eventHash,
+            out AudioPlaybackPriority priority,
+            out float cooldownSeconds)
+        {
+            eventId = null;
+            eventHash = 0u;
+            priority = AudioPlaybackPriority.High;
+            cooldownSeconds = 3f;
+
+            if (warningType != ThreatWarningType.Ground && warningType != ThreatWarningType.Air)
+                return false;
+
+            bool critical = etaSeconds <= 0.01f || threatCount > 1;
+            if (critical)
+            {
+                eventId = AudioEventIds.AlertThreatCritical;
+                eventHash = AudioEventIds.AlertThreatCriticalHash;
+                priority = AudioPlaybackPriority.Critical;
+                cooldownSeconds = 4f;
+                return true;
+            }
+
+            eventId = AudioEventIds.AlertThreatMinor;
+            eventHash = AudioEventIds.AlertThreatMinorHash;
+            return true;
         }
 
         private bool ShouldSkipScan(int targetCount)

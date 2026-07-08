@@ -27,6 +27,12 @@ public sealed class AlertObjectiveAudioFeedbackTests
             passed++;
             tests.UnitAttackSystem_DamagingPlayerTargetEnqueuesUnderAttackAudio();
             passed++;
+            tests.BaseBreachedAudio_ResolvesOnlyForPlayerOwnedBarriers();
+            passed++;
+            tests.TryEmitBaseBreachedAudio_EnqueuesCriticalAlertRequest();
+            passed++;
+            tests.BeginDestroyedBuildingState_EmitsBaseBreachedAudioOnlyWhenCombatBoundaryRequestsIt();
+            passed++;
 
             Debug.Log($"[AlertObjectiveAudioFeedbackValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -179,6 +185,110 @@ public sealed class AlertObjectiveAudioFeedbackTests
         Assert.That(requests[0].RequestedAt, Is.EqualTo(1.5f).Within(0.001f));
     }
 
+    [Test]
+    public void BaseBreachedAudio_ResolvesOnlyForPlayerOwnedBarriers()
+    {
+        RuntimeBuildingEntity playerWall = CreateRuntimeBuilding(
+            FactionIdentity.PlayerFactionId,
+            isWall: true,
+            displayName: "Perimeter Wall");
+        RuntimeBuildingEntity playerGate = CreateRuntimeBuilding(
+            FactionIdentity.PlayerFactionId,
+            isWall: false,
+            displayName: "Road_Barrier Gate");
+        RuntimeBuildingEntity enemyWall = CreateRuntimeBuilding(
+            FactionIdentity.EnemyFactionId,
+            isWall: true,
+            displayName: "Enemy Wall");
+        RuntimeBuildingEntity playerBarracks = CreateRuntimeBuilding(
+            FactionIdentity.PlayerFactionId,
+            isWall: false,
+            displayName: "Barracks");
+
+        AssertBaseBreachedAudio(playerWall);
+        AssertBaseBreachedAudio(playerGate);
+        Assert.IsFalse(BuildingCombatUtilitySystemHelper.TryResolveBaseBreachedAudioEvent(
+            enemyWall,
+            out _,
+            out _,
+            out _,
+            out _));
+        Assert.IsFalse(BuildingCombatUtilitySystemHelper.TryResolveBaseBreachedAudioEvent(
+            playerBarracks,
+            out _,
+            out _,
+            out _,
+            out _));
+    }
+
+    [Test]
+    public void TryEmitBaseBreachedAudio_EnqueuesCriticalAlertRequest()
+    {
+        using World world = new("BaseBreachedAudioEmitTests");
+        EntityManager em = world.EntityManager;
+        Entity combatEntity = em.CreateEntity();
+        RuntimeBuildingEntity playerWall = CreateRuntimeBuilding(
+            FactionIdentity.PlayerFactionId,
+            isWall: true,
+            displayName: "Perimeter Wall",
+            combatEntity: combatEntity);
+
+        Assert.IsTrue(BuildingCombatUtilitySystemHelper.TryEmitBaseBreachedAudio(
+            em,
+            playerWall,
+            requestedAt: 6.75f));
+
+        DynamicBuffer<AudioPlaybackRequestElement> requests = GetAudioRequests(em);
+        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(AudioEventIds.AlertBaseBreached, requests[0].EventId.ToString());
+        Assert.AreEqual(AudioEventIds.AlertBaseBreachedHash, requests[0].EventHash);
+        Assert.AreEqual("Alerts", requests[0].BusId.ToString());
+        Assert.AreEqual(AudioPlaybackPriority.Critical, requests[0].Priority);
+        Assert.AreEqual(AudioPlaybackRequestStatus.Pending, requests[0].Status);
+        Assert.AreEqual(combatEntity, requests[0].SourceEntity);
+        Assert.That(requests[0].CooldownSeconds, Is.EqualTo(5f).Within(0.001f));
+        Assert.That(requests[0].RequestedAt, Is.EqualTo(6.75f).Within(0.001f));
+    }
+
+    [Test]
+    public void BeginDestroyedBuildingState_EmitsBaseBreachedAudioOnlyWhenCombatBoundaryRequestsIt()
+    {
+        using World world = new("BaseBreachedAudioDestroyedStateTests");
+        EntityManager em = world.EntityManager;
+        var helper = new BuildingCombatUtilitySystemHelper();
+        BuildingCombatUtilitySystemHelper.Context<RuntimeBuildingEntity> context =
+            CreateBuildingCombatContext(em);
+
+        RuntimeBuildingEntity manualDeleteWall = CreateRuntimeBuilding(
+            FactionIdentity.PlayerFactionId,
+            isWall: true,
+            displayName: "Perimeter Wall",
+            combatEntity: em.CreateEntity());
+        Assert.IsTrue(helper.BeginDestroyedBuildingState(
+            context,
+            manualDeleteWall,
+            now: 2f,
+            destroyedLifetimeSeconds: 5f));
+        Assert.AreEqual(0, GetAudioRequests(em).Length);
+
+        RuntimeBuildingEntity combatDestroyedWall = CreateRuntimeBuilding(
+            FactionIdentity.PlayerFactionId,
+            isWall: true,
+            displayName: "Perimeter Wall",
+            combatEntity: em.CreateEntity());
+        Assert.IsTrue(helper.BeginDestroyedBuildingState(
+            context,
+            combatDestroyedWall,
+            now: 3f,
+            destroyedLifetimeSeconds: 5f,
+            emitBaseBreachedAudio: true));
+
+        DynamicBuffer<AudioPlaybackRequestElement> requests = GetAudioRequests(em);
+        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(AudioEventIds.AlertBaseBreached, requests[0].EventId.ToString());
+        Assert.AreEqual(combatDestroyedWall.CombatEntity, requests[0].SourceEntity);
+    }
+
     private static void AssertThreatAudio(
         ThreatWarningType warningType,
         float etaSeconds,
@@ -200,6 +310,64 @@ public sealed class AlertObjectiveAudioFeedbackTests
         Assert.AreEqual(expectedEventHash, eventHash);
         Assert.AreEqual(expectedPriority, priority);
         Assert.That(cooldownSeconds, Is.EqualTo(expectedCooldownSeconds).Within(0.001f));
+    }
+
+    private static void AssertBaseBreachedAudio(RuntimeBuildingEntity building)
+    {
+        Assert.IsTrue(BuildingCombatUtilitySystemHelper.TryResolveBaseBreachedAudioEvent(
+            building,
+            out string eventId,
+            out uint eventHash,
+            out AudioPlaybackPriority priority,
+            out float cooldownSeconds));
+        Assert.AreEqual(AudioEventIds.AlertBaseBreached, eventId);
+        Assert.AreEqual(AudioEventIds.AlertBaseBreachedHash, eventHash);
+        Assert.AreEqual(AudioPlaybackPriority.Critical, priority);
+        Assert.That(cooldownSeconds, Is.EqualTo(5f).Within(0.001f));
+    }
+
+    private static RuntimeBuildingEntity CreateRuntimeBuilding(
+        byte ownerFactionId,
+        bool isWall,
+        string displayName,
+        Entity combatEntity = default)
+    {
+        return new RuntimeBuildingEntity
+        {
+            Definition = new BuildingDefinition
+            {
+                DisplayName = displayName,
+                FootprintCells = new Vector2Int(1, 1),
+                IsWall = isWall
+            },
+            HasOwnerFaction = true,
+            OwnerFactionId = ownerFactionId,
+            CombatEntity = combatEntity
+        };
+    }
+
+    private static BuildingCombatUtilitySystemHelper.Context<RuntimeBuildingEntity> CreateBuildingCombatContext(
+        EntityManager em)
+    {
+        return new BuildingCombatUtilitySystemHelper.Context<RuntimeBuildingEntity>(
+            runtimeBuildingSystem: null,
+            runtimeBuildings: null,
+            tryGetEntityManager: TryGetEntityManager,
+            rememberOpenBaseBreach: null,
+            notifyHomeBuildingDestroyed: null,
+            destroyedVisualPresentationHelper: null,
+            destroyedVisualContext: default,
+            destroyObject: null,
+            refreshBuildingMarkerVisibility: null,
+            notifyStaticMinimapChanged: null,
+            log: null,
+            enableDestroyDiagnostics: false);
+
+        bool TryGetEntityManager(out EntityManager entityManager)
+        {
+            entityManager = em;
+            return true;
+        }
     }
 
     private static Entity CreateUnit(EntityManager em, byte factionId, int2 cell, bool air, int health)

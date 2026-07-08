@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 using Game.Components;
+using Game.Configs;
 
 namespace Game.Runtime
 {
@@ -94,6 +96,60 @@ namespace Game.Runtime
             building.IsDestroyed = true;
             building.DestroyedCleanupAt = now + Mathf.Max(0f, destroyedLifetimeSeconds);
             return true;
+        }
+
+        internal static bool TryResolveBaseBreachedAudioEvent(
+            RuntimeBuildingEntity building,
+            out string eventId,
+            out uint eventHash,
+            out AudioPlaybackPriority priority,
+            out float cooldownSeconds)
+        {
+            eventId = null;
+            eventHash = 0u;
+            priority = AudioPlaybackPriority.Medium;
+            cooldownSeconds = 0f;
+
+            if (!IsPlayerOwnedBaseBarrier(building))
+                return false;
+
+            eventId = AudioEventIds.AlertBaseBreached;
+            eventHash = AudioEventIds.AlertBaseBreachedHash;
+            priority = AudioPlaybackPriority.Critical;
+            cooldownSeconds = 5f;
+            return true;
+        }
+
+        internal static bool TryEmitBaseBreachedAudio(EntityManager em, RuntimeBuildingEntity building, float requestedAt)
+        {
+            if (!TryResolveBaseBreachedAudioEvent(
+                    building,
+                    out string eventId,
+                    out uint eventHash,
+                    out AudioPlaybackPriority priority,
+                    out float cooldownSeconds))
+            {
+                return false;
+            }
+
+            AudioEventRequestSystem.EnqueueOneShot(
+                em,
+                new FixedString64Bytes(eventId),
+                eventHash,
+                new FixedString32Bytes("Alerts"),
+                priority,
+                requestedAt,
+                cooldownSeconds,
+                building != null ? building.CombatEntity : Entity.Null);
+            return true;
+        }
+
+        private static bool IsPlayerOwnedBaseBarrier(RuntimeBuildingEntity building)
+        {
+            return building?.Definition != null &&
+                   building.HasOwnerFaction &&
+                   FactionIdentity.IsPlayerControlled(building.OwnerFactionId) &&
+                   (building.Definition.IsWall || BuildingBarrierUtilitySystemHelper.IsWallGateDefinition(building.Definition));
         }
 
         public List<int> CollectDestroyedCleanupIds<TBuilding>(IReadOnlyDictionary<int, TBuilding> buildings, float now)
@@ -317,16 +373,21 @@ namespace Game.Runtime
             RuntimeCombatState combatState = ResolveRuntimeCombatState(building, em);
             if (combatState == RuntimeCombatState.MissingCombatEntity)
             {
-                BeginDestroyedBuildingState(context, building, now, destroyedLifetimeSeconds);
+                BeginDestroyedBuildingState(context, building, now, destroyedLifetimeSeconds, emitBaseBreachedAudio: true);
                 building.CombatEntity = Entity.Null;
                 return;
             }
 
             if (combatState == RuntimeCombatState.DeadCombatEntity)
-                BeginDestroyedBuildingState(context, building, now, destroyedLifetimeSeconds);
+                BeginDestroyedBuildingState(context, building, now, destroyedLifetimeSeconds, emitBaseBreachedAudio: true);
         }
 
-        public bool BeginDestroyedBuildingState<TBuilding>(Context<TBuilding> context, TBuilding building, float now, float destroyedLifetimeSeconds)
+        public bool BeginDestroyedBuildingState<TBuilding>(
+            Context<TBuilding> context,
+            TBuilding building,
+            float now,
+            float destroyedLifetimeSeconds,
+            bool emitBaseBreachedAudio = false)
             where TBuilding : class, IRuntimeBuildingVisualState
         {
             if (!TryMarkDestroyed(building, now, destroyedLifetimeSeconds))
@@ -334,6 +395,13 @@ namespace Game.Runtime
 
             context.NotifyHomeBuildingDestroyed?.Invoke(building.Id);
             context.RememberOpenBaseBreach?.Invoke(building);
+            if (emitBaseBreachedAudio &&
+                building is RuntimeBuildingEntity breachedBuilding &&
+                context.TryGetEntityManager != null &&
+                context.TryGetEntityManager(out EntityManager baseBreachEntityManager))
+            {
+                TryEmitBaseBreachedAudio(baseBreachEntityManager, breachedBuilding, now);
+            }
             DestroyRuntimeBuildingBlockerEntity(context, building);
 
             if (context.RuntimeBuildingSystem != null &&

@@ -323,14 +323,14 @@ Use this section as the work checklist. Update status after each implementation 
 
 ### Current Completion
 
-Overall tracked completion: **86%**.
+Overall tracked completion: **88%**.
 
 - Completed steps: 14 / 20.
 - Asset and placeholder catalog preparation: **Done**.
 - Runtime playback implementation: **In Progress**.
 - UI/gameplay wiring: **In Progress**.
 - Validation/performance test coverage: **In Progress**.
-- Latest stable slice: player unit-under-attack damage emits alert audio through the ECS audio request buffer on the `Alerts` bus.
+- Latest stable slice: player-owned base barrier destruction emits base-breached alert audio through the ECS audio request buffer on the `Alerts` bus.
 
 Status legend:
 
@@ -355,7 +355,7 @@ Status legend:
 | 12. Wire common UI button audio | Done | UI | Shared button/tab/card/toggle/slider audio event views. | `UiAudioEventViewTests.RunFocusedValidation` passed. |
 | 13. Wire shell route/popup audio | Done | UI | Screen forward/back, popup open/close, drawer open/close. | `UiShellAudioRoutePopupTests.RunFocusedValidation` passed. |
 | 14. Wire match command audio | In Progress | Gameplay/UI | Select, move, attack, hold, stop/return, scan, build valid/invalid. | `BuildingAudioFeedbackTests.RunFocusedValidation`, `SelectionAudioFeedbackTests.RunFocusedValidation`, `MatchCommandAudioFeedbackTests.RunFocusedValidation`, and `FocusedUnitCommandSystemTests.RunFocusedValidation` passed for current match/build command audio. |
-| 15. Wire alert/objective audio | In Progress | Gameplay/UI | Threat, objective, unit under attack, base breached events. | `AlertObjectiveAudioFeedbackTests.RunFocusedValidation` passed for threat warning and unit-under-attack alert audio. |
+| 15. Wire alert/objective audio | In Progress | Gameplay/UI | Threat, objective, unit under attack, base breached events. | `AlertObjectiveAudioFeedbackTests.RunFocusedValidation` passed for threat warning, unit-under-attack, and base-breached alert audio. |
 | 16. Wire music state system | Not Started | Gameplay/UI | Splash/menu/briefing/match/result music state transitions. | Route transition test; no overlapping unintended loops. |
 | 17. Add audio catalog validation tests | Not Started | QA | Missing clip, duplicate id, invalid bus, cooldown, import profile tests. | EditMode pass. |
 | 18. Add performance validation | Not Started | QA/Perf | Audio stress test for UI spam and match alerts. | No recurring GC after warmup; no runtime loading; pool size stable. |
@@ -637,10 +637,13 @@ Current Step 15 threat warning pass:
 - Threat warning audio is paired with existing visual warning presentation through `ThreatWarningRuntimeState` and `TryShowMatchHudThreatWarning`.
 - Standard unit attack damage against player-controlled targets emits `Alert.Unit.UnderAttack` on bus `Alerts`, priority `High`, cooldown `2.5s`.
 - Enemy targets and non-player targets do not emit unit-under-attack player alerts.
+- Player-owned wall or wall-gate destruction emits `Alert.Base.Breached` on bus `Alerts`, priority `Critical`, cooldown `5s`.
+- Base-breached audio is emitted from combat-destruction sync after the destroyed state is confirmed, and uses the destroyed building combat entity as the request source.
+- Manual/admin delete-style destruction does not emit base-breached audio unless a combat boundary explicitly requests it.
+- Enemy-owned barriers and non-barrier player buildings do not emit player base-breached audio.
 
 Remaining Step 15 work:
 
-- Base breached audio: emit `Alert.Base.Breached` from the base breach/order or building breach result boundary.
 - Objective progress/complete/failed audio: wire `Gameplay.Objective.Progress`, `Gameplay.Objective.Complete`, and `Gameplay.Objective.Failed` to concrete mission/objective result state once the mission result boundary is identified.
 
 ### Step 16: Music State

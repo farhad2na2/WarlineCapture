@@ -323,14 +323,14 @@ Use this section as the work checklist. Update status after each implementation 
 
 ### Current Completion
 
-Overall tracked completion: **70%**.
+Overall tracked completion: **73%**.
 
 - Completed steps: 14 / 20.
 - Asset and placeholder catalog preparation: **Done**.
 - Runtime playback implementation: **In Progress**.
 - UI/gameplay wiring: **In Progress**.
 - Validation/performance test coverage: **In Progress**.
-- Latest stable slice: shell route, popup, and drawer requests emit semantic UI audio events through the ECS audio request buffer.
+- Latest stable slice: match command outcomes emit semantic gameplay audio events through the ECS audio request buffer.
 
 Status legend:
 
@@ -354,7 +354,7 @@ Status legend:
 | 11. Wire settings UI | Done | UI | Master/Music/SFX/Voice/Alerts volume controls update audio settings. | `AudioSettingsUiProjectionTests.RunFocusedValidation` passed. |
 | 12. Wire common UI button audio | Done | UI | Shared button/tab/card/toggle/slider audio event views. | `UiAudioEventViewTests.RunFocusedValidation` passed. |
 | 13. Wire shell route/popup audio | Done | UI | Screen forward/back, popup open/close, drawer open/close. | `UiShellAudioRoutePopupTests.RunFocusedValidation` passed. |
-| 14. Wire match command audio | Not Started | Gameplay/UI | Select, move, attack, hold, stop/return, scan, build valid/invalid. | Match command tests and manual M01 smoke. |
+| 14. Wire match command audio | In Progress | Gameplay/UI | Select, move, attack, hold, stop/return, scan, build valid/invalid. | `MatchCommandAudioFeedbackTests.RunFocusedValidation` and `FocusedUnitCommandSystemTests.RunFocusedValidation` passed for command outcome audio. |
 | 15. Wire alert/objective audio | Not Started | Gameplay/UI | Threat, objective, unit under attack, base breached events. | Cooldown and priority tests. |
 | 16. Wire music state system | Not Started | Gameplay/UI | Splash/menu/briefing/match/result music state transitions. | Route transition test; no overlapping unintended loops. |
 | 17. Add audio catalog validation tests | Not Started | QA | Missing clip, duplicate id, invalid bus, cooldown, import profile tests. | EditMode pass. |
@@ -588,6 +588,25 @@ Examples:
 | Command rejected | `Gameplay.Command.Rejected` or `UI.Feedback.Toast.Error` |
 
 For `HOLD`, `STOP`, and `SCAN`, align audio feedback with `Match_Unit_Command_Behavior_Spec.md`. A fixed-wing jet or drone returning must not play a ground stop sound.
+
+Current Step 14 command outcome pass:
+
+- Source: `Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushCompositionSystemHelper.cs`.
+- Validation: `MatchCommandAudioFeedbackTests.RunFocusedValidation`, `FocusedUnitCommandSystemTests.RunFocusedValidation`.
+- Move command result accepted emits `Gameplay.Command.Move.Accepted`.
+- Attack command result accepted emits `Gameplay.Command.Attack.Accepted`.
+- Hold immediate command accepted emits `Gameplay.Command.Hold.Accepted`.
+- Stop/return immediate command accepted emits `Gameplay.Command.Stop.Returning`.
+- Scan target mode entry emits `Gameplay.Command.Scan.Targeting`.
+- Scan command result accepted emits `Gameplay.Command.Scan.Accepted`.
+- Rejected command outcomes emit `Gameplay.Command.Rejected`.
+- Validation note: `SelectionCommandRequestResultContractTests.RunBatchValidation` was attempted, but an existing scan engagement assertion failed outside this audio mapping path; the focused command audio and focused hold/stop validations passed.
+
+Remaining Step 14 work:
+
+- Selection unit-type audio: infantry, vehicle, air.
+- Build placement valid/invalid, production queued, production rejected.
+- Manual M01 smoke once playback presentation is connected in-scene.
 
 ### Step 15: Alerts And Objective Audio
 

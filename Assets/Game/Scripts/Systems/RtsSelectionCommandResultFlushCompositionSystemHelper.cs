@@ -329,6 +329,7 @@ namespace Game.Runtime
                     return true;
                 }
 
+                TryEmitCommandAudio(context, processedKind, accepted: false);
                 context.ApplyHudCommandResult?.Invoke(
                     BuildImmediateSelectedUnitCommandResult(processedKind, accepted, rejectionReason, issuedCount));
                 if (hasCommandMode)
@@ -341,6 +342,7 @@ namespace Game.Runtime
                 if (context.SelectionStateCompositionSystemHelper != null)
                     context.ClearFocusedUnit?.Invoke(context.SelectionStateCompositionSystemHelper);
                 context.ClearHudSelection?.Invoke();
+                TryEmitCommandAudio(context, processedKind, accepted: true);
                 context.ApplyHudCommandResult?.Invoke(
                     BuildImmediateSelectedUnitCommandResult(processedKind, accepted, rejectionReason, issuedCount));
                 return true;
@@ -357,6 +359,7 @@ namespace Game.Runtime
                     $"SelectionUiCommandUiSystemHelper.{mode}");
                 context.SetCameraDragging?.Invoke(false);
                 context.ClearHudCommandMode?.Invoke();
+                TryEmitCommandAudio(context, processedKind, accepted: true);
                 context.ApplyHudCommandResult?.Invoke(
                     BuildImmediateSelectedUnitCommandResult(processedKind, accepted, rejectionReason, issuedCount));
                 if (context.SelectionStateCompositionSystemHelper != null)
@@ -364,6 +367,7 @@ namespace Game.Runtime
                 return true;
             }
 
+            TryEmitCommandAudio(context, processedKind, accepted: true);
             context.ApplyHudCommandResult?.Invoke(
                 BuildImmediateSelectedUnitCommandResult(processedKind, accepted, rejectionReason, issuedCount));
             return true;
@@ -445,6 +449,7 @@ namespace Game.Runtime
             if (!accepted)
             {
                 context.ClearHudCommandMode?.Invoke();
+                TryEmitCommandAudio(context, RtsSelectionCommandIntentKind.EnterMoveTargetMode, accepted: false);
                 context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(rejectionReason));
                 context.LogSelectionClickDiagnostic?.Invoke(
                     $"moveModeEntered result=False reason={rejectionReason} frame={currentFrame}");
@@ -514,6 +519,7 @@ namespace Game.Runtime
             {
                 if (enterAttackTargetMode)
                     context.ClearHudCommandMode?.Invoke();
+                TryEmitCommandAudio(context, processedKind, accepted: false);
                 context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(rejectionReason));
                 if (enterAttackTargetMode)
                     context.SetHudWorldMarkersVisible?.Invoke(false);
@@ -638,6 +644,7 @@ namespace Game.Runtime
                 "SelectionUiCommandUiSystemHelper.EnterScanTargetMode");
             context.SetCameraDragging?.Invoke(false);
             context.SetHudWorldMarkersVisible?.Invoke(false);
+            TryEmitCommandAudio(context, RtsSelectionCommandIntentKind.EnterScanTargetMode, accepted: true);
             context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Scan);
             context.LogSelectionClickDiagnostic?.Invoke(
                 $"scanModeEntered result=True frame={currentFrame} dragReset={SelectionPointerPosition(context)}");
@@ -771,6 +778,7 @@ namespace Game.Runtime
                 bool clearCommandMode = context.InputSystem.ShouldClearActiveCommandModeAfterCommand(TacticalCommandMode.Move);
                 if (clearCommandMode)
                     context.InputSystem.ClearActiveCommandMode();
+                TryEmitCommandAudio(context, result.Kind, result.Accepted != 0);
                 if (result.Accepted != 0)
                 {
                     context.OrderMarkerSystem.TryShowCommandResultMarker(em, result);
@@ -802,6 +810,7 @@ namespace Game.Runtime
                     SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace($"processMoveCommandRequestsUnhandled frame={UnityEngine.Time.frameCount}");
                 context.ClearHudCommandMode?.Invoke();
                 context.InputSystem.ClearActiveCommandMode();
+                TryEmitCommandAudio(context, RtsSelectionCommandIntentKind.Move, accepted: false);
                 context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
             }
         }
@@ -925,6 +934,8 @@ namespace Game.Runtime
             for (int i = 0; i < _attackCommandResultScratch.Count; i++)
             {
                 RtsSelectionCommandResultElement result = _attackCommandResultScratch[i];
+                if (result.HasCommandResult != 0 || result.Accepted != 0)
+                    TryEmitCommandAudio(context, result.Kind, result.Accepted != 0);
                 if (result.HasCommandResult != 0)
                     context.ApplyHudCommandResult?.Invoke(ToTacticalCommandResult(result));
 
@@ -1057,6 +1068,7 @@ namespace Game.Runtime
                     $"hasCommandResult={result.HasCommandResult} revealed={result.RevealedCount} source={result.SourceEntity} frame={UnityEngine.Time.frameCount}");
                 if (result.Accepted == 0)
                 {
+                    TryEmitCommandAudio(context, result.Kind, accepted: false);
                     bool clearRejectedInputCommandMode = context.InputSystem.ShouldClearActiveCommandModeAfterCommand(TacticalCommandMode.Scan);
                     if (clearRejectedInputCommandMode)
                     {
@@ -1070,6 +1082,7 @@ namespace Game.Runtime
                 }
 
                 bool clearInputCommandMode = context.InputSystem.ShouldClearActiveCommandModeAfterCommand(TacticalCommandMode.Scan);
+                TryEmitCommandAudio(context, result.Kind, accepted: true);
                 if (clearInputCommandMode)
                     context.InputSystem.ClearActiveCommandMode();
                 context.OrderMarkerSystem.TryShowCommandResultMarker(em, result);
@@ -1231,6 +1244,77 @@ namespace Game.Runtime
         {
             if (context.TryGetDefaultEntityManager?.Invoke(out EntityManager defaultEntityManager) == true)
                 context.HudFeedbackSystem.EnsureFeedbackQueue(defaultEntityManager);
+        }
+
+        internal static bool TryEmitCommandAudio(Context context, RtsSelectionCommandIntentKind kind, bool accepted)
+        {
+            if (context.TryGetDefaultEntityManager?.Invoke(out EntityManager em) != true)
+                return false;
+
+            return TryEmitCommandAudio(em, kind, accepted);
+        }
+
+        internal static bool TryEmitCommandAudio(EntityManager em, RtsSelectionCommandIntentKind kind, bool accepted)
+        {
+            if (!TryResolveCommandAudioEvent(kind, accepted, out string eventId, out uint eventHash))
+                return false;
+
+            AudioEventRequestSystem.EnqueueOneShot(
+                em,
+                new FixedString64Bytes(eventId),
+                eventHash,
+                new FixedString32Bytes("Gameplay"),
+                accepted ? AudioPlaybackPriority.Medium : AudioPlaybackPriority.High,
+                UnityEngine.Time.time,
+                cooldownSeconds: accepted ? 0.08f : 0.12f);
+            return true;
+        }
+
+        internal static bool TryResolveCommandAudioEvent(
+            RtsSelectionCommandIntentKind kind,
+            bool accepted,
+            out string eventId,
+            out uint eventHash)
+        {
+            if (!accepted)
+            {
+                eventId = AudioEventIds.GameplayCommandRejected;
+                eventHash = AudioEventIds.GameplayCommandRejectedHash;
+                return true;
+            }
+
+            switch (kind)
+            {
+                case RtsSelectionCommandIntentKind.Move:
+                    eventId = AudioEventIds.GameplayCommandMoveAccepted;
+                    eventHash = AudioEventIds.GameplayCommandMoveAcceptedHash;
+                    return true;
+                case RtsSelectionCommandIntentKind.Attack:
+                    eventId = AudioEventIds.GameplayCommandAttackAccepted;
+                    eventHash = AudioEventIds.GameplayCommandAttackAcceptedHash;
+                    return true;
+                case RtsSelectionCommandIntentKind.HoldPosition:
+                    eventId = AudioEventIds.GameplayCommandHoldAccepted;
+                    eventHash = AudioEventIds.GameplayCommandHoldAcceptedHash;
+                    return true;
+                case RtsSelectionCommandIntentKind.Stop:
+                case RtsSelectionCommandIntentKind.ReturnToBase:
+                    eventId = AudioEventIds.GameplayCommandStopReturning;
+                    eventHash = AudioEventIds.GameplayCommandStopReturningHash;
+                    return true;
+                case RtsSelectionCommandIntentKind.EnterScanTargetMode:
+                    eventId = AudioEventIds.GameplayCommandScanTargeting;
+                    eventHash = AudioEventIds.GameplayCommandScanTargetingHash;
+                    return true;
+                case RtsSelectionCommandIntentKind.Scan:
+                    eventId = AudioEventIds.GameplayCommandScanAccepted;
+                    eventHash = AudioEventIds.GameplayCommandScanAcceptedHash;
+                    return true;
+                default:
+                    eventId = string.Empty;
+                    eventHash = 0u;
+                    return false;
+            }
         }
 
         private static void DrainResults(

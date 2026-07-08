@@ -19,6 +19,8 @@ namespace Game.UI.Runtime
         private const string ColorblindModeKey = Prefix + "Accessibility.ColorblindMode";
         private const string LanguageKey = Prefix + "Localization.Language";
         private const string AssistanceLevelKey = Prefix + "Assistant.AssistanceLevel";
+        private const string AssistantNarrationModeKey = Prefix + "Assistant.NarrationMode";
+        private const string AssistantAllowTakeoverKey = Prefix + "Assistant.AllowTakeover";
 
         public static event System.Action<UISettingsModel> RuntimeApplied;
 
@@ -57,7 +59,9 @@ namespace Game.UI.Runtime
             },
             Assistant = new AssistantSettingsModel
             {
-                AssistanceLevel = UIAssistanceLevel.FullGuidance
+                AssistanceLevel = UIAssistanceLevel.FullGuidance,
+                NarrationMode = UIAssistantNarrationMode.Important,
+                AllowTakeover = true
             }
         };
 
@@ -99,7 +103,9 @@ namespace Game.UI.Runtime
                 },
                 Assistant = new AssistantSettingsModel
                 {
-                    AssistanceLevel = GetEnum(AssistanceLevelKey, defaults.Assistant.AssistanceLevel)
+                    AssistanceLevel = GetEnum(AssistanceLevelKey, defaults.Assistant.AssistanceLevel),
+                    NarrationMode = GetEnum(AssistantNarrationModeKey, defaults.Assistant.NarrationMode),
+                    AllowTakeover = PlayerPrefs.GetInt(AssistantAllowTakeoverKey, defaults.Assistant.AllowTakeover ? 1 : 0) == 1
                 }
             };
         }
@@ -120,6 +126,8 @@ namespace Game.UI.Runtime
             PlayerPrefs.SetInt(ColorblindModeKey, (int)model.Accessibility.ColorblindMode);
             PlayerPrefs.SetInt(LanguageKey, (int)model.Localization.Language);
             PlayerPrefs.SetInt(AssistanceLevelKey, (int)model.Assistant.AssistanceLevel);
+            PlayerPrefs.SetInt(AssistantNarrationModeKey, (int)model.Assistant.NarrationMode);
+            PlayerPrefs.SetInt(AssistantAllowTakeoverKey, model.Assistant.AllowTakeover ? 1 : 0);
             PlayerPrefs.Save();
         }
 

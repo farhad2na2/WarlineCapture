@@ -90,9 +90,18 @@ public sealed class SettingsPopupValidationTests
                 UIAssistanceLevel.FullGuidance,
                 defaults.Assistant.AssistanceLevel,
                 "Settings defaults must include the documented full-guidance assistant level.");
+            Assert.AreEqual(
+                UIAssistantNarrationMode.Important,
+                defaults.Assistant.NarrationMode,
+                "Settings defaults must match the ECS important-only narration default.");
+            Assert.IsTrue(
+                defaults.Assistant.AllowTakeover,
+                "Settings defaults must allow bounded ARIA takeover.");
 
             UISettingsModel model = defaults;
             model.Assistant.AssistanceLevel = UIAssistanceLevel.HintsOnly;
+            model.Assistant.NarrationMode = UIAssistantNarrationMode.CriticalOnly;
+            model.Assistant.AllowTakeover = false;
             SettingsService.Save(model);
 
             UISettingsModel loaded = SettingsService.Load();
@@ -100,6 +109,13 @@ public sealed class SettingsPopupValidationTests
                 UIAssistanceLevel.HintsOnly,
                 loaded.Assistant.AssistanceLevel,
                 "Assistant assistance level must round-trip through SettingsService.");
+            Assert.AreEqual(
+                UIAssistantNarrationMode.CriticalOnly,
+                loaded.Assistant.NarrationMode,
+                "Assistant narration mode must round-trip through SettingsService.");
+            Assert.IsFalse(
+                loaded.Assistant.AllowTakeover,
+                "Assistant takeover permission must round-trip through SettingsService.");
         }
         finally
         {

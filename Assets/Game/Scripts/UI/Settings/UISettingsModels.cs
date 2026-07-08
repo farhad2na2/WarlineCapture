@@ -47,6 +47,15 @@ namespace Game.UI.Runtime
     }
 
     [Serializable]
+    public enum UIAssistantNarrationMode
+    {
+        Off = 0,
+        CriticalOnly = 1,
+        Important = 2,
+        All = 3
+    }
+
+    [Serializable]
     public struct AudioSettingsModel
     {
         public float MasterVolume;
@@ -93,6 +102,8 @@ namespace Game.UI.Runtime
     public struct AssistantSettingsModel
     {
         public UIAssistanceLevel AssistanceLevel;
+        public UIAssistantNarrationMode NarrationMode;
+        public bool AllowTakeover;
     }
 
     [Serializable]

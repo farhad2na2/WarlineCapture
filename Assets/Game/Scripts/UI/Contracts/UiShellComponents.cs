@@ -52,7 +52,8 @@ namespace Game.UI.Contracts
         Pause,
         BuildDrawer,
         RewardUnlock,
-        Settings
+        Settings,
+        ResourceExchange
     }
 
     public enum UiShellPopupIntent

@@ -202,6 +202,94 @@ namespace Game.UI.Shell.Contracts.Ecs
         public FixedString32Bytes TimeText;
     }
 
+    public enum UiResourceExchangeTab : byte
+    {
+        Export = 0,
+        Import = 1
+    }
+
+    public enum UiResourceExchangeQueueState : byte
+    {
+        None = 0,
+        Pending = 1,
+        InProgress = 2,
+        Completed = 3,
+        Cancelled = 4,
+        Blocked = 5
+    }
+
+    public struct UiResourceExchangeStateComponent : IComponentData
+    {
+        public UiResourceExchangeTab ActiveTab;
+        public int SelectedRecipeSlot;
+        public int ExportRecipeCount;
+        public int ImportRecipeCount;
+        public int QueueCount;
+        public int ActiveCount;
+        public int CompletedCount;
+        public int MaxQueueItems;
+        public FixedString32Bytes QueueCapacityText;
+        public FixedString32Bytes CreditsText;
+        public FixedString32Bytes MaterialsText;
+        public FixedString32Bytes OilText;
+        public FixedString32Bytes FuelText;
+        public FixedString32Bytes RushTicketsText;
+        public byte ExchangeEnabled;
+        public byte RushAllEnabled;
+        public byte ClearCompletedEnabled;
+        public uint Version;
+    }
+
+    public struct UiResourceExchangeDetailComponent : IComponentData
+    {
+        public FixedString128Bytes RecipeId;
+        public FixedString64Bytes Name;
+        public FixedString32Bytes RouteText;
+        public FixedString64Bytes RateText;
+        public FixedString32Bytes AmountText;
+        public FixedString32Bytes InputCostText;
+        public FixedString32Bytes OutputPreviewText;
+        public FixedString32Bytes DurationText;
+        public FixedString64Bytes RequirementsText;
+        public FixedString128Bytes InstructionText;
+        public byte ConfirmEnabled;
+        public byte WarningVisible;
+    }
+
+    public struct UiResourceExchangeRecipeCardComponent : IBufferElementData
+    {
+        public byte Visible;
+        public byte Enabled;
+        public byte Selected;
+        public byte Locked;
+        public byte WarningVisible;
+        public UiResourceExchangeTab Tab;
+        public FixedString128Bytes RecipeId;
+        public FixedString64Bytes Title;
+        public FixedString32Bytes InputText;
+        public FixedString32Bytes OutputText;
+        public FixedString32Bytes DurationText;
+        public FixedString64Bytes ReasonText;
+    }
+
+    public struct UiResourceExchangeQueueRowComponent : IBufferElementData
+    {
+        public byte Visible;
+        public byte RushEnabled;
+        public byte CancelEnabled;
+        public byte CompletedVisible;
+        public int QueueItemId;
+        public UiResourceExchangeQueueState State;
+        public FixedString32Bytes NumberText;
+        public FixedString64Bytes Name;
+        public FixedString32Bytes InputText;
+        public FixedString32Bytes OutputText;
+        public FixedString32Bytes TimeText;
+        public FixedString32Bytes PercentText;
+        public FixedString64Bytes StateText;
+        public float Progress01;
+    }
+
     public struct UiBuildPlacementConfirmationBarComponent : IComponentData
     {
         public byte Visible;

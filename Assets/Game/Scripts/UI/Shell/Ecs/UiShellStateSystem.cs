@@ -47,6 +47,10 @@ namespace Game.UI.Shell.Ecs
                 EnsureBuildDrawerActiveProductionComponent(ref state, existingBoundary);
                 EnsureUiBuildDrawerCatalogBuffer(ref state, existingBoundary);
                 EnsureUiBuildDrawerQueueBuffer(ref state, existingBoundary);
+                EnsureResourceExchangeStateComponent(ref state, existingBoundary);
+                EnsureResourceExchangeDetailComponent(ref state, existingBoundary);
+                EnsureUiResourceExchangeRecipeCardBuffer(ref state, existingBoundary);
+                EnsureUiResourceExchangeQueueRowBuffer(ref state, existingBoundary);
                 EnsureBuildPlacementConfirmationBarComponent(ref state, existingBoundary);
                 EnsureUiActionRequestBuffer(ref state, existingBoundary);
                 EnsureUiBuildCatalogRequestBuffer(ref state, existingBoundary);
@@ -112,6 +116,8 @@ namespace Game.UI.Shell.Ecs
             state.EntityManager.AddComponentData(boundary, DefaultBuildDrawerState());
             state.EntityManager.AddComponentData(boundary, DefaultBuildDrawerDetail());
             state.EntityManager.AddComponentData(boundary, DefaultBuildDrawerActiveProduction());
+            state.EntityManager.AddComponentData(boundary, DefaultResourceExchangeState());
+            state.EntityManager.AddComponentData(boundary, DefaultResourceExchangeDetail());
             state.EntityManager.AddComponentData(boundary, DefaultBuildPlacementConfirmationBar());
             DynamicBuffer<UiBuildDrawerCatalogItemComponent> catalog =
                 state.EntityManager.AddBuffer<UiBuildDrawerCatalogItemComponent>(boundary);
@@ -119,6 +125,12 @@ namespace Game.UI.Shell.Ecs
             DynamicBuffer<UiBuildDrawerQueueRowComponent> queue =
                 state.EntityManager.AddBuffer<UiBuildDrawerQueueRowComponent>(boundary);
             SeedBuildDrawerQueue(queue);
+            DynamicBuffer<UiResourceExchangeRecipeCardComponent> exchangeCards =
+                state.EntityManager.AddBuffer<UiResourceExchangeRecipeCardComponent>(boundary);
+            SeedResourceExchangeRecipeCards(exchangeCards);
+            DynamicBuffer<UiResourceExchangeQueueRowComponent> exchangeQueue =
+                state.EntityManager.AddBuffer<UiResourceExchangeQueueRowComponent>(boundary);
+            SeedResourceExchangeQueue(exchangeQueue);
             state.EntityManager.AddBuffer<UiShellArmoryCategoryRequestComponent>(boundary);
             state.EntityManager.AddBuffer<UiActionRequestComponent>(boundary);
             state.EntityManager.AddBuffer<UiBuildCatalogRequestComponent>(boundary);
@@ -326,6 +338,54 @@ namespace Game.UI.Shell.Ecs
                 SeedBuildDrawerQueue(queue);
         }
 
+        private static void EnsureResourceExchangeStateComponent(ref SystemState state, Entity boundary)
+        {
+            if (state.EntityManager.HasComponent<UiResourceExchangeStateComponent>(boundary))
+                return;
+
+            state.EntityManager.AddComponentData(boundary, DefaultResourceExchangeState());
+        }
+
+        private static void EnsureResourceExchangeDetailComponent(ref SystemState state, Entity boundary)
+        {
+            if (state.EntityManager.HasComponent<UiResourceExchangeDetailComponent>(boundary))
+                return;
+
+            state.EntityManager.AddComponentData(boundary, DefaultResourceExchangeDetail());
+        }
+
+        private static void EnsureUiResourceExchangeRecipeCardBuffer(ref SystemState state, Entity boundary)
+        {
+            DynamicBuffer<UiResourceExchangeRecipeCardComponent> cards;
+            if (state.EntityManager.HasBuffer<UiResourceExchangeRecipeCardComponent>(boundary))
+            {
+                cards = state.EntityManager.GetBuffer<UiResourceExchangeRecipeCardComponent>(boundary);
+            }
+            else
+            {
+                cards = state.EntityManager.AddBuffer<UiResourceExchangeRecipeCardComponent>(boundary);
+            }
+
+            if (cards.Length == 0)
+                SeedResourceExchangeRecipeCards(cards);
+        }
+
+        private static void EnsureUiResourceExchangeQueueRowBuffer(ref SystemState state, Entity boundary)
+        {
+            DynamicBuffer<UiResourceExchangeQueueRowComponent> queue;
+            if (state.EntityManager.HasBuffer<UiResourceExchangeQueueRowComponent>(boundary))
+            {
+                queue = state.EntityManager.GetBuffer<UiResourceExchangeQueueRowComponent>(boundary);
+            }
+            else
+            {
+                queue = state.EntityManager.AddBuffer<UiResourceExchangeQueueRowComponent>(boundary);
+            }
+
+            if (queue.Length == 0)
+                SeedResourceExchangeQueue(queue);
+        }
+
         private static void EnsureBuildPlacementConfirmationBarComponent(ref SystemState state, Entity boundary)
         {
             if (state.EntityManager.HasComponent<UiBuildPlacementConfirmationBarComponent>(boundary))
@@ -506,6 +566,42 @@ namespace Game.UI.Shell.Ecs
             };
         }
 
+        private static UiResourceExchangeStateComponent DefaultResourceExchangeState()
+        {
+            return new UiResourceExchangeStateComponent
+            {
+                ActiveTab = UiResourceExchangeTab.Export,
+                SelectedRecipeSlot = 0,
+                QueueCapacityText = new FixedString32Bytes("0/0"),
+                CreditsText = new FixedString32Bytes("0"),
+                MaterialsText = new FixedString32Bytes("0"),
+                OilText = new FixedString32Bytes("0"),
+                FuelText = new FixedString32Bytes("0"),
+                RushTicketsText = new FixedString32Bytes("0"),
+                ExchangeEnabled = 0,
+                RushAllEnabled = 0,
+                ClearCompletedEnabled = 0
+            };
+        }
+
+        private static UiResourceExchangeDetailComponent DefaultResourceExchangeDetail()
+        {
+            return new UiResourceExchangeDetailComponent
+            {
+                Name = new FixedString64Bytes("RESOURCE EXCHANGE"),
+                RouteText = new FixedString32Bytes("EXPORT"),
+                RateText = new FixedString64Bytes("No route selected."),
+                AmountText = new FixedString32Bytes("0"),
+                InputCostText = new FixedString32Bytes("0"),
+                OutputPreviewText = new FixedString32Bytes("0"),
+                DurationText = new FixedString32Bytes("00:00"),
+                RequirementsText = new FixedString64Bytes("Exchange unavailable."),
+                InstructionText = new FixedString128Bytes("Select an exchange route."),
+                ConfirmEnabled = 0,
+                WarningVisible = 0
+            };
+        }
+
         private static void SeedBuildDrawerCatalog(DynamicBuffer<UiBuildDrawerCatalogItemComponent> catalog)
         {
             catalog.Add(new UiBuildDrawerCatalogItemComponent
@@ -543,6 +639,41 @@ namespace Game.UI.Shell.Ecs
                 NumberText = new FixedString32Bytes("1"),
                 Name = new FixedString64Bytes("BARRACKS"),
                 TimeText = new FixedString32Bytes("00:14")
+            });
+        }
+
+        private static void SeedResourceExchangeRecipeCards(DynamicBuffer<UiResourceExchangeRecipeCardComponent> cards)
+        {
+            cards.Add(new UiResourceExchangeRecipeCardComponent
+            {
+                Visible = 1,
+                Enabled = 0,
+                Selected = 1,
+                Locked = 1,
+                Tab = UiResourceExchangeTab.Export,
+                Title = new FixedString64Bytes("EXPORT ROUTE"),
+                InputText = new FixedString32Bytes("0"),
+                OutputText = new FixedString32Bytes("0"),
+                DurationText = new FixedString32Bytes("00:00"),
+                ReasonText = new FixedString64Bytes("Exchange unavailable")
+            });
+        }
+
+        private static void SeedResourceExchangeQueue(DynamicBuffer<UiResourceExchangeQueueRowComponent> queue)
+        {
+            queue.Add(new UiResourceExchangeQueueRowComponent
+            {
+                Visible = 0,
+                RushEnabled = 0,
+                CancelEnabled = 0,
+                CompletedVisible = 0,
+                NumberText = new FixedString32Bytes("1"),
+                Name = new FixedString64Bytes("NO ACTIVE EXCHANGE"),
+                InputText = new FixedString32Bytes("0"),
+                OutputText = new FixedString32Bytes("0"),
+                TimeText = new FixedString32Bytes("00:00"),
+                PercentText = new FixedString32Bytes("0%"),
+                StateText = new FixedString64Bytes("IDLE")
             });
         }
 

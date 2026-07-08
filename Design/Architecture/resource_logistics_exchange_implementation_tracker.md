@@ -1,7 +1,7 @@
 # Resource Logistics Exchange Implementation Tracker
 
 Date: 2026-07-08
-Status: Phase 4 Rush Tickets complete
+Status: Phase 5 UI popup and header routing in progress
 Design source: `../Resource_Logistics_Exchange_Design.md`
 
 ## Objective
@@ -23,7 +23,7 @@ Implement the timed Resource Logistics Exchange without drifting from WarlineCap
 
 ## Progress Summary
 
-Overall implementation progress: 53% (48/91 checklist items complete).
+Overall implementation progress: 53% (49/92 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -34,7 +34,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 2. Request validation and queue start | Complete | 10 | 10 | 100% | Added ISystem request validation, ECS wallet boundary, input reservation, queue item creation, economy event row, and typed results. |
 | 3. Queue ticking, completion, cancel, refund | Complete | 11 | 11 | 100% | Timed queue, output grant once, cancel/refund rules, mission-end cancel/refund policy. |
 | 4. Rush Tickets | Complete | 7 | 7 | 100% | Rush eligible jobs with ticket spend, per-item caps, rush-all budget, and feedback. |
-| 5. UI popup and header routing | Not started | 0 | 12 | 0% | Build-Popup-style popup, resource header tap route, cards, details, amount stepper, queue panel. |
+| 5. UI popup and header routing | In progress | 1 | 13 | 8% | ECS-backed UI read-model foundation complete; Build-Popup-style popup, resource header tap route, cards, details, amount stepper, queue panel remain. |
 | 6. World presentation | Not started | 0 | 8 | 0% | Non-authoritative pooled truck/plane presentation and fallback behavior. |
 | 7. Audio, VFX, feedback, ARIA | Not started | 0 | 7 | 0% | Config-driven audio, resource flyouts, completion/reject feedback, optional ARIA copy. |
 | 8. AI, balance, telemetry | Not started | 0 | 6 | 0% | Economy events, balancing reports, AI awareness if enabled for AI factions. |
@@ -155,6 +155,7 @@ Exit criteria:
 
 ## Phase 5: UI Popup And Header Routing
 
+- [x] Add ECS-backed UI read-model projection for popup state, recipe cards, selected detail, wallet totals, and queue rows.
 - [ ] Create accepted target-lock mockup request for `POP-12 Resource Logistics Exchange` aligned with the Build Popup visual language.
 - [ ] Create separated layer pack under `Design/VisualLockLayered/POP-12_ResourceLogisticsExchange/`.
 - [ ] Build Canvas popup from reusable panels/icons/text/buttons, not a screenshot.
@@ -415,3 +416,36 @@ Remaining blocker or next slice:
 - Next slice is Phase 5 UI popup and header routing.
 - The Resource Exchange popup still does not exist in the live Match HUD, and the exchange wallet still needs to be seeded/synced from live match resources before player-facing UI is enabled.
 - Rush Ticket spend currently uses the ECS exchange wallet boundary introduced for this feature. A later persistence/account integration pass must decide when active-match Rush Ticket spend writes back to profile save data.
+
+### 2026-07-08 - Phase 5A UI Read-Model Foundation
+
+Files changed:
+
+- `Assets/Game/Scripts/UI/Contracts/UiShellComponents.cs`
+- `Assets/Game/Scripts/UI/Shell/Ecs/Contracts/UiShellEcsComponents.cs`
+- `Assets/Game/Scripts/UI/Shell/Ecs/UiShellStateSystem.cs`
+- `Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeReadModelSystem.cs`
+- `Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeReadModelSystem.cs.meta`
+- `Assets/Tests/Editor/UiResourceExchangeReadModelSystemTests.cs`
+- `Assets/Tests/Editor/UiResourceExchangeReadModelSystemTests.cs.meta`
+- `Design/Architecture/resource_logistics_exchange_implementation_tracker.md`
+
+Behavior changed:
+
+- Added `ResourceExchange` as a typed UI shell popup kind so the match HUD can route to the exchange popup without stringly popup ids.
+- Added UI ECS read-model data for Resource Exchange active tab state, selected recipe slot, wallet totals, queue capacity, rush/clear button state, recipe cards, detail panel, and queue rows.
+- Added `UiResourceExchangeReadModelSystem` as an unmanaged `ISystem` in the presentation group. It only writes Resource Exchange UI data while the Resource Exchange popup is visible.
+- The read model projects enabled state, recipes, wallet values, summary, rush availability, storage-full/queue-full/insufficient-resource disabled reasons, queue ETA, progress, queue state, rush, cancel, and completed-row flags from ECS data.
+- The slice does not expose a partial visual popup, bind header taps, or own exchange math in UI views. Managed Canvas/prefab work remains a later Phase 5 slice.
+- Added focused editor tests for export card/detail/queue projection, import storage-full disabled copy, and empty active-tab fallback.
+
+Validation:
+
+- `git diff --check` passed.
+- `dotnet build Game.Tests.Editor.csproj --no-restore -v:q` passed with existing Unity reference conflict warnings and 0 errors.
+
+Remaining blocker or next slice:
+
+- Next slice is Phase 5 visual target/layer alignment or Canvas popup construction, depending on whether the accepted `POP-12 Resource Logistics Exchange` target-lock/layer pack already exists by then.
+- Header/resource-bar tap routing still needs to open `UiShellPopupKind.ResourceExchange` only when exchange is enabled and must block world input while open.
+- The exchange wallet still needs live match resource seeding/sync before the popup can be enabled for player use in a match.

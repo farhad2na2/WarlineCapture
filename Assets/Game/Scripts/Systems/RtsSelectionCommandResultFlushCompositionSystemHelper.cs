@@ -13,6 +13,8 @@ namespace Game.Runtime
 {
     public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
     {
+        private const float AriaVoiceCooldownSeconds = 0.6f;
+
         public delegate bool TryGetEntityManagerAction(out EntityManager em);
         public delegate void ClearCurrentSelectionAction(EntityManager em, string reason);
         public delegate void RefreshFocusedUnitAction(EntityManager em, SelectionStateCompositionSystemHelper selectionStateSystem);
@@ -296,6 +298,10 @@ namespace Game.Runtime
             context.ClearHudSelection?.Invoke();
             context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Success(
                 GameText.Get("tactical.feedback.destroyed_selected_building", "Destroyed selected building.")));
+            TryEmitAriaVoice(
+                context,
+                AudioEventIds.VOARIAMessageTacticalFeedbackDestroyedSelectedBuilding,
+                AudioEventIds.VOARIAMessageTacticalFeedbackDestroyedSelectedBuildingHash);
             return true;
         }
 
@@ -343,6 +349,7 @@ namespace Game.Runtime
                     context.ClearFocusedUnit?.Invoke(context.SelectionStateCompositionSystemHelper);
                 context.ClearHudSelection?.Invoke();
                 TryEmitCommandAudio(context, processedKind, accepted: true);
+                TryEmitImmediateCommandVoice(context, processedKind, accepted: true, issuedCount);
                 context.ApplyHudCommandResult?.Invoke(
                     BuildImmediateSelectedUnitCommandResult(processedKind, accepted, rejectionReason, issuedCount));
                 return true;
@@ -360,6 +367,7 @@ namespace Game.Runtime
                 context.SetCameraDragging?.Invoke(false);
                 context.ClearHudCommandMode?.Invoke();
                 TryEmitCommandAudio(context, processedKind, accepted: true);
+                TryEmitImmediateCommandVoice(context, processedKind, accepted: true, issuedCount);
                 context.ApplyHudCommandResult?.Invoke(
                     BuildImmediateSelectedUnitCommandResult(processedKind, accepted, rejectionReason, issuedCount));
                 if (context.SelectionStateCompositionSystemHelper != null)
@@ -368,6 +376,7 @@ namespace Game.Runtime
             }
 
             TryEmitCommandAudio(context, processedKind, accepted: true);
+            TryEmitImmediateCommandVoice(context, processedKind, accepted: true, issuedCount);
             context.ApplyHudCommandResult?.Invoke(
                 BuildImmediateSelectedUnitCommandResult(processedKind, accepted, rejectionReason, issuedCount));
             return true;
@@ -1157,7 +1166,10 @@ namespace Game.Runtime
                 if (result.Accepted == 0)
                 {
                     if (result.HasCommandResult != 0)
+                    {
+                        TryEmitTransportCommandVoice(context, result);
                         context.ApplyHudCommandResult?.Invoke(ToTacticalCommandResult(result));
+                    }
                     continue;
                 }
 
@@ -1165,6 +1177,7 @@ namespace Game.Runtime
                 if (result.Kind == RtsSelectionCommandIntentKind.DisembarkTransport ||
                     result.Kind == RtsSelectionCommandIntentKind.DisembarkTransportPassenger)
                 {
+                    TryEmitTransportCommandVoice(context, result);
                     context.ApplyHudCommandResult?.Invoke(ToAcceptedTransportCommandResult(
                         result,
                         result.Kind == RtsSelectionCommandIntentKind.DisembarkTransportPassenger
@@ -1180,6 +1193,7 @@ namespace Game.Runtime
                     context.SetCameraDragging?.Invoke(false);
                     context.SetHudWorldMarkersVisible?.Invoke(false);
                     context.ClearHudCommandMode?.Invoke();
+                    TryEmitTransportCommandVoice(context, result);
                     context.ApplyHudCommandResult?.Invoke(ToTacticalCommandResult(result));
                     continue;
                 }
@@ -1200,6 +1214,7 @@ namespace Game.Runtime
                     PreserveSelectedTransportAfterBoarding(context, em, result.TargetEntity);
                 if (clearInputCommandMode)
                     context.ClearHudCommandMode?.Invoke();
+                TryEmitTransportCommandVoice(context, result);
                 context.ApplyHudCommandResult?.Invoke(ToAcceptedTransportCommandResult(
                     result,
                     result.Kind == RtsSelectionCommandIntentKind.BoardSelectedTransport ||
@@ -1269,6 +1284,149 @@ namespace Game.Runtime
                 accepted ? AudioPlaybackPriority.Medium : AudioPlaybackPriority.High,
                 UnityEngine.Time.time,
                 cooldownSeconds: accepted ? 0.08f : 0.12f);
+            return true;
+        }
+
+        internal static bool TryEmitImmediateCommandVoice(
+            Context context,
+            RtsSelectionCommandIntentKind kind,
+            bool accepted,
+            int issuedCount)
+        {
+            if (context.TryGetDefaultEntityManager?.Invoke(out EntityManager em) != true)
+                return false;
+
+            return TryEmitImmediateCommandVoice(em, kind, accepted, issuedCount);
+        }
+
+        internal static bool TryEmitImmediateCommandVoice(
+            EntityManager em,
+            RtsSelectionCommandIntentKind kind,
+            bool accepted,
+            int issuedCount)
+        {
+            if (!TryResolveImmediateCommandVoiceEvent(kind, accepted, issuedCount, out string eventId, out uint eventHash))
+                return false;
+
+            return TryEmitAriaVoice(em, eventId, eventHash);
+        }
+
+        internal static bool TryResolveImmediateCommandVoiceEvent(
+            RtsSelectionCommandIntentKind kind,
+            bool accepted,
+            int issuedCount,
+            out string eventId,
+            out uint eventHash)
+        {
+            eventId = string.Empty;
+            eventHash = 0u;
+            if (!accepted)
+                return false;
+
+            switch (kind)
+            {
+                case RtsSelectionCommandIntentKind.ReturnToBase:
+                    if (issuedCount == 1)
+                    {
+                        eventId = AudioEventIds.VOARIAMessageTacticalFeedbackUnitReturningToBase;
+                        eventHash = AudioEventIds.VOARIAMessageTacticalFeedbackUnitReturningToBaseHash;
+                    }
+                    else
+                    {
+                        eventId = AudioEventIds.VOARIAMessageTacticalFeedbackUnitsReturningToBase;
+                        eventHash = AudioEventIds.VOARIAMessageTacticalFeedbackUnitsReturningToBaseHash;
+                    }
+                    return true;
+                case RtsSelectionCommandIntentKind.DestroyFocusedUnit:
+                    if (issuedCount == 1)
+                    {
+                        eventId = AudioEventIds.VOARIAMessageTacticalFeedbackDestroyedSelectedUnit;
+                        eventHash = AudioEventIds.VOARIAMessageTacticalFeedbackDestroyedSelectedUnitHash;
+                    }
+                    else
+                    {
+                        eventId = AudioEventIds.VOARIAMessageTacticalFeedbackDestroyedSelectedUnits;
+                        eventHash = AudioEventIds.VOARIAMessageTacticalFeedbackDestroyedSelectedUnitsHash;
+                    }
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        internal static bool TryEmitTransportCommandVoice(Context context, RtsSelectionCommandResultElement result)
+        {
+            if (context.TryGetDefaultEntityManager?.Invoke(out EntityManager em) != true)
+                return false;
+
+            return TryEmitTransportCommandVoice(em, result);
+        }
+
+        internal static bool TryEmitTransportCommandVoice(EntityManager em, RtsSelectionCommandResultElement result)
+        {
+            if (!TryResolveTransportCommandVoiceEvent(result, out string eventId, out uint eventHash))
+                return false;
+
+            return TryEmitAriaVoice(em, eventId, eventHash);
+        }
+
+        internal static bool TryResolveTransportCommandVoiceEvent(
+            RtsSelectionCommandResultElement result,
+            out string eventId,
+            out uint eventHash)
+        {
+            eventId = string.Empty;
+            eventHash = 0u;
+            if (result.Accepted == 0)
+                return false;
+
+            switch (result.Kind)
+            {
+                case RtsSelectionCommandIntentKind.DisembarkTransportPassenger:
+                    eventId = AudioEventIds.VOARIAMessageTacticalFeedbackExitingUnit;
+                    eventHash = AudioEventIds.VOARIAMessageTacticalFeedbackExitingUnitHash;
+                    return true;
+                case RtsSelectionCommandIntentKind.DisembarkTransport:
+                    eventId = AudioEventIds.VOARIAMessageTacticalFeedbackExitingPassengers;
+                    eventHash = AudioEventIds.VOARIAMessageTacticalFeedbackExitingPassengersHash;
+                    return true;
+                case RtsSelectionCommandIntentKind.BoardSelectedTransport:
+                case RtsSelectionCommandIntentKind.BoardSelectedTransportPassenger:
+                    eventId = AudioEventIds.VOARIAMessageTacticalFeedbackLoadingTransport;
+                    eventHash = AudioEventIds.VOARIAMessageTacticalFeedbackLoadingTransportHash;
+                    return true;
+                case RtsSelectionCommandIntentKind.BoardTransport:
+                case RtsSelectionCommandIntentKind.BoardNearestSoldiers:
+                case RtsSelectionCommandIntentKind.BoardAllSelectedTransport:
+                    eventId = AudioEventIds.VOARIAMessageTacticalFeedbackBoardingTransport;
+                    eventHash = AudioEventIds.VOARIAMessageTacticalFeedbackBoardingTransportHash;
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        internal static bool TryEmitAriaVoice(Context context, string eventId, uint eventHash)
+        {
+            if (context.TryGetDefaultEntityManager?.Invoke(out EntityManager em) != true)
+                return false;
+
+            return TryEmitAriaVoice(em, eventId, eventHash);
+        }
+
+        internal static bool TryEmitAriaVoice(EntityManager em, string eventId, uint eventHash)
+        {
+            if (string.IsNullOrWhiteSpace(eventId) || eventHash == 0u)
+                return false;
+
+            AudioEventRequestSystem.EnqueueOneShot(
+                em,
+                new FixedString64Bytes(eventId),
+                eventHash,
+                new FixedString32Bytes("Voice"),
+                AudioPlaybackPriority.High,
+                Time.time,
+                AriaVoiceCooldownSeconds);
             return true;
         }
 

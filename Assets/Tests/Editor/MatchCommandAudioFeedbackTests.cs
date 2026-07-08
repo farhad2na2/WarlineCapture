@@ -20,6 +20,12 @@ public sealed class MatchCommandAudioFeedbackTests
             passed++;
             tests.TryEmitCommandAudio_EnqueuesGameplayAudioRequest();
             passed++;
+            tests.SelectionPanelCommandVoices_ResolveExpectedAriaEvents();
+            passed++;
+            tests.TransportCommandVoices_ResolveExpectedAriaEvents();
+            passed++;
+            tests.TryEmitAriaVoice_EnqueuesVoiceRequest();
+            passed++;
 
             Debug.Log($"[MatchCommandAudioFeedbackValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -103,6 +109,84 @@ public sealed class MatchCommandAudioFeedbackTests
         Assert.AreEqual(AudioPlaybackRequestStatus.Pending, requests[0].Status);
     }
 
+    [Test]
+    public void SelectionPanelCommandVoices_ResolveExpectedAriaEvents()
+    {
+        AssertImmediateVoiceResolved(
+            RtsSelectionCommandIntentKind.ReturnToBase,
+            accepted: true,
+            issuedCount: 1,
+            AudioEventIds.VOARIAMessageTacticalFeedbackUnitReturningToBase,
+            AudioEventIds.VOARIAMessageTacticalFeedbackUnitReturningToBaseHash);
+        AssertImmediateVoiceResolved(
+            RtsSelectionCommandIntentKind.ReturnToBase,
+            accepted: true,
+            issuedCount: 3,
+            AudioEventIds.VOARIAMessageTacticalFeedbackUnitsReturningToBase,
+            AudioEventIds.VOARIAMessageTacticalFeedbackUnitsReturningToBaseHash);
+        AssertImmediateVoiceResolved(
+            RtsSelectionCommandIntentKind.DestroyFocusedUnit,
+            accepted: true,
+            issuedCount: 1,
+            AudioEventIds.VOARIAMessageTacticalFeedbackDestroyedSelectedUnit,
+            AudioEventIds.VOARIAMessageTacticalFeedbackDestroyedSelectedUnitHash);
+        AssertImmediateVoiceResolved(
+            RtsSelectionCommandIntentKind.DestroyFocusedUnit,
+            accepted: true,
+            issuedCount: 2,
+            AudioEventIds.VOARIAMessageTacticalFeedbackDestroyedSelectedUnits,
+            AudioEventIds.VOARIAMessageTacticalFeedbackDestroyedSelectedUnitsHash);
+
+        Assert.IsFalse(RtsSelectionCommandResultFlushCompositionSystemHelper.TryResolveImmediateCommandVoiceEvent(
+            RtsSelectionCommandIntentKind.ReturnToBase,
+            accepted: false,
+            issuedCount: 1,
+            out _,
+            out _));
+    }
+
+    [Test]
+    public void TransportCommandVoices_ResolveExpectedAriaEvents()
+    {
+        AssertTransportVoiceResolved(
+            RtsSelectionCommandIntentKind.BoardTransport,
+            AudioEventIds.VOARIAMessageTacticalFeedbackBoardingTransport,
+            AudioEventIds.VOARIAMessageTacticalFeedbackBoardingTransportHash);
+        AssertTransportVoiceResolved(
+            RtsSelectionCommandIntentKind.BoardSelectedTransport,
+            AudioEventIds.VOARIAMessageTacticalFeedbackLoadingTransport,
+            AudioEventIds.VOARIAMessageTacticalFeedbackLoadingTransportHash);
+        AssertTransportVoiceResolved(
+            RtsSelectionCommandIntentKind.DisembarkTransportPassenger,
+            AudioEventIds.VOARIAMessageTacticalFeedbackExitingUnit,
+            AudioEventIds.VOARIAMessageTacticalFeedbackExitingUnitHash);
+        AssertTransportVoiceResolved(
+            RtsSelectionCommandIntentKind.DisembarkTransport,
+            AudioEventIds.VOARIAMessageTacticalFeedbackExitingPassengers,
+            AudioEventIds.VOARIAMessageTacticalFeedbackExitingPassengersHash);
+    }
+
+    [Test]
+    public void TryEmitAriaVoice_EnqueuesVoiceRequest()
+    {
+        using World world = new("MatchCommandAriaVoiceFeedbackTests");
+
+        Assert.IsTrue(RtsSelectionCommandResultFlushCompositionSystemHelper.TryEmitAriaVoice(
+            world.EntityManager,
+            AudioEventIds.VOARIAMessageTacticalFeedbackCameraFollowActive,
+            AudioEventIds.VOARIAMessageTacticalFeedbackCameraFollowActiveHash));
+
+        Entity audioEntity = AudioEventRequestSystem.EnsureAudioEntity(world.EntityManager);
+        DynamicBuffer<AudioPlaybackRequestElement> requests =
+            world.EntityManager.GetBuffer<AudioPlaybackRequestElement>(audioEntity);
+        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(AudioEventIds.VOARIAMessageTacticalFeedbackCameraFollowActive, requests[0].EventId.ToString());
+        Assert.AreEqual(AudioEventIds.VOARIAMessageTacticalFeedbackCameraFollowActiveHash, requests[0].EventHash);
+        Assert.AreEqual("Voice", requests[0].BusId.ToString());
+        Assert.AreEqual(AudioPlaybackPriority.High, requests[0].Priority);
+        Assert.AreEqual(AudioPlaybackRequestStatus.Pending, requests[0].Status);
+    }
+
     private static void AssertResolved(
         RtsSelectionCommandIntentKind kind,
         bool accepted,
@@ -112,6 +196,42 @@ public sealed class MatchCommandAudioFeedbackTests
         Assert.IsTrue(RtsSelectionCommandResultFlushCompositionSystemHelper.TryResolveCommandAudioEvent(
             kind,
             accepted,
+            out string eventId,
+            out uint eventHash));
+        Assert.AreEqual(expectedEventId, eventId);
+        Assert.AreEqual(expectedEventHash, eventHash);
+    }
+
+    private static void AssertImmediateVoiceResolved(
+        RtsSelectionCommandIntentKind kind,
+        bool accepted,
+        int issuedCount,
+        string expectedEventId,
+        uint expectedEventHash)
+    {
+        Assert.IsTrue(RtsSelectionCommandResultFlushCompositionSystemHelper.TryResolveImmediateCommandVoiceEvent(
+            kind,
+            accepted,
+            issuedCount,
+            out string eventId,
+            out uint eventHash));
+        Assert.AreEqual(expectedEventId, eventId);
+        Assert.AreEqual(expectedEventHash, eventHash);
+    }
+
+    private static void AssertTransportVoiceResolved(
+        RtsSelectionCommandIntentKind kind,
+        string expectedEventId,
+        uint expectedEventHash)
+    {
+        RtsSelectionCommandResultElement result = new()
+        {
+            Kind = kind,
+            Accepted = 1
+        };
+
+        Assert.IsTrue(RtsSelectionCommandResultFlushCompositionSystemHelper.TryResolveTransportCommandVoiceEvent(
+            result,
             out string eventId,
             out uint eventHash));
         Assert.AreEqual(expectedEventId, eventId);

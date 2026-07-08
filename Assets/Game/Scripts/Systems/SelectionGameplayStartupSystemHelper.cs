@@ -267,6 +267,9 @@ namespace Game.Runtime
                     TacticalCommandResult.Rejected(
                         TacticalCommandReasonCode.CommandUnavailable,
                         GameText.Get("tactical.command.board.unavailable", "Board command unavailable.")));
+                EmitAriaVoice(
+                    AudioEventIds.VOARIAMessageTacticalCommandBoardUnavailable,
+                    AudioEventIds.VOARIAMessageTacticalCommandBoardUnavailableHash);
             }
 
             void RequestToggleTacticalFollowCameraModeFromPanel()
@@ -279,6 +282,9 @@ namespace Game.Runtime
                     TacticalCommandResult.Rejected(
                         TacticalCommandReasonCode.CameraJumpUnavailable,
                         GameText.Get("tactical.feedback.camera_follow_unavailable", "Camera follow unavailable.")));
+                EmitAriaVoice(
+                    AudioEventIds.VOARIAMessageTacticalFeedbackCameraFollowUnavailable,
+                    AudioEventIds.VOARIAMessageTacticalFeedbackCameraFollowUnavailableHash);
             }
 
             void BindMatchHudSquadTray(IMatchHudSquadTrayView view)
@@ -578,6 +584,12 @@ namespace Game.Runtime
                 selectionHudFeedbackSystem.ApplyCommandResult(
                     GetHudFeedbackContext(),
                     TacticalCommandResult.Rejected((TacticalCommandReasonCode)readModel.ReasonCode));
+                if ((TacticalCommandReasonCode)readModel.ReasonCode == TacticalCommandReasonCode.CameraJumpUnavailable)
+                {
+                    EmitAriaVoice(
+                        AudioEventIds.VOARIAMessageTacticalFeedbackCameraFollowUnavailable,
+                        AudioEventIds.VOARIAMessageTacticalFeedbackCameraFollowUnavailableHash);
+                }
                 return processed;
             }
 
@@ -620,7 +632,51 @@ namespace Game.Runtime
                     };
 
                 if (!string.IsNullOrWhiteSpace(result.Message) || !result.Accepted)
+                {
+                    if (TryResolveTacticalFollowCameraVoiceEvent(
+                            (TacticalFollowCameraFeedbackCode)readModel.FeedbackCode,
+                            out string eventId,
+                            out uint eventHash))
+                    {
+                        EmitAriaVoice(eventId, eventHash);
+                    }
+
                     selectionHudFeedbackSystem.ApplyCommandResult(GetHudFeedbackContext(), result);
+                }
+            }
+
+            void EmitAriaVoice(string eventId, uint eventHash)
+            {
+                if (!TryGetDefaultEntityManager(out EntityManager em))
+                    return;
+
+                RtsSelectionCommandResultFlushCompositionSystemHelper.TryEmitAriaVoice(em, eventId, eventHash);
+            }
+
+            static bool TryResolveTacticalFollowCameraVoiceEvent(
+                TacticalFollowCameraFeedbackCode code,
+                out string eventId,
+                out uint eventHash)
+            {
+                switch (code)
+                {
+                    case TacticalFollowCameraFeedbackCode.EnteredFollowMode:
+                        eventId = AudioEventIds.VOARIAMessageTacticalFeedbackCameraFollowActive;
+                        eventHash = AudioEventIds.VOARIAMessageTacticalFeedbackCameraFollowActiveHash;
+                        return true;
+                    case TacticalFollowCameraFeedbackCode.ExitedFollowMode:
+                        eventId = AudioEventIds.VOARIAMessageTacticalFeedbackRtsCameraRestored;
+                        eventHash = AudioEventIds.VOARIAMessageTacticalFeedbackRtsCameraRestoredHash;
+                        return true;
+                    case TacticalFollowCameraFeedbackCode.TargetLost:
+                        eventId = AudioEventIds.VOARIAMessageTacticalFeedbackFollowTargetLost;
+                        eventHash = AudioEventIds.VOARIAMessageTacticalFeedbackFollowTargetLostHash;
+                        return true;
+                    default:
+                        eventId = string.Empty;
+                        eventHash = 0u;
+                        return false;
+                }
             }
 
             bool RefreshTacticalFollowCameraPose()

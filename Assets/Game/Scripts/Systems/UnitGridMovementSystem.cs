@@ -16,6 +16,7 @@ namespace Game.Runtime
         private const int VehicleOccupancyPaddingCells = 1;
         private const int SoftBlockerDisplacementSearchRadius = 4;
         private const float InfantryOccupiedRepathDelaySeconds = 0.35f;
+        private const float VehicleTurnInPlaceRepathDelaySeconds = 1.25f;
         private const float InfantryGroupFinalStopDistanceCells = 1.25f;
         private const int InfantryMaxWaypointAdvancesPerFrame = 8;
         public float DeltaTime;
@@ -207,7 +208,7 @@ namespace Game.Runtime
                 if (!moved)
                 {
                     vehicleKinematics.StallSeconds += DeltaTime;
-                    if (vehicleKinematics.StallSeconds >= 0.35f)
+                    if (vehicleKinematics.StallSeconds >= VehicleTurnInPlaceRepathDelaySeconds)
                     {
                         vehicleKinematics.StallSeconds = 0f;
                         RequestRepath(sortKey, entity);

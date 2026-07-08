@@ -40,6 +40,7 @@ public sealed class UnitMovementBlockerValidationTests
             tests.PathRequestIgnoredOccupancyDefaultsToMovingUnitFootprint();
             tests.VehiclePathingCanDepartFromCurrentPaddedClearanceOccupancy();
             tests.VehicleMovementCanDepartFromCurrentPaddedClearanceOccupancy();
+            tests.VehicleTurnInPlaceDoesNotRepathBeforeAlignmentWindow();
             tests.InfantryOpenPathMovementAdvancesEveryFrame();
             Debug.Log("[UnitMovementBlockerValidation] result=Passed");
             ValidationExit.Passed();
@@ -86,6 +87,23 @@ public sealed class UnitMovementBlockerValidationTests
         {
             Debug.LogException(ex);
             Debug.LogError("[MapVehiclePlacementValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
+    public static void RunVehicleTurnInPlaceFocusedValidation()
+    {
+        try
+        {
+            var tests = new UnitMovementBlockerValidationTests();
+            tests.VehicleTurnInPlaceDoesNotRepathBeforeAlignmentWindow();
+            Debug.Log("[VehicleTurnInPlaceValidation] result=Passed tests=1");
+            ValidationExit.Passed();
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[VehicleTurnInPlaceValidation] result=Failed");
             ValidationExit.Failed();
         }
     }
@@ -1706,6 +1724,149 @@ public sealed class UnitMovementBlockerValidationTests
                 position.x,
                 3.5f,
                 "A vehicle must be able to depart when an occupied cell is already inside its current padded clearance but outside its actual footprint.");
+        }
+        finally
+        {
+            if (pathPool.IsCreated)
+                pathPool.Dispose();
+            if (occupied.IsCreated)
+                occupied.Dispose();
+            if (friendlyPassFactionIds.IsCreated)
+                friendlyPassFactionIds.Dispose();
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (blockerCounts.IsCreated)
+                blockerCounts.Dispose();
+        }
+    }
+
+    [Test]
+    public void VehicleTurnInPlaceDoesNotRepathBeforeAlignmentWindow()
+    {
+        using var world = new World("VehicleTurnInPlaceRepathDelayValidation");
+        EntityManager em = world.EntityManager;
+
+        NativeArray<int> blockerCounts = default;
+        NativeBitArray blocked = default;
+        NativeArray<byte> friendlyPassFactionIds = default;
+        NativeBitArray occupied = default;
+        NativeList<int2> pathPool = default;
+
+        try
+        {
+            const int width = 12;
+            const int height = 5;
+            int gridSize = width * height;
+            blockerCounts = new NativeArray<int>(gridSize, Allocator.Persistent);
+            blocked = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+            friendlyPassFactionIds = new NativeArray<byte>(gridSize, Allocator.Persistent);
+            for (int i = 0; i < friendlyPassFactionIds.Length; i++)
+                friendlyPassFactionIds[i] = byte.MaxValue;
+            occupied = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+            pathPool = new NativeList<int2>(Allocator.Persistent);
+            pathPool.Add(new int2(8, 2));
+
+            var grid = new GridConfig { Width = width, Height = height, CellSize = 1f, Origin = float3.zero };
+            Entity gridEntity = em.CreateEntity(
+                typeof(GridConfig),
+                typeof(DynamicBlockerComponent),
+                typeof(DynamicOccupancyComponent),
+                typeof(PathPoolComponent));
+            em.SetComponentData(gridEntity, grid);
+            em.SetComponentData(gridEntity, new DynamicBlockerComponent
+            {
+                GridSize = gridSize,
+                Counts = blockerCounts,
+                Blocked = blocked,
+                FriendlyPassFactionIds = friendlyPassFactionIds
+            });
+            em.SetComponentData(gridEntity, new DynamicOccupancyComponent
+            {
+                GridSize = gridSize,
+                Occupied = occupied
+            });
+            em.SetComponentData(gridEntity, new PathPoolComponent { Cells = pathPool });
+
+            em.AddBuffer<GridWalkable>(gridEntity);
+            em.AddBuffer<GridRoad>(gridEntity);
+            em.AddBuffer<GridRoadSidewalk>(gridEntity);
+            em.AddBuffer<GridRoadDirt>(gridEntity);
+            DynamicBuffer<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity);
+            DynamicBuffer<GridRoad> roads = em.GetBuffer<GridRoad>(gridEntity);
+            DynamicBuffer<GridRoadSidewalk> sidewalks = em.GetBuffer<GridRoadSidewalk>(gridEntity);
+            DynamicBuffer<GridRoadDirt> dirtRoads = em.GetBuffer<GridRoadDirt>(gridEntity);
+            walkable.ResizeUninitialized(gridSize);
+            roads.ResizeUninitialized(gridSize);
+            sidewalks.ResizeUninitialized(gridSize);
+            dirtRoads.ResizeUninitialized(gridSize);
+            for (int i = 0; i < gridSize; i++)
+            {
+                walkable[i] = new GridWalkable { Value = 1 };
+                roads[i] = new GridRoad { Value = 0 };
+                sidewalks[i] = new GridRoadSidewalk { Value = 0 };
+                dirtRoads[i] = new GridRoadDirt { Value = 0 };
+            }
+
+            Entity unit = em.CreateEntity(
+                typeof(Faction),
+                typeof(UnitGrid),
+                typeof(UnitFootprint),
+                typeof(UnitMove),
+                typeof(UnitMovementBehavior),
+                typeof(UnitVehicleMovement),
+                typeof(UnitVehicleKinematics),
+                typeof(UnitPathFollow),
+                typeof(UnitPathRange),
+                typeof(UnitTarget),
+                typeof(LocalTransform));
+            em.SetComponentData(unit, new Faction { Id = 1 });
+            em.SetComponentData(unit, new UnitGrid { Cell = new int2(3, 2) });
+            em.SetComponentData(unit, new UnitFootprint { Size = new int2(1, 1) });
+            em.SetComponentData(unit, new UnitMove { Speed = 5f, WalkSpeed = 5f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.01f });
+            em.SetComponentData(unit, new UnitMovementBehavior { AllowIdleWander = 0, UsesVehicleMotion = 1 });
+            em.SetComponentData(unit, new UnitVehicleMovement { TurnSpeedDegrees = 180f, Acceleration = 20f, Braking = 20f, RearPivotOffset = 0f });
+            em.SetComponentData(unit, new UnitVehicleKinematics());
+            em.SetComponentData(unit, new UnitPathFollow { PathIndex = 0 });
+            em.SetComponentData(unit, new UnitPathRange { Start = 0, Length = pathPool.Length });
+            em.SetComponentData(unit, new UnitTarget { Cell = new int2(8, 2) });
+            em.SetComponentData(unit, LocalTransform.FromPositionRotation(new float3(3.5f, 0f, 2.5f), quaternion.RotateY(math.radians(-90f))));
+
+            var endSimulation = world.CreateSystemManaged<EndSimulationEntityCommandBufferSystem>();
+            SystemHandle movementSystem = world.CreateSystem<UnitGridMovementSystem>();
+            float initialX = em.GetComponentData<LocalTransform>(unit).Position.x;
+            for (int frame = 1; frame <= 2; frame++)
+            {
+                world.SetTime(new TimeData(frame * 0.2d, 0.2f));
+                movementSystem.Update(world.Unmanaged);
+                em.CompleteAllTrackedJobs();
+                endSimulation.Update();
+            }
+
+            Assert.IsFalse(
+                em.HasComponent<UnitPathRequest>(unit),
+                "A vehicle that is still rotating in place toward a valid path node must not churn path requests before it has enough time to align.");
+            Assert.IsTrue(em.HasComponent<UnitPathFollow>(unit));
+            Assert.IsTrue(em.HasComponent<UnitPathRange>(unit));
+            Assert.Greater(
+                math.abs(UnitVehicleMovementUtility.SignedAngleY(new float3(-1f, 0f, 0f), UnitVehicleMovementUtility.Forward(em.GetComponentData<LocalTransform>(unit).Rotation))),
+                0.01f,
+                "The regression setup must exercise turn-in-place rotation rather than straight-line movement.");
+
+            for (int frame = 3; frame <= 8; frame++)
+            {
+                world.SetTime(new TimeData(frame * 0.2d, 0.2f));
+                movementSystem.Update(world.Unmanaged);
+                em.CompleteAllTrackedJobs();
+                endSimulation.Update();
+            }
+
+            Assert.IsFalse(
+                em.HasComponent<UnitPathRequest>(unit),
+                "A vehicle that finishes its in-place alignment toward a valid path node must continue on the current path instead of replacing it with a new request.");
+            Assert.Greater(
+                em.GetComponentData<LocalTransform>(unit).Position.x,
+                initialX + 0.1f,
+                "The vehicle must start moving forward after the turn-in-place alignment window.");
         }
         finally
         {

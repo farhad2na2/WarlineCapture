@@ -177,6 +177,7 @@ namespace Game.Components
         public float StartTimeSeconds;
         public float DurationSeconds;
         public float RemainingSeconds;
+        public int RushTicketsSpent;
         public byte PresentationStarted;
         public byte OutputApplied;
         public uint Version;

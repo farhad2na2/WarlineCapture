@@ -1,7 +1,7 @@
 # Resource Logistics Exchange Implementation Tracker
 
 Date: 2026-07-08
-Status: Phase 3 queue ticking, completion, cancel, and refund complete
+Status: Phase 4 Rush Tickets complete
 Design source: `../Resource_Logistics_Exchange_Design.md`
 
 ## Objective
@@ -23,7 +23,7 @@ Implement the timed Resource Logistics Exchange without drifting from WarlineCap
 
 ## Progress Summary
 
-Overall implementation progress: 45% (41/91 checklist items complete).
+Overall implementation progress: 53% (48/91 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -33,7 +33,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 1. Data model and config | Complete | 12 | 12 | 100% | Added Resource Exchange enums, ECS data, config entries, scenario gates, and config validation tests. |
 | 2. Request validation and queue start | Complete | 10 | 10 | 100% | Added ISystem request validation, ECS wallet boundary, input reservation, queue item creation, economy event row, and typed results. |
 | 3. Queue ticking, completion, cancel, refund | Complete | 11 | 11 | 100% | Timed queue, output grant once, cancel/refund rules, mission-end cancel/refund policy. |
-| 4. Rush Tickets | Not started | 0 | 7 | 0% | Rush eligible jobs with ticket spend, caps, and feedback. |
+| 4. Rush Tickets | Complete | 7 | 7 | 100% | Rush eligible jobs with ticket spend, per-item caps, rush-all budget, and feedback. |
 | 5. UI popup and header routing | Not started | 0 | 12 | 0% | Build-Popup-style popup, resource header tap route, cards, details, amount stepper, queue panel. |
 | 6. World presentation | Not started | 0 | 8 | 0% | Non-authoritative pooled truck/plane presentation and fallback behavior. |
 | 7. Audio, VFX, feedback, ARIA | Not started | 0 | 7 | 0% | Config-driven audio, resource flyouts, completion/reject feedback, optional ARIA copy. |
@@ -139,13 +139,13 @@ Exit criteria:
 
 ## Phase 4: Rush Tickets
 
-- [ ] Add rush request data for one queue item and optional rush-all command.
-- [ ] Validate queue item rush eligibility.
-- [ ] Validate Rush Ticket affordability.
-- [ ] Enforce max tickets per queue item and per rush action.
-- [ ] Spend Rush Tickets at rush confirmation.
-- [ ] Reduce remaining duration or complete instantly if remaining time reaches zero.
-- [ ] Add tests for rush acceptance, insufficient tickets, max cap, non-rushable job, and completion from rush.
+- [x] Add rush request data for one queue item and optional rush-all command.
+- [x] Validate queue item rush eligibility.
+- [x] Validate Rush Ticket affordability.
+- [x] Enforce max tickets per queue item and per rush action.
+- [x] Spend Rush Tickets at rush confirmation.
+- [x] Reduce remaining duration or complete instantly if remaining time reaches zero.
+- [x] Add tests for rush acceptance, insufficient tickets, max cap, non-rushable job, and completion from rush.
 
 Exit criteria:
 
@@ -383,3 +383,35 @@ Remaining blocker or next slice:
 - Next slice is Phase 4 Rush Tickets.
 - The current cancel policy intentionally uses the global design default. Recipe-level partial refund rules are not implemented yet because the Phase 1 recipe data does not carry a partial-refund percentage.
 - A later UI/runtime integration slice must still bind the exchange wallet to the live match resource header before players can safely use the popup in the HUD.
+
+### 2026-07-08 - Phase 4 Rush Tickets
+
+Files changed:
+
+- `Assets/Game/Scripts/Components/ResourceExchangeComponents.cs`
+- `Assets/Game/Scripts/Systems/ResourceExchangeRequestValidationSystem.cs`
+- `Assets/Game/Scripts/Systems/ResourceExchangeQueueTickSystem.cs`
+- `Assets/Tests/Editor/ResourceExchangeRushSystemTests.cs`
+- `Assets/Tests/Editor/ResourceExchangeRushSystemTests.cs.meta`
+- `Design/Architecture/resource_logistics_exchange_implementation_tracker.md`
+
+Behavior changed:
+
+- Added `RushTicketsSpent` to queue rows so max rush caps are enforced across multiple actions on the same exchange job.
+- Added typed request helpers for single-item rush and rush-all budget requests.
+- Rush validation now checks exchange enabled state, `AllowRush`, faction ownership, queue item state, remaining time, recipe rush rules, per-item ticket caps, and Rush Ticket affordability.
+- Accepted rush actions spend Rush Tickets from the typed exchange wallet, append a negative Rush Ticket economy event row, reduce remaining duration, increment queue row version, and publish typed `RushAccepted` results.
+- If a rush reduces remaining time to zero, the queue item completes immediately through the same queue-completion helper used by normal ticking, including output grant, storage blocking, economy event, and one-time output protection.
+- Rush-all allocates a request budget across eligible in-progress queue items in queue order without rushing blocked, completed, cancelled, or invalid jobs.
+- Added focused edit-mode tests for accepted rush, insufficient Rush Tickets, per-item max cap, blocked/non-rushable queue item rejection, immediate completion from rush, and rush-all budget allocation.
+
+Validation:
+
+- `git diff --check` passed.
+- `dotnet build Game.Tests.Editor.csproj --no-restore` passed with existing Unity reference conflict warnings and 0 errors.
+
+Remaining blocker or next slice:
+
+- Next slice is Phase 5 UI popup and header routing.
+- The Resource Exchange popup still does not exist in the live Match HUD, and the exchange wallet still needs to be seeded/synced from live match resources before player-facing UI is enabled.
+- Rush Ticket spend currently uses the ECS exchange wallet boundary introduced for this feature. A later persistence/account integration pass must decide when active-match Rush Ticket spend writes back to profile save data.

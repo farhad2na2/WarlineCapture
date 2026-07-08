@@ -103,6 +103,18 @@ namespace Game.Runtime
                 ApplySummary(ref summary, enabled, queue);
         }
 
+        public static bool TryCompleteQueueItem(
+            ref ResourceExchangeWalletComponent wallet,
+            in ResourceExchangeQueueComponent source,
+            DynamicBuffer<ResourceExchangeResultComponent> results,
+            DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
+            out ResourceExchangeQueueComponent completed)
+        {
+            bool stateChanged = false;
+            CompleteQueueItem(ref wallet, source, ref stateChanged, results, economyEvents, out completed);
+            return completed.State == ResourceExchangeQueueState.Completed;
+        }
+
         private static void CompleteQueueItem(
             ref ResourceExchangeWalletComponent wallet,
             in ResourceExchangeQueueComponent source,

@@ -2339,6 +2339,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1865759524}
   - component: {fileID: 1865759525}
+  - component: {fileID: 1865759526}
   m_Layer: 0
   m_Name: GameUIRoot
   m_TagString: Untagged
@@ -2383,6 +2384,22 @@ MonoBehaviour:
   shellEcsPresentation: {fileID: 1818590230}
   contentSystem: {fileID: 1818590229}
   router: {fileID: 1818590233}
+--- !u!114 &1865759526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1865759523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 234f191e148684a2fae0e7c0659ce388, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Game.Runtime::Game.Runtime.AudioPlaybackPresentationRuntimeView
+  eventCatalog: {fileID: 11400000, guid: dc1f27aae7c03472a81feb4b7cc5931b, type: 2}
+  mixerBusConfig: {fileID: 11400000, guid: edaa44fa96c9542ddbfe741b20222c58, type: 2}
+  initialPoolSize: 8
+  maxPoolSize: 32
 --- !u!1 &1958929999
 GameObject:
   m_ObjectHideFlags: 0

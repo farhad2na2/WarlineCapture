@@ -22,6 +22,8 @@ public sealed class AssistantCommandIntentGatewayTests
             passed++;
             RunCase(test => test.TryEnqueueAssistantCommandIntent_PreservesTakeoverFlag());
             passed++;
+            RunCase(test => test.TryEnqueueAssistantCommandIntent_BlocksTakeoverWhenDisabled());
+            passed++;
             RunCase(test => test.TryEnqueueAssistantCommandIntent_QueuesStopWithoutRecommendation());
             passed++;
             RunCase(test => test.TryReadMatchHudAssistantHighlight_ConvertsActivePreviewRow());
@@ -151,6 +153,13 @@ public sealed class AssistantCommandIntentGatewayTests
     public void TryEnqueueAssistantCommandIntent_PreservesTakeoverFlag()
     {
         Entity boundary = _entityManager.CreateEntity(typeof(UiShellRootComponent));
+        _entityManager.AddComponentData(boundary, new AssistantSettingsComponent
+        {
+            GuidanceLevel = AssistantGuidanceLevel.FullGuidance,
+            NarrationMode = AssistantNarrationMode.Important,
+            AllowTakeover = 1,
+            SubtitlesEnabled = 1
+        });
         DynamicBuffer<AssistantRecommendationElement> recommendations =
             _entityManager.AddBuffer<AssistantRecommendationElement>(boundary);
         recommendations.Add(new AssistantRecommendationElement
@@ -169,6 +178,32 @@ public sealed class AssistantCommandIntentGatewayTests
         Assert.AreEqual(1, requests.Length);
         Assert.AreEqual(AssistantCommandIntentKind.SelectEntity, requests[0].Kind);
         Assert.AreEqual(1, requests[0].FromTakeover);
+    }
+
+    [Test]
+    public void TryEnqueueAssistantCommandIntent_BlocksTakeoverWhenDisabled()
+    {
+        Entity boundary = _entityManager.CreateEntity(typeof(UiShellRootComponent));
+        _entityManager.AddComponentData(boundary, new AssistantSettingsComponent
+        {
+            GuidanceLevel = AssistantGuidanceLevel.FullGuidance,
+            NarrationMode = AssistantNarrationMode.Important,
+            AllowTakeover = 0,
+            SubtitlesEnabled = 1
+        });
+        DynamicBuffer<AssistantRecommendationElement> recommendations =
+            _entityManager.AddBuffer<AssistantRecommendationElement>(boundary);
+        recommendations.Add(new AssistantRecommendationElement
+        {
+            RecommendationId = 3001,
+            Kind = AssistantRecommendationKind.Select,
+            TargetKind = AssistantTargetKind.UiSurface,
+            CanExecute = 1,
+            CanTakeControl = 1
+        });
+
+        Assert.IsFalse(UiShellEcsGateway.TryEnqueueAssistantCommandIntent(UiAssistantCommandIntentKind.ExecuteRecommendation, true));
+        Assert.IsFalse(_entityManager.HasBuffer<AssistantCommandIntentRequestElement>(boundary));
     }
 
     [Test]

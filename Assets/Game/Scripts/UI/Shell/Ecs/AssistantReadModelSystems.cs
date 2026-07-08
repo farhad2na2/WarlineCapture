@@ -60,15 +60,21 @@ namespace Game.UI.Shell.Ecs
             EntityManager em = state.EntityManager;
             if (!em.HasComponent<AssistantStateComponent>(boundary))
             {
+                AssistantSettingsComponent settings = em.HasComponent<AssistantSettingsComponent>(boundary)
+                    ? em.GetComponentData<AssistantSettingsComponent>(boundary)
+                    : AssistantSettingsPersistenceSystemHelper.LoadSettingsComponent();
                 em.AddComponentData(boundary, new AssistantStateComponent
                 {
-                    GuidanceLevel = AssistantGuidanceLevel.FullGuidance,
+                    GuidanceLevel = settings.GuidanceLevel,
                     ControlState = AssistantControlState.Player,
                     SourceVersion = 1,
                     PublishedVersion = 1,
                     UiDirty = 1
                 });
             }
+
+            if (!em.HasComponent<AssistantSettingsComponent>(boundary))
+                em.AddComponentData(boundary, AssistantSettingsPersistenceSystemHelper.LoadSettingsComponent());
 
             if (!em.HasComponent<AssistantRecommendationReadModelComponent>(boundary))
                 em.AddComponentData(boundary, default(AssistantRecommendationReadModelComponent));

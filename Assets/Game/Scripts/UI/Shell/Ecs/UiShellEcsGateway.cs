@@ -180,6 +180,9 @@ namespace Game.UI.Shell.Ecs
                 return true;
             }
 
+            if (fromTakeover && !AssistantSettingsPersistenceSystemHelper.TakeoverAllowed(entityManager, boundary))
+                return false;
+
             if (!entityManager.HasBuffer<AssistantRecommendationElement>(boundary))
                 return false;
 

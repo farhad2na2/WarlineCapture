@@ -83,15 +83,7 @@ namespace Game.UI.Shell.Ecs
         {
             EntityManager em = state.EntityManager;
             if (!em.HasComponent<AssistantSettingsComponent>(boundary))
-            {
-                em.AddComponentData(boundary, new AssistantSettingsComponent
-                {
-                    GuidanceLevel = AssistantGuidanceLevel.FullGuidance,
-                    NarrationMode = AssistantNarrationMode.Important,
-                    AllowTakeover = 1,
-                    SubtitlesEnabled = 1
-                });
-            }
+                em.AddComponentData(boundary, AssistantSettingsPersistenceSystemHelper.LoadSettingsComponent());
 
             if (!em.HasComponent<AssistantNarrationStateComponent>(boundary))
             {

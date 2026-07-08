@@ -13,10 +13,13 @@ namespace Game.UI.Shell.Ecs
     {
         private const int MaxResultRows = 16;
         private const int MaxMessageRows = 16;
+        private const int TimeoutFrameWindow = 600;
         private const int ReasonAccepted = 0;
         private const int ReasonUnsupportedIntent = 1;
         private const int ReasonMissingPreviewTarget = 2;
         private const int ReasonMissingSelectionTarget = 3;
+        private const int ReasonCancelled = 4;
+        private const int ReasonTimedOut = 5;
         private const int RecoveryMessageBaseId = 700000;
 
         private EntityQuery boundaryQuery;
@@ -49,10 +52,17 @@ namespace Game.UI.Shell.Ecs
             if (requests.Length == 0)
                 return;
 
+            int currentFrame = UnityEngine.Time.frameCount;
             bool needsCameraPreview = false;
             bool needsSelectionCommand = false;
             for (int i = 0; i < requests.Length; i++)
             {
+                if (IsTimedOut(requests[i], currentFrame) ||
+                    requests[i].Kind == AssistantCommandIntentKind.CancelPreview)
+                {
+                    continue;
+                }
+
                 if (requests[i].Kind == AssistantCommandIntentKind.SelectEntity)
                     needsSelectionCommand = true;
 
@@ -95,6 +105,26 @@ namespace Game.UI.Shell.Ecs
             for (int i = 0; i < requests.Length; i++)
             {
                 AssistantCommandIntentRequestElement request = requests[i];
+                if (IsTimedOut(request, currentFrame))
+                {
+                    ClearPreviewHighlight(highlights);
+                    AddResult(results, request, AssistantCommandIntentStatus.TimedOut, ReasonTimedOut, new FixedString64Bytes("Intent timed out."));
+                    assistantState.UiDirty = 1;
+                    assistantStateChanged = true;
+                    continue;
+                }
+
+                if (request.Kind == AssistantCommandIntentKind.CancelPreview)
+                {
+                    ClearPreviewHighlight(highlights);
+                    AddResult(results, request, AssistantCommandIntentStatus.Cancelled, ReasonCancelled, new FixedString64Bytes("Preview cancelled."));
+                    assistantState.ControlState = AssistantControlState.Player;
+                    assistantState.ActiveRecommendationId = 0;
+                    assistantState.UiDirty = 1;
+                    assistantStateChanged = true;
+                    continue;
+                }
+
                 if (request.Kind == AssistantCommandIntentKind.SelectEntity)
                 {
                     ClearPreviewHighlight(highlights);
@@ -149,6 +179,7 @@ namespace Game.UI.Shell.Ecs
 
                 QueueCameraPreview(ref state, focusWorldPosition);
                 AddResult(results, request, AssistantCommandIntentStatus.Accepted, ReasonAccepted, new FixedString64Bytes("Preview queued."));
+                AddResult(results, request, AssistantCommandIntentStatus.Completed, ReasonAccepted, new FixedString64Bytes("Preview active."));
                 SetPreviewHighlight(highlights, request, focusWorldPosition);
 
                 assistantState.ControlState = AssistantControlState.AssistantPreview;
@@ -201,6 +232,11 @@ namespace Game.UI.Shell.Ecs
             }
 
             return false;
+        }
+
+        private static bool IsTimedOut(AssistantCommandIntentRequestElement request, int currentFrame)
+        {
+            return currentFrame - request.Frame > TimeoutFrameWindow;
         }
 
         private bool TryQueueSelectionCommand(ref SystemState state, AssistantCommandIntentRequestElement request)

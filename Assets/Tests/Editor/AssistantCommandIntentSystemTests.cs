@@ -30,6 +30,10 @@ public sealed class AssistantCommandIntentSystemTests
             passed++;
             RunCase(test => test.AssistantCommandIntentSystem_WritesRecoveryMessageForInvalidSelectTarget());
             passed++;
+            RunCase(test => test.AssistantCommandIntentSystem_CancelsPreviewRequest());
+            passed++;
+            RunCase(test => test.AssistantCommandIntentSystem_TimesOutStaleRequest());
+            passed++;
 
             Debug.Log($"[AssistantCommandIntentSystemValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -68,6 +72,84 @@ public sealed class AssistantCommandIntentSystemTests
     public void TearDown()
     {
         _world?.Dispose();
+    }
+
+    [Test]
+    public void AssistantCommandIntentSystem_CancelsPreviewRequest()
+    {
+        Entity boundary = CreateBoundary();
+        _entityManager.AddComponentData(boundary, new AssistantStateComponent
+        {
+            ControlState = AssistantControlState.AssistantPreview,
+            ActiveRecommendationId = 3101
+        });
+        _entityManager.AddBuffer<AssistantPreviewHighlightElement>(boundary).Add(new AssistantPreviewHighlightElement
+        {
+            RequestId = 4,
+            RecommendationId = 3101,
+            WorldPosition = new float3(1f, 0f, 2f),
+            Strength = 1f,
+            Active = 1
+        });
+        DynamicBuffer<AssistantCommandIntentRequestElement> requests =
+            _entityManager.GetBuffer<AssistantCommandIntentRequestElement>(boundary);
+        requests.Add(new AssistantCommandIntentRequestElement
+        {
+            RequestId = 16,
+            Frame = UnityEngine.Time.frameCount,
+            RecommendationId = 3101,
+            Kind = AssistantCommandIntentKind.CancelPreview,
+            TargetKind = AssistantTargetKind.Entity
+        });
+
+        _intentSystem.Update(_world.Unmanaged);
+
+        Assert.AreEqual(0, _entityManager.GetBuffer<AssistantCommandIntentRequestElement>(boundary).Length);
+        Assert.AreEqual(0, _entityManager.GetBuffer<AssistantPreviewHighlightElement>(boundary).Length);
+
+        DynamicBuffer<AssistantCommandIntentResultElement> results =
+            _entityManager.GetBuffer<AssistantCommandIntentResultElement>(boundary);
+        Assert.AreEqual(1, results.Length);
+        Assert.AreEqual(AssistantCommandIntentStatus.Cancelled, results[0].Status);
+        Assert.AreEqual("Preview cancelled.", results[0].Message.ToString());
+
+        AssistantStateComponent assistantState =
+            _entityManager.GetComponentData<AssistantStateComponent>(boundary);
+        Assert.AreEqual(AssistantControlState.Player, assistantState.ControlState);
+        Assert.AreEqual(0, assistantState.ActiveRecommendationId);
+        Assert.AreEqual(1, assistantState.UiDirty);
+    }
+
+    [Test]
+    public void AssistantCommandIntentSystem_TimesOutStaleRequest()
+    {
+        Entity boundary = CreateBoundary();
+        DynamicBuffer<AssistantCommandIntentRequestElement> requests =
+            _entityManager.GetBuffer<AssistantCommandIntentRequestElement>(boundary);
+        requests.Add(new AssistantCommandIntentRequestElement
+        {
+            RequestId = 17,
+            Frame = UnityEngine.Time.frameCount - 1000,
+            RecommendationId = 3301,
+            Kind = AssistantCommandIntentKind.ShowRecommendation,
+            TargetKind = AssistantTargetKind.WorldPosition,
+            WorldPosition = new float3(10f, 0f, 12f)
+        });
+
+        _intentSystem.Update(_world.Unmanaged);
+
+        Assert.AreEqual(0, _entityManager.GetBuffer<AssistantCommandIntentRequestElement>(boundary).Length);
+
+        DynamicBuffer<AssistantCommandIntentResultElement> results =
+            _entityManager.GetBuffer<AssistantCommandIntentResultElement>(boundary);
+        Assert.AreEqual(1, results.Length);
+        Assert.AreEqual(AssistantCommandIntentStatus.TimedOut, results[0].Status);
+        Assert.AreEqual("Intent timed out.", results[0].Message.ToString());
+
+        using EntityQuery cameraQuery = _entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<RtsCameraRequestQueueComponent>(),
+            ComponentType.ReadOnly<RtsCameraRequestElement>());
+        Assert.IsTrue(cameraQuery.IsEmptyIgnoreFilter);
     }
 
     [Test]
@@ -221,10 +303,12 @@ public sealed class AssistantCommandIntentSystemTests
 
         DynamicBuffer<AssistantCommandIntentResultElement> results =
             _entityManager.GetBuffer<AssistantCommandIntentResultElement>(boundary);
-        Assert.AreEqual(1, results.Length);
+        Assert.AreEqual(2, results.Length);
         Assert.AreEqual(7, results[0].RequestId);
         Assert.AreEqual(AssistantCommandIntentStatus.Accepted, results[0].Status);
         Assert.AreEqual("Preview queued.", results[0].Message.ToString());
+        Assert.AreEqual(AssistantCommandIntentStatus.Completed, results[1].Status);
+        Assert.AreEqual("Preview active.", results[1].Message.ToString());
 
         AssistantStateComponent assistantState =
             _entityManager.GetComponentData<AssistantStateComponent>(boundary);

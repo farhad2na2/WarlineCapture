@@ -1,4 +1,7 @@
 using Unity.Entities;
+using Game.Components;
+using Game.Configs;
+using Game.Runtime;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
 using Game.UI.Shell.Contracts.Ecs;
@@ -66,6 +69,7 @@ namespace Game.UI.Shell.Ecs
                 shellState.CurrentMode = UiShellMode.MainMenu;
                 shellState.ActiveRoute = UIRoute.MainMenu;
                 shellState.Phase = UiShellTransitionPhase.EnteringMenu;
+                EmitMusicState(state.World, AudioEventIds.MusicMenuLoop, AudioEventIds.MusicMenuLoopHash, transitionSeconds: 1.5f);
                 state.EntityManager.SetComponentData(boundary, shellState);
                 state.EntityManager.SetComponentData(boundary, matchIntro);
                 return;
@@ -84,6 +88,7 @@ namespace Game.UI.Shell.Ecs
             if (TryConsumeRouteRequest(routeRequests, out UiShellRouteRequestComponent routeRequest))
             {
                 ProcessRouteRequest(ref shellState, ref matchIntro, commands, routeHistory, routeRequest);
+                EmitRouteMusic(state.World, routeRequest);
                 EmitRouteAudio(state.World, routeRequest);
                 if (routeRequest.Intent == UiShellRouteIntent.EnterMatch ||
                     routeRequest.Intent == UiShellRouteIntent.ReturnToMainMenu)
@@ -120,6 +125,7 @@ namespace Game.UI.Shell.Ecs
                     shellState.ActiveRoute = UIRoute.MainMenu;
                     shellState.Phase = UiShellTransitionPhase.EnteringMenu;
                     SetMatchIntroInactive(ref matchIntro);
+                    EmitMusicState(state.World, AudioEventIds.MusicMenuLoop, AudioEventIds.MusicMenuLoopHash, transitionSeconds: 1.5f);
                 }
                 state.EntityManager.SetComponentData(boundary, shellState);
                 state.EntityManager.SetComponentData(boundary, matchIntro);
@@ -352,6 +358,42 @@ namespace Game.UI.Shell.Ecs
                 ? UIAudioEventKind.ScreenBack
                 : UIAudioEventKind.ScreenForward;
             EmitShellAudio(world, kind);
+        }
+
+        private static void EmitRouteMusic(World world, UiShellRouteRequestComponent request)
+        {
+            switch (request.Intent)
+            {
+                case UiShellRouteIntent.EnterMatch:
+                    EmitMusicState(world, AudioEventIds.MusicMatchCalmLoop, AudioEventIds.MusicMatchCalmLoopHash, transitionSeconds: 2f);
+                    break;
+                case UiShellRouteIntent.ReturnToMainMenu:
+                case UiShellRouteIntent.OpenMenuRoute:
+                case UiShellRouteIntent.BackMenuRoute:
+                case UiShellRouteIntent.OpenSettings:
+                    EmitMusicState(world, AudioEventIds.MusicMenuLoop, AudioEventIds.MusicMenuLoopHash, transitionSeconds: 1.5f);
+                    break;
+            }
+        }
+
+        private static void EmitMusicState(World world, string eventId, uint eventHash, float transitionSeconds)
+        {
+            if (world == null || !world.IsCreated || string.IsNullOrEmpty(eventId) || eventHash == 0u)
+                return;
+
+            EntityManager entityManager = world.EntityManager;
+            Entity audioEntity = AudioEventRequestSystem.EnsureAudioEntity(entityManager);
+            AudioMusicStateComponent musicState = entityManager.GetComponentData<AudioMusicStateComponent>(audioEntity);
+            if (musicState.CurrentEventHash == eventHash || musicState.RequestedEventHash == eventHash)
+                return;
+
+            AudioEventRequestSystem.EnqueueMusicState(
+                entityManager,
+                new Unity.Collections.FixedString64Bytes(eventId),
+                eventHash,
+                requestedAt: 0f,
+                transitionSeconds: transitionSeconds,
+                loop: true);
         }
 
         private static void EmitPopupAudio(World world, UiShellPopupRequestComponent request)

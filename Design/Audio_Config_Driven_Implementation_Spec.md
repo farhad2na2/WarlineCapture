@@ -323,14 +323,14 @@ Use this section as the work checklist. Update status after each implementation 
 
 ### Current Completion
 
-Overall tracked completion: **88%**.
+Overall tracked completion: **90%**.
 
 - Completed steps: 14 / 20.
 - Asset and placeholder catalog preparation: **Done**.
 - Runtime playback implementation: **In Progress**.
 - UI/gameplay wiring: **In Progress**.
 - Validation/performance test coverage: **In Progress**.
-- Latest stable slice: player-owned base barrier destruction emits base-breached alert audio through the ECS audio request buffer on the `Alerts` bus.
+- Latest stable slice: UI shell route transitions request menu and match music states through the ECS audio music state path.
 
 Status legend:
 
@@ -355,8 +355,8 @@ Status legend:
 | 12. Wire common UI button audio | Done | UI | Shared button/tab/card/toggle/slider audio event views. | `UiAudioEventViewTests.RunFocusedValidation` passed. |
 | 13. Wire shell route/popup audio | Done | UI | Screen forward/back, popup open/close, drawer open/close. | `UiShellAudioRoutePopupTests.RunFocusedValidation` passed. |
 | 14. Wire match command audio | In Progress | Gameplay/UI | Select, move, attack, hold, stop/return, scan, build valid/invalid. | `BuildingAudioFeedbackTests.RunFocusedValidation`, `SelectionAudioFeedbackTests.RunFocusedValidation`, `MatchCommandAudioFeedbackTests.RunFocusedValidation`, and `FocusedUnitCommandSystemTests.RunFocusedValidation` passed for current match/build command audio. |
-| 15. Wire alert/objective audio | In Progress | Gameplay/UI | Threat, objective, unit under attack, base breached events. | `AlertObjectiveAudioFeedbackTests.RunFocusedValidation` passed for threat warning, unit-under-attack, and base-breached alert audio. |
-| 16. Wire music state system | Not Started | Gameplay/UI | Splash/menu/briefing/match/result music state transitions. | Route transition test; no overlapping unintended loops. |
+| 15. Wire alert/objective audio | Blocked | Gameplay/UI | Threat, objective, unit under attack, base breached events. | `AlertObjectiveAudioFeedbackTests.RunFocusedValidation` passed for threat warning, unit-under-attack, and base-breached alert audio. Objective audio is blocked until mission/objective result state exists beyond seeded HUD text/icons. |
+| 16. Wire music state system | In Progress | Gameplay/UI | Splash/menu/briefing/match/result music state transitions. | `UiShellAudioRoutePopupTests.RunFocusedValidation` passed for menu and match route music requests. Result music pending until result route/model is implemented. |
 | 17. Add audio catalog validation tests | Not Started | QA | Missing clip, duplicate id, invalid bus, cooldown, import profile tests. | EditMode pass. |
 | 18. Add performance validation | Not Started | QA/Perf | Audio stress test for UI spam and match alerts. | No recurring GC after warmup; no runtime loading; pool size stable. |
 | 19. Update `Audio_Design_Guidelines.md` handoff | Done | Designer | Cross-link implementation spec and mark event set source. | Docs aligned. |
@@ -644,7 +644,7 @@ Current Step 15 threat warning pass:
 
 Remaining Step 15 work:
 
-- Objective progress/complete/failed audio: wire `Gameplay.Objective.Progress`, `Gameplay.Objective.Complete`, and `Gameplay.Objective.Failed` to concrete mission/objective result state once the mission result boundary is identified.
+- Blocked: Objective progress/complete/failed audio needs a concrete mission/objective result boundary. Current objective data is seeded HUD read-model text/icon state (`UiMatchHudStatusSurfacesComponent`) and the mission result gateway returns a static victory default, so wiring `Gameplay.Objective.Progress`, `Gameplay.Objective.Complete`, or `Gameplay.Objective.Failed` there would produce false audio from presentation defaults instead of gameplay outcomes.
 
 ### Step 16: Music State
 
@@ -666,6 +666,23 @@ Rules:
 - Music state changes come from route/session/match state, not arbitrary UI button views.
 - Crossfade or stop/start transitions must be config-driven.
 - Combat intensity changes should have hysteresis/cooldown to prevent rapid switching.
+
+Current Step 16 route music pass:
+
+- Source: `Assets/Game/Scripts/UI/Shell/Ecs/UiShellFlowSystem.cs`.
+- Validation: `UiShellAudioRoutePopupTests.RunFocusedValidation`.
+- First shell entry into main menu requests `Music.Menu.Loop` through `AudioEventRequestSystem.EnqueueMusicState`.
+- Entering match/loading requests `Music.Match.CalmLoop`.
+- Returning from match to main menu requests `Music.Menu.Loop`.
+- Route music requests are duplicate-safe: if the current or pending music event hash already matches the target event, no duplicate music request is enqueued.
+- Menu and match route music uses semantic event ids and the central catalog path; no route owns direct clips.
+
+Remaining Step 16 work:
+
+- Splash/loading intro music once the splash/loading route boundary is represented in ECS.
+- Briefing music once a briefing/loadout route is wired as a distinct state.
+- Result victory/defeat music once result routing/model data is no longer the static default gateway.
+- Match tension/combat intensity music once gameplay threat/combat intensity state exists with hysteresis.
 
 ### Step 17-18: Validation
 

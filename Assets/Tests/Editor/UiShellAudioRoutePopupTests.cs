@@ -28,6 +28,12 @@ public sealed class UiShellAudioRoutePopupTests
             passed++;
             RunCase(test => test.PassengerDrawerToggle_EnqueuesDrawerOpenAudio());
             passed++;
+            RunCase(test => test.InitialMenuState_RequestsMenuMusicLoop());
+            passed++;
+            RunCase(test => test.EnterMatchRoute_RequestsMatchCalmMusicLoop());
+            passed++;
+            RunCase(test => test.ReturnToMainMenuRoute_RequestsMenuMusicLoop());
+            passed++;
 
             Debug.Log($"[UiShellAudioRoutePopupValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -161,7 +167,51 @@ public sealed class UiShellAudioRoutePopupTests
         AssertLatestAudioRequest(AudioEventIds.UIDrawerOpen, AudioEventIds.UIDrawerOpenHash);
     }
 
-    private Entity CreateShellFlowBoundary()
+    [Test]
+    public void InitialMenuState_RequestsMenuMusicLoop()
+    {
+        CreateShellFlowBoundary(UiShellMode.None, UIRoute.Splash);
+
+        _world.CreateSystem<UiShellFlowSystem>().Update(_world.Unmanaged);
+
+        AssertMusicStateRequested(AudioEventIds.MusicMenuLoop, AudioEventIds.MusicMenuLoopHash, transitionSeconds: 1.5f);
+    }
+
+    [Test]
+    public void EnterMatchRoute_RequestsMatchCalmMusicLoop()
+    {
+        Entity boundary = CreateShellFlowBoundary();
+        _world.EntityManager.GetBuffer<UiShellRouteRequestComponent>(boundary).Add(new UiShellRouteRequestComponent
+        {
+            Route = UIRoute.Match,
+            Intent = UiShellRouteIntent.EnterMatch
+        });
+
+        _world.CreateSystem<UiShellFlowSystem>().Update(_world.Unmanaged);
+
+        AssertMusicStateRequested(AudioEventIds.MusicMatchCalmLoop, AudioEventIds.MusicMatchCalmLoopHash, transitionSeconds: 2f);
+        AssertLatestAudioRequest(AudioEventIds.UIScreenForward, AudioEventIds.UIScreenForwardHash);
+    }
+
+    [Test]
+    public void ReturnToMainMenuRoute_RequestsMenuMusicLoop()
+    {
+        Entity boundary = CreateShellFlowBoundary(UiShellMode.MatchHud, UIRoute.Match);
+        _world.EntityManager.GetBuffer<UiShellRouteRequestComponent>(boundary).Add(new UiShellRouteRequestComponent
+        {
+            Route = UIRoute.MainMenu,
+            Intent = UiShellRouteIntent.ReturnToMainMenu
+        });
+
+        _world.CreateSystem<UiShellFlowSystem>().Update(_world.Unmanaged);
+
+        AssertMusicStateRequested(AudioEventIds.MusicMenuLoop, AudioEventIds.MusicMenuLoopHash, transitionSeconds: 1.5f);
+        AssertLatestAudioRequest(AudioEventIds.UIScreenForward, AudioEventIds.UIScreenForwardHash);
+    }
+
+    private Entity CreateShellFlowBoundary(
+        UiShellMode currentMode = UiShellMode.MainMenu,
+        UIRoute activeRoute = UIRoute.MainMenu)
     {
         Entity boundary = _world.EntityManager.CreateEntity(
             typeof(UiShellStateComponent),
@@ -170,8 +220,8 @@ public sealed class UiShellAudioRoutePopupTests
             typeof(UiShellActivePopupComponent));
         _world.EntityManager.SetComponentData(boundary, new UiShellStateComponent
         {
-            CurrentMode = UiShellMode.MainMenu,
-            ActiveRoute = UIRoute.MainMenu,
+            CurrentMode = currentMode,
+            ActiveRoute = activeRoute,
             Phase = UiShellTransitionPhase.MenuReady
         });
         _world.EntityManager.SetComponentData(boundary, new UiShellActivePopupComponent
@@ -228,5 +278,34 @@ public sealed class UiShellAudioRoutePopupTests
         Assert.AreEqual(eventHash, request.EventHash);
         Assert.AreEqual("UI", request.BusId.ToString());
         Assert.AreEqual(AudioPlaybackRequestStatus.Pending, request.Status);
+    }
+
+    private void AssertMusicStateRequested(string eventId, uint eventHash, float transitionSeconds)
+    {
+        Entity audioEntity = Game.Runtime.AudioEventRequestSystem.EnsureAudioEntity(_world.EntityManager);
+        AudioMusicStateComponent musicState = _world.EntityManager.GetComponentData<AudioMusicStateComponent>(audioEntity);
+        Assert.AreEqual(eventId, musicState.RequestedEventId.ToString());
+        Assert.AreEqual(eventHash, musicState.RequestedEventHash);
+        Assert.AreEqual(1, musicState.IsTransitioning);
+        Assert.That(musicState.TransitionSeconds, Is.EqualTo(transitionSeconds).Within(0.001f));
+
+        DynamicBuffer<AudioPlaybackRequestElement> requests =
+            _world.EntityManager.GetBuffer<AudioPlaybackRequestElement>(audioEntity);
+        Assert.Greater(requests.Length, 0, "Expected at least one audio request.");
+        bool found = false;
+        for (int i = 0; i < requests.Length; i++)
+        {
+            AudioPlaybackRequestElement request = requests[i];
+            if (request.EventHash != eventHash)
+                continue;
+
+            found = true;
+            Assert.AreEqual(eventId, request.EventId.ToString());
+            Assert.AreEqual("Music", request.BusId.ToString());
+            Assert.AreEqual(AudioPlaybackPriority.High, request.Priority);
+            Assert.AreEqual(AudioPlaybackRequestStatus.Pending, request.Status);
+        }
+
+        Assert.IsTrue(found, $"Expected music audio request {eventId}.");
     }
 }

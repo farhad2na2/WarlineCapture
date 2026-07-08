@@ -1,12 +1,12 @@
 # ARIA Assistant ECS Implementation Tracker
 
 Date: 2026-07-08
-Status: Phase 5 bounded control sequence complete
+Status: Phase 6 message priority status-source slice complete
 Source design: `Design/ARIA_Assistant_ECS_Design.md`
 
 ## Progress
 
-Overall progress: 68% complete, 46 of 68 checklist items complete.
+Overall progress: 69% complete, 47 of 68 checklist items complete.
 
 | Phase | Scope | Items | Complete | Status |
 |---|---|---:|---:|---|
@@ -16,7 +16,7 @@ Overall progress: 68% complete, 46 of 68 checklist items complete.
 | 3 | Goal and recommendation read models | 8 | 8 | Complete |
 | 4 | Show Me and Do It command intents | 8 | 8 | Complete |
 | 5 | Give Control ownership | 8 | 8 | Complete |
-| 6 | Message, narration, and audio | 8 | 0 | Not started |
+| 6 | Message, narration, and audio | 8 | 1 | In progress |
 | 7 | Settings, save, and accessibility | 6 | 0 | Not started |
 | 8 | Validation, performance, and rollout | 8 | 0 | Not started |
 
@@ -171,7 +171,7 @@ Phase 5 notes:
 
 ## Phase 6: Message, Narration, And Audio
 
-- [ ] Add `AssistantMessagePrioritySystem` to merge objectives, command feedback, resources, fuel, threats, and reports.
+- [x] Add `AssistantMessagePrioritySystem` to merge objectives, command feedback, resources, fuel, threats, and reports.
 - [ ] Add priority levels: Critical, High, Normal, Low.
 - [ ] Add cooldown, coalescing, and duplicate suppression.
 - [ ] Add `AssistantNarrationRequestSystem` to create narration requests from eligible messages.
@@ -181,6 +181,11 @@ Phase 5 notes:
 - [ ] Add tests for spam suppression and priority interruption.
 
 Exit criteria: ARIA can present prioritized alerts/reports and read eligible messages without spam or allocations.
+
+Phase 6 notes:
+
+- Added unmanaged `AssistantMessagePrioritySystem` as the first message aggregation slice. It currently publishes deduplicated match-HUD threat and command-feedback status rows into `AssistantMessageElement` with fixed message ids and suppression keys, resets acknowledged status when content changes, removes inactive status rows, and marks the assistant UI dirty without rebuilding panel UI policy.
+- Remaining Phase 6 source expansions still need to add objectives, resource/fuel logistics, match reports, cooldown/coalescing policy beyond fixed-row dedupe, narration request generation, subtitle display, audio fallback, and narration settings gates.
 
 ## Phase 7: Settings, Save, And Accessibility
 
@@ -235,6 +240,7 @@ Exit criteria: feature is playable, validated, documented, and does not regress 
 | 2026-07-08 | Phase 5 shell blocker takeover cancellation | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-shell-blocker-cancel-unity.log --timeout 420 -- -quit -executeMethod AssistantControlOwnerSystemTests.RunFocusedValidation` | Passed | Focused Unity validation reported `[AssistantControlOwnerSystemValidation] result=Passed tests=11`. Validates takeover return-to-player on match route changes and pause popups, while keeping non-blocking threat alert popups from cancelling ARIA ownership. |
 | 2026-07-08 | Phase 5 ownership banner/detail text | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-ownership-banner-ui-unity.log --timeout 420 -- -quit -executeMethod MatchHudAssistantUiSystemHelperTests.RunFocusedValidation` | Passed | Focused Unity validation reported `[MatchHudAssistantUiValidation] result=Passed tests=2`. Validates the ARIA panel ownership detail text and existing assistant panel command buttons/world highlight binding. |
 | 2026-07-08 | Phase 5 bounded Give Control sequence | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-bounded-control-gateway-unity.log --timeout 420 -- -quit -executeMethod AssistantCommandIntentGatewayTests.RunFocusedValidation`; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-bounded-control-intent-unity.log --timeout 420 -- -quit -executeMethod AssistantCommandIntentSystemTests.RunFocusedValidation`; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-bounded-control-ui-unity.log --timeout 420 -- -quit -executeMethod MatchHudAssistantUiSystemHelperTests.RunFocusedValidation` | Passed | Focused Unity validations reported `[AssistantCommandIntentGatewayValidation] result=Passed tests=5`, `[AssistantCommandIntentSystemValidation] result=Passed tests=9`, and `[MatchHudAssistantUiValidation] result=Passed tests=2`. Validates Give Control sends takeover intent, safe selection/focus command routing enters `AssistantTakeover`, and the bounded owner system remains responsible for returning control. |
+| 2026-07-08 | Phase 6 assistant message priority status-source slice | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; sandboxed Unity attempt `/private/tmp/aria-assistant-message-priority-unity.log` hit the documented licensing channel timeout; workaround rerun `/private/tmp/aria-assistant-message-priority-unity-rerun.log`; after rebasing on `origin/main`, reran `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-message-priority-rebased-unity.log --timeout 420 -- -quit -executeMethod AssistantMessagePrioritySystemTests.RunFocusedValidation` | Passed | Focused Unity validation reported `[AssistantMessagePrioritySystemValidation] result=Passed tests=3`. Validates fixed-row threat/feedback message publishing, no duplicate rows on steady state, changed feedback upsert, inactive status removal, and UI dirty marking. |
 
 ## Open Decisions
 

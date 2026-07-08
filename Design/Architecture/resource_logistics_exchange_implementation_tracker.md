@@ -1,7 +1,7 @@
 # Resource Logistics Exchange Implementation Tracker
 
 Date: 2026-07-08
-Status: Phase 0 inventory complete
+Status: Phase 1 data model and config complete
 Design source: `../Resource_Logistics_Exchange_Design.md`
 
 ## Objective
@@ -23,14 +23,14 @@ Implement the timed Resource Logistics Exchange without drifting from WarlineCap
 
 ## Progress Summary
 
-Overall implementation progress: 9% (8/91 checklist items complete).
+Overall implementation progress: 22% (20/91 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
 | Phase | Status | Complete | Total | Progress | Notes |
 |---|---|---:|---:|---:|---|
 | 0. Inventory and source alignment | Complete | 8 | 8 | 100% | Current resource data, HUD header, Build Popup, fuel logistics, save/profile fields, and economy event gaps are documented below. |
-| 1. Data model and config | Not started | 0 | 12 | 0% | Add recipe/config data, ECS request/queue/result data, states, reason codes, and scenario gates. |
+| 1. Data model and config | Complete | 12 | 12 | 100% | Added Resource Exchange enums, ECS data, config entries, scenario gates, and config validation tests. |
 | 2. Request validation and queue start | Not started | 0 | 10 | 0% | Validate affordability, caps, storage, queue slots, and spend/reserve input at confirmation. |
 | 3. Queue ticking, completion, cancel, refund | Not started | 0 | 11 | 0% | Timed queue, output grant once, cancel/refund rules, mission-end policy. |
 | 4. Rush Tickets | Not started | 0 | 7 | 0% | Rush eligible jobs with ticket spend, caps, and feedback. |
@@ -79,18 +79,18 @@ Expected implementation file set:
 
 ## Phase 1: Data Model And Config
 
-- [ ] Define `ResourceExchangeRouteType` enum.
-- [ ] Define `ResourceExchangeQueueState` enum.
-- [ ] Define `ResourceExchangeReason` enum.
-- [ ] Define exchange resource kind mapping for Credits, Materials, Oil, Fuel, and Rush Tickets.
-- [ ] Add exchange recipe config data with stable recipe ids, route type, input/output resources, rates, caps, duration, rush rules, requirements, and scenario tags.
-- [ ] Add scenario/preset gate data for exchange enabled/disabled state.
-- [ ] Add ECS recipe projection data such as `ResourceExchangeRecipeComponent`.
-- [ ] Add ECS request data such as `ResourceExchangeRequestComponent`.
-- [ ] Add ECS queue data such as `ResourceExchangeQueueComponent`.
-- [ ] Add ECS result data such as `ResourceExchangeResultComponent`.
-- [ ] Add versioned exchange summary/read-model data for UI.
-- [ ] Add tests for recipe id uniqueness, nonnegative amounts, valid resources, valid rates, and valid duration/rush values.
+- [x] Define `ResourceExchangeRouteType` enum.
+- [x] Define `ResourceExchangeQueueState` enum.
+- [x] Define `ResourceExchangeReason` enum.
+- [x] Define exchange resource kind mapping for Credits, Materials, Oil, Fuel, and Rush Tickets.
+- [x] Add exchange recipe config data with stable recipe ids, route type, input/output resources, rates, caps, duration, rush rules, requirements, and scenario tags.
+- [x] Add scenario/preset gate data for exchange enabled/disabled state.
+- [x] Add ECS recipe projection data such as `ResourceExchangeRecipeComponent`.
+- [x] Add ECS request data such as `ResourceExchangeRequestComponent`.
+- [x] Add ECS queue data such as `ResourceExchangeQueueComponent`.
+- [x] Add ECS result data such as `ResourceExchangeResultComponent`.
+- [x] Add versioned exchange summary/read-model data for UI.
+- [x] Add tests for recipe id uniqueness, nonnegative amounts, valid resources, valid rates, and valid duration/rush values.
 
 Exit criteria:
 
@@ -288,3 +288,34 @@ Remaining blocker or next slice:
 - Next slice is Phase 1 data model/config.
 - Resource Exchange needs an explicit typed economy event boundary because no central runtime `EconomyEvent` contract was found.
 - Resource Exchange must not rely on the incomplete Build Drawer Rush button path; add typed exchange rush requests/results first, then integrate with persistent Rush Tickets or a future shared Rush Ticket wallet.
+
+### 2026-07-08 - Phase 1 Data Model And Config
+
+Files changed:
+
+- `Assets/Game/Scripts/Components/ResourceExchangeComponents.cs`
+- `Assets/Game/Scripts/Components/ResourceExchangeComponents.cs.meta`
+- `Assets/Game/Scripts/Configs/ResourceExchangeConfigModels.cs`
+- `Assets/Game/Scripts/Configs/ResourceExchangeConfigModels.cs.meta`
+- `Assets/Tests/Editor/ResourceExchangeConfigValidationTests.cs`
+- `Assets/Tests/Editor/ResourceExchangeConfigValidationTests.cs.meta`
+- `Design/Architecture/resource_logistics_exchange_implementation_tracker.md`
+
+Behavior changed:
+
+- Added typed Resource Exchange runtime data: route type, queue state, reason codes, resource kind mapping, request kind, result kind, visual cue kind, enabled marker, recipe buffer, request buffer, queue buffer, result buffer, summary/read-model component, economy event buffer, and visual request buffer.
+- Added config-driven recipe and scenario gate models through `ResourceExchangeRecipeConfigSet`, `ResourceExchangeRecipeConfigEntry`, and `ResourceExchangeScenarioGateConfigEntry`.
+- Added `ResourceExchangeRecipeConfigValidator` for recipe id, duplicate id, allowed route, amount bounds, input step, rate, duration, rush-rule, and resource-kind validation.
+- Added focused editor tests for stable enum values, valid import/export routes, duplicate ids, invalid amount/rate/duration/rush rules, and disallowed conversion routes.
+- Kept this slice data/config only. No runtime systems, resource mutation, UI wiring, or world presentation behavior was added.
+
+Validation:
+
+- `git diff --check` passed.
+- `dotnet build Game.Tests.Editor.csproj --no-restore` passed with existing Unity reference conflict warnings and 0 errors.
+
+Remaining blocker or next slice:
+
+- Next slice is Phase 2 request validation and queue start.
+- Phase 2 must choose the first authoritative active-match Credits boundary before spending/reserving inputs: either wrap `RuntimeResourceUtilitySystemHelper` with typed exchange access or introduce an ECS tactical Credits component synced with the current runtime dollar helper.
+- Phase 2 should consume the new config/ECS data only through typed requests/results and must not add UI-owned conversion math.

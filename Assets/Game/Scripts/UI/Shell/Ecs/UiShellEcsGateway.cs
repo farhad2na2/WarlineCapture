@@ -152,11 +152,32 @@ namespace Game.UI.Shell.Ecs
             bool fromTakeover)
         {
             if (kind == UiAssistantCommandIntentKind.None ||
-                !TryGetBoundary(out EntityManager entityManager, out Entity boundary) ||
-                !entityManager.HasBuffer<AssistantRecommendationElement>(boundary))
+                !TryGetBoundary(out EntityManager entityManager, out Entity boundary))
             {
                 return false;
             }
+
+            if (kind == UiAssistantCommandIntentKind.StopAssistantControl)
+            {
+                EnsureAssistantCommandIntentBuffers(entityManager, boundary);
+                DynamicBuffer<AssistantCommandIntentRequestElement> stopRequests =
+                    entityManager.GetBuffer<AssistantCommandIntentRequestElement>(boundary);
+                DynamicBuffer<AssistantCommandIntentResultElement> stopResults =
+                    entityManager.GetBuffer<AssistantCommandIntentResultElement>(boundary, true);
+                stopRequests.Add(new AssistantCommandIntentRequestElement
+                {
+                    RequestId = NextAssistantCommandIntentRequestId(stopRequests, stopResults),
+                    Frame = Time.frameCount,
+                    RecommendationId = 0,
+                    Kind = AssistantCommandIntentKind.StopAssistantControl,
+                    TargetKind = AssistantTargetKind.None,
+                    FromTakeover = fromTakeover ? (byte)1 : (byte)0
+                });
+                return true;
+            }
+
+            if (!entityManager.HasBuffer<AssistantRecommendationElement>(boundary))
+                return false;
 
             DynamicBuffer<AssistantRecommendationElement> recommendations =
                 entityManager.GetBuffer<AssistantRecommendationElement>(boundary, true);
@@ -1095,9 +1116,14 @@ namespace Game.UI.Shell.Ecs
             return value.ToString();
         }
 
-        private static uint CombineAssistantPanelVersion(uint sourceVersion, uint recommendationVersion, int messageVersion)
+        private static uint CombineAssistantPanelVersion(
+            uint sourceVersion,
+            uint recommendationVersion,
+            int messageVersion,
+            AssistantControlState controlState)
         {
             uint combined = sourceVersion * 397u ^ recommendationVersion ^ (uint)math.max(0, messageVersion) * 31u;
+            combined = combined * 17u ^ (uint)controlState;
             return combined == 0u ? 1u : combined;
         }
 
@@ -1198,6 +1224,14 @@ namespace Game.UI.Shell.Ecs
             };
         }
 
+        private static bool CanStopAssistantControl(AssistantControlState state)
+        {
+            return state == AssistantControlState.Guided ||
+                   state == AssistantControlState.AssistantPreview ||
+                   state == AssistantControlState.AssistantTakeover ||
+                   state == AssistantControlState.PlayerOverridePending;
+        }
+
         public static bool TryReadMatchHudStatusSurfaces(out UiMatchHudStatusSurfacesModel statusSurfaces)
         {
             statusSurfaces = UiMatchHudStatusSurfacesModel.Default;
@@ -1271,7 +1305,11 @@ namespace Game.UI.Shell.Ecs
             AssistantRecommendationElement topRecommendation =
                 recommendations.Length > 0 ? recommendations[0] : default;
             string alertsText = BuildAssistantAlertsText(messages);
-            uint modelVersion = CombineAssistantPanelVersion(assistantState.SourceVersion, recommendationReadModel.Version, messageVersion);
+            uint modelVersion = CombineAssistantPanelVersion(
+                assistantState.SourceVersion,
+                recommendationReadModel.Version,
+                messageVersion,
+                assistantState.ControlState);
             assistantPanel = new UiAssistantPanelModel(
                 modelVersion,
                 BuildAssistantGoalsText(goals),
@@ -1286,6 +1324,7 @@ namespace Game.UI.Shell.Ecs
                 topRecommendation.RecommendationId != 0 ? topRecommendation.ActionLabel.ToString() : "SHOW ME",
                 topRecommendation.CanShow != 0,
                 topRecommendation.CanExecute != 0,
+                CanStopAssistantControl(assistantState.ControlState),
                 topRecommendation.CanTakeControl != 0,
                 ControlStateText(assistantState.ControlState));
 

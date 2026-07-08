@@ -32,6 +32,8 @@ public sealed class AssistantCommandIntentSystemTests
             passed++;
             RunCase(test => test.AssistantCommandIntentSystem_CancelsPreviewRequest());
             passed++;
+            RunCase(test => test.AssistantCommandIntentSystem_StopsAssistantControlRequest());
+            passed++;
             RunCase(test => test.AssistantCommandIntentSystem_TimesOutStaleRequest());
             passed++;
 
@@ -112,6 +114,53 @@ public sealed class AssistantCommandIntentSystemTests
         Assert.AreEqual(1, results.Length);
         Assert.AreEqual(AssistantCommandIntentStatus.Cancelled, results[0].Status);
         Assert.AreEqual("Preview cancelled.", results[0].Message.ToString());
+
+        AssistantStateComponent assistantState =
+            _entityManager.GetComponentData<AssistantStateComponent>(boundary);
+        Assert.AreEqual(AssistantControlState.Player, assistantState.ControlState);
+        Assert.AreEqual(0, assistantState.ActiveRecommendationId);
+        Assert.AreEqual(1, assistantState.UiDirty);
+    }
+
+    [Test]
+    public void AssistantCommandIntentSystem_StopsAssistantControlRequest()
+    {
+        Entity boundary = CreateBoundary();
+        _entityManager.AddComponentData(boundary, new AssistantStateComponent
+        {
+            ControlState = AssistantControlState.AssistantTakeover,
+            ActiveRecommendationId = 4101
+        });
+        _entityManager.AddBuffer<AssistantPreviewHighlightElement>(boundary).Add(new AssistantPreviewHighlightElement
+        {
+            RequestId = 8,
+            RecommendationId = 4101,
+            WorldPosition = new float3(5f, 0f, 6f),
+            Strength = 1f,
+            Active = 1
+        });
+        DynamicBuffer<AssistantCommandIntentRequestElement> requests =
+            _entityManager.GetBuffer<AssistantCommandIntentRequestElement>(boundary);
+        requests.Add(new AssistantCommandIntentRequestElement
+        {
+            RequestId = 18,
+            Frame = UnityEngine.Time.frameCount,
+            RecommendationId = 0,
+            Kind = AssistantCommandIntentKind.StopAssistantControl,
+            TargetKind = AssistantTargetKind.None
+        });
+
+        _intentSystem.Update(_world.Unmanaged);
+
+        Assert.AreEqual(0, _entityManager.GetBuffer<AssistantCommandIntentRequestElement>(boundary).Length);
+        Assert.AreEqual(0, _entityManager.GetBuffer<AssistantPreviewHighlightElement>(boundary).Length);
+
+        DynamicBuffer<AssistantCommandIntentResultElement> results =
+            _entityManager.GetBuffer<AssistantCommandIntentResultElement>(boundary);
+        Assert.AreEqual(1, results.Length);
+        Assert.AreEqual(18, results[0].RequestId);
+        Assert.AreEqual(AssistantCommandIntentStatus.Cancelled, results[0].Status);
+        Assert.AreEqual("Assistant control stopped.", results[0].Message.ToString());
 
         AssistantStateComponent assistantState =
             _entityManager.GetComponentData<AssistantStateComponent>(boundary);

@@ -13,8 +13,10 @@ namespace Game.UI.Runtime
         private TMP_Text _recommendationBodyText;
         private TMP_Text _nextActionLabelText;
         private TMP_Text _giveControlLabelText;
+        private TMP_Text _stopLabelText;
         private Button _nextActionButton;
         private Button _giveControlButton;
+        private Button _stopButton;
         private uint _lastAppliedReadModelVersion = uint.MaxValue;
 
         public void Bind(
@@ -25,8 +27,10 @@ namespace Game.UI.Runtime
             TMP_Text recommendationBodyText,
             Button nextActionButton,
             Button giveControlButton,
+            Button stopButton,
             TMP_Text nextActionLabelText,
-            TMP_Text giveControlLabelText)
+            TMP_Text giveControlLabelText,
+            TMP_Text stopLabelText)
         {
             _stateText = stateText;
             _ownershipBodyText = ownershipBodyText;
@@ -35,8 +39,10 @@ namespace Game.UI.Runtime
             _recommendationBodyText = recommendationBodyText;
             _nextActionButton = nextActionButton;
             _giveControlButton = giveControlButton;
+            _stopButton = stopButton;
             _nextActionLabelText = nextActionLabelText;
             _giveControlLabelText = giveControlLabelText;
+            _stopLabelText = stopLabelText;
             _lastAppliedReadModelVersion = uint.MaxValue;
         }
 
@@ -49,8 +55,10 @@ namespace Game.UI.Runtime
             _recommendationBodyText = null;
             _nextActionLabelText = null;
             _giveControlLabelText = null;
+            _stopLabelText = null;
             _nextActionButton = null;
             _giveControlButton = null;
+            _stopButton = null;
             _lastAppliedReadModelVersion = uint.MaxValue;
         }
 
@@ -79,10 +87,14 @@ namespace Game.UI.Runtime
                 _nextActionButton.interactable = model.CanShow;
             if (_giveControlButton != null)
                 _giveControlButton.interactable = model.CanExecute;
+            if (_stopButton != null)
+                _stopButton.interactable = model.CanStop;
             if (_nextActionLabelText != null)
                 _nextActionLabelText.text = string.IsNullOrWhiteSpace(model.RecommendationActionLabel) ? "SHOW ME" : model.RecommendationActionLabel;
             if (_giveControlLabelText != null)
                 _giveControlLabelText.text = model.CanExecute ? "DO IT" : "CONTROL LOCKED";
+            if (_stopLabelText != null)
+                _stopLabelText.text = model.CanStop ? "STOP" : "STOP";
         }
     }
 }

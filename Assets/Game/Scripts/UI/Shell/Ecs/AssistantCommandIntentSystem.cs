@@ -125,6 +125,17 @@ namespace Game.UI.Shell.Ecs
                     continue;
                 }
 
+                if (request.Kind == AssistantCommandIntentKind.StopAssistantControl)
+                {
+                    ClearPreviewHighlight(highlights);
+                    AddResult(results, request, AssistantCommandIntentStatus.Cancelled, ReasonCancelled, new FixedString64Bytes("Assistant control stopped."));
+                    assistantState.ControlState = AssistantControlState.Player;
+                    assistantState.ActiveRecommendationId = 0;
+                    assistantState.UiDirty = 1;
+                    assistantStateChanged = true;
+                    continue;
+                }
+
                 if (request.Kind == AssistantCommandIntentKind.SelectEntity)
                 {
                     ClearPreviewHighlight(highlights);

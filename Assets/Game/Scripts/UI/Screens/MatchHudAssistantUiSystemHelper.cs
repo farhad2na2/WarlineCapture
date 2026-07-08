@@ -18,6 +18,7 @@ namespace Game.UI.Runtime
         private Button _closeButton;
         private Button _nextActionButton;
         private Button _giveControlButton;
+        private Button _stopButton;
         private readonly AssistantPanelUiSystemHelper _panelUiSystem = new();
         private readonly AssistantHighlightPresentationSystemHelper _highlightPresentationSystem = new();
         private Action _captureGameplayUiClick;
@@ -45,6 +46,7 @@ namespace Game.UI.Runtime
             UnbindButton(_closeButton, ClosePanel);
             UnbindButton(_nextActionButton, ShowRecommendation);
             UnbindButton(_giveControlButton, ExecuteRecommendation);
+            UnbindButton(_stopButton, StopAssistantControl);
 
             DestroyObject(_buttonRoot != null ? _buttonRoot.gameObject : null);
             DestroyObject(_panelRoot != null ? _panelRoot.gameObject : null);
@@ -55,6 +57,7 @@ namespace Game.UI.Runtime
             _closeButton = null;
             _nextActionButton = null;
             _giveControlButton = null;
+            _stopButton = null;
             _captureGameplayUiClick = null;
             _panelUiSystem.Unbind();
             _highlightPresentationSystem.Unbind();
@@ -105,7 +108,7 @@ namespace Game.UI.Runtime
             CreateText("Label", root, "ARIA", 28, TextAlignmentOptions.Left, new Vector2(18f, -8f), new Vector2(94f, 34f));
             TMP_Text stateText = CreateText("State", root, "PLAYER CONTROL", 18, TextAlignmentOptions.Left, new Vector2(18f, -42f), new Vector2(144f, 24f), new Color(0.45f, 0.95f, 1f, 1f));
             CreateText("Cue", root, ">", 42, TextAlignmentOptions.Center, new Vector2(-55f, -18f), new Vector2(44f, 48f), new Color(1f, 0.78f, 0.32f, 1f));
-            _panelUiSystem.Bind(stateText, null, null, null, null, null, null, null, null);
+            _panelUiSystem.Bind(stateText, null, null, null, null, null, null, null, null, null, null);
 
             return root;
         }
@@ -117,7 +120,7 @@ namespace Game.UI.Runtime
             root.anchorMax = new Vector2(1f, 1f);
             root.pivot = new Vector2(1f, 1f);
             root.anchoredPosition = parent == headerRect ? new Vector2(-360f, -118f) : new Vector2(-60f, -330f);
-            root.sizeDelta = new Vector2(640f, 520f);
+            root.sizeDelta = new Vector2(640f, 590f);
             root.SetAsLastSibling();
             MatchHudCanvasBatchingUtility.EnsureLocalCanvas(root.gameObject, needsRaycaster: true);
 
@@ -139,11 +142,14 @@ namespace Game.UI.Runtime
             _nextActionButton = CreatePanelButton("NextActionButton", root, "SHOW ME", new Vector2(28f, -398f), out TMP_Text nextActionLabelText);
             _giveControlButton = CreatePanelButton("GiveControlButton", root, "CONTROL LOCKED", new Vector2(246f, -398f), out TMP_Text giveControlLabelText);
             _closeButton = CreatePanelButton("CloseButton", root, "CLOSE", new Vector2(464f, -398f), out _);
+            _stopButton = CreatePanelButton("StopButton", root, "STOP", new Vector2(246f, -466f), out TMP_Text stopLabelText);
             _nextActionButton.interactable = false;
             _giveControlButton.interactable = false;
+            _stopButton.interactable = false;
 
             _nextActionButton.onClick.AddListener(ShowRecommendation);
             _giveControlButton.onClick.AddListener(ExecuteRecommendation);
+            _stopButton.onClick.AddListener(StopAssistantControl);
             _closeButton.onClick.AddListener(ClosePanel);
             TMP_Text stateText = _buttonRoot != null ? _buttonRoot.Find("State")?.GetComponent<TMP_Text>() : null;
             _panelUiSystem.Bind(
@@ -154,8 +160,10 @@ namespace Game.UI.Runtime
                 recommendationBodyText,
                 _nextActionButton,
                 _giveControlButton,
+                _stopButton,
                 nextActionLabelText,
-                giveControlLabelText);
+                giveControlLabelText,
+                stopLabelText);
             _highlightPresentationSystem.Bind(previewPulse);
             return root;
         }
@@ -251,6 +259,12 @@ namespace Game.UI.Runtime
         {
             CaptureUiOnly();
             UiShellRuntimeGateway.TryEnqueueAssistantCommandIntent(UiAssistantCommandIntentKind.ExecuteRecommendation);
+        }
+
+        private void StopAssistantControl()
+        {
+            CaptureUiOnly();
+            UiShellRuntimeGateway.TryEnqueueAssistantCommandIntent(UiAssistantCommandIntentKind.StopAssistantControl);
         }
 
         private void CaptureUiOnly()

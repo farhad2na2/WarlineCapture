@@ -966,6 +966,7 @@ namespace Game.UI.Contracts
         public readonly string RecommendationActionLabel;
         public readonly bool CanShow;
         public readonly bool CanExecute;
+        public readonly bool CanStop;
         public readonly bool CanTakeControl;
         public readonly string OwnershipText;
 
@@ -981,6 +982,7 @@ namespace Game.UI.Contracts
             string recommendationActionLabel,
             bool canShow,
             bool canExecute,
+            bool canStop,
             bool canTakeControl,
             string ownershipText)
         {
@@ -995,6 +997,7 @@ namespace Game.UI.Contracts
             RecommendationActionLabel = recommendationActionLabel;
             CanShow = canShow;
             CanExecute = canExecute;
+            CanStop = canStop;
             CanTakeControl = canTakeControl;
             OwnershipText = ownershipText;
         }
@@ -1010,6 +1013,7 @@ namespace Game.UI.Contracts
                 "ARIA is waiting for live battlefield context.",
                 "LOW",
                 "SHOW ME",
+                false,
                 false,
                 false,
                 false,

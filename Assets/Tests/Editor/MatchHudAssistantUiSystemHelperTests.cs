@@ -121,6 +121,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             "SHOW ME",
             true,
             true,
+            true,
             false,
             "ARIA CONTROL"),
             new UiAssistantHighlightModel(88, true, 7, 3101, 1, 12f, 3f, 9f, 1f));
@@ -137,6 +138,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Image previewPulse = panel.Find("PreviewPulse")?.GetComponent<Image>();
         Button showMe = panel.Find("NextActionButton")?.GetComponent<Button>();
         Button giveControl = panel.Find("GiveControlButton")?.GetComponent<Button>();
+        Button stop = panel.Find("StopButton")?.GetComponent<Button>();
         TMP_Text giveControlLabel = panel.Find("GiveControlButton/Label")?.GetComponent<TMP_Text>();
 
         Assert.NotNull(goals);
@@ -146,6 +148,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.NotNull(previewPulse);
         Assert.NotNull(showMe);
         Assert.NotNull(giveControl);
+        Assert.NotNull(stop);
         Assert.NotNull(giveControlLabel);
         Assert.AreEqual("- Neutralize hostile patrol\n[x] Protect civilians", goals.text);
         Assert.AreEqual("HIGH: Fuel reserves empty", alerts.text);
@@ -164,6 +167,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.AreEqual(9f, worldRingRenderer.GetPosition(0).z, 0.01f);
         Assert.IsTrue(showMe.interactable);
         Assert.IsTrue(giveControl.interactable);
+        Assert.IsTrue(stop.interactable);
         Assert.AreEqual("DO IT", giveControlLabel.text);
 
         showMe.onClick.Invoke();
@@ -176,6 +180,12 @@ public sealed class MatchHudAssistantUiSystemHelperTests
 
         Assert.AreEqual(2, assistantGateway.AssistantIntentRequestCount);
         Assert.AreEqual(UiAssistantCommandIntentKind.ExecuteRecommendation, assistantGateway.LastAssistantIntentKind);
+        Assert.IsFalse(assistantGateway.LastAssistantIntentFromTakeover);
+
+        stop.onClick.Invoke();
+
+        Assert.AreEqual(3, assistantGateway.AssistantIntentRequestCount);
+        Assert.AreEqual(UiAssistantCommandIntentKind.StopAssistantControl, assistantGateway.LastAssistantIntentKind);
         Assert.IsFalse(assistantGateway.LastAssistantIntentFromTakeover);
 
         ui.Dispose();

@@ -18,13 +18,8 @@ namespace Game.UI.Runtime
         private Button _closeButton;
         private Button _nextActionButton;
         private Button _giveControlButton;
-        private TMP_Text _stateText;
-        private TMP_Text _goalsBodyText;
-        private TMP_Text _recommendationBodyText;
-        private TMP_Text _nextActionLabelText;
-        private TMP_Text _giveControlLabelText;
+        private readonly AssistantPanelUiSystemHelper _panelUiSystem = new();
         private Action _captureGameplayUiClick;
-        private uint _lastAppliedReadModelVersion = uint.MaxValue;
 
         public bool IsPanelOpen => _panelRoot != null && _panelRoot.gameObject.activeSelf;
 
@@ -60,39 +55,15 @@ namespace Game.UI.Runtime
             _nextActionButton = null;
             _giveControlButton = null;
             _captureGameplayUiClick = null;
-            _stateText = null;
-            _goalsBodyText = null;
-            _recommendationBodyText = null;
-            _nextActionLabelText = null;
-            _giveControlLabelText = null;
-            _lastAppliedReadModelVersion = uint.MaxValue;
+            _panelUiSystem.Unbind();
         }
 
         public void ApplyReadModel(UiAssistantPanelModel model)
         {
-            if (_buttonRoot == null || _lastAppliedReadModelVersion == model.Version)
+            if (_buttonRoot == null)
                 return;
 
-            _lastAppliedReadModelVersion = model.Version;
-            if (_stateText != null)
-                _stateText.text = string.IsNullOrWhiteSpace(model.OwnershipText) ? "PLAYER CONTROL" : model.OwnershipText;
-            if (_goalsBodyText != null)
-                _goalsBodyText.text = string.IsNullOrWhiteSpace(model.GoalsText) ? "No active objectives" : model.GoalsText;
-            if (_recommendationBodyText != null)
-            {
-                _recommendationBodyText.text = model.HasRecommendation
-                    ? $"{model.RecommendationPriorityText}: {model.RecommendationTitle}\n{model.RecommendationBody}"
-                    : model.RecommendationBody;
-            }
-
-            if (_nextActionButton != null)
-                _nextActionButton.interactable = model.CanShow;
-            if (_giveControlButton != null)
-                _giveControlButton.interactable = model.CanTakeControl;
-            if (_nextActionLabelText != null)
-                _nextActionLabelText.text = string.IsNullOrWhiteSpace(model.RecommendationActionLabel) ? "SHOW ME" : model.RecommendationActionLabel;
-            if (_giveControlLabelText != null)
-                _giveControlLabelText.text = model.CanTakeControl ? "GIVE CONTROL" : "CONTROL LOCKED";
+            _panelUiSystem.ApplyReadModel(model);
         }
 
         public bool ContainsScreenPoint(Vector2 screenPosition)
@@ -122,8 +93,9 @@ namespace Game.UI.Runtime
             _button.onClick.AddListener(TogglePanel);
 
             CreateText("Label", root, "ARIA", 28, TextAlignmentOptions.Left, new Vector2(18f, -8f), new Vector2(94f, 34f));
-            _stateText = CreateText("State", root, "PLAYER CONTROL", 18, TextAlignmentOptions.Left, new Vector2(18f, -42f), new Vector2(144f, 24f), new Color(0.45f, 0.95f, 1f, 1f));
+            TMP_Text stateText = CreateText("State", root, "PLAYER CONTROL", 18, TextAlignmentOptions.Left, new Vector2(18f, -42f), new Vector2(144f, 24f), new Color(0.45f, 0.95f, 1f, 1f));
             CreateText("Cue", root, ">", 42, TextAlignmentOptions.Center, new Vector2(-55f, -18f), new Vector2(44f, 48f), new Color(1f, 0.78f, 0.32f, 1f));
+            _panelUiSystem.Bind(stateText, null, null, null, null, null, null);
 
             return root;
         }
@@ -145,12 +117,12 @@ namespace Game.UI.Runtime
 
             CreateText("Title", root, "ARIA COMMAND ASSISTANT", 28, TextAlignmentOptions.Left, new Vector2(28f, -24f), new Vector2(460f, 38f), new Color(0.92f, 0.96f, 0.95f, 1f));
             CreateText("GoalsTitle", root, "CURRENT GOALS", 18, TextAlignmentOptions.Left, new Vector2(28f, -88f), new Vector2(240f, 28f), new Color(1f, 0.80f, 0.34f, 1f));
-            _goalsBodyText = CreateText("GoalsBody", root, "No active objectives", 20, TextAlignmentOptions.Left, new Vector2(28f, -124f), new Vector2(310f, 104f), new Color(0.80f, 0.86f, 0.84f, 1f));
+            TMP_Text goalsBodyText = CreateText("GoalsBody", root, "No active objectives", 20, TextAlignmentOptions.Left, new Vector2(28f, -124f), new Vector2(310f, 104f), new Color(0.80f, 0.86f, 0.84f, 1f));
             CreateText("RecommendationTitle", root, "RECOMMENDED NEXT ACTION", 18, TextAlignmentOptions.Left, new Vector2(28f, -258f), new Vector2(330f, 28f), new Color(0.45f, 0.95f, 1f, 1f));
-            _recommendationBodyText = CreateText("RecommendationBody", root, "ARIA is waiting for live battlefield context.", 20, TextAlignmentOptions.Left, new Vector2(28f, -294f), new Vector2(520f, 72f), new Color(0.78f, 0.84f, 0.82f, 1f));
+            TMP_Text recommendationBodyText = CreateText("RecommendationBody", root, "ARIA is waiting for live battlefield context.", 20, TextAlignmentOptions.Left, new Vector2(28f, -294f), new Vector2(520f, 72f), new Color(0.78f, 0.84f, 0.82f, 1f));
 
-            _nextActionButton = CreatePanelButton("NextActionButton", root, "SHOW ME", new Vector2(28f, -398f), out _nextActionLabelText);
-            _giveControlButton = CreatePanelButton("GiveControlButton", root, "CONTROL LOCKED", new Vector2(246f, -398f), out _giveControlLabelText);
+            _nextActionButton = CreatePanelButton("NextActionButton", root, "SHOW ME", new Vector2(28f, -398f), out TMP_Text nextActionLabelText);
+            _giveControlButton = CreatePanelButton("GiveControlButton", root, "CONTROL LOCKED", new Vector2(246f, -398f), out TMP_Text giveControlLabelText);
             _closeButton = CreatePanelButton("CloseButton", root, "CLOSE", new Vector2(464f, -398f), out _);
             _nextActionButton.interactable = false;
             _giveControlButton.interactable = false;
@@ -158,6 +130,15 @@ namespace Game.UI.Runtime
             _nextActionButton.onClick.AddListener(CaptureUiOnly);
             _giveControlButton.onClick.AddListener(CaptureUiOnly);
             _closeButton.onClick.AddListener(ClosePanel);
+            TMP_Text stateText = _buttonRoot != null ? _buttonRoot.Find("State")?.GetComponent<TMP_Text>() : null;
+            _panelUiSystem.Bind(
+                stateText,
+                goalsBodyText,
+                recommendationBodyText,
+                _nextActionButton,
+                _giveControlButton,
+                nextActionLabelText,
+                giveControlLabelText);
             return root;
         }
 

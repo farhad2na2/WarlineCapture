@@ -37,6 +37,7 @@ namespace Game.Editor
         private const string RequirePerformanceRegressionReportKey = "MatchRuntimeShellSmokeValidation.RequirePerformanceRegressionReport";
         private const string RequireInitialBuildingSmokeKey = "MatchRuntimeShellSmokeValidation.RequireInitialBuildingSmoke";
         private const string RequireFuelReadinessKey = "MatchRuntimeShellSmokeValidation.RequireFuelReadiness";
+        private const string RequireResourceHaulerMovementKey = "MatchRuntimeShellSmokeValidation.RequireResourceHaulerMovement";
         private const string InitialBuildingImmediateStatusKey = "MatchRuntimeShellSmokeValidation.InitialBuildingImmediateStatus";
         private const string FrameDiagKey = "MatchRuntimeShellSmokeValidation.FrameDiag";
         private const string ReadyAtKey = "MatchRuntimeShellSmokeValidation.ReadyAt";
@@ -56,6 +57,8 @@ namespace Game.Editor
         private const double BaselineMetricsObservationSeconds = 4d;
         private const double InitialBuildingPostAiObservationSeconds = 10d;
         private const double FuelReadinessObservationSeconds = 8d;
+        private const double ResourceHaulerMovementObservationSeconds = 10d;
+        private const float ResourceHaulerMovementMinDistance = 0.35f;
         private const int BaselineMetricsFrameTarget = 180;
         private const string AirLauncherConfigPath = "Assets/Game/Configs/Weapons/AirMissileLauncher_Air_Config.asset";
 
@@ -69,7 +72,8 @@ namespace Game.Editor
             WaitingForAirMissileSmoke = 5,
             WaitingForBaselineMetrics = 6,
             WaitingForInitialBuildingPostAi = 7,
-            WaitingForFuelReadiness = 8
+            WaitingForFuelReadiness = 8,
+            WaitingForResourceHaulerMovement = 9
         }
 
         private static Entity _airSmokeLauncher = Entity.Null;
@@ -77,6 +81,9 @@ namespace Game.Editor
         private static bool _airSmokeProjectileSeen;
         private static bool _airSmokeTrailSeen;
         private static double _airSmokeStartedAt;
+        private static Entity _resourceHaulerObservedEntity = Entity.Null;
+        private static float3 _resourceHaulerObservedStartPosition;
+        private static double _resourceHaulerObservedStartedAt;
         private static readonly List<double> BaselineFrameTimesMs = new(BaselineMetricsFrameTarget + 16);
         private static double _baselineMetricsStartedAt;
         private static long _baselineMetricsAllocatedBytesAtStart;
@@ -141,6 +148,18 @@ namespace Game.Editor
                 requireFuelReadiness: true);
         }
 
+        public static void RunResourceHaulerMovement()
+        {
+            RunInternal(
+                requireFrameDiag: false,
+                requireAirMissileSmoke: false,
+                requireBaselineMetrics: false,
+                requirePerformanceRegressionReport: false,
+                requireInitialBuildingSmoke: false,
+                requireFuelReadiness: false,
+                requireResourceHaulerMovement: true);
+        }
+
         private static void RunInternal(bool requireFrameDiag)
         {
             RunInternal(requireFrameDiag, requireAirMissileSmoke: false, requireBaselineMetrics: false);
@@ -176,12 +195,14 @@ namespace Game.Editor
             bool requireBaselineMetrics,
             bool requirePerformanceRegressionReport,
             bool requireInitialBuildingSmoke,
-            bool requireFuelReadiness = false)
+            bool requireFuelReadiness = false,
+            bool requireResourceHaulerMovement = false)
         {
             try
             {
                 ResetAirMissileSmokeState();
                 ResetBaselineMetricsState();
+                ResetResourceHaulerMovementState();
                 SessionState.SetBool(ActiveKey, true);
                 SessionState.SetInt(PhaseKey, (int)Phase.WaitingForPlayMode);
                 SessionState.SetFloat(StartedAtKey, (float)EditorApplication.timeSinceStartup);
@@ -192,6 +213,7 @@ namespace Game.Editor
                 SessionState.SetBool(RequirePerformanceRegressionReportKey, requirePerformanceRegressionReport);
                 SessionState.SetBool(RequireInitialBuildingSmokeKey, requireInitialBuildingSmoke);
                 SessionState.SetBool(RequireFuelReadinessKey, requireFuelReadiness);
+                SessionState.SetBool(RequireResourceHaulerMovementKey, requireResourceHaulerMovement);
                 SessionState.EraseString(FrameDiagKey);
                 SessionState.EraseString(InitialBuildingImmediateStatusKey);
                 SessionState.EraseFloat(ReadyAtKey);
@@ -402,6 +424,38 @@ namespace Game.Editor
                 return;
             }
 
+            if (phase == Phase.WaitingForResourceHaulerMovement)
+            {
+                bool passed = ValidateResourceHaulerMovement(out string movementStatus);
+                if (passed)
+                {
+                    Finish(true, movementStatus);
+                    return;
+                }
+
+                int movementErrorCount = SessionState.GetInt(ErrorCountKey, 0);
+                if (movementErrorCount > 0)
+                {
+                    Finish(false, $"Resource hauler movement logged {movementErrorCount} runtime error(s). {movementStatus}");
+                    return;
+                }
+
+                float readyAt = SessionState.GetFloat(ReadyAtKey, 0f);
+                if (readyAt <= 0f)
+                {
+                    SessionState.SetFloat(ReadyAtKey, (float)EditorApplication.timeSinceStartup);
+                    return;
+                }
+
+                if (EditorApplication.timeSinceStartup - readyAt >= ResourceHaulerMovementObservationSeconds)
+                {
+                    Finish(false, movementStatus);
+                    return;
+                }
+
+                return;
+            }
+
             if (phase != Phase.WaitingForMatchReady)
                 return;
 
@@ -465,7 +519,112 @@ namespace Game.Editor
                 return;
             }
 
+            if (SessionState.GetBool(RequireResourceHaulerMovementKey, false))
+            {
+                Debug.Log($"[MatchRuntimeShellSmokeValidation] runtimeReady checkingResourceHaulerMovement {status}");
+                ResetResourceHaulerMovementState();
+                SessionState.SetFloat(ReadyAtKey, (float)EditorApplication.timeSinceStartup);
+                SessionState.SetInt(PhaseKey, (int)Phase.WaitingForResourceHaulerMovement);
+                return;
+            }
+
             Finish(true, status);
+        }
+
+        private static bool ValidateResourceHaulerMovement(out string status)
+        {
+            status = "[ResourceHaulerMovement] result=Failed world=missing";
+            World world = World.DefaultGameObjectInjectionWorld;
+            if (world == null || !world.IsCreated)
+                return false;
+
+            EntityManager em = world.EntityManager;
+            if (!TryFindOilResourceHauler(
+                    em,
+                    out Entity hauler,
+                    out LocalTransform transform,
+                    out UnitResourceHaulOrder order,
+                    out string sourceKey))
+            {
+                ResetResourceHaulerMovementState();
+                status = "[ResourceHaulerMovement] result=Waiting reason=NoOilHaulerWithOrder";
+                return false;
+            }
+
+            if (_resourceHaulerObservedEntity != hauler ||
+                _resourceHaulerObservedEntity == Entity.Null ||
+                !em.Exists(_resourceHaulerObservedEntity))
+            {
+                _resourceHaulerObservedEntity = hauler;
+                _resourceHaulerObservedStartPosition = transform.Position;
+                _resourceHaulerObservedStartedAt = EditorApplication.timeSinceStartup;
+            }
+
+            float2 start = _resourceHaulerObservedStartPosition.xz;
+            float2 current = transform.Position.xz;
+            float distance = math.distance(start, current);
+            bool hasActivePath = HasActivePath(em, hauler);
+            double observedSeconds = EditorApplication.timeSinceStartup - _resourceHaulerObservedStartedAt;
+            bool passed = distance >= ResourceHaulerMovementMinDistance;
+            status =
+                "[ResourceHaulerMovement] " +
+                $"result={(passed ? "Passed" : "Waiting")} " +
+                $"entity={hauler.Index}:{hauler.Version} key='{sourceKey}' " +
+                $"phase={(ResourceHaulerUtilitySystemHelper.ResourceHaulPhase)order.Phase} " +
+                $"target={order.TargetCell.x},{order.TargetCell.y} activePath={(hasActivePath ? 1 : 0)} " +
+                $"distance={distance.ToString("0.###", CultureInfo.InvariantCulture)} " +
+                $"observedSeconds={observedSeconds.ToString("0.###", CultureInfo.InvariantCulture)}";
+            return passed;
+        }
+
+        private static bool TryFindOilResourceHauler(
+            EntityManager em,
+            out Entity hauler,
+            out LocalTransform transform,
+            out UnitResourceHaulOrder order,
+            out string sourceKey)
+        {
+            hauler = Entity.Null;
+            transform = default;
+            order = default;
+            sourceKey = string.Empty;
+
+            using EntityQuery query = em.CreateEntityQuery(
+                ComponentType.ReadOnly<UnitResourceHauler>(),
+                ComponentType.ReadOnly<UnitResourceHaulOrder>(),
+                ComponentType.ReadOnly<LocalTransform>());
+            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity entity = entities[i];
+                UnitResourceHaulOrder candidateOrder = em.GetComponentData<UnitResourceHaulOrder>(entity);
+                if (candidateOrder.ResourceKind != (byte)ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil)
+                    continue;
+
+                if (!em.HasComponent<UnitVehicleMovement>(entity))
+                    continue;
+
+                string candidateKey = em.HasComponent<UnitSourcePrefabKey>(entity)
+                    ? em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString()
+                    : string.Empty;
+                hauler = entity;
+                transform = em.GetComponentData<LocalTransform>(entity);
+                order = candidateOrder;
+                sourceKey = candidateKey;
+                if (candidateKey.Contains("Truck_Tray", StringComparison.Ordinal))
+                    return true;
+            }
+
+            return hauler != Entity.Null;
+        }
+
+        private static bool HasActivePath(EntityManager em, Entity entity)
+        {
+            return em.HasComponent<UnitPathRequest>(entity) ||
+                   em.HasComponent<UnitPathFollow>(entity) ||
+                   em.HasComponent<UnitPathRange>(entity) ||
+                   em.HasComponent<UnitPathRetryCooldown>(entity) ||
+                   em.HasComponent<UnitLongDistanceMove>(entity);
         }
 
         private static bool ValidateFuelReadiness(out string status)
@@ -2123,6 +2282,13 @@ namespace Game.Editor
             _airSmokeStartedAt = 0d;
         }
 
+        private static void ResetResourceHaulerMovementState()
+        {
+            _resourceHaulerObservedEntity = Entity.Null;
+            _resourceHaulerObservedStartPosition = default;
+            _resourceHaulerObservedStartedAt = 0d;
+        }
+
         private static void Finish(bool passed, string details)
         {
             Debug.Log(
@@ -2149,11 +2315,13 @@ namespace Game.Editor
             SessionState.EraseBool(RequirePerformanceRegressionReportKey);
             SessionState.EraseBool(RequireInitialBuildingSmokeKey);
             SessionState.EraseBool(RequireFuelReadinessKey);
+            SessionState.EraseBool(RequireResourceHaulerMovementKey);
             SessionState.EraseString(FrameDiagKey);
             SessionState.EraseString(InitialBuildingImmediateStatusKey);
             SessionState.EraseFloat(ReadyAtKey);
             SessionState.EraseFloat(LastProgressLogAtKey);
             ResetBaselineMetricsState();
+            ResetResourceHaulerMovementState();
         }
     }
 }

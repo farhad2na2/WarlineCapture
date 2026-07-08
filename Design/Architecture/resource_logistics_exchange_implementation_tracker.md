@@ -23,7 +23,7 @@ Implement the timed Resource Logistics Exchange without drifting from WarlineCap
 
 ## Progress Summary
 
-Overall implementation progress: 54% (50/92 checklist items complete).
+Overall implementation progress: 55% (51/92 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -34,7 +34,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 2. Request validation and queue start | Complete | 10 | 10 | 100% | Added ISystem request validation, ECS wallet boundary, input reservation, queue item creation, economy event row, and typed results. |
 | 3. Queue ticking, completion, cancel, refund | Complete | 11 | 11 | 100% | Timed queue, output grant once, cancel/refund rules, mission-end cancel/refund policy. |
 | 4. Rush Tickets | Complete | 7 | 7 | 100% | Rush eligible jobs with ticket spend, per-item caps, rush-all budget, and feedback. |
-| 5. UI popup and header routing | In progress | 2 | 13 | 15% | ECS-backed UI read-model and target-lock reference complete; layer pack, Build-Popup-style popup, resource header tap route, cards, details, amount stepper, queue panel remain. |
+| 5. UI popup and header routing | In progress | 3 | 13 | 23% | ECS-backed UI read-model, target-lock reference, and separated layer pack complete; Build-Popup-style popup, resource header tap route, cards, details, amount stepper, queue panel remain. |
 | 6. World presentation | Not started | 0 | 8 | 0% | Non-authoritative pooled truck/plane presentation and fallback behavior. |
 | 7. Audio, VFX, feedback, ARIA | Not started | 0 | 7 | 0% | Config-driven audio, resource flyouts, completion/reject feedback, optional ARIA copy. |
 | 8. AI, balance, telemetry | Not started | 0 | 6 | 0% | Economy events, balancing reports, AI awareness if enabled for AI factions. |
@@ -157,7 +157,7 @@ Exit criteria:
 
 - [x] Add ECS-backed UI read-model projection for popup state, recipe cards, selected detail, wallet totals, and queue rows.
 - [x] Create accepted target-lock mockup request for `POP-12 Resource Logistics Exchange` aligned with the Build Popup visual language.
-- [ ] Create separated layer pack under `Design/VisualLockLayered/POP-12_ResourceLogisticsExchange/`.
+- [x] Create separated layer pack under `Design/VisualLockLayered/POP-12_ResourceLogisticsExchange/`.
 - [ ] Build Canvas popup from reusable panels/icons/text/buttons, not a screenshot.
 - [ ] Add `ResourceExchangePopupView` with explicit serialized references.
 - [ ] Add recipe card view with selected, disabled, locked, and warning states.
@@ -507,3 +507,39 @@ Remaining blocker or next slice:
 
 - Next slice is the separated layer pack under `Design/VisualLockLayered/POP-12_ResourceLogisticsExchange/`.
 - Unity Canvas/prefab implementation remains blocked until layer extraction produces separate frames, icons, progress fills, badges, button states, `layer_manifest.json`, and a contact sheet.
+
+### 2026-07-08 - Phase 5D POP-12 Separated Layer Pack
+
+Files changed:
+
+- `Design/VisualLockLayered/POP-12_ResourceLogisticsExchange/README.md`
+- `Design/VisualLockLayered/POP-12_ResourceLogisticsExchange/layer_requests/README.md`
+- `Design/VisualLockLayered/POP-12_ResourceLogisticsExchange/layer_manifest.json`
+- `Design/VisualLockLayered/POP-12_ResourceLogisticsExchange/generated_one_go/source/POP-12_ResourceExchange_Panels_Green_v01.png`
+- `Design/VisualLockLayered/POP-12_ResourceLogisticsExchange/generated_one_go/source/POP-12_ResourceExchange_Icons_Green_v01.png`
+- `Design/VisualLockLayered/POP-12_ResourceLogisticsExchange/generated_one_go/source/POP-12_ResourceExchange_Content_Green_v01.png`
+- `Design/VisualLockLayered/POP-12_ResourceLogisticsExchange/generated_one_go/layers_contact_sheet.png`
+- `Design/VisualLockLayered/POP-12_ResourceLogisticsExchange/layers/`
+- `Design/VisualLockLayered/POP-12_ResourceLogisticsExchange/validation/POP-12_ResourceLogisticsExchange_layers_contact_sheet.png`
+- `Design/VisualLockLayered/POP-12_ResourceLogisticsExchange/validation/pop12_layer_validation.json`
+- `Design/Architecture/resource_logistics_exchange_implementation_tracker.md`
+
+Behavior changed:
+
+- Generated the V01 separated layer pack from separate green-key one-go source sheets, not from target-reference crops.
+- Added 55 transparent sprites covering popup chrome, panel/card/button frames, amount/progress/queue elements, resource/action icons, badges, and route thumbnail content images.
+- Kept route thumbnails as artwork-only layers; runtime labels, amounts, locks, checks, warnings, progress bars, and buttons remain separate live UI elements.
+- Cleaned green-key spill from frame sprites before accepting the contact sheet.
+- Updated POP-12 docs so the next implementation slice can build the Canvas popup from `layer_manifest.json`.
+
+Validation:
+
+- Visually inspected `Design/VisualLockLayered/POP-12_ResourceLogisticsExchange/generated_one_go/layers_contact_sheet.png`.
+- `Design/VisualLockLayered/POP-12_ResourceLogisticsExchange/validation/pop12_layer_validation.json`: 55 files, 26 panel/control sprites, 23 icon/badge/resource sprites, 6 content thumbnails, 0 pure key-green pixels, 0 border key-green pixels, 0 frame green-spill pixels.
+- `git diff --check` passed.
+- Unity compile was not run for this image/documentation-only slice.
+
+Remaining blocker or next slice:
+
+- Next slice is Canvas popup construction from the V01 layer pack and ECS read model.
+- Header/resource-bar tap routing must remain gated until the popup has real button wiring and input suppression.

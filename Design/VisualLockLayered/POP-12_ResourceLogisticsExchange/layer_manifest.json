@@ -1,0 +1,1339 @@
+{
+  "surface": "POP-12_ResourceLogisticsExchange",
+  "target": "reference/POP-12_ResourceLogisticsExchange_NewMainMenuArtDirection_TargetLock_V01.png",
+  "workflow": "VisualLockLayered V15 3D green-key layer pack",
+  "sourceSheets": [
+    "generated_one_go/source/POP-12_ResourceExchange_Panels_Green_v01.png",
+    "generated_one_go/source/POP-12_ResourceExchange_Icons_Green_v01.png",
+    "generated_one_go/source/POP-12_ResourceExchange_Content_Green_v01.png"
+  ],
+  "notes": [
+    "Layer pack generated from separate green-background source sheets, not cropped from the target mockup.",
+    "All labels, resource amounts, timers, queue percentages, disabled reasons, and button text must be live TMP/UI data.",
+    "Content thumbnails are separate route artwork only; card frames, locks, checkmarks, warning badges, and progress bars must be overlaid as separate UI layers.",
+    "Import Oil appears in the target as a locked/gated visual state only; runtime Credits -> Oil remains disabled unless a scenario explicitly enables it.",
+    "Layer pack is sufficient for Canvas construction planning, but final visual lock still requires prefab implementation, captures, and target comparison."
+  ],
+  "layers": [
+    {
+      "id": "pop12_chrome_01_popup_outer_frame",
+      "file": "layers/pop12_chrome_01_popup_outer_frame.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Panels_Green_v01.png",
+      "sourceRect": {
+        "x": 21,
+        "y": 23,
+        "width": 867,
+        "height": 319
+      },
+      "trimmedSize": {
+        "width": 867,
+        "height": 319
+      },
+      "category": "chrome",
+      "description": "popup outer transparent frame",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_chrome_02_modal_backplate_fill",
+      "file": "layers/pop12_chrome_02_modal_backplate_fill.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Panels_Green_v01.png",
+      "sourceRect": {
+        "x": 920,
+        "y": 34,
+        "width": 567,
+        "height": 269
+      },
+      "trimmedSize": {
+        "width": 567,
+        "height": 269
+      },
+      "category": "chrome",
+      "description": "modal dark backplate fill",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_chrome_03_detail_panel_frame",
+      "file": "layers/pop12_chrome_03_detail_panel_frame.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Panels_Green_v01.png",
+      "sourceRect": {
+        "x": 918,
+        "y": 328,
+        "width": 576,
+        "height": 236
+      },
+      "trimmedSize": {
+        "width": 576,
+        "height": 236
+      },
+      "category": "chrome",
+      "description": "detail panel frame",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_chrome_04_header_title_strip_frame",
+      "file": "layers/pop12_chrome_04_header_title_strip_frame.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Panels_Green_v01.png",
+      "sourceRect": {
+        "x": 29,
+        "y": 357,
+        "width": 726,
+        "height": 70
+      },
+      "trimmedSize": {
+        "width": 726,
+        "height": 70
+      },
+      "category": "chrome",
+      "description": "header title strip frame",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_chrome_05_close_square_button_frame",
+      "file": "layers/pop12_chrome_05_close_square_button_frame.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Panels_Green_v01.png",
+      "sourceRect": {
+        "x": 777,
+        "y": 362,
+        "width": 84,
+        "height": 76
+      },
+      "trimmedSize": {
+        "width": 84,
+        "height": 76
+      },
+      "category": "chrome",
+      "description": "close square button frame",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_chrome_06_tab_selected_gold_frame",
+      "file": "layers/pop12_chrome_06_tab_selected_gold_frame.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Panels_Green_v01.png",
+      "sourceRect": {
+        "x": 32,
+        "y": 444,
+        "width": 345,
+        "height": 63
+      },
+      "trimmedSize": {
+        "width": 345,
+        "height": 63
+      },
+      "category": "button_frame",
+      "description": "selected export tab frame",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_chrome_07_tab_default_dark_frame",
+      "file": "layers/pop12_chrome_07_tab_default_dark_frame.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Panels_Green_v01.png",
+      "sourceRect": {
+        "x": 400,
+        "y": 445,
+        "width": 332,
+        "height": 63
+      },
+      "trimmedSize": {
+        "width": 332,
+        "height": 63
+      },
+      "category": "button_frame",
+      "description": "default import tab frame",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_chrome_08_recipe_card_selected_frame",
+      "file": "layers/pop12_chrome_08_recipe_card_selected_frame.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Panels_Green_v01.png",
+      "sourceRect": {
+        "x": 29,
+        "y": 522,
+        "width": 280,
+        "height": 223
+      },
+      "trimmedSize": {
+        "width": 280,
+        "height": 221
+      },
+      "category": "card_frame",
+      "description": "selected recipe card frame",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_chrome_09_recipe_card_default_frame",
+      "file": "layers/pop12_chrome_09_recipe_card_default_frame.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Panels_Green_v01.png",
+      "sourceRect": {
+        "x": 336,
+        "y": 525,
+        "width": 264,
+        "height": 215
+      },
+      "trimmedSize": {
+        "width": 264,
+        "height": 215
+      },
+      "category": "card_frame",
+      "description": "default recipe card frame",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_chrome_10_recipe_card_locked_frame",
+      "file": "layers/pop12_chrome_10_recipe_card_locked_frame.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Panels_Green_v01.png",
+      "sourceRect": {
+        "x": 626,
+        "y": 525,
+        "width": 254,
+        "height": 215
+      },
+      "trimmedSize": {
+        "width": 254,
+        "height": 215
+      },
+      "category": "card_frame",
+      "description": "locked recipe card frame",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_chrome_11_queue_panel_frame",
+      "file": "layers/pop12_chrome_11_queue_panel_frame.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Panels_Green_v01.png",
+      "sourceRect": {
+        "x": 918,
+        "y": 582,
+        "width": 576,
+        "height": 164
+      },
+      "trimmedSize": {
+        "width": 576,
+        "height": 164
+      },
+      "category": "chrome",
+      "description": "exchange queue panel frame",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_chrome_12_bottom_instruction_rail_frame",
+      "file": "layers/pop12_chrome_12_bottom_instruction_rail_frame.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Panels_Green_v01.png",
+      "sourceRect": {
+        "x": 30,
+        "y": 761,
+        "width": 770,
+        "height": 74
+      },
+      "trimmedSize": {
+        "width": 770,
+        "height": 74
+      },
+      "category": "chrome",
+      "description": "bottom instruction rail frame",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_chrome_13_primary_gold_button_frame",
+      "file": "layers/pop12_chrome_13_primary_gold_button_frame.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Panels_Green_v01.png",
+      "sourceRect": {
+        "x": 818,
+        "y": 762,
+        "width": 326,
+        "height": 71
+      },
+      "trimmedSize": {
+        "width": 326,
+        "height": 71
+      },
+      "category": "button_frame",
+      "description": "primary confirm/rush button frame",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_chrome_14_secondary_dark_button_frame",
+      "file": "layers/pop12_chrome_14_secondary_dark_button_frame.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Panels_Green_v01.png",
+      "sourceRect": {
+        "x": 1164,
+        "y": 762,
+        "width": 313,
+        "height": 71
+      },
+      "trimmedSize": {
+        "width": 313,
+        "height": 71
+      },
+      "category": "button_frame",
+      "description": "secondary/clear button frame",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_chrome_15_small_plus_button_frame",
+      "file": "layers/pop12_chrome_15_small_plus_button_frame.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Panels_Green_v01.png",
+      "sourceRect": {
+        "x": 1318,
+        "y": 856,
+        "width": 65,
+        "height": 62
+      },
+      "trimmedSize": {
+        "width": 65,
+        "height": 62
+      },
+      "category": "button_frame",
+      "description": "small square plus button frame",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_chrome_16_small_minus_button_frame",
+      "file": "layers/pop12_chrome_16_small_minus_button_frame.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Panels_Green_v01.png",
+      "sourceRect": {
+        "x": 1416,
+        "y": 856,
+        "width": 68,
+        "height": 62
+      },
+      "trimmedSize": {
+        "width": 68,
+        "height": 62
+      },
+      "category": "button_frame",
+      "description": "small square minus button frame",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_chrome_17_queue_row_frame",
+      "file": "layers/pop12_chrome_17_queue_row_frame.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Panels_Green_v01.png",
+      "sourceRect": {
+        "x": 30,
+        "y": 859,
+        "width": 364,
+        "height": 50
+      },
+      "trimmedSize": {
+        "width": 364,
+        "height": 50
+      },
+      "category": "row_frame",
+      "description": "queue row frame",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_chrome_18_progress_track_frame",
+      "file": "layers/pop12_chrome_18_progress_track_frame.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Panels_Green_v01.png",
+      "sourceRect": {
+        "x": 417,
+        "y": 859,
+        "width": 333,
+        "height": 49
+      },
+      "trimmedSize": {
+        "width": 333,
+        "height": 49
+      },
+      "category": "control_frame",
+      "description": "progress track frame",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_chrome_19_amount_value_frame",
+      "file": "layers/pop12_chrome_19_amount_value_frame.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Panels_Green_v01.png",
+      "sourceRect": {
+        "x": 1107,
+        "y": 859,
+        "width": 186,
+        "height": 58
+      },
+      "trimmedSize": {
+        "width": 186,
+        "height": 58
+      },
+      "category": "control_frame",
+      "description": "amount value frame",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_chrome_20_progress_fill_blue_segment",
+      "file": "layers/pop12_chrome_20_progress_fill_blue_segment.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Panels_Green_v01.png",
+      "sourceRect": {
+        "x": 772,
+        "y": 870,
+        "width": 313,
+        "height": 37
+      },
+      "trimmedSize": {
+        "width": 313,
+        "height": 37
+      },
+      "category": "control_fill",
+      "description": "progress fill blue segment",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_chrome_21_small_status_chip_frame",
+      "file": "layers/pop12_chrome_21_small_status_chip_frame.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Panels_Green_v01.png",
+      "sourceRect": {
+        "x": 31,
+        "y": 938,
+        "width": 168,
+        "height": 48
+      },
+      "trimmedSize": {
+        "width": 168,
+        "height": 48
+      },
+      "category": "chip_frame",
+      "description": "small status chip frame",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_chrome_22_small_counter_chip_frame",
+      "file": "layers/pop12_chrome_22_small_counter_chip_frame.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Panels_Green_v01.png",
+      "sourceRect": {
+        "x": 248,
+        "y": 938,
+        "width": 153,
+        "height": 49
+      },
+      "trimmedSize": {
+        "width": 153,
+        "height": 49
+      },
+      "category": "chip_frame",
+      "description": "small counter chip frame",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_chrome_23_long_dark_button_frame",
+      "file": "layers/pop12_chrome_23_long_dark_button_frame.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Panels_Green_v01.png",
+      "sourceRect": {
+        "x": 978,
+        "y": 939,
+        "width": 506,
+        "height": 46
+      },
+      "trimmedSize": {
+        "width": 506,
+        "height": 46
+      },
+      "category": "button_frame",
+      "description": "long dark action/status frame",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_chrome_24_thin_gold_divider_line",
+      "file": "layers/pop12_chrome_24_thin_gold_divider_line.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Panels_Green_v01.png",
+      "sourceRect": {
+        "x": 451,
+        "y": 954,
+        "width": 485,
+        "height": 7
+      },
+      "trimmedSize": {
+        "width": 485,
+        "height": 7
+      },
+      "category": "divider",
+      "description": "thin gold divider line",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_icon_01_logistics_exchange_truck",
+      "file": "layers/pop12_icon_01_logistics_exchange_truck.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Icons_Green_v01.png",
+      "sourceRect": {
+        "x": 90,
+        "y": 123,
+        "width": 263,
+        "height": 132
+      },
+      "trimmedSize": {
+        "width": 263,
+        "height": 132
+      },
+      "category": "icon",
+      "description": "logistics exchange truck icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_icon_02_close_x",
+      "file": "layers/pop12_icon_02_close_x.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Icons_Green_v01.png",
+      "sourceRect": {
+        "x": 418,
+        "y": 117,
+        "width": 128,
+        "height": 130
+      },
+      "trimmedSize": {
+        "width": 128,
+        "height": 130
+      },
+      "category": "icon",
+      "description": "close x icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_icon_03_credits_star_coin",
+      "file": "layers/pop12_icon_03_credits_star_coin.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Icons_Green_v01.png",
+      "sourceRect": {
+        "x": 628,
+        "y": 112,
+        "width": 140,
+        "height": 143
+      },
+      "trimmedSize": {
+        "width": 140,
+        "height": 143
+      },
+      "category": "resource_icon",
+      "description": "credits star coin icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_icon_04_materials_crate",
+      "file": "layers/pop12_icon_04_materials_crate.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Icons_Green_v01.png",
+      "sourceRect": {
+        "x": 855,
+        "y": 105,
+        "width": 157,
+        "height": 166
+      },
+      "trimmedSize": {
+        "width": 157,
+        "height": 165
+      },
+      "category": "resource_icon",
+      "description": "materials crate icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_icon_05_oil_droplet",
+      "file": "layers/pop12_icon_05_oil_droplet.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Icons_Green_v01.png",
+      "sourceRect": {
+        "x": 1116,
+        "y": 109,
+        "width": 98,
+        "height": 154
+      },
+      "trimmedSize": {
+        "width": 98,
+        "height": 154
+      },
+      "category": "resource_icon",
+      "description": "oil droplet icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_icon_06_fuel_jerrycan",
+      "file": "layers/pop12_icon_06_fuel_jerrycan.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Icons_Green_v01.png",
+      "sourceRect": {
+        "x": 1314,
+        "y": 108,
+        "width": 114,
+        "height": 156
+      },
+      "trimmedSize": {
+        "width": 114,
+        "height": 156
+      },
+      "category": "resource_icon",
+      "description": "fuel jerrycan icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_icon_07_rush_ticket",
+      "file": "layers/pop12_icon_07_rush_ticket.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Icons_Green_v01.png",
+      "sourceRect": {
+        "x": 104,
+        "y": 338,
+        "width": 162,
+        "height": 155
+      },
+      "trimmedSize": {
+        "width": 162,
+        "height": 155
+      },
+      "category": "resource_icon",
+      "description": "rush ticket icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_icon_08_rush_lightning",
+      "file": "layers/pop12_icon_08_rush_lightning.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Icons_Green_v01.png",
+      "sourceRect": {
+        "x": 376,
+        "y": 336,
+        "width": 105,
+        "height": 155
+      },
+      "trimmedSize": {
+        "width": 105,
+        "height": 155
+      },
+      "category": "icon",
+      "description": "rush lightning icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_icon_09_timer_clock",
+      "file": "layers/pop12_icon_09_timer_clock.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Icons_Green_v01.png",
+      "sourceRect": {
+        "x": 610,
+        "y": 345,
+        "width": 143,
+        "height": 145
+      },
+      "trimmedSize": {
+        "width": 143,
+        "height": 145
+      },
+      "category": "icon",
+      "description": "timer clock icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_icon_10_info_circle",
+      "file": "layers/pop12_icon_10_info_circle.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Icons_Green_v01.png",
+      "sourceRect": {
+        "x": 851,
+        "y": 346,
+        "width": 141,
+        "height": 143
+      },
+      "trimmedSize": {
+        "width": 141,
+        "height": 143
+      },
+      "category": "icon",
+      "description": "info circle icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_icon_11_checkmark_badge",
+      "file": "layers/pop12_icon_11_checkmark_badge.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Icons_Green_v01.png",
+      "sourceRect": {
+        "x": 1092,
+        "y": 350,
+        "width": 131,
+        "height": 147
+      },
+      "trimmedSize": {
+        "width": 131,
+        "height": 147
+      },
+      "category": "badge",
+      "description": "checkmark badge",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_icon_12_lock_badge",
+      "file": "layers/pop12_icon_12_lock_badge.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Icons_Green_v01.png",
+      "sourceRect": {
+        "x": 1307,
+        "y": 350,
+        "width": 131,
+        "height": 147
+      },
+      "trimmedSize": {
+        "width": 131,
+        "height": 147
+      },
+      "category": "badge",
+      "description": "lock badge",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_icon_13_warning_triangle",
+      "file": "layers/pop12_icon_13_warning_triangle.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Icons_Green_v01.png",
+      "sourceRect": {
+        "x": 108,
+        "y": 550,
+        "width": 158,
+        "height": 142
+      },
+      "trimmedSize": {
+        "width": 158,
+        "height": 142
+      },
+      "category": "icon",
+      "description": "warning triangle icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_icon_14_cancel_x_small",
+      "file": "layers/pop12_icon_14_cancel_x_small.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Icons_Green_v01.png",
+      "sourceRect": {
+        "x": 379,
+        "y": 575,
+        "width": 116,
+        "height": 117
+      },
+      "trimmedSize": {
+        "width": 116,
+        "height": 117
+      },
+      "category": "icon",
+      "description": "small cancel x icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_icon_15_queue_reorder_handle",
+      "file": "layers/pop12_icon_15_queue_reorder_handle.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Icons_Green_v01.png",
+      "sourceRect": {
+        "x": 602,
+        "y": 572,
+        "width": 134,
+        "height": 125
+      },
+      "trimmedSize": {
+        "width": 134,
+        "height": 125
+      },
+      "category": "icon",
+      "description": "queue reorder handle icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_icon_16_plus",
+      "file": "layers/pop12_icon_16_plus.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Icons_Green_v01.png",
+      "sourceRect": {
+        "x": 836,
+        "y": 572,
+        "width": 133,
+        "height": 125
+      },
+      "trimmedSize": {
+        "width": 133,
+        "height": 125
+      },
+      "category": "icon",
+      "description": "plus icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_icon_17_minus",
+      "file": "layers/pop12_icon_17_minus.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Icons_Green_v01.png",
+      "sourceRect": {
+        "x": 1067,
+        "y": 572,
+        "width": 134,
+        "height": 125
+      },
+      "trimmedSize": {
+        "width": 134,
+        "height": 125
+      },
+      "category": "icon",
+      "description": "minus icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_icon_18_conversion_arrow",
+      "file": "layers/pop12_icon_18_conversion_arrow.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Icons_Green_v01.png",
+      "sourceRect": {
+        "x": 1301,
+        "y": 579,
+        "width": 135,
+        "height": 112
+      },
+      "trimmedSize": {
+        "width": 135,
+        "height": 112
+      },
+      "category": "icon",
+      "description": "right arrow conversion icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_icon_19_transport_plane",
+      "file": "layers/pop12_icon_19_transport_plane.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Icons_Green_v01.png",
+      "sourceRect": {
+        "x": 61,
+        "y": 740,
+        "width": 241,
+        "height": 188
+      },
+      "trimmedSize": {
+        "width": 241,
+        "height": 188
+      },
+      "category": "icon",
+      "description": "transport plane icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_icon_20_logistics_truck",
+      "file": "layers/pop12_icon_20_logistics_truck.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Icons_Green_v01.png",
+      "sourceRect": {
+        "x": 267,
+        "y": 790,
+        "width": 245,
+        "height": 116
+      },
+      "trimmedSize": {
+        "width": 245,
+        "height": 116
+      },
+      "category": "icon",
+      "description": "logistics truck icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_icon_21_refinery_requirement",
+      "file": "layers/pop12_icon_21_refinery_requirement.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Icons_Green_v01.png",
+      "sourceRect": {
+        "x": 564,
+        "y": 743,
+        "width": 170,
+        "height": 173
+      },
+      "trimmedSize": {
+        "width": 170,
+        "height": 172
+      },
+      "category": "icon",
+      "description": "refinery requirement icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_icon_22_storage_crate",
+      "file": "layers/pop12_icon_22_storage_crate.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Icons_Green_v01.png",
+      "sourceRect": {
+        "x": 779,
+        "y": 774,
+        "width": 137,
+        "height": 140
+      },
+      "trimmedSize": {
+        "width": 137,
+        "height": 140
+      },
+      "category": "icon",
+      "description": "storage crate icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_icon_23_completed_check_square",
+      "file": "layers/pop12_icon_23_completed_check_square.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Icons_Green_v01.png",
+      "sourceRect": {
+        "x": 980,
+        "y": 779,
+        "width": 131,
+        "height": 131
+      },
+      "trimmedSize": {
+        "width": 131,
+        "height": 131
+      },
+      "category": "badge",
+      "description": "completed check square badge",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_icon_24_queued_number_chip_outline",
+      "file": "layers/pop12_icon_24_queued_number_chip_outline.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Icons_Green_v01.png",
+      "sourceRect": {
+        "x": 1160,
+        "y": 780,
+        "width": 128,
+        "height": 129
+      },
+      "trimmedSize": {
+        "width": 128,
+        "height": 129
+      },
+      "category": "chip_frame",
+      "description": "queued number chip outline",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_icon_25_progress_spark_accent",
+      "file": "layers/pop12_icon_25_progress_spark_accent.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Icons_Green_v01.png",
+      "sourceRect": {
+        "x": 1329,
+        "y": 785,
+        "width": 148,
+        "height": 108
+      },
+      "trimmedSize": {
+        "width": 148,
+        "height": 107
+      },
+      "category": "accent",
+      "description": "progress spark accent",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No text is baked into this layer; bind labels and values in Unity TMP.",
+      "separationRule": "This sprite must not contain runtime labels, resource values, progress text, or child icons unless the asset itself is an icon/badge."
+    },
+    {
+      "id": "pop12_content_01_export_oil_thumbnail",
+      "file": "layers/pop12_content_01_export_oil_thumbnail.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Content_Green_v01.png",
+      "sourceRect": {
+        "x": 54,
+        "y": 50,
+        "width": 698,
+        "height": 298
+      },
+      "trimmedSize": {
+        "width": 698,
+        "height": 298
+      },
+      "category": "content_image",
+      "description": "Export Oil route thumbnail image: oil pump, tanks, and desert base logistics. No UI frame, text, icon, badge, or progress art is baked in.",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No labels, amounts, timers, badges, locks, buttons, or progress UI are baked into this thumbnail; bind those as separate Unity UI layers.",
+      "separationRule": "Use this as route artwork inside a card image well only. Overlay card frames, selection checkmarks, warning/lock badges, resource icons, and TMP text separately."
+    },
+    {
+      "id": "pop12_content_02_export_materials_thumbnail",
+      "file": "layers/pop12_content_02_export_materials_thumbnail.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Content_Green_v01.png",
+      "sourceRect": {
+        "x": 783,
+        "y": 50,
+        "width": 698,
+        "height": 298
+      },
+      "trimmedSize": {
+        "width": 698,
+        "height": 298
+      },
+      "category": "content_image",
+      "description": "Export Materials route thumbnail image: material crates and depot yard logistics. No UI frame, text, icon, badge, or progress art is baked in.",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No labels, amounts, timers, badges, locks, buttons, or progress UI are baked into this thumbnail; bind those as separate Unity UI layers.",
+      "separationRule": "Use this as route artwork inside a card image well only. Overlay card frames, selection checkmarks, warning/lock badges, resource icons, and TMP text separately."
+    },
+    {
+      "id": "pop12_content_03_export_fuel_thumbnail",
+      "file": "layers/pop12_content_03_export_fuel_thumbnail.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Content_Green_v01.png",
+      "sourceRect": {
+        "x": 54,
+        "y": 373,
+        "width": 698,
+        "height": 282
+      },
+      "trimmedSize": {
+        "width": 698,
+        "height": 282
+      },
+      "category": "content_image",
+      "description": "Export Fuel route thumbnail image: fuel drums and tanker staging. No UI frame, text, icon, badge, or progress art is baked in.",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No labels, amounts, timers, badges, locks, buttons, or progress UI are baked into this thumbnail; bind those as separate Unity UI layers.",
+      "separationRule": "Use this as route artwork inside a card image well only. Overlay card frames, selection checkmarks, warning/lock badges, resource icons, and TMP text separately."
+    },
+    {
+      "id": "pop12_content_04_import_materials_thumbnail",
+      "file": "layers/pop12_content_04_import_materials_thumbnail.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Content_Green_v01.png",
+      "sourceRect": {
+        "x": 783,
+        "y": 373,
+        "width": 698,
+        "height": 282
+      },
+      "trimmedSize": {
+        "width": 698,
+        "height": 282
+      },
+      "category": "content_image",
+      "description": "Import Materials route thumbnail image: logistics truck receiving crates. No UI frame, text, icon, badge, or progress art is baked in.",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No labels, amounts, timers, badges, locks, buttons, or progress UI are baked into this thumbnail; bind those as separate Unity UI layers.",
+      "separationRule": "Use this as route artwork inside a card image well only. Overlay card frames, selection checkmarks, warning/lock badges, resource icons, and TMP text separately."
+    },
+    {
+      "id": "pop12_content_05_import_fuel_thumbnail",
+      "file": "layers/pop12_content_05_import_fuel_thumbnail.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Content_Green_v01.png",
+      "sourceRect": {
+        "x": 54,
+        "y": 680,
+        "width": 698,
+        "height": 284
+      },
+      "trimmedSize": {
+        "width": 698,
+        "height": 284
+      },
+      "category": "content_image",
+      "description": "Import Fuel route thumbnail image: fuel tanker and bladder storage. No UI frame, text, icon, badge, or progress art is baked in.",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No labels, amounts, timers, badges, locks, buttons, or progress UI are baked into this thumbnail; bind those as separate Unity UI layers.",
+      "separationRule": "Use this as route artwork inside a card image well only. Overlay card frames, selection checkmarks, warning/lock badges, resource icons, and TMP text separately."
+    },
+    {
+      "id": "pop12_content_06_import_oil_locked_thumbnail",
+      "file": "layers/pop12_content_06_import_oil_locked_thumbnail.png",
+      "source": "generated_one_go/source/POP-12_ResourceExchange_Content_Green_v01.png",
+      "sourceRect": {
+        "x": 783,
+        "y": 680,
+        "width": 697,
+        "height": 284
+      },
+      "trimmedSize": {
+        "width": 697,
+        "height": 284
+      },
+      "category": "content_image",
+      "description": "Locked Import Oil route thumbnail image: desaturated oil facility visual only. Lock icon, disabled tint, and gate text must be separate UI layers.",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "liveTextRule": "No labels, amounts, timers, badges, locks, buttons, or progress UI are baked into this thumbnail; bind those as separate Unity UI layers.",
+      "separationRule": "Use this as route artwork inside a card image well only. Overlay card frames, selection checkmarks, warning/lock badges, resource icons, and TMP text separately."
+    }
+  ]
+}

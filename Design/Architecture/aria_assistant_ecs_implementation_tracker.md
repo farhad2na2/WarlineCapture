@@ -1,12 +1,12 @@
 # ARIA Assistant ECS Implementation Tracker
 
 Date: 2026-07-08
-Status: Phase 8 performance diagnostics complete; docs rollout pending
+Status: Complete; ECS-aligned ARIA assistant vertical slice implemented, validated, documented, committed, and pushed
 Source design: `Design/ARIA_Assistant_ECS_Design.md`
 
 ## Progress
 
-Overall progress: 97% complete, 66 of 68 checklist items complete.
+Overall progress: 100% complete, 68 of 68 checklist items complete.
 
 | Phase | Scope | Items | Complete | Status |
 |---|---|---:|---:|---|
@@ -18,7 +18,7 @@ Overall progress: 97% complete, 66 of 68 checklist items complete.
 | 5 | Give Control ownership | 8 | 8 | Complete |
 | 6 | Message, narration, and audio | 8 | 8 | Complete |
 | 7 | Settings, save, and accessibility | 6 | 6 | Complete |
-| 8 | Validation, performance, and rollout | 8 | 6 | In progress |
+| 8 | Validation, performance, and rollout | 8 | 8 | Complete |
 
 Progress update rule: update the complete count and overall percentage after every stable slice. Do not mark a phase complete until code, docs, and validation notes are updated.
 
@@ -218,8 +218,8 @@ Phase 7 notes:
 - [x] Run compile validation.
 - [x] Run Unity visual validation for match header button, panel, Show Me, Do It, Give Control, Stop, and narration text.
 - [x] Capture performance diagnostics for assistant update time and GC allocations.
-- [ ] Update `Design/README.md`, root `README.md`, and related docs with final implementation status.
-- [ ] Commit and push only after stable validation passes.
+- [x] Update `Design/README.md`, root `README.md`, and related docs with final implementation status.
+- [x] Commit and push only after stable validation passes.
 
 Exit criteria: feature is playable, validated, documented, and does not regress architecture or frame hot paths.
 
@@ -231,6 +231,7 @@ Phase 8 notes:
 - Added explicit match HUD assistant visual-surface validation covering the generated ARIA header button size, panel size, visible panel state, Show Me / Do It / Stop buttons, narration subtitle text, expected font sizes, panel child containment, and command-button overlap guards.
 - Added `AssistantPerformanceDiagnosticsValidation.RunBatchValidation` to measure the assistant ECS steady-state update chain after warmup. The fixture covers goals, recommendations, messages, narration requests, empty command-intent polling, and control ownership without UI presentation work.
 - Latest performance report: `/private/tmp/warlinecapture-aria-assistant-performance.json`, 240 measured frames, average `0.0468ms`, p95 `0.0561ms`, max `0.1169ms`, and `0` allocated bytes.
+- Final documentation closeout updated the root README, `Design/README.md`, and `Design/ARIA_Assistant_ECS_Design.md` with the implemented ECS vertical-slice status, validation evidence, and future optional voice/TTS polish boundary.
 
 ## Validation Log
 
@@ -274,6 +275,7 @@ Phase 8 notes:
 | 2026-07-08 | Phase 8 aggregate assistant rollout validation | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; `dotnet build Assembly-CSharp.csproj --no-restore`; pre-rebase `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-rollout-validation-unity.log --timeout 900 -- -quit -executeMethod AssistantRolloutValidationTests.RunFocusedValidation`; post-rebase `/private/tmp/aria-assistant-rollout-validation-postrebase-unity.log` | Passed | Aggregate Unity validation reported `[AssistantRolloutValidation] result=Passed validations=10` before and after rebase. Covers ECS data contract, read models, command intent gateway/system, control ownership, message priorities, narration requests, settings persistence, match HUD assistant UI, and shared settings popup focused validations in one batch entry point. |
 | 2026-07-08 | Phase 8 match HUD assistant visual validation | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; `dotnet build Assembly-CSharp.csproj --no-restore`; focused attempt `/private/tmp/aria-assistant-visual-surface-unity.log`; corrected rerun `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-visual-surface-rerun-unity.log --timeout 600 -- -quit -executeMethod MatchHudAssistantUiSystemHelperTests.RunFocusedValidation`; aggregate rerun `/private/tmp/aria-assistant-rollout-visual-postslice-unity.log` | Passed | First visual validation caught a synthetic GameView root-bound assertion that was too strict for batchmode canvas sizing; the corrected visual contract validated generated button/panel dimensions, visible Show Me / Do It / Stop controls, narration subtitle text, font sizes, child containment, and overlap guards. Focused validation reported `[MatchHudAssistantUiValidation] result=Passed tests=3`; aggregate validation reported `[AssistantRolloutValidation] result=Passed validations=10`. |
 | 2026-07-08 | Phase 8 assistant performance and GC diagnostics | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; `dotnet build Assembly-CSharp.csproj --no-restore`; initial Unity compile attempt `/private/tmp/aria-assistant-performance-diagnostics-unity.log`; stale-buffer fixture attempt `/private/tmp/aria-assistant-performance-diagnostics-rerun-unity.log`; corrected rerun `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-performance-diagnostics-rerun2-unity.log --timeout 600 -- -quit -executeMethod AssistantPerformanceDiagnosticsValidation.RunBatchValidation`; aggregate rerun `/private/tmp/aria-assistant-rollout-performance-postslice-unity.log`; post-rebase rerun `/private/tmp/aria-assistant-performance-diagnostics-postrebase-unity.log`; report `/private/tmp/warlinecapture-aria-assistant-performance.json` | Passed | Unity validation reported `[AssistantPerformanceDiagnosticsValidation] result=Passed`, post-rebase rerun reported `[AssistantPerformanceDiagnosticsValidation] result=Passed`, and aggregate rerun reported `[AssistantRolloutValidation] result=Passed validations=10`. Report measured 240 steady-state assistant ECS frames after 32 warmup frames: average `0.0468ms`, p95 `0.0561ms`, p99 `0.0756ms`, max `0.1169ms`, and `0` allocated bytes. Earlier attempts exposed and fixed test-only fixture issues: integer fuel capacity fields and stale dynamic-buffer reads after structural changes. |
+| 2026-07-08 | Phase 8 documentation rollout and tracker closeout | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; `dotnet build Assembly-CSharp.csproj --no-restore` | Passed | Documentation-only closeout updated the root README, `Design/README.md`, `Design/ARIA_Assistant_ECS_Design.md`, and this tracker with final implementation status. Runtime validation evidence remains the Phase 8 aggregate, visual, and performance Unity validation rows above. |
 
 ## Open Decisions
 

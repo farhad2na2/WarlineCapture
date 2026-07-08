@@ -3,6 +3,12 @@
 Date: 2026-07-08
 Status: Active high-level design contract
 
+## Implementation Status
+
+Current rollout status, 2026-07-08: the ECS-aligned match HUD vertical slice is implemented and validated. The shipped slice includes the ARIA header button, assistant panel goals/recommendations, prioritized alerts/reports, `Show Me`, one safe `Do It` path through existing command boundaries, bounded `Give Control`, `Stop`, player override/cancellation, narration subtitle fallback, assistant settings persistence, aggregate validation, visual validation, and steady-state performance diagnostics.
+
+Optional future polish remains separate from the core contract: pre-authored ARIA voice clips, platform/local TTS for low-priority dynamic reports, richer mission-specific recommendation sources, and additional bounded `Do It` command families can be added as later slices if they preserve the ECS data ownership and managed-helper boundary rules below.
+
 ## Purpose
 
 This document updates the reusable ARIA assistant design so future implementation matches WarlineCapture's ECS/SOLID architecture, runtime naming conventions, and performance targets.
@@ -238,3 +244,5 @@ Feature acceptance requires:
 - Alerts/reports are prioritized and rate-limited.
 - No forbidden service/provider/controller/runtime names are added for new assistant implementation.
 - `git diff --check`, focused assistant tests, architecture guardrails, and Unity visual validation pass before claiming the feature works.
+
+Current validation closeout is recorded in `Design/Architecture/aria_assistant_ecs_implementation_tracker.md`. The rollout includes aggregate focused Unity validation, match HUD visual-surface checks, forbidden-name scans, compile validation, and assistant steady-state performance diagnostics with zero measured managed allocations in the dedicated test fixture.

@@ -90,6 +90,12 @@ Core design reading order starts in `Design/README.md`. The current high-priorit
 - `Design/UIUX_Mockup_To_Canvas_Conversion_Plan.md`
 - `Design/UIUX_MainMenu_Visual_Contract.md`
 
+Current ARIA implementation status:
+
+- The match HUD now has an ECS-backed ARIA assistant vertical slice: header button, panel goals/recommendations, prioritized alerts/reports, `Show Me`, `Do It`, bounded `Give Control`, `Stop`, narration subtitle fallback, assistant settings, and persisted takeover/narration preferences.
+- Assistant gameplay logic is data-owned by ECS components, dynamic buffers, and systems. Unity UI, highlight, narration, and persistence code remain narrow helper boundaries, following `Design/Architecture/gameplay_solid_ecs_contract.md`.
+- The rollout tracker is `Design/Architecture/aria_assistant_ecs_implementation_tracker.md`; its validation log records aggregate Unity coverage, match HUD visual checks, and steady-state assistant performance diagnostics.
+
 ## Design Documentation Tree
 
 ![WarlineCapture Design Documentation Tree](Design/VisualTargets/DesignDocumentationTree.svg)

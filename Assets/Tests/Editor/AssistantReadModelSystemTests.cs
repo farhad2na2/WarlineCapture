@@ -26,6 +26,8 @@ public sealed class AssistantReadModelSystemTests
             passed++;
             RunCase(test => test.AssistantRecommendationSystem_PublishesNoSelectionRecommendation());
             passed++;
+            RunCase(test => test.AssistantRecommendationSystem_PublishesFuelLogisticsWarningRecommendation());
+            passed++;
             RunCase(test => test.AssistantRecommendationSystem_PublishesSelectedIdleCombatUnitRecommendation());
             passed++;
             RunCase(test => test.AssistantReadModels_DoNotRepublishWhenSourcesAreUnchanged());
@@ -146,6 +148,32 @@ public sealed class AssistantReadModelSystemTests
     }
 
     [Test]
+    public void AssistantRecommendationSystem_PublishesFuelLogisticsWarningRecommendation()
+    {
+        Entity boundary = CreateBoundary(DefaultStatus());
+        AddUsableFuelSummary(boundary, storedOil: 25f, storedFuel: 0f, fuelVersion: 12u);
+
+        _goalSystem.Update(_world.Unmanaged);
+        _recommendationSystem.Update(_world.Unmanaged);
+
+        DynamicBuffer<AssistantRecommendationElement> recommendations =
+            _entityManager.GetBuffer<AssistantRecommendationElement>(boundary);
+        AssistantRecommendationReadModelComponent readModel =
+            _entityManager.GetComponentData<AssistantRecommendationReadModelComponent>(boundary);
+
+        Assert.AreEqual(1, recommendations.Length);
+        Assert.AreEqual(4001, recommendations[0].RecommendationId);
+        Assert.AreEqual(AssistantRecommendationKind.Logistics, recommendations[0].Kind);
+        Assert.AreEqual(AssistantMessagePriority.High, recommendations[0].Priority);
+        Assert.AreEqual(AssistantTargetKind.UiSurface, recommendations[0].TargetKind);
+        Assert.AreEqual("Fuel reserves empty", recommendations[0].Title.ToString());
+        Assert.AreEqual(1, recommendations[0].CanShow);
+        Assert.AreEqual(1, readModel.RecommendationCount);
+        Assert.AreEqual(4001, readModel.TopRecommendationId);
+        Assert.AreEqual(AssistantRecommendationKind.Logistics, readModel.TopKind);
+    }
+
+    [Test]
     public void AssistantRecommendationSystem_PublishesSelectedIdleCombatUnitRecommendation()
     {
         Entity focusedUnit = CreateSelectedUnit();
@@ -220,6 +248,24 @@ public sealed class AssistantReadModelSystemTests
         });
 
         return boundary;
+    }
+
+    private void AddUsableFuelSummary(Entity boundary, float storedOil, float storedFuel, uint fuelVersion)
+    {
+        DynamicBuffer<BuildingRuntimeFactionUsableFuelSummary> summaries =
+            _entityManager.AddBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundary);
+        summaries.Add(new BuildingRuntimeFactionUsableFuelSummary
+        {
+            FactionId = FactionIdentity.PlayerFactionId,
+            StoredOilBarrels = storedOil,
+            StoredFuelBarrels = storedFuel,
+            CurrentFuelBarrels = storedFuel,
+            FuelProducedBarrels = storedFuel,
+            FuelDeliveredBarrels = storedFuel,
+            OilStorageCapacity = 1000,
+            FuelStorageCapacity = 1000,
+            Version = fuelVersion
+        });
     }
 
     private Entity CreateSelectedUnit()

@@ -204,6 +204,7 @@ namespace Game.UI.Shell.Ecs
             DynamicBuffer<AssistantRecommendationElement> recommendations =
                 state.EntityManager.GetBuffer<AssistantRecommendationElement>(boundary);
             TryReadFocusedSelection(out FocusedUnitUiReadModelComponent focusedSelection);
+            TryReadPlayerUsableFuelSummary(state.EntityManager, boundary, out BuildingRuntimeFactionUsableFuelSummary fuelSummary);
             int selectedUnitCount = selectedUnitsQuery.IsEmptyIgnoreFilter
                 ? 0
                 : selectedUnitsQuery.CalculateEntityCount();
@@ -212,6 +213,7 @@ namespace Game.UI.Shell.Ecs
                 status,
                 goals,
                 focusedSelection,
+                fuelSummary,
                 selectedUnitCount,
                 assistantState.SourceVersion);
             if (RecommendationsMatch(recommendations, next))
@@ -256,6 +258,7 @@ namespace Game.UI.Shell.Ecs
             UiMatchHudStatusSurfacesComponent status,
             DynamicBuffer<AssistantGoalReadModelElement> goals,
             FocusedUnitUiReadModelComponent focusedSelection,
+            BuildingRuntimeFactionUsableFuelSummary fuelSummary,
             int selectedUnitCount,
             uint sourceVersion)
         {
@@ -275,6 +278,36 @@ namespace Game.UI.Shell.Ecs
                     Reason = status.ThreatSubtitle.Length > 0
                         ? CopyTo128(status.ThreatSubtitle)
                         : new FixedString128Bytes("Respond to the active threat before issuing routine orders."),
+                    ActionLabel = new FixedString64Bytes("SHOW ME"),
+                    CanShow = 1
+                };
+            }
+
+            if (HasFuelLogisticsWarning(fuelSummary))
+            {
+                int roundedFuel = math.max(0, (int)math.round(fuelSummary.StoredFuelBarrels));
+                int roundedOil = math.max(0, (int)math.round(fuelSummary.StoredOilBarrels));
+                bool hasOilWaiting = roundedOil > 0;
+                return new AssistantRecommendationElement
+                {
+                    RecommendationId = roundedFuel <= 0 ? 4001 : 4002,
+                    SourceVersion = FuelSourceVersion(
+                        sourceVersion,
+                        fuelSummary.Version,
+                        roundedOil,
+                        roundedFuel,
+                        fuelSummary.OilStorageCapacity,
+                        fuelSummary.FuelStorageCapacity),
+                    Kind = AssistantRecommendationKind.Logistics,
+                    Priority = roundedFuel <= 0 ? AssistantMessagePriority.High : AssistantMessagePriority.Normal,
+                    TargetKind = AssistantTargetKind.UiSurface,
+                    Score = roundedFuel <= 0 ? 95f : 84f,
+                    Title = roundedFuel <= 0
+                        ? new FixedString64Bytes("Fuel reserves empty")
+                        : new FixedString64Bytes("Fuel reserves low"),
+                    Reason = hasOilWaiting
+                        ? new FixedString128Bytes("Oil is waiting in storage. Keep refineries and tanker delivery online to restore usable fuel.")
+                        : new FixedString128Bytes("Usable fuel is low. Protect oil pumps, refineries, and fuel storage before vehicles stall."),
                     ActionLabel = new FixedString64Bytes("SHOW ME"),
                     CanShow = 1
                 };
@@ -349,6 +382,47 @@ namespace Game.UI.Shell.Ecs
             return default;
         }
 
+        private static bool TryReadPlayerUsableFuelSummary(
+            EntityManager entityManager,
+            Entity boundary,
+            out BuildingRuntimeFactionUsableFuelSummary fuelSummary)
+        {
+            fuelSummary = default;
+            if (!entityManager.HasBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundary))
+                return false;
+
+            DynamicBuffer<BuildingRuntimeFactionUsableFuelSummary> summaries =
+                entityManager.GetBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundary, true);
+            for (int i = 0; i < summaries.Length; i++)
+            {
+                BuildingRuntimeFactionUsableFuelSummary summary = summaries[i];
+                if (!FactionIdentity.IsPlayerControlled(summary.FactionId))
+                    continue;
+
+                fuelSummary = summary;
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool HasFuelLogisticsWarning(BuildingRuntimeFactionUsableFuelSummary fuelSummary)
+        {
+            if (!FactionIdentity.IsPlayerControlled(fuelSummary.FactionId))
+                return false;
+
+            if (fuelSummary.OilStorageCapacity <= 0 &&
+                fuelSummary.FuelStorageCapacity <= 0 &&
+                fuelSummary.StoredOilBarrels <= 0.001f &&
+                fuelSummary.StoredFuelBarrels <= 0.001f)
+            {
+                return false;
+            }
+
+            return fuelSummary.StoredFuelBarrels <= 0.5f ||
+                   fuelSummary.StoredFuelBarrels < math.min(100f, fuelSummary.FuelStorageCapacity * 0.1f);
+        }
+
         private bool TryReadFocusedSelection(out FocusedUnitUiReadModelComponent focusedSelection)
         {
             focusedSelection = default;
@@ -357,6 +431,23 @@ namespace Game.UI.Shell.Ecs
 
             focusedSelection = focusedSelectionQuery.GetSingleton<FocusedUnitUiReadModelComponent>();
             return true;
+        }
+
+        private static int FuelSourceVersion(
+            uint sourceVersion,
+            uint fuelVersion,
+            int oil,
+            int fuel,
+            int oilCapacity,
+            int fuelCapacity)
+        {
+            uint combined = sourceVersion * 397u
+                ^ fuelVersion * 131u
+                ^ (uint)math.max(0, oil) * 31u
+                ^ (uint)math.max(0, fuel) * 17u
+                ^ (uint)math.max(0, oilCapacity) * 7u
+                ^ (uint)math.max(0, fuelCapacity);
+            return (int)(combined == 0u ? 1u : combined);
         }
 
         private static int SelectionSourceVersion(uint sourceVersion, uint commandStateVersion, int selectedUnitCount)

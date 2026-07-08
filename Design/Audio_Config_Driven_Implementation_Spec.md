@@ -323,14 +323,14 @@ Use this section as the work checklist. Update status after each implementation 
 
 ### Current Completion
 
-Overall tracked completion: **30%**.
+Overall tracked completion: **35%**.
 
-- Completed steps: 6 / 20.
+- Completed steps: 7 / 20.
 - Asset and placeholder catalog preparation: **Done**.
 - Runtime playback implementation: **Not Started**.
 - UI/gameplay wiring: **Not Started**.
 - Validation/performance test coverage: **Not Started**.
-- Latest stable slice: audio config ScriptableObject contracts passed focused Unity validation.
+- Latest stable slice: generated audio event constants and stable hashes passed focused Unity validation.
 
 Status legend:
 
@@ -344,7 +344,7 @@ Status legend:
 | 1. Confirm audio architecture scope | Done | Designer | This spec created and linked. | Review against audio guide, ECS contract, performance contract. |
 | 2. Create audio folders | Done | UI/Audio | `Assets/Game/Audio/*` folder layout. | Folders exist; `.meta` files preserved. |
 | 3. Create catalog config types | Done | Gameplay/UI | `AudioEventCatalogConfig`, entry structs, bus config, music state config. | `AudioConfigContractTests.RunFocusedValidation` passed. |
-| 4. Create generated event constants | Not Started | Gameplay | Event id constants/hash generation path. | No string lookup in hot path; duplicate ids fail validation. |
+| 4. Create generated event constants | Done | Gameplay | Event id constants/hash generation path. | `AudioConfigContractTests.RunFocusedValidation` passed with catalog/hash alignment checks. |
 | 5. Create placeholder audio generator | Done | Audio/Tools | `Tools/Audio/generate_placeholder_audio.py`. | Script outputs first batch WAV files and data-only catalog. |
 | 6. Generate first placeholder clip batch | Done | Audio/Tools | UI, command, alert, music placeholder clips. | 44 events assigned; catalog WAV headers validated. |
 | 7. Create Unity import profile rules | Not Started | UI/Audio | Import settings for UI, gameplay, alerts, music, ambience. | Editor validation confirms compression/load type. |

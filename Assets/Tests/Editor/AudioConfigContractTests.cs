@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using Game.Configs;
 using NUnit.Framework;
 using UnityEngine;
@@ -11,8 +14,11 @@ public sealed class AudioConfigContractTests
         "Assets/Game/Scripts/Audio/Config/AudioEventCatalogConfig.cs",
         "Assets/Game/Scripts/Audio/Config/AudioEventCatalogEntry.cs",
         "Assets/Game/Scripts/Audio/Config/AudioMixerBusConfig.cs",
-        "Assets/Game/Scripts/Audio/Config/AudioMusicStateConfig.cs"
+        "Assets/Game/Scripts/Audio/Config/AudioMusicStateConfig.cs",
+        "Assets/Game/Scripts/Audio/Config/AudioEventIds.cs"
     };
+
+    private const string CatalogJsonPath = "Assets/Game/Audio/Config/audio_event_catalog_v0_1.json";
 
     public static void RunFocusedValidation()
     {
@@ -25,7 +31,9 @@ public sealed class AudioConfigContractTests
             tests.AudioEventEntryDefaultsToSafeRuntimeValues();
             tests.AudioMusicStateDefaultsToLoopWithNonNegativeFades();
             tests.AudioConfigAssetsCreateWithEmptyCollections();
-            Debug.Log("[AudioConfigContractValidation] result=Passed tests=6");
+            tests.AudioEventIdsMatchCatalogJson();
+            tests.AudioEventHashesAreStableAndUnique();
+            Debug.Log("[AudioConfigContractValidation] result=Passed tests=8");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -130,5 +138,38 @@ public sealed class AudioConfigContractTests
             UnityEngine.Object.DestroyImmediate(buses);
             UnityEngine.Object.DestroyImmediate(states);
         }
+    }
+
+    [Test]
+    public void AudioEventIdsMatchCatalogJson()
+    {
+        string[] catalogEventIds = ReadCatalogEventIds();
+
+        CollectionAssert.AreEqual(catalogEventIds, AudioEventIds.AllEventIds);
+        Assert.AreEqual(44, AudioEventIds.AllEventIds.Length);
+        Assert.AreEqual(AudioEventIds.UIButtonPrimaryClick, catalogEventIds[0]);
+        Assert.AreEqual(AudioEventIds.AmbienceBaseDistantLoop, catalogEventIds[catalogEventIds.Length - 1]);
+    }
+
+    [Test]
+    public void AudioEventHashesAreStableAndUnique()
+    {
+        string[] eventIds = AudioEventIds.AllEventIds;
+        uint[] hashes = AudioEventIds.AllEventHashes;
+
+        Assert.AreEqual(eventIds.Length, hashes.Length);
+        Assert.AreEqual(hashes.Length, new HashSet<uint>(hashes).Count);
+
+        for (int i = 0; i < eventIds.Length; i++)
+            Assert.AreEqual(AudioEventIds.StableHash(eventIds[i]), hashes[i], eventIds[i]);
+    }
+
+    private static string[] ReadCatalogEventIds()
+    {
+        string json = File.ReadAllText(CatalogJsonPath);
+        MatchCollection matches = Regex.Matches(json, "\"eventId\"\\s*:\\s*\"([^\"]+)\"");
+        return matches
+            .Select(match => match.Groups[1].Value)
+            .ToArray();
     }
 }

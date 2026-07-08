@@ -1,18 +1,18 @@
 # ARIA Assistant ECS Implementation Tracker
 
 Date: 2026-07-08
-Status: Phase 1 ECS data contract implemented
+Status: Phase 2 match HUD assistant shell implemented
 Source design: `Design/ARIA_Assistant_ECS_Design.md`
 
 ## Progress
 
-Overall progress: 21% complete, 14 of 68 checklist items complete.
+Overall progress: 25% complete, 17 of 68 checklist items complete.
 
 | Phase | Scope | Items | Complete | Status |
 |---|---|---:|---:|---|
 | 0 | Contract reconciliation | 6 | 6 | Complete |
 | 1 | ECS data contract | 8 | 8 | Complete |
-| 2 | Match header and panel shell | 8 | 0 | Not started |
+| 2 | Match header and panel shell | 8 | 3 | In progress |
 | 3 | Goal and recommendation read models | 8 | 0 | Not started |
 | 4 | Show Me and Do It command intents | 8 | 0 | Not started |
 | 5 | Give Control ownership | 8 | 0 | Not started |
@@ -73,9 +73,9 @@ Phase 1 notes:
 
 ## Phase 2: Match Header And Panel Shell
 
-- [ ] Add ARIA header button to the match HUD using existing Canvas style and sprites.
-- [ ] Ensure ARIA header button blocks world pointer/touch selection behind UI on desktop and Android.
-- [ ] Add panel open/close binding through `MatchHudAssistantUiSystemHelper`.
+- [x] Add ARIA header button to the match HUD using existing Canvas style and sprites.
+- [x] Ensure ARIA header button blocks world pointer/touch selection behind UI on desktop and Android.
+- [x] Add panel open/close binding through `MatchHudAssistantUiSystemHelper`.
 - [ ] Add panel binding through `AssistantPanelUiSystemHelper` without assistant policy in the UI helper.
 - [ ] Show current goals area from read-model rows.
 - [ ] Show top recommendation area with title, reason, risk/status chip, and action buttons.
@@ -83,6 +83,13 @@ Phase 1 notes:
 - [ ] Add visible ownership state when ARIA preview/takeover is active.
 
 Exit criteria: opening/closing the panel is visually validated in Unity, causes no world click-through, and does not allocate in steady-state panel refresh.
+
+Phase 2 notes:
+
+- Added `MatchHudAssistantUiSystemHelper` as a narrow managed UI boundary. It creates the ARIA header button and a lightweight panel shell when the match HUD header installs, and destroys both with the header lifecycle.
+- ARIA button and panel clicks call `MainMenuPlayUI.CaptureGameplayUiClickSequence()` so Android/desktop UI touches suppress world selection behind the HUD.
+- The panel currently contains static shell sections for current goals and recommended action. Phase 3 must replace static rows with ECS read-model buffers and may extract `AssistantPanelUiSystemHelper` if the binding grows beyond shell creation.
+- The shell includes `NEXT ACTION` and `GIVE CONTROL` buttons as non-executing UI affordances. Command intent wiring remains Phase 4/5.
 
 ## Phase 3: Goal And Recommendation Read Models
 
@@ -166,6 +173,7 @@ Exit criteria: feature is playable, validated, documented, and does not regress 
 |---|---|---|---|---|
 | 2026-07-08 | Design and tracker creation | `git diff --check` | Passed | Added high-level ARIA ECS design, tracker, and cross-doc links. No code implementation yet. |
 | 2026-07-08 | Phase 0 inventory and Phase 1 ECS data contract | `git diff --check`; forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-data-contract-unity-rerun.log --timeout 420 -- -quit -executeMethod AssistantEcsDataContractTests.RunFocusedValidation` | Passed | Focused Unity validation reported `[AssistantEcsDataContractValidation] result=Passed tests=3`. Earlier dotnet revalidation attempts cancelled at 5:00 with 0 warnings/errors, so Unity wrapper validation is the authoritative compile/test evidence for this slice. |
+| 2026-07-08 | Phase 2 match HUD assistant shell | `git diff --check`; forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-match-hud-assistant-ui-unity-final.log --timeout 420 -- -quit -executeMethod MatchHudAssistantUiSystemHelperTests.RunFocusedValidation` | Passed | Focused Unity validation reported `[MatchHudAssistantUiValidation] result=Passed tests=1`. Validates ARIA button/panel creation, panel open, world-click suppression, and match HUD helper cleanup. |
 
 ## Open Decisions
 

@@ -19,6 +19,7 @@ namespace Game.UI.Runtime
 
         private readonly MatchHudMinimapInputUiSystemHelper _matchHudMinimapInputSystem = new();
         private readonly MatchHudMinimapInputUiSystemHelper _matchHudFullMapInputSystem = new();
+        private readonly MatchHudAssistantUiSystemHelper _matchHudAssistantUiSystem = new();
         private IMatchRuntimeState _runtimeGameplayStateSystem;
         private ISelectionUiCommand _selectionUiCommandSystem;
         private IMatchHudCameraControl _selectionUiCameraSystem;
@@ -84,6 +85,7 @@ namespace Game.UI.Runtime
         {
             _matchHudMinimapInputSystem.Dispose();
             _matchHudFullMapInputSystem.Dispose();
+            _matchHudAssistantUiSystem.Unbind();
             if (_matchHudMinimapView != null)
                 _matchHudMinimapView.FullMapOpenRequested -= RequestFullMapPopup;
             if (_matchHudFullMapPopupView != null)
@@ -297,6 +299,11 @@ namespace Game.UI.Runtime
             SetMatchHudThreatWarningVisible(false);
         }
 
+        public void BindMatchHudAssistant(GameObject headerContent, RectTransform overlayRoot)
+        {
+            _matchHudAssistantUiSystem.Bind(headerContent, overlayRoot, CaptureGameplayUiClickSequence);
+        }
+
         private void BindMatchHudResourceSlots(GameObject headerContent)
         {
             Transform resourceStrip = headerContent.transform.Find("ResourceStrip");
@@ -493,6 +500,12 @@ namespace Game.UI.Runtime
             if (_matchHudRightQuickRailView != null && _matchHudRightQuickRailView.ContainsScreenPoint(screenPosition))
             {
                 source = "MatchHudRightQuickRail";
+                return true;
+            }
+
+            if (_matchHudAssistantUiSystem.ContainsScreenPoint(screenPosition))
+            {
+                source = "MatchHudAssistant";
                 return true;
             }
 

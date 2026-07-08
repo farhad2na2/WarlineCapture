@@ -301,6 +301,7 @@ namespace Game.UI.Runtime
                 ? _matchHudHeaderContent.GetComponent<MatchHudCurrentOrderBannerView>()
                 : null;
             _mainMenuPlayUi?.BindMatchHudThreatJumpPanel(_matchHudHeaderContent);
+            _mainMenuPlayUi?.BindMatchHudAssistant(_matchHudHeaderContent, shellView != null ? shellView.transform as RectTransform : null);
             GameObject left = InstallSection(matchHudContentPrefab, UIShellContentSectionId.Left, UIShellRegionId.LeftRegion);
             _matchHudSelectionPanelView = left != null ? left.GetComponent<MatchHudSelectionPanelView>() : null;
             BindMatchHudSelectionPanel(_matchHudSelectionPanelView);
@@ -764,6 +765,7 @@ namespace Game.UI.Runtime
         {
             _matchHudHeaderContent = null;
             _mainMenuPlayUi?.BindMatchHudThreatJumpPanel(null);
+            _mainMenuPlayUi?.BindMatchHudAssistant(null, null);
         }
 
         private void BindFullMapPopupRequests()

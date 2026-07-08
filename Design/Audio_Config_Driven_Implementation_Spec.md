@@ -323,14 +323,14 @@ Use this section as the work checklist. Update status after each implementation 
 
 ### Current Completion
 
-Overall tracked completion: **60%**.
+Overall tracked completion: **65%**.
 
-- Completed steps: 12 / 20.
+- Completed steps: 13 / 20.
 - Asset and placeholder catalog preparation: **Done**.
 - Runtime playback implementation: **In Progress**.
 - UI/gameplay wiring: **In Progress**.
 - Validation/performance test coverage: **Not Started**.
-- Latest stable slice: settings UI audio volumes persist and project into ECS audio settings through focused Unity validation.
+- Latest stable slice: shared UI audio event views emit semantic event ids and bridge to ECS audio requests through focused Unity validation.
 
 Status legend:
 
@@ -352,7 +352,7 @@ Status legend:
 | 9. Create request systems | Done | Gameplay | `AudioEventRequestSystem`, `AudioCooldownSystem`, `AudioMusicStateSystem`, `AudioSettingsSystem`. | `AudioRequestSystemTests.RunFocusedValidation` passed. |
 | 10. Create playback presentation helper | Done | UI/Audio | Pooled `AudioSource` playback helper and mixer application helper. | `AudioPlaybackPresentationSystemHelperTests.RunFocusedValidation` passed. |
 | 11. Wire settings UI | Done | UI | Master/Music/SFX/Voice/Alerts volume controls update audio settings. | `AudioSettingsUiProjectionTests.RunFocusedValidation` passed. |
-| 12. Wire common UI button audio | Not Started | UI | Shared button/tab/card/toggle/slider audio event views. | Changing catalog click clip affects all migrated buttons. |
+| 12. Wire common UI button audio | Done | UI | Shared button/tab/card/toggle/slider audio event views. | `UiAudioEventViewTests.RunFocusedValidation` passed. |
 | 13. Wire shell route/popup audio | Not Started | UI | Screen forward/back, popup open/close, drawer open/close. | UI route smoke test. |
 | 14. Wire match command audio | Not Started | Gameplay/UI | Select, move, attack, hold, stop/return, scan, build valid/invalid. | Match command tests and manual M01 smoke. |
 | 15. Wire alert/objective audio | Not Started | Gameplay/UI | Threat, objective, unit under attack, base breached events. | Cooldown and priority tests. |
@@ -518,7 +518,25 @@ Implementation rule:
 - ECS audio runtime owns normalized bus volumes.
 - UI controls must not assign clips, mixer groups, or per-button audio references.
 
-### Step 12: Common UI Migration
+### Step 12: Shared UI Audio Event Views
+
+Current common UI audio pass:
+
+- UI event gateway: `Assets/Game/Scripts/UI/Components/UIAudioEventGateway.cs`
+- Button audio view: `Assets/Game/Scripts/UI/Components/UIButtonAudioEventView.cs`
+- Toggle audio view: `Assets/Game/Scripts/UI/Components/UIToggleAudioEventView.cs`
+- Slider audio view: `Assets/Game/Scripts/UI/Components/UISliderAudioEventView.cs`
+- ECS bridge: `Assets/Game/Scripts/UI/Shell/Ecs/UiAudioEventBridgeSystem.cs`
+- Validation: `UiAudioEventViewTests.RunFocusedValidation`
+- Latest validation: primary/disabled button, tab/card, toggle on/off, slider tick, and UI-to-ECS request enqueue paths passed focused Unity validation.
+
+Implementation rule:
+
+- UI views emit semantic event ids only.
+- UI views must not assign clips, mixer groups, or direct `AudioSource` references.
+- Catalog changes must remain centralized through the audio event catalog and playback path.
+
+#### Common UI Migration Order
 
 Migration order:
 

@@ -19,6 +19,7 @@ namespace Game.UI.Runtime
         private Button _nextActionButton;
         private Button _giveControlButton;
         private readonly AssistantPanelUiSystemHelper _panelUiSystem = new();
+        private readonly AssistantHighlightPresentationSystemHelper _highlightPresentationSystem = new();
         private Action _captureGameplayUiClick;
 
         public bool IsPanelOpen => _panelRoot != null && _panelRoot.gameObject.activeSelf;
@@ -56,6 +57,7 @@ namespace Game.UI.Runtime
             _giveControlButton = null;
             _captureGameplayUiClick = null;
             _panelUiSystem.Unbind();
+            _highlightPresentationSystem.Unbind();
         }
 
         public void ApplyReadModel(UiAssistantPanelModel model)
@@ -64,6 +66,14 @@ namespace Game.UI.Runtime
                 return;
 
             _panelUiSystem.ApplyReadModel(model);
+        }
+
+        public void ApplyHighlightReadModel(UiAssistantHighlightModel model)
+        {
+            if (_buttonRoot == null)
+                return;
+
+            _highlightPresentationSystem.ApplyReadModel(model);
         }
 
         public bool ContainsScreenPoint(Vector2 screenPosition)
@@ -123,6 +133,7 @@ namespace Game.UI.Runtime
             CreateText("AlertsTitle", root, "ALERTS & REPORTS", 18, TextAlignmentOptions.Left, new Vector2(350f, -88f), new Vector2(240f, 28f), new Color(1f, 0.80f, 0.34f, 1f));
             TMP_Text alertsBodyText = CreateText("AlertsBody", root, "No priority alerts", 18, TextAlignmentOptions.Left, new Vector2(350f, -124f), new Vector2(250f, 104f), new Color(0.80f, 0.86f, 0.84f, 1f));
             CreateText("RecommendationTitle", root, "RECOMMENDED NEXT ACTION", 18, TextAlignmentOptions.Left, new Vector2(28f, -258f), new Vector2(330f, 28f), new Color(0.45f, 0.95f, 1f, 1f));
+            Image previewPulse = CreatePulse("PreviewPulse", root, new Vector2(20f, -284f), new Vector2(560f, 92f));
             TMP_Text recommendationBodyText = CreateText("RecommendationBody", root, "ARIA is waiting for live battlefield context.", 20, TextAlignmentOptions.Left, new Vector2(28f, -294f), new Vector2(520f, 72f), new Color(0.78f, 0.84f, 0.82f, 1f));
 
             _nextActionButton = CreatePanelButton("NextActionButton", root, "SHOW ME", new Vector2(28f, -398f), out TMP_Text nextActionLabelText);
@@ -145,7 +156,24 @@ namespace Game.UI.Runtime
                 _giveControlButton,
                 nextActionLabelText,
                 giveControlLabelText);
+            _highlightPresentationSystem.Bind(previewPulse);
             return root;
+        }
+
+        private static Image CreatePulse(string name, RectTransform parent, Vector2 anchoredPosition, Vector2 size)
+        {
+            RectTransform root = CreateRect(name, parent);
+            root.anchorMin = new Vector2(0f, 1f);
+            root.anchorMax = new Vector2(0f, 1f);
+            root.pivot = new Vector2(0f, 1f);
+            root.anchoredPosition = anchoredPosition;
+            root.sizeDelta = size;
+
+            Image image = root.gameObject.AddComponent<Image>();
+            image.color = new Color(0.45f, 0.95f, 1f, 0.28f);
+            image.raycastTarget = false;
+            image.gameObject.SetActive(false);
+            return image;
         }
 
         private Button CreatePanelButton(string name, RectTransform parent, string label, Vector2 anchoredPosition, out TMP_Text labelText)

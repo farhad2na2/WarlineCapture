@@ -238,4 +238,18 @@ namespace Game.Components
         public int ReasonCode;
         public FixedString64Bytes Message;
     }
+
+    public struct AssistantPreviewHighlightElement : IBufferElementData
+    {
+        public int RequestId;
+        public int Frame;
+        public int RecommendationId;
+        public AssistantTargetKind TargetKind;
+        public Entity SourceEntity;
+        public Entity TargetEntity;
+        public int2 TargetCell;
+        public float3 WorldPosition;
+        public float Strength;
+        public byte Active;
+    }
 }

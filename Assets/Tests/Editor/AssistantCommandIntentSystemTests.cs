@@ -99,6 +99,15 @@ public sealed class AssistantCommandIntentSystemTests
         Assert.AreEqual(3101, assistantState.ActiveRecommendationId);
         Assert.AreEqual(1, assistantState.UiDirty);
 
+        DynamicBuffer<AssistantPreviewHighlightElement> highlights =
+            _entityManager.GetBuffer<AssistantPreviewHighlightElement>(boundary);
+        Assert.AreEqual(1, highlights.Length);
+        Assert.AreEqual(7, highlights[0].RequestId);
+        Assert.AreEqual(3101, highlights[0].RecommendationId);
+        Assert.AreEqual(AssistantTargetKind.Entity, highlights[0].TargetKind);
+        Assert.AreEqual(new float3(18f, 2f, 32f), highlights[0].WorldPosition);
+        Assert.AreEqual(1, highlights[0].Active);
+
         using EntityQuery cameraQuery = _entityManager.CreateEntityQuery(
             ComponentType.ReadOnly<RtsCameraRequestQueueComponent>(),
             ComponentType.ReadOnly<RtsCameraRequestElement>());
@@ -116,6 +125,14 @@ public sealed class AssistantCommandIntentSystemTests
     public void AssistantCommandIntentSystem_RejectsPreviewWithoutWorldTarget()
     {
         Entity boundary = CreateBoundary();
+        _entityManager.AddBuffer<AssistantPreviewHighlightElement>(boundary).Add(new AssistantPreviewHighlightElement
+        {
+            RequestId = 1,
+            RecommendationId = 2001,
+            WorldPosition = new float3(2f, 0f, 3f),
+            Strength = 1f,
+            Active = 1
+        });
         DynamicBuffer<AssistantCommandIntentRequestElement> requests =
             _entityManager.GetBuffer<AssistantCommandIntentRequestElement>(boundary);
         requests.Add(new AssistantCommandIntentRequestElement
@@ -138,6 +155,7 @@ public sealed class AssistantCommandIntentSystemTests
         Assert.AreEqual(3, results[0].RequestId);
         Assert.AreEqual(AssistantCommandIntentStatus.Rejected, results[0].Status);
         Assert.AreEqual("No preview target is available.", results[0].Message.ToString());
+        Assert.AreEqual(0, _entityManager.GetBuffer<AssistantPreviewHighlightElement>(boundary).Length);
 
         using EntityQuery cameraQuery = _entityManager.CreateEntityQuery(
             ComponentType.ReadOnly<RtsCameraRequestQueueComponent>(),

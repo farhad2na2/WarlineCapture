@@ -20,6 +20,8 @@ public sealed class AssistantCommandIntentGatewayTests
             passed++;
             RunCase(test => test.TryEnqueueAssistantCommandIntent_MapsExecutableRecommendationKind());
             passed++;
+            RunCase(test => test.TryReadMatchHudAssistantHighlight_ConvertsActivePreviewRow());
+            passed++;
 
             Debug.Log($"[AssistantCommandIntentGatewayValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -139,5 +141,33 @@ public sealed class AssistantCommandIntentGatewayTests
         Assert.AreEqual(3101, requests[0].RecommendationId);
         Assert.AreEqual(source, requests[0].SourceEntity);
         Assert.AreEqual(target, requests[0].TargetEntity);
+    }
+
+    [Test]
+    public void TryReadMatchHudAssistantHighlight_ConvertsActivePreviewRow()
+    {
+        Entity boundary = _entityManager.CreateEntity(typeof(UiShellRootComponent));
+        DynamicBuffer<AssistantPreviewHighlightElement> highlights =
+            _entityManager.AddBuffer<AssistantPreviewHighlightElement>(boundary);
+        highlights.Add(new AssistantPreviewHighlightElement
+        {
+            RequestId = 12,
+            RecommendationId = 4501,
+            TargetKind = AssistantTargetKind.WorldPosition,
+            WorldPosition = new float3(21f, 4f, 13f),
+            Strength = 0.75f,
+            Active = 1
+        });
+
+        Assert.IsTrue(UiShellEcsGateway.TryReadMatchHudAssistantHighlight(out UiAssistantHighlightModel highlight));
+        Assert.IsTrue(highlight.Active);
+        Assert.AreEqual(12, highlight.RequestId);
+        Assert.AreEqual(4501, highlight.RecommendationId);
+        Assert.AreEqual((byte)AssistantTargetKind.WorldPosition, highlight.TargetKind);
+        Assert.AreEqual(21f, highlight.WorldX);
+        Assert.AreEqual(4f, highlight.WorldY);
+        Assert.AreEqual(13f, highlight.WorldZ);
+        Assert.AreEqual(0.75f, highlight.Strength);
+        Assert.Greater(highlight.Version, 0u);
     }
 }

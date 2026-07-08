@@ -54,6 +54,12 @@ namespace Game.UI.Shell.Ecs
         private static int cachedAssistantPanelRecommendationCount;
         private static AssistantControlState cachedAssistantPanelControlState;
         private static UiAssistantPanelModel cachedAssistantPanel;
+        private static bool hasCachedAssistantHighlight;
+        private static World cachedAssistantHighlightWorld;
+        private static Entity cachedAssistantHighlightBoundary;
+        private static uint cachedAssistantHighlightVersion;
+        private static int cachedAssistantHighlightRequestId;
+        private static UiAssistantHighlightModel cachedAssistantHighlight;
 
         private UiShellEcsGateway()
         {
@@ -95,6 +101,12 @@ namespace Game.UI.Shell.Ecs
             cachedAssistantPanelRecommendationCount = 0;
             cachedAssistantPanelControlState = AssistantControlState.Player;
             cachedAssistantPanel = UiAssistantPanelModel.Empty;
+            hasCachedAssistantHighlight = false;
+            cachedAssistantHighlightWorld = null;
+            cachedAssistantHighlightBoundary = Entity.Null;
+            cachedAssistantHighlightVersion = 0;
+            cachedAssistantHighlightRequestId = 0;
+            cachedAssistantHighlight = UiAssistantHighlightModel.Empty;
             cachedDiagnosticsLogFixedText = default;
             cachedDiagnosticsLogText = string.Empty;
             UiShellRuntimeGateway.Register(Shared);
@@ -1089,6 +1101,17 @@ namespace Game.UI.Shell.Ecs
             return combined == 0u ? 1u : combined;
         }
 
+        private static uint AssistantHighlightVersion(AssistantPreviewHighlightElement highlight)
+        {
+            uint combined = (uint)math.max(1, highlight.RequestId);
+            combined = combined * 397u ^ (uint)math.max(0, highlight.RecommendationId);
+            combined = combined * 31u ^ (uint)highlight.TargetKind;
+            combined = combined * 17u ^ (uint)math.asint(highlight.WorldPosition.x);
+            combined = combined * 17u ^ (uint)math.asint(highlight.WorldPosition.y);
+            combined = combined * 17u ^ (uint)math.asint(highlight.WorldPosition.z);
+            return combined == 0u ? 1u : combined;
+        }
+
         private static string BuildAssistantGoalsText(DynamicBuffer<AssistantGoalReadModelElement> goals)
         {
             if (goals.Length == 0)
@@ -1277,6 +1300,52 @@ namespace Game.UI.Shell.Ecs
             cachedAssistantPanelRecommendationCount = recommendations.Length;
             cachedAssistantPanelControlState = assistantState.ControlState;
             cachedAssistantPanel = assistantPanel;
+            return true;
+        }
+
+        public static bool TryReadMatchHudAssistantHighlight(out UiAssistantHighlightModel assistantHighlight)
+        {
+            assistantHighlight = UiAssistantHighlightModel.Empty;
+            if (!TryGetBoundary(out EntityManager entityManager, out Entity boundary))
+                return false;
+
+            if (!entityManager.HasBuffer<AssistantPreviewHighlightElement>(boundary))
+                return false;
+
+            DynamicBuffer<AssistantPreviewHighlightElement> highlights =
+                entityManager.GetBuffer<AssistantPreviewHighlightElement>(boundary, true);
+            if (highlights.Length == 0 || highlights[0].Active == 0)
+                return false;
+
+            AssistantPreviewHighlightElement highlight = highlights[0];
+            uint version = AssistantHighlightVersion(highlight);
+            if (hasCachedAssistantHighlight &&
+                cachedAssistantHighlightWorld == entityManager.World &&
+                cachedAssistantHighlightBoundary == boundary &&
+                cachedAssistantHighlightVersion == version &&
+                cachedAssistantHighlightRequestId == highlight.RequestId)
+            {
+                assistantHighlight = cachedAssistantHighlight;
+                return true;
+            }
+
+            assistantHighlight = new UiAssistantHighlightModel(
+                version,
+                true,
+                highlight.RequestId,
+                highlight.RecommendationId,
+                (byte)highlight.TargetKind,
+                highlight.WorldPosition.x,
+                highlight.WorldPosition.y,
+                highlight.WorldPosition.z,
+                highlight.Strength);
+
+            hasCachedAssistantHighlight = true;
+            cachedAssistantHighlightWorld = entityManager.World;
+            cachedAssistantHighlightBoundary = boundary;
+            cachedAssistantHighlightVersion = version;
+            cachedAssistantHighlightRequestId = highlight.RequestId;
+            cachedAssistantHighlight = assistantHighlight;
             return true;
         }
 
@@ -2110,6 +2179,11 @@ namespace Game.UI.Shell.Ecs
         bool IUiShellRuntimeGateway.TryReadMatchHudAssistantPanel(out UiAssistantPanelModel assistantPanel)
         {
             return TryReadMatchHudAssistantPanel(out assistantPanel);
+        }
+
+        bool IUiShellRuntimeGateway.TryReadMatchHudAssistantHighlight(out UiAssistantHighlightModel assistantHighlight)
+        {
+            return TryReadMatchHudAssistantHighlight(out assistantHighlight);
         }
 
         bool IUiShellRuntimeGateway.TryReadMatchHudMinimap(out UiMatchHudMinimapModel minimap)

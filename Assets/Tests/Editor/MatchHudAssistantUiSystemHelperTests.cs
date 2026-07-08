@@ -106,7 +106,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         var ui = new MainMenuPlayUI();
         ui.Init(null, new FakeMatchRuntimeState());
         ui.BindMatchHudAssistant(header.gameObject, overlay);
-        var assistantGateway = new FakeAssistantPanelGateway(new UiAssistantPanelModel(
+        var assistantGateway = new FakeAssistantPanelGateway(
+            new UiAssistantPanelModel(
             42,
             "- Neutralize hostile patrol\n[x] Protect civilians",
             "HIGH: Fuel reserves empty",
@@ -119,7 +120,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             true,
             true,
             false,
-            "ARIA CONTROL"));
+            "ARIA CONTROL"),
+            new UiAssistantHighlightModel(88, true, 7, 3101, 1, 12f, 3f, 9f, 1f));
         UiShellRuntimeGateway.Register(assistantGateway);
 
         ui.Update();
@@ -130,6 +132,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         TMP_Text alerts = panel.Find("AlertsBody")?.GetComponent<TMP_Text>();
         TMP_Text ownership = panel.Find("OwnershipBody")?.GetComponent<TMP_Text>();
         TMP_Text recommendation = panel.Find("RecommendationBody")?.GetComponent<TMP_Text>();
+        Image previewPulse = panel.Find("PreviewPulse")?.GetComponent<Image>();
         Button showMe = panel.Find("NextActionButton")?.GetComponent<Button>();
         Button giveControl = panel.Find("GiveControlButton")?.GetComponent<Button>();
         TMP_Text giveControlLabel = panel.Find("GiveControlButton/Label")?.GetComponent<TMP_Text>();
@@ -138,6 +141,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.NotNull(alerts);
         Assert.NotNull(ownership);
         Assert.NotNull(recommendation);
+        Assert.NotNull(previewPulse);
         Assert.NotNull(showMe);
         Assert.NotNull(giveControl);
         Assert.NotNull(giveControlLabel);
@@ -145,6 +149,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.AreEqual("HIGH: Fuel reserves empty", alerts.text);
         Assert.AreEqual("ARIA CONTROL", ownership.text);
         StringAssert.Contains("HIGH: Review objective", recommendation.text);
+        Assert.IsTrue(previewPulse.gameObject.activeSelf);
+        Assert.Greater(previewPulse.color.a, 0.4f);
         Assert.IsTrue(showMe.interactable);
         Assert.IsTrue(giveControl.interactable);
         Assert.AreEqual("DO IT", giveControlLabel.text);
@@ -204,13 +210,17 @@ public sealed class MatchHudAssistantUiSystemHelperTests
     private sealed class FakeAssistantPanelGateway : IUiShellRuntimeGateway
     {
         private readonly UiAssistantPanelModel _assistantPanel;
+        private readonly UiAssistantHighlightModel _assistantHighlight;
         public int AssistantIntentRequestCount { get; private set; }
         public UiAssistantCommandIntentKind LastAssistantIntentKind { get; private set; }
         public bool LastAssistantIntentFromTakeover { get; private set; }
 
-        public FakeAssistantPanelGateway(UiAssistantPanelModel assistantPanel)
+        public FakeAssistantPanelGateway(
+            UiAssistantPanelModel assistantPanel,
+            UiAssistantHighlightModel assistantHighlight)
         {
             _assistantPanel = assistantPanel;
+            _assistantHighlight = assistantHighlight;
         }
 
         public bool TryEnqueueRouteRequest(UiShellRouteIntent intent, UIRoute route, bool pushHistory) => false;
@@ -235,6 +245,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         public bool TryReadMatchHudHeader(out UiMatchHudHeaderModel header) { header = UiMatchHudHeaderModel.Default; return false; }
         public bool TryReadMatchHudStatusSurfaces(out UiMatchHudStatusSurfacesModel statusSurfaces) { statusSurfaces = UiMatchHudStatusSurfacesModel.Default; return false; }
         public bool TryReadMatchHudAssistantPanel(out UiAssistantPanelModel assistantPanel) { assistantPanel = _assistantPanel; return true; }
+        public bool TryReadMatchHudAssistantHighlight(out UiAssistantHighlightModel assistantHighlight) { assistantHighlight = _assistantHighlight; return _assistantHighlight.Active; }
         public bool TryReadMatchHudMinimap(out UiMatchHudMinimapModel minimap) { minimap = UiMatchHudMinimapModel.Default; return false; }
         public bool TryReadMatchHudPassengerDrawer(out UiMatchHudPassengerDrawerModel passengerDrawer) { passengerDrawer = UiMatchHudPassengerDrawerModel.Hidden; return false; }
         public bool TryReadMatchHudSquadTray(out UiMatchHudSquadTrayModel squadTray) { squadTray = UiMatchHudSquadTrayModel.Default; return false; }

@@ -81,6 +81,9 @@ namespace Game.UI.Shell.Ecs
 
             if (!em.HasBuffer<AssistantMessageElement>(boundary))
                 em.AddBuffer<AssistantMessageElement>(boundary);
+
+            if (!em.HasBuffer<AssistantPreviewHighlightElement>(boundary))
+                em.AddBuffer<AssistantPreviewHighlightElement>(boundary);
         }
 
         private static AssistantGoalReadModelElement BuildGoal(

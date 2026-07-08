@@ -62,6 +62,8 @@ namespace Game.UI.Shell.Ecs
                 state.EntityManager.GetComponentData<AssistantStateComponent>(boundary);
             DynamicBuffer<AssistantCommandIntentResultElement> results =
                 state.EntityManager.GetBuffer<AssistantCommandIntentResultElement>(boundary);
+            DynamicBuffer<AssistantPreviewHighlightElement> highlights =
+                state.EntityManager.GetBuffer<AssistantPreviewHighlightElement>(boundary);
 
             bool assistantStateChanged = false;
             for (int i = 0; i < requests.Length; i++)
@@ -69,18 +71,21 @@ namespace Game.UI.Shell.Ecs
                 AssistantCommandIntentRequestElement request = requests[i];
                 if (!IsPreviewIntent(request.Kind))
                 {
+                    ClearPreviewHighlight(highlights);
                     AddResult(results, request, AssistantCommandIntentStatus.Rejected, ReasonUnsupportedIntent, new FixedString64Bytes("Intent is not available yet."));
                     continue;
                 }
 
                 if (!TryResolvePreviewTarget(ref state, request, out float3 focusWorldPosition))
                 {
+                    ClearPreviewHighlight(highlights);
                     AddResult(results, request, AssistantCommandIntentStatus.Rejected, ReasonMissingPreviewTarget, new FixedString64Bytes("No preview target is available."));
                     continue;
                 }
 
                 QueueCameraPreview(ref state, focusWorldPosition);
                 AddResult(results, request, AssistantCommandIntentStatus.Accepted, ReasonAccepted, new FixedString64Bytes("Preview queued."));
+                SetPreviewHighlight(highlights, request, focusWorldPosition);
 
                 assistantState.ControlState = AssistantControlState.AssistantPreview;
                 assistantState.ActiveRecommendationId = request.RecommendationId;
@@ -212,6 +217,33 @@ namespace Game.UI.Shell.Ecs
                 WorldPosition = request.WorldPosition,
                 ReasonCode = reasonCode,
                 Message = message
+            });
+        }
+
+        private static void ClearPreviewHighlight(DynamicBuffer<AssistantPreviewHighlightElement> highlights)
+        {
+            if (highlights.Length > 0)
+                highlights.Clear();
+        }
+
+        private static void SetPreviewHighlight(
+            DynamicBuffer<AssistantPreviewHighlightElement> highlights,
+            AssistantCommandIntentRequestElement request,
+            float3 focusWorldPosition)
+        {
+            highlights.Clear();
+            highlights.Add(new AssistantPreviewHighlightElement
+            {
+                RequestId = request.RequestId,
+                Frame = request.Frame,
+                RecommendationId = request.RecommendationId,
+                TargetKind = request.TargetKind,
+                SourceEntity = request.SourceEntity,
+                TargetEntity = request.TargetEntity,
+                TargetCell = request.TargetCell,
+                WorldPosition = focusWorldPosition,
+                Strength = 1f,
+                Active = 1
             });
         }
 

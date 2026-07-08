@@ -89,6 +89,11 @@ namespace Game.UI.Runtime
             return current.TryReadMatchHudAssistantPanel(out assistantPanel);
         }
 
+        public static bool TryReadMatchHudAssistantHighlight(out UiAssistantHighlightModel assistantHighlight)
+        {
+            return current.TryReadMatchHudAssistantHighlight(out assistantHighlight);
+        }
+
         public static bool TryReadMatchHudMinimap(out UiMatchHudMinimapModel minimap)
         {
             return current.TryReadMatchHudMinimap(out minimap);
@@ -221,6 +226,12 @@ namespace Game.UI.Runtime
             public bool TryReadMatchHudAssistantPanel(out UiAssistantPanelModel assistantPanel)
             {
                 assistantPanel = UiAssistantPanelModel.Empty;
+                return false;
+            }
+
+            public bool TryReadMatchHudAssistantHighlight(out UiAssistantHighlightModel assistantHighlight)
+            {
+                assistantHighlight = UiAssistantHighlightModel.Empty;
                 return false;
             }
 

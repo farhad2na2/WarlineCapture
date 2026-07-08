@@ -80,6 +80,7 @@ public sealed class AssistantEcsDataContractTests
         AssertBuffer<AssistantNarrationRequestElement>();
         AssertBuffer<AssistantCommandIntentRequestElement>();
         AssertBuffer<AssistantCommandIntentResultElement>();
+        AssertBuffer<AssistantPreviewHighlightElement>();
 
         Entity assistant = _entityManager.CreateEntity(
             typeof(AssistantStateComponent),
@@ -154,12 +155,23 @@ public sealed class AssistantEcsDataContractTests
             Message = new FixedString64Bytes("Camera focus accepted.")
         });
 
+        _entityManager.AddBuffer<AssistantPreviewHighlightElement>(assistant).Add(new AssistantPreviewHighlightElement
+        {
+            RequestId = 13,
+            RecommendationId = 7,
+            TargetKind = AssistantTargetKind.WorldPosition,
+            WorldPosition = new float3(12f, 0f, 3f),
+            Strength = 1f,
+            Active = 1
+        });
+
         Assert.AreEqual(1, _entityManager.GetBuffer<AssistantGoalReadModelElement>(assistant).Length);
         Assert.AreEqual(1, _entityManager.GetBuffer<AssistantRecommendationElement>(assistant).Length);
         Assert.AreEqual(1, _entityManager.GetBuffer<AssistantMessageElement>(assistant).Length);
         Assert.AreEqual(1, _entityManager.GetBuffer<AssistantNarrationRequestElement>(assistant).Length);
         Assert.AreEqual(1, _entityManager.GetBuffer<AssistantCommandIntentRequestElement>(assistant).Length);
         Assert.AreEqual(1, _entityManager.GetBuffer<AssistantCommandIntentResultElement>(assistant).Length);
+        Assert.AreEqual(1, _entityManager.GetBuffer<AssistantPreviewHighlightElement>(assistant).Length);
     }
 
     [Test]

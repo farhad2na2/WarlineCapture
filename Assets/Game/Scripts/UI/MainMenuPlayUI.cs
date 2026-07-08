@@ -431,6 +431,11 @@ namespace Game.UI.Runtime
         {
             if (UiShellRuntimeGateway.TryReadMatchHudAssistantPanel(out UiAssistantPanelModel assistantPanel))
                 _matchHudAssistantUiSystem.ApplyReadModel(assistantPanel);
+
+            if (UiShellRuntimeGateway.TryReadMatchHudAssistantHighlight(out UiAssistantHighlightModel assistantHighlight))
+                _matchHudAssistantUiSystem.ApplyHighlightReadModel(assistantHighlight);
+            else
+                _matchHudAssistantUiSystem.ApplyHighlightReadModel(UiAssistantHighlightModel.Empty);
         }
 
         public bool TryShowMatchHudThreatWarning(string title, float visibleUntilTime)

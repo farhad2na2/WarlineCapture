@@ -1,0 +1,205 @@
+using System;
+using Game.Components;
+using Game.UI.Contracts;
+using Game.UI.Shell.Contracts.Ecs;
+using Game.UI.Shell.Ecs;
+using NUnit.Framework;
+using Unity.Collections;
+using Unity.Entities;
+using UnityEngine;
+
+public sealed class AssistantNarrationRequestSystemTests
+{
+    private World _world;
+    private EntityManager _entityManager;
+    private SystemHandle _narrationSystem;
+
+    public static void RunFocusedValidation()
+    {
+        int passed = 0;
+        try
+        {
+            RunCase(test => test.AssistantNarrationRequestSystem_CreatesRequestForImportantMessage());
+            passed++;
+            RunCase(test => test.AssistantNarrationRequestSystem_SuppressesDuplicateRequests());
+            passed++;
+            RunCase(test => test.AssistantNarrationRequestSystem_RespectsNarrationModeGate());
+            passed++;
+
+            Debug.Log($"[AssistantNarrationRequestSystemValidation] result=Passed tests={passed}");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError($"[AssistantNarrationRequestSystemValidation] result=Failed passed={passed}");
+            ValidationExit.Exit(1);
+        }
+    }
+
+    private static void RunCase(Action<AssistantNarrationRequestSystemTests> testCase)
+    {
+        var tests = new AssistantNarrationRequestSystemTests();
+        tests.SetUp();
+        try
+        {
+            testCase(tests);
+        }
+        finally
+        {
+            tests.TearDown();
+        }
+    }
+
+    [SetUp]
+    public void SetUp()
+    {
+        _world = new World(nameof(AssistantNarrationRequestSystemTests));
+        _entityManager = _world.EntityManager;
+        _narrationSystem = _world.CreateSystem<AssistantNarrationRequestSystem>();
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        _world?.Dispose();
+    }
+
+    [Test]
+    public void AssistantNarrationRequestSystem_CreatesRequestForImportantMessage()
+    {
+        Entity boundary = CreateBoundary(AssistantNarrationMode.Important);
+        AddMessage(boundary, 1001, AssistantMessagePriority.High, "Hostile patrol near base", requiresNarration: 1);
+
+        _narrationSystem.Update(_world.Unmanaged);
+
+        DynamicBuffer<AssistantNarrationRequestElement> requests =
+            _entityManager.GetBuffer<AssistantNarrationRequestElement>(boundary);
+        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(1001, requests[0].MessageId);
+        Assert.AreEqual(AssistantMessagePriority.High, requests[0].Priority);
+        Assert.AreEqual(AssistantCommandIntentStatus.Pending, requests[0].Status);
+        Assert.AreEqual("Hostile patrol near base", requests[0].Text.ToString());
+        Assert.AreEqual(1, requests[0].InterruptsLowerPriority);
+
+        AssistantNarrationStateComponent narrationState =
+            _entityManager.GetComponentData<AssistantNarrationStateComponent>(boundary);
+        Assert.AreEqual(1001, narrationState.LastSpokenMessageId);
+        Assert.AreEqual(AssistantNarrationMode.Important, narrationState.Mode);
+        Assert.AreEqual(1, narrationState.UiDirty);
+    }
+
+    [Test]
+    public void AssistantNarrationRequestSystem_SuppressesDuplicateRequests()
+    {
+        Entity boundary = CreateBoundary(AssistantNarrationMode.All);
+        AddMessage(boundary, 1002, AssistantMessagePriority.Normal, "Oil trucks are idle", requiresNarration: 1);
+
+        _narrationSystem.Update(_world.Unmanaged);
+        _narrationSystem.Update(_world.Unmanaged);
+
+        DynamicBuffer<AssistantNarrationRequestElement> requests =
+            _entityManager.GetBuffer<AssistantNarrationRequestElement>(boundary);
+        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(1002, requests[0].MessageId);
+        Assert.AreEqual(0, requests[0].InterruptsLowerPriority);
+    }
+
+    [Test]
+    public void AssistantNarrationRequestSystem_RespectsNarrationModeGate()
+    {
+        Entity boundary = CreateBoundary(AssistantNarrationMode.CriticalOnly);
+        AddMessage(boundary, 1003, AssistantMessagePriority.High, "Fuel low", requiresNarration: 1);
+
+        _narrationSystem.Update(_world.Unmanaged);
+
+        DynamicBuffer<AssistantNarrationRequestElement> requests =
+            _entityManager.GetBuffer<AssistantNarrationRequestElement>(boundary);
+        Assert.AreEqual(0, requests.Length);
+
+        AddMessage(boundary, 1004, AssistantMessagePriority.Critical, "Base under attack", requiresNarration: 1);
+
+        _narrationSystem.Update(_world.Unmanaged);
+
+        requests = _entityManager.GetBuffer<AssistantNarrationRequestElement>(boundary);
+        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(1004, requests[0].MessageId);
+
+        AssistantSettingsComponent settings =
+            _entityManager.GetComponentData<AssistantSettingsComponent>(boundary);
+        settings.NarrationMode = AssistantNarrationMode.Off;
+        _entityManager.SetComponentData(boundary, settings);
+        AddMessage(boundary, 1005, AssistantMessagePriority.Critical, "Command center critical", requiresNarration: 1);
+
+        _narrationSystem.Update(_world.Unmanaged);
+
+        requests = _entityManager.GetBuffer<AssistantNarrationRequestElement>(boundary);
+        Assert.AreEqual(1, requests.Length);
+    }
+
+    private Entity CreateBoundary(AssistantNarrationMode mode)
+    {
+        Entity boundary = _entityManager.CreateEntity(
+            typeof(UiShellStateComponent),
+            typeof(UiMatchHudStatusSurfacesComponent),
+            typeof(UiMatchHudHeaderComponent),
+            typeof(AssistantSettingsComponent));
+        _entityManager.SetComponentData(boundary, DefaultStatus());
+        _entityManager.SetComponentData(boundary, new UiMatchHudHeaderComponent
+        {
+            OrderText = new FixedString32Bytes("ORDER"),
+            SquadText = new FixedString32Bytes("RIFLE SQUAD"),
+            CreditsText = new FixedString32Bytes("187,540"),
+            FuelText = new FixedString32Bytes("9,750"),
+            SupplyText = new FixedString32Bytes("92/120"),
+            CivilianRiskText = new FixedString32Bytes("MED")
+        });
+        _entityManager.SetComponentData(boundary, new AssistantSettingsComponent
+        {
+            GuidanceLevel = AssistantGuidanceLevel.FullGuidance,
+            NarrationMode = mode,
+            AllowTakeover = 1,
+            SubtitlesEnabled = 1
+        });
+        _entityManager.AddBuffer<AssistantMessageElement>(boundary);
+        return boundary;
+    }
+
+    private void AddMessage(
+        Entity boundary,
+        int messageId,
+        AssistantMessagePriority priority,
+        string text,
+        byte requiresNarration)
+    {
+        DynamicBuffer<AssistantMessageElement> messages =
+            _entityManager.GetBuffer<AssistantMessageElement>(boundary);
+        messages.Add(new AssistantMessageElement
+        {
+            MessageId = messageId,
+            SourceVersion = messageId,
+            Priority = priority,
+            RelatedKind = AssistantRecommendationKind.Explain,
+            SuppressionKey = new FixedString64Bytes($"test.{messageId}"),
+            Text = new FixedString128Bytes(text),
+            AudioEventId = new FixedString64Bytes($"aria.{messageId}"),
+            RequiresNarration = requiresNarration,
+            Acknowledged = 0
+        });
+    }
+
+    private static UiMatchHudStatusSurfacesComponent DefaultStatus()
+    {
+        return new UiMatchHudStatusSurfacesComponent
+        {
+            ObjectivesTitle = new FixedString32Bytes("OBJECTIVES"),
+            Objective0Text = new FixedString64Bytes("Neutralize hostile patrol"),
+            Objective1Text = new FixedString64Bytes("Protect civilians"),
+            Objective2Text = new FixedString64Bytes("Keep losses low"),
+            Objective0IconKind = UiMatchHudObjectiveIconKind.Unchecked,
+            Objective1IconKind = UiMatchHudObjectiveIconKind.Checked,
+            Objective2IconKind = UiMatchHudObjectiveIconKind.Star,
+            ElapsedText = new FixedString32Bytes("00:30")
+        };
+    }
+}

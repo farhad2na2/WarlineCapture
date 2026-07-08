@@ -82,6 +82,7 @@ public sealed class AudioRequestSystemTests
         AudioSettingsComponent settings = _entityManager.GetComponentData<AudioSettingsComponent>(audioEntity);
         Assert.AreEqual(1f, settings.MasterVolume);
         Assert.AreEqual(0.75f, settings.MusicVolume);
+        Assert.AreEqual(1, settings.MusicMuted);
     }
 
     [Test]

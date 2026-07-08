@@ -111,6 +111,7 @@ public sealed class AudioSettingsUiProjectionTests
         Assert.AreEqual(8u, projected.Version);
         Assert.AreEqual(0.25f, projected.MasterVolume);
         Assert.AreEqual(0.5f, projected.MusicVolume);
+        Assert.AreEqual(1, projected.MusicMuted);
         Assert.AreEqual(0.75f, projected.SfxVolume);
         Assert.AreEqual(0.75f, projected.UiVolume);
         Assert.AreEqual(1f, projected.AlertsVolume);
@@ -136,6 +137,7 @@ public sealed class AudioSettingsUiProjectionTests
 
         Assert.AreEqual(0.4f, settings.MasterVolume);
         Assert.AreEqual(0.2f, settings.MusicVolume);
+        Assert.AreEqual(1, settings.MusicMuted);
         Assert.AreEqual(0.7f, settings.SfxVolume);
         Assert.AreEqual(0.3f, settings.AlertsVolume);
         Assert.AreEqual(0.6f, settings.VoiceVolume);

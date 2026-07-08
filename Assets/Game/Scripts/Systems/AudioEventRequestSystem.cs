@@ -123,6 +123,7 @@ namespace Game.Runtime
                 SfxVolume = 1f,
                 AlertsVolume = 1f,
                 MusicVolume = 0.75f,
+                MusicMuted = 1,
                 AmbienceVolume = 0.75f,
                 VoiceVolume = 1f
             };

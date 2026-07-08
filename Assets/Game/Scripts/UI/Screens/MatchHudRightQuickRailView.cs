@@ -158,6 +158,7 @@ namespace Game.UI.Runtime
 
         private void TriggerBuildCommand()
         {
+            EmitButtonClickAudio();
             _selectionUiCommandSystem?.CaptureUiClickSequence();
 
             if (_buildCommandClicked != null)
@@ -173,6 +174,7 @@ namespace Game.UI.Runtime
 
         private void OnZoomInButtonClicked()
         {
+            EmitButtonClickAudio();
             _selectionUiCommandSystem?.CaptureUiClickSequence();
             _zoomInClicked?.Invoke();
             RefreshZoomControls();
@@ -180,9 +182,15 @@ namespace Game.UI.Runtime
 
         private void OnZoomOutButtonClicked()
         {
+            EmitButtonClickAudio();
             _selectionUiCommandSystem?.CaptureUiClickSequence();
             _zoomOutClicked?.Invoke();
             RefreshZoomControls();
+        }
+
+        private static void EmitButtonClickAudio()
+        {
+            UIAudioEventGateway.Raise(UIAudioEventKind.ButtonPrimaryClick);
         }
 
         private void InstallBuildButtonListener()

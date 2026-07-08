@@ -309,13 +309,18 @@ namespace Game.UI.Runtime
 
             private void OnCommandTabRuntimeClick(Button button, bool scanAlias)
             {
-                CaptureCommandUiClick();
                 if (scanAlias)
+                {
                     OnScanButtonClicked();
+                    return;
+                }
+
+                CaptureCommandUiClick();
             }
 
             private void CaptureCommandUiClick()
             {
+                UIAudioEventGateway.Raise(UIAudioEventKind.ButtonPrimaryClick);
                 _captureGameplayUiClick?.Invoke();
             }
 

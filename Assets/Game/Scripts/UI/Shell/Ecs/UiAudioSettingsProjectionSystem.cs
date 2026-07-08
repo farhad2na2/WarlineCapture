@@ -37,6 +37,7 @@ namespace Game.UI.Shell.Ecs
                 SfxVolume = NormalizePercent(model.Audio.SfxVolume),
                 AlertsVolume = NormalizePercent(model.Audio.AlertsVolume),
                 MusicVolume = NormalizePercent(model.Audio.MusicVolume),
+                MusicMuted = 1,
                 AmbienceVolume = NormalizePercent(model.Audio.SfxVolume),
                 VoiceVolume = NormalizePercent(model.Audio.VoiceVolume)
             };

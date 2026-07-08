@@ -97,4 +97,53 @@ public sealed class MatchHudSquadTrayQuickSelectTests
             Assert.NotNull(card.FindPropertyRelative("PortraitImage").objectReferenceValue, $"Card {i + 1} portrait reference is required.");
         }
     }
+
+    [Test]
+    public void MatchHudSquadTrayCardClick_EmitsPrimaryClickAudio()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(MatchHudContentPrefabPath);
+        Assert.NotNull(prefab);
+
+        GameObject instance = Object.Instantiate(prefab);
+        try
+        {
+            Transform frame = instance.transform.Find("FooterContent/SquadTray/Frame");
+            Assert.NotNull(frame);
+
+            MatchHudSquadTrayView view = frame.GetComponent<MatchHudSquadTrayView>();
+            Assert.NotNull(view, "The squad tray frame must own MatchHudSquadTrayView.");
+
+            SerializedObject serialized = new(view);
+            SerializedProperty cards = serialized.FindProperty("cards");
+            Assert.NotNull(cards);
+            Button button = cards.GetArrayElementAtIndex(0).FindPropertyRelative("Button").objectReferenceValue as Button;
+            Assert.NotNull(button, "Squad card 1 button reference is required.");
+
+            int eventCount = 0;
+            UIAudioEventKind lastKind = UIAudioEventKind.None;
+            void Capture(UIAudioEventRequest request)
+            {
+                eventCount++;
+                lastKind = request.Kind;
+            }
+
+            view.Bind(_ => { });
+            UIAudioEventGateway.AudioEventRequested += Capture;
+            try
+            {
+                button.onClick.Invoke();
+            }
+            finally
+            {
+                UIAudioEventGateway.AudioEventRequested -= Capture;
+            }
+
+            Assert.AreEqual(1, eventCount);
+            Assert.AreEqual(UIAudioEventKind.ButtonPrimaryClick, lastKind);
+        }
+        finally
+        {
+            Object.DestroyImmediate(instance);
+        }
+    }
 }

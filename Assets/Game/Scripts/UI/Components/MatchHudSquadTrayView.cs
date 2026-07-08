@@ -128,7 +128,7 @@ namespace Game.UI.Runtime
                     continue;
 
                 int index = i;
-                card.Button.onClick.AddListener(() => _cardClicked?.Invoke(ToSlot(index)));
+                card.Button.onClick.AddListener(() => OnCardClicked(index));
             }
         }
 
@@ -226,6 +226,12 @@ namespace Game.UI.Runtime
 
             card = cards[index];
             return card != null;
+        }
+
+        private void OnCardClicked(int index)
+        {
+            UIAudioEventGateway.Raise(UIAudioEventKind.ButtonPrimaryClick);
+            _cardClicked?.Invoke(ToSlot(index));
         }
 
         private static void SetImageSprite(Image image, Sprite sprite)

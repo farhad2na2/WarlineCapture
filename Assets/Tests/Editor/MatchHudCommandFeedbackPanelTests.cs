@@ -28,10 +28,11 @@ public sealed class MatchHudCommandFeedbackPanelTests
             RunValidationStep(nameof(RuntimeFeedbackSystem_BoardErrorRestoresBoardPromptAndActions), tests => tests.RuntimeFeedbackSystem_BoardErrorRestoresBoardPromptAndActions());
             RunValidationStep(nameof(RuntimeFeedbackSystem_BoardSuccessClearsPromptFallbackAndAutoHides), tests => tests.RuntimeFeedbackSystem_BoardSuccessClearsPromptFallbackAndAutoHides());
             RunValidationStep(nameof(SelectButtonClick_QueuesRequestAndFeedbackClearsBoardActions), tests => tests.SelectButtonClick_QueuesRequestAndFeedbackClearsBoardActions());
+            RunValidationStep(nameof(CommandButtons_EmitPrimaryClickAudio), tests => tests.CommandButtons_EmitPrimaryClickAudio());
             RunValidationStep(nameof(HoldStopScanButtons_WhenNoSelectionShowRecommendedFeedback), tests => tests.HoldStopScanButtons_WhenNoSelectionShowRecommendedFeedback());
             RunValidationStep(nameof(ScanButtonClick_WhenReadModelRejectsShowsFeedbackWithoutQueueing), tests => tests.ScanButtonClick_WhenReadModelRejectsShowsFeedbackWithoutQueueing());
             RunValidationStep(nameof(MatchHudContentPrefab_UpdatesActualFeedbackIconForMessageSeverity), tests => tests.MatchHudContentPrefab_UpdatesActualFeedbackIconForMessageSeverity());
-            Debug.Log("[MatchHudCommandFeedbackValidation] result=Passed tests=14");
+            Debug.Log("[MatchHudCommandFeedbackValidation] result=Passed tests=15");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -479,6 +480,72 @@ public sealed class MatchHudCommandFeedbackPanelTests
     }
 
     [Test]
+    public void CommandButtons_EmitPrimaryClickAudio()
+    {
+        _root = new GameObject("CommandButtonAudioBoundary");
+        var controlsObject = new GameObject("Controls");
+        controlsObject.transform.SetParent(_root.transform);
+
+        var controls = controlsObject.AddComponent<MatchOverlayCommandControlsView>();
+        Button selectButton = CreateChildButton(controlsObject.transform, "SelectButton");
+        Button moveButton = CreateChildButton(controlsObject.transform, "MoveButton");
+        Button attackButton = CreateChildButton(controlsObject.transform, "AttackButton");
+        Button scanButton = CreateChildButton(controlsObject.transform, "ScanButton");
+        Button boardButton = CreateChildButton(controlsObject.transform, "BoardButton");
+        Button buildButton = CreateChildButton(controlsObject.transform, "BuildButton");
+        Button holdButton = CreateChildButton(controlsObject.transform, "HoldButton");
+        Button stopButton = CreateChildButton(controlsObject.transform, "StopButton");
+
+        SetPrivateField(controls, "selectButton", selectButton);
+        SetPrivateField(controls, "moveButton", moveButton);
+        SetPrivateField(controls, "attackButton", attackButton);
+        SetPrivateField(controls, "scanButton", scanButton);
+        SetPrivateField(controls, "boardButton", boardButton);
+        SetPrivateField(controls, "buildButton", buildButton);
+        SetPrivateField(controls, "holdButton", holdButton);
+        SetPrivateField(controls, "stopButton", stopButton);
+
+        var commandSink = new RecordingSelectionUiCommand();
+        var inputSystem = new MatchOverlayCommandInputUiSystemHelper();
+        inputSystem.Bind(controls, commandSink);
+
+        int eventCount = 0;
+        UIAudioEventKind lastKind = UIAudioEventKind.None;
+        void Capture(UIAudioEventRequest request)
+        {
+            eventCount++;
+            lastKind = request.Kind;
+        }
+
+        UIAudioEventGateway.AudioEventRequested += Capture;
+        try
+        {
+            Button[] buttons =
+            {
+                selectButton,
+                moveButton,
+                attackButton,
+                scanButton,
+                boardButton,
+                buildButton,
+                holdButton,
+                stopButton
+            };
+
+            for (int i = 0; i < buttons.Length; i++)
+            {
+                buttons[i].onClick.Invoke();
+                Assert.AreEqual(i + 1, eventCount, $"{buttons[i].name} must emit one primary click audio event.");
+                Assert.AreEqual(UIAudioEventKind.ButtonPrimaryClick, lastKind);
+            }
+        }
+        finally
+        {
+            UIAudioEventGateway.AudioEventRequested -= Capture;
+        }
+    }
+
+    [Test]
     public void HoldStopScanButtons_WhenNoSelectionShowRecommendedFeedback()
     {
         _root = new GameObject("NoSelectionCommandFeedbackBoundary");
@@ -620,6 +687,13 @@ public sealed class MatchHudCommandFeedbackPanelTests
         Button button = child.GetComponent<Button>();
         Assert.NotNull(button, $"Missing Button component at {path}.");
         return button;
+    }
+
+    private static Button CreateChildButton(Transform parent, string name)
+    {
+        var buttonObject = new GameObject(name);
+        buttonObject.transform.SetParent(parent);
+        return buttonObject.AddComponent<Button>();
     }
 
     private BattleHudRuntimeFeedbackView CreateFeedbackView(out GameObject panel, out TMP_Text text)

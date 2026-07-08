@@ -34,9 +34,10 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
             RunValidationStep(nameof(MatchHudSelectionPanelCameraButtonHoverAndPressUseSpriteSwapStates), tests => tests.MatchHudSelectionPanelCameraButtonHoverAndPressUseSpriteSwapStates());
             RunValidationStep(nameof(MatchHudRightQuickRailZoomButtonsUseSpriteSwapStates), tests => tests.MatchHudRightQuickRailZoomButtonsUseSpriteSwapStates());
             RunValidationStep(nameof(MatchHudRightQuickRailZoomButtonsApplyStepState), tests => tests.MatchHudRightQuickRailZoomButtonsApplyStepState());
+            RunValidationStep(nameof(MatchHudRightQuickRailButtonsEmitPrimaryClickAudio), tests => tests.MatchHudRightQuickRailButtonsEmitPrimaryClickAudio());
             RunValidationStep(nameof(MatchHudThreatJumpPanelBindsTitleAndAutoHides), tests => tests.MatchHudThreatJumpPanelBindsTitleAndAutoHides());
             RunValidationStep(nameof(LegacySupportCommandTabRoutesToScanCommandMode), tests => tests.LegacySupportCommandTabRoutesToScanCommandMode());
-            Debug.Log("[MatchHudCommandControlsCurrentPrefabValidation] result=Passed tests=13");
+            Debug.Log("[MatchHudCommandControlsCurrentPrefabValidation] result=Passed tests=14");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -373,6 +374,50 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
 
         rail.ZoomOutButton.onClick.Invoke();
         Assert.AreEqual(1, zoomOutClicks, "ZoomOutButton click should route through the rail callback.");
+    }
+
+    [Test]
+    public void MatchHudRightQuickRailButtonsEmitPrimaryClickAudio()
+    {
+        MatchHudRightQuickRailView rail = _instance.GetComponentInChildren<MatchHudRightQuickRailView>(true);
+        Assert.NotNull(rail, "SCN08_MatchHudContent must expose MatchHudRightQuickRailView.");
+        Assert.NotNull(rail.BuildButton, "Right quick rail Build button must be serialized.");
+        Assert.NotNull(rail.ZoomInButton, "Right quick rail ZoomIn button must resolve.");
+        Assert.NotNull(rail.ZoomOutButton, "Right quick rail ZoomOut button must resolve.");
+
+        MatchHudZoomControlState state = MatchHudZoomControlState.Default;
+        rail.BindBuildCommand(() => { }, null);
+        rail.BindZoomControls(() => { }, () => { }, () => state);
+
+        int eventCount = 0;
+        UIAudioEventKind lastKind = UIAudioEventKind.None;
+        void Capture(UIAudioEventRequest request)
+        {
+            eventCount++;
+            lastKind = request.Kind;
+        }
+
+        UIAudioEventGateway.AudioEventRequested += Capture;
+        try
+        {
+            Button[] buttons =
+            {
+                rail.BuildButton,
+                rail.ZoomInButton,
+                rail.ZoomOutButton
+            };
+
+            for (int i = 0; i < buttons.Length; i++)
+            {
+                buttons[i].onClick.Invoke();
+                Assert.AreEqual(i + 1, eventCount, $"{buttons[i].name} must emit one primary click audio event.");
+                Assert.AreEqual(UIAudioEventKind.ButtonPrimaryClick, lastKind);
+            }
+        }
+        finally
+        {
+            UIAudioEventGateway.AudioEventRequested -= Capture;
+        }
     }
 
     [Test]

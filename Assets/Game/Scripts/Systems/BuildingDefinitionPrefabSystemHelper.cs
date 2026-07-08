@@ -37,6 +37,21 @@ namespace Game.Runtime
             public int RefugeeUpkeepPerCitizenPerDay;
             public ThreatDetectionKind ThreatDetectionKind;
             public int ThreatDetectionRadiusCells;
+            public bool CanAttack;
+            public int MaxConcurrentAttacks;
+            public float AttackRange;
+            public float AttackCooldownSeconds;
+            public int AttackDamage;
+            public GameObject AttackImpactPrefab;
+            public GameObject MuzzleFlashPrefab;
+            public float MuzzleFlashHeightOffset;
+            public float MuzzleFlashForwardOffset;
+            public Color AttackTraceColor;
+            public float AttackTraceWidth;
+            public float AttackTraceScrollSpeed;
+            public float AttackTraceDashDensity;
+            public float AttackTraceVisibleSeconds;
+            public int AttackTracerEveryNthShot;
             public GameObject[] ProductionSpawnUnitPrefabs;
         }
 
@@ -392,6 +407,23 @@ namespace Game.Runtime
                 FuelStorageCapacity = metadata.HasDefinitionMetadata ? Mathf.Max(0, metadata.DefinitionMetadata.FuelStorageCapacity) : 0,
                 RefugeeCapacity = metadata.HasDefinitionMetadata ? Mathf.Max(0, metadata.DefinitionMetadata.RefugeeCapacity) : 0,
                 RefugeeUpkeepPerCitizenPerDay = metadata.HasDefinitionMetadata ? Mathf.Max(0, metadata.DefinitionMetadata.RefugeeUpkeepPerCitizenPerDay) : 0,
+                ThreatDetectionKind = metadata.HasDefinitionMetadata ? metadata.DefinitionMetadata.ThreatDetectionKind : ThreatDetectionKind.None,
+                ThreatDetectionRadiusCells = metadata.HasDefinitionMetadata ? Mathf.Max(0, metadata.DefinitionMetadata.ThreatDetectionRadiusCells) : 0,
+                CanAttack = metadata.HasDefinitionMetadata && metadata.DefinitionMetadata.CanAttack,
+                MaxConcurrentAttacks = metadata.HasDefinitionMetadata ? Mathf.Max(1, metadata.DefinitionMetadata.MaxConcurrentAttacks) : 1,
+                AttackRange = metadata.HasDefinitionMetadata ? Mathf.Max(0f, metadata.DefinitionMetadata.AttackRange) : 0f,
+                AttackCooldownSeconds = metadata.HasDefinitionMetadata ? Mathf.Max(0.01f, metadata.DefinitionMetadata.AttackCooldownSeconds) : 1f,
+                AttackDamage = metadata.HasDefinitionMetadata ? Mathf.Max(0, metadata.DefinitionMetadata.AttackDamage) : 0,
+                AttackImpactPrefab = metadata.HasDefinitionMetadata ? metadata.DefinitionMetadata.AttackImpactPrefab : null,
+                MuzzleFlashPrefab = metadata.HasDefinitionMetadata ? metadata.DefinitionMetadata.MuzzleFlashPrefab : null,
+                MuzzleFlashHeightOffset = metadata.HasDefinitionMetadata ? Mathf.Max(0f, metadata.DefinitionMetadata.MuzzleFlashHeightOffset) : 0.95f,
+                MuzzleFlashForwardOffset = metadata.HasDefinitionMetadata ? Mathf.Max(0f, metadata.DefinitionMetadata.MuzzleFlashForwardOffset) : 0.5f,
+                AttackTraceColor = metadata.HasDefinitionMetadata ? metadata.DefinitionMetadata.AttackTraceColor : new Color(1f, 0.62f, 0.25f, 1f),
+                AttackTraceWidth = metadata.HasDefinitionMetadata ? Mathf.Max(0.01f, metadata.DefinitionMetadata.AttackTraceWidth) : 0.14f,
+                AttackTraceScrollSpeed = metadata.HasDefinitionMetadata ? Mathf.Max(0.1f, metadata.DefinitionMetadata.AttackTraceScrollSpeed) : 24f,
+                AttackTraceDashDensity = metadata.HasDefinitionMetadata ? Mathf.Max(1f, metadata.DefinitionMetadata.AttackTraceDashDensity) : 4f,
+                AttackTraceVisibleSeconds = metadata.HasDefinitionMetadata ? Mathf.Max(0.01f, metadata.DefinitionMetadata.AttackTraceVisibleSeconds) : 0.1f,
+                AttackTracerEveryNthShot = metadata.HasDefinitionMetadata ? Mathf.Max(1, metadata.DefinitionMetadata.AttackTracerEveryNthShot) : 3,
                 LocalBounds = metadata.LocalBounds,
                 HasLocalBounds = metadata.HasLocalBounds,
                 ProductionSpawnLocalPositions = BuildProductionSpawnLocalPositions(
@@ -457,6 +489,21 @@ namespace Game.Runtime
                 RefugeeUpkeepPerCitizenPerDay = hasMetadata ? Mathf.Max(0, metadata.RefugeeUpkeepPerCitizenPerDay) : 0,
                 ThreatDetectionKind = hasMetadata ? metadata.ThreatDetectionKind : ThreatDetectionKind.None,
                 ThreatDetectionRadiusCells = hasMetadata ? Mathf.Max(0, metadata.ThreatDetectionRadiusCells) : 0,
+                CanAttack = hasMetadata && metadata.CanAttack,
+                MaxConcurrentAttacks = hasMetadata ? Mathf.Max(1, metadata.MaxConcurrentAttacks) : 1,
+                AttackRange = hasMetadata ? Mathf.Max(0f, metadata.AttackRange) : 0f,
+                AttackCooldownSeconds = hasMetadata ? Mathf.Max(0.01f, metadata.AttackCooldownSeconds) : 1f,
+                AttackDamage = hasMetadata ? Mathf.Max(0, metadata.AttackDamage) : 0,
+                AttackImpactPrefab = hasMetadata ? metadata.AttackImpactPrefab : null,
+                MuzzleFlashPrefab = hasMetadata ? metadata.MuzzleFlashPrefab : null,
+                MuzzleFlashHeightOffset = hasMetadata ? Mathf.Max(0f, metadata.MuzzleFlashHeightOffset) : 0.95f,
+                MuzzleFlashForwardOffset = hasMetadata ? Mathf.Max(0f, metadata.MuzzleFlashForwardOffset) : 0.5f,
+                AttackTraceColor = hasMetadata ? metadata.AttackTraceColor : new Color(1f, 0.62f, 0.25f, 1f),
+                AttackTraceWidth = hasMetadata ? Mathf.Max(0.01f, metadata.AttackTraceWidth) : 0.14f,
+                AttackTraceScrollSpeed = hasMetadata ? Mathf.Max(0.1f, metadata.AttackTraceScrollSpeed) : 24f,
+                AttackTraceDashDensity = hasMetadata ? Mathf.Max(1f, metadata.AttackTraceDashDensity) : 4f,
+                AttackTraceVisibleSeconds = hasMetadata ? Mathf.Max(0.01f, metadata.AttackTraceVisibleSeconds) : 0.1f,
+                AttackTracerEveryNthShot = hasMetadata ? Mathf.Max(1, metadata.AttackTracerEveryNthShot) : 3,
                 LocalBounds = localBounds,
                 HasLocalBounds = hasLocalBounds,
                 ProductionSpawnLocalPositions = BuildProductionSpawnLocalPositions(

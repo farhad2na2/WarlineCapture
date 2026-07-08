@@ -148,6 +148,7 @@ namespace Game.Runtime
                 });
                 AddAirDefenseSupportProvider(em, entity, definition.ThreatDetectionKind, definition.ThreatDetectionRadiusCells);
             }
+            AddBuildingDefenseWeapon(em, entity, definition);
             em.AddComponentData(entity, new UnitPrevWorldPos { Value = center });
             em.AddComponentData(entity, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 0f });
             em.AddComponentData(entity, new UnitAnimationSettings
@@ -156,6 +157,86 @@ namespace Game.Runtime
                 DeathAnimationSeconds = 0.01f
             });
             return entity;
+        }
+
+        private static void AddBuildingDefenseWeapon(EntityManager em, Entity entity, BuildingDefinition definition)
+        {
+            if (definition == null ||
+                !definition.CanAttack ||
+                definition.AttackRange <= 0f ||
+                definition.AttackDamage <= 0)
+            {
+                return;
+            }
+
+            Color traceColor = definition.AttackTraceColor;
+            var attack = new UnitAttack
+            {
+                Range = Mathf.Max(0f, definition.AttackRange),
+                CooldownSeconds = Mathf.Max(0.01f, definition.AttackCooldownSeconds),
+                Damage = Mathf.Max(0, definition.AttackDamage),
+                TraceColor = new float4(traceColor.r, traceColor.g, traceColor.b, traceColor.a),
+                TraceWidth = Mathf.Max(0.01f, definition.AttackTraceWidth),
+                TraceScrollSpeed = Mathf.Max(0.1f, definition.AttackTraceScrollSpeed),
+                TraceDashDensity = Mathf.Max(1f, definition.AttackTraceDashDensity),
+                TraceVisibleSeconds = Mathf.Max(0.01f, definition.AttackTraceVisibleSeconds),
+                TracerEveryNthShot = Mathf.Max(1, definition.AttackTracerEveryNthShot)
+            };
+
+            em.AddComponentData(entity, new BuildingDefenseWeapon
+            {
+                Range = attack.Range,
+                CooldownSeconds = attack.CooldownSeconds,
+                Damage = attack.Damage,
+                MaxConcurrentAttacks = (byte)Mathf.Clamp(definition.MaxConcurrentAttacks, 1, 4),
+                TraceColor = attack.TraceColor,
+                TraceWidth = attack.TraceWidth,
+                TraceScrollSpeed = attack.TraceScrollSpeed,
+                TraceDashDensity = attack.TraceDashDensity,
+                TraceVisibleSeconds = attack.TraceVisibleSeconds,
+                TracerEveryNthShot = attack.TracerEveryNthShot
+            });
+            em.AddComponentData(entity, attack);
+            em.AddComponentData(entity, new UnitAttackTraceComponent { TimeRemaining = 0f, Phase = 0f });
+            int slotCount = Mathf.Clamp(definition.MaxConcurrentAttacks, 1, 4);
+            if (slotCount > 1)
+            {
+                em.AddComponentData(entity, new UnitAttackTraceOriginPattern
+                {
+                    OriginCount = (byte)slotCount,
+                    LateralOffset = 0.8f,
+                    TargetLateralOffset = 0.2f
+                });
+            }
+
+            DynamicBuffer<BuildingDefenseAttackSlot> slots = em.AddBuffer<BuildingDefenseAttackSlot>(entity);
+            for (int i = 0; i < slotCount; i++)
+            {
+                slots.Add(new BuildingDefenseAttackSlot
+                {
+                    Target = Entity.Null,
+                    CooldownRemaining = 0f,
+                    ShotCounter = 0
+                });
+            }
+
+            if (definition.AttackImpactPrefab != null)
+            {
+                em.AddComponentData(entity, new UnitAttackImpactVfxReference
+                {
+                    Prefab = definition.AttackImpactPrefab
+                });
+            }
+
+            if (definition.MuzzleFlashPrefab != null)
+            {
+                em.AddComponentData(entity, new UnitMuzzleFlashVfxReference
+                {
+                    Prefab = definition.MuzzleFlashPrefab,
+                    HeightOffset = Mathf.Max(0f, definition.MuzzleFlashHeightOffset),
+                    ForwardOffset = Mathf.Max(0f, definition.MuzzleFlashForwardOffset)
+                });
+            }
         }
 
         private static void AddResourceStorageComponent(

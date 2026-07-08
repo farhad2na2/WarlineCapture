@@ -41,6 +41,21 @@ namespace Game.Composition
                 RefugeeUpkeepPerCitizenPerDay = authoring.ConfiguredRefugeeUpkeepPerCitizenPerDay,
                 ThreatDetectionKind = authoring.ConfiguredThreatDetectionKind,
                 ThreatDetectionRadiusCells = authoring.ConfiguredThreatDetectionRadiusCells,
+                CanAttack = authoring.ConfiguredCanAttack,
+                MaxConcurrentAttacks = authoring.ConfiguredMaxConcurrentAttacks,
+                AttackRange = authoring.ConfiguredAttackRange,
+                AttackCooldownSeconds = authoring.ConfiguredAttackCooldownSeconds,
+                AttackDamage = authoring.ConfiguredAttackDamage,
+                AttackImpactPrefab = authoring.ConfiguredAttackImpactPrefab,
+                MuzzleFlashPrefab = authoring.ConfiguredMuzzleFlashPrefab,
+                MuzzleFlashHeightOffset = authoring.ConfiguredMuzzleFlashHeightOffset,
+                MuzzleFlashForwardOffset = authoring.ConfiguredMuzzleFlashForwardOffset,
+                AttackTraceColor = authoring.ConfiguredAttackTraceColor,
+                AttackTraceWidth = authoring.ConfiguredAttackTraceWidth,
+                AttackTraceScrollSpeed = authoring.ConfiguredAttackTraceScrollSpeed,
+                AttackTraceDashDensity = authoring.ConfiguredAttackTraceDashDensity,
+                AttackTraceVisibleSeconds = authoring.ConfiguredAttackTraceVisibleSeconds,
+                AttackTracerEveryNthShot = authoring.ConfiguredAttackTracerEveryNthShot,
                 ProductionSpawnUnitPrefabs = productionPrefabs
             };
             return true;

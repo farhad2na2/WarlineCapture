@@ -32,5 +32,20 @@ MonoBehaviour:
   refugeeUpkeepPerCitizenPerDay: 0
   threatDetectionKind: 0
   threatDetectionRadiusCells: 0
+  canAttack: 1
+  maxConcurrentAttacks: 4
+  attackRange: 100
+  attackCooldownSeconds: 0.3
+  attackDamage: 10
+  attackImpactPrefab: {fileID: 4211309594880850807, guid: bb48c0739f28e4c928e1733f7f54ca39, type: 3}
+  muzzleFlashPrefab: {fileID: 6487102725361823017, guid: c832329c4cbe94ca7870bed4da70360d, type: 3}
+  muzzleFlashHeightOffset: 6.5
+  muzzleFlashForwardOffset: 0.5
+  attackTraceColor: {r: 1, g: 0.62, b: 0.25, a: 1}
+  attackTraceWidth: 0.14
+  attackTraceScrollSpeed: 24
+  attackTraceDashDensity: 4
+  attackTraceVisibleSeconds: 0.1
+  attackTracerEveryNthShot: 3
   destroyedVisualPrefab: {fileID: 6636576347512447236, guid: 66a13eabfd2174582bc41301b23f1a58, type: 3}
   productions: []

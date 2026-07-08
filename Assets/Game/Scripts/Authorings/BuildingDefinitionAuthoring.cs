@@ -46,6 +46,23 @@ namespace Game.Authoring
         [SerializeField, HideInInspector] private ThreatDetectionKind threatDetectionKind;
         [SerializeField, HideInInspector, Min(0)] private int threatDetectionRadiusCells;
 
+        [Header("Defense")]
+        [SerializeField, HideInInspector] private bool canAttack;
+        [SerializeField, HideInInspector, Min(1)] private int maxConcurrentAttacks = 1;
+        [SerializeField, HideInInspector, Min(0f)] private float attackRange;
+        [SerializeField, HideInInspector, Min(0.01f)] private float attackCooldownSeconds = 1f;
+        [SerializeField, HideInInspector, Min(0)] private int attackDamage;
+        [SerializeField, HideInInspector] private GameObject attackImpactPrefab;
+        [SerializeField, HideInInspector] private GameObject muzzleFlashPrefab;
+        [SerializeField, HideInInspector, Min(0f)] private float muzzleFlashHeightOffset = 0.95f;
+        [SerializeField, HideInInspector, Min(0f)] private float muzzleFlashForwardOffset = 0.5f;
+        [SerializeField, HideInInspector] private Color attackTraceColor = new(1f, 0.62f, 0.25f, 1f);
+        [SerializeField, HideInInspector, Min(0.01f)] private float attackTraceWidth = 0.14f;
+        [SerializeField, HideInInspector, Min(0.1f)] private float attackTraceScrollSpeed = 24f;
+        [SerializeField, HideInInspector, Min(1f)] private float attackTraceDashDensity = 4f;
+        [SerializeField, HideInInspector, Min(0.01f)] private float attackTraceVisibleSeconds = 0.1f;
+        [SerializeField, HideInInspector, Min(1)] private int attackTracerEveryNthShot = 3;
+
         [Header("Production")]
         [SerializeField, HideInInspector] private List<ProductionDefinition> productions = new();
         [SerializeField, HideInInspector] private bool isWall;
@@ -79,6 +96,21 @@ namespace Game.Authoring
         public int ConfiguredRefugeeUpkeepPerCitizenPerDay => refugeeUpkeepPerCitizenPerDay;
         public ThreatDetectionKind ConfiguredThreatDetectionKind => threatDetectionKind;
         public int ConfiguredThreatDetectionRadiusCells => Mathf.Max(0, threatDetectionRadiusCells);
+        public bool ConfiguredCanAttack => canAttack;
+        public int ConfiguredMaxConcurrentAttacks => Mathf.Max(1, maxConcurrentAttacks);
+        public float ConfiguredAttackRange => Mathf.Max(0f, attackRange);
+        public float ConfiguredAttackCooldownSeconds => Mathf.Max(0.01f, attackCooldownSeconds);
+        public int ConfiguredAttackDamage => Mathf.Max(0, attackDamage);
+        public GameObject ConfiguredAttackImpactPrefab => attackImpactPrefab;
+        public GameObject ConfiguredMuzzleFlashPrefab => muzzleFlashPrefab;
+        public float ConfiguredMuzzleFlashHeightOffset => Mathf.Max(0f, muzzleFlashHeightOffset);
+        public float ConfiguredMuzzleFlashForwardOffset => Mathf.Max(0f, muzzleFlashForwardOffset);
+        public Color ConfiguredAttackTraceColor => attackTraceColor;
+        public float ConfiguredAttackTraceWidth => Mathf.Max(0.01f, attackTraceWidth);
+        public float ConfiguredAttackTraceScrollSpeed => Mathf.Max(0.1f, attackTraceScrollSpeed);
+        public float ConfiguredAttackTraceDashDensity => Mathf.Max(1f, attackTraceDashDensity);
+        public float ConfiguredAttackTraceVisibleSeconds => Mathf.Max(0.01f, attackTraceVisibleSeconds);
+        public int ConfiguredAttackTracerEveryNthShot => Mathf.Max(1, attackTracerEveryNthShot);
         public int ConfiguredProductionCount => productions != null ? productions.Count : 0;
         public GameObject ConfiguredDestroyedVisualPrefab => destroyedVisualPrefab;
 
@@ -130,6 +162,21 @@ namespace Game.Authoring
             refugeeUpkeepPerCitizenPerDay = config.RefugeeUpkeepPerCitizenPerDay;
             threatDetectionKind = config.ThreatDetectionKind;
             threatDetectionRadiusCells = config.ThreatDetectionRadiusCells;
+            canAttack = config.CanAttack;
+            maxConcurrentAttacks = config.MaxConcurrentAttacks;
+            attackRange = config.AttackRange;
+            attackCooldownSeconds = config.AttackCooldownSeconds;
+            attackDamage = config.AttackDamage;
+            attackImpactPrefab = config.AttackImpactPrefab;
+            muzzleFlashPrefab = config.MuzzleFlashPrefab;
+            muzzleFlashHeightOffset = config.MuzzleFlashHeightOffset;
+            muzzleFlashForwardOffset = config.MuzzleFlashForwardOffset;
+            attackTraceColor = config.AttackTraceColor;
+            attackTraceWidth = config.AttackTraceWidth;
+            attackTraceScrollSpeed = config.AttackTraceScrollSpeed;
+            attackTraceDashDensity = config.AttackTraceDashDensity;
+            attackTraceVisibleSeconds = config.AttackTraceVisibleSeconds;
+            attackTracerEveryNthShot = config.AttackTracerEveryNthShot;
             destroyedVisualPrefab = config.DestroyedVisualPrefab;
             productions ??= new List<ProductionDefinition>();
             productions.Clear();

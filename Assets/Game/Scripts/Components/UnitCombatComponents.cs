@@ -116,6 +116,28 @@ namespace Game.Components
         public int ShotCounter;
     }
 
+    public struct BuildingDefenseWeapon : IComponentData
+    {
+        public float Range;
+        public float CooldownSeconds;
+        public int Damage;
+        public byte MaxConcurrentAttacks;
+        public float4 TraceColor;
+        public float TraceWidth;
+        public float TraceScrollSpeed;
+        public float TraceDashDensity;
+        public float TraceVisibleSeconds;
+        public int TracerEveryNthShot;
+    }
+
+    [InternalBufferCapacity(4)]
+    public struct BuildingDefenseAttackSlot : IBufferElementData
+    {
+        public Entity Target;
+        public float CooldownRemaining;
+        public int ShotCounter;
+    }
+
     public struct EngageTarget : IComponentData
     {
         public Entity Target;

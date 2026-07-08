@@ -121,7 +121,11 @@ namespace Game.Rendering
                         sourcePosition = em.GetComponentData<LocalToWorld>(turretRef.Turret).Position;
                 }
 
-                Vector3 baseStart = (Vector3)sourcePosition + new Vector3(0f, sourceHeightOffset, 0f);
+                float resolvedSourceHeightOffset = sourceHeightOffset;
+                if (em.HasComponent<UnitMuzzleFlashVfxReference>(entity))
+                    resolvedSourceHeightOffset = Mathf.Max(resolvedSourceHeightOffset, em.GetComponentData<UnitMuzzleFlashVfxReference>(entity).HeightOffset);
+
+                Vector3 baseStart = (Vector3)sourcePosition + new Vector3(0f, resolvedSourceHeightOffset, 0f);
                 Vector3 baseEnd = (Vector3)targetTransform.Position + new Vector3(0f, targetHeightOffset, 0f);
                 UnitAttackTraceOriginPattern originPattern = em.HasComponent<UnitAttackTraceOriginPattern>(entity)
                     ? em.GetComponentData<UnitAttackTraceOriginPattern>(entity)

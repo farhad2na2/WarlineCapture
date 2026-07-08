@@ -1,7 +1,7 @@
 # Resource Logistics Exchange Implementation Tracker
 
 Date: 2026-07-08
-Status: Phase 2 request validation and queue start complete
+Status: Phase 3 queue ticking, completion, cancel, and refund complete
 Design source: `../Resource_Logistics_Exchange_Design.md`
 
 ## Objective
@@ -23,7 +23,7 @@ Implement the timed Resource Logistics Exchange without drifting from WarlineCap
 
 ## Progress Summary
 
-Overall implementation progress: 33% (30/91 checklist items complete).
+Overall implementation progress: 45% (41/91 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -32,7 +32,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 0. Inventory and source alignment | Complete | 8 | 8 | 100% | Current resource data, HUD header, Build Popup, fuel logistics, save/profile fields, and economy event gaps are documented below. |
 | 1. Data model and config | Complete | 12 | 12 | 100% | Added Resource Exchange enums, ECS data, config entries, scenario gates, and config validation tests. |
 | 2. Request validation and queue start | Complete | 10 | 10 | 100% | Added ISystem request validation, ECS wallet boundary, input reservation, queue item creation, economy event row, and typed results. |
-| 3. Queue ticking, completion, cancel, refund | Not started | 0 | 11 | 0% | Timed queue, output grant once, cancel/refund rules, mission-end policy. |
+| 3. Queue ticking, completion, cancel, refund | Complete | 11 | 11 | 100% | Timed queue, output grant once, cancel/refund rules, mission-end cancel/refund policy. |
 | 4. Rush Tickets | Not started | 0 | 7 | 0% | Rush eligible jobs with ticket spend, caps, and feedback. |
 | 5. UI popup and header routing | Not started | 0 | 12 | 0% | Build-Popup-style popup, resource header tap route, cards, details, amount stepper, queue panel. |
 | 6. World presentation | Not started | 0 | 8 | 0% | Non-authoritative pooled truck/plane presentation and fallback behavior. |
@@ -119,17 +119,17 @@ Exit criteria:
 
 ## Phase 3: Queue Ticking, Completion, Cancel, And Refund
 
-- [ ] Implement queue tick using `ISystem` where practical.
-- [ ] Advance timers without managed allocation.
-- [ ] Pause or block queue items when output storage becomes invalid/full by recipe policy.
-- [ ] Complete exchange jobs exactly once.
-- [ ] Apply output resource grant on completion.
-- [ ] Emit economy event for input spend and output grant.
-- [ ] Implement cancel request path.
-- [ ] Apply refund rules based on queue state and recipe policy.
-- [ ] Handle mission end policy: complete, cancel/refund, or discard tactical-only exchange by scenario.
-- [ ] Publish versioned queue/read-model updates only when queue state changes.
-- [ ] Add deterministic edit-mode tests for complete, cancel, refund, storage-blocked, and mission-ending paths.
+- [x] Implement queue tick using `ISystem` where practical.
+- [x] Advance timers without managed allocation.
+- [x] Pause or block queue items when output storage becomes invalid/full by recipe policy.
+- [x] Complete exchange jobs exactly once.
+- [x] Apply output resource grant on completion.
+- [x] Emit economy event for input spend and output grant.
+- [x] Implement cancel request path.
+- [x] Apply refund rules based on queue state and recipe policy.
+- [x] Handle mission end policy: complete, cancel/refund, or discard tactical-only exchange by scenario.
+- [x] Publish versioned queue/read-model updates only when queue state changes.
+- [x] Add deterministic edit-mode tests for complete, cancel, refund, storage-blocked, and mission-ending paths.
 
 Exit criteria:
 
@@ -350,3 +350,36 @@ Remaining blocker or next slice:
 - Next slice is Phase 3 queue ticking, completion, cancel, and refund.
 - The `ResourceExchangeWalletComponent` is now the ECS-side exchange authority for this feature. A later UI/runtime integration slice must seed/sync it from current match resources, especially the existing `RuntimeResourceUtilitySystemHelper` tactical Credits path, before the popup is exposed in live HUD.
 - Queue completion must grant output exactly once and emit the positive output economy event row; this is intentionally not part of the Phase 2 queue-start slice.
+
+### 2026-07-08 - Phase 3 Queue Ticking, Completion, Cancel, And Refund
+
+Files changed:
+
+- `Assets/Game/Scripts/Components/ResourceExchangeComponents.cs`
+- `Assets/Game/Scripts/Systems/ResourceExchangeRequestValidationSystem.cs`
+- `Assets/Game/Scripts/Systems/ResourceExchangeQueueTickSystem.cs`
+- `Assets/Game/Scripts/Systems/ResourceExchangeQueueTickSystem.cs.meta`
+- `Assets/Tests/Editor/ResourceExchangeQueueTickSystemTests.cs`
+- `Assets/Tests/Editor/ResourceExchangeQueueTickSystemTests.cs.meta`
+- `Design/Architecture/resource_logistics_exchange_implementation_tracker.md`
+
+Behavior changed:
+
+- Added `ResourceExchangeQueueTickSystem` as an unmanaged `ISystem` that advances active queue timers, blocks jobs when output storage is unavailable, resumes blocked jobs when capacity returns, and completes jobs without managed allocation.
+- Queue completion now grants output resources exactly once, clears reserved input, appends a positive output economy event row, and publishes a typed `QueueCompleted` result.
+- Added typed cancel request intake through `ResourceExchangeRequestValidationSystem.EnqueueCancelRequest`.
+- Cancellation now applies the documented refund rule: full reserved-input refund before presentation starts and no refund after presentation has started until recipe-level partial refund policy is added.
+- Added typed mission-end cleanup through `ResourceExchangeRequestValidationSystem.EnqueueMissionEndRequest`; the current default policy cancels active jobs and applies the same refund rule while marking queue rows with `MissionEnding`.
+- Summary/read-model versions now update on queue lifecycle state changes instead of every idle tick.
+- Added focused edit-mode tests for one-time completion, storage-full blocking/resume, cancel refund, cancel no-refund after presentation, and mission-end cancellation/refund.
+
+Validation:
+
+- `git diff --check` passed.
+- `dotnet build Game.Tests.Editor.csproj --no-restore` passed with existing Unity reference conflict warnings and 0 errors.
+
+Remaining blocker or next slice:
+
+- Next slice is Phase 4 Rush Tickets.
+- The current cancel policy intentionally uses the global design default. Recipe-level partial refund rules are not implemented yet because the Phase 1 recipe data does not carry a partial-refund percentage.
+- A later UI/runtime integration slice must still bind the exchange wallet to the live match resource header before players can safely use the popup in the HUD.

@@ -65,7 +65,8 @@ namespace Game.Components
         Cancel = 1,
         Rush = 2,
         RushAll = 3,
-        ClearCompleted = 4
+        ClearCompleted = 4,
+        MissionEnd = 5
     }
 
     public enum ResourceExchangeResultKind : byte

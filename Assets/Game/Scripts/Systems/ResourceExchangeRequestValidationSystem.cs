@@ -70,6 +70,50 @@ namespace Game.Runtime
             return requestQueue.LastRequestId;
         }
 
+        public static int EnqueueCancelRequest(
+            EntityManager em,
+            Entity exchangeEntity,
+            int queueItemId,
+            byte factionId,
+            int frameCount)
+        {
+            ResourceExchangeRequestQueueComponent requestQueue =
+                em.GetComponentData<ResourceExchangeRequestQueueComponent>(exchangeEntity);
+            requestQueue.LastRequestId++;
+            em.SetComponentData(exchangeEntity, requestQueue);
+            em.GetBuffer<ResourceExchangeRequestComponent>(exchangeEntity).Add(new ResourceExchangeRequestComponent
+            {
+                RequestId = requestQueue.LastRequestId,
+                RequestKind = ResourceExchangeRequestKind.Cancel,
+                FactionId = factionId,
+                QueueItemId = queueItemId,
+                FrameCount = frameCount
+            });
+
+            return requestQueue.LastRequestId;
+        }
+
+        public static int EnqueueMissionEndRequest(
+            EntityManager em,
+            Entity exchangeEntity,
+            byte factionId,
+            int frameCount)
+        {
+            ResourceExchangeRequestQueueComponent requestQueue =
+                em.GetComponentData<ResourceExchangeRequestQueueComponent>(exchangeEntity);
+            requestQueue.LastRequestId++;
+            em.SetComponentData(exchangeEntity, requestQueue);
+            em.GetBuffer<ResourceExchangeRequestComponent>(exchangeEntity).Add(new ResourceExchangeRequestComponent
+            {
+                RequestId = requestQueue.LastRequestId,
+                RequestKind = ResourceExchangeRequestKind.MissionEnd,
+                FactionId = factionId,
+                FrameCount = frameCount
+            });
+
+            return requestQueue.LastRequestId;
+        }
+
         public static bool TryGetResult(
             EntityManager em,
             Entity exchangeEntity,
@@ -110,15 +154,42 @@ namespace Game.Runtime
             for (int i = 0; i < requests.Length; i++)
             {
                 ResourceExchangeRequestComponent request = requests[i];
-                ResourceExchangeResultComponent result = ProcessStartRequest(
-                    ref requestQueue,
-                    enabled,
-                    ref wallet,
-                    recipes,
-                    queue,
-                    economyEvents,
-                    request,
-                    elapsedSeconds);
+                ResourceExchangeResultComponent result;
+                switch (request.RequestKind)
+                {
+                    case ResourceExchangeRequestKind.Start:
+                        result = ProcessStartRequest(
+                            ref requestQueue,
+                            enabled,
+                            ref wallet,
+                            recipes,
+                            queue,
+                            economyEvents,
+                            request,
+                            elapsedSeconds);
+                        break;
+                    case ResourceExchangeRequestKind.Cancel:
+                        result = ProcessCancelRequest(
+                            enabled,
+                            ref wallet,
+                            queue,
+                            economyEvents,
+                            request,
+                            ResourceExchangeReason.None);
+                        break;
+                    case ResourceExchangeRequestKind.MissionEnd:
+                        result = ProcessMissionEndRequest(
+                            enabled,
+                            ref wallet,
+                            queue,
+                            economyEvents,
+                            request);
+                        break;
+                    default:
+                        result = Rejected(request, default, ResourceExchangeReason.InvalidRecipe);
+                        break;
+                }
+
                 results.Add(result);
                 ApplySummary(ref summary, enabled, queue, result);
             }
@@ -202,6 +273,126 @@ namespace Game.Runtime
                 OutputResource = recipe.OutputResource,
                 InputAmount = request.InputAmount,
                 OutputAmount = outputAmount
+            };
+        }
+
+        private static ResourceExchangeResultComponent ProcessCancelRequest(
+            in ResourceExchangeEnabledComponent enabled,
+            ref ResourceExchangeWalletComponent wallet,
+            DynamicBuffer<ResourceExchangeQueueComponent> queue,
+            DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
+            in ResourceExchangeRequestComponent request,
+            ResourceExchangeReason stateReason)
+        {
+            byte factionId = request.FactionId != 0 ? request.FactionId : enabled.FactionId;
+            if (enabled.FactionId != 0 && factionId != enabled.FactionId)
+                return Rejected(request, default, ResourceExchangeReason.ExchangeUnavailable);
+
+            for (int i = 0; i < queue.Length; i++)
+            {
+                ResourceExchangeQueueComponent item = queue[i];
+                if (item.QueueItemId != request.QueueItemId || item.FactionId != factionId)
+                    continue;
+
+                if (!CanCancel(item))
+                    return Rejected(request, default, ResourceExchangeReason.CancelUnavailable);
+
+                int refundAmount = CalculateRefundAmount(item);
+                if (refundAmount > 0)
+                {
+                    AddResourceAmount(ref wallet, item.InputResource, refundAmount);
+                    economyEvents.Add(new ResourceExchangeEconomyEventComponent
+                    {
+                        QueueItemId = item.QueueItemId,
+                        FactionId = item.FactionId,
+                        ResultKind = ResourceExchangeResultKind.QueueCancelled,
+                        ResourceKind = item.InputResource,
+                        Amount = refundAmount,
+                        RecipeId = item.RecipeId
+                    });
+                }
+
+                item.State = ResourceExchangeQueueState.Cancelled;
+                item.StateReason = stateReason;
+                item.RemainingSeconds = 0f;
+                item.ReservedInputAmount = 0;
+                item.Version++;
+                queue[i] = item;
+
+                return new ResourceExchangeResultComponent
+                {
+                    RequestId = request.RequestId,
+                    QueueItemId = item.QueueItemId,
+                    FactionId = factionId,
+                    ResultKind = ResourceExchangeResultKind.QueueCancelled,
+                    Accepted = 1,
+                    Reason = stateReason,
+                    RecipeId = item.RecipeId,
+                    InputResource = item.InputResource,
+                    OutputResource = item.OutputResource,
+                    InputAmount = refundAmount,
+                    OutputAmount = item.OutputAmount
+                };
+            }
+
+            return Rejected(request, default, ResourceExchangeReason.CancelUnavailable);
+        }
+
+        private static ResourceExchangeResultComponent ProcessMissionEndRequest(
+            in ResourceExchangeEnabledComponent enabled,
+            ref ResourceExchangeWalletComponent wallet,
+            DynamicBuffer<ResourceExchangeQueueComponent> queue,
+            DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
+            in ResourceExchangeRequestComponent request)
+        {
+            byte factionId = request.FactionId != 0 ? request.FactionId : enabled.FactionId;
+            if (enabled.FactionId != 0 && factionId != enabled.FactionId)
+                return Rejected(request, default, ResourceExchangeReason.ExchangeUnavailable);
+
+            int cancelledCount = 0;
+            int totalRefund = 0;
+            for (int i = 0; i < queue.Length; i++)
+            {
+                ResourceExchangeQueueComponent item = queue[i];
+                if (item.FactionId != factionId || !CanCancel(item))
+                    continue;
+
+                int refundAmount = CalculateRefundAmount(item);
+                if (refundAmount > 0)
+                {
+                    AddResourceAmount(ref wallet, item.InputResource, refundAmount);
+                    economyEvents.Add(new ResourceExchangeEconomyEventComponent
+                    {
+                        QueueItemId = item.QueueItemId,
+                        FactionId = item.FactionId,
+                        ResultKind = ResourceExchangeResultKind.QueueCancelled,
+                        ResourceKind = item.InputResource,
+                        Amount = refundAmount,
+                        RecipeId = item.RecipeId
+                    });
+                    totalRefund += refundAmount;
+                }
+
+                item.State = ResourceExchangeQueueState.Cancelled;
+                item.StateReason = ResourceExchangeReason.MissionEnding;
+                item.RemainingSeconds = 0f;
+                item.ReservedInputAmount = 0;
+                item.Version++;
+                queue[i] = item;
+                cancelledCount++;
+            }
+
+            return new ResourceExchangeResultComponent
+            {
+                RequestId = request.RequestId,
+                FactionId = factionId,
+                ResultKind = cancelledCount > 0
+                    ? ResourceExchangeResultKind.QueueCancelled
+                    : ResourceExchangeResultKind.RequestAccepted,
+                Accepted = 1,
+                Reason = ResourceExchangeReason.MissionEnding,
+                InputAmount = totalRefund,
+                OutputAmount = cancelledCount
             };
         }
 
@@ -493,6 +684,35 @@ namespace Game.Runtime
                 default:
                     return ResourceExchangeReason.InvalidResource;
             }
+        }
+
+        private static bool CanCancel(in ResourceExchangeQueueComponent item)
+        {
+            if (item.OutputApplied != 0)
+                return false;
+
+            return item.State == ResourceExchangeQueueState.Pending ||
+                   item.State == ResourceExchangeQueueState.InProgress ||
+                   item.State == ResourceExchangeQueueState.Blocked;
+        }
+
+        private static int CalculateRefundAmount(in ResourceExchangeQueueComponent item)
+        {
+            return item.PresentationStarted == 0
+                ? math.max(0, item.ReservedInputAmount)
+                : 0;
+        }
+
+        private static void AddResourceAmount(
+            ref ResourceExchangeWalletComponent wallet,
+            ResourceExchangeResourceKind resourceKind,
+            int amount)
+        {
+            if (amount <= 0)
+                return;
+
+            SetResourceAmount(ref wallet, resourceKind, GetResourceAmount(wallet, resourceKind) + amount);
+            wallet.Version++;
         }
     }
 }

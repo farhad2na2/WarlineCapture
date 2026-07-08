@@ -18,8 +18,7 @@ namespace Game.Runtime
                          recipes,
                          requests,
                          queue,
-                         results,
-                         economyEvents)
+                         exchangeEntity)
                      in SystemAPI.Query<
                          RefRW<ResourceExchangeRequestQueueComponent>,
                          RefRO<ResourceExchangeEnabledComponent>,
@@ -27,10 +26,13 @@ namespace Game.Runtime
                          RefRW<ResourceExchangeSummaryComponent>,
                          DynamicBuffer<ResourceExchangeRecipeComponent>,
                          DynamicBuffer<ResourceExchangeRequestComponent>,
-                         DynamicBuffer<ResourceExchangeQueueComponent>,
-                         DynamicBuffer<ResourceExchangeResultComponent>,
-                         DynamicBuffer<ResourceExchangeEconomyEventComponent>>())
+                         DynamicBuffer<ResourceExchangeQueueComponent>>()
+                         .WithEntityAccess())
             {
+                DynamicBuffer<ResourceExchangeResultComponent> results =
+                    SystemAPI.GetBuffer<ResourceExchangeResultComponent>(exchangeEntity);
+                DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents =
+                    SystemAPI.GetBuffer<ResourceExchangeEconomyEventComponent>(exchangeEntity);
                 ProcessRequests(
                     ref requestQueue.ValueRW,
                     enabled.ValueRO,

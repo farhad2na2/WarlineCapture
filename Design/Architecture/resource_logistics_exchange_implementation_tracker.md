@@ -1,7 +1,7 @@
 # Resource Logistics Exchange Implementation Tracker
 
 Date: 2026-07-08
-Status: Not started
+Status: Phase 0 inventory complete
 Design source: `../Resource_Logistics_Exchange_Design.md`
 
 ## Objective
@@ -23,13 +23,13 @@ Implement the timed Resource Logistics Exchange without drifting from WarlineCap
 
 ## Progress Summary
 
-Overall implementation progress: 0% (0/91 checklist items complete).
+Overall implementation progress: 9% (8/91 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
 | Phase | Status | Complete | Total | Progress | Notes |
 |---|---|---:|---:|---:|---|
-| 0. Inventory and source alignment | Not started | 0 | 8 | 0% | Confirm current resource data, HUD header, Build Popup, fuel logistics, save/profile fields, and economy event paths. |
+| 0. Inventory and source alignment | Complete | 8 | 8 | 100% | Current resource data, HUD header, Build Popup, fuel logistics, save/profile fields, and economy event gaps are documented below. |
 | 1. Data model and config | Not started | 0 | 12 | 0% | Add recipe/config data, ECS request/queue/result data, states, reason codes, and scenario gates. |
 | 2. Request validation and queue start | Not started | 0 | 10 | 0% | Validate affordability, caps, storage, queue slots, and spend/reserve input at confirmation. |
 | 3. Queue ticking, completion, cancel, refund | Not started | 0 | 11 | 0% | Timed queue, output grant once, cancel/refund rules, mission-end policy. |
@@ -42,20 +42,40 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 
 ## Phase 0: Inventory And Source Alignment
 
-- [ ] Inventory current player/account resource fields in save/profile data.
-- [ ] Inventory current tactical resource components and Faction resource mutation paths.
-- [ ] Inventory current Oil/Fuel logistics data from fuel automation and field logistics systems.
-- [ ] Inventory current Match HUD resource header view, tap/click handling, and UI bridge ownership.
-- [ ] Inventory current Build Popup/Build Drawer prefab hierarchy, sprites, tabs, cards, details, and queue row conventions.
-- [ ] Inventory current Rush Ticket data, production queue rush implementation, and audio/feedback events.
-- [ ] Identify existing economy event/log/report path or define required new event boundary.
-- [ ] Document exact implementation files expected to change before coding begins.
+- [x] Inventory current player/account resource fields in save/profile data.
+- [x] Inventory current tactical resource components and Faction resource mutation paths.
+- [x] Inventory current Oil/Fuel logistics data from fuel automation and field logistics systems.
+- [x] Inventory current Match HUD resource header view, tap/click handling, and UI bridge ownership.
+- [x] Inventory current Build Popup/Build Drawer prefab hierarchy, sprites, tabs, cards, details, and queue row conventions.
+- [x] Inventory current Rush Ticket data, production queue rush implementation, and audio/feedback events.
+- [x] Identify existing economy event/log/report path or define required new event boundary.
+- [x] Document exact implementation files expected to change before coding begins.
 
 Exit criteria:
 
 - Active resource ownership is known.
 - No implementation starts before the correct wallet/faction resource path is identified.
 - Any missing prerequisite is written as a blocker in this tracker.
+
+Phase 0 inventory findings:
+
+- Account/profile resources live in `Assets/Game/Scripts/Persistence/SaveDataModel.cs` on `PlayerProfileSaveData`: `credits`, `materials`, `fuel`, `intel`, `commandAuthority`, and `rushTickets`. These are persistent account resources, not automatically authoritative for active-match exchange jobs.
+- Current in-match tactical Credits are represented as runtime dollars through `Assets/Game/Scripts/Systems/RuntimeResourceUtilitySystemHelper.cs` and `Assets/Game/Scripts/Systems/CitizenResourceCompositionSystemHelper.cs`. Build placement and production spend through the existing `TrySpendDollars` delegate path, so Phase 1 must decide whether Resource Exchange uses this current match wallet directly or introduces a typed ECS Credits component/read model around the same value.
+- Tactical Oil/Fuel data exists in `Assets/Game/Scripts/Components/BuildingRuntimeEcsComponents.cs`: `ResourceKind`, `BuildingResourceStorageComponent`, `BuildingRuntimeFactionSummary`, `BuildingRuntimeFactionUsableFuelSummary`, fuel logistics tags, and `BuildingFactionResourceSellRequest`. `BuildingFactionResourceSellRequest` is an AI/economy sell request and is not sufficient for the player-facing timed exchange queue.
+- Fuel automation and field logistics mutate Oil/Fuel through building storage/reservation fields and the production/logistics helpers, including `BuildingResourceProductionSystemHelper`, `BuildingResourceProductionEcsSystem`, `FactionResourceCompositionSystemHelper`, `VehicleFuelConsumptionSystem`, and runtime fuel summary publication.
+- Match HUD resource display is owned by `UiShellEcsGateway.TryReadMatchHudHeader`, `UiMatchHudHeaderComponent`, and `MainMenuPlayUI.BindMatchHudResourceSlots` / `ApplyMatchHudHeaderResourceState`. Current code formats Credits/Fuel/Oil text, but no Resource Exchange header tap route exists yet.
+- Build Popup conventions to mirror are `BuildDrawerCatalogRuntimeView`, `BuildDrawerView`, `BuildDrawerQueueItemView`, `BuildDrawerCatalogQueryUiSystemHelper`, `UiRuntimeContracts` (`IBuildingUiCommand`, `IBuildingUiQuery`, `BuildingPendingProductionUiEntry`), and the command/result buffers in `BuildingRuntimeEcsComponents`.
+- Rush Tickets exist as persistent profile data and economy design. The Build Drawer has Rush UI/read-model fields (`RushButton`, `UiActionKind.BuildProductionRush`, `RushEnabled`), but no complete live Rush Ticket spend path was found in the implementation inventory. Resource Exchange must add its own typed rush request/result path and later integrate with a shared Rush Ticket wallet if that becomes available.
+- No central `EconomyEvent` runtime contract was found. Current balancing/reporting uses `GameRuntimeStats`, `BalanceMetrics`, and `BalanceReportWriter` for sampled economy activity. Phase 1/8 must introduce a typed Resource Exchange economy event boundary instead of only mutating resource numbers.
+
+Expected implementation file set:
+
+- New ECS data should start in a dedicated file such as `Assets/Game/Scripts/Components/ResourceExchangeComponents.cs` unless the existing component assembly requires a different local convention.
+- New config data should be added through the existing config model path, either a dedicated `ResourceExchangeRecipeConfig` asset/model or a narrowly scoped addition near `GameplayConfigModels.cs`.
+- Runtime systems should use focused `ISystem` files such as `ResourceExchangeConfigProjectionSystem`, `ResourceExchangeRequestValidationSystem`, `ResourceExchangeQueueTickSystem`, `ResourceExchangeCompletionSystem`, `ResourceExchangeCancelSystem`, and `ResourceExchangeRushSystem`.
+- UI contracts/read models should be explicit, for example `ResourceExchangeUiModels`, `ResourceExchangePopupView`, `ResourceExchangeRecipeCardView`, `ResourceExchangeQueueItemView`, and `UiResourceExchangeReadModelSystem`.
+- Header routing should extend the existing match HUD/UI shell path rather than adding a separate scene-global manager.
+- Validation should start with focused editor tests such as `ResourceExchangeConfigValidationTests`, `ResourceExchangeRequestValidationTests`, `ResourceExchangeQueueSystemTests`, `ResourceExchangeRushSystemTests`, and `ResourceExchangeUiRoutingTests`.
 
 ## Phase 1: Data Model And Config
 
@@ -246,3 +266,25 @@ Use this section during implementation. Each completed batch should add:
 - validation commands and log paths
 - profiler result when performance-sensitive
 - remaining blocker or next slice
+
+### 2026-07-08 - Phase 0 Inventory And Source Alignment
+
+Files changed:
+
+- `Design/Architecture/resource_logistics_exchange_implementation_tracker.md`
+
+Behavior changed:
+
+- Documentation-only tracker update.
+- Marked Phase 0 complete after inventorying profile resources, in-match tactical credit helpers, Oil/Fuel ECS storage, Match HUD header binding, Build Popup queue conventions, Rush Ticket implementation status, and economy reporting gaps.
+- Confirmed the first implementation slice should not mutate unrelated audio/combat work currently dirty in the workspace.
+
+Validation:
+
+- `git diff --check` passed for this documentation slice.
+
+Remaining blocker or next slice:
+
+- Next slice is Phase 1 data model/config.
+- Resource Exchange needs an explicit typed economy event boundary because no central runtime `EconomyEvent` contract was found.
+- Resource Exchange must not rely on the incomplete Build Drawer Rush button path; add typed exchange rush requests/results first, then integrate with persistent Rush Tickets or a future shared Rush Ticket wallet.

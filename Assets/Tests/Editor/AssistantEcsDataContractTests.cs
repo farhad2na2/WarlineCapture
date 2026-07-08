@@ -179,6 +179,9 @@ public sealed class AssistantEcsDataContractTests
     {
         Assert.AreEqual(0, (byte)AssistantControlState.Player);
         Assert.AreEqual(3, (byte)AssistantControlState.AssistantTakeover);
+        Assert.AreEqual(0, (byte)AssistantMessagePriority.Low);
+        Assert.AreEqual(1, (byte)AssistantMessagePriority.Normal);
+        Assert.AreEqual(2, (byte)AssistantMessagePriority.High);
         Assert.AreEqual(3, (byte)AssistantMessagePriority.Critical);
         Assert.AreEqual(2, (byte)AssistantNarrationMode.Important);
         Assert.AreEqual(5, (byte)AssistantCommandIntentStatus.TimedOut);

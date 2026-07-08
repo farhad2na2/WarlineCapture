@@ -330,7 +330,13 @@ Overall tracked completion: **96%**.
 - Runtime playback implementation: **In Progress**.
 - UI/gameplay wiring: **In Progress**.
 - Validation/performance test coverage: **In Progress**.
-- Latest stable slice: production audio replacement plan defines how placeholder clips graduate to final sourced/composed/mastered assets without code or prefab edits.
+- Latest stable slice: runtime playback blocker audit confirmed the missing bridge inputs before scene wiring work.
+
+Active blocker before 100%:
+
+- `AudioPlaybackPresentationSystemHelper` exists and is tested, but no authored `AudioEventCatalogConfig` or `AudioMixerBusConfig` asset currently references the generated clip catalog. A playback presentation system cannot safely resolve accepted ECS requests to real `AudioClip` references until those assets are generated/authored and assigned to a scene/runtime bootstrap.
+- The JSON catalog remains the data source for validation and generated constants only. It must either generate ScriptableObject catalog assets in editor tooling or be converted into authored assets before runtime playback can be smoke-tested in M01.
+- Remaining objective/result/splash/briefing/combat-intensity audio is still blocked on the gameplay/route state boundaries listed in Steps 15 and 16.
 
 Status legend:
 
@@ -474,6 +480,7 @@ Current Step 8-10 data/request/playback-helper pass:
 - Validation: `AudioEcsDataContractTests.RunFocusedValidation`, `AudioRequestSystemTests.RunFocusedValidation`
 - Latest validation: unmanaged request/result/settings/music/listener contracts, request system bootstrap/cooldown/music/settings behavior, and pooled playback helper behavior passed focused Unity validation.
 - Runtime implementation status: playback presentation helper exists; ECS-to-helper playback system wiring is still not implemented.
+- Blocker audit: no project asset currently references the `AudioEventCatalogConfig` or `AudioMixerBusConfig` ScriptableObject script GUIDs, so the runtime has no authored clip/bus asset to feed into the playback helper.
 
 Required data flow:
 
@@ -614,7 +621,7 @@ Current Step 14 match feedback pass:
 
 Remaining Step 14 work:
 
-- Manual M01 smoke once playback presentation is connected in-scene.
+- Manual M01 smoke once playback presentation is connected in-scene through authored/generated `AudioEventCatalogConfig` and `AudioMixerBusConfig` assets.
 
 ### Step 15: Alerts And Objective Audio
 

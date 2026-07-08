@@ -33,6 +33,8 @@ public sealed class TacticalFollowAttackCinematicHelperTests
             passed++;
             RunCase(test => test.FlyoverShot_TracksJetThenFallsBackWithoutNaN());
             passed++;
+            RunCase(test => test.FlyoverShot_FramesVisibleJetWhenStillBehindImpact());
+            passed++;
             RunCase(test => test.CinematicShots_StayWideAndAboveAction());
             passed++;
             RunCase(test => test.CinematicShots_ClampFovAndUseHudSafeImpactAim());
@@ -273,12 +275,17 @@ public sealed class TacticalFollowAttackCinematicHelperTests
     [Test]
     public void FlyoverShot_TracksJetThenFallsBackWithoutNaN()
     {
-        TacticalFollowAttackCinematicHelper.ShotContext context = CreateContext(hasJet: true);
+        TacticalFollowAttackCinematicHelper.ShotContext context = new(
+            new float3(0f, 10f, 0f),
+            new float3(30f, 0f, 5f),
+            new float3(1f, 0f, 0.1f),
+            new float3(64f, 18f, 9f),
+            hasJet: true);
         TacticalFollowAttackCinematicHelper.Shot shot = TacticalFollowAttackCinematicHelper.EvaluateShot(
             TacticalFollowAttackCinematicPhase.Flyover,
             TacticalFollowAttackCinematicHelper.FlyoverDurationSeconds * 0.9f,
             context);
-        Assert.Greater(math.dot(shot.LookAt - context.ImpactPosition, context.AttackDirection), 20f);
+        Assert.Greater(math.dot(shot.LookAt - context.ImpactPosition, context.AttackDirection), 12f);
         Assert.Greater(shot.LookAt.y, context.ImpactPosition.y + 8f);
 
         TacticalFollowAttackCinematicHelper.ShotContext fallback = CreateContext(hasJet: false);
@@ -288,6 +295,30 @@ public sealed class TacticalFollowAttackCinematicHelperTests
             fallback);
         Assert.IsTrue(math.all(math.isfinite(fallbackShot.CameraPosition)));
         Assert.IsTrue(math.all(math.isfinite(fallbackShot.LookAt)));
+    }
+
+    [Test]
+    public void FlyoverShot_FramesVisibleJetWhenStillBehindImpact()
+    {
+        float3 attackDirection = math.normalize(new float3(1f, 0f, 0.1f));
+        float3 impactPosition = new(30f, 0f, 5f);
+        float3 visibleJetPosition = impactPosition - attackDirection * 65f + new float3(0f, 14f, 0f);
+        TacticalFollowAttackCinematicHelper.ShotContext context = new(
+            new float3(0f, 10f, 0f),
+            impactPosition,
+            attackDirection,
+            visibleJetPosition,
+            hasJet: true);
+
+        TacticalFollowAttackCinematicHelper.Shot shot = TacticalFollowAttackCinematicHelper.EvaluateShot(
+            TacticalFollowAttackCinematicPhase.Flyover,
+            TacticalFollowAttackCinematicHelper.FlyoverDurationSeconds * 0.65f,
+            context);
+
+        float3 projectedOnly = impactPosition + attackDirection * 45f + new float3(0f, 17f, 0f);
+        Assert.Less(math.distance(shot.LookAt, visibleJetPosition), math.distance(shot.LookAt, projectedOnly));
+        Assert.Less(math.dot(shot.LookAt - impactPosition, attackDirection), 5f);
+        Assert.Greater(math.distance(shot.CameraPosition, visibleJetPosition), 12f);
     }
 
     [Test]

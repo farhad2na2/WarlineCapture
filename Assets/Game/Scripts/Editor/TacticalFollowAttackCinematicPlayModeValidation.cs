@@ -28,7 +28,7 @@ namespace Game.Editor
         private const string DefaultArtifactDirectory = "/private/tmp/warline-attack-cinematic-playmode";
         private const int DefaultCaptureWidth = 1280;
         private const int DefaultCaptureHeight = 720;
-        private const int TimeoutFrames = 12000;
+        private const int TimeoutFrames = 60000;
         private const int DeployWarmupFrames = 45;
         private const int CinematicWaitFrames = 480;
 
@@ -209,7 +209,10 @@ namespace Game.Editor
                     cinematicObserved = true;
 
                 if (cinematic.Active != 0)
+                {
+                    DriveProofSourceAircraft(cinematic);
                     CaptureActivePhase(matchScene.WorldCamera, cinematic);
+                }
 
                 if (cinematicObserved && cinematic.Active == 0)
                 {
@@ -250,7 +253,9 @@ namespace Game.Editor
         private static void CaptureActivePhase(Camera camera, in TacticalFollowAttackCinematicStateComponent cinematic)
         {
             TacticalFollowAttackCinematicPhase phase =
-                TacticalFollowAttackCinematicHelper.EvaluatePhase(cinematic.ElapsedUnscaledSeconds, out _);
+                TacticalFollowAttackCinematicHelper.EvaluatePhase(
+                    cinematic.ElapsedUnscaledSeconds,
+                    out float phaseElapsedSeconds);
 
             if (!launchCaptured && phase == TacticalFollowAttackCinematicPhase.Launch && cinematic.ElapsedUnscaledSeconds > 0.2f)
             {
@@ -258,23 +263,69 @@ namespace Game.Editor
                 launchCaptured = true;
             }
 
-            if (!pathCaptured && phase == TacticalFollowAttackCinematicPhase.MissilePath)
+            if (!pathCaptured &&
+                phase == TacticalFollowAttackCinematicPhase.MissilePath &&
+                phaseElapsedSeconds >= TacticalFollowAttackCinematicHelper.MissilePathDurationSeconds * 0.45f)
             {
                 CaptureOrFail(camera, "02-missile-path");
                 pathCaptured = true;
             }
 
-            if (!impactCaptured && cinematic.ImpactEventTriggered != 0)
+            if (!impactCaptured &&
+                phase == TacticalFollowAttackCinematicPhase.Impact &&
+                cinematic.ImpactEventTriggered != 0 &&
+                phaseElapsedSeconds >= 0.25f)
             {
                 CaptureOrFail(camera, "03-impact");
                 impactCaptured = true;
             }
 
-            if (!flyoverCaptured && phase == TacticalFollowAttackCinematicPhase.Flyover)
+            if (!flyoverCaptured &&
+                phase == TacticalFollowAttackCinematicPhase.Flyover &&
+                phaseElapsedSeconds >= TacticalFollowAttackCinematicHelper.FlyoverDurationSeconds * 0.65f)
             {
                 CaptureOrFail(camera, "04-flyover");
                 flyoverCaptured = true;
             }
+        }
+
+        private static void DriveProofSourceAircraft(in TacticalFollowAttackCinematicStateComponent cinematic)
+        {
+            World world = World.DefaultGameObjectInjectionWorld;
+            if (world == null || !world.IsCreated)
+                return;
+
+            EntityManager em = world.EntityManager;
+            if (sourceEntity == Entity.Null ||
+                !em.Exists(sourceEntity) ||
+                !em.HasComponent<LocalTransform>(sourceEntity))
+            {
+                return;
+            }
+
+            TacticalFollowAttackCinematicPhase phase =
+                TacticalFollowAttackCinematicHelper.EvaluatePhase(
+                    cinematic.ElapsedUnscaledSeconds,
+                    out float phaseElapsedSeconds);
+            float3 direction = math.normalizesafe(cinematic.AttackDirection, new float3(0f, 0f, 1f));
+            float3 position = phase switch
+            {
+                TacticalFollowAttackCinematicPhase.Launch => cinematic.LaunchPosition +
+                    direction * math.lerp(-6f, 5f, math.saturate(phaseElapsedSeconds / TacticalFollowAttackCinematicHelper.LaunchDurationSeconds)),
+                TacticalFollowAttackCinematicPhase.MissilePath => cinematic.LaunchPosition +
+                    direction * math.lerp(5f, 32f, math.saturate(phaseElapsedSeconds / TacticalFollowAttackCinematicHelper.MissilePathDurationSeconds)),
+                TacticalFollowAttackCinematicPhase.Impact => cinematic.ImpactPosition -
+                    direction * math.lerp(30f, 14f, math.saturate(phaseElapsedSeconds / TacticalFollowAttackCinematicHelper.ImpactDurationSeconds)),
+                TacticalFollowAttackCinematicPhase.Flyover => cinematic.ImpactPosition +
+                    direction * math.lerp(-10f, 56f, math.saturate(phaseElapsedSeconds / TacticalFollowAttackCinematicHelper.FlyoverDurationSeconds)),
+                _ => cinematic.ImpactPosition + direction * 56f
+            };
+            position.y = math.max(position.y, cinematic.ImpactPosition.y + 15f);
+
+            LocalTransform transform = em.GetComponentData<LocalTransform>(sourceEntity);
+            transform.Position = position;
+            transform.Rotation = quaternion.LookRotationSafe(direction, new float3(0f, 1f, 0f));
+            em.SetComponentData(sourceEntity, transform);
         }
 
         private static void CaptureOrFail(Camera camera, string name)

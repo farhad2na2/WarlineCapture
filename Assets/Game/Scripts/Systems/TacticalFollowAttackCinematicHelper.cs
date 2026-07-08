@@ -49,20 +49,20 @@ namespace Game.Runtime
         private const float ImpactFieldOfView = 48f;
         private const float ImpactDampingSeconds = 0.15f;
 
-        private const float FlyoverCameraBackDistance = 24f;
-        private const float FlyoverCameraSideDistance = 20f;
-        private const float FlyoverCameraHeight = 12f;
-        private const float FlyoverLookRampNormalized = 0.45f;
-        private const float FlyoverLookJetWeight = 0.9f;
-        private const float FlyoverExitBlendStartNormalized = 0.6f;
-        private const float FlyoverExitBlendWeight = 0.65f;
-        private const float FlyoverFollowBackDistance = 24f;
-        private const float FlyoverFollowHeight = 11f;
-        private const float FlyoverFieldOfView = 52f;
+        private const float FlyoverCameraBackDistance = 34f;
+        private const float FlyoverCameraSideDistance = 32f;
+        private const float FlyoverCameraHeight = 18f;
+        private const float FlyoverLookRampNormalized = 0.5f;
+        private const float FlyoverLookJetWeight = 0.72f;
+        private const float FlyoverExitBlendStartNormalized = 0.88f;
+        private const float FlyoverExitBlendWeight = 0.25f;
+        private const float FlyoverFollowBackDistance = 30f;
+        private const float FlyoverFollowHeight = 14f;
+        private const float FlyoverFieldOfView = 58f;
         private const float FlyoverDampingSeconds = 0.28f;
-        private const float FlyoverProjectedEntryDistance = 8f;
-        private const float FlyoverProjectedExitDistance = 46f;
-        private const float FlyoverProjectedHeight = 13f;
+        private const float FlyoverProjectedEntryDistance = 6f;
+        private const float FlyoverProjectedExitDistance = 70f;
+        private const float FlyoverProjectedHeight = 17f;
 
         private const float MinCinematicFieldOfView = 42f;
         private const float MaxCinematicFieldOfView = 58f;
@@ -438,22 +438,25 @@ namespace Game.Runtime
                 new float3(1f, 0f, 0f));
             float normalized = math.saturate(phaseElapsedSeconds / FlyoverDurationSeconds);
 
-            float3 projectedJetLook = context.ImpactPosition
+            float3 projectedJetPosition = context.ImpactPosition
                 + dir * math.lerp(-FlyoverProjectedEntryDistance, FlyoverProjectedExitDistance, normalized)
                 + new float3(0f, FlyoverProjectedHeight, 0f);
-            float actualJetForwardDistance = context.HasJet
-                ? math.dot(context.JetPosition - context.ImpactPosition, dir)
-                : float.MinValue;
-            float3 jetLook = context.HasJet && actualJetForwardDistance >= -FlyoverProjectedEntryDistance
+            float3 aircraftPosition = context.HasJet
                 ? context.JetPosition
-                : projectedJetLook;
+                : projectedJetPosition;
 
-            // Pan up from the wreck to track the jet passing over it.
+            // Pan up from the wreck to the real attacker when it still exists.
+            // The projected path is only a fallback for source loss; otherwise
+            // the shot can drift to an invisible point and miss the aircraft.
             float lookBlend = math.smoothstep(0f, FlyoverLookRampNormalized, normalized) * FlyoverLookJetWeight;
             float3 wreckLook = context.ImpactPosition + new float3(0f, 1.5f - FlyoverHudSafeLookDrop, 0f);
-            float3 lookAt = math.lerp(wreckLook, jetLook, lookBlend);
+            float3 aircraftLook = math.lerp(wreckLook, aircraftPosition, 0.58f) + new float3(0f, 1.5f, 0f);
+            float3 lookAt = math.lerp(wreckLook, aircraftLook, lookBlend);
 
-            float3 cameraPosition = context.ImpactPosition
+            float3 cameraAnchor = context.HasJet
+                ? math.lerp(context.ImpactPosition, aircraftPosition, 0.35f)
+                : context.ImpactPosition;
+            float3 cameraPosition = cameraAnchor
                 - dir * FlyoverCameraBackDistance
                 + right * FlyoverCameraSideDistance
                 + new float3(0f, FlyoverCameraHeight, 0f);
@@ -463,7 +466,7 @@ namespace Game.Runtime
             if (normalized > FlyoverExitBlendStartNormalized)
             {
                 float exitBlend = math.smoothstep(FlyoverExitBlendStartNormalized, 1f, normalized) * FlyoverExitBlendWeight;
-                float3 followPosition = jetLook
+                float3 followPosition = aircraftPosition
                     - dir * FlyoverFollowBackDistance
                     + new float3(0f, FlyoverFollowHeight, 0f);
                 cameraPosition = math.lerp(cameraPosition, followPosition, exitBlend);

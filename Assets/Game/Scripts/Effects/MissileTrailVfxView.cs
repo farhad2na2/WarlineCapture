@@ -8,8 +8,8 @@ namespace Game.Runtime
 {
     public sealed class MissileTrailVfxView : MonoBehaviour
     {
-        private const float SmokeTrailSeconds = 0.62f;
-        private const float CoreTrailSeconds = 0.18f;
+        private const float SmokeTrailSeconds = 0.82f;
+        private const float CoreTrailSeconds = 0.34f;
         private const int MissingFrameTolerance = 2;
 
         private sealed class TrailInstance
@@ -151,8 +151,8 @@ namespace Game.Runtime
                 root,
                 "SmokeTrail",
                 SmokeTrailSeconds,
-                0.22f,
-                1.35f,
+                0.48f,
+                2.15f,
                 BuildSmokeGradient(),
                 SmokeMaterial);
             smokeTrail.minVertexDistance = 0.38f;
@@ -161,8 +161,8 @@ namespace Game.Runtime
                 root,
                 "HotCoreTrail",
                 CoreTrailSeconds,
-                0.16f,
-                0.03f,
+                0.32f,
+                0.08f,
                 BuildCoreGradient(),
                 CoreMaterial);
             coreTrail.minVertexDistance = 0.16f;

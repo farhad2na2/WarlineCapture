@@ -71,6 +71,9 @@ namespace Game.Runtime
 
             bool found = false;
             bool hasLaunch = false;
+            Entity selectedSource = Entity.Null;
+            Entity capturedMuzzleRequest = Entity.Null;
+            Entity capturedImpactRequest = Entity.Null;
             UnitAttackVfxRequest selectedRequest = default;
             float3 launchPosition = default;
             float3 impactPosition = default;
@@ -78,7 +81,8 @@ namespace Game.Runtime
             UnityObjectRef<GameObject> impactVfxPrefab = default;
             quaternion launchVfxRotation = quaternion.identity;
             quaternion impactVfxRotation = quaternion.identity;
-            foreach (RefRO<UnitAttackVfxRequest> requestRef in SystemAPI.Query<RefRO<UnitAttackVfxRequest>>())
+            foreach ((RefRO<UnitAttackVfxRequest> requestRef, Entity requestEntity) in
+                     SystemAPI.Query<RefRO<UnitAttackVfxRequest>>().WithEntityAccess())
             {
                 UnitAttackVfxRequest request = requestRef.ValueRO;
                 if (!IsAttackCutawayRequest(request) ||
@@ -91,6 +95,7 @@ namespace Game.Runtime
                 if (!found)
                 {
                     found = true;
+                    selectedSource = request.Source;
                     selectedRequest = request;
                     launchPosition = kind == UnitAttackVfxRequestKind.MuzzleFlash &&
                                      math.lengthsq(request.PlaybackPosition) > 0.0001f
@@ -100,22 +105,25 @@ namespace Game.Runtime
                     hasLaunch = kind == UnitAttackVfxRequestKind.MuzzleFlash;
                     if (kind == UnitAttackVfxRequestKind.MuzzleFlash)
                     {
+                        capturedMuzzleRequest = requestEntity;
                         launchVfxPrefab = request.Prefab;
                         launchVfxRotation = request.PlaybackRotation;
                     }
                     else if (kind == UnitAttackVfxRequestKind.Impact)
                     {
+                        capturedImpactRequest = requestEntity;
                         impactVfxPrefab = request.Prefab;
                         impactVfxRotation = request.PlaybackRotation;
                     }
                     continue;
                 }
 
-                if (request.Source != selectedRequest.Source)
+                if (request.Source != selectedSource)
                     continue;
 
                 if (kind == UnitAttackVfxRequestKind.MuzzleFlash && !hasLaunch)
                 {
+                    capturedMuzzleRequest = requestEntity;
                     selectedRequest = request;
                     launchPosition = math.lengthsq(request.PlaybackPosition) > 0.0001f
                         ? request.PlaybackPosition
@@ -126,6 +134,7 @@ namespace Game.Runtime
                 }
                 else if (kind == UnitAttackVfxRequestKind.Impact)
                 {
+                    capturedImpactRequest = requestEntity;
                     impactPosition = ResolveImpactPosition(request);
                     impactVfxPrefab = request.Prefab;
                     impactVfxRotation = request.PlaybackRotation;
@@ -136,6 +145,15 @@ namespace Game.Runtime
 
             if (!found)
                 return;
+
+            if (capturedMuzzleRequest != Entity.Null && em.Exists(capturedMuzzleRequest))
+                em.DestroyEntity(capturedMuzzleRequest);
+            if (capturedImpactRequest != Entity.Null &&
+                capturedImpactRequest != capturedMuzzleRequest &&
+                em.Exists(capturedImpactRequest))
+            {
+                em.DestroyEntity(capturedImpactRequest);
+            }
 
             cinematic = TacticalFollowAttackCinematicHelper.BuildInitialState(
                 selectedRequest.Source,

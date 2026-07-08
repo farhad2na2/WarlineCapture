@@ -101,6 +101,8 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
             passed++;
             RunCase(test => test.CompletedAttackCinematicRespectsRetriggerCooldown());
             passed++;
+            RunCase(test => test.FollowedAirAttackCinematicConsumesCapturedVfxRequests());
+            passed++;
             RunCase(test => test.AttackCinematicAbortCleansStateWhenTemporaryTargetCleared());
             passed++;
             RunCase(test => test.AttackCinematicContinuesWithCachedImpactWhenTargetIsDestroyed());
@@ -1106,7 +1108,7 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
         Assert.IsTrue(_system.TryReadPose(_em, out TacticalFollowCameraPoseComponent pose));
         Assert.AreEqual(TacticalFollowCameraPoseSource.TemporaryMissile, pose.Source);
 
-        _world.SetTime(new TimeData(15d, 5f));
+        _world.SetTime(new TimeData(15d, TacticalFollowAttackCinematicHelper.TotalDurationSeconds + 0.25f));
         cinematicSystem.Update(_world.Unmanaged);
         Assert.IsTrue(_system.RefreshActiveTargetAndPose(_em, default, 15.1f));
 
@@ -1216,11 +1218,11 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
         cinematicSystem.Update(_world.Unmanaged);
         AssertActiveCinematic(active: 1);
 
-        _world.SetTime(new TimeData(15d, 5f));
+        _world.SetTime(new TimeData(15d, TacticalFollowAttackCinematicHelper.TotalDurationSeconds + 0.25f));
         cinematicSystem.Update(_world.Unmanaged);
         AssertActiveCinematic(active: 0);
 
-        _em.DestroyEntity(request);
+        Assert.IsFalse(_em.Exists(request));
         CreateAttackVfxRequest(aircraft, target, targetPosition);
         _world.SetTime(new TimeData(15.5d, 0.016f));
         cinematicSystem.Update(_world.Unmanaged);
@@ -1228,6 +1230,40 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
         AssertActiveCinematic(active: 0);
         Assert.IsTrue(_system.TryReadMode(_em, out TacticalFollowCameraModeComponent mode));
         Assert.AreEqual(0, mode.HasTemporaryTarget);
+    }
+
+    [Test]
+    public void FollowedAirAttackCinematicConsumesCapturedVfxRequests()
+    {
+        Entity aircraft = CreateSelectedAirUnit(new float3(0f, 12f, 0f), quaternion.identity);
+        Entity target = _em.CreateEntity(typeof(LocalTransform));
+        float3 targetPosition = new float3(24f, 0f, 10f);
+        _em.SetComponentData(target, LocalTransform.FromPosition(targetPosition));
+        QueueRequest(TacticalFollowCameraRequestKind.ToggleFollowMode);
+        Assert.IsTrue(_system.ProcessPendingRequests(_em));
+
+        Entity muzzleRequest = CreateAttackVfxRequest(aircraft, target, targetPosition);
+        Entity impactRequest = _em.CreateEntity(typeof(UnitAttackVfxRequest));
+        _em.SetComponentData(impactRequest, new UnitAttackVfxRequest
+        {
+            Kind = (byte)UnitAttackVfxRequestKind.Impact,
+            Source = aircraft,
+            Target = target,
+            SourcePosition = new float3(0f, 12f, 0f),
+            TargetPosition = targetPosition,
+            PlaybackPosition = targetPosition,
+            PlaybackRotation = quaternion.identity
+        });
+
+        SystemHandle cinematicSystem = _world.CreateSystem<TacticalFollowAttackCinematicSystem>();
+        _world.SetTime(new TimeData(10d, 0.016f));
+        cinematicSystem.Update(_world.Unmanaged);
+
+        AssertActiveCinematic(active: 1);
+        Assert.IsFalse(_em.Exists(muzzleRequest));
+        Assert.IsFalse(_em.Exists(impactRequest));
+        TacticalFollowAttackCinematicStateComponent cinematic = ReadCinematicState();
+        Assert.AreEqual(0, cinematic.ImpactEventTriggered);
     }
 
     [Test]
@@ -1297,7 +1333,7 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
         Assert.AreEqual(Entity.Null, followTarget.TargetEntity);
         Assert.AreEqual(targetPosition, followTarget.Center);
 
-        _world.SetTime(new TimeData(15d, 5f));
+        _world.SetTime(new TimeData(15d, TacticalFollowAttackCinematicHelper.TotalDurationSeconds + 0.25f));
         cinematicSystem.Update(_world.Unmanaged);
         cinematic = ReadCinematicState();
         Assert.AreEqual(0, cinematic.Active);
@@ -1332,7 +1368,7 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
         Assert.IsTrue(_system.TryReadPose(_em, out TacticalFollowCameraPoseComponent pose));
         Assert.AreEqual(TacticalFollowCameraPoseSource.TemporaryMissile, pose.Source);
 
-        _world.SetTime(new TimeData(15d, 5f));
+        _world.SetTime(new TimeData(15d, TacticalFollowAttackCinematicHelper.TotalDurationSeconds + 0.25f));
         cinematicSystem.Update(_world.Unmanaged);
         cinematic = ReadCinematicState();
         Assert.AreEqual(0, cinematic.Active);

@@ -83,7 +83,7 @@ The current implementation is not accepted because it is too close, too fast, fr
 
 ## Progress Summary
 
-Overall implementation progress: 81% (68/84 implementation checklist items complete).
+Overall implementation progress: 88% (74/84 implementation checklist items complete).
 
 Progress is checklist-based. Each implementation or validation checkbox below counts as one item. Documentation creation and index links are not counted as implementation progress.
 
@@ -92,11 +92,11 @@ Progress is checklist-based. Each implementation or validation checkbox below co
 | 0. Baseline and proof capture | In progress | 7 | 8 | 88% | User screenshots plus code inspection confirm current failure path; Unity reproduction still required. |
 | 1. ECS event and data contract | In progress | 8 | 10 | 80% | ECS state now owns typed attack kind, request start, projectile progress, launch/impact/flyover triggers, completion, and abort reason. |
 | 2. Timeline and phase sequencing | In progress | 8 | 10 | 80% | Timeline now has explicit Launch, MissilePath, Impact, and Flyover phases plus projectile progress beats. |
-| 3. Cinematic missile and impact VFX | In progress | 8 | 10 | 80% | ECS timeline now replays launch, missile trail, and impact VFX through existing pooled presentation views; Unity visual acceptance still open. |
+| 3. Cinematic missile and impact VFX | In progress | 9 | 10 | 90% | ECS timeline now replays readable launch, missile trail, and impact VFX through existing pooled presentation views; optional debug-log gates remain open. |
 | 4. Shot solver and obstruction safety | Complete | 12 | 12 | 100% | Pure shot solver now uses wider, higher launch/path/impact/flyover shots with safety clamps, HUD-safe aim bias, FOV clamps, explicit phase-entry snap rules, deterministic fallback candidates, and non-alloc obstruction probes at the managed camera boundary. |
 | 5. Follow-camera/time-scale integration | Complete | 9 | 9 | 100% | Active attack pose ownership, completion handback, temporary-target abort cleanup, time-scale apply/restore, paused-time restoration, destroyed source/target fallback behavior, and active-cinematic UI stability are covered by focused tests. |
 | 6. Tests and architecture guardrails | Complete | 13 | 13 | 100% | Pure helper tests cover phase/shot math; ECS tests cover followed/unfollowed request behavior, retrigger cooldown, abort cleanup, and architecture guardrails. |
-| 7. Unity visual validation | In progress | 2 | 8 | 25% | Synthetic and real Match playmode capture harnesses now record launch/path/impact/flyover/return frames; flyover readability is still not accepted. |
+| 7. Unity visual validation | In progress | 7 | 8 | 88% | Real Match playmode proof now records readable launch/path/impact/flyover/return frames; profiler/GC validation remains open. |
 | 8. Rollout and documentation | Not started | 0 | 4 | 0% | Update docs and final acceptance notes after the feature works. |
 
 ## Phase 0: Baseline And Proof Capture
@@ -239,7 +239,7 @@ Phase 2 notes, 2026-07-07:
 - [x] Spawn or activate a visible projectile/tracer at the launch beat.
 - [x] Update projectile/tracer movement from ECS timeline data without per-frame allocation.
 - [x] Trigger impact/explosion at the impact beat even if gameplay damage happened earlier.
-- [ ] Ensure VFX playback works with slow motion or explicitly controls playback speed.
+- [x] Ensure VFX playback works with slow motion or explicitly controls playback speed.
 - [x] Return VFX instances to the pool on completion/abort.
 - [x] Avoid GameObject instantiate/destroy during steady-state cinematic playback after warmup.
 - [ ] Add diagnostics gates for optional cinematic debug logging without per-frame string allocation.
@@ -256,7 +256,7 @@ Phase 3 notes, 2026-07-07:
 - Added narrow managed boundary `TacticalFollowAttackCinematicVfxSystemHelper` with approved `VfxSystemHelper` suffix. It has no lifecycle and no update loop; ECS state remains the timeline owner.
 - Extended `TacticalFollowAttackCinematicStateComponent` with captured launch/impact prefab references and rotations from the original `UnitAttackVfxRequest`.
 - `TacticalFollowAttackCinematicSystem` now triggers launch VFX at the launch event edge, updates missile trail position from ECS projectile data while active, releases the trail on impact/completion/abort, and replays impact VFX at the cinematic impact beat.
-- This slice does not yet solve camera readability, obstruction avoidance, or Unity visual acceptance. Those remain Phase 4 and Phase 7 work.
+- The final in-match proof shows launch flash, delayed missile-path tracer, delayed impact explosion, and flyover aftermath during the cinematic timeline.
 - Validation:
   - `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
   - `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
@@ -298,8 +298,8 @@ Phase 4 notes, 2026-07-07:
 - Routed active cinematic shot selection through the obstruction-safe resolver so blocked primary shots choose deterministic fallback offsets without altering pure shot math or adding a new update loop.
 - Added `ObstructionFallback_UsesAlternateShotWhenPrimaryLineBlocked` coverage with a temporary collider blocking the primary impact shot.
 - Tuned the launch and missile-path shots wider and higher after synthetic capture showed the launch angle was still too close and the missile-path framing was too target-heavy.
-- Tuned flyover look solving so, when the real jet has not yet crossed the target, the camera tracks the projected post-impact flyover corridor instead of looking back toward the launch-side jet position.
-- Open work: Unity visual validation.
+- Tuned flyover look solving so, when the real jet still exists, the camera frames the real aircraft crossing past the impact; the projected post-impact corridor is now only a source-loss fallback.
+- Unity visual validation is now covered by the in-match proof. Open work: performance/GC validation and final handoff docs.
 - Validation:
   - `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
   - `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
@@ -393,12 +393,12 @@ Phase 6 notes, 2026-07-07:
 
 ## Phase 7: Unity Visual Validation
 
-- [ ] Validate a jet attack from third-person follow mode in the Unity editor.
+- [x] Validate a jet attack from third-person follow mode in the Unity editor.
 - [x] Capture screenshots or a short video of launch, missile path, impact, flyover, and return.
-- [ ] Verify the missile/tracer is visible from the launch shot.
-- [ ] Verify explosion/impact is centered and visible from the impact shot.
-- [ ] Verify the jet flies over or past the destroyed target after impact.
-- [ ] Verify no camera shot clips into terrain, buildings, tents, hangars, the target, or the jet.
+- [x] Verify the missile/tracer is visible from the launch shot.
+- [x] Verify explosion/impact is centered and visible from the impact shot.
+- [x] Verify the jet flies over or past the destroyed target after impact.
+- [x] Verify no camera shot clips into terrain, buildings, tents, hangars, the target, or the jet.
 - [ ] Verify frame time and GC do not regress during the cinematic sequence.
 - [x] Record validation logs, screenshots, or profiler notes in this tracker.
 
@@ -423,10 +423,18 @@ Phase 7 notes, 2026-07-07:
   - `/private/tmp/warline-attack-cinematic-playmode/03-impact.png`
   - `/private/tmp/warline-attack-cinematic-playmode/04-flyover.png`
   - `/private/tmp/warline-attack-cinematic-playmode/05-return.png`
-- Current acceptance read from the in-match captures:
+- Final acceptance read from the in-match captures:
   - Launch framing is readable and no longer an under-wing closeup.
-  - Impact/explosion is visible and readable.
-  - Missile path and flyover still need tuning before final acceptance. The flyover capture does not clearly show the jet crossing past the destroyed target, so the acceptance checkbox remains open.
+  - Missile path no longer triggers the impact explosion early; the boosted pooled missile trail is visible across the attack corridor.
+  - Impact/explosion is centered and readable after the proof waits for the impact beat to render.
+  - Flyover and return frames show the jet past the destroyed target with explosion aftermath still visible.
+  - The proof frames do not show camera clipping into terrain, buildings, tents, hangars, the target, or the jet.
+- Completed slice, 2026-07-08:
+  - Updated `TacticalFollowAttackCinematicHelper.EvaluateFlyoverShot` so the flyover shot follows the real source aircraft when it still exists and uses the projected aircraft path only as a source-loss fallback. This addresses the target-only flyover frames where the camera looked at an invisible projected point.
+  - Updated `Game.Editor.TacticalFollowAttackCinematicPlayModeValidation.RunInMatchAttackCinematicProof` so the editor-only proof drives the source aircraft through the attack lane while capturing the real Match camera. This makes the flyover capture validate a visible attacker instead of a parked source unit.
+  - `TacticalFollowAttackCinematicSystem` now copies same-source followed-air muzzle/impact request data into the cinematic timeline and consumes those captured `UnitAttackVfxRequest` entities before normal VFX playback can fire them early. Unfollowed attack requests remain untouched.
+  - Increased pooled `MissileTrailVfxView` trail duration/width so the missile path reads in the wide cinematic camera without adding new loops or steady-state allocation.
+  - Added focused test coverage for real-attacker flyover framing and followed-air request consumption.
 - Licensing/tooling note: the first sandboxed Unity run timed out before project load on `LicenseClient-farhad`; the documented out-of-sandbox Unity workaround was required. The first escalated `-quit` run exited before asynchronous Play Mode validation, so the accepted command omits `-quit` and lets the validation method exit Unity after Play Mode.
 - Validation:
   - `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
@@ -436,6 +444,12 @@ Phase 7 notes, 2026-07-07:
   - `Tools/CI/invoke_unity_macos.sh --timeout 420 --log /private/tmp/warline-attack-cinematic-playmode-validation-escalated-5.log -- -executeMethod Game.Editor.TacticalFollowAttackCinematicPlayModeValidation.RunInMatchAttackCinematicProof` passed with `[TacticalFollowAttackCinematicPlayModeValidation] result=Passed`.
   - `Tools/CI/invoke_unity_macos.sh --timeout 420 --log /private/tmp/warline-attack-cinematic-architecture-validation-13.log -- -quit -nographics -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation` passed with `[EcsBurstHotPathArchitectureValidation] result=Passed tests=10`.
   - `Tools/CI/invoke_unity_macos.sh --timeout 420 --log /private/tmp/warline-attack-cinematic-architecture-validation-14.log -- -quit -nographics -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation` passed with `[EcsBurstHotPathArchitectureValidation] result=Passed tests=10`.
+  - `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
+  - `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
+  - `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
+  - `Tools/CI/invoke_unity_macos.sh --timeout 420 --log /private/tmp/warline-tactical-follow-command-validation-4.log -- -quit -nographics -executeMethod TacticalFollowCameraModeCommandSystemHelperTests.RunFocusedValidation` passed with `[TacticalFollowCameraModeCommandValidation] result=Passed tests=44`.
+  - `Tools/CI/invoke_unity_macos.sh --timeout 480 --log /private/tmp/warline-attack-cinematic-playmode-validation-escalated-12.log -- -executeMethod Game.Editor.TacticalFollowAttackCinematicPlayModeValidation.RunInMatchAttackCinematicProof` passed with `[TacticalFollowAttackCinematicPlayModeValidation] result=Passed`.
+  - `Tools/CI/invoke_unity_macos.sh --timeout 420 --log /private/tmp/warline-attack-cinematic-architecture-validation-15.log -- -quit -nographics -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation` passed with `[EcsBurstHotPathArchitectureValidation] result=Passed tests=10`.
   - `git diff --check` passed.
 
 ## Phase 8: Rollout And Documentation

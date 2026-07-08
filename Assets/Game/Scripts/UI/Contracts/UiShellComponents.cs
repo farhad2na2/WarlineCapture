@@ -958,6 +958,7 @@ namespace Game.UI.Contracts
         public readonly uint Version;
         public readonly string GoalsText;
         public readonly string AlertsText;
+        public readonly string NarrationSubtitleText;
         public readonly bool HasAlerts;
         public readonly bool HasRecommendation;
         public readonly string RecommendationTitle;
@@ -975,6 +976,7 @@ namespace Game.UI.Contracts
             uint version,
             string goalsText,
             string alertsText,
+            string narrationSubtitleText,
             bool hasAlerts,
             bool hasRecommendation,
             string recommendationTitle,
@@ -991,6 +993,7 @@ namespace Game.UI.Contracts
             Version = version;
             GoalsText = goalsText;
             AlertsText = alertsText;
+            NarrationSubtitleText = narrationSubtitleText;
             HasAlerts = hasAlerts;
             HasRecommendation = hasRecommendation;
             RecommendationTitle = recommendationTitle;
@@ -1010,6 +1013,7 @@ namespace Game.UI.Contracts
                 0,
                 "No active objectives",
                 "No priority alerts",
+                "No active narration",
                 false,
                 false,
                 "No recommendation",

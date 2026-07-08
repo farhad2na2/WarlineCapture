@@ -108,7 +108,7 @@ namespace Game.UI.Runtime
             CreateText("Label", root, "ARIA", 28, TextAlignmentOptions.Left, new Vector2(18f, -8f), new Vector2(94f, 34f));
             TMP_Text stateText = CreateText("State", root, "PLAYER CONTROL", 18, TextAlignmentOptions.Left, new Vector2(18f, -42f), new Vector2(144f, 24f), new Color(0.45f, 0.95f, 1f, 1f));
             CreateText("Cue", root, ">", 42, TextAlignmentOptions.Center, new Vector2(-55f, -18f), new Vector2(44f, 48f), new Color(1f, 0.78f, 0.32f, 1f));
-            _panelUiSystem.Bind(stateText, null, null, null, null, null, null, null, null, null, null);
+            _panelUiSystem.Bind(stateText, null, null, null, null, null, null, null, null, null, null, null);
 
             return root;
         }
@@ -135,14 +135,16 @@ namespace Game.UI.Runtime
             TMP_Text goalsBodyText = CreateText("GoalsBody", root, "No active objectives", 20, TextAlignmentOptions.Left, new Vector2(28f, -124f), new Vector2(286f, 104f), new Color(0.80f, 0.86f, 0.84f, 1f));
             CreateText("AlertsTitle", root, "ALERTS & REPORTS", 18, TextAlignmentOptions.Left, new Vector2(350f, -88f), new Vector2(240f, 28f), new Color(1f, 0.80f, 0.34f, 1f));
             TMP_Text alertsBodyText = CreateText("AlertsBody", root, "No priority alerts", 18, TextAlignmentOptions.Left, new Vector2(350f, -124f), new Vector2(250f, 104f), new Color(0.80f, 0.86f, 0.84f, 1f));
-            CreateText("RecommendationTitle", root, "RECOMMENDED NEXT ACTION", 18, TextAlignmentOptions.Left, new Vector2(28f, -258f), new Vector2(330f, 28f), new Color(0.45f, 0.95f, 1f, 1f));
-            Image previewPulse = CreatePulse("PreviewPulse", root, new Vector2(20f, -284f), new Vector2(560f, 92f));
-            TMP_Text recommendationBodyText = CreateText("RecommendationBody", root, "ARIA is waiting for live battlefield context.", 20, TextAlignmentOptions.Left, new Vector2(28f, -294f), new Vector2(520f, 72f), new Color(0.78f, 0.84f, 0.82f, 1f));
+            CreateText("NarrationTitle", root, "ARIA VOICE", 14, TextAlignmentOptions.Left, new Vector2(350f, -236f), new Vector2(120f, 20f), new Color(0.45f, 0.95f, 1f, 1f));
+            TMP_Text narrationSubtitleText = CreateText("NarrationSubtitle", root, "No active narration", 15, TextAlignmentOptions.Left, new Vector2(350f, -260f), new Vector2(250f, 42f), new Color(0.80f, 0.92f, 0.90f, 1f));
+            CreateText("RecommendationTitle", root, "RECOMMENDED NEXT ACTION", 18, TextAlignmentOptions.Left, new Vector2(28f, -312f), new Vector2(330f, 28f), new Color(0.45f, 0.95f, 1f, 1f));
+            Image previewPulse = CreatePulse("PreviewPulse", root, new Vector2(20f, -338f), new Vector2(560f, 92f));
+            TMP_Text recommendationBodyText = CreateText("RecommendationBody", root, "ARIA is waiting for live battlefield context.", 20, TextAlignmentOptions.Left, new Vector2(28f, -348f), new Vector2(520f, 72f), new Color(0.78f, 0.84f, 0.82f, 1f));
 
-            _nextActionButton = CreatePanelButton("NextActionButton", root, "SHOW ME", new Vector2(28f, -398f), out TMP_Text nextActionLabelText);
-            _giveControlButton = CreatePanelButton("GiveControlButton", root, "CONTROL LOCKED", new Vector2(246f, -398f), out TMP_Text giveControlLabelText);
-            _closeButton = CreatePanelButton("CloseButton", root, "CLOSE", new Vector2(464f, -398f), out _);
-            _stopButton = CreatePanelButton("StopButton", root, "STOP", new Vector2(246f, -466f), out TMP_Text stopLabelText);
+            _nextActionButton = CreatePanelButton("NextActionButton", root, "SHOW ME", new Vector2(28f, -430f), out TMP_Text nextActionLabelText);
+            _giveControlButton = CreatePanelButton("GiveControlButton", root, "CONTROL LOCKED", new Vector2(246f, -430f), out TMP_Text giveControlLabelText);
+            _closeButton = CreatePanelButton("CloseButton", root, "CLOSE", new Vector2(464f, -430f), out _);
+            _stopButton = CreatePanelButton("StopButton", root, "STOP", new Vector2(246f, -498f), out TMP_Text stopLabelText);
             _nextActionButton.interactable = false;
             _giveControlButton.interactable = false;
             _stopButton.interactable = false;
@@ -157,6 +159,7 @@ namespace Game.UI.Runtime
                 ownershipBodyText,
                 goalsBodyText,
                 alertsBodyText,
+                narrationSubtitleText,
                 recommendationBodyText,
                 _nextActionButton,
                 _giveControlButton,

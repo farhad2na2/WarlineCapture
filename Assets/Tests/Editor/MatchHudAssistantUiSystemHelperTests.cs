@@ -113,6 +113,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             42,
             "- Neutralize hostile patrol\n[x] Protect civilians",
             "HIGH: Fuel reserves empty",
+            "HIGH: Hostile patrol near base",
             true,
             true,
             "Review objective",
@@ -134,6 +135,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.NotNull(panel);
         TMP_Text goals = panel.Find("GoalsBody")?.GetComponent<TMP_Text>();
         TMP_Text alerts = panel.Find("AlertsBody")?.GetComponent<TMP_Text>();
+        TMP_Text narration = panel.Find("NarrationSubtitle")?.GetComponent<TMP_Text>();
         TMP_Text ownership = panel.Find("OwnershipBody")?.GetComponent<TMP_Text>();
         TMP_Text recommendation = panel.Find("RecommendationBody")?.GetComponent<TMP_Text>();
         Image previewPulse = panel.Find("PreviewPulse")?.GetComponent<Image>();
@@ -144,6 +146,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
 
         Assert.NotNull(goals);
         Assert.NotNull(alerts);
+        Assert.NotNull(narration);
         Assert.NotNull(ownership);
         Assert.NotNull(recommendation);
         Assert.NotNull(previewPulse);
@@ -153,6 +156,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.NotNull(giveControlLabel);
         Assert.AreEqual("- Neutralize hostile patrol\n[x] Protect civilians", goals.text);
         Assert.AreEqual("HIGH: Fuel reserves empty", alerts.text);
+        Assert.AreEqual("HIGH: Hostile patrol near base", narration.text);
         Assert.AreEqual("ARIA is executing a bounded action. STOP returns control.", ownership.text);
         StringAssert.Contains("HIGH: Review objective", recommendation.text);
         Assert.IsTrue(previewPulse.gameObject.activeSelf);

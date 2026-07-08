@@ -51,6 +51,8 @@ namespace Game.UI.Shell.Ecs
         private static int cachedAssistantPanelGoalCount;
         private static int cachedAssistantPanelMessageCount;
         private static int cachedAssistantPanelMessageVersion;
+        private static int cachedAssistantPanelNarrationCount;
+        private static int cachedAssistantPanelNarrationVersion;
         private static int cachedAssistantPanelRecommendationCount;
         private static AssistantControlState cachedAssistantPanelControlState;
         private static UiAssistantPanelModel cachedAssistantPanel;
@@ -98,6 +100,8 @@ namespace Game.UI.Shell.Ecs
             cachedAssistantPanelGoalCount = 0;
             cachedAssistantPanelMessageCount = 0;
             cachedAssistantPanelMessageVersion = 0;
+            cachedAssistantPanelNarrationCount = 0;
+            cachedAssistantPanelNarrationVersion = 0;
             cachedAssistantPanelRecommendationCount = 0;
             cachedAssistantPanelControlState = AssistantControlState.Player;
             cachedAssistantPanel = UiAssistantPanelModel.Empty;
@@ -1201,6 +1205,47 @@ namespace Game.UI.Shell.Ecs
             return (int)(version == 0u ? (uint)messages.Length : version);
         }
 
+        private static int AssistantNarrationVersion(DynamicBuffer<AssistantNarrationRequestElement> requests)
+        {
+            uint version = 0u;
+            for (int i = 0; i < requests.Length; i++)
+            {
+                AssistantNarrationRequestElement request = requests[i];
+                version = version * 397u
+                    ^ (uint)math.max(0, request.RequestId)
+                    ^ (uint)math.max(0, request.MessageId) * 31u
+                    ^ (uint)request.Priority * 17u
+                    ^ (uint)request.Status;
+            }
+
+            return (int)(version == 0u ? (uint)requests.Length : version);
+        }
+
+        private static string BuildAssistantNarrationSubtitleText(DynamicBuffer<AssistantNarrationRequestElement> requests)
+        {
+            if (requests.Length == 0)
+                return "No active narration";
+
+            string text = string.Empty;
+            int visibleCount = 0;
+            for (int i = requests.Length - 1; i >= 0 && visibleCount < 2; i--)
+            {
+                AssistantNarrationRequestElement request = requests[i];
+                if (request.Text.Length == 0)
+                    continue;
+
+                if (text.Length > 0)
+                    text += "\n";
+
+                text += PriorityText(request.Priority);
+                text += ": ";
+                text += request.Text.ToString();
+                visibleCount++;
+            }
+
+            return text.Length > 0 ? text : "No active narration";
+        }
+
         private static string PriorityText(AssistantMessagePriority priority)
         {
             return priority switch
@@ -1298,6 +1343,12 @@ namespace Game.UI.Shell.Ecs
             DynamicBuffer<AssistantMessageElement> messages =
                 entityManager.GetBuffer<AssistantMessageElement>(boundary, true);
             int messageVersion = AssistantMessageVersion(messages);
+            bool hasNarrationRequests = entityManager.HasBuffer<AssistantNarrationRequestElement>(boundary);
+            DynamicBuffer<AssistantNarrationRequestElement> narrationRequests = hasNarrationRequests
+                ? entityManager.GetBuffer<AssistantNarrationRequestElement>(boundary, true)
+                : default;
+            int narrationCount = hasNarrationRequests ? narrationRequests.Length : 0;
+            int narrationVersion = hasNarrationRequests ? AssistantNarrationVersion(narrationRequests) : 0;
 
             if (hasCachedAssistantPanel &&
                 cachedAssistantPanelWorld == entityManager.World &&
@@ -1307,6 +1358,8 @@ namespace Game.UI.Shell.Ecs
                 cachedAssistantPanelGoalCount == goals.Length &&
                 cachedAssistantPanelMessageCount == messages.Length &&
                 cachedAssistantPanelMessageVersion == messageVersion &&
+                cachedAssistantPanelNarrationCount == narrationCount &&
+                cachedAssistantPanelNarrationVersion == narrationVersion &&
                 cachedAssistantPanelRecommendationCount == recommendations.Length &&
                 cachedAssistantPanelControlState == assistantState.ControlState)
             {
@@ -1317,15 +1370,19 @@ namespace Game.UI.Shell.Ecs
             AssistantRecommendationElement topRecommendation =
                 recommendations.Length > 0 ? recommendations[0] : default;
             string alertsText = BuildAssistantAlertsText(messages);
+            string narrationSubtitleText = hasNarrationRequests
+                ? BuildAssistantNarrationSubtitleText(narrationRequests)
+                : "No active narration";
             uint modelVersion = CombineAssistantPanelVersion(
                 assistantState.SourceVersion,
                 recommendationReadModel.Version,
-                messageVersion,
+                messageVersion ^ narrationVersion,
                 assistantState.ControlState);
             assistantPanel = new UiAssistantPanelModel(
                 modelVersion,
                 BuildAssistantGoalsText(goals),
                 alertsText,
+                narrationSubtitleText,
                 alertsText != "No priority alerts",
                 topRecommendation.RecommendationId != 0,
                 topRecommendation.RecommendationId != 0 ? topRecommendation.Title.ToString() : "No recommendation",
@@ -1349,6 +1406,8 @@ namespace Game.UI.Shell.Ecs
             cachedAssistantPanelGoalCount = goals.Length;
             cachedAssistantPanelMessageCount = messages.Length;
             cachedAssistantPanelMessageVersion = messageVersion;
+            cachedAssistantPanelNarrationCount = narrationCount;
+            cachedAssistantPanelNarrationVersion = narrationVersion;
             cachedAssistantPanelRecommendationCount = recommendations.Length;
             cachedAssistantPanelControlState = assistantState.ControlState;
             cachedAssistantPanel = assistantPanel;

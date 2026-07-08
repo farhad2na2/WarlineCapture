@@ -935,12 +935,13 @@ namespace Game.Runtime
             {
                 if (VerboseResourceHaulerLogs)
                     Debug.Log($"[ResourceHauler] entity={entity} phase=ToSource current={currentCell} target={order.TargetCell} source={source.Id} sourceOrigin={source.OriginCell}");
-                if (!HasGoalOrPathRequest(em, entity, order.TargetCell))
+                if (!HasActiveGoalOrPathRequest(em, entity, order.TargetCell))
                 {
                     if (VerboseResourceHaulerLogs)
                         Debug.Log($"[ResourceHauler] entity={entity} reissuing-source-move source={source.Id}");
-                    if (TryIssueHaulerMoveToBuilding(context, em, entity, source, out _))
+                    if (TryIssueHaulerMoveToBuilding(context, em, entity, source, out int2 sourceGoal))
                     {
+                        context.ResourceHaulerUtilitySystemHelper.SetTravelPhase(ref order, ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.ToSource, sourceGoal);
                         SetOrAddResourceHaulOrder(em, entity, order);
                     }
                     else
@@ -1065,10 +1066,11 @@ namespace Game.Runtime
         {
             if (!IsHaulerAtBuildingApproach(context, currentCell, footprintSize, destination, grid))
             {
-                if (!HasGoalOrPathRequest(em, entity, order.TargetCell))
+                if (!HasActiveGoalOrPathRequest(em, entity, order.TargetCell))
                 {
-                    if (TryIssueHaulerMoveToBuilding(context, em, entity, destination, out _))
+                    if (TryIssueHaulerMoveToBuilding(context, em, entity, destination, out int2 destinationGoal))
                     {
+                        context.ResourceHaulerUtilitySystemHelper.SetTravelPhase(ref order, ResourceHaulerUtilitySystemHelper.ResourceHaulPhase.ToDestination, destinationGoal);
                         SetOrAddResourceHaulOrder(em, entity, order);
                     }
                     else
@@ -1235,11 +1237,24 @@ namespace Game.Runtime
             return true;
         }
 
-        private static bool HasGoalOrPathRequest(EntityManager em, Entity entity, int2 goal)
+        private static bool HasActiveGoalOrPathRequest(EntityManager em, Entity entity, int2 goal)
         {
-            bool sameTarget = em.HasComponent<UnitTarget>(entity) && em.GetComponentData<UnitTarget>(entity).Cell.Equals(goal);
-            bool sameRequest = em.HasComponent<UnitPathRequest>(entity) && em.GetComponentData<UnitPathRequest>(entity).Goal.Equals(goal);
-            return sameTarget || sameRequest;
+            if (em.HasComponent<UnitPathRequest>(entity) &&
+                em.GetComponentData<UnitPathRequest>(entity).Goal.Equals(goal))
+            {
+                return true;
+            }
+
+            if (!em.HasComponent<UnitTarget>(entity) ||
+                !em.GetComponentData<UnitTarget>(entity).Cell.Equals(goal))
+            {
+                return false;
+            }
+
+            return em.HasComponent<UnitPathFollow>(entity) ||
+                   em.HasComponent<UnitPathRange>(entity) ||
+                   em.HasComponent<UnitPathRetryCooldown>(entity) ||
+                   em.HasComponent<UnitLongDistanceMove>(entity);
         }
 
         private static void SetOrAddResourceHaulOrder(EntityManager em, Entity entity, UnitResourceHaulOrder order)

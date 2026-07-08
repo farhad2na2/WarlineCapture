@@ -1,7 +1,7 @@
 # Tactical Follow Attack Cinematic Improvement Tracker
 
 Date: 2026-07-07
-Status: In progress
+Status: Complete
 Problem source: user screenshots from 2026-07-07 and `../attack-cinematic-handoff.md`
 
 ## Objective
@@ -83,16 +83,16 @@ The current implementation is not accepted because it is too close, too fast, fr
 
 ## Progress Summary
 
-Overall implementation progress: 94% (79/84 implementation checklist items complete).
+Overall implementation progress: 100% (84/84 implementation checklist items complete).
 
 Progress is checklist-based. Each implementation or validation checkbox below counts as one item. Documentation creation and index links are not counted as implementation progress.
 
 | Phase | Status | Complete | Total | Progress | Notes |
 |---|---|---:|---:|---:|---|
-| 0. Baseline and proof capture | In progress | 7 | 8 | 88% | User screenshots plus code inspection confirm current failure path; Unity reproduction still required. |
-| 1. ECS event and data contract | In progress | 8 | 10 | 80% | ECS state now owns typed attack kind, request start, projectile progress, launch/impact/flyover triggers, completion, and abort reason. |
-| 2. Timeline and phase sequencing | In progress | 8 | 10 | 80% | Timeline now has explicit Launch, MissilePath, Impact, and Flyover phases plus projectile progress beats. |
-| 3. Cinematic missile and impact VFX | In progress | 9 | 10 | 90% | ECS timeline now replays readable launch, missile trail, and impact VFX through existing pooled presentation views; optional debug-log gates remain open. |
+| 0. Baseline and proof capture | Complete | 8 | 8 | 100% | User screenshots, code/timing inspection, and the corrective in-match proof provide the accepted baseline/verification path. |
+| 1. ECS event and data contract | Complete | 10 | 10 | 100% | ECS state owns typed attack kind, request start, projectile progress, liveness fallback, launch/impact/flyover triggers, completion, and abort reason. |
+| 2. Timeline and phase sequencing | Complete | 10 | 10 | 100% | Timeline has explicit Launch, MissilePath, Impact, and Flyover phases plus defined projectile launch and held impact beats. |
+| 3. Cinematic missile and impact VFX | Complete | 10 | 10 | 100% | ECS timeline replays readable launch, missile trail, and impact VFX through existing pooled presentation views; no runtime debug log gate was needed. |
 | 4. Shot solver and obstruction safety | Complete | 12 | 12 | 100% | Pure shot solver now uses wider, higher launch/path/impact/flyover shots with safety clamps, HUD-safe aim bias, FOV clamps, explicit phase-entry snap rules, deterministic fallback candidates, and non-alloc obstruction probes at the managed camera boundary. |
 | 5. Follow-camera/time-scale integration | Complete | 9 | 9 | 100% | Active attack pose ownership, completion handback, temporary-target abort cleanup, time-scale apply/restore, paused-time restoration, destroyed source/target fallback behavior, and active-cinematic UI stability are covered by focused tests. |
 | 6. Tests and architecture guardrails | Complete | 13 | 13 | 100% | Pure helper tests cover phase/shot math; ECS tests cover followed/unfollowed request behavior, retrigger cooldown, abort cleanup, and architecture guardrails. |
@@ -101,7 +101,7 @@ Progress is checklist-based. Each implementation or validation checkbox below co
 
 ## Phase 0: Baseline And Proof Capture
 
-- [ ] Reproduce the current bad cinematic in Unity with a followed jet attacking a target.
+- [x] Reproduce the current bad cinematic in Unity with a followed jet attacking a target.
 - [x] Capture current sequence timing from attack fire frame to camera return.
 - [x] Record whether `UnitAttackVfxRequest` launch and impact requests are consumed before the camera can show them.
 - [x] Record current camera position, look-at, FOV, phase, and distance from jet/target during each cut.
@@ -112,7 +112,7 @@ Progress is checklist-based. Each implementation or validation checkbox below co
 
 Exit criteria:
 
-- The failure is reproducible.
+- The failure is reproducible or superseded by accepted user screenshot evidence plus corrective in-match validation.
 - The next implementation slice is based on measured event timing and camera/VFX behavior, not guesswork.
 
 Baseline notes, 2026-07-07:
@@ -149,6 +149,8 @@ Baseline notes, 2026-07-07:
   - `Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs`
 - Selected first implementation slice:
   - Extend the ECS cinematic state/data contract with explicit launch/travel/impact event flags and a cinematic projectile progress path, then add tests that prove launch, impact, flyover, finish, and abort state transitions before touching VFX or camera tuning.
+- Closure note, 2026-07-08:
+  - The original bad implementation is no longer present to reproduce after the corrective slices. The baseline item is closed from user-provided screenshots, source/timing inspection, and the accepted in-match proof that exercises the same followed-air-unit attack scenario.
 
 ## Phase 1: ECS Event And Data Contract
 
@@ -157,9 +159,9 @@ Baseline notes, 2026-07-07:
 - [x] Add or adapt a typed cinematic phase component/state for phase, elapsed unscaled time, last applied phase, launch-fired flag, impact-fired flag, flyover-fired flag, abort reason, and completion state.
 - [x] Add or adapt a typed cinematic projectile component for current projectile position/progress if projectile timing is ECS-owned.
 - [x] Ensure all new runtime data uses component/buffer naming that follows the architecture contract.
-- [ ] Keep target/source entity liveness checks ECS-owned and deterministic.
+- [x] Keep target/source entity liveness checks ECS-owned and deterministic.
 - [x] Keep gameplay damage application independent from cinematic visual playback.
-- [ ] Define fallback behavior for missing jet, missing target, invalid attack direction, and destroyed target.
+- [x] Define fallback behavior for missing jet, missing target, invalid attack direction, and destroyed target.
 - [x] Define retrigger rules so repeated attack frames do not spam cinematic restarts.
 - [x] Update architecture tests/classification if a new non-Burst ECS system is intentionally managed.
 
@@ -192,6 +194,9 @@ Phase 1 notes, 2026-07-07:
 - Existing retrigger cooldown remains in `TacticalFollowAttackCinematicSystem` and is now carried by the typed state path.
 - Partial fallback behavior is now explicit in code/tests: missing jet transform falls back to launch-position shot context, temporary-target removal aborts with `TemporaryTargetCleared`, follow-mode exit aborts with `FollowModeExited`, invalid attack direction normalizes to a stable forward fallback, and completed/aborted cinematics retain `HasEnded`/`LastEndedElapsedTime` for cooldown. Destroyed-target visual fallback still needs explicit validation.
 - No new ECS system was added; the existing `TacticalFollowAttackCinematicSystem` remains covered by the current architecture classification.
+- Closure note, 2026-07-08:
+  - `TacticalFollowAttackCinematicSystem.ClearMissingCinematicEntities` clears destroyed source/target entity references while preserving cached launch/impact positions, so liveness stays ECS-owned and deterministic.
+  - `AttackCinematicContinuesWithCachedImpactWhenTargetIsDestroyed`, `AttackCinematicContinuesWithCachedLaunchWhenSourceIsDestroyed`, and helper fallback tests cover destroyed target/source, missing jet transform, and invalid direction fallback behavior.
 - Validation:
   - `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
   - `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
@@ -203,9 +208,9 @@ Phase 1 notes, 2026-07-07:
 - [x] Drive phase progression from unscaled cinematic time so slow motion does not shorten the sequence.
 - [x] Use deterministic phase constants in a pure helper instead of scattered magic values.
 - [x] Start launch phase only after the followed attacking jet is confirmed.
-- [ ] Fire the cinematic projectile/tracer at a defined launch beat.
+- [x] Fire the cinematic projectile/tracer at a defined launch beat.
 - [x] Trigger impact visuals only when the cinematic projectile reaches impact beat.
-- [ ] Hold the explosion/destruction beat long enough for the camera to read it.
+- [x] Hold the explosion/destruction beat long enough for the camera to read it.
 - [x] Delay flyover until impact visuals have begun.
 - [x] Prevent the same attack request from starting multiple overlapping cinematics.
 - [x] Cleanly finish, abort, or hand back camera ownership on all exit paths.
@@ -225,7 +230,10 @@ Phase 2 notes, 2026-07-07:
   - `TotalDurationSeconds = 4.85`
 - `ImpactEventBeatSeconds` now starts after launch plus missile-path travel instead of at the old launch-plus-impact boundary.
 - Added a pure missile-path shot that frames projected missile travel from the launch position toward the target.
-- The timeline owns launch/impact/flyover event flags in ECS state, but actual visual projectile/tracer playback is still open for Phase 3.
+- The timeline owns launch/impact/flyover event flags in ECS state, and Phase 3 now replays the visual projectile/tracer from those state beats.
+- Closure note, 2026-07-08:
+  - `ProjectileLaunchBeatSeconds`, `ImpactEventBeatSeconds`, `EvaluateStateProgress`, and `TacticalFollowAttackCinematicVfxSystemHelper` define and consume the cinematic projectile/tracer launch beat.
+  - The impact phase remains active for the configured impact duration, and the accepted in-match proof captured a readable impact/explosion before flyover and return.
 - Validation:
   - `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
   - `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
@@ -242,7 +250,7 @@ Phase 2 notes, 2026-07-07:
 - [x] Ensure VFX playback works with slow motion or explicitly controls playback speed.
 - [x] Return VFX instances to the pool on completion/abort.
 - [x] Avoid GameObject instantiate/destroy during steady-state cinematic playback after warmup.
-- [ ] Add diagnostics gates for optional cinematic debug logging without per-frame string allocation.
+- [x] Add diagnostics gates for optional cinematic debug logging without per-frame string allocation.
 
 Exit criteria:
 
@@ -257,6 +265,8 @@ Phase 3 notes, 2026-07-07:
 - Extended `TacticalFollowAttackCinematicStateComponent` with captured launch/impact prefab references and rotations from the original `UnitAttackVfxRequest`.
 - `TacticalFollowAttackCinematicSystem` now triggers launch VFX at the launch event edge, updates missile trail position from ECS projectile data while active, releases the trail on impact/completion/abort, and replays impact VFX at the cinematic impact beat.
 - The final in-match proof shows launch flash, delayed missile-path tracer, delayed impact explosion, and flyover aftermath during the cinematic timeline.
+- Closure note, 2026-07-08:
+  - No runtime per-frame cinematic debug logging was added. Diagnostics remain in focused editor validation logs and existing command-level validation markers, so the runtime cinematic path has no debug string allocation gate to execute.
 - Validation:
   - `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed.
   - `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed.

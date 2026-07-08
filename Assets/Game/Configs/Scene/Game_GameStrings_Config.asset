@@ -15,22 +15,49 @@ MonoBehaviour:
   entries:
   - key: confirm_destroy
     value: Are you sure you want to destroy {0}?
+    audioEventId: VO.ARIA.Message.ConfirmDestroy
+    audioEventId: VO.ARIA.Message.ConfirmDestroy
+    audioEventId: VO.ARIA.Message.ConfirmDestroy
   - key: not_enough_money
     value: Not enough money
+    audioEventId: VO.ARIA.Message.NotEnoughMoney
+    audioEventId: VO.ARIA.Message.NotEnoughMoney
+    audioEventId: VO.ARIA.Message.NotEnoughMoney
   - key: create_first
     value: Create {0} first
+    audioEventId: VO.ARIA.Message.CreateFirst
+    audioEventId: VO.ARIA.Message.CreateFirst
+    audioEventId: VO.ARIA.Message.CreateFirst
   - key: drag_building_to_final_position
     value: Drag to final position
+    audioEventId: VO.ARIA.Message.DragBuildingToFinalPosition
+    audioEventId: VO.ARIA.Message.DragBuildingToFinalPosition
+    audioEventId: VO.ARIA.Message.DragBuildingToFinalPosition
   - key: warning_ground_attack_type
     value: Ground vehicle attack detected
+    audioEventId: VO.ARIA.Message.WarningGroundAttackType
+    audioEventId: VO.ARIA.Message.WarningGroundAttackType
+    audioEventId: VO.ARIA.Message.WarningGroundAttackType
   - key: warning_air_attack_type
     value: Air attack detected
+    audioEventId: VO.ARIA.Message.WarningAirAttackType
+    audioEventId: VO.ARIA.Message.WarningAirAttackType
+    audioEventId: VO.ARIA.Message.WarningAirAttackType
   - key: warning_attack_eta_seconds
     value: 'Estimated time to base: {0} seconds'
+    audioEventId: VO.ARIA.Message.WarningAttackEtaSeconds
+    audioEventId: VO.ARIA.Message.WarningAttackEtaSeconds
+    audioEventId: VO.ARIA.Message.WarningAttackEtaSeconds
   - key: warning_attack_eta_suffix
     value: '{0} - ETA {1}s'
+    audioEventId: VO.ARIA.Message.WarningAttackEtaSuffix
+    audioEventId: VO.ARIA.Message.WarningAttackEtaSuffix
+    audioEventId: VO.ARIA.Message.WarningAttackEtaSuffix
   - key: warning_attack_count_suffix
     value: '{0} x{1}'
+    audioEventId: VO.ARIA.Message.WarningAttackCountSuffix
+    audioEventId: VO.ARIA.Message.WarningAttackCountSuffix
+    audioEventId: VO.ARIA.Message.WarningAttackCountSuffix
   - key: tactical.command.mode.select
     value: SELECT SQUAD
   - key: tactical.command.mode.move
@@ -51,192 +78,468 @@ MonoBehaviour:
     value: SPECIAL ORDER
   - key: tactical.command.reason.no_selection
     value: Select units or a building first.
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonNoSelection
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonNoSelection
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonNoSelection
   - key: tactical.command.reason.target_out_of_bounds
     value: Target is outside the playable area.
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonTargetOutOfBounds
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonTargetOutOfBounds
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonTargetOutOfBounds
   - key: tactical.command.reason.target_blocked
     value: Route is blocked.
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonTargetBlocked
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonTargetBlocked
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonTargetBlocked
   - key: tactical.command.reason.target_unreachable
     value: Target is unreachable.
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonTargetUnreachable
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonTargetUnreachable
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonTargetUnreachable
   - key: tactical.command.reason.target_not_enemy
     value: Target is not hostile.
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonTargetNotEnemy
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonTargetNotEnemy
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonTargetNotEnemy
   - key: tactical.command.reason.target_not_attackable
     value: Target cannot be attacked.
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonTargetNotAttackable
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonTargetNotAttackable
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonTargetNotAttackable
   - key: tactical.command.reason.command_unavailable
     value: Command unavailable.
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonCommandUnavailable
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonCommandUnavailable
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonCommandUnavailable
   - key: tactical.command.reason.build_unavailable
     value: Building unavailable.
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonBuildUnavailable
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonBuildUnavailable
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonBuildUnavailable
   - key: tactical.command.reason.camera_jump_unavailable
     value: Camera focus unavailable.
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonCameraJumpUnavailable
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonCameraJumpUnavailable
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonCameraJumpUnavailable
   - key: tactical.command.reason.scan_unavailable
     value: Scan unavailable.
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonScanUnavailable
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonScanUnavailable
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonScanUnavailable
   - key: tactical.command.reason.scan_cooldown
     value: Scan cooling down.
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonScanCooldown
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonScanCooldown
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonScanCooldown
   - key: tactical.command.reason.insufficient_resources
     value: Insufficient resources.
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonInsufficientResources
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonInsufficientResources
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonInsufficientResources
   - key: tactical.command.reason.insufficient_fuel
     value: Insufficient fuel.
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonInsufficientFuel
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonInsufficientFuel
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonInsufficientFuel
   - key: tactical.command.reason.invalid_transport
     value: Select a transport vehicle or aircraft first.
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonInvalidTransport
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonInvalidTransport
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonInvalidTransport
   - key: tactical.command.reason.invalid_passenger
     value: Select units or cargo that can board.
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonInvalidPassenger
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonInvalidPassenger
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonInvalidPassenger
   - key: tactical.command.reason.transport_full
     value: Transport is full.
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonTransportFull
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonTransportFull
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonTransportFull
   - key: tactical.command.reason.no_eligible_passengers
     value: No nearby units can board this transport.
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonNoEligiblePassengers
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonNoEligiblePassengers
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonNoEligiblePassengers
   - key: tactical.command.reason.no_disembark_cell
     value: No clear exit point for passengers.
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonNoDisembarkCell
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonNoDisembarkCell
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonNoDisembarkCell
   - key: tactical.command.reason.transport_passenger_missing
     value: Passenger is not inside this transport.
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonTransportPassengerMissing
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonTransportPassengerMissing
+    audioEventId: VO.ARIA.Message.TacticalCommandReasonTransportPassengerMissing
   - key: tactical.command.instruction.select
     value: Select units or a building.
+    audioEventId: VO.ARIA.Message.TacticalCommandInstructionSelect
+    audioEventId: VO.ARIA.Message.TacticalCommandInstructionSelect
+    audioEventId: VO.ARIA.Message.TacticalCommandInstructionSelect
   - key: tactical.command.instruction.move
     value: Choose destination.
+    audioEventId: VO.ARIA.Message.TacticalCommandInstructionMove
+    audioEventId: VO.ARIA.Message.TacticalCommandInstructionMove
+    audioEventId: VO.ARIA.Message.TacticalCommandInstructionMove
   - key: tactical.command.instruction.attack
     value: Tap hostile target.
+    audioEventId: VO.ARIA.Message.TacticalCommandInstructionAttack
+    audioEventId: VO.ARIA.Message.TacticalCommandInstructionAttack
+    audioEventId: VO.ARIA.Message.TacticalCommandInstructionAttack
   - key: tactical.command.instruction.hold
     value: Hold position and return fire.
+    audioEventId: VO.ARIA.Message.TacticalCommandInstructionHold
+    audioEventId: VO.ARIA.Message.TacticalCommandInstructionHold
+    audioEventId: VO.ARIA.Message.TacticalCommandInstructionHold
   - key: tactical.command.instruction.stop
     value: Stop selected units and clear orders.
+    audioEventId: VO.ARIA.Message.TacticalCommandInstructionStop
+    audioEventId: VO.ARIA.Message.TacticalCommandInstructionStop
+    audioEventId: VO.ARIA.Message.TacticalCommandInstructionStop
   - key: tactical.command.instruction.scan
     value: Tap scan area.
+    audioEventId: VO.ARIA.Message.TacticalCommandInstructionScan
+    audioEventId: VO.ARIA.Message.TacticalCommandInstructionScan
+    audioEventId: VO.ARIA.Message.TacticalCommandInstructionScan
   - key: tactical.command.instruction.board
     value: Select a transport.
+    audioEventId: VO.ARIA.Message.TacticalCommandInstructionBoard
+    audioEventId: VO.ARIA.Message.TacticalCommandInstructionBoard
+    audioEventId: VO.ARIA.Message.TacticalCommandInstructionBoard
   - key: tactical.command.instruction.build
     value: Choose what to build, produce, or recruit.
+    audioEventId: VO.ARIA.Message.TacticalCommandInstructionBuild
+    audioEventId: VO.ARIA.Message.TacticalCommandInstructionBuild
+    audioEventId: VO.ARIA.Message.TacticalCommandInstructionBuild
   - key: tactical.command.instruction.special
     value: Choose special command.
+    audioEventId: VO.ARIA.Message.TacticalCommandInstructionSpecial
+    audioEventId: VO.ARIA.Message.TacticalCommandInstructionSpecial
+    audioEventId: VO.ARIA.Message.TacticalCommandInstructionSpecial
   - key: tactical.command.board.prompt_transport_to_passenger
     value: Select units to board or use BOARD ALL.
+    audioEventId: VO.ARIA.Message.TacticalCommandBoardPromptTransportToPassenger
+    audioEventId: VO.ARIA.Message.TacticalCommandBoardPromptTransportToPassenger
+    audioEventId: VO.ARIA.Message.TacticalCommandBoardPromptTransportToPassenger
   - key: tactical.command.board.prompt_passenger_to_transport
     value: Select a transport.
+    audioEventId: VO.ARIA.Message.TacticalCommandBoardPromptPassengerToTransport
+    audioEventId: VO.ARIA.Message.TacticalCommandBoardPromptPassengerToTransport
+    audioEventId: VO.ARIA.Message.TacticalCommandBoardPromptPassengerToTransport
   - key: tactical.command.board.unavailable
     value: Board command unavailable.
+    audioEventId: VO.ARIA.Message.TacticalCommandBoardUnavailable
+    audioEventId: VO.ARIA.Message.TacticalCommandBoardUnavailable
+    audioEventId: VO.ARIA.Message.TacticalCommandBoardUnavailable
   - key: tactical.command.board.tap_units_to_board
     value: Tap units to board.
+    audioEventId: VO.ARIA.Message.TacticalCommandBoardTapUnitsToBoard
+    audioEventId: VO.ARIA.Message.TacticalCommandBoardTapUnitsToBoard
+    audioEventId: VO.ARIA.Message.TacticalCommandBoardTapUnitsToBoard
   - key: tactical.command.board.selected_unit_cannot_board
     value: Selected unit cannot board.
+    audioEventId: VO.ARIA.Message.TacticalCommandBoardSelectedUnitCannotBoard
+    audioEventId: VO.ARIA.Message.TacticalCommandBoardSelectedUnitCannotBoard
+    audioEventId: VO.ARIA.Message.TacticalCommandBoardSelectedUnitCannotBoard
   - key: tactical.command.board.select_unit_first
     value: Select a unit first.
+    audioEventId: VO.ARIA.Message.TacticalCommandBoardSelectUnitFirst
+    audioEventId: VO.ARIA.Message.TacticalCommandBoardSelectUnitFirst
+    audioEventId: VO.ARIA.Message.TacticalCommandBoardSelectUnitFirst
   - key: tactical.command.unavailable.hold_no_selection
     value: Select units before holding position.
+    audioEventId: VO.ARIA.Message.TacticalCommandUnavailableHoldNoSelection
+    audioEventId: VO.ARIA.Message.TacticalCommandUnavailableHoldNoSelection
+    audioEventId: VO.ARIA.Message.TacticalCommandUnavailableHoldNoSelection
   - key: tactical.command.unavailable.stop_no_selection
     value: Select units before stopping orders.
+    audioEventId: VO.ARIA.Message.TacticalCommandUnavailableStopNoSelection
+    audioEventId: VO.ARIA.Message.TacticalCommandUnavailableStopNoSelection
+    audioEventId: VO.ARIA.Message.TacticalCommandUnavailableStopNoSelection
   - key: tactical.command.unavailable.scan_no_selection
     value: Select a scanner or combat unit first.
+    audioEventId: VO.ARIA.Message.TacticalCommandUnavailableScanNoSelection
+    audioEventId: VO.ARIA.Message.TacticalCommandUnavailableScanNoSelection
+    audioEventId: VO.ARIA.Message.TacticalCommandUnavailableScanNoSelection
   - key: tactical.feedback.camera_follow_unavailable
     value: Camera follow unavailable.
+    audioEventId: VO.ARIA.Message.TacticalFeedbackCameraFollowUnavailable
+    audioEventId: VO.ARIA.Message.TacticalFeedbackCameraFollowUnavailable
+    audioEventId: VO.ARIA.Message.TacticalFeedbackCameraFollowUnavailable
   - key: tactical.feedback.camera_follow_active
     value: Camera follow active.
+    audioEventId: VO.ARIA.Message.TacticalFeedbackCameraFollowActive
+    audioEventId: VO.ARIA.Message.TacticalFeedbackCameraFollowActive
+    audioEventId: VO.ARIA.Message.TacticalFeedbackCameraFollowActive
   - key: tactical.feedback.rts_camera_restored
     value: RTS camera restored.
+    audioEventId: VO.ARIA.Message.TacticalFeedbackRtsCameraRestored
+    audioEventId: VO.ARIA.Message.TacticalFeedbackRtsCameraRestored
+    audioEventId: VO.ARIA.Message.TacticalFeedbackRtsCameraRestored
   - key: tactical.feedback.follow_target_lost
     value: Follow target lost.
+    audioEventId: VO.ARIA.Message.TacticalFeedbackFollowTargetLost
+    audioEventId: VO.ARIA.Message.TacticalFeedbackFollowTargetLost
+    audioEventId: VO.ARIA.Message.TacticalFeedbackFollowTargetLost
   - key: tactical.feedback.destroyed_selected_building
     value: Destroyed selected building.
+    audioEventId: VO.ARIA.Message.TacticalFeedbackDestroyedSelectedBuilding
+    audioEventId: VO.ARIA.Message.TacticalFeedbackDestroyedSelectedBuilding
+    audioEventId: VO.ARIA.Message.TacticalFeedbackDestroyedSelectedBuilding
   - key: tactical.feedback.air_defense_auto_engage
     value: Air defense auto-engages aircraft and incoming missiles.
+    audioEventId: VO.ARIA.Message.TacticalFeedbackAirDefenseAutoEngage
+    audioEventId: VO.ARIA.Message.TacticalFeedbackAirDefenseAutoEngage
+    audioEventId: VO.ARIA.Message.TacticalFeedbackAirDefenseAutoEngage
   - key: tactical.feedback.exiting_unit
     value: Exiting unit.
+    audioEventId: VO.ARIA.Message.TacticalFeedbackExitingUnit
+    audioEventId: VO.ARIA.Message.TacticalFeedbackExitingUnit
+    audioEventId: VO.ARIA.Message.TacticalFeedbackExitingUnit
   - key: tactical.feedback.exiting_passengers
     value: Exiting passengers.
+    audioEventId: VO.ARIA.Message.TacticalFeedbackExitingPassengers
+    audioEventId: VO.ARIA.Message.TacticalFeedbackExitingPassengers
+    audioEventId: VO.ARIA.Message.TacticalFeedbackExitingPassengers
   - key: tactical.feedback.loading_transport
     value: Loading transport.
+    audioEventId: VO.ARIA.Message.TacticalFeedbackLoadingTransport
+    audioEventId: VO.ARIA.Message.TacticalFeedbackLoadingTransport
+    audioEventId: VO.ARIA.Message.TacticalFeedbackLoadingTransport
   - key: tactical.feedback.boarding_transport
     value: Boarding transport.
+    audioEventId: VO.ARIA.Message.TacticalFeedbackBoardingTransport
+    audioEventId: VO.ARIA.Message.TacticalFeedbackBoardingTransport
+    audioEventId: VO.ARIA.Message.TacticalFeedbackBoardingTransport
   - key: tactical.feedback.holding_current_position
     value: Holding current position.
+    audioEventId: VO.ARIA.Message.TacticalFeedbackHoldingCurrentPosition
+    audioEventId: VO.ARIA.Message.TacticalFeedbackHoldingCurrentPosition
+    audioEventId: VO.ARIA.Message.TacticalFeedbackHoldingCurrentPosition
   - key: tactical.feedback.stopped_selected_units
     value: Stopped selected units.
+    audioEventId: VO.ARIA.Message.TacticalFeedbackStoppedSelectedUnits
+    audioEventId: VO.ARIA.Message.TacticalFeedbackStoppedSelectedUnits
+    audioEventId: VO.ARIA.Message.TacticalFeedbackStoppedSelectedUnits
   - key: tactical.feedback.unit_returning_to_base
     value: Unit returning to base.
+    audioEventId: VO.ARIA.Message.TacticalFeedbackUnitReturningToBase
+    audioEventId: VO.ARIA.Message.TacticalFeedbackUnitReturningToBase
+    audioEventId: VO.ARIA.Message.TacticalFeedbackUnitReturningToBase
   - key: tactical.feedback.units_returning_to_base
     value: '{0} units returning to base.'
+    audioEventId: VO.ARIA.Message.TacticalFeedbackUnitsReturningToBase
+    audioEventId: VO.ARIA.Message.TacticalFeedbackUnitsReturningToBase
+    audioEventId: VO.ARIA.Message.TacticalFeedbackUnitsReturningToBase
   - key: tactical.feedback.destroyed_selected_unit
     value: Destroyed selected unit.
+    audioEventId: VO.ARIA.Message.TacticalFeedbackDestroyedSelectedUnit
+    audioEventId: VO.ARIA.Message.TacticalFeedbackDestroyedSelectedUnit
+    audioEventId: VO.ARIA.Message.TacticalFeedbackDestroyedSelectedUnit
   - key: tactical.feedback.destroyed_selected_units
     value: 'Destroyed {0} selected units.'
+    audioEventId: VO.ARIA.Message.TacticalFeedbackDestroyedSelectedUnits
+    audioEventId: VO.ARIA.Message.TacticalFeedbackDestroyedSelectedUnits
+    audioEventId: VO.ARIA.Message.TacticalFeedbackDestroyedSelectedUnits
   - key: tactical.feedback.scan_ordered
     value: 'SCAN ORDERED: SCANNER EN ROUTE'
+    audioEventId: VO.ARIA.Message.TacticalFeedbackScanOrdered
+    audioEventId: VO.ARIA.Message.TacticalFeedbackScanOrdered
+    audioEventId: VO.ARIA.Message.TacticalFeedbackScanOrdered
   - key: tactical.feedback.scan_one_contact
     value: 1 CONTACT
+    audioEventId: VO.ARIA.Message.TacticalFeedbackScanOneContact
+    audioEventId: VO.ARIA.Message.TacticalFeedbackScanOneContact
+    audioEventId: VO.ARIA.Message.TacticalFeedbackScanOneContact
   - key: tactical.feedback.scan_contacts
     value: '{0} CONTACTS'
+    audioEventId: VO.ARIA.Message.TacticalFeedbackScanContacts
+    audioEventId: VO.ARIA.Message.TacticalFeedbackScanContacts
+    audioEventId: VO.ARIA.Message.TacticalFeedbackScanContacts
   - key: tactical.feedback.scan_complete
     value: 'SCAN COMPLETE: {0}'
+    audioEventId: VO.ARIA.Message.TacticalFeedbackScanComplete
+    audioEventId: VO.ARIA.Message.TacticalFeedbackScanComplete
+    audioEventId: VO.ARIA.Message.TacticalFeedbackScanComplete
   - key: tactical.feedback.missile_launched
     value: Missile launched.
+    audioEventId: VO.ARIA.Message.TacticalFeedbackMissileLaunched
+    audioEventId: VO.ARIA.Message.TacticalFeedbackMissileLaunched
+    audioEventId: VO.ARIA.Message.TacticalFeedbackMissileLaunched
   - key: tactical.airdrop.emergency_drop_visual_missing
     value: Emergency drop visual missing.
+    audioEventId: VO.ARIA.Message.TacticalAirdropEmergencyDropVisualMissing
+    audioEventId: VO.ARIA.Message.TacticalAirdropEmergencyDropVisualMissing
+    audioEventId: VO.ARIA.Message.TacticalAirdropEmergencyDropVisualMissing
   - key: tactical.airdrop.parachute_visual_missing
     value: Parachute visual missing.
+    audioEventId: VO.ARIA.Message.TacticalAirdropParachuteVisualMissing
+    audioEventId: VO.ARIA.Message.TacticalAirdropParachuteVisualMissing
+    audioEventId: VO.ARIA.Message.TacticalAirdropParachuteVisualMissing
   - key: tactical.airdrop.no_clear_landing_zone
     value: No clear airdrop landing zone.
+    audioEventId: VO.ARIA.Message.TacticalAirdropNoClearLandingZone
+    audioEventId: VO.ARIA.Message.TacticalAirdropNoClearLandingZone
+    audioEventId: VO.ARIA.Message.TacticalAirdropNoClearLandingZone
   - key: tactical.airdrop.cargo_drop_blocked
     value: Cargo drop blocked.
+    audioEventId: VO.ARIA.Message.TacticalAirdropCargoDropBlocked
+    audioEventId: VO.ARIA.Message.TacticalAirdropCargoDropBlocked
+    audioEventId: VO.ARIA.Message.TacticalAirdropCargoDropBlocked
   - key: tactical.banner.mode.move.title
     value: MOVE ORDER
+    audioEventId: VO.ARIA.Message.TacticalBannerModeMoveTitle
+    audioEventId: VO.ARIA.Message.TacticalBannerModeMoveTitle
+    audioEventId: VO.ARIA.Message.TacticalBannerModeMoveTitle
   - key: tactical.banner.mode.move.description
     value: Select a destination.
+    audioEventId: VO.ARIA.Message.TacticalBannerModeMoveDescription
+    audioEventId: VO.ARIA.Message.TacticalBannerModeMoveDescription
+    audioEventId: VO.ARIA.Message.TacticalBannerModeMoveDescription
   - key: tactical.banner.mode.attack.title
     value: ATTACK ORDER
+    audioEventId: VO.ARIA.Message.TacticalBannerModeAttackTitle
+    audioEventId: VO.ARIA.Message.TacticalBannerModeAttackTitle
+    audioEventId: VO.ARIA.Message.TacticalBannerModeAttackTitle
   - key: tactical.banner.mode.attack.description
     value: Select an enemy target.
+    audioEventId: VO.ARIA.Message.TacticalBannerModeAttackDescription
+    audioEventId: VO.ARIA.Message.TacticalBannerModeAttackDescription
+    audioEventId: VO.ARIA.Message.TacticalBannerModeAttackDescription
   - key: tactical.banner.mode.scan.title
     value: SCAN ORDER
+    audioEventId: VO.ARIA.Message.TacticalBannerModeScanTitle
+    audioEventId: VO.ARIA.Message.TacticalBannerModeScanTitle
+    audioEventId: VO.ARIA.Message.TacticalBannerModeScanTitle
   - key: tactical.banner.mode.scan.description
     value: Select an area to scan.
+    audioEventId: VO.ARIA.Message.TacticalBannerModeScanDescription
+    audioEventId: VO.ARIA.Message.TacticalBannerModeScanDescription
+    audioEventId: VO.ARIA.Message.TacticalBannerModeScanDescription
   - key: tactical.banner.mode.board.title
     value: BOARD ORDER
+    audioEventId: VO.ARIA.Message.TacticalBannerModeBoardTitle
+    audioEventId: VO.ARIA.Message.TacticalBannerModeBoardTitle
+    audioEventId: VO.ARIA.Message.TacticalBannerModeBoardTitle
   - key: tactical.banner.mode.board.description
     value: Select a transport.
+    audioEventId: VO.ARIA.Message.TacticalBannerModeBoardDescription
+    audioEventId: VO.ARIA.Message.TacticalBannerModeBoardDescription
+    audioEventId: VO.ARIA.Message.TacticalBannerModeBoardDescription
   - key: tactical.banner.mode.board.description_transport_to_passenger
     value: Select units to board.
+    audioEventId: VO.ARIA.Message.TacticalBannerModeBoardDescriptionTransportToPassenger
+    audioEventId: VO.ARIA.Message.TacticalBannerModeBoardDescriptionTransportToPassenger
+    audioEventId: VO.ARIA.Message.TacticalBannerModeBoardDescriptionTransportToPassenger
   - key: tactical.banner.mode.build.title
     value: BUILD ORDER
+    audioEventId: VO.ARIA.Message.TacticalBannerModeBuildTitle
+    audioEventId: VO.ARIA.Message.TacticalBannerModeBuildTitle
+    audioEventId: VO.ARIA.Message.TacticalBannerModeBuildTitle
   - key: tactical.banner.mode.build.description
     value: Place structure on valid terrain.
+    audioEventId: VO.ARIA.Message.TacticalBannerModeBuildDescription
+    audioEventId: VO.ARIA.Message.TacticalBannerModeBuildDescription
+    audioEventId: VO.ARIA.Message.TacticalBannerModeBuildDescription
   - key: tactical.banner.accepted.move.title
     value: MOVE ORDER
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedMoveTitle
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedMoveTitle
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedMoveTitle
   - key: tactical.banner.accepted.move.description
     value: Units moving to target.
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedMoveDescription
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedMoveDescription
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedMoveDescription
   - key: tactical.banner.accepted.attack.title
     value: ATTACK ORDER
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedAttackTitle
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedAttackTitle
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedAttackTitle
   - key: tactical.banner.accepted.attack.description
     value: Engaging target.
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedAttackDescription
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedAttackDescription
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedAttackDescription
   - key: tactical.banner.accepted.hold.title
     value: HOLD POSITION
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedHoldTitle
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedHoldTitle
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedHoldTitle
   - key: tactical.banner.accepted.hold.description
     value: Selected units holding ground.
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedHoldDescription
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedHoldDescription
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedHoldDescription
   - key: tactical.banner.accepted.stop.title
     value: STOP ORDER
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedStopTitle
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedStopTitle
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedStopTitle
   - key: tactical.banner.accepted.stop.description
     value: Selected units clearing orders.
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedStopDescription
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedStopDescription
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedStopDescription
   - key: tactical.banner.accepted.scan.title
     value: SCAN ORDER
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedScanTitle
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedScanTitle
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedScanTitle
   - key: tactical.banner.accepted.scan.description
     value: Recon sweep in progress.
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedScanDescription
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedScanDescription
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedScanDescription
   - key: tactical.banner.accepted.board.title
     value: BOARD ORDER
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedBoardTitle
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedBoardTitle
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedBoardTitle
   - key: tactical.banner.accepted.board.description
     value: Boarding transport.
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedBoardDescription
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedBoardDescription
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedBoardDescription
   - key: tactical.banner.accepted.build.title
     value: BUILD ORDER
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedBuildTitle
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedBuildTitle
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedBuildTitle
   - key: tactical.banner.accepted.build.description
     value: Building order accepted.
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedBuildDescription
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedBuildDescription
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedBuildDescription
   - key: tactical.banner.accepted.return.title
     value: RETURN ORDER
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedReturnTitle
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedReturnTitle
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedReturnTitle
   - key: tactical.banner.accepted.return.description
     value: Unit returning to base.
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedReturnDescription
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedReturnDescription
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedReturnDescription
   - key: tactical.banner.accepted.destroy.title
     value: DESTROY ORDER
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedDestroyTitle
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedDestroyTitle
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedDestroyTitle
   - key: tactical.banner.accepted.destroy.description
     value: Selected unit removed.
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedDestroyDescription
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedDestroyDescription
+    audioEventId: VO.ARIA.Message.TacticalBannerAcceptedDestroyDescription
   - key: build.drawer.production.title
     value: PRODUCTION
   - key: build.drawer.production.fallback_name
     value: Production
   - key: build.drawer.empty.name
     value: NO ITEMS
+    audioEventId: VO.ARIA.Message.BuildDrawerEmptyName
+    audioEventId: VO.ARIA.Message.BuildDrawerEmptyName
+    audioEventId: VO.ARIA.Message.BuildDrawerEmptyName
   - key: build.drawer.requirements.buildings
     value: Valid footprint required.
   - key: build.drawer.requirements.aircraft
@@ -247,50 +550,119 @@ MonoBehaviour:
     value: Requires compatible recruitment building.
   - key: build.drawer.ready.buildings
     value: 'PLACE: choose a location for {0}.'
+    audioEventId: VO.ARIA.Message.BuildDrawerReadyBuildings
+    audioEventId: VO.ARIA.Message.BuildDrawerReadyBuildings
+    audioEventId: VO.ARIA.Message.BuildDrawerReadyBuildings
   - key: build.drawer.ready.vehicles
     value: 'PRODUCE: add {0} to the vehicle queue.'
+    audioEventId: VO.ARIA.Message.BuildDrawerReadyVehicles
+    audioEventId: VO.ARIA.Message.BuildDrawerReadyVehicles
+    audioEventId: VO.ARIA.Message.BuildDrawerReadyVehicles
   - key: build.drawer.ready.aircraft
     value: 'PRODUCE: add {0} to the aircraft queue.'
+    audioEventId: VO.ARIA.Message.BuildDrawerReadyAircraft
+    audioEventId: VO.ARIA.Message.BuildDrawerReadyAircraft
+    audioEventId: VO.ARIA.Message.BuildDrawerReadyAircraft
   - key: build.drawer.ready.soldiers
     value: 'RECRUIT: add {0} to the training queue.'
+    audioEventId: VO.ARIA.Message.BuildDrawerReadySoldiers
+    audioEventId: VO.ARIA.Message.BuildDrawerReadySoldiers
+    audioEventId: VO.ARIA.Message.BuildDrawerReadySoldiers
   - key: build.drawer.ready.default
     value: Select {0}.
+    audioEventId: VO.ARIA.Message.BuildDrawerReadyDefault
+    audioEventId: VO.ARIA.Message.BuildDrawerReadyDefault
+    audioEventId: VO.ARIA.Message.BuildDrawerReadyDefault
   - key: build.drawer.instruction.place_pending_confirm
     value: 'Place {0}: drag to position, then confirm.'
+    audioEventId: VO.ARIA.Message.BuildDrawerInstructionPlacePendingConfirm
+    audioEventId: VO.ARIA.Message.BuildDrawerInstructionPlacePendingConfirm
+    audioEventId: VO.ARIA.Message.BuildDrawerInstructionPlacePendingConfirm
   - key: build.drawer.instruction.cannot_place_here
     value: 'Cannot place here: {0}.'
+    audioEventId: VO.ARIA.Message.BuildDrawerInstructionCannotPlaceHere
+    audioEventId: VO.ARIA.Message.BuildDrawerInstructionCannotPlaceHere
+    audioEventId: VO.ARIA.Message.BuildDrawerInstructionCannotPlaceHere
   - key: build.drawer.failure.connecting
     value: Build drawer is still connecting. Try again in a moment.
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureConnecting
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureConnecting
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureConnecting
   - key: build.drawer.failure.not_enough_money
     value: Need {0} more credits to {1} {2}.
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureNotEnoughMoney
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureNotEnoughMoney
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureNotEnoughMoney
   - key: build.drawer.failure.missing_producer_named
     value: 'Cannot {0} {1}: requires {2}.'
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureMissingProducerNamed
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureMissingProducerNamed
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureMissingProducerNamed
   - key: build.drawer.failure.missing_producer
     value: 'Cannot {0} {1}: {2}.'
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureMissingProducer
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureMissingProducer
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureMissingProducer
   - key: build.drawer.failure.queue_full_named
     value: 'Cannot {0} {1}: all {2} production slots are full.'
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureQueueFullNamed
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureQueueFullNamed
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureQueueFullNamed
   - key: build.drawer.failure.queue_full
     value: 'Cannot {0} {1}: all compatible production slots are full.'
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureQueueFull
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureQueueFull
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureQueueFull
   - key: build.drawer.failure.global_queue_full
     value: 'Cannot {0} {1}: production queue limit reached ({2} max).'
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureGlobalQueueFull
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureGlobalQueueFull
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureGlobalQueueFull
   - key: build.drawer.failure.invalid_selection
     value: Select a build drawer item first.
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureInvalidSelection
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureInvalidSelection
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureInvalidSelection
   - key: build.drawer.failure.unavailable
     value: 'Cannot {0} {1}: request unavailable.'
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureUnavailable
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureUnavailable
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureUnavailable
   - key: build.drawer.failure.short.not_enough_money
     value: Insufficient credits.
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureShortNotEnoughMoney
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureShortNotEnoughMoney
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureShortNotEnoughMoney
   - key: build.drawer.failure.short.requires_named
     value: Requires {0}.
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureShortRequiresNamed
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureShortRequiresNamed
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureShortRequiresNamed
   - key: build.drawer.failure.short.missing_producer
     value: Required producer is missing.
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureShortMissingProducer
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureShortMissingProducer
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureShortMissingProducer
   - key: build.drawer.failure.short.queue_full_named
     value: '{0} production slots are full.'
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureShortQueueFullNamed
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureShortQueueFullNamed
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureShortQueueFullNamed
   - key: build.drawer.failure.short.queue_full
     value: All compatible production slots are full.
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureShortQueueFull
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureShortQueueFull
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureShortQueueFull
   - key: build.drawer.failure.short.global_queue_full
     value: Production queue limit reached ({0} max).
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureShortGlobalQueueFull
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureShortGlobalQueueFull
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureShortGlobalQueueFull
   - key: build.drawer.failure.short.unavailable
     value: Build request unavailable.
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureShortUnavailable
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureShortUnavailable
+    audioEventId: VO.ARIA.Message.BuildDrawerFailureShortUnavailable
   - key: build.drawer.item.fallback_name
     value: item
   - key: build.drawer.verb.place
@@ -313,82 +685,199 @@ MonoBehaviour:
     value: required producer is missing
   - key: build.drawer.empty.buildings
     value: No requestable buildings are configured.
+    audioEventId: VO.ARIA.Message.BuildDrawerEmptyBuildings
+    audioEventId: VO.ARIA.Message.BuildDrawerEmptyBuildings
+    audioEventId: VO.ARIA.Message.BuildDrawerEmptyBuildings
   - key: build.drawer.empty.vehicles
     value: No requestable vehicles are configured.
+    audioEventId: VO.ARIA.Message.BuildDrawerEmptyVehicles
+    audioEventId: VO.ARIA.Message.BuildDrawerEmptyVehicles
+    audioEventId: VO.ARIA.Message.BuildDrawerEmptyVehicles
   - key: build.drawer.empty.aircraft
     value: No requestable aircraft are configured.
+    audioEventId: VO.ARIA.Message.BuildDrawerEmptyAircraft
+    audioEventId: VO.ARIA.Message.BuildDrawerEmptyAircraft
+    audioEventId: VO.ARIA.Message.BuildDrawerEmptyAircraft
   - key: build.drawer.empty.soldiers
     value: No requestable soldiers are configured.
+    audioEventId: VO.ARIA.Message.BuildDrawerEmptySoldiers
+    audioEventId: VO.ARIA.Message.BuildDrawerEmptySoldiers
+    audioEventId: VO.ARIA.Message.BuildDrawerEmptySoldiers
   - key: build.drawer.empty.default
     value: No requestable items are configured.
+    audioEventId: VO.ARIA.Message.BuildDrawerEmptyDefault
+    audioEventId: VO.ARIA.Message.BuildDrawerEmptyDefault
+    audioEventId: VO.ARIA.Message.BuildDrawerEmptyDefault
   - key: build.drawer.empty.select_item
     value: Select an item to place, produce, or recruit.
+    audioEventId: VO.ARIA.Message.BuildDrawerEmptySelectItem
+    audioEventId: VO.ARIA.Message.BuildDrawerEmptySelectItem
+    audioEventId: VO.ARIA.Message.BuildDrawerEmptySelectItem
   - key: build.drawer.placement.invalid
     value: invalid placement
+    audioEventId: VO.ARIA.Message.BuildDrawerPlacementInvalid
+    audioEventId: VO.ARIA.Message.BuildDrawerPlacementInvalid
+    audioEventId: VO.ARIA.Message.BuildDrawerPlacementInvalid
   - key: build.drawer.action.place_choose_footprint
     value: 'Place {0}: choose a valid footprint.'
+    audioEventId: VO.ARIA.Message.BuildDrawerActionPlaceChooseFootprint
+    audioEventId: VO.ARIA.Message.BuildDrawerActionPlaceChooseFootprint
+    audioEventId: VO.ARIA.Message.BuildDrawerActionPlaceChooseFootprint
   - key: build.feedback.place_building
     value: PLACE BUILDING
+    audioEventId: VO.ARIA.Message.BuildFeedbackPlaceBuilding
+    audioEventId: VO.ARIA.Message.BuildFeedbackPlaceBuilding
+    audioEventId: VO.ARIA.Message.BuildFeedbackPlaceBuilding
   - key: build.feedback.production_requested
     value: '{0}: {1}'
+    audioEventId: VO.ARIA.Message.BuildFeedbackProductionRequested
+    audioEventId: VO.ARIA.Message.BuildFeedbackProductionRequested
+    audioEventId: VO.ARIA.Message.BuildFeedbackProductionRequested
   - key: build.drawer.success.recruitment_queued
     value: '{0} added to recruitment queue.'
+    audioEventId: VO.ARIA.Message.BuildDrawerSuccessRecruitmentQueued
+    audioEventId: VO.ARIA.Message.BuildDrawerSuccessRecruitmentQueued
+    audioEventId: VO.ARIA.Message.BuildDrawerSuccessRecruitmentQueued
   - key: build.drawer.success.production_queued
     value: '{0} added to production queue.'
+    audioEventId: VO.ARIA.Message.BuildDrawerSuccessProductionQueued
+    audioEventId: VO.ARIA.Message.BuildDrawerSuccessProductionQueued
+    audioEventId: VO.ARIA.Message.BuildDrawerSuccessProductionQueued
   - key: build.feedback.production_cancel_unavailable
     value: Production cancel unavailable.
+    audioEventId: VO.ARIA.Message.BuildFeedbackProductionCancelUnavailable
+    audioEventId: VO.ARIA.Message.BuildFeedbackProductionCancelUnavailable
+    audioEventId: VO.ARIA.Message.BuildFeedbackProductionCancelUnavailable
   - key: build.feedback.production_cancelled_named
     value: Cancelled {0}.
+    audioEventId: VO.ARIA.Message.BuildFeedbackProductionCancelledNamed
+    audioEventId: VO.ARIA.Message.BuildFeedbackProductionCancelledNamed
+    audioEventId: VO.ARIA.Message.BuildFeedbackProductionCancelledNamed
   - key: build.feedback.production_cancelled
     value: PRODUCTION CANCELLED
+    audioEventId: VO.ARIA.Message.BuildFeedbackProductionCancelled
+    audioEventId: VO.ARIA.Message.BuildFeedbackProductionCancelled
+    audioEventId: VO.ARIA.Message.BuildFeedbackProductionCancelled
   - key: build.feedback.production_queue_empty
     value: Production queue is empty.
+    audioEventId: VO.ARIA.Message.BuildFeedbackProductionQueueEmpty
+    audioEventId: VO.ARIA.Message.BuildFeedbackProductionQueueEmpty
+    audioEventId: VO.ARIA.Message.BuildFeedbackProductionQueueEmpty
   - key: build.feedback.production_queue_cleared_sentence
     value: Production queue cleared.
+    audioEventId: VO.ARIA.Message.BuildFeedbackProductionQueueClearedSentence
+    audioEventId: VO.ARIA.Message.BuildFeedbackProductionQueueClearedSentence
+    audioEventId: VO.ARIA.Message.BuildFeedbackProductionQueueClearedSentence
   - key: build.feedback.production_clear_unavailable
     value: Production clear unavailable.
+    audioEventId: VO.ARIA.Message.BuildFeedbackProductionClearUnavailable
+    audioEventId: VO.ARIA.Message.BuildFeedbackProductionClearUnavailable
+    audioEventId: VO.ARIA.Message.BuildFeedbackProductionClearUnavailable
   - key: build.feedback.production_queue_cleared
     value: PRODUCTION QUEUE CLEARED
+    audioEventId: VO.ARIA.Message.BuildFeedbackProductionQueueCleared
+    audioEventId: VO.ARIA.Message.BuildFeedbackProductionQueueCleared
+    audioEventId: VO.ARIA.Message.BuildFeedbackProductionQueueCleared
   - key: build.feedback.placement_cancelled
     value: PLACEMENT CANCELLED
+    audioEventId: VO.ARIA.Message.BuildFeedbackPlacementCancelled
+    audioEventId: VO.ARIA.Message.BuildFeedbackPlacementCancelled
+    audioEventId: VO.ARIA.Message.BuildFeedbackPlacementCancelled
   - key: build.feedback.rotated_90
     value: ROTATED 90 DEGREES
+    audioEventId: VO.ARIA.Message.BuildFeedbackRotated90
+    audioEventId: VO.ARIA.Message.BuildFeedbackRotated90
+    audioEventId: VO.ARIA.Message.BuildFeedbackRotated90
   - key: build.feedback.no_active_placement
     value: No active building placement.
+    audioEventId: VO.ARIA.Message.BuildFeedbackNoActivePlacement
+    audioEventId: VO.ARIA.Message.BuildFeedbackNoActivePlacement
+    audioEventId: VO.ARIA.Message.BuildFeedbackNoActivePlacement
   - key: build.feedback.building_placed
     value: BUILDING PLACED
+    audioEventId: VO.ARIA.Message.BuildFeedbackBuildingPlaced
+    audioEventId: VO.ARIA.Message.BuildFeedbackBuildingPlaced
+    audioEventId: VO.ARIA.Message.BuildFeedbackBuildingPlaced
   - key: build.feedback.place_on_valid_ground
     value: Place on valid ground.
+    audioEventId: VO.ARIA.Message.BuildFeedbackPlaceOnValidGround
+    audioEventId: VO.ARIA.Message.BuildFeedbackPlaceOnValidGround
+    audioEventId: VO.ARIA.Message.BuildFeedbackPlaceOnValidGround
   - key: build.feedback.drawer_not_ready
     value: Build drawer is not ready.
+    audioEventId: VO.ARIA.Message.BuildFeedbackDrawerNotReady
+    audioEventId: VO.ARIA.Message.BuildFeedbackDrawerNotReady
+    audioEventId: VO.ARIA.Message.BuildFeedbackDrawerNotReady
   - key: build.placement.status.drag_to_position
     value: DRAG TO POSITION
+    audioEventId: VO.ARIA.Message.BuildPlacementStatusDragToPosition
+    audioEventId: VO.ARIA.Message.BuildPlacementStatusDragToPosition
+    audioEventId: VO.ARIA.Message.BuildPlacementStatusDragToPosition
   - key: build.placement.status.valid_ground
     value: VALID GROUND
+    audioEventId: VO.ARIA.Message.BuildPlacementStatusValidGround
+    audioEventId: VO.ARIA.Message.BuildPlacementStatusValidGround
+    audioEventId: VO.ARIA.Message.BuildPlacementStatusValidGround
   - key: build.placement.title.default
     value: PLACE BUILDING
+    audioEventId: VO.ARIA.Message.BuildPlacementTitleDefault
+    audioEventId: VO.ARIA.Message.BuildPlacementTitleDefault
+    audioEventId: VO.ARIA.Message.BuildPlacementTitleDefault
   - key: build.placement.title.named
     value: PLACE {0}
+    audioEventId: VO.ARIA.Message.BuildPlacementTitleNamed
+    audioEventId: VO.ARIA.Message.BuildPlacementTitleNamed
+    audioEventId: VO.ARIA.Message.BuildPlacementTitleNamed
   - key: build.placement.instruction.confirm
     value: DRAG TO POSITION, CONFIRM TO BUILD
+    audioEventId: VO.ARIA.Message.BuildPlacementInstructionConfirm
+    audioEventId: VO.ARIA.Message.BuildPlacementInstructionConfirm
+    audioEventId: VO.ARIA.Message.BuildPlacementInstructionConfirm
   - key: build.placement.title.fallback_subject
     value: BUILDING
+    audioEventId: VO.ARIA.Message.BuildPlacementTitleFallbackSubject
+    audioEventId: VO.ARIA.Message.BuildPlacementTitleFallbackSubject
+    audioEventId: VO.ARIA.Message.BuildPlacementTitleFallbackSubject
   - key: match.feedback.tactical_map_not_ready
     value: Tactical map is not ready.
+    audioEventId: VO.ARIA.Message.MatchFeedbackTacticalMapNotReady
+    audioEventId: VO.ARIA.Message.MatchFeedbackTacticalMapNotReady
+    audioEventId: VO.ARIA.Message.MatchFeedbackTacticalMapNotReady
   - key: match.feedback.blocked_civilian_zone
     value: 'Blocked: civilian zone'
+    audioEventId: VO.ARIA.Message.MatchFeedbackBlockedCivilianZone
+    audioEventId: VO.ARIA.Message.MatchFeedbackBlockedCivilianZone
+    audioEventId: VO.ARIA.Message.MatchFeedbackBlockedCivilianZone
   - key: selection.feedback.unit_singular
     value: UNIT
+    audioEventId: VO.ARIA.Message.SelectionFeedbackUnitSingular
+    audioEventId: VO.ARIA.Message.SelectionFeedbackUnitSingular
+    audioEventId: VO.ARIA.Message.SelectionFeedbackUnitSingular
   - key: selection.feedback.unit_plural
     value: UNITS
+    audioEventId: VO.ARIA.Message.SelectionFeedbackUnitPlural
+    audioEventId: VO.ARIA.Message.SelectionFeedbackUnitPlural
+    audioEventId: VO.ARIA.Message.SelectionFeedbackUnitPlural
   - key: selection.feedback.vehicle_singular
     value: VEHICLE
+    audioEventId: VO.ARIA.Message.SelectionFeedbackVehicleSingular
+    audioEventId: VO.ARIA.Message.SelectionFeedbackVehicleSingular
+    audioEventId: VO.ARIA.Message.SelectionFeedbackVehicleSingular
   - key: selection.feedback.soldier_singular
     value: SOLDIER
+    audioEventId: VO.ARIA.Message.SelectionFeedbackSoldierSingular
+    audioEventId: VO.ARIA.Message.SelectionFeedbackSoldierSingular
+    audioEventId: VO.ARIA.Message.SelectionFeedbackSoldierSingular
   - key: selection.feedback.squad_count
     value: '{0} {1}'
+    audioEventId: VO.ARIA.Message.SelectionFeedbackSquadCount
+    audioEventId: VO.ARIA.Message.SelectionFeedbackSquadCount
+    audioEventId: VO.ARIA.Message.SelectionFeedbackSquadCount
   - key: selection.feedback.squad_selected
     value: SQUAD SELECTED
+    audioEventId: VO.ARIA.Message.SelectionFeedbackSquadSelected
+    audioEventId: VO.ARIA.Message.SelectionFeedbackSquadSelected
+    audioEventId: VO.ARIA.Message.SelectionFeedbackSquadSelected
   - key: selection.order.idle
     value: Idle
   - key: selection.order.structure_selected

@@ -51,9 +51,11 @@ namespace Game.Configs
     {
         [SerializeField] private string key;
         [TextArea, SerializeField] private string value;
+        [SerializeField] private string audioEventId;
 
         public string Key => key;
         public string Value => value;
+        public string AudioEventId => audioEventId;
     }
 
     public enum AIControllerRole : byte

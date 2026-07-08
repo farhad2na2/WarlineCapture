@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: d606be4417e1704afb7d5a960d5f4d68
+AudioImporter:
+  externalObjects: {}
+  serializedVersion: 7
+  defaultSettings:
+    loadType: 0
+    preloadAudioData: 1
+    sampleRateSetting: 0
+    sampleRateOverride: 44100
+    compressionFormat: 1
+    quality: 1
+    conversionMode: 0
+  platformSettingOverrides: {}
+  forceToMono: 1
+  normalize: 1
+  preloadAudioData: 1
+  loadInBackground: 0
+  ambisonic: 0
+  3D: 1
+  userData: Generated ARIA message voice audio
+  assetBundleName:
+  assetBundleVariant:

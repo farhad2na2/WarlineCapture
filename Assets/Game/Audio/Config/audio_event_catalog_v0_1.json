@@ -32,6 +32,15 @@
       "busId": "Ambience",
       "parentBusId": "Master",
       "defaultVolumeDb": -8.0
+    },
+    {
+      "busId": "Voice",
+      "parentBusId": "Master",
+      "defaultVolumeDb": -2.0,
+      "ducks": [
+        "Music",
+        "Ambience"
+      ]
     }
   ],
   "events": [
@@ -1183,6 +1192,3918 @@
         {
           "assetPath": "Assets/Game/Audio/Ambience/amb_base_distant_loop_01.wav",
           "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.ConfirmDestroy",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_confirm_destroy_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.NotEnoughMoney",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_not_enough_money_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.CreateFirst",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_create_first_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.DragBuildingToFinalPosition",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_drag_building_to_final_position_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.WarningGroundAttackType",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 2500,
+      "volumeDb": -5.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_ground_attack_type_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.WarningAirAttackType",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 2500,
+      "volumeDb": -5.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_air_attack_type_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.WarningAttackEtaSeconds",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 2500,
+      "volumeDb": -5.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_attack_eta_seconds_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.WarningAttackEtaSuffix",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 2500,
+      "volumeDb": -5.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_attack_eta_suffix_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.WarningAttackCountSuffix",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 2500,
+      "volumeDb": -5.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_attack_count_suffix_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonNoSelection",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_no_selection_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTargetOutOfBounds",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_target_out_of_bounds_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTargetBlocked",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_target_blocked_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTargetUnreachable",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_target_unreachable_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTargetNotEnemy",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_target_not_enemy_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTargetNotAttackable",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_target_not_attackable_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonCommandUnavailable",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_command_unavailable_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonBuildUnavailable",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_build_unavailable_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonCameraJumpUnavailable",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_camera_jump_unavailable_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonScanUnavailable",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_scan_unavailable_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonScanCooldown",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_scan_cooldown_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonInsufficientResources",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_insufficient_resources_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonInsufficientFuel",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_insufficient_fuel_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonInvalidTransport",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_invalid_transport_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonInvalidPassenger",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_invalid_passenger_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTransportFull",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_transport_full_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonNoEligiblePassengers",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_no_eligible_passengers_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonNoDisembarkCell",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_no_disembark_cell_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTransportPassengerMissing",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_transport_passenger_missing_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionSelect",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_select_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionMove",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_move_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionAttack",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_attack_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionHold",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_hold_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionStop",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_stop_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionScan",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_scan_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionBoard",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_board_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionBuild",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_build_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionSpecial",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_special_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardPromptTransportToPassenger",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_prompt_transport_to_passenger_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardPromptPassengerToTransport",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_prompt_passenger_to_transport_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardUnavailable",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_unavailable_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardTapUnitsToBoard",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_tap_units_to_board_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardSelectedUnitCannotBoard",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_selected_unit_cannot_board_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardSelectUnitFirst",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_select_unit_first_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandUnavailableHoldNoSelection",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 900,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_unavailable_hold_no_selection_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandUnavailableStopNoSelection",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 900,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_unavailable_stop_no_selection_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandUnavailableScanNoSelection",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 900,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_unavailable_scan_no_selection_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackCameraFollowUnavailable",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_camera_follow_unavailable_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackCameraFollowActive",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_camera_follow_active_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackRtsCameraRestored",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_rts_camera_restored_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackFollowTargetLost",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_follow_target_lost_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackDestroyedSelectedBuilding",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_destroyed_selected_building_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackAirDefenseAutoEngage",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_air_defense_auto_engage_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackExitingUnit",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_exiting_unit_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackExitingPassengers",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_exiting_passengers_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackLoadingTransport",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_loading_transport_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackBoardingTransport",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_boarding_transport_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackHoldingCurrentPosition",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_holding_current_position_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackStoppedSelectedUnits",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_stopped_selected_units_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackUnitReturningToBase",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_unit_returning_to_base_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackUnitsReturningToBase",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_units_returning_to_base_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackDestroyedSelectedUnit",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_destroyed_selected_unit_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackDestroyedSelectedUnits",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_destroyed_selected_units_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackScanOrdered",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_scan_ordered_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackScanOneContact",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_scan_one_contact_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackScanContacts",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_scan_contacts_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackScanComplete",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_scan_complete_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackMissileLaunched",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_missile_launched_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalAirdropEmergencyDropVisualMissing",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_airdrop_emergency_drop_visual_missing_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalAirdropParachuteVisualMissing",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_airdrop_parachute_visual_missing_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalAirdropNoClearLandingZone",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_airdrop_no_clear_landing_zone_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalAirdropCargoDropBlocked",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_airdrop_cargo_drop_blocked_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerModeMoveTitle",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_move_title_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerModeMoveDescription",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_move_description_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerModeAttackTitle",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_attack_title_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerModeAttackDescription",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_attack_description_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerModeScanTitle",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_scan_title_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerModeScanDescription",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_scan_description_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerModeBoardTitle",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_board_title_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerModeBoardDescription",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_board_description_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerModeBoardDescriptionTransportToPassenger",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_board_description_transport_to_passenger_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerModeBuildTitle",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_build_title_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerModeBuildDescription",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_build_description_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedMoveTitle",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_move_title_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedMoveDescription",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_move_description_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedAttackTitle",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_attack_title_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedAttackDescription",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_attack_description_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedHoldTitle",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_hold_title_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedHoldDescription",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_hold_description_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedStopTitle",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_stop_title_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedStopDescription",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_stop_description_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedScanTitle",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_scan_title_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedScanDescription",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_scan_description_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedBoardTitle",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_board_title_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedBoardDescription",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_board_description_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedBuildTitle",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_build_title_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedBuildDescription",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_build_description_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedReturnTitle",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_return_title_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedReturnDescription",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_return_description_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedDestroyTitle",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_destroy_title_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedDestroyDescription",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_destroy_description_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptyName",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_name_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerReadyBuildings",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_ready_buildings_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerReadyVehicles",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_ready_vehicles_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerReadyAircraft",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_ready_aircraft_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerReadySoldiers",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_ready_soldiers_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerReadyDefault",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_ready_default_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerInstructionPlacePendingConfirm",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_instruction_place_pending_confirm_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerInstructionCannotPlaceHere",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_instruction_cannot_place_here_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureConnecting",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_connecting_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureNotEnoughMoney",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_not_enough_money_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureMissingProducerNamed",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_missing_producer_named_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureMissingProducer",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_missing_producer_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureQueueFullNamed",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_queue_full_named_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureQueueFull",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_queue_full_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureGlobalQueueFull",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_global_queue_full_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureInvalidSelection",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_invalid_selection_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureUnavailable",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_unavailable_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortNotEnoughMoney",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_not_enough_money_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortRequiresNamed",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_requires_named_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortMissingProducer",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_missing_producer_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortQueueFullNamed",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_queue_full_named_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortQueueFull",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_queue_full_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortGlobalQueueFull",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_global_queue_full_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortUnavailable",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 900,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_unavailable_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptyBuildings",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_buildings_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptyVehicles",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_vehicles_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptyAircraft",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_aircraft_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptySoldiers",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_soldiers_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptyDefault",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_default_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptySelectItem",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_select_item_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerPlacementInvalid",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_placement_invalid_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerActionPlaceChooseFootprint",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_action_place_choose_footprint_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildFeedbackPlaceBuilding",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_place_building_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionRequested",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_requested_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerSuccessRecruitmentQueued",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_success_recruitment_queued_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerSuccessProductionQueued",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_success_production_queued_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionCancelUnavailable",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_cancel_unavailable_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionCancelledNamed",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_cancelled_named_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionCancelled",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_cancelled_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionQueueEmpty",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_queue_empty_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionQueueClearedSentence",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_queue_cleared_sentence_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionClearUnavailable",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_clear_unavailable_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionQueueCleared",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_queue_cleared_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildFeedbackPlacementCancelled",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_placement_cancelled_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildFeedbackRotated90",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_rotated_90_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildFeedbackNoActivePlacement",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_no_active_placement_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildFeedbackBuildingPlaced",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_building_placed_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildFeedbackPlaceOnValidGround",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_place_on_valid_ground_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildFeedbackDrawerNotReady",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_drawer_not_ready_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildPlacementStatusDragToPosition",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_status_drag_to_position_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildPlacementStatusValidGround",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_status_valid_ground_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildPlacementTitleDefault",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_title_default_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildPlacementTitleNamed",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_title_named_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildPlacementInstructionConfirm",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_instruction_confirm_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildPlacementTitleFallbackSubject",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_title_fallback_subject_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.MatchFeedbackTacticalMapNotReady",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_match_feedback_tactical_map_not_ready_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.MatchFeedbackBlockedCivilianZone",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_match_feedback_blocked_civilian_zone_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.SelectionFeedbackUnitSingular",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_unit_singular_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.SelectionFeedbackUnitPlural",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_unit_plural_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.SelectionFeedbackVehicleSingular",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_vehicle_singular_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.SelectionFeedbackSoldierSingular",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_soldier_singular_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.SelectionFeedbackSquadCount",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_squad_count_01.wav",
+          "status": "neural-tts",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Message.SelectionFeedbackSquadSelected",
+      "busId": "Voice",
+      "priority": "Medium",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_squad_selected_01.wav",
+          "status": "neural-tts",
           "weight": 1
         }
       ]

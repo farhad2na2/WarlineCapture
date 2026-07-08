@@ -1,0 +1,2462 @@
+{
+  "schema": "WarlineCapture.StringAudioEventManifest.v0.1",
+  "generatedBy": "Tools/Audio/generate_string_audio_events.py",
+  "backend": "edge",
+  "voice": "en-US-AriaNeural",
+  "voiceRate": "-6%",
+  "voiceVolume": "+0%",
+  "voicePitch": "-2Hz",
+  "targetCount": 163,
+  "catalogPath": "Assets/Game/Audio/Config/audio_event_catalog_v0_1.json",
+  "stringsPath": "Assets/Game/Configs/Scene/Game_GameStrings_Config.asset",
+  "note": "ARIA TTS clips for feedback/alert strings. Replace with final recorded voice before release if desired.",
+  "targets": [
+    {
+      "key": "confirm_destroy",
+      "text": "Are you sure you want to destroy {0}?",
+      "spokenText": "Are you sure you want to destroy target?",
+      "eventId": "VO.ARIA.Message.ConfirmDestroy",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_confirm_destroy_01.wav"
+    },
+    {
+      "key": "not_enough_money",
+      "text": "Not enough money",
+      "spokenText": "Not enough money",
+      "eventId": "VO.ARIA.Message.NotEnoughMoney",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_not_enough_money_01.wav"
+    },
+    {
+      "key": "create_first",
+      "text": "Create {0} first",
+      "spokenText": "Create target first",
+      "eventId": "VO.ARIA.Message.CreateFirst",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_create_first_01.wav"
+    },
+    {
+      "key": "drag_building_to_final_position",
+      "text": "Drag to final position",
+      "spokenText": "Drag to final position",
+      "eventId": "VO.ARIA.Message.DragBuildingToFinalPosition",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_drag_building_to_final_position_01.wav"
+    },
+    {
+      "key": "warning_ground_attack_type",
+      "text": "Ground vehicle attack detected",
+      "spokenText": "Ground vehicle attack detected",
+      "eventId": "VO.ARIA.Message.WarningGroundAttackType",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_ground_attack_type_01.wav"
+    },
+    {
+      "key": "warning_air_attack_type",
+      "text": "Air attack detected",
+      "spokenText": "Air attack detected",
+      "eventId": "VO.ARIA.Message.WarningAirAttackType",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_air_attack_type_01.wav"
+    },
+    {
+      "key": "warning_attack_eta_seconds",
+      "text": "Estimated time to base: {0} seconds",
+      "spokenText": "Estimated time to base. target seconds",
+      "eventId": "VO.ARIA.Message.WarningAttackEtaSeconds",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_attack_eta_seconds_01.wav"
+    },
+    {
+      "key": "warning_attack_eta_suffix",
+      "text": "{0} - ETA {1}s",
+      "spokenText": "target - ETA values",
+      "eventId": "VO.ARIA.Message.WarningAttackEtaSuffix",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_attack_eta_suffix_01.wav"
+    },
+    {
+      "key": "warning_attack_count_suffix",
+      "text": "{0} x{1}",
+      "spokenText": "target xvalue",
+      "eventId": "VO.ARIA.Message.WarningAttackCountSuffix",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_attack_count_suffix_01.wav"
+    },
+    {
+      "key": "tactical.command.reason.no_selection",
+      "text": "Select units or a building first.",
+      "spokenText": "Select units or a building first.",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonNoSelection",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_no_selection_01.wav"
+    },
+    {
+      "key": "tactical.command.reason.target_out_of_bounds",
+      "text": "Target is outside the playable area.",
+      "spokenText": "Target is outside the playable area.",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTargetOutOfBounds",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_target_out_of_bounds_01.wav"
+    },
+    {
+      "key": "tactical.command.reason.target_blocked",
+      "text": "Route is blocked.",
+      "spokenText": "Route is blocked.",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTargetBlocked",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_target_blocked_01.wav"
+    },
+    {
+      "key": "tactical.command.reason.target_unreachable",
+      "text": "Target is unreachable.",
+      "spokenText": "Target is unreachable.",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTargetUnreachable",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_target_unreachable_01.wav"
+    },
+    {
+      "key": "tactical.command.reason.target_not_enemy",
+      "text": "Target is not hostile.",
+      "spokenText": "Target is not hostile.",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTargetNotEnemy",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_target_not_enemy_01.wav"
+    },
+    {
+      "key": "tactical.command.reason.target_not_attackable",
+      "text": "Target cannot be attacked.",
+      "spokenText": "Target cannot be attacked.",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTargetNotAttackable",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_target_not_attackable_01.wav"
+    },
+    {
+      "key": "tactical.command.reason.command_unavailable",
+      "text": "Command unavailable.",
+      "spokenText": "Command unavailable.",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonCommandUnavailable",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_command_unavailable_01.wav"
+    },
+    {
+      "key": "tactical.command.reason.build_unavailable",
+      "text": "Building unavailable.",
+      "spokenText": "Building unavailable.",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonBuildUnavailable",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_build_unavailable_01.wav"
+    },
+    {
+      "key": "tactical.command.reason.camera_jump_unavailable",
+      "text": "Camera focus unavailable.",
+      "spokenText": "Camera focus unavailable.",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonCameraJumpUnavailable",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_camera_jump_unavailable_01.wav"
+    },
+    {
+      "key": "tactical.command.reason.scan_unavailable",
+      "text": "Scan unavailable.",
+      "spokenText": "Scan unavailable.",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonScanUnavailable",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_scan_unavailable_01.wav"
+    },
+    {
+      "key": "tactical.command.reason.scan_cooldown",
+      "text": "Scan cooling down.",
+      "spokenText": "Scan cooling down.",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonScanCooldown",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_scan_cooldown_01.wav"
+    },
+    {
+      "key": "tactical.command.reason.insufficient_resources",
+      "text": "Insufficient resources.",
+      "spokenText": "Insufficient resources.",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonInsufficientResources",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_insufficient_resources_01.wav"
+    },
+    {
+      "key": "tactical.command.reason.insufficient_fuel",
+      "text": "Insufficient fuel.",
+      "spokenText": "Insufficient fuel.",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonInsufficientFuel",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_insufficient_fuel_01.wav"
+    },
+    {
+      "key": "tactical.command.reason.invalid_transport",
+      "text": "Select a transport vehicle or aircraft first.",
+      "spokenText": "Select a transport vehicle or aircraft first.",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonInvalidTransport",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_invalid_transport_01.wav"
+    },
+    {
+      "key": "tactical.command.reason.invalid_passenger",
+      "text": "Select units or cargo that can board.",
+      "spokenText": "Select units or cargo that can board.",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonInvalidPassenger",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_invalid_passenger_01.wav"
+    },
+    {
+      "key": "tactical.command.reason.transport_full",
+      "text": "Transport is full.",
+      "spokenText": "Transport is full.",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTransportFull",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_transport_full_01.wav"
+    },
+    {
+      "key": "tactical.command.reason.no_eligible_passengers",
+      "text": "No nearby units can board this transport.",
+      "spokenText": "No nearby units can board this transport.",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonNoEligiblePassengers",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_no_eligible_passengers_01.wav"
+    },
+    {
+      "key": "tactical.command.reason.no_disembark_cell",
+      "text": "No clear exit point for passengers.",
+      "spokenText": "No clear exit point for passengers.",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonNoDisembarkCell",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_no_disembark_cell_01.wav"
+    },
+    {
+      "key": "tactical.command.reason.transport_passenger_missing",
+      "text": "Passenger is not inside this transport.",
+      "spokenText": "Passenger is not inside this transport.",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTransportPassengerMissing",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_transport_passenger_missing_01.wav"
+    },
+    {
+      "key": "tactical.command.instruction.select",
+      "text": "Select units or a building.",
+      "spokenText": "Select units or a building.",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionSelect",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_select_01.wav"
+    },
+    {
+      "key": "tactical.command.instruction.move",
+      "text": "Choose destination.",
+      "spokenText": "Choose destination.",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionMove",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_move_01.wav"
+    },
+    {
+      "key": "tactical.command.instruction.attack",
+      "text": "Tap hostile target.",
+      "spokenText": "Tap hostile target.",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionAttack",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_attack_01.wav"
+    },
+    {
+      "key": "tactical.command.instruction.hold",
+      "text": "Hold position and return fire.",
+      "spokenText": "Hold position and return fire.",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionHold",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_hold_01.wav"
+    },
+    {
+      "key": "tactical.command.instruction.stop",
+      "text": "Stop selected units and clear orders.",
+      "spokenText": "Stop selected units and clear orders.",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionStop",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_stop_01.wav"
+    },
+    {
+      "key": "tactical.command.instruction.scan",
+      "text": "Tap scan area.",
+      "spokenText": "Tap scan area.",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionScan",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_scan_01.wav"
+    },
+    {
+      "key": "tactical.command.instruction.board",
+      "text": "Select a transport.",
+      "spokenText": "Select a transport.",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionBoard",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_board_01.wav"
+    },
+    {
+      "key": "tactical.command.instruction.build",
+      "text": "Choose what to build, produce, or recruit.",
+      "spokenText": "Choose what to build, produce, or recruit.",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionBuild",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_build_01.wav"
+    },
+    {
+      "key": "tactical.command.instruction.special",
+      "text": "Choose special command.",
+      "spokenText": "Choose special command.",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionSpecial",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_special_01.wav"
+    },
+    {
+      "key": "tactical.command.board.prompt_transport_to_passenger",
+      "text": "Select units to board or use BOARD ALL.",
+      "spokenText": "Select units to board or use BOARD ALL.",
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardPromptTransportToPassenger",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_prompt_transport_to_passenger_01.wav"
+    },
+    {
+      "key": "tactical.command.board.prompt_passenger_to_transport",
+      "text": "Select a transport.",
+      "spokenText": "Select a transport.",
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardPromptPassengerToTransport",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_prompt_passenger_to_transport_01.wav"
+    },
+    {
+      "key": "tactical.command.board.unavailable",
+      "text": "Board command unavailable.",
+      "spokenText": "Board command unavailable.",
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardUnavailable",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_unavailable_01.wav"
+    },
+    {
+      "key": "tactical.command.board.tap_units_to_board",
+      "text": "Tap units to board.",
+      "spokenText": "Tap units to board.",
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardTapUnitsToBoard",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_tap_units_to_board_01.wav"
+    },
+    {
+      "key": "tactical.command.board.selected_unit_cannot_board",
+      "text": "Selected unit cannot board.",
+      "spokenText": "Selected unit cannot board.",
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardSelectedUnitCannotBoard",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_selected_unit_cannot_board_01.wav"
+    },
+    {
+      "key": "tactical.command.board.select_unit_first",
+      "text": "Select a unit first.",
+      "spokenText": "Select a unit first.",
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardSelectUnitFirst",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_select_unit_first_01.wav"
+    },
+    {
+      "key": "tactical.command.unavailable.hold_no_selection",
+      "text": "Select units before holding position.",
+      "spokenText": "Select units before holding position.",
+      "eventId": "VO.ARIA.Message.TacticalCommandUnavailableHoldNoSelection",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_unavailable_hold_no_selection_01.wav"
+    },
+    {
+      "key": "tactical.command.unavailable.stop_no_selection",
+      "text": "Select units before stopping orders.",
+      "spokenText": "Select units before stopping orders.",
+      "eventId": "VO.ARIA.Message.TacticalCommandUnavailableStopNoSelection",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_unavailable_stop_no_selection_01.wav"
+    },
+    {
+      "key": "tactical.command.unavailable.scan_no_selection",
+      "text": "Select a scanner or combat unit first.",
+      "spokenText": "Select a scanner or combat unit first.",
+      "eventId": "VO.ARIA.Message.TacticalCommandUnavailableScanNoSelection",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_unavailable_scan_no_selection_01.wav"
+    },
+    {
+      "key": "tactical.feedback.camera_follow_unavailable",
+      "text": "Camera follow unavailable.",
+      "spokenText": "Camera follow unavailable.",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackCameraFollowUnavailable",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_camera_follow_unavailable_01.wav"
+    },
+    {
+      "key": "tactical.feedback.camera_follow_active",
+      "text": "Camera follow active.",
+      "spokenText": "Camera follow active.",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackCameraFollowActive",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_camera_follow_active_01.wav"
+    },
+    {
+      "key": "tactical.feedback.rts_camera_restored",
+      "text": "RTS camera restored.",
+      "spokenText": "RTS camera restored.",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackRtsCameraRestored",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_rts_camera_restored_01.wav"
+    },
+    {
+      "key": "tactical.feedback.follow_target_lost",
+      "text": "Follow target lost.",
+      "spokenText": "Follow target lost.",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackFollowTargetLost",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_follow_target_lost_01.wav"
+    },
+    {
+      "key": "tactical.feedback.destroyed_selected_building",
+      "text": "Destroyed selected building.",
+      "spokenText": "Destroyed selected building.",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackDestroyedSelectedBuilding",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_destroyed_selected_building_01.wav"
+    },
+    {
+      "key": "tactical.feedback.air_defense_auto_engage",
+      "text": "Air defense auto-engages aircraft and incoming missiles.",
+      "spokenText": "Air defense auto-engages aircraft and incoming missiles.",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackAirDefenseAutoEngage",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_air_defense_auto_engage_01.wav"
+    },
+    {
+      "key": "tactical.feedback.exiting_unit",
+      "text": "Exiting unit.",
+      "spokenText": "Exiting unit.",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackExitingUnit",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_exiting_unit_01.wav"
+    },
+    {
+      "key": "tactical.feedback.exiting_passengers",
+      "text": "Exiting passengers.",
+      "spokenText": "Exiting passengers.",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackExitingPassengers",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_exiting_passengers_01.wav"
+    },
+    {
+      "key": "tactical.feedback.loading_transport",
+      "text": "Loading transport.",
+      "spokenText": "Loading transport.",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackLoadingTransport",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_loading_transport_01.wav"
+    },
+    {
+      "key": "tactical.feedback.boarding_transport",
+      "text": "Boarding transport.",
+      "spokenText": "Boarding transport.",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackBoardingTransport",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_boarding_transport_01.wav"
+    },
+    {
+      "key": "tactical.feedback.holding_current_position",
+      "text": "Holding current position.",
+      "spokenText": "Holding current position.",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackHoldingCurrentPosition",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_holding_current_position_01.wav"
+    },
+    {
+      "key": "tactical.feedback.stopped_selected_units",
+      "text": "Stopped selected units.",
+      "spokenText": "Stopped selected units.",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackStoppedSelectedUnits",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_stopped_selected_units_01.wav"
+    },
+    {
+      "key": "tactical.feedback.unit_returning_to_base",
+      "text": "Unit returning to base.",
+      "spokenText": "Unit returning to base.",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackUnitReturningToBase",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_unit_returning_to_base_01.wav"
+    },
+    {
+      "key": "tactical.feedback.units_returning_to_base",
+      "text": "{0} units returning to base.",
+      "spokenText": "target units returning to base.",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackUnitsReturningToBase",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_units_returning_to_base_01.wav"
+    },
+    {
+      "key": "tactical.feedback.destroyed_selected_unit",
+      "text": "Destroyed selected unit.",
+      "spokenText": "Destroyed selected unit.",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackDestroyedSelectedUnit",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_destroyed_selected_unit_01.wav"
+    },
+    {
+      "key": "tactical.feedback.destroyed_selected_units",
+      "text": "Destroyed {0} selected units.",
+      "spokenText": "Destroyed target selected units.",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackDestroyedSelectedUnits",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_destroyed_selected_units_01.wav"
+    },
+    {
+      "key": "tactical.feedback.scan_ordered",
+      "text": "SCAN ORDERED: SCANNER EN ROUTE",
+      "spokenText": "SCAN ORDERED. SCANNER EN ROUTE",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackScanOrdered",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_scan_ordered_01.wav"
+    },
+    {
+      "key": "tactical.feedback.scan_one_contact",
+      "text": "1 CONTACT",
+      "spokenText": "1 CONTACT",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackScanOneContact",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_scan_one_contact_01.wav"
+    },
+    {
+      "key": "tactical.feedback.scan_contacts",
+      "text": "{0} CONTACTS",
+      "spokenText": "target CONTACTS",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackScanContacts",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_scan_contacts_01.wav"
+    },
+    {
+      "key": "tactical.feedback.scan_complete",
+      "text": "SCAN COMPLETE: {0}",
+      "spokenText": "SCAN COMPLETE. target",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackScanComplete",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_scan_complete_01.wav"
+    },
+    {
+      "key": "tactical.feedback.missile_launched",
+      "text": "Missile launched.",
+      "spokenText": "Missile launched.",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackMissileLaunched",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_missile_launched_01.wav"
+    },
+    {
+      "key": "tactical.airdrop.emergency_drop_visual_missing",
+      "text": "Emergency drop visual missing.",
+      "spokenText": "Emergency drop visual missing.",
+      "eventId": "VO.ARIA.Message.TacticalAirdropEmergencyDropVisualMissing",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_airdrop_emergency_drop_visual_missing_01.wav"
+    },
+    {
+      "key": "tactical.airdrop.parachute_visual_missing",
+      "text": "Parachute visual missing.",
+      "spokenText": "Parachute visual missing.",
+      "eventId": "VO.ARIA.Message.TacticalAirdropParachuteVisualMissing",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_airdrop_parachute_visual_missing_01.wav"
+    },
+    {
+      "key": "tactical.airdrop.no_clear_landing_zone",
+      "text": "No clear airdrop landing zone.",
+      "spokenText": "No clear airdrop landing zone.",
+      "eventId": "VO.ARIA.Message.TacticalAirdropNoClearLandingZone",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_airdrop_no_clear_landing_zone_01.wav"
+    },
+    {
+      "key": "tactical.airdrop.cargo_drop_blocked",
+      "text": "Cargo drop blocked.",
+      "spokenText": "Cargo drop blocked.",
+      "eventId": "VO.ARIA.Message.TacticalAirdropCargoDropBlocked",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_airdrop_cargo_drop_blocked_01.wav"
+    },
+    {
+      "key": "tactical.banner.mode.move.title",
+      "text": "MOVE ORDER",
+      "spokenText": "MOVE ORDER",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeMoveTitle",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_move_title_01.wav"
+    },
+    {
+      "key": "tactical.banner.mode.move.description",
+      "text": "Select a destination.",
+      "spokenText": "Select a destination.",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeMoveDescription",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_move_description_01.wav"
+    },
+    {
+      "key": "tactical.banner.mode.attack.title",
+      "text": "ATTACK ORDER",
+      "spokenText": "ATTACK ORDER",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeAttackTitle",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_attack_title_01.wav"
+    },
+    {
+      "key": "tactical.banner.mode.attack.description",
+      "text": "Select an enemy target.",
+      "spokenText": "Select an enemy target.",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeAttackDescription",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_attack_description_01.wav"
+    },
+    {
+      "key": "tactical.banner.mode.scan.title",
+      "text": "SCAN ORDER",
+      "spokenText": "SCAN ORDER",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeScanTitle",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_scan_title_01.wav"
+    },
+    {
+      "key": "tactical.banner.mode.scan.description",
+      "text": "Select an area to scan.",
+      "spokenText": "Select an area to scan.",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeScanDescription",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_scan_description_01.wav"
+    },
+    {
+      "key": "tactical.banner.mode.board.title",
+      "text": "BOARD ORDER",
+      "spokenText": "BOARD ORDER",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeBoardTitle",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_board_title_01.wav"
+    },
+    {
+      "key": "tactical.banner.mode.board.description",
+      "text": "Select a transport.",
+      "spokenText": "Select a transport.",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeBoardDescription",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_board_description_01.wav"
+    },
+    {
+      "key": "tactical.banner.mode.board.description_transport_to_passenger",
+      "text": "Select units to board.",
+      "spokenText": "Select units to board.",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeBoardDescriptionTransportToPassenger",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_board_description_transport_to_passenger_01.wav"
+    },
+    {
+      "key": "tactical.banner.mode.build.title",
+      "text": "BUILD ORDER",
+      "spokenText": "BUILD ORDER",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeBuildTitle",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_build_title_01.wav"
+    },
+    {
+      "key": "tactical.banner.mode.build.description",
+      "text": "Place structure on valid terrain.",
+      "spokenText": "Place structure on valid terrain.",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeBuildDescription",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_build_description_01.wav"
+    },
+    {
+      "key": "tactical.banner.accepted.move.title",
+      "text": "MOVE ORDER",
+      "spokenText": "MOVE ORDER",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedMoveTitle",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_move_title_01.wav"
+    },
+    {
+      "key": "tactical.banner.accepted.move.description",
+      "text": "Units moving to target.",
+      "spokenText": "Units moving to target.",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedMoveDescription",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_move_description_01.wav"
+    },
+    {
+      "key": "tactical.banner.accepted.attack.title",
+      "text": "ATTACK ORDER",
+      "spokenText": "ATTACK ORDER",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedAttackTitle",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_attack_title_01.wav"
+    },
+    {
+      "key": "tactical.banner.accepted.attack.description",
+      "text": "Engaging target.",
+      "spokenText": "Engaging target.",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedAttackDescription",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_attack_description_01.wav"
+    },
+    {
+      "key": "tactical.banner.accepted.hold.title",
+      "text": "HOLD POSITION",
+      "spokenText": "HOLD POSITION",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedHoldTitle",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_hold_title_01.wav"
+    },
+    {
+      "key": "tactical.banner.accepted.hold.description",
+      "text": "Selected units holding ground.",
+      "spokenText": "Selected units holding ground.",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedHoldDescription",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_hold_description_01.wav"
+    },
+    {
+      "key": "tactical.banner.accepted.stop.title",
+      "text": "STOP ORDER",
+      "spokenText": "STOP ORDER",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedStopTitle",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_stop_title_01.wav"
+    },
+    {
+      "key": "tactical.banner.accepted.stop.description",
+      "text": "Selected units clearing orders.",
+      "spokenText": "Selected units clearing orders.",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedStopDescription",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_stop_description_01.wav"
+    },
+    {
+      "key": "tactical.banner.accepted.scan.title",
+      "text": "SCAN ORDER",
+      "spokenText": "SCAN ORDER",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedScanTitle",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_scan_title_01.wav"
+    },
+    {
+      "key": "tactical.banner.accepted.scan.description",
+      "text": "Recon sweep in progress.",
+      "spokenText": "Recon sweep in progress.",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedScanDescription",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_scan_description_01.wav"
+    },
+    {
+      "key": "tactical.banner.accepted.board.title",
+      "text": "BOARD ORDER",
+      "spokenText": "BOARD ORDER",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedBoardTitle",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_board_title_01.wav"
+    },
+    {
+      "key": "tactical.banner.accepted.board.description",
+      "text": "Boarding transport.",
+      "spokenText": "Boarding transport.",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedBoardDescription",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_board_description_01.wav"
+    },
+    {
+      "key": "tactical.banner.accepted.build.title",
+      "text": "BUILD ORDER",
+      "spokenText": "BUILD ORDER",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedBuildTitle",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_build_title_01.wav"
+    },
+    {
+      "key": "tactical.banner.accepted.build.description",
+      "text": "Building order accepted.",
+      "spokenText": "Building order accepted.",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedBuildDescription",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_build_description_01.wav"
+    },
+    {
+      "key": "tactical.banner.accepted.return.title",
+      "text": "RETURN ORDER",
+      "spokenText": "RETURN ORDER",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedReturnTitle",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_return_title_01.wav"
+    },
+    {
+      "key": "tactical.banner.accepted.return.description",
+      "text": "Unit returning to base.",
+      "spokenText": "Unit returning to base.",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedReturnDescription",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_return_description_01.wav"
+    },
+    {
+      "key": "tactical.banner.accepted.destroy.title",
+      "text": "DESTROY ORDER",
+      "spokenText": "DESTROY ORDER",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedDestroyTitle",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_destroy_title_01.wav"
+    },
+    {
+      "key": "tactical.banner.accepted.destroy.description",
+      "text": "Selected unit removed.",
+      "spokenText": "Selected unit removed.",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedDestroyDescription",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_destroy_description_01.wav"
+    },
+    {
+      "key": "build.drawer.empty.name",
+      "text": "NO ITEMS",
+      "spokenText": "NO ITEMS",
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptyName",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_name_01.wav"
+    },
+    {
+      "key": "build.drawer.ready.buildings",
+      "text": "PLACE: choose a location for {0}.",
+      "spokenText": "PLACE. choose a location for target.",
+      "eventId": "VO.ARIA.Message.BuildDrawerReadyBuildings",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_ready_buildings_01.wav"
+    },
+    {
+      "key": "build.drawer.ready.vehicles",
+      "text": "PRODUCE: add {0} to the vehicle queue.",
+      "spokenText": "PRODUCE. add target to the vehicle queue.",
+      "eventId": "VO.ARIA.Message.BuildDrawerReadyVehicles",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_ready_vehicles_01.wav"
+    },
+    {
+      "key": "build.drawer.ready.aircraft",
+      "text": "PRODUCE: add {0} to the aircraft queue.",
+      "spokenText": "PRODUCE. add target to the aircraft queue.",
+      "eventId": "VO.ARIA.Message.BuildDrawerReadyAircraft",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_ready_aircraft_01.wav"
+    },
+    {
+      "key": "build.drawer.ready.soldiers",
+      "text": "RECRUIT: add {0} to the training queue.",
+      "spokenText": "RECRUIT. add target to the training queue.",
+      "eventId": "VO.ARIA.Message.BuildDrawerReadySoldiers",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_ready_soldiers_01.wav"
+    },
+    {
+      "key": "build.drawer.ready.default",
+      "text": "Select {0}.",
+      "spokenText": "Select target.",
+      "eventId": "VO.ARIA.Message.BuildDrawerReadyDefault",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_ready_default_01.wav"
+    },
+    {
+      "key": "build.drawer.instruction.place_pending_confirm",
+      "text": "Place {0}: drag to position, then confirm.",
+      "spokenText": "Place target. drag to position, then confirm.",
+      "eventId": "VO.ARIA.Message.BuildDrawerInstructionPlacePendingConfirm",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_instruction_place_pending_confirm_01.wav"
+    },
+    {
+      "key": "build.drawer.instruction.cannot_place_here",
+      "text": "Cannot place here: {0}.",
+      "spokenText": "Cannot place here. target.",
+      "eventId": "VO.ARIA.Message.BuildDrawerInstructionCannotPlaceHere",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_instruction_cannot_place_here_01.wav"
+    },
+    {
+      "key": "build.drawer.failure.connecting",
+      "text": "Build drawer is still connecting. Try again in a moment.",
+      "spokenText": "Build drawer is still connecting. Try again in a moment.",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureConnecting",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_connecting_01.wav"
+    },
+    {
+      "key": "build.drawer.failure.not_enough_money",
+      "text": "Need {0} more credits to {1} {2}.",
+      "spokenText": "Need target more credits to value detail.",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureNotEnoughMoney",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_not_enough_money_01.wav"
+    },
+    {
+      "key": "build.drawer.failure.missing_producer_named",
+      "text": "Cannot {0} {1}: requires {2}.",
+      "spokenText": "Cannot target value. requires detail.",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureMissingProducerNamed",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_missing_producer_named_01.wav"
+    },
+    {
+      "key": "build.drawer.failure.missing_producer",
+      "text": "Cannot {0} {1}: {2}.",
+      "spokenText": "Cannot target value. detail.",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureMissingProducer",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_missing_producer_01.wav"
+    },
+    {
+      "key": "build.drawer.failure.queue_full_named",
+      "text": "Cannot {0} {1}: all {2} production slots are full.",
+      "spokenText": "Cannot target value. all detail production slots are full.",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureQueueFullNamed",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_queue_full_named_01.wav"
+    },
+    {
+      "key": "build.drawer.failure.queue_full",
+      "text": "Cannot {0} {1}: all compatible production slots are full.",
+      "spokenText": "Cannot target value. all compatible production slots are full.",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureQueueFull",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_queue_full_01.wav"
+    },
+    {
+      "key": "build.drawer.failure.global_queue_full",
+      "text": "Cannot {0} {1}: production queue limit reached ({2} max).",
+      "spokenText": "Cannot target value. production queue limit reached (detail max).",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureGlobalQueueFull",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_global_queue_full_01.wav"
+    },
+    {
+      "key": "build.drawer.failure.invalid_selection",
+      "text": "Select a build drawer item first.",
+      "spokenText": "Select a build drawer item first.",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureInvalidSelection",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_invalid_selection_01.wav"
+    },
+    {
+      "key": "build.drawer.failure.unavailable",
+      "text": "Cannot {0} {1}: request unavailable.",
+      "spokenText": "Cannot target value. request unavailable.",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureUnavailable",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_unavailable_01.wav"
+    },
+    {
+      "key": "build.drawer.failure.short.not_enough_money",
+      "text": "Insufficient credits.",
+      "spokenText": "Insufficient credits.",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortNotEnoughMoney",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_not_enough_money_01.wav"
+    },
+    {
+      "key": "build.drawer.failure.short.requires_named",
+      "text": "Requires {0}.",
+      "spokenText": "Requires target.",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortRequiresNamed",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_requires_named_01.wav"
+    },
+    {
+      "key": "build.drawer.failure.short.missing_producer",
+      "text": "Required producer is missing.",
+      "spokenText": "Required producer is missing.",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortMissingProducer",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_missing_producer_01.wav"
+    },
+    {
+      "key": "build.drawer.failure.short.queue_full_named",
+      "text": "{0} production slots are full.",
+      "spokenText": "target production slots are full.",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortQueueFullNamed",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_queue_full_named_01.wav"
+    },
+    {
+      "key": "build.drawer.failure.short.queue_full",
+      "text": "All compatible production slots are full.",
+      "spokenText": "All compatible production slots are full.",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortQueueFull",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_queue_full_01.wav"
+    },
+    {
+      "key": "build.drawer.failure.short.global_queue_full",
+      "text": "Production queue limit reached ({0} max).",
+      "spokenText": "Production queue limit reached (target max).",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortGlobalQueueFull",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_global_queue_full_01.wav"
+    },
+    {
+      "key": "build.drawer.failure.short.unavailable",
+      "text": "Build request unavailable.",
+      "spokenText": "Build request unavailable.",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortUnavailable",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_unavailable_01.wav"
+    },
+    {
+      "key": "build.drawer.empty.buildings",
+      "text": "No requestable buildings are configured.",
+      "spokenText": "No requestable buildings are configured.",
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptyBuildings",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_buildings_01.wav"
+    },
+    {
+      "key": "build.drawer.empty.vehicles",
+      "text": "No requestable vehicles are configured.",
+      "spokenText": "No requestable vehicles are configured.",
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptyVehicles",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_vehicles_01.wav"
+    },
+    {
+      "key": "build.drawer.empty.aircraft",
+      "text": "No requestable aircraft are configured.",
+      "spokenText": "No requestable aircraft are configured.",
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptyAircraft",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_aircraft_01.wav"
+    },
+    {
+      "key": "build.drawer.empty.soldiers",
+      "text": "No requestable soldiers are configured.",
+      "spokenText": "No requestable soldiers are configured.",
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptySoldiers",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_soldiers_01.wav"
+    },
+    {
+      "key": "build.drawer.empty.default",
+      "text": "No requestable items are configured.",
+      "spokenText": "No requestable items are configured.",
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptyDefault",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_default_01.wav"
+    },
+    {
+      "key": "build.drawer.empty.select_item",
+      "text": "Select an item to place, produce, or recruit.",
+      "spokenText": "Select an item to place, produce, or recruit.",
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptySelectItem",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_select_item_01.wav"
+    },
+    {
+      "key": "build.drawer.placement.invalid",
+      "text": "invalid placement",
+      "spokenText": "invalid placement",
+      "eventId": "VO.ARIA.Message.BuildDrawerPlacementInvalid",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_placement_invalid_01.wav"
+    },
+    {
+      "key": "build.drawer.action.place_choose_footprint",
+      "text": "Place {0}: choose a valid footprint.",
+      "spokenText": "Place target. choose a valid footprint.",
+      "eventId": "VO.ARIA.Message.BuildDrawerActionPlaceChooseFootprint",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_action_place_choose_footprint_01.wav"
+    },
+    {
+      "key": "build.feedback.place_building",
+      "text": "PLACE BUILDING",
+      "spokenText": "PLACE BUILDING",
+      "eventId": "VO.ARIA.Message.BuildFeedbackPlaceBuilding",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_place_building_01.wav"
+    },
+    {
+      "key": "build.feedback.production_requested",
+      "text": "{0}: {1}",
+      "spokenText": "target. value",
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionRequested",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_requested_01.wav"
+    },
+    {
+      "key": "build.drawer.success.recruitment_queued",
+      "text": "{0} added to recruitment queue.",
+      "spokenText": "target added to recruitment queue.",
+      "eventId": "VO.ARIA.Message.BuildDrawerSuccessRecruitmentQueued",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_success_recruitment_queued_01.wav"
+    },
+    {
+      "key": "build.drawer.success.production_queued",
+      "text": "{0} added to production queue.",
+      "spokenText": "target added to production queue.",
+      "eventId": "VO.ARIA.Message.BuildDrawerSuccessProductionQueued",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_success_production_queued_01.wav"
+    },
+    {
+      "key": "build.feedback.production_cancel_unavailable",
+      "text": "Production cancel unavailable.",
+      "spokenText": "Production cancel unavailable.",
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionCancelUnavailable",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_cancel_unavailable_01.wav"
+    },
+    {
+      "key": "build.feedback.production_cancelled_named",
+      "text": "Cancelled {0}.",
+      "spokenText": "Cancelled target.",
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionCancelledNamed",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_cancelled_named_01.wav"
+    },
+    {
+      "key": "build.feedback.production_cancelled",
+      "text": "PRODUCTION CANCELLED",
+      "spokenText": "PRODUCTION CANCELLED",
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionCancelled",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_cancelled_01.wav"
+    },
+    {
+      "key": "build.feedback.production_queue_empty",
+      "text": "Production queue is empty.",
+      "spokenText": "Production queue is empty.",
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionQueueEmpty",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_queue_empty_01.wav"
+    },
+    {
+      "key": "build.feedback.production_queue_cleared_sentence",
+      "text": "Production queue cleared.",
+      "spokenText": "Production queue cleared.",
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionQueueClearedSentence",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_queue_cleared_sentence_01.wav"
+    },
+    {
+      "key": "build.feedback.production_clear_unavailable",
+      "text": "Production clear unavailable.",
+      "spokenText": "Production clear unavailable.",
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionClearUnavailable",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_clear_unavailable_01.wav"
+    },
+    {
+      "key": "build.feedback.production_queue_cleared",
+      "text": "PRODUCTION QUEUE CLEARED",
+      "spokenText": "PRODUCTION QUEUE CLEARED",
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionQueueCleared",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_queue_cleared_01.wav"
+    },
+    {
+      "key": "build.feedback.placement_cancelled",
+      "text": "PLACEMENT CANCELLED",
+      "spokenText": "PLACEMENT CANCELLED",
+      "eventId": "VO.ARIA.Message.BuildFeedbackPlacementCancelled",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_placement_cancelled_01.wav"
+    },
+    {
+      "key": "build.feedback.rotated_90",
+      "text": "ROTATED 90 DEGREES",
+      "spokenText": "ROTATED 90 DEGREES",
+      "eventId": "VO.ARIA.Message.BuildFeedbackRotated90",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_rotated_90_01.wav"
+    },
+    {
+      "key": "build.feedback.no_active_placement",
+      "text": "No active building placement.",
+      "spokenText": "No active building placement.",
+      "eventId": "VO.ARIA.Message.BuildFeedbackNoActivePlacement",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_no_active_placement_01.wav"
+    },
+    {
+      "key": "build.feedback.building_placed",
+      "text": "BUILDING PLACED",
+      "spokenText": "BUILDING PLACED",
+      "eventId": "VO.ARIA.Message.BuildFeedbackBuildingPlaced",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_building_placed_01.wav"
+    },
+    {
+      "key": "build.feedback.place_on_valid_ground",
+      "text": "Place on valid ground.",
+      "spokenText": "Place on valid ground.",
+      "eventId": "VO.ARIA.Message.BuildFeedbackPlaceOnValidGround",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_place_on_valid_ground_01.wav"
+    },
+    {
+      "key": "build.feedback.drawer_not_ready",
+      "text": "Build drawer is not ready.",
+      "spokenText": "Build drawer is not ready.",
+      "eventId": "VO.ARIA.Message.BuildFeedbackDrawerNotReady",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_drawer_not_ready_01.wav"
+    },
+    {
+      "key": "build.placement.status.drag_to_position",
+      "text": "DRAG TO POSITION",
+      "spokenText": "DRAG TO POSITION",
+      "eventId": "VO.ARIA.Message.BuildPlacementStatusDragToPosition",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_status_drag_to_position_01.wav"
+    },
+    {
+      "key": "build.placement.status.valid_ground",
+      "text": "VALID GROUND",
+      "spokenText": "VALID GROUND",
+      "eventId": "VO.ARIA.Message.BuildPlacementStatusValidGround",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_status_valid_ground_01.wav"
+    },
+    {
+      "key": "build.placement.title.default",
+      "text": "PLACE BUILDING",
+      "spokenText": "PLACE BUILDING",
+      "eventId": "VO.ARIA.Message.BuildPlacementTitleDefault",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_title_default_01.wav"
+    },
+    {
+      "key": "build.placement.title.named",
+      "text": "PLACE {0}",
+      "spokenText": "PLACE target",
+      "eventId": "VO.ARIA.Message.BuildPlacementTitleNamed",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_title_named_01.wav"
+    },
+    {
+      "key": "build.placement.instruction.confirm",
+      "text": "DRAG TO POSITION, CONFIRM TO BUILD",
+      "spokenText": "DRAG TO POSITION, CONFIRM TO BUILD",
+      "eventId": "VO.ARIA.Message.BuildPlacementInstructionConfirm",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_instruction_confirm_01.wav"
+    },
+    {
+      "key": "build.placement.title.fallback_subject",
+      "text": "BUILDING",
+      "spokenText": "BUILDING",
+      "eventId": "VO.ARIA.Message.BuildPlacementTitleFallbackSubject",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_title_fallback_subject_01.wav"
+    },
+    {
+      "key": "match.feedback.tactical_map_not_ready",
+      "text": "Tactical map is not ready.",
+      "spokenText": "Tactical map is not ready.",
+      "eventId": "VO.ARIA.Message.MatchFeedbackTacticalMapNotReady",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_match_feedback_tactical_map_not_ready_01.wav"
+    },
+    {
+      "key": "match.feedback.blocked_civilian_zone",
+      "text": "Blocked: civilian zone",
+      "spokenText": "Blocked. civilian zone",
+      "eventId": "VO.ARIA.Message.MatchFeedbackBlockedCivilianZone",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_match_feedback_blocked_civilian_zone_01.wav"
+    },
+    {
+      "key": "selection.feedback.unit_singular",
+      "text": "UNIT",
+      "spokenText": "UNIT",
+      "eventId": "VO.ARIA.Message.SelectionFeedbackUnitSingular",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_unit_singular_01.wav"
+    },
+    {
+      "key": "selection.feedback.unit_plural",
+      "text": "UNITS",
+      "spokenText": "UNITS",
+      "eventId": "VO.ARIA.Message.SelectionFeedbackUnitPlural",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_unit_plural_01.wav"
+    },
+    {
+      "key": "selection.feedback.vehicle_singular",
+      "text": "VEHICLE",
+      "spokenText": "VEHICLE",
+      "eventId": "VO.ARIA.Message.SelectionFeedbackVehicleSingular",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_vehicle_singular_01.wav"
+    },
+    {
+      "key": "selection.feedback.soldier_singular",
+      "text": "SOLDIER",
+      "spokenText": "SOLDIER",
+      "eventId": "VO.ARIA.Message.SelectionFeedbackSoldierSingular",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_soldier_singular_01.wav"
+    },
+    {
+      "key": "selection.feedback.squad_count",
+      "text": "{0} {1}",
+      "spokenText": "target value",
+      "eventId": "VO.ARIA.Message.SelectionFeedbackSquadCount",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_squad_count_01.wav"
+    },
+    {
+      "key": "selection.feedback.squad_selected",
+      "text": "SQUAD SELECTED",
+      "spokenText": "SQUAD SELECTED",
+      "eventId": "VO.ARIA.Message.SelectionFeedbackSquadSelected",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_squad_selected_01.wav"
+    }
+  ],
+  "clips": [
+    {
+      "eventId": "VO.ARIA.Message.ConfirmDestroy",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_confirm_destroy_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.216
+    },
+    {
+      "eventId": "VO.ARIA.Message.NotEnoughMoney",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_not_enough_money_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.184
+    },
+    {
+      "eventId": "VO.ARIA.Message.CreateFirst",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_create_first_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.496
+    },
+    {
+      "eventId": "VO.ARIA.Message.DragBuildingToFinalPosition",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_drag_building_to_final_position_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.568
+    },
+    {
+      "eventId": "VO.ARIA.Message.WarningGroundAttackType",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_ground_attack_type_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.024
+    },
+    {
+      "eventId": "VO.ARIA.Message.WarningAirAttackType",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_air_attack_type_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.352
+    },
+    {
+      "eventId": "VO.ARIA.Message.WarningAttackEtaSeconds",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_attack_eta_seconds_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 4.752
+    },
+    {
+      "eventId": "VO.ARIA.Message.WarningAttackEtaSuffix",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_attack_eta_suffix_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.784
+    },
+    {
+      "eventId": "VO.ARIA.Message.WarningAttackCountSuffix",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_attack_count_suffix_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.256
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonNoSelection",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_no_selection_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.24
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTargetOutOfBounds",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_target_out_of_bounds_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.312
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTargetBlocked",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_target_blocked_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.184
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTargetUnreachable",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_target_unreachable_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.496
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTargetNotEnemy",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_target_not_enemy_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.544
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTargetNotAttackable",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_target_not_attackable_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.664
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonCommandUnavailable",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_command_unavailable_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.424
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonBuildUnavailable",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_build_unavailable_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.376
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonCameraJumpUnavailable",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_camera_jump_unavailable_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.856
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonScanUnavailable",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_scan_unavailable_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.448
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonScanCooldown",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_scan_cooldown_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.496
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonInsufficientResources",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_insufficient_resources_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.712
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonInsufficientFuel",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_insufficient_fuel_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.328
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonInvalidTransport",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_invalid_transport_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 4.128
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonInvalidPassenger",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_invalid_passenger_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.36
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTransportFull",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_transport_full_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.256
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonNoEligiblePassengers",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_no_eligible_passengers_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.792
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonNoDisembarkCell",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_no_disembark_cell_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.528
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTransportPassengerMissing",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_transport_passenger_missing_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.648
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionSelect",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_select_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.736
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionMove",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_move_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.304
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionAttack",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_attack_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.424
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionHold",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_hold_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.024
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionStop",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_stop_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.528
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionScan",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_scan_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.352
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionBoard",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_board_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.448
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionBuild",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_build_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.768
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionSpecial",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_special_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.52
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardPromptTransportToPassenger",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_prompt_transport_to_passenger_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.672
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardPromptPassengerToTransport",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_prompt_passenger_to_transport_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.448
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardUnavailable",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_unavailable_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.784
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardTapUnitsToBoard",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_tap_units_to_board_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.4
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardSelectedUnitCannotBoard",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_selected_unit_cannot_board_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.856
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardSelectUnitFirst",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_select_unit_first_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.52
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandUnavailableHoldNoSelection",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_unavailable_hold_no_selection_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.312
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandUnavailableStopNoSelection",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_unavailable_stop_no_selection_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.408
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalCommandUnavailableScanNoSelection",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_unavailable_scan_no_selection_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.624
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackCameraFollowUnavailable",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_camera_follow_unavailable_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.784
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackCameraFollowActive",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_camera_follow_active_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.496
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackRtsCameraRestored",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_rts_camera_restored_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.736
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackFollowTargetLost",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_follow_target_lost_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.472
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackDestroyedSelectedBuilding",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_destroyed_selected_building_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.664
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackAirDefenseAutoEngage",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_air_defense_auto_engage_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 4.704
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackExitingUnit",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_exiting_unit_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.136
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackExitingPassengers",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_exiting_passengers_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.496
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackLoadingTransport",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_loading_transport_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.376
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackBoardingTransport",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_boarding_transport_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.304
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackHoldingCurrentPosition",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_holding_current_position_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.544
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackStoppedSelectedUnits",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_stopped_selected_units_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.688
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackUnitReturningToBase",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_unit_returning_to_base_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.616
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackUnitsReturningToBase",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_units_returning_to_base_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.12
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackDestroyedSelectedUnit",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_destroyed_selected_unit_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.688
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackDestroyedSelectedUnits",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_destroyed_selected_units_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.168
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackScanOrdered",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_scan_ordered_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 4.44
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackScanOneContact",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_scan_one_contact_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.208
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackScanContacts",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_scan_contacts_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.424
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackScanComplete",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_scan_complete_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.816
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalFeedbackMissileLaunched",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_missile_launched_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.088
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalAirdropEmergencyDropVisualMissing",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_airdrop_emergency_drop_visual_missing_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.072
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalAirdropParachuteVisualMissing",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_airdrop_parachute_visual_missing_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.616
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalAirdropNoClearLandingZone",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_airdrop_no_clear_landing_zone_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.192
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalAirdropCargoDropBlocked",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_airdrop_cargo_drop_blocked_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.376
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerModeMoveTitle",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_move_title_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 1.944
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerModeMoveDescription",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_move_description_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.472
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerModeAttackTitle",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_attack_title_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.016
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerModeAttackDescription",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_attack_description_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.736
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerModeScanTitle",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_scan_title_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.064
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerModeScanDescription",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_scan_description_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.784
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerModeBoardTitle",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_board_title_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 1.944
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerModeBoardDescription",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_board_description_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.448
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerModeBoardDescriptionTransportToPassenger",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_board_description_transport_to_passenger_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.616
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerModeBuildTitle",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_build_title_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 1.896
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerModeBuildDescription",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_build_description_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.024
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedMoveTitle",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_move_title_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 1.944
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedMoveDescription",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_move_description_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.712
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedAttackTitle",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_attack_title_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.016
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedAttackDescription",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_attack_description_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.376
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedHoldTitle",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_hold_title_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.04
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedHoldDescription",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_hold_description_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.976
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedStopTitle",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_stop_title_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.016
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedStopDescription",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_stop_description_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.096
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedScanTitle",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_scan_title_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.064
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedScanDescription",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_scan_description_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.832
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedBoardTitle",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_board_title_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 1.944
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedBoardDescription",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_board_description_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.304
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedBuildTitle",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_build_title_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 1.896
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedBuildDescription",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_build_description_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.592
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedReturnTitle",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_return_title_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.112
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedReturnDescription",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_return_description_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.616
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedDestroyTitle",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_destroy_title_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.088
+    },
+    {
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedDestroyDescription",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_destroy_description_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.592
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptyName",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_name_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.04
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerReadyBuildings",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_ready_buildings_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 4.488
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerReadyVehicles",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_ready_vehicles_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 4.656
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerReadyAircraft",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_ready_aircraft_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 4.776
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerReadySoldiers",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_ready_soldiers_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 4.584
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerReadyDefault",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_ready_default_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.28
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerInstructionPlacePendingConfirm",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_instruction_place_pending_confirm_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 5.16
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerInstructionCannotPlaceHere",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_instruction_cannot_place_here_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.792
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureConnecting",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_connecting_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 5.208
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureNotEnoughMoney",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_not_enough_money_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.744
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureMissingProducerNamed",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_missing_producer_named_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 4.752
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureMissingProducer",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_missing_producer_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 4.248
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureQueueFullNamed",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_queue_full_named_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 5.688
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureQueueFull",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_queue_full_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 5.832
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureGlobalQueueFull",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_global_queue_full_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 6.288
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureInvalidSelection",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_invalid_selection_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.168
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureUnavailable",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_unavailable_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 4.872
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortNotEnoughMoney",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_not_enough_money_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.472
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortRequiresNamed",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_requires_named_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.376
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortMissingProducer",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_missing_producer_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.904
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortQueueFullNamed",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_queue_full_named_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.928
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortQueueFull",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_queue_full_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.432
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortGlobalQueueFull",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_global_queue_full_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.84
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortUnavailable",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_unavailable_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.736
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptyBuildings",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_buildings_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.336
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptyVehicles",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_vehicles_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.408
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptyAircraft",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_aircraft_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.552
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptySoldiers",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_soldiers_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.456
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptyDefault",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_default_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.312
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptySelectItem",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_select_item_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 4.224
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerPlacementInvalid",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_placement_invalid_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.376
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerActionPlaceChooseFootprint",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_action_place_choose_footprint_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 4.488
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildFeedbackPlaceBuilding",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_place_building_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 1.968
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionRequested",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_requested_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.456
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerSuccessRecruitmentQueued",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_success_recruitment_queued_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.024
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildDrawerSuccessProductionQueued",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_success_production_queued_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.024
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionCancelUnavailable",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_cancel_unavailable_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.928
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionCancelledNamed",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_cancelled_named_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.184
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionCancelled",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_cancelled_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.328
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionQueueEmpty",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_queue_empty_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.688
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionQueueClearedSentence",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_queue_cleared_sentence_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.496
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionClearUnavailable",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_clear_unavailable_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.808
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionQueueCleared",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_queue_cleared_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.496
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildFeedbackPlacementCancelled",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_placement_cancelled_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.304
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildFeedbackRotated90",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_rotated_90_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.784
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildFeedbackNoActivePlacement",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_no_active_placement_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.904
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildFeedbackBuildingPlaced",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_building_placed_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.088
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildFeedbackPlaceOnValidGround",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_place_on_valid_ground_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.496
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildFeedbackDrawerNotReady",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_drawer_not_ready_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.592
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildPlacementStatusDragToPosition",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_status_drag_to_position_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.208
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildPlacementStatusValidGround",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_status_valid_ground_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.136
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildPlacementTitleDefault",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_title_default_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 1.968
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildPlacementTitleNamed",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_title_named_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.064
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildPlacementInstructionConfirm",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_instruction_confirm_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.408
+    },
+    {
+      "eventId": "VO.ARIA.Message.BuildPlacementTitleFallbackSubject",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_title_fallback_subject_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 1.656
+    },
+    {
+      "eventId": "VO.ARIA.Message.MatchFeedbackTacticalMapNotReady",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_match_feedback_tactical_map_not_ready_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.784
+    },
+    {
+      "eventId": "VO.ARIA.Message.MatchFeedbackBlockedCivilianZone",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_match_feedback_blocked_civilian_zone_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 3.792
+    },
+    {
+      "eventId": "VO.ARIA.Message.SelectionFeedbackUnitSingular",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_unit_singular_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 1.68
+    },
+    {
+      "eventId": "VO.ARIA.Message.SelectionFeedbackUnitPlural",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_unit_plural_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 1.728
+    },
+    {
+      "eventId": "VO.ARIA.Message.SelectionFeedbackVehicleSingular",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_vehicle_singular_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 1.8
+    },
+    {
+      "eventId": "VO.ARIA.Message.SelectionFeedbackSoldierSingular",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_soldier_singular_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 1.848
+    },
+    {
+      "eventId": "VO.ARIA.Message.SelectionFeedbackSquadCount",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_squad_count_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.16
+    },
+    {
+      "eventId": "VO.ARIA.Message.SelectionFeedbackSquadSelected",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_squad_selected_01.wav",
+      "status": "neural-tts",
+      "channels": 1,
+      "sampleRate": 44100,
+      "durationSeconds": 2.304
+    }
+  ]
+}

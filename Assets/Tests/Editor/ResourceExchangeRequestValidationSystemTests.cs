@@ -1,12 +1,38 @@
+using System;
 using Game.Components;
 using Game.Runtime;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
+using UnityEngine;
 
 public sealed class ResourceExchangeRequestValidationSystemTests
 {
+    public static void RunFocusedValidation()
+    {
+        int passed = 0;
+        try
+        {
+            RunValidationStep(
+                nameof(StartRequest_Accepted_ReservesInputAndCreatesQueueItem),
+                test => test.StartRequest_Accepted_ReservesInputAndCreatesQueueItem(),
+                ref passed);
+            RunValidationStep(
+                nameof(ClearCompleted_RemovesOnlyCompletedRowsForFaction),
+                test => test.ClearCompleted_RemovesOnlyCompletedRowsForFaction(),
+                ref passed);
+
+            Debug.Log($"[ResourceExchangeRequestValidation] result=Passed tests={passed}");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[ResourceExchangeRequestValidation] result=Failed passed={passed}\n{exception}");
+            ValidationExit.Exit(1);
+        }
+    }
+
     [Test]
     public void StartRequest_Accepted_ReservesInputAndCreatesQueueItem()
     {
@@ -215,6 +241,50 @@ public sealed class ResourceExchangeRequestValidationSystemTests
         Assert.AreEqual(500, em.GetComponentData<ResourceExchangeWalletComponent>(exchange).Oil);
     }
 
+    [Test]
+    public void ClearCompleted_RemovesOnlyCompletedRowsForFaction()
+    {
+        using World world = new(nameof(ClearCompleted_RemovesOnlyCompletedRowsForFaction));
+        EntityManager em = world.EntityManager;
+        Entity exchange = CreateExchangeEntity(em);
+        DynamicBuffer<ResourceExchangeQueueComponent> queue = em.GetBuffer<ResourceExchangeQueueComponent>(exchange);
+        queue.Add(new ResourceExchangeQueueComponent
+        {
+            QueueItemId = 1,
+            FactionId = 1,
+            State = ResourceExchangeQueueState.Completed
+        });
+        queue.Add(new ResourceExchangeQueueComponent
+        {
+            QueueItemId = 2,
+            FactionId = 1,
+            State = ResourceExchangeQueueState.InProgress
+        });
+        queue.Add(new ResourceExchangeQueueComponent
+        {
+            QueueItemId = 3,
+            FactionId = 2,
+            State = ResourceExchangeQueueState.Completed
+        });
+
+        int requestId = ResourceExchangeRequestValidationSystem.EnqueueClearCompletedRequest(em, exchange, 1, 0);
+        UpdateSystem(world);
+
+        Assert.IsTrue(ResourceExchangeRequestValidationSystem.TryGetResult(
+            em,
+            exchange,
+            requestId,
+            out ResourceExchangeResultComponent result));
+        Assert.AreEqual(1, result.Accepted);
+        Assert.AreEqual(ResourceExchangeResultKind.RequestAccepted, result.ResultKind);
+        Assert.AreEqual(1, result.InputAmount);
+
+        queue = em.GetBuffer<ResourceExchangeQueueComponent>(exchange);
+        Assert.AreEqual(2, queue.Length);
+        Assert.AreEqual(2, queue[0].QueueItemId);
+        Assert.AreEqual(3, queue[1].QueueItemId);
+    }
+
     private static Entity CreateExchangeEntity(
         EntityManager em,
         bool enabled = true,
@@ -309,6 +379,25 @@ public sealed class ResourceExchangeRequestValidationSystemTests
         Assert.AreEqual(0, result.Accepted);
         Assert.AreEqual(ResourceExchangeResultKind.RequestRejected, result.ResultKind);
         Assert.AreEqual(reason, result.Reason);
+    }
+
+    private static void RunValidationStep(
+        string name,
+        Action<ResourceExchangeRequestValidationSystemTests> action,
+        ref int passed)
+    {
+        var test = new ResourceExchangeRequestValidationSystemTests();
+        try
+        {
+            action(test);
+            passed++;
+            Debug.Log($"[ResourceExchangeRequestValidation] passed {name}");
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[ResourceExchangeRequestValidation] failed {name}\n{exception}");
+            throw;
+        }
     }
 }
 #endif

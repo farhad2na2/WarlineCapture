@@ -6,6 +6,7 @@ using Game.UI.Contracts;
 using Game.UI.Runtime;
 using Game.UI.Shell.Contracts.Ecs;
 using Game.Components;
+using Game.Runtime;
 
 namespace Game.UI.Shell.Ecs
 {
@@ -16,6 +17,7 @@ namespace Game.UI.Shell.Ecs
         private EntityQuery selectionInputQuery;
         private EntityQuery buildingPlacementCommandQuery;
         private EntityQuery resourceExchangeEnabledQuery;
+        private EntityQuery resourceExchangeRequestQuery;
 
         public void OnCreate(ref SystemState state)
         {
@@ -40,6 +42,11 @@ namespace Game.UI.Shell.Ecs
                 ComponentType.ReadWrite<BuildingUiPlacementCommandRequestElement>());
             resourceExchangeEnabledQuery = state.GetEntityQuery(
                 ComponentType.ReadOnly<ResourceExchangeEnabledComponent>());
+            resourceExchangeRequestQuery = state.GetEntityQuery(
+                ComponentType.ReadOnly<ResourceExchangeEnabledComponent>(),
+                ComponentType.ReadWrite<ResourceExchangeRequestQueueComponent>(),
+                ComponentType.ReadWrite<ResourceExchangeRequestComponent>(),
+                ComponentType.ReadOnly<ResourceExchangeRecipeComponent>());
             state.RequireForUpdate(boundaryQuery);
         }
 
@@ -94,6 +101,11 @@ namespace Game.UI.Shell.Ecs
             RtsSelectionInputRequestQueueComponent queue =
                 state.EntityManager.GetComponentData<RtsSelectionInputRequestQueueComponent>(selectionInput);
             bool resourceExchangeEnabled = IsResourceExchangeEnabled();
+            bool hasResourceExchangeRequestEntity =
+                TryResolveResourceExchangeRequestEntity(
+                    ref state,
+                    out Entity resourceExchangeRequestEntity,
+                    out ResourceExchangeEnabledComponent resourceExchangeRuntimeState);
             DynamicBuffer<BuildingUiPlacementCommandRequestElement> placementRequests = default;
             BuildingUiPlacementCommandQueueComponent placementQueue = default;
             if (needsPlacementCommandQueue)
@@ -124,6 +136,10 @@ namespace Game.UI.Shell.Ecs
                     hasResourceExchangeState,
                     ref placementQueue,
                     resourceExchangeEnabled,
+                    state.EntityManager,
+                    resourceExchangeRequestEntity,
+                    resourceExchangeRuntimeState,
+                    hasResourceExchangeRequestEntity,
                     frame,
                     state.World);
             }
@@ -228,6 +244,24 @@ namespace Game.UI.Shell.Ecs
             return false;
         }
 
+        private bool TryResolveResourceExchangeRequestEntity(
+            ref SystemState state,
+            out Entity entity,
+            out ResourceExchangeEnabledComponent enabled)
+        {
+            entity = Entity.Null;
+            enabled = default;
+            if (resourceExchangeRequestQuery.IsEmptyIgnoreFilter)
+                return false;
+
+            entity = ResolveFirstEntity(resourceExchangeRequestQuery);
+            if (entity == Entity.Null)
+                return false;
+
+            enabled = state.EntityManager.GetComponentData<ResourceExchangeEnabledComponent>(entity);
+            return true;
+        }
+
         private static void ProcessRequest(
             UiActionRequestComponent request,
             ref RtsSelectionInputStateComponent inputState,
@@ -247,6 +281,10 @@ namespace Game.UI.Shell.Ecs
             bool hasResourceExchangeState,
             ref BuildingUiPlacementCommandQueueComponent placementQueue,
             bool resourceExchangeEnabled,
+            EntityManager entityManager,
+            Entity resourceExchangeRequestEntity,
+            in ResourceExchangeEnabledComponent resourceExchangeRuntimeState,
+            bool hasResourceExchangeRequestEntity,
             int frame,
             World world)
         {
@@ -310,6 +348,7 @@ namespace Game.UI.Shell.Ecs
                     {
                         resourceExchangeState.ActiveTab = exchangeTab;
                         resourceExchangeState.SelectedRecipeSlot = 0;
+                        resourceExchangeState.SelectedInputAmount = 0;
                         resourceExchangeState.Version++;
                     }
                     break;
@@ -318,17 +357,88 @@ namespace Game.UI.Shell.Ecs
                     if (hasResourceExchangeState)
                     {
                         resourceExchangeState.SelectedRecipeSlot = math.max(0, request.PayloadId);
+                        resourceExchangeState.SelectedInputAmount = 0;
                         resourceExchangeState.Version++;
                     }
                     break;
                 case UiActionKind.ResourceExchangeAmountDecrease:
+                    CaptureUiClickSequence(ref inputState, commandRequests, frame);
+                    AdjustResourceExchangeAmount(
+                        entityManager,
+                        resourceExchangeRequestEntity,
+                        hasResourceExchangeRequestEntity,
+                        ref resourceExchangeState,
+                        hasResourceExchangeState,
+                        -1);
+                    break;
                 case UiActionKind.ResourceExchangeAmountIncrease:
+                    CaptureUiClickSequence(ref inputState, commandRequests, frame);
+                    AdjustResourceExchangeAmount(
+                        entityManager,
+                        resourceExchangeRequestEntity,
+                        hasResourceExchangeRequestEntity,
+                        ref resourceExchangeState,
+                        hasResourceExchangeState,
+                        1);
+                    break;
                 case UiActionKind.ResourceExchangeConfirm:
+                    CaptureUiClickSequence(ref inputState, commandRequests, frame);
+                    EnqueueResourceExchangeConfirm(
+                        entityManager,
+                        resourceExchangeRequestEntity,
+                        resourceExchangeRuntimeState,
+                        hasResourceExchangeRequestEntity,
+                        resourceExchangeState,
+                        hasResourceExchangeState,
+                        frame);
+                    break;
                 case UiActionKind.ResourceExchangeRushAll:
+                    CaptureUiClickSequence(ref inputState, commandRequests, frame);
+                    if (hasResourceExchangeRequestEntity)
+                    {
+                        ResourceExchangeRequestValidationSystem.EnqueueRushAllRequest(
+                            entityManager,
+                            resourceExchangeRequestEntity,
+                            0,
+                            resourceExchangeRuntimeState.FactionId,
+                            frame);
+                    }
+                    break;
                 case UiActionKind.ResourceExchangeClearCompleted:
+                    CaptureUiClickSequence(ref inputState, commandRequests, frame);
+                    if (hasResourceExchangeRequestEntity)
+                    {
+                        ResourceExchangeRequestValidationSystem.EnqueueClearCompletedRequest(
+                            entityManager,
+                            resourceExchangeRequestEntity,
+                            resourceExchangeRuntimeState.FactionId,
+                            frame);
+                    }
+                    break;
                 case UiActionKind.ResourceExchangeQueueRush:
+                    CaptureUiClickSequence(ref inputState, commandRequests, frame);
+                    if (hasResourceExchangeRequestEntity && request.PayloadId > 0)
+                    {
+                        ResourceExchangeRequestValidationSystem.EnqueueRushRequest(
+                            entityManager,
+                            resourceExchangeRequestEntity,
+                            request.PayloadId,
+                            1,
+                            resourceExchangeRuntimeState.FactionId,
+                            frame);
+                    }
+                    break;
                 case UiActionKind.ResourceExchangeQueueCancel:
                     CaptureUiClickSequence(ref inputState, commandRequests, frame);
+                    if (hasResourceExchangeRequestEntity && request.PayloadId > 0)
+                    {
+                        ResourceExchangeRequestValidationSystem.EnqueueCancelRequest(
+                            entityManager,
+                            resourceExchangeRequestEntity,
+                            request.PayloadId,
+                            resourceExchangeRuntimeState.FactionId,
+                            frame);
+                    }
                     break;
                 case UiActionKind.BuildDrawerPrimaryBuild:
                     CaptureUiClickSequence(ref inputState, commandRequests, frame);
@@ -461,6 +571,118 @@ namespace Game.UI.Shell.Ecs
                     diagnosticsOverlay.LogVisible = 0;
                     break;
             }
+        }
+
+        private static void AdjustResourceExchangeAmount(
+            EntityManager entityManager,
+            Entity exchangeEntity,
+            bool hasExchangeEntity,
+            ref UiResourceExchangeStateComponent resourceExchangeState,
+            bool hasResourceExchangeState,
+            int direction)
+        {
+            if (!hasResourceExchangeState ||
+                !hasExchangeEntity ||
+                !TryResolveSelectedResourceExchangeRecipe(
+                    entityManager,
+                    exchangeEntity,
+                    resourceExchangeState,
+                    out ResourceExchangeRecipeComponent recipe))
+            {
+                return;
+            }
+
+            int current = NormalizeResourceExchangeInputAmount(recipe, resourceExchangeState.SelectedInputAmount);
+            int step = math.max(1, recipe.InputStep);
+            int next = current + (direction >= 0 ? step : -step);
+            resourceExchangeState.SelectedInputAmount = NormalizeResourceExchangeInputAmount(recipe, next);
+            resourceExchangeState.Version++;
+        }
+
+        private static void EnqueueResourceExchangeConfirm(
+            EntityManager entityManager,
+            Entity exchangeEntity,
+            in ResourceExchangeEnabledComponent enabled,
+            bool hasExchangeEntity,
+            in UiResourceExchangeStateComponent resourceExchangeState,
+            bool hasResourceExchangeState,
+            int frame)
+        {
+            if (!hasResourceExchangeState ||
+                !hasExchangeEntity ||
+                !TryResolveSelectedResourceExchangeRecipe(
+                    entityManager,
+                    exchangeEntity,
+                    resourceExchangeState,
+                    out ResourceExchangeRecipeComponent recipe))
+            {
+                return;
+            }
+
+            int amount = NormalizeResourceExchangeInputAmount(recipe, resourceExchangeState.SelectedInputAmount);
+            ResourceExchangeRequestValidationSystem.EnqueueStartRequest(
+                entityManager,
+                exchangeEntity,
+                recipe.RecipeId,
+                amount,
+                enabled.FactionId,
+                frame);
+        }
+
+        private static bool TryResolveSelectedResourceExchangeRecipe(
+            EntityManager entityManager,
+            Entity exchangeEntity,
+            in UiResourceExchangeStateComponent resourceExchangeState,
+            out ResourceExchangeRecipeComponent recipe)
+        {
+            recipe = default;
+            if (exchangeEntity == Entity.Null ||
+                !entityManager.HasBuffer<ResourceExchangeRecipeComponent>(exchangeEntity))
+            {
+                return false;
+            }
+
+            ResourceExchangeRouteType routeType = ToResourceExchangeRouteType(resourceExchangeState.ActiveTab);
+            int selectedSlot = math.max(0, resourceExchangeState.SelectedRecipeSlot);
+            int visibleIndex = 0;
+            DynamicBuffer<ResourceExchangeRecipeComponent> recipes =
+                entityManager.GetBuffer<ResourceExchangeRecipeComponent>(exchangeEntity, true);
+            for (int i = 0; i < recipes.Length; i++)
+            {
+                ResourceExchangeRecipeComponent candidate = recipes[i];
+                if (candidate.RouteType != routeType)
+                    continue;
+
+                if (visibleIndex == selectedSlot)
+                {
+                    recipe = candidate;
+                    return true;
+                }
+
+                visibleIndex++;
+            }
+
+            return false;
+        }
+
+        private static int NormalizeResourceExchangeInputAmount(
+            in ResourceExchangeRecipeComponent recipe,
+            int inputAmount)
+        {
+            int min = math.max(1, recipe.InputAmountMin);
+            int max = math.max(min, recipe.InputAmountMax);
+            int step = math.max(1, recipe.InputStep);
+            int amount = inputAmount > 0 ? inputAmount : min;
+            amount = math.clamp(amount, min, max);
+            int completedSteps = (amount - min) / step;
+            return math.clamp(min + completedSteps * step, min, max);
+        }
+
+        private static ResourceExchangeRouteType ToResourceExchangeRouteType(UiResourceExchangeTab tab)
+        {
+            return tab == UiResourceExchangeTab.Import
+                ? ResourceExchangeRouteType.Import
+                : ResourceExchangeRouteType.Export;
         }
 
         private static void EmitDrawerAudio(World world, bool open)

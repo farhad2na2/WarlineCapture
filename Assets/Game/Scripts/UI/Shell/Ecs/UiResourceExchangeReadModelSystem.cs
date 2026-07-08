@@ -180,6 +180,7 @@ namespace Game.UI.Shell.Ecs
             if (visibleIndex == 0)
             {
                 uiState.SelectedRecipeSlot = 0;
+                uiState.SelectedInputAmount = 0;
                 detail = EmptyDetail(uiState.ActiveTab);
                 return;
             }
@@ -188,21 +189,35 @@ namespace Game.UI.Shell.Ecs
             if (selectedRecipeIndex < 0)
                 selectedRecipeIndex = FindRecipeIndexByVisibleSlot(recipes, activeRoute, uiState.SelectedRecipeSlot);
 
-            detail = selectedRecipeIndex >= 0
-                ? BuildDetail(enabled, wallet, recipes[selectedRecipeIndex], queue)
-                : EmptyDetail(uiState.ActiveTab);
+            if (selectedRecipeIndex >= 0)
+            {
+                int selectedAmount = NormalizeInputAmount(recipes[selectedRecipeIndex], uiState.SelectedInputAmount);
+                uiState.SelectedInputAmount = selectedAmount;
+                detail = BuildDetail(enabled, wallet, recipes[selectedRecipeIndex], queue, selectedAmount);
+            }
+            else
+            {
+                uiState.SelectedInputAmount = 0;
+                detail = EmptyDetail(uiState.ActiveTab);
+            }
         }
 
         private static UiResourceExchangeDetailComponent BuildDetail(
             in ResourceExchangeEnabledComponent enabled,
             in ResourceExchangeWalletComponent wallet,
             in ResourceExchangeRecipeComponent recipe,
-            DynamicBuffer<ResourceExchangeQueueComponent> queue)
+            DynamicBuffer<ResourceExchangeQueueComponent> queue,
+            int amount)
         {
-            int amount = math.max(1, recipe.InputAmountMin);
             int outputAmount = CalculateOutputAmount(recipe, amount);
             float duration = CalculateDuration(recipe, amount);
-            ResourceExchangeReason reason = ValidateConfirm(enabled, wallet, recipe, outputAmount, CountActiveQueueItems(queue, enabled.FactionId));
+            ResourceExchangeReason reason = ValidateConfirm(
+                enabled,
+                wallet,
+                recipe,
+                amount,
+                outputAmount,
+                CountActiveQueueItems(queue, enabled.FactionId));
             return new UiResourceExchangeDetailComponent
             {
                 RecipeId = recipe.RecipeId,
@@ -396,6 +411,7 @@ namespace Game.UI.Shell.Ecs
             in ResourceExchangeEnabledComponent enabled,
             in ResourceExchangeWalletComponent wallet,
             in ResourceExchangeRecipeComponent recipe,
+            int inputAmount,
             int outputAmount,
             int activeQueueCount)
         {
@@ -407,7 +423,6 @@ namespace Game.UI.Shell.Ecs
             if (maxQueueItems <= 0 || activeQueueCount >= maxQueueItems)
                 return ResourceExchangeReason.QueueFull;
 
-            int inputAmount = math.max(1, recipe.InputAmountMin);
             if (GetResourceAmount(wallet, recipe.InputResource) < inputAmount)
                 return InsufficientReason(recipe.InputResource);
 
@@ -434,6 +449,17 @@ namespace Game.UI.Shell.Ecs
         {
             int steps = math.max(0, (inputAmount - recipe.InputAmountMin) / math.max(1, recipe.InputStep));
             return math.max(0f, recipe.DurationSecondsBase + steps * recipe.DurationSecondsPerStep);
+        }
+
+        private static int NormalizeInputAmount(in ResourceExchangeRecipeComponent recipe, int inputAmount)
+        {
+            int min = math.max(1, recipe.InputAmountMin);
+            int max = math.max(min, recipe.InputAmountMax);
+            int step = math.max(1, recipe.InputStep);
+            int amount = inputAmount > 0 ? inputAmount : min;
+            amount = math.clamp(amount, min, max);
+            int completedSteps = (amount - min) / step;
+            return math.clamp(min + completedSteps * step, min, max);
         }
 
         private static int GetResourceAmount(in ResourceExchangeWalletComponent wallet, ResourceExchangeResourceKind resourceKind)

@@ -572,6 +572,7 @@ namespace Game.UI.Shell.Ecs
             {
                 ActiveTab = UiResourceExchangeTab.Export,
                 SelectedRecipeSlot = 0,
+                SelectedInputAmount = 0,
                 QueueCapacityText = new FixedString32Bytes("0/0"),
                 CreditsText = new FixedString32Bytes("0"),
                 MaterialsText = new FixedString32Bytes("0"),

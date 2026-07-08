@@ -143,6 +143,27 @@ namespace Game.Runtime
             return requestQueue.LastRequestId;
         }
 
+        public static int EnqueueClearCompletedRequest(
+            EntityManager em,
+            Entity exchangeEntity,
+            byte factionId,
+            int frameCount)
+        {
+            ResourceExchangeRequestQueueComponent requestQueue =
+                em.GetComponentData<ResourceExchangeRequestQueueComponent>(exchangeEntity);
+            requestQueue.LastRequestId++;
+            em.SetComponentData(exchangeEntity, requestQueue);
+            em.GetBuffer<ResourceExchangeRequestComponent>(exchangeEntity).Add(new ResourceExchangeRequestComponent
+            {
+                RequestId = requestQueue.LastRequestId,
+                RequestKind = ResourceExchangeRequestKind.ClearCompleted,
+                FactionId = factionId,
+                FrameCount = frameCount
+            });
+
+            return requestQueue.LastRequestId;
+        }
+
         public static int EnqueueMissionEndRequest(
             EntityManager em,
             Entity exchangeEntity,
@@ -245,6 +266,12 @@ namespace Game.Runtime
                             queue,
                             results,
                             economyEvents,
+                            request);
+                        break;
+                    case ResourceExchangeRequestKind.ClearCompleted:
+                        result = ProcessClearCompletedRequest(
+                            enabled,
+                            queue,
                             request);
                         break;
                     case ResourceExchangeRequestKind.MissionEnd:
@@ -406,6 +433,42 @@ namespace Game.Runtime
             }
 
             return Rejected(request, default, ResourceExchangeReason.CancelUnavailable);
+        }
+
+        private static ResourceExchangeResultComponent ProcessClearCompletedRequest(
+            in ResourceExchangeEnabledComponent enabled,
+            DynamicBuffer<ResourceExchangeQueueComponent> queue,
+            in ResourceExchangeRequestComponent request)
+        {
+            if (enabled.Enabled == 0)
+                return Rejected(request, default, ResourceExchangeReason.ExchangeUnavailable);
+
+            byte factionId = request.FactionId != 0 ? request.FactionId : enabled.FactionId;
+            if (enabled.FactionId != 0 && factionId != enabled.FactionId)
+                return Rejected(request, default, ResourceExchangeReason.ExchangeUnavailable);
+
+            int removedCount = 0;
+            for (int i = queue.Length - 1; i >= 0; i--)
+            {
+                ResourceExchangeQueueComponent item = queue[i];
+                if (item.FactionId != factionId || item.State != ResourceExchangeQueueState.Completed)
+                    continue;
+
+                queue.RemoveAt(i);
+                removedCount++;
+            }
+
+            return removedCount > 0
+                ? new ResourceExchangeResultComponent
+                {
+                    RequestId = request.RequestId,
+                    FactionId = factionId,
+                    ResultKind = ResourceExchangeResultKind.RequestAccepted,
+                    Accepted = 1,
+                    Reason = ResourceExchangeReason.None,
+                    InputAmount = removedCount
+                }
+                : Rejected(request, default, ResourceExchangeReason.CancelUnavailable);
         }
 
         private static ResourceExchangeResultComponent ProcessRushRequest(

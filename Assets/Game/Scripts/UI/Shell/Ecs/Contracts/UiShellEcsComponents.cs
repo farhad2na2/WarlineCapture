@@ -222,6 +222,7 @@ namespace Game.UI.Shell.Contracts.Ecs
     {
         public UiResourceExchangeTab ActiveTab;
         public int SelectedRecipeSlot;
+        public int SelectedInputAmount;
         public int ExportRecipeCount;
         public int ImportRecipeCount;
         public int QueueCount;

@@ -23,7 +23,7 @@ Implement the timed Resource Logistics Exchange without drifting from WarlineCap
 
 ## Progress Summary
 
-Overall implementation progress: 63% (59/93 checklist items complete).
+Overall implementation progress: 64% (60/94 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -34,7 +34,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 2. Request validation and queue start | Complete | 10 | 10 | 100% | Added ISystem request validation, ECS wallet boundary, input reservation, queue item creation, economy event row, and typed results. |
 | 3. Queue ticking, completion, cancel, refund | Complete | 11 | 11 | 100% | Timed queue, output grant once, cancel/refund rules, mission-end cancel/refund policy. |
 | 4. Rush Tickets | Complete | 7 | 7 | 100% | Rush eligible jobs with ticket spend, per-item caps, rush-all budget, and feedback. |
-| 5. UI popup and header routing | In progress | 11 | 14 | 79% | ECS-backed UI read-model, target-lock reference, separated layer pack, Canvas popup prefab, serialized view refs, cards, details, amount stepper, queue panel, enabled-gated resource header tap route, popup input restoration, and live read-model binding complete; captures and full button request backend remain. |
+| 5. UI popup and header routing | In progress | 12 | 15 | 80% | ECS-backed UI read-model, target-lock reference, separated layer pack, Canvas popup prefab, serialized view refs, cards, details, amount stepper, queue panel, enabled-gated resource header tap route, popup input restoration, live read-model binding, and request-buffer wiring complete; captures and TMP/prefab polish remain. |
 | 6. World presentation | Not started | 0 | 8 | 0% | Non-authoritative pooled truck/plane presentation and fallback behavior. |
 | 7. Audio, VFX, feedback, ARIA | Not started | 0 | 7 | 0% | Config-driven audio, resource flyouts, completion/reject feedback, optional ARIA copy. |
 | 8. AI, balance, telemetry | Not started | 0 | 6 | 0% | Economy events, balancing reports, AI awareness if enabled for AI factions. |
@@ -166,6 +166,7 @@ Exit criteria:
 - [x] Route match `ResourceBar` tap/click to popup only when exchange is enabled.
 - [x] Ensure popup blocks world input and restores prior match HUD state on close.
 - [x] Bind installed POP-12 popup to the ECS read model and typed tab/card/control UI actions.
+- [x] Route POP-12 amount, confirm, rush-all, clear-completed, row rush, and row cancel controls into ECS request buffers.
 - [ ] Ensure all runtime text uses TMP/Oxanium rules from UI docs.
 - [ ] Validate 16:9 and 20:9 layout with captures.
 - [ ] Add focused UI/prefab tests for object ids, button wiring, disabled reasons, and input suppression.
@@ -690,3 +691,42 @@ Remaining blocker or next slice:
 
 - Next slice should route `ResourceExchangeConfirm`, amount stepper changes, row rush/cancel, rush-all, and clear-completed actions into the existing `ResourceExchangeRequestComponent` buffers without adding UI-owned economy policy.
 - TMP/Oxanium validation and 16:9/20:9 layout captures remain required before this popup is player-facing.
+
+### 2026-07-08 - Phase 5I POP-12 Backend Request Wiring
+
+Files changed:
+
+- `Assets/Game/Scripts/Systems/ResourceExchangeRequestValidationSystem.cs`
+- `Assets/Game/Scripts/UI/Shell/Ecs/Contracts/UiShellEcsComponents.cs`
+- `Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs`
+- `Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeReadModelSystem.cs`
+- `Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs`
+- `Assets/Game/Scripts/UI/Shell/Ecs/UiShellStateSystem.cs`
+- `Assets/Tests/Editor/ResourceExchangeRequestValidationSystemTests.cs`
+- `Assets/Tests/Editor/ResourceExchangeUiActionRequestSystemTests.cs`
+- `Design/Architecture/resource_logistics_exchange_implementation_tracker.md`
+
+Behavior changed:
+
+- Added `SelectedInputAmount` to the POP-12 ECS UI state so the amount stepper can persist the selected amount independently from the recipe slot.
+- `UiResourceExchangeReadModelSystem` now normalizes the selected amount by recipe min/max/step, updates detail cost/output/duration from that amount, and validates confirm affordability/storage against the selected amount instead of always using the recipe minimum.
+- `UiActionRequestSystem` now resolves the selected recipe from ECS and routes amount decrease/increase into `SelectedInputAmount` updates without owning wallet or conversion policy.
+- `ResourceExchangeConfirm` now appends a typed `ResourceExchangeRequestKind.Start` request with the selected recipe id and normalized input amount.
+- `ResourceExchangeQueueRush`, `ResourceExchangeQueueCancel`, `ResourceExchangeRushAll`, and `ResourceExchangeClearCompleted` now append typed ECS request-buffer entries through the existing `ResourceExchangeRequestValidationSystem` helpers.
+- Added `EnqueueClearCompletedRequest` and validation-system handling for `ResourceExchangeRequestKind.ClearCompleted`; the request removes completed rows for the requesting faction only and never mutates wallet balances.
+- Added focused editor validation entry points for UI action routing and backend request validation so future heartbeat slices can run deterministic Unity batchmode checks.
+
+Validation:
+
+- `git diff --check` passed.
+- `dotnet build Game.UI.Shell.Contracts.Ecs.csproj --no-restore` passed with 4 warnings and 0 errors.
+- `dotnet build Game.Runtime.csproj --no-restore` passed with 6 warnings and 0 errors.
+- `dotnet build Game.UI.Shell.Ecs.csproj --no-restore` passed with 7 warnings and 0 errors.
+- `dotnet build Game.Tests.Editor.csproj --no-restore` passed with 10 warnings and 0 errors.
+- Unity focused UI action validation passed 3/3 with `ResourceExchangeUiActionRequestSystemTests.RunFocusedValidation`: `/private/tmp/wlc-resource-ui-action-validation.log`.
+- Unity focused backend validation passed 2/2 with `ResourceExchangeRequestValidationSystemTests.RunFocusedValidation`: `/private/tmp/wlc-resource-request-validation.log`.
+
+Remaining blocker or next slice:
+
+- Next slice should verify POP-12 runtime text uses TMP/Oxanium and that all visible object ids/button refs survive prefab regeneration.
+- 16:9 and 20:9 layout captures remain required before this popup is player-facing.

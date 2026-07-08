@@ -52,6 +52,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         {
             if (roots[i] != null && roots[i].name.StartsWith("AssistantUiTest", StringComparison.Ordinal))
                 UnityEngine.Object.DestroyImmediate(roots[i]);
+            else if (roots[i] != null && roots[i].name.StartsWith("AriaAssistantPreviewHighlightRuntime", StringComparison.Ordinal))
+                UnityEngine.Object.DestroyImmediate(roots[i]);
         }
     }
 
@@ -151,6 +153,15 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         StringAssert.Contains("HIGH: Review objective", recommendation.text);
         Assert.IsTrue(previewPulse.gameObject.activeSelf);
         Assert.Greater(previewPulse.color.a, 0.4f);
+        GameObject worldRing = GameObject.Find("AriaAssistantPreviewHighlightRuntime");
+        Assert.NotNull(worldRing);
+        Assert.IsTrue(worldRing.activeSelf);
+        LineRenderer worldRingRenderer = worldRing.GetComponent<LineRenderer>();
+        Assert.NotNull(worldRingRenderer);
+        Assert.AreEqual(96, worldRingRenderer.positionCount);
+        Assert.AreEqual(12f + 2.35f, worldRingRenderer.GetPosition(0).x, 0.01f);
+        Assert.AreEqual(3f + 0.38f, worldRingRenderer.GetPosition(0).y, 0.01f);
+        Assert.AreEqual(9f, worldRingRenderer.GetPosition(0).z, 0.01f);
         Assert.IsTrue(showMe.interactable);
         Assert.IsTrue(giveControl.interactable);
         Assert.AreEqual("DO IT", giveControlLabel.text);

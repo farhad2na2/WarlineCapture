@@ -1,12 +1,12 @@
 # ARIA Assistant ECS Implementation Tracker
 
 Date: 2026-07-08
-Status: Phase 4 assistant preview highlight UI pulse implemented
+Status: Phase 4 assistant preview highlight presentation implemented
 Source design: `Design/ARIA_Assistant_ECS_Design.md`
 
 ## Progress
 
-Overall progress: 49% complete, 33 of 68 checklist items complete.
+Overall progress: 50% complete, 34 of 68 checklist items complete.
 
 | Phase | Scope | Items | Complete | Status |
 |---|---|---:|---:|---|
@@ -14,7 +14,7 @@ Overall progress: 49% complete, 33 of 68 checklist items complete.
 | 1 | ECS data contract | 8 | 8 | Complete |
 | 2 | Match header and panel shell | 8 | 8 | Complete |
 | 3 | Goal and recommendation read models | 8 | 8 | Complete |
-| 4 | Show Me and Do It command intents | 8 | 3 | In progress |
+| 4 | Show Me and Do It command intents | 8 | 4 | In progress |
 | 5 | Give Control ownership | 8 | 0 | Not started |
 | 6 | Message, narration, and audio | 8 | 0 | Not started |
 | 7 | Settings, save, and accessibility | 6 | 0 | Not started |
@@ -121,7 +121,7 @@ Phase 3 notes:
 - [x] Add `AssistantCommandIntentRequestElement` enqueue path from `Show Me`.
 - [x] Add `AssistantCommandIntentRequestElement` enqueue path from `Do It`.
 - [x] Add `AssistantCommandIntentSystem` routing for camera/selection preview intents.
-- [ ] Add `AssistantHighlightPresentationSystemHelper` for UI pulse, world highlight, and camera nudge from ECS read models. Partial: ECS highlight row, camera-preview nudge, and HUD UI pulse are implemented; world-space highlight remains.
+- [x] Add `AssistantHighlightPresentationSystemHelper` for UI pulse, world highlight, and camera nudge from ECS read models.
 - [ ] Add one safe `Do It` command through existing ECS command boundaries.
 - [ ] Add result rows for accepted, rejected, completed, cancelled, and timed-out intents.
 - [ ] Add recovery message when a command intent is rejected.
@@ -137,7 +137,7 @@ Phase 4 notes:
 - Added `AssistantCommandIntentSystem` as an unmanaged UI Shell ECS system. It consumes queued Show Me / focus-preview requests, resolves entity or world-position targets, queues existing `RtsCameraRequestElement` smooth focus requests, writes accepted/rejected assistant result rows, and marks assistant control state as `AssistantPreview` without executing gameplay.
 - The ARIA panel `DO IT` button now enqueues `ExecuteRecommendation` only when the top recommendation exposes `CanExecute`. `UiShellEcsGateway` maps executable recommendation kinds to typed assistant intents (`SelectEntity`, `MoveToWorldPosition`, `AttackEntity`, `FocusCamera`, or `StopAssistantControl`) instead of assuming all executable recommendations are attacks. No gameplay command execution is added yet.
 - Added `AssistantPreviewHighlightElement` as the ECS preview read model for accepted Show Me / focus-preview requests. `AssistantCommandIntentSystem` now writes one active highlight row on accepted preview and clears stale rows on rejected or unsupported preview requests.
-- Added `UiAssistantHighlightModel`, gateway conversion/caching, and `AssistantHighlightPresentationSystemHelper`. The match HUD panel consumes the model through the existing refresh path and displays a bounded cyan pulse behind the recommendation area. World-space highlight/camera nudge can now build on the same ECS read model in a later Phase 4 slice without changing command routing.
+- Added `UiAssistantHighlightModel`, gateway conversion/caching, and `AssistantHighlightPresentationSystemHelper`. The match HUD panel consumes the model through the existing refresh path, displays a bounded cyan pulse behind the recommendation area, and shows a pooled overlay world ring at the preview target. Camera preview nudge continues through the existing `RtsCameraRequestElement` smooth-focus request.
 
 ## Phase 5: Give Control Ownership
 
@@ -207,6 +207,7 @@ Exit criteria: feature is playable, validated, documented, and does not regress 
 | 2026-07-08 | Phase 4 Show Me camera preview routing | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; sandboxed Unity attempt `/private/tmp/aria-assistant-command-intent-system-unity.log`; escalated workaround attempt `/private/tmp/aria-assistant-command-intent-system-unity-escalated-rerun.log` with `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-command-intent-system-unity-escalated-rerun.log --timeout 420 -- -quit -executeMethod AssistantCommandIntentSystemTests.RunFocusedValidation` | Passed | Sandboxed Unity hit the documented `LicenseClient-farhad` licensing initialization failure before tests. The documented out-of-sandbox rerun passed with `[AssistantCommandIntentSystemValidation] result=Passed tests=2`, validating accepted camera-preview routing and rejected no-target recovery. |
 | 2026-07-08 | Phase 4 Do It command intent enqueue | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-doit-ui-unity.log --timeout 420 -- -quit -executeMethod MatchHudAssistantUiSystemHelperTests.RunFocusedValidation`; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-doit-gateway-unity.log --timeout 420 -- -quit -executeMethod AssistantCommandIntentGatewayTests.RunFocusedValidation` | Passed | UI validation reported `[MatchHudAssistantUiValidation] result=Passed tests=2`; gateway validation reported `[AssistantCommandIntentGatewayValidation] result=Passed tests=2`. Validates the panel `DO IT` button queues `ExecuteRecommendation` and executable recommendation kinds map to typed ECS assistant intents without executing gameplay. |
 | 2026-07-08 | Phase 4 assistant preview highlight UI pulse | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; sandboxed Unity attempt `/private/tmp/aria-assistant-highlight-data-contract-unity.log`; escalated workaround validations `/private/tmp/aria-assistant-highlight-data-contract-unity-escalated.log`, `/private/tmp/aria-assistant-highlight-intent-system-unity.log`, `/private/tmp/aria-assistant-highlight-ui-unity.log`, and `/private/tmp/aria-assistant-highlight-gateway-unity.log` | Passed | Sandboxed Unity hit the documented `LicenseClient-farhad` licensing initialization failure. Workaround reruns passed with `[AssistantEcsDataContractValidation] result=Passed tests=3`, `[AssistantCommandIntentSystemValidation] result=Passed tests=2`, `[MatchHudAssistantUiValidation] result=Passed tests=2`, and `[AssistantCommandIntentGatewayValidation] result=Passed tests=3`. Validates ECS preview highlight rows, stale highlight clearing on rejection, gateway conversion, and HUD panel pulse binding. World-space highlight remains for the next stable slice. |
+| 2026-07-08 | Phase 4 assistant preview world highlight | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-world-highlight-ui-unity.log --timeout 420 -- -quit -executeMethod MatchHudAssistantUiSystemHelperTests.RunFocusedValidation` | Passed | Focused Unity validation reported `[MatchHudAssistantUiValidation] result=Passed tests=2`. Validates the panel pulse plus pooled `AriaAssistantPreviewHighlightRuntime` world ring from `UiAssistantHighlightModel`, including target position and renderer setup. |
 
 ## Open Decisions
 

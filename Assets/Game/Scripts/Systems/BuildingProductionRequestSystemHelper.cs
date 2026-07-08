@@ -3,6 +3,7 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 using Game.Components;
+using Game.Configs;
 using Game.Tactical.Contracts;
 
 namespace Game.Runtime
@@ -306,7 +307,59 @@ namespace Game.Runtime
                     ResultCode = resultCode,
                     ReasonCode = (int)ToProductionReasonCode(resultCode)
                 });
+
+                TryEmitProductionCommandAudio(em, request.RequestKind, queued, resultCode);
             }
+        }
+
+        public static bool TryEmitProductionCommandAudio(
+            EntityManager em,
+            byte requestKind,
+            bool accepted,
+            byte resultCode)
+        {
+            if (!TryResolveProductionCommandAudioEvent(requestKind, accepted, resultCode, out string eventId, out uint eventHash))
+                return false;
+
+            AudioEventRequestSystem.EnqueueOneShot(
+                em,
+                new FixedString64Bytes(eventId),
+                eventHash,
+                new FixedString32Bytes("Gameplay"),
+                AudioPlaybackPriority.Medium,
+                Time.time,
+                cooldownSeconds: 0.08f);
+            return true;
+        }
+
+        public static bool TryResolveProductionCommandAudioEvent(
+            byte requestKind,
+            bool accepted,
+            byte resultCode,
+            out string eventId,
+            out uint eventHash)
+        {
+            eventId = null;
+            eventHash = 0u;
+
+            if (requestKind == BuildingUiProductionCommandRequestElement.KindCancelProduction)
+                return false;
+
+            if (accepted && resultCode == BuildingUiProductionCommandResultElement.Queued)
+            {
+                eventId = AudioEventIds.GameplayProductionQueued;
+                eventHash = AudioEventIds.GameplayProductionQueuedHash;
+                return true;
+            }
+
+            if (!accepted)
+            {
+                eventId = AudioEventIds.GameplayCommandRejected;
+                eventHash = AudioEventIds.GameplayCommandRejectedHash;
+                return true;
+            }
+
+            return false;
         }
 
         private bool ProcessUiProductionCommand(
@@ -657,7 +710,54 @@ namespace Game.Runtime
                     ResultCode = resultCode,
                     ReasonCode = (int)ToCampItemReasonCode(resultCode)
                 });
+
+                TryEmitCampItemAudio(em, accepted, resultCode);
             }
+        }
+
+        public static bool TryEmitCampItemAudio(
+            EntityManager em,
+            bool accepted,
+            byte resultCode)
+        {
+            if (!TryResolveCampItemAudioEvent(accepted, resultCode, out string eventId, out uint eventHash))
+                return false;
+
+            AudioEventRequestSystem.EnqueueOneShot(
+                em,
+                new FixedString64Bytes(eventId),
+                eventHash,
+                new FixedString32Bytes("Gameplay"),
+                AudioPlaybackPriority.Medium,
+                Time.time,
+                cooldownSeconds: 0.08f);
+            return true;
+        }
+
+        public static bool TryResolveCampItemAudioEvent(
+            bool accepted,
+            byte resultCode,
+            out string eventId,
+            out uint eventHash)
+        {
+            eventId = null;
+            eventHash = 0u;
+
+            if (accepted && resultCode == BuildingUiCampItemCommandResultElement.ProductionQueued)
+            {
+                eventId = AudioEventIds.GameplayProductionQueued;
+                eventHash = AudioEventIds.GameplayProductionQueuedHash;
+                return true;
+            }
+
+            if (!accepted)
+            {
+                eventId = AudioEventIds.GameplayCommandRejected;
+                eventHash = AudioEventIds.GameplayCommandRejectedHash;
+                return true;
+            }
+
+            return false;
         }
 
         public bool CanCreateUnitFromSelectedBuilding(Context context, int? activeBuildingId, int productionIndex)

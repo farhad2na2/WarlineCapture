@@ -3,6 +3,7 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 using Game.Components;
+using Game.Configs;
 using Game.Tactical.Contracts;
 
 namespace Game.Runtime
@@ -202,7 +203,59 @@ namespace Game.Runtime
                     ResultCode = resultCode,
                     ReasonCode = (int)ToReasonCode(resultCode)
                 });
+
+                TryEmitPlacementAudio(em, request.RequestKind, accepted, resultCode);
             }
+        }
+
+        public static bool TryEmitPlacementAudio(
+            EntityManager em,
+            byte requestKind,
+            bool accepted,
+            byte resultCode)
+        {
+            if (!TryResolvePlacementAudioEvent(requestKind, accepted, resultCode, out string eventId, out uint eventHash))
+                return false;
+
+            AudioEventRequestSystem.EnqueueOneShot(
+                em,
+                new FixedString64Bytes(eventId),
+                eventHash,
+                new FixedString32Bytes("Gameplay"),
+                AudioPlaybackPriority.Medium,
+                Time.time,
+                cooldownSeconds: 0.08f);
+            return true;
+        }
+
+        public static bool TryResolvePlacementAudioEvent(
+            byte requestKind,
+            bool accepted,
+            byte resultCode,
+            out string eventId,
+            out uint eventHash)
+        {
+            eventId = null;
+            eventHash = 0u;
+
+            if (requestKind != BuildingUiPlacementCommandRequestElement.KindConfirmPlacement)
+                return false;
+
+            if (accepted && resultCode == BuildingUiPlacementCommandResultElement.Completed)
+            {
+                eventId = AudioEventIds.GameplayBuildPlaceValid;
+                eventHash = AudioEventIds.GameplayBuildPlaceValidHash;
+                return true;
+            }
+
+            if (!accepted)
+            {
+                eventId = AudioEventIds.GameplayBuildPlaceInvalid;
+                eventHash = AudioEventIds.GameplayBuildPlaceInvalidHash;
+                return true;
+            }
+
+            return false;
         }
 
         public void NotifyPlacementUiPointerDown(Context context)

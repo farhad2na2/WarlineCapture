@@ -8,6 +8,8 @@ namespace Game.UI.Runtime
         private const string MasterVolumeKey = Prefix + "Audio.MasterVolume";
         private const string MusicVolumeKey = Prefix + "Audio.MusicVolume";
         private const string SfxVolumeKey = Prefix + "Audio.SfxVolume";
+        private const string AlertsVolumeKey = Prefix + "Audio.AlertsVolume";
+        private const string VoiceVolumeKey = Prefix + "Audio.VoiceVolume";
         private const string GraphicsQualityKey = Prefix + "Graphics.Quality";
         private const string FrameRateModeKey = Prefix + "Graphics.FrameRateMode";
         private const string CameraSensitivityKey = Prefix + "Controls.CameraSensitivity";
@@ -26,7 +28,9 @@ namespace Game.UI.Runtime
             {
                 MasterVolume = 80f,
                 MusicVolume = 60f,
-                SfxVolume = 85f
+                SfxVolume = 85f,
+                AlertsVolume = 90f,
+                VoiceVolume = 85f
             },
             Graphics = new GraphicsSettingsModel
             {
@@ -66,7 +70,9 @@ namespace Game.UI.Runtime
                 {
                     MasterVolume = PlayerPrefs.GetFloat(MasterVolumeKey, defaults.Audio.MasterVolume),
                     MusicVolume = PlayerPrefs.GetFloat(MusicVolumeKey, defaults.Audio.MusicVolume),
-                    SfxVolume = PlayerPrefs.GetFloat(SfxVolumeKey, defaults.Audio.SfxVolume)
+                    SfxVolume = PlayerPrefs.GetFloat(SfxVolumeKey, defaults.Audio.SfxVolume),
+                    AlertsVolume = PlayerPrefs.GetFloat(AlertsVolumeKey, defaults.Audio.AlertsVolume),
+                    VoiceVolume = PlayerPrefs.GetFloat(VoiceVolumeKey, defaults.Audio.VoiceVolume)
                 },
                 Graphics = new GraphicsSettingsModel
                 {
@@ -103,6 +109,8 @@ namespace Game.UI.Runtime
             PlayerPrefs.SetFloat(MasterVolumeKey, Mathf.Clamp(model.Audio.MasterVolume, 0f, 100f));
             PlayerPrefs.SetFloat(MusicVolumeKey, Mathf.Clamp(model.Audio.MusicVolume, 0f, 100f));
             PlayerPrefs.SetFloat(SfxVolumeKey, Mathf.Clamp(model.Audio.SfxVolume, 0f, 100f));
+            PlayerPrefs.SetFloat(AlertsVolumeKey, Mathf.Clamp(model.Audio.AlertsVolume, 0f, 100f));
+            PlayerPrefs.SetFloat(VoiceVolumeKey, Mathf.Clamp(model.Audio.VoiceVolume, 0f, 100f));
             PlayerPrefs.SetInt(GraphicsQualityKey, (int)model.Graphics.Quality);
             PlayerPrefs.SetInt(FrameRateModeKey, (int)model.Graphics.FrameRateMode);
             PlayerPrefs.SetFloat(CameraSensitivityKey, Mathf.Clamp(model.Controls.CameraSensitivity, 0f, 100f));

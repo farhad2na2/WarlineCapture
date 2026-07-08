@@ -16,6 +16,8 @@ namespace Game.UI.Runtime
         [SerializeField] private UISliderRowView masterVolumeRow;
         [SerializeField] private UISliderRowView musicVolumeRow;
         [SerializeField] private UISliderRowView sfxVolumeRow;
+        [SerializeField] private UISliderRowView alertsVolumeRow;
+        [SerializeField] private UISliderRowView voiceVolumeRow;
         [SerializeField] private UISegmentedControlView graphicsQualityControl;
         [SerializeField] private UISegmentedControlView frameRateControl;
         [SerializeField] private UISliderRowView cameraSensitivityRow;
@@ -48,6 +50,8 @@ namespace Game.UI.Runtime
             masterVolumeRow?.Bind("Master Volume", model.Audio.MasterVolume, 0f, 100f);
             musicVolumeRow?.Bind("Music", model.Audio.MusicVolume, 0f, 100f);
             sfxVolumeRow?.Bind("SFX", model.Audio.SfxVolume, 0f, 100f);
+            alertsVolumeRow?.Bind("ALERTS", model.Audio.AlertsVolume, 0f, 100f);
+            voiceVolumeRow?.Bind("VOICE", model.Audio.VoiceVolume, 0f, 100f);
             graphicsQualityControl?.Bind(GraphicsQualityLabels, (int)model.Graphics.Quality);
             frameRateControl?.Bind(FrameRateLabels, (int)model.Graphics.FrameRateMode);
             cameraSensitivityRow?.Bind("CAMERA SENSITIVITY", model.Controls.CameraSensitivity, 0f, 100f);
@@ -66,6 +70,8 @@ namespace Game.UI.Runtime
             model.Audio.MasterVolume = GetSliderValue(masterVolumeRow, model.Audio.MasterVolume);
             model.Audio.MusicVolume = GetSliderValue(musicVolumeRow, model.Audio.MusicVolume);
             model.Audio.SfxVolume = GetSliderValue(sfxVolumeRow, model.Audio.SfxVolume);
+            model.Audio.AlertsVolume = GetSliderValue(alertsVolumeRow, model.Audio.AlertsVolume);
+            model.Audio.VoiceVolume = GetSliderValue(voiceVolumeRow, model.Audio.VoiceVolume);
             model.Graphics.Quality = _model.Graphics.Quality;
             model.Graphics.FrameRateMode = _model.Graphics.FrameRateMode;
             model.Controls.CameraSensitivity = GetSliderValue(cameraSensitivityRow, model.Controls.CameraSensitivity);
@@ -92,6 +98,8 @@ namespace Game.UI.Runtime
             AddSliderListener(masterVolumeRow, OnMasterVolumeChanged);
             AddSliderListener(musicVolumeRow, OnMusicVolumeChanged);
             AddSliderListener(sfxVolumeRow, OnSfxVolumeChanged);
+            AddSliderListener(alertsVolumeRow, OnAlertsVolumeChanged);
+            AddSliderListener(voiceVolumeRow, OnVoiceVolumeChanged);
             AddSliderListener(cameraSensitivityRow, OnCameraSensitivityChanged);
             AddToggleListener(threatWarningsRow, OnThreatWarningsChanged);
             AddToggleListener(highContrastRow, OnHighContrastChanged);
@@ -113,6 +121,8 @@ namespace Game.UI.Runtime
             RemoveSliderListener(masterVolumeRow, OnMasterVolumeChanged);
             RemoveSliderListener(musicVolumeRow, OnMusicVolumeChanged);
             RemoveSliderListener(sfxVolumeRow, OnSfxVolumeChanged);
+            RemoveSliderListener(alertsVolumeRow, OnAlertsVolumeChanged);
+            RemoveSliderListener(voiceVolumeRow, OnVoiceVolumeChanged);
             RemoveSliderListener(cameraSensitivityRow, OnCameraSensitivityChanged);
             RemoveToggleListener(threatWarningsRow, OnThreatWarningsChanged);
             RemoveToggleListener(highContrastRow, OnHighContrastChanged);
@@ -127,6 +137,8 @@ namespace Game.UI.Runtime
         private void OnMasterVolumeChanged(float value) => _model.Audio.MasterVolume = value;
         private void OnMusicVolumeChanged(float value) => _model.Audio.MusicVolume = value;
         private void OnSfxVolumeChanged(float value) => _model.Audio.SfxVolume = value;
+        private void OnAlertsVolumeChanged(float value) => _model.Audio.AlertsVolume = value;
+        private void OnVoiceVolumeChanged(float value) => _model.Audio.VoiceVolume = value;
         private void OnCameraSensitivityChanged(float value) => _model.Controls.CameraSensitivity = value;
         private void OnThreatWarningsChanged(bool value) => _model.Notifications.ThreatWarnings = value;
         private void OnHighContrastChanged(bool value) => _model.Accessibility.HighContrastUi = value;

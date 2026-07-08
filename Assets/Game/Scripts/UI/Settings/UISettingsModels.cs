@@ -52,6 +52,8 @@ namespace Game.UI.Runtime
         public float MasterVolume;
         public float MusicVolume;
         public float SfxVolume;
+        public float AlertsVolume;
+        public float VoiceVolume;
     }
 
     [Serializable]

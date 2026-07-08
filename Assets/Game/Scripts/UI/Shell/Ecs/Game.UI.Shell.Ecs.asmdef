@@ -5,6 +5,7 @@
         "Game.Catalog.Contracts",
         "Game.Components",
         "Game.Configs",
+        "Game.Runtime",
         "Game.Tactical.Contracts",
         "Game.UI.Contracts",
         "Game.UI.Runtime",

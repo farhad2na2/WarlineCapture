@@ -323,14 +323,14 @@ Use this section as the work checklist. Update status after each implementation 
 
 ### Current Completion
 
-Overall tracked completion: **55%**.
+Overall tracked completion: **60%**.
 
-- Completed steps: 11 / 20.
+- Completed steps: 12 / 20.
 - Asset and placeholder catalog preparation: **Done**.
 - Runtime playback implementation: **In Progress**.
-- UI/gameplay wiring: **Not Started**.
+- UI/gameplay wiring: **In Progress**.
 - Validation/performance test coverage: **Not Started**.
-- Latest stable slice: pooled audio playback presentation helper passed focused Unity validation.
+- Latest stable slice: settings UI audio volumes persist and project into ECS audio settings through focused Unity validation.
 
 Status legend:
 
@@ -351,7 +351,7 @@ Status legend:
 | 8. Create ECS request components | Done | Gameplay | `AudioPlaybackRequestComponent`, settings/music state components. | `AudioEcsDataContractTests.RunFocusedValidation` passed. |
 | 9. Create request systems | Done | Gameplay | `AudioEventRequestSystem`, `AudioCooldownSystem`, `AudioMusicStateSystem`, `AudioSettingsSystem`. | `AudioRequestSystemTests.RunFocusedValidation` passed. |
 | 10. Create playback presentation helper | Done | UI/Audio | Pooled `AudioSource` playback helper and mixer application helper. | `AudioPlaybackPresentationSystemHelperTests.RunFocusedValidation` passed. |
-| 11. Wire settings UI | Not Started | UI | Master/Music/SFX/Voice/Alerts volume controls update audio settings. | Settings persist and immediately affect playback. |
+| 11. Wire settings UI | Done | UI | Master/Music/SFX/Voice/Alerts volume controls update audio settings. | `AudioSettingsUiProjectionTests.RunFocusedValidation` passed. |
 | 12. Wire common UI button audio | Not Started | UI | Shared button/tab/card/toggle/slider audio event views. | Changing catalog click clip affects all migrated buttons. |
 | 13. Wire shell route/popup audio | Not Started | UI | Screen forward/back, popup open/close, drawer open/close. | UI route smoke test. |
 | 14. Wire match command audio | Not Started | Gameplay/UI | Select, move, attack, hold, stop/return, scan, build valid/invalid. | Match command tests and manual M01 smoke. |
@@ -501,6 +501,22 @@ Allowed shortcut for first implementation:
 - UI may use a shell-edge audio request queue if ECS is not yet initialized on splash/menu.
 - The queue must still use event ids and the same catalog.
 - Match gameplay should move toward ECS request buffers.
+
+### Step 11: Settings UI Audio Projection
+
+Current settings pass:
+
+- Settings model/service: `Assets/Game/Scripts/UI/Settings/UISettingsModels.cs`, `Assets/Game/Scripts/UI/Settings/SettingsService.cs`
+- Settings panel support: `Assets/Game/Scripts/UI/Settings/SettingsPanelView.cs`
+- ECS projection: `Assets/Game/Scripts/UI/Shell/Ecs/UiAudioSettingsProjectionSystem.cs`
+- Validation: `AudioSettingsUiProjectionTests.RunFocusedValidation`
+- Latest validation: Master, Music, SFX, Alerts, and Voice values persist through `SettingsService`; `SettingsService.ApplyRuntime` projects normalized values to `AudioSettingsComponent` in the default ECS world.
+
+Implementation rule:
+
+- Settings UI owns percentages and persistence.
+- ECS audio runtime owns normalized bus volumes.
+- UI controls must not assign clips, mixer groups, or per-button audio references.
 
 ### Step 12: Common UI Migration
 

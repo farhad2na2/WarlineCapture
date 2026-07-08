@@ -135,6 +135,59 @@ namespace Game.UI.Shell.Ecs
             return true;
         }
 
+        public static bool TryEnqueueAssistantCommandIntent(
+            UiAssistantCommandIntentKind kind,
+            bool fromTakeover)
+        {
+            AssistantCommandIntentKind ecsKind = ToAssistantCommandIntentKind(kind);
+            if (ecsKind == AssistantCommandIntentKind.None ||
+                !TryGetBoundary(out EntityManager entityManager, out Entity boundary) ||
+                !entityManager.HasBuffer<AssistantRecommendationElement>(boundary))
+            {
+                return false;
+            }
+
+            DynamicBuffer<AssistantRecommendationElement> recommendations =
+                entityManager.GetBuffer<AssistantRecommendationElement>(boundary, true);
+            if (recommendations.Length == 0 || recommendations[0].RecommendationId == 0)
+                return false;
+
+            AssistantRecommendationElement recommendation = recommendations[0];
+            if (ecsKind == AssistantCommandIntentKind.ShowRecommendation && recommendation.CanShow == 0)
+                return false;
+
+            EnsureAssistantCommandIntentBuffers(entityManager, boundary);
+            DynamicBuffer<AssistantCommandIntentRequestElement> requests =
+                entityManager.GetBuffer<AssistantCommandIntentRequestElement>(boundary);
+            DynamicBuffer<AssistantCommandIntentResultElement> results =
+                entityManager.GetBuffer<AssistantCommandIntentResultElement>(boundary, true);
+            requests.Add(new AssistantCommandIntentRequestElement
+            {
+                RequestId = NextAssistantCommandIntentRequestId(requests, results),
+                Frame = Time.frameCount,
+                RecommendationId = recommendation.RecommendationId,
+                Kind = ecsKind,
+                TargetKind = recommendation.TargetKind,
+                SourceEntity = recommendation.SourceEntity,
+                TargetEntity = recommendation.TargetEntity,
+                TargetCell = recommendation.TargetCell,
+                WorldPosition = recommendation.WorldPosition,
+                FromTakeover = fromTakeover ? (byte)1 : (byte)0
+            });
+            return true;
+        }
+
+        private static AssistantCommandIntentKind ToAssistantCommandIntentKind(UiAssistantCommandIntentKind kind)
+        {
+            return kind switch
+            {
+                UiAssistantCommandIntentKind.ShowRecommendation => AssistantCommandIntentKind.ShowRecommendation,
+                UiAssistantCommandIntentKind.ExecuteRecommendation => AssistantCommandIntentKind.AttackEntity,
+                UiAssistantCommandIntentKind.StopAssistantControl => AssistantCommandIntentKind.StopAssistantControl,
+                _ => AssistantCommandIntentKind.None
+            };
+        }
+
         public static bool TryReadLoadingProgress(out UiShellLoadingProgressModel loading)
         {
             loading = default;
@@ -1698,6 +1751,28 @@ namespace Game.UI.Shell.Ecs
                 entityManager.AddBuffer<UiActionRequestComponent>(boundary);
         }
 
+        private static void EnsureAssistantCommandIntentBuffers(EntityManager entityManager, Entity boundary)
+        {
+            if (!entityManager.HasBuffer<AssistantCommandIntentRequestElement>(boundary))
+                entityManager.AddBuffer<AssistantCommandIntentRequestElement>(boundary);
+
+            if (!entityManager.HasBuffer<AssistantCommandIntentResultElement>(boundary))
+                entityManager.AddBuffer<AssistantCommandIntentResultElement>(boundary);
+        }
+
+        private static int NextAssistantCommandIntentRequestId(
+            DynamicBuffer<AssistantCommandIntentRequestElement> requests,
+            DynamicBuffer<AssistantCommandIntentResultElement> results)
+        {
+            int requestId = 0;
+            for (int i = 0; i < requests.Length; i++)
+                requestId = math.max(requestId, requests[i].RequestId);
+            for (int i = 0; i < results.Length; i++)
+                requestId = math.max(requestId, results[i].RequestId);
+
+            return requestId + 1;
+        }
+
         private static void EnsureLoadingProgressRequestBuffer(EntityManager entityManager, Entity boundary)
         {
             if (!entityManager.HasBuffer<UiShellLoadingProgressRequestComponent>(boundary))
@@ -1938,6 +2013,13 @@ namespace Game.UI.Shell.Ecs
         bool IUiShellRuntimeGateway.TryEnqueueUiAction(UiActionKind kind, int payloadId)
         {
             return TryEnqueueUiAction(kind, payloadId);
+        }
+
+        bool IUiShellRuntimeGateway.TryEnqueueAssistantCommandIntent(
+            UiAssistantCommandIntentKind kind,
+            bool fromTakeover)
+        {
+            return TryEnqueueAssistantCommandIntent(kind, fromTakeover);
         }
 
         bool IUiShellRuntimeGateway.TryReadLoadingProgress(out UiShellLoadingProgressModel loading)

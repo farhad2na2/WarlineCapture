@@ -1,12 +1,12 @@
 # ARIA Assistant ECS Implementation Tracker
 
 Date: 2026-07-08
-Status: Phase 2 match header and panel shell complete
+Status: Phase 4 Show Me command intent enqueue implemented
 Source design: `Design/ARIA_Assistant_ECS_Design.md`
 
 ## Progress
 
-Overall progress: 44% complete, 30 of 68 checklist items complete.
+Overall progress: 46% complete, 31 of 68 checklist items complete.
 
 | Phase | Scope | Items | Complete | Status |
 |---|---|---:|---:|---|
@@ -14,7 +14,7 @@ Overall progress: 44% complete, 30 of 68 checklist items complete.
 | 1 | ECS data contract | 8 | 8 | Complete |
 | 2 | Match header and panel shell | 8 | 8 | Complete |
 | 3 | Goal and recommendation read models | 8 | 8 | Complete |
-| 4 | Show Me and Do It command intents | 8 | 0 | Not started |
+| 4 | Show Me and Do It command intents | 8 | 1 | In progress |
 | 5 | Give Control ownership | 8 | 0 | Not started |
 | 6 | Message, narration, and audio | 8 | 0 | Not started |
 | 7 | Settings, save, and accessibility | 6 | 0 | Not started |
@@ -118,7 +118,7 @@ Phase 3 notes:
 
 ## Phase 4: Show Me And Do It Command Intents
 
-- [ ] Add `AssistantCommandIntentRequestElement` enqueue path from `Show Me`.
+- [x] Add `AssistantCommandIntentRequestElement` enqueue path from `Show Me`.
 - [ ] Add `AssistantCommandIntentRequestElement` enqueue path from `Do It`.
 - [ ] Add `AssistantCommandIntentSystem` routing for camera/selection preview intents.
 - [ ] Add `AssistantHighlightPresentationSystemHelper` for UI pulse, world highlight, and camera nudge from ECS read models.
@@ -128,6 +128,12 @@ Phase 3 notes:
 - [ ] Add focused tests for intent request/result routing and invalid target recovery.
 
 Exit criteria: `Show Me` previews without committing gameplay and `Do It` executes one safe command through ECS request/result data.
+
+Phase 4 notes:
+
+- Added a UI-contract `UiAssistantCommandIntentKind` so `Game.UI.Contracts` does not depend on ECS component assemblies.
+- The ARIA panel `SHOW ME` button now calls the runtime gateway and enqueues a `ShowRecommendation` intent copied from the current top `AssistantRecommendationElement`.
+- `UiShellEcsGateway` creates assistant command request/result buffers on the shell boundary as needed and rejects stale Show Me calls when the top recommendation cannot be shown. Routing and visual preview are intentionally left for the next Phase 4 slice.
 
 ## Phase 5: Give Control Ownership
 
@@ -193,6 +199,7 @@ Exit criteria: feature is playable, validated, documented, and does not regress 
 | 2026-07-08 | Phase 2 assistant panel helper binding extraction | `git diff --check`; forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-panel-helper-unity.log --timeout 420 -- -quit -executeMethod MatchHudAssistantUiSystemHelperTests.RunFocusedValidation` | Passed | Focused Unity validation reported `[MatchHudAssistantUiValidation] result=Passed tests=2`. Validates ARIA header/panel creation, world-click suppression, and live panel read-model binding after extracting `AssistantPanelUiSystemHelper`. |
 | 2026-07-08 | Phase 2 assistant panel alert/report rows | `git diff --check`; forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-alert-panel-unity.log --timeout 420 -- -quit -executeMethod MatchHudAssistantUiSystemHelperTests.RunFocusedValidation` | Passed | Focused Unity validation reported `[MatchHudAssistantUiValidation] result=Passed tests=2`. Validates alert/report text rendering from `UiAssistantPanelModel` and compiles the gateway conversion from `AssistantMessageElement` rows. |
 | 2026-07-08 | Phase 2 assistant panel ownership state | `git diff --check`; forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-ownership-panel-unity.log --timeout 420 -- -quit -executeMethod MatchHudAssistantUiSystemHelperTests.RunFocusedValidation` | Passed | Focused Unity validation reported `[MatchHudAssistantUiValidation] result=Passed tests=2`. Validates visible `OwnershipText` binding in the ARIA panel and keeps header/panel click suppression validation green. |
+| 2026-07-08 | Phase 4 Show Me command intent enqueue | `git diff --check`; forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-showme-ui-unity.log --timeout 420 -- -quit -executeMethod MatchHudAssistantUiSystemHelperTests.RunFocusedValidation`; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-command-intent-gateway-unity.log --timeout 420 -- -quit -executeMethod AssistantCommandIntentGatewayTests.RunFocusedValidation` | Passed | UI validation reported `[MatchHudAssistantUiValidation] result=Passed tests=2`; gateway validation reported `[AssistantCommandIntentGatewayValidation] result=Passed tests=1`. Validates the Show Me button requests a UI assistant intent and the ECS gateway writes an `AssistantCommandIntentRequestElement` copied from the top recommendation. |
 
 ## Open Decisions
 

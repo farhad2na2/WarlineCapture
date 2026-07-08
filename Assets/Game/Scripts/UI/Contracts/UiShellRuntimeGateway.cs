@@ -2,11 +2,21 @@ using System.Collections.Generic;
 
 namespace Game.UI.Contracts
 {
+    public enum UiAssistantCommandIntentKind : byte
+    {
+        None = 0,
+        ShowRecommendation = 1,
+        ExecuteRecommendation = 2,
+        StopAssistantControl = 3
+    }
+
     public interface IUiShellRuntimeGateway
     {
         bool TryEnqueueRouteRequest(UiShellRouteIntent intent, UIRoute route, bool pushHistory);
 
         bool TryEnqueueUiAction(UiActionKind kind, int payloadId);
+
+        bool TryEnqueueAssistantCommandIntent(UiAssistantCommandIntentKind kind, bool fromTakeover);
 
         bool TryReadLoadingProgress(out UiShellLoadingProgressModel loading);
 

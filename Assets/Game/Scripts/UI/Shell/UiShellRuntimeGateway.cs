@@ -22,6 +22,13 @@ namespace Game.UI.Runtime
             return current.TryEnqueueUiAction(kind, payloadId);
         }
 
+        public static bool TryEnqueueAssistantCommandIntent(
+            UiAssistantCommandIntentKind kind,
+            bool fromTakeover = false)
+        {
+            return current.TryEnqueueAssistantCommandIntent(kind, fromTakeover);
+        }
+
         public static bool TryReadLoadingProgress(out UiShellLoadingProgressModel loading)
         {
             return current.TryReadLoadingProgress(out loading);
@@ -137,6 +144,11 @@ namespace Game.UI.Runtime
             }
 
             public bool TryEnqueueUiAction(UiActionKind kind, int payloadId)
+            {
+                return false;
+            }
+
+            public bool TryEnqueueAssistantCommandIntent(UiAssistantCommandIntentKind kind, bool fromTakeover)
             {
                 return false;
             }

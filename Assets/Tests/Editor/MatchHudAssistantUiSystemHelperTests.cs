@@ -106,7 +106,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         var ui = new MainMenuPlayUI();
         ui.Init(null, new FakeMatchRuntimeState());
         ui.BindMatchHudAssistant(header.gameObject, overlay);
-        UiShellRuntimeGateway.Register(new FakeAssistantPanelGateway(new UiAssistantPanelModel(
+        var assistantGateway = new FakeAssistantPanelGateway(new UiAssistantPanelModel(
             42,
             "- Neutralize hostile patrol\n[x] Protect civilians",
             "HIGH: Fuel reserves empty",
@@ -119,7 +119,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             true,
             false,
             false,
-            "ARIA CONTROL")));
+            "ARIA CONTROL"));
+        UiShellRuntimeGateway.Register(assistantGateway);
 
         ui.Update();
 
@@ -144,6 +145,12 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         StringAssert.Contains("HIGH: Review objective", recommendation.text);
         Assert.IsTrue(showMe.interactable);
         Assert.IsFalse(giveControl.interactable);
+
+        showMe.onClick.Invoke();
+
+        Assert.AreEqual(1, assistantGateway.AssistantIntentRequestCount);
+        Assert.AreEqual(UiAssistantCommandIntentKind.ShowRecommendation, assistantGateway.LastAssistantIntentKind);
+        Assert.IsFalse(assistantGateway.LastAssistantIntentFromTakeover);
 
         ui.Dispose();
         UnityEngine.Object.DestroyImmediate(overlay.gameObject);
@@ -188,6 +195,9 @@ public sealed class MatchHudAssistantUiSystemHelperTests
     private sealed class FakeAssistantPanelGateway : IUiShellRuntimeGateway
     {
         private readonly UiAssistantPanelModel _assistantPanel;
+        public int AssistantIntentRequestCount { get; private set; }
+        public UiAssistantCommandIntentKind LastAssistantIntentKind { get; private set; }
+        public bool LastAssistantIntentFromTakeover { get; private set; }
 
         public FakeAssistantPanelGateway(UiAssistantPanelModel assistantPanel)
         {
@@ -196,6 +206,14 @@ public sealed class MatchHudAssistantUiSystemHelperTests
 
         public bool TryEnqueueRouteRequest(UiShellRouteIntent intent, UIRoute route, bool pushHistory) => false;
         public bool TryEnqueueUiAction(UiActionKind kind, int payloadId) => false;
+        public bool TryEnqueueAssistantCommandIntent(UiAssistantCommandIntentKind kind, bool fromTakeover)
+        {
+            AssistantIntentRequestCount++;
+            LastAssistantIntentKind = kind;
+            LastAssistantIntentFromTakeover = fromTakeover;
+            return true;
+        }
+
         public bool TryReadLoadingProgress(out UiShellLoadingProgressModel loading) { loading = default; return false; }
         public bool TrySetLoadingProgress(float progress01, string status, bool complete) => false;
         public bool TryReadDiagnosticsOverlay(out UiDiagnosticsOverlayModel diagnostics) { diagnostics = default; return false; }

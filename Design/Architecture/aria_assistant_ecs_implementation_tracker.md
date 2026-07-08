@@ -1,19 +1,19 @@
 # ARIA Assistant ECS Implementation Tracker
 
 Date: 2026-07-08
-Status: Phase 2 match HUD assistant shell implemented
+Status: Phase 3 objective read-model base implemented
 Source design: `Design/ARIA_Assistant_ECS_Design.md`
 
 ## Progress
 
-Overall progress: 25% complete, 17 of 68 checklist items complete.
+Overall progress: 32% complete, 22 of 68 checklist items complete.
 
 | Phase | Scope | Items | Complete | Status |
 |---|---|---:|---:|---|
 | 0 | Contract reconciliation | 6 | 6 | Complete |
 | 1 | ECS data contract | 8 | 8 | Complete |
 | 2 | Match header and panel shell | 8 | 3 | In progress |
-| 3 | Goal and recommendation read models | 8 | 0 | Not started |
+| 3 | Goal and recommendation read models | 8 | 5 | In progress |
 | 4 | Show Me and Do It command intents | 8 | 0 | Not started |
 | 5 | Give Control ownership | 8 | 0 | Not started |
 | 6 | Message, narration, and audio | 8 | 0 | Not started |
@@ -93,16 +93,22 @@ Phase 2 notes:
 
 ## Phase 3: Goal And Recommendation Read Models
 
-- [ ] Add `AssistantGoalReadModelSystem` with dirty/version gates for objective, result, resource, fuel, and selection source changes.
-- [ ] Add `AssistantRecommendationSystem` with bounded candidate scoring.
+- [x] Add `AssistantGoalReadModelSystem` with dirty/version gates for objective source changes.
+- [x] Add `AssistantRecommendationSystem` with bounded candidate scoring.
 - [ ] Add first recommendation source for no selection or selected idle combat unit.
-- [ ] Add first recommendation source for active objective or visible mission target.
+- [x] Add first recommendation source for active objective or visible mission target.
 - [ ] Add first recommendation source for resource/fuel/logistics warning when relevant.
-- [ ] Add deterministic priority tie-breakers and stable recommendation ids.
-- [ ] Add UI read-model dirty version publishing.
-- [ ] Add tests for recommendation suppression when source versions do not change.
+- [x] Add deterministic priority tie-breakers and stable recommendation ids.
+- [x] Add UI read-model dirty version publishing.
+- [x] Add tests for recommendation suppression when source versions do not change.
 
 Exit criteria: panel can show live goals and one recommendation without per-frame rebuilds.
+
+Phase 3 notes:
+
+- Added `AssistantGoalReadModelSystem` in the UI Shell ECS lane. It creates assistant read-model buffers on the match HUD shell boundary and publishes objective rows only when objective text/icon state changes.
+- Added `AssistantRecommendationSystem` with a bounded first pass: active threat warning wins with a stable defensive-alert recommendation, otherwise the first active objective produces a stable `CameraFocus` recommendation.
+- Remaining Phase 3 read-model sources are intentionally not marked complete yet: selected idle unit/no-selection recommendations and resource/fuel/logistics warnings still need dedicated source versions and tests before panel live binding.
 
 ## Phase 4: Show Me And Do It Command Intents
 
@@ -174,6 +180,7 @@ Exit criteria: feature is playable, validated, documented, and does not regress 
 | 2026-07-08 | Design and tracker creation | `git diff --check` | Passed | Added high-level ARIA ECS design, tracker, and cross-doc links. No code implementation yet. |
 | 2026-07-08 | Phase 0 inventory and Phase 1 ECS data contract | `git diff --check`; forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-data-contract-unity-rerun.log --timeout 420 -- -quit -executeMethod AssistantEcsDataContractTests.RunFocusedValidation` | Passed | Focused Unity validation reported `[AssistantEcsDataContractValidation] result=Passed tests=3`. Earlier dotnet revalidation attempts cancelled at 5:00 with 0 warnings/errors, so Unity wrapper validation is the authoritative compile/test evidence for this slice. |
 | 2026-07-08 | Phase 2 match HUD assistant shell | `git diff --check`; forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-match-hud-assistant-ui-unity-final.log --timeout 420 -- -quit -executeMethod MatchHudAssistantUiSystemHelperTests.RunFocusedValidation` | Passed | Focused Unity validation reported `[MatchHudAssistantUiValidation] result=Passed tests=1`. Validates ARIA button/panel creation, panel open, world-click suppression, and match HUD helper cleanup. |
+| 2026-07-08 | Phase 3 objective goals and recommendation read-model base | `git diff --check`; forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-read-models-unity.log --timeout 420 -- -quit -executeMethod AssistantReadModelSystemTests.RunFocusedValidation` | Passed | Focused Unity validation reported `[AssistantReadModelValidation] result=Passed tests=3`. Validates objective goal publishing, objective recommendation publishing, and no republish/version bump when sources are unchanged. |
 
 ## Open Decisions
 

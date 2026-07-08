@@ -323,14 +323,14 @@ Use this section as the work checklist. Update status after each implementation 
 
 ### Current Completion
 
-Overall tracked completion: **35%**.
+Overall tracked completion: **40%**.
 
-- Completed steps: 7 / 20.
+- Completed steps: 8 / 20.
 - Asset and placeholder catalog preparation: **Done**.
 - Runtime playback implementation: **Not Started**.
 - UI/gameplay wiring: **Not Started**.
 - Validation/performance test coverage: **Not Started**.
-- Latest stable slice: generated audio event constants and stable hashes passed focused Unity validation.
+- Latest stable slice: audio import profiles passed focused Unity validation.
 
 Status legend:
 
@@ -347,7 +347,7 @@ Status legend:
 | 4. Create generated event constants | Done | Gameplay | Event id constants/hash generation path. | `AudioConfigContractTests.RunFocusedValidation` passed with catalog/hash alignment checks. |
 | 5. Create placeholder audio generator | Done | Audio/Tools | `Tools/Audio/generate_placeholder_audio.py`. | Script outputs first batch WAV files and data-only catalog. |
 | 6. Generate first placeholder clip batch | Done | Audio/Tools | UI, command, alert, music placeholder clips. | 44 events assigned; catalog WAV headers validated. |
-| 7. Create Unity import profile rules | Not Started | UI/Audio | Import settings for UI, gameplay, alerts, music, ambience. | Editor validation confirms compression/load type. |
+| 7. Create Unity import profile rules | Done | UI/Audio | Import settings for UI, gameplay, alerts, music, ambience. | `AudioConfigContractTests.RunFocusedValidation` passed with importer profile checks. |
 | 8. Create ECS request components | Not Started | Gameplay | `AudioPlaybackRequestComponent`, settings/music state components. | Compile and component tests. |
 | 9. Create request systems | Not Started | Gameplay | `AudioEventRequestSystem`, `AudioCooldownSystem`, `AudioMusicStateSystem`, `AudioSettingsSystem`. | Unit/EditMode tests for requests/cooldowns. |
 | 10. Create playback presentation helper | Not Started | UI/Audio | Pooled `AudioSource` playback helper and mixer application helper. | Pool reuse test; no instantiate/destroy during steady playback. |
@@ -454,6 +454,15 @@ game_objective_complete_01.wav
 music_menu_loop_01.wav
 music_match_calm_loop_01.wav
 ```
+
+### Step 7: Unity Import Profiles
+
+Current import profile pass:
+
+- Profile config: `Assets/Game/Audio/Config/audio_import_profiles_v0_1.json`
+- Apply tool: `Tools/Audio/apply_audio_import_profiles.py`
+- Validation: `AudioConfigContractTests.RunFocusedValidation`
+- Latest validation: 44 catalog WAVs checked through Unity `AudioImporter`; UI/gameplay/alerts use mono decompressed preload, music/ambience use stereo streaming background load.
 
 ### Step 8-10: ECS Request And Playback
 

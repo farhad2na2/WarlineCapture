@@ -145,6 +145,7 @@ def write_audio_meta(path: Path, category: str, channels: int) -> None:
     force_to_mono = 1 if channels == 1 else 0
     preload = 0 if category in {"music", "ambience"} else 1
     load_in_background = 1 if category in {"music", "ambience"} else 0
+    load_type = 2 if category in {"music", "ambience"} else 0
     meta_path(path).write_text(
         f"""fileFormatVersion: 2
 guid: {unity_guid(path)}
@@ -152,7 +153,8 @@ AudioImporter:
   externalObjects: {{}}
   serializedVersion: 7
   defaultSettings:
-    loadType: 0
+    loadType: {load_type}
+    preloadAudioData: {preload}
     sampleRateSetting: 0
     sampleRateOverride: 44100
     compressionFormat: 1

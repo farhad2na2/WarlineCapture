@@ -1,0 +1,46 @@
+{
+  "schema": "WarlineCapture.AudioImportProfiles.v0.1",
+  "generatedBy": "Step 7 audio import profile slice",
+  "profiles": {
+    "UI": {
+      "loadType": "DecompressOnLoad",
+      "compressionFormat": "Vorbis",
+      "forceToMono": true,
+      "preloadAudioData": true,
+      "loadInBackground": false,
+      "sampleRateOverride": 44100
+    },
+    "Gameplay": {
+      "loadType": "DecompressOnLoad",
+      "compressionFormat": "Vorbis",
+      "forceToMono": true,
+      "preloadAudioData": true,
+      "loadInBackground": false,
+      "sampleRateOverride": 44100
+    },
+    "Alerts": {
+      "loadType": "DecompressOnLoad",
+      "compressionFormat": "Vorbis",
+      "forceToMono": true,
+      "preloadAudioData": true,
+      "loadInBackground": false,
+      "sampleRateOverride": 44100
+    },
+    "Music": {
+      "loadType": "Streaming",
+      "compressionFormat": "Vorbis",
+      "forceToMono": false,
+      "preloadAudioData": false,
+      "loadInBackground": true,
+      "sampleRateOverride": 44100
+    },
+    "Ambience": {
+      "loadType": "Streaming",
+      "compressionFormat": "Vorbis",
+      "forceToMono": false,
+      "preloadAudioData": false,
+      "loadInBackground": true,
+      "sampleRateOverride": 44100
+    }
+  }
+}

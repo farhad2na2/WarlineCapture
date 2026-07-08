@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Game.Configs;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEngine;
 
 public sealed class AudioConfigContractTests
@@ -19,6 +20,7 @@ public sealed class AudioConfigContractTests
     };
 
     private const string CatalogJsonPath = "Assets/Game/Audio/Config/audio_event_catalog_v0_1.json";
+    private const string ImportProfileJsonPath = "Assets/Game/Audio/Config/audio_import_profiles_v0_1.json";
 
     public static void RunFocusedValidation()
     {
@@ -33,7 +35,9 @@ public sealed class AudioConfigContractTests
             tests.AudioConfigAssetsCreateWithEmptyCollections();
             tests.AudioEventIdsMatchCatalogJson();
             tests.AudioEventHashesAreStableAndUnique();
-            Debug.Log("[AudioConfigContractValidation] result=Passed tests=8");
+            tests.AudioImportProfileConfigExists();
+            tests.CatalogAudioImportSettingsMatchProfiles();
+            Debug.Log("[AudioConfigContractValidation] result=Passed tests=10");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -164,6 +168,48 @@ public sealed class AudioConfigContractTests
             Assert.AreEqual(AudioEventIds.StableHash(eventIds[i]), hashes[i], eventIds[i]);
     }
 
+    [Test]
+    public void AudioImportProfileConfigExists()
+    {
+        Assert.IsTrue(File.Exists(ImportProfileJsonPath), $"Missing audio import profile config: {ImportProfileJsonPath}");
+    }
+
+    [Test]
+    public void CatalogAudioImportSettingsMatchProfiles()
+    {
+        string[] clipPaths = ReadCatalogClipPaths();
+        Assert.AreEqual(44, clipPaths.Length);
+
+        for (int i = 0; i < clipPaths.Length; i++)
+        {
+            string path = clipPaths[i];
+            AudioImporter importer = AssetImporter.GetAtPath(path) as AudioImporter;
+            Assert.NotNull(importer, $"{path} must use AudioImporter.");
+            AudioImporterSampleSettings settings = importer.defaultSampleSettings;
+            string category = ReadAudioCategory(path);
+
+            Assert.AreEqual(AudioCompressionFormat.Vorbis, settings.compressionFormat, path);
+            Assert.AreEqual(AudioSampleRateSetting.PreserveSampleRate, settings.sampleRateSetting, path);
+            Assert.AreEqual(44100, settings.sampleRateOverride, path);
+            Assert.IsFalse(importer.ambisonic, path);
+
+            if (category == "Music" || category == "Ambience")
+            {
+                Assert.AreEqual(AudioClipLoadType.Streaming, settings.loadType, path);
+                Assert.IsFalse(importer.forceToMono, path);
+                Assert.IsFalse(settings.preloadAudioData, path);
+                Assert.IsTrue(importer.loadInBackground, path);
+            }
+            else
+            {
+                Assert.AreEqual(AudioClipLoadType.DecompressOnLoad, settings.loadType, path);
+                Assert.IsTrue(importer.forceToMono, path);
+                Assert.IsTrue(settings.preloadAudioData, path);
+                Assert.IsFalse(importer.loadInBackground, path);
+            }
+        }
+    }
+
     private static string[] ReadCatalogEventIds()
     {
         string json = File.ReadAllText(CatalogJsonPath);
@@ -171,5 +217,24 @@ public sealed class AudioConfigContractTests
         return matches
             .Select(match => match.Groups[1].Value)
             .ToArray();
+    }
+
+    private static string[] ReadCatalogClipPaths()
+    {
+        string json = File.ReadAllText(CatalogJsonPath);
+        MatchCollection matches = Regex.Matches(json, "\"assetPath\"\\s*:\\s*\"([^\"]+\\.wav)\"");
+        return matches
+            .Select(match => match.Groups[1].Value)
+            .ToArray();
+    }
+
+    private static string ReadAudioCategory(string assetPath)
+    {
+        string[] parts = assetPath.Split('/');
+        Assert.GreaterOrEqual(parts.Length, 5, assetPath);
+        Assert.AreEqual("Assets", parts[0], assetPath);
+        Assert.AreEqual("Game", parts[1], assetPath);
+        Assert.AreEqual("Audio", parts[2], assetPath);
+        return parts[3];
     }
 }

@@ -176,6 +176,8 @@ namespace Game.UI.Shell.Ecs
     public partial struct AssistantRecommendationSystem : ISystem
     {
         private EntityQuery boundaryQuery;
+        private EntityQuery focusedSelectionQuery;
+        private EntityQuery selectedUnitsQuery;
 
         public void OnCreate(ref SystemState state)
         {
@@ -183,6 +185,8 @@ namespace Game.UI.Shell.Ecs
                 ComponentType.ReadOnly<UiShellStateComponent>(),
                 ComponentType.ReadOnly<UiMatchHudStatusSurfacesComponent>(),
                 ComponentType.ReadOnly<UiMatchHudHeaderComponent>());
+            focusedSelectionQuery = state.GetEntityQuery(ComponentType.ReadOnly<FocusedUnitUiReadModelComponent>());
+            selectedUnitsQuery = state.GetEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
             state.RequireForUpdate(boundaryQuery);
         }
 
@@ -199,8 +203,17 @@ namespace Game.UI.Shell.Ecs
                 state.EntityManager.GetBuffer<AssistantGoalReadModelElement>(boundary);
             DynamicBuffer<AssistantRecommendationElement> recommendations =
                 state.EntityManager.GetBuffer<AssistantRecommendationElement>(boundary);
+            TryReadFocusedSelection(out FocusedUnitUiReadModelComponent focusedSelection);
+            int selectedUnitCount = selectedUnitsQuery.IsEmptyIgnoreFilter
+                ? 0
+                : selectedUnitsQuery.CalculateEntityCount();
 
-            AssistantRecommendationElement next = BuildRecommendation(status, goals, assistantState.SourceVersion);
+            AssistantRecommendationElement next = BuildRecommendation(
+                status,
+                goals,
+                focusedSelection,
+                selectedUnitCount,
+                assistantState.SourceVersion);
             if (RecommendationsMatch(recommendations, next))
                 return;
 
@@ -242,6 +255,8 @@ namespace Game.UI.Shell.Ecs
         private static AssistantRecommendationElement BuildRecommendation(
             UiMatchHudStatusSurfacesComponent status,
             DynamicBuffer<AssistantGoalReadModelElement> goals,
+            FocusedUnitUiReadModelComponent focusedSelection,
+            int selectedUnitCount,
             uint sourceVersion)
         {
             if (status.ThreatVisible != 0)
@@ -260,6 +275,50 @@ namespace Game.UI.Shell.Ecs
                     Reason = status.ThreatSubtitle.Length > 0
                         ? CopyTo128(status.ThreatSubtitle)
                         : new FixedString128Bytes("Respond to the active threat before issuing routine orders."),
+                    ActionLabel = new FixedString64Bytes("SHOW ME"),
+                    CanShow = 1
+                };
+            }
+
+            if (focusedSelection.HasFocusedUnit == 0 && selectedUnitCount <= 0)
+            {
+                return new AssistantRecommendationElement
+                {
+                    RecommendationId = 3001,
+                    SourceVersion = SelectionSourceVersion(sourceVersion, 0u, selectedUnitCount),
+                    Kind = AssistantRecommendationKind.Select,
+                    Priority = AssistantMessagePriority.High,
+                    TargetKind = AssistantTargetKind.UiSurface,
+                    Score = 90f,
+                    Title = new FixedString64Bytes("Select a unit"),
+                    Reason = new FixedString128Bytes("Select a combat unit first so ARIA can recommend a concrete order."),
+                    ActionLabel = new FixedString64Bytes("SHOW ME"),
+                    CanShow = 1
+                };
+            }
+
+            if (focusedSelection.HasFocusedUnit != 0 &&
+                focusedSelection.OwnedByPlayer != 0 &&
+                focusedSelection.Status == 0)
+            {
+                bool canAttack = focusedSelection.CanAttack != 0;
+                return new AssistantRecommendationElement
+                {
+                    RecommendationId = canAttack ? 3101 : 3102,
+                    SourceVersion = SelectionSourceVersion(sourceVersion, focusedSelection.CommandStateVersion, selectedUnitCount),
+                    Kind = canAttack ? AssistantRecommendationKind.Attack : AssistantRecommendationKind.Move,
+                    Priority = AssistantMessagePriority.Normal,
+                    TargetKind = AssistantTargetKind.Entity,
+                    SourceEntity = focusedSelection.FocusedUnit,
+                    TargetEntity = focusedSelection.FocusedUnit,
+                    WorldPosition = focusedSelection.HasWorldPosition != 0 ? focusedSelection.WorldPosition : default,
+                    Score = canAttack ? 86f : 82f,
+                    Title = canAttack
+                        ? new FixedString64Bytes("Assign an attack target")
+                        : new FixedString64Bytes("Move the selected unit"),
+                    Reason = canAttack
+                        ? new FixedString128Bytes("The selected unit is idle and ready for an attack order.")
+                        : new FixedString128Bytes("The selected unit is idle; move it toward the next objective."),
                     ActionLabel = new FixedString64Bytes("SHOW ME"),
                     CanShow = 1
                 };
@@ -288,6 +347,22 @@ namespace Game.UI.Shell.Ecs
             }
 
             return default;
+        }
+
+        private bool TryReadFocusedSelection(out FocusedUnitUiReadModelComponent focusedSelection)
+        {
+            focusedSelection = default;
+            if (focusedSelectionQuery.IsEmptyIgnoreFilter)
+                return false;
+
+            focusedSelection = focusedSelectionQuery.GetSingleton<FocusedUnitUiReadModelComponent>();
+            return true;
+        }
+
+        private static int SelectionSourceVersion(uint sourceVersion, uint commandStateVersion, int selectedUnitCount)
+        {
+            uint combined = sourceVersion * 397u ^ commandStateVersion * 31u ^ (uint)math.max(0, selectedUnitCount);
+            return (int)(combined == 0u ? 1u : combined);
         }
 
         private static FixedString128Bytes CopyTo128(FixedString64Bytes text)

@@ -24,6 +24,10 @@ public sealed class AssistantReadModelSystemTests
             passed++;
             RunCase(test => test.AssistantRecommendationSystem_PublishesObjectiveRecommendation());
             passed++;
+            RunCase(test => test.AssistantRecommendationSystem_PublishesNoSelectionRecommendation());
+            passed++;
+            RunCase(test => test.AssistantRecommendationSystem_PublishesSelectedIdleCombatUnitRecommendation());
+            passed++;
             RunCase(test => test.AssistantReadModels_DoNotRepublishWhenSourcesAreUnchanged());
             passed++;
 
@@ -96,6 +100,7 @@ public sealed class AssistantReadModelSystemTests
     public void AssistantRecommendationSystem_PublishesObjectiveRecommendation()
     {
         Entity boundary = CreateBoundary(DefaultStatus());
+        CreateSelectedUnit();
 
         _goalSystem.Update(_world.Unmanaged);
         _recommendationSystem.Update(_world.Unmanaged);
@@ -116,6 +121,52 @@ public sealed class AssistantReadModelSystemTests
         Assert.AreEqual(1, readModel.RecommendationCount);
         Assert.AreEqual(1001, readModel.TopRecommendationId);
         Assert.AreEqual(AssistantRecommendationKind.CameraFocus, readModel.TopKind);
+    }
+
+    [Test]
+    public void AssistantRecommendationSystem_PublishesNoSelectionRecommendation()
+    {
+        CreateBoundary(DefaultStatus());
+
+        _goalSystem.Update(_world.Unmanaged);
+        _recommendationSystem.Update(_world.Unmanaged);
+
+        using EntityQuery recommendationQuery =
+            _entityManager.CreateEntityQuery(ComponentType.ReadOnly<AssistantRecommendationElement>());
+        Entity boundary = recommendationQuery.GetSingletonEntity();
+        DynamicBuffer<AssistantRecommendationElement> recommendations =
+            _entityManager.GetBuffer<AssistantRecommendationElement>(boundary);
+
+        Assert.AreEqual(1, recommendations.Length);
+        Assert.AreEqual(3001, recommendations[0].RecommendationId);
+        Assert.AreEqual(AssistantRecommendationKind.Select, recommendations[0].Kind);
+        Assert.AreEqual(AssistantTargetKind.UiSurface, recommendations[0].TargetKind);
+        Assert.AreEqual(AssistantMessagePriority.High, recommendations[0].Priority);
+        Assert.AreEqual("Select a unit", recommendations[0].Title.ToString());
+    }
+
+    [Test]
+    public void AssistantRecommendationSystem_PublishesSelectedIdleCombatUnitRecommendation()
+    {
+        Entity focusedUnit = CreateSelectedUnit();
+        CreateFocusedUnitReadModel(focusedUnit);
+        CreateBoundary(DefaultStatus());
+
+        _goalSystem.Update(_world.Unmanaged);
+        _recommendationSystem.Update(_world.Unmanaged);
+
+        using EntityQuery recommendationQuery =
+            _entityManager.CreateEntityQuery(ComponentType.ReadOnly<AssistantRecommendationElement>());
+        Entity boundary = recommendationQuery.GetSingletonEntity();
+        DynamicBuffer<AssistantRecommendationElement> recommendations =
+            _entityManager.GetBuffer<AssistantRecommendationElement>(boundary);
+
+        Assert.AreEqual(1, recommendations.Length);
+        Assert.AreEqual(3101, recommendations[0].RecommendationId);
+        Assert.AreEqual(AssistantRecommendationKind.Attack, recommendations[0].Kind);
+        Assert.AreEqual(focusedUnit, recommendations[0].SourceEntity);
+        Assert.AreEqual(AssistantTargetKind.Entity, recommendations[0].TargetKind);
+        Assert.AreEqual("Assign an attack target", recommendations[0].Title.ToString());
     }
 
     [Test]
@@ -169,6 +220,31 @@ public sealed class AssistantReadModelSystemTests
         });
 
         return boundary;
+    }
+
+    private Entity CreateSelectedUnit()
+    {
+        return _entityManager.CreateEntity(typeof(SelectedUnitTag));
+    }
+
+    private Entity CreateFocusedUnitReadModel(Entity focusedUnit)
+    {
+        Entity readModel = _entityManager.CreateEntity(typeof(FocusedUnitUiReadModelComponent));
+        _entityManager.SetComponentData(readModel, new FocusedUnitUiReadModelComponent
+        {
+            FocusedUnit = focusedUnit,
+            HasFocusedUnit = 1,
+            OwnedByPlayer = 1,
+            CanAttack = 1,
+            CanHold = 1,
+            CanStop = 1,
+            CanScan = 1,
+            CommandStateVersion = 7,
+            Status = 0,
+            Label = new FixedString64Bytes("Rifle Squad"),
+            Description = new FixedString128Bytes("Infantry")
+        });
+        return readModel;
     }
 
     private static UiMatchHudStatusSurfacesComponent DefaultStatus()

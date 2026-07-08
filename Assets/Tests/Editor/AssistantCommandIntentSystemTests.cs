@@ -24,6 +24,10 @@ public sealed class AssistantCommandIntentSystemTests
             passed++;
             RunCase(test => test.AssistantCommandIntentSystem_RejectsPreviewWithoutWorldTarget());
             passed++;
+            RunCase(test => test.AssistantCommandIntentSystem_QueuesSelectionModeFromUiSurfaceDoIt());
+            passed++;
+            RunCase(test => test.AssistantCommandIntentSystem_QueuesFocusUnitFromEntityDoIt());
+            passed++;
 
             Debug.Log($"[AssistantCommandIntentSystemValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -62,6 +66,90 @@ public sealed class AssistantCommandIntentSystemTests
     public void TearDown()
     {
         _world?.Dispose();
+    }
+
+    [Test]
+    public void AssistantCommandIntentSystem_QueuesSelectionModeFromUiSurfaceDoIt()
+    {
+        Entity boundary = CreateBoundary();
+        DynamicBuffer<AssistantCommandIntentRequestElement> requests =
+            _entityManager.GetBuffer<AssistantCommandIntentRequestElement>(boundary);
+        requests.Add(new AssistantCommandIntentRequestElement
+        {
+            RequestId = 11,
+            Frame = 25,
+            RecommendationId = 3001,
+            Kind = AssistantCommandIntentKind.SelectEntity,
+            TargetKind = AssistantTargetKind.UiSurface
+        });
+
+        _intentSystem.Update(_world.Unmanaged);
+
+        Assert.AreEqual(0, _entityManager.GetBuffer<AssistantCommandIntentRequestElement>(boundary).Length);
+
+        DynamicBuffer<AssistantCommandIntentResultElement> results =
+            _entityManager.GetBuffer<AssistantCommandIntentResultElement>(boundary);
+        Assert.AreEqual(1, results.Length);
+        Assert.AreEqual(AssistantCommandIntentStatus.Accepted, results[0].Status);
+        Assert.AreEqual("Selection queued.", results[0].Message.ToString());
+
+        AssistantStateComponent assistantState =
+            _entityManager.GetComponentData<AssistantStateComponent>(boundary);
+        Assert.AreEqual(AssistantControlState.Guided, assistantState.ControlState);
+        Assert.AreEqual(3001, assistantState.ActiveRecommendationId);
+        Assert.AreEqual(1, assistantState.UiDirty);
+
+        using EntityQuery selectionQuery = _entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<RtsSelectionInputStateComponent>(),
+            ComponentType.ReadOnly<RtsSelectionCommandIntentRequestElement>());
+        Entity selectionEntity = selectionQuery.GetSingletonEntity();
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> selectionRequests =
+            _entityManager.GetBuffer<RtsSelectionCommandIntentRequestElement>(selectionEntity);
+        Assert.AreEqual(1, selectionRequests.Length);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.EnterSelectionMode, selectionRequests[0].Kind);
+        Assert.AreEqual(1, selectionRequests[0].RequestId);
+        Assert.AreEqual(25, selectionRequests[0].Frame);
+    }
+
+    [Test]
+    public void AssistantCommandIntentSystem_QueuesFocusUnitFromEntityDoIt()
+    {
+        Entity boundary = CreateBoundary();
+        Entity target = CreateTarget(new float3(4f, 0f, 9f));
+        DynamicBuffer<AssistantCommandIntentRequestElement> requests =
+            _entityManager.GetBuffer<AssistantCommandIntentRequestElement>(boundary);
+        requests.Add(new AssistantCommandIntentRequestElement
+        {
+            RequestId = 12,
+            Frame = 26,
+            RecommendationId = 3201,
+            Kind = AssistantCommandIntentKind.SelectEntity,
+            TargetKind = AssistantTargetKind.Entity,
+            TargetEntity = target,
+            WorldPosition = new float3(4f, 0f, 9f)
+        });
+
+        _intentSystem.Update(_world.Unmanaged);
+
+        DynamicBuffer<AssistantCommandIntentResultElement> results =
+            _entityManager.GetBuffer<AssistantCommandIntentResultElement>(boundary);
+        Assert.AreEqual(1, results.Length);
+        Assert.AreEqual(AssistantCommandIntentStatus.Accepted, results[0].Status);
+        Assert.AreEqual("Selection queued.", results[0].Message.ToString());
+
+        using EntityQuery selectionQuery = _entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<RtsSelectionInputStateComponent>(),
+            ComponentType.ReadOnly<RtsSelectionCommandIntentRequestElement>());
+        Entity selectionEntity = selectionQuery.GetSingletonEntity();
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> selectionRequests =
+            _entityManager.GetBuffer<RtsSelectionCommandIntentRequestElement>(selectionEntity);
+        Assert.AreEqual(1, selectionRequests.Length);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.FocusUnit, selectionRequests[0].Kind);
+        Assert.AreEqual(RtsSelectionCommandTargetKind.Entity, selectionRequests[0].TargetKind);
+        Assert.AreEqual(target, selectionRequests[0].TargetEntity);
+        Assert.AreEqual(1, selectionRequests[0].HasTargetEntity);
+        Assert.AreEqual(new float3(4f, 0f, 9f), selectionRequests[0].WorldPosition);
+        Assert.AreEqual(1, selectionRequests[0].HasWorldPosition);
     }
 
     [Test]

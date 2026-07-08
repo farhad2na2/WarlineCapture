@@ -15,9 +15,11 @@ namespace Game.UI.Shell.Ecs
         private const int ReasonAccepted = 0;
         private const int ReasonUnsupportedIntent = 1;
         private const int ReasonMissingPreviewTarget = 2;
+        private const int ReasonMissingSelectionTarget = 3;
 
         private EntityQuery boundaryQuery;
         private EntityQuery cameraRequestQuery;
+        private EntityQuery selectionInputQuery;
 
         public void OnCreate(ref SystemState state)
         {
@@ -28,6 +30,10 @@ namespace Game.UI.Shell.Ecs
             cameraRequestQuery = state.GetEntityQuery(
                 ComponentType.ReadWrite<RtsCameraRequestQueueComponent>(),
                 ComponentType.ReadWrite<RtsCameraRequestElement>());
+            selectionInputQuery = state.GetEntityQuery(
+                ComponentType.ReadWrite<RtsSelectionInputStateComponent>(),
+                ComponentType.ReadWrite<RtsSelectionInputRequestQueueComponent>(),
+                ComponentType.ReadWrite<RtsSelectionCommandIntentRequestElement>());
             state.RequireForUpdate(boundaryQuery);
         }
 
@@ -42,8 +48,12 @@ namespace Game.UI.Shell.Ecs
                 return;
 
             bool needsCameraPreview = false;
+            bool needsSelectionCommand = false;
             for (int i = 0; i < requests.Length; i++)
             {
+                if (requests[i].Kind == AssistantCommandIntentKind.SelectEntity)
+                    needsSelectionCommand = true;
+
                 if (IsPreviewIntent(requests[i].Kind) &&
                     TryResolvePreviewTarget(ref state, requests[i], out _))
                 {
@@ -52,9 +62,21 @@ namespace Game.UI.Shell.Ecs
                 }
             }
 
+            bool structuralSetupChanged = false;
             if (needsCameraPreview)
             {
                 EnsureCameraRequestEntity(ref state);
+                structuralSetupChanged = true;
+            }
+
+            if (needsSelectionCommand)
+            {
+                EnsureSelectionInputEntity(ref state);
+                structuralSetupChanged = true;
+            }
+
+            if (structuralSetupChanged)
+            {
                 requests = state.EntityManager.GetBuffer<AssistantCommandIntentRequestElement>(boundary);
             }
 
@@ -69,6 +91,23 @@ namespace Game.UI.Shell.Ecs
             for (int i = 0; i < requests.Length; i++)
             {
                 AssistantCommandIntentRequestElement request = requests[i];
+                if (request.Kind == AssistantCommandIntentKind.SelectEntity)
+                {
+                    ClearPreviewHighlight(highlights);
+                    if (!TryQueueSelectionCommand(ref state, request))
+                    {
+                        AddResult(results, request, AssistantCommandIntentStatus.Rejected, ReasonMissingSelectionTarget, new FixedString64Bytes("No selectable target is available."));
+                        continue;
+                    }
+
+                    AddResult(results, request, AssistantCommandIntentStatus.Accepted, ReasonAccepted, new FixedString64Bytes("Selection queued."));
+                    assistantState.ControlState = AssistantControlState.Guided;
+                    assistantState.ActiveRecommendationId = request.RecommendationId;
+                    assistantState.UiDirty = 1;
+                    assistantStateChanged = true;
+                    continue;
+                }
+
                 if (!IsPreviewIntent(request.Kind))
                 {
                     ClearPreviewHighlight(highlights);
@@ -138,6 +177,62 @@ namespace Game.UI.Shell.Ecs
             return false;
         }
 
+        private bool TryQueueSelectionCommand(ref SystemState state, AssistantCommandIntentRequestElement request)
+        {
+            Entity selectionInput = EnsureSelectionInputEntity(ref state);
+            RtsSelectionInputRequestQueueComponent queue =
+                state.EntityManager.GetComponentData<RtsSelectionInputRequestQueueComponent>(selectionInput);
+            DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests =
+                state.EntityManager.GetBuffer<RtsSelectionCommandIntentRequestElement>(selectionInput);
+
+            if (request.TargetKind == AssistantTargetKind.Entity)
+            {
+                Entity target = ResolveExistingEntity(ref state, request.TargetEntity);
+                if (target == Entity.Null)
+                    target = ResolveExistingEntity(ref state, request.SourceEntity);
+                if (target == Entity.Null)
+                    return false;
+
+                queue.LastRequestId++;
+                commandRequests.Add(new RtsSelectionCommandIntentRequestElement
+                {
+                    Kind = RtsSelectionCommandIntentKind.FocusUnit,
+                    RequestId = queue.LastRequestId,
+                    Frame = request.Frame,
+                    SourceEntity = request.SourceEntity,
+                    TargetEntity = target,
+                    TargetKind = RtsSelectionCommandTargetKind.Entity,
+                    WorldPosition = request.WorldPosition,
+                    HasSourceEntity = request.SourceEntity != Entity.Null ? (byte)1 : (byte)0,
+                    HasTargetEntity = 1,
+                    HasWorldPosition = IsFinite(request.WorldPosition) ? (byte)1 : (byte)0
+                });
+                state.EntityManager.SetComponentData(selectionInput, queue);
+                return true;
+            }
+
+            if (request.TargetKind == AssistantTargetKind.UiSurface ||
+                request.TargetKind == AssistantTargetKind.None)
+            {
+                queue.LastRequestId++;
+                commandRequests.Add(new RtsSelectionCommandIntentRequestElement
+                {
+                    Kind = RtsSelectionCommandIntentKind.EnterSelectionMode,
+                    RequestId = queue.LastRequestId,
+                    Frame = request.Frame
+                });
+                state.EntityManager.SetComponentData(selectionInput, queue);
+                return true;
+            }
+
+            return false;
+        }
+
+        private static Entity ResolveExistingEntity(ref SystemState state, Entity entity)
+        {
+            return entity != Entity.Null && state.EntityManager.Exists(entity) ? entity : Entity.Null;
+        }
+
         private static bool TryReadEntityPosition(ref SystemState state, Entity entity, out float3 position)
         {
             position = default;
@@ -194,6 +289,36 @@ namespace Game.UI.Shell.Ecs
                 typeof(RtsCameraStateComponent));
             state.EntityManager.AddBuffer<RtsCameraRequestElement>(cameraEntity);
             return cameraEntity;
+        }
+
+        private Entity EnsureSelectionInputEntity(ref SystemState state)
+        {
+            if (!selectionInputQuery.IsEmptyIgnoreFilter)
+            {
+                Entity entity = selectionInputQuery.GetSingletonEntity();
+                EnsureSelectionBuffers(ref state, entity);
+                return entity;
+            }
+
+            Entity selectionInput = state.EntityManager.CreateEntity(
+                typeof(RtsSelectionInputStateComponent),
+                typeof(RtsSelectionInputRequestQueueComponent));
+            state.EntityManager.SetComponentData(selectionInput, new RtsSelectionInputStateComponent
+            {
+                QueuedMoveOrderFrame = -1
+            });
+            EnsureSelectionBuffers(ref state, selectionInput);
+            return selectionInput;
+        }
+
+        private static void EnsureSelectionBuffers(ref SystemState state, Entity entity)
+        {
+            if (!state.EntityManager.HasBuffer<RtsSelectionPointerRequestElement>(entity))
+                state.EntityManager.AddBuffer<RtsSelectionPointerRequestElement>(entity);
+            if (!state.EntityManager.HasBuffer<RtsSelectionCommandIntentRequestElement>(entity))
+                state.EntityManager.AddBuffer<RtsSelectionCommandIntentRequestElement>(entity);
+            if (!state.EntityManager.HasBuffer<RtsSelectionCommandResultElement>(entity))
+                state.EntityManager.AddBuffer<RtsSelectionCommandResultElement>(entity);
         }
 
         private static void AddResult(

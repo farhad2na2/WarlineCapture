@@ -286,6 +286,9 @@ namespace Game.Runtime
             switch (request.Kind)
             {
                 case RtsSelectionCommandIntentKind.FocusUnit:
+                    if (request.HasTargetEntity != 0)
+                        return TrySelectRuntimeEntity(context, request.TargetEntity).Accepted;
+
                     return request.HasScreenPosition != 0 &&
                            context.TryFocusScreenPosition?.Invoke(new Vector2(request.ScreenPosition.x, request.ScreenPosition.y)) == true;
                 case RtsSelectionCommandIntentKind.SelectAll:

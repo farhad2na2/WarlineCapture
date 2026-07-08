@@ -329,7 +329,8 @@ namespace Game.UI.Shell.Ecs
                     Title = new FixedString64Bytes("Select a unit"),
                     Reason = new FixedString128Bytes("Select a combat unit first so ARIA can recommend a concrete order."),
                     ActionLabel = new FixedString64Bytes("SHOW ME"),
-                    CanShow = 1
+                    CanShow = 1,
+                    CanExecute = 1
                 };
             }
 

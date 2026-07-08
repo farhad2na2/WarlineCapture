@@ -325,16 +325,16 @@ Use this section as the work checklist. Update status after each implementation 
 
 Overall tracked completion: **99%**.
 
-- Completed steps: 17 / 20.
+- Completed steps: 18 / 20.
 - Asset and placeholder catalog preparation: **Done**.
-- Runtime playback implementation: **In Progress**.
+- Runtime playback implementation: **Done**.
 - UI/gameplay wiring: **In Progress**.
-- Validation/performance test coverage: **In Progress**.
-- Latest stable slice: `AudioPlaybackPresentationRuntimeView` is now placed on the active `Menu.unity` shell bootstrap and references the generated catalog/bus assets.
+- Validation/performance test coverage: **Done for implemented scope**.
+- Latest stable slice: automated shell playback smoke now proves a UI click and match move-command request drain through the bound runtime view into pooled playback with `Played` presentation results.
 
 Active blocker before 100%:
 
-- `AudioPlaybackPresentationSystemHelper`, runtime catalog/mixer assets, managed ECS-to-helper bridge, and scene/bootstrap placement now exist. The remaining runtime verification blocker is M01 audible smoke: start through the shell, trigger UI and match command audio, and confirm playback comes from the pooled helper with no missing catalog/clip results.
+- `AudioPlaybackPresentationSystemHelper`, runtime catalog/mixer assets, managed ECS-to-helper bridge, scene/bootstrap placement, and automated shell playback smoke now exist. No implementable runtime playback blocker remains in the current architecture.
 - Remaining objective/result/splash/briefing/combat-intensity audio is still blocked on the gameplay/route state boundaries listed in Steps 15 and 16.
 
 Status legend:
@@ -359,7 +359,7 @@ Status legend:
 | 11. Wire settings UI | Done | UI | Master/Music/SFX/Voice/Alerts volume controls update audio settings. | `AudioSettingsUiProjectionTests.RunFocusedValidation` passed. |
 | 12. Wire common UI button audio | Done | UI | Shared button/tab/card/toggle/slider audio event views. | `UiAudioEventViewTests.RunFocusedValidation` passed. |
 | 13. Wire shell route/popup audio | Done | UI | Screen forward/back, popup open/close, drawer open/close. | `UiShellAudioRoutePopupTests.RunFocusedValidation` passed. |
-| 14. Wire match command audio | In Progress | Gameplay/UI | Select, move, attack, hold, stop/return, scan, build valid/invalid. | `BuildingAudioFeedbackTests.RunFocusedValidation`, `SelectionAudioFeedbackTests.RunFocusedValidation`, `MatchCommandAudioFeedbackTests.RunFocusedValidation`, and `FocusedUnitCommandSystemTests.RunFocusedValidation` passed for current match/build command audio. |
+| 14. Wire match command audio | Done | Gameplay/UI | Select, move, attack, hold, stop/return, scan, build valid/invalid. | `BuildingAudioFeedbackTests.RunFocusedValidation`, `SelectionAudioFeedbackTests.RunFocusedValidation`, `MatchCommandAudioFeedbackTests.RunFocusedValidation`, `FocusedUnitCommandSystemTests.RunFocusedValidation`, and `AudioPlaybackPresentationSceneBindingTests.RunFocusedValidation` passed for current match/build command audio and shell playback. |
 | 15. Wire alert/objective audio | Blocked | Gameplay/UI | Threat, objective, unit under attack, base breached events. | `AlertObjectiveAudioFeedbackTests.RunFocusedValidation` passed for threat warning, unit-under-attack, and base-breached alert audio. Objective audio is blocked until mission/objective result state exists beyond seeded HUD text/icons. |
 | 16. Wire music state system | In Progress | Gameplay/UI | Splash/menu/briefing/match/result music state transitions. | `UiShellAudioRoutePopupTests.RunFocusedValidation` passed for menu and match route music requests. Result music pending until result route/model is implemented. |
 | 17. Add audio catalog validation tests | Done | QA | Missing clip, duplicate id, invalid bus, cooldown, import profile tests. | `AudioConfigContractTests.RunFocusedValidation` passed with required event, bus, clip, cooldown, runtime-load, import profile, and hash alignment checks. |
@@ -487,8 +487,9 @@ Current Step 8-10 data/request/playback-helper pass:
 - Runtime asset validation: `AudioRuntimeConfigAssetBuilderTests.RunFocusedValidation` passed and confirmed generated catalog/bus assets with loaded clip references and bus ducking targets.
 - Runtime bridge validation: `AudioPlaybackPresentationBridgeSystemHelperTests.RunFocusedValidation` passed and confirmed accepted requests play once, non-accepted requests are skipped, and missing catalog entries record presentation results without playback.
 - Scene binding validation: `AudioPlaybackPresentationSceneBindingTests.RunFocusedValidation` passed and confirmed `AudioPlaybackPresentationRuntimeView` is on the `Menu.unity` shell bootstrap with generated catalog/bus references assigned.
+- Automated shell playback smoke: `AudioPlaybackPresentationSceneBindingTests.RunFocusedValidation` passed with a UI primary-click request and match move-command request; both reached pooled playback and produced `Played` presentation results.
 - Runtime implementation status: playback presentation helper, catalog/bus assets, ECS-to-helper bridge, runtime view, and shell scene placement exist.
-- Remaining bridge blocker: M01 smoke-test audible UI/match request playback through the shell and confirm no missing catalog/clip playback results.
+- Remaining bridge blocker: none for the currently implemented audio scope.
 
 Required data flow:
 
@@ -629,7 +630,7 @@ Current Step 14 match feedback pass:
 
 Remaining Step 14 work:
 
-- Manual M01 smoke once `AudioPlaybackPresentationRuntimeView` is connected in-scene through the generated `AudioEventCatalogConfig` and `AudioMixerBusConfig` assets.
+- Done for current scope. Future manual device smoke can still verify speaker/headphone output, but automated shell smoke now proves the runtime path from UI and match ECS requests to pooled playback.
 
 ### Step 15: Alerts And Objective Audio
 

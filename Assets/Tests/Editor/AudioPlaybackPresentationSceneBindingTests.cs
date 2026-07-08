@@ -1,8 +1,11 @@
 using System;
+using Game.Components;
 using Game.Composition;
 using Game.Configs;
 using Game.Runtime;
 using NUnit.Framework;
+using Unity.Collections;
+using Unity.Entities;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -15,17 +18,22 @@ public sealed class AudioPlaybackPresentationSceneBindingTests
 
     public static void RunFocusedValidation()
     {
+        int passed = 0;
         try
         {
             AudioPlaybackPresentationSceneBindingTests tests = new();
             tests.MenuSceneBootstrap_HasAudioPlaybackRuntimeViewWithGeneratedAssets();
-            Debug.Log("[AudioPlaybackPresentationSceneBindingValidation] result=Passed tests=1");
+            passed++;
+            tests.MenuSceneAudioRuntime_DrainsUiRequestThroughPooledPlayback();
+            passed++;
+
+            Debug.Log($"[AudioPlaybackPresentationSceneBindingValidation] result=Passed tests={passed}");
             ValidationExit.Passed();
         }
         catch (Exception exception)
         {
             Debug.LogException(exception);
-            Debug.Log("[AudioPlaybackPresentationSceneBindingValidation] result=Failed");
+            Debug.Log($"[AudioPlaybackPresentationSceneBindingValidation] result=Failed passed={passed}");
             ValidationExit.Failed();
         }
     }
@@ -58,5 +66,77 @@ public sealed class AudioPlaybackPresentationSceneBindingTests
             "Audio playback runtime must reference the generated mixer bus config.");
         Assert.GreaterOrEqual(serialized.FindProperty("initialPoolSize").intValue, 0);
         Assert.Greater(serialized.FindProperty("maxPoolSize").intValue, 0);
+    }
+
+    [Test]
+    public void MenuSceneAudioRuntime_DrainsUiRequestThroughPooledPlayback()
+    {
+        EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
+
+        AudioPlaybackPresentationRuntimeView audioRuntime =
+            UnityEngine.Object.FindAnyObjectByType<AudioPlaybackPresentationRuntimeView>(FindObjectsInactive.Include);
+        Assert.NotNull(audioRuntime, "Menu scene must contain AudioPlaybackPresentationRuntimeView.");
+
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        World world = new("AudioPlaybackPresentationSceneSmokeTests");
+        World.DefaultGameObjectInjectionWorld = world;
+
+        try
+        {
+            audioRuntime.SendMessage("Awake", SendMessageOptions.DontRequireReceiver);
+
+            int uiRequestId = AudioEventRequestSystem.EnqueueOneShot(
+                world.EntityManager,
+                new FixedString64Bytes(AudioEventIds.UIButtonPrimaryClick),
+                AudioEventIds.UIButtonPrimaryClickHash,
+                new FixedString32Bytes("UI"),
+                AudioPlaybackPriority.Medium,
+                requestedAt: 1f,
+                cooldownSeconds: 0f);
+            int matchRequestId = AudioEventRequestSystem.EnqueueOneShot(
+                world.EntityManager,
+                new FixedString64Bytes(AudioEventIds.GameplayCommandMoveAccepted),
+                AudioEventIds.GameplayCommandMoveAcceptedHash,
+                new FixedString32Bytes("SFX"),
+                AudioPlaybackPriority.Medium,
+                requestedAt: 1f,
+                cooldownSeconds: 0f);
+            AudioCooldownSystem.ProcessPendingRequests(world.EntityManager, now: 1f);
+
+            audioRuntime.SendMessage("Update", SendMessageOptions.DontRequireReceiver);
+
+            Entity audioEntity = AudioEventRequestSystem.EnsureAudioEntity(world.EntityManager);
+            DynamicBuffer<AudioPlaybackResultElement> results =
+                world.EntityManager.GetBuffer<AudioPlaybackResultElement>(audioEntity);
+            AudioPlaybackResultElement presentationResult = results[results.Length - 1];
+
+            Assert.AreEqual(matchRequestId, audioRuntime.LastPresentedRequestId);
+            Assert.Greater(audioRuntime.PoolSize, 0);
+            Assert.GreaterOrEqual(audioRuntime.ActiveSourceCount, 2);
+            Assert.AreEqual(matchRequestId, presentationResult.RequestId);
+            Assert.AreEqual(AudioPlaybackRequestStatus.Accepted, presentationResult.Status);
+            Assert.AreEqual("Played", presentationResult.Reason.ToString());
+            Assert.IsTrue(HasPlayedResult(results, uiRequestId));
+            Assert.IsTrue(HasPlayedResult(results, matchRequestId));
+        }
+        finally
+        {
+            audioRuntime.SendMessage("OnDestroy", SendMessageOptions.DontRequireReceiver);
+            if (World.DefaultGameObjectInjectionWorld == world)
+                World.DefaultGameObjectInjectionWorld = previousWorld;
+            world.Dispose();
+        }
+    }
+
+    private static bool HasPlayedResult(DynamicBuffer<AudioPlaybackResultElement> results, int requestId)
+    {
+        for (int i = 0; i < results.Length; i++)
+        {
+            AudioPlaybackResultElement result = results[i];
+            if (result.RequestId == requestId && result.Reason.ToString() == "Played")
+                return true;
+        }
+
+        return false;
     }
 }

@@ -1,5 +1,6 @@
 using Game.Components;
 using Game.UI.Shell.Contracts.Ecs;
+using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
@@ -10,6 +11,7 @@ namespace Game.UI.Shell.Ecs
     public partial struct AssistantNarrationRequestSystem : ISystem
     {
         private const int MaxNarrationRows = 8;
+        private const float LowPriorityCooldownSeconds = 12f;
 
         private EntityQuery boundaryQuery;
 
@@ -35,12 +37,15 @@ namespace Game.UI.Shell.Ecs
 
             AssistantSettingsComponent settings =
                 state.EntityManager.GetComponentData<AssistantSettingsComponent>(boundary);
-            if (!TryFindBestMessage(messages, settings.NarrationMode, out AssistantMessageElement message))
+            AssistantNarrationStateComponent narrationState =
+                state.EntityManager.GetComponentData<AssistantNarrationStateComponent>(boundary);
+            float now = Time.time;
+            if (!TryFindBestMessage(messages, settings.NarrationMode, narrationState, now, out AssistantMessageElement message))
                 return;
 
             DynamicBuffer<AssistantNarrationRequestElement> requests =
                 state.EntityManager.GetBuffer<AssistantNarrationRequestElement>(boundary);
-            if (HasRequestForMessage(requests, message.MessageId))
+            if (HasMatchingRequest(requests, messages, message))
                 return;
 
             int currentFrame = Mathf.Max(1, Time.frameCount);
@@ -53,17 +58,17 @@ namespace Game.UI.Shell.Ecs
                 Status = AssistantCommandIntentStatus.Pending,
                 Text = message.Text,
                 AudioEventId = message.AudioEventId,
-                RequestedAt = Time.time,
+                RequestedAt = now,
                 InterruptsLowerPriority = message.Priority >= AssistantMessagePriority.High ? (byte)1 : (byte)0
             });
             TrimRequests(requests);
 
-            AssistantNarrationStateComponent narrationState =
-                state.EntityManager.GetComponentData<AssistantNarrationStateComponent>(boundary);
             narrationState.Version = NextVersion(narrationState.Version);
             narrationState.ActiveNarrationId = requestId;
             narrationState.LastSpokenMessageId = message.MessageId;
-            narrationState.LastSpokenAt = Time.time;
+            narrationState.LastSpokenAt = now;
+            if (message.Priority <= AssistantMessagePriority.Normal)
+                narrationState.LowPriorityCooldownUntil = now + LowPriorityCooldownSeconds;
             narrationState.Mode = settings.NarrationMode;
             narrationState.UiDirty = 1;
             state.EntityManager.SetComponentData(boundary, narrationState);
@@ -106,6 +111,8 @@ namespace Game.UI.Shell.Ecs
         private static bool TryFindBestMessage(
             DynamicBuffer<AssistantMessageElement> messages,
             AssistantNarrationMode mode,
+            AssistantNarrationStateComponent narrationState,
+            float now,
             out AssistantMessageElement best)
         {
             best = default;
@@ -113,7 +120,7 @@ namespace Game.UI.Shell.Ecs
             for (int i = 0; i < messages.Length; i++)
             {
                 AssistantMessageElement message = messages[i];
-                if (!IsEligible(message, mode))
+                if (!IsEligible(message, mode, narrationState, now))
                     continue;
 
                 if (!found
@@ -128,10 +135,20 @@ namespace Game.UI.Shell.Ecs
             return found;
         }
 
-        private static bool IsEligible(AssistantMessageElement message, AssistantNarrationMode mode)
+        private static bool IsEligible(
+            AssistantMessageElement message,
+            AssistantNarrationMode mode,
+            AssistantNarrationStateComponent narrationState,
+            float now)
         {
             if (message.RequiresNarration == 0 || message.Acknowledged != 0 || message.Text.Length == 0)
                 return false;
+
+            if (message.Priority <= AssistantMessagePriority.Normal &&
+                now < narrationState.LowPriorityCooldownUntil)
+            {
+                return false;
+            }
 
             return mode switch
             {
@@ -143,14 +160,39 @@ namespace Game.UI.Shell.Ecs
             };
         }
 
-        private static bool HasRequestForMessage(
+        private static bool HasMatchingRequest(
             DynamicBuffer<AssistantNarrationRequestElement> requests,
-            int messageId)
+            DynamicBuffer<AssistantMessageElement> messages,
+            AssistantMessageElement message)
         {
             for (int i = 0; i < requests.Length; i++)
             {
-                if (requests[i].MessageId == messageId)
+                if (requests[i].MessageId == message.MessageId ||
+                    HasMatchingSuppressionKey(messages, requests[i].MessageId, message.SuppressionKey))
+                {
                     return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool HasMatchingSuppressionKey(
+            DynamicBuffer<AssistantMessageElement> messages,
+            int requestMessageId,
+            FixedString64Bytes suppressionKey)
+        {
+            if (suppressionKey.Length == 0)
+                return false;
+
+            for (int i = 0; i < messages.Length; i++)
+            {
+                AssistantMessageElement message = messages[i];
+                if (message.MessageId == requestMessageId &&
+                    message.SuppressionKey.Equals(suppressionKey))
+                {
+                    return true;
+                }
             }
 
             return false;

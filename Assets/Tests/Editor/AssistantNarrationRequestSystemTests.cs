@@ -25,6 +25,10 @@ public sealed class AssistantNarrationRequestSystemTests
             passed++;
             RunCase(test => test.AssistantNarrationRequestSystem_RespectsNarrationModeGate());
             passed++;
+            RunCase(test => test.AssistantNarrationRequestSystem_CoalescesSameSuppressionKey());
+            passed++;
+            RunCase(test => test.AssistantNarrationRequestSystem_ThrottlesLowPriorityButAllowsCriticalInterruption());
+            passed++;
 
             Debug.Log($"[AssistantNarrationRequestSystemValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -137,6 +141,73 @@ public sealed class AssistantNarrationRequestSystemTests
         Assert.AreEqual(1, requests.Length);
     }
 
+    [Test]
+    public void AssistantNarrationRequestSystem_CoalescesSameSuppressionKey()
+    {
+        Entity boundary = CreateBoundary(AssistantNarrationMode.Important);
+        AddMessage(
+            boundary,
+            1101,
+            AssistantMessagePriority.High,
+            "Hostile armor spotted",
+            requiresNarration: 1,
+            suppressionKey: "threat.cluster");
+
+        _narrationSystem.Update(_world.Unmanaged);
+
+        DynamicBuffer<AssistantMessageElement> messages =
+            _entityManager.GetBuffer<AssistantMessageElement>(boundary);
+        AssistantMessageElement first = messages[0];
+        first.Acknowledged = 1;
+        messages[0] = first;
+        AddMessage(
+            boundary,
+            1102,
+            AssistantMessagePriority.High,
+            "Hostile armor still near base",
+            requiresNarration: 1,
+            suppressionKey: "threat.cluster");
+
+        _narrationSystem.Update(_world.Unmanaged);
+
+        DynamicBuffer<AssistantNarrationRequestElement> requests =
+            _entityManager.GetBuffer<AssistantNarrationRequestElement>(boundary);
+        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(1101, requests[0].MessageId);
+    }
+
+    [Test]
+    public void AssistantNarrationRequestSystem_ThrottlesLowPriorityButAllowsCriticalInterruption()
+    {
+        Entity boundary = CreateBoundary(AssistantNarrationMode.All);
+        AddMessage(boundary, 1201, AssistantMessagePriority.Normal, "Oil trucks are idle", requiresNarration: 1);
+
+        _narrationSystem.Update(_world.Unmanaged);
+
+        DynamicBuffer<AssistantMessageElement> messages =
+            _entityManager.GetBuffer<AssistantMessageElement>(boundary);
+        AssistantMessageElement normal = messages[0];
+        normal.Acknowledged = 1;
+        messages[0] = normal;
+        AddMessage(boundary, 1202, AssistantMessagePriority.Normal, "Supply trucks are idle", requiresNarration: 1);
+
+        _narrationSystem.Update(_world.Unmanaged);
+
+        DynamicBuffer<AssistantNarrationRequestElement> requests =
+            _entityManager.GetBuffer<AssistantNarrationRequestElement>(boundary);
+        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(1201, requests[0].MessageId);
+
+        AddMessage(boundary, 1203, AssistantMessagePriority.Critical, "Base under attack", requiresNarration: 1);
+
+        _narrationSystem.Update(_world.Unmanaged);
+
+        requests = _entityManager.GetBuffer<AssistantNarrationRequestElement>(boundary);
+        Assert.AreEqual(2, requests.Length);
+        Assert.AreEqual(1203, requests[1].MessageId);
+        Assert.AreEqual(1, requests[1].InterruptsLowerPriority);
+    }
+
     private Entity CreateBoundary(AssistantNarrationMode mode)
     {
         Entity boundary = _entityManager.CreateEntity(
@@ -170,7 +241,8 @@ public sealed class AssistantNarrationRequestSystemTests
         int messageId,
         AssistantMessagePriority priority,
         string text,
-        byte requiresNarration)
+        byte requiresNarration,
+        string suppressionKey = null)
     {
         DynamicBuffer<AssistantMessageElement> messages =
             _entityManager.GetBuffer<AssistantMessageElement>(boundary);
@@ -180,7 +252,7 @@ public sealed class AssistantNarrationRequestSystemTests
             SourceVersion = messageId,
             Priority = priority,
             RelatedKind = AssistantRecommendationKind.Explain,
-            SuppressionKey = new FixedString64Bytes($"test.{messageId}"),
+            SuppressionKey = new FixedString64Bytes(suppressionKey ?? $"test.{messageId}"),
             Text = new FixedString128Bytes(text),
             AudioEventId = new FixedString64Bytes($"aria.{messageId}"),
             RequiresNarration = requiresNarration,

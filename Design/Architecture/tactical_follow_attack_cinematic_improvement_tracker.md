@@ -83,7 +83,7 @@ The current implementation is not accepted because it is too close, too fast, fr
 
 ## Progress Summary
 
-Overall implementation progress: 93% (78/84 implementation checklist items complete).
+Overall implementation progress: 94% (79/84 implementation checklist items complete).
 
 Progress is checklist-based. Each implementation or validation checkbox below counts as one item. Documentation creation and index links are not counted as implementation progress.
 
@@ -96,7 +96,7 @@ Progress is checklist-based. Each implementation or validation checkbox below co
 | 4. Shot solver and obstruction safety | Complete | 12 | 12 | 100% | Pure shot solver now uses wider, higher launch/path/impact/flyover shots with safety clamps, HUD-safe aim bias, FOV clamps, explicit phase-entry snap rules, deterministic fallback candidates, and non-alloc obstruction probes at the managed camera boundary. |
 | 5. Follow-camera/time-scale integration | Complete | 9 | 9 | 100% | Active attack pose ownership, completion handback, temporary-target abort cleanup, time-scale apply/restore, paused-time restoration, destroyed source/target fallback behavior, and active-cinematic UI stability are covered by focused tests. |
 | 6. Tests and architecture guardrails | Complete | 13 | 13 | 100% | Pure helper tests cover phase/shot math; ECS tests cover followed/unfollowed request behavior, retrigger cooldown, abort cleanup, and architecture guardrails. |
-| 7. Unity visual validation | In progress | 7 | 8 | 88% | Real Match playmode proof now records readable launch/path/impact/flyover/return frames; profiler/GC validation remains open. |
+| 7. Unity visual validation | Complete | 8 | 8 | 100% | Real Match playmode proof records readable launch/path/impact/flyover/return frames and now verifies frame-time/GC on non-capture cinematic frames. |
 | 8. Rollout and documentation | Complete | 4 | 4 | 100% | Handoff and tracker now document final behavior, validation evidence, managed boundaries, and this validated documentation rollout slice. |
 
 ## Phase 0: Baseline And Proof Capture
@@ -399,7 +399,7 @@ Phase 6 notes, 2026-07-07:
 - [x] Verify explosion/impact is centered and visible from the impact shot.
 - [x] Verify the jet flies over or past the destroyed target after impact.
 - [x] Verify no camera shot clips into terrain, buildings, tents, hangars, the target, or the jet.
-- [ ] Verify frame time and GC do not regress during the cinematic sequence.
+- [x] Verify frame time and GC do not regress during the cinematic sequence.
 - [x] Record validation logs, screenshots, or profiler notes in this tracker.
 
 Exit criteria:
@@ -451,6 +451,11 @@ Phase 7 notes, 2026-07-07:
   - `Tools/CI/invoke_unity_macos.sh --timeout 480 --log /private/tmp/warline-attack-cinematic-playmode-validation-escalated-12.log -- -executeMethod Game.Editor.TacticalFollowAttackCinematicPlayModeValidation.RunInMatchAttackCinematicProof` passed with `[TacticalFollowAttackCinematicPlayModeValidation] result=Passed`.
   - `Tools/CI/invoke_unity_macos.sh --timeout 420 --log /private/tmp/warline-attack-cinematic-architecture-validation-15.log -- -quit -nographics -executeMethod EcsBurstHotPathArchitectureTests.RunFocusedValidation` passed with `[EcsBurstHotPathArchitectureValidation] result=Passed tests=10`.
   - `git diff --check` passed.
+- Completed slice, 2026-07-08:
+  - Added cinematic-only performance sampling to `Game.Editor.TacticalFollowAttackCinematicPlayModeValidation.RunInMatchAttackCinematicProof`.
+  - The sampler measures only non-capture cinematic frames, skips screenshot render/PNG capture frames, and resets the GC baseline after validation captures so the check is focused on the cinematic update path.
+  - Validation log: `/private/tmp/warline-attack-cinematic-playmode-validation-perf-2.log`.
+  - Result: `[TacticalFollowAttackCinematicPlayModeValidation] result=Passed ... performance=Passed limitAvgMs=50.00 limitMaxMs=150.00 perfSamples=526 avgFrameMs=8.71 maxFrameMs=35.71 gcDelta=0/0/0`.
 
 ## Phase 8: Rollout And Documentation
 
@@ -465,13 +470,13 @@ Exit criteria:
 
 Phase 8 notes, 2026-07-08:
 
-- Updated `../attack-cinematic-handoff.md` so it no longer reads as the accepted final state from the rejected 2026-07-07 pass. It now records the current implementation, real Match proof evidence, validation logs, captured proof frame paths, and remaining perf/GC validation item.
+- Updated `../attack-cinematic-handoff.md` so it no longer reads as the accepted final state from the rejected 2026-07-07 pass. It now records the current implementation, real Match proof evidence, validation logs, captured proof frame paths, and completed perf/GC validation item.
 - Intentional managed boundaries are documented:
   - `TacticalFollowAttackCinematicSystem` is an `ISystem` boundary that intentionally touches `UnityEngine.Time.timeScale` and request consumption around presentation timing, so it is not Burst-compiled.
   - `MissileTrailVfxView` is the existing pooled Unity-object presentation boundary; gameplay damage and targeting remain ECS-owned.
   - Editor playmode proof helpers are validation-only and do not introduce runtime update loops.
-- Open validation work:
-  - Run the remaining frame-time/GC validation during the cinematic sequence.
+- Completed validation work:
+  - Frame-time/GC validation passed during the cinematic sequence in `/private/tmp/warline-attack-cinematic-playmode-validation-perf-2.log`.
 - Documentation rollout validation: `git diff --check` passed.
 
 ## Validation Matrix

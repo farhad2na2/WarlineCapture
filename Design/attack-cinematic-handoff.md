@@ -19,6 +19,7 @@ The tactical follow attack cinematic now owns the followed air-unit attack seque
 - Editor test compile passed: `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`.
 - Focused follow-camera command validation passed: `/private/tmp/warline-tactical-follow-command-validation-4.log`, `[TacticalFollowCameraModeCommandValidation] result=Passed tests=44`.
 - Real Match playmode proof passed: `/private/tmp/warline-attack-cinematic-playmode-validation-escalated-12.log`, `[TacticalFollowAttackCinematicPlayModeValidation] result=Passed`.
+- Real Match playmode proof with cinematic-only perf/GC sampling passed: `/private/tmp/warline-attack-cinematic-playmode-validation-perf-2.log`, `performance=Passed limitAvgMs=50.00 limitMaxMs=150.00 perfSamples=526 avgFrameMs=8.71 maxFrameMs=35.71 gcDelta=0/0/0`.
 - ECS/Burst architecture guard passed: `/private/tmp/warline-attack-cinematic-architecture-validation-15.log`, `[EcsBurstHotPathArchitectureValidation] result=Passed tests=10`.
 - Captured proof frames:
   - `/private/tmp/warline-attack-cinematic-playmode/01-launch.png`
@@ -33,9 +34,9 @@ The tactical follow attack cinematic now owns the followed air-unit attack seque
 - `MissileTrailVfxView` remains a pooled Unity-object presentation boundary; it does not own damage, targeting, or gameplay policy.
 - Editor playmode proof helpers are validation-only and are not runtime loops.
 
-## Remaining Open Item
+## Performance/GC Validation
 
-- Performance/GC validation remains open in the architecture tracker. The current implementation avoids new per-frame object creation in the cinematic path by reusing ECS data and pooled VFX, but it still needs a measured Unity run that records frame time and GC during the cinematic sequence.
+- Performance/GC validation is covered by the real Match playmode proof. The sampler excludes screenshot render/PNG capture frames and verifies the cinematic update path has no GC collection during measured non-capture frames.
 
 ## Goal
 When the player follows a jet in 3rd-person mode (`ToggleFollowMode`) and it attacks, play a

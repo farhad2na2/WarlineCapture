@@ -31,11 +31,18 @@ namespace Game.Editor
         private const int TimeoutFrames = 60000;
         private const int DeployWarmupFrames = 45;
         private const int CinematicWaitFrames = 480;
+        private const double DefaultMaxMeasuredFrameMs = 150d;
+        private const double DefaultAverageMeasuredFrameMs = 50d;
 
         private static int frameCount;
         private static int deployFrame;
         private static int matchReadyFrame;
         private static int requestFrame;
+        private static int performanceSampleCount;
+        private static int skippedPerformanceSamples;
+        private static int startGcGen0Count;
+        private static int startGcGen1Count;
+        private static int startGcGen2Count;
         private static bool deploySubmitted;
         private static bool matchReady;
         private static bool followArmed;
@@ -47,7 +54,11 @@ namespace Game.Editor
         private static bool flyoverCaptured;
         private static bool returnCaptured;
         private static bool completed;
+        private static bool performanceSamplingActive;
         private static double startedAt;
+        private static double lastPerformanceTimestamp;
+        private static double totalMeasuredFrameMs;
+        private static double maxMeasuredFrameMs;
         private static Entity sourceEntity;
         private static Entity targetEntity;
         private static float3 launchPosition;
@@ -93,10 +104,19 @@ namespace Game.Editor
                 flyoverCaptured = false;
                 returnCaptured = false;
                 completed = false;
+                performanceSamplingActive = false;
+                performanceSampleCount = 0;
+                skippedPerformanceSamples = 0;
+                startGcGen0Count = 0;
+                startGcGen1Count = 0;
+                startGcGen2Count = 0;
+                totalMeasuredFrameMs = 0d;
+                maxMeasuredFrameMs = 0d;
                 sourceEntity = Entity.Null;
                 targetEntity = Entity.Null;
                 pendingBatchExitCode = int.MinValue;
                 startedAt = EditorApplication.timeSinceStartup;
+                lastPerformanceTimestamp = startedAt;
 
                 EditorApplication.playModeStateChanged -= ExitBatchAfterPlayMode;
                 EditorApplication.update -= Continue;
@@ -123,6 +143,8 @@ namespace Game.Editor
                 frameCount++;
                 if (frameCount == 1)
                     startedAt = EditorApplication.timeSinceStartup;
+
+                RecordPerformanceSample();
 
                 if (frameCount > TimeoutFrames || EditorApplication.timeSinceStartup - startedAt > 240d)
                 {
@@ -193,6 +215,7 @@ namespace Game.Editor
 
                     requestsSubmitted = true;
                     requestFrame = frameCount;
+                    BeginPerformanceSampling();
                     return;
                 }
 
@@ -217,11 +240,16 @@ namespace Game.Editor
                 if (cinematicObserved && cinematic.Active == 0)
                 {
                     if (!returnCaptured &&
-                        frameCount - requestFrame > 12 &&
-                        !TryRenderCamera(matchScene.WorldCamera, CapturePath("05-return"), out string returnError))
+                        frameCount - requestFrame > 12)
                     {
-                        Complete(false, returnError);
-                        return;
+                        SkipPerformanceSamples(2);
+                        bool rendered = TryRenderCamera(matchScene.WorldCamera, CapturePath("05-return"), out string returnError);
+                        ResetGcCollectionBaseline();
+                        if (!rendered)
+                        {
+                            Complete(false, returnError);
+                            return;
+                        }
                     }
 
                     returnCaptured = true;
@@ -239,9 +267,15 @@ namespace Game.Editor
                         return;
                     }
 
+                    if (!TryValidatePerformance(out string performanceStatus))
+                    {
+                        Complete(false, performanceStatus);
+                        return;
+                    }
+
                     Complete(
                         true,
-                        $"source={sourceEntity} target={targetEntity} launch={Format(launchPosition)} impact={Format(impactPosition)} dir={artifactDirectory}");
+                        $"source={sourceEntity} target={targetEntity} launch={Format(launchPosition)} impact={Format(impactPosition)} dir={artifactDirectory} {performanceStatus}");
                 }
             }
             catch (Exception exception)
@@ -330,7 +364,10 @@ namespace Game.Editor
 
         private static void CaptureOrFail(Camera camera, string name)
         {
-            if (!TryRenderCamera(camera, CapturePath(name), out string error))
+            SkipPerformanceSamples(2);
+            bool rendered = TryRenderCamera(camera, CapturePath(name), out string error);
+            ResetGcCollectionBaseline();
+            if (!rendered)
                 throw new InvalidOperationException(error);
         }
 
@@ -702,6 +739,97 @@ namespace Game.Editor
             }
         }
 
+        private static void BeginPerformanceSampling()
+        {
+            performanceSamplingActive = true;
+            performanceSampleCount = 0;
+            skippedPerformanceSamples = 2;
+            totalMeasuredFrameMs = 0d;
+            maxMeasuredFrameMs = 0d;
+            lastPerformanceTimestamp = EditorApplication.timeSinceStartup;
+            startGcGen0Count = GC.CollectionCount(0);
+            startGcGen1Count = GC.CollectionCount(1);
+            startGcGen2Count = GC.CollectionCount(2);
+        }
+
+        private static void ResetGcCollectionBaseline()
+        {
+            if (!performanceSamplingActive)
+                return;
+
+            startGcGen0Count = GC.CollectionCount(0);
+            startGcGen1Count = GC.CollectionCount(1);
+            startGcGen2Count = GC.CollectionCount(2);
+        }
+
+        private static void RecordPerformanceSample()
+        {
+            if (!performanceSamplingActive)
+                return;
+
+            double now = EditorApplication.timeSinceStartup;
+            double deltaMs = math.max(0d, (now - lastPerformanceTimestamp) * 1000d);
+            lastPerformanceTimestamp = now;
+
+            if (skippedPerformanceSamples > 0)
+            {
+                skippedPerformanceSamples--;
+                return;
+            }
+
+            performanceSampleCount++;
+            totalMeasuredFrameMs += deltaMs;
+            maxMeasuredFrameMs = math.max(maxMeasuredFrameMs, deltaMs);
+        }
+
+        private static void SkipPerformanceSamples(int count)
+        {
+            skippedPerformanceSamples = math.max(skippedPerformanceSamples, count);
+        }
+
+        private static bool TryValidatePerformance(out string status)
+        {
+            performanceSamplingActive = false;
+            int gen0Delta = GC.CollectionCount(0) - startGcGen0Count;
+            int gen1Delta = GC.CollectionCount(1) - startGcGen1Count;
+            int gen2Delta = GC.CollectionCount(2) - startGcGen2Count;
+            double averageMs = performanceSampleCount > 0
+                ? totalMeasuredFrameMs / performanceSampleCount
+                : 0d;
+            status =
+                $"perfSamples={performanceSampleCount} avgFrameMs={averageMs:0.00} maxFrameMs={maxMeasuredFrameMs:0.00} " +
+                $"gcDelta={gen0Delta}/{gen1Delta}/{gen2Delta}";
+
+            if (performanceSampleCount <= 0)
+            {
+                status = $"No non-capture cinematic performance samples were recorded. {status}";
+                return false;
+            }
+
+            if (gen0Delta != 0 || gen1Delta != 0 || gen2Delta != 0)
+            {
+                status = $"GC collection occurred during non-capture cinematic frames. {status}";
+                return false;
+            }
+
+            double maxFrameMs = ResolvePositiveDouble(
+                "WARLINE_ATTACK_CINEMATIC_MAX_FRAME_MS",
+                DefaultMaxMeasuredFrameMs);
+            double averageFrameMs = ResolvePositiveDouble(
+                "WARLINE_ATTACK_CINEMATIC_AVG_FRAME_MS",
+                DefaultAverageMeasuredFrameMs);
+            if (maxMeasuredFrameMs > maxFrameMs || averageMs > averageFrameMs)
+            {
+                status =
+                    $"Cinematic frame-time budget exceeded. limitAvgMs={averageFrameMs:0.00} limitMaxMs={maxFrameMs:0.00} {status}";
+                return false;
+            }
+
+            status =
+                $"performance=Passed limitAvgMs={averageFrameMs:0.00} limitMaxMs={maxFrameMs:0.00} {status}";
+            return true;
+        }
+
         private static void SetRuntimeUiMode(RuntimeUiConfig runtimeConfig, RuntimeUiMode mode)
         {
             SerializedObject serialized = new(runtimeConfig);
@@ -717,6 +845,14 @@ namespace Game.Editor
         {
             string configured = Environment.GetEnvironmentVariable(name);
             return int.TryParse(configured, NumberStyles.Integer, CultureInfo.InvariantCulture, out int value) && value > 0
+                ? value
+                : fallback;
+        }
+
+        private static double ResolvePositiveDouble(string name, double fallback)
+        {
+            string configured = Environment.GetEnvironmentVariable(name);
+            return double.TryParse(configured, NumberStyles.Float, CultureInfo.InvariantCulture, out double value) && value > 0d
                 ? value
                 : fallback;
         }

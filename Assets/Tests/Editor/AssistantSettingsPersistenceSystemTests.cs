@@ -74,6 +74,7 @@ public sealed class AssistantSettingsPersistenceSystemTests
         model.Assistant.AssistanceLevel = UIAssistanceLevel.Minimal;
         model.Assistant.NarrationMode = UIAssistantNarrationMode.CriticalOnly;
         model.Assistant.AllowTakeover = false;
+        model.Assistant.SubtitlesEnabled = false;
         model.Accessibility.LargeText = true;
         model.Accessibility.HighContrastUi = true;
 
@@ -83,7 +84,7 @@ public sealed class AssistantSettingsPersistenceSystemTests
         Assert.AreEqual(AssistantGuidanceLevel.Minimal, projected.GuidanceLevel);
         Assert.AreEqual(AssistantNarrationMode.CriticalOnly, projected.NarrationMode);
         Assert.AreEqual(0, projected.AllowTakeover);
-        Assert.AreEqual(1, projected.SubtitlesEnabled);
+        Assert.AreEqual(0, projected.SubtitlesEnabled);
         Assert.AreEqual(1, projected.LargeTextEnabled);
         Assert.AreEqual(1, projected.HighContrastEnabled);
     }
@@ -108,6 +109,7 @@ public sealed class AssistantSettingsPersistenceSystemTests
         model.Assistant.AssistanceLevel = UIAssistanceLevel.HintsOnly;
         model.Assistant.NarrationMode = UIAssistantNarrationMode.All;
         model.Assistant.AllowTakeover = false;
+        model.Assistant.SubtitlesEnabled = false;
 
         AssistantSettingsPersistenceSystemHelper.ApplyToWorld(_world, model);
 
@@ -121,6 +123,7 @@ public sealed class AssistantSettingsPersistenceSystemTests
         Assert.AreEqual(AssistantGuidanceLevel.HintsOnly, settings.GuidanceLevel);
         Assert.AreEqual(AssistantNarrationMode.All, settings.NarrationMode);
         Assert.AreEqual(0, settings.AllowTakeover);
+        Assert.AreEqual(0, settings.SubtitlesEnabled);
         Assert.AreEqual(AssistantGuidanceLevel.HintsOnly, assistantState.GuidanceLevel);
         Assert.AreEqual(1, assistantState.UiDirty);
         Assert.AreEqual(AssistantNarrationMode.All, narrationState.Mode);

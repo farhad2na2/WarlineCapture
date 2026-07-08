@@ -97,11 +97,15 @@ public sealed class SettingsPopupValidationTests
             Assert.IsTrue(
                 defaults.Assistant.AllowTakeover,
                 "Settings defaults must allow bounded ARIA takeover.");
+            Assert.IsTrue(
+                defaults.Assistant.SubtitlesEnabled,
+                "Settings defaults must keep ARIA text subtitles visible.");
 
             UISettingsModel model = defaults;
             model.Assistant.AssistanceLevel = UIAssistanceLevel.HintsOnly;
             model.Assistant.NarrationMode = UIAssistantNarrationMode.CriticalOnly;
             model.Assistant.AllowTakeover = false;
+            model.Assistant.SubtitlesEnabled = false;
             SettingsService.Save(model);
 
             UISettingsModel loaded = SettingsService.Load();
@@ -116,6 +120,9 @@ public sealed class SettingsPopupValidationTests
             Assert.IsFalse(
                 loaded.Assistant.AllowTakeover,
                 "Assistant takeover permission must round-trip through SettingsService.");
+            Assert.IsFalse(
+                loaded.Assistant.SubtitlesEnabled,
+                "Assistant subtitle visibility must round-trip through SettingsService.");
         }
         finally
         {

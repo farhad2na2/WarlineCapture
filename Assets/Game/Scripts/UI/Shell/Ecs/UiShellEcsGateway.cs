@@ -53,6 +53,7 @@ namespace Game.UI.Shell.Ecs
         private static int cachedAssistantPanelMessageVersion;
         private static int cachedAssistantPanelNarrationCount;
         private static int cachedAssistantPanelNarrationVersion;
+        private static bool cachedAssistantPanelSubtitlesEnabled;
         private static int cachedAssistantPanelRecommendationCount;
         private static AssistantControlState cachedAssistantPanelControlState;
         private static UiAssistantPanelModel cachedAssistantPanel;
@@ -102,6 +103,7 @@ namespace Game.UI.Shell.Ecs
             cachedAssistantPanelMessageVersion = 0;
             cachedAssistantPanelNarrationCount = 0;
             cachedAssistantPanelNarrationVersion = 0;
+            cachedAssistantPanelSubtitlesEnabled = true;
             cachedAssistantPanelRecommendationCount = 0;
             cachedAssistantPanelControlState = AssistantControlState.Player;
             cachedAssistantPanel = UiAssistantPanelModel.Empty;
@@ -1346,6 +1348,8 @@ namespace Game.UI.Shell.Ecs
             DynamicBuffer<AssistantMessageElement> messages =
                 entityManager.GetBuffer<AssistantMessageElement>(boundary, true);
             int messageVersion = AssistantMessageVersion(messages);
+            bool subtitlesEnabled = !entityManager.HasComponent<AssistantSettingsComponent>(boundary) ||
+                                    entityManager.GetComponentData<AssistantSettingsComponent>(boundary).SubtitlesEnabled != 0;
             bool hasNarrationRequests = entityManager.HasBuffer<AssistantNarrationRequestElement>(boundary);
             DynamicBuffer<AssistantNarrationRequestElement> narrationRequests = hasNarrationRequests
                 ? entityManager.GetBuffer<AssistantNarrationRequestElement>(boundary, true)
@@ -1363,6 +1367,7 @@ namespace Game.UI.Shell.Ecs
                 cachedAssistantPanelMessageVersion == messageVersion &&
                 cachedAssistantPanelNarrationCount == narrationCount &&
                 cachedAssistantPanelNarrationVersion == narrationVersion &&
+                cachedAssistantPanelSubtitlesEnabled == subtitlesEnabled &&
                 cachedAssistantPanelRecommendationCount == recommendations.Length &&
                 cachedAssistantPanelControlState == assistantState.ControlState)
             {
@@ -1386,6 +1391,7 @@ namespace Game.UI.Shell.Ecs
                 BuildAssistantGoalsText(goals),
                 alertsText,
                 narrationSubtitleText,
+                subtitlesEnabled,
                 alertsText != "No priority alerts",
                 topRecommendation.RecommendationId != 0,
                 topRecommendation.RecommendationId != 0 ? topRecommendation.Title.ToString() : "No recommendation",
@@ -1411,6 +1417,7 @@ namespace Game.UI.Shell.Ecs
             cachedAssistantPanelMessageVersion = messageVersion;
             cachedAssistantPanelNarrationCount = narrationCount;
             cachedAssistantPanelNarrationVersion = narrationVersion;
+            cachedAssistantPanelSubtitlesEnabled = subtitlesEnabled;
             cachedAssistantPanelRecommendationCount = recommendations.Length;
             cachedAssistantPanelControlState = assistantState.ControlState;
             cachedAssistantPanel = assistantPanel;

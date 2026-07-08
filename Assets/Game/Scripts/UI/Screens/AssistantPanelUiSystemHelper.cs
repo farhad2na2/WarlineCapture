@@ -82,7 +82,7 @@ namespace Game.UI.Runtime
                 _goalsBodyText.text = string.IsNullOrWhiteSpace(model.GoalsText) ? "No active objectives" : model.GoalsText;
             if (_alertsBodyText != null)
                 _alertsBodyText.text = string.IsNullOrWhiteSpace(model.AlertsText) ? "No priority alerts" : model.AlertsText;
-            _narrationPresentationSystem.ApplySubtitle(model.NarrationSubtitleText);
+            _narrationPresentationSystem.ApplySubtitle(model.NarrationSubtitleText, model.NarrationSubtitlesVisible);
             if (_recommendationBodyText != null)
             {
                 _recommendationBodyText.text = model.HasRecommendation

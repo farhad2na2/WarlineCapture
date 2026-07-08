@@ -13,7 +13,7 @@ namespace Game.UI.Runtime
         {
             _subtitleText = subtitleText;
             _lastSubtitleText = null;
-            ApplySubtitle(null);
+            ApplySubtitle(null, true);
         }
 
         public void Unbind()
@@ -22,9 +22,12 @@ namespace Game.UI.Runtime
             _lastSubtitleText = null;
         }
 
-        public void ApplySubtitle(string subtitleText)
+        public void ApplySubtitle(string subtitleText, bool visible)
         {
             string resolvedText = string.IsNullOrWhiteSpace(subtitleText) ? FallbackSubtitleText : subtitleText;
+            if (_subtitleText != null && _subtitleText.gameObject.activeSelf != visible)
+                _subtitleText.gameObject.SetActive(visible);
+
             if (_lastSubtitleText == resolvedText)
                 return;
 

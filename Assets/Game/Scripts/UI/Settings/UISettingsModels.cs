@@ -104,6 +104,7 @@ namespace Game.UI.Runtime
         public UIAssistanceLevel AssistanceLevel;
         public UIAssistantNarrationMode NarrationMode;
         public bool AllowTakeover;
+        public bool SubtitlesEnabled;
     }
 
     [Serializable]

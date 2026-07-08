@@ -1,12 +1,12 @@
 # ARIA Assistant ECS Implementation Tracker
 
 Date: 2026-07-08
-Status: Phase 7 assistant settings ECS persistence in validation
+Status: Phase 7 assistant settings accessibility controls in progress
 Source design: `Design/ARIA_Assistant_ECS_Design.md`
 
 ## Progress
 
-Overall progress: 85% complete, 58 of 68 checklist items complete.
+Overall progress: 87% complete, 59 of 68 checklist items complete.
 
 | Phase | Scope | Items | Complete | Status |
 |---|---|---:|---:|---|
@@ -17,7 +17,7 @@ Overall progress: 85% complete, 58 of 68 checklist items complete.
 | 4 | Show Me and Do It command intents | 8 | 8 | Complete |
 | 5 | Give Control ownership | 8 | 8 | Complete |
 | 6 | Message, narration, and audio | 8 | 8 | Complete |
-| 7 | Settings, save, and accessibility | 6 | 4 | In progress |
+| 7 | Settings, save, and accessibility | 6 | 5 | In progress |
 | 8 | Validation, performance, and rollout | 8 | 0 | Not started |
 
 Progress update rule: update the complete count and overall percentage after every stable slice. Do not mark a phase complete until code, docs, and validation notes are updated.
@@ -198,7 +198,7 @@ Phase 6 notes:
 - [x] Add narration mode setting.
 - [x] Add assistant takeover permission setting.
 - [x] Persist assistant settings through `AssistantSettingsPersistenceSystemHelper`.
-- [ ] Add text fallback and subtitle visibility rules.
+- [x] Add text fallback and subtitle visibility rules.
 - [ ] Add UI affordance for turning off narration and takeover.
 
 Exit criteria: settings survive session reload and never block critical text feedback.
@@ -207,7 +207,8 @@ Phase 7 notes:
 
 - Extended `AssistantSettingsModel` with persisted narration mode and bounded takeover permission fields beside the existing assistance/guidance level. Defaults match the current ECS assistant defaults: full guidance, important narration, and takeover allowed.
 - Added `AssistantSettingsPersistenceSystemHelper` plus a narrow initialization `AssistantSettingsPersistenceSystem` bridge. The helper projects persisted settings into `AssistantSettingsComponent`, synchronizes assistant guidance/narration state, and blocks takeover command enqueue when takeover is disabled.
-- Subtitle visibility rules and visible in-popup affordances remain open Phase 7 work.
+- Added persisted assistant subtitle visibility to `AssistantSettingsModel` / `SettingsService`, projected it into `AssistantSettingsComponent`, folded it into the assistant panel read-model cache, and made `AssistantNarrationPresentationSystemHelper` hide the narration subtitle text object while leaving priority alert text visible.
+- Visible in-popup affordances remain open Phase 7 work.
 
 ## Phase 8: Validation, Performance, And Rollout
 
@@ -259,6 +260,7 @@ Exit criteria: feature is playable, validated, documented, and does not regress 
 | 2026-07-08 | Phase 6 narration presentation silent fallback | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; pre-rebase `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-narration-presentation-ui-unity.log --timeout 420 -- -quit -executeMethod MatchHudAssistantUiSystemHelperTests.RunFocusedValidation`; post-rebase compiler fix and reruns `/private/tmp/aria-assistant-narration-presentation-ui-postrebase-fix-unity.log` and `/private/tmp/aria-assistant-narration-presentation-ui-final-rebase-unity.log` | Passed | Focused Unity validation reported `[MatchHudAssistantUiValidation] result=Passed tests=2`. Validates `AssistantNarrationPresentationSystemHelper` as the managed silent-fallback boundary for narration subtitle presentation without adding a new update loop; post-rebase validation also fixed a remote `UiResourceExchangeReadModelSystem` fixed-string compile blocker. |
 | 2026-07-08 | Phase 7 assistant settings model fields | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-settings-model-unity.log --timeout 420 -- -quit -executeMethod SettingsPopupValidationTests.RunFocusedValidation` | Passed | Focused Unity validation reported `[SettingsPopupValidation] result=Passed tests=8`. Validates persisted assistant guidance, narration mode, and takeover permission defaults/round-trips while keeping shared settings popup prefab validation green. |
 | 2026-07-08 | Phase 7 assistant settings ECS persistence bridge | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-settings-persistence-unity.log --timeout 420 -- -quit -executeMethod AssistantSettingsPersistenceSystemTests.RunFocusedValidation`; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-settings-gateway-unity.log --timeout 420 -- -quit -executeMethod AssistantCommandIntentGatewayTests.RunFocusedValidation` | Passed | Focused Unity validations reported `[AssistantSettingsPersistenceValidation] result=Passed tests=3` and `[AssistantCommandIntentGatewayValidation] result=Passed tests=6`. Validates ECS projection, runtime settings bridge, dependent state sync, and disabled-takeover command blocking. |
+| 2026-07-08 | Phase 7 subtitle visibility setting and panel fallback | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-subtitle-persistence-unity.log --timeout 420 -- -quit -executeMethod AssistantSettingsPersistenceSystemTests.RunFocusedValidation`; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-subtitle-visibility-ui-unity.log --timeout 420 -- -quit -executeMethod MatchHudAssistantUiSystemHelperTests.RunFocusedValidation`; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-subtitle-settings-unity.log --timeout 420 -- -quit -executeMethod SettingsPopupValidationTests.RunFocusedValidation`; post-rebase reruns `/private/tmp/aria-assistant-subtitle-visibility-ui-postrebase-unity.log` and `/private/tmp/aria-assistant-subtitle-settings-postrebase-unity.log`; `dotnet build Game.UI.Contracts.csproj --no-restore`; `dotnet build Game.UI.Shell.Ecs.csproj --no-restore`; `dotnet build Assembly-CSharp.csproj --no-restore` | Passed | Focused Unity validations reported `[AssistantSettingsPersistenceValidation] result=Passed tests=3`, `[MatchHudAssistantUiValidation] result=Passed tests=2`, and `[SettingsPopupValidation] result=Passed tests=8`; post-rebase reruns again reported `[MatchHudAssistantUiValidation] result=Passed tests=2` and `[SettingsPopupValidation] result=Passed tests=8`. C# project builds passed with warnings only. Validates persisted subtitle settings, ECS projection, hidden narration subtitle row, visible critical alert fallback text, and shared settings popup regression coverage. |
 
 ## Open Decisions
 

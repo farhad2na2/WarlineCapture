@@ -58,7 +58,7 @@ namespace Game.UI.Shell.Ecs
                 GuidanceLevel = ToGuidanceLevel(model.Assistant.AssistanceLevel),
                 NarrationMode = ToNarrationMode(model.Assistant.NarrationMode),
                 AllowTakeover = model.Assistant.AllowTakeover ? (byte)1 : (byte)0,
-                SubtitlesEnabled = 1,
+                SubtitlesEnabled = model.Assistant.SubtitlesEnabled ? (byte)1 : (byte)0,
                 LargeTextEnabled = model.Accessibility.LargeText ? (byte)1 : (byte)0,
                 HighContrastEnabled = model.Accessibility.HighContrastUi ? (byte)1 : (byte)0
             };

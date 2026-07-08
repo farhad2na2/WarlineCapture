@@ -116,6 +116,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             "HIGH: Hostile patrol near base",
             true,
             true,
+            true,
             "Review objective",
             "Focus the active objective before choosing the next order.",
             "HIGH",
@@ -193,6 +194,29 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.AreEqual(UiAssistantCommandIntentKind.StopAssistantControl, assistantGateway.LastAssistantIntentKind);
         Assert.IsFalse(assistantGateway.LastAssistantIntentFromTakeover);
 
+        assistantGateway.AssistantPanel = new UiAssistantPanelModel(
+            43,
+            "- Neutralize hostile patrol\n[x] Protect civilians",
+            "HIGH: Fuel reserves empty",
+            "HIGH: Hidden narration",
+            false,
+            true,
+            true,
+            "Review objective",
+            "Focus the active objective before choosing the next order.",
+            "HIGH",
+            "SHOW ME",
+            true,
+            true,
+            true,
+            false,
+            "ARIA CONTROL",
+            "ARIA is executing a bounded action. STOP returns control.");
+        ui.Update();
+
+        Assert.IsFalse(narration.gameObject.activeSelf, "Assistant subtitles should hide when the setting is disabled.");
+        Assert.AreEqual("HIGH: Fuel reserves empty", alerts.text, "Critical text alerts must remain visible when narration subtitles are hidden.");
+
         ui.Dispose();
         UnityEngine.Object.DestroyImmediate(overlay.gameObject);
     }
@@ -235,17 +259,17 @@ public sealed class MatchHudAssistantUiSystemHelperTests
 
     private sealed class FakeAssistantPanelGateway : IUiShellRuntimeGateway
     {
-        private readonly UiAssistantPanelModel _assistantPanel;
         private readonly UiAssistantHighlightModel _assistantHighlight;
         public int AssistantIntentRequestCount { get; private set; }
         public UiAssistantCommandIntentKind LastAssistantIntentKind { get; private set; }
         public bool LastAssistantIntentFromTakeover { get; private set; }
+        public UiAssistantPanelModel AssistantPanel { get; set; }
 
         public FakeAssistantPanelGateway(
             UiAssistantPanelModel assistantPanel,
             UiAssistantHighlightModel assistantHighlight)
         {
-            _assistantPanel = assistantPanel;
+            AssistantPanel = assistantPanel;
             _assistantHighlight = assistantHighlight;
         }
 
@@ -270,7 +294,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         public bool TryReadMatchHudCommandState(out UiMatchHudCommandStateModel commandState) { commandState = default; return false; }
         public bool TryReadMatchHudHeader(out UiMatchHudHeaderModel header) { header = UiMatchHudHeaderModel.Default; return false; }
         public bool TryReadMatchHudStatusSurfaces(out UiMatchHudStatusSurfacesModel statusSurfaces) { statusSurfaces = UiMatchHudStatusSurfacesModel.Default; return false; }
-        public bool TryReadMatchHudAssistantPanel(out UiAssistantPanelModel assistantPanel) { assistantPanel = _assistantPanel; return true; }
+        public bool TryReadMatchHudAssistantPanel(out UiAssistantPanelModel assistantPanel) { assistantPanel = AssistantPanel; return true; }
         public bool TryReadMatchHudAssistantHighlight(out UiAssistantHighlightModel assistantHighlight) { assistantHighlight = _assistantHighlight; return _assistantHighlight.Active; }
         public bool TryReadMatchHudMinimap(out UiMatchHudMinimapModel minimap) { minimap = UiMatchHudMinimapModel.Default; return false; }
         public bool TryReadMatchHudPassengerDrawer(out UiMatchHudPassengerDrawerModel passengerDrawer) { passengerDrawer = UiMatchHudPassengerDrawerModel.Hidden; return false; }

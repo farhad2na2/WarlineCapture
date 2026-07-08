@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Game.Configs;
 using Game.Tactical.Contracts;
 using Game.UI.Contracts;
 
@@ -167,7 +168,7 @@ namespace Game.UI.Runtime
 
             BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
                 TacticalCommandReasonCode.BuildUnavailable,
-                "Build drawer is not ready."));
+                GameText.Get("build.feedback.drawer_not_ready", "Build drawer is not ready.")));
         }
 
         private void OnZoomInButtonClicked()

@@ -264,7 +264,9 @@ namespace Game.Runtime
 
                 selectionHudFeedbackSystem.ApplyCommandResult(
                     GetHudFeedbackContext(),
-                    TacticalCommandResult.Rejected(TacticalCommandReasonCode.CommandUnavailable, "Board command unavailable."));
+                    TacticalCommandResult.Rejected(
+                        TacticalCommandReasonCode.CommandUnavailable,
+                        GameText.Get("tactical.command.board.unavailable", "Board command unavailable.")));
             }
 
             void RequestToggleTacticalFollowCameraModeFromPanel()
@@ -274,7 +276,9 @@ namespace Game.Runtime
 
                 selectionHudFeedbackSystem.ApplyCommandResult(
                     GetHudFeedbackContext(),
-                    TacticalCommandResult.Rejected(TacticalCommandReasonCode.CameraJumpUnavailable, "Camera follow unavailable."));
+                    TacticalCommandResult.Rejected(
+                        TacticalCommandReasonCode.CameraJumpUnavailable,
+                        GameText.Get("tactical.feedback.camera_follow_unavailable", "Camera follow unavailable.")));
             }
 
             void BindMatchHudSquadTray(IMatchHudSquadTrayView view)
@@ -605,11 +609,13 @@ namespace Game.Runtime
                     (TacticalFollowCameraFeedbackCode)readModel.FeedbackCode switch
                     {
                         TacticalFollowCameraFeedbackCode.EnteredFollowMode =>
-                            TacticalCommandResult.Success("Camera follow active."),
+                            TacticalCommandResult.Success(GameText.Get("tactical.feedback.camera_follow_active", "Camera follow active.")),
                         TacticalFollowCameraFeedbackCode.ExitedFollowMode =>
-                            TacticalCommandResult.Success("RTS camera restored."),
+                            TacticalCommandResult.Success(GameText.Get("tactical.feedback.rts_camera_restored", "RTS camera restored.")),
                         TacticalFollowCameraFeedbackCode.TargetLost =>
-                            TacticalCommandResult.Rejected(TacticalCommandReasonCode.CameraJumpUnavailable, "Follow target lost."),
+                            TacticalCommandResult.Rejected(
+                                TacticalCommandReasonCode.CameraJumpUnavailable,
+                                GameText.Get("tactical.feedback.follow_target_lost", "Follow target lost.")),
                         _ => TacticalCommandResult.Success()
                     };
 

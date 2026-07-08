@@ -4,6 +4,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using Game.Configs;
 using Game.Tactical.Contracts;
 using Game.Components;
 
@@ -55,7 +56,7 @@ namespace Game.Runtime
             {
                 string displayMessage = !string.IsNullOrWhiteSpace(message)
                     ? message
-                    : TacticalCommandFeedbackText.ToDisplayText(reasonCode);
+                    : ResolveReasonText(reasonCode);
                 return new Result(false, reasonCode, default, default, 0, new FixedString64Bytes(displayMessage ?? string.Empty));
             }
 
@@ -89,7 +90,7 @@ namespace Game.Runtime
             {
                 string displayMessage = !string.IsNullOrWhiteSpace(message)
                     ? message
-                    : TacticalCommandFeedbackText.ToDisplayText(reasonCode);
+                    : ResolveReasonText(reasonCode);
                 return new DisembarkResult(false, reasonCode, showFeedback, new FixedString64Bytes(displayMessage ?? string.Empty));
             }
         }
@@ -426,7 +427,7 @@ namespace Game.Runtime
                     request,
                     false,
                     TacticalCommandReasonCode.CommandUnavailable,
-                    "Select a transport vehicle or aircraft first.");
+                    GameText.Get("tactical.command.reason.invalid_transport", "Select a transport vehicle or aircraft first."));
             }
 
             if (!TryIssueBoardNearestSoldierOrders(
@@ -2535,8 +2536,8 @@ namespace Game.Runtime
             {
                 reasonCode = TacticalCommandReasonCode.CommandUnavailable;
                 message = passengerKind == UnitTransportPassengerKind.Vehicle
-                    ? "Emergency drop visual missing."
-                    : "Parachute visual missing.";
+                    ? GameText.Get("tactical.airdrop.emergency_drop_visual_missing", "Emergency drop visual missing.")
+                    : GameText.Get("tactical.airdrop.parachute_visual_missing", "Parachute visual missing.");
                 return false;
             }
 
@@ -2557,7 +2558,7 @@ namespace Game.Runtime
             }
 
             reasonCode = TacticalCommandReasonCode.TargetBlocked;
-            message = "No clear airdrop landing zone.";
+            message = GameText.Get("tactical.airdrop.no_clear_landing_zone", "No clear airdrop landing zone.");
             return false;
         }
 
@@ -2587,8 +2588,15 @@ namespace Game.Runtime
         private static string ResolveAirdropRejectedMessage(TacticalCommandReasonCode reasonCode)
         {
             return reasonCode == TacticalCommandReasonCode.TargetBlocked
-                ? "Cargo drop blocked."
-                : TacticalCommandFeedbackText.ToDisplayText(reasonCode);
+                ? GameText.Get("tactical.airdrop.cargo_drop_blocked", "Cargo drop blocked.")
+                : ResolveReasonText(reasonCode);
+        }
+
+        private static string ResolveReasonText(TacticalCommandReasonCode reasonCode)
+        {
+            return GameText.Get(
+                TacticalCommandFeedbackText.ToDisplayTextKey(reasonCode),
+                TacticalCommandFeedbackText.ToDisplayText(reasonCode));
         }
 
         private static void SetPlaneAirdropRequest(

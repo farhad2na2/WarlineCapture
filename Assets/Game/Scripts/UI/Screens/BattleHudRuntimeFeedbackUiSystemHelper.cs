@@ -1,4 +1,5 @@
 using UnityEngine;
+using Game.Configs;
 using Game.Tactical.Contracts;
 using Game.UI.Contracts;
 
@@ -54,14 +55,14 @@ namespace Game.UI.Runtime
                 view.ResolveCommandIconSprite(TacticalCommandMode.Board)));
 
             MatchHudCommandFeedbackModel commandFeedback = direction == UiBoardCommandModeDirection.TransportToPassenger
-                ? MatchHudCommandFeedbackModel.Show("Select units to board or use BOARD ALL.", CommandFeedbackSeverity.Ready)
-                : MatchHudCommandFeedbackModel.Show("Select a transport.", CommandFeedbackSeverity.Ready);
+                ? MatchHudCommandFeedbackModel.Show(GameText.Get("tactical.command.board.prompt_transport_to_passenger", "Select units to board or use BOARD ALL."), CommandFeedbackSeverity.Ready)
+                : MatchHudCommandFeedbackModel.Show(GameText.Get("tactical.command.board.prompt_passenger_to_transport", "Select a transport."), CommandFeedbackSeverity.Ready);
             MatchHudCommandFeedbackActionsModel actions = direction == UiBoardCommandModeDirection.TransportToPassenger
                 ? MatchHudCommandFeedbackActionsModel.BoardPassengerSelection(boardAllInteractable)
                 : MatchHudCommandFeedbackActionsModel.CancelOnly;
             view.ApplyPersistentCommandFeedback(commandFeedback, actions);
 
-            view.ShowCommandMode(TacticalCommandFeedbackText.ToDisplayText(TacticalCommandMode.Board));
+            view.ShowCommandMode(ResolveCommandModeText(TacticalCommandMode.Board));
         }
 
         public static void ApplyStickyCommandMode(IBattleHudRuntimeFeedbackView view, TacticalCommandMode mode)
@@ -134,7 +135,7 @@ namespace Game.UI.Runtime
 
             string reason = !string.IsNullOrWhiteSpace(result.Message)
                 ? result.Message
-                : TacticalCommandFeedbackText.ToDisplayText(result.ReasonCode);
+                : ResolveCommandReasonText(result.ReasonCode);
             view.ShowInvalidCommand(reason);
             view.ApplyTransientCommandFeedback(
                 MatchHudCommandFeedbackModel.ShowTransient(reason, CommandFeedbackSeverity.Error, ErrorFeedbackDurationSeconds),
@@ -174,7 +175,7 @@ namespace Game.UI.Runtime
             else
                 view.ApplyPersistentCommandFeedback(commandFeedback, MatchHudCommandFeedbackActionsModel.Hidden);
 
-            string displayText = TacticalCommandFeedbackText.ToDisplayText(mode);
+            string displayText = ResolveCommandModeText(mode);
             if (string.IsNullOrEmpty(displayText))
                 view.HideCommandMode();
             else
@@ -193,7 +194,7 @@ namespace Game.UI.Runtime
 
         private static MatchHudCommandFeedbackModel BuildCommandModeFeedback(TacticalCommandMode mode)
         {
-            string instruction = TacticalCommandFeedbackText.ToInstructionText(mode);
+            string instruction = ResolveCommandInstructionText(mode);
             return MatchHudCommandFeedbackModel.Show(
                 instruction,
                 TacticalCommandFeedbackText.ToInstructionSeverity(mode));
@@ -205,7 +206,7 @@ namespace Game.UI.Runtime
             {
                 string reason = !string.IsNullOrWhiteSpace(result.Message)
                     ? result.Message
-                    : TacticalCommandFeedbackText.ToDisplayText(result.ReasonCode);
+                    : ResolveCommandReasonText(result.ReasonCode);
                 return MatchHudCommandFeedbackModel.ShowTransient(reason, CommandFeedbackSeverity.Error, ErrorFeedbackDurationSeconds);
             }
 
@@ -220,6 +221,27 @@ namespace Game.UI.Runtime
                 result.Message,
                 severity,
                 ResolveResultDuration(severity));
+        }
+
+        private static string ResolveCommandModeText(TacticalCommandMode mode)
+        {
+            return GameText.Get(
+                TacticalCommandFeedbackText.ToDisplayTextKey(mode),
+                TacticalCommandFeedbackText.ToDisplayText(mode));
+        }
+
+        private static string ResolveCommandReasonText(TacticalCommandReasonCode reasonCode)
+        {
+            return GameText.Get(
+                TacticalCommandFeedbackText.ToDisplayTextKey(reasonCode),
+                TacticalCommandFeedbackText.ToDisplayText(reasonCode));
+        }
+
+        private static string ResolveCommandInstructionText(TacticalCommandMode mode)
+        {
+            return GameText.Get(
+                TacticalCommandFeedbackText.ToInstructionTextKey(mode),
+                TacticalCommandFeedbackText.ToInstructionText(mode));
         }
 
         private static float ResolveResultDuration(CommandFeedbackSeverity severity)

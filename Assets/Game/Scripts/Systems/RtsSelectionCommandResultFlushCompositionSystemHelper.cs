@@ -5,6 +5,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using Game.Configs;
 using Game.Tactical.Contracts;
 using Game.Components;
 
@@ -293,7 +294,8 @@ namespace Game.Runtime
 
             context.BuildingPlacementInteractionCompositionSystemHelper.DeleteSelectedBuilding(context.BuildingPlacementInteractionContext);
             context.ClearHudSelection?.Invoke();
-            context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Success("Destroyed selected building."));
+            context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Success(
+                GameText.Get("tactical.feedback.destroyed_selected_building", "Destroyed selected building.")));
             return true;
         }
 
@@ -501,7 +503,7 @@ namespace Game.Runtime
             {
                 context.ClearHudCommandMode?.Invoke();
                 context.ApplyHudCommandResult?.Invoke(
-                    TacticalCommandResult.Success("Air defense auto-engages aircraft and incoming missiles."));
+                    TacticalCommandResult.Success(GameText.Get("tactical.feedback.air_defense_auto_engage", "Air defense auto-engages aircraft and incoming missiles.")));
                 context.SetHudWorldMarkersVisible?.Invoke(false);
                 context.LogSelectionClickDiagnostic?.Invoke(
                     $"attackModeEntered result=False reason=AirDefenseAutoEngage frame={currentFrame}");
@@ -682,8 +684,8 @@ namespace Game.Runtime
             if (!accepted)
             {
                 string message = rejectionReason == TacticalCommandReasonCode.CommandUnavailable
-                    ? "Selected unit cannot board."
-                    : "Select a unit first.";
+                    ? GameText.Get("tactical.command.board.selected_unit_cannot_board", "Selected unit cannot board.")
+                    : GameText.Get("tactical.command.board.select_unit_first", "Select a unit first.");
                 context.ClearHudCommandMode?.Invoke();
                 context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(rejectionReason, message));
                 context.SetHudWorldMarkersVisible?.Invoke(false);
@@ -1151,8 +1153,8 @@ namespace Game.Runtime
                     context.ApplyHudCommandResult?.Invoke(ToAcceptedTransportCommandResult(
                         result,
                         result.Kind == RtsSelectionCommandIntentKind.DisembarkTransportPassenger
-                            ? "Exiting unit."
-                            : "Exiting passengers."));
+                            ? GameText.Get("tactical.feedback.exiting_unit", "Exiting unit.")
+                            : GameText.Get("tactical.feedback.exiting_passengers", "Exiting passengers.")));
                     continue;
                 }
 
@@ -1187,8 +1189,8 @@ namespace Game.Runtime
                     result,
                     result.Kind == RtsSelectionCommandIntentKind.BoardSelectedTransport ||
                     result.Kind == RtsSelectionCommandIntentKind.BoardSelectedTransportPassenger
-                        ? "Loading transport."
-                        : "Boarding transport."));
+                        ? GameText.Get("tactical.feedback.loading_transport", "Loading transport.")
+                        : GameText.Get("tactical.feedback.boarding_transport", "Boarding transport.")));
             }
 
             return accepted;
@@ -1288,12 +1290,16 @@ namespace Game.Runtime
 
             return kind switch
             {
-                RtsSelectionCommandIntentKind.HoldPosition => TacticalCommandResult.Success("Holding current position."),
-                RtsSelectionCommandIntentKind.Stop => TacticalCommandResult.Success("Stopped selected units."),
+                RtsSelectionCommandIntentKind.HoldPosition => TacticalCommandResult.Success(GameText.Get("tactical.feedback.holding_current_position", "Holding current position.")),
+                RtsSelectionCommandIntentKind.Stop => TacticalCommandResult.Success(GameText.Get("tactical.feedback.stopped_selected_units", "Stopped selected units.")),
                 RtsSelectionCommandIntentKind.ReturnToBase => TacticalCommandResult.Success(
-                    issuedCount == 1 ? "Unit returning to base." : $"{issuedCount} units returning to base."),
+                    issuedCount == 1
+                        ? GameText.Get("tactical.feedback.unit_returning_to_base", "Unit returning to base.")
+                        : GameText.Format("tactical.feedback.units_returning_to_base", "{0} units returning to base.", issuedCount)),
                 RtsSelectionCommandIntentKind.DestroyFocusedUnit => TacticalCommandResult.Success(
-                    issuedCount == 1 ? "Destroyed selected unit." : $"Destroyed {issuedCount} selected units."),
+                    issuedCount == 1
+                        ? GameText.Get("tactical.feedback.destroyed_selected_unit", "Destroyed selected unit.")
+                        : GameText.Format("tactical.feedback.destroyed_selected_units", "Destroyed {0} selected units.", issuedCount)),
                 _ => TacticalCommandResult.Success()
             };
         }
@@ -1311,12 +1317,12 @@ namespace Game.Runtime
                 return TacticalCommandResult.Rejected((TacticalCommandReasonCode)result.ReasonCode);
 
             if (result.DeferredToSource != 0)
-                return TacticalCommandResult.Success("SCAN ORDERED: SCANNER EN ROUTE");
+                return TacticalCommandResult.Success(GameText.Get("tactical.feedback.scan_ordered", "SCAN ORDERED: SCANNER EN ROUTE"));
 
             string contacts = result.RevealedCount == 1
-                ? "1 CONTACT"
-                : $"{result.RevealedCount} CONTACTS";
-            return TacticalCommandResult.Success($"SCAN COMPLETE: {contacts}");
+                ? GameText.Get("tactical.feedback.scan_one_contact", "1 CONTACT")
+                : GameText.Format("tactical.feedback.scan_contacts", "{0} CONTACTS", result.RevealedCount);
+            return TacticalCommandResult.Success(GameText.Format("tactical.feedback.scan_complete", "SCAN COMPLETE: {0}", contacts));
         }
     }
 }

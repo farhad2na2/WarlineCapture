@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using Game.Configs;
 using Game.Tactical.Contracts;
 using Game.UI.Contracts;
 
@@ -361,7 +362,7 @@ namespace Game.UI.Runtime
             {
                 BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(ResolveMatchHudRuntimeFeedback(), TacticalCommandResult.Rejected(
                     TacticalCommandReasonCode.BuildUnavailable,
-                    "Build drawer is not ready."));
+                    GameText.Get("build.feedback.drawer_not_ready", "Build drawer is not ready.")));
                 return;
             }
 
@@ -494,7 +495,7 @@ namespace Game.UI.Runtime
             {
                 BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(ResolveMatchHudRuntimeFeedback(), TacticalCommandResult.Rejected(
                     TacticalCommandReasonCode.CommandUnavailable,
-                    "Tactical map is not ready."));
+                    GameText.Get("match.feedback.tactical_map_not_ready", "Tactical map is not ready.")));
                 return;
             }
 

@@ -5,6 +5,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using Game.Configs;
 using Game.Tactical.Contracts;
 using Game.Components;
 using Game.Runtime.Pathfinding;
@@ -483,7 +484,9 @@ namespace Game.Runtime
             if (queued <= 0)
             {
                 context.ApplyHudCommandResult?.Invoke(
-                    TacticalCommandResult.Rejected(TacticalCommandReasonCode.CommandUnavailable, "Tap units to board."));
+                    TacticalCommandResult.Rejected(
+                        TacticalCommandReasonCode.CommandUnavailable,
+                        GameText.Get("tactical.command.board.tap_units_to_board", "Tap units to board.")));
                 return false;
             }
 

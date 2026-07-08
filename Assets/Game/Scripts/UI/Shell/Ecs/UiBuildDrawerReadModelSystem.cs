@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using Game.Catalog.Contracts;
+using Game.Configs;
 using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
@@ -204,8 +205,8 @@ namespace Game.UI.Shell.Ecs
             {
                 bool canConfirm = buildingUiCommand.CanConfirmBuildingPlacement;
                 instruction = canConfirm
-                    ? $"Place {item.DisplayName}: drag to position, then confirm."
-                    : $"Cannot place here: {FormatPlacementStatus(buildingUiCommand.PlacementStatusText)}.";
+                    ? GameText.Format("build.drawer.instruction.place_pending_confirm", "Place {0}: drag to position, then confirm.", item.DisplayName)
+                    : GameText.Format("build.drawer.instruction.cannot_place_here", "Cannot place here: {0}.", FormatPlacementStatus(buildingUiCommand.PlacementStatusText));
             }
 
             return new UiBuildDrawerDetailComponent
@@ -221,7 +222,7 @@ namespace Game.UI.Shell.Ecs
                 CreditsCostText = ToFixed32(FormatPrice(item.Price)),
                 SuppliesCostText = default,
                 InstructionText = ToFixed128(instruction),
-                ProductionTitle = new FixedString32Bytes("PRODUCTION"),
+                ProductionTitle = ToFixed32(GameText.Get("build.drawer.production.title", "PRODUCTION")),
                 ProductionCountText = ToFixed32(PendingProductions.Count.ToString(CultureInfo.InvariantCulture)),
                 BuildEnabled = canBuild ? (byte)1 : (byte)0,
                 RushEnabled = 0,
@@ -234,7 +235,7 @@ namespace Game.UI.Shell.Ecs
         {
             return new UiBuildDrawerDetailComponent
             {
-                Name = new FixedString64Bytes("NO ITEMS"),
+                Name = ToFixed64(GameText.Get("build.drawer.empty.name", "NO ITEMS")),
                 Role = ToFixed32(BuildDrawerCategoryFormatter.Format(category)),
                 Description = ToFixed128(FormatEmptyCategoryInstruction(category)),
                 FootprintText = default,
@@ -244,7 +245,7 @@ namespace Game.UI.Shell.Ecs
                 CreditsCostText = default,
                 SuppliesCostText = default,
                 InstructionText = ToFixed128(FormatEmptyCategoryInstruction(category)),
-                ProductionTitle = new FixedString32Bytes("PRODUCTION"),
+                ProductionTitle = ToFixed32(GameText.Get("build.drawer.production.title", "PRODUCTION")),
                 ProductionCountText = ToFixed32(PendingProductions.Count.ToString(CultureInfo.InvariantCulture)),
                 BuildEnabled = 0,
                 RushEnabled = 0,
@@ -313,7 +314,7 @@ namespace Game.UI.Shell.Ecs
         {
             return CatalogQuery.TryResolvePrefab(unitPrefabSource, buildingPrefabSource, entry.Prefab, out BuildDrawerCatalogItem item)
                 ? item.DisplayName
-                : entry.Prefab != null ? entry.Prefab.name : "Production";
+                : entry.Prefab != null ? entry.Prefab.name : GameText.Get("build.drawer.production.fallback_name", "Production");
         }
 
         private static Sprite ResolveQueueThumbnail(BuildingPendingProductionUiEntry entry)
@@ -366,10 +367,10 @@ namespace Game.UI.Shell.Ecs
         {
             return item.Category switch
             {
-                BuildDrawerCategory.Buildings => "Valid footprint required.",
-                BuildDrawerCategory.Aircrafts => "Requires compatible air production.",
-                BuildDrawerCategory.Vehicles => "Requires compatible vehicle production.",
-                BuildDrawerCategory.Soldiers => "Requires compatible recruitment building.",
+                BuildDrawerCategory.Buildings => GameText.Get("build.drawer.requirements.buildings", "Valid footprint required."),
+                BuildDrawerCategory.Aircrafts => GameText.Get("build.drawer.requirements.aircraft", "Requires compatible air production."),
+                BuildDrawerCategory.Vehicles => GameText.Get("build.drawer.requirements.vehicles", "Requires compatible vehicle production."),
+                BuildDrawerCategory.Soldiers => GameText.Get("build.drawer.requirements.soldiers", "Requires compatible recruitment building."),
                 _ => string.Empty
             };
         }
@@ -378,11 +379,11 @@ namespace Game.UI.Shell.Ecs
         {
             return item.Category switch
             {
-                BuildDrawerCategory.Buildings => $"PLACE: choose a location for {item.DisplayName}.",
-                BuildDrawerCategory.Vehicles => $"PRODUCE: add {item.DisplayName} to the vehicle queue.",
-                BuildDrawerCategory.Aircrafts => $"PRODUCE: add {item.DisplayName} to the aircraft queue.",
-                BuildDrawerCategory.Soldiers => $"RECRUIT: add {item.DisplayName} to the training queue.",
-                _ => $"Select {item.DisplayName}."
+                BuildDrawerCategory.Buildings => GameText.Format("build.drawer.ready.buildings", "PLACE: choose a location for {0}.", item.DisplayName),
+                BuildDrawerCategory.Vehicles => GameText.Format("build.drawer.ready.vehicles", "PRODUCE: add {0} to the vehicle queue.", item.DisplayName),
+                BuildDrawerCategory.Aircrafts => GameText.Format("build.drawer.ready.aircraft", "PRODUCE: add {0} to the aircraft queue.", item.DisplayName),
+                BuildDrawerCategory.Soldiers => GameText.Format("build.drawer.ready.soldiers", "RECRUIT: add {0} to the training queue.", item.DisplayName),
+                _ => GameText.Format("build.drawer.ready.default", "Select {0}.", item.DisplayName)
             };
         }
 
@@ -392,24 +393,24 @@ namespace Game.UI.Shell.Ecs
             string requiredBuildingDisplayName)
         {
             if (buildingUiCommand == null)
-                return "Build drawer is still connecting. Try again in a moment.";
+                return GameText.Get("build.drawer.failure.connecting", "Build drawer is still connecting. Try again in a moment.");
 
             return failure switch
             {
                 BuildingUiCommandFailure.NotEnoughMoney =>
-                    $"Need {FormatMissingCredits(item.Price)} more credits to {FormatActionVerb(item.Category).ToLowerInvariant()} {item.DisplayName}.",
+                    GameText.Format("build.drawer.failure.not_enough_money", "Need {0} more credits to {1} {2}.", FormatMissingCredits(item.Price), FormatActionVerb(item.Category).ToLowerInvariant(), item.DisplayName),
                 BuildingUiCommandFailure.MissingProducerBuilding when !string.IsNullOrWhiteSpace(requiredBuildingDisplayName) =>
-                    $"Cannot {FormatActionVerb(item.Category).ToLowerInvariant()} {item.DisplayName}: requires {requiredBuildingDisplayName}.",
+                    GameText.Format("build.drawer.failure.missing_producer_named", "Cannot {0} {1}: requires {2}.", FormatActionVerb(item.Category).ToLowerInvariant(), item.DisplayName, requiredBuildingDisplayName),
                 BuildingUiCommandFailure.MissingProducerBuilding =>
-                    $"Cannot {FormatActionVerb(item.Category).ToLowerInvariant()} {item.DisplayName}: {FormatMissingProducerFallback(item.Category)}.",
+                    GameText.Format("build.drawer.failure.missing_producer", "Cannot {0} {1}: {2}.", FormatActionVerb(item.Category).ToLowerInvariant(), item.DisplayName, FormatMissingProducerFallback(item.Category)),
                 BuildingUiCommandFailure.ProductionQueueFull when !string.IsNullOrWhiteSpace(requiredBuildingDisplayName) =>
-                    $"Cannot {FormatActionVerb(item.Category).ToLowerInvariant()} {item.DisplayName}: all {requiredBuildingDisplayName} production slots are full.",
+                    GameText.Format("build.drawer.failure.queue_full_named", "Cannot {0} {1}: all {2} production slots are full.", FormatActionVerb(item.Category).ToLowerInvariant(), item.DisplayName, requiredBuildingDisplayName),
                 BuildingUiCommandFailure.ProductionQueueFull =>
-                    $"Cannot {FormatActionVerb(item.Category).ToLowerInvariant()} {item.DisplayName}: all compatible production slots are full.",
+                    GameText.Format("build.drawer.failure.queue_full", "Cannot {0} {1}: all compatible production slots are full.", FormatActionVerb(item.Category).ToLowerInvariant(), item.DisplayName),
                 BuildingUiCommandFailure.GlobalProductionQueueFull =>
-                    $"Cannot {FormatActionVerb(item.Category).ToLowerInvariant()} {item.DisplayName}: production queue limit reached ({FormatMaxQueuedUnitProductions()} max).",
-                BuildingUiCommandFailure.InvalidSelection => "Select a build drawer item first.",
-                _ => $"Cannot {FormatActionVerb(item.Category).ToLowerInvariant()} {item.DisplayName}: request unavailable."
+                    GameText.Format("build.drawer.failure.global_queue_full", "Cannot {0} {1}: production queue limit reached ({2} max).", FormatActionVerb(item.Category).ToLowerInvariant(), item.DisplayName, FormatMaxQueuedUnitProductions()),
+                BuildingUiCommandFailure.InvalidSelection => GameText.Get("build.drawer.failure.invalid_selection", "Select a build drawer item first."),
+                _ => GameText.Format("build.drawer.failure.unavailable", "Cannot {0} {1}: request unavailable.", FormatActionVerb(item.Category).ToLowerInvariant(), item.DisplayName)
             };
         }
 
@@ -428,11 +429,11 @@ namespace Game.UI.Shell.Ecs
         {
             return category switch
             {
-                BuildDrawerCategory.Buildings => "Place",
-                BuildDrawerCategory.Soldiers => "Recruit",
-                BuildDrawerCategory.Vehicles => "Produce",
-                BuildDrawerCategory.Aircrafts => "Produce",
-                _ => "Select"
+                BuildDrawerCategory.Buildings => GameText.Get("build.drawer.verb.place", "Place"),
+                BuildDrawerCategory.Soldiers => GameText.Get("build.drawer.verb.recruit", "Recruit"),
+                BuildDrawerCategory.Vehicles => GameText.Get("build.drawer.verb.produce", "Produce"),
+                BuildDrawerCategory.Aircrafts => GameText.Get("build.drawer.verb.produce", "Produce"),
+                _ => GameText.Get("build.drawer.verb.select", "Select")
             };
         }
 
@@ -440,10 +441,10 @@ namespace Game.UI.Shell.Ecs
         {
             return category switch
             {
-                BuildDrawerCategory.Vehicles => "no compatible vehicle producer is available",
-                BuildDrawerCategory.Aircrafts => "no compatible air producer is available",
-                BuildDrawerCategory.Soldiers => "no compatible training building is available",
-                _ => "required producer is missing"
+                BuildDrawerCategory.Vehicles => GameText.Get("build.drawer.missing_producer.vehicles", "no compatible vehicle producer is available"),
+                BuildDrawerCategory.Aircrafts => GameText.Get("build.drawer.missing_producer.aircraft", "no compatible air producer is available"),
+                BuildDrawerCategory.Soldiers => GameText.Get("build.drawer.missing_producer.soldiers", "no compatible training building is available"),
+                _ => GameText.Get("build.drawer.missing_producer.default", "required producer is missing")
             };
         }
 
@@ -451,18 +452,18 @@ namespace Game.UI.Shell.Ecs
         {
             return category switch
             {
-                BuildDrawerCategory.Buildings => "No requestable buildings are configured.",
-                BuildDrawerCategory.Vehicles => "No requestable vehicles are configured.",
-                BuildDrawerCategory.Aircrafts => "No requestable aircraft are configured.",
-                BuildDrawerCategory.Soldiers => "No requestable soldiers are configured.",
-                _ => "No requestable items are configured."
+                BuildDrawerCategory.Buildings => GameText.Get("build.drawer.empty.buildings", "No requestable buildings are configured."),
+                BuildDrawerCategory.Vehicles => GameText.Get("build.drawer.empty.vehicles", "No requestable vehicles are configured."),
+                BuildDrawerCategory.Aircrafts => GameText.Get("build.drawer.empty.aircraft", "No requestable aircraft are configured."),
+                BuildDrawerCategory.Soldiers => GameText.Get("build.drawer.empty.soldiers", "No requestable soldiers are configured."),
+                _ => GameText.Get("build.drawer.empty.default", "No requestable items are configured.")
             };
         }
 
         private static string FormatPlacementStatus(string rawStatus)
         {
             if (string.IsNullOrWhiteSpace(rawStatus))
-                return "invalid placement";
+                return GameText.Get("build.drawer.placement.invalid", "invalid placement");
 
             int separator = rawStatus.IndexOf(':');
             return separator >= 0 && separator + 1 < rawStatus.Length

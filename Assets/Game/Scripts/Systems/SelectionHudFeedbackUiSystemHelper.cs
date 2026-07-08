@@ -3,6 +3,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
+using Game.Configs;
 using Game.Tactical.Contracts;
 using Game.UI.Contracts;
 using Game.Components;
@@ -166,12 +167,14 @@ namespace Game.Runtime
                 return;
             }
 
-            string unitLabel = selectedCount == 1 ? "UNIT" : "UNITS";
+            string unitLabel = selectedCount == 1
+                ? Text("selection.feedback.unit_singular", "UNIT")
+                : Text("selection.feedback.unit_plural", "UNITS");
             feedback.Add(new SelectionHudFeedbackElement
             {
                 Kind = SelectionHudFeedbackKind.SquadSelection,
-                Label = ToFixed64($"{selectedCount} {unitLabel}"),
-                Status = ToFixed64("SQUAD SELECTED"),
+                Label = ToFixed64(FormatText("selection.feedback.squad_count", "{0} {1}", selectedCount, unitLabel)),
+                Status = ToFixed64(Text("selection.feedback.squad_selected", "SQUAD SELECTED")),
                 Count = selectedCount
             });
         }
@@ -483,7 +486,7 @@ namespace Game.Runtime
             System.Func<bool> hasSelectedBuilding)
         {
             if (!TryGetDefaultEntityManager(context, out EntityManager em))
-                return "Idle";
+                return Text("selection.order.idle", "Idle");
 
             ensureEntityQueries?.Invoke(em);
             if (focusedUnitLifecycleSystem != null &&
@@ -508,9 +511,9 @@ namespace Game.Runtime
             }
 
             if (hasSelectedBuilding != null && hasSelectedBuilding())
-                return "Structure selected";
+                return Text("selection.order.structure_selected", "Structure selected");
 
-            return "Idle";
+            return Text("selection.order.idle", "Idle");
         }
 
         public static SelectedSummary BuildSelectedSummary(
@@ -542,9 +545,9 @@ namespace Game.Runtime
                     0,
                     0,
                     noSelectionBuildingCount,
-                    noSelectionBuildingCount > 0 ? "1 STRUCTURE" : "NO SELECTION",
-                    noSelectionBuildingCount > 0 ? "Building selected" : string.Empty,
-                    noSelectionBuildingCount > 0 ? "Structure selected" : "Idle",
+                    noSelectionBuildingCount > 0 ? Text("selection.title.one_structure", "1 STRUCTURE") : Text("selection.title.no_selection", "NO SELECTION"),
+                    noSelectionBuildingCount > 0 ? Text("selection.subtitle.building_selected", "Building selected") : string.Empty,
+                    noSelectionBuildingCount > 0 ? Text("selection.order.structure_selected", "Structure selected") : Text("selection.order.idle", "Idle"),
                     "-",
                     0f,
                     noSelectionBuildingCount > 0 ? SelectionSummaryPortraitKind.Buildings : SelectionSummaryPortraitKind.None);
@@ -602,7 +605,7 @@ namespace Game.Runtime
             int buildingCount = includeSelectedBuilding ? 1 : 0;
             string healthText = maxTotal > 0 ? $"{currentTotal}/{maxTotal}" : "-";
             float health01 = maxTotal > 0 ? math.saturate((float)currentTotal / maxTotal) : 0f;
-            string orderText = mixedOrders ? "Mixed orders" : ToOrderText(firstOrder);
+            string orderText = mixedOrders ? Text("selection.order.mixed_orders", "Mixed orders") : ToOrderText(firstOrder);
             SelectionSummaryPortraitKind portraitKind = ResolvePortraitKind(soldierCount, vehicleCount, aircraftCount, transportCount, buildingCount);
 
             return new SelectedSummary(
@@ -1124,21 +1127,21 @@ namespace Game.Runtime
             if (snapshot.FuelBarrelsPerDay <= 0f)
                 return null;
             if (snapshot.OilCurrent <= 0)
-                return "WAITING OIL";
+                return Text("selection.resource.waiting_oil", "WAITING OIL");
             if (snapshot.FuelCapacity > 0 && snapshot.FuelCurrent >= snapshot.FuelCapacity)
-                return "FUEL FULL";
-            return "CONVERTING";
+                return Text("selection.resource.fuel_full", "FUEL FULL");
+            return Text("selection.resource.converting", "CONVERTING");
         }
 
         private string ResolvePassengerRoleText(Context context, EntityManager em, Entity passenger)
         {
             if (!em.Exists(passenger))
-                return "UNIT";
+                return Text("selection.feedback.unit_singular", "UNIT");
 
             if (context.SelectionUiReadModelLookup.IsVehicleForVisibleSelection(em, passenger))
-                return "VEHICLE";
+                return Text("selection.feedback.vehicle_singular", "VEHICLE");
 
-            return "SOLDIER";
+            return Text("selection.feedback.soldier_singular", "SOLDIER");
         }
 
         private MatchHudSelectionPanelModel BuildSquadPanelModel(
@@ -1191,9 +1194,9 @@ namespace Game.Runtime
             portraitSprite ??= _matchHudSelectionPanelView.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.Buildings);
             return new MatchHudSelectionPanelModel(
                 true,
-                string.IsNullOrWhiteSpace(selectedBuildingLabel) ? "Selected Building" : selectedBuildingLabel,
-                "Base Structure",
-                "Structure selected",
+                string.IsNullOrWhiteSpace(selectedBuildingLabel) ? Text("selection.building.selected_building", "Selected Building") : selectedBuildingLabel,
+                Text("selection.building.base_structure", "Base Structure"),
+                Text("selection.order.structure_selected", "Structure selected"),
                 "-",
                 0f,
                 portraitSprite,
@@ -1210,21 +1213,21 @@ namespace Game.Runtime
             SelectionUiReadModelLookup selectionUiReadModelLookup)
         {
             if (em.HasComponent<UnitTransportPassenger>(entity))
-                return "In transport";
+                return Text("selection.order.in_transport", "In transport");
             if (em.HasComponent<UnitTransportBoardingTarget>(entity))
-                return "Boarding transport";
+                return Text("selection.order.boarding_transport", "Boarding transport");
 
             return selectionUiReadModelLookup.GetFocusedUnitUiStatus(em, entity) switch
             {
-                SelectionUiReadModelLookup.FocusedUnitUiStatus.ReturningToBase => "Returning to base",
-                SelectionUiReadModelLookup.FocusedUnitUiStatus.MissileLaunched => "Missile launched",
-                SelectionUiReadModelLookup.FocusedUnitUiStatus.AirspaceClear => "Airspace clear",
-                SelectionUiReadModelLookup.FocusedUnitUiStatus.TrackingAirTarget => "Tracking air target",
-                SelectionUiReadModelLookup.FocusedUnitUiStatus.InterceptingMissile => "Intercepting missile",
-                SelectionUiReadModelLookup.FocusedUnitUiStatus.AirDefenseReloading => "Reloading",
-                SelectionUiReadModelLookup.FocusedUnitUiStatus.Engaged => "Engaging target",
-                SelectionUiReadModelLookup.FocusedUnitUiStatus.Moving => "Moving",
-                _ => "Idle"
+                SelectionUiReadModelLookup.FocusedUnitUiStatus.ReturningToBase => Text("selection.order.returning_to_base", "Returning to base"),
+                SelectionUiReadModelLookup.FocusedUnitUiStatus.MissileLaunched => Text("selection.order.missile_launched", "Missile launched"),
+                SelectionUiReadModelLookup.FocusedUnitUiStatus.AirspaceClear => Text("selection.order.airspace_clear", "Airspace clear"),
+                SelectionUiReadModelLookup.FocusedUnitUiStatus.TrackingAirTarget => Text("selection.order.tracking_air_target", "Tracking air target"),
+                SelectionUiReadModelLookup.FocusedUnitUiStatus.InterceptingMissile => Text("selection.order.intercepting_missile", "Intercepting missile"),
+                SelectionUiReadModelLookup.FocusedUnitUiStatus.AirDefenseReloading => Text("selection.order.reloading", "Reloading"),
+                SelectionUiReadModelLookup.FocusedUnitUiStatus.Engaged => Text("selection.order.engaging_target", "Engaging target"),
+                SelectionUiReadModelLookup.FocusedUnitUiStatus.Moving => Text("selection.order.moving", "Moving"),
+                _ => Text("selection.order.idle", "Idle")
             };
         }
 
@@ -1237,21 +1240,29 @@ namespace Game.Runtime
             int buildingCount)
         {
             if (unitCount <= 0)
-                return buildingCount == 1 ? "1 STRUCTURE" : "NO SELECTION";
+                return buildingCount == 1 ? Text("selection.title.one_structure", "1 STRUCTURE") : Text("selection.title.no_selection", "NO SELECTION");
             if (buildingCount > 0)
-                return "MIXED SELECTION";
+                return Text("selection.title.mixed_selection", "MIXED SELECTION");
             if (soldierCount == unitCount)
-                return unitCount == 1 ? "1 SOLDIER" : $"{unitCount} SOLDIERS";
+                return unitCount == 1
+                    ? Text("selection.title.one_soldier", "1 SOLDIER")
+                    : FormatText("selection.title.soldiers", "{0} SOLDIERS", unitCount);
             if (transportCount == unitCount)
-                return unitCount == 1 ? "1 TRANSPORT" : $"{unitCount} TRANSPORTS";
+                return unitCount == 1
+                    ? Text("selection.title.one_transport", "1 TRANSPORT")
+                    : FormatText("selection.title.transports", "{0} TRANSPORTS", unitCount);
             if (aircraftCount == unitCount)
-                return unitCount == 1 ? "1 AIRCRAFT" : $"{unitCount} AIRCRAFT";
+                return unitCount == 1
+                    ? Text("selection.title.one_aircraft", "1 AIRCRAFT")
+                    : FormatText("selection.title.aircraft", "{0} AIRCRAFT", unitCount);
             if (vehicleCount == unitCount)
-                return unitCount == 1 ? "1 VEHICLE" : $"{unitCount} VEHICLES";
+                return unitCount == 1
+                    ? Text("selection.title.one_vehicle", "1 VEHICLE")
+                    : FormatText("selection.title.vehicles", "{0} VEHICLES", unitCount);
             if (aircraftCount > 0 && soldierCount + vehicleCount + transportCount > 0)
-                return "MIXED FORCE";
+                return Text("selection.title.mixed_force", "MIXED FORCE");
 
-            return "MIXED SQUAD";
+            return Text("selection.title.mixed_squad", "MIXED SQUAD");
         }
 
         private static string ResolveSubtitle(
@@ -1263,25 +1274,25 @@ namespace Game.Runtime
             int buildingCount)
         {
             if (unitCount <= 0)
-                return buildingCount > 0 ? "Building Group" : string.Empty;
+                return buildingCount > 0 ? Text("selection.subtitle.building_group", "Building Group") : string.Empty;
             if (buildingCount > 0)
-                return $"{unitCount} Units / {buildingCount} Structure";
+                return FormatText("selection.subtitle.units_structures", "{0} Units / {1} Structure", unitCount, buildingCount);
             if (soldierCount == unitCount)
-                return "Infantry Squad";
+                return Text("selection.subtitle.infantry_squad", "Infantry Squad");
             if (transportCount == unitCount)
-                return "Transport Group";
+                return Text("selection.subtitle.transport_group", "Transport Group");
             if (aircraftCount == unitCount)
-                return "Air Wing";
+                return Text("selection.subtitle.air_wing", "Air Wing");
             if (vehicleCount == unitCount)
-                return "Vehicle Squad";
+                return Text("selection.subtitle.vehicle_squad", "Vehicle Squad");
 
             int groundCount = soldierCount + vehicleCount + transportCount;
             if (aircraftCount > 0 && groundCount > 0)
-                return $"{groundCount} Ground / {aircraftCount} Air";
+                return FormatText("selection.subtitle.ground_air", "{0} Ground / {1} Air", groundCount, aircraftCount);
             if (soldierCount > 0 && vehicleCount + transportCount > 0)
-                return $"{soldierCount} Infantry / {vehicleCount + transportCount} Vehicles";
+                return FormatText("selection.subtitle.infantry_vehicles", "{0} Infantry / {1} Vehicles", soldierCount, vehicleCount + transportCount);
 
-            return $"{unitCount} Selected Units";
+            return FormatText("selection.subtitle.selected_units", "{0} Selected Units", unitCount);
         }
 
         private static SelectionSummaryPortraitKind ResolvePortraitKind(
@@ -1508,15 +1519,15 @@ namespace Game.Runtime
         {
             return status switch
             {
-                SelectionUiReadModelLookup.FocusedUnitUiStatus.ReturningToBase => "Returning to base",
-                SelectionUiReadModelLookup.FocusedUnitUiStatus.MissileLaunched => "Missile launched",
-                SelectionUiReadModelLookup.FocusedUnitUiStatus.AirspaceClear => "Airspace clear",
-                SelectionUiReadModelLookup.FocusedUnitUiStatus.TrackingAirTarget => "Tracking air target",
-                SelectionUiReadModelLookup.FocusedUnitUiStatus.InterceptingMissile => "Intercepting missile",
-                SelectionUiReadModelLookup.FocusedUnitUiStatus.AirDefenseReloading => "Reloading",
-                SelectionUiReadModelLookup.FocusedUnitUiStatus.Engaged => "Engaging target",
-                SelectionUiReadModelLookup.FocusedUnitUiStatus.Moving => "Moving",
-                _ => "Idle"
+                SelectionUiReadModelLookup.FocusedUnitUiStatus.ReturningToBase => Text("selection.order.returning_to_base", "Returning to base"),
+                SelectionUiReadModelLookup.FocusedUnitUiStatus.MissileLaunched => Text("selection.order.missile_launched", "Missile launched"),
+                SelectionUiReadModelLookup.FocusedUnitUiStatus.AirspaceClear => Text("selection.order.airspace_clear", "Airspace clear"),
+                SelectionUiReadModelLookup.FocusedUnitUiStatus.TrackingAirTarget => Text("selection.order.tracking_air_target", "Tracking air target"),
+                SelectionUiReadModelLookup.FocusedUnitUiStatus.InterceptingMissile => Text("selection.order.intercepting_missile", "Intercepting missile"),
+                SelectionUiReadModelLookup.FocusedUnitUiStatus.AirDefenseReloading => Text("selection.order.reloading", "Reloading"),
+                SelectionUiReadModelLookup.FocusedUnitUiStatus.Engaged => Text("selection.order.engaging_target", "Engaging target"),
+                SelectionUiReadModelLookup.FocusedUnitUiStatus.Moving => Text("selection.order.moving", "Moving"),
+                _ => Text("selection.order.idle", "Idle")
             };
         }
 
@@ -1794,7 +1805,7 @@ namespace Game.Runtime
         {
             if (!context.SelectionUiReadModelLookup.TryGetFocusedUnitHealth(em, entity, out int current, out int max) || max <= 0)
             {
-                healthLabel = "Health: -";
+                healthLabel = Text("selection.health.empty", "Health: -");
                 health01 = 0f;
                 return;
             }
@@ -1806,12 +1817,12 @@ namespace Game.Runtime
         {
             if (max <= 0)
             {
-                healthLabel = "Health: -";
+                healthLabel = Text("selection.health.empty", "Health: -");
                 health01 = 0f;
                 return;
             }
 
-            healthLabel = $"Health: {math.max(0, current)}/{max}";
+            healthLabel = FormatText("selection.health.value", "Health: {0}/{1}", math.max(0, current), max);
             health01 = math.saturate((float)current / max);
         }
 
@@ -1972,6 +1983,16 @@ namespace Game.Runtime
                 return result;
             result.Append(value.Length <= 61 ? value : value.Substring(0, 61));
             return result;
+        }
+
+        private static string Text(string key, string fallback)
+        {
+            return GameText.Get(key, fallback);
+        }
+
+        private static string FormatText(string key, string fallback, params object[] args)
+        {
+            return GameText.Format(key, fallback, args);
         }
 
         private IBattleHudRuntimeFeedbackSink ResolveBattleHudFeedbackSink()

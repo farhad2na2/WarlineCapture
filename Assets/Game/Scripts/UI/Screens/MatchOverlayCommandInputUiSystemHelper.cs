@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Game.Configs;
 using Game.Tactical.Contracts;
 using Game.UI.Contracts;
 
@@ -219,7 +220,7 @@ namespace Game.UI.Runtime
 
                 BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
                     TacticalCommandReasonCode.BuildUnavailable,
-                    "Build drawer is not ready."));
+                    GameText.Get("build.feedback.drawer_not_ready", "Build drawer is not ready.")));
             }
 
             private void OnMoveButtonClicked()
@@ -483,17 +484,24 @@ namespace Game.UI.Runtime
                 {
                     return capability switch
                     {
-                        CommandCapability.Hold => "Select units before holding position.",
-                        CommandCapability.Stop => "Select units before stopping orders.",
-                        CommandCapability.Scan => "Select a scanner or combat unit first.",
-                        _ => TacticalCommandFeedbackText.ToDisplayText(reason)
+                        CommandCapability.Hold => GameText.Get("tactical.command.unavailable.hold_no_selection", "Select units before holding position."),
+                        CommandCapability.Stop => GameText.Get("tactical.command.unavailable.stop_no_selection", "Select units before stopping orders."),
+                        CommandCapability.Scan => GameText.Get("tactical.command.unavailable.scan_no_selection", "Select a scanner or combat unit first."),
+                        _ => ResolveReasonText(reason)
                     };
                 }
 
                 if (capability == CommandCapability.Scan && reason == TacticalCommandReasonCode.ScanUnavailable)
-                    return "Select a scanner or combat unit first.";
+                    return GameText.Get("tactical.command.unavailable.scan_no_selection", "Select a scanner or combat unit first.");
 
-                return TacticalCommandFeedbackText.ToDisplayText(reason);
+                return ResolveReasonText(reason);
+            }
+
+            private static string ResolveReasonText(TacticalCommandReasonCode reason)
+            {
+                return GameText.Get(
+                    TacticalCommandFeedbackText.ToDisplayTextKey(reason),
+                    TacticalCommandFeedbackText.ToDisplayText(reason));
             }
 
             private static void ApplyButtonInteractable(Button button, bool interactable)

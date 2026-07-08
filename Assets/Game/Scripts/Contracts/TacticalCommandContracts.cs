@@ -184,6 +184,23 @@ namespace Game.Tactical.Contracts
 
     public static class TacticalCommandFeedbackText
     {
+        public static string ToDisplayTextKey(TacticalCommandMode mode)
+        {
+            return mode switch
+            {
+                TacticalCommandMode.Select => "tactical.command.mode.select",
+                TacticalCommandMode.Move => "tactical.command.mode.move",
+                TacticalCommandMode.Attack => "tactical.command.mode.attack",
+                TacticalCommandMode.Hold => "tactical.command.mode.hold",
+                TacticalCommandMode.Stop => "tactical.command.mode.stop",
+                TacticalCommandMode.Scan => "tactical.command.mode.scan",
+                TacticalCommandMode.Board => "tactical.command.mode.board",
+                TacticalCommandMode.Build => "tactical.command.mode.build",
+                TacticalCommandMode.Special => "tactical.command.mode.special",
+                _ => string.Empty
+            };
+        }
+
         public static string ToDisplayText(TacticalCommandMode mode)
         {
             return mode switch
@@ -197,6 +214,33 @@ namespace Game.Tactical.Contracts
                 TacticalCommandMode.Board => "BOARD ORDER",
                 TacticalCommandMode.Build => "BUILD MODE",
                 TacticalCommandMode.Special => "SPECIAL ORDER",
+                _ => string.Empty
+            };
+        }
+
+        public static string ToDisplayTextKey(TacticalCommandReasonCode reasonCode)
+        {
+            return reasonCode switch
+            {
+                TacticalCommandReasonCode.NoSelection => "tactical.command.reason.no_selection",
+                TacticalCommandReasonCode.TargetOutOfBounds => "tactical.command.reason.target_out_of_bounds",
+                TacticalCommandReasonCode.TargetBlocked => "tactical.command.reason.target_blocked",
+                TacticalCommandReasonCode.TargetUnreachable => "tactical.command.reason.target_unreachable",
+                TacticalCommandReasonCode.TargetNotEnemy => "tactical.command.reason.target_not_enemy",
+                TacticalCommandReasonCode.TargetNotAttackable => "tactical.command.reason.target_not_attackable",
+                TacticalCommandReasonCode.CommandUnavailable => "tactical.command.reason.command_unavailable",
+                TacticalCommandReasonCode.BuildUnavailable => "tactical.command.reason.build_unavailable",
+                TacticalCommandReasonCode.CameraJumpUnavailable => "tactical.command.reason.camera_jump_unavailable",
+                TacticalCommandReasonCode.ScanUnavailable => "tactical.command.reason.scan_unavailable",
+                TacticalCommandReasonCode.ScanCooldown => "tactical.command.reason.scan_cooldown",
+                TacticalCommandReasonCode.InsufficientResources => "tactical.command.reason.insufficient_resources",
+                TacticalCommandReasonCode.InsufficientFuel => "tactical.command.reason.insufficient_fuel",
+                TacticalCommandReasonCode.InvalidTransport => "tactical.command.reason.invalid_transport",
+                TacticalCommandReasonCode.InvalidPassenger => "tactical.command.reason.invalid_passenger",
+                TacticalCommandReasonCode.TransportFull => "tactical.command.reason.transport_full",
+                TacticalCommandReasonCode.NoEligiblePassengers => "tactical.command.reason.no_eligible_passengers",
+                TacticalCommandReasonCode.NoDisembarkCell => "tactical.command.reason.no_disembark_cell",
+                TacticalCommandReasonCode.TransportPassengerMissing => "tactical.command.reason.transport_passenger_missing",
                 _ => string.Empty
             };
         }
@@ -224,6 +268,23 @@ namespace Game.Tactical.Contracts
                 TacticalCommandReasonCode.NoEligiblePassengers => "No nearby units can board this transport.",
                 TacticalCommandReasonCode.NoDisembarkCell => "No clear exit point for passengers.",
                 TacticalCommandReasonCode.TransportPassengerMissing => "Passenger is not inside this transport.",
+                _ => string.Empty
+            };
+        }
+
+        public static string ToInstructionTextKey(TacticalCommandMode mode)
+        {
+            return mode switch
+            {
+                TacticalCommandMode.Select => "tactical.command.instruction.select",
+                TacticalCommandMode.Move => "tactical.command.instruction.move",
+                TacticalCommandMode.Attack => "tactical.command.instruction.attack",
+                TacticalCommandMode.Hold => "tactical.command.instruction.hold",
+                TacticalCommandMode.Stop => "tactical.command.instruction.stop",
+                TacticalCommandMode.Scan => "tactical.command.instruction.scan",
+                TacticalCommandMode.Board => "tactical.command.instruction.board",
+                TacticalCommandMode.Build => "tactical.command.instruction.build",
+                TacticalCommandMode.Special => "tactical.command.instruction.special",
                 _ => string.Empty
             };
         }

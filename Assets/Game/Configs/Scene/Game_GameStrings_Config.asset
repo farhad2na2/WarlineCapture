@@ -27,3 +27,477 @@ MonoBehaviour:
     value: Air attack detected
   - key: warning_attack_eta_seconds
     value: 'Estimated time to base: {0} seconds'
+  - key: warning_attack_eta_suffix
+    value: '{0} - ETA {1}s'
+  - key: warning_attack_count_suffix
+    value: '{0} x{1}'
+  - key: tactical.command.mode.select
+    value: SELECT SQUAD
+  - key: tactical.command.mode.move
+    value: MOVE ORDER
+  - key: tactical.command.mode.attack
+    value: ATTACK ORDER
+  - key: tactical.command.mode.hold
+    value: HOLD POSITION
+  - key: tactical.command.mode.stop
+    value: STOP ORDER
+  - key: tactical.command.mode.scan
+    value: SCAN ORDER
+  - key: tactical.command.mode.board
+    value: BOARD ORDER
+  - key: tactical.command.mode.build
+    value: BUILD MODE
+  - key: tactical.command.mode.special
+    value: SPECIAL ORDER
+  - key: tactical.command.reason.no_selection
+    value: Select units or a building first.
+  - key: tactical.command.reason.target_out_of_bounds
+    value: Target is outside the playable area.
+  - key: tactical.command.reason.target_blocked
+    value: Route is blocked.
+  - key: tactical.command.reason.target_unreachable
+    value: Target is unreachable.
+  - key: tactical.command.reason.target_not_enemy
+    value: Target is not hostile.
+  - key: tactical.command.reason.target_not_attackable
+    value: Target cannot be attacked.
+  - key: tactical.command.reason.command_unavailable
+    value: Command unavailable.
+  - key: tactical.command.reason.build_unavailable
+    value: Building unavailable.
+  - key: tactical.command.reason.camera_jump_unavailable
+    value: Camera focus unavailable.
+  - key: tactical.command.reason.scan_unavailable
+    value: Scan unavailable.
+  - key: tactical.command.reason.scan_cooldown
+    value: Scan cooling down.
+  - key: tactical.command.reason.insufficient_resources
+    value: Insufficient resources.
+  - key: tactical.command.reason.insufficient_fuel
+    value: Insufficient fuel.
+  - key: tactical.command.reason.invalid_transport
+    value: Select a transport vehicle or aircraft first.
+  - key: tactical.command.reason.invalid_passenger
+    value: Select units or cargo that can board.
+  - key: tactical.command.reason.transport_full
+    value: Transport is full.
+  - key: tactical.command.reason.no_eligible_passengers
+    value: No nearby units can board this transport.
+  - key: tactical.command.reason.no_disembark_cell
+    value: No clear exit point for passengers.
+  - key: tactical.command.reason.transport_passenger_missing
+    value: Passenger is not inside this transport.
+  - key: tactical.command.instruction.select
+    value: Select units or a building.
+  - key: tactical.command.instruction.move
+    value: Choose destination.
+  - key: tactical.command.instruction.attack
+    value: Tap hostile target.
+  - key: tactical.command.instruction.hold
+    value: Hold position and return fire.
+  - key: tactical.command.instruction.stop
+    value: Stop selected units and clear orders.
+  - key: tactical.command.instruction.scan
+    value: Tap scan area.
+  - key: tactical.command.instruction.board
+    value: Select a transport.
+  - key: tactical.command.instruction.build
+    value: Choose what to build, produce, or recruit.
+  - key: tactical.command.instruction.special
+    value: Choose special command.
+  - key: tactical.command.board.prompt_transport_to_passenger
+    value: Select units to board or use BOARD ALL.
+  - key: tactical.command.board.prompt_passenger_to_transport
+    value: Select a transport.
+  - key: tactical.command.board.unavailable
+    value: Board command unavailable.
+  - key: tactical.command.board.tap_units_to_board
+    value: Tap units to board.
+  - key: tactical.command.board.selected_unit_cannot_board
+    value: Selected unit cannot board.
+  - key: tactical.command.board.select_unit_first
+    value: Select a unit first.
+  - key: tactical.command.unavailable.hold_no_selection
+    value: Select units before holding position.
+  - key: tactical.command.unavailable.stop_no_selection
+    value: Select units before stopping orders.
+  - key: tactical.command.unavailable.scan_no_selection
+    value: Select a scanner or combat unit first.
+  - key: tactical.feedback.camera_follow_unavailable
+    value: Camera follow unavailable.
+  - key: tactical.feedback.camera_follow_active
+    value: Camera follow active.
+  - key: tactical.feedback.rts_camera_restored
+    value: RTS camera restored.
+  - key: tactical.feedback.follow_target_lost
+    value: Follow target lost.
+  - key: tactical.feedback.destroyed_selected_building
+    value: Destroyed selected building.
+  - key: tactical.feedback.air_defense_auto_engage
+    value: Air defense auto-engages aircraft and incoming missiles.
+  - key: tactical.feedback.exiting_unit
+    value: Exiting unit.
+  - key: tactical.feedback.exiting_passengers
+    value: Exiting passengers.
+  - key: tactical.feedback.loading_transport
+    value: Loading transport.
+  - key: tactical.feedback.boarding_transport
+    value: Boarding transport.
+  - key: tactical.feedback.holding_current_position
+    value: Holding current position.
+  - key: tactical.feedback.stopped_selected_units
+    value: Stopped selected units.
+  - key: tactical.feedback.unit_returning_to_base
+    value: Unit returning to base.
+  - key: tactical.feedback.units_returning_to_base
+    value: '{0} units returning to base.'
+  - key: tactical.feedback.destroyed_selected_unit
+    value: Destroyed selected unit.
+  - key: tactical.feedback.destroyed_selected_units
+    value: 'Destroyed {0} selected units.'
+  - key: tactical.feedback.scan_ordered
+    value: 'SCAN ORDERED: SCANNER EN ROUTE'
+  - key: tactical.feedback.scan_one_contact
+    value: 1 CONTACT
+  - key: tactical.feedback.scan_contacts
+    value: '{0} CONTACTS'
+  - key: tactical.feedback.scan_complete
+    value: 'SCAN COMPLETE: {0}'
+  - key: tactical.feedback.missile_launched
+    value: Missile launched.
+  - key: tactical.airdrop.emergency_drop_visual_missing
+    value: Emergency drop visual missing.
+  - key: tactical.airdrop.parachute_visual_missing
+    value: Parachute visual missing.
+  - key: tactical.airdrop.no_clear_landing_zone
+    value: No clear airdrop landing zone.
+  - key: tactical.airdrop.cargo_drop_blocked
+    value: Cargo drop blocked.
+  - key: tactical.banner.mode.move.title
+    value: MOVE ORDER
+  - key: tactical.banner.mode.move.description
+    value: Select a destination.
+  - key: tactical.banner.mode.attack.title
+    value: ATTACK ORDER
+  - key: tactical.banner.mode.attack.description
+    value: Select an enemy target.
+  - key: tactical.banner.mode.scan.title
+    value: SCAN ORDER
+  - key: tactical.banner.mode.scan.description
+    value: Select an area to scan.
+  - key: tactical.banner.mode.board.title
+    value: BOARD ORDER
+  - key: tactical.banner.mode.board.description
+    value: Select a transport.
+  - key: tactical.banner.mode.board.description_transport_to_passenger
+    value: Select units to board.
+  - key: tactical.banner.mode.build.title
+    value: BUILD ORDER
+  - key: tactical.banner.mode.build.description
+    value: Place structure on valid terrain.
+  - key: tactical.banner.accepted.move.title
+    value: MOVE ORDER
+  - key: tactical.banner.accepted.move.description
+    value: Units moving to target.
+  - key: tactical.banner.accepted.attack.title
+    value: ATTACK ORDER
+  - key: tactical.banner.accepted.attack.description
+    value: Engaging target.
+  - key: tactical.banner.accepted.hold.title
+    value: HOLD POSITION
+  - key: tactical.banner.accepted.hold.description
+    value: Selected units holding ground.
+  - key: tactical.banner.accepted.stop.title
+    value: STOP ORDER
+  - key: tactical.banner.accepted.stop.description
+    value: Selected units clearing orders.
+  - key: tactical.banner.accepted.scan.title
+    value: SCAN ORDER
+  - key: tactical.banner.accepted.scan.description
+    value: Recon sweep in progress.
+  - key: tactical.banner.accepted.board.title
+    value: BOARD ORDER
+  - key: tactical.banner.accepted.board.description
+    value: Boarding transport.
+  - key: tactical.banner.accepted.build.title
+    value: BUILD ORDER
+  - key: tactical.banner.accepted.build.description
+    value: Building order accepted.
+  - key: tactical.banner.accepted.return.title
+    value: RETURN ORDER
+  - key: tactical.banner.accepted.return.description
+    value: Unit returning to base.
+  - key: tactical.banner.accepted.destroy.title
+    value: DESTROY ORDER
+  - key: tactical.banner.accepted.destroy.description
+    value: Selected unit removed.
+  - key: build.drawer.production.title
+    value: PRODUCTION
+  - key: build.drawer.production.fallback_name
+    value: Production
+  - key: build.drawer.empty.name
+    value: NO ITEMS
+  - key: build.drawer.requirements.buildings
+    value: Valid footprint required.
+  - key: build.drawer.requirements.aircraft
+    value: Requires compatible air production.
+  - key: build.drawer.requirements.vehicles
+    value: Requires compatible vehicle production.
+  - key: build.drawer.requirements.soldiers
+    value: Requires compatible recruitment building.
+  - key: build.drawer.ready.buildings
+    value: 'PLACE: choose a location for {0}.'
+  - key: build.drawer.ready.vehicles
+    value: 'PRODUCE: add {0} to the vehicle queue.'
+  - key: build.drawer.ready.aircraft
+    value: 'PRODUCE: add {0} to the aircraft queue.'
+  - key: build.drawer.ready.soldiers
+    value: 'RECRUIT: add {0} to the training queue.'
+  - key: build.drawer.ready.default
+    value: Select {0}.
+  - key: build.drawer.instruction.place_pending_confirm
+    value: 'Place {0}: drag to position, then confirm.'
+  - key: build.drawer.instruction.cannot_place_here
+    value: 'Cannot place here: {0}.'
+  - key: build.drawer.failure.connecting
+    value: Build drawer is still connecting. Try again in a moment.
+  - key: build.drawer.failure.not_enough_money
+    value: Need {0} more credits to {1} {2}.
+  - key: build.drawer.failure.missing_producer_named
+    value: 'Cannot {0} {1}: requires {2}.'
+  - key: build.drawer.failure.missing_producer
+    value: 'Cannot {0} {1}: {2}.'
+  - key: build.drawer.failure.queue_full_named
+    value: 'Cannot {0} {1}: all {2} production slots are full.'
+  - key: build.drawer.failure.queue_full
+    value: 'Cannot {0} {1}: all compatible production slots are full.'
+  - key: build.drawer.failure.global_queue_full
+    value: 'Cannot {0} {1}: production queue limit reached ({2} max).'
+  - key: build.drawer.failure.invalid_selection
+    value: Select a build drawer item first.
+  - key: build.drawer.failure.unavailable
+    value: 'Cannot {0} {1}: request unavailable.'
+  - key: build.drawer.failure.short.not_enough_money
+    value: Insufficient credits.
+  - key: build.drawer.failure.short.requires_named
+    value: Requires {0}.
+  - key: build.drawer.failure.short.missing_producer
+    value: Required producer is missing.
+  - key: build.drawer.failure.short.queue_full_named
+    value: '{0} production slots are full.'
+  - key: build.drawer.failure.short.queue_full
+    value: All compatible production slots are full.
+  - key: build.drawer.failure.short.global_queue_full
+    value: Production queue limit reached ({0} max).
+  - key: build.drawer.failure.short.unavailable
+    value: Build request unavailable.
+  - key: build.drawer.item.fallback_name
+    value: item
+  - key: build.drawer.verb.place
+    value: Place
+  - key: build.drawer.verb.recruit
+    value: Recruit
+  - key: build.drawer.verb.produce
+    value: Produce
+  - key: build.drawer.verb.select
+    value: Select
+  - key: build.drawer.verb.request
+    value: Request
+  - key: build.drawer.missing_producer.vehicles
+    value: no compatible vehicle producer is available
+  - key: build.drawer.missing_producer.aircraft
+    value: no compatible air producer is available
+  - key: build.drawer.missing_producer.soldiers
+    value: no compatible training building is available
+  - key: build.drawer.missing_producer.default
+    value: required producer is missing
+  - key: build.drawer.empty.buildings
+    value: No requestable buildings are configured.
+  - key: build.drawer.empty.vehicles
+    value: No requestable vehicles are configured.
+  - key: build.drawer.empty.aircraft
+    value: No requestable aircraft are configured.
+  - key: build.drawer.empty.soldiers
+    value: No requestable soldiers are configured.
+  - key: build.drawer.empty.default
+    value: No requestable items are configured.
+  - key: build.drawer.empty.select_item
+    value: Select an item to place, produce, or recruit.
+  - key: build.drawer.placement.invalid
+    value: invalid placement
+  - key: build.drawer.action.place_choose_footprint
+    value: 'Place {0}: choose a valid footprint.'
+  - key: build.feedback.place_building
+    value: PLACE BUILDING
+  - key: build.feedback.production_requested
+    value: '{0}: {1}'
+  - key: build.drawer.success.recruitment_queued
+    value: '{0} added to recruitment queue.'
+  - key: build.drawer.success.production_queued
+    value: '{0} added to production queue.'
+  - key: build.feedback.production_cancel_unavailable
+    value: Production cancel unavailable.
+  - key: build.feedback.production_cancelled_named
+    value: Cancelled {0}.
+  - key: build.feedback.production_cancelled
+    value: PRODUCTION CANCELLED
+  - key: build.feedback.production_queue_empty
+    value: Production queue is empty.
+  - key: build.feedback.production_queue_cleared_sentence
+    value: Production queue cleared.
+  - key: build.feedback.production_clear_unavailable
+    value: Production clear unavailable.
+  - key: build.feedback.production_queue_cleared
+    value: PRODUCTION QUEUE CLEARED
+  - key: build.feedback.placement_cancelled
+    value: PLACEMENT CANCELLED
+  - key: build.feedback.rotated_90
+    value: ROTATED 90 DEGREES
+  - key: build.feedback.no_active_placement
+    value: No active building placement.
+  - key: build.feedback.building_placed
+    value: BUILDING PLACED
+  - key: build.feedback.place_on_valid_ground
+    value: Place on valid ground.
+  - key: build.feedback.drawer_not_ready
+    value: Build drawer is not ready.
+  - key: build.placement.status.drag_to_position
+    value: DRAG TO POSITION
+  - key: build.placement.status.valid_ground
+    value: VALID GROUND
+  - key: build.placement.title.default
+    value: PLACE BUILDING
+  - key: build.placement.title.named
+    value: PLACE {0}
+  - key: build.placement.instruction.confirm
+    value: DRAG TO POSITION, CONFIRM TO BUILD
+  - key: build.placement.title.fallback_subject
+    value: BUILDING
+  - key: match.feedback.tactical_map_not_ready
+    value: Tactical map is not ready.
+  - key: match.feedback.blocked_civilian_zone
+    value: 'Blocked: civilian zone'
+  - key: selection.feedback.unit_singular
+    value: UNIT
+  - key: selection.feedback.unit_plural
+    value: UNITS
+  - key: selection.feedback.vehicle_singular
+    value: VEHICLE
+  - key: selection.feedback.soldier_singular
+    value: SOLDIER
+  - key: selection.feedback.squad_count
+    value: '{0} {1}'
+  - key: selection.feedback.squad_selected
+    value: SQUAD SELECTED
+  - key: selection.order.idle
+    value: Idle
+  - key: selection.order.structure_selected
+    value: Structure selected
+  - key: selection.order.mixed_orders
+    value: Mixed orders
+  - key: selection.order.in_transport
+    value: In transport
+  - key: selection.order.boarding_transport
+    value: Boarding transport
+  - key: selection.order.returning_to_base
+    value: Returning to base
+  - key: selection.order.missile_launched
+    value: Missile launched
+  - key: selection.order.airspace_clear
+    value: Airspace clear
+  - key: selection.order.tracking_air_target
+    value: Tracking air target
+  - key: selection.order.intercepting_missile
+    value: Intercepting missile
+  - key: selection.order.reloading
+    value: Reloading
+  - key: selection.order.engaging_target
+    value: Engaging target
+  - key: selection.order.moving
+    value: Moving
+  - key: selection.order.holding
+    value: Holding
+  - key: selection.resource.waiting_oil
+    value: WAITING OIL
+  - key: selection.resource.fuel_full
+    value: FUEL FULL
+  - key: selection.resource.converting
+    value: CONVERTING
+  - key: selection.title.no_selection
+    value: NO SELECTION
+  - key: selection.title.one_structure
+    value: 1 STRUCTURE
+  - key: selection.title.mixed_selection
+    value: MIXED SELECTION
+  - key: selection.title.one_soldier
+    value: 1 SOLDIER
+  - key: selection.title.soldiers
+    value: '{0} SOLDIERS'
+  - key: selection.title.one_transport
+    value: 1 TRANSPORT
+  - key: selection.title.transports
+    value: '{0} TRANSPORTS'
+  - key: selection.title.one_aircraft
+    value: 1 AIRCRAFT
+  - key: selection.title.aircraft
+    value: '{0} AIRCRAFT'
+  - key: selection.title.one_vehicle
+    value: 1 VEHICLE
+  - key: selection.title.vehicles
+    value: '{0} VEHICLES'
+  - key: selection.title.mixed_force
+    value: MIXED FORCE
+  - key: selection.title.mixed_squad
+    value: MIXED SQUAD
+  - key: selection.subtitle.building_selected
+    value: Building selected
+  - key: selection.subtitle.building_group
+    value: Building Group
+  - key: selection.subtitle.units_structures
+    value: '{0} Units / {1} Structure'
+  - key: selection.subtitle.infantry_squad
+    value: Infantry Squad
+  - key: selection.subtitle.transport_group
+    value: Transport Group
+  - key: selection.subtitle.air_wing
+    value: Air Wing
+  - key: selection.subtitle.vehicle_squad
+    value: Vehicle Squad
+  - key: selection.subtitle.ground_air
+    value: '{0} Ground / {1} Air'
+  - key: selection.subtitle.infantry_vehicles
+    value: '{0} Infantry / {1} Vehicles'
+  - key: selection.subtitle.selected_units
+    value: '{0} Selected Units'
+  - key: selection.building.selected_building
+    value: Selected Building
+  - key: selection.building.base_structure
+    value: Base Structure
+  - key: selection.health.empty
+    value: 'Health: -'
+  - key: selection.health.value
+    value: 'Health: {0}/{1}'
+  - key: selection.health.summary_value
+    value: '{0} / {1}'
+  - key: selection.health.summary_empty
+    value: HEALTH -
+  - key: selection.focused_unit.empty_label
+    value: Unit
+  - key: selection.focused_unit.empty_description
+    value: Select a unit to inspect it.
+  - key: selection.shell.title.soldier
+    value: SOLDIER
+  - key: selection.shell.title.vehicle
+    value: VEHICLE
+  - key: selection.shell.title.aircraft
+    value: AIRCRAFT
+  - key: selection.shell.title.selected
+    value: '{0} SELECTED'
+  - key: selection.shell.subtitle.infantry_group
+    value: INFANTRY GROUP
+  - key: selection.shell.subtitle.armored_group
+    value: ARMORED GROUP
+  - key: selection.shell.subtitle.air_group
+    value: AIR GROUP
+  - key: selection.shell.subtitle.mixed_group
+    value: MIXED GROUP

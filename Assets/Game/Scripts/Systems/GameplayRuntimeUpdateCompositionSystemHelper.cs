@@ -275,10 +275,10 @@ namespace Game.Runtime
 
             int eta = Mathf.CeilToInt(Mathf.Max(0f, etaSeconds));
             if (eta > 0)
-                title = $"{title} - ETA {eta}s";
+                title = GameStrings.Format("warning_attack_eta_suffix", "{0} - ETA {1}s", title, eta);
 
             if (threatCount > 1)
-                title = $"{title} x{threatCount}";
+                title = GameStrings.Format("warning_attack_count_suffix", "{0} x{1}", title, threatCount);
 
             return title;
         }

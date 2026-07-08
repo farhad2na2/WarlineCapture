@@ -1,5 +1,6 @@
 using Unity.Collections;
 using Unity.Entities;
+using Game.Configs;
 using Game.UI.Contracts;
 using Game.UI.Shell.Contracts.Ecs;
 
@@ -497,11 +498,11 @@ namespace Game.UI.Shell.Ecs
                 CanConfirm = 0,
                 CanCancel = 0,
                 CanRotate = 0,
-                Title = new FixedString64Bytes("PLACE BUILDING"),
-                Status = new FixedString64Bytes("VALID GROUND"),
+                Title = new FixedString64Bytes(GameText.Get("build.placement.title.default", "PLACE BUILDING")),
+                Status = new FixedString64Bytes(GameText.Get("build.placement.status.valid_ground", "VALID GROUND")),
                 CostText = new FixedString32Bytes("2,000"),
                 DurationText = new FixedString32Bytes("00:30"),
-                InstructionText = new FixedString128Bytes("DRAG TO POSITION, CONFIRM TO BUILD")
+                InstructionText = new FixedString128Bytes(GameText.Get("build.placement.instruction.confirm", "DRAG TO POSITION, CONFIRM TO BUILD"))
             };
         }
 
@@ -575,7 +576,7 @@ namespace Game.UI.Shell.Ecs
                 ThreatSubtitle = new FixedString64Bytes("Market quarter, 140m"),
                 JumpEnabled = 1,
                 FeedbackVisible = 1,
-                FeedbackText = new FixedString64Bytes("Blocked: civilian zone"),
+                FeedbackText = new FixedString64Bytes(GameText.Get("match.feedback.blocked_civilian_zone", "Blocked: civilian zone")),
                 BoardAllVisible = 1,
                 BoardAllEnabled = 1,
                 CancelVisible = 1,

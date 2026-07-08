@@ -4,6 +4,7 @@
     "references": [
         "Game.Catalog.Contracts",
         "Game.Components",
+        "Game.Configs",
         "Game.Tactical.Contracts",
         "Game.UI.Contracts",
         "Game.UI.Runtime",

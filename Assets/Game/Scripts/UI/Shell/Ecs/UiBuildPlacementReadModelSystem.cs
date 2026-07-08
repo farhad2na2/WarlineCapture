@@ -2,6 +2,7 @@ using System.Globalization;
 using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
+using Game.Configs;
 using Game.UI.Contracts;
 using Game.UI.Shell.Contracts.Ecs;
 
@@ -64,8 +65,11 @@ namespace Game.UI.Shell.Ecs
             bool canConfirm = buildingUiCommand.CanConfirmBuildingPlacement;
             SplitPlacementStatus(buildingUiCommand.PlacementStatusText, out string title, out string status);
             string safeStatus = string.IsNullOrWhiteSpace(status)
-                ? "DRAG TO POSITION"
+                ? GameText.Get("build.placement.status.drag_to_position", "DRAG TO POSITION")
                 : status.ToUpperInvariant();
+            string titleText = string.IsNullOrWhiteSpace(title)
+                ? GameText.Get("build.placement.title.default", "PLACE BUILDING")
+                : GameText.Format("build.placement.title.named", "PLACE {0}", title.ToUpperInvariant());
 
             return new UiBuildPlacementConfirmationBarComponent
             {
@@ -73,11 +77,11 @@ namespace Game.UI.Shell.Ecs
                 CanConfirm = canConfirm ? (byte)1 : (byte)0,
                 CanCancel = 1,
                 CanRotate = 1,
-                Title = new FixedString64Bytes(string.IsNullOrWhiteSpace(title) ? "PLACE BUILDING" : $"PLACE {title.ToUpperInvariant()}"),
+                Title = new FixedString64Bytes(titleText),
                 Status = new FixedString64Bytes(safeStatus),
                 CostText = new FixedString32Bytes(FormatCost(buildingUiCommand.ActivePlacementCost)),
                 DurationText = new FixedString32Bytes(FormatDuration(buildingUiCommand.ActivePlacementDurationSeconds)),
-                InstructionText = new FixedString128Bytes("DRAG TO POSITION, CONFIRM TO BUILD")
+                InstructionText = new FixedString128Bytes(GameText.Get("build.placement.instruction.confirm", "DRAG TO POSITION, CONFIRM TO BUILD"))
             };
         }
 
@@ -99,7 +103,7 @@ namespace Game.UI.Shell.Ecs
 
         private static void SplitPlacementStatus(string rawStatus, out string title, out string status)
         {
-            title = "BUILDING";
+            title = GameText.Get("build.placement.title.fallback_subject", "BUILDING");
             status = rawStatus;
             if (string.IsNullOrWhiteSpace(rawStatus))
                 return;

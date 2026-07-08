@@ -2,6 +2,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using Game.Configs;
 using Game.Tactical.Contracts;
 using Game.Components;
 
@@ -264,7 +265,7 @@ namespace Game.Runtime
             }
 
             TacticalCommandResult result = issuedCount > 0
-                ? TacticalCommandResult.Success(issuedGroundMissileOrder ? "Missile launched." : string.Empty)
+                ? TacticalCommandResult.Success(issuedGroundMissileOrder ? GameText.Get("tactical.feedback.missile_launched", "Missile launched.") : string.Empty)
                 : missileRangeRejection.ReasonCode != TacticalCommandReasonCode.None
                     ? missileRangeRejection
                     : TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);

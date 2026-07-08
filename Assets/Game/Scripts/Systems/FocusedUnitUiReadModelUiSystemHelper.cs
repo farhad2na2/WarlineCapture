@@ -3,6 +3,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
+using Game.Configs;
 using Game.Tactical.Contracts;
 using Game.Components;
 
@@ -81,7 +82,7 @@ namespace Game.Runtime
             {
                 model.HealthText = sameFocusedUnit && previousModel.HasHealth == 0
                     ? previousModel.HealthText
-                    : ToFixed32("Health: -");
+                    : ToFixed32(GameText.Get("selection.health.empty", "Health: -"));
             }
 
             if (selectionUiReadModelLookup.TryGetFocusedUnitCapacityInfo(
@@ -196,9 +197,9 @@ namespace Game.Runtime
             return new FocusedUnitUiReadModelComponent
             {
                 FocusedUnit = Entity.Null,
-                Label = ToFixed64("Unit"),
-                Description = ToFixed128("Select a unit to inspect it."),
-                HealthText = ToFixed32("Health: -"),
+                Label = ToFixed64(GameText.Get("selection.focused_unit.empty_label", "Unit")),
+                Description = ToFixed128(GameText.Get("selection.focused_unit.empty_description", "Select a unit to inspect it.")),
+                HealthText = ToFixed32(GameText.Get("selection.health.empty", "Health: -")),
                 PortraitForward = new float3(0f, 0f, 1f)
             };
         }
@@ -280,12 +281,7 @@ namespace Game.Runtime
 
         private static FixedString32Bytes ToHealthFixed32(int current, int max)
         {
-            FixedString32Bytes result = default;
-            result.Append("Health: ");
-            result.Append(current);
-            result.Append('/');
-            result.Append(max);
-            return result;
+            return ToFixed32(GameText.Format("selection.health.value", "Health: {0}/{1}", current, max));
         }
 
         private static FixedString64Bytes ToFixed64(string value)

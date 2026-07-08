@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using Game.Configs;
 using Game.Tactical.Contracts;
 using Game.UI.Contracts;
 
@@ -178,13 +179,17 @@ namespace Game.UI.Runtime
 
             string rawStatus = _commandSystem.PlacementStatusText;
             SplitPlacementStatus(rawStatus, out string title, out string status);
-            SetText(titleText, string.IsNullOrWhiteSpace(title) ? "PLACE BUILDING" : $"PLACE {title.ToUpperInvariant()}");
+            SetText(titleText, string.IsNullOrWhiteSpace(title)
+                ? GameText.Get("build.placement.title.default", "PLACE BUILDING")
+                : GameText.Format("build.placement.title.named", "PLACE {0}", title.ToUpperInvariant()));
             SetText(costText, FormatCost(_commandSystem.ActivePlacementCost));
             SetText(durationText, FormatDuration(_commandSystem.ActivePlacementDurationSeconds));
-            SetText(instructionText, "DRAG TO POSITION, CONFIRM TO BUILD");
+            SetText(instructionText, GameText.Get("build.placement.instruction.confirm", "DRAG TO POSITION, CONFIRM TO BUILD"));
 
             bool canConfirm = _commandSystem.CanConfirmBuildingPlacement;
-            SetText(statusText, string.IsNullOrWhiteSpace(status) ? "DRAG TO POSITION" : status.ToUpperInvariant());
+            SetText(statusText, string.IsNullOrWhiteSpace(status)
+                ? GameText.Get("build.placement.status.drag_to_position", "DRAG TO POSITION")
+                : status.ToUpperInvariant());
             if (statusText != null)
                 SetTextColor(statusText, canConfirm
                     ? new Color(0.62f, 0.98f, 0.35f)
@@ -202,7 +207,7 @@ namespace Game.UI.Runtime
         {
             _commandSystem?.CancelBuildingPlacement();
             BattleHudRuntimeFeedbackUiSystemHelper.ClearStickyCommandMode(_runtimeFeedbackView, TacticalCommandMode.Build);
-            BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Success("PLACEMENT CANCELLED"));
+            BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Success(GameText.Get("build.feedback.placement_cancelled", "PLACEMENT CANCELLED")));
             Refresh(force: true);
         }
 
@@ -210,8 +215,8 @@ namespace Game.UI.Runtime
         {
             bool rotated = _commandSystem != null && _commandSystem.RotateBuildingPlacement();
             BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, rotated
-                ? TacticalCommandResult.Success("ROTATED 90 DEGREES")
-                : TacticalCommandResult.Rejected(TacticalCommandReasonCode.BuildUnavailable, "No active building placement."));
+                ? TacticalCommandResult.Success(GameText.Get("build.feedback.rotated_90", "ROTATED 90 DEGREES"))
+                : TacticalCommandResult.Rejected(TacticalCommandReasonCode.BuildUnavailable, GameText.Get("build.feedback.no_active_placement", "No active building placement.")));
             Refresh(force: true);
         }
 
@@ -219,8 +224,8 @@ namespace Game.UI.Runtime
         {
             bool placed = _commandSystem != null && _commandSystem.ConfirmBuildingPlacement();
             BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, placed
-                ? TacticalCommandResult.Success("BUILDING PLACED")
-                : TacticalCommandResult.Rejected(TacticalCommandReasonCode.BuildUnavailable, "Place on valid ground."));
+                ? TacticalCommandResult.Success(GameText.Get("build.feedback.building_placed", "BUILDING PLACED"))
+                : TacticalCommandResult.Rejected(TacticalCommandReasonCode.BuildUnavailable, GameText.Get("build.feedback.place_on_valid_ground", "Place on valid ground.")));
             Refresh(force: true);
         }
 

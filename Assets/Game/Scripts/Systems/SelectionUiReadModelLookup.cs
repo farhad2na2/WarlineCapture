@@ -4,6 +4,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using Game.Configs;
 using Game.Tactical.Contracts;
 using Game.Components;
 
@@ -122,9 +123,9 @@ namespace Game.Runtime
         public string ResolveFocusedUnitHealthText(EntityManager entityManager, Entity entity)
         {
             if (!TryGetFocusedUnitHealth(entityManager, entity, out int current, out int max))
-                return "Health: -";
+                return GameText.Get("selection.health.empty", "Health: -");
 
-            return $"Health: {current}/{max}";
+            return GameText.Format("selection.health.value", "Health: {0}/{1}", current, max);
         }
 
         public bool TryGetFocusedUnitHealth(EntityManager entityManager, Entity entity, out int current, out int max)

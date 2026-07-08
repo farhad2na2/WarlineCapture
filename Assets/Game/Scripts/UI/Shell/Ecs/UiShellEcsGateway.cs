@@ -3,6 +3,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
+using Game.Configs;
 using Game.Tactical.Contracts;
 using Game.UI.Contracts;
 using Game.UI.Shell.Contracts.Ecs;
@@ -356,37 +357,45 @@ namespace Game.UI.Shell.Ecs
                 }
             }
 
-            summary.OrderText = summary.MixedOrders ? "Mixed orders" : summary.OrderText ?? "Idle";
+            summary.OrderText = summary.MixedOrders
+                ? GameText.Get("selection.order.mixed_orders", "Mixed orders")
+                : summary.OrderText ?? GameText.Get("selection.order.idle", "Idle");
             if (summary.HealthMax > 0)
             {
                 summary.Health01 = Mathf.Clamp01((float)summary.HealthCurrent / summary.HealthMax);
-                summary.HealthText = $"{summary.HealthCurrent} / {summary.HealthMax}";
+                summary.HealthText = GameText.Format("selection.health.summary_value", "{0} / {1}", summary.HealthCurrent, summary.HealthMax);
             }
             else
             {
                 summary.Health01 = 0f;
-                summary.HealthText = "HEALTH -";
+                summary.HealthText = GameText.Get("selection.health.summary_empty", "HEALTH -");
             }
 
             if (summary.SelectedCount == summary.SoldierCount)
             {
-                summary.Title = summary.SelectedCount == 1 ? "SOLDIER" : $"{summary.SelectedCount} SOLDIERS";
-                summary.Subtitle = "INFANTRY GROUP";
+                summary.Title = summary.SelectedCount == 1
+                    ? GameText.Get("selection.shell.title.soldier", "SOLDIER")
+                    : GameText.Format("selection.title.soldiers", "{0} SOLDIERS", summary.SelectedCount);
+                summary.Subtitle = GameText.Get("selection.shell.subtitle.infantry_group", "INFANTRY GROUP");
             }
             else if (summary.SelectedCount == summary.VehicleCount)
             {
-                summary.Title = summary.SelectedCount == 1 ? "VEHICLE" : $"{summary.SelectedCount} VEHICLES";
-                summary.Subtitle = "ARMORED GROUP";
+                summary.Title = summary.SelectedCount == 1
+                    ? GameText.Get("selection.shell.title.vehicle", "VEHICLE")
+                    : GameText.Format("selection.title.vehicles", "{0} VEHICLES", summary.SelectedCount);
+                summary.Subtitle = GameText.Get("selection.shell.subtitle.armored_group", "ARMORED GROUP");
             }
             else if (summary.SelectedCount == summary.AircraftCount)
             {
-                summary.Title = summary.SelectedCount == 1 ? "AIRCRAFT" : $"{summary.SelectedCount} AIRCRAFT";
-                summary.Subtitle = "AIR GROUP";
+                summary.Title = summary.SelectedCount == 1
+                    ? GameText.Get("selection.shell.title.aircraft", "AIRCRAFT")
+                    : GameText.Format("selection.title.aircraft", "{0} AIRCRAFT", summary.SelectedCount);
+                summary.Subtitle = GameText.Get("selection.shell.subtitle.air_group", "AIR GROUP");
             }
             else
             {
-                summary.Title = $"{summary.SelectedCount} SELECTED";
-                summary.Subtitle = "MIXED GROUP";
+                summary.Title = GameText.Format("selection.shell.title.selected", "{0} SELECTED", summary.SelectedCount);
+                summary.Subtitle = GameText.Get("selection.shell.subtitle.mixed_group", "MIXED GROUP");
             }
 
             return summary;
@@ -395,18 +404,18 @@ namespace Game.UI.Shell.Ecs
         private static string ResolveEntityOrderText(EntityManager entityManager, Entity entity)
         {
             if (entityManager.HasComponent<UnitTransportBoardingTarget>(entity))
-                return "Boarding transport";
+                return GameText.Get("selection.order.boarding_transport", "Boarding transport");
             if (entityManager.HasComponent<EngageTarget>(entity))
-                return "Engaging target";
+                return GameText.Get("selection.order.engaging_target", "Engaging target");
             if (entityManager.HasComponent<ManualMoveOrderTag>(entity) ||
                 entityManager.HasComponent<ManualMoveGroupMemberTag>(entity))
             {
-                return "Moving";
+                return GameText.Get("selection.order.moving", "Moving");
             }
 
             if (entityManager.HasComponent<HoldPositionOrderTag>(entity))
-                return "Holding";
-            return "Idle";
+                return GameText.Get("selection.order.holding", "Holding");
+            return GameText.Get("selection.order.idle", "Idle");
         }
 
         private static void EnsureSelectedUnitsQuery(EntityManager entityManager)
@@ -1623,11 +1632,11 @@ namespace Game.UI.Shell.Ecs
                 CanConfirm = 0,
                 CanCancel = 0,
                 CanRotate = 0,
-                Title = new FixedString64Bytes("PLACE BUILDING"),
-                Status = new FixedString64Bytes("VALID GROUND"),
+                Title = new FixedString64Bytes(GameText.Get("build.placement.title.default", "PLACE BUILDING")),
+                Status = new FixedString64Bytes(GameText.Get("build.placement.status.valid_ground", "VALID GROUND")),
                 CostText = new FixedString32Bytes("2,000"),
                 DurationText = new FixedString32Bytes("00:30"),
-                InstructionText = new FixedString128Bytes("DRAG TO POSITION, CONFIRM TO BUILD")
+                InstructionText = new FixedString128Bytes(GameText.Get("build.placement.instruction.confirm", "DRAG TO POSITION, CONFIRM TO BUILD"))
             });
         }
 
@@ -1693,7 +1702,7 @@ namespace Game.UI.Shell.Ecs
                 ThreatSubtitle = new FixedString64Bytes("Market quarter, 140m"),
                 JumpEnabled = 1,
                 FeedbackVisible = 1,
-                FeedbackText = new FixedString64Bytes("Blocked: civilian zone"),
+                FeedbackText = new FixedString64Bytes(GameText.Get("match.feedback.blocked_civilian_zone", "Blocked: civilian zone")),
                 BoardAllVisible = 1,
                 BoardAllEnabled = 1,
                 CancelVisible = 1,

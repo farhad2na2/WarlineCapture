@@ -18,6 +18,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             passed++;
             RunCase(test => test.BindMatchHudAssistant_AppliesAssistantPanelReadModel());
             passed++;
+            RunCase(test => test.BindMatchHudAssistant_VisualSurfaceKeepsControlsReadableInsideOverlay());
+            passed++;
 
             Debug.Log($"[MatchHudAssistantUiValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -221,6 +223,76 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         UnityEngine.Object.DestroyImmediate(overlay.gameObject);
     }
 
+    [Test]
+    public void BindMatchHudAssistant_VisualSurfaceKeepsControlsReadableInsideOverlay()
+    {
+        RectTransform overlay = CreateRectRoot("AssistantUiTestOverlay", new Vector2(1920f, 1080f));
+        RectTransform header = CreateRect("HeaderContent", overlay);
+        header.anchorMin = new Vector2(0f, 1f);
+        header.anchorMax = new Vector2(0f, 1f);
+        header.pivot = new Vector2(0f, 1f);
+        header.anchoredPosition = Vector2.zero;
+        header.sizeDelta = new Vector2(1920f, 160f);
+
+        var ui = new MainMenuPlayUI();
+        ui.Init(null, new FakeMatchRuntimeState());
+        ui.BindMatchHudAssistant(header.gameObject, overlay);
+        var assistantGateway = new FakeAssistantPanelGateway(
+            new UiAssistantPanelModel(
+            101,
+            "- Neutralize hostile patrol\n[x] Protect civilians",
+            "HIGH: Hostile patrol near base\nNORMAL: Fuel convoy ready",
+            "HIGH: Hostile patrol near base",
+            true,
+            true,
+            true,
+            "Assign attack order",
+            "Focus the visible hostile target, then execute the recommended attack order.",
+            "HIGH",
+            "SHOW ME",
+            true,
+            true,
+            true,
+            false,
+            "ARIA CONTROL",
+            "ARIA can execute one bounded tactical order. STOP returns control."),
+            UiAssistantHighlightModel.Empty);
+        UiShellRuntimeGateway.Register(assistantGateway);
+
+        RectTransform button = header.Find("AriaAssistantButton") as RectTransform;
+        Assert.NotNull(button);
+        button.GetComponent<Button>().onClick.Invoke();
+        ui.Update();
+
+        RectTransform panel = overlay.Find("AriaAssistantPanel") as RectTransform;
+        Assert.NotNull(panel);
+        Assert.IsTrue(panel.gameObject.activeSelf, "The ARIA panel must be visible after clicking the header button.");
+
+        AssertRectSize(button, new Vector2(228f, 78f), "ARIA header button");
+        AssertRectSize(panel, new Vector2(640f, 590f), "ARIA assistant panel");
+        AssertRectContained(panel, RequireChild(panel, "NextActionButton"), "Show Me button");
+        AssertRectContained(panel, RequireChild(panel, "GiveControlButton"), "Do It button");
+        AssertRectContained(panel, RequireChild(panel, "StopButton"), "Stop button");
+        AssertRectContained(panel, RequireChild(panel, "NarrationSubtitle"), "Narration subtitle");
+
+        AssertTextReadable(panel, "Title", "ARIA COMMAND ASSISTANT", 24f);
+        AssertTextReadable(panel, "GoalsBody", "Neutralize hostile patrol", 18f);
+        AssertTextReadable(panel, "AlertsBody", "Hostile patrol", 16f);
+        AssertTextReadable(panel, "NarrationSubtitle", "HIGH: Hostile patrol near base", 14f);
+        AssertTextReadable(panel, "RecommendationBody", "Focus the visible hostile target", 18f);
+        AssertTextReadable(panel, "NextActionButton/Label", "SHOW ME", 16f);
+        AssertTextReadable(panel, "GiveControlButton/Label", "DO IT", 16f);
+        AssertTextReadable(panel, "StopButton/Label", "STOP", 16f);
+
+        AssertNoOverlap(RequireChild(panel, "NextActionButton"), RequireChild(panel, "GiveControlButton"), "Show Me and Do It buttons");
+        AssertNoOverlap(RequireChild(panel, "GiveControlButton"), RequireChild(panel, "CloseButton"), "Do It and Close buttons");
+        AssertNoOverlap(RequireChild(panel, "GiveControlButton"), RequireChild(panel, "StopButton"), "Do It and Stop buttons");
+        AssertNoOverlap(RequireChild(panel, "RecommendationBody"), RequireChild(panel, "NextActionButton"), "Recommendation text and command buttons");
+
+        ui.Dispose();
+        UnityEngine.Object.DestroyImmediate(overlay.gameObject);
+    }
+
     private static RectTransform CreateRectRoot(string name, Vector2 size)
     {
         var root = new GameObject(name, typeof(RectTransform), typeof(Canvas));
@@ -244,6 +316,59 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         rect.GetWorldCorners(corners);
         Vector3 center = (corners[0] + corners[2]) * 0.5f;
         return RectTransformUtility.WorldToScreenPoint(null, center);
+    }
+
+    private static RectTransform RequireChild(RectTransform parent, string path)
+    {
+        RectTransform child = parent.Find(path) as RectTransform;
+        Assert.NotNull(child, $"{path} must exist under {parent.name}.");
+        Assert.IsTrue(child.gameObject.activeInHierarchy, $"{path} must be visible.");
+        return child;
+    }
+
+    private static void AssertTextReadable(RectTransform parent, string path, string expectedText, float minimumFontSize)
+    {
+        RectTransform rect = RequireChild(parent, path);
+        TMP_Text text = rect.GetComponent<TMP_Text>();
+        Assert.NotNull(text, $"{path} must have TMP text.");
+        StringAssert.Contains(expectedText, text.text, $"{path} must show the expected assistant text.");
+        Assert.GreaterOrEqual(text.fontSize, minimumFontSize, $"{path} font is too small for the match HUD.");
+        Assert.Greater(rect.rect.width, 40f, $"{path} must have visible width.");
+        Assert.Greater(rect.rect.height, 20f, $"{path} must have visible height.");
+    }
+
+    private static void AssertRectContained(RectTransform container, RectTransform child, string label)
+    {
+        Rect containerRect = WorldRect(container);
+        Rect childRect = WorldRect(child);
+        Assert.GreaterOrEqual(childRect.xMin, containerRect.xMin - 0.5f, $"{label} leaks left of its container.");
+        Assert.LessOrEqual(childRect.xMax, containerRect.xMax + 0.5f, $"{label} leaks right of its container.");
+        Assert.GreaterOrEqual(childRect.yMin, containerRect.yMin - 0.5f, $"{label} leaks below its container.");
+        Assert.LessOrEqual(childRect.yMax, containerRect.yMax + 0.5f, $"{label} leaks above its container.");
+    }
+
+    private static void AssertRectSize(RectTransform rectTransform, Vector2 expectedSize, string label)
+    {
+        Assert.AreEqual(expectedSize.x, rectTransform.rect.width, 0.1f, $"{label} width drifted.");
+        Assert.AreEqual(expectedSize.y, rectTransform.rect.height, 0.1f, $"{label} height drifted.");
+    }
+
+    private static void AssertNoOverlap(RectTransform first, RectTransform second, string label)
+    {
+        Rect firstRect = WorldRect(first);
+        Rect secondRect = WorldRect(second);
+        Assert.IsFalse(firstRect.Overlaps(secondRect), $"{label} should not overlap.");
+    }
+
+    private static Rect WorldRect(RectTransform rectTransform)
+    {
+        Vector3[] corners = new Vector3[4];
+        rectTransform.GetWorldCorners(corners);
+        float xMin = Mathf.Min(corners[0].x, corners[2].x);
+        float xMax = Mathf.Max(corners[0].x, corners[2].x);
+        float yMin = Mathf.Min(corners[0].y, corners[2].y);
+        float yMax = Mathf.Max(corners[0].y, corners[2].y);
+        return Rect.MinMaxRect(xMin, yMin, xMax, yMax);
     }
 
     private sealed class FakeMatchRuntimeState : IMatchRuntimeState

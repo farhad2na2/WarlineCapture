@@ -2,6 +2,8 @@
 
 Date: 2026-05-06
 
+Current implementation note, 2026-07-08: this document remains the product/UX source for ARIA's role, FTUE flow, contextual recommendations, and safe control takeover. New implementation must follow `Design/ARIA_Assistant_ECS_Design.md` and `Design/Architecture/aria_assistant_ecs_implementation_tracker.md` for ECS data ownership, naming, bounded control, narration, and no service/provider/controller/runtime drift.
+
 ## Purpose
 
 This document designs WarlineCapture's first-time user experience, contextual tutorials, and reusable command assistant. It is grounded in the current Unity project, especially:

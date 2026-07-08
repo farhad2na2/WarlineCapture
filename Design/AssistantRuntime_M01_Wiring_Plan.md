@@ -2,6 +2,8 @@
 
 Date: 2026-05-07
 
+Current implementation note, 2026-07-08: this document is retained for M01 recommendation semantics and historical wiring context. New ARIA assistant implementation must follow `Design/ARIA_Assistant_ECS_Design.md` and `Design/Architecture/aria_assistant_ecs_implementation_tracker.md`. Do not introduce new `WarlineCaptureAssistantService`, `AssistantContextProvider`, `M01AssistantRecommendationProvider`, `CommandIntentExecutor`, `M01AssistantCommandRuntime`, `AssistantPanelController`, or `AssistantHighlightController` types. Use ECS components, dynamic buffer elements, unmanaged systems, and narrow `*UiSystemHelper` / `*PresentationSystemHelper` boundaries instead.
+
 ## Purpose
 
 This is the runtime wiring contract for the Mission 01 ARIA assistant recommendation flow.
@@ -16,6 +18,19 @@ It sits between:
 The goal is to remove runtime guesswork for the first playable assistant path: objectives intro, select squad, move to cover, attack patrol, invalid command recovery, and result explanation.
 
 This is a contract only. It does not add Chapter 1 mechanics, does not approve art assets, and does not make ARIA an autopilot.
+
+## Superseded Naming Notice
+
+The broad owner names below are no longer approved names for new code. Preserve the behavior contract where still relevant, but map it to the current ECS architecture:
+
+| Historical Name | Current Direction |
+|---|---|
+| `WarlineCaptureAssistantService` | `AssistantStateComponent`, `AssistantControlOwnerComponent`, `AssistantRecommendationReadModelComponent`, and ECS assistant systems. |
+| `AssistantContextProvider` | Versioned ECS read models and `AssistantGoalReadModelSystem` / `AssistantRecommendationSystem`. |
+| `M01AssistantRecommendationProvider` | Data-driven recommendation rules inside `AssistantRecommendationSystem` or a narrow mission-specific ECS system if needed. |
+| `CommandIntentExecutor` / `M01AssistantCommandRuntime` | `AssistantCommandIntentRequestElement`, `AssistantCommandIntentResultElement`, and `AssistantCommandIntentSystem`. |
+| `AssistantPanelController` | `MatchHudAssistantUiSystemHelper` and `AssistantPanelUiSystemHelper` as passive UI presentation helpers. |
+| `AssistantHighlightController` | `AssistantHighlightPresentationSystemHelper` consuming ECS preview/highlight requests. |
 
 ## Runtime Ownership
 

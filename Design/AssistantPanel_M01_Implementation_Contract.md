@@ -2,6 +2,8 @@
 
 Date: 2026-05-07
 
+Current implementation note, 2026-07-08: this M01 panel contract remains the source for `PREFAB-05_AssistantPanel` fields and Mission 01 recommendation behavior. New assistant architecture, naming, read models, command intents, narration, and control ownership must follow `Design/ARIA_Assistant_ECS_Design.md` and `Design/Architecture/aria_assistant_ecs_implementation_tracker.md`; old broad owner names in this document are historical handoff language, not approved names for new code.
+
 ## Purpose
 
 This is the implementation contract for `PREFAB-05_AssistantPanel` and the Mission 01 ARIA recommendation states.
@@ -24,6 +26,7 @@ This contract does not make the flat visual reference a completed implementation
 | `Design/M01_FirstContact_Production_Contract.md` | Locked M01 ids, tactical anchors, runtime entities, FTUE step ids, command reasons. |
 | `Design/Gameplay_UI_Integration_Handoff_Spec.md` | `BattleHudGameplayBridge`, active mission ids, tactical command modes, current bridge reason codes. |
 | `Design/UIUX_Gameplay_Element_Alignment.md` | Assistant panel purpose and gameplay data ownership. |
+| `Design/ARIA_Assistant_ECS_Design.md` | Current ECS-aligned assistant naming, data ownership, UI/audio helper boundaries, and no service/provider/controller drift rules. |
 | `Design/AssistantRuntime_M01_Wiring_Plan.md` | Runtime service ownership, M01 recommendation state transitions, typed intents, save/session state, and validation tests. |
 
 ## Surface Contract
@@ -35,7 +38,7 @@ This contract does not make the flat visual reference a completed implementation
 | View component | `AssistantPanelView` |
 | Visual target | `Design/VisualLockLayered/PREFAB-05_AssistantPanel/reference/PREFAB-05_AssistantPanel_Landscape_Target.png` |
 | Visual target type | Layered panel/popup reference over WarlineCapture 3D battle HUD context. |
-| Runtime owner | Future `AssistantPanelController` / `WarlineCaptureAssistantService` |
+| Runtime owner | `MatchHudAssistantUiSystemHelper` / `AssistantPanelUiSystemHelper` presentation boundary over ECS assistant read models |
 | Gameplay dependency | `BattleHudGameplayBridge` on `Screen_MatchOverlay` |
 
 ## Required UI Element Ids

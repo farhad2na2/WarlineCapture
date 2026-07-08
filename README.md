@@ -85,6 +85,7 @@ Core design reading order starts in `Design/README.md`. The current high-priorit
 - `Design/Field_Logistics_Oil_Fuel_Design.md`
 - `Design/M01_FirstContact_Production_Contract.md`
 - `Design/FTUE_And_Command_Assistant_Design.md`
+- `Design/ARIA_Assistant_ECS_Design.md`
 - `Design/UIUX_Mockup_To_Canvas_Conversion_Plan.md`
 - `Design/UIUX_MainMenu_Visual_Contract.md`
 
@@ -118,6 +119,8 @@ This diagram is an orientation aid. It may lag behind architecture and task-boar
       - [Chapter 5: Citywide Command](Design/SagaChapters/Saga_Chapter05_Citywide_Command.md)
     - [M01 First Contact Production Contract](Design/M01_FirstContact_Production_Contract.md)
     - [FTUE And Command Assistant Design](Design/FTUE_And_Command_Assistant_Design.md)
+      - [ARIA Assistant ECS Design](Design/ARIA_Assistant_ECS_Design.md)
+      - [ARIA Assistant ECS Implementation Tracker](Design/Architecture/aria_assistant_ecs_implementation_tracker.md)
   - Systems And Economy
     - [Combat Catalog And Upgrade Design](Design/Combat_Catalog_And_Upgrade_Design.md)
       - [Combat Balance Config](Design/BalanceConfigs/Combat_Balance_Config_v0_1.json)

@@ -20,7 +20,7 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - Mission result states: `Mission_Result_State_Spec.md` is the active contract for `POP-05` victory, partial success, defeat, withdrawal, operation-resolved states, result data, CTA order, rewards, consequences, and routes.
 - Map contract: the active map contract is one large 3D operation map with planning, briefing, minimap, deployment, threat, and battle views as overlays/camera states on the same world.
 - Operation map texture/mask workflow: `3D_Operation_Map_Texture_Mask_Workflow.md` defines how gameplay/editor tooling consumes 2024x2024 base visuals, blocker masks, tree/rock density masks, and height masks to generate 3D operation-map metadata.
-- FTUE and assistant: `FTUE_And_Command_Assistant_Design.md` defines the reusable ARIA command assistant, Chapter 1 FTUE flow, contextual recommendations, and safe assistant control takeover model. `AssistantPanel_M01_Implementation_Contract.md` is the current support/UI/gameplay handoff for `PREFAB-05_AssistantPanel` and M01 ARIA recommendation states.
+- FTUE and assistant: `FTUE_And_Command_Assistant_Design.md` defines the reusable ARIA command assistant, Chapter 1 FTUE flow, contextual recommendations, and safe assistant control takeover model. `ARIA_Assistant_ECS_Design.md` is the current assistant architecture and naming contract for match-header ARIA, panel goals/recommendations, read-aloud alerts, bounded control, ECS data ownership, and no service/provider/controller drift. `AssistantPanel_M01_Implementation_Contract.md` is the current support/UI/gameplay handoff for `PREFAB-05_AssistantPanel` and M01 ARIA recommendation states. `Architecture/aria_assistant_ecs_implementation_tracker.md` is the implementation progress source.
 - Agent coordination: `Agent_Coordination_Workflow.md` defines PM handoff, validation, cross-lane sync, tracking workflow, lane ownership, and commit/push rules for agents.
 - Gameplay architecture: `Architecture/gameplay_solid_ecs_contract.md` defines the SOLID/ECS runtime contract, bootstrap responsibility boundaries, service/logging rules, and no-new-drift guardrails.
 - Architecture visuals: `Architecture/ArchitectureOverview.svg` is the high-level code architecture map. The detailed split diagrams cover assembly boundaries, runtime lifecycle, ECS data flow, UI shell, performance hot paths, and guardrails.
@@ -56,25 +56,26 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 17. `Mission_Result_State_Spec.md`
 18. `M01_FirstContact_Production_Contract.md`
 19. `FTUE_And_Command_Assistant_Design.md`
-20. `AssistantPanel_M01_Implementation_Contract.md`
-21. `AssistantRuntime_M01_Wiring_Plan.md`
-22. `Designer_Role_And_Documentation_Workflow.md`
-23. `Agent_Coordination_Workflow.md`
-24. `Architecture/gameplay_solid_ecs_contract.md`
-25. `Architecture/performance_regression_contract.md`
-26. `Gameplay_Features_High_Level_Spec.md`
-27. `Gameplay_Features_Detailed_Spec.md`
-28. `UIUX_Implementation_High_Level_Spec.md`
-29. `UIUX_Implementation_Detailed_Spec.md`
-30. `Field_Logistics_Oil_Fuel_Design.md`
-31. `Automated_Fuel_Logistics_Design.md`
-32. `Economy_Reward_Design.md`
-33. `Balancing_Automated_Test_Plan.md`
-34. `UIUX_Gameplay_Element_Alignment.md`
-35. `Visual_Feedback_VFX_Recommendations.md`
-36. `UIUX_MainMenu_Visual_Contract.md`
-37. `UIUX_Mockup_To_Canvas_Conversion_Plan.md`
-38. `UIUX_Target_To_Canvas_Workflow_Guide.md`
+20. `ARIA_Assistant_ECS_Design.md`
+21. `AssistantPanel_M01_Implementation_Contract.md`
+22. `AssistantRuntime_M01_Wiring_Plan.md`
+23. `Designer_Role_And_Documentation_Workflow.md`
+24. `Agent_Coordination_Workflow.md`
+25. `Architecture/gameplay_solid_ecs_contract.md`
+26. `Architecture/performance_regression_contract.md`
+27. `Gameplay_Features_High_Level_Spec.md`
+28. `Gameplay_Features_Detailed_Spec.md`
+29. `UIUX_Implementation_High_Level_Spec.md`
+30. `UIUX_Implementation_Detailed_Spec.md`
+31. `Field_Logistics_Oil_Fuel_Design.md`
+32. `Automated_Fuel_Logistics_Design.md`
+33. `Economy_Reward_Design.md`
+34. `Balancing_Automated_Test_Plan.md`
+35. `UIUX_Gameplay_Element_Alignment.md`
+36. `Visual_Feedback_VFX_Recommendations.md`
+37. `UIUX_MainMenu_Visual_Contract.md`
+38. `UIUX_Mockup_To_Canvas_Conversion_Plan.md`
+39. `UIUX_Target_To_Canvas_Workflow_Guide.md`
 
 ## Core Product And Gameplay
 
@@ -102,6 +103,8 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - `Mission_Result_State_Spec.md` - canonical result-state contract for `POP-05`, including victory, partial success, defeat, withdrawal, Operation auto-resolution, result data, route rules, and acceptance tests.
 - `M01_FirstContact_Production_Contract.md` - concrete first playable slice contract for M01 First Contact, including map metadata anchors, UI command feedback, FTUE targets, asset manifest, audio/VFX requirements, and validation gates.
 - `FTUE_And_Command_Assistant_Design.md` - first-time user experience and reusable ARIA command assistant design, including Chapter 1 tutorial steps, contextual recommendations, safe control takeover, data model, UI surfaces, and validation plan.
+- `ARIA_Assistant_ECS_Design.md` - current ECS-aligned ARIA assistant architecture and naming contract, including match header button, goals/recommendations panel, priority alerts/reports, narration technology, bounded `Give Control`, Burst/data boundaries, and no-service/provider/controller rules.
+- `Architecture/aria_assistant_ecs_implementation_tracker.md` - step-by-step ARIA assistant implementation tracker with progress percentage, ECS/SOLID guardrails, validation gates, and commit/push criteria.
 - `AssistantPanel_M01_Implementation_Contract.md` - implementation contract for `PREFAB-05_AssistantPanel`, M01 ARIA recommendation states, runtime data fields, Show Me / Do It / Stop behavior, player-control cancellation, `BattleHudGameplayBridge` integration, asset-register implications, and acceptance checks.
 - `AssistantRuntime_M01_Wiring_Plan.md` - runtime wiring contract for M01 ARIA assistant services, context data flow, recommendation transitions, typed intents, save/session fields, button rules, invalid-command recovery, and validation tests.
 - `Agent_Coordination_Workflow.md` - PM assistant operating workflow for agent handoffs, cross-lane contract changes, validation gates, and tracking updates.

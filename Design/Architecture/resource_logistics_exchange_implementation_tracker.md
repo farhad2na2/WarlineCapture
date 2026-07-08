@@ -23,7 +23,7 @@ Implement the timed Resource Logistics Exchange without drifting from WarlineCap
 
 ## Progress Summary
 
-Overall implementation progress: 53% (49/92 checklist items complete).
+Overall implementation progress: 54% (50/92 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -34,7 +34,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 2. Request validation and queue start | Complete | 10 | 10 | 100% | Added ISystem request validation, ECS wallet boundary, input reservation, queue item creation, economy event row, and typed results. |
 | 3. Queue ticking, completion, cancel, refund | Complete | 11 | 11 | 100% | Timed queue, output grant once, cancel/refund rules, mission-end cancel/refund policy. |
 | 4. Rush Tickets | Complete | 7 | 7 | 100% | Rush eligible jobs with ticket spend, per-item caps, rush-all budget, and feedback. |
-| 5. UI popup and header routing | In progress | 1 | 13 | 8% | ECS-backed UI read-model foundation complete; Build-Popup-style popup, resource header tap route, cards, details, amount stepper, queue panel remain. |
+| 5. UI popup and header routing | In progress | 2 | 13 | 15% | ECS-backed UI read-model and target-lock request complete; generated reference/layers, Build-Popup-style popup, resource header tap route, cards, details, amount stepper, queue panel remain. |
 | 6. World presentation | Not started | 0 | 8 | 0% | Non-authoritative pooled truck/plane presentation and fallback behavior. |
 | 7. Audio, VFX, feedback, ARIA | Not started | 0 | 7 | 0% | Config-driven audio, resource flyouts, completion/reject feedback, optional ARIA copy. |
 | 8. AI, balance, telemetry | Not started | 0 | 6 | 0% | Economy events, balancing reports, AI awareness if enabled for AI factions. |
@@ -156,7 +156,7 @@ Exit criteria:
 ## Phase 5: UI Popup And Header Routing
 
 - [x] Add ECS-backed UI read-model projection for popup state, recipe cards, selected detail, wallet totals, and queue rows.
-- [ ] Create accepted target-lock mockup request for `POP-12 Resource Logistics Exchange` aligned with the Build Popup visual language.
+- [x] Create accepted target-lock mockup request for `POP-12 Resource Logistics Exchange` aligned with the Build Popup visual language.
 - [ ] Create separated layer pack under `Design/VisualLockLayered/POP-12_ResourceLogisticsExchange/`.
 - [ ] Build Canvas popup from reusable panels/icons/text/buttons, not a screenshot.
 - [ ] Add `ResourceExchangePopupView` with explicit serialized references.
@@ -449,3 +449,32 @@ Remaining blocker or next slice:
 - Next slice is Phase 5 visual target/layer alignment or Canvas popup construction, depending on whether the accepted `POP-12 Resource Logistics Exchange` target-lock/layer pack already exists by then.
 - Header/resource-bar tap routing still needs to open `UiShellPopupKind.ResourceExchange` only when exchange is enabled and must block world input while open.
 - The exchange wallet still needs live match resource seeding/sync before the popup can be enabled for player use in a match.
+
+### 2026-07-08 - Phase 5B POP-12 Target-Lock Request
+
+Files changed:
+
+- `Design/VisualLockLayered/README.md`
+- `Design/VisualLockLayered/POP-12_ResourceLogisticsExchange/README.md`
+- `Design/VisualLockLayered/POP-12_ResourceLogisticsExchange/prompts/POP-12_ResourceLogisticsExchange_NewMainMenuArtDirection_TargetLock_V01.md`
+- `Design/VisualLockLayered/POP-12_ResourceLogisticsExchange/reference/README.md`
+- `Design/VisualLockLayered/POP-12_ResourceLogisticsExchange/layer_requests/README.md`
+- `Design/Architecture/resource_logistics_exchange_implementation_tracker.md`
+
+Behavior changed:
+
+- Documentation-only visual workflow slice.
+- Added the `POP-12 Resource Logistics Exchange` VisualLockLayered pack shell and target-lock prompt request.
+- The prompt defines the Build-Popup-aligned popup composition, Export/Import tabs, route cards, selected detail panel, amount stepper, exchange queue panel, Rush All/Clear Completed actions, allowed resource set, and layer separation constraints.
+- Added explicit reference/layer blocking notes so future agents do not implement from prompt-only drafts, chat-only images, screenshot crops, or baked layers.
+- Registered `POP-12_ResourceLogisticsExchange` under VisualLockLayered pending target requests instead of saved references because the generated PNG does not exist yet.
+
+Validation:
+
+- `git diff --check` passed.
+
+Remaining blocker or next slice:
+
+- Next slice is generating/saving the target-lock reference PNG or creating the separated layer pack once an accepted reference exists.
+- Unity Canvas/prefab implementation remains blocked until the accepted PNG and layer manifest exist under `Design/VisualLockLayered/POP-12_ResourceLogisticsExchange/`.
+- Header/resource-bar tap routing can proceed in parallel only if it stays behind exchange-enabled gating and does not expose an unfinished popup to players.

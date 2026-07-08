@@ -13,6 +13,12 @@ This folder now keeps only the current bright premium military command UI art di
 | `SCN-09_BuildDrawer` | `SCN-09_BuildDrawer/reference/SCN-09_BuildDrawer_NewMainMenuArtDirection_TargetLock_V03.png` |
 | `SCN-19_Armory` | `SCN-19_Armory/reference/SCN-19_Armory_NewMainMenuArtDirection_TargetLock_V04.png` |
 
+## Pending Target Requests
+
+| Surface | Target-lock request | Required reference output |
+|---|---|---|
+| `POP-12_ResourceLogisticsExchange` | `POP-12_ResourceLogisticsExchange/prompts/POP-12_ResourceLogisticsExchange_NewMainMenuArtDirection_TargetLock_V01.md` | `POP-12_ResourceLogisticsExchange/reference/POP-12_ResourceLogisticsExchange_NewMainMenuArtDirection_TargetLock_V01.png` |
+
 ## Hard Rule
 
 A generated target is not accepted because it appeared in chat. It is accepted only when the exact PNG exists under:

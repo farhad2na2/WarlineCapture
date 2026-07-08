@@ -13,6 +13,7 @@ Primary source documents:
 - `Design/Gameplay_Features_Detailed_Spec.md`
 - `Design/3D_SingleMap_Gameplay_Direction.md`
 - `Design/GAME_DESIGN_REFERENCE.md`
+- `Design/Audio_Config_Driven_Implementation_Spec.md` for the config-driven runtime implementation plan, ECS request flow, pooled playback, placeholder generation, and validation tracker.
 
 WarlineCapture is a mobile-first, grid-based military/civilian RTS with Campaign, Operations, and Skirmish modes. Audio must support tactical clarity, responsiveness, and premium polish without overwhelming phone speakers or masking important player feedback.
 

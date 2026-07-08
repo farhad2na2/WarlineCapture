@@ -30,6 +30,7 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - Combat catalog: `Combat_Catalog_And_Upgrade_Design.md` plus `BalanceConfigs/Combat_Balance_Config_v0_1.json` and `VisualConfigs/Combat_Visual_Config_v0_1.json` define all unit, building, skill, ability, and upgrade-track ids, including availability, unlock moments, implementation owners, and balance data separated from art data.
 - UI layer: mobile landscape app shell, command-base menus, and battle HUD should be built as real Unity Canvas hierarchy from separate panels, sprites, icons, TMP text, and controls over the 3D operation-map flow.
 - Feedback layer: `Visual_Feedback_VFX_Recommendations.md` defines shared UI motion, gameplay VFX, warning feedback, reward flyouts, popup transitions, and paired audio event ids for responsive play.
+- Audio implementation: `Audio_Config_Driven_Implementation_Spec.md` defines the config-driven audio event architecture, ECS request flow, pooled playback, placeholder clip generation plan, validation steps, and implementation tracker.
 - Visual direction: new gameplay-facing battlefield art should use 3D town/base operation scenes with runtime units, buildings, civilians, vehicles, aircraft, markers, VFX, and metadata-backed command overlays.
 - Main menu visual direction: `UIUX_MainMenu_Visual_Contract.md` now points at the command-base style with Campaign, Operations, Skirmish, Store, Commander, Settings, Credits, Supplies, Command, and Deploy Operation.
 - Economy and rewards are locked by `Economy_Reward_Design.md`. Monetization and marketing claims use the same canonical resources, reward types, and disabled purchase states as the UI/gameplay alignment docs.
@@ -73,9 +74,11 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 34. `Balancing_Automated_Test_Plan.md`
 35. `UIUX_Gameplay_Element_Alignment.md`
 36. `Visual_Feedback_VFX_Recommendations.md`
-37. `UIUX_MainMenu_Visual_Contract.md`
-38. `UIUX_Mockup_To_Canvas_Conversion_Plan.md`
-39. `UIUX_Target_To_Canvas_Workflow_Guide.md`
+37. `Audio_Design_Guidelines.md`
+38. `Audio_Config_Driven_Implementation_Spec.md`
+39. `UIUX_MainMenu_Visual_Contract.md`
+40. `UIUX_Mockup_To_Canvas_Conversion_Plan.md`
+41. `UIUX_Target_To_Canvas_Workflow_Guide.md`
 
 ## Core Product And Gameplay
 
@@ -165,6 +168,7 @@ The previous visual-lock folders were moved to `Archive/LegacyVisualLock_2026-05
 ## Audio, Monetization, Marketing, And Art Generation
 
 - `Audio_Design_Guidelines.md` - audio identity, buses, event names, playback rules, shared visual-feedback audio cues, and generation guidance.
+- `Audio_Config_Driven_Implementation_Spec.md` - config-driven audio event implementation plan, including central catalog config, ECS request data, pooled presentation playback, generated placeholder clips, UI/match/music wiring, and progress tracker.
 - `Visual_Feedback_VFX_Recommendations.md` - cross-discipline feedback matrix for UI motion, gameplay VFX, reward/account-state feedback, critical warnings, and paired audio event ids.
 - `Art_Asset_Requirements_Register.md` - production art approval workflow and companion CSV index.
 - `Monetization/Monetization_Strategy.md` - monetization principles and guardrails.

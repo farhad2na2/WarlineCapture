@@ -140,6 +140,7 @@ This diagram is an orientation aid. It may lag behind architecture and task-boar
   - Production Support
     - [Art Asset Requirements Register](Design/Art_Asset_Requirements_Register.md)
     - [Audio Design Guidelines](Design/Audio_Design_Guidelines.md)
+      - [Config-Driven Audio Implementation Spec](Design/Audio_Config_Driven_Implementation_Spec.md)
     - [Monetization Strategy](Design/Monetization/Monetization_Strategy.md)
       - [Store Catalog](Design/Monetization/Monetization_Store_Catalog.md)
       - [Monetization Visual Targets](Design/Monetization/Monetization_Visual_Targets.md)

@@ -150,9 +150,10 @@
   <text x="315" y="1460" text-anchor="middle" class="text">Production Support</text>
   <text x="315" y="1500" text-anchor="middle" class="tiny">Art Asset Requirements Register</text>
   <text x="315" y="1532" text-anchor="middle" class="tiny">Audio Design Guidelines</text>
-  <text x="315" y="1564" text-anchor="middle" class="tiny">Monetization Strategy</text>
-  <text x="315" y="1596" text-anchor="middle" class="tiny">Store Catalog</text>
-  <text x="315" y="1628" text-anchor="middle" class="tiny">Marketing Workflow</text>
+  <text x="315" y="1564" text-anchor="middle" class="tiny">Audio Config Implementation</text>
+  <text x="315" y="1596" text-anchor="middle" class="tiny">Monetization Strategy</text>
+  <text x="315" y="1628" text-anchor="middle" class="tiny">Store Catalog</text>
+  <text x="315" y="1660" text-anchor="middle" class="tiny">Marketing Workflow</text>
   <path class="line" d="M315 1375 L315 1420"/>
 
   <rect x="1090" y="1420" width="390" height="250" rx="8" class="branch"/>

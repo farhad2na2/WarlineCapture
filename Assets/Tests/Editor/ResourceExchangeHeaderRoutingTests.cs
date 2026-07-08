@@ -31,6 +31,14 @@ public sealed class ResourceExchangeHeaderRoutingTests
                 test => test.UiActionRequestSystem_OpenResourceExchangeRequiresEnabledExchange(),
                 ref passed);
             RunValidationStep(
+                nameof(UiActionRequestSystem_CloseResourceExchangeHidesPopupAndSuppressesWorldClick),
+                test => test.UiActionRequestSystem_CloseResourceExchangeHidesPopupAndSuppressesWorldClick(),
+                ref passed);
+            RunValidationStep(
+                nameof(UiShellFlowSystem_ResourceExchangeHideRestoresMatchHudPopupState),
+                test => test.UiShellFlowSystem_ResourceExchangeHideRestoresMatchHudPopupState(),
+                ref passed);
+            RunValidationStep(
                 nameof(MenuSceneShell_InstallsResourceExchangePopup),
                 test => test.MenuSceneShell_InstallsResourceExchangePopup(),
                 ref passed);
@@ -90,7 +98,7 @@ public sealed class ResourceExchangeHeaderRoutingTests
     public void UiActionRequestSystem_OpenResourceExchangeRequiresEnabledExchange()
     {
         using World enabledWorld = new("ResourceExchangeHeaderRouting_Enabled");
-        ResourceExchangeActionResult enabledResult = RunOpenResourceExchangeAction(enabledWorld, exchangeEnabled: true);
+        ResourceExchangeActionResult enabledResult = RunResourceExchangeAction(enabledWorld, UiActionKind.OpenResourceExchange, exchangeEnabled: true);
         Assert.AreEqual(0, enabledResult.ActionRequestCount, "OpenResourceExchange action should be consumed when exchange is enabled.");
         Assert.AreEqual(1, enabledResult.PopupRequestCount, "OpenResourceExchange should show the popup when exchange is enabled.");
         Assert.AreEqual(UiShellPopupKind.ResourceExchange, enabledResult.PopupKind);
@@ -98,10 +106,58 @@ public sealed class ResourceExchangeHeaderRoutingTests
         Assert.IsTrue(enabledResult.WorldInputSuppressed, "Resource header click must suppress the matching world click.");
 
         using World disabledWorld = new("ResourceExchangeHeaderRouting_Disabled");
-        ResourceExchangeActionResult disabledResult = RunOpenResourceExchangeAction(disabledWorld, exchangeEnabled: false);
+        ResourceExchangeActionResult disabledResult = RunResourceExchangeAction(disabledWorld, UiActionKind.OpenResourceExchange, exchangeEnabled: false);
         Assert.AreEqual(0, disabledResult.ActionRequestCount, "OpenResourceExchange action should be consumed when exchange is disabled.");
         Assert.AreEqual(0, disabledResult.PopupRequestCount, "OpenResourceExchange must not show the popup when exchange is disabled.");
         Assert.IsTrue(disabledResult.WorldInputSuppressed, "Disabled Resource Exchange clicks still need to suppress the matching world click.");
+    }
+
+    [Test]
+    public void UiActionRequestSystem_CloseResourceExchangeHidesPopupAndSuppressesWorldClick()
+    {
+        using World world = new("ResourceExchangeHeaderRouting_Close");
+        ResourceExchangeActionResult result = RunResourceExchangeAction(world, UiActionKind.CloseResourceExchange, exchangeEnabled: true);
+
+        Assert.AreEqual(0, result.ActionRequestCount, "CloseResourceExchange action should be consumed.");
+        Assert.AreEqual(1, result.PopupRequestCount, "CloseResourceExchange must enqueue one popup hide request.");
+        Assert.AreEqual(UiShellPopupKind.ResourceExchange, result.PopupKind);
+        Assert.AreEqual(UiShellPopupIntent.Hide, result.PopupIntent);
+        Assert.IsTrue(result.WorldInputSuppressed, "Resource Exchange close clicks must suppress the matching world click.");
+    }
+
+    [Test]
+    public void UiShellFlowSystem_ResourceExchangeHideRestoresMatchHudPopupState()
+    {
+        using World world = new("ResourceExchangeHeaderRouting_FlowHide");
+        EntityManager entityManager = world.EntityManager;
+        Entity boundary = CreateShellFlowBoundary(entityManager);
+        DynamicBuffer<UiShellPopupRequestComponent> popupRequests =
+            entityManager.GetBuffer<UiShellPopupRequestComponent>(boundary);
+        popupRequests.Add(new UiShellPopupRequestComponent
+        {
+            PopupKind = UiShellPopupKind.ResourceExchange,
+            Intent = UiShellPopupIntent.Hide,
+            PayloadId = 0
+        });
+
+        SystemHandle system = world.CreateSystem<UiShellFlowSystem>();
+        system.Update(world.Unmanaged);
+
+        UiShellActivePopupComponent activePopup =
+            entityManager.GetComponentData<UiShellActivePopupComponent>(boundary);
+        UiShellStateComponent shellState =
+            entityManager.GetComponentData<UiShellStateComponent>(boundary);
+        DynamicBuffer<UiShellPresentationCommandComponent> commands =
+            entityManager.GetBuffer<UiShellPresentationCommandComponent>(boundary);
+
+        popupRequests = entityManager.GetBuffer<UiShellPopupRequestComponent>(boundary);
+        Assert.AreEqual(0, popupRequests.Length, "Popup hide request should be consumed.");
+        Assert.AreEqual(0, activePopup.Visible, "Resource Exchange hide must clear the active popup visible flag.");
+        Assert.AreEqual(UiShellMode.MatchHud, shellState.CurrentMode, "Closing the popup must restore the underlying Match HUD mode.");
+        Assert.AreEqual(UiShellTransitionPhase.HidingPopup, shellState.Phase);
+        Assert.AreEqual(1, commands.Length, "Popup hide should produce one presentation command.");
+        Assert.AreEqual(UiShellCommandKind.HidePopup, commands[0].Kind);
+        Assert.AreEqual(UiShellPopupKind.ResourceExchange, commands[0].PopupKind);
     }
 
     [Test]
@@ -112,6 +168,11 @@ public sealed class ResourceExchangeHeaderRoutingTests
         Assert.NotNull(content, "Menu scene must contain the shell content binder.");
         Assert.NotNull(content.ResourceExchangePopupPrefab, "Menu scene shell must serialize the Resource Exchange popup prefab.");
         Assert.AreEqual("POP12_ResourceExchangePopup", content.ResourceExchangePopupPrefab.name);
+
+        var gateway = new RecordingGateway();
+        UiShellRuntimeGateway.Register(gateway);
+        MainMenuPlayUI runtimeUi = new();
+        content.BindGameplayRuntimeDependencies(null, runtimeUi);
 
         content.PrepareForCommandSequence(new[]
         {
@@ -136,11 +197,28 @@ public sealed class ResourceExchangeHeaderRoutingTests
         Assert.NotNull(popupView, "Installed Resource Exchange popup must expose its runtime view.");
         Assert.NotNull(popupView.CloseButton, "Installed Resource Exchange popup must expose its close button.");
 
-        content.CloseResourceExchangePopup();
+        Canvas.ForceUpdateCanvases();
+        Vector2 popupCenter = RectTransformUtility.WorldToScreenPoint(null, popup.transform.position);
+        Assert.IsTrue(
+            runtimeUi.IsPointerOverAnyGameplayUi(popupCenter, out string source),
+            "Open Resource Exchange popup must block world input over its screen area.");
+        Assert.AreEqual("ResourceExchangePopup", source);
+
+        popupView.CloseButton.onClick.Invoke();
+
+        Assert.AreEqual(UiActionKind.CloseResourceExchange, gateway.LastActionKind, "Close button must enqueue the typed close action.");
         AssertRegionIsEmpty(content.ShellView, UIShellRegionId.PopupLayer);
+        bool hitAfterClose = runtimeUi.IsPointerOverAnyGameplayUi(popupCenter, out string sourceAfterClose);
+        Assert.IsFalse(
+            hitAfterClose && sourceAfterClose == "ResourceExchangePopup",
+            "Closing Resource Exchange must remove the modal popup from gameplay UI hit testing.");
+        runtimeUi.Dispose();
     }
 
-    private static ResourceExchangeActionResult RunOpenResourceExchangeAction(World world, bool exchangeEnabled)
+    private static ResourceExchangeActionResult RunResourceExchangeAction(
+        World world,
+        UiActionKind actionKind,
+        bool exchangeEnabled)
     {
         EntityManager entityManager = world.EntityManager;
         Entity boundary = CreateUiBoundary(entityManager);
@@ -154,7 +232,7 @@ public sealed class ResourceExchangeHeaderRoutingTests
             entityManager.GetBuffer<UiActionRequestComponent>(boundary);
         actionRequests.Add(new UiActionRequestComponent
         {
-            Kind = UiActionKind.OpenResourceExchange,
+            Kind = actionKind,
             PayloadId = 0
         });
 
@@ -191,6 +269,35 @@ public sealed class ResourceExchangeHeaderRoutingTests
         entityManager.AddBuffer<UiBuildCatalogRequestComponent>(boundary);
         entityManager.AddBuffer<UiBuildProductionRequestComponent>(boundary);
         entityManager.AddBuffer<UiBuildPrimaryRequestComponent>(boundary);
+        return boundary;
+    }
+
+    private static Entity CreateShellFlowBoundary(EntityManager entityManager)
+    {
+        Entity boundary = entityManager.CreateEntity(
+            typeof(UiShellRootComponent),
+            typeof(UiShellStateComponent),
+            typeof(UiShellLoadingProgressComponent),
+            typeof(MatchIntroTransitionComponent),
+            typeof(UiShellActivePopupComponent));
+        entityManager.SetComponentData(boundary, new UiShellStateComponent
+        {
+            CurrentMode = UiShellMode.MatchHud,
+            ActiveRoute = UIRoute.Match,
+            Phase = UiShellTransitionPhase.PopupVisible,
+            IsTransitionRunning = 0
+        });
+        entityManager.SetComponentData(boundary, new UiShellActivePopupComponent
+        {
+            PopupKind = UiShellPopupKind.ResourceExchange,
+            Visible = 1
+        });
+        entityManager.AddBuffer<UiShellLoadingProgressRequestComponent>(boundary);
+        entityManager.AddBuffer<UiShellRouteRequestComponent>(boundary);
+        entityManager.AddBuffer<UiShellRouteHistoryComponent>(boundary);
+        entityManager.AddBuffer<UiShellPopupRequestComponent>(boundary);
+        entityManager.AddBuffer<UiShellPresentationCommandComponent>(boundary);
+        entityManager.AddBuffer<UiShellTransitionCompleteComponent>(boundary);
         return boundary;
     }
 

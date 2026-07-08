@@ -108,7 +108,8 @@ namespace Game.UI.Contracts
         BuildPlacementRotate,
         ToggleDiagnosticsOverlay,
         CloseDiagnosticsOverlay,
-        OpenResourceExchange
+        OpenResourceExchange,
+        CloseResourceExchange
     }
 
     public enum UiBuildProductionActionKind : byte

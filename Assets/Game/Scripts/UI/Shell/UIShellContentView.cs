@@ -680,9 +680,16 @@ namespace Game.UI.Runtime
                 return;
 
             _resourceExchangePopupCloseButton = view.CloseButton;
-            _resourceExchangePopupCloseButtonListener = CloseResourceExchangePopup;
+            _resourceExchangePopupCloseButtonListener = RequestCloseResourceExchangePopup;
             _resourceExchangePopupCloseButton.onClick.RemoveListener(_resourceExchangePopupCloseButtonListener);
             _resourceExchangePopupCloseButton.onClick.AddListener(_resourceExchangePopupCloseButtonListener);
+        }
+
+        private void RequestCloseResourceExchangePopup()
+        {
+            _mainMenuPlayUi?.CaptureGameplayUiClickSequence();
+            UiShellRuntimeGateway.TryEnqueueUiAction(UiActionKind.CloseResourceExchange, 0);
+            CloseResourceExchangePopup();
         }
 
         private void BindBuildDrawerRuntimeCommands(GameObject popup)

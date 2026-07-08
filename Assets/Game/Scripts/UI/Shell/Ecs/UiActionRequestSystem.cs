@@ -259,6 +259,10 @@ namespace Game.UI.Shell.Ecs
                     if (resourceExchangeEnabled)
                         EnqueuePopup(popupRequests, UiShellPopupKind.ResourceExchange, UiShellPopupIntent.Show, request.PayloadId);
                     break;
+                case UiActionKind.CloseResourceExchange:
+                    CaptureUiClickSequence(ref inputState, commandRequests, frame);
+                    EnqueuePopup(popupRequests, UiShellPopupKind.ResourceExchange, UiShellPopupIntent.Hide, request.PayloadId);
+                    break;
                 case UiActionKind.RightBuild:
                 case UiActionKind.Build:
                     CaptureUiClickSequence(ref inputState, commandRequests, frame);

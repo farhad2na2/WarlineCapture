@@ -149,13 +149,75 @@ namespace Game.Runtime
                 return;
             }
 
-            DynamicBuffer<SelectionHudFeedbackElement> feedback = em.GetBuffer<SelectionHudFeedbackElement>(EnsureFeedbackQueue(em));
-            feedback.Add(new SelectionHudFeedbackElement
             {
-                Kind = SelectionHudFeedbackKind.Selection,
-                Label = ToFixed64(selectionUiReadModelLookup.ResolveFocusedUnitName(em, entity)),
-                Status = ToFixed64(selectionUiReadModelLookup.ResolveHudSelectionStatus(em, entity))
-            });
+                DynamicBuffer<SelectionHudFeedbackElement> feedback = em.GetBuffer<SelectionHudFeedbackElement>(EnsureFeedbackQueue(em));
+                feedback.Add(new SelectionHudFeedbackElement
+                {
+                    Kind = SelectionHudFeedbackKind.Selection,
+                    Label = ToFixed64(selectionUiReadModelLookup.ResolveFocusedUnitName(em, entity)),
+                    Status = ToFixed64(selectionUiReadModelLookup.ResolveHudSelectionStatus(em, entity))
+                });
+            }
+
+            TryEmitSelectionAudio(em, entity);
+        }
+
+        public static bool TryEmitSelectionAudio(EntityManager em, Entity entity)
+        {
+            if (!TryResolveSelectionAudioEvent(em, entity, out string eventId, out uint eventHash))
+                return false;
+
+            AudioEventRequestSystem.EnqueueOneShot(
+                em,
+                new FixedString64Bytes(eventId),
+                eventHash,
+                new FixedString32Bytes("Gameplay"),
+                AudioPlaybackPriority.Medium,
+                Time.time,
+                cooldownSeconds: 0.08f,
+                sourceEntity: entity);
+            return true;
+        }
+
+        public static bool TryResolveSelectionAudioEvent(
+            EntityManager em,
+            Entity entity,
+            out string eventId,
+            out uint eventHash)
+        {
+            eventId = null;
+            eventHash = 0u;
+
+            if (entity == Entity.Null || !em.Exists(entity))
+                return false;
+
+            if (em.HasComponent<UnitAirMovement>(entity))
+            {
+                eventId = AudioEventIds.GameplayUnitSelectAir;
+                eventHash = AudioEventIds.GameplayUnitSelectAirHash;
+                return true;
+            }
+
+            if (!em.HasComponent<UnitMove>(entity))
+                return false;
+
+            if (em.HasComponent<UnitMovementBehavior>(entity))
+            {
+                UnitMovementBehavior movementBehavior = em.GetComponentData<UnitMovementBehavior>(entity);
+                UnitFootprint footprint = em.HasComponent<UnitFootprint>(entity)
+                    ? em.GetComponentData<UnitFootprint>(entity)
+                    : new UnitFootprint { Size = new int2(1, 1) };
+                if (UnitVehicleMovementUtility.IsVehicle(footprint, movementBehavior))
+                {
+                    eventId = AudioEventIds.GameplayUnitSelectVehicle;
+                    eventHash = AudioEventIds.GameplayUnitSelectVehicleHash;
+                    return true;
+                }
+            }
+
+            eventId = AudioEventIds.GameplayUnitSelectInfantry;
+            eventHash = AudioEventIds.GameplayUnitSelectInfantryHash;
+            return true;
         }
 
         public void QueueSquadSelection(EntityManager em, int selectedCount)

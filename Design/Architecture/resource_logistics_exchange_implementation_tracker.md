@@ -1,7 +1,7 @@
 # Resource Logistics Exchange Implementation Tracker
 
 Date: 2026-07-08
-Status: Phase 1 data model and config complete
+Status: Phase 2 request validation and queue start complete
 Design source: `../Resource_Logistics_Exchange_Design.md`
 
 ## Objective
@@ -23,7 +23,7 @@ Implement the timed Resource Logistics Exchange without drifting from WarlineCap
 
 ## Progress Summary
 
-Overall implementation progress: 22% (20/91 checklist items complete).
+Overall implementation progress: 33% (30/91 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -31,7 +31,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 |---|---|---:|---:|---:|---|
 | 0. Inventory and source alignment | Complete | 8 | 8 | 100% | Current resource data, HUD header, Build Popup, fuel logistics, save/profile fields, and economy event gaps are documented below. |
 | 1. Data model and config | Complete | 12 | 12 | 100% | Added Resource Exchange enums, ECS data, config entries, scenario gates, and config validation tests. |
-| 2. Request validation and queue start | Not started | 0 | 10 | 0% | Validate affordability, caps, storage, queue slots, and spend/reserve input at confirmation. |
+| 2. Request validation and queue start | Complete | 10 | 10 | 100% | Added ISystem request validation, ECS wallet boundary, input reservation, queue item creation, economy event row, and typed results. |
 | 3. Queue ticking, completion, cancel, refund | Not started | 0 | 11 | 0% | Timed queue, output grant once, cancel/refund rules, mission-end policy. |
 | 4. Rush Tickets | Not started | 0 | 7 | 0% | Rush eligible jobs with ticket spend, caps, and feedback. |
 | 5. UI popup and header routing | Not started | 0 | 12 | 0% | Build-Popup-style popup, resource header tap route, cards, details, amount stepper, queue panel. |
@@ -100,16 +100,16 @@ Exit criteria:
 
 ## Phase 2: Request Validation And Queue Start
 
-- [ ] Implement request intake from UI/appended ECS request data.
-- [ ] Validate exchange enabled state by mission/skirmish/operation gate.
-- [ ] Validate recipe availability and unlock/mission tags.
-- [ ] Validate amount min, max, and step.
-- [ ] Validate input affordability.
-- [ ] Validate output storage or capacity where required.
-- [ ] Validate queue capacity.
-- [ ] Spend or reserve input resources at confirmation.
-- [ ] Create queue item with deterministic id, start time, duration, input/output preview, and state.
-- [ ] Write accepted/rejected result rows with typed reason codes.
+- [x] Implement request intake from UI/appended ECS request data.
+- [x] Validate exchange enabled state by mission/skirmish/operation gate.
+- [x] Validate recipe availability and unlock/mission tags.
+- [x] Validate amount min, max, and step.
+- [x] Validate input affordability.
+- [x] Validate output storage or capacity where required.
+- [x] Validate queue capacity.
+- [x] Spend or reserve input resources at confirmation.
+- [x] Create queue item with deterministic id, start time, duration, input/output preview, and state.
+- [x] Write accepted/rejected result rows with typed reason codes.
 
 Exit criteria:
 
@@ -319,3 +319,34 @@ Remaining blocker or next slice:
 - Next slice is Phase 2 request validation and queue start.
 - Phase 2 must choose the first authoritative active-match Credits boundary before spending/reserving inputs: either wrap `RuntimeResourceUtilitySystemHelper` with typed exchange access or introduce an ECS tactical Credits component synced with the current runtime dollar helper.
 - Phase 2 should consume the new config/ECS data only through typed requests/results and must not add UI-owned conversion math.
+
+### 2026-07-08 - Phase 2 Request Validation And Queue Start
+
+Files changed:
+
+- `Assets/Game/Scripts/Components/ResourceExchangeComponents.cs`
+- `Assets/Game/Scripts/Systems/ResourceExchangeRequestValidationSystem.cs`
+- `Assets/Game/Scripts/Systems/ResourceExchangeRequestValidationSystem.cs.meta`
+- `Assets/Tests/Editor/ResourceExchangeRequestValidationSystemTests.cs`
+- `Assets/Tests/Editor/ResourceExchangeRequestValidationSystemTests.cs.meta`
+- `Design/Architecture/resource_logistics_exchange_implementation_tracker.md`
+
+Behavior changed:
+
+- Added `ResourceExchangeWalletComponent` as the typed ECS Resource Exchange wallet boundary for active-match Credits, Materials, Oil, Fuel, and Rush Tickets during exchange validation.
+- Added `ResourceExchangeRequestQueueComponent` for deterministic request ids and queue item ids.
+- Added `ResourceExchangeRequestValidationSystem` as an unmanaged `ISystem` that processes appended ECS start requests, validates exchange enabled state, faction, recipe availability, mission tag, amount bounds/steps, input affordability, output storage capacity, and queue capacity.
+- Accepted requests reserve/spend the input resource from the exchange wallet, create an `InProgress` queue item with deterministic id/start/duration/input/output fields, write a negative input economy event row, and publish an accepted typed result.
+- Rejected requests leave wallet and queue state unchanged and publish typed rejection reasons.
+- Added focused tests for accepted export, disabled exchange, missing/locked recipes, invalid amount path, insufficient Oil, storage full, and queue full.
+
+Validation:
+
+- `git diff --check` passed.
+- `dotnet build Game.Tests.Editor.csproj --no-restore` passed with existing Unity reference conflict warnings and 0 errors.
+
+Remaining blocker or next slice:
+
+- Next slice is Phase 3 queue ticking, completion, cancel, and refund.
+- The `ResourceExchangeWalletComponent` is now the ECS-side exchange authority for this feature. A later UI/runtime integration slice must seed/sync it from current match resources, especially the existing `RuntimeResourceUtilitySystemHelper` tactical Credits path, before the popup is exposed in live HUD.
+- Queue completion must grant output exactly once and emit the positive output economy event row; this is intentionally not part of the Phase 2 queue-start slice.

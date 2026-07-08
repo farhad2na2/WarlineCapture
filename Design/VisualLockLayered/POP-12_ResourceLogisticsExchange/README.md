@@ -1,14 +1,14 @@
 # POP-12 Resource Logistics Exchange Visual Lock
 
-Status: target-lock request ready, generated reference pending.
+Status: target-lock reference saved, layer pack pending.
 
-This pack defines the requested target for the in-match Resource Exchange popup. It is intentionally prompt-first until a generated reference PNG is saved under `reference/`.
+This pack defines the accepted target reference for the in-match Resource Exchange popup. The reference PNG is saved under `reference/`; implementation remains blocked until the separated layer pack exists.
 
 Current target-lock request:
 
 `prompts/POP-12_ResourceLogisticsExchange_NewMainMenuArtDirection_TargetLock_V01.md`
 
-Expected saved reference after image generation:
+Accepted saved reference:
 
 `reference/POP-12_ResourceLogisticsExchange_NewMainMenuArtDirection_TargetLock_V01.png`
 
@@ -27,12 +27,11 @@ Expected saved reference after image generation:
 - The reference must show the popup over a dimmed match HUD/world background. The modal is the focus; background detail must not fight the popup.
 - The target must include Export and Import tabs, recipe cards, selected details, amount stepper, queue panel, Rush All, Clear Completed, and Close.
 - The reference must show at least one disabled/locked or warning state without baking lock/warning/progress art into card backgrounds.
-- The generated PNG is not accepted unless it exists in `reference/` with the exact filename above.
-- Do not build a Unity Canvas or layer pack from this prompt alone.
+- The generated PNG exists in `reference/` with the exact filename above.
+- The locked `IMPORT OIL` card is a disabled/gated visual state only. Runtime implementation must keep Credits -> Oil disabled by default unless a mission explicitly enables it.
+- Do not build a Unity Canvas from the target PNG alone; create the separated layer pack first.
 
 ## Next Steps
 
-1. Generate the target-lock reference from the prompt.
-2. Save the accepted PNG in `reference/`.
-3. Generate separated green-key layer requests for popup chrome, tabs, cards, icons, progress bars, buttons, amount stepper, and queue rows.
-4. Create `layer_manifest.json`, a contact sheet, and implementation notes before Canvas prefab work starts.
+1. Generate separated green-key layer requests for popup chrome, tabs, cards, icons, progress bars, buttons, amount stepper, and queue rows.
+2. Create `layer_manifest.json`, a contact sheet, and implementation notes before Canvas prefab work starts.

@@ -34,7 +34,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 2. Request validation and queue start | Complete | 10 | 10 | 100% | Added ISystem request validation, ECS wallet boundary, input reservation, queue item creation, economy event row, and typed results. |
 | 3. Queue ticking, completion, cancel, refund | Complete | 11 | 11 | 100% | Timed queue, output grant once, cancel/refund rules, mission-end cancel/refund policy. |
 | 4. Rush Tickets | Complete | 7 | 7 | 100% | Rush eligible jobs with ticket spend, per-item caps, rush-all budget, and feedback. |
-| 5. UI popup and header routing | In progress | 2 | 13 | 15% | ECS-backed UI read-model and target-lock request complete; generated reference/layers, Build-Popup-style popup, resource header tap route, cards, details, amount stepper, queue panel remain. |
+| 5. UI popup and header routing | In progress | 2 | 13 | 15% | ECS-backed UI read-model and target-lock reference complete; layer pack, Build-Popup-style popup, resource header tap route, cards, details, amount stepper, queue panel remain. |
 | 6. World presentation | Not started | 0 | 8 | 0% | Non-authoritative pooled truck/plane presentation and fallback behavior. |
 | 7. Audio, VFX, feedback, ARIA | Not started | 0 | 7 | 0% | Config-driven audio, resource flyouts, completion/reject feedback, optional ARIA copy. |
 | 8. AI, balance, telemetry | Not started | 0 | 6 | 0% | Economy events, balancing reports, AI awareness if enabled for AI factions. |
@@ -478,3 +478,32 @@ Remaining blocker or next slice:
 - Next slice is generating/saving the target-lock reference PNG or creating the separated layer pack once an accepted reference exists.
 - Unity Canvas/prefab implementation remains blocked until the accepted PNG and layer manifest exist under `Design/VisualLockLayered/POP-12_ResourceLogisticsExchange/`.
 - Header/resource-bar tap routing can proceed in parallel only if it stays behind exchange-enabled gating and does not expose an unfinished popup to players.
+
+### 2026-07-08 - Phase 5C POP-12 Target-Lock Reference PNG
+
+Files changed:
+
+- `Design/VisualLockLayered/README.md`
+- `Design/VisualLockLayered/POP-12_ResourceLogisticsExchange/README.md`
+- `Design/VisualLockLayered/POP-12_ResourceLogisticsExchange/reference/POP-12_ResourceLogisticsExchange_NewMainMenuArtDirection_TargetLock_V01.png`
+- `Design/VisualLockLayered/POP-12_ResourceLogisticsExchange/reference/README.md`
+- `Design/VisualLockLayered/POP-12_ResourceLogisticsExchange/layer_requests/README.md`
+- `Design/Architecture/resource_logistics_exchange_implementation_tracker.md`
+
+Behavior changed:
+
+- Generated and saved the accepted `POP-12 Resource Logistics Exchange` target-lock reference PNG using the built-in imagegen workflow.
+- Moved `POP-12_ResourceLogisticsExchange` from pending target requests to saved references in the VisualLockLayered inventory.
+- Recorded validation notes for the generated reference: Build-Popup-aligned dark/gold command UI, Export/Import route cards, selected details, amount stepper, queue rows, Rush All, Clear Completed, and separable-looking icons/progress/badges.
+- Kept the separated layer pack and Canvas implementation unchecked. The target PNG is a visual reference, not a Unity-ready layer pack.
+- Noted that the generated locked `IMPORT OIL` card is a disabled/gated visual state only; runtime must keep Credits -> Oil unavailable by default unless an authored scenario enables it.
+
+Validation:
+
+- Visually inspected the saved PNG at `Design/VisualLockLayered/POP-12_ResourceLogisticsExchange/reference/POP-12_ResourceLogisticsExchange_NewMainMenuArtDirection_TargetLock_V01.png`.
+- `git diff --check` passed.
+
+Remaining blocker or next slice:
+
+- Next slice is the separated layer pack under `Design/VisualLockLayered/POP-12_ResourceLogisticsExchange/`.
+- Unity Canvas/prefab implementation remains blocked until layer extraction produces separate frames, icons, progress fills, badges, button states, `layer_manifest.json`, and a contact sheet.

@@ -1,6 +1,6 @@
 # POP-12 Resource Logistics Exchange Layer Requests
 
-Layer generation is blocked until the accepted target PNG exists under:
+Layer generation should use the accepted target PNG under:
 
 `../reference/POP-12_ResourceLogisticsExchange_NewMainMenuArtDirection_TargetLock_V01.png`
 

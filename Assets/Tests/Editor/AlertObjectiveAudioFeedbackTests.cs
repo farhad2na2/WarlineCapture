@@ -6,6 +6,7 @@ using NUnit.Framework;
 using Unity.Core;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEngine;
 
 public sealed class AlertObjectiveAudioFeedbackTests
@@ -21,6 +22,10 @@ public sealed class AlertObjectiveAudioFeedbackTests
             tests.TryEmitThreatWarningAudio_EnqueuesAlertsBusRequest();
             passed++;
             tests.ThreatDetectionWarningSystem_NewCloseAirThreatEnqueuesCriticalAlertAudio();
+            passed++;
+            tests.UnitUnderAttackAudio_ResolvesOnlyForPlayerControlledTargets();
+            passed++;
+            tests.UnitAttackSystem_DamagingPlayerTargetEnqueuesUnderAttackAudio();
             passed++;
 
             Debug.Log($"[AlertObjectiveAudioFeedbackValidation] result=Passed tests={passed}");
@@ -124,6 +129,56 @@ public sealed class AlertObjectiveAudioFeedbackTests
         }
     }
 
+    [Test]
+    public void UnitUnderAttackAudio_ResolvesOnlyForPlayerControlledTargets()
+    {
+        using World world = new("UnitUnderAttackAudioResolveTests");
+        EntityManager em = world.EntityManager;
+        Entity playerTarget = CreateCombatTarget(em, FactionIdentity.PlayerFactionId, new int2(4, 4), new float3(4f, 0f, 4f), 100);
+        Entity enemyTarget = CreateCombatTarget(em, FactionIdentity.EnemyFactionId, new int2(5, 4), new float3(5f, 0f, 4f), 100);
+
+        Assert.IsTrue(UnitAttackSystem.TryResolveUnitUnderAttackAudioEvent(
+            em,
+            playerTarget,
+            out string eventId,
+            out uint eventHash));
+        Assert.AreEqual(AudioEventIds.AlertUnitUnderAttack, eventId);
+        Assert.AreEqual(AudioEventIds.AlertUnitUnderAttackHash, eventHash);
+
+        Assert.IsFalse(UnitAttackSystem.TryResolveUnitUnderAttackAudioEvent(
+            em,
+            enemyTarget,
+            out _,
+            out _));
+    }
+
+    [Test]
+    public void UnitAttackSystem_DamagingPlayerTargetEnqueuesUnderAttackAudio()
+    {
+        using World world = new("UnitUnderAttackAudioSystemTests");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em);
+        Entity target = CreateCombatTarget(em, FactionIdentity.PlayerFactionId, new int2(4, 4), new float3(4f, 0f, 4f), 100);
+        CreateCombatAttacker(em, FactionIdentity.EnemyFactionId, new int2(4, 5), new float3(4f, 0f, 5f), target, 25);
+
+        SystemHandle attackSystem = world.CreateSystem<UnitAttackSystem>();
+        world.SetTime(new TimeData(1.5d, 0.1f));
+        attackSystem.Update(world.Unmanaged);
+
+        Assert.AreEqual(75, em.GetComponentData<UnitHealth>(target).Current);
+
+        DynamicBuffer<AudioPlaybackRequestElement> requests = GetAudioRequests(em);
+        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(AudioEventIds.AlertUnitUnderAttack, requests[0].EventId.ToString());
+        Assert.AreEqual(AudioEventIds.AlertUnitUnderAttackHash, requests[0].EventHash);
+        Assert.AreEqual("Alerts", requests[0].BusId.ToString());
+        Assert.AreEqual(AudioPlaybackPriority.High, requests[0].Priority);
+        Assert.AreEqual(AudioPlaybackRequestStatus.Pending, requests[0].Status);
+        Assert.AreEqual(target, requests[0].SourceEntity);
+        Assert.That(requests[0].CooldownSeconds, Is.EqualTo(2.5f).Within(0.001f));
+        Assert.That(requests[0].RequestedAt, Is.EqualTo(1.5f).Within(0.001f));
+    }
+
     private static void AssertThreatAudio(
         ThreatWarningType warningType,
         float etaSeconds,
@@ -167,6 +222,78 @@ public sealed class AlertObjectiveAudioFeedbackTests
             });
         }
 
+        return entity;
+    }
+
+    private static void CreateGrid(EntityManager em)
+    {
+        Entity gridEntity = em.CreateEntity(typeof(GridConfig));
+        em.SetComponentData(gridEntity, new GridConfig
+        {
+            Width = 16,
+            Height = 16,
+            CellSize = 1f,
+            Origin = float3.zero
+        });
+    }
+
+    private static Entity CreateCombatTarget(EntityManager em, byte factionId, int2 cell, float3 position, int health)
+    {
+        Entity entity = em.CreateEntity(
+            typeof(Faction),
+            typeof(UnitGrid),
+            typeof(UnitFootprint),
+            typeof(UnitHealth),
+            typeof(LocalTransform));
+        em.SetComponentData(entity, new Faction { Id = factionId });
+        em.SetComponentData(entity, new UnitGrid { Cell = cell });
+        em.SetComponentData(entity, new UnitFootprint { Size = new int2(1, 1) });
+        em.SetComponentData(entity, new UnitHealth { Current = health, Max = health });
+        em.SetComponentData(entity, LocalTransform.FromPosition(position));
+        return entity;
+    }
+
+    private static Entity CreateCombatAttacker(
+        EntityManager em,
+        byte factionId,
+        int2 cell,
+        float3 position,
+        Entity target,
+        int damage)
+    {
+        Entity entity = em.CreateEntity(
+            typeof(Faction),
+            typeof(UnitGrid),
+            typeof(UnitFootprint),
+            typeof(UnitHealth),
+            typeof(UnitCombat),
+            typeof(UnitAttack),
+            typeof(UnitAttackCooldownComponent),
+            typeof(UnitAttackTraceComponent),
+            typeof(UnitAttackAnimationComponent),
+            typeof(EngageTarget),
+            typeof(LocalTransform));
+        em.SetComponentData(entity, new Faction { Id = factionId });
+        em.SetComponentData(entity, new UnitGrid { Cell = cell });
+        em.SetComponentData(entity, new UnitFootprint { Size = new int2(1, 1) });
+        em.SetComponentData(entity, new UnitHealth { Current = 100, Max = 100 });
+        em.SetComponentData(entity, new UnitCombat { CanAttack = 1, AutoEngage = 0 });
+        em.SetComponentData(entity, new UnitAttack
+        {
+            Range = 2f,
+            CooldownSeconds = 1f,
+            Damage = damage,
+            TraceVisibleSeconds = 0.1f,
+            TracerEveryNthShot = 1
+        });
+        em.SetComponentData(entity, new EngageTarget
+        {
+            Target = target,
+            Cell = new int2(4, 4),
+            Position = new float3(4f, 0f, 4f),
+            IsCommanded = 1
+        });
+        em.SetComponentData(entity, LocalTransform.FromPosition(position));
         return entity;
     }
 

@@ -5,6 +5,7 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
 using Game.Components;
+using Game.Configs;
 
 namespace Game.Runtime
 {
@@ -345,6 +346,10 @@ namespace Game.Runtime
 
                 health.Current = math.max(0, health.Current - pending.TotalDamage);
                 em.SetComponentData(target, health);
+                TryEmitUnitUnderAttackAudio(
+                    em,
+                    target,
+                    (float)SystemAPI.Time.ElapsedTime);
 
                 if (em.HasComponent<RecentAttacker>(target))
                 {
@@ -401,6 +406,48 @@ namespace Game.Runtime
 
             ecb.Playback(em);
             ecb.Dispose();
+        }
+
+        public static bool TryEmitUnitUnderAttackAudio(
+            EntityManager em,
+            Entity target,
+            float requestedAt)
+        {
+            if (!TryResolveUnitUnderAttackAudioEvent(em, target, out string eventId, out uint eventHash))
+                return false;
+
+            AudioEventRequestSystem.EnqueueOneShot(
+                em,
+                new FixedString64Bytes(eventId),
+                eventHash,
+                new FixedString32Bytes("Alerts"),
+                AudioPlaybackPriority.High,
+                requestedAt,
+                cooldownSeconds: 2.5f,
+                sourceEntity: target);
+            return true;
+        }
+
+        public static bool TryResolveUnitUnderAttackAudioEvent(
+            EntityManager em,
+            Entity target,
+            out string eventId,
+            out uint eventHash)
+        {
+            eventId = null;
+            eventHash = 0u;
+
+            if (target == Entity.Null ||
+                !em.Exists(target) ||
+                !em.HasComponent<Faction>(target) ||
+                !FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(target).Id))
+            {
+                return false;
+            }
+
+            eventId = AudioEventIds.AlertUnitUnderAttack;
+            eventHash = AudioEventIds.AlertUnitUnderAttackHash;
+            return true;
         }
 
         private void ProcessStandardAttackPlans(

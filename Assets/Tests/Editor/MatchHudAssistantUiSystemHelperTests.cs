@@ -181,7 +181,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
 
         Assert.AreEqual(2, assistantGateway.AssistantIntentRequestCount);
         Assert.AreEqual(UiAssistantCommandIntentKind.ExecuteRecommendation, assistantGateway.LastAssistantIntentKind);
-        Assert.IsFalse(assistantGateway.LastAssistantIntentFromTakeover);
+        Assert.IsTrue(assistantGateway.LastAssistantIntentFromTakeover);
 
         stop.onClick.Invoke();
 

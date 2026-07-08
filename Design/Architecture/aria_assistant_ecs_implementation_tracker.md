@@ -1,12 +1,12 @@
 # ARIA Assistant ECS Implementation Tracker
 
 Date: 2026-07-08
-Status: Phase 5 ownership banner slice complete
+Status: Phase 5 bounded control sequence complete
 Source design: `Design/ARIA_Assistant_ECS_Design.md`
 
 ## Progress
 
-Overall progress: 66% complete, 45 of 68 checklist items complete.
+Overall progress: 68% complete, 46 of 68 checklist items complete.
 
 | Phase | Scope | Items | Complete | Status |
 |---|---|---:|---:|---|
@@ -15,7 +15,7 @@ Overall progress: 66% complete, 45 of 68 checklist items complete.
 | 2 | Match header and panel shell | 8 | 8 | Complete |
 | 3 | Goal and recommendation read models | 8 | 8 | Complete |
 | 4 | Show Me and Do It command intents | 8 | 8 | Complete |
-| 5 | Give Control ownership | 8 | 7 | In progress |
+| 5 | Give Control ownership | 8 | 8 | Complete |
 | 6 | Message, narration, and audio | 8 | 0 | Not started |
 | 7 | Settings, save, and accessibility | 6 | 0 | Not started |
 | 8 | Validation, performance, and rollout | 8 | 0 | Not started |
@@ -150,7 +150,7 @@ Phase 4 notes:
 - [x] Cancel takeover on pause, route change, result popup, destroyed target, invalid command, or selection ownership mismatch.
 - [x] Add `Stop` button request path to cancel preview/takeover.
 - [x] Add visible ownership banner/state on the panel.
-- [ ] Add one bounded control sequence, such as one tutorial select/move/action.
+- [x] Add one bounded control sequence, such as one tutorial select/move/action.
 - [x] Add tests for cancellation and player override.
 
 Exit criteria: ARIA can perform one bounded control sequence and reliably returns control to the player.
@@ -167,6 +167,7 @@ Phase 5 notes:
 - Assistant takeover now returns control to the player when a newer command-intent result is rejected, cancelled, or timed out. This covers invalid commands and destroyed-target rejection paths through the existing ECS command-result boundary.
 - Shell blocker cancellation now returns control to the player when the shell leaves the match route, enters a non-match/non-popup mode, or shows pause/settings/reward popups. Threat alert popups are intentionally non-blocking. The mission-result popup currently has no ECS source (`TryReadMissionResult` returns false), so future result UI should either use `UiShellActivePopupComponent` or add a data-only ECS result component before ARIA can observe it directly.
 - The panel ownership surface now uses a short header state plus a readable detail line from `UiAssistantPanelModel.OwnershipDetailText`, so active preview/takeover/override states tell the player what ARIA is doing and how to stop it.
+- Phase 5 bounded control sequence is complete. The ARIA panel Give Control action now sends a takeover-marked execute request; `AssistantCommandIntentSystem` routes the safe selection/focus command through existing RTS selection command buffers and enters `AssistantTakeover`, where `AssistantControlOwnerSystem` applies timeout, action-count, shell-blocker, invalid-command, and player-override bounds.
 
 ## Phase 6: Message, Narration, And Audio
 
@@ -233,6 +234,7 @@ Exit criteria: feature is playable, validated, documented, and does not regress 
 | 2026-07-08 | Phase 5 invalid command takeover cancellation | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-cancel-invalid-intent-unity.log --timeout 420 -- -quit -executeMethod AssistantControlOwnerSystemTests.RunFocusedValidation` | Passed | Focused Unity validation reported `[AssistantControlOwnerSystemValidation] result=Passed tests=8`. Validates takeover return-to-player on rejected and timed-out assistant command results, alongside timeout, max-action, and player-input override coverage. |
 | 2026-07-08 | Phase 5 shell blocker takeover cancellation | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-shell-blocker-cancel-unity.log --timeout 420 -- -quit -executeMethod AssistantControlOwnerSystemTests.RunFocusedValidation` | Passed | Focused Unity validation reported `[AssistantControlOwnerSystemValidation] result=Passed tests=11`. Validates takeover return-to-player on match route changes and pause popups, while keeping non-blocking threat alert popups from cancelling ARIA ownership. |
 | 2026-07-08 | Phase 5 ownership banner/detail text | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-ownership-banner-ui-unity.log --timeout 420 -- -quit -executeMethod MatchHudAssistantUiSystemHelperTests.RunFocusedValidation` | Passed | Focused Unity validation reported `[MatchHudAssistantUiValidation] result=Passed tests=2`. Validates the ARIA panel ownership detail text and existing assistant panel command buttons/world highlight binding. |
+| 2026-07-08 | Phase 5 bounded Give Control sequence | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-bounded-control-gateway-unity.log --timeout 420 -- -quit -executeMethod AssistantCommandIntentGatewayTests.RunFocusedValidation`; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-bounded-control-intent-unity.log --timeout 420 -- -quit -executeMethod AssistantCommandIntentSystemTests.RunFocusedValidation`; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-bounded-control-ui-unity.log --timeout 420 -- -quit -executeMethod MatchHudAssistantUiSystemHelperTests.RunFocusedValidation` | Passed | Focused Unity validations reported `[AssistantCommandIntentGatewayValidation] result=Passed tests=5`, `[AssistantCommandIntentSystemValidation] result=Passed tests=9`, and `[MatchHudAssistantUiValidation] result=Passed tests=2`. Validates Give Control sends takeover intent, safe selection/focus command routing enters `AssistantTakeover`, and the bounded owner system remains responsible for returning control. |
 
 ## Open Decisions
 

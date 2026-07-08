@@ -153,7 +153,9 @@ namespace Game.UI.Shell.Ecs
                     }
 
                     AddResult(results, request, AssistantCommandIntentStatus.Accepted, ReasonAccepted, new FixedString64Bytes("Selection queued."));
-                    assistantState.ControlState = AssistantControlState.Guided;
+                    assistantState.ControlState = request.FromTakeover != 0
+                        ? AssistantControlState.AssistantTakeover
+                        : AssistantControlState.Guided;
                     assistantState.ActiveRecommendationId = request.RecommendationId;
                     assistantState.UiDirty = 1;
                     assistantStateChanged = true;

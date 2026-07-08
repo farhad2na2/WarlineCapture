@@ -26,6 +26,8 @@ public sealed class AssistantCommandIntentSystemTests
             passed++;
             RunCase(test => test.AssistantCommandIntentSystem_QueuesSelectionModeFromUiSurfaceDoIt());
             passed++;
+            RunCase(test => test.AssistantCommandIntentSystem_QueuesTakeoverSelectionModeFromUiSurfaceDoIt());
+            passed++;
             RunCase(test => test.AssistantCommandIntentSystem_QueuesFocusUnitFromEntityDoIt());
             passed++;
             RunCase(test => test.AssistantCommandIntentSystem_WritesRecoveryMessageForInvalidSelectTarget());
@@ -285,6 +287,45 @@ public sealed class AssistantCommandIntentSystemTests
         Assert.AreEqual(RtsSelectionCommandIntentKind.EnterSelectionMode, selectionRequests[0].Kind);
         Assert.AreEqual(1, selectionRequests[0].RequestId);
         Assert.AreEqual(25, selectionRequests[0].Frame);
+    }
+
+    [Test]
+    public void AssistantCommandIntentSystem_QueuesTakeoverSelectionModeFromUiSurfaceDoIt()
+    {
+        Entity boundary = CreateBoundary();
+        DynamicBuffer<AssistantCommandIntentRequestElement> requests =
+            _entityManager.GetBuffer<AssistantCommandIntentRequestElement>(boundary);
+        requests.Add(new AssistantCommandIntentRequestElement
+        {
+            RequestId = 19,
+            Frame = 35,
+            RecommendationId = 3001,
+            Kind = AssistantCommandIntentKind.SelectEntity,
+            TargetKind = AssistantTargetKind.UiSurface,
+            FromTakeover = 1
+        });
+
+        _intentSystem.Update(_world.Unmanaged);
+
+        DynamicBuffer<AssistantCommandIntentResultElement> results =
+            _entityManager.GetBuffer<AssistantCommandIntentResultElement>(boundary);
+        Assert.AreEqual(1, results.Length);
+        Assert.AreEqual(AssistantCommandIntentStatus.Accepted, results[0].Status);
+
+        AssistantStateComponent assistantState =
+            _entityManager.GetComponentData<AssistantStateComponent>(boundary);
+        Assert.AreEqual(AssistantControlState.AssistantTakeover, assistantState.ControlState);
+        Assert.AreEqual(3001, assistantState.ActiveRecommendationId);
+        Assert.AreEqual(1, assistantState.UiDirty);
+
+        using EntityQuery selectionQuery = _entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<RtsSelectionInputStateComponent>(),
+            ComponentType.ReadOnly<RtsSelectionCommandIntentRequestElement>());
+        Entity selectionEntity = selectionQuery.GetSingletonEntity();
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> selectionRequests =
+            _entityManager.GetBuffer<RtsSelectionCommandIntentRequestElement>(selectionEntity);
+        Assert.AreEqual(1, selectionRequests.Length);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.EnterSelectionMode, selectionRequests[0].Kind);
     }
 
     [Test]

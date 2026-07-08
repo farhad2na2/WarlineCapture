@@ -4,8 +4,29 @@ using UnityEngine;
 
 internal static class ValidationExit
 {
+    private static int _suppressedExitDepth;
+
+    public static int? LastExitCode { get; private set; }
+
+    public static IDisposable SuppressProcessExit()
+    {
+        _suppressedExitDepth++;
+        return new SuppressedExitScope();
+    }
+
+    public static void ClearLastExitCode()
+    {
+        LastExitCode = null;
+    }
+
     public static void Exit(int code)
     {
+        LastExitCode = code;
+        if (_suppressedExitDepth > 0)
+        {
+            return;
+        }
+
         if (Application.isBatchMode ||
             Array.IndexOf(Environment.GetCommandLineArgs(), "-runTests") >= 0)
         {
@@ -21,5 +42,13 @@ internal static class ValidationExit
     public static void Failed()
     {
         Exit(1);
+    }
+
+    private readonly struct SuppressedExitScope : IDisposable
+    {
+        public void Dispose()
+        {
+            _suppressedExitDepth = Math.Max(0, _suppressedExitDepth - 1);
+        }
     }
 }

@@ -1,12 +1,12 @@
 # ARIA Assistant ECS Implementation Tracker
 
 Date: 2026-07-08
-Status: Phase 7 assistant settings accessibility controls complete; Phase 8 validation/performance rollout pending
+Status: Phase 8 aggregate validation runner complete; visual/performance/docs rollout pending
 Source design: `Design/ARIA_Assistant_ECS_Design.md`
 
 ## Progress
 
-Overall progress: 88% complete, 60 of 68 checklist items complete.
+Overall progress: 94% complete, 64 of 68 checklist items complete.
 
 | Phase | Scope | Items | Complete | Status |
 |---|---|---:|---:|---|
@@ -18,7 +18,7 @@ Overall progress: 88% complete, 60 of 68 checklist items complete.
 | 5 | Give Control ownership | 8 | 8 | Complete |
 | 6 | Message, narration, and audio | 8 | 8 | Complete |
 | 7 | Settings, save, and accessibility | 6 | 6 | Complete |
-| 8 | Validation, performance, and rollout | 8 | 0 | Not started |
+| 8 | Validation, performance, and rollout | 8 | 4 | In progress |
 
 Progress update rule: update the complete count and overall percentage after every stable slice. Do not mark a phase complete until code, docs, and validation notes are updated.
 
@@ -212,16 +212,22 @@ Phase 7 notes:
 
 ## Phase 8: Validation, Performance, And Rollout
 
-- [ ] Run `git diff --check`.
-- [ ] Run focused assistant edit-mode tests.
-- [ ] Run architecture guardrails for forbidden naming and helper suffix compliance.
-- [ ] Run compile validation.
+- [x] Run `git diff --check`.
+- [x] Run focused assistant edit-mode tests.
+- [x] Run architecture guardrails for forbidden naming and helper suffix compliance.
+- [x] Run compile validation.
 - [ ] Run Unity visual validation for match header button, panel, Show Me, Do It, Give Control, Stop, and narration text.
 - [ ] Capture performance diagnostics for assistant update time and GC allocations.
 - [ ] Update `Design/README.md`, root `README.md`, and related docs with final implementation status.
 - [ ] Commit and push only after stable validation passes.
 
 Exit criteria: feature is playable, validated, documented, and does not regress architecture or frame hot paths.
+
+Phase 8 notes:
+
+- Added `AssistantRolloutValidationTests.RunFocusedValidation` as the aggregate editor batch entry point for the ARIA rollout. It reuses the focused ECS data, read-model, command intent, control ownership, message priority, narration, settings persistence, match HUD UI, and settings popup validations.
+- Extended the editor-only `ValidationExit` helper with scoped process-exit suppression so aggregate validation can run existing batch entry points without terminating Unity after the first focused pass. Normal standalone validation exit behavior is unchanged outside the suppression scope.
+- Source-only forbidden assistant owner-name scan remains clean for active scripts and tests.
 
 ## Validation Log
 
@@ -262,6 +268,7 @@ Exit criteria: feature is playable, validated, documented, and does not regress 
 | 2026-07-08 | Phase 7 assistant settings ECS persistence bridge | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-settings-persistence-unity.log --timeout 420 -- -quit -executeMethod AssistantSettingsPersistenceSystemTests.RunFocusedValidation`; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-settings-gateway-unity.log --timeout 420 -- -quit -executeMethod AssistantCommandIntentGatewayTests.RunFocusedValidation` | Passed | Focused Unity validations reported `[AssistantSettingsPersistenceValidation] result=Passed tests=3` and `[AssistantCommandIntentGatewayValidation] result=Passed tests=6`. Validates ECS projection, runtime settings bridge, dependent state sync, and disabled-takeover command blocking. |
 | 2026-07-08 | Phase 7 subtitle visibility setting and panel fallback | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-subtitle-persistence-unity.log --timeout 420 -- -quit -executeMethod AssistantSettingsPersistenceSystemTests.RunFocusedValidation`; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-subtitle-visibility-ui-unity.log --timeout 420 -- -quit -executeMethod MatchHudAssistantUiSystemHelperTests.RunFocusedValidation`; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-subtitle-settings-unity.log --timeout 420 -- -quit -executeMethod SettingsPopupValidationTests.RunFocusedValidation`; post-rebase reruns `/private/tmp/aria-assistant-subtitle-visibility-ui-postrebase-unity.log` and `/private/tmp/aria-assistant-subtitle-settings-postrebase-unity.log`; `dotnet build Game.UI.Contracts.csproj --no-restore`; `dotnet build Game.UI.Shell.Ecs.csproj --no-restore`; `dotnet build Assembly-CSharp.csproj --no-restore` | Passed | Focused Unity validations reported `[AssistantSettingsPersistenceValidation] result=Passed tests=3`, `[MatchHudAssistantUiValidation] result=Passed tests=2`, and `[SettingsPopupValidation] result=Passed tests=8`; post-rebase reruns again reported `[MatchHudAssistantUiValidation] result=Passed tests=2` and `[SettingsPopupValidation] result=Passed tests=8`. C# project builds passed with warnings only. Validates persisted subtitle settings, ECS projection, hidden narration subtitle row, visible critical alert fallback text, and shared settings popup regression coverage. |
 | 2026-07-08 | Phase 7 visible settings popup controls | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; `dotnet build Game.UI.Contracts.csproj --no-restore`; `dotnet build Game.UI.Shell.Ecs.csproj --no-restore`; `dotnet build Assembly-CSharp.csproj --no-restore`; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-settings-controls-builder-unity-3.log --timeout 420 -- -quit -executeMethod Game.Editor.SettingsPopupPrefabBuilder.Build`; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-settings-controls-popup-validation-3.log --timeout 420 -- -quit -executeMethod SettingsPopupValidationTests.RunFocusedValidation`; post-rebase rerun `/private/tmp/aria-settings-controls-popup-validation-postrebase.log` | Passed | Focused popup validation reported `[SettingsPopupValidation] result=Passed tests=8`; post-rebase rerun also reported `[SettingsPopupValidation] result=Passed tests=8`. Earlier validation attempts caught visible `ARIA` wording in generated text and were corrected before this pass. Validates visible narration mode, assistant takeover, and assistant subtitle controls in the shared settings popup, required control counts, readable non-overlapping layout, sliced PPU-2 frames, and menu/match popup installation. |
+| 2026-07-08 | Phase 8 aggregate assistant rollout validation | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; `dotnet build Assembly-CSharp.csproj --no-restore`; pre-rebase `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-rollout-validation-unity.log --timeout 900 -- -quit -executeMethod AssistantRolloutValidationTests.RunFocusedValidation`; post-rebase `/private/tmp/aria-assistant-rollout-validation-postrebase-unity.log` | Passed | Aggregate Unity validation reported `[AssistantRolloutValidation] result=Passed validations=10` before and after rebase. Covers ECS data contract, read models, command intent gateway/system, control ownership, message priorities, narration requests, settings persistence, match HUD assistant UI, and shared settings popup focused validations in one batch entry point. |
 
 ## Open Decisions
 

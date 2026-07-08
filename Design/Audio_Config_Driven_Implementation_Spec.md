@@ -323,14 +323,14 @@ Use this section as the work checklist. Update status after each implementation 
 
 ### Current Completion
 
-Overall tracked completion: **92%**.
+Overall tracked completion: **94%**.
 
-- Completed steps: 15 / 20.
+- Completed steps: 16 / 20.
 - Asset and placeholder catalog preparation: **Done**.
 - Runtime playback implementation: **In Progress**.
 - UI/gameplay wiring: **In Progress**.
 - Validation/performance test coverage: **In Progress**.
-- Latest stable slice: audio catalog validation now enforces required events, valid buses, clip paths, runtime-safe playback rules, import profiles, and generated id/hash alignment.
+- Latest stable slice: audio performance validation now stress-checks cooldown spam behavior, alert burst cooldowns, playback pool stability, and direct playback/runtime-load guardrails.
 
 Status legend:
 
@@ -358,7 +358,7 @@ Status legend:
 | 15. Wire alert/objective audio | Blocked | Gameplay/UI | Threat, objective, unit under attack, base breached events. | `AlertObjectiveAudioFeedbackTests.RunFocusedValidation` passed for threat warning, unit-under-attack, and base-breached alert audio. Objective audio is blocked until mission/objective result state exists beyond seeded HUD text/icons. |
 | 16. Wire music state system | In Progress | Gameplay/UI | Splash/menu/briefing/match/result music state transitions. | `UiShellAudioRoutePopupTests.RunFocusedValidation` passed for menu and match route music requests. Result music pending until result route/model is implemented. |
 | 17. Add audio catalog validation tests | Done | QA | Missing clip, duplicate id, invalid bus, cooldown, import profile tests. | `AudioConfigContractTests.RunFocusedValidation` passed with required event, bus, clip, cooldown, runtime-load, import profile, and hash alignment checks. |
-| 18. Add performance validation | Not Started | QA/Perf | Audio stress test for UI spam and match alerts. | No recurring GC after warmup; no runtime loading; pool size stable. |
+| 18. Add performance validation | Done | QA/Perf | Audio stress test for UI spam and match alerts. | `AudioPerformanceValidationTests.RunFocusedValidation` passed for UI spam cooldowns, alert burst cooldowns, playback pool stability, and no direct gameplay/UI ECS audio loading/playback. |
 | 19. Update `Audio_Design_Guidelines.md` handoff | Done | Designer | Cross-link implementation spec and mark event set source. | Docs aligned. |
 | 20. Production audio replacement plan | Not Started | Audio/Designer | Final audio asset sourcing/composition plan. | Catalog entries marked final/placeholder. |
 
@@ -719,6 +719,15 @@ Performance scenario:
 - Trigger a threat alert burst.
 - Validate no recurring managed allocation after warmup from audio request processing or playback.
 - Validate pool size stabilizes.
+
+Current Step 18 performance validation pass:
+
+- Source: `Assets/Tests/Editor/AudioPerformanceValidationTests.cs`.
+- Validation: `AudioPerformanceValidationTests.RunFocusedValidation`.
+- UI disabled-button spam validation enqueues 512 semantic requests and confirms cooldown state remains one event entry, with one accepted request and the rest cooldown-skipped.
+- Alert burst validation enqueues 256 mixed critical/unit-under-attack alert requests and confirms cooldown state remains bounded to the two alert event hashes.
+- Playback pool validation plays and stops 128 accepted requests through `AudioPlaybackPresentationSystemHelper` and confirms the prewarmed source is reused with no pool growth.
+- Architecture guard validates gameplay systems, UI shell ECS, and UI component code do not use `Resources.Load`, `AudioSource`, `PlayOneShot`, or direct `.Play()` calls; those remain isolated to the audio presentation helper.
 
 ## Acceptance Definition
 

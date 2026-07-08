@@ -13,10 +13,14 @@ namespace Game.UI.Shell.Ecs
         private const float DefaultTakeoverSeconds = 30f;
 
         private EntityQuery boundaryQuery;
+        private EntityQuery selectionInputQuery;
 
         public void OnCreate(ref SystemState state)
         {
             boundaryQuery = state.GetEntityQuery(ComponentType.ReadOnly<UiShellRootComponent>());
+            selectionInputQuery = state.GetEntityQuery(
+                ComponentType.ReadOnly<RtsSelectionInputStateComponent>(),
+                ComponentType.ReadOnly<RtsSelectionPointerRequestElement>());
             state.RequireForUpdate(boundaryQuery);
         }
 
@@ -31,14 +35,21 @@ namespace Game.UI.Shell.Ecs
             AssistantControlOwnerComponent owner = em.GetComponentData<AssistantControlOwnerComponent>(boundary);
             DynamicBuffer<AssistantCommandIntentResultElement> results =
                 em.GetBuffer<AssistantCommandIntentResultElement>(boundary);
+            SelectionInputSnapshot selectionInput = ReadSelectionInputSnapshot(ref state);
 
             float now = UnityEngine.Time.time;
             bool assistantStateChanged = false;
             bool ownerChanged = false;
 
             if (assistantState.ControlState == AssistantControlState.Player ||
-                owner.CancelRequested != 0 ||
-                owner.PlayerOverrideRequested != 0)
+                owner.CancelRequested != 0)
+            {
+                ResetToPlayer(ref assistantState, ref owner);
+                assistantStateChanged = true;
+                ownerChanged = true;
+            }
+            else if (assistantState.ControlState == AssistantControlState.PlayerOverridePending ||
+                     owner.PlayerOverrideRequested != 0)
             {
                 ResetToPlayer(ref assistantState, ref owner);
                 assistantStateChanged = true;
@@ -46,27 +57,36 @@ namespace Game.UI.Shell.Ecs
             }
             else if (owner.State != assistantState.ControlState)
             {
-                BeginOwnershipState(ref owner, assistantState, results, now);
+                BeginOwnershipState(ref owner, assistantState, results, selectionInput, now);
                 ownerChanged = true;
             }
             else
             {
-                if (owner.ActiveRecommendationId != assistantState.ActiveRecommendationId)
+                if (IsPlayerOverrideDetected(owner, selectionInput))
                 {
-                    owner.ActiveRecommendationId = assistantState.ActiveRecommendationId;
+                    MarkPlayerOverridePending(ref assistantState, ref owner);
+                    assistantStateChanged = true;
                     ownerChanged = true;
                 }
-
-                if (owner.State == AssistantControlState.AssistantTakeover)
+                else
                 {
-                    if (ConsumeTakeoverActionResults(ref owner, results))
-                        ownerChanged = true;
-
-                    if (HasTakeoverExpired(owner, now) || HasReachedActionLimit(owner))
+                    if (owner.ActiveRecommendationId != assistantState.ActiveRecommendationId)
                     {
-                        ResetToPlayer(ref assistantState, ref owner);
-                        assistantStateChanged = true;
+                        owner.ActiveRecommendationId = assistantState.ActiveRecommendationId;
                         ownerChanged = true;
+                    }
+
+                    if (owner.State == AssistantControlState.AssistantTakeover)
+                    {
+                        if (ConsumeTakeoverActionResults(ref owner, results))
+                            ownerChanged = true;
+
+                        if (HasTakeoverExpired(owner, now) || HasReachedActionLimit(owner))
+                        {
+                            ResetToPlayer(ref assistantState, ref owner);
+                            assistantStateChanged = true;
+                            ownerChanged = true;
+                        }
                     }
                 }
             }
@@ -91,6 +111,7 @@ namespace Game.UI.Shell.Ecs
             ref AssistantControlOwnerComponent owner,
             AssistantStateComponent assistantState,
             DynamicBuffer<AssistantCommandIntentResultElement> results,
+            SelectionInputSnapshot selectionInput,
             float now)
         {
             owner.State = assistantState.ControlState;
@@ -98,6 +119,8 @@ namespace Game.UI.Shell.Ecs
             owner.CancelRequested = 0;
             owner.PlayerOverrideRequested = 0;
             owner.ActiveIntentRequestId = LatestResultRequestId(results);
+            owner.LastPlayerInputRequestId = selectionInput.LatestPointerRequestId;
+            owner.LastQueuedMoveOrderToken = selectionInput.QueuedMoveOrderToken;
 
             if (assistantState.ControlState == AssistantControlState.AssistantTakeover)
             {
@@ -113,6 +136,57 @@ namespace Game.UI.Shell.Ecs
                 owner.StartedAt = 0f;
                 owner.TimeoutAt = 0f;
             }
+        }
+
+        private SelectionInputSnapshot ReadSelectionInputSnapshot(ref SystemState state)
+        {
+            if (selectionInputQuery.IsEmptyIgnoreFilter)
+                return default;
+
+            Entity selectionInput = selectionInputQuery.GetSingletonEntity();
+            RtsSelectionInputStateComponent inputState =
+                state.EntityManager.GetComponentData<RtsSelectionInputStateComponent>(selectionInput);
+            DynamicBuffer<RtsSelectionPointerRequestElement> pointerRequests =
+                state.EntityManager.GetBuffer<RtsSelectionPointerRequestElement>(selectionInput, true);
+
+            int latestPointerRequestId = 0;
+            for (int i = 0; i < pointerRequests.Length; i++)
+                latestPointerRequestId = math.max(latestPointerRequestId, pointerRequests[i].RequestId);
+
+            return new SelectionInputSnapshot
+            {
+                HasValue = true,
+                LatestPointerRequestId = latestPointerRequestId,
+                QueuedMoveOrderToken = inputState.QueuedMoveOrderToken,
+                HasQueuedMoveOrder = inputState.HasQueuedMoveOrder
+            };
+        }
+
+        private static bool IsPlayerOverrideDetected(
+            AssistantControlOwnerComponent owner,
+            SelectionInputSnapshot selectionInput)
+        {
+            if (!selectionInput.HasValue || owner.State == AssistantControlState.Player)
+                return false;
+
+            if (selectionInput.LatestPointerRequestId > owner.LastPlayerInputRequestId)
+                return true;
+
+            return selectionInput.HasQueuedMoveOrder != 0 &&
+                   selectionInput.QueuedMoveOrderToken != owner.LastQueuedMoveOrderToken;
+        }
+
+        private static void MarkPlayerOverridePending(
+            ref AssistantStateComponent assistantState,
+            ref AssistantControlOwnerComponent owner)
+        {
+            assistantState.ControlState = AssistantControlState.PlayerOverridePending;
+            assistantState.ActiveRecommendationId = 0;
+            assistantState.UiDirty = 1;
+
+            owner.State = AssistantControlState.PlayerOverridePending;
+            owner.ActiveRecommendationId = 0;
+            owner.PlayerOverrideRequested = 1;
         }
 
         private static bool ConsumeTakeoverActionResults(
@@ -199,10 +273,20 @@ namespace Game.UI.Shell.Ecs
             owner.ActiveRecommendationId = 0;
             owner.ActionCount = 0;
             owner.MaxActionCount = 0;
+            owner.LastPlayerInputRequestId = 0;
+            owner.LastQueuedMoveOrderToken = 0;
             owner.StartedAt = 0f;
             owner.TimeoutAt = 0f;
             owner.CancelRequested = 0;
             owner.PlayerOverrideRequested = 0;
+        }
+
+        private struct SelectionInputSnapshot
+        {
+            public bool HasValue;
+            public int LatestPointerRequestId;
+            public uint QueuedMoveOrderToken;
+            public byte HasQueuedMoveOrder;
         }
     }
 }

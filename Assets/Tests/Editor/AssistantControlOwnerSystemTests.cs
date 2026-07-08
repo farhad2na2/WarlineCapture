@@ -4,6 +4,7 @@ using Game.UI.Shell.Contracts.Ecs;
 using Game.UI.Shell.Ecs;
 using NUnit.Framework;
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 
 public sealed class AssistantControlOwnerSystemTests
@@ -24,6 +25,10 @@ public sealed class AssistantControlOwnerSystemTests
             RunCase(test => test.AssistantControlOwnerSystem_CancelsExpiredTakeover());
             passed++;
             RunCase(test => test.AssistantControlOwnerSystem_CancelsAfterMaxActionCount());
+            passed++;
+            RunCase(test => test.AssistantControlOwnerSystem_EntersOverridePendingOnNewPointerInput());
+            passed++;
+            RunCase(test => test.AssistantControlOwnerSystem_EntersOverridePendingOnQueuedMoveInput());
             passed++;
 
             Debug.Log($"[AssistantControlOwnerSystemValidation] result=Passed tests={passed}");
@@ -180,11 +185,108 @@ public sealed class AssistantControlOwnerSystemTests
         Assert.AreEqual(0, owner.ActionCount);
     }
 
+    [Test]
+    public void AssistantControlOwnerSystem_EntersOverridePendingOnNewPointerInput()
+    {
+        Entity boundary = CreateBoundary(new AssistantStateComponent
+        {
+            ControlState = AssistantControlState.AssistantTakeover,
+            ActiveRecommendationId = 4101
+        });
+        Entity selectionInput = CreateSelectionInput(new RtsSelectionInputStateComponent());
+        DynamicBuffer<RtsSelectionPointerRequestElement> pointerRequests =
+            _entityManager.GetBuffer<RtsSelectionPointerRequestElement>(selectionInput);
+        pointerRequests.Add(new RtsSelectionPointerRequestElement
+        {
+            Kind = RtsSelectionPointerRequestKind.Pressed,
+            RequestId = 4,
+            Frame = 10,
+            ScreenPosition = new float2(12f, 14f)
+        });
+
+        _ownerSystem.Update(_world.Unmanaged);
+        AssistantControlOwnerComponent owner =
+            _entityManager.GetComponentData<AssistantControlOwnerComponent>(boundary);
+        Assert.AreEqual(4, owner.LastPlayerInputRequestId);
+
+        pointerRequests = _entityManager.GetBuffer<RtsSelectionPointerRequestElement>(selectionInput);
+        pointerRequests.Add(new RtsSelectionPointerRequestElement
+        {
+            Kind = RtsSelectionPointerRequestKind.Clicked,
+            RequestId = 5,
+            Frame = 11,
+            ScreenPosition = new float2(20f, 22f)
+        });
+
+        _ownerSystem.Update(_world.Unmanaged);
+
+        AssistantStateComponent assistantState =
+            _entityManager.GetComponentData<AssistantStateComponent>(boundary);
+        owner = _entityManager.GetComponentData<AssistantControlOwnerComponent>(boundary);
+        Assert.AreEqual(AssistantControlState.PlayerOverridePending, assistantState.ControlState);
+        Assert.AreEqual(0, assistantState.ActiveRecommendationId);
+        Assert.AreEqual(1, assistantState.UiDirty);
+        Assert.AreEqual(AssistantControlState.PlayerOverridePending, owner.State);
+        Assert.AreEqual(1, owner.PlayerOverrideRequested);
+
+        _ownerSystem.Update(_world.Unmanaged);
+
+        assistantState = _entityManager.GetComponentData<AssistantStateComponent>(boundary);
+        owner = _entityManager.GetComponentData<AssistantControlOwnerComponent>(boundary);
+        Assert.AreEqual(AssistantControlState.Player, assistantState.ControlState);
+        Assert.AreEqual(AssistantControlState.Player, owner.State);
+        Assert.AreEqual(0, owner.PlayerOverrideRequested);
+    }
+
+    [Test]
+    public void AssistantControlOwnerSystem_EntersOverridePendingOnQueuedMoveInput()
+    {
+        Entity boundary = CreateBoundary(new AssistantStateComponent
+        {
+            ControlState = AssistantControlState.AssistantTakeover,
+            ActiveRecommendationId = 4101
+        });
+        Entity selectionInput = CreateSelectionInput(new RtsSelectionInputStateComponent
+        {
+            QueuedMoveOrderToken = 10,
+            QueuedMoveOrderFrame = 12
+        });
+
+        _ownerSystem.Update(_world.Unmanaged);
+        AssistantControlOwnerComponent owner =
+            _entityManager.GetComponentData<AssistantControlOwnerComponent>(boundary);
+        Assert.AreEqual(10u, owner.LastQueuedMoveOrderToken);
+
+        _entityManager.SetComponentData(selectionInput, new RtsSelectionInputStateComponent
+        {
+            QueuedMoveOrderToken = 11,
+            QueuedMoveOrderFrame = 13,
+            HasQueuedMoveOrder = 1
+        });
+
+        _ownerSystem.Update(_world.Unmanaged);
+
+        AssistantStateComponent assistantState =
+            _entityManager.GetComponentData<AssistantStateComponent>(boundary);
+        owner = _entityManager.GetComponentData<AssistantControlOwnerComponent>(boundary);
+        Assert.AreEqual(AssistantControlState.PlayerOverridePending, assistantState.ControlState);
+        Assert.AreEqual(AssistantControlState.PlayerOverridePending, owner.State);
+        Assert.AreEqual(1, owner.PlayerOverrideRequested);
+    }
+
     private Entity CreateBoundary(AssistantStateComponent assistantState)
     {
         Entity boundary = _entityManager.CreateEntity(typeof(UiShellRootComponent));
         _entityManager.AddComponentData(boundary, assistantState);
         _entityManager.AddBuffer<AssistantCommandIntentResultElement>(boundary);
         return boundary;
+    }
+
+    private Entity CreateSelectionInput(RtsSelectionInputStateComponent inputState)
+    {
+        Entity selectionInput = _entityManager.CreateEntity(typeof(RtsSelectionInputStateComponent));
+        _entityManager.SetComponentData(selectionInput, inputState);
+        _entityManager.AddBuffer<RtsSelectionPointerRequestElement>(selectionInput);
+        return selectionInput;
     }
 }

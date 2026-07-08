@@ -1,12 +1,12 @@
 # ARIA Assistant ECS Implementation Tracker
 
 Date: 2026-07-08
-Status: Phase 5 control ownership bounds slice complete
+Status: Phase 5 player override detection slice complete
 Source design: `Design/ARIA_Assistant_ECS_Design.md`
 
 ## Progress
 
-Overall progress: 60% complete, 41 of 68 checklist items complete.
+Overall progress: 62% complete, 42 of 68 checklist items complete.
 
 | Phase | Scope | Items | Complete | Status |
 |---|---|---:|---:|---|
@@ -15,7 +15,7 @@ Overall progress: 60% complete, 41 of 68 checklist items complete.
 | 2 | Match header and panel shell | 8 | 8 | Complete |
 | 3 | Goal and recommendation read models | 8 | 8 | Complete |
 | 4 | Show Me and Do It command intents | 8 | 8 | Complete |
-| 5 | Give Control ownership | 8 | 3 | In progress |
+| 5 | Give Control ownership | 8 | 4 | In progress |
 | 6 | Message, narration, and audio | 8 | 0 | Not started |
 | 7 | Settings, save, and accessibility | 6 | 0 | Not started |
 | 8 | Validation, performance, and rollout | 8 | 0 | Not started |
@@ -146,7 +146,7 @@ Phase 4 notes:
 
 - [x] Add `AssistantControlOwnerSystem` transition handling for player, guided, preview, takeover, and override-pending states.
 - [x] Add explicit takeover timeout and max action count.
-- [ ] Add player input override detection through existing input boundaries.
+- [x] Add player input override detection through existing input boundaries.
 - [ ] Cancel takeover on pause, route change, result popup, destroyed target, invalid command, or selection ownership mismatch.
 - [x] Add `Stop` button request path to cancel preview/takeover.
 - [ ] Add visible ownership banner/state on the panel.
@@ -163,6 +163,7 @@ Phase 5 notes:
 - The assistant panel model version now includes control state so state-only ownership changes refresh the header/panel text and button interactability.
 - Added unmanaged `AssistantControlOwnerSystem` to mirror player/guided/preview/takeover/override-pending ownership states from `AssistantStateComponent` into `AssistantControlOwnerComponent`.
 - Takeover ownership now starts with bounded defaults: 30 seconds and 3 counted actions. The owner system returns control to the player when timeout or action count is reached.
+- Player pointer requests and queued move-order tokens are now sampled from the existing RTS selection input ECS boundary. ARIA ownership baselines the latest observed input when ownership starts, then enters `PlayerOverridePending` and returns control to the player when newer player input appears.
 
 ## Phase 6: Message, Narration, And Audio
 
@@ -225,6 +226,7 @@ Exit criteria: feature is playable, validated, documented, and does not regress 
 | 2026-07-08 | Phase 4 command-intent lifecycle statuses | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-intent-status-lifecycle-unity.log --timeout 420 -- -quit -executeMethod AssistantCommandIntentSystemTests.RunFocusedValidation` | Passed | Focused Unity validation reported `[AssistantCommandIntentSystemValidation] result=Passed tests=7`. Validates `Accepted`, `Rejected`, `Completed`, `Cancelled`, and `TimedOut` assistant command result rows without adding broad takeover ownership. |
 | 2026-07-08 | Phase 5 Stop control cancellation path | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; sequential Unity validations after an initial parallel batchmode attempt raced `Library/Bee`: `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-stop-gateway-unity-rerun.log --timeout 420 -- -quit -executeMethod AssistantCommandIntentGatewayTests.RunFocusedValidation`; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-stop-intent-system-unity-rerun.log --timeout 420 -- -quit -executeMethod AssistantCommandIntentSystemTests.RunFocusedValidation`; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-stop-ui-unity-rerun.log --timeout 420 -- -quit -executeMethod MatchHudAssistantUiSystemHelperTests.RunFocusedValidation` | Passed | Gateway validation reported `[AssistantCommandIntentGatewayValidation] result=Passed tests=4`; command-intent validation reported `[AssistantCommandIntentSystemValidation] result=Passed tests=8`; UI validation reported `[MatchHudAssistantUiValidation] result=Passed tests=2`. Validates the panel Stop button, no-recommendation stop enqueue, ECS cancellation result, preview highlight clearing, and player-control return. |
 | 2026-07-08 | Phase 5 control owner state and takeover bounds | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-control-owner-unity.log --timeout 420 -- -quit -executeMethod AssistantControlOwnerSystemTests.RunFocusedValidation` | Passed | Focused Unity validation reported `[AssistantControlOwnerSystemValidation] result=Passed tests=4`. Validates owner-state mirroring, bounded takeover startup, timeout cancellation, and max-action cancellation without adding managed ownership shells. |
+| 2026-07-08 | Phase 5 player input override detection | `git diff --check`; source-only forbidden assistant owner-name `rg` scan; initial focused Unity attempt `/private/tmp/aria-assistant-player-override-unity.log` failed due to stale test `DynamicBuffer` after a structural change; fixed test handle refresh; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-player-override-rerun-unity.log --timeout 420 -- -quit -executeMethod AssistantControlOwnerSystemTests.RunFocusedValidation` | Passed | Focused Unity validation reported `[AssistantControlOwnerSystemValidation] result=Passed tests=6`. Validates baseline sampling, pointer-request override, queued-move override, `PlayerOverridePending`, and return to player control. |
 
 ## Open Decisions
 

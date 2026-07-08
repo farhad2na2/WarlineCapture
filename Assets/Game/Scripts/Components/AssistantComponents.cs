@@ -112,6 +112,8 @@ namespace Game.Components
         public int ActiveRecommendationId;
         public int ActionCount;
         public int MaxActionCount;
+        public int LastPlayerInputRequestId;
+        public uint LastQueuedMoveOrderToken;
         public float StartedAt;
         public float TimeoutAt;
         public byte CancelRequested;

@@ -44,7 +44,7 @@ namespace Game.Runtime
 
             foreach (var (faction, movement, consumption, entity) in SystemAPI
                          .Query<RefRO<Faction>, RefRO<UnitMovementBehavior>, RefRO<UnitFuelConsumption>>()
-                         .WithNone<UnitAirMovement>()
+                         .WithNone<UnitAirMovement, UnitResourceHaulOrder>()
                          .WithEntityAccess())
             {
                 if (movement.ValueRO.UsesVehicleMotion == 0 ||

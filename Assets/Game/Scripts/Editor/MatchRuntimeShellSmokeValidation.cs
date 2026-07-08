@@ -84,6 +84,7 @@ namespace Game.Editor
         private static Entity _resourceHaulerObservedEntity = Entity.Null;
         private static float3 _resourceHaulerObservedStartPosition;
         private static double _resourceHaulerObservedStartedAt;
+        private static bool _resourceHaulerScenarioSeeded;
         private static readonly List<double> BaselineFrameTimesMs = new(BaselineMetricsFrameTarget + 16);
         private static double _baselineMetricsStartedAt;
         private static long _baselineMetricsAllocatedBytesAtStart;
@@ -203,6 +204,7 @@ namespace Game.Editor
                 ResetAirMissileSmokeState();
                 ResetBaselineMetricsState();
                 ResetResourceHaulerMovementState();
+                _resourceHaulerScenarioSeeded = false;
                 SessionState.SetBool(ActiveKey, true);
                 SessionState.SetInt(PhaseKey, (int)Phase.WaitingForPlayMode);
                 SessionState.SetFloat(StartedAtKey, (float)EditorApplication.timeSinceStartup);
@@ -539,6 +541,7 @@ namespace Game.Editor
                 return false;
 
             EntityManager em = world.EntityManager;
+            string scenarioStatus = EnsureResourceHaulerMovementScenario(em);
             if (!TryFindOilResourceHauler(
                     em,
                     out Entity hauler,
@@ -547,7 +550,7 @@ namespace Game.Editor
                     out string sourceKey))
             {
                 ResetResourceHaulerMovementState();
-                status = "[ResourceHaulerMovement] result=Waiting reason=NoOilHaulerWithOrder";
+                status = "[ResourceHaulerMovement] result=Waiting reason=NoOilHaulerWithOrder " + scenarioStatus;
                 return false;
             }
 
@@ -573,8 +576,208 @@ namespace Game.Editor
                 $"phase={(ResourceHaulerUtilitySystemHelper.ResourceHaulPhase)order.Phase} " +
                 $"target={order.TargetCell.x},{order.TargetCell.y} activePath={(hasActivePath ? 1 : 0)} " +
                 $"distance={distance.ToString("0.###", CultureInfo.InvariantCulture)} " +
-                $"observedSeconds={observedSeconds.ToString("0.###", CultureInfo.InvariantCulture)}";
+                $"observedSeconds={observedSeconds.ToString("0.###", CultureInfo.InvariantCulture)} " +
+                DescribeResourceHaulerMovementState(em, hauler) + " " +
+                scenarioStatus;
             return passed;
+        }
+
+        private static string DescribeResourceHaulerMovementState(EntityManager em, Entity entity)
+        {
+            var builder = new StringBuilder("state=");
+            builder.Append("grid=");
+            builder.Append(em.HasComponent<UnitGrid>(entity)
+                ? em.GetComponentData<UnitGrid>(entity).Cell.ToString()
+                : "none");
+            builder.Append(",target=");
+            builder.Append(em.HasComponent<UnitTarget>(entity)
+                ? em.GetComponentData<UnitTarget>(entity).Cell.ToString()
+                : "none");
+            builder.Append(",request=");
+            builder.Append(em.HasComponent<UnitPathRequest>(entity)
+                ? em.GetComponentData<UnitPathRequest>(entity).Goal.ToString()
+                : "none");
+            builder.Append(",follow=");
+            builder.Append(em.HasComponent<UnitPathFollow>(entity)
+                ? em.GetComponentData<UnitPathFollow>(entity).PathIndex.ToString(CultureInfo.InvariantCulture)
+                : "none");
+            builder.Append(",range=");
+            if (em.HasComponent<UnitPathRange>(entity))
+            {
+                UnitPathRange range = em.GetComponentData<UnitPathRange>(entity);
+                builder.Append(range.Start.ToString(CultureInfo.InvariantCulture));
+                builder.Append(':');
+                builder.Append(range.Length.ToString(CultureInfo.InvariantCulture));
+            }
+            else
+            {
+                builder.Append("none");
+            }
+
+            builder.Append(",retry=");
+            builder.Append(em.HasComponent<UnitPathRetryCooldown>(entity)
+                ? em.GetComponentData<UnitPathRetryCooldown>(entity).ResumeFrame.ToString(CultureInfo.InvariantCulture)
+                : "none");
+            builder.Append(",long=");
+            builder.Append(em.HasComponent<UnitLongDistanceMove>(entity)
+                ? em.GetComponentData<UnitLongDistanceMove>(entity).FinalGoal.ToString()
+                : "none");
+            builder.Append(",manual=");
+            builder.Append(em.HasComponent<ManualMoveOrderTag>(entity) ? '1' : '0');
+            builder.Append(",kinematics=");
+            if (em.HasComponent<UnitVehicleKinematics>(entity))
+            {
+                UnitVehicleKinematics kinematics = em.GetComponentData<UnitVehicleKinematics>(entity);
+                builder.Append(kinematics.CurrentSpeed.ToString("0.###", CultureInfo.InvariantCulture));
+                builder.Append('/');
+                builder.Append(kinematics.StallSeconds.ToString("0.###", CultureInfo.InvariantCulture));
+            }
+            else
+            {
+                builder.Append("none");
+            }
+
+            return builder.ToString();
+        }
+
+        private static string EnsureResourceHaulerMovementScenario(EntityManager em)
+        {
+            if (_resourceHaulerScenarioSeeded)
+                return "scenarioSeeded=1";
+
+            if (!TryFindOilResourceHaulerCandidate(
+                    em,
+                    out byte factionId,
+                    out float loadAmount,
+                    out string haulerKey,
+                    out string haulerStatus))
+            {
+                return "scenarioSeeded=0 reason=" + haulerStatus;
+            }
+
+            if (!TrySeedOilLogisticsStorage(
+                    em,
+                    factionId,
+                    loadAmount,
+                    out string storageStatus))
+            {
+                return $"scenarioSeeded=0 haulerKey='{haulerKey}' reason={storageStatus}";
+            }
+
+            _resourceHaulerScenarioSeeded = true;
+            return $"scenarioSeeded=1 haulerKey='{haulerKey}' {storageStatus}";
+        }
+
+        private static bool TryFindOilResourceHaulerCandidate(
+            EntityManager em,
+            out byte factionId,
+            out float loadAmount,
+            out string haulerKey,
+            out string status)
+        {
+            factionId = 0;
+            loadAmount = 0f;
+            haulerKey = string.Empty;
+            status = "NoTrayTruckCandidate";
+
+            using EntityQuery query = em.CreateEntityQuery(
+                ComponentType.ReadOnly<UnitResourceHauler>(),
+                ComponentType.ReadOnly<UnitSourcePrefabKey>(),
+                ComponentType.ReadOnly<Faction>());
+            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity entity = entities[i];
+                if (em.HasComponent<UnitAirMovement>(entity))
+                    continue;
+
+                UnitSourcePrefabKey sourceKey = em.GetComponentData<UnitSourcePrefabKey>(entity);
+                string key = sourceKey.Value.ToString();
+                if (!string.Equals(key, "Unit_Veh_Truck_Tray", StringComparison.Ordinal))
+                    continue;
+
+                UnitResourceHauler hauler = em.GetComponentData<UnitResourceHauler>(entity);
+                loadAmount = Mathf.Max(1f, hauler.BarrelCapacity);
+                factionId = em.GetComponentData<Faction>(entity).Id;
+                haulerKey = key;
+                status = $"TrayTruckCandidate entity={entity.Index}:{entity.Version} faction={factionId}";
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool TrySeedOilLogisticsStorage(
+            EntityManager em,
+            byte factionId,
+            float loadAmount,
+            out string status)
+        {
+            status = "NoOilSource";
+            Entity sourceEntity = Entity.Null;
+            Entity destinationEntity = Entity.Null;
+            BuildingResourceStorageComponent source = default;
+            BuildingResourceStorageComponent destination = default;
+            using EntityQuery query = em.CreateEntityQuery(
+                ComponentType.ReadWrite<BuildingResourceStorageComponent>());
+            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity entity = entities[i];
+                BuildingResourceStorageComponent storage = em.GetComponentData<BuildingResourceStorageComponent>(entity);
+                if (storage.OwnerFactionId != factionId)
+                    continue;
+
+                if (sourceEntity == Entity.Null &&
+                    storage.OilBarrelsPerDay > 0f &&
+                    storage.OilStorageCapacity > 0)
+                {
+                    sourceEntity = entity;
+                    source = storage;
+                }
+
+                if (destinationEntity == Entity.Null &&
+                    storage.FuelBarrelsPerDay > 0f &&
+                    storage.OilStorageCapacity > 0)
+                {
+                    destinationEntity = entity;
+                    destination = storage;
+                }
+            }
+
+            if (sourceEntity == Entity.Null)
+                return false;
+            if (destinationEntity == Entity.Null)
+            {
+                status = "NoRefineryDestination";
+                return false;
+            }
+
+            float requiredSourceOil = loadAmount + source.ReservedOilOutboundBarrels + 0.5f;
+            if (source.StoredOilBarrels + 0.001f < requiredSourceOil)
+            {
+                source.StoredOilBarrels = Mathf.Min(source.OilStorageCapacity, requiredSourceOil);
+                source.Version++;
+                em.SetComponentData(sourceEntity, source);
+            }
+
+            float destinationFree = destination.OilStorageCapacity -
+                                    destination.StoredOilBarrels -
+                                    destination.ReservedOilInboundBarrels;
+            if (destinationFree + 0.001f < loadAmount)
+            {
+                destination.StoredOilBarrels = Mathf.Max(
+                    0f,
+                    destination.OilStorageCapacity - destination.ReservedOilInboundBarrels - loadAmount - 0.5f);
+                destination.Version++;
+                em.SetComponentData(destinationEntity, destination);
+            }
+
+            status =
+                $"source={sourceEntity.Index}:{sourceEntity.Version} sourceOil={source.StoredOilBarrels.ToString("0.###", CultureInfo.InvariantCulture)}/{source.OilStorageCapacity} " +
+                $"destination={destinationEntity.Index}:{destinationEntity.Version} destinationOil={destination.StoredOilBarrels.ToString("0.###", CultureInfo.InvariantCulture)}/{destination.OilStorageCapacity} " +
+                $"load={loadAmount.ToString("0.###", CultureInfo.InvariantCulture)} faction={factionId}";
+            return true;
         }
 
         private static bool TryFindOilResourceHauler(
@@ -2322,6 +2525,7 @@ namespace Game.Editor
             SessionState.EraseFloat(LastProgressLogAtKey);
             ResetBaselineMetricsState();
             ResetResourceHaulerMovementState();
+            _resourceHaulerScenarioSeeded = false;
         }
     }
 }

@@ -9,14 +9,16 @@ Read these files together before changing Oil/Fuel gameplay:
 
 1. `Field_Logistics_Oil_Fuel_Design.md`
 2. `Automated_Fuel_Logistics_Design.md`
-3. `Economy_Reward_Design.md`
-4. `Combat_Catalog_And_Upgrade_Design.md`
-5. `Gameplay_Features_High_Level_Spec.md`
-6. `Architecture/gameplay_solid_ecs_contract.md`
-7. `Architecture/performance_regression_contract.md`
-8. `Architecture/automated_fuel_logistics_implementation_tracker.md`
+3. `Resource_Logistics_Exchange_Design.md`
+4. `Economy_Reward_Design.md`
+5. `Combat_Catalog_And_Upgrade_Design.md`
+6. `Gameplay_Features_High_Level_Spec.md`
+7. `Architecture/gameplay_solid_ecs_contract.md`
+8. `Architecture/performance_regression_contract.md`
+9. `Architecture/automated_fuel_logistics_implementation_tracker.md`
 
 `Field_Logistics_Oil_Fuel_Design.md` remains the catalog-aligned baseline for Oil Pump, Refinery, Fuel Bladder, oil truck, and tanker roles. This document defines the player-facing automation model and the meaning of usable Fuel.
+`Resource_Logistics_Exchange_Design.md` is a separate optional exchange-queue feature for import/export jobs. It must not replace or bypass the autonomous Oil Pump -> Refinery -> Fuel storage loop.
 
 ## Goal
 

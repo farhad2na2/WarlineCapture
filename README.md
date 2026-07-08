@@ -83,6 +83,7 @@ Core design reading order starts in `Design/README.md`. The current high-priorit
 - `Design/Match_Unit_Command_Behavior_Spec.md`
 - `Design/Architecture/tactical_follow_attack_cinematic_improvement_tracker.md`
 - `Design/Field_Logistics_Oil_Fuel_Design.md`
+- `Design/Resource_Logistics_Exchange_Design.md`
 - `Design/M01_FirstContact_Production_Contract.md`
 - `Design/FTUE_And_Command_Assistant_Design.md`
 - `Design/ARIA_Assistant_ECS_Design.md`
@@ -126,6 +127,8 @@ This diagram is an orientation aid. It may lag behind architecture and task-boar
       - [Combat Balance Config](Design/BalanceConfigs/Combat_Balance_Config_v0_1.json)
       - [Combat Visual Config](Design/VisualConfigs/Combat_Visual_Config_v0_1.json)
     - [Field Logistics Oil And Fuel Design](Design/Field_Logistics_Oil_Fuel_Design.md)
+      - [Resource Logistics Exchange Design](Design/Resource_Logistics_Exchange_Design.md)
+      - [Resource Logistics Exchange Implementation Tracker](Design/Architecture/resource_logistics_exchange_implementation_tracker.md)
     - [Economy And Reward Design](Design/Economy_Reward_Design.md)
     - [Balancing Automated Test Plan](Design/Balancing_Automated_Test_Plan.md)
   - UI/UX And Visual Targets

@@ -21,10 +21,12 @@ Related economy source:
 
 - `Economy_Reward_Design.md`
 - `Automated_Fuel_Logistics_Design.md`
+- `Resource_Logistics_Exchange_Design.md`
 
 Automation rule:
 
 - `Automated_Fuel_Logistics_Design.md` supersedes manual logistics micro for the normal match economy. Oil trucks and tanker trucks should work autonomously; Fuel becomes the shared header pool only after tanker delivery into Fuel Bladder/base storage.
+- `Resource_Logistics_Exchange_Design.md` owns the optional timed import/export popup opened from the match resource header. It can export surplus Oil/Materials/Fuel or import Materials/Fuel through authored exchange recipes, but it must not replace the normal Oil Pump -> Refinery -> Fuel storage loop.
 
 ## Resource Positioning
 
@@ -41,6 +43,7 @@ Main Menu rule:
 - Main Menu shows compact top-level resources: Credits, Supplies, Command.
 - Oil is never a main menu resource.
 - Fuel is not shown in the main menu top strip unless a future top-level economy review explicitly adds it.
+- Resource Exchange is a match logistics feature, not a Main Menu store feature.
 
 Match rule:
 
@@ -135,6 +138,8 @@ Players acquire account-level Fuel only through authored rewards:
 - capped store bundles if monetization allows it
 
 Tactical Oil is not sold in the store and is not banked directly after match end.
+
+Players may export or import tactical resources through `Resource_Logistics_Exchange_Design.md` only when the active mission, Skirmish preset, or Operation event enables Resource Exchange. Those exchange jobs are timed queue actions with authored rates, fees, caps, and completion rules; they are not instant free conversion.
 
 ## Spending And Conversion Rules
 

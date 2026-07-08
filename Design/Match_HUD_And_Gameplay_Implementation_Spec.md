@@ -9,6 +9,7 @@ Use this document before answering or implementing match-screen behavior. Lower-
 Child specs:
 
 - `Field_Logistics_Oil_Fuel_Design.md` - Oil/Fuel field logistics loop, Build Drawer resource rules, and tactical HUD fuel display rules.
+- `Resource_Logistics_Exchange_Design.md` - optional timed Resource Exchange popup opened from the match resource header, including import/export recipes, queue/rush behavior, and non-authoritative logistics world presentation.
 - `Match_Selection_Implementation_Spec.md` - exact rules for unit selection, `SELECT`, squad cards, drag-select, input suppression, and M01 selection exceptions.
 - `Match_Unit_Command_Behavior_Spec.md` - exact per-unit behavior and edge cases for `HOLD`, `STOP`, and `SCAN`, including fixed-wing aircraft, helicopters, drones, buildings, civilian-risk auto-engage rules, and mixed selections.
 - `M01_FirstContact_Production_Contract.md` - M01-specific mission, FTUE, and tutorial-scope restrictions.
@@ -22,6 +23,7 @@ This spec owns:
 - `SCN-08 RTS Battle HUD`
 - `SCN-09 Build Drawer / Production` when opened from the match HUD
 - `SCN-10 Unit Command / Command Wheel` when opened from the match HUD
+- `POP-12 Resource Logistics Exchange` when opened from the match resource header
 - `POP-07 Pause / Options` when opened during match
 - `POP-05 Mission Result` when entered from match completion
 - non-blocking match warnings, toasts, command banners, world markers, assistant match hooks, minimap/camera focus, and tutorial highlights
@@ -110,7 +112,7 @@ Names may be nested for layout, but public ids must remain discoverable through 
 |---|---|---|---|---|---|
 | `ObjectivePanel` | Show active primary objective, star goals, progress, failure state. | `MissionConfig`, `ObjectiveRuntimeState`, active `ScenarioSetup`. | Tap objective row focuses objective anchor or opens detail if available. | Visible during active match. Rows hidden only if no objective exists. | Objective pulse, camera jump, reject `CameraJumpUnavailable` if anchor missing. |
 | `ThreatFeedPanel` | Show live warnings and recent tactical events. | `ThreatWarningRuntimeState`, AI alerts, civilian risk, objective changes. | Tap actionable warning focuses source or opens detail. | Visible when mission supports warnings; may show empty/quiet state. | Severity color, short text, optional sound/VFX. |
-| `ResourceBar` | Show match resources only when relevant. | `FactionResources`, population/capacity, tactical Credits, Oil/Fuel when active. | Read-only unless a resource detail route exists. | Hide or collapse in M01 if unused; show in base/build/fuel-logistics missions. | Resource delta/flyout on change. |
+| `ResourceBar` | Show match resources only when relevant and provide the Resource Exchange entry when enabled. | `FactionResources`, population/capacity, tactical Credits, Oil/Fuel when active, exchange enabled/read-model state. | Tap resource header opens `POP-12 Resource Logistics Exchange` only when the active mission/preset enables exchange; otherwise read-only or tooltip by mission policy. | Hide or collapse in M01 if unused; show in base/build/fuel-logistics missions; exchange affordance visible only when recipe data is available. | Resource delta/flyout on change; exchange disabled reason if tapped when unavailable. |
 | `PauseButton` | Open pause/options. | Current match route/session state. | Opens `POP-07`. | Enabled during active match except non-interruptible loading/result transition. | Simulation pauses; HUD blocked by modal. |
 | `AssistantLayer/AssistantEntryButton` | Open ARIA recommendation/help during match. | FTUE/recommendation state, assistant context provider. | Opens assistant panel dock or accepts typed recommendation actions. | Visible only when assistant is enabled for route/step. | Never clicks raw coordinates; uses typed intents. |
 | `SquadTray` | Show controllable squads/groups. | selected/available unit groups, health, status, transport occupancy. | Tap squad card selects/focuses squad. | Cards enabled for alive/available controllable groups. Disabled cards show reason/lock. | Selected frame, health changes, unavailable state. |

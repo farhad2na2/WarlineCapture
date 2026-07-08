@@ -41,6 +41,7 @@ Field logistics sources:
 
 - `Field_Logistics_Oil_Fuel_Design.md` owns the tactical Oil Pump -> Oil Truck -> Refinery -> Fuel -> Fuel Bladder/Tanker baseline, including build menu usage, match HUD rules, and config-aligned roles.
 - `Automated_Fuel_Logistics_Design.md` owns the automated logistics model. Header Fuel is usable faction Fuel delivered into Fuel Bladder/base storage; raw Oil, Oil in transit, refinery input, refinery output Fuel, and tanker cargo are not header Fuel.
+- `Resource_Logistics_Exchange_Design.md` owns the optional timed match Resource Exchange popup. It can export surplus tactical Oil/Materials/Fuel into Credits or import Materials/Fuel with Credits through authored recipes, queue timers, Rush Ticket acceleration, and economy-event logging. It is not the Store and it is not instant free conversion.
 
 ## Canonical Reward Types
 
@@ -125,6 +126,8 @@ Balancer reports should group by `ResourceOrRewardType`, `SourceSystem`, `Balanc
 |---|---|---|---|
 | Tactical `Money` | `Credits` display label | Tactical HUD and result presentation. | UI labels tactical money as Credits. Account banking occurs only through `RewardConfig`. |
 | Tactical `Oil` | Tactical `Fuel` | Refinery/production gameplay plus tanker delivery into storage. | Tactical production converts Oil into refinery output Fuel; it becomes header usable Fuel only after delivery into Fuel Bladder/base storage. Account Fuel grants are separate rewards. |
+| Tactical `Oil`, `Materials`, or `Fuel` | `Credits` | Resource Logistics Exchange export job. | Allowed only when the active match enables `Resource_Logistics_Exchange_Design.md`; input is spent/reserved at confirmation and Credits are granted on timed completion using authored rate/fee/cap. |
+| `Credits` | Tactical `Materials` or `Fuel` | Resource Logistics Exchange import job. | Allowed only when the active match enables `Resource_Logistics_Exchange_Design.md`; Credits are spent at confirmation and output is granted on timed completion, respecting storage/capacity rules. |
 | `Credits`, `Materials`, `Fuel`, `Intel` | Operation metric deltas | Authored Operation action. | Spending resources applies the action's configured Trust, Security, Intel, or Infrastructure delta. |
 | `Command Authority` | Store item or `RushTicket` grant | Command Exchange purchase. | Purchase spends Command Authority and grants the exact catalog `RewardConfig`. |
 | `RushTicket` | Time reduction | Queue or Operation timer rush. | Each ticket reduces time by `RushTicketSecondsPerTicket`, capped per queue/day. |
@@ -210,6 +213,7 @@ Every `RewardConfig` and store catalog reward item should expose these fields:
 | POP-06 End of Day Report | Resolve Operation day simulation, explain city/district deltas, persist state, and start next day. |
 | POP-07 Pause / Options | Pause safely, expose settings/help/restart/exit without accidental loss. |
 | POP-08 Intel Reveal | Turn patrol/scan/raid/capture results into evidence, Intel gain, and archive progress. |
+| POP-12 Resource Logistics Exchange | Let enabled matches export surplus tactical resources for Credits or import Materials/Fuel with Credits through timed logistics queue jobs, Rush Ticket acceleration, and clear economy-event feedback. |
 | PREFAB-01 Objective Tracker | Keep required objectives, star goals, timers, and progress visible during play. |
 | PREFAB-02 Squad Tray | Keep squad selection, health, status, and transport state readable for mobile command. |
 | PREFAB-03 Build Drawer | Convert build/production catalogs, costs, locks, and queues into compact tactical actions. |

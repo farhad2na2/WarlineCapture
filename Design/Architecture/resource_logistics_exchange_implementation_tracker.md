@@ -1,0 +1,248 @@
+# Resource Logistics Exchange Implementation Tracker
+
+Date: 2026-07-08
+Status: Not started
+Design source: `../Resource_Logistics_Exchange_Design.md`
+
+## Objective
+
+Implement the timed Resource Logistics Exchange without drifting from WarlineCapture's ECS/SOLID architecture. The feature lets players open a Build-Popup-style match popup from the resource header, queue import/export logistics jobs, rush eligible jobs with Rush Tickets, and receive optional world truck/transport-plane presentation while ECS remains the source of truth for resources, timers, results, and economy events.
+
+## Architecture Contract
+
+- Prefer unmanaged `ISystem` for runtime exchange simulation, validation, queue ticking, completion, cancellation, rush, and read-model publication.
+- Use `SystemBase` only when managed Unity references are unavoidable, and split those cases so data production stays in ECS while managed code is presentation-only.
+- Do not add broad `Manager`, `Controller`, `Facade`, `Service`, singleton, static mutable state, or stringly runtime state.
+- UI views may submit typed requests and display read models, but must not own economy policy, conversion math, queue state, resource mutation, or disabled reasons.
+- World plane/truck presentation is non-authoritative. It consumes ECS visual cue data and must not control exchange completion.
+- Hot paths must avoid LINQ, per-frame string formatting, broad scene searches, instantiate/destroy churn, and recurring managed allocation.
+- Use typed reason codes, resource enums, queue states, versioned read models, and economy events.
+- Keep resource names aligned with `../Economy_Reward_Design.md`: Credits, Materials, Fuel, Intel, Command Authority, Rush Tickets, and tactical Oil.
+- Keep Oil/Fuel logistics aligned with `../Field_Logistics_Oil_Fuel_Design.md` and `../Automated_Fuel_Logistics_Design.md`.
+- Keep popup visuals aligned with `../Match_HUD_And_Gameplay_Implementation_Spec.md`, `../SCN09_Build_Placement_Mode_Implementation_Spec.md`, and active VisualLockLayered workflows.
+
+## Progress Summary
+
+Overall implementation progress: 0% (0/91 checklist items complete).
+
+Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
+
+| Phase | Status | Complete | Total | Progress | Notes |
+|---|---|---:|---:|---:|---|
+| 0. Inventory and source alignment | Not started | 0 | 8 | 0% | Confirm current resource data, HUD header, Build Popup, fuel logistics, save/profile fields, and economy event paths. |
+| 1. Data model and config | Not started | 0 | 12 | 0% | Add recipe/config data, ECS request/queue/result data, states, reason codes, and scenario gates. |
+| 2. Request validation and queue start | Not started | 0 | 10 | 0% | Validate affordability, caps, storage, queue slots, and spend/reserve input at confirmation. |
+| 3. Queue ticking, completion, cancel, refund | Not started | 0 | 11 | 0% | Timed queue, output grant once, cancel/refund rules, mission-end policy. |
+| 4. Rush Tickets | Not started | 0 | 7 | 0% | Rush eligible jobs with ticket spend, caps, and feedback. |
+| 5. UI popup and header routing | Not started | 0 | 12 | 0% | Build-Popup-style popup, resource header tap route, cards, details, amount stepper, queue panel. |
+| 6. World presentation | Not started | 0 | 8 | 0% | Non-authoritative pooled truck/plane presentation and fallback behavior. |
+| 7. Audio, VFX, feedback, ARIA | Not started | 0 | 7 | 0% | Config-driven audio, resource flyouts, completion/reject feedback, optional ARIA copy. |
+| 8. AI, balance, telemetry | Not started | 0 | 6 | 0% | Economy events, balancing reports, AI awareness if enabled for AI factions. |
+| 9. Validation and performance | Not started | 0 | 10 | 0% | Focused tests, compile, architecture guardrails, UI captures, GC/performance checks. |
+
+## Phase 0: Inventory And Source Alignment
+
+- [ ] Inventory current player/account resource fields in save/profile data.
+- [ ] Inventory current tactical resource components and Faction resource mutation paths.
+- [ ] Inventory current Oil/Fuel logistics data from fuel automation and field logistics systems.
+- [ ] Inventory current Match HUD resource header view, tap/click handling, and UI bridge ownership.
+- [ ] Inventory current Build Popup/Build Drawer prefab hierarchy, sprites, tabs, cards, details, and queue row conventions.
+- [ ] Inventory current Rush Ticket data, production queue rush implementation, and audio/feedback events.
+- [ ] Identify existing economy event/log/report path or define required new event boundary.
+- [ ] Document exact implementation files expected to change before coding begins.
+
+Exit criteria:
+
+- Active resource ownership is known.
+- No implementation starts before the correct wallet/faction resource path is identified.
+- Any missing prerequisite is written as a blocker in this tracker.
+
+## Phase 1: Data Model And Config
+
+- [ ] Define `ResourceExchangeRouteType` enum.
+- [ ] Define `ResourceExchangeQueueState` enum.
+- [ ] Define `ResourceExchangeReason` enum.
+- [ ] Define exchange resource kind mapping for Credits, Materials, Oil, Fuel, and Rush Tickets.
+- [ ] Add exchange recipe config data with stable recipe ids, route type, input/output resources, rates, caps, duration, rush rules, requirements, and scenario tags.
+- [ ] Add scenario/preset gate data for exchange enabled/disabled state.
+- [ ] Add ECS recipe projection data such as `ResourceExchangeRecipeComponent`.
+- [ ] Add ECS request data such as `ResourceExchangeRequestComponent`.
+- [ ] Add ECS queue data such as `ResourceExchangeQueueComponent`.
+- [ ] Add ECS result data such as `ResourceExchangeResultComponent`.
+- [ ] Add versioned exchange summary/read-model data for UI.
+- [ ] Add tests for recipe id uniqueness, nonnegative amounts, valid resources, valid rates, and valid duration/rush values.
+
+Exit criteria:
+
+- Recipe data is config-driven.
+- Runtime data is typed ECS data.
+- No UI hard-codes recipe math.
+
+## Phase 2: Request Validation And Queue Start
+
+- [ ] Implement request intake from UI/appended ECS request data.
+- [ ] Validate exchange enabled state by mission/skirmish/operation gate.
+- [ ] Validate recipe availability and unlock/mission tags.
+- [ ] Validate amount min, max, and step.
+- [ ] Validate input affordability.
+- [ ] Validate output storage or capacity where required.
+- [ ] Validate queue capacity.
+- [ ] Spend or reserve input resources at confirmation.
+- [ ] Create queue item with deterministic id, start time, duration, input/output preview, and state.
+- [ ] Write accepted/rejected result rows with typed reason codes.
+
+Exit criteria:
+
+- Invalid requests never mutate resources.
+- Accepted requests spend/reserve input exactly once.
+- UI can display exact rejection reason.
+
+## Phase 3: Queue Ticking, Completion, Cancel, And Refund
+
+- [ ] Implement queue tick using `ISystem` where practical.
+- [ ] Advance timers without managed allocation.
+- [ ] Pause or block queue items when output storage becomes invalid/full by recipe policy.
+- [ ] Complete exchange jobs exactly once.
+- [ ] Apply output resource grant on completion.
+- [ ] Emit economy event for input spend and output grant.
+- [ ] Implement cancel request path.
+- [ ] Apply refund rules based on queue state and recipe policy.
+- [ ] Handle mission end policy: complete, cancel/refund, or discard tactical-only exchange by scenario.
+- [ ] Publish versioned queue/read-model updates only when queue state changes.
+- [ ] Add deterministic edit-mode tests for complete, cancel, refund, storage-blocked, and mission-ending paths.
+
+Exit criteria:
+
+- Queue jobs cannot double-grant or double-refund.
+- Queue progress is deterministic in tests.
+- No per-frame string or managed allocation in queue ticking.
+
+## Phase 4: Rush Tickets
+
+- [ ] Add rush request data for one queue item and optional rush-all command.
+- [ ] Validate queue item rush eligibility.
+- [ ] Validate Rush Ticket affordability.
+- [ ] Enforce max tickets per queue item and per rush action.
+- [ ] Spend Rush Tickets at rush confirmation.
+- [ ] Reduce remaining duration or complete instantly if remaining time reaches zero.
+- [ ] Add tests for rush acceptance, insufficient tickets, max cap, non-rushable job, and completion from rush.
+
+Exit criteria:
+
+- Rush uses Rush Tickets only.
+- Rush cannot bypass blocked/invalid queue state.
+- Rush results are visible through typed feedback.
+
+## Phase 5: UI Popup And Header Routing
+
+- [ ] Create accepted target-lock mockup request for `POP-12 Resource Logistics Exchange` aligned with the Build Popup visual language.
+- [ ] Create separated layer pack under `Design/VisualLockLayered/POP-12_ResourceLogisticsExchange/`.
+- [ ] Build Canvas popup from reusable panels/icons/text/buttons, not a screenshot.
+- [ ] Add `ResourceExchangePopupView` with explicit serialized references.
+- [ ] Add recipe card view with selected, disabled, locked, and warning states.
+- [ ] Add details panel with rate, amount stepper, input/output preview, requirements, duration, confirm button.
+- [ ] Add exchange queue panel rows with progress, ETA, rush, cancel, and complete state.
+- [ ] Route match `ResourceBar` tap/click to popup only when exchange is enabled.
+- [ ] Ensure popup blocks world input and restores prior match HUD state on close.
+- [ ] Ensure all runtime text uses TMP/Oxanium rules from UI docs.
+- [ ] Validate 16:9 and 20:9 layout with captures.
+- [ ] Add focused UI/prefab tests for object ids, button wiring, disabled reasons, and input suppression.
+
+Exit criteria:
+
+- UI is visually consistent with the Build Popup.
+- UI state is data-bound from ECS/read models.
+- Header tapping does not leak into world input.
+
+## Phase 6: World Presentation
+
+- [ ] Define presentation anchors for base depot, runway/landing zone, storage, and fallback safe anchor.
+- [ ] Add ECS visual cue request data for exchange start, load, plane landing, plane departure, unload, and completion.
+- [ ] Implement managed presentation boundary as `ResourceExchangeVisualPresentationSystemHelper` or existing approved presentation owner.
+- [ ] Use pooled plane/truck presentation actors or an existing pooling boundary.
+- [ ] Ensure presentation actors do not block gameplay pathfinding or mutate economy state.
+- [ ] Add fallback behavior when anchors or presentation prefabs are missing.
+- [ ] Add visual state cleanup on popup close, mission end, scene unload, and queue cancellation.
+- [ ] Add tests or playmode validation for missing-anchor fallback and no duplicate presentation actors.
+
+Exit criteria:
+
+- Queue completion does not depend on visuals.
+- Visuals do not introduce gameplay blockers.
+- Presentation can be disabled without breaking economy state.
+
+## Phase 7: Audio, VFX, Feedback, And ARIA
+
+- [ ] Add config-driven audio event ids for accepted, rejected, queue started, rushed, completed, and cancelled exchange events.
+- [ ] Generate or assign placeholder audio clips through the audio config workflow.
+- [ ] Add resource delta flyouts for spend, reserve, output grant, refund, and rush spend.
+- [ ] Add completion toast and rejection toast with typed reason text.
+- [ ] Add optional ARIA strings for insufficient resources, exchange started, exchange complete, and exchange blocked.
+- [ ] Pair world presentation cues with non-authoritative VFX markers.
+- [ ] Validate no direct AudioSource/prefab sound wiring outside the config-driven audio path.
+
+Exit criteria:
+
+- Feedback is clear for every accepted/rejected path.
+- Audio remains config-driven.
+- No feedback text is baked into art.
+
+## Phase 8: AI, Balance, And Telemetry
+
+- [ ] Add economy events for input spend/reserve, output grant, refund, rush ticket spend, and blocked/cancelled jobs.
+- [ ] Add balance report fields for exchange route, amount, duration, source mode, completion, and resource delta.
+- [ ] Add data sanity tests for rates, fees, duration, and farming-risk caps.
+- [ ] Gate exchange recipes by chapter/mission/skirmish preset so early FTUE is not overloaded.
+- [ ] Add AI exchange support only if a scenario explicitly enables AI exchange behavior.
+- [ ] If AI exchange is enabled, ensure it is data-driven and does not add managed per-frame planner scans.
+
+Exit criteria:
+
+- Balancing can see every exchange source/sink.
+- Exchange cannot become a hidden infinite resource loop.
+- AI behavior is optional and data-gated.
+
+## Phase 9: Validation And Performance
+
+- [ ] Run `git diff --check`.
+- [ ] Run repository compile validation.
+- [ ] Run focused exchange data/config tests.
+- [ ] Run focused exchange queue/rush/cancel/refund tests.
+- [ ] Run focused HUD/header popup routing tests.
+- [ ] Run focused UI prefab/capture validation at 16:9 and 20:9.
+- [ ] Run architecture guardrails for naming, ECS boundaries, and no broad manager/controller/service drift.
+- [ ] Run GC allocation check for exchange queue steady state.
+- [ ] Run performance scenario if exchange is active during match steady state.
+- [ ] Update this tracker with validation commands, log paths, pass/fail result, and remaining blockers.
+
+Performance acceptance targets:
+
+- Queue ticking and validation introduce no steady-state GC allocation.
+- UI read models update only on version changes.
+- World presentation uses pooling and creates no recurring instantiate/destroy churn.
+- No runtime broad scene searches or hierarchy-path lookups in match frames.
+- Exchange systems remain within the current match performance budget for active logistics scenarios.
+
+## Validation Matrix
+
+| Area | Required Checks |
+|---|---|
+| Compile | Unity compile or repository-approved compile validation. |
+| Architecture | SOLID/ECS guardrails, ISystem preference, no new broad shell types. |
+| Data | Recipe ids, valid resource kinds, rates, duration, caps, queue states, reason ids. |
+| Economy | Spend/reserve input, grant output once, refund rules, rush ticket spend, economy event logging. |
+| UI | Header route, popup layout, card/detail/queue states, disabled reasons, input suppression. |
+| World presentation | Optional/non-authoritative truck/plane visuals, pooling, anchor fallback. |
+| Performance | 0 B/frame queue ticking, version-gated UI, no managed hot-path churn. |
+| Balance | Farming caps, early FTUE gates, import/export rates, mission-end policy. |
+
+## Implementation Notes Log
+
+Use this section during implementation. Each completed batch should add:
+
+- date
+- files changed
+- behavior changed
+- validation commands and log paths
+- profiler result when performance-sensitive
+- remaining blocker or next slice

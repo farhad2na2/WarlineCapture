@@ -34,7 +34,7 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - Visual direction: new gameplay-facing battlefield art should use 3D town/base operation scenes with runtime units, buildings, civilians, vehicles, aircraft, markers, VFX, and metadata-backed command overlays.
 - Main menu visual direction: `UIUX_MainMenu_Visual_Contract.md` now points at the command-base style with Campaign, Operations, Skirmish, Store, Commander, Settings, Credits, Supplies, Command, and Deploy Operation.
 - Economy and rewards are locked by `Economy_Reward_Design.md`. Monetization and marketing claims use the same canonical resources, reward types, and disabled purchase states as the UI/gameplay alignment docs.
-- Field logistics: `Field_Logistics_Oil_Fuel_Design.md` formalizes the existing Oil Pump, Oil Refinery, Fuel Bladder, oil truck, and tanker truck configs as a tactical Oil -> Fuel logistics loop for base-building, vehicle, air, and Skirmish missions. `Automated_Fuel_Logistics_Design.md` defines the automation model: tray trucks and tankers work without direct micro, Fuel becomes usable only after delivery to storage, and vehicles spend a shared faction Fuel pool.
+- Field logistics: `Field_Logistics_Oil_Fuel_Design.md` formalizes the existing Oil Pump, Oil Refinery, Fuel Bladder, oil truck, and tanker truck configs as a tactical Oil -> Fuel logistics loop for base-building, vehicle, air, and Skirmish missions. `Automated_Fuel_Logistics_Design.md` defines the automation model: tray trucks and tankers work without direct micro, Fuel becomes usable only after delivery to storage, and vehicles spend a shared faction Fuel pool. `Resource_Logistics_Exchange_Design.md` defines the timed in-match Resource Exchange popup, import/export recipes, Rush Ticket acceleration, and non-authoritative truck/transport-plane presentation.
 
 ## Primary Reading Order
 
@@ -70,15 +70,16 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 30. `UIUX_Implementation_Detailed_Spec.md`
 31. `Field_Logistics_Oil_Fuel_Design.md`
 32. `Automated_Fuel_Logistics_Design.md`
-33. `Economy_Reward_Design.md`
-34. `Balancing_Automated_Test_Plan.md`
-35. `UIUX_Gameplay_Element_Alignment.md`
-36. `Visual_Feedback_VFX_Recommendations.md`
-37. `Audio_Design_Guidelines.md`
-38. `Audio_Config_Driven_Implementation_Spec.md`
-39. `UIUX_MainMenu_Visual_Contract.md`
-40. `UIUX_Mockup_To_Canvas_Conversion_Plan.md`
-41. `UIUX_Target_To_Canvas_Workflow_Guide.md`
+33. `Resource_Logistics_Exchange_Design.md`
+34. `Economy_Reward_Design.md`
+35. `Balancing_Automated_Test_Plan.md`
+36. `UIUX_Gameplay_Element_Alignment.md`
+37. `Visual_Feedback_VFX_Recommendations.md`
+38. `Audio_Design_Guidelines.md`
+39. `Audio_Config_Driven_Implementation_Spec.md`
+40. `UIUX_MainMenu_Visual_Contract.md`
+41. `UIUX_Mockup_To_Canvas_Conversion_Plan.md`
+42. `UIUX_Target_To_Canvas_Workflow_Guide.md`
 
 ## Core Product And Gameplay
 
@@ -131,6 +132,8 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - `Gameplay_Features_Detailed_Spec.md` - code-oriented implementation plan for gameplay systems.
 - `Field_Logistics_Oil_Fuel_Design.md` - tactical Oil/Fuel logistics design for Oil Pump, Oil Refinery, Large Oil Refinery, Fuel Bladder, oil transport truck, tanker truck, Build Drawer integration, match HUD rules, AI/balance metrics, and acquisition/spending rules.
 - `Automated_Fuel_Logistics_Design.md` - automation design for tray truck and tanker behavior, refinery buffers, usable faction Fuel, vehicle/air Fuel spending, player-facing feedback, balance knobs, and ECS/performance expectations.
+- `Resource_Logistics_Exchange_Design.md` - timed in-match Resource Exchange design for export/import recipes, queue progress, Rush Ticket acceleration, resource-header popup routing, and optional truck/transport-plane world presentation.
+- `Architecture/resource_logistics_exchange_implementation_tracker.md` - step-by-step Resource Exchange implementation tracker with ECS/SOLID guardrails, UI consistency rules, validation gates, and performance targets.
 - `Economy_Reward_Design.md` - canonical resources, reward types, resource strips, and popup/panel gameplay goals.
 - `Balancing_Automated_Test_Plan.md` - implementation plan for balance harness tests, opt-in probes, metrics, reports, and data sanity checks.
 - `AI_CONTROLLER_DESIGN.md` - AI controller architecture and tuning companion.

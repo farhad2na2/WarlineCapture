@@ -1,18 +1,18 @@
 # ARIA Assistant ECS Implementation Tracker
 
 Date: 2026-07-08
-Status: Phase 2 assistant panel alert/report binding implemented
+Status: Phase 2 match header and panel shell complete
 Source design: `Design/ARIA_Assistant_ECS_Design.md`
 
 ## Progress
 
-Overall progress: 43% complete, 29 of 68 checklist items complete.
+Overall progress: 44% complete, 30 of 68 checklist items complete.
 
 | Phase | Scope | Items | Complete | Status |
 |---|---|---:|---:|---|
 | 0 | Contract reconciliation | 6 | 6 | Complete |
 | 1 | ECS data contract | 8 | 8 | Complete |
-| 2 | Match header and panel shell | 8 | 7 | In progress |
+| 2 | Match header and panel shell | 8 | 8 | Complete |
 | 3 | Goal and recommendation read models | 8 | 8 | Complete |
 | 4 | Show Me and Do It command intents | 8 | 0 | Not started |
 | 5 | Give Control ownership | 8 | 0 | Not started |
@@ -80,7 +80,7 @@ Phase 1 notes:
 - [x] Show current goals area from read-model rows.
 - [x] Show top recommendation area with title, reason, risk/status chip, and action buttons.
 - [x] Show alert/report list from prioritized message rows.
-- [ ] Add visible ownership state when ARIA preview/takeover is active.
+- [x] Add visible ownership state when ARIA preview/takeover is active.
 
 Exit criteria: opening/closing the panel is visually validated in Unity, causes no world click-through, and does not allocate in steady-state panel refresh.
 
@@ -93,6 +93,7 @@ Phase 2 notes:
 - Added `UiAssistantPanelModel` and runtime gateway binding so `MainMenuPlayUI` applies live goal/recommendation rows to the panel without the UI helper querying ECS. The gateway caches converted strings by assistant source/recommendation versions, and the helper only updates text when the model version changes.
 - Extracted `AssistantPanelUiSystemHelper` as the panel read-model binding boundary. `MatchHudAssistantUiSystemHelper` now owns ARIA header/panel lifecycle and pointer capture, while the panel helper applies `UiAssistantPanelModel` text/button state behind dirty version checks.
 - Added alert/report panel binding from `AssistantMessageElement` rows. The gateway converts up to three unacknowledged prioritized message rows into cached panel text, and the panel helper displays the alerts without querying ECS or owning message policy.
+- Added a visible control-state label to the panel, bound from `UiAssistantPanelModel.OwnershipText`. Phase 5 still owns real control-state transitions and cancellation behavior; Phase 2 now has the display surface ready.
 
 ## Phase 3: Goal And Recommendation Read Models
 
@@ -191,6 +192,7 @@ Exit criteria: feature is playable, validated, documented, and does not regress 
 | 2026-07-08 | Phase 3 fuel/logistics recommendations | `git diff --check`; forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-fuel-recommendations-unity.log --timeout 420 -- -quit -executeMethod AssistantReadModelSystemTests.RunFocusedValidation` | Passed | Focused Unity validation reported `[AssistantReadModelValidation] result=Passed tests=6`. Validates high-priority logistics recommendation from empty player usable fuel summary and keeps objective/selection recommendation tests green. |
 | 2026-07-08 | Phase 2 assistant panel helper binding extraction | `git diff --check`; forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-panel-helper-unity.log --timeout 420 -- -quit -executeMethod MatchHudAssistantUiSystemHelperTests.RunFocusedValidation` | Passed | Focused Unity validation reported `[MatchHudAssistantUiValidation] result=Passed tests=2`. Validates ARIA header/panel creation, world-click suppression, and live panel read-model binding after extracting `AssistantPanelUiSystemHelper`. |
 | 2026-07-08 | Phase 2 assistant panel alert/report rows | `git diff --check`; forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-alert-panel-unity.log --timeout 420 -- -quit -executeMethod MatchHudAssistantUiSystemHelperTests.RunFocusedValidation` | Passed | Focused Unity validation reported `[MatchHudAssistantUiValidation] result=Passed tests=2`. Validates alert/report text rendering from `UiAssistantPanelModel` and compiles the gateway conversion from `AssistantMessageElement` rows. |
+| 2026-07-08 | Phase 2 assistant panel ownership state | `git diff --check`; forbidden assistant owner-name `rg` scan; `Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture-Clone --log /private/tmp/aria-assistant-ownership-panel-unity.log --timeout 420 -- -quit -executeMethod MatchHudAssistantUiSystemHelperTests.RunFocusedValidation` | Passed | Focused Unity validation reported `[MatchHudAssistantUiValidation] result=Passed tests=2`. Validates visible `OwnershipText` binding in the ARIA panel and keeps header/panel click suppression validation green. |
 
 ## Open Decisions
 

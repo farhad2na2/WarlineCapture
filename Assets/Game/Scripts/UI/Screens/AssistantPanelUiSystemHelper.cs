@@ -7,6 +7,7 @@ namespace Game.UI.Runtime
     internal sealed class AssistantPanelUiSystemHelper
     {
         private TMP_Text _stateText;
+        private TMP_Text _ownershipBodyText;
         private TMP_Text _goalsBodyText;
         private TMP_Text _alertsBodyText;
         private TMP_Text _recommendationBodyText;
@@ -18,6 +19,7 @@ namespace Game.UI.Runtime
 
         public void Bind(
             TMP_Text stateText,
+            TMP_Text ownershipBodyText,
             TMP_Text goalsBodyText,
             TMP_Text alertsBodyText,
             TMP_Text recommendationBodyText,
@@ -27,6 +29,7 @@ namespace Game.UI.Runtime
             TMP_Text giveControlLabelText)
         {
             _stateText = stateText;
+            _ownershipBodyText = ownershipBodyText;
             _goalsBodyText = goalsBodyText;
             _alertsBodyText = alertsBodyText;
             _recommendationBodyText = recommendationBodyText;
@@ -40,6 +43,7 @@ namespace Game.UI.Runtime
         public void Unbind()
         {
             _stateText = null;
+            _ownershipBodyText = null;
             _goalsBodyText = null;
             _alertsBodyText = null;
             _recommendationBodyText = null;
@@ -58,6 +62,8 @@ namespace Game.UI.Runtime
             _lastAppliedReadModelVersion = model.Version;
             if (_stateText != null)
                 _stateText.text = string.IsNullOrWhiteSpace(model.OwnershipText) ? "PLAYER CONTROL" : model.OwnershipText;
+            if (_ownershipBodyText != null)
+                _ownershipBodyText.text = string.IsNullOrWhiteSpace(model.OwnershipText) ? "PLAYER CONTROL" : model.OwnershipText;
             if (_goalsBodyText != null)
                 _goalsBodyText.text = string.IsNullOrWhiteSpace(model.GoalsText) ? "No active objectives" : model.GoalsText;
             if (_alertsBodyText != null)

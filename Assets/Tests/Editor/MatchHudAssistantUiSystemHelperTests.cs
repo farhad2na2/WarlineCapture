@@ -119,7 +119,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             true,
             false,
             false,
-            "PLAYER CONTROL")));
+            "ARIA CONTROL")));
 
         ui.Update();
 
@@ -127,17 +127,20 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.NotNull(panel);
         TMP_Text goals = panel.Find("GoalsBody")?.GetComponent<TMP_Text>();
         TMP_Text alerts = panel.Find("AlertsBody")?.GetComponent<TMP_Text>();
+        TMP_Text ownership = panel.Find("OwnershipBody")?.GetComponent<TMP_Text>();
         TMP_Text recommendation = panel.Find("RecommendationBody")?.GetComponent<TMP_Text>();
         Button showMe = panel.Find("NextActionButton")?.GetComponent<Button>();
         Button giveControl = panel.Find("GiveControlButton")?.GetComponent<Button>();
 
         Assert.NotNull(goals);
         Assert.NotNull(alerts);
+        Assert.NotNull(ownership);
         Assert.NotNull(recommendation);
         Assert.NotNull(showMe);
         Assert.NotNull(giveControl);
         Assert.AreEqual("- Neutralize hostile patrol\n[x] Protect civilians", goals.text);
         Assert.AreEqual("HIGH: Fuel reserves empty", alerts.text);
+        Assert.AreEqual("ARIA CONTROL", ownership.text);
         StringAssert.Contains("HIGH: Review objective", recommendation.text);
         Assert.IsTrue(showMe.interactable);
         Assert.IsFalse(giveControl.interactable);

@@ -78,10 +78,14 @@ namespace Game.UI.Shell.Ecs
 
                     if (owner.State == AssistantControlState.AssistantTakeover)
                     {
-                        if (ConsumeTakeoverActionResults(ref owner, results))
+                        TakeoverResultConsumption resultConsumption =
+                            ConsumeTakeoverActionResults(ref owner, results);
+                        if (resultConsumption != TakeoverResultConsumption.Unchanged)
                             ownerChanged = true;
 
-                        if (HasTakeoverExpired(owner, now) || HasReachedActionLimit(owner))
+                        if (resultConsumption == TakeoverResultConsumption.Cancelled ||
+                            HasTakeoverExpired(owner, now) ||
+                            HasReachedActionLimit(owner))
                         {
                             ResetToPlayer(ref assistantState, ref owner);
                             assistantStateChanged = true;
@@ -189,11 +193,12 @@ namespace Game.UI.Shell.Ecs
             owner.PlayerOverrideRequested = 1;
         }
 
-        private static bool ConsumeTakeoverActionResults(
+        private static TakeoverResultConsumption ConsumeTakeoverActionResults(
             ref AssistantControlOwnerComponent owner,
             DynamicBuffer<AssistantCommandIntentResultElement> results)
         {
             bool changed = false;
+            bool cancelled = false;
             int latestRequestId = owner.ActiveIntentRequestId;
             int actionCount = owner.ActionCount;
 
@@ -204,6 +209,9 @@ namespace Game.UI.Shell.Ecs
                     continue;
 
                 latestRequestId = math.max(latestRequestId, result.RequestId);
+                if (CancelsTakeover(result))
+                    cancelled = true;
+
                 if (CountsAsTakeoverAction(result))
                 {
                     actionCount++;
@@ -223,7 +231,17 @@ namespace Game.UI.Shell.Ecs
                 changed = true;
             }
 
-            return changed;
+            if (cancelled)
+                return TakeoverResultConsumption.Cancelled;
+
+            return changed ? TakeoverResultConsumption.Changed : TakeoverResultConsumption.Unchanged;
+        }
+
+        private static bool CancelsTakeover(AssistantCommandIntentResultElement result)
+        {
+            return result.Status == AssistantCommandIntentStatus.Rejected ||
+                   result.Status == AssistantCommandIntentStatus.Cancelled ||
+                   result.Status == AssistantCommandIntentStatus.TimedOut;
         }
 
         private static bool CountsAsTakeoverAction(AssistantCommandIntentResultElement result)
@@ -287,6 +305,13 @@ namespace Game.UI.Shell.Ecs
             public int LatestPointerRequestId;
             public uint QueuedMoveOrderToken;
             public byte HasQueuedMoveOrder;
+        }
+
+        private enum TakeoverResultConsumption : byte
+        {
+            Unchanged = 0,
+            Changed = 1,
+            Cancelled = 2
         }
     }
 }

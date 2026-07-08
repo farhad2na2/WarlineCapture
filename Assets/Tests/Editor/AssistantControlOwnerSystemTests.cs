@@ -30,6 +30,10 @@ public sealed class AssistantControlOwnerSystemTests
             passed++;
             RunCase(test => test.AssistantControlOwnerSystem_EntersOverridePendingOnQueuedMoveInput());
             passed++;
+            RunCase(test => test.AssistantControlOwnerSystem_CancelsTakeoverOnRejectedIntentResult());
+            passed++;
+            RunCase(test => test.AssistantControlOwnerSystem_CancelsTakeoverOnTimedOutIntentResult());
+            passed++;
 
             Debug.Log($"[AssistantControlOwnerSystemValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -274,6 +278,44 @@ public sealed class AssistantControlOwnerSystemTests
         Assert.AreEqual(1, owner.PlayerOverrideRequested);
     }
 
+    [Test]
+    public void AssistantControlOwnerSystem_CancelsTakeoverOnRejectedIntentResult()
+    {
+        Entity boundary = CreateActiveTakeoverBoundary();
+        DynamicBuffer<AssistantCommandIntentResultElement> results =
+            _entityManager.GetBuffer<AssistantCommandIntentResultElement>(boundary);
+        results.Add(new AssistantCommandIntentResultElement
+        {
+            RequestId = 9,
+            Kind = AssistantCommandIntentKind.AttackEntity,
+            Status = AssistantCommandIntentStatus.Rejected,
+            TargetKind = AssistantTargetKind.Entity
+        });
+
+        _ownerSystem.Update(_world.Unmanaged);
+
+        AssertTakeoverReturnedToPlayer(boundary);
+    }
+
+    [Test]
+    public void AssistantControlOwnerSystem_CancelsTakeoverOnTimedOutIntentResult()
+    {
+        Entity boundary = CreateActiveTakeoverBoundary();
+        DynamicBuffer<AssistantCommandIntentResultElement> results =
+            _entityManager.GetBuffer<AssistantCommandIntentResultElement>(boundary);
+        results.Add(new AssistantCommandIntentResultElement
+        {
+            RequestId = 10,
+            Kind = AssistantCommandIntentKind.MoveToWorldPosition,
+            Status = AssistantCommandIntentStatus.TimedOut,
+            TargetKind = AssistantTargetKind.WorldPosition
+        });
+
+        _ownerSystem.Update(_world.Unmanaged);
+
+        AssertTakeoverReturnedToPlayer(boundary);
+    }
+
     private Entity CreateBoundary(AssistantStateComponent assistantState)
     {
         Entity boundary = _entityManager.CreateEntity(typeof(UiShellRootComponent));
@@ -288,5 +330,38 @@ public sealed class AssistantControlOwnerSystemTests
         _entityManager.SetComponentData(selectionInput, inputState);
         _entityManager.AddBuffer<RtsSelectionPointerRequestElement>(selectionInput);
         return selectionInput;
+    }
+
+    private Entity CreateActiveTakeoverBoundary()
+    {
+        Entity boundary = CreateBoundary(new AssistantStateComponent
+        {
+            ControlState = AssistantControlState.AssistantTakeover,
+            ActiveRecommendationId = 4101
+        });
+        _entityManager.AddComponentData(boundary, new AssistantControlOwnerComponent
+        {
+            State = AssistantControlState.AssistantTakeover,
+            ActiveRecommendationId = 4101,
+            ActiveIntentRequestId = 8,
+            MaxActionCount = 3,
+            TimeoutAt = UnityEngine.Time.time + 30f
+        });
+        return boundary;
+    }
+
+    private void AssertTakeoverReturnedToPlayer(Entity boundary)
+    {
+        AssistantStateComponent assistantState =
+            _entityManager.GetComponentData<AssistantStateComponent>(boundary);
+        AssistantControlOwnerComponent owner =
+            _entityManager.GetComponentData<AssistantControlOwnerComponent>(boundary);
+        Assert.AreEqual(AssistantControlState.Player, assistantState.ControlState);
+        Assert.AreEqual(0, assistantState.ActiveRecommendationId);
+        Assert.AreEqual(1, assistantState.UiDirty);
+        Assert.AreEqual(AssistantControlState.Player, owner.State);
+        Assert.AreEqual(0, owner.ActiveRecommendationId);
+        Assert.AreEqual(0, owner.ActiveIntentRequestId);
+        Assert.AreEqual(0, owner.ActionCount);
     }
 }

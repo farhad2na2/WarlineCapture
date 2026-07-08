@@ -109,6 +109,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         UiShellRuntimeGateway.Register(new FakeAssistantPanelGateway(new UiAssistantPanelModel(
             42,
             "- Neutralize hostile patrol\n[x] Protect civilians",
+            "HIGH: Fuel reserves empty",
+            true,
             true,
             "Review objective",
             "Focus the active objective before choosing the next order.",
@@ -124,15 +126,18 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         RectTransform panel = overlay.Find("AriaAssistantPanel") as RectTransform;
         Assert.NotNull(panel);
         TMP_Text goals = panel.Find("GoalsBody")?.GetComponent<TMP_Text>();
+        TMP_Text alerts = panel.Find("AlertsBody")?.GetComponent<TMP_Text>();
         TMP_Text recommendation = panel.Find("RecommendationBody")?.GetComponent<TMP_Text>();
         Button showMe = panel.Find("NextActionButton")?.GetComponent<Button>();
         Button giveControl = panel.Find("GiveControlButton")?.GetComponent<Button>();
 
         Assert.NotNull(goals);
+        Assert.NotNull(alerts);
         Assert.NotNull(recommendation);
         Assert.NotNull(showMe);
         Assert.NotNull(giveControl);
         Assert.AreEqual("- Neutralize hostile patrol\n[x] Protect civilians", goals.text);
+        Assert.AreEqual("HIGH: Fuel reserves empty", alerts.text);
         StringAssert.Contains("HIGH: Review objective", recommendation.text);
         Assert.IsTrue(showMe.interactable);
         Assert.IsFalse(giveControl.interactable);

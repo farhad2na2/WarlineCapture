@@ -49,6 +49,8 @@ namespace Game.UI.Shell.Ecs
         private static uint cachedAssistantPanelSourceVersion;
         private static uint cachedAssistantPanelRecommendationVersion;
         private static int cachedAssistantPanelGoalCount;
+        private static int cachedAssistantPanelMessageCount;
+        private static int cachedAssistantPanelMessageVersion;
         private static int cachedAssistantPanelRecommendationCount;
         private static AssistantControlState cachedAssistantPanelControlState;
         private static UiAssistantPanelModel cachedAssistantPanel;
@@ -88,6 +90,8 @@ namespace Game.UI.Shell.Ecs
             cachedAssistantPanelSourceVersion = 0;
             cachedAssistantPanelRecommendationVersion = 0;
             cachedAssistantPanelGoalCount = 0;
+            cachedAssistantPanelMessageCount = 0;
+            cachedAssistantPanelMessageVersion = 0;
             cachedAssistantPanelRecommendationCount = 0;
             cachedAssistantPanelControlState = AssistantControlState.Player;
             cachedAssistantPanel = UiAssistantPanelModel.Empty;
@@ -1006,9 +1010,9 @@ namespace Game.UI.Shell.Ecs
             return value.ToString();
         }
 
-        private static uint CombineAssistantPanelVersion(uint sourceVersion, uint recommendationVersion)
+        private static uint CombineAssistantPanelVersion(uint sourceVersion, uint recommendationVersion, int messageVersion)
         {
-            uint combined = sourceVersion * 397u ^ recommendationVersion;
+            uint combined = sourceVersion * 397u ^ recommendationVersion ^ (uint)math.max(0, messageVersion) * 31u;
             return combined == 0u ? 1u : combined;
         }
 
@@ -1032,6 +1036,47 @@ namespace Game.UI.Shell.Ecs
             }
 
             return text.Length > 0 ? text : "No active objectives";
+        }
+
+        private static string BuildAssistantAlertsText(DynamicBuffer<AssistantMessageElement> messages)
+        {
+            if (messages.Length == 0)
+                return "No priority alerts";
+
+            string text = string.Empty;
+            int visibleCount = 0;
+            for (int i = 0; i < messages.Length && visibleCount < 3; i++)
+            {
+                AssistantMessageElement message = messages[i];
+                if (message.Text.Length == 0 || message.Acknowledged != 0)
+                    continue;
+
+                if (text.Length > 0)
+                    text += "\n";
+
+                text += PriorityText(message.Priority);
+                text += ": ";
+                text += message.Text.ToString();
+                visibleCount++;
+            }
+
+            return text.Length > 0 ? text : "No priority alerts";
+        }
+
+        private static int AssistantMessageVersion(DynamicBuffer<AssistantMessageElement> messages)
+        {
+            uint version = 0u;
+            for (int i = 0; i < messages.Length; i++)
+            {
+                AssistantMessageElement message = messages[i];
+                version = version * 397u
+                    ^ (uint)message.MessageId
+                    ^ (uint)math.max(0, message.SourceVersion) * 31u
+                    ^ (uint)message.Priority * 17u
+                    ^ (uint)message.Acknowledged;
+            }
+
+            return (int)(version == 0u ? (uint)messages.Length : version);
         }
 
         private static string PriorityText(AssistantMessagePriority priority)
@@ -1094,7 +1139,8 @@ namespace Game.UI.Shell.Ecs
             if (!entityManager.HasComponent<AssistantStateComponent>(boundary) ||
                 !entityManager.HasComponent<AssistantRecommendationReadModelComponent>(boundary) ||
                 !entityManager.HasBuffer<AssistantGoalReadModelElement>(boundary) ||
-                !entityManager.HasBuffer<AssistantRecommendationElement>(boundary))
+                !entityManager.HasBuffer<AssistantRecommendationElement>(boundary) ||
+                !entityManager.HasBuffer<AssistantMessageElement>(boundary))
             {
                 return false;
             }
@@ -1107,6 +1153,9 @@ namespace Game.UI.Shell.Ecs
                 entityManager.GetBuffer<AssistantGoalReadModelElement>(boundary, true);
             DynamicBuffer<AssistantRecommendationElement> recommendations =
                 entityManager.GetBuffer<AssistantRecommendationElement>(boundary, true);
+            DynamicBuffer<AssistantMessageElement> messages =
+                entityManager.GetBuffer<AssistantMessageElement>(boundary, true);
+            int messageVersion = AssistantMessageVersion(messages);
 
             if (hasCachedAssistantPanel &&
                 cachedAssistantPanelWorld == entityManager.World &&
@@ -1114,6 +1163,8 @@ namespace Game.UI.Shell.Ecs
                 cachedAssistantPanelSourceVersion == assistantState.SourceVersion &&
                 cachedAssistantPanelRecommendationVersion == recommendationReadModel.Version &&
                 cachedAssistantPanelGoalCount == goals.Length &&
+                cachedAssistantPanelMessageCount == messages.Length &&
+                cachedAssistantPanelMessageVersion == messageVersion &&
                 cachedAssistantPanelRecommendationCount == recommendations.Length &&
                 cachedAssistantPanelControlState == assistantState.ControlState)
             {
@@ -1123,10 +1174,13 @@ namespace Game.UI.Shell.Ecs
 
             AssistantRecommendationElement topRecommendation =
                 recommendations.Length > 0 ? recommendations[0] : default;
-            uint modelVersion = CombineAssistantPanelVersion(assistantState.SourceVersion, recommendationReadModel.Version);
+            string alertsText = BuildAssistantAlertsText(messages);
+            uint modelVersion = CombineAssistantPanelVersion(assistantState.SourceVersion, recommendationReadModel.Version, messageVersion);
             assistantPanel = new UiAssistantPanelModel(
                 modelVersion,
                 BuildAssistantGoalsText(goals),
+                alertsText,
+                alertsText != "No priority alerts",
                 topRecommendation.RecommendationId != 0,
                 topRecommendation.RecommendationId != 0 ? topRecommendation.Title.ToString() : "No recommendation",
                 topRecommendation.RecommendationId != 0
@@ -1145,6 +1199,8 @@ namespace Game.UI.Shell.Ecs
             cachedAssistantPanelSourceVersion = assistantState.SourceVersion;
             cachedAssistantPanelRecommendationVersion = recommendationReadModel.Version;
             cachedAssistantPanelGoalCount = goals.Length;
+            cachedAssistantPanelMessageCount = messages.Length;
+            cachedAssistantPanelMessageVersion = messageVersion;
             cachedAssistantPanelRecommendationCount = recommendations.Length;
             cachedAssistantPanelControlState = assistantState.ControlState;
             cachedAssistantPanel = assistantPanel;

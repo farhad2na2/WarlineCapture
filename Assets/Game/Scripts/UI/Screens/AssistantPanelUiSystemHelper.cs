@@ -8,6 +8,7 @@ namespace Game.UI.Runtime
     {
         private TMP_Text _stateText;
         private TMP_Text _goalsBodyText;
+        private TMP_Text _alertsBodyText;
         private TMP_Text _recommendationBodyText;
         private TMP_Text _nextActionLabelText;
         private TMP_Text _giveControlLabelText;
@@ -18,6 +19,7 @@ namespace Game.UI.Runtime
         public void Bind(
             TMP_Text stateText,
             TMP_Text goalsBodyText,
+            TMP_Text alertsBodyText,
             TMP_Text recommendationBodyText,
             Button nextActionButton,
             Button giveControlButton,
@@ -26,6 +28,7 @@ namespace Game.UI.Runtime
         {
             _stateText = stateText;
             _goalsBodyText = goalsBodyText;
+            _alertsBodyText = alertsBodyText;
             _recommendationBodyText = recommendationBodyText;
             _nextActionButton = nextActionButton;
             _giveControlButton = giveControlButton;
@@ -38,6 +41,7 @@ namespace Game.UI.Runtime
         {
             _stateText = null;
             _goalsBodyText = null;
+            _alertsBodyText = null;
             _recommendationBodyText = null;
             _nextActionLabelText = null;
             _giveControlLabelText = null;
@@ -56,6 +60,8 @@ namespace Game.UI.Runtime
                 _stateText.text = string.IsNullOrWhiteSpace(model.OwnershipText) ? "PLAYER CONTROL" : model.OwnershipText;
             if (_goalsBodyText != null)
                 _goalsBodyText.text = string.IsNullOrWhiteSpace(model.GoalsText) ? "No active objectives" : model.GoalsText;
+            if (_alertsBodyText != null)
+                _alertsBodyText.text = string.IsNullOrWhiteSpace(model.AlertsText) ? "No priority alerts" : model.AlertsText;
             if (_recommendationBodyText != null)
             {
                 _recommendationBodyText.text = model.HasRecommendation

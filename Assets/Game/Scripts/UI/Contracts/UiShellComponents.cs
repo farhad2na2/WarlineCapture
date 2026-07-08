@@ -957,6 +957,8 @@ namespace Game.UI.Contracts
     {
         public readonly uint Version;
         public readonly string GoalsText;
+        public readonly string AlertsText;
+        public readonly bool HasAlerts;
         public readonly bool HasRecommendation;
         public readonly string RecommendationTitle;
         public readonly string RecommendationBody;
@@ -970,6 +972,8 @@ namespace Game.UI.Contracts
         public UiAssistantPanelModel(
             uint version,
             string goalsText,
+            string alertsText,
+            bool hasAlerts,
             bool hasRecommendation,
             string recommendationTitle,
             string recommendationBody,
@@ -982,6 +986,8 @@ namespace Game.UI.Contracts
         {
             Version = version;
             GoalsText = goalsText;
+            AlertsText = alertsText;
+            HasAlerts = hasAlerts;
             HasRecommendation = hasRecommendation;
             RecommendationTitle = recommendationTitle;
             RecommendationBody = recommendationBody;
@@ -997,6 +1003,8 @@ namespace Game.UI.Contracts
             new(
                 0,
                 "No active objectives",
+                "No priority alerts",
+                false,
                 false,
                 "No recommendation",
                 "ARIA is waiting for live battlefield context.",

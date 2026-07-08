@@ -1,6 +1,41 @@
 # Handoff: Jet Attack Cinematic Camera (3rd-person follow mode)
 
-> Current acceptance note, 2026-07-07: this handoff is historical context only. The user-visible result was rejected as too fast, too close, and not showing launch, impact, explosion, or flyover reliably. Use `Architecture/tactical_follow_attack_cinematic_improvement_tracker.md` as the active corrective plan and progress tracker.
+> Current acceptance note, 2026-07-08: the corrective implementation is now the active behavior. The original 2026-07-07 handoff below remains useful historical context, but acceptance and remaining work are tracked in `Architecture/tactical_follow_attack_cinematic_improvement_tracker.md`.
+
+## Current Implemented Behavior
+
+The tactical follow attack cinematic now owns the followed air-unit attack sequence instead of relying on the same-frame normal attack VFX playback:
+
+1. The followed jet attack is captured after `UnitAttackSystem` and before normal attack VFX playback.
+2. Captured same-source muzzle and impact requests are copied into the cinematic timeline, then consumed so impact VFX cannot fire before the camera reaches the impact beat.
+3. The sequence plays launch, missile path, impact, flyover, and return frames through the existing tactical follow camera pose singletons.
+4. The flyover shot tracks the real source aircraft when it still exists, with projected path fallback only if the source is lost.
+5. The existing pooled missile trail view is reused with cinematic-readable trail duration and width.
+
+## Current Validation Evidence
+
+- Runtime compile passed: `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly`.
+- Editor compile passed: `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`.
+- Editor test compile passed: `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`.
+- Focused follow-camera command validation passed: `/private/tmp/warline-tactical-follow-command-validation-4.log`, `[TacticalFollowCameraModeCommandValidation] result=Passed tests=44`.
+- Real Match playmode proof passed: `/private/tmp/warline-attack-cinematic-playmode-validation-escalated-12.log`, `[TacticalFollowAttackCinematicPlayModeValidation] result=Passed`.
+- ECS/Burst architecture guard passed: `/private/tmp/warline-attack-cinematic-architecture-validation-15.log`, `[EcsBurstHotPathArchitectureValidation] result=Passed tests=10`.
+- Captured proof frames:
+  - `/private/tmp/warline-attack-cinematic-playmode/01-launch.png`
+  - `/private/tmp/warline-attack-cinematic-playmode/02-missile-path.png`
+  - `/private/tmp/warline-attack-cinematic-playmode/03-impact.png`
+  - `/private/tmp/warline-attack-cinematic-playmode/04-flyover.png`
+  - `/private/tmp/warline-attack-cinematic-playmode/05-return.png`
+
+## Intentional Managed Boundaries
+
+- `TacticalFollowAttackCinematicSystem` remains an `ISystem` but is intentionally not Burst-compiled because it owns `UnityEngine.Time.timeScale` restoration and consumes entity requests around managed presentation timing.
+- `MissileTrailVfxView` remains a pooled Unity-object presentation boundary; it does not own damage, targeting, or gameplay policy.
+- Editor playmode proof helpers are validation-only and are not runtime loops.
+
+## Remaining Open Item
+
+- Performance/GC validation remains open in the architecture tracker. The current implementation avoids new per-frame object creation in the cinematic path by reusing ECS data and pooled VFX, but it still needs a measured Unity run that records frame time and GC during the cinematic sequence.
 
 ## Goal
 When the player follows a jet in 3rd-person mode (`ToggleFollowMode`) and it attacks, play a

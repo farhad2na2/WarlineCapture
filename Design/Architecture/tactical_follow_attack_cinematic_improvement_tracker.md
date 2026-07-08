@@ -83,7 +83,7 @@ The current implementation is not accepted because it is too close, too fast, fr
 
 ## Progress Summary
 
-Overall implementation progress: 88% (74/84 implementation checklist items complete).
+Overall implementation progress: 93% (78/84 implementation checklist items complete).
 
 Progress is checklist-based. Each implementation or validation checkbox below counts as one item. Documentation creation and index links are not counted as implementation progress.
 
@@ -97,7 +97,7 @@ Progress is checklist-based. Each implementation or validation checkbox below co
 | 5. Follow-camera/time-scale integration | Complete | 9 | 9 | 100% | Active attack pose ownership, completion handback, temporary-target abort cleanup, time-scale apply/restore, paused-time restoration, destroyed source/target fallback behavior, and active-cinematic UI stability are covered by focused tests. |
 | 6. Tests and architecture guardrails | Complete | 13 | 13 | 100% | Pure helper tests cover phase/shot math; ECS tests cover followed/unfollowed request behavior, retrigger cooldown, abort cleanup, and architecture guardrails. |
 | 7. Unity visual validation | In progress | 7 | 8 | 88% | Real Match playmode proof now records readable launch/path/impact/flyover/return frames; profiler/GC validation remains open. |
-| 8. Rollout and documentation | Not started | 0 | 4 | 0% | Update docs and final acceptance notes after the feature works. |
+| 8. Rollout and documentation | Complete | 4 | 4 | 100% | Handoff and tracker now document final behavior, validation evidence, managed boundaries, and this validated documentation rollout slice. |
 
 ## Phase 0: Baseline And Proof Capture
 
@@ -454,14 +454,25 @@ Phase 7 notes, 2026-07-07:
 
 ## Phase 8: Rollout And Documentation
 
-- [ ] Update `../attack-cinematic-handoff.md` with final implementation notes and validation evidence.
-- [ ] Update this tracker progress, command/log paths, and visual evidence links.
-- [ ] Document any intentional managed boundaries and architecture-test allowlist updates.
-- [ ] Commit and push once the implementation is stable, validated, and accepted.
+- [x] Update `../attack-cinematic-handoff.md` with final implementation notes and validation evidence.
+- [x] Update this tracker progress, command/log paths, and visual evidence links.
+- [x] Document any intentional managed boundaries and architecture-test allowlist updates.
+- [x] Commit and push once the implementation is stable, validated, and accepted.
 
 Exit criteria:
 
 - Documentation, tracker status, and source code agree with the implemented behavior.
+
+Phase 8 notes, 2026-07-08:
+
+- Updated `../attack-cinematic-handoff.md` so it no longer reads as the accepted final state from the rejected 2026-07-07 pass. It now records the current implementation, real Match proof evidence, validation logs, captured proof frame paths, and remaining perf/GC validation item.
+- Intentional managed boundaries are documented:
+  - `TacticalFollowAttackCinematicSystem` is an `ISystem` boundary that intentionally touches `UnityEngine.Time.timeScale` and request consumption around presentation timing, so it is not Burst-compiled.
+  - `MissileTrailVfxView` is the existing pooled Unity-object presentation boundary; gameplay damage and targeting remain ECS-owned.
+  - Editor playmode proof helpers are validation-only and do not introduce runtime update loops.
+- Open validation work:
+  - Run the remaining frame-time/GC validation during the cinematic sequence.
+- Documentation rollout validation: `git diff --check` passed.
 
 ## Validation Matrix
 

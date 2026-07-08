@@ -2045,6 +2045,7 @@ MonoBehaviour:
   buildDrawerPopupPrefab: {fileID: 6681354990523575241, guid: f8fdfa57f1e92e74dbc1987ff731b3b3, type: 3}
   fullMapPopupPrefab: {fileID: 5212093184515549060, guid: 4cbbb8d6a3a28439784346da6e1c3022, type: 3}
   settingsPopupPrefab: {fileID: 6007764285479271553, guid: aa32fc17726f147338fed3c55fbd6534, type: 3}
+  resourceExchangePopupPrefab: {fileID: 7142867792348903761, guid: 3a34b9e4e9aa44bb8b55de86f8ce65ed, type: 3}
   buildPlacementConfirmationBarPrefab: {fileID: 732146810000000001, guid: 4e6c8754ee9148fca63ee5f8b91a230a, type: 3}
 --- !u!114 &1818590230
 MonoBehaviour:

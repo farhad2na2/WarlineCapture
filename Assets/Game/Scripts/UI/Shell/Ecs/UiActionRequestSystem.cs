@@ -14,6 +14,7 @@ namespace Game.UI.Shell.Ecs
         private EntityQuery boundaryQuery;
         private EntityQuery selectionInputQuery;
         private EntityQuery buildingPlacementCommandQuery;
+        private EntityQuery resourceExchangeEnabledQuery;
 
         public void OnCreate(ref SystemState state)
         {
@@ -36,6 +37,8 @@ namespace Game.UI.Shell.Ecs
             buildingPlacementCommandQuery = state.GetEntityQuery(
                 ComponentType.ReadWrite<BuildingUiPlacementCommandQueueComponent>(),
                 ComponentType.ReadWrite<BuildingUiPlacementCommandRequestElement>());
+            resourceExchangeEnabledQuery = state.GetEntityQuery(
+                ComponentType.ReadOnly<ResourceExchangeEnabledComponent>());
             state.RequireForUpdate(boundaryQuery);
         }
 
@@ -84,6 +87,7 @@ namespace Game.UI.Shell.Ecs
                 state.EntityManager.GetComponentData<RtsSelectionInputStateComponent>(selectionInput);
             RtsSelectionInputRequestQueueComponent queue =
                 state.EntityManager.GetComponentData<RtsSelectionInputRequestQueueComponent>(selectionInput);
+            bool resourceExchangeEnabled = IsResourceExchangeEnabled();
             DynamicBuffer<BuildingUiPlacementCommandRequestElement> placementRequests = default;
             BuildingUiPlacementCommandQueueComponent placementQueue = default;
             if (needsPlacementCommandQueue)
@@ -111,6 +115,7 @@ namespace Game.UI.Shell.Ecs
                     ref squadTrayState,
                     ref buildDrawerState,
                     ref placementQueue,
+                    resourceExchangeEnabled,
                     frame,
                     state.World);
             }
@@ -194,6 +199,25 @@ namespace Game.UI.Shell.Ecs
             return entities.Length > 0 ? entities[0] : Entity.Null;
         }
 
+        private bool IsResourceExchangeEnabled()
+        {
+            int count = resourceExchangeEnabledQuery.CalculateEntityCount();
+            if (count == 0)
+                return false;
+            if (count == 1)
+                return resourceExchangeEnabledQuery.GetSingleton<ResourceExchangeEnabledComponent>().Enabled != 0;
+
+            using NativeArray<ResourceExchangeEnabledComponent> exchangeStates =
+                resourceExchangeEnabledQuery.ToComponentDataArray<ResourceExchangeEnabledComponent>(Allocator.Temp);
+            for (int i = 0; i < exchangeStates.Length; i++)
+            {
+                if (exchangeStates[i].Enabled != 0)
+                    return true;
+            }
+
+            return false;
+        }
+
         private static void ProcessRequest(
             UiActionRequestComponent request,
             ref RtsSelectionInputStateComponent inputState,
@@ -210,6 +234,7 @@ namespace Game.UI.Shell.Ecs
             ref UiMatchHudSquadTrayStateComponent squadTrayState,
             ref UiBuildDrawerStateComponent buildDrawerState,
             ref BuildingUiPlacementCommandQueueComponent placementQueue,
+            bool resourceExchangeEnabled,
             int frame,
             World world)
         {
@@ -228,6 +253,11 @@ namespace Game.UI.Shell.Ecs
                     break;
                 case UiActionKind.OpenSettings:
                     EnqueuePopup(popupRequests, UiShellPopupKind.Settings, UiShellPopupIntent.Show, request.PayloadId);
+                    break;
+                case UiActionKind.OpenResourceExchange:
+                    CaptureUiClickSequence(ref inputState, commandRequests, frame);
+                    if (resourceExchangeEnabled)
+                        EnqueuePopup(popupRequests, UiShellPopupKind.ResourceExchange, UiShellPopupIntent.Show, request.PayloadId);
                     break;
                 case UiActionKind.RightBuild:
                 case UiActionKind.Build:

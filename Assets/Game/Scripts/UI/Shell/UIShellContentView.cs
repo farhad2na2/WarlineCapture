@@ -19,6 +19,7 @@ namespace Game.UI.Runtime
         [SerializeField] private GameObject buildDrawerPopupPrefab;
         [SerializeField] private GameObject fullMapPopupPrefab;
         [SerializeField] private GameObject settingsPopupPrefab;
+        [SerializeField] private GameObject resourceExchangePopupPrefab;
         [SerializeField] private GameObject buildPlacementConfirmationBarPrefab;
         private readonly MatchOverlayCommandInputUiSystemHelper _matchOverlayCommandInputSystem = new();
         private ISelectionUiCommand _selectionUiCommandSystem;
@@ -46,7 +47,11 @@ namespace Game.UI.Runtime
         private GameObject _buildDrawerPopupInstance;
         private GameObject _fullMapPopupInstance;
         private GameObject _settingsPopupInstance;
+        private GameObject _resourceExchangePopupInstance;
         private SettingsPopupView _settingsPopupView;
+        private ResourceExchangePopupView _resourceExchangePopupView;
+        private Button _resourceExchangePopupCloseButton;
+        private UnityAction _resourceExchangePopupCloseButtonListener;
         private MatchHudFullMapPopupView _fullMapPopupView;
         private int _contentVersion;
 
@@ -58,6 +63,7 @@ namespace Game.UI.Runtime
         public GameObject BuildDrawerPopupPrefab => buildDrawerPopupPrefab;
         public GameObject FullMapPopupPrefab => fullMapPopupPrefab;
         public GameObject SettingsPopupPrefab => settingsPopupPrefab;
+        public GameObject ResourceExchangePopupPrefab => resourceExchangePopupPrefab;
         public GameObject BuildPlacementConfirmationBarPrefab => buildPlacementConfirmationBarPrefab;
         public int ContentVersion => _contentVersion;
 
@@ -70,7 +76,8 @@ namespace Game.UI.Runtime
             GameObject buildDrawerPrefab,
             GameObject fullMapPrefab = null,
             GameObject buildPlacementConfirmationPrefab = null,
-            GameObject settingsPrefab = null)
+            GameObject settingsPrefab = null,
+            GameObject resourceExchangePrefab = null)
         {
             shellView = view;
             loadingContentPrefab = loadingPrefab;
@@ -84,6 +91,8 @@ namespace Game.UI.Runtime
                 buildPlacementConfirmationBarPrefab = buildPlacementConfirmationPrefab;
             if (settingsPrefab != null)
                 settingsPopupPrefab = settingsPrefab;
+            if (resourceExchangePrefab != null)
+                resourceExchangePopupPrefab = resourceExchangePrefab;
         }
 
         public void PrepareForCommandSequence(IReadOnlyList<UiShellPresentationCommandModel> commands)
@@ -458,6 +467,9 @@ namespace Game.UI.Runtime
                 case UiShellPopupKind.Settings:
                     InstallSettingsPopup(command.Route);
                     break;
+                case UiShellPopupKind.ResourceExchange:
+                    InstallResourceExchangePopup();
+                    break;
             }
         }
 
@@ -476,6 +488,18 @@ namespace Game.UI.Runtime
             }
 
             return _settingsPopupInstance;
+        }
+
+        public GameObject InstallResourceExchangePopup()
+        {
+            UnbindResourceExchangePopupCloseButton();
+            _resourceExchangePopupInstance = InstallRoot(resourceExchangePopupPrefab, UIShellRegionId.PopupLayer);
+            _resourceExchangePopupView = _resourceExchangePopupInstance != null
+                ? _resourceExchangePopupInstance.GetComponent<ResourceExchangePopupView>()
+                : null;
+            _mainMenuPlayUi?.BindResourceExchangePopup(_resourceExchangePopupView);
+            BindResourceExchangePopupCloseButton(_resourceExchangePopupView);
+            return _resourceExchangePopupInstance;
         }
 
         private void OpenFullMapPopup()
@@ -587,6 +611,34 @@ namespace Game.UI.Runtime
             MarkContentChanged();
         }
 
+        public void CloseResourceExchangePopup()
+        {
+            UnbindResourceExchangePopupCloseButton();
+            _mainMenuPlayUi?.BindResourceExchangePopup(null);
+            GameObject popup = _resourceExchangePopupInstance;
+            _resourceExchangePopupInstance = null;
+            _resourceExchangePopupView = null;
+
+            if (popup == null)
+                return;
+
+            if (Application.isPlaying)
+            {
+                UIPopupMotionView motionView = popup.GetComponent<UIPopupMotionView>();
+                if (motionView != null && motionView.PlayHide(() =>
+                    {
+                        DestroyRegionObject(popup);
+                        MarkContentChanged();
+                    }))
+                {
+                    return;
+                }
+            }
+
+            DestroyRegionObject(popup);
+            MarkContentChanged();
+        }
+
         private void BindBuildDrawerPopupInputBlocker(GameObject popup)
         {
             BuildDrawerView view = popup != null ? popup.GetComponent<BuildDrawerView>() : null;
@@ -620,6 +672,17 @@ namespace Game.UI.Runtime
             _buildDrawerPopupCloseButtonListener = CloseBuildDrawerPopup;
             _buildDrawerPopupCloseButton.onClick.RemoveListener(_buildDrawerPopupCloseButtonListener);
             _buildDrawerPopupCloseButton.onClick.AddListener(_buildDrawerPopupCloseButtonListener);
+        }
+
+        private void BindResourceExchangePopupCloseButton(ResourceExchangePopupView view)
+        {
+            if (view == null || view.CloseButton == null)
+                return;
+
+            _resourceExchangePopupCloseButton = view.CloseButton;
+            _resourceExchangePopupCloseButtonListener = CloseResourceExchangePopup;
+            _resourceExchangePopupCloseButton.onClick.RemoveListener(_resourceExchangePopupCloseButtonListener);
+            _resourceExchangePopupCloseButton.onClick.AddListener(_resourceExchangePopupCloseButtonListener);
         }
 
         private void BindBuildDrawerRuntimeCommands(GameObject popup)
@@ -666,6 +729,15 @@ namespace Game.UI.Runtime
 
             _buildDrawerPopupCloseButton = null;
             _buildDrawerPopupCloseButtonListener = null;
+        }
+
+        private void UnbindResourceExchangePopupCloseButton()
+        {
+            if (_resourceExchangePopupCloseButton != null && _resourceExchangePopupCloseButtonListener != null)
+                _resourceExchangePopupCloseButton.onClick.RemoveListener(_resourceExchangePopupCloseButtonListener);
+
+            _resourceExchangePopupCloseButton = null;
+            _resourceExchangePopupCloseButtonListener = null;
         }
 
         private GameObject InstallRoot(GameObject prefab, UIShellRegionId regionId)
@@ -719,12 +791,16 @@ namespace Game.UI.Runtime
             else if (regionId == UIShellRegionId.PopupLayer)
             {
                 UnbindBuildDrawerPopupCloseButton();
+                UnbindResourceExchangePopupCloseButton();
                 _mainMenuPlayUi?.BindBuildDrawer(null);
                 _mainMenuPlayUi?.BindMatchHudFullMapPopup(null);
+                _mainMenuPlayUi?.BindResourceExchangePopup(null);
                 _fullMapPopupInstance = null;
                 _fullMapPopupView = null;
                 _settingsPopupInstance = null;
                 _settingsPopupView = null;
+                _resourceExchangePopupInstance = null;
+                _resourceExchangePopupView = null;
             }
 
             if (TryGetRegionContentRoot(regionId, out RectTransform contentRoot))
@@ -740,6 +816,8 @@ namespace Game.UI.Runtime
                 _fullMapPopupView = null;
                 _settingsPopupInstance = null;
                 _settingsPopupView = null;
+                _resourceExchangePopupInstance = null;
+                _resourceExchangePopupView = null;
             }
             if (regionId == UIShellRegionId.FooterRegion)
             {

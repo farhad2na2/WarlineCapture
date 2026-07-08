@@ -4,6 +4,7 @@ using Unity.Profiling;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 using Game.Tactical.Contracts;
 using Game.UI.Contracts;
 
@@ -49,12 +50,14 @@ namespace Game.UI.Runtime
         private float _nextZoomControlRefreshTime;
         private BuildDrawerView _buildDrawerView;
         private BuildPlacementConfirmationBarView _buildPlacementConfirmationBarView;
+        private ResourceExchangePopupView _resourceExchangePopupView;
         private System.Action<IMatchHudSelectionPanelView> _bindMatchHudSelectionPanel;
         private System.Action<IBattleHudRuntimeFeedbackSink> _bindMatchHudRuntimeFeedback;
         private System.Action<IMatchHudSquadTrayView> _bindMatchHudSquadTray;
         private EventSystem _raycastEventSystem;
         private PointerEventData _raycastPointerData;
         private readonly List<RaycastResult> _raycastResults = new(16);
+        private readonly List<Button> _matchHudResourceExchangeButtons = new(4);
         private int _lastGameplayUiClickFrame = -1000;
 
         public void Init(
@@ -99,9 +102,11 @@ namespace Game.UI.Runtime
             _matchHudRuntimeFeedbackView = null;
             _matchHudSquadTrayView?.Unbind();
             _matchHudSquadTrayView = null;
+            UnbindMatchHudResourceExchangeButtons();
             BindMatchHudThreatJumpPanel(null);
             _buildDrawerView = null;
             _buildPlacementConfirmationBarView = null;
+            _resourceExchangePopupView = null;
             _bindMatchHudSelectionPanel = null;
             _bindMatchHudRuntimeFeedback = null;
             _bindMatchHudSquadTray = null;
@@ -281,6 +286,7 @@ namespace Game.UI.Runtime
             _matchHudOilVisibilityApplied = false;
             _matchHudResourceLabelsApplied = false;
             _nextHeaderResourceRefreshTime = 0f;
+            UnbindMatchHudResourceExchangeButtons();
 
             if (headerContent == null)
                 return;
@@ -321,6 +327,7 @@ namespace Game.UI.Runtime
                 oilSlot = CreateOilResourceSlot(resourceStrip, fuelSlot);
 
             ArrangeMatchHudResourceSlots(resourceStrip);
+            BindMatchHudResourceExchangeButtons(resourceStrip);
             _matchHudOilSlotRoot = oilSlot.gameObject;
             BindMatchHudResourceSlot(oilSlot, out _matchHudOilSlotLabel, out _matchHudOilSlotValue);
             BindMatchHudResourceSlot(fuelSlot, out _matchHudFuelSlotLabel, out _matchHudFuelSlotValue);
@@ -376,6 +383,48 @@ namespace Game.UI.Runtime
             Transform value = slot.Find("Value");
             labelText = label != null ? label.GetComponent<TMP_Text>() : null;
             valueText = value != null ? value.GetComponent<TMP_Text>() : null;
+        }
+
+        private void BindMatchHudResourceExchangeButtons(Transform resourceStrip)
+        {
+            UnbindMatchHudResourceExchangeButtons();
+            BindMatchHudResourceExchangeButton(resourceStrip.Find("CreditsSlot"));
+            BindMatchHudResourceExchangeButton(resourceStrip.Find("OilSlot"));
+            BindMatchHudResourceExchangeButton(resourceStrip.Find("FuelSlot"));
+            BindMatchHudResourceExchangeButton(resourceStrip.Find("SupplySlot"));
+        }
+
+        private void BindMatchHudResourceExchangeButton(Transform slot)
+        {
+            if (slot == null)
+                return;
+
+            Button button = slot.GetComponent<Button>();
+            if (button == null)
+                button = slot.gameObject.AddComponent<Button>();
+
+            if (slot.TryGetComponent(out Graphic graphic))
+            {
+                graphic.raycastTarget = true;
+                button.targetGraphic = graphic;
+            }
+
+            button.transition = Selectable.Transition.None;
+            button.onClick.RemoveListener(RequestResourceExchangePopup);
+            button.onClick.AddListener(RequestResourceExchangePopup);
+            _matchHudResourceExchangeButtons.Add(button);
+        }
+
+        private void UnbindMatchHudResourceExchangeButtons()
+        {
+            for (int i = 0; i < _matchHudResourceExchangeButtons.Count; i++)
+            {
+                Button button = _matchHudResourceExchangeButtons[i];
+                if (button != null)
+                    button.onClick.RemoveListener(RequestResourceExchangePopup);
+            }
+
+            _matchHudResourceExchangeButtons.Clear();
         }
 
         private void ApplyMatchHudHeaderResourceState()
@@ -470,6 +519,11 @@ namespace Game.UI.Runtime
             _buildPlacementConfirmationBarView = buildPlacementConfirmationBarView;
         }
 
+        public void BindResourceExchangePopup(ResourceExchangePopupView resourceExchangePopupView)
+        {
+            _resourceExchangePopupView = resourceExchangePopupView;
+        }
+
         public bool IsBuildDrawerOpen => _buildDrawerView != null && _buildDrawerView.IsOpen;
 
         public event System.Action FullMapPopupRequested;
@@ -493,6 +547,12 @@ namespace Game.UI.Runtime
                 _buildPlacementConfirmationBarView.ContainsScreenPoint(screenPosition))
             {
                 source = "BuildPlacementConfirmationBar";
+                return true;
+            }
+
+            if (_resourceExchangePopupView != null && _resourceExchangePopupView.ContainsScreenPoint(screenPosition))
+            {
+                source = "ResourceExchangePopup";
                 return true;
             }
 
@@ -700,6 +760,12 @@ namespace Game.UI.Runtime
                 _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
 
             FullMapPopupCloseRequested?.Invoke();
+        }
+
+        private void RequestResourceExchangePopup()
+        {
+            CaptureGameplayUiClickSequence();
+            UiShellRuntimeGateway.TryEnqueueUiAction(UiActionKind.OpenResourceExchange, 0);
         }
 
         private void RequestMatchHudZoomIn()

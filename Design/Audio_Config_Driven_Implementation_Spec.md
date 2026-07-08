@@ -323,14 +323,14 @@ Use this section as the work checklist. Update status after each implementation 
 
 ### Current Completion
 
-Overall tracked completion: **50%**.
+Overall tracked completion: **55%**.
 
-- Completed steps: 10 / 20.
+- Completed steps: 11 / 20.
 - Asset and placeholder catalog preparation: **Done**.
 - Runtime playback implementation: **In Progress**.
 - UI/gameplay wiring: **Not Started**.
 - Validation/performance test coverage: **Not Started**.
-- Latest stable slice: ECS audio request systems, cooldown filtering, music state application, and settings normalization passed focused Unity validation.
+- Latest stable slice: pooled audio playback presentation helper passed focused Unity validation.
 
 Status legend:
 
@@ -350,7 +350,7 @@ Status legend:
 | 7. Create Unity import profile rules | Done | UI/Audio | Import settings for UI, gameplay, alerts, music, ambience. | `AudioConfigContractTests.RunFocusedValidation` passed with importer profile checks. |
 | 8. Create ECS request components | Done | Gameplay | `AudioPlaybackRequestComponent`, settings/music state components. | `AudioEcsDataContractTests.RunFocusedValidation` passed. |
 | 9. Create request systems | Done | Gameplay | `AudioEventRequestSystem`, `AudioCooldownSystem`, `AudioMusicStateSystem`, `AudioSettingsSystem`. | `AudioRequestSystemTests.RunFocusedValidation` passed. |
-| 10. Create playback presentation helper | Not Started | UI/Audio | Pooled `AudioSource` playback helper and mixer application helper. | Pool reuse test; no instantiate/destroy during steady playback. |
+| 10. Create playback presentation helper | Done | UI/Audio | Pooled `AudioSource` playback helper and mixer application helper. | `AudioPlaybackPresentationSystemHelperTests.RunFocusedValidation` passed. |
 | 11. Wire settings UI | Not Started | UI | Master/Music/SFX/Voice/Alerts volume controls update audio settings. | Settings persist and immediately affect playback. |
 | 12. Wire common UI button audio | Not Started | UI | Shared button/tab/card/toggle/slider audio event views. | Changing catalog click clip affects all migrated buttons. |
 | 13. Wire shell route/popup audio | Not Started | UI | Screen forward/back, popup open/close, drawer open/close. | UI route smoke test. |
@@ -466,13 +466,14 @@ Current import profile pass:
 
 ### Step 8-10: ECS Request And Playback
 
-Current Step 8-9 data/request system pass:
+Current Step 8-10 data/request/playback-helper pass:
 
 - Components: `Assets/Game/Scripts/Components/AudioComponents.cs`
 - Request systems: `Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs`
+- Playback helper: `Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationSystemHelper.cs`
 - Validation: `AudioEcsDataContractTests.RunFocusedValidation`, `AudioRequestSystemTests.RunFocusedValidation`
-- Latest validation: unmanaged request/result/settings/music/listener contracts and request system bootstrap/cooldown/music/settings behavior passed focused Unity validation.
-- Runtime implementation status: playback systems and presentation helper are still not implemented.
+- Latest validation: unmanaged request/result/settings/music/listener contracts, request system bootstrap/cooldown/music/settings behavior, and pooled playback helper behavior passed focused Unity validation.
+- Runtime implementation status: playback presentation helper exists; ECS-to-helper playback system wiring is still not implemented.
 
 Required data flow:
 

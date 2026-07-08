@@ -323,14 +323,14 @@ Use this section as the work checklist. Update status after each implementation 
 
 ### Current Completion
 
-Overall tracked completion: **94%**.
+Overall tracked completion: **96%**.
 
-- Completed steps: 16 / 20.
+- Completed steps: 17 / 20.
 - Asset and placeholder catalog preparation: **Done**.
 - Runtime playback implementation: **In Progress**.
 - UI/gameplay wiring: **In Progress**.
 - Validation/performance test coverage: **In Progress**.
-- Latest stable slice: audio performance validation now stress-checks cooldown spam behavior, alert burst cooldowns, playback pool stability, and direct playback/runtime-load guardrails.
+- Latest stable slice: production audio replacement plan defines how placeholder clips graduate to final sourced/composed/mastered assets without code or prefab edits.
 
 Status legend:
 
@@ -360,7 +360,7 @@ Status legend:
 | 17. Add audio catalog validation tests | Done | QA | Missing clip, duplicate id, invalid bus, cooldown, import profile tests. | `AudioConfigContractTests.RunFocusedValidation` passed with required event, bus, clip, cooldown, runtime-load, import profile, and hash alignment checks. |
 | 18. Add performance validation | Done | QA/Perf | Audio stress test for UI spam and match alerts. | `AudioPerformanceValidationTests.RunFocusedValidation` passed for UI spam cooldowns, alert burst cooldowns, playback pool stability, and no direct gameplay/UI ECS audio loading/playback. |
 | 19. Update `Audio_Design_Guidelines.md` handoff | Done | Designer | Cross-link implementation spec and mark event set source. | Docs aligned. |
-| 20. Production audio replacement plan | Not Started | Audio/Designer | Final audio asset sourcing/composition plan. | Catalog entries marked final/placeholder. |
+| 20. Production audio replacement plan | Done | Audio/Designer | Final audio asset sourcing/composition plan. | Catalog replacement workflow documented; current catalog entries remain marked placeholder until final assets are reviewed and approved. |
 
 ## Step Details
 
@@ -742,6 +742,89 @@ The first implementation is complete when:
 - No gameplay ECS system directly plays Unity audio objects.
 - Placeholder clips exist and are clearly marked as placeholder/generated.
 - Validation tests cover catalog integrity and core playback performance.
+
+### Step 20: Production Audio Replacement Plan
+
+The first implementation uses placeholder-generated clips to prove config-driven playback, event timing, and UI/gameplay wiring. Final production audio must replace those placeholders through catalog data only; no UI prefab, gameplay system, or ECS request code should change just because a clip changes.
+
+#### Replacement Sources
+
+Use these source tiers, in order of preference:
+
+| Tier | Use For | Requirement |
+|---|---|---|
+| Commissioned/custom audio | Music stems, critical alerts, signature UI identity, ARIA/voice, major reward/result stingers. | Clear commercial rights, uncompressed masters, edit stems when applicable. |
+| Licensed libraries | Weapons, vehicles, ambience beds, construction/industrial layers, non-signature UI sweeteners. | License must cover mobile game distribution and marketing captures. |
+| AI/generated placeholders | Timing, implementation, internal UX tests, non-final experiments. | Must remain marked `placeholder` or `generated_source` and must not ship as final without review/legal approval. |
+| In-house synthesis/editing | UI ticks, data sweeps, menu layers, radio beeps, test variants. | Store source recipe/session under `Assets/Game/Audio/GeneratedSource` or external source-control artifact. |
+
+#### Final Asset Batches
+
+Replace in this order so the audible game improves where the player notices it first:
+
+1. **Core UI identity:** primary/secondary/negative/disabled buttons, tab/card select, popup open/close, screen forward/back, drawer open/close.
+2. **Command feedback:** unit select by class, move, attack, hold, stop/return, scan targeting/accepted, rejected command, build valid/invalid, production queued.
+3. **Critical alerts:** threat minor/critical, unit under attack, base breached, objective failed, mission timer warnings.
+4. **Music states:** menu loop, briefing/loadout loop, match calm/tension/combat stems, result victory/defeat stingers, result loop.
+5. **Ambience and combat bed:** city/base/battlefield ambience, distant vehicles/aircraft, low-density weapon and impact layers.
+6. **Progression/reward:** objective progress/complete, reward reveal, star/stat reveal, resource spend/gain/refund.
+7. **Voice/ARIA:** tutorial and assistant lines with subtitle ids, ducking metadata, no-overlap policy, localization-ready source manifest.
+
+#### File And Mastering Contract
+
+- Runtime files stay under `Assets/Game/Audio/<BusOrDomain>/`.
+- Source sessions, prompts, stems, and uncompressed masters stay under `Assets/Game/Audio/GeneratedSource/` or a documented external source archive.
+- Runtime filenames remain lowercase snake case and stable where possible. If a filename changes, update only the catalog entry and manifest.
+- UI, command, alert, and short gameplay one-shots should be mono unless a final mix review approves stereo.
+- Music and ambience should be stereo and stream/background-load through the existing import profile.
+- Final one-shots should be short-tailed, normalized conservatively, and checked on phone speakers. Avoid harsh high-frequency alarms and excess low end.
+- Alerts and voice must remain intelligible when music and ambience are active.
+
+#### Catalog Status Contract
+
+Current catalog clip statuses are placeholders. Final replacement must use these status meanings:
+
+| Status | Meaning | Ship Gate |
+|---|---|---|
+| `placeholder` | Generated/prototype timing clip. | Internal implementation only. |
+| `generated_source` | AI/synth clip with source manifest, not yet final reviewed. | Internal or review builds only. |
+| `licensed_candidate` | Licensed candidate with proof of license stored externally. | Needs mix/legal approval. |
+| `custom_candidate` | Commissioned/in-house candidate with source/master available. | Needs mix approval. |
+| `final_approved` | Approved runtime clip. | Eligible for release candidate. |
+
+Do not remove placeholder entries until the replacement clip is imported and validated. During replacement, update the existing `assetPath` and `status` fields rather than introducing event-id-specific code.
+
+#### Replacement Workflow
+
+1. Choose the event batch and lock the exact event ids from `AudioEventIds.AllEventIds`.
+2. Source or compose candidate clips for the batch.
+3. Store source files, stems, prompts, license notes, or edit notes in `GeneratedSource` or the external source archive.
+4. Export runtime WAV files to the correct `Assets/Game/Audio/<category>/` folder.
+5. Apply the import profile for the category.
+6. Update `audio_event_catalog_v0_1.json` clip `assetPath`, `status`, and optional weighting.
+7. Run `AudioConfigContractTests.RunFocusedValidation`.
+8. Run `AudioPerformanceValidationTests.RunFocusedValidation` for any high-frequency UI/alert/command batch.
+9. Perform a short subjective mix pass on device or mobile-speaker simulation: menu taps, match command spam, threat alert burst, and music/ambience ducking.
+10. Commit only the replacement batch assets, catalog changes, source manifest changes, and validation notes.
+
+#### Approval Checklist
+
+Before a batch can be marked `final_approved`:
+
+- Every event in the batch has a runtime clip and source/license record.
+- The clip matches the event role, priority, and bus in `Audio_Design_Guidelines.md`.
+- The clip passes import profile validation.
+- Repeated playback is not fatiguing at expected cooldowns.
+- Critical alerts remain readable over match music and ambience.
+- The clip has a visible feedback counterpart when the event is critical.
+- No prefab owns a direct clip reference as the source of truth.
+
+#### Remaining Blockers For Full Audio Completion
+
+- Objective progress/complete/failed runtime audio remains blocked until real mission/objective result state exists.
+- Result victory/defeat music remains blocked until result routing/model data is implemented beyond static defaults.
+- Splash/briefing/combat-intensity music remains blocked until those route/gameplay intensity boundaries exist.
+- Final subjective audio approval requires sourced/composed production clips; placeholder-generated files prove implementation only.
 
 ## Future Extensions
 

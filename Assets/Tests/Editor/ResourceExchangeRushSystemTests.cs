@@ -1,12 +1,54 @@
+using System;
 using Game.Components;
 using Game.Runtime;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
+using UnityEngine;
 
 public sealed class ResourceExchangeRushSystemTests
 {
+    public static void RunFocusedValidation()
+    {
+        int passed = 0;
+        try
+        {
+            RunValidationStep(
+                nameof(RushRequest_Accepted_SpendsTicketsAndReducesRemainingTime),
+                test => test.RushRequest_Accepted_SpendsTicketsAndReducesRemainingTime(),
+                ref passed);
+            RunValidationStep(
+                nameof(RushRequest_RejectsInsufficientRushTickets),
+                test => test.RushRequest_RejectsInsufficientRushTickets(),
+                ref passed);
+            RunValidationStep(
+                nameof(RushRequest_RejectsWhenQueueItemCapWouldBeExceeded),
+                test => test.RushRequest_RejectsWhenQueueItemCapWouldBeExceeded(),
+                ref passed);
+            RunValidationStep(
+                nameof(RushRequest_RejectsBlockedQueueItem),
+                test => test.RushRequest_RejectsBlockedQueueItem(),
+                ref passed);
+            RunValidationStep(
+                nameof(RushRequest_CompletesImmediatelyWhenRemainingTimeReachesZero),
+                test => test.RushRequest_CompletesImmediatelyWhenRemainingTimeReachesZero(),
+                ref passed);
+            RunValidationStep(
+                nameof(RushAllRequest_SpendsBudgetAcrossEligibleQueueItems),
+                test => test.RushAllRequest_SpendsBudgetAcrossEligibleQueueItems(),
+                ref passed);
+
+            Debug.Log($"[ResourceExchangeRushValidation] result=Passed tests={passed}");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[ResourceExchangeRushValidation] result=Failed passed={passed}\n{exception}");
+            ValidationExit.Exit(1);
+        }
+    }
+
     [Test]
     public void RushRequest_Accepted_SpendsTicketsAndReducesRemainingTime()
     {
@@ -265,6 +307,25 @@ public sealed class ResourceExchangeRushSystemTests
         Assert.AreEqual(0, result.Accepted);
         Assert.AreEqual(ResourceExchangeResultKind.RushRejected, result.ResultKind);
         Assert.AreEqual(reason, result.Reason);
+    }
+
+    private static void RunValidationStep(
+        string name,
+        Action<ResourceExchangeRushSystemTests> action,
+        ref int passed)
+    {
+        var test = new ResourceExchangeRushSystemTests();
+        try
+        {
+            action(test);
+            passed++;
+            Debug.Log($"[ResourceExchangeRushValidation] passed {name}");
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[ResourceExchangeRushValidation] failed {name}\n{exception}");
+            throw;
+        }
     }
 }
 #endif

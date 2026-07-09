@@ -1,12 +1,50 @@
+using System;
 using Game.Components;
 using Game.Runtime;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
+using UnityEngine;
 
 public sealed class ResourceExchangeQueueTickSystemTests
 {
+    public static void RunFocusedValidation()
+    {
+        int passed = 0;
+        try
+        {
+            RunValidationStep(
+                nameof(TickQueue_CompletesOnceAndGrantsOutput),
+                test => test.TickQueue_CompletesOnceAndGrantsOutput(),
+                ref passed);
+            RunValidationStep(
+                nameof(TickQueue_BlocksWhenOutputStorageFullAndResumesWhenAvailable),
+                test => test.TickQueue_BlocksWhenOutputStorageFullAndResumesWhenAvailable(),
+                ref passed);
+            RunValidationStep(
+                nameof(CancelRequest_RefundsReservedInputBeforePresentation),
+                test => test.CancelRequest_RefundsReservedInputBeforePresentation(),
+                ref passed);
+            RunValidationStep(
+                nameof(CancelRequest_DoesNotRefundAfterPresentationStarted),
+                test => test.CancelRequest_DoesNotRefundAfterPresentationStarted(),
+                ref passed);
+            RunValidationStep(
+                nameof(MissionEnd_CancelsActiveJobsAndAppliesRefundPolicy),
+                test => test.MissionEnd_CancelsActiveJobsAndAppliesRefundPolicy(),
+                ref passed);
+
+            Debug.Log($"[ResourceExchangeQueueTickValidation] result=Passed tests={passed}");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[ResourceExchangeQueueTickValidation] result=Failed passed={passed}\n{exception}");
+            ValidationExit.Exit(1);
+        }
+    }
+
     [Test]
     public void TickQueue_CompletesOnceAndGrantsOutput()
     {
@@ -255,6 +293,25 @@ public sealed class ResourceExchangeQueueTickSystemTests
     {
         SystemHandle handle = world.CreateSystem<ResourceExchangeRequestValidationSystem>();
         world.Unmanaged.GetUnsafeSystemRef<ResourceExchangeRequestValidationSystem>(handle).OnUpdate(ref world.Unmanaged.ResolveSystemStateRef(handle));
+    }
+
+    private static void RunValidationStep(
+        string name,
+        Action<ResourceExchangeQueueTickSystemTests> action,
+        ref int passed)
+    {
+        var test = new ResourceExchangeQueueTickSystemTests();
+        try
+        {
+            action(test);
+            passed++;
+            Debug.Log($"[ResourceExchangeQueueTickValidation] passed {name}");
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[ResourceExchangeQueueTickValidation] failed {name}\n{exception}");
+            throw;
+        }
     }
 }
 #endif

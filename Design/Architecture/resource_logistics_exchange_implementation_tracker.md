@@ -1,7 +1,7 @@
 # Resource Logistics Exchange Implementation Tracker
 
 Date: 2026-07-08
-Status: Phase 5 UI popup and header routing in progress
+Status: Phase 5 complete; Phase 6 world presentation next
 Design source: `../Resource_Logistics_Exchange_Design.md`
 
 ## Objective
@@ -23,7 +23,7 @@ Implement the timed Resource Logistics Exchange without drifting from WarlineCap
 
 ## Progress Summary
 
-Overall implementation progress: 66% (62/94 checklist items complete).
+Overall implementation progress: 67% (63/94 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -34,7 +34,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 2. Request validation and queue start | Complete | 10 | 10 | 100% | Added ISystem request validation, ECS wallet boundary, input reservation, queue item creation, economy event row, and typed results. |
 | 3. Queue ticking, completion, cancel, refund | Complete | 11 | 11 | 100% | Timed queue, output grant once, cancel/refund rules, mission-end cancel/refund policy. |
 | 4. Rush Tickets | Complete | 7 | 7 | 100% | Rush eligible jobs with ticket spend, per-item caps, rush-all budget, and feedback. |
-| 5. UI popup and header routing | In progress | 14 | 15 | 93% | ECS-backed UI read-model, target-lock reference, separated layer pack, Canvas popup prefab, serialized view refs, cards, details, amount stepper, queue panel, enabled-gated resource header tap route, popup input restoration, live read-model binding, request-buffer wiring, TMP/Oxanium validation, and prefab contract tests complete; 16:9/20:9 captures remain. |
+| 5. UI popup and header routing | Complete | 15 | 15 | 100% | ECS-backed UI read-model, target-lock reference, separated layer pack, Canvas popup prefab, serialized view refs, cards, details, amount stepper, queue panel, enabled-gated resource header tap route, popup input restoration, live read-model binding, request-buffer wiring, TMP/Oxanium validation, prefab contract tests, and 16:9/20:9 captures complete. |
 | 6. World presentation | Not started | 0 | 8 | 0% | Non-authoritative pooled truck/plane presentation and fallback behavior. |
 | 7. Audio, VFX, feedback, ARIA | Not started | 0 | 7 | 0% | Config-driven audio, resource flyouts, completion/reject feedback, optional ARIA copy. |
 | 8. AI, balance, telemetry | Not started | 0 | 6 | 0% | Economy events, balancing reports, AI awareness if enabled for AI factions. |
@@ -168,7 +168,7 @@ Exit criteria:
 - [x] Bind installed POP-12 popup to the ECS read model and typed tab/card/control UI actions.
 - [x] Route POP-12 amount, confirm, rush-all, clear-completed, row rush, and row cancel controls into ECS request buffers.
 - [x] Ensure all runtime text uses TMP/Oxanium rules from UI docs.
-- [ ] Validate 16:9 and 20:9 layout with captures.
+- [x] Validate 16:9 and 20:9 layout with captures.
 - [x] Add focused UI/prefab tests for object ids, button wiring, disabled reasons, and input suppression.
 
 Exit criteria:
@@ -753,5 +753,40 @@ Validation:
 
 Remaining blocker or next slice:
 
-- 16:9 and 20:9 layout captures remain required before this popup is player-facing.
-- Next Phase 5 slice should generate the POP-12 layout captures and close the final UI popup/header-routing checklist item.
+- Completed by Phase 5K below.
+
+### 2026-07-09 - Phase 5K POP-12 Layout Captures
+
+Files changed:
+
+- `Assets/Game/Prefabs/UI/Shell/Popups/POP12_ResourceExchangePopup.prefab`
+- `Assets/Game/Scripts/Editor/ResourceExchangePopupPrefabBuilder.cs`
+- `Assets/Game/Scripts/Editor/ResourceExchangePopupLayoutCaptureValidation.cs`
+- `Assets/Game/Scripts/Editor/ResourceExchangePopupLayoutCaptureValidation.cs.meta`
+- `Design/AgentReports/Captures/ResourceExchange/POP12_ResourceExchange_16x9_1920x1080.png`
+- `Design/AgentReports/Captures/ResourceExchange/POP12_ResourceExchange_20x9_2400x1080.png`
+- `Design/AgentReports/Captures/ResourceExchange/POP12_ResourceExchange_layout_capture_report.md`
+- `Design/Architecture/resource_logistics_exchange_implementation_tracker.md`
+
+Behavior changed:
+
+- Added an editor-only POP-12 layout capture validator that renders the live Canvas prefab at 16:9 and 20:9 instead of using a target-lock screenshot.
+- The validator writes proof captures, checks exact capture resolution, checks nonblank output, keeps the 1640x916 modal panel stable across both aspects, validates major panel bounds, checks active TMP overflow, and guards the detail panel against requirements/confirm/instruction overlap.
+- Adjusted the POP-12 detail-panel row spacing so `Requires Oil Pump`, the amount stepper, the `CONFIRM` button, and the detail instruction line no longer collide.
+
+Validation:
+
+- `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 8 warnings and 0 errors.
+- Unity prefab rebuild passed with `Game.Editor.ResourceExchangePopupPrefabBuilder.Build`: `/private/tmp/wlc-resource-exchange-popup-rebuild-layout-v3.log`.
+- Unity POP-12 layout capture validation passed with `Game.Editor.ResourceExchangePopupLayoutCaptureValidation.Run`: `/private/tmp/wlc-resource-exchange-layout-capture-v5.log`.
+- Unity focused POP-12 prefab contract validation still passed 6/6 with `ResourceExchangePopupPrefabTests.RunFocusedValidation`: `/private/tmp/wlc-resource-exchange-popup-prefab-validation-layout.log`.
+- Capture report: `Design/AgentReports/Captures/ResourceExchange/POP12_ResourceExchange_layout_capture_report.md`.
+- 16:9 capture: `Design/AgentReports/Captures/ResourceExchange/POP12_ResourceExchange_16x9_1920x1080.png`.
+- 20:9 capture: `Design/AgentReports/Captures/ResourceExchange/POP12_ResourceExchange_20x9_2400x1080.png`.
+- Final visual inspection confirmed the earlier detail-panel text/CTA collision is gone in both captures.
+- Unity modified `Assets/Settings/UniversalRenderPipelineGlobalSettings.asset` as an editor side effect in the temp worktree; that unrelated file was left unstaged and is not part of this slice.
+
+Remaining blocker or next slice:
+
+- Phase 5 is complete.
+- Next slice is Phase 6 world presentation: define Resource Exchange presentation anchors and non-authoritative cue data without making truck/plane visuals control exchange completion.

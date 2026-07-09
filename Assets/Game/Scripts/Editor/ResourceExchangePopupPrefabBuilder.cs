@@ -302,14 +302,14 @@ namespace Game.Editor
             SetRect(thumbnail.rectTransform, new Vector2(0.035f, 0.50f), new Vector2(0.47f, 0.87f), Vector2.zero, Vector2.zero);
             TMP_Text name = CreateText("Name", detail, "EXPORT OIL", 28f, boldFont, TextAlignmentOptions.Left, GoldText);
             SetRect(name.rectTransform, new Vector2(0.50f, 0.82f), new Vector2(0.96f, 0.93f), Vector2.zero, Vector2.zero);
-            TMP_Text route = DetailLine("Route", detail, "ROUTE", "EXPORT", 0.73f);
-            TMP_Text rate = DetailLine("Rate", detail, "RATE", "1 OIL -> 0.47 CREDITS", 0.64f);
-            TMP_Text input = DetailLine("Input", detail, "INPUT", "100 OIL", 0.55f);
-            TMP_Text output = DetailLine("Output", detail, "OUTPUT", "46 CREDITS", 0.46f);
-            TMP_Text duration = DetailLine("Duration", detail, "TIME", "00:30", 0.37f);
-            TMP_Text requirements = DetailLine("Requirements", detail, "REQUIRES", "Oil Pump", 0.28f);
+            TMP_Text route = DetailLine("Route", detail, "ROUTE", "EXPORT", 0.74f);
+            TMP_Text rate = DetailLine("Rate", detail, "RATE", "1 OIL -> 0.47 CREDITS", 0.65f);
+            TMP_Text input = DetailLine("Input", detail, "INPUT", "100 OIL", 0.56f);
+            TMP_Text output = DetailLine("Output", detail, "OUTPUT", "46 CREDITS", 0.47f);
+            TMP_Text duration = DetailLine("Duration", detail, "TIME", "00:30", 0.38f);
+            TMP_Text requirements = DetailLine("Requirements", detail, "REQUIRES", "Oil Pump", 0.29f);
 
-            RectTransform amountFrame = CreateRect("AmountStepper", detail, new Vector2(0.05f, 0.18f), new Vector2(0.50f, 0.29f), Vector2.zero, Vector2.zero);
+            RectTransform amountFrame = CreateRect("AmountStepper", detail, new Vector2(0.05f, 0.145f), new Vector2(0.50f, 0.255f), Vector2.zero, Vector2.zero);
             Image amountImage = amountFrame.gameObject.AddComponent<Image>();
             amountImage.sprite = sprites.AmountValueFrame;
             ApplySliced(amountImage);
@@ -318,11 +318,11 @@ namespace Game.Editor
             TMP_Text amount = CreateText("Amount", amountFrame, "100", 24f, boldFont, TextAlignmentOptions.Center, PaleText);
             SetRect(amount.rectTransform, new Vector2(0.22f, 0f), new Vector2(0.78f, 1f), Vector2.zero, Vector2.zero);
 
-            Button confirm = CreateTextButton("ConfirmButton", detail, "CONFIRM", sprites.PrimaryButtonFrame, sprites.CheckBadgeIcon, new Vector2(0.52f, 0.16f), new Vector2(0.96f, 0.31f), 25f, out TMP_Text confirmLabel);
+            Button confirm = CreateTextButton("ConfirmButton", detail, "CONFIRM", sprites.PrimaryButtonFrame, sprites.CheckBadgeIcon, new Vector2(0.52f, 0.135f), new Vector2(0.96f, 0.275f), 25f, out TMP_Text confirmLabel);
             TMP_Text instruction = CreateText("Instruction", detail, "Confirm to start a timed logistics exchange.", 16f, mediumFont, TextAlignmentOptions.Left, PaleText);
-            SetRect(instruction.rectTransform, new Vector2(0.05f, 0.04f), new Vector2(0.94f, 0.14f), Vector2.zero, Vector2.zero);
+            SetRect(instruction.rectTransform, new Vector2(0.05f, 0.015f), new Vector2(0.94f, 0.105f), Vector2.zero, Vector2.zero);
             Image warning = CreateImage("Warning", detail, sprites.WarningIcon, Color.white, false, Image.Type.Simple);
-            SetRect(warning.rectTransform, new Vector2(0.90f, 0.04f), new Vector2(0.97f, 0.14f), Vector2.zero, Vector2.zero);
+            SetRect(warning.rectTransform, new Vector2(0.90f, 0.015f), new Vector2(0.97f, 0.105f), Vector2.zero, Vector2.zero);
             warning.preserveAspect = true;
             warning.gameObject.SetActive(false);
 

@@ -119,6 +119,26 @@ namespace Game.Configs
         [SerializeField] private bool allowWorldPresentation = true;
         [SerializeField] private ResourceExchangeReason disabledReason = ResourceExchangeReason.ExchangeUnavailable;
 
+        public ResourceExchangeScenarioGateConfigEntry()
+        {
+        }
+
+        public ResourceExchangeScenarioGateConfigEntry(
+            string scenarioTag,
+            bool exchangeEnabled,
+            int maxQueueItems = 3,
+            bool allowRush = true,
+            bool allowWorldPresentation = true,
+            ResourceExchangeReason disabledReason = ResourceExchangeReason.ExchangeUnavailable)
+        {
+            this.scenarioTag = scenarioTag;
+            this.exchangeEnabled = exchangeEnabled;
+            this.maxQueueItems = maxQueueItems;
+            this.allowRush = allowRush;
+            this.allowWorldPresentation = allowWorldPresentation;
+            this.disabledReason = disabledReason;
+        }
+
         public string ScenarioTag => scenarioTag ?? string.Empty;
         public bool ExchangeEnabled => exchangeEnabled;
         public int MaxQueueItems => Mathf.Max(0, maxQueueItems);
@@ -245,6 +265,72 @@ namespace Game.Configs
                 return ResourceExchangeReason.InvalidRushRule;
 
             return ResourceExchangeReason.None;
+        }
+
+        public static ResourceExchangeReason ValidateRecipeAndScenarioGateSet(
+            IReadOnlyList<ResourceExchangeRecipeConfigEntry> recipes,
+            IReadOnlyList<ResourceExchangeScenarioGateConfigEntry> scenarioGates)
+        {
+            ResourceExchangeReason recipeReason = ValidateRecipeSet(recipes);
+            if (recipeReason != ResourceExchangeReason.None)
+                return recipeReason;
+
+            return ValidateScenarioGateSet(scenarioGates, recipes);
+        }
+
+        public static ResourceExchangeReason ValidateScenarioGateSet(
+            IReadOnlyList<ResourceExchangeScenarioGateConfigEntry> scenarioGates,
+            IReadOnlyList<ResourceExchangeRecipeConfigEntry> recipes)
+        {
+            if (scenarioGates == null || scenarioGates.Count == 0)
+                return ResourceExchangeReason.InvalidScenarioGate;
+
+            HashSet<string> scenarioTags = new(StringComparer.Ordinal);
+            for (int i = 0; i < scenarioGates.Count; i++)
+            {
+                ResourceExchangeScenarioGateConfigEntry gate = scenarioGates[i];
+                if (gate == null)
+                    return ResourceExchangeReason.InvalidScenarioGate;
+
+                string scenarioTag = gate.ScenarioTag.Trim();
+                if (!IsValidScenarioTag(scenarioTag) || !scenarioTags.Add(scenarioTag))
+                    return ResourceExchangeReason.InvalidScenarioGate;
+
+                if (gate.ExchangeEnabled && gate.MaxQueueItems <= 0)
+                    return ResourceExchangeReason.InvalidScenarioGate;
+
+                if (!gate.ExchangeEnabled && gate.DisabledReason == ResourceExchangeReason.None)
+                    return ResourceExchangeReason.InvalidScenarioGate;
+            }
+
+            if (recipes == null || recipes.Count == 0)
+                return ResourceExchangeReason.InvalidRecipe;
+
+            for (int i = 0; i < recipes.Count; i++)
+            {
+                ResourceExchangeRecipeConfigEntry recipe = recipes[i];
+                if (recipe == null)
+                    return ResourceExchangeReason.InvalidRecipe;
+
+                string missionTag = recipe.MissionTag.Trim();
+                if (string.IsNullOrWhiteSpace(missionTag) || !scenarioTags.Contains(missionTag))
+                    return ResourceExchangeReason.InvalidScenarioGate;
+            }
+
+            return ResourceExchangeReason.None;
+        }
+
+        public static bool IsValidScenarioTag(string scenarioTag)
+        {
+            if (string.IsNullOrWhiteSpace(scenarioTag))
+                return false;
+
+            return scenarioTag.StartsWith("chapter.", StringComparison.Ordinal) ||
+                   scenarioTag.StartsWith("mission.", StringComparison.Ordinal) ||
+                   scenarioTag.StartsWith("campaign.", StringComparison.Ordinal) ||
+                   scenarioTag.StartsWith("skirmish.", StringComparison.Ordinal) ||
+                   scenarioTag.StartsWith("custom.skirmish.", StringComparison.Ordinal) ||
+                   scenarioTag.StartsWith("operation.", StringComparison.Ordinal);
         }
 
         public static bool IsValidResourceKind(ResourceExchangeResourceKind resourceKind)

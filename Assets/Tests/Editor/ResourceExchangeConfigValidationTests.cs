@@ -29,6 +29,14 @@ public sealed class ResourceExchangeConfigValidationTests
                 nameof(ValidateRecipeSet_RejectsRoundTripFarmingRisk),
                 test => test.ValidateRecipeSet_RejectsRoundTripFarmingRisk(),
                 ref passed);
+            RunValidationStep(
+                nameof(ValidateRecipeAndScenarioGateSet_AcceptsExplicitMissionAndSkirmishGates),
+                test => test.ValidateRecipeAndScenarioGateSet_AcceptsExplicitMissionAndSkirmishGates(),
+                ref passed);
+            RunValidationStep(
+                nameof(ValidateScenarioGateSet_RejectsUnsafeFtueGateAuthoring),
+                test => test.ValidateScenarioGateSet_RejectsUnsafeFtueGateAuthoring(),
+                ref passed);
 
             Debug.Log($"[ResourceExchangeConfigValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -334,6 +342,126 @@ public sealed class ResourceExchangeConfigValidationTests
         Assert.AreEqual(
             ResourceExchangeReason.InvalidRate,
             ResourceExchangeRecipeConfigValidator.ValidateRecipeSet(farmingRiskRecipes));
+    }
+
+    [Test]
+    public void ValidateRecipeAndScenarioGateSet_AcceptsExplicitMissionAndSkirmishGates()
+    {
+        var recipes = new[]
+        {
+            new ResourceExchangeRecipeConfigEntry(
+                "exchange.export_oil_credits.mission_active",
+                ResourceExchangeRouteType.Export,
+                ResourceExchangeResourceKind.Oil,
+                ResourceExchangeResourceKind.Credits,
+                missionTag: "mission.active"),
+            new ResourceExchangeRecipeConfigEntry(
+                "exchange.import_fuel_credits.skirmish_quick",
+                ResourceExchangeRouteType.Import,
+                ResourceExchangeResourceKind.Credits,
+                ResourceExchangeResourceKind.Fuel,
+                missionTag: "custom.skirmish.quick")
+        };
+
+        var gates = new[]
+        {
+            new ResourceExchangeScenarioGateConfigEntry(
+                "chapter.01.ftue",
+                false,
+                maxQueueItems: 0,
+                allowRush: false,
+                allowWorldPresentation: false,
+                disabledReason: ResourceExchangeReason.ExchangeUnavailable),
+            new ResourceExchangeScenarioGateConfigEntry(
+                "mission.active",
+                true,
+                maxQueueItems: 2),
+            new ResourceExchangeScenarioGateConfigEntry(
+                "custom.skirmish.quick",
+                true,
+                maxQueueItems: 3)
+        };
+
+        Assert.AreEqual(
+            ResourceExchangeReason.None,
+            ResourceExchangeRecipeConfigValidator.ValidateRecipeAndScenarioGateSet(recipes, gates));
+    }
+
+    [Test]
+    public void ValidateScenarioGateSet_RejectsUnsafeFtueGateAuthoring()
+    {
+        var validGates = new[]
+        {
+            new ResourceExchangeScenarioGateConfigEntry("mission.active", true, maxQueueItems: 2)
+        };
+
+        var blankRecipeGate = new[]
+        {
+            new ResourceExchangeRecipeConfigEntry(
+                "exchange.export_oil_credits.blank_gate",
+                ResourceExchangeRouteType.Export,
+                ResourceExchangeResourceKind.Oil,
+                ResourceExchangeResourceKind.Credits)
+        };
+
+        Assert.AreEqual(
+            ResourceExchangeReason.InvalidScenarioGate,
+            ResourceExchangeRecipeConfigValidator.ValidateScenarioGateSet(validGates, blankRecipeGate));
+
+        var unknownRecipeGate = new[]
+        {
+            new ResourceExchangeRecipeConfigEntry(
+                "exchange.export_oil_credits.unknown_gate",
+                ResourceExchangeRouteType.Export,
+                ResourceExchangeResourceKind.Oil,
+                ResourceExchangeResourceKind.Credits,
+                missionTag: "mission.late")
+        };
+
+        Assert.AreEqual(
+            ResourceExchangeReason.InvalidScenarioGate,
+            ResourceExchangeRecipeConfigValidator.ValidateScenarioGateSet(validGates, unknownRecipeGate));
+
+        Assert.AreEqual(
+            ResourceExchangeReason.InvalidScenarioGate,
+            ResourceExchangeRecipeConfigValidator.ValidateScenarioGateSet(
+                new[] { new ResourceExchangeScenarioGateConfigEntry(string.Empty, true, maxQueueItems: 2) },
+                unknownRecipeGate));
+
+        Assert.AreEqual(
+            ResourceExchangeReason.InvalidScenarioGate,
+            ResourceExchangeRecipeConfigValidator.ValidateScenarioGateSet(
+                new[] { new ResourceExchangeScenarioGateConfigEntry("sandbox.debug", true, maxQueueItems: 2) },
+                unknownRecipeGate));
+
+        Assert.AreEqual(
+            ResourceExchangeReason.InvalidScenarioGate,
+            ResourceExchangeRecipeConfigValidator.ValidateScenarioGateSet(
+                new[]
+                {
+                    new ResourceExchangeScenarioGateConfigEntry("mission.active", true, maxQueueItems: 2),
+                    new ResourceExchangeScenarioGateConfigEntry("mission.active", true, maxQueueItems: 2)
+                },
+                unknownRecipeGate));
+
+        Assert.AreEqual(
+            ResourceExchangeReason.InvalidScenarioGate,
+            ResourceExchangeRecipeConfigValidator.ValidateScenarioGateSet(
+                new[] { new ResourceExchangeScenarioGateConfigEntry("mission.active", true, maxQueueItems: 0) },
+                unknownRecipeGate));
+
+        Assert.AreEqual(
+            ResourceExchangeReason.InvalidScenarioGate,
+            ResourceExchangeRecipeConfigValidator.ValidateScenarioGateSet(
+                new[]
+                {
+                    new ResourceExchangeScenarioGateConfigEntry(
+                        "chapter.01.ftue",
+                        false,
+                        maxQueueItems: 0,
+                        disabledReason: ResourceExchangeReason.None)
+                },
+                unknownRecipeGate));
     }
 
     [Test]

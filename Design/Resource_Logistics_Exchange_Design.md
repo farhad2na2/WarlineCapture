@@ -77,6 +77,17 @@ Resource Header
 9. All resource deltas must become economy events for balancing and telemetry.
 10. UI must expose exact affordability, queue, timer, storage, cap, and disabled reasons. No silent failure.
 
+## Scenario Gate Rules
+
+Resource Exchange is an authored scenario feature, not a default FTUE mechanic.
+
+- Every shipping Resource Exchange config must include explicit scenario gates before exchange can be enabled.
+- Gate tags must use stable authored prefixes: `chapter.`, `mission.`, `campaign.`, `skirmish.`, `custom.skirmish.`, or `operation.`.
+- Early FTUE chapters should include an explicit disabled gate, for example `chapter.01.ftue`, with `ExchangeUnavailable` as the disabled reason.
+- Recipes in a gated config must use a non-empty `missionTag` that maps to a known scenario gate. Do not ship blank/global recipes, because they would appear in every enabled mission or preset.
+- Mission and campaign gates should expose only the routes the player has been taught. Skirmish/custom gates may expose a wider set once the preset explicitly opts in.
+- Enabled gates must set a positive queue cap. Disabled gates may use a queue cap of `0` but must carry a typed disabled reason.
+
 ## Resource Exchange Matrix
 
 | Route | Player Copy | Allowed | Input Timing | Output Timing | Notes |

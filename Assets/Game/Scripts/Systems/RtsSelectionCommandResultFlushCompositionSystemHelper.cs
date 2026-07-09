@@ -349,7 +349,8 @@ namespace Game.Runtime
                     context.ClearFocusedUnit?.Invoke(context.SelectionStateCompositionSystemHelper);
                 context.ClearHudSelection?.Invoke();
                 TryEmitCommandAudio(context, processedKind, accepted: true);
-                TryEmitImmediateCommandVoice(context, processedKind, accepted: true, issuedCount);
+                if (!TryEmitImmediateCommandVoice(context, processedKind, accepted: true, issuedCount))
+                    TryEmitCommandConfirmationVoice(context, processedKind, accepted: true);
                 context.ApplyHudCommandResult?.Invoke(
                     BuildImmediateSelectedUnitCommandResult(processedKind, accepted, rejectionReason, issuedCount));
                 return true;
@@ -367,7 +368,8 @@ namespace Game.Runtime
                 context.SetCameraDragging?.Invoke(false);
                 context.ClearHudCommandMode?.Invoke();
                 TryEmitCommandAudio(context, processedKind, accepted: true);
-                TryEmitImmediateCommandVoice(context, processedKind, accepted: true, issuedCount);
+                if (!TryEmitImmediateCommandVoice(context, processedKind, accepted: true, issuedCount))
+                    TryEmitCommandConfirmationVoice(context, processedKind, accepted: true);
                 context.ApplyHudCommandResult?.Invoke(
                     BuildImmediateSelectedUnitCommandResult(processedKind, accepted, rejectionReason, issuedCount));
                 if (context.SelectionStateCompositionSystemHelper != null)
@@ -376,7 +378,8 @@ namespace Game.Runtime
             }
 
             TryEmitCommandAudio(context, processedKind, accepted: true);
-            TryEmitImmediateCommandVoice(context, processedKind, accepted: true, issuedCount);
+            if (!TryEmitImmediateCommandVoice(context, processedKind, accepted: true, issuedCount))
+                TryEmitCommandConfirmationVoice(context, processedKind, accepted: true);
             context.ApplyHudCommandResult?.Invoke(
                 BuildImmediateSelectedUnitCommandResult(processedKind, accepted, rejectionReason, issuedCount));
             return true;
@@ -788,6 +791,7 @@ namespace Game.Runtime
                 if (clearCommandMode)
                     context.InputSystem.ClearActiveCommandMode();
                 TryEmitCommandAudio(context, result.Kind, result.Accepted != 0);
+                TryEmitCommandConfirmationVoice(context, result.Kind, result.Accepted != 0);
                 if (result.Accepted != 0)
                 {
                     context.OrderMarkerSystem.TryShowCommandResultMarker(em, result);
@@ -944,7 +948,10 @@ namespace Game.Runtime
             {
                 RtsSelectionCommandResultElement result = _attackCommandResultScratch[i];
                 if (result.HasCommandResult != 0 || result.Accepted != 0)
+                {
                     TryEmitCommandAudio(context, result.Kind, result.Accepted != 0);
+                    TryEmitCommandConfirmationVoice(context, result.Kind, result.Accepted != 0);
+                }
                 if (result.HasCommandResult != 0)
                     context.ApplyHudCommandResult?.Invoke(ToTacticalCommandResult(result));
 
@@ -1094,6 +1101,7 @@ namespace Game.Runtime
 
                 bool clearInputCommandMode = context.InputSystem.ShouldClearActiveCommandModeAfterCommand(TacticalCommandMode.Scan);
                 TryEmitCommandAudio(context, result.Kind, accepted: true);
+                TryEmitCommandConfirmationVoice(context, result.Kind, accepted: true);
                 if (clearInputCommandMode)
                     context.InputSystem.ClearActiveCommandMode();
                 context.OrderMarkerSystem.TryShowCommandResultMarker(em, result);
@@ -1269,6 +1277,60 @@ namespace Game.Runtime
                 return false;
 
             return TryEmitCommandAudio(em, kind, accepted);
+        }
+
+        internal static bool TryEmitCommandConfirmationVoice(Context context, RtsSelectionCommandIntentKind kind, bool accepted)
+        {
+            if (context.TryGetDefaultEntityManager?.Invoke(out EntityManager em) != true)
+                return false;
+
+            return TryEmitCommandConfirmationVoice(em, kind, accepted);
+        }
+
+        internal static bool TryEmitCommandConfirmationVoice(EntityManager em, RtsSelectionCommandIntentKind kind, bool accepted)
+        {
+            if (!TryResolveCommandConfirmationVoiceEvent(kind, accepted, out string eventId, out uint eventHash))
+                return false;
+
+            return TryEmitAriaVoice(em, eventId, eventHash);
+        }
+
+        internal static bool TryResolveCommandConfirmationVoiceEvent(
+            RtsSelectionCommandIntentKind kind,
+            bool accepted,
+            out string eventId,
+            out uint eventHash)
+        {
+            eventId = string.Empty;
+            eventHash = 0u;
+            if (!accepted)
+                return false;
+
+            switch (kind)
+            {
+                case RtsSelectionCommandIntentKind.Move:
+                    eventId = AudioEventIds.VOARIAMessageTacticalBannerAcceptedMoveTitle;
+                    eventHash = AudioEventIds.VOARIAMessageTacticalBannerAcceptedMoveTitleHash;
+                    return true;
+                case RtsSelectionCommandIntentKind.Attack:
+                    eventId = AudioEventIds.VOARIAMessageTacticalBannerAcceptedAttackTitle;
+                    eventHash = AudioEventIds.VOARIAMessageTacticalBannerAcceptedAttackTitleHash;
+                    return true;
+                case RtsSelectionCommandIntentKind.HoldPosition:
+                    eventId = AudioEventIds.VOARIAMessageTacticalBannerAcceptedHoldTitle;
+                    eventHash = AudioEventIds.VOARIAMessageTacticalBannerAcceptedHoldTitleHash;
+                    return true;
+                case RtsSelectionCommandIntentKind.Stop:
+                    eventId = AudioEventIds.VOARIAMessageTacticalBannerAcceptedStopTitle;
+                    eventHash = AudioEventIds.VOARIAMessageTacticalBannerAcceptedStopTitleHash;
+                    return true;
+                case RtsSelectionCommandIntentKind.Scan:
+                    eventId = AudioEventIds.VOARIAMessageTacticalBannerAcceptedScanTitle;
+                    eventHash = AudioEventIds.VOARIAMessageTacticalBannerAcceptedScanTitleHash;
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         internal static bool TryEmitCommandAudio(EntityManager em, RtsSelectionCommandIntentKind kind, bool accepted)

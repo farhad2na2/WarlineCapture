@@ -12,18 +12,28 @@ namespace Game.Runtime
     {
         private const float DamageHealthBarVisibleSeconds = 2f;
         private const double TargetAcquisitionIntervalSeconds = 0.12d;
-        private EntityQuery _targetQuery;
+        private const int InitialTargetScratchCapacity = 1024;
+        private NativeList<TargetCandidate> _targetCandidates;
         private double _nextTargetAcquisitionTime;
+
+        private struct TargetCandidate
+        {
+            public Entity Entity;
+            public UnitHealth Health;
+            public Faction Faction;
+            public LocalTransform Transform;
+        }
 
         public void OnCreate(ref SystemState state)
         {
-            _targetQuery = state.GetEntityQuery(
-                ComponentType.ReadOnly<UnitHealth>(),
-                ComponentType.ReadOnly<Faction>(),
-                ComponentType.ReadOnly<LocalTransform>(),
-                ComponentType.Exclude<UnitAirMovement>(),
-                ComponentType.Exclude<DebugFireTargetTag>());
+            _targetCandidates = new NativeList<TargetCandidate>(InitialTargetScratchCapacity, Allocator.Persistent);
             state.RequireForUpdate<BuildingDefenseWeapon>();
+        }
+
+        public void OnDestroy(ref SystemState state)
+        {
+            if (_targetCandidates.IsCreated)
+                _targetCandidates.Dispose();
         }
 
         public void OnUpdate(ref SystemState state)
@@ -35,17 +45,26 @@ namespace Game.Runtime
             float deltaTime = SystemAPI.Time.DeltaTime;
             float now = (float)SystemAPI.Time.ElapsedTime;
             bool refreshTargets = SystemAPI.Time.ElapsedTime >= _nextTargetAcquisitionTime;
-            NativeArray<Entity> targets = default;
-            NativeArray<UnitHealth> targetHealth = default;
-            NativeArray<Faction> targetFactions = default;
-            NativeArray<LocalTransform> targetTransforms = default;
+            NativeArray<TargetCandidate> targetCandidates = default;
             if (refreshTargets)
             {
                 _nextTargetAcquisitionTime = SystemAPI.Time.ElapsedTime + TargetAcquisitionIntervalSeconds;
-                targets = _targetQuery.ToEntityArray(Allocator.Temp);
-                targetHealth = _targetQuery.ToComponentDataArray<UnitHealth>(Allocator.Temp);
-                targetFactions = _targetQuery.ToComponentDataArray<Faction>(Allocator.Temp);
-                targetTransforms = _targetQuery.ToComponentDataArray<LocalTransform>(Allocator.Temp);
+                _targetCandidates.Clear();
+                foreach (var (healthRef, factionRef, transformRef, entity) in
+                         SystemAPI.Query<RefRO<UnitHealth>, RefRO<Faction>, RefRO<LocalTransform>>()
+                             .WithNone<UnitAirMovement, DebugFireTargetTag>()
+                             .WithEntityAccess())
+                {
+                    _targetCandidates.Add(new TargetCandidate
+                    {
+                        Entity = entity,
+                        Health = healthRef.ValueRO,
+                        Faction = factionRef.ValueRO,
+                        Transform = transformRef.ValueRO
+                    });
+                }
+
+                targetCandidates = _targetCandidates.AsArray();
             }
 
             var ecb = new EntityCommandBuffer(Allocator.Temp);
@@ -69,10 +88,7 @@ namespace Game.Runtime
                 if (refreshTargets)
                 {
                     FindBestTargets(
-                        targets,
-                        targetHealth,
-                        targetFactions,
-                        targetTransforms,
+                        targetCandidates,
                         entity,
                         factionRef.ValueRO.Id,
                         transformRef.ValueRO.Position,
@@ -133,10 +149,6 @@ namespace Game.Runtime
             pendingTraceTargetAdds.Dispose();
             pendingRecentAttackerAdds.Dispose();
             pendingHealthBarVisibilityAdds.Dispose();
-            if (targets.IsCreated) targets.Dispose();
-            if (targetHealth.IsCreated) targetHealth.Dispose();
-            if (targetFactions.IsCreated) targetFactions.Dispose();
-            if (targetTransforms.IsCreated) targetTransforms.Dispose();
         }
 
         private static void EnsureSlotCount(DynamicBuffer<BuildingDefenseAttackSlot> slots, int slotCount)
@@ -302,10 +314,7 @@ namespace Game.Runtime
         }
 
         private static void FindBestTargets(
-            NativeArray<Entity> targets,
-            NativeArray<UnitHealth> targetHealth,
-            NativeArray<Faction> targetFactions,
-            NativeArray<LocalTransform> targetTransforms,
+            NativeArray<TargetCandidate> targets,
             Entity source,
             byte sourceFaction,
             float3 sourcePosition,
@@ -327,13 +336,14 @@ namespace Game.Runtime
             float rangeSq = math.max(0f, range) * math.max(0f, range);
             for (int i = 0; i < targets.Length; i++)
             {
-                Entity candidate = targets[i];
+                TargetCandidate target = targets[i];
+                Entity candidate = target.Entity;
                 if (candidate == source ||
-                    targetHealth[i].Current <= 0 ||
-                    !FactionIdentity.CanAutoTargetForCombat(sourceFaction, targetFactions[i].Id))
+                    target.Health.Current <= 0 ||
+                    !FactionIdentity.CanAutoTargetForCombat(sourceFaction, target.Faction.Id))
                     continue;
 
-                float3 candidatePosition = targetTransforms[i].Position;
+                float3 candidatePosition = target.Transform.Position;
                 float3 delta = candidatePosition - sourcePosition;
                 delta.y = 0f;
                 float distSq = math.lengthsq(delta);

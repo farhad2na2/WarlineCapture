@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Game.Components;
 using Game.Runtime;
 using NUnit.Framework;
@@ -26,6 +27,8 @@ public sealed class BuildingDefenseAttackSystemTests
             passed++;
             tests.GuardTowerDefense_IgnoresAircraftAndFiresAtGroundTarget();
             passed++;
+            tests.GuardTowerDefense_IgnoresDebugFireTargetAndFiresAtEligibleHostile();
+            passed++;
             tests.GuardTowerDefense_SelectsNearestHostileRegardlessOfCreationOrder();
             passed++;
             tests.GuardTowerDefense_FourConcurrentSlotsAttackFourNearestHostilesInOrder();
@@ -35,6 +38,8 @@ public sealed class BuildingDefenseAttackSystemTests
             tests.GuardTowerDefense_RemovedTargetBetweenUpdatesClearsSlotAndReacquiresAfterInterval();
             passed++;
             tests.WarmedTargetCollectionUpdate_ThirtyTwoTowersAndSevenHundredFortyCandidates_DoesNotAllocateManagedMemory();
+            passed++;
+            tests.BuildingDefenseSource_UsesPersistentDirectIterationScratchWithoutArraySnapshots();
             passed++;
 
             Debug.Log($"[BuildingDefenseAttackSystemValidation] result=Passed tests={passed}");
@@ -111,6 +116,38 @@ public sealed class BuildingDefenseAttackSystemTests
         Assert.IsTrue(em.HasComponent<RecentAttacker>(groundTarget));
         Assert.AreEqual(tower, em.GetComponentData<RecentAttacker>(groundTarget).Attacker);
         Assert.IsFalse(em.HasComponent<RecentAttacker>(airTarget));
+    }
+
+    [Test]
+    public void GuardTowerDefense_IgnoresDebugFireTargetAndFiresAtEligibleHostile()
+    {
+        using World world = new("GuardTowerDefense_IgnoresDebugFireTargetAndFiresAtEligibleHostile");
+        EntityManager em = world.EntityManager;
+
+        Entity tower = CreateGuardTower(
+            em,
+            new float3(0f, 0f, 0f),
+            FactionIdentity.EnemyFactionId,
+            maxConcurrentAttacks: 1);
+        Entity debugTarget = CreateTarget(
+            em,
+            new float3(2f, 0f, 0f),
+            health: 100,
+            factionId: FactionIdentity.PlayerFactionId);
+        em.AddComponentData(debugTarget, new DebugFireTargetTag { Source = tower });
+        Entity hostileTarget = CreateTarget(
+            em,
+            new float3(6f, 0f, 0f),
+            health: 100,
+            factionId: FactionIdentity.PlayerFactionId);
+
+        SystemHandle attackSystem = world.CreateSystem<BuildingDefenseAttackSystem>();
+        Update(world, attackSystem, elapsedTime: 0.1d, deltaTime: 0.1f);
+
+        Assert.AreEqual(100, GetHealth(em, debugTarget), "Debug fire targets must remain outside automatic building-defense acquisition.");
+        Assert.AreEqual(90, GetHealth(em, hostileTarget));
+        Assert.AreEqual(hostileTarget, em.GetBuffer<BuildingDefenseAttackSlot>(tower)[0].Target);
+        Assert.IsFalse(em.HasComponent<RecentAttacker>(debugTarget));
     }
 
     [Test]
@@ -340,6 +377,32 @@ public sealed class BuildingDefenseAttackSystemTests
             harnessAllocatedBytes,
             0,
             "Harness allocation is the complete measurement window minus bytes allocated inside SystemHandle.Update and cannot be negative.");
+    }
+
+    [Test]
+    public void BuildingDefenseSource_UsesPersistentDirectIterationScratchWithoutArraySnapshots()
+    {
+        string sourcePath = Path.Combine(
+            Application.dataPath,
+            "Game",
+            "Scripts",
+            "Systems",
+            "BuildingDefenseAttackSystem.cs");
+        Assert.IsTrue(File.Exists(sourcePath), $"Missing building-defense source at {sourcePath}.");
+
+        string source = File.ReadAllText(sourcePath);
+        StringAssert.Contains("NativeList<TargetCandidate>", source);
+        StringAssert.Contains("Allocator.Persistent", source);
+        StringAssert.Contains("public void OnDestroy(ref SystemState state)", source);
+        StringAssert.Contains("_targetCandidates.IsCreated", source);
+        StringAssert.Contains("_targetCandidates.Dispose()", source);
+        StringAssert.Contains(
+            "SystemAPI.Query<RefRO<UnitHealth>, RefRO<Faction>, RefRO<LocalTransform>>()",
+            source);
+        StringAssert.Contains(".WithNone<UnitAirMovement, DebugFireTargetTag>()", source);
+        StringAssert.DoesNotContain("_targetQuery", source);
+        StringAssert.DoesNotContain("ToEntityArray(", source);
+        StringAssert.DoesNotContain("ToComponentDataArray<", source);
     }
 
     private static void Update(World world, SystemHandle attackSystem, double elapsedTime, float deltaTime)

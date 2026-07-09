@@ -139,6 +139,18 @@ namespace Game.Components
         ExchangeBlocked = 4
     }
 
+    public enum ResourceExchangeVfxMarkerKind : byte
+    {
+        None = 0,
+        ExchangeStartedPulse = 1,
+        TransportLandingDust = 2,
+        ExportLoadPulse = 3,
+        ImportUnloadPulse = 4,
+        TransportDepartingTrail = 5,
+        ExchangeCompletedPulse = 6,
+        ExchangeCancelledPulse = 7
+    }
+
     public struct ResourceExchangeEnabledComponent : IComponentData
     {
         public byte Enabled;
@@ -345,6 +357,30 @@ namespace Game.Components
         public float AnchorRadius;
         public byte AnchorResolved;
         public byte UsedFallbackAnchor;
+    }
+
+    public struct ResourceExchangeVfxMarkerComponent : IBufferElementData
+    {
+        public int SequenceId;
+        public int QueueItemId;
+        public byte FactionId;
+        public ResourceExchangeVisualCueKind CueKind;
+        public ResourceExchangeVfxMarkerKind MarkerKind;
+        public FixedString128Bytes RecipeId;
+        public ResourceExchangeRouteType RouteType;
+        public ResourceExchangeResourceKind InputResource;
+        public ResourceExchangeResourceKind OutputResource;
+        public int InputAmount;
+        public int OutputAmount;
+        public ResourceExchangePresentationAnchorKind RequestedAnchorKind;
+        public ResourceExchangePresentationAnchorKind ResolvedAnchorKind;
+        public float3 AnchorPosition;
+        public quaternion AnchorRotation;
+        public float AnchorRadius;
+        public float DurationSeconds;
+        public byte AnchorResolved;
+        public byte UsedFallbackAnchor;
+        public byte NonAuthoritative;
     }
 
     public struct ResourceExchangePresentationAnchorComponent : IBufferElementData

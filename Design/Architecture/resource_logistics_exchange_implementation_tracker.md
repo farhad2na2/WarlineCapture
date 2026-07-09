@@ -1,7 +1,7 @@
 # Resource Logistics Exchange Implementation Tracker
 
 Date: 2026-07-09
-Status: Phase 7 audio, resource delta flyout, toast, and ARIA data complete; VFX pending
+Status: Phase 7 audio, resource delta flyout, toast, ARIA, and VFX marker data complete; direct audio wiring validation pending
 Design source: `../Resource_Logistics_Exchange_Design.md`
 
 ## Objective
@@ -23,7 +23,7 @@ Implement the timed Resource Logistics Exchange without drifting from WarlineCap
 
 ## Progress Summary
 
-Overall implementation progress: 81% (76/94 checklist items complete).
+Overall implementation progress: 82% (77/94 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -36,7 +36,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 4. Rush Tickets | Complete | 7 | 7 | 100% | Rush eligible jobs with ticket spend, per-item caps, rush-all budget, and feedback. |
 | 5. UI popup and header routing | Complete | 15 | 15 | 100% | ECS-backed UI read-model, target-lock reference, separated layer pack, Canvas popup prefab, serialized view refs, cards, details, amount stepper, queue panel, enabled-gated resource header tap route, popup input restoration, live read-model binding, request-buffer wiring, TMP/Oxanium validation, prefab contract tests, and 16:9/20:9 captures complete. |
 | 6. World presentation | Complete | 8 | 8 | 100% | Presentation anchors, deterministic fallback resolution, data-only ECS visual cue emission, managed presentation boundary, pooled actor reuse, actor safety, fallback behavior, cleanup wiring, and focused validation are complete. |
-| 7. Audio, VFX, feedback, ARIA | In progress | 5 | 7 | 71% | Resource Exchange audio ids, placeholder clips, data-only delta flyout requests, typed toast requests, and optional ARIA strings are complete; VFX markers remain. |
+| 7. Audio, VFX, feedback, ARIA | In progress | 6 | 7 | 86% | Resource Exchange audio ids, placeholder clips, data-only delta flyout requests, typed toast requests, optional ARIA strings, and non-authoritative VFX marker data are complete; direct audio wiring validation remains. |
 | 8. AI, balance, telemetry | Not started | 0 | 6 | 0% | Economy events, balancing reports, AI awareness if enabled for AI factions. |
 | 9. Validation and performance | Not started | 0 | 10 | 0% | Focused tests, compile, architecture guardrails, UI captures, GC/performance checks. |
 
@@ -251,7 +251,7 @@ Phase 6 implementation notes:
 - [x] Add resource delta flyouts for spend, reserve, output grant, refund, and rush spend.
 - [x] Add completion toast and rejection toast with typed reason text.
 - [x] Add optional ARIA strings for insufficient resources, exchange started, exchange complete, and exchange blocked.
-- [ ] Pair world presentation cues with non-authoritative VFX markers.
+- [x] Pair world presentation cues with non-authoritative VFX markers.
 - [ ] Validate no direct AudioSource/prefab sound wiring outside the config-driven audio path.
 
 Exit criteria:
@@ -1027,3 +1027,35 @@ Remaining blocker or next slice:
 
 - Re-run Unity focused validation when licensing is healthy: `ResourceExchangeAriaAnnouncementSystemTests.RunFocusedValidation`.
 - Next Phase 7 slice should pair world presentation cues with non-authoritative VFX markers.
+
+### 2026-07-09 - Phase 7E Non-Authoritative VFX Marker Data
+
+Files changed:
+
+- `Assets/Game/Scripts/Components/ResourceExchangeComponents.cs`
+- `Assets/Game/Scripts/Systems/ResourceExchangeVisualCueSystem.cs`
+- `Assets/Tests/Editor/ResourceExchangeVfxMarkerSystemTests.cs`
+- `Assets/Tests/Editor/ResourceExchangeVfxMarkerSystemTests.cs.meta`
+- `Design/Architecture/resource_logistics_exchange_implementation_tracker.md`
+
+Behavior changed:
+
+- Added `ResourceExchangeVfxMarkerKind` and `ResourceExchangeVfxMarkerComponent` as optional data-only ECS presentation markers for Resource Exchange VFX.
+- Kept VFX markers non-authoritative. They mirror visual cue timing and resolved anchor data, but they do not mutate queue state, wallet state, resources, timers, or world blockers.
+- Kept the marker buffer optional. Existing exchange entities without `ResourceExchangeVfxMarkerComponent` still emit normal `ResourceExchangeVisualRequestComponent` rows and preserve the previous visual cue API.
+- Paired exchange start, transport landing, export load, import unload, transport departure, completion, and cancellation cues with stable marker kinds and short suggested durations.
+- Preserved missing-anchor diagnostics. Marker rows still emit with `AnchorResolved = 0` when anchors are absent, allowing presentation diagnostics without starting gameplay presentation.
+- Added focused editor coverage for export/import marker pairing, terminal completion/cancel markers, missing-anchor unresolved markers, disabled world presentation, no duplicate marker emission, and cue-kind mapping.
+
+Validation:
+
+- `git diff --check` passed before this tracker update.
+- `dotnet build Game.Components.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 6 warnings and 0 errors.
+- `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 6 warnings and 0 errors.
+- `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 11 warnings and 0 errors.
+- `Tools/CI/invoke_unity_macos.sh --project /private/tmp/wlc-resource-exchange-next --log /private/tmp/wlc-resource-exchange-vfx-marker-validation.log --timeout 420 -- -quit -executeMethod ResourceExchangeVfxMarkerSystemTests.RunFocusedValidation`
+- Unity focused result: `[ResourceExchangeVfxMarkerValidation] result=Passed tests=6`
+
+Remaining blocker or next slice:
+
+- Next Phase 7 slice should validate that Resource Exchange uses the config-driven audio path and does not add direct `AudioSource` or prefab sound wiring outside the audio catalog/bridge contract.

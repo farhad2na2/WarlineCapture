@@ -16,14 +16,21 @@ namespace Game.Runtime
                          enabled,
                          queue,
                          visualRequests,
-                         anchors)
+                         anchors,
+                         exchangeEntity)
                      in SystemAPI.Query<
                          RefRO<ResourceExchangeEnabledComponent>,
                          DynamicBuffer<ResourceExchangeQueueComponent>,
                          DynamicBuffer<ResourceExchangeVisualRequestComponent>,
-                         DynamicBuffer<ResourceExchangePresentationAnchorComponent>>())
+                         DynamicBuffer<ResourceExchangePresentationAnchorComponent>>()
+                         .WithEntityAccess())
             {
-                EmitVisualCues(enabled.ValueRO, queue, visualRequests, anchors);
+                bool hasVfxMarkers =
+                    state.EntityManager.HasBuffer<ResourceExchangeVfxMarkerComponent>(exchangeEntity);
+                DynamicBuffer<ResourceExchangeVfxMarkerComponent> vfxMarkers = hasVfxMarkers
+                    ? state.EntityManager.GetBuffer<ResourceExchangeVfxMarkerComponent>(exchangeEntity)
+                    : default;
+                EmitVisualCues(enabled.ValueRO, queue, visualRequests, anchors, vfxMarkers, hasVfxMarkers);
             }
         }
 
@@ -32,6 +39,17 @@ namespace Game.Runtime
             DynamicBuffer<ResourceExchangeQueueComponent> queue,
             DynamicBuffer<ResourceExchangeVisualRequestComponent> visualRequests,
             DynamicBuffer<ResourceExchangePresentationAnchorComponent> anchors)
+        {
+            EmitVisualCues(enabled, queue, visualRequests, anchors, default, false);
+        }
+
+        public static void EmitVisualCues(
+            in ResourceExchangeEnabledComponent enabled,
+            DynamicBuffer<ResourceExchangeQueueComponent> queue,
+            DynamicBuffer<ResourceExchangeVisualRequestComponent> visualRequests,
+            DynamicBuffer<ResourceExchangePresentationAnchorComponent> anchors,
+            DynamicBuffer<ResourceExchangeVfxMarkerComponent> vfxMarkers,
+            bool emitVfxMarkers)
         {
             if (enabled.Enabled == 0 || enabled.AllowWorldPresentation == 0 || queue.Length == 0)
                 return;
@@ -52,6 +70,8 @@ namespace Game.Runtime
                         factionId,
                         visualRequests,
                         anchors,
+                        vfxMarkers,
+                        emitVfxMarkers,
                         ref changed);
                 }
                 else if (item.State == ResourceExchangeQueueState.Completed)
@@ -65,6 +85,8 @@ namespace Game.Runtime
                             ResourceExchangePresentationAnchorKind.BaseDepot,
                             visualRequests,
                             anchors,
+                            vfxMarkers,
+                            emitVfxMarkers,
                             out _);
                         item.VisualCompletionEmitted = 1;
                         changed = true;
@@ -81,6 +103,8 @@ namespace Game.Runtime
                             ResourceExchangePresentationAnchorKind.FallbackSafe,
                             visualRequests,
                             anchors,
+                            vfxMarkers,
+                            emitVfxMarkers,
                             out _);
                         item.VisualCancellationEmitted = 1;
                         changed = true;
@@ -97,6 +121,8 @@ namespace Game.Runtime
             byte factionId,
             DynamicBuffer<ResourceExchangeVisualRequestComponent> visualRequests,
             DynamicBuffer<ResourceExchangePresentationAnchorComponent> anchors,
+            DynamicBuffer<ResourceExchangeVfxMarkerComponent> vfxMarkers,
+            bool emitVfxMarkers,
             ref bool changed)
         {
             if (item.VisualStartedEmitted == 0)
@@ -108,6 +134,8 @@ namespace Game.Runtime
                     ResourceExchangePresentationAnchorKind.BaseDepot,
                     visualRequests,
                     anchors,
+                    vfxMarkers,
+                    emitVfxMarkers,
                     out _);
                 item.VisualStartedEmitted = 1;
                 changed = true;
@@ -123,6 +151,8 @@ namespace Game.Runtime
                     ResourceExchangePresentationAnchorKind.RunwayLandingZone,
                     visualRequests,
                     anchors,
+                    vfxMarkers,
+                    emitVfxMarkers,
                     ref changed);
                 item.VisualLandingEmitted = 1;
             }
@@ -138,6 +168,8 @@ namespace Game.Runtime
                         ResourceExchangePresentationAnchorKind.Storage,
                         visualRequests,
                         anchors,
+                        vfxMarkers,
+                        emitVfxMarkers,
                         ref changed);
                     item.VisualLoadEmitted = 1;
                 }
@@ -151,6 +183,8 @@ namespace Game.Runtime
                     ResourceExchangePresentationAnchorKind.Storage,
                     visualRequests,
                     anchors,
+                    vfxMarkers,
+                    emitVfxMarkers,
                     ref changed);
                 item.VisualUnloadEmitted = 1;
             }
@@ -164,6 +198,8 @@ namespace Game.Runtime
                     ResourceExchangePresentationAnchorKind.RunwayLandingZone,
                     visualRequests,
                     anchors,
+                    vfxMarkers,
+                    emitVfxMarkers,
                     ref changed);
                 item.VisualDepartingEmitted = 1;
             }
@@ -176,6 +212,8 @@ namespace Game.Runtime
             ResourceExchangePresentationAnchorKind requestedAnchorKind,
             DynamicBuffer<ResourceExchangeVisualRequestComponent> visualRequests,
             DynamicBuffer<ResourceExchangePresentationAnchorComponent> anchors,
+            DynamicBuffer<ResourceExchangeVfxMarkerComponent> vfxMarkers,
+            bool emitVfxMarkers,
             ref bool changed)
         {
             EmitCue(
@@ -185,6 +223,8 @@ namespace Game.Runtime
                 requestedAnchorKind,
                 visualRequests,
                 anchors,
+                vfxMarkers,
+                emitVfxMarkers,
                 out bool anchorResolved);
             if (anchorResolved)
                 item.PresentationStarted = 1;
@@ -198,6 +238,8 @@ namespace Game.Runtime
             ResourceExchangePresentationAnchorKind requestedAnchorKind,
             DynamicBuffer<ResourceExchangeVisualRequestComponent> visualRequests,
             DynamicBuffer<ResourceExchangePresentationAnchorComponent> anchors,
+            DynamicBuffer<ResourceExchangeVfxMarkerComponent> vfxMarkers,
+            bool emitVfxMarkers,
             out bool anchorResolved)
         {
             anchorResolved = ResourceExchangePresentationAnchorUtility.TryResolveAnchor(
@@ -227,6 +269,103 @@ namespace Game.Runtime
                 AnchorResolved = anchorResolved ? (byte)1 : (byte)0,
                 UsedFallbackAnchor = usedFallback
             });
+
+            EmitVfxMarker(
+                vfxMarkers,
+                emitVfxMarkers,
+                item,
+                factionId,
+                cueKind,
+                requestedAnchorKind,
+                anchor,
+                anchorResolved,
+                resolvedKind,
+                usedFallback);
+        }
+
+        public static ResourceExchangeVfxMarkerKind ResolveVfxMarkerKind(ResourceExchangeVisualCueKind cueKind)
+        {
+            switch (cueKind)
+            {
+                case ResourceExchangeVisualCueKind.ExchangeStarted:
+                    return ResourceExchangeVfxMarkerKind.ExchangeStartedPulse;
+                case ResourceExchangeVisualCueKind.TransportPlaneLanding:
+                    return ResourceExchangeVfxMarkerKind.TransportLandingDust;
+                case ResourceExchangeVisualCueKind.ExportLoadStarted:
+                    return ResourceExchangeVfxMarkerKind.ExportLoadPulse;
+                case ResourceExchangeVisualCueKind.ImportUnloadStarted:
+                    return ResourceExchangeVfxMarkerKind.ImportUnloadPulse;
+                case ResourceExchangeVisualCueKind.TransportPlaneDeparting:
+                    return ResourceExchangeVfxMarkerKind.TransportDepartingTrail;
+                case ResourceExchangeVisualCueKind.ExchangeCompleted:
+                    return ResourceExchangeVfxMarkerKind.ExchangeCompletedPulse;
+                case ResourceExchangeVisualCueKind.ExchangeCancelled:
+                    return ResourceExchangeVfxMarkerKind.ExchangeCancelledPulse;
+                default:
+                    return ResourceExchangeVfxMarkerKind.None;
+            }
+        }
+
+        private static void EmitVfxMarker(
+            DynamicBuffer<ResourceExchangeVfxMarkerComponent> vfxMarkers,
+            bool emitVfxMarkers,
+            in ResourceExchangeQueueComponent item,
+            byte factionId,
+            ResourceExchangeVisualCueKind cueKind,
+            ResourceExchangePresentationAnchorKind requestedAnchorKind,
+            in ResourceExchangePresentationAnchorComponent anchor,
+            bool anchorResolved,
+            ResourceExchangePresentationAnchorKind resolvedKind,
+            byte usedFallback)
+        {
+            if (!emitVfxMarkers)
+                return;
+
+            ResourceExchangeVfxMarkerKind markerKind = ResolveVfxMarkerKind(cueKind);
+            if (markerKind == ResourceExchangeVfxMarkerKind.None)
+                return;
+
+            vfxMarkers.Add(new ResourceExchangeVfxMarkerComponent
+            {
+                SequenceId = vfxMarkers.Length + 1,
+                QueueItemId = item.QueueItemId,
+                FactionId = factionId,
+                CueKind = cueKind,
+                MarkerKind = markerKind,
+                RecipeId = item.RecipeId,
+                RouteType = item.RouteType,
+                InputResource = item.InputResource,
+                OutputResource = item.OutputResource,
+                InputAmount = item.InputAmount,
+                OutputAmount = item.OutputAmount,
+                RequestedAnchorKind = requestedAnchorKind,
+                ResolvedAnchorKind = anchorResolved ? resolvedKind : ResourceExchangePresentationAnchorKind.None,
+                AnchorPosition = anchorResolved ? anchor.Position : default,
+                AnchorRotation = anchorResolved ? anchor.Rotation : quaternion.identity,
+                AnchorRadius = anchorResolved ? anchor.Radius : 0f,
+                DurationSeconds = ResolveVfxMarkerDurationSeconds(markerKind),
+                AnchorResolved = anchorResolved ? (byte)1 : (byte)0,
+                UsedFallbackAnchor = usedFallback,
+                NonAuthoritative = 1
+            });
+        }
+
+        private static float ResolveVfxMarkerDurationSeconds(ResourceExchangeVfxMarkerKind markerKind)
+        {
+            switch (markerKind)
+            {
+                case ResourceExchangeVfxMarkerKind.TransportLandingDust:
+                case ResourceExchangeVfxMarkerKind.TransportDepartingTrail:
+                    return 2.5f;
+                case ResourceExchangeVfxMarkerKind.ExportLoadPulse:
+                case ResourceExchangeVfxMarkerKind.ImportUnloadPulse:
+                    return 2f;
+                case ResourceExchangeVfxMarkerKind.ExchangeCompletedPulse:
+                case ResourceExchangeVfxMarkerKind.ExchangeCancelledPulse:
+                    return 1.75f;
+                default:
+                    return 1.25f;
+            }
         }
 
         private static float CalculateProgress01(in ResourceExchangeQueueComponent item)

@@ -1,11 +1,175 @@
 {
-  "acceptedBaselineVersion": 1,
-  "acceptedAtUtc": "2026-07-06",
+  "acceptedBaselineVersion": 2,
+  "acceptedAtUtc": "2026-07-09",
   "source": "Game.Editor.MatchRuntimeShellSmokeValidation.RunPerformanceRegressionBaseline",
   "editorP95FrameBudgetMs": 50,
   "currentThreadAllocatedBytesBudget": 0,
   "minimumFrameCount": 180,
   "minimumUnitCount": 700,
   "minimumRuntimeBuildingCount": 600,
-  "minimumVisibleModelEstimate": 40
+  "minimumVisibleModelEstimate": 40,
+  "productBudgets": {
+    "taskId": "APH-009",
+    "baselineCommit": "ba3da6704",
+    "status": "frozen-initial",
+    "androidFrameP95AfterWarmup": {
+      "comparison": "lessThan",
+      "unit": "ms",
+      "baseline": 33,
+      "recommended": 33,
+      "highEnd": 25,
+      "requiredEvidence": [
+        "exactCommit",
+        "artifactSha256",
+        "deviceProfile",
+        "buildType",
+        "qualityTier",
+        "frameRateMode",
+        "scenario",
+        "warmupDuration",
+        "sampleDuration",
+        "averageFrameMs",
+        "p95FrameMs",
+        "p99FrameMs",
+        "maximumFrameMs",
+        "cpuTiming",
+        "gpuTiming",
+        "thermalState"
+      ]
+    },
+    "matchSteadyStateGc": {
+      "status": "red-baseline",
+      "baselineAllocatedBytes": 269482,
+      "acceptanceBudgetBytes": 1024,
+      "warmupFrames": 180,
+      "measuredFrames": 300,
+      "source": "Design/AgentReports/2026-07-09_aph-007_match-gc-steady-state_raw-metadata-final_failed.md"
+    },
+    "peakAllocatedMemory": {
+      "baseline": {
+        "status": "validated-same-device",
+        "metric": "peakAllocatedMemory",
+        "unit": "MB",
+        "minimum": 1054,
+        "maximum": 1075,
+        "deviceProfile": "Xiaomi 24090RA29G / MediaTek MT6878 / Android 16",
+        "source": "Design/Architecture/architecture_performance_hardening_implementation_tracker.md#sustained-android-baseline"
+      },
+      "target": {
+        "status": "relative-budget-active",
+        "comparison": "atLeastReductionPercent",
+        "requiredReductionPercent": 10,
+        "sameDeviceRequired": true,
+        "absoluteReleaseLimitMB": null,
+        "absoluteReleaseLimitStatus": "measurement-required",
+        "ownerTaskId": "APH-501"
+      },
+      "runtimeResidency": {
+        "status": "uncertain-measurement-required",
+        "ownerTaskId": "APH-501",
+        "inventorySource": "Design/AgentReports/architecture_performance_content_residency_baseline.json",
+        "measurementBoundary": "APH-008 dependency inclusion and imported-size evidence does not prove simultaneous runtime residency or unload lifetime."
+      },
+      "requiredEvidence": [
+        "exactCommit",
+        "artifactSha256",
+        "deviceProfile",
+        "buildType",
+        "scenario",
+        "warmupDuration",
+        "sampleDuration",
+        "peakAllocatedMemoryMB",
+        "monoMemoryMB",
+        "sameDeviceComparison",
+        "runtimeResidencyNotes"
+      ]
+    },
+    "releaseEvidence": {
+      "knownProfilerApkBaseline": {
+        "status": "baseline-evidence-only-not-release-limit",
+        "observedApproximateRange": "443-471 MB depending on captured profiler build",
+        "source": "Design/Architecture/architecture_performance_hardening_implementation_tracker.md#code-and-content-scale",
+        "isReleaseLimit": false
+      },
+      "apk": {
+        "status": "measurement-required",
+        "releaseLimitBytes": null,
+        "measurementOwnerTaskId": "APH-500",
+        "budgetOwnerTaskId": "APH-501",
+        "requiredEvidence": [
+          "exactCommit",
+          "artifactSha256",
+          "releaseBuildType",
+          "buildTarget",
+          "scriptingBackend",
+          "targetArchitecture",
+          "artifactBytes",
+          "buildReportIncludedAssets"
+        ]
+      },
+      "aab": {
+        "status": "measurement-required",
+        "releaseLimitBytes": null,
+        "measurementOwnerTaskId": "APH-500",
+        "budgetOwnerTaskId": "APH-501",
+        "requiredEvidence": [
+          "exactCommit",
+          "artifactSha256",
+          "releaseBuildType",
+          "buildTarget",
+          "scriptingBackend",
+          "targetArchitecture",
+          "artifactBytes",
+          "buildReportIncludedAssets"
+        ]
+      },
+      "installedSize": {
+        "status": "measurement-required",
+        "releaseLimitBytes": null,
+        "ownerTaskId": "APH-501",
+        "requiredEvidence": [
+          "exactCommit",
+          "artifactSha256",
+          "deviceProfile",
+          "cleanInstallMethod",
+          "installedBytes",
+          "packageManagerEvidence"
+        ]
+      },
+      "startupTime": {
+        "status": "measurement-required",
+        "p95LimitMs": null,
+        "ownerTaskId": "APH-803",
+        "requiredEvidence": [
+          "exactCommit",
+          "artifactSha256",
+          "deviceProfile",
+          "launchDefinition",
+          "coldStartSamples",
+          "warmStartSamples",
+          "p50Ms",
+          "p95Ms",
+          "maximumMs"
+        ]
+      },
+      "visualQuality": {
+        "status": "evidence-required",
+        "ownerTaskId": "APH-809",
+        "requiredEvidence": [
+          "exactCommit",
+          "artifactSha256",
+          "deviceProfile",
+          "qualityTier",
+          "frameRateMode",
+          "sameCameraBeforeAfter",
+          "gameplayZoomCapture",
+          "maxZoomOutCapture",
+          "nightCapture",
+          "16:9Capture",
+          "20:9Capture",
+          "reviewerDecision"
+        ]
+      }
+    }
+  }
 }

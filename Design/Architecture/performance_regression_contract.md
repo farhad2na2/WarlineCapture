@@ -46,6 +46,17 @@ Budgets must be scenario-specific and platform-aware.
 
 Use warmup windows and percentile thresholds. Do not fail a test only because of one expected startup/import spike.
 
+### Tracked Product Budget Authority
+
+`Design/Architecture/performance_regression_accepted_baseline.json` is the authoritative tracked config for both the existing editor regression gate and the initial `APH-009` product budgets. The editor fields remain consumed by `MatchRuntimeShellSmokeValidation`; `productBudgets` records device-tier and release-evidence requirements without converting unmeasured values into invented limits.
+
+- Android p95 frame budgets use an exclusive comparison: less than `33 ms` for baseline/recommended and less than `25 ms` for high-end.
+- The validated same-device peak allocated-memory baseline is `1054-1075 MB`. Acceptance requires at least a 10 percent same-device reduction until `APH-501` replaces the relative target with an approved measured absolute limit.
+- The `APH-008` inventory establishes dependency reachability and selected imported sizes, not simultaneous runtime residency or unload lifetime. Runtime-residency uncertainty remains explicit in the config and requires device evidence.
+- The red Match steady-state GC baseline is `269482` bytes over 300 measured frames after 180 warmup frames. Its acceptance budget remains `1024` bytes.
+- A `measurement-required` status must keep its limit `null`, name a future owning task, and retain its required evidence list. `APH-500` owns APK/AAB BuildReport measurement, `APH-501` owns release package/installed/memory budgets, `APH-803` owns startup device-gate measurement, and `APH-809` owns visual evidence.
+- The known `443-471 MB` profiler APK range is baseline evidence only. It is not an APK, AAB, installed-size, or release limit.
+
 ## FreezeDetect Role
 
 FreezeDetect and system timing logs remain useful, but their role is diagnostic.

@@ -813,6 +813,150 @@
       ]
     },
     {
+      "eventId": "Gameplay.ResourceExchange.Accepted",
+      "busId": "SFX",
+      "priority": "Medium",
+      "cooldownMs": 120,
+      "volumeDb": -10.0,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 3,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_resource_exchange_accepted_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.ResourceExchange.Rejected",
+      "busId": "SFX",
+      "priority": "High",
+      "cooldownMs": 180,
+      "volumeDb": -9.5,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 3,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_resource_exchange_rejected_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.ResourceExchange.QueueStarted",
+      "busId": "SFX",
+      "priority": "Medium",
+      "cooldownMs": 120,
+      "volumeDb": -10.0,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 3,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_resource_exchange_queue_started_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.ResourceExchange.Rushed",
+      "busId": "SFX",
+      "priority": "High",
+      "cooldownMs": 160,
+      "volumeDb": -9.0,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 3,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_resource_exchange_rushed_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.ResourceExchange.Completed",
+      "busId": "SFX",
+      "priority": "High",
+      "cooldownMs": 250,
+      "volumeDb": -8.5,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 3,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_resource_exchange_completed_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.ResourceExchange.Cancelled",
+      "busId": "SFX",
+      "priority": "Medium",
+      "cooldownMs": 160,
+      "volumeDb": -10.5,
+      "pitchVariance": {
+        "min": -0.02,
+        "max": 0.02
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 3,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_resource_exchange_cancelled_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
       "eventId": "Alert.Threat.Minor",
       "busId": "Alerts",
       "priority": "Medium",

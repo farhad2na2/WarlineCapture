@@ -461,6 +461,90 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: d61664ed15fa8329390c68e14f4a69b8, type: 3}
       weight: 1
+  - eventId: Gameplay.ResourceExchange.Accepted
+    busId: SFX
+    priority: 1
+    cooldownMilliseconds: 120
+    volumeDecibels: -10
+    pitchVariance: {x: -0.02, y: 0.02}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 3
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: 95728b7366d1df65a61d49e6ed8aa2fa, type: 3}
+      weight: 1
+  - eventId: Gameplay.ResourceExchange.Rejected
+    busId: SFX
+    priority: 2
+    cooldownMilliseconds: 180
+    volumeDecibels: -9.5
+    pitchVariance: {x: -0.02, y: 0.02}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 3
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: 9f7eb4c7f9c0a7288a8f4ffe3eb56a11, type: 3}
+      weight: 1
+  - eventId: Gameplay.ResourceExchange.QueueStarted
+    busId: SFX
+    priority: 1
+    cooldownMilliseconds: 120
+    volumeDecibels: -10
+    pitchVariance: {x: -0.02, y: 0.02}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 3
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: 8cf07865fd833a627d935d67184543c6, type: 3}
+      weight: 1
+  - eventId: Gameplay.ResourceExchange.Rushed
+    busId: SFX
+    priority: 2
+    cooldownMilliseconds: 160
+    volumeDecibels: -9
+    pitchVariance: {x: -0.02, y: 0.02}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 3
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: b8bc88ff590a80a9c65f2562e231d6b7, type: 3}
+      weight: 1
+  - eventId: Gameplay.ResourceExchange.Completed
+    busId: SFX
+    priority: 2
+    cooldownMilliseconds: 250
+    volumeDecibels: -8.5
+    pitchVariance: {x: -0.02, y: 0.02}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 3
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: d5084308f5d43876e21bc5481b6a91aa, type: 3}
+      weight: 1
+  - eventId: Gameplay.ResourceExchange.Cancelled
+    busId: SFX
+    priority: 1
+    cooldownMilliseconds: 160
+    volumeDecibels: -10.5
+    pitchVariance: {x: -0.02, y: 0.02}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 3
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: 310d4729a5a7c1095f98a002ffef6e21, type: 3}
+      weight: 1
   - eventId: Alert.Threat.Minor
     busId: Alerts
     priority: 1

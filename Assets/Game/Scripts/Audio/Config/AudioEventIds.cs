@@ -103,6 +103,24 @@ namespace Game.Configs
         public const string GameplayProductionComplete = "Gameplay.Production.Complete";
         public const uint GameplayProductionCompleteHash = 2701904751u;
 
+        public const string GameplayResourceExchangeAccepted = "Gameplay.ResourceExchange.Accepted";
+        public const uint GameplayResourceExchangeAcceptedHash = 677266519u;
+
+        public const string GameplayResourceExchangeRejected = "Gameplay.ResourceExchange.Rejected";
+        public const uint GameplayResourceExchangeRejectedHash = 624368988u;
+
+        public const string GameplayResourceExchangeQueueStarted = "Gameplay.ResourceExchange.QueueStarted";
+        public const uint GameplayResourceExchangeQueueStartedHash = 3901359954u;
+
+        public const string GameplayResourceExchangeRushed = "Gameplay.ResourceExchange.Rushed";
+        public const uint GameplayResourceExchangeRushedHash = 3276875873u;
+
+        public const string GameplayResourceExchangeCompleted = "Gameplay.ResourceExchange.Completed";
+        public const uint GameplayResourceExchangeCompletedHash = 2973504283u;
+
+        public const string GameplayResourceExchangeCancelled = "Gameplay.ResourceExchange.Cancelled";
+        public const uint GameplayResourceExchangeCancelledHash = 2587331601u;
+
         public const string AlertThreatMinor = "Alert.Threat.Minor";
         public const uint AlertThreatMinorHash = 3119639462u;
 
@@ -674,6 +692,12 @@ namespace Game.Configs
             GameplayBuildPlaceInvalid,
             GameplayProductionQueued,
             GameplayProductionComplete,
+            GameplayResourceExchangeAccepted,
+            GameplayResourceExchangeRejected,
+            GameplayResourceExchangeQueueStarted,
+            GameplayResourceExchangeRushed,
+            GameplayResourceExchangeCompleted,
+            GameplayResourceExchangeCancelled,
             AlertThreatMinor,
             AlertThreatCritical,
             AlertUnitUnderAttack,
@@ -889,6 +913,12 @@ namespace Game.Configs
             GameplayBuildPlaceInvalidHash,
             GameplayProductionQueuedHash,
             GameplayProductionCompleteHash,
+            GameplayResourceExchangeAcceptedHash,
+            GameplayResourceExchangeRejectedHash,
+            GameplayResourceExchangeQueueStartedHash,
+            GameplayResourceExchangeRushedHash,
+            GameplayResourceExchangeCompletedHash,
+            GameplayResourceExchangeCancelledHash,
             AlertThreatMinorHash,
             AlertThreatCriticalHash,
             AlertUnitUnderAttackHash,

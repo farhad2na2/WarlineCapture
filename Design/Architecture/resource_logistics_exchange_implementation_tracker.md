@@ -1,7 +1,7 @@
 # Resource Logistics Exchange Implementation Tracker
 
 Date: 2026-07-09
-Status: Phase 7 audio, VFX, feedback, and ARIA ready
+Status: Phase 7 audio event ids and placeholder clips complete; feedback, VFX, and ARIA pending
 Design source: `../Resource_Logistics_Exchange_Design.md`
 
 ## Objective
@@ -23,7 +23,7 @@ Implement the timed Resource Logistics Exchange without drifting from WarlineCap
 
 ## Progress Summary
 
-Overall implementation progress: 76% (71/94 checklist items complete).
+Overall implementation progress: 78% (73/94 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -36,7 +36,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 4. Rush Tickets | Complete | 7 | 7 | 100% | Rush eligible jobs with ticket spend, per-item caps, rush-all budget, and feedback. |
 | 5. UI popup and header routing | Complete | 15 | 15 | 100% | ECS-backed UI read-model, target-lock reference, separated layer pack, Canvas popup prefab, serialized view refs, cards, details, amount stepper, queue panel, enabled-gated resource header tap route, popup input restoration, live read-model binding, request-buffer wiring, TMP/Oxanium validation, prefab contract tests, and 16:9/20:9 captures complete. |
 | 6. World presentation | Complete | 8 | 8 | 100% | Presentation anchors, deterministic fallback resolution, data-only ECS visual cue emission, managed presentation boundary, pooled actor reuse, actor safety, fallback behavior, cleanup wiring, and focused validation are complete. |
-| 7. Audio, VFX, feedback, ARIA | Not started | 0 | 7 | 0% | Config-driven audio, resource flyouts, completion/reject feedback, optional ARIA copy. |
+| 7. Audio, VFX, feedback, ARIA | In progress | 2 | 7 | 29% | Resource Exchange audio ids and placeholder clips are config-driven; resource flyouts, toasts, VFX markers, and ARIA copy remain. |
 | 8. AI, balance, telemetry | Not started | 0 | 6 | 0% | Economy events, balancing reports, AI awareness if enabled for AI factions. |
 | 9. Validation and performance | Not started | 0 | 10 | 0% | Focused tests, compile, architecture guardrails, UI captures, GC/performance checks. |
 
@@ -246,8 +246,8 @@ Phase 6 implementation notes:
 
 ## Phase 7: Audio, VFX, Feedback, And ARIA
 
-- [ ] Add config-driven audio event ids for accepted, rejected, queue started, rushed, completed, and cancelled exchange events.
-- [ ] Generate or assign placeholder audio clips through the audio config workflow.
+- [x] Add config-driven audio event ids for accepted, rejected, queue started, rushed, completed, and cancelled exchange events.
+- [x] Generate or assign placeholder audio clips through the audio config workflow.
 - [ ] Add resource delta flyouts for spend, reserve, output grant, refund, and rush spend.
 - [ ] Add completion toast and rejection toast with typed reason text.
 - [ ] Add optional ARIA strings for insufficient resources, exchange started, exchange complete, and exchange blocked.
@@ -871,3 +871,47 @@ Remaining blocker or next slice:
 
 - Next Phase 6 slice should add ECS visual cue request emission for exchange start, load, plane landing, plane departure, unload, completion, and cancellation.
 - Managed pooled truck/plane playback remains intentionally unimplemented until cue emission is stable.
+
+### 2026-07-09 - Phase 7A Resource Exchange Audio Event Ids And Placeholder Clips
+
+Files changed:
+
+- `Assets/Game/Audio/Config/audio_event_catalog_v0_1.json`
+- `Assets/Game/Audio/Events/AudioEventCatalogConfig.asset`
+- `Assets/Game/Audio/Gameplay/game_resource_exchange_accepted_01.wav`
+- `Assets/Game/Audio/Gameplay/game_resource_exchange_accepted_01.wav.meta`
+- `Assets/Game/Audio/Gameplay/game_resource_exchange_rejected_01.wav`
+- `Assets/Game/Audio/Gameplay/game_resource_exchange_rejected_01.wav.meta`
+- `Assets/Game/Audio/Gameplay/game_resource_exchange_queue_started_01.wav`
+- `Assets/Game/Audio/Gameplay/game_resource_exchange_queue_started_01.wav.meta`
+- `Assets/Game/Audio/Gameplay/game_resource_exchange_rushed_01.wav`
+- `Assets/Game/Audio/Gameplay/game_resource_exchange_rushed_01.wav.meta`
+- `Assets/Game/Audio/Gameplay/game_resource_exchange_completed_01.wav`
+- `Assets/Game/Audio/Gameplay/game_resource_exchange_completed_01.wav.meta`
+- `Assets/Game/Audio/Gameplay/game_resource_exchange_cancelled_01.wav`
+- `Assets/Game/Audio/Gameplay/game_resource_exchange_cancelled_01.wav.meta`
+- `Assets/Game/Scripts/Audio/Config/AudioEventIds.cs`
+- `Assets/Tests/Editor/ResourceExchangeAudioConfigTests.cs`
+- `Assets/Tests/Editor/ResourceExchangeAudioConfigTests.cs.meta`
+- `Design/Architecture/resource_logistics_exchange_implementation_tracker.md`
+
+Behavior changed:
+
+- Added six config-driven Resource Exchange SFX event ids: accepted, rejected, queue started, rushed, completed, and cancelled.
+- Generated deterministic mono placeholder WAV clips for those events and wired them through the central audio catalog with `SFX` bus routing, non-looping playback, no runtime loading, and stable clip metas.
+- Regenerated `AudioEventIds.cs` from the updated catalog so constants, hashes, and all-event ordering stay source-of-truth driven by `audio_event_catalog_v0_1.json`.
+- Mirrored the same entries into `AudioEventCatalogConfig.asset` so runtime config users can resolve the new clips before the Unity asset builder can be rerun successfully.
+- Added `ResourceExchangeAudioConfigTests.RunFocusedValidation` to keep Resource Exchange audio ids, hashes, SFX routing, clip paths, and placeholder assets required by a focused editor contract.
+
+Validation:
+
+- `dotnet build Game.Tests.Editor.csproj --no-restore` passed with 11 warnings and 0 errors.
+- Non-Unity catalog/constants/runtime-asset validation passed for the six Resource Exchange events, including JSON entries, generated constants, stable hashes, WAV headers, `.meta` GUIDs, and runtime YAML references.
+- Attempted Unity runtime audio config validation with the documented macOS licensing workaround: `Tools/CI/invoke_unity_macos.sh --project /private/tmp/wlc-resource-exchange-next --log /private/tmp/wlc-resource-exchange-audio-runtime-config-builder.log --timeout 420 -- -quit -executeMethod AudioRuntimeConfigAssetBuilderTests.RunFocusedValidation`.
+- Unity validation was blocked by licensing after the wrapper was already used: the log timed out waiting for `LicenseClient-farhad`, then reported `Licensing initialization failed after 74.83s`. The stuck temp-worktree Unity PID was terminated; the separate main-checkout Unity process was left alone.
+- Known unrelated worktree side effect left unstaged: `Assets/Settings/UniversalRenderPipelineGlobalSettings.asset`.
+
+Remaining blocker or next slice:
+
+- Re-run Unity focused validations when licensing is healthy: `AudioRuntimeConfigAssetBuilderTests.RunFocusedValidation`, `AudioConfigContractTests.RunFocusedValidation`, and `ResourceExchangeAudioConfigTests.RunFocusedValidation`.
+- Next Phase 7 slice should add resource delta flyouts for spend, reserve, output grant, refund, and rush spend.

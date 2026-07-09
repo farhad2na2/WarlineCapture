@@ -14,7 +14,6 @@ namespace Game.UI.Shell.Ecs
         private const int MaxQueueRows = 4;
 
         private EntityQuery boundaryQuery;
-        private EntityQuery exchangeQuery;
 
         public void OnCreate(ref SystemState state)
         {
@@ -25,12 +24,6 @@ namespace Game.UI.Shell.Ecs
                 ComponentType.ReadWrite<UiResourceExchangeDetailComponent>(),
                 ComponentType.ReadWrite<UiResourceExchangeRecipeCardComponent>(),
                 ComponentType.ReadWrite<UiResourceExchangeQueueRowComponent>());
-            exchangeQuery = state.GetEntityQuery(
-                ComponentType.ReadOnly<ResourceExchangeEnabledComponent>(),
-                ComponentType.ReadOnly<ResourceExchangeWalletComponent>(),
-                ComponentType.ReadOnly<ResourceExchangeSummaryComponent>(),
-                ComponentType.ReadOnly<ResourceExchangeRecipeComponent>(),
-                ComponentType.ReadOnly<ResourceExchangeQueueComponent>());
             state.RequireForUpdate(boundaryQuery);
         }
 
@@ -51,24 +44,36 @@ namespace Game.UI.Shell.Ecs
             DynamicBuffer<UiResourceExchangeQueueRowComponent> queueRows =
                 state.EntityManager.GetBuffer<UiResourceExchangeQueueRowComponent>(boundary);
 
-            if (exchangeQuery.IsEmptyIgnoreFilter)
+            bool wroteExchange = false;
+            foreach (var (
+                         enabled,
+                         wallet,
+                         summary,
+                         recipes,
+                         queue)
+                     in SystemAPI.Query<
+                         RefRO<ResourceExchangeEnabledComponent>,
+                         RefRO<ResourceExchangeWalletComponent>,
+                         RefRO<ResourceExchangeSummaryComponent>,
+                         DynamicBuffer<ResourceExchangeRecipeComponent>,
+                         DynamicBuffer<ResourceExchangeQueueComponent>>())
             {
-                WriteUnavailable(ref uiState, ref detail, cards, queueRows);
-            }
-            else
-            {
-                Entity exchange = ResolveFirstEntity(exchangeQuery);
                 WriteReadModel(
-                    state.EntityManager.GetComponentData<ResourceExchangeEnabledComponent>(exchange),
-                    state.EntityManager.GetComponentData<ResourceExchangeWalletComponent>(exchange),
-                    state.EntityManager.GetComponentData<ResourceExchangeSummaryComponent>(exchange),
-                    state.EntityManager.GetBuffer<ResourceExchangeRecipeComponent>(exchange, true),
-                    state.EntityManager.GetBuffer<ResourceExchangeQueueComponent>(exchange, true),
+                    enabled.ValueRO,
+                    wallet.ValueRO,
+                    summary.ValueRO,
+                    recipes,
+                    queue,
                     ref uiState,
                     ref detail,
                     cards,
                     queueRows);
+                wroteExchange = true;
+                break;
             }
+
+            if (!wroteExchange)
+                WriteUnavailable(ref uiState, ref detail, cards, queueRows);
 
             state.EntityManager.SetComponentData(boundary, uiState);
             state.EntityManager.SetComponentData(boundary, detail);
@@ -278,15 +283,6 @@ namespace Game.UI.Shell.Ecs
                     Progress01 = progress
                 });
             }
-        }
-
-        private static Entity ResolveFirstEntity(EntityQuery query)
-        {
-            if (query.CalculateEntityCount() == 1)
-                return query.GetSingletonEntity();
-
-            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-            return entities.Length > 0 ? entities[0] : Entity.Null;
         }
 
         private static int CountRecipes(DynamicBuffer<ResourceExchangeRecipeComponent> recipes, ResourceExchangeRouteType routeType)

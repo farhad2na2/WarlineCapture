@@ -1,7 +1,7 @@
 # Resource Logistics Exchange Implementation Tracker
 
 Date: 2026-07-09
-Status: Phase 9 UI prefab/capture validation complete; architecture guardrails next
+Status: Phase 9 architecture guardrails complete; GC allocation check next
 Design source: `../Resource_Logistics_Exchange_Design.md`
 
 ## Objective
@@ -23,7 +23,7 @@ Implement the timed Resource Logistics Exchange without drifting from WarlineCap
 
 ## Progress Summary
 
-Overall implementation progress: 95% (90/94 checklist items complete).
+Overall implementation progress: 96% (91/94 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -38,7 +38,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 6. World presentation | Complete | 8 | 8 | 100% | Presentation anchors, deterministic fallback resolution, data-only ECS visual cue emission, managed presentation boundary, pooled actor reuse, actor safety, fallback behavior, cleanup wiring, and focused validation are complete. |
 | 7. Audio, VFX, feedback, ARIA | Complete | 7 | 7 | 100% | Resource Exchange audio ids, placeholder clips, data-only delta flyout requests, typed toast requests, optional ARIA strings, non-authoritative VFX marker data, and direct-audio wiring guardrails are complete. |
 | 8. AI, balance, telemetry | Complete | 6 | 6 | 100% | Economy event coverage, Resource Exchange balance report fields, data sanity tests, scenario gates, AI opt-in gating, and AI planner guardrails are complete. |
-| 9. Validation and performance | In progress | 6 | 10 | 60% | Diff whitespace, repository compile validation, focused exchange data/config tests, queue/rush/cancel/refund tests, HUD/header popup routing tests, and UI prefab/capture validation are complete; architecture guardrails remain next. |
+| 9. Validation and performance | In progress | 7 | 10 | 70% | Diff whitespace, repository compile validation, focused exchange data/config tests, queue/rush/cancel/refund tests, HUD/header popup routing tests, UI prefab/capture validation, and architecture guardrails are complete; GC allocation check remains next. |
 
 ## Phase 0: Inventory And Source Alignment
 
@@ -283,7 +283,7 @@ Exit criteria:
 - [x] Run focused exchange queue/rush/cancel/refund tests.
 - [x] Run focused HUD/header popup routing tests.
 - [x] Run focused UI prefab/capture validation at 16:9 and 20:9.
-- [ ] Run architecture guardrails for naming, ECS boundaries, and no broad manager/controller/service drift.
+- [x] Run architecture guardrails for naming, ECS boundaries, and no broad manager/controller/service drift.
 - [ ] Run GC allocation check for exchange queue steady state.
 - [ ] Run performance scenario if exchange is active during match steady state.
 - [ ] Update this tracker with validation commands, log paths, pass/fail result, and remaining blockers.
@@ -1448,3 +1448,31 @@ Validation:
 Remaining blocker or next slice:
 
 - Next Phase 9 slice should run architecture guardrails for naming, ECS boundaries, and no broad manager/controller/service drift.
+
+### 2026-07-09 - Phase 9G Architecture Guardrails
+
+Files changed:
+
+- `Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeReadModelSystem.cs`
+- `Assets/Tests/Editor/ResourceExchangeArchitectureGuardrailTests.cs`
+- `Assets/Tests/Editor/ResourceExchangeArchitectureGuardrailTests.cs.meta`
+- `Design/Architecture/resource_logistics_exchange_implementation_tracker.md`
+
+Behavior changed:
+
+- Removed the Resource Exchange UI read-model fallback that used `ToEntityArray(Allocator.Temp)` to pick an exchange entity, replacing it with direct `SystemAPI.Query` iteration and an unavailable-state fallback when no exchange entity exists.
+- Added focused Resource Exchange architecture guardrails covering unmanaged `ISystem` preference, no `SystemBase` drift, no broad `Manager`/`Controller`/`Service`/`Facade` shell names, UI screen separation from direct ECS mutation, no LINQ/snapshot/scene-search tokens in exchange hot-path systems, and non-authoritative managed presentation boundaries.
+- The new guardrail intentionally allows the existing managed visual presentation helper only for pooled GameObject presentation, while blocking that helper from mutating wallet, queue, recipe, result, summary, request, or economy event state.
+
+Validation:
+
+- `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 12 warnings and 0 errors after rebasing onto `origin/main`.
+- `dotnet build Game.UI.Shell.Ecs.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 9 warnings and 0 errors after rebasing onto `origin/main`.
+- `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 16 warnings and 0 errors after rebasing onto `origin/main`.
+- During the first compile pass, stale local generated csproj state did not include existing gameplay audio files: `GameplayAudioFeedbackSystemHelper.cs`, `MissileFlightAudioSystem.cs`, and `UnitMotionAudioSystem.cs`. Refreshing the Unity-generated csproj state made those includes available locally; no audio source behavior was changed in this slice.
+- `Tools/CI/invoke_unity_macos.sh --project /private/tmp/wlc-resource-exchange-next --log /private/tmp/wlc-resource-exchange-architecture-guardrail-validation-rebased.log --timeout 420 -- -quit -executeMethod ResourceExchangeArchitectureGuardrailTests.RunFocusedValidation`
+- Unity focused architecture guardrail result: `[ResourceExchangeArchitectureGuardrail] result=Passed tests=5`
+
+Remaining blocker or next slice:
+
+- Next Phase 9 slice should run the GC allocation check for exchange queue steady state.

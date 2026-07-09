@@ -32,7 +32,7 @@ Progress is checklist-based. Each markdown checklist item in the phase sections 
 
 | Phase | Status | Complete | Total | Progress | Notes |
 |---|---|---:|---:|---:|---|
-| 0. Visual target and contract setup | In Progress | 5 | 7 | 71% | Functional pass uses code-built/runtime UI; optional production sprite replacement is deferred. |
+| 0. Visual target and contract setup | In Progress | 5 | 7 | 71% | Approved `LandscapeLayout` prefab exists; runtime migration from the current code-built surface remains. |
 | 1. Baseline tests before feature work | Not Started | 0 | 7 | 0% | Remove actionable placeholders, add runtime gates/contracts, and lock current behavior. |
 | 2. Top-left HUD relocation | Not Started | 0 | 7 | 0% | Move ARIA into the exact objective-panel slot with fallback/restore behavior. |
 | 3. Structured goal rows | Not Started | 0 | 8 | 0% | Publish mission-owned structured objectives and elapsed whole seconds. |
@@ -41,7 +41,7 @@ Progress is checklist-based. Each markdown checklist item in the phase sections 
 | 6. Recommendation scoring and target lock | Not Started | 0 | 7 | 0% | Make target-lock graphic fully data-driven. |
 | 7. Complete command mechanics | Not Started | 0 | 13 | 0% | Execute and correlate concrete select, move, attack, focus, and stop intents. |
 | 8. ARIA voice state panel | Not Started | 0 | 6 | 0% | Show true narration request/audio status. |
-| 9. Popup visual implementation | Not Started | 0 | 10 | 0% | Bind stable rows and wide/compact lifecycle behavior. |
+| 9. Popup visual implementation | Not Started | 0 | 10 | 0% | Bind stable rows into the single fixed-landscape prefab lifecycle. |
 | 10. Gateway publishing and caching | Not Started | 0 | 7 | 0% | Preserve explicit-version, cached no-allocation managed publishing. |
 | 11. Validation and acceptance | Not Started | 0 | 14 | 0% | Compile, source-truth, command/audio, visual, play, and performance gates. |
 
@@ -61,6 +61,9 @@ Progress update rule: update this table in the same change that completes or add
 | `Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs` | Current cached UI publishing path. |
 | `Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.cs` | Current code-built ARIA surface. |
 | `Assets/Game/Scripts/UI/Screens/AssistantPanelUiSystemHelper.cs` | Current panel binding helper. |
+| `Assets/Game/Prefabs/UI/Shell/Popups/POP13_ARIACommandAssistantPopup.prefab` | Approved single-layout presentation prefab. Runtime binding must target `LandscapeLayout`; do not recreate a compact variant. |
+| `Assets/Game/Scenes/Menu.unity` | Authoritative runtime UI canvas: `GameUICanvas` uses a `4800 x 2160` reference resolution. |
+| `Assets/Game/Prefabs/UI/Shell/Popups/SCN09_BuildDrawerPopup.prefab` | Popup scale peer: `BuildDrawerRoot/DrawerFrame` is `2460 x 1510` at `(0, 156)`. |
 | `Assets/Game/Scripts/Components/UnitCombatComponents.cs` | Combat enrichment data for real threat rows. `RecentAttacker` remains retaliation state and is not the ARIA event source. |
 | `Assets/Game/Scripts/Components/AudioComponents.cs` | Audio request/result statuses used by the truthful ARIA voice state. |
 | `Assets/Game/Scripts/Components/SelectionInputRequestComponents.cs` | Existing selection command request/result boundary and canonical tactical reason codes. |
@@ -86,7 +89,7 @@ Progress update rule: update this table in the same change that completes or add
 | Status | Milestone | Exit criteria |
 |---|---|---|
 | `[x]` | V01 target reference saved | Mockup and prompt exist under this folder. |
-| `[~]` | Readable code-built popup pass | Current popup is enlarged and styled, but some details are decorative/static. |
+| `[~]` | Approved presentation prefab | `POP13_ARIACommandAssistantPopup.prefab` has the locked premium landscape hierarchy; runtime still uses the older code-built surface. |
 | `[~]` | Thin ECS ARIA model exists | Current model has text goals, alerts, narration, one recommendation, command buttons, preview highlight. |
 | `[ ]` | Structured panel model | Popup binds structured row models instead of plain multiline strings. |
 | `[ ]` | Top-left HUD relocation | ARIA button owns current objective-panel space; objective panel presentation is removed from always-visible HUD. |
@@ -96,7 +99,7 @@ Progress update rule: update this table in the same change that completes or add
 | `[ ]` | Complete command mechanics | `SHOW ME`, `DO IT`, and `STOP` route to existing typed command boundaries for select, move, attack, focus, and cancel. |
 | `[ ]` | Narration state is visible and true | ARIA voice panel reflects correlated queued/accepted/presented/failed/text-only/off state without claiming clip completion. |
 | `[ ]` | Performance validation | Focused tests prove no repeated allocations/rebuilds when versions are unchanged. |
-| `[ ]` | Visual validation | Desktop/mobile screenshots show readable popup, top-left ARIA button, and no overlapping HUD. |
+| `[ ]` | Visual validation | Fixed-landscape screenshots show a readable popup, top-left ARIA button, and no overlapping HUD. |
 
 ## Current Baseline
 
@@ -369,10 +372,10 @@ Required order and attributes:
 ### Popup placement and lifecycle contract
 
 - Resolve `HeaderContent/ObjectivesPanel` from the installed match HUD header. The current prefab rect is top-left anchored at `(16, -16)` with a `670 x 520` footprint.
-- Create the ARIA button as a sibling using the objective panel's top-left anchor/position. Initial button size is `228 x 78`. Disable the old `ObjectivesPanel` visual root after successful ARIA binding and restore it during `Unbind` if the object still exists.
+- Create the ARIA button as a sibling using the objective panel's top-left anchor/position. Initial button size is `454 x 155` in the `4800 x 2160` reference canvas. Disable the old `ObjectivesPanel` visual root after successful ARIA binding and restore it during `Unbind` if the object still exists.
 - If `ObjectivesPanel` cannot be resolved, keep it visible and bind ARIA to the current header fallback. Log one diagnostic in development builds; never hide objectives without a working replacement.
-- The popup remains parented to the shell overlay, not the disabled objective panel. Wide layout target is `1040 x 760` reference pixels, clamped to the canvas safe area with at least 24 reference pixels of margin and with the right quick rail excluded.
-- At less than 1200 reference pixels of usable width or 820 of usable height, use the compact layout: safe-area width minus 16-pixel margins, safe-area height minus 16-pixel margins, one vertical scroll region, and a stable two-by-two command-button grid. Text does not shrink below 18 reference pixels.
+- The popup remains parented to the shell overlay, not the disabled objective panel. The only supported presentation is `LandscapeLayout`, authored at `2460 x 1510` and centered at `(0, 156)` in the authoritative `4800 x 2160` `Menu.unity` canvas, matching the build drawer's popup footprint.
+- Do not add width/height threshold switching or a compact/mobile hierarchy. The game uses one fixed landscape presentation; any production output scaling is owned by `GameUICanvas` and its `CanvasScaler`.
 - The popup is non-modal. Its button/panel block world clicks inside their rects; clicking the world outside does not close it.
 - Only one large tactical popup may be open: ARIA, resource exchange, full map, or build drawer. `MainMenuPlayUI` closes the currently open sibling before opening another through their existing narrow view methods; do not add a popup manager/controller.
 - Escape/back closes ARIA first. `CLOSE` and Escape do not acknowledge messages or stop accepted unit orders. `STOP` follows the command contract above.
@@ -624,8 +627,8 @@ Implementation should proceed as small vertical slices. For each slice: update c
 - [x] Save the V01 target-lock generation prompt under `prompts/`.
 - [x] Link this implementation tracker from the POP-13 README.
 - [x] Add this functional implementation tracker with an overall progress summary.
-- [x] Record the layer-pack decision: the functional POP-13 pass uses code-built Unity UI/existing approved sprites; separated production sprite replacement is deferred and is not an acceptance dependency.
-- [ ] Reconcile the runtime code-built popup against the target-lock visual after functional model work is complete.
+- [x] Record the layer-pack decision: the production POP-13 surface uses `POP13_ARIACommandAssistantPopup.prefab` with existing approved sprites; separated sprite replacement is deferred and is not an acceptance dependency.
+- [ ] Replace the runtime code-built popup with the approved prefab binding after functional model contracts are ready.
 - [ ] Mark Phase 0 complete only after runtime parity/layer-pack decision is documented.
 
 Exit criteria:
@@ -652,7 +655,7 @@ Exit criteria:
 ### 2. Top-left HUD relocation
 
 - [ ] Resolve `HeaderContent/ObjectivesPanel` and pass its `RectTransform`/fallback state through the existing match HUD bind path.
-- [ ] Change `MatchHudAssistantUiSystemHelper.Bind` to create a `228 x 78` top-left button as a sibling at the objective panel anchor while keeping the popup under the shell overlay.
+- [ ] Change `MatchHudAssistantUiSystemHelper.Bind` to create a `454 x 155` top-left button as a sibling at the objective panel anchor while keeping the popup under the shell overlay.
 - [ ] Hide the old objective visual only after successful ARIA button/popup binding and restore it during `Unbind`.
 - [ ] Keep the old objective panel visible and use the current header fallback if the target rect cannot be resolved.
 - [ ] Ensure the ARIA button blocks world clicks through `ContainsScreenPoint` and the existing gameplay UI click sequence.
@@ -674,7 +677,7 @@ Exit criteria:
 - [ ] Update `UiShellEcsGateway.TryReadMatchHudAssistantPanel` to copy each goal into a row slot only when objective version/count changes.
 - [ ] Keep the current `GoalsText` field only as temporary compatibility if needed by tests.
 - [ ] Update `AssistantPanelUiSystemHelper` to bind rows to stable child controls instead of assigning one multiline TMP string.
-- [ ] Create row controls once in `MatchHudAssistantUiSystemHelper.CreatePanel`; only update text/color/visibility on model version change.
+- [ ] Bind the stable row controls already serialized under `LandscapeLayout`; only update text/color/visibility on model version change and do not create row GameObjects after bind.
 
 Exit criteria:
 
@@ -776,10 +779,10 @@ Exit criteria:
 
 - [ ] Replace decorative row guides with stable row views bound to goal/alert/report row models.
 - [ ] Keep target-lock chrome static, but bind all text/active markers to `UiAssistantTargetLockModel`.
-- [ ] Use pooled/stable child objects created once during bind.
+- [ ] Use the stable child objects serialized in the prefab; create no row, marker, or command-control GameObjects during or after bind.
 - [ ] Use TMP autosizing only where necessary and with bounded min/max sizes.
 - [ ] Preserve large readable controls matching build/resource popup scale.
-- [ ] Implement the locked wide `1040 x 760` safe-area layout and compact one-column scroll layout with minimum 18-pixel text.
+- [ ] Instantiate and bind the locked `LandscapeLayout` prefab at `2460 x 1510`, `(0, 156)`, on the `4800 x 2160` runtime canvas; do not generate a parallel compact hierarchy.
 - [ ] Exclude the right quick rail and keep at least the locked safe-area margins.
 - [ ] Enforce one-large-tactical-popup exclusivity through `MainMenuPlayUI` and existing view close methods.
 - [ ] Bind Escape/back/CLOSE/STOP behavior exactly as specified in the popup lifecycle contract.
@@ -788,7 +791,7 @@ Exit criteria:
 Exit criteria:
 
 - The panel visually resembles the mockup but has no fake data-only decorations.
-- It remains readable at desktop and mobile match HUD scales.
+- It remains readable at the fixed supported landscape runtime scale.
 - It remains non-modal and does not overlap the right rail controls.
 
 ### 10. Gateway publishing and caching
@@ -819,7 +822,7 @@ Exit criteria:
 - [ ] Editor test: no-change gateway call returns same version and does not rebuild strings/rows.
 - [ ] UI helper test: row GameObjects are created once and reused.
 - [ ] UI helper test: top-left objective slot binding, missing-slot fallback, old-panel restore, popup exclusivity, and Escape/CLOSE/STOP semantics.
-- [ ] Visual validation: 16:9 desktop, 16:10, ultrawide, and mobile-ish aspect screenshots.
+- [ ] Visual validation: authoritative `4800 x 2160` reference-canvas capture plus the fixed production landscape output, with the right quick rail visible and unobstructed.
 - [ ] Performance validation: locked timing/allocation budgets pass for idle polling and a saturated bounded threat model.
 - [ ] Play validation: start match, open popup, see objectives inside ARIA, issue move, issue attack, observe accurate threat/voice/target-lock rows.
 
@@ -835,8 +838,8 @@ Exit criteria:
 
 Target placement:
 
-- Resolve `HeaderContent/ObjectivesPanel`, copy its top-left anchor/position `(16, -16)`, and create the ARIA button as a `228 x 78` sibling.
-- Keep `228 x 78` as the minimum desktop touch target; compact layout may grow it but must not shrink it.
+- Resolve `HeaderContent/ObjectivesPanel`, copy its top-left anchor/position `(16, -16)`, and create the ARIA button as a `454 x 155` sibling.
+- Keep `454 x 155` as the locked landscape touch target in the `4800 x 2160` reference canvas.
 - Show a compact status strip on the button:
   - idle: `ARIA`
   - recommendation: `ARIA READY`
@@ -908,7 +911,7 @@ Objective panel migration:
 8. Add target-lock/readiness state and bind it to the popup.
 9. Add authoritative move/attack targets, downstream dispatch mapping, and result correlation.
 10. Bind correlated narration/audio result state to the voice panel.
-11. Implement wide/compact popup layout, sibling-popup exclusivity, and accessibility hooks.
+11. Bind the single fixed-landscape popup, sibling-popup exclusivity, and accessibility hooks.
 12. Run compile, focused Unity, play, visual, and steady-state/saturated performance validation.
 
 ## Definition Of Done

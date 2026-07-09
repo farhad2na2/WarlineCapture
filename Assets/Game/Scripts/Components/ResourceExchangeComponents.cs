@@ -190,6 +190,13 @@ namespace Game.Components
         public int RushTicketsSpent;
         public byte PresentationStarted;
         public byte OutputApplied;
+        public byte VisualStartedEmitted;
+        public byte VisualLoadEmitted;
+        public byte VisualLandingEmitted;
+        public byte VisualDepartingEmitted;
+        public byte VisualUnloadEmitted;
+        public byte VisualCompletionEmitted;
+        public byte VisualCancellationEmitted;
         public uint Version;
     }
 
@@ -239,8 +246,18 @@ namespace Game.Components
         public byte FactionId;
         public ResourceExchangeVisualCueKind CueKind;
         public FixedString128Bytes RecipeId;
+        public ResourceExchangeRouteType RouteType;
         public ResourceExchangeResourceKind InputResource;
         public ResourceExchangeResourceKind OutputResource;
+        public int InputAmount;
+        public int OutputAmount;
+        public ResourceExchangePresentationAnchorKind RequestedAnchorKind;
+        public ResourceExchangePresentationAnchorKind ResolvedAnchorKind;
+        public float3 AnchorPosition;
+        public quaternion AnchorRotation;
+        public float AnchorRadius;
+        public byte AnchorResolved;
+        public byte UsedFallbackAnchor;
     }
 
     public struct ResourceExchangePresentationAnchorComponent : IBufferElementData

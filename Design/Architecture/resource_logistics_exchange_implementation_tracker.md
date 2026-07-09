@@ -1,6 +1,6 @@
 # Resource Logistics Exchange Implementation Tracker
 
-Date: 2026-07-08
+Date: 2026-07-09
 Status: Phase 6 world presentation in progress
 Design source: `../Resource_Logistics_Exchange_Design.md`
 
@@ -23,7 +23,7 @@ Implement the timed Resource Logistics Exchange without drifting from WarlineCap
 
 ## Progress Summary
 
-Overall implementation progress: 68% (64/94 checklist items complete).
+Overall implementation progress: 69% (65/94 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -35,7 +35,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 3. Queue ticking, completion, cancel, refund | Complete | 11 | 11 | 100% | Timed queue, output grant once, cancel/refund rules, mission-end cancel/refund policy. |
 | 4. Rush Tickets | Complete | 7 | 7 | 100% | Rush eligible jobs with ticket spend, per-item caps, rush-all budget, and feedback. |
 | 5. UI popup and header routing | Complete | 15 | 15 | 100% | ECS-backed UI read-model, target-lock reference, separated layer pack, Canvas popup prefab, serialized view refs, cards, details, amount stepper, queue panel, enabled-gated resource header tap route, popup input restoration, live read-model binding, request-buffer wiring, TMP/Oxanium validation, prefab contract tests, and 16:9/20:9 captures complete. |
-| 6. World presentation | In progress | 1 | 8 | 13% | Presentation anchor data and deterministic fallback resolution are complete; cue emission, managed pooled actor playback, fallback actor behavior, cleanup, and validation remain. |
+| 6. World presentation | In progress | 2 | 8 | 25% | Presentation anchor data, deterministic fallback resolution, and data-only ECS visual cue emission are complete; managed pooled actor playback, fallback actor behavior, cleanup, and validation remain. |
 | 7. Audio, VFX, feedback, ARIA | Not started | 0 | 7 | 0% | Config-driven audio, resource flyouts, completion/reject feedback, optional ARIA copy. |
 | 8. AI, balance, telemetry | Not started | 0 | 6 | 0% | Economy events, balancing reports, AI awareness if enabled for AI factions. |
 | 9. Validation and performance | Not started | 0 | 10 | 0% | Focused tests, compile, architecture guardrails, UI captures, GC/performance checks. |
@@ -180,7 +180,7 @@ Exit criteria:
 ## Phase 6: World Presentation
 
 - [x] Define presentation anchors for base depot, runway/landing zone, storage, and fallback safe anchor.
-- [ ] Add ECS visual cue request data for exchange start, load, plane landing, plane departure, unload, and completion.
+- [x] Add ECS visual cue request data for exchange start, load, plane landing, plane departure, unload, and completion.
 - [ ] Implement managed presentation boundary as `ResourceExchangeVisualPresentationSystemHelper` or existing approved presentation owner.
 - [ ] Use pooled plane/truck presentation actors or an existing pooling boundary.
 - [ ] Ensure presentation actors do not block gameplay pathfinding or mutate economy state.
@@ -193,6 +193,24 @@ Exit criteria:
 - Queue completion does not depend on visuals.
 - Visuals do not introduce gameplay blockers.
 - Presentation can be disabled without breaking economy state.
+
+Phase 6 implementation notes:
+
+### 2026-07-09 - Phase 6B Visual Cue Request Emission
+
+- Added `ResourceExchangeVisualCueSystem` as an unmanaged `ISystem` with a pure static entry point for deterministic tests.
+- Added queue-side visual emission flags so exchange start, landing, transfer, departure, completion, and cancellation cues are emitted once per queue item.
+- Expanded `ResourceExchangeVisualRequestComponent` with route, amounts, requested anchor, resolved anchor, fallback flag, anchor pose, and radius so the future managed presentation boundary can avoid scene searches.
+- Cue order is narrative-safe for both imports and exports: exchange starts, transport plane lands, trucks transfer resources, transport plane departs, then terminal completion/cancellation emits when queue state reaches a terminal state.
+- `PresentationStarted` is set only after a resolved world-presentation cue. If anchors are missing, cues still record unresolved requests for diagnostics, but cancellation refund eligibility is preserved.
+- Presentation remains optional and non-authoritative: when `AllowWorldPresentation` is disabled, no visual cues emit and economy/queue state continues normally.
+- Validation passed:
+  - `dotnet build Game.Components.csproj --no-restore -v:q -clp:ErrorsOnly`
+  - `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly`
+  - `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`
+  - `Tools/CI/invoke_unity_macos.sh --project /private/tmp/wlc-resource-exchange-next --log /private/tmp/wlc-resource-exchange-visual-cue-validation.log --timeout 420 -- -quit -executeMethod ResourceExchangeVisualCueSystemTests.RunFocusedValidation`
+  - Unity focused result: `[ResourceExchangeVisualCueValidation] result=Passed tests=5`
+- Known unrelated worktree side effect left unstaged: `Assets/Settings/UniversalRenderPipelineGlobalSettings.asset`.
 
 ## Phase 7: Audio, VFX, Feedback, And ARIA
 

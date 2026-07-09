@@ -248,16 +248,16 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `10 / 106` |
-| Checklist percent complete | `9.4%` |
-| Checklist in progress | `3 / 106`: `APH-100`, `APH-200`, `APH-205` |
-| Complete plus active coverage | `13 / 106` (`12.3%`); this is visibility only, not accepted completion |
+| Checklist complete | `11 / 106` |
+| Checklist percent complete | `10.4%` |
+| Checklist in progress | `3 / 106`: `APH-100`, `APH-200`, `APH-206` |
+| Complete plus active coverage | `14 / 106` (`13.2%`); this is visibility only, not accepted completion |
 | Current phase | Phases 1 and 2 - UI boundary and ECS hot-path guardrails |
-| Current task | `APH-100` UI resolver tests; `APH-200` multi-exchange regression; `APH-205` defense behavior regressions |
+| Current task | `APH-100` UI resolver tests; `APH-200`/`APH-201` exchange regressions; `APH-206` defense allocation regression |
 | Red architecture gates | `2` at the audit baseline; current-head reproduction remains required |
 | Red performance gates | `1`: steady-state Match GC `269,482 / 1,024` bytes |
-| Last verified commit | `1e20f1417` for `APH-009`; Phase 0 complete |
-| Last update | 2026-07-09 - `APH-009` accepted; Wave 1 test-first tasks active |
+| Last verified commit | `437587eea` for `APH-205`; Phase 0 complete |
+| Last update | 2026-07-09 - `APH-205` accepted; Wave 1 test-first tasks continue |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -364,8 +364,10 @@ Immediate implementation contract:
 - Remove explicit `state.Dependency.Complete()` only when lookups/query dependencies make direct access safe. Do not hide the sync in another helper.
 - This immediate phase does not introduce the shared spatial index; that is `APH-704`.
 
-- [~] `APH-205` Extend defense tests for neutral targets, aircraft exclusion, nearest-hostile ordering, four concurrent slots, destroyed targets, and target removal between updates.
-- [ ] `APH-206` Add a warmed allocation test covering at least 32 towers and 740 candidate units.
+- [x] `APH-205` Extend defense tests for neutral targets, aircraft exclusion, nearest-hostile ordering, four concurrent slots, destroyed targets, and target removal between updates.
+  - Result: six focused regressions cover every required behavior and preserve slot order, cooldown, shot-count, damage, tracer, recent-attacker, audio/VFX-producing configuration, and reacquisition semantics.
+  - Validation: `[BuildingDefenseAttackSystemValidation] result=Passed tests=6`; Editor/test builds passed with 0 errors; commit `437587eea` pushed to `main`.
+- [~] `APH-206` Add a warmed allocation test covering at least 32 towers and 740 candidate units.
 - [ ] `APH-207` Add persistent target scratch storage with explicit `OnCreate`/`OnDestroy` lifetime.
 - [ ] `APH-208` Replace `_targetQuery.ToEntityArray(Allocator.Temp)` and remove the per-frame snapshot.
 - [ ] `APH-209` Audit the explicit dependency completion and direct `EntityManager` calls; remove or document each unavoidable synchronization point with profiler evidence.
@@ -744,6 +746,21 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Visual result: Not applicable; config and editor validation only
 - Residual risk: release APK/AAB, installed size, startup, runtime residency, and absolute memory limits remain measurement-required under `APH-500`, `APH-501`, `APH-803`, and `APH-809`
 - Next ready tasks: `APH-100`, `APH-200`, and `APH-205`
+
+### 2026-07-09 - APH-205 - Building-defense behavior regressions
+
+- Status: Complete
+- Commit or worktree baseline: `428da26cf`
+- Stable commit/push: `437587eea` pushed to `main`
+- Files changed: `Assets/Tests/Editor/BuildingDefenseAttackSystemTests.cs`
+- Behavior preserved/changed: production behavior unchanged; focused coverage now locks neutral filtering, aircraft exclusion, nearest-hostile order, four-slot order, destroyed targets, and removed-target reacquisition
+- Validation: Editor/test builds passed with 0 errors; `[BuildingDefenseAttackSystemValidation] result=Passed tests=6`; `git diff --check` passed
+- Artifacts: `/private/tmp/warline-aph205-building-defense-focused.log`
+- Metrics before: 1 focused defense case
+- Metrics after: 6 focused defense cases
+- Visual result: Not applicable; deterministic ECS EditMode behavior
+- Residual risk: warmed 32-tower/740-candidate allocation evidence remains `APH-206`; production snapshot removal remains `APH-207`/`APH-208`
+- Next ready task: `APH-206`
 
 ## Decision Log
 

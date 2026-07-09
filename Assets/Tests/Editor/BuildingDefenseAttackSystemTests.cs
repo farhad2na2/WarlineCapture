@@ -16,7 +16,17 @@ public sealed class BuildingDefenseAttackSystemTests
         try
         {
             var tests = new BuildingDefenseAttackSystemTests();
+            tests.GuardTowerDefense_IgnoresNeutralTargetsAndFiresAtHostileTarget();
+            passed++;
             tests.GuardTowerDefense_IgnoresAircraftAndFiresAtGroundTarget();
+            passed++;
+            tests.GuardTowerDefense_SelectsNearestHostileRegardlessOfCreationOrder();
+            passed++;
+            tests.GuardTowerDefense_FourConcurrentSlotsAttackFourNearestHostilesInOrder();
+            passed++;
+            tests.GuardTowerDefense_IgnoresDestroyedTargetAndFiresAtLiveHostile();
+            passed++;
+            tests.GuardTowerDefense_RemovedTargetBetweenUpdatesClearsSlotAndReacquiresAfterInterval();
             passed++;
 
             Debug.Log($"[BuildingDefenseAttackSystemValidation] result=Passed tests={passed}");
@@ -31,27 +41,214 @@ public sealed class BuildingDefenseAttackSystemTests
     }
 
     [Test]
+    public void GuardTowerDefense_IgnoresNeutralTargetsAndFiresAtHostileTarget()
+    {
+        using World world = new("GuardTowerDefense_IgnoresNeutralTargetsAndFiresAtHostileTarget");
+        EntityManager em = world.EntityManager;
+
+        Entity tower = CreateGuardTower(
+            em,
+            new float3(0f, 0f, 0f),
+            FactionIdentity.PlayerFactionId,
+            maxConcurrentAttacks: 1);
+        Entity neutralTarget = CreateTarget(
+            em,
+            new float3(2f, 0f, 0f),
+            health: 100,
+            factionId: FactionIdentity.NeutralFactionId);
+        Entity hostileTarget = CreateTarget(
+            em,
+            new float3(6f, 0f, 0f),
+            health: 100,
+            factionId: FactionIdentity.EnemyFactionId);
+
+        SystemHandle attackSystem = world.CreateSystem<BuildingDefenseAttackSystem>();
+        Update(world, attackSystem, elapsedTime: 0.1d, deltaTime: 0.1f);
+
+        Assert.AreEqual(100, GetHealth(em, neutralTarget), "Neutral targets must remain ineligible even when they are closest.");
+        Assert.AreEqual(90, GetHealth(em, hostileTarget), "The nearest eligible hostile should still be attacked.");
+        Assert.AreEqual(hostileTarget, em.GetBuffer<BuildingDefenseAttackSlot>(tower)[0].Target);
+        Assert.IsFalse(em.HasComponent<RecentAttacker>(neutralTarget));
+        Assert.AreEqual(tower, em.GetComponentData<RecentAttacker>(hostileTarget).Attacker);
+    }
+
+    [Test]
     public void GuardTowerDefense_IgnoresAircraftAndFiresAtGroundTarget()
     {
         using World world = new("GuardTowerDefense_IgnoresAircraftAndFiresAtGroundTarget");
         EntityManager em = world.EntityManager;
 
-        Entity tower = CreateGuardTower(em, new float3(0f, 0f, 0f));
-        Entity airTarget = CreateTarget(em, new float3(2f, 12f, 0f), health: 100, air: true);
-        Entity groundTarget = CreateTarget(em, new float3(10f, 0f, 0f), health: 100, air: false);
+        Entity tower = CreateGuardTower(
+            em,
+            new float3(0f, 0f, 0f),
+            FactionIdentity.EnemyFactionId,
+            maxConcurrentAttacks: 1);
+        Entity airTarget = CreateTarget(
+            em,
+            new float3(2f, 12f, 0f),
+            health: 100,
+            factionId: FactionIdentity.PlayerFactionId,
+            air: true);
+        Entity groundTarget = CreateTarget(
+            em,
+            new float3(10f, 0f, 0f),
+            health: 100,
+            factionId: FactionIdentity.PlayerFactionId);
 
         SystemHandle attackSystem = world.CreateSystem<BuildingDefenseAttackSystem>();
-        world.SetTime(new TimeData(0.1d, 0.1f));
-        attackSystem.Update(world.Unmanaged);
+        Update(world, attackSystem, elapsedTime: 0.1d, deltaTime: 0.1f);
 
-        Assert.AreEqual(100, em.GetComponentData<UnitHealth>(airTarget).Current, "Guard towers must not use ground-defense fire against aircraft.");
-        Assert.AreEqual(90, em.GetComponentData<UnitHealth>(groundTarget).Current, "Guard towers should still attack in-range ground units.");
+        Assert.AreEqual(100, GetHealth(em, airTarget), "Guard towers must not use ground-defense fire against aircraft.");
+        Assert.AreEqual(90, GetHealth(em, groundTarget), "Guard towers should still attack in-range ground units.");
         Assert.IsTrue(em.HasComponent<RecentAttacker>(groundTarget));
         Assert.AreEqual(tower, em.GetComponentData<RecentAttacker>(groundTarget).Attacker);
         Assert.IsFalse(em.HasComponent<RecentAttacker>(airTarget));
     }
 
-    private static Entity CreateGuardTower(EntityManager em, float3 position)
+    [Test]
+    public void GuardTowerDefense_SelectsNearestHostileRegardlessOfCreationOrder()
+    {
+        using World world = new("GuardTowerDefense_SelectsNearestHostileRegardlessOfCreationOrder");
+        EntityManager em = world.EntityManager;
+
+        Entity tower = CreateGuardTower(
+            em,
+            new float3(0f, 0f, 0f),
+            FactionIdentity.EnemyFactionId,
+            maxConcurrentAttacks: 1);
+        Entity farTarget = CreateTarget(em, new float3(9f, 0f, 0f), 100, FactionIdentity.PlayerFactionId);
+        Entity nearestTarget = CreateTarget(em, new float3(2f, 0f, 0f), 100, FactionIdentity.PlayerFactionId);
+        Entity middleTarget = CreateTarget(em, new float3(5f, 0f, 0f), 100, FactionIdentity.PlayerFactionId);
+
+        SystemHandle attackSystem = world.CreateSystem<BuildingDefenseAttackSystem>();
+        Update(world, attackSystem, elapsedTime: 0.1d, deltaTime: 0.1f);
+
+        Assert.AreEqual(100, GetHealth(em, farTarget));
+        Assert.AreEqual(90, GetHealth(em, nearestTarget));
+        Assert.AreEqual(100, GetHealth(em, middleTarget));
+        Assert.AreEqual(nearestTarget, em.GetBuffer<BuildingDefenseAttackSlot>(tower)[0].Target);
+    }
+
+    [Test]
+    public void GuardTowerDefense_FourConcurrentSlotsAttackFourNearestHostilesInOrder()
+    {
+        using World world = new("GuardTowerDefense_FourConcurrentSlotsAttackFourNearestHostilesInOrder");
+        EntityManager em = world.EntityManager;
+
+        Entity tower = CreateGuardTower(
+            em,
+            new float3(0f, 0f, 0f),
+            FactionIdentity.EnemyFactionId,
+            maxConcurrentAttacks: 4);
+        Entity fifthTarget = CreateTarget(em, new float3(10f, 0f, 0f), 100, FactionIdentity.PlayerFactionId);
+        Entity secondTarget = CreateTarget(em, new float3(4f, 0f, 0f), 100, FactionIdentity.PlayerFactionId);
+        Entity fourthTarget = CreateTarget(em, new float3(8f, 0f, 0f), 100, FactionIdentity.PlayerFactionId);
+        Entity firstTarget = CreateTarget(em, new float3(2f, 0f, 0f), 100, FactionIdentity.PlayerFactionId);
+        Entity thirdTarget = CreateTarget(em, new float3(6f, 0f, 0f), 100, FactionIdentity.PlayerFactionId);
+
+        SystemHandle attackSystem = world.CreateSystem<BuildingDefenseAttackSystem>();
+        Update(world, attackSystem, elapsedTime: 0.1d, deltaTime: 0.1f);
+
+        DynamicBuffer<BuildingDefenseAttackSlot> slots = em.GetBuffer<BuildingDefenseAttackSlot>(tower);
+        Assert.AreEqual(4, slots.Length);
+        Assert.AreEqual(firstTarget, slots[0].Target);
+        Assert.AreEqual(secondTarget, slots[1].Target);
+        Assert.AreEqual(thirdTarget, slots[2].Target);
+        Assert.AreEqual(fourthTarget, slots[3].Target);
+
+        Assert.AreEqual(90, GetHealth(em, firstTarget));
+        Assert.AreEqual(90, GetHealth(em, secondTarget));
+        Assert.AreEqual(90, GetHealth(em, thirdTarget));
+        Assert.AreEqual(90, GetHealth(em, fourthTarget));
+        Assert.AreEqual(100, GetHealth(em, fifthTarget), "Targets beyond the four-slot cap must not be attacked.");
+
+        for (int i = 0; i < slots.Length; i++)
+        {
+            Assert.AreEqual(1, slots[i].ShotCounter);
+            Assert.AreEqual(0.3f, slots[i].CooldownRemaining, 0.0001f);
+        }
+    }
+
+    [Test]
+    public void GuardTowerDefense_IgnoresDestroyedTargetAndFiresAtLiveHostile()
+    {
+        using World world = new("GuardTowerDefense_IgnoresDestroyedTargetAndFiresAtLiveHostile");
+        EntityManager em = world.EntityManager;
+
+        Entity tower = CreateGuardTower(
+            em,
+            new float3(0f, 0f, 0f),
+            FactionIdentity.EnemyFactionId,
+            maxConcurrentAttacks: 1);
+        Entity destroyedTarget = CreateTarget(em, new float3(2f, 0f, 0f), 0, FactionIdentity.PlayerFactionId);
+        Entity liveTarget = CreateTarget(em, new float3(5f, 0f, 0f), 100, FactionIdentity.PlayerFactionId);
+
+        SystemHandle attackSystem = world.CreateSystem<BuildingDefenseAttackSystem>();
+        Update(world, attackSystem, elapsedTime: 0.1d, deltaTime: 0.1f);
+
+        Assert.AreEqual(0, GetHealth(em, destroyedTarget));
+        Assert.AreEqual(90, GetHealth(em, liveTarget));
+        Assert.AreEqual(liveTarget, em.GetBuffer<BuildingDefenseAttackSlot>(tower)[0].Target);
+        Assert.IsFalse(em.HasComponent<RecentAttacker>(destroyedTarget));
+    }
+
+    [Test]
+    public void GuardTowerDefense_RemovedTargetBetweenUpdatesClearsSlotAndReacquiresAfterInterval()
+    {
+        using World world = new("GuardTowerDefense_RemovedTargetBetweenUpdatesClearsSlotAndReacquiresAfterInterval");
+        EntityManager em = world.EntityManager;
+
+        Entity tower = CreateGuardTower(
+            em,
+            new float3(0f, 0f, 0f),
+            FactionIdentity.EnemyFactionId,
+            maxConcurrentAttacks: 1);
+        Entity removedTarget = CreateTarget(em, new float3(2f, 0f, 0f), 100, FactionIdentity.PlayerFactionId);
+        Entity fallbackTarget = CreateTarget(em, new float3(5f, 0f, 0f), 100, FactionIdentity.PlayerFactionId);
+
+        SystemHandle attackSystem = world.CreateSystem<BuildingDefenseAttackSystem>();
+        Update(world, attackSystem, elapsedTime: 1d, deltaTime: 0.1f);
+
+        BuildingDefenseAttackSlot initialSlot = em.GetBuffer<BuildingDefenseAttackSlot>(tower)[0];
+        Assert.AreEqual(removedTarget, initialSlot.Target);
+        Assert.AreEqual(90, GetHealth(em, removedTarget));
+        Assert.AreEqual(100, GetHealth(em, fallbackTarget));
+
+        em.DestroyEntity(removedTarget);
+        Update(world, attackSystem, elapsedTime: 1.05d, deltaTime: 0.05f);
+
+        BuildingDefenseAttackSlot clearedSlot = em.GetBuffer<BuildingDefenseAttackSlot>(tower)[0];
+        Assert.AreEqual(Entity.Null, clearedSlot.Target, "A removed target must be cleared before the next acquisition pass.");
+        Assert.AreEqual(1, clearedSlot.ShotCounter);
+        Assert.AreEqual(0.25f, clearedSlot.CooldownRemaining, 0.0001f, "Clearing a stale target must preserve cooldown progress.");
+        Assert.AreEqual(100, GetHealth(em, fallbackTarget), "The system must not reacquire before the 0.12-second interval.");
+
+        Update(world, attackSystem, elapsedTime: 1.13d, deltaTime: 0.08f);
+
+        BuildingDefenseAttackSlot reacquiredSlot = em.GetBuffer<BuildingDefenseAttackSlot>(tower)[0];
+        Assert.AreEqual(fallbackTarget, reacquiredSlot.Target);
+        Assert.AreEqual(1, reacquiredSlot.ShotCounter);
+        Assert.AreEqual(0.17f, reacquiredSlot.CooldownRemaining, 0.0001f);
+        Assert.AreEqual(100, GetHealth(em, fallbackTarget), "Reacquisition must not bypass the slot cooldown.");
+    }
+
+    private static void Update(World world, SystemHandle attackSystem, double elapsedTime, float deltaTime)
+    {
+        world.SetTime(new TimeData(elapsedTime, deltaTime));
+        attackSystem.Update(world.Unmanaged);
+        world.EntityManager.CompleteAllTrackedJobs();
+    }
+
+    private static int GetHealth(EntityManager em, Entity target)
+    {
+        return em.GetComponentData<UnitHealth>(target).Current;
+    }
+
+    private static Entity CreateGuardTower(
+        EntityManager em,
+        float3 position,
+        byte factionId,
+        byte maxConcurrentAttacks)
     {
         Entity entity = em.CreateEntity(
             typeof(RuntimeBuildingCombatTag),
@@ -66,19 +263,24 @@ public sealed class BuildingDefenseAttackSystemTests
             Range = 100f,
             CooldownSeconds = 0.3f,
             Damage = 10,
-            MaxConcurrentAttacks = 1,
+            MaxConcurrentAttacks = maxConcurrentAttacks,
             TraceVisibleSeconds = 0.1f,
             TracerEveryNthShot = 1
         });
         em.SetComponentData(entity, new UnitHealth { Current = 700, Max = 700 });
-        em.SetComponentData(entity, new Faction { Id = FactionIdentity.EnemyFactionId });
+        em.SetComponentData(entity, new Faction { Id = factionId });
         em.SetComponentData(entity, LocalTransform.FromPosition(position));
         em.SetComponentData(entity, new UnitAttackTraceComponent());
         em.AddBuffer<BuildingDefenseAttackSlot>(entity);
         return entity;
     }
 
-    private static Entity CreateTarget(EntityManager em, float3 position, int health, bool air)
+    private static Entity CreateTarget(
+        EntityManager em,
+        float3 position,
+        int health,
+        byte factionId,
+        bool air = false)
     {
         Entity entity = em.CreateEntity(
             typeof(UnitHealth),
@@ -86,7 +288,7 @@ public sealed class BuildingDefenseAttackSystemTests
             typeof(LocalTransform));
 
         em.SetComponentData(entity, new UnitHealth { Current = health, Max = health });
-        em.SetComponentData(entity, new Faction { Id = FactionIdentity.PlayerFactionId });
+        em.SetComponentData(entity, new Faction { Id = factionId });
         em.SetComponentData(entity, LocalTransform.FromPosition(position));
         if (air)
             em.AddComponentData(entity, new UnitAirMovement { CruiseHeight = math.max(1f, position.y), RunwayTaxiSpeed = 5f });

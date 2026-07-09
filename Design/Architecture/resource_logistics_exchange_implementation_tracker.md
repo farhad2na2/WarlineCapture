@@ -1,7 +1,7 @@
 # Resource Logistics Exchange Implementation Tracker
 
 Date: 2026-07-09
-Status: Phase 8 AI exchange opt-in gate complete; data-driven AI planner guardrail next
+Status: Phase 8 complete; validation and performance next
 Design source: `../Resource_Logistics_Exchange_Design.md`
 
 ## Objective
@@ -23,7 +23,7 @@ Implement the timed Resource Logistics Exchange without drifting from WarlineCap
 
 ## Progress Summary
 
-Overall implementation progress: 88% (83/94 checklist items complete).
+Overall implementation progress: 89% (84/94 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -37,7 +37,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 5. UI popup and header routing | Complete | 15 | 15 | 100% | ECS-backed UI read-model, target-lock reference, separated layer pack, Canvas popup prefab, serialized view refs, cards, details, amount stepper, queue panel, enabled-gated resource header tap route, popup input restoration, live read-model binding, request-buffer wiring, TMP/Oxanium validation, prefab contract tests, and 16:9/20:9 captures complete. |
 | 6. World presentation | Complete | 8 | 8 | 100% | Presentation anchors, deterministic fallback resolution, data-only ECS visual cue emission, managed presentation boundary, pooled actor reuse, actor safety, fallback behavior, cleanup wiring, and focused validation are complete. |
 | 7. Audio, VFX, feedback, ARIA | Complete | 7 | 7 | 100% | Resource Exchange audio ids, placeholder clips, data-only delta flyout requests, typed toast requests, optional ARIA strings, non-authoritative VFX marker data, and direct-audio wiring guardrails are complete. |
-| 8. AI, balance, telemetry | In progress | 5 | 6 | 83% | Economy event coverage, Resource Exchange balance report fields, data sanity tests, scenario gates, and AI opt-in gating are complete; AI planner guardrails remain. |
+| 8. AI, balance, telemetry | Complete | 6 | 6 | 100% | Economy event coverage, Resource Exchange balance report fields, data sanity tests, scenario gates, AI opt-in gating, and AI planner guardrails are complete. |
 | 9. Validation and performance | Not started | 0 | 10 | 0% | Focused tests, compile, architecture guardrails, UI captures, GC/performance checks. |
 
 ## Phase 0: Inventory And Source Alignment
@@ -267,7 +267,7 @@ Exit criteria:
 - [x] Add data sanity tests for rates, fees, duration, and farming-risk caps.
 - [x] Gate exchange recipes by chapter/mission/skirmish preset so early FTUE is not overloaded.
 - [x] Add AI exchange support only if a scenario explicitly enables AI exchange behavior.
-- [ ] If AI exchange is enabled, ensure it is data-driven and does not add managed per-frame planner scans.
+- [x] If AI exchange is enabled, ensure it is data-driven and does not add managed per-frame planner scans.
 
 Exit criteria:
 
@@ -1242,3 +1242,32 @@ Validation:
 Remaining blocker or next slice:
 
 - Next Phase 8 slice should ensure that, if AI exchange is enabled later, it remains data-driven and does not add managed per-frame planner scans.
+
+### 2026-07-09 - Phase 8F Data-Driven AI Planner Guardrail
+
+Files changed:
+
+- `Assets/Tests/Editor/ResourceExchangeAiPlannerGuardrailTests.cs`
+- `Assets/Tests/Editor/ResourceExchangeAiPlannerGuardrailTests.cs.meta`
+- `Design/Resource_Logistics_Exchange_Design.md`
+- `Design/Architecture/resource_logistics_exchange_implementation_tracker.md`
+
+Behavior changed:
+
+- Added `ResourceExchangeAiPlannerGuardrailTests` with a Unity focused validation entry point.
+- Locked the AI exchange gate as a data-only ECS contract by compiling against `ResourceExchangeEnabledComponent.AllowAiExchange` and `ResourceExchangeSummaryComponent.AllowAiExchange`.
+- Added guardrails for future production Resource Exchange AI planner scripts: planner files must avoid `SystemBase`, `MonoBehaviour`, Unity object references/lookups, broad scene searches, LINQ planner chains, and per-frame entity/component snapshot APIs such as `ToComponentDataArray` and `ToEntityArray`.
+- Added a queue-request guardrail: any future Resource Exchange AI planner script that calls `EnqueueStartRequest` must also read `AllowAiExchange`.
+- Updated the design document to specify optional `ResourceExchangeAiPlannerSystem` as an `ISystem` only, data-driven from ECS buffers, and forbidden from managed per-frame planner scans.
+- No AI planner, broad scene search, managed polling, or autonomous AI exchange request behavior was added in this slice.
+
+Validation:
+
+- `git diff --check` passed before this tracker update.
+- `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 10 warnings and 0 errors.
+- `Tools/CI/invoke_unity_macos.sh --project /private/tmp/wlc-resource-exchange-next --log /private/tmp/wlc-resource-exchange-ai-planner-guardrail-validation.log --timeout 420 -- -quit -executeMethod ResourceExchangeAiPlannerGuardrailTests.RunFocusedValidation`
+- Unity focused result: `[ResourceExchangeAiPlannerGuardrail] result=Passed tests=3`
+
+Remaining blocker or next slice:
+
+- Phase 8 is complete. Next slice should begin Phase 9 validation and performance, starting with `git diff --check` and repository compile validation.

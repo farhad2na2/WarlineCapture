@@ -89,6 +89,7 @@ Resource Exchange is an authored scenario feature, not a default FTUE mechanic.
 - Enabled gates must set a positive queue cap. Disabled gates may use a queue cap of `0` but must carry a typed disabled reason.
 - AI exchange is separately opt-in through the scenario gate. `allowAiExchange` defaults to false, must never be true on a disabled gate, and should be enabled only for authored scenarios where AI logistics behavior is part of the mission or preset balance.
 - AI-controlled factions must not infer exchange permission from `AIControlledTag` or `FactionControlEntry` alone. Any future AI exchange planner must read the Resource Exchange runtime gate and remain data-driven.
+- Future AI exchange planner code must be ECS/data-driven. It should consume `ResourceExchangeEnabledComponent`, `ResourceExchangeSummaryComponent`, wallet, recipe, queue, and faction-control data, then append typed exchange requests. It must not use `SystemBase`, `MonoBehaviour`, broad scene searches, LINQ planner scans, `ToComponentDataArray`/`ToEntityArray` snapshots, or Unity object lookups in a per-frame planning loop.
 
 ## Resource Exchange Matrix
 
@@ -297,6 +298,7 @@ Prefer unmanaged `ISystem` and Burst-compatible data paths:
 | `ResourceExchangeRushSystem` | Spend Rush Tickets and reduce time. | `ISystem`. |
 | `ResourceExchangeReadModelSystem` | Publish versioned UI read model. | `ISystem` when possible. |
 | `ResourceExchangeVisualCueSystem` | Emit presentation cue requests. | `ISystem` for request data only. |
+| `ResourceExchangeAiPlannerSystem` | Optional AI exchange request planner for authored scenarios. | `ISystem`; must read `AllowAiExchange` and data buffers before appending requests. |
 | `ResourceExchangeVisualPresentationSystemHelper` | Pooled plane/truck visual playback. | Managed helper/presentation boundary only. |
 
 Use `SystemBase` only if a system must hold or query managed Unity references and cannot be split into an ECS data producer plus managed presentation helper. If `SystemBase` is used, document why in the implementation tracker.

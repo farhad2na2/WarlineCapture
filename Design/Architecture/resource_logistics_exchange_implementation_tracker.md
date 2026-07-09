@@ -1,7 +1,7 @@
 # Resource Logistics Exchange Implementation Tracker
 
 Date: 2026-07-09
-Status: Phase 7 audio event ids and placeholder clips complete; feedback, VFX, and ARIA pending
+Status: Phase 7 audio and resource delta flyout data complete; toasts, VFX, and ARIA pending
 Design source: `../Resource_Logistics_Exchange_Design.md`
 
 ## Objective
@@ -23,7 +23,7 @@ Implement the timed Resource Logistics Exchange without drifting from WarlineCap
 
 ## Progress Summary
 
-Overall implementation progress: 78% (73/94 checklist items complete).
+Overall implementation progress: 79% (74/94 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -36,7 +36,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 4. Rush Tickets | Complete | 7 | 7 | 100% | Rush eligible jobs with ticket spend, per-item caps, rush-all budget, and feedback. |
 | 5. UI popup and header routing | Complete | 15 | 15 | 100% | ECS-backed UI read-model, target-lock reference, separated layer pack, Canvas popup prefab, serialized view refs, cards, details, amount stepper, queue panel, enabled-gated resource header tap route, popup input restoration, live read-model binding, request-buffer wiring, TMP/Oxanium validation, prefab contract tests, and 16:9/20:9 captures complete. |
 | 6. World presentation | Complete | 8 | 8 | 100% | Presentation anchors, deterministic fallback resolution, data-only ECS visual cue emission, managed presentation boundary, pooled actor reuse, actor safety, fallback behavior, cleanup wiring, and focused validation are complete. |
-| 7. Audio, VFX, feedback, ARIA | In progress | 2 | 7 | 29% | Resource Exchange audio ids and placeholder clips are config-driven; resource flyouts, toasts, VFX markers, and ARIA copy remain. |
+| 7. Audio, VFX, feedback, ARIA | In progress | 3 | 7 | 43% | Resource Exchange audio ids, placeholder clips, and data-only delta flyout requests are complete; toasts, VFX markers, and ARIA copy remain. |
 | 8. AI, balance, telemetry | Not started | 0 | 6 | 0% | Economy events, balancing reports, AI awareness if enabled for AI factions. |
 | 9. Validation and performance | Not started | 0 | 10 | 0% | Focused tests, compile, architecture guardrails, UI captures, GC/performance checks. |
 
@@ -248,7 +248,7 @@ Phase 6 implementation notes:
 
 - [x] Add config-driven audio event ids for accepted, rejected, queue started, rushed, completed, and cancelled exchange events.
 - [x] Generate or assign placeholder audio clips through the audio config workflow.
-- [ ] Add resource delta flyouts for spend, reserve, output grant, refund, and rush spend.
+- [x] Add resource delta flyouts for spend, reserve, output grant, refund, and rush spend.
 - [ ] Add completion toast and rejection toast with typed reason text.
 - [ ] Add optional ARIA strings for insufficient resources, exchange started, exchange complete, and exchange blocked.
 - [ ] Pair world presentation cues with non-authoritative VFX markers.
@@ -915,3 +915,39 @@ Remaining blocker or next slice:
 
 - Re-run Unity focused validations when licensing is healthy: `AudioRuntimeConfigAssetBuilderTests.RunFocusedValidation`, `AudioConfigContractTests.RunFocusedValidation`, and `ResourceExchangeAudioConfigTests.RunFocusedValidation`.
 - Next Phase 7 slice should add resource delta flyouts for spend, reserve, output grant, refund, and rush spend.
+
+### 2026-07-09 - Phase 7B Resource Delta Flyout Data
+
+Files changed:
+
+- `Assets/Game/Scripts/Components/ResourceExchangeComponents.cs`
+- `Assets/Game/Scripts/Systems/ResourceExchangeRequestValidationSystem.cs`
+- `Assets/Game/Scripts/Systems/ResourceExchangeQueueTickSystem.cs`
+- `Assets/Tests/Editor/ResourceExchangeDeltaFlyoutSystemTests.cs`
+- `Assets/Tests/Editor/ResourceExchangeDeltaFlyoutSystemTests.cs.meta`
+- `Design/Architecture/resource_logistics_exchange_implementation_tracker.md`
+
+Behavior changed:
+
+- Added `ResourceExchangeDeltaFlyoutKind` and `ResourceExchangeDeltaFlyoutComponent` as data-only ECS presentation requests for Resource Exchange resource deltas.
+- Kept the new buffer optional in runtime systems. Existing exchange entities without `ResourceExchangeDeltaFlyoutComponent` still process requests, queue ticking, cancel, rush, and completion normally.
+- Start requests emit an `InputReserved` flyout with a negative input amount when resources are spent/reserved into a queue item.
+- Queue completion emits an `OutputGranted` flyout with a positive output amount when the output is actually applied.
+- Cancel and mission-end refund paths emit `InputRefunded` flyouts only when reserved input is actually returned.
+- Rush and rush-all paths emit `RushTicketsSpent` flyouts with negative Rush Ticket amounts. If rushing completes a job immediately, the same path also emits the `OutputGranted` completion flyout.
+- Added focused editor coverage for input reserve/spend, output grant, refund, rush spend, and rush-immediate-completion flyout sequencing.
+
+Validation:
+
+- `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 11 warnings and 0 errors.
+- `dotnet build Game.Components.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 6 warnings and 0 errors.
+- `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 6 warnings and 0 errors.
+- `git diff --check` passed before this tracker update.
+- Attempted Unity focused validation with the documented macOS licensing workaround: `Tools/CI/invoke_unity_macos.sh --project /private/tmp/wlc-resource-exchange-next --log /private/tmp/wlc-resource-exchange-delta-flyout-validation.log --timeout 420 -- -quit -executeMethod ResourceExchangeDeltaFlyoutSystemTests.RunFocusedValidation`.
+- Unity validation was blocked by licensing after the wrapper was already used: the log timed out waiting for `LicenseClient-farhad`, then reported `Licensing initialization failed after 74.83s`. The stuck temp-worktree Unity PID was terminated.
+- Known unrelated worktree side effect left unstaged: `Assets/Settings/UniversalRenderPipelineGlobalSettings.asset`.
+
+Remaining blocker or next slice:
+
+- Re-run Unity focused validation when licensing is healthy: `ResourceExchangeDeltaFlyoutSystemTests.RunFocusedValidation`.
+- Next Phase 7 slice should add completion and rejection toast data with typed reason text.

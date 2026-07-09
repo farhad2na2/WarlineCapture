@@ -103,6 +103,15 @@ namespace Game.Components
         FallbackSafe = 4
     }
 
+    public enum ResourceExchangeDeltaFlyoutKind : byte
+    {
+        None = 0,
+        InputReserved = 1,
+        OutputGranted = 2,
+        InputRefunded = 3,
+        RushTicketsSpent = 4
+    }
+
     public struct ResourceExchangeEnabledComponent : IComponentData
     {
         public byte Enabled;
@@ -234,6 +243,18 @@ namespace Game.Components
     {
         public int QueueItemId;
         public byte FactionId;
+        public ResourceExchangeResultKind ResultKind;
+        public ResourceExchangeResourceKind ResourceKind;
+        public int Amount;
+        public FixedString128Bytes RecipeId;
+    }
+
+    public struct ResourceExchangeDeltaFlyoutComponent : IBufferElementData
+    {
+        public int SequenceId;
+        public int QueueItemId;
+        public byte FactionId;
+        public ResourceExchangeDeltaFlyoutKind FlyoutKind;
         public ResourceExchangeResultKind ResultKind;
         public ResourceExchangeResourceKind ResourceKind;
         public int Amount;

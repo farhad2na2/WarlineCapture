@@ -1,4 +1,5 @@
 using Game.Components;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 
@@ -15,15 +16,22 @@ namespace Game.Runtime
                          summary,
                          queue,
                          results,
-                         economyEvents)
+                         economyEvents,
+                         exchangeEntity)
                      in SystemAPI.Query<
                          RefRO<ResourceExchangeEnabledComponent>,
                          RefRW<ResourceExchangeWalletComponent>,
                          RefRW<ResourceExchangeSummaryComponent>,
                          DynamicBuffer<ResourceExchangeQueueComponent>,
                          DynamicBuffer<ResourceExchangeResultComponent>,
-                         DynamicBuffer<ResourceExchangeEconomyEventComponent>>())
+                         DynamicBuffer<ResourceExchangeEconomyEventComponent>>()
+                         .WithEntityAccess())
             {
+                bool hasDeltaFlyouts =
+                    state.EntityManager.HasBuffer<ResourceExchangeDeltaFlyoutComponent>(exchangeEntity);
+                DynamicBuffer<ResourceExchangeDeltaFlyoutComponent> deltaFlyouts = hasDeltaFlyouts
+                    ? state.EntityManager.GetBuffer<ResourceExchangeDeltaFlyoutComponent>(exchangeEntity)
+                    : default;
                 TickQueue(
                     enabled.ValueRO,
                     ref wallet.ValueRW,
@@ -31,6 +39,8 @@ namespace Game.Runtime
                     queue,
                     results,
                     economyEvents,
+                    deltaFlyouts,
+                    hasDeltaFlyouts,
                     deltaSeconds);
             }
         }
@@ -42,6 +52,29 @@ namespace Game.Runtime
             DynamicBuffer<ResourceExchangeQueueComponent> queue,
             DynamicBuffer<ResourceExchangeResultComponent> results,
             DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
+            float deltaSeconds)
+        {
+            TickQueue(
+                enabled,
+                ref wallet,
+                ref summary,
+                queue,
+                results,
+                economyEvents,
+                default,
+                false,
+                deltaSeconds);
+        }
+
+        public static void TickQueue(
+            in ResourceExchangeEnabledComponent enabled,
+            ref ResourceExchangeWalletComponent wallet,
+            ref ResourceExchangeSummaryComponent summary,
+            DynamicBuffer<ResourceExchangeQueueComponent> queue,
+            DynamicBuffer<ResourceExchangeResultComponent> results,
+            DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
+            DynamicBuffer<ResourceExchangeDeltaFlyoutComponent> deltaFlyouts,
+            bool emitDeltaFlyouts,
             float deltaSeconds)
         {
             if (queue.Length == 0)
@@ -69,7 +102,15 @@ namespace Game.Runtime
 
                 if (item.State == ResourceExchangeQueueState.Completing)
                 {
-                    CompleteQueueItem(ref wallet, item, ref stateChanged, results, economyEvents, out item);
+                    CompleteQueueItem(
+                        ref wallet,
+                        item,
+                        ref stateChanged,
+                        results,
+                        economyEvents,
+                        deltaFlyouts,
+                        emitDeltaFlyouts,
+                        out item);
                     queue[i] = item;
                     continue;
                 }
@@ -94,7 +135,17 @@ namespace Game.Runtime
 
                 item.RemainingSeconds = math.max(0f, item.RemainingSeconds - safeDeltaSeconds);
                 if (item.RemainingSeconds <= 0f)
-                    CompleteQueueItem(ref wallet, item, ref stateChanged, results, economyEvents, out item);
+                {
+                    CompleteQueueItem(
+                        ref wallet,
+                        item,
+                        ref stateChanged,
+                        results,
+                        economyEvents,
+                        deltaFlyouts,
+                        emitDeltaFlyouts,
+                        out item);
+                }
 
                 queue[i] = item;
             }
@@ -110,8 +161,35 @@ namespace Game.Runtime
             DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
             out ResourceExchangeQueueComponent completed)
         {
+            return TryCompleteQueueItem(
+                ref wallet,
+                source,
+                results,
+                economyEvents,
+                default,
+                false,
+                out completed);
+        }
+
+        public static bool TryCompleteQueueItem(
+            ref ResourceExchangeWalletComponent wallet,
+            in ResourceExchangeQueueComponent source,
+            DynamicBuffer<ResourceExchangeResultComponent> results,
+            DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
+            DynamicBuffer<ResourceExchangeDeltaFlyoutComponent> deltaFlyouts,
+            bool emitDeltaFlyouts,
+            out ResourceExchangeQueueComponent completed)
+        {
             bool stateChanged = false;
-            CompleteQueueItem(ref wallet, source, ref stateChanged, results, economyEvents, out completed);
+            CompleteQueueItem(
+                ref wallet,
+                source,
+                ref stateChanged,
+                results,
+                economyEvents,
+                deltaFlyouts,
+                emitDeltaFlyouts,
+                out completed);
             return completed.State == ResourceExchangeQueueState.Completed;
         }
 
@@ -121,6 +199,8 @@ namespace Game.Runtime
             ref bool stateChanged,
             DynamicBuffer<ResourceExchangeResultComponent> results,
             DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
+            DynamicBuffer<ResourceExchangeDeltaFlyoutComponent> deltaFlyouts,
+            bool emitDeltaFlyouts,
             out ResourceExchangeQueueComponent completed)
         {
             completed = source;
@@ -153,7 +233,44 @@ namespace Game.Runtime
                 Amount = completed.OutputAmount,
                 RecipeId = completed.RecipeId
             });
+            EmitDeltaFlyout(
+                deltaFlyouts,
+                emitDeltaFlyouts,
+                completed.QueueItemId,
+                completed.FactionId,
+                ResourceExchangeDeltaFlyoutKind.OutputGranted,
+                ResourceExchangeResultKind.QueueCompleted,
+                completed.OutputResource,
+                completed.OutputAmount,
+                completed.RecipeId);
             results.Add(CreateResult(completed, ResourceExchangeResultKind.QueueCompleted, 1, ResourceExchangeReason.None));
+        }
+
+        private static void EmitDeltaFlyout(
+            DynamicBuffer<ResourceExchangeDeltaFlyoutComponent> deltaFlyouts,
+            bool emitDeltaFlyouts,
+            int queueItemId,
+            byte factionId,
+            ResourceExchangeDeltaFlyoutKind flyoutKind,
+            ResourceExchangeResultKind resultKind,
+            ResourceExchangeResourceKind resourceKind,
+            int amount,
+            FixedString128Bytes recipeId)
+        {
+            if (!emitDeltaFlyouts || amount == 0)
+                return;
+
+            deltaFlyouts.Add(new ResourceExchangeDeltaFlyoutComponent
+            {
+                SequenceId = deltaFlyouts.Length + 1,
+                QueueItemId = queueItemId,
+                FactionId = factionId,
+                FlyoutKind = flyoutKind,
+                ResultKind = resultKind,
+                ResourceKind = resourceKind,
+                Amount = amount,
+                RecipeId = recipeId
+            });
         }
 
         private static ResourceExchangeResultComponent CreateResult(

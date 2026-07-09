@@ -639,8 +639,8 @@ MonoBehaviour:
     category: Building_OilPump
     buildingPrefab: {fileID: 7546298519455943663, guid: 0012eb42b25984abdbd97abd513b16de, type: 3}
     factionId: 1
-    worldCenter: {x: 872.4843, y: 3.5866163, z: 277.5072}
-    worldPosition: {x: 874.1, y: 0, z: 277.4999}
+    worldCenter: {x: 823.88434, y: 4.2866163, z: 282.80725}
+    worldPosition: {x: 825.5, y: 0.7, z: 282.79996}
     worldEulerAngles: {x: -0, y: 90, z: -0}
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 90
@@ -659,8 +659,8 @@ MonoBehaviour:
     category: Building_OilPump
     buildingPrefab: {fileID: 7546298519455943663, guid: 0012eb42b25984abdbd97abd513b16de, type: 3}
     factionId: 1
-    worldCenter: {x: 1042.1843, y: 3.5866163, z: 277.20718}
-    worldPosition: {x: 1043.8, y: 0, z: 277.19992}
+    worldCenter: {x: 1006.6844, y: 3.5866163, z: 292.40723}
+    worldPosition: {x: 1008.3, y: 0, z: 292.39993}
     worldEulerAngles: {x: -0, y: 90, z: -0}
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 90
@@ -669,8 +669,8 @@ MonoBehaviour:
     category: Building_OilPump
     buildingPrefab: {fileID: 7546298519455943663, guid: 0012eb42b25984abdbd97abd513b16de, type: 3}
     factionId: 1
-    worldCenter: {x: 953.08435, y: 4.1166162, z: 279.90726}
-    worldPosition: {x: 954.7, y: 0.53, z: 279.89996}
+    worldCenter: {x: 865.4843, y: 4.1166162, z: 285.2073}
+    worldPosition: {x: 867.1, y: 0.53, z: 285.2}
     worldEulerAngles: {x: -0, y: 90, z: -0}
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 90
@@ -1296,16 +1296,6 @@ MonoBehaviour:
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 90
     rotateVertical: 1
-  - sourcePath: Map/Buildings/Building_Refinery_Big/SM_Bld_GasTower_01 (2)
-    category: Building_Refinery_Big
-    buildingPrefab: {fileID: 7546298519455943663, guid: 3745b7c959c8348a68e93131b571bba7, type: 3}
-    factionId: 1
-    worldCenter: {x: 1131.8003, y: 4.096115, z: 311.3199}
-    worldPosition: {x: 1131.8003, y: -1.39, z: 311.31985}
-    worldEulerAngles: {x: -0, y: 180, z: -0}
-    worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
-    yawDegrees: 180
-    rotateVertical: 0
   - sourcePath: Map/Buildings/Building_Refinery_Big/SM_Bld_GasTower_Pipe_01 (1)
     category: Building_Refinery_Big
     buildingPrefab: {fileID: 7546298519455943663, guid: 3745b7c959c8348a68e93131b571bba7, type: 3}

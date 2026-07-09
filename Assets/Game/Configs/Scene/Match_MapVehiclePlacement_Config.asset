@@ -306,19 +306,19 @@ MonoBehaviour:
     vehiclePrefab: {fileID: 5616646512338707422, guid: c0213638ba0c6466fadcd5bbe8fe0149, type: 3}
     vehicleSourceKey: unit_veh_plane_transport
     factionId: 1
-    worldCenter: {x: 994.4, y: 0.25, z: 328.79996}
-    worldPosition: {x: 994.4, y: 0.25, z: 328.79996}
-    worldEulerAngles: {x: 1.2900031, y: 235, z: 0}
-    worldScale: {x: 1.0000008, y: 1, z: 1.0000007}
+    worldCenter: {x: 902, y: 0.25, z: 290.49994}
+    worldPosition: {x: 902, y: 0.25, z: 290.49994}
+    worldEulerAngles: {x: 1.2900031, y: 305, z: 0}
+    worldScale: {x: 1.0000002, y: 1, z: 1.0000001}
   - sourcePath: Map/Vehicles/MapVehicle_Plane_Transport/SM_Veh_TransportPlane_01
     category: Unit_Veh_Plane_Transport
     vehiclePrefab: {fileID: 5616646512338707422, guid: c0213638ba0c6466fadcd5bbe8fe0149, type: 3}
     vehicleSourceKey: unit_veh_plane_transport
     factionId: 2
-    worldCenter: {x: 1897.0001, y: 2.8500004, z: 239.09985}
-    worldPosition: {x: 1897.0001, y: 2.8500004, z: 239.09985}
-    worldEulerAngles: {x: 1.2900031, y: 235, z: 0}
-    worldScale: {x: 1.0000008, y: 1, z: 1.0000007}
+    worldCenter: {x: 1846.2001, y: 2.8500004, z: 203.99982}
+    worldPosition: {x: 1846.2001, y: 2.8500004, z: 203.99982}
+    worldEulerAngles: {x: 1.2900031, y: 305, z: 0}
+    worldScale: {x: 1.0000002, y: 1, z: 1.0000001}
   - sourcePath: Map/Vehicles/MapVehicle_Radar_Tank/SM_Veh_Radar_Tank_01
     category: Unit_Veh_Radar_Tank
     vehiclePrefab: {fileID: 8579631638336695248, guid: b7087e56a58614db08d7c66c8845747b, type: 3}
@@ -346,60 +346,6 @@ MonoBehaviour:
     worldPosition: {x: 949.38007, y: 0.005039215, z: 394.69995}
     worldEulerAngles: {x: -0, y: 88.4986, z: -0}
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-  - sourcePath: Map/Vehicles/MapVehicle_Truck_Tray/SM_Veh_Truck_01 (1)
-    category: Unit_Veh_Truck_Tray
-    vehiclePrefab: {fileID: 8579631638336695248, guid: 57f2dccc00faf49bca391aa1cc44d70a, type: 3}
-    vehicleSourceKey: unit_veh_truck_tray
-    factionId: 1
-    worldCenter: {x: 950.1165, y: 1.614971, z: 399.95023}
-    worldPosition: {x: 949.6501, y: -0.040000916, z: 399.93994}
-    worldEulerAngles: {x: -0, y: 89.16079, z: -0}
-    worldScale: {x: 1.0000004, y: 1, z: 1.0000004}
-  - sourcePath: Map/Vehicles/MapVehicle_Truck_Tray/SM_Veh_Truck_01 (3)
-    category: Unit_Veh_Truck_Tray
-    vehiclePrefab: {fileID: 8579631638336695248, guid: 57f2dccc00faf49bca391aa1cc44d70a, type: 3}
-    vehicleSourceKey: unit_veh_truck_tray
-    factionId: 0
-    worldCenter: {x: 1327.7194, y: 4.6001835, z: 506.27213}
-    worldPosition: {x: 1327.4756, y: 3.014845, z: 506.15894}
-    worldEulerAngles: {x: -0, y: 65.0921, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-  - sourcePath: Map/Vehicles/MapVehicle_Truck_Tray/SM_Veh_Truck_01 (2)
-    category: Unit_Veh_Truck_Tray
-    vehiclePrefab: {fileID: 8579631638336695248, guid: 57f2dccc00faf49bca391aa1cc44d70a, type: 3}
-    vehicleSourceKey: unit_veh_truck_tray
-    factionId: 0
-    worldCenter: {x: 1338.3646, y: 4.6401844, z: 509.7589}
-    worldPosition: {x: 1338.4856, y: 3.0548458, z: 509.51892}
-    worldEulerAngles: {x: 0, y: 333.26038, z: 0}
-    worldScale: {x: 0.99999994, y: 1, z: 0.99999994}
-  - sourcePath: Map/Vehicles/MapVehicle_Truck_Tray/SM_Veh_Truck_01
-    category: Unit_Veh_Truck_Tray
-    vehiclePrefab: {fileID: 8579631638336695248, guid: 57f2dccc00faf49bca391aa1cc44d70a, type: 3}
-    vehicleSourceKey: unit_veh_truck_tray
-    factionId: 0
-    worldCenter: {x: 1343.0009, y: 4.6401844, z: 538.3319}
-    worldPosition: {x: 1343.0354, y: 3.0548458, z: 538.589}
-    worldEulerAngles: {x: 0, y: 187.39552, z: 0}
-    worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
-  - sourcePath: Map/Vehicles/MapVehicle_Truck_Tray/SM_Veh_Truck_01 (1)
-    category: Unit_Veh_Truck_Tray
-    vehiclePrefab: {fileID: 8579631638336695248, guid: 57f2dccc00faf49bca391aa1cc44d70a, type: 3}
-    vehicleSourceKey: unit_veh_truck_tray
-    factionId: 0
-    worldCenter: {x: 1347.0559, y: 4.6401844, z: 538.6426}
-    worldPosition: {x: 1347.0254, y: 3.0548458, z: 538.8989}
-    worldEulerAngles: {x: -0, y: 173.46748, z: -0}
-    worldScale: {x: 1.0000008, y: 1, z: 1.0000008}
-  - sourcePath: Map/Vehicles/MapVehicle_Truck_Tray/SM_Veh_Truck_01 (4)
-    category: Unit_Veh_Truck_Tray
-    vehiclePrefab: {fileID: 8579631638336695248, guid: 57f2dccc00faf49bca391aa1cc44d70a, type: 3}
-    vehicleSourceKey: unit_veh_truck_tray
-    factionId: 2
-    worldCenter: {x: 1748.8914, y: 4.244478, z: 304.35693}
-    worldPosition: {x: 1749.3181, y: 2.5491962, z: 303.79926}
-    worldEulerAngles: {x: 0, y: 322.57468, z: 0}
-    worldScale: {x: 1.0000004, y: 1, z: 1.0000004}
   - sourcePath: Map/Vehicles/MapVehicle_Truck_Tray/SM_Veh_Truck_01 (2)
     category: Unit_Veh_Truck_Tray
     vehiclePrefab: {fileID: 8579631638336695248, guid: 57f2dccc00faf49bca391aa1cc44d70a, type: 3}
@@ -409,10 +355,19 @@ MonoBehaviour:
     worldPosition: {x: 1861.0161, y: 1.5582371, z: 306.9483}
     worldEulerAngles: {x: -0, y: 88.4986, z: -0}
     worldScale: {x: 1.0000005, y: 1, z: 1.0000005}
-  - sourcePath: Map/Vehicles/MapVehicle_Truck_Tray/SM_Veh_Truck_01 (3)
-    category: Unit_Veh_Truck_Tray
-    vehiclePrefab: {fileID: 8579631638336695248, guid: 57f2dccc00faf49bca391aa1cc44d70a, type: 3}
-    vehicleSourceKey: unit_veh_truck_tray
+  - sourcePath: Map/Vehicles/Unit_Veh_Truck_Tanker/SM_Veh_Truck_01 (1)
+    category: Unit_Veh_Truck_Tanker
+    vehiclePrefab: {fileID: 8579631638336695248, guid: e9015a8d3f0294ca6ac7bf8614ac2e7e, type: 3}
+    vehicleSourceKey: unit_veh_truck_tanker
+    factionId: 1
+    worldCenter: {x: 950.1165, y: 1.614971, z: 399.95023}
+    worldPosition: {x: 949.6501, y: -0.040000916, z: 399.93994}
+    worldEulerAngles: {x: -0, y: 89.16079, z: -0}
+    worldScale: {x: 1.0000004, y: 1, z: 1.0000004}
+  - sourcePath: Map/Vehicles/Unit_Veh_Truck_Tanker/SM_Veh_Truck_01 (3)
+    category: Unit_Veh_Truck_Tanker
+    vehiclePrefab: {fileID: 8579631638336695248, guid: e9015a8d3f0294ca6ac7bf8614ac2e7e, type: 3}
+    vehicleSourceKey: unit_veh_truck_tanker
     factionId: 2
     worldCenter: {x: 1861.7523, y: 3.1681688, z: 312.19852}
     worldPosition: {x: 1861.2859, y: 1.513197, z: 312.1883}

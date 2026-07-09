@@ -1,7 +1,7 @@
 # Resource Logistics Exchange Implementation Tracker
 
 Date: 2026-07-09
-Status: Phase 9 focused queue/rush/cancel/refund tests complete; HUD/header popup routing tests next
+Status: Phase 9 HUD/header popup routing tests complete; UI prefab/capture validation next
 Design source: `../Resource_Logistics_Exchange_Design.md`
 
 ## Objective
@@ -23,7 +23,7 @@ Implement the timed Resource Logistics Exchange without drifting from WarlineCap
 
 ## Progress Summary
 
-Overall implementation progress: 93% (88/94 checklist items complete).
+Overall implementation progress: 94% (89/94 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -38,7 +38,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 6. World presentation | Complete | 8 | 8 | 100% | Presentation anchors, deterministic fallback resolution, data-only ECS visual cue emission, managed presentation boundary, pooled actor reuse, actor safety, fallback behavior, cleanup wiring, and focused validation are complete. |
 | 7. Audio, VFX, feedback, ARIA | Complete | 7 | 7 | 100% | Resource Exchange audio ids, placeholder clips, data-only delta flyout requests, typed toast requests, optional ARIA strings, non-authoritative VFX marker data, and direct-audio wiring guardrails are complete. |
 | 8. AI, balance, telemetry | Complete | 6 | 6 | 100% | Economy event coverage, Resource Exchange balance report fields, data sanity tests, scenario gates, AI opt-in gating, and AI planner guardrails are complete. |
-| 9. Validation and performance | In progress | 4 | 10 | 40% | Diff whitespace, repository compile validation, focused exchange data/config tests, and queue/rush/cancel/refund tests are complete; HUD/header popup routing tests remain next. |
+| 9. Validation and performance | In progress | 5 | 10 | 50% | Diff whitespace, repository compile validation, focused exchange data/config tests, queue/rush/cancel/refund tests, and HUD/header popup routing tests are complete; UI prefab/capture validation remains next. |
 
 ## Phase 0: Inventory And Source Alignment
 
@@ -281,7 +281,7 @@ Exit criteria:
 - [x] Run repository compile validation.
 - [x] Run focused exchange data/config tests.
 - [x] Run focused exchange queue/rush/cancel/refund tests.
-- [ ] Run focused HUD/header popup routing tests.
+- [x] Run focused HUD/header popup routing tests.
 - [ ] Run focused UI prefab/capture validation at 16:9 and 20:9.
 - [ ] Run architecture guardrails for naming, ECS boundaries, and no broad manager/controller/service drift.
 - [ ] Run GC allocation check for exchange queue steady state.
@@ -1389,3 +1389,30 @@ Validation:
 Remaining blocker or next slice:
 
 - Next Phase 9 slice should run focused HUD/header popup routing tests.
+
+### 2026-07-09 - Phase 9E Focused HUD/Header Popup Routing Tests
+
+Files changed:
+
+- `Design/Architecture/resource_logistics_exchange_implementation_tracker.md`
+
+Behavior changed:
+
+- Documentation-only validation tracker update.
+- Ran focused HUD/header routing validation for Resource Exchange popup access and close flow.
+- Validation covered resource header slot clicks enqueueing `OpenResourceExchange`, enabled/disabled Resource Exchange gating, world-click suppression on open and close, shell popup hide restoring Match HUD state, Menu scene popup prefab serialization, popup installation into the shell popup layer, modal input hit testing, close button routing, and popup removal after close.
+- No runtime ECS, economy, UI, prefab, scene, or asset behavior changed.
+
+Validation:
+
+- `dotnet build Game.UI.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 6 warnings and 0 errors.
+- `dotnet build Game.UI.Shell.Ecs.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 6 warnings and 0 errors.
+- `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 10 warnings and 0 errors.
+- `Tools/CI/invoke_unity_macos.sh --project /private/tmp/wlc-resource-exchange-next --log /private/tmp/wlc-resource-exchange-header-routing-validation.log --timeout 420 -- -quit -executeMethod ResourceExchangeHeaderRoutingTests.RunFocusedValidation`
+- Unity focused HUD/header routing result: `[ResourceExchangeHeaderRoutingValidation] result=Passed tests=5`
+- HUD/header routing log result: exit code 0, no compiler-error or focused-test failure markers found in `/private/tmp/wlc-resource-exchange-header-routing-validation.log`.
+- `git diff --check` passed after this tracker update.
+
+Remaining blocker or next slice:
+
+- Next Phase 9 slice should run focused UI prefab/capture validation at 16:9 and 20:9.

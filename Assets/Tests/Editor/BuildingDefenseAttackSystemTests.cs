@@ -41,6 +41,8 @@ public sealed class BuildingDefenseAttackSystemTests
             passed++;
             tests.BuildingDefenseSource_UsesPersistentDirectIterationScratchWithoutArraySnapshots();
             passed++;
+            tests.BuildingDefenseSource_AuditsSingleCompletionAndNamedEntityManagerBoundaries();
+            passed++;
 
             Debug.Log($"[BuildingDefenseAttackSystemValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -382,15 +384,7 @@ public sealed class BuildingDefenseAttackSystemTests
     [Test]
     public void BuildingDefenseSource_UsesPersistentDirectIterationScratchWithoutArraySnapshots()
     {
-        string sourcePath = Path.Combine(
-            Application.dataPath,
-            "Game",
-            "Scripts",
-            "Systems",
-            "BuildingDefenseAttackSystem.cs");
-        Assert.IsTrue(File.Exists(sourcePath), $"Missing building-defense source at {sourcePath}.");
-
-        string source = File.ReadAllText(sourcePath);
+        string source = ReadBuildingDefenseSource();
         StringAssert.Contains("NativeList<TargetCandidate>", source);
         StringAssert.Contains("Allocator.Persistent", source);
         StringAssert.Contains("public void OnDestroy(ref SystemState state)", source);
@@ -403,6 +397,79 @@ public sealed class BuildingDefenseAttackSystemTests
         StringAssert.DoesNotContain("_targetQuery", source);
         StringAssert.DoesNotContain("ToEntityArray(", source);
         StringAssert.DoesNotContain("ToComponentDataArray<", source);
+    }
+
+    [Test]
+    public void BuildingDefenseSource_AuditsSingleCompletionAndNamedEntityManagerBoundaries()
+    {
+        string source = ReadBuildingDefenseSource();
+
+        Assert.AreEqual(
+            1,
+            CountOccurrences(source, "state.Dependency.Complete();"),
+            "Building defense keeps one explicit completion for same-frame optional effect helpers and ECB playback.");
+        StringAssert.Contains("Keep this completion explicit until", source);
+        StringAssert.DoesNotContain("CompleteDependencyBefore", source);
+
+        string[] removedDirectOperations =
+        {
+            "em.Exists(",
+            "em.HasComponent<",
+            "em.GetComponentData<",
+            "em.SetComponentData("
+        };
+        for (int i = 0; i < removedDirectOperations.Length; i++)
+        {
+            StringAssert.DoesNotContain(
+                removedDirectOperations[i],
+                source,
+                $"Local direct EntityManager operation `{removedDirectOperations[i]}` must use the audited lookup bundle.");
+        }
+
+        string[] remainingEntityManagerBoundaries =
+        {
+            "AudioEventRequestSystem.EnsureAudioEntity(em)",
+            "GameplayAudioFeedbackSystemHelper.TryEmitWeaponFireAudio(em",
+            "UnitAttackSystem.TryEmitUnitUnderAttackAudio(",
+            "UnitAttackSystem.TryBuildAttackVfxRequest(em",
+            "ecb.Playback(em)"
+        };
+        for (int i = 0; i < remainingEntityManagerBoundaries.Length; i++)
+        {
+            Assert.AreEqual(
+                1,
+                CountOccurrences(source, remainingEntityManagerBoundaries[i]),
+                $"EntityManager boundary `{remainingEntityManagerBoundaries[i]}` must remain explicit and uniquely auditable.");
+        }
+
+        StringAssert.Contains("DirectComponentAccess", source);
+        StringAssert.Contains("SystemAPI.GetEntityStorageInfoLookup()", source);
+        StringAssert.Contains("SystemAPI.GetComponentLookup<UnitHealth>()", source);
+    }
+
+    private static string ReadBuildingDefenseSource()
+    {
+        string sourcePath = Path.Combine(
+            Application.dataPath,
+            "Game",
+            "Scripts",
+            "Systems",
+            "BuildingDefenseAttackSystem.cs");
+        Assert.IsTrue(File.Exists(sourcePath), $"Missing building-defense source at {sourcePath}.");
+        return File.ReadAllText(sourcePath);
+    }
+
+    private static int CountOccurrences(string source, string value)
+    {
+        int count = 0;
+        int index = 0;
+        while ((index = source.IndexOf(value, index, StringComparison.Ordinal)) >= 0)
+        {
+            count++;
+            index += value.Length;
+        }
+
+        return count;
     }
 
     private static void Update(World world, SystemHandle attackSystem, double elapsedTime, float deltaTime)

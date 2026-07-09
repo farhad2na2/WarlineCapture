@@ -24,6 +24,19 @@ namespace Game.Runtime
             public LocalTransform Transform;
         }
 
+        private struct DirectComponentAccess
+        {
+            public EntityStorageInfoLookup Entities;
+            public ComponentLookup<UnitHealth> Health;
+            public ComponentLookup<Faction> Factions;
+            public ComponentLookup<LocalTransform> Transforms;
+            public ComponentLookup<UnitAirMovement> AirMovement;
+            public ComponentLookup<DebugFireTargetTag> DebugFireTargets;
+            public ComponentLookup<EngageTarget> EngageTargets;
+            public ComponentLookup<RecentAttacker> RecentAttackers;
+            public ComponentLookup<RecentDamageHealthBarVisibility> DamageHealthBars;
+        }
+
         public void OnCreate(ref SystemState state)
         {
             _targetCandidates = new NativeList<TargetCandidate>(InitialTargetScratchCapacity, Allocator.Persistent);
@@ -38,9 +51,24 @@ namespace Game.Runtime
 
         public void OnUpdate(ref SystemState state)
         {
+            // Same-frame effect helpers inspect optional component sets through EntityManager,
+            // and ECB playback must observe their writes. Keep this completion explicit until
+            // those helper contracts become lookup-based.
+            state.Dependency.Complete();
             EntityManager em = state.EntityManager;
             AudioEventRequestSystem.EnsureAudioEntity(em);
-            state.Dependency.Complete();
+            DirectComponentAccess directAccess = new()
+            {
+                Entities = SystemAPI.GetEntityStorageInfoLookup(),
+                Health = SystemAPI.GetComponentLookup<UnitHealth>(),
+                Factions = SystemAPI.GetComponentLookup<Faction>(true),
+                Transforms = SystemAPI.GetComponentLookup<LocalTransform>(true),
+                AirMovement = SystemAPI.GetComponentLookup<UnitAirMovement>(true),
+                DebugFireTargets = SystemAPI.GetComponentLookup<DebugFireTargetTag>(true),
+                EngageTargets = SystemAPI.GetComponentLookup<EngageTarget>(),
+                RecentAttackers = SystemAPI.GetComponentLookup<RecentAttacker>(),
+                DamageHealthBars = SystemAPI.GetComponentLookup<RecentDamageHealthBarVisibility>()
+            };
 
             float deltaTime = SystemAPI.Time.DeltaTime;
             float now = (float)SystemAPI.Time.ElapsedTime;
@@ -111,7 +139,7 @@ namespace Game.Runtime
                         continue;
                     }
 
-                    if (!IsLiveEnemyTarget(em, target, factionRef.ValueRO.Id, transformRef.ValueRO.Position, weapon.Range))
+                    if (!IsLiveEnemyTarget(ref directAccess, target, factionRef.ValueRO.Id, transformRef.ValueRO.Position, weapon.Range))
                     {
                         slot.Target = Entity.Null;
                         slotBuffer[i] = slot;
@@ -140,7 +168,8 @@ namespace Game.Runtime
                         now,
                         ref pendingTraceTargetAdds,
                         ref pendingRecentAttackerAdds,
-                        ref pendingHealthBarVisibilityAdds);
+                        ref pendingHealthBarVisibilityAdds,
+                        ref directAccess);
                 }
             }
 
@@ -192,17 +221,18 @@ namespace Game.Runtime
             float now,
             ref NativeParallelHashSet<Entity> pendingTraceTargetAdds,
             ref NativeParallelHashSet<Entity> pendingRecentAttackerAdds,
-            ref NativeParallelHashSet<Entity> pendingHealthBarVisibilityAdds)
+            ref NativeParallelHashSet<Entity> pendingHealthBarVisibilityAdds,
+            ref DirectComponentAccess directAccess)
         {
-            if (!em.Exists(target) || !em.HasComponent<UnitHealth>(target))
+            if (!directAccess.Entities.Exists(target) || !directAccess.Health.HasComponent(target))
                 return;
 
-            UnitHealth targetHealth = em.GetComponentData<UnitHealth>(target);
+            UnitHealth targetHealth = directAccess.Health[target];
             if (targetHealth.Current <= 0)
                 return;
 
-            float3 targetPosition = em.HasComponent<LocalTransform>(target)
-                ? em.GetComponentData<LocalTransform>(target).Position
+            float3 targetPosition = directAccess.Transforms.HasComponent(target)
+                ? directAccess.Transforms[target].Position
                 : sourcePosition;
 
             int tracerInterval = math.max(1, weapon.TracerEveryNthShot);
@@ -211,7 +241,7 @@ namespace Game.Runtime
             {
                 trace.TimeRemaining = math.max(0.01f, weapon.TraceVisibleSeconds);
                 trace.Phase = math.frac(trace.Phase + 0.371f);
-                SetTraceTarget(em, ecb, source, target, targetPosition, ref pendingTraceTargetAdds);
+                SetTraceTarget(ecb, source, target, targetPosition, ref pendingTraceTargetAdds, ref directAccess);
                 EnqueueAttackVfxRequest(ecb, em, UnitAttackVfxRequestKind.MuzzleFlash, source, target, sourcePosition, targetPosition);
             }
 
@@ -220,7 +250,7 @@ namespace Game.Runtime
                 GameplayAudioFeedbackSystemHelper.TryEmitWeaponFireAudio(em, source, now, sourcePosition);
 
             targetHealth.Current = math.max(0, targetHealth.Current - damage);
-            em.SetComponentData(target, targetHealth);
+            directAccess.Health[target] = targetHealth;
 
             UnitAttackSystem.TryEmitUnitUnderAttackAudio(
                 em,
@@ -229,20 +259,20 @@ namespace Game.Runtime
                 source,
                 damage,
                 nameof(BuildingDefenseAttackSystem));
-            SetRecentAttacker(em, ecb, target, source, sourcePosition, ref pendingRecentAttackerAdds);
-            SetDamageHealthBarVisibility(em, ecb, target, ref pendingHealthBarVisibilityAdds);
+            SetRecentAttacker(ecb, target, source, sourcePosition, ref pendingRecentAttackerAdds, ref directAccess);
+            SetDamageHealthBarVisibility(ecb, target, ref pendingHealthBarVisibilityAdds, ref directAccess);
 
             if (showTracer)
                 EnqueueAttackVfxRequest(ecb, em, UnitAttackVfxRequestKind.Impact, source, target, sourcePosition, targetPosition);
         }
 
         private static void SetTraceTarget(
-            EntityManager em,
             EntityCommandBuffer ecb,
             Entity source,
             Entity target,
             float3 targetPosition,
-            ref NativeParallelHashSet<Entity> pendingTraceTargetAdds)
+            ref NativeParallelHashSet<Entity> pendingTraceTargetAdds,
+            ref DirectComponentAccess directAccess)
         {
             int2 targetCell = new((int)math.round(targetPosition.x), (int)math.round(targetPosition.z));
             var engage = new EngageTarget
@@ -253,19 +283,19 @@ namespace Game.Runtime
                 IsCommanded = 0
             };
 
-            if (em.HasComponent<EngageTarget>(source))
-                em.SetComponentData(source, engage);
+            if (directAccess.EngageTargets.HasComponent(source))
+                directAccess.EngageTargets[source] = engage;
             else if (pendingTraceTargetAdds.Add(source))
                 ecb.AddComponent(source, engage);
         }
 
         private static void SetRecentAttacker(
-            EntityManager em,
             EntityCommandBuffer ecb,
             Entity target,
             Entity attacker,
             float3 attackerPosition,
-            ref NativeParallelHashSet<Entity> pendingRecentAttackerAdds)
+            ref NativeParallelHashSet<Entity> pendingRecentAttackerAdds,
+            ref DirectComponentAccess directAccess)
         {
             var recent = new RecentAttacker
             {
@@ -274,25 +304,25 @@ namespace Game.Runtime
                 Position = attackerPosition
             };
 
-            if (em.HasComponent<RecentAttacker>(target))
-                em.SetComponentData(target, recent);
+            if (directAccess.RecentAttackers.HasComponent(target))
+                directAccess.RecentAttackers[target] = recent;
             else if (pendingRecentAttackerAdds.Add(target))
                 ecb.AddComponent(target, recent);
         }
 
         private static void SetDamageHealthBarVisibility(
-            EntityManager em,
             EntityCommandBuffer ecb,
             Entity target,
-            ref NativeParallelHashSet<Entity> pendingHealthBarVisibilityAdds)
+            ref NativeParallelHashSet<Entity> pendingHealthBarVisibilityAdds,
+            ref DirectComponentAccess directAccess)
         {
             var visibility = new RecentDamageHealthBarVisibility
             {
                 TimeRemaining = DamageHealthBarVisibleSeconds
             };
 
-            if (em.HasComponent<RecentDamageHealthBarVisibility>(target))
-                em.SetComponentData(target, visibility);
+            if (directAccess.DamageHealthBars.HasComponent(target))
+                directAccess.DamageHealthBars[target] = visibility;
             else if (pendingHealthBarVisibilityAdds.Add(target))
                 ecb.AddComponent(target, visibility);
         }
@@ -364,9 +394,9 @@ namespace Game.Runtime
             }
         }
 
-        private static bool IsLiveEnemyTarget(EntityManager em, Entity target, byte sourceFaction, float3 sourcePosition, float range)
+        private static bool IsLiveEnemyTarget(ref DirectComponentAccess directAccess, Entity target, byte sourceFaction, float3 sourcePosition, float range)
         {
-            if (!TryGetLiveEnemyPosition(em, target, sourceFaction, out float3 targetPosition))
+            if (!TryGetLiveEnemyPosition(ref directAccess, target, sourceFaction, out float3 targetPosition))
                 return false;
 
             float3 delta = targetPosition - sourcePosition;
@@ -375,28 +405,28 @@ namespace Game.Runtime
             return math.lengthsq(delta) <= rangeSq;
         }
 
-        private static bool TryGetLiveEnemyPosition(EntityManager em, Entity candidate, byte sourceFaction, out float3 position)
+        private static bool TryGetLiveEnemyPosition(ref DirectComponentAccess directAccess, Entity candidate, byte sourceFaction, out float3 position)
         {
             position = default;
             if (candidate == Entity.Null ||
-                !em.Exists(candidate) ||
-                !em.HasComponent<Faction>(candidate) ||
-                !em.HasComponent<UnitHealth>(candidate) ||
-                !em.HasComponent<LocalTransform>(candidate) ||
-                em.HasComponent<UnitAirMovement>(candidate) ||
-                em.HasComponent<DebugFireTargetTag>(candidate))
+                !directAccess.Entities.Exists(candidate) ||
+                !directAccess.Factions.HasComponent(candidate) ||
+                !directAccess.Health.HasComponent(candidate) ||
+                !directAccess.Transforms.HasComponent(candidate) ||
+                directAccess.AirMovement.HasComponent(candidate) ||
+                directAccess.DebugFireTargets.HasComponent(candidate))
             {
                 return false;
             }
 
-            if (!FactionIdentity.CanAutoTargetForCombat(sourceFaction, em.GetComponentData<Faction>(candidate).Id))
+            if (!FactionIdentity.CanAutoTargetForCombat(sourceFaction, directAccess.Factions[candidate].Id))
                 return false;
 
-            UnitHealth health = em.GetComponentData<UnitHealth>(candidate);
+            UnitHealth health = directAccess.Health[candidate];
             if (health.Current <= 0)
                 return false;
 
-            position = em.GetComponentData<LocalTransform>(candidate).Position;
+            position = directAccess.Transforms[candidate].Position;
             return true;
         }
 

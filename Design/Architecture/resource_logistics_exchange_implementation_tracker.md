@@ -1,7 +1,7 @@
 # Resource Logistics Exchange Implementation Tracker
 
 Date: 2026-07-09
-Status: Phase 8 balance report fields complete; data sanity tests next
+Status: Phase 8 data sanity tests complete; scenario gates next
 Design source: `../Resource_Logistics_Exchange_Design.md`
 
 ## Objective
@@ -23,7 +23,7 @@ Implement the timed Resource Logistics Exchange without drifting from WarlineCap
 
 ## Progress Summary
 
-Overall implementation progress: 85% (80/94 checklist items complete).
+Overall implementation progress: 86% (81/94 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -37,7 +37,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 5. UI popup and header routing | Complete | 15 | 15 | 100% | ECS-backed UI read-model, target-lock reference, separated layer pack, Canvas popup prefab, serialized view refs, cards, details, amount stepper, queue panel, enabled-gated resource header tap route, popup input restoration, live read-model binding, request-buffer wiring, TMP/Oxanium validation, prefab contract tests, and 16:9/20:9 captures complete. |
 | 6. World presentation | Complete | 8 | 8 | 100% | Presentation anchors, deterministic fallback resolution, data-only ECS visual cue emission, managed presentation boundary, pooled actor reuse, actor safety, fallback behavior, cleanup wiring, and focused validation are complete. |
 | 7. Audio, VFX, feedback, ARIA | Complete | 7 | 7 | 100% | Resource Exchange audio ids, placeholder clips, data-only delta flyout requests, typed toast requests, optional ARIA strings, non-authoritative VFX marker data, and direct-audio wiring guardrails are complete. |
-| 8. AI, balance, telemetry | In progress | 2 | 6 | 33% | Economy event coverage and Resource Exchange balance report fields are complete; data sanity tests remain. |
+| 8. AI, balance, telemetry | In progress | 3 | 6 | 50% | Economy event coverage, Resource Exchange balance report fields, and data sanity tests are complete; scenario gates remain. |
 | 9. Validation and performance | Not started | 0 | 10 | 0% | Focused tests, compile, architecture guardrails, UI captures, GC/performance checks. |
 
 ## Phase 0: Inventory And Source Alignment
@@ -264,7 +264,7 @@ Exit criteria:
 
 - [x] Add economy events for input spend/reserve, output grant, refund, rush ticket spend, and blocked/cancelled jobs.
 - [x] Add balance report fields for exchange route, amount, duration, source mode, completion, and resource delta.
-- [ ] Add data sanity tests for rates, fees, duration, and farming-risk caps.
+- [x] Add data sanity tests for rates, fees, duration, and farming-risk caps.
 - [ ] Gate exchange recipes by chapter/mission/skirmish preset so early FTUE is not overloaded.
 - [ ] Add AI exchange support only if a scenario explicitly enables AI exchange behavior.
 - [ ] If AI exchange is enabled, ensure it is data-driven and does not add managed per-frame planner scans.
@@ -1146,3 +1146,32 @@ Validation:
 Remaining blocker or next slice:
 
 - Next Phase 8 slice should add data sanity tests for exchange rates, fees, duration, and farming-risk caps.
+
+### 2026-07-09 - Phase 8C Data Sanity And Farming-Risk Caps
+
+Files changed:
+
+- `Assets/Game/Scripts/Configs/ResourceExchangeConfigModels.cs`
+- `Assets/Tests/Editor/ResourceExchangeConfigValidationTests.cs`
+- `Design/Resource_Logistics_Exchange_Design.md`
+- `Design/Architecture/resource_logistics_exchange_implementation_tracker.md`
+
+Behavior changed:
+
+- Added named Resource Exchange config guardrails for single-exchange amount caps, per-recipe output-rate caps, minimum base queue duration, per-job Rush Ticket caps, and paired export/import round-trip retention.
+- Recipe validation now rejects unsafe authored values before runtime instead of only rejecting mathematically invalid negative/NaN/infinite data.
+- Recipe-set validation now checks paired export/import loops through Credits for Materials/Fuel and rejects round trips that retain more than 85% of the original resource after fees.
+- Added focused editor coverage for amount cap, rate cap, fee NaN, instant-duration, rush cap, safe paired routes, and unsafe round-trip farming loops.
+- Updated the high-level design document so the data sanity thresholds are visible to designers and future implementation agents.
+
+Validation:
+
+- `git diff --check` passed before this tracker update.
+- `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 6 warnings and 0 errors.
+- `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 11 warnings and 0 errors.
+- `Tools/CI/invoke_unity_macos.sh --project /private/tmp/wlc-resource-exchange-next --log /private/tmp/wlc-resource-exchange-config-sanity-validation-rerun.log --timeout 420 -- -quit -executeMethod ResourceExchangeConfigValidationTests.RunFocusedValidation`
+- Unity focused result: `[ResourceExchangeConfigValidation] result=Passed tests=4`
+
+Remaining blocker or next slice:
+
+- Next Phase 8 slice should gate exchange recipes by chapter, mission, and skirmish preset so early FTUE is not overloaded.

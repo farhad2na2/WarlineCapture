@@ -125,6 +125,7 @@ Balance recommendation:
 - Use queue time as a pressure lever, not as a punishment.
 - Use storage caps to avoid overfilling imported Fuel/Materials.
 - Limit simultaneous exchange jobs per faction to a small number for readability and performance.
+- Config validation should reject unsafe economy data before runtime: single exchange amounts above 100,000, per-recipe output rates above 5x, queue base duration below 1 second, per-job rush caps above 10 tickets, and any paired Credits export/import loop that retains more than 85% of the original resource after fees.
 
 ## Queue Rules
 

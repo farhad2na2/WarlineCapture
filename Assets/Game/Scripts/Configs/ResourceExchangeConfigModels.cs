@@ -129,6 +129,12 @@ namespace Game.Configs
 
     public static class ResourceExchangeRecipeConfigValidator
     {
+        public const int MaximumInputAmountPerExchange = 100000;
+        public const float MaximumOutputPerInput = 5f;
+        public const float MinimumBaseDurationSeconds = 1f;
+        public const int MaximumRushTicketsPerJob = 10;
+        public const float MaximumRoundTripResourceRetention = 0.85f;
+
         public static ResourceExchangeReason ValidateRecipeSet(IReadOnlyList<ResourceExchangeRecipeConfigEntry> recipes)
         {
             if (recipes == null || recipes.Count == 0)
@@ -145,6 +151,10 @@ namespace Game.Configs
                 if (!recipeIds.Add(recipe.RecipeId))
                     return ResourceExchangeReason.DuplicateRecipeId;
             }
+
+            ResourceExchangeReason farmingRiskReason = ValidateRoundTripFarmingRisk(recipes);
+            if (farmingRiskReason != ResourceExchangeReason.None)
+                return farmingRiskReason;
 
             return ResourceExchangeReason.None;
         }
@@ -200,10 +210,16 @@ namespace Game.Configs
             if (inputAmountMin <= 0 || inputAmountMax < inputAmountMin)
                 return ResourceExchangeReason.InvalidRecipe;
 
+            if (inputAmountMax > MaximumInputAmountPerExchange)
+                return ResourceExchangeReason.InvalidRecipe;
+
             if (inputStep <= 0 || ((inputAmountMax - inputAmountMin) % inputStep) != 0)
                 return ResourceExchangeReason.InputStepInvalid;
 
             if (outputPerInput <= 0f || float.IsNaN(outputPerInput) || float.IsInfinity(outputPerInput))
+                return ResourceExchangeReason.InvalidRate;
+
+            if (outputPerInput > MaximumOutputPerInput)
                 return ResourceExchangeReason.InvalidRate;
 
             if (feePercent < 0f || feePercent >= 1f || float.IsNaN(feePercent) || float.IsInfinity(feePercent))
@@ -216,7 +232,13 @@ namespace Game.Configs
                 return ResourceExchangeReason.InvalidDuration;
             }
 
+            if (durationSecondsBase < MinimumBaseDurationSeconds)
+                return ResourceExchangeReason.InvalidDuration;
+
             if (rushTicketSecondsPerTicket < 0 || maxRushTickets < 0)
+                return ResourceExchangeReason.InvalidRushRule;
+
+            if (maxRushTickets > MaximumRushTicketsPerJob)
                 return ResourceExchangeReason.InvalidRushRule;
 
             if (maxRushTickets > 0 && rushTicketSecondsPerTicket <= 0)
@@ -264,6 +286,45 @@ namespace Game.Configs
             return inputResource == ResourceExchangeResourceKind.Credits &&
                    (outputResource == ResourceExchangeResourceKind.Materials ||
                     outputResource == ResourceExchangeResourceKind.Fuel);
+        }
+
+        private static ResourceExchangeReason ValidateRoundTripFarmingRisk(
+            IReadOnlyList<ResourceExchangeRecipeConfigEntry> recipes)
+        {
+            for (int i = 0; i < recipes.Count; i++)
+            {
+                ResourceExchangeRecipeConfigEntry exportRecipe = recipes[i];
+                if (exportRecipe.RouteType != ResourceExchangeRouteType.Export ||
+                    exportRecipe.OutputResource != ResourceExchangeResourceKind.Credits)
+                {
+                    continue;
+                }
+
+                for (int j = 0; j < recipes.Count; j++)
+                {
+                    ResourceExchangeRecipeConfigEntry importRecipe = recipes[j];
+                    if (importRecipe.RouteType != ResourceExchangeRouteType.Import ||
+                        importRecipe.InputResource != ResourceExchangeResourceKind.Credits ||
+                        importRecipe.OutputResource != exportRecipe.InputResource)
+                    {
+                        continue;
+                    }
+
+                    float roundTripRetention =
+                        EffectiveOutputPerInput(exportRecipe) *
+                        EffectiveOutputPerInput(importRecipe);
+
+                    if (roundTripRetention > MaximumRoundTripResourceRetention)
+                        return ResourceExchangeReason.InvalidRate;
+                }
+            }
+
+            return ResourceExchangeReason.None;
+        }
+
+        private static float EffectiveOutputPerInput(ResourceExchangeRecipeConfigEntry recipe)
+        {
+            return recipe.OutputPerInput * (1f - recipe.FeePercent);
         }
     }
 }

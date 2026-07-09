@@ -20,6 +20,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             passed++;
             RunCase(test => test.BindMatchHudAssistant_VisualSurfaceKeepsControlsReadableInsideOverlay());
             passed++;
+            RunCase(test => test.BindMatchHudAssistant_RemainsReadableOnScaledMatchHudOverlay());
+            passed++;
 
             Debug.Log($"[MatchHudAssistantUiValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -269,25 +271,62 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.IsTrue(panel.gameObject.activeSelf, "The ARIA panel must be visible after clicking the header button.");
 
         AssertRectSize(button, new Vector2(228f, 78f), "ARIA header button");
-        AssertRectSize(panel, new Vector2(640f, 590f), "ARIA assistant panel");
+        AssertRectSize(panel, new Vector2(1040f, 760f), "ARIA assistant panel");
         AssertRectContained(panel, RequireChild(panel, "NextActionButton"), "Show Me button");
         AssertRectContained(panel, RequireChild(panel, "GiveControlButton"), "Do It button");
         AssertRectContained(panel, RequireChild(panel, "StopButton"), "Stop button");
         AssertRectContained(panel, RequireChild(panel, "NarrationSubtitle"), "Narration subtitle");
 
-        AssertTextReadable(panel, "Title", "ARIA COMMAND ASSISTANT", 24f);
-        AssertTextReadable(panel, "GoalsBody", "Neutralize hostile patrol", 18f);
-        AssertTextReadable(panel, "AlertsBody", "Hostile patrol", 16f);
-        AssertTextReadable(panel, "NarrationSubtitle", "HIGH: Hostile patrol near base", 14f);
-        AssertTextReadable(panel, "RecommendationBody", "Focus the visible hostile target", 18f);
-        AssertTextReadable(panel, "NextActionButton/Label", "SHOW ME", 16f);
-        AssertTextReadable(panel, "GiveControlButton/Label", "DO IT", 16f);
-        AssertTextReadable(panel, "StopButton/Label", "STOP", 16f);
+        AssertTextReadable(panel, "Title", "ARIA COMMAND ASSISTANT", 40f);
+        AssertTextReadable(panel, "GoalsBody", "Neutralize hostile patrol", 30f);
+        AssertTextReadable(panel, "AlertsBody", "Hostile patrol", 28f);
+        AssertTextReadable(panel, "NarrationSubtitle", "HIGH: Hostile patrol near base", 24f);
+        AssertTextReadable(panel, "RecommendationBody", "Focus the visible hostile target", 28f);
+        AssertTextReadable(panel, "NextActionButton/Label", "SHOW ME", 24f);
+        AssertTextReadable(panel, "GiveControlButton/Label", "DO IT", 24f);
+        AssertTextReadable(panel, "StopButton/Label", "STOP", 24f);
 
         AssertNoOverlap(RequireChild(panel, "NextActionButton"), RequireChild(panel, "GiveControlButton"), "Show Me and Do It buttons");
         AssertNoOverlap(RequireChild(panel, "GiveControlButton"), RequireChild(panel, "CloseButton"), "Do It and Close buttons");
         AssertNoOverlap(RequireChild(panel, "GiveControlButton"), RequireChild(panel, "StopButton"), "Do It and Stop buttons");
         AssertNoOverlap(RequireChild(panel, "RecommendationBody"), RequireChild(panel, "NextActionButton"), "Recommendation text and command buttons");
+
+        ui.Dispose();
+        UnityEngine.Object.DestroyImmediate(overlay.gameObject);
+    }
+
+    [Test]
+    public void BindMatchHudAssistant_RemainsReadableOnScaledMatchHudOverlay()
+    {
+        RectTransform overlay = CreateRectRoot("AssistantUiTestScaledOverlay", new Vector2(1920f, 1080f));
+        overlay.localScale = new Vector3(0.325f, 0.325f, 1f);
+        RectTransform header = CreateRect("HeaderContent", overlay);
+        header.anchorMin = new Vector2(0f, 1f);
+        header.anchorMax = new Vector2(0f, 1f);
+        header.pivot = new Vector2(0f, 1f);
+        header.anchoredPosition = Vector2.zero;
+        header.sizeDelta = new Vector2(1920f, 160f);
+
+        var ui = new MainMenuPlayUI();
+        ui.Init(null, new FakeMatchRuntimeState());
+        ui.BindMatchHudAssistant(header.gameObject, overlay);
+
+        RectTransform button = header.Find("AriaAssistantButton") as RectTransform;
+        Assert.NotNull(button);
+        button.GetComponent<Button>().onClick.Invoke();
+
+        RectTransform panel = overlay.Find("AriaAssistantPanel") as RectTransform;
+        Assert.NotNull(panel);
+        Assert.IsTrue(panel.gameObject.activeSelf, "The ARIA panel must open on a scaled match HUD overlay.");
+
+        AssertWorldSizeAtLeast(panel, new Vector2(330f, 240f), "scaled ARIA assistant panel");
+        AssertScaledTextReadable(panel, "Title", 12f);
+        AssertScaledTextReadable(panel, "GoalsBody", 9f);
+        AssertScaledTextReadable(panel, "AlertsBody", 9f);
+        AssertScaledTextReadable(panel, "RecommendationBody", 9f);
+        AssertWorldSizeAtLeast(RequireChild(panel, "NextActionButton"), new Vector2(68f, 22f), "scaled Show Me button");
+        AssertWorldSizeAtLeast(RequireChild(panel, "GiveControlButton"), new Vector2(68f, 22f), "scaled Do It button");
+        AssertWorldSizeAtLeast(RequireChild(panel, "CloseButton"), new Vector2(68f, 22f), "scaled Close button");
 
         ui.Dispose();
         UnityEngine.Object.DestroyImmediate(overlay.gameObject);
@@ -351,6 +390,22 @@ public sealed class MatchHudAssistantUiSystemHelperTests
     {
         Assert.AreEqual(expectedSize.x, rectTransform.rect.width, 0.1f, $"{label} width drifted.");
         Assert.AreEqual(expectedSize.y, rectTransform.rect.height, 0.1f, $"{label} height drifted.");
+    }
+
+    private static void AssertWorldSizeAtLeast(RectTransform rectTransform, Vector2 minimumSize, string label)
+    {
+        Rect rect = WorldRect(rectTransform);
+        Assert.GreaterOrEqual(rect.width, minimumSize.x, $"{label} is too narrow in screen space.");
+        Assert.GreaterOrEqual(rect.height, minimumSize.y, $"{label} is too short in screen space.");
+    }
+
+    private static void AssertScaledTextReadable(RectTransform parent, string path, float minimumScreenFontSize)
+    {
+        RectTransform rect = RequireChild(parent, path);
+        TMP_Text text = rect.GetComponent<TMP_Text>();
+        Assert.NotNull(text, $"{path} must have TMP text.");
+        float screenFontSize = text.fontSize * Mathf.Abs(text.transform.lossyScale.y);
+        Assert.GreaterOrEqual(screenFontSize, minimumScreenFontSize, $"{path} is too small after HUD scaling.");
     }
 
     private static void AssertNoOverlap(RectTransform first, RectTransform second, string label)

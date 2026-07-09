@@ -1,7 +1,7 @@
 # Resource Logistics Exchange Implementation Tracker
 
 Date: 2026-07-09
-Status: Phase 8 economy event coverage complete; balance report fields next
+Status: Phase 8 balance report fields complete; data sanity tests next
 Design source: `../Resource_Logistics_Exchange_Design.md`
 
 ## Objective
@@ -23,7 +23,7 @@ Implement the timed Resource Logistics Exchange without drifting from WarlineCap
 
 ## Progress Summary
 
-Overall implementation progress: 84% (79/94 checklist items complete).
+Overall implementation progress: 85% (80/94 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -37,7 +37,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 5. UI popup and header routing | Complete | 15 | 15 | 100% | ECS-backed UI read-model, target-lock reference, separated layer pack, Canvas popup prefab, serialized view refs, cards, details, amount stepper, queue panel, enabled-gated resource header tap route, popup input restoration, live read-model binding, request-buffer wiring, TMP/Oxanium validation, prefab contract tests, and 16:9/20:9 captures complete. |
 | 6. World presentation | Complete | 8 | 8 | 100% | Presentation anchors, deterministic fallback resolution, data-only ECS visual cue emission, managed presentation boundary, pooled actor reuse, actor safety, fallback behavior, cleanup wiring, and focused validation are complete. |
 | 7. Audio, VFX, feedback, ARIA | Complete | 7 | 7 | 100% | Resource Exchange audio ids, placeholder clips, data-only delta flyout requests, typed toast requests, optional ARIA strings, non-authoritative VFX marker data, and direct-audio wiring guardrails are complete. |
-| 8. AI, balance, telemetry | In progress | 1 | 6 | 17% | Economy event coverage is complete for reserve, output grant, refund, rush spend, blocked jobs, and cancelled jobs; balance report fields remain. |
+| 8. AI, balance, telemetry | In progress | 2 | 6 | 33% | Economy event coverage and Resource Exchange balance report fields are complete; data sanity tests remain. |
 | 9. Validation and performance | Not started | 0 | 10 | 0% | Focused tests, compile, architecture guardrails, UI captures, GC/performance checks. |
 
 ## Phase 0: Inventory And Source Alignment
@@ -263,7 +263,7 @@ Exit criteria:
 ## Phase 8: AI, Balance, And Telemetry
 
 - [x] Add economy events for input spend/reserve, output grant, refund, rush ticket spend, and blocked/cancelled jobs.
-- [ ] Add balance report fields for exchange route, amount, duration, source mode, completion, and resource delta.
+- [x] Add balance report fields for exchange route, amount, duration, source mode, completion, and resource delta.
 - [ ] Add data sanity tests for rates, fees, duration, and farming-risk caps.
 - [ ] Gate exchange recipes by chapter/mission/skirmish preset so early FTUE is not overloaded.
 - [ ] Add AI exchange support only if a scenario explicitly enables AI exchange behavior.
@@ -1118,3 +1118,31 @@ Validation:
 Remaining blocker or next slice:
 
 - Next Phase 8 slice should add balance report fields for exchange route, amount, duration, source mode, completion, and resource delta.
+
+### 2026-07-09 - Phase 8B Balance Report Fields
+
+Files changed:
+
+- `Assets/Game/Scripts/Balance/BalanceMetrics.cs`
+- `Assets/Game/Scripts/Balance/BalanceReportWriter.cs`
+- `Assets/Tests/Editor/Balance/BalanceHarnessContractTests.cs`
+- `Design/Architecture/resource_logistics_exchange_implementation_tracker.md`
+
+Behavior changed:
+
+- Added Resource Exchange balance fields to `BalanceMetrics` for source mode, route summary, started/completed/cancelled/blocked/rush counts, planned input/output amounts, total duration seconds, completion rate, per-resource deltas, and net resource delta.
+- Added `BalanceMetrics.ApplyResourceExchangeTelemetry` as a pure reporting helper that summarizes existing `ResourceExchangeQueueComponent` rows and `ResourceExchangeEconomyEventComponent` rows without owning gameplay policy or mutating ECS state.
+- Added a Resource Exchange section to generated Markdown balance reports, exposing route, amount, duration, source mode, completion, and resource delta fields for human tuning review.
+- Added focused balance harness coverage proving Resource Exchange queue/economy telemetry populates the new fields and both JSON and Markdown reports include them.
+
+Validation:
+
+- `git diff --check` passed before this tracker update.
+- `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 6 warnings and 0 errors.
+- `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 11 warnings and 0 errors.
+- `Tools/CI/invoke_unity_macos.sh --project /private/tmp/wlc-resource-exchange-next --log /private/tmp/wlc-resource-exchange-balance-report-validation.log --timeout 420 -- -quit -executeMethod BalanceHarnessContractTests.RunFocusedValidation`
+- Unity focused result: `[BalanceHarnessContractValidation] result=Passed tests=2`
+
+Remaining blocker or next slice:
+
+- Next Phase 8 slice should add data sanity tests for exchange rates, fees, duration, and farming-risk caps.

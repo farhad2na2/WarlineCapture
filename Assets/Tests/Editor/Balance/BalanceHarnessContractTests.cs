@@ -1,11 +1,38 @@
 using System;
 using System.IO;
 using NUnit.Framework;
+using Unity.Collections;
+using UnityEngine;
+using Game.Components;
 using Game.Configs;
 using Game.Runtime;
 
 public sealed class BalanceHarnessContractTests
 {
+    public static void RunFocusedValidation()
+    {
+        int passed = 0;
+        try
+        {
+            RunCase(
+                nameof(BalanceMetrics_ResourceExchangeTelemetrySummarizesReportFields),
+                test => test.BalanceMetrics_ResourceExchangeTelemetrySummarizesReportFields(),
+                ref passed);
+            RunCase(
+                nameof(BalanceReportWriter_IncludesResourceExchangeFields),
+                test => test.BalanceReportWriter_IncludesResourceExchangeFields(),
+                ref passed);
+
+            Debug.Log($"[BalanceHarnessContractValidation] result=Passed tests={passed}");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[BalanceHarnessContractValidation] result=Failed passed={passed}\n{exception}");
+            ValidationExit.Exit(1);
+        }
+    }
+
     [Test]
     [Category("Balance")]
     public void BalanceOutcomeClassifier_ClassifiesGoodRuntimeSnapshot()
@@ -147,8 +174,214 @@ public sealed class BalanceHarnessContractTests
 
     [Test]
     [Category("Balance")]
+    public void BalanceMetrics_ResourceExchangeTelemetrySummarizesReportFields()
+    {
+        var metrics = new BalanceMetrics();
+        metrics.ApplyResourceExchangeTelemetry(
+            "Skirmish",
+            new[]
+            {
+                CreateExchangeQueueItem(
+                    queueItemId: 1,
+                    routeType: ResourceExchangeRouteType.Export,
+                    inputAmount: 200,
+                    outputAmount: 110,
+                    durationSeconds: 45f,
+                    state: ResourceExchangeQueueState.Completed),
+                CreateExchangeQueueItem(
+                    queueItemId: 2,
+                    routeType: ResourceExchangeRouteType.Import,
+                    inputAmount: 300,
+                    outputAmount: 150,
+                    durationSeconds: 45f,
+                    state: ResourceExchangeQueueState.Blocked)
+            },
+            new[]
+            {
+                CreateExchangeEconomyEvent(
+                    queueItemId: 1,
+                    ResourceExchangeResultKind.QueueStarted,
+                    ResourceExchangeResourceKind.Oil,
+                    -200),
+                CreateExchangeEconomyEvent(
+                    queueItemId: 1,
+                    ResourceExchangeResultKind.QueueCompleted,
+                    ResourceExchangeResourceKind.Credits,
+                    110),
+                CreateExchangeEconomyEvent(
+                    queueItemId: 2,
+                    ResourceExchangeResultKind.QueueStarted,
+                    ResourceExchangeResourceKind.Credits,
+                    -300),
+                CreateExchangeEconomyEvent(
+                    queueItemId: 2,
+                    ResourceExchangeResultKind.QueueBlocked,
+                    ResourceExchangeResourceKind.Fuel,
+                    0),
+                CreateExchangeEconomyEvent(
+                    queueItemId: 2,
+                    ResourceExchangeResultKind.QueueCancelled,
+                    ResourceExchangeResourceKind.Credits,
+                    0),
+                CreateExchangeEconomyEvent(
+                    queueItemId: 2,
+                    ResourceExchangeResultKind.RushAccepted,
+                    ResourceExchangeResourceKind.RushTickets,
+                    -2)
+            });
+
+        Assert.AreEqual("Skirmish", metrics.ResourceExchangeSourceMode);
+        Assert.AreEqual("Export:1 Import:1", metrics.ResourceExchangeRouteSummary);
+        Assert.AreEqual(2, metrics.ResourceExchangeStartedCount);
+        Assert.AreEqual(1, metrics.ResourceExchangeCompletedCount);
+        Assert.AreEqual(1, metrics.ResourceExchangeCancelledCount);
+        Assert.AreEqual(1, metrics.ResourceExchangeBlockedCount);
+        Assert.AreEqual(1, metrics.ResourceExchangeRushCount);
+        Assert.AreEqual(500, metrics.ResourceExchangeInputAmount);
+        Assert.AreEqual(260, metrics.ResourceExchangeOutputAmount);
+        Assert.AreEqual(90f, metrics.ResourceExchangeDurationSeconds);
+        Assert.AreEqual(50f, metrics.ResourceExchangeCompletionRatePercent);
+        Assert.AreEqual(-190, metrics.ResourceExchangeCreditsDelta);
+        Assert.AreEqual(-200, metrics.ResourceExchangeOilDelta);
+        Assert.AreEqual(0, metrics.ResourceExchangeFuelDelta);
+        Assert.AreEqual(-2, metrics.ResourceExchangeRushTicketsDelta);
+        Assert.AreEqual(-392, metrics.ResourceExchangeNetResourceDelta);
+    }
+
+    [Test]
+    [Category("Balance")]
+    public void BalanceReportWriter_IncludesResourceExchangeFields()
+    {
+        string reportDirectory = Path.Combine(
+            Path.GetTempPath(),
+            "BalanceReportTests",
+            Guid.NewGuid().ToString("N"));
+
+        try
+        {
+            var metrics = new BalanceMetrics
+            {
+                ProbeId = "QuickCustom_ResourceExchange_Report_Test",
+                ScenarioId = "quick_custom_resource_exchange_report_test",
+                ProbeDisplayName = "Resource Exchange Report Test",
+                Seed = 104729,
+                EnemyType = "Balanced",
+                EnemyCount = 1,
+                Difficulty = "Normal",
+                StartingCredits = "Normal",
+                SampledDurationSeconds = 10f * 60f,
+                Winner = "Unresolved",
+                ResultReason = "Harness contract test."
+            };
+            metrics.ApplyResourceExchangeTelemetry(
+                "Mission",
+                new[]
+                {
+                    CreateExchangeQueueItem(
+                        queueItemId: 1,
+                        routeType: ResourceExchangeRouteType.Export,
+                        inputAmount: 100,
+                        outputAmount: 55,
+                        durationSeconds: 32f,
+                        state: ResourceExchangeQueueState.Completed)
+                },
+                new[]
+                {
+                    CreateExchangeEconomyEvent(
+                        queueItemId: 1,
+                        ResourceExchangeResultKind.QueueStarted,
+                        ResourceExchangeResourceKind.Oil,
+                        -100),
+                    CreateExchangeEconomyEvent(
+                        queueItemId: 1,
+                        ResourceExchangeResultKind.QueueCompleted,
+                        ResourceExchangeResourceKind.Credits,
+                        55)
+                });
+
+            BalanceReportWriter.ReportPaths paths = BalanceReportWriter.WriteReport(metrics, reportDirectory);
+
+            string markdown = File.ReadAllText(paths.MarkdownPath);
+            StringAssert.Contains("## Resource Exchange", markdown);
+            StringAssert.Contains("Source mode", markdown);
+            StringAssert.Contains("Route summary", markdown);
+            StringAssert.Contains("Completion rate", markdown);
+            StringAssert.Contains("Credits delta", markdown);
+            StringAssert.Contains("Oil delta", markdown);
+            StringAssert.Contains("`Mission`", markdown);
+            StringAssert.Contains("`Export:1`", markdown);
+
+            string json = File.ReadAllText(paths.JsonPath);
+            StringAssert.Contains("ResourceExchangeSourceMode", json);
+            StringAssert.Contains("ResourceExchangeRouteSummary", json);
+            StringAssert.Contains("ResourceExchangeCompletionRatePercent", json);
+            StringAssert.Contains("ResourceExchangeCreditsDelta", json);
+        }
+        finally
+        {
+            if (Directory.Exists(reportDirectory))
+                Directory.Delete(reportDirectory, true);
+        }
+    }
+
+    [Test]
+    [Category("Balance")]
     public void BalanceProbeRunner_ExposesDocumentedRunAllEntryPoint()
     {
         Assert.NotNull(typeof(BalanceProbeRunner).GetMethod(nameof(BalanceProbeRunner.RunAllBalanceProbes)));
+    }
+
+    private static ResourceExchangeQueueComponent CreateExchangeQueueItem(
+        int queueItemId,
+        ResourceExchangeRouteType routeType,
+        int inputAmount,
+        int outputAmount,
+        float durationSeconds,
+        ResourceExchangeQueueState state)
+    {
+        return new ResourceExchangeQueueComponent
+        {
+            QueueItemId = queueItemId,
+            FactionId = 1,
+            RecipeId = new FixedString128Bytes("exchange.balance.test"),
+            RouteType = routeType,
+            InputResource = routeType == ResourceExchangeRouteType.Export
+                ? ResourceExchangeResourceKind.Oil
+                : ResourceExchangeResourceKind.Credits,
+            OutputResource = routeType == ResourceExchangeRouteType.Export
+                ? ResourceExchangeResourceKind.Credits
+                : ResourceExchangeResourceKind.Fuel,
+            InputAmount = inputAmount,
+            OutputAmount = outputAmount,
+            State = state,
+            DurationSeconds = durationSeconds
+        };
+    }
+
+    private static ResourceExchangeEconomyEventComponent CreateExchangeEconomyEvent(
+        int queueItemId,
+        ResourceExchangeResultKind resultKind,
+        ResourceExchangeResourceKind resourceKind,
+        int amount)
+    {
+        return new ResourceExchangeEconomyEventComponent
+        {
+            QueueItemId = queueItemId,
+            FactionId = 1,
+            ResultKind = resultKind,
+            ResourceKind = resourceKind,
+            Amount = amount,
+            RecipeId = new FixedString128Bytes("exchange.balance.test")
+        };
+    }
+
+    private static void RunCase(
+        string name,
+        Action<BalanceHarnessContractTests> action,
+        ref int passed)
+    {
+        var test = new BalanceHarnessContractTests();
+        action(test);
+        passed++;
     }
 }

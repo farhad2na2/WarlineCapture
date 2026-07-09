@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Game.Components;
 using Game.Configs;
 
 namespace Game.Runtime
@@ -40,6 +41,23 @@ namespace Game.Runtime
         public int BuildingsBuilt;
         public int OwnSoldiersDead;
         public int EnemySoldiersDead;
+        public string ResourceExchangeSourceMode;
+        public string ResourceExchangeRouteSummary;
+        public int ResourceExchangeStartedCount;
+        public int ResourceExchangeCompletedCount;
+        public int ResourceExchangeCancelledCount;
+        public int ResourceExchangeBlockedCount;
+        public int ResourceExchangeRushCount;
+        public int ResourceExchangeInputAmount;
+        public int ResourceExchangeOutputAmount;
+        public float ResourceExchangeDurationSeconds;
+        public float ResourceExchangeCompletionRatePercent;
+        public int ResourceExchangeCreditsDelta;
+        public int ResourceExchangeMaterialsDelta;
+        public int ResourceExchangeOilDelta;
+        public int ResourceExchangeFuelDelta;
+        public int ResourceExchangeRushTicketsDelta;
+        public int ResourceExchangeNetResourceDelta;
         public string MatchDurationClassification;
         public string EconomyActivityClassification;
         public string CasualtyClassification;
@@ -122,6 +140,116 @@ namespace Game.Runtime
 
             BalanceOutcomeClassifier.Classify(metrics);
             return metrics;
+        }
+
+        public void ApplyResourceExchangeTelemetry(
+            string sourceMode,
+            ResourceExchangeQueueComponent[] queueItems,
+            ResourceExchangeEconomyEventComponent[] economyEvents)
+        {
+            ResourceExchangeSourceMode = string.IsNullOrWhiteSpace(sourceMode)
+                ? "Unspecified"
+                : sourceMode;
+
+            queueItems ??= Array.Empty<ResourceExchangeQueueComponent>();
+            economyEvents ??= Array.Empty<ResourceExchangeEconomyEventComponent>();
+
+            int exportCount = 0;
+            int importCount = 0;
+            ResourceExchangeInputAmount = 0;
+            ResourceExchangeOutputAmount = 0;
+            ResourceExchangeDurationSeconds = 0f;
+
+            for (int i = 0; i < queueItems.Length; i++)
+            {
+                ResourceExchangeQueueComponent item = queueItems[i];
+                if (item.RouteType == ResourceExchangeRouteType.Import)
+                    importCount++;
+                else
+                    exportCount++;
+
+                ResourceExchangeInputAmount += Mathf.Max(0, item.InputAmount);
+                ResourceExchangeOutputAmount += Mathf.Max(0, item.OutputAmount);
+                ResourceExchangeDurationSeconds += Mathf.Max(0f, item.DurationSeconds);
+            }
+
+            ResourceExchangeRouteSummary = BuildRouteSummary(exportCount, importCount);
+            ResourceExchangeStartedCount = 0;
+            ResourceExchangeCompletedCount = 0;
+            ResourceExchangeCancelledCount = 0;
+            ResourceExchangeBlockedCount = 0;
+            ResourceExchangeRushCount = 0;
+            ResourceExchangeCreditsDelta = 0;
+            ResourceExchangeMaterialsDelta = 0;
+            ResourceExchangeOilDelta = 0;
+            ResourceExchangeFuelDelta = 0;
+            ResourceExchangeRushTicketsDelta = 0;
+            ResourceExchangeNetResourceDelta = 0;
+
+            for (int i = 0; i < economyEvents.Length; i++)
+            {
+                ResourceExchangeEconomyEventComponent economyEvent = economyEvents[i];
+                switch (economyEvent.ResultKind)
+                {
+                    case ResourceExchangeResultKind.QueueStarted:
+                        ResourceExchangeStartedCount++;
+                        break;
+                    case ResourceExchangeResultKind.QueueCompleted:
+                        ResourceExchangeCompletedCount++;
+                        break;
+                    case ResourceExchangeResultKind.QueueCancelled:
+                        ResourceExchangeCancelledCount++;
+                        break;
+                    case ResourceExchangeResultKind.QueueBlocked:
+                        ResourceExchangeBlockedCount++;
+                        break;
+                    case ResourceExchangeResultKind.RushAccepted:
+                        ResourceExchangeRushCount++;
+                        break;
+                }
+
+                AddResourceExchangeDelta(economyEvent.ResourceKind, economyEvent.Amount);
+                ResourceExchangeNetResourceDelta += economyEvent.Amount;
+            }
+
+            ResourceExchangeCompletionRatePercent = ResourceExchangeStartedCount > 0
+                ? Mathf.Clamp01((float)ResourceExchangeCompletedCount / ResourceExchangeStartedCount) * 100f
+                : 0f;
+        }
+
+        private static string BuildRouteSummary(int exportCount, int importCount)
+        {
+            if (exportCount <= 0 && importCount <= 0)
+                return "None";
+
+            if (exportCount > 0 && importCount > 0)
+                return $"Export:{exportCount} Import:{importCount}";
+
+            return exportCount > 0
+                ? $"Export:{exportCount}"
+                : $"Import:{importCount}";
+        }
+
+        private void AddResourceExchangeDelta(ResourceExchangeResourceKind resourceKind, int amount)
+        {
+            switch (resourceKind)
+            {
+                case ResourceExchangeResourceKind.Credits:
+                    ResourceExchangeCreditsDelta += amount;
+                    return;
+                case ResourceExchangeResourceKind.Materials:
+                    ResourceExchangeMaterialsDelta += amount;
+                    return;
+                case ResourceExchangeResourceKind.Oil:
+                    ResourceExchangeOilDelta += amount;
+                    return;
+                case ResourceExchangeResourceKind.Fuel:
+                    ResourceExchangeFuelDelta += amount;
+                    return;
+                case ResourceExchangeResourceKind.RushTickets:
+                    ResourceExchangeRushTicketsDelta += amount;
+                    return;
+            }
         }
     }
 }

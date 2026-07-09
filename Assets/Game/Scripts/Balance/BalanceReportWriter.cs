@@ -82,6 +82,26 @@ namespace Game.Runtime
             builder.AppendLine($"- Own soldiers dead: `{metrics.OwnSoldiersDead}`");
             builder.AppendLine($"- Enemy soldiers dead: `{metrics.EnemySoldiersDead}`");
             builder.AppendLine();
+            builder.AppendLine("## Resource Exchange");
+            builder.AppendLine();
+            builder.AppendLine($"- Source mode: `{metrics.ResourceExchangeSourceMode ?? "Unspecified"}`");
+            builder.AppendLine($"- Route summary: `{metrics.ResourceExchangeRouteSummary ?? "None"}`");
+            builder.AppendLine($"- Started jobs: `{metrics.ResourceExchangeStartedCount}`");
+            builder.AppendLine($"- Completed jobs: `{metrics.ResourceExchangeCompletedCount}`");
+            builder.AppendLine($"- Cancelled jobs: `{metrics.ResourceExchangeCancelledCount}`");
+            builder.AppendLine($"- Blocked jobs: `{metrics.ResourceExchangeBlockedCount}`");
+            builder.AppendLine($"- Rush actions: `{metrics.ResourceExchangeRushCount}`");
+            builder.AppendLine($"- Input amount planned: `{metrics.ResourceExchangeInputAmount}`");
+            builder.AppendLine($"- Output amount planned: `{metrics.ResourceExchangeOutputAmount}`");
+            builder.AppendLine($"- Total duration seconds: `{metrics.ResourceExchangeDurationSeconds:0.##}`");
+            builder.AppendLine($"- Completion rate: `{metrics.ResourceExchangeCompletionRatePercent:0.##}%`");
+            builder.AppendLine($"- Credits delta: `{metrics.ResourceExchangeCreditsDelta}`");
+            builder.AppendLine($"- Materials delta: `{metrics.ResourceExchangeMaterialsDelta}`");
+            builder.AppendLine($"- Oil delta: `{metrics.ResourceExchangeOilDelta}`");
+            builder.AppendLine($"- Fuel delta: `{metrics.ResourceExchangeFuelDelta}`");
+            builder.AppendLine($"- Rush Tickets delta: `{metrics.ResourceExchangeRushTicketsDelta}`");
+            builder.AppendLine($"- Net resource delta: `{metrics.ResourceExchangeNetResourceDelta}`");
+            builder.AppendLine();
             builder.AppendLine("This report is a balance tuning artifact, not a build-validation gate.");
             return builder.ToString();
         }

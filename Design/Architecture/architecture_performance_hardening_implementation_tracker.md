@@ -11,22 +11,31 @@ This tracker follows the completed historical program in `Design/Architecture/ar
 | Field | Value |
 |---|---|
 | Baseline date | 2026-07-09 |
-| Baseline commit | `b66453e979d847c3f05d61155266b166650b8df5` |
+| Original audit baseline commit | `b66453e979d847c3f05d61155266b166650b8df5` |
+| Current execution baseline | `a6af1335cb7270d8b87c60d9646ed78be7e97ac5` |
 | Unity | `6000.5.2f1` |
-| Project root | `/Users/farhad/Projects/WarlineCapture-Clone` |
+| Canonical project root | `/Users/farhad/Projects/WarlineCapture` |
 | Architecture rating | `6.5 / 10` |
 | Performance rating | `6.0 / 10` |
-| Current program status | Active - baseline captured; implementation not started |
+| Current program status | Active - execution baseline reconciled; Phase 0 parallel intake ready |
 
-### Protected Existing Work
+### Protected Integrated Work
 
-The following baseline worktree changes belonged to the user when this tracker was created. Agents must preserve them and must not revert, overwrite, reformat, or include them in unrelated commits:
+The following work belonged to the user when this tracker was created and is now integrated in commits `76d098a9a` and `845a56eb8`. Agents must preserve it and must not revert, overwrite, reformat, or include it in unrelated commits:
 
 - `Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.cs`
 - `Assets/Tests/Editor/MatchHudAssistantUiSystemHelperTests.cs`
 - `Design/VisualLockLayered/POP-13_ARIACommandAssistant/`
 
 If a tracker task genuinely needs one of these files, read and integrate the existing changes. Record the overlap in the task handoff before editing.
+
+### Baseline Reconciliation
+
+The tracker was authored at `b66453e97`, then entered `main` through `68b2da500`. Before implementation began, `main` also received the protected ARIA work and the match CPU performance repair in `a6af1335c`. The current execution baseline is therefore `a6af1335c`, not the original audit commit.
+
+The FPS repair changed `BuildingDefenseAttackSystem` and related presentation, audio, warning, settings, diagnostics, and validation code. It reduced the focused 4,800 x 2,160 Editor benchmark with 733 units to an average `8.893 ms`, median `8.242 ms`, and p95 `12.516 ms`. This is accepted current-head evidence, but it does not complete Phase 2B: the system still creates one entity snapshot and three component snapshots during its throttled 0.12-second target-acquisition pass. `APH-205` through `APH-213` remain pending until their tracker-specific acceptance criteria pass.
+
+Before changing production code, the Phase 0 agents must reproduce current-head compiler, architecture, performance, and residency evidence. If current results differ from the original audit snapshot, record both values; never rewrite the original evidence as though it had been measured at `a6af1335c`.
 
 ## Status Rules
 
@@ -35,24 +44,55 @@ If a tracker task genuinely needs one of these files, read and integrate the exi
 - `[x]` complete with validation evidence recorded in this file
 - `[!]` blocked with the exact blocker and next unblocking action recorded
 - A task is not complete because code compiles. Its stated focused tests, architecture gates, and behavior checks must pass.
-- Update `Progress Snapshot`, the task checkbox, and `Implementation Log` in the same change.
+- The coordinator updates `Progress Snapshot`, task checkboxes, and `Implementation Log` in the same integration change. Parallel workers return handoff evidence and do not edit these shared tracker sections.
+- A completed implementation slice must be committed and pushed by the coordinator after the Stable Integration and Push Gate passes. Do not mark a task complete while its accepted changes exist only in a local worktree.
 - Never raise a budget, allowlist a violation, or weaken a test merely to obtain a pass. A budget or allowlist change requires a before/after report and explicit approval in the Decision Log.
 - Run `git diff --check` after every implementation slice.
 - Preserve Unity `.meta` files and serialized scene/prefab references.
 - Do not combine gameplay balance changes, visual redesign, random-map generation, or unrelated UI work with this program.
 
+## Multi-Agent Operating Model
+
+The program may use multiple coding agents, but the coordinator owns the critical path and integration state. Parallelism is allowed only for tasks with satisfied dependencies and non-overlapping file ownership.
+
+### Roles and Initial Allocation
+
+| Role | Initial assignment | Ownership |
+|---|---|---|
+| Coordinator | Program control and integration | tracker state, dependency checks, work allocation, conflict review, final validation, commits, and pushes |
+| Build agent | `APH-006` | sequential first-party build matrix and categorized warning report; no Unity lease required |
+| Performance agent | `APH-007` | current-head Match performance and steady-state GC captures; exclusive Unity lease required |
+| Residency agent | `APH-008` | machine-readable content-residency inventory and Markdown summary; Unity importer inspection requires the Unity lease |
+| Budget analysis agent | prepare `APH-009` | draft measured budget recommendations only after `APH-007` and `APH-008` evidence exists; coordinator approves and integrates |
+
+### Coordination Rules
+
+1. The coordinator is the only agent that claims tasks in this tracker, edits shared progress/log sections, integrates commits, rebases, or pushes.
+2. Workers receive a bounded task, an explicit file allowlist, required validations, and a prohibition on touching unrelated dirty work.
+3. Workers must not edit the same production file, test file, generated artifact, scene, prefab, or importer concurrently. If overlap becomes necessary, stop one worker and serialize the work.
+4. Workers operating in the canonical shared worktree do not commit, rebase, or push. They return a handoff; the coordinator reviews and integrates it. A worker may commit only when the coordinator explicitly assigns an isolated worktree and commit ownership.
+5. Only one Unity Editor or Unity batchmode process may use a project workspace at a time. The coordinator grants an exclusive Unity lease. Other agents may continue non-Unity builds, source analysis, or report work while that lease is active.
+6. An isolated Unity workspace may run concurrently only when it already exists, points at the same execution baseline, has no shared `Library` directory, and the coordinator records its path and result. Never create an ad hoc clone merely to bypass a lock or licensing failure.
+7. Use `Tools/CI/invoke_unity_macos.sh` in windowed batchmode without `-nographics`. If licensing fails in the sandbox, rerun once with the documented escalated/out-of-sandbox workaround before reporting a blocker.
+8. The coordinator runs cross-slice validation after integration. A worker's focused pass is necessary evidence, not permission to skip the integrated build and architecture gates.
+9. When the integrated slice is stable and has no compiler errors, the coordinator stages only task-owned files, commits one focused slice, reconciles with the latest remote branch without overwriting other work, and pushes. Never commit or push a known-broken slice or unrelated dirty work.
+
+### Worker Handoff Contract
+
+Every worker handoff must contain: task ID, baseline commit, files changed, files intentionally not touched, behavior statement, exact commands and pass markers, artifact/log paths, metrics before/after, visual result when applicable, residual risks, recommended next task, and a proposed focused commit message. The coordinator rejects incomplete handoffs and leaves the task pending or blocked.
+
 ## Agent Start Procedure
 
 1. Read this document completely.
 2. Read only the source files and focused tests named by the selected task.
-3. Run `git status --short` and preserve unrelated work.
-4. Confirm every dependency in the Phase Dependency table is complete.
-5. Change the selected task to `[~]` and update `Current task` in the Progress Snapshot.
-6. Implement the narrowest behavior-preserving slice.
-7. Run the task-specific commands and the Common Validation Matrix.
-8. Inspect Unity console output and, for visual work, capture the required views.
-9. Record files, metrics, logs, behavior result, and next task in the Implementation Log.
-10. Mark the task `[x]` only after all acceptance criteria pass.
+3. Run `git status --short`, record the baseline commit, and preserve unrelated work.
+4. Confirm every dependency in the Phase Dependency table is complete and obtain the task/file claim from the coordinator.
+5. The coordinator changes the selected task to `[~]` and updates `Current task` in the Progress Snapshot before implementation begins.
+6. Implement the narrowest behavior-preserving slice within the assigned file allowlist.
+7. Run the task-specific commands and relevant rows of the Common Validation Matrix.
+8. Inspect Unity console output and, for visual work, capture the required views while holding the Unity lease.
+9. Return the Worker Handoff Contract evidence to the coordinator. Do not edit shared tracker state from a parallel worker.
+10. The coordinator reviews the diff, runs integrated validation, writes the Implementation Log entry, commits and pushes the stable slice, and marks the task `[x]` only after all acceptance criteria and the Stable Integration and Push Gate pass.
 
 ## Current Evidence Snapshot
 
@@ -106,7 +146,7 @@ Interpretation:
 | Gate | Current failure | Required end state |
 |---|---|---|
 | `ScriptArchitectureAlignmentContractTests.RunAssemblyBoundaryValidation` | `Game.UI.Runtime` references `Game.Configs` | pass all 31 checks without weakening the contract |
-| `EcsBurstHotPathArchitectureTests.RunFocusedValidation` | two `ToEntityArray(Allocator.Temp)` hot-path snapshots | zero hot-path `ToEntityArray` / `ToComponentDataArray` debt |
+| `EcsBurstHotPathArchitectureTests.RunFocusedValidation` | current head still contains resource-exchange and building-defense query snapshots; exact current-head guard count must be reproduced | zero hot-path `ToEntityArray` / `ToComponentDataArray` debt |
 
 Current violating files:
 
@@ -118,8 +158,8 @@ Current violating files:
 - `Assets/Game/Scripts/UI/Screens/MatchHudRightQuickRailView.cs`: direct `GameText` access.
 - `Assets/Game/Scripts/UI/Screens/MatchOverlayCommandInputUiSystemHelper.cs`: direct `GameText` access.
 - `Assets/Game/Scripts/UI/Shell/UIShellContentView.cs`: direct `GameText` access.
-- `Assets/Game/Scripts/Systems/ResourceExchangeRequestValidationSystem.cs:31`: `exchangeQuery.ToEntityArray(Allocator.Temp)`.
-- `Assets/Game/Scripts/Systems/BuildingDefenseAttackSystem.cs:30-32`: dependency completion plus `_targetQuery.ToEntityArray(Allocator.Temp)`.
+- `Assets/Game/Scripts/Systems/ResourceExchangeRequestValidationSystem.cs`: `exchangeQuery.ToEntityArray(Allocator.Temp)`.
+- `Assets/Game/Scripts/Systems/BuildingDefenseAttackSystem.cs`: explicit dependency completion plus one `ToEntityArray` and three `ToComponentDataArray` snapshots on each throttled target-acquisition pass.
 
 ## Program Outcomes
 
@@ -164,6 +204,12 @@ The program is complete only when all of the following are true:
 | `D-009` | Audio changes start with catalog-referenced voice residency. Existing cataloged music and ambience streaming behavior is preserved. |
 | `D-010` | Static map optimization is editor-baked and transform-preserving. Runtime procedural relocation or regrouping of authored content is forbidden. |
 | `D-011` | Unity MCP should be used for scene hierarchy inspection and visual validation when connected. If unavailable, use the named Unity capture/validation runners and record that limitation. |
+| `D-012` | `a6af1335c` is the current execution baseline; the original `b66453e97` audit evidence remains historical and is not relabeled as current-head evidence. |
+| `D-013` | One coordinator owns tracker state, task claims, integration validation, commits, and pushes. Parallel workers return structured handoffs instead of editing shared tracker state. |
+| `D-014` | Parallel work requires satisfied dependencies and disjoint file ownership. Any newly discovered overlap is serialized by the coordinator. |
+| `D-015` | Unity access is an exclusive per-workspace lease. Use the macOS wrapper in windowed batchmode without `-nographics`, then use the documented escalated licensing retry before declaring a licensing blocker. |
+| `D-016` | `APH-006`, `APH-007`, and the non-Unity portion of `APH-008` may begin in parallel. `APH-009` waits for accepted `APH-007` and `APH-008` evidence. |
+| `D-017` | Each accepted implementation slice is committed and pushed by the coordinator only after relevant builds, focused tests, diff checks, and compiler-error checks pass. Known-broken or unrelated work is never included. |
 
 ## Phase Dependency Order
 
@@ -180,6 +226,19 @@ The program is complete only when all of the following are true:
 | 8 | CI, PlayMode, and device gates | Phases 3-7 as relevant |
 | 9 | Final validation and re-rating | all active phases |
 
+### Recommended Execution Waves
+
+| Wave | Parallel work | Integration barrier |
+|---|---|---|
+| 0A | `APH-006`, `APH-007`, and non-Unity `APH-008` inventory work | current-head build, performance, GC, and residency evidence accepted |
+| 0B | Unity importer portion of `APH-008`; budget analysis after evidence handoff | `APH-009` accepted and Phase 0 complete |
+| 1 | Phase 1 UI boundary, Phase 2A resource exchange, and Phase 2B building defense with disjoint owners | both red architecture gates pass together on the integrated head |
+| 2 | Phase 3 settings/environment; Phase 4 audio measurements may run after Phase 2 under a separate owner | settings ownership and audio pilot evidence accepted |
+| 3 | Phase 5 policy work; Phase 7 analysis-only reports that do not touch active Phase 5 files | memory/build budgets and measured decomposition priorities accepted |
+| 4 | Phase 6 static-map work, then approved Phase 7 implementation slices | visual lock, startup, memory, and architecture gates remain green |
+| 5 | Phase 8 CI/device gates | all required automated and device evidence accepted |
+| 6 | Phase 9 final closeout | no required task remains |
+
 ## Progress Snapshot
 
 | Field | Status |
@@ -187,10 +246,10 @@ The program is complete only when all of the following are true:
 | Checklist complete | `6 / 106` |
 | Checklist percent complete | `5.7%` |
 | Current phase | Phase 0 - Baseline and safety freeze |
-| Current task | `APH-006` full build matrix |
-| Red architecture gates | `2` |
-| Last verified commit | `b66453e979d847c3f05d61155266b166650b8df5` |
-| Last update | 2026-07-09 - tracker created from current audit |
+| Current task | `APH-006`, `APH-007`, and `APH-008` ready for coordinator assignment; none claimed yet |
+| Red architecture gates | `2` at the audit baseline; current-head reproduction remains required |
+| Last verified commit | `a6af1335cb7270d8b87c60d9646ed78be7e97ac5` for the scoped FPS repair; tracker-wide validation pending |
+| Last update | 2026-07-09 - execution baseline and multi-agent operating model reconciled |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -201,26 +260,30 @@ Goal: preserve current evidence, make the program reproducible, and establish bu
 - [x] `APH-001` Record baseline commit, Unity version, code/content scale, ratings, and Android soak metrics.
   - Evidence: Authority and Baseline plus Current Evidence Snapshot.
 - [x] `APH-002` Record and protect the baseline dirty worktree.
-  - Evidence: Protected Existing Work.
+  - Evidence: Protected Integrated Work and Baseline Reconciliation.
 - [x] `APH-003` Reproduce the UI assembly-boundary failure.
   - Result: failed because `Game.UI.Runtime` references `Game.Configs`.
   - Log: `/private/tmp/warline-architecture-audit-validation.log`.
 - [x] `APH-004` Reproduce the ECS hot-path architecture failure.
-  - Result: failed with two array snapshots in building defense and resource exchange.
+  - Result: the audit baseline failed with snapshot violations in two systems: building defense and resource exchange. Current-head reproduction is still required because the building-defense implementation changed in `a6af1335c`.
   - Log: `/private/tmp/warline-performance-architecture-audit-validation.log`.
 - [x] `APH-005` Confirm core runtime compiler health.
   - Result: `Game.Runtime.csproj` built with 0 errors and 6 generated-project/reference warnings.
 - [ ] `APH-006` Run the sequential first-party build matrix.
+  - Initial owner: Build agent. May run in parallel with `APH-007` and non-Unity `APH-008` work.
   - Build `Game.Components`, `Game.Configs`, `Game.Runtime.Pathfinding`, `Game.Runtime`, `Game.Rendering`, `Game.UI.Contracts`, `Game.UI.Runtime`, `Game.UI.Shell.Ecs`, `Game.Composition`, `Game.Editor`, `Game.Tests.Editor`, and `Game.Tests.PlayMode`.
   - Acceptance: 0 errors. Record warnings by category; do not paste repeated SDK reference-conflict noise into this tracker.
 - [ ] `APH-007` Capture a fresh pre-change Match performance baseline on the current commit.
+  - Initial owner: Performance agent. Requires the exclusive Unity lease.
   - Run the editor regression baseline and steady-state GC capture.
   - Preserve the generated JSON/Markdown artifacts before optimization.
   - Acceptance: capture includes at least 700 units, 600 runtime buildings, 180 warmup frames, and 300 measured frames.
 - [ ] `APH-008` Add a machine-readable content-residency inventory report.
+  - Initial owner: Residency agent. File/dependency inventory may run in parallel; serialized importer inspection requires the exclusive Unity lease.
   - Required fields: build-included asset path, type, source size, imported size where available, dependency root, audio load type, texture dimensions/format/mipmap/streaming state, mesh read/write state, and animation texture payload.
   - Output: `Design/AgentReports/architecture_performance_content_residency_baseline.json` plus Markdown summary.
 - [ ] `APH-009` Freeze initial product budgets in a tracked config.
+  - Initial owner: Budget analysis agent for the draft; coordinator owns approval and integration. Depends on accepted `APH-007` and `APH-008` evidence.
   - Keep existing Android p95 budgets: `<33 ms` baseline/recommended and `<25 ms` high-end.
   - Add same-device peak allocated-memory, APK/AAB, installed-size, startup-time, and visual-quality evidence requirements.
   - Initial memory improvement target: at least 10 percent below the validated same-device baseline; do not assert an absolute limit until `APH-008` identifies residency owners.
@@ -252,7 +315,7 @@ Implementation contract:
 
 ## Phase 2 - Restore the ECS Hot-Path Gate
 
-Goal: remove the two new synchronous array snapshots without changing gameplay behavior.
+Goal: remove all remaining synchronous hot-path query snapshots without changing gameplay behavior or losing the measured FPS repair.
 
 ### Phase 2A - Resource Exchange
 
@@ -269,6 +332,12 @@ Implementation contract:
 - [ ] `APH-204` Run `ResourceExchangeRequestValidationSystemTests.RunFocusedValidation` and `ResourceExchangeGcAllocationValidationTests.RunFocusedValidation`.
 
 ### Phase 2B - Building Defense
+
+Current-head overlap:
+
+- Commit `a6af1335c` changed this system to acquire targets every 0.12 seconds, copy query data into contiguous arrays, and preserve per-frame firing cooldown updates. It also added focused performance diagnostics and supporting tests.
+- That repair is the performance floor for this phase. Preserve or improve its focused benchmark and do not restore per-frame target acquisition or random per-candidate `EntityManager` reads.
+- The current implementation still uses one entity snapshot and three component snapshots during target acquisition, so it does not satisfy `APH-208` or the zero-snapshot architecture gate.
 
 Immediate implementation contract:
 
@@ -430,6 +499,22 @@ Goal: prove the complete program improved production readiness without gameplay 
 - [ ] `APH-903` Compare final architecture/performance metrics against this baseline and write `Design/AgentReports/architecture_performance_hardening_final_report.md`.
 - [ ] `APH-904` Re-rate architecture and performance, list residual risks, update the root architecture index, and mark this tracker complete only when no required task remains.
 
+## Stable Integration and Push Gate
+
+Run this gate after each implementation slice and before changing its task status to `[x]`:
+
+1. Inspect `git status --short` and the complete diff. Identify task-owned files and preserve all unrelated work.
+2. Run `git diff --check`.
+3. Build the owning assembly and every directly affected first-party dependent assembly with `0` errors. For shared runtime or composition changes, include `Game.Runtime`, `Game.Editor`, and the relevant test assembly at minimum.
+4. Run every focused test and architecture gate required by the task. Unity-required slices must reach their execute method and required pass marker; a licensing failure is handled through the documented wrapper/escalation retry first.
+5. Inspect the relevant Unity log or live Editor console for `error CS`, compiler failure, unhandled exception, test failure, or asset import failure attributable to the slice. Existing unrelated warnings must be categorized in the handoff.
+6. Stage only task-owned implementation files, tests, generated evidence, and the coordinated tracker update. Review `git diff --cached --check` and `git diff --cached --stat` before committing.
+7. Create one focused commit for the stable slice. Do not use the commit as a checkpoint for broken compilation or incomplete acceptance criteria.
+8. Fetch the latest remote branch before pushing. If it advanced, inspect overlap and rebase or integrate without overwriting other work. Rerun affected validation after any conflict resolution or content-changing integration.
+9. Push the current branch and confirm local/remote divergence is zero. Record the final commit hash and branch in the Implementation Log.
+
+If any required check fails, do not commit or push the slice. Keep the task `[~]`, or mark it `[!]` only with the exact blocker and next unblocking action. A documentation-only coordination change may be committed separately when `git diff --check` passes and it does not claim implementation acceptance.
+
 ## Common Validation Matrix
 
 Run only the focused rows relevant to a slice during development. Run every row in Phase 9.
@@ -454,11 +539,17 @@ git diff --check
 
 ### Unity Command Template
 
-Replace `<Method>` and `<LogName>` only. Keep commands sequential; Unity cannot open the same project in parallel.
+Replace `<Method>` and `<LogName>` only. The coordinator must grant the exclusive Unity lease before the command starts. Use the project wrapper in windowed batchmode and do not add `-nographics`. Use `-quit` only for execute methods that complete synchronously; asynchronous Play Mode capture methods must own their own exit lifecycle.
 
 ```bash
-"/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/MacOS/Unity" -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod <Method> -logFile /private/tmp/<LogName>.log
+Tools/CI/invoke_unity_macos.sh \
+  --project /Users/farhad/Projects/WarlineCapture \
+  --timeout 900 \
+  --log /private/tmp/<LogName>.log \
+  -- -quit -executeMethod <Method>
 ```
+
+If the sandboxed run fails during Unity licensing initialization, rerun the same wrapper command once with escalation/out-of-sandbox access. Record both log paths. A first licensing loop is not a final blocker.
 
 ### Required Execute Methods
 
@@ -481,7 +572,11 @@ Replace `<Method>` and `<LogName>` only. Keep commands sequential; Unity cannot 
 ### Android Profiler Build and Launch
 
 ```bash
-"/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/MacOS/Unity" -batchmode -nographics -quit -projectPath /Users/farhad/Projects/WarlineCapture-Clone -executeMethod Game.Editor.BuildScript.BuildAndroidProfilerApk -logFile /private/tmp/warline-architecture-performance-profiler-build.log
+Tools/CI/invoke_unity_macos.sh \
+  --project /Users/farhad/Projects/WarlineCapture \
+  --timeout 3600 \
+  --log /private/tmp/warline-architecture-performance-profiler-build.log \
+  -- -quit -executeMethod Game.Editor.BuildScript.BuildAndroidProfilerApk
 adb install -r Build/AndroidProfiler/WarlineCapture-Profiler.apk
 adb shell am force-stop com.warlinecapture.game
 adb shell "am start -n com.warlinecapture.game/com.unity3d.player.UnityPlayerGameActivity --es unity '-warlineAutoStartMatch -warlineProfilerMarkers'"
@@ -529,9 +624,10 @@ Append one entry per completed or blocked task. Keep entries concise but include
 
 - Status: Complete / Blocked
 - Commit or worktree baseline: `<hash>`
+- Stable commit/push: `<final hash>` pushed to `<branch>`, or `not pushed` with reason
 - Files changed: `path`, `path`
 - Behavior preserved/changed: exact statement
-- Validation: command plus required pass marker
+- Validation: command plus required pass marker; include Stable Integration and Push Gate result
 - Artifacts: log/report/screenshot paths
 - Metrics before: values or `not applicable`
 - Metrics after: values or `not applicable`
@@ -556,10 +652,27 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Residual risk: both current architecture gates remain red by design until Phases 1 and 2
 - Next ready task: `APH-006`
 
+### 2026-07-09 - Program baseline reconciliation and multi-agent execution model
+
+- Status: Complete tracker administration; no implementation task marked complete
+- Commit or worktree baseline: `a6af1335cb7270d8b87c60d9646ed78be7e97ac5`
+- Files changed: this tracker only
+- Behavior preserved/changed: no runtime, scene, prefab, config, or asset behavior changed
+- Validation: current commit and clean pre-edit worktree confirmed; current building-defense snapshot sites inspected; `git diff --check` passed after the documentation update
+- Artifacts: current tracker and commit `a6af1335c` benchmark evidence
+- Metrics before: original audit baseline remains recorded above
+- Metrics after: current FPS repair evidence recorded under Baseline Reconciliation; not treated as Phase 2 completion
+- Visual result: Not applicable
+- Residual risk: current-head full build matrix, architecture gates, Match baseline, GC baseline, and content-residency report remain pending
+- Next ready tasks: `APH-006`, `APH-007`, and `APH-008` may be assigned in parallel under the coordination rules
+
 ## Decision Log
 
 Append approved deviations here. Do not silently alter Fixed Architecture Decisions.
 
 | Date | Decision ID | Decision | Reason | Evidence/approval |
 |---|---|---|---|---|
-| 2026-07-09 | `D-001` through `D-011` | Initial implementation decisions accepted as the execution baseline | Convert the audit into deterministic multi-agent work | This tracker |
+| 2026-07-09 | `D-001` through `D-011` | Initial implementation decisions accepted as the audit baseline | Convert the audit into deterministic implementation work | This tracker |
+| 2026-07-09 | `D-012` | Reconcile execution to `a6af1335c` while retaining historical audit evidence | The tracker entered `main` before the ARIA and FPS commits were integrated | Commit history and current source inspection |
+| 2026-07-09 | `D-013` through `D-016` | Adopt coordinator-owned tracker integration, disjoint worker ownership, an exclusive Unity lease, and Phase 0 parallel intake | Multiple agents can reduce elapsed time only when shared-state and Unity collisions are controlled | User approval and Multi-Agent Operating Model |
+| 2026-07-09 | `D-017` | Commit and push each accepted implementation slice only after the stable integration gate passes | Keep `main` usable throughout the program and prevent broken or unrelated work from entering task commits | User direction and Stable Integration and Push Gate |

@@ -79,6 +79,9 @@ namespace Game.Configs
         public const string GameplayUnitEngineAircraftFlight = "Gameplay.Unit.Engine.Aircraft.Flight";
         public const uint GameplayUnitEngineAircraftFlightHash = 1332154053u;
 
+        public const string GameplayUnitEngineHelicopterFlight = "Gameplay.Unit.Engine.Helicopter.Flight";
+        public const uint GameplayUnitEngineHelicopterFlightHash = 696811920u;
+
         public const string GameplayWeaponFireSmallArms = "Gameplay.Weapon.Fire.SmallArms";
         public const uint GameplayWeaponFireSmallArmsHash = 3212856651u;
 
@@ -705,6 +708,7 @@ namespace Game.Configs
             GameplayUnitEngineVehicleMove,
             GameplayUnitEngineAircraftTakeoff,
             GameplayUnitEngineAircraftFlight,
+            GameplayUnitEngineHelicopterFlight,
             GameplayWeaponFireSmallArms,
             GameplayWeaponMissileLaunch,
             GameplayWeaponMissileFlight,
@@ -933,6 +937,7 @@ namespace Game.Configs
             GameplayUnitEngineVehicleMoveHash,
             GameplayUnitEngineAircraftTakeoffHash,
             GameplayUnitEngineAircraftFlightHash,
+            GameplayUnitEngineHelicopterFlightHash,
             GameplayWeaponFireSmallArmsHash,
             GameplayWeaponMissileLaunchHash,
             GameplayWeaponMissileFlightHash,

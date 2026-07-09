@@ -46,6 +46,7 @@ public sealed class AudioConfigContractTests
         AudioEventIds.GameplayUnitEngineVehicleMove,
         AudioEventIds.GameplayUnitEngineAircraftTakeoff,
         AudioEventIds.GameplayUnitEngineAircraftFlight,
+        AudioEventIds.GameplayUnitEngineHelicopterFlight,
         AudioEventIds.GameplayWeaponFireSmallArms,
         AudioEventIds.GameplayWeaponMissileLaunch,
         AudioEventIds.GameplayWeaponMissileFlight,

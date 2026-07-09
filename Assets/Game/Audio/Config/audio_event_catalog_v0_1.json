@@ -63,7 +63,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/UI/ui_button_primary_click_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -87,7 +87,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/UI/ui_button_secondary_click_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -111,7 +111,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/UI/ui_button_negative_click_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -135,7 +135,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/UI/ui_button_disabled_tap_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -159,7 +159,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/UI/ui_tab_select_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -183,7 +183,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/UI/ui_card_select_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -207,7 +207,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/UI/ui_card_locked_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -231,7 +231,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/UI/ui_popup_open_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -255,7 +255,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/UI/ui_popup_close_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -279,7 +279,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/UI/ui_screen_forward_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -303,7 +303,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/UI/ui_screen_back_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -327,7 +327,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/UI/ui_drawer_open_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -351,7 +351,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/UI/ui_drawer_close_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -375,7 +375,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/UI/ui_slider_tick_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -399,7 +399,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/UI/ui_toggle_on_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -423,7 +423,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/UI/ui_toggle_off_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -447,7 +447,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/UI/ui_feedback_toast_error_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -471,7 +471,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/UI/ui_feedback_toast_positive_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -495,7 +495,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_unit_select_infantry_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -519,7 +519,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_unit_select_vehicle_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -543,7 +543,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_unit_select_air_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -567,7 +567,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_unit_engine_vehicle_move_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -591,7 +591,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_unit_engine_aircraft_takeoff_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -615,7 +615,31 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_unit_engine_aircraft_flight_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Unit.Engine.Helicopter.Flight",
+      "busId": "SFX",
+      "priority": "Low",
+      "cooldownMs": 0,
+      "volumeDb": -12.0,
+      "pitchVariance": {
+        "min": -0.03,
+        "max": 0.03
+      },
+      "playback": {
+        "loop": false,
+        "spatial": true,
+        "maxInstances": 8,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_unit_engine_helicopter_flight_01.wav",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -639,7 +663,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_fire_small_arms_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -663,7 +687,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_missile_launch_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -687,7 +711,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_missile_flight_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -711,7 +735,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_missile_impact_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -735,7 +759,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_command_move_accepted_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -759,7 +783,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_command_attack_accepted_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -783,7 +807,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_command_hold_accepted_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -807,7 +831,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_command_stop_returning_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -831,7 +855,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_command_scan_targeting_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -855,7 +879,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_command_scan_accepted_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -879,7 +903,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_command_rejected_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -903,7 +927,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_build_place_valid_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -927,7 +951,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_build_place_invalid_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -951,7 +975,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_production_queued_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -975,7 +999,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_production_complete_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -999,7 +1023,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_resource_exchange_accepted_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -1023,7 +1047,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_resource_exchange_rejected_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -1047,7 +1071,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_resource_exchange_queue_started_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -1071,7 +1095,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_resource_exchange_rushed_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -1095,7 +1119,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_resource_exchange_completed_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -1119,7 +1143,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_resource_exchange_cancelled_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -1143,7 +1167,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Alerts/alert_threat_minor_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -1167,7 +1191,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Alerts/alert_threat_critical_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -1191,7 +1215,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Alerts/alert_unit_under_attack_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -1215,7 +1239,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Alerts/alert_base_breached_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -1239,7 +1263,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_objective_progress_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -1263,7 +1287,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_objective_complete_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -1287,7 +1311,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_objective_failed_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -1311,7 +1335,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Music/music_splash_intro_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -1335,7 +1359,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Music/music_menu_loop_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -1359,7 +1383,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Music/music_briefing_loop_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -1383,7 +1407,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Music/music_match_calm_loop_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -1407,7 +1431,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Music/music_match_combat_loop_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -1431,7 +1455,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Music/music_result_victory_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -1455,7 +1479,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Music/music_result_defeat_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -1479,7 +1503,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Ambience/amb_city_day_loop_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -1503,7 +1527,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Ambience/amb_base_distant_loop_01.wav",
-          "status": "placeholder",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]

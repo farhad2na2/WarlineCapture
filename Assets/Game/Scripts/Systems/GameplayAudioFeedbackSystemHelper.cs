@@ -45,6 +45,23 @@ namespace Game.Runtime
                 worldPosition);
         }
 
+        public static bool TryEmitHelicopterFlightAudio(
+            EntityManager em,
+            Entity source,
+            float requestedAt,
+            float3 worldPosition)
+        {
+            return EnqueueSpatialSfx(
+                em,
+                AudioEventIds.GameplayUnitEngineHelicopterFlight,
+                AudioEventIds.GameplayUnitEngineHelicopterFlightHash,
+                AudioPlaybackPriority.Low,
+                requestedAt,
+                cooldownSeconds: 0f,
+                source,
+                worldPosition);
+        }
+
         public static bool TryEmitAircraftTakeoffAudio(
             EntityManager em,
             Entity source,

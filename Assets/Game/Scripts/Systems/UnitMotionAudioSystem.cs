@@ -69,7 +69,10 @@ namespace Game.Runtime
 
                     if (aircraftActive && now >= audioState.NextAircraftFlightAt)
                     {
-                        GameplayAudioFeedbackSystemHelper.TryEmitAircraftFlightAudio(em, entity, now, transform.ValueRO.Position);
+                        if (IsHelicopterAudioSource(em, entity))
+                            GameplayAudioFeedbackSystemHelper.TryEmitHelicopterFlightAudio(em, entity, now, transform.ValueRO.Position);
+                        else
+                            GameplayAudioFeedbackSystemHelper.TryEmitAircraftFlightAudio(em, entity, now, transform.ValueRO.Position);
                         audioState.NextAircraftFlightAt = now + AircraftFlightIntervalSeconds;
                         changed = true;
                     }
@@ -96,6 +99,15 @@ namespace Game.Runtime
 
             ecb.Playback(em);
             ecb.Dispose();
+        }
+
+        private static bool IsHelicopterAudioSource(EntityManager em, Entity entity)
+        {
+            if (!em.HasComponent<UnitSourcePrefabKey>(entity))
+                return false;
+
+            string sourceKey = em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString();
+            return sourceKey.IndexOf("helicopter", System.StringComparison.OrdinalIgnoreCase) >= 0;
         }
     }
 }

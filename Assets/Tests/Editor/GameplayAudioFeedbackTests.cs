@@ -23,6 +23,8 @@ public sealed class GameplayAudioFeedbackTests
             passed++;
             tests.UnitMotionAudioSystem_AttackRunAircraftEnqueuesFlightSfxWhenVisualMovementIsIdle();
             passed++;
+            tests.UnitMotionAudioSystem_HelicopterSourceEnqueuesHelicopterFlightSfx();
+            passed++;
             tests.UnitAttackSystem_StandardShotEnqueuesWeaponFireSfx();
             passed++;
             tests.UnitAttackSystem_AircraftShotEnqueuesMissileSfx();
@@ -115,6 +117,38 @@ public sealed class GameplayAudioFeedbackTests
             aircraft,
             new float3(14f, 8f, 22f));
         AssertNoAudioEvent(requests, AudioEventIds.GameplayUnitEngineAircraftTakeoff);
+    }
+
+    [Test]
+    public void UnitMotionAudioSystem_HelicopterSourceEnqueuesHelicopterFlightSfx()
+    {
+        using World world = new("GameplayAudioFeedbackTests_HelicopterFlight");
+        EntityManager em = world.EntityManager;
+        Entity helicopter = CreateMotionUnit(em, new float3(6f, 5f, 18f), vehicle: true, aircraft: true);
+        em.AddComponentData(helicopter, new UnitSourcePrefabKey
+        {
+            Value = new Unity.Collections.FixedString64Bytes("unit_veh_helicopter_attack")
+        });
+        em.SetComponentData(helicopter, new UnitAirComponent
+        {
+            Airborne = 1,
+            HomeInitialized = 1,
+            HomePosition = new float3(6f, 0f, 18f)
+        });
+
+        SystemHandle system = world.CreateSystem<UnitMotionAudioSystem>();
+        world.SetTime(new TimeData(6d, 0.1f));
+        system.Update(world.Unmanaged);
+
+        DynamicBuffer<AudioPlaybackRequestElement> requests = GetAudioRequests(em);
+        Assert.AreEqual(1, requests.Length);
+        AssertAudioRequest(
+            requests[0],
+            AudioEventIds.GameplayUnitEngineHelicopterFlight,
+            AudioEventIds.GameplayUnitEngineHelicopterFlightHash,
+            helicopter,
+            new float3(6f, 5f, 18f));
+        AssertNoAudioEvent(requests, AudioEventIds.GameplayUnitEngineAircraftFlight);
     }
 
     [Test]

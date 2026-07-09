@@ -19,6 +19,10 @@ public sealed class ResourceExchangeRequestValidationSystemTests
                 test => test.StartRequest_Accepted_ReservesInputAndCreatesQueueItem(),
                 ref passed);
             RunValidationStep(
+                nameof(Update_TwoExchangeEntities_ProcessesEachQueueInOrder),
+                test => test.Update_TwoExchangeEntities_ProcessesEachQueueInOrder(),
+                ref passed);
+            RunValidationStep(
                 nameof(ClearCompleted_RemovesOnlyCompletedRowsForFaction),
                 test => test.ClearCompleted_RemovesOnlyCompletedRowsForFaction(),
                 ref passed);
@@ -83,6 +87,134 @@ public sealed class ResourceExchangeRequestValidationSystemTests
         Assert.AreEqual(1, events.Length);
         Assert.AreEqual(-200, events[0].Amount);
         Assert.AreEqual(ResourceExchangeResourceKind.Oil, events[0].ResourceKind);
+    }
+
+    [Test]
+    public void Update_TwoExchangeEntities_ProcessesEachQueueInOrder()
+    {
+        using World world = new(nameof(Update_TwoExchangeEntities_ProcessesEachQueueInOrder));
+        EntityManager em = world.EntityManager;
+        Entity exportExchange = CreateExchangeEntity(
+            em,
+            wallet: new ResourceExchangeWalletComponent
+            {
+                FactionId = 1,
+                Oil = 700
+            },
+            factionId: 1,
+            maxQueueItems: 2);
+        Entity importExchange = CreateExchangeEntity(
+            em,
+            allowAiExchange: true,
+            wallet: new ResourceExchangeWalletComponent
+            {
+                FactionId = 2,
+                Credits = 1000,
+                Fuel = 100,
+                FuelCapacity = 1000
+            },
+            factionId: 2,
+            maxQueueItems: 2);
+        AddRecipe(em, exportExchange, ExportOilRecipe());
+        AddRecipe(em, importExchange, ImportFuelRecipe());
+
+        FixedString128Bytes exportRecipeId = new("exchange.export_oil_credits.standard");
+        FixedString128Bytes importRecipeId = new("exchange.import_fuel_credits.standard");
+        int firstExportRequest = ResourceExchangeRequestValidationSystem.EnqueueStartRequest(
+            em,
+            exportExchange,
+            exportRecipeId,
+            200,
+            1,
+            10);
+        int firstImportRequest = ResourceExchangeRequestValidationSystem.EnqueueStartRequest(
+            em,
+            importExchange,
+            importRecipeId,
+            100,
+            2,
+            11);
+        int secondExportRequest = ResourceExchangeRequestValidationSystem.EnqueueStartRequest(
+            em,
+            exportExchange,
+            exportRecipeId,
+            100,
+            1,
+            12);
+        int secondImportRequest = ResourceExchangeRequestValidationSystem.EnqueueStartRequest(
+            em,
+            importExchange,
+            importRecipeId,
+            300,
+            2,
+            13);
+
+        UpdateSystem(world);
+
+        Assert.AreEqual(0, em.GetBuffer<ResourceExchangeRequestComponent>(exportExchange).Length);
+        Assert.AreEqual(0, em.GetBuffer<ResourceExchangeRequestComponent>(importExchange).Length);
+
+        ResourceExchangeRequestQueueComponent exportRequestQueue =
+            em.GetComponentData<ResourceExchangeRequestQueueComponent>(exportExchange);
+        Assert.AreEqual(2, exportRequestQueue.LastRequestId);
+        Assert.AreEqual(2, exportRequestQueue.LastQueueItemId);
+        ResourceExchangeRequestQueueComponent importRequestQueue =
+            em.GetComponentData<ResourceExchangeRequestQueueComponent>(importExchange);
+        Assert.AreEqual(2, importRequestQueue.LastRequestId);
+        Assert.AreEqual(2, importRequestQueue.LastQueueItemId);
+
+        ResourceExchangeWalletComponent exportWallet =
+            em.GetComponentData<ResourceExchangeWalletComponent>(exportExchange);
+        Assert.AreEqual(1, exportWallet.FactionId);
+        Assert.AreEqual(400, exportWallet.Oil);
+        Assert.AreEqual(0, exportWallet.Credits);
+        Assert.AreEqual(2u, exportWallet.Version);
+        ResourceExchangeWalletComponent importWallet =
+            em.GetComponentData<ResourceExchangeWalletComponent>(importExchange);
+        Assert.AreEqual(2, importWallet.FactionId);
+        Assert.AreEqual(600, importWallet.Credits);
+        Assert.AreEqual(100, importWallet.Fuel);
+        Assert.AreEqual(2u, importWallet.Version);
+
+        DynamicBuffer<ResourceExchangeQueueComponent> exportQueue =
+            em.GetBuffer<ResourceExchangeQueueComponent>(exportExchange);
+        Assert.AreEqual(2, exportQueue.Length);
+        AssertQueueItem(exportQueue[0], 1, 1, exportRecipeId, 200, 93, 32f);
+        AssertQueueItem(exportQueue[1], 2, 1, exportRecipeId, 100, 46, 30f);
+        DynamicBuffer<ResourceExchangeQueueComponent> importQueue =
+            em.GetBuffer<ResourceExchangeQueueComponent>(importExchange);
+        Assert.AreEqual(2, importQueue.Length);
+        AssertQueueItem(importQueue[0], 1, 2, importRecipeId, 100, 50, 30f);
+        AssertQueueItem(importQueue[1], 2, 2, importRecipeId, 300, 150, 34f);
+
+        DynamicBuffer<ResourceExchangeResultComponent> exportResults =
+            em.GetBuffer<ResourceExchangeResultComponent>(exportExchange);
+        Assert.AreEqual(2, exportResults.Length);
+        AssertAcceptedResult(exportResults[0], firstExportRequest, 1, 1, exportRecipeId, 200, 93);
+        AssertAcceptedResult(exportResults[1], secondExportRequest, 2, 1, exportRecipeId, 100, 46);
+        DynamicBuffer<ResourceExchangeResultComponent> importResults =
+            em.GetBuffer<ResourceExchangeResultComponent>(importExchange);
+        Assert.AreEqual(2, importResults.Length);
+        AssertAcceptedResult(importResults[0], firstImportRequest, 1, 2, importRecipeId, 100, 50);
+        AssertAcceptedResult(importResults[1], secondImportRequest, 2, 2, importRecipeId, 300, 150);
+
+        DynamicBuffer<ResourceExchangeEconomyEventComponent> exportEvents =
+            em.GetBuffer<ResourceExchangeEconomyEventComponent>(exportExchange);
+        Assert.AreEqual(2, exportEvents.Length);
+        AssertEconomyEvent(exportEvents[0], 1, 1, exportRecipeId, ResourceExchangeResourceKind.Oil, -200);
+        AssertEconomyEvent(exportEvents[1], 2, 1, exportRecipeId, ResourceExchangeResourceKind.Oil, -100);
+        DynamicBuffer<ResourceExchangeEconomyEventComponent> importEvents =
+            em.GetBuffer<ResourceExchangeEconomyEventComponent>(importExchange);
+        Assert.AreEqual(2, importEvents.Length);
+        AssertEconomyEvent(importEvents[0], 1, 2, importRecipeId, ResourceExchangeResourceKind.Credits, -100);
+        AssertEconomyEvent(importEvents[1], 2, 2, importRecipeId, ResourceExchangeResourceKind.Credits, -300);
+
+        ResourceExchangeSummaryComponent exportSummary =
+            em.GetComponentData<ResourceExchangeSummaryComponent>(exportExchange);
+        AssertSummary(exportSummary, factionId: 1, allowAiExchange: 0);
+        ResourceExchangeSummaryComponent importSummary =
+            em.GetComponentData<ResourceExchangeSummaryComponent>(importExchange);
+        AssertSummary(importSummary, factionId: 2, allowAiExchange: 1);
     }
 
     [Test]
@@ -327,7 +459,9 @@ public sealed class ResourceExchangeRequestValidationSystemTests
         EntityManager em,
         bool enabled = true,
         bool allowAiExchange = false,
-        ResourceExchangeWalletComponent wallet = default)
+        ResourceExchangeWalletComponent wallet = default,
+        byte factionId = 1,
+        int maxQueueItems = 1)
     {
         Entity entity = em.CreateEntity(
             typeof(ResourceExchangeRequestQueueComponent),
@@ -337,16 +471,16 @@ public sealed class ResourceExchangeRequestValidationSystemTests
         em.SetComponentData(entity, new ResourceExchangeEnabledComponent
         {
             Enabled = enabled ? (byte)1 : (byte)0,
-            FactionId = 1,
+            FactionId = factionId,
             AllowRush = 1,
             AllowWorldPresentation = 1,
             AllowAiExchange = allowAiExchange ? (byte)1 : (byte)0,
-            MaxQueueItems = 1,
+            MaxQueueItems = maxQueueItems,
             ScenarioTag = new FixedString64Bytes("mission.active")
         });
 
         if (wallet.FactionId == 0)
-            wallet.FactionId = 1;
+            wallet.FactionId = factionId;
         em.SetComponentData(entity, wallet);
         em.AddBuffer<ResourceExchangeRecipeComponent>(entity);
         em.AddBuffer<ResourceExchangeRequestComponent>(entity);
@@ -359,6 +493,82 @@ public sealed class ResourceExchangeRequestValidationSystemTests
     private static void AddRecipe(EntityManager em, Entity exchange, ResourceExchangeRecipeComponent recipe)
     {
         em.GetBuffer<ResourceExchangeRecipeComponent>(exchange).Add(recipe);
+    }
+
+    private static void AssertQueueItem(
+        ResourceExchangeQueueComponent item,
+        int queueItemId,
+        byte factionId,
+        FixedString128Bytes recipeId,
+        int inputAmount,
+        int outputAmount,
+        float durationSeconds)
+    {
+        Assert.AreEqual(queueItemId, item.QueueItemId);
+        Assert.AreEqual(factionId, item.FactionId);
+        Assert.AreEqual(recipeId, item.RecipeId);
+        Assert.AreEqual(inputAmount, item.InputAmount);
+        Assert.AreEqual(inputAmount, item.ReservedInputAmount);
+        Assert.AreEqual(outputAmount, item.OutputAmount);
+        Assert.AreEqual(ResourceExchangeQueueState.InProgress, item.State);
+        Assert.AreEqual(ResourceExchangeReason.None, item.StateReason);
+        Assert.AreEqual(durationSeconds, item.DurationSeconds);
+        Assert.AreEqual(durationSeconds, item.RemainingSeconds);
+        Assert.AreEqual(1u, item.Version);
+    }
+
+    private static void AssertAcceptedResult(
+        ResourceExchangeResultComponent result,
+        int requestId,
+        int queueItemId,
+        byte factionId,
+        FixedString128Bytes recipeId,
+        int inputAmount,
+        int outputAmount)
+    {
+        Assert.AreEqual(requestId, result.RequestId);
+        Assert.AreEqual(queueItemId, result.QueueItemId);
+        Assert.AreEqual(factionId, result.FactionId);
+        Assert.AreEqual(ResourceExchangeResultKind.RequestAccepted, result.ResultKind);
+        Assert.AreEqual(1, result.Accepted);
+        Assert.AreEqual(ResourceExchangeReason.None, result.Reason);
+        Assert.AreEqual(recipeId, result.RecipeId);
+        Assert.AreEqual(inputAmount, result.InputAmount);
+        Assert.AreEqual(outputAmount, result.OutputAmount);
+    }
+
+    private static void AssertEconomyEvent(
+        ResourceExchangeEconomyEventComponent economyEvent,
+        int queueItemId,
+        byte factionId,
+        FixedString128Bytes recipeId,
+        ResourceExchangeResourceKind resourceKind,
+        int amount)
+    {
+        Assert.AreEqual(queueItemId, economyEvent.QueueItemId);
+        Assert.AreEqual(factionId, economyEvent.FactionId);
+        Assert.AreEqual(ResourceExchangeResultKind.QueueStarted, economyEvent.ResultKind);
+        Assert.AreEqual(resourceKind, economyEvent.ResourceKind);
+        Assert.AreEqual(amount, economyEvent.Amount);
+        Assert.AreEqual(recipeId, economyEvent.RecipeId);
+    }
+
+    private static void AssertSummary(
+        ResourceExchangeSummaryComponent summary,
+        byte factionId,
+        byte allowAiExchange)
+    {
+        Assert.AreEqual(factionId, summary.FactionId);
+        Assert.AreEqual(1, summary.Enabled);
+        Assert.AreEqual(1, summary.AllowRush);
+        Assert.AreEqual(1, summary.AllowWorldPresentation);
+        Assert.AreEqual(allowAiExchange, summary.AllowAiExchange);
+        Assert.AreEqual(2, summary.QueueCount);
+        Assert.AreEqual(2, summary.ActiveCount);
+        Assert.AreEqual(0, summary.CompletedCount);
+        Assert.AreEqual(2, summary.MaxQueueItems);
+        Assert.AreEqual(ResourceExchangeReason.None, summary.LastReason);
+        Assert.AreEqual(2u, summary.Version);
     }
 
     private static ResourceExchangeRecipeComponent ExportOilRecipe(string missionTag = "")

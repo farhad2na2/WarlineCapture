@@ -7,65 +7,47 @@ namespace Game.Runtime
 {
     public partial struct ResourceExchangeRequestValidationSystem : ISystem
     {
-        private EntityQuery exchangeQuery;
-
-        public void OnCreate(ref SystemState state)
-        {
-            exchangeQuery = state.GetEntityQuery(
-                ComponentType.ReadWrite<ResourceExchangeRequestQueueComponent>(),
-                ComponentType.ReadOnly<ResourceExchangeEnabledComponent>(),
-                ComponentType.ReadWrite<ResourceExchangeWalletComponent>(),
-                ComponentType.ReadWrite<ResourceExchangeSummaryComponent>(),
-                ComponentType.ReadWrite<ResourceExchangeRecipeComponent>(),
-                ComponentType.ReadWrite<ResourceExchangeRequestComponent>(),
-                ComponentType.ReadWrite<ResourceExchangeQueueComponent>(),
-                ComponentType.ReadWrite<ResourceExchangeResultComponent>(),
-                ComponentType.ReadWrite<ResourceExchangeEconomyEventComponent>());
-            state.RequireForUpdate(exchangeQuery);
-        }
-
         public void OnUpdate(ref SystemState state)
         {
             float elapsedSeconds = (float)SystemAPI.Time.ElapsedTime;
-            EntityManager em = state.EntityManager;
-            using NativeArray<Entity> entities = exchangeQuery.ToEntityArray(Allocator.Temp);
-            for (int i = 0; i < entities.Length; i++)
+            foreach (var (
+                         requestQueue,
+                         enabled,
+                         wallet,
+                         summary,
+                         recipes,
+                         requests,
+                         queue,
+                         exchangeEntity)
+                     in SystemAPI.Query<
+                         RefRW<ResourceExchangeRequestQueueComponent>,
+                         RefRO<ResourceExchangeEnabledComponent>,
+                         RefRW<ResourceExchangeWalletComponent>,
+                         RefRW<ResourceExchangeSummaryComponent>,
+                         DynamicBuffer<ResourceExchangeRecipeComponent>,
+                         DynamicBuffer<ResourceExchangeRequestComponent>,
+                         DynamicBuffer<ResourceExchangeQueueComponent>>()
+                         .WithAll<
+                             ResourceExchangeResultComponent,
+                             ResourceExchangeEconomyEventComponent>()
+                         .WithEntityAccess())
             {
-                Entity entity = entities[i];
-                ResourceExchangeRequestQueueComponent requestQueue =
-                    em.GetComponentData<ResourceExchangeRequestQueueComponent>(entity);
-                ResourceExchangeEnabledComponent enabled =
-                    em.GetComponentData<ResourceExchangeEnabledComponent>(entity);
-                ResourceExchangeWalletComponent wallet =
-                    em.GetComponentData<ResourceExchangeWalletComponent>(entity);
-                ResourceExchangeSummaryComponent summary =
-                    em.GetComponentData<ResourceExchangeSummaryComponent>(entity);
-                DynamicBuffer<ResourceExchangeRecipeComponent> recipes =
-                    em.GetBuffer<ResourceExchangeRecipeComponent>(entity);
-                DynamicBuffer<ResourceExchangeRequestComponent> requests =
-                    em.GetBuffer<ResourceExchangeRequestComponent>(entity);
-                DynamicBuffer<ResourceExchangeQueueComponent> queue =
-                    em.GetBuffer<ResourceExchangeQueueComponent>(entity);
                 DynamicBuffer<ResourceExchangeResultComponent> results =
-                    em.GetBuffer<ResourceExchangeResultComponent>(entity);
+                    SystemAPI.GetBuffer<ResourceExchangeResultComponent>(exchangeEntity);
                 DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents =
-                    em.GetBuffer<ResourceExchangeEconomyEventComponent>(entity);
+                    SystemAPI.GetBuffer<ResourceExchangeEconomyEventComponent>(exchangeEntity);
 
                 ProcessRequests(
-                    ref requestQueue,
-                    enabled,
-                    ref wallet,
-                    ref summary,
+                    ref requestQueue.ValueRW,
+                    enabled.ValueRO,
+                    ref wallet.ValueRW,
+                    ref summary.ValueRW,
                     recipes,
                     requests,
                     queue,
                     results,
                     economyEvents,
                     elapsedSeconds);
-
-                em.SetComponentData(entity, requestQueue);
-                em.SetComponentData(entity, wallet);
-                em.SetComponentData(entity, summary);
             }
         }
 
@@ -878,6 +860,7 @@ namespace Game.Runtime
             summary.Enabled = enabled.Enabled;
             summary.AllowRush = enabled.AllowRush;
             summary.AllowWorldPresentation = enabled.AllowWorldPresentation;
+            summary.AllowAiExchange = enabled.AllowAiExchange;
             summary.QueueCount = queue.Length;
             summary.ActiveCount = activeCount;
             summary.CompletedCount = completedCount;

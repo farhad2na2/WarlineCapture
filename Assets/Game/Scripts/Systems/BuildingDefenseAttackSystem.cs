@@ -18,7 +18,8 @@ namespace Game.Runtime
             _targetQuery = state.GetEntityQuery(
                 ComponentType.ReadOnly<UnitHealth>(),
                 ComponentType.ReadOnly<Faction>(),
-                ComponentType.ReadOnly<LocalTransform>());
+                ComponentType.ReadOnly<LocalTransform>(),
+                ComponentType.Exclude<UnitAirMovement>());
             state.RequireForUpdate<BuildingDefenseWeapon>();
         }
 
@@ -337,6 +338,7 @@ namespace Game.Runtime
                 !em.HasComponent<Faction>(candidate) ||
                 !em.HasComponent<UnitHealth>(candidate) ||
                 !em.HasComponent<LocalTransform>(candidate) ||
+                em.HasComponent<UnitAirMovement>(candidate) ||
                 em.HasComponent<DebugFireTargetTag>(candidate))
             {
                 return false;

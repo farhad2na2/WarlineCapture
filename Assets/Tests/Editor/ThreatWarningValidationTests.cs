@@ -24,6 +24,7 @@ public sealed class ThreatWarningValidationTests
             var tests = new ThreatWarningValidationTests();
             tests.ThreatWarningConfigs_AssignDetectorRolesDescriptionsAndStrings();
             tests.MatchScene_DoesNotContainLegacyMenuViewWarningPanel();
+            tests.ThreatDetectionWarningSystem_DoesNotWarnBeforeSimulationActive();
             tests.ThreatDetectionWarningSystem_GroundRadarWarnsOnlyWhenNewGroundThreatEntersRadius();
             tests.ThreatDetectionWarningSystem_GroundRadarIgnoresEnemySoldiersMovingTowardSensor();
             tests.ThreatDetectionWarningSystem_IgnoresVehiclesMovingAwayFromSensor();
@@ -78,6 +79,41 @@ public sealed class ThreatWarningValidationTests
         SceneYamlTestUtility scene = SceneYamlTestUtility.Load(ScenePath);
         Assert.Throws<AssertionException>(() => scene.FindRequiredBlockContaining("::Game.Scripts.UI.MenuView"));
         Assert.Throws<AssertionException>(() => scene.FindRequiredBlockContaining("m_Name: UI_Canvas"));
+    }
+
+    [Test]
+    public void ThreatDetectionWarningSystem_DoesNotWarnBeforeSimulationActive()
+    {
+        using var world = new World("ThreatDetectionWarningSystem_NotSimulationActive");
+        EntityManager em = world.EntityManager;
+        Entity sensor = CreateUnit(em, FactionIdentity.PlayerFactionId, new int2(20, 20), false, 100, 0f);
+        em.AddComponentData(sensor, new ThreatDetector
+        {
+            Kind = (byte)ThreatDetectionKind.Ground,
+            RadiusCells = 20
+        });
+        CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(30, 20), false, 100, 5f, true, new int2(20, 20));
+
+        SystemHandle system = world.CreateSystem<ThreatDetectionWarningSystem>();
+        try
+        {
+            RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
+            RuntimeGameplayStateTestHelper.SetSimulationActive(em, false);
+            ThreatWarningRuntimeState.RequestWarning(ThreatWarningType.Ground, 0f, 1);
+
+            system.Update(world.Unmanaged);
+
+            Entity audioEntity = AudioEventRequestSystem.EnsureAudioEntity(em);
+            DynamicBuffer<AudioPlaybackRequestElement> requests = em.GetBuffer<AudioPlaybackRequestElement>(audioEntity);
+            Assert.IsFalse(ThreatWarningRuntimeState.HasPendingWarning);
+            Assert.AreEqual(0, requests.Length);
+        }
+        finally
+        {
+            InitialUnitsRuntimeState.PlayRequested = false;
+            InitialUnitsRuntimeState.SimulationActive = false;
+            ThreatWarningRuntimeState.Reset();
+        }
     }
 
     [Test]

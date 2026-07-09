@@ -17,15 +17,6 @@ namespace Game.Runtime
 
             if (IsAircraft(em, source))
             {
-                EmitSpatialOneShot(
-                    em,
-                    AudioEventIds.GameplayUnitAircraftFlyby,
-                    AudioEventIds.GameplayUnitAircraftFlybyHash,
-                    AudioPlaybackPriority.High,
-                    requestedAt,
-                    1.2f,
-                    source,
-                    position);
                 return EmitSpatialOneShot(
                     em,
                     AudioEventIds.GameplayWeaponMissileLaunch,
@@ -76,16 +67,6 @@ namespace Game.Runtime
 
         public static bool EmitAirMissileLaunch(EntityManager em, Entity source, float3 position, float requestedAt)
         {
-            EmitSpatialOneShot(
-                em,
-                AudioEventIds.GameplayUnitAircraftFlyby,
-                AudioEventIds.GameplayUnitAircraftFlybyHash,
-                AudioPlaybackPriority.High,
-                requestedAt,
-                1.2f,
-                source,
-                position);
-
             return EmitSpatialOneShot(
                 em,
                 AudioEventIds.GameplayWeaponAirMissileLaunch,
@@ -114,8 +95,8 @@ namespace Game.Runtime
         {
             return EmitSpatialOneShot(
                 em,
-                AudioEventIds.GameplayUnitAircraftFlyby,
-                AudioEventIds.GameplayUnitAircraftFlybyHash,
+                AudioEventIds.GameplayUnitEngineAircraftFlight,
+                AudioEventIds.GameplayUnitEngineAircraftFlightHash,
                 AudioPlaybackPriority.Medium,
                 requestedAt,
                 0.55f,

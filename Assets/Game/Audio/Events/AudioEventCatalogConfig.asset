@@ -531,6 +531,62 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: bd7c415e717fbdfc55dc94aeae743877, type: 3}
       weight: 1
+  - eventId: Gameplay.Unit.Engine.Vehicle.Move
+    busId: SFX
+    priority: 0
+    cooldownMilliseconds: 0
+    volumeDecibels: -13
+    pitchVariance: {x: -0.04, y: 0.03}
+    playback:
+      loop: 0
+      spatial: 1
+      maxInstances: 8
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: c5056fd0c0ccd11708fdc9344c83842c, type: 3}
+      weight: 1
+  - eventId: Gameplay.Unit.Engine.Aircraft.Takeoff
+    busId: SFX
+    priority: 1
+    cooldownMilliseconds: 0
+    volumeDecibels: -10
+    pitchVariance: {x: -0.03, y: 0.03}
+    playback:
+      loop: 0
+      spatial: 1
+      maxInstances: 4
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: 66018e2c7e74360db939fb2ff3958044, type: 3}
+      weight: 1
+  - eventId: Gameplay.Unit.Engine.Aircraft.Flight
+    busId: SFX
+    priority: 0
+    cooldownMilliseconds: 0
+    volumeDecibels: -12
+    pitchVariance: {x: -0.03, y: 0.03}
+    playback:
+      loop: 0
+      spatial: 1
+      maxInstances: 8
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: ebd33511dbdc20f77421141ab5718683, type: 3}
+      weight: 1
+  - eventId: Gameplay.Unit.Engine.Helicopter.Flight
+    busId: SFX
+    priority: 0
+    cooldownMilliseconds: 0
+    volumeDecibels: -12
+    pitchVariance: {x: -0.03, y: 0.03}
+    playback:
+      loop: 0
+      spatial: 1
+      maxInstances: 8
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: e025f45bfcb8f3459b3fd55d0f333385, type: 3}
+      weight: 1
   - eventId: Gameplay.Unit.Aircraft.Flyby
     busId: SFX
     priority: 2

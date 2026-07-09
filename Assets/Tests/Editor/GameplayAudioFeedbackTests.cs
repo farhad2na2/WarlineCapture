@@ -88,6 +88,7 @@ public sealed class GameplayAudioFeedbackTests
         Assert.AreEqual(2, requests.Length);
         AssertHasAudioEvent(requests, AudioEventIds.GameplayUnitEngineAircraftTakeoff, aircraft);
         AssertHasAudioEvent(requests, AudioEventIds.GameplayUnitEngineAircraftFlight, aircraft);
+        AssertNoAudioEvent(requests, AudioEventIds.GameplayUnitAircraftFlyby);
     }
 
     [Test]
@@ -117,6 +118,7 @@ public sealed class GameplayAudioFeedbackTests
             aircraft,
             new float3(14f, 8f, 22f));
         AssertNoAudioEvent(requests, AudioEventIds.GameplayUnitEngineAircraftTakeoff);
+        AssertNoAudioEvent(requests, AudioEventIds.GameplayUnitAircraftFlyby);
     }
 
     [Test]

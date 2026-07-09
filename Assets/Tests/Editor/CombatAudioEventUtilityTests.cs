@@ -49,7 +49,7 @@ public sealed class CombatAudioEventUtilityTests
     }
 
     [Test]
-    public void EmitStandardWeaponFire_AircraftEnqueuesFlybyAndMissileLaunch()
+    public void EmitStandardWeaponFire_AircraftEnqueuesMissileLaunchOnly()
     {
         Entity aircraft = _entityManager.CreateEntity(typeof(UnitAirComponent));
         float3 position = new(10f, 24f, 12f);
@@ -57,13 +57,13 @@ public sealed class CombatAudioEventUtilityTests
         Assert.IsTrue(CombatAudioEventUtility.EmitStandardWeaponFire(_entityManager, aircraft, position, 5f));
 
         DynamicBuffer<AudioPlaybackRequestElement> requests = Requests();
-        Assert.AreEqual(2, requests.Length);
-        AssertRequest(requests[0], AudioEventIds.GameplayUnitAircraftFlyby, AudioEventIds.GameplayUnitAircraftFlybyHash, AudioPlaybackPriority.High, aircraft, position);
-        AssertRequest(requests[1], AudioEventIds.GameplayWeaponMissileLaunch, AudioEventIds.GameplayWeaponMissileLaunchHash, AudioPlaybackPriority.High, aircraft, position);
+        Assert.AreEqual(1, requests.Length);
+        AssertRequest(requests[0], AudioEventIds.GameplayWeaponMissileLaunch, AudioEventIds.GameplayWeaponMissileLaunchHash, AudioPlaybackPriority.High, aircraft, position);
+        AssertNoRequest(requests, AudioEventIds.GameplayUnitAircraftFlyby);
     }
 
     [Test]
-    public void EmitAirMissileLaunch_EnqueuesFlybyAndAirMissileLaunch()
+    public void EmitAirMissileLaunch_EnqueuesAirMissileLaunchOnly()
     {
         Entity aircraft = _entityManager.CreateEntity(typeof(UnitAirComponent));
         float3 position = new(11f, 28f, 13f);
@@ -71,9 +71,9 @@ public sealed class CombatAudioEventUtilityTests
         Assert.IsTrue(CombatAudioEventUtility.EmitAirMissileLaunch(_entityManager, aircraft, position, 6f));
 
         DynamicBuffer<AudioPlaybackRequestElement> requests = Requests();
-        Assert.AreEqual(2, requests.Length);
-        AssertRequest(requests[0], AudioEventIds.GameplayUnitAircraftFlyby, AudioEventIds.GameplayUnitAircraftFlybyHash, AudioPlaybackPriority.High, aircraft, position);
-        AssertRequest(requests[1], AudioEventIds.GameplayWeaponAirMissileLaunch, AudioEventIds.GameplayWeaponAirMissileLaunchHash, AudioPlaybackPriority.High, aircraft, position);
+        Assert.AreEqual(1, requests.Length);
+        AssertRequest(requests[0], AudioEventIds.GameplayWeaponAirMissileLaunch, AudioEventIds.GameplayWeaponAirMissileLaunchHash, AudioPlaybackPriority.High, aircraft, position);
+        AssertNoRequest(requests, AudioEventIds.GameplayUnitAircraftFlyby);
     }
 
     [Test]
@@ -125,5 +125,11 @@ public sealed class CombatAudioEventUtilityTests
         Assert.AreEqual(1, request.Spatial);
         Assert.AreEqual(1, request.HasWorldPosition);
         Assert.AreEqual(position, request.WorldPosition);
+    }
+
+    private static void AssertNoRequest(DynamicBuffer<AudioPlaybackRequestElement> requests, string eventId)
+    {
+        for (int i = 0; i < requests.Length; i++)
+            Assert.AreNotEqual(eventId, requests[i].EventId.ToString());
     }
 }

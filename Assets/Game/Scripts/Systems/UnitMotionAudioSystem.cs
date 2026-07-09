@@ -1,4 +1,5 @@
 using Game.Components;
+using System;
 using Unity.Entities;
 using Unity.Transforms;
 
@@ -55,9 +56,35 @@ namespace Game.Runtime
                         air.LandingRolling != 0 ||
                         air.AttackRunActive != 0;
 
+                    if (aircraftActive && air.TakeoffRolling != 0 && audioState.WasAircraftActive == 0)
+                    {
+                        GameplayAudioFeedbackSystemHelper.TryEmitAircraftTakeoffAudio(
+                            em,
+                            entity,
+                            now,
+                            transform.ValueRO.Position);
+                        changed = true;
+                    }
+
                     if (aircraftActive && now >= audioState.NextAircraftEngineAt)
                     {
-                        CombatAudioEventUtility.EmitAircraftEngine(em, entity, transform.ValueRO.Position, now);
+                        if (IsHelicopter(em, entity))
+                        {
+                            GameplayAudioFeedbackSystemHelper.TryEmitHelicopterFlightAudio(
+                                em,
+                                entity,
+                                now,
+                                transform.ValueRO.Position);
+                        }
+                        else
+                        {
+                            GameplayAudioFeedbackSystemHelper.TryEmitAircraftFlightAudio(
+                                em,
+                                entity,
+                                now,
+                                transform.ValueRO.Position);
+                        }
+
                         audioState.NextAircraftEngineAt = now + AircraftEngineIntervalSeconds;
                         changed = true;
                     }
@@ -67,7 +94,7 @@ namespace Game.Runtime
                 }
                 else if (visual.ValueRO.IsMoving != 0 && now >= audioState.NextVehicleEngineAt)
                 {
-                    CombatAudioEventUtility.EmitVehicleEngine(em, entity, transform.ValueRO.Position, now);
+                    GameplayAudioFeedbackSystemHelper.TryEmitVehicleEngineAudio(em, entity, now, transform.ValueRO.Position);
                     audioState.NextVehicleEngineAt = now + VehicleEngineIntervalSeconds;
                     changed = true;
                 }
@@ -92,6 +119,15 @@ namespace Game.Runtime
 
             return em.HasComponent<UnitMovementBehavior>(entity) &&
                    em.GetComponentData<UnitMovementBehavior>(entity).UsesVehicleMotion != 0;
+        }
+
+        private static bool IsHelicopter(EntityManager em, Entity entity)
+        {
+            if (!em.HasComponent<UnitSourcePrefabKey>(entity))
+                return false;
+
+            string sourceKey = em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString();
+            return sourceKey.IndexOf("helicopter", StringComparison.OrdinalIgnoreCase) >= 0;
         }
     }
 }

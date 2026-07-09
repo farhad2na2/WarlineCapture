@@ -189,7 +189,7 @@ namespace Game.Runtime
 #endif
             using (MainMenuMarker.Auto())
             {
-                PresentPendingThreatWarning(mainMenu, Time.unscaledTime);
+                PresentPendingThreatWarning(mainMenu, Time.unscaledTime, simulationActive);
                 mainMenu?.Update();
             }
             hadSlowStep |= performanceDiagnosticsSystem.EndStep("MainMenu", stepStart);
@@ -252,8 +252,14 @@ namespace Game.Runtime
             }
         }
 
-        private static void PresentPendingThreatWarning(IMatchRuntimeUi mainMenu, float now)
+        private static void PresentPendingThreatWarning(IMatchRuntimeUi mainMenu, float now, bool simulationActive)
         {
+            if (!simulationActive)
+            {
+                ThreatWarningRuntimeState.Reset();
+                return;
+            }
+
             if (mainMenu == null || !ThreatWarningRuntimeState.HasPendingWarning)
                 return;
 

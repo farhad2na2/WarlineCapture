@@ -64,6 +64,7 @@ namespace Game.Runtime
             DynamicBuffer<AudioPlaybackRequestElement> requests = em.GetBuffer<AudioPlaybackRequestElement>(audioEntity);
             DynamicBuffer<AudioPlaybackResultElement> results = em.GetBuffer<AudioPlaybackResultElement>(audioEntity);
 
+            bool simulationActive = IsGameplaySimulationActive(em);
             int presented = 0;
             int played = 0;
             int failed = 0;
@@ -79,7 +80,12 @@ namespace Game.Runtime
 
                 AudioEventCatalogEntry entry = ResolveEvent(request);
                 AudioMixerBusEntry bus = ResolveBus(entry, request);
-                AudioPlaybackPresentationResult result = playbackHelper.PlayAcceptedRequest(request, entry, bus, settings);
+                AudioPlaybackPresentationResult result = ShouldCullGameplayOnlyRequestWhileInactive(
+                        simulationActive,
+                        request,
+                        entry)
+                    ? new AudioPlaybackPresentationResult(false, AudioPlaybackRequestStatus.Culled, "GameplayInactive", -1)
+                    : playbackHelper.PlayAcceptedRequest(request, entry, bus, settings);
                 AppendPresentationResult(results, request, result, now);
                 LogPresentationDiagnostic(em, request, entry, result, now);
                 request.Status = result.Played
@@ -163,6 +169,43 @@ namespace Game.Runtime
                 return null;
 
             return _busesById.TryGetValue(busId, out AudioMixerBusEntry bus) ? bus : null;
+        }
+
+        private static bool IsGameplaySimulationActive(EntityManager em)
+        {
+            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<RuntimeGameplayStateComponent>());
+            if (query.CalculateEntityCount() == 0)
+                return false;
+
+            RuntimeGameplayStateComponent state = query.GetSingleton<RuntimeGameplayStateComponent>();
+            return state.PlayRequested != 0 && state.SimulationActive != 0;
+        }
+
+        private static bool ShouldCullGameplayOnlyRequestWhileInactive(
+            bool simulationActive,
+            AudioPlaybackRequestElement request,
+            AudioEventCatalogEntry entry)
+        {
+            if (simulationActive)
+                return false;
+
+            string busId = !string.IsNullOrWhiteSpace(entry?.BusId)
+                ? entry.BusId
+                : request.BusId.ToString();
+
+            if (string.Equals(busId, "Voice", System.StringComparison.Ordinal) ||
+                string.Equals(busId, "Alerts", System.StringComparison.Ordinal))
+            {
+                return true;
+            }
+
+            string eventId = !string.IsNullOrWhiteSpace(entry?.EventId)
+                ? entry.EventId
+                : request.EventId.ToString();
+
+            return eventId.StartsWith("Gameplay.", System.StringComparison.Ordinal) ||
+                   eventId.StartsWith("Alert.", System.StringComparison.Ordinal) ||
+                   eventId.StartsWith("VO.ARIA", System.StringComparison.Ordinal);
         }
 
         private static void AppendPresentationResult(

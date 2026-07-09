@@ -81,10 +81,12 @@ namespace Game.Runtime
         public void OnUpdate(ref SystemState state)
         {
             state.EntityManager.CompleteDependencyBeforeRO<RuntimeGameplayStateComponent>();
-            if (SystemAPI.GetSingleton<RuntimeGameplayStateComponent>().PlayRequested == 0)
+            RuntimeGameplayStateComponent gameplayState = SystemAPI.GetSingleton<RuntimeGameplayStateComponent>();
+            if (gameplayState.PlayRequested == 0 || gameplayState.SimulationActive == 0)
             {
                 _framesUntilNextScan = 0;
                 ClearPreviousThreats();
+                ThreatWarningRuntimeState.Reset();
                 return;
             }
 

@@ -29,8 +29,8 @@ namespace Game.Runtime
 
     public sealed class AudioPlaybackPresentationSystemHelper : IDisposable
     {
-        public const float SpatialSfxMinDistance = 120f;
-        public const float SpatialSfxMaxDistance = 6000f;
+        public const float SpatialSfxMinDistance = 24f;
+        public const float SpatialSfxMaxDistance = 180f;
 
         private readonly List<PooledAudioSource> _sources = new();
         private readonly int _maxPoolSize;

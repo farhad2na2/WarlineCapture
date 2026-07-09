@@ -14,6 +14,7 @@ namespace Game.Composition
     public sealed class MatchSceneView : MonoBehaviour
     {
         private readonly MatchBootstrapCompositionSystemHelper matchBootstrapSystem = new();
+        private readonly List<AudioListener> audioListenersDisabledForMatch = new();
         private bool matchRuntimeBound;
 
         [Header("Scene Refs")]
@@ -145,11 +146,13 @@ namespace Game.Composition
 
         private void OnDestroy()
         {
+            RestoreAudioListenerAuthority();
             ShutdownMatchRuntimeBound();
         }
 
         private void OnDisable()
         {
+            RestoreAudioListenerAuthority();
             ShutdownMatchRuntimeBound();
         }
 
@@ -177,20 +180,35 @@ namespace Game.Composition
             if (listener == null)
                 return;
 
-            listener.enabled = !HasOtherEnabledActiveAudioListener(listener);
-        }
-
-        private static bool HasOtherEnabledActiveAudioListener(AudioListener self)
-        {
             AudioListener[] listeners = FindObjectsByType<AudioListener>(FindObjectsInactive.Exclude);
             for (int i = 0; i < listeners.Length; i++)
             {
-                AudioListener listener = listeners[i];
-                if (listener != null && listener != self && listener.enabled)
-                    return true;
+                AudioListener otherListener = listeners[i];
+                if (otherListener == null || otherListener == listener || !otherListener.enabled)
+                    continue;
+
+                if (!audioListenersDisabledForMatch.Contains(otherListener))
+                    audioListenersDisabledForMatch.Add(otherListener);
+                otherListener.enabled = false;
             }
 
-            return false;
+            listener.enabled = true;
+        }
+
+        private void RestoreAudioListenerAuthority()
+        {
+            AudioListener listener = worldCamera != null ? worldCamera.GetComponent<AudioListener>() : null;
+            if (listener != null)
+                listener.enabled = false;
+
+            for (int i = 0; i < audioListenersDisabledForMatch.Count; i++)
+            {
+                AudioListener disabledListener = audioListenersDisabledForMatch[i];
+                if (disabledListener != null && disabledListener.gameObject.activeInHierarchy)
+                    disabledListener.enabled = true;
+            }
+
+            audioListenersDisabledForMatch.Clear();
         }
     }
 }

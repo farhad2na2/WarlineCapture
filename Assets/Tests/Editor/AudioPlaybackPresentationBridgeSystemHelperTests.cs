@@ -28,6 +28,8 @@ public sealed class AudioPlaybackPresentationBridgeSystemHelperTests
             passed++;
             RunCase(test => test.DrainAcceptedRequests_RecordsMissingEventWithoutPlayback());
             passed++;
+            RunCase(test => test.DrainAcceptedRequests_CullsGameplayVoiceWhileSimulationInactive());
+            passed++;
             RunCase(test => test.DrainAcceptedRequests_FadesSettingsChangesOnActiveMusicSource());
             passed++;
 
@@ -224,6 +226,57 @@ public sealed class AudioPlaybackPresentationBridgeSystemHelperTests
         Assert.AreEqual(1, results.Length);
         Assert.AreEqual(AudioPlaybackRequestStatus.MissingEvent, results[0].Status);
         Assert.AreEqual("MissingCatalogEntry", results[0].Reason.ToString());
+    }
+
+    [Test]
+    public void DrainAcceptedRequests_CullsGameplayVoiceWhileSimulationInactive()
+    {
+        try
+        {
+            RuntimeGameplayStateTestHelper.SetPlayRequested(_entityManager, true);
+            RuntimeGameplayStateTestHelper.SetSimulationActive(_entityManager, false);
+            AudioEventRequestSystem.EnqueueOneShot(
+                _entityManager,
+                new FixedString64Bytes(AudioEventIds.VOARIAMessageWarningGroundAttackType),
+                AudioEventIds.VOARIAMessageWarningGroundAttackTypeHash,
+                new FixedString32Bytes("Voice"),
+                AudioPlaybackPriority.Critical,
+                requestedAt: 1f);
+            AudioCooldownSystem.ProcessPendingRequests(_entityManager, now: 1f);
+
+            AudioEventCatalogConfig catalog = CreateCatalog(CreateEntry(
+                AudioEventIds.VOARIAMessageWarningGroundAttackType,
+                "Voice",
+                CreateClip("aria_ground_attack")));
+            AudioMixerBusConfig buses = CreateBuses(CreateBus("Voice"));
+            using AudioPlaybackPresentationSystemHelper playback = new(initialPoolSize: 1, maxPoolSize: 1);
+            AudioPlaybackPresentationBridgeSystemHelper bridge = new();
+
+            AudioPlaybackPresentationBridgeResult result = bridge.DrainAcceptedRequests(
+                _entityManager,
+                catalog,
+                buses,
+                playback,
+                now: 1.1f);
+
+            Entity audioEntity = AudioEventRequestSystem.EnsureAudioEntity(_entityManager);
+            DynamicBuffer<AudioPlaybackRequestElement> requests = _entityManager.GetBuffer<AudioPlaybackRequestElement>(audioEntity);
+            DynamicBuffer<AudioPlaybackResultElement> results = _entityManager.GetBuffer<AudioPlaybackResultElement>(audioEntity);
+            AudioPlaybackResultElement lastResult = results[results.Length - 1];
+
+            Assert.AreEqual(1, result.PresentedCount);
+            Assert.AreEqual(0, result.PlayedCount);
+            Assert.AreEqual(1, result.FailedCount);
+            Assert.AreEqual(0, playback.ActiveSourceCount);
+            Assert.AreEqual(AudioPlaybackRequestStatus.Culled, requests[0].Status);
+            Assert.AreEqual(AudioPlaybackRequestStatus.Culled, lastResult.Status);
+            Assert.AreEqual("GameplayInactive", lastResult.Reason.ToString());
+        }
+        finally
+        {
+            InitialUnitsRuntimeState.PlayRequested = false;
+            InitialUnitsRuntimeState.SimulationActive = false;
+        }
     }
 
     [Test]

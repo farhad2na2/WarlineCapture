@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using Game.Components;
 using Game.Composition;
 using Game.Configs;
@@ -31,7 +32,7 @@ public sealed class AudioPlaybackPresentationSceneBindingTests
             passed++;
             tests.MenuAndMatchScenes_HaveExactlyOneEnabledAudioListener();
             passed++;
-            tests.MatchAdditiveLoad_KeepsExactlyOneAudioListener();
+            tests.MatchAdditiveLoad_UsesWorldCameraAudioListenerForSpatialGameplay();
             passed++;
 
             Debug.Log($"[AudioPlaybackPresentationSceneBindingValidation] result=Passed tests={passed}");
@@ -53,7 +54,7 @@ public sealed class AudioPlaybackPresentationSceneBindingTests
     }
 
     [Test]
-    public void MatchAdditiveLoad_KeepsExactlyOneAudioListener()
+    public void MatchAdditiveLoad_UsesWorldCameraAudioListenerForSpatialGameplay()
     {
         EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
 
@@ -68,6 +69,13 @@ public sealed class AudioPlaybackPresentationSceneBindingTests
         Assert.IsTrue(menuListener.enabled, "Menu AudioListener should start enabled before match is loaded.");
 
         EditorSceneManager.OpenScene(MatchScenePath, OpenSceneMode.Additive);
+        MatchSceneView matchScene =
+            UnityEngine.Object.FindAnyObjectByType<MatchSceneView>(FindObjectsInactive.Include);
+        Assert.NotNull(matchScene, "Match scene must contain MatchSceneView.");
+        AudioListener worldListener = matchScene.WorldCamera != null
+            ? matchScene.WorldCamera.GetComponent<AudioListener>()
+            : null;
+        Assert.NotNull(worldListener, "Match world camera must have an AudioListener for spatial gameplay audio.");
 
         World previousWorld = World.DefaultGameObjectInjectionWorld;
         World world = new("AudioListenerAdditiveMatchSceneTests");
@@ -78,8 +86,10 @@ public sealed class AudioPlaybackPresentationSceneBindingTests
             bootstrap.SendMessage("Awake", SendMessageOptions.DontRequireReceiver);
             CreateMatchRouteShellBoundary(world.EntityManager);
             bootstrap.SendMessage("Update", SendMessageOptions.DontRequireReceiver);
+            InvokeApplyAudioListenerAuthority(matchScene);
 
-            Assert.IsTrue(menuListener.enabled, "Menu AudioListener must remain enabled while the shell owns additive Match audio.");
+            Assert.IsFalse(menuListener.enabled, "Menu AudioListener must be disabled while Match spatial audio listens from the world camera.");
+            Assert.IsTrue(worldListener.enabled, "World camera AudioListener must be enabled so follow-camera gameplay audio is heard locally.");
             Assert.AreEqual(1, CountEnabledActiveAudioListeners(), "Menu + additive Match scenes must have exactly one enabled active AudioListener.");
         }
         finally
@@ -190,6 +200,15 @@ public sealed class AudioPlaybackPresentationSceneBindingTests
         }
 
         return false;
+    }
+
+    private static void InvokeApplyAudioListenerAuthority(MatchSceneView matchScene)
+    {
+        MethodInfo method = typeof(MatchSceneView).GetMethod(
+            "ApplyAudioListenerAuthority",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.NotNull(method, "MatchSceneView must expose internal listener authority logic for scene binding validation.");
+        method.Invoke(matchScene, null);
     }
 
     private static void AssertSceneHasExactlyOneEnabledAudioListener(string scenePath)

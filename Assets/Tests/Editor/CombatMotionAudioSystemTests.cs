@@ -50,8 +50,8 @@ public sealed class CombatMotionAudioSystemTests
         Assert.AreEqual(1, requests.Length);
         AssertAudioRequest(
             requests[0],
-            AudioEventIds.GameplayUnitVehicleEngine,
-            AudioEventIds.GameplayUnitVehicleEngineHash,
+            AudioEventIds.GameplayUnitEngineVehicleMove,
+            AudioEventIds.GameplayUnitEngineVehicleMoveHash,
             vehicle,
             new float3(4f, 0f, 7f));
     }
@@ -77,10 +77,11 @@ public sealed class CombatMotionAudioSystemTests
         Assert.AreEqual(1, requests.Length);
         AssertAudioRequest(
             requests[0],
-            AudioEventIds.GameplayUnitAircraftFlyby,
-            AudioEventIds.GameplayUnitAircraftFlybyHash,
+            AudioEventIds.GameplayUnitEngineAircraftFlight,
+            AudioEventIds.GameplayUnitEngineAircraftFlightHash,
             aircraft,
             new float3(8f, 12f, 14f));
+        AssertNoAudioEvent(requests, AudioEventIds.GameplayUnitAircraftFlyby);
     }
 
     [Test]
@@ -182,5 +183,11 @@ public sealed class CombatMotionAudioSystemTests
         }
 
         Assert.Fail($"Missing audio event {eventId} for {source}.");
+    }
+
+    private static void AssertNoAudioEvent(DynamicBuffer<AudioPlaybackRequestElement> requests, string eventId)
+    {
+        for (int i = 0; i < requests.Length; i++)
+            Assert.AreNotEqual(eventId, requests[i].EventId.ToString());
     }
 }

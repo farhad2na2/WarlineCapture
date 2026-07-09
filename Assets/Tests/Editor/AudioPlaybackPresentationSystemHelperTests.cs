@@ -29,7 +29,7 @@ public sealed class AudioPlaybackPresentationSystemHelperTests
             passed++;
             RunCase(test => test.ResolveLinearVolume_AppliesMasterAndBusSettings());
             passed++;
-            RunCase(test => test.PlayAcceptedRequest_ConfiguresSpatialSfxForRtsScaleAudibility());
+            RunCase(test => test.PlayAcceptedRequest_ConfiguresSpatialSfxForCameraLocalAudibility());
             passed++;
             RunCase(test => test.ApplySettingsToActiveSources_UpdatesMusicLoopVolume());
             passed++;
@@ -182,6 +182,13 @@ public sealed class AudioPlaybackPresentationSystemHelperTests
         Assert.AreEqual(AudioRolloffMode.Linear, source.rolloffMode);
         Assert.AreEqual(AudioPlaybackPresentationSystemHelper.SpatialSfxMinDistance, source.minDistance);
         Assert.AreEqual(AudioPlaybackPresentationSystemHelper.SpatialSfxMaxDistance, source.maxDistance);
+        Assert.LessOrEqual(
+            AudioPlaybackPresentationSystemHelper.SpatialSfxMaxDistance,
+            256f,
+            "Combat SFX must stay camera-local on the 2048-unit match map instead of remaining audible across the map.");
+        Assert.Greater(
+            AudioPlaybackPresentationSystemHelper.SpatialSfxMaxDistance,
+            AudioPlaybackPresentationSystemHelper.SpatialSfxMinDistance);
         Assert.AreEqual(0f, source.dopplerLevel);
         Assert.AreEqual(0f, source.spread);
         Assert.AreEqual(300f, source.transform.position.x, 0.001f);
@@ -210,7 +217,7 @@ public sealed class AudioPlaybackPresentationSystemHelperTests
     }
 
     [Test]
-    public void PlayAcceptedRequest_ConfiguresSpatialSfxForRtsScaleAudibility()
+    public void PlayAcceptedRequest_ConfiguresSpatialSfxForCameraLocalAudibility()
     {
         using AudioPlaybackPresentationSystemHelper helper = new(initialPoolSize: 1, maxPoolSize: 1);
         AudioEventCatalogEntry entry = CreateEntry(

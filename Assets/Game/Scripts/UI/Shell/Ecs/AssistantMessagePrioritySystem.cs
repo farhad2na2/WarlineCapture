@@ -1,4 +1,7 @@
+using System;
 using Game.Components;
+using Game.Configs;
+using Game.UI.Contracts;
 using Game.UI.Shell.Contracts.Ecs;
 using Unity.Collections;
 using Unity.Entities;
@@ -36,8 +39,14 @@ namespace Game.UI.Shell.Ecs
                 state.EntityManager.GetBuffer<AssistantMessageElement>(boundary);
 
             int sourceVersion = math.max(1, Time.frameCount);
-            bool changed = UpsertOrRemoveThreat(messages, status, sourceVersion);
-            changed |= UpsertOrRemoveFeedback(messages, status, sourceVersion);
+            UiShellStateComponent shellState =
+                state.EntityManager.GetComponentData<UiShellStateComponent>(boundary);
+            bool changed = AllowsMatchStatusMessages(shellState)
+                ? UpsertOrRemoveThreat(messages, status, sourceVersion)
+                : RemoveMessage(messages, ThreatMessageId);
+            changed |= AllowsMatchStatusMessages(shellState)
+                ? UpsertOrRemoveFeedback(messages, status, sourceVersion)
+                : RemoveMessage(messages, FeedbackMessageId);
 
             if (!changed)
                 return;
@@ -71,8 +80,31 @@ namespace Game.UI.Shell.Ecs
                 AssistantRecommendationKind.DefensiveAlert,
                 new FixedString64Bytes("assistant.threat"),
                 text,
-                new FixedString64Bytes("aria.threat"),
+                ResolveThreatAudioEventId(status),
                 requiresNarration: 1);
+        }
+
+        private static bool AllowsMatchStatusMessages(UiShellStateComponent shellState)
+        {
+            return shellState.ActiveRoute == UIRoute.Match &&
+                   (shellState.CurrentMode == UiShellMode.MatchHud ||
+                    shellState.CurrentMode == UiShellMode.PopupOnly);
+        }
+
+        private static FixedString64Bytes ResolveThreatAudioEventId(UiMatchHudStatusSurfacesComponent status)
+        {
+            bool isAirThreat =
+                ContainsIgnoreCase(status.ThreatTitle, "air") ||
+                ContainsIgnoreCase(status.ThreatSubtitle, "air");
+            return new FixedString64Bytes(isAirThreat
+                ? AudioEventIds.VOARIAMessageWarningAirAttackType
+                : AudioEventIds.VOARIAMessageWarningGroundAttackType);
+        }
+
+        private static bool ContainsIgnoreCase(FixedString64Bytes text, string value)
+        {
+            return text.Length > 0 &&
+                   text.ToString().IndexOf(value, StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         private static bool UpsertOrRemoveFeedback(

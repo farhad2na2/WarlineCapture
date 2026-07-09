@@ -176,7 +176,13 @@ namespace Game.Runtime
             targetHealth.Current = math.max(0, targetHealth.Current - math.max(0, weapon.Damage));
             em.SetComponentData(target, targetHealth);
 
-            UnitAttackSystem.TryEmitUnitUnderAttackAudio(em, target, now);
+            UnitAttackSystem.TryEmitUnitUnderAttackAudio(
+                em,
+                target,
+                now,
+                source,
+                math.max(0, weapon.Damage),
+                nameof(BuildingDefenseAttackSystem));
             SetRecentAttacker(em, ecb, target, source, sourcePosition, ref pendingRecentAttackerAdds);
             SetDamageHealthBarVisibility(em, ecb, target, ref pendingHealthBarVisibilityAdds);
 

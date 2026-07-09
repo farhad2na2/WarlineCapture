@@ -1,5 +1,7 @@
 using System;
 using Game.Components;
+using Game.Configs;
+using Game.Runtime;
 using Game.UI.Contracts;
 using Game.UI.Shell.Contracts.Ecs;
 using Game.UI.Shell.Ecs;
@@ -13,6 +15,7 @@ public sealed class AssistantNarrationRequestSystemTests
     private World _world;
     private EntityManager _entityManager;
     private SystemHandle _narrationSystem;
+    private SystemHandle _narrationAudioSystem;
 
     public static void RunFocusedValidation()
     {
@@ -28,6 +31,10 @@ public sealed class AssistantNarrationRequestSystemTests
             RunCase(test => test.AssistantNarrationRequestSystem_CoalescesSameSuppressionKey());
             passed++;
             RunCase(test => test.AssistantNarrationRequestSystem_ThrottlesLowPriorityButAllowsCriticalInterruption());
+            passed++;
+            RunCase(test => test.AssistantNarrationAudioRequestSystem_EnqueuesVoiceRequestForPendingNarration());
+            passed++;
+            RunCase(test => test.AssistantNarrationRequestSystem_SuppressesNarrationOutsideMatchRoute());
             passed++;
 
             Debug.Log($"[AssistantNarrationRequestSystemValidation] result=Passed tests={passed}");
@@ -61,6 +68,7 @@ public sealed class AssistantNarrationRequestSystemTests
         _world = new World(nameof(AssistantNarrationRequestSystemTests));
         _entityManager = _world.EntityManager;
         _narrationSystem = _world.CreateSystem<AssistantNarrationRequestSystem>();
+        _narrationAudioSystem = _world.CreateSystem<AssistantNarrationAudioRequestSystem>();
     }
 
     [TearDown]
@@ -208,13 +216,75 @@ public sealed class AssistantNarrationRequestSystemTests
         Assert.AreEqual(1, requests[1].InterruptsLowerPriority);
     }
 
-    private Entity CreateBoundary(AssistantNarrationMode mode)
+    [Test]
+    public void AssistantNarrationAudioRequestSystem_EnqueuesVoiceRequestForPendingNarration()
+    {
+        Entity boundary = CreateBoundary(AssistantNarrationMode.Important);
+        AddMessage(
+            boundary,
+            1301,
+            AssistantMessagePriority.High,
+            "Ground vehicle attack detected",
+            requiresNarration: 1,
+            audioEventId: AudioEventIds.VOARIAMessageWarningGroundAttackType);
+
+        _narrationSystem.Update(_world.Unmanaged);
+        _narrationAudioSystem.Update(_world.Unmanaged);
+
+        DynamicBuffer<AssistantNarrationRequestElement> narrationRequests =
+            _entityManager.GetBuffer<AssistantNarrationRequestElement>(boundary);
+        Assert.AreEqual(1, narrationRequests.Length);
+        Assert.AreEqual(AssistantCommandIntentStatus.Accepted, narrationRequests[0].Status);
+
+        Entity audioEntity = AudioEventRequestSystem.EnsureAudioEntity(_entityManager);
+        DynamicBuffer<AudioPlaybackRequestElement> audioRequests =
+            _entityManager.GetBuffer<AudioPlaybackRequestElement>(audioEntity);
+        Assert.AreEqual(1, audioRequests.Length);
+        Assert.AreEqual(AudioEventIds.VOARIAMessageWarningGroundAttackType, audioRequests[0].EventId.ToString());
+        Assert.AreEqual(AudioEventIds.VOARIAMessageWarningGroundAttackTypeHash, audioRequests[0].EventHash);
+        Assert.AreEqual("Voice", audioRequests[0].BusId.ToString());
+        Assert.AreEqual(AudioPlaybackPriority.High, audioRequests[0].Priority);
+        Assert.AreEqual(AudioPlaybackRequestStatus.Pending, audioRequests[0].Status);
+    }
+
+    [Test]
+    public void AssistantNarrationRequestSystem_SuppressesNarrationOutsideMatchRoute()
+    {
+        Entity boundary = CreateBoundary(AssistantNarrationMode.Important, UIRoute.MainMenu, UiShellMode.MainMenu);
+        AddMessage(
+            boundary,
+            1401,
+            AssistantMessagePriority.High,
+            "Ground vehicle attack detected",
+            requiresNarration: 1,
+            audioEventId: AudioEventIds.VOARIAMessageWarningGroundAttackType);
+
+        _narrationSystem.Update(_world.Unmanaged);
+        _narrationAudioSystem.Update(_world.Unmanaged);
+
+        Assert.IsFalse(_entityManager.HasBuffer<AssistantNarrationRequestElement>(boundary));
+        Entity audioEntity = AudioEventRequestSystem.EnsureAudioEntity(_entityManager);
+        DynamicBuffer<AudioPlaybackRequestElement> audioRequests =
+            _entityManager.GetBuffer<AudioPlaybackRequestElement>(audioEntity);
+        Assert.AreEqual(0, audioRequests.Length);
+    }
+
+    private Entity CreateBoundary(
+        AssistantNarrationMode mode,
+        UIRoute route = UIRoute.Match,
+        UiShellMode shellMode = UiShellMode.MatchHud)
     {
         Entity boundary = _entityManager.CreateEntity(
             typeof(UiShellStateComponent),
             typeof(UiMatchHudStatusSurfacesComponent),
             typeof(UiMatchHudHeaderComponent),
             typeof(AssistantSettingsComponent));
+        _entityManager.SetComponentData(boundary, new UiShellStateComponent
+        {
+            CurrentMode = shellMode,
+            ActiveRoute = route,
+            Phase = UiShellTransitionPhase.Idle
+        });
         _entityManager.SetComponentData(boundary, DefaultStatus());
         _entityManager.SetComponentData(boundary, new UiMatchHudHeaderComponent
         {
@@ -242,7 +312,8 @@ public sealed class AssistantNarrationRequestSystemTests
         AssistantMessagePriority priority,
         string text,
         byte requiresNarration,
-        string suppressionKey = null)
+        string suppressionKey = null,
+        string audioEventId = null)
     {
         DynamicBuffer<AssistantMessageElement> messages =
             _entityManager.GetBuffer<AssistantMessageElement>(boundary);
@@ -254,7 +325,7 @@ public sealed class AssistantNarrationRequestSystemTests
             RelatedKind = AssistantRecommendationKind.Explain,
             SuppressionKey = new FixedString64Bytes(suppressionKey ?? $"test.{messageId}"),
             Text = new FixedString128Bytes(text),
-            AudioEventId = new FixedString64Bytes($"aria.{messageId}"),
+            AudioEventId = new FixedString64Bytes(audioEventId ?? $"aria.{messageId}"),
             RequiresNarration = requiresNarration,
             Acknowledged = 0
         });

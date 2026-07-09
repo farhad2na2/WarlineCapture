@@ -17,15 +17,17 @@ public sealed class AlertObjectiveAudioFeedbackTests
         try
         {
             var tests = new AlertObjectiveAudioFeedbackTests();
-            tests.ThreatWarningAudio_ResolvesMinorAndCriticalAlerts();
+            tests.ThreatWarningAudio_ResolvesAriaGroundAndAirWarnings();
             passed++;
-            tests.TryEmitThreatWarningAudio_EnqueuesAlertsBusRequest();
+            tests.TryEmitThreatWarningAudio_EnqueuesVoiceBusRequest();
             passed++;
-            tests.ThreatDetectionWarningSystem_NewCloseAirThreatEnqueuesCriticalAlertAudio();
+            tests.ThreatDetectionWarningSystem_NewCloseAirThreatEnqueuesCriticalAriaVoice();
             passed++;
             tests.UnitUnderAttackAudio_ResolvesOnlyForPlayerControlledTargets();
             passed++;
-            tests.UnitAttackSystem_DamagingPlayerTargetEnqueuesUnderAttackAudio();
+            tests.UnitAttackSystem_DamagingPlayerTargetDoesNotEnqueueGenericUnderAttackAudio();
+            passed++;
+            tests.TryEmitUnitUnderAttackAudio_SuppressesGenericPlaceholderAlert();
             passed++;
             tests.BaseBreachedAudio_ResolvesOnlyForPlayerOwnedBarriers();
             passed++;
@@ -46,14 +48,14 @@ public sealed class AlertObjectiveAudioFeedbackTests
     }
 
     [Test]
-    public void ThreatWarningAudio_ResolvesMinorAndCriticalAlerts()
+    public void ThreatWarningAudio_ResolvesAriaGroundAndAirWarnings()
     {
         AssertThreatAudio(
             ThreatWarningType.Ground,
             etaSeconds: 12f,
             threatCount: 1,
-            AudioEventIds.AlertThreatMinor,
-            AudioEventIds.AlertThreatMinorHash,
+            AudioEventIds.VOARIAMessageWarningGroundAttackType,
+            AudioEventIds.VOARIAMessageWarningGroundAttackTypeHash,
             AudioPlaybackPriority.High,
             expectedCooldownSeconds: 3f);
 
@@ -61,8 +63,8 @@ public sealed class AlertObjectiveAudioFeedbackTests
             ThreatWarningType.Air,
             etaSeconds: 0f,
             threatCount: 1,
-            AudioEventIds.AlertThreatCritical,
-            AudioEventIds.AlertThreatCriticalHash,
+            AudioEventIds.VOARIAMessageWarningAirAttackType,
+            AudioEventIds.VOARIAMessageWarningAirAttackTypeHash,
             AudioPlaybackPriority.Critical,
             expectedCooldownSeconds: 4f);
 
@@ -70,14 +72,14 @@ public sealed class AlertObjectiveAudioFeedbackTests
             ThreatWarningType.Ground,
             etaSeconds: 10f,
             threatCount: 2,
-            AudioEventIds.AlertThreatCritical,
-            AudioEventIds.AlertThreatCriticalHash,
+            AudioEventIds.VOARIAMessageWarningGroundAttackType,
+            AudioEventIds.VOARIAMessageWarningGroundAttackTypeHash,
             AudioPlaybackPriority.Critical,
             expectedCooldownSeconds: 4f);
     }
 
     [Test]
-    public void TryEmitThreatWarningAudio_EnqueuesAlertsBusRequest()
+    public void TryEmitThreatWarningAudio_EnqueuesVoiceBusRequest()
     {
         using World world = new("AlertAudioFeedbackEmitTests");
 
@@ -90,9 +92,9 @@ public sealed class AlertObjectiveAudioFeedbackTests
 
         DynamicBuffer<AudioPlaybackRequestElement> requests = GetAudioRequests(world.EntityManager);
         Assert.AreEqual(1, requests.Length);
-        Assert.AreEqual(AudioEventIds.AlertThreatMinor, requests[0].EventId.ToString());
-        Assert.AreEqual(AudioEventIds.AlertThreatMinorHash, requests[0].EventHash);
-        Assert.AreEqual("Alerts", requests[0].BusId.ToString());
+        Assert.AreEqual(AudioEventIds.VOARIAMessageWarningGroundAttackType, requests[0].EventId.ToString());
+        Assert.AreEqual(AudioEventIds.VOARIAMessageWarningGroundAttackTypeHash, requests[0].EventHash);
+        Assert.AreEqual("Voice", requests[0].BusId.ToString());
         Assert.AreEqual(AudioPlaybackPriority.High, requests[0].Priority);
         Assert.AreEqual(AudioPlaybackRequestStatus.Pending, requests[0].Status);
         Assert.That(requests[0].CooldownSeconds, Is.EqualTo(3f).Within(0.001f));
@@ -100,7 +102,7 @@ public sealed class AlertObjectiveAudioFeedbackTests
     }
 
     [Test]
-    public void ThreatDetectionWarningSystem_NewCloseAirThreatEnqueuesCriticalAlertAudio()
+    public void ThreatDetectionWarningSystem_NewCloseAirThreatEnqueuesCriticalAriaVoice()
     {
         using World world = new("AlertAudioFeedbackThreatDetectionTests");
         EntityManager em = world.EntityManager;
@@ -122,9 +124,9 @@ public sealed class AlertObjectiveAudioFeedbackTests
 
             DynamicBuffer<AudioPlaybackRequestElement> requests = GetAudioRequests(em);
             Assert.AreEqual(1, requests.Length);
-            Assert.AreEqual(AudioEventIds.AlertThreatCritical, requests[0].EventId.ToString());
-            Assert.AreEqual(AudioEventIds.AlertThreatCriticalHash, requests[0].EventHash);
-            Assert.AreEqual("Alerts", requests[0].BusId.ToString());
+            Assert.AreEqual(AudioEventIds.VOARIAMessageWarningAirAttackType, requests[0].EventId.ToString());
+            Assert.AreEqual(AudioEventIds.VOARIAMessageWarningAirAttackTypeHash, requests[0].EventHash);
+            Assert.AreEqual("Voice", requests[0].BusId.ToString());
             Assert.AreEqual(AudioPlaybackPriority.Critical, requests[0].Priority);
             Assert.That(requests[0].CooldownSeconds, Is.EqualTo(4f).Within(0.001f));
         }
@@ -159,7 +161,7 @@ public sealed class AlertObjectiveAudioFeedbackTests
     }
 
     [Test]
-    public void UnitAttackSystem_DamagingPlayerTargetEnqueuesUnderAttackAudio()
+    public void UnitAttackSystem_DamagingPlayerTargetDoesNotEnqueueGenericUnderAttackAudio()
     {
         using World world = new("UnitUnderAttackAudioSystemTests");
         EntityManager em = world.EntityManager;
@@ -174,15 +176,20 @@ public sealed class AlertObjectiveAudioFeedbackTests
         Assert.AreEqual(75, em.GetComponentData<UnitHealth>(target).Current);
 
         DynamicBuffer<AudioPlaybackRequestElement> requests = GetAudioRequests(em);
-        Assert.AreEqual(1, requests.Length);
-        Assert.AreEqual(AudioEventIds.AlertUnitUnderAttack, requests[0].EventId.ToString());
-        Assert.AreEqual(AudioEventIds.AlertUnitUnderAttackHash, requests[0].EventHash);
-        Assert.AreEqual("Alerts", requests[0].BusId.ToString());
-        Assert.AreEqual(AudioPlaybackPriority.High, requests[0].Priority);
-        Assert.AreEqual(AudioPlaybackRequestStatus.Pending, requests[0].Status);
-        Assert.AreEqual(target, requests[0].SourceEntity);
-        Assert.That(requests[0].CooldownSeconds, Is.EqualTo(2.5f).Within(0.001f));
-        Assert.That(requests[0].RequestedAt, Is.EqualTo(1.5f).Within(0.001f));
+        Assert.AreEqual(0, requests.Length);
+    }
+
+    [Test]
+    public void TryEmitUnitUnderAttackAudio_SuppressesGenericPlaceholderAlert()
+    {
+        using World world = new("UnitUnderAttackAudioPlaceholderSuppressionTests");
+        EntityManager em = world.EntityManager;
+        Entity target = CreateCombatTarget(em, FactionIdentity.PlayerFactionId, new int2(4, 4), new float3(4f, 0f, 4f), 100);
+
+        Assert.IsFalse(UnitAttackSystem.TryEmitUnitUnderAttackAudio(em, target, requestedAt: 2f));
+
+        DynamicBuffer<AudioPlaybackRequestElement> requests = GetAudioRequests(em);
+        Assert.AreEqual(0, requests.Length);
     }
 
     [Test]

@@ -29,7 +29,8 @@ namespace Game.Components
         CooldownSkipped = 3,
         MissingEvent = 4,
         MissingClip = 5,
-        Culled = 6
+        Culled = 6,
+        Presented = 7
     }
 
     public struct AudioPlaybackRequestQueueComponent : IComponentData

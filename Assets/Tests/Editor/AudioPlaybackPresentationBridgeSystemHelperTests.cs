@@ -22,6 +22,8 @@ public sealed class AudioPlaybackPresentationBridgeSystemHelperTests
         {
             RunCase(test => test.DrainAcceptedRequests_PlaysAcceptedRequestOnce());
             passed++;
+            RunCase(test => test.DrainAcceptedRequests_DoesNotReplayPresentedRequestWithNewBridge());
+            passed++;
             RunCase(test => test.DrainAcceptedRequests_SkipsPendingAndCooldownSkippedRequests());
             passed++;
             RunCase(test => test.DrainAcceptedRequests_RecordsMissingEventWithoutPlayback());
@@ -107,6 +109,7 @@ public sealed class AudioPlaybackPresentationBridgeSystemHelperTests
             now: 1.2f);
 
         Entity audioEntity = AudioEventRequestSystem.EnsureAudioEntity(_entityManager);
+        DynamicBuffer<AudioPlaybackRequestElement> requests = _entityManager.GetBuffer<AudioPlaybackRequestElement>(audioEntity);
         DynamicBuffer<AudioPlaybackResultElement> results = _entityManager.GetBuffer<AudioPlaybackResultElement>(audioEntity);
 
         Assert.AreEqual(1, first.PresentedCount);
@@ -117,6 +120,53 @@ public sealed class AudioPlaybackPresentationBridgeSystemHelperTests
         Assert.AreEqual(1, bridge.LastPresentedRequestId);
         Assert.AreEqual(2, results.Length);
         Assert.AreEqual("Played", results[1].Reason.ToString());
+        Assert.AreEqual(AudioPlaybackRequestStatus.Presented, requests[0].Status);
+    }
+
+    [Test]
+    public void DrainAcceptedRequests_DoesNotReplayPresentedRequestWithNewBridge()
+    {
+        AudioEventRequestSystem.EnqueueOneShot(
+            _entityManager,
+            new FixedString64Bytes(AudioEventIds.UIButtonPrimaryClick),
+            AudioEventIds.UIButtonPrimaryClickHash,
+            new FixedString32Bytes("UI"),
+            AudioPlaybackPriority.Medium,
+            requestedAt: 1f);
+        AudioCooldownSystem.ProcessPendingRequests(_entityManager, now: 1f);
+
+        AudioEventCatalogConfig catalog = CreateCatalog(CreateEntry(
+            AudioEventIds.UIButtonPrimaryClick,
+            "UI",
+            CreateClip("ui_primary_click")));
+        AudioMixerBusConfig buses = CreateBuses(CreateBus("UI"));
+        using AudioPlaybackPresentationSystemHelper playback = new(initialPoolSize: 1, maxPoolSize: 2);
+
+        AudioPlaybackPresentationBridgeSystemHelper firstBridge = new();
+        AudioPlaybackPresentationBridgeResult first = firstBridge.DrainAcceptedRequests(
+            _entityManager,
+            catalog,
+            buses,
+            playback,
+            now: 1.1f);
+
+        AudioPlaybackPresentationBridgeSystemHelper recreatedBridge = new();
+        AudioPlaybackPresentationBridgeResult second = recreatedBridge.DrainAcceptedRequests(
+            _entityManager,
+            catalog,
+            buses,
+            playback,
+            now: 1.2f);
+
+        Entity audioEntity = AudioEventRequestSystem.EnsureAudioEntity(_entityManager);
+        DynamicBuffer<AudioPlaybackRequestElement> requests = _entityManager.GetBuffer<AudioPlaybackRequestElement>(audioEntity);
+        DynamicBuffer<AudioPlaybackResultElement> results = _entityManager.GetBuffer<AudioPlaybackResultElement>(audioEntity);
+
+        Assert.AreEqual(1, first.PlayedCount);
+        Assert.AreEqual(0, second.PresentedCount);
+        Assert.AreEqual(1, playback.ActiveSourceCount);
+        Assert.AreEqual(AudioPlaybackRequestStatus.Presented, requests[0].Status);
+        Assert.AreEqual(2, results.Length);
     }
 
     [Test]

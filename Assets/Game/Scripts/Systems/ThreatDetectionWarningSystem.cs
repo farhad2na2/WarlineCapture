@@ -198,7 +198,7 @@ namespace Game.Runtime
                 em,
                 new FixedString64Bytes(eventId),
                 eventHash,
-                new FixedString32Bytes("Alerts"),
+                new FixedString32Bytes("Voice"),
                 priority,
                 requestedAt,
                 cooldownSeconds);
@@ -223,17 +223,23 @@ namespace Game.Runtime
                 return false;
 
             bool critical = etaSeconds <= 0.01f || threatCount > 1;
-            if (critical)
+            if (warningType == ThreatWarningType.Air)
             {
-                eventId = AudioEventIds.AlertThreatCritical;
-                eventHash = AudioEventIds.AlertThreatCriticalHash;
-                priority = AudioPlaybackPriority.Critical;
-                cooldownSeconds = 4f;
-                return true;
+                eventId = AudioEventIds.VOARIAMessageWarningAirAttackType;
+                eventHash = AudioEventIds.VOARIAMessageWarningAirAttackTypeHash;
+            }
+            else
+            {
+                eventId = AudioEventIds.VOARIAMessageWarningGroundAttackType;
+                eventHash = AudioEventIds.VOARIAMessageWarningGroundAttackTypeHash;
             }
 
-            eventId = AudioEventIds.AlertThreatMinor;
-            eventHash = AudioEventIds.AlertThreatMinorHash;
+            if (critical)
+            {
+                priority = AudioPlaybackPriority.Critical;
+                cooldownSeconds = 4f;
+            }
+
             return true;
         }
 

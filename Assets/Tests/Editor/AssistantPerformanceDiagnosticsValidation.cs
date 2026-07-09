@@ -163,6 +163,12 @@ public sealed class AssistantPerformanceDiagnosticsValidation
             typeof(UiMatchHudStatusSurfacesComponent),
             typeof(UiMatchHudHeaderComponent),
             typeof(AssistantSettingsComponent));
+        em.SetComponentData(boundary, new UiShellStateComponent
+        {
+            CurrentMode = UiShellMode.MatchHud,
+            ActiveRoute = UIRoute.Match,
+            Phase = UiShellTransitionPhase.Idle
+        });
         em.SetComponentData(boundary, StatusWithThreatAndFeedback());
         em.SetComponentData(boundary, Header());
         em.SetComponentData(boundary, new AssistantSettingsComponent

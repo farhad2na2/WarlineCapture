@@ -349,7 +349,10 @@ namespace Game.Runtime
                 TryEmitUnitUnderAttackAudio(
                     em,
                     target,
-                    (float)SystemAPI.Time.ElapsedTime);
+                    (float)SystemAPI.Time.ElapsedTime,
+                    pending.Attacker,
+                    pending.TotalDamage,
+                    nameof(UnitAttackSystem));
 
                 if (em.HasComponent<RecentAttacker>(target))
                 {
@@ -411,21 +414,19 @@ namespace Game.Runtime
         public static bool TryEmitUnitUnderAttackAudio(
             EntityManager em,
             Entity target,
-            float requestedAt)
+            float requestedAt,
+            Entity attacker = default,
+            int damage = 0,
+            string sourceSystem = null)
         {
-            if (!TryResolveUnitUnderAttackAudioEvent(em, target, out string eventId, out uint eventHash))
+            if (!TryResolveUnitUnderAttackAudioEvent(em, target, out string eventId, out _))
                 return false;
 
-            AudioEventRequestSystem.EnqueueOneShot(
-                em,
-                new FixedString64Bytes(eventId),
-                eventHash,
-                new FixedString32Bytes("Alerts"),
-                AudioPlaybackPriority.High,
-                requestedAt,
-                cooldownSeconds: 2.5f,
-                sourceEntity: target);
-            return true;
+            LogSuppressedUnitUnderAttackAudio(em, target, attacker, damage, requestedAt, sourceSystem, eventId);
+
+            // Generic damage-tick alerts were masking ARIA threat voice at match start.
+            // Keep the event id resolvable, but do not auto-play the placeholder alert.
+            return false;
         }
 
         public static bool TryResolveUnitUnderAttackAudioEvent(
@@ -449,6 +450,67 @@ namespace Game.Runtime
             eventHash = AudioEventIds.AlertUnitUnderAttackHash;
             return true;
         }
+
+#if UNITY_EDITOR
+        private const int MaxSuppressedUnderAttackAudioLogs = 16;
+        private static int s_SuppressedUnderAttackAudioLogCount;
+
+        private static void LogSuppressedUnitUnderAttackAudio(
+            EntityManager em,
+            Entity target,
+            Entity attacker,
+            int damage,
+            float requestedAt,
+            string sourceSystem,
+            string eventId)
+        {
+            if (!UnityEngine.Application.isPlaying ||
+                s_SuppressedUnderAttackAudioLogCount >= MaxSuppressedUnderAttackAudioLogs)
+            {
+                return;
+            }
+
+            s_SuppressedUnderAttackAudioLogCount++;
+            UnityEngine.Debug.Log(
+                $"[AudioDiag] Suppressed {eventId} reason=GenericUnderAttackAlertDisabled " +
+                $"sourceSystem={sourceSystem ?? "Unknown"} requestedAt={requestedAt:F2} damage={damage} " +
+                $"target={DescribeAudioEntity(em, target)} attacker={DescribeAudioEntity(em, attacker)}");
+        }
+
+        private static string DescribeAudioEntity(EntityManager em, Entity entity)
+        {
+            if (entity == Entity.Null || !em.Exists(entity))
+                return "null";
+
+            string displayName = em.HasComponent<UnitDisplayInfo>(entity)
+                ? em.GetComponentData<UnitDisplayInfo>(entity).Name.ToString()
+                : string.Empty;
+            string sourceKey = em.HasComponent<UnitSourcePrefabKey>(entity)
+                ? em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString()
+                : string.Empty;
+            string faction = em.HasComponent<Faction>(entity)
+                ? em.GetComponentData<Faction>(entity).Id.ToString()
+                : "?";
+            string cell = em.HasComponent<UnitGrid>(entity)
+                ? FormatCell(em.GetComponentData<UnitGrid>(entity).Cell)
+                : "(?,?)";
+            string health = em.HasComponent<UnitHealth>(entity)
+                ? FormatHealth(em.GetComponentData<UnitHealth>(entity))
+                : "?";
+
+            return $"entity={entity.Index}:{entity.Version} name='{displayName}' source='{sourceKey}' faction={faction} cell={cell} hp={health}";
+        }
+
+        private static string FormatCell(int2 cell)
+        {
+            return $"({cell.x},{cell.y})";
+        }
+
+        private static string FormatHealth(UnitHealth health)
+        {
+            return $"{health.Current}/{health.Max}";
+        }
+#endif
 
         private void ProcessStandardAttackPlans(
             EntityManager em,

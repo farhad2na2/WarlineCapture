@@ -1,5 +1,6 @@
 using System;
 using Game.Components;
+using Game.Configs;
 using Game.UI.Contracts;
 using Game.UI.Shell.Contracts.Ecs;
 using Game.UI.Shell.Ecs;
@@ -24,6 +25,10 @@ public sealed class AssistantMessagePrioritySystemTests
             RunCase(test => test.AssistantMessagePrioritySystem_RemovesInactiveStatusMessages());
             passed++;
             RunCase(test => test.AssistantMessagePrioritySystem_UpdatesChangedFeedbackWithoutDuplicating());
+            passed++;
+            RunCase(test => test.AssistantMessagePrioritySystem_UsesAirWarningVoiceForAirThreats());
+            passed++;
+            RunCase(test => test.AssistantMessagePrioritySystem_SuppressesThreatMessagesOutsideMatchRoute());
             passed++;
 
             Debug.Log($"[AssistantMessagePrioritySystemValidation] result=Passed tests={passed}");
@@ -82,7 +87,7 @@ public sealed class AssistantMessagePrioritySystemTests
         Assert.AreEqual(AssistantRecommendationKind.DefensiveAlert, threat.RelatedKind);
         Assert.AreEqual("assistant.threat", threat.SuppressionKey.ToString());
         Assert.AreEqual("Hostile patrol: North gate", threat.Text.ToString());
-        Assert.AreEqual("aria.threat", threat.AudioEventId.ToString());
+        Assert.AreEqual(AudioEventIds.VOARIAMessageWarningGroundAttackType, threat.AudioEventId.ToString());
         Assert.AreEqual(1, threat.RequiresNarration);
         Assert.AreEqual(0, threat.Acknowledged);
 
@@ -142,12 +147,50 @@ public sealed class AssistantMessagePrioritySystemTests
         Assert.AreEqual(0, feedback.Acknowledged);
     }
 
-    private Entity CreateBoundary(UiMatchHudStatusSurfacesComponent status)
+    [Test]
+    public void AssistantMessagePrioritySystem_UsesAirWarningVoiceForAirThreats()
+    {
+        UiMatchHudStatusSurfacesComponent status = StatusWithThreatAndFeedback();
+        status.ThreatTitle = new FixedString64Bytes("Air attack detected");
+        status.ThreatSubtitle = new FixedString64Bytes("Inbound from east");
+        Entity boundary = CreateBoundary(status);
+
+        _messageSystem.Update(_world.Unmanaged);
+
+        DynamicBuffer<AssistantMessageElement> messages =
+            _entityManager.GetBuffer<AssistantMessageElement>(boundary);
+        AssistantMessageElement threat =
+            FindMessage(messages, AssistantMessagePrioritySystem.ThreatMessageId);
+        Assert.AreEqual(AudioEventIds.VOARIAMessageWarningAirAttackType, threat.AudioEventId.ToString());
+    }
+
+    [Test]
+    public void AssistantMessagePrioritySystem_SuppressesThreatMessagesOutsideMatchRoute()
+    {
+        Entity boundary = CreateBoundary(StatusWithThreatAndFeedback(), UIRoute.MainMenu, UiShellMode.MainMenu);
+
+        _messageSystem.Update(_world.Unmanaged);
+
+        DynamicBuffer<AssistantMessageElement> messages =
+            _entityManager.GetBuffer<AssistantMessageElement>(boundary);
+        Assert.AreEqual(0, messages.Length);
+    }
+
+    private Entity CreateBoundary(
+        UiMatchHudStatusSurfacesComponent status,
+        UIRoute route = UIRoute.Match,
+        UiShellMode mode = UiShellMode.MatchHud)
     {
         Entity boundary = _entityManager.CreateEntity(
             typeof(UiShellStateComponent),
             typeof(UiMatchHudStatusSurfacesComponent),
             typeof(UiMatchHudHeaderComponent));
+        _entityManager.SetComponentData(boundary, new UiShellStateComponent
+        {
+            CurrentMode = mode,
+            ActiveRoute = route,
+            Phase = UiShellTransitionPhase.Idle
+        });
         _entityManager.SetComponentData(boundary, status);
         _entityManager.SetComponentData(boundary, new UiMatchHudHeaderComponent
         {

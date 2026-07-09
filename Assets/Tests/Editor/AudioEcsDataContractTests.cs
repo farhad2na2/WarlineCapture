@@ -169,6 +169,7 @@ public sealed class AudioEcsDataContractTests
         Assert.AreEqual(1, (byte)AudioPlaybackRequestKind.MusicState);
         Assert.AreEqual(0, (byte)AudioPlaybackRequestStatus.Pending);
         Assert.AreEqual(3, (byte)AudioPlaybackRequestStatus.CooldownSkipped);
+        Assert.AreEqual(7, (byte)AudioPlaybackRequestStatus.Presented);
     }
 
     [Test]

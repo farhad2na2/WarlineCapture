@@ -1131,6 +1131,17 @@ namespace Game.Runtime
             if (em.GetComponentData<UnitHealth>(target).Current <= 0)
                 return;
 
+            if (!em.HasComponent<Faction>(target) ||
+                !em.HasComponent<Faction>(attacker))
+            {
+                return;
+            }
+
+            byte targetFactionId = em.GetComponentData<Faction>(target).Id;
+            byte attackerFactionId = em.GetComponentData<Faction>(attacker).Id;
+            if (!FactionIdentity.CanAutoTargetForCombat(targetFactionId, attackerFactionId))
+                return;
+
             UnitCombat targetCombat = em.GetComponentData<UnitCombat>(target);
             bool hasActiveManualMove =
                 em.HasComponent<ManualMoveOrderTag>(target) &&

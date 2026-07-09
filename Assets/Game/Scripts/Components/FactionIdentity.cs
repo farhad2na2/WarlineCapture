@@ -26,6 +26,13 @@ namespace Game.Components
             return factionId != NeutralFactionId && factionId != PlayerFactionId;
         }
 
+        public static bool CanAutoTargetForCombat(byte sourceFactionId, byte targetFactionId)
+        {
+            return sourceFactionId != NeutralFactionId &&
+                   targetFactionId != NeutralFactionId &&
+                   sourceFactionId != targetFactionId;
+        }
+
         public static byte ResolveDefaultTargetFaction(byte factionId)
         {
             return IsPlayerControlled(factionId) ? EnemyFactionId : PlayerFactionId;

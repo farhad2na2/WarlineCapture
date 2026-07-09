@@ -189,6 +189,8 @@ namespace Game.Runtime
                     return;
                 if (combat.AutoEngage == 0)
                     return;
+                if (selfFaction.Id == FactionIdentity.NeutralFactionId)
+                    return;
 
                 bool hasActiveManualMove =
                     ManualMoveLookup.HasComponent(entity) &&
@@ -333,7 +335,8 @@ namespace Game.Runtime
                     return;
 
                 var otherFaction = FactionLookup[candidate];
-                if (otherFaction.Id == selfFactionId)
+                if (otherFaction.Id == FactionIdentity.NeutralFactionId ||
+                    otherFaction.Id == selfFactionId)
                     return;
 
                 if (HealthLookup.HasComponent(candidate) && HealthLookup[candidate].Current <= 0)
@@ -402,7 +405,9 @@ namespace Game.Runtime
                     return false;
                 }
 
-                if (FactionLookup[candidate].Id == selfFactionId)
+                byte candidateFactionId = FactionLookup[candidate].Id;
+                if (candidateFactionId == FactionIdentity.NeutralFactionId ||
+                    candidateFactionId == selfFactionId)
                     return false;
 
                 return !HealthLookup.HasComponent(candidate) || HealthLookup[candidate].Current > 0;

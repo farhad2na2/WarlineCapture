@@ -349,7 +349,7 @@ namespace Game.Runtime
                 return false;
             }
 
-            if (em.GetComponentData<Faction>(candidate).Id == sourceFaction)
+            if (!FactionIdentity.CanAutoTargetForCombat(sourceFaction, em.GetComponentData<Faction>(candidate).Id))
                 return false;
 
             UnitHealth health = em.GetComponentData<UnitHealth>(candidate);

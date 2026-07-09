@@ -150,6 +150,7 @@ namespace Game.Runtime
                     building.IsDestroyed ||
                     building.Definition == null ||
                     !building.HasOwnerFaction ||
+                    building.OwnerFactionId == FactionIdentity.NeutralFactionId ||
                     building.OwnerFactionId == attackerFactionId ||
                     (!building.Definition.IsWall && !IsWallGateDefinition(context, building.Definition)))
                 {

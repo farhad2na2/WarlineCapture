@@ -601,7 +601,9 @@ namespace Game.Runtime
             for (int i = 0; i < runtimeBuildings.Length; i++)
             {
                 RuntimeBuildingCombatInfo info = runtimeBuildings[i].Info;
-                if (!IsActiveWallOrGate(runtimeBuildings, i) || info.OwnerFactionId == attackerFactionId)
+                if (!IsActiveWallOrGate(runtimeBuildings, i) ||
+                    info.OwnerFactionId == FactionIdentity.NeutralFactionId ||
+                    info.OwnerFactionId == attackerFactionId)
                     continue;
                 if (ContainsFaction(processedFactions, info.OwnerFactionId))
                     continue;

@@ -368,7 +368,8 @@ namespace Game.Runtime
                 {
                     Entity target = targets[i];
                     Faction faction = factions[i];
-                    if (faction.Id == squad.FactionId)
+                    if (faction.Id == FactionIdentity.NeutralFactionId ||
+                        faction.Id == squad.FactionId)
                         continue;
 
                     UnitHealth health = healths[i];

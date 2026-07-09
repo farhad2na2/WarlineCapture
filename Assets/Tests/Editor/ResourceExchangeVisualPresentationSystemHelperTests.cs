@@ -33,6 +33,14 @@ public sealed class ResourceExchangeVisualPresentationSystemHelperTests
                 test => test.MissingAnchorAndMissingPrefab_DoNotCreateActors(),
                 ref passed);
             RunValidationStep(
+                nameof(CleanupVisualState_PopupCloseMissionEndAndSceneUnloadReleaseAllActors),
+                test => test.CleanupVisualState_PopupCloseMissionEndAndSceneUnloadReleaseAllActors(),
+                ref passed);
+            RunValidationStep(
+                nameof(CleanupVisualState_QueueCancelledReleasesOnlyMatchingQueue),
+                test => test.CleanupVisualState_QueueCancelledReleasesOnlyMatchingQueue(),
+                ref passed);
+            RunValidationStep(
                 nameof(ResolveActorKind_MapsCueKindsToPresentationActors),
                 test => test.ResolveActorKind_MapsCueKindsToPresentationActors(),
                 ref passed);
@@ -238,6 +246,69 @@ public sealed class ResourceExchangeVisualPresentationSystemHelperTests
     }
 
     [Test]
+    public void CleanupVisualState_PopupCloseMissionEndAndSceneUnloadReleaseAllActors()
+    {
+        AssertReleaseAllCleanupReason(ResourceExchangeVisualCleanupReason.PopupClosed);
+        AssertReleaseAllCleanupReason(ResourceExchangeVisualCleanupReason.MissionEnding);
+        AssertReleaseAllCleanupReason(ResourceExchangeVisualCleanupReason.SceneUnloading);
+    }
+
+    [Test]
+    public void CleanupVisualState_QueueCancelledReleasesOnlyMatchingQueue()
+    {
+        using World world = new(nameof(CleanupVisualState_QueueCancelledReleasesOnlyMatchingQueue));
+        Entity entity = CreateVisualRequestEntity(world.EntityManager);
+        DynamicBuffer<ResourceExchangeVisualRequestComponent> requests =
+            world.EntityManager.GetBuffer<ResourceExchangeVisualRequestComponent>(entity);
+
+        GameObject root = new("ResourceExchangeVisualPresentationQueueCleanupRoot");
+        GameObject planePrefab = CreatePrefab("TransportPlanePrefab");
+        var helper = new ResourceExchangeVisualPresentationSystemHelper();
+        try
+        {
+            var context = new ResourceExchangeVisualPresentationSystemHelper.Context(
+                root.transform,
+                (ResourceExchangeVisualActorKind actorKind, ResourceExchangeVisualRequestComponent request, out GameObject prefab) =>
+                {
+                    prefab = actorKind == ResourceExchangeVisualActorKind.TransportPlane
+                        ? planePrefab
+                        : null;
+                    return prefab != null;
+                });
+
+            requests.Add(CreateRequest(ResourceExchangeVisualCueKind.TransportPlaneLanding, new float3(1f, 0f, 1f), queueItemId: 11));
+            requests.Add(CreateRequest(ResourceExchangeVisualCueKind.TransportPlaneLanding, new float3(2f, 0f, 2f), queueItemId: 12));
+            ResourceExchangeVisualPresentationSystemHelper.Result consume = helper.ConsumeVisualRequests(context, requests);
+            Assert.AreEqual(2, consume.PlayedCount);
+            Assert.AreEqual(2, helper.ActiveActorCount);
+
+            requests.Add(CreateRequest(ResourceExchangeVisualCueKind.TransportPlaneDeparting, new float3(3f, 0f, 3f), queueItemId: 11));
+            requests.Add(CreateRequest(ResourceExchangeVisualCueKind.TransportPlaneDeparting, new float3(4f, 0f, 4f), queueItemId: 12));
+
+            ResourceExchangeVisualPresentationSystemHelper.CleanupResult cleanup =
+                helper.CleanupVisualState(
+                    new ResourceExchangeVisualPresentationSystemHelper.CleanupRequest(
+                        ResourceExchangeVisualCleanupReason.QueueCancelled,
+                        queueItemId: 11),
+                    requests);
+
+            Assert.AreEqual(ResourceExchangeVisualCleanupReason.QueueCancelled, cleanup.Reason);
+            Assert.AreEqual(1, cleanup.ReleasedActorCount);
+            Assert.AreEqual(1, cleanup.ClearedPendingRequestCount);
+            Assert.AreEqual(1, helper.ActiveActorCount);
+            Assert.AreEqual(1, requests.Length);
+            Assert.AreEqual(12, requests[0].QueueItemId);
+            Assert.AreEqual(1, helper.GetPooledActorCount(planePrefab));
+        }
+        finally
+        {
+            helper.Dispose();
+            DestroyImmediate(planePrefab);
+            DestroyImmediate(root);
+        }
+    }
+
+    [Test]
     public void ResolveActorKind_MapsCueKindsToPresentationActors()
     {
         Assert.AreEqual(
@@ -258,6 +329,54 @@ public sealed class ResourceExchangeVisualPresentationSystemHelperTests
         Assert.AreEqual(
             ResourceExchangeVisualActorKind.CancellationMarker,
             ResourceExchangeVisualPresentationSystemHelper.ResolveActorKind(ResourceExchangeVisualCueKind.ExchangeCancelled));
+    }
+
+    private static void AssertReleaseAllCleanupReason(ResourceExchangeVisualCleanupReason cleanupReason)
+    {
+        using World world = new(nameof(AssertReleaseAllCleanupReason));
+        Entity entity = CreateVisualRequestEntity(world.EntityManager);
+        DynamicBuffer<ResourceExchangeVisualRequestComponent> requests =
+            world.EntityManager.GetBuffer<ResourceExchangeVisualRequestComponent>(entity);
+
+        GameObject root = new($"ResourceExchangeVisualPresentation{cleanupReason}CleanupRoot");
+        GameObject planePrefab = CreatePrefab("TransportPlanePrefab");
+        GameObject truckPrefab = CreatePrefab("ResourceTruckPrefab");
+        var helper = new ResourceExchangeVisualPresentationSystemHelper();
+        try
+        {
+            ResourceExchangeVisualPresentationSystemHelper.Context context =
+                CreateContext(root.transform, planePrefab, truckPrefab);
+
+            requests.Add(CreateRequest(ResourceExchangeVisualCueKind.TransportPlaneLanding, new float3(1f, 0f, 1f), queueItemId: 21));
+            requests.Add(CreateRequest(ResourceExchangeVisualCueKind.ExportLoadStarted, new float3(2f, 0f, 2f), queueItemId: 22));
+            ResourceExchangeVisualPresentationSystemHelper.Result consume =
+                helper.ConsumeVisualRequests(context, requests);
+            Assert.AreEqual(2, consume.PlayedCount);
+            Assert.AreEqual(2, helper.ActiveActorCount);
+
+            requests.Add(CreateRequest(ResourceExchangeVisualCueKind.TransportPlaneDeparting, new float3(3f, 0f, 3f), queueItemId: 21));
+            requests.Add(CreateRequest(ResourceExchangeVisualCueKind.ImportUnloadStarted, new float3(4f, 0f, 4f), queueItemId: 22));
+
+            ResourceExchangeVisualPresentationSystemHelper.CleanupResult cleanup =
+                helper.CleanupVisualState(
+                    new ResourceExchangeVisualPresentationSystemHelper.CleanupRequest(cleanupReason),
+                    requests);
+
+            Assert.AreEqual(cleanupReason, cleanup.Reason);
+            Assert.AreEqual(2, cleanup.ReleasedActorCount);
+            Assert.AreEqual(2, cleanup.ClearedPendingRequestCount);
+            Assert.AreEqual(0, helper.ActiveActorCount);
+            Assert.AreEqual(0, requests.Length);
+            Assert.AreEqual(1, helper.GetPooledActorCount(planePrefab));
+            Assert.AreEqual(1, helper.GetPooledActorCount(truckPrefab));
+        }
+        finally
+        {
+            helper.Dispose();
+            DestroyImmediate(planePrefab);
+            DestroyImmediate(truckPrefab);
+            DestroyImmediate(root);
+        }
     }
 
     private static Entity CreateVisualRequestEntity(EntityManager em)

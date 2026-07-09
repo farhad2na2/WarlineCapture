@@ -17,6 +17,15 @@ namespace Game.Runtime
         CancellationMarker = 5
     }
 
+    internal enum ResourceExchangeVisualCleanupReason : byte
+    {
+        None = 0,
+        PopupClosed = 1,
+        MissionEnding = 2,
+        SceneUnloading = 3,
+        QueueCancelled = 4
+    }
+
     internal sealed class ResourceExchangeVisualPresentationSystemHelper : IDisposable
     {
         private const string RuntimeRootName = "ResourceExchangeVisualPresentation";
@@ -71,6 +80,30 @@ namespace Game.Runtime
             public int MissingPrefabCount;
             public int ReleasedActorCount;
             public int ClearedRequestCount;
+        }
+
+        public readonly struct CleanupRequest
+        {
+            public readonly ResourceExchangeVisualCleanupReason Reason;
+            public readonly int QueueItemId;
+            public readonly bool ClearPendingRequests;
+
+            public CleanupRequest(
+                ResourceExchangeVisualCleanupReason reason,
+                int queueItemId = 0,
+                bool clearPendingRequests = true)
+            {
+                Reason = reason;
+                QueueItemId = queueItemId;
+                ClearPendingRequests = clearPendingRequests;
+            }
+        }
+
+        public struct CleanupResult
+        {
+            public ResourceExchangeVisualCleanupReason Reason;
+            public int ReleasedActorCount;
+            public int ClearedPendingRequestCount;
         }
 
         private readonly Dictionary<GameObject, Stack<GameObject>> _poolByPrefab = new();
@@ -156,8 +189,9 @@ namespace Game.Runtime
             return releasedCount;
         }
 
-        public void ReleaseAll()
+        public int ReleaseAll()
         {
+            int releasedCount = _activeActors.Count;
             for (int i = _activeActors.Count - 1; i >= 0; i--)
             {
                 ActiveActor actor = _activeActors[i];
@@ -165,6 +199,45 @@ namespace Game.Runtime
             }
 
             _activeActors.Clear();
+            return releasedCount;
+        }
+
+        public CleanupResult CleanupVisualState(
+            CleanupRequest request,
+            DynamicBuffer<ResourceExchangeVisualRequestComponent> visualRequests)
+        {
+            CleanupResult result = CleanupVisualState(request);
+            if (request.ClearPendingRequests)
+            {
+                result.ClearedPendingRequestCount = request.Reason == ResourceExchangeVisualCleanupReason.QueueCancelled
+                    ? ClearPendingRequestsForQueue(visualRequests, request.QueueItemId)
+                    : ClearAllPendingRequests(visualRequests);
+            }
+
+            return result;
+        }
+
+        public CleanupResult CleanupVisualState(CleanupRequest request)
+        {
+            var result = new CleanupResult
+            {
+                Reason = request.Reason
+            };
+
+            switch (request.Reason)
+            {
+                case ResourceExchangeVisualCleanupReason.PopupClosed:
+                case ResourceExchangeVisualCleanupReason.MissionEnding:
+                case ResourceExchangeVisualCleanupReason.SceneUnloading:
+                    result.ReleasedActorCount = ReleaseAll();
+                    break;
+                case ResourceExchangeVisualCleanupReason.QueueCancelled:
+                    if (request.QueueItemId > 0)
+                        result.ReleasedActorCount = ReleaseActorsForQueue(request.QueueItemId);
+                    break;
+            }
+
+            return result;
         }
 
         public int GetPooledActorCount(GameObject prefab)
@@ -300,6 +373,34 @@ namespace Game.Runtime
             }
 
             return pool;
+        }
+
+        private static int ClearAllPendingRequests(
+            DynamicBuffer<ResourceExchangeVisualRequestComponent> visualRequests)
+        {
+            int count = visualRequests.Length;
+            visualRequests.Clear();
+            return count;
+        }
+
+        private static int ClearPendingRequestsForQueue(
+            DynamicBuffer<ResourceExchangeVisualRequestComponent> visualRequests,
+            int queueItemId)
+        {
+            if (queueItemId <= 0)
+                return 0;
+
+            int removedCount = 0;
+            for (int i = visualRequests.Length - 1; i >= 0; i--)
+            {
+                if (visualRequests[i].QueueItemId != queueItemId)
+                    continue;
+
+                visualRequests.RemoveAt(i);
+                removedCount++;
+            }
+
+            return removedCount;
         }
 
         private Transform EnsureRuntimeRoot(Context context)

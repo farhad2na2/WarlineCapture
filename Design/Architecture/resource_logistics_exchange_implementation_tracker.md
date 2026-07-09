@@ -1,7 +1,7 @@
 # Resource Logistics Exchange Implementation Tracker
 
 Date: 2026-07-09
-Status: Phase 6 world presentation in progress
+Status: Phase 7 audio, VFX, feedback, and ARIA ready
 Design source: `../Resource_Logistics_Exchange_Design.md`
 
 ## Objective
@@ -23,7 +23,7 @@ Implement the timed Resource Logistics Exchange without drifting from WarlineCap
 
 ## Progress Summary
 
-Overall implementation progress: 74% (70/94 checklist items complete).
+Overall implementation progress: 76% (71/94 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -35,7 +35,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 3. Queue ticking, completion, cancel, refund | Complete | 11 | 11 | 100% | Timed queue, output grant once, cancel/refund rules, mission-end cancel/refund policy. |
 | 4. Rush Tickets | Complete | 7 | 7 | 100% | Rush eligible jobs with ticket spend, per-item caps, rush-all budget, and feedback. |
 | 5. UI popup and header routing | Complete | 15 | 15 | 100% | ECS-backed UI read-model, target-lock reference, separated layer pack, Canvas popup prefab, serialized view refs, cards, details, amount stepper, queue panel, enabled-gated resource header tap route, popup input restoration, live read-model binding, request-buffer wiring, TMP/Oxanium validation, prefab contract tests, and 16:9/20:9 captures complete. |
-| 6. World presentation | In progress | 7 | 8 | 88% | Presentation anchors, deterministic fallback resolution, data-only ECS visual cue emission, managed presentation boundary, pooled actor reuse, actor safety, fallback behavior, and focused validation are complete; popup/mission/scene cleanup wiring remains. |
+| 6. World presentation | Complete | 8 | 8 | 100% | Presentation anchors, deterministic fallback resolution, data-only ECS visual cue emission, managed presentation boundary, pooled actor reuse, actor safety, fallback behavior, cleanup wiring, and focused validation are complete. |
 | 7. Audio, VFX, feedback, ARIA | Not started | 0 | 7 | 0% | Config-driven audio, resource flyouts, completion/reject feedback, optional ARIA copy. |
 | 8. AI, balance, telemetry | Not started | 0 | 6 | 0% | Economy events, balancing reports, AI awareness if enabled for AI factions. |
 | 9. Validation and performance | Not started | 0 | 10 | 0% | Focused tests, compile, architecture guardrails, UI captures, GC/performance checks. |
@@ -185,7 +185,7 @@ Exit criteria:
 - [x] Use pooled plane/truck presentation actors or an existing pooling boundary.
 - [x] Ensure presentation actors do not block gameplay pathfinding or mutate economy state.
 - [x] Add fallback behavior when anchors or presentation prefabs are missing.
-- [ ] Add visual state cleanup on popup close, mission end, scene unload, and queue cancellation.
+- [x] Add visual state cleanup on popup close, mission end, scene unload, and queue cancellation.
 - [x] Add tests or playmode validation for missing-anchor fallback and no duplicate presentation actors.
 
 Exit criteria:
@@ -227,6 +227,21 @@ Phase 6 implementation notes:
   - `git diff --check`
   - `Tools/CI/invoke_unity_macos.sh --project /private/tmp/wlc-resource-exchange-next --log /private/tmp/wlc-resource-exchange-visual-presentation-validation.log --timeout 420 -- -quit -executeMethod ResourceExchangeVisualPresentationSystemHelperTests.RunFocusedValidation`
   - Unity focused result: `[ResourceExchangeVisualPresentationValidation] result=Passed tests=5`
+- Known unrelated worktree side effect left unstaged: `Assets/Settings/UniversalRenderPipelineGlobalSettings.asset`.
+
+### 2026-07-09 - Phase 6D Visual Cleanup Boundaries
+
+- Added typed visual cleanup reasons for popup close, mission ending, scene unload, and queue cancellation.
+- Added `CleanupVisualState` APIs that release active presentation actors and clear stale pending visual cue requests at the same lifecycle boundary.
+- Popup close, mission ending, and scene unload cleanup release all active exchange presentation actors and clear all pending visual requests.
+- Queue cancellation cleanup releases only actors for the cancelled queue item and removes only pending visual requests for that queue item, preserving other active exchange visuals.
+- Cleanup remains presentation-only: it does not mutate queue state, wallet state, results, recipes, or economy events.
+- Validation passed:
+  - `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly`
+  - `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`
+  - `git diff --check`
+  - `Tools/CI/invoke_unity_macos.sh --project /private/tmp/wlc-resource-exchange-next --log /private/tmp/wlc-resource-exchange-visual-presentation-cleanup-validation.log --timeout 420 -- -quit -executeMethod ResourceExchangeVisualPresentationSystemHelperTests.RunFocusedValidation`
+  - Unity focused result: `[ResourceExchangeVisualPresentationValidation] result=Passed tests=7`
 - Known unrelated worktree side effect left unstaged: `Assets/Settings/UniversalRenderPipelineGlobalSettings.asset`.
 
 ## Phase 7: Audio, VFX, Feedback, And ARIA

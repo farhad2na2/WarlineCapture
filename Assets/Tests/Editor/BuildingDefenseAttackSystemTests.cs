@@ -10,6 +10,12 @@ using UnityEngine;
 
 public sealed class BuildingDefenseAttackSystemTests
 {
+    private const int AllocationTowerCount = 32;
+    private const int AllocationCandidateCount = 740;
+    private const int AllocationWarmupFrames = 32;
+    private const int AllocationMeasuredFrames = 64;
+    private const float AllocationDeltaSeconds = 0.2f;
+
     public static void RunFocusedValidation()
     {
         int passed = 0;
@@ -27,6 +33,8 @@ public sealed class BuildingDefenseAttackSystemTests
             tests.GuardTowerDefense_IgnoresDestroyedTargetAndFiresAtLiveHostile();
             passed++;
             tests.GuardTowerDefense_RemovedTargetBetweenUpdatesClearsSlotAndReacquiresAfterInterval();
+            passed++;
+            tests.WarmedTargetCollectionUpdate_ThirtyTwoTowersAndSevenHundredFortyCandidates_DoesNotAllocateManagedMemory();
             passed++;
 
             Debug.Log($"[BuildingDefenseAttackSystemValidation] result=Passed tests={passed}");
@@ -232,6 +240,108 @@ public sealed class BuildingDefenseAttackSystemTests
         Assert.AreEqual(100, GetHealth(em, fallbackTarget), "Reacquisition must not bypass the slot cooldown.");
     }
 
+    [Test]
+    public void WarmedTargetCollectionUpdate_ThirtyTwoTowersAndSevenHundredFortyCandidates_DoesNotAllocateManagedMemory()
+    {
+        long fixtureSetupBefore = GC.GetAllocatedBytesForCurrentThread();
+        using World world = new(nameof(WarmedTargetCollectionUpdate_ThirtyTwoTowersAndSevenHundredFortyCandidates_DoesNotAllocateManagedMemory));
+        EntityManager em = world.EntityManager;
+        var towers = new Entity[AllocationTowerCount];
+        var candidates = new Entity[AllocationCandidateCount];
+
+        for (int i = 0; i < candidates.Length; i++)
+        {
+            candidates[i] = CreateTarget(
+                em,
+                new float3(i + 1f, 0f, 0f),
+                health: 100,
+                factionId: FactionIdentity.PlayerFactionId);
+        }
+
+        for (int i = 0; i < towers.Length; i++)
+            towers[i] = CreateWarmedAllocationTower(em);
+
+        AudioEventRequestSystem.EnsureAudioEntity(em);
+        SystemHandle attackSystem = world.CreateSystem<BuildingDefenseAttackSystem>();
+        double elapsedTime = 0d;
+        for (int frame = 0; frame < AllocationWarmupFrames; frame++)
+        {
+            elapsedTime += AllocationDeltaSeconds;
+            Update(world, attackSystem, elapsedTime, AllocationDeltaSeconds);
+        }
+
+        long fixtureSetupAndWarmupAllocatedBytes =
+            GC.GetAllocatedBytesForCurrentThread() - fixtureSetupBefore;
+
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+        GC.Collect();
+
+        long productionUpdateAllocatedBytes = 0;
+        long maxUpdateAllocatedBytes = 0;
+        int firstAllocatingFrame = -1;
+        long firstAllocatingFrameBytes = 0;
+        long measurementWindowBefore = GC.GetAllocatedBytesForCurrentThread();
+        for (int frame = 0; frame < AllocationMeasuredFrames; frame++)
+        {
+            elapsedTime += AllocationDeltaSeconds;
+            world.SetTime(new TimeData(elapsedTime, AllocationDeltaSeconds));
+
+            long productionUpdateBefore = GC.GetAllocatedBytesForCurrentThread();
+            attackSystem.Update(world.Unmanaged);
+            long frameAllocatedBytes =
+                GC.GetAllocatedBytesForCurrentThread() - productionUpdateBefore;
+
+            productionUpdateAllocatedBytes += frameAllocatedBytes;
+            if (frameAllocatedBytes > maxUpdateAllocatedBytes)
+                maxUpdateAllocatedBytes = frameAllocatedBytes;
+            if (frameAllocatedBytes > 0 && firstAllocatingFrame < 0)
+            {
+                firstAllocatingFrame = frame;
+                firstAllocatingFrameBytes = frameAllocatedBytes;
+            }
+
+            em.CompleteAllTrackedJobs();
+        }
+
+        long measurementWindowAllocatedBytes =
+            GC.GetAllocatedBytesForCurrentThread() - measurementWindowBefore;
+        long harnessAllocatedBytes = measurementWindowAllocatedBytes - productionUpdateAllocatedBytes;
+
+        Assert.AreEqual(AllocationTowerCount, towers.Length);
+        Assert.AreEqual(AllocationCandidateCount, candidates.Length);
+        for (int towerIndex = 0; towerIndex < towers.Length; towerIndex++)
+        {
+            DynamicBuffer<BuildingDefenseAttackSlot> slots =
+                em.GetBuffer<BuildingDefenseAttackSlot>(towers[towerIndex]);
+            Assert.AreEqual(4, slots.Length);
+            for (int slotIndex = 0; slotIndex < slots.Length; slotIndex++)
+            {
+                Assert.AreEqual(
+                    candidates[slotIndex],
+                    slots[slotIndex].Target,
+                    $"Tower {towerIndex} must preserve nearest-hostile ordering for slot {slotIndex}.");
+                Assert.AreEqual(0, slots[slotIndex].ShotCounter);
+                Assert.Greater(slots[slotIndex].CooldownRemaining, 0f);
+            }
+        }
+
+        for (int slotIndex = 0; slotIndex < 4; slotIndex++)
+            Assert.AreEqual(100, GetHealth(em, candidates[slotIndex]));
+
+        Debug.Log(
+            $"[BuildingDefenseAttackSystemAllocationValidation] towers={AllocationTowerCount} candidates={AllocationCandidateCount} warmupFrames={AllocationWarmupFrames} measuredFrames={AllocationMeasuredFrames} productionUpdateAllocatedBytes={productionUpdateAllocatedBytes} maxUpdateAllocatedBytes={maxUpdateAllocatedBytes} firstAllocatingFrame={firstAllocatingFrame} firstAllocatingFrameBytes={firstAllocatingFrameBytes} measurementWindowAllocatedBytes={measurementWindowAllocatedBytes} harnessAllocatedBytes={harnessAllocatedBytes} fixtureSetupAndWarmupAllocatedBytes={fixtureSetupAndWarmupAllocatedBytes}");
+
+        Assert.AreEqual(
+            0,
+            productionUpdateAllocatedBytes,
+            $"Warmed BuildingDefenseAttackSystem.OnUpdate via SystemHandle.Update allocated {productionUpdateAllocatedBytes} managed bytes over {AllocationMeasuredFrames} target-acquisition updates with {AllocationTowerCount} towers and {AllocationCandidateCount} candidates; firstAllocatingFrame={firstAllocatingFrame}, firstAllocatingFrameBytes={firstAllocatingFrameBytes}, maxUpdateAllocatedBytes={maxUpdateAllocatedBytes}. The complete measurement window allocated {measurementWindowAllocatedBytes} bytes, of which {harnessAllocatedBytes} bytes came from time advancement, allocation sampling, and job completion outside SystemHandle.Update. Do not weaken this zero-byte gate; profile BuildingDefenseAttackSystem.OnUpdate when this assertion fails.");
+        Assert.GreaterOrEqual(
+            harnessAllocatedBytes,
+            0,
+            "Harness allocation is the complete measurement window minus bytes allocated inside SystemHandle.Update and cannot be negative.");
+    }
+
     private static void Update(World world, SystemHandle attackSystem, double elapsedTime, float deltaTime)
     {
         world.SetTime(new TimeData(elapsedTime, deltaTime));
@@ -273,6 +383,32 @@ public sealed class BuildingDefenseAttackSystemTests
         em.SetComponentData(entity, new UnitAttackTraceComponent());
         em.AddBuffer<BuildingDefenseAttackSlot>(entity);
         return entity;
+    }
+
+    private static Entity CreateWarmedAllocationTower(EntityManager em)
+    {
+        Entity tower = CreateGuardTower(
+            em,
+            float3.zero,
+            FactionIdentity.EnemyFactionId,
+            maxConcurrentAttacks: 4);
+
+        BuildingDefenseWeapon weapon = em.GetComponentData<BuildingDefenseWeapon>(tower);
+        weapon.Range = 1000f;
+        em.SetComponentData(tower, weapon);
+
+        DynamicBuffer<BuildingDefenseAttackSlot> slots = em.GetBuffer<BuildingDefenseAttackSlot>(tower);
+        for (int i = 0; i < 4; i++)
+        {
+            slots.Add(new BuildingDefenseAttackSlot
+            {
+                Target = Entity.Null,
+                CooldownRemaining = 1000f,
+                ShotCounter = 0
+            });
+        }
+
+        return tower;
     }
 
     private static Entity CreateTarget(

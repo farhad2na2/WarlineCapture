@@ -80,15 +80,15 @@ SPECS: tuple[SfxSpec, ...] = (
     SfxSpec(
         event_id="Gameplay.Unit.Engine.Aircraft.Flight",
         asset_path="Assets/Game/Audio/Gameplay/game_unit_engine_aircraft_flight_01.wav",
-        duration_seconds=0.62,
+        duration_seconds=2.8,
         prompt=(
-            "Modern combat jet engine flyby bed, sustained turbine roar and air rush for camera follow, "
-            "short seamless-feeling game sound effect, no music, no voice, no siren, no alarm beep, "
-            "no UI tone, clean mix with headroom."
+            "Modern combat jet engine steady cruise bed for camera follow, smooth sustained turbine "
+            "roar and air rush, no flyby doppler sweep, no impact, no metal hit, no ding, no beep, "
+            "no music, no voice, seamless-feeling low transient game ambience with headroom."
         ),
         loop=False,
         prompt_influence=0.60,
-        max_rms_db=-7.0,
+        max_rms_db=-12.0,
         max_crest_db=18.0,
     ),
     SfxSpec(

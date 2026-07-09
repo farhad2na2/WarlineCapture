@@ -601,10 +601,10 @@
       "busId": "SFX",
       "priority": "Low",
       "cooldownMs": 0,
-      "volumeDb": -12.0,
+      "volumeDb": -16.0,
       "pitchVariance": {
-        "min": -0.03,
-        "max": 0.03
+        "min": -0.015,
+        "max": 0.015
       },
       "playback": {
         "loop": false,
@@ -615,7 +615,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_unit_engine_aircraft_flight_01.wav",
-          "status": "generated-elevenlabs",
+          "status": "generated-procedural",
           "weight": 1
         }
       ]

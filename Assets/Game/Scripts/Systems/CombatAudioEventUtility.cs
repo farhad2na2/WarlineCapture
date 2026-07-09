@@ -97,9 +97,9 @@ namespace Game.Runtime
                 em,
                 AudioEventIds.GameplayUnitEngineAircraftFlight,
                 AudioEventIds.GameplayUnitEngineAircraftFlightHash,
-                AudioPlaybackPriority.Medium,
+                AudioPlaybackPriority.Low,
                 requestedAt,
-                0.55f,
+                2.6f,
                 source,
                 position);
         }

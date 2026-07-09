@@ -74,7 +74,7 @@ EVENTS: tuple[EventSpec, ...] = (
     EventSpec("Gameplay.Unit.Select.Air", "Gameplay/game_unit_select_air_01.wav", "SFX", "gameplay", "Medium", 80, -10.0, spatial=True),
     EventSpec("Gameplay.Unit.Engine.Vehicle.Move", "Gameplay/game_unit_engine_vehicle_move_01.wav", "SFX", "gameplay", "Low", 0, -13.0, spatial=True, max_instances=8, pitch_variance=(-0.04, 0.03)),
     EventSpec("Gameplay.Unit.Engine.Aircraft.Takeoff", "Gameplay/game_unit_engine_aircraft_takeoff_01.wav", "SFX", "gameplay", "Medium", 0, -10.0, spatial=True, max_instances=4, pitch_variance=(-0.03, 0.03)),
-    EventSpec("Gameplay.Unit.Engine.Aircraft.Flight", "Gameplay/game_unit_engine_aircraft_flight_01.wav", "SFX", "gameplay", "Low", 0, -12.0, spatial=True, max_instances=8, pitch_variance=(-0.03, 0.03)),
+    EventSpec("Gameplay.Unit.Engine.Aircraft.Flight", "Gameplay/game_unit_engine_aircraft_flight_01.wav", "SFX", "gameplay", "Low", 0, -16.0, spatial=True, max_instances=8, pitch_variance=(-0.015, 0.015)),
     EventSpec("Gameplay.Weapon.Fire.SmallArms", "Gameplay/game_weapon_fire_small_arms_01.wav", "SFX", "gameplay", "Medium", 40, -9.0, spatial=True, max_instances=12, pitch_variance=(-0.05, 0.04)),
     EventSpec("Gameplay.Weapon.Missile.Launch", "Gameplay/game_weapon_missile_launch_01.wav", "SFX", "gameplay", "High", 0, -7.0, spatial=True, max_instances=6, pitch_variance=(-0.03, 0.03)),
     EventSpec("Gameplay.Weapon.Missile.Flight", "Gameplay/game_weapon_missile_flight_01.wav", "SFX", "gameplay", "Medium", 0, -10.0, spatial=True, max_instances=8, pitch_variance=(-0.04, 0.04)),
@@ -196,6 +196,30 @@ def read_wav_info(path: Path) -> dict[str, Any]:
 def render_clip(clip: str) -> tuple[list[float], int]:
     name = Path(clip).name
 
+    def jet_engine_bed(duration: float = 2.8) -> list[float]:
+        low = 0.0
+        mid = 0.0
+        slow = 0.0
+
+        def fn(t: float, rng) -> float:
+            nonlocal low, mid, slow
+            white = LEGACY.noise(rng)
+            slow += (white - slow) * 0.003
+            low += (white - low) * 0.018
+            mid += (white - mid) * 0.11
+            hiss = white - mid
+            wobble = 1.0 + 0.018 * LEGACY.sine(0.7, t) + 0.01 * LEGACY.sine(1.9, t)
+            rumble = (
+                LEGACY.sine(82 * wobble, t) * 0.11 +
+                LEGACY.sine(164 * wobble, t) * 0.045)
+            turbine = (
+                LEGACY.sine(430 + 12 * LEGACY.sine(0.45, t), t) * 0.022 +
+                LEGACY.sine(860 + 18 * LEGACY.sine(0.38, t), t) * 0.012)
+            air = low * 0.18 + slow * 0.08 + hiss * 0.035
+            return (rumble + turbine + air) * LEGACY.env(t, duration, 0.18, 0.22)
+
+        return LEGACY.render_mono(duration, fn)
+
     recipes: dict[str, Callable[[], tuple[list[float], int]]] = {
         "ui_button_primary_click_01.wav": lambda: (LEGACY.click("primary"), 1),
         "ui_button_secondary_click_01.wav": lambda: (LEGACY.click("secondary"), 1),
@@ -216,7 +240,7 @@ def render_clip(clip: str) -> tuple[list[float], int]:
         "game_unit_select_air_01.wav": lambda: (LEGACY.radio("air", 0.32), 1),
         "game_unit_engine_vehicle_move_01.wav": lambda: (LEGACY.sweep("vehicle_engine", 0.55, 90, 120), 1),
         "game_unit_engine_aircraft_takeoff_01.wav": lambda: (LEGACY.sweep("aircraft_takeoff", 1.05, 170, 680), 1),
-        "game_unit_engine_aircraft_flight_01.wav": lambda: (LEGACY.sweep("aircraft_flight", 0.70, 610, 760), 1),
+        "game_unit_engine_aircraft_flight_01.wav": lambda: (jet_engine_bed(), 1),
         "game_weapon_fire_small_arms_01.wav": lambda: (LEGACY.impact("small_arms", 0.16), 1),
         "game_weapon_missile_launch_01.wav": lambda: (LEGACY.impact("cannon", 0.75), 1),
         "game_weapon_missile_flight_01.wav": lambda: (LEGACY.sweep("missile_flight", 0.55, 850, 1320), 1),

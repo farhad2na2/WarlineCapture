@@ -11,7 +11,8 @@ namespace Game.Runtime
     public partial struct UnitMotionAudioSystem : ISystem
     {
         private const float VehicleEngineIntervalSeconds = 0.65f;
-        private const float AircraftEngineIntervalSeconds = 0.9f;
+        private const float FixedWingAircraftFlightIntervalSeconds = 2.6f;
+        private const float HelicopterFlightIntervalSeconds = 0.8f;
 
         public void OnCreate(ref SystemState state)
         {
@@ -75,6 +76,7 @@ namespace Game.Runtime
                                 entity,
                                 now,
                                 transform.ValueRO.Position);
+                            audioState.NextAircraftEngineAt = now + HelicopterFlightIntervalSeconds;
                         }
                         else
                         {
@@ -83,9 +85,9 @@ namespace Game.Runtime
                                 entity,
                                 now,
                                 transform.ValueRO.Position);
+                            audioState.NextAircraftEngineAt = now + FixedWingAircraftFlightIntervalSeconds;
                         }
 
-                        audioState.NextAircraftEngineAt = now + AircraftEngineIntervalSeconds;
                         changed = true;
                     }
 

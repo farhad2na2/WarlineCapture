@@ -21,6 +21,8 @@ public sealed class CombatMotionAudioSystemTests
             passed++;
             tests.UnitMotionAudioSystem_ActiveAircraftEnqueuesAircraftSfx();
             passed++;
+            tests.UnitMotionAudioSystem_FixedWingFlightDoesNotRepeatEverySecond();
+            passed++;
             tests.MissileFlightAudioSystem_ProjectilesEnqueueFlightSfx();
             passed++;
 
@@ -82,6 +84,34 @@ public sealed class CombatMotionAudioSystemTests
             aircraft,
             new float3(8f, 12f, 14f));
         AssertNoAudioEvent(requests, AudioEventIds.GameplayUnitAircraftFlyby);
+    }
+
+    [Test]
+    public void UnitMotionAudioSystem_FixedWingFlightDoesNotRepeatEverySecond()
+    {
+        using World world = new("CombatMotionAudioSystemTests_AircraftCadence");
+        EntityManager em = world.EntityManager;
+        Entity aircraft = CreateMotionUnit(em, new float3(8f, 12f, 14f), vehicle: false, aircraft: true);
+        em.SetComponentData(aircraft, new UnitAirComponent
+        {
+            Airborne = 1,
+            HomeInitialized = 1,
+            HomePosition = new float3(8f, 0f, 14f)
+        });
+
+        SystemHandle system = world.CreateSystem<UnitMotionAudioSystem>();
+        world.SetTime(new TimeData(3d, 0.1f));
+        system.Update(world.Unmanaged);
+        world.SetTime(new TimeData(4d, 0.1f));
+        system.Update(world.Unmanaged);
+
+        DynamicBuffer<AudioPlaybackRequestElement> requests = GetAudioRequests(em);
+        Assert.AreEqual(1, CountAudioEvent(requests, AudioEventIds.GameplayUnitEngineAircraftFlight, aircraft));
+
+        world.SetTime(new TimeData(5.7d, 0.1f));
+        system.Update(world.Unmanaged);
+        requests = GetAudioRequests(em);
+        Assert.AreEqual(2, CountAudioEvent(requests, AudioEventIds.GameplayUnitEngineAircraftFlight, aircraft));
     }
 
     [Test]
@@ -183,6 +213,22 @@ public sealed class CombatMotionAudioSystemTests
         }
 
         Assert.Fail($"Missing audio event {eventId} for {source}.");
+    }
+
+    private static int CountAudioEvent(
+        DynamicBuffer<AudioPlaybackRequestElement> requests,
+        string eventId,
+        Entity source)
+    {
+        int count = 0;
+        for (int i = 0; i < requests.Length; i++)
+        {
+            AudioPlaybackRequestElement request = requests[i];
+            if (request.EventId.ToString() == eventId && request.SourceEntity == source)
+                count++;
+        }
+
+        return count;
     }
 
     private static void AssertNoAudioEvent(DynamicBuffer<AudioPlaybackRequestElement> requests, string eventId)

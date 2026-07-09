@@ -11,9 +11,51 @@ public sealed class ResourceExchangeArchitectureGuardrailTests
     private const string UiScreensRoot = "Assets/Game/Scripts/UI/Screens";
     private const string ManagedPresentationHelperPath =
         "Assets/Game/Scripts/Systems/ResourceExchangeVisualPresentationSystemHelper.cs";
+    private const string RequestValidationSystemPath =
+        "Assets/Game/Scripts/Systems/ResourceExchangeRequestValidationSystem.cs";
 
     private static readonly Regex TypeDeclarationRegex =
         new(@"\b(class|struct|interface)\s+([A-Za-z_][A-Za-z0-9_]*)", RegexOptions.Compiled);
+
+    private static readonly Regex RequestValidationForbiddenOnUpdateRegex = new(
+        @"\bCreateEntityQuery\s*\(|\bstate\s*\.\s*Dependency\s*\.\s*Complete\s*\(|\b(?:ToEntityArray|ToComponentDataArray)\s*(?:<[^>]+>)?\s*\(|\bAllocator\s*\.\s*Temp\b|\b(?:Get|TryGet|Set|Has)Singleton[A-Za-z0-9_]*\s*(?:<[^>]+>)?\s*\(",
+        RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
+    private static readonly Regex RequestValidationRequiredBufferFilterRegex = new(
+        @"\.WithAll\s*<\s*ResourceExchangeResultComponent\s*,\s*ResourceExchangeEconomyEventComponent\s*>\s*\(\s*\)",
+        RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
+    private static readonly string[] RequestValidationRequiredQueryTypes =
+    {
+        "ResourceExchangeRequestQueueComponent",
+        "ResourceExchangeEnabledComponent",
+        "ResourceExchangeWalletComponent",
+        "ResourceExchangeSummaryComponent",
+        "ResourceExchangeRecipeComponent",
+        "ResourceExchangeRequestComponent",
+        "ResourceExchangeQueueComponent",
+        "ResourceExchangeResultComponent",
+        "ResourceExchangeEconomyEventComponent"
+    };
+
+    private static readonly string[] RequestValidationForbiddenManagedAllocationTokens =
+    {
+        "new List<",
+        "new Dictionary<",
+        "new HashSet<",
+        "new Queue<",
+        "new Stack<",
+        "new string",
+        "new object",
+        "new[]",
+        "System.Linq",
+        ".ToArray(",
+        ".ToList(",
+        "string.Format(",
+        "string.Concat(",
+        "string.Join(",
+        "$\""
+    };
 
     private static readonly string[] DisallowedEcsBaseTokens =
     {
@@ -106,6 +148,10 @@ public sealed class ResourceExchangeArchitectureGuardrailTests
                 test => test.ResourceExchangeHotPathSystemsAvoidManagedScanTokens(),
                 ref passed);
             RunValidationStep(
+                nameof(RequestValidationSystemUsesDirectMultiEntityQueryWithoutForbiddenHotPathApis),
+                test => test.RequestValidationSystemUsesDirectMultiEntityQueryWithoutForbiddenHotPathApis(),
+                ref passed);
+            RunValidationStep(
                 nameof(ResourceExchangeManagedPresentationBoundaryDoesNotMutateAuthoritativeExchangeState),
                 test => test.ResourceExchangeManagedPresentationBoundaryDoesNotMutateAuthoritativeExchangeState(),
                 ref passed);
@@ -187,6 +233,47 @@ public sealed class ResourceExchangeArchitectureGuardrailTests
             string path = runtimeSystems[i];
             string contents = File.ReadAllText(path);
             AssertNoForbiddenTokens(path, contents, HotPathForbiddenManagedScanTokens);
+        }
+    }
+
+    [Test]
+    public void RequestValidationSystemUsesDirectMultiEntityQueryWithoutForbiddenHotPathApis()
+    {
+        Assert.IsTrue(
+            File.Exists(RequestValidationSystemPath),
+            $"{RequestValidationSystemPath} was not found.");
+
+        string contents = File.ReadAllText(RequestValidationSystemPath);
+        string onUpdate = ExtractMethod(contents, "public void OnUpdate");
+        Match forbiddenMatch = RequestValidationForbiddenOnUpdateRegex.Match(onUpdate);
+
+        Assert.IsFalse(
+            forbiddenMatch.Success,
+            $"{RequestValidationSystemPath}.OnUpdate contains forbidden hot-path API `{forbiddenMatch.Value}`.");
+        AssertNoForbiddenTokens(
+            $"{RequestValidationSystemPath}.OnUpdate",
+            onUpdate,
+            RequestValidationForbiddenManagedAllocationTokens);
+
+        StringAssert.Contains("foreach", onUpdate);
+        StringAssert.Contains("SystemAPI.Query<", onUpdate);
+        StringAssert.Contains(".WithEntityAccess()", onUpdate);
+        Assert.IsTrue(
+            RequestValidationRequiredBufferFilterRegex.IsMatch(onUpdate),
+            "Request validation must keep result and economy-event buffers in the direct query match set.");
+        StringAssert.Contains(
+            "SystemAPI.GetBuffer<ResourceExchangeResultComponent>(exchangeEntity)",
+            onUpdate);
+        StringAssert.Contains(
+            "SystemAPI.GetBuffer<ResourceExchangeEconomyEventComponent>(exchangeEntity)",
+            onUpdate);
+
+        for (int i = 0; i < RequestValidationRequiredQueryTypes.Length; i++)
+        {
+            StringAssert.Contains(
+                RequestValidationRequiredQueryTypes[i],
+                onUpdate,
+                $"Request validation direct iteration must retain `{RequestValidationRequiredQueryTypes[i]}`.");
         }
     }
 
@@ -280,6 +367,29 @@ public sealed class ResourceExchangeArchitectureGuardrailTests
     {
         Assert.IsNotNull(values, message);
         Assert.IsTrue(values.Count > 0, message);
+    }
+
+    private static string ExtractMethod(string source, string signature)
+    {
+        int signatureStart = source.IndexOf(signature, StringComparison.Ordinal);
+        Assert.GreaterOrEqual(signatureStart, 0, $"{signature} was not found.");
+        int bodyStart = source.IndexOf('{', signatureStart);
+        Assert.GreaterOrEqual(bodyStart, 0, $"{signature} body was not found.");
+
+        int depth = 0;
+        for (int i = bodyStart; i < source.Length; i++)
+        {
+            if (source[i] == '{')
+                depth++;
+            else if (source[i] == '}')
+                depth--;
+
+            if (depth == 0)
+                return source.Substring(bodyStart, i - bodyStart + 1);
+        }
+
+        Assert.Fail($"{signature} body was not closed.");
+        return string.Empty;
     }
 
     private static string NormalizePath(string path)

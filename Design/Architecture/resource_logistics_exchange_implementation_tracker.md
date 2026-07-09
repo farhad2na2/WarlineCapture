@@ -1,7 +1,7 @@
 # Resource Logistics Exchange Implementation Tracker
 
 Date: 2026-07-09
-Status: Phase 9 architecture guardrails complete; GC allocation check next
+Status: Phase 9 GC allocation check complete; performance scenario next
 Design source: `../Resource_Logistics_Exchange_Design.md`
 
 ## Objective
@@ -23,7 +23,7 @@ Implement the timed Resource Logistics Exchange without drifting from WarlineCap
 
 ## Progress Summary
 
-Overall implementation progress: 96% (91/94 checklist items complete).
+Overall implementation progress: 97% (92/94 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -38,7 +38,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 6. World presentation | Complete | 8 | 8 | 100% | Presentation anchors, deterministic fallback resolution, data-only ECS visual cue emission, managed presentation boundary, pooled actor reuse, actor safety, fallback behavior, cleanup wiring, and focused validation are complete. |
 | 7. Audio, VFX, feedback, ARIA | Complete | 7 | 7 | 100% | Resource Exchange audio ids, placeholder clips, data-only delta flyout requests, typed toast requests, optional ARIA strings, non-authoritative VFX marker data, and direct-audio wiring guardrails are complete. |
 | 8. AI, balance, telemetry | Complete | 6 | 6 | 100% | Economy event coverage, Resource Exchange balance report fields, data sanity tests, scenario gates, AI opt-in gating, and AI planner guardrails are complete. |
-| 9. Validation and performance | In progress | 7 | 10 | 70% | Diff whitespace, repository compile validation, focused exchange data/config tests, queue/rush/cancel/refund tests, HUD/header popup routing tests, UI prefab/capture validation, and architecture guardrails are complete; GC allocation check remains next. |
+| 9. Validation and performance | In progress | 8 | 10 | 80% | Diff whitespace, repository compile validation, focused exchange data/config tests, queue/rush/cancel/refund tests, HUD/header popup routing tests, UI prefab/capture validation, architecture guardrails, and GC allocation check are complete; performance scenario remains next. |
 
 ## Phase 0: Inventory And Source Alignment
 
@@ -284,7 +284,7 @@ Exit criteria:
 - [x] Run focused HUD/header popup routing tests.
 - [x] Run focused UI prefab/capture validation at 16:9 and 20:9.
 - [x] Run architecture guardrails for naming, ECS boundaries, and no broad manager/controller/service drift.
-- [ ] Run GC allocation check for exchange queue steady state.
+- [x] Run GC allocation check for exchange queue steady state.
 - [ ] Run performance scenario if exchange is active during match steady state.
 - [ ] Update this tracker with validation commands, log paths, pass/fail result, and remaining blockers.
 
@@ -1476,3 +1476,31 @@ Validation:
 Remaining blocker or next slice:
 
 - Next Phase 9 slice should run the GC allocation check for exchange queue steady state.
+
+### 2026-07-09 - Phase 9H GC Allocation Check
+
+Files changed:
+
+- `Assets/Tests/Editor/ResourceExchangeGcAllocationValidationTests.cs`
+- `Assets/Tests/Editor/ResourceExchangeGcAllocationValidationTests.cs.meta`
+- `Design/Architecture/resource_logistics_exchange_implementation_tracker.md`
+
+Behavior changed:
+
+- Added a focused Resource Exchange GC allocation validation runner.
+- The validation builds a deterministic ECS-only exchange fixture with preallocated recipe, request, queue, result, and economy-event buffers.
+- It warms up request validation and queue ticking for 64 frames, then measures 512 steady-state frames where active queue items remain in progress and no requests, result rows, economy events, completion, storage block, popup, world presentation, or buffer growth occurs.
+- No gameplay behavior, runtime systems, UI prefabs, scenes, configs, or assets changed in this slice.
+
+Validation:
+
+- `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 7 warnings and 0 errors.
+- `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 10 warnings and 0 errors.
+- `git diff --check` passed before this tracker update.
+- `Tools/CI/invoke_unity_macos.sh --project /private/tmp/wlc-resource-exchange-next --log /private/tmp/wlc-resource-exchange-gc-allocation-validation.log --timeout 420 -- -quit -executeMethod ResourceExchangeGcAllocationValidationTests.RunFocusedValidation`
+- Unity focused GC allocation result: `[ResourceExchangeGcAllocationValidation] result=Passed tests=1`
+- Measured allocation result: `[ResourceExchangeGcAllocationValidation] measuredFrames=512 warmupFrames=64 allocatedBytes=0`
+
+Remaining blocker or next slice:
+
+- Next Phase 9 slice should run the performance scenario if exchange is active during match steady state.

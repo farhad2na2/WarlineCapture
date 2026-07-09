@@ -1,5 +1,6 @@
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 
 namespace Game.Components
 {
@@ -91,6 +92,15 @@ namespace Game.Components
         ImportUnloadStarted = 5,
         ExchangeCompleted = 6,
         ExchangeCancelled = 7
+    }
+
+    public enum ResourceExchangePresentationAnchorKind : byte
+    {
+        None = 0,
+        BaseDepot = 1,
+        RunwayLandingZone = 2,
+        Storage = 3,
+        FallbackSafe = 4
     }
 
     public struct ResourceExchangeEnabledComponent : IComponentData
@@ -231,5 +241,16 @@ namespace Game.Components
         public FixedString128Bytes RecipeId;
         public ResourceExchangeResourceKind InputResource;
         public ResourceExchangeResourceKind OutputResource;
+    }
+
+    public struct ResourceExchangePresentationAnchorComponent : IBufferElementData
+    {
+        public byte FactionId;
+        public ResourceExchangePresentationAnchorKind AnchorKind;
+        public FixedString64Bytes AnchorId;
+        public float3 Position;
+        public quaternion Rotation;
+        public float Radius;
+        public byte IsValid;
     }
 }

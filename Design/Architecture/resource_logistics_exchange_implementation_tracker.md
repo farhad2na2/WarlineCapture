@@ -1,7 +1,7 @@
 # Resource Logistics Exchange Implementation Tracker
 
 Date: 2026-07-08
-Status: Phase 5 complete; Phase 6 world presentation next
+Status: Phase 6 world presentation in progress
 Design source: `../Resource_Logistics_Exchange_Design.md`
 
 ## Objective
@@ -23,7 +23,7 @@ Implement the timed Resource Logistics Exchange without drifting from WarlineCap
 
 ## Progress Summary
 
-Overall implementation progress: 67% (63/94 checklist items complete).
+Overall implementation progress: 68% (64/94 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -35,7 +35,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 3. Queue ticking, completion, cancel, refund | Complete | 11 | 11 | 100% | Timed queue, output grant once, cancel/refund rules, mission-end cancel/refund policy. |
 | 4. Rush Tickets | Complete | 7 | 7 | 100% | Rush eligible jobs with ticket spend, per-item caps, rush-all budget, and feedback. |
 | 5. UI popup and header routing | Complete | 15 | 15 | 100% | ECS-backed UI read-model, target-lock reference, separated layer pack, Canvas popup prefab, serialized view refs, cards, details, amount stepper, queue panel, enabled-gated resource header tap route, popup input restoration, live read-model binding, request-buffer wiring, TMP/Oxanium validation, prefab contract tests, and 16:9/20:9 captures complete. |
-| 6. World presentation | Not started | 0 | 8 | 0% | Non-authoritative pooled truck/plane presentation and fallback behavior. |
+| 6. World presentation | In progress | 1 | 8 | 13% | Presentation anchor data and deterministic fallback resolution are complete; cue emission, managed pooled actor playback, fallback actor behavior, cleanup, and validation remain. |
 | 7. Audio, VFX, feedback, ARIA | Not started | 0 | 7 | 0% | Config-driven audio, resource flyouts, completion/reject feedback, optional ARIA copy. |
 | 8. AI, balance, telemetry | Not started | 0 | 6 | 0% | Economy events, balancing reports, AI awareness if enabled for AI factions. |
 | 9. Validation and performance | Not started | 0 | 10 | 0% | Focused tests, compile, architecture guardrails, UI captures, GC/performance checks. |
@@ -179,7 +179,7 @@ Exit criteria:
 
 ## Phase 6: World Presentation
 
-- [ ] Define presentation anchors for base depot, runway/landing zone, storage, and fallback safe anchor.
+- [x] Define presentation anchors for base depot, runway/landing zone, storage, and fallback safe anchor.
 - [ ] Add ECS visual cue request data for exchange start, load, plane landing, plane departure, unload, and completion.
 - [ ] Implement managed presentation boundary as `ResourceExchangeVisualPresentationSystemHelper` or existing approved presentation owner.
 - [ ] Use pooled plane/truck presentation actors or an existing pooling boundary.
@@ -790,3 +790,34 @@ Remaining blocker or next slice:
 
 - Phase 5 is complete.
 - Next slice is Phase 6 world presentation: define Resource Exchange presentation anchors and non-authoritative cue data without making truck/plane visuals control exchange completion.
+
+### 2026-07-09 - Phase 6A Presentation Anchor Data
+
+Files changed:
+
+- `Assets/Game/Scripts/Components/ResourceExchangeComponents.cs`
+- `Assets/Game/Scripts/Systems/ResourceExchangePresentationAnchorUtility.cs`
+- `Assets/Game/Scripts/Systems/ResourceExchangePresentationAnchorUtility.cs.meta`
+- `Assets/Tests/Editor/ResourceExchangePresentationAnchorUtilityTests.cs`
+- `Assets/Tests/Editor/ResourceExchangePresentationAnchorUtilityTests.cs.meta`
+- `Design/Architecture/resource_logistics_exchange_implementation_tracker.md`
+
+Behavior changed:
+
+- Added typed Resource Exchange presentation anchor kinds: base depot, runway/landing zone, storage, and fallback safe.
+- Added `ResourceExchangePresentationAnchorComponent` as ECS buffer data with faction id, anchor kind, stable anchor id, world position, rotation, safe radius, and validity flag.
+- Added `ResourceExchangePresentationAnchorUtility` as a pure data resolver for later visual playback. It resolves exact preferred anchors first, then deterministic fallback safe/base depot/storage/runway anchors without mutating economy, pathfinding, or queue state.
+- Kept this slice data-only. It does not spawn planes/trucks, query scene objects, run pathfinding, or change queue completion.
+
+Validation:
+
+- `dotnet build Game.Components.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 6 warnings and 0 errors.
+- `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 11 warnings and 0 errors.
+- `git diff --check` passed for the touched files before this tracker update.
+- Unity focused presentation-anchor validation passed 4/4 with `ResourceExchangePresentationAnchorUtilityTests.RunFocusedValidation`: `/private/tmp/wlc-resource-exchange-presentation-anchor-validation.log`.
+- Unity modified `Assets/Settings/UniversalRenderPipelineGlobalSettings.asset` as an editor side effect in the temp worktree; that unrelated file was left unstaged and is not part of this slice.
+
+Remaining blocker or next slice:
+
+- Next Phase 6 slice should add ECS visual cue request emission for exchange start, load, plane landing, plane departure, unload, completion, and cancellation.
+- Managed pooled truck/plane playback remains intentionally unimplemented until cue emission is stable.

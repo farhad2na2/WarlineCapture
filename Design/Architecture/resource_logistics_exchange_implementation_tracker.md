@@ -23,7 +23,7 @@ Implement the timed Resource Logistics Exchange without drifting from WarlineCap
 
 ## Progress Summary
 
-Overall implementation progress: 64% (60/94 checklist items complete).
+Overall implementation progress: 66% (62/94 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -34,7 +34,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 2. Request validation and queue start | Complete | 10 | 10 | 100% | Added ISystem request validation, ECS wallet boundary, input reservation, queue item creation, economy event row, and typed results. |
 | 3. Queue ticking, completion, cancel, refund | Complete | 11 | 11 | 100% | Timed queue, output grant once, cancel/refund rules, mission-end cancel/refund policy. |
 | 4. Rush Tickets | Complete | 7 | 7 | 100% | Rush eligible jobs with ticket spend, per-item caps, rush-all budget, and feedback. |
-| 5. UI popup and header routing | In progress | 12 | 15 | 80% | ECS-backed UI read-model, target-lock reference, separated layer pack, Canvas popup prefab, serialized view refs, cards, details, amount stepper, queue panel, enabled-gated resource header tap route, popup input restoration, live read-model binding, and request-buffer wiring complete; captures and TMP/prefab polish remain. |
+| 5. UI popup and header routing | In progress | 14 | 15 | 93% | ECS-backed UI read-model, target-lock reference, separated layer pack, Canvas popup prefab, serialized view refs, cards, details, amount stepper, queue panel, enabled-gated resource header tap route, popup input restoration, live read-model binding, request-buffer wiring, TMP/Oxanium validation, and prefab contract tests complete; 16:9/20:9 captures remain. |
 | 6. World presentation | Not started | 0 | 8 | 0% | Non-authoritative pooled truck/plane presentation and fallback behavior. |
 | 7. Audio, VFX, feedback, ARIA | Not started | 0 | 7 | 0% | Config-driven audio, resource flyouts, completion/reject feedback, optional ARIA copy. |
 | 8. AI, balance, telemetry | Not started | 0 | 6 | 0% | Economy events, balancing reports, AI awareness if enabled for AI factions. |
@@ -167,9 +167,9 @@ Exit criteria:
 - [x] Ensure popup blocks world input and restores prior match HUD state on close.
 - [x] Bind installed POP-12 popup to the ECS read model and typed tab/card/control UI actions.
 - [x] Route POP-12 amount, confirm, rush-all, clear-completed, row rush, and row cancel controls into ECS request buffers.
-- [ ] Ensure all runtime text uses TMP/Oxanium rules from UI docs.
+- [x] Ensure all runtime text uses TMP/Oxanium rules from UI docs.
 - [ ] Validate 16:9 and 20:9 layout with captures.
-- [ ] Add focused UI/prefab tests for object ids, button wiring, disabled reasons, and input suppression.
+- [x] Add focused UI/prefab tests for object ids, button wiring, disabled reasons, and input suppression.
 
 Exit criteria:
 
@@ -730,3 +730,28 @@ Remaining blocker or next slice:
 
 - Next slice should verify POP-12 runtime text uses TMP/Oxanium and that all visible object ids/button refs survive prefab regeneration.
 - 16:9 and 20:9 layout captures remain required before this popup is player-facing.
+
+### 2026-07-09 - Phase 5J POP-12 Prefab Contract Tests
+
+Files changed:
+
+- `Assets/Tests/Editor/ResourceExchangePopupPrefabTests.cs`
+- `Design/Architecture/resource_logistics_exchange_implementation_tracker.md`
+
+Behavior changed:
+
+- Added focused POP-12 prefab contract coverage for live TMP-only text, Oxanium TMP font usage, non-raycast TMP labels, stable named hierarchy paths, recipe-card/queue-row disabled state objects, and runtime popup button actions.
+- Added `ResourceExchangePopupPrefabTests.RunFocusedValidation` so the POP-12 prefab contract can be executed directly in Unity batchmode without relying on the full EditMode runner.
+- No gameplay runtime behavior changed in this slice.
+
+Validation:
+
+- Unity focused POP-12 prefab validation passed 6/6 with `ResourceExchangePopupPrefabTests.RunFocusedValidation`: `/private/tmp/wlc-resource-exchange-popup-prefab-validation-workaround.log`.
+- The successful validation used the documented licensing workaround: `Tools/CI/invoke_unity_macos.sh` in windowed batchmode, without `-nographics`, so it avoided the previous `com.unity.editor.headless` licensing route.
+- `git diff --check` passed after this tracker update.
+- Unity modified `Assets/Settings/UniversalRenderPipelineGlobalSettings.asset` as an editor side effect in the temp worktree; that unrelated file was left unstaged and is not part of this slice.
+
+Remaining blocker or next slice:
+
+- 16:9 and 20:9 layout captures remain required before this popup is player-facing.
+- Next Phase 5 slice should generate the POP-12 layout captures and close the final UI popup/header-routing checklist item.

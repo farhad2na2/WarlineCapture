@@ -17,7 +17,7 @@ This tracker follows the completed historical program in `Design/Architecture/ar
 | Canonical project root | `/Users/farhad/Projects/WarlineCapture` |
 | Architecture rating | `6.5 / 10` |
 | Performance rating | `6.0 / 10` |
-| Current program status | Active - Phase 0 complete; Wave 1 UI and ECS guardrail work active |
+| Current program status | Active - Phase 0 and Phase 2A complete; Phase 1 and Phase 2B hardening active |
 
 ### Protected Integrated Work
 
@@ -33,7 +33,7 @@ If a tracker task genuinely needs one of these files, read and integrate the exi
 
 The tracker was authored at `b66453e97`, then entered `main` through `68b2da500`. Before implementation began, `main` also received the protected ARIA work and the match CPU performance repair in `a6af1335c`. The current execution baseline is therefore `a6af1335c`, not the original audit commit.
 
-The FPS repair changed `BuildingDefenseAttackSystem` and related presentation, audio, warning, settings, diagnostics, and validation code. It reduced the focused 4,800 x 2,160 Editor benchmark with 733 units to an average `8.893 ms`, median `8.242 ms`, and p95 `12.516 ms`. This is accepted current-head evidence, but it does not complete Phase 2B: the system still creates one entity snapshot and three component snapshots during its throttled 0.12-second target-acquisition pass. `APH-205` through `APH-213` remain pending until their tracker-specific acceptance criteria pass.
+The FPS repair changed `BuildingDefenseAttackSystem` and related presentation, audio, warning, settings, diagnostics, and validation code. It reduced the focused 4,800 x 2,160 Editor benchmark with 733 units to an average `8.893 ms`, median `8.242 ms`, and p95 `12.516 ms`. This remains the accepted performance floor. `APH-207` and `APH-208` subsequently removed the four throttled target-acquisition snapshots through persistent unmanaged scratch storage; `APH-209` through `APH-213` still require synchronization audit, profiler evidence, integrated architecture validation, and performance recapture.
 
 Before changing production code, the Phase 0 agents must reproduce current-head compiler, architecture, performance, and residency evidence. If current results differ from the original audit snapshot, record both values; never rewrite the original evidence as though it had been measured at `a6af1335c`.
 
@@ -248,16 +248,16 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `17 / 106` |
-| Checklist percent complete | `16.0%` |
-| Checklist in progress | `3 / 106`: `APH-102`, `APH-203`, `APH-207` |
-| Complete plus active coverage | `20 / 106` (`18.9%`); this is visibility only, not accepted completion |
+| Checklist complete | `22 / 106` |
+| Checklist percent complete | `20.8%` |
+| Checklist in progress | `2 / 106`: `APH-103`, `APH-209` |
+| Complete plus active coverage | `24 / 106` (`22.6%`); this is visibility only, not accepted completion |
 | Current phase | Phases 1 and 2 - UI boundary and ECS hot-path guardrails |
-| Current task | `APH-102` composition text adapter; `APH-203` exchange hot-path guard; `APH-207`/`APH-208` defense persistent scratch and snapshot removal |
+| Current task | `APH-103` resolver injection through Menu and Match adapters; `APH-209` defense synchronization audit and profiler evidence |
 | Red architecture gates | `2` at the audit baseline; current-head reproduction remains required |
 | Red performance gates | `1`: steady-state Match GC `269,482 / 1,024` bytes |
-| Last verified commit | `cd7646340` for `APH-206`; Phase 0 complete |
-| Last update | 2026-07-09 - UI contract, exchange direct iteration, and defense allocation coverage accepted |
+| Last verified commit | `b97e2a2d1` for `APH-207`/`APH-208`; Phase 2A complete |
+| Last update | 2026-07-09 - composition adapter, Resource Exchange guardrails, and defense snapshot removal accepted |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -322,8 +322,10 @@ Implementation contract:
 - [x] `APH-101` Add `IGameTextResolver` and immutable fallback implementation under `Assets/Game/Scripts/UI/Contracts`.
   - Result: sealed stateless fallback added with no Unity, `Game.Configs`, or static mutable-registry dependency.
   - Validation: `[GameTextResolverValidation] result=Passed tests=5`; UI Contracts and Editor-test builds passed with 0 errors; commit `a6f48a8c5` pushed to `main`.
-- [~] `APH-102` Add the composition-owned `GameTextResolverAdapter` wrapping the existing config-owned text source.
-- [ ] `APH-103` Inject the resolver through Menu and Match UI runtime adapters without hierarchy search or static registration.
+- [x] `APH-102` Add the composition-owned `GameTextResolverAdapter` wrapping the existing config-owned text source.
+  - Result: stateless composition adapter delegates configured lookup, fallback, and formatting behavior without introducing a mutable registry.
+  - Validation: `[GameTextResolverAdapterValidation] result=Passed tests=5`; UI Contracts, Composition, Runtime, Editor, and Editor-test builds passed with 0 errors; commit `72b9ecf5f` pushed to `main`.
+- [~] `APH-103` Inject the resolver through Menu and Match UI runtime adapters without hierarchy search or static registration.
 - [ ] `APH-104` Migrate the seven known `Game.UI.Runtime` text consumers listed in Current Red Gates.
   - Preserve every key and fallback string from commit `caaafe339`.
   - Preserve formatting culture and error fallback behavior.
@@ -352,8 +354,12 @@ Implementation contract:
 - [x] `APH-202` Replace the temporary entity array with direct ECS query iteration.
   - Result: direct multi-entity `SystemAPI.Query` iteration replaces the native snapshot; missing `AllowAiExchange` summary propagation is restored.
   - Validation: behavior tests passed 4/4; allocation tests passed 2/2; Runtime/Editor-test builds passed with 0 errors; commit `b0b5f7e08` pushed to `main`.
-- [~] `APH-203` Confirm no new `EntityManager.CreateEntityQuery`, structural sync point, managed allocation, or singleton assumption was introduced.
-- [ ] `APH-204` Run `ResourceExchangeRequestValidationSystemTests.RunFocusedValidation` and `ResourceExchangeGcAllocationValidationTests.RunFocusedValidation`.
+- [x] `APH-203` Confirm no new `EntityManager.CreateEntityQuery`, structural sync point, managed allocation, or singleton assumption was introduced.
+  - Result: focused source guard locks direct multi-entity iteration and rejects query creation, dependency completion, snapshots, temporary allocation, singleton APIs, and common managed-allocation tokens in `OnUpdate`.
+  - Validation: `[ResourceExchangeArchitectureGuardrail] result=Passed tests=6`; commit `5dd7f26d4` pushed to `main`.
+- [x] `APH-204` Run `ResourceExchangeRequestValidationSystemTests.RunFocusedValidation` and `ResourceExchangeGcAllocationValidationTests.RunFocusedValidation`.
+  - Result: behavior passed 4/4 and warmed allocation passed 2/2 across 64 warmup and 512 measured frames with two exchange entities and `productionUpdateAllocatedBytes=0`.
+  - Logs: `/private/tmp/warline-aph204-resource-request-validation.log` and `/private/tmp/warline-aph204-resource-gc-validation.log`.
 
 ### Phase 2B - Building Defense
 
@@ -361,7 +367,7 @@ Current-head overlap:
 
 - Commit `a6af1335c` changed this system to acquire targets every 0.12 seconds, copy query data into contiguous arrays, and preserve per-frame firing cooldown updates. It also added focused performance diagnostics and supporting tests.
 - That repair is the performance floor for this phase. Preserve or improve its focused benchmark and do not restore per-frame target acquisition or random per-candidate `EntityManager` reads.
-- The current implementation still uses one entity snapshot and three component snapshots during target acquisition, so it does not satisfy `APH-208` or the zero-snapshot architecture gate.
+- Commit `b97e2a2d1` removed the one entity snapshot and three component snapshots while preserving the 0.12-second acquisition cadence. The remaining Phase 2B debt starts with explicit dependency completion and direct `EntityManager` access under `APH-209`.
 
 Immediate implementation contract:
 
@@ -377,9 +383,12 @@ Immediate implementation contract:
 - [x] `APH-206` Add a warmed allocation test covering at least 32 towers and 740 candidate units.
   - Result: 32 towers, 740 candidates, 32 warmup updates, and 64 measured acquisition updates report `productionUpdateAllocatedBytes=0` with four-slot order preserved.
   - Validation: `[BuildingDefenseAttackSystemValidation] result=Passed tests=7`; commit `cd7646340` pushed to `main`.
-- [~] `APH-207` Add persistent target scratch storage with explicit `OnCreate`/`OnDestroy` lifetime.
-- [ ] `APH-208` Replace `_targetQuery.ToEntityArray(Allocator.Temp)` and remove the per-frame snapshot.
-- [ ] `APH-209` Audit the explicit dependency completion and direct `EntityManager` calls; remove or document each unavoidable synchronization point with profiler evidence.
+- [x] `APH-207` Add persistent target scratch storage with explicit `OnCreate`/`OnDestroy` lifetime.
+  - Result: `BuildingDefenseAttackSystem` owns a persistent `NativeList<TargetCandidate>`, clears it at acquisition cadence, and disposes it explicitly in `OnDestroy`.
+- [x] `APH-208` Replace `_targetQuery.ToEntityArray(Allocator.Temp)` and remove the per-frame snapshot.
+  - Result: direct `SystemAPI.Query` iteration rebuilds one structure-of-record scratch list and excludes aircraft and debug targets without any query snapshots.
+  - Validation: `[BuildingDefenseAttackSystemValidation] result=Passed tests=9`; 32-tower/740-candidate warmed allocation remains zero; Runtime, Editor, and Editor-test builds passed with 0 errors; commit `b97e2a2d1` pushed to `main`.
+- [~] `APH-209` Audit the explicit dependency completion and direct `EntityManager` calls; remove or document each unavoidable synchronization point with profiler evidence.
 - [ ] `APH-210` Add profiler markers for target collection, target selection, and effect application so the later spatial-index phase has comparable metrics.
 - [ ] `APH-211` Run defense, automatic-faction-targeting, combat, audio, and VFX focused validations.
 - [ ] `APH-212` Run `EcsBurstHotPathArchitectureTests.RunFocusedValidation`.
@@ -815,6 +824,51 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Visual result: Not applicable
 - Residual risk: four native query snapshots and explicit dependency completion remain production debt
 - Next ready task: `APH-207`
+
+### 2026-07-09 - APH-102 - Composition text resolver adapter
+
+- Status: Complete
+- Commit or worktree baseline: `59dbb6148`
+- Stable commit/push: `72b9ecf5f` pushed to `main`
+- Files changed: composition-owned resolver adapter, focused tests, and Unity `.meta` files
+- Behavior preserved/changed: configured lookup, missing-key fallback, and formatting behavior are unchanged; no runtime consumer is migrated in this slice
+- Validation: `[GameTextResolverAdapterValidation] result=Passed tests=5`; UI Contracts, Composition, Runtime, Editor, and Editor-test builds passed with 0 errors; `git diff --check` passed
+- Artifacts: `/private/tmp/warline-aph102-text-resolver-validation.log`
+- Metrics before: UI contract existed without a config-backed composition implementation
+- Metrics after: five adapter behavior cases and one stateless composition implementation
+- Visual result: Not applicable
+- Residual risk: Menu and Match injection remains `APH-103`; seven runtime consumers remain `APH-104`
+- Next ready task: `APH-103`
+
+### 2026-07-09 - APH-203 and APH-204 - Resource Exchange architecture closeout
+
+- Status: Complete
+- Commit or worktree baseline: `59dbb6148`
+- Stable commit/push: `5dd7f26d4` pushed to `main`
+- Files changed: Resource Exchange architecture guardrail tests
+- Behavior preserved/changed: production behavior unchanged; source guard now prevents snapshots, structural completion, singleton assumptions, temporary allocation, and common managed allocation in request validation `OnUpdate`
+- Validation: architecture 6/6, request behavior 4/4, and warmed GC 2/2 passed; 64 warmup and 512 measured frames reported `productionUpdateAllocatedBytes=0`
+- Artifacts: `/private/tmp/warline-aph203-resource-architecture-validation.log`, `/private/tmp/warline-aph204-resource-request-validation.log`, and `/private/tmp/warline-aph204-resource-gc-validation.log`
+- Metrics before: Phase 2A direct iteration lacked a production-source regression gate
+- Metrics after: Phase 2A behavior, architecture, and zero-allocation matrix is complete
+- Visual result: Not applicable
+- Residual risk: integrated full architecture gate remains scheduled with `APH-212` after Building Defense synchronization work
+- Next ready task: Phase 2A complete; no Resource Exchange task remains in this phase
+
+### 2026-07-09 - APH-207 and APH-208 - Building-defense snapshot removal
+
+- Status: Complete
+- Commit or worktree baseline: `59dbb6148`
+- Stable commit/push: `b97e2a2d1` pushed to `main`
+- Files changed: `BuildingDefenseAttackSystem` and its focused editor tests
+- Behavior preserved/changed: target acquisition remains throttled at 0.12 seconds with the same eligibility, nearest ordering, four slots, cooldowns, damage, audio, and VFX; four temporary query snapshots are replaced by persistent unmanaged scratch
+- Validation: `[BuildingDefenseAttackSystemValidation] result=Passed tests=9`; 32-tower/740-candidate warmed update remains zero managed bytes; Runtime, Editor, and Editor-test builds passed with 0 errors; `git diff --check` passed
+- Artifacts: `/private/tmp/warline-aph207-defense-validation.log`
+- Metrics before: one entity and three component snapshots per acquisition pass
+- Metrics after: zero target-acquisition query snapshots and one explicitly disposed persistent candidate list
+- Visual result: Not applicable; deterministic ECS behavior
+- Residual risk: explicit dependency completion, direct `EntityManager` calls, temporary command/effect containers, and effect-application synchronization remain under `APH-209`
+- Next ready task: `APH-209`
 
 ## Decision Log
 

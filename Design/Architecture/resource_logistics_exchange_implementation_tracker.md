@@ -1168,7 +1168,7 @@ Validation:
 
 - `git diff --check` passed before this tracker update.
 - `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 6 warnings and 0 errors.
-- `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 11 warnings and 0 errors.
+- `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 12 warnings and 0 errors.
 - `Tools/CI/invoke_unity_macos.sh --project /private/tmp/wlc-resource-exchange-next --log /private/tmp/wlc-resource-exchange-config-sanity-validation-rerun.log --timeout 420 -- -quit -executeMethod ResourceExchangeConfigValidationTests.RunFocusedValidation`
 - Unity focused result: `[ResourceExchangeConfigValidation] result=Passed tests=4`
 

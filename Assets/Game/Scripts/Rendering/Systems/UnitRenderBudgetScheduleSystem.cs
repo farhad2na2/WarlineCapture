@@ -2,6 +2,7 @@ namespace Game.Rendering
 {
     public struct UnitRenderBudgetSchedule
     {
+        private const int CameraMotionUpdateIntervalFrames = 3;
         private int _nextUpdateFrame;
         private int _lodResumeFrame;
         private bool _budgetStable;
@@ -30,7 +31,6 @@ namespace Game.Rendering
             int currentSelectedUnitHash)
         {
             return
-                !cameraMotionActive &&
                 currentSelectedUnitCount == _stableSelectedUnitCount &&
                 currentSelectedUnitHash == _stableSelectedUnitHash &&
                 frame < _nextUpdateFrame;
@@ -38,12 +38,14 @@ namespace Game.Rendering
 
         public void ScheduleNextUpdate(bool cameraMotionActive, int frame, int updateIntervalFrames)
         {
-            _nextUpdateFrame = frame + (cameraMotionActive ? 1 : updateIntervalFrames);
+            _nextUpdateFrame = frame + (cameraMotionActive ? CameraMotionUpdateIntervalFrames : updateIntervalFrames);
         }
 
         public void MarkCameraMotion(int frame, int settleFrames)
         {
             _budgetStable = false;
+            if (!IsWithinLodResume(frame))
+                _nextUpdateFrame = frame;
             _lodResumeFrame = frame + settleFrames;
         }
 

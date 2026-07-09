@@ -11,7 +11,9 @@ namespace Game.Runtime
     public partial struct BuildingDefenseAttackSystem : ISystem
     {
         private const float DamageHealthBarVisibleSeconds = 2f;
+        private const double TargetAcquisitionIntervalSeconds = 0.12d;
         private EntityQuery _targetQuery;
+        private double _nextTargetAcquisitionTime;
 
         public void OnCreate(ref SystemState state)
         {
@@ -19,7 +21,8 @@ namespace Game.Runtime
                 ComponentType.ReadOnly<UnitHealth>(),
                 ComponentType.ReadOnly<Faction>(),
                 ComponentType.ReadOnly<LocalTransform>(),
-                ComponentType.Exclude<UnitAirMovement>());
+                ComponentType.Exclude<UnitAirMovement>(),
+                ComponentType.Exclude<DebugFireTargetTag>());
             state.RequireForUpdate<BuildingDefenseWeapon>();
         }
 
@@ -29,12 +32,22 @@ namespace Game.Runtime
             AudioEventRequestSystem.EnsureAudioEntity(em);
             state.Dependency.Complete();
 
-            using NativeArray<Entity> targets = _targetQuery.ToEntityArray(Allocator.Temp);
-            if (targets.Length == 0)
-                return;
-
             float deltaTime = SystemAPI.Time.DeltaTime;
             float now = (float)SystemAPI.Time.ElapsedTime;
+            bool refreshTargets = SystemAPI.Time.ElapsedTime >= _nextTargetAcquisitionTime;
+            NativeArray<Entity> targets = default;
+            NativeArray<UnitHealth> targetHealth = default;
+            NativeArray<Faction> targetFactions = default;
+            NativeArray<LocalTransform> targetTransforms = default;
+            if (refreshTargets)
+            {
+                _nextTargetAcquisitionTime = SystemAPI.Time.ElapsedTime + TargetAcquisitionIntervalSeconds;
+                targets = _targetQuery.ToEntityArray(Allocator.Temp);
+                targetHealth = _targetQuery.ToComponentDataArray<UnitHealth>(Allocator.Temp);
+                targetFactions = _targetQuery.ToComponentDataArray<Faction>(Allocator.Temp);
+                targetTransforms = _targetQuery.ToComponentDataArray<LocalTransform>(Allocator.Temp);
+            }
+
             var ecb = new EntityCommandBuffer(Allocator.Temp);
             var pendingTraceTargetAdds = new NativeParallelHashSet<Entity>(32, Allocator.Temp);
             var pendingRecentAttackerAdds = new NativeParallelHashSet<Entity>(64, Allocator.Temp);
@@ -53,42 +66,48 @@ namespace Game.Runtime
                 int slotCount = math.min(math.max((int)weapon.MaxConcurrentAttacks, 1), 4);
                 EnsureSlotCount(slotBuffer, slotCount);
 
-                FindBestTargets(
-                    em,
-                    targets,
-                    entity,
-                    factionRef.ValueRO.Id,
-                    transformRef.ValueRO.Position,
-                    weapon.Range,
-                    out Entity target0,
-                    out Entity target1,
-                    out Entity target2,
-                    out Entity target3);
-
-                if (target0 == Entity.Null)
+                if (refreshTargets)
                 {
-                    TickSlotCooldowns(slotBuffer, slotCount, deltaTime);
-                    continue;
+                    FindBestTargets(
+                        targets,
+                        targetHealth,
+                        targetFactions,
+                        targetTransforms,
+                        entity,
+                        factionRef.ValueRO.Id,
+                        transformRef.ValueRO.Position,
+                        weapon.Range,
+                        out Entity target0,
+                        out Entity target1,
+                        out Entity target2,
+                        out Entity target3);
+                    AssignTargets(slotBuffer, slotCount, target0, target1, target2, target3);
                 }
 
                 for (int i = 0; i < slotCount; i++)
                 {
                     BuildingDefenseAttackSlot slot = slotBuffer[i];
                     slot.CooldownRemaining = math.max(0f, slot.CooldownRemaining - deltaTime);
+                    Entity target = slot.Target;
+                    if (target == Entity.Null)
+                    {
+                        slotBuffer[i] = slot;
+                        continue;
+                    }
+
+                    if (!IsLiveEnemyTarget(em, target, factionRef.ValueRO.Id, transformRef.ValueRO.Position, weapon.Range))
+                    {
+                        slot.Target = Entity.Null;
+                        slotBuffer[i] = slot;
+                        continue;
+                    }
+
                     if (slot.CooldownRemaining > 0f)
                     {
                         slotBuffer[i] = slot;
                         continue;
                     }
 
-                    Entity target = ResolveTargetForSlot(i, target0, target1, target2, target3);
-                    if (target == Entity.Null || !IsLiveEnemyTarget(em, target, factionRef.ValueRO.Id, transformRef.ValueRO.Position, weapon.Range))
-                    {
-                        slotBuffer[i] = slot;
-                        continue;
-                    }
-
-                    slot.Target = target;
                     slot.CooldownRemaining = math.max(0.01f, weapon.CooldownSeconds);
                     slot.ShotCounter++;
                     slotBuffer[i] = slot;
@@ -114,6 +133,10 @@ namespace Game.Runtime
             pendingTraceTargetAdds.Dispose();
             pendingRecentAttackerAdds.Dispose();
             pendingHealthBarVisibilityAdds.Dispose();
+            if (targets.IsCreated) targets.Dispose();
+            if (targetHealth.IsCreated) targetHealth.Dispose();
+            if (targetFactions.IsCreated) targetFactions.Dispose();
+            if (targetTransforms.IsCreated) targetTransforms.Dispose();
         }
 
         private static void EnsureSlotCount(DynamicBuffer<BuildingDefenseAttackSlot> slots, int slotCount)
@@ -129,13 +152,18 @@ namespace Game.Runtime
             }
         }
 
-        private static void TickSlotCooldowns(DynamicBuffer<BuildingDefenseAttackSlot> slots, int slotCount, float deltaTime)
+        private static void AssignTargets(
+            DynamicBuffer<BuildingDefenseAttackSlot> slots,
+            int slotCount,
+            Entity target0,
+            Entity target1,
+            Entity target2,
+            Entity target3)
         {
             for (int i = 0; i < slotCount; i++)
             {
                 BuildingDefenseAttackSlot slot = slots[i];
-                slot.CooldownRemaining = math.max(0f, slot.CooldownRemaining - deltaTime);
-                slot.Target = Entity.Null;
+                slot.Target = ResolveTargetForSlot(i, target0, target1, target2, target3);
                 slots[i] = slot;
             }
         }
@@ -274,8 +302,10 @@ namespace Game.Runtime
         }
 
         private static void FindBestTargets(
-            EntityManager em,
             NativeArray<Entity> targets,
+            NativeArray<UnitHealth> targetHealth,
+            NativeArray<Faction> targetFactions,
+            NativeArray<LocalTransform> targetTransforms,
             Entity source,
             byte sourceFaction,
             float3 sourcePosition,
@@ -299,11 +329,11 @@ namespace Game.Runtime
             {
                 Entity candidate = targets[i];
                 if (candidate == source ||
-                    !TryGetLiveEnemyPosition(em, candidate, sourceFaction, out float3 candidatePosition))
-                {
+                    targetHealth[i].Current <= 0 ||
+                    !FactionIdentity.CanAutoTargetForCombat(sourceFaction, targetFactions[i].Id))
                     continue;
-                }
 
+                float3 candidatePosition = targetTransforms[i].Position;
                 float3 delta = candidatePosition - sourcePosition;
                 delta.y = 0f;
                 float distSq = math.lengthsq(delta);

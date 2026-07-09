@@ -52,7 +52,16 @@ namespace Game.Runtime
             "UnitEngagedMovementSystem",
             "UnitIdleWanderSystem",
             "UnitLookAtTargetSystem",
-            "UnitRenderBudgetSystem"
+            "UnitRenderBudgetSystem",
+            "SimulationSystemGroup",
+            "AudioEventRequestSystem",
+            "AudioCooldownSystem",
+            "AudioMusicStateSystem",
+            "AudioSettingsSystem",
+            "UnitMotionAudioSystem",
+            "MissileFlightAudioSystem",
+            "ResourceExchange",
+            "UiShell"
         };
 
         private readonly bool _enableFrameRateDiagnostics = true;

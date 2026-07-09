@@ -526,7 +526,9 @@ namespace Game.Rendering
     [UpdateAfter(typeof(UnitRenderBudgetSystem))]
     public partial struct UnitRenderVisualExclusivitySystem : ISystem
     {
+        private const int UpdateIntervalFrames = 2;
         private EntityQuery _visualRootsQuery;
+        private int _nextUpdateFrame;
 
         public void OnCreate(ref SystemState state)
         {
@@ -547,6 +549,11 @@ namespace Game.Rendering
 
         public void OnUpdate(ref SystemState state)
         {
+            int frame = Time.frameCount;
+            if (frame < _nextUpdateFrame)
+                return;
+            _nextUpdateFrame = frame + UpdateIntervalFrames;
+
             if (_visualRootsQuery.IsEmptyIgnoreFilter)
                 return;
 

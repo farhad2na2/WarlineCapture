@@ -37,6 +37,7 @@ public sealed partial class UnitRenderBudgetSystemTests
             tests.AirUnitDecisionForcesDetailedRootsWhenBudgetWouldUseLow();
             tests.SelectedVehicleForcesImmediateDetailedVisual();
             tests.StableBudgetDoesNotSkipSelectedUnitsAndSelectionChanges();
+            tests.CameraMotionBudgetRespectsThreeFrameThrottle();
             tests.SelectedVehicleReappliesDetailRootsWhenVisualStateAlreadyDetail();
             tests.MissingMeshLodInstanceKeepsDetailVisibleUntilReady();
             tests.VisualStateTransitionKeepsCurrentVisualUntilStableOrForced();
@@ -53,7 +54,7 @@ public sealed partial class UnitRenderBudgetSystemTests
             tests.CharacterImpostorsScaleUpAtHighTacticalCameraHeight();
             tests.HighCameraCharacterImpostorsFaceCameraPlane();
             tests.SourceKeyPrefixChecksDoNotAllocate();
-            Debug.Log("[UnitRenderBudgetFocusedValidation] result=Passed tests=33");
+            Debug.Log("[UnitRenderBudgetFocusedValidation] result=Passed tests=34");
         }
         catch (System.Exception ex)
         {
@@ -842,6 +843,36 @@ public sealed partial class UnitRenderBudgetSystemTests
             frame: 25,
             currentSelectedUnitCount: 1,
             currentSelectedUnitHash: 4096));
+    }
+
+    [Test]
+    public void CameraMotionBudgetRespectsThreeFrameThrottle()
+    {
+        var schedule = new UnitRenderBudgetSchedule();
+        schedule.MarkCameraMotion(frame: 10, settleFrames: 8);
+        Assert.IsFalse(schedule.ShouldSkipUpdateFrame(
+            cameraMotionActive: true,
+            frame: 10,
+            currentSelectedUnitCount: 0,
+            currentSelectedUnitHash: 0));
+
+        schedule.ScheduleNextUpdate(cameraMotionActive: true, frame: 10, updateIntervalFrames: 10);
+        schedule.MarkCameraMotion(frame: 11, settleFrames: 8);
+        Assert.IsTrue(schedule.ShouldSkipUpdateFrame(
+            cameraMotionActive: true,
+            frame: 11,
+            currentSelectedUnitCount: 0,
+            currentSelectedUnitHash: 0));
+        Assert.IsTrue(schedule.ShouldSkipUpdateFrame(
+            cameraMotionActive: true,
+            frame: 12,
+            currentSelectedUnitCount: 0,
+            currentSelectedUnitHash: 0));
+        Assert.IsFalse(schedule.ShouldSkipUpdateFrame(
+            cameraMotionActive: true,
+            frame: 13,
+            currentSelectedUnitCount: 0,
+            currentSelectedUnitHash: 0));
     }
 
     [Test]

@@ -104,9 +104,12 @@ namespace Game.Runtime
             double afterBoundary = startTime;
             try
             {
-                using (UpdateBuildingRuntimeStateMarker.Auto())
+                if (!GameplayRuntimeUpdateDebugFlags.DisableBuildingBoundaryRuntime)
                 {
-                    context.UpdateBuildingRuntimeState?.Invoke();
+                    using (UpdateBuildingRuntimeStateMarker.Auto())
+                    {
+                        context.UpdateBuildingRuntimeState?.Invoke();
+                    }
                 }
 
                 afterBoundary = UnityEngine.Time.realtimeSinceStartupAsDouble;
@@ -193,7 +196,8 @@ namespace Game.Runtime
                     : Mathf.Max(0f, UnityEngine.Time.deltaTime);
                 _resourceProductionElapsedSeconds += deltaTime;
                 bool pendingProductionObservedActiveTransport = false;
-                if (now >= _nextProductionAt)
+                if (!GameplayRuntimeUpdateDebugFlags.DisableBuildingProductionRuntime &&
+                    now >= _nextProductionAt)
                 {
                     _nextProductionAt = now + ProductionIntervalSeconds;
                     using (ProcessPendingProductionsMarker.Auto())
@@ -207,9 +211,10 @@ namespace Game.Runtime
 
                 now = afterPendingProductions;
                 bool shouldUpdateActiveTransports =
-                    (_activeProductionTransportsObserved && now >= _nextActiveProductionTransportProbeAt) ||
-                    pendingProductionObservedActiveTransport ||
-                    now >= _nextActiveProductionTransportProbeAt;
+                    !GameplayRuntimeUpdateDebugFlags.DisableBuildingProductionRuntime &&
+                    ((_activeProductionTransportsObserved && now >= _nextActiveProductionTransportProbeAt) ||
+                     pendingProductionObservedActiveTransport ||
+                     now >= _nextActiveProductionTransportProbeAt);
                 if (shouldUpdateActiveTransports)
                 {
                     using (UpdateActiveProductionTransportsMarker.Auto())
@@ -226,7 +231,8 @@ namespace Game.Runtime
                 afterProductions = UnityEngine.Time.realtimeSinceStartupAsDouble;
 
                 now = afterProductions;
-                if (now >= _nextResourceProductionAt)
+                if (!GameplayRuntimeUpdateDebugFlags.DisableBuildingResourceRuntime &&
+                    now >= _nextResourceProductionAt)
                 {
                     _nextResourceProductionAt = now + ResourceProductionIntervalSeconds;
                     using (UpdateResourceProductionMarker.Auto())
@@ -239,7 +245,8 @@ namespace Game.Runtime
                 afterResources = UnityEngine.Time.realtimeSinceStartupAsDouble;
 
                 now = afterResources;
-                if (now >= _nextResourceHaulerAt)
+                if (!GameplayRuntimeUpdateDebugFlags.DisableBuildingResourceHaulerRuntime &&
+                    now >= _nextResourceHaulerAt)
                 {
                     _nextResourceHaulerAt = now + ResourceHaulerIntervalSeconds;
                     using (UpdateResourceHaulersMarker.Auto())
@@ -250,7 +257,8 @@ namespace Game.Runtime
                 afterHaulers = UnityEngine.Time.realtimeSinceStartupAsDouble;
 
                 now = afterHaulers;
-                if (now >= _nextResourceVisualAt)
+                if (!GameplayRuntimeUpdateDebugFlags.DisableBuildingVisualRuntime &&
+                    now >= _nextResourceVisualAt)
                 {
                     _nextResourceVisualAt = now + ResourceVisualIntervalSeconds;
                     using (UpdateBuildingResourceVisualsMarker.Auto())
@@ -261,7 +269,8 @@ namespace Game.Runtime
                 afterResourceVisuals = UnityEngine.Time.realtimeSinceStartupAsDouble;
 
                 now = afterResourceVisuals;
-                if (now >= _nextReservationCleanupAt)
+                if (!GameplayRuntimeUpdateDebugFlags.DisableBuildingReservationCleanupRuntime &&
+                    now >= _nextReservationCleanupAt)
                 {
                     _nextReservationCleanupAt = now + ReservationCleanupIntervalSeconds;
                     using (CleanupRecentSpawnReservationsMarker.Auto())
@@ -272,7 +281,8 @@ namespace Game.Runtime
                 afterReservations = UnityEngine.Time.realtimeSinceStartupAsDouble;
 
                 now = afterReservations;
-                if (now >= _nextDestroyedCleanupAt)
+                if (!GameplayRuntimeUpdateDebugFlags.DisableBuildingDestroyedRuntime &&
+                    now >= _nextDestroyedCleanupAt)
                 {
                     _nextDestroyedCleanupAt = now + DestroyedCleanupIntervalSeconds;
                     using (SyncDestroyedRuntimeBuildingCombatEntitiesMarker.Auto())
@@ -287,23 +297,32 @@ namespace Game.Runtime
                 }
                 afterDestroyed = UnityEngine.Time.realtimeSinceStartupAsDouble;
 
-                using (UpdateRoadBarrierDoorsMarker.Auto())
+                if (!GameplayRuntimeUpdateDebugFlags.DisableBuildingDoorRuntime)
                 {
-                    context.UpdateRoadBarrierDoors?.Invoke();
+                    using (UpdateRoadBarrierDoorsMarker.Auto())
+                    {
+                        context.UpdateRoadBarrierDoors?.Invoke();
+                    }
                 }
                 afterDoors = UnityEngine.Time.realtimeSinceStartupAsDouble;
-                using (FlushPendingMarkerRefreshMarker.Auto())
+                if (!GameplayRuntimeUpdateDebugFlags.DisableBuildingMarkerRuntime)
                 {
-                    context.FlushPendingMarkerRefresh?.Invoke();
+                    using (FlushPendingMarkerRefreshMarker.Auto())
+                    {
+                        context.FlushPendingMarkerRefresh?.Invoke();
+                    }
                 }
                 afterMarkers = UnityEngine.Time.realtimeSinceStartupAsDouble;
 
-                BuildingPlacementInputRuntimeTickUiSystemHelper.Result input;
-                using (UpdateInputMarker.Auto())
+                BuildingPlacementInputRuntimeTickUiSystemHelper.Result input = default;
+                if (!GameplayRuntimeUpdateDebugFlags.DisableBuildingInputRuntime)
                 {
-                    input = context.UpdateInput != null
-                        ? context.UpdateInput()
-                        : default;
+                    using (UpdateInputMarker.Auto())
+                    {
+                        input = context.UpdateInput != null
+                            ? context.UpdateInput()
+                            : default;
+                    }
                 }
                 afterInputOutline = input.AfterOutline;
                 afterInputMouse = input.AfterMouse;

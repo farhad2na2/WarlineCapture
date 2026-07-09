@@ -83,15 +83,10 @@ namespace Game.Runtime
             EntityQuery haulerUnitsQuery = context.GetHaulerUnitsQuery != null
                 ? context.GetHaulerUnitsQuery()
                 : default;
-            EntityTypeHandle entityType = em.GetEntityTypeHandle();
-            using NativeArray<ArchetypeChunk> chunks = haulerUnitsQuery.ToArchetypeChunkArray(Allocator.Temp);
-            using var haulerQuery = new NativeList<Entity>(haulerUnitsQuery.CalculateEntityCount(), Allocator.Temp);
-            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
-            {
-                NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
-                haulerQuery.AddRange(entities);
-            }
+            if (haulerUnitsQuery.IsEmptyIgnoreFilter)
+                return;
 
+            using NativeArray<Entity> haulerQuery = haulerUnitsQuery.ToEntityArray(Allocator.Temp);
             if (haulerQuery.Length == 0)
                 return;
 
@@ -303,7 +298,7 @@ namespace Game.Runtime
             Context context,
             EntityManager em,
             GridConfig grid,
-            NativeList<Entity> haulers,
+            NativeArray<Entity> haulers,
             float now)
         {
             if (_hasAutomaticAssignmentSignature && now < _nextAutomaticAssignmentRefreshAt)
@@ -343,7 +338,7 @@ namespace Game.Runtime
             Context context,
             EntityManager em,
             GridConfig grid,
-            NativeList<Entity> haulers)
+            NativeArray<Entity> haulers)
         {
             uint hash = 2166136261u;
             int idleCandidateCount = 0;
@@ -433,7 +428,7 @@ namespace Game.Runtime
             NativeList<Entity> haulers,
             float now)
         {
-            return ShouldRunAutomaticAssignmentScan(context, em, grid, haulers, now);
+            return ShouldRunAutomaticAssignmentScan(context, em, grid, haulers.AsArray(), now);
         }
 
         internal static uint CalculateAutomaticAssignmentSignatureForTests(
@@ -442,7 +437,7 @@ namespace Game.Runtime
             GridConfig grid,
             NativeList<Entity> haulers)
         {
-            return CalculateAutomaticAssignmentSignature(context, em, grid, haulers);
+            return CalculateAutomaticAssignmentSignature(context, em, grid, haulers.AsArray());
         }
 #endif
 

@@ -1,5 +1,5 @@
 using Game.Components;
-using System;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
 
@@ -13,6 +13,8 @@ namespace Game.Runtime
         private const float VehicleEngineIntervalSeconds = 0.65f;
         private const float FixedWingAircraftFlightIntervalSeconds = 2.6f;
         private const float HelicopterFlightIntervalSeconds = 0.8f;
+        private const double MotionAudioUpdateIntervalSeconds = 0.2d;
+        private double _nextMotionAudioUpdateTime;
 
         public void OnCreate(ref SystemState state)
         {
@@ -21,10 +23,20 @@ namespace Game.Runtime
 
         public void OnUpdate(ref SystemState state)
         {
+            if (GameplayRuntimeUpdateDebugFlags.DisableUnitMotionAudioRuntime)
+                return;
+
+            double elapsedTime = SystemAPI.Time.ElapsedTime;
+            if (elapsedTime < _nextMotionAudioUpdateTime)
+                return;
+
+            _nextMotionAudioUpdateTime = elapsedTime + MotionAudioUpdateIntervalSeconds;
+
             EntityManager em = state.EntityManager;
             AudioEventRequestSystem.EnsureAudioEntity(em);
-            float now = (float)SystemAPI.Time.ElapsedTime;
-            EntityCommandBuffer ecb = new(Unity.Collections.Allocator.Temp);
+            float now = elapsedTime > float.MaxValue ? float.MaxValue : (float)elapsedTime;
+            EntityCommandBuffer ecb = default;
+            bool hasEntityCommandBuffer = false;
 
             foreach (var (transform, visual, entity) in SystemAPI
                          .Query<RefRO<LocalTransform>, RefRO<UnitMoveVisualComponent>>()
@@ -105,13 +117,26 @@ namespace Game.Runtime
                     continue;
 
                 if (em.HasComponent<UnitMotionAudioState>(entity))
+                {
                     em.SetComponentData(entity, audioState);
+                }
                 else
+                {
+                    if (!hasEntityCommandBuffer)
+                    {
+                        ecb = new EntityCommandBuffer(Allocator.Temp);
+                        hasEntityCommandBuffer = true;
+                    }
+
                     ecb.AddComponent(entity, audioState);
+                }
             }
 
-            ecb.Playback(em);
-            ecb.Dispose();
+            if (hasEntityCommandBuffer)
+            {
+                ecb.Playback(em);
+                ecb.Dispose();
+            }
         }
 
         private static bool IsGroundVehicle(EntityManager em, Entity entity)
@@ -128,8 +153,41 @@ namespace Game.Runtime
             if (!em.HasComponent<UnitSourcePrefabKey>(entity))
                 return false;
 
-            string sourceKey = em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString();
-            return sourceKey.IndexOf("helicopter", StringComparison.OrdinalIgnoreCase) >= 0;
+            FixedString64Bytes sourceKey = em.GetComponentData<UnitSourcePrefabKey>(entity).Value;
+            return ContainsIgnoreCase(sourceKey, "Helicopter") || ContainsIgnoreCase(sourceKey, "Heli");
+        }
+
+        private static bool ContainsIgnoreCase(FixedString64Bytes value, string needle)
+        {
+            int valueLength = value.Length;
+            int needleLength = needle.Length;
+            if (needleLength == 0 || valueLength < needleLength)
+                return false;
+
+            for (int start = 0; start <= valueLength - needleLength; start++)
+            {
+                bool matches = true;
+                for (int offset = 0; offset < needleLength; offset++)
+                {
+                    if (ToLowerAscii(value[start + offset]) == ToLowerAscii((byte)needle[offset]))
+                        continue;
+
+                    matches = false;
+                    break;
+                }
+
+                if (matches)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static byte ToLowerAscii(byte value)
+        {
+            return value is >= (byte)'A' and <= (byte)'Z'
+                ? (byte)(value + ((byte)'a' - (byte)'A'))
+                : value;
         }
     }
 }

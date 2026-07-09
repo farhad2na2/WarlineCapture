@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Text;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using Unity.Profiling;
 using UnityEngine.SceneManagement;
+using UnityEditorInternal;
 using Game.Configs;
 using Game.UI.Runtime;
 using Game.Runtime;
@@ -18,6 +20,7 @@ namespace Game.Editor
     {
         private const string MenuScenePath = "Assets/Game/Scenes/Menu.unity";
         private const string RuntimeUiConfigPath = "Assets/Game/Data/UI/RuntimeUiConfig.asset";
+        private const int MatchReadyTimeoutFrames = 12000;
 
         private static readonly List<float> frameTimes = new(360);
         private static int frameCount;
@@ -31,6 +34,10 @@ namespace Game.Editor
         private static int sampleFrames;
         private static string variant;
         private static bool variantApplied;
+        private static bool buildingSliceDiagnosticsEnabled;
+        private static bool rawProfilerCaptureEnabled;
+        private static bool rawProfilerCaptureStarted;
+        private static string rawProfilerCapturePath;
         private static readonly List<NamedRecorderSample> recorderSamples = new();
         private static readonly string[] markerNames =
         {
@@ -66,7 +73,12 @@ namespace Game.Editor
             "BuildingPlacementRuntimeTick.UpdateDestroyedBuildings",
             "BuildingPlacementRuntimeTick.UpdateRoadBarrierDoors",
             "BuildingPlacementRuntimeTick.FlushPendingMarkerRefresh",
-            "BuildingPlacementRuntimeTick.UpdateInput"
+            "BuildingPlacementRuntimeTick.UpdateInput",
+            "Default World Game.Runtime.UnitMotionAudioSystem",
+            "Default World Game.Runtime.AudioCooldownSystem",
+            "Default World Game.Runtime.ResourceExchangeQueueTickSystem",
+            "Default World Game.UI.Runtime.UiResourceExchangeReadModelSystem",
+            "Default World Unity.Entities.SimulationSystemGroup"
         };
 
         private struct NamedRecorderSample
@@ -94,6 +106,12 @@ namespace Game.Editor
                 sampleFrames = ResolvePositiveInt("WARLINE_CANVAS_MATCH_FPS_SAMPLE_FRAMES", 240);
                 variant = Environment.GetEnvironmentVariable("WARLINE_CANVAS_MATCH_FPS_VARIANT") ?? "Normal";
                 GameplayRuntimeUpdateDebugFlags.Reset();
+                InitialUnitsRuntimeState.BuildingRuntimeSliceDiagnostics = false;
+                buildingSliceDiagnosticsEnabled = false;
+                rawProfilerCaptureEnabled = ResolveBool("WARLINE_CANVAS_MATCH_FPS_CAPTURE_RAW");
+                rawProfilerCaptureStarted = false;
+                rawProfilerCapturePath = Environment.GetEnvironmentVariable("WARLINE_CANVAS_MATCH_FPS_CAPTURE_PATH") ??
+                    "/private/tmp/warline-canvas-match-fps-capture";
                 StartMarkerRecorders();
 
                 EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
@@ -177,8 +195,16 @@ namespace Game.Editor
                     if (matchScene == null || !SceneManager.GetSceneByName("Match").isLoaded)
                         return;
 
-                    if (!matchScene.GameplayStartComplete && frameCount - deployFrame < 360)
+                    if (!matchScene.GameplayStartComplete)
+                    {
+                        if (frameCount - deployFrame >= MatchReadyTimeoutFrames)
+                        {
+                            Complete(false, $"Timed out waiting for gameplay start complete variant={variant} frame={frameCount} deployFrame={deployFrame} scene={SceneManager.GetActiveScene().name} progress={matchScene.GameplayStartProgress01:0.00} status={matchScene.GameplayStartStatus}");
+                            return;
+                        }
+
                         return;
+                    }
 
                     matchReady = true;
                     matchReadyFrame = frameCount;
@@ -192,6 +218,9 @@ namespace Game.Editor
                 int sampledFrame = frameCount - matchReadyFrame - warmupFrames;
                 if (sampledFrame < 0)
                     return;
+
+                if (sampledFrame == 0 && rawProfilerCaptureEnabled && !rawProfilerCaptureStarted)
+                    StartRawProfilerCapture();
 
                 float deltaSeconds = Time.unscaledDeltaTime;
                 if (deltaSeconds > 0f)
@@ -249,7 +278,32 @@ namespace Game.Editor
             float median = Percentile(0.50f);
             float p95 = Percentile(0.95f);
             float medianFps = median > 0f ? 1f / median : 0f;
-            return $"variant={variant} samples={frameTimes.Count} warmupFrames={warmupFrames} avgMs={average * 1000f:0.000} fps={fps:0.0} medianMs={median * 1000f:0.000} medianFps={medianFps:0.0} p95Ms={p95 * 1000f:0.000} minMs={min * 1000f:0.000} maxMs={max * 1000f:0.000} deployFrame={deployFrame} matchReadyFrame={matchReadyFrame} vSync={QualitySettings.vSyncCount} targetFps={Application.targetFrameRate} focused={(Application.isFocused ? 1 : 0)} batch={(Application.isBatchMode ? 1 : 0)} disableBuildingPlacement={(GameplayRuntimeUpdateDebugFlags.DisableBuildingPlacementRuntime ? 1 : 0)} disableSelection={(GameplayRuntimeUpdateDebugFlags.DisableSelectionRuntime ? 1 : 0)} markers={BuildMarkerSummary()}";
+            return $"variant={variant} samples={frameTimes.Count} warmupFrames={warmupFrames} avgMs={average * 1000f:0.000} fps={fps:0.0} medianMs={median * 1000f:0.000} medianFps={medianFps:0.0} p95Ms={p95 * 1000f:0.000} minMs={min * 1000f:0.000} maxMs={max * 1000f:0.000} deployFrame={deployFrame} matchReadyFrame={matchReadyFrame} vSync={QualitySettings.vSyncCount} targetFps={Application.targetFrameRate} focused={(Application.isFocused ? 1 : 0)} batch={(Application.isBatchMode ? 1 : 0)} disableBuildingPlacement={(GameplayRuntimeUpdateDebugFlags.DisableBuildingPlacementRuntime ? 1 : 0)} disableSelection={(GameplayRuntimeUpdateDebugFlags.DisableSelectionRuntime ? 1 : 0)} disableUnitMotionAudio={(GameplayRuntimeUpdateDebugFlags.DisableUnitMotionAudioRuntime ? 1 : 0)} rawCapture={(rawProfilerCaptureStarted ? rawProfilerCapturePath + ".raw" : "disabled")} markers={BuildMarkerSummary()}";
+        }
+
+        private static void StartRawProfilerCapture()
+        {
+            string rawPath = rawProfilerCapturePath + ".raw";
+            if (File.Exists(rawPath))
+                File.Delete(rawPath);
+
+            UnityEngine.Profiling.Profiler.enabled = false;
+            ProfilerDriver.ClearAllFrames();
+            UnityEngine.Profiling.Profiler.logFile = rawProfilerCapturePath;
+            UnityEngine.Profiling.Profiler.enableBinaryLog = true;
+            UnityEngine.Profiling.Profiler.enabled = true;
+            rawProfilerCaptureStarted = true;
+            Debug.Log($"[CanvasMatchFpsValidation] rawCaptureStarted path={rawPath}");
+        }
+
+        private static void StopRawProfilerCapture()
+        {
+            if (!rawProfilerCaptureStarted)
+                return;
+
+            UnityEngine.Profiling.Profiler.enabled = false;
+            UnityEngine.Profiling.Profiler.enableBinaryLog = false;
+            UnityEngine.Profiling.Profiler.logFile = string.Empty;
         }
 
         private static void StartMarkerRecorders()
@@ -358,9 +412,46 @@ namespace Game.Editor
             bool unbindMinimap = string.Equals(variant, "UnbindMinimap", StringComparison.OrdinalIgnoreCase);
             bool disableBuildingPlacement = string.Equals(variant, "DisableBuildingPlacement", StringComparison.OrdinalIgnoreCase);
             bool disableSelection = string.Equals(variant, "DisableSelection", StringComparison.OrdinalIgnoreCase);
+            bool disableUnitMotionAudio = string.Equals(variant, "DisableUnitMotionAudio", StringComparison.OrdinalIgnoreCase) ||
+                ResolveBool("WARLINE_CANVAS_MATCH_FPS_DISABLE_UNIT_MOTION_AUDIO");
+            bool disableBuildingBoundary = string.Equals(variant, "DisableBuildingBoundary", StringComparison.OrdinalIgnoreCase) ||
+                ResolveBool("WARLINE_CANVAS_MATCH_FPS_DISABLE_BUILDING_BOUNDARY");
+            bool disableBuildingProduction = string.Equals(variant, "DisableBuildingProduction", StringComparison.OrdinalIgnoreCase) ||
+                ResolveBool("WARLINE_CANVAS_MATCH_FPS_DISABLE_BUILDING_PRODUCTION");
+            bool disableBuildingResource = string.Equals(variant, "DisableBuildingResource", StringComparison.OrdinalIgnoreCase) ||
+                ResolveBool("WARLINE_CANVAS_MATCH_FPS_DISABLE_BUILDING_RESOURCE");
+            bool disableBuildingResourceHauler = string.Equals(variant, "DisableBuildingResourceHauler", StringComparison.OrdinalIgnoreCase) ||
+                ResolveBool("WARLINE_CANVAS_MATCH_FPS_DISABLE_BUILDING_RESOURCE_HAULER");
+            bool disableBuildingVisual = string.Equals(variant, "DisableBuildingVisual", StringComparison.OrdinalIgnoreCase) ||
+                ResolveBool("WARLINE_CANVAS_MATCH_FPS_DISABLE_BUILDING_VISUAL");
+            bool disableBuildingInput = string.Equals(variant, "DisableBuildingInput", StringComparison.OrdinalIgnoreCase) ||
+                ResolveBool("WARLINE_CANVAS_MATCH_FPS_DISABLE_BUILDING_INPUT");
+            bool disableBuildingReservationCleanup = string.Equals(variant, "DisableBuildingReservationCleanup", StringComparison.OrdinalIgnoreCase) ||
+                ResolveBool("WARLINE_CANVAS_MATCH_FPS_DISABLE_BUILDING_RESERVATION_CLEANUP");
+            bool disableBuildingDestroyed = string.Equals(variant, "DisableBuildingDestroyed", StringComparison.OrdinalIgnoreCase) ||
+                ResolveBool("WARLINE_CANVAS_MATCH_FPS_DISABLE_BUILDING_DESTROYED");
+            bool disableBuildingDoor = string.Equals(variant, "DisableBuildingDoor", StringComparison.OrdinalIgnoreCase) ||
+                ResolveBool("WARLINE_CANVAS_MATCH_FPS_DISABLE_BUILDING_DOOR");
+            bool disableBuildingMarker = string.Equals(variant, "DisableBuildingMarker", StringComparison.OrdinalIgnoreCase) ||
+                ResolveBool("WARLINE_CANVAS_MATCH_FPS_DISABLE_BUILDING_MARKER");
+            buildingSliceDiagnosticsEnabled =
+                string.Equals(variant, "BuildingSliceDiagnostics", StringComparison.OrdinalIgnoreCase) ||
+                ResolveBool("WARLINE_CANVAS_MATCH_FPS_BUILDING_SLICE_DIAG");
 
             GameplayRuntimeUpdateDebugFlags.DisableBuildingPlacementRuntime = disableBuildingPlacement;
             GameplayRuntimeUpdateDebugFlags.DisableSelectionRuntime = disableSelection;
+            GameplayRuntimeUpdateDebugFlags.DisableUnitMotionAudioRuntime = disableUnitMotionAudio;
+            GameplayRuntimeUpdateDebugFlags.DisableBuildingBoundaryRuntime = disableBuildingBoundary;
+            GameplayRuntimeUpdateDebugFlags.DisableBuildingProductionRuntime = disableBuildingProduction;
+            GameplayRuntimeUpdateDebugFlags.DisableBuildingResourceRuntime = disableBuildingResource;
+            GameplayRuntimeUpdateDebugFlags.DisableBuildingResourceHaulerRuntime = disableBuildingResourceHauler;
+            GameplayRuntimeUpdateDebugFlags.DisableBuildingVisualRuntime = disableBuildingVisual;
+            GameplayRuntimeUpdateDebugFlags.DisableBuildingInputRuntime = disableBuildingInput;
+            GameplayRuntimeUpdateDebugFlags.DisableBuildingReservationCleanupRuntime = disableBuildingReservationCleanup;
+            GameplayRuntimeUpdateDebugFlags.DisableBuildingDestroyedRuntime = disableBuildingDestroyed;
+            GameplayRuntimeUpdateDebugFlags.DisableBuildingDoorRuntime = disableBuildingDoor;
+            GameplayRuntimeUpdateDebugFlags.DisableBuildingMarkerRuntime = disableBuildingMarker;
+            InitialUnitsRuntimeState.BuildingRuntimeSliceDiagnostics = buildingSliceDiagnosticsEnabled;
 
             if (hideCanvas && bootstrap.UiCanvas != null && bootstrap.UiCanvas.gameObject.activeSelf)
                 bootstrap.UiCanvas.gameObject.SetActive(false);
@@ -395,6 +486,14 @@ namespace Game.Editor
                 : fallback;
         }
 
+        private static bool ResolveBool(string name)
+        {
+            string configured = Environment.GetEnvironmentVariable(name);
+            return string.Equals(configured, "1", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(configured, "true", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(configured, "yes", StringComparison.OrdinalIgnoreCase);
+        }
+
         private static void SetRuntimeUiMode(RuntimeUiConfig runtimeConfig, RuntimeUiMode mode)
         {
             SerializedObject serialized = new(runtimeConfig);
@@ -413,8 +512,11 @@ namespace Game.Editor
 
             completed = true;
             EditorApplication.update -= Continue;
+            StopRawProfilerCapture();
             DisposeMarkerRecorders();
             GameplayRuntimeUpdateDebugFlags.Reset();
+            InitialUnitsRuntimeState.BuildingRuntimeSliceDiagnostics = false;
+            buildingSliceDiagnosticsEnabled = false;
             if (success)
                 Debug.Log($"[CanvasMatchFpsValidation] result=Passed {message}");
             else

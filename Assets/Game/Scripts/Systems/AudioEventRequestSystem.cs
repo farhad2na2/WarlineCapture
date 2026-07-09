@@ -8,6 +8,9 @@ namespace Game.Runtime
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     public partial struct AudioEventRequestSystem : ISystem
     {
+        private static World s_CachedAudioWorld;
+        private static Entity s_CachedAudioEntity;
+
         public void OnCreate(ref SystemState state)
         {
             EnsureAudioEntity(state.EntityManager);
@@ -20,10 +23,23 @@ namespace Game.Runtime
 
         public static Entity EnsureAudioEntity(EntityManager em)
         {
+            World world = em.World;
+            if (world != null &&
+                world.IsCreated &&
+                s_CachedAudioWorld == world &&
+                s_CachedAudioEntity != Entity.Null &&
+                em.Exists(s_CachedAudioEntity) &&
+                em.HasComponent<AudioPlaybackRequestQueueComponent>(s_CachedAudioEntity))
+            {
+                return s_CachedAudioEntity;
+            }
+
             using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<AudioPlaybackRequestQueueComponent>());
             if (!query.IsEmptyIgnoreFilter)
             {
-                return query.GetSingletonEntity();
+                s_CachedAudioWorld = world;
+                s_CachedAudioEntity = query.GetSingletonEntity();
+                return s_CachedAudioEntity;
             }
 
             Entity entity = em.CreateEntity(
@@ -41,6 +57,8 @@ namespace Game.Runtime
             em.AddBuffer<AudioPlaybackRequestElement>(entity);
             em.AddBuffer<AudioPlaybackResultElement>(entity);
             em.AddBuffer<AudioCooldownStateElement>(entity);
+            s_CachedAudioWorld = world;
+            s_CachedAudioEntity = entity;
             return entity;
         }
 
@@ -134,6 +152,9 @@ namespace Game.Runtime
     [UpdateAfter(typeof(AudioEventRequestSystem))]
     public partial struct AudioCooldownSystem : ISystem
     {
+        private const int MaxRequestHistory = 128;
+        private const int MaxResultHistory = 128;
+
         public void OnCreate(ref SystemState state)
         {
             AudioEventRequestSystem.EnsureAudioEntity(state.EntityManager);
@@ -178,6 +199,8 @@ namespace Game.Runtime
                     ProcessedAt = now
                 });
             }
+
+            PruneHistory(requests, results);
         }
 
         private static AudioPlaybackRequestStatus ResolveRequestStatus(
@@ -237,6 +260,27 @@ namespace Game.Runtime
                 AudioPlaybackRequestStatus.MissingEvent => new FixedString64Bytes("MissingEvent"),
                 _ => new FixedString64Bytes("Rejected")
             };
+        }
+
+        private static void PruneHistory(
+            DynamicBuffer<AudioPlaybackRequestElement> requests,
+            DynamicBuffer<AudioPlaybackResultElement> results)
+        {
+            for (int i = 0; requests.Length > MaxRequestHistory && i < requests.Length;)
+            {
+                AudioPlaybackRequestStatus status = requests[i].Status;
+                if (status == AudioPlaybackRequestStatus.Pending ||
+                    status == AudioPlaybackRequestStatus.Accepted)
+                {
+                    i++;
+                    continue;
+                }
+
+                requests.RemoveAt(i);
+            }
+
+            while (results.Length > MaxResultHistory)
+                results.RemoveAt(0);
         }
     }
 

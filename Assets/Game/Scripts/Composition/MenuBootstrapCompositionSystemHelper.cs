@@ -71,7 +71,7 @@ namespace Game.Composition
                 return;
 
             bool wasInitialized = initialized;
-            ApplyEditorMenuPerformanceDefaults();
+            ApplyStartupRuntimeSettings();
             EnsurePersistentDiagnosticsInitialized();
             autoStartMatchRequested = ShouldAutoStartMatch();
             view.ApplyRuntimeUiMode();
@@ -165,12 +165,14 @@ namespace Game.Composition
             diagnosticsInitialized = true;
         }
 
-        [System.Diagnostics.Conditional("UNITY_EDITOR")]
-        private static void ApplyEditorMenuPerformanceDefaults()
+        private static void ApplyStartupRuntimeSettings()
         {
-            // Editor menu benchmarks should stay uncapped; build/runtime settings still own shipped frame limits.
+            SettingsService.ApplyRuntime(SettingsService.Load());
+#if UNITY_EDITOR
+            // Unity's desktop software limiter adds pacing overhead in Play Mode; keep Editor profiling uncapped.
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = -1;
+#endif
         }
 
         private static void SetLoading(EntityManager entityManager, Entity boundary, float progress01, bool complete)
@@ -447,24 +449,26 @@ namespace Game.Composition
             }
 
             MatchBootstrapCompositionSystemHelper matchBootstrap = matchScene.MatchBootstrap;
-            MainMenuPlayUI mainMenu = matchBootstrap.EnsureMainMenuRuntimeDependencies();
-            if (view.ContentSystem.TryGetMatchHudSelectionPanelView(out MatchHudSelectionPanelView selectionPanelView))
-                matchBootstrap.BindMatchHudSelectionPanel(selectionPanelView);
-
             SelectionUiCommandUiSystemHelper selectionUiCommand = matchBootstrap.SelectionUiCommand;
             if (selectionUiCommand == null)
                 return;
             SelectionUiReadModelUiSystemHelper selectionUiReadModel = matchBootstrap.SelectionUiReadModel;
 
             int contentVersion = view.ContentSystem.ContentVersion;
+            MainMenuPlayUI currentMainMenu = matchBootstrap.MainMenu;
             if (boundMatchRuntimeView == matchScene &&
                 boundSelectionUiCommand == selectionUiCommand &&
                 boundSelectionUiReadModel == selectionUiReadModel &&
-                boundMainMenu == mainMenu &&
-                boundContentVersion == contentVersion)
+                boundMainMenu == currentMainMenu &&
+                boundContentVersion == contentVersion &&
+                matchBootstrap.AreMainMenuRuntimeDependenciesCurrent())
             {
                 return;
             }
+
+            MainMenuPlayUI mainMenu = matchBootstrap.EnsureMainMenuRuntimeDependencies();
+            if (view.ContentSystem.TryGetMatchHudSelectionPanelView(out MatchHudSelectionPanelView selectionPanelView))
+                matchBootstrap.BindMatchHudSelectionPanel(selectionPanelView);
 
             view.ContentSystem.BindGameplayRuntimeDependencies(
                 selectionUiCommand,

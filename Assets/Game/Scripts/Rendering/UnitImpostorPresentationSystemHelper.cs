@@ -7,6 +7,7 @@ using Unity.Rendering;
 using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.Rendering;
+using Unity.Profiling;
 using Game.Rendering.Contracts;
 using Game.Components;
 using Game.Configs;
@@ -15,6 +16,12 @@ namespace Game.Rendering
 {
     public sealed class UnitImpostorPresentationSystemHelper : IUnitImpostorRenderer
     {
+        private static readonly ProfilerMarker ResetBatchesMarker = new("UnitImpostors.ResetBatches");
+        private static readonly ProfilerMarker DrawCulledMarker = new("UnitImpostors.DrawCulled");
+        private static readonly ProfilerMarker DrawFallbackMarker = new("UnitImpostors.DrawFallback");
+        private static readonly ProfilerMarker ExtractQueryMarker = new("UnitImpostors.ExtractQuery");
+        private static readonly ProfilerMarker BuildMatricesMarker = new("UnitImpostors.BuildMatrices");
+        private static readonly ProfilerMarker FlushBatchesMarker = new("UnitImpostors.FlushBatches");
         private static readonly bool EnableImpostorAtlasDiagnostics = false;
         private const int MaxBatchSize = 1023;
         private const float BaseCharacterWidth = 0.85f;
@@ -24,6 +31,7 @@ namespace Game.Rendering
         private const float BaseAirWidth = 2.2f;
         private const float BaseAirHeight = 1.35f;
         private const int DirectionalImpostorCount = 8;
+        private const float SourceFallbackProbeIntervalSeconds = 1f;
         private const float CharacterImpostorWidthScale = 1.65f;
         private const float CharacterImpostorHeightScale = 1.65f;
         private const string ImpostorShaderName = "Game/Unit Impostor Unlit";
@@ -70,12 +78,17 @@ namespace Game.Rendering
         private readonly Dictionary<FixedString64Bytes, ImpostorStyle> _styleByKey = new();
         private readonly Dictionary<Material, BatchState> _batchByMaterial = new();
         private readonly List<BatchState> _batches = new();
+        private readonly HashSet<BatchState> _activeBatchSet = new();
+        private readonly List<BatchState> _activeBatches = new();
         private World _cachedWorld;
         private EntityQuery _query;
         private EntityQuery _sourceKeyFallbackQuery;
         private int _renderLayer;
         private bool _initialized;
         private bool _hasQuery;
+        private bool _hasSourceFallbackCandidates;
+        private int _lastSourceFallbackQueryCount = -1;
+        private float _nextSourceFallbackProbeAt;
         private TryGetUnitRenderingMetadataDelegate _tryGetUnitRenderingMetadata;
 
         public int LastDrawnCount { get; private set; }
@@ -116,10 +129,27 @@ namespace Game.Rendering
             if (world == null || !world.IsCreated)
                 return;
 
-            ResetBatches();
-            LastCulledCandidateCount = DrawQuery(GetOrCreateCulledQuery(world), skipVisibleRenderableUnits: true);
-            LastSourceKeyFallbackCandidateCount = DrawQuery(GetOrCreateSourceKeyFallbackQuery(world), skipRenderableUnits: true);
-            FlushBatches();
+            using (ResetBatchesMarker.Auto())
+                ResetBatches();
+            using (DrawCulledMarker.Auto())
+                LastCulledCandidateCount = DrawQuery(GetOrCreateCulledQuery(world), requireFarVisualState: true);
+            EntityQuery fallbackQuery = GetOrCreateSourceKeyFallbackQuery(world);
+            int fallbackQueryCount = fallbackQuery.CalculateEntityCount();
+            bool fallbackQueryChanged = fallbackQueryCount != _lastSourceFallbackQueryCount;
+            bool shouldProbeFallback =
+                _hasSourceFallbackCandidates ||
+                fallbackQueryChanged ||
+                Time.unscaledTime >= _nextSourceFallbackProbeAt;
+            if (shouldProbeFallback)
+            {
+                using (DrawFallbackMarker.Auto())
+                    LastSourceKeyFallbackCandidateCount = DrawQuery(fallbackQuery, skipRenderableUnits: true);
+                _hasSourceFallbackCandidates = LastSourceKeyFallbackCandidateCount > 0;
+                _lastSourceFallbackQueryCount = fallbackQueryCount;
+                _nextSourceFallbackProbeAt = Time.unscaledTime + SourceFallbackProbeIntervalSeconds;
+            }
+            using (FlushBatchesMarker.Auto())
+                FlushBatches();
         }
 
         public void Dispose()
@@ -152,12 +182,17 @@ namespace Game.Rendering
             _styleByKey.Clear();
             _batchByMaterial.Clear();
             _batches.Clear();
+            _activeBatchSet.Clear();
+            _activeBatches.Clear();
             _quadMesh = null;
             _fallbackMaterial = null;
             _camera = null;
             _cachedWorld = null;
             _initialized = false;
             _hasQuery = false;
+            _hasSourceFallbackCandidates = false;
+            _lastSourceFallbackQueryCount = -1;
+            _nextSourceFallbackProbeAt = 0f;
             LastDrawnCount = 0;
             LastCulledCandidateCount = 0;
             LastSourceKeyFallbackCandidateCount = 0;
@@ -206,6 +241,9 @@ namespace Game.Rendering
             }
 
             _cachedWorld = world;
+            _hasSourceFallbackCandidates = false;
+            _lastSourceFallbackQueryCount = -1;
+            _nextSourceFallbackProbeAt = 0f;
             _query = world.EntityManager.CreateEntityQuery(new EntityQueryDesc
             {
                 All = new[]
@@ -214,6 +252,7 @@ namespace Game.Rendering
                     ComponentType.ReadOnly<UnitGrid>(),
                     ComponentType.ReadOnly<LocalTransform>(),
                     ComponentType.ReadOnly<UnitSourcePrefabKey>(),
+                    ComponentType.ReadOnly<UnitRenderVisualComponent>(),
                 },
                 None = new[]
                 {
@@ -258,54 +297,74 @@ namespace Game.Rendering
             });
         }
 
-        private int DrawQuery(EntityQuery query, bool skipRenderableUnits = false, bool skipVisibleRenderableUnits = false)
+        private int DrawQuery(EntityQuery query, bool skipRenderableUnits = false, bool requireFarVisualState = false)
         {
             if (query.IsEmptyIgnoreFilter)
                 return 0;
 
             EntityManager em = _cachedWorld.EntityManager;
-            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-            using NativeArray<LocalTransform> transforms = query.ToComponentDataArray<LocalTransform>(Allocator.Temp);
-            using NativeArray<UnitSourcePrefabKey> sourceKeys = query.ToComponentDataArray<UnitSourcePrefabKey>(Allocator.Temp);
+            NativeArray<Entity> entities;
+            NativeArray<LocalTransform> transforms;
+            NativeArray<UnitSourcePrefabKey> sourceKeys;
+            NativeArray<UnitRenderVisualComponent> visualStates;
+            using (ExtractQueryMarker.Auto())
+            {
+                entities = query.ToEntityArray(Allocator.Temp);
+                transforms = query.ToComponentDataArray<LocalTransform>(Allocator.Temp);
+                sourceKeys = query.ToComponentDataArray<UnitSourcePrefabKey>(Allocator.Temp);
+                visualStates = requireFarVisualState
+                    ? query.ToComponentDataArray<UnitRenderVisualComponent>(Allocator.Temp)
+                    : default;
+            }
             int candidateCount = 0;
 
             Vector3 cameraPosition = _camera.transform.position;
-            for (int i = 0; i < transforms.Length; i++)
+            Quaternion cameraRotation = _camera.transform.rotation;
+            using (BuildMatricesMarker.Auto())
             {
-                if (skipRenderableUnits && IsRenderableUnit(em, entities[i]))
-                    continue;
-                if (skipVisibleRenderableUnits && IsRenderableVisibleUnit(em, entities[i]))
-                    continue;
-
-                float3 unitPosition = transforms[i].Position;
-                Vector3 position = new(unitPosition.x, unitPosition.y, unitPosition.z);
-                FixedString64Bytes sourceKey = sourceKeys[i].Value;
-                if (!IsUnitSourceKey(sourceKey))
-                    continue;
-
-                ImpostorStyle style = GetOrCreateStyle(sourceKey);
-                Material material = ResolveDirectionalMaterial(style, transforms[i].Rotation, cameraPosition - position);
-                if (style == null || material == null)
+                for (int i = 0; i < transforms.Length; i++)
                 {
-                    style = GetFallbackStyle();
-                    material = ResolveDirectionalMaterial(style, transforms[i].Rotation, cameraPosition - position);
+                    if (skipRenderableUnits && IsRenderableUnit(em, entities[i]))
+                        continue;
+                    if (requireFarVisualState && visualStates[i].Current != (byte)UnitRenderVisualKind.Far)
+                        continue;
+
+                    float3 unitPosition = transforms[i].Position;
+                    Vector3 position = new(unitPosition.x, unitPosition.y, unitPosition.z);
+                    Vector3 toCamera = cameraPosition - position;
+                    FixedString64Bytes sourceKey = sourceKeys[i].Value;
+                    if (!IsUnitSourceKey(sourceKey))
+                        continue;
+
+                    ImpostorStyle style = GetOrCreateStyle(sourceKey);
+                    Material material = ResolveDirectionalMaterial(style, transforms[i].Rotation, toCamera);
+                    if (style == null || material == null)
+                    {
+                        style = GetFallbackStyle();
+                        material = ResolveDirectionalMaterial(style, transforms[i].Rotation, toCamera);
+                    }
+
+                    bool isCharacter = IsCharacterSourceKey(sourceKey);
+
+                    Quaternion rotation = ResolveBillboardRotation(
+                        isCharacter,
+                        position,
+                        cameraPosition,
+                        cameraRotation);
+                    float tacticalScale = isCharacter ? ResolveCharacterTacticalScale(cameraPosition.y) : 1f;
+                    Vector3 scale = new(style.Width * tacticalScale, style.Height * tacticalScale, 1f);
+                    Vector3 drawPosition = new(position.x, position.y - (style.GroundAnchorOffset * tacticalScale), position.z);
+                    Matrix4x4 matrix = Matrix4x4.TRS(drawPosition, rotation, scale);
+                    AddToBatch(material, matrix);
+                    candidateCount++;
                 }
-
-                Vector3 toCamera = cameraPosition - position;
-                bool isCharacter = IsCharacterSourceKey(sourceKey);
-
-                Quaternion rotation = ResolveBillboardRotation(
-                    isCharacter,
-                    position,
-                    cameraPosition,
-                    _camera.transform.rotation);
-                float tacticalScale = isCharacter ? ResolveCharacterTacticalScale(cameraPosition.y) : 1f;
-                Vector3 scale = new(style.Width * tacticalScale, style.Height * tacticalScale, 1f);
-                Vector3 drawPosition = new(position.x, position.y - (style.GroundAnchorOffset * tacticalScale), position.z);
-                Matrix4x4 matrix = Matrix4x4.TRS(drawPosition, rotation, scale);
-                AddToBatch(material, matrix);
-                candidateCount++;
             }
+
+            entities.Dispose();
+            transforms.Dispose();
+            sourceKeys.Dispose();
+            if (visualStates.IsCreated)
+                visualStates.Dispose();
 
             return candidateCount;
         }
@@ -386,8 +445,10 @@ namespace Game.Rendering
 
         private void ResetBatches()
         {
-            for (int i = 0; i < _batches.Count; i++)
-                _batches[i].Count = 0;
+            for (int i = 0; i < _activeBatches.Count; i++)
+                _activeBatches[i].Count = 0;
+            _activeBatchSet.Clear();
+            _activeBatches.Clear();
         }
 
         private void AddToBatch(Material material, Matrix4x4 matrix)
@@ -399,6 +460,8 @@ namespace Game.Rendering
                 _batches.Add(batch);
             }
 
+            if (_activeBatchSet.Add(batch))
+                _activeBatches.Add(batch);
             batch.Matrices[batch.Count++] = matrix;
             if (batch.Count >= MaxBatchSize)
                 FlushBatch(batch);
@@ -406,8 +469,8 @@ namespace Game.Rendering
 
         private void FlushBatches()
         {
-            for (int i = 0; i < _batches.Count; i++)
-                FlushBatch(_batches[i]);
+            for (int i = 0; i < _activeBatches.Count; i++)
+                FlushBatch(_activeBatches[i]);
         }
 
         private void FlushBatch(BatchState batch)

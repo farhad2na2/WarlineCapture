@@ -14,6 +14,7 @@ namespace Game.UI.Runtime
     {
         private const float CompactMinimapUpdateIntervalSeconds = 0.1f;
         private const float HeaderResourceRefreshIntervalSeconds = 0.2f;
+        private const float AssistantPanelRefreshIntervalSeconds = 0.1f;
         private const float ZoomControlRefreshIntervalSeconds = 0.1f;
         private static readonly ProfilerMarker MinimapUpdateMarker = new("MainMenuPlayUI.MinimapUpdate");
         private static readonly ProfilerMarker FeedbackLifetimeMarker = new("MainMenuPlayUI.FeedbackLifetime");
@@ -47,6 +48,7 @@ namespace Game.UI.Runtime
         private bool _matchHudResourceLabelsApplied;
         private float _nextCompactMinimapUpdateTime;
         private float _nextHeaderResourceRefreshTime;
+        private float _nextAssistantPanelRefreshTime;
         private float _nextZoomControlRefreshTime;
         private BuildDrawerView _buildDrawerView;
         private BuildPlacementConfirmationBarView _buildPlacementConfirmationBarView;
@@ -139,7 +141,7 @@ namespace Game.UI.Runtime
             _selectionUiCameraSystem?.UpdateZoomTransition();
             RefreshZoomControlsIfDue(now);
             ApplyMatchHudHeaderResourceStateIfDue(now);
-            ApplyMatchHudAssistantPanelReadModel();
+            ApplyMatchHudAssistantPanelReadModelIfDue(now);
             TickMatchHudThreatWarning(now);
         }
 
@@ -309,6 +311,7 @@ namespace Game.UI.Runtime
         public void BindMatchHudAssistant(GameObject headerContent, RectTransform overlayRoot)
         {
             _matchHudAssistantUiSystem.Bind(headerContent, overlayRoot, CaptureGameplayUiClickSequence);
+            _nextAssistantPanelRefreshTime = 0f;
         }
 
         private void BindMatchHudResourceSlots(GameObject headerContent)
@@ -474,6 +477,15 @@ namespace Game.UI.Runtime
 
             _nextHeaderResourceRefreshTime = now + HeaderResourceRefreshIntervalSeconds;
             ApplyMatchHudHeaderResourceState();
+        }
+
+        private void ApplyMatchHudAssistantPanelReadModelIfDue(float now)
+        {
+            if (now < _nextAssistantPanelRefreshTime)
+                return;
+
+            _nextAssistantPanelRefreshTime = now + AssistantPanelRefreshIntervalSeconds;
+            ApplyMatchHudAssistantPanelReadModel();
         }
 
         private void ApplyMatchHudAssistantPanelReadModel()

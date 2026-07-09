@@ -15,12 +15,12 @@ namespace Game.Runtime
         private const byte PlayerFactionId = FactionIdentity.PlayerFactionId;
         private const float FallbackThreatSpeed = 5f;
         private const int CloseContactWarningRadiusCells = 12;
-        private const int ScanIntervalFrames = 8;
+        private const double ScanIntervalSeconds = 0.2d;
         private const int ScanEveryFrameTargetThreshold = 32;
 
         private NativeParallelHashSet<Entity> _previousGroundThreats;
         private NativeParallelHashSet<Entity> _previousAirThreats;
-        private int _framesUntilNextScan;
+        private double _nextScanTime;
         private EntityQuery _sensorQuery;
         private EntityQuery _targetQuery;
         private EntityQuery _gridQuery;
@@ -84,14 +84,14 @@ namespace Game.Runtime
             RuntimeGameplayStateComponent gameplayState = SystemAPI.GetSingleton<RuntimeGameplayStateComponent>();
             if (gameplayState.PlayRequested == 0 || gameplayState.SimulationActive == 0)
             {
-                _framesUntilNextScan = 0;
+                _nextScanTime = 0d;
                 ClearPreviousThreats();
                 ThreatWarningRuntimeState.Reset();
                 return;
             }
 
             int targetCount = _targetQuery.CalculateEntityCount();
-            if (ShouldSkipScan(targetCount))
+            if (ShouldSkipScan(targetCount, SystemAPI.Time.ElapsedTime))
                 return;
 
             CompleteMainThreadReadDependencies(ref state);
@@ -245,21 +245,18 @@ namespace Game.Runtime
             return true;
         }
 
-        private bool ShouldSkipScan(int targetCount)
+        private bool ShouldSkipScan(int targetCount, double now)
         {
             if (targetCount <= ScanEveryFrameTargetThreshold)
             {
-                _framesUntilNextScan = 0;
+                _nextScanTime = now;
                 return false;
             }
 
-            if (_framesUntilNextScan > 0)
-            {
-                _framesUntilNextScan--;
+            if (now < _nextScanTime)
                 return true;
-            }
 
-            _framesUntilNextScan = ScanIntervalFrames - 1;
+            _nextScanTime = now + ScanIntervalSeconds;
             return false;
         }
 

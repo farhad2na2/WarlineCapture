@@ -461,11 +461,26 @@ namespace Game.Composition
             if (MainMenu == null)
                 MainMenu = new MainMenuPlayUI();
 
+            if (!resetRuntimeState && AreMainMenuRuntimeDependenciesCurrent())
+                return MainMenu;
+
             EnsureUiRuntimeAdapters();
             MainMenu.Init(SelectionUiCommand, _matchRuntimeState, _matchHudCameraControl, _matchHudMinimapDataSource, resetRuntimeState);
             ApplyMainMenuBaseBindings();
             ApplyMainMenuFeatureBindingsIfReady();
             return MainMenu;
+        }
+
+        public bool AreMainMenuRuntimeDependenciesCurrent()
+        {
+            if (SelectionUiCommand == null || MainMenu == null || !_mainMenuBaseBindingsApplied)
+                return false;
+
+            if (!GameplayInitialized)
+                return true;
+
+            return _mainMenuFeatureBoundGridBlockers == RuntimeGridBlockers &&
+                   _mainMenuFeatureBoundRuntimeCity == RuntimeCity;
         }
 
         public void BindMatchHudSelectionPanel(IMatchHudSelectionPanelView view)

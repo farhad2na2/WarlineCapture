@@ -248,16 +248,16 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `11 / 106` |
-| Checklist percent complete | `10.4%` |
-| Checklist in progress | `3 / 106`: `APH-100`, `APH-200`, `APH-206` |
-| Complete plus active coverage | `14 / 106` (`13.2%`); this is visibility only, not accepted completion |
+| Checklist complete | `17 / 106` |
+| Checklist percent complete | `16.0%` |
+| Checklist in progress | `3 / 106`: `APH-102`, `APH-203`, `APH-207` |
+| Complete plus active coverage | `20 / 106` (`18.9%`); this is visibility only, not accepted completion |
 | Current phase | Phases 1 and 2 - UI boundary and ECS hot-path guardrails |
-| Current task | `APH-100` UI resolver tests; `APH-200`/`APH-201` exchange regressions; `APH-206` defense allocation regression |
+| Current task | `APH-102` composition text adapter; `APH-203` exchange hot-path guard; `APH-207`/`APH-208` defense persistent scratch and snapshot removal |
 | Red architecture gates | `2` at the audit baseline; current-head reproduction remains required |
 | Red performance gates | `1`: steady-state Match GC `269,482 / 1,024` bytes |
-| Last verified commit | `437587eea` for `APH-205`; Phase 0 complete |
-| Last update | 2026-07-09 - `APH-205` accepted; Wave 1 test-first tasks continue |
+| Last verified commit | `cd7646340` for `APH-206`; Phase 0 complete |
+| Last update | 2026-07-09 - UI contract, exchange direct iteration, and defense allocation coverage accepted |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -317,9 +317,12 @@ Implementation contract:
 - Inject the resolver through existing UI bootstrap/runtime adapter binding. Do not create a static mutable UI registry.
 - Migrate only files compiled by `Game.UI.Runtime` in this phase. `Game.UI.Shell.Ecs` and gameplay-system text ownership are separate later decisions.
 
-- [~] `APH-100` Add focused tests for resolver fallback, configured text, formatting success, invalid-format fallback, and missing-key fallback before production migration.
-- [ ] `APH-101` Add `IGameTextResolver` and immutable fallback implementation under `Assets/Game/Scripts/UI/Contracts`.
-- [ ] `APH-102` Add the composition-owned `GameTextResolverAdapter` wrapping the existing config-owned text source.
+- [x] `APH-100` Add focused tests for resolver fallback, configured text, formatting success, invalid-format fallback, and missing-key fallback before production migration.
+  - Result: five focused resolver cases pass through the UI contract.
+- [x] `APH-101` Add `IGameTextResolver` and immutable fallback implementation under `Assets/Game/Scripts/UI/Contracts`.
+  - Result: sealed stateless fallback added with no Unity, `Game.Configs`, or static mutable-registry dependency.
+  - Validation: `[GameTextResolverValidation] result=Passed tests=5`; UI Contracts and Editor-test builds passed with 0 errors; commit `a6f48a8c5` pushed to `main`.
+- [~] `APH-102` Add the composition-owned `GameTextResolverAdapter` wrapping the existing config-owned text source.
 - [ ] `APH-103` Inject the resolver through Menu and Match UI runtime adapters without hierarchy search or static registration.
 - [ ] `APH-104` Migrate the seven known `Game.UI.Runtime` text consumers listed in Current Red Gates.
   - Preserve every key and fallback string from commit `caaafe339`.
@@ -342,10 +345,14 @@ Implementation contract:
 - Preserve support for multiple exchange entities and deterministic per-entity processing.
 - Preserve request order, result order, wallet mutation, queue mutation, economy events, and summary publication.
 
-- [~] `APH-200` Add a regression with two exchange entities proving both queues process in one update.
-- [ ] `APH-201` Add or extend zero-allocation coverage for a warmed resource-exchange update.
-- [ ] `APH-202` Replace the temporary entity array with direct ECS query iteration.
-- [ ] `APH-203` Confirm no new `EntityManager.CreateEntityQuery`, structural sync point, managed allocation, or singleton assumption was introduced.
+- [x] `APH-200` Add a regression with two exchange entities proving both queues process in one update.
+  - Result: deterministic two-entity request, wallet, queue, result, economy-event, and summary ordering is locked.
+- [x] `APH-201` Add or extend zero-allocation coverage for a warmed resource-exchange update.
+  - Result: 64 warmup and 512 measured two-entity updates report `productionUpdateAllocatedBytes=0`.
+- [x] `APH-202` Replace the temporary entity array with direct ECS query iteration.
+  - Result: direct multi-entity `SystemAPI.Query` iteration replaces the native snapshot; missing `AllowAiExchange` summary propagation is restored.
+  - Validation: behavior tests passed 4/4; allocation tests passed 2/2; Runtime/Editor-test builds passed with 0 errors; commit `b0b5f7e08` pushed to `main`.
+- [~] `APH-203` Confirm no new `EntityManager.CreateEntityQuery`, structural sync point, managed allocation, or singleton assumption was introduced.
 - [ ] `APH-204` Run `ResourceExchangeRequestValidationSystemTests.RunFocusedValidation` and `ResourceExchangeGcAllocationValidationTests.RunFocusedValidation`.
 
 ### Phase 2B - Building Defense
@@ -367,8 +374,10 @@ Immediate implementation contract:
 - [x] `APH-205` Extend defense tests for neutral targets, aircraft exclusion, nearest-hostile ordering, four concurrent slots, destroyed targets, and target removal between updates.
   - Result: six focused regressions cover every required behavior and preserve slot order, cooldown, shot-count, damage, tracer, recent-attacker, audio/VFX-producing configuration, and reacquisition semantics.
   - Validation: `[BuildingDefenseAttackSystemValidation] result=Passed tests=6`; Editor/test builds passed with 0 errors; commit `437587eea` pushed to `main`.
-- [~] `APH-206` Add a warmed allocation test covering at least 32 towers and 740 candidate units.
-- [ ] `APH-207` Add persistent target scratch storage with explicit `OnCreate`/`OnDestroy` lifetime.
+- [x] `APH-206` Add a warmed allocation test covering at least 32 towers and 740 candidate units.
+  - Result: 32 towers, 740 candidates, 32 warmup updates, and 64 measured acquisition updates report `productionUpdateAllocatedBytes=0` with four-slot order preserved.
+  - Validation: `[BuildingDefenseAttackSystemValidation] result=Passed tests=7`; commit `cd7646340` pushed to `main`.
+- [~] `APH-207` Add persistent target scratch storage with explicit `OnCreate`/`OnDestroy` lifetime.
 - [ ] `APH-208` Replace `_targetQuery.ToEntityArray(Allocator.Temp)` and remove the per-frame snapshot.
 - [ ] `APH-209` Audit the explicit dependency completion and direct `EntityManager` calls; remove or document each unavoidable synchronization point with profiler evidence.
 - [ ] `APH-210` Add profiler markers for target collection, target selection, and effect application so the later spatial-index phase has comparable metrics.
@@ -761,6 +770,51 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Visual result: Not applicable; deterministic ECS EditMode behavior
 - Residual risk: warmed 32-tower/740-candidate allocation evidence remains `APH-206`; production snapshot removal remains `APH-207`/`APH-208`
 - Next ready task: `APH-206`
+
+### 2026-07-09 - APH-100 and APH-101 - UI text resolver contract
+
+- Status: Complete
+- Commit or worktree baseline: `17a8e44d5`
+- Stable commit/push: `a6f48a8c5` pushed to `main`
+- Files changed: UI Contracts resolver interface/fallback, focused tests, and Unity `.meta` files
+- Behavior preserved/changed: no existing consumer behavior changed; a non-Unity UI-facing contract and immutable fallback now exist
+- Validation: UI Contracts, UI Runtime, and Editor-test builds passed with 0 errors; `[GameTextResolverValidation] result=Passed tests=5`; `git diff --check` passed
+- Artifacts: `/private/tmp/warline-aph100-game-text-resolver.log`
+- Metrics before: no UI-facing resolver contract
+- Metrics after: 5 focused contract cases
+- Visual result: Not applicable
+- Residual risk: composition adapter and runtime injection remain `APH-102`/`APH-103`
+- Next ready task: `APH-102`
+
+### 2026-07-09 - APH-200 through APH-202 - Multi-entity resource exchange without snapshots
+
+- Status: Complete
+- Commit or worktree baseline: `17a8e44d5`
+- Stable commit/push: `b0b5f7e08` pushed to `main`
+- Files changed: resource-exchange validation system plus behavior and warmed allocation tests
+- Behavior preserved/changed: both exchanges process deterministically in one update; `AllowAiExchange` summary propagation corrected; native entity snapshot removed
+- Validation: Runtime and Editor-test builds passed with 0 errors; behavior 4/4 and GC 2/2 markers passed; 512 measured updates reported 0 production-update managed bytes; `git diff --check` passed
+- Artifacts: `/private/tmp/warline-aph202-resource-request-validation.log` and `/private/tmp/warline-aph202-resource-gc-validation.log`
+- Metrics before: one `Allocator.Temp` entity snapshot per update and missing secondary AI-exchange summary flag
+- Metrics after: zero query snapshots, zero measured production-update managed bytes, and both summary versions reached 576
+- Visual result: Not applicable
+- Residual risk: source/architecture guard and complete Phase 2A validation remain `APH-203`/`APH-204`
+- Next ready task: `APH-203`
+
+### 2026-07-09 - APH-206 - Building-defense warmed allocation gate
+
+- Status: Complete
+- Commit or worktree baseline: `437587eea`
+- Stable commit/push: `cd7646340` pushed to `main`
+- Files changed: `Assets/Tests/Editor/BuildingDefenseAttackSystemTests.cs`
+- Behavior preserved/changed: production unchanged; test now measures 32 towers and 740 candidates at forced acquisition cadence
+- Validation: Editor/test builds passed with 0 errors; `[BuildingDefenseAttackSystemValidation] result=Passed tests=7`; 64 measured updates reported 0 managed update bytes; `git diff --check` passed
+- Artifacts: `/private/tmp/warline-aph206-building-defense-allocation.log`
+- Metrics before: no production-scale warmed allocation fixture
+- Metrics after: 32 warmup and 64 measured updates, `productionUpdateAllocatedBytes=0`
+- Visual result: Not applicable
+- Residual risk: four native query snapshots and explicit dependency completion remain production debt
+- Next ready task: `APH-207`
 
 ## Decision Log
 

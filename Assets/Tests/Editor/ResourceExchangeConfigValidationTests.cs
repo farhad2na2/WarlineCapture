@@ -14,8 +14,16 @@ public sealed class ResourceExchangeConfigValidationTests
         try
         {
             RunValidationStep(
+                nameof(ResourceExchangeEnums_KeepStablePhaseOneValues),
+                test => test.ResourceExchangeEnums_KeepStablePhaseOneValues(),
+                ref passed);
+            RunValidationStep(
                 nameof(ValidateRecipe_AcceptsAuthoredExportAndImportRoutes),
                 test => test.ValidateRecipe_AcceptsAuthoredExportAndImportRoutes(),
+                ref passed);
+            RunValidationStep(
+                nameof(ValidateRecipeSet_RejectsDuplicateRecipeIds),
+                test => test.ValidateRecipeSet_RejectsDuplicateRecipeIds(),
                 ref passed);
             RunValidationStep(
                 nameof(ValidateRecipe_RejectsInvalidAmountsRatesDurationAndRushRules),
@@ -40,6 +48,10 @@ public sealed class ResourceExchangeConfigValidationTests
             RunValidationStep(
                 nameof(ScenarioGate_DefaultsAiExchangeOffAndRequiresEnabledGate),
                 test => test.ScenarioGate_DefaultsAiExchangeOffAndRequiresEnabledGate(),
+                ref passed);
+            RunValidationStep(
+                nameof(ValidateRecipe_RejectsDisallowedConversionRoutes),
+                test => test.ValidateRecipe_RejectsDisallowedConversionRoutes(),
                 ref passed);
 
             Debug.Log($"[ResourceExchangeConfigValidation] result=Passed tests={passed}");

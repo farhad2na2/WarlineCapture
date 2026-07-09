@@ -1,7 +1,7 @@
 # Resource Logistics Exchange Implementation Tracker
 
 Date: 2026-07-09
-Status: Phase 9 repository compile validation complete; focused exchange data/config tests next
+Status: Phase 9 focused exchange data/config tests complete; queue/rush/cancel/refund tests next
 Design source: `../Resource_Logistics_Exchange_Design.md`
 
 ## Objective
@@ -23,7 +23,7 @@ Implement the timed Resource Logistics Exchange without drifting from WarlineCap
 
 ## Progress Summary
 
-Overall implementation progress: 91% (86/94 checklist items complete).
+Overall implementation progress: 92% (87/94 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -38,7 +38,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 6. World presentation | Complete | 8 | 8 | 100% | Presentation anchors, deterministic fallback resolution, data-only ECS visual cue emission, managed presentation boundary, pooled actor reuse, actor safety, fallback behavior, cleanup wiring, and focused validation are complete. |
 | 7. Audio, VFX, feedback, ARIA | Complete | 7 | 7 | 100% | Resource Exchange audio ids, placeholder clips, data-only delta flyout requests, typed toast requests, optional ARIA strings, non-authoritative VFX marker data, and direct-audio wiring guardrails are complete. |
 | 8. AI, balance, telemetry | Complete | 6 | 6 | 100% | Economy event coverage, Resource Exchange balance report fields, data sanity tests, scenario gates, AI opt-in gating, and AI planner guardrails are complete. |
-| 9. Validation and performance | In progress | 2 | 10 | 20% | Diff whitespace and repository compile validation are complete; focused exchange data/config tests remain next. |
+| 9. Validation and performance | In progress | 3 | 10 | 30% | Diff whitespace, repository compile validation, and focused exchange data/config tests are complete; queue/rush/cancel/refund tests remain next. |
 
 ## Phase 0: Inventory And Source Alignment
 
@@ -279,7 +279,7 @@ Exit criteria:
 
 - [x] Run `git diff --check`.
 - [x] Run repository compile validation.
-- [ ] Run focused exchange data/config tests.
+- [x] Run focused exchange data/config tests.
 - [ ] Run focused exchange queue/rush/cancel/refund tests.
 - [ ] Run focused HUD/header popup routing tests.
 - [ ] Run focused UI prefab/capture validation at 16:9 and 20:9.
@@ -1330,3 +1330,30 @@ Validation:
 Remaining blocker or next slice:
 
 - Next Phase 9 slice should run focused exchange data/config tests.
+
+### 2026-07-09 - Phase 9C Focused Exchange Data/Config Tests
+
+Files changed:
+
+- `Assets/Tests/Editor/ResourceExchangeConfigValidationTests.cs`
+- `Design/Architecture/resource_logistics_exchange_implementation_tracker.md`
+
+Behavior changed:
+
+- Expanded `ResourceExchangeConfigValidationTests.RunFocusedValidation` so the focused Unity runner now executes all existing Resource Exchange data/config contract tests, including enum stability, duplicate recipe id rejection, and disallowed conversion route rejection.
+- Ran focused data/config validation for route authoring, recipe id uniqueness, amount/rate/duration/rush rule validation, data sanity caps, round-trip farming-risk rejection, explicit mission/skirmish scenario gates, unsafe FTUE gate authoring, AI exchange gate defaults, and disallowed conversion resources.
+- No runtime ECS, economy, UI, prefab, scene, or asset behavior changed.
+
+Validation:
+
+- `dotnet build Game.Components.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 6 warnings and 0 errors.
+- `dotnet build Game.Configs.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 6 warnings and 0 errors.
+- `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 10 warnings and 0 errors.
+- `Tools/CI/invoke_unity_macos.sh --project /private/tmp/wlc-resource-exchange-next --log /private/tmp/wlc-resource-exchange-data-config-validation.log --timeout 420 -- -quit -executeMethod ResourceExchangeConfigValidationTests.RunFocusedValidation`
+- Unity focused result: `[ResourceExchangeConfigValidation] result=Passed tests=10`
+- Unity log result: exit code 0, no compiler-error or focused-test failure markers found in `/private/tmp/wlc-resource-exchange-data-config-validation.log`.
+- `git diff --check` passed after this tracker update.
+
+Remaining blocker or next slice:
+
+- Next Phase 9 slice should run focused exchange queue/rush/cancel/refund tests.

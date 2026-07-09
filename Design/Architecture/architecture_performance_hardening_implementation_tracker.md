@@ -17,7 +17,7 @@ This tracker follows the completed historical program in `Design/Architecture/ar
 | Canonical project root | `/Users/farhad/Projects/WarlineCapture` |
 | Architecture rating | `6.5 / 10` |
 | Performance rating | `6.0 / 10` |
-| Current program status | Active - execution baseline reconciled; Phase 0 parallel intake ready |
+| Current program status | Active - Phase 0 complete; Wave 1 UI and ECS guardrail work active |
 
 ### Protected Integrated Work
 
@@ -248,16 +248,16 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `9 / 106` |
-| Checklist percent complete | `8.5%` |
-| Checklist in progress | `1 / 106`: `APH-009` |
-| Complete plus active coverage | `10 / 106` (`9.4%`); this is visibility only, not accepted completion |
-| Current phase | Phase 0 - Baseline and safety freeze |
-| Current task | `APH-009` initial product-budget config and validation; Budget analysis agent |
+| Checklist complete | `10 / 106` |
+| Checklist percent complete | `9.4%` |
+| Checklist in progress | `3 / 106`: `APH-100`, `APH-200`, `APH-205` |
+| Complete plus active coverage | `13 / 106` (`12.3%`); this is visibility only, not accepted completion |
+| Current phase | Phases 1 and 2 - UI boundary and ECS hot-path guardrails |
+| Current task | `APH-100` UI resolver tests; `APH-200` multi-exchange regression; `APH-205` defense behavior regressions |
 | Red architecture gates | `2` at the audit baseline; current-head reproduction remains required |
 | Red performance gates | `1`: steady-state Match GC `269,482 / 1,024` bytes |
-| Last verified commit | `ba3da6704` for `APH-007`; full 12-assembly `APH-006` matrix passed at `7084805d7` |
-| Last update | 2026-07-09 - `APH-007` baseline accepted with red GC debt; `APH-009` active |
+| Last verified commit | `1e20f1417` for `APH-009`; Phase 0 complete |
+| Last update | 2026-07-09 - `APH-009` accepted; Wave 1 test-first tasks active |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -297,11 +297,13 @@ Goal: preserve current evidence, make the program reproducible, and establish bu
   - Output: `Design/AgentReports/architecture_performance_content_residency_baseline.json` plus Markdown summary.
   - Result: 4,099 dependency-root-reachable assets across 12 roots; 2,680 imported-size measurements; 226 audio clips; 637 textures; 1,817 meshes; and 3 reachable animation textures with 50,331,648 payload bytes.
   - Validation: generator and 4 focused tests passed; `Game.Editor` and `Game.Tests.Editor` built with 0 errors; commit `929ab7bb3` pushed to `main`.
-- [~] `APH-009` Freeze initial product budgets in a tracked config.
+- [x] `APH-009` Freeze initial product budgets in a tracked config.
   - Initial owner: Budget analysis agent for the draft; coordinator owns approval and integration. Depends on accepted `APH-007` and `APH-008` evidence.
   - Keep existing Android p95 budgets: `<33 ms` baseline/recommended and `<25 ms` high-end.
   - Add same-device peak allocated-memory, APK/AAB, installed-size, startup-time, and visual-quality evidence requirements.
   - Initial memory improvement target: at least 10 percent below the validated same-device baseline; do not assert an absolute limit until `APH-008` identifies residency owners.
+  - Result: accepted-baseline schema version 2 is the single authority for editor and initial product budgets. Known frame, GC, and relative memory targets are frozen; unsupported release package, installed-size, startup, and runtime-residency limits remain explicit measurement-required states with owner tasks.
+  - Validation: strict config validator and 4 focused tests passed; `Game.Editor` and `Game.Tests.Editor` built with 0 errors; commit `1e20f1417` pushed to `main`.
 
 ## Phase 1 - Restore the UI Assembly Boundary
 
@@ -315,7 +317,7 @@ Implementation contract:
 - Inject the resolver through existing UI bootstrap/runtime adapter binding. Do not create a static mutable UI registry.
 - Migrate only files compiled by `Game.UI.Runtime` in this phase. `Game.UI.Shell.Ecs` and gameplay-system text ownership are separate later decisions.
 
-- [ ] `APH-100` Add focused tests for resolver fallback, configured text, formatting success, invalid-format fallback, and missing-key fallback before production migration.
+- [~] `APH-100` Add focused tests for resolver fallback, configured text, formatting success, invalid-format fallback, and missing-key fallback before production migration.
 - [ ] `APH-101` Add `IGameTextResolver` and immutable fallback implementation under `Assets/Game/Scripts/UI/Contracts`.
 - [ ] `APH-102` Add the composition-owned `GameTextResolverAdapter` wrapping the existing config-owned text source.
 - [ ] `APH-103` Inject the resolver through Menu and Match UI runtime adapters without hierarchy search or static registration.
@@ -340,7 +342,7 @@ Implementation contract:
 - Preserve support for multiple exchange entities and deterministic per-entity processing.
 - Preserve request order, result order, wallet mutation, queue mutation, economy events, and summary publication.
 
-- [ ] `APH-200` Add a regression with two exchange entities proving both queues process in one update.
+- [~] `APH-200` Add a regression with two exchange entities proving both queues process in one update.
 - [ ] `APH-201` Add or extend zero-allocation coverage for a warmed resource-exchange update.
 - [ ] `APH-202` Replace the temporary entity array with direct ECS query iteration.
 - [ ] `APH-203` Confirm no new `EntityManager.CreateEntityQuery`, structural sync point, managed allocation, or singleton assumption was introduced.
@@ -362,7 +364,7 @@ Immediate implementation contract:
 - Remove explicit `state.Dependency.Complete()` only when lookups/query dependencies make direct access safe. Do not hide the sync in another helper.
 - This immediate phase does not introduce the shared spatial index; that is `APH-704`.
 
-- [ ] `APH-205` Extend defense tests for neutral targets, aircraft exclusion, nearest-hostile ordering, four concurrent slots, destroyed targets, and target removal between updates.
+- [~] `APH-205` Extend defense tests for neutral targets, aircraft exclusion, nearest-hostile ordering, four concurrent slots, destroyed targets, and target removal between updates.
 - [ ] `APH-206` Add a warmed allocation test covering at least 32 towers and 740 candidate units.
 - [ ] `APH-207` Add persistent target scratch storage with explicit `OnCreate`/`OnDestroy` lifetime.
 - [ ] `APH-208` Replace `_targetQuery.ToEntityArray(Allocator.Temp)` and remove the per-frame snapshot.
@@ -727,6 +729,21 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Visual result: Not applicable; diagnostic tooling and structured evidence only
 - Residual risk: the unchanged steady-state GC gate is red; exact allocation owners are mandatory Phase 7 remediation and Phase 8/9 acceptance work
 - Next ready task: `APH-009`
+
+### 2026-07-09 - APH-009 - Initial product-budget authority
+
+- Status: Complete
+- Commit or worktree baseline: `e848eb24a0`
+- Stable commit/push: `1e20f1417` pushed to `main`
+- Files changed: accepted-baseline JSON schema, performance regression contract, editor budget validator, 4 focused tests, and Unity `.meta` files
+- Behavior preserved/changed: no runtime or visual behavior changed; initial product budgets and measurement-required states are now machine-validated
+- Validation: `Game.Editor` and `Game.Tests.Editor` built with 0 errors; `[PerformanceProductBudgetValidation] result=Passed tests=4`; JSON invariants and `git diff --check` passed
+- Artifacts: `Design/Architecture/performance_regression_accepted_baseline.json`, `/private/tmp/warline-aph009-product-budget-focused-escalated.log`, and build logs
+- Metrics before: schema version 1 with editor-only thresholds
+- Metrics after: schema version 2 with `<33 ms` baseline/recommended and `<25 ms` high-end Android p95 budgets, `269,482 / 1,024` GC baseline/budget, `1054-1075 MB` same-device memory baseline, and at least 10 percent relative memory-reduction target
+- Visual result: Not applicable; config and editor validation only
+- Residual risk: release APK/AAB, installed size, startup, runtime residency, and absolute memory limits remain measurement-required under `APH-500`, `APH-501`, `APH-803`, and `APH-809`
+- Next ready tasks: `APH-100`, `APH-200`, and `APH-205`
 
 ## Decision Log
 

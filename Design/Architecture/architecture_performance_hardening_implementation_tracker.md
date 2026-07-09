@@ -147,6 +147,7 @@ Interpretation:
 |---|---|---|
 | `ScriptArchitectureAlignmentContractTests.RunAssemblyBoundaryValidation` | `Game.UI.Runtime` references `Game.Configs` | pass all 31 checks without weakening the contract |
 | `EcsBurstHotPathArchitectureTests.RunFocusedValidation` | current head still contains resource-exchange and building-defense query snapshots; exact current-head guard count must be reproduced | zero hot-path `ToEntityArray` / `ToComponentDataArray` debt |
+| `MatchGcAllocationCallstackCapture.RunSteadyState` | current baseline records `269,482 / 1,024` player-relevant bytes over 300 measured frames | pass the unchanged 1,024-byte budget after 180 warmup and 300 measured frames |
 
 Current violating files:
 
@@ -160,6 +161,8 @@ Current violating files:
 - `Assets/Game/Scripts/UI/Shell/UIShellContentView.cs`: direct `GameText` access.
 - `Assets/Game/Scripts/Systems/ResourceExchangeRequestValidationSystem.cs`: `exchangeQuery.ToEntityArray(Allocator.Temp)`.
 - `Assets/Game/Scripts/Systems/BuildingDefenseAttackSystem.cs`: explicit dependency completion plus one `ToEntityArray` and three `ToComponentDataArray` snapshots on each throttled target-acquisition pass.
+
+Current measured steady-state GC owners include per-frame scene-root scanning, `SelectionStateCompositionSystemHelper` construction, transport request processing, UI shell presentation, tactical-camera state queries, building command-entity queries, audio gameplay-state lookup, road command lookup, and pathfinding schedule/apply allocations. The authoritative owner table and call stacks are in `Design/AgentReports/2026-07-09_aph-007_match-gc-steady-state_raw-metadata-final_failed.md`.
 
 ## Program Outcomes
 
@@ -178,6 +181,7 @@ The program is complete only when all of the following are true:
 11. Android release APK/AAB size and installed size have explicit tracked budgets.
 12. Critical menu-to-match and gameplay flows have PlayMode coverage.
 13. The architecture and performance ratings are re-audited and the evidence is recorded.
+14. The steady-state Match GC capture passes the unchanged 1,024-byte player-relevant budget for 300 measured frames after 180 warmup frames.
 
 ## Non-Goals
 
@@ -210,6 +214,7 @@ The program is complete only when all of the following are true:
 | `D-015` | Unity access is an exclusive per-workspace lease. Use the macOS wrapper in windowed batchmode without `-nographics`, then use the documented escalated licensing retry before declaring a licensing blocker. |
 | `D-016` | `APH-006`, `APH-007`, and the non-Unity portion of `APH-008` may begin in parallel. `APH-009` waits for accepted `APH-007` and `APH-008` evidence. |
 | `D-017` | Each accepted implementation slice is committed and pushed by the coordinator only after relevant builds, focused tests, diff checks, and compiler-error checks pass. Known-broken or unrelated work is never included. |
+| `D-018` | `APH-007` accepts a reproducible baseline capture even when that baseline exposes a red GC budget. The 1,024-byte budget is not weakened; measured allocation owners become mandatory remediation input for Phases 7-9. |
 
 ## Phase Dependency Order
 
@@ -243,15 +248,16 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `8 / 106` |
-| Checklist percent complete | `7.5%` |
-| Checklist in progress | `1 / 106`: `APH-007` |
-| Complete plus active coverage | `9 / 106` (`8.5%`); this is visibility only, not accepted completion |
+| Checklist complete | `9 / 106` |
+| Checklist percent complete | `8.5%` |
+| Checklist in progress | `1 / 106`: `APH-009` |
+| Complete plus active coverage | `10 / 106` (`9.4%`); this is visibility only, not accepted completion |
 | Current phase | Phase 0 - Baseline and safety freeze |
-| Current task | `APH-007` GC attribution repair validation and fresh 300-frame capture; Unity lease held by Performance agent |
+| Current task | `APH-009` initial product-budget config and validation; Budget analysis agent |
 | Red architecture gates | `2` at the audit baseline; current-head reproduction remains required |
-| Last verified commit | `929ab7bb3` for `APH-008`; full 12-assembly `APH-006` matrix passed at `7084805d7` |
-| Last update | 2026-07-09 - `APH-006` and `APH-008` accepted; `APH-007` remains active |
+| Red performance gates | `1`: steady-state Match GC `269,482 / 1,024` bytes |
+| Last verified commit | `ba3da6704` for `APH-007`; full 12-assembly `APH-006` matrix passed at `7084805d7` |
+| Last update | 2026-07-09 - `APH-007` baseline accepted with red GC debt; `APH-009` active |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -277,18 +283,21 @@ Goal: preserve current evidence, make the program reproducible, and establish bu
   - Acceptance: 0 errors. Record warnings by category; do not paste repeated SDK reference-conflict noise into this tracker.
   - Result: all 12 assemblies passed sequentially with 0 errors. Only generated-project `MSB3277` reference-version conflicts were observed; no first-party compiler warning category was present.
   - Logs: `/private/tmp/warline-aph006-final-matrix-summary.log` and `/private/tmp/warline-aph006-warning-categories.log`.
-- [~] `APH-007` Capture a fresh pre-change Match performance baseline on the current commit.
+- [x] `APH-007` Capture a fresh pre-change Match performance baseline on the current commit.
   - Initial owner: Performance agent. Requires the exclusive Unity lease.
   - Run the editor regression baseline and steady-state GC capture.
   - Preserve the generated JSON/Markdown artifacts before optimization.
   - Acceptance: capture includes at least 700 units, 600 runtime buildings, 180 warmup frames, and 300 measured frames.
+  - Result: 733 units, 628 runtime buildings, 1,173 performance frames, 180 GC warmup frames, and 300 measured GC frames. Average `3.42 ms`, p95 `5.22 ms`, p99 `6.87 ms`, maximum `18.13 ms`.
+  - GC result: raw-sample metadata attribution reconciled 4,826 samples and `269,482` player-relevant bytes. This is an accepted red baseline, not a green GC gate; the 1,024-byte budget remains unchanged.
+  - Validation: 16 focused attribution tests and Editor/test builds passed with 0 errors; commit `ba3da6704` pushed to `main`.
 - [x] `APH-008` Add a machine-readable content-residency inventory report.
   - Initial owner: Residency agent. File/dependency inventory may run in parallel; serialized importer inspection requires the exclusive Unity lease.
   - Required fields: build-included asset path, type, source size, imported size where available, dependency root, audio load type, texture dimensions/format/mipmap/streaming state, mesh read/write state, and animation texture payload.
   - Output: `Design/AgentReports/architecture_performance_content_residency_baseline.json` plus Markdown summary.
   - Result: 4,099 dependency-root-reachable assets across 12 roots; 2,680 imported-size measurements; 226 audio clips; 637 textures; 1,817 meshes; and 3 reachable animation textures with 50,331,648 payload bytes.
   - Validation: generator and 4 focused tests passed; `Game.Editor` and `Game.Tests.Editor` built with 0 errors; commit `929ab7bb3` pushed to `main`.
-- [ ] `APH-009` Freeze initial product budgets in a tracked config.
+- [~] `APH-009` Freeze initial product budgets in a tracked config.
   - Initial owner: Budget analysis agent for the draft; coordinator owns approval and integration. Depends on accepted `APH-007` and `APH-008` evidence.
   - Keep existing Android p95 budgets: `<33 ms` baseline/recommended and `<25 ms` high-end.
   - Add same-device peak allocated-memory, APK/AAB, installed-size, startup-time, and visual-quality evidence requirements.
@@ -465,25 +474,27 @@ Priority order:
 4. UI shell, because `UiShellEcsGateway` remains 2,577 lines.
 5. Selection/HUD, because several files exceed 1,500-2,000 lines.
 
+The `APH-007` raw-metadata GC report is mandatory measured input for this phase. Its recurring scene-root, helper-construction, transport, UI shell, selection, command-query, audio, road, and pathfinding allocation owners must be removed or explicitly reassigned to another tracker task before `APH-711` can pass.
+
 - [ ] `APH-700` Add a generated domain dependency report listing every first-party assembly edge and top cross-domain type references.
 - [ ] `APH-701` Freeze new `*SystemHelper` and `*CompositionSystemHelper` files unless the architecture guard contains an approved task ID from this tracker.
 - [ ] `APH-702` Add a size guard for new or growing production files: review required above 500 lines; no existing file above 1,000 lines may grow without an explicit tracker exception.
-- [ ] `APH-703` Inventory `World.DefaultGameObjectInjectionWorld` runtime call sites and classify composition edge, authoring/debug, presentation edge, or hidden service-locator debt.
+- [ ] `APH-703` Inventory `World.DefaultGameObjectInjectionWorld` runtime call sites and the recurring `APH-007` allocation owners; classify composition edge, authoring/debug, presentation edge, hidden service-locator debt, or unrelated allocation debt.
 - [ ] `APH-704` Design and benchmark a shared read-only unit spatial index for building defense, AI targeting, threat detection, and selection candidates. Adopt it only when it beats the Phase 2 direct-query baseline and preserves results.
 - [ ] `APH-705` Extract combat contracts/data required for a future `Game.Runtime.Combat` assembly without introducing a dependency cycle.
 - [ ] `APH-706` Split one cohesive combat slice and pass the full assembly boundary/build/test matrix before opening another domain split.
 - [ ] `APH-707` Decompose `TransportBoardingCommandSystem` by its existing planning/routing/application seams while preserving public behavior and scenario tests.
 - [ ] `APH-708` Decompose `UiShellEcsGateway` into route, read-model, action, and settings adapters behind existing contracts; views remain passive.
 - [ ] `APH-709` Decompose selection/HUD files only where profiler or change-frequency evidence identifies risk; do not split for line count alone.
-- [ ] `APH-710` Remove classified hidden world lookups as each domain receives explicit World/EntityManager/query dependencies.
-- [ ] `APH-711` Re-run compile time, domain reload time, architecture gates, focused tests, and Match performance after every physical asmdef split.
+- [ ] `APH-710` Remove classified hidden world lookups and recurring per-frame allocation owners as each domain receives explicit World/EntityManager/query dependencies or cached non-allocating state.
+- [ ] `APH-711` Re-run compile time, domain reload time, architecture gates, focused tests, Match performance, and the unchanged steady-state GC capture after every physical asmdef split and final allocation-remediation slice.
 
 ## Phase 8 - CI, PlayMode, Visual, and Device Gates
 
 Goal: prevent recurrence and cover behavior that source-scanning tests cannot prove.
 
 - [ ] `APH-800` Add both architecture execute-method validations to CI and fail the build on nonzero exit or missing pass marker.
-- [ ] `APH-801` Add the editor Match performance baseline and steady-state GC capture to a scheduled or pre-merge performance lane.
+- [ ] `APH-801` Add the editor Match performance baseline and steady-state GC capture to a scheduled or pre-merge performance lane; fail when the unchanged 1,024-byte GC budget is exceeded.
 - [ ] `APH-802` Ratchet the editor p95 budget from the current lenient `50 ms` only after at least five stable captures establish variance.
 - [ ] `APH-803` Add an Android development-build gate for p95/p99 frame, peak memory, startup time, and thermal status on the reference device profile.
 - [ ] `APH-804` Add Android release-build acceptance for the documented 30 FPS tier; keep 60 FPS as a separate high-end target.
@@ -702,6 +713,21 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Residual risk: dependency reachability is not exact APK/AAB contribution or simultaneous runtime residency; `APH-500` and `APH-508` own those measurements
 - Next ready task: `APH-009` after `APH-007` acceptance
 
+### 2026-07-09 - APH-007 - Current-head Match performance and GC baseline
+
+- Status: Complete baseline capture; steady-state GC gate recorded red
+- Commit or worktree baseline: `7084805d771142706f340e9f2e52a68570bcb72b`, validated again after tracker-only commits through `8a52df3e9`
+- Stable commit/push: `ba3da6704` pushed to `main`
+- Files changed: Match GC capture runner, 16 focused attribution tests, performance baseline JSON/Markdown, canonical GC report, and preserved failed-attribution reports
+- Behavior preserved/changed: editor diagnostic attribution now binds bytes and call stacks to the same raw profiler sample; runtime and gameplay behavior are unchanged
+- Validation: `Game.Editor` and `Game.Tests.Editor` built with 0 errors; `[MatchGcAllocationAttributionValidation] result=Passed tests=16`; 180 warmup and 300 measured frames completed; `git diff --check` and focused code review passed
+- Artifacts: `Design/AgentReports/performance_regression_match_baseline.json`, matching Markdown, `Design/AgentReports/2026-07-09_aph-007_match-gc-steady-state_raw-metadata-final_failed.md`, focused log, full capture log, and raw profile under `/private/tmp`
+- Metrics before: previous tracked editor baseline p95 `7.186 ms`; earlier GC attribution was nondeterministically smeared across hierarchy rows
+- Metrics after: 733 units, 628 buildings, average `3.42 ms`, p95 `5.22 ms`, p99 `6.87 ms`, maximum `18.13 ms`; 4,826 GC samples and `269,482 / 1,024` player-relevant bytes with raw metadata attribution
+- Visual result: Not applicable; diagnostic tooling and structured evidence only
+- Residual risk: the unchanged steady-state GC gate is red; exact allocation owners are mandatory Phase 7 remediation and Phase 8/9 acceptance work
+- Next ready task: `APH-009`
+
 ## Decision Log
 
 Append approved deviations here. Do not silently alter Fixed Architecture Decisions.
@@ -712,3 +738,4 @@ Append approved deviations here. Do not silently alter Fixed Architecture Decisi
 | 2026-07-09 | `D-012` | Reconcile execution to `a6af1335c` while retaining historical audit evidence | The tracker entered `main` before the ARIA and FPS commits were integrated | Commit history and current source inspection |
 | 2026-07-09 | `D-013` through `D-016` | Adopt coordinator-owned tracker integration, disjoint worker ownership, an exclusive Unity lease, and Phase 0 parallel intake | Multiple agents can reduce elapsed time only when shared-state and Unity collisions are controlled | User approval and Multi-Agent Operating Model |
 | 2026-07-09 | `D-017` | Commit and push each accepted implementation slice only after the stable integration gate passes | Keep `main` usable throughout the program and prevent broken or unrelated work from entering task commits | User direction and Stable Integration and Push Gate |
+| 2026-07-09 | `D-018` | Accept `APH-007` as a reproducible baseline while keeping its 1,024-byte GC gate red and unchanged | Baseline capture must freeze measured debt before optimization; requiring a green result would optimize before establishing the baseline | Raw-sample metadata report, 16 focused tests, and coordinator review |

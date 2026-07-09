@@ -26,6 +26,7 @@ namespace Game.UI.Runtime
         private ISelectionUiReadModel _selectionUiReadModelSystem;
         private IBuildingUiCommand _buildingUiCommandSystem;
         private IBuildingUiQuery _buildingUiQuerySystem;
+        private IGameTextResolver _gameTextResolver = FallbackGameTextResolver.Instance;
         private IQuickCustomGameConfigStore _quickCustomGameConfigStore;
         private IMatchLaunchCommand _matchLaunchCommand;
         private ISelectionDiagnosticsSink _selectionDiagnosticsSink;
@@ -66,6 +67,7 @@ namespace Game.UI.Runtime
         public GameObject ResourceExchangePopupPrefab => resourceExchangePopupPrefab;
         public GameObject BuildPlacementConfirmationBarPrefab => buildPlacementConfirmationBarPrefab;
         public int ContentVersion => _contentVersion;
+        internal IGameTextResolver GameTextResolver => _gameTextResolver;
 
         public void Configure(
             UIShellView view,
@@ -93,6 +95,11 @@ namespace Game.UI.Runtime
                 settingsPopupPrefab = settingsPrefab;
             if (resourceExchangePrefab != null)
                 resourceExchangePopupPrefab = resourceExchangePrefab;
+        }
+
+        public void BindGameTextResolver(IGameTextResolver gameTextResolver)
+        {
+            _gameTextResolver = gameTextResolver ?? FallbackGameTextResolver.Instance;
         }
 
         public void PrepareForCommandSequence(IReadOnlyList<UiShellPresentationCommandModel> commands)

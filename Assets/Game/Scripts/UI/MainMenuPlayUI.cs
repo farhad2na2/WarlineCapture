@@ -26,6 +26,7 @@ namespace Game.UI.Runtime
         private ISelectionUiCommand _selectionUiCommandSystem;
         private IMatchHudCameraControl _selectionUiCameraSystem;
         private IMatchHudMinimapDataSource _minimapDataSource;
+        private IGameTextResolver _gameTextResolver = FallbackGameTextResolver.Instance;
         private MatchOverlayCommandControlsView _matchHudCommandControlsView;
         private MatchHudRightQuickRailView _matchHudRightQuickRailView;
         private MatchHudMinimapView _matchHudMinimapView;
@@ -62,17 +63,21 @@ namespace Game.UI.Runtime
         private readonly List<Button> _matchHudResourceExchangeButtons = new(4);
         private int _lastGameplayUiClickFrame = -1000;
 
+        internal IGameTextResolver GameTextResolver => _gameTextResolver;
+
         public void Init(
             ISelectionUiCommand selectionUiCommandSystem,
             IMatchRuntimeState runtimeGameplayStateSystem,
             IMatchHudCameraControl selectionUiCameraSystem = null,
             IMatchHudMinimapDataSource minimapDataSource = null,
+            IGameTextResolver gameTextResolver = null,
             bool resetRuntimeState = true)
         {
             _selectionUiCommandSystem = selectionUiCommandSystem;
             _runtimeGameplayStateSystem = runtimeGameplayStateSystem;
             _selectionUiCameraSystem = selectionUiCameraSystem;
             _minimapDataSource = minimapDataSource;
+            _gameTextResolver = gameTextResolver ?? FallbackGameTextResolver.Instance;
 
             if (!resetRuntimeState || _runtimeGameplayStateSystem == null)
                 return;
@@ -116,6 +121,7 @@ namespace Game.UI.Runtime
             _runtimeGameplayStateSystem = null;
             _selectionUiCameraSystem = null;
             _minimapDataSource = null;
+            _gameTextResolver = FallbackGameTextResolver.Instance;
         }
 
         public void Update()

@@ -50,6 +50,7 @@ namespace Game.Composition
         private readonly GameplayRuntimeUpdateCompositionSystemHelper gameplayRuntimeUpdateSystem = new();
         private readonly PerformanceDiagnosticsSystemHelper fallbackPerformanceDiagnosticsSystemHelper = new();
         private readonly StaticMapChunkBatchingPresentationSystemHelper staticMapBatchingSystem = new();
+        private readonly IGameTextResolver gameTextResolver = new GameTextResolverAdapter();
         private bool fallbackPerformanceDiagnosticsInitialized;
         private bool _staticMapBatchingInitialized;
         private MatchSceneView sceneView;
@@ -465,7 +466,7 @@ namespace Game.Composition
                 return MainMenu;
 
             EnsureUiRuntimeAdapters();
-            MainMenu.Init(SelectionUiCommand, _matchRuntimeState, _matchHudCameraControl, _matchHudMinimapDataSource, resetRuntimeState);
+            MainMenu.Init(SelectionUiCommand, _matchRuntimeState, _matchHudCameraControl, _matchHudMinimapDataSource, gameTextResolver, resetRuntimeState);
             ApplyMainMenuBaseBindings();
             ApplyMainMenuFeatureBindingsIfReady();
             return MainMenu;
@@ -956,7 +957,7 @@ namespace Game.Composition
             _managedRuntimeInitialized = true;
             if (MainMenu != null)
             {
-                MainMenu.Init(SelectionUiCommand, _matchRuntimeState, _matchHudCameraControl, _matchHudMinimapDataSource, resetRuntimeState: false);
+                MainMenu.Init(SelectionUiCommand, _matchRuntimeState, _matchHudCameraControl, _matchHudMinimapDataSource, gameTextResolver, resetRuntimeState: false);
                 ApplyMainMenuBaseBindings();
             }
 

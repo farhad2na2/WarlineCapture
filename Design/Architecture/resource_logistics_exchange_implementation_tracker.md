@@ -1,7 +1,7 @@
 # Resource Logistics Exchange Implementation Tracker
 
 Date: 2026-07-09
-Status: Phase 7 audio and resource delta flyout data complete; toasts, VFX, and ARIA pending
+Status: Phase 7 audio, resource delta flyout, and toast data complete; VFX and ARIA pending
 Design source: `../Resource_Logistics_Exchange_Design.md`
 
 ## Objective
@@ -23,7 +23,7 @@ Implement the timed Resource Logistics Exchange without drifting from WarlineCap
 
 ## Progress Summary
 
-Overall implementation progress: 79% (74/94 checklist items complete).
+Overall implementation progress: 80% (75/94 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -36,7 +36,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 4. Rush Tickets | Complete | 7 | 7 | 100% | Rush eligible jobs with ticket spend, per-item caps, rush-all budget, and feedback. |
 | 5. UI popup and header routing | Complete | 15 | 15 | 100% | ECS-backed UI read-model, target-lock reference, separated layer pack, Canvas popup prefab, serialized view refs, cards, details, amount stepper, queue panel, enabled-gated resource header tap route, popup input restoration, live read-model binding, request-buffer wiring, TMP/Oxanium validation, prefab contract tests, and 16:9/20:9 captures complete. |
 | 6. World presentation | Complete | 8 | 8 | 100% | Presentation anchors, deterministic fallback resolution, data-only ECS visual cue emission, managed presentation boundary, pooled actor reuse, actor safety, fallback behavior, cleanup wiring, and focused validation are complete. |
-| 7. Audio, VFX, feedback, ARIA | In progress | 3 | 7 | 43% | Resource Exchange audio ids, placeholder clips, and data-only delta flyout requests are complete; toasts, VFX markers, and ARIA copy remain. |
+| 7. Audio, VFX, feedback, ARIA | In progress | 4 | 7 | 57% | Resource Exchange audio ids, placeholder clips, data-only delta flyout requests, and typed toast requests are complete; VFX markers and ARIA copy remain. |
 | 8. AI, balance, telemetry | Not started | 0 | 6 | 0% | Economy events, balancing reports, AI awareness if enabled for AI factions. |
 | 9. Validation and performance | Not started | 0 | 10 | 0% | Focused tests, compile, architecture guardrails, UI captures, GC/performance checks. |
 
@@ -249,7 +249,7 @@ Phase 6 implementation notes:
 - [x] Add config-driven audio event ids for accepted, rejected, queue started, rushed, completed, and cancelled exchange events.
 - [x] Generate or assign placeholder audio clips through the audio config workflow.
 - [x] Add resource delta flyouts for spend, reserve, output grant, refund, and rush spend.
-- [ ] Add completion toast and rejection toast with typed reason text.
+- [x] Add completion toast and rejection toast with typed reason text.
 - [ ] Add optional ARIA strings for insufficient resources, exchange started, exchange complete, and exchange blocked.
 - [ ] Pair world presentation cues with non-authoritative VFX markers.
 - [ ] Validate no direct AudioSource/prefab sound wiring outside the config-driven audio path.
@@ -951,3 +951,41 @@ Remaining blocker or next slice:
 
 - Re-run Unity focused validation when licensing is healthy: `ResourceExchangeDeltaFlyoutSystemTests.RunFocusedValidation`.
 - Next Phase 7 slice should add completion and rejection toast data with typed reason text.
+
+### 2026-07-09 - Phase 7C Completion And Rejection Toast Data
+
+Files changed:
+
+- `Assets/Game/Scripts/Components/ResourceExchangeComponents.cs`
+- `Assets/Game/Scripts/Systems/ResourceExchangeToastTextUtility.cs`
+- `Assets/Game/Scripts/Systems/ResourceExchangeToastTextUtility.cs.meta`
+- `Assets/Game/Scripts/Systems/ResourceExchangeRequestValidationSystem.cs`
+- `Assets/Game/Scripts/Systems/ResourceExchangeQueueTickSystem.cs`
+- `Assets/Tests/Editor/ResourceExchangeToastSystemTests.cs`
+- `Assets/Tests/Editor/ResourceExchangeToastSystemTests.cs.meta`
+- `Design/Architecture/resource_logistics_exchange_implementation_tracker.md`
+
+Behavior changed:
+
+- Added `ResourceExchangeToastKind`, `ResourceExchangeToastSeverity`, and `ResourceExchangeToastComponent` as data-only ECS feedback requests for Resource Exchange toasts.
+- Added `ResourceExchangeToastTextUtility` to map typed `ResourceExchangeReason` values into short player-facing body text without stringly runtime state.
+- Kept the toast buffer optional in runtime systems. Existing exchange entities without `ResourceExchangeToastComponent` still process requests, queue ticking, cancel, rush, and completion normally.
+- Start request acceptance emits an `EXCHANGE QUEUED` toast.
+- Request rejection, rush rejection, and queue-blocked paths emit an `EXCHANGE BLOCKED` toast with typed reason text such as insufficient Oil, queue full, storage full, storage missing, rush unavailable, and mission ending.
+- Queue completion emits an `EXCHANGE COMPLETE` toast only when the output is actually granted.
+- Cancel and mission-end cancellation paths emit an `EXCHANGE CANCELLED` toast. Rush accepted paths emit a `RUSH APPLIED` toast, and rush-immediate-completion can emit both rush and completion toast rows.
+- Added focused editor coverage for accepted start, insufficient-Oil rejection, queue completion, cancel/refund, rush-immediate-completion, and common typed reason text mapping.
+
+Validation:
+
+- `git diff --check` passed before this tracker update.
+- `dotnet build Game.Components.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 6 warnings and 0 errors.
+- `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 6 warnings and 0 errors.
+- `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 11 warnings and 0 errors.
+- Attempted Unity focused validation with the documented macOS licensing workaround: `Tools/CI/invoke_unity_macos.sh --project /private/tmp/wlc-resource-exchange-next --log /private/tmp/wlc-resource-exchange-toast-validation.log --timeout 420 -- -quit -executeMethod ResourceExchangeToastSystemTests.RunFocusedValidation`.
+- Unity validation was blocked by licensing after the wrapper was already used: the log timed out waiting for `LicenseClient-farhad`, then reported `Licensing initialization failed after 74.83s`. The stuck temp-worktree Unity PID was terminated.
+
+Remaining blocker or next slice:
+
+- Re-run Unity focused validation when licensing is healthy: `ResourceExchangeToastSystemTests.RunFocusedValidation`.
+- Next Phase 7 slice should add optional ARIA strings for insufficient resources, exchange started, exchange complete, and exchange blocked.

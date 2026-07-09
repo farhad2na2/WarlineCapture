@@ -38,6 +38,11 @@ namespace Game.Runtime
                 DynamicBuffer<ResourceExchangeDeltaFlyoutComponent> deltaFlyouts = hasDeltaFlyouts
                     ? state.EntityManager.GetBuffer<ResourceExchangeDeltaFlyoutComponent>(exchangeEntity)
                     : default;
+                bool hasToasts =
+                    state.EntityManager.HasBuffer<ResourceExchangeToastComponent>(exchangeEntity);
+                DynamicBuffer<ResourceExchangeToastComponent> toasts = hasToasts
+                    ? state.EntityManager.GetBuffer<ResourceExchangeToastComponent>(exchangeEntity)
+                    : default;
                 ProcessRequests(
                     ref requestQueue.ValueRW,
                     enabled.ValueRO,
@@ -50,6 +55,8 @@ namespace Game.Runtime
                     economyEvents,
                     deltaFlyouts,
                     hasDeltaFlyouts,
+                    toasts,
+                    hasToasts,
                     elapsedSeconds);
             }
         }
@@ -227,6 +234,39 @@ namespace Game.Runtime
             bool emitDeltaFlyouts,
             float elapsedSeconds)
         {
+            ProcessRequests(
+                ref requestQueue,
+                enabled,
+                ref wallet,
+                ref summary,
+                recipes,
+                requests,
+                queue,
+                results,
+                economyEvents,
+                deltaFlyouts,
+                emitDeltaFlyouts,
+                default,
+                false,
+                elapsedSeconds);
+        }
+
+        public static void ProcessRequests(
+            ref ResourceExchangeRequestQueueComponent requestQueue,
+            in ResourceExchangeEnabledComponent enabled,
+            ref ResourceExchangeWalletComponent wallet,
+            ref ResourceExchangeSummaryComponent summary,
+            DynamicBuffer<ResourceExchangeRecipeComponent> recipes,
+            DynamicBuffer<ResourceExchangeRequestComponent> requests,
+            DynamicBuffer<ResourceExchangeQueueComponent> queue,
+            DynamicBuffer<ResourceExchangeResultComponent> results,
+            DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
+            DynamicBuffer<ResourceExchangeDeltaFlyoutComponent> deltaFlyouts,
+            bool emitDeltaFlyouts,
+            DynamicBuffer<ResourceExchangeToastComponent> toasts,
+            bool emitToasts,
+            float elapsedSeconds)
+        {
             if (requests.Length == 0)
                 return;
 
@@ -271,6 +311,8 @@ namespace Game.Runtime
                             economyEvents,
                             deltaFlyouts,
                             emitDeltaFlyouts,
+                            toasts,
+                            emitToasts,
                             request);
                         break;
                     case ResourceExchangeRequestKind.RushAll:
@@ -283,6 +325,8 @@ namespace Game.Runtime
                             economyEvents,
                             deltaFlyouts,
                             emitDeltaFlyouts,
+                            toasts,
+                            emitToasts,
                             request);
                         break;
                     case ResourceExchangeRequestKind.ClearCompleted:
@@ -307,6 +351,7 @@ namespace Game.Runtime
                 }
 
                 results.Add(result);
+                ResourceExchangeToastTextUtility.TryAppendToast(toasts, emitToasts, result);
                 ApplySummary(ref summary, enabled, queue, result);
             }
 
@@ -523,6 +568,8 @@ namespace Game.Runtime
             DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
             DynamicBuffer<ResourceExchangeDeltaFlyoutComponent> deltaFlyouts,
             bool emitDeltaFlyouts,
+            DynamicBuffer<ResourceExchangeToastComponent> toasts,
+            bool emitToasts,
             in ResourceExchangeRequestComponent request)
         {
             ResourceExchangeReason gateReason = ValidateRushGate(enabled, request, out byte factionId);
@@ -568,6 +615,8 @@ namespace Game.Runtime
                 economyEvents,
                 deltaFlyouts,
                 emitDeltaFlyouts,
+                toasts,
+                emitToasts,
                 queueIndex,
                 item,
                 recipe,
@@ -586,6 +635,8 @@ namespace Game.Runtime
             DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
             DynamicBuffer<ResourceExchangeDeltaFlyoutComponent> deltaFlyouts,
             bool emitDeltaFlyouts,
+            DynamicBuffer<ResourceExchangeToastComponent> toasts,
+            bool emitToasts,
             in ResourceExchangeRequestComponent request)
         {
             ResourceExchangeReason gateReason = ValidateRushGate(enabled, request, out byte factionId);
@@ -637,6 +688,8 @@ namespace Game.Runtime
                     economyEvents,
                     deltaFlyouts,
                     emitDeltaFlyouts,
+                    toasts,
+                    emitToasts,
                     i,
                     item,
                     recipe,
@@ -1085,6 +1138,8 @@ namespace Game.Runtime
             DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
             DynamicBuffer<ResourceExchangeDeltaFlyoutComponent> deltaFlyouts,
             bool emitDeltaFlyouts,
+            DynamicBuffer<ResourceExchangeToastComponent> toasts,
+            bool emitToasts,
             int queueIndex,
             in ResourceExchangeQueueComponent source,
             in ResourceExchangeRecipeComponent recipe,
@@ -1126,6 +1181,8 @@ namespace Game.Runtime
                     economyEvents,
                     deltaFlyouts,
                     emitDeltaFlyouts,
+                    toasts,
+                    emitToasts,
                     out item);
             }
 

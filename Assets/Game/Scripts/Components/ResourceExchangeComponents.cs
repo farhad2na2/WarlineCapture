@@ -112,6 +112,24 @@ namespace Game.Components
         RushTicketsSpent = 4
     }
 
+    public enum ResourceExchangeToastKind : byte
+    {
+        None = 0,
+        QueueStarted = 1,
+        QueueCompleted = 2,
+        QueueCancelled = 3,
+        RushAccepted = 4,
+        Rejected = 5
+    }
+
+    public enum ResourceExchangeToastSeverity : byte
+    {
+        Info = 0,
+        Success = 1,
+        Warning = 2,
+        Error = 3
+    }
+
     public struct ResourceExchangeEnabledComponent : IComponentData
     {
         public byte Enabled;
@@ -259,6 +277,26 @@ namespace Game.Components
         public ResourceExchangeResourceKind ResourceKind;
         public int Amount;
         public FixedString128Bytes RecipeId;
+    }
+
+    public struct ResourceExchangeToastComponent : IBufferElementData
+    {
+        public int SequenceId;
+        public int RequestId;
+        public int QueueItemId;
+        public byte FactionId;
+        public ResourceExchangeToastKind ToastKind;
+        public ResourceExchangeToastSeverity Severity;
+        public ResourceExchangeResultKind ResultKind;
+        public ResourceExchangeReason Reason;
+        public ResourceExchangeResourceKind InputResource;
+        public ResourceExchangeResourceKind OutputResource;
+        public int InputAmount;
+        public int OutputAmount;
+        public int RushTicketsSpent;
+        public FixedString128Bytes RecipeId;
+        public FixedString128Bytes Title;
+        public FixedString128Bytes Body;
     }
 
     public struct ResourceExchangeVisualRequestComponent : IBufferElementData

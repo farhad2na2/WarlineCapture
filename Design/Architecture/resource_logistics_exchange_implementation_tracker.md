@@ -1,7 +1,7 @@
 # Resource Logistics Exchange Implementation Tracker
 
 Date: 2026-07-09
-Status: Phase 9 HUD/header popup routing tests complete; UI prefab/capture validation next
+Status: Phase 9 UI prefab/capture validation complete; architecture guardrails next
 Design source: `../Resource_Logistics_Exchange_Design.md`
 
 ## Objective
@@ -23,7 +23,7 @@ Implement the timed Resource Logistics Exchange without drifting from WarlineCap
 
 ## Progress Summary
 
-Overall implementation progress: 94% (89/94 checklist items complete).
+Overall implementation progress: 95% (90/94 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -38,7 +38,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 6. World presentation | Complete | 8 | 8 | 100% | Presentation anchors, deterministic fallback resolution, data-only ECS visual cue emission, managed presentation boundary, pooled actor reuse, actor safety, fallback behavior, cleanup wiring, and focused validation are complete. |
 | 7. Audio, VFX, feedback, ARIA | Complete | 7 | 7 | 100% | Resource Exchange audio ids, placeholder clips, data-only delta flyout requests, typed toast requests, optional ARIA strings, non-authoritative VFX marker data, and direct-audio wiring guardrails are complete. |
 | 8. AI, balance, telemetry | Complete | 6 | 6 | 100% | Economy event coverage, Resource Exchange balance report fields, data sanity tests, scenario gates, AI opt-in gating, and AI planner guardrails are complete. |
-| 9. Validation and performance | In progress | 5 | 10 | 50% | Diff whitespace, repository compile validation, focused exchange data/config tests, queue/rush/cancel/refund tests, and HUD/header popup routing tests are complete; UI prefab/capture validation remains next. |
+| 9. Validation and performance | In progress | 6 | 10 | 60% | Diff whitespace, repository compile validation, focused exchange data/config tests, queue/rush/cancel/refund tests, HUD/header popup routing tests, and UI prefab/capture validation are complete; architecture guardrails remain next. |
 
 ## Phase 0: Inventory And Source Alignment
 
@@ -282,7 +282,7 @@ Exit criteria:
 - [x] Run focused exchange data/config tests.
 - [x] Run focused exchange queue/rush/cancel/refund tests.
 - [x] Run focused HUD/header popup routing tests.
-- [ ] Run focused UI prefab/capture validation at 16:9 and 20:9.
+- [x] Run focused UI prefab/capture validation at 16:9 and 20:9.
 - [ ] Run architecture guardrails for naming, ECS boundaries, and no broad manager/controller/service drift.
 - [ ] Run GC allocation check for exchange queue steady state.
 - [ ] Run performance scenario if exchange is active during match steady state.
@@ -1416,3 +1416,35 @@ Validation:
 Remaining blocker or next slice:
 
 - Next Phase 9 slice should run focused UI prefab/capture validation at 16:9 and 20:9.
+
+### 2026-07-09 - Phase 9F Focused UI Prefab/Capture Validation
+
+Files changed:
+
+- `Design/Architecture/resource_logistics_exchange_implementation_tracker.md`
+
+Behavior changed:
+
+- Documentation-only validation tracker update.
+- Ran focused Resource Exchange popup prefab contract validation for required serialized view references, card/queue row buttons, separated POP-12 sprite usage, live Oxanium TMP text, stable interaction paths, and typed UI action routing.
+- Ran live layout capture validation from the `POP12_ResourceExchangePopup` Canvas prefab at 16:9 and 20:9.
+- Verified captures are nonblank, exact requested dimensions, inside viewport bounds, fixed 1640x916 modal panel size, and active TMP text has no overflow.
+- The tracked capture PNG/report artifacts were regenerated identically; no runtime ECS, economy, UI, prefab, scene, image, or asset behavior changed.
+
+Validation:
+
+- `dotnet build Game.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 8 warnings and 0 errors.
+- `dotnet build Game.UI.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 6 warnings and 0 errors.
+- `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 10 warnings and 0 errors.
+- `Tools/CI/invoke_unity_macos.sh --project /private/tmp/wlc-resource-exchange-next --log /private/tmp/wlc-resource-exchange-popup-prefab-validation.log --timeout 420 -- -quit -executeMethod ResourceExchangePopupPrefabTests.RunFocusedValidation`
+- Unity focused popup prefab result: `[ResourceExchangePopupPrefabValidation] result=Passed tests=6`
+- Prefab validation log result: exit code 0, no compiler-error or focused-test failure markers found in `/private/tmp/wlc-resource-exchange-popup-prefab-validation.log`.
+- `Tools/CI/invoke_unity_macos.sh --project /private/tmp/wlc-resource-exchange-next --log /private/tmp/wlc-resource-exchange-popup-layout-capture-validation.log --timeout 420 -- -quit -executeMethod Game.Editor.ResourceExchangePopupLayoutCaptureValidation.Run`
+- Unity focused popup layout capture result: `[ResourceExchangePopupLayoutCaptureValidation] result=Passed captures=2 report=Design/AgentReports/Captures/ResourceExchange/POP12_ResourceExchange_layout_capture_report.md`
+- Capture report values: 16:9 1920x1080 and 20:9 2400x1080; both reported 71479 bright pixel samples.
+- `file Design/AgentReports/Captures/ResourceExchange/POP12_ResourceExchange_16x9_1920x1080.png Design/AgentReports/Captures/ResourceExchange/POP12_ResourceExchange_20x9_2400x1080.png` confirmed exact PNG dimensions: 1920x1080 and 2400x1080.
+- `git diff --check` passed after this tracker update.
+
+Remaining blocker or next slice:
+
+- Next Phase 9 slice should run architecture guardrails for naming, ECS boundaries, and no broad manager/controller/service drift.

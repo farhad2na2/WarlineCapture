@@ -214,6 +214,15 @@ namespace Game.Runtime
                     ResourceExchangeResultComponent result =
                         CreateResult(item, ResourceExchangeResultKind.QueueBlocked, 0, storageReason);
                     results.Add(result);
+                    economyEvents.Add(new ResourceExchangeEconomyEventComponent
+                    {
+                        QueueItemId = item.QueueItemId,
+                        FactionId = item.FactionId,
+                        ResultKind = ResourceExchangeResultKind.QueueBlocked,
+                        ResourceKind = item.OutputResource,
+                        Amount = 0,
+                        RecipeId = item.RecipeId
+                    });
                     ResourceExchangeToastTextUtility.TryAppendToast(toasts, emitToasts, result);
                     ResourceExchangeAriaTextUtility.TryAppendAnnouncement(ariaAnnouncements, emitAriaAnnouncements, result);
                     continue;
@@ -368,6 +377,15 @@ namespace Game.Runtime
                 ResourceExchangeResultComponent blockedResult =
                     CreateResult(completed, ResourceExchangeResultKind.QueueBlocked, 0, storageReason);
                 results.Add(blockedResult);
+                economyEvents.Add(new ResourceExchangeEconomyEventComponent
+                {
+                    QueueItemId = completed.QueueItemId,
+                    FactionId = completed.FactionId,
+                    ResultKind = ResourceExchangeResultKind.QueueBlocked,
+                    ResourceKind = completed.OutputResource,
+                    Amount = 0,
+                    RecipeId = completed.RecipeId
+                });
                 ResourceExchangeToastTextUtility.TryAppendToast(toasts, emitToasts, blockedResult);
                 ResourceExchangeAriaTextUtility.TryAppendAnnouncement(
                     ariaAnnouncements,

@@ -62,6 +62,12 @@ public sealed class ResourceExchangeQueueTickSystemTests
         Assert.AreEqual(ResourceExchangeQueueState.Blocked, queue[0].State);
         Assert.AreEqual(ResourceExchangeReason.StorageFull, queue[0].StateReason);
         Assert.AreEqual(980, em.GetComponentData<ResourceExchangeWalletComponent>(exchange).Fuel);
+        DynamicBuffer<ResourceExchangeEconomyEventComponent> events =
+            em.GetBuffer<ResourceExchangeEconomyEventComponent>(exchange);
+        Assert.AreEqual(1, events.Length);
+        Assert.AreEqual(ResourceExchangeResultKind.QueueBlocked, events[0].ResultKind);
+        Assert.AreEqual(ResourceExchangeResourceKind.Fuel, events[0].ResourceKind);
+        Assert.AreEqual(0, events[0].Amount);
 
         ResourceExchangeWalletComponent wallet = em.GetComponentData<ResourceExchangeWalletComponent>(exchange);
         wallet.Fuel = 940;
@@ -73,6 +79,10 @@ public sealed class ResourceExchangeQueueTickSystemTests
         queue = em.GetBuffer<ResourceExchangeQueueComponent>(exchange);
         Assert.AreEqual(ResourceExchangeQueueState.Completed, queue[0].State);
         Assert.AreEqual(990, wallet.Fuel);
+        events = em.GetBuffer<ResourceExchangeEconomyEventComponent>(exchange);
+        Assert.AreEqual(2, events.Length);
+        Assert.AreEqual(ResourceExchangeResultKind.QueueCompleted, events[1].ResultKind);
+        Assert.AreEqual(50, events[1].Amount);
     }
 
     [Test]
@@ -121,7 +131,12 @@ public sealed class ResourceExchangeQueueTickSystemTests
         Assert.AreEqual(0, result.InputAmount);
         Assert.AreEqual(300, em.GetComponentData<ResourceExchangeWalletComponent>(exchange).Oil);
         Assert.AreEqual(ResourceExchangeQueueState.Cancelled, em.GetBuffer<ResourceExchangeQueueComponent>(exchange)[0].State);
-        Assert.AreEqual(0, em.GetBuffer<ResourceExchangeEconomyEventComponent>(exchange).Length);
+        DynamicBuffer<ResourceExchangeEconomyEventComponent> events =
+            em.GetBuffer<ResourceExchangeEconomyEventComponent>(exchange);
+        Assert.AreEqual(1, events.Length);
+        Assert.AreEqual(ResourceExchangeResultKind.QueueCancelled, events[0].ResultKind);
+        Assert.AreEqual(ResourceExchangeResourceKind.Oil, events[0].ResourceKind);
+        Assert.AreEqual(0, events[0].Amount);
     }
 
     [Test]
@@ -154,7 +169,13 @@ public sealed class ResourceExchangeQueueTickSystemTests
         Assert.AreEqual(ResourceExchangeReason.MissionEnding, queue[0].StateReason);
         Assert.AreEqual(ResourceExchangeQueueState.Cancelled, queue[1].State);
         Assert.AreEqual(ResourceExchangeReason.MissionEnding, queue[1].StateReason);
-        Assert.AreEqual(1, em.GetBuffer<ResourceExchangeEconomyEventComponent>(exchange).Length);
+        DynamicBuffer<ResourceExchangeEconomyEventComponent> events =
+            em.GetBuffer<ResourceExchangeEconomyEventComponent>(exchange);
+        Assert.AreEqual(2, events.Length);
+        Assert.AreEqual(ResourceExchangeResultKind.QueueCancelled, events[0].ResultKind);
+        Assert.AreEqual(200, events[0].Amount);
+        Assert.AreEqual(ResourceExchangeResultKind.QueueCancelled, events[1].ResultKind);
+        Assert.AreEqual(0, events[1].Amount);
     }
 
     private static Entity CreateExchangeEntity(EntityManager em, ResourceExchangeWalletComponent wallet)

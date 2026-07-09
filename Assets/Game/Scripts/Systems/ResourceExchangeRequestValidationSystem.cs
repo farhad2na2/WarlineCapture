@@ -527,18 +527,18 @@ namespace Game.Runtime
                     return Rejected(request, default, ResourceExchangeReason.CancelUnavailable);
 
                 int refundAmount = CalculateRefundAmount(item);
+                economyEvents.Add(new ResourceExchangeEconomyEventComponent
+                {
+                    QueueItemId = item.QueueItemId,
+                    FactionId = item.FactionId,
+                    ResultKind = ResourceExchangeResultKind.QueueCancelled,
+                    ResourceKind = item.InputResource,
+                    Amount = refundAmount,
+                    RecipeId = item.RecipeId
+                });
                 if (refundAmount > 0)
                 {
                     AddResourceAmount(ref wallet, item.InputResource, refundAmount);
-                    economyEvents.Add(new ResourceExchangeEconomyEventComponent
-                    {
-                        QueueItemId = item.QueueItemId,
-                        FactionId = item.FactionId,
-                        ResultKind = ResourceExchangeResultKind.QueueCancelled,
-                        ResourceKind = item.InputResource,
-                        Amount = refundAmount,
-                        RecipeId = item.RecipeId
-                    });
                     EmitDeltaFlyout(
                         deltaFlyouts,
                         emitDeltaFlyouts,
@@ -789,18 +789,18 @@ namespace Game.Runtime
                     continue;
 
                 int refundAmount = CalculateRefundAmount(item);
+                economyEvents.Add(new ResourceExchangeEconomyEventComponent
+                {
+                    QueueItemId = item.QueueItemId,
+                    FactionId = item.FactionId,
+                    ResultKind = ResourceExchangeResultKind.QueueCancelled,
+                    ResourceKind = item.InputResource,
+                    Amount = refundAmount,
+                    RecipeId = item.RecipeId
+                });
                 if (refundAmount > 0)
                 {
                     AddResourceAmount(ref wallet, item.InputResource, refundAmount);
-                    economyEvents.Add(new ResourceExchangeEconomyEventComponent
-                    {
-                        QueueItemId = item.QueueItemId,
-                        FactionId = item.FactionId,
-                        ResultKind = ResourceExchangeResultKind.QueueCancelled,
-                        ResourceKind = item.InputResource,
-                        Amount = refundAmount,
-                        RecipeId = item.RecipeId
-                    });
                     EmitDeltaFlyout(
                         deltaFlyouts,
                         emitDeltaFlyouts,

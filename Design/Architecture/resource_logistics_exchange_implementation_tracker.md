@@ -1,7 +1,7 @@
 # Resource Logistics Exchange Implementation Tracker
 
 Date: 2026-07-09
-Status: Phase 7 complete; Phase 8 AI, balance, and telemetry next
+Status: Phase 8 economy event coverage complete; balance report fields next
 Design source: `../Resource_Logistics_Exchange_Design.md`
 
 ## Objective
@@ -23,7 +23,7 @@ Implement the timed Resource Logistics Exchange without drifting from WarlineCap
 
 ## Progress Summary
 
-Overall implementation progress: 83% (78/94 checklist items complete).
+Overall implementation progress: 84% (79/94 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -37,7 +37,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 5. UI popup and header routing | Complete | 15 | 15 | 100% | ECS-backed UI read-model, target-lock reference, separated layer pack, Canvas popup prefab, serialized view refs, cards, details, amount stepper, queue panel, enabled-gated resource header tap route, popup input restoration, live read-model binding, request-buffer wiring, TMP/Oxanium validation, prefab contract tests, and 16:9/20:9 captures complete. |
 | 6. World presentation | Complete | 8 | 8 | 100% | Presentation anchors, deterministic fallback resolution, data-only ECS visual cue emission, managed presentation boundary, pooled actor reuse, actor safety, fallback behavior, cleanup wiring, and focused validation are complete. |
 | 7. Audio, VFX, feedback, ARIA | Complete | 7 | 7 | 100% | Resource Exchange audio ids, placeholder clips, data-only delta flyout requests, typed toast requests, optional ARIA strings, non-authoritative VFX marker data, and direct-audio wiring guardrails are complete. |
-| 8. AI, balance, telemetry | Not started | 0 | 6 | 0% | Economy events, balancing reports, AI awareness if enabled for AI factions. |
+| 8. AI, balance, telemetry | In progress | 1 | 6 | 17% | Economy event coverage is complete for reserve, output grant, refund, rush spend, blocked jobs, and cancelled jobs; balance report fields remain. |
 | 9. Validation and performance | Not started | 0 | 10 | 0% | Focused tests, compile, architecture guardrails, UI captures, GC/performance checks. |
 
 ## Phase 0: Inventory And Source Alignment
@@ -262,7 +262,7 @@ Exit criteria:
 
 ## Phase 8: AI, Balance, And Telemetry
 
-- [ ] Add economy events for input spend/reserve, output grant, refund, rush ticket spend, and blocked/cancelled jobs.
+- [x] Add economy events for input spend/reserve, output grant, refund, rush ticket spend, and blocked/cancelled jobs.
 - [ ] Add balance report fields for exchange route, amount, duration, source mode, completion, and resource delta.
 - [ ] Add data sanity tests for rates, fees, duration, and farming-risk caps.
 - [ ] Gate exchange recipes by chapter/mission/skirmish preset so early FTUE is not overloaded.
@@ -1085,3 +1085,36 @@ Validation:
 Remaining blocker or next slice:
 
 - Phase 7 is complete. Next slice should begin Phase 8 with economy/balance/telemetry event coverage for exchange input reserve, output grant, refund, rush ticket spend, blocked jobs, and cancelled jobs.
+
+### 2026-07-09 - Phase 8A Economy Event Coverage
+
+Files changed:
+
+- `Assets/Game/Scripts/Systems/ResourceExchangeQueueTickSystem.cs`
+- `Assets/Game/Scripts/Systems/ResourceExchangeRequestValidationSystem.cs`
+- `Assets/Tests/Editor/ResourceExchangeQueueTickSystemTests.cs`
+- `Assets/Tests/Editor/ResourceExchangeEconomyEventSystemTests.cs`
+- `Assets/Tests/Editor/ResourceExchangeEconomyEventSystemTests.cs.meta`
+- `Design/Architecture/resource_logistics_exchange_implementation_tracker.md`
+
+Behavior changed:
+
+- Queue start/input reserve already emitted `QueueStarted` economy events with negative input amounts; focused coverage now locks this contract.
+- Queue completion/output grant already emitted `QueueCompleted` economy events with positive output amounts; focused coverage now locks this contract.
+- Rush accepted already emitted `RushAccepted` economy events with negative Rush Ticket amounts; focused coverage now locks this contract.
+- Queue blocked now emits a `QueueBlocked` economy event with output resource and amount `0`, so storage/capacity blockers are visible to telemetry and balance reporting.
+- Queue cancellation now always emits a `QueueCancelled` economy event. Refundable cancellations use the positive refund amount; no-refund cancellations emit amount `0`, so cancellation telemetry is not lost when presentation has already started.
+- Mission-ending cancellation now emits one `QueueCancelled` economy event per cancelled job, including zero-amount rows for no-refund jobs.
+- Added `ResourceExchangeEconomyEventSystemTests` to validate input reserve, output grant, refund, no-refund cancel, blocked job, and rush-ticket spend event rows.
+
+Validation:
+
+- `git diff --check` passed before this tracker update.
+- `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 6 warnings and 0 errors.
+- `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 11 warnings and 0 errors.
+- `Tools/CI/invoke_unity_macos.sh --project /private/tmp/wlc-resource-exchange-next --log /private/tmp/wlc-resource-exchange-economy-event-validation.log --timeout 420 -- -quit -executeMethod ResourceExchangeEconomyEventSystemTests.RunFocusedValidation`
+- Unity focused result: `[ResourceExchangeEconomyEventValidation] result=Passed tests=6`
+
+Remaining blocker or next slice:
+
+- Next Phase 8 slice should add balance report fields for exchange route, amount, duration, source mode, completion, and resource delta.

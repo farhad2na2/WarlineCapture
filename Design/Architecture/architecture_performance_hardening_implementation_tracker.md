@@ -243,13 +243,15 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `6 / 106` |
-| Checklist percent complete | `5.7%` |
+| Checklist complete | `8 / 106` |
+| Checklist percent complete | `7.5%` |
+| Checklist in progress | `1 / 106`: `APH-007` |
+| Complete plus active coverage | `9 / 106` (`8.5%`); this is visibility only, not accepted completion |
 | Current phase | Phase 0 - Baseline and safety freeze |
-| Current task | `APH-006`, `APH-007`, and `APH-008` ready for coordinator assignment; none claimed yet |
+| Current task | `APH-007` GC attribution repair validation and fresh 300-frame capture; Unity lease held by Performance agent |
 | Red architecture gates | `2` at the audit baseline; current-head reproduction remains required |
-| Last verified commit | `a6af1335cb7270d8b87c60d9646ed78be7e97ac5` for the scoped FPS repair; tracker-wide validation pending |
-| Last update | 2026-07-09 - execution baseline and multi-agent operating model reconciled |
+| Last verified commit | `929ab7bb3` for `APH-008`; full 12-assembly `APH-006` matrix passed at `7084805d7` |
+| Last update | 2026-07-09 - `APH-006` and `APH-008` accepted; `APH-007` remains active |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -269,19 +271,23 @@ Goal: preserve current evidence, make the program reproducible, and establish bu
   - Log: `/private/tmp/warline-performance-architecture-audit-validation.log`.
 - [x] `APH-005` Confirm core runtime compiler health.
   - Result: `Game.Runtime.csproj` built with 0 errors and 6 generated-project/reference warnings.
-- [ ] `APH-006` Run the sequential first-party build matrix.
+- [x] `APH-006` Run the sequential first-party build matrix.
   - Initial owner: Build agent. May run in parallel with `APH-007` and non-Unity `APH-008` work.
   - Build `Game.Components`, `Game.Configs`, `Game.Runtime.Pathfinding`, `Game.Runtime`, `Game.Rendering`, `Game.UI.Contracts`, `Game.UI.Runtime`, `Game.UI.Shell.Ecs`, `Game.Composition`, `Game.Editor`, `Game.Tests.Editor`, and `Game.Tests.PlayMode`.
   - Acceptance: 0 errors. Record warnings by category; do not paste repeated SDK reference-conflict noise into this tracker.
-- [ ] `APH-007` Capture a fresh pre-change Match performance baseline on the current commit.
+  - Result: all 12 assemblies passed sequentially with 0 errors. Only generated-project `MSB3277` reference-version conflicts were observed; no first-party compiler warning category was present.
+  - Logs: `/private/tmp/warline-aph006-final-matrix-summary.log` and `/private/tmp/warline-aph006-warning-categories.log`.
+- [~] `APH-007` Capture a fresh pre-change Match performance baseline on the current commit.
   - Initial owner: Performance agent. Requires the exclusive Unity lease.
   - Run the editor regression baseline and steady-state GC capture.
   - Preserve the generated JSON/Markdown artifacts before optimization.
   - Acceptance: capture includes at least 700 units, 600 runtime buildings, 180 warmup frames, and 300 measured frames.
-- [ ] `APH-008` Add a machine-readable content-residency inventory report.
+- [x] `APH-008` Add a machine-readable content-residency inventory report.
   - Initial owner: Residency agent. File/dependency inventory may run in parallel; serialized importer inspection requires the exclusive Unity lease.
   - Required fields: build-included asset path, type, source size, imported size where available, dependency root, audio load type, texture dimensions/format/mipmap/streaming state, mesh read/write state, and animation texture payload.
   - Output: `Design/AgentReports/architecture_performance_content_residency_baseline.json` plus Markdown summary.
+  - Result: 4,099 dependency-root-reachable assets across 12 roots; 2,680 imported-size measurements; 226 audio clips; 637 textures; 1,817 meshes; and 3 reachable animation textures with 50,331,648 payload bytes.
+  - Validation: generator and 4 focused tests passed; `Game.Editor` and `Game.Tests.Editor` built with 0 errors; commit `929ab7bb3` pushed to `main`.
 - [ ] `APH-009` Freeze initial product budgets in a tracked config.
   - Initial owner: Budget analysis agent for the draft; coordinator owns approval and integration. Depends on accepted `APH-007` and `APH-008` evidence.
   - Keep existing Android p95 budgets: `<33 ms` baseline/recommended and `<25 ms` high-end.
@@ -665,6 +671,36 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Visual result: Not applicable
 - Residual risk: current-head full build matrix, architecture gates, Match baseline, GC baseline, and content-residency report remain pending
 - Next ready tasks: `APH-006`, `APH-007`, and `APH-008` may be assigned in parallel under the coordination rules
+
+### 2026-07-09 - APH-006 - Sequential first-party build matrix
+
+- Status: Complete
+- Commit or worktree baseline: `7084805d771142706f340e9f2e52a68570bcb72b`
+- Stable commit/push: `PENDING_TRACKER_COMPLETION_COMMIT`
+- Files changed: this tracker only; the build agent changed no files
+- Behavior preserved/changed: no runtime, scene, prefab, config, asset, or test behavior changed
+- Validation: all 12 Common Validation Matrix assemblies built sequentially with 0 errors; `git diff --check` passed
+- Artifacts: `/private/tmp/warline-aph006-final-matrix-summary.log`, `/private/tmp/warline-aph006-warning-categories.log`, and 12 `warline-aph006-final-*` assembly logs
+- Metrics before: not applicable
+- Metrics after: 12/12 builds passed; warnings were generated-project `MSB3277` reference-version conflicts only
+- Visual result: Not applicable
+- Residual risk: Unity activity can rewrite `Temp/Bin`; future build matrices remain serialized against Unity import/build operations
+- Next ready task: `APH-009` after `APH-007` acceptance
+
+### 2026-07-09 - APH-008 - Content-residency inventory baseline
+
+- Status: Complete
+- Commit or worktree baseline: `7084805d771142706f340e9f2e52a68570bcb72b`
+- Stable commit/push: `929ab7bb3` pushed to `main`
+- Files changed: `Assets/Game/Scripts/Editor/ContentResidencyInventoryGenerator.cs`, focused Editor tests, Unity `.meta` files, JSON inventory, and Markdown summary
+- Behavior preserved/changed: added editor-only reporting; runtime, scene, prefab, config, asset-import, and gameplay behavior are unchanged
+- Validation: generator passed for 4,099 assets; 4 focused tests passed; `Game.Editor` and `Game.Tests.Editor` built with 0 errors; JSON invariants and `git diff --check` passed
+- Artifacts: `Design/AgentReports/architecture_performance_content_residency_baseline.json`, matching Markdown summary, `/private/tmp/warline-aph-008-content-residency-final.log`, and focused-test log
+- Metrics before: six project animation textures with 100,663,296 payload bytes were known, without build-root scope
+- Metrics after: 4,099 reachable assets, 815,664,568 source bytes, 2,471,396,094 measured imported bytes across 2,680 assets, 217 DecompressOnLoad audio clips, 9 Streaming clips, 637 textures with 0 streaming-enabled, 1,817 meshes with 901 read/write-enabled, and 3 reachable animation textures with 50,331,648 payload bytes
+- Visual result: Not applicable; editor inventory only
+- Residual risk: dependency reachability is not exact APK/AAB contribution or simultaneous runtime residency; `APH-500` and `APH-508` own those measurements
+- Next ready task: `APH-009` after `APH-007` acceptance
 
 ## Decision Log
 

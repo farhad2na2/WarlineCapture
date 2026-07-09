@@ -93,6 +93,44 @@ namespace Game.Editor
             public int LastFrameIndex = -1;
         }
 
+        private sealed class RawAllocationAttributionSummary
+        {
+            public int ResolvedSamples;
+            public long ResolvedBytes;
+            public int UnresolvedItems;
+            public int UnresolvedSamples;
+            public long UnresolvedBytes;
+            public readonly Dictionary<string, int> FailureReasons = new(StringComparer.Ordinal);
+
+            public void RecordResolved(int samples, long bytes)
+            {
+                ResolvedSamples += samples;
+                ResolvedBytes += bytes;
+            }
+
+            public void RecordUnresolved(int samples, long bytes, string reason)
+            {
+                UnresolvedItems++;
+                UnresolvedSamples += samples;
+                UnresolvedBytes += bytes;
+                string key = string.IsNullOrWhiteSpace(reason) ? "unknown" : reason;
+                FailureReasons.TryGetValue(key, out int count);
+                FailureReasons[key] = count + 1;
+            }
+
+            public string FormatFailureReasons()
+            {
+                if (FailureReasons.Count == 0)
+                    return "none";
+
+                List<string> reasons = new(FailureReasons.Count);
+                foreach (KeyValuePair<string, int> pair in FailureReasons)
+                    reasons.Add($"{pair.Key}:{pair.Value}");
+                reasons.Sort(StringComparer.Ordinal);
+                return string.Join(",", reasons);
+            }
+        }
+
         private struct FrameAllocationSummary
         {
             public int FrameIndex;
@@ -362,6 +400,7 @@ namespace Game.Editor
             CaptureMode mode = GetCaptureMode();
             Dictionary<string, AllocationSite> sites = new(StringComparer.Ordinal);
             Dictionary<int, FrameAllocationSummary> frameSummaries = new();
+            RawAllocationAttributionSummary rawAttribution = new();
             int firstFrame = ProfilerDriver.firstFrameIndex;
             int lastFrame = ProfilerDriver.lastFrameIndex;
             int scannedFrames = 0;
@@ -381,9 +420,10 @@ namespace Game.Editor
                     if (!frame.valid)
                         break;
 
+                    using RawFrameDataView rawFrame = ProfilerDriver.GetRawFrameDataView(frameIndex, threadIndex);
                     scannedThreads++;
                     frameHadData = true;
-                    ScanHierarchyFrame(frame, sites, frameSummaries);
+                    ScanHierarchyFrame(frame, rawFrame, sites, frameSummaries, rawAttribution);
                 }
 
                 if (frameHadData)
@@ -422,11 +462,10 @@ namespace Game.Editor
             int playerRelevantSamples = 0;
             List<AllocationSite> playerRelevantSites = new(rankedSites.Count);
             List<AllocationSite> editorToolingSites = new(rankedSites.Count);
-            AllocationClassificationContext classificationContext = CreateAllocationClassificationContext();
             for (int i = 0; i < rankedSites.Count; i++)
             {
                 AllocationSite site = rankedSites[i];
-                if (IsExcludedFromPlayerRelevantAllocation(site, classificationContext))
+                if (IsExcludedFromPlayerRelevantAllocation(site))
                 {
                     editorToolingBytes += site.Bytes;
                     editorToolingSamples += site.Samples;
@@ -455,6 +494,9 @@ namespace Game.Editor
             builder.AppendLine($"- Scanned thread views: {scannedThreads}");
             builder.AppendLine($"- GC.Alloc samples: {totalSamples}");
             builder.AppendLine($"- GC.Alloc bytes from hierarchy column: {totalBytes}");
+            builder.AppendLine($"- Raw allocation samples resolved: {rawAttribution.ResolvedSamples} ({rawAttribution.ResolvedBytes} bytes)");
+            builder.AppendLine($"- Raw allocation samples conservatively unresolved: {rawAttribution.UnresolvedSamples} across {rawAttribution.UnresolvedItems} hierarchy items ({rawAttribution.UnresolvedBytes} bytes)");
+            builder.AppendLine($"- Raw attribution failure reasons: `{rawAttribution.FormatFailureReasons()}`");
             builder.AppendLine($"- GC.Alloc samples excluding editor/tooling/diagnostic rows: {playerRelevantSamples}");
             builder.AppendLine($"- GC.Alloc bytes excluding editor/tooling/diagnostic rows: {playerRelevantBytes}");
             if (mode == CaptureMode.SteadyState)
@@ -533,7 +575,9 @@ namespace Game.Editor
             else
                 builder.AppendLine("- This automated pass covers steady-state Match HUD/runtime after the shell completes the Menu -> Match transition.");
             builder.AppendLine("- Spike-frame call stacks still require an interactive Profiler capture with Call Stacks -> GC.Alloc enabled unless a deterministic spike driver is added.");
-            builder.AppendLine("- Editor/tooling/diagnostic rows include Burst compiler threads, Unity AI/MCP/Tracing frames, diagnostic logging from `PerformanceDiagnosticsSystemHelper.LogNoStackTrace`, and probe-contradicted Mono JIT attribution rows. Do not treat those raw rows as gameplay work unless they also appear in the player-relevant table.");
+            builder.AppendLine("- Allocation bytes come from per-instance GC metadata; hierarchy ownership comes from the allocation item path; managed stacks are resolved from each item's raw profiler sample index.");
+            builder.AppendLine("- Missing or malformed raw sample metadata is recorded as an unresolved hierarchy allocation and remains inside the player-relevant budget unless its hierarchy/thread independently proves editor tooling ownership.");
+            builder.AppendLine("- Editor/tooling/diagnostic rows include only Burst compiler threads, Unity AI/MCP/Tracing hierarchy paths, and diagnostic logging hierarchy paths. Gameplay allocations are not excluded by direct-probe results.");
             builder.AppendLine("- Do not use this report to edit unrelated files unless they appear in the call stacks above.");
             return builder.ToString();
         }
@@ -570,66 +614,31 @@ namespace Game.Editor
                 builder.AppendLine("| 0 | 0 | 0 | 0 | n/a | n/a | No GC.Alloc samples found in this automated capture. | n/a |");
         }
 
-        private readonly struct AllocationClassificationContext
-        {
-            public readonly bool SelectionRuntimeProbeRecordedZeroBytes;
-
-            public AllocationClassificationContext(bool selectionRuntimeProbeRecordedZeroBytes)
-            {
-                SelectionRuntimeProbeRecordedZeroBytes = selectionRuntimeProbeRecordedZeroBytes;
-            }
-        }
-
-        private static AllocationClassificationContext CreateAllocationClassificationContext()
-        {
-            SelectionRuntimeDiagnosticsSystemHelper.EditorSelectionAllocationProbeSnapshot selectionProbe =
-                SelectionRuntimeDiagnosticsSystemHelper.GetEditorSelectionAllocationProbe();
-            return new AllocationClassificationContext(selectionProbe.TotalBytes == 0);
-        }
-
-        private static bool IsExcludedFromPlayerRelevantAllocation(
-            AllocationSite site,
-            AllocationClassificationContext context)
-        {
-            return IsEditorToolingAllocation(site) ||
-                   IsProbeContradictedMonoJitAttribution(site, context);
-        }
-
-        private static bool IsEditorToolingAllocation(AllocationSite site)
-        {
-            if (site == null)
-                return false;
-
-            if (!string.IsNullOrEmpty(site.ThreadName) &&
-                site.ThreadName.StartsWith("Burst-CompilerThread", StringComparison.Ordinal))
-                return true;
-
-            return ContainsEditorToolingFrame(site.Callstack) ||
-                   ContainsEditorToolingFrame(site.HierarchyPath) ||
-                   ContainsDiagnosticLoggingFrame(site.Callstack);
-        }
-
-        private static bool IsProbeContradictedMonoJitAttribution(
-            AllocationSite site,
-            AllocationClassificationContext context)
+        private static bool IsExcludedFromPlayerRelevantAllocation(AllocationSite site)
         {
             return site != null &&
-                   context.SelectionRuntimeProbeRecordedZeroBytes &&
-                   ContainsMonoJitFrame(site.Callstack) &&
-                   ContainsSelectionRuntimePhaseFrame(site.Callstack);
+                   ShouldExcludeAllocationForClassification(
+                       site.ThreadName,
+                       site.HierarchyPath,
+                       site.Callstack);
         }
 
-        private static bool ContainsMonoJitFrame(string value)
+        private static bool ShouldExcludeAllocationForClassification(
+            string threadName,
+            string hierarchyPath,
+            string callstack)
         {
-            return !string.IsNullOrEmpty(value) &&
-                   value.Contains("(Mono JIT Code)", StringComparison.Ordinal);
+            return IsEditorToolingAllocation(threadName, hierarchyPath);
         }
 
-        private static bool ContainsSelectionRuntimePhaseFrame(string value)
+        private static bool IsEditorToolingAllocation(string threadName, string hierarchyPath)
         {
-            return !string.IsNullOrEmpty(value) &&
-                   value.Contains("SelectionGameplayStartupSystemHelper/<>c__DisplayClass", StringComparison.Ordinal) &&
-                   value.Contains("<Initialize>g__UpdateSelectionRuntimePhases", StringComparison.Ordinal);
+            if (!string.IsNullOrEmpty(threadName) &&
+                threadName.StartsWith("Burst-CompilerThread", StringComparison.Ordinal))
+                return true;
+
+            return ContainsEditorToolingFrame(hierarchyPath) ||
+                   ContainsDiagnosticLoggingFrame(hierarchyPath);
         }
 
         private static bool ContainsEditorToolingFrame(string value)
@@ -955,8 +964,10 @@ namespace Game.Editor
 
         private static void ScanHierarchyFrame(
             HierarchyFrameDataView frame,
+            RawFrameDataView rawFrame,
             Dictionary<string, AllocationSite> sites,
-            Dictionary<int, FrameAllocationSummary> frameSummaries)
+            Dictionary<int, FrameAllocationSummary> frameSummaries,
+            RawAllocationAttributionSummary rawAttribution)
         {
             int rootId = frame.GetRootItemID();
             if (rootId == HierarchyFrameDataView.invalidSampleId)
@@ -970,7 +981,15 @@ namespace Game.Editor
             for (int i = 0; i < children.Count; i++)
             {
                 int childId = children[i];
-                ScanHierarchyItem(frame, childId, frame.GetItemName(childId), sites, ref frameBytes, ref frameSamples);
+                ScanHierarchyItem(
+                    frame,
+                    rawFrame,
+                    childId,
+                    frame.GetItemName(childId),
+                    sites,
+                    rawAttribution,
+                    ref frameBytes,
+                    ref frameSamples);
             }
 
             if (frameSamples <= 0)
@@ -986,9 +1005,11 @@ namespace Game.Editor
 
         private static bool ScanHierarchyItem(
             HierarchyFrameDataView frame,
+            RawFrameDataView rawFrame,
             int itemId,
             string hierarchyPath,
             Dictionary<string, AllocationSite> sites,
+            RawAllocationAttributionSummary rawAttribution,
             ref long frameBytes,
             ref int frameSamples)
         {
@@ -1006,7 +1027,15 @@ namespace Game.Editor
                 string childPath = string.IsNullOrEmpty(hierarchyPath)
                     ? childName
                     : hierarchyPath + " > " + childName;
-                if (ScanHierarchyItem(frame, childId, childPath, sites, ref frameBytes, ref frameSamples))
+                if (ScanHierarchyItem(
+                        frame,
+                        rawFrame,
+                        childId,
+                        childPath,
+                        sites,
+                        rawAttribution,
+                        ref frameBytes,
+                        ref frameSamples))
                     childHasGc = true;
             }
 
@@ -1020,35 +1049,238 @@ namespace Game.Editor
                 return true;
 
             int mergedSampleCount = frame.GetItemMergedSamplesCount(itemId);
+            List<int> rawSampleIndices = new(Math.Max(1, mergedSampleCount));
+            string failureReason;
+            bool resolved = false;
+            try
+            {
+                frame.GetItemRawFrameDataViewIndices(itemId, rawSampleIndices);
+                long resolvedBytes = 0;
+                int resolvedSamples = 0;
+                resolved = TryResolveRawAllocationSamples(
+                    itemBytes,
+                    mergedSampleCount,
+                    rawSampleIndices,
+                    rawFrame.valid ? rawFrame.sampleCount : 0,
+                    rawSampleIndex => rawFrame.GetSampleName(rawSampleIndex),
+                    rawSampleIndex => rawFrame.GetSampleMetadataAsLong(rawSampleIndex, 0),
+                    rawSampleIndex => ResolveRawSampleCallstack(rawFrame, rawSampleIndex),
+                    (rawSampleIndex, bytes, callstack) =>
+                    {
+                        RecordSite(
+                            sites,
+                            itemName,
+                            frame.threadName,
+                            hierarchyPath,
+                            callstack,
+                            bytes,
+                            frame.frameIndex,
+                            1);
+                        resolvedBytes += bytes;
+                        resolvedSamples++;
+                    },
+                    out failureReason);
+
+                if (resolved)
+                {
+                    frameBytes += resolvedBytes;
+                    frameSamples += resolvedSamples;
+                    rawAttribution.RecordResolved(resolvedSamples, resolvedBytes);
+                    return true;
+                }
+            }
+            catch (Exception exception)
+            {
+                failureReason = $"rawMappingException:{exception.GetType().Name}";
+            }
+
+            int unresolvedSampleCount = ResolveUnresolvedSampleCount(
+                mergedSampleCount,
+                rawSampleIndices.Count);
+            rawAttribution.RecordUnresolved(unresolvedSampleCount, itemBytes, failureReason);
+            RecordSite(
+                sites,
+                itemName,
+                frame.threadName,
+                hierarchyPath,
+                $"(raw allocation attribution unavailable: {failureReason})",
+                itemBytes,
+                frame.frameIndex,
+                unresolvedSampleCount);
+            frameBytes += itemBytes;
+            frameSamples += unresolvedSampleCount;
+            return true;
+        }
+
+        private static bool TryResolveRawAllocationSamples(
+            long itemBytes,
+            int mergedSampleCount,
+            IReadOnlyList<int> rawSampleIndices,
+            int rawSampleCount,
+            Func<int, string> sampleNameResolver,
+            Func<int, long> allocationBytesResolver,
+            Func<int, string> callstackResolver,
+            Action<int, long, string> resolvedSample,
+            out string failureReason)
+        {
+            failureReason = string.Empty;
+            if (itemBytes <= 0)
+            {
+                failureReason = "itemBytesNonPositive";
+                return false;
+            }
+
             if (mergedSampleCount <= 0)
             {
-                RecordSite(
-                    sites,
-                    itemName,
-                    frame.threadName,
-                    hierarchyPath,
-                    frame.ResolveItemCallstack(itemId),
-                    itemBytes,
-                    frame.frameIndex);
-                frameBytes += itemBytes;
-                frameSamples++;
-                return true;
+                failureReason = "mergedSampleCountNonPositive";
+                return false;
             }
 
-            List<double> sampleBytes = new(mergedSampleCount);
-            frame.GetItemMergedSamplesColumnDataAsDoubles(itemId, HierarchyFrameDataView.columnGcMemory, sampleBytes);
+            if (rawSampleIndices == null || rawSampleIndices.Count != mergedSampleCount)
+            {
+                failureReason = $"rawIndexCountMismatch:{rawSampleIndices?.Count ?? 0}/{mergedSampleCount}";
+                return false;
+            }
+
+            if (rawSampleCount <= 0 ||
+                sampleNameResolver == null ||
+                allocationBytesResolver == null ||
+                callstackResolver == null ||
+                resolvedSample == null)
+            {
+                failureReason = "rawSampleMetadataUnavailable";
+                return false;
+            }
+
+            int[] indices = new int[mergedSampleCount];
+            long[] bytesBySample = new long[mergedSampleCount];
+            string[] callstacks = new string[mergedSampleCount];
+            long totalBytes = 0;
             for (int sampleIndex = 0; sampleIndex < mergedSampleCount; sampleIndex++)
             {
-                long bytes = sampleIndex < sampleBytes.Count
-                    ? Math.Max(0, (long)Math.Round(sampleBytes[sampleIndex]))
-                    : itemBytes / Math.Max(1, mergedSampleCount);
-                string callstack = frame.ResolveItemMergedSampleCallstack(itemId, sampleIndex);
-                RecordSite(sites, itemName, frame.threadName, hierarchyPath, callstack, bytes, frame.frameIndex);
-                frameBytes += bytes;
-                frameSamples++;
+                int rawSampleIndex = rawSampleIndices[sampleIndex];
+                if (rawSampleIndex < 0 || rawSampleIndex >= rawSampleCount)
+                {
+                    failureReason = $"rawSampleIndexOutOfRange:{rawSampleIndex}/{rawSampleCount}";
+                    return false;
+                }
+
+                string sampleName;
+                try
+                {
+                    sampleName = sampleNameResolver(rawSampleIndex);
+                }
+                catch (Exception exception)
+                {
+                    failureReason = $"rawSampleNameException:{exception.GetType().Name}";
+                    return false;
+                }
+
+                if (!string.Equals(sampleName, "GC.Alloc", StringComparison.Ordinal))
+                {
+                    failureReason = $"rawSampleNameMismatch:{sampleName ?? "<null>"}";
+                    return false;
+                }
+
+                long bytes;
+                try
+                {
+                    bytes = allocationBytesResolver(rawSampleIndex);
+                }
+                catch (Exception exception)
+                {
+                    failureReason = $"rawSampleByteMetadataException:{exception.GetType().Name}";
+                    return false;
+                }
+
+                if (bytes <= 0)
+                {
+                    failureReason = $"sampleBytesNonPositive:{bytes}";
+                    return false;
+                }
+
+                string callstack;
+                try
+                {
+                    callstack = callstackResolver(rawSampleIndex);
+                }
+                catch (Exception exception)
+                {
+                    failureReason = $"rawSampleCallstackException:{exception.GetType().Name}";
+                    return false;
+                }
+
+                if (string.IsNullOrWhiteSpace(callstack))
+                {
+                    failureReason = "rawSampleCallstackUnavailable";
+                    return false;
+                }
+
+                indices[sampleIndex] = rawSampleIndex;
+                bytesBySample[sampleIndex] = bytes;
+                callstacks[sampleIndex] = callstack;
+                try
+                {
+                    totalBytes = checked(totalBytes + bytes);
+                }
+                catch (OverflowException)
+                {
+                    failureReason = "sampleByteTotalOverflow";
+                    return false;
+                }
             }
 
+            if (totalBytes != itemBytes)
+            {
+                failureReason = $"sampleByteTotalMismatch:{totalBytes}/{itemBytes}";
+                return false;
+            }
+
+            for (int sampleIndex = 0; sampleIndex < mergedSampleCount; sampleIndex++)
+                resolvedSample(indices[sampleIndex], bytesBySample[sampleIndex], callstacks[sampleIndex]);
+
             return true;
+        }
+
+        private static int ResolveUnresolvedSampleCount(
+            int mergedSampleCount,
+            int rawItemSampleCount)
+        {
+            if (mergedSampleCount > 0)
+                return mergedSampleCount;
+            if (rawItemSampleCount > 0)
+                return rawItemSampleCount;
+            return 1;
+        }
+
+        private static string ResolveRawSampleCallstack(RawFrameDataView rawFrame, int rawSampleIndex)
+        {
+            List<ulong> callSites = new(16);
+            rawFrame.GetSampleCallstack(rawSampleIndex, callSites);
+            if (callSites.Count == 0)
+                return string.Empty;
+
+            StringBuilder builder = new(512);
+            int resolvedFrameIndex = 0;
+            for (int i = 0; i < callSites.Count; i++)
+            {
+                FrameDataView.MethodInfo method = rawFrame.ResolveMethodInfo(callSites[i]);
+                if (string.IsNullOrWhiteSpace(method.methodName))
+                    continue;
+
+                builder.Append(" #").Append(resolvedFrameIndex++).Append(' ');
+                if (!string.IsNullOrWhiteSpace(method.sourceFileName))
+                {
+                    builder.Append('[')
+                        .Append(method.sourceFileName)
+                        .Append(':')
+                        .Append(method.sourceFileLine)
+                        .Append("] ");
+                }
+                builder.AppendLine(method.methodName);
+            }
+
+            return builder.ToString().TrimEnd();
         }
 
         private static void RecordSite(
@@ -1058,7 +1290,8 @@ namespace Game.Editor
             string hierarchyPath,
             string callstack,
             long bytes,
-            int frameIndex)
+            int frameIndex,
+            int sampleCount)
         {
             if (string.IsNullOrWhiteSpace(callstack))
                 callstack = "(no managed call stack captured)";
@@ -1078,7 +1311,7 @@ namespace Game.Editor
             }
 
             site.Bytes += bytes;
-            site.Samples++;
+            site.Samples += Math.Max(1, sampleCount);
             if (site.LastFrameIndex != frameIndex)
             {
                 site.LastFrameIndex = frameIndex;

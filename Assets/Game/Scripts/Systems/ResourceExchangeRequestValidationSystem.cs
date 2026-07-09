@@ -43,6 +43,11 @@ namespace Game.Runtime
                 DynamicBuffer<ResourceExchangeToastComponent> toasts = hasToasts
                     ? state.EntityManager.GetBuffer<ResourceExchangeToastComponent>(exchangeEntity)
                     : default;
+                bool hasAriaAnnouncements =
+                    state.EntityManager.HasBuffer<ResourceExchangeAriaAnnouncementComponent>(exchangeEntity);
+                DynamicBuffer<ResourceExchangeAriaAnnouncementComponent> ariaAnnouncements = hasAriaAnnouncements
+                    ? state.EntityManager.GetBuffer<ResourceExchangeAriaAnnouncementComponent>(exchangeEntity)
+                    : default;
                 ProcessRequests(
                     ref requestQueue.ValueRW,
                     enabled.ValueRO,
@@ -57,6 +62,8 @@ namespace Game.Runtime
                     hasDeltaFlyouts,
                     toasts,
                     hasToasts,
+                    ariaAnnouncements,
+                    hasAriaAnnouncements,
                     elapsedSeconds);
             }
         }
@@ -248,6 +255,8 @@ namespace Game.Runtime
                 emitDeltaFlyouts,
                 default,
                 false,
+                default,
+                false,
                 elapsedSeconds);
         }
 
@@ -265,6 +274,43 @@ namespace Game.Runtime
             bool emitDeltaFlyouts,
             DynamicBuffer<ResourceExchangeToastComponent> toasts,
             bool emitToasts,
+            float elapsedSeconds)
+        {
+            ProcessRequests(
+                ref requestQueue,
+                enabled,
+                ref wallet,
+                ref summary,
+                recipes,
+                requests,
+                queue,
+                results,
+                economyEvents,
+                deltaFlyouts,
+                emitDeltaFlyouts,
+                toasts,
+                emitToasts,
+                default,
+                false,
+                elapsedSeconds);
+        }
+
+        public static void ProcessRequests(
+            ref ResourceExchangeRequestQueueComponent requestQueue,
+            in ResourceExchangeEnabledComponent enabled,
+            ref ResourceExchangeWalletComponent wallet,
+            ref ResourceExchangeSummaryComponent summary,
+            DynamicBuffer<ResourceExchangeRecipeComponent> recipes,
+            DynamicBuffer<ResourceExchangeRequestComponent> requests,
+            DynamicBuffer<ResourceExchangeQueueComponent> queue,
+            DynamicBuffer<ResourceExchangeResultComponent> results,
+            DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
+            DynamicBuffer<ResourceExchangeDeltaFlyoutComponent> deltaFlyouts,
+            bool emitDeltaFlyouts,
+            DynamicBuffer<ResourceExchangeToastComponent> toasts,
+            bool emitToasts,
+            DynamicBuffer<ResourceExchangeAriaAnnouncementComponent> ariaAnnouncements,
+            bool emitAriaAnnouncements,
             float elapsedSeconds)
         {
             if (requests.Length == 0)
@@ -313,6 +359,8 @@ namespace Game.Runtime
                             emitDeltaFlyouts,
                             toasts,
                             emitToasts,
+                            ariaAnnouncements,
+                            emitAriaAnnouncements,
                             request);
                         break;
                     case ResourceExchangeRequestKind.RushAll:
@@ -327,6 +375,8 @@ namespace Game.Runtime
                             emitDeltaFlyouts,
                             toasts,
                             emitToasts,
+                            ariaAnnouncements,
+                            emitAriaAnnouncements,
                             request);
                         break;
                     case ResourceExchangeRequestKind.ClearCompleted:
@@ -352,6 +402,10 @@ namespace Game.Runtime
 
                 results.Add(result);
                 ResourceExchangeToastTextUtility.TryAppendToast(toasts, emitToasts, result);
+                ResourceExchangeAriaTextUtility.TryAppendAnnouncement(
+                    ariaAnnouncements,
+                    emitAriaAnnouncements,
+                    result);
                 ApplySummary(ref summary, enabled, queue, result);
             }
 
@@ -570,6 +624,8 @@ namespace Game.Runtime
             bool emitDeltaFlyouts,
             DynamicBuffer<ResourceExchangeToastComponent> toasts,
             bool emitToasts,
+            DynamicBuffer<ResourceExchangeAriaAnnouncementComponent> ariaAnnouncements,
+            bool emitAriaAnnouncements,
             in ResourceExchangeRequestComponent request)
         {
             ResourceExchangeReason gateReason = ValidateRushGate(enabled, request, out byte factionId);
@@ -617,6 +673,8 @@ namespace Game.Runtime
                 emitDeltaFlyouts,
                 toasts,
                 emitToasts,
+                ariaAnnouncements,
+                emitAriaAnnouncements,
                 queueIndex,
                 item,
                 recipe,
@@ -637,6 +695,8 @@ namespace Game.Runtime
             bool emitDeltaFlyouts,
             DynamicBuffer<ResourceExchangeToastComponent> toasts,
             bool emitToasts,
+            DynamicBuffer<ResourceExchangeAriaAnnouncementComponent> ariaAnnouncements,
+            bool emitAriaAnnouncements,
             in ResourceExchangeRequestComponent request)
         {
             ResourceExchangeReason gateReason = ValidateRushGate(enabled, request, out byte factionId);
@@ -690,6 +750,8 @@ namespace Game.Runtime
                     emitDeltaFlyouts,
                     toasts,
                     emitToasts,
+                    ariaAnnouncements,
+                    emitAriaAnnouncements,
                     i,
                     item,
                     recipe,
@@ -1140,6 +1202,8 @@ namespace Game.Runtime
             bool emitDeltaFlyouts,
             DynamicBuffer<ResourceExchangeToastComponent> toasts,
             bool emitToasts,
+            DynamicBuffer<ResourceExchangeAriaAnnouncementComponent> ariaAnnouncements,
+            bool emitAriaAnnouncements,
             int queueIndex,
             in ResourceExchangeQueueComponent source,
             in ResourceExchangeRecipeComponent recipe,
@@ -1183,6 +1247,8 @@ namespace Game.Runtime
                     emitDeltaFlyouts,
                     toasts,
                     emitToasts,
+                    ariaAnnouncements,
+                    emitAriaAnnouncements,
                     out item);
             }
 

@@ -130,6 +130,15 @@ namespace Game.Components
         Error = 3
     }
 
+    public enum ResourceExchangeAriaAnnouncementKind : byte
+    {
+        None = 0,
+        InsufficientResources = 1,
+        ExchangeStarted = 2,
+        ExchangeComplete = 3,
+        ExchangeBlocked = 4
+    }
+
     public struct ResourceExchangeEnabledComponent : IComponentData
     {
         public byte Enabled;
@@ -297,6 +306,25 @@ namespace Game.Components
         public FixedString128Bytes RecipeId;
         public FixedString128Bytes Title;
         public FixedString128Bytes Body;
+    }
+
+    public struct ResourceExchangeAriaAnnouncementComponent : IBufferElementData
+    {
+        public int SequenceId;
+        public int RequestId;
+        public int QueueItemId;
+        public byte FactionId;
+        public ResourceExchangeAriaAnnouncementKind AnnouncementKind;
+        public AssistantMessagePriority Priority;
+        public ResourceExchangeResultKind ResultKind;
+        public ResourceExchangeReason Reason;
+        public ResourceExchangeResourceKind InputResource;
+        public ResourceExchangeResourceKind OutputResource;
+        public int InputAmount;
+        public int OutputAmount;
+        public FixedString128Bytes RecipeId;
+        public FixedString64Bytes SuppressionKey;
+        public FixedString128Bytes Text;
     }
 
     public struct ResourceExchangeVisualRequestComponent : IBufferElementData

@@ -37,6 +37,11 @@ namespace Game.Runtime
                 DynamicBuffer<ResourceExchangeToastComponent> toasts = hasToasts
                     ? state.EntityManager.GetBuffer<ResourceExchangeToastComponent>(exchangeEntity)
                     : default;
+                bool hasAriaAnnouncements =
+                    state.EntityManager.HasBuffer<ResourceExchangeAriaAnnouncementComponent>(exchangeEntity);
+                DynamicBuffer<ResourceExchangeAriaAnnouncementComponent> ariaAnnouncements = hasAriaAnnouncements
+                    ? state.EntityManager.GetBuffer<ResourceExchangeAriaAnnouncementComponent>(exchangeEntity)
+                    : default;
                 TickQueue(
                     enabled.ValueRO,
                     ref wallet.ValueRW,
@@ -48,6 +53,8 @@ namespace Game.Runtime
                     hasDeltaFlyouts,
                     toasts,
                     hasToasts,
+                    ariaAnnouncements,
+                    hasAriaAnnouncements,
                     deltaSeconds);
             }
         }
@@ -68,6 +75,8 @@ namespace Game.Runtime
                 queue,
                 results,
                 economyEvents,
+                default,
+                false,
                 default,
                 false,
                 default,
@@ -97,6 +106,8 @@ namespace Game.Runtime
                 emitDeltaFlyouts,
                 default,
                 false,
+                default,
+                false,
                 deltaSeconds);
         }
 
@@ -111,6 +122,37 @@ namespace Game.Runtime
             bool emitDeltaFlyouts,
             DynamicBuffer<ResourceExchangeToastComponent> toasts,
             bool emitToasts,
+            float deltaSeconds)
+        {
+            TickQueue(
+                enabled,
+                ref wallet,
+                ref summary,
+                queue,
+                results,
+                economyEvents,
+                deltaFlyouts,
+                emitDeltaFlyouts,
+                toasts,
+                emitToasts,
+                default,
+                false,
+                deltaSeconds);
+        }
+
+        public static void TickQueue(
+            in ResourceExchangeEnabledComponent enabled,
+            ref ResourceExchangeWalletComponent wallet,
+            ref ResourceExchangeSummaryComponent summary,
+            DynamicBuffer<ResourceExchangeQueueComponent> queue,
+            DynamicBuffer<ResourceExchangeResultComponent> results,
+            DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
+            DynamicBuffer<ResourceExchangeDeltaFlyoutComponent> deltaFlyouts,
+            bool emitDeltaFlyouts,
+            DynamicBuffer<ResourceExchangeToastComponent> toasts,
+            bool emitToasts,
+            DynamicBuffer<ResourceExchangeAriaAnnouncementComponent> ariaAnnouncements,
+            bool emitAriaAnnouncements,
             float deltaSeconds)
         {
             if (queue.Length == 0)
@@ -148,6 +190,8 @@ namespace Game.Runtime
                         emitDeltaFlyouts,
                         toasts,
                         emitToasts,
+                        ariaAnnouncements,
+                        emitAriaAnnouncements,
                         out item);
                     queue[i] = item;
                     continue;
@@ -171,6 +215,7 @@ namespace Game.Runtime
                         CreateResult(item, ResourceExchangeResultKind.QueueBlocked, 0, storageReason);
                     results.Add(result);
                     ResourceExchangeToastTextUtility.TryAppendToast(toasts, emitToasts, result);
+                    ResourceExchangeAriaTextUtility.TryAppendAnnouncement(ariaAnnouncements, emitAriaAnnouncements, result);
                     continue;
                 }
 
@@ -187,6 +232,8 @@ namespace Game.Runtime
                         emitDeltaFlyouts,
                         toasts,
                         emitToasts,
+                        ariaAnnouncements,
+                        emitAriaAnnouncements,
                         out item);
                 }
 
@@ -213,6 +260,8 @@ namespace Game.Runtime
                 false,
                 default,
                 false,
+                default,
+                false,
                 out completed);
         }
 
@@ -234,6 +283,8 @@ namespace Game.Runtime
                 emitDeltaFlyouts,
                 default,
                 false,
+                default,
+                false,
                 out completed);
         }
 
@@ -248,6 +299,33 @@ namespace Game.Runtime
             bool emitToasts,
             out ResourceExchangeQueueComponent completed)
         {
+            return TryCompleteQueueItem(
+                ref wallet,
+                source,
+                results,
+                economyEvents,
+                deltaFlyouts,
+                emitDeltaFlyouts,
+                toasts,
+                emitToasts,
+                default,
+                false,
+                out completed);
+        }
+
+        public static bool TryCompleteQueueItem(
+            ref ResourceExchangeWalletComponent wallet,
+            in ResourceExchangeQueueComponent source,
+            DynamicBuffer<ResourceExchangeResultComponent> results,
+            DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
+            DynamicBuffer<ResourceExchangeDeltaFlyoutComponent> deltaFlyouts,
+            bool emitDeltaFlyouts,
+            DynamicBuffer<ResourceExchangeToastComponent> toasts,
+            bool emitToasts,
+            DynamicBuffer<ResourceExchangeAriaAnnouncementComponent> ariaAnnouncements,
+            bool emitAriaAnnouncements,
+            out ResourceExchangeQueueComponent completed)
+        {
             bool stateChanged = false;
             CompleteQueueItem(
                 ref wallet,
@@ -259,6 +337,8 @@ namespace Game.Runtime
                 emitDeltaFlyouts,
                 toasts,
                 emitToasts,
+                ariaAnnouncements,
+                emitAriaAnnouncements,
                 out completed);
             return completed.State == ResourceExchangeQueueState.Completed;
         }
@@ -273,6 +353,8 @@ namespace Game.Runtime
             bool emitDeltaFlyouts,
             DynamicBuffer<ResourceExchangeToastComponent> toasts,
             bool emitToasts,
+            DynamicBuffer<ResourceExchangeAriaAnnouncementComponent> ariaAnnouncements,
+            bool emitAriaAnnouncements,
             out ResourceExchangeQueueComponent completed)
         {
             completed = source;
@@ -287,6 +369,10 @@ namespace Game.Runtime
                     CreateResult(completed, ResourceExchangeResultKind.QueueBlocked, 0, storageReason);
                 results.Add(blockedResult);
                 ResourceExchangeToastTextUtility.TryAppendToast(toasts, emitToasts, blockedResult);
+                ResourceExchangeAriaTextUtility.TryAppendAnnouncement(
+                    ariaAnnouncements,
+                    emitAriaAnnouncements,
+                    blockedResult);
                 return;
             }
 
@@ -322,6 +408,10 @@ namespace Game.Runtime
                 CreateResult(completed, ResourceExchangeResultKind.QueueCompleted, 1, ResourceExchangeReason.None);
             results.Add(completedResult);
             ResourceExchangeToastTextUtility.TryAppendToast(toasts, emitToasts, completedResult);
+            ResourceExchangeAriaTextUtility.TryAppendAnnouncement(
+                ariaAnnouncements,
+                emitAriaAnnouncements,
+                completedResult);
         }
 
         private static void EmitDeltaFlyout(

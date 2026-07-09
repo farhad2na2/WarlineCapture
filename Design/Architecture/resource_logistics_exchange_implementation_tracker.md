@@ -23,7 +23,7 @@ Implement the timed Resource Logistics Exchange without drifting from WarlineCap
 
 ## Progress Summary
 
-Overall implementation progress: 69% (65/94 checklist items complete).
+Overall implementation progress: 74% (70/94 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -35,7 +35,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 3. Queue ticking, completion, cancel, refund | Complete | 11 | 11 | 100% | Timed queue, output grant once, cancel/refund rules, mission-end cancel/refund policy. |
 | 4. Rush Tickets | Complete | 7 | 7 | 100% | Rush eligible jobs with ticket spend, per-item caps, rush-all budget, and feedback. |
 | 5. UI popup and header routing | Complete | 15 | 15 | 100% | ECS-backed UI read-model, target-lock reference, separated layer pack, Canvas popup prefab, serialized view refs, cards, details, amount stepper, queue panel, enabled-gated resource header tap route, popup input restoration, live read-model binding, request-buffer wiring, TMP/Oxanium validation, prefab contract tests, and 16:9/20:9 captures complete. |
-| 6. World presentation | In progress | 2 | 8 | 25% | Presentation anchor data, deterministic fallback resolution, and data-only ECS visual cue emission are complete; managed pooled actor playback, fallback actor behavior, cleanup, and validation remain. |
+| 6. World presentation | In progress | 7 | 8 | 88% | Presentation anchors, deterministic fallback resolution, data-only ECS visual cue emission, managed presentation boundary, pooled actor reuse, actor safety, fallback behavior, and focused validation are complete; popup/mission/scene cleanup wiring remains. |
 | 7. Audio, VFX, feedback, ARIA | Not started | 0 | 7 | 0% | Config-driven audio, resource flyouts, completion/reject feedback, optional ARIA copy. |
 | 8. AI, balance, telemetry | Not started | 0 | 6 | 0% | Economy events, balancing reports, AI awareness if enabled for AI factions. |
 | 9. Validation and performance | Not started | 0 | 10 | 0% | Focused tests, compile, architecture guardrails, UI captures, GC/performance checks. |
@@ -181,12 +181,12 @@ Exit criteria:
 
 - [x] Define presentation anchors for base depot, runway/landing zone, storage, and fallback safe anchor.
 - [x] Add ECS visual cue request data for exchange start, load, plane landing, plane departure, unload, and completion.
-- [ ] Implement managed presentation boundary as `ResourceExchangeVisualPresentationSystemHelper` or existing approved presentation owner.
-- [ ] Use pooled plane/truck presentation actors or an existing pooling boundary.
-- [ ] Ensure presentation actors do not block gameplay pathfinding or mutate economy state.
-- [ ] Add fallback behavior when anchors or presentation prefabs are missing.
+- [x] Implement managed presentation boundary as `ResourceExchangeVisualPresentationSystemHelper` or existing approved presentation owner.
+- [x] Use pooled plane/truck presentation actors or an existing pooling boundary.
+- [x] Ensure presentation actors do not block gameplay pathfinding or mutate economy state.
+- [x] Add fallback behavior when anchors or presentation prefabs are missing.
 - [ ] Add visual state cleanup on popup close, mission end, scene unload, and queue cancellation.
-- [ ] Add tests or playmode validation for missing-anchor fallback and no duplicate presentation actors.
+- [x] Add tests or playmode validation for missing-anchor fallback and no duplicate presentation actors.
 
 Exit criteria:
 
@@ -210,6 +210,23 @@ Phase 6 implementation notes:
   - `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`
   - `Tools/CI/invoke_unity_macos.sh --project /private/tmp/wlc-resource-exchange-next --log /private/tmp/wlc-resource-exchange-visual-cue-validation.log --timeout 420 -- -quit -executeMethod ResourceExchangeVisualCueSystemTests.RunFocusedValidation`
   - Unity focused result: `[ResourceExchangeVisualCueValidation] result=Passed tests=5`
+- Known unrelated worktree side effect left unstaged: `Assets/Settings/UniversalRenderPipelineGlobalSettings.asset`.
+
+### 2026-07-09 - Phase 6C Managed Presentation Boundary
+
+- Added `ResourceExchangeVisualPresentationSystemHelper` as the managed-only boundary that consumes `ResourceExchangeVisualRequestComponent` rows and clears consumed cue buffers.
+- Added explicit `ResourceExchangeVisualActorKind` mapping for exchange markers, transport planes, resource trucks, completion markers, and cancellation markers.
+- Added pooled actor acquisition/release by prefab, active actor reuse by queue item and actor kind, and terminal cue release for queue-scoped transient actors.
+- Added missing-anchor and missing-prefab fallback behavior. Missing anchors/prefabs do not spawn actors, do not throw, and still clear consumed cue requests after recording result counts.
+- Presentation actors are non-authoritative: the helper does not read or write wallet, queue, recipe, result, or economy-event buffers. It only consumes visual requests.
+- Presentation actors disable all child `Collider` components on acquire so they do not create physics/pathfinding blockers.
+- Added cleanup APIs `ReleaseActorsForQueue` and `ReleaseAll`; scene/popup/mission-end wiring remains as the last Phase 6 task.
+- Validation passed:
+  - `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly`
+  - `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly`
+  - `git diff --check`
+  - `Tools/CI/invoke_unity_macos.sh --project /private/tmp/wlc-resource-exchange-next --log /private/tmp/wlc-resource-exchange-visual-presentation-validation.log --timeout 420 -- -quit -executeMethod ResourceExchangeVisualPresentationSystemHelperTests.RunFocusedValidation`
+  - Unity focused result: `[ResourceExchangeVisualPresentationValidation] result=Passed tests=5`
 - Known unrelated worktree side effect left unstaged: `Assets/Settings/UniversalRenderPipelineGlobalSettings.asset`.
 
 ## Phase 7: Audio, VFX, Feedback, And ARIA

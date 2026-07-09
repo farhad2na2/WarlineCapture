@@ -250,7 +250,17 @@ namespace Game.Runtime
                 return false;
             }
 
-            if (!TryReserveHaulCapacity(context, em, source, destination, resourceKind, loadAmount, out UnitResourceHaulReservation reservation))
+            bool allowDeferredSourceReservation = resourceKind == ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil &&
+                                                  context.ResourceHaulerUtilitySystemHelper.IsOilSourceBuilding(source);
+            if (!TryReserveHaulCapacity(
+                    context,
+                    em,
+                    source,
+                    destination,
+                    resourceKind,
+                    loadAmount,
+                    allowDeferredSourceReservation,
+                    out UnitResourceHaulReservation reservation))
             {
                 SetResourceHaulStatus(
                     em,
@@ -679,12 +689,7 @@ namespace Game.Runtime
 
             if (resourceKind == ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil)
             {
-                return context.ResourceHaulerUtilitySystemHelper.IsOilSourceBuilding(candidate) &&
-                       context.ResourceHaulerUtilitySystemHelper.HasEnoughSourceResource(
-                           em,
-                           candidate,
-                           resourceKind,
-                           loadAmount);
+                return context.ResourceHaulerUtilitySystemHelper.IsOilSourceBuilding(candidate);
             }
 
             return context.ResourceHaulerUtilitySystemHelper.IsFuelStorageSourceBuilding(candidate) &&
@@ -1309,16 +1314,39 @@ namespace Game.Runtime
             float loadAmount,
             out UnitResourceHaulReservation reservation)
         {
+            return TryReserveHaulCapacity(
+                context,
+                em,
+                source,
+                destination,
+                resourceKind,
+                loadAmount,
+                allowDeferredSourceReservation: false,
+                out reservation);
+        }
+
+        private bool TryReserveHaulCapacity(
+            Context context,
+            EntityManager em,
+            RuntimeBuildingEntity source,
+            RuntimeBuildingEntity destination,
+            ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind,
+            float loadAmount,
+            bool allowDeferredSourceReservation,
+            out UnitResourceHaulReservation reservation)
+        {
             reservation = default;
             if (context.ResourceHaulerUtilitySystemHelper == null || source == null || destination == null || loadAmount <= 0f)
                 return false;
 
-            if (!context.ResourceHaulerUtilitySystemHelper.TryReserveSource(em, source, resourceKind, loadAmount))
+            bool sourceReserved = context.ResourceHaulerUtilitySystemHelper.TryReserveSource(em, source, resourceKind, loadAmount);
+            if (!sourceReserved && !allowDeferredSourceReservation)
                 return false;
 
             if (!context.ResourceHaulerUtilitySystemHelper.TryReserveDestination(em, destination, resourceKind, loadAmount))
             {
-                context.ResourceHaulerUtilitySystemHelper.ReleaseSourceReservation(em, source, resourceKind, loadAmount);
+                if (sourceReserved)
+                    context.ResourceHaulerUtilitySystemHelper.ReleaseSourceReservation(em, source, resourceKind, loadAmount);
                 return false;
             }
 
@@ -1328,7 +1356,7 @@ namespace Game.Runtime
                 DestinationBuildingId = destination.Id,
                 ReservedBarrels = loadAmount,
                 ResourceKind = (byte)resourceKind,
-                SourceReservationActive = 1,
+                SourceReservationActive = sourceReserved ? (byte)1 : (byte)0,
                 DestinationReservationActive = 1,
                 ReservationId = NextReservationId()
             };

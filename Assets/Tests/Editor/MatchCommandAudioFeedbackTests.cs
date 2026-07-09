@@ -16,9 +16,11 @@ public sealed class MatchCommandAudioFeedbackTests
             var tests = new MatchCommandAudioFeedbackTests();
             tests.AcceptedCommandKinds_ResolveExpectedGameplayAudioEvents();
             passed++;
-            tests.RejectedCommandKinds_ResolveSharedRejectedAudioEvent();
+            tests.RejectedCommandKinds_DoNotResolveSharedRejectedAudioEvent();
             passed++;
             tests.TryEmitCommandAudio_EnqueuesGameplayAudioRequest();
+            passed++;
+            tests.TryEmitCommandAudio_SuppressesRejectedGameplayAudioRequest();
             passed++;
             tests.AcceptedCommandVoices_ResolveExpectedAriaEvents();
             passed++;
@@ -78,18 +80,18 @@ public sealed class MatchCommandAudioFeedbackTests
     }
 
     [Test]
-    public void RejectedCommandKinds_ResolveSharedRejectedAudioEvent()
+    public void RejectedCommandKinds_DoNotResolveSharedRejectedAudioEvent()
     {
-        AssertResolved(
+        Assert.IsFalse(RtsSelectionCommandResultFlushCompositionSystemHelper.TryResolveCommandAudioEvent(
             RtsSelectionCommandIntentKind.Move,
             accepted: false,
-            AudioEventIds.GameplayCommandRejected,
-            AudioEventIds.GameplayCommandRejectedHash);
-        AssertResolved(
+            out _,
+            out _));
+        Assert.IsFalse(RtsSelectionCommandResultFlushCompositionSystemHelper.TryResolveCommandAudioEvent(
             RtsSelectionCommandIntentKind.HoldPosition,
             accepted: false,
-            AudioEventIds.GameplayCommandRejected,
-            AudioEventIds.GameplayCommandRejectedHash);
+            out _,
+            out _));
     }
 
     [Test]
@@ -111,6 +113,22 @@ public sealed class MatchCommandAudioFeedbackTests
         Assert.AreEqual("Gameplay", requests[0].BusId.ToString());
         Assert.AreEqual(AudioPlaybackPriority.Medium, requests[0].Priority);
         Assert.AreEqual(AudioPlaybackRequestStatus.Pending, requests[0].Status);
+    }
+
+    [Test]
+    public void TryEmitCommandAudio_SuppressesRejectedGameplayAudioRequest()
+    {
+        using World world = new("MatchCommandRejectedAudioFeedbackTests");
+
+        Assert.IsFalse(RtsSelectionCommandResultFlushCompositionSystemHelper.TryEmitCommandAudio(
+            world.EntityManager,
+            RtsSelectionCommandIntentKind.Attack,
+            accepted: false));
+
+        Entity audioEntity = AudioEventRequestSystem.EnsureAudioEntity(world.EntityManager);
+        DynamicBuffer<AudioPlaybackRequestElement> requests =
+            world.EntityManager.GetBuffer<AudioPlaybackRequestElement>(audioEntity);
+        Assert.AreEqual(0, requests.Length);
     }
 
     [Test]

@@ -354,9 +354,7 @@ namespace Game.Runtime
 
             if (!accepted)
             {
-                eventId = AudioEventIds.GameplayCommandRejected;
-                eventHash = AudioEventIds.GameplayCommandRejectedHash;
-                return true;
+                return false;
             }
 
             return false;
@@ -752,9 +750,7 @@ namespace Game.Runtime
 
             if (!accepted)
             {
-                eventId = AudioEventIds.GameplayCommandRejected;
-                eventHash = AudioEventIds.GameplayCommandRejectedHash;
-                return true;
+                return false;
             }
 
             return false;

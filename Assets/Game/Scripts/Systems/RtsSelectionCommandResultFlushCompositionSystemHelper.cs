@@ -1500,9 +1500,9 @@ namespace Game.Runtime
         {
             if (!accepted)
             {
-                eventId = AudioEventIds.GameplayCommandRejected;
-                eventHash = AudioEventIds.GameplayCommandRejectedHash;
-                return true;
+                eventId = string.Empty;
+                eventHash = 0u;
+                return false;
             }
 
             switch (kind)

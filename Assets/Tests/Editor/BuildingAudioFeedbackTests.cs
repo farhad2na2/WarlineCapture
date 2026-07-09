@@ -20,7 +20,7 @@ public sealed class BuildingAudioFeedbackTests
             passed++;
             tests.TryEmitPlacementAudio_EnqueuesInvalidPlacementRequest();
             passed++;
-            tests.TryEmitProductionAudio_EnqueuesQueuedAndRejectedRequests();
+            tests.TryEmitProductionAudio_EnqueuesQueuedAndSuppressesRejectedRequests();
             passed++;
 
             Debug.Log($"[BuildingAudioFeedbackValidation] result=Passed tests={passed}");
@@ -69,12 +69,12 @@ public sealed class BuildingAudioFeedbackTests
             AudioEventIds.GameplayProductionQueued,
             AudioEventIds.GameplayProductionQueuedHash);
 
-        AssertProductionAudio(
+        Assert.IsFalse(BuildingProductionRequestSystemHelper.TryResolveProductionCommandAudioEvent(
             BuildingUiProductionCommandRequestElement.KindSelectedBuildingUnit,
             accepted: false,
             BuildingUiProductionCommandResultElement.QueueFull,
-            AudioEventIds.GameplayCommandRejected,
-            AudioEventIds.GameplayCommandRejectedHash);
+            out _,
+            out _));
 
         AssertCampItemAudio(
             accepted: true,
@@ -82,11 +82,11 @@ public sealed class BuildingAudioFeedbackTests
             AudioEventIds.GameplayProductionQueued,
             AudioEventIds.GameplayProductionQueuedHash);
 
-        AssertCampItemAudio(
+        Assert.IsFalse(BuildingProductionRequestSystemHelper.TryResolveCampItemAudioEvent(
             accepted: false,
             BuildingUiCampItemCommandResultElement.MissingProducerBuilding,
-            AudioEventIds.GameplayCommandRejected,
-            AudioEventIds.GameplayCommandRejectedHash);
+            out _,
+            out _));
 
         Assert.IsFalse(BuildingProductionRequestSystemHelper.TryResolveProductionCommandAudioEvent(
             BuildingUiProductionCommandRequestElement.KindCancelProduction,
@@ -123,7 +123,7 @@ public sealed class BuildingAudioFeedbackTests
     }
 
     [Test]
-    public void TryEmitProductionAudio_EnqueuesQueuedAndRejectedRequests()
+    public void TryEmitProductionAudio_EnqueuesQueuedAndSuppressesRejectedRequests()
     {
         using World world = new("BuildingProductionAudioFeedbackTests");
 
@@ -132,17 +132,15 @@ public sealed class BuildingAudioFeedbackTests
             BuildingUiProductionCommandRequestElement.KindBuildingUnit,
             accepted: true,
             BuildingUiProductionCommandResultElement.Queued));
-        Assert.IsTrue(BuildingProductionRequestSystemHelper.TryEmitCampItemAudio(
+        Assert.IsFalse(BuildingProductionRequestSystemHelper.TryEmitCampItemAudio(
             world.EntityManager,
             accepted: false,
             BuildingUiCampItemCommandResultElement.ProductionQueueFull));
 
         DynamicBuffer<AudioPlaybackRequestElement> requests = GetAudioRequests(world.EntityManager);
-        Assert.AreEqual(2, requests.Length);
+        Assert.AreEqual(1, requests.Length);
         Assert.AreEqual(AudioEventIds.GameplayProductionQueued, requests[0].EventId.ToString());
         Assert.AreEqual(AudioEventIds.GameplayProductionQueuedHash, requests[0].EventHash);
-        Assert.AreEqual(AudioEventIds.GameplayCommandRejected, requests[1].EventId.ToString());
-        Assert.AreEqual(AudioEventIds.GameplayCommandRejectedHash, requests[1].EventHash);
     }
 
     private static void AssertPlacementAudio(

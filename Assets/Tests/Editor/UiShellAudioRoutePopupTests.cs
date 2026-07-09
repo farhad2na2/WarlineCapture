@@ -29,11 +29,11 @@ public sealed class UiShellAudioRoutePopupTests
             passed++;
             RunCase(test => test.PassengerDrawerToggle_EnqueuesDrawerOpenAudio());
             passed++;
-            RunCase(test => test.InitialMenuState_RequestsMenuMusicAndSkipsDuplicateWhenCurrent());
+            RunCase(test => test.InitialMenuState_DoesNotRequestPlaceholderMenuMusic());
             passed++;
-            RunCase(test => test.EnterMatchRoute_RequestsMatchMusicAndSkipsDuplicateWhenCurrent());
+            RunCase(test => test.EnterMatchRoute_DoesNotRequestPlaceholderMatchMusic());
             passed++;
-            RunCase(test => test.ReturnToMainMenuRoute_RequestsMenuMusicFromMatchHud());
+            RunCase(test => test.ReturnToMainMenuRoute_DoesNotRequestPlaceholderMenuMusic());
             passed++;
 
             Debug.Log($"[UiShellAudioRoutePopupValidation] result=Passed tests={passed}");
@@ -169,17 +169,15 @@ public sealed class UiShellAudioRoutePopupTests
     }
 
     [Test]
-    public void InitialMenuState_RequestsMenuMusicAndSkipsDuplicateWhenCurrent()
+    public void InitialMenuState_DoesNotRequestPlaceholderMenuMusic()
     {
         Entity boundary = CreateShellFlowBoundary(UiShellMode.None, UIRoute.Splash);
         SystemHandle system = _world.CreateSystem<UiShellFlowSystem>();
 
         system.Update(_world.Unmanaged);
 
-        AssertMusicStateRequested(AudioEventIds.MusicMenuLoop, AudioEventIds.MusicMenuLoopHash, 1.5f);
-        AssertMusicRequestCount(AudioEventIds.MusicMenuLoopHash, 1);
+        AssertNoMusicRequest(AudioEventIds.MusicMenuLoopHash);
 
-        ApplyRequestedMusicState();
         CompleteCurrentTransition(boundary, UiShellCommandKind.EnterMenu);
         system.Update(_world.Unmanaged);
 
@@ -190,12 +188,11 @@ public sealed class UiShellAudioRoutePopupTests
         });
         system.Update(_world.Unmanaged);
 
-        AssertMusicStateCurrentOnly(AudioEventIds.MusicMenuLoop, AudioEventIds.MusicMenuLoopHash);
-        AssertMusicRequestCount(AudioEventIds.MusicMenuLoopHash, 1);
+        AssertNoMusicRequest(AudioEventIds.MusicMenuLoopHash);
     }
 
     [Test]
-    public void EnterMatchRoute_RequestsMatchMusicAndSkipsDuplicateWhenCurrent()
+    public void EnterMatchRoute_DoesNotRequestPlaceholderMatchMusic()
     {
         Entity boundary = CreateShellFlowBoundary();
         SystemHandle system = _world.CreateSystem<UiShellFlowSystem>();
@@ -207,11 +204,9 @@ public sealed class UiShellAudioRoutePopupTests
 
         system.Update(_world.Unmanaged);
 
-        AssertMusicStateRequested(AudioEventIds.MusicMatchCalmLoop, AudioEventIds.MusicMatchCalmLoopHash, 2f);
-        AssertMusicRequestCount(AudioEventIds.MusicMatchCalmLoopHash, 1);
+        AssertNoMusicRequest(AudioEventIds.MusicMatchCalmLoopHash);
         AssertLatestAudioRequest(AudioEventIds.UIScreenForward, AudioEventIds.UIScreenForwardHash);
 
-        ApplyRequestedMusicState();
         CompleteCurrentTransition(boundary, UiShellCommandKind.ShowLoading);
         system.Update(_world.Unmanaged);
 
@@ -222,12 +217,11 @@ public sealed class UiShellAudioRoutePopupTests
         });
         system.Update(_world.Unmanaged);
 
-        AssertMusicStateCurrentOnly(AudioEventIds.MusicMatchCalmLoop, AudioEventIds.MusicMatchCalmLoopHash);
-        AssertMusicRequestCount(AudioEventIds.MusicMatchCalmLoopHash, 1);
+        AssertNoMusicRequest(AudioEventIds.MusicMatchCalmLoopHash);
     }
 
     [Test]
-    public void ReturnToMainMenuRoute_RequestsMenuMusicFromMatchHud()
+    public void ReturnToMainMenuRoute_DoesNotRequestPlaceholderMenuMusic()
     {
         Entity boundary = CreateShellFlowBoundary(UiShellMode.MatchHud, UIRoute.Match);
         SetCurrentMusicState(AudioEventIds.MusicMatchCalmLoop, AudioEventIds.MusicMatchCalmLoopHash);
@@ -239,8 +233,7 @@ public sealed class UiShellAudioRoutePopupTests
 
         _world.CreateSystem<UiShellFlowSystem>().Update(_world.Unmanaged);
 
-        AssertMusicStateRequested(AudioEventIds.MusicMenuLoop, AudioEventIds.MusicMenuLoopHash, 1.5f);
-        AssertMusicRequestCount(AudioEventIds.MusicMenuLoopHash, 1);
+        AssertNoMusicRequest(AudioEventIds.MusicMenuLoopHash);
         AssertLatestAudioRequest(AudioEventIds.UIScreenForward, AudioEventIds.UIScreenForwardHash);
     }
 
@@ -367,6 +360,14 @@ public sealed class UiShellAudioRoutePopupTests
         }
 
         Assert.AreEqual(expectedCount, count);
+    }
+
+    private void AssertNoMusicRequest(uint eventHash)
+    {
+        Entity audioEntity = AudioEventRequestSystem.EnsureAudioEntity(_world.EntityManager);
+        AudioMusicStateComponent musicState = _world.EntityManager.GetComponentData<AudioMusicStateComponent>(audioEntity);
+        Assert.AreNotEqual(eventHash, musicState.RequestedEventHash);
+        AssertMusicRequestCount(eventHash, 0);
     }
 
     private void ApplyRequestedMusicState()

@@ -11,6 +11,8 @@ namespace Game.UI.Shell.Ecs
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     public partial struct UiShellFlowSystem : ISystem
     {
+        private const bool EnableShellMusicLoops = false;
+
         private EntityQuery boundaryQuery;
 
         public void OnCreate(ref SystemState state)
@@ -378,8 +380,15 @@ namespace Game.UI.Shell.Ecs
 
         private static void EmitMusicState(World world, string eventId, uint eventHash, float transitionSeconds)
         {
-            if (world == null || !world.IsCreated || string.IsNullOrEmpty(eventId) || eventHash == 0u)
+            // Generated music loop beds currently read as a repeated low bump on idle menu/loading.
+            if (!EnableShellMusicLoops ||
+                world == null ||
+                !world.IsCreated ||
+                string.IsNullOrEmpty(eventId) ||
+                eventHash == 0u)
+            {
                 return;
+            }
 
             EntityManager entityManager = world.EntityManager;
             Entity audioEntity = AudioEventRequestSystem.EnsureAudioEntity(entityManager);

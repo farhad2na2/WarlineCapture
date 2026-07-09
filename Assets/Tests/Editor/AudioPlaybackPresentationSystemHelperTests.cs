@@ -25,9 +25,15 @@ public sealed class AudioPlaybackPresentationSystemHelperTests
             passed++;
             RunCase(test => test.PlayAcceptedRequest_ReturnsMissingClipForEmptyCatalogEntry());
             passed++;
-            RunCase(test => test.PlayAcceptedRequest_ConfiguresSpatialSfxForRtsScaleAudibility());
+            RunCase(test => test.PlayAcceptedRequest_ConfiguresMissileSpatialSfxForRtsScaleAudibility());
             passed++;
             RunCase(test => test.ResolveLinearVolume_AppliesMasterAndBusSettings());
+            passed++;
+            RunCase(test => test.PlayAcceptedRequest_ConfiguresSpatialSfxForRtsScaleAudibility());
+            passed++;
+            RunCase(test => test.ApplySettingsToActiveSources_UpdatesMusicLoopVolume());
+            passed++;
+            RunCase(test => test.ApplySettingsToActiveSources_FadesMusicLoopVolumeWhenRequested());
             passed++;
 
             Debug.Log($"[AudioPlaybackPresentationHelperValidation] result=Passed tests={passed}");
@@ -150,7 +156,7 @@ public sealed class AudioPlaybackPresentationSystemHelperTests
     }
 
     [Test]
-    public void PlayAcceptedRequest_ConfiguresSpatialSfxForRtsScaleAudibility()
+    public void PlayAcceptedRequest_ConfiguresMissileSpatialSfxForRtsScaleAudibility()
     {
         using AudioPlaybackPresentationSystemHelper helper = new(initialPoolSize: 1, maxPoolSize: 1);
         AudioEventCatalogEntry entry = CreateEntry(
@@ -203,6 +209,97 @@ public sealed class AudioPlaybackPresentationSystemHelperTests
         Assert.That(volume, Is.EqualTo(0.125297f).Within(0.001f));
     }
 
+    [Test]
+    public void PlayAcceptedRequest_ConfiguresSpatialSfxForRtsScaleAudibility()
+    {
+        using AudioPlaybackPresentationSystemHelper helper = new(initialPoolSize: 1, maxPoolSize: 1);
+        AudioEventCatalogEntry entry = CreateEntry(
+            AudioEventIds.GameplayWeaponMissileFlight,
+            busId: "SFX",
+            maxInstances: 1,
+            clip: CreateClip("missile_flight"),
+            spatial: true);
+        AudioPlaybackRequestElement request = CreateAcceptedRequest(
+            7,
+            AudioEventIds.GameplayWeaponMissileFlight,
+            AudioEventIds.GameplayWeaponMissileFlightHash);
+        request.BusId = new FixedString32Bytes("SFX");
+        request.Spatial = 1;
+        request.HasWorldPosition = 1;
+        request.WorldPosition = new Unity.Mathematics.float3(1200f, 35f, -900f);
+
+        AudioPlaybackPresentationResult result = helper.PlayAcceptedRequest(request, entry, bus: null, settings: CreateSettings());
+
+        Assert.IsTrue(result.Played);
+        Assert.IsTrue(helper.TryGetActiveSource(request.RequestId, out AudioSource source));
+        Assert.AreEqual(1f, source.spatialBlend);
+        Assert.AreEqual(AudioRolloffMode.Linear, source.rolloffMode);
+        Assert.That(source.minDistance, Is.EqualTo(AudioPlaybackPresentationSystemHelper.SpatialSfxMinDistance).Within(0.001f));
+        Assert.That(source.maxDistance, Is.EqualTo(AudioPlaybackPresentationSystemHelper.SpatialSfxMaxDistance).Within(0.001f));
+        Assert.AreEqual(0f, source.dopplerLevel);
+        Assert.That(source.transform.position.x, Is.EqualTo(1200f).Within(0.001f));
+        Assert.That(source.transform.position.y, Is.EqualTo(35f).Within(0.001f));
+        Assert.That(source.transform.position.z, Is.EqualTo(-900f).Within(0.001f));
+    }
+
+    [Test]
+    public void ApplySettingsToActiveSources_UpdatesMusicLoopVolume()
+    {
+        using AudioPlaybackPresentationSystemHelper helper = new(initialPoolSize: 1, maxPoolSize: 1);
+        AudioEventCatalogEntry entry = CreateEntry(
+            AudioEventIds.MusicMenuLoop,
+            busId: "Music",
+            maxInstances: 1,
+            clip: CreateClip("music_menu_loop"));
+        AudioPlaybackRequestElement request = CreateAcceptedRequest(1, AudioEventIds.MusicMenuLoop, AudioEventIds.MusicMenuLoopHash);
+        AudioSettingsComponent settings = CreateSettings();
+        settings.MusicVolume = 0.75f;
+
+        AudioPlaybackPresentationResult result = helper.PlayAcceptedRequest(request, entry, bus: null, settings);
+
+        Assert.IsTrue(result.Played);
+        Assert.IsTrue(helper.TryGetActiveSource(request.RequestId, out AudioSource source));
+        Assert.That(source.volume, Is.EqualTo(0.75f).Within(0.001f));
+
+        settings.MusicMuted = 1;
+        helper.ApplySettingsToActiveSources(settings);
+        Assert.That(source.volume, Is.EqualTo(0f).Within(0.001f));
+
+        settings.MusicMuted = 0;
+        settings.MusicVolume = 0.5f;
+        helper.ApplySettingsToActiveSources(settings);
+        Assert.That(source.volume, Is.EqualTo(0.5f).Within(0.001f));
+    }
+
+    [Test]
+    public void ApplySettingsToActiveSources_FadesMusicLoopVolumeWhenRequested()
+    {
+        using AudioPlaybackPresentationSystemHelper helper = new(initialPoolSize: 1, maxPoolSize: 1);
+        AudioEventCatalogEntry entry = CreateEntry(
+            AudioEventIds.MusicMenuLoop,
+            busId: "Music",
+            maxInstances: 1,
+            clip: CreateClip("music_menu_loop"));
+        AudioPlaybackRequestElement request = CreateAcceptedRequest(1, AudioEventIds.MusicMenuLoop, AudioEventIds.MusicMenuLoopHash);
+        AudioSettingsComponent settings = CreateSettings();
+
+        AudioPlaybackPresentationResult result = helper.PlayAcceptedRequest(request, entry, bus: null, settings);
+
+        Assert.IsTrue(result.Played);
+        Assert.IsTrue(helper.TryGetActiveSource(request.RequestId, out AudioSource source));
+        Assert.That(source.volume, Is.EqualTo(1f).Within(0.001f));
+
+        settings.MusicMuted = 1;
+        helper.ApplySettingsToActiveSources(settings, now: 10f, fadeSeconds: 0.4f);
+        Assert.That(source.volume, Is.EqualTo(1f).Within(0.001f));
+
+        helper.UpdatePool(now: 10.2f);
+        Assert.That(source.volume, Is.EqualTo(0.5f).Within(0.05f));
+
+        helper.UpdatePool(now: 10.4f);
+        Assert.That(source.volume, Is.EqualTo(0f).Within(0.001f));
+    }
+
     private AudioClip CreateClip(string name)
     {
         AudioClip clip = AudioClip.Create(name, 4410, 1, 44100, false);
@@ -251,6 +348,7 @@ public sealed class AudioPlaybackPresentationSystemHelperTests
         AudioPlaybackConfig playback = new();
         SetPrivateField(playback, "spatial", spatial);
         SetPrivateField(playback, "maxInstances", maxInstances);
+        SetPrivateField(playback, "spatial", spatial);
         SetPrivateField(entry, "eventId", eventId);
         SetPrivateField(entry, "busId", busId);
         SetPrivateField(entry, "volumeDecibels", volumeDecibels);

@@ -24,11 +24,14 @@ namespace Game.Runtime
 
     public sealed class AudioPlaybackPresentationBridgeSystemHelper
     {
+        private const float SettingsMusicFadeSeconds = 0.35f;
+
         private readonly Dictionary<uint, AudioEventCatalogEntry> _eventsByHash = new();
         private readonly Dictionary<string, AudioMixerBusEntry> _busesById = new(System.StringComparer.Ordinal);
         private AudioEventCatalogConfig _eventCatalog;
         private AudioMixerBusConfig _mixerBusConfig;
         private int _lastPresentedRequestId;
+        private uint _lastAppliedSettingsVersion;
 
         public int LastPresentedRequestId => _lastPresentedRequestId;
 
@@ -52,6 +55,12 @@ namespace Game.Runtime
                 _lastPresentedRequestId = 0;
 
             AudioSettingsComponent settings = em.GetComponentData<AudioSettingsComponent>(audioEntity);
+            if (settings.Version != _lastAppliedSettingsVersion)
+            {
+                playbackHelper.ApplySettingsToActiveSources(settings, now, SettingsMusicFadeSeconds);
+                _lastAppliedSettingsVersion = settings.Version;
+            }
+
             DynamicBuffer<AudioPlaybackRequestElement> requests = em.GetBuffer<AudioPlaybackRequestElement>(audioEntity);
             DynamicBuffer<AudioPlaybackResultElement> results = em.GetBuffer<AudioPlaybackResultElement>(audioEntity);
 
@@ -94,6 +103,7 @@ namespace Game.Runtime
         public void ResetCursor()
         {
             _lastPresentedRequestId = 0;
+            _lastAppliedSettingsVersion = 0;
         }
 
         private void RebuildCachesIfNeeded(AudioEventCatalogConfig eventCatalog, AudioMixerBusConfig mixerBusConfig)

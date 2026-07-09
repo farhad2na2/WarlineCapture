@@ -26,6 +26,14 @@
       "loadInBackground": false,
       "sampleRateOverride": 44100
     },
+    "Voice": {
+      "loadType": "DecompressOnLoad",
+      "compressionFormat": "Vorbis",
+      "forceToMono": true,
+      "preloadAudioData": true,
+      "loadInBackground": false,
+      "sampleRateOverride": 44100
+    },
     "Music": {
       "loadType": "Streaming",
       "compressionFormat": "Vorbis",

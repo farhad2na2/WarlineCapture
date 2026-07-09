@@ -121,10 +121,8 @@ namespace Game.Components
     public struct UnitMotionAudioState : IComponentData
     {
         public float NextVehicleEngineAt;
-        public float NextAircraftFlightAt;
-        public float NextAircraftTakeoffAt;
+        public float NextAircraftEngineAt;
         public byte WasAircraftActive;
-        public byte WasTakeoffRolling;
     }
 
     public struct MissileFlightAudioState : IComponentData

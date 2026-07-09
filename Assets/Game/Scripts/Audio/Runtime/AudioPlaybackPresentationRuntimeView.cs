@@ -28,7 +28,7 @@ namespace Game.Runtime
             if (!EnsureInitialized())
                 return;
 
-            _playbackHelper.UpdatePool();
+            _playbackHelper.UpdatePool(Time.unscaledTime);
 
             World world = World.DefaultGameObjectInjectionWorld;
             if (world == null || !world.IsCreated)

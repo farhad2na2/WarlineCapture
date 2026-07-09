@@ -10,14 +10,14 @@ namespace Game.Runtime
     [UpdateBefore(typeof(AirMissileImpactSystem))]
     public partial struct MissileFlightAudioSystem : ISystem
     {
-        private const float MissileFlightIntervalSeconds = 0.5f;
+        private const float MissileFlightIntervalSeconds = 0.45f;
 
         public void OnUpdate(ref SystemState state)
         {
             EntityManager em = state.EntityManager;
             AudioEventRequestSystem.EnsureAudioEntity(em);
             float now = (float)SystemAPI.Time.ElapsedTime;
-            var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
+            EntityCommandBuffer ecb = new(Unity.Collections.Allocator.Temp);
 
             foreach (var (transform, entity) in SystemAPI
                          .Query<RefRO<LocalTransform>>()
@@ -53,7 +53,7 @@ namespace Game.Runtime
             if (now < audioState.NextFlightAudioAt)
                 return;
 
-            GameplayAudioFeedbackSystemHelper.TryEmitMissileFlightAudio(em, projectile, now, position);
+            CombatAudioEventUtility.EmitMissileFlight(em, projectile, position, now);
             audioState.NextFlightAudioAt = now + MissileFlightIntervalSeconds;
 
             if (em.HasComponent<MissileFlightAudioState>(projectile))

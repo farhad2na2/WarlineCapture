@@ -349,6 +349,8 @@ namespace Game.Components
         public float3 RunwayLandingPosition;
         public int2 RunwayLandingCell;
         public float3 AttackRunExitPosition;
+        public float FixedWingCruiseY;
+        public byte FixedWingCruiseYInitialized;
     }
 
     public struct UnitSpawnTransitTag : IComponentData

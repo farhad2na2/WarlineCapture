@@ -9,6 +9,7 @@ using Game.Runtime;
 
 namespace Game.Composition
 {
+    [ExecuteAlways]
     [DisallowMultipleComponent]
     public sealed class MatchSceneView : MonoBehaviour
     {
@@ -86,38 +87,58 @@ namespace Game.Composition
         private void Awake()
         {
             ApplyAudioListenerAuthority();
-            EnsureMatchRuntimeBound();
+            if (Application.isPlaying)
+                EnsureMatchRuntimeBound();
         }
 
         private void OnEnable()
         {
             ApplyAudioListenerAuthority();
-            EnsureMatchRuntimeBound();
+            if (Application.isPlaying)
+                EnsureMatchRuntimeBound();
         }
 
         private void Update()
         {
+            if (!Application.isPlaying)
+            {
+                ApplyAudioListenerAuthority();
+                return;
+            }
+
             matchBootstrapSystem.Update();
         }
 
         private void OnApplicationFocus(bool hasFocus)
         {
+            if (!Application.isPlaying)
+                return;
+
             matchBootstrapSystem.OnApplicationFocus(hasFocus);
         }
 
         private void OnApplicationPause(bool pauseStatus)
         {
+            if (!Application.isPlaying)
+                return;
+
             matchBootstrapSystem.OnApplicationPause(pauseStatus);
         }
 
         private void LateUpdate()
         {
+            if (!Application.isPlaying)
+                return;
+
             matchBootstrapSystem.LateUpdate();
         }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         private void OnGUI()
         {
+            if (!Application.isPlaying)
+                return;
+
             matchBootstrapSystem.OnGUI();
         }
 #endif

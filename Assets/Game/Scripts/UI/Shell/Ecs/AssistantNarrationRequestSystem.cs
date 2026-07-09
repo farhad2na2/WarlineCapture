@@ -1,5 +1,5 @@
 using Game.Components;
-using Game.UI.Contracts;
+using Game.Configs;
 using Game.UI.Shell.Contracts.Ecs;
 using Unity.Collections;
 using Unity.Entities;
@@ -28,14 +28,6 @@ namespace Game.UI.Shell.Ecs
         public void OnUpdate(ref SystemState state)
         {
             Entity boundary = boundaryQuery.GetSingletonEntity();
-            UiShellStateComponent shellState =
-                state.EntityManager.GetComponentData<UiShellStateComponent>(boundary);
-            if (!AllowsMatchNarration(shellState))
-            {
-                ClearNarrationIfPresent(ref state, boundary);
-                return;
-            }
-
             AssistantGoalReadModelSystem.EnsureAssistantReadModelBoundary(ref state, boundary);
             EnsureNarrationBoundary(ref state, boundary);
 
@@ -67,6 +59,7 @@ namespace Game.UI.Shell.Ecs
                 Status = AssistantCommandIntentStatus.Pending,
                 Text = message.Text,
                 AudioEventId = message.AudioEventId,
+                AudioEventHash = ResolveAudioEventHash(message.AudioEventId),
                 RequestedAt = now,
                 InterruptsLowerPriority = message.Priority >= AssistantMessagePriority.High ? (byte)1 : (byte)0
             });
@@ -86,34 +79,6 @@ namespace Game.UI.Shell.Ecs
                 state.EntityManager.GetComponentData<AssistantStateComponent>(boundary);
             assistantState.UiDirty = 1;
             state.EntityManager.SetComponentData(boundary, assistantState);
-        }
-
-        private static bool AllowsMatchNarration(UiShellStateComponent shellState)
-        {
-            return shellState.ActiveRoute == UIRoute.Match &&
-                   (shellState.CurrentMode == UiShellMode.MatchHud ||
-                    shellState.CurrentMode == UiShellMode.PopupOnly);
-        }
-
-        private static void ClearNarrationIfPresent(ref SystemState state, Entity boundary)
-        {
-            EntityManager em = state.EntityManager;
-            if (em.HasBuffer<AssistantNarrationRequestElement>(boundary))
-                em.GetBuffer<AssistantNarrationRequestElement>(boundary).Clear();
-
-            if (!em.HasComponent<AssistantNarrationStateComponent>(boundary))
-                return;
-
-            AssistantNarrationStateComponent narrationState =
-                em.GetComponentData<AssistantNarrationStateComponent>(boundary);
-            if (narrationState.ActiveNarrationId == 0 && narrationState.IsSpeaking == 0)
-                return;
-
-            narrationState.ActiveNarrationId = 0;
-            narrationState.IsSpeaking = 0;
-            narrationState.UiDirty = 1;
-            narrationState.Version = NextVersion(narrationState.Version);
-            em.SetComponentData(boundary, narrationState);
         }
 
         internal static void EnsureNarrationBoundary(ref SystemState state, Entity boundary)
@@ -231,6 +196,13 @@ namespace Game.UI.Shell.Ecs
         {
             int sourceVersion = message.SourceVersion > 0 ? message.SourceVersion : currentFrame;
             return message.MessageId * 31 + sourceVersion;
+        }
+
+        private static uint ResolveAudioEventHash(FixedString64Bytes audioEventId)
+        {
+            return audioEventId.Length == 0
+                ? 0u
+                : AudioEventIds.StableHash(audioEventId.ToString());
         }
 
         private static uint NextVersion(uint version)

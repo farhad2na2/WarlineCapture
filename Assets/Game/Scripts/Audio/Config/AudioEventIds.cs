@@ -85,12 +85,6 @@ namespace Game.Configs
         public const string GameplayWeaponFireSmallArms = "Gameplay.Weapon.Fire.SmallArms";
         public const uint GameplayWeaponFireSmallArmsHash = 3212856651u;
 
-        public const string GameplayWeaponMissileLaunch = "Gameplay.Weapon.Missile.Launch";
-        public const uint GameplayWeaponMissileLaunchHash = 3753501364u;
-
-        public const string GameplayWeaponMissileFlight = "Gameplay.Weapon.Missile.Flight";
-        public const uint GameplayWeaponMissileFlightHash = 1400335713u;
-
         public const string GameplayWeaponMissileImpact = "Gameplay.Weapon.Missile.Impact";
         public const uint GameplayWeaponMissileImpactHash = 990836209u;
 
@@ -144,6 +138,39 @@ namespace Game.Configs
 
         public const string GameplayResourceExchangeCancelled = "Gameplay.ResourceExchange.Cancelled";
         public const uint GameplayResourceExchangeCancelledHash = 2587331601u;
+
+        public const string GameplayWeaponRifleFire = "Gameplay.Weapon.Rifle.Fire";
+        public const uint GameplayWeaponRifleFireHash = 644878421u;
+
+        public const string GameplayWeaponVehicleCannonFire = "Gameplay.Weapon.VehicleCannon.Fire";
+        public const uint GameplayWeaponVehicleCannonFireHash = 4224941188u;
+
+        public const string GameplayWeaponMissileLaunch = "Gameplay.Weapon.Missile.Launch";
+        public const uint GameplayWeaponMissileLaunchHash = 3753501364u;
+
+        public const string GameplayWeaponAirMissileLaunch = "Gameplay.Weapon.AirMissile.Launch";
+        public const uint GameplayWeaponAirMissileLaunchHash = 510872954u;
+
+        public const string GameplayWeaponMissileFlight = "Gameplay.Weapon.Missile.Flight";
+        public const uint GameplayWeaponMissileFlightHash = 1400335713u;
+
+        public const string GameplayUnitAircraftFlyby = "Gameplay.Unit.Aircraft.Flyby";
+        public const uint GameplayUnitAircraftFlybyHash = 3269847167u;
+
+        public const string GameplayUnitVehicleEngine = "Gameplay.Unit.Vehicle.Engine";
+        public const uint GameplayUnitVehicleEngineHash = 4282126079u;
+
+        public const string GameplayImpactBullet = "Gameplay.Impact.Bullet";
+        public const uint GameplayImpactBulletHash = 2654624111u;
+
+        public const string GameplayExplosionSmall = "Gameplay.Explosion.Small";
+        public const uint GameplayExplosionSmallHash = 217574373u;
+
+        public const string GameplayExplosionLarge = "Gameplay.Explosion.Large";
+        public const uint GameplayExplosionLargeHash = 4072520545u;
+
+        public const string GameplayUnitVehicleDestroyed = "Gameplay.Unit.Vehicle.Destroyed";
+        public const uint GameplayUnitVehicleDestroyedHash = 4083608480u;
 
         public const string AlertThreatMinor = "Alert.Threat.Minor";
         public const uint AlertThreatMinorHash = 3119639462u;
@@ -710,8 +737,6 @@ namespace Game.Configs
             GameplayUnitEngineAircraftFlight,
             GameplayUnitEngineHelicopterFlight,
             GameplayWeaponFireSmallArms,
-            GameplayWeaponMissileLaunch,
-            GameplayWeaponMissileFlight,
             GameplayWeaponMissileImpact,
             GameplayCommandMoveAccepted,
             GameplayCommandAttackAccepted,
@@ -730,6 +755,17 @@ namespace Game.Configs
             GameplayResourceExchangeRushed,
             GameplayResourceExchangeCompleted,
             GameplayResourceExchangeCancelled,
+            GameplayWeaponRifleFire,
+            GameplayWeaponVehicleCannonFire,
+            GameplayWeaponMissileLaunch,
+            GameplayWeaponAirMissileLaunch,
+            GameplayWeaponMissileFlight,
+            GameplayUnitAircraftFlyby,
+            GameplayUnitVehicleEngine,
+            GameplayImpactBullet,
+            GameplayExplosionSmall,
+            GameplayExplosionLarge,
+            GameplayUnitVehicleDestroyed,
             AlertThreatMinor,
             AlertThreatCritical,
             AlertUnitUnderAttack,
@@ -939,8 +975,6 @@ namespace Game.Configs
             GameplayUnitEngineAircraftFlightHash,
             GameplayUnitEngineHelicopterFlightHash,
             GameplayWeaponFireSmallArmsHash,
-            GameplayWeaponMissileLaunchHash,
-            GameplayWeaponMissileFlightHash,
             GameplayWeaponMissileImpactHash,
             GameplayCommandMoveAcceptedHash,
             GameplayCommandAttackAcceptedHash,
@@ -959,6 +993,17 @@ namespace Game.Configs
             GameplayResourceExchangeRushedHash,
             GameplayResourceExchangeCompletedHash,
             GameplayResourceExchangeCancelledHash,
+            GameplayWeaponRifleFireHash,
+            GameplayWeaponVehicleCannonFireHash,
+            GameplayWeaponMissileLaunchHash,
+            GameplayWeaponAirMissileLaunchHash,
+            GameplayWeaponMissileFlightHash,
+            GameplayUnitAircraftFlybyHash,
+            GameplayUnitVehicleEngineHash,
+            GameplayImpactBulletHash,
+            GameplayExplosionSmallHash,
+            GameplayExplosionLargeHash,
+            GameplayUnitVehicleDestroyedHash,
             AlertThreatMinorHash,
             AlertThreatCriticalHash,
             AlertUnitUnderAttackHash,

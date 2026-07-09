@@ -206,6 +206,7 @@ namespace Game.Components
         public AssistantCommandIntentStatus Status;
         public FixedString128Bytes Text;
         public FixedString64Bytes AudioEventId;
+        public uint AudioEventHash;
         public float RequestedAt;
         public byte InterruptsLowerPriority;
     }

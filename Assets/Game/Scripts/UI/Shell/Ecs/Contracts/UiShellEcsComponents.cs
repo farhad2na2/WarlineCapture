@@ -105,9 +105,11 @@ namespace Game.UI.Shell.Contracts.Ecs
         public byte ThreatVisible;
         public FixedString64Bytes ThreatTitle;
         public FixedString64Bytes ThreatSubtitle;
+        public FixedString64Bytes ThreatAudioEventId;
         public byte JumpEnabled;
         public byte FeedbackVisible;
         public FixedString64Bytes FeedbackText;
+        public FixedString64Bytes FeedbackAudioEventId;
         public byte BoardAllVisible;
         public byte BoardAllEnabled;
         public byte CancelVisible;

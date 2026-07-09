@@ -88,7 +88,17 @@ namespace Game.Runtime
 
                 StripActiveUnitState(em, entity);
                 if (TryBeginVehicleWreck(em, entity))
+                {
+                    if (em.HasComponent<LocalTransform>(entity))
+                    {
+                        CombatAudioEventUtility.EmitVehicleDestroyed(
+                            em,
+                            entity,
+                            em.GetComponentData<LocalTransform>(entity).Position,
+                            (float)now);
+                    }
                     continue;
+                }
 
                 em.AddComponentData(entity, new UnitDeathAnimationComponent
                 {

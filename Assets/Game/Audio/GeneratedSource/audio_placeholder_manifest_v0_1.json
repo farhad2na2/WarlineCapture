@@ -1,60 +1,25 @@
 {
   "schema": "WarlineCapture.AudioPlaceholderManifest.v0.1",
   "generatedBy": "Tools/Audio/generate_placeholder_audio.py",
-  "eventCount": 51,
-  "generatedClipCount": 7,
+  "eventCount": 46,
+  "generatedClipCount": 2,
   "preservedClipCount": 44,
   "catalogPath": "Assets/Game/Audio/Config/audio_event_catalog_v0_1.json",
   "note": "Prototype clips for wiring and UX timing only; replace with final mastered/licensed assets before release.",
   "generated": [
     {
-      "eventId": "Gameplay.Unit.Engine.Vehicle.Move",
-      "assetPath": "Assets/Game/Audio/Gameplay/game_unit_engine_vehicle_move_01.wav",
-      "channels": 1,
-      "sampleRate": 48000,
-      "durationSeconds": 0.55
-    },
-    {
-      "eventId": "Gameplay.Unit.Engine.Aircraft.Takeoff",
-      "assetPath": "Assets/Game/Audio/Gameplay/game_unit_engine_aircraft_takeoff_01.wav",
-      "channels": 1,
-      "sampleRate": 48000,
-      "durationSeconds": 1.05
-    },
-    {
-      "eventId": "Gameplay.Unit.Engine.Aircraft.Flight",
-      "assetPath": "Assets/Game/Audio/Gameplay/game_unit_engine_aircraft_flight_01.wav",
-      "channels": 1,
-      "sampleRate": 48000,
-      "durationSeconds": 0.7
-    },
-    {
-      "eventId": "Gameplay.Weapon.Fire.SmallArms",
-      "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_fire_small_arms_01.wav",
-      "channels": 1,
-      "sampleRate": 48000,
-      "durationSeconds": 0.16
-    },
-    {
-      "eventId": "Gameplay.Weapon.Missile.Launch",
-      "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_missile_launch_01.wav",
-      "channels": 1,
-      "sampleRate": 48000,
-      "durationSeconds": 0.75
-    },
-    {
       "eventId": "Gameplay.Weapon.Missile.Flight",
       "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_missile_flight_01.wav",
       "channels": 1,
-      "sampleRate": 48000,
-      "durationSeconds": 0.55
+      "sampleRate": 44100,
+      "durationSeconds": 0.58
     },
     {
-      "eventId": "Gameplay.Weapon.Missile.Impact",
-      "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_missile_impact_01.wav",
+      "eventId": "Gameplay.Unit.Vehicle.Engine",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_unit_vehicle_engine_01.wav",
       "channels": 1,
-      "sampleRate": 48000,
-      "durationSeconds": 0.95
+      "sampleRate": 44100,
+      "durationSeconds": 0.72
     }
   ],
   "preserved": [
@@ -721,60 +686,20 @@
       "durationSeconds": 24.0
     },
     {
-      "eventId": "Gameplay.Unit.Engine.Vehicle.Move",
-      "assetPath": "Assets/Game/Audio/Gameplay/game_unit_engine_vehicle_move_01.wav",
-      "category": "gameplay",
-      "channels": 1,
-      "sampleRate": 48000,
-      "durationSeconds": 0.55
-    },
-    {
-      "eventId": "Gameplay.Unit.Engine.Aircraft.Takeoff",
-      "assetPath": "Assets/Game/Audio/Gameplay/game_unit_engine_aircraft_takeoff_01.wav",
-      "category": "gameplay",
-      "channels": 1,
-      "sampleRate": 48000,
-      "durationSeconds": 1.05
-    },
-    {
-      "eventId": "Gameplay.Unit.Engine.Aircraft.Flight",
-      "assetPath": "Assets/Game/Audio/Gameplay/game_unit_engine_aircraft_flight_01.wav",
-      "category": "gameplay",
-      "channels": 1,
-      "sampleRate": 48000,
-      "durationSeconds": 0.7
-    },
-    {
-      "eventId": "Gameplay.Weapon.Fire.SmallArms",
-      "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_fire_small_arms_01.wav",
-      "category": "gameplay",
-      "channels": 1,
-      "sampleRate": 48000,
-      "durationSeconds": 0.16
-    },
-    {
-      "eventId": "Gameplay.Weapon.Missile.Launch",
-      "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_missile_launch_01.wav",
-      "category": "gameplay",
-      "channels": 1,
-      "sampleRate": 48000,
-      "durationSeconds": 0.75
-    },
-    {
       "eventId": "Gameplay.Weapon.Missile.Flight",
       "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_missile_flight_01.wav",
       "category": "gameplay",
       "channels": 1,
-      "sampleRate": 48000,
-      "durationSeconds": 0.55
+      "sampleRate": 44100,
+      "durationSeconds": 0.58
     },
     {
-      "eventId": "Gameplay.Weapon.Missile.Impact",
-      "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_missile_impact_01.wav",
+      "eventId": "Gameplay.Unit.Vehicle.Engine",
+      "assetPath": "Assets/Game/Audio/Gameplay/game_unit_vehicle_engine_01.wav",
       "category": "gameplay",
       "channels": 1,
-      "sampleRate": 48000,
-      "durationSeconds": 0.95
+      "sampleRate": 44100,
+      "durationSeconds": 0.72
     }
   ]
 }

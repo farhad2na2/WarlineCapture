@@ -307,118 +307,6 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: c79483a0d92c23b3163419d925733fb1, type: 3}
       weight: 1
-  - eventId: Gameplay.Unit.Engine.Vehicle.Move
-    busId: SFX
-    priority: 0
-    cooldownMilliseconds: 0
-    volumeDecibels: -13
-    pitchVariance: {x: -0.04, y: 0.03}
-    playback:
-      loop: 0
-      spatial: 1
-      maxInstances: 8
-      allowRuntimeLoad: 0
-    clips:
-    - clip: {fileID: 8300000, guid: c5056fd0c0ccd11708fdc9344c83842c, type: 3}
-      weight: 1
-  - eventId: Gameplay.Unit.Engine.Aircraft.Takeoff
-    busId: SFX
-    priority: 1
-    cooldownMilliseconds: 0
-    volumeDecibels: -10
-    pitchVariance: {x: -0.03, y: 0.03}
-    playback:
-      loop: 0
-      spatial: 1
-      maxInstances: 4
-      allowRuntimeLoad: 0
-    clips:
-    - clip: {fileID: 8300000, guid: 66018e2c7e74360db939fb2ff3958044, type: 3}
-      weight: 1
-  - eventId: Gameplay.Unit.Engine.Aircraft.Flight
-    busId: SFX
-    priority: 0
-    cooldownMilliseconds: 0
-    volumeDecibels: -12
-    pitchVariance: {x: -0.03, y: 0.03}
-    playback:
-      loop: 0
-      spatial: 1
-      maxInstances: 8
-      allowRuntimeLoad: 0
-    clips:
-    - clip: {fileID: 8300000, guid: ebd33511dbdc20f77421141ab5718683, type: 3}
-      weight: 1
-  - eventId: Gameplay.Unit.Engine.Helicopter.Flight
-    busId: SFX
-    priority: 0
-    cooldownMilliseconds: 0
-    volumeDecibels: -12
-    pitchVariance: {x: -0.03, y: 0.03}
-    playback:
-      loop: 0
-      spatial: 1
-      maxInstances: 8
-      allowRuntimeLoad: 0
-    clips:
-    - clip: {fileID: 8300000, guid: e025f45bfcb8f3459b3fd55d0f333385, type: 3}
-      weight: 1
-  - eventId: Gameplay.Weapon.Fire.SmallArms
-    busId: SFX
-    priority: 1
-    cooldownMilliseconds: 40
-    volumeDecibels: -9
-    pitchVariance: {x: -0.05, y: 0.04}
-    playback:
-      loop: 0
-      spatial: 1
-      maxInstances: 12
-      allowRuntimeLoad: 0
-    clips:
-    - clip: {fileID: 8300000, guid: f63be05fd4e4ebabeacad4576a0265ff, type: 3}
-      weight: 1
-  - eventId: Gameplay.Weapon.Missile.Launch
-    busId: SFX
-    priority: 2
-    cooldownMilliseconds: 0
-    volumeDecibels: -7
-    pitchVariance: {x: -0.03, y: 0.03}
-    playback:
-      loop: 0
-      spatial: 1
-      maxInstances: 6
-      allowRuntimeLoad: 0
-    clips:
-    - clip: {fileID: 8300000, guid: 94c1f8e54b1ca77fac4fba5122a1b6b2, type: 3}
-      weight: 1
-  - eventId: Gameplay.Weapon.Missile.Flight
-    busId: SFX
-    priority: 1
-    cooldownMilliseconds: 0
-    volumeDecibels: -10
-    pitchVariance: {x: -0.04, y: 0.04}
-    playback:
-      loop: 0
-      spatial: 1
-      maxInstances: 8
-      allowRuntimeLoad: 0
-    clips:
-    - clip: {fileID: 8300000, guid: bd7c415e717fbdfc55dc94aeae743877, type: 3}
-      weight: 1
-  - eventId: Gameplay.Weapon.Missile.Impact
-    busId: SFX
-    priority: 2
-    cooldownMilliseconds: 0
-    volumeDecibels: -6.5
-    pitchVariance: {x: -0.03, y: 0.03}
-    playback:
-      loop: 0
-      spatial: 1
-      maxInstances: 8
-      allowRuntimeLoad: 0
-    clips:
-    - clip: {fileID: 8300000, guid: e342d1ffaacaa6748b9e3857be7d4131, type: 3}
-      weight: 1
   - eventId: Gameplay.Command.Move.Accepted
     busId: SFX
     priority: 1
@@ -573,89 +461,159 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: d61664ed15fa8329390c68e14f4a69b8, type: 3}
       weight: 1
-  - eventId: Gameplay.ResourceExchange.Accepted
+  - eventId: Gameplay.Weapon.Rifle.Fire
     busId: SFX
     priority: 1
+    cooldownMilliseconds: 55
+    volumeDecibels: -7.5
+    pitchVariance: {x: -0.04, y: 0.04}
+    playback:
+      loop: 0
+      spatial: 1
+      maxInstances: 10
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: 2f97d212b71883533498a499c3fcb149, type: 3}
+      weight: 1
+  - eventId: Gameplay.Weapon.VehicleCannon.Fire
+    busId: SFX
+    priority: 2
     cooldownMilliseconds: 120
-    volumeDecibels: -10
-    pitchVariance: {x: -0.02, y: 0.02}
+    volumeDecibels: -6.5
+    pitchVariance: {x: -0.04, y: 0.04}
     playback:
       loop: 0
-      spatial: 0
-      maxInstances: 3
+      spatial: 1
+      maxInstances: 6
       allowRuntimeLoad: 0
     clips:
-    - clip: {fileID: 8300000, guid: 95728b7366d1df65a61d49e6ed8aa2fa, type: 3}
+    - clip: {fileID: 8300000, guid: cdc7395558345f0e37abf6d2bf60193e, type: 3}
       weight: 1
-  - eventId: Gameplay.ResourceExchange.Rejected
+  - eventId: Gameplay.Weapon.Missile.Launch
     busId: SFX
     priority: 2
-    cooldownMilliseconds: 180
-    volumeDecibels: -9.5
-    pitchVariance: {x: -0.02, y: 0.02}
-    playback:
-      loop: 0
-      spatial: 0
-      maxInstances: 3
-      allowRuntimeLoad: 0
-    clips:
-    - clip: {fileID: 8300000, guid: 9f7eb4c7f9c0a7288a8f4ffe3eb56a11, type: 3}
-      weight: 1
-  - eventId: Gameplay.ResourceExchange.QueueStarted
-    busId: SFX
-    priority: 1
     cooldownMilliseconds: 120
-    volumeDecibels: -10
-    pitchVariance: {x: -0.02, y: 0.02}
+    volumeDecibels: -6
+    pitchVariance: {x: -0.04, y: 0.04}
     playback:
       loop: 0
-      spatial: 0
-      maxInstances: 3
+      spatial: 1
+      maxInstances: 6
       allowRuntimeLoad: 0
     clips:
-    - clip: {fileID: 8300000, guid: 8cf07865fd833a627d935d67184543c6, type: 3}
+    - clip: {fileID: 8300000, guid: a6873395fd2c89fa39b2ca5cdc431294, type: 3}
       weight: 1
-  - eventId: Gameplay.ResourceExchange.Rushed
+  - eventId: Gameplay.Weapon.AirMissile.Launch
     busId: SFX
     priority: 2
-    cooldownMilliseconds: 160
-    volumeDecibels: -9
-    pitchVariance: {x: -0.02, y: 0.02}
+    cooldownMilliseconds: 120
+    volumeDecibels: -6
+    pitchVariance: {x: -0.04, y: 0.04}
     playback:
       loop: 0
-      spatial: 0
-      maxInstances: 3
+      spatial: 1
+      maxInstances: 6
       allowRuntimeLoad: 0
     clips:
-    - clip: {fileID: 8300000, guid: b8bc88ff590a80a9c65f2562e231d6b7, type: 3}
+    - clip: {fileID: 8300000, guid: 26c6024312ca8eba04a0911f7395badf, type: 3}
       weight: 1
-  - eventId: Gameplay.ResourceExchange.Completed
-    busId: SFX
-    priority: 2
-    cooldownMilliseconds: 250
-    volumeDecibels: -8.5
-    pitchVariance: {x: -0.02, y: 0.02}
-    playback:
-      loop: 0
-      spatial: 0
-      maxInstances: 3
-      allowRuntimeLoad: 0
-    clips:
-    - clip: {fileID: 8300000, guid: d5084308f5d43876e21bc5481b6a91aa, type: 3}
-      weight: 1
-  - eventId: Gameplay.ResourceExchange.Cancelled
+  - eventId: Gameplay.Weapon.Missile.Flight
     busId: SFX
     priority: 1
     cooldownMilliseconds: 160
-    volumeDecibels: -10.5
-    pitchVariance: {x: -0.02, y: 0.02}
+    volumeDecibels: -7
+    pitchVariance: {x: -0.035, y: 0.035}
     playback:
       loop: 0
-      spatial: 0
+      spatial: 1
+      maxInstances: 6
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: bd7c415e717fbdfc55dc94aeae743877, type: 3}
+      weight: 1
+  - eventId: Gameplay.Unit.Aircraft.Flyby
+    busId: SFX
+    priority: 2
+    cooldownMilliseconds: 900
+    volumeDecibels: -8
+    pitchVariance: {x: -0.03, y: 0.03}
+    playback:
+      loop: 0
+      spatial: 1
       maxInstances: 3
       allowRuntimeLoad: 0
     clips:
-    - clip: {fileID: 8300000, guid: 310d4729a5a7c1095f98a002ffef6e21, type: 3}
+    - clip: {fileID: 8300000, guid: a9037d7d211029bcd1dae0881ceff071, type: 3}
+      weight: 1
+  - eventId: Gameplay.Unit.Vehicle.Engine
+    busId: SFX
+    priority: 0
+    cooldownMilliseconds: 220
+    volumeDecibels: -8
+    pitchVariance: {x: -0.03, y: 0.03}
+    playback:
+      loop: 0
+      spatial: 1
+      maxInstances: 8
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: f27dd5bc6065192da3a6f725b7ecfc0a, type: 3}
+      weight: 1
+  - eventId: Gameplay.Impact.Bullet
+    busId: SFX
+    priority: 1
+    cooldownMilliseconds: 40
+    volumeDecibels: -10
+    pitchVariance: {x: -0.05, y: 0.05}
+    playback:
+      loop: 0
+      spatial: 1
+      maxInstances: 8
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: 1830e91d0c913da52ad0acb2e037bf8e, type: 3}
+      weight: 1
+  - eventId: Gameplay.Explosion.Small
+    busId: SFX
+    priority: 2
+    cooldownMilliseconds: 120
+    volumeDecibels: -5.5
+    pitchVariance: {x: -0.04, y: 0.04}
+    playback:
+      loop: 0
+      spatial: 1
+      maxInstances: 5
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: 6bc609ccfad3a309019ed431235aeabb, type: 3}
+      weight: 1
+  - eventId: Gameplay.Explosion.Large
+    busId: SFX
+    priority: 3
+    cooldownMilliseconds: 160
+    volumeDecibels: -4.5
+    pitchVariance: {x: -0.035, y: 0.035}
+    playback:
+      loop: 0
+      spatial: 1
+      maxInstances: 4
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: ebc333e5d2673bc7a73b86216667ead1, type: 3}
+      weight: 1
+  - eventId: Gameplay.Unit.Vehicle.Destroyed
+    busId: SFX
+    priority: 2
+    cooldownMilliseconds: 350
+    volumeDecibels: -6
+    pitchVariance: {x: -0.035, y: 0.035}
+    playback:
+      loop: 0
+      spatial: 1
+      maxInstances: 4
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: c44220ec6bd9d943616188b4548d06d1, type: 3}
       weight: 1
   - eventId: Alert.Threat.Minor
     busId: Alerts

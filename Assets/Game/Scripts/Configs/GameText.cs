@@ -7,11 +7,13 @@ namespace Game.Configs
     public static class GameText
     {
         private static readonly Dictionary<string, string> Entries = new(StringComparer.Ordinal);
+        private static readonly Dictionary<string, string> AudioEventIds = new(StringComparer.Ordinal);
         private static bool initialized;
 
         public static void Init(GameStringsConfig config)
         {
             Entries.Clear();
+            AudioEventIds.Clear();
             initialized = true;
 
             if (config == null || config.Entries == null)
@@ -24,6 +26,8 @@ namespace Game.Configs
                     continue;
 
                 Entries[entry.Key] = entry.Value ?? string.Empty;
+                if (!string.IsNullOrWhiteSpace(entry.AudioEventId))
+                    AudioEventIds[entry.Key] = entry.AudioEventId;
             }
         }
 
@@ -47,6 +51,27 @@ namespace Game.Configs
             }
 
             return Entries.TryGetValue(key, out value);
+        }
+
+        public static string GetAudioEventId(string key, string fallback = "")
+        {
+            if (string.IsNullOrWhiteSpace(key))
+                return fallback ?? string.Empty;
+
+            return AudioEventIds.TryGetValue(key, out string value)
+                ? value
+                : fallback ?? string.Empty;
+        }
+
+        public static bool TryGetAudioEventId(string key, out string audioEventId)
+        {
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                audioEventId = string.Empty;
+                return false;
+            }
+
+            return AudioEventIds.TryGetValue(key, out audioEventId);
         }
 
         public static string Format(string key, string fallback, params object[] args)

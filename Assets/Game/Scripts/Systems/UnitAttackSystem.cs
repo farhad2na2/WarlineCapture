@@ -116,7 +116,6 @@ namespace Game.Runtime
             var em = state.EntityManager;
             var footprintLookup = SystemAPI.GetComponentLookup<UnitFootprint>(true);
             float dt = SystemAPI.Time.DeltaTime;
-            float now = (float)SystemAPI.Time.ElapsedTime;
             var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
             if (!_predictedHealth.IsCreated)
                 _predictedHealth = new NativeParallelHashMap<Entity, int>(InitialAttackScratchCapacity, Allocator.Persistent);
@@ -305,6 +304,11 @@ namespace Game.Runtime
                         selfTransform.ValueRO.Position,
                         em.GetComponentData<LocalTransform>(engageRw.Target).Position);
                 }
+                CombatAudioEventUtility.EmitStandardWeaponFire(
+                    em,
+                    entity,
+                    selfTransform.ValueRO.Position,
+                    (float)SystemAPI.Time.ElapsedTime);
                 if (attackRo.Damage <= 0)
                     continue;
 
@@ -332,7 +336,7 @@ namespace Game.Runtime
                 }
             }
 
-            ProcessStandardAttackPlans(em, ecb, grid, dt, now, standardAttackCandidates);
+            ProcessStandardAttackPlans(em, ecb, grid, dt, standardAttackCandidates, (float)SystemAPI.Time.ElapsedTime);
 
             foreach (var pair in _aggregatedEffects)
             {
@@ -347,10 +351,18 @@ namespace Game.Runtime
 
                 health.Current = math.max(0, health.Current - pending.TotalDamage);
                 em.SetComponentData(target, health);
+                if (em.HasComponent<LocalTransform>(target))
+                {
+                    CombatAudioEventUtility.EmitBulletImpact(
+                        em,
+                        target,
+                        em.GetComponentData<LocalTransform>(target).Position,
+                        (float)SystemAPI.Time.ElapsedTime);
+                }
                 TryEmitUnitUnderAttackAudio(
                     em,
                     target,
-                    now,
+                    (float)SystemAPI.Time.ElapsedTime,
                     pending.Attacker,
                     pending.TotalDamage,
                     nameof(UnitAttackSystem));
@@ -511,6 +523,17 @@ namespace Game.Runtime
         {
             return $"{health.Current}/{health.Max}";
         }
+#else
+        private static void LogSuppressedUnitUnderAttackAudio(
+            EntityManager em,
+            Entity target,
+            Entity attacker,
+            int damage,
+            float requestedAt,
+            string sourceSystem,
+            string eventId)
+        {
+        }
 #endif
 
         private void ProcessStandardAttackPlans(
@@ -518,8 +541,8 @@ namespace Game.Runtime
             EntityCommandBuffer ecb,
             GridConfig grid,
             float dt,
-            float now,
-            NativeList<StandardAttackCandidate> candidates)
+            NativeList<StandardAttackCandidate> candidates,
+            float requestedAt)
         {
             if (candidates.Length == 0)
                 return;
@@ -596,16 +619,14 @@ namespace Game.Runtime
                         candidate.AttackerPosition,
                         candidate.TargetPosition);
                 }
+                CombatAudioEventUtility.EmitStandardWeaponFire(
+                    em,
+                    candidate.Attacker,
+                    candidate.AttackerPosition,
+                    requestedAt);
 
                 if (plan.Damage <= 0)
                     continue;
-
-                EmitStandardAttackAudio(
-                    em,
-                    candidate.Attacker,
-                    now,
-                    candidate.AttackerPosition,
-                    candidate.TargetPosition);
 
                 _predictedHealth[candidate.Target] = math.max(0, targetPredictedHealth - plan.Damage);
                 if (_aggregatedEffects.TryGetValue(candidate.Target, out AggregatedTargetEffect effect))
@@ -757,28 +778,6 @@ namespace Game.Runtime
                 return true;
 
             return !IsFacingOrNearAttackTarget(transform, targetPosition, attack.Range);
-        }
-
-        private static void EmitStandardAttackAudio(
-            EntityManager em,
-            Entity attacker,
-            float now,
-            float3 attackerPosition,
-            float3 targetPosition)
-        {
-            if (em.HasComponent<UnitAirMovement>(attacker))
-            {
-                GameplayAudioFeedbackSystemHelper.TryEmitMissileLaunchAudio(em, attacker, now, attackerPosition);
-                GameplayAudioFeedbackSystemHelper.TryEmitMissileFlightAudio(
-                    em,
-                    attacker,
-                    now,
-                    math.lerp(attackerPosition, targetPosition, 0.5f));
-                GameplayAudioFeedbackSystemHelper.TryEmitMissileImpactAudio(em, attacker, now, targetPosition);
-                return;
-            }
-
-            GameplayAudioFeedbackSystemHelper.TryEmitWeaponFireAudio(em, attacker, now, attackerPosition);
         }
 
         private static bool IsFacingOrNearAttackTarget(LocalTransform transform, float3 targetPosition, float attackRange)

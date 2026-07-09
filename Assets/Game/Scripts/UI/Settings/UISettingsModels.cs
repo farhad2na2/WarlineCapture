@@ -63,6 +63,9 @@ namespace Game.UI.Runtime
         public float SfxVolume;
         public float AlertsVolume;
         public float VoiceVolume;
+        public bool MusicEnabled;
+        public bool SoundEnabled;
+        public bool VoiceEnabled;
     }
 
     [Serializable]

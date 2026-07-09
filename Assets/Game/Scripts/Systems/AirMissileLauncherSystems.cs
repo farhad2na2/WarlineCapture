@@ -312,9 +312,7 @@ namespace Game.Runtime
         public void OnUpdate(ref SystemState state)
         {
             EntityManager em = state.EntityManager;
-            AudioEventRequestSystem.EnsureAudioEntity(em);
             float dt = SystemAPI.Time.DeltaTime;
-            float now = (float)SystemAPI.Time.ElapsedTime;
             ComponentLookup<LocalToWorld> localToWorldLookup = SystemAPI.GetComponentLookup<LocalToWorld>(true);
             var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
 
@@ -353,7 +351,7 @@ namespace Game.Runtime
                     stateRw.TargetWorldPosition = target.TargetWorldPosition;
                     stateRw.PredictedInterceptPosition = target.PredictedInterceptPosition;
                     stateRw.Timer = 0f;
-                    LaunchMissile(em, ecb, entity, launcher.ValueRO, ref stateRw, launcherTransform.ValueRO, faction.ValueRO.Id, target, now, localToWorldLookup);
+                    LaunchMissile(em, ecb, entity, launcher.ValueRO, ref stateRw, launcherTransform.ValueRO, faction.ValueRO.Id, target, localToWorldLookup, (float)SystemAPI.Time.ElapsedTime);
                     continue;
                 }
 
@@ -387,7 +385,7 @@ namespace Game.Runtime
                 if (stateRw.Timer > 0f)
                     continue;
 
-                LaunchMissile(em, ecb, entity, launcher.ValueRO, ref stateRw, launcherTransform.ValueRO, faction.ValueRO.Id, target, now, localToWorldLookup);
+                LaunchMissile(em, ecb, entity, launcher.ValueRO, ref stateRw, launcherTransform.ValueRO, faction.ValueRO.Id, target, localToWorldLookup, (float)SystemAPI.Time.ElapsedTime);
             }
 
             ecb.Playback(em);
@@ -403,8 +401,8 @@ namespace Game.Runtime
             LocalTransform launcherTransform,
             byte factionId,
             AirMissileLauncherTargetComponent target,
-            float now,
-            ComponentLookup<LocalToWorld> localToWorldLookup)
+            ComponentLookup<LocalToWorld> localToWorldLookup,
+            float requestedAt)
         {
             Entity missileEntity = Entity.Null;
             AirMissileLauncherMissileVisualComponent missileVisual = default;
@@ -421,9 +419,9 @@ namespace Game.Runtime
             }
 
             float3 start = ResolveLaunchPosition(em, launcherEntity, missileEntity, launcherTransform.Position, localToWorldLookup);
+            CombatAudioEventUtility.EmitAirMissileLaunch(em, launcherEntity, start, requestedAt);
             float3 direction = math.normalizesafe(target.PredictedInterceptPosition - start, math.mul(launcherTransform.Rotation, new float3(0f, 0f, 1f)));
             quaternion rotation = quaternion.LookRotationSafe(direction, math.up());
-            GameplayAudioFeedbackSystemHelper.TryEmitMissileLaunchAudio(em, launcherEntity, now, start);
             Entity projectileEntity = missileEntity != Entity.Null && em.Exists(missileEntity)
                 ? missileEntity
                 : ecb.CreateEntity();
@@ -949,8 +947,6 @@ namespace Game.Runtime
         public void OnUpdate(ref SystemState state)
         {
             EntityManager em = state.EntityManager;
-            AudioEventRequestSystem.EnsureAudioEntity(em);
-            float now = (float)SystemAPI.Time.ElapsedTime;
             var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
 
             foreach (var (impact, entity) in SystemAPI.Query<RefRO<AirMissileImpactRequestComponent>>().WithEntityAccess())
@@ -984,7 +980,11 @@ namespace Game.Runtime
                 }
 
                 EnqueueImpactVfx(em, ecb, request);
-                GameplayAudioFeedbackSystemHelper.TryEmitMissileImpactAudio(em, request.Source, now, request.Position);
+                CombatAudioEventUtility.EmitSmallExplosion(
+                    em,
+                    request.Source,
+                    request.Position,
+                    (float)SystemAPI.Time.ElapsedTime);
                 if (RestoreFlyingVisual(em, ecb, entity))
                     ecb.RemoveComponent<AirMissileImpactRequestComponent>(entity);
             }

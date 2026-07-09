@@ -34,6 +34,12 @@ namespace Game.Runtime
         private const float FixedWingReturnApproachMinCells = 24f;
         private const float FixedWingReturnFinalStraightCells = 10f;
         private const float FixedWingReturnLineupSlackCells = 6f;
+        private const float FixedWingCruiseHeightDeadbandMin = 3f;
+        private const float FixedWingCruiseHeightDeadbandCells = 2.5f;
+        private const float FixedWingCruiseHeightMinClimbRate = 8f;
+        private const float FixedWingCruiseHeightClimbSpeedMultiplier = 0.55f;
+        private const float FixedWingCruiseHeightMinDescentRate = 2f;
+        private const float FixedWingCruiseHeightDescentSpeedMultiplier = 0.12f;
         private const byte FixedWingPassFinalPhase = 1;
         private const byte FixedWingPassManeuverPhase = 2;
         private const byte FixedWingPassExtendPhase = 3;
@@ -50,6 +56,69 @@ namespace Game.Runtime
             _surfaceQuery = state.GetEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
             state.RequireForUpdate(_gridQuery);
             state.RequireForUpdate<UnitAirMovement>();
+        }
+
+        private static float ResolveFixedWingCruiseY(
+            ref UnitAirComponent state,
+            MapSurfaceComponent surface,
+            bool hasSurface,
+            in GridConfig grid,
+            float3 currentWorld,
+            float3 targetWorld,
+            float speed,
+            float deltaTime,
+            float fallbackGroundY,
+            float cruiseHeight,
+            float currentY)
+        {
+            float rawCruiseY = ResolveAirCruiseY(
+                surface,
+                hasSurface,
+                grid,
+                currentWorld,
+                targetWorld,
+                speed,
+                deltaTime,
+                fallbackGroundY,
+                cruiseHeight,
+                true);
+            float minimumCruiseY = fallbackGroundY + ResolveAirClearance(cruiseHeight, true);
+            rawCruiseY = math.max(rawCruiseY, minimumCruiseY);
+
+            if (state.FixedWingCruiseYInitialized == 0)
+            {
+                state.FixedWingCruiseY = math.max(rawCruiseY, currentY);
+                state.FixedWingCruiseYInitialized = 1;
+                return state.FixedWingCruiseY;
+            }
+
+            float currentCruiseY = math.max(state.FixedWingCruiseY, minimumCruiseY);
+            float deadband = math.max(
+                FixedWingCruiseHeightDeadbandMin,
+                math.max(0.01f, grid.CellSize) * FixedWingCruiseHeightDeadbandCells);
+            float targetCruiseY = currentCruiseY;
+            if (rawCruiseY > currentCruiseY + deadband)
+                targetCruiseY = rawCruiseY;
+            else if (rawCruiseY < currentCruiseY - deadband)
+                targetCruiseY = math.max(rawCruiseY, minimumCruiseY);
+
+            float cruiseDelta = targetCruiseY - currentCruiseY;
+            if (math.abs(cruiseDelta) > 1e-4f)
+            {
+                float climbRate = math.max(FixedWingCruiseHeightMinClimbRate, math.max(0.01f, speed) * FixedWingCruiseHeightClimbSpeedMultiplier);
+                float descentRate = math.max(FixedWingCruiseHeightMinDescentRate, math.max(0.01f, speed) * FixedWingCruiseHeightDescentSpeedMultiplier);
+                float maxStep = (cruiseDelta > 0f ? climbRate : descentRate) * math.max(0f, deltaTime);
+                currentCruiseY += math.clamp(cruiseDelta, -maxStep, maxStep);
+            }
+
+            state.FixedWingCruiseY = math.max(currentCruiseY, minimumCruiseY);
+            return state.FixedWingCruiseY;
+        }
+
+        private static void ResetFixedWingCruiseState(ref UnitAirComponent state)
+        {
+            state.FixedWingCruiseY = 0f;
+            state.FixedWingCruiseYInitialized = 0;
         }
 
         [BurstCompile]
@@ -94,6 +163,7 @@ namespace Game.Runtime
                     frozenState.LandingRolling = 0;
                     frozenState.AttackRunActive = 0;
                     frozenState.ReturnApproachInitialized = 0;
+                    ResetFixedWingCruiseState(ref frozenState);
                     if (targetLookup.HasComponent(entity))
                         ecb.RemoveComponent<UnitTarget>(entity);
                     if (engageLookup.HasComponent(entity))
@@ -257,17 +327,30 @@ namespace Game.Runtime
                         continue;
                     }
 
-                    float cruiseY = ResolveAirCruiseY(
-                        surface,
-                        hasSurface,
-                        grid,
-                        transform.ValueRO.Position,
-                        engageTargetPosition,
-                        move.ValueRO.Speed,
-                        dt,
-                        groundY,
-                        airMovement.ValueRO.CruiseHeight,
-                        stateRw.UsesRunway != 0);
+                    float cruiseY = stateRw.UsesRunway != 0
+                        ? ResolveFixedWingCruiseY(
+                            ref stateRw,
+                            surface,
+                            hasSurface,
+                            grid,
+                            transform.ValueRO.Position,
+                            engageTargetPosition,
+                            move.ValueRO.Speed,
+                            dt,
+                            groundY,
+                            airMovement.ValueRO.CruiseHeight,
+                            transform.ValueRO.Position.y)
+                        : ResolveAirCruiseY(
+                            surface,
+                            hasSurface,
+                            grid,
+                            transform.ValueRO.Position,
+                            engageTargetPosition,
+                            move.ValueRO.Speed,
+                            dt,
+                            groundY,
+                            airMovement.ValueRO.CruiseHeight,
+                            false);
                     if (stateRw.UsesRunway != 0)
                     {
                         float3 attackPassTarget = new float3(engageTargetPosition.x, cruiseY, engageTargetPosition.z);
@@ -402,7 +485,8 @@ namespace Game.Runtime
                         }
                         else
                         {
-                            float cruiseY = ResolveAirCruiseY(
+                            float cruiseY = ResolveFixedWingCruiseY(
+                                ref stateRw,
                                 surface,
                                 hasSurface,
                                 grid,
@@ -412,7 +496,7 @@ namespace Game.Runtime
                                 dt,
                                 groundY,
                                 airMovement.ValueRO.CruiseHeight,
-                                stateRw.UsesRunway != 0);
+                                transform.ValueRO.Position.y);
                             float3 movePassTarget = new float3(targetWorld.x, cruiseY, targetWorld.z);
                             float moveOvershootDistance = math.max(grid.CellSize * 10f, move.ValueRO.Speed * 1.5f);
                             // Replan the pass when the ordered goal changes mid-flight (new click
@@ -512,6 +596,7 @@ namespace Game.Runtime
                             stateRw.TakeoffRolling = 0;
                             stateRw.LandingRolling = 0;
                             stateRw.ReturnApproachInitialized = 0;
+                            ResetFixedWingCruiseState(ref stateRw);
                             stateRw.HomePosition = transform.ValueRO.Position;
                             stateRw.HomeCell = unitGrid.ValueRO.Cell;
                         }
@@ -564,7 +649,8 @@ namespace Game.Runtime
                         float runwayGroundY = ResolveRunwayGroundY(stateRw, groundY);
                         if (stateRw.Airborne != 0)
                         {
-                            float cruiseY = ResolveAirCruiseY(
+                            float cruiseY = ResolveFixedWingCruiseY(
+                                ref stateRw,
                                 surface,
                                 hasSurface,
                                 grid,
@@ -574,7 +660,7 @@ namespace Game.Runtime
                                 dt,
                                 groundY,
                                 airMovement.ValueRO.CruiseHeight,
-                                stateRw.UsesRunway != 0);
+                                transform.ValueRO.Position.y);
                             float3 runwayDirection = stateRw.RunwayLandingPosition - stateRw.RunwayTakeoffPosition;
                             runwayDirection.y = 0f;
                             runwayDirection = math.normalizesafe(runwayDirection, new float3(0f, 0f, 1f));
@@ -860,6 +946,7 @@ namespace Game.Runtime
                                 stateRw.ReturnApproachInitialized = 0;
                                 stateRw.AttackRunActive = 0;
                                 stateRw.AttackRunExitPosition = default;
+                                ResetFixedWingCruiseState(ref stateRw);
                                 unitGrid.ValueRW.Cell = stateRw.RunwayTakeoffCell;
                             }
                         }
@@ -880,6 +967,7 @@ namespace Game.Runtime
                                 stateRw.LandingRolling = 0;
                                 stateRw.ReturningHome = 1;
                                 stateRw.Airborne = 0;
+                                ResetFixedWingCruiseState(ref stateRw);
                                 unitGrid.ValueRW.Cell = stateRw.RunwayLandingCell;
                             }
                         }
@@ -902,6 +990,7 @@ namespace Game.Runtime
                                 stateRw.TakeoffRolling = 0;
                                 stateRw.LandingRolling = 0;
                                 stateRw.ReturnApproachInitialized = 0;
+                                ResetFixedWingCruiseState(ref stateRw);
                                 unitGrid.ValueRW.Cell = stateRw.HomeCell;
                                 if (state.EntityManager.HasComponent<UnitSpawnTransitTag>(entity))
                                     ecb.RemoveComponent<UnitSpawnTransitTag>(entity);
@@ -926,6 +1015,7 @@ namespace Game.Runtime
                         {
                             stateRw.ReturningHome = 0;
                             stateRw.Airborne = 0;
+                            ResetFixedWingCruiseState(ref stateRw);
                             unitGrid.ValueRW.Cell = stateRw.HomeCell;
                         }
                     }
@@ -1001,17 +1091,30 @@ namespace Game.Runtime
             }
 
             float3 dropWorld = GridUtils.CellToWorldCenter(grid, request.DropReferenceCell);
-            float cruiseY = ResolveAirCruiseY(
-                surface,
-                hasSurface,
-                grid,
-                transform.Position,
-                dropWorld,
-                move.Speed,
-                deltaTime,
-                groundY,
-                airMovement.CruiseHeight,
-                state.UsesRunway != 0);
+            float cruiseY = state.UsesRunway != 0
+                ? ResolveFixedWingCruiseY(
+                    ref state,
+                    surface,
+                    hasSurface,
+                    grid,
+                    transform.Position,
+                    dropWorld,
+                    move.Speed,
+                    deltaTime,
+                    groundY,
+                    airMovement.CruiseHeight,
+                    transform.Position.y)
+                : ResolveAirCruiseY(
+                    surface,
+                    hasSurface,
+                    grid,
+                    transform.Position,
+                    dropWorld,
+                    move.Speed,
+                    deltaTime,
+                    groundY,
+                    airMovement.CruiseHeight,
+                    false);
             dropWorld.y = cruiseY;
 
             float sequenceSeconds = math.max(2f, math.max(0.1f, request.DropIntervalSeconds) * math.max(1, request.DropCount));

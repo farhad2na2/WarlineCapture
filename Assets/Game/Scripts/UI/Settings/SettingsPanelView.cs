@@ -19,6 +19,9 @@ namespace Game.UI.Runtime
         [SerializeField] private UISliderRowView sfxVolumeRow;
         [SerializeField] private UISliderRowView alertsVolumeRow;
         [SerializeField] private UISliderRowView voiceVolumeRow;
+        [SerializeField] private UIToggleRowView musicEnabledRow;
+        [SerializeField] private UIToggleRowView soundEnabledRow;
+        [SerializeField] private UIToggleRowView voiceEnabledRow;
         [SerializeField] private UISegmentedControlView graphicsQualityControl;
         [SerializeField] private UISegmentedControlView frameRateControl;
         [SerializeField] private UISliderRowView cameraSensitivityRow;
@@ -56,6 +59,9 @@ namespace Game.UI.Runtime
             sfxVolumeRow?.Bind("SFX", model.Audio.SfxVolume, 0f, 100f);
             alertsVolumeRow?.Bind("ALERTS", model.Audio.AlertsVolume, 0f, 100f);
             voiceVolumeRow?.Bind("VOICE", model.Audio.VoiceVolume, 0f, 100f);
+            musicEnabledRow?.Bind("MUSIC", "Enable command music playback.", model.Audio.MusicEnabled);
+            soundEnabledRow?.Bind("SOUND", "Enable UI, combat, alert, and ambience sounds.", model.Audio.SoundEnabled);
+            voiceEnabledRow?.Bind("VOICE", "Enable tactical assistant voice lines.", model.Audio.VoiceEnabled);
             graphicsQualityControl?.Bind(GraphicsQualityLabels, (int)model.Graphics.Quality);
             frameRateControl?.Bind(FrameRateLabels, (int)model.Graphics.FrameRateMode);
             cameraSensitivityRow?.Bind("CAMERA SENSITIVITY", model.Controls.CameraSensitivity, 0f, 100f);
@@ -79,6 +85,9 @@ namespace Game.UI.Runtime
             model.Audio.SfxVolume = GetSliderValue(sfxVolumeRow, model.Audio.SfxVolume);
             model.Audio.AlertsVolume = GetSliderValue(alertsVolumeRow, model.Audio.AlertsVolume);
             model.Audio.VoiceVolume = GetSliderValue(voiceVolumeRow, model.Audio.VoiceVolume);
+            model.Audio.MusicEnabled = GetToggleValue(musicEnabledRow, model.Audio.MusicEnabled);
+            model.Audio.SoundEnabled = GetToggleValue(soundEnabledRow, model.Audio.SoundEnabled);
+            model.Audio.VoiceEnabled = GetToggleValue(voiceEnabledRow, model.Audio.VoiceEnabled);
             model.Graphics.Quality = _model.Graphics.Quality;
             model.Graphics.FrameRateMode = _model.Graphics.FrameRateMode;
             model.Controls.CameraSensitivity = GetSliderValue(cameraSensitivityRow, model.Controls.CameraSensitivity);
@@ -110,6 +119,9 @@ namespace Game.UI.Runtime
             AddSliderListener(sfxVolumeRow, OnSfxVolumeChanged);
             AddSliderListener(alertsVolumeRow, OnAlertsVolumeChanged);
             AddSliderListener(voiceVolumeRow, OnVoiceVolumeChanged);
+            AddToggleListener(musicEnabledRow, OnMusicEnabledChanged);
+            AddToggleListener(soundEnabledRow, OnSoundEnabledChanged);
+            AddToggleListener(voiceEnabledRow, OnVoiceEnabledChanged);
             AddSliderListener(cameraSensitivityRow, OnCameraSensitivityChanged);
             AddToggleListener(threatWarningsRow, OnThreatWarningsChanged);
             AddToggleListener(highContrastRow, OnHighContrastChanged);
@@ -136,6 +148,9 @@ namespace Game.UI.Runtime
             RemoveSliderListener(sfxVolumeRow, OnSfxVolumeChanged);
             RemoveSliderListener(alertsVolumeRow, OnAlertsVolumeChanged);
             RemoveSliderListener(voiceVolumeRow, OnVoiceVolumeChanged);
+            RemoveToggleListener(musicEnabledRow, OnMusicEnabledChanged);
+            RemoveToggleListener(soundEnabledRow, OnSoundEnabledChanged);
+            RemoveToggleListener(voiceEnabledRow, OnVoiceEnabledChanged);
             RemoveSliderListener(cameraSensitivityRow, OnCameraSensitivityChanged);
             RemoveToggleListener(threatWarningsRow, OnThreatWarningsChanged);
             RemoveToggleListener(highContrastRow, OnHighContrastChanged);
@@ -154,6 +169,20 @@ namespace Game.UI.Runtime
         private void OnSfxVolumeChanged(float value) => _model.Audio.SfxVolume = value;
         private void OnAlertsVolumeChanged(float value) => _model.Audio.AlertsVolume = value;
         private void OnVoiceVolumeChanged(float value) => _model.Audio.VoiceVolume = value;
+        private void OnMusicEnabledChanged(bool value) => _model.Audio.MusicEnabled = value;
+        private void OnSoundEnabledChanged(bool value)
+        {
+            _model.Audio.SoundEnabled = value;
+            if (value)
+                UIAudioEventGateway.Raise(UIAudioEventKind.SettingsSoundConfirm);
+        }
+
+        private void OnVoiceEnabledChanged(bool value)
+        {
+            _model.Audio.VoiceEnabled = value;
+            if (value)
+                UIAudioEventGateway.Raise(UIAudioEventKind.SettingsVoiceSample);
+        }
         private void OnCameraSensitivityChanged(float value) => _model.Controls.CameraSensitivity = value;
         private void OnThreatWarningsChanged(bool value) => _model.Notifications.ThreatWarnings = value;
         private void OnHighContrastChanged(bool value) => _model.Accessibility.HighContrastUi = value;

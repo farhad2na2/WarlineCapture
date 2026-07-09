@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 94c1f8e54b1ca77fac4fba5122a1b6b2
+guid: a6873395fd2c89fa39b2ca5cdc431294
 AudioImporter:
   externalObjects: {}
   serializedVersion: 7
@@ -18,6 +18,6 @@ AudioImporter:
   loadInBackground: 0
   ambisonic: 0
   3D: 1
-  userData: WarlineCapture generated placeholder gameplay audio
+  userData: WarlineCapture generated placeholder combat audio
   assetBundleName:
   assetBundleVariant:

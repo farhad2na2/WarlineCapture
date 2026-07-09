@@ -251,8 +251,6 @@ public sealed class ResourceExchangeGcAllocationValidationTests
             queue,
             results,
             economyEvents,
-            default,
-            false,
             elapsedSeconds);
         ResourceExchangeQueueTickSystem.TickQueue(
             enabled,

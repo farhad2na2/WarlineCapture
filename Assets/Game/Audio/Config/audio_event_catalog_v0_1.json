@@ -669,54 +669,6 @@
       ]
     },
     {
-      "eventId": "Gameplay.Weapon.Missile.Launch",
-      "busId": "SFX",
-      "priority": "High",
-      "cooldownMs": 0,
-      "volumeDb": -7.0,
-      "pitchVariance": {
-        "min": -0.03,
-        "max": 0.03
-      },
-      "playback": {
-        "loop": false,
-        "spatial": true,
-        "maxInstances": 6,
-        "allowRuntimeLoad": false
-      },
-      "clips": [
-        {
-          "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_missile_launch_01.wav",
-          "status": "generated-elevenlabs",
-          "weight": 1
-        }
-      ]
-    },
-    {
-      "eventId": "Gameplay.Weapon.Missile.Flight",
-      "busId": "SFX",
-      "priority": "Medium",
-      "cooldownMs": 0,
-      "volumeDb": -10.0,
-      "pitchVariance": {
-        "min": -0.04,
-        "max": 0.04
-      },
-      "playback": {
-        "loop": false,
-        "spatial": true,
-        "maxInstances": 8,
-        "allowRuntimeLoad": false
-      },
-      "clips": [
-        {
-          "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_missile_flight_01.wav",
-          "status": "generated-elevenlabs",
-          "weight": 1
-        }
-      ]
-    },
-    {
       "eventId": "Gameplay.Weapon.Missile.Impact",
       "busId": "SFX",
       "priority": "High",
@@ -1144,6 +1096,270 @@
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_resource_exchange_cancelled_01.wav",
           "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Weapon.Rifle.Fire",
+      "busId": "SFX",
+      "priority": "Medium",
+      "cooldownMs": 55,
+      "volumeDb": -7.5,
+      "pitchVariance": {
+        "min": -0.04,
+        "max": 0.04
+      },
+      "playback": {
+        "loop": false,
+        "spatial": true,
+        "maxInstances": 10,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_rifle_fire_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Weapon.VehicleCannon.Fire",
+      "busId": "SFX",
+      "priority": "High",
+      "cooldownMs": 120,
+      "volumeDb": -6.5,
+      "pitchVariance": {
+        "min": -0.04,
+        "max": 0.04
+      },
+      "playback": {
+        "loop": false,
+        "spatial": true,
+        "maxInstances": 6,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_vehicle_cannon_fire_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Weapon.Missile.Launch",
+      "busId": "SFX",
+      "priority": "High",
+      "cooldownMs": 120,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": -0.04,
+        "max": 0.04
+      },
+      "playback": {
+        "loop": false,
+        "spatial": true,
+        "maxInstances": 6,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_missile_launch_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Weapon.AirMissile.Launch",
+      "busId": "SFX",
+      "priority": "High",
+      "cooldownMs": 120,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": -0.04,
+        "max": 0.04
+      },
+      "playback": {
+        "loop": false,
+        "spatial": true,
+        "maxInstances": 6,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_air_missile_launch_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Weapon.Missile.Flight",
+      "busId": "SFX",
+      "priority": "Medium",
+      "cooldownMs": 160,
+      "volumeDb": -7.0,
+      "pitchVariance": {
+        "min": -0.035,
+        "max": 0.035
+      },
+      "playback": {
+        "loop": false,
+        "spatial": true,
+        "maxInstances": 6,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_missile_flight_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Unit.Aircraft.Flyby",
+      "busId": "SFX",
+      "priority": "High",
+      "cooldownMs": 900,
+      "volumeDb": -8.0,
+      "pitchVariance": {
+        "min": -0.03,
+        "max": 0.03
+      },
+      "playback": {
+        "loop": false,
+        "spatial": true,
+        "maxInstances": 3,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_unit_aircraft_flyby_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Unit.Vehicle.Engine",
+      "busId": "SFX",
+      "priority": "Low",
+      "cooldownMs": 220,
+      "volumeDb": -8.0,
+      "pitchVariance": {
+        "min": -0.03,
+        "max": 0.03
+      },
+      "playback": {
+        "loop": false,
+        "spatial": true,
+        "maxInstances": 8,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_unit_vehicle_engine_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Impact.Bullet",
+      "busId": "SFX",
+      "priority": "Medium",
+      "cooldownMs": 40,
+      "volumeDb": -10.0,
+      "pitchVariance": {
+        "min": -0.05,
+        "max": 0.05
+      },
+      "playback": {
+        "loop": false,
+        "spatial": true,
+        "maxInstances": 8,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_impact_bullet_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Explosion.Small",
+      "busId": "SFX",
+      "priority": "High",
+      "cooldownMs": 120,
+      "volumeDb": -5.5,
+      "pitchVariance": {
+        "min": -0.04,
+        "max": 0.04
+      },
+      "playback": {
+        "loop": false,
+        "spatial": true,
+        "maxInstances": 5,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_explosion_small_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Explosion.Large",
+      "busId": "SFX",
+      "priority": "Critical",
+      "cooldownMs": 160,
+      "volumeDb": -4.5,
+      "pitchVariance": {
+        "min": -0.035,
+        "max": 0.035
+      },
+      "playback": {
+        "loop": false,
+        "spatial": true,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_explosion_large_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Unit.Vehicle.Destroyed",
+      "busId": "SFX",
+      "priority": "High",
+      "cooldownMs": 350,
+      "volumeDb": -6.0,
+      "pitchVariance": {
+        "min": -0.035,
+        "max": 0.035
+      },
+      "playback": {
+        "loop": false,
+        "spatial": true,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_unit_vehicle_destroyed_01.wav",
+          "status": "placeholder",
           "weight": 1
         }
       ]

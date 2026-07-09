@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using Game.Components;
 using Game.Configs;
 using Game.UI.Runtime;
@@ -20,6 +21,10 @@ public sealed class UiAudioEventViewTests
         try
         {
             RunCase(test => test.Gateway_ResolvesGeneratedEventIds());
+            passed++;
+            RunCase(test => test.Gateway_ResolvesSettingsSampleEvents());
+            passed++;
+            RunCase(test => test.SettingsPanelView_EmitsSamplesOnlyForEnableInteractions());
             passed++;
             RunCase(test => test.ButtonAudioEventView_EmitsConfiguredClickAndDisabledTap());
             passed++;
@@ -83,6 +88,79 @@ public sealed class UiAudioEventViewTests
         Assert.AreEqual(AudioEventIds.UIButtonPrimaryClick, request.EventId);
         Assert.AreEqual(AudioEventIds.UIButtonPrimaryClickHash, request.EventHash);
         Assert.AreEqual("UI", request.BusId);
+    }
+
+    [Test]
+    public void Gateway_ResolvesSettingsSampleEvents()
+    {
+        Assert.IsTrue(UIAudioEventGateway.TryCreateRequest(UIAudioEventKind.SettingsSoundConfirm, out UIAudioEventRequest soundRequest));
+        Assert.AreEqual(UIAudioEventKind.SettingsSoundConfirm, soundRequest.Kind);
+        Assert.AreEqual(AudioEventIds.UIFeedbackToastPositive, soundRequest.EventId);
+        Assert.AreEqual(AudioEventIds.UIFeedbackToastPositiveHash, soundRequest.EventHash);
+        Assert.AreEqual("UI", soundRequest.BusId);
+        Assert.Greater(soundRequest.CooldownSeconds, 0f);
+
+        Assert.IsTrue(UIAudioEventGateway.TryCreateRequest(UIAudioEventKind.SettingsVoiceSample, out UIAudioEventRequest voiceRequest));
+        Assert.AreEqual(UIAudioEventKind.SettingsVoiceSample, voiceRequest.Kind);
+        Assert.AreEqual(AudioEventIds.VOARIAMessageTacticalFeedbackRtsCameraRestored, voiceRequest.EventId);
+        Assert.AreEqual(AudioEventIds.VOARIAMessageTacticalFeedbackRtsCameraRestoredHash, voiceRequest.EventHash);
+        Assert.AreEqual("Voice", voiceRequest.BusId);
+        Assert.GreaterOrEqual(voiceRequest.CooldownSeconds, 0.5f);
+    }
+
+    [Test]
+    public void SettingsPanelView_EmitsSamplesOnlyForEnableInteractions()
+    {
+        var panelObject = new GameObject("SettingsPanel");
+        panelObject.transform.SetParent(_root.transform, false);
+        panelObject.SetActive(false);
+        SettingsPanelView panel = panelObject.AddComponent<SettingsPanelView>();
+        UIToggleRowView soundRow = CreateToggleRow("SoundEnabledRow", out Toggle soundToggle);
+        UIToggleRowView voiceRow = CreateToggleRow("VoiceEnabledRow", out Toggle voiceToggle);
+        SetPrivateField(panel, "soundEnabledRow", soundRow);
+        SetPrivateField(panel, "voiceEnabledRow", voiceRow);
+        InvokePrivate(panel, "Awake");
+
+        int eventCount = 0;
+        UIAudioEventKind firstKind = UIAudioEventKind.None;
+        UIAudioEventKind secondKind = UIAudioEventKind.None;
+        void Capture(UIAudioEventRequest request)
+        {
+            eventCount++;
+            if (eventCount == 1)
+                firstKind = request.Kind;
+            else if (eventCount == 2)
+                secondKind = request.Kind;
+        }
+
+        UIAudioEventGateway.AudioEventRequested += Capture;
+        try
+        {
+            UISettingsModel model = default;
+            model.Audio.SoundEnabled = false;
+            model.Audio.VoiceEnabled = false;
+            panel.Bind(model);
+            Assert.AreEqual(0, eventCount, "Binding settings controls must not play samples.");
+
+            soundToggle.isOn = true;
+            Assert.AreEqual(1, eventCount);
+            Assert.AreEqual(UIAudioEventKind.SettingsSoundConfirm, firstKind);
+
+            soundToggle.isOn = false;
+            Assert.AreEqual(1, eventCount, "Disabling Sound must not play the enable sample.");
+
+            voiceToggle.isOn = true;
+            Assert.AreEqual(2, eventCount);
+            Assert.AreEqual(UIAudioEventKind.SettingsVoiceSample, secondKind);
+
+            voiceToggle.isOn = false;
+            Assert.AreEqual(2, eventCount, "Disabling Voice must not play the enable sample.");
+        }
+        finally
+        {
+            UIAudioEventGateway.AudioEventRequested -= Capture;
+            InvokePrivate(panel, "OnDestroy");
+        }
     }
 
     [Test]
@@ -205,5 +283,32 @@ public sealed class UiAudioEventViewTests
         var child = new GameObject(name);
         child.transform.SetParent(_root.transform, false);
         return child.AddComponent<T>();
+    }
+
+    private UIToggleRowView CreateToggleRow(string name, out Toggle toggle)
+    {
+        var rowObject = new GameObject(name);
+        rowObject.transform.SetParent(_root.transform, false);
+        var row = rowObject.AddComponent<UIToggleRowView>();
+
+        var toggleObject = new GameObject("Toggle");
+        toggleObject.transform.SetParent(rowObject.transform, false);
+        toggle = toggleObject.AddComponent<Toggle>();
+        SetPrivateField(row, "toggle", toggle);
+        return row;
+    }
+
+    private static void SetPrivateField<TValue>(object target, string fieldName, TValue value)
+    {
+        FieldInfo field = target.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.NotNull(field, $"{target.GetType().Name} must contain private field {fieldName}.");
+        field.SetValue(target, value);
+    }
+
+    private static void InvokePrivate(object target, string methodName)
+    {
+        MethodInfo method = target.GetType().GetMethod(methodName, BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.NotNull(method, $"{target.GetType().Name} must contain private method {methodName}.");
+        method.Invoke(target, null);
     }
 }

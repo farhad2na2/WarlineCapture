@@ -114,6 +114,8 @@ namespace Game.Runtime
             pooledSource.EventHash = request.EventHash;
             pooledSource.RequestId = request.RequestId;
             pooledSource.Priority = request.Priority;
+            pooledSource.BusId = ResolveBusId(request, entry);
+            pooledSource.VolumeDecibels = ResolveTotalDecibels(request, entry, bus);
             pooledSource.InUse = true;
             _sources[sourceIndex] = pooledSource;
 
@@ -123,6 +125,11 @@ namespace Game.Runtime
 
         public void UpdatePool()
         {
+            UpdatePool(now: 0f);
+        }
+
+        public void UpdatePool(float now)
+        {
             for (int i = 0; i < _sources.Count; i++)
             {
                 PooledAudioSource pooledSource = _sources[i];
@@ -130,7 +137,13 @@ namespace Game.Runtime
                     continue;
 
                 if (pooledSource.Source == null || !pooledSource.Source.isPlaying)
+                {
                     ReleaseSource(i);
+                    continue;
+                }
+
+                if (AdvanceFade(ref pooledSource, now))
+                    _sources[i] = pooledSource;
             }
         }
 
@@ -142,6 +155,46 @@ namespace Game.Runtime
                 if (pooledSource.Source != null)
                     pooledSource.Source.Stop();
                 ReleaseSource(i);
+            }
+        }
+
+        public void ApplySettingsToActiveSources(AudioSettingsComponent settings)
+        {
+            ApplySettingsToActiveSources(settings, now: 0f, fadeSeconds: 0f);
+        }
+
+        public void ApplySettingsToActiveSources(
+            AudioSettingsComponent settings,
+            float now,
+            float fadeSeconds)
+        {
+            for (int i = 0; i < _sources.Count; i++)
+            {
+                PooledAudioSource pooledSource = _sources[i];
+                if (!pooledSource.InUse || pooledSource.Source == null)
+                    continue;
+
+                AdvanceFade(ref pooledSource, now);
+                float targetVolume = ResolveLinearVolume(
+                    pooledSource.BusId,
+                    pooledSource.VolumeDecibels,
+                    settings);
+
+                if (fadeSeconds > 0f && IsMusicBus(pooledSource.BusId))
+                {
+                    pooledSource.FadeActive = true;
+                    pooledSource.FadeStartVolume = pooledSource.Source.volume;
+                    pooledSource.FadeTargetVolume = targetVolume;
+                    pooledSource.FadeStartTime = now;
+                    pooledSource.FadeDuration = fadeSeconds;
+                }
+                else
+                {
+                    pooledSource.FadeActive = false;
+                    pooledSource.Source.volume = targetVolume;
+                }
+
+                _sources[i] = pooledSource;
             }
         }
 
@@ -175,11 +228,17 @@ namespace Game.Runtime
             AudioMixerBusEntry bus,
             AudioSettingsComponent settings)
         {
-            string busId = !string.IsNullOrWhiteSpace(entry?.BusId)
-                ? entry.BusId
-                : request.BusId.ToString();
+            string busId = ResolveBusId(request, entry);
+            float decibels = ResolveTotalDecibels(request, entry, bus);
+            return ResolveLinearVolume(busId, decibels, settings);
+        }
+
+        private static float ResolveLinearVolume(
+            string busId,
+            float decibels,
+            AudioSettingsComponent settings)
+        {
             float busVolume = ResolveBusVolume(busId, settings);
-            float decibels = (entry?.VolumeDecibels ?? 0f) + request.VolumeDecibels + (bus?.DefaultVolumeDecibels ?? 0f);
             return math.saturate(DecibelsToLinear(decibels) * busVolume);
         }
 
@@ -236,7 +295,6 @@ namespace Game.Runtime
             source.minDistance = SpatialSfxMinDistance;
             source.maxDistance = SpatialSfxMaxDistance;
             source.dopplerLevel = 0f;
-            source.spread = 0f;
             source.volume = 1f;
             _sources.Add(new PooledAudioSource { Source = source });
             _createdSourceCount++;
@@ -256,7 +314,6 @@ namespace Game.Runtime
                 pooledSource.Source.minDistance = SpatialSfxMinDistance;
                 pooledSource.Source.maxDistance = SpatialSfxMaxDistance;
                 pooledSource.Source.dopplerLevel = 0f;
-                pooledSource.Source.spread = 0f;
                 pooledSource.Source.transform.localPosition = Vector3.zero;
             }
 
@@ -264,6 +321,13 @@ namespace Game.Runtime
             pooledSource.EventHash = 0u;
             pooledSource.RequestId = 0;
             pooledSource.Priority = AudioPlaybackPriority.Low;
+            pooledSource.BusId = null;
+            pooledSource.VolumeDecibels = 0f;
+            pooledSource.FadeActive = false;
+            pooledSource.FadeStartVolume = 0f;
+            pooledSource.FadeTargetVolume = 0f;
+            pooledSource.FadeStartTime = 0f;
+            pooledSource.FadeDuration = 0f;
             _sources[index] = pooledSource;
         }
 
@@ -291,6 +355,46 @@ namespace Game.Runtime
             return null;
         }
 
+        private static bool AdvanceFade(ref PooledAudioSource pooledSource, float now)
+        {
+            if (!pooledSource.FadeActive || pooledSource.Source == null)
+                return false;
+
+            float duration = math.max(0.0001f, pooledSource.FadeDuration);
+            float t = math.saturate((now - pooledSource.FadeStartTime) / duration);
+            pooledSource.Source.volume = math.lerp(
+                pooledSource.FadeStartVolume,
+                pooledSource.FadeTargetVolume,
+                t);
+
+            if (t >= 1f)
+                pooledSource.FadeActive = false;
+
+            return true;
+        }
+
+        private static string ResolveBusId(AudioPlaybackRequestElement request, AudioEventCatalogEntry entry)
+        {
+            return !string.IsNullOrWhiteSpace(entry?.BusId)
+                ? entry.BusId
+                : request.BusId.ToString();
+        }
+
+        private static bool IsMusicBus(string busId)
+        {
+            return string.Equals(busId, "Music", StringComparison.Ordinal);
+        }
+
+        private static float ResolveTotalDecibels(
+            AudioPlaybackRequestElement request,
+            AudioEventCatalogEntry entry,
+            AudioMixerBusEntry bus)
+        {
+            return (entry?.VolumeDecibels ?? 0f) +
+                request.VolumeDecibels +
+                (bus?.DefaultVolumeDecibels ?? 0f);
+        }
+
         private static void ConfigureSource(
             AudioSource source,
             AudioPlaybackRequestElement request,
@@ -304,11 +408,7 @@ namespace Game.Runtime
             source.loop = entry.Playback?.Loop ?? request.Kind == AudioPlaybackRequestKind.MusicState;
             bool spatial = entry.Playback?.Spatial ?? request.Spatial != 0;
             source.spatialBlend = spatial ? 1f : 0f;
-            source.rolloffMode = AudioRolloffMode.Linear;
-            source.minDistance = spatial ? SpatialSfxMinDistance : 1f;
-            source.maxDistance = spatial ? SpatialSfxMaxDistance : 500f;
-            source.dopplerLevel = 0f;
-            source.spread = 0f;
+            ConfigureSpatialReach(source, spatial);
             source.volume = ResolveLinearVolume(request, entry, bus, settings);
             source.pitch = ResolvePitch(request, entry);
 
@@ -333,6 +433,15 @@ namespace Game.Runtime
             return math.max(0.01f, requestPitch + deterministicVariance);
         }
 
+        private static void ConfigureSpatialReach(AudioSource source, bool spatial)
+        {
+            source.rolloffMode = AudioRolloffMode.Linear;
+            source.minDistance = spatial ? SpatialSfxMinDistance : 1f;
+            source.maxDistance = spatial ? SpatialSfxMaxDistance : 500f;
+            source.dopplerLevel = 0f;
+            source.spread = 0f;
+        }
+
         private struct PooledAudioSource
         {
             public AudioSource Source;
@@ -340,6 +449,13 @@ namespace Game.Runtime
             public uint EventHash;
             public int RequestId;
             public AudioPlaybackPriority Priority;
+            public string BusId;
+            public float VolumeDecibels;
+            public bool FadeActive;
+            public float FadeStartVolume;
+            public float FadeTargetVolume;
+            public float FadeStartTime;
+            public float FadeDuration;
         }
     }
 }

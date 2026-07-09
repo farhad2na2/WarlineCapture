@@ -20,7 +20,9 @@ namespace Game.UI.Runtime
         PopupOpen = 13,
         PopupClose = 14,
         DrawerOpen = 15,
-        DrawerClose = 16
+        DrawerClose = 16,
+        SettingsSoundConfirm = 17,
+        SettingsVoiceSample = 18
     }
 
     public readonly struct UIAudioEventRequest
@@ -59,7 +61,7 @@ namespace Game.UI.Runtime
                 kind,
                 eventId,
                 StableHash(eventId),
-                "UI",
+                ResolveBusId(kind),
                 ResolveCooldownSeconds(kind));
             return true;
         }
@@ -93,7 +95,18 @@ namespace Game.UI.Runtime
                 UIAudioEventKind.PopupClose => "UI.Popup.Close",
                 UIAudioEventKind.DrawerOpen => "UI.Drawer.Open",
                 UIAudioEventKind.DrawerClose => "UI.Drawer.Close",
+                UIAudioEventKind.SettingsSoundConfirm => "UI.Feedback.Toast.Positive",
+                UIAudioEventKind.SettingsVoiceSample => "VO.ARIA.Message.TacticalFeedbackRtsCameraRestored",
                 _ => string.Empty
+            };
+        }
+
+        private static string ResolveBusId(UIAudioEventKind kind)
+        {
+            return kind switch
+            {
+                UIAudioEventKind.SettingsVoiceSample => "Voice",
+                _ => "UI"
             };
         }
 
@@ -109,6 +122,8 @@ namespace Game.UI.Runtime
                 UIAudioEventKind.PopupClose => 0.08f,
                 UIAudioEventKind.DrawerOpen => 0.08f,
                 UIAudioEventKind.DrawerClose => 0.08f,
+                UIAudioEventKind.SettingsSoundConfirm => 0.25f,
+                UIAudioEventKind.SettingsVoiceSample => 0.6f,
                 _ => 0f
             };
         }

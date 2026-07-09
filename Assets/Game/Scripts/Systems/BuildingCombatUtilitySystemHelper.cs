@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEngine;
 using Game.Components;
 using Game.Configs;
@@ -402,6 +404,17 @@ namespace Game.Runtime
             {
                 TryEmitBaseBreachedAudio(baseBreachEntityManager, breachedBuilding, now);
             }
+
+            if (context.TryGetEntityManager != null &&
+                context.TryGetEntityManager(out EntityManager destructionEntityManager) &&
+                TryResolveBuildingWorldPosition(destructionEntityManager, building, out float3 destructionPosition))
+            {
+                CombatAudioEventUtility.EmitLargeExplosion(
+                    destructionEntityManager,
+                    building.CombatEntity,
+                    destructionPosition,
+                    now);
+            }
             DestroyRuntimeBuildingBlockerEntity(context, building);
 
             if (context.RuntimeBuildingSystem != null &&
@@ -414,6 +427,32 @@ namespace Game.Runtime
             if (building is RuntimeBuildingEntity runtimeBuilding)
                 context.DestroyedVisualPresentationHelper?.BeginDestroyedVisual(context.DestroyedVisualContext, runtimeBuilding);
             context.RefreshBuildingMarkerVisibility?.Invoke();
+            return true;
+        }
+
+        private static bool TryResolveBuildingWorldPosition<TBuilding>(
+            EntityManager em,
+            TBuilding building,
+            out float3 position)
+            where TBuilding : class, IRuntimeBuildingVisualState
+        {
+            position = default;
+            if (building == null)
+                return false;
+
+            if (building.CombatEntity != Entity.Null &&
+                em.Exists(building.CombatEntity) &&
+                em.HasComponent<LocalTransform>(building.CombatEntity))
+            {
+                position = em.GetComponentData<LocalTransform>(building.CombatEntity).Position;
+                return true;
+            }
+
+            if (building.InstanceObject == null)
+                return false;
+
+            Vector3 instancePosition = building.InstanceObject.transform.position;
+            position = new float3(instancePosition.x, instancePosition.y, instancePosition.z);
             return true;
         }
 

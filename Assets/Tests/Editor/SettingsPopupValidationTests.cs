@@ -315,8 +315,14 @@ public sealed class SettingsPopupValidationTests
 
         SettingsPanelView panel = popupView.SettingsPanel;
         Assert.GreaterOrEqual(panel.GetComponentsInChildren<UISliderRowView>(true).Length, 4, $"{prefabPath} must expose audio and camera sliders.");
-        Assert.GreaterOrEqual(panel.GetComponentsInChildren<UIToggleRowView>(true).Length, 5, $"{prefabPath} must expose notification, accessibility, and ARIA toggles.");
+        Assert.GreaterOrEqual(panel.GetComponentsInChildren<UIToggleRowView>(true).Length, 8, $"{prefabPath} must expose audio, notification, accessibility, and ARIA toggles.");
         Assert.GreaterOrEqual(panel.GetComponentsInChildren<UISegmentedControlView>(true).Length, 6, $"{prefabPath} must expose graphics, framerate, ARIA, color, and language segments.");
+        Assert.NotNull(FindChild(prefab.transform, "MusicEnabledRow"), $"{prefabPath} must expose a music enable toggle row.");
+        Assert.NotNull(FindChild(prefab.transform, "SoundEnabledRow"), $"{prefabPath} must expose a sound enable toggle row.");
+        Assert.NotNull(FindChild(prefab.transform, "VoiceEnabledRow"), $"{prefabPath} must expose an ARIA voice enable toggle row.");
+        AssertSerializedReference(panel, "musicEnabledRow", $"{prefabPath} must serialize the music enable row.");
+        AssertSerializedReference(panel, "soundEnabledRow", $"{prefabPath} must serialize the sound enable row.");
+        AssertSerializedReference(panel, "voiceEnabledRow", $"{prefabPath} must serialize the ARIA voice enable row.");
         Assert.NotNull(FindChild(prefab.transform, "NarrationModeControl"), $"{prefabPath} must expose ARIA narration mode control.");
         Assert.NotNull(FindChild(prefab.transform, "AssistantTakeoverRow"), $"{prefabPath} must expose ARIA takeover toggle.");
         Assert.NotNull(FindChild(prefab.transform, "AssistantSubtitlesRow"), $"{prefabPath} must expose ARIA subtitle toggle.");
@@ -328,6 +334,14 @@ public sealed class SettingsPopupValidationTests
         Assert.NotNull(popupView, $"{popup.name} must own SettingsPopupView.");
         Assert.AreEqual(expectedContext, popupView.Context, $"{popup.name} must declare the expected settings context.");
         Assert.NotNull(popupView.SettingsPanel, $"{popup.name} must serialize its SettingsPanelView.");
+    }
+
+    private static void AssertSerializedReference(UnityEngine.Object target, string fieldName, string message)
+    {
+        SerializedObject serialized = new(target);
+        SerializedProperty property = serialized.FindProperty(fieldName);
+        Assert.NotNull(property, $"{target.name} must expose serialized field {fieldName}.");
+        Assert.NotNull(property.objectReferenceValue, message);
     }
 
     private static void AssertReadablePopupLayout(string prefabPath)
@@ -348,6 +362,9 @@ public sealed class SettingsPopupValidationTests
         AssertTextPairDoesNotOverlap(prefab.transform, "MusicVolumeRow", "Label", "Value", prefabPath);
         AssertTextPairDoesNotOverlap(prefab.transform, "SfxVolumeRow", "Label", "Value", prefabPath);
         AssertTextPairDoesNotOverlap(prefab.transform, "CameraSensitivityRow", "Label", "Value", prefabPath);
+        AssertTextPairDoesNotOverlap(prefab.transform, "MusicEnabledRow", "Label", "State", prefabPath);
+        AssertTextPairDoesNotOverlap(prefab.transform, "SoundEnabledRow", "Label", "State", prefabPath);
+        AssertTextPairDoesNotOverlap(prefab.transform, "VoiceEnabledRow", "Label", "State", prefabPath);
         AssertTextPairDoesNotOverlap(prefab.transform, "ThreatWarningsRow", "Label", "State", prefabPath);
         AssertTextPairDoesNotOverlap(prefab.transform, "AssistantTakeoverRow", "Label", "State", prefabPath);
         AssertTextPairDoesNotOverlap(prefab.transform, "HighContrastRow", "Label", "State", prefabPath);

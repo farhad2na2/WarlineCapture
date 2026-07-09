@@ -27,6 +27,7 @@ public sealed class UnitMovementBlockerValidationTests
             tests.AirMovementDoesNotMoveDuringDebugFireStateWithoutEngageTarget();
             tests.AirMovementClimbsAboveElevatedMapSurfaceForDirectTarget();
             tests.FixedWingAirMovementUsesTerrainLookaheadClearance();
+            tests.FixedWingAirMovementSmoothsCruiseDescentAfterTerrainLookaheadClears();
             tests.InfantryMovementDoesNotStallOnOwnPreviousOccupancySnapshot();
             tests.VehicleConfiguredFootprintOverridesRenderedBounds();
             tests.AuthoredUsaTankPlacementsAreVehicleWalkableInBakedSurface();
@@ -708,6 +709,91 @@ public sealed class UnitMovementBlockerValidationTests
                 position.y,
                 14f,
                 "Fixed-wing aircraft must climb using terrain lookahead before crossing raised terrain or mountains.");
+        }
+        finally
+        {
+            if (surfaceBlob.IsCreated)
+                surfaceBlob.Dispose();
+            if (friendlyPassFactionIds.IsCreated)
+                friendlyPassFactionIds.Dispose();
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (blockerCounts.IsCreated)
+                blockerCounts.Dispose();
+        }
+    }
+
+    [Test]
+    public void FixedWingAirMovementSmoothsCruiseDescentAfterTerrainLookaheadClears()
+    {
+        using var world = new World("FixedWingAirSmoothCruiseDescentValidation");
+        EntityManager em = world.EntityManager;
+
+        NativeArray<int> blockerCounts = default;
+        NativeBitArray blocked = default;
+        NativeArray<byte> friendlyPassFactionIds = default;
+        BlobAssetReference<MapSurfaceBlob> surfaceBlob = default;
+
+        try
+        {
+            const int width = 32;
+            const int height = 8;
+            CreateGrid(em, width, height, out blockerCounts, out blocked, out friendlyPassFactionIds);
+            surfaceBlob = CreateSingleLayerSurfaceBlob(width, height, defaultHeight: 0f, elevatedCell: new int2(-1, -1), elevatedHeight: 0f);
+            AddMapSurface(em, surfaceBlob, width, height);
+
+            Entity jet = em.CreateEntity(
+                typeof(UnitGrid),
+                typeof(UnitMove),
+                typeof(UnitAirMovement),
+                typeof(UnitAirComponent),
+                typeof(UnitTarget),
+                typeof(LocalTransform));
+
+            float3 startPosition = new(1.5f, 48f, 3.5f);
+            em.SetComponentData(jet, new UnitGrid { Cell = new int2(1, 3) });
+            em.SetComponentData(jet, new UnitMove { Speed = 32f, WalkSpeed = 32f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.05f });
+            em.SetComponentData(jet, new UnitAirMovement { CruiseHeight = 6f, RunwayTaxiSpeed = 4f });
+            em.SetComponentData(jet, new UnitAirComponent
+            {
+                HomePosition = new float3(1.5f, 0f, 3.5f),
+                HomeCell = new int2(1, 3),
+                HomeInitialized = 1,
+                Airborne = 1,
+                UsesRunway = 1,
+                FixedWingCruiseY = 48f,
+                FixedWingCruiseYInitialized = 1,
+                RunwayTakeoffPosition = new float3(1.5f, 0f, 3.5f),
+                RunwayTakeoffCell = new int2(1, 3),
+                RunwayLandingPosition = new float3(4.5f, 0f, 3.5f),
+                RunwayLandingCell = new int2(4, 3)
+            });
+            em.SetComponentData(jet, new UnitTarget { Cell = new int2(20, 3) });
+            em.SetComponentData(
+                jet,
+                LocalTransform.FromPositionRotation(
+                    startPosition,
+                    quaternion.LookRotationSafe(new float3(1f, 0f, 0f), math.up())));
+
+            SystemHandle airMovementSystem = world.CreateSystem<UnitAirMovementSystem>();
+            world.SetTime(new TimeData(0.5d, 0.5f));
+            airMovementSystem.Update(world.Unmanaged);
+            em.CompleteAllTrackedJobs();
+
+            UnitAirComponent airState = em.GetComponentData<UnitAirComponent>(jet);
+            float3 position = em.GetComponentData<LocalTransform>(jet).Position;
+            Assert.Greater(
+                airState.FixedWingCruiseY,
+                44f,
+                "Fixed-wing aircraft should descend gently after high-terrain lookahead clears instead of snapping to the flat map cruise height.");
+            Assert.Less(
+                airState.FixedWingCruiseY,
+                48f,
+                "Fixed-wing cruise height should still converge after terrain lookahead clears.");
+            Assert.Greater(
+                position.y,
+                44f,
+                "Fixed-wing aircraft should not visibly drop in one frame when surface samples switch from high terrain back to flat terrain.");
         }
         finally
         {

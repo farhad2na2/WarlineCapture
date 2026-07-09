@@ -141,20 +141,23 @@ namespace Game.Editor
 
             SettingsPanelView panelView = panel.gameObject.AddComponent<SettingsPanelView>();
             RectTransform content = CreateRect("Content", panel, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(1540f, 720f), new Vector2(0f, -470f));
-            RectTransform audioSection = CreateSection("AudioSection", content, "AUDIO", new Vector2(-395f, 210f), new Vector2(750f, 280f));
-            RectTransform controlSection = CreateSection("ControlSection", content, "GAMEPLAY", new Vector2(-395f, -160f), new Vector2(750f, 400f));
+            RectTransform audioSection = CreateSection("AudioSection", content, "AUDIO", new Vector2(-395f, 150f), new Vector2(750f, 400f));
+            RectTransform controlSection = CreateSection("ControlSection", content, "GAMEPLAY", new Vector2(-395f, -225f), new Vector2(750f, 340f));
             RectTransform displaySection = CreateSection("DisplaySection", content, "VIDEO", new Vector2(395f, 220f), new Vector2(750f, 250f));
             RectTransform accessSection = CreateSection("AccessibilitySection", content, "ACCESSIBILITY", new Vector2(395f, -150f), new Vector2(750f, 420f));
 
-            UISliderRowView master = CreateSliderRow("MasterVolumeRow", audioSection, "MASTER VOLUME", 52f, 72f);
-            UISliderRowView music = CreateSliderRow("MusicVolumeRow", audioSection, "MUSIC", 130f, 72f);
-            UISliderRowView sfx = CreateSliderRow("SfxVolumeRow", audioSection, "SFX", 208f, 72f);
+            UISliderRowView master = CreateSliderRow("MasterVolumeRow", audioSection, "MASTER VOLUME", 46f, 56f);
+            UISliderRowView music = CreateSliderRow("MusicVolumeRow", audioSection, "MUSIC VOLUME", 108f, 56f);
+            UISliderRowView sfx = CreateSliderRow("SfxVolumeRow", audioSection, "SOUND VOLUME", 170f, 56f);
+            UIToggleRowView musicToggle = CreateToggleRow("MusicEnabledRow", audioSection, "MUSIC", "Enable command music playback.", 232f, 48f);
+            UIToggleRowView soundToggle = CreateToggleRow("SoundEnabledRow", audioSection, "SOUND", "Enable UI, combat, alert, and ambience sounds.", 284f, 48f);
+            UIToggleRowView voiceToggle = CreateToggleRow("VoiceEnabledRow", audioSection, "VOICE", "Enable tactical assistant voice lines.", 336f, 48f);
 
-            UISliderRowView camera = CreateSliderRow("CameraSensitivityRow", controlSection, "CAMERA SENSITIVITY", 46f, 62f);
-            UIToggleRowView threat = CreateToggleRow("ThreatWarningsRow", controlSection, "THREAT WARNINGS", "Show tactical warnings during missions.", 112f, 58f);
-            UISegmentedControlView assistance = CreateSegmentRow("AssistanceLevelControl", controlSection, "ASSISTANT GUIDANCE", 174f, AssistanceLevelLabels, 78f);
-            UISegmentedControlView narration = CreateSegmentRow("NarrationModeControl", controlSection, "NARRATION", 254f, NarrationModeLabels, 78f);
-            UIToggleRowView takeover = CreateToggleRow("AssistantTakeoverRow", controlSection, "ASSISTANT TAKEOVER", "Allow assistant-guided bounded actions.", 336f, 58f);
+            UISliderRowView camera = CreateSliderRow("CameraSensitivityRow", controlSection, "CAMERA SENSITIVITY", 42f, 52f);
+            UIToggleRowView threat = CreateToggleRow("ThreatWarningsRow", controlSection, "THREAT WARNINGS", "Show tactical warnings during missions.", 100f, 48f);
+            UISegmentedControlView assistance = CreateSegmentRow("AssistanceLevelControl", controlSection, "ASSISTANT GUIDANCE", 160f, AssistanceLevelLabels, 68f);
+            UISegmentedControlView narration = CreateSegmentRow("NarrationModeControl", controlSection, "NARRATION", 236f, NarrationModeLabels, 68f);
+            UIToggleRowView takeover = CreateToggleRow("AssistantTakeoverRow", controlSection, "ASSISTANT TAKEOVER", "Allow assistant-guided bounded actions.", 306f, 48f);
 
             UISegmentedControlView quality = CreateSegmentRow("GraphicsQualityControl", displaySection, "GRAPHICS QUALITY", 52f, GraphicsQualityLabels, 84f);
             UISegmentedControlView frameRate = CreateSegmentRow("FrameRateControl", displaySection, "FRAME RATE", 144f, FrameRateLabels, 84f);
@@ -168,6 +171,9 @@ namespace Game.Editor
             SetObject(panelView, "masterVolumeRow", master);
             SetObject(panelView, "musicVolumeRow", music);
             SetObject(panelView, "sfxVolumeRow", sfx);
+            SetObject(panelView, "musicEnabledRow", musicToggle);
+            SetObject(panelView, "soundEnabledRow", soundToggle);
+            SetObject(panelView, "voiceEnabledRow", voiceToggle);
             SetObject(panelView, "graphicsQualityControl", quality);
             SetObject(panelView, "frameRateControl", frameRate);
             SetObject(panelView, "cameraSensitivityRow", camera);

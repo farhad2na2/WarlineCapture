@@ -1,6 +1,5 @@
 using Game.Components;
 using Unity.Entities;
-using Unity.Mathematics;
 using Unity.Transforms;
 
 namespace Game.Runtime
@@ -10,14 +9,12 @@ namespace Game.Runtime
     [UpdateAfter(typeof(AudioEventRequestSystem))]
     public partial struct UnitMotionAudioSystem : ISystem
     {
-        private const float VehicleEngineIntervalSeconds = 0.55f;
-        private const float AircraftFlightIntervalSeconds = 0.65f;
-        private const float AircraftTakeoffIntervalSeconds = 1.1f;
+        private const float VehicleEngineIntervalSeconds = 0.65f;
+        private const float AircraftEngineIntervalSeconds = 0.9f;
 
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<UnitMoveVisualComponent>();
-            state.RequireForUpdate<UnitMovementBehavior>();
         }
 
         public void OnUpdate(ref SystemState state)
@@ -25,10 +22,10 @@ namespace Game.Runtime
             EntityManager em = state.EntityManager;
             AudioEventRequestSystem.EnsureAudioEntity(em);
             float now = (float)SystemAPI.Time.ElapsedTime;
-            var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
+            EntityCommandBuffer ecb = new(Unity.Collections.Allocator.Temp);
 
-            foreach (var (transform, visual, movement, entity) in SystemAPI
-                         .Query<RefRO<LocalTransform>, RefRO<UnitMoveVisualComponent>, RefRO<UnitMovementBehavior>>()
+            foreach (var (transform, visual, entity) in SystemAPI
+                         .Query<RefRO<LocalTransform>, RefRO<UnitMoveVisualComponent>>()
                          .WithNone<StaticGridBlocker>()
                          .WithNone<UnitDeathAnimationComponent>()
                          .WithEntityAccess())
@@ -37,7 +34,7 @@ namespace Game.Runtime
                     continue;
 
                 bool isAircraft = em.HasComponent<UnitAirMovement>(entity);
-                bool isVehicle = movement.ValueRO.UsesVehicleMotion != 0;
+                bool isVehicle = IsGroundVehicle(em, entity);
                 if (!isAircraft && !isVehicle)
                     continue;
 
@@ -51,39 +48,26 @@ namespace Game.Runtime
                     UnitAirComponent air = em.HasComponent<UnitAirComponent>(entity)
                         ? em.GetComponentData<UnitAirComponent>(entity)
                         : default;
-                    bool takeoffRolling = air.TakeoffRolling != 0;
                     bool aircraftActive =
                         visual.ValueRO.IsMoving != 0 ||
                         air.Airborne != 0 ||
                         air.TakeoffRolling != 0 ||
                         air.LandingRolling != 0 ||
-                        air.AttackRunActive != 0 ||
-                        air.ReturningHome != 0;
+                        air.AttackRunActive != 0;
 
-                    if (takeoffRolling && (audioState.WasTakeoffRolling == 0 || now >= audioState.NextAircraftTakeoffAt))
+                    if (aircraftActive && now >= audioState.NextAircraftEngineAt)
                     {
-                        GameplayAudioFeedbackSystemHelper.TryEmitAircraftTakeoffAudio(em, entity, now, transform.ValueRO.Position);
-                        audioState.NextAircraftTakeoffAt = now + AircraftTakeoffIntervalSeconds;
-                        changed = true;
-                    }
-
-                    if (aircraftActive && now >= audioState.NextAircraftFlightAt)
-                    {
-                        if (IsHelicopterAudioSource(em, entity))
-                            GameplayAudioFeedbackSystemHelper.TryEmitHelicopterFlightAudio(em, entity, now, transform.ValueRO.Position);
-                        else
-                            GameplayAudioFeedbackSystemHelper.TryEmitAircraftFlightAudio(em, entity, now, transform.ValueRO.Position);
-                        audioState.NextAircraftFlightAt = now + AircraftFlightIntervalSeconds;
+                        CombatAudioEventUtility.EmitAircraftEngine(em, entity, transform.ValueRO.Position, now);
+                        audioState.NextAircraftEngineAt = now + AircraftEngineIntervalSeconds;
                         changed = true;
                     }
 
                     audioState.WasAircraftActive = (byte)(aircraftActive ? 1 : 0);
-                    audioState.WasTakeoffRolling = (byte)(takeoffRolling ? 1 : 0);
                     changed = true;
                 }
                 else if (visual.ValueRO.IsMoving != 0 && now >= audioState.NextVehicleEngineAt)
                 {
-                    GameplayAudioFeedbackSystemHelper.TryEmitVehicleEngineAudio(em, entity, now, transform.ValueRO.Position);
+                    CombatAudioEventUtility.EmitVehicleEngine(em, entity, transform.ValueRO.Position, now);
                     audioState.NextVehicleEngineAt = now + VehicleEngineIntervalSeconds;
                     changed = true;
                 }
@@ -101,13 +85,13 @@ namespace Game.Runtime
             ecb.Dispose();
         }
 
-        private static bool IsHelicopterAudioSource(EntityManager em, Entity entity)
+        private static bool IsGroundVehicle(EntityManager em, Entity entity)
         {
-            if (!em.HasComponent<UnitSourcePrefabKey>(entity))
-                return false;
+            if (em.HasComponent<UnitVehicleMovement>(entity))
+                return true;
 
-            string sourceKey = em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString();
-            return sourceKey.IndexOf("helicopter", System.StringComparison.OrdinalIgnoreCase) >= 0;
+            return em.HasComponent<UnitMovementBehavior>(entity) &&
+                   em.GetComponentData<UnitMovementBehavior>(entity).UsesVehicleMotion != 0;
         }
     }
 }

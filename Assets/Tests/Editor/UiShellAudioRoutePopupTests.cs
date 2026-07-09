@@ -1,6 +1,7 @@
 using System;
 using Game.Components;
 using Game.Configs;
+using Game.Runtime;
 using Game.Tactical.Contracts;
 using Game.UI.Contracts;
 using Game.UI.Shell.Contracts.Ecs;
@@ -28,11 +29,11 @@ public sealed class UiShellAudioRoutePopupTests
             passed++;
             RunCase(test => test.PassengerDrawerToggle_EnqueuesDrawerOpenAudio());
             passed++;
-            RunCase(test => test.InitialMenuState_DoesNotRequestMenuMusicWhileMusicDisabled());
+            RunCase(test => test.InitialMenuState_RequestsMenuMusicAndSkipsDuplicateWhenCurrent());
             passed++;
-            RunCase(test => test.EnterMatchRoute_DoesNotRequestMatchMusicWhileMusicDisabled());
+            RunCase(test => test.EnterMatchRoute_RequestsMatchMusicAndSkipsDuplicateWhenCurrent());
             passed++;
-            RunCase(test => test.ReturnToMainMenuRoute_DoesNotRequestMenuMusicWhileMusicDisabled());
+            RunCase(test => test.ReturnToMainMenuRoute_RequestsMenuMusicFromMatchHud());
             passed++;
 
             Debug.Log($"[UiShellAudioRoutePopupValidation] result=Passed tests={passed}");
@@ -168,35 +169,68 @@ public sealed class UiShellAudioRoutePopupTests
     }
 
     [Test]
-    public void InitialMenuState_DoesNotRequestMenuMusicWhileMusicDisabled()
+    public void InitialMenuState_RequestsMenuMusicAndSkipsDuplicateWhenCurrent()
     {
-        CreateShellFlowBoundary(UiShellMode.None, UIRoute.Splash);
+        Entity boundary = CreateShellFlowBoundary(UiShellMode.None, UIRoute.Splash);
+        SystemHandle system = _world.CreateSystem<UiShellFlowSystem>();
 
-        _world.CreateSystem<UiShellFlowSystem>().Update(_world.Unmanaged);
+        system.Update(_world.Unmanaged);
 
-        AssertNoMusicRequest();
+        AssertMusicStateRequested(AudioEventIds.MusicMenuLoop, AudioEventIds.MusicMenuLoopHash, 1.5f);
+        AssertMusicRequestCount(AudioEventIds.MusicMenuLoopHash, 1);
+
+        ApplyRequestedMusicState();
+        CompleteCurrentTransition(boundary, UiShellCommandKind.EnterMenu);
+        system.Update(_world.Unmanaged);
+
+        _world.EntityManager.GetBuffer<UiShellRouteRequestComponent>(boundary).Add(new UiShellRouteRequestComponent
+        {
+            Route = UIRoute.MainMenu,
+            Intent = UiShellRouteIntent.OpenMenuRoute
+        });
+        system.Update(_world.Unmanaged);
+
+        AssertMusicStateCurrentOnly(AudioEventIds.MusicMenuLoop, AudioEventIds.MusicMenuLoopHash);
+        AssertMusicRequestCount(AudioEventIds.MusicMenuLoopHash, 1);
     }
 
     [Test]
-    public void EnterMatchRoute_DoesNotRequestMatchMusicWhileMusicDisabled()
+    public void EnterMatchRoute_RequestsMatchMusicAndSkipsDuplicateWhenCurrent()
     {
         Entity boundary = CreateShellFlowBoundary();
+        SystemHandle system = _world.CreateSystem<UiShellFlowSystem>();
         _world.EntityManager.GetBuffer<UiShellRouteRequestComponent>(boundary).Add(new UiShellRouteRequestComponent
         {
             Route = UIRoute.Match,
             Intent = UiShellRouteIntent.EnterMatch
         });
 
-        _world.CreateSystem<UiShellFlowSystem>().Update(_world.Unmanaged);
+        system.Update(_world.Unmanaged);
 
-        AssertNoMusicRequest();
+        AssertMusicStateRequested(AudioEventIds.MusicMatchCalmLoop, AudioEventIds.MusicMatchCalmLoopHash, 2f);
+        AssertMusicRequestCount(AudioEventIds.MusicMatchCalmLoopHash, 1);
         AssertLatestAudioRequest(AudioEventIds.UIScreenForward, AudioEventIds.UIScreenForwardHash);
+
+        ApplyRequestedMusicState();
+        CompleteCurrentTransition(boundary, UiShellCommandKind.ShowLoading);
+        system.Update(_world.Unmanaged);
+
+        _world.EntityManager.GetBuffer<UiShellRouteRequestComponent>(boundary).Add(new UiShellRouteRequestComponent
+        {
+            Route = UIRoute.Match,
+            Intent = UiShellRouteIntent.EnterMatch
+        });
+        system.Update(_world.Unmanaged);
+
+        AssertMusicStateCurrentOnly(AudioEventIds.MusicMatchCalmLoop, AudioEventIds.MusicMatchCalmLoopHash);
+        AssertMusicRequestCount(AudioEventIds.MusicMatchCalmLoopHash, 1);
     }
 
     [Test]
-    public void ReturnToMainMenuRoute_DoesNotRequestMenuMusicWhileMusicDisabled()
+    public void ReturnToMainMenuRoute_RequestsMenuMusicFromMatchHud()
     {
         Entity boundary = CreateShellFlowBoundary(UiShellMode.MatchHud, UIRoute.Match);
+        SetCurrentMusicState(AudioEventIds.MusicMatchCalmLoop, AudioEventIds.MusicMatchCalmLoopHash);
         _world.EntityManager.GetBuffer<UiShellRouteRequestComponent>(boundary).Add(new UiShellRouteRequestComponent
         {
             Route = UIRoute.MainMenu,
@@ -205,7 +239,8 @@ public sealed class UiShellAudioRoutePopupTests
 
         _world.CreateSystem<UiShellFlowSystem>().Update(_world.Unmanaged);
 
-        AssertNoMusicRequest();
+        AssertMusicStateRequested(AudioEventIds.MusicMenuLoop, AudioEventIds.MusicMenuLoopHash, 1.5f);
+        AssertMusicRequestCount(AudioEventIds.MusicMenuLoopHash, 1);
         AssertLatestAudioRequest(AudioEventIds.UIScreenForward, AudioEventIds.UIScreenForwardHash);
     }
 
@@ -282,7 +317,7 @@ public sealed class UiShellAudioRoutePopupTests
 
     private void AssertMusicStateRequested(string eventId, uint eventHash, float transitionSeconds)
     {
-        Entity audioEntity = Game.Runtime.AudioEventRequestSystem.EnsureAudioEntity(_world.EntityManager);
+        Entity audioEntity = AudioEventRequestSystem.EnsureAudioEntity(_world.EntityManager);
         AudioMusicStateComponent musicState = _world.EntityManager.GetComponentData<AudioMusicStateComponent>(audioEntity);
         Assert.AreEqual(eventId, musicState.RequestedEventId.ToString());
         Assert.AreEqual(eventHash, musicState.RequestedEventHash);
@@ -309,16 +344,60 @@ public sealed class UiShellAudioRoutePopupTests
         Assert.IsTrue(found, $"Expected music audio request {eventId}.");
     }
 
-    private void AssertNoMusicRequest()
+    private void AssertMusicStateCurrentOnly(string eventId, uint eventHash)
     {
-        Entity audioEntity = Game.Runtime.AudioEventRequestSystem.EnsureAudioEntity(_world.EntityManager);
+        Entity audioEntity = AudioEventRequestSystem.EnsureAudioEntity(_world.EntityManager);
         AudioMusicStateComponent musicState = _world.EntityManager.GetComponentData<AudioMusicStateComponent>(audioEntity);
-        Assert.AreEqual(0u, musicState.CurrentEventHash);
+        Assert.AreEqual(eventId, musicState.CurrentEventId.ToString());
+        Assert.AreEqual(eventHash, musicState.CurrentEventHash);
         Assert.AreEqual(0u, musicState.RequestedEventHash);
+    }
 
+    private void AssertMusicRequestCount(uint eventHash, int expectedCount)
+    {
+        Entity audioEntity = AudioEventRequestSystem.EnsureAudioEntity(_world.EntityManager);
         DynamicBuffer<AudioPlaybackRequestElement> requests =
             _world.EntityManager.GetBuffer<AudioPlaybackRequestElement>(audioEntity);
+        int count = 0;
         for (int i = 0; i < requests.Length; i++)
-            Assert.AreNotEqual("Music", requests[i].BusId.ToString());
+        {
+            AudioPlaybackRequestElement request = requests[i];
+            if (request.BusId.ToString() == "Music" && request.EventHash == eventHash)
+                count++;
+        }
+
+        Assert.AreEqual(expectedCount, count);
+    }
+
+    private void ApplyRequestedMusicState()
+    {
+        Entity audioEntity = AudioEventRequestSystem.EnsureAudioEntity(_world.EntityManager);
+        AudioMusicStateComponent musicState = _world.EntityManager.GetComponentData<AudioMusicStateComponent>(audioEntity);
+        Assert.IsTrue(AudioMusicStateSystem.ApplyRequestedMusicState(ref musicState));
+        _world.EntityManager.SetComponentData(audioEntity, musicState);
+    }
+
+    private void SetCurrentMusicState(string eventId, uint eventHash)
+    {
+        Entity audioEntity = AudioEventRequestSystem.EnsureAudioEntity(_world.EntityManager);
+        AudioMusicStateComponent musicState = _world.EntityManager.GetComponentData<AudioMusicStateComponent>(audioEntity);
+        musicState.CurrentEventId = eventId;
+        musicState.CurrentEventHash = eventHash;
+        musicState.RequestedEventId = default;
+        musicState.RequestedEventHash = 0u;
+        musicState.IsTransitioning = 0;
+        _world.EntityManager.SetComponentData(audioEntity, musicState);
+    }
+
+    private void CompleteCurrentTransition(Entity boundary, UiShellCommandKind commandKind)
+    {
+        UiShellStateComponent shellState = _world.EntityManager.GetComponentData<UiShellStateComponent>(boundary);
+        DynamicBuffer<UiShellTransitionCompleteComponent> completions =
+            _world.EntityManager.GetBuffer<UiShellTransitionCompleteComponent>(boundary);
+        completions.Add(new UiShellTransitionCompleteComponent
+        {
+            Kind = commandKind,
+            SequenceId = shellState.TransitionSequenceId
+        });
     }
 }

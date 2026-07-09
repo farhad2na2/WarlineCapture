@@ -28,6 +28,8 @@ public sealed class AudioPlaybackPresentationBridgeSystemHelperTests
             passed++;
             RunCase(test => test.DrainAcceptedRequests_RecordsMissingEventWithoutPlayback());
             passed++;
+            RunCase(test => test.DrainAcceptedRequests_FadesSettingsChangesOnActiveMusicSource());
+            passed++;
 
             Debug.Log($"[AudioPlaybackPresentationBridgeValidation] result=Passed tests={passed}");
             ValidationExit.Passed();
@@ -222,6 +224,59 @@ public sealed class AudioPlaybackPresentationBridgeSystemHelperTests
         Assert.AreEqual(1, results.Length);
         Assert.AreEqual(AudioPlaybackRequestStatus.MissingEvent, results[0].Status);
         Assert.AreEqual("MissingCatalogEntry", results[0].Reason.ToString());
+    }
+
+    [Test]
+    public void DrainAcceptedRequests_FadesSettingsChangesOnActiveMusicSource()
+    {
+        Entity audioEntity = AudioEventRequestSystem.EnsureAudioEntity(_entityManager);
+        AudioSettingsComponent settings = _entityManager.GetComponentData<AudioSettingsComponent>(audioEntity);
+        settings.MusicMuted = 0;
+        settings.MusicVolume = 1f;
+        settings.Version++;
+        _entityManager.SetComponentData(audioEntity, settings);
+
+        int requestId = AudioEventRequestSystem.EnqueueOneShot(
+            _entityManager,
+            new FixedString64Bytes(AudioEventIds.MusicMenuLoop),
+            AudioEventIds.MusicMenuLoopHash,
+            new FixedString32Bytes("Music"),
+            AudioPlaybackPriority.High,
+            requestedAt: 1f);
+        AudioCooldownSystem.ProcessPendingRequests(_entityManager, now: 1f);
+
+        AudioEventCatalogConfig catalog = CreateCatalog(CreateEntry(
+            AudioEventIds.MusicMenuLoop,
+            "Music",
+            CreateClip("music_menu_loop")));
+        AudioMixerBusConfig buses = CreateBuses(CreateBus("Music"));
+        using AudioPlaybackPresentationSystemHelper playback = new(initialPoolSize: 1, maxPoolSize: 1);
+        AudioPlaybackPresentationBridgeSystemHelper bridge = new();
+
+        bridge.DrainAcceptedRequests(_entityManager, catalog, buses, playback, now: 1.1f);
+
+        Assert.IsTrue(playback.TryGetActiveSource(requestId, out AudioSource source));
+        Assert.That(source.volume, Is.EqualTo(1f).Within(0.001f));
+
+        settings.MusicMuted = 1;
+        settings.Version++;
+        _entityManager.SetComponentData(audioEntity, settings);
+
+        AudioPlaybackPresentationBridgeResult second = bridge.DrainAcceptedRequests(
+            _entityManager,
+            catalog,
+            buses,
+            playback,
+            now: 1.2f);
+
+        Assert.AreEqual(0, second.PresentedCount);
+        Assert.That(source.volume, Is.EqualTo(1f).Within(0.001f));
+
+        playback.UpdatePool(now: 1.375f);
+        Assert.That(source.volume, Is.GreaterThan(0f).And.LessThan(1f));
+
+        playback.UpdatePool(now: 1.55f);
+        Assert.That(source.volume, Is.EqualTo(0f).Within(0.001f));
     }
 
     private AudioClip CreateClip(string name)

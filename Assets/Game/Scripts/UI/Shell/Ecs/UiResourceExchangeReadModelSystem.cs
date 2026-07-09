@@ -680,7 +680,9 @@ namespace Game.UI.Shell.Ecs
 
         private static FixedString64Bytes ToFixed64(FixedString128Bytes value)
         {
-            return new FixedString64Bytes(Trim(value.ToString(), 60));
+            FixedString64Bytes result = default;
+            result.Append(value);
+            return result;
         }
 
         private static FixedString128Bytes ToFixed128(string value)

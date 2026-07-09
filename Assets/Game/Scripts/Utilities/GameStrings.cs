@@ -19,6 +19,16 @@ namespace Game.Runtime
                 return GameText.TryGet(key, out value);
             }
 
+            public static string GetAudioEventId(string key)
+            {
+                return GameText.GetAudioEventId(key);
+            }
+
+            public static bool TryGetAudioEventId(string key, out string audioEventId)
+            {
+                return GameText.TryGetAudioEventId(key, out audioEventId);
+            }
+
             public static string Format(string key, params object[] args)
             {
                 return GameText.Format(key, key, args);

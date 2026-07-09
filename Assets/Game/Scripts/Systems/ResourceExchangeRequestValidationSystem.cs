@@ -7,64 +7,65 @@ namespace Game.Runtime
 {
     public partial struct ResourceExchangeRequestValidationSystem : ISystem
     {
+        private EntityQuery exchangeQuery;
+
+        public void OnCreate(ref SystemState state)
+        {
+            exchangeQuery = state.GetEntityQuery(
+                ComponentType.ReadWrite<ResourceExchangeRequestQueueComponent>(),
+                ComponentType.ReadOnly<ResourceExchangeEnabledComponent>(),
+                ComponentType.ReadWrite<ResourceExchangeWalletComponent>(),
+                ComponentType.ReadWrite<ResourceExchangeSummaryComponent>(),
+                ComponentType.ReadWrite<ResourceExchangeRecipeComponent>(),
+                ComponentType.ReadWrite<ResourceExchangeRequestComponent>(),
+                ComponentType.ReadWrite<ResourceExchangeQueueComponent>(),
+                ComponentType.ReadWrite<ResourceExchangeResultComponent>(),
+                ComponentType.ReadWrite<ResourceExchangeEconomyEventComponent>());
+            state.RequireForUpdate(exchangeQuery);
+        }
+
         public void OnUpdate(ref SystemState state)
         {
             float elapsedSeconds = (float)SystemAPI.Time.ElapsedTime;
-            foreach (var (
-                         requestQueue,
-                         enabled,
-                         wallet,
-                         summary,
-                         recipes,
-                         requests,
-                         queue,
-                         exchangeEntity)
-                     in SystemAPI.Query<
-                         RefRW<ResourceExchangeRequestQueueComponent>,
-                         RefRO<ResourceExchangeEnabledComponent>,
-                         RefRW<ResourceExchangeWalletComponent>,
-                         RefRW<ResourceExchangeSummaryComponent>,
-                         DynamicBuffer<ResourceExchangeRecipeComponent>,
-                         DynamicBuffer<ResourceExchangeRequestComponent>,
-                         DynamicBuffer<ResourceExchangeQueueComponent>>()
-                         .WithEntityAccess())
+            EntityManager em = state.EntityManager;
+            using NativeArray<Entity> entities = exchangeQuery.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < entities.Length; i++)
             {
+                Entity entity = entities[i];
+                ResourceExchangeRequestQueueComponent requestQueue =
+                    em.GetComponentData<ResourceExchangeRequestQueueComponent>(entity);
+                ResourceExchangeEnabledComponent enabled =
+                    em.GetComponentData<ResourceExchangeEnabledComponent>(entity);
+                ResourceExchangeWalletComponent wallet =
+                    em.GetComponentData<ResourceExchangeWalletComponent>(entity);
+                ResourceExchangeSummaryComponent summary =
+                    em.GetComponentData<ResourceExchangeSummaryComponent>(entity);
+                DynamicBuffer<ResourceExchangeRecipeComponent> recipes =
+                    em.GetBuffer<ResourceExchangeRecipeComponent>(entity);
+                DynamicBuffer<ResourceExchangeRequestComponent> requests =
+                    em.GetBuffer<ResourceExchangeRequestComponent>(entity);
+                DynamicBuffer<ResourceExchangeQueueComponent> queue =
+                    em.GetBuffer<ResourceExchangeQueueComponent>(entity);
                 DynamicBuffer<ResourceExchangeResultComponent> results =
-                    SystemAPI.GetBuffer<ResourceExchangeResultComponent>(exchangeEntity);
+                    em.GetBuffer<ResourceExchangeResultComponent>(entity);
                 DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents =
-                    SystemAPI.GetBuffer<ResourceExchangeEconomyEventComponent>(exchangeEntity);
-                bool hasDeltaFlyouts =
-                    state.EntityManager.HasBuffer<ResourceExchangeDeltaFlyoutComponent>(exchangeEntity);
-                DynamicBuffer<ResourceExchangeDeltaFlyoutComponent> deltaFlyouts = hasDeltaFlyouts
-                    ? state.EntityManager.GetBuffer<ResourceExchangeDeltaFlyoutComponent>(exchangeEntity)
-                    : default;
-                bool hasToasts =
-                    state.EntityManager.HasBuffer<ResourceExchangeToastComponent>(exchangeEntity);
-                DynamicBuffer<ResourceExchangeToastComponent> toasts = hasToasts
-                    ? state.EntityManager.GetBuffer<ResourceExchangeToastComponent>(exchangeEntity)
-                    : default;
-                bool hasAriaAnnouncements =
-                    state.EntityManager.HasBuffer<ResourceExchangeAriaAnnouncementComponent>(exchangeEntity);
-                DynamicBuffer<ResourceExchangeAriaAnnouncementComponent> ariaAnnouncements = hasAriaAnnouncements
-                    ? state.EntityManager.GetBuffer<ResourceExchangeAriaAnnouncementComponent>(exchangeEntity)
-                    : default;
+                    em.GetBuffer<ResourceExchangeEconomyEventComponent>(entity);
+
                 ProcessRequests(
-                    ref requestQueue.ValueRW,
-                    enabled.ValueRO,
-                    ref wallet.ValueRW,
-                    ref summary.ValueRW,
+                    ref requestQueue,
+                    enabled,
+                    ref wallet,
+                    ref summary,
                     recipes,
                     requests,
                     queue,
                     results,
                     economyEvents,
-                    deltaFlyouts,
-                    hasDeltaFlyouts,
-                    toasts,
-                    hasToasts,
-                    ariaAnnouncements,
-                    hasAriaAnnouncements,
                     elapsedSeconds);
+
+                em.SetComponentData(entity, requestQueue);
+                em.SetComponentData(entity, wallet);
+                em.SetComponentData(entity, summary);
             }
         }
 
@@ -237,80 +238,6 @@ namespace Game.Runtime
             DynamicBuffer<ResourceExchangeQueueComponent> queue,
             DynamicBuffer<ResourceExchangeResultComponent> results,
             DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
-            DynamicBuffer<ResourceExchangeDeltaFlyoutComponent> deltaFlyouts,
-            bool emitDeltaFlyouts,
-            float elapsedSeconds)
-        {
-            ProcessRequests(
-                ref requestQueue,
-                enabled,
-                ref wallet,
-                ref summary,
-                recipes,
-                requests,
-                queue,
-                results,
-                economyEvents,
-                deltaFlyouts,
-                emitDeltaFlyouts,
-                default,
-                false,
-                default,
-                false,
-                elapsedSeconds);
-        }
-
-        public static void ProcessRequests(
-            ref ResourceExchangeRequestQueueComponent requestQueue,
-            in ResourceExchangeEnabledComponent enabled,
-            ref ResourceExchangeWalletComponent wallet,
-            ref ResourceExchangeSummaryComponent summary,
-            DynamicBuffer<ResourceExchangeRecipeComponent> recipes,
-            DynamicBuffer<ResourceExchangeRequestComponent> requests,
-            DynamicBuffer<ResourceExchangeQueueComponent> queue,
-            DynamicBuffer<ResourceExchangeResultComponent> results,
-            DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
-            DynamicBuffer<ResourceExchangeDeltaFlyoutComponent> deltaFlyouts,
-            bool emitDeltaFlyouts,
-            DynamicBuffer<ResourceExchangeToastComponent> toasts,
-            bool emitToasts,
-            float elapsedSeconds)
-        {
-            ProcessRequests(
-                ref requestQueue,
-                enabled,
-                ref wallet,
-                ref summary,
-                recipes,
-                requests,
-                queue,
-                results,
-                economyEvents,
-                deltaFlyouts,
-                emitDeltaFlyouts,
-                toasts,
-                emitToasts,
-                default,
-                false,
-                elapsedSeconds);
-        }
-
-        public static void ProcessRequests(
-            ref ResourceExchangeRequestQueueComponent requestQueue,
-            in ResourceExchangeEnabledComponent enabled,
-            ref ResourceExchangeWalletComponent wallet,
-            ref ResourceExchangeSummaryComponent summary,
-            DynamicBuffer<ResourceExchangeRecipeComponent> recipes,
-            DynamicBuffer<ResourceExchangeRequestComponent> requests,
-            DynamicBuffer<ResourceExchangeQueueComponent> queue,
-            DynamicBuffer<ResourceExchangeResultComponent> results,
-            DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
-            DynamicBuffer<ResourceExchangeDeltaFlyoutComponent> deltaFlyouts,
-            bool emitDeltaFlyouts,
-            DynamicBuffer<ResourceExchangeToastComponent> toasts,
-            bool emitToasts,
-            DynamicBuffer<ResourceExchangeAriaAnnouncementComponent> ariaAnnouncements,
-            bool emitAriaAnnouncements,
             float elapsedSeconds)
         {
             if (requests.Length == 0)
@@ -331,8 +258,6 @@ namespace Game.Runtime
                             recipes,
                             queue,
                             economyEvents,
-                            deltaFlyouts,
-                            emitDeltaFlyouts,
                             request,
                             elapsedSeconds);
                         break;
@@ -342,8 +267,6 @@ namespace Game.Runtime
                             ref wallet,
                             queue,
                             economyEvents,
-                            deltaFlyouts,
-                            emitDeltaFlyouts,
                             request,
                             ResourceExchangeReason.None);
                         break;
@@ -355,12 +278,6 @@ namespace Game.Runtime
                             queue,
                             results,
                             economyEvents,
-                            deltaFlyouts,
-                            emitDeltaFlyouts,
-                            toasts,
-                            emitToasts,
-                            ariaAnnouncements,
-                            emitAriaAnnouncements,
                             request);
                         break;
                     case ResourceExchangeRequestKind.RushAll:
@@ -371,12 +288,6 @@ namespace Game.Runtime
                             queue,
                             results,
                             economyEvents,
-                            deltaFlyouts,
-                            emitDeltaFlyouts,
-                            toasts,
-                            emitToasts,
-                            ariaAnnouncements,
-                            emitAriaAnnouncements,
                             request);
                         break;
                     case ResourceExchangeRequestKind.ClearCompleted:
@@ -391,8 +302,6 @@ namespace Game.Runtime
                             ref wallet,
                             queue,
                             economyEvents,
-                            deltaFlyouts,
-                            emitDeltaFlyouts,
                             request);
                         break;
                     default:
@@ -401,11 +310,6 @@ namespace Game.Runtime
                 }
 
                 results.Add(result);
-                ResourceExchangeToastTextUtility.TryAppendToast(toasts, emitToasts, result);
-                ResourceExchangeAriaTextUtility.TryAppendAnnouncement(
-                    ariaAnnouncements,
-                    emitAriaAnnouncements,
-                    result);
                 ApplySummary(ref summary, enabled, queue, result);
             }
 
@@ -419,8 +323,6 @@ namespace Game.Runtime
             DynamicBuffer<ResourceExchangeRecipeComponent> recipes,
             DynamicBuffer<ResourceExchangeQueueComponent> queue,
             DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
-            DynamicBuffer<ResourceExchangeDeltaFlyoutComponent> deltaFlyouts,
-            bool emitDeltaFlyouts,
             in ResourceExchangeRequestComponent request,
             float elapsedSeconds)
         {
@@ -476,16 +378,6 @@ namespace Game.Runtime
                 Amount = -request.InputAmount,
                 RecipeId = recipe.RecipeId
             });
-            EmitDeltaFlyout(
-                deltaFlyouts,
-                emitDeltaFlyouts,
-                queueItem.QueueItemId,
-                factionId,
-                ResourceExchangeDeltaFlyoutKind.InputReserved,
-                ResourceExchangeResultKind.QueueStarted,
-                recipe.InputResource,
-                -request.InputAmount,
-                recipe.RecipeId);
 
             return new ResourceExchangeResultComponent
             {
@@ -508,8 +400,6 @@ namespace Game.Runtime
             ref ResourceExchangeWalletComponent wallet,
             DynamicBuffer<ResourceExchangeQueueComponent> queue,
             DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
-            DynamicBuffer<ResourceExchangeDeltaFlyoutComponent> deltaFlyouts,
-            bool emitDeltaFlyouts,
             in ResourceExchangeRequestComponent request,
             ResourceExchangeReason stateReason)
         {
@@ -527,28 +417,18 @@ namespace Game.Runtime
                     return Rejected(request, default, ResourceExchangeReason.CancelUnavailable);
 
                 int refundAmount = CalculateRefundAmount(item);
-                economyEvents.Add(new ResourceExchangeEconomyEventComponent
-                {
-                    QueueItemId = item.QueueItemId,
-                    FactionId = item.FactionId,
-                    ResultKind = ResourceExchangeResultKind.QueueCancelled,
-                    ResourceKind = item.InputResource,
-                    Amount = refundAmount,
-                    RecipeId = item.RecipeId
-                });
                 if (refundAmount > 0)
                 {
                     AddResourceAmount(ref wallet, item.InputResource, refundAmount);
-                    EmitDeltaFlyout(
-                        deltaFlyouts,
-                        emitDeltaFlyouts,
-                        item.QueueItemId,
-                        item.FactionId,
-                        ResourceExchangeDeltaFlyoutKind.InputRefunded,
-                        ResourceExchangeResultKind.QueueCancelled,
-                        item.InputResource,
-                        refundAmount,
-                        item.RecipeId);
+                    economyEvents.Add(new ResourceExchangeEconomyEventComponent
+                    {
+                        QueueItemId = item.QueueItemId,
+                        FactionId = item.FactionId,
+                        ResultKind = ResourceExchangeResultKind.QueueCancelled,
+                        ResourceKind = item.InputResource,
+                        Amount = refundAmount,
+                        RecipeId = item.RecipeId
+                    });
                 }
 
                 item.State = ResourceExchangeQueueState.Cancelled;
@@ -577,42 +457,6 @@ namespace Game.Runtime
             return Rejected(request, default, ResourceExchangeReason.CancelUnavailable);
         }
 
-        private static ResourceExchangeResultComponent ProcessClearCompletedRequest(
-            in ResourceExchangeEnabledComponent enabled,
-            DynamicBuffer<ResourceExchangeQueueComponent> queue,
-            in ResourceExchangeRequestComponent request)
-        {
-            if (enabled.Enabled == 0)
-                return Rejected(request, default, ResourceExchangeReason.ExchangeUnavailable);
-
-            byte factionId = request.FactionId != 0 ? request.FactionId : enabled.FactionId;
-            if (enabled.FactionId != 0 && factionId != enabled.FactionId)
-                return Rejected(request, default, ResourceExchangeReason.ExchangeUnavailable);
-
-            int removedCount = 0;
-            for (int i = queue.Length - 1; i >= 0; i--)
-            {
-                ResourceExchangeQueueComponent item = queue[i];
-                if (item.FactionId != factionId || item.State != ResourceExchangeQueueState.Completed)
-                    continue;
-
-                queue.RemoveAt(i);
-                removedCount++;
-            }
-
-            return removedCount > 0
-                ? new ResourceExchangeResultComponent
-                {
-                    RequestId = request.RequestId,
-                    FactionId = factionId,
-                    ResultKind = ResourceExchangeResultKind.RequestAccepted,
-                    Accepted = 1,
-                    Reason = ResourceExchangeReason.None,
-                    InputAmount = removedCount
-                }
-                : Rejected(request, default, ResourceExchangeReason.CancelUnavailable);
-        }
-
         private static ResourceExchangeResultComponent ProcessRushRequest(
             in ResourceExchangeEnabledComponent enabled,
             ref ResourceExchangeWalletComponent wallet,
@@ -620,12 +464,6 @@ namespace Game.Runtime
             DynamicBuffer<ResourceExchangeQueueComponent> queue,
             DynamicBuffer<ResourceExchangeResultComponent> results,
             DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
-            DynamicBuffer<ResourceExchangeDeltaFlyoutComponent> deltaFlyouts,
-            bool emitDeltaFlyouts,
-            DynamicBuffer<ResourceExchangeToastComponent> toasts,
-            bool emitToasts,
-            DynamicBuffer<ResourceExchangeAriaAnnouncementComponent> ariaAnnouncements,
-            bool emitAriaAnnouncements,
             in ResourceExchangeRequestComponent request)
         {
             ResourceExchangeReason gateReason = ValidateRushGate(enabled, request, out byte factionId);
@@ -669,12 +507,6 @@ namespace Game.Runtime
                 queue,
                 results,
                 economyEvents,
-                deltaFlyouts,
-                emitDeltaFlyouts,
-                toasts,
-                emitToasts,
-                ariaAnnouncements,
-                emitAriaAnnouncements,
                 queueIndex,
                 item,
                 recipe,
@@ -691,12 +523,6 @@ namespace Game.Runtime
             DynamicBuffer<ResourceExchangeQueueComponent> queue,
             DynamicBuffer<ResourceExchangeResultComponent> results,
             DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
-            DynamicBuffer<ResourceExchangeDeltaFlyoutComponent> deltaFlyouts,
-            bool emitDeltaFlyouts,
-            DynamicBuffer<ResourceExchangeToastComponent> toasts,
-            bool emitToasts,
-            DynamicBuffer<ResourceExchangeAriaAnnouncementComponent> ariaAnnouncements,
-            bool emitAriaAnnouncements,
             in ResourceExchangeRequestComponent request)
         {
             ResourceExchangeReason gateReason = ValidateRushGate(enabled, request, out byte factionId);
@@ -746,12 +572,6 @@ namespace Game.Runtime
                     queue,
                     results,
                     economyEvents,
-                    deltaFlyouts,
-                    emitDeltaFlyouts,
-                    toasts,
-                    emitToasts,
-                    ariaAnnouncements,
-                    emitAriaAnnouncements,
                     i,
                     item,
                     recipe,
@@ -767,13 +587,45 @@ namespace Game.Runtime
                 : RushRejected(request, default, ResourceExchangeReason.RushUnavailable);
         }
 
+        private static ResourceExchangeResultComponent ProcessClearCompletedRequest(
+            in ResourceExchangeEnabledComponent enabled,
+            DynamicBuffer<ResourceExchangeQueueComponent> queue,
+            in ResourceExchangeRequestComponent request)
+        {
+            byte factionId = request.FactionId != 0 ? request.FactionId : enabled.FactionId;
+            if (enabled.Enabled == 0 ||
+                (enabled.FactionId != 0 && factionId != enabled.FactionId))
+            {
+                return Rejected(request, default, ResourceExchangeReason.ExchangeUnavailable);
+            }
+
+            int removedCount = 0;
+            for (int i = queue.Length - 1; i >= 0; i--)
+            {
+                ResourceExchangeQueueComponent item = queue[i];
+                if (item.FactionId != factionId || item.State != ResourceExchangeQueueState.Completed)
+                    continue;
+
+                queue.RemoveAt(i);
+                removedCount++;
+            }
+
+            return new ResourceExchangeResultComponent
+            {
+                RequestId = request.RequestId,
+                FactionId = factionId,
+                ResultKind = ResourceExchangeResultKind.RequestAccepted,
+                Accepted = 1,
+                Reason = ResourceExchangeReason.None,
+                InputAmount = removedCount
+            };
+        }
+
         private static ResourceExchangeResultComponent ProcessMissionEndRequest(
             in ResourceExchangeEnabledComponent enabled,
             ref ResourceExchangeWalletComponent wallet,
             DynamicBuffer<ResourceExchangeQueueComponent> queue,
             DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
-            DynamicBuffer<ResourceExchangeDeltaFlyoutComponent> deltaFlyouts,
-            bool emitDeltaFlyouts,
             in ResourceExchangeRequestComponent request)
         {
             byte factionId = request.FactionId != 0 ? request.FactionId : enabled.FactionId;
@@ -789,28 +641,18 @@ namespace Game.Runtime
                     continue;
 
                 int refundAmount = CalculateRefundAmount(item);
-                economyEvents.Add(new ResourceExchangeEconomyEventComponent
-                {
-                    QueueItemId = item.QueueItemId,
-                    FactionId = item.FactionId,
-                    ResultKind = ResourceExchangeResultKind.QueueCancelled,
-                    ResourceKind = item.InputResource,
-                    Amount = refundAmount,
-                    RecipeId = item.RecipeId
-                });
                 if (refundAmount > 0)
                 {
                     AddResourceAmount(ref wallet, item.InputResource, refundAmount);
-                    EmitDeltaFlyout(
-                        deltaFlyouts,
-                        emitDeltaFlyouts,
-                        item.QueueItemId,
-                        item.FactionId,
-                        ResourceExchangeDeltaFlyoutKind.InputRefunded,
-                        ResourceExchangeResultKind.QueueCancelled,
-                        item.InputResource,
-                        refundAmount,
-                        item.RecipeId);
+                    economyEvents.Add(new ResourceExchangeEconomyEventComponent
+                    {
+                        QueueItemId = item.QueueItemId,
+                        FactionId = item.FactionId,
+                        ResultKind = ResourceExchangeResultKind.QueueCancelled,
+                        ResourceKind = item.InputResource,
+                        Amount = refundAmount,
+                        RecipeId = item.RecipeId
+                    });
                     totalRefund += refundAmount;
                 }
 
@@ -1036,7 +878,6 @@ namespace Game.Runtime
             summary.Enabled = enabled.Enabled;
             summary.AllowRush = enabled.AllowRush;
             summary.AllowWorldPresentation = enabled.AllowWorldPresentation;
-            summary.AllowAiExchange = enabled.AllowAiExchange;
             summary.QueueCount = queue.Length;
             summary.ActiveCount = activeCount;
             summary.CompletedCount = completedCount;
@@ -1199,12 +1040,6 @@ namespace Game.Runtime
             DynamicBuffer<ResourceExchangeQueueComponent> queue,
             DynamicBuffer<ResourceExchangeResultComponent> results,
             DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
-            DynamicBuffer<ResourceExchangeDeltaFlyoutComponent> deltaFlyouts,
-            bool emitDeltaFlyouts,
-            DynamicBuffer<ResourceExchangeToastComponent> toasts,
-            bool emitToasts,
-            DynamicBuffer<ResourceExchangeAriaAnnouncementComponent> ariaAnnouncements,
-            bool emitAriaAnnouncements,
             int queueIndex,
             in ResourceExchangeQueueComponent source,
             in ResourceExchangeRecipeComponent recipe,
@@ -1226,16 +1061,6 @@ namespace Game.Runtime
                 Amount = -rushTickets,
                 RecipeId = item.RecipeId
             });
-            EmitDeltaFlyout(
-                deltaFlyouts,
-                emitDeltaFlyouts,
-                item.QueueItemId,
-                item.FactionId,
-                ResourceExchangeDeltaFlyoutKind.RushTicketsSpent,
-                ResourceExchangeResultKind.RushAccepted,
-                ResourceExchangeResourceKind.RushTickets,
-                -rushTickets,
-                item.RecipeId);
 
             if (item.RemainingSeconds <= 0f)
             {
@@ -1244,12 +1069,6 @@ namespace Game.Runtime
                     item,
                     results,
                     economyEvents,
-                    deltaFlyouts,
-                    emitDeltaFlyouts,
-                    toasts,
-                    emitToasts,
-                    ariaAnnouncements,
-                    emitAriaAnnouncements,
                     out item);
             }
 
@@ -1326,33 +1145,6 @@ namespace Game.Runtime
 
             SetResourceAmount(ref wallet, resourceKind, GetResourceAmount(wallet, resourceKind) + amount);
             wallet.Version++;
-        }
-
-        private static void EmitDeltaFlyout(
-            DynamicBuffer<ResourceExchangeDeltaFlyoutComponent> deltaFlyouts,
-            bool emitDeltaFlyouts,
-            int queueItemId,
-            byte factionId,
-            ResourceExchangeDeltaFlyoutKind flyoutKind,
-            ResourceExchangeResultKind resultKind,
-            ResourceExchangeResourceKind resourceKind,
-            int amount,
-            FixedString128Bytes recipeId)
-        {
-            if (!emitDeltaFlyouts || amount == 0)
-                return;
-
-            deltaFlyouts.Add(new ResourceExchangeDeltaFlyoutComponent
-            {
-                SequenceId = deltaFlyouts.Length + 1,
-                QueueItemId = queueItemId,
-                FactionId = factionId,
-                FlyoutKind = flyoutKind,
-                ResultKind = resultKind,
-                ResourceKind = resourceKind,
-                Amount = amount,
-                RecipeId = recipeId
-            });
         }
     }
 }

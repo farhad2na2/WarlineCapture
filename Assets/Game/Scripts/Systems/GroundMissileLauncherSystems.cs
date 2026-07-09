@@ -26,9 +26,7 @@ namespace Game.Runtime
         public void OnUpdate(ref SystemState state)
         {
             EntityManager em = state.EntityManager;
-            AudioEventRequestSystem.EnsureAudioEntity(em);
             float dt = SystemAPI.Time.DeltaTime;
-            float now = (float)SystemAPI.Time.ElapsedTime;
             ComponentLookup<LocalTransform> localTransformLookup = SystemAPI.GetComponentLookup<LocalTransform>(true);
             ComponentLookup<LocalToWorld> localToWorldLookup = SystemAPI.GetComponentLookup<LocalToWorld>(true);
             var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
@@ -57,9 +55,9 @@ namespace Game.Runtime
                         stateRw,
                         selfTransform.ValueRO,
                         faction.ValueRO.Id,
-                        now,
                         localTransformLookup,
-                        localToWorldLookup);
+                        localToWorldLookup,
+                        (float)SystemAPI.Time.ElapsedTime);
                     LaunchRocketVisual(
                         em,
                         ecb,
@@ -105,9 +103,9 @@ namespace Game.Runtime
             GroundMissileLauncherStateComponent launcherState,
             LocalTransform launcherTransform,
             byte factionId,
-            float now,
             ComponentLookup<LocalTransform> localTransformLookup,
-            ComponentLookup<LocalToWorld> localToWorldLookup)
+            ComponentLookup<LocalToWorld> localToWorldLookup,
+            float requestedAt)
         {
             float3 sourcePosition = ResolveLaunchPosition(
                 em,
@@ -116,12 +114,12 @@ namespace Game.Runtime
                 launcherTransform.Position,
                 localTransformLookup,
                 localToWorldLookup);
+            CombatAudioEventUtility.EmitGroundMissileLaunch(em, launcherEntity, sourcePosition, requestedAt);
             float3 targetPosition = launcherState.TargetWorldPosition;
             float distance = math.distance(new float2(sourcePosition.x, sourcePosition.z), new float2(targetPosition.x, targetPosition.z));
             float duration = math.max(MinimumProjectileDurationSeconds, distance / math.max(0.01f, launcher.RocketSpeed));
             float3 launchDirection = ResolveLaunchDirection(sourcePosition, targetPosition, launcher.BatteryElevatedAngleDegrees);
             quaternion launchRotation = quaternion.LookRotationSafe(launchDirection, math.up());
-            GameplayAudioFeedbackSystemHelper.TryEmitMissileLaunchAudio(em, launcherEntity, now, sourcePosition);
 
             if (em.HasComponent<GroundMissileLauncherVfxReferenceComponent>(launcherEntity))
             {
@@ -649,8 +647,6 @@ namespace Game.Runtime
         public void OnUpdate(ref SystemState state)
         {
             EntityManager em = state.EntityManager;
-            AudioEventRequestSystem.EnsureAudioEntity(em);
-            float now = (float)SystemAPI.Time.ElapsedTime;
             var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
 
             foreach (var (impact, entity) in SystemAPI
@@ -687,7 +683,11 @@ namespace Game.Runtime
                 }
 
                 EnqueueImpactVfx(em, ecb, request);
-                GameplayAudioFeedbackSystemHelper.TryEmitMissileImpactAudio(em, request.Source, now, request.Position);
+                CombatAudioEventUtility.EmitLargeExplosion(
+                    em,
+                    request.Source,
+                    request.Position,
+                    (float)SystemAPI.Time.ElapsedTime);
                 if (request.Source != Entity.Null &&
                     em.Exists(request.Source) &&
                     em.HasComponent<GroundMissileInFlightComponent>(request.Source))

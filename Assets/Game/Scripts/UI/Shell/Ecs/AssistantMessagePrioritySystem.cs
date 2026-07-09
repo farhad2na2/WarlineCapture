@@ -1,7 +1,5 @@
-using System;
 using Game.Components;
 using Game.Configs;
-using Game.UI.Contracts;
 using Game.UI.Shell.Contracts.Ecs;
 using Unity.Collections;
 using Unity.Entities;
@@ -39,14 +37,8 @@ namespace Game.UI.Shell.Ecs
                 state.EntityManager.GetBuffer<AssistantMessageElement>(boundary);
 
             int sourceVersion = math.max(1, Time.frameCount);
-            UiShellStateComponent shellState =
-                state.EntityManager.GetComponentData<UiShellStateComponent>(boundary);
-            bool changed = AllowsMatchStatusMessages(shellState)
-                ? UpsertOrRemoveThreat(messages, status, sourceVersion)
-                : RemoveMessage(messages, ThreatMessageId);
-            changed |= AllowsMatchStatusMessages(shellState)
-                ? UpsertOrRemoveFeedback(messages, status, sourceVersion)
-                : RemoveMessage(messages, FeedbackMessageId);
+            bool changed = UpsertOrRemoveThreat(messages, status, sourceVersion);
+            changed |= UpsertOrRemoveFeedback(messages, status, sourceVersion);
 
             if (!changed)
                 return;
@@ -84,29 +76,6 @@ namespace Game.UI.Shell.Ecs
                 requiresNarration: 1);
         }
 
-        private static bool AllowsMatchStatusMessages(UiShellStateComponent shellState)
-        {
-            return shellState.ActiveRoute == UIRoute.Match &&
-                   (shellState.CurrentMode == UiShellMode.MatchHud ||
-                    shellState.CurrentMode == UiShellMode.PopupOnly);
-        }
-
-        private static FixedString64Bytes ResolveThreatAudioEventId(UiMatchHudStatusSurfacesComponent status)
-        {
-            bool isAirThreat =
-                ContainsIgnoreCase(status.ThreatTitle, "air") ||
-                ContainsIgnoreCase(status.ThreatSubtitle, "air");
-            return new FixedString64Bytes(isAirThreat
-                ? AudioEventIds.VOARIAMessageWarningAirAttackType
-                : AudioEventIds.VOARIAMessageWarningGroundAttackType);
-        }
-
-        private static bool ContainsIgnoreCase(FixedString64Bytes text, string value)
-        {
-            return text.Length > 0 &&
-                   text.ToString().IndexOf(value, StringComparison.OrdinalIgnoreCase) >= 0;
-        }
-
         private static bool UpsertOrRemoveFeedback(
             DynamicBuffer<AssistantMessageElement> messages,
             UiMatchHudStatusSurfacesComponent status,
@@ -115,16 +84,42 @@ namespace Game.UI.Shell.Ecs
             if (status.FeedbackVisible == 0 || status.FeedbackText.Length == 0)
                 return RemoveMessage(messages, FeedbackMessageId);
 
+            FixedString64Bytes audioEventId = ResolveFeedbackAudioEventId(status);
             return UpsertMessage(
                 messages,
                 FeedbackMessageId,
                 sourceVersion,
-                AssistantMessagePriority.Normal,
+                audioEventId.Length > 0 ? AssistantMessagePriority.High : AssistantMessagePriority.Normal,
                 AssistantRecommendationKind.Explain,
                 new FixedString64Bytes("assistant.feedback"),
                 new FixedString128Bytes(status.FeedbackText),
-                default,
-                requiresNarration: 0);
+                audioEventId,
+                requiresNarration: audioEventId.Length > 0 ? (byte)1 : (byte)0);
+        }
+
+        private static FixedString64Bytes ResolveThreatAudioEventId(UiMatchHudStatusSurfacesComponent status)
+        {
+            if (status.ThreatAudioEventId.Length > 0)
+                return status.ThreatAudioEventId;
+
+            string title = status.ThreatTitle.ToString();
+            return title.IndexOf("AIR", System.StringComparison.OrdinalIgnoreCase) >= 0
+                ? new FixedString64Bytes(AudioEventIds.VOARIAMessageWarningAirAttackType)
+                : new FixedString64Bytes(AudioEventIds.VOARIAMessageWarningGroundAttackType);
+        }
+
+        private static FixedString64Bytes ResolveFeedbackAudioEventId(UiMatchHudStatusSurfacesComponent status)
+        {
+            if (status.FeedbackAudioEventId.Length > 0)
+                return status.FeedbackAudioEventId;
+
+            string blockedCivilianZone = GameText.Get("match.feedback.blocked_civilian_zone", "Blocked: civilian zone");
+            string blockedCivilianZoneAudioEventId = GameText.GetAudioEventId(
+                "match.feedback.blocked_civilian_zone",
+                AudioEventIds.VOARIAMessageMatchFeedbackBlockedCivilianZone);
+            return status.FeedbackText.Equals(new FixedString64Bytes(blockedCivilianZone))
+                ? new FixedString64Bytes(blockedCivilianZoneAudioEventId)
+                : default;
         }
 
         private static bool UpsertMessage(

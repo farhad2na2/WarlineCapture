@@ -20,9 +20,13 @@ public sealed class AudioSettingsUiProjectionTests
         {
             RunCase(test => test.SettingsService_DefaultsIncludeAllAudioBuses());
             passed++;
-            RunCase(test => test.SettingsService_PersistsAlertsAndVoiceVolumes());
+            RunCase(test => test.SettingsService_PersistsAudioBusVolumesAndToggles());
+            passed++;
+            RunCase(test => test.SettingsService_ResetRestoresEnabledAudioBuses());
             passed++;
             RunCase(test => test.UiAudioSettingsProjection_MapsPercentValuesToEcsAudioSettings());
+            passed++;
+            RunCase(test => test.UiAudioSettingsProjection_MapsAudioTogglesToMuteFlags());
             passed++;
             RunCase(test => test.SettingsServiceApplyRuntime_UpdatesDefaultWorldAudioSettings());
             passed++;
@@ -80,20 +84,49 @@ public sealed class AudioSettingsUiProjectionTests
         Assert.AreEqual(85f, defaults.Audio.SfxVolume);
         Assert.AreEqual(90f, defaults.Audio.AlertsVolume);
         Assert.AreEqual(85f, defaults.Audio.VoiceVolume);
+        Assert.IsTrue(defaults.Audio.MusicEnabled);
+        Assert.IsTrue(defaults.Audio.SoundEnabled);
+        Assert.IsTrue(defaults.Audio.VoiceEnabled);
     }
 
     [Test]
-    public void SettingsService_PersistsAlertsAndVoiceVolumes()
+    public void SettingsService_PersistsAudioBusVolumesAndToggles()
     {
         UISettingsModel model = SettingsService.Defaults;
         model.Audio.AlertsVolume = 37f;
         model.Audio.VoiceVolume = 42f;
+        model.Audio.MusicEnabled = false;
+        model.Audio.SoundEnabled = false;
+        model.Audio.VoiceEnabled = false;
 
         SettingsService.Save(model);
         UISettingsModel loaded = SettingsService.Load();
 
         Assert.AreEqual(37f, loaded.Audio.AlertsVolume);
         Assert.AreEqual(42f, loaded.Audio.VoiceVolume);
+        Assert.IsFalse(loaded.Audio.MusicEnabled);
+        Assert.IsFalse(loaded.Audio.SoundEnabled);
+        Assert.IsFalse(loaded.Audio.VoiceEnabled);
+    }
+
+    [Test]
+    public void SettingsService_ResetRestoresEnabledAudioBuses()
+    {
+        UISettingsModel model = SettingsService.Defaults;
+        model.Audio.MusicEnabled = false;
+        model.Audio.SoundEnabled = false;
+        model.Audio.VoiceEnabled = false;
+        SettingsService.Save(model);
+
+        UISettingsModel reset = SettingsService.ResetToDefaults();
+        UISettingsModel loaded = SettingsService.Load();
+
+        Assert.IsTrue(reset.Audio.MusicEnabled);
+        Assert.IsTrue(reset.Audio.SoundEnabled);
+        Assert.IsTrue(reset.Audio.VoiceEnabled);
+        Assert.IsTrue(loaded.Audio.MusicEnabled);
+        Assert.IsTrue(loaded.Audio.SoundEnabled);
+        Assert.IsTrue(loaded.Audio.VoiceEnabled);
     }
 
     [Test]
@@ -111,11 +144,30 @@ public sealed class AudioSettingsUiProjectionTests
         Assert.AreEqual(8u, projected.Version);
         Assert.AreEqual(0.25f, projected.MasterVolume);
         Assert.AreEqual(0.5f, projected.MusicVolume);
-        Assert.AreEqual(1, projected.MusicMuted);
+        Assert.AreEqual(0, projected.MusicMuted);
         Assert.AreEqual(0.75f, projected.SfxVolume);
         Assert.AreEqual(0.75f, projected.UiVolume);
         Assert.AreEqual(1f, projected.AlertsVolume);
         Assert.AreEqual(0.1f, projected.VoiceVolume);
+    }
+
+    [Test]
+    public void UiAudioSettingsProjection_MapsAudioTogglesToMuteFlags()
+    {
+        UISettingsModel model = SettingsService.Defaults;
+        model.Audio.MusicEnabled = false;
+        model.Audio.SoundEnabled = false;
+        model.Audio.VoiceEnabled = false;
+
+        AudioSettingsComponent projected = UiAudioSettingsProjectionSystem.ToAudioSettingsComponent(model, version: 3u);
+
+        Assert.AreEqual(0, projected.MasterMuted);
+        Assert.AreEqual(1, projected.MusicMuted);
+        Assert.AreEqual(1, projected.SfxMuted);
+        Assert.AreEqual(1, projected.UiMuted);
+        Assert.AreEqual(1, projected.AlertsMuted);
+        Assert.AreEqual(1, projected.AmbienceMuted);
+        Assert.AreEqual(1, projected.VoiceMuted);
     }
 
     [Test]
@@ -129,6 +181,9 @@ public sealed class AudioSettingsUiProjectionTests
         model.Audio.SfxVolume = 70f;
         model.Audio.AlertsVolume = 30f;
         model.Audio.VoiceVolume = 60f;
+        model.Audio.MusicEnabled = false;
+        model.Audio.SoundEnabled = false;
+        model.Audio.VoiceEnabled = false;
 
         SettingsService.ApplyRuntime(model);
 
@@ -139,8 +194,12 @@ public sealed class AudioSettingsUiProjectionTests
         Assert.AreEqual(0.2f, settings.MusicVolume);
         Assert.AreEqual(1, settings.MusicMuted);
         Assert.AreEqual(0.7f, settings.SfxVolume);
+        Assert.AreEqual(1, settings.SfxMuted);
+        Assert.AreEqual(1, settings.UiMuted);
         Assert.AreEqual(0.3f, settings.AlertsVolume);
+        Assert.AreEqual(1, settings.AlertsMuted);
         Assert.AreEqual(0.6f, settings.VoiceVolume);
+        Assert.AreEqual(1, settings.VoiceMuted);
         Assert.AreEqual(0.4f, AudioListener.volume);
     }
 }

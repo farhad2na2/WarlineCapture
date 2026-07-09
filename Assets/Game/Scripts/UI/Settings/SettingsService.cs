@@ -10,6 +10,9 @@ namespace Game.UI.Runtime
         private const string SfxVolumeKey = Prefix + "Audio.SfxVolume";
         private const string AlertsVolumeKey = Prefix + "Audio.AlertsVolume";
         private const string VoiceVolumeKey = Prefix + "Audio.VoiceVolume";
+        private const string MusicEnabledKey = Prefix + "Audio.MusicEnabled";
+        private const string SoundEnabledKey = Prefix + "Audio.SoundEnabled";
+        private const string VoiceEnabledKey = Prefix + "Audio.VoiceEnabled";
         private const string GraphicsQualityKey = Prefix + "Graphics.Quality";
         private const string FrameRateModeKey = Prefix + "Graphics.FrameRateMode";
         private const string CameraSensitivityKey = Prefix + "Controls.CameraSensitivity";
@@ -33,7 +36,10 @@ namespace Game.UI.Runtime
                 MusicVolume = 60f,
                 SfxVolume = 85f,
                 AlertsVolume = 90f,
-                VoiceVolume = 85f
+                VoiceVolume = 85f,
+                MusicEnabled = true,
+                SoundEnabled = true,
+                VoiceEnabled = true
             },
             Graphics = new GraphicsSettingsModel
             {
@@ -78,7 +84,10 @@ namespace Game.UI.Runtime
                     MusicVolume = PlayerPrefs.GetFloat(MusicVolumeKey, defaults.Audio.MusicVolume),
                     SfxVolume = PlayerPrefs.GetFloat(SfxVolumeKey, defaults.Audio.SfxVolume),
                     AlertsVolume = PlayerPrefs.GetFloat(AlertsVolumeKey, defaults.Audio.AlertsVolume),
-                    VoiceVolume = PlayerPrefs.GetFloat(VoiceVolumeKey, defaults.Audio.VoiceVolume)
+                    VoiceVolume = PlayerPrefs.GetFloat(VoiceVolumeKey, defaults.Audio.VoiceVolume),
+                    MusicEnabled = GetBool(MusicEnabledKey, defaults.Audio.MusicEnabled),
+                    SoundEnabled = GetBool(SoundEnabledKey, defaults.Audio.SoundEnabled),
+                    VoiceEnabled = GetBool(VoiceEnabledKey, defaults.Audio.VoiceEnabled)
                 },
                 Graphics = new GraphicsSettingsModel
                 {
@@ -120,6 +129,9 @@ namespace Game.UI.Runtime
             PlayerPrefs.SetFloat(SfxVolumeKey, Mathf.Clamp(model.Audio.SfxVolume, 0f, 100f));
             PlayerPrefs.SetFloat(AlertsVolumeKey, Mathf.Clamp(model.Audio.AlertsVolume, 0f, 100f));
             PlayerPrefs.SetFloat(VoiceVolumeKey, Mathf.Clamp(model.Audio.VoiceVolume, 0f, 100f));
+            PlayerPrefs.SetInt(MusicEnabledKey, model.Audio.MusicEnabled ? 1 : 0);
+            PlayerPrefs.SetInt(SoundEnabledKey, model.Audio.SoundEnabled ? 1 : 0);
+            PlayerPrefs.SetInt(VoiceEnabledKey, model.Audio.VoiceEnabled ? 1 : 0);
             PlayerPrefs.SetInt(GraphicsQualityKey, (int)model.Graphics.Quality);
             PlayerPrefs.SetInt(FrameRateModeKey, (int)model.Graphics.FrameRateMode);
             PlayerPrefs.SetFloat(CameraSensitivityKey, Mathf.Clamp(model.Controls.CameraSensitivity, 0f, 100f));
@@ -188,6 +200,11 @@ namespace Game.UI.Runtime
             int fallbackValue = System.Convert.ToInt32(fallback);
             int storedValue = PlayerPrefs.GetInt(key, fallbackValue);
             return System.Enum.IsDefined(typeof(T), storedValue) ? (T)System.Enum.ToObject(typeof(T), storedValue) : fallback;
+        }
+
+        private static bool GetBool(string key, bool fallback)
+        {
+            return PlayerPrefs.GetInt(key, fallback ? 1 : 0) != 0;
         }
     }
 }

@@ -1,7 +1,7 @@
 # Resource Logistics Exchange Implementation Tracker
 
 Date: 2026-07-09
-Status: Phase 9 diff check complete; repository compile validation next
+Status: Phase 9 repository compile validation complete; focused exchange data/config tests next
 Design source: `../Resource_Logistics_Exchange_Design.md`
 
 ## Objective
@@ -23,7 +23,7 @@ Implement the timed Resource Logistics Exchange without drifting from WarlineCap
 
 ## Progress Summary
 
-Overall implementation progress: 90% (85/94 checklist items complete).
+Overall implementation progress: 91% (86/94 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -38,7 +38,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 6. World presentation | Complete | 8 | 8 | 100% | Presentation anchors, deterministic fallback resolution, data-only ECS visual cue emission, managed presentation boundary, pooled actor reuse, actor safety, fallback behavior, cleanup wiring, and focused validation are complete. |
 | 7. Audio, VFX, feedback, ARIA | Complete | 7 | 7 | 100% | Resource Exchange audio ids, placeholder clips, data-only delta flyout requests, typed toast requests, optional ARIA strings, non-authoritative VFX marker data, and direct-audio wiring guardrails are complete. |
 | 8. AI, balance, telemetry | Complete | 6 | 6 | 100% | Economy event coverage, Resource Exchange balance report fields, data sanity tests, scenario gates, AI opt-in gating, and AI planner guardrails are complete. |
-| 9. Validation and performance | In progress | 1 | 10 | 10% | Diff whitespace validation is complete; repository compile validation remains next. |
+| 9. Validation and performance | In progress | 2 | 10 | 20% | Diff whitespace and repository compile validation are complete; focused exchange data/config tests remain next. |
 
 ## Phase 0: Inventory And Source Alignment
 
@@ -278,7 +278,7 @@ Exit criteria:
 ## Phase 9: Validation And Performance
 
 - [x] Run `git diff --check`.
-- [ ] Run repository compile validation.
+- [x] Run repository compile validation.
 - [ ] Run focused exchange data/config tests.
 - [ ] Run focused exchange queue/rush/cancel/refund tests.
 - [ ] Run focused HUD/header popup routing tests.
@@ -1291,3 +1291,42 @@ Validation:
 Remaining blocker or next slice:
 
 - Next Phase 9 slice should run repository compile validation.
+
+### 2026-07-09 - Phase 9B Repository Compile Validation
+
+Files changed:
+
+- `Design/Architecture/resource_logistics_exchange_implementation_tracker.md`
+
+Behavior changed:
+
+- Documentation-only validation tracker update.
+- Ran repository compile validation on the clean Resource Exchange temp worktree.
+- Confirmed the source compile path is clean through Unity batchmode with the documented macOS licensing workaround.
+- Observed that ignored/generated `Game.UI.Toolkit.csproj` references missing `Assets/Game/Scripts/UI/Toolkit/UiToolkitShellView.cs` and `UiToolkitShellApplySystem.cs`; the `.csproj` file is ignored by `.gitignore`, no `Assets` source references `Game.UI.Toolkit`, and Unity source compilation passed, so this is recorded as a generated IDE-project anomaly rather than a source compiler blocker.
+- No runtime, UI, ECS, config, prefab, scene, or asset behavior changed.
+
+Validation:
+
+- `dotnet build Game.Catalog.Contracts.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 4 warnings and 0 errors after one tooling-anomaly retry.
+- `dotnet build Game.Components.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 6 warnings and 0 errors.
+- `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 6 warnings and 0 errors.
+- `dotnet build Game.UI.Shell.Ecs.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 6 warnings and 0 errors.
+- `dotnet build Game.UI.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 6 warnings and 0 errors.
+- `dotnet build Game.Configs.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 6 warnings and 0 errors.
+- `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 10 warnings and 0 errors.
+- `dotnet build Game.Composition.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 6 warnings and 0 errors.
+- `dotnet build Game.Tactical.Contracts.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 4 warnings and 0 errors.
+- `dotnet build Game.Rendering.Contracts.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 4 warnings and 0 errors.
+- `dotnet build Game.UI.Contracts.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 4 warnings and 0 errors.
+- `dotnet build Game.UI.Shell.Contracts.Ecs.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 4 warnings and 0 errors.
+- `dotnet build Game.Runtime.Pathfinding.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 6 warnings and 0 errors.
+- `dotnet build Game.Rendering.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 6 warnings and 0 errors.
+- `dotnet build Game.Authoring.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 6 warnings and 0 errors.
+- `Tools/CI/invoke_unity_macos.sh --project /private/tmp/wlc-resource-exchange-next --log /private/tmp/wlc-resource-exchange-repository-compile-validation.log --timeout 420 -- -quit`
+- Unity compile result: exit code 0, no compiler-error markers found in `/private/tmp/wlc-resource-exchange-repository-compile-validation.log`.
+- `git diff --check` passed after this tracker update.
+
+Remaining blocker or next slice:
+
+- Next Phase 9 slice should run focused exchange data/config tests.

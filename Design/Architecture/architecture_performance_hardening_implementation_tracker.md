@@ -248,16 +248,16 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `22 / 106` |
-| Checklist percent complete | `20.8%` |
-| Checklist in progress | `2 / 106`: `APH-103`, `APH-209` |
-| Complete plus active coverage | `24 / 106` (`22.6%`); this is visibility only, not accepted completion |
+| Checklist complete | `24 / 106` |
+| Checklist percent complete | `22.6%` |
+| Checklist in progress | `2 / 106`: `APH-104`, `APH-210` |
+| Complete plus active coverage | `26 / 106` (`24.5%`); this is visibility only, not accepted completion |
 | Current phase | Phases 1 and 2 - UI boundary and ECS hot-path guardrails |
-| Current task | `APH-103` resolver injection through Menu and Match adapters; `APH-209` defense synchronization audit and profiler evidence |
+| Current task | `APH-104` migrate seven UI runtime text consumers; `APH-210` add comparable building-defense phase markers |
 | Red architecture gates | `2` at the audit baseline; current-head reproduction remains required |
 | Red performance gates | `1`: steady-state Match GC `269,482 / 1,024` bytes |
-| Last verified commit | `b97e2a2d1` for `APH-207`/`APH-208`; Phase 2A complete |
-| Last update | 2026-07-09 - composition adapter, Resource Exchange guardrails, and defense snapshot removal accepted |
+| Last verified commit | `13ff44928` for `APH-209`; Phase 2A complete |
+| Last update | 2026-07-09 - resolver injection and defense synchronization audit accepted |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -325,8 +325,10 @@ Implementation contract:
 - [x] `APH-102` Add the composition-owned `GameTextResolverAdapter` wrapping the existing config-owned text source.
   - Result: stateless composition adapter delegates configured lookup, fallback, and formatting behavior without introducing a mutable registry.
   - Validation: `[GameTextResolverAdapterValidation] result=Passed tests=5`; UI Contracts, Composition, Runtime, Editor, and Editor-test builds passed with 0 errors; commit `72b9ecf5f` pushed to `main`.
-- [~] `APH-103` Inject the resolver through Menu and Match UI runtime adapters without hierarchy search or static registration.
-- [ ] `APH-104` Migrate the seven known `Game.UI.Runtime` text consumers listed in Current Red Gates.
+- [x] `APH-103` Inject the resolver through Menu and Match UI runtime adapters without hierarchy search or static registration.
+  - Result: Menu binds before router content installation; both Match initialization paths inject the resolver; unbound runtime roots retain the immutable fallback.
+  - Validation: `[GameTextResolverInjectionValidation] result=Passed tests=4`; UI Contracts, UI Runtime, Composition, Runtime, Editor, EditMode-test, and PlayMode-test builds passed with 0 errors; commit `2f7c767fa` pushed to `main`.
+- [~] `APH-104` Migrate the seven known `Game.UI.Runtime` text consumers listed in Current Red Gates.
   - Preserve every key and fallback string from commit `caaafe339`.
   - Preserve formatting culture and error fallback behavior.
 - [ ] `APH-105` Remove `using Game.Configs` from files compiled by `Game.UI.Runtime`.
@@ -388,8 +390,12 @@ Immediate implementation contract:
 - [x] `APH-208` Replace `_targetQuery.ToEntityArray(Allocator.Temp)` and remove the per-frame snapshot.
   - Result: direct `SystemAPI.Query` iteration rebuilds one structure-of-record scratch list and excludes aircraft and debug targets without any query snapshots.
   - Validation: `[BuildingDefenseAttackSystemValidation] result=Passed tests=9`; 32-tower/740-candidate warmed allocation remains zero; Runtime, Editor, and Editor-test builds passed with 0 errors; commit `b97e2a2d1` pushed to `main`.
-- [~] `APH-209` Audit the explicit dependency completion and direct `EntityManager` calls; remove or document each unavoidable synchronization point with profiler evidence.
-- [ ] `APH-210` Add profiler markers for target collection, target selection, and effect application so the later spatial-index phase has comparable metrics.
+- [x] `APH-209` Audit the explicit dependency completion and direct `EntityManager` calls; remove or document each unavoidable synchronization point with profiler evidence.
+  - Result: 21 local `EntityManager` data operations were replaced with explicit component/entity lookups. One documented `state.Dependency.Complete()` remains before five uniquely guarded helper/structural boundaries because removing it now would move synchronization into helper-owned access rather than eliminate it.
+  - Validation: `[BuildingDefenseAttackSystemValidation] result=Passed tests=10`; the 32-tower/740-candidate warmed update remained at `productionUpdateAllocatedBytes=0`; commit `13ff44928` pushed to `main`.
+  - Profiler evidence: the 240-frame capture passed at average `4.138 ms` and p95 `4.325 ms`. `BuildingDefenseAttackSystem` recorded `13.88 ms` total, `13.67 ms` self, `0.058 ms/frame` average total, `1.09 ms` maximum, and 238 calls. All nested completion/helper/ECB work therefore totaled at most `0.21 ms`, below `0.001 ms/frame`.
+  - Artifact: `/private/tmp/warline-aph209-building-defense-summary.md` from `/private/tmp/warline-aph209-building-defense.raw`.
+- [~] `APH-210` Add profiler markers for target collection, target selection, and effect application so the later spatial-index phase has comparable metrics.
 - [ ] `APH-211` Run defense, automatic-faction-targeting, combat, audio, and VFX focused validations.
 - [ ] `APH-212` Run `EcsBurstHotPathArchitectureTests.RunFocusedValidation`.
   - Acceptance: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=10` and zero snapshot debt.
@@ -869,6 +875,36 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Visual result: Not applicable; deterministic ECS behavior
 - Residual risk: explicit dependency completion, direct `EntityManager` calls, temporary command/effect containers, and effect-application synchronization remain under `APH-209`
 - Next ready task: `APH-209`
+
+### 2026-07-09 - APH-103 - Resolver injection through runtime roots
+
+- Status: Complete
+- Commit or worktree baseline: `8ce928759`
+- Stable commit/push: `2f7c767fa` pushed to `main`
+- Files changed: Menu and Match composition bootstraps, `MainMenuPlayUI`, `UIShellContentView`, focused injection tests, and Unity `.meta`
+- Behavior preserved/changed: Menu binds the config-backed resolver before router installation; both Match runtime initialization paths inject it; unbound roots use the immutable fallback
+- Validation: `[GameTextResolverInjectionValidation] result=Passed tests=4`; UI Contracts, UI Runtime, Composition, Runtime, Editor, EditMode-test, and PlayMode-test builds passed with 0 errors; `git diff --check` passed
+- Artifacts: `/private/tmp/warline-aph103-game-text-resolver-injection.log` and `/private/tmp/warline-aph103-*.log`
+- Metrics before: config-backed resolver existed without runtime-root injection
+- Metrics after: Menu plus two Match initialization paths are explicitly covered
+- Visual result: Not applicable; no screen content changed
+- Residual risk: the seven direct `GameText` consumers remain `APH-104`
+- Next ready task: `APH-104`
+
+### 2026-07-09 - APH-209 - Building-defense synchronization audit
+
+- Status: Complete
+- Commit or worktree baseline: `8ce928759`
+- Stable commit/push: `13ff44928` pushed to `main`
+- Files changed: `BuildingDefenseAttackSystem` and focused defense tests
+- Behavior preserved/changed: target and effect component access now uses explicit ECS lookups; one completion remains visible before five guarded legacy helper/structural boundaries
+- Validation: `[BuildingDefenseAttackSystemValidation] result=Passed tests=10`; warmed 32-tower/740-candidate update remained zero managed bytes; integrated seven-assembly build matrix passed with 0 errors; `git diff --check` passed
+- Artifacts: `/private/tmp/warline-aph209-building-defense-focused.log`, `/private/tmp/warline-aph209-building-defense-profiler.log`, `/private/tmp/warline-aph209-building-defense.raw`, and `/private/tmp/warline-aph209-building-defense-summary.md`
+- Metrics before: 21 local direct `EntityManager` data operations and one explicit completion without current profiler attribution
+- Metrics after: zero local direct data operations; one documented completion; Match average `4.138 ms`, p95 `4.325 ms`; defense `0.058 ms/frame` average, `1.09 ms` maximum, with nested work below `0.001 ms/frame`
+- Visual result: Not applicable; raw profiler and deterministic ECS validation
+- Residual risk: target-collection, target-selection, and effect-application timing need separate markers under `APH-210`
+- Next ready task: `APH-210`
 
 ## Decision Log
 

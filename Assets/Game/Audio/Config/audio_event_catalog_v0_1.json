@@ -549,6 +549,174 @@
       ]
     },
     {
+      "eventId": "Gameplay.Unit.Engine.Vehicle.Move",
+      "busId": "SFX",
+      "priority": "Low",
+      "cooldownMs": 0,
+      "volumeDb": -13.0,
+      "pitchVariance": {
+        "min": -0.04,
+        "max": 0.03
+      },
+      "playback": {
+        "loop": false,
+        "spatial": true,
+        "maxInstances": 8,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_unit_engine_vehicle_move_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Unit.Engine.Aircraft.Takeoff",
+      "busId": "SFX",
+      "priority": "Medium",
+      "cooldownMs": 0,
+      "volumeDb": -10.0,
+      "pitchVariance": {
+        "min": -0.03,
+        "max": 0.03
+      },
+      "playback": {
+        "loop": false,
+        "spatial": true,
+        "maxInstances": 4,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_unit_engine_aircraft_takeoff_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Unit.Engine.Aircraft.Flight",
+      "busId": "SFX",
+      "priority": "Low",
+      "cooldownMs": 0,
+      "volumeDb": -12.0,
+      "pitchVariance": {
+        "min": -0.03,
+        "max": 0.03
+      },
+      "playback": {
+        "loop": false,
+        "spatial": true,
+        "maxInstances": 8,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_unit_engine_aircraft_flight_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Weapon.Fire.SmallArms",
+      "busId": "SFX",
+      "priority": "Medium",
+      "cooldownMs": 40,
+      "volumeDb": -9.0,
+      "pitchVariance": {
+        "min": -0.05,
+        "max": 0.04
+      },
+      "playback": {
+        "loop": false,
+        "spatial": true,
+        "maxInstances": 12,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_fire_small_arms_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Weapon.Missile.Launch",
+      "busId": "SFX",
+      "priority": "High",
+      "cooldownMs": 0,
+      "volumeDb": -7.0,
+      "pitchVariance": {
+        "min": -0.03,
+        "max": 0.03
+      },
+      "playback": {
+        "loop": false,
+        "spatial": true,
+        "maxInstances": 6,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_missile_launch_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Weapon.Missile.Flight",
+      "busId": "SFX",
+      "priority": "Medium",
+      "cooldownMs": 0,
+      "volumeDb": -10.0,
+      "pitchVariance": {
+        "min": -0.04,
+        "max": 0.04
+      },
+      "playback": {
+        "loop": false,
+        "spatial": true,
+        "maxInstances": 8,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_missile_flight_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "Gameplay.Weapon.Missile.Impact",
+      "busId": "SFX",
+      "priority": "High",
+      "cooldownMs": 0,
+      "volumeDb": -6.5,
+      "pitchVariance": {
+        "min": -0.03,
+        "max": 0.03
+      },
+      "playback": {
+        "loop": false,
+        "spatial": true,
+        "maxInstances": 8,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_missile_impact_01.wav",
+          "status": "placeholder",
+          "weight": 1
+        }
+      ]
+    },
+    {
       "eventId": "Gameplay.Command.Move.Accepted",
       "busId": "SFX",
       "priority": "Medium",

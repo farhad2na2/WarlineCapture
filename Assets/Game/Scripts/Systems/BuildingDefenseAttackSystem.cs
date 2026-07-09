@@ -26,6 +26,7 @@ namespace Game.Runtime
         public void OnUpdate(ref SystemState state)
         {
             EntityManager em = state.EntityManager;
+            AudioEventRequestSystem.EnsureAudioEntity(em);
             state.Dependency.Complete();
 
             using NativeArray<Entity> targets = _targetQuery.ToEntityArray(Allocator.Temp);
@@ -174,7 +175,11 @@ namespace Game.Runtime
                 EnqueueAttackVfxRequest(ecb, em, UnitAttackVfxRequestKind.MuzzleFlash, source, target, sourcePosition, targetPosition);
             }
 
-            targetHealth.Current = math.max(0, targetHealth.Current - math.max(0, weapon.Damage));
+            int damage = math.max(0, weapon.Damage);
+            if (damage > 0)
+                GameplayAudioFeedbackSystemHelper.TryEmitWeaponFireAudio(em, source, now, sourcePosition);
+
+            targetHealth.Current = math.max(0, targetHealth.Current - damage);
             em.SetComponentData(target, targetHealth);
 
             UnitAttackSystem.TryEmitUnitUnderAttackAudio(
@@ -182,7 +187,7 @@ namespace Game.Runtime
                 target,
                 now,
                 source,
-                math.max(0, weapon.Damage),
+                damage,
                 nameof(BuildingDefenseAttackSystem));
             SetRecentAttacker(em, ecb, target, source, sourcePosition, ref pendingRecentAttackerAdds);
             SetDamageHealthBarVisibility(em, ecb, target, ref pendingHealthBarVisibilityAdds);

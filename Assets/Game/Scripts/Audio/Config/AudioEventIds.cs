@@ -70,6 +70,27 @@ namespace Game.Configs
         public const string GameplayUnitSelectAir = "Gameplay.Unit.Select.Air";
         public const uint GameplayUnitSelectAirHash = 2620032125u;
 
+        public const string GameplayUnitEngineVehicleMove = "Gameplay.Unit.Engine.Vehicle.Move";
+        public const uint GameplayUnitEngineVehicleMoveHash = 1168540290u;
+
+        public const string GameplayUnitEngineAircraftTakeoff = "Gameplay.Unit.Engine.Aircraft.Takeoff";
+        public const uint GameplayUnitEngineAircraftTakeoffHash = 3592499569u;
+
+        public const string GameplayUnitEngineAircraftFlight = "Gameplay.Unit.Engine.Aircraft.Flight";
+        public const uint GameplayUnitEngineAircraftFlightHash = 1332154053u;
+
+        public const string GameplayWeaponFireSmallArms = "Gameplay.Weapon.Fire.SmallArms";
+        public const uint GameplayWeaponFireSmallArmsHash = 3212856651u;
+
+        public const string GameplayWeaponMissileLaunch = "Gameplay.Weapon.Missile.Launch";
+        public const uint GameplayWeaponMissileLaunchHash = 3753501364u;
+
+        public const string GameplayWeaponMissileFlight = "Gameplay.Weapon.Missile.Flight";
+        public const uint GameplayWeaponMissileFlightHash = 1400335713u;
+
+        public const string GameplayWeaponMissileImpact = "Gameplay.Weapon.Missile.Impact";
+        public const uint GameplayWeaponMissileImpactHash = 990836209u;
+
         public const string GameplayCommandMoveAccepted = "Gameplay.Command.Move.Accepted";
         public const uint GameplayCommandMoveAcceptedHash = 1382687044u;
 
@@ -681,6 +702,13 @@ namespace Game.Configs
             GameplayUnitSelectInfantry,
             GameplayUnitSelectVehicle,
             GameplayUnitSelectAir,
+            GameplayUnitEngineVehicleMove,
+            GameplayUnitEngineAircraftTakeoff,
+            GameplayUnitEngineAircraftFlight,
+            GameplayWeaponFireSmallArms,
+            GameplayWeaponMissileLaunch,
+            GameplayWeaponMissileFlight,
+            GameplayWeaponMissileImpact,
             GameplayCommandMoveAccepted,
             GameplayCommandAttackAccepted,
             GameplayCommandHoldAccepted,
@@ -902,6 +930,13 @@ namespace Game.Configs
             GameplayUnitSelectInfantryHash,
             GameplayUnitSelectVehicleHash,
             GameplayUnitSelectAirHash,
+            GameplayUnitEngineVehicleMoveHash,
+            GameplayUnitEngineAircraftTakeoffHash,
+            GameplayUnitEngineAircraftFlightHash,
+            GameplayWeaponFireSmallArmsHash,
+            GameplayWeaponMissileLaunchHash,
+            GameplayWeaponMissileFlightHash,
+            GameplayWeaponMissileImpactHash,
             GameplayCommandMoveAcceptedHash,
             GameplayCommandAttackAcceptedHash,
             GameplayCommandHoldAcceptedHash,

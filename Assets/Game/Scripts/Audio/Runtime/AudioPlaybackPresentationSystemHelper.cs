@@ -29,6 +29,9 @@ namespace Game.Runtime
 
     public sealed class AudioPlaybackPresentationSystemHelper : IDisposable
     {
+        public const float SpatialSfxMinDistance = 120f;
+        public const float SpatialSfxMaxDistance = 6000f;
+
         private readonly List<PooledAudioSource> _sources = new();
         private readonly int _maxPoolSize;
         private readonly GameObject _root;
@@ -229,6 +232,11 @@ namespace Game.Runtime
             source.playOnAwake = false;
             source.loop = false;
             source.spatialBlend = 0f;
+            source.rolloffMode = AudioRolloffMode.Linear;
+            source.minDistance = SpatialSfxMinDistance;
+            source.maxDistance = SpatialSfxMaxDistance;
+            source.dopplerLevel = 0f;
+            source.spread = 0f;
             source.volume = 1f;
             _sources.Add(new PooledAudioSource { Source = source });
             _createdSourceCount++;
@@ -244,6 +252,11 @@ namespace Game.Runtime
                 pooledSource.Source.outputAudioMixerGroup = null;
                 pooledSource.Source.loop = false;
                 pooledSource.Source.spatialBlend = 0f;
+                pooledSource.Source.rolloffMode = AudioRolloffMode.Linear;
+                pooledSource.Source.minDistance = SpatialSfxMinDistance;
+                pooledSource.Source.maxDistance = SpatialSfxMaxDistance;
+                pooledSource.Source.dopplerLevel = 0f;
+                pooledSource.Source.spread = 0f;
                 pooledSource.Source.transform.localPosition = Vector3.zero;
             }
 
@@ -289,7 +302,13 @@ namespace Game.Runtime
             source.clip = clip;
             source.outputAudioMixerGroup = bus?.MixerGroup;
             source.loop = entry.Playback?.Loop ?? request.Kind == AudioPlaybackRequestKind.MusicState;
-            source.spatialBlend = (entry.Playback?.Spatial ?? request.Spatial != 0) ? 1f : 0f;
+            bool spatial = entry.Playback?.Spatial ?? request.Spatial != 0;
+            source.spatialBlend = spatial ? 1f : 0f;
+            source.rolloffMode = AudioRolloffMode.Linear;
+            source.minDistance = spatial ? SpatialSfxMinDistance : 1f;
+            source.maxDistance = spatial ? SpatialSfxMaxDistance : 500f;
+            source.dopplerLevel = 0f;
+            source.spread = 0f;
             source.volume = ResolveLinearVolume(request, entry, bus, settings);
             source.pitch = ResolvePitch(request, entry);
 

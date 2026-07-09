@@ -25,6 +25,8 @@ public sealed class AudioPlaybackPresentationSystemHelperTests
             passed++;
             RunCase(test => test.PlayAcceptedRequest_ReturnsMissingClipForEmptyCatalogEntry());
             passed++;
+            RunCase(test => test.PlayAcceptedRequest_ConfiguresSpatialSfxForRtsScaleAudibility());
+            passed++;
             RunCase(test => test.ResolveLinearVolume_AppliesMasterAndBusSettings());
             passed++;
 
@@ -148,6 +150,40 @@ public sealed class AudioPlaybackPresentationSystemHelperTests
     }
 
     [Test]
+    public void PlayAcceptedRequest_ConfiguresSpatialSfxForRtsScaleAudibility()
+    {
+        using AudioPlaybackPresentationSystemHelper helper = new(initialPoolSize: 1, maxPoolSize: 1);
+        AudioEventCatalogEntry entry = CreateEntry(
+            AudioEventIds.GameplayUnitEngineAircraftFlight,
+            busId: "SFX",
+            maxInstances: 1,
+            clip: CreateClip("aircraft_engine"),
+            spatial: true);
+        AudioPlaybackRequestElement request = CreateAcceptedRequest(
+            7,
+            AudioEventIds.GameplayUnitEngineAircraftFlight,
+            AudioEventIds.GameplayUnitEngineAircraftFlightHash);
+        request.BusId = new FixedString32Bytes("SFX");
+        request.Spatial = 1;
+        request.HasWorldPosition = 1;
+        request.WorldPosition = new Unity.Mathematics.float3(300f, 40f, 250f);
+
+        AudioPlaybackPresentationResult result = helper.PlayAcceptedRequest(request, entry, bus: null, settings: CreateSettings());
+
+        Assert.IsTrue(result.Played);
+        Assert.IsTrue(helper.TryGetActiveSource(request.RequestId, out AudioSource source));
+        Assert.AreEqual(1f, source.spatialBlend);
+        Assert.AreEqual(AudioRolloffMode.Linear, source.rolloffMode);
+        Assert.AreEqual(AudioPlaybackPresentationSystemHelper.SpatialSfxMinDistance, source.minDistance);
+        Assert.AreEqual(AudioPlaybackPresentationSystemHelper.SpatialSfxMaxDistance, source.maxDistance);
+        Assert.AreEqual(0f, source.dopplerLevel);
+        Assert.AreEqual(0f, source.spread);
+        Assert.AreEqual(300f, source.transform.position.x, 0.001f);
+        Assert.AreEqual(40f, source.transform.position.y, 0.001f);
+        Assert.AreEqual(250f, source.transform.position.z, 0.001f);
+    }
+
+    [Test]
     public void ResolveLinearVolume_AppliesMasterAndBusSettings()
     {
         AudioEventCatalogEntry entry = CreateEntry(
@@ -208,10 +244,12 @@ public sealed class AudioPlaybackPresentationSystemHelperTests
         string busId,
         int maxInstances,
         AudioClip clip,
-        float volumeDecibels = 0f)
+        float volumeDecibels = 0f,
+        bool spatial = false)
     {
         AudioEventCatalogEntry entry = new();
         AudioPlaybackConfig playback = new();
+        SetPrivateField(playback, "spatial", spatial);
         SetPrivateField(playback, "maxInstances", maxInstances);
         SetPrivateField(entry, "eventId", eventId);
         SetPrivateField(entry, "busId", busId);

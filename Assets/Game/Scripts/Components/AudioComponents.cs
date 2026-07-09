@@ -117,4 +117,18 @@ namespace Game.Components
         public float MaxAudibleDistance;
         public byte HasListener;
     }
+
+    public struct UnitMotionAudioState : IComponentData
+    {
+        public float NextVehicleEngineAt;
+        public float NextAircraftFlightAt;
+        public float NextAircraftTakeoffAt;
+        public byte WasAircraftActive;
+        public byte WasTakeoffRolling;
+    }
+
+    public struct MissileFlightAudioState : IComponentData
+    {
+        public float NextFlightAudioAt;
+    }
 }

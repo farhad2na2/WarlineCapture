@@ -22,6 +22,10 @@ public sealed class ResourceExchangeRequestValidationSystemTests
                 nameof(ClearCompleted_RemovesOnlyCompletedRowsForFaction),
                 test => test.ClearCompleted_RemovesOnlyCompletedRowsForFaction(),
                 ref passed);
+            RunValidationStep(
+                nameof(Summary_CarriesAiExchangeGateFromRuntimeState),
+                test => test.Summary_CarriesAiExchangeGateFromRuntimeState(),
+                ref passed);
 
             Debug.Log($"[ResourceExchangeRequestValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -109,6 +113,40 @@ public sealed class ResourceExchangeRequestValidationSystemTests
         AssertRejected(em, exchange, requestId, ResourceExchangeReason.ExchangeUnavailable);
         Assert.AreEqual(500, em.GetComponentData<ResourceExchangeWalletComponent>(exchange).Oil);
         Assert.AreEqual(0, em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Length);
+    }
+
+    [Test]
+    public void Summary_CarriesAiExchangeGateFromRuntimeState()
+    {
+        using World world = new(nameof(Summary_CarriesAiExchangeGateFromRuntimeState));
+        EntityManager em = world.EntityManager;
+        Entity exchange = CreateExchangeEntity(
+            em,
+            allowAiExchange: true,
+            wallet: new ResourceExchangeWalletComponent
+            {
+                FactionId = 1,
+                Oil = 500
+            });
+        AddRecipe(em, exchange, ExportOilRecipe());
+
+        int requestId = ResourceExchangeRequestValidationSystem.EnqueueStartRequest(
+            em,
+            exchange,
+            new FixedString128Bytes("exchange.export_oil_credits.standard"),
+            200,
+            1,
+            0);
+
+        UpdateSystem(world);
+
+        Assert.IsTrue(ResourceExchangeRequestValidationSystem.TryGetResult(em, exchange, requestId, out ResourceExchangeResultComponent result));
+        Assert.AreEqual(1, result.Accepted);
+
+        ResourceExchangeSummaryComponent summary = em.GetComponentData<ResourceExchangeSummaryComponent>(exchange);
+        Assert.AreEqual(1, summary.AllowAiExchange);
+        Assert.AreEqual(1, summary.AllowRush);
+        Assert.AreEqual(1, summary.AllowWorldPresentation);
     }
 
     [Test]
@@ -288,6 +326,7 @@ public sealed class ResourceExchangeRequestValidationSystemTests
     private static Entity CreateExchangeEntity(
         EntityManager em,
         bool enabled = true,
+        bool allowAiExchange = false,
         ResourceExchangeWalletComponent wallet = default)
     {
         Entity entity = em.CreateEntity(
@@ -301,6 +340,7 @@ public sealed class ResourceExchangeRequestValidationSystemTests
             FactionId = 1,
             AllowRush = 1,
             AllowWorldPresentation = 1,
+            AllowAiExchange = allowAiExchange ? (byte)1 : (byte)0,
             MaxQueueItems = 1,
             ScenarioTag = new FixedString64Bytes("mission.active")
         });

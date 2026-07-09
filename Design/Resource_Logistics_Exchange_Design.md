@@ -87,6 +87,8 @@ Resource Exchange is an authored scenario feature, not a default FTUE mechanic.
 - Recipes in a gated config must use a non-empty `missionTag` that maps to a known scenario gate. Do not ship blank/global recipes, because they would appear in every enabled mission or preset.
 - Mission and campaign gates should expose only the routes the player has been taught. Skirmish/custom gates may expose a wider set once the preset explicitly opts in.
 - Enabled gates must set a positive queue cap. Disabled gates may use a queue cap of `0` but must carry a typed disabled reason.
+- AI exchange is separately opt-in through the scenario gate. `allowAiExchange` defaults to false, must never be true on a disabled gate, and should be enabled only for authored scenarios where AI logistics behavior is part of the mission or preset balance.
+- AI-controlled factions must not infer exchange permission from `AIControlledTag` or `FactionControlEntry` alone. Any future AI exchange planner must read the Resource Exchange runtime gate and remain data-driven.
 
 ## Resource Exchange Matrix
 

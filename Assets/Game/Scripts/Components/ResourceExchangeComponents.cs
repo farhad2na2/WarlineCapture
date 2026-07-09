@@ -157,6 +157,7 @@ namespace Game.Components
         public byte FactionId;
         public byte AllowRush;
         public byte AllowWorldPresentation;
+        public byte AllowAiExchange;
         public int MaxQueueItems;
         public FixedString64Bytes ScenarioTag;
         public uint Version;
@@ -270,6 +271,7 @@ namespace Game.Components
         public byte Enabled;
         public byte AllowRush;
         public byte AllowWorldPresentation;
+        public byte AllowAiExchange;
         public int QueueCount;
         public int ActiveCount;
         public int CompletedCount;

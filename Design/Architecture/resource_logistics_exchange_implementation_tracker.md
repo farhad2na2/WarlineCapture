@@ -1,7 +1,7 @@
 # Resource Logistics Exchange Implementation Tracker
 
 Date: 2026-07-09
-Status: Phase 8 scenario gates complete; AI exchange opt-in gate next
+Status: Phase 8 AI exchange opt-in gate complete; data-driven AI planner guardrail next
 Design source: `../Resource_Logistics_Exchange_Design.md`
 
 ## Objective
@@ -23,7 +23,7 @@ Implement the timed Resource Logistics Exchange without drifting from WarlineCap
 
 ## Progress Summary
 
-Overall implementation progress: 87% (82/94 checklist items complete).
+Overall implementation progress: 88% (83/94 checklist items complete).
 
 Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation item below counts as one item. When a future implementation slice adds or removes checklist items, update this section in the same commit.
 
@@ -37,7 +37,7 @@ Progress is checklist-based. Each `- [ ]` or `- [x]` implementation/validation i
 | 5. UI popup and header routing | Complete | 15 | 15 | 100% | ECS-backed UI read-model, target-lock reference, separated layer pack, Canvas popup prefab, serialized view refs, cards, details, amount stepper, queue panel, enabled-gated resource header tap route, popup input restoration, live read-model binding, request-buffer wiring, TMP/Oxanium validation, prefab contract tests, and 16:9/20:9 captures complete. |
 | 6. World presentation | Complete | 8 | 8 | 100% | Presentation anchors, deterministic fallback resolution, data-only ECS visual cue emission, managed presentation boundary, pooled actor reuse, actor safety, fallback behavior, cleanup wiring, and focused validation are complete. |
 | 7. Audio, VFX, feedback, ARIA | Complete | 7 | 7 | 100% | Resource Exchange audio ids, placeholder clips, data-only delta flyout requests, typed toast requests, optional ARIA strings, non-authoritative VFX marker data, and direct-audio wiring guardrails are complete. |
-| 8. AI, balance, telemetry | In progress | 4 | 6 | 67% | Economy event coverage, Resource Exchange balance report fields, data sanity tests, and scenario gates are complete; AI opt-in gating remains. |
+| 8. AI, balance, telemetry | In progress | 5 | 6 | 83% | Economy event coverage, Resource Exchange balance report fields, data sanity tests, scenario gates, and AI opt-in gating are complete; AI planner guardrails remain. |
 | 9. Validation and performance | Not started | 0 | 10 | 0% | Focused tests, compile, architecture guardrails, UI captures, GC/performance checks. |
 
 ## Phase 0: Inventory And Source Alignment
@@ -266,7 +266,7 @@ Exit criteria:
 - [x] Add balance report fields for exchange route, amount, duration, source mode, completion, and resource delta.
 - [x] Add data sanity tests for rates, fees, duration, and farming-risk caps.
 - [x] Gate exchange recipes by chapter/mission/skirmish preset so early FTUE is not overloaded.
-- [ ] Add AI exchange support only if a scenario explicitly enables AI exchange behavior.
+- [x] Add AI exchange support only if a scenario explicitly enables AI exchange behavior.
 - [ ] If AI exchange is enabled, ensure it is data-driven and does not add managed per-frame planner scans.
 
 Exit criteria:
@@ -1204,3 +1204,41 @@ Validation:
 Remaining blocker or next slice:
 
 - Next Phase 8 slice should add AI exchange support only if a scenario explicitly enables AI exchange behavior.
+
+### 2026-07-09 - Phase 8E AI Exchange Opt-In Gate
+
+Files changed:
+
+- `Assets/Game/Scripts/Components/ResourceExchangeComponents.cs`
+- `Assets/Game/Scripts/Configs/ResourceExchangeConfigModels.cs`
+- `Assets/Game/Scripts/Systems/ResourceExchangeQueueTickSystem.cs`
+- `Assets/Game/Scripts/Systems/ResourceExchangeRequestValidationSystem.cs`
+- `Assets/Tests/Editor/ResourceExchangeConfigValidationTests.cs`
+- `Assets/Tests/Editor/ResourceExchangeRequestValidationSystemTests.cs`
+- `Design/Resource_Logistics_Exchange_Design.md`
+- `Design/Architecture/resource_logistics_exchange_implementation_tracker.md`
+
+Behavior changed:
+
+- Added `allowAiExchange` to Resource Exchange scenario gates. It defaults to false and is invalid on disabled gates.
+- Added `AllowAiExchange` to `ResourceExchangeEnabledComponent` and `ResourceExchangeSummaryComponent` so future AI logic can read the scenario opt-in from ECS data without inferring permission from general faction AI control.
+- Request validation and queue ticking now preserve the AI opt-in flag into Resource Exchange summary state alongside rush and world-presentation flags.
+- Added focused config coverage proving AI exchange is off by default, explicitly opt-in when authored, accepted only on enabled scenario gates, and rejected on disabled scenario gates.
+- Added focused request-validation coverage proving the runtime summary carries the AI exchange gate when the scenario state enables it.
+- Documented that AI-controlled factions must not infer exchange permission from `AIControlledTag` or `FactionControlEntry` alone.
+- No AI planner, broad scene search, managed polling, or autonomous AI exchange request behavior was added in this slice.
+
+Validation:
+
+- `git diff --check` passed before this tracker update.
+- `dotnet build Game.Components.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 10 warnings and 0 errors.
+- `dotnet build Game.Runtime.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 7 warnings and 0 errors.
+- `dotnet build Game.Tests.Editor.csproj --no-restore -v:q -clp:ErrorsOnly` passed with 12 warnings and 0 errors.
+- `Tools/CI/invoke_unity_macos.sh --project /private/tmp/wlc-resource-exchange-next --log /private/tmp/wlc-resource-exchange-ai-gate-config-validation.log --timeout 420 -- -quit -executeMethod ResourceExchangeConfigValidationTests.RunFocusedValidation`
+- Unity focused result: `[ResourceExchangeConfigValidation] result=Passed tests=7`
+- `Tools/CI/invoke_unity_macos.sh --project /private/tmp/wlc-resource-exchange-next --log /private/tmp/wlc-resource-exchange-ai-gate-request-validation.log --timeout 420 -- -quit -executeMethod ResourceExchangeRequestValidationSystemTests.RunFocusedValidation`
+- Unity focused result: `[ResourceExchangeRequestValidation] result=Passed tests=3`
+
+Remaining blocker or next slice:
+
+- Next Phase 8 slice should ensure that, if AI exchange is enabled later, it remains data-driven and does not add managed per-frame planner scans.

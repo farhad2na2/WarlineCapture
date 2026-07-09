@@ -37,6 +37,10 @@ public sealed class ResourceExchangeConfigValidationTests
                 nameof(ValidateScenarioGateSet_RejectsUnsafeFtueGateAuthoring),
                 test => test.ValidateScenarioGateSet_RejectsUnsafeFtueGateAuthoring(),
                 ref passed);
+            RunValidationStep(
+                nameof(ScenarioGate_DefaultsAiExchangeOffAndRequiresEnabledGate),
+                test => test.ScenarioGate_DefaultsAiExchangeOffAndRequiresEnabledGate(),
+                ref passed);
 
             Debug.Log($"[ResourceExchangeConfigValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -462,6 +466,47 @@ public sealed class ResourceExchangeConfigValidationTests
                         disabledReason: ResourceExchangeReason.None)
                 },
                 unknownRecipeGate));
+    }
+
+    [Test]
+    public void ScenarioGate_DefaultsAiExchangeOffAndRequiresEnabledGate()
+    {
+        ResourceExchangeScenarioGateConfigEntry defaultGate =
+            new("mission.ai_disabled_by_default", true, maxQueueItems: 2);
+        Assert.IsFalse(defaultGate.AllowAiExchange);
+
+        ResourceExchangeScenarioGateConfigEntry explicitAiGate =
+            new("mission.ai_exchange_enabled", true, maxQueueItems: 2, allowAiExchange: true);
+        Assert.IsTrue(explicitAiGate.AllowAiExchange);
+
+        var gatedRecipe = new[]
+        {
+            new ResourceExchangeRecipeConfigEntry(
+                "exchange.export_oil_credits.ai_enabled",
+                ResourceExchangeRouteType.Export,
+                ResourceExchangeResourceKind.Oil,
+                ResourceExchangeResourceKind.Credits,
+                missionTag: "mission.ai_exchange_enabled")
+        };
+
+        Assert.AreEqual(
+            ResourceExchangeReason.None,
+            ResourceExchangeRecipeConfigValidator.ValidateScenarioGateSet(
+                new[] { explicitAiGate },
+                gatedRecipe));
+
+        Assert.AreEqual(
+            ResourceExchangeReason.InvalidScenarioGate,
+            ResourceExchangeRecipeConfigValidator.ValidateScenarioGateSet(
+                new[]
+                {
+                    new ResourceExchangeScenarioGateConfigEntry(
+                        "mission.ai_exchange_enabled",
+                        false,
+                        maxQueueItems: 0,
+                        allowAiExchange: true)
+                },
+                gatedRecipe));
     }
 
     [Test]

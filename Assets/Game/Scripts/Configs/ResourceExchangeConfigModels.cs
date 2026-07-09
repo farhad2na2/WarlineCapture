@@ -117,6 +117,7 @@ namespace Game.Configs
         [SerializeField, Min(0)] private int maxQueueItems = 3;
         [SerializeField] private bool allowRush = true;
         [SerializeField] private bool allowWorldPresentation = true;
+        [SerializeField] private bool allowAiExchange;
         [SerializeField] private ResourceExchangeReason disabledReason = ResourceExchangeReason.ExchangeUnavailable;
 
         public ResourceExchangeScenarioGateConfigEntry()
@@ -129,6 +130,7 @@ namespace Game.Configs
             int maxQueueItems = 3,
             bool allowRush = true,
             bool allowWorldPresentation = true,
+            bool allowAiExchange = false,
             ResourceExchangeReason disabledReason = ResourceExchangeReason.ExchangeUnavailable)
         {
             this.scenarioTag = scenarioTag;
@@ -136,6 +138,7 @@ namespace Game.Configs
             this.maxQueueItems = maxQueueItems;
             this.allowRush = allowRush;
             this.allowWorldPresentation = allowWorldPresentation;
+            this.allowAiExchange = allowAiExchange;
             this.disabledReason = disabledReason;
         }
 
@@ -144,6 +147,7 @@ namespace Game.Configs
         public int MaxQueueItems => Mathf.Max(0, maxQueueItems);
         public bool AllowRush => allowRush;
         public bool AllowWorldPresentation => allowWorldPresentation;
+        public bool AllowAiExchange => allowAiExchange;
         public ResourceExchangeReason DisabledReason => disabledReason;
     }
 
@@ -300,6 +304,9 @@ namespace Game.Configs
                     return ResourceExchangeReason.InvalidScenarioGate;
 
                 if (!gate.ExchangeEnabled && gate.DisabledReason == ResourceExchangeReason.None)
+                    return ResourceExchangeReason.InvalidScenarioGate;
+
+                if (gate.AllowAiExchange && !gate.ExchangeEnabled)
                     return ResourceExchangeReason.InvalidScenarioGate;
             }
 

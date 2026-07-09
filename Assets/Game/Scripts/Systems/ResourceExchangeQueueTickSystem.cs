@@ -520,6 +520,7 @@ namespace Game.Runtime
             summary.Enabled = enabled.Enabled;
             summary.AllowRush = enabled.AllowRush;
             summary.AllowWorldPresentation = enabled.AllowWorldPresentation;
+            summary.AllowAiExchange = enabled.AllowAiExchange;
             summary.QueueCount = queue.Length;
             summary.ActiveCount = activeCount;
             summary.CompletedCount = completedCount;

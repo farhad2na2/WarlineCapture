@@ -283,6 +283,8 @@ public sealed class AssistantReadModelSystemTests
         Assert.DoesNotThrow(() => _goalSystem.Update(_world.Unmanaged));
         SystemHandle narrationSystem = _world.CreateSystem<AssistantNarrationRequestSystem>();
         Assert.DoesNotThrow(() => narrationSystem.Update(_world.Unmanaged));
+        SystemHandle controlOwnerSystem = _world.CreateSystem<AssistantControlOwnerSystem>();
+        Assert.DoesNotThrow(() => controlOwnerSystem.Update(_world.Unmanaged));
 
         Assert.IsTrue(_entityManager.HasBuffer<MatchObjectiveRuntimeElement>(boundary));
         Assert.IsTrue(_entityManager.HasBuffer<AssistantGoalReadModelElement>(boundary));
@@ -294,6 +296,8 @@ public sealed class AssistantReadModelSystemTests
         Assert.IsTrue(_entityManager.HasBuffer<AssistantCommandIntentRequestElement>(boundary));
         Assert.IsTrue(_entityManager.HasBuffer<AssistantCommandIntentResultElement>(boundary));
         Assert.IsTrue(_entityManager.HasBuffer<AssistantCommandDispatchElement>(boundary));
+        Assert.IsTrue(_entityManager.HasComponent<AssistantNarrationStateComponent>(boundary));
+        Assert.IsTrue(_entityManager.HasComponent<AssistantControlOwnerComponent>(boundary));
     }
 
     private Entity CreateBoundary(bool withMission, bool matchStarted = true)

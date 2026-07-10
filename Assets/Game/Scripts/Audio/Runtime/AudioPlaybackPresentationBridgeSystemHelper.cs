@@ -90,7 +90,9 @@ namespace Game.Runtime
                     : result.Status;
                 requests[i] = request;
                 AppendPresentationResult(em, audioEntity, request, result, now);
+#if UNITY_EDITOR
                 LogPresentationDiagnostic(em, request, entry, result, now);
+#endif
 
                 presented++;
                 if (result.Played)

@@ -7,6 +7,7 @@ namespace Game.Editor
     using System.Globalization;
     using System.IO;
     using System.Linq;
+    using System.Security.Cryptography;
     using System.Text;
     using System.Threading.Tasks;
     using Game.Components;
@@ -44,6 +45,11 @@ namespace Game.Editor
         private const string TargetKey = "AudioMemoryPlaybackCapture.Target";
         private const string StartedAtKey = "AudioMemoryPlaybackCapture.StartedAt";
         private const double TimeoutSeconds = 360d;
+        private const double PostPresentationMinimumSettleSeconds = 0.5d;
+        private const double ResidencySampleIntervalSeconds = 0.1d;
+        private const int RequiredStableResidencySamples = 3;
+        private const double ResidencySettleTimeoutSeconds = 5d;
+        private const double BaselineIdleTimeoutSeconds = 10d;
 
         private static readonly JsonSerializerSettings JsonSettings = new()
         {
@@ -52,11 +58,29 @@ namespace Game.Editor
             NullValueHandling = NullValueHandling.Include
         };
 
+        private static readonly string[] MenuPhases =
+        {
+            "menu-before-controlled-playback",
+            "menu-after-ui-primary-click",
+            "menu-after-music-loop"
+        };
+
+        private static readonly string[] MatchPhases =
+        {
+            "match-before-controlled-playback",
+            "match-after-small-arms",
+            "match-after-music-calm-loop",
+            "match-after-city-day-ambience",
+            "match-after-aria-settings-voice"
+        };
+
         private static bool s_ContinuationRunning;
         private static bool s_ProfilerStarted;
         private static double s_CaptureEpochSeconds;
+        private static double s_CaptureUnscaledEpochSeconds;
         private static AudioMemoryPlaybackReport s_Report;
         private static ProfilerState s_PreviousProfilerState;
+        private static List<CatalogClipDescriptor> s_CatalogDescriptors;
 
         private enum CaptureTarget
         {
@@ -111,6 +135,24 @@ namespace Game.Editor
             public string AssetPath;
             public readonly HashSet<string> EventIds = new(StringComparer.Ordinal);
             public readonly HashSet<string> BusIds = new(StringComparer.Ordinal);
+        }
+
+        private readonly struct ResidencySignature : IEquatable<ResidencySignature>
+        {
+            public ResidencySignature(long runtimeMemoryBytes, int loadedClipCount)
+            {
+                RuntimeMemoryBytes = runtimeMemoryBytes;
+                LoadedClipCount = loadedClipCount;
+            }
+
+            public long RuntimeMemoryBytes { get; }
+            public int LoadedClipCount { get; }
+
+            public bool Equals(ResidencySignature other)
+            {
+                return RuntimeMemoryBytes == other.RuntimeMemoryBytes &&
+                       LoadedClipCount == other.LoadedClipCount;
+            }
         }
 
         [InitializeOnLoadMethod]
@@ -213,6 +255,70 @@ namespace Game.Editor
             };
         }
 
+        public static double ToCaptureRelativeSeconds(double runtimeSeconds, double captureRuntimeEpochSeconds)
+        {
+            return Math.Max(0d, runtimeSeconds - captureRuntimeEpochSeconds);
+        }
+
+        public static void ValidatePresentedEvent(AudioMemoryEventSnapshot observation)
+        {
+            if (observation == null)
+                throw new ArgumentNullException(nameof(observation));
+            if (!string.Equals(
+                    observation.Status,
+                    AudioPlaybackRequestStatus.Presented.ToString(),
+                    StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException(
+                    $"Audio event {observation.EventId} ended with {observation.Status}; representative playback was not presented.");
+            }
+        }
+
+        public static void ValidateCompletedReport(AudioMemoryPlaybackReport report)
+        {
+            if (report == null)
+                throw new ArgumentNullException(nameof(report));
+
+            string[] requiredPhases = string.Equals(report.CaptureTarget, "Menu", StringComparison.Ordinal)
+                ? MenuPhases
+                : string.Equals(report.CaptureTarget, "Match", StringComparison.Ordinal)
+                    ? MatchPhases
+                    : throw new InvalidOperationException($"Unknown capture target '{report.CaptureTarget}'.");
+
+            if (report.Snapshots.Count != requiredPhases.Length)
+            {
+                throw new InvalidOperationException(
+                    $"{report.CaptureTarget} requires {requiredPhases.Length} snapshots, found {report.Snapshots.Count}.");
+            }
+
+            for (int index = 0; index < requiredPhases.Length; index++)
+            {
+                AudioMemoryPhaseSnapshot snapshot = report.Snapshots[index];
+                if (!string.Equals(snapshot.Phase, requiredPhases[index], StringComparison.Ordinal))
+                {
+                    throw new InvalidOperationException(
+                        $"Snapshot {index} must be '{requiredPhases[index]}', found '{snapshot.Phase}'.");
+                }
+
+                if (index == 0)
+                {
+                    if (snapshot.ActiveSourceCount != 0)
+                        throw new InvalidOperationException("The controlled baseline must have zero active audio sources.");
+                    continue;
+                }
+
+                ValidatePresentedEvent(snapshot.Event);
+            }
+
+            if (string.IsNullOrWhiteSpace(report.ExactCommit) ||
+                string.IsNullOrWhiteSpace(report.CatalogSha256) ||
+                string.IsNullOrWhiteSpace(report.RawProfilerSha256) ||
+                report.RawProfilerBytes <= 0)
+            {
+                throw new InvalidOperationException("Capture provenance and raw-profiler evidence are incomplete.");
+            }
+        }
+
         public static string SerializeReport(AudioMemoryPlaybackReport report)
         {
             if (report == null)
@@ -232,17 +338,27 @@ namespace Game.Editor
             AppendLine(builder, $"- Task: `{EscapeMarkdown(report.TaskId)}`");
             AppendLine(builder, $"- Capture target: `{EscapeMarkdown(report.CaptureTarget)}`");
             AppendLine(builder, $"- Capture result: `{EscapeMarkdown(report.CaptureResult)}`");
+            AppendLine(builder, $"- Captured UTC: `{EscapeMarkdown(report.CapturedAtUtc)}`");
+            AppendLine(builder, $"- Exact commit: `{EscapeMarkdown(report.ExactCommit)}`");
+            AppendLine(builder, $"- Dirty worktree: `{(report.Dirty ? "true" : "false")}`");
             AppendLine(builder, $"- Unity: `{EscapeMarkdown(report.UnityVersion)}`");
+            AppendLine(builder, $"- Active build target: `{EscapeMarkdown(report.ActiveBuildTarget)}`");
+            AppendLine(builder, $"- Invocation: `{EscapeMarkdown(report.Invocation)}`");
+            AppendLine(builder, $"- Catalog SHA-256: `{EscapeMarkdown(report.CatalogSha256)}`");
             AppendLine(builder, $"- JSON: `{EscapeMarkdown(report.JsonReportPath)}`");
             AppendLine(builder, $"- Markdown: `{EscapeMarkdown(report.MarkdownReportPath)}`");
             AppendLine(builder, $"- Raw profiler: `{EscapeMarkdown(report.RawProfilerPath)}`");
+            AppendLine(builder, $"- Raw profiler bytes: `{FormatBytes(report.RawProfilerBytes)}`");
+            AppendLine(builder, $"- Raw profiler SHA-256: `{EscapeMarkdown(report.RawProfilerSha256)}`");
+            AppendLine(builder, $"- Raw profiler retention: {EscapeMarkdown(report.RawProfilerRetention)}");
+            AppendLine(builder, $"- Memory contract: {EscapeMarkdown(report.MemoryMeasurementContract)}");
             if (!string.IsNullOrWhiteSpace(report.Failure))
                 AppendLine(builder, $"- Failure: `{EscapeMarkdown(report.Failure)}`");
 
             AppendLine(builder, string.Empty);
             AppendLine(builder, "## Phase Summary");
             AppendLine(builder, string.Empty);
-            AppendLine(builder, "| Phase | Time (s) | Event ID | Hash | Status | Catalog bytes | Allocated | Reserved | Mono used | Mono heap | Pool | Active |");
+            AppendLine(builder, "| Phase | Time (s) | Event ID | Hash | Status | Catalog bytes | Process allocated (context) | Process reserved (context) | Mono used (context) | Mono heap (context) | Pool | Active |");
             AppendLine(builder, "|---|---:|---|---:|---|---:|---:|---:|---:|---:|---:|---:|");
             for (int i = 0; i < report.Snapshots.Count; i++)
             {
@@ -326,11 +442,15 @@ namespace Game.Editor
 
             try
             {
+                if (!Application.isBatchMode)
+                    throw new InvalidOperationException("APH-401 capture is batchmode-only because it replaces the active scene and profiler history.");
                 if (EditorApplication.isPlayingOrWillChangePlaymode)
                     throw new InvalidOperationException("Start APH-401 capture from Edit Mode.");
 
                 s_Report = null;
                 s_CaptureEpochSeconds = 0d;
+                s_CaptureUnscaledEpochSeconds = 0d;
+                s_CatalogDescriptors = null;
                 SessionState.SetBool(ActiveKey, true);
                 SessionState.SetInt(TargetKey, (int)target);
                 SessionState.SetFloat(StartedAtKey, (float)EditorApplication.timeSinceStartup);
@@ -357,6 +477,7 @@ namespace Game.Editor
 
                 CaptureTarget target = (CaptureTarget)SessionState.GetInt(TargetKey, (int)CaptureTarget.Menu);
                 CapturePaths paths = GetPaths(target);
+                s_CatalogDescriptors = BuildCatalogDescriptors();
                 StartRawProfilerCapture(paths.RawProfilerPath);
                 s_Report = CreateReport(paths);
 
@@ -379,24 +500,24 @@ namespace Game.Editor
 
         private static async Task CaptureMenuAsync()
         {
-            await WaitEditorUpdatesAsync(2);
+            await WaitForAudioIdleAsync("Menu controlled baseline");
             AddSnapshot("menu-before-controlled-playback", CreateNoEventSnapshot());
 
             EventHandle uiClick = EnqueueUiEvent(UIAudioEventKind.ButtonPrimaryClick);
-            AddSnapshot("menu-after-ui-primary-click", await WaitForTerminalEventAsync(uiClick));
+            AddSnapshot("menu-after-ui-primary-click", await WaitForSettledEventAsync(uiClick));
 
             EventHandle menuMusic = EnqueueMusic(
                 AudioEventIds.MusicMenuLoop,
                 AudioEventIds.MusicMenuLoopHash,
                 transitionSeconds: 1.5f);
-            AddSnapshot("menu-after-music-loop", await WaitForTerminalEventAsync(menuMusic));
+            AddSnapshot("menu-after-music-loop", await WaitForSettledEventAsync(menuMusic));
         }
 
         private static async Task CaptureMatchAsync()
         {
             EnqueueMatchRoute();
             await WaitUntilAsync(IsMatchReady, "Menu-to-Match transition readiness");
-            await WaitEditorUpdatesAsync(2);
+            await WaitForAudioIdleAsync("Match controlled baseline");
             AddSnapshot("match-before-controlled-playback", CreateNoEventSnapshot());
 
             EventHandle smallArms = EnqueueOneShot(
@@ -404,28 +525,28 @@ namespace Game.Editor
                 AudioEventIds.GameplayWeaponFireSmallArmsHash,
                 "SFX",
                 AudioPlaybackPriority.Medium);
-            AddSnapshot("match-after-small-arms", await WaitForTerminalEventAsync(smallArms));
+            AddSnapshot("match-after-small-arms", await WaitForSettledEventAsync(smallArms));
 
             EventHandle matchMusic = EnqueueMusic(
                 AudioEventIds.MusicMatchCalmLoop,
                 AudioEventIds.MusicMatchCalmLoopHash,
                 transitionSeconds: 2f);
-            AddSnapshot("match-after-music-calm-loop", await WaitForTerminalEventAsync(matchMusic));
+            AddSnapshot("match-after-music-calm-loop", await WaitForSettledEventAsync(matchMusic));
 
             EventHandle ambience = EnqueueOneShot(
                 AudioEventIds.AmbienceCityDayLoop,
                 AudioEventIds.AmbienceCityDayLoopHash,
                 "Ambience",
                 AudioPlaybackPriority.Low);
-            AddSnapshot("match-after-city-day-ambience", await WaitForTerminalEventAsync(ambience));
+            AddSnapshot("match-after-city-day-ambience", await WaitForSettledEventAsync(ambience));
 
             EventHandle voice = EnqueueUiEvent(UIAudioEventKind.SettingsVoiceSample);
-            AddSnapshot("match-after-aria-settings-voice", await WaitForTerminalEventAsync(voice));
+            AddSnapshot("match-after-aria-settings-voice", await WaitForSettledEventAsync(voice));
         }
 
         private static void AddSnapshot(string phase, AudioMemoryEventSnapshot eventSnapshot)
         {
-            AudioPlaybackPresentationRuntimeView audioRuntime = FindAudioRuntime();
+            AudioPlaybackPresentationRuntimeView audioRuntime = RequireSingleAudioRuntime();
             s_Report.Snapshots.Add(CreateSnapshot(
                 phase,
                 ElapsedSeconds(),
@@ -433,13 +554,13 @@ namespace Game.Editor
                 Profiler.GetTotalReservedMemoryLong(),
                 Profiler.GetMonoUsedSizeLong(),
                 Profiler.GetMonoHeapSizeLong(),
-                audioRuntime != null ? audioRuntime.PoolSize : null,
-                audioRuntime != null ? audioRuntime.ActiveSourceCount : null,
+                audioRuntime.PoolSize,
+                audioRuntime.ActiveSourceCount,
                 eventSnapshot,
                 CaptureCatalogClips()));
         }
 
-        private static List<AudioMemoryCatalogClipSnapshot> CaptureCatalogClips()
+        private static List<CatalogClipDescriptor> BuildCatalogDescriptors()
         {
             AudioEventCatalogConfig catalog = AssetDatabase.LoadAssetAtPath<AudioEventCatalogConfig>(CatalogAssetPath);
             if (catalog == null)
@@ -481,9 +602,20 @@ namespace Game.Editor
                 }
             }
 
-            List<AudioMemoryCatalogClipSnapshot> snapshots = new(clipsByPath.Count);
-            foreach (CatalogClipDescriptor descriptor in clipsByPath.Values)
+            return clipsByPath.Values
+                .OrderBy(descriptor => descriptor.AssetPath, StringComparer.Ordinal)
+                .ToList();
+        }
+
+        private static List<AudioMemoryCatalogClipSnapshot> CaptureCatalogClips()
+        {
+            if (s_CatalogDescriptors == null || s_CatalogDescriptors.Count == 0)
+                throw new InvalidOperationException("Audio catalog descriptors were not initialized.");
+
+            List<AudioMemoryCatalogClipSnapshot> snapshots = new(s_CatalogDescriptors.Count);
+            for (int index = 0; index < s_CatalogDescriptors.Count; index++)
             {
+                CatalogClipDescriptor descriptor = s_CatalogDescriptors[index];
                 snapshots.Add(new AudioMemoryCatalogClipSnapshot
                 {
                     AssetPath = descriptor.AssetPath,
@@ -495,6 +627,44 @@ namespace Game.Editor
             }
 
             return snapshots;
+        }
+
+        private static ResidencySignature ReadResidencySignature()
+        {
+            if (s_CatalogDescriptors == null || s_CatalogDescriptors.Count == 0)
+                throw new InvalidOperationException("Audio catalog descriptors were not initialized.");
+
+            long runtimeMemoryBytes = 0;
+            int loadedClipCount = 0;
+            for (int index = 0; index < s_CatalogDescriptors.Count; index++)
+            {
+                AudioClip clip = s_CatalogDescriptors[index].Clip;
+                runtimeMemoryBytes += Profiler.GetRuntimeMemorySizeLong(clip);
+                if (clip.loadState == AudioDataLoadState.Loaded)
+                    loadedClipCount++;
+            }
+
+            return new ResidencySignature(runtimeMemoryBytes, loadedClipCount);
+        }
+
+        private static bool AreEventClipsLoaded(string eventId)
+        {
+            if (s_CatalogDescriptors == null)
+                return false;
+
+            bool found = false;
+            for (int index = 0; index < s_CatalogDescriptors.Count; index++)
+            {
+                CatalogClipDescriptor descriptor = s_CatalogDescriptors[index];
+                if (!descriptor.EventIds.Contains(eventId))
+                    continue;
+
+                found = true;
+                if (descriptor.Clip.loadState != AudioDataLoadState.Loaded)
+                    return false;
+            }
+
+            return found;
         }
 
         private static EventHandle EnqueueUiEvent(UIAudioEventKind kind)
@@ -557,16 +727,52 @@ namespace Game.Editor
                 () => TryReadEvent(handle, out observation) && IsTerminalStatus(observation.Status),
                 $"terminal playback result for {handle.EventId}");
             observation.ObservedAtSeconds = ElapsedSeconds();
-            if (!string.Equals(
-                    observation.Status,
-                    AudioPlaybackRequestStatus.Presented.ToString(),
-                    StringComparison.Ordinal))
+            ValidatePresentedEvent(observation);
+            return observation;
+        }
+
+        private static async Task<AudioMemoryEventSnapshot> WaitForSettledEventAsync(EventHandle handle)
+        {
+            AudioMemoryEventSnapshot observation = await WaitForTerminalEventAsync(handle);
+            await WaitUntilAsync(
+                () => AreEventClipsLoaded(handle.EventId),
+                $"loaded clip state for {handle.EventId}");
+            await WaitForSecondsAsync(PostPresentationMinimumSettleSeconds);
+
+            double deadline = EditorApplication.timeSinceStartup + ResidencySettleTimeoutSeconds;
+            ResidencySignature previous = ReadResidencySignature();
+            int stableSamples = 1;
+            while (EditorApplication.timeSinceStartup < deadline)
             {
-                throw new InvalidOperationException(
-                    $"Audio event {handle.EventId} ended with {observation.Status}; representative playback was not presented.");
+                await WaitForSecondsAsync(ResidencySampleIntervalSeconds);
+                ResidencySignature current = ReadResidencySignature();
+                stableSamples = current.Equals(previous) ? stableSamples + 1 : 1;
+                previous = current;
+                if (stableSamples >= RequiredStableResidencySamples)
+                {
+                    observation.ObservedAtSeconds = ElapsedSeconds();
+                    return observation;
+                }
             }
 
-            return observation;
+            throw new TimeoutException($"Audio residency did not settle after presenting {handle.EventId}.");
+        }
+
+        private static async Task WaitForAudioIdleAsync(string description)
+        {
+            double deadline = EditorApplication.timeSinceStartup + BaselineIdleTimeoutSeconds;
+            int stableSamples = 0;
+            while (EditorApplication.timeSinceStartup < deadline)
+            {
+                AudioPlaybackPresentationRuntimeView runtime = RequireSingleAudioRuntime();
+                stableSamples = runtime.ActiveSourceCount == 0 ? stableSamples + 1 : 0;
+                if (stableSamples >= RequiredStableResidencySamples)
+                    return;
+
+                await WaitForSecondsAsync(ResidencySampleIntervalSeconds);
+            }
+
+            throw new TimeoutException($"Timed out waiting for zero active audio sources for {description}.");
         }
 
         private static bool TryReadEvent(EventHandle handle, out AudioMemoryEventSnapshot observation)
@@ -612,8 +818,12 @@ namespace Game.Editor
                 EventHash = request.EventHash != 0u ? request.EventHash : handle.EventHash,
                 Status = request.Status.ToString(),
                 TriggeredAtSeconds = handle.TriggeredAtSeconds,
-                RequestedAtSeconds = request.RequestedAt,
-                ProcessedAtSeconds = processedAt
+                RequestedAtSeconds = request.RequestedAt > 0d
+                    ? ToCaptureRelativeSeconds(request.RequestedAt, s_CaptureUnscaledEpochSeconds)
+                    : handle.TriggeredAtSeconds,
+                ProcessedAtSeconds = processedAt.HasValue
+                    ? ToCaptureRelativeSeconds(processedAt.Value, s_CaptureUnscaledEpochSeconds)
+                    : null
             };
             return true;
         }
@@ -663,7 +873,7 @@ namespace Game.Editor
                    shellState.CurrentMode == UiShellMode.MainMenu &&
                    shellState.ActiveRoute == UIRoute.MainMenu &&
                    shellState.IsTransitionRunning == 0 &&
-                   FindAudioRuntime() != null;
+                   TryGetSingleAudioRuntime(out _);
         }
 
         private static bool IsMatchReady()
@@ -698,7 +908,7 @@ namespace Game.Editor
                 return false;
 
             Scene matchScene = SceneManager.GetSceneByName(MatchSceneName);
-            return matchScene.IsValid() && matchScene.isLoaded && FindAudioRuntime() != null;
+            return matchScene.IsValid() && matchScene.isLoaded && TryGetSingleAudioRuntime(out _);
         }
 
         private static bool TryGetShellState(out UiShellStateComponent shellState)
@@ -719,9 +929,26 @@ namespace Game.Editor
             return true;
         }
 
-        private static AudioPlaybackPresentationRuntimeView FindAudioRuntime()
+        private static bool TryGetSingleAudioRuntime(out AudioPlaybackPresentationRuntimeView runtime)
         {
-            return UnityEngine.Object.FindAnyObjectByType<AudioPlaybackPresentationRuntimeView>(FindObjectsInactive.Include);
+            AudioPlaybackPresentationRuntimeView[] runtimes = UnityEngine.Object.FindObjectsByType<AudioPlaybackPresentationRuntimeView>(
+                FindObjectsInactive.Include,
+                FindObjectsSortMode.None);
+            runtime = runtimes.Length == 1 ? runtimes[0] : null;
+            return runtime != null;
+        }
+
+        private static AudioPlaybackPresentationRuntimeView RequireSingleAudioRuntime()
+        {
+            if (!TryGetSingleAudioRuntime(out AudioPlaybackPresentationRuntimeView runtime))
+            {
+                int count = UnityEngine.Object.FindObjectsByType<AudioPlaybackPresentationRuntimeView>(
+                    FindObjectsInactive.Include,
+                    FindObjectsSortMode.None).Length;
+                throw new InvalidOperationException($"Expected exactly one audio runtime view, found {count}.");
+            }
+
+            return runtime;
         }
 
         private static World RequireWorld()
@@ -747,10 +974,14 @@ namespace Game.Editor
             }
         }
 
-        private static async Task WaitEditorUpdatesAsync(int count)
+        private static async Task WaitForSecondsAsync(double seconds)
         {
-            for (int i = 0; i < count; i++)
+            double deadline = EditorApplication.timeSinceStartup + Math.Max(0d, seconds);
+            do
+            {
                 await NextEditorUpdateAsync();
+            }
+            while (EditorApplication.timeSinceStartup < deadline);
         }
 
         private static Task NextEditorUpdateAsync()
@@ -795,6 +1026,7 @@ namespace Game.Editor
             Profiler.enabled = true;
             s_ProfilerStarted = true;
             s_CaptureEpochSeconds = Time.realtimeSinceStartupAsDouble;
+            s_CaptureUnscaledEpochSeconds = Time.unscaledTimeAsDouble;
         }
 
         private static void StopRawProfilerCapture()
@@ -815,14 +1047,25 @@ namespace Game.Editor
 
         private static AudioMemoryPlaybackReport CreateReport(CapturePaths paths)
         {
+            string gitStatus = RunGit("status --porcelain --untracked-files=normal");
             return new AudioMemoryPlaybackReport
             {
                 CaptureTarget = paths.TargetName,
                 CaptureResult = "Running",
+                CapturedAtUtc = DateTime.UtcNow.ToString("O", CultureInfo.InvariantCulture),
+                ExactCommit = RunGit("rev-parse HEAD").Trim(),
+                Dirty = !string.IsNullOrWhiteSpace(gitStatus),
                 UnityVersion = Application.unityVersion,
+                ActiveBuildTarget = EditorUserBuildSettings.activeBuildTarget.ToString(),
+                Invocation = $"Game.Editor.AudioMemoryPlaybackCapture.Run{paths.TargetName}",
+                CatalogSha256 = ComputeSha256(CatalogAssetPath),
                 JsonReportPath = paths.JsonPath,
                 MarkdownReportPath = paths.MarkdownPath,
-                RawProfilerPath = paths.RawProfilerPath
+                RawProfilerPath = paths.RawProfilerPath,
+                RawProfilerRetention = "Transient local profiler evidence; regenerate with the recorded invocation when the local file expires.",
+                MemoryMeasurementContract =
+                    "CatalogRuntimeMemoryBytes, loaded clip counts, and bus totals are authoritative audio-residency measurements. " +
+                    "Process and Mono counters are context only because the editor capture harness allocates report metadata."
             };
         }
 
@@ -836,7 +1079,13 @@ namespace Game.Editor
         private static void CompleteCapture()
         {
             StopRawProfilerCapture();
+            if (!File.Exists(s_Report.RawProfilerPath))
+                throw new FileNotFoundException("Raw profiler capture was not created.", s_Report.RawProfilerPath);
+
+            s_Report.RawProfilerBytes = new FileInfo(s_Report.RawProfilerPath).Length;
+            s_Report.RawProfilerSha256 = ComputeSha256(s_Report.RawProfilerPath);
             s_Report.CaptureResult = "Succeeded";
+            ValidateCompletedReport(s_Report);
             WriteReports(s_Report);
             Debug.Log(
                 $"[AudioMemoryPlaybackCapture] result=Passed target={s_Report.CaptureTarget} " +
@@ -873,6 +1122,7 @@ namespace Game.Editor
             SessionState.EraseBool(ActiveKey);
             SessionState.EraseInt(TargetKey);
             SessionState.EraseFloat(StartedAtKey);
+            s_CatalogDescriptors = null;
 
             if (Application.isBatchMode)
             {
@@ -892,6 +1142,49 @@ namespace Game.Editor
 
             File.WriteAllText(report.JsonReportPath, SerializeReport(report) + "\n", new UTF8Encoding(false));
             File.WriteAllText(report.MarkdownReportPath, BuildMarkdown(report), new UTF8Encoding(false));
+        }
+
+        private static string RunGit(string arguments)
+        {
+            using var process = new System.Diagnostics.Process
+            {
+                StartInfo = new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = "git",
+                    Arguments = arguments,
+                    WorkingDirectory = Directory.GetCurrentDirectory(),
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
+                }
+            };
+
+            if (!process.Start())
+                throw new InvalidOperationException($"Could not start git {arguments}.");
+
+            string output = process.StandardOutput.ReadToEnd();
+            string error = process.StandardError.ReadToEnd();
+            if (!process.WaitForExit(10000))
+                throw new TimeoutException($"git {arguments} timed out.");
+            if (process.ExitCode != 0)
+            {
+                throw new InvalidOperationException(
+                    $"git {arguments} failed with exit code {process.ExitCode}: {error.Trim()}");
+            }
+
+            return output;
+        }
+
+        private static string ComputeSha256(string filePath)
+        {
+            using FileStream stream = File.OpenRead(filePath);
+            using SHA256 sha256 = SHA256.Create();
+            byte[] hash = sha256.ComputeHash(stream);
+            StringBuilder builder = new(hash.Length * 2);
+            for (int index = 0; index < hash.Length; index++)
+                builder.Append(hash[index].ToString("x2", CultureInfo.InvariantCulture));
+            return builder.ToString();
         }
 
         private static double ElapsedSeconds()
@@ -983,10 +1276,20 @@ namespace Game.Editor
         public string CaptureTarget { get; set; } = string.Empty;
         public string CaptureResult { get; set; } = string.Empty;
         public string Failure { get; set; }
+        public string CapturedAtUtc { get; set; } = string.Empty;
+        public string ExactCommit { get; set; } = string.Empty;
+        public bool Dirty { get; set; }
         public string UnityVersion { get; set; } = string.Empty;
+        public string ActiveBuildTarget { get; set; } = string.Empty;
+        public string Invocation { get; set; } = string.Empty;
+        public string CatalogSha256 { get; set; } = string.Empty;
         public string JsonReportPath { get; set; } = string.Empty;
         public string MarkdownReportPath { get; set; } = string.Empty;
         public string RawProfilerPath { get; set; } = string.Empty;
+        public long RawProfilerBytes { get; set; }
+        public string RawProfilerSha256 { get; set; } = string.Empty;
+        public string RawProfilerRetention { get; set; } = string.Empty;
+        public string MemoryMeasurementContract { get; set; } = string.Empty;
         public List<AudioMemoryPhaseSnapshot> Snapshots { get; set; } = new();
     }
 

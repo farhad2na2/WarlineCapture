@@ -14,7 +14,11 @@ public sealed class AudioMemoryPlaybackCaptureTests
             tests.CreateSnapshot_SortsClipMetadataAndAggregatesRuntimeBytesByBus();
             tests.SerializeReport_IsStableAndIncludesNullableSourceCounts();
             tests.BuildMarkdown_RecordsMemoryEventTimingBusAndClipState();
-            Debug.Log("[AudioMemoryPlaybackCaptureValidation] result=Passed tests=3");
+            tests.ToCaptureRelativeSeconds_UsesTheCaptureRuntimeEpoch();
+            tests.ValidatePresentedEvent_RejectsNonPresentedTerminalState();
+            tests.ValidateCompletedReport_RequiresExactPhasesCleanBaselineAndProvenance();
+            tests.ValidateCompletedReport_RejectsAnActiveBaselineSource();
+            Debug.Log("[AudioMemoryPlaybackCaptureValidation] result=Passed tests=7");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -107,6 +111,42 @@ public sealed class AudioMemoryPlaybackCaptureTests
         StringAssert.Contains("| UI | 256 | 1 | 1 |", markdown);
         StringAssert.Contains("Assets/Game/Audio/UI/click.wav", markdown);
         StringAssert.Contains("| Loaded | 256 |", markdown);
+        StringAssert.Contains("Process allocated (context)", markdown);
+        StringAssert.Contains("authoritative audio-residency measurements", markdown);
+    }
+
+    [Test]
+    public void ToCaptureRelativeSeconds_UsesTheCaptureRuntimeEpoch()
+    {
+        Assert.That(AudioMemoryPlaybackCapture.ToCaptureRelativeSeconds(11.25d, 8d), Is.EqualTo(3.25d));
+        Assert.That(AudioMemoryPlaybackCapture.ToCaptureRelativeSeconds(7d, 8d), Is.Zero);
+    }
+
+    [Test]
+    public void ValidatePresentedEvent_RejectsNonPresentedTerminalState()
+    {
+        AudioMemoryEventSnapshot observation = CreateEvent();
+        observation.Status = "MissingEvent";
+
+        Assert.Throws<InvalidOperationException>(
+            () => AudioMemoryPlaybackCapture.ValidatePresentedEvent(observation));
+    }
+
+    [Test]
+    public void ValidateCompletedReport_RequiresExactPhasesCleanBaselineAndProvenance()
+    {
+        AudioMemoryPlaybackReport report = CreateCompletedMenuReport(activeBaselineSources: 0);
+
+        Assert.DoesNotThrow(() => AudioMemoryPlaybackCapture.ValidateCompletedReport(report));
+    }
+
+    [Test]
+    public void ValidateCompletedReport_RejectsAnActiveBaselineSource()
+    {
+        AudioMemoryPlaybackReport report = CreateCompletedMenuReport(activeBaselineSources: 1);
+
+        Assert.Throws<InvalidOperationException>(
+            () => AudioMemoryPlaybackCapture.ValidateCompletedReport(report));
     }
 
     private static AudioMemoryPlaybackReport CreateReport(int? sourcePoolSize, int? activeSourceCount)
@@ -118,7 +158,8 @@ public sealed class AudioMemoryPlaybackCaptureTests
             UnityVersion = "6000.5.2f1",
             JsonReportPath = "Design/AgentReports/test.json",
             MarkdownReportPath = "Design/AgentReports/test.md",
-            RawProfilerPath = "Design/AgentReports/test.raw"
+            RawProfilerPath = "Design/AgentReports/test.raw",
+            MemoryMeasurementContract = "Catalog values are authoritative audio-residency measurements."
         };
         report.Snapshots.Add(AudioMemoryPlaybackCapture.CreateSnapshot(
             "menu-after-ui-primary-click",
@@ -142,6 +183,39 @@ public sealed class AudioMemoryPlaybackCaptureTests
                 }
             }));
         return report;
+    }
+
+    private static AudioMemoryPlaybackReport CreateCompletedMenuReport(int activeBaselineSources)
+    {
+        AudioMemoryPlaybackReport report = new()
+        {
+            CaptureTarget = "Menu",
+            CaptureResult = "Succeeded",
+            ExactCommit = "0123456789abcdef",
+            CatalogSha256 = new string('a', 64),
+            RawProfilerSha256 = new string('b', 64),
+            RawProfilerBytes = 1024
+        };
+        report.Snapshots.Add(CreateContractSnapshot(
+            "menu-before-controlled-playback",
+            activeBaselineSources,
+            new AudioMemoryEventSnapshot { Status = "NotRequested" }));
+        report.Snapshots.Add(CreateContractSnapshot("menu-after-ui-primary-click", 1, CreateEvent()));
+        report.Snapshots.Add(CreateContractSnapshot("menu-after-music-loop", 1, CreateEvent()));
+        return report;
+    }
+
+    private static AudioMemoryPhaseSnapshot CreateContractSnapshot(
+        string phase,
+        int activeSourceCount,
+        AudioMemoryEventSnapshot eventSnapshot)
+    {
+        return new AudioMemoryPhaseSnapshot
+        {
+            Phase = phase,
+            ActiveSourceCount = activeSourceCount,
+            Event = eventSnapshot
+        };
     }
 
     private static AudioMemoryEventSnapshot CreateEvent()

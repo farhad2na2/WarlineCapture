@@ -248,17 +248,17 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `51 / 106` |
-| Checklist percent complete | `48.1%` |
+| Checklist complete | `52 / 106` |
+| Checklist percent complete | `49.1%` |
 | Checklist in progress | `2 / 106`: `APH-311`, `APH-601` |
-| Complete plus active coverage | `53 / 106` (`50.0%`); this is visibility only, not accepted completion |
-| Current phase | Phase 3 Android device evidence plus Phase 6 static-map startup measurement |
-| Current task | `APH-311` has a foreground 2,000-frame Android candidate capture but still needs the required 10-minute 30/60 FPS sessions; `APH-601` is completing accepted CPU/GPU mesh-memory and peak-allocation evidence after rejecting the 96 m and 32 m combine candidates |
+| Complete plus active coverage | `54 / 106` (`50.9%`); this is visibility only, not accepted completion |
+| Current phase | Phase 3 Android device evidence plus Phase 6 shared-mesh presentation baking |
+| Current task | `APH-603` is complete; `APH-604` is the next Phase 6 slice for deterministic rebake and manifest-owned stale cleanup; `APH-601` and `APH-311` retain measurement/device ownership |
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: steady-state Match GC `234,324 / 1,024` bytes; improved 13.0% from the APH-007 baseline without weakening the budget |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
 | Last verified commit | `f5375ee37`; Android texture/impostor residency policy, candidate profiler evidence, and the revised Phase 6 direction pass compile plus focused Android validation |
-| Last update | 2026-07-10 - Android combine candidates load successfully but fail the 60 FPS GPU gate; neither transient output is accepted |
+| Last update | 2026-07-10 - APH-603 generated 17,564 shared-renderer sources across 525 additive scenes with zero mesh/material duplication |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -540,7 +540,9 @@ Quality lock:
   - Remaining: record exact CPU/GPU mesh memory and peak startup allocation for the accepted implementation. Preserve overlay-sensitive source geometry and require foreground load, settled memory, visual, and 60 FPS evidence before closing APH-601.
 - [x] `APH-602` Extract the current `BatchKey`, safety filters, chunk size, and mesh limits into editor-usable deterministic code without changing runtime behavior.
   - Result: `StaticMapChunkBatchingPolicy` owns deterministic key equality, renderer safety, source eligibility, chunk coordinates, and shared limits; focused policy/readback/Android preload tests pass `21/21`; commits `aef56c454` and `4c05a2da1` pushed to `main`.
-- [ ] `APH-603` Build an editor baker that writes additive shared-mesh presentation scenes under `Assets/Game/GeneratedStaticMapPresentation/` with a manifest containing source object IDs, source dependency hashes, chunk bounds, scene paths, and shared mesh/material IDs.
+- [x] `APH-603` Build an editor baker that writes additive shared-mesh presentation scenes under `Assets/Game/GeneratedStaticMapPresentation/` with a manifest containing source object IDs, source dependency hashes, chunk bounds, scene paths, and shared mesh/material IDs.
+  - Result: the editor-only baker generated `17,564` shared-renderer source entries across `525` deterministic 32 m additive scenes and a schema-versioned manifest with canonical dependency hash, content hash, chunk bounds/paths, GlobalObjectIds, per-source hashes, and shared mesh/material GUID/local IDs.
+  - Validation: Android visual/import `12/12`, runtime/editor .NET builds, Unity compilation, canonical-scene cleanliness, and full generated-output component/asset scans passed. Generated output is `63 MB`, contains zero embedded/generated mesh or material assets, zero colliders/scripts/prefab instances/static-batch flags, and zero duplicate source IDs. Evidence: `Design/AgentReports/2026-07-10_aph-603_static_map_presentation_bake.md`.
 - [ ] `APH-604` Add deterministic rebake and stale-output cleanup tests. Never delete output not listed in the manifest.
 - [ ] `APH-605` Add structural validation for source/chunk bijection, unchanged transforms, shared mesh/material identity, lightmap data, layers, shadows, probes, bounds, and an explicit zero-collider/zero-gameplay-script chunk contract.
 - [ ] `APH-606` Add a serialized presentation-manifest reference to `MatchSceneView` or an equivalent composition-owned config, and include every generated chunk scene in Android builds. Do not add a `GameObject.Find` fallback.
@@ -1216,6 +1218,20 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Visual result: Not applicable
 - Residual risk: no release APK/AAB evidence exists yet; both long-running builds and report review are required before completion
 - Next ready task: run the release APK and AAB build commands from commit `671a009aa` or later
+
+### 2026-07-10 - APH-603 - Shared-mesh additive presentation baker
+
+- Status: Complete
+- Commit or worktree baseline: `554ea2c5a`
+- Files changed: runtime-readable presentation manifest model, editor-only canonical Match baker, 525 generated additive scenes, generated manifest, and focused evidence report
+- Behavior preserved/changed: canonical Match authoring and runtime behavior are unchanged; no generated scene is in build settings or runtime loading yet. The baker creates presentation-only clones that retain shared mesh/material references and exact representable world transforms.
+- Validation: Unity compilation with 0 C# errors, Android visual/import `12/12`, Game Runtime and Editor .NET builds, 525/525 scene-path presence, 17,564 unique source IDs, and zero forbidden generated components/assets/static-batch flags
+- Artifacts: `Assets/Game/GeneratedStaticMapPresentation/`, `/private/tmp/warline-aph603-bake.log`, `/private/tmp/warline-aph603-compile-retry.log`, and `Design/AgentReports/2026-07-10_aph-603_static_map_presentation_bake.md`
+- Metrics before: no overlay-safe shared-mesh additive presentation output or ownership manifest
+- Metrics after: 17,564 sources, 525 chunks, 63 MB generated output, 14 MB manifest, zero duplicated mesh/material assets, and content hash `05da13c7d8593ee269ad730856904213`
+- Visual result: no runtime visual change in this slice; generated scenes are not loaded. Canonical `Match.unity` remained clean.
+- Residual risk: stale generated scenes are not removed yet; deterministic rebake and sentinel-safe cleanup are owned by APH-604. Full source/renderer-state equivalence remains APH-605.
+- Next ready task: `APH-604`
 
 ### 2026-07-10 - APH-311 and APH-601 - Android 96 m combine candidate rejection
 

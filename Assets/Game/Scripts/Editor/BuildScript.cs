@@ -89,13 +89,14 @@ namespace Game.Editor
             {
                 scenes = GetEnabledScenes(),
                 target = BuildTarget.Android,
-                options = BuildOptions.None,
+                options = BuildOptions.DetailedBuildReport,
                 locationPathName = outputPath
             };
 
             ConfigureAndroidBuild(buildType == "AAB");
 
-            ExecuteBuild(buildPlayerOptions);
+            BuildReport report = ExecuteBuild(buildPlayerOptions);
+            AndroidBuildReportGenerator.GenerateAndWriteReports(report, buildType);
         }
 
         public static void BuildAndroidProfilerApk()
@@ -177,7 +178,7 @@ namespace Game.Editor
             ZipFile.CreateFromDirectory(path, zipPath);
         }
 
-        private static void ExecuteBuild(BuildPlayerOptions buildPlayerOptions)
+        private static BuildReport ExecuteBuild(BuildPlayerOptions buildPlayerOptions)
         {
             var report = BuildPipeline.BuildPlayer(buildPlayerOptions);
             var summary = report.summary;
@@ -190,6 +191,7 @@ namespace Game.Editor
 
             UnityEngine.Debug.Log(
                 $"Build succeeded. target={buildPlayerOptions.target} output={summary.outputPath} size={summary.totalSize} warnings={summary.totalWarnings}");
+            return report;
         }
 
         private static void ConfigureAndroidBuild(bool buildAppBundle)

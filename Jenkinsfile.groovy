@@ -44,7 +44,11 @@ pipeline {
                         returnStdout: true,
                         script: '@git -C "%PROJECT_PATH%" rev-parse HEAD'
                     ).trim()
-                    echo "Checked out WarlineCapture commit ${env.GIT_COMMIT}"
+                    env.APH500_GIT_DIRTY = bat(
+                        returnStdout: true,
+                        script: '@git -C "%PROJECT_PATH%" status --porcelain --untracked-files=normal'
+                    ).trim().isEmpty() ? 'false' : 'true'
+                    echo "Checked out WarlineCapture commit ${env.GIT_COMMIT}; dirty=${env.APH500_GIT_DIRTY}"
                 }
             }
         }
@@ -359,7 +363,7 @@ pipeline {
             }
             post {
                 success {
-                    archiveArtifacts artifacts: 'Build/AndroidAPK/WarlineCapture.apk', fingerprint: true
+                    archiveArtifacts artifacts: 'Build/AndroidAPK/WarlineCapture.apk,Design/AgentReports/architecture_performance_android_apk_build_report.json,Design/AgentReports/architecture_performance_android_apk_build_report.md', fingerprint: true
                 }
             }
         }
@@ -409,7 +413,7 @@ pipeline {
             }
             post {
                 success {
-                    archiveArtifacts artifacts: 'Build/AndroidAAB/WarlineCapture.aab', fingerprint: true
+                    archiveArtifacts artifacts: 'Build/AndroidAAB/WarlineCapture.aab,Design/AgentReports/architecture_performance_android_aab_build_report.json,Design/AgentReports/architecture_performance_android_aab_build_report.md', fingerprint: true
                 }
             }
         }

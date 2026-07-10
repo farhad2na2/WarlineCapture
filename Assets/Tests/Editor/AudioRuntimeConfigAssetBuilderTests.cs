@@ -1,6 +1,6 @@
 using System;
 using Game.Configs;
-using Game.EditorTools;
+using Game.Editor;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;

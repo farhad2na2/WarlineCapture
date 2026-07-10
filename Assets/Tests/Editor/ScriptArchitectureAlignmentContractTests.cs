@@ -698,10 +698,18 @@ public sealed class ScriptArchitectureAlignmentContractTests
     {
         string uiRuntimeAsmdefPath = Path.Combine(GameScriptsRoot, "UI/Game.UI.Runtime.asmdef");
         string asmdef = File.ReadAllText(uiRuntimeAsmdefPath);
+        List<string> violations = new();
 
-        Assert.IsFalse(
-            asmdef.Contains("\"Game.Configs\"", StringComparison.Ordinal),
-            "`Game.UI.Runtime` must not reference `Game.Configs`. Use UI contracts and config-owned adapters/source interfaces instead.");
+        if (asmdef.Contains("\"Game.Configs\"", StringComparison.Ordinal))
+            violations.Add($"{NormalizePath(uiRuntimeAsmdefPath)} references `Game.Configs`.");
+
+        violations.AddRange(
+            EnumerateAssemblySourceFiles(uiRuntimeAsmdefPath)
+                .SelectMany(path => FindTokenReferences(path, "using Game.Configs", "GameText.")));
+
+        AssertNoViolations(
+            violations,
+            "`Game.UI.Runtime` must not reference `Game.Configs`, import its namespace, or call `GameText` directly. Use UI contracts and composition-owned adapters instead.");
     }
 
     [Test]
@@ -1566,6 +1574,27 @@ public sealed class ScriptArchitectureAlignmentContractTests
         foreach (string path in Directory.GetFiles(root, "*.cs", SearchOption.AllDirectories))
         {
             if (string.Equals(NormalizePath(path), SelfPath, StringComparison.Ordinal))
+                continue;
+
+            yield return path;
+        }
+    }
+
+    private static IEnumerable<string> EnumerateAssemblySourceFiles(string asmdefPath)
+    {
+        string assemblyRoot = NormalizePath(Path.GetDirectoryName(asmdefPath));
+        List<string> nestedAssemblyRoots = Directory
+            .GetFiles(assemblyRoot, "*.asmdef", SearchOption.AllDirectories)
+            .Select(path => NormalizePath(Path.GetDirectoryName(path)))
+            .Where(root => !string.Equals(root, assemblyRoot, StringComparison.Ordinal))
+            .Distinct(StringComparer.Ordinal)
+            .OrderByDescending(root => root.Length)
+            .ToList();
+
+        foreach (string path in EnumerateSourceFiles(assemblyRoot))
+        {
+            string normalizedPath = NormalizePath(path);
+            if (nestedAssemblyRoots.Any(root => IsPathOwnedByRule(normalizedPath, root)))
                 continue;
 
             yield return path;

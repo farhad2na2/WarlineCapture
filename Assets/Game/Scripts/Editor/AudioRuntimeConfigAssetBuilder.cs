@@ -3,7 +3,7 @@ using Game.Configs;
 using UnityEditor;
 using UnityEngine;
 
-namespace Game.EditorTools
+namespace Game.Editor
 {
     public static class AudioRuntimeConfigAssetBuilder
     {

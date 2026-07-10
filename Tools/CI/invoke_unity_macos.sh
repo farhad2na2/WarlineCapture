@@ -107,20 +107,17 @@ echo "[UnityInvokeMac] Arguments: -batchmode -projectPath $PROJECT_PATH -logFile
 
 "$UNITY_EXE" -batchmode -projectPath "$PROJECT_PATH" -logFile "$LOG_FILE" "$@" &
 unity_pid=$!
-started_at="$(date +%s)"
+elapsed_seconds=0
 
 while kill -0 "$unity_pid" 2>/dev/null; do
-    if [[ "$TIMEOUT_SECONDS" -gt 0 ]]; then
-        now="$(date +%s)"
-        elapsed=$((now - started_at))
-        if [[ "$elapsed" -ge "$TIMEOUT_SECONDS" ]]; then
-            echo "[UnityInvokeMac] ERROR: Unity timed out after ${TIMEOUT_SECONDS}s. Killing PID $unity_pid."
-            kill_tree "$unity_pid"
-            wait "$unity_pid" 2>/dev/null || true
-            exit 124
-        fi
+    if [[ "$TIMEOUT_SECONDS" -gt 0 && "$elapsed_seconds" -ge "$TIMEOUT_SECONDS" ]]; then
+        echo "[UnityInvokeMac] ERROR: Unity timed out after ${TIMEOUT_SECONDS}s. Killing PID $unity_pid."
+        kill_tree "$unity_pid"
+        wait "$unity_pid" 2>/dev/null || true
+        exit 124
     fi
     sleep 1
+    elapsed_seconds=$((elapsed_seconds + 1))
 done
 
 wait "$unity_pid"

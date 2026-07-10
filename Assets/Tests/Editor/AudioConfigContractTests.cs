@@ -19,6 +19,7 @@ public sealed class AudioConfigContractTests
     };
 
     private const string CatalogJsonPath = "Assets/Game/Audio/Config/audio_event_catalog_v0_1.json";
+    private const string RuntimeCatalogAssetPath = "Assets/Game/Audio/Events/AudioEventCatalogConfig.asset";
     private const string ImportProfileJsonPath = "Assets/Game/Audio/Config/audio_import_profiles_v0_1.json";
 
     private static readonly string[] RequiredCoreEventIds =
@@ -84,9 +85,10 @@ public sealed class AudioConfigContractTests
             tests.AudioCatalogRequiredEventsHaveEntries();
             tests.AudioCatalogEntriesReferenceValidBusesAndClips();
             tests.AudioCatalogEntriesUseRuntimeSafePlaybackRules();
+            tests.SerializedRuntimeCatalogMatchesSourceJson();
             tests.AudioImportProfileConfigExists();
             tests.CatalogAudioImportSettingsMatchProfiles();
-            Debug.Log("[AudioConfigContractValidation] result=Passed tests=13");
+            Debug.Log("[AudioConfigContractValidation] result=Passed tests=14");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -286,6 +288,46 @@ public sealed class AudioConfigContractTests
     }
 
     [Test]
+    public void SerializedRuntimeCatalogMatchesSourceJson()
+    {
+        CatalogJson source = ReadCatalog();
+        AudioEventCatalogConfig runtime =
+            AssetDatabase.LoadAssetAtPath<AudioEventCatalogConfig>(RuntimeCatalogAssetPath);
+        Assert.NotNull(runtime, $"Missing serialized runtime catalog: {RuntimeCatalogAssetPath}");
+        Assert.AreEqual(source.events.Length, runtime.Events.Count, "Serialized runtime catalog event count drifted from JSON.");
+
+        for (int eventIndex = 0; eventIndex < source.events.Length; eventIndex++)
+        {
+            AudioEventJson expected = source.events[eventIndex];
+            AudioEventCatalogEntry actual = runtime.Events[eventIndex];
+            Assert.NotNull(actual, $"Serialized runtime event {eventIndex} is null.");
+            Assert.AreEqual(expected.eventId, actual.EventId, $"eventId[{eventIndex}]");
+            Assert.AreEqual(expected.busId, actual.BusId, expected.eventId);
+            Assert.AreEqual(Enum.Parse<AudioEventPriority>(expected.priority), actual.Priority, expected.eventId);
+            Assert.AreEqual(expected.cooldownMs, actual.CooldownMilliseconds, expected.eventId);
+            Assert.That(actual.VolumeDecibels, Is.EqualTo(expected.volumeDb).Within(0.001f), expected.eventId);
+            Assert.That(actual.PitchVariance.x, Is.EqualTo(expected.pitchVariance.min).Within(0.001f), expected.eventId);
+            Assert.That(actual.PitchVariance.y, Is.EqualTo(expected.pitchVariance.max).Within(0.001f), expected.eventId);
+            Assert.AreEqual(expected.playback.loop, actual.Playback.Loop, expected.eventId);
+            Assert.AreEqual(expected.playback.spatial, actual.Playback.Spatial, expected.eventId);
+            Assert.AreEqual(expected.playback.maxInstances, actual.Playback.MaxInstances, expected.eventId);
+            Assert.AreEqual(expected.playback.allowRuntimeLoad, actual.Playback.AllowRuntimeLoad, expected.eventId);
+            Assert.AreEqual(expected.clips.Length, actual.Clips.Count, expected.eventId);
+
+            for (int clipIndex = 0; clipIndex < expected.clips.Length; clipIndex++)
+            {
+                AudioClipWeightEntry actualClip = actual.Clips[clipIndex];
+                Assert.NotNull(actualClip, $"{expected.eventId} clip {clipIndex} is null.");
+                Assert.AreEqual(
+                    expected.clips[clipIndex].assetPath,
+                    AssetDatabase.GetAssetPath(actualClip.Clip),
+                    $"{expected.eventId} clip {clipIndex}");
+                Assert.AreEqual(expected.clips[clipIndex].weight, actualClip.Weight, $"{expected.eventId} clip {clipIndex}");
+            }
+        }
+    }
+
+    [Test]
     public void CatalogAudioImportSettingsMatchProfiles()
     {
         string[] clipPaths = ReadCatalogClipPaths();
@@ -382,6 +424,7 @@ public sealed class AudioConfigContractTests
         public string busId;
         public string priority;
         public int cooldownMs;
+        public float volumeDb;
         public PitchVarianceJson pitchVariance;
         public PlaybackJson playback;
         public AudioClipJson[] clips;

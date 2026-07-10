@@ -4,24 +4,24 @@
   "audioResidencyTaskId": "APH-400",
   "status": "complete",
   "baselineCommit": "7084805d771142706f340e9f2e52a68570bcb72b",
-  "generatedUtc": "2026-07-10T09:49:14.2373020Z",
+  "generatedUtc": "2026-07-10T10:22:23.8436710Z",
   "unityVersion": "6000.5.2f1",
   "activeBuildTarget": "Android",
   "importerPlatform": "Android",
   "scope": "Enabled build scenes, Assets Resources content, PlayerSettings preloaded assets, and StreamingAssets, including transitive AssetDatabase dependencies.",
   "summary": {
     "dependencyRootCount": 12,
-    "assetCount": 4102,
-    "sourceSizeAvailableAssetCount": 4102,
-    "sourceSizeBytes": 816165398,
-    "importedSizeAvailableAssetCount": 2682,
-    "importedSizeBytes": 2471900934,
-    "audioAssetCount": 226,
-    "catalogAudioClipCount": 226,
-    "catalogAudioDurationSeconds": 575.83753387188233,
-    "catalogAudioCompressedSizeAvailableClipCount": 226,
-    "catalogAudioCompressedSizeBytes": 50966162,
-    "catalogAudioEstimatedDecodedSizeBytes": 101717516,
+    "assetCount": 4110,
+    "sourceSizeAvailableAssetCount": 4110,
+    "sourceSizeBytes": 816567651,
+    "importedSizeAvailableAssetCount": 2690,
+    "importedSizeBytes": 2472354294,
+    "audioAssetCount": 234,
+    "catalogAudioClipCount": 234,
+    "catalogAudioDurationSeconds": 580.35753387188242,
+    "catalogAudioCompressedSizeAvailableClipCount": 234,
+    "catalogAudioCompressedSizeBytes": 51809082,
+    "catalogAudioEstimatedDecodedSizeBytes": 102514844,
     "textureAssetCount": 639,
     "textureStreamingEnabledCount": 0,
     "meshAssetCount": 1817,
@@ -11637,7 +11637,7 @@
     {
       "assetPath": "Assets/Game/Audio/Events/AudioEventCatalogConfig.asset",
       "assetType": "AudioEventCatalogConfig",
-      "sourceSizeBytes": 85073,
+      "sourceSizeBytes": 88038,
       "importedSizeBytes": null,
       "importedSizeMeasurement": null,
       "dependencyRoots": [
@@ -12049,6 +12049,144 @@
       "animationTexturePayloadBytes": null
     },
     {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_resource_exchange_accepted_01.wav",
+      "assetType": "AudioClip",
+      "sourceSizeBytes": 42414,
+      "importedSizeBytes": 49173,
+      "importedSizeMeasurement": "Profiler.GetRuntimeMemorySizeLong total for Texture, AudioClip, and Mesh objects at this asset path",
+      "dependencyRoots": [
+        {
+          "kind": "BuildScene",
+          "assetPath": "Assets/Game/Scenes/Menu.unity"
+        }
+      ],
+      "audioLoadType": "DecompressOnLoad",
+      "audioLoadTypeSource": "default importer settings",
+      "textureWidth": null,
+      "textureHeight": null,
+      "textureFormat": null,
+      "textureMipmapsEnabled": null,
+      "textureStreamingEnabled": null,
+      "meshReadWriteEnabled": null,
+      "meshReadWriteState": null,
+      "animationTexturePayloadBytes": null
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_resource_exchange_cancelled_01.wav",
+      "assetType": "AudioClip",
+      "sourceSizeBytes": 42414,
+      "importedSizeBytes": 49173,
+      "importedSizeMeasurement": "Profiler.GetRuntimeMemorySizeLong total for Texture, AudioClip, and Mesh objects at this asset path",
+      "dependencyRoots": [
+        {
+          "kind": "BuildScene",
+          "assetPath": "Assets/Game/Scenes/Menu.unity"
+        }
+      ],
+      "audioLoadType": "DecompressOnLoad",
+      "audioLoadTypeSource": "default importer settings",
+      "textureWidth": null,
+      "textureHeight": null,
+      "textureFormat": null,
+      "textureMipmapsEnabled": null,
+      "textureStreamingEnabled": null,
+      "meshReadWriteEnabled": null,
+      "meshReadWriteState": null,
+      "animationTexturePayloadBytes": null
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_resource_exchange_completed_01.wav",
+      "assetType": "AudioClip",
+      "sourceSizeBytes": 56526,
+      "importedSizeBytes": 63285,
+      "importedSizeMeasurement": "Profiler.GetRuntimeMemorySizeLong total for Texture, AudioClip, and Mesh objects at this asset path",
+      "dependencyRoots": [
+        {
+          "kind": "BuildScene",
+          "assetPath": "Assets/Game/Scenes/Menu.unity"
+        }
+      ],
+      "audioLoadType": "DecompressOnLoad",
+      "audioLoadTypeSource": "default importer settings",
+      "textureWidth": null,
+      "textureHeight": null,
+      "textureFormat": null,
+      "textureMipmapsEnabled": null,
+      "textureStreamingEnabled": null,
+      "meshReadWriteEnabled": null,
+      "meshReadWriteState": null,
+      "animationTexturePayloadBytes": null
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_resource_exchange_queue_started_01.wav",
+      "assetType": "AudioClip",
+      "sourceSizeBytes": 45942,
+      "importedSizeBytes": 52701,
+      "importedSizeMeasurement": "Profiler.GetRuntimeMemorySizeLong total for Texture, AudioClip, and Mesh objects at this asset path",
+      "dependencyRoots": [
+        {
+          "kind": "BuildScene",
+          "assetPath": "Assets/Game/Scenes/Menu.unity"
+        }
+      ],
+      "audioLoadType": "DecompressOnLoad",
+      "audioLoadTypeSource": "default importer settings",
+      "textureWidth": null,
+      "textureHeight": null,
+      "textureFormat": null,
+      "textureMipmapsEnabled": null,
+      "textureStreamingEnabled": null,
+      "meshReadWriteEnabled": null,
+      "meshReadWriteState": null,
+      "animationTexturePayloadBytes": null
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_resource_exchange_rejected_01.wav",
+      "assetType": "AudioClip",
+      "sourceSizeBytes": 42414,
+      "importedSizeBytes": 49173,
+      "importedSizeMeasurement": "Profiler.GetRuntimeMemorySizeLong total for Texture, AudioClip, and Mesh objects at this asset path",
+      "dependencyRoots": [
+        {
+          "kind": "BuildScene",
+          "assetPath": "Assets/Game/Scenes/Menu.unity"
+        }
+      ],
+      "audioLoadType": "DecompressOnLoad",
+      "audioLoadTypeSource": "default importer settings",
+      "textureWidth": null,
+      "textureHeight": null,
+      "textureFormat": null,
+      "textureMipmapsEnabled": null,
+      "textureStreamingEnabled": null,
+      "meshReadWriteEnabled": null,
+      "meshReadWriteState": null,
+      "animationTexturePayloadBytes": null
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_resource_exchange_rushed_01.wav",
+      "assetType": "AudioClip",
+      "sourceSizeBytes": 45942,
+      "importedSizeBytes": 52701,
+      "importedSizeMeasurement": "Profiler.GetRuntimeMemorySizeLong total for Texture, AudioClip, and Mesh objects at this asset path",
+      "dependencyRoots": [
+        {
+          "kind": "BuildScene",
+          "assetPath": "Assets/Game/Scenes/Menu.unity"
+        }
+      ],
+      "audioLoadType": "DecompressOnLoad",
+      "audioLoadTypeSource": "default importer settings",
+      "textureWidth": null,
+      "textureHeight": null,
+      "textureFormat": null,
+      "textureMipmapsEnabled": null,
+      "textureStreamingEnabled": null,
+      "meshReadWriteEnabled": null,
+      "meshReadWriteState": null,
+      "animationTexturePayloadBytes": null
+    },
+    {
       "assetPath": "Assets/Game/Audio/Gameplay/game_unit_aircraft_flyby_01.wav",
       "assetType": "AudioClip",
       "sourceSizeBytes": 110442,
@@ -12302,10 +12440,56 @@
       "animationTexturePayloadBytes": null
     },
     {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_fire_small_arms_01.wav",
+      "assetType": "AudioClip",
+      "sourceSizeBytes": 42414,
+      "importedSizeBytes": 49173,
+      "importedSizeMeasurement": "Profiler.GetRuntimeMemorySizeLong total for Texture, AudioClip, and Mesh objects at this asset path",
+      "dependencyRoots": [
+        {
+          "kind": "BuildScene",
+          "assetPath": "Assets/Game/Scenes/Menu.unity"
+        }
+      ],
+      "audioLoadType": "DecompressOnLoad",
+      "audioLoadTypeSource": "default importer settings",
+      "textureWidth": null,
+      "textureHeight": null,
+      "textureFormat": null,
+      "textureMipmapsEnabled": null,
+      "textureStreamingEnabled": null,
+      "meshReadWriteEnabled": null,
+      "meshReadWriteState": null,
+      "animationTexturePayloadBytes": null
+    },
+    {
       "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_missile_flight_01.wav",
       "assetType": "AudioClip",
       "sourceSizeBytes": 51200,
       "importedSizeBytes": 57993,
+      "importedSizeMeasurement": "Profiler.GetRuntimeMemorySizeLong total for Texture, AudioClip, and Mesh objects at this asset path",
+      "dependencyRoots": [
+        {
+          "kind": "BuildScene",
+          "assetPath": "Assets/Game/Scenes/Menu.unity"
+        }
+      ],
+      "audioLoadType": "DecompressOnLoad",
+      "audioLoadTypeSource": "default importer settings",
+      "textureWidth": null,
+      "textureHeight": null,
+      "textureFormat": null,
+      "textureMipmapsEnabled": null,
+      "textureStreamingEnabled": null,
+      "meshReadWriteEnabled": null,
+      "meshReadWriteState": null,
+      "animationTexturePayloadBytes": null
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_missile_impact_01.wav",
+      "assetType": "AudioClip",
+      "sourceSizeBytes": 81222,
+      "importedSizeBytes": 87981,
       "importedSizeMeasurement": "Profiler.GetRuntimeMemorySizeLong total for Texture, AudioClip, and Mesh objects at this asset path",
       "dependencyRoots": [
         {
@@ -98050,7 +98234,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 134372,
+      "compressedSizeBytes": 135332,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 211680
     },
@@ -98069,7 +98253,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 123788,
+      "compressedSizeBytes": 124748,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 190512
     },
@@ -98088,7 +98272,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 99092,
+      "compressedSizeBytes": 100052,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 141120
     },
@@ -98107,7 +98291,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 102620,
+      "compressedSizeBytes": 103580,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 148176
     },
@@ -98297,7 +98481,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 70868,
+      "compressedSizeBytes": 71828,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 84672
     },
@@ -98316,7 +98500,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 81452,
+      "compressedSizeBytes": 82412,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 105840
     },
@@ -98335,7 +98519,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 70868,
+      "compressedSizeBytes": 71828,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 84672
     },
@@ -98354,7 +98538,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 70868,
+      "compressedSizeBytes": 71828,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 84672
     },
@@ -98373,7 +98557,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 70868,
+      "compressedSizeBytes": 71828,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 84672
     },
@@ -98392,7 +98576,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 70868,
+      "compressedSizeBytes": 71828,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 84672
     },
@@ -98411,7 +98595,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 74396,
+      "compressedSizeBytes": 75356,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 91728
     },
@@ -98430,7 +98614,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 74396,
+      "compressedSizeBytes": 75356,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 91728
     },
@@ -98449,7 +98633,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 74396,
+      "compressedSizeBytes": 75356,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 91728
     },
@@ -98468,7 +98652,7 @@
       "frequencyHz": 48000,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 138930,
+      "compressedSizeBytes": 139890,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 220796
     },
@@ -98487,7 +98671,7 @@
       "frequencyHz": 48000,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 97652,
+      "compressedSizeBytes": 98612,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 138240
     },
@@ -98506,7 +98690,7 @@
       "frequencyHz": 48000,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 43892,
+      "compressedSizeBytes": 44852,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 30720
     },
@@ -98525,7 +98709,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 106148,
+      "compressedSizeBytes": 107108,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 155232
     },
@@ -98544,7 +98728,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 106148,
+      "compressedSizeBytes": 107108,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 155232
     },
@@ -98563,7 +98747,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 84980,
+      "compressedSizeBytes": 85940,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 112896
     },
@@ -98582,7 +98766,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 99092,
+      "compressedSizeBytes": 100052,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 141120
     },
@@ -98601,9 +98785,123 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 70868,
+      "compressedSizeBytes": 71828,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 84672
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_resource_exchange_accepted_01.wav",
+      "eventIds": [
+        "Gameplay.ResourceExchange.Accepted"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.48,
+      "sampleFrames": 21168,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 71828,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 84672
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_resource_exchange_cancelled_01.wav",
+      "eventIds": [
+        "Gameplay.ResourceExchange.Cancelled"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.48,
+      "sampleFrames": 21168,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 71828,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 84672
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_resource_exchange_completed_01.wav",
+      "eventIds": [
+        "Gameplay.ResourceExchange.Completed"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.64,
+      "sampleFrames": 28224,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 85940,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 112896
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_resource_exchange_queue_started_01.wav",
+      "eventIds": [
+        "Gameplay.ResourceExchange.QueueStarted"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.52,
+      "sampleFrames": 22932,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 75356,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 91728
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_resource_exchange_rejected_01.wav",
+      "eventIds": [
+        "Gameplay.ResourceExchange.Rejected"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.48,
+      "sampleFrames": 21168,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 71828,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 84672
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_resource_exchange_rushed_01.wav",
+      "eventIds": [
+        "Gameplay.ResourceExchange.Rushed"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.52,
+      "sampleFrames": 22932,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 75356,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 91728
     },
     {
       "assetPath": "Assets/Game/Audio/Gameplay/game_unit_aircraft_flyby_01.wav",
@@ -98620,7 +98918,7 @@
       "frequencyHz": 48000,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 138930,
+      "compressedSizeBytes": 139890,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 220796
     },
@@ -98639,7 +98937,7 @@
       "frequencyHz": 48000,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 297332,
+      "compressedSizeBytes": 298292,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 537600
     },
@@ -98658,7 +98956,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 120260,
+      "compressedSizeBytes": 121220,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 183456
     },
@@ -98677,7 +98975,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 81452,
+      "compressedSizeBytes": 82412,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 105840
     },
@@ -98696,7 +98994,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 70868,
+      "compressedSizeBytes": 71828,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 84672
     },
@@ -98715,7 +99013,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 70868,
+      "compressedSizeBytes": 71828,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 84672
     },
@@ -98734,7 +99032,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 70868,
+      "compressedSizeBytes": 71828,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 84672
     },
@@ -98753,7 +99051,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 70868,
+      "compressedSizeBytes": 71828,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 84672
     },
@@ -98772,7 +99070,7 @@
       "frequencyHz": 48000,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 119732,
+      "compressedSizeBytes": 120692,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 182400
     },
@@ -98791,7 +99089,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 92036,
+      "compressedSizeBytes": 92996,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 127008
     },
@@ -98810,9 +99108,28 @@
       "frequencyHz": 48000,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 84210,
+      "compressedSizeBytes": 85170,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 111356
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_fire_small_arms_01.wav",
+      "eventIds": [
+        "Gameplay.Weapon.Fire.SmallArms"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.48,
+      "sampleFrames": 21168,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 71828,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 84672
     },
     {
       "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_missile_flight_01.wav",
@@ -98829,9 +99146,28 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 79688,
+      "compressedSizeBytes": 80648,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 102312
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_missile_impact_01.wav",
+      "eventIds": [
+        "Gameplay.Weapon.Missile.Impact"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.92,
+      "sampleFrames": 40572,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 110636,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 162288
     },
     {
       "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_missile_launch_01.wav",
@@ -98848,7 +99184,7 @@
       "frequencyHz": 48000,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 97652,
+      "compressedSizeBytes": 98612,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 138240
     },
@@ -98867,7 +99203,7 @@
       "frequencyHz": 48000,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 45812,
+      "compressedSizeBytes": 46772,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 34560
     },
@@ -98886,7 +99222,7 @@
       "frequencyHz": 48000,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 81332,
+      "compressedSizeBytes": 82292,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 105600
     },
@@ -98905,7 +99241,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 70868,
+      "compressedSizeBytes": 71828,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 84672
     },
@@ -98924,7 +99260,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 70868,
+      "compressedSizeBytes": 71828,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 84672
     },
@@ -98943,7 +99279,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 70868,
+      "compressedSizeBytes": 71828,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 84672
     },
@@ -98962,7 +99298,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 70868,
+      "compressedSizeBytes": 71828,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 84672
     },
@@ -98981,7 +99317,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 70868,
+      "compressedSizeBytes": 71828,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 84672
     },
@@ -99000,7 +99336,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 70868,
+      "compressedSizeBytes": 71828,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 84672
     },
@@ -99019,7 +99355,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 74396,
+      "compressedSizeBytes": 75356,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 91728
     },
@@ -99038,7 +99374,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 81452,
+      "compressedSizeBytes": 82412,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 105840
     },
@@ -99057,7 +99393,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 84980,
+      "compressedSizeBytes": 85940,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 112896
     },
@@ -99076,7 +99412,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 84980,
+      "compressedSizeBytes": 85940,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 112896
     },
@@ -99095,7 +99431,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 70868,
+      "compressedSizeBytes": 71828,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 84672
     },
@@ -99114,7 +99450,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 74396,
+      "compressedSizeBytes": 75356,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 91728
     },
@@ -99133,7 +99469,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 81452,
+      "compressedSizeBytes": 82412,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 105840
     },
@@ -99152,7 +99488,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 81452,
+      "compressedSizeBytes": 82412,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 105840
     },
@@ -99171,7 +99507,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 70868,
+      "compressedSizeBytes": 71828,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 84672
     },
@@ -99190,7 +99526,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 70868,
+      "compressedSizeBytes": 71828,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 84672
     },
@@ -99209,7 +99545,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 70868,
+      "compressedSizeBytes": 71828,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 84672
     },
@@ -99228,7 +99564,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 70868,
+      "compressedSizeBytes": 71828,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 84672
     },
@@ -99247,7 +99583,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 424406,
+      "compressedSizeBytes": 425366,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 791684
     },
@@ -99266,7 +99602,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 341852,
+      "compressedSizeBytes": 342812,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 626576
     },
@@ -99285,7 +99621,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 322800,
+      "compressedSizeBytes": 323760,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 588472
     },
@@ -99304,7 +99640,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 320684,
+      "compressedSizeBytes": 321644,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 584240
     },
@@ -99323,7 +99659,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 208460,
+      "compressedSizeBytes": 209420,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 359856
     },
@@ -99342,7 +99678,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 401122,
+      "compressedSizeBytes": 402082,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 745116
     },
@@ -99361,7 +99697,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 333384,
+      "compressedSizeBytes": 334344,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 609640
     },
@@ -99380,7 +99716,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 329150,
+      "compressedSizeBytes": 330110,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 601172
     },
@@ -99399,7 +99735,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 487910,
+      "compressedSizeBytes": 488870,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 918692
     },
@@ -99418,7 +99754,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 583166,
+      "compressedSizeBytes": 584126,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 1109204
     },
@@ -99437,7 +99773,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 307982,
+      "compressedSizeBytes": 308942,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 558836
     },
@@ -99456,7 +99792,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 403238,
+      "compressedSizeBytes": 404198,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 749348
     },
@@ -99475,7 +99811,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 447692,
+      "compressedSizeBytes": 448652,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 838256
     },
@@ -99494,7 +99830,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 358786,
+      "compressedSizeBytes": 359746,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 660444
     },
@@ -99513,7 +99849,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 542948,
+      "compressedSizeBytes": 543908,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 1028768
     },
@@ -99532,7 +99868,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 530246,
+      "compressedSizeBytes": 531206,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 1003364
     },
@@ -99551,7 +99887,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 367252,
+      "compressedSizeBytes": 368212,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 677376
     },
@@ -99570,7 +99906,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 284666,
+      "compressedSizeBytes": 285626,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 512268
     },
@@ -99589,7 +99925,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 246564,
+      "compressedSizeBytes": 247524,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 436064
     },
@@ -99608,7 +99944,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 331268,
+      "compressedSizeBytes": 332228,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 605408
     },
@@ -99627,7 +99963,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 286782,
+      "compressedSizeBytes": 287742,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 516500
     },
@@ -99646,7 +99982,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 238096,
+      "compressedSizeBytes": 239056,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 419128
     },
@@ -99665,7 +100001,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 269848,
+      "compressedSizeBytes": 270808,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 482632
     },
@@ -99684,7 +100020,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 458276,
+      "compressedSizeBytes": 459236,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 859424
     },
@@ -99703,7 +100039,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 363020,
+      "compressedSizeBytes": 363980,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 668912
     },
@@ -99722,7 +100058,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 483676,
+      "compressedSizeBytes": 484636,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 910224
     },
@@ -99741,7 +100077,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 238096,
+      "compressedSizeBytes": 239056,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 419128
     },
@@ -99760,7 +100096,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 449808,
+      "compressedSizeBytes": 450768,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 842488
     },
@@ -99779,7 +100115,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 424406,
+      "compressedSizeBytes": 425366,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 791684
     },
@@ -99798,7 +100134,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 229628,
+      "compressedSizeBytes": 230588,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 402192
     },
@@ -99817,7 +100153,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 432874,
+      "compressedSizeBytes": 433834,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 808620
     },
@@ -99836,7 +100172,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 439224,
+      "compressedSizeBytes": 440184,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 821320
     },
@@ -99855,7 +100191,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 295282,
+      "compressedSizeBytes": 296242,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 533436
     },
@@ -99874,7 +100210,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 295282,
+      "compressedSizeBytes": 296242,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 533436
     },
@@ -99893,7 +100229,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 212694,
+      "compressedSizeBytes": 213654,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 368324
     },
@@ -99912,7 +100248,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 257148,
+      "compressedSizeBytes": 258108,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 457232
     },
@@ -99931,7 +100267,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 284666,
+      "compressedSizeBytes": 285626,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 512268
     },
@@ -99950,7 +100286,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 202110,
+      "compressedSizeBytes": 203070,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 347156
     },
@@ -99969,7 +100305,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 248680,
+      "compressedSizeBytes": 249640,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 440296
     },
@@ -99988,7 +100324,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 231746,
+      "compressedSizeBytes": 232706,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 406428
     },
@@ -100007,7 +100343,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 286782,
+      "compressedSizeBytes": 287742,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 516500
     },
@@ -100026,7 +100362,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 233862,
+      "compressedSizeBytes": 234822,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 410660
     },
@@ -100045,7 +100381,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 221162,
+      "compressedSizeBytes": 222122,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 385260
     },
@@ -100064,7 +100400,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 276198,
+      "compressedSizeBytes": 277158,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 495332
     },
@@ -100083,7 +100419,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 248680,
+      "compressedSizeBytes": 249640,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 440296
     },
@@ -100102,7 +100438,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 248680,
+      "compressedSizeBytes": 249640,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 440296
     },
@@ -100121,7 +100457,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 265614,
+      "compressedSizeBytes": 266574,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 474164
     },
@@ -100140,7 +100476,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 333384,
+      "compressedSizeBytes": 334344,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 609640
     },
@@ -100159,7 +100495,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 274082,
+      "compressedSizeBytes": 275042,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 491100
     },
@@ -100178,7 +100514,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 329150,
+      "compressedSizeBytes": 330110,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 601172
     },
@@ -100197,7 +100533,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 223278,
+      "compressedSizeBytes": 224238,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 389492
     },
@@ -100216,7 +100552,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 216928,
+      "compressedSizeBytes": 217888,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 376792
     },
@@ -100235,7 +100571,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 202110,
+      "compressedSizeBytes": 203070,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 347156
     },
@@ -100254,7 +100590,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 174592,
+      "compressedSizeBytes": 175552,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 292120
     },
@@ -100273,7 +100609,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 210578,
+      "compressedSizeBytes": 211538,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 364092
     },
@@ -100292,7 +100628,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 312216,
+      "compressedSizeBytes": 313176,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 567304
     },
@@ -100311,7 +100647,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 248680,
+      "compressedSizeBytes": 249640,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 440296
     },
@@ -100330,7 +100666,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 255030,
+      "compressedSizeBytes": 255990,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 452996
     },
@@ -100349,7 +100685,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 363020,
+      "compressedSizeBytes": 363980,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 668912
     },
@@ -100368,7 +100704,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 274082,
+      "compressedSizeBytes": 275042,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 491100
     },
@@ -100387,7 +100723,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 221162,
+      "compressedSizeBytes": 222122,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 385260
     },
@@ -100406,7 +100742,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 191526,
+      "compressedSizeBytes": 192486,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 325988
     },
@@ -100425,7 +100761,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 219044,
+      "compressedSizeBytes": 220004,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 381024
     },
@@ -100444,7 +100780,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 231746,
+      "compressedSizeBytes": 232706,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 406428
     },
@@ -100463,7 +100799,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 180942,
+      "compressedSizeBytes": 181902,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 304820
     },
@@ -100482,7 +100818,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 176708,
+      "compressedSizeBytes": 177668,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 296352
     },
@@ -100501,7 +100837,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 187292,
+      "compressedSizeBytes": 188252,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 317520
     },
@@ -100520,7 +100856,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 238096,
+      "compressedSizeBytes": 239056,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 419128
     },
@@ -100539,7 +100875,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 299516,
+      "compressedSizeBytes": 300476,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 541904
     },
@@ -100558,7 +100894,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 310100,
+      "compressedSizeBytes": 311060,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 563072
     },
@@ -100577,7 +100913,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 259264,
+      "compressedSizeBytes": 260224,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 461464
     },
@@ -100596,7 +100932,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 238096,
+      "compressedSizeBytes": 239056,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 419128
     },
@@ -100615,7 +100951,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 206344,
+      "compressedSizeBytes": 207304,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 355624
     },
@@ -100634,7 +100970,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 231746,
+      "compressedSizeBytes": 232706,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 406428
     },
@@ -100653,7 +100989,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 199994,
+      "compressedSizeBytes": 200954,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 342924
     },
@@ -100672,7 +101008,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 257148,
+      "compressedSizeBytes": 258108,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 457232
     },
@@ -100691,7 +101027,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 195760,
+      "compressedSizeBytes": 196720,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 334456
     },
@@ -100710,7 +101046,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 257148,
+      "compressedSizeBytes": 258108,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 457232
     },
@@ -100729,7 +101065,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 212694,
+      "compressedSizeBytes": 213654,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 368324
     },
@@ -100748,7 +101084,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 291016,
+      "compressedSizeBytes": 291976,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 524968
     },
@@ -100767,7 +101103,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 208460,
+      "compressedSizeBytes": 209420,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 359856
     },
@@ -100786,7 +101122,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 267732,
+      "compressedSizeBytes": 268692,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 478400
     },
@@ -100805,7 +101141,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 199994,
+      "compressedSizeBytes": 200954,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 342924
     },
@@ -100824,7 +101160,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 259264,
+      "compressedSizeBytes": 260224,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 461464
     },
@@ -100843,7 +101179,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 214812,
+      "compressedSizeBytes": 215772,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 372560
     },
@@ -100862,7 +101198,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 278316,
+      "compressedSizeBytes": 279276,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 499568
     },
@@ -100881,7 +101217,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 210578,
+      "compressedSizeBytes": 211538,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 364092
     },
@@ -100900,7 +101236,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 301632,
+      "compressedSizeBytes": 302592,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 546136
     },
@@ -100919,7 +101255,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 206344,
+      "compressedSizeBytes": 207304,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 355624
     },
@@ -100938,7 +101274,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 269848,
+      "compressedSizeBytes": 270808,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 482632
     },
@@ -100957,7 +101293,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 206344,
+      "compressedSizeBytes": 207304,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 355624
     },
@@ -100976,7 +101312,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 244446,
+      "compressedSizeBytes": 245406,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 431828
     },
@@ -100995,7 +101331,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 259264,
+      "compressedSizeBytes": 260224,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 461464
     },
@@ -101014,7 +101350,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 199994,
+      "compressedSizeBytes": 200954,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 342924
     },
@@ -101033,7 +101369,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 295282,
+      "compressedSizeBytes": 296242,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 533436
     },
@@ -101052,7 +101388,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 195760,
+      "compressedSizeBytes": 196720,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 334456
     },
@@ -101071,7 +101407,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 246564,
+      "compressedSizeBytes": 247524,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 436064
     },
@@ -101090,7 +101426,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 199994,
+      "compressedSizeBytes": 200954,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 342924
     },
@@ -101109,7 +101445,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 274082,
+      "compressedSizeBytes": 275042,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 491100
     },
@@ -101128,7 +101464,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 210578,
+      "compressedSizeBytes": 211538,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 364092
     },
@@ -101147,7 +101483,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 244446,
+      "compressedSizeBytes": 245406,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 431828
     },
@@ -101166,7 +101502,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 352436,
+      "compressedSizeBytes": 353396,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 647744
     },
@@ -101185,7 +101521,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 250796,
+      "compressedSizeBytes": 251756,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 444528
     },
@@ -101204,7 +101540,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 280432,
+      "compressedSizeBytes": 281392,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 503800
     },
@@ -101223,7 +101559,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 240212,
+      "compressedSizeBytes": 241172,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 423360
     },
@@ -101242,7 +101578,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 274082,
+      "compressedSizeBytes": 275042,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 491100
     },
@@ -101261,7 +101597,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 242330,
+      "compressedSizeBytes": 243290,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 427596
     },
@@ -101280,7 +101616,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 244446,
+      "compressedSizeBytes": 245406,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 431828
     },
@@ -101299,7 +101635,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 360902,
+      "compressedSizeBytes": 361862,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 664676
     },
@@ -101318,7 +101654,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 295282,
+      "compressedSizeBytes": 296242,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 533436
     },
@@ -101337,7 +101673,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 231746,
+      "compressedSizeBytes": 232706,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 406428
     },
@@ -101356,7 +101692,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 235980,
+      "compressedSizeBytes": 236940,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 414896
     },
@@ -101375,7 +101711,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 269848,
+      "compressedSizeBytes": 270808,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 482632
     },
@@ -101394,7 +101730,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 250796,
+      "compressedSizeBytes": 251756,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 444528
     },
@@ -101413,7 +101749,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 339734,
+      "compressedSizeBytes": 340694,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 622340
     },
@@ -101432,7 +101768,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 238096,
+      "compressedSizeBytes": 239056,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 419128
     },
@@ -101451,7 +101787,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 280432,
+      "compressedSizeBytes": 281392,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 503800
     },
@@ -101470,7 +101806,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 242330,
+      "compressedSizeBytes": 243290,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 427596
     },
@@ -101489,7 +101825,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 233862,
+      "compressedSizeBytes": 234822,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 410660
     },
@@ -101508,7 +101844,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 267732,
+      "compressedSizeBytes": 268692,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 478400
     },
@@ -101527,7 +101863,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 324916,
+      "compressedSizeBytes": 325876,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 592704
     },
@@ -101546,7 +101882,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 392654,
+      "compressedSizeBytes": 393614,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 728180
     },
@@ -101565,7 +101901,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 339734,
+      "compressedSizeBytes": 340694,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 622340
     },
@@ -101584,7 +101920,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 363020,
+      "compressedSizeBytes": 363980,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 668912
     },
@@ -101603,7 +101939,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 314332,
+      "compressedSizeBytes": 315292,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 571536
     },
@@ -101622,7 +101958,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 248680,
+      "compressedSizeBytes": 249640,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 440296
     },
@@ -101641,7 +101977,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 244446,
+      "compressedSizeBytes": 245406,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 431828
     },
@@ -101660,7 +101996,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 221162,
+      "compressedSizeBytes": 222122,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 385260
     },
@@ -101679,7 +102015,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 263498,
+      "compressedSizeBytes": 264458,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 469932
     },
@@ -101698,7 +102034,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 252914,
+      "compressedSizeBytes": 253874,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 448764
     },
@@ -101717,7 +102053,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 320684,
+      "compressedSizeBytes": 321644,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 584240
     },
@@ -101736,7 +102072,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 248680,
+      "compressedSizeBytes": 249640,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 440296
     },
@@ -101755,7 +102091,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 227512,
+      "compressedSizeBytes": 228472,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 397960
     },
@@ -101774,7 +102110,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 350318,
+      "compressedSizeBytes": 351278,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 643508
     },
@@ -101793,7 +102129,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 320684,
+      "compressedSizeBytes": 321644,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 584240
     },
@@ -101812,7 +102148,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 348202,
+      "compressedSizeBytes": 349162,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 639276
     },
@@ -101831,7 +102167,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 329150,
+      "compressedSizeBytes": 330110,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 601172
     },
@@ -101850,7 +102186,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 443458,
+      "compressedSizeBytes": 444418,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 829788
     },
@@ -101869,7 +102205,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 231746,
+      "compressedSizeBytes": 232706,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 406428
     },
@@ -101888,7 +102224,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 248680,
+      "compressedSizeBytes": 249640,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 440296
     },
@@ -101907,7 +102243,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 274082,
+      "compressedSizeBytes": 275042,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 491100
     },
@@ -101926,7 +102262,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 263498,
+      "compressedSizeBytes": 264458,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 469932
     },
@@ -101945,7 +102281,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 265614,
+      "compressedSizeBytes": 266574,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 474164
     },
@@ -101964,7 +102300,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 307982,
+      "compressedSizeBytes": 308942,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 558836
     },
@@ -101983,7 +102319,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 248680,
+      "compressedSizeBytes": 249640,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 440296
     },
@@ -102002,7 +102338,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 216928,
+      "compressedSizeBytes": 217888,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 376792
     },
@@ -102021,7 +102357,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 246564,
+      "compressedSizeBytes": 247524,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 436064
     },
@@ -102040,7 +102376,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 252914,
+      "compressedSizeBytes": 253874,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 448764
     },
@@ -102059,7 +102395,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 238096,
+      "compressedSizeBytes": 239056,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 419128
     },
@@ -102078,7 +102414,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 212694,
+      "compressedSizeBytes": 213654,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 368324
     },
@@ -102097,7 +102433,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 269848,
+      "compressedSizeBytes": 270808,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 482632
     },
@@ -102116,7 +102452,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 365136,
+      "compressedSizeBytes": 366096,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 673144
     },
@@ -102135,7 +102471,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 242330,
+      "compressedSizeBytes": 243290,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 427596
     },
@@ -102154,7 +102490,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 223278,
+      "compressedSizeBytes": 224238,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 389492
     },
@@ -102173,7 +102509,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 420172,
+      "compressedSizeBytes": 421132,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 783216
     },
@@ -102192,7 +102528,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 265614,
+      "compressedSizeBytes": 266574,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 474164
     },
@@ -102211,7 +102547,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 259264,
+      "compressedSizeBytes": 260224,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 461464
     },
@@ -102230,7 +102566,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 303748,
+      "compressedSizeBytes": 304708,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 550368
     },
@@ -102249,7 +102585,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 235980,
+      "compressedSizeBytes": 236940,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 414896
     },
@@ -102268,7 +102604,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 227512,
+      "compressedSizeBytes": 228472,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 397960
     },
@@ -102287,7 +102623,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 447692,
+      "compressedSizeBytes": 448652,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 838256
     },
@@ -102306,7 +102642,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 274082,
+      "compressedSizeBytes": 275042,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 491100
     },
@@ -102325,7 +102661,7 @@
       "frequencyHz": 44100,
       "importLoadType": "DecompressOnLoad",
       "importLoadTypeSource": "default importer settings",
-      "compressedSizeBytes": 295282,
+      "compressedSizeBytes": 296242,
       "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
       "estimatedDecodedSizeBytes": 533436
     }

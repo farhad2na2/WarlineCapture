@@ -79,7 +79,7 @@ public sealed class AssistantCommandIntentGatewayTests
     [Test]
     public void TryEnqueueAssistantCommandIntent_CopiesTopRecommendationIntoRequest()
     {
-        Entity boundary = _entityManager.CreateEntity(typeof(UiShellRootComponent));
+        Entity boundary = CreateActiveBoundary();
         Entity source = _entityManager.CreateEntity();
         Entity target = _entityManager.CreateEntity();
         DynamicBuffer<AssistantRecommendationElement> recommendations =
@@ -109,6 +109,7 @@ public sealed class AssistantCommandIntentGatewayTests
         Assert.AreEqual(1, requests.Length);
         Assert.AreEqual(1, requests[0].RequestId);
         Assert.AreEqual(3101, requests[0].RecommendationId);
+        Assert.AreEqual(7, requests[0].RecommendationSourceVersion);
         Assert.AreEqual(AssistantCommandIntentKind.ShowRecommendation, requests[0].Kind);
         Assert.AreEqual(AssistantTargetKind.Entity, requests[0].TargetKind);
         Assert.AreEqual(source, requests[0].SourceEntity);
@@ -121,7 +122,7 @@ public sealed class AssistantCommandIntentGatewayTests
     [Test]
     public void TryEnqueueAssistantCommandIntent_MapsExecutableRecommendationKind()
     {
-        Entity boundary = _entityManager.CreateEntity(typeof(UiShellRootComponent));
+        Entity boundary = CreateActiveBoundary();
         Entity source = _entityManager.CreateEntity();
         Entity target = _entityManager.CreateEntity();
         DynamicBuffer<AssistantRecommendationElement> recommendations =
@@ -152,7 +153,7 @@ public sealed class AssistantCommandIntentGatewayTests
     [Test]
     public void TryEnqueueAssistantCommandIntent_PreservesTakeoverFlag()
     {
-        Entity boundary = _entityManager.CreateEntity(typeof(UiShellRootComponent));
+        Entity boundary = CreateActiveBoundary();
         _entityManager.AddComponentData(boundary, new AssistantSettingsComponent
         {
             GuidanceLevel = AssistantGuidanceLevel.FullGuidance,
@@ -183,7 +184,7 @@ public sealed class AssistantCommandIntentGatewayTests
     [Test]
     public void TryEnqueueAssistantCommandIntent_BlocksTakeoverWhenDisabled()
     {
-        Entity boundary = _entityManager.CreateEntity(typeof(UiShellRootComponent));
+        Entity boundary = CreateActiveBoundary();
         _entityManager.AddComponentData(boundary, new AssistantSettingsComponent
         {
             GuidanceLevel = AssistantGuidanceLevel.FullGuidance,
@@ -209,7 +210,7 @@ public sealed class AssistantCommandIntentGatewayTests
     [Test]
     public void TryEnqueueAssistantCommandIntent_QueuesStopWithoutRecommendation()
     {
-        Entity boundary = _entityManager.CreateEntity(typeof(UiShellRootComponent));
+        Entity boundary = CreateActiveBoundary();
 
         Assert.IsTrue(UiShellEcsGateway.TryEnqueueAssistantCommandIntent(UiAssistantCommandIntentKind.StopAssistantControl, false));
         Assert.IsTrue(_entityManager.HasBuffer<AssistantCommandIntentRequestElement>(boundary));
@@ -251,5 +252,23 @@ public sealed class AssistantCommandIntentGatewayTests
         Assert.AreEqual(13f, highlight.WorldZ);
         Assert.AreEqual(0.75f, highlight.Strength);
         Assert.Greater(highlight.Version, 0u);
+    }
+
+    private Entity CreateActiveBoundary()
+    {
+        Entity boundary = _entityManager.CreateEntity(typeof(UiShellRootComponent), typeof(UiShellStateComponent));
+        _entityManager.SetComponentData(boundary, new UiShellStateComponent
+        {
+            ActiveRoute = UIRoute.Match,
+            CurrentMode = UiShellMode.MatchHud,
+            Phase = UiShellTransitionPhase.MatchHudReady
+        });
+        Entity matchStart = _entityManager.CreateEntity(typeof(MatchStartQueueComponent));
+        _entityManager.SetComponentData(matchStart, new MatchStartQueueComponent
+        {
+            HasStarted = 1,
+            LastStatus = MatchStartStatusKind.Started
+        });
+        return boundary;
     }
 }

@@ -1,4 +1,6 @@
 using Game.Components;
+using Game.Runtime;
+using Game.Tactical.Contracts;
 using Game.UI.Shell.Contracts.Ecs;
 using Unity.Collections;
 using Unity.Entities;
@@ -13,18 +15,20 @@ namespace Game.UI.Shell.Ecs
     {
         private const int MaxResultRows = 16;
         private const int MaxMessageRows = 16;
+        private const int MaxDispatchRows = 8;
         private const int TimeoutFrameWindow = 600;
-        private const int ReasonAccepted = 0;
-        private const int ReasonUnsupportedIntent = 1;
-        private const int ReasonMissingPreviewTarget = 2;
-        private const int ReasonMissingSelectionTarget = 3;
-        private const int ReasonCancelled = 4;
-        private const int ReasonTimedOut = 5;
+        private const int ReasonAccepted = (int)TacticalCommandReasonCode.None;
+        private const int ReasonUnsupportedIntent = (int)TacticalCommandReasonCode.CommandUnavailable;
+        private const int ReasonMissingPreviewTarget = (int)TacticalCommandReasonCode.CameraJumpUnavailable;
+        private const int ReasonMissingSelectionTarget = (int)TacticalCommandReasonCode.NoSelection;
+        private const int ReasonCancelled = (int)TacticalCommandReasonCode.None;
+        private const int ReasonTimedOut = (int)TacticalCommandReasonCode.CommandUnavailable;
         private const int RecoveryMessageBaseId = 700000;
 
         private EntityQuery boundaryQuery;
         private EntityQuery cameraRequestQuery;
         private EntityQuery selectionInputQuery;
+        private EntityQuery gridQuery;
 
         public void OnCreate(ref SystemState state)
         {
@@ -39,6 +43,7 @@ namespace Game.UI.Shell.Ecs
                 ComponentType.ReadWrite<RtsSelectionInputStateComponent>(),
                 ComponentType.ReadWrite<RtsSelectionInputRequestQueueComponent>(),
                 ComponentType.ReadWrite<RtsSelectionCommandIntentRequestElement>());
+            gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
             state.RequireForUpdate(boundaryQuery);
         }
 
@@ -55,6 +60,8 @@ namespace Game.UI.Shell.Ecs
             int currentFrame = UnityEngine.Time.frameCount;
             bool needsCameraPreview = false;
             bool needsSelectionCommand = false;
+            bool needsMoveCommand = false;
+            bool needsAttackCommand = false;
             for (int i = 0; i < requests.Length; i++)
             {
                 if (IsTimedOut(requests[i], currentFrame) ||
@@ -65,6 +72,10 @@ namespace Game.UI.Shell.Ecs
 
                 if (requests[i].Kind == AssistantCommandIntentKind.SelectEntity)
                     needsSelectionCommand = true;
+                else if (requests[i].Kind == AssistantCommandIntentKind.MoveToWorldPosition)
+                    needsMoveCommand = true;
+                else if (requests[i].Kind == AssistantCommandIntentKind.AttackEntity)
+                    needsAttackCommand = true;
 
                 if (IsPreviewIntent(requests[i].Kind) &&
                     TryResolvePreviewTarget(ref state, requests[i], out _))
@@ -87,6 +98,18 @@ namespace Game.UI.Shell.Ecs
                 structuralSetupChanged = true;
             }
 
+            if (needsMoveCommand)
+            {
+                UnitMoveOrderRequestSystem.EnsureQueueEntity(state.EntityManager);
+                structuralSetupChanged = true;
+            }
+
+            if (needsAttackCommand)
+            {
+                UnitAttackOrderRequestSystem.EnsureQueueEntity(state.EntityManager);
+                structuralSetupChanged = true;
+            }
+
             if (structuralSetupChanged)
             {
                 requests = state.EntityManager.GetBuffer<AssistantCommandIntentRequestElement>(boundary);
@@ -100,8 +123,13 @@ namespace Game.UI.Shell.Ecs
                 state.EntityManager.GetBuffer<AssistantMessageElement>(boundary);
             DynamicBuffer<AssistantPreviewHighlightElement> highlights =
                 state.EntityManager.GetBuffer<AssistantPreviewHighlightElement>(boundary);
+            DynamicBuffer<AssistantCommandDispatchElement> dispatches =
+                state.EntityManager.GetBuffer<AssistantCommandDispatchElement>(boundary);
+            DynamicBuffer<AssistantRecommendationElement> recommendations =
+                state.EntityManager.GetBuffer<AssistantRecommendationElement>(boundary, true);
 
             bool assistantStateChanged = false;
+            float now = (float)SystemAPI.Time.ElapsedTime;
             for (int i = 0; i < requests.Length; i++)
             {
                 AssistantCommandIntentRequestElement request = requests[i];
@@ -128,6 +156,7 @@ namespace Game.UI.Shell.Ecs
                 if (request.Kind == AssistantCommandIntentKind.StopAssistantControl)
                 {
                     ClearPreviewHighlight(highlights);
+                    CancelPendingDispatches(dispatches);
                     AddResult(results, request, AssistantCommandIntentStatus.Cancelled, ReasonCancelled, new FixedString64Bytes("Assistant control stopped."));
                     assistantState.ControlState = AssistantControlState.Player;
                     assistantState.ActiveRecommendationId = 0;
@@ -139,13 +168,16 @@ namespace Game.UI.Shell.Ecs
                 if (request.Kind == AssistantCommandIntentKind.SelectEntity)
                 {
                     ClearPreviewHighlight(highlights);
-                    if (!TryQueueSelectionCommand(ref state, request))
+                    if (!TryValidateRecommendation(recommendations, request, out TacticalCommandReasonCode validationReason) ||
+                        !TryQueueSelectionCommand(ref state, request, out int downstreamRequestId))
                     {
                         AddRejectedResult(
                             results,
                             messages,
                             request,
-                            ReasonMissingSelectionTarget,
+                            validationReason == TacticalCommandReasonCode.None
+                                ? (int)TacticalCommandReasonCode.NoSelection
+                                : (int)validationReason,
                             new FixedString64Bytes("No selectable target is available."));
                         assistantState.UiDirty = 1;
                         assistantStateChanged = true;
@@ -153,6 +185,72 @@ namespace Game.UI.Shell.Ecs
                     }
 
                     AddResult(results, request, AssistantCommandIntentStatus.Accepted, ReasonAccepted, new FixedString64Bytes("Selection queued."));
+                    AddDispatch(
+                        dispatches,
+                        request,
+                        AssistantDownstreamCommandKind.Selection,
+                        downstreamRequestId,
+                        now);
+                    assistantState.ControlState = request.FromTakeover != 0
+                        ? AssistantControlState.AssistantTakeover
+                        : AssistantControlState.Guided;
+                    assistantState.ActiveRecommendationId = request.RecommendationId;
+                    assistantState.UiDirty = 1;
+                    assistantStateChanged = true;
+                    continue;
+                }
+
+                if (request.Kind == AssistantCommandIntentKind.MoveToWorldPosition)
+                {
+                    ClearPreviewHighlight(highlights);
+                    if (!TryValidateRecommendation(recommendations, request, out TacticalCommandReasonCode validationReason) ||
+                        !TryQueueMoveCommand(ref state, request, out int downstreamRequestId, out validationReason))
+                    {
+                        AddRejectedResult(
+                            results,
+                            messages,
+                            request,
+                            (int)(validationReason == TacticalCommandReasonCode.None
+                                ? TacticalCommandReasonCode.CommandUnavailable
+                                : validationReason),
+                            ReasonMessage(validationReason));
+                        assistantState.UiDirty = 1;
+                        assistantStateChanged = true;
+                        continue;
+                    }
+
+                    AddResult(results, request, AssistantCommandIntentStatus.Accepted, ReasonAccepted, new FixedString64Bytes("Move order queued."));
+                    AddDispatch(dispatches, request, AssistantDownstreamCommandKind.MoveOrder, downstreamRequestId, now);
+                    assistantState.ControlState = request.FromTakeover != 0
+                        ? AssistantControlState.AssistantTakeover
+                        : AssistantControlState.Guided;
+                    assistantState.ActiveRecommendationId = request.RecommendationId;
+                    assistantState.UiDirty = 1;
+                    assistantStateChanged = true;
+                    continue;
+                }
+
+                if (request.Kind == AssistantCommandIntentKind.AttackEntity)
+                {
+                    ClearPreviewHighlight(highlights);
+                    if (!TryValidateRecommendation(recommendations, request, out TacticalCommandReasonCode validationReason) ||
+                        !TryQueueAttackCommand(ref state, request, out int downstreamRequestId, out validationReason))
+                    {
+                        AddRejectedResult(
+                            results,
+                            messages,
+                            request,
+                            (int)(validationReason == TacticalCommandReasonCode.None
+                                ? TacticalCommandReasonCode.CommandUnavailable
+                                : validationReason),
+                            ReasonMessage(validationReason));
+                        assistantState.UiDirty = 1;
+                        assistantStateChanged = true;
+                        continue;
+                    }
+
+                    AddResult(results, request, AssistantCommandIntentStatus.Accepted, ReasonAccepted, new FixedString64Bytes("Attack order queued."));
+                    AddDispatch(dispatches, request, AssistantDownstreamCommandKind.AttackOrder, downstreamRequestId, now);
                     assistantState.ControlState = request.FromTakeover != 0
                         ? AssistantControlState.AssistantTakeover
                         : AssistantControlState.Guided;
@@ -171,6 +269,20 @@ namespace Game.UI.Shell.Ecs
                         request,
                         ReasonUnsupportedIntent,
                         new FixedString64Bytes("Intent is not available yet."));
+                    assistantState.UiDirty = 1;
+                    assistantStateChanged = true;
+                    continue;
+                }
+
+                if (!TryValidateRecommendation(recommendations, request, out TacticalCommandReasonCode previewValidationReason))
+                {
+                    ClearPreviewHighlight(highlights);
+                    AddRejectedResult(
+                        results,
+                        messages,
+                        request,
+                        (int)previewValidationReason,
+                        ReasonMessage(previewValidationReason));
                     assistantState.UiDirty = 1;
                     assistantStateChanged = true;
                     continue;
@@ -195,6 +307,14 @@ namespace Game.UI.Shell.Ecs
                 AddResult(results, request, AssistantCommandIntentStatus.Completed, ReasonAccepted, new FixedString64Bytes("Preview active."));
                 SetPreviewHighlight(highlights, request, focusWorldPosition);
 
+                if (request.Kind == AssistantCommandIntentKind.FocusCamera)
+                {
+                    AddDispatch(dispatches, request, AssistantDownstreamCommandKind.Camera, 0, now);
+                    AssistantCommandDispatchElement cameraDispatch = dispatches[dispatches.Length - 1];
+                    cameraDispatch.Status = AssistantCommandIntentStatus.Completed;
+                    dispatches[dispatches.Length - 1] = cameraDispatch;
+                }
+
                 assistantState.ControlState = AssistantControlState.AssistantPreview;
                 assistantState.ActiveRecommendationId = request.RecommendationId;
                 assistantState.UiDirty = 1;
@@ -204,6 +324,7 @@ namespace Game.UI.Shell.Ecs
             requests.Clear();
             TrimResults(results);
             TrimMessages(messages);
+            TrimDispatches(dispatches);
 
             if (assistantStateChanged)
                 state.EntityManager.SetComponentData(boundary, assistantState);
@@ -252,8 +373,12 @@ namespace Game.UI.Shell.Ecs
             return currentFrame - request.Frame > TimeoutFrameWindow;
         }
 
-        private bool TryQueueSelectionCommand(ref SystemState state, AssistantCommandIntentRequestElement request)
+        private bool TryQueueSelectionCommand(
+            ref SystemState state,
+            AssistantCommandIntentRequestElement request,
+            out int downstreamRequestId)
         {
+            downstreamRequestId = 0;
             Entity selectionInput = EnsureSelectionInputEntity(ref state);
             RtsSelectionInputRequestQueueComponent queue =
                 state.EntityManager.GetComponentData<RtsSelectionInputRequestQueueComponent>(selectionInput);
@@ -269,6 +394,7 @@ namespace Game.UI.Shell.Ecs
                     return false;
 
                 queue.LastRequestId++;
+                downstreamRequestId = queue.LastRequestId;
                 commandRequests.Add(new RtsSelectionCommandIntentRequestElement
                 {
                     Kind = RtsSelectionCommandIntentKind.FocusUnit,
@@ -290,6 +416,7 @@ namespace Game.UI.Shell.Ecs
                 request.TargetKind == AssistantTargetKind.None)
             {
                 queue.LastRequestId++;
+                downstreamRequestId = queue.LastRequestId;
                 commandRequests.Add(new RtsSelectionCommandIntentRequestElement
                 {
                     Kind = RtsSelectionCommandIntentKind.EnterSelectionMode,
@@ -301,6 +428,219 @@ namespace Game.UI.Shell.Ecs
             }
 
             return false;
+        }
+
+        private static bool TryValidateRecommendation(
+            DynamicBuffer<AssistantRecommendationElement> recommendations,
+            AssistantCommandIntentRequestElement request,
+            out TacticalCommandReasonCode reason)
+        {
+            reason = TacticalCommandReasonCode.None;
+            if (request.Kind == AssistantCommandIntentKind.StopAssistantControl ||
+                request.Kind == AssistantCommandIntentKind.CancelPreview)
+            {
+                return true;
+            }
+
+            // Legacy synthetic requests created before source-version correlation remain
+            // preview/test compatible. Runtime gateway requests always carry a version.
+            if (request.RecommendationSourceVersion == 0)
+                return true;
+
+            if (recommendations.Length == 0)
+            {
+                reason = TacticalCommandReasonCode.CommandUnavailable;
+                return false;
+            }
+
+            AssistantRecommendationElement current = recommendations[0];
+            if (current.RecommendationId != request.RecommendationId ||
+                (request.RecommendationSourceVersion != 0 &&
+                 current.SourceVersion != request.RecommendationSourceVersion) ||
+                current.SourceEntity != request.SourceEntity ||
+                current.TargetEntity != request.TargetEntity ||
+                !current.TargetCell.Equals(request.TargetCell) ||
+                !current.WorldPosition.Equals(request.WorldPosition))
+            {
+                reason = TacticalCommandReasonCode.CommandUnavailable;
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool TryQueueMoveCommand(
+            ref SystemState state,
+            AssistantCommandIntentRequestElement request,
+            out int downstreamRequestId,
+            out TacticalCommandReasonCode reason)
+        {
+            downstreamRequestId = 0;
+            reason = TacticalCommandReasonCode.None;
+            if (!TryValidatePlayerSource(state.EntityManager, request.SourceEntity, out reason))
+                return false;
+            if (gridQuery.IsEmptyIgnoreFilter)
+            {
+                reason = TacticalCommandReasonCode.CommandUnavailable;
+                return false;
+            }
+
+            GridConfig grid = gridQuery.GetSingleton<GridConfig>();
+            int2 targetCell;
+            if (request.TargetKind == AssistantTargetKind.Cell)
+            {
+                targetCell = request.TargetCell;
+            }
+            else if (request.TargetKind == AssistantTargetKind.WorldPosition && IsFinite(request.WorldPosition))
+            {
+                targetCell = GridUtils.WorldToCell(grid, request.WorldPosition);
+            }
+            else
+            {
+                reason = TacticalCommandReasonCode.TargetOutOfBounds;
+                return false;
+            }
+
+            if (targetCell.x < 0 || targetCell.y < 0 || targetCell.x >= grid.Width || targetCell.y >= grid.Height)
+            {
+                reason = TacticalCommandReasonCode.TargetOutOfBounds;
+                return false;
+            }
+
+            downstreamRequestId = UnitMoveOrderRequestSystem.EnqueueImmediateMoveOrder(
+                state.EntityManager,
+                request.SourceEntity,
+                targetCell);
+            return downstreamRequestId > 0;
+        }
+
+        private static bool TryQueueAttackCommand(
+            ref SystemState state,
+            AssistantCommandIntentRequestElement request,
+            out int downstreamRequestId,
+            out TacticalCommandReasonCode reason)
+        {
+            downstreamRequestId = 0;
+            reason = TacticalCommandReasonCode.None;
+            EntityManager em = state.EntityManager;
+            if (!TryValidatePlayerSource(em, request.SourceEntity, out reason))
+                return false;
+
+            if (!em.HasComponent<UnitAttack>(request.SourceEntity))
+            {
+                reason = TacticalCommandReasonCode.CommandUnavailable;
+                return false;
+            }
+
+            if (request.TargetEntity == Entity.Null ||
+                !em.Exists(request.TargetEntity) ||
+                !em.HasComponent<Faction>(request.TargetEntity))
+            {
+                reason = TacticalCommandReasonCode.TargetNotAttackable;
+                return false;
+            }
+
+            byte targetFaction = em.GetComponentData<Faction>(request.TargetEntity).Id;
+            if (!FactionIdentity.IsHostileToPlayer(targetFaction))
+            {
+                reason = TacticalCommandReasonCode.TargetNotEnemy;
+                return false;
+            }
+
+            if (em.HasComponent<UnitHealth>(request.TargetEntity) &&
+                em.GetComponentData<UnitHealth>(request.TargetEntity).Current <= 0)
+            {
+                reason = TacticalCommandReasonCode.TargetNotAttackable;
+                return false;
+            }
+
+            int2 targetCell = request.TargetCell;
+            if (em.HasComponent<UnitGrid>(request.TargetEntity))
+                targetCell = em.GetComponentData<UnitGrid>(request.TargetEntity).Cell;
+            float3 targetPosition = request.WorldPosition;
+            if (em.HasComponent<LocalTransform>(request.TargetEntity))
+                targetPosition = em.GetComponentData<LocalTransform>(request.TargetEntity).Position;
+
+            downstreamRequestId = UnitAttackOrderRequestSystem.EnqueueDirectAttackTarget(
+                em,
+                request.SourceEntity,
+                request.TargetEntity,
+                targetCell,
+                targetPosition);
+            return downstreamRequestId > 0;
+        }
+
+        private static bool TryValidatePlayerSource(
+            EntityManager entityManager,
+            Entity source,
+            out TacticalCommandReasonCode reason)
+        {
+            reason = TacticalCommandReasonCode.None;
+            if (source == Entity.Null || !entityManager.Exists(source))
+            {
+                reason = TacticalCommandReasonCode.NoSelection;
+                return false;
+            }
+
+            if (!entityManager.HasComponent<Faction>(source) ||
+                !FactionIdentity.IsPlayerControlled(entityManager.GetComponentData<Faction>(source).Id))
+            {
+                reason = TacticalCommandReasonCode.NoSelection;
+                return false;
+            }
+
+            if (entityManager.HasComponent<UnitHealth>(source) &&
+                entityManager.GetComponentData<UnitHealth>(source).Current <= 0)
+            {
+                reason = TacticalCommandReasonCode.CommandUnavailable;
+                return false;
+            }
+
+            return true;
+        }
+
+        private static FixedString64Bytes ReasonMessage(TacticalCommandReasonCode reason)
+        {
+            return reason switch
+            {
+                TacticalCommandReasonCode.NoSelection => new FixedString64Bytes("No player unit is available."),
+                TacticalCommandReasonCode.TargetOutOfBounds => new FixedString64Bytes("Target is outside the operation map."),
+                TacticalCommandReasonCode.TargetNotEnemy => new FixedString64Bytes("Target is not hostile."),
+                TacticalCommandReasonCode.TargetNotAttackable => new FixedString64Bytes("Target cannot be attacked."),
+                _ => new FixedString64Bytes("Command is unavailable.")
+            };
+        }
+
+        private static void AddDispatch(
+            DynamicBuffer<AssistantCommandDispatchElement> dispatches,
+            AssistantCommandIntentRequestElement request,
+            AssistantDownstreamCommandKind downstreamKind,
+            int downstreamRequestId,
+            float now)
+        {
+            dispatches.Add(new AssistantCommandDispatchElement
+            {
+                AssistantRequestId = request.RequestId,
+                RecommendationId = request.RecommendationId,
+                IntentKind = request.Kind,
+                DownstreamKind = downstreamKind,
+                DownstreamRequestId = downstreamRequestId,
+                Status = AssistantCommandIntentStatus.Accepted,
+                RequestedAt = now
+            });
+        }
+
+        private static void CancelPendingDispatches(DynamicBuffer<AssistantCommandDispatchElement> dispatches)
+        {
+            for (int i = 0; i < dispatches.Length; i++)
+            {
+                AssistantCommandDispatchElement dispatch = dispatches[i];
+                if (dispatch.Status != AssistantCommandIntentStatus.Pending)
+                    continue;
+
+                dispatch.Status = AssistantCommandIntentStatus.Cancelled;
+                dispatches[i] = dispatch;
+            }
         }
 
         private static Entity ResolveExistingEntity(ref SystemState state, Entity entity)
@@ -495,6 +835,28 @@ namespace Game.UI.Shell.Ecs
         {
             while (messages.Length > MaxMessageRows)
                 messages.RemoveAt(0);
+        }
+
+        private static void TrimDispatches(DynamicBuffer<AssistantCommandDispatchElement> dispatches)
+        {
+            while (dispatches.Length > MaxDispatchRows)
+            {
+                int removeIndex = -1;
+                for (int i = 0; i < dispatches.Length; i++)
+                {
+                    AssistantCommandIntentStatus status = dispatches[i].Status;
+                    if (status == AssistantCommandIntentStatus.Pending ||
+                        status == AssistantCommandIntentStatus.Accepted)
+                    {
+                        continue;
+                    }
+
+                    removeIndex = i;
+                    break;
+                }
+
+                dispatches.RemoveAt(removeIndex >= 0 ? removeIndex : 0);
+            }
         }
     }
 }

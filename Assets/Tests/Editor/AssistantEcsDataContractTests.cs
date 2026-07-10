@@ -69,6 +69,12 @@ public sealed class AssistantEcsDataContractTests
         AssertComponent<AssistantRecommendationReadModelComponent>();
         AssertComponent<AssistantNarrationStateComponent>();
         AssertComponent<AssistantSettingsComponent>();
+        AssertComponent<AssistantRecommendationEvaluationStateComponent>();
+        AssertComponent<AssistantMessageReadModelComponent>();
+        AssertComponent<AssistantThreatReadModelStateComponent>();
+        AssertComponent<AssistantTargetLockReadModelComponent>();
+        AssertComponent<MatchObjectiveRuntimeStateComponent>();
+        AssertComponent<CombatDamageObservationQueueComponent>();
     }
 
     [Test]
@@ -81,6 +87,10 @@ public sealed class AssistantEcsDataContractTests
         AssertBuffer<AssistantCommandIntentRequestElement>();
         AssertBuffer<AssistantCommandIntentResultElement>();
         AssertBuffer<AssistantPreviewHighlightElement>();
+        AssertBuffer<AssistantThreatReadModelElement>();
+        AssertBuffer<AssistantCommandDispatchElement>();
+        AssertBuffer<MatchObjectiveRuntimeElement>();
+        AssertBuffer<CombatDamageObservationElement>();
 
         Entity assistant = _entityManager.CreateEntity(
             typeof(AssistantStateComponent),

@@ -64,4 +64,9 @@ namespace Game.UI.Contracts
 
         bool TryEnqueueTransitionComplete(UiShellTransitionCompleteModel completion);
     }
+
+    public interface IUiAssistantPanelStateGateway
+    {
+        bool TrySetAssistantPanelOpen(bool open);
+    }
 }

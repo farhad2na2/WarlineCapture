@@ -4,6 +4,10 @@ Accepted target PNG:
 
 `POP-13_ARIACommandAssistant_TargetLock_V01.png`
 
+Functional 4800 x 2160 HUD validation capture:
+
+`POP-13_ARIACommandAssistant_Functional_4800x2160.png`
+
 Generated with the built-in imagegen workflow on 2026-07-09 from:
 
 `../prompts/POP-13_ARIACommandAssistant_TargetLock_V01.md`

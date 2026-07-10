@@ -1293,25 +1293,187 @@ namespace Game.UI.Contracts
         public static UiMatchHudStatusSurfacesModel Default =>
             new(
                 "OBJECTIVES",
-                new UiMatchHudObjectiveRowModel("Neutralize hostile patrol", UiMatchHudObjectiveIconKind.Unchecked),
-                new UiMatchHudObjectiveRowModel("Protect civilians", UiMatchHudObjectiveIconKind.Checked),
-                new UiMatchHudObjectiveRowModel("Keep losses low", UiMatchHudObjectiveIconKind.Star),
-                "ELAPSED: 07:42",
+                new UiMatchHudObjectiveRowModel(string.Empty, UiMatchHudObjectiveIconKind.Unchecked),
+                new UiMatchHudObjectiveRowModel(string.Empty, UiMatchHudObjectiveIconKind.Unchecked),
+                new UiMatchHudObjectiveRowModel(string.Empty, UiMatchHudObjectiveIconKind.Unchecked),
+                string.Empty,
                 false,
                 string.Empty,
                 string.Empty,
                 false,
-                true,
-                "Blocked: civilian zone",
+                false,
+                string.Empty,
                 true,
                 true,
                 true,
                 true);
     }
 
+    public readonly struct UiAssistantGoalRowModel
+    {
+        public readonly bool Visible;
+        public readonly int GoalId;
+        public readonly string Title;
+        public readonly string Body;
+        public readonly byte State;
+        public readonly byte Priority;
+        public readonly bool IsPrimary;
+
+        public UiAssistantGoalRowModel(
+            bool visible,
+            int goalId,
+            string title,
+            string body,
+            byte state,
+            byte priority,
+            bool isPrimary)
+        {
+            Visible = visible;
+            GoalId = goalId;
+            Title = title ?? string.Empty;
+            Body = body ?? string.Empty;
+            State = state;
+            Priority = priority;
+            IsPrimary = isPrimary;
+        }
+
+        public static UiAssistantGoalRowModel Empty =>
+            new(false, 0, string.Empty, string.Empty, 0, 0, false);
+    }
+
+    public readonly struct UiAssistantMessageRowModel
+    {
+        public readonly bool Visible;
+        public readonly int MessageId;
+        public readonly string Title;
+        public readonly string Body;
+        public readonly byte Priority;
+        public readonly byte RelatedKind;
+        public readonly byte AgeState;
+        public readonly bool RequiresNarration;
+        public readonly bool Acknowledged;
+
+        public UiAssistantMessageRowModel(
+            bool visible,
+            int messageId,
+            string title,
+            string body,
+            byte priority,
+            byte relatedKind,
+            byte ageState,
+            bool requiresNarration,
+            bool acknowledged)
+        {
+            Visible = visible;
+            MessageId = messageId;
+            Title = title ?? string.Empty;
+            Body = body ?? string.Empty;
+            Priority = priority;
+            RelatedKind = relatedKind;
+            AgeState = ageState;
+            RequiresNarration = requiresNarration;
+            Acknowledged = acknowledged;
+        }
+
+        public static UiAssistantMessageRowModel Empty =>
+            new(false, 0, string.Empty, string.Empty, 0, 0, 0, false, false);
+    }
+
+    public readonly struct UiAssistantTargetLockModel
+    {
+        public readonly bool Visible;
+        public readonly byte LockState;
+        public readonly byte TargetKind;
+        public readonly string TargetName;
+        public readonly string SourceName;
+        public readonly string DistanceText;
+        public readonly string HealthText;
+        public readonly string FactionRelationText;
+        public readonly string ReadinessText;
+        public readonly string ReasonText;
+
+        public UiAssistantTargetLockModel(
+            bool visible,
+            byte lockState,
+            byte targetKind,
+            string targetName,
+            string sourceName,
+            string distanceText,
+            string healthText,
+            string factionRelationText,
+            string readinessText,
+            string reasonText)
+        {
+            Visible = visible;
+            LockState = lockState;
+            TargetKind = targetKind;
+            TargetName = targetName ?? string.Empty;
+            SourceName = sourceName ?? string.Empty;
+            DistanceText = distanceText ?? string.Empty;
+            HealthText = healthText ?? string.Empty;
+            FactionRelationText = factionRelationText ?? string.Empty;
+            ReadinessText = readinessText ?? string.Empty;
+            ReasonText = reasonText ?? string.Empty;
+        }
+
+        public static UiAssistantTargetLockModel Empty =>
+            new(false, 0, 0, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
+    }
+
+    public enum UiAssistantNarrationStateKind : byte
+    {
+        Off = 0,
+        TextOnly = 1,
+        Queued = 2,
+        Accepted = 3,
+        Presented = 4,
+        Failed = 5
+    }
+
+    public readonly struct UiAssistantNarrationModel
+    {
+        public readonly byte State;
+        public readonly byte Priority;
+        public readonly string StatusText;
+        public readonly string SubtitleText;
+        public readonly string FailureReasonText;
+        public readonly bool WaveformPulse;
+
+        public UiAssistantNarrationModel(
+            byte state,
+            byte priority,
+            string statusText,
+            string subtitleText,
+            string failureReasonText,
+            bool waveformPulse)
+        {
+            State = state;
+            Priority = priority;
+            StatusText = statusText ?? string.Empty;
+            SubtitleText = subtitleText ?? string.Empty;
+            FailureReasonText = failureReasonText ?? string.Empty;
+            WaveformPulse = waveformPulse;
+        }
+
+        public static UiAssistantNarrationModel Empty =>
+            new(0, 0, string.Empty, string.Empty, string.Empty, false);
+    }
+
     public readonly struct UiAssistantPanelModel
     {
         public readonly uint Version;
+        public readonly bool ElapsedVisible;
+        public readonly int ElapsedWholeSeconds;
+        public readonly UiAssistantGoalRowModel Goal0;
+        public readonly UiAssistantGoalRowModel Goal1;
+        public readonly UiAssistantGoalRowModel Goal2;
+        public readonly UiAssistantMessageRowModel Alert0;
+        public readonly UiAssistantMessageRowModel Alert1;
+        public readonly UiAssistantMessageRowModel Alert2;
+        public readonly UiAssistantMessageRowModel Report0;
+        public readonly UiAssistantMessageRowModel Report1;
+        public readonly UiAssistantTargetLockModel TargetLock;
+        public readonly UiAssistantNarrationModel Narration;
         public readonly string GoalsText;
         public readonly string AlertsText;
         public readonly string NarrationSubtitleText;
@@ -1326,6 +1488,8 @@ namespace Game.UI.Contracts
         public readonly bool CanExecute;
         public readonly bool CanStop;
         public readonly bool CanTakeControl;
+        public readonly bool LargeTextEnabled;
+        public readonly bool HighContrastEnabled;
         public readonly string OwnershipText;
         public readonly string OwnershipDetailText;
 
@@ -1349,6 +1513,18 @@ namespace Game.UI.Contracts
             string ownershipDetailText)
         {
             Version = version;
+            ElapsedVisible = false;
+            ElapsedWholeSeconds = 0;
+            Goal0 = UiAssistantGoalRowModel.Empty;
+            Goal1 = UiAssistantGoalRowModel.Empty;
+            Goal2 = UiAssistantGoalRowModel.Empty;
+            Alert0 = UiAssistantMessageRowModel.Empty;
+            Alert1 = UiAssistantMessageRowModel.Empty;
+            Alert2 = UiAssistantMessageRowModel.Empty;
+            Report0 = UiAssistantMessageRowModel.Empty;
+            Report1 = UiAssistantMessageRowModel.Empty;
+            TargetLock = UiAssistantTargetLockModel.Empty;
+            Narration = UiAssistantNarrationModel.Empty;
             GoalsText = goalsText;
             AlertsText = alertsText;
             NarrationSubtitleText = narrationSubtitleText;
@@ -1363,29 +1539,92 @@ namespace Game.UI.Contracts
             CanExecute = canExecute;
             CanStop = canStop;
             CanTakeControl = canTakeControl;
+            LargeTextEnabled = false;
+            HighContrastEnabled = false;
             OwnershipText = ownershipText;
             OwnershipDetailText = ownershipDetailText;
+        }
+
+        public UiAssistantPanelModel(
+            uint version,
+            bool elapsedVisible,
+            int elapsedWholeSeconds,
+            UiAssistantGoalRowModel goal0,
+            UiAssistantGoalRowModel goal1,
+            UiAssistantGoalRowModel goal2,
+            UiAssistantMessageRowModel alert0,
+            UiAssistantMessageRowModel alert1,
+            UiAssistantMessageRowModel alert2,
+            UiAssistantMessageRowModel report0,
+            UiAssistantMessageRowModel report1,
+            UiAssistantTargetLockModel targetLock,
+            UiAssistantNarrationModel narration,
+            bool hasRecommendation,
+            string recommendationTitle,
+            string recommendationBody,
+            string recommendationPriorityText,
+            string recommendationActionLabel,
+            bool canShow,
+            bool canExecute,
+            bool canStop,
+            bool canTakeControl,
+            string ownershipText,
+            string ownershipDetailText,
+            bool largeTextEnabled = false,
+            bool highContrastEnabled = false)
+        {
+            Version = version;
+            ElapsedVisible = elapsedVisible;
+            ElapsedWholeSeconds = elapsedWholeSeconds;
+            Goal0 = goal0;
+            Goal1 = goal1;
+            Goal2 = goal2;
+            Alert0 = alert0;
+            Alert1 = alert1;
+            Alert2 = alert2;
+            Report0 = report0;
+            Report1 = report1;
+            TargetLock = targetLock;
+            Narration = narration;
+            GoalsText = string.Empty;
+            AlertsText = string.Empty;
+            NarrationSubtitleText = narration.SubtitleText;
+            NarrationSubtitlesVisible = narration.SubtitleText.Length > 0;
+            HasAlerts = alert0.Visible || alert1.Visible || alert2.Visible;
+            HasRecommendation = hasRecommendation;
+            RecommendationTitle = recommendationTitle ?? string.Empty;
+            RecommendationBody = recommendationBody ?? string.Empty;
+            RecommendationPriorityText = recommendationPriorityText ?? string.Empty;
+            RecommendationActionLabel = recommendationActionLabel ?? string.Empty;
+            CanShow = canShow;
+            CanExecute = canExecute;
+            CanStop = canStop;
+            CanTakeControl = canTakeControl;
+            LargeTextEnabled = largeTextEnabled;
+            HighContrastEnabled = highContrastEnabled;
+            OwnershipText = ownershipText ?? string.Empty;
+            OwnershipDetailText = ownershipDetailText ?? string.Empty;
         }
 
         public static UiAssistantPanelModel Empty =>
             new(
                 0,
-                "No active objectives",
-                "No priority alerts",
-                "No active narration",
-                true,
-                false,
-                false,
-                "No recommendation",
-                "ARIA is waiting for live battlefield context.",
-                "LOW",
-                "SHOW ME",
+                string.Empty,
+                string.Empty,
+                string.Empty,
                 false,
                 false,
                 false,
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty,
                 false,
-                "PLAYER CONTROL",
-                "You are issuing orders directly.");
+                false,
+                false,
+                false,
+                string.Empty,
+                string.Empty);
     }
 
     public readonly struct UiAssistantHighlightModel

@@ -62,7 +62,6 @@ namespace Game.Runtime
             }
 
             DynamicBuffer<AudioPlaybackRequestElement> requests = em.GetBuffer<AudioPlaybackRequestElement>(audioEntity);
-            DynamicBuffer<AudioPlaybackResultElement> results = em.GetBuffer<AudioPlaybackResultElement>(audioEntity);
 
             bool simulationActive = IsGameplaySimulationActive(em);
             int presented = 0;
@@ -86,12 +85,12 @@ namespace Game.Runtime
                         entry)
                     ? new AudioPlaybackPresentationResult(false, AudioPlaybackRequestStatus.Culled, "GameplayInactive", -1)
                     : playbackHelper.PlayAcceptedRequest(request, entry, bus, settings);
-                AppendPresentationResult(results, request, result, now);
-                LogPresentationDiagnostic(em, request, entry, result, now);
                 request.Status = result.Played
                     ? AudioPlaybackRequestStatus.Presented
                     : result.Status;
                 requests[i] = request;
+                AppendPresentationResult(em, audioEntity, request, result, now);
+                LogPresentationDiagnostic(em, request, entry, result, now);
 
                 presented++;
                 if (result.Played)
@@ -102,6 +101,9 @@ namespace Game.Runtime
                 if (request.RequestId > _lastPresentedRequestId)
                     _lastPresentedRequestId = request.RequestId;
             }
+
+            if (presented > 0)
+                AudioEventRequestSystem.PruneTerminalRequestHistory(requests);
 
             return new AudioPlaybackPresentationBridgeResult(presented, played, failed, _lastPresentedRequestId);
         }
@@ -209,15 +211,16 @@ namespace Game.Runtime
         }
 
         private static void AppendPresentationResult(
-            DynamicBuffer<AudioPlaybackResultElement> results,
+            EntityManager em,
+            Entity audioEntity,
             AudioPlaybackRequestElement request,
             AudioPlaybackPresentationResult result,
             float now)
         {
-            results.Add(new AudioPlaybackResultElement
+            AudioEventRequestSystem.AppendPlaybackResult(em, audioEntity, new AudioPlaybackResultElement
             {
                 RequestId = request.RequestId,
-                Status = result.Status,
+                Status = result.Played ? AudioPlaybackRequestStatus.Presented : result.Status,
                 EventHash = request.EventHash,
                 EventId = request.EventId,
                 Reason = new FixedString64Bytes(result.Reason),

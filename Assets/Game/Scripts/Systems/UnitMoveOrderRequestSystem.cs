@@ -159,6 +159,11 @@ namespace Game.Runtime
             return false;
         }
 
+        public static Entity EnsureQueueEntity(EntityManager em)
+        {
+            return EnsureCommandEntity(em);
+        }
+
         private static int EnqueueMoveOrder(
             EntityManager em,
             Entity entity,

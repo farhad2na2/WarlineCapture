@@ -1,5 +1,6 @@
 using Game.Components;
 using Game.Configs;
+using Game.UI.Contracts;
 using Game.UI.Shell.Contracts.Ecs;
 using Unity.Collections;
 using Unity.Entities;
@@ -13,8 +14,12 @@ namespace Game.UI.Shell.Ecs
     {
         private const int MaxNarrationRows = 8;
         private const float LowPriorityCooldownSeconds = 12f;
+        private const float ThreatSuppressionSeconds = 8f;
+        private const int ThreatMessageBaseId = 810000;
+        private const int CommandMessageBaseId = 820000;
 
         private EntityQuery boundaryQuery;
+        private EntityQuery matchStartQuery;
 
         public void OnCreate(ref SystemState state)
         {
@@ -22,6 +27,9 @@ namespace Game.UI.Shell.Ecs
                 ComponentType.ReadOnly<UiShellStateComponent>(),
                 ComponentType.ReadOnly<UiMatchHudStatusSurfacesComponent>(),
                 ComponentType.ReadOnly<UiMatchHudHeaderComponent>());
+            matchStartQuery = state.GetEntityQuery(
+                ComponentType.ReadOnly<MatchStartStateComponent>(),
+                ComponentType.ReadOnly<MatchStartQueueComponent>());
             state.RequireForUpdate(boundaryQuery);
         }
 
@@ -31,22 +39,36 @@ namespace Game.UI.Shell.Ecs
             AssistantGoalReadModelSystem.EnsureAssistantReadModelBoundary(ref state, boundary);
             EnsureNarrationBoundary(ref state, boundary);
 
-            DynamicBuffer<AssistantMessageElement> messages =
-                state.EntityManager.GetBuffer<AssistantMessageElement>(boundary);
-            if (messages.Length == 0)
+            if (!IsNarrationRuntimeActive(state.EntityManager, boundary, matchStartQuery))
+            {
+                ClearNarrationBoundary(state.EntityManager, boundary);
                 return;
+            }
 
             AssistantSettingsComponent settings =
                 state.EntityManager.GetComponentData<AssistantSettingsComponent>(boundary);
             AssistantNarrationStateComponent narrationState =
                 state.EntityManager.GetComponentData<AssistantNarrationStateComponent>(boundary);
-            float now = Time.time;
+            if (narrationState.Mode != settings.NarrationMode)
+            {
+                narrationState.Mode = settings.NarrationMode;
+                narrationState.Version = NextVersion(narrationState.Version);
+                narrationState.UiDirty = 1;
+                state.EntityManager.SetComponentData(boundary, narrationState);
+            }
+
+            DynamicBuffer<AssistantMessageElement> messages =
+                state.EntityManager.GetBuffer<AssistantMessageElement>(boundary);
+            if (messages.Length == 0)
+                return;
+
+            float now = Time.unscaledTime;
             if (!TryFindBestMessage(messages, settings.NarrationMode, narrationState, now, out AssistantMessageElement message))
                 return;
 
             DynamicBuffer<AssistantNarrationRequestElement> requests =
                 state.EntityManager.GetBuffer<AssistantNarrationRequestElement>(boundary);
-            if (HasMatchingRequest(requests, messages, message))
+            if (HasMatchingRequest(requests, messages, message, now))
                 return;
 
             int currentFrame = Mathf.Max(1, Time.frameCount);
@@ -67,11 +89,14 @@ namespace Game.UI.Shell.Ecs
 
             narrationState.Version = NextVersion(narrationState.Version);
             narrationState.ActiveNarrationId = requestId;
-            narrationState.LastSpokenMessageId = message.MessageId;
-            narrationState.LastSpokenAt = now;
+            narrationState.ActiveAudioPlaybackRequestId = 0;
             if (message.Priority <= AssistantMessagePriority.Normal)
                 narrationState.LowPriorityCooldownUntil = now + LowPriorityCooldownSeconds;
             narrationState.Mode = settings.NarrationMode;
+            narrationState.LastAudioStatus = AudioPlaybackRequestStatus.Pending;
+            narrationState.LastAudioFailureReason = default;
+            narrationState.LastPresentedAt = 0f;
+            narrationState.IsSpeaking = 0;
             narrationState.UiDirty = 1;
             state.EntityManager.SetComponentData(boundary, narrationState);
 
@@ -100,6 +125,73 @@ namespace Game.UI.Shell.Ecs
 
             if (!em.HasBuffer<AssistantNarrationRequestElement>(boundary))
                 em.AddBuffer<AssistantNarrationRequestElement>(boundary);
+        }
+
+        internal static bool IsNarrationRuntimeActive(
+            EntityManager em,
+            Entity boundary,
+            EntityQuery matchStartQuery)
+        {
+            UiShellStateComponent shellState = em.GetComponentData<UiShellStateComponent>(boundary);
+            if (shellState.ActiveRoute != UIRoute.Match ||
+                shellState.CurrentMode != UiShellMode.MatchHud ||
+                shellState.IsTransitionRunning != 0 ||
+                matchStartQuery.CalculateEntityCount() != 1)
+                return false;
+
+            MatchStartQueueComponent matchStart = matchStartQuery.GetSingleton<MatchStartQueueComponent>();
+            return matchStart.HasStarted != 0 && matchStart.IsStartPending == 0;
+        }
+
+        internal static bool ClearNarrationBoundary(EntityManager em, Entity boundary)
+        {
+            bool changed = false;
+            if (em.HasBuffer<AssistantNarrationRequestElement>(boundary))
+            {
+                DynamicBuffer<AssistantNarrationRequestElement> requests =
+                    em.GetBuffer<AssistantNarrationRequestElement>(boundary);
+                if (requests.Length > 0)
+                {
+                    requests.Clear();
+                    changed = true;
+                }
+            }
+
+            if (!em.HasComponent<AssistantNarrationStateComponent>(boundary))
+                return changed;
+
+            AssistantNarrationStateComponent narrationState =
+                em.GetComponentData<AssistantNarrationStateComponent>(boundary);
+            AssistantNarrationMode mode = em.HasComponent<AssistantSettingsComponent>(boundary)
+                ? em.GetComponentData<AssistantSettingsComponent>(boundary).NarrationMode
+                : narrationState.Mode;
+            changed |= narrationState.ActiveNarrationId != 0 ||
+                       narrationState.ActiveAudioPlaybackRequestId != 0 ||
+                       narrationState.LastSpokenMessageId != 0 ||
+                       narrationState.LastSpokenAt != 0f ||
+                       narrationState.LowPriorityCooldownUntil != 0f ||
+                       narrationState.LastPresentedAt != 0f ||
+                       narrationState.Mode != mode ||
+                       narrationState.LastAudioStatus != AudioPlaybackRequestStatus.Pending ||
+                       narrationState.LastAudioFailureReason.Length != 0 ||
+                       narrationState.IsSpeaking != 0;
+            if (!changed)
+                return false;
+
+            narrationState.Version = NextVersion(narrationState.Version);
+            narrationState.ActiveNarrationId = 0;
+            narrationState.ActiveAudioPlaybackRequestId = 0;
+            narrationState.LastSpokenMessageId = 0;
+            narrationState.LastSpokenAt = 0f;
+            narrationState.LowPriorityCooldownUntil = 0f;
+            narrationState.LastPresentedAt = 0f;
+            narrationState.Mode = mode;
+            narrationState.LastAudioStatus = AudioPlaybackRequestStatus.Pending;
+            narrationState.LastAudioFailureReason = default;
+            narrationState.IsSpeaking = 0;
+            narrationState.UiDirty = 1;
+            em.SetComponentData(boundary, narrationState);
+            return true;
         }
 
         private static bool TryFindBestMessage(
@@ -157,18 +249,31 @@ namespace Game.UI.Shell.Ecs
         private static bool HasMatchingRequest(
             DynamicBuffer<AssistantNarrationRequestElement> requests,
             DynamicBuffer<AssistantMessageElement> messages,
-            AssistantMessageElement message)
+            AssistantMessageElement message,
+            float now)
         {
             for (int i = 0; i < requests.Length; i++)
             {
-                if (requests[i].MessageId == message.MessageId ||
-                    HasMatchingSuppressionKey(messages, requests[i].MessageId, message.SuppressionKey))
+                AssistantNarrationRequestElement request = requests[i];
+                if ((request.MessageId == message.MessageId ||
+                     HasMatchingSuppressionKey(messages, request.MessageId, message.SuppressionKey)) &&
+                    IsRequestSuppressed(request, message, now))
                 {
                     return true;
                 }
             }
 
             return false;
+        }
+
+        public static bool IsRequestSuppressed(
+            AssistantNarrationRequestElement request,
+            AssistantMessageElement message,
+            float now)
+        {
+            bool threatMessage = message.MessageId >= ThreatMessageBaseId &&
+                                 message.MessageId < CommandMessageBaseId;
+            return !threatMessage || now - request.RequestedAt < ThreatSuppressionSeconds;
         }
 
         private static bool HasMatchingSuppressionKey(

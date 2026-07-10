@@ -4,23 +4,37 @@ using Game.UI.Contracts;
 using Game.UI.Runtime;
 using NUnit.Framework;
 using TMPro;
+using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public sealed class MatchHudAssistantUiSystemHelperTests
 {
+    private const string PopupPrefabPath =
+        "Assets/Game/Prefabs/UI/Shell/Popups/POP13_ARIACommandAssistantPopup.prefab";
+    private const string MenuScenePath = "Assets/Game/Scenes/Menu.unity";
+    private bool _openedScene;
+
     public static void RunFocusedValidation()
     {
         int passed = 0;
         try
         {
-            RunCase(test => test.BindMatchHudAssistant_CreatesButtonPanelAndBlocksWorldClicks());
+            RunCase(test => test.PopupPrefab_BindsLockedLandscapeHierarchyAndMenuReference());
             passed++;
-            RunCase(test => test.BindMatchHudAssistant_AppliesAssistantPanelReadModel());
+            RunCase(test => test.BindMatchHudAssistant_UsesObjectiveSlotAndRestoresObjectives());
             passed++;
-            RunCase(test => test.BindMatchHudAssistant_VisualSurfaceKeepsControlsReadableInsideOverlay());
+            RunCase(test => test.BindMatchHudAssistant_MissingSlotKeepsFallbackObjectivesVisible());
             passed++;
-            RunCase(test => test.BindMatchHudAssistant_RemainsReadableOnScaledMatchHudOverlay());
+            RunCase(test => test.BindMatchHudAssistant_AppliesStructuredRowsWithoutCreatingPopupObjects());
+            passed++;
+            RunCase(test => test.AssistantPanelUi_UnchangedModelApplicationsAllocateZeroManagedBytes());
+            passed++;
+            RunCase(test => test.BindMatchHudAssistant_EnforcesPopupExclusivity());
+            passed++;
+            RunCase(test => test.BindMatchHudAssistant_CloseEscapeAndStopHaveSeparateSemantics());
             passed++;
 
             Debug.Log($"[MatchHudAssistantUiValidation] result=Passed tests={passed}");
@@ -51,285 +65,310 @@ public sealed class MatchHudAssistantUiSystemHelperTests
     public void TearDown()
     {
         UiShellRuntimeGateway.Register(null);
-        GameObject[] roots = GameObject.FindGameObjectsWithTag("Untagged");
+        GameObject[] roots = Resources.FindObjectsOfTypeAll<GameObject>();
         for (int i = roots.Length - 1; i >= 0; i--)
         {
-            if (roots[i] != null && roots[i].name.StartsWith("AssistantUiTest", StringComparison.Ordinal))
-                UnityEngine.Object.DestroyImmediate(roots[i]);
-            else if (roots[i] != null && roots[i].name.StartsWith("AriaAssistantPreviewHighlightRuntime", StringComparison.Ordinal))
-                UnityEngine.Object.DestroyImmediate(roots[i]);
+            GameObject root = roots[i];
+            if (root == null || EditorUtility.IsPersistent(root))
+                continue;
+            if (root.name.StartsWith("AssistantUiTest", StringComparison.Ordinal) ||
+                root.name.StartsWith("AriaAssistantPreviewHighlightRuntime", StringComparison.Ordinal))
+            {
+                UnityEngine.Object.DestroyImmediate(root);
+            }
         }
+
+        if (_openedScene)
+            EditorSceneManager.NewScene(NewSceneSetup.EmptyScene);
+        _openedScene = false;
     }
 
     [Test]
-    public void BindMatchHudAssistant_CreatesButtonPanelAndBlocksWorldClicks()
+    public void PopupPrefab_BindsLockedLandscapeHierarchyAndMenuReference()
     {
-        RectTransform overlay = CreateRectRoot("AssistantUiTestOverlay", new Vector2(1920f, 1080f));
-        RectTransform header = CreateRect("HeaderContent", overlay);
-        header.anchorMin = new Vector2(0f, 1f);
-        header.anchorMax = new Vector2(0f, 1f);
-        header.pivot = new Vector2(0f, 1f);
-        header.anchoredPosition = Vector2.zero;
-        header.sizeDelta = new Vector2(1920f, 160f);
+        GameObject prefab = LoadPopupPrefab();
+        AriaCommandAssistantPopupView view = prefab.GetComponent<AriaCommandAssistantPopupView>();
+        Assert.NotNull(view, "POP-13 prefab must own the focused ARIA popup view.");
 
+        GameObject instance = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
+        Assert.NotNull(instance);
+        instance.name = "AssistantUiTestPopupPrefab";
+        view = instance.GetComponent<AriaCommandAssistantPopupView>();
+        Assert.IsTrue(view.TryBindHierarchy(), "The view must bind every required stable prefab child.");
+        Assert.AreEqual(new Vector2(2460f, 1510f), view.LandscapeLayout.sizeDelta);
+        Assert.AreEqual(new Vector2(0f, 156f), view.LandscapeLayout.anchoredPosition);
+        Assert.NotNull(FindNamed(view.transform, "GoalRow0"));
+        Assert.NotNull(FindNamed(view.transform, "AlertRow2"));
+        Assert.NotNull(FindNamed(view.transform, "ReportRow1"));
+        Assert.NotNull(FindNamed(view.transform, "TargetMarker2"));
+
+        Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
+        _openedScene = true;
+        UIShellContentView content = FindInScene<UIShellContentView>(scene);
+        Assert.NotNull(content);
+        Assert.AreSame(prefab, content.AriaCommandAssistantPopupPrefab);
+    }
+
+    [Test]
+    public void BindMatchHudAssistant_UsesObjectiveSlotAndRestoresObjectives()
+    {
+        CreateHudHarness(
+            includeDirectObjectivePanel: true,
+            out RectTransform overlay,
+            out RectTransform header,
+            out RectTransform objectives);
         var runtimeState = new FakeMatchRuntimeState();
         var ui = new MainMenuPlayUI();
         ui.Init(null, runtimeState);
-        ui.BindMatchHudAssistant(header.gameObject, overlay);
+        ui.BindMatchHudAssistant(header.gameObject, overlay, LoadPopupPrefab());
 
-        RectTransform button = header.Find("AriaAssistantButton") as RectTransform;
-        RectTransform panel = overlay.Find("AriaAssistantPanel") as RectTransform;
-        Assert.NotNull(button, "Binding the match HUD assistant must add the ARIA header button.");
-        Assert.NotNull(panel, "Binding the match HUD assistant must add the ARIA panel shell.");
-        Assert.IsFalse(panel.gameObject.activeSelf, "The ARIA panel should start closed.");
+        RectTransform button = objectives.parent.Find("AriaAssistantButton") as RectTransform;
+        AriaCommandAssistantPopupView popup = overlay.GetComponentInChildren<AriaCommandAssistantPopupView>(true);
+        Assert.NotNull(button);
+        Assert.NotNull(popup);
+        Assert.IsFalse(objectives.gameObject.activeSelf, "Objectives hide only after button and popup binding succeed.");
+        Assert.AreEqual(objectives.anchorMin, button.anchorMin);
+        Assert.AreEqual(objectives.anchorMax, button.anchorMax);
+        Assert.AreEqual(objectives.pivot, button.pivot);
+        Assert.AreEqual(objectives.anchoredPosition, button.anchoredPosition);
+        Assert.AreEqual(new Vector2(454f, 155f), button.sizeDelta);
+        Assert.IsFalse(popup.gameObject.activeSelf, "ARIA starts closed.");
 
-        Button buttonComponent = button.GetComponent<Button>();
-        Assert.NotNull(buttonComponent, "The ARIA header button must be a Unity Button.");
-        buttonComponent.onClick.Invoke();
-
-        Assert.IsTrue(panel.gameObject.activeSelf, "Clicking ARIA should open the panel shell.");
-        Assert.IsTrue(runtimeState.SuppressNextWorldClick, "ARIA UI clicks must suppress the next world click.");
-
-        Vector2 buttonPoint = CenterScreenPoint(button);
-        Assert.IsTrue(ui.IsPointerOverAnyGameplayUi(buttonPoint, out string source));
+        button.GetComponent<Button>().onClick.Invoke();
+        Assert.IsTrue(popup.IsOpen);
+        Assert.IsTrue(runtimeState.SuppressNextWorldClick);
+        Assert.IsTrue(ui.IsPointerOverAnyGameplayUi(CenterScreenPoint(button), out string source));
         Assert.AreEqual("MatchHudAssistant", source);
 
         ui.Dispose();
-        UnityEngine.Object.DestroyImmediate(overlay.gameObject);
+        Assert.IsTrue(objectives.gameObject.activeSelf, "Unbind must restore the old objective root.");
     }
 
     [Test]
-    public void BindMatchHudAssistant_AppliesAssistantPanelReadModel()
+    public void BindMatchHudAssistant_MissingSlotKeepsFallbackObjectivesVisible()
     {
-        RectTransform overlay = CreateRectRoot("AssistantUiTestOverlay", new Vector2(1920f, 1080f));
-        RectTransform header = CreateRect("HeaderContent", overlay);
-        header.anchorMin = new Vector2(0f, 1f);
-        header.anchorMax = new Vector2(0f, 1f);
-        header.pivot = new Vector2(0f, 1f);
-        header.anchoredPosition = Vector2.zero;
-        header.sizeDelta = new Vector2(1920f, 160f);
-
+        CreateHudHarness(
+            includeDirectObjectivePanel: false,
+            out RectTransform overlay,
+            out RectTransform header,
+            out RectTransform nestedObjectives);
         var ui = new MainMenuPlayUI();
         ui.Init(null, new FakeMatchRuntimeState());
-        ui.BindMatchHudAssistant(header.gameObject, overlay);
-        var assistantGateway = new FakeAssistantPanelGateway(
-            new UiAssistantPanelModel(
-            42,
-            "- Neutralize hostile patrol\n[x] Protect civilians",
-            "HIGH: Fuel reserves empty",
-            "HIGH: Hostile patrol near base",
-            true,
-            true,
-            true,
-            "Review objective",
-            "Focus the active objective before choosing the next order.",
-            "HIGH",
-            "SHOW ME",
-            true,
-            true,
-            true,
-            false,
-            "ARIA CONTROL",
-            "ARIA is executing a bounded action. STOP returns control."),
-            new UiAssistantHighlightModel(88, true, 7, 3101, 1, 12f, 3f, 9f, 1f));
-        UiShellRuntimeGateway.Register(assistantGateway);
+        ui.BindMatchHudAssistant(header.gameObject, overlay, LoadPopupPrefab());
 
+        RectTransform button = header.Find("AriaAssistantButton") as RectTransform;
+        Assert.NotNull(button, "Missing objective slot should keep the existing header fallback.");
+        Assert.AreEqual(new Vector2(228f, 78f), button.sizeDelta);
+        Assert.IsTrue(nestedObjectives.gameObject.activeSelf, "Fallback binding must never hide unresolved objectives.");
+        Assert.NotNull(overlay.GetComponentInChildren<AriaCommandAssistantPopupView>(true));
+
+        ui.Dispose();
+    }
+
+    [Test]
+    public void BindMatchHudAssistant_AppliesStructuredRowsWithoutCreatingPopupObjects()
+    {
+        CreateHudHarness(true, out RectTransform overlay, out RectTransform header, out _);
+        var gateway = new FakeAssistantPanelGateway(CreateStructuredModel(42), CreateHighlightModel(88));
+        UiShellRuntimeGateway.Register(gateway);
+        var ui = new MainMenuPlayUI();
+        ui.Init(null, new FakeMatchRuntimeState());
+        ui.BindMatchHudAssistant(header.gameObject, overlay, LoadPopupPrefab());
+
+        AriaCommandAssistantPopupView popup = overlay.GetComponentInChildren<AriaCommandAssistantPopupView>(true);
+        Assert.NotNull(popup);
+        int childCountBefore = popup.GetComponentsInChildren<Transform>(true).Length;
         ui.Update();
+        int childCountAfter = popup.GetComponentsInChildren<Transform>(true).Length;
+        Assert.AreEqual(childCountBefore, childCountAfter, "Read-model binding must reuse the prefab hierarchy.");
 
-        RectTransform panel = overlay.Find("AriaAssistantPanel") as RectTransform;
-        Assert.NotNull(panel);
-        TMP_Text goals = panel.Find("GoalsBody")?.GetComponent<TMP_Text>();
-        TMP_Text alerts = panel.Find("AlertsBody")?.GetComponent<TMP_Text>();
-        TMP_Text narration = panel.Find("NarrationSubtitle")?.GetComponent<TMP_Text>();
-        TMP_Text ownership = panel.Find("OwnershipBody")?.GetComponent<TMP_Text>();
-        TMP_Text recommendation = panel.Find("RecommendationBody")?.GetComponent<TMP_Text>();
-        Image previewPulse = panel.Find("PreviewPulse")?.GetComponent<Image>();
-        Button showMe = panel.Find("NextActionButton")?.GetComponent<Button>();
-        Button giveControl = panel.Find("GiveControlButton")?.GetComponent<Button>();
-        Button stop = panel.Find("StopButton")?.GetComponent<Button>();
-        TMP_Text giveControlLabel = panel.Find("GiveControlButton/Label")?.GetComponent<TMP_Text>();
+        Assert.AreEqual("Secure the relay", Text(popup.transform, "Goal0Title"));
+        Assert.AreEqual("PRIMARY / ACTIVE", Text(popup.transform, "Goal0StateText"));
+        Assert.IsFalse(FindNamed(popup.transform, "GoalRow2").gameObject.activeSelf);
+        Assert.AreEqual("HOSTILE ARMOR", Text(popup.transform, "Alert0Body"));
+        Assert.AreEqual("CRITICAL / NEW", Text(popup.transform, "Alert0PriorityText"));
+        Assert.AreEqual("Fuel convoy ready", Text(popup.transform, "Report0Body"));
+        Assert.AreEqual("LOW / ACTIVE", Text(popup.transform, "Report0PriorityText"));
+        Assert.AreEqual("Raven Tank", Text(popup.transform, "TargetNameText"));
+        Assert.AreEqual("PRESENTED", Text(popup.transform, "NarrationStateText"));
+        Assert.IsTrue(FindNamed(popup.transform, "NarrationWaveform").gameObject.activeSelf);
+        Assert.AreEqual("ELAPSED: 02:07", Text(popup.transform, "ElapsedText"));
+        Assert.IsTrue(FindNamed(popup.transform, "ShowMeButton").GetComponent<Button>().interactable);
+        Assert.IsTrue(FindNamed(popup.transform, "DoItButton").GetComponent<Button>().interactable);
+        Assert.IsTrue(FindNamed(popup.transform, "StopButton").GetComponent<Button>().interactable);
+        Assert.AreEqual("DO IT", Text(popup.transform, "DoItButtonLabel"));
 
-        Assert.NotNull(goals);
-        Assert.NotNull(alerts);
-        Assert.NotNull(narration);
-        Assert.NotNull(ownership);
-        Assert.NotNull(recommendation);
-        Assert.NotNull(previewPulse);
-        Assert.NotNull(showMe);
-        Assert.NotNull(giveControl);
-        Assert.NotNull(stop);
-        Assert.NotNull(giveControlLabel);
-        Assert.AreEqual("- Neutralize hostile patrol\n[x] Protect civilians", goals.text);
-        Assert.AreEqual("HIGH: Fuel reserves empty", alerts.text);
-        Assert.AreEqual("HIGH: Hostile patrol near base", narration.text);
-        Assert.AreEqual("ARIA is executing a bounded action. STOP returns control.", ownership.text);
-        StringAssert.Contains("HIGH: Review objective", recommendation.text);
-        Assert.IsTrue(previewPulse.gameObject.activeSelf);
-        Assert.Greater(previewPulse.color.a, 0.4f);
+        FindNamed(popup.transform, "ShowMeButton").GetComponent<Button>().onClick.Invoke();
+        FindNamed(popup.transform, "DoItButton").GetComponent<Button>().onClick.Invoke();
+        Assert.AreEqual(2, gateway.AssistantIntentRequestCount);
+        Assert.AreEqual(UiAssistantCommandIntentKind.ExecuteRecommendation, gateway.LastAssistantIntentKind);
+        Assert.IsTrue(gateway.LastAssistantIntentFromTakeover);
+
         GameObject worldRing = GameObject.Find("AriaAssistantPreviewHighlightRuntime");
         Assert.NotNull(worldRing);
-        Assert.IsTrue(worldRing.activeSelf);
-        LineRenderer worldRingRenderer = worldRing.GetComponent<LineRenderer>();
-        Assert.NotNull(worldRingRenderer);
-        Assert.AreEqual(96, worldRingRenderer.positionCount);
-        Assert.AreEqual(12f + 2.35f, worldRingRenderer.GetPosition(0).x, 0.01f);
-        Assert.AreEqual(3f + 0.38f, worldRingRenderer.GetPosition(0).y, 0.01f);
-        Assert.AreEqual(9f, worldRingRenderer.GetPosition(0).z, 0.01f);
-        Assert.IsTrue(showMe.interactable);
-        Assert.IsTrue(giveControl.interactable);
-        Assert.IsTrue(stop.interactable);
-        Assert.AreEqual("DO IT", giveControlLabel.text);
-
-        showMe.onClick.Invoke();
-
-        Assert.AreEqual(1, assistantGateway.AssistantIntentRequestCount);
-        Assert.AreEqual(UiAssistantCommandIntentKind.ShowRecommendation, assistantGateway.LastAssistantIntentKind);
-        Assert.IsFalse(assistantGateway.LastAssistantIntentFromTakeover);
-
-        giveControl.onClick.Invoke();
-
-        Assert.AreEqual(2, assistantGateway.AssistantIntentRequestCount);
-        Assert.AreEqual(UiAssistantCommandIntentKind.ExecuteRecommendation, assistantGateway.LastAssistantIntentKind);
-        Assert.IsTrue(assistantGateway.LastAssistantIntentFromTakeover);
-
-        stop.onClick.Invoke();
-
-        Assert.AreEqual(3, assistantGateway.AssistantIntentRequestCount);
-        Assert.AreEqual(UiAssistantCommandIntentKind.StopAssistantControl, assistantGateway.LastAssistantIntentKind);
-        Assert.IsFalse(assistantGateway.LastAssistantIntentFromTakeover);
-
-        assistantGateway.AssistantPanel = new UiAssistantPanelModel(
-            43,
-            "- Neutralize hostile patrol\n[x] Protect civilians",
-            "HIGH: Fuel reserves empty",
-            "HIGH: Hidden narration",
-            false,
-            true,
-            true,
-            "Review objective",
-            "Focus the active objective before choosing the next order.",
-            "HIGH",
-            "SHOW ME",
-            true,
-            true,
-            true,
-            false,
-            "ARIA CONTROL",
-            "ARIA is executing a bounded action. STOP returns control.");
-        ui.Update();
-
-        Assert.IsFalse(narration.gameObject.activeSelf, "Assistant subtitles should hide when the setting is disabled.");
-        Assert.AreEqual("HIGH: Fuel reserves empty", alerts.text, "Critical text alerts must remain visible when narration subtitles are hidden.");
-
+        Assert.AreEqual(96, worldRing.GetComponent<LineRenderer>().positionCount);
         ui.Dispose();
-        UnityEngine.Object.DestroyImmediate(overlay.gameObject);
     }
 
     [Test]
-    public void BindMatchHudAssistant_VisualSurfaceKeepsControlsReadableInsideOverlay()
+    public void AssistantPanelUi_UnchangedModelApplicationsAllocateZeroManagedBytes()
     {
-        RectTransform overlay = CreateRectRoot("AssistantUiTestOverlay", new Vector2(1920f, 1080f));
-        RectTransform header = CreateRect("HeaderContent", overlay);
-        header.anchorMin = new Vector2(0f, 1f);
-        header.anchorMax = new Vector2(0f, 1f);
-        header.pivot = new Vector2(0f, 1f);
-        header.anchoredPosition = Vector2.zero;
-        header.sizeDelta = new Vector2(1920f, 160f);
+        GameObject instance = UnityEngine.Object.Instantiate(LoadPopupPrefab());
+        instance.name = "AssistantUiTestAllocationPopup";
+        AriaCommandAssistantPopupView popup = instance.GetComponent<AriaCommandAssistantPopupView>();
+        Assert.NotNull(popup);
+        Assert.IsTrue(popup.TryBindHierarchy());
 
+        var panel = new AssistantPanelUiSystemHelper();
+        panel.Bind(popup, null, null);
+        UiAssistantPanelModel model = CreateStructuredModel(73);
+        panel.ApplyReadModel(model);
+        for (int i = 0; i < 16; i++)
+            panel.ApplyReadModel(model);
+
+        long allocationStart = GC.GetAllocatedBytesForCurrentThread();
+        for (int i = 0; i < 1000; i++)
+            panel.ApplyReadModel(model);
+        long allocatedBytes = GC.GetAllocatedBytesForCurrentThread() - allocationStart;
+
+        Assert.AreEqual(0, allocatedBytes, "Repeated applications of one assistant model version must allocate zero managed bytes.");
+        panel.Unbind();
+    }
+
+    [Test]
+    public void BindMatchHudAssistant_EnforcesPopupExclusivity()
+    {
+        CreateHudHarness(true, out RectTransform overlay, out RectTransform header, out RectTransform objectives);
         var ui = new MainMenuPlayUI();
         ui.Init(null, new FakeMatchRuntimeState());
-        ui.BindMatchHudAssistant(header.gameObject, overlay);
-        var assistantGateway = new FakeAssistantPanelGateway(
-            new UiAssistantPanelModel(
-            101,
-            "- Neutralize hostile patrol\n[x] Protect civilians",
-            "HIGH: Hostile patrol near base\nNORMAL: Fuel convoy ready",
-            "HIGH: Hostile patrol near base",
-            true,
-            true,
-            true,
-            "Assign attack order",
-            "Focus the visible hostile target, then execute the recommended attack order.",
-            "HIGH",
-            "SHOW ME",
-            true,
-            true,
-            true,
-            false,
-            "ARIA CONTROL",
-            "ARIA can execute one bounded tactical order. STOP returns control."),
+        ui.BindMatchHudAssistant(header.gameObject, overlay, LoadPopupPrefab());
+
+        GameObject buildRoot = CreatePopupPeer<BuildDrawerView>("AssistantUiTestBuildDrawer");
+        GameObject mapRoot = CreatePopupPeer<MatchHudFullMapPopupView>("AssistantUiTestFullMap");
+        GameObject exchangeRoot = CreatePopupPeer<ResourceExchangePopupView>("AssistantUiTestResourceExchange");
+        ui.BindBuildDrawer(buildRoot.GetComponent<BuildDrawerView>());
+        ui.BindMatchHudFullMapPopup(mapRoot.GetComponent<MatchHudFullMapPopupView>());
+        ui.BindResourceExchangePopup(exchangeRoot.GetComponent<ResourceExchangePopupView>());
+
+        int buildClosed = 0;
+        int mapClosed = 0;
+        int exchangeClosed = 0;
+        ui.ConfigureLargeTacticalPopupCloseActions(
+            () => { buildClosed++; buildRoot.SetActive(false); },
+            () => { mapClosed++; mapRoot.SetActive(false); },
+            () => { exchangeClosed++; exchangeRoot.SetActive(false); });
+
+        RectTransform button = objectives.parent.Find("AriaAssistantButton") as RectTransform;
+        button.GetComponent<Button>().onClick.Invoke();
+        Assert.AreEqual(1, buildClosed);
+        Assert.AreEqual(1, mapClosed);
+        Assert.AreEqual(1, exchangeClosed);
+        Assert.IsTrue(overlay.GetComponentInChildren<AriaCommandAssistantPopupView>(true).IsOpen);
+        ui.Dispose();
+    }
+
+    [Test]
+    public void BindMatchHudAssistant_CloseEscapeAndStopHaveSeparateSemantics()
+    {
+        CreateHudHarness(true, out RectTransform overlay, out RectTransform header, out RectTransform objectives);
+        var gateway = new FakeAssistantPanelGateway(
+            CreateStructuredModel(91, canExecute: false),
             UiAssistantHighlightModel.Empty);
-        UiShellRuntimeGateway.Register(assistantGateway);
-
-        RectTransform button = header.Find("AriaAssistantButton") as RectTransform;
-        Assert.NotNull(button);
-        button.GetComponent<Button>().onClick.Invoke();
+        UiShellRuntimeGateway.Register(gateway);
+        var panelStates = new List<bool>();
+        var ui = new MainMenuPlayUI();
+        ui.MatchHudAssistantPanelOpenChanged += panelStates.Add;
+        ui.Init(null, new FakeMatchRuntimeState());
+        ui.BindMatchHudAssistant(header.gameObject, overlay, LoadPopupPrefab());
         ui.Update();
 
-        RectTransform panel = overlay.Find("AriaAssistantPanel") as RectTransform;
-        Assert.NotNull(panel);
-        Assert.IsTrue(panel.gameObject.activeSelf, "The ARIA panel must be visible after clicking the header button.");
+        Button access = objectives.parent.Find("AriaAssistantButton").GetComponent<Button>();
+        AriaCommandAssistantPopupView popup = overlay.GetComponentInChildren<AriaCommandAssistantPopupView>(true);
+        Assert.IsFalse(FindNamed(popup.transform, "DoItButton").GetComponent<Button>().interactable);
+        Assert.AreEqual("DO IT", Text(popup.transform, "DoItButtonLabel"));
+        access.onClick.Invoke();
+        FindNamed(popup.transform, "HeaderCloseButton").GetComponent<Button>().onClick.Invoke();
+        Assert.IsFalse(popup.IsOpen);
+        Assert.AreEqual(0, gateway.AssistantIntentRequestCount, "Header CLOSE must not enqueue a command.");
 
-        AssertRectSize(button, new Vector2(228f, 78f), "ARIA header button");
-        AssertRectSize(panel, new Vector2(1040f, 760f), "ARIA assistant panel");
-        AssertRectContained(panel, RequireChild(panel, "NextActionButton"), "Show Me button");
-        AssertRectContained(panel, RequireChild(panel, "GiveControlButton"), "Do It button");
-        AssertRectContained(panel, RequireChild(panel, "StopButton"), "Stop button");
-        AssertRectContained(panel, RequireChild(panel, "NarrationSubtitle"), "Narration subtitle");
+        access.onClick.Invoke();
+        FindNamed(popup.transform, "CloseButton").GetComponent<Button>().onClick.Invoke();
+        Assert.IsFalse(popup.IsOpen);
+        Assert.AreEqual(0, gateway.AssistantIntentRequestCount, "Bottom CLOSE must not enqueue a command.");
 
-        AssertTextReadable(panel, "Title", "ARIA COMMAND ASSISTANT", 40f);
-        AssertTextReadable(panel, "GoalsBody", "Neutralize hostile patrol", 30f);
-        AssertTextReadable(panel, "AlertsBody", "Hostile patrol", 28f);
-        AssertTextReadable(panel, "NarrationSubtitle", "HIGH: Hostile patrol near base", 24f);
-        AssertTextReadable(panel, "RecommendationBody", "Focus the visible hostile target", 28f);
-        AssertTextReadable(panel, "NextActionButton/Label", "SHOW ME", 24f);
-        AssertTextReadable(panel, "GiveControlButton/Label", "DO IT", 24f);
-        AssertTextReadable(panel, "StopButton/Label", "STOP", 24f);
+        access.onClick.Invoke();
+        FindNamed(popup.transform, "StopButton").GetComponent<Button>().onClick.Invoke();
+        Assert.IsTrue(popup.IsOpen, "STOP is a command and must not close the popup.");
+        Assert.AreEqual(1, gateway.AssistantIntentRequestCount);
+        Assert.AreEqual(UiAssistantCommandIntentKind.StopAssistantControl, gateway.LastAssistantIntentKind);
 
-        AssertNoOverlap(RequireChild(panel, "NextActionButton"), RequireChild(panel, "GiveControlButton"), "Show Me and Do It buttons");
-        AssertNoOverlap(RequireChild(panel, "GiveControlButton"), RequireChild(panel, "CloseButton"), "Do It and Close buttons");
-        AssertNoOverlap(RequireChild(panel, "GiveControlButton"), RequireChild(panel, "StopButton"), "Do It and Stop buttons");
-        AssertNoOverlap(RequireChild(panel, "RecommendationBody"), RequireChild(panel, "NextActionButton"), "Recommendation text and command buttons");
-
+        Assert.IsTrue(ui.TryCloseMatchHudAssistantForBack());
+        Assert.IsFalse(popup.IsOpen, "Escape/back closes ARIA first.");
+        Assert.AreEqual(1, gateway.AssistantIntentRequestCount, "Escape/back must not enqueue STOP.");
+        Assert.IsFalse(gateway.LastAssistantPanelOpen);
+        CollectionAssert.Contains(gateway.AssistantPanelOpenStates, true);
+        CollectionAssert.Contains(panelStates, true);
+        Assert.IsFalse(panelStates[panelStates.Count - 1]);
         ui.Dispose();
-        UnityEngine.Object.DestroyImmediate(overlay.gameObject);
     }
 
-    [Test]
-    public void BindMatchHudAssistant_RemainsReadableOnScaledMatchHudOverlay()
+    private static UiAssistantPanelModel CreateStructuredModel(uint version, bool canExecute = true)
     {
-        RectTransform overlay = CreateRectRoot("AssistantUiTestScaledOverlay", new Vector2(1920f, 1080f));
-        overlay.localScale = new Vector3(0.325f, 0.325f, 1f);
-        RectTransform header = CreateRect("HeaderContent", overlay);
+        return new UiAssistantPanelModel(
+            version,
+            true,
+            127,
+            new UiAssistantGoalRowModel(true, 10, "Secure the relay", "Hold the uplink perimeter.", 0, 2, true),
+            new UiAssistantGoalRowModel(true, 11, "Protect civilians", "Keep the evacuation route open.", 2, 3, false),
+            UiAssistantGoalRowModel.Empty,
+            new UiAssistantMessageRowModel(true, 20, "HOSTILE ARMOR", "Raven Tank is firing on Echo Squad.", 3, 1, 1, true, false),
+            UiAssistantMessageRowModel.Empty,
+            UiAssistantMessageRowModel.Empty,
+            new UiAssistantMessageRowModel(true, 30, "Fuel convoy ready", "Depot route is clear.", 0, 2, 2, false, false),
+            UiAssistantMessageRowModel.Empty,
+            new UiAssistantTargetLockModel(true, 2, 1, "Raven Tank", "Echo Squad", "140 M", "72 / 100", "HOSTILE", "PREVIEW", "Line of fire verified."),
+            new UiAssistantNarrationModel((byte)UiAssistantNarrationStateKind.Presented, 3, "PRESENTED", "Hostile armor identified.", string.Empty, true),
+            true,
+            "Focus hostile armor",
+            "Preview the verified hostile source before dispatch.",
+            "CRITICAL",
+            "SHOW ME",
+            true,
+            canExecute,
+            true,
+            false,
+            "PLAYER CONTROL",
+            "You are issuing orders directly.");
+    }
+
+    private static UiAssistantHighlightModel CreateHighlightModel(uint version)
+    {
+        return new UiAssistantHighlightModel(version, true, 7, 3101, 1, 12f, 3f, 9f, 1f);
+    }
+
+    private static void CreateHudHarness(
+        bool includeDirectObjectivePanel,
+        out RectTransform overlay,
+        out RectTransform header,
+        out RectTransform objectives)
+    {
+        overlay = CreateRectRoot("AssistantUiTestOverlay", new Vector2(4800f, 2160f));
+        header = CreateRect("HeaderContent", overlay);
         header.anchorMin = new Vector2(0f, 1f);
-        header.anchorMax = new Vector2(0f, 1f);
-        header.pivot = new Vector2(0f, 1f);
+        header.anchorMax = new Vector2(1f, 1f);
+        header.pivot = new Vector2(0.5f, 1f);
         header.anchoredPosition = Vector2.zero;
-        header.sizeDelta = new Vector2(1920f, 160f);
+        header.sizeDelta = new Vector2(0f, 560f);
 
-        var ui = new MainMenuPlayUI();
-        ui.Init(null, new FakeMatchRuntimeState());
-        ui.BindMatchHudAssistant(header.gameObject, overlay);
-
-        RectTransform button = header.Find("AriaAssistantButton") as RectTransform;
-        Assert.NotNull(button);
-        button.GetComponent<Button>().onClick.Invoke();
-
-        RectTransform panel = overlay.Find("AriaAssistantPanel") as RectTransform;
-        Assert.NotNull(panel);
-        Assert.IsTrue(panel.gameObject.activeSelf, "The ARIA panel must open on a scaled match HUD overlay.");
-
-        AssertWorldSizeAtLeast(panel, new Vector2(330f, 240f), "scaled ARIA assistant panel");
-        AssertScaledTextReadable(panel, "Title", 12f);
-        AssertScaledTextReadable(panel, "GoalsBody", 9f);
-        AssertScaledTextReadable(panel, "AlertsBody", 9f);
-        AssertScaledTextReadable(panel, "RecommendationBody", 9f);
-        AssertWorldSizeAtLeast(RequireChild(panel, "NextActionButton"), new Vector2(68f, 22f), "scaled Show Me button");
-        AssertWorldSizeAtLeast(RequireChild(panel, "GiveControlButton"), new Vector2(68f, 22f), "scaled Do It button");
-        AssertWorldSizeAtLeast(RequireChild(panel, "CloseButton"), new Vector2(68f, 22f), "scaled Close button");
-
-        ui.Dispose();
-        UnityEngine.Object.DestroyImmediate(overlay.gameObject);
+        Transform parent = header;
+        if (!includeDirectObjectivePanel)
+            parent = CreateRect("FallbackObjectivesContainer", header);
+        objectives = CreateRect("ObjectivesPanel", parent);
+        objectives.anchorMin = new Vector2(0f, 1f);
+        objectives.anchorMax = new Vector2(0f, 1f);
+        objectives.pivot = new Vector2(0f, 1f);
+        objectives.anchoredPosition = new Vector2(16f, -16f);
+        objectives.sizeDelta = new Vector2(670f, 520f);
     }
 
     private static RectTransform CreateRectRoot(string name, Vector2 size)
@@ -337,8 +376,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         var root = new GameObject(name, typeof(RectTransform), typeof(Canvas));
         RectTransform rect = root.GetComponent<RectTransform>();
         rect.sizeDelta = size;
-        Canvas canvas = root.GetComponent<Canvas>();
-        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        root.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
         return rect;
     }
 
@@ -349,81 +387,60 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         return root.GetComponent<RectTransform>();
     }
 
+    private static GameObject CreatePopupPeer<T>(string name) where T : Component
+    {
+        var root = new GameObject(name, typeof(RectTransform), typeof(T));
+        root.SetActive(true);
+        return root;
+    }
+
+    private static GameObject LoadPopupPrefab()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PopupPrefabPath);
+        Assert.NotNull(prefab, PopupPrefabPath);
+        return prefab;
+    }
+
+    private static Transform FindNamed(Transform root, string name)
+    {
+        if (root == null)
+            return null;
+        if (root.name == name)
+            return root;
+        for (int i = 0; i < root.childCount; i++)
+        {
+            Transform match = FindNamed(root.GetChild(i), name);
+            if (match != null)
+                return match;
+        }
+        return null;
+    }
+
+    private static string Text(Transform root, string name)
+    {
+        Transform match = FindNamed(root, name);
+        Assert.NotNull(match, name);
+        TMP_Text text = match.GetComponent<TMP_Text>();
+        Assert.NotNull(text, name);
+        return text.text;
+    }
+
     private static Vector2 CenterScreenPoint(RectTransform rect)
     {
         Vector3[] corners = new Vector3[4];
         rect.GetWorldCorners(corners);
-        Vector3 center = (corners[0] + corners[2]) * 0.5f;
-        return RectTransformUtility.WorldToScreenPoint(null, center);
+        return RectTransformUtility.WorldToScreenPoint(null, (corners[0] + corners[2]) * 0.5f);
     }
 
-    private static RectTransform RequireChild(RectTransform parent, string path)
+    private static T FindInScene<T>(Scene scene) where T : Component
     {
-        RectTransform child = parent.Find(path) as RectTransform;
-        Assert.NotNull(child, $"{path} must exist under {parent.name}.");
-        Assert.IsTrue(child.gameObject.activeInHierarchy, $"{path} must be visible.");
-        return child;
-    }
-
-    private static void AssertTextReadable(RectTransform parent, string path, string expectedText, float minimumFontSize)
-    {
-        RectTransform rect = RequireChild(parent, path);
-        TMP_Text text = rect.GetComponent<TMP_Text>();
-        Assert.NotNull(text, $"{path} must have TMP text.");
-        StringAssert.Contains(expectedText, text.text, $"{path} must show the expected assistant text.");
-        Assert.GreaterOrEqual(text.fontSize, minimumFontSize, $"{path} font is too small for the match HUD.");
-        Assert.Greater(rect.rect.width, 40f, $"{path} must have visible width.");
-        Assert.Greater(rect.rect.height, 20f, $"{path} must have visible height.");
-    }
-
-    private static void AssertRectContained(RectTransform container, RectTransform child, string label)
-    {
-        Rect containerRect = WorldRect(container);
-        Rect childRect = WorldRect(child);
-        Assert.GreaterOrEqual(childRect.xMin, containerRect.xMin - 0.5f, $"{label} leaks left of its container.");
-        Assert.LessOrEqual(childRect.xMax, containerRect.xMax + 0.5f, $"{label} leaks right of its container.");
-        Assert.GreaterOrEqual(childRect.yMin, containerRect.yMin - 0.5f, $"{label} leaks below its container.");
-        Assert.LessOrEqual(childRect.yMax, containerRect.yMax + 0.5f, $"{label} leaks above its container.");
-    }
-
-    private static void AssertRectSize(RectTransform rectTransform, Vector2 expectedSize, string label)
-    {
-        Assert.AreEqual(expectedSize.x, rectTransform.rect.width, 0.1f, $"{label} width drifted.");
-        Assert.AreEqual(expectedSize.y, rectTransform.rect.height, 0.1f, $"{label} height drifted.");
-    }
-
-    private static void AssertWorldSizeAtLeast(RectTransform rectTransform, Vector2 minimumSize, string label)
-    {
-        Rect rect = WorldRect(rectTransform);
-        Assert.GreaterOrEqual(rect.width, minimumSize.x, $"{label} is too narrow in screen space.");
-        Assert.GreaterOrEqual(rect.height, minimumSize.y, $"{label} is too short in screen space.");
-    }
-
-    private static void AssertScaledTextReadable(RectTransform parent, string path, float minimumScreenFontSize)
-    {
-        RectTransform rect = RequireChild(parent, path);
-        TMP_Text text = rect.GetComponent<TMP_Text>();
-        Assert.NotNull(text, $"{path} must have TMP text.");
-        float screenFontSize = text.fontSize * Mathf.Abs(text.transform.lossyScale.y);
-        Assert.GreaterOrEqual(screenFontSize, minimumScreenFontSize, $"{path} is too small after HUD scaling.");
-    }
-
-    private static void AssertNoOverlap(RectTransform first, RectTransform second, string label)
-    {
-        Rect firstRect = WorldRect(first);
-        Rect secondRect = WorldRect(second);
-        Assert.IsFalse(firstRect.Overlaps(secondRect), $"{label} should not overlap.");
-    }
-
-    private static Rect WorldRect(RectTransform rectTransform)
-    {
-        Vector3[] corners = new Vector3[4];
-        rectTransform.GetWorldCorners(corners);
-        float xMin = Mathf.Min(corners[0].x, corners[2].x);
-        float xMax = Mathf.Max(corners[0].x, corners[2].x);
-        float yMin = Mathf.Min(corners[0].y, corners[2].y);
-        float yMax = Mathf.Max(corners[0].y, corners[2].y);
-        return Rect.MinMaxRect(xMin, yMin, xMax, yMax);
+        foreach (GameObject root in scene.GetRootGameObjects())
+        {
+            T match = root.GetComponentInChildren<T>(true);
+            if (match != null)
+                return match;
+        }
+        return null;
     }
 
     private sealed class FakeMatchRuntimeState : IMatchRuntimeState
@@ -437,17 +454,18 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         public bool SuppressNextWorldClick { get; set; }
     }
 
-    private sealed class FakeAssistantPanelGateway : IUiShellRuntimeGateway
+    private sealed class FakeAssistantPanelGateway : IUiShellRuntimeGateway, IUiAssistantPanelStateGateway
     {
         private readonly UiAssistantHighlightModel _assistantHighlight;
         public int AssistantIntentRequestCount { get; private set; }
         public UiAssistantCommandIntentKind LastAssistantIntentKind { get; private set; }
         public bool LastAssistantIntentFromTakeover { get; private set; }
         public UiAssistantPanelModel AssistantPanel { get; set; }
+        public List<bool> AssistantPanelOpenStates { get; } = new();
+        public bool LastAssistantPanelOpen => AssistantPanelOpenStates.Count > 0 &&
+                                              AssistantPanelOpenStates[AssistantPanelOpenStates.Count - 1];
 
-        public FakeAssistantPanelGateway(
-            UiAssistantPanelModel assistantPanel,
-            UiAssistantHighlightModel assistantHighlight)
+        public FakeAssistantPanelGateway(UiAssistantPanelModel assistantPanel, UiAssistantHighlightModel assistantHighlight)
         {
             AssistantPanel = assistantPanel;
             _assistantHighlight = assistantHighlight;
@@ -455,6 +473,12 @@ public sealed class MatchHudAssistantUiSystemHelperTests
 
         public bool TryEnqueueRouteRequest(UiShellRouteIntent intent, UIRoute route, bool pushHistory) => false;
         public bool TryEnqueueUiAction(UiActionKind kind, int payloadId) => false;
+        public bool TrySetAssistantPanelOpen(bool open)
+        {
+            AssistantPanelOpenStates.Add(open);
+            return true;
+        }
+
         public bool TryEnqueueAssistantCommandIntent(UiAssistantCommandIntentKind kind, bool fromTakeover)
         {
             AssistantIntentRequestCount++;

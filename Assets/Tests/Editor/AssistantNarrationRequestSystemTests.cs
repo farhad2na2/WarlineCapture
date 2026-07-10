@@ -16,6 +16,8 @@ public sealed class AssistantNarrationRequestSystemTests
     private EntityManager _entityManager;
     private SystemHandle _narrationSystem;
     private SystemHandle _narrationAudioSystem;
+    private SystemHandle _narrationAudioResultSystem;
+    private Entity _matchStartBoundary;
 
     public static void RunFocusedValidation()
     {
@@ -32,7 +34,19 @@ public sealed class AssistantNarrationRequestSystemTests
             passed++;
             RunCase(test => test.AssistantNarrationRequestSystem_ThrottlesLowPriorityButAllowsCriticalInterruption());
             passed++;
+            RunCase(test => test.AssistantNarrationRequestSystem_ThreatSuppressionExpiresAfterEightSeconds());
+            passed++;
             RunCase(test => test.AssistantNarrationAudioRequestSystem_QueuesAriaVoicePlayback());
+            passed++;
+            RunCase(test => test.AssistantNarrationAudioRequestSystem_PreservesTextOnlyTruth());
+            passed++;
+            RunCase(test => test.AssistantNarrationSystems_GateAndClearOutsideStartedMatch());
+            passed++;
+            RunCase(test => test.AssistantNarrationAudioResultProjection_UsesNewestCorrelatedResult());
+            passed++;
+            RunCase(test => test.AssistantNarrationAudioTruth_ResolvesOnlyObservableStates());
+            passed++;
+            RunCase(test => test.AssistantNarrationPresentedPulse_EndsAtPointEightSeconds());
             passed++;
 
             Debug.Log($"[AssistantNarrationRequestSystemValidation] result=Passed tests={passed}");
@@ -67,6 +81,15 @@ public sealed class AssistantNarrationRequestSystemTests
         _entityManager = _world.EntityManager;
         _narrationSystem = _world.CreateSystem<AssistantNarrationRequestSystem>();
         _narrationAudioSystem = _world.CreateSystem<AssistantNarrationAudioRequestSystem>();
+        _narrationAudioResultSystem = _world.CreateSystem<AssistantNarrationAudioResultProjectionSystem>();
+        _matchStartBoundary = _entityManager.CreateEntity(
+            typeof(MatchStartStateComponent),
+            typeof(MatchStartQueueComponent));
+        _entityManager.SetComponentData(_matchStartBoundary, new MatchStartQueueComponent
+        {
+            HasStarted = 1,
+            LastStatus = MatchStartStatusKind.Started
+        });
     }
 
     [TearDown]
@@ -94,7 +117,8 @@ public sealed class AssistantNarrationRequestSystemTests
 
         AssistantNarrationStateComponent narrationState =
             _entityManager.GetComponentData<AssistantNarrationStateComponent>(boundary);
-        Assert.AreEqual(1001, narrationState.LastSpokenMessageId);
+        Assert.AreEqual(requests[0].RequestId, narrationState.ActiveNarrationId);
+        Assert.AreEqual(0, narrationState.LastSpokenMessageId);
         Assert.AreEqual(AssistantNarrationMode.Important, narrationState.Mode);
         Assert.AreEqual(1, narrationState.UiDirty);
     }
@@ -215,6 +239,28 @@ public sealed class AssistantNarrationRequestSystemTests
     }
 
     [Test]
+    public void AssistantNarrationRequestSystem_ThreatSuppressionExpiresAfterEightSeconds()
+    {
+        AssistantNarrationRequestElement request = new()
+        {
+            MessageId = 810123,
+            RequestedAt = 2f
+        };
+        AssistantMessageElement threat = new()
+        {
+            MessageId = 810123
+        };
+        AssistantMessageElement report = new()
+        {
+            MessageId = 820123
+        };
+
+        Assert.IsTrue(AssistantNarrationRequestSystem.IsRequestSuppressed(request, threat, 9.999f));
+        Assert.IsFalse(AssistantNarrationRequestSystem.IsRequestSuppressed(request, threat, 10f));
+        Assert.IsTrue(AssistantNarrationRequestSystem.IsRequestSuppressed(request, report, 100f));
+    }
+
+    [Test]
     public void AssistantNarrationAudioRequestSystem_QueuesAriaVoicePlayback()
     {
         Entity boundary = CreateBoundary(AssistantNarrationMode.Important);
@@ -232,7 +278,8 @@ public sealed class AssistantNarrationRequestSystemTests
         DynamicBuffer<AssistantNarrationRequestElement> narrationRequests =
             _entityManager.GetBuffer<AssistantNarrationRequestElement>(boundary);
         Assert.AreEqual(1, narrationRequests.Length);
-        Assert.AreEqual(AssistantCommandIntentStatus.Completed, narrationRequests[0].Status);
+        Assert.AreEqual(AssistantCommandIntentStatus.Accepted, narrationRequests[0].Status);
+        Assert.Greater(narrationRequests[0].AudioPlaybackRequestId, 0);
         Assert.AreEqual(AudioEventIds.VOARIAMessageWarningGroundAttackType, narrationRequests[0].AudioEventId.ToString());
         Assert.AreEqual(AudioEventIds.VOARIAMessageWarningGroundAttackTypeHash, narrationRequests[0].AudioEventHash);
 
@@ -240,6 +287,7 @@ public sealed class AssistantNarrationRequestSystemTests
         DynamicBuffer<AudioPlaybackRequestElement> playbackRequests =
             _entityManager.GetBuffer<AudioPlaybackRequestElement>(audioEntity);
         Assert.AreEqual(1, playbackRequests.Length);
+        Assert.AreEqual(narrationRequests[0].AudioPlaybackRequestId, playbackRequests[0].RequestId);
         Assert.AreEqual(AudioPlaybackRequestKind.OneShot, playbackRequests[0].Kind);
         Assert.AreEqual(AudioPlaybackPriority.High, playbackRequests[0].Priority);
         Assert.AreEqual(AudioPlaybackRequestStatus.Pending, playbackRequests[0].Status);
@@ -252,6 +300,247 @@ public sealed class AssistantNarrationRequestSystemTests
         Assert.AreEqual(AudioPlaybackRequestStatus.Accepted, playbackRequests[0].Status);
     }
 
+    [Test]
+    public void AssistantNarrationAudioRequestSystem_PreservesTextOnlyTruth()
+    {
+        Entity boundary = CreateBoundary(AssistantNarrationMode.Important);
+        AddMessage(boundary, 1351, AssistantMessagePriority.High, "Hostile cell spotted", requiresNarration: 1);
+        DynamicBuffer<AssistantMessageElement> messages =
+            _entityManager.GetBuffer<AssistantMessageElement>(boundary);
+        AssistantMessageElement message = messages[0];
+        message.AudioEventId = default;
+        messages[0] = message;
+
+        _narrationSystem.Update(_world.Unmanaged);
+        _narrationAudioSystem.Update(_world.Unmanaged);
+
+        AssistantNarrationRequestElement request =
+            _entityManager.GetBuffer<AssistantNarrationRequestElement>(boundary)[0];
+        AssistantNarrationStateComponent narrationState =
+            _entityManager.GetComponentData<AssistantNarrationStateComponent>(boundary);
+        Entity audioEntity = AudioEventRequestSystem.EnsureAudioEntity(_entityManager);
+
+        Assert.AreEqual(AssistantCommandIntentStatus.Accepted, request.Status);
+        Assert.AreEqual(0, request.AudioPlaybackRequestId);
+        Assert.AreEqual(0, _entityManager.GetBuffer<AudioPlaybackRequestElement>(audioEntity).Length);
+        Assert.AreEqual(AudioPlaybackRequestStatus.Pending, narrationState.LastAudioStatus);
+        Assert.AreEqual(0, narrationState.LastAudioFailureReason.Length);
+        Assert.AreEqual(0, narrationState.IsSpeaking);
+    }
+
+    [Test]
+    public void AssistantNarrationSystems_GateAndClearOutsideStartedMatch()
+    {
+        Entity boundary = CreateBoundary(AssistantNarrationMode.Important);
+        AddMessage(boundary, 1401, AssistantMessagePriority.High, "Hostile patrol", requiresNarration: 1);
+
+        MatchStartQueueComponent matchStart =
+            _entityManager.GetComponentData<MatchStartQueueComponent>(_matchStartBoundary);
+        matchStart.HasStarted = 0;
+        matchStart.IsStartPending = 1;
+        matchStart.LastStatus = MatchStartStatusKind.Starting;
+        _entityManager.SetComponentData(_matchStartBoundary, matchStart);
+
+        _narrationSystem.Update(_world.Unmanaged);
+
+        Assert.AreEqual(0, _entityManager.GetBuffer<AssistantNarrationRequestElement>(boundary).Length);
+
+        matchStart.HasStarted = 1;
+        matchStart.IsStartPending = 0;
+        matchStart.LastStatus = MatchStartStatusKind.Started;
+        _entityManager.SetComponentData(_matchStartBoundary, matchStart);
+        _narrationSystem.Update(_world.Unmanaged);
+        _narrationAudioSystem.Update(_world.Unmanaged);
+        Assert.AreEqual(1, _entityManager.GetBuffer<AssistantNarrationRequestElement>(boundary).Length);
+
+        UiShellStateComponent shellState = _entityManager.GetComponentData<UiShellStateComponent>(boundary);
+        shellState.ActiveRoute = UIRoute.MainMenu;
+        shellState.CurrentMode = UiShellMode.MainMenu;
+        _entityManager.SetComponentData(boundary, shellState);
+        _narrationSystem.Update(_world.Unmanaged);
+
+        AssistantNarrationStateComponent narrationState =
+            _entityManager.GetComponentData<AssistantNarrationStateComponent>(boundary);
+        Assert.AreEqual(0, _entityManager.GetBuffer<AssistantNarrationRequestElement>(boundary).Length);
+        Assert.AreEqual(0, narrationState.ActiveNarrationId);
+        Assert.AreEqual(0, narrationState.ActiveAudioPlaybackRequestId);
+        Assert.AreEqual(AudioPlaybackRequestStatus.Pending, narrationState.LastAudioStatus);
+        Assert.AreEqual(0f, narrationState.LastPresentedAt);
+        Assert.AreEqual(0, narrationState.IsSpeaking);
+    }
+
+    [Test]
+    public void AssistantNarrationAudioResultProjection_UsesNewestCorrelatedResult()
+    {
+        Entity boundary = CreateBoundary(AssistantNarrationMode.Important);
+        AddMessage(
+            boundary,
+            1501,
+            AssistantMessagePriority.High,
+            "Hostile cell spotted",
+            requiresNarration: 1,
+            audioEventId: AudioEventIds.VOARIAMessageWarningGroundAttackType);
+
+        _narrationSystem.Update(_world.Unmanaged);
+        _narrationAudioSystem.Update(_world.Unmanaged);
+
+        AssistantNarrationRequestElement narrationRequest =
+            _entityManager.GetBuffer<AssistantNarrationRequestElement>(boundary)[0];
+        Entity audioEntity = AudioEventRequestSystem.EnsureAudioEntity(_entityManager);
+        AudioCooldownSystem.ProcessPendingRequests(_entityManager, now: 1f);
+        _narrationAudioResultSystem.Update(_world.Unmanaged);
+
+        AssistantNarrationStateComponent narrationState =
+            _entityManager.GetComponentData<AssistantNarrationStateComponent>(boundary);
+        Assert.AreEqual(AudioPlaybackRequestStatus.Accepted, narrationState.LastAudioStatus);
+        Assert.AreEqual(0, narrationState.IsSpeaking);
+
+        uint acceptedVersion = narrationState.Version;
+        AudioEventRequestSystem.AppendPlaybackResult(_entityManager, audioEntity, new AudioPlaybackResultElement
+        {
+            RequestId = narrationRequest.AudioPlaybackRequestId + 1000,
+            Status = AudioPlaybackRequestStatus.MissingClip,
+            Reason = new FixedString64Bytes("Unrelated"),
+            ProcessedAt = 1.05f
+        });
+        _narrationAudioResultSystem.Update(_world.Unmanaged);
+        narrationState = _entityManager.GetComponentData<AssistantNarrationStateComponent>(boundary);
+        Assert.AreEqual(acceptedVersion, narrationState.Version);
+        Assert.AreEqual(AudioPlaybackRequestStatus.Accepted, narrationState.LastAudioStatus);
+
+        float presentedAt = Mathf.Max(0.01f, Time.unscaledTime);
+        AudioEventRequestSystem.AppendPlaybackResult(_entityManager, audioEntity, new AudioPlaybackResultElement
+        {
+            RequestId = narrationRequest.AudioPlaybackRequestId,
+            Status = AudioPlaybackRequestStatus.Presented,
+            EventHash = narrationRequest.AudioEventHash,
+            EventId = narrationRequest.AudioEventId,
+            Reason = new FixedString64Bytes("Played"),
+            ProcessedAt = presentedAt
+        });
+        _narrationAudioResultSystem.Update(_world.Unmanaged);
+
+        narrationState = _entityManager.GetComponentData<AssistantNarrationStateComponent>(boundary);
+        Assert.AreEqual(AudioPlaybackRequestStatus.Presented, narrationState.LastAudioStatus);
+        Assert.AreEqual(presentedAt, narrationState.LastPresentedAt);
+        Assert.AreEqual(1501, narrationState.LastSpokenMessageId);
+        Assert.AreEqual(0, narrationState.IsSpeaking);
+
+        AudioEventRequestSystem.AppendPlaybackResult(_entityManager, audioEntity, new AudioPlaybackResultElement
+        {
+            RequestId = narrationRequest.AudioPlaybackRequestId,
+            Status = AudioPlaybackRequestStatus.MissingClip,
+            EventHash = narrationRequest.AudioEventHash,
+            EventId = narrationRequest.AudioEventId,
+            Reason = new FixedString64Bytes("debug-only-reason"),
+            ProcessedAt = presentedAt + 0.1f
+        });
+        _narrationAudioResultSystem.Update(_world.Unmanaged);
+
+        narrationState = _entityManager.GetComponentData<AssistantNarrationStateComponent>(boundary);
+        Assert.AreEqual(AudioPlaybackRequestStatus.MissingClip, narrationState.LastAudioStatus);
+        Assert.AreEqual("Voice clip unavailable", narrationState.LastAudioFailureReason.ToString());
+        Assert.AreEqual(0f, narrationState.LastPresentedAt);
+        Assert.AreEqual(0, narrationState.IsSpeaking);
+    }
+
+    [Test]
+    public void AssistantNarrationAudioTruth_ResolvesOnlyObservableStates()
+    {
+        AssistantSettingsComponent assistantSettings = new()
+        {
+            NarrationMode = AssistantNarrationMode.Important
+        };
+        AudioSettingsComponent audioSettings = new()
+        {
+            MasterVolume = 1f,
+            VoiceVolume = 1f
+        };
+        AssistantNarrationRequestElement request = new()
+        {
+            Text = new FixedString128Bytes("Hostile cell spotted"),
+            AudioEventId = new FixedString64Bytes(AudioEventIds.VOARIAMessageWarningGroundAttackType),
+            AudioPlaybackRequestId = 7
+        };
+        AssistantNarrationStateComponent narrationState = new()
+        {
+            Mode = AssistantNarrationMode.Important,
+            LastAudioStatus = AudioPlaybackRequestStatus.Pending
+        };
+
+        Assert.AreEqual(
+            UiAssistantNarrationStateKind.Queued,
+            AssistantNarrationAudioResultProjectionSystem.ResolveTruthState(
+                assistantSettings,
+                audioSettings,
+                request,
+                narrationState));
+
+        narrationState.LastAudioStatus = AudioPlaybackRequestStatus.Accepted;
+        Assert.AreEqual(
+            UiAssistantNarrationStateKind.Accepted,
+            AssistantNarrationAudioResultProjectionSystem.ResolveTruthState(
+                assistantSettings,
+                audioSettings,
+                request,
+                narrationState));
+
+        narrationState.LastAudioStatus = AudioPlaybackRequestStatus.Presented;
+        Assert.AreEqual(
+            UiAssistantNarrationStateKind.Presented,
+            AssistantNarrationAudioResultProjectionSystem.ResolveTruthState(
+                assistantSettings,
+                audioSettings,
+                request,
+                narrationState));
+
+        narrationState.LastAudioStatus = AudioPlaybackRequestStatus.MissingEvent;
+        Assert.AreEqual(
+            UiAssistantNarrationStateKind.Failed,
+            AssistantNarrationAudioResultProjectionSystem.ResolveTruthState(
+                assistantSettings,
+                audioSettings,
+                request,
+                narrationState));
+
+        narrationState.LastAudioStatus = AudioPlaybackRequestStatus.Pending;
+        request.AudioEventId = default;
+        request.AudioPlaybackRequestId = 0;
+        Assert.AreEqual(
+            UiAssistantNarrationStateKind.TextOnly,
+            AssistantNarrationAudioResultProjectionSystem.ResolveTruthState(
+                assistantSettings,
+                audioSettings,
+                request,
+                narrationState));
+
+        audioSettings.VoiceMuted = 1;
+        Assert.AreEqual(
+            UiAssistantNarrationStateKind.Off,
+            AssistantNarrationAudioResultProjectionSystem.ResolveTruthState(
+                assistantSettings,
+                audioSettings,
+                request,
+                narrationState));
+    }
+
+    [Test]
+    public void AssistantNarrationPresentedPulse_EndsAtPointEightSeconds()
+    {
+        AssistantNarrationStateComponent narrationState = new()
+        {
+            LastAudioStatus = AudioPlaybackRequestStatus.Presented,
+            LastPresentedAt = 10f,
+            IsSpeaking = 0
+        };
+
+        Assert.IsTrue(AssistantNarrationAudioResultProjectionSystem.IsPresentationPulseActive(narrationState, 10f));
+        Assert.IsTrue(AssistantNarrationAudioResultProjectionSystem.IsPresentationPulseActive(narrationState, 10.799f));
+        Assert.IsFalse(AssistantNarrationAudioResultProjectionSystem.IsPresentationPulseActive(narrationState, 10.8f));
+        Assert.IsFalse(AssistantNarrationAudioResultProjectionSystem.IsPresentationPulseActive(narrationState, 11f));
+        Assert.AreEqual(0, narrationState.IsSpeaking);
+    }
+
     private Entity CreateBoundary(AssistantNarrationMode mode)
     {
         Entity boundary = _entityManager.CreateEntity(
@@ -259,6 +548,12 @@ public sealed class AssistantNarrationRequestSystemTests
             typeof(UiMatchHudStatusSurfacesComponent),
             typeof(UiMatchHudHeaderComponent),
             typeof(AssistantSettingsComponent));
+        _entityManager.SetComponentData(boundary, new UiShellStateComponent
+        {
+            CurrentMode = UiShellMode.MatchHud,
+            ActiveRoute = UIRoute.Match,
+            Phase = UiShellTransitionPhase.MatchHudReady
+        });
         _entityManager.SetComponentData(boundary, DefaultStatus());
         _entityManager.SetComponentData(boundary, new UiMatchHudHeaderComponent
         {

@@ -8,6 +8,9 @@ namespace Game.Runtime
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     public partial struct AudioEventRequestSystem : ISystem
     {
+        public const int MaxTerminalRequestHistory = 256;
+        public const int MaxResultHistory = 256;
+
         private static World s_CachedAudioWorld;
         private static Entity s_CachedAudioEntity;
 
@@ -31,6 +34,7 @@ namespace Game.Runtime
                 em.Exists(s_CachedAudioEntity) &&
                 em.HasComponent<AudioPlaybackRequestQueueComponent>(s_CachedAudioEntity))
             {
+                EnsureAudioStorage(em, s_CachedAudioEntity);
                 return s_CachedAudioEntity;
             }
 
@@ -39,11 +43,13 @@ namespace Game.Runtime
             {
                 s_CachedAudioWorld = world;
                 s_CachedAudioEntity = query.GetSingletonEntity();
+                EnsureAudioStorage(em, s_CachedAudioEntity);
                 return s_CachedAudioEntity;
             }
 
             Entity entity = em.CreateEntity(
                 typeof(AudioPlaybackRequestQueueComponent),
+                typeof(AudioPlaybackResultQueueComponent),
                 typeof(AudioSettingsComponent),
                 typeof(AudioMusicStateComponent),
                 typeof(AudioListenerStateComponent));
@@ -60,6 +66,50 @@ namespace Game.Runtime
             s_CachedAudioWorld = world;
             s_CachedAudioEntity = entity;
             return entity;
+        }
+
+        public static void AppendPlaybackResult(
+            EntityManager em,
+            Entity audioEntity,
+            AudioPlaybackResultElement result)
+        {
+            DynamicBuffer<AudioPlaybackResultElement> results = em.GetBuffer<AudioPlaybackResultElement>(audioEntity);
+            results.Add(result);
+            while (results.Length > MaxResultHistory)
+                results.RemoveAt(0);
+
+            AudioPlaybackResultQueueComponent resultQueue =
+                em.GetComponentData<AudioPlaybackResultQueueComponent>(audioEntity);
+            resultQueue.Version = NextVersion(resultQueue.Version);
+            em.SetComponentData(audioEntity, resultQueue);
+        }
+
+        public static void PruneTerminalRequestHistory(DynamicBuffer<AudioPlaybackRequestElement> requests)
+        {
+            int terminalCount = 0;
+            for (int i = 0; i < requests.Length; i++)
+            {
+                if (IsTerminalStatus(requests[i].Status))
+                    terminalCount++;
+            }
+
+            for (int i = 0; terminalCount > MaxTerminalRequestHistory && i < requests.Length;)
+            {
+                if (!IsTerminalStatus(requests[i].Status))
+                {
+                    i++;
+                    continue;
+                }
+
+                requests.RemoveAt(i);
+                terminalCount--;
+            }
+        }
+
+        public static bool IsTerminalStatus(AudioPlaybackRequestStatus status)
+        {
+            return status != AudioPlaybackRequestStatus.Pending &&
+                   status != AudioPlaybackRequestStatus.Accepted;
         }
 
         public static int EnqueueOneShot(
@@ -146,15 +196,30 @@ namespace Game.Runtime
                 VoiceVolume = 1f
             };
         }
+
+        private static void EnsureAudioStorage(EntityManager em, Entity entity)
+        {
+            if (!em.HasComponent<AudioPlaybackResultQueueComponent>(entity))
+                em.AddComponentData(entity, new AudioPlaybackResultQueueComponent());
+            if (!em.HasBuffer<AudioPlaybackRequestElement>(entity))
+                em.AddBuffer<AudioPlaybackRequestElement>(entity);
+            if (!em.HasBuffer<AudioPlaybackResultElement>(entity))
+                em.AddBuffer<AudioPlaybackResultElement>(entity);
+            if (!em.HasBuffer<AudioCooldownStateElement>(entity))
+                em.AddBuffer<AudioCooldownStateElement>(entity);
+        }
+
+        private static uint NextVersion(uint version)
+        {
+            uint next = version + 1u;
+            return next == 0u ? 1u : next;
+        }
     }
 
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     [UpdateAfter(typeof(AudioEventRequestSystem))]
     public partial struct AudioCooldownSystem : ISystem
     {
-        private const int MaxRequestHistory = 128;
-        private const int MaxResultHistory = 128;
-
         public void OnCreate(ref SystemState state)
         {
             AudioEventRequestSystem.EnsureAudioEntity(state.EntityManager);
@@ -169,8 +234,8 @@ namespace Game.Runtime
         {
             Entity audioEntity = AudioEventRequestSystem.EnsureAudioEntity(em);
             DynamicBuffer<AudioPlaybackRequestElement> requests = em.GetBuffer<AudioPlaybackRequestElement>(audioEntity);
-            DynamicBuffer<AudioPlaybackResultElement> results = em.GetBuffer<AudioPlaybackResultElement>(audioEntity);
             DynamicBuffer<AudioCooldownStateElement> cooldowns = em.GetBuffer<AudioCooldownStateElement>(audioEntity);
+            bool appendedTerminalResult = false;
 
             for (int i = 0; i < requests.Length; i++)
             {
@@ -189,7 +254,7 @@ namespace Game.Runtime
                     UpsertCooldown(cooldowns, request.EventHash, now);
                 }
 
-                results.Add(new AudioPlaybackResultElement
+                AudioEventRequestSystem.AppendPlaybackResult(em, audioEntity, new AudioPlaybackResultElement
                 {
                     RequestId = request.RequestId,
                     Status = status,
@@ -198,9 +263,11 @@ namespace Game.Runtime
                     Reason = CreateReason(status),
                     ProcessedAt = now
                 });
+                appendedTerminalResult |= AudioEventRequestSystem.IsTerminalStatus(status);
             }
 
-            PruneHistory(requests, results);
+            if (appendedTerminalResult)
+                AudioEventRequestSystem.PruneTerminalRequestHistory(requests);
         }
 
         private static AudioPlaybackRequestStatus ResolveRequestStatus(
@@ -262,26 +329,6 @@ namespace Game.Runtime
             };
         }
 
-        private static void PruneHistory(
-            DynamicBuffer<AudioPlaybackRequestElement> requests,
-            DynamicBuffer<AudioPlaybackResultElement> results)
-        {
-            for (int i = 0; requests.Length > MaxRequestHistory && i < requests.Length;)
-            {
-                AudioPlaybackRequestStatus status = requests[i].Status;
-                if (status == AudioPlaybackRequestStatus.Pending ||
-                    status == AudioPlaybackRequestStatus.Accepted)
-                {
-                    i++;
-                    continue;
-                }
-
-                requests.RemoveAt(i);
-            }
-
-            while (results.Length > MaxResultHistory)
-                results.RemoveAt(0);
-        }
     }
 
     [UpdateInGroup(typeof(SimulationSystemGroup))]

@@ -120,7 +120,7 @@ namespace Game.Runtime
             _sources[sourceIndex] = pooledSource;
 
             pooledSource.Source.Play();
-            return new AudioPlaybackPresentationResult(true, AudioPlaybackRequestStatus.Accepted, "Played", sourceIndex);
+            return new AudioPlaybackPresentationResult(true, AudioPlaybackRequestStatus.Presented, "Played", sourceIndex);
         }
 
         public void UpdatePool()

@@ -19,6 +19,7 @@ namespace Game.UI.Runtime
         [SerializeField] private GameObject fullMapPopupPrefab;
         [SerializeField] private GameObject settingsPopupPrefab;
         [SerializeField] private GameObject resourceExchangePopupPrefab;
+        [SerializeField] private GameObject ariaCommandAssistantPopupPrefab;
         [SerializeField] private GameObject buildPlacementConfirmationBarPrefab;
         private readonly MatchOverlayCommandInputUiSystemHelper _matchOverlayCommandInputSystem = new();
         private ISelectionUiCommand _selectionUiCommandSystem;
@@ -64,6 +65,7 @@ namespace Game.UI.Runtime
         public GameObject FullMapPopupPrefab => fullMapPopupPrefab;
         public GameObject SettingsPopupPrefab => settingsPopupPrefab;
         public GameObject ResourceExchangePopupPrefab => resourceExchangePopupPrefab;
+        public GameObject AriaCommandAssistantPopupPrefab => ariaCommandAssistantPopupPrefab;
         public GameObject BuildPlacementConfirmationBarPrefab => buildPlacementConfirmationBarPrefab;
         public int ContentVersion => _contentVersion;
         internal IGameTextResolver GameTextResolver => _gameTextResolver;
@@ -78,7 +80,8 @@ namespace Game.UI.Runtime
             GameObject fullMapPrefab = null,
             GameObject buildPlacementConfirmationPrefab = null,
             GameObject settingsPrefab = null,
-            GameObject resourceExchangePrefab = null)
+            GameObject resourceExchangePrefab = null,
+            GameObject ariaCommandAssistantPrefab = null)
         {
             shellView = view;
             loadingContentPrefab = loadingPrefab;
@@ -94,6 +97,8 @@ namespace Game.UI.Runtime
                 settingsPopupPrefab = settingsPrefab;
             if (resourceExchangePrefab != null)
                 resourceExchangePopupPrefab = resourceExchangePrefab;
+            if (ariaCommandAssistantPrefab != null)
+                ariaCommandAssistantPopupPrefab = ariaCommandAssistantPrefab;
         }
 
         public void BindGameTextResolver(IGameTextResolver gameTextResolver)
@@ -135,6 +140,7 @@ namespace Game.UI.Runtime
             ISelectionUiReadModel selectionUiReadModelSystem = null)
         {
             UnbindFullMapPopupRequests();
+            _mainMenuPlayUi?.ConfigureLargeTacticalPopupCloseActions(null, null, null);
             _selectionUiCommandSystem = selectionUiCommandSystem;
             _selectionUiReadModelSystem = selectionUiReadModelSystem;
             _buildingUiCommandSystem = buildingUiCommandSystem;
@@ -142,7 +148,12 @@ namespace Game.UI.Runtime
             _mainMenuPlayUi = mainMenuPlayUi;
             _bindMatchHudSelectionPanel = bindMatchHudSelectionPanel;
             BindFullMapPopupRequests();
+            _mainMenuPlayUi?.ConfigureLargeTacticalPopupCloseActions(
+                CloseBuildDrawerPopup,
+                CloseFullMapPopup,
+                RequestCloseResourceExchangePopup);
             _mainMenuPlayUi?.BindMatchHudThreatJumpPanel(_matchHudHeaderContent);
+            BindMatchHudAssistant();
             BindMatchHudSelectionPanel(_matchHudSelectionPanelView);
             BindMatchHudFooter(_matchHudFooterContentView);
             BindMatchHudRightQuickRail(_rightQuickRailView);
@@ -318,7 +329,7 @@ namespace Game.UI.Runtime
                 ? _matchHudHeaderContent.GetComponent<MatchHudCurrentOrderBannerView>()
                 : null;
             _mainMenuPlayUi?.BindMatchHudThreatJumpPanel(_matchHudHeaderContent);
-            _mainMenuPlayUi?.BindMatchHudAssistant(_matchHudHeaderContent, shellView != null ? shellView.transform as RectTransform : null);
+            BindMatchHudAssistant();
             GameObject left = InstallSection(matchHudContentPrefab, UIShellContentSectionId.Left, UIShellRegionId.LeftRegion);
             _matchHudSelectionPanelView = left != null ? left.GetComponent<MatchHudSelectionPanelView>() : null;
             BindMatchHudSelectionPanel(_matchHudSelectionPanelView);
@@ -458,6 +469,7 @@ namespace Game.UI.Runtime
 
         public GameObject InstallBuildDrawerPopup()
         {
+            _mainMenuPlayUi?.PrepareToOpenLargeTacticalPopup(MatchHudLargeTacticalPopup.BuildDrawer);
             UnbindBuildDrawerPopupCloseButton();
             _buildDrawerPopupInstance = InstallRoot(buildDrawerPopupPrefab, UIShellRegionId.PopupLayer);
             BindBuildDrawerPopupInputBlocker(_buildDrawerPopupInstance);
@@ -501,6 +513,7 @@ namespace Game.UI.Runtime
 
         public GameObject InstallResourceExchangePopup()
         {
+            _mainMenuPlayUi?.PrepareToOpenLargeTacticalPopup(MatchHudLargeTacticalPopup.ResourceExchange);
             UnbindResourceExchangePopupCloseButton();
             _resourceExchangePopupInstance = InstallRoot(resourceExchangePopupPrefab, UIShellRegionId.PopupLayer);
             _resourceExchangePopupView = _resourceExchangePopupInstance != null
@@ -520,6 +533,7 @@ namespace Game.UI.Runtime
                 return;
             }
 
+            _mainMenuPlayUi?.PrepareToOpenLargeTacticalPopup(MatchHudLargeTacticalPopup.FullMap);
             _fullMapPopupInstance = InstallRoot(fullMapPopupPrefab, UIShellRegionId.PopupLayer);
             _fullMapPopupView = _fullMapPopupInstance != null
                 ? _fullMapPopupInstance.GetComponent<MatchHudFullMapPopupView>()
@@ -861,7 +875,17 @@ namespace Game.UI.Runtime
         {
             _matchHudHeaderContent = null;
             _mainMenuPlayUi?.BindMatchHudThreatJumpPanel(null);
-            _mainMenuPlayUi?.BindMatchHudAssistant(null, null);
+            _mainMenuPlayUi?.BindMatchHudAssistant(null, null, null);
+        }
+
+        private void BindMatchHudAssistant()
+        {
+            RectTransform popupLayer = null;
+            TryGetRegionContentRoot(UIShellRegionId.PopupLayer, out popupLayer);
+            _mainMenuPlayUi?.BindMatchHudAssistant(
+                _matchHudHeaderContent,
+                popupLayer,
+                ariaCommandAssistantPopupPrefab);
         }
 
         private void BindFullMapPopupRequests()

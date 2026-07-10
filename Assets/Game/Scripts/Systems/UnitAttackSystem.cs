@@ -33,6 +33,9 @@ namespace Game.Runtime
             public Entity Attacker;
             public int2 AttackerCell;
             public float3 AttackerPosition;
+            public Entity ObservationSource;
+            public float3 ObservationSourcePosition;
+            public byte HasMixedObservationSources;
             public byte ShowImpactVfx; // only shots that showed a tracer trigger impact VFX
         }
 
@@ -89,10 +92,13 @@ namespace Game.Runtime
         private NativeParallelHashMap<Entity, int> _predictedHealth;
         private NativeParallelHashMap<Entity, AggregatedTargetEffect> _aggregatedEffects;
         private EntityQuery _gridQuery;
+        private EntityQuery _observationQueueQuery;
 
         public void OnCreate(ref SystemState state)
         {
             _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
+            _observationQueueQuery = state.GetEntityQuery(
+                ComponentType.ReadWrite<CombatDamageObservationQueueComponent>());
             state.RequireForUpdate(_gridQuery);
             state.RequireForUpdate<UnitCombat>();
             state.RequireForUpdate<UnitAttack>();
@@ -114,6 +120,8 @@ namespace Game.Runtime
             Entity gridEntity = _gridQuery.GetSingletonEntity();
             GridConfig grid = state.EntityManager.GetComponentData<GridConfig>(gridEntity);
             var em = state.EntityManager;
+            AudioEventRequestSystem.EnsureAudioEntity(em);
+            Entity observationQueue = CombatDamageObservationUtility.TryGetQueue(_observationQueueQuery);
             var footprintLookup = SystemAPI.GetComponentLookup<UnitFootprint>(true);
             float dt = SystemAPI.Time.DeltaTime;
             var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
@@ -317,6 +325,8 @@ namespace Game.Runtime
                 if (_aggregatedEffects.TryGetValue(engageRw.Target, out AggregatedTargetEffect effect))
                 {
                     effect.TotalDamage += attackRo.Damage;
+                    if (effect.ObservationSource != entity)
+                        effect.HasMixedObservationSources = 1;
                     effect.Attacker = entity;
                     effect.AttackerCell = attackerCell;
                     effect.AttackerPosition = selfTransform.ValueRO.Position;
@@ -331,6 +341,8 @@ namespace Game.Runtime
                         Attacker = entity,
                         AttackerCell = attackerCell,
                         AttackerPosition = selfTransform.ValueRO.Position,
+                        ObservationSource = entity,
+                        ObservationSourcePosition = selfTransform.ValueRO.Position,
                         ShowImpactVfx = (byte)(tracerShown ? 1 : 0)
                     });
                 }
@@ -349,8 +361,24 @@ namespace Game.Runtime
                 if (health.Current <= 0)
                     continue;
 
+                int previousHealth = health.Current;
                 health.Current = math.max(0, health.Current - pending.TotalDamage);
                 em.SetComponentData(target, health);
+                float3 targetPosition = em.HasComponent<LocalTransform>(target)
+                    ? em.GetComponentData<LocalTransform>(target).Position
+                    : float3.zero;
+                CombatDamageObservationUtility.Append(
+                    em,
+                    observationQueue,
+                    pending.HasMixedObservationSources != 0 ? Entity.Null : pending.ObservationSource,
+                    target,
+                    CombatDamageSourceKind.DirectFire,
+                    previousHealth,
+                    health.Current,
+                    health.Max,
+                    (float)SystemAPI.Time.ElapsedTime,
+                    pending.HasMixedObservationSources != 0 ? float3.zero : pending.ObservationSourcePosition,
+                    targetPosition);
                 if (em.HasComponent<LocalTransform>(target))
                 {
                     CombatAudioEventUtility.EmitBulletImpact(
@@ -632,6 +660,8 @@ namespace Game.Runtime
                 if (_aggregatedEffects.TryGetValue(candidate.Target, out AggregatedTargetEffect effect))
                 {
                     effect.TotalDamage += plan.Damage;
+                    if (effect.ObservationSource != candidate.Attacker)
+                        effect.HasMixedObservationSources = 1;
                     effect.Attacker = candidate.Attacker;
                     effect.AttackerCell = plan.AttackerCell;
                     effect.AttackerPosition = candidate.AttackerPosition;
@@ -646,6 +676,8 @@ namespace Game.Runtime
                         Attacker = candidate.Attacker,
                         AttackerCell = plan.AttackerCell,
                         AttackerPosition = candidate.AttackerPosition,
+                        ObservationSource = candidate.Attacker,
+                        ObservationSourcePosition = candidate.AttackerPosition,
                         ShowImpactVfx = plan.ShowTracer
                     });
                 }

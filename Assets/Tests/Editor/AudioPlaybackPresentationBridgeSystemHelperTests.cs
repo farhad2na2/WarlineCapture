@@ -124,7 +124,11 @@ public sealed class AudioPlaybackPresentationBridgeSystemHelperTests
         Assert.AreEqual(1, bridge.LastPresentedRequestId);
         Assert.AreEqual(2, results.Length);
         Assert.AreEqual("Played", results[1].Reason.ToString());
+        Assert.AreEqual(AudioPlaybackRequestStatus.Presented, results[1].Status);
         Assert.AreEqual(AudioPlaybackRequestStatus.Presented, requests[0].Status);
+        Assert.AreEqual(
+            2u,
+            _entityManager.GetComponentData<AudioPlaybackResultQueueComponent>(audioEntity).Version);
     }
 
     [Test]

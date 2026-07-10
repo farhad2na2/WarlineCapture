@@ -1,107 +1,126 @@
 using TMPro;
-using UnityEngine.UI;
 using Game.UI.Contracts;
 
 namespace Game.UI.Runtime
 {
     internal sealed class AssistantPanelUiSystemHelper
     {
-        private TMP_Text _stateText;
-        private TMP_Text _ownershipBodyText;
-        private TMP_Text _goalsBodyText;
-        private TMP_Text _alertsBodyText;
-        private TMP_Text _recommendationBodyText;
-        private TMP_Text _nextActionLabelText;
-        private TMP_Text _giveControlLabelText;
-        private TMP_Text _stopLabelText;
-        private Button _nextActionButton;
-        private Button _giveControlButton;
-        private Button _stopButton;
-        private readonly AssistantNarrationPresentationSystemHelper _narrationPresentationSystem = new();
+        private AriaCommandAssistantPopupView _view;
+        private TMP_Text _accessStateText;
+        private TMP_Text _accessCueText;
         private uint _lastAppliedReadModelVersion = uint.MaxValue;
 
         public void Bind(
-            TMP_Text stateText,
-            TMP_Text ownershipBodyText,
-            TMP_Text goalsBodyText,
-            TMP_Text alertsBodyText,
-            TMP_Text narrationSubtitleText,
-            TMP_Text recommendationBodyText,
-            Button nextActionButton,
-            Button giveControlButton,
-            Button stopButton,
-            TMP_Text nextActionLabelText,
-            TMP_Text giveControlLabelText,
-            TMP_Text stopLabelText)
+            AriaCommandAssistantPopupView view,
+            TMP_Text accessStateText,
+            TMP_Text accessCueText)
         {
-            _stateText = stateText;
-            _ownershipBodyText = ownershipBodyText;
-            _goalsBodyText = goalsBodyText;
-            _alertsBodyText = alertsBodyText;
-            _recommendationBodyText = recommendationBodyText;
-            _nextActionButton = nextActionButton;
-            _giveControlButton = giveControlButton;
-            _stopButton = stopButton;
-            _nextActionLabelText = nextActionLabelText;
-            _giveControlLabelText = giveControlLabelText;
-            _stopLabelText = stopLabelText;
-            _narrationPresentationSystem.Bind(narrationSubtitleText);
+            _view = view;
+            _accessStateText = accessStateText;
+            _accessCueText = accessCueText;
             _lastAppliedReadModelVersion = uint.MaxValue;
         }
 
         public void Unbind()
         {
-            _stateText = null;
-            _ownershipBodyText = null;
-            _goalsBodyText = null;
-            _alertsBodyText = null;
-            _recommendationBodyText = null;
-            _nextActionLabelText = null;
-            _giveControlLabelText = null;
-            _stopLabelText = null;
-            _nextActionButton = null;
-            _giveControlButton = null;
-            _stopButton = null;
-            _narrationPresentationSystem.Unbind();
+            _view = null;
+            _accessStateText = null;
+            _accessCueText = null;
             _lastAppliedReadModelVersion = uint.MaxValue;
         }
 
         public void ApplyReadModel(UiAssistantPanelModel model)
         {
-            if (_lastAppliedReadModelVersion == model.Version)
+            if (_view == null || _lastAppliedReadModelVersion == model.Version)
                 return;
 
             _lastAppliedReadModelVersion = model.Version;
-            if (_stateText != null)
-                _stateText.text = string.IsNullOrWhiteSpace(model.OwnershipText) ? "PLAYER CONTROL" : model.OwnershipText;
-            if (_ownershipBodyText != null)
-                _ownershipBodyText.text = string.IsNullOrWhiteSpace(model.OwnershipDetailText)
-                    ? (string.IsNullOrWhiteSpace(model.OwnershipText) ? "You are issuing orders directly." : model.OwnershipText)
-                    : model.OwnershipDetailText;
-            if (_goalsBodyText != null)
-                _goalsBodyText.text = string.IsNullOrWhiteSpace(model.GoalsText) ? "No active objectives" : model.GoalsText;
-            if (_alertsBodyText != null)
-                _alertsBodyText.text = string.IsNullOrWhiteSpace(model.AlertsText) ? "No priority alerts" : model.AlertsText;
-            _narrationPresentationSystem.ApplySubtitle(model.NarrationSubtitleText, model.NarrationSubtitlesVisible);
-            if (_recommendationBodyText != null)
+            string ownership = string.IsNullOrWhiteSpace(model.OwnershipText)
+                ? "PLAYER CONTROL"
+                : model.OwnershipText;
+            SetText(_accessStateText, ownership);
+            _view.ApplyControlState(ownership);
+            _view.ApplyAccessibility(model.LargeTextEnabled, model.HighContrastEnabled);
+            _view.ApplyElapsed(model.ElapsedVisible, model.ElapsedWholeSeconds);
+
+            bool hasStructuredGoals = model.Goal0.Visible || model.Goal1.Visible || model.Goal2.Visible;
+            if (hasStructuredGoals)
             {
-                _recommendationBodyText.text = model.HasRecommendation
-                    ? $"{model.RecommendationPriorityText}: {model.RecommendationTitle}\n{model.RecommendationBody}"
-                    : model.RecommendationBody;
+                _view.ApplyGoal(0, model.Goal0);
+                _view.ApplyGoal(1, model.Goal1);
+                _view.ApplyGoal(2, model.Goal2);
+            }
+            else
+            {
+                _view.ApplyLegacyGoals(model.GoalsText);
             }
 
-            if (_nextActionButton != null)
-                _nextActionButton.interactable = model.CanShow;
-            if (_giveControlButton != null)
-                _giveControlButton.interactable = model.CanExecute;
-            if (_stopButton != null)
-                _stopButton.interactable = model.CanStop;
-            if (_nextActionLabelText != null)
-                _nextActionLabelText.text = string.IsNullOrWhiteSpace(model.RecommendationActionLabel) ? "SHOW ME" : model.RecommendationActionLabel;
-            if (_giveControlLabelText != null)
-                _giveControlLabelText.text = model.CanExecute ? "DO IT" : "CONTROL LOCKED";
-            if (_stopLabelText != null)
-                _stopLabelText.text = model.CanStop ? "STOP" : "STOP";
+            bool hasStructuredMessages = model.Alert0.Visible ||
+                                         model.Alert1.Visible ||
+                                         model.Alert2.Visible ||
+                                         model.Report0.Visible ||
+                                         model.Report1.Visible;
+            if (hasStructuredMessages)
+            {
+                _view.ApplyAlert(0, model.Alert0);
+                _view.ApplyAlert(1, model.Alert1);
+                _view.ApplyAlert(2, model.Alert2);
+                _view.ApplyReport(0, model.Report0);
+                _view.ApplyReport(1, model.Report1);
+            }
+            else
+            {
+                _view.ApplyLegacyAlerts(model.AlertsText);
+            }
+
+            _view.ApplyRecommendation(model);
+            _view.ApplyTargetLock(model.TargetLock);
+            _view.ApplyNarration(
+                model.Narration,
+                model.NarrationSubtitleText,
+                model.NarrationSubtitlesVisible);
+            ApplyAccessCue(model);
+        }
+
+        private void ApplyAccessCue(UiAssistantPanelModel model)
+        {
+            if (_accessCueText == null)
+                return;
+
+            int priority = -1;
+            priority = MaxVisiblePriority(priority, model.Alert0);
+            priority = MaxVisiblePriority(priority, model.Alert1);
+            priority = MaxVisiblePriority(priority, model.Alert2);
+            if (priority < 0 && model.HasAlerts)
+                priority = 1;
+
+            SetText(_accessCueText, priority switch
+            {
+                3 => "CRITICAL",
+                2 => "HIGH",
+                1 => "ALERT",
+                0 => "REPORT",
+                _ => string.Empty
+            });
+        }
+
+        private static int MaxVisiblePriority(int current, UiAssistantMessageRowModel row)
+        {
+            return row.Visible && !row.Acknowledged && row.Priority > current
+                ? row.Priority
+                : current;
+        }
+
+        private static void SetText(TMP_Text target, string value)
+        {
+            if (target == null)
+                return;
+
+            string resolved = value ?? string.Empty;
+            if (target.text != resolved)
+                target.text = resolved;
+            if (target.gameObject.activeSelf != (resolved.Length > 0))
+                target.gameObject.SetActive(resolved.Length > 0);
         }
     }
 }

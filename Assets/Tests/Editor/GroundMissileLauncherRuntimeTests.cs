@@ -661,6 +661,7 @@ public sealed class GroundMissileLauncherRuntimeTests
             null,
             default);
 
+        results = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
         Assert.AreEqual(1, results.Length);
         Assert.AreEqual(0, results[0].Accepted);
         Assert.AreEqual((int)TacticalCommandReasonCode.TargetNotAttackable, results[0].ReasonCode);

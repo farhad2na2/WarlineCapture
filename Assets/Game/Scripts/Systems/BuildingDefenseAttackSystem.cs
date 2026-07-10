@@ -21,6 +21,7 @@ namespace Game.Runtime
         private static readonly ProfilerMarker EffectApplicationMarker =
             new("BuildingDefenseAttackSystem.EffectApplication");
         private NativeList<TargetCandidate> _targetCandidates;
+        private EntityQuery _observationQueueQuery;
         private double _nextTargetAcquisitionTime;
 
         private struct TargetCandidate
@@ -47,6 +48,8 @@ namespace Game.Runtime
         public void OnCreate(ref SystemState state)
         {
             _targetCandidates = new NativeList<TargetCandidate>(InitialTargetScratchCapacity, Allocator.Persistent);
+            _observationQueueQuery = state.GetEntityQuery(
+                ComponentType.ReadWrite<CombatDamageObservationQueueComponent>());
             state.RequireForUpdate<BuildingDefenseWeapon>();
         }
 
@@ -63,6 +66,7 @@ namespace Game.Runtime
             // those helper contracts become lookup-based.
             state.Dependency.Complete();
             EntityManager em = state.EntityManager;
+            Entity observationQueue = CombatDamageObservationUtility.TryGetQueue(_observationQueueQuery);
             AudioEventRequestSystem.EnsureAudioEntity(em);
             DirectComponentAccess directAccess = new()
             {
@@ -181,6 +185,7 @@ namespace Game.Runtime
                             slot.ShotCounter,
                             ref traceRef.ValueRW,
                             now,
+                            observationQueue,
                             ref pendingTraceTargetAdds,
                             ref pendingRecentAttackerAdds,
                             ref pendingHealthBarVisibilityAdds,
@@ -236,6 +241,7 @@ namespace Game.Runtime
             int shotCounter,
             ref UnitAttackTraceComponent trace,
             float now,
+            Entity observationQueue,
             ref NativeParallelHashSet<Entity> pendingTraceTargetAdds,
             ref NativeParallelHashSet<Entity> pendingRecentAttackerAdds,
             ref NativeParallelHashSet<Entity> pendingHealthBarVisibilityAdds,
@@ -266,8 +272,21 @@ namespace Game.Runtime
             if (damage > 0)
                 GameplayAudioFeedbackSystemHelper.TryEmitWeaponFireAudio(em, source, now, sourcePosition);
 
+            int previousHealth = targetHealth.Current;
             targetHealth.Current = math.max(0, targetHealth.Current - damage);
             directAccess.Health[target] = targetHealth;
+            CombatDamageObservationUtility.Append(
+                em,
+                observationQueue,
+                source,
+                target,
+                CombatDamageSourceKind.BuildingDefense,
+                previousHealth,
+                targetHealth.Current,
+                targetHealth.Max,
+                now,
+                sourcePosition,
+                targetPosition);
 
             UnitAttackSystem.TryEmitUnitUnderAttackAudio(
                 em,

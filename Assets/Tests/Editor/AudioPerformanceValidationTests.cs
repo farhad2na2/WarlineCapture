@@ -94,11 +94,14 @@ public sealed class AudioPerformanceValidationTests
         DynamicBuffer<AudioPlaybackResultElement> results = em.GetBuffer<AudioPlaybackResultElement>(audioEntity);
         DynamicBuffer<AudioCooldownStateElement> cooldowns = em.GetBuffer<AudioCooldownStateElement>(audioEntity);
 
-        Assert.AreEqual(SpamCount, requests.Length);
-        Assert.AreEqual(SpamCount, results.Length);
+        Assert.AreEqual(AudioEventRequestSystem.MaxTerminalRequestHistory + 1, requests.Length);
+        Assert.AreEqual(AudioEventRequestSystem.MaxResultHistory, results.Length);
         Assert.AreEqual(1, cooldowns.Length);
         Assert.AreEqual(1, CountRequestsWithStatus(requests, AudioPlaybackRequestStatus.Accepted));
-        Assert.AreEqual(SpamCount - 1, CountRequestsWithStatus(requests, AudioPlaybackRequestStatus.CooldownSkipped));
+        Assert.AreEqual(
+            AudioEventRequestSystem.MaxTerminalRequestHistory,
+            CountRequestsWithStatus(requests, AudioPlaybackRequestStatus.CooldownSkipped));
+        Assert.AreEqual(SpamCount - AudioEventRequestSystem.MaxResultHistory + 1, results[0].RequestId);
     }
 
     [Test]

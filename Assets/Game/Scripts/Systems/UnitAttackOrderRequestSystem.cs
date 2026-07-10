@@ -257,6 +257,11 @@ namespace Game.Runtime
             return false;
         }
 
+        public static Entity EnsureQueueEntity(EntityManager em)
+        {
+            return EnsureCommandEntity(em);
+        }
+
         private static void ProcessPendingRequests(
             EntityManager em,
             EntityQuery queueQuery,

@@ -26,6 +26,7 @@ namespace Game.Runtime
         public void OnUpdate(ref SystemState state)
         {
             EntityManager em = state.EntityManager;
+            AudioEventRequestSystem.EnsureAudioEntity(em);
             float dt = SystemAPI.Time.DeltaTime;
             ComponentLookup<LocalTransform> localTransformLookup = SystemAPI.GetComponentLookup<LocalTransform>(true);
             ComponentLookup<LocalToWorld> localToWorldLookup = SystemAPI.GetComponentLookup<LocalToWorld>(true);
@@ -638,15 +639,21 @@ namespace Game.Runtime
     public partial struct GroundMissileImpactSystem : ISystem
     {
         private const float DamageHealthBarVisibleSeconds = 2f;
+        private EntityQuery _observationQueueQuery;
 
         public void OnCreate(ref SystemState state)
         {
+            _observationQueueQuery = state.GetEntityQuery(
+                ComponentType.ReadWrite<CombatDamageObservationQueueComponent>());
             state.RequireForUpdate<GroundMissileImpactRequestComponent>();
         }
 
         public void OnUpdate(ref SystemState state)
         {
             EntityManager em = state.EntityManager;
+            AudioEventRequestSystem.EnsureAudioEntity(em);
+            Entity observationQueue = CombatDamageObservationUtility.TryGetQueue(_observationQueueQuery);
+            float now = (float)SystemAPI.Time.ElapsedTime;
             var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
 
             foreach (var (impact, entity) in SystemAPI
@@ -657,7 +664,8 @@ namespace Game.Runtime
                 float radius = math.max(0f, request.DamageRadius);
                 float radiusSq = radius * radius;
                 int damage = math.max(0, request.Damage);
-                ApplyDirectHitDamage(em, ecb, request);
+                float3 sourcePosition = ResolveSourcePosition(em, request.Source, request.Position);
+                ApplyDirectHitDamage(em, ecb, request, observationQueue, sourcePosition, now);
                 if (damage > 0)
                 {
                     foreach (var (health, transform, faction, target) in SystemAPI
@@ -677,7 +685,22 @@ namespace Game.Runtime
                         if (math.lengthsq(delta) > radiusSq)
                             continue;
 
-                        health.ValueRW.Current = math.max(0, health.ValueRO.Current - damage);
+                        int previousHealth = health.ValueRO.Current;
+                        int targetMaxHealth = health.ValueRO.Max;
+                        int currentHealth = math.max(0, previousHealth - damage);
+                        health.ValueRW.Current = currentHealth;
+                        CombatDamageObservationUtility.Append(
+                            em,
+                            observationQueue,
+                            request.Source,
+                            target,
+                            CombatDamageSourceKind.GroundMissile,
+                            previousHealth,
+                            currentHealth,
+                            targetMaxHealth,
+                            now,
+                            sourcePosition,
+                            transform.ValueRO.Position);
                         ApplyRecentDamageState(em, ecb, target, request);
                     }
                 }
@@ -704,7 +727,10 @@ namespace Game.Runtime
         private static void ApplyDirectHitDamage(
             EntityManager em,
             EntityCommandBuffer ecb,
-            GroundMissileImpactRequestComponent request)
+            GroundMissileImpactRequestComponent request,
+            Entity observationQueue,
+            float3 sourcePosition,
+            float observedAt)
         {
             Entity target = request.TargetEntity;
             if (target == Entity.Null ||
@@ -726,9 +752,37 @@ namespace Game.Runtime
             if (damage <= 0)
                 return;
 
+            int previousHealth = health.Current;
             health.Current = math.max(0, health.Current - damage);
             em.SetComponentData(target, health);
+            float3 targetPosition = em.HasComponent<LocalTransform>(target)
+                ? em.GetComponentData<LocalTransform>(target).Position
+                : request.Position;
+            CombatDamageObservationUtility.Append(
+                em,
+                observationQueue,
+                request.Source,
+                target,
+                CombatDamageSourceKind.GroundMissile,
+                previousHealth,
+                health.Current,
+                health.Max,
+                observedAt,
+                sourcePosition,
+                targetPosition);
             ApplyRecentDamageState(em, ecb, target, request);
+        }
+
+        private static float3 ResolveSourcePosition(
+            EntityManager em,
+            Entity source,
+            float3 fallback)
+        {
+            return source != Entity.Null &&
+                   em.Exists(source) &&
+                   em.HasComponent<LocalTransform>(source)
+                ? em.GetComponentData<LocalTransform>(source).Position
+                : fallback;
         }
 
         private static void ApplyRecentDamageState(

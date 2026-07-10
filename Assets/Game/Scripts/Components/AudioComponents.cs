@@ -39,6 +39,11 @@ namespace Game.Components
         public uint Version;
     }
 
+    public struct AudioPlaybackResultQueueComponent : IComponentData
+    {
+        public uint Version;
+    }
+
     public struct AudioPlaybackRequestElement : IBufferElementData
     {
         public int RequestId;

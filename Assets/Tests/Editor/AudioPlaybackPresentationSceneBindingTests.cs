@@ -83,9 +83,9 @@ public sealed class AudioPlaybackPresentationSceneBindingTests
 
         try
         {
-            bootstrap.SendMessage("Awake", SendMessageOptions.DontRequireReceiver);
+            InvokeLifecycle(bootstrap, "Awake");
             CreateMatchRouteShellBoundary(world.EntityManager);
-            bootstrap.SendMessage("Update", SendMessageOptions.DontRequireReceiver);
+            InvokeLifecycle(bootstrap, "Update");
             InvokeApplyAudioListenerAuthority(matchScene);
 
             Assert.IsFalse(menuListener.enabled, "Menu AudioListener must be disabled while Match spatial audio listens from the world camera.");
@@ -145,7 +145,13 @@ public sealed class AudioPlaybackPresentationSceneBindingTests
 
         try
         {
-            audioRuntime.SendMessage("Awake", SendMessageOptions.DontRequireReceiver);
+            InvokeLifecycle(audioRuntime, "Awake");
+            Entity gameplayStateEntity = world.EntityManager.CreateEntity(typeof(RuntimeGameplayStateComponent));
+            world.EntityManager.SetComponentData(gameplayStateEntity, new RuntimeGameplayStateComponent
+            {
+                PlayRequested = 1,
+                SimulationActive = 1
+            });
 
             int uiRequestId = AudioEventRequestSystem.EnqueueOneShot(
                 world.EntityManager,
@@ -165,7 +171,7 @@ public sealed class AudioPlaybackPresentationSceneBindingTests
                 cooldownSeconds: 0f);
             AudioCooldownSystem.ProcessPendingRequests(world.EntityManager, now: 1f);
 
-            audioRuntime.SendMessage("Update", SendMessageOptions.DontRequireReceiver);
+            InvokeLifecycle(audioRuntime, "Update");
 
             Entity audioEntity = AudioEventRequestSystem.EnsureAudioEntity(world.EntityManager);
             DynamicBuffer<AudioPlaybackResultElement> results =
@@ -176,14 +182,14 @@ public sealed class AudioPlaybackPresentationSceneBindingTests
             Assert.Greater(audioRuntime.PoolSize, 0);
             Assert.GreaterOrEqual(audioRuntime.ActiveSourceCount, 2);
             Assert.AreEqual(matchRequestId, presentationResult.RequestId);
-            Assert.AreEqual(AudioPlaybackRequestStatus.Accepted, presentationResult.Status);
+            Assert.AreEqual(AudioPlaybackRequestStatus.Presented, presentationResult.Status);
             Assert.AreEqual("Played", presentationResult.Reason.ToString());
             Assert.IsTrue(HasPlayedResult(results, uiRequestId));
             Assert.IsTrue(HasPlayedResult(results, matchRequestId));
         }
         finally
         {
-            audioRuntime.SendMessage("OnDestroy", SendMessageOptions.DontRequireReceiver);
+            InvokeLifecycle(audioRuntime, "OnDestroy");
             if (World.DefaultGameObjectInjectionWorld == world)
                 World.DefaultGameObjectInjectionWorld = previousWorld;
             world.Dispose();
@@ -209,6 +215,15 @@ public sealed class AudioPlaybackPresentationSceneBindingTests
             BindingFlags.Instance | BindingFlags.NonPublic);
         Assert.NotNull(method, "MatchSceneView must expose internal listener authority logic for scene binding validation.");
         method.Invoke(matchScene, null);
+    }
+
+    private static void InvokeLifecycle(MonoBehaviour behaviour, string methodName)
+    {
+        MethodInfo method = behaviour.GetType().GetMethod(
+            methodName,
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.NotNull(method, $"{behaviour.GetType().Name} must define {methodName}().");
+        method.Invoke(behaviour, null);
     }
 
     private static void AssertSceneHasExactlyOneEnabledAudioListener(string scenePath)

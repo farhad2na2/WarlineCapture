@@ -1,8 +1,8 @@
 # POP-13 ARIA Command Assistant Functional Implementation Tracker
 
 Date: 2026-07-09
-Status: Implementation-ready specification; runtime phases remain in progress
-Last contract audit: 2026-07-09
+Status: Functional implementation stable; mission publisher and live-play acceptance remain
+Last contract audit: 2026-07-10
 
 ## Purpose
 
@@ -26,26 +26,35 @@ Normative language in this document is intentional. `Must` and `must not` are ac
 
 ## Progress Summary
 
-Overall implementation progress: **5% (5 / 106 checklist items complete)**.
+Overall implementation progress: **98% (104 / 106 checklist items complete)**.
 
 Progress is checklist-based. Each markdown checklist item in the phase sections below counts as one item. Partial `[~]` milestone rows are useful status notes, but they do not count as complete until their exit criteria are met.
 
 | Phase | Status | Complete | Total | Progress | Notes |
 |---|---|---:|---:|---:|---|
-| 0. Visual target and contract setup | In Progress | 5 | 7 | 71% | Approved `LandscapeLayout` prefab exists; runtime migration from the current code-built surface remains. |
-| 1. Baseline tests before feature work | Not Started | 0 | 7 | 0% | Remove actionable placeholders, add runtime gates/contracts, and lock current behavior. |
-| 2. Top-left HUD relocation | Not Started | 0 | 7 | 0% | Move ARIA into the exact objective-panel slot with fallback/restore behavior. |
-| 3. Structured goal rows | Not Started | 0 | 8 | 0% | Publish mission-owned structured objectives and elapsed whole seconds. |
-| 4. Structured alerts and reports | Not Started | 0 | 7 | 0% | Split versioned high-priority alerts from lower-priority reports. |
-| 5. Real threat telemetry | Not Started | 0 | 13 | 0% | Capture bounded damage observations and identify player target/source/impact. |
-| 6. Recommendation scoring and target lock | Not Started | 0 | 7 | 0% | Make target-lock graphic fully data-driven. |
-| 7. Complete command mechanics | Not Started | 0 | 13 | 0% | Execute and correlate concrete select, move, attack, focus, and stop intents. |
-| 8. ARIA voice state panel | Not Started | 0 | 6 | 0% | Show true narration request/audio status. |
-| 9. Popup visual implementation | Not Started | 0 | 10 | 0% | Bind stable rows into the single fixed-landscape prefab lifecycle. |
-| 10. Gateway publishing and caching | Not Started | 0 | 7 | 0% | Preserve explicit-version, cached no-allocation managed publishing. |
-| 11. Validation and acceptance | Not Started | 0 | 14 | 0% | Compile, source-truth, command/audio, visual, play, and performance gates. |
+| 0. Visual target and contract setup | Complete | 7 | 7 | 100% | Approved `LandscapeLayout` prefab is the runtime surface. |
+| 1. Baseline tests before feature work | Complete | 7 | 7 | 100% | Production placeholders are removed and route/match-start gates are locked by tests. |
+| 2. Top-left HUD relocation | Complete | 7 | 7 | 100% | ARIA owns the objective-panel slot with fallback/restore and click blocking. |
+| 3. Structured goal rows | Blocked | 7 | 8 | 88% | Contracts, rows, elapsed time, and caching are complete; no authoritative mission runtime exists to publish M01 objectives. |
+| 4. Structured alerts and reports | Complete | 7 | 7 | 100% | Versioned fixed alert/report slots are bounded and suppression-key coalesced. |
+| 5. Real threat telemetry | Complete | 13 | 13 | 100% | Exact damage observations drive bounded player/protected-objective threat rows. |
+| 6. Recommendation scoring and target lock | Complete | 7 | 7 | 100% | Target-lock state and metrics are real and model-driven. |
+| 7. Complete command mechanics | Complete | 13 | 13 | 100% | Select/move/attack/focus dispatch and correlated result handling are implemented. |
+| 8. ARIA voice state panel | Complete | 6 | 6 | 100% | Correlated audio states and the bounded presentation pulse are truthful. |
+| 9. Popup visual implementation | Complete | 10 | 10 | 100% | Stable prefab rows, popup lifecycle, accessibility, and fixed landscape layout are bound. |
+| 10. Gateway publishing and caching | Complete | 7 | 7 | 100% | Explicit source versions produce zero-allocation unchanged polling. |
+| 11. Validation and acceptance | In Progress | 13 | 14 | 93% | Automated compile, focused, visual, and performance gates pass; live in-match acceptance remains. |
 
 Progress update rule: update this table in the same change that completes or adds tracker items. Do not count a row complete until code, tests or validation notes, and docs are updated.
+
+### 2026-07-10 validation evidence
+
+- Consolidated Unity EditMode regression: **155 / 155 passed** across assistant contracts/read models, commands/results, narration/audio truth, gateway/UI binding, exact combat telemetry, towers, unit combat, and ground/air missile paths.
+- Standalone compile: `dotnet build Game.Tests.Editor.csproj --no-restore --disable-build-servers -v:q -clp:ErrorsOnly` completed with **0 errors**.
+- Saturated assistant fixture: 64 observations, four threats, three goals, five messages, one recommendation, and one narration row; 240 measured frames produced **0.0839 ms average**, **0.0893 ms p95**, and **0 managed allocation bytes**.
+- Unchanged managed publishing: 1,000 gateway polls and 1,000 repeated UI applications of the same model version each allocate **0 bytes**.
+- Visual proof: `reference/POP-13_ARIACommandAssistant_Functional_4800x2160.png` uses the production match HUD and popup prefabs, shows the relocated top-left ARIA button, and keeps the right quick rail unobstructed.
+- Remaining blocked acceptance: the codebase has tactical-map M01 metadata but no authoritative mission runtime owner/publisher. The implementation therefore refuses to fabricate production objective rows from static map metadata.
 
 ## Source References
 
@@ -89,41 +98,37 @@ Progress update rule: update this table in the same change that completes or add
 | Status | Milestone | Exit criteria |
 |---|---|---|
 | `[x]` | V01 target reference saved | Mockup and prompt exist under this folder. |
-| `[~]` | Approved presentation prefab | `POP13_ARIACommandAssistantPopup.prefab` has the locked premium landscape hierarchy; runtime still uses the older code-built surface. |
-| `[~]` | Thin ECS ARIA model exists | Current model has text goals, alerts, narration, one recommendation, command buttons, preview highlight. |
-| `[ ]` | Structured panel model | Popup binds structured row models instead of plain multiline strings. |
-| `[ ]` | Top-left HUD relocation | ARIA button owns current objective-panel space; objective panel presentation is removed from always-visible HUD. |
-| `[ ]` | Objectives inside popup | Existing objective ECS data is rendered as real ARIA goal rows. |
-| `[ ]` | Real threat telemetry | Threat rows name friendly target, attacker when known, threat kind, distance, damage/health state, last hit age. |
-| `[ ]` | Real target-lock panel | Target-lock graphic shows selected recommendation target, validity/readiness, distance, faction, health, and preview/dispatch state. |
-| `[ ]` | Complete command mechanics | `SHOW ME`, `DO IT`, and `STOP` route to existing typed command boundaries for select, move, attack, focus, and cancel. |
-| `[ ]` | Narration state is visible and true | ARIA voice panel reflects correlated queued/accepted/presented/failed/text-only/off state without claiming clip completion. |
-| `[ ]` | Performance validation | Focused tests prove no repeated allocations/rebuilds when versions are unchanged. |
-| `[ ]` | Visual validation | Fixed-landscape screenshots show a readable popup, top-left ARIA button, and no overlapping HUD. |
+| `[x]` | Approved presentation prefab | `POP13_ARIACommandAssistantPopup.prefab` is the runtime surface and binds only its serialized `LandscapeLayout` hierarchy. |
+| `[x]` | Structured ECS ARIA model | Goals, messages, threats, target lock, narration, recommendations, dispatch, and result state are explicit ECS contracts. |
+| `[x]` | Structured panel model | Popup binds structured fixed row models instead of plain multiline strings. |
+| `[x]` | Top-left HUD relocation | ARIA button owns current objective-panel space; objective panel presentation is removed from always-visible HUD. |
+| `[~]` | Objectives inside popup | Mission-neutral objective rows render correctly; the production M01 mission publisher is blocked by the absent mission runtime owner. |
+| `[x]` | Real threat telemetry | Threat rows name friendly/protected targets, attacker when known, threat kind, distance, damage/health state, and expiry. |
+| `[x]` | Real target-lock panel | Target-lock graphic shows selected recommendation target, validity/readiness, distance, faction, health, and preview/dispatch state. |
+| `[x]` | Complete command mechanics | `SHOW ME`, `DO IT`, and `STOP` route to existing typed command boundaries for select, move, attack, focus, and cancel. |
+| `[x]` | Narration state is visible and true | ARIA voice panel reflects correlated queued/accepted/presented/failed/text-only/off state without claiming clip completion. |
+| `[x]` | Performance validation | Saturated ECS, 1,000 gateway polls, and 1,000 unchanged UI applications allocate zero managed bytes. |
+| `[x]` | Visual validation | The persisted 4800 x 2160 functional capture shows a readable popup, top-left ARIA button, and unobstructed right rail. |
 
 ## Current Baseline
 
 ### Already implemented infrastructure
 
-- `AssistantGoalReadModelSystem` reads the current match HUD projection and builds `AssistantGoalReadModelElement` rows. The projection is not yet an authoritative objective source.
-- `AssistantRecommendationSystem` builds one top recommendation from threat visibility, fuel logistics, selection state, focused unit state, or active objective.
-- `AssistantMessagePrioritySystem` converts threat/feedback status surfaces into `AssistantMessageElement` rows.
-- `AssistantNarrationRequestSystem` converts eligible messages into `AssistantNarrationRequestElement` rows with cooldown and priority rules.
-- `AssistantNarrationAudioRequestSystem` enqueues a one-shot `Voice` audio event when a narration request has an audio event id.
-- `UiShellEcsGateway.TryReadMatchHudAssistantPanel` caches the managed `UiAssistantPanelModel` and only rebuilds it when source versions/counts change.
-- `AssistantPanelUiSystemHelper.ApplyReadModel` skips unchanged model versions.
-- `AssistantCommandIntentSystem` supports preview/highlight/focus behavior and a safe selection execution path.
+- `AssistantGoalReadModelSystem` consumes mission-neutral `MatchObjectiveRuntimeElement` rows and publishes numeric elapsed whole seconds.
+- `AssistantThreatReadModelSystem` consumes a bounded 64-row exact-damage observation ring and publishes four bounded player/protected-objective threats.
+- `AssistantRecommendationSystem` publishes one concrete recommendation without broad selected-tag scans or fabricated targets.
+- `AssistantTargetLockReadModelSystem` derives truthful candidate/preview/executable/executing/invalid state and target telemetry.
+- `AssistantMessagePrioritySystem` publishes bounded, coalesced structured alert/report rows from verified threats and correlated command results.
+- Narration request/audio/result systems publish correlated `OFF`, `TEXT ONLY`, `QUEUED`, `ACCEPTED`, `PRESENTED`, and `FAILED` states.
+- `AssistantCommandIntentSystem` and `AssistantCommandResultBridgeSystem` dispatch through typed select/move/attack/focus boundaries and correlate terminal results.
+- `UiShellEcsGateway.TryReadMatchHudAssistantPanel` caches a fixed structured model from explicit source versions; unchanged polling allocates zero bytes.
+- `AssistantPanelUiSystemHelper` binds stable serialized prefab controls only when `UiAssistantPanelModel.Version` changes.
+- `MatchHudAssistantUiSystemHelper` replaces the objective slot with the ARIA button and instantiates the approved popup under the shell overlay.
 
-### Not yet real enough for the mockup
+### Remaining prerequisite
 
-- `UiMatchHudStatusSurfacesComponent`, `UiMatchHudStatusSurfacesModel.Default`, and gateway fallback creation still contain sample objectives, elapsed time, threat, and feedback values. Those values are fixtures, not gameplay truth.
-- No active runtime mission/objective publisher currently owns objective ids, body text, priority, primary state, completion, or match elapsed time.
-- Goals and alerts are flattened to strings before UI binding.
-- The mockup row chips, target-lock radar, telemetry markers, and voice waveform are currently presentation scaffolding.
-- The current recommendation model does not expose rich target telemetry.
-- Threats are mostly text-oriented through HUD status data. ARIA cannot yet reliably state which exact friendly unit is under attack and which entity attacked it.
-- `DO IT` does not yet execute all recommended action families. Move/attack are mapped in intent enums, but unsupported execution currently rejects non-preview intents.
-- The button is still in the header/right area, not the top-left objective-panel slot.
+- No authoritative production mission/objective owner currently publishes mission id, objective ids/state, primary marker, target entities/anchors, completion, or match start time. POP-13 intentionally shows zero goal rows until that owner populates `MatchObjectiveRuntimeStateComponent` and `MatchObjectiveRuntimeElement`; it does not synthesize M01 data from tactical-map assets or HUD text.
+- Live play acceptance remains after that publisher exists: start a real authored mission, inspect goal transitions, execute move/attack recommendations, and observe threat/narration/target-lock changes against production entities.
 
 ## Locked Implementation Contracts
 
@@ -628,8 +633,8 @@ Implementation should proceed as small vertical slices. For each slice: update c
 - [x] Link this implementation tracker from the POP-13 README.
 - [x] Add this functional implementation tracker with an overall progress summary.
 - [x] Record the layer-pack decision: the production POP-13 surface uses `POP13_ARIACommandAssistantPopup.prefab` with existing approved sprites; separated sprite replacement is deferred and is not an acceptance dependency.
-- [ ] Replace the runtime code-built popup with the approved prefab binding after functional model contracts are ready.
-- [ ] Mark Phase 0 complete only after runtime parity/layer-pack decision is documented.
+- [x] Replace the runtime code-built popup with the approved prefab binding after functional model contracts are ready.
+- [x] Mark Phase 0 complete only after runtime parity/layer-pack decision is documented.
 
 Exit criteria:
 
@@ -638,13 +643,13 @@ Exit criteria:
 
 ### 1. Baseline tests before feature work
 
-- [ ] Add or update editor tests that capture the current assistant panel model, command intent behavior, and no-change version caching.
-- [ ] Replace production match HUD objective/threat/feedback defaults with the locked empty, non-actionable values; keep synthetic values inside test fixtures only.
-- [ ] Add route/match-start gating tests proving main menu, loading, pre-start, route exit/re-entry, and retained old combat observations publish no actionable ARIA row or narration request.
-- [ ] Add the mission-neutral objective runtime component/buffer contract and focused contract tests.
-- [ ] Add an explicit test showing a mission-published objective becomes an `AssistantGoalReadModelElement` and no mission produces zero goal rows.
-- [ ] Add a regression test that `TryReadMatchHudAssistantPanel` returns the same cached model/version when source versions do not change.
-- [ ] Add a UI helper test proving `ApplyReadModel` skips unchanged versions and does not rebuild row GameObjects.
+- [x] Add or update editor tests that capture the current assistant panel model, command intent behavior, and no-change version caching.
+- [x] Replace production match HUD objective/threat/feedback defaults with the locked empty, non-actionable values; keep synthetic values inside test fixtures only.
+- [x] Add route/match-start gating tests proving main menu, loading, pre-start, route exit/re-entry, and retained old combat observations publish no actionable ARIA row or narration request.
+- [x] Add the mission-neutral objective runtime component/buffer contract and focused contract tests.
+- [x] Add an explicit test showing a mission-published objective becomes an `AssistantGoalReadModelElement` and no mission produces zero goal rows.
+- [x] Add a regression test that `TryReadMatchHudAssistantPanel` returns the same cached model/version when source versions do not change.
+- [x] Add a UI helper test proving `ApplyReadModel` skips unchanged versions and does not rebuild row GameObjects.
 
 Exit criteria:
 
@@ -654,13 +659,13 @@ Exit criteria:
 
 ### 2. Top-left HUD relocation
 
-- [ ] Resolve `HeaderContent/ObjectivesPanel` and pass its `RectTransform`/fallback state through the existing match HUD bind path.
-- [ ] Change `MatchHudAssistantUiSystemHelper.Bind` to create a `454 x 155` top-left button as a sibling at the objective panel anchor while keeping the popup under the shell overlay.
-- [ ] Hide the old objective visual only after successful ARIA button/popup binding and restore it during `Unbind`.
-- [ ] Keep the old objective panel visible and use the current header fallback if the target rect cannot be resolved.
-- [ ] Ensure the ARIA button blocks world clicks through `ContainsScreenPoint` and the existing gameplay UI click sequence.
-- [ ] Mirror panel open/closed state into `AssistantStateComponent.PanelOpen` through the ECS gateway/request boundary.
-- [ ] Add tests for button rect position, size, and click blocking.
+- [x] Resolve `HeaderContent/ObjectivesPanel` and pass its `RectTransform`/fallback state through the existing match HUD bind path.
+- [x] Change `MatchHudAssistantUiSystemHelper.Bind` to create a `454 x 155` top-left button as a sibling at the objective panel anchor while keeping the popup under the shell overlay.
+- [x] Hide the old objective visual only after successful ARIA button/popup binding and restore it during `Unbind`.
+- [x] Keep the old objective panel visible and use the current header fallback if the target rect cannot be resolved.
+- [x] Ensure the ARIA button blocks world clicks through `ContainsScreenPoint` and the existing gameplay UI click sequence.
+- [x] Mirror panel open/closed state into `AssistantStateComponent.PanelOpen` through the ECS gateway/request boundary.
+- [x] Add tests for button rect position, size, and click blocking.
 
 Exit criteria:
 
@@ -670,14 +675,14 @@ Exit criteria:
 
 ### 3. Structured goal rows
 
-- [ ] Extend `UiAssistantPanelModel` with `UiAssistantGoalRowModel` fixed slots.
-- [ ] Add the active mission objective publisher; for M01 publish only the authored M01 objective when M01 identity and completion state are available.
-- [ ] Update `AssistantGoalReadModelSystem` to consume `MatchObjectiveRuntimeElement`, not the status-surface text slots.
-- [ ] Publish numeric elapsed whole seconds from `MatchObjectiveRuntimeStateComponent`, update at most once per second, and bind through TMP numeric `SetText` without a managed timer string.
-- [ ] Update `UiShellEcsGateway.TryReadMatchHudAssistantPanel` to copy each goal into a row slot only when objective version/count changes.
-- [ ] Keep the current `GoalsText` field only as temporary compatibility if needed by tests.
-- [ ] Update `AssistantPanelUiSystemHelper` to bind rows to stable child controls instead of assigning one multiline TMP string.
-- [ ] Bind the stable row controls already serialized under `LandscapeLayout`; only update text/color/visibility on model version change and do not create row GameObjects after bind.
+- [x] Extend `UiAssistantPanelModel` with `UiAssistantGoalRowModel` fixed slots.
+- [!] Add the active mission objective publisher; blocked until an authoritative mission runtime owns M01 identity, objective completion, target entity/anchor, and match start time.
+- [x] Update `AssistantGoalReadModelSystem` to consume `MatchObjectiveRuntimeElement`, not the status-surface text slots.
+- [x] Publish numeric elapsed whole seconds from `MatchObjectiveRuntimeStateComponent`, update at most once per second, and bind through TMP numeric `SetText` without a managed timer string.
+- [x] Update `UiShellEcsGateway.TryReadMatchHudAssistantPanel` to copy each goal into a row slot only when objective version/count changes.
+- [x] Keep the current `GoalsText` field only as temporary compatibility if needed by tests.
+- [x] Update `AssistantPanelUiSystemHelper` to bind rows to stable child controls instead of assigning one multiline TMP string.
+- [x] Bind the stable row controls already serialized under `LandscapeLayout`; only update text/color/visibility on model version change and do not create row GameObjects after bind.
 
 Exit criteria:
 
@@ -687,13 +692,13 @@ Exit criteria:
 
 ### 4. Structured alerts and reports
 
-- [ ] Keep `AssistantMessageElement` as the canonical message buffer.
-- [ ] Add `AssistantMessageReadModelComponent.Version` and increment it only on visible insert/update/remove/acknowledgement changes.
-- [ ] Add row slots to `UiAssistantPanelModel`: three alert rows and two report rows.
-- [ ] Split messages by priority in the gateway: `Critical`/`High` into alerts; `Normal`/`Low` into reports.
-- [ ] Preserve `Acknowledged`, `RequiresNarration`, and categorical `AgeState` in row models.
-- [ ] Hide acknowledged/expired rows and update panel UI with priority/body/static age-state chips for visible rows.
-- [ ] Keep message buffers bounded and coalesced by `SuppressionKey`.
+- [x] Keep `AssistantMessageElement` as the canonical message buffer.
+- [x] Add `AssistantMessageReadModelComponent.Version` and increment it only on visible insert/update/remove/acknowledgement changes.
+- [x] Add row slots to `UiAssistantPanelModel`: three alert rows and two report rows.
+- [x] Split messages by priority in the gateway: `Critical`/`High` into alerts; `Normal`/`Low` into reports.
+- [x] Preserve `Acknowledged`, `RequiresNarration`, and categorical `AgeState` in row models.
+- [x] Hide acknowledged/expired rows and update panel UI with priority/body/static age-state chips for visible rows.
+- [x] Keep message buffers bounded and coalesced by `SuppressionKey`.
 
 Exit criteria:
 
@@ -703,19 +708,19 @@ Exit criteria:
 
 ### 5. Real threat telemetry
 
-- [ ] Add the neutral `CombatDamageObservationQueueComponent` and bounded `CombatDamageObservationElement` ring.
-- [ ] Instrument every `UnitHealth` damage path in direct unit fire, building defense, ground missiles, and air missiles with exact applied-damage observations.
-- [ ] Add `AssistantThreatReadModelElement` and `AssistantThreatReadModelStateComponent`.
-- [ ] Add `AssistantThreatReadModelSystem` in `PresentationSystemGroup` before recommendations/messages and consume only new observation ids or scheduled expiry boundaries.
-- [ ] Reject enemy-only/neutral-target observations unless an authoritative objective marks the target as player-protected.
-- [ ] Resolve hostile source from the observation entity/position when available.
-- [ ] Resolve attacker/target names from ECS `UnitDisplayInfo`, then use the locked fixed generic labels; do not expose prefab keys or call managed selection lookup code from the ECS system.
-- [ ] Classify air/ground/building-defense/missile threat from locked gameplay components/source kind.
-- [ ] Publish captured applied damage, post-hit health, horizontal distance, and last-observed time without weapon-config inference.
-- [ ] Upsert four bounded rows using the locked stable `ThreatId` hash and priority thresholds.
-- [ ] Expire rows at 6 seconds using `NextExpiryAt`, not a broad per-frame query.
-- [ ] Feed top threat rows into `AssistantMessagePrioritySystem` so voice and alerts share the same fact source.
-- [ ] Apply the 8-second per-threat narration suppression rule and text-only fallback when ARIA voice is unavailable.
+- [x] Add the neutral `CombatDamageObservationQueueComponent` and bounded `CombatDamageObservationElement` ring.
+- [x] Instrument every `UnitHealth` damage path in direct unit fire, building defense, ground missiles, and air missiles with exact applied-damage observations.
+- [x] Add `AssistantThreatReadModelElement` and `AssistantThreatReadModelStateComponent`.
+- [x] Add `AssistantThreatReadModelSystem` in `PresentationSystemGroup` before recommendations/messages and consume only new observation ids or scheduled expiry boundaries.
+- [x] Reject enemy-only/neutral-target observations unless an authoritative objective marks the target as player-protected.
+- [x] Resolve hostile source from the observation entity/position when available.
+- [x] Resolve attacker/target names from ECS `UnitDisplayInfo`, then use the locked fixed generic labels; do not expose prefab keys or call managed selection lookup code from the ECS system.
+- [x] Classify air/ground/building-defense/missile threat from locked gameplay components/source kind.
+- [x] Publish captured applied damage, post-hit health, horizontal distance, and last-observed time without weapon-config inference.
+- [x] Upsert four bounded rows using the locked stable `ThreatId` hash and priority thresholds.
+- [x] Expire rows at 6 seconds using `NextExpiryAt`, not a broad per-frame query.
+- [x] Feed top threat rows into `AssistantMessagePrioritySystem` so voice and alerts share the same fact source.
+- [x] Apply the 8-second per-threat narration suppression rule and text-only fallback when ARIA voice is unavailable.
 
 Exit criteria:
 
@@ -725,13 +730,13 @@ Exit criteria:
 
 ### 6. Recommendation scoring and target lock
 
-- [ ] Extend recommendation target metadata, add the locked input-version evaluation state, and remove the per-frame selected-tag count query.
-- [ ] Add `AssistantTargetLockReadModelSystem` after recommendations and threats.
-- [ ] Target lock uses the locked recommendation/preview/dispatch/top-threat priority and never falls back to camera position or an arbitrary focused unit.
-- [ ] Compute lock state from command capability: candidate, preview, executable, executing, invalid.
-- [ ] Publish the truthful readiness label (`PREVIEW`, `READY`, `ACTIVE`, `BLOCKED`) instead of numeric confidence.
-- [ ] Publish target display name, source name, faction relation, distance text, health text, readiness text, and reason text through `UiAssistantTargetLockModel`.
-- [ ] Update the target-lock graphic so its markers and text are model-driven.
+- [x] Extend recommendation target metadata, add the locked input-version evaluation state, and remove the per-frame selected-tag count query.
+- [x] Add `AssistantTargetLockReadModelSystem` after recommendations and threats.
+- [x] Target lock uses the locked recommendation/preview/dispatch/top-threat priority and never falls back to camera position or an arbitrary focused unit.
+- [x] Compute lock state from command capability: candidate, preview, executable, executing, invalid.
+- [x] Publish the truthful readiness label (`PREVIEW`, `READY`, `ACTIVE`, `BLOCKED`) instead of numeric confidence.
+- [x] Publish target display name, source name, faction relation, distance text, health text, readiness text, and reason text through `UiAssistantTargetLockModel`.
+- [x] Update the target-lock graphic so its markers and text are model-driven.
 
 Exit criteria:
 
@@ -741,19 +746,19 @@ Exit criteria:
 
 ### 7. Complete command mechanics
 
-- [ ] Preserve `ShowRecommendation` as preview-only.
-- [ ] Add concrete move recommendation targeting from an authoritative objective/tactical target and disable execution when none exists.
-- [ ] Add concrete attack recommendation targeting from an authoritative objective or verified threat and disable execution when none exists.
-- [ ] Implement `MoveToWorldPosition` through `UnitMoveOrderRequestSystem.EnqueueImmediateMoveOrder` for the recommendation's single revalidated source entity.
-- [ ] Implement `AttackEntity` through `UnitAttackOrderRequestSystem.EnqueueDirectAttackTarget` for the recommendation's single revalidated source entity.
-- [ ] Keep `SelectEntity` execution through existing selection command intent request flow.
-- [ ] Keep `FocusCamera` execution through the existing `RtsCameraRequestQueueComponent`/`RtsCameraRequestElement` preview path.
-- [ ] Add bounded assistant-to-downstream dispatch mapping and a result bridge for selection/move/attack request ids.
-- [ ] Revalidate recommendation id/source version, entity existence, ownership, health, target relation, and cell bounds immediately before dispatch.
-- [ ] Reuse canonical `TacticalCommandReasonCode` values for stale entity, missing source, invalid cell, non-hostile target, and unavailable command path.
-- [ ] Mark assistant intents `Accepted` on downstream enqueue and `Completed`/`Rejected` only from the correlated result; time out after 5 seconds.
-- [ ] `DO IT` must only be interactable when the recommendation has an executable typed path.
-- [ ] `STOP` clears undispatched work, preview highlight, target-lock preview state, and assistant control owner state without undoing an accepted atomic unit order.
+- [x] Preserve `ShowRecommendation` as preview-only.
+- [x] Add concrete move recommendation targeting from an authoritative objective/tactical target and disable execution when none exists.
+- [x] Add concrete attack recommendation targeting from an authoritative objective or verified threat and disable execution when none exists.
+- [x] Implement `MoveToWorldPosition` through `UnitMoveOrderRequestSystem.EnqueueImmediateMoveOrder` for the recommendation's single revalidated source entity.
+- [x] Implement `AttackEntity` through `UnitAttackOrderRequestSystem.EnqueueDirectAttackTarget` for the recommendation's single revalidated source entity.
+- [x] Keep `SelectEntity` execution through existing selection command intent request flow.
+- [x] Keep `FocusCamera` execution through the existing `RtsCameraRequestQueueComponent`/`RtsCameraRequestElement` preview path.
+- [x] Add bounded assistant-to-downstream dispatch mapping and a result bridge for selection/move/attack request ids.
+- [x] Revalidate recommendation id/source version, entity existence, ownership, health, target relation, and cell bounds immediately before dispatch.
+- [x] Reuse canonical `TacticalCommandReasonCode` values for stale entity, missing source, invalid cell, non-hostile target, and unavailable command path.
+- [x] Mark assistant intents `Accepted` on downstream enqueue and `Completed`/`Rejected` only from the correlated result; time out after 5 seconds.
+- [x] `DO IT` must only be interactable when the recommendation has an executable typed path.
+- [x] `STOP` clears undispatched work, preview highlight, target-lock preview state, and assistant control owner state without undoing an accepted atomic unit order.
 
 Exit criteria:
 
@@ -763,12 +768,12 @@ Exit criteria:
 
 ### 8. ARIA voice state panel
 
-- [ ] Extend narration requests with `AudioPlaybackRequestId` and the managed panel model with correlated narration state, priority, subtitle, and safe failure reason.
-- [ ] Keep playback in existing audio infrastructure; add bounded/versioned 256-row terminal request/result retention without introducing an assistant-owned audio player.
-- [ ] Add `AssistantNarrationAudioResultProjectionSystem`, correlate audio results, and publish only `OFF`, `TEXT ONLY`, `QUEUED`, `ACCEPTED`, `PRESENTED`, or `FAILED`.
-- [ ] Pulse the waveform for at most 0.8 seconds on transition to `PRESENTED`; keep it still otherwise.
-- [ ] Failed narration shows text fallback and a user-safe reason with no fake speaking/completed state.
-- [ ] Do not expose debug audio event ids in retail UI. Keep them in tests/logs only.
+- [x] Extend narration requests with `AudioPlaybackRequestId` and the managed panel model with correlated narration state, priority, subtitle, and safe failure reason.
+- [x] Keep playback in existing audio infrastructure; add bounded/versioned 256-row terminal request/result retention without introducing an assistant-owned audio player.
+- [x] Add `AssistantNarrationAudioResultProjectionSystem`, correlate audio results, and publish only `OFF`, `TEXT ONLY`, `QUEUED`, `ACCEPTED`, `PRESENTED`, or `FAILED`.
+- [x] Pulse the waveform for at most 0.8 seconds on transition to `PRESENTED`; keep it still otherwise.
+- [x] Failed narration shows text fallback and a user-safe reason with no fake speaking/completed state.
+- [x] Do not expose debug audio event ids in retail UI. Keep them in tests/logs only.
 
 Exit criteria:
 
@@ -777,16 +782,16 @@ Exit criteria:
 
 ### 9. Popup visual implementation
 
-- [ ] Replace decorative row guides with stable row views bound to goal/alert/report row models.
-- [ ] Keep target-lock chrome static, but bind all text/active markers to `UiAssistantTargetLockModel`.
-- [ ] Use the stable child objects serialized in the prefab; create no row, marker, or command-control GameObjects during or after bind.
-- [ ] Use TMP autosizing only where necessary and with bounded min/max sizes.
-- [ ] Preserve large readable controls matching build/resource popup scale.
-- [ ] Instantiate and bind the locked `LandscapeLayout` prefab at `2460 x 1510`, `(0, 156)`, on the `4800 x 2160` runtime canvas; do not generate a parallel compact hierarchy.
-- [ ] Exclude the right quick rail and keep at least the locked safe-area margins.
-- [ ] Enforce one-large-tactical-popup exclusivity through `MainMenuPlayUI` and existing view close methods.
-- [ ] Bind Escape/back/CLOSE/STOP behavior exactly as specified in the popup lifecycle contract.
-- [ ] Add high-contrast/large-text hooks from `AssistantSettingsComponent` if those settings are active.
+- [x] Replace decorative row guides with stable row views bound to goal/alert/report row models.
+- [x] Keep target-lock chrome static, but bind all text/active markers to `UiAssistantTargetLockModel`.
+- [x] Use the stable child objects serialized in the prefab; create no row, marker, or command-control GameObjects during or after bind.
+- [x] Use TMP autosizing only where necessary and with bounded min/max sizes.
+- [x] Preserve large readable controls matching build/resource popup scale.
+- [x] Instantiate and bind the locked `LandscapeLayout` prefab at `2460 x 1510`, `(0, 156)`, on the `4800 x 2160` runtime canvas; do not generate a parallel compact hierarchy.
+- [x] Exclude the right quick rail and keep at least the locked safe-area margins.
+- [x] Enforce one-large-tactical-popup exclusivity through `MainMenuPlayUI` and existing view close methods.
+- [x] Bind Escape/back/CLOSE/STOP behavior exactly as specified in the popup lifecycle contract.
+- [x] Add high-contrast/large-text hooks from `AssistantSettingsComponent` if those settings are active.
 
 Exit criteria:
 
@@ -796,13 +801,13 @@ Exit criteria:
 
 ### 10. Gateway publishing and caching
 
-- [ ] Add explicit source-version state for messages, threats, and target lock plus cached tuple fields in `UiShellEcsGateway`.
-- [ ] Replace per-poll message/narration content hashing with explicit bounded source versions.
-- [ ] Increment one monotonic managed `UiAssistantPanelModel.Version` only when the cached source tuple changes.
-- [ ] Convert fixed strings to managed strings only when the combined version changes.
-- [ ] Do not allocate lists/arrays during `TryReadMatchHudAssistantPanel`.
-- [ ] Avoid repeated `.ToString()` calls for unchanged rows.
-- [ ] Keep fallback `UiAssistantPanelModel.Empty` cheap and static-like.
+- [x] Add explicit source-version state for messages, threats, and target lock plus cached tuple fields in `UiShellEcsGateway`.
+- [x] Replace per-poll message/narration content hashing with explicit bounded source versions.
+- [x] Increment one monotonic managed `UiAssistantPanelModel.Version` only when the cached source tuple changes.
+- [x] Convert fixed strings to managed strings only when the combined version changes.
+- [x] Do not allocate lists/arrays during `TryReadMatchHudAssistantPanel`.
+- [x] Avoid repeated `.ToString()` calls for unchanged rows.
+- [x] Keep fallback `UiAssistantPanelModel.Empty` cheap and static-like.
 
 Exit criteria:
 
@@ -811,19 +816,19 @@ Exit criteria:
 
 ### 11. Validation and acceptance
 
-- [ ] Editor test: production defaults and non-match/pre-start routes publish no objectives, threats, feedback, or narration.
-- [ ] Editor test: mission-owned structured goal rows publish objective ids, states, bodies, primary marker, and elapsed whole seconds correctly.
-- [ ] Editor test: direct fire, building defense, ground missile, and air missile damage each append exact applied-damage observations.
-- [ ] Editor test: threat rows identify the player-owned target and attacker from combat observations while enemy-only damage is ignored.
-- [ ] Editor test: threat rows expire/coalesce without unbounded growth.
-- [ ] Editor test: recommendation target-lock model uses top recommendation and changes state on preview.
-- [ ] Editor test: command intent dispatch/result bridge accepts or rejects select, move, attack, and focus with correlated downstream request ids and canonical reasons.
-- [ ] Editor test: narration state maps correlated audio pending/accepted/presented/failure/text-only/off states without a false completed/speaking state.
-- [ ] Editor test: no-change gateway call returns same version and does not rebuild strings/rows.
-- [ ] UI helper test: row GameObjects are created once and reused.
-- [ ] UI helper test: top-left objective slot binding, missing-slot fallback, old-panel restore, popup exclusivity, and Escape/CLOSE/STOP semantics.
-- [ ] Visual validation: authoritative `4800 x 2160` reference-canvas capture plus the fixed production landscape output, with the right quick rail visible and unobstructed.
-- [ ] Performance validation: locked timing/allocation budgets pass for idle polling and a saturated bounded threat model.
+- [x] Editor test: production defaults and non-match/pre-start routes publish no objectives, threats, feedback, or narration.
+- [x] Editor test: mission-owned structured goal rows publish objective ids, states, bodies, primary marker, and elapsed whole seconds correctly.
+- [x] Editor test: direct fire, building defense, ground missile, and air missile damage each append exact applied-damage observations.
+- [x] Editor test: threat rows identify the player-owned/protected target and attacker from combat observations while enemy-only damage is ignored.
+- [x] Editor test: threat rows expire/coalesce without unbounded growth.
+- [x] Editor test: recommendation target-lock model uses top recommendation and changes state on preview.
+- [x] Editor test: command intent dispatch/result bridge accepts or rejects select, move, attack, and focus with correlated downstream request ids and canonical reasons.
+- [x] Editor test: narration state maps correlated audio pending/accepted/presented/failure/text-only/off states without a false completed/speaking state.
+- [x] Editor test: no-change gateway call returns same version and does not rebuild strings/rows.
+- [x] UI helper test: row GameObjects are created once and reused.
+- [x] UI helper test: top-left objective slot binding, missing-slot fallback, old-panel restore, popup exclusivity, and Escape/CLOSE/STOP semantics.
+- [x] Visual validation: authoritative `4800 x 2160` reference-canvas capture plus the fixed production landscape output, with the right quick rail visible and unobstructed.
+- [x] Performance validation: locked timing/allocation budgets pass for idle polling and a saturated bounded threat model.
 - [ ] Play validation: start match, open popup, see objectives inside ARIA, issue move, issue attack, observe accurate threat/voice/target-lock rows.
 
 Exit criteria:

@@ -68,6 +68,7 @@ public sealed class AudioEcsDataContractTests
     public void AudioComponents_AreUnmanagedEcsData()
     {
         AssertComponent<AudioPlaybackRequestQueueComponent>();
+        AssertComponent<AudioPlaybackResultQueueComponent>();
         AssertComponent<AudioSettingsComponent>();
         AssertComponent<AudioMusicStateComponent>();
         AssertComponent<AudioListenerStateComponent>();

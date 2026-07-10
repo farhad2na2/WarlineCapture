@@ -58,6 +58,7 @@ namespace Game.Runtime
             var queueEntity = RespawnQueueUtility.GetOrCreateQueue(ref state, _respawnQueueQuery);
             var queueState = SystemAPI.GetComponent<RespawnQueueComponent>(queueEntity);
             var em = state.EntityManager;
+            AudioEventRequestSystem.EnsureAudioEntity(em);
             float dt = SystemAPI.Time.DeltaTime;
             double now = SystemAPI.Time.ElapsedTime;
             double respawnDelay = math.max(0.01f, queueState.RespawnDelaySeconds);

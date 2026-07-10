@@ -41,6 +41,7 @@ public sealed class AndroidVisualQualityValidationTests
             RunCase(() => MatchCompositionRoutesVisualQualityChangesAndUnsubscribes(), ref passed);
             RunCase(() => VisualQualityRoutingRemainsEventDriven(), ref passed);
             RunCase(() => DayNightRemainsAuthoritativeAcrossQualityChanges(), ref passed);
+            RunCase(() => RuntimeQualityTierMappingsAreComplete(), ref passed);
             Debug.Log($"[AndroidVisualQualityValidation] result=Passed tests={passed}");
         }
         catch (Exception exception)
@@ -500,6 +501,137 @@ public sealed class AndroidVisualQualityValidationTests
             UnityEngine.Object.DestroyImmediate(ultraVolumeProfile);
             SettingsService.Save(previousSettings);
         }
+    }
+
+    [Test]
+    public static void RuntimeQualityTierMappingsAreComplete()
+    {
+        VisualQualityProfileAsset profile =
+            AssetDatabase.LoadAssetAtPath<VisualQualityProfileAsset>(VisualQualityProfilePath);
+        Assert.NotNull(profile, $"Missing visual quality profile at {VisualQualityProfilePath}.");
+
+        SerializedObject serializedProfile = new(profile);
+        UnityEngine.Object lowPipeline = serializedProfile.FindProperty("lowRenderPipelineAsset").objectReferenceValue;
+        UnityEngine.Object mediumPipeline = serializedProfile.FindProperty("mediumRenderPipelineAsset").objectReferenceValue;
+        UnityEngine.Object ultraPipeline = serializedProfile.FindProperty("renderPipelineAsset").objectReferenceValue;
+        UnityEngine.Object ultraVolumeProfile = serializedProfile.FindProperty("globalVolumeProfile").objectReferenceValue;
+        int configuredAntialiasing = serializedProfile.FindProperty("cameraAntialiasingMode").intValue;
+        Assert.NotNull(lowPipeline);
+        Assert.NotNull(mediumPipeline);
+        Assert.NotNull(ultraPipeline);
+        Assert.NotNull(ultraVolumeProfile);
+
+        Type cameraDataType = Type.GetType(
+            "UnityEngine.Rendering.Universal.UniversalAdditionalCameraData, Unity.RenderPipelines.Universal.Runtime");
+        Type volumeType = Type.GetType(
+            "UnityEngine.Rendering.Volume, Unity.RenderPipelines.Core.Runtime");
+        Type volumeProfileType = Type.GetType(
+            "UnityEngine.Rendering.VolumeProfile, Unity.RenderPipelines.Core.Runtime");
+        Assert.NotNull(cameraDataType);
+        Assert.NotNull(volumeType);
+        Assert.NotNull(volumeProfileType);
+
+        GameObject cameraObject = new("QualityTierMappingCamera", typeof(Camera));
+        GameObject volumeObject = new("QualityTierMappingVolume");
+        ScriptableObject baselineVolumeProfile = ScriptableObject.CreateInstance(volumeProfileType);
+        World world = new("QualityTierMappingValidation");
+
+        try
+        {
+            Component cameraData = cameraObject.AddComponent(cameraDataType);
+            Component volume = volumeObject.AddComponent(volumeType);
+            WriteMember(volume, "sharedProfile", baselineVolumeProfile);
+            VisualQualitySettingsSystem system =
+                world.GetOrCreateSystemManaged<VisualQualitySettingsSystem>();
+            MethodInfo initialize = typeof(VisualQualitySettingsSystem).GetMethod(
+                "Initialize",
+                BindingFlags.Instance | BindingFlags.Public);
+            Assert.NotNull(initialize);
+            initialize.Invoke(system, new object[]
+            {
+                profile,
+                cameraObject.GetComponent<Camera>(),
+                null,
+                volume
+            });
+
+            AssertRuntimeQualityTier(
+                system,
+                VisualQualityRuntimeMode.Low,
+                lowPipeline,
+                profile.LowRenderScaleOverride,
+                baselineVolumeProfile,
+                cameraData,
+                volume,
+                expectedPostProcessing: false,
+                expectedAntialiasing: 0,
+                expectedShadowStrengthCap: profile.LowSunShadowStrength);
+            AssertRuntimeQualityTier(
+                system,
+                VisualQualityRuntimeMode.Medium,
+                mediumPipeline,
+                profile.MediumRenderScaleOverride,
+                baselineVolumeProfile,
+                cameraData,
+                volume,
+                expectedPostProcessing: false,
+                expectedAntialiasing: 0,
+                expectedShadowStrengthCap: profile.MediumSunShadowStrength);
+            AssertRuntimeQualityTier(
+                system,
+                VisualQualityRuntimeMode.High,
+                mediumPipeline,
+                profile.MediumRenderScaleOverride,
+                baselineVolumeProfile,
+                cameraData,
+                volume,
+                expectedPostProcessing: false,
+                expectedAntialiasing: configuredAntialiasing,
+                expectedShadowStrengthCap: profile.MediumSunShadowStrength);
+            AssertRuntimeQualityTier(
+                system,
+                VisualQualityRuntimeMode.Ultra,
+                ultraPipeline,
+                profile.CameraRenderScaleOverride,
+                ultraVolumeProfile,
+                cameraData,
+                volume,
+                profile.EnableCameraPostProcessing,
+                configuredAntialiasing,
+                profile.PremiumSunShadowStrength);
+        }
+        finally
+        {
+            world.Dispose();
+            UnityEngine.Object.DestroyImmediate(cameraObject);
+            UnityEngine.Object.DestroyImmediate(volumeObject);
+            UnityEngine.Object.DestroyImmediate(baselineVolumeProfile);
+        }
+    }
+
+    private static void AssertRuntimeQualityTier(
+        VisualQualitySettingsSystem system,
+        VisualQualityRuntimeMode mode,
+        UnityEngine.Object expectedPipeline,
+        float expectedRenderScale,
+        UnityEngine.Object expectedVolumeProfile,
+        Component cameraData,
+        Component volume,
+        bool expectedPostProcessing,
+        int expectedAntialiasing,
+        float expectedShadowStrengthCap)
+    {
+        system.ApplyRuntimeMode(mode);
+
+        Assert.AreEqual(mode, system.AppliedMode);
+        Assert.AreSame(expectedPipeline, QualitySettings.renderPipeline);
+        SerializedProperty renderScale = new SerializedObject(expectedPipeline).FindProperty("m_RenderScale");
+        Assert.NotNull(renderScale, $"{expectedPipeline.name} is missing m_RenderScale.");
+        Assert.That(renderScale.floatValue, Is.EqualTo(expectedRenderScale).Within(0.001f));
+        Assert.AreSame(expectedVolumeProfile, ReadMember(volume, "sharedProfile"));
+        Assert.AreEqual(expectedPostProcessing, Convert.ToBoolean(ReadMember(cameraData, "renderPostProcessing")));
+        Assert.AreEqual(expectedAntialiasing, Convert.ToInt32(ReadMember(cameraData, "antialiasing")));
+        Assert.That(system.AppliedShadowStrengthCap, Is.EqualTo(expectedShadowStrengthCap).Within(0.001f));
     }
 
     private static float ReadVolumeFloat(DayNightSystem dayNight, string componentFieldName, string parameterName)

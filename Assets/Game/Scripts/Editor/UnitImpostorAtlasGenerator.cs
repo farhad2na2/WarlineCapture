@@ -22,6 +22,8 @@ namespace Game.Editor
         private const int TileSize = 512;
         private const int TilePadding = 24;
         private const int InnerTileSize = TileSize - TilePadding * 2;
+        private const int AndroidMaxTextureSize = 1024;
+        private const int AndroidCompressionQuality = 50;
         private static readonly int SnivelerModelShownId = Shader.PropertyToID("_SnivelerModelShown");
         private static readonly int SnivelerRenderPixelId = Shader.PropertyToID("_SnivelerRenderPixel");
 
@@ -73,6 +75,26 @@ namespace Game.Editor
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             Debug.Log($"[ImpostorAtlasGen] generatedAll soldiers={generated} registry={RegistryConfigPath}");
+        }
+
+        [MenuItem("Game/Rendering/Atlases/Apply Mobile Import Policy")]
+        public static void ApplyMobileImportPolicyToExistingAtlases()
+        {
+            string[] guids = AssetDatabase.FindAssets("t:Texture2D", new[] { OutputFolder });
+            var paths = new List<string>(guids.Length);
+            for (int i = 0; i < guids.Length; i++)
+                paths.Add(AssetDatabase.GUIDToAssetPath(guids[i]));
+
+            paths.Sort(System.StringComparer.Ordinal);
+            int configured = 0;
+            for (int i = 0; i < paths.Count; i++)
+            {
+                if (ConfigureTextureImporter(paths[i]))
+                    configured++;
+            }
+
+            AssetDatabase.SaveAssets();
+            Debug.Log($"[ImpostorAtlasGen] mobileImportPolicy configured={configured} discovered={paths.Count} folder={OutputFolder}");
         }
 
         private static bool GenerateAtlasForPrefab(UnitPrefabRegistryAuthoringConfig registry, GameObject prefab)
@@ -455,20 +477,30 @@ namespace Game.Editor
             EditorUtility.SetDirty(registry);
         }
 
-        private static void ConfigureTextureImporter(string assetPath)
+        private static bool ConfigureTextureImporter(string assetPath)
         {
             TextureImporter importer = AssetImporter.GetAtPath(assetPath) as TextureImporter;
             if (importer == null)
-                return;
+                return false;
 
             importer.textureType = TextureImporterType.Default;
             importer.alphaSource = TextureImporterAlphaSource.FromInput;
             importer.alphaIsTransparency = true;
             importer.mipmapEnabled = true;
+            importer.streamingMipmaps = true;
             importer.wrapMode = TextureWrapMode.Clamp;
             importer.filterMode = FilterMode.Bilinear;
             importer.textureCompression = TextureImporterCompression.Uncompressed;
+
+            TextureImporterPlatformSettings androidSettings = importer.GetPlatformTextureSettings("Android");
+            androidSettings.name = "Android";
+            androidSettings.overridden = true;
+            androidSettings.maxTextureSize = AndroidMaxTextureSize;
+            androidSettings.format = TextureImporterFormat.ASTC_6x6;
+            androidSettings.compressionQuality = AndroidCompressionQuality;
+            importer.SetPlatformTextureSettings(androidSettings);
             importer.SaveAndReimport();
+            return true;
         }
 
         private static void EnsureOutputFolder()

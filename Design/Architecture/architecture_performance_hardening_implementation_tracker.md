@@ -253,15 +253,15 @@ The program is complete only when all of the following are true:
 |---|---|
 | Checklist complete | `59 / 106` |
 | Checklist percent complete | `55.7%` |
-| Checklist in progress | `3 / 106`: `APH-311`, `APH-501`, `APH-601` |
-| Complete plus active coverage | `62 / 106` (`58.5%`); this is visibility only, not accepted completion |
+| Checklist in progress | `6 / 106`: `APH-311`, `APH-501`, `APH-502`, `APH-509`, `APH-601`, `APH-607` |
+| Complete plus active coverage | `65 / 106` (`61.3%`); this is visibility only, not accepted completion |
 | Current phase | Phase 3 Android device evidence, Phase 5 product budgets, and Phase 6 shared-mesh presentation streaming |
-| Current task | `APH-607` is the next Phase 6 implementation task; `APH-501`, `APH-601`, and `APH-311` retain release-device measurement ownership |
+| Current task | `APH-607` is active for bounded presentation streaming and chunk-first Match teardown; `APH-502` and `APH-509` have accepted analysis tooling but retain their clean-evidence/implementation gates |
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: steady-state Match GC `234,324 / 1,024` bytes; improved 13.0% from the APH-007 baseline without weakening the budget |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
 | Last verified commit | `1224f9bf4`; APH-604/605 and APH-700/701/702 are validated, committed, and pushed to `main` |
-| Last update | 2026-07-10 - APH-606 accepted; APH-501 package budgets implemented with release-device memory limits still active |
+| Last update | 2026-07-10 - APH-607 opened; APH-502/509 analysis artifacts independently reviewed with remaining gates explicit |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -511,14 +511,16 @@ Goal: make residency and package size intentional while preserving visible quali
   - Evidence: clean ARM64 IL2CPP release APK and AAB reports were generated and reviewed. APK artifact `463,359,198` bytes with SHA-256 `cb18f212...824f20`; AAB artifact `426,399,778` bytes with SHA-256 `c03558f2...7ac29`; evidence commits `a527e151e` and `ddfca3b27` are pushed to `main`.
 - [~] `APH-501` Add tracked budgets for APK/AAB size, installed size, peak allocated memory, texture memory, mesh memory, audio memory, and graphics-driver memory.
   - Active result: schema 3 pins clean ARM64 IL2CPP release budgets at APK `<= 463,359,198` bytes and AAB `<= 426,399,778` bytes, including exact artifact commit, SHA-256, immutable evidence commit, and report path. Installed size and absolute peak/texture/mesh/audio/graphics-driver memory limits remain fail-closed `null` until accepted release-device captures provide the required measurements.
-- [ ] `APH-502` Classify texture importers into UI, world albedo, world normal/mask, VFX, impostor/atlas, generated source/reference, and excluded/unreferenced groups.
+- [~] `APH-502` Classify texture importers into UI, world albedo, world normal/mask, VFX, impostor/atlas, generated source/reference, and excluded/unreferenced groups.
+  - Active result: deterministic tooling provisionally classifies all 3,464 tracked importers by semantic path/YAML evidence and exposes 105 overlaps. Final inclusion/exclusion buckets remain explicitly unaccepted until a clean same-revision Unity residency inventory and complete BuildReport texture-path export are available.
 - [ ] `APH-503` Add an editor guard preventing mip streaming on UI, font, animation-data, sprite-atlas, and generated reference/source textures.
 - [ ] `APH-504` Enable mip streaming for a representative world-texture subset with mipmaps; set a mobile memory budget and preserve full-resolution nearby textures.
 - [ ] `APH-505` Capture identical near, medium, and far camera screenshots before and after streaming. Reject blur, late pop, terrain seams, or missing vegetation detail.
 - [ ] `APH-506` Measure memory and I/O during a 10-minute camera-pan/zoom session. Expand streaming only after the pilot passes.
 - [ ] `APH-507` Audit Android texture overrides for ASTC size/quality and remove oversized 4K/8K limits only where the BuildReport proves inclusion and visual evidence proves no loss.
 - [ ] `APH-508` Audit the six generated animation textures for actual runtime residency, duplication, clip coverage, precision requirements, and unload behavior. Do not change format based only on source file size.
-- [ ] `APH-509` Remove unused packages only after a package-usage report proves no source, serialized asset, build script, or editor workflow dependency.
+- [~] `APH-509` Remove unused packages only after a package-usage report proves no source, serialized asset, build script, or editor workflow dependency.
+  - Active result: a reviewed read-only inventory classifies 46 manifest packages, one embedded depth-zero manifest discrepancy, and 20 ordinary lock-only transitives. Sixteen direct packages are candidate-unused only; no package removal is accepted until isolated import/compile/test/build/device validation proves it safe.
 - [ ] `APH-510` Rebuild Android, compare BuildReport/memory/frame metrics, and record per-category deltas.
 
 ## Phase 6 - Editor-Baked Static Map Chunks
@@ -554,7 +556,8 @@ Quality lock:
 - [x] `APH-606` Add a serialized presentation-manifest reference to `MatchSceneView` or an equivalent composition-owned config, and include every generated chunk scene in Android builds. Do not add a `GameObject.Find` fallback.
   - Result: `MatchSceneView` owns the serialized manifest reference; deterministic editor wiring updates the canonical Match scene without hierarchy-name lookup; both Android release and profiler build paths include enabled base scenes followed by the exact 525 manifest-owned chunks. The resolver fails closed for stale canonical dependencies, stale enabled output, missing base/chunk scenes, duplicate/non-owned chunks, schema/content drift, and integrity-ledger mismatch.
   - Validation: resolver `21/21`, scene wiring `2/2`, APH-700 `7/7`, APH-701/702 `15/15`, two identical post-wiring bakes with zero scene writes/deletes, and all 12 first-party assemblies with zero errors.
-- [ ] `APH-607` Add a managed presentation streamer that preloads the camera footprint plus one ring before Match-ready, then loads/unloads with hysteresis and one bounded operation queue. Unload every presentation chunk before unloading Match.
+- [~] `APH-607` Add a managed presentation streamer that preloads the camera footprint plus one ring before Match-ready, then loads/unloads with hysteresis and one bounded operation queue. Unload every presentation chunk before unloading Match.
+  - Active scope: add one plain managed composition-owned streamer with a 64-entry queue, one active operation, one start per frame, one-ring preload, two-ring unload hysteresis, fail-closed readiness, and drain completion as a hard prerequisite for `QueueUnloadMatch`.
 - [ ] `APH-608` Enable Unity 6 GPU Resident Drawer `InstancedDrawing` for the Mobile URP asset, retain BRG shader variants, disable Android static batching, and preserve a measured fallback for incompatible renderers. Do not add a new gameplay `ISystem` or `SystemBase` owner.
 - [ ] `APH-609` Compare canonical/runtime-batched and shared-mesh chunked/GRD screenshots plus draw calls, triangles, CPU/GPU frame time, memory, package size, and startup time. Require pixel/visual review, not metrics alone.
 - [ ] `APH-610` After acceptance, disable runtime mesh combination when a valid presentation manifest is present, remove duplicated base-scene visual renderers represented by validated chunk entries, and disable Read/Write only on meshes no accepted runtime path needs. Keep development-only stale/missing-manifest diagnostics.

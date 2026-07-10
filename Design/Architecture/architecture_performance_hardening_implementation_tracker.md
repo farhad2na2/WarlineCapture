@@ -248,16 +248,16 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `38 / 106` |
-| Checklist percent complete | `35.8%` |
-| Checklist in progress | `1 / 106`: `APH-305` |
-| Complete plus active coverage | `39 / 106` (`36.8%`); this is visibility only, not accepted completion |
+| Checklist complete | `40 / 106` |
+| Checklist percent complete | `37.7%` |
+| Checklist in progress | `1 / 106`: `APH-307` |
+| Complete plus active coverage | `41 / 106` (`38.7%`); this is visibility only, not accepted completion |
 | Current phase | Phase 3 - settings, frame-rate, and environment ownership |
-| Current task | `APH-305` route settings changes through composition with explicit subscription cleanup |
+| Current task | `APH-307` split static visual-tier application from dynamic Day/Night environment ownership |
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: steady-state Match GC `234,324 / 1,024` bytes; improved 13.0% from the APH-007 baseline without weakening the budget |
-| Last verified commit | `7c13bf7e7`; exactly-once Menu/Match settings routing passes |
-| Last update | 2026-07-10 - APH-304 complete; composition-owned change routing active |
+| Last verified commit | `c92d3095e`; event-driven visual-quality routing and Match smoke pass |
+| Last update | 2026-07-10 - APH-305/306 complete; Day/Night ownership split active |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -446,9 +446,12 @@ Target ownership:
 - [x] `APH-304` Apply `SettingsService.Load()` through the composition startup path exactly once after required runtime owners exist.
   - Result: audio and assistant ECS owners subscribe without independently loading settings; Menu composition defers until both owners exist, then applies persisted settings once per ECS world across repeated `Awake`, `OnEnable`, and `Update` entries.
   - Validation: settings integration `8/8`, Menu settings/audio smoke passed, Match settings/audio smoke passed at HUD ready, ECS/Burst hot path `10/10`, UI Shell ECS, Composition, and Editor-test builds passed with 0 errors; commit `7c13bf7e7` pushed to `main`.
-- [~] `APH-305` Route settings-change events through composition to `VisualQualitySettingsSystem`; ensure subscriptions are removed on shutdown/domain reload.
-- [ ] `APH-306` Give `VisualQualitySettingsSystem` an explicit apply-on-change API and remove its manual per-frame `Update` call from Match bootstrap.
-- [ ] `APH-307` Split static tier application from dynamic environment application. After initialization, visual-quality code must not overwrite Day/Night sun, ambient, fog, skybox, or volume values every frame.
+- [x] `APH-305` Route settings-change events through composition to `VisualQualitySettingsSystem`; ensure subscriptions are removed on shutdown/domain reload.
+  - Result: Match composition subscribes once to the settings runtime event, maps the graphics tier to the visual-quality runtime mode, applies the latest value when the managed visual owner becomes ready, and unsubscribes on shutdown; subsystem registration clears stale static subscribers across domain-reload-disabled sessions.
+- [x] `APH-306` Give `VisualQualitySettingsSystem` an explicit apply-on-change API and remove its manual per-frame `Update` call from Match bootstrap.
+  - Result: visual quality exposes `ApplyRuntimeMode`, reports its initialized/applied state for composition and validation, and is no longer polled from the Match bootstrap frame loop.
+  - Validation: Android visual-quality `10/10`, Match settings/audio smoke passed at HUD ready, ECS/Burst hot path `10/10`, UI Runtime, Game Runtime, Composition, and Editor-test builds passed with 0 errors; commit `c92d3095e` pushed to `main`.
+- [~] `APH-307` Split static tier application from dynamic environment application. After initialization, visual-quality code must not overwrite Day/Night sun, ambient, fog, skybox, or volume values every frame.
 - [ ] `APH-308` Add an ownership regression that advances Day/Night, runs visual-quality handling, and proves the Day/Night values remain authoritative.
 - [ ] `APH-309` Verify Low, Balanced/High, and Ultra mappings, including render pipeline, render scale, post-processing, AA, and shadow strength.
 - [ ] `APH-310` Run `SettingsPopupValidationTests.RunFocusedValidation`, `AndroidVisualQualityValidationTests.RunFocusedValidation`, Match smoke, and visual captures at day, dusk, and night.
@@ -1066,6 +1069,21 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Visual result: no visual assets changed; Menu and Match HUD remained operational through their real smoke routes
 - Residual risk: runtime change subscriptions still live in the ECS lifecycle systems and visual quality is not yet an event target; `APH-305` owns that routing
 - Next ready task: `APH-305`
+
+### 2026-07-10 - APH-305 and APH-306 - Event-driven visual-quality routing
+
+- Status: Complete
+- Commit or worktree baseline: `3d2f9612a`
+- Stable commit/push: `c92d3095e` pushed to `main`
+- Files changed: Match composition settings routing, visual-quality apply API, SettingsService domain-reload cleanup/publication seam, and focused visual-quality validation
+- Behavior preserved/changed: settings now reach visual quality through one composition-owned subscription; the latest graphics tier is cached until the managed visual owner is ready, applied explicitly on change, and no longer polled each Match frame; shutdown and subsystem registration remove stale listeners
+- Validation: `[AndroidVisualQualityValidation] result=Passed tests=10`, Match `[SettingsAudioRuntimeSmoke] result=Passed` at HUD ready, `[EcsBurstHotPathArchitectureValidation] result=Passed tests=10`; UI Runtime, Game Runtime, Composition, and Editor-test builds passed with 0 errors; `git diff --check` passed
+- Artifacts: `/private/tmp/aph305-306-visual-quality-routing-final.log`, `/private/tmp/aph305-306-match-settings-smoke.log`, and `/private/tmp/aph305-306-ecs-burst-architecture.log`
+- Metrics before: one manual visual-quality call ran every Match frame and visual quality did not receive SettingsService changes through composition
+- Metrics after: zero Match-frame visual-quality polling calls, one active composition subscription, and explicit Low/Balanced/High/Ultra mapping with verified shutdown unsubscription
+- Visual result: Match HUD remained operational; no visual asset changed
+- Residual risk: a tier change can still overwrite Day/Night-owned light, ambient, fog, and volume state; `APH-307` and `APH-308` own that boundary and its regression
+- Next ready task: `APH-307`
 
 ### 2026-07-09 - Unity validation timeout reliability
 

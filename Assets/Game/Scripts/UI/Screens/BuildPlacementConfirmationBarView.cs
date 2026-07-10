@@ -3,7 +3,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
-using Game.Configs;
 using Game.Tactical.Contracts;
 using Game.UI.Contracts;
 

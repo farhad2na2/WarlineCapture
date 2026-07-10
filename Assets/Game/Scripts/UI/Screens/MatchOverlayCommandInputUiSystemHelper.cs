@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Game.Configs;
 using Game.Tactical.Contracts;
 using Game.UI.Contracts;
 

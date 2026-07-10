@@ -2,7 +2,6 @@ using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using Game.Configs;
 using Game.Tactical.Contracts;
 using Game.UI.Contracts;
 

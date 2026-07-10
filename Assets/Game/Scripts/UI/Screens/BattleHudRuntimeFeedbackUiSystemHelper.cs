@@ -1,5 +1,4 @@
 using UnityEngine;
-using Game.Configs;
 using Game.Tactical.Contracts;
 using Game.UI.Contracts;
 

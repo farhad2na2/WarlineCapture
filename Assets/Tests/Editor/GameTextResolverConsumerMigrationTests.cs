@@ -70,7 +70,7 @@ public sealed class GameTextResolverConsumerMigrationTests
             string source = File.ReadAllText(ConsumerPaths[i]);
             StringAssert.DoesNotContain("GameText.Get(", source, $"Direct Get remains in {ConsumerPaths[i]}.");
             StringAssert.DoesNotContain("GameText.Format(", source, $"Direct Format remains in {ConsumerPaths[i]}.");
-            StringAssert.Contains("using Game.Configs;", source, $"APH-105 owns using-directive removal for {ConsumerPaths[i]}.");
+            StringAssert.DoesNotContain("using Game.Configs;", source, $"Stale Game.Configs import remains in {ConsumerPaths[i]}.");
 
             MatchCollection calls = ResolverCallRegex.Matches(source);
             for (int callIndex = 0; callIndex < calls.Count; callIndex++)

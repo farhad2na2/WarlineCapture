@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Game.Catalog.Contracts;
-using Game.Configs;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;

@@ -257,7 +257,7 @@ The program is complete only when all of the following are true:
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: steady-state Match GC `234,324 / 1,024` bytes; improved 13.0% from the APH-007 baseline without weakening the budget |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
-| Last verified commit | `f5375ee37`; Android texture/impostor residency policy, candidate profiler evidence, and the revised Phase 6 direction pass compile plus focused Android validation |
+| Last verified commit | `9e80c0f1d`; APH-603 shared-mesh additive presentation scenes and ownership manifest pass compile, structural, and focused Android validation |
 | Last update | 2026-07-10 - APH-603 generated 17,564 shared-renderer sources across 525 additive scenes with zero mesh/material duplication |
 
 ## Phase 0 - Baseline and Safety Freeze
@@ -1232,6 +1232,7 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Visual result: no runtime visual change in this slice; generated scenes are not loaded. Canonical `Match.unity` remained clean.
 - Residual risk: stale generated scenes are not removed yet; deterministic rebake and sentinel-safe cleanup are owned by APH-604. Full source/renderer-state equivalence remains APH-605.
 - Next ready task: `APH-604`
+- Stable commit/push: `9e80c0f1d` committed to `main`; push recorded by the follow-up tracker checkpoint
 
 ### 2026-07-10 - APH-311 and APH-601 - Android 96 m combine candidate rejection
 

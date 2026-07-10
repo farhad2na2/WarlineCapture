@@ -1,15 +1,18 @@
 using Game.Components;
+using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 
 namespace Game.Runtime
 {
+    [BurstCompile]
     public partial struct ResourceExchangeVisualCueSystem : ISystem
     {
         private const float PlaneLandingProgress = 0.10f;
         private const float ResourceTransferProgress = 0.35f;
         private const float PlaneDepartingProgress = 0.75f;
 
+        [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
             foreach (var (

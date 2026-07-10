@@ -13,6 +13,7 @@ namespace Game.Runtime
         private static readonly FixedString64Bytes TrayTruckSourceKey = new("Unit_Veh_Truck_Tray");
         private static readonly FixedString64Bytes TankerTruckSourceKey = new("Unit_Veh_Truck_Tanker");
         private const float AutomaticAssignmentStableRefreshSeconds = 2f;
+        private readonly List<Entity> _haulerEntities = new();
         private readonly HashSet<Entity> _invalidCapacityWarningEntities = new();
         private uint _lastAutomaticAssignmentSignature;
         private uint _nextReservationId = 1u;
@@ -86,14 +87,29 @@ namespace Game.Runtime
             if (haulerUnitsQuery.IsEmptyIgnoreFilter)
                 return;
 
-            using NativeArray<Entity> haulerQuery = haulerUnitsQuery.ToEntityArray(Allocator.Temp);
-            if (haulerQuery.Length == 0)
+            int haulerCount = haulerUnitsQuery.CalculateEntityCount();
+            if (haulerCount == 0)
                 return;
 
-            bool runAutomaticAssignment = ShouldRunAutomaticAssignmentScan(context, em, grid, haulerQuery, now);
-            for (int i = 0; i < haulerQuery.Length; i++)
+            _haulerEntities.Clear();
+            if (_haulerEntities.Capacity < haulerCount)
+                _haulerEntities.Capacity = haulerCount;
+
+            EntityTypeHandle entityType = em.GetEntityTypeHandle();
+            using (NativeArray<ArchetypeChunk> chunks = haulerUnitsQuery.ToArchetypeChunkArray(Allocator.Temp))
             {
-                Entity hauler = haulerQuery[i];
+                for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+                {
+                    NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
+                    for (int entityIndex = 0; entityIndex < entities.Length; entityIndex++)
+                        _haulerEntities.Add(entities[entityIndex]);
+                }
+            }
+
+            bool runAutomaticAssignment = ShouldRunAutomaticAssignmentScan(context, em, grid, _haulerEntities, now);
+            for (int i = 0; i < _haulerEntities.Count; i++)
+            {
+                Entity hauler = _haulerEntities[i];
                 if (em.HasComponent<UnitResourceHaulOrder>(hauler))
                 {
                     UpdateResourceHauler(context, em, grid, hauler, now);
@@ -298,21 +314,29 @@ namespace Game.Runtime
             Context context,
             EntityManager em,
             GridConfig grid,
-            NativeArray<Entity> haulers,
+            List<Entity> haulers,
             float now)
+        {
+            if (!CanEvaluateAutomaticAssignmentSignature(context, haulers.Count, now))
+                return false;
+
+            uint signature = CalculateAutomaticAssignmentSignature(context, em, grid, haulers);
+            return ApplyAutomaticAssignmentSignature(signature, now);
+        }
+
+        private bool CanEvaluateAutomaticAssignmentSignature(Context context, int haulerCount, float now)
         {
             if (_hasAutomaticAssignmentSignature && now < _nextAutomaticAssignmentRefreshAt)
                 return false;
 
-            if (context.ResourceHaulerUtilitySystemHelper == null ||
-                context.FactionResourceCompositionSystemHelper == null ||
-                context.RuntimeBuildings == null ||
-                haulers.Length == 0)
-            {
-                return false;
-            }
+            return context.ResourceHaulerUtilitySystemHelper != null &&
+                   context.FactionResourceCompositionSystemHelper != null &&
+                   context.RuntimeBuildings != null &&
+                   haulerCount > 0;
+        }
 
-            uint signature = CalculateAutomaticAssignmentSignature(context, em, grid, haulers);
+        private bool ApplyAutomaticAssignmentSignature(uint signature, float now)
+        {
             if (signature == 0u)
             {
                 _hasAutomaticAssignmentSignature = false;
@@ -338,37 +362,55 @@ namespace Game.Runtime
             Context context,
             EntityManager em,
             GridConfig grid,
-            NativeArray<Entity> haulers)
+            List<Entity> haulers)
         {
             uint hash = 2166136261u;
             int idleCandidateCount = 0;
-            for (int i = 0; i < haulers.Length; i++)
+            for (int i = 0; i < haulers.Count; i++)
+                AccumulateAutomaticHaulerSignature(context, em, haulers[i], ref hash, ref idleCandidateCount);
+
+            return FinalizeAutomaticAssignmentSignature(context, em, grid, hash, idleCandidateCount);
+        }
+
+        private static void AccumulateAutomaticHaulerSignature(
+            Context context,
+            EntityManager em,
+            Entity haulerEntity,
+            ref uint hash,
+            ref int idleCandidateCount)
+        {
+            if (em.HasComponent<UnitResourceHaulOrder>(haulerEntity) ||
+                !TryGetAutomaticHaulerKind(em, haulerEntity, out ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind))
             {
-                Entity haulerEntity = haulers[i];
-                if (em.HasComponent<UnitResourceHaulOrder>(haulerEntity) ||
-                    !TryGetAutomaticHaulerKind(em, haulerEntity, out ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind))
-                {
-                    continue;
-                }
-
-                UnitResourceHauler hauler = em.GetComponentData<UnitResourceHauler>(haulerEntity);
-                float loadAmount = context.ResourceHaulerUtilitySystemHelper.GetLoadAmount(hauler);
-                if (loadAmount <= 0f)
-                    continue;
-
-                idleCandidateCount++;
-                hash = AppendHash(hash, haulerEntity.Index);
-                hash = AppendHash(hash, haulerEntity.Version);
-                hash = AppendHash(hash, (int)resourceKind);
-                hash = AppendHash(hash, em.GetComponentData<Faction>(haulerEntity).Id);
-                hash = AppendHash(hash, QuantizeResource(loadAmount));
-                if (em.HasComponent<UnitGrid>(haulerEntity))
-                {
-                    int2 cell = em.GetComponentData<UnitGrid>(haulerEntity).Cell;
-                    hash = AppendHash(hash, cell.x);
-                    hash = AppendHash(hash, cell.y);
-                }
+                return;
             }
+
+            UnitResourceHauler hauler = em.GetComponentData<UnitResourceHauler>(haulerEntity);
+            float loadAmount = context.ResourceHaulerUtilitySystemHelper.GetLoadAmount(hauler);
+            if (loadAmount <= 0f)
+                return;
+
+            idleCandidateCount++;
+            hash = AppendHash(hash, haulerEntity.Index);
+            hash = AppendHash(hash, haulerEntity.Version);
+            hash = AppendHash(hash, (int)resourceKind);
+            hash = AppendHash(hash, em.GetComponentData<Faction>(haulerEntity).Id);
+            hash = AppendHash(hash, QuantizeResource(loadAmount));
+            if (em.HasComponent<UnitGrid>(haulerEntity))
+            {
+                int2 cell = em.GetComponentData<UnitGrid>(haulerEntity).Cell;
+                hash = AppendHash(hash, cell.x);
+                hash = AppendHash(hash, cell.y);
+            }
+        }
+
+        private static uint FinalizeAutomaticAssignmentSignature(
+            Context context,
+            EntityManager em,
+            GridConfig grid,
+            uint hash,
+            int idleCandidateCount)
+        {
 
             if (idleCandidateCount == 0)
                 return 0u;
@@ -421,6 +463,20 @@ namespace Game.Runtime
         }
 
 #if UNITY_INCLUDE_TESTS
+        private static uint CalculateAutomaticAssignmentSignature(
+            Context context,
+            EntityManager em,
+            GridConfig grid,
+            NativeArray<Entity> haulers)
+        {
+            uint hash = 2166136261u;
+            int idleCandidateCount = 0;
+            for (int i = 0; i < haulers.Length; i++)
+                AccumulateAutomaticHaulerSignature(context, em, haulers[i], ref hash, ref idleCandidateCount);
+
+            return FinalizeAutomaticAssignmentSignature(context, em, grid, hash, idleCandidateCount);
+        }
+
         internal bool ShouldRunAutomaticAssignmentScanForTests(
             Context context,
             EntityManager em,
@@ -428,7 +484,11 @@ namespace Game.Runtime
             NativeList<Entity> haulers,
             float now)
         {
-            return ShouldRunAutomaticAssignmentScan(context, em, grid, haulers.AsArray(), now);
+            if (!CanEvaluateAutomaticAssignmentSignature(context, haulers.Length, now))
+                return false;
+
+            uint signature = CalculateAutomaticAssignmentSignature(context, em, grid, haulers.AsArray());
+            return ApplyAutomaticAssignmentSignature(signature, now);
         }
 
         internal static uint CalculateAutomaticAssignmentSignatureForTests(

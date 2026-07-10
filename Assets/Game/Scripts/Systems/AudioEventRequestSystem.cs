@@ -295,12 +295,11 @@ namespace Game.Runtime
 
         public void OnUpdate(ref SystemState state)
         {
-            Entity audioEntity = AudioEventRequestSystem.EnsureAudioEntity(state.EntityManager);
-            AudioMusicStateComponent musicState = state.EntityManager.GetComponentData<AudioMusicStateComponent>(audioEntity);
+            AudioEventRequestSystem.EnsureAudioEntity(state.EntityManager);
+            RefRW<AudioMusicStateComponent> musicStateSingleton = SystemAPI.GetSingletonRW<AudioMusicStateComponent>();
+            AudioMusicStateComponent musicState = musicStateSingleton.ValueRO;
             if (ApplyRequestedMusicState(ref musicState))
-            {
-                state.EntityManager.SetComponentData(audioEntity, musicState);
-            }
+                musicStateSingleton.ValueRW = musicState;
         }
 
         public static bool ApplyRequestedMusicState(ref AudioMusicStateComponent musicState)
@@ -332,12 +331,11 @@ namespace Game.Runtime
 
         public void OnUpdate(ref SystemState state)
         {
-            Entity audioEntity = AudioEventRequestSystem.EnsureAudioEntity(state.EntityManager);
-            AudioSettingsComponent settings = state.EntityManager.GetComponentData<AudioSettingsComponent>(audioEntity);
+            AudioEventRequestSystem.EnsureAudioEntity(state.EntityManager);
+            RefRW<AudioSettingsComponent> settingsSingleton = SystemAPI.GetSingletonRW<AudioSettingsComponent>();
+            AudioSettingsComponent settings = settingsSingleton.ValueRO;
             if (NormalizeSettings(ref settings))
-            {
-                state.EntityManager.SetComponentData(audioEntity, settings);
-            }
+                settingsSingleton.ValueRW = settings;
         }
 
         public static bool NormalizeSettings(ref AudioSettingsComponent settings)

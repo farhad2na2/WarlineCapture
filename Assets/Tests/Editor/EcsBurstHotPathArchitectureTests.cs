@@ -91,6 +91,8 @@ public sealed class EcsBurstHotPathArchitectureTests
 
     private static readonly Dictionary<string, string> ManagedPresentationNonBurstOnUpdateFiles = new(StringComparer.Ordinal)
     {
+        ["Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs"] = "audio presentation request boundary; recurring queue/state systems share managed World caching and one-time audio singleton creation before presentation consumes requests.",
+        ["Assets/Game/Scripts/Systems/MissileFlightAudioSystem.cs"] = "spatial audio presentation bridge; missile-flight ticks route configured managed-string event identifiers through the shared audio request singleton.",
         ["Assets/Game/Scripts/Rendering/Systems/RuntimeCameraReferenceSystem.cs"] = "camera presentation bridge; tracks managed Unity camera references for ECS consumers.",
         ["Assets/Game/Scripts/Systems/UnitRespawnSystem.cs"] = "spawn/presentation boundary; prefab instantiation, grounding warnings, and setup stay managed.",
         ["Assets/Game/Scripts/Systems/UnitAttackVfxSystems.cs"] = "GameObject VFX presentation bridge; plays managed muzzle flash, impact, missile, and explosion prefabs.",
@@ -107,15 +109,26 @@ public sealed class EcsBurstHotPathArchitectureTests
         ["Assets/Game/Scripts/Systems/CitizenPrefabSelectionSystem.cs"] = "citizen presentation bridge; resolves managed prefab choices for citizen visuals.",
         ["Assets/Game/Scripts/Systems/CitizenPrefabSystem.cs"] = "citizen presentation bridge; spawns and owns managed citizen prefab instances.",
         ["Assets/Game/Scripts/Systems/RuntimeUnitPrefabSystem.cs"] = "runtime prefab presentation bridge; resolves managed unit prefab references for ECS spawning.",
+        ["Assets/Game/Scripts/Systems/UnitMotionAudioSystem.cs"] = "spatial audio presentation bridge; unit motion classification uses managed source-key strings and the shared managed audio request singleton.",
         ["Assets/Game/Scripts/Systems/VisualQualitySettingsSystem.cs"] = "visual settings bridge; applies managed render quality policy to presentation systems."
     };
 
     private static readonly Dictionary<string, string> ManagedUiShellNonBurstOnUpdateFiles = new(StringComparer.Ordinal)
     {
+        ["Assets/Game/Scripts/UI/Shell/Ecs/AssistantCommandIntentSystem.cs"] = "assistant UI command boundary; expands low-cardinality assistant intents into selection/camera request queues and creates missing command queue singletons.",
+        ["Assets/Game/Scripts/UI/Shell/Ecs/AssistantControlOwnerSystem.cs"] = "assistant takeover boundary; arbitrates shell route, player input, and assistant ownership before applying low-cardinality control state changes.",
+        ["Assets/Game/Scripts/UI/Shell/Ecs/AssistantMessagePrioritySystem.cs"] = "assistant message presentation boundary; formats localized managed strings and resolves configured narration audio event identifiers for HUD priority state.",
+        ["Assets/Game/Scripts/UI/Shell/Ecs/AssistantNarrationAudioRequestSystem.cs"] = "assistant voice presentation boundary; maps narration requests into the managed audio event singleton and updates narration playback state.",
+        ["Assets/Game/Scripts/UI/Shell/Ecs/AssistantNarrationRequestSystem.cs"] = "assistant narration read-model boundary; coalesces message state into low-cardinality narration requests and UI-facing assistant state.",
+        ["Assets/Game/Scripts/UI/Shell/Ecs/AssistantReadModelSystems.cs"] = "assistant HUD read-model boundary; projects goals, recommendations, fuel summaries, and UI dirty state through managed EntityManager access.",
+        ["Assets/Game/Scripts/UI/Shell/Ecs/AssistantSettingsPersistenceSystem.cs"] = "assistant settings lifecycle boundary; its disabled empty tick accompanies managed SettingsService event subscription and startup projection in OnCreate/OnDestroy.",
         ["Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs"] = "UI shell command boundary; consumes low-cardinality UI action requests.",
+        ["Assets/Game/Scripts/UI/Shell/Ecs/UiAudioEventBridgeSystem.cs"] = "UI audio event lifecycle boundary; its disabled empty tick accompanies managed gateway event subscription and default-world routing in OnCreate/OnDestroy.",
+        ["Assets/Game/Scripts/UI/Shell/Ecs/UiAudioSettingsProjectionSystem.cs"] = "UI audio settings lifecycle boundary; its disabled empty tick accompanies managed settings events, AudioListener volume, and default-world projection.",
         ["Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs"] = "UI shell read-model boundary; projects ECS build catalog data for managed UI views.",
         ["Assets/Game/Scripts/UI/Shell/Ecs/UiBuildPlacementReadModelSystem.cs"] = "UI shell read-model boundary; projects build placement state for managed UI views.",
         ["Assets/Game/Scripts/UI/Shell/Ecs/UiDiagnosticsReadModelSystem.cs"] = "UI shell diagnostics boundary; projects runtime diagnostics into UI read models.",
+        ["Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeReadModelSystem.cs"] = "resource exchange UI read-model boundary; performs managed string formatting and truncation while projecting queue and recipe state for popup views.",
         ["Assets/Game/Scripts/UI/Shell/Ecs/UiShellArmoryCategorySystem.cs"] = "UI shell state boundary; single boundary entity command consumption stays managed.",
         ["Assets/Game/Scripts/UI/Shell/Ecs/UiShellStateSystem.cs"] = "UI shell bootstrap boundary; creates the shell boundary entity and buffers.",
         ["Assets/Game/Scripts/UI/Shell/Ecs/UiShellFlowSystem.cs"] = "UI shell transition boundary; route/popup/presentation command buffering stays managed."
@@ -165,6 +178,7 @@ public sealed class EcsBurstHotPathArchitectureTests
         ["Assets/Game/Scripts/Systems/RtsSelectionSelectAllCommandSystem.cs"] = "selection command boundary; consumes low-cardinality select-all requests.",
         ["Assets/Game/Scripts/Systems/RuntimeDiagnosticsSystem.cs"] = "runtime diagnostics boundary; gathers and formats diagnostic state outside Burst hot paths.",
         ["Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs"] = "runtime state boundary; owns low-cardinality match/input state for managed UI and systems.",
+        ["Assets/Game/Scripts/Systems/ResourceExchangeRequestValidationSystem.cs"] = "low-cardinality exchange command boundary; validates explicit player/AI requests and its Rush path reuses managed ARIA announcement projection during queue completion.",
         ["Assets/Game/Scripts/Systems/ScanIntelCommandSystem.cs"] = "tactical command boundary; consumes low-cardinality scan requests and writes command state.",
         ["Assets/Game/Scripts/Systems/SelectedMoveOrderCommandSystem.cs"] = "selection command boundary; expands one selected-move request into unit move requests.",
         ["Assets/Game/Scripts/Systems/TacticalFollowAttackCinematicSystem.cs"] = "camera cinematic orchestration edge; consumes low-cardinality attack VFX requests and writes temporary tactical-follow camera target state through EntityManager.",
@@ -182,6 +196,8 @@ public sealed class EcsBurstHotPathArchitectureTests
 
     private static readonly Dictionary<string, string> TrackedHotPathDebtNonBurstOnUpdateFiles = new(StringComparer.Ordinal)
     {
+        ["Assets/Game/Scripts/Systems/BuildingDefenseAttackSystem.cs"] = "profiled recurring defense-combat hot path; same-frame managed audio/VFX feedback and guarded helper structural boundaries currently prevent Burst compilation, with phase markers and zero-allocation tests constraining the debt.",
+        ["Assets/Game/Scripts/Systems/ResourceExchangeQueueTickSystem.cs"] = "recurring exchange queue hot path; same-tick ARIA announcement projection currently calls managed localized string formatting, while focused steady-state tests constrain its allocation and timing debt.",
     };
 
     private static readonly IReadOnlyDictionary<string, string> ManagedBoundaryNonBurstOnUpdateFiles = BuildManagedBoundaryNonBurstFiles();

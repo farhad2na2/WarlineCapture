@@ -248,17 +248,17 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `45 / 106` |
-| Checklist percent complete | `42.5%` |
+| Checklist complete | `47 / 106` |
+| Checklist percent complete | `44.3%` |
 | Checklist in progress | `2 / 106`: `APH-311`, `APH-401` |
-| Complete plus active coverage | `47 / 106` (`44.3%`); this is visibility only, not accepted completion |
+| Complete plus active coverage | `49 / 106` (`46.2%`); this is visibility only, not accepted completion |
 | Current phase | Phase 3 Android device evidence plus parallel Phase 4 audio residency |
 | Current task | `APH-311` awaits a physical device; `APH-401` controlled Menu/Match audio-memory capture implementation is active |
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: steady-state Match GC `234,324 / 1,024` bytes; improved 13.0% from the APH-007 baseline without weakening the budget |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
-| Last verified commit | `6f858f762`; catalog-only APH-400 residency report passes `8/8` and generated without warnings |
-| Last update | 2026-07-10 - APH-400 complete in parallel; APH-311 device evidence and APH-401 runtime audio capture active |
+| Last verified commit | `e2eb61b3f`; catalog Music/Ambience drift is zero and audio contracts pass `13/13` |
+| Last update | 2026-07-10 - APH-400/402/403 complete in parallel; APH-311 device evidence and APH-401 runtime audio capture active |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -483,8 +483,11 @@ Known baseline:
   - Result: schema-2 JSON and Markdown now list the 226 serialized catalog clips only, grouped and detailed by bus/category with event IDs, duration, channels, sample rate, active Android importer load type, measured compressed storage-memory size, and decoded PCM estimate; unreferenced legacy clips are excluded from the catalog section.
   - Validation: focused content-residency `8/8`, Android report generation passed with 4,102 included assets, 226/226 catalog clips, zero warnings, 575.838 seconds duration, 48.61 MiB measured compressed bytes, and 97.01 MiB estimated decoded bytes; commit `6f858f762` pushed to `main`.
 - [~] `APH-401` Capture Menu and Match audio memory before playback and after representative UI, combat, music, ambience, and ARIA voice playback.
-- [ ] `APH-402` Identify catalog drift: cataloged Music/Ambience clips that do not match the existing Streaming profile and unused legacy clips that do not affect runtime residency.
-- [ ] `APH-403` Correct cataloged Music/Ambience drift without changing event IDs or playback behavior.
+- [x] `APH-402` Identify catalog drift: cataloged Music/Ambience clips that do not match the existing Streaming profile and unused legacy clips that do not affect runtime residency.
+  - Result: all nine Music/Ambience references agree between source JSON and the serialized catalog and match Streaming/not-preloaded/background-load policy; zero catalog importer mismatches were found. Six unreferenced legacy files are isolated as build/cleanup inventory and do not affect runtime catalog residency.
+- [x] `APH-403` Correct cataloged Music/Ambience drift without changing event IDs or playback behavior.
+  - Result: no importer correction was necessary. The stale audio contract source paths were updated to the current `Configs/Audio` ownership location; runtime audio, clips, event IDs, catalogs, and importers remain unchanged.
+  - Validation: `[AudioConfigContractValidation] result=Passed tests=13`, deterministic raw-file audit found `0 / 9` catalog mismatches, and commit `e2eb61b3f` pushed to `main`.
 - [ ] `APH-404` Change the Voice import profile pilot to `CompressedInMemory`, `preloadAudioData=false`, and `loadInBackground=true` for a representative ARIA subset.
 - [ ] `APH-405` Measure first-play latency, repeated-play latency, decoded memory, compressed memory, and audio glitches on Android for the pilot.
 - [ ] `APH-406` If the pilot passes, apply the Voice policy through the existing JSON-driven audio importer workflow and update contract tests. If it fails, record the failing devices/clips and use a bounded prewarm set instead of reverting to global preload.
@@ -1156,6 +1159,21 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Visual result: Not applicable
 - Residual risk: static dependency/import evidence does not prove simultaneous runtime residency or first-play latency; APH-401 owns controlled Menu/Match playback captures
 - Next ready task: `APH-401`
+
+### 2026-07-10 - APH-402 and APH-403 - Music/Ambience importer drift
+
+- Status: Complete; APH-403 accepted as a verified no-op
+- Commit or worktree baseline: `a95a33030`
+- Stable commit/push: `e2eb61b3f` pushed to `main`
+- Files changed: deterministic drift report, stale audio contract source-path guard, and matching audio implementation-spec reference
+- Behavior preserved/changed: no runtime audio behavior, event ID, catalog, clip reference, or importer changed; contract ownership paths now match the current `Game.Configs` layout
+- Validation: `[AudioConfigContractValidation] result=Passed tests=13`; 262 project WAV importers, 15 Music/Ambience assets, 9 JSON catalog references, 9 serialized catalog references, 0 catalog importer mismatches, and 6 unreferenced legacy clips
+- Artifacts: `/private/tmp/aph402-403-audio-contract.log` (stale-path reproduction), `/private/tmp/aph402-403-audio-contract-fixed.log`, and `Design/AgentReports/2026-07-10_aph-402_audio_catalog_drift_audit.md`
+- Metrics before: catalog drift and legacy inventory were not separated; the audio contract runner failed on five obsolete source paths
+- Metrics after: all 9 cataloged Music/Ambience clips are verified Streaming/not-preloaded/background-loaded, 6 legacy clips are excluded from runtime residency, and the 13-test contract is green
+- Visual result: Not applicable
+- Residual risk: unused legacy clips can still affect repository/build-size work if later included by a build path, but they do not affect current runtime catalog residency
+- Next ready task: continue `APH-401`; `APH-404` follows its measured baseline
 
 ### 2026-07-09 - Unity validation timeout reliability
 

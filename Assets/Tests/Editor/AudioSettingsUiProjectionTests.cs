@@ -227,8 +227,7 @@ public sealed class AudioSettingsUiProjectionTests
     public void MenuStartup_AppliesPersistedSettingsWithoutOpeningPopup()
     {
         _world.CreateSystem<UiShellStateSystem>();
-        _world.CreateSystem<UiAudioSettingsProjectionSystem>();
-        _world.CreateSystem<AssistantSettingsPersistenceSystem>();
+        MenuBootstrapCompositionSystemHelper.ResetStartupRuntimeSettingsApplicationForTests();
 
         using EntityQuery shellQuery =
             _world.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<UiShellRootComponent>());
@@ -260,8 +259,17 @@ public sealed class AudioSettingsUiProjectionTests
         try
         {
             InvokeLifecycle(bootstrap, "Awake");
+            Assert.AreEqual(
+                0,
+                runtimeApplyCount,
+                "Menu startup must defer settings until the runtime projection owners exist.");
 
-            Assert.AreEqual(1, runtimeApplyCount, "Menu startup should apply persisted settings once during Awake.");
+            _world.CreateSystem<UiAudioSettingsProjectionSystem>();
+            _world.CreateSystem<AssistantSettingsPersistenceSystem>();
+            InvokeLifecycle(bootstrap, "OnEnable");
+            InvokeLifecycle(bootstrap, "OnEnable");
+
+            Assert.AreEqual(1, runtimeApplyCount, "Menu startup should apply persisted settings once after its owners exist.");
             Assert.AreEqual(31f, applied.Audio.MasterVolume);
             Assert.AreEqual(17f, applied.Audio.MusicVolume);
             Assert.IsFalse(applied.Audio.MusicEnabled);

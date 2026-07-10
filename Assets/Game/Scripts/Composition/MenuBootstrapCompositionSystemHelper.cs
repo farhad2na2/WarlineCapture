@@ -4,6 +4,7 @@ using Unity.Entities;
 using UnityEngine;
 using Game.UI.Contracts;
 using Game.UI.Shell.Contracts.Ecs;
+using Game.UI.Shell.Ecs;
 using Game.Components;
 using Game.UI.Runtime;
 using Game.Runtime;
@@ -17,6 +18,8 @@ namespace Game.Composition
         private const float MatchReadyHoldSeconds = 0.75f;
         private const string AutoStartMatchEnvironmentVariable = "WARLINE_AUTO_START_MATCH";
         private const string AutoStartMatchCommandLineArg = "-warlineAutoStartMatch";
+
+        private static World startupRuntimeSettingsWorld;
 
         private readonly SceneLifecycleSceneSystemHelper sceneLifecycleSceneSystemHelper = new();
         private readonly MatchStartSceneSystemHelper matchStartSystem = new();
@@ -72,7 +75,6 @@ namespace Game.Composition
                 return;
 
             bool wasInitialized = initialized;
-            ApplyStartupRuntimeSettings();
             EnsurePersistentDiagnosticsInitialized();
             autoStartMatchRequested = ShouldAutoStartMatch();
             view.ApplyRuntimeUiMode();
@@ -94,6 +96,7 @@ namespace Game.Composition
                 ResetShellForFreshMenuScene();
 
             initialized = true;
+            TryApplyStartupRuntimeSettings();
         }
 
         public void OnApplicationFocus(bool hasFocus)
@@ -115,6 +118,7 @@ namespace Game.Composition
                 Initialize(view);
             if (view == null)
                 return;
+            TryApplyStartupRuntimeSettings();
             view.ApplyRuntimeUiMode();
 
             if (!TryGetWorldEntityManager(out EntityManager entityManager))
@@ -167,14 +171,38 @@ namespace Game.Composition
             diagnosticsInitialized = true;
         }
 
-        private static void ApplyStartupRuntimeSettings()
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStartupRuntimeSettingsApplication()
         {
+            startupRuntimeSettingsWorld = null;
+        }
+
+        internal static void ResetStartupRuntimeSettingsApplicationForTests()
+        {
+            ResetStartupRuntimeSettingsApplication();
+        }
+
+        private static bool TryApplyStartupRuntimeSettings()
+        {
+            World world = World.DefaultGameObjectInjectionWorld;
+            if (world == null || !world.IsCreated)
+                return false;
+            if (ReferenceEquals(startupRuntimeSettingsWorld, world))
+                return true;
+            if (world.Unmanaged.GetExistingUnmanagedSystem<UiAudioSettingsProjectionSystem>() == SystemHandle.Null ||
+                world.Unmanaged.GetExistingUnmanagedSystem<AssistantSettingsPersistenceSystem>() == SystemHandle.Null)
+            {
+                return false;
+            }
+
             SettingsService.ApplyRuntime(SettingsService.Load());
 #if UNITY_EDITOR
             // Unity's desktop software limiter adds pacing overhead in Play Mode; keep Editor profiling uncapped.
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = -1;
 #endif
+            startupRuntimeSettingsWorld = world;
+            return true;
         }
 
         private static void SetLoading(EntityManager entityManager, Entity boundary, float progress01, bool complete)

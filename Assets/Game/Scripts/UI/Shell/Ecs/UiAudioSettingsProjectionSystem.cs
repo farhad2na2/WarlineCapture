@@ -14,7 +14,6 @@ namespace Game.UI.Shell.Ecs
         public void OnCreate(ref SystemState state)
         {
             RegisterRuntimeAppliedBridge();
-            ApplyToWorld(state.World, SettingsService.Load());
             state.Enabled = false;
         }
 

@@ -4,9 +4,12 @@ namespace Game.Editor
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
+    using System.Reflection;
     using System.Text;
+    using Game.Configs;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;
     using UnityEditor;
@@ -25,9 +28,19 @@ namespace Game.Editor
         public const string BaselineCommit = "7084805d771142706f340e9f2e52a68570bcb72b";
 
         private const string StreamingAssetRootKind = "StreamingAssets";
+        private const string AudioAssetRoot = "Assets/Game/Audio/";
         private const string ScopeDescription =
             "Enabled build scenes, Assets Resources content, PlayerSettings preloaded assets, " +
             "and StreamingAssets, including transitive AssetDatabase dependencies.";
+
+        private static readonly MethodInfo AudioCompressedSizeMethod = typeof(AudioImporter).Assembly
+            .GetType("UnityEditor.AudioUtil")?
+            .GetMethod(
+                "GetSoundSize",
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static,
+                null,
+                new[] { typeof(AudioClip) },
+                null);
 
         private static readonly HashSet<string> ExcludedExtensions = new(StringComparer.OrdinalIgnoreCase)
         {
@@ -59,6 +72,7 @@ namespace Game.Editor
                 Debug.Log(
                     $"[ContentResidencyInventory] result=Passed assets={report.Summary.AssetCount} " +
                     $"roots={report.Summary.DependencyRootCount} " +
+                    $"catalogAudioClips={report.Summary.CatalogAudioClipCount} " +
                     $"importedSizeAvailable={report.Summary.ImportedSizeAvailableAssetCount} " +
                     $"animationTexturePayloadBytes={report.Summary.AnimationTexturePayloadBytes} " +
                     $"json={JsonReportPath} markdown={MarkdownReportPath}");
@@ -99,6 +113,7 @@ namespace Game.Editor
             builder.AppendLine("# Architecture Performance Content Residency Baseline");
             builder.AppendLine();
             builder.AppendLine($"- Task: `{report.TaskId}`");
+            builder.AppendLine($"- Audio residency extension: `{report.AudioResidencyTaskId}`");
             builder.AppendLine($"- Status: `{report.Status}`");
             builder.AppendLine($"- Baseline commit: `{report.BaselineCommit}`");
             builder.AppendLine($"- Generated UTC: `{report.GeneratedUtc ?? "Unavailable"}`");
@@ -134,6 +149,7 @@ namespace Game.Editor
                     .ThenBy(asset => asset.AssetPath, StringComparer.Ordinal)
                     .Take(25));
             AppendCategorySummaries(builder, report.Assets);
+            AppendCatalogAudioResidency(builder, report.CatalogAudioClips, report.AudioCatalogAssetPaths);
             AppendAnimationTextureTable(builder, report.Assets);
 
             builder.AppendLine("## Measurement Boundaries");
@@ -187,6 +203,30 @@ namespace Game.Editor
                    fileName.StartsWith("AnimationTexture", StringComparison.Ordinal);
         }
 
+        public static string GetAudioCategory(string assetPath)
+        {
+            if (string.IsNullOrWhiteSpace(assetPath))
+                return null;
+
+            string normalized = assetPath.Replace('\\', '/');
+            if (!normalized.StartsWith(AudioAssetRoot, StringComparison.Ordinal))
+                return null;
+
+            string relative = normalized.Substring(AudioAssetRoot.Length);
+            int separatorIndex = relative.IndexOf('/');
+            return separatorIndex > 0 ? relative.Substring(0, separatorIndex) : null;
+        }
+
+        public static long EstimateDecodedAudioSizeBytes(long sampleFrames, int channels)
+        {
+            if (sampleFrames < 0)
+                throw new ArgumentOutOfRangeException(nameof(sampleFrames));
+            if (channels <= 0)
+                throw new ArgumentOutOfRangeException(nameof(channels));
+
+            return checked(sampleFrames * channels * sizeof(float));
+        }
+
         private static ContentResidencyReport GenerateReport()
         {
             string activeBuildTarget = EditorUserBuildSettings.activeBuildTarget.ToString();
@@ -210,6 +250,12 @@ namespace Game.Editor
                 "Dependency inclusion does not prove simultaneous runtime residency or unload lifetime.");
             report.Limitations.Add(
                 "Source size is the project/package file length. Native built-in resources without a project path are excluded.");
+            report.Limitations.Add(
+                "Catalog audio compressed size is Unity's imported storage-memory measurement from " +
+                "AudioUtil.GetSoundSize, not source WAV size or final APK/AAB contribution.");
+            report.Limitations.Add(
+                "Catalog audio decoded size is estimated as sample frames x channels x 4-byte PCM float samples; " +
+                "it excludes engine/object overhead and does not claim simultaneous residency.");
 
             List<DependencyRootRecord> roots = DiscoverDependencyRoots(report.Warnings);
             report.Roots.AddRange(roots);
@@ -218,8 +264,125 @@ namespace Game.Editor
             foreach (ContentResidencyAssetRecord record in records.Values.OrderBy(asset => asset.AssetPath, StringComparer.Ordinal))
                 report.Assets.Add(record);
 
-            report.Summary = BuildSummary(report.Roots, report.Assets);
+            report.CatalogAudioClips.AddRange(CollectCatalogAudioResidency(
+                report.AudioCatalogAssetPaths,
+                report.Warnings));
+            report.Summary = BuildSummary(report.Roots, report.Assets, report.CatalogAudioClips);
             return report;
+        }
+
+        private static List<CatalogAudioResidencyRecord> CollectCatalogAudioResidency(
+            List<string> catalogAssetPaths,
+            List<string> warnings)
+        {
+            var records = new Dictionary<string, CatalogAudioResidencyRecord>(StringComparer.Ordinal);
+            string[] catalogPaths = AssetDatabase.FindAssets($"t:{nameof(AudioEventCatalogConfig)}")
+                .Select(AssetDatabase.GUIDToAssetPath)
+                .Where(path => !string.IsNullOrWhiteSpace(path))
+                .OrderBy(path => path, StringComparer.Ordinal)
+                .ToArray();
+
+            for (int catalogIndex = 0; catalogIndex < catalogPaths.Length; catalogIndex++)
+            {
+                string catalogPath = catalogPaths[catalogIndex];
+                AudioEventCatalogConfig catalog = AssetDatabase.LoadAssetAtPath<AudioEventCatalogConfig>(catalogPath);
+                if (catalog == null)
+                {
+                    warnings.Add($"Audio event catalog could not be loaded: '{catalogPath}'.");
+                    continue;
+                }
+
+                catalogAssetPaths.Add(catalogPath);
+                IReadOnlyList<AudioEventCatalogEntry> events = catalog.Events;
+                for (int eventIndex = 0; eventIndex < events.Count; eventIndex++)
+                {
+                    AudioEventCatalogEntry audioEvent = events[eventIndex];
+                    if (audioEvent == null)
+                    {
+                        warnings.Add($"Audio event catalog '{catalogPath}' contains a null event at index {eventIndex}.");
+                        continue;
+                    }
+
+                    IReadOnlyList<AudioClipWeightEntry> clips = audioEvent.Clips;
+                    for (int clipIndex = 0; clipIndex < clips.Count; clipIndex++)
+                    {
+                        AudioClip clip = clips[clipIndex]?.Clip;
+                        if (clip == null)
+                        {
+                            warnings.Add(
+                                $"Audio event '{audioEvent.EventId}' in '{catalogPath}' contains a null clip at index {clipIndex}.");
+                            continue;
+                        }
+
+                        string clipPath = AssetDatabase.GetAssetPath(clip)?.Replace('\\', '/');
+                        if (string.IsNullOrWhiteSpace(clipPath))
+                        {
+                            warnings.Add($"Audio event '{audioEvent.EventId}' has a clip without an AssetDatabase path.");
+                            continue;
+                        }
+
+                        if (!records.TryGetValue(clipPath, out CatalogAudioResidencyRecord record))
+                        {
+                            record = InspectCatalogAudioClip(clipPath, clip, warnings);
+                            records.Add(clipPath, record);
+                        }
+
+                        AddUniqueSorted(record.EventIds, audioEvent.EventId);
+                        AddUniqueSorted(record.BusIds, audioEvent.BusId);
+                    }
+                }
+            }
+
+            if (catalogAssetPaths.Count == 0)
+                warnings.Add("No AudioEventCatalogConfig assets were found for catalog audio residency reporting.");
+
+            return records.Values
+                .OrderBy(record => string.Join(",", record.BusIds), StringComparer.Ordinal)
+                .ThenBy(record => record.Category, StringComparer.Ordinal)
+                .ThenBy(record => record.AssetPath, StringComparer.Ordinal)
+                .ToList();
+        }
+
+        private static CatalogAudioResidencyRecord InspectCatalogAudioClip(
+            string assetPath,
+            AudioClip clip,
+            List<string> warnings)
+        {
+            string category = GetAudioCategory(assetPath);
+            if (category == null)
+            {
+                category = "Uncategorized";
+                warnings.Add($"Catalog audio clip is outside the profiled audio category root: '{assetPath}'.");
+            }
+
+            var record = new CatalogAudioResidencyRecord
+            {
+                AssetPath = assetPath,
+                Category = category,
+                DurationSeconds = clip.frequency > 0 ? (double)clip.samples / clip.frequency : clip.length,
+                SampleFrames = clip.samples,
+                Channels = clip.channels,
+                FrequencyHz = clip.frequency,
+                EstimatedDecodedSizeBytes = EstimateDecodedAudioSizeBytes(clip.samples, clip.channels)
+            };
+
+            AudioImporter importer = AssetImporter.GetAtPath(assetPath) as AudioImporter;
+            if (importer == null)
+            {
+                warnings.Add($"Catalog audio clip does not have an AudioImporter: '{assetPath}'.");
+            }
+            else
+            {
+                ResolveAudioLoadType(importer, out string loadType, out string loadTypeSource);
+                record.ImportLoadType = loadType;
+                record.ImportLoadTypeSource = loadTypeSource;
+            }
+
+            record.CompressedSizeBytes = TryMeasureAudioCompressedSize(clip, assetPath, warnings);
+            if (record.CompressedSizeBytes.HasValue)
+                record.CompressedSizeMeasurement = "UnityEditor.AudioUtil.GetSoundSize";
+
+            return record;
         }
 
         private static List<DependencyRootRecord> DiscoverDependencyRoots(List<string> warnings)
@@ -350,13 +513,49 @@ namespace Game.Editor
 
         private static void ApplyAudioMetadata(ContentResidencyAssetRecord record, AudioImporter importer)
         {
+            ResolveAudioLoadType(importer, out string loadType, out string loadTypeSource);
+            record.AudioLoadType = loadType;
+            record.AudioLoadTypeSource = loadTypeSource;
+        }
+
+        private static void ResolveAudioLoadType(
+            AudioImporter importer,
+            out string loadType,
+            out string loadTypeSource)
+        {
             string platform = BuildPipeline.GetBuildTargetGroup(EditorUserBuildSettings.activeBuildTarget).ToString();
             bool usesOverride = !string.IsNullOrEmpty(platform) && importer.ContainsSampleSettingsOverride(platform);
             AudioImporterSampleSettings settings = usesOverride
                 ? importer.GetOverrideSampleSettings(platform)
                 : importer.defaultSampleSettings;
-            record.AudioLoadType = settings.loadType.ToString();
-            record.AudioLoadTypeSource = usesOverride ? $"{platform} override" : "default importer settings";
+            loadType = settings.loadType.ToString();
+            loadTypeSource = usesOverride ? $"{platform} override" : "default importer settings";
+        }
+
+        private static long? TryMeasureAudioCompressedSize(
+            AudioClip clip,
+            string assetPath,
+            List<string> warnings)
+        {
+            if (AudioCompressedSizeMethod == null)
+            {
+                AddWarningOnce(
+                    warnings,
+                    "UnityEditor.AudioUtil.GetSoundSize is unavailable; catalog compressed sizes are null.");
+                return null;
+            }
+
+            try
+            {
+                object value = AudioCompressedSizeMethod.Invoke(null, new object[] { clip });
+                long bytes = Convert.ToInt64(value, CultureInfo.InvariantCulture);
+                return bytes >= 0 ? bytes : null;
+            }
+            catch (Exception exception)
+            {
+                warnings.Add($"Compressed-size measurement failed for '{assetPath}': {exception.GetBaseException().Message}");
+                return null;
+            }
         }
 
         private static void ApplyTextureMetadata(
@@ -472,7 +671,8 @@ namespace Game.Editor
 
         private static ContentResidencySummary BuildSummary(
             IReadOnlyCollection<DependencyRootRecord> roots,
-            IReadOnlyCollection<ContentResidencyAssetRecord> assets)
+            IReadOnlyCollection<ContentResidencyAssetRecord> assets,
+            IReadOnlyCollection<CatalogAudioResidencyRecord> catalogAudioClips)
         {
             return new ContentResidencySummary
             {
@@ -491,7 +691,16 @@ namespace Game.Editor
                 MeshReadWriteEnabledCount = assets.Count(asset => asset.MeshReadWriteEnabled == true),
                 AnimationTextureCount = assets.Count(asset => asset.AnimationTexturePayloadBytes.HasValue),
                 AnimationTexturePayloadBytes = assets.Where(asset => asset.AnimationTexturePayloadBytes.HasValue)
-                    .Sum(asset => asset.AnimationTexturePayloadBytes.GetValueOrDefault())
+                    .Sum(asset => asset.AnimationTexturePayloadBytes.GetValueOrDefault()),
+                CatalogAudioClipCount = catalogAudioClips.Count,
+                CatalogAudioDurationSeconds = catalogAudioClips.Sum(clip => clip.DurationSeconds),
+                CatalogAudioCompressedSizeAvailableClipCount =
+                    catalogAudioClips.Count(clip => clip.CompressedSizeBytes.HasValue),
+                CatalogAudioCompressedSizeBytes = catalogAudioClips
+                    .Where(clip => clip.CompressedSizeBytes.HasValue)
+                    .Sum(clip => clip.CompressedSizeBytes.GetValueOrDefault()),
+                CatalogAudioEstimatedDecodedSizeBytes = catalogAudioClips
+                    .Sum(clip => clip.EstimatedDecodedSizeBytes)
             };
         }
 
@@ -508,6 +717,14 @@ namespace Game.Editor
             builder.AppendLine($"| Assets with measured imported size | {summary.ImportedSizeAvailableAssetCount:N0} |");
             builder.AppendLine($"| Known imported bytes | {FormatBytes(summary.ImportedSizeBytes)} |");
             builder.AppendLine($"| Audio assets | {summary.AudioAssetCount:N0} |");
+            builder.AppendLine($"| Catalog-referenced audio clips | {summary.CatalogAudioClipCount:N0} |");
+            builder.AppendLine($"| Catalog audio duration | {FormatDuration(summary.CatalogAudioDurationSeconds)} |");
+            builder.AppendLine(
+                $"| Catalog clips with compressed size | " +
+                $"{summary.CatalogAudioCompressedSizeAvailableClipCount:N0} / {summary.CatalogAudioClipCount:N0} |");
+            builder.AppendLine($"| Known catalog compressed bytes | {FormatBytes(summary.CatalogAudioCompressedSizeBytes)} |");
+            builder.AppendLine(
+                $"| Estimated catalog decoded bytes | {FormatBytes(summary.CatalogAudioEstimatedDecodedSizeBytes)} |");
             builder.AppendLine($"| Texture assets | {summary.TextureAssetCount:N0} |");
             builder.AppendLine($"| Streaming-enabled textures | {summary.TextureStreamingEnabledCount:N0} |");
             builder.AppendLine($"| Mesh assets | {summary.MeshAssetCount:N0} |");
@@ -569,7 +786,7 @@ namespace Game.Editor
         {
             builder.AppendLine("## Import States");
             builder.AppendLine();
-            builder.AppendLine("### Audio Load Types");
+            builder.AppendLine("### Build-Included Audio Load Types");
             builder.AppendLine();
             AppendGroupedCounts(builder, assets.Where(asset => asset.AudioLoadType != null), asset => asset.AudioLoadType);
             builder.AppendLine("### Texture Mipmap and Streaming");
@@ -607,6 +824,79 @@ namespace Game.Editor
             builder.AppendLine("|---|---:|");
             for (int i = 0; i < groups.Length; i++)
                 builder.AppendLine($"| {EscapeMarkdown(groups[i].Key)} | {groups[i].Count():N0} |");
+            builder.AppendLine();
+        }
+
+        private static void AppendCatalogAudioResidency(
+            StringBuilder builder,
+            IReadOnlyCollection<CatalogAudioResidencyRecord> catalogAudioClips,
+            IReadOnlyList<string> catalogAssetPaths)
+        {
+            CatalogAudioResidencyRecord[] rows = catalogAudioClips
+                .OrderBy(record => FormatValues(record.BusIds), StringComparer.Ordinal)
+                .ThenBy(record => record.Category, StringComparer.Ordinal)
+                .ThenBy(record => record.AssetPath, StringComparer.Ordinal)
+                .ToArray();
+
+            builder.AppendLine("## Catalog-Referenced Audio Residency");
+            builder.AppendLine();
+            builder.AppendLine(
+                "This inventory includes only clips directly referenced by serialized `AudioEventCatalogConfig` assets. " +
+                "Unreferenced project audio is excluded.");
+            builder.AppendLine();
+
+            if (catalogAssetPaths.Count > 0)
+            {
+                builder.AppendLine("Catalog assets:");
+                for (int i = 0; i < catalogAssetPaths.Count; i++)
+                    builder.AppendLine($"- `{EscapeMarkdown(catalogAssetPaths[i])}`");
+                builder.AppendLine();
+            }
+
+            if (rows.Length == 0)
+            {
+                builder.AppendLine("Unavailable until Unity generation.");
+                builder.AppendLine();
+                return;
+            }
+
+            builder.AppendLine("### Bus and Category Totals");
+            builder.AppendLine();
+            builder.AppendLine("| Bus | Category | Clips | Duration | Compressed | Estimated decoded |");
+            builder.AppendLine("|---|---|---:|---:|---:|---:|");
+            var groups = rows
+                .GroupBy(record => new { Bus = FormatValues(record.BusIds), record.Category })
+                .OrderBy(group => group.Key.Bus, StringComparer.Ordinal)
+                .ThenBy(group => group.Key.Category, StringComparer.Ordinal);
+            foreach (var group in groups)
+            {
+                long? compressedBytes = group.All(record => record.CompressedSizeBytes.HasValue)
+                    ? group.Sum(record => record.CompressedSizeBytes.GetValueOrDefault())
+                    : null;
+                builder.AppendLine(
+                    $"| {EscapeMarkdown(group.Key.Bus)} | {EscapeMarkdown(group.Key.Category)} | " +
+                    $"{group.Count():N0} | {FormatDuration(group.Sum(record => record.DurationSeconds))} | " +
+                    $"{FormatBytes(compressedBytes)} | " +
+                    $"{FormatBytes(group.Sum(record => record.EstimatedDecodedSizeBytes))} |");
+            }
+            builder.AppendLine();
+
+            builder.AppendLine("### Catalog Clip Detail");
+            builder.AppendLine();
+            builder.AppendLine(
+                "| Bus | Category | Clip | Event ID(s) | Duration | Channels | Frequency | Import load type | Compressed | Estimated decoded |");
+            builder.AppendLine("|---|---|---|---|---:|---:|---:|---|---:|---:|");
+            for (int i = 0; i < rows.Length; i++)
+            {
+                CatalogAudioResidencyRecord row = rows[i];
+                builder.AppendLine(
+                    $"| {EscapeMarkdown(FormatValues(row.BusIds))} | {EscapeMarkdown(row.Category)} | " +
+                    $"`{EscapeMarkdown(row.AssetPath)}` | {EscapeMarkdown(FormatValues(row.EventIds))} | " +
+                    $"{FormatDuration(row.DurationSeconds)} | {row.Channels.ToString("N0", CultureInfo.InvariantCulture)} | " +
+                    $"{row.FrequencyHz.ToString("N0", CultureInfo.InvariantCulture)} Hz | " +
+                    $"{EscapeMarkdown(row.ImportLoadType ?? "Unavailable")} | {FormatBytes(row.CompressedSizeBytes)} | " +
+                    $"{FormatBytes(row.EstimatedDecodedSizeBytes)} |");
+            }
             builder.AppendLine();
         }
 
@@ -718,6 +1008,22 @@ namespace Game.Editor
             record.DependencyRoots.Sort(CompareRoots);
         }
 
+        private static void AddUniqueSorted(List<string> values, string value)
+        {
+            string normalized = string.IsNullOrWhiteSpace(value) ? "Unassigned" : value.Trim();
+            if (values.Contains(normalized, StringComparer.Ordinal))
+                return;
+
+            values.Add(normalized);
+            values.Sort(StringComparer.Ordinal);
+        }
+
+        private static void AddWarningOnce(List<string> warnings, string warning)
+        {
+            if (!warnings.Contains(warning, StringComparer.Ordinal))
+                warnings.Add(warning);
+        }
+
         private static int CompareRoots(DependencyRootRecord left, DependencyRootRecord right)
         {
             int pathComparison = string.Compare(left.AssetPath, right.AssetPath, StringComparison.Ordinal);
@@ -752,6 +1058,16 @@ namespace Game.Editor
             return value.HasValue ? value.Value.ToString().ToLowerInvariant() : "unavailable";
         }
 
+        private static string FormatValues(IReadOnlyList<string> values)
+        {
+            return values.Count > 0 ? string.Join("<br>", values) : "Unassigned";
+        }
+
+        private static string FormatDuration(double seconds)
+        {
+            return $"{seconds.ToString("0.000", CultureInfo.InvariantCulture)} s";
+        }
+
         private static string FormatBytes(long? bytes)
         {
             return bytes.HasValue ? FormatBytes(bytes.Value) : "Unavailable";
@@ -783,8 +1099,9 @@ namespace Game.Editor
 
     public sealed class ContentResidencyReport
     {
-        public int SchemaVersion { get; set; } = 1;
+        public int SchemaVersion { get; set; } = 2;
         public string TaskId { get; set; } = "APH-008";
+        public string AudioResidencyTaskId { get; set; } = "APH-400";
         public string Status { get; set; } = "pending-unity-generation";
         public string BaselineCommit { get; set; } = ContentResidencyInventoryGenerator.BaselineCommit;
         public string GeneratedUtc { get; set; }
@@ -795,6 +1112,8 @@ namespace Game.Editor
         public ContentResidencySummary Summary { get; set; } = new();
         public List<DependencyRootRecord> Roots { get; } = new();
         public List<ContentResidencyAssetRecord> Assets { get; } = new();
+        public List<string> AudioCatalogAssetPaths { get; } = new();
+        public List<CatalogAudioResidencyRecord> CatalogAudioClips { get; } = new();
         public List<string> Limitations { get; } = new();
         public List<string> Warnings { get; } = new();
     }
@@ -808,6 +1127,11 @@ namespace Game.Editor
         public int ImportedSizeAvailableAssetCount { get; set; }
         public long ImportedSizeBytes { get; set; }
         public int AudioAssetCount { get; set; }
+        public int CatalogAudioClipCount { get; set; }
+        public double CatalogAudioDurationSeconds { get; set; }
+        public int CatalogAudioCompressedSizeAvailableClipCount { get; set; }
+        public long CatalogAudioCompressedSizeBytes { get; set; }
+        public long CatalogAudioEstimatedDecodedSizeBytes { get; set; }
         public int TextureAssetCount { get; set; }
         public int TextureStreamingEnabledCount { get; set; }
         public int MeshAssetCount { get; set; }
@@ -840,6 +1164,23 @@ namespace Game.Editor
         public bool? MeshReadWriteEnabled { get; set; }
         public string MeshReadWriteState { get; set; }
         public long? AnimationTexturePayloadBytes { get; set; }
+    }
+
+    public sealed class CatalogAudioResidencyRecord
+    {
+        public string AssetPath { get; set; } = string.Empty;
+        public List<string> EventIds { get; } = new();
+        public List<string> BusIds { get; } = new();
+        public string Category { get; set; } = string.Empty;
+        public double DurationSeconds { get; set; }
+        public int SampleFrames { get; set; }
+        public int Channels { get; set; }
+        public int FrequencyHz { get; set; }
+        public string ImportLoadType { get; set; }
+        public string ImportLoadTypeSource { get; set; }
+        public long? CompressedSizeBytes { get; set; }
+        public string CompressedSizeMeasurement { get; set; }
+        public long EstimatedDecodedSizeBytes { get; set; }
     }
 }
 

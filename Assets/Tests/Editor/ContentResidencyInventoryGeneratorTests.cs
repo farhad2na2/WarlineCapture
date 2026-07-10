@@ -13,8 +13,12 @@ public sealed class ContentResidencyInventoryGeneratorTests
             tests.UnavailableImportedSizesSerializeAsNull();
             tests.GeneratedAnimationTextureConventionIsNarrow();
             tests.PlayerContentFilterExcludesEditorAndScriptSources();
+            tests.AudioCategoryUsesImportProfileFolder();
+            tests.DecodedAudioSizeUsesFloatPcmSamples();
+            tests.CatalogAudioFieldsSerializeWithMeasurements();
+            tests.CatalogAudioMarkdownExcludesUnreferencedAudioAssets();
             tests.PendingMarkdownDoesNotClaimMeasurements();
-            Debug.Log("[ContentResidencyInventoryValidation] result=Passed tests=4");
+            Debug.Log("[ContentResidencyInventoryValidation] result=Passed tests=8");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -72,6 +76,83 @@ public sealed class ContentResidencyInventoryGeneratorTests
     }
 
     [Test]
+    public void AudioCategoryUsesImportProfileFolder()
+    {
+        Assert.AreEqual(
+            "Voice",
+            ContentResidencyInventoryGenerator.GetAudioCategory(
+                "Assets/Game/Audio/Voice/ARIA/aria_message.wav"));
+        Assert.AreEqual(
+            "Music",
+            ContentResidencyInventoryGenerator.GetAudioCategory(
+                "Assets\\Game\\Audio\\Music\\music_menu_loop.wav"));
+        Assert.IsNull(ContentResidencyInventoryGenerator.GetAudioCategory(
+            "Assets/LegacyAudio/unused.wav"));
+        Assert.IsNull(ContentResidencyInventoryGenerator.GetAudioCategory(
+            "Assets/Game/Audio/orphan.wav"));
+    }
+
+    [Test]
+    public void DecodedAudioSizeUsesFloatPcmSamples()
+    {
+        Assert.AreEqual(
+            352800L,
+            ContentResidencyInventoryGenerator.EstimateDecodedAudioSizeBytes(44100, 2));
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            ContentResidencyInventoryGenerator.EstimateDecodedAudioSizeBytes(44100, 0));
+    }
+
+    [Test]
+    public void CatalogAudioFieldsSerializeWithMeasurements()
+    {
+        ContentResidencyReport report = CreatePendingReport();
+        CatalogAudioResidencyRecord clip = CreateCatalogClip();
+        report.AudioCatalogAssetPaths.Add("Assets/Game/Audio/Events/AudioEventCatalogConfig.asset");
+        report.CatalogAudioClips.Add(clip);
+
+        string json = ContentResidencyInventoryGenerator.SerializeReport(report);
+
+        StringAssert.Contains("\"audioResidencyTaskId\": \"APH-400\"", json);
+        StringAssert.Contains("\"audioCatalogAssetPaths\"", json);
+        StringAssert.Contains("\"catalogAudioClips\"", json);
+        StringAssert.Contains("\"eventIds\"", json);
+        StringAssert.Contains("\"busIds\"", json);
+        StringAssert.Contains("\"category\": \"UI\"", json);
+        StringAssert.Contains("\"durationSeconds\": 0.5", json);
+        StringAssert.Contains("\"channels\": 2", json);
+        StringAssert.Contains("\"frequencyHz\": 44100", json);
+        StringAssert.Contains("\"importLoadType\": \"DecompressOnLoad\"", json);
+        StringAssert.Contains("\"compressedSizeBytes\": 12000", json);
+        StringAssert.Contains("\"estimatedDecodedSizeBytes\": 176400", json);
+    }
+
+    [Test]
+    public void CatalogAudioMarkdownExcludesUnreferencedAudioAssets()
+    {
+        ContentResidencyReport report = CreatePendingReport();
+        report.Assets.Add(new ContentResidencyAssetRecord
+        {
+            AssetPath = "Assets/Game/Audio/Legacy/unused.wav",
+            AssetType = "AudioClip",
+            AudioLoadType = "DecompressOnLoad"
+        });
+        report.AudioCatalogAssetPaths.Add("Assets/Game/Audio/Events/AudioEventCatalogConfig.asset");
+        report.CatalogAudioClips.Add(CreateCatalogClip());
+
+        string markdown = ContentResidencyInventoryGenerator.BuildMarkdown(report);
+
+        StringAssert.Contains("## Catalog-Referenced Audio Residency", markdown);
+        StringAssert.Contains("### Bus and Category Totals", markdown);
+        StringAssert.Contains("### Catalog Clip Detail", markdown);
+        StringAssert.Contains("Assets/Game/Audio/UI/ui_button.wav", markdown);
+        StringAssert.Contains("UI.Button.Click", markdown);
+        StringAssert.Contains("0.500 s", markdown);
+        StringAssert.Contains("44,100 Hz", markdown);
+        StringAssert.Contains("DecompressOnLoad", markdown);
+        StringAssert.DoesNotContain("Assets/Game/Audio/Legacy/unused.wav", markdown);
+    }
+
+    [Test]
     public void PendingMarkdownDoesNotClaimMeasurements()
     {
         ContentResidencyReport report = CreatePendingReport();
@@ -92,5 +173,26 @@ public sealed class ContentResidencyInventoryGeneratorTests
         };
         report.Limitations.Add("Unity generation is required.");
         return report;
+    }
+
+    private static CatalogAudioResidencyRecord CreateCatalogClip()
+    {
+        CatalogAudioResidencyRecord clip = new()
+        {
+            AssetPath = "Assets/Game/Audio/UI/ui_button.wav",
+            Category = "UI",
+            DurationSeconds = 0.5,
+            SampleFrames = 22050,
+            Channels = 2,
+            FrequencyHz = 44100,
+            ImportLoadType = "DecompressOnLoad",
+            ImportLoadTypeSource = "default importer settings",
+            CompressedSizeBytes = 12000,
+            CompressedSizeMeasurement = "UnityEditor.AudioUtil.GetSoundSize",
+            EstimatedDecodedSizeBytes = 176400
+        };
+        clip.EventIds.Add("UI.Button.Click");
+        clip.BusIds.Add("UI");
+        return clip;
     }
 }

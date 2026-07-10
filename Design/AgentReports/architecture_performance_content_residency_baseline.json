@@ -1,22 +1,28 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "taskId": "APH-008",
+  "audioResidencyTaskId": "APH-400",
   "status": "complete",
   "baselineCommit": "7084805d771142706f340e9f2e52a68570bcb72b",
-  "generatedUtc": "2026-07-09T21:12:28.6355540Z",
+  "generatedUtc": "2026-07-10T09:49:14.2373020Z",
   "unityVersion": "6000.5.2f1",
   "activeBuildTarget": "Android",
   "importerPlatform": "Android",
   "scope": "Enabled build scenes, Assets Resources content, PlayerSettings preloaded assets, and StreamingAssets, including transitive AssetDatabase dependencies.",
   "summary": {
     "dependencyRootCount": 12,
-    "assetCount": 4099,
-    "sourceSizeAvailableAssetCount": 4099,
-    "sourceSizeBytes": 815664568,
-    "importedSizeAvailableAssetCount": 2680,
-    "importedSizeBytes": 2471396094,
+    "assetCount": 4102,
+    "sourceSizeAvailableAssetCount": 4102,
+    "sourceSizeBytes": 816165398,
+    "importedSizeAvailableAssetCount": 2682,
+    "importedSizeBytes": 2471900934,
     "audioAssetCount": 226,
-    "textureAssetCount": 637,
+    "catalogAudioClipCount": 226,
+    "catalogAudioDurationSeconds": 575.83753387188233,
+    "catalogAudioCompressedSizeAvailableClipCount": 226,
+    "catalogAudioCompressedSizeBytes": 50966162,
+    "catalogAudioEstimatedDecodedSizeBytes": 101717516,
+    "textureAssetCount": 639,
     "textureStreamingEnabledCount": 0,
     "meshAssetCount": 1817,
     "meshReadWriteEnabledCount": 901,
@@ -1209,7 +1215,7 @@
       "assetPath": "Assets/Game/Art/UI/Generated/BuildDrawer/LayeredOneGo/thumb_04_building_supply_depot_thumb.png",
       "assetType": "Texture2D",
       "sourceSizeBytes": 269492,
-      "importedSizeBytes": 114197,
+      "importedSizeBytes": 114709,
       "importedSizeMeasurement": "Profiler.GetRuntimeMemorySizeLong total for Texture, AudioClip, and Mesh objects at this asset path",
       "dependencyRoots": [
         {
@@ -2520,7 +2526,7 @@
       "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_resource_diamond_icon.png",
       "assetType": "Texture2D",
       "sourceSizeBytes": 529715,
-      "importedSizeBytes": 5483472,
+      "importedSizeBytes": 5482960,
       "importedSizeMeasurement": "Profiler.GetRuntimeMemorySizeLong total for Texture, AudioClip, and Mesh objects at this asset path",
       "dependencyRoots": [
         {
@@ -3072,7 +3078,7 @@
       "assetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV01/scn08_minimap_focus_target_icon.png",
       "assetType": "Texture2D",
       "sourceSizeBytes": 21092,
-      "importedSizeBytes": 11376,
+      "importedSizeBytes": 11888,
       "importedSizeMeasurement": "Profiler.GetRuntimeMemorySizeLong total for Texture, AudioClip, and Mesh objects at this asset path",
       "dependencyRoots": [
         {
@@ -3245,6 +3251,29 @@
       "audioLoadTypeSource": null,
       "textureWidth": 147,
       "textureHeight": 153,
+      "textureFormat": "R8G8B8A8_SRGB",
+      "textureMipmapsEnabled": false,
+      "textureStreamingEnabled": false,
+      "meshReadWriteEnabled": null,
+      "meshReadWriteState": null,
+      "animationTexturePayloadBytes": null
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_focus_reticle.png",
+      "assetType": "Texture2D",
+      "sourceSizeBytes": 20560,
+      "importedSizeBytes": 138224,
+      "importedSizeMeasurement": "Profiler.GetRuntimeMemorySizeLong total for Texture, AudioClip, and Mesh objects at this asset path",
+      "dependencyRoots": [
+        {
+          "kind": "BuildScene",
+          "assetPath": "Assets/Game/Scenes/Menu.unity"
+        }
+      ],
+      "audioLoadType": null,
+      "audioLoadTypeSource": null,
+      "textureWidth": 134,
+      "textureHeight": 128,
       "textureFormat": "R8G8B8A8_SRGB",
       "textureMipmapsEnabled": false,
       "textureStreamingEnabled": false,
@@ -4360,7 +4389,7 @@
       "assetPath": "Assets/Game/Art/UI/Generated/ResourceExchange/LayeredOneGo/pop12_chrome_17_queue_row_frame.png",
       "assetType": "Texture2D",
       "sourceSizeBytes": 22755,
-      "importedSizeBytes": 18576,
+      "importedSizeBytes": 19088,
       "importedSizeMeasurement": "Profiler.GetRuntimeMemorySizeLong total for Texture, AudioClip, and Mesh objects at this asset path",
       "dependencyRoots": [
         {
@@ -4441,6 +4470,29 @@
       "audioLoadTypeSource": null,
       "textureWidth": 313,
       "textureHeight": 37,
+      "textureFormat": "RGBA_ASTC6X6_SRGB",
+      "textureMipmapsEnabled": false,
+      "textureStreamingEnabled": false,
+      "meshReadWriteEnabled": null,
+      "meshReadWriteState": null,
+      "animationTexturePayloadBytes": null
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/ResourceExchange/LayeredOneGo/pop12_chrome_21_small_status_chip_frame.png",
+      "assetType": "Texture2D",
+      "sourceSizeBytes": 12550,
+      "importedSizeBytes": 8216,
+      "importedSizeMeasurement": "Profiler.GetRuntimeMemorySizeLong total for Texture, AudioClip, and Mesh objects at this asset path",
+      "dependencyRoots": [
+        {
+          "kind": "BuildScene",
+          "assetPath": "Assets/Game/Scenes/Menu.unity"
+        }
+      ],
+      "audioLoadType": null,
+      "audioLoadTypeSource": null,
+      "textureWidth": 168,
+      "textureHeight": 48,
       "textureFormat": "RGBA_ASTC6X6_SRGB",
       "textureMipmapsEnabled": false,
       "textureStreamingEnabled": false,
@@ -4797,7 +4849,7 @@
       "assetPath": "Assets/Game/Art/UI/Generated/ResourceExchange/LayeredOneGo/pop12_icon_10_info_circle.png",
       "assetType": "Texture2D",
       "sourceSizeBytes": 39980,
-      "importedSizeBytes": 19952,
+      "importedSizeBytes": 19440,
       "importedSizeMeasurement": "Profiler.GetRuntimeMemorySizeLong total for Texture, AudioClip, and Mesh objects at this asset path",
       "dependencyRoots": [
         {
@@ -30623,6 +30675,29 @@
       "animationTexturePayloadBytes": null
     },
     {
+      "assetPath": "Assets/Game/Prefabs/UI/Shell/Popups/POP13_ARIACommandAssistantPopup.prefab",
+      "assetType": "GameObject",
+      "sourceSizeBytes": 467606,
+      "importedSizeBytes": null,
+      "importedSizeMeasurement": null,
+      "dependencyRoots": [
+        {
+          "kind": "BuildScene",
+          "assetPath": "Assets/Game/Scenes/Menu.unity"
+        }
+      ],
+      "audioLoadType": null,
+      "audioLoadTypeSource": null,
+      "textureWidth": null,
+      "textureHeight": null,
+      "textureFormat": null,
+      "textureMipmapsEnabled": null,
+      "textureStreamingEnabled": null,
+      "meshReadWriteEnabled": null,
+      "meshReadWriteState": null,
+      "animationTexturePayloadBytes": null
+    },
+    {
       "assetPath": "Assets/Game/Prefabs/UI/Shell/Popups/SCN08_FullMapPopup.prefab",
       "assetType": "GameObject",
       "sourceSizeBytes": 42265,
@@ -32949,7 +33024,7 @@
     {
       "assetPath": "Assets/Game/Scenes/Menu.unity",
       "assetType": "SceneAsset",
-      "sourceSizeBytes": 76891,
+      "sourceSizeBytes": 77005,
       "importedSizeBytes": null,
       "importedSizeMeasurement": null,
       "dependencyRoots": [
@@ -84007,7 +84082,7 @@
       "assetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/HUD/SPR_HUD_MilitaryCombat_Shadow_Octagon_01.png",
       "assetType": "Texture2D",
       "sourceSizeBytes": 5170,
-      "importedSizeBytes": 60729,
+      "importedSizeBytes": 60217,
       "importedSizeMeasurement": "Profiler.GetRuntimeMemorySizeLong total for Texture, AudioClip, and Mesh objects at this asset path",
       "dependencyRoots": [
         {
@@ -97847,7 +97922,7 @@
       "assetPath": "Packages/com.unity.render-pipelines.universal/Textures/SMAA/AreaTex.tga",
       "assetType": "Texture2D",
       "sourceSizeBytes": 358444,
-      "importedSizeBytes": 627888,
+      "importedSizeBytes": 986288,
       "importedSizeMeasurement": "Profiler.GetRuntimeMemorySizeLong total for Texture, AudioClip, and Mesh objects at this asset path",
       "dependencyRoots": [
         {
@@ -97956,11 +98031,4312 @@
       "animationTexturePayloadBytes": null
     }
   ],
+  "audioCatalogAssetPaths": [
+    "Assets/Game/Audio/Events/AudioEventCatalogConfig.asset"
+  ],
+  "catalogAudioClips": [
+    {
+      "assetPath": "Assets/Game/Audio/Alerts/alert_base_breached_01.wav",
+      "eventIds": [
+        "Alert.Base.Breached"
+      ],
+      "busIds": [
+        "Alerts"
+      ],
+      "category": "Alerts",
+      "durationSeconds": 1.2,
+      "sampleFrames": 52920,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 134372,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 211680
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Alerts/alert_threat_critical_01.wav",
+      "eventIds": [
+        "Alert.Threat.Critical"
+      ],
+      "busIds": [
+        "Alerts"
+      ],
+      "category": "Alerts",
+      "durationSeconds": 1.08,
+      "sampleFrames": 47628,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 123788,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 190512
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Alerts/alert_threat_minor_01.wav",
+      "eventIds": [
+        "Alert.Threat.Minor"
+      ],
+      "busIds": [
+        "Alerts"
+      ],
+      "category": "Alerts",
+      "durationSeconds": 0.8,
+      "sampleFrames": 35280,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 99092,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 141120
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Alerts/alert_unit_under_attack_01.wav",
+      "eventIds": [
+        "Alert.Unit.UnderAttack"
+      ],
+      "busIds": [
+        "Alerts"
+      ],
+      "category": "Alerts",
+      "durationSeconds": 0.84,
+      "sampleFrames": 37044,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 102620,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 148176
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Ambience/amb_base_distant_loop_01.wav",
+      "eventIds": [
+        "Ambience.Base.DistantLoop"
+      ],
+      "busIds": [
+        "Ambience"
+      ],
+      "category": "Ambience",
+      "durationSeconds": 8.0,
+      "sampleFrames": 352800,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "Streaming",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 0,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 1411200
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Ambience/amb_city_day_loop_01.wav",
+      "eventIds": [
+        "Ambience.City.DayLoop"
+      ],
+      "busIds": [
+        "Ambience"
+      ],
+      "category": "Ambience",
+      "durationSeconds": 8.0,
+      "sampleFrames": 352800,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "Streaming",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 0,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 1411200
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Music/music_briefing_loop_01.wav",
+      "eventIds": [
+        "Music.Briefing.Loop"
+      ],
+      "busIds": [
+        "Music"
+      ],
+      "category": "Music",
+      "durationSeconds": 10.0,
+      "sampleFrames": 441000,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "Streaming",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 0,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 1764000
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Music/music_match_calm_loop_01.wav",
+      "eventIds": [
+        "Music.Match.CalmLoop"
+      ],
+      "busIds": [
+        "Music"
+      ],
+      "category": "Music",
+      "durationSeconds": 10.0,
+      "sampleFrames": 441000,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "Streaming",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 0,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 1764000
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Music/music_match_combat_loop_01.wav",
+      "eventIds": [
+        "Music.Match.CombatLoop"
+      ],
+      "busIds": [
+        "Music"
+      ],
+      "category": "Music",
+      "durationSeconds": 10.0,
+      "sampleFrames": 441000,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "Streaming",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 0,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 1764000
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Music/music_menu_loop_01.wav",
+      "eventIds": [
+        "Music.Menu.Loop"
+      ],
+      "busIds": [
+        "Music"
+      ],
+      "category": "Music",
+      "durationSeconds": 10.0,
+      "sampleFrames": 441000,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "Streaming",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 0,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 1764000
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Music/music_result_defeat_01.wav",
+      "eventIds": [
+        "Music.Result.Defeat"
+      ],
+      "busIds": [
+        "Music"
+      ],
+      "category": "Music",
+      "durationSeconds": 4.0,
+      "sampleFrames": 176400,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "Streaming",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 0,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 705600
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Music/music_result_victory_01.wav",
+      "eventIds": [
+        "Music.Result.Victory"
+      ],
+      "busIds": [
+        "Music"
+      ],
+      "category": "Music",
+      "durationSeconds": 4.0,
+      "sampleFrames": 176400,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "Streaming",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 0,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 705600
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Music/music_splash_intro_01.wav",
+      "eventIds": [
+        "Music.Splash.Intro"
+      ],
+      "busIds": [
+        "Music"
+      ],
+      "category": "Music",
+      "durationSeconds": 5.0,
+      "sampleFrames": 220500,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "Streaming",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 0,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 882000
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_build_place_invalid_01.wav",
+      "eventIds": [
+        "Gameplay.Build.Place.Invalid"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.48,
+      "sampleFrames": 21168,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 70868,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 84672
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_build_place_valid_01.wav",
+      "eventIds": [
+        "Gameplay.Build.Place.Valid"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.6,
+      "sampleFrames": 26460,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 81452,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 105840
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_command_attack_accepted_01.wav",
+      "eventIds": [
+        "Gameplay.Command.Attack.Accepted"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.48,
+      "sampleFrames": 21168,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 70868,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 84672
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_command_hold_accepted_01.wav",
+      "eventIds": [
+        "Gameplay.Command.Hold.Accepted"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.48,
+      "sampleFrames": 21168,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 70868,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 84672
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_command_move_accepted_01.wav",
+      "eventIds": [
+        "Gameplay.Command.Move.Accepted"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.48,
+      "sampleFrames": 21168,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 70868,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 84672
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_command_rejected_01.wav",
+      "eventIds": [
+        "Gameplay.Command.Rejected"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.48,
+      "sampleFrames": 21168,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 70868,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 84672
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_command_scan_accepted_01.wav",
+      "eventIds": [
+        "Gameplay.Command.Scan.Accepted"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.52,
+      "sampleFrames": 22932,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 74396,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 91728
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_command_scan_targeting_01.wav",
+      "eventIds": [
+        "Gameplay.Command.Scan.Targeting"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.52,
+      "sampleFrames": 22932,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 74396,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 91728
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_command_stop_returning_01.wav",
+      "eventIds": [
+        "Gameplay.Command.Stop.Returning"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.52,
+      "sampleFrames": 22932,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 74396,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 91728
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_explosion_large_01.wav",
+      "eventIds": [
+        "Gameplay.Explosion.Large"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 1.1499791666666668,
+      "sampleFrames": 55199,
+      "channels": 1,
+      "frequencyHz": 48000,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 138930,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 220796
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_explosion_small_01.wav",
+      "eventIds": [
+        "Gameplay.Explosion.Small"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.72,
+      "sampleFrames": 34560,
+      "channels": 1,
+      "frequencyHz": 48000,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 97652,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 138240
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_impact_bullet_01.wav",
+      "eventIds": [
+        "Gameplay.Impact.Bullet"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.16,
+      "sampleFrames": 7680,
+      "channels": 1,
+      "frequencyHz": 48000,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 43892,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 30720
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_objective_complete_01.wav",
+      "eventIds": [
+        "Gameplay.Objective.Complete"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.88,
+      "sampleFrames": 38808,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 106148,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 155232
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_objective_failed_01.wav",
+      "eventIds": [
+        "Gameplay.Objective.Failed"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.88,
+      "sampleFrames": 38808,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 106148,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 155232
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_objective_progress_01.wav",
+      "eventIds": [
+        "Gameplay.Objective.Progress"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.64,
+      "sampleFrames": 28224,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 84980,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 112896
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_production_complete_01.wav",
+      "eventIds": [
+        "Gameplay.Production.Complete"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.8,
+      "sampleFrames": 35280,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 99092,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 141120
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_production_queued_01.wav",
+      "eventIds": [
+        "Gameplay.Production.Queued"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.48,
+      "sampleFrames": 21168,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 70868,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 84672
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_unit_aircraft_flyby_01.wav",
+      "eventIds": [
+        "Gameplay.Unit.Aircraft.Flyby"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 1.1499791666666668,
+      "sampleFrames": 55199,
+      "channels": 1,
+      "frequencyHz": 48000,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 138930,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 220796
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_unit_engine_aircraft_flight_01.wav",
+      "eventIds": [
+        "Gameplay.Unit.Engine.Aircraft.Flight"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 2.8,
+      "sampleFrames": 134400,
+      "channels": 1,
+      "frequencyHz": 48000,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 297332,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 537600
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_unit_engine_aircraft_takeoff_01.wav",
+      "eventIds": [
+        "Gameplay.Unit.Engine.Aircraft.Takeoff"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 1.04,
+      "sampleFrames": 45864,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 120260,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 183456
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_unit_engine_helicopter_flight_01.wav",
+      "eventIds": [
+        "Gameplay.Unit.Engine.Helicopter.Flight"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.6,
+      "sampleFrames": 26460,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 81452,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 105840
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_unit_engine_vehicle_move_01.wav",
+      "eventIds": [
+        "Gameplay.Unit.Engine.Vehicle.Move"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.48,
+      "sampleFrames": 21168,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 70868,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 84672
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_unit_select_air_01.wav",
+      "eventIds": [
+        "Gameplay.Unit.Select.Air"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.48,
+      "sampleFrames": 21168,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 70868,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 84672
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_unit_select_infantry_01.wav",
+      "eventIds": [
+        "Gameplay.Unit.Select.Infantry"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.48,
+      "sampleFrames": 21168,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 70868,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 84672
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_unit_select_vehicle_01.wav",
+      "eventIds": [
+        "Gameplay.Unit.Select.Vehicle"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.48,
+      "sampleFrames": 21168,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 70868,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 84672
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_unit_vehicle_destroyed_01.wav",
+      "eventIds": [
+        "Gameplay.Unit.Vehicle.Destroyed"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.95,
+      "sampleFrames": 45600,
+      "channels": 1,
+      "frequencyHz": 48000,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 119732,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 182400
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_unit_vehicle_engine_01.wav",
+      "eventIds": [
+        "Gameplay.Unit.Vehicle.Engine"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.72,
+      "sampleFrames": 31752,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 92036,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 127008
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_air_missile_launch_01.wav",
+      "eventIds": [
+        "Gameplay.Weapon.AirMissile.Launch"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.57997916666666671,
+      "sampleFrames": 27839,
+      "channels": 1,
+      "frequencyHz": 48000,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 84210,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 111356
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_missile_flight_01.wav",
+      "eventIds": [
+        "Gameplay.Weapon.Missile.Flight"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.58,
+      "sampleFrames": 25578,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 79688,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 102312
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_missile_launch_01.wav",
+      "eventIds": [
+        "Gameplay.Weapon.Missile.Launch"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.72,
+      "sampleFrames": 34560,
+      "channels": 1,
+      "frequencyHz": 48000,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 97652,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 138240
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_rifle_fire_01.wav",
+      "eventIds": [
+        "Gameplay.Weapon.Rifle.Fire"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.18,
+      "sampleFrames": 8640,
+      "channels": 1,
+      "frequencyHz": 48000,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 45812,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 34560
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Gameplay/game_weapon_vehicle_cannon_fire_01.wav",
+      "eventIds": [
+        "Gameplay.Weapon.VehicleCannon.Fire"
+      ],
+      "busIds": [
+        "SFX"
+      ],
+      "category": "Gameplay",
+      "durationSeconds": 0.55,
+      "sampleFrames": 26400,
+      "channels": 1,
+      "frequencyHz": 48000,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 81332,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 105600
+    },
+    {
+      "assetPath": "Assets/Game/Audio/UI/ui_button_disabled_tap_01.wav",
+      "eventIds": [
+        "UI.Button.Disabled.Tap"
+      ],
+      "busIds": [
+        "UI"
+      ],
+      "category": "UI",
+      "durationSeconds": 0.48,
+      "sampleFrames": 21168,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 70868,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 84672
+    },
+    {
+      "assetPath": "Assets/Game/Audio/UI/ui_button_negative_click_01.wav",
+      "eventIds": [
+        "UI.Button.Negative.Click"
+      ],
+      "busIds": [
+        "UI"
+      ],
+      "category": "UI",
+      "durationSeconds": 0.48,
+      "sampleFrames": 21168,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 70868,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 84672
+    },
+    {
+      "assetPath": "Assets/Game/Audio/UI/ui_button_primary_click_01.wav",
+      "eventIds": [
+        "UI.Button.Primary.Click"
+      ],
+      "busIds": [
+        "UI"
+      ],
+      "category": "UI",
+      "durationSeconds": 0.48,
+      "sampleFrames": 21168,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 70868,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 84672
+    },
+    {
+      "assetPath": "Assets/Game/Audio/UI/ui_button_secondary_click_01.wav",
+      "eventIds": [
+        "UI.Button.Secondary.Click"
+      ],
+      "busIds": [
+        "UI"
+      ],
+      "category": "UI",
+      "durationSeconds": 0.48,
+      "sampleFrames": 21168,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 70868,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 84672
+    },
+    {
+      "assetPath": "Assets/Game/Audio/UI/ui_card_locked_01.wav",
+      "eventIds": [
+        "UI.Card.Locked"
+      ],
+      "busIds": [
+        "UI"
+      ],
+      "category": "UI",
+      "durationSeconds": 0.48,
+      "sampleFrames": 21168,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 70868,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 84672
+    },
+    {
+      "assetPath": "Assets/Game/Audio/UI/ui_card_select_01.wav",
+      "eventIds": [
+        "UI.Card.Select"
+      ],
+      "busIds": [
+        "UI"
+      ],
+      "category": "UI",
+      "durationSeconds": 0.48,
+      "sampleFrames": 21168,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 70868,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 84672
+    },
+    {
+      "assetPath": "Assets/Game/Audio/UI/ui_drawer_close_01.wav",
+      "eventIds": [
+        "UI.Drawer.Close"
+      ],
+      "busIds": [
+        "UI"
+      ],
+      "category": "UI",
+      "durationSeconds": 0.52,
+      "sampleFrames": 22932,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 74396,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 91728
+    },
+    {
+      "assetPath": "Assets/Game/Audio/UI/ui_drawer_open_01.wav",
+      "eventIds": [
+        "UI.Drawer.Open"
+      ],
+      "busIds": [
+        "UI"
+      ],
+      "category": "UI",
+      "durationSeconds": 0.6,
+      "sampleFrames": 26460,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 81452,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 105840
+    },
+    {
+      "assetPath": "Assets/Game/Audio/UI/ui_feedback_toast_error_01.wav",
+      "eventIds": [
+        "UI.Feedback.Toast.Error"
+      ],
+      "busIds": [
+        "UI"
+      ],
+      "category": "UI",
+      "durationSeconds": 0.64,
+      "sampleFrames": 28224,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 84980,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 112896
+    },
+    {
+      "assetPath": "Assets/Game/Audio/UI/ui_feedback_toast_positive_01.wav",
+      "eventIds": [
+        "UI.Feedback.Toast.Positive"
+      ],
+      "busIds": [
+        "UI"
+      ],
+      "category": "UI",
+      "durationSeconds": 0.64,
+      "sampleFrames": 28224,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 84980,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 112896
+    },
+    {
+      "assetPath": "Assets/Game/Audio/UI/ui_popup_close_01.wav",
+      "eventIds": [
+        "UI.Popup.Close"
+      ],
+      "busIds": [
+        "UI"
+      ],
+      "category": "UI",
+      "durationSeconds": 0.48,
+      "sampleFrames": 21168,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 70868,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 84672
+    },
+    {
+      "assetPath": "Assets/Game/Audio/UI/ui_popup_open_01.wav",
+      "eventIds": [
+        "UI.Popup.Open"
+      ],
+      "busIds": [
+        "UI"
+      ],
+      "category": "UI",
+      "durationSeconds": 0.52,
+      "sampleFrames": 22932,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 74396,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 91728
+    },
+    {
+      "assetPath": "Assets/Game/Audio/UI/ui_screen_back_01.wav",
+      "eventIds": [
+        "UI.Screen.Back"
+      ],
+      "busIds": [
+        "UI"
+      ],
+      "category": "UI",
+      "durationSeconds": 0.6,
+      "sampleFrames": 26460,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 81452,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 105840
+    },
+    {
+      "assetPath": "Assets/Game/Audio/UI/ui_screen_forward_01.wav",
+      "eventIds": [
+        "UI.Screen.Forward"
+      ],
+      "busIds": [
+        "UI"
+      ],
+      "category": "UI",
+      "durationSeconds": 0.6,
+      "sampleFrames": 26460,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 81452,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 105840
+    },
+    {
+      "assetPath": "Assets/Game/Audio/UI/ui_slider_tick_01.wav",
+      "eventIds": [
+        "UI.Slider.Tick"
+      ],
+      "busIds": [
+        "UI"
+      ],
+      "category": "UI",
+      "durationSeconds": 0.48,
+      "sampleFrames": 21168,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 70868,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 84672
+    },
+    {
+      "assetPath": "Assets/Game/Audio/UI/ui_tab_select_01.wav",
+      "eventIds": [
+        "UI.Tab.Select"
+      ],
+      "busIds": [
+        "UI"
+      ],
+      "category": "UI",
+      "durationSeconds": 0.48,
+      "sampleFrames": 21168,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 70868,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 84672
+    },
+    {
+      "assetPath": "Assets/Game/Audio/UI/ui_toggle_off_01.wav",
+      "eventIds": [
+        "UI.Toggle.Off"
+      ],
+      "busIds": [
+        "UI"
+      ],
+      "category": "UI",
+      "durationSeconds": 0.48,
+      "sampleFrames": 21168,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 70868,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 84672
+    },
+    {
+      "assetPath": "Assets/Game/Audio/UI/ui_toggle_on_01.wav",
+      "eventIds": [
+        "UI.Toggle.On"
+      ],
+      "busIds": [
+        "UI"
+      ],
+      "category": "UI",
+      "durationSeconds": 0.48,
+      "sampleFrames": 21168,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 70868,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 84672
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_action_place_choose_footprint_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerActionPlaceChooseFootprint"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 4.4880045351473923,
+      "sampleFrames": 197921,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 424406,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 791684
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_aircraft_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerEmptyAircraft"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.5520181405895692,
+      "sampleFrames": 156644,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 341852,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 626576
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_buildings_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerEmptyBuildings"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.3360090702947844,
+      "sampleFrames": 147118,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 322800,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 588472
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_default_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerEmptyDefault"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.312018140589569,
+      "sampleFrames": 146060,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 320684,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 584240
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_name_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerEmptyName"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.04,
+      "sampleFrames": 89964,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 208460,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 359856
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_select_item_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerEmptySelectItem"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 4.2240136054421766,
+      "sampleFrames": 186279,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 401122,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 745116
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_soldiers_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerEmptySoldiers"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.4560090702947845,
+      "sampleFrames": 152410,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 333384,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 609640
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_vehicles_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerEmptyVehicles"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.4080045351473922,
+      "sampleFrames": 150293,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 329150,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 601172
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_connecting_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerFailureConnecting"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 5.208004535147392,
+      "sampleFrames": 229673,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 487910,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 918692
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_global_queue_full_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerFailureGlobalQueueFull"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 6.2880045351473921,
+      "sampleFrames": 277301,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 583166,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 1109204
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_invalid_selection_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerFailureInvalidSelection"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.1680045351473924,
+      "sampleFrames": 139709,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 307982,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 558836
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_missing_producer_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerFailureMissingProducer"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 4.2480045351473921,
+      "sampleFrames": 187337,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 403238,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 749348
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_missing_producer_named_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerFailureMissingProducerNamed"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 4.752018140589569,
+      "sampleFrames": 209564,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 447692,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 838256
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_not_enough_money_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerFailureNotEnoughMoney"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.7440136054421767,
+      "sampleFrames": 165111,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 358786,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 660444
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_queue_full_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerFailureQueueFull"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 5.832018140589569,
+      "sampleFrames": 257192,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 542948,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 1028768
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_queue_full_named_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerFailureQueueFullNamed"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 5.6880045351473925,
+      "sampleFrames": 250841,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 530246,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 1003364
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_global_queue_full_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerFailureShortGlobalQueueFull"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.84,
+      "sampleFrames": 169344,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 367252,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 677376
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_missing_producer_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerFailureShortMissingProducer"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.9040136054421768,
+      "sampleFrames": 128067,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 284666,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 512268
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_not_enough_money_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerFailureShortNotEnoughMoney"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.4720181405895691,
+      "sampleFrames": 109016,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 246564,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 436064
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_queue_full_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerFailureShortQueueFull"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.4320181405895691,
+      "sampleFrames": 151352,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 331268,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 605408
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_queue_full_named_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerFailureShortQueueFullNamed"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.9280045351473922,
+      "sampleFrames": 129125,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 286782,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 516500
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_requires_named_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerFailureShortRequiresNamed"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.3760090702947845,
+      "sampleFrames": 104782,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 238096,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 419128
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_unavailable_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerFailureShortUnavailable"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.7360090702947848,
+      "sampleFrames": 120658,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 269848,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 482632
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_unavailable_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerFailureUnavailable"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 4.8720181405895691,
+      "sampleFrames": 214856,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 458276,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 859424
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_instruction_cannot_place_here_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerInstructionCannotPlaceHere"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.792018140589569,
+      "sampleFrames": 167228,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 363020,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 668912
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_instruction_place_pending_confirm_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerInstructionPlacePendingConfirm"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 5.16,
+      "sampleFrames": 227556,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 483676,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 910224
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_placement_invalid_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerPlacementInvalid"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.3760090702947845,
+      "sampleFrames": 104782,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 238096,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 419128
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_ready_aircraft_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerReadyAircraft"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 4.7760090702947844,
+      "sampleFrames": 210622,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 449808,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 842488
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_ready_buildings_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerReadyBuildings"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 4.4880045351473923,
+      "sampleFrames": 197921,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 424406,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 791684
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_ready_default_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerReadyDefault"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.28,
+      "sampleFrames": 100548,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 229628,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 402192
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_ready_soldiers_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerReadySoldiers"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 4.584013605442177,
+      "sampleFrames": 202155,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 432874,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 808620
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_ready_vehicles_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerReadyVehicles"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 4.6560090702947843,
+      "sampleFrames": 205330,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 439224,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 821320
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_success_production_queued_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerSuccessProductionQueued"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.0240136054421769,
+      "sampleFrames": 133359,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 295282,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 533436
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_success_recruitment_queued_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildDrawerSuccessRecruitmentQueued"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.0240136054421769,
+      "sampleFrames": 133359,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 295282,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 533436
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_building_placed_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildFeedbackBuildingPlaced"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.0880045351473924,
+      "sampleFrames": 92081,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 212694,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 368324
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_drawer_not_ready_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildFeedbackDrawerNotReady"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.5920181405895693,
+      "sampleFrames": 114308,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 257148,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 457232
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_no_active_placement_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildFeedbackNoActivePlacement"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.9040136054421768,
+      "sampleFrames": 128067,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 284666,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 512268
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_place_building_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildFeedbackPlaceBuilding"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 1.9680045351473923,
+      "sampleFrames": 86789,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 202110,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 347156
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_place_on_valid_ground_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildFeedbackPlaceOnValidGround"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.4960090702947846,
+      "sampleFrames": 110074,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 248680,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 440296
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_placement_cancelled_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildFeedbackPlacementCancelled"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.3040136054421767,
+      "sampleFrames": 101607,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 231746,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 406428
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_cancel_unavailable_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildFeedbackProductionCancelUnavailable"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.9280045351473922,
+      "sampleFrames": 129125,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 286782,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 516500
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_cancelled_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildFeedbackProductionCancelled"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.3280045351473921,
+      "sampleFrames": 102665,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 233862,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 410660
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_cancelled_named_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildFeedbackProductionCancelledNamed"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.184013605442177,
+      "sampleFrames": 96315,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 221162,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 385260
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_clear_unavailable_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildFeedbackProductionClearUnavailable"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.8080045351473921,
+      "sampleFrames": 123833,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 276198,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 495332
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_queue_cleared_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildFeedbackProductionQueueCleared"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.4960090702947846,
+      "sampleFrames": 110074,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 248680,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 440296
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_queue_cleared_sentence_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildFeedbackProductionQueueClearedSentence"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.4960090702947846,
+      "sampleFrames": 110074,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 248680,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 440296
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_queue_empty_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildFeedbackProductionQueueEmpty"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.6880045351473925,
+      "sampleFrames": 118541,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 265614,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 474164
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_requested_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildFeedbackProductionRequested"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.4560090702947845,
+      "sampleFrames": 152410,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 333384,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 609640
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_rotated_90_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildFeedbackRotated90"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.7840136054421767,
+      "sampleFrames": 122775,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 274082,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 491100
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_instruction_confirm_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildPlacementInstructionConfirm"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.4080045351473922,
+      "sampleFrames": 150293,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 329150,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 601172
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_status_drag_to_position_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildPlacementStatusDragToPosition"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.2080045351473925,
+      "sampleFrames": 97373,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 223278,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 389492
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_status_valid_ground_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildPlacementStatusValidGround"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.1360090702947847,
+      "sampleFrames": 94198,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 216928,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 376792
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_title_default_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildPlacementTitleDefault"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 1.9680045351473923,
+      "sampleFrames": 86789,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 202110,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 347156
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_title_fallback_subject_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildPlacementTitleFallbackSubject"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 1.6560090702947845,
+      "sampleFrames": 73030,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 174592,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 292120
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_title_named_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.BuildPlacementTitleNamed"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.0640136054421769,
+      "sampleFrames": 91023,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 210578,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 364092
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_confirm_destroy_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.ConfirmDestroy"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.2160090702947848,
+      "sampleFrames": 141826,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 312216,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 567304
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_create_first_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.CreateFirst"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.4960090702947846,
+      "sampleFrames": 110074,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 248680,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 440296
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_drag_building_to_final_position_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.DragBuildingToFinalPosition"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.5680045351473924,
+      "sampleFrames": 113249,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 255030,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 452996
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_match_feedback_blocked_civilian_zone_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.MatchFeedbackBlockedCivilianZone"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.792018140589569,
+      "sampleFrames": 167228,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 363020,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 668912
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_match_feedback_tactical_map_not_ready_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.MatchFeedbackTacticalMapNotReady"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.7840136054421767,
+      "sampleFrames": 122775,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 274082,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 491100
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_not_enough_money_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.NotEnoughMoney"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.184013605442177,
+      "sampleFrames": 96315,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 221162,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 385260
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_soldier_singular_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.SelectionFeedbackSoldierSingular"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 1.8480045351473924,
+      "sampleFrames": 81497,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 191526,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 325988
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_squad_count_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.SelectionFeedbackSquadCount"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.16,
+      "sampleFrames": 95256,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 219044,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 381024
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_squad_selected_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.SelectionFeedbackSquadSelected"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.3040136054421767,
+      "sampleFrames": 101607,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 231746,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 406428
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_unit_plural_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.SelectionFeedbackUnitPlural"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 1.7280045351473923,
+      "sampleFrames": 76205,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 180942,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 304820
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_unit_singular_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.SelectionFeedbackUnitSingular"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 1.68,
+      "sampleFrames": 74088,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 176708,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 296352
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_vehicle_singular_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.SelectionFeedbackVehicleSingular"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 1.8,
+      "sampleFrames": 79380,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 187292,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 317520
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_airdrop_cargo_drop_blocked_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalAirdropCargoDropBlocked"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.3760090702947845,
+      "sampleFrames": 104782,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 238096,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 419128
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_airdrop_emergency_drop_visual_missing_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalAirdropEmergencyDropVisualMissing"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.0720181405895692,
+      "sampleFrames": 135476,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 299516,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 541904
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_airdrop_no_clear_landing_zone_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalAirdropNoClearLandingZone"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.1920181405895693,
+      "sampleFrames": 140768,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 310100,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 563072
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_airdrop_parachute_visual_missing_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalAirdropParachuteVisualMissing"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.6160090702947847,
+      "sampleFrames": 115366,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 259264,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 461464
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_attack_description_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalBannerAcceptedAttackDescription"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.3760090702947845,
+      "sampleFrames": 104782,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 238096,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 419128
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_attack_title_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalBannerAcceptedAttackTitle"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.0160090702947846,
+      "sampleFrames": 88906,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 206344,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 355624
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_board_description_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalBannerAcceptedBoardDescription"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.3040136054421767,
+      "sampleFrames": 101607,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 231746,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 406428
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_board_title_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalBannerAcceptedBoardTitle"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 1.9440136054421768,
+      "sampleFrames": 85731,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 199994,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 342924
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_build_description_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalBannerAcceptedBuildDescription"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.5920181405895693,
+      "sampleFrames": 114308,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 257148,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 457232
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_build_title_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalBannerAcceptedBuildTitle"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 1.8960090702947845,
+      "sampleFrames": 83614,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 195760,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 334456
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_destroy_description_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalBannerAcceptedDestroyDescription"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.5920181405895693,
+      "sampleFrames": 114308,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 257148,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 457232
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_destroy_title_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalBannerAcceptedDestroyTitle"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.0880045351473924,
+      "sampleFrames": 92081,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 212694,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 368324
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_hold_description_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalBannerAcceptedHoldDescription"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.9760090702947846,
+      "sampleFrames": 131242,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 291016,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 524968
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_hold_title_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalBannerAcceptedHoldTitle"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.04,
+      "sampleFrames": 89964,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 208460,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 359856
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_move_description_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalBannerAcceptedMoveDescription"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.7120181405895694,
+      "sampleFrames": 119600,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 267732,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 478400
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_move_title_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalBannerAcceptedMoveTitle"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 1.9440136054421768,
+      "sampleFrames": 85731,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 199994,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 342924
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_return_description_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalBannerAcceptedReturnDescription"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.6160090702947847,
+      "sampleFrames": 115366,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 259264,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 461464
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_return_title_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalBannerAcceptedReturnTitle"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.1120181405895693,
+      "sampleFrames": 93140,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 214812,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 372560
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_scan_description_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalBannerAcceptedScanDescription"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.832018140589569,
+      "sampleFrames": 124892,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 278316,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 499568
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_scan_title_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalBannerAcceptedScanTitle"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.0640136054421769,
+      "sampleFrames": 91023,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 210578,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 364092
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_stop_description_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalBannerAcceptedStopDescription"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.0960090702947847,
+      "sampleFrames": 136534,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 301632,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 546136
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_stop_title_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalBannerAcceptedStopTitle"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.0160090702947846,
+      "sampleFrames": 88906,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 206344,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 355624
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_attack_description_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalBannerModeAttackDescription"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.7360090702947848,
+      "sampleFrames": 120658,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 269848,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 482632
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_attack_title_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalBannerModeAttackTitle"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.0160090702947846,
+      "sampleFrames": 88906,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 206344,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 355624
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_board_description_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalBannerModeBoardDescription"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.4480045351473922,
+      "sampleFrames": 107957,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 244446,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 431828
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_board_description_transport_to_passenger_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalBannerModeBoardDescriptionTransportToPassenger"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.6160090702947847,
+      "sampleFrames": 115366,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 259264,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 461464
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_board_title_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalBannerModeBoardTitle"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 1.9440136054421768,
+      "sampleFrames": 85731,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 199994,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 342924
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_build_description_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalBannerModeBuildDescription"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.0240136054421769,
+      "sampleFrames": 133359,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 295282,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 533436
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_build_title_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalBannerModeBuildTitle"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 1.8960090702947845,
+      "sampleFrames": 83614,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 195760,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 334456
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_move_description_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalBannerModeMoveDescription"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.4720181405895691,
+      "sampleFrames": 109016,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 246564,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 436064
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_move_title_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalBannerModeMoveTitle"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 1.9440136054421768,
+      "sampleFrames": 85731,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 199994,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 342924
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_scan_description_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalBannerModeScanDescription"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.7840136054421767,
+      "sampleFrames": 122775,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 274082,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 491100
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_scan_title_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalBannerModeScanTitle"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.0640136054421769,
+      "sampleFrames": 91023,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 210578,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 364092
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_prompt_passenger_to_transport_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandBoardPromptPassengerToTransport"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.4480045351473922,
+      "sampleFrames": 107957,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 244446,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 431828
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_prompt_transport_to_passenger_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandBoardPromptTransportToPassenger"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.6720181405895693,
+      "sampleFrames": 161936,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 352436,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 647744
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_select_unit_first_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandBoardSelectUnitFirst"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.52,
+      "sampleFrames": 111132,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 250796,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 444528
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_selected_unit_cannot_board_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandBoardSelectedUnitCannotBoard"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.8560090702947845,
+      "sampleFrames": 125950,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 280432,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 503800
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_tap_units_to_board_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandBoardTapUnitsToBoard"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.4,
+      "sampleFrames": 105840,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 240212,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 423360
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_unavailable_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandBoardUnavailable"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.7840136054421767,
+      "sampleFrames": 122775,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 274082,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 491100
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_attack_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandInstructionAttack"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.4240136054421768,
+      "sampleFrames": 106899,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 242330,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 427596
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_board_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandInstructionBoard"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.4480045351473922,
+      "sampleFrames": 107957,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 244446,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 431828
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_build_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandInstructionBuild"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.7680045351473921,
+      "sampleFrames": 166169,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 360902,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 664676
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_hold_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandInstructionHold"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.0240136054421769,
+      "sampleFrames": 133359,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 295282,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 533436
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_move_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandInstructionMove"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.3040136054421767,
+      "sampleFrames": 101607,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 231746,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 406428
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_scan_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandInstructionScan"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.352018140589569,
+      "sampleFrames": 103724,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 235980,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 414896
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_select_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandInstructionSelect"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.7360090702947848,
+      "sampleFrames": 120658,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 269848,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 482632
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_special_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandInstructionSpecial"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.52,
+      "sampleFrames": 111132,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 250796,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 444528
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_stop_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandInstructionStop"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.5280045351473923,
+      "sampleFrames": 155585,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 339734,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 622340
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_build_unavailable_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandReasonBuildUnavailable"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.3760090702947845,
+      "sampleFrames": 104782,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 238096,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 419128
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_camera_jump_unavailable_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandReasonCameraJumpUnavailable"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.8560090702947845,
+      "sampleFrames": 125950,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 280432,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 503800
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_command_unavailable_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandReasonCommandUnavailable"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.4240136054421768,
+      "sampleFrames": 106899,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 242330,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 427596
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_insufficient_fuel_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandReasonInsufficientFuel"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.3280045351473921,
+      "sampleFrames": 102665,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 233862,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 410660
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_insufficient_resources_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandReasonInsufficientResources"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.7120181405895694,
+      "sampleFrames": 119600,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 267732,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 478400
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_invalid_passenger_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandReasonInvalidPassenger"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.36,
+      "sampleFrames": 148176,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 324916,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 592704
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_invalid_transport_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandReasonInvalidTransport"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 4.128004535147392,
+      "sampleFrames": 182045,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 392654,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 728180
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_no_disembark_cell_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandReasonNoDisembarkCell"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.5280045351473923,
+      "sampleFrames": 155585,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 339734,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 622340
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_no_eligible_passengers_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandReasonNoEligiblePassengers"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.792018140589569,
+      "sampleFrames": 167228,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 363020,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 668912
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_no_selection_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandReasonNoSelection"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.24,
+      "sampleFrames": 142884,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 314332,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 571536
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_scan_cooldown_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandReasonScanCooldown"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.4960090702947846,
+      "sampleFrames": 110074,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 248680,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 440296
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_scan_unavailable_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandReasonScanUnavailable"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.4480045351473922,
+      "sampleFrames": 107957,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 244446,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 431828
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_target_blocked_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandReasonTargetBlocked"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.184013605442177,
+      "sampleFrames": 96315,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 221162,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 385260
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_target_not_attackable_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandReasonTargetNotAttackable"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.664013605442177,
+      "sampleFrames": 117483,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 263498,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 469932
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_target_not_enemy_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandReasonTargetNotEnemy"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.5440136054421769,
+      "sampleFrames": 112191,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 252914,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 448764
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_target_out_of_bounds_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandReasonTargetOutOfBounds"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.312018140589569,
+      "sampleFrames": 146060,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 320684,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 584240
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_target_unreachable_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandReasonTargetUnreachable"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.4960090702947846,
+      "sampleFrames": 110074,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 248680,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 440296
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_transport_full_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandReasonTransportFull"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.2560090702947844,
+      "sampleFrames": 99490,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 227512,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 397960
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_transport_passenger_missing_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandReasonTransportPassengerMissing"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.6480045351473924,
+      "sampleFrames": 160877,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 350318,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 643508
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_unavailable_hold_no_selection_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandUnavailableHoldNoSelection"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.312018140589569,
+      "sampleFrames": 146060,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 320684,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 584240
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_unavailable_scan_no_selection_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandUnavailableScanNoSelection"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.624013605442177,
+      "sampleFrames": 159819,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 348202,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 639276
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_unavailable_stop_no_selection_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalCommandUnavailableStopNoSelection"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.4080045351473922,
+      "sampleFrames": 150293,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 329150,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 601172
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_air_defense_auto_engage_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalFeedbackAirDefenseAutoEngage"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 4.7040136054421771,
+      "sampleFrames": 207447,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 443458,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 829788
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_boarding_transport_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalFeedbackBoardingTransport"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.3040136054421767,
+      "sampleFrames": 101607,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 231746,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 406428
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_camera_follow_active_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalFeedbackCameraFollowActive"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.4960090702947846,
+      "sampleFrames": 110074,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 248680,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 440296
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_camera_follow_unavailable_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalFeedbackCameraFollowUnavailable"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.7840136054421767,
+      "sampleFrames": 122775,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 274082,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 491100
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_destroyed_selected_building_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalFeedbackDestroyedSelectedBuilding"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.664013605442177,
+      "sampleFrames": 117483,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 263498,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 469932
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_destroyed_selected_unit_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalFeedbackDestroyedSelectedUnit"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.6880045351473925,
+      "sampleFrames": 118541,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 265614,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 474164
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_destroyed_selected_units_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalFeedbackDestroyedSelectedUnits"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.1680045351473924,
+      "sampleFrames": 139709,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 307982,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 558836
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_exiting_passengers_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalFeedbackExitingPassengers"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.4960090702947846,
+      "sampleFrames": 110074,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 248680,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 440296
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_exiting_unit_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalFeedbackExitingUnit"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.1360090702947847,
+      "sampleFrames": 94198,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 216928,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 376792
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_follow_target_lost_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalFeedbackFollowTargetLost"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.4720181405895691,
+      "sampleFrames": 109016,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 246564,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 436064
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_holding_current_position_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalFeedbackHoldingCurrentPosition"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.5440136054421769,
+      "sampleFrames": 112191,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 252914,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 448764
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_loading_transport_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalFeedbackLoadingTransport"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.3760090702947845,
+      "sampleFrames": 104782,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 238096,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 419128
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_missile_launched_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalFeedbackMissileLaunched"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.0880045351473924,
+      "sampleFrames": 92081,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 212694,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 368324
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_rts_camera_restored_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalFeedbackRtsCameraRestored"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.7360090702947848,
+      "sampleFrames": 120658,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 269848,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 482632
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_scan_complete_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalFeedbackScanComplete"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.8160090702947844,
+      "sampleFrames": 168286,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 365136,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 673144
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_scan_contacts_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalFeedbackScanContacts"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.4240136054421768,
+      "sampleFrames": 106899,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 242330,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 427596
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_scan_one_contact_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalFeedbackScanOneContact"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.2080045351473925,
+      "sampleFrames": 97373,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 223278,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 389492
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_scan_ordered_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalFeedbackScanOrdered"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 4.44,
+      "sampleFrames": 195804,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 420172,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 783216
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_stopped_selected_units_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalFeedbackStoppedSelectedUnits"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.6880045351473925,
+      "sampleFrames": 118541,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 265614,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 474164
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_unit_returning_to_base_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalFeedbackUnitReturningToBase"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.6160090702947847,
+      "sampleFrames": 115366,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 259264,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 461464
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_units_returning_to_base_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.TacticalFeedbackUnitsReturningToBase"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.12,
+      "sampleFrames": 137592,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 303748,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 550368
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_air_attack_type_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.WarningAirAttackType"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.352018140589569,
+      "sampleFrames": 103724,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 235980,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 414896
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_attack_count_suffix_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.WarningAttackCountSuffix"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.2560090702947844,
+      "sampleFrames": 99490,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 227512,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 397960
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_attack_eta_seconds_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.WarningAttackEtaSeconds"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 4.752018140589569,
+      "sampleFrames": 209564,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 447692,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 838256
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_attack_eta_suffix_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.WarningAttackEtaSuffix"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 2.7840136054421767,
+      "sampleFrames": 122775,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 274082,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 491100
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_ground_attack_type_01.wav",
+      "eventIds": [
+        "VO.ARIA.Message.WarningGroundAttackType"
+      ],
+      "busIds": [
+        "Voice"
+      ],
+      "category": "Voice",
+      "durationSeconds": 3.0240136054421769,
+      "sampleFrames": 133359,
+      "channels": 1,
+      "frequencyHz": 44100,
+      "importLoadType": "DecompressOnLoad",
+      "importLoadTypeSource": "default importer settings",
+      "compressedSizeBytes": 295282,
+      "compressedSizeMeasurement": "UnityEditor.AudioUtil.GetSoundSize",
+      "estimatedDecodedSizeBytes": 533436
+    }
+  ],
   "limitations": [
     "Build inclusion is a deterministic dependency-root inventory, not a BuildReport. Exact APK/AAB contribution remains APH-500 work.",
     "Imported size is reported only for loaded Texture, AudioClip, and Mesh objects through Profiler.GetRuntimeMemorySizeLong; unsupported assets remain JSON null.",
     "Dependency inclusion does not prove simultaneous runtime residency or unload lifetime.",
-    "Source size is the project/package file length. Native built-in resources without a project path are excluded."
+    "Source size is the project/package file length. Native built-in resources without a project path are excluded.",
+    "Catalog audio compressed size is Unity's imported storage-memory measurement from AudioUtil.GetSoundSize, not source WAV size or final APK/AAB contribution.",
+    "Catalog audio decoded size is estimated as sample frames x channels x 4-byte PCM float samples; it excludes engine/object overhead and does not claim simultaneous residency."
   ],
   "warnings": []
 }

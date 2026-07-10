@@ -248,16 +248,16 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `24 / 106` |
-| Checklist percent complete | `22.6%` |
-| Checklist in progress | `2 / 106`: `APH-104`, `APH-210` |
-| Complete plus active coverage | `26 / 106` (`24.5%`); this is visibility only, not accepted completion |
+| Checklist complete | `26 / 106` |
+| Checklist percent complete | `24.5%` |
+| Checklist in progress | `2 / 106`: `APH-105`, `APH-211` |
+| Complete plus active coverage | `28 / 106` (`26.4%`); this is visibility only, not accepted completion |
 | Current phase | Phases 1 and 2 - UI boundary and ECS hot-path guardrails |
-| Current task | `APH-104` migrate seven UI runtime text consumers; `APH-210` add comparable building-defense phase markers |
+| Current task | `APH-105` remove stale UI runtime config imports; `APH-211` run the integrated defense behavior/audio/VFX matrix |
 | Red architecture gates | `2` at the audit baseline; current-head reproduction remains required |
 | Red performance gates | `1`: steady-state Match GC `269,482 / 1,024` bytes |
-| Last verified commit | `13ff44928` for `APH-209`; Phase 2A complete |
-| Last update | 2026-07-09 - resolver injection and defense synchronization audit accepted |
+| Last verified commit | `190140146` for `APH-210`; Phase 2A complete |
+| Last update | 2026-07-09 - all UI text consumers migrated and defense phase markers captured |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -328,10 +328,12 @@ Implementation contract:
 - [x] `APH-103` Inject the resolver through Menu and Match UI runtime adapters without hierarchy search or static registration.
   - Result: Menu binds before router content installation; both Match initialization paths inject the resolver; unbound runtime roots retain the immutable fallback.
   - Validation: `[GameTextResolverInjectionValidation] result=Passed tests=4`; UI Contracts, UI Runtime, Composition, Runtime, Editor, EditMode-test, and PlayMode-test builds passed with 0 errors; commit `2f7c767fa` pushed to `main`.
-- [~] `APH-104` Migrate the seven known `Game.UI.Runtime` text consumers listed in Current Red Gates.
+- [x] `APH-104` Migrate the seven known `Game.UI.Runtime` text consumers listed in Current Red Gates.
   - Preserve every key and fallback string from commit `caaafe339`.
   - Preserve formatting culture and error fallback behavior.
-- [ ] `APH-105` Remove `using Game.Configs` from files compiled by `Game.UI.Runtime`.
+  - Result: all 85 direct expressions now use the injected contract: 62 `Get` and 23 `Format`; 80 literal key/fallback pairs retain the baseline fingerprint and five dynamic expressions retain their original shapes. Existing runtime sink and command-wheel propagation use the same resolver without duplicate implementations or static state.
+  - Validation: `[GameTextResolverConsumerMigrationValidation] result=Passed tests=4 gets=62 formats=23 expressions=85`; order-banner 16/16, command-feedback 15/15, and Build Drawer 25/25 focused cases passed; seven-assembly build matrix passed with 0 errors; commit `5358a0c1e` pushed to `main`.
+- [~] `APH-105` Remove `using Game.Configs` from files compiled by `Game.UI.Runtime`.
 - [ ] `APH-106` Remove `Game.Configs` from `Assets/Game/Scripts/UI/Game.UI.Runtime.asmdef`.
 - [ ] `APH-107` Add a guard that enumerates UI runtime source files and fails on future `Game.Configs` imports or direct `GameText` calls.
 - [ ] `APH-108` Run UI text focused tests, `Game.UI.Runtime`, `Game.Composition`, and `Game.Tests.Editor` builds, then run the 31-check assembly-boundary validation.
@@ -395,8 +397,11 @@ Immediate implementation contract:
   - Validation: `[BuildingDefenseAttackSystemValidation] result=Passed tests=10`; the 32-tower/740-candidate warmed update remained at `productionUpdateAllocatedBytes=0`; commit `13ff44928` pushed to `main`.
   - Profiler evidence: the 240-frame capture passed at average `4.138 ms` and p95 `4.325 ms`. `BuildingDefenseAttackSystem` recorded `13.88 ms` total, `13.67 ms` self, `0.058 ms/frame` average total, `1.09 ms` maximum, and 238 calls. All nested completion/helper/ECB work therefore totaled at most `0.21 ms`, below `0.001 ms/frame`.
   - Artifact: `/private/tmp/warline-aph209-building-defense-summary.md` from `/private/tmp/warline-aph209-building-defense.raw`.
-- [~] `APH-210` Add profiler markers for target collection, target selection, and effect application so the later spatial-index phase has comparable metrics.
-- [ ] `APH-211` Run defense, automatic-faction-targeting, combat, audio, and VFX focused validations.
+- [x] `APH-210` Add profiler markers for target collection, target selection, and effect application so the later spatial-index phase has comparable metrics.
+  - Result: three static zero-allocation markers cover collection, per-tower selection, and immediate plus deferred effect application; the Match capture runner registers and records them deterministically.
+  - Validation: `[BuildingDefenseAttackSystemValidation] result=Passed tests=11`; warmed allocation remained zero; 240-frame Match capture passed at p95 `3.691 ms`; commit `190140146` pushed to `main`.
+  - Marker metrics: collection average/max `0.121/0.135 ms`; selection `0.904/0.922 ms`; effect application `0.001/0.006 ms`.
+- [~] `APH-211` Run defense, automatic-faction-targeting, combat, audio, and VFX focused validations.
 - [ ] `APH-212` Run `EcsBurstHotPathArchitectureTests.RunFocusedValidation`.
   - Acceptance: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=10` and zero snapshot debt.
 - [ ] `APH-213` Re-run editor performance and steady-state GC baselines; reject the slice if frame p95 or player-relevant GC regresses beyond noise.
@@ -905,6 +910,51 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Visual result: Not applicable; raw profiler and deterministic ECS validation
 - Residual risk: target-collection, target-selection, and effect-application timing need separate markers under `APH-210`
 - Next ready task: `APH-210`
+
+### 2026-07-09 - APH-104 - UI runtime text consumer migration
+
+- Status: Complete
+- Commit or worktree baseline: `26c6177e0`
+- Stable commit/push: `5358a0c1e` pushed to `main`
+- Files changed: seven direct UI runtime consumers, existing runtime feedback sink, command-wheel propagation, `MainMenuPlayUI`, and focused migration tests
+- Behavior preserved/changed: 85 configured text expressions now use the injected resolver while preserving exact keys, fallbacks, current-culture formatting, and invalid-format fallback; no static registry or hierarchy search was added
+- Validation: migration 4/4 with 62 `Get`, 23 `Format`, and 85 total expressions; order banner 16/16, command feedback 15/15, Build Drawer 25/25; seven-assembly build matrix passed with 0 errors; `git diff --check` passed
+- Artifacts: `/private/tmp/warline-aph104-game-text-consumers-final-recovered.log`, `/private/tmp/warline-aph104-order-banner.log`, `/private/tmp/warline-aph104-command-feedback.log`, and `/private/tmp/warline-aph104-build-drawer.log`
+- Metrics before: seven runtime files with 85 direct config-owned text calls
+- Metrics after: zero direct text calls in those consumers and one baseline fingerprint covering 80 literal plus five dynamic expressions
+- Visual result: no visual assets changed; two additional prefab-content suites remain independently red on pre-existing camera-button/status-chip sprite assignments and are not resolver failures
+- Residual risk: stale `Game.Configs` imports remain intentionally owned by `APH-105`
+- Next ready task: `APH-105`
+
+### 2026-07-09 - APH-210 - Building-defense phase profiler markers
+
+- Status: Complete
+- Commit or worktree baseline: `26c6177e0`
+- Stable commit/push: `190140146` pushed to `main`
+- Files changed: `BuildingDefenseAttackSystem`, Canvas Match profiler capture, and focused defense tests
+- Behavior preserved/changed: static markers surround target collection, per-tower selection, and immediate/deferred effects without changing targeting, combat, audio, VFX, or allocation behavior
+- Validation: `[BuildingDefenseAttackSystemValidation] result=Passed tests=11`; warmed 32-tower/740-candidate update remained zero managed bytes; Match capture passed at average `3.592 ms` and p95 `3.691 ms`; seven-assembly build matrix passed with 0 errors
+- Artifacts: `/private/tmp/warline-aph210-building-defense-marker-registration.log`, `/private/tmp/warline-aph210-building-defense-profiler-registered.log`, and `/private/tmp/warline-aph210-building-defense-registered.raw`
+- Metrics before: only whole-system defense timing (`0.058 ms/frame` average in APH-209)
+- Metrics after: collection `0.121/0.135 ms` average/max; selection `0.904/0.922 ms`; effects `0.001/0.006 ms`
+- Visual result: Not applicable; raw profiler and focused ECS validation
+- Residual risk: defense-specific overwrite/audio/VFX integration and the full behavior matrix remain `APH-211`
+- Next ready task: `APH-211`
+
+### 2026-07-09 - Unity validation timeout reliability
+
+- Status: Complete infrastructure repair; no checklist item added
+- Commit or worktree baseline: `26c6177e0`
+- Stable commit/push: `88404af67` pushed to `main`
+- Files changed: `Tools/CI/invoke_unity_macos.sh`
+- Behavior preserved/changed: timeout duration is counted by completed one-second wait cycles instead of adjustable wall-clock time; Unity invocation arguments and cleanup behavior are unchanged
+- Validation: `bash -n` and `git diff --check` passed; subsequent focused Unity and 240-frame profiler runs completed under the corrected timeout
+- Artifacts: APH-104 and APH-210 logs above
+- Metrics before: system-time adjustments could falsely report a 900-second timeout within one launch interval
+- Metrics after: completed validations exit normally while retaining hard timeout enforcement
+- Visual result: Not applicable
+- Residual risk: Unity package initialization can still be slow; it no longer causes false elapsed-time calculation
+- Next ready task: continue Wave 1
 
 ## Decision Log
 

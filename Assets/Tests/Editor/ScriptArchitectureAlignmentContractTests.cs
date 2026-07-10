@@ -646,6 +646,10 @@ public sealed class ScriptArchitectureAlignmentContractTests
         foreach (string path in EnumerateSourceFiles(GameScriptsRoot))
         {
             string normalizedPath = NormalizePath(path);
+            string source = File.ReadAllText(path);
+            if (IsAssemblyMetadataSource(normalizedPath, source))
+                continue;
+
             AssemblyNamespaceRule owner = rules.FirstOrDefault(rule => IsPathOwnedByRule(normalizedPath, rule.RootPath));
             if (string.IsNullOrEmpty(owner.Namespace))
             {
@@ -653,7 +657,7 @@ public sealed class ScriptArchitectureAlignmentContractTests
                 continue;
             }
 
-            string declaredNamespace = ReadDeclaredNamespace(File.ReadAllText(path));
+            string declaredNamespace = ReadDeclaredNamespace(source);
             if (string.IsNullOrEmpty(declaredNamespace))
             {
                 violations.Add($"{normalizedPath} does not declare namespace `{owner.Namespace}`.");
@@ -1627,6 +1631,12 @@ public sealed class ScriptArchitectureAlignmentContractTests
             @"^\s*namespace\s+(?<name>[A-Za-z_][A-Za-z0-9_.]*)\s*[;{]",
             RegexOptions.CultureInvariant | RegexOptions.Multiline);
         return match.Success ? match.Groups["name"].Value : string.Empty;
+    }
+
+    private static bool IsAssemblyMetadataSource(string path, string source)
+    {
+        return string.Equals(Path.GetFileName(path), "AssemblyInfo.cs", StringComparison.Ordinal) &&
+               Regex.IsMatch(source, @"^\s*\[assembly\s*:", RegexOptions.CultureInvariant | RegexOptions.Multiline);
     }
 
     private static bool IsPathOwnedByRule(string sourcePath, string ruleRootPath)

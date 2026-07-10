@@ -10,7 +10,7 @@ Supersedes: `AAA_Mobile_Game_Design_Document_v0_1.md` and its DOCX companion for
 
 Upstream authority: none inside `Design`; this is the active product-design root.
 
-Direct consumers: `Campaign_Narrative_Bible.md`, `Gameplay_North_Star_And_Content_Grammar.md`, `First_Player_Experience_And_Story_Onboarding_Design.md`, `Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md`, `Narrative_Presentation_And_Cutscene_Design.md`, `3D_SingleMap_Gameplay_Direction.md`, and mode/system design documents.
+Direct consumers: `Campaign_Narrative_Bible.md`, `Gameplay_North_Star_And_Content_Grammar.md`, `First_Player_Experience_And_Story_Onboarding_Design.md`, `Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md`, `Narrative_Presentation_And_Cutscene_Design.md`, `Campaign_Mission_High_Level_Design_Catalog.md`, `Campaign_Narrative_Sequence_And_Comic_Catalog.md`, `3D_SingleMap_Gameplay_Direction.md`, and mode/system design documents.
 
 ## Product Vision
 
@@ -57,6 +57,8 @@ The first campaign is provisionally titled `Shattered Relay`. Coordinated attack
 The attacks are part of a plan by former emergency planner Nadir Qassem to reactivate and seize the Civic Relay, a dormant network connecting infrastructure and military response. The campaign moves from local insurgent attacks to logistics warfare, hidden-cell investigation, proxy-backed armor and aircraft, and a citywide final assault.
 
 The detailed authority for setting, factions, character casting, all 25 mission story beats, and the ending is `Campaign_Narrative_Bible.md`.
+
+The complete playable high-level contract for each mission is `Campaign_Mission_High_Level_Design_Catalog.md`. The complete Campaign cinematic/comic inventory and panel/communication beats are in `Campaign_Narrative_Sequence_And_Comic_Catalog.md`.
 
 ## Player Role
 
@@ -218,7 +220,7 @@ The recommended format is a grounded illustrated motion-comic package using appr
 - Pre-generated, reviewed assets only; no runtime generative AI dependency.
 - One reusable sequence format for most scenes; exceptional hero moments may use Unity Timeline.
 
-See `Narrative_Presentation_And_Cutscene_Design.md`.
+See `Narrative_Presentation_And_Cutscene_Design.md` for format and production rules. See `Campaign_Narrative_Sequence_And_Comic_Catalog.md` for the complete first-Campaign sequence inventory.
 
 ## World, Character, And Visual Direction
 
@@ -295,8 +297,10 @@ High-level targets for later instrumentation and tuning:
 5. `Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md`
 6. `Narrative_Presentation_And_Cutscene_Design.md`
 7. `Level_And_Mission_Content_Plan.md`
-8. `SagaChapters/README.md` and the five chapter documents
-9. System-specific and implementation documents
+8. `Campaign_Mission_High_Level_Design_Catalog.md`
+9. `Campaign_Narrative_Sequence_And_Comic_Catalog.md`
+10. `SagaChapters/README.md` and the five chapter documents
+11. System-specific and implementation documents
 
 When a lower document conflicts with this hierarchy, the higher active authority wins. Historical v0.1 and archived documents remain reference material only.
 

@@ -8,7 +8,7 @@ Scope: First launch, first session, story onboarding, progressive menu disclosur
 
 Upstream authorities: `AAA_Mobile_Game_Design_Document_v0_2.md` and `Campaign_Narrative_Bible.md`.
 
-Direct consumers: `FTUE_And_Command_Assistant_Design.md`, `ARIA_Assistant_ECS_Design.md`, `M01_FirstContact_Production_Contract.md`, `Mission_Result_State_Spec.md`, `UIUX_MainMenu_Visual_Contract.md`, and later first-launch routing/sequence implementation plans.
+Direct consumers: `Campaign_Narrative_Sequence_And_Comic_Catalog.md`, `FTUE_And_Command_Assistant_Design.md`, `ARIA_Assistant_ECS_Design.md`, `M01_FirstContact_Production_Contract.md`, `Mission_Result_State_Spec.md`, `UIUX_MainMenu_Visual_Contract.md`, and later first-launch routing/sequence implementation plans.
 
 ## Experience Goal
 
@@ -263,7 +263,7 @@ The first session target is approximately 6-10 minutes including the cold open, 
 - The first hostile units use actual insurgent character references.
 - The first gameplay frame visually continues the final story panel so the transition feels direct.
 
-Detailed sequence tiers and art rules are in `Narrative_Presentation_And_Cutscene_Design.md`.
+Detailed sequence tiers and art rules are in `Narrative_Presentation_And_Cutscene_Design.md`. Stable prologue, identity, Chapter 1 opening, M01 brief/comms/debrief, and later Campaign sequence beats are in `Campaign_Narrative_Sequence_And_Comic_Catalog.md`.
 
 ## High-Level Success Criteria
 

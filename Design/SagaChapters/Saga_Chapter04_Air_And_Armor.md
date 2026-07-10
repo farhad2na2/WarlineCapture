@@ -8,7 +8,9 @@ Status: Active detailed high-level chapter design. No step-by-step implementatio
 
 This document owns Campaign Chapter 4 high-level story, character, feature, mission, consequence, reward, and presentation direction. The narrative bible owns canonical facts; the feature matrix owns readiness truth.
 
-Read after the v0.2 GDD, narrative bible, North Star, feature matrix, level/mission plan, narrative presentation design, Fuel design, and relevant combat catalog entries.
+`../Campaign_Mission_High_Level_Design_Catalog.md` owns the complete per-mission gameplay/story contracts and fallbacks. `../Campaign_Narrative_Sequence_And_Comic_Catalog.md` owns the exact briefing, in-mission communication, debrief, chapter-opening, and Protocol Fragment sequence beats.
+
+Read after the v0.2 GDD, narrative bible, North Star, feature matrix, level/mission plan, narrative presentation design, mission high-level catalog, narrative sequence catalog, Fuel design, and relevant combat catalog entries.
 
 ## Chapter Promise
 
@@ -79,6 +81,18 @@ Vanguard Brigade establishes that WarlineCapture can support military-versus-mil
 | M03 Split Front | Neutralize a verified long-range battery while a diversion attacks the forward base. | Manual G2G with minimum range, preparation, and civilian-risk constraints. | Qassem offers unrestricted Relay access; ARIA refuses before the Commander answers. | The battery's targeting package expects ARIA authorization. |
 | M04 Grounded Signal | Insert behind Vanguard lines to disable an air-support relay and extract its control hardware. | Transport plane, parachute, cargo drop, boarding/extraction. | Karim and Yusuf lead a specialist operation; the Commander chooses safe runway or riskier airborne timing as authored conditions allow. | Imported hardware is physically compatible with the Civic Relay. |
 | M05 Armor Break | Destroy the Vanguard command group before it connects heavy weapons to Sahrin's dormant nodes. | Full air, armor, Fuel, G2A, G2G, and logistics mastery. | Dalia and Laila coordinate the combined-arms climax while ARIA protects permission boundaries. | Protocol Fragment 4 proves Qassem needs ARIA's archive and the Commander's live authority. |
+
+## Mission High-Level Design References
+
+These references complete the one-per-mission high-level layer. Detailed implementation specifications must later use the shared template in `../Level_And_Mission_Content_Plan.md` without changing these contracts.
+
+| Mission | Gameplay/story contract | Sequence/comic coverage |
+|---|---|---|
+| M01 Air Corridor | [CH04-M01 Air Corridor](../Campaign_Mission_High_Level_Design_Catalog.md#ch04-m01-air-corridor) | [Chapter 4 sequence catalog](../Campaign_Narrative_Sequence_And_Comic_Catalog.md#chapter-4-air-and-armor): `seq.ch04.m01.brief`, `.comms`, `.debrief` |
+| M02 Steel Push | [CH04-M02 Steel Push](../Campaign_Mission_High_Level_Design_Catalog.md#ch04-m02-steel-push) | [Chapter 4 sequence catalog](../Campaign_Narrative_Sequence_And_Comic_Catalog.md#chapter-4-air-and-armor): `seq.ch04.m02.brief`, `.comms`, `.debrief` |
+| M03 Split Front | [CH04-M03 Split Front](../Campaign_Mission_High_Level_Design_Catalog.md#ch04-m03-split-front) | [Chapter 4 sequence catalog](../Campaign_Narrative_Sequence_And_Comic_Catalog.md#chapter-4-air-and-armor): `seq.ch04.m03.brief`, `.comms`, `.debrief` |
+| M04 Grounded Signal | [CH04-M04 Grounded Signal](../Campaign_Mission_High_Level_Design_Catalog.md#ch04-m04-grounded-signal) | [Chapter 4 sequence catalog](../Campaign_Narrative_Sequence_And_Comic_Catalog.md#chapter-4-air-and-armor): `seq.ch04.m04.brief`, `.comms`, `.debrief` |
+| M05 Armor Break | [CH04-M05 Armor Break](../Campaign_Mission_High_Level_Design_Catalog.md#ch04-m05-armor-break) | [Chapter 4 sequence catalog](../Campaign_Narrative_Sequence_And_Comic_Catalog.md#chapter-4-air-and-armor): `seq.ch04.m05.brief`, `.comms`, `.debrief`, then `seq.ch04.close.protocol_fragment_04` |
 
 ## Consequence Direction
 

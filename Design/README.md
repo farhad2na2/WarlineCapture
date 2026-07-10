@@ -10,9 +10,12 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 
 - Active product GDD: `AAA_Mobile_Game_Design_Document_v0_2.md` supersedes v0.1 for product, narrative, first-player, and campaign direction. The v0.1 Markdown and DOCX remain historical references.
 - Campaign narrative: `Campaign_Narrative_Bible.md` owns the fictional Middle Eastern setting, Daryat/Sahrin working names, Ash Line and Vanguard factions, actual character-roster casting, Commander/ARIA arcs, 25 mission story map, five Protocol Fragments, and canonical ending.
+- Story-only reading edition: `Shattered_Relay_Story.md` retells the complete story as uninterrupted prose with no design tables, mechanics, IDs, or implementation material. The narrative bible remains the canon authority.
 - First player experience: `First_Player_Experience_And_Story_Onboarding_Design.md` owns the fresh-profile route from a short attack cold open and ARIA boot directly into M01. The normal complex Main Menu is revealed only after the first debrief or deliberate exit.
 - Feature exposure: `Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md` separates implemented, partial, scaffolded, and designed capabilities and gates when each may become a required Campaign mechanic.
 - Narrative presentation: `Narrative_Presentation_And_Cutscene_Design.md` owns the tactical motion-comic format, sequence tiers, character/location continuity, AI-assisted asset rules, subtitles, accessibility, and Story Archive direction.
+- Campaign mission designs: `Campaign_Mission_High_Level_Design_Catalog.md` owns a complete high-level gameplay/story contract, feature-readiness fallback, clue, consequence, and sequence link for every one of the 25 missions.
+- Campaign sequence/comic coverage: `Campaign_Narrative_Sequence_And_Comic_Catalog.md` owns the complete 92-record prologue, identity, chapter opening, mission brief/comms/debrief, Protocol Fragment, epilogue, consequence, and postscript inventory.
 - Product structure: one shared 3D operation-map RTS simulation wrapped by Campaign, Operations, and Skirmish. Internal legacy names such as Saga Campaign, Persistent Operation, and Quick Custom Game may remain only as runtime compatibility terms until updated.
 - Active 3D direction: `3D_SingleMap_Gameplay_Direction.md` is the current source of truth for returning to full 3D, single large operation maps, prefab-catalog roster usage, and the command-base menu style.
 - Gameplay north star: `Gameplay_North_Star_And_Content_Grammar.md` locks the core fantasy, mission archetypes, threat families, Chapter 1 teaching arc, Operation week rhythm, and balance target bands before level-by-level content authoring.
@@ -44,17 +47,38 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - Economy and rewards are locked by `Economy_Reward_Design.md`. Monetization and marketing claims use the same canonical resources, reward types, and disabled purchase states as the UI/gameplay alignment docs.
 - Field logistics: `Field_Logistics_Oil_Fuel_Design.md` formalizes the existing Oil Pump, Oil Refinery, Fuel Bladder, oil truck, and tanker truck configs as a tactical Oil -> Fuel logistics loop for base-building, vehicle, air, and Skirmish missions. `Automated_Fuel_Logistics_Design.md` defines the automation model: tray trucks and tankers work without direct micro, Fuel becomes usable only after delivery to storage, and vehicles spend a shared faction Fuel pool. `Resource_Logistics_Exchange_Design.md` defines the timed in-match Resource Exchange popup, import/export recipes, Rush Ticket acceleration, and non-authoritative truck/transport-plane presentation.
 
+## Campaign High-Level Coverage Status
+
+The first Campaign's high-level design layer is complete. `Mission` is the player-facing authored content unit; the project does not use `Level` as a second Campaign-content concept.
+
+| High-level design area | Coverage | Authority |
+|---|---:|---|
+| Product premise, pillars, modes, progression, and precedence | Complete | `AAA_Mobile_Game_Design_Document_v0_2.md` |
+| Setting, factions, cast, central mystery, chapter reveals, and ending | Complete | `Campaign_Narrative_Bible.md` |
+| First launch, Commander identity, direct M01 entry, debrief, and menu reveal | Complete | `First_Player_Experience_And_Story_Onboarding_Design.md` |
+| Chapter arcs and Protocol Fragment progression | 5 of 5 chapters | `SagaChapters/README.md` and chapter files |
+| Individual mission gameplay/story contracts | 25 of 25 missions | `Campaign_Mission_High_Level_Design_Catalog.md` |
+| Mission brief, in-mission story communication, and debrief | 75 of 75 mission beats | `Campaign_Narrative_Sequence_And_Comic_Catalog.md` |
+| Chapter opening and Protocol Fragment close | 5 of 5 openings; 5 of 5 closes | `Campaign_Narrative_Sequence_And_Comic_Catalog.md` |
+| Prologue, identity bridge, canonical epilogue, consequence emphasis, and postscript | Complete | `Campaign_Narrative_Sequence_And_Comic_Catalog.md` |
+| Motion-comic style, sequence tiers, continuity, accessibility, and AI-assisted art rules | Complete | `Narrative_Presentation_And_Cutscene_Design.md` |
+| Feature-readiness truth and high-level mission fallbacks | Complete as current audit snapshot | `Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md` and mission catalog |
+
+This does not mean production is complete. Chapters 2-5 still need detailed mission specifications; all chapters still need final scripts, storyboard frames, approved character/location reference sheets, reviewed comic art, voice/audio/localization packages, exact map and balance data, runtime sequence/Campaign systems, and implementation validation. Those are the next design-production and implementation layers, not missing high-level Campaign design.
+
 ## Authority And Connection Map
 
 | Layer | Active authority | Consumes | Direct downstream documents |
 |---|---|---|---|
 | Product | [AAA Mobile GDD v0.2](AAA_Mobile_Game_Design_Document_v0_2.md) | Project goals and current product constraints. | Narrative bible, North Star, FPE, feature exposure, presentation, and mode/system designs. |
-| Fiction and characters | [Campaign Narrative Bible](Campaign_Narrative_Bible.md) | GDD v0.2. | FPE, presentation, mission plan, chapter documents, character and story-art production. |
+| Fiction and characters | [Campaign Narrative Bible](Campaign_Narrative_Bible.md) | GDD v0.2. | FPE, presentation, mission/sequence catalogs, chapter documents, character and story-art production. |
 | Gameplay grammar | [Gameplay North Star](Gameplay_North_Star_And_Content_Grammar.md) | GDD v0.2 and narrative bible. | Mission plan, chapter missions, objectives, rewards, and balance authoring. |
 | First player experience | [First Player Experience](First_Player_Experience_And_Story_Onboarding_Design.md) | GDD v0.2 and narrative bible. | FTUE/ARIA design, M01 contract, Main Menu contract, Mission Result contract. |
 | Feature truth | [Feature Maturity And Exposure Matrix](Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md) | Current runtime audit, GDD v0.2, and narrative bible. | Mission plan, chapters, feature-specific design, and later implementation prerequisites. |
-| Narrative presentation | [Narrative Presentation And Cutscene Design](Narrative_Presentation_And_Cutscene_Design.md) | GDD v0.2, narrative bible, and FPE. | Chapter sequences, Story Archive, character art, audio, localization, and later sequence implementation. |
-| Mission authoring | [Level And Mission Content Plan](Level_And_Mission_Content_Plan.md) | Narrative, North Star, FPE, presentation, and feature readiness. | [Five chapter documents](SagaChapters/README.md), mission specs, and balance/validation plans. |
+| Narrative presentation | [Narrative Presentation And Cutscene Design](Narrative_Presentation_And_Cutscene_Design.md) | GDD v0.2, narrative bible, and FPE. | Campaign sequence catalog, Story Archive, character art, audio, localization, and later sequence implementation. |
+| Mission authoring | [Level And Mission Content Plan](Level_And_Mission_Content_Plan.md) | Narrative, North Star, FPE, presentation, and feature readiness. | Campaign mission catalog, [five chapter documents](SagaChapters/README.md), mission specs, and balance/validation plans. |
+| Campaign mission contracts | [Campaign Mission High-Level Design Catalog](Campaign_Mission_High_Level_Design_Catalog.md) | Bible, North Star, feature truth, and shared mission template. | All 25 detailed mission specs, chapter docs, level art briefs, balance, and validation. |
+| Campaign story inventory | [Campaign Narrative Sequence And Comic Catalog](Campaign_Narrative_Sequence_And_Comic_Catalog.md) | Bible, FPE, presentation rules, and mission contracts. | Scripts, storyboards, Story Archive, art/audio/localization, and sequence implementation. |
 | World and map | [3D Single-Map Gameplay Direction](3D_SingleMap_Gameplay_Direction.md) | GDD v0.2 and gameplay grammar. | Operation maps, map metadata, camera/minimap contracts, art, and tactical UI. |
 | Runtime architecture | [Gameplay SOLID/ECS Contract](Architecture/gameplay_solid_ecs_contract.md) | Product/system contracts and measured runtime constraints. | System implementation plans, source ownership, tests, and the active hardening tracker. |
 | Implementation status | [Architecture/Performance Hardening Tracker](Architecture/architecture_performance_hardening_implementation_tracker.md) and feature-specific trackers | Architecture contracts and current evidence. | Task execution and validation only; trackers do not redefine product or narrative intent. |
@@ -66,12 +90,19 @@ flowchart TD
     GDD --> Matrix["Feature Maturity Matrix"]
     Bible --> FPE["First Player Experience"]
     Bible --> Narrative["Narrative Presentation"]
-    Bible --> Missions["Level And Mission Plan"]
-    North --> Missions
-    Matrix --> Missions
+    Bible --> Template["Level And Mission Plan"]
+    North --> Template
+    Matrix --> Template
+    Bible --> MissionCatalog["25-Mission High-Level Catalog"]
+    North --> MissionCatalog
+    Matrix --> MissionCatalog
+    Template --> MissionCatalog
+    FPE --> SequenceCatalog["92-Record Sequence And Comic Catalog"]
+    Narrative --> SequenceCatalog
+    MissionCatalog --> SequenceCatalog
     FPE --> M01["FTUE, M01, Menu, Result Contracts"]
-    Narrative --> Chapters["Five Chapter Documents"]
-    Missions --> Chapters
+    MissionCatalog --> Chapters["Five Chapter Documents"]
+    SequenceCatalog --> Chapters
     GDD --> Map["3D Single-Map Direction"]
     Map --> Systems["System And UI Contracts"]
     Systems --> Architecture["Architecture Contract"]
@@ -89,45 +120,47 @@ Connection rule: a lower-level document may narrow or implement an upstream deci
 5. `Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md`
 6. `Narrative_Presentation_And_Cutscene_Design.md`
 7. `Level_And_Mission_Content_Plan.md`
-8. `SagaChapters/README.md`
-9. `GAME_DESIGN_REFERENCE.md`
-10. `3D_SingleMap_Gameplay_Direction.md`
-11. `Command_Offensive_Premise_Alignment.md`
-12. `Combat_Catalog_And_Upgrade_Design.md`
-13. `BalanceConfigs/Combat_Balance_Config_v0_1.json`
-14. `VisualConfigs/Combat_Visual_Config_v0_1.json`
-15. `LargeScale_Grid_Movement_Design.md`
-16. `AAA_Mobile_Technical_Targets.md`
-17. `3D_Operation_Map_Texture_Mask_Workflow.md`
-18. `M01_FirstContact_Production_Contract.md`
-19. `FTUE_And_Command_Assistant_Design.md`
-20. `ARIA_Assistant_ECS_Design.md`
-21. `Mission_Result_State_Spec.md`
-22. `Skirmish_Mode_Implementation_Spec.md`
-23. `Match_HUD_And_Gameplay_Implementation_Spec.md`
-24. `Match_Selection_Implementation_Spec.md`
-25. `Match_Unit_Command_Behavior_Spec.md`
-26. `Gameplay_Features_High_Level_Spec.md`
-27. `Gameplay_Features_Detailed_Spec.md`
-28. `Field_Logistics_Oil_Fuel_Design.md`
-29. `Automated_Fuel_Logistics_Design.md`
-30. `Resource_Logistics_Exchange_Design.md`
-31. `Economy_Reward_Design.md`
-32. `Balancing_Automated_Test_Plan.md`
-33. `UIUX_Gameplay_Element_Alignment.md`
-34. `UIUX_Implementation_High_Level_Spec.md`
-35. `UIUX_Implementation_Detailed_Spec.md`
-36. `Visual_Feedback_VFX_Recommendations.md`
-37. `Audio_Design_Guidelines.md`
-38. `Audio_Config_Driven_Implementation_Spec.md`
-39. `UIUX_MainMenu_Visual_Contract.md`
-40. `UIUX_Mockup_To_Canvas_Conversion_Plan.md`
-41. `UIUX_Target_To_Canvas_Workflow_Guide.md`
-42. `Architecture/gameplay_solid_ecs_contract.md`
-43. `Architecture/architecture_performance_hardening_implementation_tracker.md`
-44. `Architecture/performance_regression_contract.md`
-45. `Designer_Role_And_Documentation_Workflow.md`
-46. `Agent_Coordination_Workflow.md`
+8. `Campaign_Mission_High_Level_Design_Catalog.md`
+9. `Campaign_Narrative_Sequence_And_Comic_Catalog.md`
+10. `SagaChapters/README.md`
+11. `GAME_DESIGN_REFERENCE.md`
+12. `3D_SingleMap_Gameplay_Direction.md`
+13. `Command_Offensive_Premise_Alignment.md`
+14. `Combat_Catalog_And_Upgrade_Design.md`
+15. `BalanceConfigs/Combat_Balance_Config_v0_1.json`
+16. `VisualConfigs/Combat_Visual_Config_v0_1.json`
+17. `LargeScale_Grid_Movement_Design.md`
+18. `AAA_Mobile_Technical_Targets.md`
+19. `3D_Operation_Map_Texture_Mask_Workflow.md`
+20. `M01_FirstContact_Production_Contract.md`
+21. `FTUE_And_Command_Assistant_Design.md`
+22. `ARIA_Assistant_ECS_Design.md`
+23. `Mission_Result_State_Spec.md`
+24. `Skirmish_Mode_Implementation_Spec.md`
+25. `Match_HUD_And_Gameplay_Implementation_Spec.md`
+26. `Match_Selection_Implementation_Spec.md`
+27. `Match_Unit_Command_Behavior_Spec.md`
+28. `Gameplay_Features_High_Level_Spec.md`
+29. `Gameplay_Features_Detailed_Spec.md`
+30. `Field_Logistics_Oil_Fuel_Design.md`
+31. `Automated_Fuel_Logistics_Design.md`
+32. `Resource_Logistics_Exchange_Design.md`
+33. `Economy_Reward_Design.md`
+34. `Balancing_Automated_Test_Plan.md`
+35. `UIUX_Gameplay_Element_Alignment.md`
+36. `UIUX_Implementation_High_Level_Spec.md`
+37. `UIUX_Implementation_Detailed_Spec.md`
+38. `Visual_Feedback_VFX_Recommendations.md`
+39. `Audio_Design_Guidelines.md`
+40. `Audio_Config_Driven_Implementation_Spec.md`
+41. `UIUX_MainMenu_Visual_Contract.md`
+42. `UIUX_Mockup_To_Canvas_Conversion_Plan.md`
+43. `UIUX_Target_To_Canvas_Workflow_Guide.md`
+44. `Architecture/gameplay_solid_ecs_contract.md`
+45. `Architecture/architecture_performance_hardening_implementation_tracker.md`
+46. `Architecture/performance_regression_contract.md`
+47. `Designer_Role_And_Documentation_Workflow.md`
+48. `Agent_Coordination_Workflow.md`
 
 ## Core Product And Gameplay
 
@@ -139,9 +172,12 @@ Connection rule: a lower-level document may narrow or implement an upstream deci
 - `VisualConfigs/Combat_Visual_Config_v0_1.json` - visual-only companion entries for combat entities, abilities, and upgrade tracks.
 - `AAA_Mobile_Game_Design_Document_v0_2.md` - active high-level product, Campaign, first-player, narrative, system, progression, visual, audio, cultural, and monetization authority.
 - `Campaign_Narrative_Bible.md` - active setting, factions, characters, actual roster casting, five-chapter story, 25 mission story map, Protocol Fragments, ending, and cultural guardrails.
+- `Shattered_Relay_Story.md` - standalone prose edition of the complete story, intended for reading like a short book rather than as a design reference.
 - `First_Player_Experience_And_Story_Onboarding_Design.md` - active cold open, ARIA emergency boot, diegetic identity, direct M01 launch, first debrief, menu reveal, returning-player, and accessibility design.
 - `Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md` - current feature maturity and chapter introduction/reinforcement/mastery readiness rules.
 - `Narrative_Presentation_And_Cutscene_Design.md` - active motion-comic format, sequence tiers, visual/audio continuity, AI-assisted asset policy, accessibility, and Story Archive design.
+- `Campaign_Mission_High_Level_Design_Catalog.md` - complete gameplay/story, clue, consequence, readiness fallback, and sequence-link contract for all 25 Campaign missions.
+- `Campaign_Narrative_Sequence_And_Comic_Catalog.md` - complete 92-record Campaign sequence inventory with prologue, all mission briefs/comms/debriefs, chapter transitions, Protocol Fragments, ending, consequence emphasis, and postscript beats.
 - `Campaign_Narrative_And_Content_Redesign_Recommendations.md` - accepted audit and recommendation record that explains why the active narrative and content redesign was chosen; not an implementation contract.
 - `AAA_Mobile_Game_Design_Document_v0_1.md` and `.docx` - superseded historical GDD references.
 - `3D_SingleMap_Gameplay_Direction.md` - active 3D single-map direction, including mode alignment, prefab-catalog roster usage, world scale, and UI menus that need updating.
@@ -243,7 +279,7 @@ The previous visual-lock folders were moved to `Archive/LegacyVisualLock_2026-05
 
 - Update this index and the root `README.md` whenever a new design document is added.
 - New active authority documents must declare status/date, upstream authority, downstream consumers, and implementation maturity vocabulary where relevant.
-- For product precedence, use `AAA_Mobile_Game_Design_Document_v0_2.md`; for fiction/characters use `Campaign_Narrative_Bible.md`; for gameplay grammar use `Gameplay_North_Star_And_Content_Grammar.md`; for first launch use `First_Player_Experience_And_Story_Onboarding_Design.md`; for campaign readiness use `Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md`; for story presentation use `Narrative_Presentation_And_Cutscene_Design.md`; for shared mission authoring use `Level_And_Mission_Content_Plan.md`.
+- For product precedence, use `AAA_Mobile_Game_Design_Document_v0_2.md`; for fiction/characters use `Campaign_Narrative_Bible.md`; for gameplay grammar use `Gameplay_North_Star_And_Content_Grammar.md`; for first launch use `First_Player_Experience_And_Story_Onboarding_Design.md`; for campaign readiness use `Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md`; for story presentation rules use `Narrative_Presentation_And_Cutscene_Design.md`; for shared mission authoring use `Level_And_Mission_Content_Plan.md`; for each Campaign mission use `Campaign_Mission_High_Level_Design_Catalog.md`; for exact Campaign cinematic/comic coverage use `Campaign_Narrative_Sequence_And_Comic_Catalog.md`.
 - When older map or visual docs conflict with `3D_SingleMap_Gameplay_Direction.md`, the active 3D single-map direction wins.
 - Do not create new active design work that assumes 2.5D isometric macro tiles or separate strategic/tactical maps unless PM explicitly reopens that decision.
 - Treat archived source mockup JPG references under `Archive/LegacyUI_2026-05-21/UIUX_Codex_Package` as layout/content reference only; active implementation-ready targets live under `VisualLockLayered`.

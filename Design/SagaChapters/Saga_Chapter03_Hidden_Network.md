@@ -8,7 +8,9 @@ Status: Active detailed high-level chapter design. No step-by-step implementatio
 
 This document owns Campaign Chapter 3 high-level story, character, feature, mission, consequence, reward, and presentation direction. `../Campaign_Narrative_Bible.md` owns canonical story facts. `../Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md` owns feature-readiness truth.
 
-Read after the v0.2 GDD, narrative bible, North Star, feature matrix, level/mission plan, and narrative presentation design.
+`../Campaign_Mission_High_Level_Design_Catalog.md` owns the complete per-mission gameplay/story contracts and fallbacks. `../Campaign_Narrative_Sequence_And_Comic_Catalog.md` owns the exact briefing, in-mission communication, debrief, chapter-opening, and Protocol Fragment sequence beats.
+
+Read after the v0.2 GDD, narrative bible, North Star, feature matrix, level/mission plan, narrative presentation design, mission high-level catalog, and narrative sequence catalog.
 
 ## Chapter Promise
 
@@ -76,6 +78,18 @@ This chapter cannot rely on visual profiling as a mechanic.
 | M03 False Front | A planted report draws JRC away while the Ash Line attacks an evacuation route. | Civilian evacuation, deception, divided attention. | Samira's report corrects ARIA's feed; ARIA marks its uncertainty rather than silently switching truth. | The false report came through a compromised Relay-era authority channel. |
 | M04 Evidence Chain | Move a recovered archive and protected witness through an ambush to an extraction point. | APC/helicopter boarding, escort, evidence preservation. | Salma and Laila support the extraction; Dalia prioritizes evidence over chasing retreating fighters. | The archive contains ARIA's signature on a self-sealing command. |
 | M05 Network Break | Assault the bunker holding the original audit while the Ash Line attempts to erase it and endanger nearby civilians. | Scan, precision breach, extraction, civilian-risk mastery. | ARIA tells the Commander the partition was her deliberate act. | Protocol Fragment 3 identifies Qassem as the original override architect. |
+
+## Mission High-Level Design References
+
+These references complete the one-per-mission high-level layer. Detailed implementation specifications must later use the shared template in `../Level_And_Mission_Content_Plan.md` without changing these contracts.
+
+| Mission | Gameplay/story contract | Sequence/comic coverage |
+|---|---|---|
+| M01 Signal Trace | [CH03-M01 Signal Trace](../Campaign_Mission_High_Level_Design_Catalog.md#ch03-m01-signal-trace) | [Chapter 3 sequence catalog](../Campaign_Narrative_Sequence_And_Comic_Catalog.md#chapter-3-hidden-network): `seq.ch03.m01.brief`, `.comms`, `.debrief` |
+| M02 Safehouse Sweep | [CH03-M02 Safehouse Sweep](../Campaign_Mission_High_Level_Design_Catalog.md#ch03-m02-safehouse-sweep) | [Chapter 3 sequence catalog](../Campaign_Narrative_Sequence_And_Comic_Catalog.md#chapter-3-hidden-network): `seq.ch03.m02.brief`, `.comms`, `.debrief` |
+| M03 False Front | [CH03-M03 False Front](../Campaign_Mission_High_Level_Design_Catalog.md#ch03-m03-false-front) | [Chapter 3 sequence catalog](../Campaign_Narrative_Sequence_And_Comic_Catalog.md#chapter-3-hidden-network): `seq.ch03.m03.brief`, `.comms`, `.debrief` |
+| M04 Evidence Chain | [CH03-M04 Evidence Chain](../Campaign_Mission_High_Level_Design_Catalog.md#ch03-m04-evidence-chain) | [Chapter 3 sequence catalog](../Campaign_Narrative_Sequence_And_Comic_Catalog.md#chapter-3-hidden-network): `seq.ch03.m04.brief`, `.comms`, `.debrief` |
+| M05 Network Break | [CH03-M05 Network Break](../Campaign_Mission_High_Level_Design_Catalog.md#ch03-m05-network-break) | [Chapter 3 sequence catalog](../Campaign_Narrative_Sequence_And_Comic_Catalog.md#chapter-3-hidden-network): `seq.ch03.m05.brief`, `.comms`, `.debrief`, then `seq.ch03.close.protocol_fragment_03` |
 
 ## Consequence Direction
 

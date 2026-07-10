@@ -68,12 +68,18 @@ Key project documents:
   Active product authority and document precedence.
 - [Campaign Narrative Bible](Design/Campaign_Narrative_Bible.md)
   Active setting, factions, character casting, 25-mission story, Protocol Fragments, and ending authority.
+- [Shattered Relay Story](Design/Shattered_Relay_Story.md)
+  Complete standalone prose story with no design tables, mechanics, IDs, or implementation material.
 - [First Player Experience And Story Onboarding](Design/First_Player_Experience_And_Story_Onboarding_Design.md)
   Active fresh-profile cold open, identity, direct M01 route, first debrief, and progressive menu disclosure.
 - [Gameplay Feature Maturity And Campaign Exposure](Design/Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md)
   Active distinction between implemented, partial, scaffolded, designed, and campaign-ready features.
 - [Narrative Presentation And Cutscene Design](Design/Narrative_Presentation_And_Cutscene_Design.md)
   Active sequence tiers, motion-comic direction, AI-assisted asset policy, continuity, accessibility, and Story Archive authority.
+- [Campaign Mission High-Level Design Catalog](Design/Campaign_Mission_High_Level_Design_Catalog.md)
+  Complete gameplay/story contract, readiness fallback, clue, consequence, and narrative handoff for all 25 missions.
+- [Campaign Narrative Sequence And Comic Catalog](Design/Campaign_Narrative_Sequence_And_Comic_Catalog.md)
+  Complete 92-record Campaign inventory covering prologue, identity, every mission brief/comms/debrief, chapter transitions, Protocol Fragments, epilogue, consequence emphasis, and postscript.
 - `Design/Project_State_Source.json`
   Machine-readable project state. Update this before regenerating dashboard output.
 - `Design/Project_State_Dashboard.md`
@@ -103,9 +109,12 @@ Core design reading order starts in `Design/README.md`. The current high-priorit
 
 - `Design/AAA_Mobile_Game_Design_Document_v0_2.md`
 - `Design/Campaign_Narrative_Bible.md`
+- `Design/Shattered_Relay_Story.md`
 - `Design/First_Player_Experience_And_Story_Onboarding_Design.md`
 - `Design/Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md`
 - `Design/Narrative_Presentation_And_Cutscene_Design.md`
+- `Design/Campaign_Mission_High_Level_Design_Catalog.md`
+- `Design/Campaign_Narrative_Sequence_And_Comic_Catalog.md`
 - `Design/Gameplay_North_Star_And_Content_Grammar.md`
 - `Design/3D_SingleMap_Gameplay_Direction.md`
 - `Design/LargeScale_Grid_Movement_Design.md`
@@ -122,6 +131,8 @@ Core design reading order starts in `Design/README.md`. The current high-priorit
 - `Design/ARIA_Assistant_ECS_Design.md`
 - `Design/UIUX_Mockup_To_Canvas_Conversion_Plan.md`
 - `Design/UIUX_MainMenu_Visual_Contract.md`
+
+The first Campaign high-level design layer is complete: 5 chapter arcs, 25 individual mission contracts, 75 mission brief/comms/debrief beats, and 92 total planned sequence records. See [Campaign High-Level Coverage Status](Design/README.md#campaign-high-level-coverage-status) for the exact boundary between completed high-level design and remaining scripts, storyboards, art, detailed mission specs, and runtime work.
 
 Current ARIA implementation status:
 
@@ -142,9 +153,16 @@ flowchart TD
     F --> G
     B --> G
     D --> H["M01 And FTUE Contracts"]
-    E --> I["Chapter And Story Sequences"]
-    G --> J["Five Chapter Documents"]
-    J --> K["Later Mission Implementation Plans"]
+    B --> I["25-Mission High-Level Catalog"]
+    C --> I
+    F --> I
+    G --> I
+    D --> J["92-Record Sequence And Comic Catalog"]
+    E --> J
+    I --> J
+    I --> K["Five Chapter Documents"]
+    J --> K
+    K --> O["Later Mission And Story Production"]
     A --> L["3D Single-Map Direction"]
     L --> M["System And UI Design Contracts"]
     M --> N["Architecture And Implementation Trackers"]
@@ -160,6 +178,8 @@ The linked hierarchy below is the maintained documentation map. The older `Desig
     - [First Player Experience And Story Onboarding](Design/First_Player_Experience_And_Story_Onboarding_Design.md)
     - [Gameplay Feature Maturity And Campaign Exposure](Design/Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md)
     - [Narrative Presentation And Cutscene Design](Design/Narrative_Presentation_And_Cutscene_Design.md)
+    - [Campaign Mission High-Level Design Catalog](Design/Campaign_Mission_High_Level_Design_Catalog.md)
+    - [Campaign Narrative Sequence And Comic Catalog](Design/Campaign_Narrative_Sequence_And_Comic_Catalog.md)
     - [3D Single-Map Gameplay Direction](Design/3D_SingleMap_Gameplay_Direction.md)
     - [Level And Mission Content Plan](Design/Level_And_Mission_Content_Plan.md)
       - [Chapter 1: First Response](Design/SagaChapters/Saga_Chapter01_First_Response.md)

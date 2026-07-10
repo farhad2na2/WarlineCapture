@@ -10,7 +10,7 @@ This document locks the high-level gameplay direction that must be read before a
 
 The existing gameplay specs define systems. This document defines the content grammar those systems should serve: what WarlineCapture is about, what a good mission asks from the player, how Campaign, Operations, and Skirmish connect, and which balancing targets every authored mission must expose.
 
-Use `AAA_Mobile_Game_Design_Document_v0_2.md` for product authority, `Campaign_Narrative_Bible.md` for setting/story/character authority, and `First_Player_Experience_And_Story_Onboarding_Design.md` for the first-launch route. Use `3D_SingleMap_Gameplay_Direction.md` for the active map direction and prefab-catalog roster source. Use `Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md` before making a feature mission-critical. Use `Level_And_Mission_Content_Plan.md` and the dedicated docs under `SagaChapters` for mission and chapter authoring.
+Use `AAA_Mobile_Game_Design_Document_v0_2.md` for product authority, `Campaign_Narrative_Bible.md` for setting/story/character authority, and `First_Player_Experience_And_Story_Onboarding_Design.md` for the first-launch route. Use `3D_SingleMap_Gameplay_Direction.md` for the active map direction and prefab-catalog roster source. Use `Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md` before making a feature mission-critical. Use `Level_And_Mission_Content_Plan.md` for the shared authoring template, `Campaign_Mission_High_Level_Design_Catalog.md` for all 25 mission contracts, and the dedicated docs under `SagaChapters` for chapter authoring.
 
 Terminology rule: a player-facing Campaign node launches a `Mission`; the mission uses a `ScenarioSetup`; the ScenarioSetup references a reusable 3D `OperationMap`. Do not use Level as a synonym for Mission in config names, UI labels, or validation docs. Legacy docs may still say Saga, Quick Custom, Level, tactical map, or strategic map; new player-facing language should prefer Campaign, Skirmish, and 3D operation map.
 
@@ -22,6 +22,7 @@ Terminology rule: a player-facing Campaign node launches a `Mission`; the missio
 - `First_Player_Experience_And_Story_Onboarding_Design.md`
 - `Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md`
 - `Narrative_Presentation_And_Cutscene_Design.md`
+- `Campaign_Mission_High_Level_Design_Catalog.md`
 - `3D_SingleMap_Gameplay_Direction.md`
 - `AAA_Mobile_Game_Design_Document_v0_1.md` (historical)
 - `Command_Offensive_Premise_Alignment.md`

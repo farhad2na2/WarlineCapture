@@ -17,6 +17,8 @@ Read after:
 - `../First_Player_Experience_And_Story_Onboarding_Design.md`
 - `../Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md`
 - `../Narrative_Presentation_And_Cutscene_Design.md`
+- `../Campaign_Mission_High_Level_Design_Catalog.md`
+- `../Campaign_Narrative_Sequence_And_Comic_Catalog.md`
 - `../Gameplay_North_Star_And_Content_Grammar.md`
 - `../Level_And_Mission_Content_Plan.md`
 - `../FTUE_And_Command_Assistant_Design.md`
@@ -74,6 +76,8 @@ Command has failed during a coordinated attack. The player answers ARIA's emerge
 ## Story Presentation Contract
 
 - First launch uses the Tier A `Command Lost` cold open and direct-to-M01 route in `../First_Player_Experience_And_Story_Onboarding_Design.md`.
+- The stable sequence IDs and complete Chapter 1 panel/communication beats are owned by `../Campaign_Narrative_Sequence_And_Comic_Catalog.md#chapter-1-first-response`.
+- The campaign-wide high-level gameplay/story contracts for all five missions are owned by `../Campaign_Mission_High_Level_Design_Catalog.md#chapter-1-first-response`; the detailed objective, balance, UI, reward, and validation specifications in this file refine those contracts.
 - M01's final prologue panel should transition into the same Old Market operation-map location and time of day.
 - M02-M04 use concise Tier C brief/debrief beats and non-blocking Tier D communications.
 - M05 uses a Tier B chapter-finale reveal and unlocks Protocol Fragment 1 in Story Archive.

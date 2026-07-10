@@ -8,6 +8,8 @@ Status: Active detailed high-level chapter design. No step-by-step implementatio
 
 This document owns Campaign Chapter 2 high-level story, character, feature, mission, consequence, reward, and presentation direction. `../Campaign_Narrative_Bible.md` owns the canonical story facts and `../Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md` owns feature-readiness truth.
 
+`../Campaign_Mission_High_Level_Design_Catalog.md` owns the complete per-mission gameplay/story contracts and fallbacks. `../Campaign_Narrative_Sequence_And_Comic_Catalog.md` owns the exact briefing, in-mission communication, debrief, chapter-opening, and Protocol Fragment sequence beats.
+
 Read after:
 
 - `../AAA_Mobile_Game_Design_Document_v0_2.md`
@@ -16,6 +18,8 @@ Read after:
 - `../Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md`
 - `../Level_And_Mission_Content_Plan.md`
 - `../Narrative_Presentation_And_Cutscene_Design.md`
+- `../Campaign_Mission_High_Level_Design_Catalog.md`
+- `../Campaign_Narrative_Sequence_And_Comic_Catalog.md`
 - `../Field_Logistics_Oil_Fuel_Design.md`
 - `../Automated_Fuel_Logistics_Design.md`
 - `../Resource_Logistics_Exchange_Design.md`
@@ -77,6 +81,18 @@ In Chapter 2, the player learns how the district stays alive.
 | M03 Market Lifeline | Secure an emergency exchange yard, expose a corrupt manifest route, and keep essential supplies moving. | Conditional import/export introduction with escort pressure. | Yasin identifies the legitimate trade pattern the enemy has copied. | A captured manifest names multiple Relay-era storage sites. |
 | M04 Power Relay | Reconnect a power substation while moving displaced civilians to shelters and defending engineers. | Repair, refugees, timed defense, logistics combination. | The Commander reconciles ARIA's shortest route with Samira's safer civilian route. | The substation contains a dormant handshake waiting for an ARIA key. |
 | M05 Route Reopened | Break the Ash Line hold on the district logistics hub without destroying the systems the city needs. | Roads, Fuel, automated hauling, defense, and breach mastery. | Dalia and Samira coordinate military and civil routes as peers. | Protocol Fragment 2 proves the attacks are powering selected Civic Relay nodes. |
+
+## Mission High-Level Design References
+
+These references complete the one-per-mission high-level layer. Detailed implementation specifications must later use the shared template in `../Level_And_Mission_Content_Plan.md` without changing these contracts.
+
+| Mission | Gameplay/story contract | Sequence/comic coverage |
+|---|---|---|
+| M01 Gridlock | [CH02-M01 Gridlock](../Campaign_Mission_High_Level_Design_Catalog.md#ch02-m01-gridlock) | [Chapter 2 sequence catalog](../Campaign_Narrative_Sequence_And_Comic_Catalog.md#chapter-2-broken-grid): `seq.ch02.m01.brief`, `.comms`, `.debrief` |
+| M02 Supply Line | [CH02-M02 Supply Line](../Campaign_Mission_High_Level_Design_Catalog.md#ch02-m02-supply-line) | [Chapter 2 sequence catalog](../Campaign_Narrative_Sequence_And_Comic_Catalog.md#chapter-2-broken-grid): `seq.ch02.m02.brief`, `.comms`, `.debrief` |
+| M03 Market Lifeline | [CH02-M03 Market Lifeline](../Campaign_Mission_High_Level_Design_Catalog.md#ch02-m03-market-lifeline) | [Chapter 2 sequence catalog](../Campaign_Narrative_Sequence_And_Comic_Catalog.md#chapter-2-broken-grid): `seq.ch02.m03.brief`, `.comms`, `.debrief` |
+| M04 Power Relay | [CH02-M04 Power Relay](../Campaign_Mission_High_Level_Design_Catalog.md#ch02-m04-power-relay) | [Chapter 2 sequence catalog](../Campaign_Narrative_Sequence_And_Comic_Catalog.md#chapter-2-broken-grid): `seq.ch02.m04.brief`, `.comms`, `.debrief` |
+| M05 Route Reopened | [CH02-M05 Route Reopened](../Campaign_Mission_High_Level_Design_Catalog.md#ch02-m05-route-reopened) | [Chapter 2 sequence catalog](../Campaign_Narrative_Sequence_And_Comic_Catalog.md#chapter-2-broken-grid): `seq.ch02.m05.brief`, `.comms`, `.debrief`, then `seq.ch02.close.protocol_fragment_02` |
 
 ## Mission Consequence Direction
 

@@ -2,13 +2,13 @@
 
 Date: 2026-05-21
 
-2026-07-10 narrative amendment: the 25-mission high-level story map is now owned by `Campaign_Narrative_Bible.md`. This document continues to own the shared mission authoring contract.
+2026-07-10 narrative amendment: the 25-mission story map is owned by `Campaign_Narrative_Bible.md`; the complete one-per-mission high-level contracts are owned by `Campaign_Mission_High_Level_Design_Catalog.md`; and the exact first-Campaign story sequence inventory is owned by `Campaign_Narrative_Sequence_And_Comic_Catalog.md`. This document continues to own the shared mission authoring contract.
 
 ## Purpose
 
 This document is the working plan for level-by-level and mission-by-mission design. It turns the gameplay north star and content grammar into concrete authoring rules for Campaign missions, Operations mission generation, Skirmish probes, validation, and balance targets.
 
-Read this document after `AAA_Mobile_Game_Design_Document_v0_2.md`, `Campaign_Narrative_Bible.md`, and `Gameplay_North_Star_And_Content_Grammar.md`, and before writing individual mission specs or data configs. Check `Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md` before making any feature required. For the first-launch route use `First_Player_Experience_And_Story_Onboarding_Design.md`; for reusable tutorial behavior use `FTUE_And_Command_Assistant_Design.md`.
+Read this document after `AAA_Mobile_Game_Design_Document_v0_2.md`, `Campaign_Narrative_Bible.md`, and `Gameplay_North_Star_And_Content_Grammar.md`, and before writing individual mission specs or data configs. Campaign mission authors must then read the applicable entry in `Campaign_Mission_High_Level_Design_Catalog.md` and its sequence row in `Campaign_Narrative_Sequence_And_Comic_Catalog.md`. Check `Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md` before making any feature required. For the first-launch route use `First_Player_Experience_And_Story_Onboarding_Design.md`; for reusable tutorial behavior use `FTUE_And_Command_Assistant_Design.md`.
 
 For every mission or level that uses map/world art, also read `3D_SingleMap_Gameplay_Direction.md`. Planning, briefing, minimap, deployment, threat alerts, and battle view are UI/camera layers on the same 3D operation map. Do not author new missions around separate strategic and tactical maps.
 
@@ -37,6 +37,8 @@ Do not use `Level` as a synonym for `Mission` in config names or UI. A Campaign 
 - `First_Player_Experience_And_Story_Onboarding_Design.md`
 - `Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md`
 - `Narrative_Presentation_And_Cutscene_Design.md`
+- `Campaign_Mission_High_Level_Design_Catalog.md`
+- `Campaign_Narrative_Sequence_And_Comic_Catalog.md`
 - `Gameplay_North_Star_And_Content_Grammar.md`
 - `FTUE_And_Command_Assistant_Design.md`
 - `Gameplay_Features_High_Level_Spec.md`
@@ -54,13 +56,14 @@ Do not use `Level` as a synonym for `Mission` in config names or UI. A Campaign 
 WarlineCapture should author content in this order:
 
 1. Preserve the accepted high-level campaign arc and character roles in `Campaign_Narrative_Bible.md`.
-2. Use the mission template and acceptance checklist in this document.
-3. Confirm each required feature is campaign-ready in the maturity/exposure matrix.
-4. Turn Chapter 1 into a five-mission detailed design pack without changing its story contract.
-5. Implement Mission 1 as the first story-to-gameplay vertical slice.
-6. Validate cold open, identity, M01, result, first clue, save, and command-base reveal as one experience.
-7. Add one Operations hook and one Skirmish probe that reuse the same mission/consequence model.
-8. Continue mission-by-mission only after the vertical slice passes.
+2. Preserve the applicable gameplay/story contract in `Campaign_Mission_High_Level_Design_Catalog.md` and the sequence coverage in `Campaign_Narrative_Sequence_And_Comic_Catalog.md`.
+3. Use the mission template and acceptance checklist in this document.
+4. Confirm each required feature is campaign-ready in the maturity/exposure matrix; use the catalog fallback when it is not.
+5. Use the existing Chapter 1 detailed pack as the first mission-authoring reference without copying its implementation assumptions into later chapters.
+6. Implement Mission 1 as the first story-to-gameplay vertical slice.
+7. Validate cold open, identity, M01, result, first clue, save, and command-base reveal as one experience.
+8. Add one Operations hook and one Skirmish probe that reuse the same mission/consequence model.
+9. Continue mission-by-mission only after the vertical slice passes.
 
 Mission 1 implementation must use `M01_FirstContact_Production_Contract.md` as the concrete production contract.
 

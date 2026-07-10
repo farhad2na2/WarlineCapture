@@ -8,11 +8,13 @@ Scope: Fiction, characters, factions, campaign arc, mission story beats, tone, a
 
 Upstream authority: `AAA_Mobile_Game_Design_Document_v0_2.md`.
 
-Direct consumers: `First_Player_Experience_And_Story_Onboarding_Design.md`, `Narrative_Presentation_And_Cutscene_Design.md`, `Gameplay_North_Star_And_Content_Grammar.md`, `Level_And_Mission_Content_Plan.md`, `SagaChapters/README.md`, and later character, dialogue, story-art, and mission implementation plans.
+Direct consumers: `First_Player_Experience_And_Story_Onboarding_Design.md`, `Narrative_Presentation_And_Cutscene_Design.md`, `Campaign_Mission_High_Level_Design_Catalog.md`, `Campaign_Narrative_Sequence_And_Comic_Catalog.md`, `Gameplay_North_Star_And_Content_Grammar.md`, `Level_And_Mission_Content_Plan.md`, `SagaChapters/README.md`, and later character, dialogue, story-art, and mission implementation plans.
 
 ## Authority And Working Names
 
 This document is the narrative source of truth for the first WarlineCapture Campaign. It is subordinate only to `AAA_Mobile_Game_Design_Document_v0_2.md` for product direction and should be read before authoring missions, cutscenes, character art, dialogue, briefings, or rewards.
+
+For uninterrupted story reading without design tables or production material, use `Shattered_Relay_Story.md`. It is the prose retelling; this Bible remains the authority if the two ever disagree.
 
 The setting and faction names below are production working names. They are specific enough to support design, but they require legal, cultural, localization, and trademark review before marketing lock.
 
@@ -331,6 +333,8 @@ A high-level mission is narratively ready only if the answer to each question is
 - `AAA_Mobile_Game_Design_Document_v0_2.md`
 - `First_Player_Experience_And_Story_Onboarding_Design.md`
 - `Narrative_Presentation_And_Cutscene_Design.md`
+- `Campaign_Mission_High_Level_Design_Catalog.md`
+- `Campaign_Narrative_Sequence_And_Comic_Catalog.md`
 - `Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md`
 - `Gameplay_North_Star_And_Content_Grammar.md`
 - `Level_And_Mission_Content_Plan.md`

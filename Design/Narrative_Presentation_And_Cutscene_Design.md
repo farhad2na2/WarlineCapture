@@ -8,7 +8,7 @@ Scope: Presentation format, sequence tiers, visual language, character continuit
 
 Upstream authorities: `AAA_Mobile_Game_Design_Document_v0_2.md`, `Campaign_Narrative_Bible.md`, and `First_Player_Experience_And_Story_Onboarding_Design.md`.
 
-Direct consumers: `Level_And_Mission_Content_Plan.md`, `SagaChapters/README.md`, Story Archive design, character/story-art production, audio/localization planning, and later sequence-player implementation plans.
+Direct consumers: `Campaign_Narrative_Sequence_And_Comic_Catalog.md`, `Campaign_Mission_High_Level_Design_Catalog.md`, `Level_And_Mission_Content_Plan.md`, `SagaChapters/README.md`, Story Archive design, character/story-art production, audio/localization planning, and later sequence-player implementation plans.
 
 ## Recommendation
 
@@ -68,6 +68,8 @@ AI image generation can accelerate source art, but the shipped product uses revi
 
 Not every mission needs both a full brief and debrief cinematic. A strong interactive briefing or result card can carry Tier C when the story beat is small. Chapter finales and the first session deserve the most authored presentation.
 
+`Campaign_Narrative_Sequence_And_Comic_Catalog.md` is the exact first-Campaign sequence authority. It assigns stable IDs and high-level panel/communication beats to all 25 mission briefs, in-mission communications, debriefs, five chapter openings, five Protocol Fragment closes, the prologue, and the epilogue. A Tier C record may be realized as an interactive briefing or result surface, but its required story coverage cannot be omitted.
+
 ## Campaign Sequence Map
 
 | Campaign moment | Minimum presentation |
@@ -80,6 +82,8 @@ Not every mission needs both a full brief and debrief cinematic. A strong intera
 | Chapter 4 opening | Clear visual escalation from insurgent cells to organized proxy armor and aircraft. |
 | Final mission | Tier A pre-assault and ending sequence, followed by epilogue panels. |
 | Return after absence | Optional Tier E recap, never forced long playback. |
+
+The table above defines minimum presentation. Use `Campaign_Narrative_Sequence_And_Comic_Catalog.md` for the complete 92-record inventory and the required transition between each sequence and mission.
 
 ## Scene Grammar
 

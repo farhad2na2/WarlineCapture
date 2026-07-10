@@ -8,7 +8,7 @@ Scope: Current maturity classification, narrative purpose, intended first author
 
 Upstream authorities: current validated runtime evidence, `AAA_Mobile_Game_Design_Document_v0_2.md`, and `Campaign_Narrative_Bible.md`.
 
-Direct consumers: `Gameplay_North_Star_And_Content_Grammar.md`, `Level_And_Mission_Content_Plan.md`, `SagaChapters/README.md`, feature-specific design documents, and later implementation prerequisites. When code and this matrix disagree, re-audit and update the matrix; do not reinterpret code from a stale design claim.
+Direct consumers: `Gameplay_North_Star_And_Content_Grammar.md`, `Level_And_Mission_Content_Plan.md`, `Campaign_Mission_High_Level_Design_Catalog.md`, `SagaChapters/README.md`, feature-specific design documents, and later implementation prerequisites. When code and this matrix disagree, re-audit and update the matrix; do not reinterpret code from a stale design claim.
 
 ## Purpose
 
@@ -120,6 +120,7 @@ Before a mission moves from high-level design into implementation planning, clas
 - `Campaign_Narrative_Bible.md`
 - `Gameplay_North_Star_And_Content_Grammar.md`
 - `Level_And_Mission_Content_Plan.md`
+- `Campaign_Mission_High_Level_Design_Catalog.md`
 - `FTUE_And_Command_Assistant_Design.md`
 - `ARIA_Assistant_ECS_Design.md`
 - `Campaign_Narrative_And_Content_Redesign_Recommendations.md`

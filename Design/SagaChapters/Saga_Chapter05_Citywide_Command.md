@@ -8,7 +8,9 @@ Status: Active detailed high-level chapter and ending design. No step-by-step im
 
 This document owns Campaign Chapter 5 high-level story, character, feature, mission, consequence, reward, presentation, and ending direction. The narrative bible owns canonical facts and epilogue values; the feature matrix owns readiness truth.
 
-Read after the v0.2 GDD, narrative bible, North Star, feature matrix, level/mission plan, narrative presentation design, and Chapters 1-4.
+`../Campaign_Mission_High_Level_Design_Catalog.md` owns the complete per-mission gameplay/story contracts and fallbacks. `../Campaign_Narrative_Sequence_And_Comic_Catalog.md` owns the exact briefing, in-mission communication, debrief, chapter-opening, Protocol Fragment, and epilogue sequence beats.
+
+Read after the v0.2 GDD, narrative bible, North Star, feature matrix, level/mission plan, narrative presentation design, mission high-level catalog, narrative sequence catalog, and Chapters 1-4.
 
 ## Chapter Promise
 
@@ -74,6 +76,18 @@ Any feature still Partial or Scaffolded at detailed-design time must be simplifi
 | M03 Network Collapse | Strike verified command nodes, neutralize long-range threats, and preserve the complete evidence chain. | Scan/Intel, precision raid, G2G restraint, evidence extraction. | Dalia chooses proof and civilian protection over a faster destructive solution. | The complete audit proves Qassem caused the original shutdown and present attacks. |
 | M04 Last Corridor | Move Fuel, medical supplies, engineers, and reinforcements into the city center through a collapsing route network. | Roads, Oil/Fuel, automated logistics, convoys, airlift, parachute/cargo as authored. | Dalia and Samira jointly set route priority; Laila and Karim keep the air option alive. | The convoy carries the physical keys needed to restore bounded Relay access. |
 | M05 Command Node | Assault the Relay complex, defeat Qassem's mixed force, and protect the city systems wired into his defenses. | Full combined-arms and multi-objective mastery with ARIA support. | All principal arcs resolve through action before the final governance choice. | Protocol Fragment 5 and the canonical revelation are released to the city. |
+
+## Mission High-Level Design References
+
+These references complete the one-per-mission high-level layer. Detailed implementation specifications must later use the shared template in `../Level_And_Mission_Content_Plan.md` without changing these contracts.
+
+| Mission | Gameplay/story contract | Sequence/comic coverage |
+|---|---|---|
+| M01 Citywide Alert | [CH05-M01 Citywide Alert](../Campaign_Mission_High_Level_Design_Catalog.md#ch05-m01-citywide-alert) | [Chapter 5 sequence catalog](../Campaign_Narrative_Sequence_And_Comic_Catalog.md#chapter-5-citywide-command): `seq.ch05.m01.brief`, `.comms`, `.debrief` |
+| M02 Trust Under Fire | [CH05-M02 Trust Under Fire](../Campaign_Mission_High_Level_Design_Catalog.md#ch05-m02-trust-under-fire) | [Chapter 5 sequence catalog](../Campaign_Narrative_Sequence_And_Comic_Catalog.md#chapter-5-citywide-command): `seq.ch05.m02.brief`, `.comms`, `.debrief` |
+| M03 Network Collapse | [CH05-M03 Network Collapse](../Campaign_Mission_High_Level_Design_Catalog.md#ch05-m03-network-collapse) | [Chapter 5 sequence catalog](../Campaign_Narrative_Sequence_And_Comic_Catalog.md#chapter-5-citywide-command): `seq.ch05.m03.brief`, `.comms`, `.debrief` |
+| M04 Last Corridor | [CH05-M04 Last Corridor](../Campaign_Mission_High_Level_Design_Catalog.md#ch05-m04-last-corridor) | [Chapter 5 sequence catalog](../Campaign_Narrative_Sequence_And_Comic_Catalog.md#chapter-5-citywide-command): `seq.ch05.m04.brief`, `.comms`, `.debrief` |
+| M05 Command Node | [CH05-M05 Command Node](../Campaign_Mission_High_Level_Design_Catalog.md#ch05-m05-command-node) | [Chapter 5 sequence catalog](../Campaign_Narrative_Sequence_And_Comic_Catalog.md#chapter-5-citywide-command): `seq.ch05.m05.brief`, `.comms`, `.debrief`, `seq.ch05.close.protocol_fragment_05`, and epilogue family |
 
 ## Final Mission High-Level Phases
 

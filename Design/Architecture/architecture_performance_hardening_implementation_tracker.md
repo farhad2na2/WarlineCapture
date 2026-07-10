@@ -258,7 +258,7 @@ The program is complete only when all of the following are true:
 | Red performance gates | `1`: steady-state Match GC `234,324 / 1,024` bytes; improved 13.0% from the APH-007 baseline without weakening the budget |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
 | Last verified commit | `fd10d99e6`; integrated graphics gates and deterministic day/dusk/night capture pass |
-| Last update | 2026-07-10 - APH-310 complete with night-readability finding; Android tier capture active |
+| Last update | 2026-07-10 - APH-310 complete; APH-311 awaiting an attached Android device while Phase 4 preparation runs in parallel |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -465,6 +465,7 @@ Target ownership:
   - Validation: Settings popup `8/8`, Android visual quality `12/12`, Match settings/audio smoke passed at HUD ready, and current-profile Metal capture completed at 1920x1080; commit `fd10d99e6` pushed to `main`.
   - Visual review: day and dusk pass structural review; night is nonblank but remains a red readability finding at mean luma `22.34 / 255`. No lighting value was silently changed.
 - [~] `APH-311` On Android, run a 10-minute 30 FPS tier capture and a 60 FPS tier capture. Record frame, GPU, memory, thermal, and visual results separately.
+  - Current blocker: escalated `adb devices -l` starts the daemon successfully but reports no attached device. Editor or simulator data cannot satisfy the required GPU, battery, thermal, and physical-device visual evidence. Keep this task active and resume both captures when a target Android device is authorized and visible to ADB.
 
 ## Phase 4 - Reduce Audio Residency
 

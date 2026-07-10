@@ -87,7 +87,7 @@ namespace Game.Editor
 
             var buildPlayerOptions = new BuildPlayerOptions
             {
-                scenes = GetEnabledScenes(),
+                scenes = StaticMapAndroidBuildSceneResolver.ResolveForCurrentProject(GetEnabledScenes()),
                 target = BuildTarget.Android,
                 options = BuildOptions.DetailedBuildReport,
                 locationPathName = outputPath
@@ -129,7 +129,7 @@ namespace Game.Editor
 
             var buildPlayerOptions = new BuildPlayerOptions
             {
-                scenes = GetEnabledScenes(),
+                scenes = StaticMapAndroidBuildSceneResolver.ResolveForCurrentProject(GetEnabledScenes()),
                 target = BuildTarget.Android,
                 options =
                     BuildOptions.Development |

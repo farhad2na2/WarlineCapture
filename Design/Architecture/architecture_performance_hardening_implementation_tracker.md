@@ -251,17 +251,17 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `58 / 106` |
-| Checklist percent complete | `54.7%` |
-| Checklist in progress | `2 / 106`: `APH-311`, `APH-601` |
-| Complete plus active coverage | `60 / 106` (`56.6%`); this is visibility only, not accepted completion |
-| Current phase | Phase 3 Android device evidence, Phase 6 shared-mesh presentation baking, plus dependency-ready Phase 7 analysis |
-| Current task | `APH-606` is the next dependency-ready static-map integration task; `APH-601` and `APH-311` retain measurement/device ownership |
+| Checklist complete | `59 / 106` |
+| Checklist percent complete | `55.7%` |
+| Checklist in progress | `3 / 106`: `APH-311`, `APH-501`, `APH-601` |
+| Complete plus active coverage | `62 / 106` (`58.5%`); this is visibility only, not accepted completion |
+| Current phase | Phase 3 Android device evidence, Phase 5 product budgets, and Phase 6 shared-mesh presentation streaming |
+| Current task | `APH-607` is the next Phase 6 implementation task; `APH-501`, `APH-601`, and `APH-311` retain release-device measurement ownership |
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: steady-state Match GC `234,324 / 1,024` bytes; improved 13.0% from the APH-007 baseline without weakening the budget |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
-| Last verified commit | `9280ead85`; current APH-604/605 and APH-700/701/702 acceptance slice is validated locally and pending coordinated commit/push |
-| Last update | 2026-07-10 - APH-604/605 and APH-700/701/702 passed independent review, zero-error compile, and focused Unity acceptance gates |
+| Last verified commit | `1224f9bf4`; APH-604/605 and APH-700/701/702 are validated, committed, and pushed to `main` |
+| Last update | 2026-07-10 - APH-606 accepted; APH-501 package budgets implemented with release-device memory limits still active |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -509,7 +509,8 @@ Goal: make residency and package size intentional while preserving visible quali
   - Tooling: release APK/AAB builds now request `DetailedBuildReport`, deterministically aggregate `BuildReport.packedAssets`, preserve attributed/unattributed/overhead accounting, and write top-100 JSON/Markdown evidence with commit, dirty-state, architecture, artifact size, and SHA-256. Jenkins archives each report with its matching artifact.
   - Validation: focused aggregation/evidence contract `6/6`, Unity compile clean, `git diff --check` clean; tooling commit `671a009aa` pushed to `main`.
   - Evidence: clean ARM64 IL2CPP release APK and AAB reports were generated and reviewed. APK artifact `463,359,198` bytes with SHA-256 `cb18f212...824f20`; AAB artifact `426,399,778` bytes with SHA-256 `c03558f2...7ac29`; evidence commits `a527e151e` and `ddfca3b27` are pushed to `main`.
-- [ ] `APH-501` Add tracked budgets for APK/AAB size, installed size, peak allocated memory, texture memory, mesh memory, audio memory, and graphics-driver memory.
+- [~] `APH-501` Add tracked budgets for APK/AAB size, installed size, peak allocated memory, texture memory, mesh memory, audio memory, and graphics-driver memory.
+  - Active result: schema 3 pins clean ARM64 IL2CPP release budgets at APK `<= 463,359,198` bytes and AAB `<= 426,399,778` bytes, including exact artifact commit, SHA-256, immutable evidence commit, and report path. Installed size and absolute peak/texture/mesh/audio/graphics-driver memory limits remain fail-closed `null` until accepted release-device captures provide the required measurements.
 - [ ] `APH-502` Classify texture importers into UI, world albedo, world normal/mask, VFX, impostor/atlas, generated source/reference, and excluded/unreferenced groups.
 - [ ] `APH-503` Add an editor guard preventing mip streaming on UI, font, animation-data, sprite-atlas, and generated reference/source textures.
 - [ ] `APH-504` Enable mip streaming for a representative world-texture subset with mipmaps; set a mobile memory budget and preserve full-resolution nearby textures.
@@ -550,7 +551,9 @@ Quality lock:
   - Result: direct-dependency provenance prunes generated branches transitively; layer changes affect source identity; a SHA-256 scene/meta integrity ledger rejects stale or corrupted output; manifest-owned writes/deletes are journaled and rolled back on failure; disk-present owned scenes cannot be orphaned by stale AssetDatabase state. Unity ownership tests pass `23/23`, the real AssetDatabase delete/rollback/GUID restoration test passes `1/1`, and the post-migration identical bake reused all `525` scenes with `scenesWritten=0` and `staleScenesDeleted=0`.
 - [x] `APH-605` Add structural validation for source/chunk bijection, unchanged transforms, shared mesh/material identity, lightmap data, layers, shadows, probes, bounds, and an explicit zero-collider/zero-gameplay-script chunk contract.
   - Result: the exhaustive Unity validation passed `2/2` in `658.45 s`, proving the manifest/source/chunk bijection and full parity for all `17,564` renderers across `525` scenes, including transforms, assets, materials, renderer/lightmap/probe state, bounds, layers, and zero collider/MonoBehaviour presentation contracts.
-- [ ] `APH-606` Add a serialized presentation-manifest reference to `MatchSceneView` or an equivalent composition-owned config, and include every generated chunk scene in Android builds. Do not add a `GameObject.Find` fallback.
+- [x] `APH-606` Add a serialized presentation-manifest reference to `MatchSceneView` or an equivalent composition-owned config, and include every generated chunk scene in Android builds. Do not add a `GameObject.Find` fallback.
+  - Result: `MatchSceneView` owns the serialized manifest reference; deterministic editor wiring updates the canonical Match scene without hierarchy-name lookup; both Android release and profiler build paths include enabled base scenes followed by the exact 525 manifest-owned chunks. The resolver fails closed for stale canonical dependencies, stale enabled output, missing base/chunk scenes, duplicate/non-owned chunks, schema/content drift, and integrity-ledger mismatch.
+  - Validation: resolver `21/21`, scene wiring `2/2`, APH-700 `7/7`, APH-701/702 `15/15`, two identical post-wiring bakes with zero scene writes/deletes, and all 12 first-party assemblies with zero errors.
 - [ ] `APH-607` Add a managed presentation streamer that preloads the camera footprint plus one ring before Match-ready, then loads/unloads with hysteresis and one bounded operation queue. Unload every presentation chunk before unloading Match.
 - [ ] `APH-608` Enable Unity 6 GPU Resident Drawer `InstancedDrawing` for the Mobile URP asset, retain BRG shader variants, disable Android static batching, and preserve a measured fallback for incompatible renderers. Do not add a new gameplay `ISystem` or `SystemBase` owner.
 - [ ] `APH-609` Compare canonical/runtime-batched and shared-mesh chunked/GRD screenshots plus draw calls, triangles, CPU/GPU frame time, memory, package size, and startup time. Require pixel/visual review, not metrics alone.
@@ -1298,6 +1301,29 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Residual risk: stale generated scenes are not removed yet; deterministic rebake and sentinel-safe cleanup are owned by APH-604. Full source/renderer-state equivalence remains APH-605.
 - Next ready task: `APH-604`
 - Stable commit/push: `9e80c0f1d` committed to `main`; push recorded by the follow-up tracker checkpoint
+
+### 2026-07-10 - APH-606 - Composition-owned manifest and Android scene inclusion
+
+- Status: Complete
+- Commit or worktree baseline: `1224f9bf4`
+- Stable commit/push: pending coordinated stable-slice commit
+- Files changed: `MatchSceneView`, canonical Match serialization, Android build scene resolver and tests, deterministic editor scene wiring and tests, generated manifest dependency hash, and refreshed APH-700 reports
+- Behavior preserved/changed: non-Android build lists remain unchanged; Android release and profiler builds now package enabled base scenes plus exactly all 525 manifest chunks. Runtime chunk loading remains APH-607.
+- Validation: resolver `21/21`, scene wiring `2/2`, APH-700 `7/7`, APH-701/702 `15/15`, all 12 first-party assemblies with zero errors, and two identical post-wiring bakes at content hash `393591d2855b764bce260888e6f5fa20` with `reusedScenes=1`, `scenesWritten=0`, and `staleScenesDeleted=0`
+- Independent review: fixed stale canonical-dependency acceptance and missing non-Match base-scene acceptance before final validation; no remaining finding
+- Residual risk: packaging does not control residency; bounded preload/load/unload ownership and Match teardown are APH-607
+- Next ready task: `APH-607`
+
+### 2026-07-10 - APH-501 - Tracked package and memory budget authority
+
+- Status: Active; clean release package budgets accepted, release-device memory limits pending
+- Commit or worktree baseline: `1224f9bf4`
+- Stable commit/push: pending coordinated stable-slice commit
+- Files changed: schema-3 accepted baseline JSON, product-budget validator and focused tests, and performance regression contract
+- Behavior preserved/changed: tooling/config only; APK and AAB budgets now ratchet against exact clean APH-500 artifacts. Unmeasured installed size and absolute peak/texture/mesh/audio/graphics-driver memory limits remain fail-closed `null`.
+- Validation: `[PerformanceProductBudgetValidation] result=Passed tests=5`, Game Editor and Editor-test assemblies plus the complete 12-assembly matrix build with zero errors, and `git diff --check` passes
+- Residual risk: accepted release-device captures are still required before absolute installed-size and memory limits can replace measurement-required states
+- Next action: collect the required release artifact/device/scenario/profiler metrics under the serialized Android evidence lane
 
 ### 2026-07-10 - APH-311 and APH-601 - Android 96 m combine candidate rejection
 

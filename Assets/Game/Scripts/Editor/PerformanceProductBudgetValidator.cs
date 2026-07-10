@@ -16,7 +16,7 @@ namespace Game.Editor
         public const string ConfigPath =
             "Design/Architecture/performance_regression_accepted_baseline.json";
 
-        private const int ExpectedSchemaVersion = 2;
+        private const int ExpectedSchemaVersion = 3;
         private const double MaximumEditorP95Ms = 50d;
         private const double MaximumBaselineAndroidP95Ms = 33d;
         private const double MaximumRecommendedAndroidP95Ms = 33d;
@@ -26,6 +26,22 @@ namespace Game.Editor
         private const int ExpectedPeakMemoryMinimumMB = 1054;
         private const int ExpectedPeakMemoryMaximumMB = 1075;
         private const double MinimumPeakMemoryReductionPercent = 10d;
+        private const long AcceptedApkBytes = 463359198;
+        private const long AcceptedAabBytes = 426399778;
+        private const string AcceptedApkCommit = "5a49ab8f010674ca8b364af1245fe2902401b305";
+        private const string AcceptedAabCommit = "a527e151e9e43a491ba30f4c19a0320dc54faf5c";
+        private const string AcceptedApkSha256 =
+            "cb18f212d09ebde206884fd608e94441ce4f34fdc5800017067275f892824f20";
+        private const string AcceptedAabSha256 =
+            "c03558f2e093277949edf56ba8efd34d347e8f2396be594f8f88bdec5c57ac29";
+        private const string AcceptedApkEvidenceSource =
+            "Design/AgentReports/architecture_performance_android_apk_build_report.json";
+        private const string AcceptedAabEvidenceSource =
+            "Design/AgentReports/architecture_performance_android_aab_build_report.json";
+        private const string AcceptedApkEvidenceCommit =
+            "a527e151e9e43a491ba30f4c19a0320dc54faf5c";
+        private const string AcceptedAabEvidenceCommit =
+            "ddfca3b27c089da512925643933d68ae414cba43";
 
         private static readonly string[] FrameEvidence =
         {
@@ -51,6 +67,32 @@ namespace Game.Editor
         {
             "exactCommit", "artifactSha256", "deviceProfile", "cleanInstallMethod", "installedBytes",
             "packageManagerEvidence"
+        };
+
+        private static readonly string[] TextureMemoryEvidence =
+        {
+            "exactCommit", "artifactSha256", "deviceProfile", "releaseBuildType", "scenario",
+            "warmupDuration", "sampleDuration", "memoryProfilerCapture", "textureMemoryBytes"
+        };
+
+        private static readonly string[] MeshMemoryEvidence =
+        {
+            "exactCommit", "artifactSha256", "deviceProfile", "releaseBuildType", "scenario",
+            "warmupDuration", "sampleDuration", "memoryProfilerCapture", "meshMemoryBytes"
+        };
+
+        private static readonly string[] AudioMemoryEvidence =
+        {
+            "exactCommit", "artifactSha256", "deviceProfile", "releaseBuildType", "scenario",
+            "warmupDuration", "sampleDuration", "memoryProfilerCapture", "audioMemoryBytes",
+            "representativePlaybackCoverage"
+        };
+
+        private static readonly string[] GraphicsDriverMemoryEvidence =
+        {
+            "exactCommit", "artifactSha256", "deviceProfile", "releaseBuildType", "graphicsApi",
+            "scenario", "warmupDuration", "sampleDuration", "memoryProfilerCapture",
+            "graphicsDriverMemoryBytes"
         };
 
         private static readonly string[] StartupEvidence =
@@ -140,14 +182,15 @@ namespace Game.Editor
             const string path = "$.productBudgets";
             ValidateSchema(productBudgets, path, errors,
                 "taskId", "baselineCommit", "status", "androidFrameP95AfterWarmup",
-                "matchSteadyStateGc", "peakAllocatedMemory", "releaseEvidence");
+                "matchSteadyStateGc", "peakAllocatedMemory", "resourceMemoryBudgets", "releaseEvidence");
             RequireString(productBudgets, "taskId", path, errors, "APH-009");
             RequireString(productBudgets, "baselineCommit", path, errors, "ba3da6704");
-            RequireString(productBudgets, "status", path, errors, "frozen-initial");
+            RequireString(productBudgets, "status", path, errors, "tracked-product-budgets");
 
             JObject frames = RequireObject(productBudgets, "androidFrameP95AfterWarmup", path, errors);
             JObject gc = RequireObject(productBudgets, "matchSteadyStateGc", path, errors);
             JObject memory = RequireObject(productBudgets, "peakAllocatedMemory", path, errors);
+            JObject resourceMemory = RequireObject(productBudgets, "resourceMemoryBudgets", path, errors);
             JObject releaseEvidence = RequireObject(productBudgets, "releaseEvidence", path, errors);
 
             if (frames != null)
@@ -156,8 +199,47 @@ namespace Game.Editor
                 ValidateGcBudget(gc, errors);
             if (memory != null)
                 ValidateMemoryBudget(memory, errors);
+            if (resourceMemory != null)
+                ValidateResourceMemoryBudgets(resourceMemory, errors);
             if (releaseEvidence != null)
                 ValidateReleaseEvidence(releaseEvidence, errors);
+        }
+
+        private static void ValidateResourceMemoryBudgets(JObject budgets, List<string> errors)
+        {
+            const string path = "$.productBudgets.resourceMemoryBudgets";
+            ValidateSchema(budgets, path, errors,
+                "textureMemory", "meshMemory", "audioMemory", "graphicsDriverMemory");
+
+            ValidateUnmeasuredMemoryBudget(RequireObject(budgets, "textureMemory", path, errors),
+                path + ".textureMemory", "textureMemoryBytes", TextureMemoryEvidence, errors);
+            ValidateUnmeasuredMemoryBudget(RequireObject(budgets, "meshMemory", path, errors),
+                path + ".meshMemory", "meshMemoryBytes", MeshMemoryEvidence, errors);
+            ValidateUnmeasuredMemoryBudget(RequireObject(budgets, "audioMemory", path, errors),
+                path + ".audioMemory", "audioMemoryBytes", AudioMemoryEvidence, errors);
+            ValidateUnmeasuredMemoryBudget(RequireObject(budgets, "graphicsDriverMemory", path, errors),
+                path + ".graphicsDriverMemory", "graphicsDriverMemoryBytes",
+                GraphicsDriverMemoryEvidence, errors);
+        }
+
+        private static void ValidateUnmeasuredMemoryBudget(
+            JObject budget,
+            string path,
+            string metric,
+            IReadOnlyCollection<string> requiredEvidence,
+            List<string> errors)
+        {
+            if (budget == null)
+                return;
+
+            ValidateSchema(budget, path, errors,
+                "status", "metric", "unit", "releaseLimitBytes", "ownerTaskId", "requiredEvidence");
+            RequireString(budget, "status", path, errors, "measurement-required");
+            RequireString(budget, "metric", path, errors, metric);
+            RequireString(budget, "unit", path, errors, "bytes");
+            RequireNull(budget, "releaseLimitBytes", path, errors);
+            RequireString(budget, "ownerTaskId", path, errors, "APH-501");
+            RequireEvidence(budget, "requiredEvidence", path, errors, requiredEvidence);
         }
 
         private static void ValidateFrameBudgets(JObject frames, List<string> errors)
@@ -268,8 +350,10 @@ namespace Game.Editor
                 RequireBoolean(knownApk, "isReleaseLimit", knownPath, errors, false);
             }
 
-            ValidatePackageEvidence(apk, path + ".apk", "APH-500", "APH-501", errors);
-            ValidatePackageEvidence(aab, path + ".aab", "APH-500", "APH-501", errors);
+            ValidatePackageBudget(apk, path + ".apk", AcceptedApkBytes, AcceptedApkCommit,
+                AcceptedApkSha256, AcceptedApkEvidenceCommit, AcceptedApkEvidenceSource, errors);
+            ValidatePackageBudget(aab, path + ".aab", AcceptedAabBytes, AcceptedAabCommit,
+                AcceptedAabSha256, AcceptedAabEvidenceCommit, AcceptedAabEvidenceSource, errors);
             ValidateMeasurementEvidence(installed, path + ".installedSize", "releaseLimitBytes",
                 "APH-501", InstalledSizeEvidence, errors);
             ValidateMeasurementEvidence(startup, path + ".startupTime", "p95LimitMs",
@@ -285,23 +369,34 @@ namespace Game.Editor
             }
         }
 
-        private static void ValidatePackageEvidence(
+        private static void ValidatePackageBudget(
             JObject evidence,
             string path,
-            string measurementOwner,
-            string budgetOwner,
+            long acceptedBytes,
+            string exactCommit,
+            string artifactSha256,
+            string evidenceCommit,
+            string evidenceSource,
             List<string> errors)
         {
             if (evidence == null)
                 return;
 
             ValidateSchema(evidence, path, errors,
-                "status", "releaseLimitBytes", "measurementOwnerTaskId", "budgetOwnerTaskId",
-                "requiredEvidence");
-            RequireString(evidence, "status", path, errors, "measurement-required");
-            RequireNull(evidence, "releaseLimitBytes", path, errors);
-            RequireString(evidence, "measurementOwnerTaskId", path, errors, measurementOwner);
-            RequireString(evidence, "budgetOwnerTaskId", path, errors, budgetOwner);
+                "status", "comparison", "unit", "acceptedArtifactBytes", "releaseLimitBytes",
+                "exactCommit", "artifactSha256", "evidenceCommit", "evidenceSource",
+                "measurementOwnerTaskId", "budgetOwnerTaskId", "requiredEvidence");
+            RequireString(evidence, "status", path, errors, "tracked-budget");
+            RequireString(evidence, "comparison", path, errors, "lessThanOrEqual");
+            RequireString(evidence, "unit", path, errors, "bytes");
+            RequireInteger(evidence, "acceptedArtifactBytes", path, errors, acceptedBytes, acceptedBytes);
+            RequireInteger(evidence, "releaseLimitBytes", path, errors, acceptedBytes, acceptedBytes);
+            RequireString(evidence, "exactCommit", path, errors, exactCommit);
+            RequireString(evidence, "artifactSha256", path, errors, artifactSha256);
+            RequireString(evidence, "evidenceCommit", path, errors, evidenceCommit);
+            RequireString(evidence, "evidenceSource", path, errors, evidenceSource);
+            RequireString(evidence, "measurementOwnerTaskId", path, errors, "APH-500");
+            RequireString(evidence, "budgetOwnerTaskId", path, errors, "APH-501");
             RequireEvidence(evidence, "requiredEvidence", path, errors, PackageEvidence);
         }
 

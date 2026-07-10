@@ -5,6 +5,7 @@ using UnityEngine.Rendering;
 using Game.Components;
 using Game.Configs;
 using Game.Authoring;
+using Game.Rendering;
 using Game.Runtime;
 
 namespace Game.Composition
@@ -22,6 +23,7 @@ namespace Game.Composition
         [SerializeField] private Light directionalLight;
         [SerializeField] private Volume globalVolume;
         [SerializeField] private VisualQualityProfileAsset visualQualityProfile;
+        [SerializeField] private StaticMapPresentationManifest staticMapPresentationManifest;
         [SerializeField] private CombinedMeshBaker decorationCombinedMeshBaker;
         [SerializeField] private Transform decorationRoot;
         [SerializeField] private Transform mapBuildingAuthoringRoot;
@@ -51,6 +53,7 @@ namespace Game.Composition
         public Light DirectionalLight => directionalLight;
         public Volume GlobalVolume => globalVolume;
         public VisualQualityProfileAsset VisualQualityProfile => visualQualityProfile;
+        public StaticMapPresentationManifest StaticMapPresentationManifest => staticMapPresentationManifest;
         public CombinedMeshBaker DecorationCombinedMeshBaker => decorationCombinedMeshBaker;
         public Transform DecorationRoot => decorationRoot != null ? decorationRoot : (decorationCombinedMeshBaker != null ? decorationCombinedMeshBaker.transform : null);
         public Transform MapBuildingAuthoringRoot => mapBuildingAuthoringRoot;

@@ -1,6 +1,6 @@
 {
-  "acceptedBaselineVersion": 2,
-  "acceptedAtUtc": "2026-07-09",
+  "acceptedBaselineVersion": 3,
+  "acceptedAtUtc": "2026-07-10",
   "source": "Game.Editor.MatchRuntimeShellSmokeValidation.RunPerformanceRegressionBaseline",
   "editorP95FrameBudgetMs": 50,
   "currentThreadAllocatedBytesBudget": 0,
@@ -11,7 +11,7 @@
   "productBudgets": {
     "taskId": "APH-009",
     "baselineCommit": "ba3da6704",
-    "status": "frozen-initial",
+    "status": "tracked-product-budgets",
     "androidFrameP95AfterWarmup": {
       "comparison": "lessThan",
       "unit": "ms",
@@ -84,6 +84,82 @@
         "runtimeResidencyNotes"
       ]
     },
+    "resourceMemoryBudgets": {
+      "textureMemory": {
+        "status": "measurement-required",
+        "metric": "textureMemoryBytes",
+        "unit": "bytes",
+        "releaseLimitBytes": null,
+        "ownerTaskId": "APH-501",
+        "requiredEvidence": [
+          "exactCommit",
+          "artifactSha256",
+          "deviceProfile",
+          "releaseBuildType",
+          "scenario",
+          "warmupDuration",
+          "sampleDuration",
+          "memoryProfilerCapture",
+          "textureMemoryBytes"
+        ]
+      },
+      "meshMemory": {
+        "status": "measurement-required",
+        "metric": "meshMemoryBytes",
+        "unit": "bytes",
+        "releaseLimitBytes": null,
+        "ownerTaskId": "APH-501",
+        "requiredEvidence": [
+          "exactCommit",
+          "artifactSha256",
+          "deviceProfile",
+          "releaseBuildType",
+          "scenario",
+          "warmupDuration",
+          "sampleDuration",
+          "memoryProfilerCapture",
+          "meshMemoryBytes"
+        ]
+      },
+      "audioMemory": {
+        "status": "measurement-required",
+        "metric": "audioMemoryBytes",
+        "unit": "bytes",
+        "releaseLimitBytes": null,
+        "ownerTaskId": "APH-501",
+        "requiredEvidence": [
+          "exactCommit",
+          "artifactSha256",
+          "deviceProfile",
+          "releaseBuildType",
+          "scenario",
+          "warmupDuration",
+          "sampleDuration",
+          "memoryProfilerCapture",
+          "audioMemoryBytes",
+          "representativePlaybackCoverage"
+        ]
+      },
+      "graphicsDriverMemory": {
+        "status": "measurement-required",
+        "metric": "graphicsDriverMemoryBytes",
+        "unit": "bytes",
+        "releaseLimitBytes": null,
+        "ownerTaskId": "APH-501",
+        "requiredEvidence": [
+          "exactCommit",
+          "artifactSha256",
+          "deviceProfile",
+          "releaseBuildType",
+          "graphicsApi",
+          "scenario",
+          "warmupDuration",
+          "sampleDuration",
+          "memoryProfilerCapture",
+          "graphicsDriverMemoryBytes"
+        ]
+      }
+    },
     "releaseEvidence": {
       "knownProfilerApkBaseline": {
         "status": "baseline-evidence-only-not-release-limit",
@@ -92,8 +168,15 @@
         "isReleaseLimit": false
       },
       "apk": {
-        "status": "measurement-required",
-        "releaseLimitBytes": null,
+        "status": "tracked-budget",
+        "comparison": "lessThanOrEqual",
+        "unit": "bytes",
+        "acceptedArtifactBytes": 463359198,
+        "releaseLimitBytes": 463359198,
+        "exactCommit": "5a49ab8f010674ca8b364af1245fe2902401b305",
+        "artifactSha256": "cb18f212d09ebde206884fd608e94441ce4f34fdc5800017067275f892824f20",
+        "evidenceCommit": "a527e151e9e43a491ba30f4c19a0320dc54faf5c",
+        "evidenceSource": "Design/AgentReports/architecture_performance_android_apk_build_report.json",
         "measurementOwnerTaskId": "APH-500",
         "budgetOwnerTaskId": "APH-501",
         "requiredEvidence": [
@@ -108,8 +191,15 @@
         ]
       },
       "aab": {
-        "status": "measurement-required",
-        "releaseLimitBytes": null,
+        "status": "tracked-budget",
+        "comparison": "lessThanOrEqual",
+        "unit": "bytes",
+        "acceptedArtifactBytes": 426399778,
+        "releaseLimitBytes": 426399778,
+        "exactCommit": "a527e151e9e43a491ba30f4c19a0320dc54faf5c",
+        "artifactSha256": "c03558f2e093277949edf56ba8efd34d347e8f2396be594f8f88bdec5c57ac29",
+        "evidenceCommit": "ddfca3b27c089da512925643933d68ae414cba43",
+        "evidenceSource": "Design/AgentReports/architecture_performance_android_aab_build_report.json",
         "measurementOwnerTaskId": "APH-500",
         "budgetOwnerTaskId": "APH-501",
         "requiredEvidence": [

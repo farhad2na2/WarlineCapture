@@ -48,14 +48,18 @@ Use warmup windows and percentile thresholds. Do not fail a test only because of
 
 ### Tracked Product Budget Authority
 
-`Design/Architecture/performance_regression_accepted_baseline.json` is the authoritative tracked config for both the existing editor regression gate and the initial `APH-009` product budgets. The editor fields remain consumed by `MatchRuntimeShellSmokeValidation`; `productBudgets` records device-tier and release-evidence requirements without converting unmeasured values into invented limits.
+`Design/Architecture/performance_regression_accepted_baseline.json` is the authoritative tracked config for the existing editor regression gate and product budgets established by `APH-009` and `APH-501`. The editor fields remain consumed by `MatchRuntimeShellSmokeValidation`; `productBudgets` records device-tier, package, memory, and release-evidence requirements without converting unmeasured values into invented limits.
 
 - Android p95 frame budgets use an exclusive comparison: less than `33 ms` for baseline/recommended and less than `25 ms` for high-end.
-- The validated same-device peak allocated-memory baseline is `1054-1075 MB`. Acceptance requires at least a 10 percent same-device reduction until `APH-501` replaces the relative target with an approved measured absolute limit.
+- The validated same-device peak allocated-memory baseline is `1054-1075 MB`. Acceptance requires at least a 10 percent same-device reduction. The absolute release limit remains measurement-required because the existing evidence supports the relative comparison but does not establish a product-approved absolute limit.
 - The `APH-008` inventory establishes dependency reachability and selected imported sizes, not simultaneous runtime residency or unload lifetime. Runtime-residency uncertainty remains explicit in the config and requires device evidence.
 - The red Match steady-state GC baseline is `269482` bytes over 300 measured frames after 180 warmup frames. Its acceptance budget remains `1024` bytes.
-- A `measurement-required` status must keep its limit `null`, name a future owning task, and retain its required evidence list. `APH-500` owns APK/AAB BuildReport measurement, `APH-501` owns release package/installed/memory budgets, `APH-803` owns startup device-gate measurement, and `APH-809` owns visual evidence.
+- The clean APH-500 ARM64 IL2CPP release artifacts establish ratcheted package budgets: APK `<= 463359198` bytes and AAB `<= 426399778` bytes. Each tracked package record pins the accepted artifact bytes, exact source commit, SHA-256, BuildReport evidence commit, and evidence path. A dirty, rewritten, or differently identified rebuild cannot silently replace accepted evidence.
+- Installed size, texture memory, mesh memory, audio memory, graphics-driver memory, and the absolute peak allocated-memory limit do not yet have accepted release-device measurements. Their limits remain JSON `null`, owned by `APH-501`, with scenario and profiler evidence requirements. The APH-401 editor audio-residency capture and APH-008 imported/dependency inventory are diagnostic baselines, not Android release-device absolute limits.
+- A `measurement-required` status must keep its limit `null`, name an owning task, and retain its metric-specific evidence list. `APH-501` owns installed/package-memory absolute budgets, `APH-803` owns startup device-gate measurement, and `APH-809` owns visual evidence.
 - The known `443-471 MB` profiler APK range is baseline evidence only. It is not an APK, AAB, installed-size, or release limit.
+
+The budget validator is fail-closed. Unknown or missing schema fields fail validation; active package values must exactly match the accepted identities and limits; measurement-required limits must remain null; and required evidence entries cannot be removed. Tightening an active package limit requires a new accepted clean artifact and a deliberate validator/config update. Loosening requires an approved report explaining the product tradeoff under the ratchet policy.
 
 ## FreezeDetect Role
 

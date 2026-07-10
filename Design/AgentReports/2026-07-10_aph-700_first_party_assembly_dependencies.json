@@ -3,15 +3,15 @@
   "taskId": "APH-700",
   "scope": "Direct dependencies and source-level cross-domain type references for first-party asmdefs under Assets/Game, Assets/Tests, and Assets/Editor.",
   "determinismContract": "No timestamp or mutable VCS state; ordinal path ordering, normalized LF output, and a content-derived source fingerprint.",
-  "sourceFingerprintSha256": "77383055a5e08b7b28d48f695ea1ca072a7a21c0cdd4c2d5908040b22c47e08f",
+  "sourceFingerprintSha256": "5e7de0cba840cb894f7a77f244dce6e69e196963eef1504c98a023d80f7502eb",
   "summary": {
     "assemblyCount": 18,
     "firstPartyEdgeCount": 79,
     "externalReferenceCount": 82,
-    "sourceFileCount": 1132,
-    "declaredTypeCount": 2462,
-    "resolvedCrossDomainTypeOccurrenceCount": 29641,
-    "distinctCrossDomainTypeReferenceCount": 2604,
+    "sourceFileCount": 1136,
+    "declaredTypeCount": 2467,
+    "resolvedCrossDomainTypeOccurrenceCount": 29674,
+    "distinctCrossDomainTypeReferenceCount": 2607,
     "ambiguousTypeTokenOccurrenceCount": 39,
     "unownedScopedSourceFileCount": 0
   },
@@ -65,8 +65,8 @@
       "name": "Game.Editor",
       "asmdefPath": "Assets/Game/Scripts/Editor/Game.Editor.asmdef",
       "asmdefGuid": "f904b4f32c8634430b43f82380f2405f",
-      "sourceFileCount": 81,
-      "declaredTypeCount": 116,
+      "sourceFileCount": 83,
+      "declaredTypeCount": 119,
       "firstPartyDependencyCount": 14,
       "externalDependencyCount": 10
     },
@@ -119,8 +119,8 @@
       "name": "Game.Tests.Editor",
       "asmdefPath": "Assets/Tests/Editor/Game.Tests.Editor.asmdef",
       "asmdefGuid": "75d949434cfb844baba7f313bdfe96db",
-      "sourceFileCount": 224,
-      "declaredTypeCount": 230,
+      "sourceFileCount": 226,
+      "declaredTypeCount": 232,
       "firstPartyDependencyCount": 15,
       "externalDependencyCount": 9
     },
@@ -798,9 +798,9 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Composition/Game.Composition.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Rendering/Game.Rendering.asmdef",
       "declaredReference": "Game.Rendering",
-      "resolvedTypeOccurrenceCount": 13,
-      "distinctResolvedTypeCount": 5,
-      "referencingSourceFileCount": 2,
+      "resolvedTypeOccurrenceCount": 15,
+      "distinctResolvedTypeCount": 6,
+      "referencingSourceFileCount": 3,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Composition",
@@ -833,6 +833,17 @@
           "sourceFileCount": 1,
           "sourceFiles": [
             "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Composition",
+          "targetAssembly": "Game.Rendering",
+          "fullTypeName": "Game.Rendering.StaticMapPresentationManifest",
+          "typeName": "StaticMapPresentationManifest",
+          "occurrenceCount": 2,
+          "sourceFileCount": 1,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Composition/MatchSceneView.cs"
           ]
         },
         {
@@ -1869,17 +1880,17 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Editor/Game.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Composition/Game.Composition.asmdef",
       "declaredReference": "Game.Composition",
-      "resolvedTypeOccurrenceCount": 72,
+      "resolvedTypeOccurrenceCount": 76,
       "distinctResolvedTypeCount": 2,
-      "referencingSourceFileCount": 10,
+      "referencingSourceFileCount": 11,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Editor",
           "targetAssembly": "Game.Composition",
           "fullTypeName": "Game.Composition.MatchSceneView",
           "typeName": "MatchSceneView",
-          "occurrenceCount": 45,
-          "sourceFileCount": 9,
+          "occurrenceCount": 49,
+          "sourceFileCount": 10,
           "sourceFiles": [
             "Assets/Game/Scripts/Editor/CanvasMatchFpsValidation.cs",
             "Assets/Game/Scripts/Editor/CanvasMatchRenderedGeometryAudit.cs",
@@ -1889,6 +1900,7 @@
             "Assets/Game/Scripts/Editor/MobileVisualQualityPlayModeCapture.cs",
             "Assets/Game/Scripts/Editor/RuntimeCitySpawnerStep13Validation.cs",
             "Assets/Game/Scripts/Editor/StaticMapPresentationBaker.cs",
+            "Assets/Game/Scripts/Editor/StaticMapPresentationSceneWiring.cs",
             "Assets/Game/Scripts/Editor/TacticalFollowAttackCinematicPlayModeValidation.cs"
           ]
         },
@@ -2061,20 +2073,22 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Editor/Game.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Rendering/Game.Rendering.asmdef",
       "declaredReference": "Game.Rendering",
-      "resolvedTypeOccurrenceCount": 23,
+      "resolvedTypeOccurrenceCount": 29,
       "distinctResolvedTypeCount": 4,
-      "referencingSourceFileCount": 2,
+      "referencingSourceFileCount": 4,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Editor",
           "targetAssembly": "Game.Rendering",
           "fullTypeName": "Game.Rendering.StaticMapPresentationManifest",
           "typeName": "StaticMapPresentationManifest",
-          "occurrenceCount": 8,
-          "sourceFileCount": 2,
+          "occurrenceCount": 14,
+          "sourceFileCount": 4,
           "sourceFiles": [
+            "Assets/Game/Scripts/Editor/StaticMapAndroidBuildSceneResolver.cs",
             "Assets/Game/Scripts/Editor/StaticMapPresentationBaker.cs",
-            "Assets/Game/Scripts/Editor/StaticMapPresentationOutputOwnership.cs"
+            "Assets/Game/Scripts/Editor/StaticMapPresentationOutputOwnership.cs",
+            "Assets/Game/Scripts/Editor/StaticMapPresentationSceneWiring.cs"
           ]
         },
         {
@@ -4022,9 +4036,9 @@
       "sourceAsmdefPath": "Assets/Tests/Editor/Game.Tests.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Composition/Game.Composition.asmdef",
       "declaredReference": "Game.Composition",
-      "resolvedTypeOccurrenceCount": 47,
+      "resolvedTypeOccurrenceCount": 51,
       "distinctResolvedTypeCount": 9,
-      "referencingSourceFileCount": 9,
+      "referencingSourceFileCount": 10,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Tests.Editor",
@@ -4043,24 +4057,25 @@
         {
           "sourceAssembly": "Game.Tests.Editor",
           "targetAssembly": "Game.Composition",
+          "fullTypeName": "Game.Composition.MatchSceneView",
+          "typeName": "MatchSceneView",
+          "occurrenceCount": 11,
+          "sourceFileCount": 3,
+          "sourceFiles": [
+            "Assets/Tests/Editor/AudioPlaybackPresentationSceneBindingTests.cs",
+            "Assets/Tests/Editor/MatchSceneReferenceSceneSystemHelperTests.cs",
+            "Assets/Tests/Editor/StaticMapPresentationSceneWiringTests.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Tests.Editor",
+          "targetAssembly": "Game.Composition",
           "fullTypeName": "Game.Composition.BuildingUiCommandAdapter",
           "typeName": "BuildingUiCommandAdapter",
           "occurrenceCount": 10,
           "sourceFileCount": 1,
           "sourceFiles": [
             "Assets/Tests/Editor/BuildDrawerCatalogQueryUiSystemHelperTests.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Tests.Editor",
-          "targetAssembly": "Game.Composition",
-          "fullTypeName": "Game.Composition.MatchSceneView",
-          "typeName": "MatchSceneView",
-          "occurrenceCount": 7,
-          "sourceFileCount": 2,
-          "sourceFiles": [
-            "Assets/Tests/Editor/AudioPlaybackPresentationSceneBindingTests.cs",
-            "Assets/Tests/Editor/MatchSceneReferenceSceneSystemHelperTests.cs"
           ]
         },
         {
@@ -4297,9 +4312,9 @@
       "sourceAsmdefPath": "Assets/Tests/Editor/Game.Tests.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Editor/Game.Editor.asmdef",
       "declaredReference": "Game.Editor",
-      "resolvedTypeOccurrenceCount": 92,
-      "distinctResolvedTypeCount": 21,
-      "referencingSourceFileCount": 10,
+      "resolvedTypeOccurrenceCount": 97,
+      "distinctResolvedTypeCount": 22,
+      "referencingSourceFileCount": 11,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Tests.Editor",
@@ -4392,23 +4407,23 @@
         {
           "sourceAssembly": "Game.Tests.Editor",
           "targetAssembly": "Game.Editor",
+          "fullTypeName": "Game.Editor.StaticMapAndroidBuildManifestSnapshot",
+          "typeName": "StaticMapAndroidBuildManifestSnapshot",
+          "occurrenceCount": 5,
+          "sourceFileCount": 1,
+          "sourceFiles": [
+            "Assets/Tests/Editor/StaticMapAndroidBuildSceneResolverTests.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Tests.Editor",
+          "targetAssembly": "Game.Editor",
           "fullTypeName": "Game.Editor.AndroidPackedAssetContribution",
           "typeName": "AndroidPackedAssetContribution",
           "occurrenceCount": 4,
           "sourceFileCount": 1,
           "sourceFiles": [
             "Assets/Tests/Editor/AndroidBuildReportGeneratorTests.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Tests.Editor",
-          "targetAssembly": "Game.Editor",
-          "fullTypeName": "Game.Editor.MatchGcAllocationCallstackCapture",
-          "typeName": "MatchGcAllocationCallstackCapture",
-          "occurrenceCount": 4,
-          "sourceFileCount": 1,
-          "sourceFiles": [
-            "Assets/Tests/Editor/MatchGcAllocationCallstackCaptureTests.cs"
           ]
         }
       ]
@@ -4419,9 +4434,9 @@
       "sourceAsmdefPath": "Assets/Tests/Editor/Game.Tests.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Rendering/Game.Rendering.asmdef",
       "declaredReference": "Game.Rendering",
-      "resolvedTypeOccurrenceCount": 203,
-      "distinctResolvedTypeCount": 47,
-      "referencingSourceFileCount": 9,
+      "resolvedTypeOccurrenceCount": 215,
+      "distinctResolvedTypeCount": 48,
+      "referencingSourceFileCount": 11,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Tests.Editor",
@@ -4433,6 +4448,20 @@
           "sourceFiles": [
             "Assets/Tests/Editor/UnitRenderBudgetPerformanceValidation.cs",
             "Assets/Tests/Editor/UnitRenderBudgetSystemTests.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Tests.Editor",
+          "targetAssembly": "Game.Rendering",
+          "fullTypeName": "Game.Rendering.StaticMapPresentationManifest",
+          "typeName": "StaticMapPresentationManifest",
+          "occurrenceCount": 15,
+          "sourceFileCount": 4,
+          "sourceFiles": [
+            "Assets/Tests/Editor/StaticMapAndroidBuildSceneResolverTests.cs",
+            "Assets/Tests/Editor/StaticMapPresentationOutputOwnershipTests.cs",
+            "Assets/Tests/Editor/StaticMapPresentationSceneWiringTests.cs",
+            "Assets/Tests/Editor/StaticMapPresentationStructuralValidationTests.cs"
           ]
         },
         {
@@ -4456,18 +4485,6 @@
           "sourceFileCount": 1,
           "sourceFiles": [
             "Assets/Tests/Editor/VehicleVisualAdornmentsSystemTests.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Tests.Editor",
-          "targetAssembly": "Game.Rendering",
-          "fullTypeName": "Game.Rendering.StaticMapPresentationManifest",
-          "typeName": "StaticMapPresentationManifest",
-          "occurrenceCount": 11,
-          "sourceFileCount": 2,
-          "sourceFiles": [
-            "Assets/Tests/Editor/StaticMapPresentationOutputOwnershipTests.cs",
-            "Assets/Tests/Editor/StaticMapPresentationStructuralValidationTests.cs"
           ]
         },
         {
@@ -4517,23 +4534,23 @@
         {
           "sourceAssembly": "Game.Tests.Editor",
           "targetAssembly": "Game.Rendering",
+          "fullTypeName": "Game.Rendering.UnitRenderBudgetSnapshot.Snapshot",
+          "typeName": "Snapshot",
+          "occurrenceCount": 8,
+          "sourceFileCount": 1,
+          "sourceFiles": [
+            "Assets/Tests/Editor/StaticMapAndroidBuildSceneResolverTests.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Tests.Editor",
+          "targetAssembly": "Game.Rendering",
           "fullTypeName": "Game.Rendering.RuntimeCameraReferenceSystem",
           "typeName": "RuntimeCameraReferenceSystem",
           "occurrenceCount": 6,
           "sourceFileCount": 1,
           "sourceFiles": [
             "Assets/Tests/Editor/RuntimeCameraReferenceSystemTests.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Tests.Editor",
-          "targetAssembly": "Game.Rendering",
-          "fullTypeName": "Game.Rendering.StaticMapChunkBatchKey",
-          "typeName": "StaticMapChunkBatchKey",
-          "occurrenceCount": 6,
-          "sourceFileCount": 1,
-          "sourceFiles": [
-            "Assets/Tests/Editor/StaticMapChunkBatchingPolicyTests.cs"
           ]
         }
       ]

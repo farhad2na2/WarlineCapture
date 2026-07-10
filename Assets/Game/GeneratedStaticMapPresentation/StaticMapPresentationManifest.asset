@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Rendering::Game.Rendering.StaticMapPresentationManifest
   schemaVersion: 1
   canonicalScenePath: Assets/Game/Scenes/Match.unity
-  canonicalSceneDependencyHash: ae9030424a4337d17130d61c3804bf44
+  canonicalSceneDependencyHash: e3098a74d7b13c076cfddb3248b3d049
   chunkSize: 32
   contentHash: 393591d2855b764bce260888e6f5fa20
   chunks:

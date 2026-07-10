@@ -18,10 +18,11 @@ public sealed class PerformanceProductBudgetValidatorTests
         {
             PerformanceProductBudgetValidatorTests tests = new();
             tests.TrackedConfig_HasStrictSchemaAndApprovedThresholds();
+            tests.PackageBudgets_ArePinnedToAcceptedCleanArtifacts();
             tests.MeasurementRequiredLimits_AreNullAndOwned();
             tests.Validator_RejectsSilentBudgetLoosening();
             tests.Validator_RejectsSchemaDriftMissingOwnershipAndEvidence();
-            Debug.Log("[PerformanceProductBudgetValidation] result=Passed tests=4");
+            Debug.Log("[PerformanceProductBudgetValidation] result=Passed tests=5");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -39,7 +40,7 @@ public sealed class PerformanceProductBudgetValidatorTests
         PerformanceProductBudgetValidator.ValidateJson(json);
 
         JsonObject root = ParseConfig(json);
-        Assert.AreEqual(2, root["acceptedBaselineVersion"].GetValue<int>());
+        Assert.AreEqual(3, root["acceptedBaselineVersion"].GetValue<int>());
         Assert.AreEqual(50d, root["editorP95FrameBudgetMs"].GetValue<double>());
 
         JsonNode frames = root["productBudgets"]["androidFrameP95AfterWarmup"];
@@ -73,11 +74,33 @@ public sealed class PerformanceProductBudgetValidatorTests
     }
 
     [Test]
+    public void PackageBudgets_ArePinnedToAcceptedCleanArtifacts()
+    {
+        JsonNode release = ParseConfig(ReadConfig())["productBudgets"]["releaseEvidence"];
+
+        AssertTrackedPackageBudget(
+            release["apk"],
+            463359198L,
+            "5a49ab8f010674ca8b364af1245fe2902401b305",
+            "cb18f212d09ebde206884fd608e94441ce4f34fdc5800017067275f892824f20",
+            "a527e151e9e43a491ba30f4c19a0320dc54faf5c",
+            "Design/AgentReports/architecture_performance_android_apk_build_report.json");
+        AssertTrackedPackageBudget(
+            release["aab"],
+            426399778L,
+            "a527e151e9e43a491ba30f4c19a0320dc54faf5c",
+            "c03558f2e093277949edf56ba8efd34d347e8f2396be594f8f88bdec5c57ac29",
+            "ddfca3b27c089da512925643933d68ae414cba43",
+            "Design/AgentReports/architecture_performance_android_aab_build_report.json");
+    }
+
+    [Test]
     public void MeasurementRequiredLimits_AreNullAndOwned()
     {
         JsonObject root = ParseConfig(ReadConfig());
         JsonNode productBudgets = root["productBudgets"];
         JsonNode release = productBudgets["releaseEvidence"];
+        JsonNode resourceMemory = productBudgets["resourceMemoryBudgets"];
 
         AssertMeasurementRequired(
             productBudgets["peakAllocatedMemory"]["target"],
@@ -87,19 +110,22 @@ public sealed class PerformanceProductBudgetValidatorTests
         Assert.AreEqual(
             "APH-501",
             productBudgets["peakAllocatedMemory"]["runtimeResidency"]["ownerTaskId"].GetValue<string>());
-        AssertMeasurementRequired(release["apk"], "releaseLimitBytes", "measurementOwnerTaskId", "APH-500");
-        Assert.AreEqual("APH-501", release["apk"]["budgetOwnerTaskId"].GetValue<string>());
-        AssertMeasurementRequired(release["aab"], "releaseLimitBytes", "measurementOwnerTaskId", "APH-500");
-        Assert.AreEqual("APH-501", release["aab"]["budgetOwnerTaskId"].GetValue<string>());
         AssertMeasurementRequired(release["installedSize"], "releaseLimitBytes", "ownerTaskId", "APH-501");
         AssertMeasurementRequired(release["startupTime"], "p95LimitMs", "ownerTaskId", "APH-803");
         Assert.AreEqual("APH-809", release["visualQuality"]["ownerTaskId"].GetValue<string>());
+
+        foreach (string category in new[] { "textureMemory", "meshMemory", "audioMemory", "graphicsDriverMemory" })
+            AssertMeasurementRequired(resourceMemory[category], "releaseLimitBytes", "ownerTaskId", "APH-501");
 
         Assert.That(EvidenceValues(release["apk"]), Does.Contain("artifactBytes"));
         Assert.That(EvidenceValues(release["aab"]), Does.Contain("buildReportIncludedAssets"));
         Assert.That(EvidenceValues(release["installedSize"]), Does.Contain("installedBytes"));
         Assert.That(EvidenceValues(release["startupTime"]), Does.Contain("coldStartSamples"));
         Assert.That(EvidenceValues(release["visualQuality"]), Does.Contain("sameCameraBeforeAfter"));
+        Assert.That(EvidenceValues(resourceMemory["textureMemory"]), Does.Contain("textureMemoryBytes"));
+        Assert.That(EvidenceValues(resourceMemory["meshMemory"]), Does.Contain("meshMemoryBytes"));
+        Assert.That(EvidenceValues(resourceMemory["audioMemory"]), Does.Contain("representativePlaybackCoverage"));
+        Assert.That(EvidenceValues(resourceMemory["graphicsDriverMemory"]), Does.Contain("graphicsApi"));
     }
 
     [Test]
@@ -118,7 +144,9 @@ public sealed class PerformanceProductBudgetValidatorTests
             ["productBudgets.androidFrameP95AfterWarmup.recommended"] = 33.01d,
             ["productBudgets.androidFrameP95AfterWarmup.highEnd"] = 25.01d,
             ["productBudgets.matchSteadyStateGc.acceptanceBudgetBytes"] = 1025,
-            ["productBudgets.peakAllocatedMemory.target.requiredReductionPercent"] = 9.99d
+            ["productBudgets.peakAllocatedMemory.target.requiredReductionPercent"] = 9.99d,
+            ["productBudgets.releaseEvidence.apk.releaseLimitBytes"] = 463359199L,
+            ["productBudgets.releaseEvidence.aab.releaseLimitBytes"] = 426399779L
         };
 
         foreach (KeyValuePair<string, JsonNode> mutation in mutations)
@@ -146,10 +174,17 @@ public sealed class PerformanceProductBudgetValidatorTests
         Assert.Throws<InvalidDataException>(
             () => PerformanceProductBudgetValidator.ValidateJson(missingOwner.ToJsonString()));
 
-        JsonObject inventedLimit = ParseConfig(json);
-        inventedLimit["productBudgets"]["releaseEvidence"]["apk"]["releaseLimitBytes"] = 500000000;
+        JsonObject substitutedArtifact = ParseConfig(json);
+        substitutedArtifact["productBudgets"]["releaseEvidence"]["apk"]["artifactSha256"] =
+            new string('0', 64);
         Assert.Throws<InvalidDataException>(
-            () => PerformanceProductBudgetValidator.ValidateJson(inventedLimit.ToJsonString()));
+            () => PerformanceProductBudgetValidator.ValidateJson(substitutedArtifact.ToJsonString()));
+
+        JsonObject inventedMemoryLimit = ParseConfig(json);
+        inventedMemoryLimit["productBudgets"]["resourceMemoryBudgets"]
+            ["textureMemory"]["releaseLimitBytes"] = 1;
+        Assert.Throws<InvalidDataException>(
+            () => PerformanceProductBudgetValidator.ValidateJson(inventedMemoryLimit.ToJsonString()));
 
         JsonObject missingEvidence = ParseConfig(json);
         JsonArray visualEvidence = missingEvidence["productBudgets"]["releaseEvidence"]
@@ -161,6 +196,27 @@ public sealed class PerformanceProductBudgetValidatorTests
         visualEvidence.RemoveAt(reviewerDecisionIndex);
         Assert.Throws<InvalidDataException>(
             () => PerformanceProductBudgetValidator.ValidateJson(missingEvidence.ToJsonString()));
+    }
+
+    private static void AssertTrackedPackageBudget(
+        JsonNode value,
+        long acceptedBytes,
+        string exactCommit,
+        string artifactSha256,
+        string evidenceCommit,
+        string evidenceSource)
+    {
+        Assert.AreEqual("tracked-budget", value["status"].GetValue<string>());
+        Assert.AreEqual("lessThanOrEqual", value["comparison"].GetValue<string>());
+        Assert.AreEqual("bytes", value["unit"].GetValue<string>());
+        Assert.AreEqual(acceptedBytes, value["acceptedArtifactBytes"].GetValue<long>());
+        Assert.AreEqual(acceptedBytes, value["releaseLimitBytes"].GetValue<long>());
+        Assert.AreEqual(exactCommit, value["exactCommit"].GetValue<string>());
+        Assert.AreEqual(artifactSha256, value["artifactSha256"].GetValue<string>());
+        Assert.AreEqual(evidenceCommit, value["evidenceCommit"].GetValue<string>());
+        Assert.AreEqual(evidenceSource, value["evidenceSource"].GetValue<string>());
+        Assert.AreEqual("APH-500", value["measurementOwnerTaskId"].GetValue<string>());
+        Assert.AreEqual("APH-501", value["budgetOwnerTaskId"].GetValue<string>());
     }
 
     private static void AssertMeasurementRequired(

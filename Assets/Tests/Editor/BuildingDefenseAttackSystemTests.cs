@@ -43,6 +43,8 @@ public sealed class BuildingDefenseAttackSystemTests
             passed++;
             tests.BuildingDefenseSource_AuditsSingleCompletionAndNamedEntityManagerBoundaries();
             passed++;
+            tests.BuildingDefenseSource_DefinesStableZeroAllocationPhaseMarkers();
+            passed++;
 
             Debug.Log($"[BuildingDefenseAttackSystemValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -447,6 +449,50 @@ public sealed class BuildingDefenseAttackSystemTests
         StringAssert.Contains("SystemAPI.GetComponentLookup<UnitHealth>()", source);
     }
 
+    [Test]
+    public void BuildingDefenseSource_DefinesStableZeroAllocationPhaseMarkers()
+    {
+        string source = ReadBuildingDefenseSource();
+        string captureSource = ReadCanvasMatchFpsValidationSource();
+
+        StringAssert.Contains("using Unity.Profiling;", source);
+        StringAssert.Contains(
+            "RuntimeHelpers.RunClassConstructor(typeof(BuildingDefenseAttackSystem).TypeHandle);",
+            captureSource,
+            "The capture runner must register defense markers before opening the Match scene.");
+        Assert.AreEqual(
+            3,
+            CountOccurrences(source, "private static readonly ProfilerMarker"),
+            "Building defense must expose exactly the three APH-210 phase markers.");
+
+        string[] markerNames =
+        {
+            "BuildingDefenseAttackSystem.TargetCollection",
+            "BuildingDefenseAttackSystem.TargetSelection",
+            "BuildingDefenseAttackSystem.EffectApplication"
+        };
+        for (int i = 0; i < markerNames.Length; i++)
+        {
+            Assert.AreEqual(
+                1,
+                CountOccurrences(source, $"new(\"{markerNames[i]}\")"),
+                $"Profiler marker `{markerNames[i]}` must be a single stable static instance.");
+            Assert.AreEqual(
+                1,
+                CountOccurrences(captureSource, $"\"{markerNames[i]}\""),
+                $"Canvas Match capture must record `{markerNames[i]}` for comparable APH-210 metrics.");
+        }
+
+        Assert.AreEqual(1, CountOccurrences(source, "using (TargetCollectionMarker.Auto())"));
+        Assert.AreEqual(1, CountOccurrences(source, "using (TargetSelectionMarker.Auto())"));
+        Assert.AreEqual(
+            2,
+            CountOccurrences(source, "using (EffectApplicationMarker.Auto())"),
+            "Effect timing must cover both immediate shot effects and deferred ECB playback.");
+        StringAssert.DoesNotContain("Profiler.BeginSample", source);
+        StringAssert.DoesNotContain("new ProfilerMarker", source);
+    }
+
     private static string ReadBuildingDefenseSource()
     {
         string sourcePath = Path.Combine(
@@ -456,6 +502,18 @@ public sealed class BuildingDefenseAttackSystemTests
             "Systems",
             "BuildingDefenseAttackSystem.cs");
         Assert.IsTrue(File.Exists(sourcePath), $"Missing building-defense source at {sourcePath}.");
+        return File.ReadAllText(sourcePath);
+    }
+
+    private static string ReadCanvasMatchFpsValidationSource()
+    {
+        string sourcePath = Path.Combine(
+            Application.dataPath,
+            "Game",
+            "Scripts",
+            "Editor",
+            "CanvasMatchFpsValidation.cs");
+        Assert.IsTrue(File.Exists(sourcePath), $"Missing Canvas Match capture source at {sourcePath}.");
         return File.ReadAllText(sourcePath);
     }
 

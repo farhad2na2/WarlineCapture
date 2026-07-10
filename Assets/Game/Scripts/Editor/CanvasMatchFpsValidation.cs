@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -74,6 +75,9 @@ namespace Game.Editor
             "BuildingPlacementRuntimeTick.UpdateRoadBarrierDoors",
             "BuildingPlacementRuntimeTick.FlushPendingMarkerRefresh",
             "BuildingPlacementRuntimeTick.UpdateInput",
+            "BuildingDefenseAttackSystem.TargetCollection",
+            "BuildingDefenseAttackSystem.TargetSelection",
+            "BuildingDefenseAttackSystem.EffectApplication",
             "Default World Game.Runtime.UnitMotionAudioSystem",
             "Default World Game.Runtime.AudioCooldownSystem",
             "Default World Game.Runtime.ResourceExchangeQueueTickSystem",
@@ -112,6 +116,7 @@ namespace Game.Editor
                 rawProfilerCaptureStarted = false;
                 rawProfilerCapturePath = Environment.GetEnvironmentVariable("WARLINE_CANVAS_MATCH_FPS_CAPTURE_PATH") ??
                     "/private/tmp/warline-canvas-match-fps-capture";
+                RuntimeHelpers.RunClassConstructor(typeof(BuildingDefenseAttackSystem).TypeHandle);
                 StartMarkerRecorders();
 
                 EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);

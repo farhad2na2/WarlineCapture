@@ -1,6 +1,7 @@
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Profiling;
 using Unity.Transforms;
 using Game.Components;
 
@@ -13,6 +14,12 @@ namespace Game.Runtime
         private const float DamageHealthBarVisibleSeconds = 2f;
         private const double TargetAcquisitionIntervalSeconds = 0.12d;
         private const int InitialTargetScratchCapacity = 1024;
+        private static readonly ProfilerMarker TargetCollectionMarker =
+            new("BuildingDefenseAttackSystem.TargetCollection");
+        private static readonly ProfilerMarker TargetSelectionMarker =
+            new("BuildingDefenseAttackSystem.TargetSelection");
+        private static readonly ProfilerMarker EffectApplicationMarker =
+            new("BuildingDefenseAttackSystem.EffectApplication");
         private NativeList<TargetCandidate> _targetCandidates;
         private double _nextTargetAcquisitionTime;
 
@@ -76,23 +83,26 @@ namespace Game.Runtime
             NativeArray<TargetCandidate> targetCandidates = default;
             if (refreshTargets)
             {
-                _nextTargetAcquisitionTime = SystemAPI.Time.ElapsedTime + TargetAcquisitionIntervalSeconds;
-                _targetCandidates.Clear();
-                foreach (var (healthRef, factionRef, transformRef, entity) in
-                         SystemAPI.Query<RefRO<UnitHealth>, RefRO<Faction>, RefRO<LocalTransform>>()
-                             .WithNone<UnitAirMovement, DebugFireTargetTag>()
-                             .WithEntityAccess())
+                using (TargetCollectionMarker.Auto())
                 {
-                    _targetCandidates.Add(new TargetCandidate
+                    _nextTargetAcquisitionTime = SystemAPI.Time.ElapsedTime + TargetAcquisitionIntervalSeconds;
+                    _targetCandidates.Clear();
+                    foreach (var (healthRef, factionRef, transformRef, entity) in
+                             SystemAPI.Query<RefRO<UnitHealth>, RefRO<Faction>, RefRO<LocalTransform>>()
+                                 .WithNone<UnitAirMovement, DebugFireTargetTag>()
+                                 .WithEntityAccess())
                     {
-                        Entity = entity,
-                        Health = healthRef.ValueRO,
-                        Faction = factionRef.ValueRO,
-                        Transform = transformRef.ValueRO
-                    });
-                }
+                        _targetCandidates.Add(new TargetCandidate
+                        {
+                            Entity = entity,
+                            Health = healthRef.ValueRO,
+                            Faction = factionRef.ValueRO,
+                            Transform = transformRef.ValueRO
+                        });
+                    }
 
-                targetCandidates = _targetCandidates.AsArray();
+                    targetCandidates = _targetCandidates.AsArray();
+                }
             }
 
             var ecb = new EntityCommandBuffer(Allocator.Temp);
@@ -115,17 +125,20 @@ namespace Game.Runtime
 
                 if (refreshTargets)
                 {
-                    FindBestTargets(
-                        targetCandidates,
-                        entity,
-                        factionRef.ValueRO.Id,
-                        transformRef.ValueRO.Position,
-                        weapon.Range,
-                        out Entity target0,
-                        out Entity target1,
-                        out Entity target2,
-                        out Entity target3);
-                    AssignTargets(slotBuffer, slotCount, target0, target1, target2, target3);
+                    using (TargetSelectionMarker.Auto())
+                    {
+                        FindBestTargets(
+                            targetCandidates,
+                            entity,
+                            factionRef.ValueRO.Id,
+                            transformRef.ValueRO.Position,
+                            weapon.Range,
+                            out Entity target0,
+                            out Entity target1,
+                            out Entity target2,
+                            out Entity target3);
+                        AssignTargets(slotBuffer, slotCount, target0, target1, target2, target3);
+                    }
                 }
 
                 for (int i = 0; i < slotCount; i++)
@@ -156,24 +169,28 @@ namespace Game.Runtime
                     slot.ShotCounter++;
                     slotBuffer[i] = slot;
 
-                    FireShot(
-                        em,
-                        ecb,
-                        entity,
-                        target,
-                        transformRef.ValueRO.Position,
-                        weapon,
-                        slot.ShotCounter,
-                        ref traceRef.ValueRW,
-                        now,
-                        ref pendingTraceTargetAdds,
-                        ref pendingRecentAttackerAdds,
-                        ref pendingHealthBarVisibilityAdds,
-                        ref directAccess);
+                    using (EffectApplicationMarker.Auto())
+                    {
+                        FireShot(
+                            em,
+                            ecb,
+                            entity,
+                            target,
+                            transformRef.ValueRO.Position,
+                            weapon,
+                            slot.ShotCounter,
+                            ref traceRef.ValueRW,
+                            now,
+                            ref pendingTraceTargetAdds,
+                            ref pendingRecentAttackerAdds,
+                            ref pendingHealthBarVisibilityAdds,
+                            ref directAccess);
+                    }
                 }
             }
 
-            ecb.Playback(em);
+            using (EffectApplicationMarker.Auto())
+                ecb.Playback(em);
             ecb.Dispose();
             pendingTraceTargetAdds.Dispose();
             pendingRecentAttackerAdds.Dispose();

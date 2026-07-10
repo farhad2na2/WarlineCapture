@@ -6,6 +6,10 @@ Status: Active high-level narrative authority
 
 Scope: Fiction, characters, factions, campaign arc, mission story beats, tone, and narrative guardrails. This is not an implementation plan or dialogue script.
 
+Upstream authority: `AAA_Mobile_Game_Design_Document_v0_2.md`.
+
+Direct consumers: `First_Player_Experience_And_Story_Onboarding_Design.md`, `Narrative_Presentation_And_Cutscene_Design.md`, `Gameplay_North_Star_And_Content_Grammar.md`, `Level_And_Mission_Content_Plan.md`, `SagaChapters/README.md`, and later character, dialogue, story-art, and mission implementation plans.
+
 ## Authority And Working Names
 
 This document is the narrative source of truth for the first WarlineCapture Campaign. It is subordinate only to `AAA_Mobile_Game_Design_Document_v0_2.md` for product direction and should be read before authoring missions, cutscenes, character art, dialogue, briefings, or rewards.

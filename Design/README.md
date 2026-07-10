@@ -2,6 +2,8 @@
 
 Date: 2026-07-10
 
+Status: Active design index and document-connection authority
+
 This folder is the source of truth for WarlineCapture product design, gameplay planning, UI/UX implementation, visual targets, audio direction, monetization planning, marketing asset workflow, and the active 3D single-map production direction.
 
 ## Current Alignment
@@ -28,6 +30,7 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - FTUE and assistant: `FTUE_And_Command_Assistant_Design.md` defines the reusable ARIA command assistant, Chapter 1 FTUE flow, contextual recommendations, and safe assistant control takeover model. `ARIA_Assistant_ECS_Design.md` is the current assistant architecture and naming contract for match-header ARIA, panel goals/recommendations, read-aloud alerts, bounded control, ECS data ownership, and no service/provider/controller drift. The ECS vertical slice is now implemented for the match HUD header/panel, `Show Me`, `Do It`, bounded `Give Control`, `Stop`, prioritized alerts/reports, narration subtitle fallback, assistant settings, and validation/performance gates. `AssistantPanel_M01_Implementation_Contract.md` is the historical support/UI/gameplay handoff for `PREFAB-05_AssistantPanel` and M01 ARIA recommendation states; use the ECS design and tracker when it conflicts with older service/provider/controller wording. `Architecture/aria_assistant_ecs_implementation_tracker.md` is the implementation and validation source.
 - Agent coordination: `Agent_Coordination_Workflow.md` defines PM handoff, validation, cross-lane sync, tracking workflow, lane ownership, and commit/push rules for agents.
 - Gameplay architecture: `Architecture/gameplay_solid_ecs_contract.md` defines the SOLID/ECS runtime contract, bootstrap responsibility boundaries, service/logging rules, and no-new-drift guardrails.
+- Architecture/performance hardening: `Architecture/architecture_performance_hardening_implementation_tracker.md` is the active execution and evidence source for the 2026-07-09 architecture/performance audit. Do not copy its transient progress or red-gate state into static design summaries.
 - Architecture visuals: `Architecture/ArchitectureOverview.svg` is the high-level code architecture map. The detailed split diagrams cover assembly boundaries, runtime lifecycle, ECS data flow, UI shell, performance hot paths, and guardrails.
 - Performance regression: `Architecture/performance_regression_contract.md` defines the structured-metrics, budget, FreezeDetect, and hot-path rules for preventing new performance regressions.
 - Designer workflow: `Designer_Role_And_Documentation_Workflow.md` defines the Designer lane for README/design-index clarity, source-of-truth ordering, terminology alignment, product/design coherence, and documentation pruning recommendations.
@@ -40,6 +43,42 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - Main menu visual direction: `UIUX_MainMenu_Visual_Contract.md` now points at the command-base style with Campaign, Operations, Skirmish, Store, Commander, Settings, Credits, Supplies, Command, and Deploy Operation.
 - Economy and rewards are locked by `Economy_Reward_Design.md`. Monetization and marketing claims use the same canonical resources, reward types, and disabled purchase states as the UI/gameplay alignment docs.
 - Field logistics: `Field_Logistics_Oil_Fuel_Design.md` formalizes the existing Oil Pump, Oil Refinery, Fuel Bladder, oil truck, and tanker truck configs as a tactical Oil -> Fuel logistics loop for base-building, vehicle, air, and Skirmish missions. `Automated_Fuel_Logistics_Design.md` defines the automation model: tray trucks and tankers work without direct micro, Fuel becomes usable only after delivery to storage, and vehicles spend a shared faction Fuel pool. `Resource_Logistics_Exchange_Design.md` defines the timed in-match Resource Exchange popup, import/export recipes, Rush Ticket acceleration, and non-authoritative truck/transport-plane presentation.
+
+## Authority And Connection Map
+
+| Layer | Active authority | Consumes | Direct downstream documents |
+|---|---|---|---|
+| Product | [AAA Mobile GDD v0.2](AAA_Mobile_Game_Design_Document_v0_2.md) | Project goals and current product constraints. | Narrative bible, North Star, FPE, feature exposure, presentation, and mode/system designs. |
+| Fiction and characters | [Campaign Narrative Bible](Campaign_Narrative_Bible.md) | GDD v0.2. | FPE, presentation, mission plan, chapter documents, character and story-art production. |
+| Gameplay grammar | [Gameplay North Star](Gameplay_North_Star_And_Content_Grammar.md) | GDD v0.2 and narrative bible. | Mission plan, chapter missions, objectives, rewards, and balance authoring. |
+| First player experience | [First Player Experience](First_Player_Experience_And_Story_Onboarding_Design.md) | GDD v0.2 and narrative bible. | FTUE/ARIA design, M01 contract, Main Menu contract, Mission Result contract. |
+| Feature truth | [Feature Maturity And Exposure Matrix](Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md) | Current runtime audit, GDD v0.2, and narrative bible. | Mission plan, chapters, feature-specific design, and later implementation prerequisites. |
+| Narrative presentation | [Narrative Presentation And Cutscene Design](Narrative_Presentation_And_Cutscene_Design.md) | GDD v0.2, narrative bible, and FPE. | Chapter sequences, Story Archive, character art, audio, localization, and later sequence implementation. |
+| Mission authoring | [Level And Mission Content Plan](Level_And_Mission_Content_Plan.md) | Narrative, North Star, FPE, presentation, and feature readiness. | [Five chapter documents](SagaChapters/README.md), mission specs, and balance/validation plans. |
+| World and map | [3D Single-Map Gameplay Direction](3D_SingleMap_Gameplay_Direction.md) | GDD v0.2 and gameplay grammar. | Operation maps, map metadata, camera/minimap contracts, art, and tactical UI. |
+| Runtime architecture | [Gameplay SOLID/ECS Contract](Architecture/gameplay_solid_ecs_contract.md) | Product/system contracts and measured runtime constraints. | System implementation plans, source ownership, tests, and the active hardening tracker. |
+| Implementation status | [Architecture/Performance Hardening Tracker](Architecture/architecture_performance_hardening_implementation_tracker.md) and feature-specific trackers | Architecture contracts and current evidence. | Task execution and validation only; trackers do not redefine product or narrative intent. |
+
+```mermaid
+flowchart TD
+    GDD["GDD v0.2"] --> Bible["Narrative Bible"]
+    GDD --> North["Gameplay North Star"]
+    GDD --> Matrix["Feature Maturity Matrix"]
+    Bible --> FPE["First Player Experience"]
+    Bible --> Narrative["Narrative Presentation"]
+    Bible --> Missions["Level And Mission Plan"]
+    North --> Missions
+    Matrix --> Missions
+    FPE --> M01["FTUE, M01, Menu, Result Contracts"]
+    Narrative --> Chapters["Five Chapter Documents"]
+    Missions --> Chapters
+    GDD --> Map["3D Single-Map Direction"]
+    Map --> Systems["System And UI Contracts"]
+    Systems --> Architecture["Architecture Contract"]
+    Architecture --> Trackers["Implementation Trackers And Validation"]
+```
+
+Connection rule: a lower-level document may narrow or implement an upstream decision, but it may not silently redefine it. Runtime maturity comes from validated code/evidence and the feature matrix; narrative intent comes from the narrative bible; implementation trackers never become product-design authorities.
 
 ## Primary Reading Order
 
@@ -85,9 +124,10 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 40. `UIUX_Mockup_To_Canvas_Conversion_Plan.md`
 41. `UIUX_Target_To_Canvas_Workflow_Guide.md`
 42. `Architecture/gameplay_solid_ecs_contract.md`
-43. `Architecture/performance_regression_contract.md`
-44. `Designer_Role_And_Documentation_Workflow.md`
-45. `Agent_Coordination_Workflow.md`
+43. `Architecture/architecture_performance_hardening_implementation_tracker.md`
+44. `Architecture/performance_regression_contract.md`
+45. `Designer_Role_And_Documentation_Workflow.md`
+46. `Agent_Coordination_Workflow.md`
 
 ## Core Product And Gameplay
 
@@ -127,6 +167,7 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - `Agent_Coordination_Workflow.md` - PM assistant operating workflow for agent handoffs, cross-lane contract changes, validation gates, and tracking updates.
 - `Designer_Role_And_Documentation_Workflow.md` - Designer lane workflow for README/design-index optimization, source-of-truth hierarchy, terminology alignment, documentation pruning, and product/design coherence reviews.
 - `Architecture/gameplay_solid_ecs_contract.md` - gameplay SOLID/ECS architecture contract, including bootstrap composition boundaries, ECS-first runtime rules, service/logging guidance, and no-new-drift migration rules.
+- `Architecture/architecture_performance_hardening_implementation_tracker.md` - active remediation program and current evidence for architecture boundaries, ECS hot paths, GC, frame performance, and content residency.
 - `Architecture/ArchitectureOverview.svg` - high-level architecture overview for README/onboarding.
 - `Architecture/AssemblyBoundaries.svg` - assembly definition and dependency direction map.
 - `Architecture/RuntimeLifecycle.svg` - menu, shell, loading, match, result, and return lifecycle map.
@@ -161,7 +202,7 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - `UIUX_Target_To_Canvas_Workflow_Guide.md` - operational workflow for converting targets into layered Unity Canvas prefabs.
 - `UIUX_MainMenu_Visual_Contract.md` - active Main Menu visual contract.
 - `UIUX_Runtime_Optimization_Plan.md` - UI runtime optimization and validation direction.
-- `VisualTargets/UIFlowNavigationTree.svg` - visual UI navigation tree showing Splash, Main Menu branches, game-mode paths, overlays, and safe returns.
+- `VisualTargets/UIFlowNavigationTree.svg` - legacy full-route orientation diagram. It does not own the story-first fresh-profile route; use `First_Player_Experience_And_Story_Onboarding_Design.md` and the root README Mermaid flow until the SVG is regenerated.
 - `VisualTargets/Gameplay/MapPacks/README.md` - active 3D operation-map texture/mask packs, including `SyntyHighlands_01`.
 Historical immediate UI phase plans have been archived under `Archive/LegacyUI_2026-05-21/ImmediateImplementationPlans/`. They are implementation history only; use the active UI/UX specs and visual-lock workflow above for new 3D-aligned work.
 
@@ -201,11 +242,14 @@ The previous visual-lock folders were moved to `Archive/LegacyVisualLock_2026-05
 ## Alignment Rules For Future Changes
 
 - Update this index and the root `README.md` whenever a new design document is added.
-- When older docs conflict with `3D_SingleMap_Gameplay_Direction.md`, the 2026-05-21 3D single-map direction wins.
+- New active authority documents must declare status/date, upstream authority, downstream consumers, and implementation maturity vocabulary where relevant.
+- For product precedence, use `AAA_Mobile_Game_Design_Document_v0_2.md`; for fiction/characters use `Campaign_Narrative_Bible.md`; for gameplay grammar use `Gameplay_North_Star_And_Content_Grammar.md`; for first launch use `First_Player_Experience_And_Story_Onboarding_Design.md`; for campaign readiness use `Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md`; for story presentation use `Narrative_Presentation_And_Cutscene_Design.md`; for shared mission authoring use `Level_And_Mission_Content_Plan.md`.
+- When older map or visual docs conflict with `3D_SingleMap_Gameplay_Direction.md`, the active 3D single-map direction wins.
 - Do not create new active design work that assumes 2.5D isometric macro tiles or separate strategic/tactical maps unless PM explicitly reopens that decision.
 - Treat archived source mockup JPG references under `Archive/LegacyUI_2026-05-21/UIUX_Codex_Package` as layout/content reference only; active implementation-ready targets live under `VisualLockLayered`.
 - Keep canonical generated UI targets under `VisualLockLayered`; use `VisualLock` only for scratch/reference drafts.
 - Keep production gameplay art references under `VisualReferences`.
 - Keep combat gameplay numbers in `BalanceConfigs` and combat art/presentation references in `VisualConfigs`; do not duplicate balance values into visual files.
-- When two docs disagree, prefer `3D_SingleMap_Gameplay_Direction.md` for gameplay/art direction, `UIUX_MainMenu_Visual_Contract.md` for Main Menu visuals, and the target-to-canvas workflow for Canvas implementation mechanics.
+- System-specific design may narrow an upstream product decision but cannot contradict it. Architecture contracts own implementation boundaries; implementation trackers own progress/evidence only and cannot redefine product, fiction, mission intent, or visual direction.
+- Prefer `UIUX_MainMenu_Visual_Contract.md` for Main Menu visuals and the target-to-canvas workflow for Canvas implementation mechanics, subject to the story-first FPE route and higher product authorities.
 - Do not use generated visual references as direct implementation screenshots unless the relevant workflow document explicitly says that target is temporary runtime art.

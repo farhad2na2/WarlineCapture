@@ -1,5 +1,4 @@
 using UnityEngine;
-using Game.Configs;
 using Game.Tactical.Contracts;
 using Game.UI.Contracts;
 
@@ -9,27 +8,31 @@ namespace Game.UI.Runtime
     {
         public static MatchHudCurrentOrderBannerModel BuildCommandModeBanner(
             TacticalCommandMode commandMode,
-            Sprite iconSprite)
+            Sprite iconSprite,
+            IGameTextResolver gameTextResolver = null)
         {
+            IGameTextResolver textResolver = gameTextResolver ?? FallbackGameTextResolver.Instance;
             return commandMode switch
             {
-                TacticalCommandMode.Move => Build(commandMode, Text("tactical.banner.mode.move.title", "MOVE ORDER"), Text("tactical.banner.mode.move.description", "Select a destination."), iconSprite),
-                TacticalCommandMode.Attack => Build(commandMode, Text("tactical.banner.mode.attack.title", "ATTACK ORDER"), Text("tactical.banner.mode.attack.description", "Select an enemy target."), iconSprite),
-                TacticalCommandMode.Scan => Build(commandMode, Text("tactical.banner.mode.scan.title", "SCAN ORDER"), Text("tactical.banner.mode.scan.description", "Select an area to scan."), iconSprite),
-                TacticalCommandMode.Board => Build(commandMode, Text("tactical.banner.mode.board.title", "BOARD ORDER"), Text("tactical.banner.mode.board.description", "Select a transport."), iconSprite),
-                TacticalCommandMode.Build => Build(commandMode, Text("tactical.banner.mode.build.title", "BUILD ORDER"), Text("tactical.banner.mode.build.description", "Place structure on valid terrain."), iconSprite),
+                TacticalCommandMode.Move => Build(commandMode, Text(textResolver, "tactical.banner.mode.move.title", "MOVE ORDER"), Text(textResolver, "tactical.banner.mode.move.description", "Select a destination."), iconSprite),
+                TacticalCommandMode.Attack => Build(commandMode, Text(textResolver, "tactical.banner.mode.attack.title", "ATTACK ORDER"), Text(textResolver, "tactical.banner.mode.attack.description", "Select an enemy target."), iconSprite),
+                TacticalCommandMode.Scan => Build(commandMode, Text(textResolver, "tactical.banner.mode.scan.title", "SCAN ORDER"), Text(textResolver, "tactical.banner.mode.scan.description", "Select an area to scan."), iconSprite),
+                TacticalCommandMode.Board => Build(commandMode, Text(textResolver, "tactical.banner.mode.board.title", "BOARD ORDER"), Text(textResolver, "tactical.banner.mode.board.description", "Select a transport."), iconSprite),
+                TacticalCommandMode.Build => Build(commandMode, Text(textResolver, "tactical.banner.mode.build.title", "BUILD ORDER"), Text(textResolver, "tactical.banner.mode.build.description", "Place structure on valid terrain."), iconSprite),
                 _ => MatchHudCurrentOrderBannerModel.Hidden
             };
         }
 
         public static MatchHudCurrentOrderBannerModel BuildBoardCommandModeBanner(
             UiBoardCommandModeDirection direction,
-            Sprite iconSprite)
+            Sprite iconSprite,
+            IGameTextResolver gameTextResolver = null)
         {
+            IGameTextResolver textResolver = gameTextResolver ?? FallbackGameTextResolver.Instance;
             string description = direction == UiBoardCommandModeDirection.TransportToPassenger
-                ? Text("tactical.banner.mode.board.description_transport_to_passenger", "Select units to board.")
-                : Text("tactical.banner.mode.board.description", "Select a transport.");
-            return Build(TacticalCommandMode.Board, Text("tactical.banner.mode.board.title", "BOARD ORDER"), description, iconSprite);
+                ? Text(textResolver, "tactical.banner.mode.board.description_transport_to_passenger", "Select units to board.")
+                : Text(textResolver, "tactical.banner.mode.board.description", "Select a transport.");
+            return Build(TacticalCommandMode.Board, Text(textResolver, "tactical.banner.mode.board.title", "BOARD ORDER"), description, iconSprite);
         }
 
         public static TacticalCommandMode ResolveAcceptedResultCommandMode(
@@ -65,21 +68,23 @@ namespace Game.UI.Runtime
         public static MatchHudCurrentOrderBannerModel BuildAcceptedResultBanner(
             TacticalCommandResult result,
             TacticalCommandMode commandMode,
-            Sprite iconSprite)
+            Sprite iconSprite,
+            IGameTextResolver gameTextResolver = null)
         {
             if (!result.Accepted || commandMode == TacticalCommandMode.None)
                 return MatchHudCurrentOrderBannerModel.Hidden;
 
+            IGameTextResolver textResolver = gameTextResolver ?? FallbackGameTextResolver.Instance;
             return commandMode switch
             {
-                TacticalCommandMode.Move => Build(commandMode, Text("tactical.banner.accepted.move.title", "MOVE ORDER"), Text("tactical.banner.accepted.move.description", "Units moving to target."), iconSprite),
-                TacticalCommandMode.Attack => Build(commandMode, Text("tactical.banner.accepted.attack.title", "ATTACK ORDER"), Text("tactical.banner.accepted.attack.description", "Engaging target."), iconSprite),
-                TacticalCommandMode.Hold => Build(commandMode, Text("tactical.banner.accepted.hold.title", "HOLD POSITION"), Text("tactical.banner.accepted.hold.description", "Selected units holding ground."), iconSprite),
-                TacticalCommandMode.Stop => Build(commandMode, Text("tactical.banner.accepted.stop.title", "STOP ORDER"), Text("tactical.banner.accepted.stop.description", "Selected units clearing orders."), iconSprite),
-                TacticalCommandMode.Scan => Build(commandMode, Text("tactical.banner.accepted.scan.title", "SCAN ORDER"), Text("tactical.banner.accepted.scan.description", "Recon sweep in progress."), iconSprite),
-                TacticalCommandMode.Board => Build(commandMode, Text("tactical.banner.accepted.board.title", "BOARD ORDER"), Text("tactical.banner.accepted.board.description", "Boarding transport."), iconSprite),
-                TacticalCommandMode.Build => Build(commandMode, Text("tactical.banner.accepted.build.title", "BUILD ORDER"), Text("tactical.banner.accepted.build.description", "Building order accepted."), iconSprite),
-                TacticalCommandMode.Special => BuildSpecialAcceptedResult(result, iconSprite),
+                TacticalCommandMode.Move => Build(commandMode, Text(textResolver, "tactical.banner.accepted.move.title", "MOVE ORDER"), Text(textResolver, "tactical.banner.accepted.move.description", "Units moving to target."), iconSprite),
+                TacticalCommandMode.Attack => Build(commandMode, Text(textResolver, "tactical.banner.accepted.attack.title", "ATTACK ORDER"), Text(textResolver, "tactical.banner.accepted.attack.description", "Engaging target."), iconSprite),
+                TacticalCommandMode.Hold => Build(commandMode, Text(textResolver, "tactical.banner.accepted.hold.title", "HOLD POSITION"), Text(textResolver, "tactical.banner.accepted.hold.description", "Selected units holding ground."), iconSprite),
+                TacticalCommandMode.Stop => Build(commandMode, Text(textResolver, "tactical.banner.accepted.stop.title", "STOP ORDER"), Text(textResolver, "tactical.banner.accepted.stop.description", "Selected units clearing orders."), iconSprite),
+                TacticalCommandMode.Scan => Build(commandMode, Text(textResolver, "tactical.banner.accepted.scan.title", "SCAN ORDER"), Text(textResolver, "tactical.banner.accepted.scan.description", "Recon sweep in progress."), iconSprite),
+                TacticalCommandMode.Board => Build(commandMode, Text(textResolver, "tactical.banner.accepted.board.title", "BOARD ORDER"), Text(textResolver, "tactical.banner.accepted.board.description", "Boarding transport."), iconSprite),
+                TacticalCommandMode.Build => Build(commandMode, Text(textResolver, "tactical.banner.accepted.build.title", "BUILD ORDER"), Text(textResolver, "tactical.banner.accepted.build.description", "Building order accepted."), iconSprite),
+                TacticalCommandMode.Special => BuildSpecialAcceptedResult(result, iconSprite, textResolver),
                 _ => MatchHudCurrentOrderBannerModel.Hidden
             };
         }
@@ -93,20 +98,23 @@ namespace Game.UI.Runtime
                 TacticalCommandMode.Build;
         }
 
-        private static MatchHudCurrentOrderBannerModel BuildSpecialAcceptedResult(TacticalCommandResult result, Sprite iconSprite)
+        private static MatchHudCurrentOrderBannerModel BuildSpecialAcceptedResult(
+            TacticalCommandResult result,
+            Sprite iconSprite,
+            IGameTextResolver textResolver)
         {
             string normalized = result.Message?.ToUpperInvariant() ?? string.Empty;
             if (normalized.Contains("RETURN"))
-                return Build(TacticalCommandMode.Special, Text("tactical.banner.accepted.return.title", "RETURN ORDER"), Text("tactical.banner.accepted.return.description", "Unit returning to base."), iconSprite);
+                return Build(TacticalCommandMode.Special, Text(textResolver, "tactical.banner.accepted.return.title", "RETURN ORDER"), Text(textResolver, "tactical.banner.accepted.return.description", "Unit returning to base."), iconSprite);
             if (normalized.Contains("DESTROY"))
-                return Build(TacticalCommandMode.Special, Text("tactical.banner.accepted.destroy.title", "DESTROY ORDER"), Text("tactical.banner.accepted.destroy.description", "Selected unit removed."), iconSprite);
+                return Build(TacticalCommandMode.Special, Text(textResolver, "tactical.banner.accepted.destroy.title", "DESTROY ORDER"), Text(textResolver, "tactical.banner.accepted.destroy.description", "Selected unit removed."), iconSprite);
 
             return MatchHudCurrentOrderBannerModel.Hidden;
         }
 
-        private static string Text(string key, string fallback)
+        private static string Text(IGameTextResolver textResolver, string key, string fallback)
         {
-            return GameText.Get(key, fallback);
+            return textResolver.Get(key, fallback);
         }
 
         private static MatchHudCurrentOrderBannerModel Build(

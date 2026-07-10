@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Game.Catalog.Contracts;
-using Game.Configs;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -34,6 +33,7 @@ namespace Game.UI.Runtime
         private bool _hasSelectedItem;
         private IBuildingUiCommand _uiCommandSystem;
         private IBuildingUiQuery _uiQuerySystem;
+        private IGameTextResolver _gameTextResolver = FallbackGameTextResolver.Instance;
         private BattleHudRuntimeFeedbackView _runtimeFeedbackView;
         private Action _closeDrawer;
         private Button _primaryActionButton;
@@ -127,11 +127,13 @@ namespace Game.UI.Runtime
         public void BindRuntimeCommands(
             IBuildingUiCommand uiCommandSystem,
             Action closeDrawer,
-            BattleHudRuntimeFeedbackView runtimeFeedbackView = null)
+            BattleHudRuntimeFeedbackView runtimeFeedbackView = null,
+            IGameTextResolver gameTextResolver = null)
         {
             _uiCommandSystem = uiCommandSystem;
             _closeDrawer = closeDrawer;
             _runtimeFeedbackView = runtimeFeedbackView;
+            _gameTextResolver = gameTextResolver ?? FallbackGameTextResolver.Instance;
             WirePrimaryAction();
             WireQueueControls();
             RefreshQueue();
@@ -351,11 +353,11 @@ namespace Game.UI.Runtime
 
             if (_uiCommandSystem == null)
             {
-                string connecting = GameText.Get("build.drawer.failure.connecting", "Build drawer is still connecting. Try again in a moment.");
+                string connecting = _gameTextResolver.Get("build.drawer.failure.connecting", "Build drawer is still connecting. Try again in a moment.");
                 ApplyInstruction(connecting, BuildDrawerInstructionSeverity.Error);
                 BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
                     TacticalCommandReasonCode.BuildUnavailable,
-                    GameText.Get("build.feedback.drawer_not_ready", "Build drawer is not ready.")));
+                    _gameTextResolver.Get("build.feedback.drawer_not_ready", "Build drawer is not ready.")), _gameTextResolver);
                 return;
             }
 
@@ -373,16 +375,16 @@ namespace Game.UI.Runtime
 
             if (_selectedItem.Category == BuildDrawerCategory.Buildings)
             {
-                ApplyInstruction(GameText.Format("build.drawer.action.place_choose_footprint", "Place {0}: choose a valid footprint.", _selectedItem.DisplayName), BuildDrawerInstructionSeverity.Ready);
-                BattleHudRuntimeFeedbackUiSystemHelper.ApplyStickyCommandMode(_runtimeFeedbackView, TacticalCommandMode.Build);
-                BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Success(GameText.Get("build.feedback.place_building", "PLACE BUILDING")));
+                ApplyInstruction(_gameTextResolver.Format("build.drawer.action.place_choose_footprint", "Place {0}: choose a valid footprint.", _selectedItem.DisplayName), BuildDrawerInstructionSeverity.Ready);
+                BattleHudRuntimeFeedbackUiSystemHelper.ApplyStickyCommandMode(_runtimeFeedbackView, TacticalCommandMode.Build, _gameTextResolver);
+                BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Success(_gameTextResolver.Get("build.feedback.place_building", "PLACE BUILDING")), _gameTextResolver);
                 _closeDrawer?.Invoke();
                 return;
             }
 
             ApplyInstruction(FormatPrimarySuccessInstruction(_selectedItem), BuildDrawerInstructionSeverity.Ready);
             BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Success(
-                GameText.Format("build.feedback.production_requested", "{0}: {1}", _selectedItem.ActionLabel, _selectedItem.DisplayName)));
+                _gameTextResolver.Format("build.feedback.production_requested", "{0}: {1}", _selectedItem.ActionLabel, _selectedItem.DisplayName)), _gameTextResolver);
             RefreshQueue();
         }
 
@@ -392,24 +394,24 @@ namespace Game.UI.Runtime
                 _pendingProductions[0].PendingProductionIndex < 0 ||
                 _uiCommandSystem == null)
             {
-                string unavailable = GameText.Get("build.feedback.production_cancel_unavailable", "Production cancel unavailable.");
+                string unavailable = _gameTextResolver.Get("build.feedback.production_cancel_unavailable", "Production cancel unavailable.");
                 ApplyInstruction(unavailable, BuildDrawerInstructionSeverity.Error);
                 BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
                     TacticalCommandReasonCode.BuildUnavailable,
-                    unavailable));
+                    unavailable), _gameTextResolver);
                 return;
             }
 
             BuildingPendingProductionUiEntry active = _pendingProductions[0];
             bool cancelled = _uiCommandSystem.CancelProduction(active.BuildingId, active.PendingProductionIndex);
             ApplyInstruction(cancelled
-                    ? GameText.Format("build.feedback.production_cancelled_named", "Cancelled {0}.", ResolveQueueDisplayName(active))
-                    : GameText.Get("build.feedback.production_cancel_unavailable", "Production cancel unavailable."),
+                    ? _gameTextResolver.Format("build.feedback.production_cancelled_named", "Cancelled {0}.", ResolveQueueDisplayName(active))
+                    : _gameTextResolver.Get("build.feedback.production_cancel_unavailable", "Production cancel unavailable."),
                 cancelled ? BuildDrawerInstructionSeverity.Warning : BuildDrawerInstructionSeverity.Error);
 
             BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, cancelled
-                ? TacticalCommandResult.Success(GameText.Get("build.feedback.production_cancelled", "PRODUCTION CANCELLED"))
-                : TacticalCommandResult.Rejected(TacticalCommandReasonCode.BuildUnavailable, GameText.Get("build.feedback.production_cancel_unavailable", "Production cancel unavailable.")));
+                ? TacticalCommandResult.Success(_gameTextResolver.Get("build.feedback.production_cancelled", "PRODUCTION CANCELLED"))
+                : TacticalCommandResult.Rejected(TacticalCommandReasonCode.BuildUnavailable, _gameTextResolver.Get("build.feedback.production_cancel_unavailable", "Production cancel unavailable.")), _gameTextResolver);
             RefreshQueue();
         }
 
@@ -417,11 +419,11 @@ namespace Game.UI.Runtime
         {
             if (_pendingProductions.Count == 0 || _uiCommandSystem == null)
             {
-                string empty = GameText.Get("build.feedback.production_queue_empty", "Production queue is empty.");
+                string empty = _gameTextResolver.Get("build.feedback.production_queue_empty", "Production queue is empty.");
                 ApplyInstruction(empty, BuildDrawerInstructionSeverity.Warning);
                 BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
                     TacticalCommandReasonCode.BuildUnavailable,
-                    empty));
+                    empty), _gameTextResolver);
                 return;
             }
 
@@ -445,12 +447,12 @@ namespace Game.UI.Runtime
 
             _clearProductionScratch.Clear();
             ApplyInstruction(cancelledCount > 0
-                    ? GameText.Get("build.feedback.production_queue_cleared_sentence", "Production queue cleared.")
-                    : GameText.Get("build.feedback.production_clear_unavailable", "Production clear unavailable."),
+                    ? _gameTextResolver.Get("build.feedback.production_queue_cleared_sentence", "Production queue cleared.")
+                    : _gameTextResolver.Get("build.feedback.production_clear_unavailable", "Production clear unavailable."),
                 cancelledCount > 0 ? BuildDrawerInstructionSeverity.Warning : BuildDrawerInstructionSeverity.Error);
             BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, cancelledCount > 0
-                ? TacticalCommandResult.Success(GameText.Get("build.feedback.production_queue_cleared", "PRODUCTION QUEUE CLEARED"))
-                : TacticalCommandResult.Rejected(TacticalCommandReasonCode.BuildUnavailable, GameText.Get("build.feedback.production_clear_unavailable", "Production clear unavailable.")));
+                ? TacticalCommandResult.Success(_gameTextResolver.Get("build.feedback.production_queue_cleared", "PRODUCTION QUEUE CLEARED"))
+                : TacticalCommandResult.Rejected(TacticalCommandReasonCode.BuildUnavailable, _gameTextResolver.Get("build.feedback.production_clear_unavailable", "Production clear unavailable.")), _gameTextResolver);
             RefreshQueue();
         }
 
@@ -730,14 +732,14 @@ namespace Game.UI.Runtime
                 : "-";
         }
 
-        private static string FormatRequirements(BuildDrawerCatalogItem model)
+        private string FormatRequirements(BuildDrawerCatalogItem model)
         {
             return model.Category switch
             {
-                BuildDrawerCategory.Buildings => GameText.Get("build.drawer.requirements.buildings", "Valid footprint required."),
-                BuildDrawerCategory.Aircrafts => GameText.Get("build.drawer.requirements.aircraft", "Requires compatible air production."),
-                BuildDrawerCategory.Vehicles => GameText.Get("build.drawer.requirements.vehicles", "Requires compatible vehicle production."),
-                BuildDrawerCategory.Soldiers => GameText.Get("build.drawer.requirements.soldiers", "Requires compatible recruitment building."),
+                BuildDrawerCategory.Buildings => _gameTextResolver.Get("build.drawer.requirements.buildings", "Valid footprint required."),
+                BuildDrawerCategory.Aircrafts => _gameTextResolver.Get("build.drawer.requirements.aircraft", "Requires compatible air production."),
+                BuildDrawerCategory.Vehicles => _gameTextResolver.Get("build.drawer.requirements.vehicles", "Requires compatible vehicle production."),
+                BuildDrawerCategory.Soldiers => _gameTextResolver.Get("build.drawer.requirements.soldiers", "Requires compatible recruitment building."),
                 _ => string.Empty
             };
         }
@@ -804,7 +806,7 @@ namespace Game.UI.Runtime
         {
             return _query.TryResolvePrefab(UnitPrefabSource, BuildingPrefabSource, entry.Prefab, out BuildDrawerCatalogItem item)
                 ? item.DisplayName
-                : entry.Prefab != null ? entry.Prefab.name : GameText.Get("build.drawer.production.fallback_name", "Production");
+                : entry.Prefab != null ? entry.Prefab.name : _gameTextResolver.Get("build.drawer.production.fallback_name", "Production");
         }
 
         private Sprite ResolveQueueThumbnail(BuildingPendingProductionUiEntry entry)
@@ -846,7 +848,7 @@ namespace Game.UI.Runtime
                 : TacticalCommandReasonCode.BuildUnavailable;
             BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
                 reason,
-                FormatFailureMessage(failure, requiredBuildingDisplayName)));
+                FormatFailureMessage(failure, requiredBuildingDisplayName)), _gameTextResolver);
         }
 
         private string FormatFailureMessage(
@@ -855,16 +857,16 @@ namespace Game.UI.Runtime
         {
             return failure switch
             {
-                BuildingUiCommandFailure.NotEnoughMoney => GameText.Get("build.drawer.failure.short.not_enough_money", "Insufficient credits."),
+                BuildingUiCommandFailure.NotEnoughMoney => _gameTextResolver.Get("build.drawer.failure.short.not_enough_money", "Insufficient credits."),
                 BuildingUiCommandFailure.MissingProducerBuilding when !string.IsNullOrWhiteSpace(requiredBuildingDisplayName) =>
-                    GameText.Format("build.drawer.failure.short.requires_named", "Requires {0}.", requiredBuildingDisplayName),
-                BuildingUiCommandFailure.MissingProducerBuilding => GameText.Get("build.drawer.failure.short.missing_producer", "Required producer is missing."),
+                    _gameTextResolver.Format("build.drawer.failure.short.requires_named", "Requires {0}.", requiredBuildingDisplayName),
+                BuildingUiCommandFailure.MissingProducerBuilding => _gameTextResolver.Get("build.drawer.failure.short.missing_producer", "Required producer is missing."),
                 BuildingUiCommandFailure.ProductionQueueFull when !string.IsNullOrWhiteSpace(requiredBuildingDisplayName) =>
-                    GameText.Format("build.drawer.failure.short.queue_full_named", "{0} production slots are full.", requiredBuildingDisplayName),
-                BuildingUiCommandFailure.ProductionQueueFull => GameText.Get("build.drawer.failure.short.queue_full", "All compatible production slots are full."),
-                BuildingUiCommandFailure.GlobalProductionQueueFull => GameText.Format("build.drawer.failure.short.global_queue_full", "Production queue limit reached ({0} max).", FormatMaxQueuedUnitProductions()),
-                BuildingUiCommandFailure.InvalidSelection => GameText.Get("build.drawer.failure.invalid_selection", "Select a build drawer item first."),
-                _ => GameText.Get("build.drawer.failure.short.unavailable", "Build request unavailable.")
+                    _gameTextResolver.Format("build.drawer.failure.short.queue_full_named", "{0} production slots are full.", requiredBuildingDisplayName),
+                BuildingUiCommandFailure.ProductionQueueFull => _gameTextResolver.Get("build.drawer.failure.short.queue_full", "All compatible production slots are full."),
+                BuildingUiCommandFailure.GlobalProductionQueueFull => _gameTextResolver.Format("build.drawer.failure.short.global_queue_full", "Production queue limit reached ({0} max).", FormatMaxQueuedUnitProductions()),
+                BuildingUiCommandFailure.InvalidSelection => _gameTextResolver.Get("build.drawer.failure.invalid_selection", "Select a build drawer item first."),
+                _ => _gameTextResolver.Get("build.drawer.failure.short.unavailable", "Build request unavailable.")
             };
         }
 
@@ -899,8 +901,8 @@ namespace Game.UI.Runtime
                     bool canConfirm = _uiCommandSystem.CanConfirmBuildingPlacement;
                     ApplyInstruction(
                         canConfirm
-                            ? GameText.Format("build.drawer.instruction.place_pending_confirm", "Place {0}: drag to position, then confirm.", _selectedItem.DisplayName)
-                            : GameText.Format("build.drawer.instruction.cannot_place_here", "Cannot place here: {0}.", FormatPlacementStatus(status)),
+                            ? _gameTextResolver.Format("build.drawer.instruction.place_pending_confirm", "Place {0}: drag to position, then confirm.", _selectedItem.DisplayName)
+                            : _gameTextResolver.Format("build.drawer.instruction.cannot_place_here", "Cannot place here: {0}.", FormatPlacementStatus(status)),
                         canConfirm ? BuildDrawerInstructionSeverity.Ready : BuildDrawerInstructionSeverity.Error);
                     return;
                 }
@@ -921,23 +923,23 @@ namespace Game.UI.Runtime
             BuildingUiCommandFailure failure,
             string requiredBuildingDisplayName)
         {
-            string itemName = _hasSelectedItem ? _selectedItem.DisplayName : GameText.Get("build.drawer.item.fallback_name", "item");
+            string itemName = _hasSelectedItem ? _selectedItem.DisplayName : _gameTextResolver.Get("build.drawer.item.fallback_name", "item");
             return failure switch
             {
                 BuildingUiCommandFailure.NotEnoughMoney =>
-                    GameText.Format("build.drawer.failure.not_enough_money", "Need {0} more credits to {1} {2}.", FormatMissingCredits(), FormatActionVerb(_selectedItem.Category).ToLowerInvariant(), itemName),
+                    _gameTextResolver.Format("build.drawer.failure.not_enough_money", "Need {0} more credits to {1} {2}.", FormatMissingCredits(), FormatActionVerb(_selectedItem.Category).ToLowerInvariant(), itemName),
                 BuildingUiCommandFailure.MissingProducerBuilding when !string.IsNullOrWhiteSpace(requiredBuildingDisplayName) =>
-                    GameText.Format("build.drawer.failure.missing_producer_named", "Cannot {0} {1}: requires {2}.", FormatActionVerb(_selectedItem.Category).ToLowerInvariant(), itemName, requiredBuildingDisplayName),
+                    _gameTextResolver.Format("build.drawer.failure.missing_producer_named", "Cannot {0} {1}: requires {2}.", FormatActionVerb(_selectedItem.Category).ToLowerInvariant(), itemName, requiredBuildingDisplayName),
                 BuildingUiCommandFailure.MissingProducerBuilding =>
-                    GameText.Format("build.drawer.failure.missing_producer", "Cannot {0} {1}: {2}.", FormatActionVerb(_selectedItem.Category).ToLowerInvariant(), itemName, FormatMissingProducerFallback(_selectedItem.Category)),
+                    _gameTextResolver.Format("build.drawer.failure.missing_producer", "Cannot {0} {1}: {2}.", FormatActionVerb(_selectedItem.Category).ToLowerInvariant(), itemName, FormatMissingProducerFallback(_selectedItem.Category)),
                 BuildingUiCommandFailure.ProductionQueueFull when !string.IsNullOrWhiteSpace(requiredBuildingDisplayName) =>
-                    GameText.Format("build.drawer.failure.queue_full_named", "Cannot {0} {1}: all {2} production slots are full.", FormatActionVerb(_selectedItem.Category).ToLowerInvariant(), itemName, requiredBuildingDisplayName),
+                    _gameTextResolver.Format("build.drawer.failure.queue_full_named", "Cannot {0} {1}: all {2} production slots are full.", FormatActionVerb(_selectedItem.Category).ToLowerInvariant(), itemName, requiredBuildingDisplayName),
                 BuildingUiCommandFailure.ProductionQueueFull =>
-                    GameText.Format("build.drawer.failure.queue_full", "Cannot {0} {1}: all compatible production slots are full.", FormatActionVerb(_selectedItem.Category).ToLowerInvariant(), itemName),
+                    _gameTextResolver.Format("build.drawer.failure.queue_full", "Cannot {0} {1}: all compatible production slots are full.", FormatActionVerb(_selectedItem.Category).ToLowerInvariant(), itemName),
                 BuildingUiCommandFailure.GlobalProductionQueueFull =>
-                    GameText.Format("build.drawer.failure.global_queue_full", "Cannot {0} {1}: production queue limit reached ({2} max).", FormatActionVerb(_selectedItem.Category).ToLowerInvariant(), itemName, FormatMaxQueuedUnitProductions()),
-                BuildingUiCommandFailure.InvalidSelection => GameText.Get("build.drawer.failure.invalid_selection", "Select a build drawer item first."),
-                _ => GameText.Format("build.drawer.failure.unavailable", "Cannot {0} {1}: request unavailable.", FormatActionVerb(_selectedItem.Category).ToLowerInvariant(), itemName)
+                    _gameTextResolver.Format("build.drawer.failure.global_queue_full", "Cannot {0} {1}: production queue limit reached ({2} max).", FormatActionVerb(_selectedItem.Category).ToLowerInvariant(), itemName, FormatMaxQueuedUnitProductions()),
+                BuildingUiCommandFailure.InvalidSelection => _gameTextResolver.Get("build.drawer.failure.invalid_selection", "Select a build drawer item first."),
+                _ => _gameTextResolver.Format("build.drawer.failure.unavailable", "Cannot {0} {1}: request unavailable.", FormatActionVerb(_selectedItem.Category).ToLowerInvariant(), itemName)
             };
         }
 
@@ -954,63 +956,63 @@ namespace Game.UI.Runtime
             return Mathf.Max(0, _selectedItem.Price - current);
         }
 
-        private static string FormatReadyInstruction(BuildDrawerCatalogItem model)
+        private string FormatReadyInstruction(BuildDrawerCatalogItem model)
         {
             return model.Category switch
             {
-                BuildDrawerCategory.Buildings => GameText.Format("build.drawer.ready.buildings", "PLACE: choose a location for {0}.", model.DisplayName),
-                BuildDrawerCategory.Vehicles => GameText.Format("build.drawer.ready.vehicles", "PRODUCE: add {0} to the vehicle queue.", model.DisplayName),
-                BuildDrawerCategory.Aircrafts => GameText.Format("build.drawer.ready.aircraft", "PRODUCE: add {0} to the aircraft queue.", model.DisplayName),
-                BuildDrawerCategory.Soldiers => GameText.Format("build.drawer.ready.soldiers", "RECRUIT: add {0} to the training queue.", model.DisplayName),
-                _ => GameText.Format("build.drawer.ready.default", "Select {0}.", model.DisplayName)
+                BuildDrawerCategory.Buildings => _gameTextResolver.Format("build.drawer.ready.buildings", "PLACE: choose a location for {0}.", model.DisplayName),
+                BuildDrawerCategory.Vehicles => _gameTextResolver.Format("build.drawer.ready.vehicles", "PRODUCE: add {0} to the vehicle queue.", model.DisplayName),
+                BuildDrawerCategory.Aircrafts => _gameTextResolver.Format("build.drawer.ready.aircraft", "PRODUCE: add {0} to the aircraft queue.", model.DisplayName),
+                BuildDrawerCategory.Soldiers => _gameTextResolver.Format("build.drawer.ready.soldiers", "RECRUIT: add {0} to the training queue.", model.DisplayName),
+                _ => _gameTextResolver.Format("build.drawer.ready.default", "Select {0}.", model.DisplayName)
             };
         }
 
-        private static string FormatPrimarySuccessInstruction(BuildDrawerCatalogItem model)
+        private string FormatPrimarySuccessInstruction(BuildDrawerCatalogItem model)
         {
             return model.Category == BuildDrawerCategory.Soldiers
-                ? GameText.Format("build.drawer.success.recruitment_queued", "{0} added to recruitment queue.", model.DisplayName)
-                : GameText.Format("build.drawer.success.production_queued", "{0} added to production queue.", model.DisplayName);
+                ? _gameTextResolver.Format("build.drawer.success.recruitment_queued", "{0} added to recruitment queue.", model.DisplayName)
+                : _gameTextResolver.Format("build.drawer.success.production_queued", "{0} added to production queue.", model.DisplayName);
         }
 
-        private static string FormatEmptyCategoryInstruction(BuildDrawerCategory category)
+        private string FormatEmptyCategoryInstruction(BuildDrawerCategory category)
         {
             return category switch
             {
-                BuildDrawerCategory.Buildings => GameText.Get("build.drawer.empty.buildings", "No requestable buildings are configured."),
-                BuildDrawerCategory.Vehicles => GameText.Get("build.drawer.empty.vehicles", "No requestable vehicles are configured."),
-                BuildDrawerCategory.Aircrafts => GameText.Get("build.drawer.empty.aircraft", "No requestable aircraft are configured."),
-                BuildDrawerCategory.Soldiers => GameText.Get("build.drawer.empty.soldiers", "No requestable soldiers are configured."),
-                _ => GameText.Get("build.drawer.empty.select_item", "Select an item to place, produce, or recruit.")
+                BuildDrawerCategory.Buildings => _gameTextResolver.Get("build.drawer.empty.buildings", "No requestable buildings are configured."),
+                BuildDrawerCategory.Vehicles => _gameTextResolver.Get("build.drawer.empty.vehicles", "No requestable vehicles are configured."),
+                BuildDrawerCategory.Aircrafts => _gameTextResolver.Get("build.drawer.empty.aircraft", "No requestable aircraft are configured."),
+                BuildDrawerCategory.Soldiers => _gameTextResolver.Get("build.drawer.empty.soldiers", "No requestable soldiers are configured."),
+                _ => _gameTextResolver.Get("build.drawer.empty.select_item", "Select an item to place, produce, or recruit.")
             };
         }
 
-        private static string FormatMissingProducerFallback(BuildDrawerCategory category)
+        private string FormatMissingProducerFallback(BuildDrawerCategory category)
         {
             return category switch
             {
-                BuildDrawerCategory.Vehicles => GameText.Get("build.drawer.missing_producer.vehicles", "no compatible vehicle producer is available"),
-                BuildDrawerCategory.Aircrafts => GameText.Get("build.drawer.missing_producer.aircraft", "no compatible air producer is available"),
-                BuildDrawerCategory.Soldiers => GameText.Get("build.drawer.missing_producer.soldiers", "no compatible training building is available"),
-                _ => GameText.Get("build.drawer.missing_producer.default", "required producer is missing")
+                BuildDrawerCategory.Vehicles => _gameTextResolver.Get("build.drawer.missing_producer.vehicles", "no compatible vehicle producer is available"),
+                BuildDrawerCategory.Aircrafts => _gameTextResolver.Get("build.drawer.missing_producer.aircraft", "no compatible air producer is available"),
+                BuildDrawerCategory.Soldiers => _gameTextResolver.Get("build.drawer.missing_producer.soldiers", "no compatible training building is available"),
+                _ => _gameTextResolver.Get("build.drawer.missing_producer.default", "required producer is missing")
             };
         }
 
-        private static string FormatActionVerb(BuildDrawerCategory category)
+        private string FormatActionVerb(BuildDrawerCategory category)
         {
             return category switch
             {
-                BuildDrawerCategory.Buildings => GameText.Get("build.drawer.verb.place", "Place"),
-                BuildDrawerCategory.Soldiers => GameText.Get("build.drawer.verb.recruit", "Recruit"),
-                BuildDrawerCategory.Vehicles => GameText.Get("build.drawer.verb.produce", "Produce"),
-                BuildDrawerCategory.Aircrafts => GameText.Get("build.drawer.verb.produce", "Produce"),
-                _ => GameText.Get("build.drawer.verb.request", "Request")
+                BuildDrawerCategory.Buildings => _gameTextResolver.Get("build.drawer.verb.place", "Place"),
+                BuildDrawerCategory.Soldiers => _gameTextResolver.Get("build.drawer.verb.recruit", "Recruit"),
+                BuildDrawerCategory.Vehicles => _gameTextResolver.Get("build.drawer.verb.produce", "Produce"),
+                BuildDrawerCategory.Aircrafts => _gameTextResolver.Get("build.drawer.verb.produce", "Produce"),
+                _ => _gameTextResolver.Get("build.drawer.verb.request", "Request")
             };
         }
 
-        private static string FormatPlacementStatus(string status)
+        private string FormatPlacementStatus(string status)
         {
-            return string.IsNullOrWhiteSpace(status) ? GameText.Get("build.drawer.placement.invalid", "invalid placement") : status;
+            return string.IsNullOrWhiteSpace(status) ? _gameTextResolver.Get("build.drawer.placement.invalid", "invalid placement") : status;
         }
 
         private readonly struct ButtonBinding

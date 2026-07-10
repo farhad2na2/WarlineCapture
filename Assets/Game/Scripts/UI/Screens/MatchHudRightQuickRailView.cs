@@ -2,7 +2,6 @@ using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using Game.Configs;
 using Game.Tactical.Contracts;
 using Game.UI.Contracts;
 
@@ -20,6 +19,7 @@ namespace Game.UI.Runtime
         private Action _zoomOutClicked;
         private Func<MatchHudZoomControlState> _zoomStateProvider;
         private ISelectionUiCommand _selectionUiCommandSystem;
+        private IGameTextResolver _gameTextResolver = FallbackGameTextResolver.Instance;
         private BattleHudRuntimeFeedbackView _runtimeFeedbackView;
         private bool _buildButtonListenerInstalled;
         private bool _zoomButtonListenersInstalled;
@@ -72,11 +72,13 @@ namespace Game.UI.Runtime
         public void BindBuildCommand(
             Action buildCommandClicked,
             ISelectionUiCommand selectionUiCommandSystem,
-            BattleHudRuntimeFeedbackView runtimeFeedbackView = null)
+            BattleHudRuntimeFeedbackView runtimeFeedbackView = null,
+            IGameTextResolver gameTextResolver = null)
         {
             _buildCommandClicked = buildCommandClicked;
             _selectionUiCommandSystem = selectionUiCommandSystem;
             _runtimeFeedbackView = runtimeFeedbackView;
+            _gameTextResolver = gameTextResolver ?? FallbackGameTextResolver.Instance;
             InstallBuildButtonListener();
             ClearButtonSelection(buildButton);
         }
@@ -86,6 +88,7 @@ namespace Game.UI.Runtime
             _buildCommandClicked = null;
             _selectionUiCommandSystem = null;
             _runtimeFeedbackView = null;
+            _gameTextResolver = FallbackGameTextResolver.Instance;
         }
 
         public void BindZoomControls(
@@ -169,7 +172,7 @@ namespace Game.UI.Runtime
 
             BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
                 TacticalCommandReasonCode.BuildUnavailable,
-                GameText.Get("build.feedback.drawer_not_ready", "Build drawer is not ready.")));
+                _gameTextResolver.Get("build.feedback.drawer_not_ready", "Build drawer is not ready.")), _gameTextResolver);
         }
 
         private void OnZoomInButtonClicked()

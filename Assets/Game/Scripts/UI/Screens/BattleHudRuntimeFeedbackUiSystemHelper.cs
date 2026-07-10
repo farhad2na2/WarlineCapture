@@ -1,5 +1,4 @@
 using UnityEngine;
-using Game.Configs;
 using Game.Tactical.Contracts;
 using Game.UI.Contracts;
 
@@ -31,48 +30,59 @@ namespace Game.UI.Runtime
             view?.HideSelectedEntity();
         }
 
-        public static void ApplyCommandMode(IBattleHudRuntimeFeedbackView view, TacticalCommandMode mode)
+        public static void ApplyCommandMode(
+            IBattleHudRuntimeFeedbackView view,
+            TacticalCommandMode mode,
+            IGameTextResolver gameTextResolver = null)
         {
             if (view == null)
                 return;
 
+            IGameTextResolver textResolver = gameTextResolver ?? FallbackGameTextResolver.Instance;
             view.CurrentCommandMode = mode;
-            ApplyCommandModeVisuals(view, mode);
+            ApplyCommandModeVisuals(view, mode, textResolver);
         }
 
         public static void ApplyBoardCommandMode(
             IBattleHudRuntimeFeedbackView view,
             UiBoardCommandModeDirection direction,
-            bool boardAllInteractable)
+            bool boardAllInteractable,
+            IGameTextResolver gameTextResolver = null)
         {
             if (view == null)
                 return;
 
+            IGameTextResolver textResolver = gameTextResolver ?? FallbackGameTextResolver.Instance;
             view.CurrentCommandMode = TacticalCommandMode.Board;
             view.ApplyCommandModeTabs(TacticalCommandMode.Board);
             view.ApplyCurrentOrderBanner(MatchHudCurrentOrderBannerUiSystemHelper.BuildBoardCommandModeBanner(
                 direction,
-                view.ResolveCommandIconSprite(TacticalCommandMode.Board)));
+                view.ResolveCommandIconSprite(TacticalCommandMode.Board),
+                textResolver));
 
             MatchHudCommandFeedbackModel commandFeedback = direction == UiBoardCommandModeDirection.TransportToPassenger
-                ? MatchHudCommandFeedbackModel.Show(GameText.Get("tactical.command.board.prompt_transport_to_passenger", "Select units to board or use BOARD ALL."), CommandFeedbackSeverity.Ready)
-                : MatchHudCommandFeedbackModel.Show(GameText.Get("tactical.command.board.prompt_passenger_to_transport", "Select a transport."), CommandFeedbackSeverity.Ready);
+                ? MatchHudCommandFeedbackModel.Show(textResolver.Get("tactical.command.board.prompt_transport_to_passenger", "Select units to board or use BOARD ALL."), CommandFeedbackSeverity.Ready)
+                : MatchHudCommandFeedbackModel.Show(textResolver.Get("tactical.command.board.prompt_passenger_to_transport", "Select a transport."), CommandFeedbackSeverity.Ready);
             MatchHudCommandFeedbackActionsModel actions = direction == UiBoardCommandModeDirection.TransportToPassenger
                 ? MatchHudCommandFeedbackActionsModel.BoardPassengerSelection(boardAllInteractable)
                 : MatchHudCommandFeedbackActionsModel.CancelOnly;
             view.ApplyPersistentCommandFeedback(commandFeedback, actions);
 
-            view.ShowCommandMode(ResolveCommandModeText(TacticalCommandMode.Board));
+            view.ShowCommandMode(ResolveCommandModeText(TacticalCommandMode.Board, textResolver));
         }
 
-        public static void ApplyStickyCommandMode(IBattleHudRuntimeFeedbackView view, TacticalCommandMode mode)
+        public static void ApplyStickyCommandMode(
+            IBattleHudRuntimeFeedbackView view,
+            TacticalCommandMode mode,
+            IGameTextResolver gameTextResolver = null)
         {
             if (view == null)
                 return;
 
+            IGameTextResolver textResolver = gameTextResolver ?? FallbackGameTextResolver.Instance;
             view.StickyCommandMode = mode;
             view.CurrentCommandMode = mode;
-            ApplyCommandModeVisuals(view, mode);
+            ApplyCommandModeVisuals(view, mode, textResolver);
         }
 
         public static void ClearStickyCommandMode(IBattleHudRuntimeFeedbackView view, TacticalCommandMode mode)
@@ -87,26 +97,33 @@ namespace Game.UI.Runtime
             ClearCommandModeInternal(view);
         }
 
-        public static void ClearCommandMode(IBattleHudRuntimeFeedbackView view)
+        public static void ClearCommandMode(
+            IBattleHudRuntimeFeedbackView view,
+            IGameTextResolver gameTextResolver = null)
         {
             if (view == null)
                 return;
 
             if (view.StickyCommandMode != TacticalCommandMode.None)
             {
+                IGameTextResolver textResolver = gameTextResolver ?? FallbackGameTextResolver.Instance;
                 view.CurrentCommandMode = view.StickyCommandMode;
-                ApplyCommandModeVisuals(view, view.StickyCommandMode);
+                ApplyCommandModeVisuals(view, view.StickyCommandMode, textResolver);
                 return;
             }
 
             ClearCommandModeInternal(view);
         }
 
-        public static void ApplyCommandResult(IBattleHudRuntimeFeedbackView view, TacticalCommandResult result)
+        public static void ApplyCommandResult(
+            IBattleHudRuntimeFeedbackView view,
+            TacticalCommandResult result,
+            IGameTextResolver gameTextResolver = null)
         {
             if (view == null)
                 return;
 
+            IGameTextResolver textResolver = gameTextResolver ?? FallbackGameTextResolver.Instance;
             view.LastCommandResult = result;
             view.HasLastCommandResult = true;
 
@@ -122,12 +139,13 @@ namespace Game.UI.Runtime
                         MatchHudCurrentOrderBannerUiSystemHelper.BuildAcceptedResultBanner(
                             result,
                             bannerMode,
-                            view.ResolveCommandIconSprite(bannerMode)),
+                            view.ResolveCommandIconSprite(bannerMode),
+                            textResolver),
                         Time.unscaledTime,
                         SuccessFeedbackDurationSeconds);
                 }
 
-                MatchHudCommandFeedbackModel feedbackModel = BuildCommandResultFeedback(result, view.RuntimeFeedbackState);
+                MatchHudCommandFeedbackModel feedbackModel = BuildCommandResultFeedback(result, view.RuntimeFeedbackState, textResolver);
                 if (feedbackModel.Visible)
                     view.ApplyTransientCommandFeedback(feedbackModel, Time.unscaledTime);
                 return;
@@ -135,7 +153,7 @@ namespace Game.UI.Runtime
 
             string reason = !string.IsNullOrWhiteSpace(result.Message)
                 ? result.Message
-                : ResolveCommandReasonText(result.ReasonCode);
+                : ResolveCommandReasonText(result.ReasonCode, textResolver);
             view.ShowInvalidCommand(reason);
             view.ApplyTransientCommandFeedback(
                 MatchHudCommandFeedbackModel.ShowTransient(reason, CommandFeedbackSeverity.Error, ErrorFeedbackDurationSeconds),
@@ -154,7 +172,10 @@ namespace Game.UI.Runtime
             view?.SetWorldMarkersVisible(false);
         }
 
-        private static void ApplyCommandModeVisuals(IBattleHudRuntimeFeedbackView view, TacticalCommandMode mode)
+        private static void ApplyCommandModeVisuals(
+            IBattleHudRuntimeFeedbackView view,
+            TacticalCommandMode mode,
+            IGameTextResolver textResolver)
         {
             if (mode == TacticalCommandMode.None)
             {
@@ -166,16 +187,17 @@ namespace Game.UI.Runtime
                 view.ApplyCommandModeTabs(mode);
                 view.ApplyCurrentOrderBanner(MatchHudCurrentOrderBannerUiSystemHelper.BuildCommandModeBanner(
                     mode,
-                    view.ResolveCommandIconSprite(mode)));
+                    view.ResolveCommandIconSprite(mode),
+                    textResolver));
             }
 
-            MatchHudCommandFeedbackModel commandFeedback = BuildCommandModeFeedback(mode);
+            MatchHudCommandFeedbackModel commandFeedback = BuildCommandModeFeedback(mode, textResolver);
             if (!commandFeedback.Visible)
                 view.HideFeedbackMessage();
             else
                 view.ApplyPersistentCommandFeedback(commandFeedback, MatchHudCommandFeedbackActionsModel.Hidden);
 
-            string displayText = ResolveCommandModeText(mode);
+            string displayText = ResolveCommandModeText(mode, textResolver);
             if (string.IsNullOrEmpty(displayText))
                 view.HideCommandMode();
             else
@@ -192,21 +214,26 @@ namespace Game.UI.Runtime
             view.ClearCommandModeTabs();
         }
 
-        private static MatchHudCommandFeedbackModel BuildCommandModeFeedback(TacticalCommandMode mode)
+        private static MatchHudCommandFeedbackModel BuildCommandModeFeedback(
+            TacticalCommandMode mode,
+            IGameTextResolver textResolver)
         {
-            string instruction = ResolveCommandInstructionText(mode);
+            string instruction = ResolveCommandInstructionText(mode, textResolver);
             return MatchHudCommandFeedbackModel.Show(
                 instruction,
                 TacticalCommandFeedbackText.ToInstructionSeverity(mode));
         }
 
-        private static MatchHudCommandFeedbackModel BuildCommandResultFeedback(TacticalCommandResult result, BattleHudRuntimeFeedbackState state)
+        private static MatchHudCommandFeedbackModel BuildCommandResultFeedback(
+            TacticalCommandResult result,
+            BattleHudRuntimeFeedbackState state,
+            IGameTextResolver textResolver)
         {
             if (!result.Accepted)
             {
                 string reason = !string.IsNullOrWhiteSpace(result.Message)
                     ? result.Message
-                    : ResolveCommandReasonText(result.ReasonCode);
+                    : ResolveCommandReasonText(result.ReasonCode, textResolver);
                 return MatchHudCommandFeedbackModel.ShowTransient(reason, CommandFeedbackSeverity.Error, ErrorFeedbackDurationSeconds);
             }
 
@@ -223,23 +250,23 @@ namespace Game.UI.Runtime
                 ResolveResultDuration(severity));
         }
 
-        private static string ResolveCommandModeText(TacticalCommandMode mode)
+        private static string ResolveCommandModeText(TacticalCommandMode mode, IGameTextResolver textResolver)
         {
-            return GameText.Get(
+            return textResolver.Get(
                 TacticalCommandFeedbackText.ToDisplayTextKey(mode),
                 TacticalCommandFeedbackText.ToDisplayText(mode));
         }
 
-        private static string ResolveCommandReasonText(TacticalCommandReasonCode reasonCode)
+        private static string ResolveCommandReasonText(TacticalCommandReasonCode reasonCode, IGameTextResolver textResolver)
         {
-            return GameText.Get(
+            return textResolver.Get(
                 TacticalCommandFeedbackText.ToDisplayTextKey(reasonCode),
                 TacticalCommandFeedbackText.ToDisplayText(reasonCode));
         }
 
-        private static string ResolveCommandInstructionText(TacticalCommandMode mode)
+        private static string ResolveCommandInstructionText(TacticalCommandMode mode, IGameTextResolver textResolver)
         {
-            return GameText.Get(
+            return textResolver.Get(
                 TacticalCommandFeedbackText.ToInstructionTextKey(mode),
                 TacticalCommandFeedbackText.ToInstructionText(mode));
         }

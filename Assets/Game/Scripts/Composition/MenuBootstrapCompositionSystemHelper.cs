@@ -24,6 +24,7 @@ namespace Game.Composition
         private readonly MatchSceneReferenceSceneSystemHelper matchSceneReferenceSystem = new();
         private readonly QuickCustomGameConfigStore quickCustomGameConfigStore = new();
         private readonly MatchLaunchCommand matchLaunchCommand = new();
+        private readonly IGameTextResolver gameTextResolver = new GameTextResolverAdapter();
 
         private EntityQuery boundaryQuery;
         private Entity cachedBoundaryEntity;
@@ -80,6 +81,7 @@ namespace Game.Composition
                 view.ShellEcsPresentation.Configure(view.ShellView);
             if (view.ContentSystem != null)
             {
+                view.ContentSystem.BindGameTextResolver(gameTextResolver);
                 view.ContentSystem.ConfigureCatalogMetadataResolvers(
                     UiCatalogAuthoringMetadataUiSystemHelper.TryGetBuildingMetadata,
                     UiCatalogAuthoringMetadataUiSystemHelper.TryGetUnitMetadata);

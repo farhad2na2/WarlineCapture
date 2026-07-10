@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using Game.Tactical.Contracts;
+using Game.UI.Contracts;
 
 namespace Game.UI.Runtime
 {
@@ -11,9 +12,15 @@ namespace Game.UI.Runtime
         [SerializeField] private Button closeButton;
         [SerializeField] private Button scrimButton;
         [SerializeField] private BattleHudRuntimeFeedbackView runtimeFeedbackView;
+        private IGameTextResolver _gameTextResolver = FallbackGameTextResolver.Instance;
         private bool _appliedSpecialMode;
 
         public bool IsOpen => wheelRoot != null && wheelRoot.activeSelf;
+
+        public void BindGameTextResolver(IGameTextResolver gameTextResolver)
+        {
+            _gameTextResolver = gameTextResolver ?? FallbackGameTextResolver.Instance;
+        }
 
         private void Awake()
         {
@@ -73,7 +80,10 @@ namespace Game.UI.Runtime
 
         private void ApplySpecialMode()
         {
-            BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandMode(runtimeFeedbackView, TacticalCommandMode.Special);
+            BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandMode(
+                runtimeFeedbackView,
+                TacticalCommandMode.Special,
+                _gameTextResolver);
             _appliedSpecialMode = runtimeFeedbackView != null;
         }
 
@@ -82,7 +92,7 @@ namespace Game.UI.Runtime
             if (!_appliedSpecialMode)
                 return;
 
-            BattleHudRuntimeFeedbackUiSystemHelper.ClearCommandMode(runtimeFeedbackView);
+            BattleHudRuntimeFeedbackUiSystemHelper.ClearCommandMode(runtimeFeedbackView, _gameTextResolver);
             _appliedSpecialMode = false;
         }
     }

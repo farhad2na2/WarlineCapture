@@ -17,7 +17,7 @@ This tracker follows the completed historical program in `Design/Architecture/ar
 | Canonical project root | `/Users/farhad/Projects/WarlineCapture` |
 | Architecture rating | `6.5 / 10` |
 | Performance rating | `6.0 / 10` |
-| Current program status | Active - Phase 0 complete; Wave 1 UI and ECS guardrail work active |
+| Current program status | Active - Phase 0 and Phase 2A complete; Phase 1 and Phase 2B hardening active |
 
 ### Protected Integrated Work
 
@@ -33,7 +33,7 @@ If a tracker task genuinely needs one of these files, read and integrate the exi
 
 The tracker was authored at `b66453e97`, then entered `main` through `68b2da500`. Before implementation began, `main` also received the protected ARIA work and the match CPU performance repair in `a6af1335c`. The current execution baseline is therefore `a6af1335c`, not the original audit commit.
 
-The FPS repair changed `BuildingDefenseAttackSystem` and related presentation, audio, warning, settings, diagnostics, and validation code. It reduced the focused 4,800 x 2,160 Editor benchmark with 733 units to an average `8.893 ms`, median `8.242 ms`, and p95 `12.516 ms`. This is accepted current-head evidence, but it does not complete Phase 2B: the system still creates one entity snapshot and three component snapshots during its throttled 0.12-second target-acquisition pass. `APH-205` through `APH-213` remain pending until their tracker-specific acceptance criteria pass.
+The FPS repair changed `BuildingDefenseAttackSystem` and related presentation, audio, warning, settings, diagnostics, and validation code. It reduced the focused 4,800 x 2,160 Editor benchmark with 733 units to an average `8.893 ms`, median `8.242 ms`, and p95 `12.516 ms`. This remains the accepted performance floor. `APH-207` and `APH-208` subsequently removed the four throttled target-acquisition snapshots through persistent unmanaged scratch storage; `APH-209` through `APH-213` still require synchronization audit, profiler evidence, integrated architecture validation, and performance recapture.
 
 Before changing production code, the Phase 0 agents must reproduce current-head compiler, architecture, performance, and residency evidence. If current results differ from the original audit snapshot, record both values; never rewrite the original evidence as though it had been measured at `a6af1335c`.
 
@@ -248,16 +248,16 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `17 / 106` |
-| Checklist percent complete | `16.0%` |
-| Checklist in progress | `3 / 106`: `APH-102`, `APH-203`, `APH-207` |
-| Complete plus active coverage | `20 / 106` (`18.9%`); this is visibility only, not accepted completion |
+| Checklist complete | `26 / 106` |
+| Checklist percent complete | `24.5%` |
+| Checklist in progress | `2 / 106`: `APH-105`, `APH-211` |
+| Complete plus active coverage | `28 / 106` (`26.4%`); this is visibility only, not accepted completion |
 | Current phase | Phases 1 and 2 - UI boundary and ECS hot-path guardrails |
-| Current task | `APH-102` composition text adapter; `APH-203` exchange hot-path guard; `APH-207`/`APH-208` defense persistent scratch and snapshot removal |
+| Current task | `APH-105` remove stale UI runtime config imports; `APH-211` run the integrated defense behavior/audio/VFX matrix |
 | Red architecture gates | `2` at the audit baseline; current-head reproduction remains required |
 | Red performance gates | `1`: steady-state Match GC `269,482 / 1,024` bytes |
-| Last verified commit | `cd7646340` for `APH-206`; Phase 0 complete |
-| Last update | 2026-07-09 - UI contract, exchange direct iteration, and defense allocation coverage accepted |
+| Last verified commit | `190140146` for `APH-210`; Phase 2A complete |
+| Last update | 2026-07-09 - all UI text consumers migrated and defense phase markers captured |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -322,12 +322,18 @@ Implementation contract:
 - [x] `APH-101` Add `IGameTextResolver` and immutable fallback implementation under `Assets/Game/Scripts/UI/Contracts`.
   - Result: sealed stateless fallback added with no Unity, `Game.Configs`, or static mutable-registry dependency.
   - Validation: `[GameTextResolverValidation] result=Passed tests=5`; UI Contracts and Editor-test builds passed with 0 errors; commit `a6f48a8c5` pushed to `main`.
-- [~] `APH-102` Add the composition-owned `GameTextResolverAdapter` wrapping the existing config-owned text source.
-- [ ] `APH-103` Inject the resolver through Menu and Match UI runtime adapters without hierarchy search or static registration.
-- [ ] `APH-104` Migrate the seven known `Game.UI.Runtime` text consumers listed in Current Red Gates.
+- [x] `APH-102` Add the composition-owned `GameTextResolverAdapter` wrapping the existing config-owned text source.
+  - Result: stateless composition adapter delegates configured lookup, fallback, and formatting behavior without introducing a mutable registry.
+  - Validation: `[GameTextResolverAdapterValidation] result=Passed tests=5`; UI Contracts, Composition, Runtime, Editor, and Editor-test builds passed with 0 errors; commit `72b9ecf5f` pushed to `main`.
+- [x] `APH-103` Inject the resolver through Menu and Match UI runtime adapters without hierarchy search or static registration.
+  - Result: Menu binds before router content installation; both Match initialization paths inject the resolver; unbound runtime roots retain the immutable fallback.
+  - Validation: `[GameTextResolverInjectionValidation] result=Passed tests=4`; UI Contracts, UI Runtime, Composition, Runtime, Editor, EditMode-test, and PlayMode-test builds passed with 0 errors; commit `2f7c767fa` pushed to `main`.
+- [x] `APH-104` Migrate the seven known `Game.UI.Runtime` text consumers listed in Current Red Gates.
   - Preserve every key and fallback string from commit `caaafe339`.
   - Preserve formatting culture and error fallback behavior.
-- [ ] `APH-105` Remove `using Game.Configs` from files compiled by `Game.UI.Runtime`.
+  - Result: all 85 direct expressions now use the injected contract: 62 `Get` and 23 `Format`; 80 literal key/fallback pairs retain the baseline fingerprint and five dynamic expressions retain their original shapes. Existing runtime sink and command-wheel propagation use the same resolver without duplicate implementations or static state.
+  - Validation: `[GameTextResolverConsumerMigrationValidation] result=Passed tests=4 gets=62 formats=23 expressions=85`; order-banner 16/16, command-feedback 15/15, and Build Drawer 25/25 focused cases passed; seven-assembly build matrix passed with 0 errors; commit `5358a0c1e` pushed to `main`.
+- [~] `APH-105` Remove `using Game.Configs` from files compiled by `Game.UI.Runtime`.
 - [ ] `APH-106` Remove `Game.Configs` from `Assets/Game/Scripts/UI/Game.UI.Runtime.asmdef`.
 - [ ] `APH-107` Add a guard that enumerates UI runtime source files and fails on future `Game.Configs` imports or direct `GameText` calls.
 - [ ] `APH-108` Run UI text focused tests, `Game.UI.Runtime`, `Game.Composition`, and `Game.Tests.Editor` builds, then run the 31-check assembly-boundary validation.
@@ -352,8 +358,12 @@ Implementation contract:
 - [x] `APH-202` Replace the temporary entity array with direct ECS query iteration.
   - Result: direct multi-entity `SystemAPI.Query` iteration replaces the native snapshot; missing `AllowAiExchange` summary propagation is restored.
   - Validation: behavior tests passed 4/4; allocation tests passed 2/2; Runtime/Editor-test builds passed with 0 errors; commit `b0b5f7e08` pushed to `main`.
-- [~] `APH-203` Confirm no new `EntityManager.CreateEntityQuery`, structural sync point, managed allocation, or singleton assumption was introduced.
-- [ ] `APH-204` Run `ResourceExchangeRequestValidationSystemTests.RunFocusedValidation` and `ResourceExchangeGcAllocationValidationTests.RunFocusedValidation`.
+- [x] `APH-203` Confirm no new `EntityManager.CreateEntityQuery`, structural sync point, managed allocation, or singleton assumption was introduced.
+  - Result: focused source guard locks direct multi-entity iteration and rejects query creation, dependency completion, snapshots, temporary allocation, singleton APIs, and common managed-allocation tokens in `OnUpdate`.
+  - Validation: `[ResourceExchangeArchitectureGuardrail] result=Passed tests=6`; commit `5dd7f26d4` pushed to `main`.
+- [x] `APH-204` Run `ResourceExchangeRequestValidationSystemTests.RunFocusedValidation` and `ResourceExchangeGcAllocationValidationTests.RunFocusedValidation`.
+  - Result: behavior passed 4/4 and warmed allocation passed 2/2 across 64 warmup and 512 measured frames with two exchange entities and `productionUpdateAllocatedBytes=0`.
+  - Logs: `/private/tmp/warline-aph204-resource-request-validation.log` and `/private/tmp/warline-aph204-resource-gc-validation.log`.
 
 ### Phase 2B - Building Defense
 
@@ -361,7 +371,7 @@ Current-head overlap:
 
 - Commit `a6af1335c` changed this system to acquire targets every 0.12 seconds, copy query data into contiguous arrays, and preserve per-frame firing cooldown updates. It also added focused performance diagnostics and supporting tests.
 - That repair is the performance floor for this phase. Preserve or improve its focused benchmark and do not restore per-frame target acquisition or random per-candidate `EntityManager` reads.
-- The current implementation still uses one entity snapshot and three component snapshots during target acquisition, so it does not satisfy `APH-208` or the zero-snapshot architecture gate.
+- Commit `b97e2a2d1` removed the one entity snapshot and three component snapshots while preserving the 0.12-second acquisition cadence. The remaining Phase 2B debt starts with explicit dependency completion and direct `EntityManager` access under `APH-209`.
 
 Immediate implementation contract:
 
@@ -377,11 +387,21 @@ Immediate implementation contract:
 - [x] `APH-206` Add a warmed allocation test covering at least 32 towers and 740 candidate units.
   - Result: 32 towers, 740 candidates, 32 warmup updates, and 64 measured acquisition updates report `productionUpdateAllocatedBytes=0` with four-slot order preserved.
   - Validation: `[BuildingDefenseAttackSystemValidation] result=Passed tests=7`; commit `cd7646340` pushed to `main`.
-- [~] `APH-207` Add persistent target scratch storage with explicit `OnCreate`/`OnDestroy` lifetime.
-- [ ] `APH-208` Replace `_targetQuery.ToEntityArray(Allocator.Temp)` and remove the per-frame snapshot.
-- [ ] `APH-209` Audit the explicit dependency completion and direct `EntityManager` calls; remove or document each unavoidable synchronization point with profiler evidence.
-- [ ] `APH-210` Add profiler markers for target collection, target selection, and effect application so the later spatial-index phase has comparable metrics.
-- [ ] `APH-211` Run defense, automatic-faction-targeting, combat, audio, and VFX focused validations.
+- [x] `APH-207` Add persistent target scratch storage with explicit `OnCreate`/`OnDestroy` lifetime.
+  - Result: `BuildingDefenseAttackSystem` owns a persistent `NativeList<TargetCandidate>`, clears it at acquisition cadence, and disposes it explicitly in `OnDestroy`.
+- [x] `APH-208` Replace `_targetQuery.ToEntityArray(Allocator.Temp)` and remove the per-frame snapshot.
+  - Result: direct `SystemAPI.Query` iteration rebuilds one structure-of-record scratch list and excludes aircraft and debug targets without any query snapshots.
+  - Validation: `[BuildingDefenseAttackSystemValidation] result=Passed tests=9`; 32-tower/740-candidate warmed allocation remains zero; Runtime, Editor, and Editor-test builds passed with 0 errors; commit `b97e2a2d1` pushed to `main`.
+- [x] `APH-209` Audit the explicit dependency completion and direct `EntityManager` calls; remove or document each unavoidable synchronization point with profiler evidence.
+  - Result: 21 local `EntityManager` data operations were replaced with explicit component/entity lookups. One documented `state.Dependency.Complete()` remains before five uniquely guarded helper/structural boundaries because removing it now would move synchronization into helper-owned access rather than eliminate it.
+  - Validation: `[BuildingDefenseAttackSystemValidation] result=Passed tests=10`; the 32-tower/740-candidate warmed update remained at `productionUpdateAllocatedBytes=0`; commit `13ff44928` pushed to `main`.
+  - Profiler evidence: the 240-frame capture passed at average `4.138 ms` and p95 `4.325 ms`. `BuildingDefenseAttackSystem` recorded `13.88 ms` total, `13.67 ms` self, `0.058 ms/frame` average total, `1.09 ms` maximum, and 238 calls. All nested completion/helper/ECB work therefore totaled at most `0.21 ms`, below `0.001 ms/frame`.
+  - Artifact: `/private/tmp/warline-aph209-building-defense-summary.md` from `/private/tmp/warline-aph209-building-defense.raw`.
+- [x] `APH-210` Add profiler markers for target collection, target selection, and effect application so the later spatial-index phase has comparable metrics.
+  - Result: three static zero-allocation markers cover collection, per-tower selection, and immediate plus deferred effect application; the Match capture runner registers and records them deterministically.
+  - Validation: `[BuildingDefenseAttackSystemValidation] result=Passed tests=11`; warmed allocation remained zero; 240-frame Match capture passed at p95 `3.691 ms`; commit `190140146` pushed to `main`.
+  - Marker metrics: collection average/max `0.121/0.135 ms`; selection `0.904/0.922 ms`; effect application `0.001/0.006 ms`.
+- [~] `APH-211` Run defense, automatic-faction-targeting, combat, audio, and VFX focused validations.
 - [ ] `APH-212` Run `EcsBurstHotPathArchitectureTests.RunFocusedValidation`.
   - Acceptance: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=10` and zero snapshot debt.
 - [ ] `APH-213` Re-run editor performance and steady-state GC baselines; reject the slice if frame p95 or player-relevant GC regresses beyond noise.
@@ -815,6 +835,126 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Visual result: Not applicable
 - Residual risk: four native query snapshots and explicit dependency completion remain production debt
 - Next ready task: `APH-207`
+
+### 2026-07-09 - APH-102 - Composition text resolver adapter
+
+- Status: Complete
+- Commit or worktree baseline: `59dbb6148`
+- Stable commit/push: `72b9ecf5f` pushed to `main`
+- Files changed: composition-owned resolver adapter, focused tests, and Unity `.meta` files
+- Behavior preserved/changed: configured lookup, missing-key fallback, and formatting behavior are unchanged; no runtime consumer is migrated in this slice
+- Validation: `[GameTextResolverAdapterValidation] result=Passed tests=5`; UI Contracts, Composition, Runtime, Editor, and Editor-test builds passed with 0 errors; `git diff --check` passed
+- Artifacts: `/private/tmp/warline-aph102-text-resolver-validation.log`
+- Metrics before: UI contract existed without a config-backed composition implementation
+- Metrics after: five adapter behavior cases and one stateless composition implementation
+- Visual result: Not applicable
+- Residual risk: Menu and Match injection remains `APH-103`; seven runtime consumers remain `APH-104`
+- Next ready task: `APH-103`
+
+### 2026-07-09 - APH-203 and APH-204 - Resource Exchange architecture closeout
+
+- Status: Complete
+- Commit or worktree baseline: `59dbb6148`
+- Stable commit/push: `5dd7f26d4` pushed to `main`
+- Files changed: Resource Exchange architecture guardrail tests
+- Behavior preserved/changed: production behavior unchanged; source guard now prevents snapshots, structural completion, singleton assumptions, temporary allocation, and common managed allocation in request validation `OnUpdate`
+- Validation: architecture 6/6, request behavior 4/4, and warmed GC 2/2 passed; 64 warmup and 512 measured frames reported `productionUpdateAllocatedBytes=0`
+- Artifacts: `/private/tmp/warline-aph203-resource-architecture-validation.log`, `/private/tmp/warline-aph204-resource-request-validation.log`, and `/private/tmp/warline-aph204-resource-gc-validation.log`
+- Metrics before: Phase 2A direct iteration lacked a production-source regression gate
+- Metrics after: Phase 2A behavior, architecture, and zero-allocation matrix is complete
+- Visual result: Not applicable
+- Residual risk: integrated full architecture gate remains scheduled with `APH-212` after Building Defense synchronization work
+- Next ready task: Phase 2A complete; no Resource Exchange task remains in this phase
+
+### 2026-07-09 - APH-207 and APH-208 - Building-defense snapshot removal
+
+- Status: Complete
+- Commit or worktree baseline: `59dbb6148`
+- Stable commit/push: `b97e2a2d1` pushed to `main`
+- Files changed: `BuildingDefenseAttackSystem` and its focused editor tests
+- Behavior preserved/changed: target acquisition remains throttled at 0.12 seconds with the same eligibility, nearest ordering, four slots, cooldowns, damage, audio, and VFX; four temporary query snapshots are replaced by persistent unmanaged scratch
+- Validation: `[BuildingDefenseAttackSystemValidation] result=Passed tests=9`; 32-tower/740-candidate warmed update remains zero managed bytes; Runtime, Editor, and Editor-test builds passed with 0 errors; `git diff --check` passed
+- Artifacts: `/private/tmp/warline-aph207-defense-validation.log`
+- Metrics before: one entity and three component snapshots per acquisition pass
+- Metrics after: zero target-acquisition query snapshots and one explicitly disposed persistent candidate list
+- Visual result: Not applicable; deterministic ECS behavior
+- Residual risk: explicit dependency completion, direct `EntityManager` calls, temporary command/effect containers, and effect-application synchronization remain under `APH-209`
+- Next ready task: `APH-209`
+
+### 2026-07-09 - APH-103 - Resolver injection through runtime roots
+
+- Status: Complete
+- Commit or worktree baseline: `8ce928759`
+- Stable commit/push: `2f7c767fa` pushed to `main`
+- Files changed: Menu and Match composition bootstraps, `MainMenuPlayUI`, `UIShellContentView`, focused injection tests, and Unity `.meta`
+- Behavior preserved/changed: Menu binds the config-backed resolver before router installation; both Match runtime initialization paths inject it; unbound roots use the immutable fallback
+- Validation: `[GameTextResolverInjectionValidation] result=Passed tests=4`; UI Contracts, UI Runtime, Composition, Runtime, Editor, EditMode-test, and PlayMode-test builds passed with 0 errors; `git diff --check` passed
+- Artifacts: `/private/tmp/warline-aph103-game-text-resolver-injection.log` and `/private/tmp/warline-aph103-*.log`
+- Metrics before: config-backed resolver existed without runtime-root injection
+- Metrics after: Menu plus two Match initialization paths are explicitly covered
+- Visual result: Not applicable; no screen content changed
+- Residual risk: the seven direct `GameText` consumers remain `APH-104`
+- Next ready task: `APH-104`
+
+### 2026-07-09 - APH-209 - Building-defense synchronization audit
+
+- Status: Complete
+- Commit or worktree baseline: `8ce928759`
+- Stable commit/push: `13ff44928` pushed to `main`
+- Files changed: `BuildingDefenseAttackSystem` and focused defense tests
+- Behavior preserved/changed: target and effect component access now uses explicit ECS lookups; one completion remains visible before five guarded legacy helper/structural boundaries
+- Validation: `[BuildingDefenseAttackSystemValidation] result=Passed tests=10`; warmed 32-tower/740-candidate update remained zero managed bytes; integrated seven-assembly build matrix passed with 0 errors; `git diff --check` passed
+- Artifacts: `/private/tmp/warline-aph209-building-defense-focused.log`, `/private/tmp/warline-aph209-building-defense-profiler.log`, `/private/tmp/warline-aph209-building-defense.raw`, and `/private/tmp/warline-aph209-building-defense-summary.md`
+- Metrics before: 21 local direct `EntityManager` data operations and one explicit completion without current profiler attribution
+- Metrics after: zero local direct data operations; one documented completion; Match average `4.138 ms`, p95 `4.325 ms`; defense `0.058 ms/frame` average, `1.09 ms` maximum, with nested work below `0.001 ms/frame`
+- Visual result: Not applicable; raw profiler and deterministic ECS validation
+- Residual risk: target-collection, target-selection, and effect-application timing need separate markers under `APH-210`
+- Next ready task: `APH-210`
+
+### 2026-07-09 - APH-104 - UI runtime text consumer migration
+
+- Status: Complete
+- Commit or worktree baseline: `26c6177e0`
+- Stable commit/push: `5358a0c1e` pushed to `main`
+- Files changed: seven direct UI runtime consumers, existing runtime feedback sink, command-wheel propagation, `MainMenuPlayUI`, and focused migration tests
+- Behavior preserved/changed: 85 configured text expressions now use the injected resolver while preserving exact keys, fallbacks, current-culture formatting, and invalid-format fallback; no static registry or hierarchy search was added
+- Validation: migration 4/4 with 62 `Get`, 23 `Format`, and 85 total expressions; order banner 16/16, command feedback 15/15, Build Drawer 25/25; seven-assembly build matrix passed with 0 errors; `git diff --check` passed
+- Artifacts: `/private/tmp/warline-aph104-game-text-consumers-final-recovered.log`, `/private/tmp/warline-aph104-order-banner.log`, `/private/tmp/warline-aph104-command-feedback.log`, and `/private/tmp/warline-aph104-build-drawer.log`
+- Metrics before: seven runtime files with 85 direct config-owned text calls
+- Metrics after: zero direct text calls in those consumers and one baseline fingerprint covering 80 literal plus five dynamic expressions
+- Visual result: no visual assets changed; two additional prefab-content suites remain independently red on pre-existing camera-button/status-chip sprite assignments and are not resolver failures
+- Residual risk: stale `Game.Configs` imports remain intentionally owned by `APH-105`
+- Next ready task: `APH-105`
+
+### 2026-07-09 - APH-210 - Building-defense phase profiler markers
+
+- Status: Complete
+- Commit or worktree baseline: `26c6177e0`
+- Stable commit/push: `190140146` pushed to `main`
+- Files changed: `BuildingDefenseAttackSystem`, Canvas Match profiler capture, and focused defense tests
+- Behavior preserved/changed: static markers surround target collection, per-tower selection, and immediate/deferred effects without changing targeting, combat, audio, VFX, or allocation behavior
+- Validation: `[BuildingDefenseAttackSystemValidation] result=Passed tests=11`; warmed 32-tower/740-candidate update remained zero managed bytes; Match capture passed at average `3.592 ms` and p95 `3.691 ms`; seven-assembly build matrix passed with 0 errors
+- Artifacts: `/private/tmp/warline-aph210-building-defense-marker-registration.log`, `/private/tmp/warline-aph210-building-defense-profiler-registered.log`, and `/private/tmp/warline-aph210-building-defense-registered.raw`
+- Metrics before: only whole-system defense timing (`0.058 ms/frame` average in APH-209)
+- Metrics after: collection `0.121/0.135 ms` average/max; selection `0.904/0.922 ms`; effects `0.001/0.006 ms`
+- Visual result: Not applicable; raw profiler and focused ECS validation
+- Residual risk: defense-specific overwrite/audio/VFX integration and the full behavior matrix remain `APH-211`
+- Next ready task: `APH-211`
+
+### 2026-07-09 - Unity validation timeout reliability
+
+- Status: Complete infrastructure repair; no checklist item added
+- Commit or worktree baseline: `26c6177e0`
+- Stable commit/push: `88404af67` pushed to `main`
+- Files changed: `Tools/CI/invoke_unity_macos.sh`
+- Behavior preserved/changed: timeout duration is counted by completed one-second wait cycles instead of adjustable wall-clock time; Unity invocation arguments and cleanup behavior are unchanged
+- Validation: `bash -n` and `git diff --check` passed; subsequent focused Unity and 240-frame profiler runs completed under the corrected timeout
+- Artifacts: APH-104 and APH-210 logs above
+- Metrics before: system-time adjustments could falsely report a 900-second timeout within one launch interval
+- Metrics after: completed validations exit normally while retaining hard timeout enforcement
+- Visual result: Not applicable
+- Residual risk: Unity package initialization can still be slow; it no longer causes false elapsed-time calculation
+- Next ready task: continue Wave 1
 
 ## Decision Log
 

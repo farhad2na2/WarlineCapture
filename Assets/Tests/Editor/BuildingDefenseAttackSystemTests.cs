@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Game.Components;
 using Game.Runtime;
 using NUnit.Framework;
@@ -26,6 +27,8 @@ public sealed class BuildingDefenseAttackSystemTests
             passed++;
             tests.GuardTowerDefense_IgnoresAircraftAndFiresAtGroundTarget();
             passed++;
+            tests.GuardTowerDefense_IgnoresDebugFireTargetAndFiresAtEligibleHostile();
+            passed++;
             tests.GuardTowerDefense_SelectsNearestHostileRegardlessOfCreationOrder();
             passed++;
             tests.GuardTowerDefense_FourConcurrentSlotsAttackFourNearestHostilesInOrder();
@@ -35,6 +38,12 @@ public sealed class BuildingDefenseAttackSystemTests
             tests.GuardTowerDefense_RemovedTargetBetweenUpdatesClearsSlotAndReacquiresAfterInterval();
             passed++;
             tests.WarmedTargetCollectionUpdate_ThirtyTwoTowersAndSevenHundredFortyCandidates_DoesNotAllocateManagedMemory();
+            passed++;
+            tests.BuildingDefenseSource_UsesPersistentDirectIterationScratchWithoutArraySnapshots();
+            passed++;
+            tests.BuildingDefenseSource_AuditsSingleCompletionAndNamedEntityManagerBoundaries();
+            passed++;
+            tests.BuildingDefenseSource_DefinesStableZeroAllocationPhaseMarkers();
             passed++;
 
             Debug.Log($"[BuildingDefenseAttackSystemValidation] result=Passed tests={passed}");
@@ -111,6 +120,38 @@ public sealed class BuildingDefenseAttackSystemTests
         Assert.IsTrue(em.HasComponent<RecentAttacker>(groundTarget));
         Assert.AreEqual(tower, em.GetComponentData<RecentAttacker>(groundTarget).Attacker);
         Assert.IsFalse(em.HasComponent<RecentAttacker>(airTarget));
+    }
+
+    [Test]
+    public void GuardTowerDefense_IgnoresDebugFireTargetAndFiresAtEligibleHostile()
+    {
+        using World world = new("GuardTowerDefense_IgnoresDebugFireTargetAndFiresAtEligibleHostile");
+        EntityManager em = world.EntityManager;
+
+        Entity tower = CreateGuardTower(
+            em,
+            new float3(0f, 0f, 0f),
+            FactionIdentity.EnemyFactionId,
+            maxConcurrentAttacks: 1);
+        Entity debugTarget = CreateTarget(
+            em,
+            new float3(2f, 0f, 0f),
+            health: 100,
+            factionId: FactionIdentity.PlayerFactionId);
+        em.AddComponentData(debugTarget, new DebugFireTargetTag { Source = tower });
+        Entity hostileTarget = CreateTarget(
+            em,
+            new float3(6f, 0f, 0f),
+            health: 100,
+            factionId: FactionIdentity.PlayerFactionId);
+
+        SystemHandle attackSystem = world.CreateSystem<BuildingDefenseAttackSystem>();
+        Update(world, attackSystem, elapsedTime: 0.1d, deltaTime: 0.1f);
+
+        Assert.AreEqual(100, GetHealth(em, debugTarget), "Debug fire targets must remain outside automatic building-defense acquisition.");
+        Assert.AreEqual(90, GetHealth(em, hostileTarget));
+        Assert.AreEqual(hostileTarget, em.GetBuffer<BuildingDefenseAttackSlot>(tower)[0].Target);
+        Assert.IsFalse(em.HasComponent<RecentAttacker>(debugTarget));
     }
 
     [Test]
@@ -340,6 +381,153 @@ public sealed class BuildingDefenseAttackSystemTests
             harnessAllocatedBytes,
             0,
             "Harness allocation is the complete measurement window minus bytes allocated inside SystemHandle.Update and cannot be negative.");
+    }
+
+    [Test]
+    public void BuildingDefenseSource_UsesPersistentDirectIterationScratchWithoutArraySnapshots()
+    {
+        string source = ReadBuildingDefenseSource();
+        StringAssert.Contains("NativeList<TargetCandidate>", source);
+        StringAssert.Contains("Allocator.Persistent", source);
+        StringAssert.Contains("public void OnDestroy(ref SystemState state)", source);
+        StringAssert.Contains("_targetCandidates.IsCreated", source);
+        StringAssert.Contains("_targetCandidates.Dispose()", source);
+        StringAssert.Contains(
+            "SystemAPI.Query<RefRO<UnitHealth>, RefRO<Faction>, RefRO<LocalTransform>>()",
+            source);
+        StringAssert.Contains(".WithNone<UnitAirMovement, DebugFireTargetTag>()", source);
+        StringAssert.DoesNotContain("_targetQuery", source);
+        StringAssert.DoesNotContain("ToEntityArray(", source);
+        StringAssert.DoesNotContain("ToComponentDataArray<", source);
+    }
+
+    [Test]
+    public void BuildingDefenseSource_AuditsSingleCompletionAndNamedEntityManagerBoundaries()
+    {
+        string source = ReadBuildingDefenseSource();
+
+        Assert.AreEqual(
+            1,
+            CountOccurrences(source, "state.Dependency.Complete();"),
+            "Building defense keeps one explicit completion for same-frame optional effect helpers and ECB playback.");
+        StringAssert.Contains("Keep this completion explicit until", source);
+        StringAssert.DoesNotContain("CompleteDependencyBefore", source);
+
+        string[] removedDirectOperations =
+        {
+            "em.Exists(",
+            "em.HasComponent<",
+            "em.GetComponentData<",
+            "em.SetComponentData("
+        };
+        for (int i = 0; i < removedDirectOperations.Length; i++)
+        {
+            StringAssert.DoesNotContain(
+                removedDirectOperations[i],
+                source,
+                $"Local direct EntityManager operation `{removedDirectOperations[i]}` must use the audited lookup bundle.");
+        }
+
+        string[] remainingEntityManagerBoundaries =
+        {
+            "AudioEventRequestSystem.EnsureAudioEntity(em)",
+            "GameplayAudioFeedbackSystemHelper.TryEmitWeaponFireAudio(em",
+            "UnitAttackSystem.TryEmitUnitUnderAttackAudio(",
+            "UnitAttackSystem.TryBuildAttackVfxRequest(em",
+            "ecb.Playback(em)"
+        };
+        for (int i = 0; i < remainingEntityManagerBoundaries.Length; i++)
+        {
+            Assert.AreEqual(
+                1,
+                CountOccurrences(source, remainingEntityManagerBoundaries[i]),
+                $"EntityManager boundary `{remainingEntityManagerBoundaries[i]}` must remain explicit and uniquely auditable.");
+        }
+
+        StringAssert.Contains("DirectComponentAccess", source);
+        StringAssert.Contains("SystemAPI.GetEntityStorageInfoLookup()", source);
+        StringAssert.Contains("SystemAPI.GetComponentLookup<UnitHealth>()", source);
+    }
+
+    [Test]
+    public void BuildingDefenseSource_DefinesStableZeroAllocationPhaseMarkers()
+    {
+        string source = ReadBuildingDefenseSource();
+        string captureSource = ReadCanvasMatchFpsValidationSource();
+
+        StringAssert.Contains("using Unity.Profiling;", source);
+        StringAssert.Contains(
+            "RuntimeHelpers.RunClassConstructor(typeof(BuildingDefenseAttackSystem).TypeHandle);",
+            captureSource,
+            "The capture runner must register defense markers before opening the Match scene.");
+        Assert.AreEqual(
+            3,
+            CountOccurrences(source, "private static readonly ProfilerMarker"),
+            "Building defense must expose exactly the three APH-210 phase markers.");
+
+        string[] markerNames =
+        {
+            "BuildingDefenseAttackSystem.TargetCollection",
+            "BuildingDefenseAttackSystem.TargetSelection",
+            "BuildingDefenseAttackSystem.EffectApplication"
+        };
+        for (int i = 0; i < markerNames.Length; i++)
+        {
+            Assert.AreEqual(
+                1,
+                CountOccurrences(source, $"new(\"{markerNames[i]}\")"),
+                $"Profiler marker `{markerNames[i]}` must be a single stable static instance.");
+            Assert.AreEqual(
+                1,
+                CountOccurrences(captureSource, $"\"{markerNames[i]}\""),
+                $"Canvas Match capture must record `{markerNames[i]}` for comparable APH-210 metrics.");
+        }
+
+        Assert.AreEqual(1, CountOccurrences(source, "using (TargetCollectionMarker.Auto())"));
+        Assert.AreEqual(1, CountOccurrences(source, "using (TargetSelectionMarker.Auto())"));
+        Assert.AreEqual(
+            2,
+            CountOccurrences(source, "using (EffectApplicationMarker.Auto())"),
+            "Effect timing must cover both immediate shot effects and deferred ECB playback.");
+        StringAssert.DoesNotContain("Profiler.BeginSample", source);
+        StringAssert.DoesNotContain("new ProfilerMarker", source);
+    }
+
+    private static string ReadBuildingDefenseSource()
+    {
+        string sourcePath = Path.Combine(
+            Application.dataPath,
+            "Game",
+            "Scripts",
+            "Systems",
+            "BuildingDefenseAttackSystem.cs");
+        Assert.IsTrue(File.Exists(sourcePath), $"Missing building-defense source at {sourcePath}.");
+        return File.ReadAllText(sourcePath);
+    }
+
+    private static string ReadCanvasMatchFpsValidationSource()
+    {
+        string sourcePath = Path.Combine(
+            Application.dataPath,
+            "Game",
+            "Scripts",
+            "Editor",
+            "CanvasMatchFpsValidation.cs");
+        Assert.IsTrue(File.Exists(sourcePath), $"Missing Canvas Match capture source at {sourcePath}.");
+        return File.ReadAllText(sourcePath);
+    }
+
+    private static int CountOccurrences(string source, string value)
+    {
+        int count = 0;
+        int index = 0;
+        while ((index = source.IndexOf(value, index, StringComparison.Ordinal)) >= 0)
+        {
+            count++;
+            index += value.Length;
+        }
+
+        return count;
     }
 
     private static void Update(World world, SystemHandle attackSystem, double elapsedTime, float deltaTime)

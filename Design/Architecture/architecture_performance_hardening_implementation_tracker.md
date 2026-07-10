@@ -248,17 +248,17 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `44 / 106` |
-| Checklist percent complete | `41.5%` |
-| Checklist in progress | `1 / 106`: `APH-311` |
-| Complete plus active coverage | `45 / 106` (`42.5%`); this is visibility only, not accepted completion |
-| Current phase | Phase 3 - settings, frame-rate, and environment ownership |
-| Current task | `APH-311` capture separate 10-minute Android 30 FPS and 60 FPS tier evidence |
+| Checklist complete | `45 / 106` |
+| Checklist percent complete | `42.5%` |
+| Checklist in progress | `2 / 106`: `APH-311`, `APH-401` |
+| Complete plus active coverage | `47 / 106` (`44.3%`); this is visibility only, not accepted completion |
+| Current phase | Phase 3 Android device evidence plus parallel Phase 4 audio residency |
+| Current task | `APH-311` awaits a physical device; `APH-401` controlled Menu/Match audio-memory capture implementation is active |
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: steady-state Match GC `234,324 / 1,024` bytes; improved 13.0% from the APH-007 baseline without weakening the budget |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
-| Last verified commit | `fd10d99e6`; integrated graphics gates and deterministic day/dusk/night capture pass |
-| Last update | 2026-07-10 - APH-310 complete; APH-311 awaiting an attached Android device while Phase 4 preparation runs in parallel |
+| Last verified commit | `6f858f762`; catalog-only APH-400 residency report passes `8/8` and generated without warnings |
+| Last update | 2026-07-10 - APH-400 complete in parallel; APH-311 device evidence and APH-401 runtime audio capture active |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -479,8 +479,10 @@ Known baseline:
 - Existing profile policy already specifies Streaming for cataloged Music and Ambience.
 - Existing profile policy specifies DecompressOnLoad/preload for Voice. Voice is the first measured optimization candidate.
 
-- [ ] `APH-400` Extend the content-residency report to list only catalog-referenced audio clips by bus/category, duration, channels, frequency, import load type, compressed size, and estimated decoded size.
-- [ ] `APH-401` Capture Menu and Match audio memory before playback and after representative UI, combat, music, ambience, and ARIA voice playback.
+- [x] `APH-400` Extend the content-residency report to list only catalog-referenced audio clips by bus/category, duration, channels, frequency, import load type, compressed size, and estimated decoded size.
+  - Result: schema-2 JSON and Markdown now list the 226 serialized catalog clips only, grouped and detailed by bus/category with event IDs, duration, channels, sample rate, active Android importer load type, measured compressed storage-memory size, and decoded PCM estimate; unreferenced legacy clips are excluded from the catalog section.
+  - Validation: focused content-residency `8/8`, Android report generation passed with 4,102 included assets, 226/226 catalog clips, zero warnings, 575.838 seconds duration, 48.61 MiB measured compressed bytes, and 97.01 MiB estimated decoded bytes; commit `6f858f762` pushed to `main`.
+- [~] `APH-401` Capture Menu and Match audio memory before playback and after representative UI, combat, music, ambience, and ARIA voice playback.
 - [ ] `APH-402` Identify catalog drift: cataloged Music/Ambience clips that do not match the existing Streaming profile and unused legacy clips that do not affect runtime residency.
 - [ ] `APH-403` Correct cataloged Music/Ambience drift without changing event IDs or playback behavior.
 - [ ] `APH-404` Change the Voice import profile pilot to `CompressedInMemory`, `preloadAudioData=false`, and `loadInBackground=true` for a representative ARIA subset.
@@ -1139,6 +1141,21 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Visual result: day and dusk pass structural review without missing geometry, road/terrain changes, or lighting/fog reset; the 23:00 frame is valid but too dark for reliable battlefield identification
 - Residual risk: deepest-night readability requires an explicit art/design decision; APH-311 must record it separately in both Android frame-rate captures
 - Next ready task: `APH-311`
+
+### 2026-07-10 - APH-400 - Catalog audio content-residency report
+
+- Status: Complete
+- Commit or worktree baseline: `51361fa95`
+- Stable commit/push: `6f858f762` pushed to `main`
+- Files changed: content-residency generator, focused generator tests, and regenerated JSON/Markdown inventory artifacts
+- Behavior preserved/changed: runtime audio behavior, event IDs, catalog references, and importers are unchanged; the report now isolates serialized catalog clips from unused legacy audio and records the required per-clip import and size dimensions
+- Validation: `[ContentResidencyInventoryValidation] result=Passed tests=8`, `[ContentResidencyInventory] result=Passed assets=4102 roots=12 catalogAudioClips=226`, 226/226 compressed-size measurements, zero report warnings, Unity compilation with 0 C# errors, and `git diff --check` passed
+- Artifacts: `/private/tmp/aph400-content-residency-tests.log`, `/private/tmp/aph400-content-residency-generate.log`, `Design/AgentReports/architecture_performance_content_residency_baseline.json`, and `Design/AgentReports/architecture_performance_content_residency_baseline.md`
+- Metrics before: the dependency report counted included audio assets but did not identify the runtime catalog set or expose bus/category, duration, format, load type, and decoded-size evidence together
+- Metrics after: 226 catalog clips, 575.838 seconds, 48.61 MiB measured compressed storage-memory size, 97.01 MiB decoded PCM estimate; load types are 217 `DecompressOnLoad` and 9 `Streaming`
+- Visual result: Not applicable
+- Residual risk: static dependency/import evidence does not prove simultaneous runtime residency or first-play latency; APH-401 owns controlled Menu/Match playback captures
+- Next ready task: `APH-401`
 
 ### 2026-07-09 - Unity validation timeout reliability
 

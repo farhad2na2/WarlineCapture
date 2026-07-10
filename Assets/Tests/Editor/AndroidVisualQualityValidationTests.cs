@@ -200,6 +200,11 @@ public sealed class AndroidVisualQualityValidationTests
 
         StringAssert.Contains("antiAliasing: 0", mobileBlock, "Android Mobile quality tier should avoid MSAA bandwidth cost for 60 FPS.");
         StringAssert.Contains("shadowDistance: 16", mobileBlock, "Android Mobile quality tier should cap shadow distance for 60 FPS.");
+        StringAssert.Contains("globalTextureMipmapLimit: 1", mobileBlock, "Android Mobile should omit oversized top world mips while UI and exempt textures preserve native resolution.");
+        StringAssert.Contains("streamingMipmapsActive: 1", mobileBlock, "Android Mobile should stream only textures explicitly marked as eligible.");
+        StringAssert.Contains("streamingMipmapsMemoryBudget: 256", mobileBlock, "Android Mobile texture streaming must stay inside its bounded memory budget.");
+        StringAssert.Contains("asyncUploadTimeSlice: 4", mobileBlock, "Android Mobile loading should provide enough upload time to avoid multi-minute scene stalls.");
+        StringAssert.Contains("asyncUploadBufferSize: 32", mobileBlock, "Android Mobile must fit the largest accepted packed texture in the persistent upload buffer.");
     }
 
     [Test]

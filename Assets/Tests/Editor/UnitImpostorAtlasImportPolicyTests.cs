@@ -18,6 +18,7 @@ public sealed class UnitImpostorAtlasImportPolicyTests
             Assert.That(importer, Is.Not.Null, $"Missing texture importer for {path}.");
             Assert.That(importer.mipmapEnabled, Is.True, $"Mipmaps must remain enabled for {path}.");
             Assert.That(importer.streamingMipmaps, Is.True, $"Mip streaming eligibility must be enabled for {path}.");
+            Assert.That(importer.ignoreMipmapLimit, Is.True, $"Character impostors must preserve their bounded 1024 Android atlas quality: {path}.");
 
             TextureImporterPlatformSettings android = importer.GetPlatformTextureSettings("Android");
             Assert.That(android.overridden, Is.True, $"Android override is missing for {path}.");

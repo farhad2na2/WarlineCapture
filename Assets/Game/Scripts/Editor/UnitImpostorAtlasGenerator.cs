@@ -488,6 +488,7 @@ namespace Game.Editor
             importer.alphaIsTransparency = true;
             importer.mipmapEnabled = true;
             importer.streamingMipmaps = true;
+            importer.ignoreMipmapLimit = true;
             importer.wrapMode = TextureWrapMode.Clamp;
             importer.filterMode = FilterMode.Bilinear;
             importer.textureCompression = TextureImporterCompression.Uncompressed;

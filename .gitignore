@@ -50,3 +50,10 @@ Assets/**/.DS_Store
 
 # Addressables / generated caches
 Assets/AddressableAssetsData/*/*.bin*
+
+# Transient Android build-scene optimization output
+Assets/Game/GeneratedAndroidBuild/
+Assets/Game/GeneratedAndroidBuild.meta
+
+# Unity/Bee transient native build scratch
+.utmp/

@@ -248,17 +248,17 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `48 / 106` |
-| Checklist percent complete | `45.3%` |
-| Checklist in progress | `2 / 106`: `APH-311`, `APH-500` |
-| Complete plus active coverage | `50 / 106` (`47.2%`); this is visibility only, not accepted completion |
-| Current phase | Phase 3 Android device evidence plus parallel Phase 5 Android build reporting |
-| Current task | `APH-311` awaits a physical device; `APH-500` tooling is complete and release APK/AAB evidence generation is active |
+| Checklist complete | `51 / 106` |
+| Checklist percent complete | `48.1%` |
+| Checklist in progress | `2 / 106`: `APH-311`, `APH-601` |
+| Complete plus active coverage | `53 / 106` (`50.0%`); this is visibility only, not accepted completion |
+| Current phase | Phase 3 Android device evidence plus Phase 6 static-map startup measurement |
+| Current task | `APH-311` has a foreground 2,000-frame Android candidate capture but still needs the required 10-minute 30/60 FPS sessions; `APH-601` is completing accepted CPU/GPU mesh-memory and peak-allocation evidence after rejecting the 96 m and 32 m combine candidates |
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: steady-state Match GC `234,324 / 1,024` bytes; improved 13.0% from the APH-007 baseline without weakening the budget |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
-| Last verified commit | `671a009aa`; APH-401 settled audio evidence is accepted and APH-500 build-report tooling passes `6/6` |
-| Last update | 2026-07-10 - APH-401 complete after evidence hardening; APH-311 device evidence and APH-500 APK/AAB generation active |
+| Last verified commit | `df8900ce5`; Android texture/impostor residency policy, candidate profiler evidence, and the revised Phase 6 direction pass compile plus focused Android validation |
+| Last update | 2026-07-10 - Android combine candidates load successfully but fail the 60 FPS GPU gate; neither transient output is accepted |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -465,7 +465,8 @@ Target ownership:
   - Validation: Settings popup `8/8`, Android visual quality `12/12`, Match settings/audio smoke passed at HUD ready, and current-profile Metal capture completed at 1920x1080; commit `fd10d99e6` pushed to `main`.
   - Visual review: day and dusk pass structural review; night is nonblank but remains a red readability finding at mean luma `22.34 / 255`. No lighting value was silently changed.
 - [~] `APH-311` On Android, run a 10-minute 30 FPS tier capture and a 60 FPS tier capture. Record frame, GPU, memory, thermal, and visual results separately.
-  - Current blocker: escalated `adb devices -l` starts the daemon successfully but reports no attached device. Editor or simulator data cannot satisfy the required GPU, battery, thermal, and physical-device visual evidence. Keep this task active and resume both captures when a target Android device is authorized and visible to ADB.
+  - Current evidence: Xiaomi `24090RA29G` was unlocked and kept foreground for the transient 96 m combine candidate. Match reached static-map startup `3.24 s` after the deferred load request and gameplay-ready `6.60 s` after that request. The user observed `45 FPS`; the 2,000-frame development capture confirms steady avg `22.17 ms / 45.1 FPS`, p95 `26.80 ms`, p99 `31.13 ms`, GPU avg/p95 `20.23/20.87 ms`, `1,058,417` avg triangles, and thermal status `0`.
+  - Remaining: this short candidate capture does not replace the required separate 10-minute 30 FPS and 60 FPS tier sessions. Run both only after an Android implementation passes loading, visual, and steady frame-time acceptance.
 
 ## Phase 4 - Reduce Audio Residency
 
@@ -501,10 +502,10 @@ Known baseline:
 
 Goal: make residency and package size intentional while preserving visible quality.
 
-- [~] `APH-500` Produce a BuildReport-based top-100 included-asset table for Android APK and AAB builds.
+- [x] `APH-500` Produce a BuildReport-based top-100 included-asset table for Android APK and AAB builds.
   - Tooling: release APK/AAB builds now request `DetailedBuildReport`, deterministically aggregate `BuildReport.packedAssets`, preserve attributed/unattributed/overhead accounting, and write top-100 JSON/Markdown evidence with commit, dirty-state, architecture, artifact size, and SHA-256. Jenkins archives each report with its matching artifact.
   - Validation: focused aggregation/evidence contract `6/6`, Unity compile clean, `git diff --check` clean; tooling commit `671a009aa` pushed to `main`.
-  - Remaining: run clean release APK and AAB builds, inspect both generated reports/artifacts, then mark complete.
+  - Evidence: clean ARM64 IL2CPP release APK and AAB reports were generated and reviewed. APK artifact `463,359,198` bytes with SHA-256 `cb18f212...824f20`; AAB artifact `426,399,778` bytes with SHA-256 `c03558f2...7ac29`; evidence commits `a527e151e` and `ddfca3b27` are pushed to `main`.
 - [ ] `APH-501` Add tracked budgets for APK/AAB size, installed size, peak allocated memory, texture memory, mesh memory, audio memory, and graphics-driver memory.
 - [ ] `APH-502` Classify texture importers into UI, world albedo, world normal/mask, VFX, impostor/atlas, generated source/reference, and excluded/unreferenced groups.
 - [ ] `APH-503` Add an editor guard preventing mip streaming on UI, font, animation-data, sprite-atlas, and generated reference/source textures.
@@ -518,26 +519,35 @@ Goal: make residency and package size intentional while preserving visible quali
 
 ## Phase 6 - Editor-Baked Static Map Chunks
 
-Goal: keep the exact authored Match appearance while replacing runtime hierarchy scanning and mesh combination with validated editor-baked output.
+Goal: keep the exact authored Match appearance while replacing runtime hierarchy scanning and mesh combination with validated editor-baked presentation chunks that preserve shared meshes and support Unity 6 GPU Resident Drawer culling.
 
 Quality lock:
 
 - The canonical authored `Assets/Game/Scenes/Match.unity` remains the source.
 - Do not move, rotate, scale, delete, procedurally regroup, or regenerate authored buildings, interiors, roads, props, vegetation, or terrain.
-- Generated meshes must preserve world transforms, materials, lightmap indices/scale offsets, layers, shadows, probes, bounds, and culling behavior.
+- Generated presentation chunks must preserve source meshes, world transforms, materials, lightmap indices/scale offsets, layers, shadows, probes, bounds, and culling behavior.
+- Keep `MapSurfaceAuthoring`, `MapBakeGroupAuthoring` descendants needed by overlays, Buildings/Vehicles authoring roots, colliders, scripts, LOD hierarchies, property-block renderers, and unsupported GPU-driven renderers in the base Match scene.
+- Direct `Mesh.CombineMeshes` output is rejected by `D-019`. Do not duplicate source vertex/index payloads in the accepted path.
 - Every visual acceptance requires top-down, oblique, low-ground, and gameplay-camera captures. Use Unity MCP for hierarchy inspection/screenshots when available.
 
-- [ ] `APH-600` Add startup profiler markers and structured metrics around `StaticMapChunkBatchingPresentationSystemHelper.Initialize`.
-- [ ] `APH-601` Capture current startup duration, renderer scan count, eligible/skipped counts, generated vertices, CPU mesh memory, GPU mesh memory, and peak startup allocation.
-- [ ] `APH-602` Extract the current `BatchKey`, safety filters, chunk size, and mesh limits into editor-usable deterministic code without changing runtime behavior.
-- [ ] `APH-603` Build an editor baker that writes generated chunk meshes/prefabs under `Assets/Game/GeneratedCombinedMeshes/StaticMapChunks/` with a manifest containing source object IDs and hashes.
+- [x] `APH-600` Add startup profiler markers and structured metrics around `StaticMapChunkBatchingPresentationSystemHelper.Initialize`.
+  - Result: Initialize now exposes profiler markers plus structured scan, grouping, combine, disable, and total timing metrics while preserving the existing log fields and runtime behavior; commit `aef56c454` pushed to `main`.
+- [~] `APH-601` Capture current startup duration, renderer scan count, eligible/skipped counts, generated vertices, CPU mesh memory, GPU mesh memory, and peak startup allocation.
+  - Captured: canonical Match is `58,822,096` bytes with `21,433` GameObjects and `21,226` renderers. Runtime batching reported `2,501` eligible, `123` batches, `2,456` disabled, `1,004,672` generated vertices, `14,407` unreadable skips, `696` unsafe skips, and `167` oversized skips. Android native `Loading.Preload` saturates one core at 9%; pre-candidate memory was `1.525 GB` PSS with `704.8 MB` graphics after texture-policy reductions.
+  - Candidate evidence: the ignored transient 96 m Android build generated `602` meshes with `9,835,246` vertices, reduced scene objects `21,433 -> 5,891`, reduced the scene file `58,822,096 -> 14,292,922` bytes, and loaded Match instead of stalling at 9%. Runtime static-map initialization scanned `4,409` renderers in `38.454 ms`, culled `227` renderers / `934,377` triangles, and settled around `1,077 MB` Unity allocated / `1,197 MB` reserved. The development APK SHA-256 is `b7736ccbc07c74b0612df4ec12a9dd87d9fba2a9e68573d883d062f79699736f`.
+  - Finer-culling experiment: a 32 m transient variant generated `1,222` meshes / `9,479,784` vertices and reduced submitted gameplay geometry to about `0.875 M` triangles. It briefly reached about `49.9 FPS` with `18.4-19.6 ms` GPU time, then fell to `41-43 FPS` with `25.9-26.6 ms` GPU time on the already-warm device at `62.1 C`; Android thermal status and cooling-device values remained `0`. It still misses the 60 FPS gate and increases generation time to `314.6 s`.
+  - Rejection: the steady profile is GPU-bound at `20.23 ms` average / `20.87 ms` p95 with about `1.06 M` submitted triangles and only `45.1 FPS`. The transient generator also removes source `MeshFilter` components beneath possible `MapBakeGroupAuthoring` ancestors, so it does not yet satisfy overlay/source-geometry preservation. Do not commit or ship this candidate.
+  - Remaining: record exact CPU/GPU mesh memory and peak startup allocation for the accepted implementation. Preserve overlay-sensitive source geometry and require foreground load, settled memory, visual, and 60 FPS evidence before closing APH-601.
+- [x] `APH-602` Extract the current `BatchKey`, safety filters, chunk size, and mesh limits into editor-usable deterministic code without changing runtime behavior.
+  - Result: `StaticMapChunkBatchingPolicy` owns deterministic key equality, renderer safety, source eligibility, chunk coordinates, and shared limits; focused policy/readback/Android preload tests pass `21/21`; commits `aef56c454` and `4c05a2da1` pushed to `main`.
+- [ ] `APH-603` Build an editor baker that writes additive shared-mesh presentation scenes under `Assets/Game/GeneratedStaticMapPresentation/` with a manifest containing source object IDs, source dependency hashes, chunk bounds, scene paths, and shared mesh/material IDs.
 - [ ] `APH-604` Add deterministic rebake and stale-output cleanup tests. Never delete output not listed in the manifest.
-- [ ] `APH-605` Add structural validation for source count, combined bounds, material/submesh mapping, lightmap data, layers, shadows, probes, and unchanged source transforms.
-- [ ] `APH-606` Add a generated-root reference to `MatchSceneView` or an equivalent serialized composition-owned config. Do not add `GameObject.Find` fallback for the new path.
-- [ ] `APH-607` Load the baked chunks at runtime and disable only source renderers represented by a validated manifest entry.
-- [ ] `APH-608` Compare runtime-batched and editor-baked screenshots plus draw calls, triangles, memory, and startup time. Require pixel/visual review, not metrics alone.
-- [ ] `APH-609` After acceptance, disable runtime combination when a valid baked manifest is present; keep a development-only fallback for stale/missing bakes.
-- [ ] `APH-610` Disable Read/Write on source meshes that no accepted runtime path needs, then rerun placement, road, city, map surface, lighting, and Match lifecycle tests.
+- [ ] `APH-605` Add structural validation for source/chunk bijection, unchanged transforms, shared mesh/material identity, lightmap data, layers, shadows, probes, bounds, and an explicit zero-collider/zero-gameplay-script chunk contract.
+- [ ] `APH-606` Add a serialized presentation-manifest reference to `MatchSceneView` or an equivalent composition-owned config, and include every generated chunk scene in Android builds. Do not add a `GameObject.Find` fallback.
+- [ ] `APH-607` Add a managed presentation streamer that preloads the camera footprint plus one ring before Match-ready, then loads/unloads with hysteresis and one bounded operation queue. Unload every presentation chunk before unloading Match.
+- [ ] `APH-608` Enable Unity 6 GPU Resident Drawer `InstancedDrawing` for the Mobile URP asset, retain BRG shader variants, disable Android static batching, and preserve a measured fallback for incompatible renderers. Do not add a new gameplay `ISystem` or `SystemBase` owner.
+- [ ] `APH-609` Compare canonical/runtime-batched and shared-mesh chunked/GRD screenshots plus draw calls, triangles, CPU/GPU frame time, memory, package size, and startup time. Require pixel/visual review, not metrics alone.
+- [ ] `APH-610` After acceptance, disable runtime mesh combination when a valid presentation manifest is present, remove duplicated base-scene visual renderers represented by validated chunk entries, and disable Read/Write only on meshes no accepted runtime path needs. Keep development-only stale/missing-manifest diagnostics.
 - [ ] `APH-611` Run a full Android 10-minute soak and reject any missing interiors, floating/buried props, road changes, lighting changes, culling holes, or terrain-quality regression.
 
 ## Phase 7 - Incremental Architecture Decomposition
@@ -1207,6 +1217,18 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Residual risk: no release APK/AAB evidence exists yet; both long-running builds and report review are required before completion
 - Next ready task: run the release APK and AAB build commands from commit `671a009aa` or later
 
+### 2026-07-10 - APH-311 and APH-601 - Android 96 m combine candidate rejection
+
+- Status: Partial evidence accepted; implementation candidate rejected
+- Commit or worktree baseline: `4c05a2da1` plus ignored/uncommitted transient Android output
+- Stable evidence commit: `df8900ce5`
+- Behavior preserved/changed: canonical `Assets/Game/Scenes/Match.unity` remained untouched; Android build tooling generated an ignored Match copy with 602 combined meshes and replaced covered source renderers only in that copy
+- Validation: Unity profiler APK built with 0 compiler errors; install and deterministic Match auto-start passed; post-rejection Android visual/import validation passed `12/12`; Match reached static-map startup in `3.24 s` and gameplay-ready in `6.60 s`; device thermal status remained `0`; a foreground Match screenshot is nonblank and structurally coherent at the tested camera
+- Artifacts: `Design/AgentReports/2026-07-10_perf_WarlineCapture_candidate_android_full_summary.md`, `Design/AgentReports/2026-07-10_perf_WarlineCapture_candidate_android_steady_summary.md`, `/private/tmp/warline-aph-candidate-profiler-build.log`, and ignored raw capture `ProfilerCaptures/WarlineCapture_2026-07-10_15-40-candidate.data.raw`
+- Metrics: steady avg `22.17 ms / 45.1 FPS`, p95 `26.80 ms`, p99 `31.13 ms`, GPU avg/p95 `20.23/20.87 ms`, CPU active avg `16.77 ms`, SetPass `51`, triangles `1,058,417` avg, vertices `1,995,230` avg, and `7,612,760` GC bytes across 1,700 development-profile frames
+- Rejection reason: both candidates fix the 9% load stall and draw-call pressure but miss the 60 FPS GPU budget; the 32 m variant lowers geometry but is insufficient alone. Their generator can also remove overlay-sensitive source filters and therefore does not meet the Phase 6 quality lock
+- Next ready action: test finer presentation-culling granularity without committing the transient candidate, then implement the accepted path through APH-603 through APH-609 with source/overlay validation
+
 ### 2026-07-09 - Unity validation timeout reliability
 
 - Status: Complete infrastructure repair; no checklist item added
@@ -1233,3 +1255,4 @@ Append approved deviations here. Do not silently alter Fixed Architecture Decisi
 | 2026-07-09 | `D-013` through `D-016` | Adopt coordinator-owned tracker integration, disjoint worker ownership, an exclusive Unity lease, and Phase 0 parallel intake | Multiple agents can reduce elapsed time only when shared-state and Unity collisions are controlled | User approval and Multi-Agent Operating Model |
 | 2026-07-09 | `D-017` | Commit and push each accepted implementation slice only after the stable integration gate passes | Keep `main` usable throughout the program and prevent broken or unrelated work from entering task commits | User direction and Stable Integration and Push Gate |
 | 2026-07-09 | `D-018` | Accept `APH-007` as a reproducible baseline while keeping its 1,024-byte GC gate red and unchanged | Baseline capture must freeze measured debt before optimization; requiring a green result would optimize before establishing the baseline | Raw-sample metadata report, 16 focused tests, and coordinator review |
+| 2026-07-10 | `D-019` | Reject direct 96 m and 32 m transient Match mesh-combine output; retain the canonical scene and require shared-mesh/overlay-safe presentation chunks plus measured GPU culling work for Phase 6 | Direct combination solved preload but duplicated roughly 9.5-9.8M vertices, increased generated payload, removed possible overlay source filters, and remained GPU-bound at 41-50 FPS | APH-311/APH-601 Android reports, live 32 m diagnostics, and two independent architecture handoffs |

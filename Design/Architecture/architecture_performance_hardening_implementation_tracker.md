@@ -17,7 +17,7 @@ This tracker follows the completed historical program in `Design/Architecture/ar
 | Canonical project root | `/Users/farhad/Projects/WarlineCapture` |
 | Architecture rating | `6.5 / 10` |
 | Performance rating | `6.0 / 10` |
-| Current program status | Active - Phase 0 and Phase 2A complete; Phase 1 and Phase 2B hardening active |
+| Current program status | Active - Phase 0, Phase 1, and Phase 2 architecture hardening complete; Phase 2B performance recapture active |
 
 ### Protected Integrated Work
 
@@ -33,7 +33,7 @@ If a tracker task genuinely needs one of these files, read and integrate the exi
 
 The tracker was authored at `b66453e97`, then entered `main` through `68b2da500`. Before implementation began, `main` also received the protected ARIA work and the match CPU performance repair in `a6af1335c`. The current execution baseline is therefore `a6af1335c`, not the original audit commit.
 
-The FPS repair changed `BuildingDefenseAttackSystem` and related presentation, audio, warning, settings, diagnostics, and validation code. It reduced the focused 4,800 x 2,160 Editor benchmark with 733 units to an average `8.893 ms`, median `8.242 ms`, and p95 `12.516 ms`. This remains the accepted performance floor. `APH-207` and `APH-208` subsequently removed the four throttled target-acquisition snapshots through persistent unmanaged scratch storage; `APH-209` through `APH-213` still require synchronization audit, profiler evidence, integrated architecture validation, and performance recapture.
+The FPS repair changed `BuildingDefenseAttackSystem` and related presentation, audio, warning, settings, diagnostics, and validation code. It reduced the focused 4,800 x 2,160 Editor benchmark with 733 units to an average `8.893 ms`, median `8.242 ms`, and p95 `12.516 ms`. This remains the accepted performance floor. `APH-207` through `APH-212` subsequently removed the four throttled target-acquisition snapshots, documented the remaining synchronization boundary, added phase profiler evidence, closed integrated combat coverage, and restored the ECS/Burst architecture gate. `APH-213` remains the required performance recapture.
 
 Before changing production code, the Phase 0 agents must reproduce current-head compiler, architecture, performance, and residency evidence. If current results differ from the original audit snapshot, record both values; never rewrite the original evidence as though it had been measured at `a6af1335c`.
 
@@ -248,16 +248,16 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `28 / 106` |
-| Checklist percent complete | `26.4%` |
-| Checklist in progress | `2 / 106`: `APH-106`, `APH-212` |
-| Complete plus active coverage | `30 / 106` (`28.3%`); this is visibility only, not accepted completion |
-| Current phase | Phases 1 and 2 - UI boundary and ECS hot-path guardrails |
-| Current task | `APH-106` remove the UI Runtime assembly dependency; `APH-212` run the ECS/Burst hot-path architecture gate |
-| Red architecture gates | `2` at the audit baseline; current-head reproduction remains required |
+| Checklist complete | `32 / 106` |
+| Checklist percent complete | `30.2%` |
+| Checklist in progress | `1 / 106`: `APH-213` |
+| Complete plus active coverage | `33 / 106` (`31.1%`); this is visibility only, not accepted completion |
+| Current phase | Phase 2B - integrated performance and steady-state GC acceptance |
+| Current task | `APH-213` re-run editor performance and steady-state GC baselines |
+| Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: steady-state Match GC `269,482 / 1,024` bytes |
-| Last verified commit | `e55729370` for `APH-211`; Phase 2B architecture gate active |
-| Last update | 2026-07-10 - integrated defense/combat/audio/VFX matrix passed |
+| Last verified commit | `afe9e7d74`; POP-13-integrated assembly and ECS/Burst gates pass |
+| Last update | 2026-07-10 - UI boundary and ECS hot-path architecture gates restored |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -336,10 +336,13 @@ Implementation contract:
 - [x] `APH-105` Remove `using Game.Configs` from files compiled by `Game.UI.Runtime`.
   - Result: stale imports were removed from exactly the seven migrated consumers with no behavior change; migration counts, literal fingerprint, dynamic expressions, and resolver propagation remain locked.
   - Validation: `[GameTextResolverConsumerMigrationValidation] result=Passed tests=4 gets=62 formats=23 expressions=85`; UI Runtime, Composition, and Editor-test builds passed with 0 errors; commit `99f2ccee4` pushed to `main`.
-- [~] `APH-106` Remove `Game.Configs` from `Assets/Game/Scripts/UI/Game.UI.Runtime.asmdef`.
-- [ ] `APH-107` Add a guard that enumerates UI runtime source files and fails on future `Game.Configs` imports or direct `GameText` calls.
-- [ ] `APH-108` Run UI text focused tests, `Game.UI.Runtime`, `Game.Composition`, and `Game.Tests.Editor` builds, then run the 31-check assembly-boundary validation.
+- [x] `APH-106` Remove `Game.Configs` from `Assets/Game/Scripts/UI/Game.UI.Runtime.asmdef`.
+  - Result: `Game.UI.Runtime` no longer references `Game.Configs`; config-owned audio source files now live under the `Game.Configs` assembly root with their Unity GUIDs preserved.
+- [x] `APH-107` Add a guard that enumerates UI runtime source files and fails on future `Game.Configs` imports or direct `GameText` calls.
+  - Result: the ownership-aware guard enumerates files compiled by `Game.UI.Runtime`, excludes nested asmdef roots, rejects the forbidden asmdef reference, `using Game.Configs`, and direct `GameText` calls, while allowing real assembly-attribute files.
+- [x] `APH-108` Run UI text focused tests, `Game.UI.Runtime`, `Game.Composition`, and `Game.Tests.Editor` builds, then run the 31-check assembly-boundary validation.
   - Acceptance: `[ScriptArchitectureBoundaryValidation] result=Passed tests=31`.
+  - Validation: resolver contract `5/5`, adapter `5/5`, injection `4/4`, migration `4/4` with 62 gets, 23 formats, and 85 expressions; `Game.UI.Runtime`, `Game.Composition`, and `Game.Tests.Editor` built with 0 errors; assembly boundary passed `31/31` after POP-13 integration. Commits `fabfbc947` and `afe9e7d74` are pushed to `main`.
 
 ## Phase 2 - Restore the ECS Hot-Path Gate
 
@@ -406,9 +409,11 @@ Immediate implementation contract:
 - [x] `APH-211` Run defense, automatic-faction-targeting, combat, audio, and VFX focused validations.
   - Result: integration coverage now locks defense feedback overwrite behavior, configured weapon audio and muzzle/impact VFX payloads, recursive LOD exclusivity, current unit/aircraft combat audio, and air-missile launch/impact audio without structural changes inside ECS iteration.
   - Validation: Defense `13/13`, automatic faction targeting `3/3`, combat/death `6/6`, gameplay audio `8/8`, building audio `4/4`, and unit combat/VFX `3/3` passed. Runtime and Editor-test builds completed with 0 errors; commits `789fd4a03` and `e55729370` pushed to `main`.
-- [~] `APH-212` Run `EcsBurstHotPathArchitectureTests.RunFocusedValidation`.
+- [x] `APH-212` Run `EcsBurstHotPathArchitectureTests.RunFocusedValidation`.
   - Acceptance: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=10` and zero snapshot debt.
-- [ ] `APH-213` Re-run editor performance and steady-state GC baselines; reject the slice if frame p95 or player-relevant GC regresses beyond noise.
+  - Result: the remaining resource-hauler temporary entity snapshot was replaced with reusable scratch populated from temporary chunk metadata that is disposed before structural changes; recurring audio singleton writes use `SystemAPI.GetSingletonRW`; all managed boundaries and the two remaining tracked hot paths are explicitly classified.
+  - Validation: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=10`; 173 ECS `OnUpdate` implementations, 58 Burst, 45 job-backed, 115 non-Burst, two tracked hot paths, zero unclassified, and zero snapshot debt. Resource production/hauler passed `36/36`, audio request/state passed `5/5`, five first-party assemblies built with 0 errors, and the gate remained green after POP-13 integration. Commits `401bd1435`, merge `87339b802`, and `afe9e7d74` are pushed to `main`.
+- [~] `APH-213` Re-run editor performance and steady-state GC baselines; reject the slice if frame p95 or player-relevant GC regresses beyond noise.
 
 ## Phase 3 - Unify Settings, Frame Rate, and Environment Ownership
 
@@ -959,6 +964,36 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Visual result: no visual assets changed; VFX request payloads are validated at the ECS boundary
 - Residual risk: the combined ECS/Burst source architecture gate and performance recapture remain `APH-212` and `APH-213`
 - Next ready task: `APH-212`
+
+### 2026-07-10 - APH-106 through APH-108 - UI runtime config boundary closeout
+
+- Status: Complete
+- Commit or worktree baseline: `207f99142`
+- Stable commit/push: `fabfbc947` and integrated guard commit `afe9e7d74` pushed to `main`
+- Files changed: UI runtime asmdef, assembly-boundary guard, audio config source ownership, audio config builder namespace, and focused tests; Unity `.meta` GUIDs preserved
+- Behavior preserved/changed: configured UI text behavior and audio config assets are unchanged; UI Runtime can no longer compile against `Game.Configs`, and its owned source is guarded against future config imports or direct `GameText` calls
+- Validation: resolver contract `5/5`, adapter `5/5`, injection `4/4`, migration `4/4` with 62 gets, 23 formats, and 85 expressions; `[ScriptArchitectureBoundaryValidation] result=Passed tests=31`; `Game.UI.Runtime`, `Game.Composition`, and `Game.Tests.Editor` built with 0 errors; `git diff --check` passed
+- Artifacts: `/private/tmp/aph108-resolver-contract.log`, `/private/tmp/aph108-resolver-adapter.log`, `/private/tmp/aph108-resolver-injection.log`, `/private/tmp/aph108-resolver-migration.log`, and `/private/tmp/postmerge-assembly-boundary-v2.log`
+- Metrics before: one forbidden asmdef dependency and no ownership-aware source enumeration guard
+- Metrics after: zero forbidden UI Runtime config dependencies/imports/direct calls and all 31 boundary checks green on the POP-13-integrated head
+- Visual result: no visual or serialized UI content changed
+- Residual risk: none in Phase 1; all future UI Runtime source remains subject to the assembly-boundary gate
+- Next ready task: Phase 1 complete
+
+### 2026-07-10 - APH-212 - Integrated ECS/Burst hot-path architecture gate
+
+- Status: Complete
+- Commit or worktree baseline: `207f99142`
+- Stable commit/push: `401bd1435`, integration merge `87339b802`, and guard commit `afe9e7d74` pushed to `main`
+- Files changed: resource-hauler query scratch, audio singleton mutation paths, Resource Exchange visual-cue Burst declaration, ECS hot-path architecture classifications, and focused tests
+- Behavior preserved/changed: resource-hauler assignment ordering, audio music/settings state, and Resource Exchange visual cues are unchanged; the final temporary entity snapshot and recurring direct singleton writes were removed
+- Validation: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=10`; Resource production/hauler `36/36`; audio request/state `5/5`; `Game.Runtime`, `Game.UI.Runtime`, `Game.UI.Shell.Ecs`, `Game.Composition`, and `Game.Tests.Editor` built with 0 errors; no Burst compiler errors; `git diff --check` passed
+- Artifacts: `/private/tmp/aph212-resource-hauler-fix.log`, `/private/tmp/aph212-audio-singleton-write-retry.log`, and `/private/tmp/postmerge-ecs-hotpath-v2.log`
+- Metrics before: one remaining `ToEntityArray(Allocator.Temp)`, two recurring direct audio singleton writes, and managed POP-13 boundaries not yet classified
+- Metrics after: 173 ECS `OnUpdate` implementations, 58 Burst, 45 job-backed, 115 non-Burst, two tracked hot paths, zero unclassified systems, and zero snapshot debt
+- Visual result: not applicable; deterministic ECS architecture and behavior validation
+- Residual risk: the accepted red steady-state Match GC baseline and frame-time comparison remain `APH-213`
+- Next ready task: `APH-213`
 
 ### 2026-07-09 - Unity validation timeout reliability
 

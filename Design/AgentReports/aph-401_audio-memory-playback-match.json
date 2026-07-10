@@ -3,20 +3,30 @@
   "captureTarget": "Match",
   "captureResult": "Succeeded",
   "failure": null,
+  "capturedAtUtc": "2026-07-10T10:47:06.0512540Z",
+  "exactCommit": "8e1f21c2a4326ff08371d621e808f38f79b2b197",
+  "dirty": true,
   "unityVersion": "6000.5.2f1",
+  "activeBuildTarget": "Android",
+  "invocation": "Game.Editor.AudioMemoryPlaybackCapture.RunMatch",
+  "catalogSha256": "5fc0c2ea16fd65ae311fcf73667a4600dfff105cd8146d106b1db58ed83aabd5",
   "jsonReportPath": "Design/AgentReports/aph-401_audio-memory-playback-match.json",
   "markdownReportPath": "Design/AgentReports/aph-401_audio-memory-playback-match.md",
   "rawProfilerPath": "/private/tmp/warline-aph401-audio-memory-match.raw",
+  "rawProfilerBytes": 731649781,
+  "rawProfilerSha256": "1865bea3b8692d15a60f7b7e87b048d6283591a769eb6d0a11e7f9162a31887f",
+  "rawProfilerRetention": "Transient local profiler evidence; regenerate with the recorded invocation when the local file expires.",
+  "memoryMeasurementContract": "CatalogRuntimeMemoryBytes, loaded clip counts, and bus totals are authoritative audio-residency measurements. Process and Mono counters are context only because the editor capture harness allocates report metadata.",
   "snapshots": [
     {
       "phase": "match-before-controlled-playback",
-      "elapsedSeconds": 8.962070125,
-      "totalAllocatedMemoryBytes": 2612428940,
-      "totalReservedMemoryBytes": 3086562344,
-      "monoUsedMemoryBytes": 1506385920,
-      "monoHeapMemoryBytes": 1775058944,
+      "elapsedSeconds": 9.0261093750000025,
+      "totalAllocatedMemoryBytes": 2634036214,
+      "totalReservedMemoryBytes": 3110743816,
+      "monoUsedMemoryBytes": 1508163584,
+      "monoHeapMemoryBytes": 1813495808,
       "sourcePoolSize": 8,
-      "activeSourceCount": 1,
+      "activeSourceCount": 0,
       "catalogRuntimeMemoryBytes": 45448237,
       "catalogClipCount": 234,
       "loadedCatalogClipCount": 225,
@@ -28,7 +38,7 @@
         "triggeredAtSeconds": null,
         "requestedAtSeconds": null,
         "processedAtSeconds": null,
-        "observedAtSeconds": 8.9615045
+        "observedAtSeconds": 9.025828584000001
       },
       "busTotals": [
         {
@@ -2647,13 +2657,13 @@
     },
     {
       "phase": "match-after-small-arms",
-      "elapsedSeconds": 8.977629084,
-      "totalAllocatedMemoryBytes": 2612625900,
-      "totalReservedMemoryBytes": 3086652088,
-      "monoUsedMemoryBytes": 1506758656,
-      "monoHeapMemoryBytes": 1775058944,
+      "elapsedSeconds": 9.747988542,
+      "totalAllocatedMemoryBytes": 2649306638,
+      "totalReservedMemoryBytes": 3127331688,
+      "monoUsedMemoryBytes": 1509130240,
+      "monoHeapMemoryBytes": 1813495808,
       "sourcePoolSize": 8,
-      "activeSourceCount": 2,
+      "activeSourceCount": 1,
       "catalogRuntimeMemoryBytes": 45448237,
       "catalogClipCount": 234,
       "loadedCatalogClipCount": 225,
@@ -2662,10 +2672,10 @@
         "eventId": "Gameplay.Weapon.Fire.SmallArms",
         "eventHash": 3212856651,
         "status": "Presented",
-        "triggeredAtSeconds": 8.969163459,
-        "requestedAtSeconds": 11.136316299438477,
-        "processedAtSeconds": 11.151991844177246,
-        "observedAtSeconds": 8.977304
+        "triggeredAtSeconds": 9.0305732090000017,
+        "requestedAtSeconds": 9.0694005492160645,
+        "processedAtSeconds": 9.0820796492526856,
+        "observedAtSeconds": 9.7476791670000029
       },
       "busTotals": [
         {
@@ -5284,25 +5294,25 @@
     },
     {
       "phase": "match-after-music-calm-loop",
-      "elapsedSeconds": 8.9907967500000012,
-      "totalAllocatedMemoryBytes": 2612960966,
-      "totalReservedMemoryBytes": 3086792184,
-      "monoUsedMemoryBytes": 1507115008,
-      "monoHeapMemoryBytes": 1775058944,
+      "elapsedSeconds": 10.464779334000001,
+      "totalAllocatedMemoryBytes": 2667900028,
+      "totalReservedMemoryBytes": 3129523032,
+      "monoUsedMemoryBytes": 1510125568,
+      "monoHeapMemoryBytes": 1813495808,
       "sourcePoolSize": 8,
-      "activeSourceCount": 3,
-      "catalogRuntimeMemoryBytes": 45616296,
+      "activeSourceCount": 2,
+      "catalogRuntimeMemoryBytes": 45610660,
       "catalogClipCount": 234,
       "loadedCatalogClipCount": 226,
       "event": {
-        "requestId": 35,
+        "requestId": 36,
         "eventId": "Music.Match.CalmLoop",
         "eventHash": 4285376118,
         "status": "Presented",
-        "triggeredAtSeconds": 8.9813276670000022,
-        "requestedAtSeconds": 11.151991844177246,
-        "processedAtSeconds": 11.163703918457031,
-        "observedAtSeconds": 8.9905179170000018
+        "triggeredAtSeconds": 9.7505838340000022,
+        "requestedAtSeconds": 9.7926900389621583,
+        "processedAtSeconds": 9.8021647932956544,
+        "observedAtSeconds": 10.464460667000003
       },
       "busTotals": [
         {
@@ -5319,7 +5329,7 @@
         },
         {
           "busId": "Music",
-          "runtimeMemoryBytes": 173029,
+          "runtimeMemoryBytes": 167393,
           "clipCount": 7,
           "loadedClipCount": 1
         },
@@ -5869,7 +5879,7 @@
             "Music"
           ],
           "loadState": "Loaded",
-          "runtimeMemoryBytes": 168769
+          "runtimeMemoryBytes": 163133
         },
         {
           "assetPath": "Assets/Game/Audio/Music/music_match_combat_loop_01.wav",
@@ -7921,25 +7931,25 @@
     },
     {
       "phase": "match-after-city-day-ambience",
-      "elapsedSeconds": 9.002058292000001,
-      "totalAllocatedMemoryBytes": 2613282776,
-      "totalReservedMemoryBytes": 3086789560,
-      "monoUsedMemoryBytes": 1507467264,
-      "monoHeapMemoryBytes": 1775058944,
+      "elapsedSeconds": 11.385561834000002,
+      "totalAllocatedMemoryBytes": 2689812067,
+      "totalReservedMemoryBytes": 3162657624,
+      "monoUsedMemoryBytes": 1511628800,
+      "monoHeapMemoryBytes": 1813495808,
       "sourcePoolSize": 8,
       "activeSourceCount": 4,
-      "catalogRuntimeMemoryBytes": 45784355,
+      "catalogRuntimeMemoryBytes": 45773083,
       "catalogClipCount": 234,
       "loadedCatalogClipCount": 227,
       "event": {
-        "requestId": 36,
+        "requestId": 38,
         "eventId": "Ambience.City.DayLoop",
         "eventHash": 3552601528,
         "status": "Presented",
-        "triggeredAtSeconds": 8.9943914170000028,
-        "requestedAtSeconds": 11.163703918457031,
-        "processedAtSeconds": 11.176124572753906,
-        "observedAtSeconds": 9.0016970000000036
+        "triggeredAtSeconds": 10.467036084000002,
+        "requestedAtSeconds": 10.509401083273682,
+        "processedAtSeconds": 10.518044233603272,
+        "observedAtSeconds": 11.385239417000003
       },
       "busTotals": [
         {
@@ -7950,13 +7960,13 @@
         },
         {
           "busId": "Ambience",
-          "runtimeMemoryBytes": 169479,
+          "runtimeMemoryBytes": 163843,
           "clipCount": 2,
           "loadedClipCount": 1
         },
         {
           "busId": "Music",
-          "runtimeMemoryBytes": 173029,
+          "runtimeMemoryBytes": 167393,
           "clipCount": 7,
           "loadedClipCount": 1
         },
@@ -8044,7 +8054,7 @@
             "Ambience"
           ],
           "loadState": "Loaded",
-          "runtimeMemoryBytes": 168769
+          "runtimeMemoryBytes": 163133
         },
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_build_place_invalid_01.wav",
@@ -8506,7 +8516,7 @@
             "Music"
           ],
           "loadState": "Loaded",
-          "runtimeMemoryBytes": 168769
+          "runtimeMemoryBytes": 163133
         },
         {
           "assetPath": "Assets/Game/Audio/Music/music_match_combat_loop_01.wav",
@@ -10558,25 +10568,25 @@
     },
     {
       "phase": "match-after-aria-settings-voice",
-      "elapsedSeconds": 9.0135499590000023,
-      "totalAllocatedMemoryBytes": 2613440294,
-      "totalReservedMemoryBytes": 3086801848,
-      "monoUsedMemoryBytes": 1507827712,
-      "monoHeapMemoryBytes": 1775058944,
+      "elapsedSeconds": 12.098973625000001,
+      "totalAllocatedMemoryBytes": 2706436280,
+      "totalReservedMemoryBytes": 3179130008,
+      "monoUsedMemoryBytes": 1512980480,
+      "monoHeapMemoryBytes": 1813495808,
       "sourcePoolSize": 8,
-      "activeSourceCount": 5,
-      "catalogRuntimeMemoryBytes": 45784355,
+      "activeSourceCount": 3,
+      "catalogRuntimeMemoryBytes": 45773083,
       "catalogClipCount": 234,
       "loadedCatalogClipCount": 227,
       "event": {
-        "requestId": 37,
+        "requestId": 42,
         "eventId": "VO.ARIA.Message.TacticalFeedbackRtsCameraRestored",
         "eventHash": 23298754,
         "status": "Presented",
-        "triggeredAtSeconds": 9.005784000000002,
-        "requestedAtSeconds": 0.0,
-        "processedAtSeconds": 11.187336921691895,
-        "observedAtSeconds": 9.0132145840000035
+        "triggeredAtSeconds": 11.388430042000001,
+        "requestedAtSeconds": 11.388430042000001,
+        "processedAtSeconds": 11.439722776694092,
+        "observedAtSeconds": 12.098666167000003
       },
       "busTotals": [
         {
@@ -10587,13 +10597,13 @@
         },
         {
           "busId": "Ambience",
-          "runtimeMemoryBytes": 169479,
+          "runtimeMemoryBytes": 163843,
           "clipCount": 2,
           "loadedClipCount": 1
         },
         {
           "busId": "Music",
-          "runtimeMemoryBytes": 173029,
+          "runtimeMemoryBytes": 167393,
           "clipCount": 7,
           "loadedClipCount": 1
         },
@@ -10681,7 +10691,7 @@
             "Ambience"
           ],
           "loadState": "Loaded",
-          "runtimeMemoryBytes": 168769
+          "runtimeMemoryBytes": 163133
         },
         {
           "assetPath": "Assets/Game/Audio/Gameplay/game_build_place_invalid_01.wav",
@@ -11143,7 +11153,7 @@
             "Music"
           ],
           "loadState": "Loaded",
-          "runtimeMemoryBytes": 168769
+          "runtimeMemoryBytes": 163133
         },
         {
           "assetPath": "Assets/Game/Audio/Music/music_match_combat_loop_01.wav",

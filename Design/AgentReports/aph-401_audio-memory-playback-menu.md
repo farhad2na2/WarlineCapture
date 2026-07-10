@@ -3,36 +3,46 @@
 - Task: `APH-401`
 - Capture target: `Menu`
 - Capture result: `Succeeded`
+- Captured UTC: `2026-07-10T10:46:28.7606450Z`
+- Exact commit: `8e1f21c2a4326ff08371d621e808f38f79b2b197`
+- Dirty worktree: `true`
 - Unity: `6000.5.2f1`
+- Active build target: `Android`
+- Invocation: `Game.Editor.AudioMemoryPlaybackCapture.RunMenu`
+- Catalog SHA-256: `5fc0c2ea16fd65ae311fcf73667a4600dfff105cd8146d106b1db58ed83aabd5`
 - JSON: `Design/AgentReports/aph-401_audio-memory-playback-menu.json`
 - Markdown: `Design/AgentReports/aph-401_audio-memory-playback-menu.md`
 - Raw profiler: `/private/tmp/warline-aph401-audio-memory-menu.raw`
+- Raw profiler bytes: `113,988,564`
+- Raw profiler SHA-256: `d5d79cd1e122fa7e6d18779f263f86575047b356d3c66f2a9b71055d3bf7a501`
+- Raw profiler retention: Transient local profiler evidence; regenerate with the recorded invocation when the local file expires.
+- Memory contract: CatalogRuntimeMemoryBytes, loaded clip counts, and bus totals are authoritative audio-residency measurements. Process and Mono counters are context only because the editor capture harness allocates report metadata.
 
 ## Phase Summary
 
-| Phase | Time (s) | Event ID | Hash | Status | Catalog bytes | Allocated | Reserved | Mono used | Mono heap | Pool | Active |
+| Phase | Time (s) | Event ID | Hash | Status | Catalog bytes | Process allocated (context) | Process reserved (context) | Mono used (context) | Mono heap (context) | Pool | Active |
 |---|---:|---|---:|---|---:|---:|---:|---:|---:|---:|---:|
-| menu-before-controlled-playback | 0.010 | None | 0 | NotRequested | 45,448,237 | 1,416,431,432 | 1,918,640,712 | 1,606,635,520 | 1,755,250,688 | 8 | 0 |
-| menu-after-ui-primary-click | 0.023 | UI.Button.Primary.Click | 3161187545 | Presented | 45,448,237 | 1,416,806,328 | 1,918,821,720 | 1,607,213,056 | 1,755,250,688 | 8 | 1 |
-| menu-after-music-loop | 0.029 | Music.Menu.Loop | 3629030835 | Presented | 45,616,296 | 1,417,129,426 | 1,918,963,880 | 1,607,770,112 | 1,755,250,688 | 8 | 2 |
+| menu-before-controlled-playback | 0.381 | None | 0 | NotRequested | 45,448,237 | 1,429,032,604 | 1,935,401,704 | 1,584,418,816 | 1,742,422,016 | 8 | 0 |
+| menu-after-ui-primary-click | 1.095 | UI.Button.Primary.Click | 3161187545 | Presented | 45,448,237 | 1,488,738,300 | 1,967,862,376 | 1,589,256,192 | 1,742,422,016 | 8 | 0 |
+| menu-after-music-loop | 1.805 | Music.Menu.Loop | 3629030835 | Presented | 45,616,296 | 1,548,195,390 | 2,000,820,360 | 1,594,634,240 | 1,742,422,016 | 8 | 1 |
 
 ## menu-before-controlled-playback
 
-- Snapshot time: `0.010 s`
+- Snapshot time: `0.381 s`
 - Event: `None`
 - Event hash: `0`
 - Event status: `NotRequested`
 - Triggered at: `Unavailable`
 - Requested at: `Unavailable`
 - Processed at: `Unavailable`
-- Observed at: `0.010 s`
+- Observed at: `0.381 s`
 - Catalog clips: `234`
 - Loaded catalog clips: `225`
 - Catalog runtime memory: `45,448,237 bytes`
-- Total allocated memory: `1,416,431,432 bytes`
-- Total reserved memory: `1,918,640,712 bytes`
-- Mono used memory: `1,606,635,520 bytes`
-- Mono heap memory: `1,755,250,688 bytes`
+- Total allocated memory: `1,429,032,604 bytes`
+- Total reserved memory: `1,935,401,704 bytes`
+- Mono used memory: `1,584,418,816 bytes`
+- Mono heap memory: `1,742,422,016 bytes`
 - Source pool: `8`
 - Active sources: `0`
 
@@ -288,23 +298,23 @@
 
 ## menu-after-ui-primary-click
 
-- Snapshot time: `0.023 s`
+- Snapshot time: `1.095 s`
 - Event: `UI.Button.Primary.Click`
 - Event hash: `3161187545`
 - Event status: `Presented`
-- Triggered at: `0.016 s`
-- Requested at: `0.000 s`
-- Processed at: `1.879 s`
-- Observed at: `0.023 s`
+- Triggered at: `0.385 s`
+- Requested at: `0.385 s`
+- Processed at: `0.414 s`
+- Observed at: `1.095 s`
 - Catalog clips: `234`
 - Loaded catalog clips: `225`
 - Catalog runtime memory: `45,448,237 bytes`
-- Total allocated memory: `1,416,806,328 bytes`
-- Total reserved memory: `1,918,821,720 bytes`
-- Mono used memory: `1,607,213,056 bytes`
-- Mono heap memory: `1,755,250,688 bytes`
+- Total allocated memory: `1,488,738,300 bytes`
+- Total reserved memory: `1,967,862,376 bytes`
+- Mono used memory: `1,589,256,192 bytes`
+- Mono heap memory: `1,742,422,016 bytes`
 - Source pool: `8`
-- Active sources: `1`
+- Active sources: `0`
 
 ### Bus Totals
 
@@ -558,23 +568,23 @@
 
 ## menu-after-music-loop
 
-- Snapshot time: `0.029 s`
+- Snapshot time: `1.805 s`
 - Event: `Music.Menu.Loop`
 - Event hash: `3629030835`
 - Event status: `Presented`
-- Triggered at: `0.026 s`
-- Requested at: `1.879 s`
-- Processed at: `1.887 s`
-- Observed at: `0.029 s`
+- Triggered at: `1.098 s`
+- Requested at: `1.119 s`
+- Processed at: `1.123 s`
+- Observed at: `1.805 s`
 - Catalog clips: `234`
-- Loaded catalog clips: `225`
+- Loaded catalog clips: `226`
 - Catalog runtime memory: `45,616,296 bytes`
-- Total allocated memory: `1,417,129,426 bytes`
-- Total reserved memory: `1,918,963,880 bytes`
-- Mono used memory: `1,607,770,112 bytes`
-- Mono heap memory: `1,755,250,688 bytes`
+- Total allocated memory: `1,548,195,390 bytes`
+- Total reserved memory: `2,000,820,360 bytes`
+- Mono used memory: `1,594,634,240 bytes`
+- Mono heap memory: `1,742,422,016 bytes`
 - Source pool: `8`
-- Active sources: `2`
+- Active sources: `1`
 
 ### Bus Totals
 
@@ -582,7 +592,7 @@
 |---|---:|---:|---:|
 | Alerts | 350,548 | 4 | 4 |
 | Ambience | 1,420 | 2 | 0 |
-| Music | 173,029 | 7 | 0 |
+| Music | 173,029 | 7 | 1 |
 | SFX | 2,462,278 | 40 | 40 |
 | UI | 850,698 | 18 | 18 |
 | Voice | 41,778,323 | 163 | 163 |
@@ -640,7 +650,7 @@
 | Assets/Game/Audio/Music/music_briefing_loop_01.wav | Music | Music.Briefing.Loop | Unloaded | 710 |
 | Assets/Game/Audio/Music/music_match_calm_loop_01.wav | Music | Music.Match.CalmLoop | Unloaded | 710 |
 | Assets/Game/Audio/Music/music_match_combat_loop_01.wav | Music | Music.Match.CombatLoop | Unloaded | 710 |
-| Assets/Game/Audio/Music/music_menu_loop_01.wav | Music | Music.Menu.Loop | Loading | 168,769 |
+| Assets/Game/Audio/Music/music_menu_loop_01.wav | Music | Music.Menu.Loop | Loaded | 168,769 |
 | Assets/Game/Audio/Music/music_result_defeat_01.wav | Music | Music.Result.Defeat | Unloaded | 710 |
 | Assets/Game/Audio/Music/music_result_victory_01.wav | Music | Music.Result.Victory | Unloaded | 710 |
 | Assets/Game/Audio/Music/music_splash_intro_01.wav | Music | Music.Splash.Intro | Unloaded | 710 |

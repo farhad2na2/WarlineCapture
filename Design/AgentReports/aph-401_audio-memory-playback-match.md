@@ -3,40 +3,50 @@
 - Task: `APH-401`
 - Capture target: `Match`
 - Capture result: `Succeeded`
+- Captured UTC: `2026-07-10T10:47:06.0512540Z`
+- Exact commit: `8e1f21c2a4326ff08371d621e808f38f79b2b197`
+- Dirty worktree: `true`
 - Unity: `6000.5.2f1`
+- Active build target: `Android`
+- Invocation: `Game.Editor.AudioMemoryPlaybackCapture.RunMatch`
+- Catalog SHA-256: `5fc0c2ea16fd65ae311fcf73667a4600dfff105cd8146d106b1db58ed83aabd5`
 - JSON: `Design/AgentReports/aph-401_audio-memory-playback-match.json`
 - Markdown: `Design/AgentReports/aph-401_audio-memory-playback-match.md`
 - Raw profiler: `/private/tmp/warline-aph401-audio-memory-match.raw`
+- Raw profiler bytes: `731,649,781`
+- Raw profiler SHA-256: `1865bea3b8692d15a60f7b7e87b048d6283591a769eb6d0a11e7f9162a31887f`
+- Raw profiler retention: Transient local profiler evidence; regenerate with the recorded invocation when the local file expires.
+- Memory contract: CatalogRuntimeMemoryBytes, loaded clip counts, and bus totals are authoritative audio-residency measurements. Process and Mono counters are context only because the editor capture harness allocates report metadata.
 
 ## Phase Summary
 
-| Phase | Time (s) | Event ID | Hash | Status | Catalog bytes | Allocated | Reserved | Mono used | Mono heap | Pool | Active |
+| Phase | Time (s) | Event ID | Hash | Status | Catalog bytes | Process allocated (context) | Process reserved (context) | Mono used (context) | Mono heap (context) | Pool | Active |
 |---|---:|---|---:|---|---:|---:|---:|---:|---:|---:|---:|
-| match-before-controlled-playback | 8.962 | None | 0 | NotRequested | 45,448,237 | 2,612,428,940 | 3,086,562,344 | 1,506,385,920 | 1,775,058,944 | 8 | 1 |
-| match-after-small-arms | 8.978 | Gameplay.Weapon.Fire.SmallArms | 3212856651 | Presented | 45,448,237 | 2,612,625,900 | 3,086,652,088 | 1,506,758,656 | 1,775,058,944 | 8 | 2 |
-| match-after-music-calm-loop | 8.991 | Music.Match.CalmLoop | 4285376118 | Presented | 45,616,296 | 2,612,960,966 | 3,086,792,184 | 1,507,115,008 | 1,775,058,944 | 8 | 3 |
-| match-after-city-day-ambience | 9.002 | Ambience.City.DayLoop | 3552601528 | Presented | 45,784,355 | 2,613,282,776 | 3,086,789,560 | 1,507,467,264 | 1,775,058,944 | 8 | 4 |
-| match-after-aria-settings-voice | 9.014 | VO.ARIA.Message.TacticalFeedbackRtsCameraRestored | 23298754 | Presented | 45,784,355 | 2,613,440,294 | 3,086,801,848 | 1,507,827,712 | 1,775,058,944 | 8 | 5 |
+| match-before-controlled-playback | 9.026 | None | 0 | NotRequested | 45,448,237 | 2,634,036,214 | 3,110,743,816 | 1,508,163,584 | 1,813,495,808 | 8 | 0 |
+| match-after-small-arms | 9.748 | Gameplay.Weapon.Fire.SmallArms | 3212856651 | Presented | 45,448,237 | 2,649,306,638 | 3,127,331,688 | 1,509,130,240 | 1,813,495,808 | 8 | 1 |
+| match-after-music-calm-loop | 10.465 | Music.Match.CalmLoop | 4285376118 | Presented | 45,610,660 | 2,667,900,028 | 3,129,523,032 | 1,510,125,568 | 1,813,495,808 | 8 | 2 |
+| match-after-city-day-ambience | 11.386 | Ambience.City.DayLoop | 3552601528 | Presented | 45,773,083 | 2,689,812,067 | 3,162,657,624 | 1,511,628,800 | 1,813,495,808 | 8 | 4 |
+| match-after-aria-settings-voice | 12.099 | VO.ARIA.Message.TacticalFeedbackRtsCameraRestored | 23298754 | Presented | 45,773,083 | 2,706,436,280 | 3,179,130,008 | 1,512,980,480 | 1,813,495,808 | 8 | 3 |
 
 ## match-before-controlled-playback
 
-- Snapshot time: `8.962 s`
+- Snapshot time: `9.026 s`
 - Event: `None`
 - Event hash: `0`
 - Event status: `NotRequested`
 - Triggered at: `Unavailable`
 - Requested at: `Unavailable`
 - Processed at: `Unavailable`
-- Observed at: `8.962 s`
+- Observed at: `9.026 s`
 - Catalog clips: `234`
 - Loaded catalog clips: `225`
 - Catalog runtime memory: `45,448,237 bytes`
-- Total allocated memory: `2,612,428,940 bytes`
-- Total reserved memory: `3,086,562,344 bytes`
-- Mono used memory: `1,506,385,920 bytes`
-- Mono heap memory: `1,775,058,944 bytes`
+- Total allocated memory: `2,634,036,214 bytes`
+- Total reserved memory: `3,110,743,816 bytes`
+- Mono used memory: `1,508,163,584 bytes`
+- Mono heap memory: `1,813,495,808 bytes`
 - Source pool: `8`
-- Active sources: `1`
+- Active sources: `0`
 
 ### Bus Totals
 
@@ -290,23 +300,23 @@
 
 ## match-after-small-arms
 
-- Snapshot time: `8.978 s`
+- Snapshot time: `9.748 s`
 - Event: `Gameplay.Weapon.Fire.SmallArms`
 - Event hash: `3212856651`
 - Event status: `Presented`
-- Triggered at: `8.969 s`
-- Requested at: `11.136 s`
-- Processed at: `11.152 s`
-- Observed at: `8.977 s`
+- Triggered at: `9.031 s`
+- Requested at: `9.069 s`
+- Processed at: `9.082 s`
+- Observed at: `9.748 s`
 - Catalog clips: `234`
 - Loaded catalog clips: `225`
 - Catalog runtime memory: `45,448,237 bytes`
-- Total allocated memory: `2,612,625,900 bytes`
-- Total reserved memory: `3,086,652,088 bytes`
-- Mono used memory: `1,506,758,656 bytes`
-- Mono heap memory: `1,775,058,944 bytes`
+- Total allocated memory: `2,649,306,638 bytes`
+- Total reserved memory: `3,127,331,688 bytes`
+- Mono used memory: `1,509,130,240 bytes`
+- Mono heap memory: `1,813,495,808 bytes`
 - Source pool: `8`
-- Active sources: `2`
+- Active sources: `1`
 
 ### Bus Totals
 
@@ -560,23 +570,23 @@
 
 ## match-after-music-calm-loop
 
-- Snapshot time: `8.991 s`
+- Snapshot time: `10.465 s`
 - Event: `Music.Match.CalmLoop`
 - Event hash: `4285376118`
 - Event status: `Presented`
-- Triggered at: `8.981 s`
-- Requested at: `11.152 s`
-- Processed at: `11.164 s`
-- Observed at: `8.991 s`
+- Triggered at: `9.751 s`
+- Requested at: `9.793 s`
+- Processed at: `9.802 s`
+- Observed at: `10.464 s`
 - Catalog clips: `234`
 - Loaded catalog clips: `226`
-- Catalog runtime memory: `45,616,296 bytes`
-- Total allocated memory: `2,612,960,966 bytes`
-- Total reserved memory: `3,086,792,184 bytes`
-- Mono used memory: `1,507,115,008 bytes`
-- Mono heap memory: `1,775,058,944 bytes`
+- Catalog runtime memory: `45,610,660 bytes`
+- Total allocated memory: `2,667,900,028 bytes`
+- Total reserved memory: `3,129,523,032 bytes`
+- Mono used memory: `1,510,125,568 bytes`
+- Mono heap memory: `1,813,495,808 bytes`
 - Source pool: `8`
-- Active sources: `3`
+- Active sources: `2`
 
 ### Bus Totals
 
@@ -584,7 +594,7 @@
 |---|---:|---:|---:|
 | Alerts | 350,548 | 4 | 4 |
 | Ambience | 1,420 | 2 | 0 |
-| Music | 173,029 | 7 | 1 |
+| Music | 167,393 | 7 | 1 |
 | SFX | 2,462,278 | 40 | 40 |
 | UI | 850,698 | 18 | 18 |
 | Voice | 41,778,323 | 163 | 163 |
@@ -640,7 +650,7 @@
 | Assets/Game/Audio/Gameplay/game_weapon_rifle_fire_01.wav | SFX | Gameplay.Weapon.Rifle.Fire | Loaded | 18,481 |
 | Assets/Game/Audio/Gameplay/game_weapon_vehicle_cannon_fire_01.wav | SFX | Gameplay.Weapon.VehicleCannon.Fire | Loaded | 54,001 |
 | Assets/Game/Audio/Music/music_briefing_loop_01.wav | Music | Music.Briefing.Loop | Unloaded | 710 |
-| Assets/Game/Audio/Music/music_match_calm_loop_01.wav | Music | Music.Match.CalmLoop | Loaded | 168,769 |
+| Assets/Game/Audio/Music/music_match_calm_loop_01.wav | Music | Music.Match.CalmLoop | Loaded | 163,133 |
 | Assets/Game/Audio/Music/music_match_combat_loop_01.wav | Music | Music.Match.CombatLoop | Unloaded | 710 |
 | Assets/Game/Audio/Music/music_menu_loop_01.wav | Music | Music.Menu.Loop | Unloaded | 710 |
 | Assets/Game/Audio/Music/music_result_defeat_01.wav | Music | Music.Result.Defeat | Unloaded | 710 |
@@ -830,21 +840,21 @@
 
 ## match-after-city-day-ambience
 
-- Snapshot time: `9.002 s`
+- Snapshot time: `11.386 s`
 - Event: `Ambience.City.DayLoop`
 - Event hash: `3552601528`
 - Event status: `Presented`
-- Triggered at: `8.994 s`
-- Requested at: `11.164 s`
-- Processed at: `11.176 s`
-- Observed at: `9.002 s`
+- Triggered at: `10.467 s`
+- Requested at: `10.509 s`
+- Processed at: `10.518 s`
+- Observed at: `11.385 s`
 - Catalog clips: `234`
 - Loaded catalog clips: `227`
-- Catalog runtime memory: `45,784,355 bytes`
-- Total allocated memory: `2,613,282,776 bytes`
-- Total reserved memory: `3,086,789,560 bytes`
-- Mono used memory: `1,507,467,264 bytes`
-- Mono heap memory: `1,775,058,944 bytes`
+- Catalog runtime memory: `45,773,083 bytes`
+- Total allocated memory: `2,689,812,067 bytes`
+- Total reserved memory: `3,162,657,624 bytes`
+- Mono used memory: `1,511,628,800 bytes`
+- Mono heap memory: `1,813,495,808 bytes`
 - Source pool: `8`
 - Active sources: `4`
 
@@ -853,8 +863,8 @@
 | Bus | Runtime bytes | Clips | Loaded clips |
 |---|---:|---:|---:|
 | Alerts | 350,548 | 4 | 4 |
-| Ambience | 169,479 | 2 | 1 |
-| Music | 173,029 | 7 | 1 |
+| Ambience | 163,843 | 2 | 1 |
+| Music | 167,393 | 7 | 1 |
 | SFX | 2,462,278 | 40 | 40 |
 | UI | 850,698 | 18 | 18 |
 | Voice | 41,778,323 | 163 | 163 |
@@ -868,7 +878,7 @@
 | Assets/Game/Audio/Alerts/alert_threat_minor_01.wav | Alerts | Alert.Threat.Minor | Loaded | 71,761 |
 | Assets/Game/Audio/Alerts/alert_unit_under_attack_01.wav | Alerts | Alert.Unit.UnderAttack | Loaded | 75,289 |
 | Assets/Game/Audio/Ambience/amb_base_distant_loop_01.wav | Ambience | Ambience.Base.DistantLoop | Unloaded | 710 |
-| Assets/Game/Audio/Ambience/amb_city_day_loop_01.wav | Ambience | Ambience.City.DayLoop | Loaded | 168,769 |
+| Assets/Game/Audio/Ambience/amb_city_day_loop_01.wav | Ambience | Ambience.City.DayLoop | Loaded | 163,133 |
 | Assets/Game/Audio/Gameplay/game_build_place_invalid_01.wav | SFX | Gameplay.Build.Place.Invalid | Loaded | 43,537 |
 | Assets/Game/Audio/Gameplay/game_build_place_valid_01.wav | SFX | Gameplay.Build.Place.Valid | Loaded | 54,121 |
 | Assets/Game/Audio/Gameplay/game_command_attack_accepted_01.wav | SFX | Gameplay.Command.Attack.Accepted | Loaded | 43,537 |
@@ -910,7 +920,7 @@
 | Assets/Game/Audio/Gameplay/game_weapon_rifle_fire_01.wav | SFX | Gameplay.Weapon.Rifle.Fire | Loaded | 18,481 |
 | Assets/Game/Audio/Gameplay/game_weapon_vehicle_cannon_fire_01.wav | SFX | Gameplay.Weapon.VehicleCannon.Fire | Loaded | 54,001 |
 | Assets/Game/Audio/Music/music_briefing_loop_01.wav | Music | Music.Briefing.Loop | Unloaded | 710 |
-| Assets/Game/Audio/Music/music_match_calm_loop_01.wav | Music | Music.Match.CalmLoop | Loaded | 168,769 |
+| Assets/Game/Audio/Music/music_match_calm_loop_01.wav | Music | Music.Match.CalmLoop | Loaded | 163,133 |
 | Assets/Game/Audio/Music/music_match_combat_loop_01.wav | Music | Music.Match.CombatLoop | Unloaded | 710 |
 | Assets/Game/Audio/Music/music_menu_loop_01.wav | Music | Music.Menu.Loop | Unloaded | 710 |
 | Assets/Game/Audio/Music/music_result_defeat_01.wav | Music | Music.Result.Defeat | Unloaded | 710 |
@@ -1100,31 +1110,31 @@
 
 ## match-after-aria-settings-voice
 
-- Snapshot time: `9.014 s`
+- Snapshot time: `12.099 s`
 - Event: `VO.ARIA.Message.TacticalFeedbackRtsCameraRestored`
 - Event hash: `23298754`
 - Event status: `Presented`
-- Triggered at: `9.006 s`
-- Requested at: `0.000 s`
-- Processed at: `11.187 s`
-- Observed at: `9.013 s`
+- Triggered at: `11.388 s`
+- Requested at: `11.388 s`
+- Processed at: `11.440 s`
+- Observed at: `12.099 s`
 - Catalog clips: `234`
 - Loaded catalog clips: `227`
-- Catalog runtime memory: `45,784,355 bytes`
-- Total allocated memory: `2,613,440,294 bytes`
-- Total reserved memory: `3,086,801,848 bytes`
-- Mono used memory: `1,507,827,712 bytes`
-- Mono heap memory: `1,775,058,944 bytes`
+- Catalog runtime memory: `45,773,083 bytes`
+- Total allocated memory: `2,706,436,280 bytes`
+- Total reserved memory: `3,179,130,008 bytes`
+- Mono used memory: `1,512,980,480 bytes`
+- Mono heap memory: `1,813,495,808 bytes`
 - Source pool: `8`
-- Active sources: `5`
+- Active sources: `3`
 
 ### Bus Totals
 
 | Bus | Runtime bytes | Clips | Loaded clips |
 |---|---:|---:|---:|
 | Alerts | 350,548 | 4 | 4 |
-| Ambience | 169,479 | 2 | 1 |
-| Music | 173,029 | 7 | 1 |
+| Ambience | 163,843 | 2 | 1 |
+| Music | 167,393 | 7 | 1 |
 | SFX | 2,462,278 | 40 | 40 |
 | UI | 850,698 | 18 | 18 |
 | Voice | 41,778,323 | 163 | 163 |
@@ -1138,7 +1148,7 @@
 | Assets/Game/Audio/Alerts/alert_threat_minor_01.wav | Alerts | Alert.Threat.Minor | Loaded | 71,761 |
 | Assets/Game/Audio/Alerts/alert_unit_under_attack_01.wav | Alerts | Alert.Unit.UnderAttack | Loaded | 75,289 |
 | Assets/Game/Audio/Ambience/amb_base_distant_loop_01.wav | Ambience | Ambience.Base.DistantLoop | Unloaded | 710 |
-| Assets/Game/Audio/Ambience/amb_city_day_loop_01.wav | Ambience | Ambience.City.DayLoop | Loaded | 168,769 |
+| Assets/Game/Audio/Ambience/amb_city_day_loop_01.wav | Ambience | Ambience.City.DayLoop | Loaded | 163,133 |
 | Assets/Game/Audio/Gameplay/game_build_place_invalid_01.wav | SFX | Gameplay.Build.Place.Invalid | Loaded | 43,537 |
 | Assets/Game/Audio/Gameplay/game_build_place_valid_01.wav | SFX | Gameplay.Build.Place.Valid | Loaded | 54,121 |
 | Assets/Game/Audio/Gameplay/game_command_attack_accepted_01.wav | SFX | Gameplay.Command.Attack.Accepted | Loaded | 43,537 |
@@ -1180,7 +1190,7 @@
 | Assets/Game/Audio/Gameplay/game_weapon_rifle_fire_01.wav | SFX | Gameplay.Weapon.Rifle.Fire | Loaded | 18,481 |
 | Assets/Game/Audio/Gameplay/game_weapon_vehicle_cannon_fire_01.wav | SFX | Gameplay.Weapon.VehicleCannon.Fire | Loaded | 54,001 |
 | Assets/Game/Audio/Music/music_briefing_loop_01.wav | Music | Music.Briefing.Loop | Unloaded | 710 |
-| Assets/Game/Audio/Music/music_match_calm_loop_01.wav | Music | Music.Match.CalmLoop | Loaded | 168,769 |
+| Assets/Game/Audio/Music/music_match_calm_loop_01.wav | Music | Music.Match.CalmLoop | Loaded | 163,133 |
 | Assets/Game/Audio/Music/music_match_combat_loop_01.wav | Music | Music.Match.CombatLoop | Unloaded | 710 |
 | Assets/Game/Audio/Music/music_menu_loop_01.wav | Music | Music.Menu.Loop | Unloaded | 710 |
 | Assets/Game/Audio/Music/music_result_defeat_01.wav | Music | Music.Result.Defeat | Unloaded | 710 |

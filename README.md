@@ -73,6 +73,11 @@ Key project documents:
 
 Core design reading order starts in `Design/README.md`. The current high-priority design sources are:
 
+- `Design/AAA_Mobile_Game_Design_Document_v0_2.md`
+- `Design/Campaign_Narrative_Bible.md`
+- `Design/First_Player_Experience_And_Story_Onboarding_Design.md`
+- `Design/Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md`
+- `Design/Narrative_Presentation_And_Cutscene_Design.md`
 - `Design/Gameplay_North_Star_And_Content_Grammar.md`
 - `Design/3D_SingleMap_Gameplay_Direction.md`
 - `Design/LargeScale_Grid_Movement_Design.md`
@@ -104,7 +109,11 @@ This diagram is an orientation aid. It may lag behind architecture and task-boar
 
 - [Design Index](Design/README.md)
   - [Game Design Reference](Design/GAME_DESIGN_REFERENCE.md)
-    - [AAA Mobile Game Design](Design/AAA_Mobile_Game_Design_Document_v0_1.md)
+    - [AAA Mobile Game Design v0.2](Design/AAA_Mobile_Game_Design_Document_v0_2.md)
+    - [Campaign Narrative Bible](Design/Campaign_Narrative_Bible.md)
+    - [First Player Experience And Story Onboarding](Design/First_Player_Experience_And_Story_Onboarding_Design.md)
+    - [Gameplay Feature Maturity And Campaign Exposure](Design/Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md)
+    - [Narrative Presentation And Cutscene Design](Design/Narrative_Presentation_And_Cutscene_Design.md)
     - [3D Single-Map Gameplay Direction](Design/3D_SingleMap_Gameplay_Direction.md)
     - [Gameplay North Star And Content Grammar](Design/Gameplay_North_Star_And_Content_Grammar.md)
     - [Command Offensive Premise Alignment](Design/Command_Offensive_Premise_Alignment.md)

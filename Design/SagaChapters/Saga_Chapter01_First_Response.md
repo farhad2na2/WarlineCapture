@@ -4,12 +4,19 @@ Date: 2026-05-21
 
 Status: Active chapter content, updated for the 3D single-map direction. File names and some internal ids may keep `Saga` / `QuickCustom` for runtime compatibility, but player-facing language should be Campaign / Skirmish.
 
+2026-07-10 narrative amendment: aligned to the `Shattered Relay` story, story-first M01 opening, named Ash Line threat, actual project character roster, and Protocol Fragment progression.
+
 ## Purpose
 
 This document owns the detailed level-by-level and mission-by-mission design for Campaign Chapter 1. Internally this is `Chapter 1`; player-facing title is `First Response`.
 
 Read after:
 
+- `../AAA_Mobile_Game_Design_Document_v0_2.md`
+- `../Campaign_Narrative_Bible.md`
+- `../First_Player_Experience_And_Story_Onboarding_Design.md`
+- `../Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md`
+- `../Narrative_Presentation_And_Cutscene_Design.md`
 - `../Gameplay_North_Star_And_Content_Grammar.md`
 - `../Level_And_Mission_Content_Plan.md`
 - `../FTUE_And_Command_Assistant_Design.md`
@@ -41,13 +48,57 @@ Chapter 1 follows the 3D single-map direction in `../3D_SingleMap_Gameplay_Direc
 
 ## Chapter Role
 
-First Response teaches the tactical foundation while introducing the city-consequence fantasy gradually. It does not expose the full economy, full store, full Operation complexity, or all reward types.
+First Response begins during coordinated Ash Line terrorist attacks on Sahrin. It teaches the tactical foundation while establishing the Commander, ARIA, Dalia, Samira, and the central mystery. It does not expose the full economy, Store, Operations complexity, or all reward types.
 
 Chapter theme:
 
 ```text
-The first district is destabilizing. The player establishes command, restores a forward base, survives the first coordinated attack, uses transport to protect people, and removes the first fortified hostile node.
+Command has failed during a coordinated attack. The player answers ARIA's emergency authentication, protects Old Market, restores a forward post, survives a prepared convoy strike, risks an airlift to save people, and removes the first fortified Ash Line node. The recovered node proves that the enemy is using a revoked ARIA credential.
 ```
+
+## Chapter Story Contract
+
+| Element | Chapter 1 authority |
+|---|---|
+| Opening state | Ordinary life in Sahrin is interrupted by coordinated bombings, blackout, transit sabotage, and command failure. |
+| Chapter question | How did the Ash Line know exactly how JRC and ARIA would respond? |
+| Story faction | Ash Line, using Tutorial Cell, Hidden Cell, Armored Column, and Defensive Garrison encounter behavior. |
+| Commander arc | Move from isolated survivor to accepted Field Commander with a functioning forward command. |
+| ARIA arc | Serve as the only command continuity system while detecting impossible use of her revoked credentials. |
+| Dalia arc | Become the Commander's principal field lead and test whether decisive command is executable on the ground. |
+| Samira arc | Move from justified skepticism toward conditional cooperation after JRC protects civilians and services. |
+| Chapter climax | Breach the Ash Line communications node without treating the populated district as expendable. |
+| Protocol Fragment 1 | Enemy traffic used an obsolete ARIA credential revoked before the current activation. |
+| Exit hook | Qassem addresses the Commander and implies the response was predicted. |
+
+## Story Presentation Contract
+
+- First launch uses the Tier A `Command Lost` cold open and direct-to-M01 route in `../First_Player_Experience_And_Story_Onboarding_Design.md`.
+- M01's final prologue panel should transition into the same Old Market operation-map location and time of day.
+- M02-M04 use concise Tier C brief/debrief beats and non-blocking Tier D communications.
+- M05 uses a Tier B chapter-finale reveal and unlocks Protocol Fragment 1 in Story Archive.
+- No story sequence may use civilian appearance as hostile evidence or show graphic attack victims.
+
+## Character Casting
+
+| Character | Chapter use | Project visual anchor |
+|---|---|---|
+| Commander | Player-selected portrait; optional current battlefield proxy only. | `Chr_Leader_Male_01` |
+| ARIA | Emergency boot, tutorial, warnings, and first mystery clue. | Dedicated ARIA avatar |
+| Major Dalia Rahim | Field lead introduced in M02; recurring through M05. | `Chr_Soldier_Female_02_Alt_02` |
+| Engineer Samira Haddad | Old Market/civilian voice from M01 onward. | `Chr_Civilian_Female_01` |
+| Captain Laila Nasser | Airlift lead in M04. | `Chr_Pilot_Female_01` |
+| Nadir Qassem | Voice or obscured portrait after M05; do not fully explain him yet. | `Chr_Insurgent_Male_05` |
+
+## Mission Story Arc
+
+| Mission | Immediate story | Relationship beat | Evidence beat |
+|---|---|---|---|
+| M01 First Contact | Intercept a confirmed armed patrol moving toward civilians after the Old Market attack. | ARIA authenticates the Commander; Samira reports from beyond the corridor. | The patrol carries unusually precise command-route information. |
+| M02 Establish The Base | Reopen an abandoned JRC post before a second cell reaches it. | Dalia becomes the Commander's field lead. | A stolen municipal access list suggests inside preparation. |
+| M03 Radar Warning | Stop a stolen convoy using a warning-sector outage known in advance. | Dalia begins trusting ARIA's timing while questioning the leak. | The outage was scheduled before the attack. |
+| M04 Airlift | Extract a medical/engineering team and civilians from a threatened landing zone. | Laila joins; Samira sees JRC accept risk to protect people. | The ambush route matches a sealed emergency plan. |
+| M05 Breach Assault | Destroy the first fortified Ash Line communications node and preserve its archive. | Commander, Dalia, Samira, and ARIA act as one command team. | Protocol Fragment 1: revoked ARIA credential; first Qassem message. |
 
 ## Chapter-Level Progression
 
@@ -109,8 +160,13 @@ Implementation handoff: use `../M01_FirstContact_Production_Contract.md` for con
 | ChapterOrDay | Chapter 1, Mission 1 |
 | MissionArchetype | Patrol Intercept |
 | ThreatFamily | Tutorial Cell |
+| StoryFaction | Ash Line |
 | TeachingGoal | Selection, move, attack, objective tracker, result flow. |
-| CityContext | A small hostile patrol is moving near a civilian block. The commander must intercept before the district believes command has lost control. |
+| CityContext | A confirmed armed Ash Line patrol is moving toward civilians stranded by the Old Market attack. The Commander is the nearest surviving JRC authority. |
+| StoryQuestion | How did the patrol know the emergency response route? |
+| CharacterBeat | ARIA authenticates the Commander; Samira reports civilians beyond the corridor. |
+| EvidenceOrRevealBeat | The patrol carries precise command-route data; the revoked credential is revealed in the first debrief. |
+| CivilianLegitimacyContext | Hostility is confirmed by visible weapons, hostile movement, attack context, and objective state. Civilian models remain non-hostile. |
 
 ### Scenario Setup
 
@@ -148,7 +204,7 @@ Implementation handoff: use `../M01_FirstContact_Production_Contract.md` for con
 
 | Event | Consequence |
 |---|---|
-| Victory | No district penalty; result stores a security tutorial note for later Operation onboarding. |
+| Victory | Corridor secured, civilians move to safety, and the first debrief reveals a revoked ARIA credential. No district penalty is applied in the tutorial. |
 | Defeat | No permanent penalty in tutorial; result explains replay. |
 | Fast clean win | Eligible for 3-star result and first-clear reward. |
 
@@ -166,10 +222,11 @@ Do not grant Materials, Fuel, Intel, Command Authority, Rush Tickets, store item
 
 | Surface | Purpose |
 |---|---|
-| SCN-05 Campaign Map | Shows Mission 1 unlocked and selected. |
-| SCN-06 Mission Briefing | Shows objective, star goals, enemy intel, and reward preview. |
+| Tier A cold open / identity | Fresh profile only: establishes the attack, ARIA, Commander identity, guidance, and direct M01 entry. |
+| SCN-05 Campaign Map | Replay/existing-profile route; fresh first launch does not stop here before M01. |
+| SCN-06 Mission Briefing | Replay route or compact in-story brief; fresh first launch keeps the objective concise and direct. |
 | SCN-08 Battle HUD | Shows objective tracker, squad tray, command buttons, minimap if available. |
-| POP-05 Mission Result | Shows outcome, stars, stats, and rewards. |
+| POP-05 Mission Result | Shows outcome, first clue, and a direct transition to the earned command-base menu with M02 highlighted. |
 | POP-07 Pause | Supports retry/exit safely. |
 
 ### Balance Targets
@@ -193,7 +250,7 @@ Do not grant Materials, Fuel, Intel, Command Authority, Rush Tickets, store item
 | Objective test | Destroying the patrol completes the mission; losing the player squad fails or blocks completion. |
 | Star test | Completion, no-loss, and under-time stars evaluate independently. |
 | Reward test | Briefing reward preview and Mission Result grant reference the same `RewardConfig`. |
-| UI contract test | Mission Briefing, HUD objective row, and Mission Result fields map to `UIUX_Gameplay_Element_Alignment.md`. |
+| UI contract test | Mission Briefing, HUD objective row, and Mission Result fields map to `../UIUX_Gameplay_Element_Alignment.md`. |
 | Balance probe | `Campaign_Chapter1_Mission1` writes report with duration, first contact, losses, and reward data. |
 
 ### Failure And Retry Rules

@@ -4,6 +4,8 @@ Date: 2026-05-06
 
 Current implementation note, 2026-07-08: this document remains the product/UX source for ARIA's role, FTUE flow, contextual recommendations, and safe control takeover. New implementation must follow `Design/ARIA_Assistant_ECS_Design.md` and `Design/Architecture/aria_assistant_ecs_implementation_tracker.md` for ECS data ownership, naming, bounded control, narration, and no service/provider/controller/runtime drift.
 
+2026-07-10 story-first amendment: `First_Player_Experience_And_Story_Onboarding_Design.md` now owns first-launch routing, timing, cold open, identity placement, M01 entry, first debrief, and progressive menu disclosure. This document continues to own reusable tutorial steps and ARIA assistance behavior. Where the older menu-first flow below conflicts, the story-first FPE document wins.
+
 ## Purpose
 
 This document designs WarlineCapture's first-time user experience, contextual tutorials, and reusable command assistant. It is grounded in the current Unity project, especially:
@@ -24,6 +26,10 @@ This document designs WarlineCapture's first-time user experience, contextual tu
 - `Design/LargeScale_Grid_Movement_Design.md`
 - `Design/3D_SingleMap_Gameplay_Direction.md`
 - `Design/M01_FirstContact_Production_Contract.md`
+- `Design/AAA_Mobile_Game_Design_Document_v0_2.md`
+- `Design/Campaign_Narrative_Bible.md`
+- `Design/First_Player_Experience_And_Story_Onboarding_Design.md`
+- `Design/Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md`
 
 ## Short Answer
 
@@ -53,17 +59,18 @@ ARIA is not the commander. The player is the commander. ARIA is the staff office
 Player-facing premise:
 
 ```text
-You are the newly appointed Field Commander of WarlineCapture Response Command.
-Hostile factions are embedded across civilian districts, using infrastructure, logistics, and public routes as cover.
-Your job is to prepare and execute targeted operations that neutralize those factions without losing civilian trust, infrastructure, or long-term district control.
+Coordinated terrorist attacks have severed command across the fictional city of Sahrin.
+You are the surviving local JRC officer authenticated under emergency continuity rules and elevated to Field Commander.
+The Ash Line is attacking from confirmed armed cells operating through civilian infrastructure, while ordinary citizens remain people to protect, never threat profiles.
+Your job is to defeat the network, restore the city, expose who is using ARIA's revoked credentials, and keep emergency power accountable.
 ```
 
 ARIA's story role:
 
 ```text
-ARIA is the command network's surviving decision assistant. She has city telemetry, district reports, and limited tactical automation rights.
+ARIA is the fragmented Civic Relay decision assistant and the command network's surviving continuity system. Her missing archive is part of the campaign mystery.
 She can show you how command tools work, recommend priorities, and execute simple orders with your permission.
-She cannot replace judgment. She follows your command and yields control instantly.
+She cannot replace judgment or make authority legitimate. She follows your command, states uncertainty, and yields control instantly.
 ```
 
 Chapter 1 story arc:
@@ -84,11 +91,13 @@ Because the player is the Field Commander and WarlineCapture already has a Comma
 
 ### Identity Creation Flow
 
-First launch should include a short identity step after ARIA's welcome and before the first Campaign mission:
+First launch places the identity step inside the emergency story before M01, without showing the normal Main Menu:
 
 ```text
-ARIA welcome -> Commander Identity -> Choose guidance level -> Campaign highlighted
+Minimal logo -> Coordinated-attack cold open -> ARIA emergency boot -> Commander Identity -> Choose guidance level -> M01 First Contact -> First debrief -> Command-base menu reveal
 ```
+
+The first meaningful tactical action should occur within the 60-90 second target band defined by `First_Player_Experience_And_Story_Onboarding_Design.md`. Account setup, expanded cosmetics, Store promotion, mode selection, and detailed profile options are deferred until the player has experienced M01.
 
 Required fields:
 
@@ -437,7 +446,8 @@ Recommendations should be ranked by urgency, relevance, confidence, and player p
 
 | Context | Recommendation |
 |---|---|
-| Main Menu first launch | Start `Campaign` because it teaches command fundamentals. |
+| Fresh profile before M01 | Continue the emergency story route directly into `First Contact`; do not recommend the normal Main Menu. |
+| First post-M01 command-base reveal | Continue to M02 because the recovered credential proves the attack used command information. |
 | Campaign Map M01 unlocked | Select `First Contact`. |
 | Mission Briefing M01 | Review objectives, then deploy. |
 | M01 no unit selected | Select rifle squad. |
@@ -457,17 +467,17 @@ Recommendations should be ranked by urgency, relevance, confidence, and player p
 First launch should go:
 
 ```text
-Splash -> Main Menu -> ARIA welcome -> Campaign highlighted -> Campaign Map M01 -> Mission Briefing -> Match Tutorial
+Minimal logo -> Coordinated-attack cold open -> ARIA emergency boot -> Commander identity -> Guidance choice -> M01 Match Tutorial -> First debrief and clue -> Command-base Main Menu reveal
 ```
 
-Do not force the player into combat immediately from splash. Let them see that WarlineCapture has modes, but guide them to Campaign as the training path.
+Do not show the complex normal Main Menu or mode selection before the player experiences the story and first tactical command. The flow remains skippable and the player can deliberately exit to a simplified command-base state, but immediate story-to-gameplay is the primary route.
 
 ### Prologue Prompt
 
 ARIA first line:
 
 ```text
-Commander, WarlineCapture Response Command is online. I can guide the first operation, explain your options, or take a single action when you ask.
+Command chain unavailable. Civilians are exposed. Identify yourself, Commander.
 ```
 
 Choice:
@@ -493,13 +503,13 @@ Step plan:
 
 | Step | Trigger | Player Action | Assistant Option |
 |---|---|---|---|
-| `ftue.m01.welcome` | Briefing opened first time | Read mission context. | Explain objective. |
-| `ftue.m01.deploy` | Briefing CTA visible | Start mission. | Show deploy button. |
+| `ftue.m01.welcome` | Cold open enters ARIA boot | Authenticate Commander and read the immediate threat. | Explain objective. |
+| `ftue.m01.deploy` | Guidance choice confirmed and map ready | Enter the operation directly. | Show the transition/continue action only if loading requires it. |
 | `ftue.m01.objectives` | Match starts | Notice objective tracker. | Highlight tracker. |
 | `ftue.m01.select_squad` | Squad visible | Select highlighted rifle squad. | Do It selects squad. |
 | `ftue.m01.move` | Squad selected | Move to marked cover. | Do It issues move order. |
 | `ftue.m01.attack` | Enemy patrol visible | Attack highlighted patrol. | Do It issues attack. |
-| `ftue.m01.complete` | Victory | Continue to result. | Explain stars and rewards. |
+| `ftue.m01.complete` | Victory | Continue to the debrief, revoked credential clue, and command-base reveal. | Explain outcome, first clue, and next operation. |
 
 Map contract: briefing/deploy steps may use `camera.ch01.m01.planning`; match steps must use `opmap.ch01.district_edge_01` operation-map anchors for squad spawn, move target, hostile patrol, objective marker, and camera bounds.
 

@@ -1,5 +1,7 @@
 # WarlineCapture 3D Single-Map Gameplay Direction
 
+2026-07-10 narrative amendment: `Campaign_Narrative_Bible.md` owns named factions, setting, and character casting. Unique civilian, soldier, contractor, pilot, specialist, and insurgent configs retain consistent faction/story identities.
+
 Date: 2026-05-21
 Status: Active source of truth
 
@@ -13,7 +15,7 @@ This supersedes the 2.5D isometric macro-tile direction and the prior strategic-
 
 ## Product Fantasy
 
-WarlineCapture is a mobile-first 3D command RTS about preparing and executing operations in fictional Middle Eastern-inspired towns where hostile terrorist and insurgent cells hide among civilians, infrastructure, roads, compounds, markets, and district systems.
+WarlineCapture is a mobile-first 3D command RTS about preparing and executing operations in a fictional Middle Eastern-inspired city where armed terrorist and insurgent cells exploit populated infrastructure, roads, compounds, markets, and district systems.
 
 The player is a field commander preparing to attack, raid, intercept, contain, evacuate, reinforce, or defend based on imperfect intel. The pressure is not only defeating hostiles. The commander must protect civilians, avoid reckless collateral damage, keep infrastructure usable, and live with district consequences after the mission.
 
@@ -57,7 +59,7 @@ Required world ingredients:
 - air and support lanes for drones, helicopters, transport planes, and strike aircraft
 - metadata-backed zones for deployment, civilian density, restricted fire, objectives, hostile influence, build placement, vehicle lanes, and camera bounds
 
-Avoid naming real armed groups, real governments, or real-world conflicts in general design docs. The game can use "hostile cell", "terrorist cell", "insurgent network", "hidden network", and "embedded hostile force" as fictional labels.
+Avoid naming real armed groups, real governments, or real-world conflicts in general design docs. The active first Campaign uses the fictional Ash Line and Vanguard Brigade working names. Civilian appearance is never evidence of hostility; use confirmed weapons, action, Intel, zone/objective context, and faction data.
 
 ## Canonical Unit And Building Source
 
@@ -147,6 +149,7 @@ Update these UI targets and screen docs:
 - Do use 3D runtime entities for soldiers, civilians, vehicles, aircraft, buildings, markers, projectiles, VFX, and selection feedback.
 - Do use metadata as gameplay truth for routes, zones, anchors, objective positions, build validity, civilian risk, and camera bounds.
 - Do keep civilian protection and collateral risk central to the command fantasy.
+- Do preserve stable roles for unique character configs. Civilian configs remain civilians, insurgent configs remain hostile actors, and named recurring models are not randomly reused for contradictory roles in one operation.
 - Do keep the AAA mobile target: readable input, strong camera control, performance budgets, polished menu art, clear unit roles, and crisp feedback.
 
 ## Implementation Implications

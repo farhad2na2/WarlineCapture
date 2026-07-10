@@ -4,6 +4,8 @@ Date: 2026-05-23
 Owner: Design
 Surface: `POP-05 Mission Result`
 
+2026-07-10 narrative amendment: Campaign results must carry the immediate human consequence, character response, and mandatory clue/reveal defined by `Campaign_Narrative_Bible.md`. First-launch M01 uses the debrief-to-command-base reveal in `First_Player_Experience_And_Story_Onboarding_Design.md`.
+
 This spec defines the full result/debrief screen for the 3D single-map WarlineCapture direction. `POP-05` is one reusable result surface with multiple runtime states, not separate unrelated victory/loss screens.
 
 ## Purpose
@@ -34,6 +36,7 @@ All states use the same shell:
 - Performance stats: enemies defeated, units lost, civilians saved/harmed, resources spent, buildings captured/destroyed, oil/fuel recovered when relevant.
 - Rewards panel: commander XP, Credits, Supplies, Fuel, Intel, unlocks, and explicit zero/reduced reward rows.
 - Consequence panel: Civilian Safety, District Trust, Hostile Influence, Infrastructure, and mode-specific deltas.
+- Narrative beat: one concise outcome, character response, and evidence/reveal row when authored. It must distinguish mandatory story progress from optional evidence.
 - Bottom action bar: retry/replay, loadout/settings route if applicable, continue/return primary CTA.
 
 Text, values, objective rows, reward rows, CTA labels, star count, and consequence deltas must be live UI data. Frames, icons, stars, fills, and background art are separate visual layers.
@@ -104,6 +107,13 @@ Text, values, objective rows, reward rows, CTA labels, star count, and consequen
 - `CanReplay`
 - `CanRetry`
 - `CanAdjustLoadout`
+- `NarrativeOutcomeId`
+- `CharacterResponseId`
+- `MandatoryStoryBeatId`
+- `OptionalEvidenceRows`
+- `TrustDelta`
+- `EvidenceDelta`
+- `InfrastructureDelta`
 
 ## Reason Codes
 
@@ -129,7 +139,7 @@ Reason codes must be authored and user-readable:
 | Operations | `SCN-11 Operations Dashboard` or district detail. | Retry only if operation action permits. | `SCN-12 District Detail Actions`. |
 | Skirmish | `SCN-13 Skirmish Setup`. | Relaunch same preset/custom setup. | `SCN-02 Main Menu`. |
 | Custom | Custom setup screen / Skirmish setup variant. | Relaunch same custom rules. | `SCN-02 Main Menu`. |
-| Tutorial / M01 | Continue to the next FTUE step or Campaign Map. | Retry current tutorial mission. | Main Menu only after confirmation. |
+| Tutorial / first-launch M01 | Play the first debrief and revoked-ARIA-credential clue, then reveal the command-base menu with M02 highlighted. | Retry current tutorial mission. | Simplified command base with `Resume First Contact` after deliberate exit. |
 
 ## Visual-Lock Requirements
 
@@ -146,5 +156,7 @@ Reason codes must be authored and user-readable:
 - Failed objectives remain visible with readable failure reasons.
 - Clear-only rewards are hidden or disabled on defeat/withdrawal and never look granted.
 - Civilian and district consequence rows always render, including zero deltas.
+- Campaign results show the authored character/clue beat and never gate mandatory Protocol Fragments behind star count, purchases, or optional evidence.
+- Trust, Evidence, and Infrastructure changes explain the triggering actions rather than appearing as unexplained meters.
 - Continue/retry routes match the source mode.
 - No target-lock text or values are baked into implementation layers.

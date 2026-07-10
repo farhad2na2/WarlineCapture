@@ -2,6 +2,8 @@
 
 Date: 2026-05-02
 
+2026-07-10 campaign amendment: use the active v0.2 GDD, narrative bible, story-first FPE, and feature maturity/exposure matrix for current product and Campaign decisions. This document remains a high-level gameplay roadmap; its older blanket "foundation" claims are not feature-readiness evidence.
+
 ## Source Material
 
 - `Design/GAME_DESIGN_REFERENCE.md`
@@ -9,7 +11,11 @@ Date: 2026-05-02
 - `Design/BalanceConfigs/Combat_Balance_Config_v0_1.json`
 - `Design/VisualConfigs/Combat_Visual_Config_v0_1.json`
 - `Design/AI_CONTROLLER_DESIGN.md`
-- `Design/AAA_Mobile_Game_Design_Document_v0_1.md`
+- `Design/AAA_Mobile_Game_Design_Document_v0_2.md`
+- `Design/Campaign_Narrative_Bible.md`
+- `Design/First_Player_Experience_And_Story_Onboarding_Design.md`
+- `Design/Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md`
+- `Design/Narrative_Presentation_And_Cutscene_Design.md`
 - `Design/Gameplay_North_Star_And_Content_Grammar.md`
 - `Design/3D_SingleMap_Gameplay_Direction.md`
 - `Design/LargeScale_Grid_Movement_Design.md`
@@ -22,7 +28,7 @@ Date: 2026-05-02
 
 This document defines the gameplay feature roadmap that should follow the UI/UX shell work. The UI/UX plan defines how players navigate and see the game. This gameplay plan defines what the modes actually do: campaign structure, objectives, rewards, progression, persistent operation state, custom game rules, AI profiles, and match result logic.
 
-Before creating level-by-level or mission-by-mission content, read `Design/Gameplay_North_Star_And_Content_Grammar.md`, `Design/Level_And_Mission_Content_Plan.md`, and the relevant chapter doc under `Design/SagaChapters`. The north-star doc is the content-authoring gate for WarlineCapture's core fantasy and grammar; the level-and-mission plan owns shared structure; chapter docs own chapter-specific mission matrices and specs.
+Before creating level-by-level or mission-by-mission content, read `Design/Campaign_Narrative_Bible.md`, `Design/Gameplay_North_Star_And_Content_Grammar.md`, `Design/Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md`, `Design/Level_And_Mission_Content_Plan.md`, and the relevant chapter doc under `Design/SagaChapters`. The feature matrix, not the list below, determines whether a mechanic may carry a required Campaign objective.
 
 Before adding a unit, building, support ability, upgrade, reward target, or store item, read `Design/Combat_Catalog_And_Upgrade_Design.md`. Gameplay configs should use ids from `Design/BalanceConfigs/Combat_Balance_Config_v0_1.json`, while art and UI references should use `Design/VisualConfigs/Combat_Visual_Config_v0_1.json`.
 
@@ -32,7 +38,7 @@ Map-view contract: use `Design/3D_SingleMap_Gameplay_Direction.md` for all missi
 
 ## Current Gameplay Foundation
 
-WarlineCapture already has a strong real-time tactical foundation:
+WarlineCapture already has a substantial real-time tactical foundation, but the capabilities below have different maturity levels. Treat them as inventory, not a claim that every item is campaign-ready:
 
 - Grid-based RTS movement and pathing.
 - Player unit selection and attack commands.
@@ -51,6 +57,8 @@ WarlineCapture already has a strong real-time tactical foundation:
 - Configurable enemy AI and Player Auto Mode.
 - AI economy, building, production, squad, targeting, and combat systems.
 - Android build and Unity test gates.
+
+Current classification includes Implemented, Implemented/Partial, Partial, Scaffolded, and Designed. In particular, roads, civilians/refugees, Scan/Intel, ARIA command breadth, Resource Exchange reachability, and the Campaign product layer require the explicit gates in `Design/Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md`.
 
 What is missing is the product/gameplay layer around the tactical simulation:
 

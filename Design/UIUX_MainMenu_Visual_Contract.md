@@ -2,6 +2,8 @@
 
 Date: 2026-05-21
 
+2026-07-10 first-player amendment: this remains the visual contract for the command-base menu, but a fresh profile must not open here. `First_Player_Experience_And_Story_Onboarding_Design.md` routes first launch through the cold open, ARIA boot, identity, M01, and first debrief before revealing this menu as the headquarters the player has restored.
+
 ## Active Target
 
 Primary visual target:
@@ -30,6 +32,10 @@ The next main-menu visual-lock task is to create a fresh implementation-ready la
 - Right commander panel: portrait, rank, readiness pips, locked feature rows.
 - Bottom-right primary CTA: `DEPLOY OPERATION`.
 - Bottom-left comms/status panel.
+
+## Progressive Disclosure State
+
+On the first post-M01 reveal, `Continue Campaign` and M02 are dominant. Commander Profile, Settings/accessibility, and Story Archive are available but secondary. Operations, Skirmish, Store, advanced currencies, and dense progression surfaces are hidden or clearly locked until their authored reveal points. This contract must support both the simplified first-session state and the later full command-base state.
 
 ## Locked Text
 

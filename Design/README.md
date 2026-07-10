@@ -1,11 +1,16 @@
 # WarlineCapture Design Index
 
-Date: 2026-05-23
+Date: 2026-07-10
 
 This folder is the source of truth for WarlineCapture product design, gameplay planning, UI/UX implementation, visual targets, audio direction, monetization planning, marketing asset workflow, and the active 3D single-map production direction.
 
 ## Current Alignment
 
+- Active product GDD: `AAA_Mobile_Game_Design_Document_v0_2.md` supersedes v0.1 for product, narrative, first-player, and campaign direction. The v0.1 Markdown and DOCX remain historical references.
+- Campaign narrative: `Campaign_Narrative_Bible.md` owns the fictional Middle Eastern setting, Daryat/Sahrin working names, Ash Line and Vanguard factions, actual character-roster casting, Commander/ARIA arcs, 25 mission story map, five Protocol Fragments, and canonical ending.
+- First player experience: `First_Player_Experience_And_Story_Onboarding_Design.md` owns the fresh-profile route from a short attack cold open and ARIA boot directly into M01. The normal complex Main Menu is revealed only after the first debrief or deliberate exit.
+- Feature exposure: `Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md` separates implemented, partial, scaffolded, and designed capabilities and gates when each may become a required Campaign mechanic.
+- Narrative presentation: `Narrative_Presentation_And_Cutscene_Design.md` owns the tactical motion-comic format, sequence tiers, character/location continuity, AI-assisted asset rules, subtitles, accessibility, and Story Archive direction.
 - Product structure: one shared 3D operation-map RTS simulation wrapped by Campaign, Operations, and Skirmish. Internal legacy names such as Saga Campaign, Persistent Operation, and Quick Custom Game may remain only as runtime compatibility terms until updated.
 - Active 3D direction: `3D_SingleMap_Gameplay_Direction.md` is the current source of truth for returning to full 3D, single large operation maps, prefab-catalog roster usage, and the command-base menu style.
 - Gameplay north star: `Gameplay_North_Star_And_Content_Grammar.md` locks the core fantasy, mission archetypes, threat families, Chapter 1 teaching arc, Operation week rhythm, and balance target bands before level-by-level content authoring.
@@ -38,48 +43,51 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 
 ## Primary Reading Order
 
-1. `GAME_DESIGN_REFERENCE.md`
-2. `3D_SingleMap_Gameplay_Direction.md`
+1. `AAA_Mobile_Game_Design_Document_v0_2.md`
+2. `Campaign_Narrative_Bible.md`
 3. `Gameplay_North_Star_And_Content_Grammar.md`
-4. `Command_Offensive_Premise_Alignment.md`
-5. `Combat_Catalog_And_Upgrade_Design.md`
-6. `BalanceConfigs/Combat_Balance_Config_v0_1.json`
-7. `VisualConfigs/Combat_Visual_Config_v0_1.json`
-8. `AAA_Mobile_Game_Design_Document_v0_1.md`
-9. `LargeScale_Grid_Movement_Design.md`
-10. `AAA_Mobile_Technical_Targets.md`
-11. `3D_Operation_Map_Texture_Mask_Workflow.md`
-12. `Level_And_Mission_Content_Plan.md`
-13. `Skirmish_Mode_Implementation_Spec.md`
-14. `Match_HUD_And_Gameplay_Implementation_Spec.md`
-15. `Match_Selection_Implementation_Spec.md`
-16. `Match_Unit_Command_Behavior_Spec.md`
-17. `Mission_Result_State_Spec.md`
+4. `First_Player_Experience_And_Story_Onboarding_Design.md`
+5. `Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md`
+6. `Narrative_Presentation_And_Cutscene_Design.md`
+7. `Level_And_Mission_Content_Plan.md`
+8. `SagaChapters/README.md`
+9. `GAME_DESIGN_REFERENCE.md`
+10. `3D_SingleMap_Gameplay_Direction.md`
+11. `Command_Offensive_Premise_Alignment.md`
+12. `Combat_Catalog_And_Upgrade_Design.md`
+13. `BalanceConfigs/Combat_Balance_Config_v0_1.json`
+14. `VisualConfigs/Combat_Visual_Config_v0_1.json`
+15. `LargeScale_Grid_Movement_Design.md`
+16. `AAA_Mobile_Technical_Targets.md`
+17. `3D_Operation_Map_Texture_Mask_Workflow.md`
 18. `M01_FirstContact_Production_Contract.md`
 19. `FTUE_And_Command_Assistant_Design.md`
 20. `ARIA_Assistant_ECS_Design.md`
-21. `AssistantPanel_M01_Implementation_Contract.md`
-22. `AssistantRuntime_M01_Wiring_Plan.md`
-23. `Designer_Role_And_Documentation_Workflow.md`
-24. `Agent_Coordination_Workflow.md`
-25. `Architecture/gameplay_solid_ecs_contract.md`
-26. `Architecture/performance_regression_contract.md`
-27. `Gameplay_Features_High_Level_Spec.md`
-28. `Gameplay_Features_Detailed_Spec.md`
-29. `UIUX_Implementation_High_Level_Spec.md`
-30. `UIUX_Implementation_Detailed_Spec.md`
-31. `Field_Logistics_Oil_Fuel_Design.md`
-32. `Automated_Fuel_Logistics_Design.md`
-33. `Resource_Logistics_Exchange_Design.md`
-34. `Economy_Reward_Design.md`
-35. `Balancing_Automated_Test_Plan.md`
-36. `UIUX_Gameplay_Element_Alignment.md`
-37. `Visual_Feedback_VFX_Recommendations.md`
-38. `Audio_Design_Guidelines.md`
-39. `Audio_Config_Driven_Implementation_Spec.md`
-40. `UIUX_MainMenu_Visual_Contract.md`
-41. `UIUX_Mockup_To_Canvas_Conversion_Plan.md`
-42. `UIUX_Target_To_Canvas_Workflow_Guide.md`
+21. `Mission_Result_State_Spec.md`
+22. `Skirmish_Mode_Implementation_Spec.md`
+23. `Match_HUD_And_Gameplay_Implementation_Spec.md`
+24. `Match_Selection_Implementation_Spec.md`
+25. `Match_Unit_Command_Behavior_Spec.md`
+26. `Gameplay_Features_High_Level_Spec.md`
+27. `Gameplay_Features_Detailed_Spec.md`
+28. `Field_Logistics_Oil_Fuel_Design.md`
+29. `Automated_Fuel_Logistics_Design.md`
+30. `Resource_Logistics_Exchange_Design.md`
+31. `Economy_Reward_Design.md`
+32. `Balancing_Automated_Test_Plan.md`
+33. `UIUX_Gameplay_Element_Alignment.md`
+34. `UIUX_Implementation_High_Level_Spec.md`
+35. `UIUX_Implementation_Detailed_Spec.md`
+36. `Visual_Feedback_VFX_Recommendations.md`
+37. `Audio_Design_Guidelines.md`
+38. `Audio_Config_Driven_Implementation_Spec.md`
+39. `UIUX_MainMenu_Visual_Contract.md`
+40. `UIUX_Mockup_To_Canvas_Conversion_Plan.md`
+41. `UIUX_Target_To_Canvas_Workflow_Guide.md`
+42. `Architecture/gameplay_solid_ecs_contract.md`
+43. `Architecture/performance_regression_contract.md`
+44. `Designer_Role_And_Documentation_Workflow.md`
+45. `Agent_Coordination_Workflow.md`
 
 ## Core Product And Gameplay
 
@@ -89,8 +97,13 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - `BalanceConfigs/Combat_Balance_Config_v0_1.json` - gameplay/economy config for 57 units, 30 buildings, 27 skills/abilities, and 40 upgrade tracks.
 - `VisualConfigs/README.md` - visual config folder rules.
 - `VisualConfigs/Combat_Visual_Config_v0_1.json` - visual-only companion entries for combat entities, abilities, and upgrade tracks.
-- `AAA_Mobile_Game_Design_Document_v0_1.md` - high-level AAA mobile game direction.
-- `AAA_Mobile_Game_Design_Document_v0_1.docx` - authored document version of the AAA mobile GDD.
+- `AAA_Mobile_Game_Design_Document_v0_2.md` - active high-level product, Campaign, first-player, narrative, system, progression, visual, audio, cultural, and monetization authority.
+- `Campaign_Narrative_Bible.md` - active setting, factions, characters, actual roster casting, five-chapter story, 25 mission story map, Protocol Fragments, ending, and cultural guardrails.
+- `First_Player_Experience_And_Story_Onboarding_Design.md` - active cold open, ARIA emergency boot, diegetic identity, direct M01 launch, first debrief, menu reveal, returning-player, and accessibility design.
+- `Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md` - current feature maturity and chapter introduction/reinforcement/mastery readiness rules.
+- `Narrative_Presentation_And_Cutscene_Design.md` - active motion-comic format, sequence tiers, visual/audio continuity, AI-assisted asset policy, accessibility, and Story Archive design.
+- `Campaign_Narrative_And_Content_Redesign_Recommendations.md` - accepted audit and recommendation record that explains why the active narrative and content redesign was chosen; not an implementation contract.
+- `AAA_Mobile_Game_Design_Document_v0_1.md` and `.docx` - superseded historical GDD references.
 - `3D_SingleMap_Gameplay_Direction.md` - active 3D single-map direction, including mode alignment, prefab-catalog roster usage, world scale, and UI menus that need updating.
 - `Gameplay_North_Star_And_Content_Grammar.md` - gameplay north star, content grammar, mission archetypes, threat families, Chapter 1 teaching arc, Operation week rhythm, balance target bands, and mission acceptance checklist.
 - `Command_Offensive_Premise_Alignment.md` - proactive command-operation framing aligned to the 3D single-map direction.
@@ -124,10 +137,10 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - `Architecture/performance_regression_contract.md` - performance regression contract for structured frame/system/GC metrics, scenario budgets, FreezeDetect usage, hot-path rules, and ratcheted performance gates.
 - `SagaChapters/README.md` - Saga chapter design folder index and update rules.
 - `SagaChapters/Saga_Chapter01_First_Response.md` - Chapter 1 / First Response mission matrix and detailed specs for all five Chapter 1 missions.
-- `SagaChapters/Saga_Chapter02_Broken_Grid.md` - Chapter 2 / Broken Grid high-level chapter arc.
-- `SagaChapters/Saga_Chapter03_Hidden_Network.md` - Chapter 3 / Hidden Network high-level chapter arc.
-- `SagaChapters/Saga_Chapter04_Air_And_Armor.md` - Chapter 4 / Air And Armor high-level chapter arc.
-- `SagaChapters/Saga_Chapter05_Citywide_Command.md` - Chapter 5 / Citywide Command high-level chapter arc.
+- `SagaChapters/Saga_Chapter02_Broken_Grid.md` - Chapter 2 / Broken Grid detailed high-level logistics, infrastructure, character, mission, and Protocol Fragment arc.
+- `SagaChapters/Saga_Chapter03_Hidden_Network.md` - Chapter 3 / Hidden Network detailed high-level Intel, civilian-identification, evidence, character, mission, and ARIA-reveal arc.
+- `SagaChapters/Saga_Chapter04_Air_And_Armor.md` - Chapter 4 / Air And Armor detailed high-level proxy-war, aircraft, armor, missile, character, mission, and escalation arc.
+- `SagaChapters/Saga_Chapter05_Citywide_Command.md` - Chapter 5 / Citywide Command detailed high-level finale, full-system mastery, character resolution, canonical ending, and epilogue design.
 - `Gameplay_Features_High_Level_Spec.md` - mode, objective, reward, progression, persistence, Campaign, Operations, and Skirmish roadmap. Internal legacy naming may remain where runtime code has not yet been renamed.
 - `Gameplay_Features_Detailed_Spec.md` - code-oriented implementation plan for gameplay systems.
 - `Field_Logistics_Oil_Fuel_Design.md` - tactical Oil/Fuel logistics design for Oil Pump, Oil Refinery, Large Oil Refinery, Fuel Bladder, oil transport truck, tanker truck, Build Drawer integration, match HUD rules, AI/balance metrics, and acquisition/spending rules.

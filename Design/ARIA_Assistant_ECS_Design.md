@@ -3,6 +3,8 @@
 Date: 2026-07-08
 Status: Active high-level design contract
 
+2026-07-10 narrative amendment: ARIA's Campaign identity and character arc are owned by `Campaign_Narrative_Bible.md`; first-launch presentation is owned by `First_Player_Experience_And_Story_Onboarding_Design.md`. This document remains the high-level ECS/UX contract for assistant behavior.
+
 ## Implementation Status
 
 Current rollout status, 2026-07-08: the ECS-aligned match HUD vertical slice is implemented and validated. The shipped slice includes the ARIA header button, assistant panel goals/recommendations, prioritized alerts/reports, `Show Me`, one safe `Do It` path through existing command boundaries, bounded `Give Control`, `Stop`, player override/cancellation, narration subtitle fallback, assistant settings persistence, aggregate validation, visual validation, and steady-state performance diagnostics.
@@ -20,6 +22,9 @@ ARIA remains the command staff assistant described in `Design/FTUE_And_Command_A
 | Source | Use |
 |---|---|
 | `Design/FTUE_And_Command_Assistant_Design.md` | ARIA identity, teaching role, Chapter 1 assistant behavior, takeover limits. |
+| `Design/Campaign_Narrative_Bible.md` | ARIA's Civic Relay origin, self-partition, relationship arc, and ending. |
+| `Design/First_Player_Experience_And_Story_Onboarding_Design.md` | Emergency boot, identity handoff, M01 entry, first debrief, and story-first menu reveal. |
+| `Design/Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md` | Honest alignment between ARIA recommendations and campaign-ready gameplay features. |
 | `Design/AssistantPanel_M01_Implementation_Contract.md` | Existing M01 panel fields, Show Me / Do It / Stop behavior, and first assistant panel surface. |
 | `Design/AssistantRuntime_M01_Wiring_Plan.md` | Historical M01 behavior flow. Use for intent/recommendation semantics, not for old service/provider/controller naming. |
 | `Design/Match_HUD_And_Gameplay_Implementation_Spec.md` | Match HUD ownership, button behavior, warnings, command feedback, minimap, and match acceptance. |
@@ -37,6 +42,20 @@ ARIA remains the command staff assistant described in `Design/FTUE_And_Command_A
 - Let ARIA read important messages and low-priority tactical reports without spamming the player.
 - Keep the player as commander. ARIA recommends and can briefly execute with permission; she does not become an unrestricted autopilot.
 - Keep the system performant on mobile: no per-frame managed rebuilding, no string churn, no broad scans unless a dirty/version signal changed.
+
+## Narrative Character Contract
+
+ARIA is the fragmented decision-support layer of Sahrin's decommissioned Civic Relay. She is not a generic chatbot, omniscient narrator, secret villain, or replacement commander.
+
+| Chapter | Character state expressed through assistant behavior |
+|---|---|
+| 1. First Response | ARIA is procedural and confident because she is the only functioning command continuity system. A revoked ARIA credential creates the central mystery. |
+| 2. Broken Grid | ARIA learns that telemetry does not contain every human route or need; she must incorporate Samira's civilian context. |
+| 3. Hidden Network | A confident interpretation proves incomplete. ARIA discloses that she intentionally partitioned the audit of Nadir Qassem's override. |
+| 4. Air And Armor | Qassem offers unrestricted control. ARIA explicitly rejects authority she cannot justify and continues to request permission for bounded actions. |
+| 5. Citywide Command | ARIA supports simultaneous objectives while preserving player override, releases the full audit, and accepts bounded shared governance of the restored Relay. |
+
+Narrative lines must be truthful about runtime capability. If ARIA can only select or focus a target, she cannot say she will move, attack, build, route a convoy, or launch a weapon. Uncertainty, stale data, disabled features, and rejected commands should be acknowledged in character rather than hidden.
 
 ## Non-Goals
 

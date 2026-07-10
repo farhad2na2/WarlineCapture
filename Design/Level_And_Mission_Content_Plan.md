@@ -2,11 +2,13 @@
 
 Date: 2026-05-21
 
+2026-07-10 narrative amendment: the 25-mission high-level story map is now owned by `Campaign_Narrative_Bible.md`. This document continues to own the shared mission authoring contract.
+
 ## Purpose
 
 This document is the working plan for level-by-level and mission-by-mission design. It turns the gameplay north star and content grammar into concrete authoring rules for Campaign missions, Operations mission generation, Skirmish probes, validation, and balance targets.
 
-Read this document after `Gameplay_North_Star_And_Content_Grammar.md` and before writing individual mission specs or data configs. For first-time-user teaching beats, contextual recommendations, assistant help, or assistant takeover behavior, also read `FTUE_And_Command_Assistant_Design.md`.
+Read this document after `AAA_Mobile_Game_Design_Document_v0_2.md`, `Campaign_Narrative_Bible.md`, and `Gameplay_North_Star_And_Content_Grammar.md`, and before writing individual mission specs or data configs. Check `Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md` before making any feature required. For the first-launch route use `First_Player_Experience_And_Story_Onboarding_Design.md`; for reusable tutorial behavior use `FTUE_And_Command_Assistant_Design.md`.
 
 For every mission or level that uses map/world art, also read `3D_SingleMap_Gameplay_Direction.md`. Planning, briefing, minimap, deployment, threat alerts, and battle view are UI/camera layers on the same 3D operation map. Do not author new missions around separate strategic and tactical maps.
 
@@ -30,6 +32,11 @@ Do not use `Level` as a synonym for `Mission` in config names or UI. A Campaign 
 
 ## Source Design Inputs
 
+- `AAA_Mobile_Game_Design_Document_v0_2.md`
+- `Campaign_Narrative_Bible.md`
+- `First_Player_Experience_And_Story_Onboarding_Design.md`
+- `Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md`
+- `Narrative_Presentation_And_Cutscene_Design.md`
 - `Gameplay_North_Star_And_Content_Grammar.md`
 - `FTUE_And_Command_Assistant_Design.md`
 - `Gameplay_Features_High_Level_Spec.md`
@@ -46,13 +53,14 @@ Do not use `Level` as a synonym for `Mission` in config names or UI. A Campaign 
 
 WarlineCapture should author content in this order:
 
-1. Lock the mission template and acceptance checklist in this document.
-2. Author Chapter 1 as a five-mission Campaign teaching pack.
-3. Implement Mission 1 as the first vertical slice.
-4. Add one Operation action/mission hook that reuses the same consequence model.
-5. Add one Skirmish balance probe that mirrors the Mission 1 scenario.
-6. Validate the full loop: briefing, loadout, 3D operation objective, result, reward, consequence, save, and balance report.
-7. Continue Chapter 1 mission-by-mission only after the vertical slice passes.
+1. Preserve the accepted high-level campaign arc and character roles in `Campaign_Narrative_Bible.md`.
+2. Use the mission template and acceptance checklist in this document.
+3. Confirm each required feature is campaign-ready in the maturity/exposure matrix.
+4. Turn Chapter 1 into a five-mission detailed design pack without changing its story contract.
+5. Implement Mission 1 as the first story-to-gameplay vertical slice.
+6. Validate cold open, identity, M01, result, first clue, save, and command-base reveal as one experience.
+7. Add one Operations hook and one Skirmish probe that reuse the same mission/consequence model.
+8. Continue mission-by-mission only after the vertical slice passes.
 
 Mission 1 implementation must use `M01_FirstContact_Production_Contract.md` as the concrete production contract.
 
@@ -79,9 +87,16 @@ Every authored mission must use this structure.
 | `ChapterOrDay` | Campaign chapter/mission index or Operations day/event source. |
 | `MissionArchetype` | Must come from `Gameplay_North_Star_And_Content_Grammar.md`. |
 | `ThreatFamily` | Must come from the threat families in the north-star doc. |
+| `StoryFaction` | Named narrative faction, such as Ash Line or Vanguard Brigade; threat family alone is insufficient. |
 | `TeachingGoal` | One dominant mechanic or decision the mission teaches/tests. |
 | `AssistantTeachingHooks` | Optional ARIA tutorial/recommendation/takeover hooks when the mission introduces or reinforces a mechanic. |
 | `CityContext` | Why this mission matters to civilians, infrastructure, trust, security, intel, or heat. |
+| `StoryQuestion` | The question this mission raises, tests, or answers. |
+| `CharacterBeat` | Which recurring relationship changes and why. |
+| `EvidenceOrRevealBeat` | Mandatory clue, Protocol Fragment, optional evidence, or explicit `None`. |
+| `CivilianLegitimacyContext` | Why force is necessary, how hostility is confirmed, and how civilians are distinguished/protected. |
+| `NarrativePresentationTier` | Tier A-E from `Narrative_Presentation_And_Cutscene_Design.md`, or an explicit interactive-only presentation. |
+| `RequiredFeatureReadiness` | Readiness classification for every required mechanic using the feature maturity/exposure matrix. |
 | `ScenarioSetup` | Operation map id, district id, spawn rules, starting units/buildings/resources, enemy setup, allowed catalog ids from `BalanceConfigs/Combat_Balance_Config_v0_1.json` and prefab display data from `Assets/Game/Configs/Prefabs`. |
 | `MapViewContract` | Required for playable missions: `OperationMapId`, `PlanningCameraId`, `MinimapProjectionId`, operation metadata asset, camera bounds, and named anchors for spawns/routes/objectives/deployment/build zones. |
 | `Objectives` | Required objectives with exact thresholds and HUD visibility. |
@@ -100,11 +115,11 @@ The main plan keeps chapter structure high-level. Each Campaign chapter owns its
 
 | Internal Chapter | Player-Facing Name | Dedicated Doc | Campaign Role |
 |---|---|---|---|
-| Chapter 1 | First Response | `SagaChapters/Saga_Chapter01_First_Response.md` | Teach squad command, base setup, threat warnings, transport, and breach assault. |
-| Chapter 2 | Broken Grid | `SagaChapters/Saga_Chapter02_Broken_Grid.md` | Expand infrastructure pressure, resource routes, convoy defense, and repair decisions. |
-| Chapter 3 | Hidden Network | `SagaChapters/Saga_Chapter03_Hidden_Network.md` | Deepen Intel, raids, ambushes, evidence, and trust-risk decisions. |
-| Chapter 4 | Air And Armor | `SagaChapters/Saga_Chapter04_Air_And_Armor.md` | Escalate with aircraft, armored columns, combined-arms defense, and stronger AI profiles. |
-| Chapter 5 | Citywide Command | `SagaChapters/Saga_Chapter05_Citywide_Command.md` | Master mixed threats, multi-objective missions, district consequences, and the final hostile node. |
+| Chapter 1 | First Response | `SagaChapters/Saga_Chapter01_First_Response.md` | Establish command during the coordinated attacks; discover a revoked ARIA credential. |
+| Chapter 2 | Broken Grid | `SagaChapters/Saga_Chapter02_Broken_Grid.md` | Restore roads, Fuel, power, and supply; discover that resources are feeding dormant Relay nodes. |
+| Chapter 3 | Hidden Network | `SagaChapters/Saga_Chapter03_Hidden_Network.md` | Confirm targets and preserve evidence; learn that ARIA partitioned the original override audit. |
+| Chapter 4 | Air And Armor | `SagaChapters/Saga_Chapter04_Air_And_Armor.md` | Defeat proxy-backed conventional escalation; learn why Qassem needs ARIA and the Commander. |
+| Chapter 5 | Citywide Command | `SagaChapters/Saga_Chapter05_Citywide_Command.md` | Master all systems, expose the manufactured crisis, and establish bounded Relay governance. |
 
 Chapter documents are the source of truth for their mission lists. This document owns only the shared template, campaign structure, Operations hooks, Skirmish mapping, and acceptance rules.
 
@@ -137,6 +152,11 @@ A mission is not design-ready until:
 
 - It uses the required mission spec template.
 - It maps to a north-star mission archetype and threat family.
+- It preserves the chapter story beat, character role, and evidence state from the narrative bible.
+- It identifies the named story faction and explains how hostile identity is confirmed.
+- It gives civilians agency/context and never uses civilian appearance as a hostility rule.
+- Every required mechanic is classified Ready or has an explicit prerequisite; scaffolded features are not hidden dependencies.
+- Story-critical information is available without optional stars, Operations grinding, or purchases.
 - Required objectives, star goals, rewards, and consequences are authored.
 - Reward preview and reward grant use the same `RewardConfig`.
 - UI surfaces and element contracts are identified.

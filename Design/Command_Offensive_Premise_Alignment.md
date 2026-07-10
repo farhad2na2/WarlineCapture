@@ -2,6 +2,8 @@
 
 Date: 2026-05-21
 
+2026-07-10 narrative amendment: the active Campaign uses the local Daryat JRC, the Ash Line terrorist network, and later Vanguard Brigade military escalation defined in `Campaign_Narrative_Bible.md`. Civilian appearance is never a hostility rule.
+
 ## Purpose
 
 This document aligns WarlineCapture's player fantasy around an active field commander preparing and executing targeted operations against fictional hostile terrorist and insurgent cells embedded in civilian towns and districts.
@@ -10,7 +12,7 @@ The 2026-05-21 direction change updates the product target to full 3D single-map
 
 ## Updated Player Fantasy
 
-WarlineCapture is a mobile 3D command RTS about preparing and executing precision operations in fictional civilian towns where hostile cells hide among infrastructure, crowds, routes, compounds, and district systems.
+WarlineCapture is a mobile 3D command RTS about preparing and executing precision operations in a fictional Middle Eastern city where armed hostile cells exploit infrastructure, routes, compounds, compromised logistics, and populated districts.
 
 The player fantasy is:
 
@@ -60,7 +62,7 @@ The pillars should be interpreted through an offensive-command lens:
 | Pillar | Updated Meaning |
 |---|---|
 | Tactical Command | The player prepares and executes squad, move, attack, build, transport, support, and breach decisions on one large 3D operation map. |
-| Hostile Factions In Civilian Space | Fictional terrorist and insurgent cells use districts, routes, infrastructure, compounds, crowds, and civilian cover to create tactical and ethical pressure. |
+| Hostile Factions In Civilian Space | Fictional terrorist and insurgent cells use districts, routes, infrastructure, compounds, and compromised civilian systems to create tactical and ethical pressure. Civilian models remain civilians; hostility requires confirmed conduct, weapons, Intel, and objective context. |
 | Precision Under Constraint | Winning is not enough; sloppy attacks damage civilians, trust, infrastructure, intel quality, or future operation safety. |
 | District Consequence | Raids, patrols, defenses, evacuations, and breaches change district state after the mission. |
 | Readable 3D Mobile RTS | The player can understand hostile position, route risk, civilian risk, objective state, camera state, and next command at mobile landscape scale. |

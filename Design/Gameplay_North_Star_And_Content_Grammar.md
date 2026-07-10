@@ -2,21 +2,28 @@
 
 Date: 2026-05-21
 
+2026-07-10 narrative amendment: aligned to the active v0.2 GDD, `Shattered Relay` campaign bible, story-first first-player experience, and feature-readiness matrix.
+
 ## Purpose
 
 This document locks the high-level gameplay direction that must be read before authoring level-by-level, mission-by-mission, reward, validation, or balancing content.
 
 The existing gameplay specs define systems. This document defines the content grammar those systems should serve: what WarlineCapture is about, what a good mission asks from the player, how Campaign, Operations, and Skirmish connect, and which balancing targets every authored mission must expose.
 
-Use `3D_SingleMap_Gameplay_Direction.md` for the active 3D single-map gameplay direction, prefab-catalog roster source, and menu update list. Use `Level_And_Mission_Content_Plan.md` for the shared mission template, high-level Campaign chapter set, Operations mission hooks, Skirmish probe mapping, and mission acceptance workflow. Use the dedicated docs under `SagaChapters` for chapter-specific mission matrices and specs.
+Use `AAA_Mobile_Game_Design_Document_v0_2.md` for product authority, `Campaign_Narrative_Bible.md` for setting/story/character authority, and `First_Player_Experience_And_Story_Onboarding_Design.md` for the first-launch route. Use `3D_SingleMap_Gameplay_Direction.md` for the active map direction and prefab-catalog roster source. Use `Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md` before making a feature mission-critical. Use `Level_And_Mission_Content_Plan.md` and the dedicated docs under `SagaChapters` for mission and chapter authoring.
 
 Terminology rule: a player-facing Campaign node launches a `Mission`; the mission uses a `ScenarioSetup`; the ScenarioSetup references a reusable 3D `OperationMap`. Do not use Level as a synonym for Mission in config names, UI labels, or validation docs. Legacy docs may still say Saga, Quick Custom, Level, tactical map, or strategic map; new player-facing language should prefer Campaign, Skirmish, and 3D operation map.
 
 ## Source Design Inputs
 
 - `GAME_DESIGN_REFERENCE.md`
+- `AAA_Mobile_Game_Design_Document_v0_2.md`
+- `Campaign_Narrative_Bible.md`
+- `First_Player_Experience_And_Story_Onboarding_Design.md`
+- `Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md`
+- `Narrative_Presentation_And_Cutscene_Design.md`
 - `3D_SingleMap_Gameplay_Direction.md`
-- `AAA_Mobile_Game_Design_Document_v0_1.md`
+- `AAA_Mobile_Game_Design_Document_v0_1.md` (historical)
 - `Command_Offensive_Premise_Alignment.md`
 - `Gameplay_Features_High_Level_Spec.md`
 - `Gameplay_Features_Detailed_Spec.md`
@@ -33,7 +40,7 @@ Terminology rule: a player-facing Campaign node launches a `Mission`; the missio
 
 ## North Star
 
-WarlineCapture is a mobile 3D command RTS about preparing and executing operations against fictional hostile terrorist and insurgent cells embedded in civilian towns and districts.
+WarlineCapture is a mobile 3D command RTS about leading a local joint response force through a fictional Middle Eastern city under terrorist attack and later proxy-backed conventional escalation. The first Campaign, provisionally titled `Shattered Relay`, follows the Field Commander and ARIA as they defend civilians, restore the city's lifelines, expose the Ash Line, and prevent the Civic Relay from becoming an instrument of unilateral rule.
 
 The player fantasy is not only "destroy the enemy." The core fantasy is:
 
@@ -54,6 +61,7 @@ WarlineCapture should be differentiated by proactive command pressure, hostile c
 | Pillar | Meaning | Design Test |
 |---|---|---|
 | Tactical Command | The player prepares and executes readable squad, build, move, attack, transport, breach, scan, and support decisions on one 3D operation map. | Does the mission reward active command instead of passive waiting? |
+| Story Through Systems | Each major mechanic solves a specific city crisis and advances a character, chapter question, or central revelation. | If this feature were removed, would the mission's story meaning change? |
 | Hostile Factions In Civilian Space | Every mission targets a faction, cell, route, node, or threat that is using the city as cover. | Can the mission briefing explain who or what the commander is preparing to hit? |
 | Precision Under Constraint | Civilian survival, collateral damage, trust, and stability are part of success. | Can the player win tactically but still lose value through reckless choices? |
 | District Consequence | 3D operation results feed Campaign rewards or Operation district state. | Does the result screen explain what changed after the mission? |
@@ -67,7 +75,7 @@ Map readability rule: every mission resolves to one 3D operation map. Planning v
 Every authored 3D operation mission should fit this loop:
 
 ```text
-Briefing -> Intel/Scout -> Loadout -> 3D Operation -> Result/Stars -> Rewards -> District Consequence -> Next Decision
+Story Beat -> Briefing -> Intel/Scout -> Loadout -> 3D Operation -> Result/Stars -> City Consequence -> Character/Clue Beat -> Next Decision
 ```
 
 Mode-specific versions:
@@ -105,6 +113,11 @@ Every authored mission must define:
 - `ConsequenceSet`
 - `TargetBalanceBand`
 - `ValidationChecklist`
+- `StoryQuestion`
+- `CharacterBeat`
+- `EvidenceOrRevealBeat`
+- `CivilianLegitimacyContext`
+- `RequiredFeatureReadiness`
 
 No mission should be accepted as design-ready without all fields above.
 
@@ -132,6 +145,10 @@ No mission should be accepted as design-ready without all fields above.
 | Defensive Garrison | Fortified structures, walls, turrets, held zones. | Static defense plus counterattack waves. | Breach Assault and raid targets. | Stalling without clear breach options. |
 | Air Assault | Aircraft, landing/rope pressure, anti-air response. | Warning-driven attacks and support disruption. | Radar Warning, Airlift Extraction, base defense. | Unreadable offscreen damage. |
 | Mixed Force | Combined threat for mastery missions. | Uses two or more pressure types. | Chapter finales and Operation escalations. | First exposure to a mechanic. |
+
+Ash Line is the Chapter 1-3 story faction and may use Tutorial Cell, Hidden Cell, Swarm Militia, or Defensive Garrison encounter behavior. Vanguard Brigade is the Chapter 4-5 proxy military faction and may use Armored Column, Air Assault, Defensive Garrison, or Mixed Force behavior. Threat Family describes gameplay pressure; it is not a substitute for a named story faction.
+
+Civilian identity rule: civilians remain civilians in config, visuals, story, and gameplay. Armed insurgents may exploit civilian structures and routes, but a civilian model must not transform into a surprise hostile. Hostility is established through confirmed weapons, conduct, Intel, restricted-zone context, and objective state, never through clothing, language, gender, or neighborhood.
 
 ## Objective And Star Rules
 
@@ -182,6 +199,18 @@ Avoid exposing every resource and reward type in Chapter 1.
 | Season/events | Extra fixed claim nodes, event cosmetics, capped bundles. |
 
 ## Chapter 1 Teaching Arc
+
+The five-chapter Campaign escalation is:
+
+| Chapter | Command growth | Story answer |
+|---|---|---|
+| 1. First Response | Establish command and defeat the first coordinated cells. | Enemy traffic uses a revoked ARIA credential. |
+| 2. Broken Grid | Take responsibility for roads, Fuel, power, supply, and displacement. | The attacks are feeding dormant Civic Relay nodes. |
+| 3. Hidden Network | Confirm threats, preserve evidence, and resist manipulated Intel. | ARIA partitioned the audit of Qassem's original override. |
+| 4. Air And Armor | Control open military escalation across air, armor, and long-range fire. | Qassem needs ARIA and the Commander's authority to seize the Relay. |
+| 5. Citywide Command | Coordinate every mastered system without abandoning civilian legitimacy. | The manufactured crisis is exposed and the Relay receives bounded governance. |
+
+The full 25-mission story map and character arcs are owned by `Campaign_Narrative_Bible.md`.
 
 Chapter 1 should teach one dominant mechanic per mission and keep the city-consequence layer visible but light.
 The player-facing FTUE, contextual recommendation, and safe assistant takeover design for this arc lives in `FTUE_And_Command_Assistant_Design.md`.

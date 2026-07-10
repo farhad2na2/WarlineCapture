@@ -2,6 +2,8 @@
 
 Date: 2026-05-07
 
+2026-07-10 design dependency note: the tactical contract remains in force, but first-launch routing and narrative context now come from `First_Player_Experience_And_Story_Onboarding_Design.md`, `Campaign_Narrative_Bible.md`, and the amended Chapter 1 document. A fresh player reaches M01 from the cold open and diegetic identity flow, then sees the revoked-ARIA-credential debrief before the command-base menu. A later implementation-planning pass must reconcile this production contract in detail; this high-level pass does not add implementation steps.
+
 ## Purpose
 
 This is the implementation handoff for the first production tactical slice:
@@ -16,6 +18,9 @@ MinimapProjectionId: minimap.ch01.m01.projection
 
 Use this after:
 
+- `AAA_Mobile_Game_Design_Document_v0_2.md`
+- `Campaign_Narrative_Bible.md`
+- `First_Player_Experience_And_Story_Onboarding_Design.md`
 - `3D_SingleMap_Gameplay_Direction.md`
 - `LargeScale_Grid_Movement_Design.md`
 - `M01_Metric_Scale_Readability_Contract.md`

@@ -2,6 +2,8 @@
 v0.1 - Prepared from GAME_DESIGN_REFERENCE.md | 2026-05-01
 2026-05-21 amendment: aligned to the active 3D single-map direction.
 
+> Superseded for active product and narrative direction on 2026-07-10 by `AAA_Mobile_Game_Design_Document_v0_2.md`. This v0.1 file and its DOCX companion remain historical references only. Use v0.2, `Campaign_Narrative_Bible.md`, and `First_Player_Experience_And_Story_Onboarding_Design.md` for new design work.
+
 ## Executive Summary
 WarlineCapture should become a mobile-first 3D RTS with three player-facing modes built on one shared 3D operation-map simulation: Campaign, Operations, and Skirmish. The existing code already supports base building, production, mixed units, transport, base breach combat, radar/satellite warnings, economy, configurable enemy AI, and Auto Mode. The production direction is now full 3D single-map mobile RTS as defined in `Design/3D_SingleMap_Gameplay_Direction.md`. The next work should focus on reusable mode infrastructure, objectives, progression, persistence, polished command-base mobile UX, and controlled 3D large-map validation.
 

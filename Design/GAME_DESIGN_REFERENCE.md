@@ -2,13 +2,15 @@
 
 Last updated: 2026-05-21
 
+2026-07-10 authority note: this remains a compact reference to implemented simulation concepts, not the active product or Campaign narrative authority. Use `AAA_Mobile_Game_Design_Document_v0_2.md`, `Campaign_Narrative_Bible.md`, and `Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md` before making new product, story, mission, or readiness claims.
+
 This document summarizes the implemented game design for WarlineCapture. It is intended as a compact reference that can be given to ChatGPT or another design tool for future work on game modes, balance, AI tuning, difficulty settings, and feature planning.
 
 The companion implementation-planning document is `AI_CONTROLLER_DESIGN.md`.
 
 ## Summary
 
-WarlineCapture is a grid-based real-time strategy game about building and defending a military/civilian base inside a generated city. The player controls faction 0 by default. Enemy AI controls faction 1, and the same AI stack can optionally control the player faction in Auto Mode.
+At the simulation-reference level, WarlineCapture is a grid-based real-time strategy game about building, logistics, movement, and combat in a military/civilian city environment. The active product framing is a local joint response campaign in the fictional Middle Eastern city of Sahrin, followed by Operations and Skirmish. The player controls faction 0 by default. Enemy AI controls faction 1, and the same AI stack can optionally control the player faction in Auto Mode.
 
 Active presentation direction:
 

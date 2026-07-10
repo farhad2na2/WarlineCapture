@@ -17,23 +17,9 @@ namespace Game.Runtime
 
         private VisualQualityProfileAsset _premiumProfile;
         private Camera _worldCamera;
-        private Light _directionalLight;
         private Volume _globalVolume;
         private RenderPipelineAsset _originalRenderPipeline;
         private VolumeProfile _originalVolumeProfile;
-        private Color _originalSunColor;
-        private float _originalSunIntensity;
-        private float _originalSunShadowStrength;
-        private Quaternion _originalSunRotation;
-        private bool _hasOriginalSunData;
-        private AmbientMode _originalAmbientMode;
-        private Color _originalAmbientSkyColor;
-        private Color _originalAmbientEquatorColor;
-        private Color _originalAmbientGroundColor;
-        private bool _originalFog;
-        private FogMode _originalFogMode;
-        private Color _originalFogColor;
-        private float _originalFogDensity;
         private bool _originalCameraPostProcessing;
         private AntialiasingMode _originalCameraAntialiasing;
         private bool _hasOriginalCameraData;
@@ -44,12 +30,14 @@ namespace Game.Runtime
         private bool _hasOriginalMediumRenderScale;
         private bool _hasOriginalPremiumRenderScale;
         private VisualQualityRuntimeMode _appliedMode;
+        private float _appliedShadowStrengthCap = 1f;
         private bool _hasAppliedMode;
         private bool _initialized;
         private bool _overrideApplied;
 
         public bool IsInitialized => _initialized;
         public VisualQualityRuntimeMode AppliedMode => _appliedMode;
+        public float AppliedShadowStrengthCap => _appliedShadowStrengthCap;
 
         protected override void OnCreate()
         {
@@ -71,18 +59,9 @@ namespace Game.Runtime
 
             _premiumProfile = premiumProfile;
             _worldCamera = worldCamera;
-            _directionalLight = directionalLight;
             _globalVolume = globalVolume;
             _originalRenderPipeline = QualitySettings.renderPipeline;
             _originalVolumeProfile = globalVolume != null ? globalVolume.sharedProfile : null;
-            _originalAmbientMode = RenderSettings.ambientMode;
-            _originalAmbientSkyColor = RenderSettings.ambientSkyColor;
-            _originalAmbientEquatorColor = RenderSettings.ambientEquatorColor;
-            _originalAmbientGroundColor = RenderSettings.ambientGroundColor;
-            _originalFog = RenderSettings.fog;
-            _originalFogMode = RenderSettings.fogMode;
-            _originalFogColor = RenderSettings.fogColor;
-            _originalFogDensity = RenderSettings.fogDensity;
 
             if (premiumProfile != null)
             {
@@ -105,15 +84,6 @@ namespace Game.Runtime
                 }
             }
 
-            if (directionalLight != null)
-            {
-                _originalSunColor = directionalLight.color;
-                _originalSunIntensity = directionalLight.intensity;
-                _originalSunShadowStrength = directionalLight.shadowStrength;
-                _originalSunRotation = directionalLight.transform.rotation;
-                _hasOriginalSunData = true;
-            }
-
             if (worldCamera != null && worldCamera.TryGetComponent(out UniversalAdditionalCameraData cameraData))
             {
                 _originalCameraPostProcessing = cameraData.renderPostProcessing;
@@ -125,12 +95,12 @@ namespace Game.Runtime
             Apply(_premiumProfile != null ? _premiumProfile.RuntimeMode : VisualQualityRuntimeMode.High);
         }
 
-        public void ApplyRuntimeMode(VisualQualityRuntimeMode mode)
+        public bool ApplyRuntimeMode(VisualQualityRuntimeMode mode)
         {
             if (!_initialized)
-                return;
+                return false;
 
-            Apply(mode);
+            return Apply(mode);
         }
 
         public void Dispose()
@@ -141,40 +111,41 @@ namespace Game.Runtime
             RestoreBaseline();
             _premiumProfile = null;
             _worldCamera = null;
-            _directionalLight = null;
             _globalVolume = null;
             _originalRenderPipeline = null;
             _originalVolumeProfile = null;
-            _hasOriginalSunData = false;
             _hasOriginalCameraData = false;
             _hasOriginalLowRenderScale = false;
             _hasOriginalMediumRenderScale = false;
             _hasOriginalPremiumRenderScale = false;
             _hasAppliedMode = false;
+            _appliedShadowStrengthCap = 1f;
             _initialized = false;
             _overrideApplied = false;
         }
 
-        private void Apply(VisualQualityRuntimeMode mode)
+        private bool Apply(VisualQualityRuntimeMode mode)
         {
             if (!_initialized)
-                return;
+                return false;
 
-            if (!_hasAppliedMode || _appliedMode != mode)
-            {
-                RestoreBaseline();
-                ApplyModeStaticSettings(mode);
-                _appliedMode = mode;
-                _hasAppliedMode = true;
-            }
+            if (_hasAppliedMode && _appliedMode == mode)
+                return false;
 
-            ApplyModeDynamicSettings(mode);
+            RestoreBaseline();
+            ApplyModeStaticSettings(mode);
+            _appliedMode = mode;
+            _hasAppliedMode = true;
+            return true;
         }
 
         private void ApplyModeStaticSettings(VisualQualityRuntimeMode mode)
         {
+            _appliedShadowStrengthCap = ResolveShadowStrengthCap(mode);
             if (_premiumProfile == null)
                 return;
+
+            Shader.SetGlobalFloat(GroundVariationDisabledId, _premiumProfile.EnableGroundVariation ? 0f : 1f);
 
             switch (mode)
             {
@@ -193,26 +164,19 @@ namespace Game.Runtime
             }
         }
 
-        private void ApplyModeDynamicSettings(VisualQualityRuntimeMode mode)
+        private float ResolveShadowStrengthCap(VisualQualityRuntimeMode mode)
         {
             if (_premiumProfile == null)
-                return;
+                return 1f;
 
-            Shader.SetGlobalFloat(GroundVariationDisabledId, _premiumProfile.EnableGroundVariation ? 0f : 1f);
-
-            switch (mode)
+            return mode switch
             {
-                case VisualQualityRuntimeMode.Low:
-                    ApplyMobileDynamicSettings(_premiumProfile.LowSunShadowStrength);
-                    break;
-                case VisualQualityRuntimeMode.Medium:
-                case VisualQualityRuntimeMode.High:
-                    ApplyMobileDynamicSettings(_premiumProfile.MediumSunShadowStrength);
-                    break;
-                case VisualQualityRuntimeMode.Ultra:
-                    ApplyUltraDynamicSettings();
-                    break;
-            }
+                VisualQualityRuntimeMode.Low => _premiumProfile.LowSunShadowStrength,
+                VisualQualityRuntimeMode.Medium => _premiumProfile.MediumSunShadowStrength,
+                VisualQualityRuntimeMode.High => _premiumProfile.MediumSunShadowStrength,
+                VisualQualityRuntimeMode.Ultra => _premiumProfile.PremiumSunShadowStrength,
+                _ => 1f
+            };
         }
 
         private void ApplyLowStaticSettings()
@@ -285,10 +249,7 @@ namespace Game.Runtime
             }
 
             if (_globalVolume != null && _premiumProfile.GlobalVolumeProfile != null)
-            {
                 _globalVolume.sharedProfile = _premiumProfile.GlobalVolumeProfile;
-                _globalVolume.weight = 1f;
-            }
 
             if (_worldCamera != null && _worldCamera.TryGetComponent(out UniversalAdditionalCameraData cameraData))
             {
@@ -297,43 +258,6 @@ namespace Game.Runtime
             }
 
             _overrideApplied = true;
-        }
-
-        private void ApplyMobileDynamicSettings(float shadowStrength)
-        {
-            if (_hasOriginalSunData && _directionalLight != null)
-            {
-                _directionalLight.color = _originalSunColor;
-                _directionalLight.intensity = _originalSunIntensity;
-                _directionalLight.shadowStrength = shadowStrength;
-                _directionalLight.transform.rotation = _originalSunRotation;
-            }
-
-            RenderSettings.ambientMode = _originalAmbientMode;
-            RenderSettings.ambientSkyColor = _originalAmbientSkyColor;
-            RenderSettings.ambientEquatorColor = _originalAmbientEquatorColor;
-            RenderSettings.ambientGroundColor = _originalAmbientGroundColor;
-            RenderSettings.fog = false;
-        }
-
-        private void ApplyUltraDynamicSettings()
-        {
-            if (_directionalLight != null)
-            {
-                _directionalLight.color = _premiumProfile.PremiumSunColor;
-                _directionalLight.intensity = _premiumProfile.PremiumSunIntensity;
-                _directionalLight.shadowStrength = _premiumProfile.PremiumSunShadowStrength;
-                _directionalLight.transform.rotation = Quaternion.Euler(_premiumProfile.PremiumSunEulerAngles);
-            }
-
-            RenderSettings.ambientMode = AmbientMode.Trilight;
-            RenderSettings.ambientSkyColor = _premiumProfile.PremiumAmbientSkyColor;
-            RenderSettings.ambientEquatorColor = _premiumProfile.PremiumAmbientEquatorColor;
-            RenderSettings.ambientGroundColor = _premiumProfile.PremiumAmbientGroundColor;
-            RenderSettings.fog = _premiumProfile.EnablePremiumFog;
-            RenderSettings.fogMode = FogMode.ExponentialSquared;
-            RenderSettings.fogColor = _premiumProfile.PremiumFogColor;
-            RenderSettings.fogDensity = _premiumProfile.PremiumFogDensity;
         }
 
         private void RestoreBaseline()
@@ -347,23 +271,6 @@ namespace Game.Runtime
 
             if (_globalVolume != null)
                 _globalVolume.sharedProfile = _originalVolumeProfile;
-
-            if (_hasOriginalSunData && _directionalLight != null)
-            {
-                _directionalLight.color = _originalSunColor;
-                _directionalLight.intensity = _originalSunIntensity;
-                _directionalLight.shadowStrength = _originalSunShadowStrength;
-                _directionalLight.transform.rotation = _originalSunRotation;
-            }
-
-            RenderSettings.ambientMode = _originalAmbientMode;
-            RenderSettings.ambientSkyColor = _originalAmbientSkyColor;
-            RenderSettings.ambientEquatorColor = _originalAmbientEquatorColor;
-            RenderSettings.ambientGroundColor = _originalAmbientGroundColor;
-            RenderSettings.fog = _originalFog;
-            RenderSettings.fogMode = _originalFogMode;
-            RenderSettings.fogColor = _originalFogColor;
-            RenderSettings.fogDensity = _originalFogDensity;
 
             if (_hasOriginalCameraData && _worldCamera != null && _worldCamera.TryGetComponent(out UniversalAdditionalCameraData cameraData))
             {

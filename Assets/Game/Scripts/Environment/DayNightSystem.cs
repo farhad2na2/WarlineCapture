@@ -51,9 +51,12 @@ namespace Game.Runtime
         private ColorAdjustments _colorAdjustments;
         private WhiteBalance _whiteBalance;
         private Bloom _bloom;
+        private VolumeProfile _runtimeVolumeProfile;
+        private VolumeProfile _sourceVolumeProfile;
         private bool _runtimeVisualsEnabled = true;
         private bool _initialEnvironmentStateCaptured;
         private float _nextVisualRefreshTime;
+        private float _qualityShadowStrengthCap = 1f;
 
         public float FullDayDurationMinutes => fullDayDurationMinutes;
         public float CurrentHour => _currentHour;
@@ -63,6 +66,7 @@ namespace Game.Runtime
         public bool IsNightTime => IsHourWithinWrappedRange(_currentHour, nightStartsAtHour, morningStartsAtHour);
         public string FormattedTimeText => $"Day {_dayCount}  {GetHour24():00}:{GetMinute():00}";
         public bool RuntimeVisualsEnabled => _runtimeVisualsEnabled;
+        public float QualityShadowStrengthCap => _qualityShadowStrengthCap;
 
         protected override void OnCreate()
         {
@@ -112,6 +116,21 @@ namespace Game.Runtime
             PrepareVolumeOverrides();
             ApplyVisualState();
             _nextVisualRefreshTime = UnityEngine.Time.unscaledTime + VisualRefreshIntervalSeconds;
+        }
+
+        public void ReapplyVisualStateAfterQualityChange()
+        {
+            if (!_runtimeVisualsEnabled || !_initialEnvironmentStateCaptured)
+                return;
+
+            PrepareVolumeOverrides(rebuildProfile: true);
+            ApplyVisualState();
+            _nextVisualRefreshTime = UnityEngine.Time.unscaledTime + VisualRefreshIntervalSeconds;
+        }
+
+        public void SetQualityShadowStrengthCap(float shadowStrengthCap)
+        {
+            _qualityShadowStrengthCap = Mathf.Clamp01(shadowStrengthCap);
         }
 
         private void ApplyConfigIfAvailable()
@@ -166,6 +185,7 @@ namespace Game.Runtime
         public void Dispose()
         {
             RestoreInitialEnvironmentState();
+            ReleaseRuntimeVolumeProfile();
             _initialEnvironmentStateCaptured = false;
         }
 
@@ -212,7 +232,7 @@ namespace Game.Runtime
 
             if (_runtimeSkyboxMaterial != null)
             {
-                Object.Destroy(_runtimeSkyboxMaterial);
+                DestroyRuntimeObject(_runtimeSkyboxMaterial);
                 _runtimeSkyboxMaterial = null;
             }
         }
@@ -227,19 +247,26 @@ namespace Game.Runtime
             RenderSettings.skybox = _runtimeSkyboxMaterial;
         }
 
-        private void PrepareVolumeOverrides()
+        private void PrepareVolumeOverrides(bool rebuildProfile = false)
         {
             if (!affectVolume || globalVolume == null)
                 return;
 
-            VolumeProfile profile = globalVolume.profile;
-            if (profile == null)
+            VolumeProfile sourceProfile = globalVolume.sharedProfile;
+            if (rebuildProfile || _runtimeVolumeProfile == null || _sourceVolumeProfile != sourceProfile)
             {
-                profile = ScriptableObject.CreateInstance<VolumeProfile>();
-                globalVolume.sharedProfile = profile;
+                ReleaseRuntimeVolumeProfile();
+                _sourceVolumeProfile = sourceProfile;
+                _runtimeVolumeProfile = sourceProfile != null
+                    ? Object.Instantiate(sourceProfile)
+                    : ScriptableObject.CreateInstance<VolumeProfile>();
+                _runtimeVolumeProfile.name = sourceProfile != null
+                    ? $"{sourceProfile.name}_RuntimeDayNight"
+                    : "RuntimeDayNightVolume";
+                globalVolume.profile = _runtimeVolumeProfile;
             }
 
-            profile = globalVolume.profile ?? globalVolume.sharedProfile;
+            VolumeProfile profile = _runtimeVolumeProfile;
             if (profile == null)
                 return;
 
@@ -261,6 +288,31 @@ namespace Game.Runtime
             _bloom.active = true;
             _bloom.intensity.overrideState = true;
             _bloom.threshold.overrideState = true;
+        }
+
+        private void ReleaseRuntimeVolumeProfile()
+        {
+            _colorAdjustments = null;
+            _whiteBalance = null;
+            _bloom = null;
+
+            if (globalVolume != null)
+                globalVolume.profile = null;
+
+            DestroyRuntimeObject(_runtimeVolumeProfile);
+            _runtimeVolumeProfile = null;
+            _sourceVolumeProfile = null;
+        }
+
+        private static void DestroyRuntimeObject(Object target)
+        {
+            if (target == null)
+                return;
+
+            if (Application.isPlaying)
+                Object.Destroy(target);
+            else
+                Object.DestroyImmediate(target);
         }
 
         private void ApplyVisualState()
@@ -295,7 +347,9 @@ namespace Game.Runtime
             Color blended = Color.Lerp(nightColor, dawnColor, twilight);
             directionalLight.color = Color.Lerp(blended, noonColor, daylight);
             directionalLight.intensity = Mathf.Lerp(0.10f, 1.15f, daylight) + (twilight * 0.08f);
-            directionalLight.shadowStrength = Mathf.Lerp(0.35f, 1f, daylight);
+            directionalLight.shadowStrength = Mathf.Min(
+                Mathf.Lerp(0.35f, 1f, daylight),
+                _qualityShadowStrengthCap);
         }
 
         private void ApplyAmbientAndFog(float daylight, float twilight)

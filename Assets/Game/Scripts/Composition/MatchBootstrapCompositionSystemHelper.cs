@@ -856,6 +856,12 @@ namespace Game.Composition
             ApplyLatestVisualQualitySettings();
         }
 
+        internal void BindDayNightSystem(DayNightSystem system)
+        {
+            DayNight = system;
+            ApplyVisualQualityEnvironmentPolicy();
+        }
+
         internal static VisualQualityRuntimeMode ToVisualQualityRuntimeMode(UIGraphicsQuality quality)
         {
             return quality switch
@@ -929,7 +935,7 @@ namespace Game.Composition
                 MapVehicleAuthoringRoot,
                 matchIntroStateQuery);
 
-            DayNight = managedSystems.DayNight;
+            BindDayNightSystem(managedSystems.DayNight);
             FactionVisuals = managedSystems.FactionVisuals;
             RoadBuildReadModel = managedSystems.RoadBuildReadModel;
             _roadRuntimeGeneration = managedSystems.RoadRuntimeGeneration;
@@ -1070,8 +1076,19 @@ namespace Game.Composition
                 return;
             }
 
-            _visualQualitySettingsSystem.ApplyRuntimeMode(
+            bool tierChanged = _visualQualitySettingsSystem.ApplyRuntimeMode(
                 ToVisualQualityRuntimeMode(_latestRuntimeSettings.Graphics.Quality));
+            if (tierChanged)
+                ApplyVisualQualityEnvironmentPolicy();
+        }
+
+        private void ApplyVisualQualityEnvironmentPolicy()
+        {
+            if (DayNight == null || _visualQualitySettingsSystem == null)
+                return;
+
+            DayNight.SetQualityShadowStrengthCap(_visualQualitySettingsSystem.AppliedShadowStrengthCap);
+            DayNight.ReapplyVisualStateAfterQualityChange();
         }
 
         private void InitializeStaticMapBatchingIfNeeded()

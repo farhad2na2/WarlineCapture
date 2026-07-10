@@ -40,6 +40,7 @@ public sealed class AndroidVisualQualityValidationTests
             RunCase(() => AndroidFrameRatePersistenceMigratesOneTwentyToSixty(), ref passed);
             RunCase(() => MatchCompositionRoutesVisualQualityChangesAndUnsubscribes(), ref passed);
             RunCase(() => VisualQualityRoutingRemainsEventDriven(), ref passed);
+            RunCase(() => DayNightRemainsAuthoritativeAcrossQualityChanges(), ref passed);
             Debug.Log($"[AndroidVisualQualityValidation] result=Passed tests={passed}");
         }
         catch (Exception exception)
@@ -358,8 +359,188 @@ public sealed class AndroidVisualQualityValidationTests
             compositionSource,
             "Match composition must not poll visual quality every frame.");
         StringAssert.Contains(
-            "public void ApplyRuntimeMode(VisualQualityRuntimeMode mode)",
+            "public bool ApplyRuntimeMode(VisualQualityRuntimeMode mode)",
             visualQualitySource);
+        StringAssert.DoesNotContain("ApplyModeDynamicSettings", visualQualitySource);
+        StringAssert.DoesNotContain("ApplyMobileDynamicSettings", visualQualitySource);
+        StringAssert.DoesNotContain("ApplyUltraDynamicSettings", visualQualitySource);
+    }
+
+    [Test]
+    public static void DayNightRemainsAuthoritativeAcrossQualityChanges()
+    {
+        UISettingsModel previousSettings = SettingsService.Load();
+        Material previousSkybox = RenderSettings.skybox;
+        VisualQualityProfileAsset visualProfile = ScriptableObject.CreateInstance<VisualQualityProfileAsset>();
+        ScriptableObject originalVolumeProfile = null;
+        ScriptableObject ultraVolumeProfile = null;
+        GameObject lightObject = new("DayNightAuthorityLight", typeof(Light));
+        GameObject volumeObject = new("DayNightAuthorityVolume");
+        World world = new("DayNightAuthorityValidation");
+        MatchBootstrapCompositionSystemHelper composition = new();
+        Material testSkybox = null;
+
+        try
+        {
+            Type volumeType = Type.GetType(
+                "UnityEngine.Rendering.Volume, Unity.RenderPipelines.Core.Runtime");
+            Type volumeProfileType = Type.GetType(
+                "UnityEngine.Rendering.VolumeProfile, Unity.RenderPipelines.Core.Runtime");
+            Assert.NotNull(volumeType, "Volume type must be available for Day/Night authority validation.");
+            Assert.NotNull(volumeProfileType, "VolumeProfile type must be available for Day/Night authority validation.");
+
+            Component volume = volumeObject.AddComponent(volumeType);
+            originalVolumeProfile = ScriptableObject.CreateInstance(volumeProfileType);
+            ultraVolumeProfile = ScriptableObject.CreateInstance(volumeProfileType);
+            WriteMember(volume, "sharedProfile", originalVolumeProfile);
+
+            SerializedObject serializedVisualProfile = new(visualProfile);
+            serializedVisualProfile.FindProperty("runtimeMode").intValue = (int)VisualQualityRuntimeMode.Ultra;
+            serializedVisualProfile.FindProperty("globalVolumeProfile").objectReferenceValue = ultraVolumeProfile;
+            serializedVisualProfile.ApplyModifiedPropertiesWithoutUndo();
+
+            Shader skyboxShader = Shader.Find("Skybox/Procedural") ?? Shader.Find("Unlit/Color");
+            Assert.NotNull(skyboxShader, "A shader is required to verify Day/Night skybox ownership.");
+            testSkybox = new Material(skyboxShader);
+            RenderSettings.skybox = testSkybox;
+
+            Light light = lightObject.GetComponent<Light>();
+            light.type = LightType.Directional;
+            VisualQualitySettingsSystem visualQuality =
+                world.GetOrCreateSystemManaged<VisualQualitySettingsSystem>();
+            DayNightSystem dayNight = world.GetOrCreateSystemManaged<DayNightSystem>();
+            MethodInfo initializeVisualQuality = typeof(VisualQualitySettingsSystem).GetMethod(
+                "Initialize",
+                BindingFlags.Instance | BindingFlags.Public);
+            MethodInfo initializeDayNight = typeof(DayNightSystem).GetMethod(
+                "Init",
+                BindingFlags.Instance | BindingFlags.Public);
+            MethodInfo applyDayNight = typeof(DayNightSystem).GetMethod(
+                "ApplyVisualState",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            FieldInfo currentHour = typeof(DayNightSystem).GetField(
+                "_currentHour",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.NotNull(initializeVisualQuality);
+            Assert.NotNull(initializeDayNight);
+            Assert.NotNull(applyDayNight);
+            Assert.NotNull(currentHour);
+
+            initializeVisualQuality.Invoke(visualQuality, new object[] { visualProfile, null, light, volume });
+            composition.Initialize(null);
+            composition.BindVisualQualitySettingsSystem(visualQuality);
+
+            UISettingsModel ultra = SettingsService.DefaultsForPlatform(isAndroid: true);
+            ultra.Graphics.Quality = UIGraphicsQuality.Ultra;
+            SettingsService.PublishRuntimeSettings(ultra);
+
+            initializeDayNight.Invoke(dayNight, new object[] { null, light, volume });
+            composition.BindDayNightSystem(dayNight);
+            currentHour.SetValue(dayNight, 22f);
+            applyDayNight.Invoke(dayNight, null);
+
+            Color sunColor = light.color;
+            float sunIntensity = light.intensity;
+            float shadowStrength = light.shadowStrength;
+            Quaternion sunRotation = light.transform.rotation;
+            object ambientMode = RenderSettings.ambientMode;
+            Color ambientSky = RenderSettings.ambientSkyColor;
+            Color ambientEquator = RenderSettings.ambientEquatorColor;
+            Color ambientGround = RenderSettings.ambientGroundColor;
+            float ambientIntensity = RenderSettings.ambientIntensity;
+            float reflectionIntensity = RenderSettings.reflectionIntensity;
+            bool fog = RenderSettings.fog;
+            object fogMode = RenderSettings.fogMode;
+            Color fogColor = RenderSettings.fogColor;
+            float fogDensity = RenderSettings.fogDensity;
+            Material runtimeSkybox = RenderSettings.skybox;
+            float volumeWeight = Convert.ToSingle(ReadMember(volume, "weight"));
+            float postExposure = ReadVolumeFloat(dayNight, "_colorAdjustments", "postExposure");
+            float temperature = ReadVolumeFloat(dayNight, "_whiteBalance", "temperature");
+            float bloomIntensity = ReadVolumeFloat(dayNight, "_bloom", "intensity");
+
+            UISettingsModel high = ultra;
+            high.Graphics.Quality = UIGraphicsQuality.High;
+            SettingsService.PublishRuntimeSettings(high);
+
+            Assert.AreEqual(VisualQualityRuntimeMode.High, visualQuality.AppliedMode);
+            Assert.That(
+                dayNight.QualityShadowStrengthCap,
+                Is.EqualTo(visualQuality.AppliedShadowStrengthCap).Within(0.0001f));
+            Assert.AreEqual(sunColor, light.color);
+            Assert.That(light.intensity, Is.EqualTo(sunIntensity).Within(0.0001f));
+            Assert.That(light.shadowStrength, Is.EqualTo(shadowStrength).Within(0.0001f));
+            Assert.AreEqual(sunRotation, light.transform.rotation);
+            Assert.AreEqual(ambientMode, RenderSettings.ambientMode);
+            Assert.AreEqual(ambientSky, RenderSettings.ambientSkyColor);
+            Assert.AreEqual(ambientEquator, RenderSettings.ambientEquatorColor);
+            Assert.AreEqual(ambientGround, RenderSettings.ambientGroundColor);
+            Assert.That(RenderSettings.ambientIntensity, Is.EqualTo(ambientIntensity).Within(0.0001f));
+            Assert.That(RenderSettings.reflectionIntensity, Is.EqualTo(reflectionIntensity).Within(0.0001f));
+            Assert.AreEqual(fog, RenderSettings.fog);
+            Assert.AreEqual(fogMode, RenderSettings.fogMode);
+            Assert.AreEqual(fogColor, RenderSettings.fogColor);
+            Assert.That(RenderSettings.fogDensity, Is.EqualTo(fogDensity).Within(0.0001f));
+            Assert.AreSame(runtimeSkybox, RenderSettings.skybox);
+            Assert.That(Convert.ToSingle(ReadMember(volume, "weight")), Is.EqualTo(volumeWeight).Within(0.0001f));
+            Assert.That(ReadVolumeFloat(dayNight, "_colorAdjustments", "postExposure"), Is.EqualTo(postExposure).Within(0.0001f));
+            Assert.That(ReadVolumeFloat(dayNight, "_whiteBalance", "temperature"), Is.EqualTo(temperature).Within(0.0001f));
+            Assert.That(ReadVolumeFloat(dayNight, "_bloom", "intensity"), Is.EqualTo(bloomIntensity).Within(0.0001f));
+        }
+        finally
+        {
+            composition.Shutdown();
+            world.Dispose();
+            RenderSettings.skybox = previousSkybox;
+            UnityEngine.Object.DestroyImmediate(testSkybox);
+            UnityEngine.Object.DestroyImmediate(lightObject);
+            UnityEngine.Object.DestroyImmediate(volumeObject);
+            UnityEngine.Object.DestroyImmediate(visualProfile);
+            UnityEngine.Object.DestroyImmediate(originalVolumeProfile);
+            UnityEngine.Object.DestroyImmediate(ultraVolumeProfile);
+            SettingsService.Save(previousSettings);
+        }
+    }
+
+    private static float ReadVolumeFloat(DayNightSystem dayNight, string componentFieldName, string parameterName)
+    {
+        FieldInfo componentField = typeof(DayNightSystem).GetField(
+            componentFieldName,
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.NotNull(componentField, $"DayNightSystem is missing {componentFieldName}.");
+        object component = componentField.GetValue(dayNight);
+        Assert.NotNull(component, $"DayNightSystem did not bind {componentFieldName}.");
+        object parameter = ReadMember(component, parameterName);
+        return Convert.ToSingle(ReadMember(parameter, "value"));
+    }
+
+    private static object ReadMember(object target, string memberName)
+    {
+        Assert.NotNull(target, $"Cannot read {memberName} from a null target.");
+        Type type = target.GetType();
+        PropertyInfo property = type.GetProperty(memberName, BindingFlags.Instance | BindingFlags.Public);
+        if (property != null)
+            return property.GetValue(target);
+
+        FieldInfo field = type.GetField(memberName, BindingFlags.Instance | BindingFlags.Public);
+        Assert.NotNull(field, $"{type.Name} is missing {memberName}.");
+        return field.GetValue(target);
+    }
+
+    private static void WriteMember(object target, string memberName, object value)
+    {
+        Assert.NotNull(target, $"Cannot write {memberName} on a null target.");
+        Type type = target.GetType();
+        PropertyInfo property = type.GetProperty(memberName, BindingFlags.Instance | BindingFlags.Public);
+        if (property != null)
+        {
+            property.SetValue(target, value);
+            return;
+        }
+
+        FieldInfo field = type.GetField(memberName, BindingFlags.Instance | BindingFlags.Public);
+        Assert.NotNull(field, $"{type.Name} is missing {memberName}.");
+        field.SetValue(target, value);
     }
 }
 #endif

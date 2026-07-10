@@ -312,6 +312,7 @@ namespace Game.Runtime
         public void OnUpdate(ref SystemState state)
         {
             EntityManager em = state.EntityManager;
+            AudioEventRequestSystem.EnsureAudioEntity(em);
             float dt = SystemAPI.Time.DeltaTime;
             ComponentLookup<LocalToWorld> localToWorldLookup = SystemAPI.GetComponentLookup<LocalToWorld>(true);
             var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
@@ -947,6 +948,7 @@ namespace Game.Runtime
         public void OnUpdate(ref SystemState state)
         {
             EntityManager em = state.EntityManager;
+            AudioEventRequestSystem.EnsureAudioEntity(em);
             var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
 
             foreach (var (impact, entity) in SystemAPI.Query<RefRO<AirMissileImpactRequestComponent>>().WithEntityAccess())

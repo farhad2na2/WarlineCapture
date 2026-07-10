@@ -167,13 +167,19 @@ public sealed class GameplayAudioFeedbackTests
         system.Update(world.Unmanaged);
 
         DynamicBuffer<AudioPlaybackRequestElement> requests = GetAudioRequests(em);
-        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(2, requests.Length);
         AssertAudioRequest(
             requests[0],
-            AudioEventIds.GameplayWeaponFireSmallArms,
-            AudioEventIds.GameplayWeaponFireSmallArmsHash,
+            AudioEventIds.GameplayWeaponRifleFire,
+            AudioEventIds.GameplayWeaponRifleFireHash,
             attacker,
             new float3(0f, 0f, 0f));
+        AssertAudioRequest(
+            requests[1],
+            AudioEventIds.GameplayImpactBullet,
+            AudioEventIds.GameplayImpactBulletHash,
+            target,
+            new float3(5f, 0f, 0f));
         Assert.AreEqual(40, em.GetComponentData<UnitHealth>(target).Current);
     }
 
@@ -191,10 +197,19 @@ public sealed class GameplayAudioFeedbackTests
         system.Update(world.Unmanaged);
 
         DynamicBuffer<AudioPlaybackRequestElement> requests = GetAudioRequests(em);
-        Assert.AreEqual(3, requests.Length);
-        AssertHasAudioEvent(requests, AudioEventIds.GameplayWeaponMissileLaunch, aircraft);
-        AssertHasAudioEvent(requests, AudioEventIds.GameplayWeaponMissileFlight, aircraft);
-        AssertHasAudioEvent(requests, AudioEventIds.GameplayWeaponMissileImpact, aircraft);
+        Assert.AreEqual(2, requests.Length);
+        AssertAudioRequest(
+            requests[0],
+            AudioEventIds.GameplayWeaponMissileLaunch,
+            AudioEventIds.GameplayWeaponMissileLaunchHash,
+            aircraft,
+            new float3(0f, 8f, 0f));
+        AssertAudioRequest(
+            requests[1],
+            AudioEventIds.GameplayImpactBullet,
+            AudioEventIds.GameplayImpactBulletHash,
+            target,
+            new float3(12f, 0f, 0f));
         AssertNoAudioEvent(requests, AudioEventIds.GameplayWeaponFireSmallArms);
         Assert.AreEqual(40, em.GetComponentData<UnitHealth>(target).Current);
     }
@@ -277,7 +292,13 @@ public sealed class GameplayAudioFeedbackTests
         fireControl.Update(world.Unmanaged);
 
         DynamicBuffer<AudioPlaybackRequestElement> requests = GetAudioRequests(em);
-        AssertHasAudioEvent(requests, AudioEventIds.GameplayWeaponMissileLaunch, launcher);
+        Assert.AreEqual(1, requests.Length);
+        AssertAudioRequest(
+            requests[0],
+            AudioEventIds.GameplayWeaponAirMissileLaunch,
+            AudioEventIds.GameplayWeaponAirMissileLaunchHash,
+            launcher,
+            new float3(0f, 0f, 0f));
 
         Entity impactEntity = em.CreateEntity(typeof(AirMissileImpactRequestComponent));
         em.SetComponentData(impactEntity, new AirMissileImpactRequestComponent
@@ -296,7 +317,13 @@ public sealed class GameplayAudioFeedbackTests
         impact.Update(world.Unmanaged);
 
         requests = GetAudioRequests(em);
-        AssertHasAudioEvent(requests, AudioEventIds.GameplayWeaponMissileImpact, launcher);
+        Assert.AreEqual(2, requests.Length);
+        AssertAudioRequest(
+            requests[1],
+            AudioEventIds.GameplayExplosionSmall,
+            AudioEventIds.GameplayExplosionSmallHash,
+            launcher,
+            new float3(30f, 10f, 0f));
         Assert.AreEqual(75, em.GetComponentData<UnitHealth>(target).Current);
     }
 

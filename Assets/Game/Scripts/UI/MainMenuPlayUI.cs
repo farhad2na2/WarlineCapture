@@ -244,23 +244,23 @@ namespace Game.UI.Runtime
         {
             _bindMatchHudRuntimeFeedback = bindMatchHudRuntimeFeedback;
             if (_matchHudRuntimeFeedbackView != null)
-                _bindMatchHudRuntimeFeedback?.Invoke(new BattleHudRuntimeFeedbackSink(_matchHudRuntimeFeedbackView));
+                _bindMatchHudRuntimeFeedback?.Invoke(new BattleHudRuntimeFeedbackSink(_matchHudRuntimeFeedbackView, _gameTextResolver));
         }
 
         public void BindMatchHudRuntimeFeedback(BattleHudRuntimeFeedbackView runtimeFeedbackView)
         {
             _matchHudRuntimeFeedbackView = runtimeFeedbackView;
-            _bindMatchHudRuntimeFeedback?.Invoke(new BattleHudRuntimeFeedbackSink(_matchHudRuntimeFeedbackView));
+            _bindMatchHudRuntimeFeedback?.Invoke(new BattleHudRuntimeFeedbackSink(_matchHudRuntimeFeedbackView, _gameTextResolver));
         }
 
         public void ApplyMatchHudCommandMode(TacticalCommandMode mode)
         {
-            BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandMode(_matchHudRuntimeFeedbackView, mode);
+            BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandMode(_matchHudRuntimeFeedbackView, mode, _gameTextResolver);
         }
 
         public void ClearMatchHudCommandMode()
         {
-            BattleHudRuntimeFeedbackUiSystemHelper.ClearCommandMode(_matchHudRuntimeFeedbackView);
+            BattleHudRuntimeFeedbackUiSystemHelper.ClearCommandMode(_matchHudRuntimeFeedbackView, _gameTextResolver);
         }
 
         public void ConfigureMatchHudSquadTrayBinding(System.Action<IMatchHudSquadTrayView> bindMatchHudSquadTray)
@@ -831,5 +831,6 @@ namespace Game.UI.Runtime
             if (_matchHudThreatJumpPanel != null && _matchHudThreatJumpPanel.activeSelf != visible)
                 _matchHudThreatJumpPanel.SetActive(visible);
         }
+
     }
 }

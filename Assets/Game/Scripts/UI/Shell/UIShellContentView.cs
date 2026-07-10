@@ -205,7 +205,8 @@ namespace Game.UI.Runtime
             _rightQuickRailView.BindBuildCommand(
                 OpenBuildDrawerFromRightQuickRail,
                 _selectionUiCommandSystem,
-                ResolveMatchHudRuntimeFeedback());
+                ResolveMatchHudRuntimeFeedback(),
+                _gameTextResolver);
             _mainMenuPlayUi?.BindMatchHudRightQuickRail(view);
             return true;
         }
@@ -369,7 +370,7 @@ namespace Game.UI.Runtime
             _selectionUiCommandSystem?.CaptureUiClickSequence();
             if (_buildDrawerPopupInstance != null)
             {
-                BattleHudRuntimeFeedbackUiSystemHelper.ApplyStickyCommandMode(ResolveMatchHudRuntimeFeedback(), TacticalCommandMode.Build);
+                BattleHudRuntimeFeedbackUiSystemHelper.ApplyStickyCommandMode(ResolveMatchHudRuntimeFeedback(), TacticalCommandMode.Build, _gameTextResolver);
                 return;
             }
 
@@ -378,11 +379,11 @@ namespace Game.UI.Runtime
             {
                 BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(ResolveMatchHudRuntimeFeedback(), TacticalCommandResult.Rejected(
                     TacticalCommandReasonCode.BuildUnavailable,
-                    GameText.Get("build.feedback.drawer_not_ready", "Build drawer is not ready.")));
+                    _gameTextResolver.Get("build.feedback.drawer_not_ready", "Build drawer is not ready.")), _gameTextResolver);
                 return;
             }
 
-            BattleHudRuntimeFeedbackUiSystemHelper.ApplyStickyCommandMode(ResolveMatchHudRuntimeFeedback(), TacticalCommandMode.Build);
+            BattleHudRuntimeFeedbackUiSystemHelper.ApplyStickyCommandMode(ResolveMatchHudRuntimeFeedback(), TacticalCommandMode.Build, _gameTextResolver);
         }
 
         private void BindBuildPlacementConfirmationBarInRegion()
@@ -406,7 +407,8 @@ namespace Game.UI.Runtime
                     CloseBuildDrawerPopup,
                     _selectionDiagnosticsSink,
                     _selectionUiReadModelSystem,
-                    _mainMenuPlayUi != null ? _mainMenuPlayUi.CaptureGameplayUiClickSequence : null);
+                    _mainMenuPlayUi != null ? _mainMenuPlayUi.CaptureGameplayUiClickSequence : null,
+                    _gameTextResolver);
                 _mainMenuPlayUi?.BindMatchHudCommandControls(view);
                 RefreshMatchHudCommandControlState();
             }
@@ -450,7 +452,8 @@ namespace Game.UI.Runtime
             _buildPlacementConfirmationBarView.transform.SetAsLastSibling();
             _buildPlacementConfirmationBarView?.BindRuntimeCommands(
                 _buildingUiCommandSystem,
-                ResolveMatchHudRuntimeFeedback());
+                ResolveMatchHudRuntimeFeedback(),
+                _gameTextResolver);
             _mainMenuPlayUi?.BindBuildPlacementConfirmationBar(_buildPlacementConfirmationBarView);
         }
 
@@ -526,7 +529,7 @@ namespace Game.UI.Runtime
             {
                 BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(ResolveMatchHudRuntimeFeedback(), TacticalCommandResult.Rejected(
                     TacticalCommandReasonCode.CommandUnavailable,
-                    GameText.Get("match.feedback.tactical_map_not_ready", "Tactical map is not ready.")));
+                    _gameTextResolver.Get("match.feedback.tactical_map_not_ready", "Tactical map is not ready.")), _gameTextResolver);
                 return;
             }
 
@@ -714,7 +717,8 @@ namespace Game.UI.Runtime
             presenter.BindRuntimeCommands(
                 _buildingUiCommandSystem,
                 CloseBuildDrawerPopup,
-                ResolveMatchHudRuntimeFeedback());
+                ResolveMatchHudRuntimeFeedback(),
+                _gameTextResolver);
             presenter.BindRuntimeQueries(_buildingUiQuerySystem);
         }
 

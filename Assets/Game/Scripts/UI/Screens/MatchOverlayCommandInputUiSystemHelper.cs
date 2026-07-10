@@ -20,7 +20,8 @@ namespace Game.UI.Runtime
             Action closeBuildDrawer = null,
             ISelectionDiagnosticsSink diagnosticsSink = null,
             ISelectionUiReadModel selectionUiReadModel = null,
-            Action captureGameplayUiClick = null)
+            Action captureGameplayUiClick = null,
+            IGameTextResolver gameTextResolver = null)
         {
             if (view == null)
                 return;
@@ -36,7 +37,8 @@ namespace Game.UI.Runtime
                 closeBuildDrawer,
                 diagnosticsSink,
                 selectionUiReadModel,
-                captureGameplayUiClick);
+                captureGameplayUiClick,
+                gameTextResolver);
             binding.Bind();
             _bindings.Add(view, binding);
         }
@@ -91,6 +93,7 @@ namespace Game.UI.Runtime
             private readonly ISelectionDiagnosticsSink _diagnosticsSink;
             private readonly ISelectionUiReadModel _selectionUiReadModel;
             private readonly Action _captureGameplayUiClick;
+            private readonly IGameTextResolver _gameTextResolver;
             private readonly List<(Button Button, UnityEngine.Events.UnityAction Action)> _commandTabRuntimeListeners = new();
             private bool _buildDrawerOpen;
             private bool _hasAppliedVersionedCommandState;
@@ -104,7 +107,8 @@ namespace Game.UI.Runtime
                 Action closeBuildDrawer,
                 ISelectionDiagnosticsSink diagnosticsSink,
                 ISelectionUiReadModel selectionUiReadModel,
-                Action captureGameplayUiClick)
+                Action captureGameplayUiClick,
+                IGameTextResolver gameTextResolver)
             {
                 _view = view;
                 _selectionUiCommandSystem = selectionUiCommandSystem;
@@ -114,10 +118,12 @@ namespace Game.UI.Runtime
                 _diagnosticsSink = diagnosticsSink;
                 _selectionUiReadModel = selectionUiReadModel;
                 _captureGameplayUiClick = captureGameplayUiClick;
+                _gameTextResolver = gameTextResolver ?? FallbackGameTextResolver.Instance;
             }
 
             public void Bind()
             {
+                _view.CommandWheelPanel?.BindGameTextResolver(_gameTextResolver);
                 RepairScanButtonRaycastTarget();
                 LogMoveCommandTrace(
                     $"matchHudCommandControlsBind view={_view.name} " +
@@ -202,7 +208,7 @@ namespace Game.UI.Runtime
                         : _selectionUiCommandSystem.RequestExitSelectionMode());
 
                 if (!queued)
-                    BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+                    ApplyCommandResult(TacticalCommandResult.Rejected(
                         TacticalCommandReasonCode.CommandUnavailable,
                         "Selection command unavailable."));
             }
@@ -214,13 +220,13 @@ namespace Game.UI.Runtime
                 {
                     _showBuildDrawer.Invoke();
                     _buildDrawerOpen = true;
-                    BattleHudRuntimeFeedbackUiSystemHelper.ApplyStickyCommandMode(_runtimeFeedbackView, TacticalCommandMode.Build);
+                    BattleHudRuntimeFeedbackUiSystemHelper.ApplyStickyCommandMode(_runtimeFeedbackView, TacticalCommandMode.Build, _gameTextResolver);
                     return;
                 }
 
-                BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+                ApplyCommandResult(TacticalCommandResult.Rejected(
                     TacticalCommandReasonCode.BuildUnavailable,
-                    GameText.Get("build.feedback.drawer_not_ready", "Build drawer is not ready.")));
+                    _gameTextResolver.Get("build.feedback.drawer_not_ready", "Build drawer is not ready.")));
             }
 
             private void OnMoveButtonClicked()
@@ -233,7 +239,7 @@ namespace Game.UI.Runtime
                 LogMoveCommandTrace($"moveButtonRequestMoveCommandMode queued={queued}");
 
                 if (!queued)
-                    BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+                    ApplyCommandResult(TacticalCommandResult.Rejected(
                         TacticalCommandReasonCode.CommandUnavailable,
                         "Move command unavailable."));
             }
@@ -245,7 +251,7 @@ namespace Game.UI.Runtime
                     _selectionUiCommandSystem.RequestAttackCommandMode();
 
                 if (!queued)
-                    BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+                    ApplyCommandResult(TacticalCommandResult.Rejected(
                         TacticalCommandReasonCode.CommandUnavailable,
                         "Attack command unavailable."));
             }
@@ -261,7 +267,7 @@ namespace Game.UI.Runtime
                     _selectionUiCommandSystem.RequestScanCommandMode();
 
                 if (!queued)
-                    BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+                    ApplyCommandResult(TacticalCommandResult.Rejected(
                         ResolveFallbackReason(CommandCapability.Scan),
                         ResolveUnavailableFeedbackMessage(CommandCapability.Scan, ResolveFallbackReason(CommandCapability.Scan))));
             }
@@ -274,7 +280,7 @@ namespace Game.UI.Runtime
                     _selectionUiCommandSystem.RequestBoardTargetMode();
 
                 if (!queued)
-                    BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+                    ApplyCommandResult(TacticalCommandResult.Rejected(
                         TacticalCommandReasonCode.CommandUnavailable,
                         "Board command unavailable."));
             }
@@ -322,6 +328,11 @@ namespace Game.UI.Runtime
             {
                 UIAudioEventGateway.Raise(UIAudioEventKind.ButtonPrimaryClick);
                 _captureGameplayUiClick?.Invoke();
+            }
+
+            private void ApplyCommandResult(TacticalCommandResult result)
+            {
+                BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, result, _gameTextResolver);
             }
 
             private bool IsKnownCommandButton(Button button)
@@ -374,7 +385,7 @@ namespace Game.UI.Runtime
                     _selectionUiCommandSystem.RequestHoldPosition();
 
                 if (!queued)
-                    BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+                    ApplyCommandResult(TacticalCommandResult.Rejected(
                         ResolveFallbackReason(CommandCapability.Hold),
                         ResolveUnavailableFeedbackMessage(CommandCapability.Hold, ResolveFallbackReason(CommandCapability.Hold))));
             }
@@ -389,7 +400,7 @@ namespace Game.UI.Runtime
                     _selectionUiCommandSystem.RequestStop();
 
                 if (!queued)
-                    BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+                    ApplyCommandResult(TacticalCommandResult.Rejected(
                         ResolveFallbackReason(CommandCapability.Stop),
                         ResolveUnavailableFeedbackMessage(CommandCapability.Stop, ResolveFallbackReason(CommandCapability.Stop))));
             }
@@ -405,7 +416,7 @@ namespace Game.UI.Runtime
                     _selectionUiCommandSystem.RequestStop();
 
                 if (!queued)
-                    BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+                    ApplyCommandResult(TacticalCommandResult.Rejected(
                         ResolveFallbackReason(CommandCapability.Stop),
                         ResolveUnavailableFeedbackMessage(CommandCapability.Stop, ResolveFallbackReason(CommandCapability.Stop))));
             }
@@ -443,11 +454,9 @@ namespace Game.UI.Runtime
 
                 if (!readModel.HasAnySelectedUnits)
                 {
-                    BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(
-                        _runtimeFeedbackView,
-                        TacticalCommandResult.Rejected(
-                            TacticalCommandReasonCode.NoSelection,
-                            ResolveUnavailableFeedbackMessage(capability, TacticalCommandReasonCode.NoSelection)));
+                    ApplyCommandResult(TacticalCommandResult.Rejected(
+                        TacticalCommandReasonCode.NoSelection,
+                        ResolveUnavailableFeedbackMessage(capability, TacticalCommandReasonCode.NoSelection)));
                     return false;
                 }
 
@@ -468,9 +477,7 @@ namespace Game.UI.Runtime
                     CommandCapability.Scan => readModel.FocusedUnitScanDisabledReason,
                     _ => TacticalCommandReasonCode.CommandUnavailable
                 };
-                BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(
-                    _runtimeFeedbackView,
-                    TacticalCommandResult.Rejected(reason, ResolveUnavailableFeedbackMessage(capability, reason)));
+                ApplyCommandResult(TacticalCommandResult.Rejected(reason, ResolveUnavailableFeedbackMessage(capability, reason)));
                 return false;
             }
 
@@ -483,28 +490,28 @@ namespace Game.UI.Runtime
                 };
             }
 
-            private static string ResolveUnavailableFeedbackMessage(CommandCapability capability, TacticalCommandReasonCode reason)
+            private string ResolveUnavailableFeedbackMessage(CommandCapability capability, TacticalCommandReasonCode reason)
             {
                 if (reason == TacticalCommandReasonCode.NoSelection)
                 {
                     return capability switch
                     {
-                        CommandCapability.Hold => GameText.Get("tactical.command.unavailable.hold_no_selection", "Select units before holding position."),
-                        CommandCapability.Stop => GameText.Get("tactical.command.unavailable.stop_no_selection", "Select units before stopping orders."),
-                        CommandCapability.Scan => GameText.Get("tactical.command.unavailable.scan_no_selection", "Select a scanner or combat unit first."),
+                        CommandCapability.Hold => _gameTextResolver.Get("tactical.command.unavailable.hold_no_selection", "Select units before holding position."),
+                        CommandCapability.Stop => _gameTextResolver.Get("tactical.command.unavailable.stop_no_selection", "Select units before stopping orders."),
+                        CommandCapability.Scan => _gameTextResolver.Get("tactical.command.unavailable.scan_no_selection", "Select a scanner or combat unit first."),
                         _ => ResolveReasonText(reason)
                     };
                 }
 
                 if (capability == CommandCapability.Scan && reason == TacticalCommandReasonCode.ScanUnavailable)
-                    return GameText.Get("tactical.command.unavailable.scan_no_selection", "Select a scanner or combat unit first.");
+                    return _gameTextResolver.Get("tactical.command.unavailable.scan_no_selection", "Select a scanner or combat unit first.");
 
                 return ResolveReasonText(reason);
             }
 
-            private static string ResolveReasonText(TacticalCommandReasonCode reason)
+            private string ResolveReasonText(TacticalCommandReasonCode reason)
             {
-                return GameText.Get(
+                return _gameTextResolver.Get(
                     TacticalCommandFeedbackText.ToDisplayTextKey(reason),
                     TacticalCommandFeedbackText.ToDisplayText(reason));
             }
@@ -521,7 +528,7 @@ namespace Game.UI.Runtime
                     _selectionUiCommandSystem.RequestBoardAllSelectedTransport();
 
                 if (!queued)
-                    BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+                    ApplyCommandResult(TacticalCommandResult.Rejected(
                         TacticalCommandReasonCode.CommandUnavailable,
                         "Board all unavailable."));
             }
@@ -532,7 +539,7 @@ namespace Game.UI.Runtime
                     _selectionUiCommandSystem.RequestCancelActiveCommandMode();
 
                 if (!queued)
-                    BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
+                    ApplyCommandResult(TacticalCommandResult.Rejected(
                         TacticalCommandReasonCode.CommandUnavailable,
                         "Cancel unavailable."));
             }

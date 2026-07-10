@@ -248,16 +248,16 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `40 / 106` |
-| Checklist percent complete | `37.7%` |
-| Checklist in progress | `1 / 106`: `APH-307` |
-| Complete plus active coverage | `41 / 106` (`38.7%`); this is visibility only, not accepted completion |
+| Checklist complete | `42 / 106` |
+| Checklist percent complete | `39.6%` |
+| Checklist in progress | `1 / 106`: `APH-309` |
+| Complete plus active coverage | `43 / 106` (`40.6%`); this is visibility only, not accepted completion |
 | Current phase | Phase 3 - settings, frame-rate, and environment ownership |
-| Current task | `APH-307` split static visual-tier application from dynamic Day/Night environment ownership |
+| Current task | `APH-309` verify complete Low, Balanced/High, and Ultra static quality mappings |
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: steady-state Match GC `234,324 / 1,024` bytes; improved 13.0% from the APH-007 baseline without weakening the budget |
-| Last verified commit | `c92d3095e`; event-driven visual-quality routing and Match smoke pass |
-| Last update | 2026-07-10 - APH-305/306 complete; Day/Night ownership split active |
+| Last verified commit | `7167baa75`; Day/Night authority regression and Match smoke pass |
+| Last update | 2026-07-10 - APH-307/308 complete; tier mapping verification active |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -451,9 +451,12 @@ Target ownership:
 - [x] `APH-306` Give `VisualQualitySettingsSystem` an explicit apply-on-change API and remove its manual per-frame `Update` call from Match bootstrap.
   - Result: visual quality exposes `ApplyRuntimeMode`, reports its initialized/applied state for composition and validation, and is no longer polled from the Match bootstrap frame loop.
   - Validation: Android visual-quality `10/10`, Match settings/audio smoke passed at HUD ready, ECS/Burst hot path `10/10`, UI Runtime, Game Runtime, Composition, and Editor-test builds passed with 0 errors; commit `c92d3095e` pushed to `main`.
-- [~] `APH-307` Split static tier application from dynamic environment application. After initialization, visual-quality code must not overwrite Day/Night sun, ambient, fog, skybox, or volume values every frame.
-- [ ] `APH-308` Add an ownership regression that advances Day/Night, runs visual-quality handling, and proves the Day/Night values remain authoritative.
-- [ ] `APH-309` Verify Low, Balanced/High, and Ultra mappings, including render pipeline, render scale, post-processing, AA, and shadow strength.
+- [x] `APH-307` Split static tier application from dynamic environment application. After initialization, visual-quality code must not overwrite Day/Night sun, ambient, fog, skybox, or volume values every frame.
+  - Result: visual quality now owns only pipeline, render scale, post-processing profile selection, camera post-processing/AA, ground variation, and a scalar shadow-budget policy. Day/Night remains the sole writer of sun, ambient, fog, skybox, volume values, and final light shadow strength; a changed tier triggers one Day/Night volume-profile rebind and current-hour reapplication.
+- [x] `APH-308` Add an ownership regression that advances Day/Night, runs visual-quality handling, and proves the Day/Night values remain authoritative.
+  - Result: the focused regression advances Day/Night to 22:00, switches Ultra to High through the production settings/composition path, and compares sun color/intensity/rotation/shadow, ambient mode/colors/intensity/reflection, fog mode/color/density, runtime skybox, volume weight, and representative color-adjustment, white-balance, and bloom values.
+  - Validation: Android visual-quality `11/11`, Match settings/audio smoke passed at HUD ready, ECS/Burst hot path `10/10`, Unity compiled the final code with 0 C# errors, and the EditMode runtime-skybox cleanup warning was removed; commit `7167baa75` pushed to `main`.
+- [~] `APH-309` Verify Low, Balanced/High, and Ultra mappings, including render pipeline, render scale, post-processing, AA, and shadow strength.
 - [ ] `APH-310` Run `SettingsPopupValidationTests.RunFocusedValidation`, `AndroidVisualQualityValidationTests.RunFocusedValidation`, Match smoke, and visual captures at day, dusk, and night.
 - [ ] `APH-311` On Android, run a 10-minute 30 FPS tier capture and a 60 FPS tier capture. Record frame, GPU, memory, thermal, and visual results separately.
 
@@ -1084,6 +1087,21 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Visual result: Match HUD remained operational; no visual asset changed
 - Residual risk: a tier change can still overwrite Day/Night-owned light, ambient, fog, and volume state; `APH-307` and `APH-308` own that boundary and its regression
 - Next ready task: `APH-307`
+
+### 2026-07-10 - APH-307 and APH-308 - Day/Night environment authority
+
+- Status: Complete
+- Commit or worktree baseline: `51688e0c3`
+- Stable commit/push: `7167baa75` pushed to `main` after rebasing over unrelated campaign-design commit `ab3a968ae`
+- Files changed: visual-quality static policy, Day/Night runtime volume ownership and shadow cap, Match composition handoff, and focused environment-authority regression
+- Behavior preserved/changed: visual-quality changes no longer write sun, ambient, fog, skybox, volume weight, or volume override values; Day/Night clones the selected static volume profile, applies its current-hour values, and remains the sole final environment writer; tier-specific shadow strength is preserved as a cap consumed by Day/Night
+- Validation: `[AndroidVisualQualityValidation] result=Passed tests=11`, Match `[SettingsAudioRuntimeSmoke] result=Passed` at HUD ready, `[EcsBurstHotPathArchitectureValidation] result=Passed tests=10`, final Unity compilation had 0 C# errors, and `git diff --check` passed
+- Artifacts: `/private/tmp/aph307-308-daynight-shadow-policy.log`, `/private/tmp/aph307-308-match-final.log`, and `/private/tmp/aph307-308-ecs-burst-final.log`
+- Metrics before: a settings event could restore baseline environment state and apply tier-owned sun/ambient/fog values until the next Day/Night refresh; Ultra also wrote volume weight directly
+- Metrics after: zero visual-quality environment writes, one changed-tier Day/Night rebind/reapply, and deterministic 22:00 environment equality across an Ultra-to-High switch
+- Visual result: Match HUD remained operational; no visual asset changed; Day/Night state remains authoritative through runtime quality changes
+- Residual risk: complete tier-to-pipeline/render-scale/post-processing/AA/shadow mapping still requires the explicit APH-309 matrix
+- Next ready task: `APH-309`
 
 ### 2026-07-09 - Unity validation timeout reliability
 

@@ -248,16 +248,16 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `42 / 106` |
-| Checklist percent complete | `39.6%` |
-| Checklist in progress | `1 / 106`: `APH-309` |
-| Complete plus active coverage | `43 / 106` (`40.6%`); this is visibility only, not accepted completion |
+| Checklist complete | `43 / 106` |
+| Checklist percent complete | `40.6%` |
+| Checklist in progress | `1 / 106`: `APH-310` |
+| Complete plus active coverage | `44 / 106` (`41.5%`); this is visibility only, not accepted completion |
 | Current phase | Phase 3 - settings, frame-rate, and environment ownership |
-| Current task | `APH-309` verify complete Low, Balanced/High, and Ultra static quality mappings |
+| Current task | `APH-310` run integrated settings, graphics, Match, and day/dusk/night visual proof gates |
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: steady-state Match GC `234,324 / 1,024` bytes; improved 13.0% from the APH-007 baseline without weakening the budget |
-| Last verified commit | `7167baa75`; Day/Night authority regression and Match smoke pass |
-| Last update | 2026-07-10 - APH-307/308 complete; tier mapping verification active |
+| Last verified commit | `dcde564ca`; runtime tier mapping matrix passes `12/12` |
+| Last update | 2026-07-10 - APH-309 complete; integrated graphics proof active |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -456,8 +456,10 @@ Target ownership:
 - [x] `APH-308` Add an ownership regression that advances Day/Night, runs visual-quality handling, and proves the Day/Night values remain authoritative.
   - Result: the focused regression advances Day/Night to 22:00, switches Ultra to High through the production settings/composition path, and compares sun color/intensity/rotation/shadow, ambient mode/colors/intensity/reflection, fog mode/color/density, runtime skybox, volume weight, and representative color-adjustment, white-balance, and bloom values.
   - Validation: Android visual-quality `11/11`, Match settings/audio smoke passed at HUD ready, ECS/Burst hot path `10/10`, Unity compiled the final code with 0 C# errors, and the EditMode runtime-skybox cleanup warning was removed; commit `7167baa75` pushed to `main`.
-- [~] `APH-309` Verify Low, Balanced/High, and Ultra mappings, including render pipeline, render scale, post-processing, AA, and shadow strength.
-- [ ] `APH-310` Run `SettingsPopupValidationTests.RunFocusedValidation`, `AndroidVisualQualityValidationTests.RunFocusedValidation`, Match smoke, and visual captures at day, dusk, and night.
+- [x] `APH-309` Verify Low, Balanced/High, and Ultra mappings, including render pipeline, render scale, post-processing, AA, and shadow strength.
+  - Result: one runtime matrix drives the real visual-quality system through Low, Medium/Balanced, High, and Ultra against the active project profile and verifies pipeline asset, render scale, volume profile, camera post-processing, camera AA, and Day/Night shadow cap for each mode.
+  - Validation: `[AndroidVisualQualityValidation] result=Passed tests=12`, final Unity compilation had 0 C# errors, no project setting or render asset remained dirty, and commit `dcde564ca` pushed to `main`.
+- [~] `APH-310` Run `SettingsPopupValidationTests.RunFocusedValidation`, `AndroidVisualQualityValidationTests.RunFocusedValidation`, Match smoke, and visual captures at day, dusk, and night.
 - [ ] `APH-311` On Android, run a 10-minute 30 FPS tier capture and a 60 FPS tier capture. Record frame, GPU, memory, thermal, and visual results separately.
 
 ## Phase 4 - Reduce Audio Residency
@@ -1102,6 +1104,21 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Visual result: Match HUD remained operational; no visual asset changed; Day/Night state remains authoritative through runtime quality changes
 - Residual risk: complete tier-to-pipeline/render-scale/post-processing/AA/shadow mapping still requires the explicit APH-309 matrix
 - Next ready task: `APH-309`
+
+### 2026-07-10 - APH-309 - Runtime quality-tier mapping matrix
+
+- Status: Complete
+- Commit or worktree baseline: `548b2edf4`
+- Stable commit/push: `dcde564ca` pushed to `main`
+- Files changed: focused Android visual-quality Editor validation only
+- Behavior preserved/changed: production behavior unchanged; the active project profile and runtime visual-quality system are now locked to explicit Low, Medium/Balanced, High, and Ultra mappings
+- Validation: `[AndroidVisualQualityValidation] result=Passed tests=12`, final Unity compilation had 0 C# errors, `QualitySettings.asset` and render assets remained clean, and `git diff --check` passed
+- Artifacts: `/private/tmp/aph309-tier-mapping.log`
+- Metrics before: High and serialized mobile values had focused coverage, but no single test drove and compared every runtime tier
+- Metrics after: four runtime modes verify six policy dimensions each: render pipeline, render scale, volume profile, post-processing, AA, and shadow cap
+- Visual result: no visual asset changed; tests use the actual configured render assets and restore runtime state on disposal
+- Residual risk: integrated popup, Match, and day/dusk/night visual proof remains `APH-310`
+- Next ready task: `APH-310`
 
 ### 2026-07-09 - Unity validation timeout reliability
 

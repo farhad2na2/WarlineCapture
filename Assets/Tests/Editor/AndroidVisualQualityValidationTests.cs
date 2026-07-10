@@ -4,6 +4,8 @@ using System.IO;
 using System.Reflection;
 using Game.Configs;
 using Game.Runtime;
+using Game.UI.Runtime;
+using SettingsService = Game.UI.Runtime.SettingsService;
 using NUnit.Framework;
 using Unity.Entities;
 using UnityEditor;
@@ -32,6 +34,9 @@ public sealed class AndroidVisualQualityValidationTests
             RunCase(() => VisualQualityProfileUsesBalancedAndroidMatchRendering(), ref passed);
             RunCase(() => HighModeKeepsCameraPostProcessingDisabled(), ref passed);
             RunCase(() => MobileQualityTierUsesBalancedMsaaAndShadows(), ref passed);
+            RunCase(() => AndroidFrameRatePolicyClampsOneTwentyToSixty(), ref passed);
+            RunCase(() => AndroidFrameRatePolicyPreservesThirtyAndSixty(), ref passed);
+            RunCase(() => AndroidFrameRatePersistenceMigratesOneTwentyToSixty(), ref passed);
             Debug.Log($"[AndroidVisualQualityValidation] result=Passed tests={passed}");
         }
         catch (Exception exception)
@@ -190,6 +195,84 @@ public sealed class AndroidVisualQualityValidationTests
 
         StringAssert.Contains("antiAliasing: 0", mobileBlock, "Android Mobile quality tier should avoid MSAA bandwidth cost for 60 FPS.");
         StringAssert.Contains("shadowDistance: 16", mobileBlock, "Android Mobile quality tier should cap shadow distance for 60 FPS.");
+    }
+
+    [Test]
+    public static void AndroidFrameRatePolicyClampsOneTwentyToSixty()
+    {
+        Assert.AreEqual(
+            UIFrameRateMode.Sixty,
+            SettingsService.DefaultsForPlatform(isAndroid: true).Graphics.FrameRateMode);
+        Assert.AreEqual(
+            UIFrameRateMode.Sixty,
+            SettingsService.NormalizeFrameRateMode(UIFrameRateMode.OneTwenty, isAndroid: true));
+        Assert.AreEqual(
+            60,
+            SettingsService.ResolveTargetFrameRate(UIFrameRateMode.OneTwenty, isAndroid: true));
+
+        int previousTargetFrameRate = Application.targetFrameRate;
+        int previousQualityLevel = QualitySettings.GetQualityLevel();
+        float previousListenerVolume = AudioListener.volume;
+        UISettingsModel applied = default;
+        void CaptureApplied(UISettingsModel model) => applied = model;
+        SettingsService.RuntimeApplied += CaptureApplied;
+        try
+        {
+            UISettingsModel requested = SettingsService.DefaultsForPlatform(isAndroid: false);
+            requested.Graphics.FrameRateMode = UIFrameRateMode.OneTwenty;
+            SettingsService.ApplyRuntimeForPlatform(requested, isAndroid: true);
+
+            Assert.AreEqual(60, Application.targetFrameRate);
+            Assert.AreEqual(UIFrameRateMode.Sixty, applied.Graphics.FrameRateMode);
+        }
+        finally
+        {
+            SettingsService.RuntimeApplied -= CaptureApplied;
+            Application.targetFrameRate = previousTargetFrameRate;
+            if (QualitySettings.names.Length > 0)
+                QualitySettings.SetQualityLevel(previousQualityLevel, true);
+            AudioListener.volume = previousListenerVolume;
+        }
+    }
+
+    [Test]
+    public static void AndroidFrameRatePolicyPreservesThirtyAndSixty()
+    {
+        Assert.AreEqual(
+            UIFrameRateMode.Thirty,
+            SettingsService.NormalizeFrameRateMode(UIFrameRateMode.Thirty, isAndroid: true));
+        Assert.AreEqual(
+            UIFrameRateMode.Sixty,
+            SettingsService.NormalizeFrameRateMode(UIFrameRateMode.Sixty, isAndroid: true));
+        Assert.AreEqual(30, SettingsService.ResolveTargetFrameRate(UIFrameRateMode.Thirty, isAndroid: true));
+        Assert.AreEqual(60, SettingsService.ResolveTargetFrameRate(UIFrameRateMode.Sixty, isAndroid: true));
+    }
+
+    [Test]
+    public static void AndroidFrameRatePersistenceMigratesOneTwentyToSixty()
+    {
+        UISettingsModel previous = SettingsService.Load();
+        try
+        {
+            UISettingsModel legacy = SettingsService.DefaultsForPlatform(isAndroid: false);
+            legacy.Graphics.FrameRateMode = UIFrameRateMode.OneTwenty;
+            SettingsService.SaveForPlatform(legacy, isAndroid: false);
+
+            Assert.AreEqual(
+                UIFrameRateMode.Sixty,
+                SettingsService.LoadForPlatform(isAndroid: true).Graphics.FrameRateMode,
+                "A legacy saved 120 FPS value must load as 60 FPS on Android.");
+
+            SettingsService.SaveForPlatform(legacy, isAndroid: true);
+            Assert.AreEqual(
+                UIFrameRateMode.Sixty,
+                SettingsService.LoadForPlatform(isAndroid: false).Graphics.FrameRateMode,
+                "Saving settings on Android must persist the clamped 60 FPS value.");
+        }
+        finally
+        {
+            SettingsService.Save(previous);
+        }
     }
 }
 #endif

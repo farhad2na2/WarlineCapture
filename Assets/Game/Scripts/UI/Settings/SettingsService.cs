@@ -28,54 +28,64 @@ namespace Game.UI.Runtime
 
         public static event System.Action<UISettingsModel> RuntimeApplied;
 
-        public static UISettingsModel Defaults => new()
+        public static UISettingsModel Defaults => DefaultsForPlatform(IsAndroidRuntime);
+
+        internal static UISettingsModel DefaultsForPlatform(bool isAndroid)
         {
-            Audio = new AudioSettingsModel
+            return new UISettingsModel
             {
-                MasterVolume = 80f,
-                MusicVolume = 60f,
-                SfxVolume = 85f,
-                AlertsVolume = 90f,
-                VoiceVolume = 85f,
-                MusicEnabled = true,
-                SoundEnabled = true,
-                VoiceEnabled = true
-            },
-            Graphics = new GraphicsSettingsModel
-            {
-                Quality = UIGraphicsQuality.High,
-                FrameRateMode = UIFrameRateMode.OneTwenty
-            },
-            Controls = new ControlsSettingsModel
-            {
-                CameraSensitivity = 55f
-            },
-            Notifications = new NotificationSettingsModel
-            {
-                ThreatWarnings = true
-            },
-            Accessibility = new AccessibilitySettingsModel
-            {
-                HighContrastUi = false,
-                LargeText = false,
-                ColorblindMode = UIColorblindMode.Off
-            },
-            Localization = new LocalizationSettingsModel
-            {
-                Language = UILanguage.English
-            },
-            Assistant = new AssistantSettingsModel
-            {
-                AssistanceLevel = UIAssistanceLevel.FullGuidance,
-                NarrationMode = UIAssistantNarrationMode.Important,
-                AllowTakeover = true,
-                SubtitlesEnabled = true
-            }
-        };
+                Audio = new AudioSettingsModel
+                {
+                    MasterVolume = 80f,
+                    MusicVolume = 60f,
+                    SfxVolume = 85f,
+                    AlertsVolume = 90f,
+                    VoiceVolume = 85f,
+                    MusicEnabled = true,
+                    SoundEnabled = true,
+                    VoiceEnabled = true
+                },
+                Graphics = new GraphicsSettingsModel
+                {
+                    Quality = UIGraphicsQuality.High,
+                    FrameRateMode = isAndroid ? UIFrameRateMode.Sixty : UIFrameRateMode.OneTwenty
+                },
+                Controls = new ControlsSettingsModel
+                {
+                    CameraSensitivity = 55f
+                },
+                Notifications = new NotificationSettingsModel
+                {
+                    ThreatWarnings = true
+                },
+                Accessibility = new AccessibilitySettingsModel
+                {
+                    HighContrastUi = false,
+                    LargeText = false,
+                    ColorblindMode = UIColorblindMode.Off
+                },
+                Localization = new LocalizationSettingsModel
+                {
+                    Language = UILanguage.English
+                },
+                Assistant = new AssistantSettingsModel
+                {
+                    AssistanceLevel = UIAssistanceLevel.FullGuidance,
+                    NarrationMode = UIAssistantNarrationMode.Important,
+                    AllowTakeover = true,
+                    SubtitlesEnabled = true
+                }
+            };
+        }
 
         public static UISettingsModel Load()
         {
-            UISettingsModel defaults = Defaults;
+            return LoadForPlatform(IsAndroidRuntime);
+        }
+
+        internal static UISettingsModel LoadForPlatform(bool isAndroid)
+        {
+            UISettingsModel defaults = DefaultsForPlatform(isAndroid);
             return new UISettingsModel
             {
                 Audio = new AudioSettingsModel
@@ -92,7 +102,9 @@ namespace Game.UI.Runtime
                 Graphics = new GraphicsSettingsModel
                 {
                     Quality = GetEnum(GraphicsQualityKey, defaults.Graphics.Quality),
-                    FrameRateMode = GetEnum(FrameRateModeKey, defaults.Graphics.FrameRateMode)
+                    FrameRateMode = NormalizeFrameRateMode(
+                        GetEnum(FrameRateModeKey, defaults.Graphics.FrameRateMode),
+                        isAndroid)
                 },
                 Controls = new ControlsSettingsModel
                 {
@@ -124,6 +136,11 @@ namespace Game.UI.Runtime
 
         public static void Save(UISettingsModel model)
         {
+            SaveForPlatform(model, IsAndroidRuntime);
+        }
+
+        internal static void SaveForPlatform(UISettingsModel model, bool isAndroid)
+        {
             PlayerPrefs.SetFloat(MasterVolumeKey, Mathf.Clamp(model.Audio.MasterVolume, 0f, 100f));
             PlayerPrefs.SetFloat(MusicVolumeKey, Mathf.Clamp(model.Audio.MusicVolume, 0f, 100f));
             PlayerPrefs.SetFloat(SfxVolumeKey, Mathf.Clamp(model.Audio.SfxVolume, 0f, 100f));
@@ -133,7 +150,9 @@ namespace Game.UI.Runtime
             PlayerPrefs.SetInt(SoundEnabledKey, model.Audio.SoundEnabled ? 1 : 0);
             PlayerPrefs.SetInt(VoiceEnabledKey, model.Audio.VoiceEnabled ? 1 : 0);
             PlayerPrefs.SetInt(GraphicsQualityKey, (int)model.Graphics.Quality);
-            PlayerPrefs.SetInt(FrameRateModeKey, (int)model.Graphics.FrameRateMode);
+            PlayerPrefs.SetInt(
+                FrameRateModeKey,
+                (int)NormalizeFrameRateMode(model.Graphics.FrameRateMode, isAndroid));
             PlayerPrefs.SetFloat(CameraSensitivityKey, Mathf.Clamp(model.Controls.CameraSensitivity, 0f, 100f));
             PlayerPrefs.SetInt(ThreatWarningsKey, model.Notifications.ThreatWarnings ? 1 : 0);
             PlayerPrefs.SetInt(HighContrastKey, model.Accessibility.HighContrastUi ? 1 : 0);
@@ -156,14 +175,14 @@ namespace Game.UI.Runtime
 
         public static void ApplyRuntime(UISettingsModel model)
         {
+            ApplyRuntimeForPlatform(model, IsAndroidRuntime);
+        }
+
+        internal static void ApplyRuntimeForPlatform(UISettingsModel model, bool isAndroid)
+        {
+            model.Graphics.FrameRateMode = NormalizeFrameRateMode(model.Graphics.FrameRateMode, isAndroid);
             AudioListener.volume = Mathf.Clamp01(model.Audio.MasterVolume / 100f);
-            Application.targetFrameRate = model.Graphics.FrameRateMode switch
-            {
-                UIFrameRateMode.Thirty => 30,
-                UIFrameRateMode.Sixty => 60,
-                UIFrameRateMode.OneTwenty => 120,
-                _ => -1
-            };
+            Application.targetFrameRate = ResolveTargetFrameRate(model.Graphics.FrameRateMode, isAndroid);
 
             int qualityIndex = ResolveUnityQualityIndex(model.Graphics.Quality);
             if (QualitySettings.names.Length > 0)
@@ -171,6 +190,26 @@ namespace Game.UI.Runtime
 
             RuntimeApplied?.Invoke(model);
         }
+
+        internal static UIFrameRateMode NormalizeFrameRateMode(UIFrameRateMode mode, bool isAndroid)
+        {
+            return isAndroid && mode == UIFrameRateMode.OneTwenty
+                ? UIFrameRateMode.Sixty
+                : mode;
+        }
+
+        internal static int ResolveTargetFrameRate(UIFrameRateMode mode, bool isAndroid)
+        {
+            return NormalizeFrameRateMode(mode, isAndroid) switch
+            {
+                UIFrameRateMode.Thirty => 30,
+                UIFrameRateMode.Sixty => 60,
+                UIFrameRateMode.OneTwenty => 120,
+                _ => -1
+            };
+        }
+
+        private static bool IsAndroidRuntime => Application.platform == RuntimePlatform.Android;
 
         private static int ResolveUnityQualityIndex(UIGraphicsQuality quality)
         {

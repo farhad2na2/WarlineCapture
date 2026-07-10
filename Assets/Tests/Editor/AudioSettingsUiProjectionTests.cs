@@ -39,6 +39,8 @@ public sealed class AudioSettingsUiProjectionTests
             passed++;
             RunCase(test => test.MenuStartup_AppliesPersistedSettingsWithoutOpeningPopup());
             passed++;
+            RunCase(test => test.DesktopFrameRatePolicy_PreservesOneTwenty());
+            passed++;
 
             Debug.Log($"[AudioSettingsUiProjectionValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -294,6 +296,20 @@ public sealed class AudioSettingsUiProjectionTests
             InvokeLifecycle(bootstrap, "OnDisable");
             UnityEngine.Object.DestroyImmediate(bootstrapObject);
         }
+    }
+
+    [Test]
+    public void DesktopFrameRatePolicy_PreservesOneTwenty()
+    {
+        Assert.AreEqual(
+            UIFrameRateMode.OneTwenty,
+            SettingsService.DefaultsForPlatform(isAndroid: false).Graphics.FrameRateMode);
+        Assert.AreEqual(
+            UIFrameRateMode.OneTwenty,
+            SettingsService.NormalizeFrameRateMode(UIFrameRateMode.OneTwenty, isAndroid: false));
+        Assert.AreEqual(
+            120,
+            SettingsService.ResolveTargetFrameRate(UIFrameRateMode.OneTwenty, isAndroid: false));
     }
 
     private static void InvokeLifecycle(MenuBootstrapView view, string methodName)

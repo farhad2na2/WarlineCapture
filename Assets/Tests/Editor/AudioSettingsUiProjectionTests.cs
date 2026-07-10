@@ -1,7 +1,10 @@
 using System;
+using System.Reflection;
 using Game.Components;
+using Game.Composition;
 using Game.Runtime;
 using Game.UI.Runtime;
+using Game.UI.Shell.Contracts.Ecs;
 using Game.UI.Shell.Ecs;
 using NUnit.Framework;
 using Unity.Entities;
@@ -12,6 +15,10 @@ public sealed class AudioSettingsUiProjectionTests
     private World _world;
     private World _previousDefaultWorld;
     private UISettingsModel _previousSettings;
+    private int _previousTargetFrameRate;
+    private int _previousVSyncCount;
+    private int _previousQualityLevel;
+    private float _previousListenerVolume;
 
     public static void RunFocusedValidation()
     {
@@ -29,6 +36,8 @@ public sealed class AudioSettingsUiProjectionTests
             RunCase(test => test.UiAudioSettingsProjection_MapsAudioTogglesToMuteFlags());
             passed++;
             RunCase(test => test.SettingsServiceApplyRuntime_UpdatesDefaultWorldAudioSettings());
+            passed++;
+            RunCase(test => test.MenuStartup_AppliesPersistedSettingsWithoutOpeningPopup());
             passed++;
 
             Debug.Log($"[AudioSettingsUiProjectionValidation] result=Passed tests={passed}");
@@ -61,6 +70,10 @@ public sealed class AudioSettingsUiProjectionTests
     {
         _previousSettings = SettingsService.Load();
         _previousDefaultWorld = World.DefaultGameObjectInjectionWorld;
+        _previousTargetFrameRate = Application.targetFrameRate;
+        _previousVSyncCount = QualitySettings.vSyncCount;
+        _previousQualityLevel = QualitySettings.GetQualityLevel();
+        _previousListenerVolume = AudioListener.volume;
         _world = new World("AudioSettingsUiProjectionTests");
         World.DefaultGameObjectInjectionWorld = _world;
     }
@@ -72,6 +85,11 @@ public sealed class AudioSettingsUiProjectionTests
         if (World.DefaultGameObjectInjectionWorld == _world)
             World.DefaultGameObjectInjectionWorld = _previousDefaultWorld;
         _world?.Dispose();
+        Application.targetFrameRate = _previousTargetFrameRate;
+        QualitySettings.vSyncCount = _previousVSyncCount;
+        if (QualitySettings.names.Length > 0)
+            QualitySettings.SetQualityLevel(_previousQualityLevel, true);
+        AudioListener.volume = _previousListenerVolume;
     }
 
     [Test]
@@ -201,5 +219,89 @@ public sealed class AudioSettingsUiProjectionTests
         Assert.AreEqual(0.6f, settings.VoiceVolume);
         Assert.AreEqual(1, settings.VoiceMuted);
         Assert.AreEqual(0.4f, AudioListener.volume);
+    }
+
+    [Test]
+    public void MenuStartup_AppliesPersistedSettingsWithoutOpeningPopup()
+    {
+        _world.CreateSystem<UiShellStateSystem>();
+        _world.CreateSystem<UiAudioSettingsProjectionSystem>();
+        _world.CreateSystem<AssistantSettingsPersistenceSystem>();
+
+        using EntityQuery shellQuery =
+            _world.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<UiShellRootComponent>());
+        Entity boundary = shellQuery.GetSingletonEntity();
+
+        UISettingsModel persisted = SettingsService.Defaults;
+        persisted.Audio.MasterVolume = 31f;
+        persisted.Audio.MusicVolume = 17f;
+        persisted.Audio.MusicEnabled = false;
+        persisted.Graphics.Quality = UIGraphicsQuality.Low;
+        persisted.Graphics.FrameRateMode = UIFrameRateMode.Sixty;
+        persisted.Accessibility.HighContrastUi = true;
+        persisted.Assistant.AssistanceLevel = UIAssistanceLevel.Off;
+        persisted.Assistant.NarrationMode = UIAssistantNarrationMode.Off;
+        persisted.Assistant.AllowTakeover = false;
+        SettingsService.Save(persisted);
+
+        int runtimeApplyCount = 0;
+        UISettingsModel applied = default;
+        void CaptureApplied(UISettingsModel model)
+        {
+            runtimeApplyCount++;
+            applied = model;
+        }
+
+        SettingsService.RuntimeApplied += CaptureApplied;
+        GameObject bootstrapObject = new("SettingsStartupBootstrap");
+        MenuBootstrapView bootstrap = bootstrapObject.AddComponent<MenuBootstrapView>();
+        try
+        {
+            InvokeLifecycle(bootstrap, "Awake");
+
+            Assert.AreEqual(1, runtimeApplyCount, "Menu startup should apply persisted settings once during Awake.");
+            Assert.AreEqual(31f, applied.Audio.MasterVolume);
+            Assert.AreEqual(17f, applied.Audio.MusicVolume);
+            Assert.IsFalse(applied.Audio.MusicEnabled);
+            Assert.AreEqual(UIGraphicsQuality.Low, applied.Graphics.Quality);
+            Assert.AreEqual(UIFrameRateMode.Sixty, applied.Graphics.FrameRateMode);
+            Assert.AreEqual(UIAssistanceLevel.Off, applied.Assistant.AssistanceLevel);
+
+            Entity audioEntity = AudioEventRequestSystem.EnsureAudioEntity(_world.EntityManager);
+            AudioSettingsComponent audio = _world.EntityManager.GetComponentData<AudioSettingsComponent>(audioEntity);
+            Assert.AreEqual(0.31f, audio.MasterVolume, 0.0001f);
+            Assert.AreEqual(0.17f, audio.MusicVolume, 0.0001f);
+            Assert.AreEqual(1, audio.MusicMuted);
+            Assert.AreEqual(0.31f, AudioListener.volume, 0.0001f);
+
+            AssistantSettingsComponent assistant =
+                _world.EntityManager.GetComponentData<AssistantSettingsComponent>(boundary);
+            Assert.AreEqual(AssistantGuidanceLevel.Off, assistant.GuidanceLevel);
+            Assert.AreEqual(AssistantNarrationMode.Off, assistant.NarrationMode);
+            Assert.AreEqual(0, assistant.AllowTakeover);
+            Assert.AreEqual(1, assistant.HighContrastEnabled);
+
+            DynamicBuffer<UiShellPopupRequestComponent> popupRequests =
+                _world.EntityManager.GetBuffer<UiShellPopupRequestComponent>(boundary);
+            Assert.AreEqual(0, popupRequests.Length, "Startup settings application must not open the Settings popup.");
+            Assert.IsNull(
+                bootstrapObject.GetComponentInChildren<SettingsPopupView>(true),
+                "Startup must not instantiate a Settings popup to apply persisted values.");
+        }
+        finally
+        {
+            SettingsService.RuntimeApplied -= CaptureApplied;
+            InvokeLifecycle(bootstrap, "OnDisable");
+            UnityEngine.Object.DestroyImmediate(bootstrapObject);
+        }
+    }
+
+    private static void InvokeLifecycle(MenuBootstrapView view, string methodName)
+    {
+        MethodInfo method = typeof(MenuBootstrapView).GetMethod(
+            methodName,
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.NotNull(method, $"MenuBootstrapView lifecycle method '{methodName}' is missing.");
+        method.Invoke(view, null);
     }
 }

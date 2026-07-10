@@ -248,16 +248,16 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `33 / 106` |
-| Checklist percent complete | `31.1%` |
-| Checklist in progress | `1 / 106`: `APH-300` |
-| Complete plus active coverage | `34 / 106` (`32.1%`); this is visibility only, not accepted completion |
+| Checklist complete | `34 / 106` |
+| Checklist percent complete | `32.1%` |
+| Checklist in progress | `1 / 106`: `APH-301` |
+| Complete plus active coverage | `35 / 106` (`33.0%`); this is visibility only, not accepted completion |
 | Current phase | Phase 3 - settings, frame-rate, and environment ownership |
-| Current task | `APH-300` prove persisted settings apply during startup without opening the popup |
+| Current task | `APH-301` prove Android never applies 120 FPS while preserving 30 and 60 FPS |
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: steady-state Match GC `234,324 / 1,024` bytes; improved 13.0% from the APH-007 baseline without weakening the budget |
-| Last verified commit | `6cccb42c1`; APH-213 runtime, performance, GC, assistant, and architecture matrix accepted |
-| Last update | 2026-07-10 - Phase 2 closeout accepted; Phase 3 startup settings tests active |
+| Last verified commit | `25b50b0bf`; persisted startup settings integration passes |
+| Last update | 2026-07-10 - APH-300 complete; Android frame-rate contract active |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -433,8 +433,10 @@ Target ownership:
 | URP asset, render scale, AA, post-processing tier | `VisualQualitySettingsSystem` |
 | Dynamic sun, ambient, fog, skybox, day/night volume | `DayNightSystem` |
 
-- [~] `APH-300` Add tests proving persisted settings are applied during app startup without opening the settings popup.
-- [ ] `APH-301` Add Android tests proving 120 FPS is never applied on Android and 30/60 remain valid.
+- [x] `APH-300` Add tests proving persisted settings are applied during app startup without opening the settings popup.
+  - Result: the real `MenuBootstrapView.Awake` lifecycle loads persisted non-default audio, graphics, frame-rate, accessibility, and assistant values, projects audio and assistant settings through the runtime event bridge, and leaves the popup request buffer and hierarchy empty.
+  - Validation: audio/settings startup `7/7`, Settings popup `8/8`, assistant persistence `3/3`, and `Game.Tests.Editor` built with 0 errors; commit `25b50b0bf` pushed to `main`.
+- [~] `APH-301` Add Android tests proving 120 FPS is never applied on Android and 30/60 remain valid.
 - [ ] `APH-302` Add an editor/standalone test preserving 120 FPS where supported.
 - [ ] `APH-303` Change mobile defaults from 120 FPS to 60 FPS and clamp saved legacy 120 FPS values on Android.
 - [ ] `APH-304` Apply `SettingsService.Load()` through the composition startup path exactly once after required runtime owners exist.
@@ -1013,6 +1015,21 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Visual result: Match reached the normal ready state with 733 units, 628 buildings, 98 markers, and 46 visible models; no visual assets changed
 - Residual risk: external singleton buffers incur bounded first-growth native allocation and reduced locality; steady-state managed GC remains red and must be addressed by measured Phase 7 owners
 - Next ready task: `APH-300`
+
+### 2026-07-10 - APH-300 - Persisted settings startup coverage
+
+- Status: Complete
+- Commit or worktree baseline: `171acc7e4`
+- Stable commit/push: `25b50b0bf` pushed to `main`
+- Files changed: existing audio/settings projection Editor test suite only
+- Behavior preserved/changed: production behavior unchanged; the real Menu bootstrap `Awake` path is now locked to load persisted settings and apply them without opening the Settings popup
+- Validation: `[AudioSettingsUiProjectionValidation] result=Passed tests=7`, `[SettingsPopupValidation] result=Passed tests=8`, `[AssistantSettingsPersistenceValidation] result=Passed tests=3`, Editor-test build 0 errors, and `git diff --check` passed
+- Artifacts: `/private/tmp/aph300-settings-startup.log`, `/private/tmp/aph300-settings-popup.log`, and `/private/tmp/aph300-assistant-settings.log`
+- Metrics before: persistence and direct runtime projection were tested separately, but no test crossed the actual Menu startup lifecycle
+- Metrics after: one startup integration covers persisted audio, graphics, frame-rate, accessibility, and assistant payloads plus ECS audio/assistant projection and zero popup requests/instances
+- Visual result: no visual assets changed; the test explicitly proves the popup hierarchy remains absent
+- Residual risk: `Awake` and `OnEnable` can both enter initialization; exactly-once startup application remains owned by `APH-304`
+- Next ready task: `APH-301`
 
 ### 2026-07-09 - Unity validation timeout reliability
 

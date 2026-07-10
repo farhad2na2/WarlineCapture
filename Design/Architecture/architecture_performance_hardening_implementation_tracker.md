@@ -248,16 +248,16 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `26 / 106` |
-| Checklist percent complete | `24.5%` |
-| Checklist in progress | `2 / 106`: `APH-105`, `APH-211` |
-| Complete plus active coverage | `28 / 106` (`26.4%`); this is visibility only, not accepted completion |
+| Checklist complete | `28 / 106` |
+| Checklist percent complete | `26.4%` |
+| Checklist in progress | `2 / 106`: `APH-106`, `APH-212` |
+| Complete plus active coverage | `30 / 106` (`28.3%`); this is visibility only, not accepted completion |
 | Current phase | Phases 1 and 2 - UI boundary and ECS hot-path guardrails |
-| Current task | `APH-105` remove stale UI runtime config imports; `APH-211` run the integrated defense behavior/audio/VFX matrix |
+| Current task | `APH-106` remove the UI Runtime assembly dependency; `APH-212` run the ECS/Burst hot-path architecture gate |
 | Red architecture gates | `2` at the audit baseline; current-head reproduction remains required |
 | Red performance gates | `1`: steady-state Match GC `269,482 / 1,024` bytes |
-| Last verified commit | `190140146` for `APH-210`; Phase 2A complete |
-| Last update | 2026-07-09 - all UI text consumers migrated and defense phase markers captured |
+| Last verified commit | `e55729370` for `APH-211`; Phase 2B architecture gate active |
+| Last update | 2026-07-10 - integrated defense/combat/audio/VFX matrix passed |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -333,8 +333,10 @@ Implementation contract:
   - Preserve formatting culture and error fallback behavior.
   - Result: all 85 direct expressions now use the injected contract: 62 `Get` and 23 `Format`; 80 literal key/fallback pairs retain the baseline fingerprint and five dynamic expressions retain their original shapes. Existing runtime sink and command-wheel propagation use the same resolver without duplicate implementations or static state.
   - Validation: `[GameTextResolverConsumerMigrationValidation] result=Passed tests=4 gets=62 formats=23 expressions=85`; order-banner 16/16, command-feedback 15/15, and Build Drawer 25/25 focused cases passed; seven-assembly build matrix passed with 0 errors; commit `5358a0c1e` pushed to `main`.
-- [~] `APH-105` Remove `using Game.Configs` from files compiled by `Game.UI.Runtime`.
-- [ ] `APH-106` Remove `Game.Configs` from `Assets/Game/Scripts/UI/Game.UI.Runtime.asmdef`.
+- [x] `APH-105` Remove `using Game.Configs` from files compiled by `Game.UI.Runtime`.
+  - Result: stale imports were removed from exactly the seven migrated consumers with no behavior change; migration counts, literal fingerprint, dynamic expressions, and resolver propagation remain locked.
+  - Validation: `[GameTextResolverConsumerMigrationValidation] result=Passed tests=4 gets=62 formats=23 expressions=85`; UI Runtime, Composition, and Editor-test builds passed with 0 errors; commit `99f2ccee4` pushed to `main`.
+- [~] `APH-106` Remove `Game.Configs` from `Assets/Game/Scripts/UI/Game.UI.Runtime.asmdef`.
 - [ ] `APH-107` Add a guard that enumerates UI runtime source files and fails on future `Game.Configs` imports or direct `GameText` calls.
 - [ ] `APH-108` Run UI text focused tests, `Game.UI.Runtime`, `Game.Composition`, and `Game.Tests.Editor` builds, then run the 31-check assembly-boundary validation.
   - Acceptance: `[ScriptArchitectureBoundaryValidation] result=Passed tests=31`.
@@ -401,8 +403,10 @@ Immediate implementation contract:
   - Result: three static zero-allocation markers cover collection, per-tower selection, and immediate plus deferred effect application; the Match capture runner registers and records them deterministically.
   - Validation: `[BuildingDefenseAttackSystemValidation] result=Passed tests=11`; warmed allocation remained zero; 240-frame Match capture passed at p95 `3.691 ms`; commit `190140146` pushed to `main`.
   - Marker metrics: collection average/max `0.121/0.135 ms`; selection `0.904/0.922 ms`; effect application `0.001/0.006 ms`.
-- [~] `APH-211` Run defense, automatic-faction-targeting, combat, audio, and VFX focused validations.
-- [ ] `APH-212` Run `EcsBurstHotPathArchitectureTests.RunFocusedValidation`.
+- [x] `APH-211` Run defense, automatic-faction-targeting, combat, audio, and VFX focused validations.
+  - Result: integration coverage now locks defense feedback overwrite behavior, configured weapon audio and muzzle/impact VFX payloads, recursive LOD exclusivity, current unit/aircraft combat audio, and air-missile launch/impact audio without structural changes inside ECS iteration.
+  - Validation: Defense `13/13`, automatic faction targeting `3/3`, combat/death `6/6`, gameplay audio `8/8`, building audio `4/4`, and unit combat/VFX `3/3` passed. Runtime and Editor-test builds completed with 0 errors; commits `789fd4a03` and `e55729370` pushed to `main`.
+- [~] `APH-212` Run `EcsBurstHotPathArchitectureTests.RunFocusedValidation`.
   - Acceptance: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=10` and zero snapshot debt.
 - [ ] `APH-213` Re-run editor performance and steady-state GC baselines; reject the slice if frame p95 or player-relevant GC regresses beyond noise.
 
@@ -940,6 +944,21 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Visual result: Not applicable; raw profiler and focused ECS validation
 - Residual risk: defense-specific overwrite/audio/VFX integration and the full behavior matrix remain `APH-211`
 - Next ready task: `APH-211`
+
+### 2026-07-10 - APH-211 - Integrated defense/combat/audio/VFX matrix
+
+- Status: Complete
+- Commit or worktree baseline: `190140146`
+- Stable commit/push: `789fd4a03` and `e55729370` pushed to `main`
+- Files changed: air-missile fire/impact systems and focused defense, combat/death, and gameplay-audio tests
+- Behavior preserved/changed: missile audio queues are established before ECS iteration; emitted event IDs, targeting, damage, VFX, LOD visibility, and defense feedback behavior are unchanged and now covered explicitly
+- Validation: Defense `13/13`; automatic faction targeting `3/3`; combat/death `6/6`; gameplay audio `8/8`; building audio `4/4`; unit combat/VFX `3/3`; Runtime and Editor-test builds completed with 0 errors; `git diff --check` passed
+- Artifacts: `/private/tmp/warline-aph211-defense.log`, `/private/tmp/warline-aph211-automatic-faction.xml`, `/private/tmp/warline-aph211-combat-death-final-retry.log`, `/private/tmp/aph211-gameplay-audio-rerun.log`, `/private/tmp/warline-aph211-building-audio.log`, and `/private/tmp/warline-aph211-unit-combat.log`
+- Metrics before: the integrated matrix stopped after seven gameplay-audio cases because an audio singleton could be created during missile query iteration
+- Metrics after: all 37 focused cases pass; missile launch and impact enqueue the dedicated air-missile launch and small-explosion payloads without structural-change exceptions
+- Visual result: no visual assets changed; VFX request payloads are validated at the ECS boundary
+- Residual risk: the combined ECS/Burst source architecture gate and performance recapture remain `APH-212` and `APH-213`
+- Next ready task: `APH-212`
 
 ### 2026-07-09 - Unity validation timeout reliability
 

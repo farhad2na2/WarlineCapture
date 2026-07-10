@@ -384,7 +384,7 @@ Acceptance:
 Suggested files:
 
 ```text
-Assets/Game/Scripts/Audio/Config/AudioEventCatalogConfig.cs
+Assets/Game/Scripts/Configs/Audio/AudioEventCatalogConfig.cs
 Assets/Game/Scripts/Audio/Config/AudioMixerBusConfig.cs
 Assets/Game/Scripts/Audio/Config/AudioMusicStateConfig.cs
 Assets/Game/Scripts/Audio/Config/AudioEventCatalogEntry.cs

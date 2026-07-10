@@ -11,11 +11,11 @@ public sealed class AudioConfigContractTests
 {
     private static readonly string[] ConfigPaths =
     {
-        "Assets/Game/Scripts/Audio/Config/AudioEventCatalogConfig.cs",
-        "Assets/Game/Scripts/Audio/Config/AudioEventCatalogEntry.cs",
-        "Assets/Game/Scripts/Audio/Config/AudioMixerBusConfig.cs",
-        "Assets/Game/Scripts/Audio/Config/AudioMusicStateConfig.cs",
-        "Assets/Game/Scripts/Audio/Config/AudioEventIds.cs"
+        "Assets/Game/Scripts/Configs/Audio/AudioEventCatalogConfig.cs",
+        "Assets/Game/Scripts/Configs/Audio/AudioEventCatalogEntry.cs",
+        "Assets/Game/Scripts/Configs/Audio/AudioMixerBusConfig.cs",
+        "Assets/Game/Scripts/Configs/Audio/AudioMusicStateConfig.cs",
+        "Assets/Game/Scripts/Configs/Audio/AudioEventIds.cs"
     };
 
     private const string CatalogJsonPath = "Assets/Game/Audio/Config/audio_event_catalog_v0_1.json";

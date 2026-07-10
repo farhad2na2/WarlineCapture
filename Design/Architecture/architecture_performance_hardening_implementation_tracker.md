@@ -17,7 +17,7 @@ This tracker follows the completed historical program in `Design/Architecture/ar
 | Canonical project root | `/Users/farhad/Projects/WarlineCapture` |
 | Architecture rating | `6.5 / 10` |
 | Performance rating | `6.0 / 10` |
-| Current program status | Active - Phase 0, Phase 1, and Phase 2 architecture hardening complete; Phase 2B performance recapture active |
+| Current program status | Active - Phases 0 through 2 complete; Phase 3 settings ownership active |
 
 ### Protected Integrated Work
 
@@ -248,16 +248,16 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `32 / 106` |
-| Checklist percent complete | `30.2%` |
-| Checklist in progress | `1 / 106`: `APH-213` |
-| Complete plus active coverage | `33 / 106` (`31.1%`); this is visibility only, not accepted completion |
-| Current phase | Phase 2B - integrated performance and steady-state GC acceptance |
-| Current task | `APH-213` re-run editor performance and steady-state GC baselines |
+| Checklist complete | `33 / 106` |
+| Checklist percent complete | `31.1%` |
+| Checklist in progress | `1 / 106`: `APH-300` |
+| Complete plus active coverage | `34 / 106` (`32.1%`); this is visibility only, not accepted completion |
+| Current phase | Phase 3 - settings, frame-rate, and environment ownership |
+| Current task | `APH-300` prove persisted settings apply during startup without opening the popup |
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
-| Red performance gates | `1`: steady-state Match GC `269,482 / 1,024` bytes |
-| Last verified commit | `afe9e7d74`; POP-13-integrated assembly and ECS/Burst gates pass |
-| Last update | 2026-07-10 - UI boundary and ECS hot-path architecture gates restored |
+| Red performance gates | `1`: steady-state Match GC `234,324 / 1,024` bytes; improved 13.0% from the APH-007 baseline without weakening the budget |
+| Last verified commit | `6cccb42c1`; APH-213 runtime, performance, GC, assistant, and architecture matrix accepted |
+| Last update | 2026-07-10 - Phase 2 closeout accepted; Phase 3 startup settings tests active |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -413,7 +413,11 @@ Immediate implementation contract:
   - Acceptance: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=10` and zero snapshot debt.
   - Result: the remaining resource-hauler temporary entity snapshot was replaced with reusable scratch populated from temporary chunk metadata that is disposed before structural changes; recurring audio singleton writes use `SystemAPI.GetSingletonRW`; all managed boundaries and the two remaining tracked hot paths are explicitly classified.
   - Validation: `[EcsBurstHotPathArchitectureValidation] result=Passed tests=10`; 173 ECS `OnUpdate` implementations, 58 Burst, 45 job-backed, 115 non-Burst, two tracked hot paths, zero unclassified, and zero snapshot debt. Resource production/hauler passed `36/36`, audio request/state passed `5/5`, five first-party assemblies built with 0 errors, and the gate remained green after POP-13 integration. Commits `401bd1435`, merge `87339b802`, and `afe9e7d74` are pushed to `main`.
-- [~] `APH-213` Re-run editor performance and steady-state GC baselines; reject the slice if frame p95 or player-relevant GC regresses beyond noise.
+- [x] `APH-213` Re-run editor performance and steady-state GC baselines; reject the slice if frame p95 or player-relevant GC regresses beyond noise.
+  - Result: the first capture exposed a POP-13 runtime archetype overflow caused by large assistant buffers sharing the already-large UI shell entity. All ten shell-owned assistant/objective buffers now use zero inline capacity, preserving their ECS API while moving row storage outside the chunk; a full-shell regression covers every buffer plus narration and control-owner state.
+  - Performance: at 733 units and 628 runtime buildings, average improved from `3.42 ms` to `2.49 ms`, p95 from `5.22 ms` to `3.82 ms`, p99 from `6.87 ms` to `5.83 ms`, and maximum from `18.13 ms` to `14.52 ms`; current-thread allocation remained zero.
+  - GC: player-relevant steady-state allocation improved from `269,482` to `234,324` bytes over 300 measured frames after 180 warmup frames. The unchanged `1,024`-byte gate remains red and is mandatory downstream debt.
+  - Validation: assistant read models `9/9`, full assistant rollout `12/12`, assembly boundary `31/31`, ECS/Burst hot path `10/10`, and six first-party assembly builds passed with 0 errors. Commits `77f7581da` and `6cccb42c1` pushed to `main`.
 
 ## Phase 3 - Unify Settings, Frame Rate, and Environment Ownership
 
@@ -429,7 +433,7 @@ Target ownership:
 | URP asset, render scale, AA, post-processing tier | `VisualQualitySettingsSystem` |
 | Dynamic sun, ambient, fog, skybox, day/night volume | `DayNightSystem` |
 
-- [ ] `APH-300` Add tests proving persisted settings are applied during app startup without opening the settings popup.
+- [~] `APH-300` Add tests proving persisted settings are applied during app startup without opening the settings popup.
 - [ ] `APH-301` Add Android tests proving 120 FPS is never applied on Android and 30/60 remain valid.
 - [ ] `APH-302` Add an editor/standalone test preserving 120 FPS where supported.
 - [ ] `APH-303` Change mobile defaults from 120 FPS to 60 FPS and clamp saved legacy 120 FPS values on Android.
@@ -994,6 +998,21 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Visual result: not applicable; deterministic ECS architecture and behavior validation
 - Residual risk: the accepted red steady-state Match GC baseline and frame-time comparison remain `APH-213`
 - Next ready task: `APH-213`
+
+### 2026-07-10 - APH-213 - Performance recapture and assistant boundary repair
+
+- Status: Complete
+- Commit or worktree baseline: `00eac6566`
+- Stable commit/push: `77f7581da` and `6cccb42c1` pushed to `main`
+- Files changed: assistant/objective buffer capacities, full-shell assistant regression, current Match performance artifacts, and APH-213 GC report
+- Behavior preserved/changed: assistant read models, commands, narration, and control ownership remain on the existing UI shell boundary with unchanged dynamic-buffer APIs; large row payloads now use external native buffer storage so the boundary archetype stays below Unity's chunk limit
+- Validation: assistant read models `9/9`; assistant rollout `12/12`; `[ScriptArchitectureBoundaryValidation] result=Passed tests=31`; `[EcsBurstHotPathArchitectureValidation] result=Passed tests=10`; six first-party assemblies built with 0 errors; `git diff --check` passed
+- Artifacts: `/private/tmp/aph213-performance-baseline-fixed.log`, `Design/AgentReports/performance_regression_match_baseline.json`, `Design/AgentReports/performance_regression_match_baseline.md`, `/private/tmp/aph213-gc-steady-state.log`, and `Design/AgentReports/2026-07-10_aph-213_match-gc-steady-state_failed.md`
+- Metrics before: POP-13 added a 2,304-byte inline message buffer to a 15,296-byte archetype, causing 6,783 runtime exceptions and invalidating the first capture; accepted frame baseline average/p95/p99/max `3.42/5.22/6.87/18.13 ms`; GC `269,482` bytes
+- Metrics after: zero archetype-size exceptions; average/p95/p99/max `2.49/3.82/5.83/14.52 ms`; GC `234,324` bytes, a 13.0% improvement that remains above the unchanged 1,024-byte target
+- Visual result: Match reached the normal ready state with 733 units, 628 buildings, 98 markers, and 46 visible models; no visual assets changed
+- Residual risk: external singleton buffers incur bounded first-growth native allocation and reduced locality; steady-state managed GC remains red and must be addressed by measured Phase 7 owners
+- Next ready task: `APH-300`
 
 ### 2026-07-09 - Unity validation timeout reliability
 

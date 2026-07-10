@@ -203,18 +203,35 @@ public sealed class CombatDeathValidationTests
         Entity detailRoot = CreateVisualTree(em);
         Entity midRoot = CreateVisualTree(em);
         Entity lowRoot = CreateVisualTree(em);
-        Entity unit = em.CreateEntity(
+        Entity detailUnit = em.CreateEntity(
             typeof(UnitDetailedVisualReference),
             typeof(UnitMidLodInstanceReference),
             typeof(UnitLowLodInstanceReference),
             typeof(UnitRenderVisualComponent));
-        em.SetComponentData(unit, new UnitDetailedVisualReference { Root = detailRoot });
-        em.SetComponentData(unit, new UnitMidLodInstanceReference { Instance = midRoot });
-        em.SetComponentData(unit, new UnitLowLodInstanceReference { Instance = lowRoot });
-        em.SetComponentData(unit, new UnitRenderVisualComponent
+        em.SetComponentData(detailUnit, new UnitDetailedVisualReference { Root = detailRoot });
+        em.SetComponentData(detailUnit, new UnitMidLodInstanceReference { Instance = midRoot });
+        em.SetComponentData(detailUnit, new UnitLowLodInstanceReference { Instance = lowRoot });
+        em.SetComponentData(detailUnit, new UnitRenderVisualComponent
         {
             Current = (byte)UnitRenderVisualKind.Detail,
             Desired = (byte)UnitRenderVisualKind.Detail
+        });
+
+        Entity midDetailRoot = CreateVisualTree(em);
+        Entity midActiveRoot = CreateVisualTree(em);
+        Entity midLowRoot = CreateVisualTree(em);
+        Entity midUnit = em.CreateEntity(
+            typeof(UnitDetailedVisualReference),
+            typeof(UnitMidLodInstanceReference),
+            typeof(UnitLowLodInstanceReference),
+            typeof(UnitRenderVisualComponent));
+        em.SetComponentData(midUnit, new UnitDetailedVisualReference { Root = midDetailRoot });
+        em.SetComponentData(midUnit, new UnitMidLodInstanceReference { Instance = midActiveRoot });
+        em.SetComponentData(midUnit, new UnitLowLodInstanceReference { Instance = midLowRoot });
+        em.SetComponentData(midUnit, new UnitRenderVisualComponent
+        {
+            Current = (byte)UnitRenderVisualKind.Mid,
+            Desired = (byte)UnitRenderVisualKind.Mid
         });
 
         SystemHandle system = world.CreateSystem<UnitRenderVisualExclusivitySystem>();
@@ -223,17 +240,9 @@ public sealed class CombatDeathValidationTests
         AssertVisible(em, detailRoot, "The detailed root should remain visible when detail is the active visual.");
         AssertHidden(em, midRoot, "The mid LOD root must be hidden while detail is active.");
         AssertHidden(em, lowRoot, "The low LOD root must be hidden while detail is active.");
-
-        em.SetComponentData(unit, new UnitRenderVisualComponent
-        {
-            Current = (byte)UnitRenderVisualKind.Mid,
-            Desired = (byte)UnitRenderVisualKind.Mid
-        });
-        system.Update(world.Unmanaged);
-
-        AssertHidden(em, detailRoot, "The detailed root must be hidden while mid LOD is active.");
-        AssertVisible(em, midRoot, "The mid LOD root should become the only visible LOD root.");
-        AssertHidden(em, lowRoot, "The low LOD root must remain hidden while mid LOD is active.");
+        AssertHidden(em, midDetailRoot, "The detailed root must be hidden while mid LOD is active.");
+        AssertVisible(em, midActiveRoot, "The mid LOD root should become the only visible LOD root.");
+        AssertHidden(em, midLowRoot, "The low LOD root must remain hidden while mid LOD is active.");
     }
 
     [Test]

@@ -1,8 +1,10 @@
 using System;
 using System.IO;
 using Game.Components;
+using Game.Configs;
 using Game.Runtime;
 using NUnit.Framework;
+using Unity.Collections;
 using Unity.Core;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -36,6 +38,10 @@ public sealed class BuildingDefenseAttackSystemTests
             tests.GuardTowerDefense_IgnoresDestroyedTargetAndFiresAtLiveHostile();
             passed++;
             tests.GuardTowerDefense_RemovedTargetBetweenUpdatesClearsSlotAndReacquiresAfterInterval();
+            passed++;
+            tests.GuardTowerDefense_PreExistingFeedbackComponents_AreOverwrittenOnHit();
+            passed++;
+            tests.GuardTowerDefense_ConfiguredShot_EmitsWeaponAudioAndMuzzleImpactVfxRequests();
             passed++;
             tests.WarmedTargetCollectionUpdate_ThirtyTwoTowersAndSevenHundredFortyCandidates_DoesNotAllocateManagedMemory();
             passed++;
@@ -279,6 +285,153 @@ public sealed class BuildingDefenseAttackSystemTests
         Assert.AreEqual(1, reacquiredSlot.ShotCounter);
         Assert.AreEqual(0.17f, reacquiredSlot.CooldownRemaining, 0.0001f);
         Assert.AreEqual(100, GetHealth(em, fallbackTarget), "Reacquisition must not bypass the slot cooldown.");
+    }
+
+    [Test]
+    public void GuardTowerDefense_PreExistingFeedbackComponents_AreOverwrittenOnHit()
+    {
+        using World world = new(nameof(GuardTowerDefense_PreExistingFeedbackComponents_AreOverwrittenOnHit));
+        EntityManager em = world.EntityManager;
+        float3 towerPosition = new(2.2f, 0f, 3.3f);
+        float3 targetPosition = new(8.2f, 0f, 9.3f);
+        Entity staleEntity = em.CreateEntity();
+        Entity tower = CreateGuardTower(
+            em,
+            towerPosition,
+            FactionIdentity.EnemyFactionId,
+            maxConcurrentAttacks: 1);
+        Entity target = CreateTarget(
+            em,
+            targetPosition,
+            health: 100,
+            factionId: FactionIdentity.PlayerFactionId);
+
+        em.AddComponentData(tower, new EngageTarget
+        {
+            Target = staleEntity,
+            Cell = new int2(-10, -20),
+            Position = new float3(-10f, -1f, -20f),
+            IsCommanded = 1
+        });
+        em.AddComponentData(target, new RecentAttacker
+        {
+            Attacker = staleEntity,
+            Cell = new int2(-30, -40),
+            Position = new float3(-30f, -1f, -40f)
+        });
+        em.AddComponentData(target, new RecentDamageHealthBarVisibility { TimeRemaining = 0.25f });
+
+        SystemHandle attackSystem = world.CreateSystem<BuildingDefenseAttackSystem>();
+        Update(world, attackSystem, elapsedTime: 0.1d, deltaTime: 0.1f);
+
+        Assert.AreEqual(90, GetHealth(em, target));
+
+        EngageTarget engageTarget = em.GetComponentData<EngageTarget>(tower);
+        Assert.AreEqual(target, engageTarget.Target);
+        Assert.AreEqual(new int2(8, 9), engageTarget.Cell);
+        Assert.AreEqual(targetPosition, engageTarget.Position);
+        Assert.AreEqual(0, engageTarget.IsCommanded);
+
+        RecentAttacker recentAttacker = em.GetComponentData<RecentAttacker>(target);
+        Assert.AreEqual(tower, recentAttacker.Attacker);
+        Assert.AreEqual(new int2(2, 3), recentAttacker.Cell);
+        Assert.AreEqual(towerPosition, recentAttacker.Position);
+        Assert.AreEqual(
+            2f,
+            em.GetComponentData<RecentDamageHealthBarVisibility>(target).TimeRemaining,
+            0.001f);
+    }
+
+    [Test]
+    public void GuardTowerDefense_ConfiguredShot_EmitsWeaponAudioAndMuzzleImpactVfxRequests()
+    {
+        using World world = new(nameof(GuardTowerDefense_ConfiguredShot_EmitsWeaponAudioAndMuzzleImpactVfxRequests));
+        EntityManager em = world.EntityManager;
+        float3 towerPosition = new(1f, 0f, 2f);
+        float3 targetPosition = new(5f, 0f, 2f);
+        GameObject muzzlePrefab = new("DefenseMuzzleVfxPrefab");
+        GameObject impactPrefab = new("DefenseImpactVfxPrefab");
+        try
+        {
+            Entity tower = CreateGuardTower(
+                em,
+                towerPosition,
+                FactionIdentity.EnemyFactionId,
+                maxConcurrentAttacks: 1);
+            Entity target = CreateTarget(
+                em,
+                targetPosition,
+                health: 100,
+                factionId: FactionIdentity.PlayerFactionId);
+            Entity turret = em.CreateEntity(typeof(LocalToWorld));
+            em.SetComponentData(
+                turret,
+                new LocalToWorld { Value = float4x4.Translate(new float3(1f, 1f, 2f)) });
+            em.AddComponentData(tower, new UnitTurretReference { Turret = turret });
+            em.AddComponentData(tower, new UnitMuzzleFlashVfxReference
+            {
+                Prefab = muzzlePrefab,
+                HeightOffset = 0.25f,
+                ForwardOffset = 0.5f
+            });
+            em.AddComponentData(tower, new UnitAttackImpactVfxReference { Prefab = impactPrefab });
+            em.AddComponentData(tower, new UnitAttackTraceOriginPattern
+            {
+                OriginCount = 3,
+                LateralOffset = 0.4f
+            });
+
+            SystemHandle attackSystem = world.CreateSystem<BuildingDefenseAttackSystem>();
+            Update(world, attackSystem, elapsedTime: 2d, deltaTime: 0.1f);
+
+            DynamicBuffer<AudioPlaybackRequestElement> audioRequests = GetAudioRequests(em);
+            Assert.AreEqual(1, audioRequests.Length, "Defense fire should emit only the configured weapon-fire request.");
+            AudioPlaybackRequestElement audioRequest = audioRequests[0];
+            Assert.AreEqual(AudioEventIds.GameplayWeaponFireSmallArms, audioRequest.EventId.ToString());
+            Assert.AreEqual(AudioEventIds.GameplayWeaponFireSmallArmsHash, audioRequest.EventHash);
+            Assert.AreEqual(tower, audioRequest.SourceEntity);
+            Assert.AreEqual("SFX", audioRequest.BusId.ToString());
+            Assert.AreEqual(AudioPlaybackPriority.Medium, audioRequest.Priority);
+            Assert.AreEqual(AudioPlaybackRequestStatus.Pending, audioRequest.Status);
+            Assert.AreEqual(1, audioRequest.Spatial);
+            Assert.AreEqual(1, audioRequest.HasWorldPosition);
+            Assert.AreEqual(towerPosition, audioRequest.WorldPosition);
+            Assert.AreEqual(2f, audioRequest.RequestedAt, 0.001f);
+            Assert.AreEqual(0.04f, audioRequest.CooldownSeconds, 0.001f);
+
+            using EntityQuery vfxQuery = em.CreateEntityQuery(ComponentType.ReadOnly<UnitAttackVfxRequest>());
+            using NativeArray<UnitAttackVfxRequest> vfxRequests =
+                vfxQuery.ToComponentDataArray<UnitAttackVfxRequest>(Allocator.Temp);
+            Assert.AreEqual(2, vfxRequests.Length, "A traced defense shot must enqueue one muzzle and one impact request.");
+
+            UnitAttackVfxRequest muzzleRequest = FindVfxRequest(vfxRequests, UnitAttackVfxRequestKind.MuzzleFlash);
+            Assert.AreEqual(tower, muzzleRequest.Source);
+            Assert.AreEqual(target, muzzleRequest.Target);
+            Assert.AreEqual(towerPosition, muzzleRequest.SourcePosition);
+            Assert.AreEqual(targetPosition, muzzleRequest.TargetPosition);
+            Assert.AreSame(muzzlePrefab, muzzleRequest.Prefab.Value);
+            Assert.AreEqual(1.5f, muzzleRequest.PlaybackPosition.x, 0.001f);
+            Assert.AreEqual(1.25f, muzzleRequest.PlaybackPosition.y, 0.001f);
+            Assert.AreEqual(2f, muzzleRequest.PlaybackPosition.z, 0.001f);
+            Assert.AreEqual(3, muzzleRequest.OriginCount);
+            Assert.AreEqual(0.4f, muzzleRequest.LateralOffset, 0.001f);
+
+            UnitAttackVfxRequest impactRequest = FindVfxRequest(vfxRequests, UnitAttackVfxRequestKind.Impact);
+            Assert.AreEqual(tower, impactRequest.Source);
+            Assert.AreEqual(target, impactRequest.Target);
+            Assert.AreEqual(towerPosition, impactRequest.SourcePosition);
+            Assert.AreEqual(targetPosition, impactRequest.TargetPosition);
+            Assert.AreSame(impactPrefab, impactRequest.Prefab.Value);
+            Assert.AreEqual(targetPosition, impactRequest.PlaybackPosition);
+            Assert.AreEqual(1, impactRequest.OriginCount);
+            Assert.AreEqual(0f, impactRequest.LateralOffset, 0.001f);
+            Assert.AreEqual(90, GetHealth(em, target));
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(muzzlePrefab);
+            UnityEngine.Object.DestroyImmediate(impactPrefab);
+        }
     }
 
     [Test]
@@ -540,6 +693,26 @@ public sealed class BuildingDefenseAttackSystemTests
     private static int GetHealth(EntityManager em, Entity target)
     {
         return em.GetComponentData<UnitHealth>(target).Current;
+    }
+
+    private static DynamicBuffer<AudioPlaybackRequestElement> GetAudioRequests(EntityManager em)
+    {
+        Entity audioEntity = AudioEventRequestSystem.EnsureAudioEntity(em);
+        return em.GetBuffer<AudioPlaybackRequestElement>(audioEntity);
+    }
+
+    private static UnitAttackVfxRequest FindVfxRequest(
+        NativeArray<UnitAttackVfxRequest> requests,
+        UnitAttackVfxRequestKind kind)
+    {
+        for (int i = 0; i < requests.Length; i++)
+        {
+            if (requests[i].Kind == (byte)kind)
+                return requests[i];
+        }
+
+        Assert.Fail($"Missing defense VFX request kind {kind}.");
+        return default;
     }
 
     private static Entity CreateGuardTower(

@@ -25,7 +25,9 @@ namespace Game.Editor
         private const int DefaultCaptureHeight = 1080;
         private const int WarmupFrames = 90;
         private const int ZoomSettleFrames = 90;
-        private const int NightSettleFrames = 24;
+        private const int EnvironmentSettleFrames = 24;
+        private const float DayCaptureHour = 12f;
+        private const float DuskCaptureHour = 21f;
         private const float NightCaptureHour = 23f;
 
         private enum CaptureProfile
@@ -40,10 +42,15 @@ namespace Game.Editor
             WaitingForMenu,
             WaitingForMatch,
             WarmupGameplay,
+            SetDay,
+            WaitingForDay,
             CaptureGameplayZoom,
             SetMaxZoomOut,
             WaitingForMaxZoomOut,
             CaptureMaxZoomOut,
+            SetDusk,
+            WaitingForDusk,
+            CaptureDusk,
             SetNight,
             WaitingForNight,
             CaptureNight,
@@ -197,6 +204,16 @@ namespace Game.Editor
                 {
                     case CapturePhase.WarmupGameplay:
                         if (frameCount - matchReadyFrame >= WarmupFrames)
+                            SetPhase(CapturePhase.SetDay);
+                        break;
+
+                    case CapturePhase.SetDay:
+                        ApplyTimeProofState(matchScene, DayCaptureHour);
+                        SetPhase(CapturePhase.WaitingForDay);
+                        break;
+
+                    case CapturePhase.WaitingForDay:
+                        if (frameCount - phaseFrame >= EnvironmentSettleFrames)
                             SetPhase(CapturePhase.CaptureGameplayZoom);
                         break;
 
@@ -217,16 +234,31 @@ namespace Game.Editor
 
                     case CapturePhase.CaptureMaxZoomOut:
                         CaptureViewpoint(matchScene, "max_zoom_out");
+                        SetPhase(CapturePhase.SetDusk);
+                        break;
+
+                    case CapturePhase.SetDusk:
+                        ApplyTimeProofState(matchScene, DuskCaptureHour);
+                        SetPhase(CapturePhase.WaitingForDusk);
+                        break;
+
+                    case CapturePhase.WaitingForDusk:
+                        if (frameCount - phaseFrame >= EnvironmentSettleFrames)
+                            SetPhase(CapturePhase.CaptureDusk);
+                        break;
+
+                    case CapturePhase.CaptureDusk:
+                        CaptureViewpoint(matchScene, "dusk_phase");
                         SetPhase(CapturePhase.SetNight);
                         break;
 
                     case CapturePhase.SetNight:
-                        ApplyNightProofState(matchScene);
+                        ApplyTimeProofState(matchScene, NightCaptureHour);
                         SetPhase(CapturePhase.WaitingForNight);
                         break;
 
                     case CapturePhase.WaitingForNight:
-                        if (frameCount - phaseFrame >= NightSettleFrames)
+                        if (frameCount - phaseFrame >= EnvironmentSettleFrames)
                             SetPhase(CapturePhase.CaptureNight);
                         break;
 
@@ -277,11 +309,11 @@ namespace Game.Editor
             cameraControl.RequestZoomOutLevel();
         }
 
-        private static void ApplyNightProofState(MatchSceneView matchScene)
+        private static void ApplyTimeProofState(MatchSceneView matchScene, float hour)
         {
             DayNightSystem dayNight = matchScene.MatchBootstrap.DayNight;
             if (dayNight == null)
-                return;
+                throw new InvalidOperationException("Match Day/Night owner is unavailable for visual proof capture.");
 
             Type type = typeof(DayNightSystem);
             FieldInfo hourField = type.GetField("_currentHour", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -290,7 +322,7 @@ namespace Game.Editor
             if (hourField == null || visualRefreshField == null || applyVisualState == null)
                 throw new InvalidOperationException("DayNightSystem no longer exposes the expected editor proof internals.");
 
-            hourField.SetValue(dayNight, NightCaptureHour);
+            hourField.SetValue(dayNight, hour);
             visualRefreshField.SetValue(dayNight, 0f);
             applyVisualState.Invoke(dayNight, Array.Empty<object>());
         }
@@ -398,9 +430,10 @@ namespace Game.Editor
                 $"- Profile: `{profilePath}`\n" +
                 $"- Graphics device: `{SystemInfo.graphicsDeviceType}`\n" +
                 $"- Resolution: `{ResolvePositiveInt("WARLINE_MOBILE_VISUAL_CAPTURE_WIDTH", DefaultCaptureWidth)}x{ResolvePositiveInt("WARLINE_MOBILE_VISUAL_CAPTURE_HEIGHT", DefaultCaptureHeight)}`\n" +
-                $"- Gameplay zoom: `{profileLabel}_gameplay_zoom.png`\n" +
-                $"- Max zoom out: `{profileLabel}_max_zoom_out.png`\n" +
-                $"- Night phase: `{profileLabel}_night_phase.png`\n" +
+                $"- Day phase ({DayCaptureHour:0}:00), gameplay zoom: `{profileLabel}_gameplay_zoom.png`\n" +
+                $"- Day phase ({DayCaptureHour:0}:00), max zoom out: `{profileLabel}_max_zoom_out.png`\n" +
+                $"- Dusk phase ({DuskCaptureHour:0}:00): `{profileLabel}_dusk_phase.png`\n" +
+                $"- Night phase ({NightCaptureHour:0}:00): `{profileLabel}_night_phase.png`\n" +
                 $"- Camera position after captures: `{(camera != null ? Format(camera.transform.position) : "missing")}`\n" +
                 $"- Camera rotation after captures: `{(camera != null ? Format(camera.transform.rotation.eulerAngles) : "missing")}`\n");
         }
@@ -450,6 +483,8 @@ namespace Game.Editor
             DeleteIfExists(Path.Combine(artifactDirectory, $"{label}_gameplay_zoom.txt"));
             DeleteIfExists(Path.Combine(artifactDirectory, $"{label}_max_zoom_out.png"));
             DeleteIfExists(Path.Combine(artifactDirectory, $"{label}_max_zoom_out.txt"));
+            DeleteIfExists(Path.Combine(artifactDirectory, $"{label}_dusk_phase.png"));
+            DeleteIfExists(Path.Combine(artifactDirectory, $"{label}_dusk_phase.txt"));
             DeleteIfExists(Path.Combine(artifactDirectory, $"{label}_night_phase.png"));
             DeleteIfExists(Path.Combine(artifactDirectory, $"{label}_night_phase.txt"));
             DeleteIfExists(manifestPath);

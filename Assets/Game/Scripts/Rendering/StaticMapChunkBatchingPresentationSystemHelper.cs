@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+using System.Globalization;
+using Stopwatch = System.Diagnostics.Stopwatch;
+using Unity.Profiling;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -8,18 +10,17 @@ namespace Game.Rendering
 {
     public sealed class StaticMapChunkBatchingPresentationSystemHelper
     {
-        private const string CombinedRootName = "RuntimeStaticMapBatches";
-        private const float ChunkSize = 96f;
-        private const float MaxSourceExtent = 80f;
-        private const int MaxSourceVertices = 8000;
-        private const int MaxBatchVertices = 55000;
-        private const int MaxBatchRenderers = 64;
-        private const int MinBatchRenderers = 2;
         private const string ForceMobileStaticDetailCullingEnv = "WARLINE_FORCE_MOBILE_STATIC_DETAIL_CULLING";
+
+        private static readonly ProfilerMarker InitializeMarker = new("StaticMapBatching.Initialize");
+        private static readonly ProfilerMarker RendererScanMarker = new("StaticMapBatching.RendererScan");
+        private static readonly ProfilerMarker StaticDetailCullMarker = new("StaticMapBatching.StaticDetailCull");
+        private static readonly ProfilerMarker SourceCollectionMarker = new("StaticMapBatching.SourceCollection");
+        private static readonly ProfilerMarker BatchBuildMarker = new("StaticMapBatching.BatchBuild");
 
         private readonly List<RendererState> _disabledRenderers = new();
         private readonly List<Mesh> _combinedMeshes = new();
-        private readonly List<SourceRenderer> _batchScratch = new(MaxBatchRenderers);
+        private readonly List<SourceRenderer> _batchScratch = new(StaticMapChunkBatchingPolicy.MaxBatchRenderers);
         private Transform _combinedRoot;
         private bool _initialized;
 
@@ -35,76 +36,6 @@ namespace Game.Rendering
             public MeshFilter MeshFilter;
             public Mesh Mesh;
             public Material Material;
-        }
-
-        private readonly struct BatchKey : IEquatable<BatchKey>
-        {
-            public readonly int ChunkX;
-            public readonly int ChunkZ;
-            public readonly Material Material;
-            public readonly int LightmapIndex;
-            public readonly int Layer;
-            public readonly ShadowCastingMode ShadowCastingMode;
-            public readonly bool ReceiveShadows;
-            public readonly LightProbeUsage LightProbeUsage;
-            public readonly ReflectionProbeUsage ReflectionProbeUsage;
-
-            public BatchKey(
-                int chunkX,
-                int chunkZ,
-                Material material,
-                int lightmapIndex,
-                int layer,
-                ShadowCastingMode shadowCastingMode,
-                bool receiveShadows,
-                LightProbeUsage lightProbeUsage,
-                ReflectionProbeUsage reflectionProbeUsage)
-            {
-                ChunkX = chunkX;
-                ChunkZ = chunkZ;
-                Material = material;
-                LightmapIndex = lightmapIndex;
-                Layer = layer;
-                ShadowCastingMode = shadowCastingMode;
-                ReceiveShadows = receiveShadows;
-                LightProbeUsage = lightProbeUsage;
-                ReflectionProbeUsage = reflectionProbeUsage;
-            }
-
-            public bool Equals(BatchKey other)
-            {
-                return ChunkX == other.ChunkX &&
-                       ChunkZ == other.ChunkZ &&
-                       ReferenceEquals(Material, other.Material) &&
-                       LightmapIndex == other.LightmapIndex &&
-                       Layer == other.Layer &&
-                       ShadowCastingMode == other.ShadowCastingMode &&
-                       ReceiveShadows == other.ReceiveShadows &&
-                       LightProbeUsage == other.LightProbeUsage &&
-                       ReflectionProbeUsage == other.ReflectionProbeUsage;
-            }
-
-            public override bool Equals(object obj)
-            {
-                return obj is BatchKey other && Equals(other);
-            }
-
-            public override int GetHashCode()
-            {
-                unchecked
-                {
-                    int hash = ChunkX;
-                    hash = (hash * 397) ^ ChunkZ;
-                    hash = (hash * 397) ^ RuntimeHelpers.GetHashCode(Material);
-                    hash = (hash * 397) ^ LightmapIndex;
-                    hash = (hash * 397) ^ Layer;
-                    hash = (hash * 397) ^ (int)ShadowCastingMode;
-                    hash = (hash * 397) ^ (ReceiveShadows ? 1 : 0);
-                    hash = (hash * 397) ^ (int)LightProbeUsage;
-                    hash = (hash * 397) ^ (int)ReflectionProbeUsage;
-                    return hash;
-                }
-            }
         }
 
         private sealed class BatchStats
@@ -138,66 +69,100 @@ namespace Game.Rendering
             Transform mapVehicleAuthoringRoot,
             Transform decorationRoot)
         {
-            if (_initialized)
-                return;
-
-            if (mapRoot == null)
-                return;
-
-            Dispose();
-            _initialized = true;
-            _combinedRoot = EnsureCombinedRoot(mapRoot);
-            MeshRenderer[] renderers = mapRoot.GetComponentsInChildren<MeshRenderer>(false);
-            Dictionary<BatchKey, List<SourceRenderer>> batches = new();
-            BatchStats stats = new();
-            StaticDetailCullStats staticDetailCullStats = CullMobileStaticDetails(
-                renderers,
-                mapRoot,
-                mapBuildingAuthoringRoot,
-                mapVehicleAuthoringRoot,
-                decorationRoot);
-
-            for (int i = 0; i < renderers.Length; i++)
+            using (InitializeMarker.Auto())
             {
-                MeshRenderer renderer = renderers[i];
-                if (!TryCollectSource(
-                        renderer,
+                if (_initialized)
+                    return;
+
+                if (mapRoot == null)
+                    return;
+
+                long initializeStartTicks = Stopwatch.GetTimestamp();
+                Dispose();
+                _initialized = true;
+                _combinedRoot = EnsureCombinedRoot(mapRoot);
+
+                long rendererScanStartTicks = Stopwatch.GetTimestamp();
+                MeshRenderer[] renderers;
+                using (RendererScanMarker.Auto())
+                {
+                    renderers = mapRoot.GetComponentsInChildren<MeshRenderer>(false);
+                }
+                double rendererScanMilliseconds = GetElapsedMilliseconds(rendererScanStartTicks);
+
+                Dictionary<StaticMapChunkBatchKey, List<SourceRenderer>> batches = new();
+                BatchStats stats = new();
+
+                long staticDetailCullStartTicks = Stopwatch.GetTimestamp();
+                StaticDetailCullStats staticDetailCullStats;
+                using (StaticDetailCullMarker.Auto())
+                {
+                    staticDetailCullStats = CullMobileStaticDetails(
+                        renderers,
                         mapRoot,
                         mapBuildingAuthoringRoot,
                         mapVehicleAuthoringRoot,
-                        decorationRoot,
-                        stats,
-                        out SourceRenderer source,
-                        out BatchKey key))
+                        decorationRoot);
+                }
+                double staticDetailCullMilliseconds = GetElapsedMilliseconds(staticDetailCullStartTicks);
+
+                long sourceCollectionStartTicks = Stopwatch.GetTimestamp();
+                using (SourceCollectionMarker.Auto())
                 {
-                    continue;
+                    for (int i = 0; i < renderers.Length; i++)
+                    {
+                        MeshRenderer renderer = renderers[i];
+                        if (!TryCollectSource(
+                                renderer,
+                                mapBuildingAuthoringRoot,
+                                mapVehicleAuthoringRoot,
+                                decorationRoot,
+                                stats,
+                                out SourceRenderer source,
+                                out StaticMapChunkBatchKey key))
+                        {
+                            continue;
+                        }
+
+                        if (!batches.TryGetValue(key, out List<SourceRenderer> sources))
+                        {
+                            sources = new List<SourceRenderer>(StaticMapChunkBatchingPolicy.MaxBatchRenderers);
+                            batches.Add(key, sources);
+                        }
+
+                        sources.Add(source);
+                        stats.Eligible++;
+                    }
+                }
+                double sourceCollectionMilliseconds = GetElapsedMilliseconds(sourceCollectionStartTicks);
+
+                long batchBuildStartTicks = Stopwatch.GetTimestamp();
+                using (BatchBuildMarker.Auto())
+                {
+                    foreach (KeyValuePair<StaticMapChunkBatchKey, List<SourceRenderer>> pair in batches)
+                        BuildKeyBatches(pair.Key, pair.Value, stats);
+                }
+                double batchBuildMilliseconds = GetElapsedMilliseconds(batchBuildStartTicks);
+
+                if (stats.Batches == 0 && _combinedRoot != null)
+                {
+                    DestroyObject(_combinedRoot.gameObject);
+                    _combinedRoot = null;
                 }
 
-                if (!batches.TryGetValue(key, out List<SourceRenderer> sources))
-                {
-                    sources = new List<SourceRenderer>(MaxBatchRenderers);
-                    batches.Add(key, sources);
-                }
-
-                sources.Add(source);
-                stats.Eligible++;
+                double initializeMilliseconds = GetElapsedMilliseconds(initializeStartTicks);
+                LogNoStackTrace(
+                    $"[StaticMapBatching] result={(stats.Batches > 0 ? "Applied" : "Skipped")} " +
+                    $"eligible={stats.Eligible} batches={stats.Batches} disabled={stats.Disabled} vertices={stats.CombinedVertices} " +
+                    $"skippedUnreadable={stats.SkippedUnreadable} skippedUnsafe={stats.SkippedUnsafe} skippedLarge={stats.SkippedLarge} " +
+                    $"skippedMaterial={stats.SkippedMaterial} skippedSmallBatch={stats.SkippedBatchTooSmall} " +
+                    $"mobileStaticDetailCull={staticDetailCullStats.Renderers}r/{staticDetailCullStats.Triangles}tris " +
+                    $"scannedRenderers={renderers.Length} initializeMs={FormatMilliseconds(initializeMilliseconds)} " +
+                    $"rendererScanMs={FormatMilliseconds(rendererScanMilliseconds)} " +
+                    $"staticDetailCullMs={FormatMilliseconds(staticDetailCullMilliseconds)} " +
+                    $"sourceCollectionMs={FormatMilliseconds(sourceCollectionMilliseconds)} " +
+                    $"batchBuildMs={FormatMilliseconds(batchBuildMilliseconds)}");
             }
-
-            foreach (KeyValuePair<BatchKey, List<SourceRenderer>> pair in batches)
-                BuildKeyBatches(pair.Key, pair.Value, stats);
-
-            if (stats.Batches == 0 && _combinedRoot != null)
-            {
-                DestroyObject(_combinedRoot.gameObject);
-                _combinedRoot = null;
-            }
-
-            LogNoStackTrace(
-                $"[StaticMapBatching] result={(stats.Batches > 0 ? "Applied" : "Skipped")} " +
-                $"eligible={stats.Eligible} batches={stats.Batches} disabled={stats.Disabled} vertices={stats.CombinedVertices} " +
-                $"skippedUnreadable={stats.SkippedUnreadable} skippedUnsafe={stats.SkippedUnsafe} skippedLarge={stats.SkippedLarge} " +
-                $"skippedMaterial={stats.SkippedMaterial} skippedSmallBatch={stats.SkippedBatchTooSmall} " +
-                $"mobileStaticDetailCull={staticDetailCullStats.Renderers}r/{staticDetailCullStats.Triangles}tris");
         }
 
         public void Dispose()
@@ -336,112 +301,53 @@ namespace Game.Rendering
 
         private bool TryCollectSource(
             MeshRenderer renderer,
-            Transform mapRoot,
             Transform mapBuildingAuthoringRoot,
             Transform mapVehicleAuthoringRoot,
             Transform decorationRoot,
             BatchStats stats,
             out SourceRenderer source,
-            out BatchKey key)
+            out StaticMapChunkBatchKey key)
         {
             source = default;
             key = default;
 
-            if (renderer == null || !renderer.enabled || !renderer.gameObject.activeInHierarchy)
-                return false;
-            if (_combinedRoot != null && renderer.transform.IsChildOf(_combinedRoot))
-                return false;
-            if (mapBuildingAuthoringRoot != null && renderer.transform.IsChildOf(mapBuildingAuthoringRoot))
-                return false;
-            if (mapVehicleAuthoringRoot != null && renderer.transform.IsChildOf(mapVehicleAuthoringRoot))
-                return false;
-            if (decorationRoot != null && renderer.transform.IsChildOf(decorationRoot))
-                return false;
-            if (renderer.isPartOfStaticBatch || renderer.GetComponentInParent<LODGroup>() != null)
+            StaticMapChunkSourceEvaluation evaluation = StaticMapChunkBatchingPolicy.EvaluateSource(
+                renderer,
+                _combinedRoot,
+                mapBuildingAuthoringRoot,
+                mapVehicleAuthoringRoot,
+                decorationRoot);
+            switch (evaluation.Eligibility)
             {
-                stats.SkippedUnsafe++;
-                return false;
+                case StaticMapChunkSourceEligibility.UnreadableMesh:
+                    stats.SkippedUnreadable++;
+                    break;
+                case StaticMapChunkSourceEligibility.Unsafe:
+                    stats.SkippedUnsafe++;
+                    break;
+                case StaticMapChunkSourceEligibility.TooLarge:
+                    stats.SkippedLarge++;
+                    break;
+                case StaticMapChunkSourceEligibility.UnsupportedMaterialLayout:
+                    stats.SkippedMaterial++;
+                    break;
             }
 
-            if (!HasOnlySafeComponents(renderer.gameObject))
-            {
-                stats.SkippedUnsafe++;
+            if (!evaluation.IsEligible)
                 return false;
-            }
 
-            MeshFilter meshFilter = renderer.GetComponent<MeshFilter>();
-            Mesh mesh = meshFilter != null ? meshFilter.sharedMesh : null;
-            if (mesh == null || mesh.vertexCount == 0)
-                return false;
-            if (!mesh.isReadable)
-            {
-                stats.SkippedUnreadable++;
-                return false;
-            }
-            if (mesh.vertexCount > MaxSourceVertices || IsLargeRenderer(renderer))
-            {
-                stats.SkippedLarge++;
-                return false;
-            }
-            if (mesh.subMeshCount != 1 || renderer.sharedMaterials.Length != 1 || renderer.sharedMaterial == null)
-            {
-                stats.SkippedMaterial++;
-                return false;
-            }
-
-            Vector3 center = renderer.bounds.center;
-            int chunkX = Mathf.FloorToInt(center.x / ChunkSize);
-            int chunkZ = Mathf.FloorToInt(center.z / ChunkSize);
-            Material material = renderer.sharedMaterial;
-            key = new BatchKey(
-                chunkX,
-                chunkZ,
-                material,
-                renderer.lightmapIndex,
-                renderer.gameObject.layer,
-                renderer.shadowCastingMode,
-                renderer.receiveShadows,
-                renderer.lightProbeUsage,
-                renderer.reflectionProbeUsage);
+            key = StaticMapChunkBatchingPolicy.CreateBatchKey(renderer, evaluation.Material);
             source = new SourceRenderer
             {
                 Renderer = renderer,
-                MeshFilter = meshFilter,
-                Mesh = mesh,
-                Material = material
+                MeshFilter = evaluation.MeshFilter,
+                Mesh = evaluation.Mesh,
+                Material = evaluation.Material
             };
             return true;
         }
 
-        private static bool HasOnlySafeComponents(GameObject gameObject)
-        {
-            Component[] components = gameObject.GetComponents<Component>();
-            for (int i = 0; i < components.Length; i++)
-            {
-                Component component = components[i];
-                if (component == null)
-                    return false;
-                if (component is Transform ||
-                    component is MeshFilter ||
-                    component is MeshRenderer ||
-                    component is Collider)
-                {
-                    continue;
-                }
-
-                return false;
-            }
-
-            return true;
-        }
-
-        private static bool IsLargeRenderer(Renderer renderer)
-        {
-            Vector3 size = renderer.bounds.size;
-            return size.x > MaxSourceExtent || size.y > MaxSourceExtent || size.z > MaxSourceExtent;
-        }
-
-        private void BuildKeyBatches(BatchKey key, List<SourceRenderer> sources, BatchStats stats)
+        private void BuildKeyBatches(StaticMapChunkBatchKey key, List<SourceRenderer> sources, BatchStats stats)
         {
             _batchScratch.Clear();
             int vertexCount = 0;
@@ -450,7 +356,8 @@ namespace Game.Rendering
                 SourceRenderer source = sources[i];
                 int sourceVertices = source.Mesh.vertexCount;
                 if (_batchScratch.Count > 0 &&
-                    (_batchScratch.Count >= MaxBatchRenderers || vertexCount + sourceVertices > MaxBatchVertices))
+                    (_batchScratch.Count >= StaticMapChunkBatchingPolicy.MaxBatchRenderers ||
+                     vertexCount + sourceVertices > StaticMapChunkBatchingPolicy.MaxBatchVertices))
                 {
                     FlushBatch(key, _batchScratch, stats);
                     _batchScratch.Clear();
@@ -465,9 +372,9 @@ namespace Game.Rendering
             _batchScratch.Clear();
         }
 
-        private void FlushBatch(BatchKey key, List<SourceRenderer> sources, BatchStats stats)
+        private void FlushBatch(StaticMapChunkBatchKey key, List<SourceRenderer> sources, BatchStats stats)
         {
-            if (sources.Count < MinBatchRenderers)
+            if (sources.Count < StaticMapChunkBatchingPolicy.MinBatchRenderers)
             {
                 stats.SkippedBatchTooSmall += sources.Count;
                 return;
@@ -539,11 +446,11 @@ namespace Game.Rendering
 
         private static Transform EnsureCombinedRoot(Transform mapRoot)
         {
-            Transform existing = mapRoot.Find(CombinedRootName);
+            Transform existing = mapRoot.Find(StaticMapChunkBatchingPolicy.CombinedRootName);
             if (existing != null)
                 DestroyObject(existing.gameObject);
 
-            GameObject root = new GameObject(CombinedRootName)
+            GameObject root = new GameObject(StaticMapChunkBatchingPolicy.CombinedRootName)
             {
                 hideFlags = HideFlags.DontSave,
                 layer = mapRoot.gameObject.layer
@@ -564,6 +471,16 @@ namespace Game.Rendering
                 UnityEngine.Object.Destroy(target);
             else
                 UnityEngine.Object.DestroyImmediate(target);
+        }
+
+        private static double GetElapsedMilliseconds(long startTicks)
+        {
+            return (Stopwatch.GetTimestamp() - startTicks) * 1000d / Stopwatch.Frequency;
+        }
+
+        private static string FormatMilliseconds(double milliseconds)
+        {
+            return milliseconds.ToString("F3", CultureInfo.InvariantCulture);
         }
 
         private static void LogNoStackTrace(string message)

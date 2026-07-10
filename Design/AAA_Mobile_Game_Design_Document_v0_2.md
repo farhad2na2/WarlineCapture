@@ -8,6 +8,10 @@ Status: Active high-level product and game-design authority
 
 Supersedes: `AAA_Mobile_Game_Design_Document_v0_1.md` and its DOCX companion for active product direction
 
+Upstream authority: none inside `Design`; this is the active product-design root.
+
+Direct consumers: `Campaign_Narrative_Bible.md`, `Gameplay_North_Star_And_Content_Grammar.md`, `First_Player_Experience_And_Story_Onboarding_Design.md`, `Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md`, `Narrative_Presentation_And_Cutscene_Design.md`, `3D_SingleMap_Gameplay_Direction.md`, and mode/system design documents.
+
 ## Product Vision
 
 WarlineCapture is a mobile-first 3D real-time strategy game about commanding a local joint response force through a fictional Middle Eastern city under terrorist attack and later conventional military escalation.

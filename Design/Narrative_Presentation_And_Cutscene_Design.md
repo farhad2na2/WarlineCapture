@@ -6,6 +6,10 @@ Status: Active high-level narrative presentation authority
 
 Scope: Presentation format, sequence tiers, visual language, character continuity, audio/subtitle behavior, AI-assisted asset policy, and narrative UX. This is not an implementation or asset-production tracker.
 
+Upstream authorities: `AAA_Mobile_Game_Design_Document_v0_2.md`, `Campaign_Narrative_Bible.md`, and `First_Player_Experience_And_Story_Onboarding_Design.md`.
+
+Direct consumers: `Level_And_Mission_Content_Plan.md`, `SagaChapters/README.md`, Story Archive design, character/story-art production, audio/localization planning, and later sequence-player implementation plans.
+
 ## Recommendation
 
 Use a grounded illustrated tactical motion-comic format for the majority of Campaign storytelling. It can deliver character continuity, mission-specific locations, military hardware, and chapter drama at a realistic mobile production cost without requiring fully animated character cinematics.

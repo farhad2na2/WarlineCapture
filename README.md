@@ -1,8 +1,10 @@
 # WarlineCapture
 
+Last documentation audit: 2026-07-10
+
 `WarlineCapture` is a Unity 6 DOTS/ECS mobile-first 3D RTS project for large-scale grid-based movement, base building, tactical combat, district consequence systems, configurable AI, and Campaign/Operations/Skirmish game modes.
 
-The current codebase already has the core tactical simulation: units, buildings, roads, resources, production, AI economy/building/production/squads/combat, transport, base breach, radar warnings, minimap, runtime stats, and Android build support. The product direction is to wrap that simulation in a polished 3D mobile RTS structure with readable command over one large operation map, objective/result/reward flow, progression, persistence, and district consequence systems.
+The current codebase has a substantial tactical simulation: units, buildings, resources, production, AI economy/building/production/squads/combat, transport, base breach, radar warnings, minimap, runtime stats, and Android build support. Individual systems have different maturity levels; use the [Gameplay Feature Maturity And Campaign Exposure Matrix](Design/Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md) instead of treating this summary as a campaign-readiness claim.
 
 ## Project Setup
 
@@ -24,6 +26,7 @@ The current codebase already has the core tactical simulation: units, buildings,
 - Unity Collections: `6.5.0`
 - Unity Serialization: `6.5.0`
 - Unity AI Assistant / MCP package: `2.13.0-pre.2`
+- Unity Timeline: `1.8.12`
 
 ## Product Direction
 
@@ -40,14 +43,37 @@ WarlineCapture is being built around three major modes on one shared 3D operatio
 
 The active production direction is full 3D single-map mobile RTS. Each mission or operation should play on one large 3D town/base map containing soldiers, civilians, hostile cells, vehicles, aircraft, buildings, objectives, deployment zones, and metadata-backed command layers. Planning, briefing, minimap, threat alerts, and deployment are UI/camera overlays over that same world, not separate strategic and tactical maps. The active source-of-truth doc is `Design/3D_SingleMap_Gameplay_Direction.md`; superseded 2.5D isometric and strategic/tactical split design docs have been moved out of the active design index.
 
+The first Campaign is provisionally titled `Shattered Relay`. It follows a locally legitimate Field Commander and ARIA through terrorist attacks by the fictional Ash Line, restoration of Sahrin's infrastructure, hidden-network investigation, and later proxy-backed conventional escalation by the Vanguard Brigade. Fresh profiles enter this story and M01 before the full command-base menu; the complete first-launch route is owned by `Design/First_Player_Experience_And_Story_Onboarding_Design.md`.
+
+### Current Product Maturity
+
+| Area | Current status | Authority |
+|---|---|---|
+| Tactical Match simulation | Substantial implemented foundation with feature-specific gaps and readiness gates. | `Design/GAME_DESIGN_REFERENCE.md` and the feature maturity matrix. |
+| ARIA match assistant | ECS-backed vertical slice complete and validated for the documented bounded feature set. | `Design/ARIA_Assistant_ECS_Design.md` and its implementation tracker. |
+| Campaign story and content | Detailed high-level product, narrative, FPE, presentation, feature exposure, and 25-mission chapter design complete. | GDD v0.2 and the connected Campaign authorities below. |
+| Campaign runtime product layer | Not yet a complete playable 25-mission product; objective/result/reward/progression/story-sequence/persistence work remains. | `Design/Gameplay_Features_High_Level_Spec.md` and feature maturity matrix. |
+| Architecture and performance | Active hardening program; use its tracker for current gates and evidence rather than copying progress into this README. | `Design/Architecture/architecture_performance_hardening_implementation_tracker.md`. |
+| Overall project percentage | Not currently authoritative because the project-state source still needs PM refresh. | `Design/Project_State_Source.json` and generated dashboard. |
+
 ## Source Of Truth
 
 Use the root README as the project entry point. Use `Design/README.md` as the complete design index.
 
 Key project documents:
 
-- `Design/README.md`
+- [Design Index](Design/README.md)
   Complete design map for product direction, design docs, visual locks, 3D single-map direction, audio, monetization, marketing, and update rules.
+- [AAA Mobile GDD v0.2](Design/AAA_Mobile_Game_Design_Document_v0_2.md)
+  Active product authority and document precedence.
+- [Campaign Narrative Bible](Design/Campaign_Narrative_Bible.md)
+  Active setting, factions, character casting, 25-mission story, Protocol Fragments, and ending authority.
+- [First Player Experience And Story Onboarding](Design/First_Player_Experience_And_Story_Onboarding_Design.md)
+  Active fresh-profile cold open, identity, direct M01 route, first debrief, and progressive menu disclosure.
+- [Gameplay Feature Maturity And Campaign Exposure](Design/Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md)
+  Active distinction between implemented, partial, scaffolded, designed, and campaign-ready features.
+- [Narrative Presentation And Cutscene Design](Design/Narrative_Presentation_And_Cutscene_Design.md)
+  Active sequence tiers, motion-comic direction, AI-assisted asset policy, continuity, accessibility, and Story Archive authority.
 - `Design/Project_State_Source.json`
   Machine-readable project state. Update this before regenerating dashboard output.
 - `Design/Project_State_Dashboard.md`
@@ -64,12 +90,14 @@ Key project documents:
   Match runtime managed-allocation cleanup plan. Allocation work is profiler evidence first, then one confirmed site/file at a time.
 - `Design/Architecture/performance_regression_contract.md`
   Performance validation contract for warmup windows, frame-time metrics, GC allocation evidence, and platform-aware budgets.
+- `Design/Architecture/architecture_performance_hardening_implementation_tracker.md`
+  Active multi-agent remediation program for assembly boundaries, ECS hot paths, GC evidence, performance, and residency gates.
 - `Design/UIUX_Target_To_Canvas_Workflow_Guide.md`
   Active workflow for converting accepted UI target locks into real Unity Canvas prefabs.
 - `Design/UI_Screen_Reference_To_Icons_Panels_GreenKey_Workflow.md`
   Active green-key image-generation and chroma-key cleanup workflow for reusable UI icons, panels, and chrome sprites.
-- `Design/VisualLockLayered/WORKFLOW_V15_3D_GREENSCREEN.md`
-  Current VisualLockLayered workflow for 3D-direction screen, popup, and prefab layer packs.
+- `Design/UI_HQ_GreenKey_To_Final_Sprite_Workflow.md`
+  Current high-quality green-key source-to-final-sprite cleanup and validation workflow.
 
 Core design reading order starts in `Design/README.md`. The current high-priority design sources are:
 
@@ -103,19 +131,44 @@ Current ARIA implementation status:
 
 ## Design Documentation Tree
 
-![WarlineCapture Design Documentation Tree](Design/VisualTargets/DesignDocumentationTree.svg)
+```mermaid
+flowchart TD
+    A["AAA Mobile GDD v0.2"] --> B["Campaign Narrative Bible"]
+    A --> C["Gameplay North Star"]
+    B --> D["First Player Experience"]
+    B --> E["Narrative Presentation"]
+    A --> F["Feature Maturity And Exposure"]
+    C --> G["Level And Mission Content Plan"]
+    F --> G
+    B --> G
+    D --> H["M01 And FTUE Contracts"]
+    E --> I["Chapter And Story Sequences"]
+    G --> J["Five Chapter Documents"]
+    J --> K["Later Mission Implementation Plans"]
+    A --> L["3D Single-Map Direction"]
+    L --> M["System And UI Design Contracts"]
+    M --> N["Architecture And Implementation Trackers"]
+```
 
-This diagram is an orientation aid. It may lag behind architecture and task-board changes; use the linked source docs below for current decisions, and regenerate the SVG before treating it as a current acceptance artifact.
+The linked hierarchy below is the maintained documentation map. The older `Design/VisualTargets/DesignDocumentationTree.svg` remains a historical orientation artifact and is not an active authority.
 
 - [Design Index](Design/README.md)
-  - [Game Design Reference](Design/GAME_DESIGN_REFERENCE.md)
+  - Product And Campaign Authorities
     - [AAA Mobile Game Design v0.2](Design/AAA_Mobile_Game_Design_Document_v0_2.md)
     - [Campaign Narrative Bible](Design/Campaign_Narrative_Bible.md)
+    - [Gameplay North Star And Content Grammar](Design/Gameplay_North_Star_And_Content_Grammar.md)
     - [First Player Experience And Story Onboarding](Design/First_Player_Experience_And_Story_Onboarding_Design.md)
     - [Gameplay Feature Maturity And Campaign Exposure](Design/Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md)
     - [Narrative Presentation And Cutscene Design](Design/Narrative_Presentation_And_Cutscene_Design.md)
     - [3D Single-Map Gameplay Direction](Design/3D_SingleMap_Gameplay_Direction.md)
-    - [Gameplay North Star And Content Grammar](Design/Gameplay_North_Star_And_Content_Grammar.md)
+    - [Level And Mission Content Plan](Design/Level_And_Mission_Content_Plan.md)
+      - [Chapter 1: First Response](Design/SagaChapters/Saga_Chapter01_First_Response.md)
+      - [Chapter 2: Broken Grid](Design/SagaChapters/Saga_Chapter02_Broken_Grid.md)
+      - [Chapter 3: Hidden Network](Design/SagaChapters/Saga_Chapter03_Hidden_Network.md)
+      - [Chapter 4: Air And Armor](Design/SagaChapters/Saga_Chapter04_Air_And_Armor.md)
+      - [Chapter 5: Citywide Command](Design/SagaChapters/Saga_Chapter05_Citywide_Command.md)
+  - Supporting Product References
+    - [Implemented Game Design Reference](Design/GAME_DESIGN_REFERENCE.md)
     - [Command Offensive Premise Alignment](Design/Command_Offensive_Premise_Alignment.md)
     - [AAA Mobile Technical Targets](Design/AAA_Mobile_Technical_Targets.md)
   - Product Gameplay
@@ -127,16 +180,14 @@ This diagram is an orientation aid. It may lag behind architecture and task-boar
       - [Match Unit Command Behavior Spec](Design/Match_Unit_Command_Behavior_Spec.md)
       - [Tactical Follow Attack Cinematic Improvement Tracker](Design/Architecture/tactical_follow_attack_cinematic_improvement_tracker.md)
     - [Mission Result State Spec](Design/Mission_Result_State_Spec.md)
-    - [Level And Mission Content Plan](Design/Level_And_Mission_Content_Plan.md)
-      - [Chapter 1: First Response](Design/SagaChapters/Saga_Chapter01_First_Response.md)
-      - [Chapter 2: Broken Grid](Design/SagaChapters/Saga_Chapter02_Broken_Grid.md)
-      - [Chapter 3: Hidden Network](Design/SagaChapters/Saga_Chapter03_Hidden_Network.md)
-      - [Chapter 4: Air And Armor](Design/SagaChapters/Saga_Chapter04_Air_And_Armor.md)
-      - [Chapter 5: Citywide Command](Design/SagaChapters/Saga_Chapter05_Citywide_Command.md)
     - [M01 First Contact Production Contract](Design/M01_FirstContact_Production_Contract.md)
     - [FTUE And Command Assistant Design](Design/FTUE_And_Command_Assistant_Design.md)
       - [ARIA Assistant ECS Design](Design/ARIA_Assistant_ECS_Design.md)
       - [ARIA Assistant ECS Implementation Tracker](Design/Architecture/aria_assistant_ecs_implementation_tracker.md)
+  - Runtime Architecture And Performance
+    - [Gameplay SOLID/ECS Contract](Design/Architecture/gameplay_solid_ecs_contract.md)
+    - [Architecture/Performance Hardening Tracker](Design/Architecture/architecture_performance_hardening_implementation_tracker.md)
+    - [Performance Regression Contract](Design/Architecture/performance_regression_contract.md)
   - Systems And Economy
     - [Combat Catalog And Upgrade Design](Design/Combat_Catalog_And_Upgrade_Design.md)
       - [Combat Balance Config](Design/BalanceConfigs/Combat_Balance_Config_v0_1.json)
@@ -194,8 +245,12 @@ Until the project-state source and progress image are refreshed, use the lane cu
 
 Current premise direction:
 
+- `Design/AAA_Mobile_Game_Design_Document_v0_2.md`
+  Active product direction: story-first local command in fictional Sahrin, followed by Campaign, Operations, and Skirmish.
+- `Design/Campaign_Narrative_Bible.md`
+  Active fiction: Ash Line terrorist cells, Vanguard Brigade conventional escalation, civilian legitimacy, Commander/ARIA arcs, and the `Shattered Relay` mystery.
 - `Design/Command_Offensive_Premise_Alignment.md`
-  Accepted proactive command-operation framing: the player is a field commander preparing and executing operations against fictional hostile cells embedded in civilian towns.
+  Supporting proactive-operation framing, subordinate to the v0.2 GDD and narrative bible.
 
 ## Agent And Contributor Entry Points
 
@@ -227,9 +282,19 @@ The previous visual-lock packs were archived under `Design/Archive/LegacyVisualL
 
 UI flow navigation tree:
 
-![WarlineCapture UI Flow Navigation Tree](Design/VisualTargets/UIFlowNavigationTree.svg)
+```mermaid
+flowchart LR
+    Fresh["Fresh Profile"] --> Cold["Cold Open"] --> Identity["Commander Identity"] --> M01["M01 First Contact"] --> Debrief["First Debrief"] --> Base["Command-Base Menu"]
+    Return["Returning Player"] --> Continue["Continue / Recap"] --> Base
+    Base --> Campaign
+    Base --> Operations
+    Base --> Skirmish
+    Base --> Commander
+    Base --> Settings
+    Campaign --> Briefing --> Match --> Result --> Base
+```
 
-This UI flow diagram is an orientation aid. It may lag behind the current shell, route, and visual-lock workflow; use `Design/UIUX_Target_To_Canvas_Workflow_Guide.md`, current `Design/VisualLockLayered/` packs, and lane task files for active UI work.
+This first-launch flow is owned by `Design/First_Player_Experience_And_Story_Onboarding_Design.md`. `Design/VisualTargets/UIFlowNavigationTree.svg` remains a legacy full-route orientation artifact until regenerated from the current shell and FPE authority.
 
 The target UI is a mobile landscape command-base app shell:
 
@@ -325,6 +390,8 @@ The gameplay architecture contract is `Design/Architecture/gameplay_solid_ecs_co
 
 Current architecture source files:
 
+- `Design/Architecture/architecture_performance_hardening_implementation_tracker.md`
+  Active architecture/performance remediation program and current evidence source.
 - `Design/Architecture/gameplay_solid_ecs_contract.md`
   ECS/SOLID ownership, naming, UI view rules, service boundaries, assembly boundaries, GC rules, and Burst/job direction.
 - `Design/Architecture/menu_match_bootstrap_split_roadmap.md`
@@ -342,7 +409,7 @@ Current architecture source files:
 - `Design/Architecture/performance_regression_contract.md`
   Performance validation rules and metrics.
 
-Current refactor note: assembly split, GC allocation cleanup, Burst hot-path work, `SystemBase` to `ISystem` migration, and non-ECS helper renaming are still active refactors. Treat the README and contracts as no-new-debt guidance now. Do not add stricter failing gates, new ratchets, or CI blockers for these areas until the active baselines are stable or PM explicitly asks.
+Current refactor note: the architecture/performance hardening tracker is the execution authority. Assembly-boundary repair, GC allocation cleanup, Burst hot-path work, `SystemBase` to `ISystem` migration, and non-ECS helper naming remain active or tracked concerns. Treat the README and contracts as no-new-debt guidance; copy neither tracker percentages nor transient task status into this README.
 
 Code and systems architecture overview:
 
@@ -464,7 +531,7 @@ When adding a new runtime system:
 - do not add static runtime service facades; use ECS event buffers or shell-injected services for diagnostics/logging
 - do not add new `static Instance` singletons or `ResolveDependency<T>()` fallback locators
 - do not add new gameplay-facing classes ending in `Controller`, `Presenter`, `Manager`, `Bridge`, `Port`, broad `Adapter`, `Facade`, `ServiceLocator`, or `Button`
-- do not add plain non-ECS classes with bare `*System` names; convert to ECS or use an approved helper suffix from `non_ecs_system_helper_naming_refactor_tracker.md`
+- do not add plain non-ECS classes with bare `*System` names; convert to ECS or use an approved helper suffix from `Design/Architecture/non_ecs_system_helper_naming_refactor_tracker.md`
 - do not add new gameplay-domain `*State`, `*Rules`, `*Builder`, `*Session`, or `*Element` types
 
 `GameBootstrap` is retired and must not be restored. Existing bridge/controller/manager-style names and non-ECS bare `*System` helpers are legacy debt. Do not expand those patterns; retire them by domain slice when touching related behavior. The old `AILog` static facade has been retired and must not be reintroduced.
@@ -492,7 +559,7 @@ When adding a new configurable system:
 - `Menu.unity` / persistent app setup should use `MenuBootstrapView` plus `MenuBootstrapSystem` for app/menu lifetime.
 - `Match.unity` / match-scene setup should use `MatchSceneView` plus `MatchBootstrapSystem` for match lifetime.
 - `Game.unity` and legacy scene paths should not reintroduce `GameBootstrap` or another broad bootstrapper.
-- `Match/MatchSubScene.unity` may contain ECS authoring components such as grid or initial-spawn authorings, because bakers need scene/subscene authoring data at bake time.
+- `Assets/Game/Scenes/Match/MatchSubScene.unity` may contain ECS authoring components such as grid or initial-spawn authorings, because bakers need scene/subscene authoring data at bake time.
 - Authorings in the subscene should remain thin and config-driven.
 - Runtime scene references must flow through serialized view fields, ECS managed reference components such as `MatchSceneReferenceComponent`, or injected boundary systems. Do not add broad runtime scene scans.
 

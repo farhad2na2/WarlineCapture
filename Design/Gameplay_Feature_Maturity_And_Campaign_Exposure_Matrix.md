@@ -6,6 +6,10 @@ Status: Active high-level campaign exposure authority
 
 Scope: Current maturity classification, narrative purpose, intended first authored use, reinforcement, mastery, and campaign-readiness conditions. This is not an implementation tracker.
 
+Upstream authorities: current validated runtime evidence, `AAA_Mobile_Game_Design_Document_v0_2.md`, and `Campaign_Narrative_Bible.md`.
+
+Direct consumers: `Gameplay_North_Star_And_Content_Grammar.md`, `Level_And_Mission_Content_Plan.md`, `SagaChapters/README.md`, feature-specific design documents, and later implementation prerequisites. When code and this matrix disagree, re-audit and update the matrix; do not reinterpret code from a stale design claim.
+
 ## Purpose
 
 WarlineCapture already contains more gameplay systems than the older Campaign documents acknowledge. This matrix prevents two failures:

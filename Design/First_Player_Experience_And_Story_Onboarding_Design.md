@@ -6,6 +6,10 @@ Status: Active high-level FPE authority
 
 Scope: First launch, first session, story onboarding, progressive menu disclosure, returning-player entry, and high-level experience requirements. This is not an implementation tracker.
 
+Upstream authorities: `AAA_Mobile_Game_Design_Document_v0_2.md` and `Campaign_Narrative_Bible.md`.
+
+Direct consumers: `FTUE_And_Command_Assistant_Design.md`, `ARIA_Assistant_ECS_Design.md`, `M01_FirstContact_Production_Contract.md`, `Mission_Result_State_Spec.md`, `UIUX_MainMenu_Visual_Contract.md`, and later first-launch routing/sequence implementation plans.
+
 ## Experience Goal
 
 A first-time player should not open WarlineCapture into a complex command-base menu full of unknown modes, resources, store routes, and settings. The first launch should place the player inside the crisis, establish the Commander and ARIA, and begin M01 before product complexity becomes visible.

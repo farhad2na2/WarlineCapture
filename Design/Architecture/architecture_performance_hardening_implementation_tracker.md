@@ -248,16 +248,16 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `37 / 106` |
-| Checklist percent complete | `34.9%` |
-| Checklist in progress | `1 / 106`: `APH-304` |
-| Complete plus active coverage | `38 / 106` (`35.8%`); this is visibility only, not accepted completion |
+| Checklist complete | `38 / 106` |
+| Checklist percent complete | `35.8%` |
+| Checklist in progress | `1 / 106`: `APH-305` |
+| Complete plus active coverage | `39 / 106` (`36.8%`); this is visibility only, not accepted completion |
 | Current phase | Phase 3 - settings, frame-rate, and environment ownership |
-| Current task | `APH-304` apply persisted settings exactly once after required runtime owners exist |
+| Current task | `APH-305` route settings changes through composition with explicit subscription cleanup |
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: steady-state Match GC `234,324 / 1,024` bytes; improved 13.0% from the APH-007 baseline without weakening the budget |
-| Last verified commit | `74f42e192`; Android and desktop frame-rate policy matrix passes |
-| Last update | 2026-07-10 - APH-301 through APH-303 complete; exactly-once startup routing active |
+| Last verified commit | `7c13bf7e7`; exactly-once Menu/Match settings routing passes |
+| Last update | 2026-07-10 - APH-304 complete; composition-owned change routing active |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -443,8 +443,10 @@ Target ownership:
 - [x] `APH-303` Change mobile defaults from 120 FPS to 60 FPS and clamp saved legacy 120 FPS values on Android.
   - Result: platform-aware defaults, load, save, and apply paths all use the same normalization policy; Android saves migrate 120 to 60 while non-Android persistence remains unchanged.
   - Validation: Android visual/frame-rate `8/8`, desktop/settings projection `8/8`, Settings popup `8/8`, assembly boundary `31/31`, and UI Runtime, Composition, and Editor-test builds passed with 0 errors; commit `74f42e192` pushed to `main`.
-- [~] `APH-304` Apply `SettingsService.Load()` through the composition startup path exactly once after required runtime owners exist.
-- [ ] `APH-305` Route settings-change events through composition to `VisualQualitySettingsSystem`; ensure subscriptions are removed on shutdown/domain reload.
+- [x] `APH-304` Apply `SettingsService.Load()` through the composition startup path exactly once after required runtime owners exist.
+  - Result: audio and assistant ECS owners subscribe without independently loading settings; Menu composition defers until both owners exist, then applies persisted settings once per ECS world across repeated `Awake`, `OnEnable`, and `Update` entries.
+  - Validation: settings integration `8/8`, Menu settings/audio smoke passed, Match settings/audio smoke passed at HUD ready, ECS/Burst hot path `10/10`, UI Shell ECS, Composition, and Editor-test builds passed with 0 errors; commit `7c13bf7e7` pushed to `main`.
+- [~] `APH-305` Route settings-change events through composition to `VisualQualitySettingsSystem`; ensure subscriptions are removed on shutdown/domain reload.
 - [ ] `APH-306` Give `VisualQualitySettingsSystem` an explicit apply-on-change API and remove its manual per-frame `Update` call from Match bootstrap.
 - [ ] `APH-307` Split static tier application from dynamic environment application. After initialization, visual-quality code must not overwrite Day/Night sun, ambient, fog, skybox, or volume values every frame.
 - [ ] `APH-308` Add an ownership regression that advances Day/Night, runs visual-quality handling, and proves the Day/Night values remain authoritative.
@@ -1049,6 +1051,21 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Visual result: no visual assets changed
 - Residual risk: the settings panel still authors a common option set; exactly-once startup ownership and event routing remain `APH-304` through `APH-306`
 - Next ready task: `APH-304`
+
+### 2026-07-10 - APH-304 - Exactly-once startup settings routing
+
+- Status: Complete
+- Commit or worktree baseline: `a7d138b29`
+- Stable commit/push: `7c13bf7e7` pushed to `main`
+- Files changed: Menu composition startup routing, audio and assistant settings lifecycle systems, focused startup test, and ECS architecture classification
+- Behavior preserved/changed: ECS projection owners now subscribe without loading independently; composition waits for both owners and applies persisted settings once per ECS world, so repeated Menu lifecycle entries do not duplicate application
+- Validation: `[AudioSettingsUiProjectionValidation] result=Passed tests=8`, Menu and Match `[SettingsAudioRuntimeSmoke] result=Passed`, `[EcsBurstHotPathArchitectureValidation] result=Passed tests=10`; UI Shell ECS, Composition, and Editor-test builds passed with 0 errors; `git diff --check` passed
+- Artifacts: `/private/tmp/aph304-settings-focused-retry.log`, `/private/tmp/aph304-menu-settings-smoke.log`, `/private/tmp/aph304-match-settings-smoke.log`, and `/private/tmp/aph304-ecs-hotpath.log`
+- Metrics before: three startup load/application paths and duplicate Menu `Awake`/`OnEnable` application potential
+- Metrics after: one composition-owned persisted load/application after two required owner systems exist, with repeated lifecycle calls remaining at one runtime event
+- Visual result: no visual assets changed; Menu and Match HUD remained operational through their real smoke routes
+- Residual risk: runtime change subscriptions still live in the ECS lifecycle systems and visual quality is not yet an event target; `APH-305` owns that routing
+- Next ready task: `APH-305`
 
 ### 2026-07-09 - Unity validation timeout reliability
 

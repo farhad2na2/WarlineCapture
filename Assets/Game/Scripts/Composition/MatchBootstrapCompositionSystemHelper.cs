@@ -157,6 +157,9 @@ namespace Game.Composition
         private bool _gameplayStartComplete;
         private bool _managedRuntimeInitialized;
         private bool _visualQualitySettingsInitialized;
+        private bool _runtimeSettingsChangeSubscribed;
+        private bool _hasLatestRuntimeSettings;
+        private UISettingsModel _latestRuntimeSettings;
         private GameplayStartStep _gameplayStartStep;
         private AISettingsSnapshot _pendingAiSettingsSnapshot;
         private AIStartupSystem.Result _pendingAiStartupResult;
@@ -225,7 +228,6 @@ namespace Game.Composition
                 MainMenu,
                 UnitImpostors,
                 ref _gameplayStartPending);
-            _visualQualitySettingsSystem?.Update();
         }
 
         public void OnApplicationFocus(bool hasFocus)
@@ -370,10 +372,17 @@ namespace Game.Composition
         public void Initialize(MatchSceneView view)
         {
             sceneView = view;
+            EnsureRuntimeSettingsChangeSubscription();
+            if (!_hasLatestRuntimeSettings)
+            {
+                _latestRuntimeSettings = SettingsService.Load();
+                _hasLatestRuntimeSettings = true;
+            }
         }
 
         public void Shutdown()
         {
+            ReleaseRuntimeSettingsChangeSubscription();
             InitialUnitsRuntimeState.ResetSession();
             matchIntroStateQuery.Reset();
             sceneView = null;
@@ -835,8 +844,28 @@ namespace Game.Composition
             if (world == null || !world.IsCreated)
                 return null;
 
-            _visualQualitySettingsSystem = world.GetOrCreateSystemManaged<VisualQualitySettingsSystem>();
+            BindVisualQualitySettingsSystem(world.GetOrCreateSystemManaged<VisualQualitySettingsSystem>());
             return _visualQualitySettingsSystem;
+        }
+
+        internal bool IsRuntimeSettingsChangeSubscribed => _runtimeSettingsChangeSubscribed;
+
+        internal void BindVisualQualitySettingsSystem(VisualQualitySettingsSystem system)
+        {
+            _visualQualitySettingsSystem = system;
+            ApplyLatestVisualQualitySettings();
+        }
+
+        internal static VisualQualityRuntimeMode ToVisualQualityRuntimeMode(UIGraphicsQuality quality)
+        {
+            return quality switch
+            {
+                UIGraphicsQuality.Low => VisualQualityRuntimeMode.Low,
+                UIGraphicsQuality.Balanced => VisualQualityRuntimeMode.Medium,
+                UIGraphicsQuality.High => VisualQualityRuntimeMode.High,
+                UIGraphicsQuality.Ultra => VisualQualityRuntimeMode.Ultra,
+                _ => VisualQualityRuntimeMode.High
+            };
         }
 
         private RuntimeRootSceneSystemHelper ResolveRuntimeRootSceneSystemHelper()
@@ -1002,6 +1031,47 @@ namespace Game.Composition
 
             visualQualitySettingsSystem.Initialize(VisualQualityProfile, WorldCamera, DirectionalLight, GlobalVolume);
             _visualQualitySettingsInitialized = true;
+            ApplyLatestVisualQualitySettings();
+        }
+
+        private void EnsureRuntimeSettingsChangeSubscription()
+        {
+            if (_runtimeSettingsChangeSubscribed)
+                return;
+
+            SettingsService.RuntimeApplied += OnRuntimeSettingsApplied;
+            _runtimeSettingsChangeSubscribed = true;
+        }
+
+        private void ReleaseRuntimeSettingsChangeSubscription()
+        {
+            if (!_runtimeSettingsChangeSubscribed)
+                return;
+
+            SettingsService.RuntimeApplied -= OnRuntimeSettingsApplied;
+            _runtimeSettingsChangeSubscribed = false;
+            _hasLatestRuntimeSettings = false;
+            _latestRuntimeSettings = default;
+        }
+
+        private void OnRuntimeSettingsApplied(UISettingsModel settings)
+        {
+            _latestRuntimeSettings = settings;
+            _hasLatestRuntimeSettings = true;
+            ApplyLatestVisualQualitySettings();
+        }
+
+        private void ApplyLatestVisualQualitySettings()
+        {
+            if (!_hasLatestRuntimeSettings ||
+                _visualQualitySettingsSystem == null ||
+                !_visualQualitySettingsSystem.IsInitialized)
+            {
+                return;
+            }
+
+            _visualQualitySettingsSystem.ApplyRuntimeMode(
+                ToVisualQualityRuntimeMode(_latestRuntimeSettings.Graphics.Quality));
         }
 
         private void InitializeStaticMapBatchingIfNeeded()

@@ -48,6 +48,9 @@ namespace Game.Runtime
         private bool _initialized;
         private bool _overrideApplied;
 
+        public bool IsInitialized => _initialized;
+        public VisualQualityRuntimeMode AppliedMode => _appliedMode;
+
         protected override void OnCreate()
         {
             Enabled = false;
@@ -122,12 +125,12 @@ namespace Game.Runtime
             Apply(_premiumProfile != null ? _premiumProfile.RuntimeMode : VisualQualityRuntimeMode.High);
         }
 
-        public new void Update()
+        public void ApplyRuntimeMode(VisualQualityRuntimeMode mode)
         {
             if (!_initialized)
                 return;
 
-            Apply(_premiumProfile != null ? _premiumProfile.RuntimeMode : VisualQualityRuntimeMode.High);
+            Apply(mode);
         }
 
         public void Dispose()

@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using Game.Configs;
+using Game.Composition;
 using Game.Runtime;
 using Game.UI.Runtime;
 using SettingsService = Game.UI.Runtime.SettingsService;
@@ -37,6 +38,8 @@ public sealed class AndroidVisualQualityValidationTests
             RunCase(() => AndroidFrameRatePolicyClampsOneTwentyToSixty(), ref passed);
             RunCase(() => AndroidFrameRatePolicyPreservesThirtyAndSixty(), ref passed);
             RunCase(() => AndroidFrameRatePersistenceMigratesOneTwentyToSixty(), ref passed);
+            RunCase(() => MatchCompositionRoutesVisualQualityChangesAndUnsubscribes(), ref passed);
+            RunCase(() => VisualQualityRoutingRemainsEventDriven(), ref passed);
             Debug.Log($"[AndroidVisualQualityValidation] result=Passed tests={passed}");
         }
         catch (Exception exception)
@@ -273,6 +276,90 @@ public sealed class AndroidVisualQualityValidationTests
         {
             SettingsService.Save(previous);
         }
+    }
+
+    [Test]
+    public static void MatchCompositionRoutesVisualQualityChangesAndUnsubscribes()
+    {
+        UISettingsModel previousSettings = SettingsService.Load();
+        int previousTargetFrameRate = Application.targetFrameRate;
+        int previousQualityLevel = QualitySettings.GetQualityLevel();
+        float previousListenerVolume = AudioListener.volume;
+        VisualQualityProfileAsset profile = ScriptableObject.CreateInstance<VisualQualityProfileAsset>();
+        World world = new("MatchSettingsRoutingValidation");
+        MatchBootstrapCompositionSystemHelper composition = new();
+
+        try
+        {
+            VisualQualitySettingsSystem visualQuality =
+                world.GetOrCreateSystemManaged<VisualQualitySettingsSystem>();
+            MethodInfo initialize = typeof(VisualQualitySettingsSystem).GetMethod(
+                "Initialize",
+                BindingFlags.Instance | BindingFlags.Public);
+            Assert.NotNull(initialize, "VisualQualitySettingsSystem is missing Initialize.");
+            initialize.Invoke(visualQuality, new object[] { profile, null, null, null });
+            composition.Initialize(null);
+            composition.BindVisualQualitySettingsSystem(visualQuality);
+
+            UISettingsModel low = SettingsService.DefaultsForPlatform(isAndroid: true);
+            low.Graphics.Quality = UIGraphicsQuality.Low;
+            SettingsService.PublishRuntimeSettings(low);
+
+            Assert.IsTrue(composition.IsRuntimeSettingsChangeSubscribed);
+            Assert.AreEqual(VisualQualityRuntimeMode.Low, visualQuality.AppliedMode);
+
+            composition.Shutdown();
+            UISettingsModel ultra = low;
+            ultra.Graphics.Quality = UIGraphicsQuality.Ultra;
+            SettingsService.PublishRuntimeSettings(ultra);
+
+            Assert.IsFalse(composition.IsRuntimeSettingsChangeSubscribed);
+            Assert.AreEqual(
+                VisualQualityRuntimeMode.Low,
+                visualQuality.AppliedMode,
+                "Visual quality must stop receiving settings events after composition shutdown.");
+            Assert.AreEqual(VisualQualityRuntimeMode.Medium,
+                MatchBootstrapCompositionSystemHelper.ToVisualQualityRuntimeMode(UIGraphicsQuality.Balanced));
+            Assert.AreEqual(VisualQualityRuntimeMode.High,
+                MatchBootstrapCompositionSystemHelper.ToVisualQualityRuntimeMode(UIGraphicsQuality.High));
+        }
+        finally
+        {
+            composition.Shutdown();
+            world.Dispose();
+            UnityEngine.Object.DestroyImmediate(profile);
+            SettingsService.ApplyRuntime(previousSettings);
+            Application.targetFrameRate = previousTargetFrameRate;
+            if (QualitySettings.names.Length > 0)
+                QualitySettings.SetQualityLevel(previousQualityLevel, true);
+            AudioListener.volume = previousListenerVolume;
+        }
+    }
+
+    [Test]
+    public static void VisualQualityRoutingRemainsEventDriven()
+    {
+        string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+        string compositionSource = File.ReadAllText(Path.Combine(
+            projectRoot,
+            "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs"));
+        string visualQualitySource = File.ReadAllText(Path.Combine(
+            projectRoot,
+            "Assets/Game/Scripts/Systems/VisualQualitySettingsSystem.cs"));
+
+        StringAssert.Contains(
+            "SettingsService.RuntimeApplied += OnRuntimeSettingsApplied",
+            compositionSource);
+        StringAssert.Contains(
+            "SettingsService.RuntimeApplied -= OnRuntimeSettingsApplied",
+            compositionSource);
+        StringAssert.DoesNotContain(
+            "_visualQualitySettingsSystem?.Update()",
+            compositionSource,
+            "Match composition must not poll visual quality every frame.");
+        StringAssert.Contains(
+            "public void ApplyRuntimeMode(VisualQualityRuntimeMode mode)",
+            visualQualitySource);
     }
 }
 #endif

@@ -28,6 +28,12 @@ namespace Game.UI.Runtime
 
         public static event System.Action<UISettingsModel> RuntimeApplied;
 
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetRuntimeAppliedSubscribers()
+        {
+            RuntimeApplied = null;
+        }
+
         public static UISettingsModel Defaults => DefaultsForPlatform(IsAndroidRuntime);
 
         internal static UISettingsModel DefaultsForPlatform(bool isAndroid)
@@ -188,6 +194,11 @@ namespace Game.UI.Runtime
             if (QualitySettings.names.Length > 0)
                 QualitySettings.SetQualityLevel(qualityIndex, true);
 
+            PublishRuntimeSettings(model);
+        }
+
+        internal static void PublishRuntimeSettings(UISettingsModel model)
+        {
             RuntimeApplied?.Invoke(model);
         }
 

@@ -248,16 +248,16 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `34 / 106` |
-| Checklist percent complete | `32.1%` |
-| Checklist in progress | `1 / 106`: `APH-301` |
-| Complete plus active coverage | `35 / 106` (`33.0%`); this is visibility only, not accepted completion |
+| Checklist complete | `37 / 106` |
+| Checklist percent complete | `34.9%` |
+| Checklist in progress | `1 / 106`: `APH-304` |
+| Complete plus active coverage | `38 / 106` (`35.8%`); this is visibility only, not accepted completion |
 | Current phase | Phase 3 - settings, frame-rate, and environment ownership |
-| Current task | `APH-301` prove Android never applies 120 FPS while preserving 30 and 60 FPS |
+| Current task | `APH-304` apply persisted settings exactly once after required runtime owners exist |
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: steady-state Match GC `234,324 / 1,024` bytes; improved 13.0% from the APH-007 baseline without weakening the budget |
-| Last verified commit | `25b50b0bf`; persisted startup settings integration passes |
-| Last update | 2026-07-10 - APH-300 complete; Android frame-rate contract active |
+| Last verified commit | `74f42e192`; Android and desktop frame-rate policy matrix passes |
+| Last update | 2026-07-10 - APH-301 through APH-303 complete; exactly-once startup routing active |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -436,10 +436,14 @@ Target ownership:
 - [x] `APH-300` Add tests proving persisted settings are applied during app startup without opening the settings popup.
   - Result: the real `MenuBootstrapView.Awake` lifecycle loads persisted non-default audio, graphics, frame-rate, accessibility, and assistant values, projects audio and assistant settings through the runtime event bridge, and leaves the popup request buffer and hierarchy empty.
   - Validation: audio/settings startup `7/7`, Settings popup `8/8`, assistant persistence `3/3`, and `Game.Tests.Editor` built with 0 errors; commit `25b50b0bf` pushed to `main`.
-- [~] `APH-301` Add Android tests proving 120 FPS is never applied on Android and 30/60 remain valid.
-- [ ] `APH-302` Add an editor/standalone test preserving 120 FPS where supported.
-- [ ] `APH-303` Change mobile defaults from 120 FPS to 60 FPS and clamp saved legacy 120 FPS values on Android.
-- [ ] `APH-304` Apply `SettingsService.Load()` through the composition startup path exactly once after required runtime owners exist.
+- [x] `APH-301` Add Android tests proving 120 FPS is never applied on Android and 30/60 remain valid.
+  - Result: one shared policy normalizes Android 120 FPS requests to 60 before target-frame-rate application and runtime event publication; 30 and 60 remain unchanged.
+- [x] `APH-302` Add an editor/standalone test preserving 120 FPS where supported.
+  - Result: non-Android defaults, normalization, and target resolution preserve the 120 FPS mode and target.
+- [x] `APH-303` Change mobile defaults from 120 FPS to 60 FPS and clamp saved legacy 120 FPS values on Android.
+  - Result: platform-aware defaults, load, save, and apply paths all use the same normalization policy; Android saves migrate 120 to 60 while non-Android persistence remains unchanged.
+  - Validation: Android visual/frame-rate `8/8`, desktop/settings projection `8/8`, Settings popup `8/8`, assembly boundary `31/31`, and UI Runtime, Composition, and Editor-test builds passed with 0 errors; commit `74f42e192` pushed to `main`.
+- [~] `APH-304` Apply `SettingsService.Load()` through the composition startup path exactly once after required runtime owners exist.
 - [ ] `APH-305` Route settings-change events through composition to `VisualQualitySettingsSystem`; ensure subscriptions are removed on shutdown/domain reload.
 - [ ] `APH-306` Give `VisualQualitySettingsSystem` an explicit apply-on-change API and remove its manual per-frame `Update` call from Match bootstrap.
 - [ ] `APH-307` Split static tier application from dynamic environment application. After initialization, visual-quality code must not overwrite Day/Night sun, ambient, fog, skybox, or volume values every frame.
@@ -1030,6 +1034,21 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Visual result: no visual assets changed; the test explicitly proves the popup hierarchy remains absent
 - Residual risk: `Awake` and `OnEnable` can both enter initialization; exactly-once startup application remains owned by `APH-304`
 - Next ready task: `APH-301`
+
+### 2026-07-10 - APH-301 through APH-303 - Platform frame-rate policy
+
+- Status: Complete
+- Commit or worktree baseline: `082241010`
+- Stable commit/push: `74f42e192` pushed to `main`
+- Files changed: `SettingsService`, Android visual-quality validation, and audio/settings projection validation
+- Behavior preserved/changed: Android defaults to 60 FPS, preserves 30/60, and normalizes direct or persisted 120 requests to 60 before application and event publication; Editor/standalone behavior retains 120 FPS support
+- Validation: `[AndroidVisualQualityValidation] result=Passed tests=8`, `[AudioSettingsUiProjectionValidation] result=Passed tests=8`, `[SettingsPopupValidation] result=Passed tests=8`, `[ScriptArchitectureBoundaryValidation] result=Passed tests=31`; UI Runtime, Composition, and Editor-test builds passed with 0 errors; `git diff --check` passed
+- Artifacts: `/private/tmp/aph301-303-android-frame-rate.log`, `/private/tmp/aph302-desktop-frame-rate.log`, `/private/tmp/aph301-303-settings-popup.log`, and `/private/tmp/aph301-303-assembly-boundary.log`
+- Metrics before: Android startup initially set 60, but later Settings application could publish and apply 120; mobile defaults and saved values also retained 120
+- Metrics after: Android target set is `{30, 60}` with default 60 and no 120 event payload; non-Android target set remains `{30, 60, 120}`
+- Visual result: no visual assets changed
+- Residual risk: the settings panel still authors a common option set; exactly-once startup ownership and event routing remain `APH-304` through `APH-306`
+- Next ready task: `APH-304`
 
 ### 2026-07-09 - Unity validation timeout reliability
 

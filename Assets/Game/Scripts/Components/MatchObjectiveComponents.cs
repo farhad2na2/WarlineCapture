@@ -22,7 +22,8 @@ namespace Game.Components
         public byte MatchActive;
     }
 
-    [InternalBufferCapacity(3)]
+    // Objectives share the UI shell boundary with the assistant read models.
+    [InternalBufferCapacity(0)]
     public struct MatchObjectiveRuntimeElement : IBufferElementData
     {
         public int GoalId;

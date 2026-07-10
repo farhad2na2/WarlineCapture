@@ -5,13 +5,13 @@ Source: `Game.Editor.MatchRuntimeShellSmokeValidation.RunPerformanceRegressionBa
 | Metric | Value |
 |---|---:|
 | Observation seconds | 4.00 |
-| Frame count | 1173 |
-| Average frame ms | 3.42 |
-| P95 frame ms | 5.22 |
+| Frame count | 1613 |
+| Average frame ms | 2.49 |
+| P95 frame ms | 3.82 |
 | Editor P95 frame budget ms | 50.00 |
 | Editor P95 frame budget passed | yes |
-| P99 frame ms | 6.87 |
-| Max frame ms | 18.13 |
+| P99 frame ms | 5.83 |
+| Max frame ms | 14.52 |
 | Current-thread allocated bytes | 0 |
 | Current-thread allocation budget bytes | 0 |
 | Units | 733 |

@@ -37,6 +37,8 @@ public sealed class AssistantReadModelSystemTests
             passed++;
             RunCase(test => test.AssistantGoalReadModelSystem_PreStartClearsGoals());
             passed++;
+            RunCase(test => test.AssistantBoundary_FitsFullUiShellArchetype());
+            passed++;
 
             Debug.Log($"[AssistantReadModelValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -268,6 +270,30 @@ public sealed class AssistantReadModelSystemTests
         _goalSystem.Update(_world.Unmanaged);
 
         Assert.AreEqual(0, _entityManager.GetBuffer<AssistantGoalReadModelElement>(boundary).Length);
+    }
+
+    [Test]
+    public void AssistantBoundary_FitsFullUiShellArchetype()
+    {
+        _world.CreateSystem<UiShellStateSystem>();
+        using EntityQuery boundaryQuery =
+            _entityManager.CreateEntityQuery(ComponentType.ReadOnly<UiShellRootComponent>());
+        Entity boundary = boundaryQuery.GetSingletonEntity();
+
+        Assert.DoesNotThrow(() => _goalSystem.Update(_world.Unmanaged));
+        SystemHandle narrationSystem = _world.CreateSystem<AssistantNarrationRequestSystem>();
+        Assert.DoesNotThrow(() => narrationSystem.Update(_world.Unmanaged));
+
+        Assert.IsTrue(_entityManager.HasBuffer<MatchObjectiveRuntimeElement>(boundary));
+        Assert.IsTrue(_entityManager.HasBuffer<AssistantGoalReadModelElement>(boundary));
+        Assert.IsTrue(_entityManager.HasBuffer<AssistantRecommendationElement>(boundary));
+        Assert.IsTrue(_entityManager.HasBuffer<AssistantThreatReadModelElement>(boundary));
+        Assert.IsTrue(_entityManager.HasBuffer<AssistantMessageElement>(boundary));
+        Assert.IsTrue(_entityManager.HasBuffer<AssistantNarrationRequestElement>(boundary));
+        Assert.IsTrue(_entityManager.HasBuffer<AssistantPreviewHighlightElement>(boundary));
+        Assert.IsTrue(_entityManager.HasBuffer<AssistantCommandIntentRequestElement>(boundary));
+        Assert.IsTrue(_entityManager.HasBuffer<AssistantCommandIntentResultElement>(boundary));
+        Assert.IsTrue(_entityManager.HasBuffer<AssistantCommandDispatchElement>(boundary));
     }
 
     private Entity CreateBoundary(bool withMission, bool matchStarted = true)

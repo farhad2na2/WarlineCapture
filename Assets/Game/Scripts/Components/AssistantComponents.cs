@@ -214,7 +214,8 @@ namespace Game.Components
         public byte HighContrastEnabled;
     }
 
-    [InternalBufferCapacity(3)]
+    // The UI shell boundary already owns many components. Keep large ARIA rows outside its chunk.
+    [InternalBufferCapacity(0)]
     public struct AssistantGoalReadModelElement : IBufferElementData
     {
         public int GoalId;
@@ -232,7 +233,7 @@ namespace Game.Components
         public byte HasWorldPosition;
     }
 
-    [InternalBufferCapacity(1)]
+    [InternalBufferCapacity(0)]
     public struct AssistantRecommendationElement : IBufferElementData
     {
         public int RecommendationId;
@@ -256,7 +257,7 @@ namespace Game.Components
         public byte CanTakeControl;
     }
 
-    [InternalBufferCapacity(8)]
+    [InternalBufferCapacity(0)]
     public struct AssistantMessageElement : IBufferElementData
     {
         public int MessageId;
@@ -272,7 +273,7 @@ namespace Game.Components
         public byte Acknowledged;
     }
 
-    [InternalBufferCapacity(8)]
+    [InternalBufferCapacity(0)]
     public struct AssistantNarrationRequestElement : IBufferElementData
     {
         public int RequestId;
@@ -287,7 +288,7 @@ namespace Game.Components
         public byte InterruptsLowerPriority;
     }
 
-    [InternalBufferCapacity(4)]
+    [InternalBufferCapacity(0)]
     public struct AssistantCommandIntentRequestElement : IBufferElementData
     {
         public int RequestId;
@@ -304,7 +305,7 @@ namespace Game.Components
         public byte FromTakeover;
     }
 
-    [InternalBufferCapacity(8)]
+    [InternalBufferCapacity(0)]
     public struct AssistantCommandIntentResultElement : IBufferElementData
     {
         public int RequestId;
@@ -321,7 +322,7 @@ namespace Game.Components
         public FixedString64Bytes Message;
     }
 
-    [InternalBufferCapacity(1)]
+    [InternalBufferCapacity(0)]
     public struct AssistantPreviewHighlightElement : IBufferElementData
     {
         public int RequestId;
@@ -336,7 +337,7 @@ namespace Game.Components
         public byte Active;
     }
 
-    [InternalBufferCapacity(4)]
+    [InternalBufferCapacity(0)]
     public struct AssistantThreatReadModelElement : IBufferElementData
     {
         public int ThreatId;
@@ -394,7 +395,7 @@ namespace Game.Components
         public FixedString128Bytes Reason;
     }
 
-    [InternalBufferCapacity(4)]
+    [InternalBufferCapacity(0)]
     public struct AssistantCommandDispatchElement : IBufferElementData
     {
         public int AssistantRequestId;

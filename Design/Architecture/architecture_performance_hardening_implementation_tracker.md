@@ -215,6 +215,9 @@ The program is complete only when all of the following are true:
 | `D-016` | `APH-006`, `APH-007`, and the non-Unity portion of `APH-008` may begin in parallel. `APH-009` waits for accepted `APH-007` and `APH-008` evidence. |
 | `D-017` | Each accepted implementation slice is committed and pushed by the coordinator only after relevant builds, focused tests, diff checks, and compiler-error checks pass. Known-broken or unrelated work is never included. |
 | `D-018` | `APH-007` accepts a reproducible baseline capture even when that baseline exposes a red GC budget. The 1,024-byte budget is not weakened; measured allocation owners become mandatory remediation input for Phases 7-9. |
+| `D-019` | Reject direct 96 m and 32 m transient Match mesh-combine output. Phase 6 uses shared-mesh, overlay-safe presentation chunks and measured GPU culling instead. |
+| `D-020` | APH-701/702 freeze the verified `9280ead85` baseline of 265 helper paths, 108 production files above 500 lines, and 27 production files above 1,000 lines. Shrinkage passes; additions or growth require an exact tracker task and Decision Log exception. |
+| `D-021` | Static-map structural parity keeps object/asset/state identity exact while allowing only Unity serialization precision of `0.0005` for transforms and `0.005` for derived world bounds. |
 
 ## Phase Dependency Order
 
@@ -248,17 +251,17 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `52 / 106` |
-| Checklist percent complete | `49.1%` |
+| Checklist complete | `58 / 106` |
+| Checklist percent complete | `54.7%` |
 | Checklist in progress | `2 / 106`: `APH-311`, `APH-601` |
-| Complete plus active coverage | `54 / 106` (`50.9%`); this is visibility only, not accepted completion |
-| Current phase | Phase 3 Android device evidence plus Phase 6 shared-mesh presentation baking |
-| Current task | `APH-603` is complete; `APH-604` is the next Phase 6 slice for deterministic rebake and manifest-owned stale cleanup; `APH-601` and `APH-311` retain measurement/device ownership |
+| Complete plus active coverage | `60 / 106` (`56.6%`); this is visibility only, not accepted completion |
+| Current phase | Phase 3 Android device evidence, Phase 6 shared-mesh presentation baking, plus dependency-ready Phase 7 analysis |
+| Current task | `APH-606` is the next dependency-ready static-map integration task; `APH-601` and `APH-311` retain measurement/device ownership |
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: steady-state Match GC `234,324 / 1,024` bytes; improved 13.0% from the APH-007 baseline without weakening the budget |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
-| Last verified commit | `9e80c0f1d`; APH-603 shared-mesh additive presentation scenes and ownership manifest pass compile, structural, and focused Android validation |
-| Last update | 2026-07-10 - APH-603 generated 17,564 shared-renderer sources across 525 additive scenes with zero mesh/material duplication |
+| Last verified commit | `9280ead85`; current APH-604/605 and APH-700/701/702 acceptance slice is validated locally and pending coordinated commit/push |
+| Last update | 2026-07-10 - APH-604/605 and APH-700/701/702 passed independent review, zero-error compile, and focused Unity acceptance gates |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -543,8 +546,10 @@ Quality lock:
 - [x] `APH-603` Build an editor baker that writes additive shared-mesh presentation scenes under `Assets/Game/GeneratedStaticMapPresentation/` with a manifest containing source object IDs, source dependency hashes, chunk bounds, scene paths, and shared mesh/material IDs.
   - Result: the editor-only baker generated `17,564` shared-renderer source entries across `525` deterministic 32 m additive scenes and a schema-versioned manifest with canonical dependency hash, content hash, chunk bounds/paths, GlobalObjectIds, per-source hashes, and shared mesh/material GUID/local IDs.
   - Validation: Android visual/import `12/12`, runtime/editor .NET builds, Unity compilation, canonical-scene cleanliness, and full generated-output component/asset scans passed. Generated output is `63 MB`, contains zero embedded/generated mesh or material assets, zero colliders/scripts/prefab instances/static-batch flags, and zero duplicate source IDs. Evidence: `Design/AgentReports/2026-07-10_aph-603_static_map_presentation_bake.md`.
-- [ ] `APH-604` Add deterministic rebake and stale-output cleanup tests. Never delete output not listed in the manifest.
-- [ ] `APH-605` Add structural validation for source/chunk bijection, unchanged transforms, shared mesh/material identity, lightmap data, layers, shadows, probes, bounds, and an explicit zero-collider/zero-gameplay-script chunk contract.
+- [x] `APH-604` Add deterministic rebake and stale-output cleanup tests. Never delete output not listed in the manifest.
+  - Result: direct-dependency provenance prunes generated branches transitively; layer changes affect source identity; a SHA-256 scene/meta integrity ledger rejects stale or corrupted output; manifest-owned writes/deletes are journaled and rolled back on failure; disk-present owned scenes cannot be orphaned by stale AssetDatabase state. Unity ownership tests pass `23/23`, the real AssetDatabase delete/rollback/GUID restoration test passes `1/1`, and the post-migration identical bake reused all `525` scenes with `scenesWritten=0` and `staleScenesDeleted=0`.
+- [x] `APH-605` Add structural validation for source/chunk bijection, unchanged transforms, shared mesh/material identity, lightmap data, layers, shadows, probes, bounds, and an explicit zero-collider/zero-gameplay-script chunk contract.
+  - Result: the exhaustive Unity validation passed `2/2` in `658.45 s`, proving the manifest/source/chunk bijection and full parity for all `17,564` renderers across `525` scenes, including transforms, assets, materials, renderer/lightmap/probe state, bounds, layers, and zero collider/MonoBehaviour presentation contracts.
 - [ ] `APH-606` Add a serialized presentation-manifest reference to `MatchSceneView` or an equivalent composition-owned config, and include every generated chunk scene in Android builds. Do not add a `GameObject.Find` fallback.
 - [ ] `APH-607` Add a managed presentation streamer that preloads the camera footprint plus one ring before Match-ready, then loads/unloads with hysteresis and one bounded operation queue. Unload every presentation chunk before unloading Match.
 - [ ] `APH-608` Enable Unity 6 GPU Resident Drawer `InstancedDrawing` for the Mobile URP asset, retain BRG shader variants, disable Android static batching, and preserve a measured fallback for incompatible renderers. Do not add a new gameplay `ISystem` or `SystemBase` owner.
@@ -566,10 +571,14 @@ Priority order:
 
 The `APH-007` raw-metadata GC report is mandatory measured input for this phase. Its recurring scene-root, helper-construction, transport, UI shell, selection, command-query, audio, road, and pathfinding allocation owners must be removed or explicitly reassigned to another tracker task before `APH-711` can pass.
 
-- [ ] `APH-700` Add a generated domain dependency report listing every first-party assembly edge and top cross-domain type references.
-- [ ] `APH-701` Freeze new `*SystemHelper` and `*CompositionSystemHelper` files unless the architecture guard contains an approved task ID from this tracker.
-- [ ] `APH-702` Add a size guard for new or growing production files: review required above 500 lines; no existing file above 1,000 lines may grow without an explicit tracker exception.
-- [ ] `APH-703` Inventory `World.DefaultGameObjectInjectionWorld` runtime call sites and the recurring `APH-007` allocation owners; classify composition edge, authoring/debug, presentation edge, hidden service-locator debt, or unrelated allocation debt.
+- [x] `APH-700` Add a generated domain dependency report listing every first-party assembly edge and top cross-domain type references.
+  - Result: fail-closed deterministic JSON/Markdown reports cover 18 assemblies, all 79 first-party edges, 82 external declarations, 1,132 owned source files, 2,462 visible types, and 29,641 resolved cross-domain occurrences. Context-aware scanning rejects comparison/member false positives while covering nested types/generics, casts, attributes, base lists, and using declarations; missing/stale reports and unsupported `.asmref` fail closed. Independent review found no remaining issue and Unity tests pass `7/7`.
+- [x] `APH-701` Freeze new `*SystemHelper` and `*CompositionSystemHelper` files unless the architecture guard contains an approved task ID from this tracker.
+  - Result: all 265 helper paths have exact line/byte ceilings and historical shrink/delete/recreation ratchets. Exceptions require one exact path, scope, line/byte ceiling, tracker task, decision ID, and unique marker in the canonical five-column Decision Log. Case, duplicate-property, malformed-history, and binary-numstat bypasses fail closed.
+- [x] `APH-702` Add a size guard for new or growing production files: review required above 500 lines; no existing file above 1,000 lines may grow without an explicit tracker exception.
+  - Result: all 108 reviewed production paths, including the 27 paths above 1,000 lines, have immutable line and byte ceilings that ratchet after accepted shrinkage and retirement. Jenkins performs a full-history/full-blob sparse clone including `Design`, runs EditMode unconditionally, and rejects missing, malformed, zero-test, incomplete, or failed results. The combined Unity guard passes `15/15`.
+- [x] `APH-703` Inventory `World.DefaultGameObjectInjectionWorld` runtime call sites and the recurring `APH-007` allocation owners; classify composition edge, authoring/debug, presentation edge, hidden service-locator debt, or unrelated allocation debt.
+  - Result: the accepted source inventory records 91 call sites across 44 runtime files as 37 composition edges, 24 presentation edges, 21 authoring/debug sites, and 9 hidden service-locator debts. It also maps all 13 recurring APH-007 owner methods covering 204,480 bytes / 75.9% of captured GC to explicit remediation tasks. Independent review reproduced every count and found no source-call-site overlap between the world-lookup set and allocation-owner set. Evidence: `Design/AgentReports/2026-07-10_aph-703_default-world-and-gc-owner-inventory.md`.
 - [ ] `APH-704` Design and benchmark a shared read-only unit spatial index for building defense, AI targeting, threat detection, and selection candidates. Adopt it only when it beats the Phase 2 direct-query baseline and preserves results.
 - [ ] `APH-705` Extract combat contracts/data required for a future `Game.Runtime.Combat` assembly without introducing a dependency cycle.
 - [ ] `APH-706` Split one cohesive combat slice and pass the full assembly boundary/build/test matrix before opening another domain split.
@@ -1219,6 +1228,62 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Residual risk: no release APK/AAB evidence exists yet; both long-running builds and report review are required before completion
 - Next ready task: run the release APK and AAB build commands from commit `671a009aa` or later
 
+### 2026-07-10 - APH-604 - Deterministic rebake and manifest-owned cleanup
+
+- Status: Complete
+- Commit or worktree baseline: `9280ead85`
+- Stable commit/push: pending coordinated stable-slice commit
+- Files changed: static-map editor baker, canonical source hash, output ownership utility, focused ownership tests, generated manifest provenance/content hashes, and evidence report
+- Behavior preserved/changed: canonical Match and generated scene content are unchanged; identical rebakes skip all scene writes, and stale cleanup can target only validated scene paths captured from the prior manifest
+- Validation: Unity ownership/reuse tests `23/23`; real AssetDatabase rollback/GUID restoration `1/1`; migration bake passed; identical rebake reported `reusedScenes=1 scenesWritten=0 staleScenesDeleted=0`; exhaustive APH-605 structural parity passed `2/2` in `658.45 s`; editor assemblies build with zero errors
+- Artifacts: `/private/tmp/warline-aph604-ownership-escalated.xml`, `/private/tmp/warline-aph604-rollback-integration-rerun-escalated.xml`, `/private/tmp/warline-aph604-migration-bake-escalated.log`, `/private/tmp/warline-aph604-identical-reuse-escalated.log`, `/private/tmp/warline-aph605-structural-final-escalated.xml`, and `Design/AgentReports/2026-07-10_aph-604_deterministic_rebake_and_cleanup.md`
+- Metrics before: identical full bake rewrote 525 scenes and churned 312,777 inserted/deleted YAML lines because generated object file IDs changed
+- Metrics after: one integrity/layer migration wrote 525 scenes and content hash `393591d2855b764bce260888e6f5fa20`; the identical follow-up reused 525/525 scenes with zero writes and zero stale deletions
+- Visual result: Not applicable; no runtime loading or scene content changed
+- Residual risk: abrupt editor termination or power loss cannot invoke in-process rollback; runtime manifest ownership/build inclusion and streaming remain APH-606/607
+- Next ready task: `APH-606`
+
+### 2026-07-10 - APH-605 - Full static-map structural parity
+
+- Status: Complete
+- Commit or worktree baseline: APH-604 migrated output at content hash `393591d2855b764bce260888e6f5fa20`
+- Stable commit/push: pending coordinated stable-slice commit
+- Behavior preserved/changed: validation only; transform and bounds comparisons use the accepted D-021 serialization tolerances while identity/state/component contracts remain exact
+- Validation: `StaticMapPresentationStructuralValidationTests` passed `2/2` over 17,564 renderers and 525 additive scenes in `658.45 s`
+- Artifact: `/private/tmp/warline-aph605-structural-final-escalated.xml`
+- Residual risk: runtime chunk loading and Android build inclusion are not part of APH-605 and remain APH-606/607
+- Next ready task: `APH-606`
+
+### 2026-07-10 - APH-700 through APH-702 - Dependency report and source growth guards
+
+- Status: Complete
+- Commit or worktree baseline: `9280ead85`
+- Stable commit/push: pending coordinated stable-slice commit
+- Files changed: APH-700 generator/scanner/models/tests and deterministic JSON/Markdown reports; APH-701/702 baseline manifest and focused architecture tests
+- Behavior preserved/changed: editor/test architecture tooling only; no runtime, scene, prefab, config, or visual behavior changed
+- Validation: independent reviews closed all scanner, freshness, exception, ratchet, malformed-input, and Jenkins findings; APH-700 Unity tests passed `7/7`; APH-701/702 Unity tests passed `15/15`; Game Editor and Editor-test builds pass with zero errors
+- Artifacts: `Design/AgentReports/2026-07-10_aph-700_first_party_assembly_dependencies.json`, matching Markdown report, and `Design/Architecture/production_source_growth_baseline.md`
+- Metrics before: no complete assembly-edge/type-reference report; helper and oversized-file debt was not frozen globally
+- Metrics after: 18 assemblies, 79 first-party edges, 1,132 owned source files, 2,462 visible types, 29,641 resolved cross-domain occurrences, 265 frozen helper paths, 108 reviewed files above 500 lines, and 27 strict no-growth files above 1,000 lines
+- Visual result: Not applicable
+- Residual risk: APH-700 remains a context-aware lexical report rather than a compiler semantic-symbol graph; Jenkins PowerShell behavior is contract-tested locally but still awaits the next Windows agent execution
+- Next ready task: `APH-704` remains a measured prototype and must not enter production without its adoption gates
+
+### 2026-07-10 - APH-703 - Default-world and recurring GC-owner inventory
+
+- Status: Complete
+- Commit or worktree baseline: `9280ead85`
+- Stable commit/push: pending coordinated stable-slice commit
+- Files changed: `Design/AgentReports/2026-07-10_aph-703_default-world-and-gc-owner-inventory.md`
+- Behavior preserved/changed: analysis only; no runtime, scene, prefab, config, or asset behavior changed
+- Validation: independent source recount reproduced 91 occurrences across 44 files, all CE/PE/AD/HSL classification totals, and all 13 APH-007 owners totaling 204,480 bytes / 3,676 samples; no findings
+- Artifacts: `Design/AgentReports/2026-07-10_aph-703_default-world-and-gc-owner-inventory.md`
+- Metrics before: recurring lookup and allocation ownership was distributed across source and raw profiler metadata
+- Metrics after: 9 hidden service-locator sites and 13 recurring allocation owners have explicit remediation ownership for APH-707 through APH-710
+- Visual result: Not applicable
+- Residual risk: source classification does not remove the debt; APH-710 and domain decomposition tasks must eliminate or explicitly retain each owner before APH-711
+- Next ready task: `APH-710` remediation remains gated by the relevant domain slices
+
 ### 2026-07-10 - APH-603 - Shared-mesh additive presentation baker
 
 - Status: Complete
@@ -1273,3 +1338,5 @@ Append approved deviations here. Do not silently alter Fixed Architecture Decisi
 | 2026-07-09 | `D-017` | Commit and push each accepted implementation slice only after the stable integration gate passes | Keep `main` usable throughout the program and prevent broken or unrelated work from entering task commits | User direction and Stable Integration and Push Gate |
 | 2026-07-09 | `D-018` | Accept `APH-007` as a reproducible baseline while keeping its 1,024-byte GC gate red and unchanged | Baseline capture must freeze measured debt before optimization; requiring a green result would optimize before establishing the baseline | Raw-sample metadata report, 16 focused tests, and coordinator review |
 | 2026-07-10 | `D-019` | Reject direct 96 m and 32 m transient Match mesh-combine output; retain the canonical scene and require shared-mesh/overlay-safe presentation chunks plus measured GPU culling work for Phase 6 | Direct combination solved preload but duplicated roughly 9.5-9.8M vertices, increased generated payload, removed possible overlay source filters, and remained GPU-bound at 41-50 FPS | APH-311/APH-601 Android reports, live 32 m diagnostics, and two independent architecture handoffs |
+| 2026-07-10 | `D-020` | Freeze 265 helper paths, review-baseline 108 production files above 500 lines, and apply strict ceilings to 27 files above 1,000 lines at baseline `9280ead85` | New helper/large-file debt must fail by exact path while deletion and shrinkage remain encouraged | APH-701/702 baseline manifest and focused `5/5` validation |
+| 2026-07-10 | `D-021` | Compare static-map serialized transforms at `0.0005` and derived world bounds at `0.005`, while retaining exact source/asset/layer/lightmap/shadow/probe/component identity | Unity YAML round-trips change floating values below visible precision; bit equality produced 26,010 false positives without indicating visual or structural drift | APH-605 full parity run and retained exact structural contracts |

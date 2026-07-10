@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Game.Authoring;
@@ -41,8 +42,15 @@ namespace Game.Editor
             public Vector3 WorldPosition;
             public Quaternion WorldRotation;
             public Vector3 WorldScale;
+            public int Layer;
             public bool OverlaySource;
             public ChunkKey Chunk;
+        }
+
+        private sealed class ChunkDescriptor
+        {
+            public ChunkKey Key;
+            public List<SourceDescriptor> Sources;
         }
 
         private readonly struct ChunkKey : IEquatable<ChunkKey>, IComparable<ChunkKey>
@@ -110,10 +118,36 @@ namespace Game.Editor
             }
         }
 
+        public static void ProbeManifestOwnership()
+        {
+            StaticMapPresentationManifest manifest = LoadExistingManifest();
+            Debug.LogFormat(
+                LogType.Log,
+                LogOption.NoStacktrace,
+                null,
+                "[StaticMapPresentationManifestProbe] result=Passed loaded={0} chunks={1} contentHash={2}",
+                manifest != null ? 1 : 0,
+                manifest != null ? manifest.Chunks.Count : 0,
+                manifest != null ? manifest.ContentHash : "<none>");
+        }
+
         private static void BakeInternal()
         {
             EnsureAssetFolder(OutputRoot);
             EnsureAssetFolder(SceneOutputFolder);
+
+            StaticMapPresentationManifest existingManifest = LoadExistingManifest();
+            int previousSchemaVersion = existingManifest != null ? existingManifest.SchemaVersion : 0;
+            string previousCanonicalScenePath = existingManifest != null
+                ? existingManifest.CanonicalScenePath
+                : string.Empty;
+            float previousChunkSize = existingManifest != null ? existingManifest.ChunkSize : 0f;
+            string[] previousOwnedScenePaths =
+                StaticMapPresentationOutputOwnership.CaptureOwnedScenePaths(existingManifest);
+            string previousContentHash = existingManifest != null
+                ? BuildContentHash(existingManifest.Chunks, existingManifest.Sources)
+                : string.Empty;
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
 
             Scene sourceScene = EditorSceneManager.OpenScene(CanonicalMatchScenePath, OpenSceneMode.Single);
             MatchSceneView matchScene = FindMatchSceneView(sourceScene);
@@ -133,35 +167,131 @@ namespace Game.Editor
 
             List<StaticMapPresentationChunkEntry> chunkEntries = new();
             List<StaticMapPresentationSourceEntry> sourceEntries = new(sources.Count);
-            foreach (IGrouping<ChunkKey, SourceDescriptor> group in sources.GroupBy(source => source.Chunk).OrderBy(group => group.Key))
+            List<ChunkDescriptor> chunks = sources
+                .GroupBy(source => source.Chunk)
+                .OrderBy(group => group.Key)
+                .Select(group => new ChunkDescriptor
+                {
+                    Key = group.Key,
+                    Sources = group.ToList()
+                })
+                .ToList();
+            for (int i = 0; i < chunks.Count; i++)
             {
-                CreateChunkScene(sourceScene, group.Key, group.ToList(), chunkEntries, sourceEntries);
+                AddManifestEntries(chunks[i], chunkEntries, sourceEntries);
             }
 
-            string canonicalHash = AssetDatabase.GetAssetDependencyHash(CanonicalMatchScenePath).ToString();
-            string contentHash = BuildContentHash(canonicalHash, chunkEntries, sourceEntries);
-            StaticMapPresentationManifest manifest = AssetDatabase.LoadAssetAtPath<StaticMapPresentationManifest>(ManifestPath);
-            if (manifest == null)
-            {
-                manifest = ScriptableObject.CreateInstance<StaticMapPresentationManifest>();
-                AssetDatabase.CreateAsset(manifest, ManifestPath);
-            }
-
-            manifest.EditorSetData(
+            string canonicalHash = StaticMapPresentationCanonicalSourceHash.Compute(CanonicalMatchScenePath);
+            string contentHash = BuildContentHash(chunkEntries, sourceEntries);
+            string[] expectedScenePaths = chunkEntries.Select(chunk => chunk.ScenePath).ToArray();
+            string projectRoot = RequireProjectRoot();
+            bool integrityReady = StaticMapPresentationSceneIntegrity.TryLoadAndValidate(
+                projectRoot,
+                contentHash,
+                expectedScenePaths,
+                out StaticMapPresentationSceneIntegrity existingIntegrity,
+                out string integrityRejectionReason);
+            bool reusedScenes = StaticMapPresentationOutputOwnership.CanReuseExpectedScenes(
+                previousSchemaVersion,
+                previousCanonicalScenePath,
+                previousChunkSize,
+                previousContentHash,
                 CanonicalMatchScenePath,
-                canonicalHash,
                 ChunkSize,
                 contentHash,
-                chunkEntries,
-                sourceEntries);
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+                previousOwnedScenePaths,
+                expectedScenePaths,
+                path => integrityReady &&
+                        AssetDatabase.LoadAssetAtPath<SceneAsset>(path) != null &&
+                        existingIntegrity.IsSceneFileValid(path),
+                out string reuseRejectionReason);
+            if (!reusedScenes && reuseRejectionReason.StartsWith("owned-scene-integrity-invalid:", StringComparison.Ordinal))
+                reuseRejectionReason = integrityRejectionReason;
+
+            int scenesWritten = 0;
+            int staleScenesDeleted = 0;
+            IEnumerable<string> mutableAssetPaths = reusedScenes
+                ? new[] { ManifestPath }
+                : previousOwnedScenePaths
+                    .Concat(expectedScenePaths)
+                    .Append(ManifestPath)
+                    .Append(StaticMapPresentationSceneIntegrity.IntegrityAssetPath);
+            using StaticMapPresentationBakeTransaction transaction =
+                StaticMapPresentationBakeTransaction.Begin(projectRoot, mutableAssetPaths);
+            try
+            {
+                if (!reusedScenes)
+                {
+                    Debug.LogFormat(
+                        LogType.Log,
+                        LogOption.NoStacktrace,
+                        null,
+                        "[StaticMapPresentationBakeReuse] result=Regenerate reason={0} chunks={1} previousContentHash={2} expectedContentHash={3}",
+                        reuseRejectionReason,
+                        chunks.Count,
+                        previousContentHash,
+                        contentHash);
+                    for (int i = 0; i < chunks.Count; i++)
+                    {
+                        CreateChunkScene(sourceScene, chunks[i]);
+                        scenesWritten++;
+                    }
+
+                    staleScenesDeleted = StaticMapPresentationOutputOwnership.DeleteStaleSceneAssets(
+                        previousOwnedScenePaths,
+                        expectedScenePaths,
+                        AssetExists,
+                        PhysicalAssetExists,
+                        AssetDatabase.DeleteAsset,
+                        DeletePhysicalOwnedAsset);
+                    StaticMapPresentationSceneIntegrity.Write(projectRoot, contentHash, expectedScenePaths);
+                    AssetDatabase.ImportAsset(
+                        StaticMapPresentationSceneIntegrity.IntegrityAssetPath,
+                        ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.ForceUpdate);
+                }
+
+                StaticMapPresentationManifest manifest = LoadExistingManifest();
+                if (manifest == null)
+                {
+                    manifest = ScriptableObject.CreateInstance<StaticMapPresentationManifest>();
+                    AssetDatabase.CreateAsset(manifest, ManifestPath);
+                }
+
+                manifest.EditorSetData(
+                    CanonicalMatchScenePath,
+                    canonicalHash,
+                    ChunkSize,
+                    contentHash,
+                    chunkEntries,
+                    sourceEntries);
+                AssetDatabase.SaveAssetIfDirty(manifest);
+                AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+                transaction.Commit();
+            }
+            catch (Exception bakeException)
+            {
+                try
+                {
+                    transaction.Rollback();
+                    AssetDatabase.Refresh(
+                        ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.ForceUpdate);
+                }
+                catch (Exception rollbackException)
+                {
+                    throw new AggregateException(
+                        "Static map presentation bake failed and rollback did not complete.",
+                        bakeException,
+                        rollbackException);
+                }
+
+                throw;
+            }
 
             Debug.LogFormat(
                 LogType.Log,
                 LogOption.NoStacktrace,
                 null,
-                "[StaticMapPresentationBake] result=Passed sources={0} chunks={1} scanned={2} overlaySources={3} excludedAuthoring={4} excludedLod={5} excludedPropertyBlock={6} excludedProbe={7} excludedAssetIdentity={8} excludedMaterial={9} excludedTransform={10} excludedOther={11} manifest={12} contentHash={13}",
+                "[StaticMapPresentationBake] result=Passed sources={0} chunks={1} scanned={2} overlaySources={3} excludedAuthoring={4} excludedLod={5} excludedPropertyBlock={6} excludedProbe={7} excludedAssetIdentity={8} excludedMaterial={9} excludedTransform={10} excludedOther={11} manifest={12} contentHash={13} reusedScenes={14} scenesWritten={15} staleScenesDeleted={16} reuseRejectionReason={17}",
                 stats.Included,
                 chunkEntries.Count,
                 stats.Scanned,
@@ -175,7 +305,11 @@ namespace Game.Editor
                 stats.ExcludedTransform,
                 stats.ExcludedOther,
                 ManifestPath,
-                contentHash);
+                contentHash,
+                reusedScenes ? 1 : 0,
+                scenesWritten,
+                staleScenesDeleted,
+                reuseRejectionReason);
         }
 
         private static List<SourceDescriptor> CollectSources(
@@ -300,6 +434,7 @@ namespace Game.Editor
                 WorldPosition = worldPosition,
                 WorldRotation = worldRotation,
                 WorldScale = worldScale,
+                Layer = renderer.gameObject.layer,
                 OverlaySource = overlaySource,
                 Chunk = new ChunkKey(worldBounds.center)
             };
@@ -307,43 +442,57 @@ namespace Game.Editor
             return true;
         }
 
-        private static void CreateChunkScene(
-            Scene sourceScene,
-            ChunkKey chunk,
-            List<SourceDescriptor> sources,
+        private static void AddManifestEntries(
+            ChunkDescriptor chunk,
             List<StaticMapPresentationChunkEntry> chunkEntries,
             List<StaticMapPresentationSourceEntry> sourceEntries)
         {
-            Scene chunkScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Additive);
             int sourceStartIndex = sourceEntries.Count;
-            Bounds chunkBounds = sources[0].WorldBounds;
+            Bounds chunkBounds = chunk.Sources[0].WorldBounds;
+            for (int i = 0; i < chunk.Sources.Count; i++)
+            {
+                SourceDescriptor source = chunk.Sources[i];
+                string generatedObjectName = GetGeneratedObjectName(i, source);
+                chunkBounds.Encapsulate(source.WorldBounds);
+
+                sourceEntries.Add(new StaticMapPresentationSourceEntry(
+                    source.GlobalObjectId,
+                    source.HierarchyPath,
+                    source.DependencyHash,
+                    chunk.Key.Id,
+                    generatedObjectName,
+                    source.WorldBounds,
+                    source.Mesh,
+                    source.MeshGuid,
+                    source.MeshLocalId,
+                    source.MaterialEntries,
+                    source.OverlaySource));
+            }
+
+            chunkEntries.Add(new StaticMapPresentationChunkEntry(
+                chunk.Key.Id,
+                chunk.Key.ScenePath,
+                chunkBounds,
+                sourceStartIndex,
+                chunk.Sources.Count));
+        }
+
+        private static void CreateChunkScene(Scene sourceScene, ChunkDescriptor chunk)
+        {
+            Scene chunkScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Additive);
             try
             {
-                GameObject root = new($"StaticMapPresentation_{chunk.Id}");
+                GameObject root = new($"StaticMapPresentation_{chunk.Key.Id}");
                 SceneManager.MoveGameObjectToScene(root, chunkScene);
-                for (int i = 0; i < sources.Count; i++)
+                for (int i = 0; i < chunk.Sources.Count; i++)
                 {
-                    SourceDescriptor source = sources[i];
-                    string generatedObjectName = $"Visual_{i:D5}_{SanitizeName(source.Renderer.gameObject.name)}";
+                    SourceDescriptor source = chunk.Sources[i];
+                    string generatedObjectName = GetGeneratedObjectName(i, source);
                     CreateRendererClone(root.transform, generatedObjectName, source);
-                    chunkBounds.Encapsulate(source.WorldBounds);
-
-                    sourceEntries.Add(new StaticMapPresentationSourceEntry(
-                        source.GlobalObjectId,
-                        source.HierarchyPath,
-                        source.DependencyHash,
-                        chunk.Id,
-                        generatedObjectName,
-                        source.WorldBounds,
-                        source.Mesh,
-                        source.MeshGuid,
-                        source.MeshLocalId,
-                        source.MaterialEntries,
-                        source.OverlaySource));
                 }
 
-                if (!EditorSceneManager.SaveScene(chunkScene, chunk.ScenePath, true))
-                    throw new InvalidOperationException($"Failed to save static map presentation scene: {chunk.ScenePath}");
+                if (!EditorSceneManager.SaveScene(chunkScene, chunk.Key.ScenePath, true))
+                    throw new InvalidOperationException($"Failed to save static map presentation scene: {chunk.Key.ScenePath}");
             }
             finally
             {
@@ -352,20 +501,18 @@ namespace Game.Editor
                 if (sourceScene.IsValid() && sourceScene.isLoaded)
                     SceneManager.SetActiveScene(sourceScene);
             }
+        }
 
-            chunkEntries.Add(new StaticMapPresentationChunkEntry(
-                chunk.Id,
-                chunk.ScenePath,
-                chunkBounds,
-                sourceStartIndex,
-                sources.Count));
+        private static string GetGeneratedObjectName(int index, SourceDescriptor source)
+        {
+            return $"Visual_{index:D5}_{SanitizeName(source.Renderer.gameObject.name)}";
         }
 
         private static void CreateRendererClone(Transform root, string objectName, SourceDescriptor source)
         {
             GameObject clone = new(objectName)
             {
-                layer = source.Renderer.gameObject.layer
+                layer = source.Layer
             };
             clone.transform.SetParent(root, false);
             clone.transform.SetPositionAndRotation(source.WorldPosition, source.WorldRotation);
@@ -462,6 +609,7 @@ namespace Game.Editor
                 AppendAssetDependencyHash(builder, material.Material);
             }
 
+            AppendGameObjectLayerIdentity(builder, source.Layer);
             builder.Append('|').Append((int)source.Renderer.shadowCastingMode);
             builder.Append('|').Append(source.Renderer.receiveShadows ? 1 : 0);
             builder.Append('|').Append((int)source.Renderer.lightProbeUsage);
@@ -479,14 +627,22 @@ namespace Game.Editor
             return Hash128.Compute(builder.ToString()).ToString();
         }
 
+        internal static void AppendGameObjectLayerIdentity(StringBuilder builder, int layer)
+        {
+            if (builder == null)
+                throw new ArgumentNullException(nameof(builder));
+            if (layer < 0 || layer > 31)
+                throw new ArgumentOutOfRangeException(nameof(layer), layer, "Unity GameObject layer must be in [0, 31].");
+
+            builder.Append("|layer:").Append(layer);
+        }
+
         private static string BuildContentHash(
-            string canonicalHash,
-            List<StaticMapPresentationChunkEntry> chunks,
-            List<StaticMapPresentationSourceEntry> sources)
+            IReadOnlyList<StaticMapPresentationChunkEntry> chunks,
+            IReadOnlyList<StaticMapPresentationSourceEntry> sources)
         {
             StringBuilder builder = new(256 + sources.Count * 72);
             builder.Append(StaticMapPresentationManifest.CurrentSchemaVersion).Append('|');
-            builder.Append(canonicalHash).Append('|');
             builder.Append(ChunkSize.ToString("R", CultureInfo.InvariantCulture));
             for (int i = 0; i < chunks.Count; i++)
             {
@@ -592,6 +748,91 @@ namespace Game.Editor
                     AssetDatabase.CreateFolder(current, parts[i]);
                 current = next;
             }
+        }
+
+        private static bool AssetExists(string assetPath)
+        {
+            return !string.IsNullOrEmpty(AssetDatabase.AssetPathToGUID(assetPath));
+        }
+
+        private static bool PhysicalAssetExists(string assetPath)
+        {
+            string physicalPath = ResolveProjectAssetPath(assetPath);
+            return File.Exists(physicalPath) || File.Exists(physicalPath + ".meta");
+        }
+
+        private static bool DeletePhysicalOwnedAsset(string assetPath)
+        {
+            if (!StaticMapPresentationOutputOwnership.IsOwnedScenePath(assetPath))
+                throw new InvalidOperationException($"Refusing to physically delete unowned asset path: {assetPath}");
+
+            string physicalPath = ResolveProjectAssetPath(assetPath);
+            if (File.Exists(physicalPath))
+                File.Delete(physicalPath);
+            if (File.Exists(physicalPath + ".meta"))
+                File.Delete(physicalPath + ".meta");
+            return !File.Exists(physicalPath) && !File.Exists(physicalPath + ".meta");
+        }
+
+        private static string ResolveProjectAssetPath(string assetPath)
+        {
+            string projectRoot = RequireProjectRoot();
+            string fullPath = Path.GetFullPath(Path.Combine(projectRoot, assetPath));
+            string requiredPrefix = projectRoot.EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal)
+                ? projectRoot
+                : projectRoot + Path.DirectorySeparatorChar;
+            if (!fullPath.StartsWith(requiredPrefix, StringComparison.Ordinal))
+                throw new InvalidOperationException($"Asset path escaped the project root: {assetPath}");
+            return fullPath;
+        }
+
+        private static string RequireProjectRoot()
+        {
+            string projectRoot = Path.GetDirectoryName(Application.dataPath);
+            if (string.IsNullOrWhiteSpace(projectRoot))
+                throw new InvalidOperationException($"Unable to resolve project root from Application.dataPath: {Application.dataPath}");
+            return Path.GetFullPath(projectRoot);
+        }
+
+        private static StaticMapPresentationManifest LoadExistingManifest()
+        {
+            string projectRoot = Path.GetDirectoryName(Application.dataPath);
+            string manifestFilePath = Path.Combine(projectRoot ?? string.Empty, ManifestPath);
+            bool manifestFileExists = System.IO.File.Exists(manifestFilePath);
+            Debug.LogFormat(
+                LogType.Log,
+                LogOption.NoStacktrace,
+                null,
+                "[StaticMapPresentationManifestProbe] dataPath={0} projectRoot={1} manifestFile={2} fileExists={3} currentDirectory={4}",
+                Application.dataPath,
+                projectRoot ?? "<null>",
+                manifestFilePath,
+                manifestFileExists ? 1 : 0,
+                Environment.CurrentDirectory);
+            if (!manifestFileExists)
+                return null;
+
+            AssetDatabase.ImportAsset(
+                ManifestPath,
+                ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.ForceUpdate);
+            string manifestGuid = AssetDatabase.AssetPathToGUID(ManifestPath);
+            if (string.IsNullOrEmpty(manifestGuid))
+            {
+                throw new InvalidOperationException(
+                    $"Static map presentation manifest exists at {ManifestPath} but Unity did not assign its GUID. " +
+                    "Refusing to rewrite or clean owned output.");
+            }
+
+            StaticMapPresentationManifest manifest =
+                AssetDatabase.LoadAssetAtPath<StaticMapPresentationManifest>(ManifestPath);
+            if (manifest != null)
+                return manifest;
+
+            Object mainAsset = AssetDatabase.LoadMainAssetAtPath(ManifestPath);
+            string actualType = mainAsset != null ? mainAsset.GetType().FullName : "<unloaded>";
+            throw new InvalidOperationException(
+                $"Static map presentation manifest GUID {manifestGuid} exists but cannot load as " +
+                $"{nameof(StaticMapPresentationManifest)} (actual={actualType}). Refusing to rewrite or clean owned output.");
         }
     }
 }

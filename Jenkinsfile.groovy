@@ -31,10 +31,28 @@ pipeline {
                     bat '''
                     @echo off
                     git --version
-                    git clone --filter=blob:none --sparse --depth 1 --branch main "https://%GIT_USER%:%GIT_TOKEN%@github.com/farhad2na2/WarlineCapture.git" "%PROJECT_PATH%"
+                    git clone --sparse --branch main "https://%GIT_USER%:%GIT_TOKEN%@github.com/farhad2na2/WarlineCapture.git" "%PROJECT_PATH%"
                     cd /d "%PROJECT_PATH%"
                     git remote set-url origin https://github.com/farhad2na2/WarlineCapture.git
-                    git sparse-checkout set Assets Packages ProjectSettings Tools
+                    git sparse-checkout set Assets Packages ProjectSettings Tools Design
+                    if not exist "Design\Architecture\production_source_growth_baseline.md" (
+                        echo Production source growth baseline is missing from the sparse checkout.
+                        exit /b 1
+                    )
+                    if not exist "Design\Architecture\architecture_performance_hardening_implementation_tracker.md" (
+                        echo Architecture/performance tracker is missing from the sparse checkout.
+                        exit /b 1
+                    )
+                    git cat-file -e 9280ead856fd0bf117fdb3601cc2216c3a35e0f4
+                    if errorlevel 1 (
+                        echo Required APH-701/702 baseline commit is unavailable.
+                        exit /b 1
+                    )
+                    git merge-base --is-ancestor 9280ead856fd0bf117fdb3601cc2216c3a35e0f4 HEAD
+                    if errorlevel 1 (
+                        echo APH-701/702 baseline commit is not an ancestor of HEAD.
+                        exit /b 1
+                    )
                     git rev-parse HEAD
                     git status --short
                     '''
@@ -54,15 +72,6 @@ pipeline {
         }
 
         stage('Resolve Unity Editor') {
-            when {
-                expression {
-                    return params.BUILD_WINDOWS == true || params.BUILD_WINDOWS?.toString()?.equalsIgnoreCase('true') ||
-                        params.BUILD_WEBGL == true || params.BUILD_WEBGL?.toString()?.equalsIgnoreCase('true') ||
-                        params.BUILD_IOS == true || params.BUILD_IOS?.toString()?.equalsIgnoreCase('true') ||
-                        params.BUILD_ANDROID_APK == true || params.BUILD_ANDROID_APK?.toString()?.equalsIgnoreCase('true') ||
-                        params.BUILD_ANDROID_AAB == true || params.BUILD_ANDROID_AAB?.toString()?.equalsIgnoreCase('true')
-                }
-            }
             steps {
                 script {
                     bat '''
@@ -111,18 +120,9 @@ pipeline {
         }
 
         stage('Run Unity EditMode Tests') {
-            when {
-                expression {
-                    return params.BUILD_WINDOWS == true || params.BUILD_WINDOWS?.toString()?.equalsIgnoreCase('true') ||
-                        params.BUILD_WEBGL == true || params.BUILD_WEBGL?.toString()?.equalsIgnoreCase('true') ||
-                        params.BUILD_IOS == true || params.BUILD_IOS?.toString()?.equalsIgnoreCase('true') ||
-                        params.BUILD_ANDROID_APK == true || params.BUILD_ANDROID_APK?.toString()?.equalsIgnoreCase('true') ||
-                        params.BUILD_ANDROID_AAB == true || params.BUILD_ANDROID_AAB?.toString()?.equalsIgnoreCase('true')
-                }
-            }
             steps {
                 powershell '''
-                $ErrorActionPreference = "Continue"
+                $ErrorActionPreference = "Stop"
                 New-Item -ItemType Directory -Path "$env:LOCALAPPDATA\\Unity\\Caches" -Force | Out-Null
                 New-Item -ItemType Directory -Path "$env:PROJECT_PATH\\TestResults" -Force | Out-Null
                 Remove-Item -LiteralPath "$env:PROJECT_PATH\\TestResults\\BuildGateStatus.txt" -Force -ErrorAction Ignore
@@ -148,19 +148,70 @@ pipeline {
                 powershell -NoProfile -ExecutionPolicy Bypass -File "$env:PROJECT_PATH\\Tools\\CI\\PrintUnityTestFailures.ps1" -ResultsPath "$env:PROJECT_PATH\\TestResults\\EditMode.xml" -PlatformName "EditMode"
 
                 if (-not (Test-Path -LiteralPath "$env:PROJECT_PATH\\TestResults\\EditMode.xml" -PathType Leaf)) {
-                    Write-Host "[BuildGate] EditMode test results were not created. Continuing build and deployment."
-                    "[BuildGate][FINAL] EditMode tests FAILED because TestResults/EditMode.xml was not created; build was allowed to continue. See archived TestResults/EditMode.log." | Set-Content -LiteralPath "$env:PROJECT_PATH\\TestResults\\BuildGateStatus.txt"
-                    exit 0
+                    "[BuildGate][FINAL] EditMode tests FAILED because TestResults/EditMode.xml was not created; build failed closed. See archived TestResults/EditMode.log." | Set-Content -LiteralPath "$env:PROJECT_PATH\\TestResults\\BuildGateStatus.txt"
+                    throw "[BuildGate] EditMode test results were not created."
                 }
 
                 if ($editModeExit -ne 0) {
-                    Write-Host "[BuildGate] EditMode tests failed with exit code $editModeExit. Continuing build and deployment."
-                    "[BuildGate][FINAL] EditMode tests FAILED with exit code $editModeExit; build was allowed to continue. See archived TestResults/EditMode.xml and TestResults/EditMode.log." | Set-Content -LiteralPath "$env:PROJECT_PATH\\TestResults\\BuildGateStatus.txt"
-                    exit 0
+                    "[BuildGate][FINAL] EditMode tests FAILED with exit code $editModeExit; build failed closed. See archived TestResults/EditMode.xml and TestResults/EditMode.log." | Set-Content -LiteralPath "$env:PROJECT_PATH\\TestResults\\BuildGateStatus.txt"
+                    throw "[BuildGate] EditMode tests failed with exit code $editModeExit."
+                }
+
+                try {
+                    [xml]$editModeResults = Get-Content -LiteralPath "$env:PROJECT_PATH\\TestResults\\EditMode.xml" -Raw
+                } catch {
+                    "[BuildGate][FINAL] EditMode test results were malformed; build failed closed. See archived TestResults/EditMode.xml and TestResults/EditMode.log." | Set-Content -LiteralPath "$env:PROJECT_PATH\\TestResults\\BuildGateStatus.txt"
+                    throw "[BuildGate] EditMode test results could not be parsed: $($_.Exception.Message)"
+                }
+
+                $editModeRun = $editModeResults.'test-run'
+                if ($null -eq $editModeRun) {
+                    "[BuildGate][FINAL] EditMode test results had no test-run root; build failed closed. See archived TestResults/EditMode.xml and TestResults/EditMode.log." | Set-Content -LiteralPath "$env:PROJECT_PATH\\TestResults\\BuildGateStatus.txt"
+                    throw "[BuildGate] EditMode test results did not contain a test-run root."
+                }
+
+                $requiredEditModeAttributes = @(
+                    "result",
+                    "failed",
+                    "total",
+                    "testcasecount",
+                    "passed",
+                    "inconclusive",
+                    "skipped",
+                    "start-time",
+                    "end-time"
+                )
+                foreach ($requiredAttribute in $requiredEditModeAttributes) {
+                    if (-not $editModeRun.HasAttribute($requiredAttribute)) {
+                        "[BuildGate][FINAL] EditMode test results omitted required attribute '$requiredAttribute'; build failed closed." | Set-Content -LiteralPath "$env:PROJECT_PATH\\TestResults\\BuildGateStatus.txt"
+                        throw "[BuildGate] EditMode test results omitted required attribute '$requiredAttribute'."
+                    }
+                }
+
+                $editModeResult = [string]$editModeRun.result
+                $editModeFailed = [int]$editModeRun.failed
+                $editModeTotal = [int]$editModeRun.total
+                $editModeTestCaseCount = [int]$editModeRun.testcasecount
+                $editModePassed = [int]$editModeRun.passed
+                $editModeInconclusive = [int]$editModeRun.inconclusive
+                $editModeSkipped = [int]$editModeRun.skipped
+                $editModeAccounted = $editModePassed + $editModeFailed + $editModeInconclusive + $editModeSkipped
+                $editModeSerializedCases = $editModeRun.SelectNodes(".//test-case").Count
+                if ($editModeTotal -le 0 -or $editModeTestCaseCount -le 0) {
+                    "[BuildGate][FINAL] EditMode discovered zero tests; build failed closed." | Set-Content -LiteralPath "$env:PROJECT_PATH\\TestResults\\BuildGateStatus.txt"
+                    throw "[BuildGate] EditMode must discover and execute at least one test."
+                }
+                if ($editModeTotal -ne $editModeTestCaseCount -or $editModeAccounted -ne $editModeTotal -or $editModeSerializedCases -ne $editModeTestCaseCount) {
+                    "[BuildGate][FINAL] EditMode test results were incomplete: total=$editModeTotal testcasecount=$editModeTestCaseCount accounted=$editModeAccounted serialized=$editModeSerializedCases; build failed closed." | Set-Content -LiteralPath "$env:PROJECT_PATH\\TestResults\\BuildGateStatus.txt"
+                    throw "[BuildGate] EditMode test results were incomplete."
+                }
+                if ($editModeFailed -gt 0 -or $editModeResult -ne "Passed") {
+                    "[BuildGate][FINAL] EditMode tests FAILED in XML with result=$editModeResult failed=$editModeFailed; build failed closed. See archived TestResults/EditMode.xml and TestResults/EditMode.log." | Set-Content -LiteralPath "$env:PROJECT_PATH\\TestResults\\BuildGateStatus.txt"
+                    throw "[BuildGate] EditMode XML reported result=$editModeResult failed=$editModeFailed."
                 }
 
                 Write-Host "[BuildGate] EditMode tests passed. Continuing build."
-                "[BuildGate][FINAL] EditMode tests PASSED; build was allowed to continue." | Set-Content -LiteralPath "$env:PROJECT_PATH\\TestResults\\BuildGateStatus.txt"
+                "[BuildGate][FINAL] EditMode tests PASSED; build may continue." | Set-Content -LiteralPath "$env:PROJECT_PATH\\TestResults\\BuildGateStatus.txt"
                 exit 0
                 '''
             }

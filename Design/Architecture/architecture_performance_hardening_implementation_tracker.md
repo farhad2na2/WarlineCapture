@@ -248,16 +248,17 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `43 / 106` |
-| Checklist percent complete | `40.6%` |
-| Checklist in progress | `1 / 106`: `APH-310` |
-| Complete plus active coverage | `44 / 106` (`41.5%`); this is visibility only, not accepted completion |
+| Checklist complete | `44 / 106` |
+| Checklist percent complete | `41.5%` |
+| Checklist in progress | `1 / 106`: `APH-311` |
+| Complete plus active coverage | `45 / 106` (`42.5%`); this is visibility only, not accepted completion |
 | Current phase | Phase 3 - settings, frame-rate, and environment ownership |
-| Current task | `APH-310` run integrated settings, graphics, Match, and day/dusk/night visual proof gates |
+| Current task | `APH-311` capture separate 10-minute Android 30 FPS and 60 FPS tier evidence |
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: steady-state Match GC `234,324 / 1,024` bytes; improved 13.0% from the APH-007 baseline without weakening the budget |
-| Last verified commit | `dcde564ca`; runtime tier mapping matrix passes `12/12` |
-| Last update | 2026-07-10 - APH-309 complete; integrated graphics proof active |
+| Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
+| Last verified commit | `fd10d99e6`; integrated graphics gates and deterministic day/dusk/night capture pass |
+| Last update | 2026-07-10 - APH-310 complete with night-readability finding; Android tier capture active |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -459,8 +460,11 @@ Target ownership:
 - [x] `APH-309` Verify Low, Balanced/High, and Ultra mappings, including render pipeline, render scale, post-processing, AA, and shadow strength.
   - Result: one runtime matrix drives the real visual-quality system through Low, Medium/Balanced, High, and Ultra against the active project profile and verifies pipeline asset, render scale, volume profile, camera post-processing, camera AA, and Day/Night shadow cap for each mode.
   - Validation: `[AndroidVisualQualityValidation] result=Passed tests=12`, final Unity compilation had 0 C# errors, no project setting or render asset remained dirty, and commit `dcde564ca` pushed to `main`.
-- [~] `APH-310` Run `SettingsPopupValidationTests.RunFocusedValidation`, `AndroidVisualQualityValidationTests.RunFocusedValidation`, Match smoke, and visual captures at day, dusk, and night.
-- [ ] `APH-311` On Android, run a 10-minute 30 FPS tier capture and a 60 FPS tier capture. Record frame, GPU, memory, thermal, and visual results separately.
+- [x] `APH-310` Run `SettingsPopupValidationTests.RunFocusedValidation`, `AndroidVisualQualityValidationTests.RunFocusedValidation`, Match smoke, and visual captures at day, dusk, and night.
+  - Result: integrated settings/graphics/Match gates passed, and the capture utility now fixes project-correct 12:00 day, 21:00 dusk, and 23:00 night states with normal gameplay and max-zoom day views.
+  - Validation: Settings popup `8/8`, Android visual quality `12/12`, Match settings/audio smoke passed at HUD ready, and current-profile Metal capture completed at 1920x1080; commit `fd10d99e6` pushed to `main`.
+  - Visual review: day and dusk pass structural review; night is nonblank but remains a red readability finding at mean luma `22.34 / 255`. No lighting value was silently changed.
+- [~] `APH-311` On Android, run a 10-minute 30 FPS tier capture and a 60 FPS tier capture. Record frame, GPU, memory, thermal, and visual results separately.
 
 ## Phase 4 - Reduce Audio Residency
 
@@ -1119,6 +1123,21 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Visual result: no visual asset changed; tests use the actual configured render assets and restore runtime state on disposal
 - Residual risk: integrated popup, Match, and day/dusk/night visual proof remains `APH-310`
 - Next ready task: `APH-310`
+
+### 2026-07-10 - APH-310 - Integrated settings, graphics, Match, and visual proof
+
+- Status: Complete with one recorded red visual-readability finding
+- Commit or worktree baseline: `655e74cda`
+- Stable commit/push: `fd10d99e6` pushed to `main`
+- Files changed: deterministic mobile visual capture workflow, reviewed 1920x1080 capture set, manifest, and visual-review report
+- Behavior preserved/changed: production rendering behavior is unchanged; the editor proof workflow now sets fixed 12:00 day, project-correct 21:00 dusk, and 23:00 night states and fails when the Day/Night owner is unavailable
+- Validation: `[SettingsPopupValidation] result=Passed tests=8`, `[AndroidVisualQualityValidation] result=Passed tests=12`, Match `[SettingsAudioRuntimeSmoke] result=Passed` at HUD ready, `[MobileVisualQualityPlayModeCapture] result=Passed profile=current`, and `git diff --check` passed
+- Artifacts: `/private/tmp/aph310-settings-popup.log`, `/private/tmp/aph310-android-visual.log`, `/private/tmp/aph310-match-smoke.log`, `/private/tmp/aph310-visual-capture-dusk-corrected.log`, `Design/AgentReports/2026-07-10_aph-310_integrated_graphics_visual_review.md`, and `Design/AgentReports/Captures/ArchitecturePerformanceHardening/APH-310/`
+- Metrics before: the capture workflow used startup time for day, had no dusk state, and only fixed deepest night
+- Metrics after: deterministic 12:00/21:00/23:00 evidence plus normal and max-zoom day views; mean luma day gameplay/day max/dusk/night is `133.61/140.66/108.16/22.34`
+- Visual result: day and dusk pass structural review without missing geometry, road/terrain changes, or lighting/fog reset; the 23:00 frame is valid but too dark for reliable battlefield identification
+- Residual risk: deepest-night readability requires an explicit art/design decision; APH-311 must record it separately in both Android frame-rate captures
+- Next ready task: `APH-311`
 
 ### 2026-07-09 - Unity validation timeout reliability
 

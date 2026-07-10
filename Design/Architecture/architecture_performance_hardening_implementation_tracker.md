@@ -257,7 +257,7 @@ The program is complete only when all of the following are true:
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: steady-state Match GC `234,324 / 1,024` bytes; improved 13.0% from the APH-007 baseline without weakening the budget |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
-| Last verified commit | `df8900ce5`; Android texture/impostor residency policy, candidate profiler evidence, and the revised Phase 6 direction pass compile plus focused Android validation |
+| Last verified commit | `f5375ee37`; Android texture/impostor residency policy, candidate profiler evidence, and the revised Phase 6 direction pass compile plus focused Android validation |
 | Last update | 2026-07-10 - Android combine candidates load successfully but fail the 60 FPS GPU gate; neither transient output is accepted |
 
 ## Phase 0 - Baseline and Safety Freeze
@@ -1221,7 +1221,7 @@ Append one entry per completed or blocked task. Keep entries concise but include
 
 - Status: Partial evidence accepted; implementation candidate rejected
 - Commit or worktree baseline: `4c05a2da1` plus ignored/uncommitted transient Android output
-- Stable evidence commit: `df8900ce5`
+- Stable evidence commit: `f5375ee37`
 - Behavior preserved/changed: canonical `Assets/Game/Scenes/Match.unity` remained untouched; Android build tooling generated an ignored Match copy with 602 combined meshes and replaced covered source renderers only in that copy
 - Validation: Unity profiler APK built with 0 compiler errors; install and deterministic Match auto-start passed; post-rejection Android visual/import validation passed `12/12`; Match reached static-map startup in `3.24 s` and gameplay-ready in `6.60 s`; device thermal status remained `0`; a foreground Match screenshot is nonblank and structurally coherent at the tested camera
 - Artifacts: `Design/AgentReports/2026-07-10_perf_WarlineCapture_candidate_android_full_summary.md`, `Design/AgentReports/2026-07-10_perf_WarlineCapture_candidate_android_steady_summary.md`, `/private/tmp/warline-aph-candidate-profiler-build.log`, and ignored raw capture `ProfilerCaptures/WarlineCapture_2026-07-10_15-40-candidate.data.raw`

@@ -6,6 +6,7 @@ using Game.UI.Shell.Ecs;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 
 public sealed class AssistantReadModelSystemTests
@@ -31,6 +32,10 @@ public sealed class AssistantReadModelSystemTests
             RunCase(test => test.AssistantRecommendationSystem_PublishesSelectedIdleCombatUnitRecommendation());
             passed++;
             RunCase(test => test.AssistantReadModels_DoNotRepublishWhenSourcesAreUnchanged());
+            passed++;
+            RunCase(test => test.AssistantGoalReadModelSystem_NoMissionPublishesNoGoals());
+            passed++;
+            RunCase(test => test.AssistantGoalReadModelSystem_PreStartClearsGoals());
             passed++;
 
             Debug.Log($"[AssistantReadModelValidation] result=Passed tests={passed}");
@@ -76,7 +81,7 @@ public sealed class AssistantReadModelSystemTests
     [Test]
     public void AssistantGoalReadModelSystem_PublishesObjectiveGoals()
     {
-        Entity boundary = CreateBoundary(DefaultStatus());
+        Entity boundary = CreateBoundary(withMission: true);
 
         _goalSystem.Update(_world.Unmanaged);
 
@@ -101,8 +106,9 @@ public sealed class AssistantReadModelSystemTests
     [Test]
     public void AssistantRecommendationSystem_PublishesObjectiveRecommendation()
     {
-        Entity boundary = CreateBoundary(DefaultStatus());
-        CreateSelectedUnit();
+        Entity focusedUnit = CreateSelectedUnit();
+        CreateFocusedUnitReadModel(focusedUnit);
+        Entity boundary = CreateBoundary(withMission: true);
 
         _goalSystem.Update(_world.Unmanaged);
         _recommendationSystem.Update(_world.Unmanaged);
@@ -117,18 +123,19 @@ public sealed class AssistantReadModelSystemTests
 
         Assert.AreEqual(1, recommendations.Length);
         Assert.AreEqual(1001, recommendations[0].RecommendationId);
-        Assert.AreEqual(AssistantRecommendationKind.CameraFocus, recommendations[0].Kind);
-        Assert.AreEqual(AssistantTargetKind.Objective, recommendations[0].TargetKind);
-        Assert.AreEqual(1, recommendations[0].CanShow);
+        Assert.AreEqual(AssistantRecommendationKind.Move, recommendations[0].Kind);
+        Assert.AreEqual(AssistantTargetKind.Cell, recommendations[0].TargetKind);
+        Assert.AreEqual(new int2(12, 8), recommendations[0].TargetCell);
+        Assert.AreEqual(1, recommendations[0].CanExecute);
         Assert.AreEqual(1, readModel.RecommendationCount);
         Assert.AreEqual(1001, readModel.TopRecommendationId);
-        Assert.AreEqual(AssistantRecommendationKind.CameraFocus, readModel.TopKind);
+        Assert.AreEqual(AssistantRecommendationKind.Move, readModel.TopKind);
     }
 
     [Test]
     public void AssistantRecommendationSystem_PublishesNoSelectionRecommendation()
     {
-        CreateBoundary(DefaultStatus());
+        CreateBoundary(withMission: true);
 
         _goalSystem.Update(_world.Unmanaged);
         _recommendationSystem.Update(_world.Unmanaged);
@@ -150,7 +157,7 @@ public sealed class AssistantReadModelSystemTests
     [Test]
     public void AssistantRecommendationSystem_PublishesFuelLogisticsWarningRecommendation()
     {
-        Entity boundary = CreateBoundary(DefaultStatus());
+        Entity boundary = CreateBoundary(withMission: true);
         AddUsableFuelSummary(boundary, storedOil: 25f, storedFuel: 0f, fuelVersion: 12u);
 
         _goalSystem.Update(_world.Unmanaged);
@@ -178,29 +185,36 @@ public sealed class AssistantReadModelSystemTests
     {
         Entity focusedUnit = CreateSelectedUnit();
         CreateFocusedUnitReadModel(focusedUnit);
-        CreateBoundary(DefaultStatus());
+        Entity hostile = _entityManager.CreateEntity(typeof(Faction), typeof(UnitHealth));
+        _entityManager.SetComponentData(hostile, new Faction { Id = FactionIdentity.EnemyFactionId });
+        _entityManager.SetComponentData(hostile, new UnitHealth { Current = 100, Max = 100 });
+        Entity boundary = CreateBoundary(withMission: true);
+        DynamicBuffer<MatchObjectiveRuntimeElement> objectives =
+            _entityManager.GetBuffer<MatchObjectiveRuntimeElement>(boundary);
+        MatchObjectiveRuntimeElement objective = objectives[0];
+        objective.TargetEntity = hostile;
+        objective.HasTargetCell = 0;
+        objectives[0] = objective;
 
         _goalSystem.Update(_world.Unmanaged);
         _recommendationSystem.Update(_world.Unmanaged);
 
-        using EntityQuery recommendationQuery =
-            _entityManager.CreateEntityQuery(ComponentType.ReadOnly<AssistantRecommendationElement>());
-        Entity boundary = recommendationQuery.GetSingletonEntity();
         DynamicBuffer<AssistantRecommendationElement> recommendations =
             _entityManager.GetBuffer<AssistantRecommendationElement>(boundary);
 
         Assert.AreEqual(1, recommendations.Length);
-        Assert.AreEqual(3101, recommendations[0].RecommendationId);
+        Assert.AreEqual(1001, recommendations[0].RecommendationId);
         Assert.AreEqual(AssistantRecommendationKind.Attack, recommendations[0].Kind);
         Assert.AreEqual(focusedUnit, recommendations[0].SourceEntity);
         Assert.AreEqual(AssistantTargetKind.Entity, recommendations[0].TargetKind);
-        Assert.AreEqual("Assign an attack target", recommendations[0].Title.ToString());
+        Assert.AreEqual(hostile, recommendations[0].TargetEntity);
+        Assert.AreEqual("Attack objective target", recommendations[0].Title.ToString());
     }
 
     [Test]
     public void AssistantReadModels_DoNotRepublishWhenSourcesAreUnchanged()
     {
-        Entity boundary = CreateBoundary(DefaultStatus());
+        Entity boundary = CreateBoundary(withMission: true);
 
         _goalSystem.Update(_world.Unmanaged);
         _recommendationSystem.Update(_world.Unmanaged);
@@ -229,14 +243,47 @@ public sealed class AssistantReadModelSystemTests
         Assert.AreEqual(1, recommendations.Length);
     }
 
-    private Entity CreateBoundary(UiMatchHudStatusSurfacesComponent status)
+    [Test]
+    public void AssistantGoalReadModelSystem_NoMissionPublishesNoGoals()
+    {
+        Entity boundary = CreateBoundary(withMission: false);
+
+        _goalSystem.Update(_world.Unmanaged);
+
+        Assert.AreEqual(0, _entityManager.GetBuffer<AssistantGoalReadModelElement>(boundary).Length);
+    }
+
+    [Test]
+    public void AssistantGoalReadModelSystem_PreStartClearsGoals()
+    {
+        Entity boundary = CreateBoundary(withMission: true, matchStarted: false);
+        DynamicBuffer<AssistantGoalReadModelElement> goals =
+            _entityManager.AddBuffer<AssistantGoalReadModelElement>(boundary);
+        goals.Add(new AssistantGoalReadModelElement
+        {
+            GoalId = 99,
+            Title = new FixedString64Bytes("STALE")
+        });
+
+        _goalSystem.Update(_world.Unmanaged);
+
+        Assert.AreEqual(0, _entityManager.GetBuffer<AssistantGoalReadModelElement>(boundary).Length);
+    }
+
+    private Entity CreateBoundary(bool withMission, bool matchStarted = true)
     {
         Entity boundary = _entityManager.CreateEntity(
+            typeof(UiShellRootComponent),
             typeof(UiShellStateComponent),
             typeof(UiMatchHudStatusSurfacesComponent),
             typeof(UiMatchHudHeaderComponent));
 
-        _entityManager.SetComponentData(boundary, status);
+        _entityManager.SetComponentData(boundary, new UiShellStateComponent
+        {
+            ActiveRoute = UIRoute.Match,
+            CurrentMode = UiShellMode.MatchHud,
+            Phase = UiShellTransitionPhase.MatchHudReady
+        });
         _entityManager.SetComponentData(boundary, new UiMatchHudHeaderComponent
         {
             OrderText = new FixedString32Bytes("MOVE ORDER"),
@@ -247,7 +294,59 @@ public sealed class AssistantReadModelSystemTests
             CivilianRiskText = new FixedString32Bytes("MED")
         });
 
+        Entity matchStart = _entityManager.CreateEntity(typeof(MatchStartQueueComponent));
+        _entityManager.SetComponentData(matchStart, new MatchStartQueueComponent
+        {
+            HasStarted = matchStarted ? (byte)1 : (byte)0,
+            LastStatus = matchStarted ? MatchStartStatusKind.Started : MatchStartStatusKind.Starting
+        });
+
+        _entityManager.AddComponentData(boundary, new MatchObjectiveRuntimeStateComponent
+        {
+            Version = 7,
+            MissionId = withMission ? new FixedString64Bytes("saga.ch01.m01.first_contact") : default,
+            MatchActive = withMission ? (byte)1 : (byte)0
+        });
+        DynamicBuffer<MatchObjectiveRuntimeElement> objectives =
+            _entityManager.AddBuffer<MatchObjectiveRuntimeElement>(boundary);
+        if (withMission)
+            AddObjectiveFixtures(objectives);
+
         return boundary;
+    }
+
+    private static void AddObjectiveFixtures(DynamicBuffer<MatchObjectiveRuntimeElement> objectives)
+    {
+        objectives.Add(new MatchObjectiveRuntimeElement
+        {
+            GoalId = 1,
+            ObjectiveId = new FixedString64Bytes("objective.destroy_patrol_group"),
+            State = MatchObjectiveState.Active,
+            Priority = (byte)AssistantMessagePriority.High,
+            IsPrimary = 1,
+            Title = new FixedString64Bytes("Neutralize hostile patrol"),
+            Body = new FixedString128Bytes("Destroy the verified patrol target."),
+            TargetCell = new int2(12, 8),
+            HasTargetCell = 1
+        });
+        objectives.Add(new MatchObjectiveRuntimeElement
+        {
+            GoalId = 2,
+            ObjectiveId = new FixedString64Bytes("objective.protect_civilians"),
+            State = MatchObjectiveState.Complete,
+            Priority = (byte)AssistantMessagePriority.Normal,
+            Title = new FixedString64Bytes("Protect civilians"),
+            Body = new FixedString128Bytes("Civilian corridor secured.")
+        });
+        objectives.Add(new MatchObjectiveRuntimeElement
+        {
+            GoalId = 3,
+            ObjectiveId = new FixedString64Bytes("objective.keep_losses_low"),
+            State = MatchObjectiveState.Active,
+            Priority = (byte)AssistantMessagePriority.Low,
+            Title = new FixedString64Bytes("Keep losses low"),
+            Body = new FixedString128Bytes("Preserve the command squad.")
+        });
     }
 
     private void AddUsableFuelSummary(Entity boundary, float storedOil, float storedFuel, uint fuelVersion)
@@ -270,7 +369,10 @@ public sealed class AssistantReadModelSystemTests
 
     private Entity CreateSelectedUnit()
     {
-        return _entityManager.CreateEntity(typeof(SelectedUnitTag));
+        Entity entity = _entityManager.CreateEntity(typeof(SelectedUnitTag), typeof(Faction), typeof(UnitHealth));
+        _entityManager.SetComponentData(entity, new Faction { Id = FactionIdentity.PlayerFactionId });
+        _entityManager.SetComponentData(entity, new UnitHealth { Current = 100, Max = 100 });
+        return entity;
     }
 
     private Entity CreateFocusedUnitReadModel(Entity focusedUnit)
@@ -293,18 +395,4 @@ public sealed class AssistantReadModelSystemTests
         return readModel;
     }
 
-    private static UiMatchHudStatusSurfacesComponent DefaultStatus()
-    {
-        return new UiMatchHudStatusSurfacesComponent
-        {
-            ObjectivesTitle = new FixedString32Bytes("OBJECTIVES"),
-            Objective0Text = new FixedString64Bytes("Neutralize hostile patrol"),
-            Objective1Text = new FixedString64Bytes("Protect civilians"),
-            Objective2Text = new FixedString64Bytes("Keep losses low"),
-            Objective0IconKind = UiMatchHudObjectiveIconKind.Unchecked,
-            Objective1IconKind = UiMatchHudObjectiveIconKind.Checked,
-            Objective2IconKind = UiMatchHudObjectiveIconKind.Star,
-            ElapsedText = new FixedString32Bytes("00:30")
-        };
-    }
 }

@@ -15,6 +15,7 @@ namespace Game.UI.Shell.Ecs
         private const float DefaultVoiceCooldownSeconds = 0.6f;
 
         private EntityQuery boundaryQuery;
+        private EntityQuery matchStartQuery;
 
         public void OnCreate(ref SystemState state)
         {
@@ -22,56 +23,111 @@ namespace Game.UI.Shell.Ecs
                 ComponentType.ReadOnly<UiShellStateComponent>(),
                 ComponentType.ReadWrite<AssistantNarrationStateComponent>(),
                 ComponentType.ReadWrite<AssistantNarrationRequestElement>());
+            matchStartQuery = state.GetEntityQuery(
+                ComponentType.ReadOnly<MatchStartStateComponent>(),
+                ComponentType.ReadOnly<MatchStartQueueComponent>());
             state.RequireForUpdate(boundaryQuery);
         }
 
         public void OnUpdate(ref SystemState state)
         {
+            Entity boundary = boundaryQuery.GetSingletonEntity();
+            if (!AssistantNarrationRequestSystem.IsNarrationRuntimeActive(
+                    state.EntityManager,
+                    boundary,
+                    matchStartQuery))
+            {
+                AssistantNarrationRequestSystem.ClearNarrationBoundary(state.EntityManager, boundary);
+                return;
+            }
+
             AudioEventRequestSystem.EnsureAudioEntity(state.EntityManager);
 
-            Entity boundary = boundaryQuery.GetSingletonEntity();
             DynamicBuffer<AssistantNarrationRequestElement> requests =
                 state.EntityManager.GetBuffer<AssistantNarrationRequestElement>(boundary);
+            AssistantSettingsComponent settings =
+                state.EntityManager.GetComponentData<AssistantSettingsComponent>(boundary);
+            AssistantNarrationStateComponent narrationState =
+                state.EntityManager.GetComponentData<AssistantNarrationStateComponent>(boundary);
+
+            if (settings.NarrationMode == AssistantNarrationMode.Off)
+            {
+                bool offStateChanged = CancelPendingRequests(requests) ||
+                                       narrationState.ActiveAudioPlaybackRequestId != 0 ||
+                                       narrationState.Mode != AssistantNarrationMode.Off ||
+                                       narrationState.LastAudioStatus != AudioPlaybackRequestStatus.Pending ||
+                                       narrationState.LastAudioFailureReason.Length != 0 ||
+                                       narrationState.LastPresentedAt != 0f ||
+                                       narrationState.IsSpeaking != 0;
+                if (!offStateChanged)
+                    return;
+
+                narrationState.Version = NextVersion(narrationState.Version);
+                narrationState.ActiveAudioPlaybackRequestId = 0;
+                narrationState.Mode = AssistantNarrationMode.Off;
+                narrationState.LastAudioStatus = AudioPlaybackRequestStatus.Pending;
+                narrationState.LastAudioFailureReason = default;
+                narrationState.LastPresentedAt = 0f;
+                narrationState.IsSpeaking = 0;
+                narrationState.UiDirty = 1;
+                state.EntityManager.SetComponentData(boundary, narrationState);
+                return;
+            }
 
             bool changed = false;
-            float now = Time.time;
+            float now = Time.unscaledTime;
             for (int i = 0; i < requests.Length; i++)
             {
                 AssistantNarrationRequestElement request = requests[i];
                 if (request.Status != AssistantCommandIntentStatus.Pending)
                     continue;
 
-                request.Status = TryEnqueueVoiceRequest(state.EntityManager, request, now)
-                    ? AssistantCommandIntentStatus.Completed
+                int audioPlaybackRequestId = EnqueueVoiceRequest(state.EntityManager, request, now);
+                request.AudioPlaybackRequestId = audioPlaybackRequestId;
+                request.Status = audioPlaybackRequestId > 0 || request.AudioEventId.Length == 0
+                    ? AssistantCommandIntentStatus.Accepted
                     : AssistantCommandIntentStatus.Rejected;
                 requests[i] = request;
                 changed = true;
+
+                if (request.RequestId != narrationState.ActiveNarrationId)
+                    continue;
+
+                narrationState.ActiveAudioPlaybackRequestId = audioPlaybackRequestId;
+                narrationState.LastAudioStatus = audioPlaybackRequestId > 0
+                    ? AudioPlaybackRequestStatus.Pending
+                    : request.AudioEventId.Length == 0
+                        ? AudioPlaybackRequestStatus.Pending
+                        : AudioPlaybackRequestStatus.Rejected;
+                narrationState.LastAudioFailureReason = audioPlaybackRequestId <= 0 && request.AudioEventId.Length > 0
+                    ? new FixedString64Bytes("Voice request unavailable")
+                    : default;
+                narrationState.LastPresentedAt = 0f;
             }
 
             if (!changed)
                 return;
 
-            AssistantNarrationStateComponent narrationState =
-                state.EntityManager.GetComponentData<AssistantNarrationStateComponent>(boundary);
             narrationState.Version = NextVersion(narrationState.Version);
+            narrationState.Mode = settings.NarrationMode;
             narrationState.IsSpeaking = 0;
             narrationState.UiDirty = 1;
             state.EntityManager.SetComponentData(boundary, narrationState);
         }
 
-        private static bool TryEnqueueVoiceRequest(
+        private static int EnqueueVoiceRequest(
             EntityManager em,
             AssistantNarrationRequestElement request,
             float now)
         {
             if (request.AudioEventId.Length == 0)
-                return false;
+                return 0;
 
             uint eventHash = request.AudioEventHash != 0u
                 ? request.AudioEventHash
                 : AudioEventIds.StableHash(request.AudioEventId.ToString());
 
-            AudioEventRequestSystem.EnqueueOneShot(
+            return AudioEventRequestSystem.EnqueueOneShot(
                 em,
                 request.AudioEventId,
                 eventHash,
@@ -79,7 +135,23 @@ namespace Game.UI.Shell.Ecs
                 ToAudioPriority(request.Priority),
                 now,
                 cooldownSeconds: DefaultVoiceCooldownSeconds);
-            return true;
+        }
+
+        private static bool CancelPendingRequests(DynamicBuffer<AssistantNarrationRequestElement> requests)
+        {
+            bool changed = false;
+            for (int i = 0; i < requests.Length; i++)
+            {
+                AssistantNarrationRequestElement request = requests[i];
+                if (request.Status != AssistantCommandIntentStatus.Pending)
+                    continue;
+
+                request.Status = AssistantCommandIntentStatus.Cancelled;
+                requests[i] = request;
+                changed = true;
+            }
+
+            return changed;
         }
 
         private static AudioPlaybackPriority ToAudioPriority(AssistantMessagePriority priority)

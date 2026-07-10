@@ -38,6 +38,10 @@ public sealed class AssistantCommandIntentSystemTests
             passed++;
             RunCase(test => test.AssistantCommandIntentSystem_TimesOutStaleRequest());
             passed++;
+            RunCase(test => test.AssistantCommandIntentSystem_QueuesVersionedMoveOrder());
+            passed++;
+            RunCase(test => test.AssistantCommandIntentSystem_QueuesVersionedAttackOrder());
+            passed++;
 
             Debug.Log($"[AssistantCommandIntentSystemValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -470,6 +474,108 @@ public sealed class AssistantCommandIntentSystemTests
         Assert.IsTrue(cameraQuery.IsEmptyIgnoreFilter);
     }
 
+    [Test]
+    public void AssistantCommandIntentSystem_QueuesVersionedMoveOrder()
+    {
+        Entity boundary = CreateBoundary();
+        Entity source = CreatePlayerSource(canAttack: false);
+        Entity grid = _entityManager.CreateEntity(typeof(GridConfig));
+        _entityManager.SetComponentData(grid, new GridConfig
+        {
+            Width = 32,
+            Height = 24,
+            CellSize = 1f
+        });
+        DynamicBuffer<AssistantRecommendationElement> recommendations =
+            _entityManager.AddBuffer<AssistantRecommendationElement>(boundary);
+        recommendations.Add(new AssistantRecommendationElement
+        {
+            RecommendationId = 5101,
+            SourceVersion = 17,
+            Kind = AssistantRecommendationKind.Move,
+            TargetKind = AssistantTargetKind.Cell,
+            SourceEntity = source,
+            TargetCell = new int2(6, 7),
+            HasTargetCell = 1,
+            CanExecute = 1
+        });
+        _entityManager.GetBuffer<AssistantCommandIntentRequestElement>(boundary).Add(
+            new AssistantCommandIntentRequestElement
+            {
+                RequestId = 51,
+                RecommendationId = 5101,
+                RecommendationSourceVersion = 17,
+                Kind = AssistantCommandIntentKind.MoveToWorldPosition,
+                TargetKind = AssistantTargetKind.Cell,
+                SourceEntity = source,
+                TargetCell = new int2(6, 7)
+            });
+
+        _intentSystem.Update(_world.Unmanaged);
+
+        using EntityQuery query = _entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<UnitMoveOrderQueueComponent>(),
+            ComponentType.ReadOnly<UnitMoveOrderRequestElement>());
+        DynamicBuffer<UnitMoveOrderRequestElement> requests =
+            _entityManager.GetBuffer<UnitMoveOrderRequestElement>(query.GetSingletonEntity());
+        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(source, requests[0].Entity);
+        Assert.AreEqual(new int2(6, 7), requests[0].Goal);
+        AssistantCommandDispatchElement dispatch =
+            _entityManager.GetBuffer<AssistantCommandDispatchElement>(boundary)[0];
+        Assert.AreEqual(AssistantDownstreamCommandKind.MoveOrder, dispatch.DownstreamKind);
+        Assert.Greater(dispatch.DownstreamRequestId, 0);
+    }
+
+    [Test]
+    public void AssistantCommandIntentSystem_QueuesVersionedAttackOrder()
+    {
+        Entity boundary = CreateBoundary();
+        Entity source = CreatePlayerSource(canAttack: true);
+        Entity target = _entityManager.CreateEntity(typeof(Faction), typeof(UnitHealth), typeof(UnitGrid), typeof(LocalTransform));
+        _entityManager.SetComponentData(target, new Faction { Id = FactionIdentity.EnemyFactionId });
+        _entityManager.SetComponentData(target, new UnitHealth { Current = 80, Max = 80 });
+        _entityManager.SetComponentData(target, new UnitGrid { Cell = new int2(9, 5) });
+        _entityManager.SetComponentData(target, LocalTransform.FromPosition(new float3(9f, 0f, 5f)));
+        DynamicBuffer<AssistantRecommendationElement> recommendations =
+            _entityManager.AddBuffer<AssistantRecommendationElement>(boundary);
+        recommendations.Add(new AssistantRecommendationElement
+        {
+            RecommendationId = 5201,
+            SourceVersion = 19,
+            Kind = AssistantRecommendationKind.Attack,
+            TargetKind = AssistantTargetKind.Entity,
+            SourceEntity = source,
+            TargetEntity = target,
+            CanExecute = 1
+        });
+        _entityManager.GetBuffer<AssistantCommandIntentRequestElement>(boundary).Add(
+            new AssistantCommandIntentRequestElement
+            {
+                RequestId = 52,
+                RecommendationId = 5201,
+                RecommendationSourceVersion = 19,
+                Kind = AssistantCommandIntentKind.AttackEntity,
+                TargetKind = AssistantTargetKind.Entity,
+                SourceEntity = source,
+                TargetEntity = target
+            });
+
+        _intentSystem.Update(_world.Unmanaged);
+
+        using EntityQuery query = _entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<UnitAttackOrderQueueComponent>(),
+            ComponentType.ReadOnly<UnitAttackOrderRequestElement>());
+        DynamicBuffer<UnitAttackOrderRequestElement> requests =
+            _entityManager.GetBuffer<UnitAttackOrderRequestElement>(query.GetSingletonEntity());
+        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(source, requests[0].SourceEntity);
+        Assert.AreEqual(target, requests[0].TargetEntity);
+        AssistantCommandDispatchElement dispatch =
+            _entityManager.GetBuffer<AssistantCommandDispatchElement>(boundary)[0];
+        Assert.AreEqual(AssistantDownstreamCommandKind.AttackOrder, dispatch.DownstreamKind);
+    }
+
     private Entity CreateBoundary()
     {
         Entity boundary = _entityManager.CreateEntity(typeof(UiShellRootComponent));
@@ -488,5 +594,15 @@ public sealed class AssistantCommandIntentSystemTests
             Scale = 1f
         });
         return target;
+    }
+
+    private Entity CreatePlayerSource(bool canAttack)
+    {
+        Entity source = canAttack
+            ? _entityManager.CreateEntity(typeof(Faction), typeof(UnitHealth), typeof(UnitAttack))
+            : _entityManager.CreateEntity(typeof(Faction), typeof(UnitHealth));
+        _entityManager.SetComponentData(source, new Faction { Id = FactionIdentity.PlayerFactionId });
+        _entityManager.SetComponentData(source, new UnitHealth { Current = 100, Max = 100 });
+        return source;
     }
 }

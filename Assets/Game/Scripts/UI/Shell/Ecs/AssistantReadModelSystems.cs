@@ -7,17 +7,172 @@ using Unity.Mathematics;
 
 namespace Game.UI.Shell.Ecs
 {
+    internal static class AssistantRuntimeStateUtility
+    {
+        public static bool IsActive(EntityManager entityManager, Entity boundary, EntityQuery matchStartQuery)
+        {
+            if (!entityManager.HasComponent<UiShellStateComponent>(boundary) ||
+                matchStartQuery.IsEmptyIgnoreFilter)
+            {
+                return false;
+            }
+
+            UiShellStateComponent shell = entityManager.GetComponentData<UiShellStateComponent>(boundary);
+            if (shell.ActiveRoute != UIRoute.Match ||
+                shell.CurrentMode != UiShellMode.MatchHud ||
+                shell.IsTransitionRunning != 0)
+            {
+                return false;
+            }
+
+            MatchStartQueueComponent matchStart = matchStartQuery.GetSingleton<MatchStartQueueComponent>();
+            return matchStart.HasStarted != 0;
+        }
+
+        public static void ClearInactiveReadModels(EntityManager entityManager, Entity boundary)
+        {
+            bool changed = false;
+            changed |= ClearBuffer<AssistantGoalReadModelElement>(entityManager, boundary);
+            changed |= ClearBuffer<AssistantRecommendationElement>(entityManager, boundary);
+            changed |= ClearBuffer<AssistantThreatReadModelElement>(entityManager, boundary);
+            changed |= ClearBuffer<AssistantMessageElement>(entityManager, boundary);
+            changed |= ClearBuffer<AssistantNarrationRequestElement>(entityManager, boundary);
+            changed |= ClearBuffer<AssistantCommandIntentRequestElement>(entityManager, boundary);
+            changed |= ClearBuffer<AssistantCommandIntentResultElement>(entityManager, boundary);
+            changed |= ClearBuffer<AssistantCommandDispatchElement>(entityManager, boundary);
+            changed |= ClearBuffer<AssistantPreviewHighlightElement>(entityManager, boundary);
+
+            if (entityManager.HasComponent<MatchObjectiveRuntimeStateComponent>(boundary))
+            {
+                MatchObjectiveRuntimeStateComponent objectiveState =
+                    entityManager.GetComponentData<MatchObjectiveRuntimeStateComponent>(boundary);
+                if (objectiveState.MatchActive != 0 || objectiveState.ElapsedWholeSeconds != 0 || objectiveState.MissionId.Length > 0)
+                {
+                    objectiveState.Version = NextVersion(objectiveState.Version);
+                    objectiveState.MatchActive = 0;
+                    objectiveState.MatchStartedAt = 0f;
+                    objectiveState.ElapsedWholeSeconds = 0;
+                    objectiveState.MissionId = default;
+                    entityManager.SetComponentData(boundary, objectiveState);
+                    changed = true;
+                }
+            }
+
+            changed |= ClearBuffer<MatchObjectiveRuntimeElement>(entityManager, boundary);
+
+            if (entityManager.HasComponent<AssistantRecommendationReadModelComponent>(boundary))
+            {
+                AssistantRecommendationReadModelComponent recommendation =
+                    entityManager.GetComponentData<AssistantRecommendationReadModelComponent>(boundary);
+                if (recommendation.RecommendationCount != 0 || recommendation.TopRecommendationId != 0)
+                {
+                    recommendation.Version = NextVersion(recommendation.Version);
+                    recommendation.RecommendationCount = 0;
+                    recommendation.TopRecommendationId = 0;
+                    recommendation.TopPriority = AssistantMessagePriority.Low;
+                    recommendation.TopKind = AssistantRecommendationKind.None;
+                    recommendation.UiDirty = 1;
+                    entityManager.SetComponentData(boundary, recommendation);
+                    changed = true;
+                }
+            }
+
+            if (entityManager.HasComponent<AssistantThreatReadModelStateComponent>(boundary))
+            {
+                AssistantThreatReadModelStateComponent threat =
+                    entityManager.GetComponentData<AssistantThreatReadModelStateComponent>(boundary);
+                if (threat.VisibleCount != 0 || threat.NextExpiryAt > 0f)
+                {
+                    threat.Version = NextVersion(threat.Version);
+                    threat.VisibleCount = 0;
+                    threat.NextExpiryAt = 0f;
+                    entityManager.SetComponentData(boundary, threat);
+                    changed = true;
+                }
+            }
+
+            if (entityManager.HasComponent<AssistantMessageReadModelComponent>(boundary))
+            {
+                AssistantMessageReadModelComponent messages =
+                    entityManager.GetComponentData<AssistantMessageReadModelComponent>(boundary);
+                if (messages.VisibleCount != 0 || messages.NextAgeBoundaryAt > 0f)
+                {
+                    messages.Version = NextVersion(messages.Version);
+                    messages.VisibleCount = 0;
+                    messages.NextAgeBoundaryAt = 0f;
+                    entityManager.SetComponentData(boundary, messages);
+                    changed = true;
+                }
+            }
+
+            if (entityManager.HasComponent<AssistantTargetLockReadModelComponent>(boundary))
+            {
+                AssistantTargetLockReadModelComponent targetLock =
+                    entityManager.GetComponentData<AssistantTargetLockReadModelComponent>(boundary);
+                if (targetLock.Visible != 0 || targetLock.State != AssistantTargetLockState.None)
+                {
+                    uint nextVersion = NextVersion(targetLock.Version);
+                    targetLock = default;
+                    targetLock.Version = nextVersion;
+                    entityManager.SetComponentData(boundary, targetLock);
+                    changed = true;
+                }
+            }
+
+            if (!entityManager.HasComponent<AssistantStateComponent>(boundary))
+                return;
+
+            AssistantStateComponent assistant = entityManager.GetComponentData<AssistantStateComponent>(boundary);
+            if (changed ||
+                assistant.PanelOpen != 0 ||
+                assistant.HasActiveRecommendation != 0 ||
+                assistant.ActiveRecommendationId != 0 ||
+                assistant.ControlState != AssistantControlState.Player)
+            {
+                assistant.SourceVersion = NextVersion(assistant.SourceVersion);
+                assistant.PublishedVersion = assistant.SourceVersion;
+                assistant.PanelOpen = 0;
+                assistant.HasActiveRecommendation = 0;
+                assistant.ActiveRecommendationId = 0;
+                assistant.ControlState = AssistantControlState.Player;
+                assistant.UiDirty = 1;
+                entityManager.SetComponentData(boundary, assistant);
+            }
+        }
+
+        public static uint NextVersion(uint version)
+        {
+            uint next = version + 1u;
+            return next == 0u ? 1u : next;
+        }
+
+        private static bool ClearBuffer<T>(EntityManager entityManager, Entity boundary)
+            where T : unmanaged, IBufferElementData
+        {
+            if (!entityManager.HasBuffer<T>(boundary))
+                return false;
+
+            DynamicBuffer<T> buffer = entityManager.GetBuffer<T>(boundary);
+            if (buffer.Length == 0)
+                return false;
+
+            buffer.Clear();
+            return true;
+        }
+    }
+
     [UpdateInGroup(typeof(PresentationSystemGroup))]
     public partial struct AssistantGoalReadModelSystem : ISystem
     {
         private EntityQuery boundaryQuery;
+        private EntityQuery matchStartQuery;
 
         public void OnCreate(ref SystemState state)
         {
             boundaryQuery = state.GetEntityQuery(
                 ComponentType.ReadOnly<UiShellStateComponent>(),
-                ComponentType.ReadOnly<UiMatchHudStatusSurfacesComponent>(),
                 ComponentType.ReadOnly<UiMatchHudHeaderComponent>());
+            matchStartQuery = state.GetEntityQuery(ComponentType.ReadOnly<MatchStartQueueComponent>());
             state.RequireForUpdate(boundaryQuery);
         }
 
@@ -26,33 +181,34 @@ namespace Game.UI.Shell.Ecs
             Entity boundary = boundaryQuery.GetSingletonEntity();
             EnsureAssistantReadModelBoundary(ref state, boundary);
 
-            UiMatchHudStatusSurfacesComponent status =
-                state.EntityManager.GetComponentData<UiMatchHudStatusSurfacesComponent>(boundary);
+            if (!AssistantRuntimeStateUtility.IsActive(state.EntityManager, boundary, matchStartQuery))
+            {
+                AssistantRuntimeStateUtility.ClearInactiveReadModels(state.EntityManager, boundary);
+                return;
+            }
+
+            MatchObjectiveRuntimeStateComponent objectiveState =
+                state.EntityManager.GetComponentData<MatchObjectiveRuntimeStateComponent>(boundary);
+            DynamicBuffer<MatchObjectiveRuntimeElement> objectives =
+                state.EntityManager.GetBuffer<MatchObjectiveRuntimeElement>(boundary, true);
             DynamicBuffer<AssistantGoalReadModelElement> goals =
                 state.EntityManager.GetBuffer<AssistantGoalReadModelElement>(boundary);
 
-            AssistantGoalReadModelElement goal0 = BuildGoal(1, status.Objective0Text, status.Objective0IconKind, AssistantMessagePriority.High, 1);
-            AssistantGoalReadModelElement goal1 = BuildGoal(2, status.Objective1Text, status.Objective1IconKind, AssistantMessagePriority.Normal, 0);
-            AssistantGoalReadModelElement goal2 = BuildGoal(3, status.Objective2Text, status.Objective2IconKind, AssistantMessagePriority.Low, 0);
+            UpdateElapsed(ref state, boundary, ref objectiveState, (float)SystemAPI.Time.ElapsedTime);
 
-            int expectedCount = CountVisible(goal0, goal1, goal2);
-            if (GoalsMatch(goals, expectedCount, goal0, goal1, goal2))
+            int expectedCount = objectiveState.MatchActive != 0 ? math.min(3, objectives.Length) : 0;
+            if (GoalsMatch(goals, objectives, expectedCount))
                 return;
 
-            AssistantStateComponent assistantState = state.EntityManager.GetComponentData<AssistantStateComponent>(boundary);
-            uint nextVersion = assistantState.SourceVersion + 1u;
-            if (nextVersion == 0u)
-                nextVersion = 1u;
-
             goals.Clear();
-            AddVisibleGoal(goals, goal0, nextVersion);
-            AddVisibleGoal(goals, goal1, nextVersion);
-            AddVisibleGoal(goals, goal2, nextVersion);
+            for (int i = 0; i < expectedCount; i++)
+                goals.Add(ToGoal(objectives[i], objectiveState.Version));
 
-            assistantState.SourceVersion = nextVersion;
-            assistantState.PublishedVersion = nextVersion;
-            assistantState.UiDirty = 1;
-            state.EntityManager.SetComponentData(boundary, assistantState);
+            AssistantStateComponent assistant = state.EntityManager.GetComponentData<AssistantStateComponent>(boundary);
+            assistant.SourceVersion = AssistantRuntimeStateUtility.NextVersion(assistant.SourceVersion);
+            assistant.PublishedVersion = assistant.SourceVersion;
+            assistant.UiDirty = 1;
+            state.EntityManager.SetComponentData(boundary, assistant);
         }
 
         internal static void EnsureAssistantReadModelBoundary(ref SystemState state, Entity boundary)
@@ -75,108 +231,105 @@ namespace Game.UI.Shell.Ecs
 
             if (!em.HasComponent<AssistantSettingsComponent>(boundary))
                 em.AddComponentData(boundary, AssistantSettingsPersistenceSystemHelper.LoadSettingsComponent());
-
             if (!em.HasComponent<AssistantRecommendationReadModelComponent>(boundary))
                 em.AddComponentData(boundary, default(AssistantRecommendationReadModelComponent));
+            if (!em.HasComponent<AssistantRecommendationEvaluationStateComponent>(boundary))
+                em.AddComponentData(boundary, default(AssistantRecommendationEvaluationStateComponent));
+            if (!em.HasComponent<AssistantMessageReadModelComponent>(boundary))
+                em.AddComponentData(boundary, default(AssistantMessageReadModelComponent));
+            if (!em.HasComponent<AssistantThreatReadModelStateComponent>(boundary))
+                em.AddComponentData(boundary, default(AssistantThreatReadModelStateComponent));
+            if (!em.HasComponent<AssistantTargetLockReadModelComponent>(boundary))
+                em.AddComponentData(boundary, default(AssistantTargetLockReadModelComponent));
+            if (!em.HasComponent<MatchObjectiveRuntimeStateComponent>(boundary))
+                em.AddComponentData(boundary, default(MatchObjectiveRuntimeStateComponent));
 
-            if (!em.HasBuffer<AssistantGoalReadModelElement>(boundary))
-                em.AddBuffer<AssistantGoalReadModelElement>(boundary);
-
-            if (!em.HasBuffer<AssistantRecommendationElement>(boundary))
-                em.AddBuffer<AssistantRecommendationElement>(boundary);
-
-            if (!em.HasBuffer<AssistantMessageElement>(boundary))
-                em.AddBuffer<AssistantMessageElement>(boundary);
-
-            if (!em.HasBuffer<AssistantPreviewHighlightElement>(boundary))
-                em.AddBuffer<AssistantPreviewHighlightElement>(boundary);
+            EnsureBuffer<MatchObjectiveRuntimeElement>(em, boundary);
+            EnsureBuffer<AssistantGoalReadModelElement>(em, boundary);
+            EnsureBuffer<AssistantRecommendationElement>(em, boundary);
+            EnsureBuffer<AssistantThreatReadModelElement>(em, boundary);
+            EnsureBuffer<AssistantMessageElement>(em, boundary);
+            EnsureBuffer<AssistantPreviewHighlightElement>(em, boundary);
+            EnsureBuffer<AssistantCommandIntentRequestElement>(em, boundary);
+            EnsureBuffer<AssistantCommandIntentResultElement>(em, boundary);
+            EnsureBuffer<AssistantCommandDispatchElement>(em, boundary);
         }
 
-        private static AssistantGoalReadModelElement BuildGoal(
-            int goalId,
-            FixedString64Bytes text,
-            UiMatchHudObjectiveIconKind iconKind,
-            AssistantMessagePriority priority,
-            byte isPrimary)
+        private static void EnsureBuffer<T>(EntityManager entityManager, Entity boundary)
+            where T : unmanaged, IBufferElementData
+        {
+            if (!entityManager.HasBuffer<T>(boundary))
+                entityManager.AddBuffer<T>(boundary);
+        }
+
+        private static void UpdateElapsed(
+            ref SystemState state,
+            Entity boundary,
+            ref MatchObjectiveRuntimeStateComponent objectiveState,
+            float now)
+        {
+            if (objectiveState.MatchActive == 0)
+                return;
+
+            int elapsed = math.max(0, (int)math.floor(now - objectiveState.MatchStartedAt));
+            if (elapsed == objectiveState.ElapsedWholeSeconds)
+                return;
+
+            objectiveState.ElapsedWholeSeconds = elapsed;
+            objectiveState.Version = AssistantRuntimeStateUtility.NextVersion(objectiveState.Version);
+            state.EntityManager.SetComponentData(boundary, objectiveState);
+        }
+
+        private static AssistantGoalReadModelElement ToGoal(MatchObjectiveRuntimeElement objective, uint sourceVersion)
         {
             return new AssistantGoalReadModelElement
             {
-                GoalId = goalId,
-                State = iconKind == UiMatchHudObjectiveIconKind.Checked
-                    ? AssistantGoalState.Complete
-                    : AssistantGoalState.Active,
-                Priority = priority,
-                Title = text,
-                Body = iconKind == UiMatchHudObjectiveIconKind.Checked
-                    ? new FixedString128Bytes("Objective complete.")
-                    : new FixedString128Bytes("Current mission objective."),
-                IsPrimary = isPrimary
+                GoalId = objective.GoalId,
+                SourceVersion = (int)sourceVersion,
+                ObjectiveId = objective.ObjectiveId,
+                State = (AssistantGoalState)objective.State,
+                Priority = (AssistantMessagePriority)math.min((int)AssistantMessagePriority.Critical, (int)objective.Priority),
+                Title = objective.Title,
+                Body = objective.Body,
+                TargetEntity = objective.TargetEntity,
+                TargetCell = objective.TargetCell,
+                WorldPosition = objective.WorldPosition,
+                IsPrimary = objective.IsPrimary,
+                HasTargetCell = objective.HasTargetCell,
+                HasWorldPosition = objective.HasWorldPosition
             };
-        }
-
-        private static int CountVisible(
-            AssistantGoalReadModelElement goal0,
-            AssistantGoalReadModelElement goal1,
-            AssistantGoalReadModelElement goal2)
-        {
-            int count = 0;
-            if (goal0.Title.Length > 0)
-                count++;
-            if (goal1.Title.Length > 0)
-                count++;
-            if (goal2.Title.Length > 0)
-                count++;
-            return count;
         }
 
         private static bool GoalsMatch(
             DynamicBuffer<AssistantGoalReadModelElement> goals,
-            int expectedCount,
-            AssistantGoalReadModelElement goal0,
-            AssistantGoalReadModelElement goal1,
-            AssistantGoalReadModelElement goal2)
+            DynamicBuffer<MatchObjectiveRuntimeElement> objectives,
+            int expectedCount)
         {
             if (goals.Length != expectedCount)
                 return false;
 
-            int index = 0;
-            if (!GoalMatches(goals, ref index, goal0))
-                return false;
-            if (!GoalMatches(goals, ref index, goal1))
-                return false;
-            return GoalMatches(goals, ref index, goal2);
-        }
+            for (int i = 0; i < expectedCount; i++)
+            {
+                MatchObjectiveRuntimeElement source = objectives[i];
+                AssistantGoalReadModelElement current = goals[i];
+                if (current.GoalId != source.GoalId ||
+                    !current.ObjectiveId.Equals(source.ObjectiveId) ||
+                    current.State != (AssistantGoalState)source.State ||
+                    current.Priority != (AssistantMessagePriority)math.min((int)AssistantMessagePriority.Critical, (int)source.Priority) ||
+                    !current.Title.Equals(source.Title) ||
+                    !current.Body.Equals(source.Body) ||
+                    current.TargetEntity != source.TargetEntity ||
+                    !current.TargetCell.Equals(source.TargetCell) ||
+                    !current.WorldPosition.Equals(source.WorldPosition) ||
+                    current.IsPrimary != source.IsPrimary ||
+                    current.HasTargetCell != source.HasTargetCell ||
+                    current.HasWorldPosition != source.HasWorldPosition)
+                {
+                    return false;
+                }
+            }
 
-        private static bool GoalMatches(
-            DynamicBuffer<AssistantGoalReadModelElement> goals,
-            ref int index,
-            AssistantGoalReadModelElement expected)
-        {
-            if (expected.Title.Length == 0)
-                return true;
-
-            if (index >= goals.Length)
-                return false;
-
-            AssistantGoalReadModelElement current = goals[index++];
-            return current.GoalId == expected.GoalId
-                && current.State == expected.State
-                && current.Priority == expected.Priority
-                && current.Title.Equals(expected.Title)
-                && current.Body.Equals(expected.Body)
-                && current.IsPrimary == expected.IsPrimary;
-        }
-
-        private static void AddVisibleGoal(
-            DynamicBuffer<AssistantGoalReadModelElement> goals,
-            AssistantGoalReadModelElement goal,
-            uint sourceVersion)
-        {
-            if (goal.Title.Length == 0)
-                return;
-
-            goal.SourceVersion = (int)sourceVersion;
-            goals.Add(goal);
+            return true;
         }
     }
 
@@ -185,17 +338,16 @@ namespace Game.UI.Shell.Ecs
     public partial struct AssistantRecommendationSystem : ISystem
     {
         private EntityQuery boundaryQuery;
+        private EntityQuery matchStartQuery;
         private EntityQuery focusedSelectionQuery;
-        private EntityQuery selectedUnitsQuery;
 
         public void OnCreate(ref SystemState state)
         {
             boundaryQuery = state.GetEntityQuery(
                 ComponentType.ReadOnly<UiShellStateComponent>(),
-                ComponentType.ReadOnly<UiMatchHudStatusSurfacesComponent>(),
                 ComponentType.ReadOnly<UiMatchHudHeaderComponent>());
+            matchStartQuery = state.GetEntityQuery(ComponentType.ReadOnly<MatchStartQueueComponent>());
             focusedSelectionQuery = state.GetEntityQuery(ComponentType.ReadOnly<FocusedUnitUiReadModelComponent>());
-            selectedUnitsQuery = state.GetEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
             state.RequireForUpdate(boundaryQuery);
         }
 
@@ -203,35 +355,54 @@ namespace Game.UI.Shell.Ecs
         {
             Entity boundary = boundaryQuery.GetSingletonEntity();
             AssistantGoalReadModelSystem.EnsureAssistantReadModelBoundary(ref state, boundary);
+            if (!AssistantRuntimeStateUtility.IsActive(state.EntityManager, boundary, matchStartQuery))
+                return;
 
-            UiMatchHudStatusSurfacesComponent status =
-                state.EntityManager.GetComponentData<UiMatchHudStatusSurfacesComponent>(boundary);
-            AssistantStateComponent assistantState =
-                state.EntityManager.GetComponentData<AssistantStateComponent>(boundary);
+            AssistantStateComponent assistant = state.EntityManager.GetComponentData<AssistantStateComponent>(boundary);
+            AssistantThreatReadModelStateComponent threatState =
+                state.EntityManager.GetComponentData<AssistantThreatReadModelStateComponent>(boundary);
             DynamicBuffer<AssistantGoalReadModelElement> goals =
-                state.EntityManager.GetBuffer<AssistantGoalReadModelElement>(boundary);
+                state.EntityManager.GetBuffer<AssistantGoalReadModelElement>(boundary, true);
+            DynamicBuffer<AssistantThreatReadModelElement> threats =
+                state.EntityManager.GetBuffer<AssistantThreatReadModelElement>(boundary, true);
             DynamicBuffer<AssistantRecommendationElement> recommendations =
                 state.EntityManager.GetBuffer<AssistantRecommendationElement>(boundary);
-            TryReadFocusedSelection(out FocusedUnitUiReadModelComponent focusedSelection);
-            TryReadPlayerUsableFuelSummary(state.EntityManager, boundary, out BuildingRuntimeFactionUsableFuelSummary fuelSummary);
-            int selectedUnitCount = selectedUnitsQuery.IsEmptyIgnoreFilter
-                ? 0
-                : selectedUnitsQuery.CalculateEntityCount();
+            TryReadFocusedSelection(out FocusedUnitUiReadModelComponent focused);
+            TryReadPlayerUsableFuelSummary(state.EntityManager, boundary, out BuildingRuntimeFactionUsableFuelSummary fuel);
 
-            AssistantRecommendationElement next = BuildRecommendation(
-                status,
-                goals,
-                focusedSelection,
-                fuelSummary,
-                selectedUnitCount,
-                assistantState.SourceVersion);
+            UiShellStateComponent shell = state.EntityManager.GetComponentData<UiShellStateComponent>(boundary);
+            AssistantRecommendationEvaluationStateComponent evaluation =
+                state.EntityManager.GetComponentData<AssistantRecommendationEvaluationStateComponent>(boundary);
+            uint goalVersion = assistant.SourceVersion;
+            uint focusedVersion = focused.HasFocusedUnit != 0 ? focused.CommandStateVersion : 0u;
+            uint fuelVersion = fuel.Version;
+            if (evaluation.Initialized != 0 &&
+                evaluation.LastGoalVersion == goalVersion &&
+                evaluation.LastThreatVersion == threatState.Version &&
+                evaluation.LastFocusedUnitVersion == focusedVersion &&
+                evaluation.LastFuelVersion == fuelVersion &&
+                evaluation.LastRouteTransitionSequenceId == shell.TransitionSequenceId &&
+                evaluation.LastControlState == assistant.ControlState)
+            {
+                return;
+            }
+
+            evaluation.LastGoalVersion = goalVersion;
+            evaluation.LastThreatVersion = threatState.Version;
+            evaluation.LastFocusedUnitVersion = focusedVersion;
+            evaluation.LastFuelVersion = fuelVersion;
+            evaluation.LastRouteTransitionSequenceId = shell.TransitionSequenceId;
+            evaluation.LastControlState = assistant.ControlState;
+            evaluation.Initialized = 1;
+            state.EntityManager.SetComponentData(boundary, evaluation);
+
+            AssistantRecommendationElement next = BuildRecommendation(goals, threats, focused, fuel, goalVersion);
             if (RecommendationsMatch(recommendations, next))
                 return;
 
             recommendations.Clear();
             AssistantRecommendationReadModelComponent readModel =
                 state.EntityManager.GetComponentData<AssistantRecommendationReadModelComponent>(boundary);
-
             if (next.RecommendationId != 0)
             {
                 recommendations.Add(next);
@@ -239,8 +410,8 @@ namespace Game.UI.Shell.Ecs
                 readModel.TopRecommendationId = next.RecommendationId;
                 readModel.TopPriority = next.Priority;
                 readModel.TopKind = next.Kind;
-                assistantState.HasActiveRecommendation = 1;
-                assistantState.ActiveRecommendationId = next.RecommendationId;
+                assistant.HasActiveRecommendation = 1;
+                assistant.ActiveRecommendationId = next.RecommendationId;
             }
             else
             {
@@ -248,65 +419,56 @@ namespace Game.UI.Shell.Ecs
                 readModel.TopRecommendationId = 0;
                 readModel.TopPriority = AssistantMessagePriority.Low;
                 readModel.TopKind = AssistantRecommendationKind.None;
-                assistantState.HasActiveRecommendation = 0;
-                assistantState.ActiveRecommendationId = 0;
+                assistant.HasActiveRecommendation = 0;
+                assistant.ActiveRecommendationId = 0;
             }
 
-            readModel.Version++;
-            if (readModel.Version == 0u)
-                readModel.Version = 1u;
+            readModel.Version = AssistantRuntimeStateUtility.NextVersion(readModel.Version);
             readModel.UiDirty = 1;
-            assistantState.UiDirty = 1;
-            assistantState.PublishedVersion = assistantState.SourceVersion;
-
+            assistant.UiDirty = 1;
             state.EntityManager.SetComponentData(boundary, readModel);
-            state.EntityManager.SetComponentData(boundary, assistantState);
+            state.EntityManager.SetComponentData(boundary, assistant);
         }
 
         private static AssistantRecommendationElement BuildRecommendation(
-            UiMatchHudStatusSurfacesComponent status,
             DynamicBuffer<AssistantGoalReadModelElement> goals,
-            FocusedUnitUiReadModelComponent focusedSelection,
-            BuildingRuntimeFactionUsableFuelSummary fuelSummary,
-            int selectedUnitCount,
+            DynamicBuffer<AssistantThreatReadModelElement> threats,
+            FocusedUnitUiReadModelComponent focused,
+            BuildingRuntimeFactionUsableFuelSummary fuel,
             uint sourceVersion)
         {
-            if (status.ThreatVisible != 0)
+            if (threats.Length > 0)
             {
+                AssistantThreatReadModelElement threat = threats[0];
+                bool canAttack = threat.FriendlyTarget != Entity.Null && threat.HostileSource != Entity.Null;
                 return new AssistantRecommendationElement
                 {
-                    RecommendationId = 2001,
+                    RecommendationId = 200000 + math.abs(threat.ThreatId),
                     SourceVersion = (int)sourceVersion,
-                    Kind = AssistantRecommendationKind.DefensiveAlert,
-                    Priority = AssistantMessagePriority.Critical,
-                    TargetKind = AssistantTargetKind.UiSurface,
+                    Kind = canAttack ? AssistantRecommendationKind.Attack : AssistantRecommendationKind.DefensiveAlert,
+                    Priority = threat.Priority,
+                    TargetKind = AssistantTargetKind.Entity,
+                    SourceEntity = threat.FriendlyTarget,
+                    TargetEntity = threat.HostileSource,
+                    WorldPosition = threat.HostileWorldPosition,
                     Score = 100f,
-                    Title = status.ThreatTitle.Length > 0
-                        ? status.ThreatTitle
-                        : new FixedString64Bytes("Threat detected"),
-                    Reason = status.ThreatSubtitle.Length > 0
-                        ? CopyTo128(status.ThreatSubtitle)
-                        : new FixedString128Bytes("Respond to the active threat before issuing routine orders."),
-                    ActionLabel = new FixedString64Bytes("SHOW ME"),
-                    CanShow = 1
+                    Title = new FixedString64Bytes("Respond to verified threat"),
+                    Reason = threat.Reason,
+                    RejectionReason = canAttack ? default : new FixedString64Bytes("No verified hostile target"),
+                    ActionLabel = new FixedString64Bytes("DO IT"),
+                    HasWorldPosition = 1,
+                    CanShow = 1,
+                    CanExecute = canAttack ? (byte)1 : (byte)0
                 };
             }
 
-            if (HasFuelLogisticsWarning(fuelSummary))
+            if (HasFuelLogisticsWarning(fuel))
             {
-                int roundedFuel = math.max(0, (int)math.round(fuelSummary.StoredFuelBarrels));
-                int roundedOil = math.max(0, (int)math.round(fuelSummary.StoredOilBarrels));
-                bool hasOilWaiting = roundedOil > 0;
+                int roundedFuel = math.max(0, (int)math.round(fuel.StoredFuelBarrels));
                 return new AssistantRecommendationElement
                 {
                     RecommendationId = roundedFuel <= 0 ? 4001 : 4002,
-                    SourceVersion = FuelSourceVersion(
-                        sourceVersion,
-                        fuelSummary.Version,
-                        roundedOil,
-                        roundedFuel,
-                        fuelSummary.OilStorageCapacity,
-                        fuelSummary.FuelStorageCapacity),
+                    SourceVersion = (int)sourceVersion,
                     Kind = AssistantRecommendationKind.Logistics,
                     Priority = roundedFuel <= 0 ? AssistantMessagePriority.High : AssistantMessagePriority.Normal,
                     TargetKind = AssistantTargetKind.UiSurface,
@@ -314,79 +476,83 @@ namespace Game.UI.Shell.Ecs
                     Title = roundedFuel <= 0
                         ? new FixedString64Bytes("Fuel reserves empty")
                         : new FixedString64Bytes("Fuel reserves low"),
-                    Reason = hasOilWaiting
-                        ? new FixedString128Bytes("Oil is waiting in storage. Keep refineries and tanker delivery online to restore usable fuel.")
-                        : new FixedString128Bytes("Usable fuel is low. Protect oil pumps, refineries, and fuel storage before vehicles stall."),
+                    Reason = new FixedString128Bytes("Protect fuel production and delivery before issuing vehicle orders."),
+                    RejectionReason = new FixedString64Bytes("No direct ARIA command"),
                     ActionLabel = new FixedString64Bytes("SHOW ME"),
                     CanShow = 1
                 };
             }
 
-            if (focusedSelection.HasFocusedUnit == 0 && selectedUnitCount <= 0)
+            if (focused.HasFocusedUnit == 0)
             {
                 return new AssistantRecommendationElement
                 {
                     RecommendationId = 3001,
-                    SourceVersion = SelectionSourceVersion(sourceVersion, 0u, selectedUnitCount),
+                    SourceVersion = (int)sourceVersion,
                     Kind = AssistantRecommendationKind.Select,
                     Priority = AssistantMessagePriority.High,
                     TargetKind = AssistantTargetKind.UiSurface,
                     Score = 90f,
                     Title = new FixedString64Bytes("Select a unit"),
-                    Reason = new FixedString128Bytes("Select a combat unit first so ARIA can recommend a concrete order."),
-                    ActionLabel = new FixedString64Bytes("SHOW ME"),
+                    Reason = new FixedString128Bytes("Select a player-controlled unit before issuing a tactical order."),
+                    ActionLabel = new FixedString64Bytes("DO IT"),
                     CanShow = 1,
                     CanExecute = 1
-                };
-            }
-
-            if (focusedSelection.HasFocusedUnit != 0 &&
-                focusedSelection.OwnedByPlayer != 0 &&
-                focusedSelection.Status == 0)
-            {
-                bool canAttack = focusedSelection.CanAttack != 0;
-                return new AssistantRecommendationElement
-                {
-                    RecommendationId = canAttack ? 3101 : 3102,
-                    SourceVersion = SelectionSourceVersion(sourceVersion, focusedSelection.CommandStateVersion, selectedUnitCount),
-                    Kind = canAttack ? AssistantRecommendationKind.Attack : AssistantRecommendationKind.Move,
-                    Priority = AssistantMessagePriority.Normal,
-                    TargetKind = AssistantTargetKind.Entity,
-                    SourceEntity = focusedSelection.FocusedUnit,
-                    TargetEntity = focusedSelection.FocusedUnit,
-                    WorldPosition = focusedSelection.HasWorldPosition != 0 ? focusedSelection.WorldPosition : default,
-                    Score = canAttack ? 86f : 82f,
-                    Title = canAttack
-                        ? new FixedString64Bytes("Assign an attack target")
-                        : new FixedString64Bytes("Move the selected unit"),
-                    Reason = canAttack
-                        ? new FixedString128Bytes("The selected unit is idle and ready for an attack order.")
-                        : new FixedString128Bytes("The selected unit is idle; move it toward the next objective."),
-                    ActionLabel = new FixedString64Bytes("SHOW ME"),
-                    CanShow = 1
                 };
             }
 
             for (int i = 0; i < goals.Length; i++)
             {
                 AssistantGoalReadModelElement goal = goals[i];
-                if (goal.State != AssistantGoalState.Active)
+                if (goal.State != AssistantGoalState.Active && goal.State != AssistantGoalState.Warning)
                     continue;
 
-                return new AssistantRecommendationElement
+                if (goal.TargetEntity != Entity.Null && focused.CanAttack != 0)
                 {
-                    RecommendationId = 1000 + goal.GoalId,
-                    SourceVersion = (int)sourceVersion,
-                    Kind = AssistantRecommendationKind.CameraFocus,
-                    Priority = goal.Priority,
-                    TargetKind = AssistantTargetKind.Objective,
-                    TargetCell = new int2(goal.GoalId, 0),
-                    Score = 80f - goal.GoalId,
-                    Title = new FixedString64Bytes("Review objective"),
-                    Reason = new FixedString128Bytes("Focus the active objective before choosing the next order."),
-                    ActionLabel = new FixedString64Bytes("SHOW ME"),
-                    CanShow = 1
-                };
+                    return new AssistantRecommendationElement
+                    {
+                        RecommendationId = 1000 + goal.GoalId,
+                        SourceVersion = goal.SourceVersion,
+                        Kind = AssistantRecommendationKind.Attack,
+                        Priority = goal.Priority,
+                        TargetKind = AssistantTargetKind.Entity,
+                        SourceEntity = focused.FocusedUnit,
+                        TargetEntity = goal.TargetEntity,
+                        TargetCell = goal.TargetCell,
+                        WorldPosition = goal.WorldPosition,
+                        Score = 86f,
+                        Title = new FixedString64Bytes("Attack objective target"),
+                        Reason = goal.Body,
+                        ActionLabel = new FixedString64Bytes("DO IT"),
+                        HasTargetCell = goal.HasTargetCell,
+                        HasWorldPosition = goal.HasWorldPosition,
+                        CanShow = 1,
+                        CanExecute = focused.OwnedByPlayer
+                    };
+                }
+
+                if (goal.HasTargetCell != 0 || goal.HasWorldPosition != 0)
+                {
+                    return new AssistantRecommendationElement
+                    {
+                        RecommendationId = 1000 + goal.GoalId,
+                        SourceVersion = goal.SourceVersion,
+                        Kind = AssistantRecommendationKind.Move,
+                        Priority = goal.Priority,
+                        TargetKind = goal.HasTargetCell != 0 ? AssistantTargetKind.Cell : AssistantTargetKind.WorldPosition,
+                        SourceEntity = focused.FocusedUnit,
+                        TargetCell = goal.TargetCell,
+                        WorldPosition = goal.WorldPosition,
+                        Score = 82f,
+                        Title = new FixedString64Bytes("Move to objective"),
+                        Reason = goal.Body,
+                        ActionLabel = new FixedString64Bytes("DO IT"),
+                        HasTargetCell = goal.HasTargetCell,
+                        HasWorldPosition = goal.HasWorldPosition,
+                        CanShow = goal.HasWorldPosition,
+                        CanExecute = focused.OwnedByPlayer
+                    };
+                }
             }
 
             return default;
@@ -395,9 +561,9 @@ namespace Game.UI.Shell.Ecs
         private static bool TryReadPlayerUsableFuelSummary(
             EntityManager entityManager,
             Entity boundary,
-            out BuildingRuntimeFactionUsableFuelSummary fuelSummary)
+            out BuildingRuntimeFactionUsableFuelSummary fuel)
         {
-            fuelSummary = default;
+            fuel = default;
             if (!entityManager.HasBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundary))
                 return false;
 
@@ -405,72 +571,35 @@ namespace Game.UI.Shell.Ecs
                 entityManager.GetBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundary, true);
             for (int i = 0; i < summaries.Length; i++)
             {
-                BuildingRuntimeFactionUsableFuelSummary summary = summaries[i];
-                if (!FactionIdentity.IsPlayerControlled(summary.FactionId))
+                if (!FactionIdentity.IsPlayerControlled(summaries[i].FactionId))
                     continue;
-
-                fuelSummary = summary;
+                fuel = summaries[i];
                 return true;
             }
 
             return false;
         }
 
-        private static bool HasFuelLogisticsWarning(BuildingRuntimeFactionUsableFuelSummary fuelSummary)
+        private static bool HasFuelLogisticsWarning(BuildingRuntimeFactionUsableFuelSummary fuel)
         {
-            if (!FactionIdentity.IsPlayerControlled(fuelSummary.FactionId))
+            if (!FactionIdentity.IsPlayerControlled(fuel.FactionId))
                 return false;
 
-            if (fuelSummary.OilStorageCapacity <= 0 &&
-                fuelSummary.FuelStorageCapacity <= 0 &&
-                fuelSummary.StoredOilBarrels <= 0.001f &&
-                fuelSummary.StoredFuelBarrels <= 0.001f)
-            {
+            if (fuel.OilStorageCapacity <= 0 && fuel.FuelStorageCapacity <= 0)
                 return false;
-            }
 
-            return fuelSummary.StoredFuelBarrels <= 0.5f ||
-                   fuelSummary.StoredFuelBarrels < math.min(100f, fuelSummary.FuelStorageCapacity * 0.1f);
+            return fuel.StoredFuelBarrels <= 0.5f ||
+                   fuel.StoredFuelBarrels < math.min(100f, fuel.FuelStorageCapacity * 0.1f);
         }
 
-        private bool TryReadFocusedSelection(out FocusedUnitUiReadModelComponent focusedSelection)
+        private bool TryReadFocusedSelection(out FocusedUnitUiReadModelComponent focused)
         {
-            focusedSelection = default;
+            focused = default;
             if (focusedSelectionQuery.IsEmptyIgnoreFilter)
                 return false;
 
-            focusedSelection = focusedSelectionQuery.GetSingleton<FocusedUnitUiReadModelComponent>();
+            focused = focusedSelectionQuery.GetSingleton<FocusedUnitUiReadModelComponent>();
             return true;
-        }
-
-        private static int FuelSourceVersion(
-            uint sourceVersion,
-            uint fuelVersion,
-            int oil,
-            int fuel,
-            int oilCapacity,
-            int fuelCapacity)
-        {
-            uint combined = sourceVersion * 397u
-                ^ fuelVersion * 131u
-                ^ (uint)math.max(0, oil) * 31u
-                ^ (uint)math.max(0, fuel) * 17u
-                ^ (uint)math.max(0, oilCapacity) * 7u
-                ^ (uint)math.max(0, fuelCapacity);
-            return (int)(combined == 0u ? 1u : combined);
-        }
-
-        private static int SelectionSourceVersion(uint sourceVersion, uint commandStateVersion, int selectedUnitCount)
-        {
-            uint combined = sourceVersion * 397u ^ commandStateVersion * 31u ^ (uint)math.max(0, selectedUnitCount);
-            return (int)(combined == 0u ? 1u : combined);
-        }
-
-        private static FixedString128Bytes CopyTo128(FixedString64Bytes text)
-        {
-            FixedString128Bytes result = default;
-            result.Append(text);
-            return result;
         }
 
         private static bool RecommendationsMatch(
@@ -479,24 +608,28 @@ namespace Game.UI.Shell.Ecs
         {
             if (expected.RecommendationId == 0)
                 return recommendations.Length == 0;
-
             if (recommendations.Length != 1)
                 return false;
 
             AssistantRecommendationElement current = recommendations[0];
-            return current.RecommendationId == expected.RecommendationId
-                && current.SourceVersion == expected.SourceVersion
-                && current.Kind == expected.Kind
-                && current.Priority == expected.Priority
-                && current.TargetKind == expected.TargetKind
-                && current.Score.Equals(expected.Score)
-                && current.TargetCell.Equals(expected.TargetCell)
-                && current.Title.Equals(expected.Title)
-                && current.Reason.Equals(expected.Reason)
-                && current.ActionLabel.Equals(expected.ActionLabel)
-                && current.CanShow == expected.CanShow
-                && current.CanExecute == expected.CanExecute
-                && current.CanTakeControl == expected.CanTakeControl;
+            return current.RecommendationId == expected.RecommendationId &&
+                   current.SourceVersion == expected.SourceVersion &&
+                   current.Kind == expected.Kind &&
+                   current.Priority == expected.Priority &&
+                   current.TargetKind == expected.TargetKind &&
+                   current.SourceEntity == expected.SourceEntity &&
+                   current.TargetEntity == expected.TargetEntity &&
+                   current.TargetCell.Equals(expected.TargetCell) &&
+                   current.WorldPosition.Equals(expected.WorldPosition) &&
+                   current.Title.Equals(expected.Title) &&
+                   current.Reason.Equals(expected.Reason) &&
+                   current.RejectionReason.Equals(expected.RejectionReason) &&
+                   current.ActionLabel.Equals(expected.ActionLabel) &&
+                   current.HasTargetCell == expected.HasTargetCell &&
+                   current.HasWorldPosition == expected.HasWorldPosition &&
+                   current.CanShow == expected.CanShow &&
+                   current.CanExecute == expected.CanExecute &&
+                   current.CanTakeControl == expected.CanTakeControl;
         }
     }
 }

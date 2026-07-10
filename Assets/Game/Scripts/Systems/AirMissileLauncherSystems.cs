@@ -940,8 +940,12 @@ namespace Game.Runtime
     [UpdateAfter(typeof(AirMissileHomingProjectileSystem))]
     public partial struct AirMissileImpactSystem : ISystem
     {
+        private EntityQuery _observationQueueQuery;
+
         public void OnCreate(ref SystemState state)
         {
+            _observationQueueQuery = state.GetEntityQuery(
+                ComponentType.ReadWrite<CombatDamageObservationQueueComponent>());
             state.RequireForUpdate<AirMissileImpactRequestComponent>();
         }
 
@@ -949,6 +953,8 @@ namespace Game.Runtime
         {
             EntityManager em = state.EntityManager;
             AudioEventRequestSystem.EnsureAudioEntity(em);
+            Entity observationQueue = CombatDamageObservationUtility.TryGetQueue(_observationQueueQuery);
+            float now = (float)SystemAPI.Time.ElapsedTime;
             var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
 
             foreach (var (impact, entity) in SystemAPI.Query<RefRO<AirMissileImpactRequestComponent>>().WithEntityAccess())
@@ -977,8 +983,29 @@ namespace Game.Runtime
                 else if (em.Exists(request.Target) && em.HasComponent<UnitHealth>(request.Target))
                 {
                     UnitHealth health = em.GetComponentData<UnitHealth>(request.Target);
+                    int previousHealth = health.Current;
                     health.Current = math.max(0, health.Current - math.max(0, request.Damage));
                     ecb.SetComponent(request.Target, health);
+                    float3 sourcePosition = request.Source != Entity.Null &&
+                                            em.Exists(request.Source) &&
+                                            em.HasComponent<LocalTransform>(request.Source)
+                        ? em.GetComponentData<LocalTransform>(request.Source).Position
+                        : request.Position;
+                    float3 targetPosition = em.HasComponent<LocalTransform>(request.Target)
+                        ? em.GetComponentData<LocalTransform>(request.Target).Position
+                        : request.Position;
+                    CombatDamageObservationUtility.Append(
+                        em,
+                        observationQueue,
+                        request.Source,
+                        request.Target,
+                        CombatDamageSourceKind.AirMissile,
+                        previousHealth,
+                        health.Current,
+                        health.Max,
+                        now,
+                        sourcePosition,
+                        targetPosition);
                 }
 
                 EnqueueImpactVfx(em, ecb, request);

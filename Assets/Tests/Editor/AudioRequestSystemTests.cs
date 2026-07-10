@@ -23,6 +23,8 @@ public sealed class AudioRequestSystemTests
             passed++;
             RunCase(test => test.ProcessPendingRequests_MarksMissingEvent());
             passed++;
+            RunCase(test => test.ProcessPendingRequests_VersionsAndBoundsNewestResults());
+            passed++;
             RunCase(test => test.MusicStateSystem_AppliesRequestedState());
             passed++;
             RunCase(test => test.SettingsSystem_ClampsVolumesAndBumpsVersion());
@@ -72,6 +74,7 @@ public sealed class AudioRequestSystemTests
         Entity audioEntity = AudioEventRequestSystem.EnsureAudioEntity(_entityManager);
 
         Assert.IsTrue(_entityManager.HasComponent<AudioPlaybackRequestQueueComponent>(audioEntity));
+        Assert.IsTrue(_entityManager.HasComponent<AudioPlaybackResultQueueComponent>(audioEntity));
         Assert.IsTrue(_entityManager.HasComponent<AudioSettingsComponent>(audioEntity));
         Assert.IsTrue(_entityManager.HasComponent<AudioMusicStateComponent>(audioEntity));
         Assert.IsTrue(_entityManager.HasComponent<AudioListenerStateComponent>(audioEntity));
@@ -140,6 +143,40 @@ public sealed class AudioRequestSystemTests
         Assert.AreEqual(1, results.Length);
         Assert.AreEqual(AudioPlaybackRequestStatus.MissingEvent, results[0].Status);
         Assert.AreEqual("MissingEvent", results[0].Reason.ToString());
+    }
+
+    [Test]
+    public void ProcessPendingRequests_VersionsAndBoundsNewestResults()
+    {
+        const int requestCount = 300;
+        for (int i = 0; i < requestCount; i++)
+        {
+            AudioEventRequestSystem.EnqueueOneShot(
+                _entityManager,
+                default,
+                0u,
+                new FixedString32Bytes("Voice"),
+                AudioPlaybackPriority.Low,
+                requestedAt: i);
+        }
+
+        AudioCooldownSystem.ProcessPendingRequests(_entityManager, now: requestCount);
+
+        Entity audioEntity = AudioEventRequestSystem.EnsureAudioEntity(_entityManager);
+        DynamicBuffer<AudioPlaybackRequestElement> requests =
+            _entityManager.GetBuffer<AudioPlaybackRequestElement>(audioEntity);
+        DynamicBuffer<AudioPlaybackResultElement> results =
+            _entityManager.GetBuffer<AudioPlaybackResultElement>(audioEntity);
+        AudioPlaybackResultQueueComponent resultQueue =
+            _entityManager.GetComponentData<AudioPlaybackResultQueueComponent>(audioEntity);
+
+        Assert.AreEqual(AudioEventRequestSystem.MaxTerminalRequestHistory, requests.Length);
+        Assert.AreEqual(AudioEventRequestSystem.MaxResultHistory, results.Length);
+        Assert.AreEqual(45, requests[0].RequestId);
+        Assert.AreEqual(45, results[0].RequestId);
+        Assert.AreEqual(requestCount, requests[requests.Length - 1].RequestId);
+        Assert.AreEqual(requestCount, results[results.Length - 1].RequestId);
+        Assert.AreEqual((uint)requestCount, resultQueue.Version);
     }
 
     [Test]

@@ -1919,7 +1919,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 7.0961537, y: -1.9868422}
-  m_SizeDelta: {x: 260.1923, y: 51.657898}
+  m_SizeDelta: {x: 116, y: 51.657898}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &4834183315173164432
 CanvasRenderer:
@@ -6176,7 +6176,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 33.115383, y: -286.1053}
-  m_SizeDelta: {x: 274.3846, y: 55.63158}
+  m_SizeDelta: {x: 130, y: 55.63158}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &5458037859967800072
 CanvasRenderer:
@@ -8366,6 +8366,7 @@ GameObject:
   m_Component:
   - component: {fileID: 594839061345744362}
   - component: {fileID: 3305194008705825063}
+  - component: {fileID: 910000000000000013}
   m_Layer: 5
   m_Name: POP13_ARIACommandAssistantPopup
   m_TagString: Untagged
@@ -8405,6 +8406,18 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &910000000000000013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5236695059298202961}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbb0c0d3effd49d7a0e4234a67dc6084, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.AriaCommandAssistantPopupView
 --- !u!1 &5268200933641452657
 GameObject:
   m_ObjectHideFlags: 0
@@ -8713,8 +8726,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 326.42307, y: -280.14474}
-  m_SizeDelta: {x: 47.307693, y: 63.57895}
+  m_AnchoredPosition: {x: 180, y: -286.1053}
+  m_SizeDelta: {x: 250, y: 55.63158}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &5653628793756956329
 CanvasRenderer:
@@ -8771,15 +8784,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24.835527
-  m_fontSizeBase: 24.835527
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 35.76316
   m_fontSizeMax: 143.05264
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 1024
+  m_VerticalAlignment: 4096
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_characterHorizontalScale: 1
@@ -8788,7 +8801,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_TextWrappingMode: 1
+  m_TextWrappingMode: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 1
   m_linkedTextComponent: {fileID: 0}

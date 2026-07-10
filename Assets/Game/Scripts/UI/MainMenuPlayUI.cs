@@ -10,6 +10,14 @@ using Game.UI.Contracts;
 
 namespace Game.UI.Runtime
 {
+    internal enum MatchHudLargeTacticalPopup : byte
+    {
+        Assistant = 0,
+        BuildDrawer = 1,
+        FullMap = 2,
+        ResourceExchange = 3
+    }
+
     public sealed class MainMenuPlayUI : IMatchRuntimeUi
     {
         private const float CompactMinimapUpdateIntervalSeconds = 0.1f;
@@ -54,6 +62,9 @@ namespace Game.UI.Runtime
         private BuildDrawerView _buildDrawerView;
         private BuildPlacementConfirmationBarView _buildPlacementConfirmationBarView;
         private ResourceExchangePopupView _resourceExchangePopupView;
+        private System.Action _closeBuildDrawerPopup;
+        private System.Action _closeFullMapPopup;
+        private System.Action _closeResourceExchangePopup;
         private System.Action<IMatchHudSelectionPanelView> _bindMatchHudSelectionPanel;
         private System.Action<IBattleHudRuntimeFeedbackSink> _bindMatchHudRuntimeFeedback;
         private System.Action<IMatchHudSquadTrayView> _bindMatchHudSquadTray;
@@ -114,6 +125,9 @@ namespace Game.UI.Runtime
             _buildDrawerView = null;
             _buildPlacementConfirmationBarView = null;
             _resourceExchangePopupView = null;
+            _closeBuildDrawerPopup = null;
+            _closeFullMapPopup = null;
+            _closeResourceExchangePopup = null;
             _bindMatchHudSelectionPanel = null;
             _bindMatchHudRuntimeFeedback = null;
             _bindMatchHudSquadTray = null;
@@ -122,10 +136,17 @@ namespace Game.UI.Runtime
             _selectionUiCameraSystem = null;
             _minimapDataSource = null;
             _gameTextResolver = FallbackGameTextResolver.Instance;
+            MatchHudAssistantPanelOpenChanged = null;
         }
 
         public void Update()
         {
+            if (Keyboard.current?.escapeKey.wasPressedThisFrame == true &&
+                TryCloseMatchHudAssistantForBack())
+            {
+                return;
+            }
+
             float now = Time.unscaledTime;
             using (MinimapUpdateMarker.Auto())
             {
@@ -314,10 +335,74 @@ namespace Game.UI.Runtime
             SetMatchHudThreatWarningVisible(false);
         }
 
-        public void BindMatchHudAssistant(GameObject headerContent, RectTransform overlayRoot)
+        public void BindMatchHudAssistant(
+            GameObject headerContent,
+            RectTransform popupLayer,
+            GameObject popupPrefab)
         {
-            _matchHudAssistantUiSystem.Bind(headerContent, overlayRoot, CaptureGameplayUiClickSequence);
+            _matchHudAssistantUiSystem.Bind(
+                headerContent,
+                popupLayer,
+                popupPrefab,
+                CaptureGameplayUiClickSequence,
+                PrepareToOpenMatchHudAssistant,
+                NotifyMatchHudAssistantPanelOpenChanged);
             _nextAssistantPanelRefreshTime = 0f;
+        }
+
+        public void ConfigureLargeTacticalPopupCloseActions(
+            System.Action closeBuildDrawerPopup,
+            System.Action closeFullMapPopup,
+            System.Action closeResourceExchangePopup)
+        {
+            _closeBuildDrawerPopup = closeBuildDrawerPopup;
+            _closeFullMapPopup = closeFullMapPopup;
+            _closeResourceExchangePopup = closeResourceExchangePopup;
+        }
+
+        public event System.Action<bool> MatchHudAssistantPanelOpenChanged;
+
+        public bool TryCloseMatchHudAssistantForBack()
+        {
+            return _matchHudAssistantUiSystem.TryClosePanel();
+        }
+
+        internal void PrepareToOpenLargeTacticalPopup(MatchHudLargeTacticalPopup popup)
+        {
+            if (popup != MatchHudLargeTacticalPopup.Assistant)
+                _matchHudAssistantUiSystem.ClosePanelWithoutInputCapture();
+
+            if (popup != MatchHudLargeTacticalPopup.BuildDrawer &&
+                _buildDrawerView != null &&
+                _buildDrawerView.IsOpen)
+            {
+                _closeBuildDrawerPopup?.Invoke();
+            }
+
+            if (popup != MatchHudLargeTacticalPopup.FullMap &&
+                _matchHudFullMapPopupView != null &&
+                _matchHudFullMapPopupView.IsOpen)
+            {
+                _closeFullMapPopup?.Invoke();
+            }
+
+            if (popup != MatchHudLargeTacticalPopup.ResourceExchange &&
+                _resourceExchangePopupView != null &&
+                _resourceExchangePopupView.IsOpen)
+            {
+                _closeResourceExchangePopup?.Invoke();
+            }
+        }
+
+        private void PrepareToOpenMatchHudAssistant()
+        {
+            PrepareToOpenLargeTacticalPopup(MatchHudLargeTacticalPopup.Assistant);
+        }
+
+        private void NotifyMatchHudAssistantPanelOpenChanged(bool open)
+        {
+            UiShellRuntimeGateway.TrySetAssistantPanelOpen(open);
+            MatchHudAssistantPanelOpenChanged?.Invoke(open);
         }
 
         private void BindMatchHudResourceSlots(GameObject headerContent)

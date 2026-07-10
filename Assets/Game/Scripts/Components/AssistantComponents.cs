@@ -89,7 +89,46 @@ namespace Game.Components
         Active = 0,
         Complete = 1,
         Warning = 2,
-        Blocked = 3
+        Blocked = 3,
+        Failed = 4
+    }
+
+    public enum AssistantThreatKind : byte
+    {
+        None = 0,
+        FriendlyUnderAttack = 1,
+        AirAttack = 2,
+        GroundAttack = 3,
+        BuildingDefenseAttack = 4,
+        MissileAttack = 5
+    }
+
+    public enum AssistantTargetLockState : byte
+    {
+        None = 0,
+        Candidate = 1,
+        Preview = 2,
+        Executable = 3,
+        Executing = 4,
+        Invalid = 5
+    }
+
+    public enum AssistantFactionRelation : byte
+    {
+        Unknown = 0,
+        Friendly = 1,
+        Hostile = 2,
+        Neutral = 3,
+        Protected = 4
+    }
+
+    public enum AssistantDownstreamCommandKind : byte
+    {
+        None = 0,
+        Selection = 1,
+        MoveOrder = 2,
+        AttackOrder = 3,
+        Camera = 4
     }
 
     public struct AssistantStateComponent : IComponentData
@@ -130,14 +169,37 @@ namespace Game.Components
         public byte UiDirty;
     }
 
+    public struct AssistantRecommendationEvaluationStateComponent : IComponentData
+    {
+        public uint LastGoalVersion;
+        public uint LastThreatVersion;
+        public uint LastFocusedUnitVersion;
+        public uint LastFuelVersion;
+        public int LastRouteTransitionSequenceId;
+        public AssistantControlState LastControlState;
+        public byte Initialized;
+    }
+
+    public struct AssistantMessageReadModelComponent : IComponentData
+    {
+        public uint Version;
+        public int VisibleCount;
+        public int LastConsumedCommandResultVersion;
+        public float NextAgeBoundaryAt;
+    }
+
     public struct AssistantNarrationStateComponent : IComponentData
     {
         public uint Version;
         public int ActiveNarrationId;
+        public int ActiveAudioPlaybackRequestId;
         public int LastSpokenMessageId;
         public float LastSpokenAt;
         public float LowPriorityCooldownUntil;
+        public float LastPresentedAt;
         public AssistantNarrationMode Mode;
+        public AudioPlaybackRequestStatus LastAudioStatus;
+        public FixedString64Bytes LastAudioFailureReason;
         public byte IsSpeaking;
         public byte UiDirty;
     }
@@ -152,17 +214,25 @@ namespace Game.Components
         public byte HighContrastEnabled;
     }
 
+    [InternalBufferCapacity(3)]
     public struct AssistantGoalReadModelElement : IBufferElementData
     {
         public int GoalId;
         public int SourceVersion;
+        public FixedString64Bytes ObjectiveId;
         public AssistantGoalState State;
         public AssistantMessagePriority Priority;
         public FixedString64Bytes Title;
         public FixedString128Bytes Body;
+        public Entity TargetEntity;
+        public int2 TargetCell;
+        public float3 WorldPosition;
         public byte IsPrimary;
+        public byte HasTargetCell;
+        public byte HasWorldPosition;
     }
 
+    [InternalBufferCapacity(1)]
     public struct AssistantRecommendationElement : IBufferElementData
     {
         public int RecommendationId;
@@ -177,12 +247,16 @@ namespace Game.Components
         public float3 WorldPosition;
         public FixedString64Bytes Title;
         public FixedString128Bytes Reason;
+        public FixedString64Bytes RejectionReason;
         public FixedString64Bytes ActionLabel;
+        public byte HasTargetCell;
+        public byte HasWorldPosition;
         public byte CanShow;
         public byte CanExecute;
         public byte CanTakeControl;
     }
 
+    [InternalBufferCapacity(8)]
     public struct AssistantMessageElement : IBufferElementData
     {
         public int MessageId;
@@ -198,6 +272,7 @@ namespace Game.Components
         public byte Acknowledged;
     }
 
+    [InternalBufferCapacity(8)]
     public struct AssistantNarrationRequestElement : IBufferElementData
     {
         public int RequestId;
@@ -207,15 +282,18 @@ namespace Game.Components
         public FixedString128Bytes Text;
         public FixedString64Bytes AudioEventId;
         public uint AudioEventHash;
+        public int AudioPlaybackRequestId;
         public float RequestedAt;
         public byte InterruptsLowerPriority;
     }
 
+    [InternalBufferCapacity(4)]
     public struct AssistantCommandIntentRequestElement : IBufferElementData
     {
         public int RequestId;
         public int Frame;
         public int RecommendationId;
+        public int RecommendationSourceVersion;
         public AssistantCommandIntentKind Kind;
         public AssistantTargetKind TargetKind;
         public Entity SourceEntity;
@@ -226,6 +304,7 @@ namespace Game.Components
         public byte FromTakeover;
     }
 
+    [InternalBufferCapacity(8)]
     public struct AssistantCommandIntentResultElement : IBufferElementData
     {
         public int RequestId;
@@ -242,6 +321,7 @@ namespace Game.Components
         public FixedString64Bytes Message;
     }
 
+    [InternalBufferCapacity(1)]
     public struct AssistantPreviewHighlightElement : IBufferElementData
     {
         public int RequestId;
@@ -254,5 +334,76 @@ namespace Game.Components
         public float3 WorldPosition;
         public float Strength;
         public byte Active;
+    }
+
+    [InternalBufferCapacity(4)]
+    public struct AssistantThreatReadModelElement : IBufferElementData
+    {
+        public int ThreatId;
+        public int SourceEventId;
+        public AssistantThreatKind Kind;
+        public AssistantMessagePriority Priority;
+        public Entity FriendlyTarget;
+        public Entity HostileSource;
+        public byte FriendlyFactionId;
+        public byte HostileFactionId;
+        public float3 FriendlyWorldPosition;
+        public float3 HostileWorldPosition;
+        public float Distance;
+        public int Damage;
+        public int FriendlyHealth;
+        public int FriendlyMaxHealth;
+        public float LastObservedAt;
+        public float ExpiresAt;
+        public FixedString64Bytes FriendlyName;
+        public FixedString64Bytes HostileName;
+        public FixedString128Bytes Reason;
+    }
+
+    public struct AssistantThreatReadModelStateComponent : IComponentData
+    {
+        public uint Version;
+        public uint LastObservedQueueVersion;
+        public int LastConsumedEventId;
+        public float NextExpiryAt;
+        public int VisibleCount;
+    }
+
+    public struct AssistantTargetLockReadModelComponent : IComponentData
+    {
+        public uint Version;
+        public int RecommendationId;
+        public int ThreatId;
+        public AssistantTargetLockState State;
+        public AssistantTargetKind TargetKind;
+        public AssistantFactionRelation FactionRelation;
+        public Entity SourceEntity;
+        public Entity TargetEntity;
+        public int2 TargetCell;
+        public float3 WorldPosition;
+        public float Distance;
+        public int HealthCurrent;
+        public int HealthMax;
+        public byte Visible;
+        public byte HasTargetCell;
+        public byte HasWorldPosition;
+        public byte HasDistance;
+        public byte HasHealth;
+        public FixedString64Bytes SourceName;
+        public FixedString64Bytes TargetName;
+        public FixedString128Bytes Reason;
+    }
+
+    [InternalBufferCapacity(4)]
+    public struct AssistantCommandDispatchElement : IBufferElementData
+    {
+        public int AssistantRequestId;
+        public int RecommendationId;
+        public AssistantCommandIntentKind IntentKind;
+        public AssistantDownstreamCommandKind DownstreamKind;
+        public int DownstreamRequestId;
+        public AssistantCommandIntentStatus Status;
+        public int ReasonCode;
+        public float RequestedAt;
     }
 }

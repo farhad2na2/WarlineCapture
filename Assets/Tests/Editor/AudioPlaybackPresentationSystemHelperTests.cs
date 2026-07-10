@@ -101,6 +101,8 @@ public sealed class AudioPlaybackPresentationSystemHelperTests
 
         Assert.IsTrue(first.Played);
         Assert.IsTrue(second.Played);
+        Assert.AreEqual(AudioPlaybackRequestStatus.Presented, first.Status);
+        Assert.AreEqual(AudioPlaybackRequestStatus.Presented, second.Status);
         Assert.AreEqual(1, helper.CreatedSourceCount);
         Assert.AreEqual(first.SourceIndex, second.SourceIndex);
     }

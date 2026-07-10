@@ -11,6 +11,8 @@ public sealed class AssistantRolloutValidationTests
         {
             RunValidationStep(nameof(AssistantEcsDataContractTests), AssistantEcsDataContractTests.RunFocusedValidation, ref passed);
             RunValidationStep(nameof(AssistantReadModelSystemTests), AssistantReadModelSystemTests.RunFocusedValidation, ref passed);
+            RunValidationStep(nameof(CombatDamageObservationTelemetryTests), CombatDamageObservationTelemetryTests.RunFocusedValidation, ref passed);
+            RunValidationStep(nameof(AssistantPanelGatewayTests), AssistantPanelGatewayTests.RunFocusedValidation, ref passed);
             RunValidationStep(nameof(AssistantCommandIntentGatewayTests), AssistantCommandIntentGatewayTests.RunFocusedValidation, ref passed);
             RunValidationStep(nameof(AssistantCommandIntentSystemTests), AssistantCommandIntentSystemTests.RunFocusedValidation, ref passed);
             RunValidationStep(nameof(AssistantControlOwnerSystemTests), AssistantControlOwnerSystemTests.RunFocusedValidation, ref passed);

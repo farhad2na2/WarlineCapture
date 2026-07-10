@@ -89,6 +89,12 @@ namespace Game.UI.Runtime
             return current.TryReadMatchHudAssistantPanel(out assistantPanel);
         }
 
+        public static bool TrySetAssistantPanelOpen(bool open)
+        {
+            return current is IUiAssistantPanelStateGateway assistantPanelState &&
+                   assistantPanelState.TrySetAssistantPanelOpen(open);
+        }
+
         public static bool TryReadMatchHudAssistantHighlight(out UiAssistantHighlightModel assistantHighlight)
         {
             return current.TryReadMatchHudAssistantHighlight(out assistantHighlight);

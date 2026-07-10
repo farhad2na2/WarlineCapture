@@ -9,10 +9,11 @@ using Game.UI.Contracts;
 using Game.UI.Shell.Contracts.Ecs;
 using Game.Components;
 using Game.UI.Runtime;
+using Game.Runtime;
 
 namespace Game.UI.Shell.Ecs
 {
-    public sealed class UiShellEcsGateway : IUiShellRuntimeGateway
+    public sealed class UiShellEcsGateway : IUiShellRuntimeGateway, IUiAssistantPanelStateGateway
     {
         private static readonly UiShellEcsGateway Shared = new();
         private static World cachedWorld;
@@ -23,6 +24,7 @@ namespace Game.UI.Shell.Ecs
         private static EntityQuery minimapMarkerQuery;
         private static EntityQuery gridConfigQuery;
         private static EntityQuery resourceStorageQuery;
+        private static EntityQuery assistantMatchStartQuery;
         private static FixedString4096Bytes cachedDiagnosticsLogFixedText;
         private static string cachedDiagnosticsLogText;
         private static bool hasBoundaryQuery;
@@ -32,6 +34,7 @@ namespace Game.UI.Shell.Ecs
         private static bool hasMinimapMarkerQuery;
         private static bool hasGridConfigQuery;
         private static bool hasResourceStorageQuery;
+        private static bool hasAssistantMatchStartQuery;
         private static bool hasCachedDiagnosticsLogText;
         private static bool hasCachedMatchHudHeader;
         private static World cachedMatchHudHeaderWorld;
@@ -48,12 +51,16 @@ namespace Game.UI.Shell.Ecs
         private static Entity cachedAssistantPanelBoundary;
         private static uint cachedAssistantPanelSourceVersion;
         private static uint cachedAssistantPanelRecommendationVersion;
+        private static uint cachedAssistantPanelObjectiveVersion;
+        private static uint cachedAssistantPanelMessageReadModelVersion;
+        private static uint cachedAssistantPanelThreatVersion;
+        private static uint cachedAssistantPanelTargetLockVersion;
+        private static uint cachedAssistantPanelNarrationStateVersion;
+        private static bool cachedAssistantPanelNarrationPulse;
+        private static uint cachedAssistantPanelSettingsVersion;
+        private static uint cachedAssistantPanelVersion;
         private static int cachedAssistantPanelGoalCount;
         private static int cachedAssistantPanelMessageCount;
-        private static int cachedAssistantPanelMessageVersion;
-        private static int cachedAssistantPanelNarrationCount;
-        private static int cachedAssistantPanelNarrationVersion;
-        private static bool cachedAssistantPanelSubtitlesEnabled;
         private static int cachedAssistantPanelRecommendationCount;
         private static AssistantControlState cachedAssistantPanelControlState;
         private static UiAssistantPanelModel cachedAssistantPanel;
@@ -82,6 +89,7 @@ namespace Game.UI.Shell.Ecs
             hasMinimapMarkerQuery = false;
             hasGridConfigQuery = false;
             hasResourceStorageQuery = false;
+            hasAssistantMatchStartQuery = false;
             hasCachedDiagnosticsLogText = false;
             hasCachedMatchHudHeader = false;
             cachedMatchHudHeaderWorld = null;
@@ -98,12 +106,16 @@ namespace Game.UI.Shell.Ecs
             cachedAssistantPanelBoundary = Entity.Null;
             cachedAssistantPanelSourceVersion = 0;
             cachedAssistantPanelRecommendationVersion = 0;
+            cachedAssistantPanelObjectiveVersion = 0;
+            cachedAssistantPanelMessageReadModelVersion = 0;
+            cachedAssistantPanelThreatVersion = 0;
+            cachedAssistantPanelTargetLockVersion = 0;
+            cachedAssistantPanelNarrationStateVersion = 0;
+            cachedAssistantPanelNarrationPulse = false;
+            cachedAssistantPanelSettingsVersion = 0;
+            cachedAssistantPanelVersion = 0;
             cachedAssistantPanelGoalCount = 0;
             cachedAssistantPanelMessageCount = 0;
-            cachedAssistantPanelMessageVersion = 0;
-            cachedAssistantPanelNarrationCount = 0;
-            cachedAssistantPanelNarrationVersion = 0;
-            cachedAssistantPanelSubtitlesEnabled = true;
             cachedAssistantPanelRecommendationCount = 0;
             cachedAssistantPanelControlState = AssistantControlState.Player;
             cachedAssistantPanel = UiAssistantPanelModel.Empty;
@@ -163,6 +175,9 @@ namespace Game.UI.Shell.Ecs
                 return false;
             }
 
+            if (!IsAssistantRuntimeActive(entityManager, boundary))
+                return false;
+
             if (kind == UiAssistantCommandIntentKind.StopAssistantControl)
             {
                 EnsureAssistantCommandIntentBuffers(entityManager, boundary);
@@ -213,6 +228,7 @@ namespace Game.UI.Shell.Ecs
                 RequestId = NextAssistantCommandIntentRequestId(requests, results),
                 Frame = Time.frameCount,
                 RecommendationId = recommendation.RecommendationId,
+                RecommendationSourceVersion = recommendation.SourceVersion,
                 Kind = ecsKind,
                 TargetKind = recommendation.TargetKind,
                 SourceEntity = recommendation.SourceEntity,
@@ -221,6 +237,26 @@ namespace Game.UI.Shell.Ecs
                 WorldPosition = recommendation.WorldPosition,
                 FromTakeover = fromTakeover ? (byte)1 : (byte)0
             });
+            return true;
+        }
+
+        public static bool TrySetAssistantPanelOpen(bool open)
+        {
+            if (!TryGetBoundary(out EntityManager entityManager, out Entity boundary))
+                return false;
+            if (open && !IsAssistantRuntimeActive(entityManager, boundary))
+                return false;
+
+            if (!entityManager.HasComponent<AssistantStateComponent>(boundary))
+                return false;
+            AssistantStateComponent assistant = entityManager.GetComponentData<AssistantStateComponent>(boundary);
+            byte next = open ? (byte)1 : (byte)0;
+            if (assistant.PanelOpen == next)
+                return true;
+
+            assistant.PanelOpen = next;
+            assistant.UiDirty = 1;
+            entityManager.SetComponentData(boundary, assistant);
             return true;
         }
 
@@ -1125,15 +1161,10 @@ namespace Game.UI.Shell.Ecs
             return value.ToString();
         }
 
-        private static uint CombineAssistantPanelVersion(
-            uint sourceVersion,
-            uint recommendationVersion,
-            int messageVersion,
-            AssistantControlState controlState)
+        private static uint NextManagedAssistantPanelVersion(uint version)
         {
-            uint combined = sourceVersion * 397u ^ recommendationVersion ^ (uint)math.max(0, messageVersion) * 31u;
-            combined = combined * 17u ^ (uint)controlState;
-            return combined == 0u ? 1u : combined;
+            uint next = version + 1u;
+            return next == 0u ? 1u : next;
         }
 
         private static uint AssistantHighlightVersion(AssistantPreviewHighlightElement highlight)
@@ -1147,108 +1178,217 @@ namespace Game.UI.Shell.Ecs
             return combined == 0u ? 1u : combined;
         }
 
-        private static string BuildAssistantGoalsText(DynamicBuffer<AssistantGoalReadModelElement> goals)
+        private static void BuildAssistantGoalRows(
+            DynamicBuffer<AssistantGoalReadModelElement> goals,
+            out UiAssistantGoalRowModel goal0,
+            out UiAssistantGoalRowModel goal1,
+            out UiAssistantGoalRowModel goal2)
         {
-            if (goals.Length == 0)
-                return "No active objectives";
-
-            string text = string.Empty;
-            for (int i = 0; i < goals.Length; i++)
-            {
-                AssistantGoalReadModelElement goal = goals[i];
-                if (goal.Title.Length == 0)
-                    continue;
-
-                if (text.Length > 0)
-                    text += "\n";
-
-                text += goal.State == AssistantGoalState.Complete ? "[x] " : "- ";
-                text += goal.Title.ToString();
-            }
-
-            return text.Length > 0 ? text : "No active objectives";
+            goal0 = goals.Length > 0 ? ToGoalRow(goals[0]) : UiAssistantGoalRowModel.Empty;
+            goal1 = goals.Length > 1 ? ToGoalRow(goals[1]) : UiAssistantGoalRowModel.Empty;
+            goal2 = goals.Length > 2 ? ToGoalRow(goals[2]) : UiAssistantGoalRowModel.Empty;
         }
 
-        private static string BuildAssistantAlertsText(DynamicBuffer<AssistantMessageElement> messages)
+        private static UiAssistantGoalRowModel ToGoalRow(AssistantGoalReadModelElement goal)
         {
-            if (messages.Length == 0)
-                return "No priority alerts";
-
-            string text = string.Empty;
-            int visibleCount = 0;
-            for (int i = 0; i < messages.Length && visibleCount < 3; i++)
-            {
-                AssistantMessageElement message = messages[i];
-                if (message.Text.Length == 0 || message.Acknowledged != 0)
-                    continue;
-
-                if (text.Length > 0)
-                    text += "\n";
-
-                text += PriorityText(message.Priority);
-                text += ": ";
-                text += message.Text.ToString();
-                visibleCount++;
-            }
-
-            return text.Length > 0 ? text : "No priority alerts";
+            return new UiAssistantGoalRowModel(
+                goal.Title.Length > 0,
+                goal.GoalId,
+                goal.Title.ToString(),
+                goal.Body.ToString(),
+                (byte)goal.State,
+                (byte)goal.Priority,
+                goal.IsPrimary != 0);
         }
 
-        private static int AssistantMessageVersion(DynamicBuffer<AssistantMessageElement> messages)
+        private static void BuildAssistantMessageRows(
+            DynamicBuffer<AssistantMessageElement> messages,
+            out UiAssistantMessageRowModel alert0,
+            out UiAssistantMessageRowModel alert1,
+            out UiAssistantMessageRowModel alert2,
+            out UiAssistantMessageRowModel report0,
+            out UiAssistantMessageRowModel report1)
         {
-            uint version = 0u;
-            for (int i = 0; i < messages.Length; i++)
+            alert0 = UiAssistantMessageRowModel.Empty;
+            alert1 = UiAssistantMessageRowModel.Empty;
+            alert2 = UiAssistantMessageRowModel.Empty;
+            report0 = UiAssistantMessageRowModel.Empty;
+            report1 = UiAssistantMessageRowModel.Empty;
+            int alertCount = 0;
+            int reportCount = 0;
+            float now = Time.time;
+            for (int priority = (int)AssistantMessagePriority.Critical;
+                 priority >= (int)AssistantMessagePriority.Low;
+                 priority--)
             {
-                AssistantMessageElement message = messages[i];
-                version = version * 397u
-                    ^ (uint)message.MessageId
-                    ^ (uint)math.max(0, message.SourceVersion) * 31u
-                    ^ (uint)message.Priority * 17u
-                    ^ (uint)message.Acknowledged;
-            }
+                for (int i = 0; i < messages.Length; i++)
+                {
+                    AssistantMessageElement message = messages[i];
+                    if ((int)message.Priority != priority ||
+                        message.Text.Length == 0 ||
+                        message.Acknowledged != 0 ||
+                        (message.ExpiresAt > 0f && now >= message.ExpiresAt))
+                    {
+                        continue;
+                    }
 
-            return (int)(version == 0u ? (uint)messages.Length : version);
+                    UiAssistantMessageRowModel row = ToMessageRow(message, now);
+                    if (message.Priority >= AssistantMessagePriority.High)
+                    {
+                        if (alertCount == 0) alert0 = row;
+                        else if (alertCount == 1) alert1 = row;
+                        else if (alertCount == 2) alert2 = row;
+                        alertCount++;
+                    }
+                    else
+                    {
+                        if (reportCount == 0) report0 = row;
+                        else if (reportCount == 1) report1 = row;
+                        reportCount++;
+                    }
+
+                    if (alertCount >= 3 && reportCount >= 2)
+                        return;
+                }
+            }
         }
 
-        private static int AssistantNarrationVersion(DynamicBuffer<AssistantNarrationRequestElement> requests)
+        private static UiAssistantMessageRowModel ToMessageRow(AssistantMessageElement message, float now)
         {
-            uint version = 0u;
-            for (int i = 0; i < requests.Length; i++)
-            {
-                AssistantNarrationRequestElement request = requests[i];
-                version = version * 397u
-                    ^ (uint)math.max(0, request.RequestId)
-                    ^ (uint)math.max(0, request.MessageId) * 31u
-                    ^ (uint)request.Priority * 17u
-                    ^ (uint)request.Status;
-            }
-
-            return (int)(version == 0u ? (uint)requests.Length : version);
+            byte ageState = message.ExpiresAt > 0f && message.ExpiresAt - now < 1f
+                ? (byte)3
+                : now - message.CreatedAt < 5f
+                    ? (byte)1
+                    : (byte)2;
+            return new UiAssistantMessageRowModel(
+                true,
+                message.MessageId,
+                MessageTitle(message.RelatedKind),
+                message.Text.ToString(),
+                (byte)message.Priority,
+                (byte)message.RelatedKind,
+                ageState,
+                message.RequiresNarration != 0,
+                false);
         }
 
-        private static string BuildAssistantNarrationSubtitleText(DynamicBuffer<AssistantNarrationRequestElement> requests)
+        private static string MessageTitle(AssistantRecommendationKind kind)
         {
-            if (requests.Length == 0)
-                return "No active narration";
-
-            string text = string.Empty;
-            int visibleCount = 0;
-            for (int i = requests.Length - 1; i >= 0 && visibleCount < 2; i--)
+            return kind switch
             {
-                AssistantNarrationRequestElement request = requests[i];
-                if (request.Text.Length == 0)
-                    continue;
+                AssistantRecommendationKind.DefensiveAlert => "THREAT",
+                AssistantRecommendationKind.Logistics => "LOGISTICS",
+                AssistantRecommendationKind.Move => "COMMAND",
+                AssistantRecommendationKind.Attack => "COMMAND",
+                AssistantRecommendationKind.Select => "COMMAND",
+                _ => "REPORT"
+            };
+        }
 
-                if (text.Length > 0)
-                    text += "\n";
+        private static UiAssistantTargetLockModel BuildAssistantTargetLockModel(
+            AssistantTargetLockReadModelComponent targetLock)
+        {
+            if (targetLock.Visible == 0)
+                return UiAssistantTargetLockModel.Empty;
 
-                text += PriorityText(request.Priority);
-                text += ": ";
-                text += request.Text.ToString();
-                visibleCount++;
+            string distanceText = targetLock.HasDistance != 0
+                ? $"{Mathf.RoundToInt(targetLock.Distance)} m"
+                : string.Empty;
+            string healthText = targetLock.HasHealth != 0
+                ? $"{targetLock.HealthCurrent}/{targetLock.HealthMax}"
+                : string.Empty;
+            return new UiAssistantTargetLockModel(
+                true,
+                (byte)targetLock.State,
+                (byte)targetLock.TargetKind,
+                targetLock.TargetName.ToString(),
+                targetLock.SourceName.ToString(),
+                distanceText,
+                healthText,
+                FactionRelationText(targetLock.FactionRelation),
+                TargetReadinessText(targetLock.State),
+                targetLock.Reason.ToString());
+        }
+
+        private static UiAssistantNarrationModel BuildAssistantNarrationModel(
+            EntityManager entityManager,
+            AssistantSettingsComponent settings,
+            AssistantNarrationStateComponent narrationState,
+            DynamicBuffer<AssistantNarrationRequestElement> requests,
+            bool waveformPulse)
+        {
+            AssistantNarrationRequestElement request = requests.IsCreated && requests.Length > 0
+                ? requests[requests.Length - 1]
+                : default;
+            UiAssistantNarrationStateKind state = UiAssistantNarrationStateKind.Off;
+            if (request.RequestId != 0)
+            {
+                Entity audioEntity = AudioEventRequestSystem.EnsureAudioEntity(entityManager);
+                AudioSettingsComponent audioSettings =
+                    entityManager.GetComponentData<AudioSettingsComponent>(audioEntity);
+                state = AssistantNarrationAudioResultProjectionSystem.ResolveTruthState(
+                    settings,
+                    audioSettings,
+                    request,
+                    narrationState);
             }
 
-            return text.Length > 0 ? text : "No active narration";
+            return new UiAssistantNarrationModel(
+                (byte)state,
+                (byte)request.Priority,
+                NarrationStateText(state),
+                settings.SubtitlesEnabled != 0 ? request.Text.ToString() : string.Empty,
+                state == UiAssistantNarrationStateKind.Failed
+                    ? narrationState.LastAudioFailureReason.ToString()
+                    : string.Empty,
+                state == UiAssistantNarrationStateKind.Presented && waveformPulse);
+        }
+
+        private static string NarrationStateText(UiAssistantNarrationStateKind state)
+        {
+            return state switch
+            {
+                UiAssistantNarrationStateKind.TextOnly => "TEXT ONLY",
+                UiAssistantNarrationStateKind.Queued => "QUEUED",
+                UiAssistantNarrationStateKind.Accepted => "ACCEPTED",
+                UiAssistantNarrationStateKind.Presented => "PRESENTED",
+                UiAssistantNarrationStateKind.Failed => "FAILED",
+                _ => "OFF"
+            };
+        }
+
+        private static string TargetReadinessText(AssistantTargetLockState state)
+        {
+            return state switch
+            {
+                AssistantTargetLockState.Preview => "PREVIEW",
+                AssistantTargetLockState.Executable => "READY",
+                AssistantTargetLockState.Executing => "ACTIVE",
+                AssistantTargetLockState.Invalid => "BLOCKED",
+                _ => "BLOCKED"
+            };
+        }
+
+        private static string FactionRelationText(AssistantFactionRelation relation)
+        {
+            return relation switch
+            {
+                AssistantFactionRelation.Friendly => "FRIENDLY",
+                AssistantFactionRelation.Hostile => "HOSTILE",
+                AssistantFactionRelation.Neutral => "NEUTRAL",
+                AssistantFactionRelation.Protected => "PROTECTED",
+                _ => string.Empty
+            };
+        }
+
+        private static uint AssistantSettingsVersion(AssistantSettingsComponent settings)
+        {
+            return (uint)settings.GuidanceLevel |
+                   (uint)settings.NarrationMode << 4 |
+                   (uint)settings.AllowTakeover << 8 |
+                   (uint)settings.SubtitlesEnabled << 9 |
+                   (uint)settings.LargeTextEnabled << 10 |
+                   (uint)settings.HighContrastEnabled << 11;
         }
 
         private static string PriorityText(AssistantMessagePriority priority)
@@ -1328,8 +1468,18 @@ namespace Game.UI.Shell.Ecs
             if (!TryGetBoundary(out EntityManager entityManager, out Entity boundary))
                 return false;
 
+            if (!IsAssistantRuntimeActive(entityManager, boundary))
+            {
+                hasCachedAssistantPanel = false;
+                return false;
+            }
+
             if (!entityManager.HasComponent<AssistantStateComponent>(boundary) ||
                 !entityManager.HasComponent<AssistantRecommendationReadModelComponent>(boundary) ||
+                !entityManager.HasComponent<AssistantMessageReadModelComponent>(boundary) ||
+                !entityManager.HasComponent<AssistantThreatReadModelStateComponent>(boundary) ||
+                !entityManager.HasComponent<AssistantTargetLockReadModelComponent>(boundary) ||
+                !entityManager.HasComponent<MatchObjectiveRuntimeStateComponent>(boundary) ||
                 !entityManager.HasBuffer<AssistantGoalReadModelElement>(boundary) ||
                 !entityManager.HasBuffer<AssistantRecommendationElement>(boundary) ||
                 !entityManager.HasBuffer<AssistantMessageElement>(boundary))
@@ -1341,33 +1491,49 @@ namespace Game.UI.Shell.Ecs
                 entityManager.GetComponentData<AssistantStateComponent>(boundary);
             AssistantRecommendationReadModelComponent recommendationReadModel =
                 entityManager.GetComponentData<AssistantRecommendationReadModelComponent>(boundary);
+            AssistantMessageReadModelComponent messageReadModel =
+                entityManager.GetComponentData<AssistantMessageReadModelComponent>(boundary);
+            AssistantThreatReadModelStateComponent threatReadModel =
+                entityManager.GetComponentData<AssistantThreatReadModelStateComponent>(boundary);
+            AssistantTargetLockReadModelComponent targetLockReadModel =
+                entityManager.GetComponentData<AssistantTargetLockReadModelComponent>(boundary);
+            MatchObjectiveRuntimeStateComponent objectiveState =
+                entityManager.GetComponentData<MatchObjectiveRuntimeStateComponent>(boundary);
             DynamicBuffer<AssistantGoalReadModelElement> goals =
                 entityManager.GetBuffer<AssistantGoalReadModelElement>(boundary, true);
             DynamicBuffer<AssistantRecommendationElement> recommendations =
                 entityManager.GetBuffer<AssistantRecommendationElement>(boundary, true);
             DynamicBuffer<AssistantMessageElement> messages =
                 entityManager.GetBuffer<AssistantMessageElement>(boundary, true);
-            int messageVersion = AssistantMessageVersion(messages);
-            bool subtitlesEnabled = !entityManager.HasComponent<AssistantSettingsComponent>(boundary) ||
-                                    entityManager.GetComponentData<AssistantSettingsComponent>(boundary).SubtitlesEnabled != 0;
+            AssistantSettingsComponent settings = entityManager.HasComponent<AssistantSettingsComponent>(boundary)
+                ? entityManager.GetComponentData<AssistantSettingsComponent>(boundary)
+                : default;
+            uint settingsVersion = AssistantSettingsVersion(settings);
             bool hasNarrationRequests = entityManager.HasBuffer<AssistantNarrationRequestElement>(boundary);
             DynamicBuffer<AssistantNarrationRequestElement> narrationRequests = hasNarrationRequests
                 ? entityManager.GetBuffer<AssistantNarrationRequestElement>(boundary, true)
                 : default;
-            int narrationCount = hasNarrationRequests ? narrationRequests.Length : 0;
-            int narrationVersion = hasNarrationRequests ? AssistantNarrationVersion(narrationRequests) : 0;
+            AssistantNarrationStateComponent narrationState =
+                entityManager.HasComponent<AssistantNarrationStateComponent>(boundary)
+                    ? entityManager.GetComponentData<AssistantNarrationStateComponent>(boundary)
+                    : default;
+            bool narrationPulse = narrationState.LastPresentedAt > 0f &&
+                                  Time.time - narrationState.LastPresentedAt <= 0.8f;
 
             if (hasCachedAssistantPanel &&
                 cachedAssistantPanelWorld == entityManager.World &&
                 cachedAssistantPanelBoundary == boundary &&
                 cachedAssistantPanelSourceVersion == assistantState.SourceVersion &&
                 cachedAssistantPanelRecommendationVersion == recommendationReadModel.Version &&
+                cachedAssistantPanelObjectiveVersion == objectiveState.Version &&
+                cachedAssistantPanelMessageReadModelVersion == messageReadModel.Version &&
+                cachedAssistantPanelThreatVersion == threatReadModel.Version &&
+                cachedAssistantPanelTargetLockVersion == targetLockReadModel.Version &&
+                cachedAssistantPanelNarrationStateVersion == narrationState.Version &&
+                cachedAssistantPanelNarrationPulse == narrationPulse &&
+                cachedAssistantPanelSettingsVersion == settingsVersion &&
                 cachedAssistantPanelGoalCount == goals.Length &&
                 cachedAssistantPanelMessageCount == messages.Length &&
-                cachedAssistantPanelMessageVersion == messageVersion &&
-                cachedAssistantPanelNarrationCount == narrationCount &&
-                cachedAssistantPanelNarrationVersion == narrationVersion &&
-                cachedAssistantPanelSubtitlesEnabled == subtitlesEnabled &&
                 cachedAssistantPanelRecommendationCount == recommendations.Length &&
                 cachedAssistantPanelControlState == assistantState.ControlState)
             {
@@ -1377,47 +1543,70 @@ namespace Game.UI.Shell.Ecs
 
             AssistantRecommendationElement topRecommendation =
                 recommendations.Length > 0 ? recommendations[0] : default;
-            string alertsText = BuildAssistantAlertsText(messages);
-            string narrationSubtitleText = hasNarrationRequests
-                ? BuildAssistantNarrationSubtitleText(narrationRequests)
-                : "No active narration";
-            uint modelVersion = CombineAssistantPanelVersion(
-                assistantState.SourceVersion,
-                recommendationReadModel.Version,
-                messageVersion ^ narrationVersion,
-                assistantState.ControlState);
+            BuildAssistantGoalRows(
+                goals,
+                out UiAssistantGoalRowModel goal0,
+                out UiAssistantGoalRowModel goal1,
+                out UiAssistantGoalRowModel goal2);
+            BuildAssistantMessageRows(
+                messages,
+                out UiAssistantMessageRowModel alert0,
+                out UiAssistantMessageRowModel alert1,
+                out UiAssistantMessageRowModel alert2,
+                out UiAssistantMessageRowModel report0,
+                out UiAssistantMessageRowModel report1);
+            UiAssistantTargetLockModel targetLock = BuildAssistantTargetLockModel(targetLockReadModel);
+            UiAssistantNarrationModel narration = BuildAssistantNarrationModel(
+                entityManager,
+                settings,
+                narrationState,
+                hasNarrationRequests ? narrationRequests : default,
+                narrationPulse);
+            cachedAssistantPanelVersion = NextManagedAssistantPanelVersion(cachedAssistantPanelVersion);
             assistantPanel = new UiAssistantPanelModel(
-                modelVersion,
-                BuildAssistantGoalsText(goals),
-                alertsText,
-                narrationSubtitleText,
-                subtitlesEnabled,
-                alertsText != "No priority alerts",
+                cachedAssistantPanelVersion,
+                objectiveState.MatchActive != 0,
+                objectiveState.ElapsedWholeSeconds,
+                goal0,
+                goal1,
+                goal2,
+                alert0,
+                alert1,
+                alert2,
+                report0,
+                report1,
+                targetLock,
+                narration,
                 topRecommendation.RecommendationId != 0,
-                topRecommendation.RecommendationId != 0 ? topRecommendation.Title.ToString() : "No recommendation",
+                topRecommendation.RecommendationId != 0 ? topRecommendation.Title.ToString() : string.Empty,
                 topRecommendation.RecommendationId != 0
                     ? topRecommendation.Reason.ToString()
-                    : "ARIA is waiting for live battlefield context.",
-                topRecommendation.RecommendationId != 0 ? PriorityText(topRecommendation.Priority) : "LOW",
-                topRecommendation.RecommendationId != 0 ? topRecommendation.ActionLabel.ToString() : "SHOW ME",
+                    : string.Empty,
+                topRecommendation.RecommendationId != 0 ? PriorityText(topRecommendation.Priority) : string.Empty,
+                topRecommendation.RecommendationId != 0 ? topRecommendation.ActionLabel.ToString() : string.Empty,
                 topRecommendation.CanShow != 0,
                 topRecommendation.CanExecute != 0,
                 CanStopAssistantControl(assistantState.ControlState),
                 topRecommendation.CanTakeControl != 0,
                 ControlStateText(assistantState.ControlState),
-                ControlStateDetailText(assistantState.ControlState));
+                ControlStateDetailText(assistantState.ControlState),
+                settings.LargeTextEnabled != 0,
+                settings.HighContrastEnabled != 0);
 
             hasCachedAssistantPanel = true;
             cachedAssistantPanelWorld = entityManager.World;
             cachedAssistantPanelBoundary = boundary;
             cachedAssistantPanelSourceVersion = assistantState.SourceVersion;
             cachedAssistantPanelRecommendationVersion = recommendationReadModel.Version;
+            cachedAssistantPanelObjectiveVersion = objectiveState.Version;
+            cachedAssistantPanelMessageReadModelVersion = messageReadModel.Version;
+            cachedAssistantPanelThreatVersion = threatReadModel.Version;
+            cachedAssistantPanelTargetLockVersion = targetLockReadModel.Version;
+            cachedAssistantPanelNarrationStateVersion = narrationState.Version;
+            cachedAssistantPanelNarrationPulse = narrationPulse;
+            cachedAssistantPanelSettingsVersion = settingsVersion;
             cachedAssistantPanelGoalCount = goals.Length;
             cachedAssistantPanelMessageCount = messages.Length;
-            cachedAssistantPanelMessageVersion = messageVersion;
-            cachedAssistantPanelNarrationCount = narrationCount;
-            cachedAssistantPanelNarrationVersion = narrationVersion;
-            cachedAssistantPanelSubtitlesEnabled = subtitlesEnabled;
             cachedAssistantPanelRecommendationCount = recommendations.Length;
             cachedAssistantPanelControlState = assistantState.ControlState;
             cachedAssistantPanel = assistantPanel;
@@ -2091,6 +2280,7 @@ namespace Game.UI.Shell.Ecs
                 hasMinimapMarkerQuery = false;
                 hasGridConfigQuery = false;
                 hasResourceStorageQuery = false;
+                hasAssistantMatchStartQuery = false;
             }
 
             if (!hasBoundaryQuery)
@@ -2105,6 +2295,30 @@ namespace Game.UI.Shell.Ecs
             entityManager = world.EntityManager;
             boundary = boundaryQuery.GetSingletonEntity();
             return true;
+        }
+
+        private static bool IsAssistantRuntimeActive(EntityManager entityManager, Entity boundary)
+        {
+            if (!entityManager.HasComponent<UiShellStateComponent>(boundary))
+                return false;
+
+            UiShellStateComponent shell = entityManager.GetComponentData<UiShellStateComponent>(boundary);
+            if (shell.ActiveRoute != UIRoute.Match ||
+                shell.CurrentMode != UiShellMode.MatchHud ||
+                shell.IsTransitionRunning != 0)
+            {
+                return false;
+            }
+
+            if (!hasAssistantMatchStartQuery || cachedWorld != entityManager.World)
+            {
+                assistantMatchStartQuery = entityManager.CreateEntityQuery(
+                    ComponentType.ReadOnly<MatchStartQueueComponent>());
+                hasAssistantMatchStartQuery = true;
+            }
+
+            return !assistantMatchStartQuery.IsEmptyIgnoreFilter &&
+                   assistantMatchStartQuery.GetSingleton<MatchStartQueueComponent>().HasStarted != 0;
         }
 
         private static void EnsureArmoryCategoryState(EntityManager entityManager, Entity boundary)
@@ -2158,6 +2372,12 @@ namespace Game.UI.Shell.Ecs
 
             if (!entityManager.HasBuffer<AssistantCommandIntentResultElement>(boundary))
                 entityManager.AddBuffer<AssistantCommandIntentResultElement>(boundary);
+
+            if (!entityManager.HasBuffer<AssistantCommandDispatchElement>(boundary))
+                entityManager.AddBuffer<AssistantCommandDispatchElement>(boundary);
+
+            if (!entityManager.HasBuffer<AssistantPreviewHighlightElement>(boundary))
+                entityManager.AddBuffer<AssistantPreviewHighlightElement>(boundary);
         }
 
         private static int NextAssistantCommandIntentRequestId(
@@ -2391,21 +2611,21 @@ namespace Game.UI.Shell.Ecs
             entityManager.AddComponentData(boundary, new UiMatchHudStatusSurfacesComponent
             {
                 ObjectivesTitle = new FixedString32Bytes("OBJECTIVES"),
-                Objective0Text = new FixedString64Bytes("Neutralize hostile patrol"),
-                Objective1Text = new FixedString64Bytes("Protect civilians"),
-                Objective2Text = new FixedString64Bytes("Keep losses low"),
+                Objective0Text = default,
+                Objective1Text = default,
+                Objective2Text = default,
                 Objective0IconKind = UiMatchHudObjectiveIconKind.Unchecked,
-                Objective1IconKind = UiMatchHudObjectiveIconKind.Checked,
-                Objective2IconKind = UiMatchHudObjectiveIconKind.Star,
-                ElapsedText = new FixedString32Bytes("ELAPSED: 07:42"),
-                ThreatVisible = 1,
-                ThreatTitle = new FixedString64Bytes("HOSTILE CELL SPOTTED"),
-                ThreatSubtitle = new FixedString64Bytes("Market quarter, 140m"),
-                ThreatAudioEventId = new FixedString64Bytes(AudioEventIds.VOARIAMessageWarningGroundAttackType),
-                JumpEnabled = 1,
-                FeedbackVisible = 1,
-                FeedbackText = new FixedString64Bytes(GameText.Get("match.feedback.blocked_civilian_zone", "Blocked: civilian zone")),
-                FeedbackAudioEventId = new FixedString64Bytes(AudioEventIds.VOARIAMessageMatchFeedbackBlockedCivilianZone),
+                Objective1IconKind = UiMatchHudObjectiveIconKind.Unchecked,
+                Objective2IconKind = UiMatchHudObjectiveIconKind.Unchecked,
+                ElapsedText = default,
+                ThreatVisible = 0,
+                ThreatTitle = default,
+                ThreatSubtitle = default,
+                ThreatAudioEventId = default,
+                JumpEnabled = 0,
+                FeedbackVisible = 0,
+                FeedbackText = default,
+                FeedbackAudioEventId = default,
                 BoardAllVisible = 1,
                 BoardAllEnabled = 1,
                 CancelVisible = 1,
@@ -2457,6 +2677,11 @@ namespace Game.UI.Shell.Ecs
             bool fromTakeover)
         {
             return TryEnqueueAssistantCommandIntent(kind, fromTakeover);
+        }
+
+        bool IUiAssistantPanelStateGateway.TrySetAssistantPanelOpen(bool open)
+        {
+            return TrySetAssistantPanelOpen(open);
         }
 
         bool IUiShellRuntimeGateway.TryReadLoadingProgress(out UiShellLoadingProgressModel loading)

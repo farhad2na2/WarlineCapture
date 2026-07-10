@@ -248,17 +248,17 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `47 / 106` |
-| Checklist percent complete | `44.3%` |
-| Checklist in progress | `2 / 106`: `APH-311`, `APH-401` |
-| Complete plus active coverage | `49 / 106` (`46.2%`); this is visibility only, not accepted completion |
-| Current phase | Phase 3 Android device evidence plus parallel Phase 4 audio residency |
-| Current task | `APH-311` awaits a physical device; `APH-401` controlled Menu/Match audio-memory capture implementation is active |
+| Checklist complete | `48 / 106` |
+| Checklist percent complete | `45.3%` |
+| Checklist in progress | `2 / 106`: `APH-311`, `APH-500` |
+| Complete plus active coverage | `50 / 106` (`47.2%`); this is visibility only, not accepted completion |
+| Current phase | Phase 3 Android device evidence plus parallel Phase 5 Android build reporting |
+| Current task | `APH-311` awaits a physical device; `APH-500` tooling is complete and release APK/AAB evidence generation is active |
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: steady-state Match GC `234,324 / 1,024` bytes; improved 13.0% from the APH-007 baseline without weakening the budget |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
-| Last verified commit | `e2eb61b3f`; catalog Music/Ambience drift is zero and audio contracts pass `13/13` |
-| Last update | 2026-07-10 - APH-400/402/403 complete in parallel; APH-311 device evidence and APH-401 runtime audio capture active |
+| Last verified commit | `671a009aa`; APH-401 settled audio evidence is accepted and APH-500 build-report tooling passes `6/6` |
+| Last update | 2026-07-10 - APH-401 complete after evidence hardening; APH-311 device evidence and APH-500 APK/AAB generation active |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -480,9 +480,12 @@ Known baseline:
 - Existing profile policy specifies DecompressOnLoad/preload for Voice. Voice is the first measured optimization candidate.
 
 - [x] `APH-400` Extend the content-residency report to list only catalog-referenced audio clips by bus/category, duration, channels, frequency, import load type, compressed size, and estimated decoded size.
-  - Result: schema-2 JSON and Markdown now list the 226 serialized catalog clips only, grouped and detailed by bus/category with event IDs, duration, channels, sample rate, active Android importer load type, measured compressed storage-memory size, and decoded PCM estimate; unreferenced legacy clips are excluded from the catalog section.
-  - Validation: focused content-residency `8/8`, Android report generation passed with 4,102 included assets, 226/226 catalog clips, zero warnings, 575.838 seconds duration, 48.61 MiB measured compressed bytes, and 97.01 MiB estimated decoded bytes; commit `6f858f762` pushed to `main`.
-- [~] `APH-401` Capture Menu and Match audio memory before playback and after representative UI, combat, music, ambience, and ARIA voice playback.
+  - Result: schema-2 JSON and Markdown now list the 234 source-parity-guarded serialized catalog clips only, grouped and detailed by bus/category with event IDs, duration, channels, sample rate, active Android importer load type, measured compressed storage-memory size, and decoded PCM estimate; unreferenced legacy clips are excluded from the catalog section.
+  - Validation: focused content-residency `8/8`, Android report generation passed with 4,110 included assets, 234/234 catalog clips, zero warnings, 580.358 seconds duration, 49.41 MiB measured compressed bytes, and 97.77 MiB estimated decoded bytes; runtime catalog parity passes as part of the `14/14` audio contract.
+- [x] `APH-401` Capture Menu and Match audio memory before playback and after representative UI, combat, music, ambience, and ARIA voice playback.
+  - Result: controlled batchmode Menu and Match captures begin from zero active sources, wait for each requested clip to load and catalog residency to stabilize, normalize event timing to one capture clock, and record clip/bus residency plus contextual process counters. Menu covers UI and music; Match covers small-arms combat, music, ambience, and ARIA voice.
+  - Evidence: `Design/AgentReports/aph-401_audio-memory-playback-menu.{json,md}` and `Design/AgentReports/aph-401_audio-memory-playback-match.{json,md}` record exact commit `8e1f21c2a`, catalog SHA-256, raw-profiler size/hash, stable clip counts, and all requested events as `Presented`; raw captures remain transient under `/private/tmp` and are reproducible through the recorded invocation.
+  - Validation: capture contract `7/7`, audio source/runtime catalog contract `14/14`, Menu `3/3` phases, Match `5/5` phases, two-pass code/evidence review with no remaining findings; implementation commits `c2ead0fa1`, `8e1f21c2a`, and evidence commit `0aecb723b` pushed to `main`.
 - [x] `APH-402` Identify catalog drift: cataloged Music/Ambience clips that do not match the existing Streaming profile and unused legacy clips that do not affect runtime residency.
   - Result: all nine Music/Ambience references agree between source JSON and the serialized catalog and match Streaming/not-preloaded/background-load policy; zero catalog importer mismatches were found. Six unreferenced legacy files are isolated as build/cleanup inventory and do not affect runtime catalog residency.
 - [x] `APH-403` Correct cataloged Music/Ambience drift without changing event IDs or playback behavior.
@@ -498,7 +501,10 @@ Known baseline:
 
 Goal: make residency and package size intentional while preserving visible quality.
 
-- [ ] `APH-500` Produce a BuildReport-based top-100 included-asset table for Android APK and AAB builds.
+- [~] `APH-500` Produce a BuildReport-based top-100 included-asset table for Android APK and AAB builds.
+  - Tooling: release APK/AAB builds now request `DetailedBuildReport`, deterministically aggregate `BuildReport.packedAssets`, preserve attributed/unattributed/overhead accounting, and write top-100 JSON/Markdown evidence with commit, dirty-state, architecture, artifact size, and SHA-256. Jenkins archives each report with its matching artifact.
+  - Validation: focused aggregation/evidence contract `6/6`, Unity compile clean, `git diff --check` clean; tooling commit `671a009aa` pushed to `main`.
+  - Remaining: run clean release APK and AAB builds, inspect both generated reports/artifacts, then mark complete.
 - [ ] `APH-501` Add tracked budgets for APK/AAB size, installed size, peak allocated memory, texture memory, mesh memory, audio memory, and graphics-driver memory.
 - [ ] `APH-502` Classify texture importers into UI, world albedo, world normal/mask, VFX, impostor/atlas, generated source/reference, and excluded/unreferenced groups.
 - [ ] `APH-503` Add an editor guard preventing mip streaming on UI, font, animation-data, sprite-atlas, and generated reference/source textures.
@@ -1155,10 +1161,10 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Validation: `[ContentResidencyInventoryValidation] result=Passed tests=8`, `[ContentResidencyInventory] result=Passed assets=4102 roots=12 catalogAudioClips=226`, 226/226 compressed-size measurements, zero report warnings, Unity compilation with 0 C# errors, and `git diff --check` passed
 - Artifacts: `/private/tmp/aph400-content-residency-tests.log`, `/private/tmp/aph400-content-residency-generate.log`, `Design/AgentReports/architecture_performance_content_residency_baseline.json`, and `Design/AgentReports/architecture_performance_content_residency_baseline.md`
 - Metrics before: the dependency report counted included audio assets but did not identify the runtime catalog set or expose bus/category, duration, format, load type, and decoded-size evidence together
-- Metrics after: 226 catalog clips, 575.838 seconds, 48.61 MiB measured compressed storage-memory size, 97.01 MiB decoded PCM estimate; load types are 217 `DecompressOnLoad` and 9 `Streaming`
+- Metrics after: 234 catalog clips, 580.358 seconds, 49.41 MiB measured compressed storage-memory size, 97.77 MiB decoded PCM estimate; the regenerated runtime catalog is guarded against the source JSON by the `14/14` audio contract
 - Visual result: Not applicable
 - Residual risk: static dependency/import evidence does not prove simultaneous runtime residency or first-play latency; APH-401 owns controlled Menu/Match playback captures
-- Next ready task: `APH-401`
+- Next ready task: `APH-401` (completed 2026-07-10)
 
 ### 2026-07-10 - APH-402 and APH-403 - Music/Ambience importer drift
 
@@ -1173,7 +1179,33 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Metrics after: all 9 cataloged Music/Ambience clips are verified Streaming/not-preloaded/background-loaded, 6 legacy clips are excluded from runtime residency, and the 13-test contract is green
 - Visual result: Not applicable
 - Residual risk: unused legacy clips can still affect repository/build-size work if later included by a build path, but they do not affect current runtime catalog residency
-- Next ready task: continue `APH-401`; `APH-404` follows its measured baseline
+- Next ready task: `APH-404` follows the accepted `APH-401` measured baseline
+
+### 2026-07-10 - APH-401 - Controlled audio playback residency
+
+- Status: Complete
+- Stable commits/pushes: runtime parity and first capture `c2ead0fa1`; evidence hardening `8e1f21c2a`; acceptance reports `0aecb723b`
+- Files changed: batchmode capture utility, focused capture-contract tests, source/runtime catalog parity guard, serialized runtime catalog, Menu/Match JSON and Markdown evidence, and refreshed content-residency baseline
+- Behavior preserved/changed: runtime playback behavior is unchanged; the serialized runtime catalog now includes all 234 source events, and evidence capture rejects missing events, duplicate runtime views, active-source baselines, unstable residency, incomplete phase sets, and missing provenance
+- Validation: audio contracts `14/14`; capture contracts `7/7`; Menu capture passed `3/3` required phases; Match capture passed `5/5`; all requested UI/combat/music/ambience/ARIA events reached `Presented`; second review reported no remaining findings
+- Metrics before: 226 serialized runtime clips; Match baseline had one unidentified active source; post-playback samples occurred immediately at `AudioSource.Play`; timestamps used mixed origins; raw profiler provenance was transient and unhashed
+- Metrics after: 234 source-parity clips; Menu and Match baselines have zero active sources; streamed music/ambience raise settled loaded counts from 225 to 226/227; reports record one clock origin, exact commit, dirty state, catalog hash, raw-profiler size/hash, build target, and reproducible invocation
+- Visual result: Not applicable; controlled audio and memory evidence only
+- Residual risk: raw profiler files are intentionally local/transient because the Match capture is hundreds of MiB; the committed report records their hashes and exact regeneration commands. Android first-play/glitch evidence remains owned by `APH-405` and requires a physical device.
+- Next ready task: `APH-404`; `APH-405` remains device-gated
+
+### 2026-07-10 - APH-500 - Android BuildReport top-100 tooling
+
+- Status: Active; tooling complete, release APK/AAB evidence pending
+- Stable tooling commit/push: `671a009aa`
+- Files changed: `AndroidBuildReportGenerator`, focused tests, release Android build integration, and Jenkins artifact archiving
+- Behavior preserved/changed: profiler builds are unchanged; release APK/AAB builds now request `DetailedBuildReport` and fail rather than publish incomplete report evidence
+- Validation: focused aggregation/evidence contract `6/6`; Unity compile clean; deterministic ordering, normalized paths, top-100 cap, packed-overhead accounting, and report provenance are covered
+- Metrics before: Android artifact stages produced APK/AAB files without deterministic included-asset attribution
+- Metrics after: tooling can produce separate APK and AAB JSON/Markdown reports with top-100 packed contributions, unattributed bytes, packed-file overhead, summary remainder, artifact bytes, and SHA-256
+- Visual result: Not applicable
+- Residual risk: no release APK/AAB evidence exists yet; both long-running builds and report review are required before completion
+- Next ready task: run the release APK and AAB build commands from commit `671a009aa` or later
 
 ### 2026-07-09 - Unity validation timeout reliability
 

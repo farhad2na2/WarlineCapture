@@ -157,7 +157,7 @@ namespace Game.Composition
                 view.UiCanvas.transform.localScale = Vector3.one;
 
             if (view != null)
-                RestoreUiPresentationMode(view.UiCamera, view.UiCanvas);
+                RestoreUiPresentationMode(view.UiCamera, view.UiCanvas, isMatchSceneLoaded: false);
 
             initialized = false;
             hasCapturedUiPresentation = false;
@@ -666,7 +666,7 @@ namespace Game.Composition
                 return;
             }
 
-            RestoreUiPresentationMode(uiCamera, uiCanvas);
+            RestoreUiPresentationMode(uiCamera, uiCanvas, IsMatchSceneLoaded(entityManager));
         }
 
         private void CaptureUiPresentationMode(Camera uiCamera, Canvas uiCanvas)
@@ -692,14 +692,14 @@ namespace Game.Composition
             hasCapturedUiPresentation = true;
         }
 
-        private void RestoreUiPresentationMode(Camera uiCamera, Canvas uiCanvas)
+        private void RestoreUiPresentationMode(Camera uiCamera, Canvas uiCanvas, bool isMatchSceneLoaded)
         {
             if (!hasCapturedUiPresentation)
                 return;
 
             if (uiCamera != null)
             {
-                RestoreUiAudioListener(uiCamera);
+                RestoreUiAudioListener(uiCamera, isMatchSceneLoaded);
                 if (uiCamera.enabled != defaultUiCameraEnabled)
                     uiCamera.enabled = defaultUiCameraEnabled;
                 if (uiCamera.clearFlags != defaultUiCameraClearFlags)
@@ -721,19 +721,27 @@ namespace Game.Composition
         private static void ApplyUiAudioListenerMatchMode(Camera uiCamera, bool isMatchSceneLoaded)
         {
             AudioListener audioListener = uiCamera != null ? uiCamera.GetComponent<AudioListener>() : null;
-            if (audioListener == null)
+            if (audioListener == null || !isMatchSceneLoaded)
                 return;
 
-            audioListener.enabled = !isMatchSceneLoaded;
+            audioListener.enabled = false;
         }
 
-        private void RestoreUiAudioListener(Camera uiCamera)
+        private void RestoreUiAudioListener(Camera uiCamera, bool isMatchSceneLoaded)
+        {
+            ApplyUiAudioListenerMenuMode(uiCamera, isMatchSceneLoaded, defaultUiAudioListenerEnabled);
+        }
+
+        private static void ApplyUiAudioListenerMenuMode(
+            Camera uiCamera,
+            bool isMatchSceneLoaded,
+            bool defaultListenerEnabled)
         {
             AudioListener audioListener = uiCamera != null ? uiCamera.GetComponent<AudioListener>() : null;
-            if (audioListener == null)
+            if (audioListener == null || isMatchSceneLoaded)
                 return;
 
-            audioListener.enabled = defaultUiAudioListenerEnabled;
+            audioListener.enabled = defaultListenerEnabled;
         }
 
         private bool IsMatchStartComplete(EntityManager entityManager)

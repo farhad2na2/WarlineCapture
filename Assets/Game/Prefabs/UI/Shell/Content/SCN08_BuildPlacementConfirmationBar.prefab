@@ -134,7 +134,7 @@ MonoBehaviour:
   rotateButton: {fileID: 147193563217115402}
   confirmButton: {fileID: 2627786462194274018}
   panelFrameSprite: {fileID: 21300000, guid: 3c9b2fbb766544afb73729fdd2ccfea0, type: 3}
-  statusChipSprite: {fileID: 21300000, guid: c42afd407d55459098cd591821f4a26f, type: 3}
+  statusChipSprite: {fileID: 21300000, guid: 126a251a013d458cbb343329171cbd22, type: 3}
   secondaryButtonSprite: {fileID: 21300000, guid: 90bd6048af154044902aa0a3e9154ba4, type: 3}
   goldActionButtonSprite: {fileID: 21300000, guid: 90bd6048af154044902aa0a3e9154ba4, type: 3}
   squareButtonSprite: {fileID: 21300000, guid: 820d8eb3ea8641b38d0d7b6abd53010e, type: 3}
@@ -1767,7 +1767,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: c42afd407d55459098cd591821f4a26f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 126a251a013d458cbb343329171cbd22, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1

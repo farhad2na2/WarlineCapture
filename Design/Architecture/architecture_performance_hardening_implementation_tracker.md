@@ -251,17 +251,17 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `66 / 106` |
-| Checklist percent complete | `62.3%` |
-| Checklist in progress | `12 / 106`: `APH-311`, `APH-501`, `APH-502`, `APH-507`, `APH-508`, `APH-509`, `APH-601`, `APH-609`, `APH-610`, `APH-705`, `APH-802`, `APH-808` |
-| Complete plus active coverage | `78 / 106` (`73.6%`); this is visibility only, not accepted completion |
+| Checklist complete | `69 / 106` |
+| Checklist percent complete | `65.1%` |
+| Checklist in progress | `11 / 106`: `APH-311`, `APH-501`, `APH-502`, `APH-507`, `APH-508`, `APH-509`, `APH-601`, `APH-609`, `APH-610`, `APH-705`, `APH-802` |
+| Complete plus active coverage | `80 / 106` (`75.5%`); this is visibility only, not accepted completion |
 | Current phase | Phase 3 Android device evidence, Phase 5 product budgets, Phase 6 map closeout, and bounded Phase 8 automation |
 | Current task | Complete map Read/Write proof and the Android visual soak, then close remaining FPS, memory, startup, package, and device gates |
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: steady-state Match GC `234,324 / 1,024` bytes; improved 13.0% from the APH-007 baseline without weakening the budget |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
-| Last verified commit | `10ddaf00a`; map presentation ownership, texture-streaming protection, CI architecture gates, and the performance dashboard are pushed to `main` |
-| Last update | 2026-07-11 - bounded Voice pilot and scheduled performance lane complete; animation-texture and missing-reference audits remain active |
+| Last verified commit | `c2d4158ef`; bounded Voice pilot, scheduled performance lane, animation-texture evidence, and the initial missing-reference gate are pushed to `main` |
+| Last update | 2026-07-11 - missing-reference and Menu-Match-Menu lifecycle gates pass cleanly; catalog split declined pending Android Voice-pilot evidence |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -500,7 +500,9 @@ Known baseline:
   - Validation: importer application covered 234 catalog clips with exactly eight overrides; the bounded pilot contract passed `8/8`, and `AudioConfigContractTests.RunFocusedValidation` passed `14/14` in Unity.
 - [ ] `APH-405` Measure first-play latency, repeated-play latency, decoded memory, compressed memory, and audio glitches on Android for the pilot.
 - [ ] `APH-406` If the pilot passes, apply the Voice policy through the existing JSON-driven audio importer workflow and update contract tests. If it fails, record the failing devices/clips and use a bounded prewarm set instead of reverting to global preload.
-- [ ] `APH-407` Evaluate splitting the persistent catalog into Core/Menu, Match, and Voice catalogs. Open a separate implementation slice only if importer changes do not meet the memory target.
+- [x] `APH-407` Evaluate splitting the persistent catalog into Core/Menu, Match, and Voice catalogs. Open a separate implementation slice only if importer changes do not meet the memory target.
+  - Decision: do not open a catalog-split implementation now. Current evidence attributes `39.84 MiB` of the `43.34 MiB` loaded baseline to 163 Voice clips, while Core/Menu accounts for `0.81 MiB` and Match for `2.69 MiB`; the theoretical `42.53 MiB` Core/Menu-only reduction is not accepted because unload behavior is unproven.
+  - Reopen condition: only if the measured full Voice importer policy still misses the accepted memory target. Evidence and deterministic tooling: `Design/AgentReports/2026-07-11_aph-407_audio_catalog_split_analysis.{json,md}` with focused tests `6/6`.
 - [ ] `APH-408` Run `AudioConfigContractTests.RunFocusedValidation`, `AudioPerformanceValidationTests.RunFocusedValidation`, audio scene binding tests, and an Android audible smoke pass.
 
 ## Phase 5 - Texture, Animation, Build, and Memory Policy
@@ -629,12 +631,14 @@ Goal: prevent recurrence and cover behavior that source-scanning tests cannot pr
   - Remaining: collect five to seven independent captures at one frozen revision/environment and preserve each artifact separately.
 - [ ] `APH-803` Add an Android development-build gate for p95/p99 frame, peak memory, startup time, and thermal status on the reference device profile.
 - [ ] `APH-804` Add Android release-build acceptance for the documented 30 FPS tier; keep 60 FPS as a separate high-end target.
-- [ ] `APH-805` Add a Menu -> Match -> Menu lifecycle PlayMode test covering serialized references, world creation, UI binding, and cleanup.
+- [x] `APH-805` Add a Menu -> Match -> Menu lifecycle PlayMode test covering serialized references, world creation, UI binding, and cleanup.
+  - Result: the focused production-route PlayMode flow proves serialized references, persistent-world and single lifecycle-root ownership, HUD dependency binding, Match unload, UI removal, settings unsubscription, and helper cleanup. Listener authority now remains with Match until additive unload completes, and a project-owned teardown fence flushes pending GPU-animation structural changes before converted render entities are destroyed.
+  - Validation: listener scene-binding tests pass `6/6`; teardown-fence tests pass `3/3`; the final lifecycle run passes `1/1` in `13.45 s` with zero duplicate-listener warnings and zero `MaterialAlphaSetup`/invalid-entity/ECB teardown exceptions.
 - [ ] `APH-806` Add deterministic PlayMode flows for selection/move/attack and building placement/production.
 - [ ] `APH-807` Add deterministic PlayMode flows for boarding/disembark and resource exchange.
-- [~] `APH-808` Add a scene/prefab missing-reference gate for the two enabled build scenes and runtime UI content prefabs.
-  - Active result: a deterministic Unity 6-compatible validator scans both enabled build scenes and all direct runtime UI content prefabs, including inactive objects, missing scripts, and broken object references. Editor and Editor-test assemblies compile with zero errors.
-  - Blocker: the live gate correctly fails on 25 existing broken references: 17 Menu `UIRouterView.screenPrefabs`, two Menu log-panel sprites, one placement-status sprite binding, one placement-status image, and four Match HUD command-status sprites. Fix or intentionally rebind these assets, then rerun `Game.Editor.Aph808MissingSerializedReferenceValidator.Run` before completion.
+- [x] `APH-808` Add a scene/prefab missing-reference gate for the two enabled build scenes and runtime UI content prefabs.
+  - Result: a deterministic Unity 6-compatible validator scans both enabled build scenes and all six direct runtime UI content prefabs, including inactive objects, missing scripts, and broken object references. A precise asset repair restored the authoritative status-chip sprite, cleared 17 obsolete broken Menu route-prefab entries, and cleared two inactive legacy Menu sprites without unrelated prefab layout churn.
+  - Validation: focused validator tests pass `11/11`; Editor and Editor-test assemblies compile with zero errors; the live gate improved from 25 findings to `[APH-808 MissingSerializedReferenceValidation] result=Passed buildScenes=2 runtimeUiContentPrefabs=6`.
 - [ ] `APH-809` Add required visual captures for graphics tiers, Day/Night, static map chunks, and mip streaming. A visual task cannot pass from logs alone.
 - [ ] `APH-810` When Unity MCP is connected, require agents to inspect affected scene/prefab hierarchy, console, Play Mode state, and screenshots through MCP. When unavailable, record the fallback runner and screenshots used.
 - [x] `APH-811` Add a tracked performance dashboard generated from JSON artifacts rather than manually copied metrics.

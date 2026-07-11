@@ -9,6 +9,7 @@ namespace Game.Editor
     public static class BuildPlacementConfirmationBarPrefabSetupEditor
     {
         private const string PrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN08_BuildPlacementConfirmationBar.prefab";
+        internal const string StatusChipSpritePath = "Assets/Game/Art/UI/Panels/scn08_status_segment_strip.png";
 
         [MenuItem("Game/UI/Setup Build Placement Confirmation Bar Prefab")]
         public static void Setup()
@@ -31,6 +32,14 @@ namespace Game.Editor
 
                 Sprite panelFrame = GetSprite(serialized, "panelFrameSprite");
                 Sprite statusChip = GetSprite(serialized, "statusChipSprite");
+                if (statusChip == null)
+                {
+                    statusChip = AssetDatabase.LoadAssetAtPath<Sprite>(StatusChipSpritePath);
+                    if (statusChip == null)
+                        throw new MissingReferenceException($"Missing placement status-chip sprite at {StatusChipSpritePath}.");
+
+                    SetObject(serialized, "statusChipSprite", statusChip);
+                }
                 Sprite secondaryButton = GetSprite(serialized, "secondaryButtonSprite");
                 Sprite goldActionButton = GetSprite(serialized, "goldActionButtonSprite");
                 Sprite squareButton = GetSprite(serialized, "squareButtonSprite");

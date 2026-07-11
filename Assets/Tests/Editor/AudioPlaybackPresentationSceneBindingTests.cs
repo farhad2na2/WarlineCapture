@@ -34,6 +34,10 @@ public sealed class AudioPlaybackPresentationSceneBindingTests
             passed++;
             tests.MatchAdditiveLoad_UsesWorldCameraAudioListenerForSpatialGameplay();
             passed++;
+            tests.LaggingMatchLoadedState_DoesNotReenableMenuListenerAfterMatchClaimsAuthority();
+            passed++;
+            tests.ReturnRoute_DoesNotRestoreMenuListenerUntilMatchIsUnloaded();
+            passed++;
 
             Debug.Log($"[AudioPlaybackPresentationSceneBindingValidation] result=Passed tests={passed}");
             ValidationExit.Passed();
@@ -98,6 +102,77 @@ public sealed class AudioPlaybackPresentationSceneBindingTests
                 World.DefaultGameObjectInjectionWorld = previousWorld;
             world.Dispose();
         }
+    }
+
+    [Test]
+    public void LaggingMatchLoadedState_DoesNotReenableMenuListenerAfterMatchClaimsAuthority()
+    {
+        EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
+        MenuBootstrapView bootstrap =
+            UnityEngine.Object.FindAnyObjectByType<MenuBootstrapView>(FindObjectsInactive.Include);
+        Assert.NotNull(bootstrap, "Menu scene must contain MenuBootstrapView.");
+
+        AudioListener menuListener = bootstrap.UiCamera != null
+            ? bootstrap.UiCamera.GetComponent<AudioListener>()
+            : null;
+        Assert.NotNull(menuListener, "Menu UI camera must own the menu AudioListener.");
+
+        EditorSceneManager.OpenScene(MatchScenePath, OpenSceneMode.Additive);
+        MatchSceneView matchScene =
+            UnityEngine.Object.FindAnyObjectByType<MatchSceneView>(FindObjectsInactive.Include);
+        Assert.NotNull(matchScene, "Match scene must contain MatchSceneView.");
+
+        AudioListener worldListener = matchScene.WorldCamera != null
+            ? matchScene.WorldCamera.GetComponent<AudioListener>()
+            : null;
+        Assert.NotNull(worldListener, "Match Main Camera must own the spatial AudioListener.");
+
+        InvokeApplyAudioListenerAuthority(matchScene);
+        Assert.IsFalse(menuListener.enabled, "Match authority must disable the Menu listener.");
+        Assert.IsTrue(worldListener.enabled, "Match authority must enable the Match listener.");
+
+        InvokeApplyUiAudioListenerMatchMode(bootstrap.UiCamera, isMatchSceneLoaded: false);
+
+        Assert.IsFalse(
+            menuListener.enabled,
+            "A lagging scene-lifecycle flag must not reverse authority already claimed by MatchSceneView.");
+        Assert.IsTrue(worldListener.enabled, "The Match listener must retain authority during lifecycle convergence.");
+        Assert.AreEqual(1, CountEnabledActiveAudioListeners(), "The additive transition must retain exactly one enabled AudioListener.");
+
+        InvokeRestoreAudioListenerAuthority(matchScene);
+
+        Assert.IsTrue(menuListener.enabled, "Returning to Menu must restore the Menu listener.");
+        Assert.IsFalse(worldListener.enabled, "Returning to Menu must disable the Match listener.");
+        Assert.AreEqual(1, CountEnabledActiveAudioListeners(), "The return transition must retain exactly one enabled AudioListener.");
+    }
+
+    [Test]
+    public void ReturnRoute_DoesNotRestoreMenuListenerUntilMatchIsUnloaded()
+    {
+        EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
+        MenuBootstrapView bootstrap =
+            UnityEngine.Object.FindAnyObjectByType<MenuBootstrapView>(FindObjectsInactive.Include);
+        Assert.NotNull(bootstrap, "Menu scene must contain MenuBootstrapView.");
+
+        AudioListener menuListener = bootstrap.UiCamera != null
+            ? bootstrap.UiCamera.GetComponent<AudioListener>()
+            : null;
+        Assert.NotNull(menuListener, "Menu UI camera must own the menu AudioListener.");
+
+        menuListener.enabled = false;
+        InvokeApplyUiAudioListenerMenuMode(
+            bootstrap.UiCamera,
+            isMatchSceneLoaded: true,
+            defaultListenerEnabled: true);
+        Assert.IsFalse(
+            menuListener.enabled,
+            "Menu must not reclaim listener authority while the additive Match scene is still loaded.");
+
+        InvokeApplyUiAudioListenerMenuMode(
+            bootstrap.UiCamera,
+            isMatchSceneLoaded: false,
+            defaultListenerEnabled: true);
+        Assert.IsTrue(menuListener.enabled, "Menu must restore its listener after Match has unloaded.");
     }
 
     [Test]
@@ -215,6 +290,36 @@ public sealed class AudioPlaybackPresentationSceneBindingTests
             BindingFlags.Instance | BindingFlags.NonPublic);
         Assert.NotNull(method, "MatchSceneView must expose internal listener authority logic for scene binding validation.");
         method.Invoke(matchScene, null);
+    }
+
+    private static void InvokeRestoreAudioListenerAuthority(MatchSceneView matchScene)
+    {
+        MethodInfo method = typeof(MatchSceneView).GetMethod(
+            "RestoreAudioListenerAuthority",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.NotNull(method, "MatchSceneView must expose internal listener restoration logic for scene binding validation.");
+        method.Invoke(matchScene, null);
+    }
+
+    private static void InvokeApplyUiAudioListenerMatchMode(Camera uiCamera, bool isMatchSceneLoaded)
+    {
+        MethodInfo method = typeof(MenuBootstrapCompositionSystemHelper).GetMethod(
+            "ApplyUiAudioListenerMatchMode",
+            BindingFlags.Static | BindingFlags.NonPublic);
+        Assert.NotNull(method, "Menu composition must expose internal listener transition logic for validation.");
+        method.Invoke(null, new object[] { uiCamera, isMatchSceneLoaded });
+    }
+
+    private static void InvokeApplyUiAudioListenerMenuMode(
+        Camera uiCamera,
+        bool isMatchSceneLoaded,
+        bool defaultListenerEnabled)
+    {
+        MethodInfo method = typeof(MenuBootstrapCompositionSystemHelper).GetMethod(
+            "ApplyUiAudioListenerMenuMode",
+            BindingFlags.Static | BindingFlags.NonPublic);
+        Assert.NotNull(method, "Menu composition must expose internal listener restoration logic for validation.");
+        method.Invoke(null, new object[] { uiCamera, isMatchSceneLoaded, defaultListenerEnabled });
     }
 
     private static void InvokeLifecycle(MonoBehaviour behaviour, string methodName)

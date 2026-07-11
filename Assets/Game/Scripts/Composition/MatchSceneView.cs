@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
+using Unity.Entities;
 using Game.Components;
 using Game.Configs;
 using Game.Authoring;
@@ -173,6 +174,7 @@ namespace Game.Composition
             if (!matchRuntimeBound)
                 return;
 
+            GpuAnimationTeardownFence.TryFlushPendingStructuralChanges(World.DefaultGameObjectInjectionWorld);
             matchBootstrapSystem.OnDestroy();
             matchRuntimeBound = false;
         }

@@ -102,16 +102,40 @@ def apply_profile(path: Path, profile: dict[str, object]) -> None:
     meta_path.write_text(re.sub(r"[ \t]+\n", "\n", text))
 
 
-def main() -> None:
-    profiles = json.loads(PROFILE_PATH.read_text())["profiles"]
-    clip_paths = load_catalog_clip_paths()
-    for clip_path in clip_paths:
-        category = category_for(clip_path)
-        if category not in profiles:
-            raise RuntimeError(f"No import profile for category '{category}'.")
-        apply_profile(clip_path, profiles[category])
+def load_profile_config() -> tuple[dict[str, dict[str, object]], dict[str, str]]:
+    config = json.loads(PROFILE_PATH.read_text())
+    profiles = config["profiles"]
+    overrides: dict[str, str] = {}
+    for override in config.get("overrides", []):
+        asset_path = str(override["assetPath"])
+        profile_name = str(override["profile"])
+        if asset_path in overrides:
+            raise RuntimeError(f"Duplicate audio profile override: '{asset_path}'.")
+        if profile_name not in profiles:
+            raise RuntimeError(f"Unknown audio profile override '{profile_name}' for '{asset_path}'.")
+        overrides[asset_path] = profile_name
+    return profiles, overrides
 
-    print(f"Applied audio import profiles to {len(clip_paths)} catalog clips.")
+
+def main() -> None:
+    profiles, overrides = load_profile_config()
+    clip_paths = load_catalog_clip_paths()
+    catalog_paths = {path.relative_to(ROOT).as_posix() for path in clip_paths}
+    unknown_overrides = sorted(set(overrides) - catalog_paths)
+    if unknown_overrides:
+        raise RuntimeError(f"Audio profile overrides are not cataloged: {unknown_overrides}")
+
+    for clip_path in clip_paths:
+        asset_path = clip_path.relative_to(ROOT).as_posix()
+        profile_name = overrides.get(asset_path, category_for(clip_path))
+        if profile_name not in profiles:
+            raise RuntimeError(f"No import profile named '{profile_name}'.")
+        apply_profile(clip_path, profiles[profile_name])
+
+    print(
+        f"Applied audio import profiles to {len(clip_paths)} catalog clips "
+        f"with {len(overrides)} explicit overrides."
+    )
 
 
 if __name__ == "__main__":

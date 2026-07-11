@@ -331,7 +331,13 @@ public sealed class AudioConfigContractTests
     public void CatalogAudioImportSettingsMatchProfiles()
     {
         string[] clipPaths = ReadCatalogClipPaths();
+        ImportProfilesJson importProfiles = ReadImportProfiles();
+        HashSet<string> voicePilotPaths = new(
+            importProfiles.overrides
+                .Where(entry => entry.profile == "VoicePilot")
+                .Select(entry => entry.assetPath));
         Assert.GreaterOrEqual(clipPaths.Length, 48);
+        Assert.AreEqual(8, voicePilotPaths.Count, "The measured Voice pilot must remain explicitly bounded.");
 
         for (int i = 0; i < clipPaths.Length; i++)
         {
@@ -346,7 +352,14 @@ public sealed class AudioConfigContractTests
             Assert.AreEqual(44100, settings.sampleRateOverride, path);
             Assert.IsFalse(importer.ambisonic, path);
 
-            if (category == "Music" || category == "Ambience")
+            if (voicePilotPaths.Contains(path))
+            {
+                Assert.AreEqual(AudioClipLoadType.CompressedInMemory, settings.loadType, path);
+                Assert.IsTrue(importer.forceToMono, path);
+                Assert.IsFalse(settings.preloadAudioData, path);
+                Assert.IsTrue(importer.loadInBackground, path);
+            }
+            else if (category == "Music" || category == "Ambience")
             {
                 Assert.AreEqual(AudioClipLoadType.Streaming, settings.loadType, path);
                 Assert.IsFalse(importer.forceToMono, path);
@@ -391,6 +404,15 @@ public sealed class AudioConfigContractTests
         Assert.Greater(catalog.buses.Length, 0);
         Assert.Greater(catalog.events.Length, 0);
         return catalog;
+    }
+
+    private static ImportProfilesJson ReadImportProfiles()
+    {
+        Assert.IsTrue(File.Exists(ImportProfileJsonPath), $"Missing audio import profile config: {ImportProfileJsonPath}");
+        ImportProfilesJson profiles = JsonUtility.FromJson<ImportProfilesJson>(File.ReadAllText(ImportProfileJsonPath));
+        Assert.NotNull(profiles);
+        Assert.NotNull(profiles.overrides);
+        return profiles;
     }
 
     private static string ReadAudioCategory(string assetPath)
@@ -452,5 +474,18 @@ public sealed class AudioConfigContractTests
         public string assetPath;
         public string status;
         public int weight;
+    }
+
+    [Serializable]
+    private sealed class ImportProfilesJson
+    {
+        public ImportProfileOverrideJson[] overrides;
+    }
+
+    [Serializable]
+    private sealed class ImportProfileOverrideJson
+    {
+        public string assetPath;
+        public string profile;
     }
 }

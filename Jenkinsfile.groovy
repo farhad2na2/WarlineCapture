@@ -15,6 +15,10 @@ pipeline {
         disableConcurrentBuilds(abortPrevious: true)
     }
 
+    triggers {
+        cron('H H * * 1')
+    }
+
     environment {
         PROJECT_PATH = "${CUSTOM_WORKSPACE}"
         UNITY_VERSION = "${UNITY_EDITOR_VERSION}"
@@ -263,6 +267,43 @@ pipeline {
             post {
                 always {
                     archiveArtifacts artifacts: 'TestResults/Architecture*.log', allowEmptyArchive: true
+                }
+            }
+        }
+
+        stage('Run Editor Match Performance Lane') {
+            when {
+                anyOf {
+                    triggeredBy 'TimerTrigger'
+                    expression {
+                        return env.RUN_EDITOR_MATCH_PERFORMANCE?.toString()?.equalsIgnoreCase('true')
+                    }
+                }
+            }
+            steps {
+                powershell '''
+                $ErrorActionPreference = "Stop"
+                $unityPathFile = "$env:PROJECT_PATH\\unity-editor-path.txt"
+                if (-not (Test-Path -LiteralPath $unityPathFile -PathType Leaf)) {
+                    throw "Unity editor path file not found: $unityPathFile"
+                }
+
+                $unityExe = (Get-Content -LiteralPath $unityPathFile -Raw).Trim()
+                if ([string]::IsNullOrWhiteSpace($unityExe) -or $unityExe -ieq "null") {
+                    throw "Unity editor path file is empty or invalid: $unityPathFile"
+                }
+
+                & "$env:PROJECT_PATH\\Tools\\CI\\InvokeUnityMatchPerformanceLane.ps1" `
+                    -UnityExe $unityExe `
+                    -ProjectPath "$env:PROJECT_PATH" `
+                    -OutputDirectory "$env:PROJECT_PATH\\TestResults" `
+                    -GcBudgetBytes 1024 `
+                    -TimeoutSeconds 900
+                '''
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'TestResults/MatchPerformance*.log,TestResults/MatchPerformanceLaneSummary.json,Design/AgentReports/performance_regression_match_baseline.json,Design/AgentReports/performance_regression_match_baseline.md,Design/AgentReports/2026-06-11_perf_match-gc-callstack-capture.md', allowEmptyArchive: true
                 }
             }
         }

@@ -251,17 +251,17 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `64 / 106` |
-| Checklist percent complete | `60.4%` |
-| Checklist in progress | `10 / 106`: `APH-311`, `APH-501`, `APH-502`, `APH-507`, `APH-509`, `APH-601`, `APH-609`, `APH-610`, `APH-705`, `APH-802` |
-| Complete plus active coverage | `74 / 106` (`69.8%`); this is visibility only, not accepted completion |
+| Checklist complete | `66 / 106` |
+| Checklist percent complete | `62.3%` |
+| Checklist in progress | `12 / 106`: `APH-311`, `APH-501`, `APH-502`, `APH-507`, `APH-508`, `APH-509`, `APH-601`, `APH-609`, `APH-610`, `APH-705`, `APH-802`, `APH-808` |
+| Complete plus active coverage | `78 / 106` (`73.6%`); this is visibility only, not accepted completion |
 | Current phase | Phase 3 Android device evidence, Phase 5 product budgets, Phase 6 map closeout, and bounded Phase 8 automation |
 | Current task | Complete map Read/Write proof and the Android visual soak, then close remaining FPS, memory, startup, package, and device gates |
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: steady-state Match GC `234,324 / 1,024` bytes; improved 13.0% from the APH-007 baseline without weakening the budget |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
-| Last verified commit | `e9dcf183e`; hardened package-usage evidence and all earlier accepted slices are pushed to `main` |
-| Last update | 2026-07-11 - Android map ownership accepted as a partial win; 60 FPS, Read/Write cleanup, and the full visual soak remain open |
+| Last verified commit | `10ddaf00a`; map presentation ownership, texture-streaming protection, CI architecture gates, and the performance dashboard are pushed to `main` |
+| Last update | 2026-07-11 - bounded Voice pilot and scheduled performance lane complete; animation-texture and missing-reference audits remain active |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -495,7 +495,9 @@ Known baseline:
 - [x] `APH-403` Correct cataloged Music/Ambience drift without changing event IDs or playback behavior.
   - Result: no importer correction was necessary. The stale audio contract source paths were updated to the current `Configs/Audio` ownership location; runtime audio, clips, event IDs, catalogs, and importers remain unchanged.
   - Validation: `[AudioConfigContractValidation] result=Passed tests=13`, deterministic raw-file audit found `0 / 9` catalog mismatches, and commit `e2eb61b3f` pushed to `main`.
-- [ ] `APH-404` Change the Voice import profile pilot to `CompressedInMemory`, `preloadAudioData=false`, and `loadInBackground=true` for a representative ARIA subset.
+- [x] `APH-404` Change the Voice import profile pilot to `CompressedInMemory`, `preloadAudioData=false`, and `loadInBackground=true` for a representative ARIA subset.
+  - Result: JSON-driven import profiles now define an explicit `VoicePilot` profile and an eight-clip ARIA allowlist spanning warnings, command instructions, command rejection, tactical feedback, and confirmation. The remaining Voice catalog retains the prior decompressed/preloaded policy until Android evidence accepts expansion.
+  - Validation: importer application covered 234 catalog clips with exactly eight overrides; the bounded pilot contract passed `8/8`, and `AudioConfigContractTests.RunFocusedValidation` passed `14/14` in Unity.
 - [ ] `APH-405` Measure first-play latency, repeated-play latency, decoded memory, compressed memory, and audio glitches on Android for the pilot.
 - [ ] `APH-406` If the pilot passes, apply the Voice policy through the existing JSON-driven audio importer workflow and update contract tests. If it fails, record the failing devices/clips and use a bounded prewarm set instead of reverting to global preload.
 - [ ] `APH-407` Evaluate splitting the persistent catalog into Core/Menu, Match, and Voice catalogs. Open a separate implementation slice only if importer changes do not meet the memory target.
@@ -522,7 +524,9 @@ Goal: make residency and package size intentional while preserving visible quali
 - [~] `APH-507` Audit Android texture overrides for ASTC size/quality and remove oversized 4K/8K limits only where the BuildReport proves inclusion and visual evidence proves no loss.
   - Active result: historical clean-build evidence identifies 13 included Polygon Military 4K textures totaling `135.34 MiB` packed and no confirmed 8K texture. Explicit override/max-size settings and current-revision inclusion remain unproven, so no importer was changed. Evidence: `Design/AgentReports/2026-07-11_aph-507_android_texture_override_audit.md`.
   - Remaining: export complete current-revision Android importer settings and run the bounded single-texture 4K-to-2K device/visual pilot before accepting any override.
-- [ ] `APH-508` Audit the six generated animation textures for actual runtime residency, duplication, clip coverage, precision requirements, and unload behavior. Do not change format based only on source file size.
+- [~] `APH-508` Audit the six generated animation textures for actual runtime residency, duplication, clip coverage, precision requirements, and unload behavior. Do not change format based only on source file size.
+  - Active result: deterministic audit evidence covers six textures totaling `100,663,296` payload bytes, finds no exact pixel duplicates, identifies only the three `CharactersBaked` textures in Android build evidence at approximately `48 MiB` packed, and records 430 animation entries across 33 character animators (`67.95%` current coverage). Linear point-filtered `RGBAHalf` remains unchanged because lower precision is not proven safe.
+  - Remaining: measure device residency, CPU-copy retention, and post-unload memory, then establish or reject an explicit production release path. Evidence: `Design/AgentReports/2026-07-11_aph-508_animation_texture_audit.md`.
 - [~] `APH-509` Remove unused packages only after a package-usage report proves no source, serialized asset, build script, or editor workflow dependency.
   - Active result: a deterministic read-only inventory classifies 46 manifest packages, one embedded depth-zero manifest discrepancy, 20 ordinary lock-only transitives, 14 static candidate-unused packages, and five unresolved static blind spots across source, serialized assets, build scripts, and editor workflows. No package removal is accepted until isolated import/compile/test/build/device validation proves it safe.
   - Validation: six dedicated inventory tests plus syntax and deterministic-report checks pass; evidence commit `e9dcf183e` is pushed to `main`.
@@ -617,7 +621,9 @@ Goal: prevent recurrence and cover behavior that source-scanning tests cannot pr
 - [x] `APH-800` Add both architecture execute-method validations to CI and fail the build on nonzero exit or missing pass marker.
   - Result: the unconditional Jenkins architecture stage runs both required execute methods sequentially through a fail-closed PowerShell wrapper, rejects nonzero Unity exit/missing log/missing exact marker, and archives both logs.
   - Validation: source-contract checks cover both methods/markers, stage ordering, escaped paths, timeout, log archival, and the prohibition on `-nographics`; PowerShell runtime execution remains owned by the Windows Jenkins agent.
-- [ ] `APH-801` Add the editor Match performance baseline and steady-state GC capture to a scheduled or pre-merge performance lane; fail when the unchanged 1,024-byte GC budget is exceeded.
+- [x] `APH-801` Add the editor Match performance baseline and steady-state GC capture to a scheduled or pre-merge performance lane; fail when the unchanged 1,024-byte GC budget is exceeded.
+  - Result: Jenkins runs the existing Match baseline and steady-state GC execute methods weekly or when `RUN_EDITOR_MATCH_PERFORMANCE=true`, reuses the fail-closed APH-800 wrapper, rejects missing/stale/malformed evidence, preserves the `1,024`-byte budget, and archives logs plus machine-readable summary evidence.
+  - Validation: focused and combined CI Python tests pass `24/24`; source contract and syntax checks pass. Windows Jenkins execution remains the first live scheduled-lane proof.
 - [~] `APH-802` Ratchet the editor p95 budget from the current lenient `50 ms` only after at least five stable captures establish variance.
   - Active result: four exact-runner historical captures range from `3.824` to `7.186 ms` p95 with `25.97%` coefficient of variation, but span different revisions and fixtures. The evidence does not justify a ratchet; the `50 ms` budget remains unchanged. Evidence: `Design/AgentReports/2026-07-11_aph-802_editor_p95_variance_analysis.md`.
   - Remaining: collect five to seven independent captures at one frozen revision/environment and preserve each artifact separately.
@@ -626,7 +632,9 @@ Goal: prevent recurrence and cover behavior that source-scanning tests cannot pr
 - [ ] `APH-805` Add a Menu -> Match -> Menu lifecycle PlayMode test covering serialized references, world creation, UI binding, and cleanup.
 - [ ] `APH-806` Add deterministic PlayMode flows for selection/move/attack and building placement/production.
 - [ ] `APH-807` Add deterministic PlayMode flows for boarding/disembark and resource exchange.
-- [ ] `APH-808` Add a scene/prefab missing-reference gate for the two enabled build scenes and runtime UI content prefabs.
+- [~] `APH-808` Add a scene/prefab missing-reference gate for the two enabled build scenes and runtime UI content prefabs.
+  - Active result: a deterministic Unity 6-compatible validator scans both enabled build scenes and all direct runtime UI content prefabs, including inactive objects, missing scripts, and broken object references. Editor and Editor-test assemblies compile with zero errors.
+  - Blocker: the live gate correctly fails on 25 existing broken references: 17 Menu `UIRouterView.screenPrefabs`, two Menu log-panel sprites, one placement-status sprite binding, one placement-status image, and four Match HUD command-status sprites. Fix or intentionally rebind these assets, then rerun `Game.Editor.Aph808MissingSerializedReferenceValidator.Run` before completion.
 - [ ] `APH-809` Add required visual captures for graphics tiers, Day/Night, static map chunks, and mip streaming. A visual task cannot pass from logs alone.
 - [ ] `APH-810` When Unity MCP is connected, require agents to inspect affected scene/prefab hierarchy, console, Play Mode state, and screenshots through MCP. When unavailable, record the fallback runner and screenshots used.
 - [x] `APH-811` Add a tracked performance dashboard generated from JSON artifacts rather than manually copied metrics.

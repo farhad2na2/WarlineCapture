@@ -34,6 +34,14 @@
       "loadInBackground": false,
       "sampleRateOverride": 44100
     },
+    "VoicePilot": {
+      "loadType": "CompressedInMemory",
+      "compressionFormat": "Vorbis",
+      "forceToMono": true,
+      "preloadAudioData": false,
+      "loadInBackground": true,
+      "sampleRateOverride": 44100
+    },
     "Music": {
       "loadType": "Streaming",
       "compressionFormat": "Vorbis",
@@ -50,5 +58,39 @@
       "loadInBackground": true,
       "sampleRateOverride": 44100
     }
-  }
+  },
+  "overrides": [
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_confirm_destroy_01.wav",
+      "profile": "VoicePilot"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_not_enough_money_01.wav",
+      "profile": "VoicePilot"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_ground_attack_type_01.wav",
+      "profile": "VoicePilot"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_air_attack_type_01.wav",
+      "profile": "VoicePilot"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_no_selection_01.wav",
+      "profile": "VoicePilot"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_move_01.wav",
+      "profile": "VoicePilot"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_attack_01.wav",
+      "profile": "VoicePilot"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_scan_contacts_01.wav",
+      "profile": "VoicePilot"
+    }
+  ]
 }

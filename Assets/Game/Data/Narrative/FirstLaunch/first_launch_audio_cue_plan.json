@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "sequenceId": "first_launch",
+  "score": {
+    "asset": "Assets/Game/Audio/Music/music_briefing_loop_01.wav",
+    "status": "TEMP_EXISTING_PROJECT_ASSET",
+    "notes": "Low under dialogue; replace only after target-device mix review."
+  },
+  "cues": [
+    { "stateId": "FL-P01", "purpose": "market ambience", "asset": "Assets/Game/Audio/Ambience/amb_city_strategic_loop_01.wav", "bus": "Ambience" },
+    { "stateId": "FL-P02", "purpose": "market impact", "asset": "Assets/Game/Audio/Gameplay/game_explosion_large_01.wav", "bus": "Sfx" },
+    { "stateId": "FL-P02", "purpose": "radio interruption", "asset": "Assets/Game/Audio/Alerts/alert_threat_critical_01.wav", "bus": "Alerts" },
+    { "stateId": "FL-P03", "purpose": "relay blackout", "asset": "Assets/Game/Audio/UI/ui_feedback_toast_error_01.wav", "bus": "Sfx" },
+    { "stateId": "FL-P05", "purpose": "ARIA boot", "asset": "Assets/Game/Audio/UI/ui_screen_forward_01.wav", "bus": "Sfx" },
+    { "stateId": "FL-P09", "purpose": "identity confirmed", "asset": "Assets/Game/Audio/UI/ui_feedback_toast_positive_01.wav", "bus": "Sfx" },
+    { "stateId": "FL-P18", "purpose": "tactical handoff", "asset": "Assets/Game/Audio/Tutorial/tutorial_step_open_01.wav", "bus": "Sfx" }
+  ],
+  "mixRules": {
+    "voiceHonorsVoiceSetting": true,
+    "ambienceHonorsSoundSetting": true,
+    "scoreHonorsMusicSetting": true,
+    "mutedPlaybackMustRemainClearWithSubtitles": true,
+    "runtimeNetworkTts": false
+  }
+}

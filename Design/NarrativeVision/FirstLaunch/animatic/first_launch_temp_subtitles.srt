@@ -1,0 +1,99 @@
+1
+00:00:02,700 --> 00:00:07,200
+[ENVIRONMENT] Sahrin, before dawn. Old Market is already moving.
+
+2
+00:00:07,700 --> 00:00:11,950
+[RADIO] Multiple failures. Power, roads, and command.
+
+3
+00:00:12,200 --> 00:00:15,900
+[RADIO] Command channel is silent. Reports conflict.
+
+4
+00:00:16,200 --> 00:00:19,200
+[DALIA] Survivors found. Extracting.
+
+5
+00:00:19,300 --> 00:00:21,950
+[SAMIRA] Civilians cut off beyond the clinic road.
+
+6
+00:00:22,200 --> 00:00:26,400
+[ARIA] Civic Relay online. System integrity partial.
+
+7
+00:00:26,700 --> 00:00:31,300
+[ARIA] Emergency continuity search. One valid authority found.
+
+8
+00:00:31,700 --> 00:00:35,900
+[ARIA] Old Market. Civilian access is compromised.
+
+9
+00:00:36,300 --> 00:00:39,900
+[ARIA] Select a Commander identity, or continue with the default.
+
+10
+00:00:42,200 --> 00:00:46,100
+[ARIA] Commander confirmed. Give me one bounded order.
+
+11
+00:00:46,800 --> 00:00:49,100
+[ARIA] Guidance can be changed later.
+
+12
+00:00:51,700 --> 00:00:54,950
+[ARIA] Power, roads, and command links are failing.
+
+13
+00:00:55,200 --> 00:00:59,450
+[DALIA] Two JRC squads responding. Forward post dark.
+
+14
+00:00:59,700 --> 00:01:02,500
+[SAMIRA] Families and crews remain beyond the clinic.
+
+15
+00:01:03,200 --> 00:01:07,700
+[ARIA] Coordination is probable. Attribution remains uncertain.
+
+16
+00:01:08,200 --> 00:01:11,500
+[COMMANDER] Connect responders. Protect the corridor.
+
+17
+00:01:11,700 --> 00:01:14,400
+[DALIA] Confirmed armed patrol approaching Old Market.
+
+18
+00:01:15,700 --> 00:01:20,400
+[ARIA] Three hostiles confirmed. Civilians remain behind the barrier.
+
+19
+00:01:20,700 --> 00:01:24,450
+[DALIA] Field units are ready. Tactical control is yours.
+
+20
+00:01:24,700 --> 00:01:28,200
+[ARIA] Move to cover. Secure the corridor.
+
+21
+00:01:28,550 --> 00:01:30,300
+[REVIEW] M01 gameplay handoff placeholder.
+
+22
+00:01:30,700 --> 00:01:33,600
+[SAMIRA] The route is open. Responders are moving.
+
+23
+00:01:34,700 --> 00:01:39,100
+[ARIA] Orders share a timing pattern. Credential trace incomplete.
+
+24
+00:01:39,700 --> 00:01:42,600
+[DALIA] A second cell is moving toward the abandoned post.
+
+25
+00:01:43,700 --> 00:01:48,100
+[ARIA] District coordination restored. Awaiting your next command.

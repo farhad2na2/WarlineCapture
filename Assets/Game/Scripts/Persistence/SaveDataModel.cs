@@ -14,6 +14,7 @@ namespace Game.Runtime
     [Serializable]
     public sealed class PlayerProfileSaveData
     {
+        public int profileSchemaVersion = FirstLaunchProfileState.CurrentSchemaVersion;
         public string commanderName = "Commander";
         public int commanderLevel = 1;
         public int commanderXp;
@@ -36,6 +37,28 @@ namespace Game.Runtime
         public string[] ownedBuildingUnlocks = Array.Empty<string>();
         public string[] ownedSupportAbilityUnlocks = Array.Empty<string>();
         public string[] ownedCosmetics = Array.Empty<string>();
+        public string firstLaunchStatus = FirstLaunchProfileState.NotStarted;
+        public string firstLaunchLastCompletedStateId = string.Empty;
+        public string firstLaunchCommanderCallsign = "COMMANDER";
+        public string firstLaunchCommanderDisplayName = "Commander";
+        public int firstLaunchCommanderPortraitIndex;
+        public string firstLaunchGuidance = "Full";
+        public bool firstLaunchWatched;
+        public bool firstLaunchSkipped;
+    }
+
+    public static class FirstLaunchProfileState
+    {
+        public const int CurrentSchemaVersion = 1;
+        public const string NotStarted = "NotStarted";
+        public const string InProgress = "InProgress";
+        public const string HandoffPending = "HandoffPending";
+        public const string Completed = "Completed";
+
+        public static bool IsKnown(string value)
+        {
+            return value == NotStarted || value == InProgress || value == HandoffPending || value == Completed;
+        }
     }
 
     [Serializable]

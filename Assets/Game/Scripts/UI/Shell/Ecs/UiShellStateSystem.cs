@@ -31,6 +31,7 @@ namespace Game.UI.Shell.Ecs
             {
                 Entity existingBoundary = ResolveBoundaryEntity(ref state, boundaryCount);
                 EnsureShellStateComponent(ref state, existingBoundary);
+                EnsureStartupDispositionComponent(ref state, existingBoundary);
                 EnsureLoadingProgressComponent(ref state, existingBoundary);
                 EnsureMatchIntroComponent(ref state, existingBoundary);
                 EnsureDiagnosticsOverlayComponent(ref state, existingBoundary);
@@ -75,6 +76,10 @@ namespace Game.UI.Shell.Ecs
                 Phase = UiShellTransitionPhase.Idle,
                 TransitionSequenceId = 0,
                 IsTransitionRunning = 0
+            });
+            state.EntityManager.AddComponentData(boundary, new UiShellStartupDispositionComponent
+            {
+                Value = UiShellStartupDisposition.Pending
             });
             state.EntityManager.AddComponentData(boundary, new UiShellLoadingProgressComponent
             {
@@ -169,6 +174,16 @@ namespace Game.UI.Shell.Ecs
                 Phase = UiShellTransitionPhase.Idle,
                 TransitionSequenceId = 0,
                 IsTransitionRunning = 0
+            });
+        }
+
+        private static void EnsureStartupDispositionComponent(ref SystemState state, Entity boundary)
+        {
+            if (state.EntityManager.HasComponent<UiShellStartupDispositionComponent>(boundary))
+                return;
+            state.EntityManager.AddComponentData(boundary, new UiShellStartupDispositionComponent
+            {
+                Value = UiShellStartupDisposition.Pending
             });
         }
 

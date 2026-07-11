@@ -43,7 +43,11 @@ namespace Game.Runtime
 
         public PlayerProfileSaveData LoadProfile()
         {
-            return _repository.Load<PlayerProfileSaveData>(ProfileFileName);
+            bool exists = _repository.Exists(ProfileFileName);
+            string raw = exists ? _repository.ReadRaw(ProfileFileName) : string.Empty;
+            PlayerProfileSaveData profile = _repository.Load<PlayerProfileSaveData>(ProfileFileName);
+            bool legacyProfile = exists && raw.IndexOf("\"firstLaunchStatus\"", StringComparison.Ordinal) < 0;
+            return NormalizeProfile(profile, legacyProfile);
         }
 
         public SettingsSaveData LoadSettings()
@@ -58,7 +62,35 @@ namespace Game.Runtime
 
         public void SaveProfile(PlayerProfileSaveData data)
         {
-            _repository.Save(ProfileFileName, data);
+            _repository.Save(ProfileFileName, NormalizeProfile(data, false));
+        }
+
+        private static PlayerProfileSaveData NormalizeProfile(PlayerProfileSaveData profile, bool legacyProfile)
+        {
+            profile ??= new PlayerProfileSaveData();
+            profile.profileSchemaVersion = FirstLaunchProfileState.CurrentSchemaVersion;
+            if (legacyProfile)
+            {
+                profile.firstLaunchStatus = FirstLaunchProfileState.Completed;
+                profile.firstLaunchWatched = true;
+                profile.firstLaunchSkipped = false;
+            }
+            else if (!FirstLaunchProfileState.IsKnown(profile.firstLaunchStatus))
+            {
+                profile.firstLaunchStatus = FirstLaunchProfileState.NotStarted;
+            }
+
+            profile.firstLaunchLastCompletedStateId ??= string.Empty;
+            profile.firstLaunchCommanderCallsign = string.IsNullOrWhiteSpace(profile.firstLaunchCommanderCallsign)
+                ? "COMMANDER"
+                : profile.firstLaunchCommanderCallsign.Trim();
+            profile.firstLaunchCommanderDisplayName = string.IsNullOrWhiteSpace(profile.firstLaunchCommanderDisplayName)
+                ? "Commander"
+                : profile.firstLaunchCommanderDisplayName.Trim();
+            profile.firstLaunchGuidance = string.IsNullOrWhiteSpace(profile.firstLaunchGuidance)
+                ? "Full"
+                : profile.firstLaunchGuidance.Trim();
+            return profile;
         }
 
         public void SaveSettings(SettingsSaveData data)

@@ -1,0 +1,253 @@
+{
+  "schemaVersion": 1,
+  "status": "Gate6UserApproved",
+  "approvedOn": "2026-07-11",
+  "panelCount": 22,
+  "runtimeComposition": "UnityLayered",
+  "cleanPanelArt": true,
+  "dialogueAndInteractiveUiBakedIntoPanels": false,
+  "panels": [
+    {
+      "panelId": "FL-P01",
+      "approvedRevision": "R1",
+      "approvedOn": "2026-07-11",
+      "sourceMaster": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P01_FinalCandidate_R1.png",
+      "sourceMasterSha256": "b219dfbb9813718ab70655b97417e54f2fddf1e3dd7a885fe934abfe0d81abc2",
+      "runtime16x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P01.png",
+      "runtime16x9Sha256": "5e39d25fb4fbef522877fd0d78a99f6bfb3f30e71ed31ef2a6959f9b0256fea3",
+      "runtime20x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P01.png",
+      "runtime20x9Sha256": "7e563fc306403169cbc203343cb79486752f90324117aac4078b5e809234b42c"
+    },
+    {
+      "panelId": "FL-P02",
+      "approvedRevision": "R1",
+      "approvedOn": "2026-07-11",
+      "sourceMaster": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P02_FinalCandidate_R1.png",
+      "sourceMasterSha256": "604d9b1c04cc49a41555ac6bd8cdd6435bb4a9cd5574d65bedc0b854cbf7aac4",
+      "runtime16x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P02.png",
+      "runtime16x9Sha256": "d73009810448493b8495ebe4e2e260dbf3634886fb7d3d6bf00516dee87ef7a1",
+      "runtime20x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P02.png",
+      "runtime20x9Sha256": "7864ef9c457bf5bab4af5fecbbd42b0464b651887b969f9d28f7e40db9221ad0"
+    },
+    {
+      "panelId": "FL-P03",
+      "approvedRevision": "R1",
+      "approvedOn": "2026-07-11",
+      "sourceMaster": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P03_FinalCandidate_R1.png",
+      "sourceMasterSha256": "13ce503ac277a35f131619a6423b1c6128ee582e3c7d73d7b9bb923cc8312430",
+      "runtime16x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P03.png",
+      "runtime16x9Sha256": "6f26d038c2e3b61c5bb830fe17dac47ba8ddcfedd63d7101276ef0a20534d209",
+      "runtime20x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P03.png",
+      "runtime20x9Sha256": "62818f3fdb672340db3a06811dc6c2429a93cb74d8019231f0b396fcf5504b44"
+    },
+    {
+      "panelId": "FL-P04",
+      "approvedRevision": "R1",
+      "approvedOn": "2026-07-11",
+      "sourceMaster": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P04_FinalCandidate_R1.png",
+      "sourceMasterSha256": "e1a281729fc09135f7a2ed4d6af1555db7fe4045d3c393a0cc419a1c34120b5e",
+      "runtime16x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P04.png",
+      "runtime16x9Sha256": "0b248d663d8e47eef78cea9dd866e86a6e20813811138b1ad974a62588411466",
+      "runtime20x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P04.png",
+      "runtime20x9Sha256": "76a82c0ef87fdaf96fdcc35f119a88edeb5395848cc9b649416220d8de95bb24"
+    },
+    {
+      "panelId": "FL-P05",
+      "approvedRevision": "R1",
+      "approvedOn": "2026-07-11",
+      "sourceMaster": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P05_FinalCandidate_R1.png",
+      "sourceMasterSha256": "62f6e9785a6d0fb411bcab538703003a1258ec303ad0d57ca8c9d09cbf170610",
+      "runtime16x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P05.png",
+      "runtime16x9Sha256": "f4351ce41cac0bf4e0cbd2cbf5cc0096535ec520746b341cb26ac9e96997e8c5",
+      "runtime20x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P05.png",
+      "runtime20x9Sha256": "aafea55f15dc2a5199e6c98e451ffa9a4bd8e023e5a332b2014aa3859d87f234"
+    },
+    {
+      "panelId": "FL-P06",
+      "approvedRevision": "R1",
+      "approvedOn": "2026-07-11",
+      "sourceMaster": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P06_FinalCandidate_R1.png",
+      "sourceMasterSha256": "ac6daea06e4a9f4ef732f208acb601d6c30f6df3d32c4ccc9e712b8a5f550d0c",
+      "runtime16x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P06.png",
+      "runtime16x9Sha256": "02fae40c736c7b2790656fe926e281e88c69453d0ebd0c0e94fe62b6ec62c98b",
+      "runtime20x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P06.png",
+      "runtime20x9Sha256": "f2b92607072dfdcb4a8bced199ed2a7415bcc0aacc47ac22a5cc9d423cd17b0e"
+    },
+    {
+      "panelId": "FL-P07",
+      "approvedRevision": "R1",
+      "approvedOn": "2026-07-11",
+      "sourceMaster": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P07_FinalCandidate_R1.png",
+      "sourceMasterSha256": "ab8f3785e4de8efb61fc8a3fb5010c691213d22aac423ad5c53143de5f33ad33",
+      "runtime16x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P07.png",
+      "runtime16x9Sha256": "f2727595bc4dfe051c65343c9fb0ecce6aa351c48239c359e587ffa4eae0a039",
+      "runtime20x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P07.png",
+      "runtime20x9Sha256": "d3c2bdc59c0f3b23b1da49733341a0e653f1d7a58b6aa886b18f547b7e5c7620"
+    },
+    {
+      "panelId": "FL-P08",
+      "approvedRevision": "R1",
+      "approvedOn": "2026-07-11",
+      "sourceMaster": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P08_BackgroundCandidate_R1.png",
+      "sourceMasterSha256": "13ce503ac277a35f131619a6423b1c6128ee582e3c7d73d7b9bb923cc8312430",
+      "runtime16x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P08.png",
+      "runtime16x9Sha256": "36389ad4587a202aa18f72a35b3ed939ff114858bcca412058905eb3e19da340",
+      "runtime20x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P08.png",
+      "runtime20x9Sha256": "f294afe5dc6ba015459c27307230263406a828649df6c39be7c92a9e5e68ea23"
+    },
+    {
+      "panelId": "FL-P09",
+      "approvedRevision": "R1",
+      "approvedOn": "2026-07-11",
+      "sourceMaster": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P09_FinalCandidate_R1.png",
+      "sourceMasterSha256": "2fcd935d35cc7e1ffbf5d7904c3578953f326d9d0fe3348516da0f5b2a47d8d2",
+      "runtime16x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P09.png",
+      "runtime16x9Sha256": "de5d81e9b690bda20ff5dad7d310f4d501557334270af92bc8578b2f96bd5096",
+      "runtime20x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P09.png",
+      "runtime20x9Sha256": "5d915f26a26805b43e627e67d0ece2621c3a1d20fcc9113c3672030967c83341"
+    },
+    {
+      "panelId": "FL-P10",
+      "approvedRevision": "R1",
+      "approvedOn": "2026-07-11",
+      "sourceMaster": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P10_FinalCandidate_R1.png",
+      "sourceMasterSha256": "23fd8bd4a36b1723052441fba9fce0099a542e2cd39e212bfdc642e6146f9850",
+      "runtime16x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P10.png",
+      "runtime16x9Sha256": "3b89ad3a7d0a85e34e490f97b2ded76044dfcd8c904c10e80b0c0aed8f738476",
+      "runtime20x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P10.png",
+      "runtime20x9Sha256": "3f8d22b3099fe559a2a5a522720d630a97fa3fa25d322c04b96c1af82a041c2b"
+    },
+    {
+      "panelId": "FL-P11",
+      "approvedRevision": "R1",
+      "approvedOn": "2026-07-11",
+      "sourceMaster": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P11_FinalCandidate_R1.png",
+      "sourceMasterSha256": "9d052023bdb5aea1dea5313ca9d4778fb549e287b0b80ad3e2cff011aa0a2de6",
+      "runtime16x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P11.png",
+      "runtime16x9Sha256": "1de6eb2a3915f13ca52990d19aa1d060810a532df3b5e84e3c270957b6988b44",
+      "runtime20x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P11.png",
+      "runtime20x9Sha256": "63e85e339652a68dd424e63df8891ddd13d11aa452e0b393c5eb63e807d36eb3"
+    },
+    {
+      "panelId": "FL-P12",
+      "approvedRevision": "R2",
+      "approvedOn": "2026-07-11",
+      "sourceMaster": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P12_FinalCandidate_R2.png",
+      "sourceMasterSha256": "c5defd665ceb333e924f5a8aff86c22769ad88eb293b9c02b88b3fdccd0d5752",
+      "runtime16x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P12.png",
+      "runtime16x9Sha256": "eec9d7a72238336dbc25abc2d65b9b854a7244c3709ea162cc93c9263564950e",
+      "runtime20x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P12.png",
+      "runtime20x9Sha256": "ac6822bc5880cc63897833b30adad402d04e83fe8e0211d3cd501e13d523f7c9"
+    },
+    {
+      "panelId": "FL-P13",
+      "approvedRevision": "R1",
+      "approvedOn": "2026-07-11",
+      "sourceMaster": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P13_FinalCandidate_R1.png",
+      "sourceMasterSha256": "275ac561ba2fc79fa88a9b44dbbdc3f516460a4cec15a07106b1184e4c32953a",
+      "runtime16x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P13.png",
+      "runtime16x9Sha256": "90eacb977a21c033692ee46a57856394f530e7f1bf9429b9ca6ffc675df145d9",
+      "runtime20x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P13.png",
+      "runtime20x9Sha256": "03e15587b3802ddb37e6c30ff03d53eaf2c3610d542eaa606382f1daf45f9632"
+    },
+    {
+      "panelId": "FL-P14",
+      "approvedRevision": "R1",
+      "approvedOn": "2026-07-11",
+      "sourceMaster": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P14_FinalCandidate_R1.png",
+      "sourceMasterSha256": "c99190fb1e546bf6597a83e6b157d77f3b2bdc31080650db534d035facaba9c6",
+      "runtime16x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P14.png",
+      "runtime16x9Sha256": "a131fcb07ba07d610d161db0871b172e8a176f920a122369e36b51f07b581f52",
+      "runtime20x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P14.png",
+      "runtime20x9Sha256": "a53b454c6fe1fced8e6b3d2075b428e63ded17e449563079d8db3602492fdee6"
+    },
+    {
+      "panelId": "FL-P15",
+      "approvedRevision": "R1",
+      "approvedOn": "2026-07-11",
+      "sourceMaster": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P15_FinalCandidate_R1.png",
+      "sourceMasterSha256": "ce780dda6b1162dcf0b013f0e4e1dc0e4b8cc6acae8b8511de3fbc1c9bbb5fb0",
+      "runtime16x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P15.png",
+      "runtime16x9Sha256": "d4fb2393551e6dc3acbb9fdeb3a60eeb93831d9c9a331226f204581fc0514ace",
+      "runtime20x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P15.png",
+      "runtime20x9Sha256": "fb22c7587ab8b0a8b2b74a5e11f78e0004294165e0b8bc9d7aad6aedcf5f166e"
+    },
+    {
+      "panelId": "FL-P16",
+      "approvedRevision": "R2",
+      "approvedOn": "2026-07-11",
+      "sourceMaster": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P16_FinalCandidate_R2.png",
+      "sourceMasterSha256": "b6fdba306fe16ccb5f8a6cae2baa8336d4103700a8108ee76c316fa7edc88ee7",
+      "runtime16x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P16.png",
+      "runtime16x9Sha256": "94952047b892a7c46536dd5a07d1fca44853db5c17567992426503714e03f268",
+      "runtime20x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P16.png",
+      "runtime20x9Sha256": "cbb087ba7b2b390c5e71dc2d42497529808bbb390bb398ce73b533e5db2074dc"
+    },
+    {
+      "panelId": "FL-P17",
+      "approvedRevision": "R1",
+      "approvedOn": "2026-07-11",
+      "sourceMaster": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P17_FinalCandidate_R1.png",
+      "sourceMasterSha256": "0d2169c328615af4c3da5f1e3955211fa6fa9617512489f6b53e74cc5fb16c59",
+      "runtime16x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P17.png",
+      "runtime16x9Sha256": "aeccb2c51028ea9f622db4619eb62c287cd6e0da4f23af9d5569e048c32a5d09",
+      "runtime20x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P17.png",
+      "runtime20x9Sha256": "0cd2dd980f855ffdb803583bd8a0935fe9dedae9c42527a8806476ccf1a6b776"
+    },
+    {
+      "panelId": "FL-P18",
+      "approvedRevision": "R1",
+      "approvedOn": "2026-07-11",
+      "sourceMaster": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P18_FinalCandidate_R1.png",
+      "sourceMasterSha256": "262a76b67e7fdfb626bcda2a2afcffd8d849f485cef4fa317b501cd46572e70f",
+      "runtime16x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P18.png",
+      "runtime16x9Sha256": "d68d9a3341ab9493d68d491b1d51eb481bc2fc862c47b57c60affc9572216a54",
+      "runtime20x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P18.png",
+      "runtime20x9Sha256": "078abb9f5b759a3c606a030e6d44187194c156681db749bd4dbf8bed6cc4d548"
+    },
+    {
+      "panelId": "FL-P19",
+      "approvedRevision": "R2",
+      "approvedOn": "2026-07-11",
+      "sourceMaster": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P19_FinalCandidate_R2.png",
+      "sourceMasterSha256": "e69e305abf023c8a555678b3a3a3a541b48c13702afaa753e1a9a150a6149733",
+      "runtime16x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P19.png",
+      "runtime16x9Sha256": "c1c5d40e6c6e109ff5d4c872c08092f9e5e0b16633db0cd5baaa2b69f9f477ab",
+      "runtime20x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P19.png",
+      "runtime20x9Sha256": "55eaf4350a0cede6c482f823dfd951c4729631cfda1cc78b7972b6c36c27936b"
+    },
+    {
+      "panelId": "FL-P20",
+      "approvedRevision": "R1",
+      "approvedOn": "2026-07-11",
+      "sourceMaster": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P20_FinalCandidate_R1.png",
+      "sourceMasterSha256": "1891231ce2fd0fbe4279476105998008848004e1b3eb6f5e57ab759ddabdab64",
+      "runtime16x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P20.png",
+      "runtime16x9Sha256": "c7029a1a7ea3db32514cb4929548b7e5f6a50d8859ced09926a78e09b9fe4507",
+      "runtime20x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P20.png",
+      "runtime20x9Sha256": "77065827aca6be7793945df422391bab877e00e3c4e2c6a6bc7cb2fe93835827"
+    },
+    {
+      "panelId": "FL-P21",
+      "approvedRevision": "R1",
+      "approvedOn": "2026-07-11",
+      "sourceMaster": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P21_FinalCandidate_R1.png",
+      "sourceMasterSha256": "d7a1de8ab8f9aab3c7d4e2a8b30d7c3125d4573eadc2f8377ba27aee6227aa49",
+      "runtime16x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P21.png",
+      "runtime16x9Sha256": "5880ea994897db8ab74be37605c426db38acc0d34f6a991ca19c4b753cc57c09",
+      "runtime20x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P21.png",
+      "runtime20x9Sha256": "7c75ccc99d323db1131cdd8afd4217f56ed30d21d8d700a9b255d2960a84aa63"
+    },
+    {
+      "panelId": "FL-P22",
+      "approvedRevision": "R1",
+      "approvedOn": "2026-07-11",
+      "sourceMaster": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P22_FinalCandidate_R1.png",
+      "sourceMasterSha256": "b7170f8ba3984b36fa14b7bbc563064fdad75a12953779d4502a57cf1e7c0695",
+      "runtime16x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P22.png",
+      "runtime16x9Sha256": "6f1d8621afc8c39b1885e941c1aca0e8b3e79657ff101b382f28cf6aa32a8590",
+      "runtime20x9": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P22.png",
+      "runtime20x9Sha256": "ffa0ef261f669fc88eebdbfbb9b01476d4c945cb4f72595e5473cc015680a141"
+    }
+  ]
+}

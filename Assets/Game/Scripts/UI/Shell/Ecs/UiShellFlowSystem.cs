@@ -36,6 +36,9 @@ namespace Game.UI.Shell.Ecs
         {
             Entity boundary = boundaryQuery.GetSingletonEntity();
             UiShellStateComponent shellState = state.EntityManager.GetComponentData<UiShellStateComponent>(boundary);
+            UiShellStartupDispositionComponent startupDisposition = state.EntityManager.HasComponent<UiShellStartupDispositionComponent>(boundary)
+                ? state.EntityManager.GetComponentData<UiShellStartupDispositionComponent>(boundary)
+                : new UiShellStartupDispositionComponent { Value = UiShellStartupDisposition.EnterMenu };
             UiShellLoadingProgressComponent loading = state.EntityManager.GetComponentData<UiShellLoadingProgressComponent>(boundary);
             DynamicBuffer<UiShellLoadingProgressRequestComponent> loadingRequests =
                 state.EntityManager.GetBuffer<UiShellLoadingProgressRequestComponent>(boundary);
@@ -67,6 +70,27 @@ namespace Game.UI.Shell.Ecs
 
             if (shellState.CurrentMode == UiShellMode.None)
             {
+                if (routeRequests.Length > 0 &&
+                    routeRequests[0].Intent == UiShellRouteIntent.EnterMatch &&
+                    TryConsumeRouteRequest(routeRequests, out UiShellRouteRequestComponent startupRouteRequest))
+                {
+                    ProcessRouteRequest(ref shellState, ref matchIntro, commands, routeHistory, startupRouteRequest);
+                    EmitRouteMusic(state.World, startupRouteRequest);
+                    EmitRouteAudio(state.World, startupRouteRequest);
+                    ResetLoading(ref loading, "Loading operation interface");
+                    state.EntityManager.SetComponentData(boundary, loading);
+                    state.EntityManager.SetComponentData(boundary, shellState);
+                    state.EntityManager.SetComponentData(boundary, matchIntro);
+                    return;
+                }
+
+                if (startupDisposition.Value != UiShellStartupDisposition.EnterMenu)
+                {
+                    state.EntityManager.SetComponentData(boundary, shellState);
+                    state.EntityManager.SetComponentData(boundary, matchIntro);
+                    return;
+                }
+
                 BeginCommandSequence(ref shellState, commands, UiShellCommandKind.EnterMenu, UiShellRegionId.None, UIRoute.MainMenu, UiShellMode.MainMenu);
                 shellState.CurrentMode = UiShellMode.MainMenu;
                 shellState.ActiveRoute = UIRoute.MainMenu;

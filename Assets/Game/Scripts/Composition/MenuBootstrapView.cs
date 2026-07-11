@@ -20,6 +20,11 @@ namespace Game.Composition
         [FormerlySerializedAs("contentPresenter")]
         [SerializeField] private UIShellContentView contentSystem;
         [SerializeField] private UIRouterView router;
+        [Header("First Launch Narrative")]
+        [SerializeField] private NarrativeSequenceView firstLaunchNarrativeView;
+        [SerializeField] private NarrativeSequenceConfig firstLaunchNarrativeConfig;
+        [SerializeField] private NarrativeSpeakerCatalog firstLaunchSpeakerCatalog;
+        [SerializeField] private NarrativePunctuationProfile firstLaunchPunctuationProfile;
 
         public RuntimeUiConfig RuntimeUiConfig => runtimeUiConfig;
         public RuntimeUiMode UiMode => runtimeUiConfig != null ? runtimeUiConfig.Mode : RuntimeUiMode.Canvas;
@@ -29,6 +34,10 @@ namespace Game.Composition
         public UIShellEcsPresentationSystem ShellEcsPresentation => shellEcsPresentation;
         public UIShellContentView ContentSystem => contentSystem;
         public UIRouterView Router => router;
+        public NarrativeSequenceView FirstLaunchNarrativeView => firstLaunchNarrativeView;
+        public NarrativeSequenceConfig FirstLaunchNarrativeConfig => firstLaunchNarrativeConfig;
+        public NarrativeSpeakerCatalog FirstLaunchSpeakerCatalog => firstLaunchSpeakerCatalog;
+        public NarrativePunctuationProfile FirstLaunchPunctuationProfile => firstLaunchPunctuationProfile;
         public PerformanceDiagnosticsSystemHelper PerformanceDiagnostics => menuBootstrapSystem.PerformanceDiagnostics;
         public bool IsPerformanceDiagnosticsInitialized => menuBootstrapSystem.IsPerformanceDiagnosticsInitialized;
 
@@ -59,7 +68,11 @@ namespace Game.Composition
             UIShellEcsPresentationSystem configuredShellEcsPresentation,
             UIShellContentView configuredContentSystem,
             UIRouterView configuredRouter,
-            RuntimeUiConfig configuredRuntimeUiConfig = null)
+            RuntimeUiConfig configuredRuntimeUiConfig = null,
+            NarrativeSequenceView configuredFirstLaunchNarrativeView = null,
+            NarrativeSequenceConfig configuredFirstLaunchNarrativeConfig = null,
+            NarrativeSpeakerCatalog configuredFirstLaunchSpeakerCatalog = null,
+            NarrativePunctuationProfile configuredFirstLaunchPunctuationProfile = null)
         {
             if (configuredRuntimeUiConfig != null)
                 runtimeUiConfig = configuredRuntimeUiConfig;
@@ -69,6 +82,14 @@ namespace Game.Composition
             shellEcsPresentation = configuredShellEcsPresentation;
             contentSystem = configuredContentSystem;
             router = configuredRouter;
+            if (configuredFirstLaunchNarrativeView != null)
+                firstLaunchNarrativeView = configuredFirstLaunchNarrativeView;
+            if (configuredFirstLaunchNarrativeConfig != null)
+                firstLaunchNarrativeConfig = configuredFirstLaunchNarrativeConfig;
+            if (configuredFirstLaunchSpeakerCatalog != null)
+                firstLaunchSpeakerCatalog = configuredFirstLaunchSpeakerCatalog;
+            if (configuredFirstLaunchPunctuationProfile != null)
+                firstLaunchPunctuationProfile = configuredFirstLaunchPunctuationProfile;
         }
 
         public void ApplyRuntimeUiMode()

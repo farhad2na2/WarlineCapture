@@ -29,6 +29,7 @@ namespace Game.Composition
         private readonly MatchLaunchCommand matchLaunchCommand = new();
         private readonly IGameTextResolver gameTextResolver = new GameTextResolverAdapter();
         private readonly StaticMapPresentationStreamer staticMapPresentationStreamer;
+        private readonly FirstLaunchNarrativeCompositionSystemHelper firstLaunchNarrativeSystem = new();
 
         private EntityQuery boundaryQuery;
         private Entity cachedBoundaryEntity;
@@ -67,6 +68,8 @@ namespace Game.Composition
         private int boundContentVersion = -1;
         private bool autoStartMatchRequested;
         private bool autoStartMatchSubmitted;
+        private UiShellStartupDisposition desiredStartupDisposition = UiShellStartupDisposition.Pending;
+        private bool narrativeMatchRoutePending;
 
         public PerformanceDiagnosticsSystemHelper PerformanceDiagnostics => performanceDiagnosticsSystem;
         public bool IsPerformanceDiagnosticsInitialized => diagnosticsInitialized;
@@ -104,7 +107,23 @@ namespace Game.Composition
                 view.Router.Initialize();
 
             if (!wasInitialized)
+            {
                 ResetShellForFreshMenuScene();
+                firstLaunchNarrativeSystem.MatchHandoffRequested += HandleNarrativeMatchHandoffRequested;
+                bool reviewerMode = FirstLaunchNarrativeReviewSession.ConsumeRequest();
+                FirstLaunchNarrativeStartupDisposition narrativeDisposition = firstLaunchNarrativeSystem.Initialize(
+                    view.FirstLaunchNarrativeConfig,
+                    view.FirstLaunchSpeakerCatalog,
+                    view.FirstLaunchPunctuationProfile,
+                    view.FirstLaunchNarrativeView,
+                    gameTextResolver,
+                    SaveService.CreateDefault(),
+                    autoStartMatchRequested && !reviewerMode,
+                    reviewerMode);
+                desiredStartupDisposition = narrativeDisposition == FirstLaunchNarrativeStartupDisposition.EnterMenu
+                    ? UiShellStartupDisposition.EnterMenu
+                    : UiShellStartupDisposition.FirstLaunch;
+            }
 
             initialized = true;
             TryApplyStartupRuntimeSettings();
@@ -124,11 +143,11 @@ namespace Game.Composition
 
         public void Update(MenuBootstrapView view, float unscaledDeltaTime)
         {
-            _ = unscaledDeltaTime;
             if (!initialized)
                 Initialize(view);
             if (view == null)
                 return;
+            firstLaunchNarrativeSystem.Tick(unscaledDeltaTime);
             TryApplyStartupRuntimeSettings();
             view.ApplyRuntimeUiMode();
 
@@ -140,10 +159,17 @@ namespace Game.Composition
             if (!TryGetBoundary(entityManager, out Entity boundary))
                 return;
 
+            ApplyStartupDisposition(entityManager, boundary);
+            QueueNarrativeMatchHandoff(entityManager, boundary);
+
             UiShellStateComponent shellState = entityManager.GetComponentData<UiShellStateComponent>(boundary);
             UpdateStaticMapPresentation(shellState);
             if (CanAdvanceMatchStart(shellState))
                 matchStartSystem.Update(entityManager);
+            if (shellState.ActiveRoute == UIRoute.Match && shellState.CurrentMode == UiShellMode.Loading)
+                firstLaunchNarrativeSystem.OnMatchRouteAccepted();
+            if (shellState.CurrentMode == UiShellMode.MatchHud)
+                firstLaunchNarrativeSystem.MarkMatchHudReady();
             QueueAutoStartMatchIfRequested(entityManager, boundary, shellState);
             ApplyUiPresentationMode(view.UiCamera, view.UiCanvas, shellState, entityManager);
             QueueDeferredMatchLoadAfterLoadingFeedback(entityManager, shellState);
@@ -169,6 +195,10 @@ namespace Game.Composition
             streamedMatchView = null;
             ClearBoundMatchRuntimeUi();
             autoStartMatchSubmitted = false;
+            firstLaunchNarrativeSystem.MatchHandoffRequested -= HandleNarrativeMatchHandoffRequested;
+            firstLaunchNarrativeSystem.Shutdown();
+            desiredStartupDisposition = UiShellStartupDisposition.Pending;
+            narrativeMatchRoutePending = false;
             if (!diagnosticsInitialized)
                 return;
 
@@ -246,6 +276,36 @@ namespace Game.Composition
             if (string.IsNullOrEmpty(status))
                 return "Loading";
             return status.Length <= MaxAsciiChars ? status : status.Substring(0, MaxAsciiChars);
+        }
+
+        private void HandleNarrativeMatchHandoffRequested()
+        {
+            narrativeMatchRoutePending = true;
+        }
+
+        private void ApplyStartupDisposition(EntityManager entityManager, Entity boundary)
+        {
+            if (!entityManager.HasComponent<UiShellStartupDispositionComponent>(boundary))
+                return;
+            UiShellStartupDispositionComponent current = entityManager.GetComponentData<UiShellStartupDispositionComponent>(boundary);
+            if (current.Value == desiredStartupDisposition)
+                return;
+            current.Value = desiredStartupDisposition;
+            entityManager.SetComponentData(boundary, current);
+        }
+
+        private void QueueNarrativeMatchHandoff(EntityManager entityManager, Entity boundary)
+        {
+            if (!narrativeMatchRoutePending || !entityManager.HasBuffer<UiShellRouteRequestComponent>(boundary))
+                return;
+            DynamicBuffer<UiShellRouteRequestComponent> requests = entityManager.GetBuffer<UiShellRouteRequestComponent>(boundary);
+            requests.Add(new UiShellRouteRequestComponent
+            {
+                Intent = UiShellRouteIntent.EnterMatch,
+                Route = UIRoute.Match,
+                PushHistory = 0
+            });
+            narrativeMatchRoutePending = false;
         }
 
         private void QueueAutoStartMatchIfRequested(EntityManager entityManager, Entity boundary, UiShellStateComponent shellState)
@@ -861,6 +921,11 @@ namespace Game.Composition
                 TransitionSequenceId = 0,
                 IsTransitionRunning = 0
             });
+            UiShellStartupDispositionComponent startupDisposition = new() { Value = UiShellStartupDisposition.Pending };
+            if (entityManager.HasComponent<UiShellStartupDispositionComponent>(boundary))
+                entityManager.SetComponentData(boundary, startupDisposition);
+            else
+                entityManager.AddComponentData(boundary, startupDisposition);
             entityManager.SetComponentData(boundary, new UiShellLoadingProgressComponent
             {
                 Progress01 = 0f,

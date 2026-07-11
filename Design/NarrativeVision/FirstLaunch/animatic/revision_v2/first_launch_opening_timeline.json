@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 2,
+  "status": "Gate5RevisionDraft",
+  "purpose": "Reference-only opening animatic; retail playback uses layered runtime presentation",
+  "frameRate": 30,
+  "resolution": "1280x720",
+  "totalDurationSeconds": 176.5,
+  "gameplayHandoffSeconds": 176.5,
+  "interactiveStatesExcludedFromVideo": [
+    "first_launch.commander_identity",
+    "first_launch.guidance_choice"
+  ],
+  "states": [
+    {"order": 0, "id": "first_launch.logo", "frame": "animatic/aux/first_launch_logo.png", "startSeconds": 0.0, "durationSeconds": 2.5, "motion": "Static"},
+    {"order": 1, "id": "FL-P01", "frame": "ArtReview/PresentationCandidates/RevisionB_UserFeedback/dialogue_candidates/LOCATION-A_SahrinOldMarket.png", "startSeconds": 2.5, "durationSeconds": 15.0, "motion": "PushIn"},
+    {"order": 2, "id": "FL-P02", "frame": "ArtReview/WorldCandidates/DirectionB_MatchAligned/WORLD-OLDMARKET-03_AttackBlackout_CandidateB.png", "startSeconds": 17.5, "durationSeconds": 8.0, "motion": "StaticImpact"},
+    {"order": 3, "id": "FL-P03", "frame": "ArtReview/WorldCandidates/DirectionB_MatchAligned/WORLD-RELAY-01_DamagedCommandPost.png", "startSeconds": 25.5, "durationSeconds": 9.0, "motion": "DriftRight"},
+    {"order": 4, "id": "FL-P04", "frame": "ArtReview/PresentationCandidates/RevisionB_UserFeedback/scene_candidates/FL-P04_ContentCandidate_R1.png", "startSeconds": 34.5, "durationSeconds": 24.0, "motion": "PushIn"},
+    {"order": 5, "id": "FL-P05", "frame": "ArtReview/WorldCandidates/DirectionB_MatchAligned/WORLD-RELAY-02_ARIABootTreatment.png", "startSeconds": 58.5, "durationSeconds": 10.0, "motion": "PushIn"},
+    {"order": 6, "id": "FL-P06", "frame": "ArtReview/PresentationCandidates/RevisionB_UserFeedback/scene_candidates/FL-P06_ContentCandidate_R1.png", "startSeconds": 68.5, "durationSeconds": 10.0, "motion": "DriftLeft"},
+    {"order": 7, "id": "FL-P07", "frame": "ArtReview/PresentationCandidates/RevisionB_UserFeedback/scene_candidates/FL-P07_ContentCandidate_R1.png", "startSeconds": 78.5, "durationSeconds": 10.0, "motion": "PushIn"},
+    {"order": 8, "id": "FL-P09", "frame": "ArtReview/WorldCandidates/DirectionB_MatchAligned/WORLD-RELAY-02_ARIABootTreatment.png", "startSeconds": 88.5, "durationSeconds": 8.0, "motion": "PushIn"},
+    {"order": 9, "id": "FL-P10", "frame": "storyboard/frames/FL-P10.png", "startSeconds": 96.5, "durationSeconds": 8.0, "motion": "DriftRight"},
+    {"order": 10, "id": "FL-P11", "frame": "storyboard/frames/FL-P11.png", "startSeconds": 104.5, "durationSeconds": 9.0, "motion": "PushIn"},
+    {"order": 11, "id": "FL-P12", "frame": "storyboard/frames/FL-P12.png", "startSeconds": 113.5, "durationSeconds": 9.0, "motion": "PushIn"},
+    {"order": 12, "id": "FL-P13", "frame": "storyboard/frames/FL-P13.png", "startSeconds": 122.5, "durationSeconds": 8.0, "motion": "DriftLeft"},
+    {"order": 13, "id": "FL-P14", "frame": "storyboard/frames/FL-P14.png", "startSeconds": 130.5, "durationSeconds": 8.0, "motion": "PushIn"},
+    {"order": 14, "id": "FL-P15", "frame": "storyboard/frames/FL-P15.png", "startSeconds": 138.5, "durationSeconds": 10.0, "motion": "PushIn"},
+    {"order": 15, "id": "FL-P16", "frame": "storyboard/frames/FL-P16.png", "startSeconds": 148.5, "durationSeconds": 10.0, "motion": "DriftRight"},
+    {"order": 16, "id": "FL-P17", "frame": "storyboard/frames/FL-P17.png", "startSeconds": 158.5, "durationSeconds": 8.0, "motion": "PushIn"},
+    {"order": 17, "id": "FL-P18", "frame": "storyboard/frames/FL-P18.png", "startSeconds": 166.5, "durationSeconds": 10.0, "motion": "PushIn"}
+  ]
+}

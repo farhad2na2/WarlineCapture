@@ -4,6 +4,8 @@
     "references": [
         "Game.Catalog.Contracts",
         "Game.Components",
+        "Game.UI.Contracts",
+        "Unity.Addressables",
         "Unity.Collections",
         "Unity.Entities",
         "Unity.Mathematics",

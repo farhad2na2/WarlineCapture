@@ -38,6 +38,12 @@ namespace Game.Runtime
             return data ?? new T();
         }
 
+        public string ReadRaw(string fileName)
+        {
+            string path = GetPath(fileName);
+            return File.Exists(path) ? File.ReadAllText(path, Encoding.UTF8) : string.Empty;
+        }
+
         public void Save<T>(string fileName, T data) where T : class, new()
         {
             Directory.CreateDirectory(_rootPath);

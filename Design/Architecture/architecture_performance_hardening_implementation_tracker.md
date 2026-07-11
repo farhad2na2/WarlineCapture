@@ -260,7 +260,7 @@ The program is complete only when all of the following are true:
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: steady-state Match GC `234,324 / 1,024` bytes; improved 13.0% from the APH-007 baseline without weakening the budget |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
-| Last verified commit | `a25ecdf40`; Android static-map integrity soak evidence is pushed to `main` |
+| Last verified commit | `5680b8ffe`; combat observation assembly split and integrated architecture evidence are committed on `main` |
 | Last update | 2026-07-11 - the first combat domain split is complete; dependency, source-growth, combat, narrative, and ECS/Burst gates pass with zero compiler errors |
 
 ## Phase 0 - Baseline and Safety Freeze

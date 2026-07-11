@@ -222,6 +222,51 @@ pipeline {
             }
         }
 
+        stage('Run Architecture Validations') {
+            steps {
+                powershell '''
+                $ErrorActionPreference = "Stop"
+                $unityPathFile = "$env:PROJECT_PATH\\unity-editor-path.txt"
+                if (-not (Test-Path -LiteralPath $unityPathFile -PathType Leaf)) {
+                    throw "Unity editor path file not found: $unityPathFile"
+                }
+
+                $unityExe = (Get-Content -LiteralPath $unityPathFile -Raw).Trim()
+                if ([string]::IsNullOrWhiteSpace($unityExe) -or $unityExe -ieq "null") {
+                    throw "Unity editor path file is empty or invalid: $unityPathFile"
+                }
+
+                $validations = @(
+                    @{
+                        Method = "ScriptArchitectureAlignmentContractTests.RunAssemblyBoundaryValidation"
+                        Marker = "[ScriptArchitectureBoundaryValidation] result=Passed tests=31"
+                        Log = "$env:PROJECT_PATH\\TestResults\\ArchitectureAssemblyBoundaries.log"
+                    },
+                    @{
+                        Method = "EcsBurstHotPathArchitectureTests.RunFocusedValidation"
+                        Marker = "[EcsBurstHotPathArchitectureValidation] result=Passed tests=10"
+                        Log = "$env:PROJECT_PATH\\TestResults\\ArchitectureEcsHotPaths.log"
+                    }
+                )
+
+                foreach ($validation in $validations) {
+                    & "$env:PROJECT_PATH\\Tools\\CI\\InvokeUnityExecuteMethodValidation.ps1" `
+                        -UnityExe $unityExe `
+                        -ProjectPath "$env:PROJECT_PATH" `
+                        -ExecuteMethod $validation.Method `
+                        -LogFile $validation.Log `
+                        -RequiredPassMarker $validation.Marker `
+                        -TimeoutSeconds 900
+                }
+                '''
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'TestResults/Architecture*.log', allowEmptyArchive: true
+                }
+            }
+        }
+
         stage('Build Windows') {
             when { expression { return params.BUILD_WINDOWS == true || params.BUILD_WINDOWS?.toString()?.equalsIgnoreCase('true') } }
             steps {

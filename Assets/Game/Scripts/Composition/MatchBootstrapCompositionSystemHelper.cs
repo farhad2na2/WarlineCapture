@@ -49,7 +49,7 @@ namespace Game.Composition
         private readonly ManagedGameplayStartupSystemHelper managedGameplayStartupSystem = new();
         private readonly GameplayRuntimeUpdateCompositionSystemHelper gameplayRuntimeUpdateSystem = new();
         private readonly PerformanceDiagnosticsSystemHelper fallbackPerformanceDiagnosticsSystemHelper = new();
-        private readonly StaticMapChunkBatchingPresentationSystemHelper staticMapBatchingSystem = new();
+        private readonly StaticMapPresentationOwnership mapVisuals = new();
         private readonly IGameTextResolver gameTextResolver = new GameTextResolverAdapter();
         private bool fallbackPerformanceDiagnosticsInitialized;
         private bool _staticMapBatchingInitialized;
@@ -291,7 +291,7 @@ namespace Game.Composition
                 _performanceDiagnosticsSystem);
             gameplayRuntimeUpdateSystem.Dispose();
             _visualQualitySettingsSystem?.Dispose();
-            staticMapBatchingSystem.Dispose();
+            mapVisuals.Dispose();
             matchIntroStateQuery.Reset();
 
             MainMenu = null;
@@ -1100,8 +1100,7 @@ namespace Game.Composition
             if (mapRoot == null)
                 return;
 
-            staticMapBatchingSystem.Initialize(
-                mapRoot,
+            mapVisuals.Initialize(Application.platform, MatchScene.StaticMapPresentationManifest, mapRoot,
                 MapBuildingAuthoringRoot,
                 MapVehicleAuthoringRoot,
                 DecorationRoot);

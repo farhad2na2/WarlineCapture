@@ -251,17 +251,17 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `61 / 106` |
-| Checklist percent complete | `57.5%` |
-| Checklist in progress | `6 / 106`: `APH-311`, `APH-501`, `APH-502`, `APH-509`, `APH-601`, `APH-609` |
-| Complete plus active coverage | `67 / 106` (`63.2%`); this is visibility only, not accepted completion |
-| Current phase | Phase 3 Android device evidence, Phase 5 product budgets, and Phase 6 shared-mesh presentation streaming |
-| Current task | Complete the Android map-performance comparison and close the remaining FPS, memory, startup, package, and visual-soak gates |
+| Checklist complete | `64 / 106` |
+| Checklist percent complete | `60.4%` |
+| Checklist in progress | `10 / 106`: `APH-311`, `APH-501`, `APH-502`, `APH-507`, `APH-509`, `APH-601`, `APH-609`, `APH-610`, `APH-705`, `APH-802` |
+| Complete plus active coverage | `74 / 106` (`69.8%`); this is visibility only, not accepted completion |
+| Current phase | Phase 3 Android device evidence, Phase 5 product budgets, Phase 6 map closeout, and bounded Phase 8 automation |
+| Current task | Complete map Read/Write proof and the Android visual soak, then close remaining FPS, memory, startup, package, and device gates |
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: steady-state Match GC `234,324 / 1,024` bytes; improved 13.0% from the APH-007 baseline without weakening the budget |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
-| Last verified commit | `7986d7c9c`; bounded map presentation streaming and all earlier accepted slices are pushed to `main` |
-| Last update | 2026-07-11 - Android GPU instanced drawing accepted as an intermediate win; 60 FPS remains red |
+| Last verified commit | `e9dcf183e`; hardened package-usage evidence and all earlier accepted slices are pushed to `main` |
+| Last update | 2026-07-11 - Android map ownership accepted as a partial win; 60 FPS, Read/Write cleanup, and the full visual soak remain open |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -513,14 +513,19 @@ Goal: make residency and package size intentional while preserving visible quali
   - Active result: schema 3 pins clean ARM64 IL2CPP release budgets at APK `<= 463,359,198` bytes and AAB `<= 426,399,778` bytes, including exact artifact commit, SHA-256, immutable evidence commit, and report path. Installed size and absolute peak/texture/mesh/audio/graphics-driver memory limits remain fail-closed `null` until accepted release-device captures provide the required measurements.
 - [~] `APH-502` Classify texture importers into UI, world albedo, world normal/mask, VFX, impostor/atlas, generated source/reference, and excluded/unreferenced groups.
   - Active result: deterministic tooling provisionally classifies all 3,464 tracked importers by semantic path/YAML evidence and exposes 105 overlaps. Final inclusion/exclusion buckets remain explicitly unaccepted until a clean same-revision Unity residency inventory and complete BuildReport texture-path export are available.
-- [ ] `APH-503` Add an editor guard preventing mip streaming on UI, font, animation-data, sprite-atlas, and generated reference/source textures.
+- [x] `APH-503` Add an editor guard preventing mip streaming on UI, font, animation-data, sprite-atlas, and generated reference/source textures.
+  - Result: an editor `AssetPostprocessor` disables mip streaming only for protected UI/sprite, font, animation-data, sprite-atlas, and generated reference/source classes; malformed paths fail closed, the measured runtime impostor path remains explicitly allowed, and no recursive reimport API or unrelated importer mutation was added.
+  - Validation: focused policy tests pass `18/18`, editor/test assemblies compile with zero errors, and the final Android profiler build completed after the one-time importer refresh.
 - [ ] `APH-504` Enable mip streaming for a representative world-texture subset with mipmaps; set a mobile memory budget and preserve full-resolution nearby textures.
 - [ ] `APH-505` Capture identical near, medium, and far camera screenshots before and after streaming. Reject blur, late pop, terrain seams, or missing vegetation detail.
 - [ ] `APH-506` Measure memory and I/O during a 10-minute camera-pan/zoom session. Expand streaming only after the pilot passes.
-- [ ] `APH-507` Audit Android texture overrides for ASTC size/quality and remove oversized 4K/8K limits only where the BuildReport proves inclusion and visual evidence proves no loss.
+- [~] `APH-507` Audit Android texture overrides for ASTC size/quality and remove oversized 4K/8K limits only where the BuildReport proves inclusion and visual evidence proves no loss.
+  - Active result: historical clean-build evidence identifies 13 included Polygon Military 4K textures totaling `135.34 MiB` packed and no confirmed 8K texture. Explicit override/max-size settings and current-revision inclusion remain unproven, so no importer was changed. Evidence: `Design/AgentReports/2026-07-11_aph-507_android_texture_override_audit.md`.
+  - Remaining: export complete current-revision Android importer settings and run the bounded single-texture 4K-to-2K device/visual pilot before accepting any override.
 - [ ] `APH-508` Audit the six generated animation textures for actual runtime residency, duplication, clip coverage, precision requirements, and unload behavior. Do not change format based only on source file size.
 - [~] `APH-509` Remove unused packages only after a package-usage report proves no source, serialized asset, build script, or editor workflow dependency.
-  - Active result: a reviewed read-only inventory classifies 46 manifest packages, one embedded depth-zero manifest discrepancy, and 20 ordinary lock-only transitives. Sixteen direct packages are candidate-unused only; no package removal is accepted until isolated import/compile/test/build/device validation proves it safe.
+  - Active result: a deterministic read-only inventory classifies 46 manifest packages, one embedded depth-zero manifest discrepancy, 20 ordinary lock-only transitives, 14 static candidate-unused packages, and five unresolved static blind spots across source, serialized assets, build scripts, and editor workflows. No package removal is accepted until isolated import/compile/test/build/device validation proves it safe.
+  - Validation: six dedicated inventory tests plus syntax and deterministic-report checks pass; evidence commit `e9dcf183e` is pushed to `main`.
 - [ ] `APH-510` Rebuild Android, compare BuildReport/memory/frame metrics, and record per-category deltas.
 
 ## Phase 6 - Editor-Baked Static Map Chunks
@@ -566,7 +571,10 @@ Quality lock:
 - [~] `APH-609` Compare canonical/runtime-batched and shared-mesh chunked/GRD screenshots plus draw calls, triangles, CPU/GPU frame time, memory, package size, and startup time. Require pixel/visual review, not metrics alone.
   - Captured: same-source profiler comparison, final instanced screenshot, control screenshot, frame/GPU/render-thread/draw/SetPass/geometry metrics, development PSS, APK hash, thermal status, and crash/shader scan.
   - Remaining: cold-device repeat, release package/startup/memory evidence, canonical/runtime-batched comparison normalization, and full visual matrix before final acceptance.
-- [ ] `APH-610` After acceptance, disable runtime mesh combination when a valid presentation manifest is present, remove duplicated base-scene visual renderers represented by validated chunk entries, and disable Read/Write only on meshes no accepted runtime path needs. Keep development-only stale/missing-manifest diagnostics.
+- [~] `APH-610` After acceptance, disable runtime mesh combination when a valid presentation manifest is present, remove duplicated base-scene visual renderers represented by validated chunk entries, and disable Read/Write only on meshes no accepted runtime path needs. Keep development-only stale/missing-manifest diagnostics.
+  - Active result: Android transactionally validates manifest shape and canonical renderer identity, suppresses all `17,564` manifest-owned canonical renderers, and skips the legacy runtime combiner. Editor sibling-index paths use a mesh/material/world-bounds identity fallback because Unity player stripping changes runtime sibling indices. Invalid manifests fail closed to the legacy path; teardown restores original renderer states.
+  - Device evidence: the accepted run emitted `result=Presentation suppressed=17564` with no legacy batching marker, retained the complete gameplay/HUD view, reduced settled submitted geometry from `1.047 M` to `0.813 M` triangles, and improved the same-session last-ten average from `34.6` to `43.4 FPS`. Evidence: `Design/AgentReports/2026-07-11_map_presentation_ownership_android.md`.
+  - Remaining: prove and apply mesh Read/Write changes only where no accepted runtime path requires CPU mesh access; complete APH-611 before closing.
 - [ ] `APH-611` Run a full Android 10-minute soak and reject any missing interiors, floating/buried props, road changes, lighting changes, culling holes, or terrain-quality regression.
 
 ## Phase 7 - Incremental Architecture Decomposition
@@ -592,7 +600,9 @@ The `APH-007` raw-metadata GC report is mandatory measured input for this phase.
 - [x] `APH-703` Inventory `World.DefaultGameObjectInjectionWorld` runtime call sites and the recurring `APH-007` allocation owners; classify composition edge, authoring/debug, presentation edge, hidden service-locator debt, or unrelated allocation debt.
   - Result: the accepted source inventory records 91 call sites across 44 runtime files as 37 composition edges, 24 presentation edges, 21 authoring/debug sites, and 9 hidden service-locator debts. It also maps all 13 recurring APH-007 owner methods covering 204,480 bytes / 75.9% of captured GC to explicit remediation tasks. Independent review reproduced every count and found no source-call-site overlap between the world-lookup set and allocation-owner set. Evidence: `Design/AgentReports/2026-07-10_aph-703_default-world-and-gc-owner-inventory.md`.
 - [ ] `APH-704` Design and benchmark a shared read-only unit spatial index for building defense, AI targeting, threat detection, and selection candidates. Adopt it only when it beats the Phase 2 direct-query baseline and preserves results.
-- [ ] `APH-705` Extract combat contracts/data required for a future `Game.Runtime.Combat` assembly without introducing a dependency cycle.
+- [~] `APH-705` Extract combat contracts/data required for a future `Game.Runtime.Combat` assembly without introducing a dependency cycle.
+  - Active result: the extraction analysis selects the self-contained combat-damage observation seam as the first physical split, retains shared ECS data in `Game.Components`, defines the cycle-free `Game.Runtime -> Game.Runtime.Combat -> Game.Components` direction, and documents exact deferred dependencies and validation. Evidence: `Design/AgentReports/2026-07-11_aph-705_combat_contract_extraction_plan.md`.
+  - Remaining: implement and validate the bounded observation split under APH-706 before marking contract extraction complete.
 - [ ] `APH-706` Split one cohesive combat slice and pass the full assembly boundary/build/test matrix before opening another domain split.
 - [ ] `APH-707` Decompose `TransportBoardingCommandSystem` by its existing planning/routing/application seams while preserving public behavior and scenario tests.
 - [ ] `APH-708` Decompose `UiShellEcsGateway` into route, read-model, action, and settings adapters behind existing contracts; views remain passive.
@@ -604,9 +614,13 @@ The `APH-007` raw-metadata GC report is mandatory measured input for this phase.
 
 Goal: prevent recurrence and cover behavior that source-scanning tests cannot prove.
 
-- [ ] `APH-800` Add both architecture execute-method validations to CI and fail the build on nonzero exit or missing pass marker.
+- [x] `APH-800` Add both architecture execute-method validations to CI and fail the build on nonzero exit or missing pass marker.
+  - Result: the unconditional Jenkins architecture stage runs both required execute methods sequentially through a fail-closed PowerShell wrapper, rejects nonzero Unity exit/missing log/missing exact marker, and archives both logs.
+  - Validation: source-contract checks cover both methods/markers, stage ordering, escaped paths, timeout, log archival, and the prohibition on `-nographics`; PowerShell runtime execution remains owned by the Windows Jenkins agent.
 - [ ] `APH-801` Add the editor Match performance baseline and steady-state GC capture to a scheduled or pre-merge performance lane; fail when the unchanged 1,024-byte GC budget is exceeded.
-- [ ] `APH-802` Ratchet the editor p95 budget from the current lenient `50 ms` only after at least five stable captures establish variance.
+- [~] `APH-802` Ratchet the editor p95 budget from the current lenient `50 ms` only after at least five stable captures establish variance.
+  - Active result: four exact-runner historical captures range from `3.824` to `7.186 ms` p95 with `25.97%` coefficient of variation, but span different revisions and fixtures. The evidence does not justify a ratchet; the `50 ms` budget remains unchanged. Evidence: `Design/AgentReports/2026-07-11_aph-802_editor_p95_variance_analysis.md`.
+  - Remaining: collect five to seven independent captures at one frozen revision/environment and preserve each artifact separately.
 - [ ] `APH-803` Add an Android development-build gate for p95/p99 frame, peak memory, startup time, and thermal status on the reference device profile.
 - [ ] `APH-804` Add Android release-build acceptance for the documented 30 FPS tier; keep 60 FPS as a separate high-end target.
 - [ ] `APH-805` Add a Menu -> Match -> Menu lifecycle PlayMode test covering serialized references, world creation, UI binding, and cleanup.
@@ -615,7 +629,9 @@ Goal: prevent recurrence and cover behavior that source-scanning tests cannot pr
 - [ ] `APH-808` Add a scene/prefab missing-reference gate for the two enabled build scenes and runtime UI content prefabs.
 - [ ] `APH-809` Add required visual captures for graphics tiers, Day/Night, static map chunks, and mip streaming. A visual task cannot pass from logs alone.
 - [ ] `APH-810` When Unity MCP is connected, require agents to inspect affected scene/prefab hierarchy, console, Play Mode state, and screenshots through MCP. When unavailable, record the fallback runner and screenshots used.
-- [ ] `APH-811` Add a tracked performance dashboard generated from JSON artifacts rather than manually copied metrics.
+- [x] `APH-811` Add a tracked performance dashboard generated from JSON artifacts rather than manually copied metrics.
+  - Result: deterministic Python tooling derives a JSON/Markdown dashboard from seven tracked architecture, build, content-residency, runtime-performance, and audio JSON artifacts. Missing, invalid, stale, current, and revision-unknown inputs remain explicit rather than silently accepted.
+  - Validation: dedicated dashboard tests pass `6/6`, Python/JSON checks pass, every configured input is tracked, and consecutive generation hashes are byte-identical.
 
 ## Phase 9 - Final Closeout
 

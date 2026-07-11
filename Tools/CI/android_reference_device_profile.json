@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "taskId": "APH-803",
+  "device": {
+    "serial": "R4M7PZEQZ58T59ZH",
+    "manufacturer": "Xiaomi",
+    "model": "24090RA29G",
+    "deviceCodeName": "malachite",
+    "soc": "MediaTek MT6878",
+    "androidRelease": "16",
+    "sdkLevel": 36,
+    "resolutionWidth": 2712,
+    "resolutionHeight": 1220
+  },
+  "build": {
+    "packageName": "com.warlinecapture.game",
+    "activity": "com.unity3d.player.UnityPlayerGameActivity",
+    "apkPath": "Build/AndroidProfiler/WarlineCapture-Profiler.apk",
+    "buildType": "development",
+    "scriptingBackend": "IL2CPP",
+    "architecture": "ARM64",
+    "qualityTier": "Mobile",
+    "frameRateMode": 60,
+    "requiredLaunchArguments": [
+      "-warlineAutoStartMatch",
+      "-warlineProfilerMarkers",
+      "-warlineAndroidPerformanceGate"
+    ]
+  },
+  "capture": {
+    "coldStartSampleCount": 5,
+    "warmStartSampleCount": 5,
+    "warmupSeconds": 60,
+    "sustainedSampleSeconds": 600,
+    "minimumFrameSamples": 9000,
+    "requiredThermalPhases": [
+      "before",
+      "during",
+      "after"
+    ]
+  },
+  "limits": {
+    "p95FrameMs": {
+      "comparison": "lessThan",
+      "value": 33.0
+    },
+    "p99FrameMs": {
+      "comparison": "lessThanOrEqual",
+      "value": null,
+      "status": "measurement-required"
+    },
+    "startupP95Ms": {
+      "comparison": "lessThanOrEqual",
+      "value": null,
+      "status": "measurement-required"
+    },
+    "peakAllocatedMemoryMB": {
+      "comparison": "lessThanOrEqual",
+      "value": 967.5,
+      "sourceBaselineMaximumMB": 1075.0,
+      "requiredReductionPercent": 10.0
+    },
+    "maximumThermalStatus": 0,
+    "maximumCoolingDeviceValue": 0
+  }
+}

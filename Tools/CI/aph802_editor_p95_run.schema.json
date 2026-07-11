@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "WarlineCapture.APH802EditorP95Run.v1",
+  "title": "APH-802 same-revision Editor p95 run",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "artifactId",
+    "capturedAtUtc",
+    "exactCommit",
+    "environment",
+    "runner",
+    "fixture",
+    "measurements",
+    "decision",
+    "outlier"
+  ],
+  "properties": {
+    "schema": { "const": "WarlineCapture.APH802EditorP95Run.v1" },
+    "artifactId": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{2,127}$" },
+    "capturedAtUtc": { "type": "string", "format": "date-time", "pattern": "Z$" },
+    "exactCommit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "unityVersion", "os", "machineId", "graphicsDevice", "qualityLevel",
+        "resolution", "captureMode", "commandLine", "cacheStatePolicy"
+      ],
+      "properties": {
+        "unityVersion": { "type": "string", "minLength": 1 },
+        "os": { "type": "string", "minLength": 1 },
+        "machineId": { "type": "string", "minLength": 1 },
+        "graphicsDevice": { "type": "string", "minLength": 1 },
+        "qualityLevel": { "type": "string", "minLength": 1 },
+        "resolution": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["width", "height"],
+          "properties": {
+            "width": { "type": "integer", "minimum": 1 },
+            "height": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "captureMode": { "type": "string", "minLength": 1 },
+        "commandLine": { "type": "string", "minLength": 1 },
+        "cacheStatePolicy": { "type": "string", "minLength": 1 }
+      }
+    },
+    "runner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["executeMethod", "measurementSemantics"],
+      "properties": {
+        "executeMethod": {
+          "const": "Game.Editor.MatchRuntimeShellSmokeValidation.RunPerformanceRegressionBaseline"
+        },
+        "measurementSemantics": { "type": "string", "minLength": 1 }
+      }
+    },
+    "fixture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fixtureId", "observationSeconds", "minimumUnitCount",
+        "minimumRuntimeBuildingCount", "readyGate", "stableGate",
+        "allocatedBytesBudget"
+      ],
+      "properties": {
+        "fixtureId": { "type": "string", "minLength": 1 },
+        "observationSeconds": { "type": "number", "exclusiveMinimum": 0 },
+        "minimumUnitCount": { "type": "integer", "minimum": 700 },
+        "minimumRuntimeBuildingCount": { "type": "integer", "minimum": 600 },
+        "readyGate": { "type": "string", "minLength": 1 },
+        "stableGate": { "type": "string", "minLength": 1 },
+        "allocatedBytesBudget": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "measurements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "frameCount", "p95FrameMs", "unitCount", "runtimeBuildingCount",
+        "allocatedBytesCurrentThread", "readyGatePassed", "stableGatePassed"
+      ],
+      "properties": {
+        "frameCount": { "type": "integer", "minimum": 1 },
+        "p95FrameMs": { "type": "number", "exclusiveMinimum": 0 },
+        "unitCount": { "type": "integer", "minimum": 0 },
+        "runtimeBuildingCount": { "type": "integer", "minimum": 0 },
+        "allocatedBytesCurrentThread": { "type": "integer", "minimum": 0 },
+        "readyGatePassed": { "type": "boolean" },
+        "stableGatePassed": { "type": "boolean" }
+      }
+    },
+    "decision": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "rejectionReasons"],
+          "properties": {
+            "status": { "const": "Accepted" },
+            "rejectionReasons": { "type": "array", "maxItems": 0 }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "rejectionReasons"],
+          "properties": {
+            "status": { "const": "Rejected" },
+            "rejectionReasons": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      ]
+    },
+    "outlier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["declared", "rule", "reason"],
+      "properties": {
+        "declared": { "type": "boolean" },
+        "rule": { "type": "string" },
+        "reason": { "type": "string" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "declared": { "const": true } } },
+          "then": {
+            "properties": {
+              "rule": { "minLength": 1 },
+              "reason": { "minLength": 1 }
+            }
+          },
+          "else": {
+            "properties": {
+              "rule": { "maxLength": 0 },
+              "reason": { "maxLength": 0 }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

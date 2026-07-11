@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://warlinecapture.local/schemas/aph803-android-development-performance-v1.json",
+  "title": "APH-803 Android Development Performance Evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "taskId", "provenance", "device", "build", "startup", "sustainedRun", "thermal", "artifacts", "crashScan"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "taskId": { "const": "APH-803" },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["exactCommit", "dirty", "apkSha256"],
+      "properties": {
+        "exactCommit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "dirty": { "const": false },
+        "apkSha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "device": { "$ref": "#/$defs/device" },
+    "build": { "$ref": "#/$defs/build" },
+    "startup": { "$ref": "#/$defs/startup" },
+    "sustainedRun": { "$ref": "#/$defs/sustainedRun" },
+    "thermal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["parser", "snapshots"],
+      "properties": {
+        "parser": { "const": "dumpsys-thermalservice-v1" },
+        "snapshots": { "type": "array", "minItems": 3, "items": { "$ref": "#/$defs/thermalSnapshot" } }
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["apk", "structuredRecorder", "rawDeviceLog", "screenshot"],
+      "properties": {
+        "apk": { "$ref": "#/$defs/artifact" },
+        "structuredRecorder": { "$ref": "#/$defs/artifact" },
+        "rawDeviceLog": { "$ref": "#/$defs/artifact" },
+        "screenshot": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "sha256", "capturedPackage", "width", "height"],
+          "properties": {
+            "path": { "$ref": "#/$defs/nonEmptyString" },
+            "sha256": { "$ref": "#/$defs/sha256" },
+            "capturedPackage": { "type": "string", "minLength": 1 },
+            "width": { "type": "integer", "minimum": 1 },
+            "height": { "type": "integer", "minimum": 1 }
+          }
+        }
+      }
+    },
+    "crashScan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["processSurvived", "fatalMarkers"],
+      "properties": {
+        "processSurvived": { "const": true },
+        "fatalMarkers": { "type": "array", "maxItems": 0 }
+      }
+    }
+  },
+  "$defs": {
+    "nonEmptyString": { "type": "string", "minLength": 1, "pattern": ".*\\S.*" },
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "number": { "type": "number", "minimum": 0 },
+    "device": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["serial", "manufacturer", "model", "deviceCodeName", "soc", "androidRelease", "sdkLevel", "resolutionWidth", "resolutionHeight"],
+      "properties": {
+        "serial": { "$ref": "#/$defs/nonEmptyString" },
+        "manufacturer": { "$ref": "#/$defs/nonEmptyString" },
+        "model": { "$ref": "#/$defs/nonEmptyString" },
+        "deviceCodeName": { "$ref": "#/$defs/nonEmptyString" },
+        "soc": { "$ref": "#/$defs/nonEmptyString" },
+        "androidRelease": { "$ref": "#/$defs/nonEmptyString" },
+        "sdkLevel": { "type": "integer", "minimum": 1 },
+        "resolutionWidth": { "type": "integer", "minimum": 1 },
+        "resolutionHeight": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "build": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["packageName", "activity", "apkPath", "buildType", "scriptingBackend", "architecture", "qualityTier", "frameRateMode", "launchArguments"],
+      "properties": {
+        "packageName": { "$ref": "#/$defs/nonEmptyString" },
+        "activity": { "$ref": "#/$defs/nonEmptyString" },
+        "apkPath": { "$ref": "#/$defs/nonEmptyString" },
+        "buildType": { "const": "development" },
+        "scriptingBackend": { "const": "IL2CPP" },
+        "architecture": { "const": "ARM64" },
+        "qualityTier": { "$ref": "#/$defs/nonEmptyString" },
+        "frameRateMode": { "type": "integer", "minimum": 1 },
+        "launchArguments": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/nonEmptyString" }, "uniqueItems": true }
+      }
+    },
+    "startup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["launchDefinition", "coldStartSamplesMs", "warmStartSamplesMs", "coldP50Ms", "coldP95Ms", "coldMaximumMs", "warmP50Ms", "warmP95Ms", "warmMaximumMs"],
+      "properties": {
+        "launchDefinition": { "$ref": "#/$defs/nonEmptyString" },
+        "coldStartSamplesMs": { "type": "array", "minItems": 5, "maxItems": 5, "items": { "type": "number", "exclusiveMinimum": 0 } },
+        "warmStartSamplesMs": { "type": "array", "minItems": 5, "maxItems": 5, "items": { "type": "number", "exclusiveMinimum": 0 } },
+        "coldP50Ms": { "$ref": "#/$defs/number" },
+        "coldP95Ms": { "$ref": "#/$defs/number" },
+        "coldMaximumMs": { "$ref": "#/$defs/number" },
+        "warmP50Ms": { "$ref": "#/$defs/number" },
+        "warmP95Ms": { "$ref": "#/$defs/number" },
+        "warmMaximumMs": { "$ref": "#/$defs/number" }
+      }
+    },
+    "sustainedRun": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "startupFramesExcluded", "warmupSeconds", "sampleDurationSeconds", "frameTimesMs", "averageFrameMs", "p95FrameMs", "p99FrameMs", "maximumFrameMs", "p95CpuFrameMs", "p95GpuFrameMs", "peakAllocatedMemoryMB", "peakMonoMemoryMB"],
+      "properties": {
+        "source": { "const": "structured-per-frame-recorder" },
+        "startupFramesExcluded": { "const": true },
+        "warmupSeconds": { "type": "number", "minimum": 0 },
+        "sampleDurationSeconds": { "type": "number", "minimum": 0 },
+        "frameTimesMs": { "type": "array", "minItems": 1, "items": { "type": "number", "exclusiveMinimum": 0 } },
+        "averageFrameMs": { "$ref": "#/$defs/number" },
+        "p95FrameMs": { "$ref": "#/$defs/number" },
+        "p99FrameMs": { "$ref": "#/$defs/number" },
+        "maximumFrameMs": { "$ref": "#/$defs/number" },
+        "p95CpuFrameMs": { "$ref": "#/$defs/number" },
+        "p95GpuFrameMs": { "$ref": "#/$defs/number" },
+        "peakAllocatedMemoryMB": { "$ref": "#/$defs/number" },
+        "peakMonoMemoryMB": { "$ref": "#/$defs/number" }
+      }
+    },
+    "coolingDevice": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "value"],
+      "properties": {
+        "name": { "$ref": "#/$defs/nonEmptyString" },
+        "value": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "temperature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "valueC"],
+      "properties": {
+        "name": { "$ref": "#/$defs/nonEmptyString" },
+        "valueC": { "type": "number" }
+      }
+    },
+    "thermalSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["phase", "status", "coolingDevices", "temperatures"],
+      "properties": {
+        "phase": { "enum": ["before", "during", "after"] },
+        "status": { "type": "integer", "minimum": 0 },
+        "coolingDevices": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/coolingDevice" } },
+        "temperatures": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/temperature" } }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": { "$ref": "#/$defs/nonEmptyString" },
+        "sha256": { "$ref": "#/$defs/sha256" }
+      }
+    }
+  }
+}

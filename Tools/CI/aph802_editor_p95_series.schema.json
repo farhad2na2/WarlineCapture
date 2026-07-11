@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "WarlineCapture.APH802EditorP95Series.v1",
+  "title": "APH-802 same-revision Editor p95 series summary",
+  "type": "object",
+  "required": [
+    "schema", "result", "exactCommit", "environment", "runner", "fixture",
+    "maximumInputAgeHours", "generatedAtUtc", "runCount", "acceptedRunCount",
+    "rejectedRunCount", "statistics", "declaredOutliers", "runs"
+  ],
+  "properties": {
+    "schema": { "const": "WarlineCapture.APH802EditorP95Series.v1" },
+    "result": { "const": "Passed" },
+    "exactCommit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "environment": { "type": "object" },
+    "runner": { "type": "object" },
+    "fixture": { "type": "object" },
+    "maximumInputAgeHours": { "type": "number", "exclusiveMinimum": 0 },
+    "generatedAtUtc": { "type": "string", "format": "date-time" },
+    "runCount": { "type": "integer", "minimum": 5 },
+    "acceptedRunCount": { "type": "integer", "minimum": 5 },
+    "rejectedRunCount": { "type": "integer", "minimum": 0 },
+    "statistics": {
+      "type": "object",
+      "required": [
+        "sampleCount", "minimumP95FrameMs", "maximumP95FrameMs", "meanP95FrameMs",
+        "medianP95FrameMs", "sampleStandardDeviationMs", "coefficientOfVariation",
+        "coefficientOfVariationPercent"
+      ],
+      "properties": {
+        "sampleCount": { "type": "integer", "minimum": 5 },
+        "minimumP95FrameMs": { "type": "number", "exclusiveMinimum": 0 },
+        "maximumP95FrameMs": { "type": "number", "exclusiveMinimum": 0 },
+        "meanP95FrameMs": { "type": "number", "exclusiveMinimum": 0 },
+        "medianP95FrameMs": { "type": "number", "exclusiveMinimum": 0 },
+        "sampleStandardDeviationMs": { "type": "number", "minimum": 0 },
+        "coefficientOfVariation": { "type": "number", "minimum": 0 },
+        "coefficientOfVariationPercent": { "type": "number", "minimum": 0 }
+      }
+    },
+    "declaredOutliers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["artifactId", "p95FrameMs", "rule", "reason"]
+      }
+    },
+    "runs": {
+      "type": "array",
+      "minItems": 5,
+      "items": {
+        "type": "object",
+        "required": [
+          "artifactId", "capturedAtUtc", "status", "rejectionReasons", "p95FrameMs",
+          "declaredOutlier", "jsonPath", "markdownPath", "jsonSha256", "markdownSha256"
+        ]
+      }
+    }
+  }
+}

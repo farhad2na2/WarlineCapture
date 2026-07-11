@@ -2000,7 +2000,24 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
       "strictNoGrowth": false
     }
   ],
-  "approvedExceptions": []
+  "approvedExceptions": [
+    {
+      "path": "Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-607",
+      "decisionId": "D-022",
+      "maxLines": 932,
+      "maxBytes": 38015,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-607",
+      "decisionId": "D-023",
+      "maxLines": 932,
+      "maxBytes": 38015,
+      "scope": "production-over-500-review"
+    }
+  ]
 }
 ```
 <!-- production-source-growth-manifest:end -->

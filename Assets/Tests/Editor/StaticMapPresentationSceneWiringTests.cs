@@ -34,6 +34,7 @@ public sealed class StaticMapPresentationSceneWiringTests
             Assert.AreEqual(StaticMapPresentationManifest.CurrentSchemaVersion, manifest.SchemaVersion);
             Assert.AreEqual(StaticMapPresentationBaker.CanonicalMatchScenePath, manifest.CanonicalScenePath);
             Assert.That(manifest.Chunks.Count, Is.GreaterThan(0));
+            Assert.NotNull(view.WorldCamera, "MatchSceneView must serialize the camera used for chunk residency.");
         }
         finally
         {
@@ -62,6 +63,32 @@ public sealed class StaticMapPresentationSceneWiringTests
         }
     }
 
+    [Test]
+    public void MenuLifecycle_GatesMatchStartAndUnloadOnPresentationStreaming()
+    {
+        string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+        string source = File.ReadAllText(Path.Combine(
+            projectRoot,
+            "Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs"));
+
+        const string startGate = "if (CanAdvanceMatchStart(shellState))";
+        const string startUpdate = "matchStartSystem.Update(entityManager);";
+        int startGateIndex = source.IndexOf(startGate, StringComparison.Ordinal);
+        int startUpdateIndex = source.IndexOf(startUpdate, StringComparison.Ordinal);
+        Assert.That(startGateIndex, Is.GreaterThanOrEqualTo(0));
+        Assert.That(startUpdateIndex, Is.GreaterThan(startGateIndex));
+
+        const string drainGate = "if (!staticMapPresentationStreamer.DrainComplete)";
+        const string unloadCall = "sceneLifecycleSceneSystemHelper.QueueUnloadMatch(entityManager);";
+        int drainGateIndex = source.IndexOf(drainGate, StringComparison.Ordinal);
+        int unloadCallIndex = source.IndexOf(unloadCall, StringComparison.Ordinal);
+        Assert.That(drainGateIndex, Is.GreaterThanOrEqualTo(0));
+        Assert.That(unloadCallIndex, Is.GreaterThan(drainGateIndex));
+        Assert.AreEqual(1, CountOccurrences(source, unloadCall));
+        StringAssert.Contains("else if (staticMapPresentationStreamer.IsDraining)", source);
+        StringAssert.Contains("!staticMapPresentationStreamer.IsDraining", source);
+    }
+
     private static MatchSceneView FindSingleView(Scene scene)
     {
         List<MatchSceneView> views = new();
@@ -71,5 +98,18 @@ public sealed class StaticMapPresentationSceneWiringTests
 
         Assert.AreEqual(1, views.Count, $"Expected one MatchSceneView in {scene.path}.");
         return views[0];
+    }
+
+    private static int CountOccurrences(string source, string value)
+    {
+        int count = 0;
+        int offset = 0;
+        while ((offset = source.IndexOf(value, offset, StringComparison.Ordinal)) >= 0)
+        {
+            count++;
+            offset += value.Length;
+        }
+
+        return count;
     }
 }

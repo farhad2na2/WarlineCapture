@@ -28,6 +28,7 @@ namespace Game.Composition
         private readonly QuickCustomGameConfigStore quickCustomGameConfigStore = new();
         private readonly MatchLaunchCommand matchLaunchCommand = new();
         private readonly IGameTextResolver gameTextResolver = new GameTextResolverAdapter();
+        private readonly StaticMapPresentationStreamer staticMapPresentationStreamer;
 
         private EntityQuery boundaryQuery;
         private Entity cachedBoundaryEntity;
@@ -59,6 +60,7 @@ namespace Game.Composition
         private float activeMatchReadyStartedAt;
         private bool matchLoadQueuedForCurrentRoute;
         private MatchSceneView boundMatchRuntimeView;
+        private MatchSceneView streamedMatchView;
         private SelectionUiCommandUiSystemHelper boundSelectionUiCommand;
         private SelectionUiReadModelUiSystemHelper boundSelectionUiReadModel;
         private MainMenuPlayUI boundMainMenu;
@@ -68,6 +70,15 @@ namespace Game.Composition
 
         public PerformanceDiagnosticsSystemHelper PerformanceDiagnostics => performanceDiagnosticsSystem;
         public bool IsPerformanceDiagnosticsInitialized => diagnosticsInitialized;
+
+        public MenuBootstrapCompositionSystemHelper() : this(new StaticMapPresentationStreamer())
+        {
+        }
+
+        internal MenuBootstrapCompositionSystemHelper(StaticMapPresentationStreamer presentationStreamer)
+        {
+            staticMapPresentationStreamer = presentationStreamer;
+        }
 
         public void Initialize(MenuBootstrapView view)
         {
@@ -125,12 +136,14 @@ namespace Game.Composition
                 return;
 
             sceneLifecycleSceneSystemHelper.Update(entityManager);
-            matchStartSystem.Update(entityManager);
 
             if (!TryGetBoundary(entityManager, out Entity boundary))
                 return;
 
             UiShellStateComponent shellState = entityManager.GetComponentData<UiShellStateComponent>(boundary);
+            UpdateStaticMapPresentation(shellState);
+            if (CanAdvanceMatchStart(shellState))
+                matchStartSystem.Update(entityManager);
             QueueAutoStartMatchIfRequested(entityManager, boundary, shellState);
             ApplyUiPresentationMode(view.UiCamera, view.UiCanvas, shellState, entityManager);
             QueueDeferredMatchLoadAfterLoadingFeedback(entityManager, shellState);
@@ -152,6 +165,8 @@ namespace Game.Composition
             ResetLoadingMinimumWindow();
             ResetMatchReadyHoldWindow();
             matchLoadQueuedForCurrentRoute = false;
+            staticMapPresentationStreamer.Unbind();
+            streamedMatchView = null;
             ClearBoundMatchRuntimeUi();
             autoStartMatchSubmitted = false;
             if (!diagnosticsInitialized)
@@ -336,17 +351,27 @@ namespace Game.Composition
                 return;
             }
 
+            if (!IsStaticMapPresentationPreloadReady())
+            {
+                float presentationProgress = 0.90f + (Mathf.Clamp01(staticMapPresentationStreamer.Progress01) * 0.04f);
+                string presentationStatus = staticMapPresentationStreamer.Failed
+                    ? staticMapPresentationStreamer.Status
+                    : "Loading map presentation";
+                SetLoading(entityManager, boundary, presentationProgress, false, presentationStatus);
+                return;
+            }
+
             if (!IsMatchStartComplete(entityManager))
             {
                 if (TryGetMatchStartProgress(entityManager, out MatchStartProgressComponent progress))
                 {
-                    float startupProgress = 0.90f + (Mathf.Clamp01(progress.Progress01) * 0.09f);
+                    float startupProgress = 0.94f + (Mathf.Clamp01(progress.Progress01) * 0.05f);
                     string status = progress.Status.Length == 0 ? "Starting match" : progress.Status.ToString();
                     SetLoading(entityManager, boundary, startupProgress, false, status);
                     return;
                 }
 
-                SetLoading(entityManager, boundary, 0.95f, false, "Starting match");
+                SetLoading(entityManager, boundary, 0.96f, false, "Starting match");
                 return;
             }
 
@@ -361,7 +386,22 @@ namespace Game.Composition
                 (sceneState.IsBusy != 0 || sceneState.IsMatchLoaded != 0))
             {
                 if (sceneState.IsBusy == 0 && sceneState.IsMatchLoaded != 0)
+                {
+                    if (!staticMapPresentationStreamer.DrainComplete)
+                    {
+                        SetLoading(
+                            entityManager,
+                            boundary,
+                            Mathf.Clamp01(staticMapPresentationStreamer.Progress01),
+                            false,
+                            staticMapPresentationStreamer.Failed
+                                ? staticMapPresentationStreamer.Status
+                                : "Unloading map presentation");
+                        return;
+                    }
+
                     sceneLifecycleSceneSystemHelper.QueueUnloadMatch(entityManager);
+                }
 
                 float progress = sceneState.Status == SceneLifecycleStatusKind.Unloading ? sceneState.Progress01 : 0f;
                 SetLoading(entityManager, boundary, progress, false, "Unloading match");
@@ -369,6 +409,70 @@ namespace Game.Composition
             }
 
             SetLoading(entityManager, boundary, 1f, IsMinimumLoadingWindowElapsed(), "Command shell ready");
+        }
+
+        private void UpdateStaticMapPresentation(UiShellStateComponent shellState)
+        {
+            if (!matchSceneReferenceSystem.TryGetLoadedMatchSceneView(out MatchSceneView matchScene))
+            {
+                if (streamedMatchView != null)
+                {
+                    staticMapPresentationStreamer.Unbind();
+                    streamedMatchView = null;
+                }
+                staticMapPresentationStreamer.Update();
+                return;
+            }
+
+            UpdateStaticMapPresentationForLoadedMatch(
+                shellState.ActiveRoute == UIRoute.Match,
+                matchScene);
+        }
+
+        internal void UpdateStaticMapPresentationForLoadedMatch(
+            bool isMatchRoute,
+            MatchSceneView matchScene)
+        {
+            if (isMatchRoute && streamedMatchView != matchScene)
+            {
+                if (!staticMapPresentationStreamer.Bind(
+                        matchScene.StaticMapPresentationManifest,
+                        matchScene.WorldCamera) &&
+                    staticMapPresentationStreamer.HasDetachedOperation)
+                    return;
+                streamedMatchView = matchScene;
+            }
+
+            if (!isMatchRoute)
+            {
+                staticMapPresentationStreamer.BeginDrain();
+            }
+            else if (staticMapPresentationStreamer.IsDraining)
+            {
+                staticMapPresentationStreamer.Update();
+                if (staticMapPresentationStreamer.DrainComplete)
+                {
+                    staticMapPresentationStreamer.Bind(
+                        matchScene.StaticMapPresentationManifest,
+                        matchScene.WorldCamera);
+                }
+                return;
+            }
+
+            staticMapPresentationStreamer.Update();
+        }
+
+        private bool CanAdvanceMatchStart(UiShellStateComponent shellState)
+        {
+            return shellState.ActiveRoute == UIRoute.Match && IsStaticMapPresentationPreloadReady();
+        }
+
+        private bool IsStaticMapPresentationPreloadReady()
+        {
+            return streamedMatchView != null &&
+                !staticMapPresentationStreamer.Failed &&
+                !staticMapPresentationStreamer.IsDraining &&
+                staticMapPresentationStreamer.PreloadComplete;
         }
 
         private void TrackLoadingMinimumWindow(UiShellStateComponent shellState)

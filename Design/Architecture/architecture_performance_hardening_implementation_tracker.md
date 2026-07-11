@@ -251,17 +251,17 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `59 / 106` |
-| Checklist percent complete | `55.7%` |
-| Checklist in progress | `6 / 106`: `APH-311`, `APH-501`, `APH-502`, `APH-509`, `APH-601`, `APH-607` |
+| Checklist complete | `60 / 106` |
+| Checklist percent complete | `56.6%` |
+| Checklist in progress | `5 / 106`: `APH-311`, `APH-501`, `APH-502`, `APH-509`, `APH-601` |
 | Complete plus active coverage | `65 / 106` (`61.3%`); this is visibility only, not accepted completion |
 | Current phase | Phase 3 Android device evidence, Phase 5 product budgets, and Phase 6 shared-mesh presentation streaming |
-| Current task | `APH-607` is active for bounded presentation streaming and chunk-first Match teardown; `APH-502` and `APH-509` have accepted analysis tooling but retain their clean-evidence/implementation gates |
+| Current task | Enable and validate Unity mobile GPU instancing for repeated map visuals; texture and package inventories retain their clean-evidence/implementation gates |
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: steady-state Match GC `234,324 / 1,024` bytes; improved 13.0% from the APH-007 baseline without weakening the budget |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
-| Last verified commit | `1224f9bf4`; APH-604/605 and APH-700/701/702 are validated, committed, and pushed to `main` |
-| Last update | 2026-07-10 - APH-607 opened; APH-502/509 analysis artifacts independently reviewed with remaining gates explicit |
+| Last verified commit | `417333ed3`; texture/package evidence inventories and all earlier accepted slices are pushed to `main` |
+| Last update | 2026-07-11 - bounded map presentation streaming and chunk-first Match teardown accepted |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -556,8 +556,10 @@ Quality lock:
 - [x] `APH-606` Add a serialized presentation-manifest reference to `MatchSceneView` or an equivalent composition-owned config, and include every generated chunk scene in Android builds. Do not add a `GameObject.Find` fallback.
   - Result: `MatchSceneView` owns the serialized manifest reference; deterministic editor wiring updates the canonical Match scene without hierarchy-name lookup; both Android release and profiler build paths include enabled base scenes followed by the exact 525 manifest-owned chunks. The resolver fails closed for stale canonical dependencies, stale enabled output, missing base/chunk scenes, duplicate/non-owned chunks, schema/content drift, and integrity-ledger mismatch.
   - Validation: resolver `21/21`, scene wiring `2/2`, APH-700 `7/7`, APH-701/702 `15/15`, two identical post-wiring bakes with zero scene writes/deletes, and all 12 first-party assemblies with zero errors.
-- [~] `APH-607` Add a managed presentation streamer that preloads the camera footprint plus one ring before Match-ready, then loads/unloads with hysteresis and one bounded operation queue. Unload every presentation chunk before unloading Match.
-  - Active scope: add one plain managed composition-owned streamer with a 64-entry queue, one active operation, one start per frame, one-ring preload, two-ring unload hysteresis, fail-closed readiness, and drain completion as a hard prerequisite for `QueueUnloadMatch`.
+- [x] `APH-607` Add a managed presentation streamer that preloads the camera footprint plus one ring before Match-ready, then loads/unloads with hysteresis and one bounded operation queue. Unload every presentation chunk before unloading Match.
+  - Result: one plain managed composition-owned streamer uses a 64-entry queue, one active operation, one start per frame, a one-ring preload, two-ring unload hysteresis, and at most 16 scene-state checks per update. Match start remains blocked until preload readiness, and Match unload remains blocked until all presentation chunks drain.
+  - Lifecycle safety: route reversal waits for drain completion before rebinding; preload failures can still drain; detached operations retain scene ownership and clean up completed loads even if no replacement Match binds; repeated cleanup failure is fail-closed with explicit status.
+  - Validation: focused behavior and composition tests pass `31/31`; production source-growth architecture validation passes `15/15`; APH-700 dependency validation passes `7/7`; all 12 first-party assemblies passed with zero errors before final review changes and the four changed-scope assemblies passed again with zero errors afterward. Independent review closed with no actionable findings.
 - [ ] `APH-608` Enable Unity 6 GPU Resident Drawer `InstancedDrawing` for the Mobile URP asset, retain BRG shader variants, disable Android static batching, and preserve a measured fallback for incompatible renderers. Do not add a new gameplay `ISystem` or `SystemBase` owner.
 - [ ] `APH-609` Compare canonical/runtime-batched and shared-mesh chunked/GRD screenshots plus draw calls, triangles, CPU/GPU frame time, memory, package size, and startup time. Require pixel/visual review, not metrics alone.
 - [ ] `APH-610` After acceptance, disable runtime mesh combination when a valid presentation manifest is present, remove duplicated base-scene visual renderers represented by validated chunk entries, and disable Read/Write only on meshes no accepted runtime path needs. Keep development-only stale/missing-manifest diagnostics.
@@ -1317,6 +1319,22 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Residual risk: packaging does not control residency; bounded preload/load/unload ownership and Match teardown are APH-607
 - Next ready task: `APH-607`
 
+### 2026-07-11 - APH-607 - Bounded map presentation streaming and teardown
+
+- Status: Complete
+- Commit or worktree baseline: `417333ed3`
+- Stable commit/push: pending coordinated stable-slice commit
+- Files changed: plain managed presentation streamer, detached-operation cleanup owner, manifest index, Unity scene API adapter, Menu composition lifecycle integration, focused behavior/composition tests, source-growth authorization, and refreshed dependency reports
+- Behavior preserved/changed: Android Match now preloads the camera footprint plus one chunk ring before gameplay starts, streams with a second-ring unload buffer, and unloads every presentation chunk before the Match scene. Non-Android production remains a no-op. No gameplay `ISystem`, `SystemBase`, `MonoBehaviour`, scene search fallback, or background Unity API access was added.
+- Bounds: 64 queued requests maximum, one active scene operation, one operation start per update, and at most 16 counted scene-state checks per update; small manifests perform at most one load and one unload reconciliation pass rather than consuming the full budget repeatedly
+- Lifecycle safety: preload failure still permits draining; route reversal waits for drain then rebinds; an in-flight operation cannot be abandoned by unbind; detached loads are unloaded while the menu remains open; cleanup retries once and then fails closed
+- Validation: streamer/composition `31/31`, production source-growth `15/15`, APH-700 dependency report `7/7`, final changed-scope .NET assemblies `4/4` with zero errors, and `git diff --check`; the complete 12-assembly matrix also passed earlier in the same slice before the final lifecycle-only helper addition
+- Independent review: the same reviewer was reused across follow-ups; all scene-check, drain, route reversal, disabled-platform, active-operation ownership, orphan cleanup, and no-rebind cleanup findings were fixed or withdrawn; no actionable finding remains
+- Artifacts: `/private/tmp/warline-aph607-final-r2-focused.xml`, `/private/tmp/warline-aph607-source-growth-final-r5.log`, `/private/tmp/warline-aph607-aph700-final-tests.xml`, and refreshed APH-700 JSON/Markdown reports
+- Tooling note: final report generation emitted its success marker and wrote both reports before Unity 6000.5.2f1 crashed during domain-unload shutdown; the subsequent APH-700 test run exited normally and passed `7/7`
+- Residual risk: Android frame-time, memory, package, screenshot, and 10-minute visual-soak acceptance remain in the next map-optimization tasks
+- Next ready task: enable Unity mobile GPU instancing for repeated map visuals, retain a measured fallback, then compare device performance and screenshots
+
 ### 2026-07-10 - APH-501 - Tracked package and memory budget authority
 
 - Status: Active; clean release package budgets accepted, release-device memory limits pending
@@ -1369,3 +1387,5 @@ Append approved deviations here. Do not silently alter Fixed Architecture Decisi
 | 2026-07-10 | `D-019` | Reject direct 96 m and 32 m transient Match mesh-combine output; retain the canonical scene and require shared-mesh/overlay-safe presentation chunks plus measured GPU culling work for Phase 6 | Direct combination solved preload but duplicated roughly 9.5-9.8M vertices, increased generated payload, removed possible overlay source filters, and remained GPU-bound at 41-50 FPS | APH-311/APH-601 Android reports, live 32 m diagnostics, and two independent architecture handoffs |
 | 2026-07-10 | `D-020` | Freeze 265 helper paths, review-baseline 108 production files above 500 lines, and apply strict ceilings to 27 files above 1,000 lines at baseline `9280ead85` | New helper/large-file debt must fail by exact path while deletion and shrinkage remain encouraged | APH-701/702 baseline manifest and focused `5/5` validation |
 | 2026-07-10 | `D-021` | Compare static-map serialized transforms at `0.0005` and derived world bounds at `0.005`, while retaining exact source/asset/layer/lightmap/shadow/probe/component identity | Unity YAML round-trips change floating values below visible precision; bit equality produced 26,010 false positives without indicating visual or structural drift | APH-605 full parity run and retained exact structural contracts |
+| 2026-07-10 | `D-022` | Permit bounded APH-607 helper growth in the persistent Menu composition owner | The existing owner must gate Match-ready and Match unload without adding another player-loop owner or `SystemBase` | `source-growth-exception(path=Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs;scope=system-helper-growth;maxLines=932;maxBytes=38015;task=APH-607)` |
+| 2026-07-10 | `D-023` | Permit bounded APH-607 reviewed-file growth in the persistent Menu composition owner | The lifecycle integration remains in the existing reviewed composition boundary while the new streamer types stay below 500 lines | `source-growth-exception(path=Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs;scope=production-over-500-review;maxLines=932;maxBytes=38015;task=APH-607)` |

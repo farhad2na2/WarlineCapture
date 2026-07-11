@@ -28,13 +28,14 @@ class Aph407AudioCatalogSplitAnalysisTests(unittest.TestCase):
         self.assertEqual(menu["catalogRuntimeMemoryBytes"], sum(row["runtimeMemoryBytes"] for row in menu["partitions"]))
         self.assertEqual(menu["loadedClipCount"], sum(row["loadedClipCount"] for row in menu["partitions"]))
 
-    def test_recommendation_remains_gated_on_android_pilot(self):
+    def test_recommendation_remains_gated_on_full_policy_residency(self):
         report = APH407.build_report()
         self.assertEqual("DECLINE_OPENING_IMPLEMENTATION_NOW", report["recommendation"])
         self.assertEqual(8, report["importerEvidence"]["pilotImporterAppliedCount"])
-        self.assertEqual(155, report["importerEvidence"]["remainingVoiceDecompressPreloadCount"])
-        self.assertFalse(report["importerEvidence"]["pilotAndroidMeasurementAvailable"])
-        self.assertFalse(report["importerEvidence"]["fullVoicePolicyApplied"])
+        self.assertEqual(163, report["importerEvidence"]["fullVoicePolicyAppliedCount"])
+        self.assertEqual(0, report["importerEvidence"]["remainingVoiceDecompressPreloadCount"])
+        self.assertTrue(report["importerEvidence"]["pilotAndroidMeasurementAvailable"])
+        self.assertTrue(report["importerEvidence"]["fullVoicePolicyApplied"])
 
     def test_report_is_deterministic(self):
         self.assertEqual(APH407.build_report(), APH407.build_report())

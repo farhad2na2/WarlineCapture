@@ -154,9 +154,19 @@ def build_report(root: Path = ROOT) -> dict[str, Any]:
 
     profile_map = profiles.get("profiles", {})
     overrides = profiles.get("overrides", [])
-    pilot_paths = sorted(item["assetPath"] for item in overrides if item.get("profile") == "VoicePilot")
-    if len(pilot_paths) != 8 or profile_map.get("VoicePilot", {}).get("loadType") != "CompressedInMemory":
-        raise ValueError("Expected the accepted eight-clip VoicePilot importer configuration")
+    validation_sets = profiles.get("validationSets", {})
+    pilot_paths = sorted(validation_sets.get("APH405VoicePilot", []))
+    voice_profile = profile_map.get("Voice", {})
+    if overrides:
+        raise ValueError("Accepted Voice rollout must not retain per-clip importer overrides")
+    if len(pilot_paths) != 8:
+        raise ValueError("Expected the frozen eight-clip APH-405 validation set")
+    if (
+        voice_profile.get("loadType") != "CompressedInMemory"
+        or voice_profile.get("preloadAudioData") is not False
+        or voice_profile.get("loadInBackground") is not True
+    ):
+        raise ValueError("Expected the accepted category-level Voice importer policy")
     clips_by_path = {clip["assetPath"]: clip for clip in clips}
     if any(path not in clips_by_path for path in pilot_paths):
         raise ValueError("VoicePilot contains a path absent from the catalog inventory")
@@ -193,20 +203,21 @@ def build_report(root: Path = ROOT) -> dict[str, Any]:
         importer_digest.update(asset_path.encode("utf-8") + b"\0" + meta_bytes)
         importer_states[asset_path] = audio_importer_state(meta_bytes.decode("utf-8"))
     pilot_applied = sum(importer_states[path] == (1, 0, 1) for path in pilot_paths)
-    nonpilot_paths = sorted(set(voice_paths) - set(pilot_paths))
-    legacy_retained = sum(importer_states[path] == (0, 1, 0) for path in nonpilot_paths)
-    if pilot_applied != 8 or legacy_retained != 155:
+    full_policy_applied = sum(importer_states[path] == (1, 0, 1) for path in voice_paths)
+    legacy_retained = sum(importer_states[path] == (0, 1, 0) for path in voice_paths)
+    if pilot_applied != 8 or full_policy_applied != 163 or legacy_retained != 0:
         raise ValueError(
-            f"Unexpected Voice importer state: pilot={pilot_applied}/8 legacy={legacy_retained}/155"
+            "Unexpected Voice importer state: "
+            f"pilot={pilot_applied}/8 fullPolicy={full_policy_applied}/163 legacy={legacy_retained}/0"
         )
 
     inventory_partitions = summarize_inventory(clips)
     menu_saved = current_bytes - core_bytes
     return {
-        "schema": "WarlineCapture.APH407AudioCatalogSplitAnalysis.v1",
+        "schema": "WarlineCapture.APH407AudioCatalogSplitAnalysis.v2",
         "taskId": "APH-407",
         "recommendation": "DECLINE_OPENING_IMPLEMENTATION_NOW",
-        "recommendationGate": "Re-evaluate only after APH-405 Android evidence and APH-406 importer rollout prove the accepted memory target is still missed.",
+        "recommendationGate": "Re-evaluate only if full-policy Android residency evidence proves the accepted memory target is still missed.",
         "evidenceRevisions": {
             "contentInventoryCommit": inventory.get("baselineCommit"),
             "menuCaptureCommit": menu_capture.get("exactCommit"),
@@ -249,8 +260,9 @@ def build_report(root: Path = ROOT) -> dict[str, Any]:
             "pilotCompressedBytes": sum(int(clip["compressedSizeBytes"]) for clip in pilot_clips),
             "pilotEstimatedDecodedBytes": sum(int(clip["estimatedDecodedSizeBytes"]) for clip in pilot_clips),
             "remainingVoiceDecompressPreloadCount": legacy_retained,
-            "pilotAndroidMeasurementAvailable": False,
-            "fullVoicePolicyApplied": False,
+            "fullVoicePolicyAppliedCount": full_policy_applied,
+            "pilotAndroidMeasurementAvailable": True,
+            "fullVoicePolicyApplied": True,
             "capturePredatesPilot": True,
         },
         "risks": [
@@ -263,9 +275,9 @@ def build_report(root: Path = ROOT) -> dict[str, Any]:
         ],
         "decisionBasis": [
             "Voice owns the dominant measured persistent bytes, so the problem is clip import/load policy rather than lookup metadata.",
-            "APH-405 has not measured the eight-clip pilot on Android, and APH-406 has not accepted or rejected the full Voice policy.",
-            "Opening a multi-catalog runtime slice before those gates would add lifecycle risk without proving incremental savings over importer policy.",
-            "If APH-406 still misses the target, reopen with explicit load/unload ownership and device proof; do not treat asset splitting alone as a memory fix.",
+            "APH-405 accepted the eight-clip Android pilot and APH-406 promoted the policy to all 163 Voice clips.",
+            "Opening a multi-catalog runtime slice before measuring full-policy residency would add lifecycle risk without proving incremental savings over importer policy.",
+            "If full-policy Android residency still misses the target, reopen with explicit load/unload ownership and device proof; do not treat asset splitting alone as a memory fix.",
         ],
     }
 
@@ -282,14 +294,14 @@ def render_markdown(report: dict[str, Any]) -> str:
         "",
         "## Recommendation",
         "",
-        "**DECLINE opening a catalog-split implementation now.** Re-evaluate only after APH-405 measures the eight-clip pilot on Android and APH-406 either applies or rejects the full Voice importer policy. The current evidence does not establish incremental savings from catalog splitting beyond importer-controlled clip residency.",
+        "**DECLINE opening a catalog-split implementation now.** APH-405 accepted the Android pilot and APH-406 promoted the policy to all Voice clips. Re-evaluate only if full-policy Android residency still misses the accepted memory target.",
         "",
         "## Evidence Boundary",
         "",
         f"- APH-401 capture revision: `{report['evidenceRevisions']['menuCaptureCommit']}`; captures are marked dirty and predate the APH-404 pilot.",
         f"- APH-400 inventory revision: `{report['evidenceRevisions']['contentInventoryCommit']}`; it supplies clip duration/import/size classifications, not post-pilot Android residency.",
         "- Runtime ownership was inspected at the current source revision and is hash-recorded in the companion JSON.",
-        "- All 163 current Voice importer metas were inspected: eight match the pilot policy and 155 retain decompressed/preloaded behavior.",
+        "- All 163 current Voice importer metas were inspected and match the accepted on-demand compressed policy; the original eight remain frozen as the APH-405 evidence set.",
         "- Measured residency values are Unity Editor runtime clip memory, not Android release-device memory.",
         "",
         "## Current Ownership",
@@ -321,7 +333,7 @@ def render_markdown(report: dict[str, Any]) -> str:
         "",
         "Voice accounts for 163 clips and the dominant measured baseline. The eight pilot clips represent "
         f"{mib(report['importerEvidence']['pilotCompressedBytes'])} compressed inventory versus "
-        f"{mib(report['importerEvidence']['pilotEstimatedDecodedBytes'])} estimated decoded PCM. No Android first-play, repeated-play, glitch, or post-load residency measurement exists yet.",
+        f"{mib(report['importerEvidence']['pilotEstimatedDecodedBytes'])} estimated decoded PCM. APH-405 recorded passing first-play, repeated-play, glitch-counter, and post-load residency evidence for that set; full-policy Android residency remains the next measurement.",
         "",
         "## Dependency And Lifecycle Risks",
         "",
@@ -331,7 +343,7 @@ def render_markdown(report: dict[str, Any]) -> str:
         "",
         "## Decision Gate",
         "",
-        "Do not open implementation from this analysis. Reopen APH-407 only if APH-405/406 show that the accepted Voice importer policy still misses the same-device memory target. A reopened slice must first specify catalog acquisition, request queuing while loading, duplicate-event precedence, Match teardown, Voice cross-scene ownership, active-source completion, unload proof, and Android first-play/audible regression gates.",
+        "Do not open implementation from this analysis. Reopen APH-407 only if full-policy Android residency shows that the accepted Voice importer policy still misses the same-device memory target. A reopened slice must first specify catalog acquisition, request queuing while loading, duplicate-event precedence, Match teardown, Voice cross-scene ownership, active-source completion, unload proof, and Android first-play/audible regression gates.",
         "",
         "A split should be declined permanently if full Voice importer rollout meets the memory and latency targets, because Match-only non-Voice clips account for only a small persistent baseline relative to Voice and the split would add runtime ownership complexity for marginal incremental gain.",
         "",

@@ -37,9 +37,9 @@
   ],
   "decisionBasis": [
     "Voice owns the dominant measured persistent bytes, so the problem is clip import/load policy rather than lookup metadata.",
-    "APH-405 has not measured the eight-clip pilot on Android, and APH-406 has not accepted or rejected the full Voice policy.",
-    "Opening a multi-catalog runtime slice before those gates would add lifecycle risk without proving incremental savings over importer policy.",
-    "If APH-406 still misses the target, reopen with explicit load/unload ownership and device proof; do not treat asset splitting alone as a memory fix."
+    "APH-405 accepted the eight-clip Android pilot and APH-406 promoted the policy to all 163 Voice clips.",
+    "Opening a multi-catalog runtime slice before measuring full-policy residency would add lifecycle risk without proving incremental savings over importer policy.",
+    "If full-policy Android residency still misses the target, reopen with explicit load/unload ownership and device proof; do not treat asset splitting alone as a memory fix."
   ],
   "evidenceRevisions": {
     "capturesAreDirty": true,
@@ -49,13 +49,14 @@
   },
   "importerEvidence": {
     "capturePredatesPilot": true,
-    "fullVoicePolicyApplied": false,
-    "pilotAndroidMeasurementAvailable": false,
+    "fullVoicePolicyApplied": true,
+    "fullVoicePolicyAppliedCount": 163,
+    "pilotAndroidMeasurementAvailable": true,
     "pilotClipCount": 8,
     "pilotCompressedBytes": 2103058,
     "pilotEstimatedDecodedBytes": 3734052,
     "pilotImporterAppliedCount": 8,
-    "remainingVoiceDecompressPreloadCount": 155
+    "remainingVoiceDecompressPreloadCount": 0
   },
   "measuredResidency": {
     "matchBeforePlayback": {
@@ -108,7 +109,7 @@
     }
   },
   "recommendation": "DECLINE_OPENING_IMPLEMENTATION_NOW",
-  "recommendationGate": "Re-evaluate only after APH-405 Android evidence and APH-406 importer rollout prove the accepted memory target is still missed.",
+  "recommendationGate": "Re-evaluate only if full-policy Android residency evidence proves the accepted memory target is still missed.",
   "risks": [
     "The persistent Menu scene owns the only runtime view while Match loads additively; scene-owned Match catalogs require explicit registration and teardown.",
     "The bridge caches exactly one catalog and one hash map; multiple catalogs need atomic precedence, duplicate-ID, and hash-collision contracts.",
@@ -124,10 +125,10 @@
     "runtimeViewHasOneCatalogField": true,
     "singleSerializedCatalog": true
   },
-  "schema": "WarlineCapture.APH407AudioCatalogSplitAnalysis.v1",
+  "schema": "WarlineCapture.APH407AudioCatalogSplitAnalysis.v2",
   "sourceHashes": {
     "Assets/Game/Audio/Config/audio_event_catalog_v0_1.json": "2a59738d62686e64bfb56450e145c29ab80d776f716cd76e8c0c5256b0b1fa96",
-    "Assets/Game/Audio/Config/audio_import_profiles_v0_1.json": "cdebdb365e9234c7ca5324110449f899e213ae6fbea210d1437c1e17123bd6cf",
+    "Assets/Game/Audio/Config/audio_import_profiles_v0_1.json": "a607835dc43a2a8f528e1039005777d73fe6bd215628c1a4c70747ff7773f02e",
     "Assets/Game/Audio/Events/AudioEventCatalogConfig.asset": "5fc0c2ea16fd65ae311fcf73667a4600dfff105cd8146d106b1db58ed83aabd5",
     "Assets/Game/Scenes/Menu.unity": "9a4a42b882673cca2d0ecd4abbad92e05969e61ead0e697f3cc56cb784787bce",
     "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs": "03130d19080da7ed44477e1c1ffe972b07c932b79d68c26f30cf5ce287391211",
@@ -136,7 +137,7 @@
     "Design/AgentReports/aph-401_audio-memory-playback-match.json": "00aa646ff5dd6e43be6009611ca16254e6c505193a2c17c2a07450c33a3b98ac",
     "Design/AgentReports/aph-401_audio-memory-playback-menu.json": "ebfb3330b23bd4b225fb3ea2a8c4e0f25ca0f8342d96570b1ac7d5effe3addf0",
     "Design/AgentReports/architecture_performance_content_residency_baseline.json": "d485a611fe6773cb7d53d0af8ca8ec4bacb07ab944b057d598a0946f69809791",
-    "voiceImporterMetaAggregate": "28af5d42ec23f7003933f094bfdfe4ec1a9efcfc3235ddd6187c2b0ea49d81fd"
+    "voiceImporterMetaAggregate": "dcdd9393f9c231c3d5cea2b170594c6cf9ad91e12ef1af0760e0747c6e52ef8c"
   },
   "splitUpperBound": {
     "boundary": "Measured editor clip runtime bytes reclassified by event semantics; excludes catalog object/dictionary overhead and does not prove unload behavior.",

@@ -13,9 +13,6 @@ namespace Game.Runtime
 
         private readonly AudioPlaybackPresentationBridgeSystemHelper _bridge = new();
         private AudioPlaybackPresentationSystemHelper _playbackHelper;
-#if DEVELOPMENT_BUILD || UNITY_EDITOR
-        private Aph405AndroidVoicePilotProbe _voicePilotProbe;
-#endif
 
         public int LastPresentedRequestId => _bridge.LastPresentedRequestId;
         public int ActiveSourceCount => _playbackHelper?.ActiveSourceCount ?? 0;
@@ -31,9 +28,6 @@ namespace Game.Runtime
             if (!EnsureInitialized())
                 return;
 
-#if DEVELOPMENT_BUILD || UNITY_EDITOR
-            _voicePilotProbe?.Tick();
-#endif
             _playbackHelper.UpdatePool(Time.unscaledTime);
 
             World world = World.DefaultGameObjectInjectionWorld;
@@ -55,10 +49,6 @@ namespace Game.Runtime
 
         private void OnDestroy()
         {
-#if DEVELOPMENT_BUILD || UNITY_EDITOR
-            _voicePilotProbe?.Dispose();
-            _voicePilotProbe = null;
-#endif
             _playbackHelper?.Dispose();
             _playbackHelper = null;
         }
@@ -77,20 +67,7 @@ namespace Game.Runtime
                 transform,
                 resolvedInitialPoolSize,
                 resolvedMaxPoolSize);
-#if DEVELOPMENT_BUILD || UNITY_EDITOR
-            if (Application.isPlaying && ShouldRunVoicePilotProbe())
-                _voicePilotProbe = new Aph405AndroidVoicePilotProbe(eventCatalog, transform);
-#endif
             return true;
         }
-
-#if DEVELOPMENT_BUILD || UNITY_EDITOR
-        private static bool ShouldRunVoicePilotProbe()
-        {
-            return Aph405VoicePilotProbeContract.HasCommandLineArgument(
-                System.Environment.GetCommandLineArgs(),
-                Aph405VoicePilotProbeContract.EditorCommandLineArgument);
-        }
-#endif
     }
 }

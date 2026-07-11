@@ -332,12 +332,18 @@ public sealed class AudioConfigContractTests
     {
         string[] clipPaths = ReadCatalogClipPaths();
         ImportProfilesJson importProfiles = ReadImportProfiles();
-        HashSet<string> voicePilotPaths = new(
-            importProfiles.overrides
-                .Where(entry => entry.profile == "VoicePilot")
-                .Select(entry => entry.assetPath));
         Assert.GreaterOrEqual(clipPaths.Length, 48);
-        Assert.AreEqual(8, voicePilotPaths.Count, "The measured Voice pilot must remain explicitly bounded.");
+        Assert.AreEqual(
+            0,
+            importProfiles.overrides.Length,
+            "The accepted category-level Voice policy must not retain temporary pilot overrides.");
+        Assert.NotNull(importProfiles.validationSets, "Audio importer config must preserve validation sets.");
+        Assert.NotNull(importProfiles.validationSets.APH405VoicePilot, "APH-405 pilot evidence set is missing.");
+        Assert.AreEqual(
+            8,
+            importProfiles.validationSets.APH405VoicePilot.Length,
+            "APH-405 evidence must remain frozen to the eight clips measured on Android.");
+        CollectionAssert.IsSubsetOf(importProfiles.validationSets.APH405VoicePilot, clipPaths);
 
         for (int i = 0; i < clipPaths.Length; i++)
         {
@@ -352,7 +358,7 @@ public sealed class AudioConfigContractTests
             Assert.AreEqual(44100, settings.sampleRateOverride, path);
             Assert.IsFalse(importer.ambisonic, path);
 
-            if (voicePilotPaths.Contains(path))
+            if (category == "Voice")
             {
                 Assert.AreEqual(AudioClipLoadType.CompressedInMemory, settings.loadType, path);
                 Assert.IsTrue(importer.forceToMono, path);
@@ -480,6 +486,13 @@ public sealed class AudioConfigContractTests
     private sealed class ImportProfilesJson
     {
         public ImportProfileOverrideJson[] overrides;
+        public ImportProfileValidationSetsJson validationSets;
+    }
+
+    [Serializable]
+    private sealed class ImportProfileValidationSetsJson
+    {
+        public string[] APH405VoicePilot;
     }
 
     [Serializable]

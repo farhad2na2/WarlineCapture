@@ -4,8 +4,8 @@ AudioImporter:
   externalObjects: {}
   serializedVersion: 7
   defaultSettings:
-    loadType: 0
-    preloadAudioData: 1
+    loadType: 1
+    preloadAudioData: 0
     sampleRateSetting: 0
     sampleRateOverride: 44100
     compressionFormat: 1
@@ -14,8 +14,8 @@ AudioImporter:
   platformSettingOverrides: {}
   forceToMono: 1
   normalize: 1
-  preloadAudioData: 1
-  loadInBackground: 0
+  preloadAudioData: 0
+  loadInBackground: 1
   ambisonic: 0
   3D: 1
   userData: Generated ARIA message voice audio

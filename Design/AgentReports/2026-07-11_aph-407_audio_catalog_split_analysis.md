@@ -2,14 +2,14 @@
 
 ## Recommendation
 
-**DECLINE opening a catalog-split implementation now.** Re-evaluate only after APH-405 measures the eight-clip pilot on Android and APH-406 either applies or rejects the full Voice importer policy. The current evidence does not establish incremental savings from catalog splitting beyond importer-controlled clip residency.
+**DECLINE opening a catalog-split implementation now.** APH-405 accepted the Android pilot and APH-406 promoted the policy to all Voice clips. Re-evaluate only if full-policy Android residency still misses the accepted memory target.
 
 ## Evidence Boundary
 
 - APH-401 capture revision: `8e1f21c2a4326ff08371d621e808f38f79b2b197`; captures are marked dirty and predate the APH-404 pilot.
 - APH-400 inventory revision: `7084805d771142706f340e9f2e52a68570bcb72b`; it supplies clip duration/import/size classifications, not post-pilot Android residency.
 - Runtime ownership was inspected at the current source revision and is hash-recorded in the companion JSON.
-- All 163 current Voice importer metas were inspected: eight match the pilot policy and 155 retain decompressed/preloaded behavior.
+- All 163 current Voice importer metas were inspected and match the accepted on-demand compressed policy; the original eight remain frozen as the APH-405 evidence set.
 - Measured residency values are Unity Editor runtime clip memory, not Android release-device memory.
 
 ## Current Ownership
@@ -31,7 +31,7 @@ Before controlled Menu playback, 225 of 234 clips were loaded and catalog clips 
 
 If only Core/Menu clip references were resident in Menu, the measured classification upper bound is **0.81 MiB**, avoiding **42.53 MiB (98.12%)**. This is an upper bound, not a proven implementation result: it excludes catalog/dictionary overhead and does not prove Unity unloads split dependencies.
 
-Voice accounts for 163 clips and the dominant measured baseline. The eight pilot clips represent 2.01 MiB compressed inventory versus 3.56 MiB estimated decoded PCM. No Android first-play, repeated-play, glitch, or post-load residency measurement exists yet.
+Voice accounts for 163 clips and the dominant measured baseline. The eight pilot clips represent 2.01 MiB compressed inventory versus 3.56 MiB estimated decoded PCM. APH-405 recorded passing first-play, repeated-play, glitch-counter, and post-load residency evidence for that set; full-policy Android residency remains the next measurement.
 
 ## Dependency And Lifecycle Risks
 
@@ -44,7 +44,7 @@ Voice accounts for 163 clips and the dominant measured baseline. The eight pilot
 
 ## Decision Gate
 
-Do not open implementation from this analysis. Reopen APH-407 only if APH-405/406 show that the accepted Voice importer policy still misses the same-device memory target. A reopened slice must first specify catalog acquisition, request queuing while loading, duplicate-event precedence, Match teardown, Voice cross-scene ownership, active-source completion, unload proof, and Android first-play/audible regression gates.
+Do not open implementation from this analysis. Reopen APH-407 only if full-policy Android residency shows that the accepted Voice importer policy still misses the same-device memory target. A reopened slice must first specify catalog acquisition, request queuing while loading, duplicate-event precedence, Match teardown, Voice cross-scene ownership, active-source completion, unload proof, and Android first-play/audible regression gates.
 
 A split should be declined permanently if full Voice importer rollout meets the memory and latency targets, because Match-only non-Voice clips account for only a small persistent baseline relative to Voice and the split would add runtime ownership complexity for marginal incremental gain.
 

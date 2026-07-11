@@ -251,17 +251,17 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `76 / 106` |
-| Checklist percent complete | `71.7%` |
-| Checklist in progress | `13 / 106`: `APH-311`, `APH-408`, `APH-501`, `APH-502`, `APH-507`, `APH-508`, `APH-509`, `APH-601`, `APH-609`, `APH-610`, `APH-704`, `APH-705`, `APH-803` |
+| Checklist complete | `77 / 106` |
+| Checklist percent complete | `72.6%` |
+| Checklist in progress | `12 / 106`: `APH-311`, `APH-408`, `APH-501`, `APH-502`, `APH-507`, `APH-508`, `APH-509`, `APH-601`, `APH-609`, `APH-704`, `APH-705`, `APH-803` |
 | Complete plus active coverage | `89 / 106` (`84.0%`); this is visibility only, not accepted completion |
 | Current phase | Phase 3 Android device evidence, Phase 5 product budgets, Phase 6 map closeout, and bounded Phase 8 automation |
-| Current task | Complete map Read/Write proof, then close remaining FPS, memory, startup, package, and device gates |
+| Current task | Close remaining FPS, memory, startup, package, architecture, and device gates |
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: steady-state Match GC `234,324 / 1,024` bytes; improved 13.0% from the APH-007 baseline without weakening the budget |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
-| Last verified commit | `48299a0a3`; five-run Editor p95 ratchet evidence is pushed to `main` |
-| Last update | 2026-07-11 - Android Match survived a 12-minute 42-second diagnostic soak with coherent map captures; thermal status excludes it from performance acceptance |
+| Last verified commit | `a25ecdf40`; Android static-map integrity soak evidence is pushed to `main` |
+| Last update | 2026-07-11 - map Read/Write proof classifies all 830 manifest FBX importers; 758 are already unreadable and 72 remain required by runtime/fallback paths |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -585,10 +585,10 @@ Quality lock:
 - [~] `APH-609` Compare canonical/runtime-batched and shared-mesh chunked/GRD screenshots plus draw calls, triangles, CPU/GPU frame time, memory, package size, and startup time. Require pixel/visual review, not metrics alone.
   - Captured: same-source profiler comparison, final instanced screenshot, control screenshot, frame/GPU/render-thread/draw/SetPass/geometry metrics, development PSS, APK hash, thermal status, and crash/shader scan.
   - Remaining: cold-device repeat, release package/startup/memory evidence, canonical/runtime-batched comparison normalization, and full visual matrix before final acceptance.
-- [~] `APH-610` After acceptance, disable runtime mesh combination when a valid presentation manifest is present, remove duplicated base-scene visual renderers represented by validated chunk entries, and disable Read/Write only on meshes no accepted runtime path needs. Keep development-only stale/missing-manifest diagnostics.
-  - Active result: Android transactionally validates manifest shape and canonical renderer identity, suppresses all `17,564` manifest-owned canonical renderers, and skips the legacy runtime combiner. Editor sibling-index paths use a mesh/material/world-bounds identity fallback because Unity player stripping changes runtime sibling indices. Invalid manifests fail closed to the legacy path; teardown restores original renderer states.
+- [x] `APH-610` After acceptance, disable runtime mesh combination when a valid presentation manifest is present, remove duplicated base-scene visual renderers represented by validated chunk entries, and disable Read/Write only on meshes no accepted runtime path needs. Keep development-only stale/missing-manifest diagnostics.
+  - Result: Android transactionally validates manifest shape and canonical renderer identity, suppresses all `17,564` manifest-owned canonical renderers, and skips the legacy runtime combiner. Editor sibling-index paths use a mesh/material/world-bounds identity fallback because Unity player stripping changes runtime sibling indices. Invalid manifests fail closed to the legacy path; teardown restores original renderer states.
   - Device evidence: the accepted run emitted `result=Presentation suppressed=17564` with no legacy batching marker, retained the complete gameplay/HUD view, reduced settled submitted geometry from `1.047 M` to `0.813 M` triangles, and improved the same-session last-ten average from `34.6` to `43.4 FPS`. Evidence: `Design/AgentReports/2026-07-11_map_presentation_ownership_android.md`.
-  - Remaining: prove and apply mesh Read/Write changes only where no accepted runtime path requires CPU mesh access.
+  - Read/Write proof: the manifest uses 1,186 mesh sub-assets from 830 FBX importers. `758` are already unreadable. The remaining `72` stay readable because roads/decorations combine imported meshes at runtime or the accepted stale-manifest fallback can consume them. No speculative importer was changed. Evidence: `Design/AgentReports/2026-07-11_aph-610_static_map_mesh_read_write_proof.md`.
 - [x] `APH-611` Run a full Android 10-minute soak and reject any missing interiors, floating/buried props, road changes, lighting changes, culling holes, or terrain-quality regression.
   - Result: Xiaomi 24090RA29G remained foreground and alive for `762.363` seconds of Match diagnostics. Valid captures at 60 seconds, 600 seconds, and after the extended run preserve terrain, roads, buildings, tents, walls, towers, vehicles, props, and HUD without an observed culling hole, floating/buried prop, lighting discontinuity, or terrain-quality regression at the tested camera.
   - Evidence boundary: the 300-second screenshot is rejected as an Android tiled readback artifact because black tiles crossed both HUD and world; the 600-second image and three immediate repeats are coherent. Skin thermal status reached `3`, so this run closes visual integrity and survival only, not release FPS, memory, or sustained-performance acceptance. Evidence: `Design/AgentReports/2026-07-11_aph-611_android_map_soak.md`.
@@ -1450,6 +1450,17 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Thermal boundary: HAL skin reached status `3`; development PSS reached `2,445,302 KB`. This run cannot close release FPS, sustained-performance, or memory budgets.
 - Evidence: `Design/AgentReports/2026-07-11_aph-611_android_map_soak.md`
 - Next ready task: finish APH-610 mesh Read/Write proof, then collect thermally controlled release-device APH-609/APH-803 evidence
+
+### 2026-07-11 - APH-610 - Static-map ownership and mesh Read/Write closeout
+
+- Status: Complete
+- Runtime result: valid Android manifests suppress all `17,564` canonical renderers and bypass legacy runtime static-map combination; stale/missing manifests retain the visible canonical/legacy fallback
+- Inventory: `1,186` unique mesh sub-assets across `830` manifest FBX importers; `758` are already unreadable and `72` remain readable
+- Read/Write decision: no additional importer is safe to change while runtime roads, decorations, and the accepted legacy fallback use CPU mesh combination
+- Behavior preserved/changed: no importer, scene, manifest, road, decoration, collider, or fallback behavior changed in this proof slice
+- Independent review: two bounded audits independently identified the same 830/758/72 inventory and the same runtime CPU-consumer boundary
+- Evidence: `Design/AgentReports/2026-07-11_aph-610_static_map_mesh_read_write_proof.md`
+- Next ready task: thermally controlled release-device APH-609/APH-803 capture and the remaining architecture decomposition slices
 
 ## Decision Log
 

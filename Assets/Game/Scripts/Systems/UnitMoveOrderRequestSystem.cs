@@ -101,6 +101,15 @@ namespace Game.Runtime
                 currentFrame: 0);
         }
 
+        internal static void SetPathRequest(EntityManager em, Entity entity, int2 goal)
+        {
+            UnitPathRequest request = new() { Goal = goal };
+            if (em.HasComponent<UnitPathRequest>(entity))
+                em.SetComponentData(entity, request);
+            else
+                em.AddComponentData(entity, request);
+        }
+
         public static bool EnqueueAndProcessTargetPathMoveOrder(EntityManager em, Entity entity, int2 goal)
         {
             int requestId = EnqueueTargetPathMoveOrder(em, entity, goal);

@@ -2482,10 +2482,10 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void BoardAllSelectedTransport_PlansApproachCellsBeforeStructuralOrderMutation()
     {
-        string transportCommands = File.ReadAllText("Assets/Game/Scripts/Systems/TransportBoardingCommandSystem.cs");
+        string transportCommands = File.ReadAllText("Assets/Game/Scripts/Systems/TransportBoardingCommandPlanning.cs");
         string boarding = ExtractBlockAfter(transportCommands, "bool TryIssueBoardNearestSoldierOrders");
 
-        int planningIndex = boarding.IndexOf("plannedOrders.Add(", StringComparison.Ordinal);
+        int planningIndex = boarding.IndexOf("TryAppendPlannedBoardingOrder(", StringComparison.Ordinal);
         int mutationIndex = boarding.IndexOf("UnitMoveOrderRequestSystem.EnqueueAndProcessClearMovementOrder", StringComparison.Ordinal);
         Assert.GreaterOrEqual(planningIndex, 0, "Board All transport boarding must collect planned orders before mutating ECS components.");
         Assert.GreaterOrEqual(mutationIndex, 0, "Board All transport boarding must still issue movement orders after planning.");
@@ -2498,14 +2498,17 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void BoardAllSelectedTransport_CapsPlannedOrdersAtAvailableSeats()
     {
-        string transportCommands = File.ReadAllText("Assets/Game/Scripts/Systems/TransportBoardingCommandSystem.cs");
+        string transportCommands = File.ReadAllText("Assets/Game/Scripts/Systems/TransportBoardingCommandPlanning.cs");
         string boarding = ExtractBlockAfter(transportCommands, "bool TryIssueBoardNearestSoldierOrders");
+        string planningPolicy = File.ReadAllText("Assets/Game/Scripts/Systems/TransportBoardingOrderPlanningSystemHelper.cs");
 
         StringAssert.Contains("ResolveTransportSlotAvailability(", boarding);
-        StringAssert.Contains("slotAvailability.AvailableSoldierSeats", boarding);
-        StringAssert.Contains("slotAvailability.AvailableVehicleSlots", boarding);
-        StringAssert.Contains("plannedSoldierSeats >= slotAvailability.AvailableSoldierSeats", boarding);
-        StringAssert.Contains("plannedVehicleSlots >= slotAvailability.AvailableVehicleSlots", boarding);
+        StringAssert.Contains("ResolveBoardAllTransportCandidateDecision(", boarding);
+        StringAssert.Contains("TryAppendPlannedBoardingOrder(", boarding);
+        StringAssert.Contains("slotAvailability.AvailableSoldierSeats", planningPolicy);
+        StringAssert.Contains("slotAvailability.AvailableVehicleSlots", planningPolicy);
+        StringAssert.Contains("plannedSlots.SoldierSeats", planningPolicy);
+        StringAssert.Contains("plannedSlots.VehicleSlots", planningPolicy);
     }
 
     [Test]
@@ -2527,8 +2530,8 @@ public sealed class RtsSelectionInputSystemTests
     [Test]
     public void BoardCommandResult_PreservesAcceptedTargetTransportEntity()
     {
-        string transportCommands = File.ReadAllText("Assets/Game/Scripts/Systems/TransportBoardingCommandSystem.cs");
-        string resultBuilder = ExtractBlockAfter(transportCommands, "private static RtsSelectionCommandResultElement ToBoardingCommandResultElement");
+        string transportCommands = File.ReadAllText("Assets/Game/Scripts/Systems/TransportBoardingCommandRoutingSystemHelper.cs");
+        string resultBuilder = ExtractBlockAfter(transportCommands, "public static RtsSelectionCommandResultElement ToBoardingCommandResultElement");
 
         StringAssert.Contains("TargetEntity = request.TargetEntity", resultBuilder);
         StringAssert.Contains("HasTargetEntity = result.Accepted && request.HasTargetEntity != 0", resultBuilder);

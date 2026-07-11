@@ -396,6 +396,7 @@ public sealed class NonEcsSystemConversionArchitectureTests
 
     private static IEnumerable<SystemDeclaration> EnumerateSystemDeclarations()
     {
+        List<SystemDeclaration> declarations = new();
         foreach (string path in EnumerateSourceFiles(GameScriptsRoot))
         {
             string text = File.ReadAllText(path);
@@ -405,11 +406,33 @@ public sealed class NonEcsSystemConversionArchitectureTests
                 if (!name.EndsWith("System", StringComparison.Ordinal))
                     continue;
 
-                yield return new SystemDeclaration(
+                declarations.Add(new SystemDeclaration(
                     NormalizePath(path),
                     name,
-                    match.Groups["bases"].Success ? match.Groups["bases"].Value.TrimStart(':').Trim() : string.Empty);
+                    match.Groups["bases"].Success ? match.Groups["bases"].Value.TrimStart(':').Trim() : string.Empty,
+                    match.Value.Contains("partial ", StringComparison.Ordinal)));
             }
+        }
+
+        Dictionary<string, string> explicitBasesByType = declarations
+            .Where(declaration => declaration.IsPartial && !string.IsNullOrEmpty(declaration.Bases))
+            .GroupBy(declaration => declaration.Name, StringComparer.Ordinal)
+            .ToDictionary(
+                group => group.Key,
+                group => string.Join(", ", group.Select(declaration => declaration.Bases).Distinct(StringComparer.Ordinal)),
+                StringComparer.Ordinal);
+
+        foreach (SystemDeclaration declaration in declarations)
+        {
+            if (!declaration.IsPartial ||
+                !string.IsNullOrEmpty(declaration.Bases) ||
+                !explicitBasesByType.TryGetValue(declaration.Name, out string inheritedBases))
+            {
+                yield return declaration;
+                continue;
+            }
+
+            yield return new SystemDeclaration(declaration.Path, declaration.Name, inheritedBases, isPartial: true);
         }
     }
 
@@ -669,12 +692,14 @@ public sealed class NonEcsSystemConversionArchitectureTests
         public readonly string Path;
         public readonly string Name;
         public readonly string Bases;
+        public readonly bool IsPartial;
 
-        public SystemDeclaration(string path, string name, string bases)
+        public SystemDeclaration(string path, string name, string bases, bool isPartial)
         {
             Path = path;
             Name = name;
             Bases = bases;
+            IsPartial = isPartial;
         }
     }
 

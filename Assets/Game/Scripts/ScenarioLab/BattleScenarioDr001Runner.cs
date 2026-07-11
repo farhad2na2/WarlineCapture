@@ -225,7 +225,7 @@ namespace Game.Runtime
                 RoadSpeedMultiplier = 1f,
                 ArriveDistance = 0.25f
             });
-            em.SetComponentData(entity, new UnitPathRequest { Goal = SensorCell });
+            UnitMoveOrderRequestSystem.SetPathRequest(em, entity, SensorCell);
             return entity;
         }
 

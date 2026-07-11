@@ -239,8 +239,7 @@ namespace Game.Runtime
             if (!em.Exists(passenger) || em.HasComponent<Disabled>(passenger) || em.HasComponent<UnitAirMovement>(passenger))
                 return;
 
-            SetOrAdd(em, ref ecb, passenger, new UnitTarget { Cell = boardingGoal });
-            SetOrAdd(em, ref ecb, passenger, new UnitPathRequest { Goal = boardingGoal });
+            UnitMoveOrderRequestSystem.ApplyTargetPathMoveOrder(em, ecb, passenger, boardingGoal);
             if (!em.HasComponent<ManualMoveOrderTag>(passenger))
                 ecb.AddComponent<ManualMoveOrderTag>(passenger);
             if (!em.HasComponent<ManualMoveGroupMemberTag>(passenger))

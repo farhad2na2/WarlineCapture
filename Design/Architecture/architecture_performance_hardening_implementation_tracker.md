@@ -251,17 +251,17 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `79 / 106` |
-| Checklist percent complete | `74.5%` |
+| Checklist complete | `80 / 106` |
+| Checklist percent complete | `75.5%` |
 | Checklist in progress | `11 / 106`: `APH-311`, `APH-408`, `APH-501`, `APH-502`, `APH-507`, `APH-508`, `APH-509`, `APH-601`, `APH-609`, `APH-704`, `APH-803` |
-| Complete plus active coverage | `90 / 106` (`84.9%`); this is visibility only, not accepted completion |
+| Complete plus active coverage | `91 / 106` (`85.8%`); this is visibility only, not accepted completion |
 | Current phase | Phase 3 Android device evidence, Phase 5 product budgets, Phase 6 map closeout, and bounded Phase 8 automation |
-| Current task | Close remaining FPS, memory, startup, package, architecture, and device gates |
+| Current task | Close remaining FPS, memory, startup, package, architecture, and device gates; select the next bounded decomposition only when dependency-ready |
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: steady-state Match GC `234,324 / 1,024` bytes; improved 13.0% from the APH-007 baseline without weakening the budget |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
 | Last verified commit | `5680b8ffe`; combat observation assembly split and integrated architecture evidence are committed on `main` |
-| Last update | 2026-07-11 - the first combat domain split is complete; dependency, source-growth, combat, narrative, and ECS/Burst gates pass with zero compiler errors |
+| Last update | 2026-07-11 - transport boarding is decomposed into sub-500-line partials with exact method-token parity and green behavior, scenario, performance, source-growth, Burst, and boundary gates |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -622,7 +622,8 @@ The `APH-007` raw-metadata GC report is mandatory measured input for this phase.
   - Result: shared observation ECS data remains in `Game.Components`; the implementation seam is isolated behind the cycle-free `Game.Runtime -> Game.Runtime.Combat -> Game.Components` direction, and deferred combat dependencies are documented. Evidence: `Design/AgentReports/2026-07-11_aph-705_combat_contract_extraction_plan.md`.
 - [x] `APH-706` Split one cohesive combat slice and pass the full assembly boundary/build/test matrix before opening another domain split.
   - Result: `CombatDamageObservationBootstrapSystem` and `CombatDamageObservationUtility` now live in the dedicated combat assembly with their source GUID preserved. The regenerated dependency report contains the intended runtime/test edges and no reverse combat-to-runtime edge. Assembly boundary `31/31`, ECS/Burst `10/10`, source growth `15/15`, combat observation `9/9`, unit combat `3/3`, building defense `13/13`, ground missile `5/5`, air missile, and narrative regression validations pass with zero compiler errors. Evidence: `Design/AgentReports/2026-07-11_aph-706_combat_observation_assembly_split.md`.
-- [ ] `APH-707` Decompose `TransportBoardingCommandSystem` by its existing planning/routing/application seams while preserving public behavior and scenario tests.
+- [x] `APH-707` Decompose `TransportBoardingCommandSystem` by its existing planning/routing/application seams while preserving public behavior and scenario tests.
+  - Result: the original 3,226-line unmanaged owner is now a 181-line shell plus nine cohesive partials between 241 and 416 lines. Ordered partial reconstruction exactly matches all 16,571 original implementation tokens. Transport `78/78`, selection `60/60`, scenario `15/15`, extraction `33/33`, DR-001 `2/2`, gateway PlayMode `1/1`, performance/allocation, source growth `15/15`, ECS/Burst `10/10`, and assembly boundary `31/31` validations pass with zero compiler errors. Evidence: `Design/AgentReports/2026-07-11_aph-707_transport_boarding_decomposition.md`.
 - [ ] `APH-708` Decompose `UiShellEcsGateway` into route, read-model, action, and settings adapters behind existing contracts; views remain passive.
 - [ ] `APH-709` Decompose selection/HUD files only where profiler or change-frequency evidence identifies risk; do not split for line count alone.
 - [ ] `APH-710` Remove classified hidden world lookups and recurring per-frame allocation owners as each domain receives explicit World/EntityManager/query dependencies or cached non-allocating state.
@@ -1473,6 +1474,18 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Evidence: `Design/AgentReports/2026-07-11_aph-706_combat_observation_assembly_split.md`
 - Residual risk: larger combat systems remain coupled to movement, building runtime, audio, VFX, and presentation and must not move until those reverse dependencies are removed
 - Next ready task: continue one bounded architecture decomposition slice or close thermally controlled Android performance/device gates
+
+### 2026-07-11 - APH-707 - Transport boarding decomposition
+
+- Status: Complete
+- Baseline: `471986d86`
+- Behavior preserved/changed: the same unmanaged transport command owner, public API, update ordering, queries, and source GUID remain; methods moved verbatim into lifecycle, routing, boarding, approach, airdrop, and disembark partials
+- Structural result: original owner reduced from 3,226 to 181 lines; nine new partials are 241-416 lines; deterministic reconstruction matches all 16,571 original implementation tokens
+- Integrated repair: source-reading guards cover all partials, partial systems inherit their declared ECS base in the non-ECS inventory, transport recovery reuses the central target/path command application, and DR-001 path setup uses the central path-request owner
+- Validation: transport `78/78`, selection `60/60`, scenario `15/15`, extraction `33/33`, DR-001 `2/2`, gateway PlayMode `1/1`, performance/allocation pass, source growth `15/15`, ECS/Burst `10/10`, assembly boundary `31/31`, three project builds with zero errors, and `git diff --check` pass
+- Residual evidence: the broader scene transport fixture passes `8/9`; its existing soldier parachute visual offset expectation is `1.0` while runtime is `1.2`, and no visual-height code changed in this slice
+- Evidence: `Design/AgentReports/2026-07-11_aph-707_transport_boarding_decomposition.md`
+- Next ready task: close an active device/product gate or begin APH-708 only after assigning a disjoint UI gateway ownership boundary
 
 ## Decision Log
 

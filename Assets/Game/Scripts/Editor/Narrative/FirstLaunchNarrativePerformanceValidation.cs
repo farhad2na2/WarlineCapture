@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Game.Catalog.Contracts;
 using Game.Composition;
 using Game.Configs;
 using Game.UI.Contracts;
@@ -36,7 +37,7 @@ namespace Game.Editor
             GameObject prefab = RequireAsset<GameObject>(FirstLaunchNarrativePresentationPrefabBuilder.PrefabPath);
             GameObject instance = Object.Instantiate(prefab);
             NarrativeSequenceView view = instance.GetComponent<NarrativeSequenceView>();
-            FirstLaunchNarrativePlayerSystemHelper player = new();
+            FirstLaunchNarrativePlayer player = new();
             try
             {
                 UISettingsModel settings = Game.UI.Runtime.SettingsService.Defaults;
@@ -111,7 +112,7 @@ namespace Game.Editor
             }
         }
 
-        private static void AssertResidency(FirstLaunchNarrativePlayerSystemHelper player, string context)
+        private static void AssertResidency(FirstLaunchNarrativePlayer player, string context)
         {
             if (player.ResidentPanelAssetCount < 1 || player.ResidentPanelAssetCount > 2)
                 throw new InvalidOperationException($"{context} retained {player.ResidentPanelAssetCount} panel assets; expected current and optional next only.");
@@ -123,7 +124,7 @@ namespace Game.Editor
         {
             UISettingsModel settings = Game.UI.Runtime.SettingsService.Defaults;
             settings.Narrative.AutoAdvance = true;
-            NarrativeSequencePresentationSystemHelper presentation = new(view);
+            NarrativeSequencePresenter presentation = new(view);
             presentation.StartDialogue(
                 "Optional voice unavailable. Continue with readable text.",
                 new NarrativeSpeakerPresentationModel
@@ -136,13 +137,27 @@ namespace Game.Editor
                 },
                 null,
                 1f,
-                punctuation,
+                BuildPunctuationModel(punctuation),
                 settings);
             presentation.Tick(2f);
             presentation.Tick(punctuation.TailHoldSeconds + 0.01f);
             if (!presentation.ConsumeAutoAdvanceRequest())
                 throw new InvalidOperationException("Missing optional voice did not reach deterministic auto-advance.");
             presentation.Cancel();
+        }
+
+        private static NarrativePunctuationPresentationModel BuildPunctuationModel(
+            NarrativePunctuationProfile profile)
+        {
+            return new NarrativePunctuationPresentationModel
+            {
+                CharactersPerSecond = profile.CharactersPerSecond,
+                CommaPauseSeconds = profile.CommaPauseSeconds,
+                ClausePauseSeconds = profile.ClausePauseSeconds,
+                SentencePauseSeconds = profile.SentencePauseSeconds,
+                EllipsisPauseSeconds = profile.EllipsisPauseSeconds,
+                TailHoldSeconds = profile.TailHoldSeconds
+            };
         }
 
         private static void ValidateOfflineRuntimeSources()

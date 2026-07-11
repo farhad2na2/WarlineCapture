@@ -251,17 +251,17 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `77 / 106` |
-| Checklist percent complete | `72.6%` |
-| Checklist in progress | `12 / 106`: `APH-311`, `APH-408`, `APH-501`, `APH-502`, `APH-507`, `APH-508`, `APH-509`, `APH-601`, `APH-609`, `APH-704`, `APH-705`, `APH-803` |
-| Complete plus active coverage | `89 / 106` (`84.0%`); this is visibility only, not accepted completion |
+| Checklist complete | `79 / 106` |
+| Checklist percent complete | `74.5%` |
+| Checklist in progress | `11 / 106`: `APH-311`, `APH-408`, `APH-501`, `APH-502`, `APH-507`, `APH-508`, `APH-509`, `APH-601`, `APH-609`, `APH-704`, `APH-803` |
+| Complete plus active coverage | `90 / 106` (`84.9%`); this is visibility only, not accepted completion |
 | Current phase | Phase 3 Android device evidence, Phase 5 product budgets, Phase 6 map closeout, and bounded Phase 8 automation |
 | Current task | Close remaining FPS, memory, startup, package, architecture, and device gates |
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: steady-state Match GC `234,324 / 1,024` bytes; improved 13.0% from the APH-007 baseline without weakening the budget |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
 | Last verified commit | `a25ecdf40`; Android static-map integrity soak evidence is pushed to `main` |
-| Last update | 2026-07-11 - map Read/Write proof classifies all 830 manifest FBX importers; 758 are already unreadable and 72 remain required by runtime/fallback paths |
+| Last update | 2026-07-11 - the first combat domain split is complete; dependency, source-growth, combat, narrative, and ECS/Burst gates pass with zero compiler errors |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -608,7 +608,7 @@ Priority order:
 The `APH-007` raw-metadata GC report is mandatory measured input for this phase. Its recurring scene-root, helper-construction, transport, UI shell, selection, command-query, audio, road, and pathfinding allocation owners must be removed or explicitly reassigned to another tracker task before `APH-711` can pass.
 
 - [x] `APH-700` Add a generated domain dependency report listing every first-party assembly edge and top cross-domain type references.
-  - Result: fail-closed deterministic JSON/Markdown reports cover 18 assemblies, all 79 first-party edges, 82 external declarations, 1,132 owned source files, 2,462 visible types, and 29,641 resolved cross-domain occurrences. Context-aware scanning rejects comparison/member false positives while covering nested types/generics, casts, attributes, base lists, and using declarations; missing/stale reports and unsupported `.asmref` fail closed. Independent review found no remaining issue and Unity tests pass `7/7`.
+  - Result: fail-closed deterministic JSON/Markdown reports now cover 19 assemblies, all 82 first-party edges, 99 external declarations, 1,208 owned source files, 2,573 visible types, and 30,514 resolved cross-domain occurrences. Context-aware scanning rejects comparison/member false positives while covering nested types/generics, casts, attributes, base lists, and using declarations; missing/stale reports and unsupported `.asmref` fail closed. Independent review found no remaining issue and Unity tests pass `7/7`.
 - [x] `APH-701` Freeze new `*SystemHelper` and `*CompositionSystemHelper` files unless the architecture guard contains an approved task ID from this tracker.
   - Result: all 265 helper paths have exact line/byte ceilings and historical shrink/delete/recreation ratchets. Exceptions require one exact path, scope, line/byte ceiling, tracker task, decision ID, and unique marker in the canonical five-column Decision Log. Case, duplicate-property, malformed-history, and binary-numstat bypasses fail closed.
 - [x] `APH-702` Add a size guard for new or growing production files: review required above 500 lines; no existing file above 1,000 lines may grow without an explicit tracker exception.
@@ -618,10 +618,10 @@ The `APH-007` raw-metadata GC report is mandatory measured input for this phase.
 - [~] `APH-704` Design and benchmark a shared read-only unit spatial index for building defense, AI targeting, threat detection, and selection candidates. Adopt it only when it beats the Phase 2 direct-query baseline and preserves results.
   - Active result: an unmanaged `ISystem` shadow foundation preserves global ECS query order and domain-owned scoring, stays `[DisableAutoCreation]`, and adds no production Match work before adoption. Fixed-edge plus 100-seed equivalence coverage and alternating 16/32/64-cell benchmarks pass `8/8` with zero managed allocation. The final run measured direct/indexed build-plus-query totals of `492.107/509.287 ms` at 16 cells, `455.846/177.372 ms` at 32 cells, and `431.473/98.957 ms` at 64 cells; payloads were `243,968`, `96,512`, and `59,648` bytes respectively.
   - Evidence: `Design/AgentReports/2026-07-11_aph-704_shared_unit_spatial_index_plan.md` and `/private/tmp/warline-aph704-shadow-tests-r3.xml`. Remaining work is one-consumer-at-a-time production migration, repeated paired evidence, no-consumer-regression proof, and the frozen-fixture Match p95 gate; no production consumer has changed.
-- [~] `APH-705` Extract combat contracts/data required for a future `Game.Runtime.Combat` assembly without introducing a dependency cycle.
-  - Active result: the extraction analysis selects the self-contained combat-damage observation seam as the first physical split, retains shared ECS data in `Game.Components`, defines the cycle-free `Game.Runtime -> Game.Runtime.Combat -> Game.Components` direction, and documents exact deferred dependencies and validation. Evidence: `Design/AgentReports/2026-07-11_aph-705_combat_contract_extraction_plan.md`.
-  - Remaining: implement and validate the bounded observation split under APH-706 before marking contract extraction complete.
-- [ ] `APH-706` Split one cohesive combat slice and pass the full assembly boundary/build/test matrix before opening another domain split.
+- [x] `APH-705` Extract combat contracts/data required for a future `Game.Runtime.Combat` assembly without introducing a dependency cycle.
+  - Result: shared observation ECS data remains in `Game.Components`; the implementation seam is isolated behind the cycle-free `Game.Runtime -> Game.Runtime.Combat -> Game.Components` direction, and deferred combat dependencies are documented. Evidence: `Design/AgentReports/2026-07-11_aph-705_combat_contract_extraction_plan.md`.
+- [x] `APH-706` Split one cohesive combat slice and pass the full assembly boundary/build/test matrix before opening another domain split.
+  - Result: `CombatDamageObservationBootstrapSystem` and `CombatDamageObservationUtility` now live in the dedicated combat assembly with their source GUID preserved. The regenerated dependency report contains the intended runtime/test edges and no reverse combat-to-runtime edge. Assembly boundary `31/31`, ECS/Burst `10/10`, source growth `15/15`, combat observation `9/9`, unit combat `3/3`, building defense `13/13`, ground missile `5/5`, air missile, and narrative regression validations pass with zero compiler errors. Evidence: `Design/AgentReports/2026-07-11_aph-706_combat_observation_assembly_split.md`.
 - [ ] `APH-707` Decompose `TransportBoardingCommandSystem` by its existing planning/routing/application seams while preserving public behavior and scenario tests.
 - [ ] `APH-708` Decompose `UiShellEcsGateway` into route, read-model, action, and settings adapters behind existing contracts; views remain passive.
 - [ ] `APH-709` Decompose selection/HUD files only where profiler or change-frequency evidence identifies risk; do not split for line count alone.
@@ -1461,6 +1461,18 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Independent review: two bounded audits independently identified the same 830/758/72 inventory and the same runtime CPU-consumer boundary
 - Evidence: `Design/AgentReports/2026-07-11_aph-610_static_map_mesh_read_write_proof.md`
 - Next ready task: thermally controlled release-device APH-609/APH-803 capture and the remaining architecture decomposition slices
+
+### 2026-07-11 - APH-705 and APH-706 - Combat observation assembly split
+
+- Status: Complete
+- Baseline: `0137e9cc0`
+- Behavior preserved/changed: combat-damage observation ownership moved into `Game.Runtime.Combat`; damage, targeting, queue retention, audio, VFX, UI, and visual behavior are unchanged
+- Dependency result: `Game.Runtime -> Game.Runtime.Combat -> Game.Components` and `Game.Tests.Editor -> Game.Runtime.Combat`; no reverse combat-to-runtime edge or first-party cycle
+- Integrated repair: shared narrative contracts moved down to the catalog boundary, frozen source-growth debt removed through partial extraction/renaming, and disabled spatial-index structural mutations converted to command-buffer/singleton access
+- Validation: combat observation `9/9`, assembly boundary `31/31`, ECS/Burst `10/10`, source growth `15/15`, unit combat `3/3`, building defense `13/13` with zero measured allocation, ground missile `5/5`, air missile pass, narrative menu `5/5`, narrative presentation `6/6`, APH-700 generator pass, zero Unity compiler errors, and `git diff --check` pass
+- Evidence: `Design/AgentReports/2026-07-11_aph-706_combat_observation_assembly_split.md`
+- Residual risk: larger combat systems remain coupled to movement, building runtime, audio, VFX, and presentation and must not move until those reverse dependencies are removed
+- Next ready task: continue one bounded architecture decomposition slice or close thermally controlled Android performance/device gates
 
 ## Decision Log
 

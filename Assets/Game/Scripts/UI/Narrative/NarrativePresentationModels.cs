@@ -1,5 +1,5 @@
 using System;
-using Game.Configs;
+using Game.Catalog.Contracts;
 using UnityEngine;
 
 namespace Game.UI.Runtime
@@ -66,5 +66,16 @@ namespace Game.UI.Runtime
         public string StateId;
         public Sprite PanelSprite;
         public Color Tint;
+    }
+
+    [Serializable]
+    public struct NarrativePunctuationPresentationModel
+    {
+        public float CharactersPerSecond;
+        public float CommaPauseSeconds;
+        public float ClausePauseSeconds;
+        public float SentencePauseSeconds;
+        public float EllipsisPauseSeconds;
+        public float TailHoldSeconds;
     }
 }

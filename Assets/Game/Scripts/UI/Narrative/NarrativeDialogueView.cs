@@ -58,7 +58,7 @@ namespace Game.UI.Runtime
             if (speakerRoleText != null)
                 speakerRoleText.text = model.Role ?? string.Empty;
 
-            bool isAria = model.Treatment == Game.Configs.NarrativeSpeakerTreatment.AriaIcon;
+            bool isAria = model.Treatment == Game.Catalog.Contracts.NarrativeSpeakerTreatment.AriaIcon;
             if (portraitImage != null)
             {
                 portraitImage.gameObject.SetActive(!isAria && model.IdentitySprite != null);

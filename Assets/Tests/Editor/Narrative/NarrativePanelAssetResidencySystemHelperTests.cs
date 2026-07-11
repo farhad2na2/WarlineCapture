@@ -6,13 +6,13 @@ using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
 
-public sealed class NarrativePanelAssetResidencySystemHelperTests
+public sealed class NarrativePanelAssetResidencyTests
 {
     [Test]
     public void Residency_KeepsOnlyCurrentAndNextHandles()
     {
         FirstLaunchNarrativeConfigBuilder.Build();
-        NarrativePanelAssetResidencySystemHelper residency = new();
+        NarrativePanelAssetResidency residency = new();
         NarrativeSequenceConfig config = AssetDatabase.LoadAssetAtPath<NarrativeSequenceConfig>(FirstLaunchNarrativeConfigBuilder.SequencePath);
         NarrativeStateRecord firstState = Find(config, "FL-P01");
         NarrativeStateRecord secondState = Find(config, "FL-P02");
@@ -52,7 +52,7 @@ public sealed class NarrativePanelAssetResidencySystemHelperTests
     {
         try
         {
-            new NarrativePanelAssetResidencySystemHelperTests().Residency_KeepsOnlyCurrentAndNextHandles();
+            new NarrativePanelAssetResidencyTests().Residency_KeepsOnlyCurrentAndNextHandles();
             Debug.Log("[NarrativePanelAssetResidencyValidation] result=Passed tests=1");
             ValidationExit.Passed();
         }

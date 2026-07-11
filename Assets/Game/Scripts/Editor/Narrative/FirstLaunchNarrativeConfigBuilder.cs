@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using Game.Catalog.Contracts;
 using Game.Configs;
 using Game.UI.Contracts;
 using UnityEditor;

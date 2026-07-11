@@ -21,7 +21,7 @@ namespace Game.Runtime
         private static readonly ProfilerMarker EffectApplicationMarker =
             new("BuildingDefenseAttackSystem.EffectApplication");
         private NativeList<TargetCandidate> _targetCandidates;
-        private EntityQuery _observationQueueQuery;
+        private EntityQuery _damageQueueQuery;
         private double _nextTargetAcquisitionTime;
 
         private struct TargetCandidate
@@ -48,7 +48,7 @@ namespace Game.Runtime
         public void OnCreate(ref SystemState state)
         {
             _targetCandidates = new NativeList<TargetCandidate>(InitialTargetScratchCapacity, Allocator.Persistent);
-            _observationQueueQuery = state.GetEntityQuery(
+            _damageQueueQuery = state.GetEntityQuery(
                 ComponentType.ReadWrite<CombatDamageObservationQueueComponent>());
             state.RequireForUpdate<BuildingDefenseWeapon>();
         }
@@ -66,7 +66,7 @@ namespace Game.Runtime
             // those helper contracts become lookup-based.
             state.Dependency.Complete();
             EntityManager em = state.EntityManager;
-            Entity observationQueue = CombatDamageObservationUtility.TryGetQueue(_observationQueueQuery);
+            Entity damageQueue = Combat.CombatDamageObservationUtility.TryGetQueue(_damageQueueQuery);
             AudioEventRequestSystem.EnsureAudioEntity(em);
             DirectComponentAccess directAccess = new()
             {
@@ -185,7 +185,7 @@ namespace Game.Runtime
                             slot.ShotCounter,
                             ref traceRef.ValueRW,
                             now,
-                            observationQueue,
+                            damageQueue,
                             ref pendingTraceTargetAdds,
                             ref pendingRecentAttackerAdds,
                             ref pendingHealthBarVisibilityAdds,
@@ -241,7 +241,7 @@ namespace Game.Runtime
             int shotCounter,
             ref UnitAttackTraceComponent trace,
             float now,
-            Entity observationQueue,
+            Entity damageQueue,
             ref NativeParallelHashSet<Entity> pendingTraceTargetAdds,
             ref NativeParallelHashSet<Entity> pendingRecentAttackerAdds,
             ref NativeParallelHashSet<Entity> pendingHealthBarVisibilityAdds,
@@ -275,9 +275,9 @@ namespace Game.Runtime
             int previousHealth = targetHealth.Current;
             targetHealth.Current = math.max(0, targetHealth.Current - damage);
             directAccess.Health[target] = targetHealth;
-            CombatDamageObservationUtility.Append(
+            Combat.CombatDamageObservationUtility.Append(
                 em,
-                observationQueue,
+                damageQueue,
                 source,
                 target,
                 CombatDamageSourceKind.BuildingDefense,

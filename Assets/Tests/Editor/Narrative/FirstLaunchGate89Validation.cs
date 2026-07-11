@@ -1,4 +1,5 @@
 using System;
+using Game.Catalog.Contracts;
 using Game.Configs;
 using Game.Editor;
 using UnityEngine;
@@ -14,9 +15,9 @@ public static class FirstLaunchGate89Validation
             FirstLaunchNarrativeConfigTests config = new();
             config.SequenceConfig_HasUniqueConnectedStatesAndAllApprovedPanels();
             config.SequenceConfig_DoesNotDirectlyRetainPanelTextures();
-            new NarrativePanelAssetResidencySystemHelperTests().Residency_KeepsOnlyCurrentAndNextHandles();
+            new NarrativePanelAssetResidencyTests().Residency_KeepsOnlyCurrentAndNextHandles();
 
-            NarrativePanelMotionSystemHelperTests motion = new();
+            NarrativePanelMotionTests motion = new();
             foreach (NarrativeMotionPreset preset in new[]
                      {
                          NarrativeMotionPreset.PushIn,

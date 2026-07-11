@@ -123,7 +123,7 @@ public sealed class FirstLaunchNarrativePlayerTests
         Assert.IsFalse(result.Completion.Skipped);
         CollectionAssert.Contains(result.Completion.EvidenceIds, "evidence.aria.revoked_credential_fragment");
 
-        NarrativeCompletionPayload skipped = FirstLaunchNarrativePlayerSystemHelper.CreateDebriefCompletion(true);
+        NarrativeCompletionPayload skipped = FirstLaunchNarrativePlayer.CreateDebriefCompletion(true);
         Assert.IsTrue(context.Player.StartAt("first_launch.command_base_reveal", skipped));
         Assert.AreEqual(2, count);
         Assert.IsFalse(result.Completion.Watched);
@@ -166,7 +166,7 @@ public sealed class FirstLaunchNarrativePlayerTests
         Assert.NotNull(prefab, "Build the FirstLaunch presentation prefab before running player tests.");
         GameObject instance = UnityEngine.Object.Instantiate(prefab);
         NarrativeSequenceView view = instance.GetComponent<NarrativeSequenceView>();
-        FirstLaunchNarrativePlayerSystemHelper player = new();
+        FirstLaunchNarrativePlayer player = new();
         NarrativeSequenceConfig sequence = AssetDatabase.LoadAssetAtPath<NarrativeSequenceConfig>(FirstLaunchNarrativeConfigBuilder.SequencePath);
         Assert.NotNull(sequence, "Build the FirstLaunch sequence config before running player tests.");
         Assert.Greater(sequence.States.Count, 0, "FirstLaunch sequence config must be serialized before player tests.");
@@ -184,8 +184,8 @@ public sealed class FirstLaunchNarrativePlayerTests
     {
         public readonly GameObject Instance;
         public readonly NarrativeSequenceView View;
-        public readonly FirstLaunchNarrativePlayerSystemHelper Player;
-        public TestContext(GameObject instance, NarrativeSequenceView view, FirstLaunchNarrativePlayerSystemHelper player) { Instance = instance; View = view; Player = player; }
+        public readonly FirstLaunchNarrativePlayer Player;
+        public TestContext(GameObject instance, NarrativeSequenceView view, FirstLaunchNarrativePlayer player) { Instance = instance; View = view; Player = player; }
         public void Dispose() { Player.Cancel(); UnityEngine.Object.DestroyImmediate(Instance); }
     }
 }

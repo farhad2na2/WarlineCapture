@@ -1,8 +1,11 @@
 using System;
+using Game.Catalog.Contracts;
 using Game.Configs;
 using Game.Runtime;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
+using Game.UI.Shell.Contracts.Ecs;
+using Unity.Entities;
 using UnityEngine;
 
 namespace Game.Composition
@@ -14,9 +17,9 @@ namespace Game.Composition
         ResumeHandoff = 2
     }
 
-    internal sealed class FirstLaunchNarrativeCompositionSystemHelper
+    internal sealed class FirstLaunchNarrativeCoordinator
     {
-        private readonly FirstLaunchNarrativePlayerSystemHelper player = new();
+        private readonly FirstLaunchNarrativePlayer player = new();
         private SaveService saveService;
         private PlayerProfileSaveData profile;
         private NarrativeSequenceView view;
@@ -31,6 +34,8 @@ namespace Game.Composition
         private bool lastReviewerSubtitles;
         private bool reviewerSafeArea;
         private NarrativeCompletionPayload lastReviewerCompletion;
+        private UiShellStartupDisposition startupDisposition = UiShellStartupDisposition.Pending;
+        private bool shellRoutePending;
 
         public event Action MatchHandoffRequested;
         public event Action<bool> SkipConfirmationVisibilityChanged;
@@ -103,6 +108,26 @@ namespace Game.Composition
             return FirstLaunchNarrativeStartupDisposition.Playing;
         }
 
+        public void InitializeShell(
+            MenuBootstrapView menuView,
+            IGameTextResolver textResolver,
+            bool bypassForDiagnostics,
+            bool startInReviewerMode)
+        {
+            FirstLaunchNarrativeStartupDisposition disposition = Initialize(
+                menuView.FirstLaunchNarrativeConfig,
+                menuView.FirstLaunchSpeakerCatalog,
+                menuView.FirstLaunchPunctuationProfile,
+                menuView.FirstLaunchNarrativeView,
+                textResolver,
+                SaveService.CreateDefault(),
+                bypassForDiagnostics,
+                startInReviewerMode);
+            startupDisposition = disposition == FirstLaunchNarrativeStartupDisposition.EnterMenu
+                ? UiShellStartupDisposition.EnterMenu
+                : UiShellStartupDisposition.FirstLaunch;
+        }
+
         public void Tick(float unscaledDeltaTime)
         {
             if (!initialized)
@@ -112,8 +137,41 @@ namespace Game.Composition
             if (handoffRequestPending && !handoffRequestPublished)
             {
                 handoffRequestPublished = true;
+                shellRoutePending = true;
                 MatchHandoffRequested?.Invoke();
             }
+        }
+
+        public void ApplyShellState(EntityManager entityManager, Entity boundary)
+        {
+            if (entityManager.HasComponent<UiShellStartupDispositionComponent>(boundary))
+            {
+                UiShellStartupDispositionComponent current =
+                    entityManager.GetComponentData<UiShellStartupDispositionComponent>(boundary);
+                if (current.Value != startupDisposition)
+                {
+                    current.Value = startupDisposition;
+                    entityManager.SetComponentData(boundary, current);
+                }
+            }
+            if (!shellRoutePending || !entityManager.HasBuffer<UiShellRouteRequestComponent>(boundary))
+                return;
+            entityManager.GetBuffer<UiShellRouteRequestComponent>(boundary).Add(new UiShellRouteRequestComponent
+            {
+                Intent = UiShellRouteIntent.EnterMatch,
+                Route = UIRoute.Match,
+                PushHistory = 0
+            });
+            shellRoutePending = false;
+        }
+
+        public static void ResetShellState(EntityManager entityManager, Entity boundary)
+        {
+            UiShellStartupDispositionComponent state = new() { Value = UiShellStartupDisposition.Pending };
+            if (entityManager.HasComponent<UiShellStartupDispositionComponent>(boundary))
+                entityManager.SetComponentData(boundary, state);
+            else
+                entityManager.AddComponentData(boundary, state);
         }
 
         public void ConfirmSkip()
@@ -200,6 +258,8 @@ namespace Game.Composition
             lastReviewerStateIndex = -2;
             lastReviewerCompletion = default;
             reviewerSafeArea = false;
+            startupDisposition = UiShellStartupDisposition.Pending;
+            shellRoutePending = false;
             view = null;
             profile = null;
             saveService = null;
@@ -265,7 +325,7 @@ namespace Game.Composition
         {
             if (destination == "first_launch.command_base_reveal")
             {
-                player.StartAt(destination, FirstLaunchNarrativePlayerSystemHelper.CreateDebriefCompletion(true));
+                player.StartAt(destination, FirstLaunchNarrativePlayer.CreateDebriefCompletion(true));
                 RefreshReviewerSurface(true);
                 return;
             }

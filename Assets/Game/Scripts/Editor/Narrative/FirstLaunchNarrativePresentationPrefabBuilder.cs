@@ -1,4 +1,5 @@
 using System.IO;
+using Game.Catalog.Contracts;
 using Game.UI.Runtime;
 using Game.Configs;
 using Game.UI.Contracts;

@@ -4,7 +4,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace Game.UI.Runtime
 {
-    public sealed class NarrativePanelAssetResidencySystemHelper
+    public sealed class NarrativePanelAssetResidency
     {
         private Slot current;
         private Slot next;
@@ -118,7 +118,7 @@ namespace Game.UI.Runtime
             }
 
             public bool IsValid => Handle.IsValid();
-            public string Key => Reference != null ? NarrativePanelAssetResidencySystemHelper.Key(Reference) : string.Empty;
+            public string Key => Reference != null ? NarrativePanelAssetResidency.Key(Reference) : string.Empty;
         }
     }
 }

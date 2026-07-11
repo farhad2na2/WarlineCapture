@@ -1,7 +1,7 @@
 # APH-705 Combat Contract Extraction Plan
 
 Date: 2026-07-11
-Status: report-only architecture analysis; no production or assembly changes applied
+Status: Complete; implemented and validated by APH-706
 
 ## Decision
 
@@ -244,7 +244,7 @@ sed -n '1,220p' Assets/Game/Scripts/Components/Game.Components.asmdef
 sed -n '1,220p' Assets/Game/Scripts/Composition/Game.Composition.asmdef
 sed -n '1,220p' Assets/Tests/Editor/Game.Tests.Editor.asmdef
 
-sed -n '1,240p' Assets/Game/Scripts/Systems/CombatDamageObservationSystem.cs
+sed -n '1,240p' Assets/Game/Scripts/Systems/Combat/Observation/CombatDamageObservationSystem.cs
 sed -n '1,180p' Assets/Game/Scripts/Components/CombatDamageObservationComponents.cs
 
 rg -n "CombatDamageObservation(QueueComponent|Element|BootstrapSystem|Utility)|CombatDamageSourceKind" Assets/Game/Scripts Assets/Tests --glob '*.cs'

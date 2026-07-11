@@ -2,6 +2,7 @@
 using System;
 using Game.Components;
 using Game.Runtime;
+using Game.Runtime.Combat;
 using Game.UI.Contracts;
 using Game.UI.Shell.Contracts.Ecs;
 using Game.UI.Shell.Ecs;

@@ -216,7 +216,7 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
         public readonly NarrativeSequenceConfig Sequence;
         public readonly NarrativeSpeakerCatalog Speakers;
         public readonly NarrativePunctuationProfile Punctuation;
-        public readonly FirstLaunchNarrativeCompositionSystemHelper Helper = new();
+        public readonly FirstLaunchNarrativeCoordinator Helper = new();
         public Context(string root, SaveService saveService, GameObject instance, NarrativeSequenceView view, NarrativeSequenceConfig sequence, NarrativeSpeakerCatalog speakers, NarrativePunctuationProfile punctuation) { Root = root; SaveService = saveService; Instance = instance; View = view; Sequence = sequence; Speakers = speakers; Punctuation = punctuation; }
         public void Dispose() { Helper.Shutdown(); UnityEngine.Object.DestroyImmediate(Instance); if (Directory.Exists(Root)) Directory.Delete(Root, true); }
     }

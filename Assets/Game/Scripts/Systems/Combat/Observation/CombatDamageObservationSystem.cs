@@ -3,7 +3,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Game.Runtime
+namespace Game.Runtime.Combat
 {
     [UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
     public partial struct CombatDamageObservationBootstrapSystem : ISystem

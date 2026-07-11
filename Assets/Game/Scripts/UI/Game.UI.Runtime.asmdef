@@ -3,7 +3,6 @@
     "rootNamespace": "Game.UI.Runtime",
     "references": [
         "Game.Catalog.Contracts",
-        "Game.Configs",
         "Game.Tactical.Contracts",
         "Game.UI.Contracts",
         "Unity.Addressables",

@@ -1,17 +1,10 @@
 using System;
 using System.Collections.Generic;
+using Game.Catalog.Contracts;
 using UnityEngine;
 
 namespace Game.Configs
 {
-    public enum NarrativeSpeakerTreatment
-    {
-        Radio = 0,
-        HumanPortrait = 1,
-        AriaIcon = 2,
-        Commander = 3
-    }
-
     [Serializable]
     public sealed class NarrativeSpeakerRecord
     {

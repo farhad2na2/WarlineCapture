@@ -639,11 +639,11 @@ namespace Game.Runtime
     public partial struct GroundMissileImpactSystem : ISystem
     {
         private const float DamageHealthBarVisibleSeconds = 2f;
-        private EntityQuery _observationQueueQuery;
+        private EntityQuery _damageQueueQuery;
 
         public void OnCreate(ref SystemState state)
         {
-            _observationQueueQuery = state.GetEntityQuery(
+            _damageQueueQuery = state.GetEntityQuery(
                 ComponentType.ReadWrite<CombatDamageObservationQueueComponent>());
             state.RequireForUpdate<GroundMissileImpactRequestComponent>();
         }
@@ -652,7 +652,7 @@ namespace Game.Runtime
         {
             EntityManager em = state.EntityManager;
             AudioEventRequestSystem.EnsureAudioEntity(em);
-            Entity observationQueue = CombatDamageObservationUtility.TryGetQueue(_observationQueueQuery);
+            Entity damageQueue = Combat.CombatDamageObservationUtility.TryGetQueue(_damageQueueQuery);
             float now = (float)SystemAPI.Time.ElapsedTime;
             var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
 
@@ -665,7 +665,7 @@ namespace Game.Runtime
                 float radiusSq = radius * radius;
                 int damage = math.max(0, request.Damage);
                 float3 sourcePosition = ResolveSourcePosition(em, request.Source, request.Position);
-                ApplyDirectHitDamage(em, ecb, request, observationQueue, sourcePosition, now);
+                ApplyDirectHitDamage(em, ecb, request, damageQueue, sourcePosition, now);
                 if (damage > 0)
                 {
                     foreach (var (health, transform, faction, target) in SystemAPI
@@ -689,9 +689,9 @@ namespace Game.Runtime
                         int targetMaxHealth = health.ValueRO.Max;
                         int currentHealth = math.max(0, previousHealth - damage);
                         health.ValueRW.Current = currentHealth;
-                        CombatDamageObservationUtility.Append(
+                        Combat.CombatDamageObservationUtility.Append(
                             em,
-                            observationQueue,
+                            damageQueue,
                             request.Source,
                             target,
                             CombatDamageSourceKind.GroundMissile,
@@ -728,7 +728,7 @@ namespace Game.Runtime
             EntityManager em,
             EntityCommandBuffer ecb,
             GroundMissileImpactRequestComponent request,
-            Entity observationQueue,
+            Entity damageQueue,
             float3 sourcePosition,
             float observedAt)
         {
@@ -758,9 +758,9 @@ namespace Game.Runtime
             float3 targetPosition = em.HasComponent<LocalTransform>(target)
                 ? em.GetComponentData<LocalTransform>(target).Position
                 : request.Position;
-            CombatDamageObservationUtility.Append(
+            Combat.CombatDamageObservationUtility.Append(
                 em,
-                observationQueue,
+                damageQueue,
                 request.Source,
                 target,
                 CombatDamageSourceKind.GroundMissile,

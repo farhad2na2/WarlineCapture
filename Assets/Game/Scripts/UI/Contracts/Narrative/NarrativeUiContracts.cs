@@ -24,16 +24,6 @@ namespace Game.UI.Contracts
         ReviewGameplayPlaceholder = 4
     }
 
-    public enum NarrativeStateKind
-    {
-        PanelDialogue = 0,
-        InteractiveIdentity = 1,
-        InteractiveGuidance = 2,
-        RouteHandoff = 3,
-        ReviewOnlyPlaceholder = 4,
-        RouteArrival = 5
-    }
-
     public enum NarrativeGuidanceMode
     {
         Full = 0,

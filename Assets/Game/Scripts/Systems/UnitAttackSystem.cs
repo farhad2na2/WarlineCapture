@@ -92,12 +92,12 @@ namespace Game.Runtime
         private NativeParallelHashMap<Entity, int> _predictedHealth;
         private NativeParallelHashMap<Entity, AggregatedTargetEffect> _aggregatedEffects;
         private EntityQuery _gridQuery;
-        private EntityQuery _observationQueueQuery;
+        private EntityQuery _damageQueueQuery;
 
         public void OnCreate(ref SystemState state)
         {
             _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
-            _observationQueueQuery = state.GetEntityQuery(
+            _damageQueueQuery = state.GetEntityQuery(
                 ComponentType.ReadWrite<CombatDamageObservationQueueComponent>());
             state.RequireForUpdate(_gridQuery);
             state.RequireForUpdate<UnitCombat>();
@@ -121,7 +121,7 @@ namespace Game.Runtime
             GridConfig grid = state.EntityManager.GetComponentData<GridConfig>(gridEntity);
             var em = state.EntityManager;
             AudioEventRequestSystem.EnsureAudioEntity(em);
-            Entity observationQueue = CombatDamageObservationUtility.TryGetQueue(_observationQueueQuery);
+            Entity damageQueue = Combat.CombatDamageObservationUtility.TryGetQueue(_damageQueueQuery);
             var footprintLookup = SystemAPI.GetComponentLookup<UnitFootprint>(true);
             float dt = SystemAPI.Time.DeltaTime;
             var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
@@ -367,9 +367,9 @@ namespace Game.Runtime
                 float3 targetPosition = em.HasComponent<LocalTransform>(target)
                     ? em.GetComponentData<LocalTransform>(target).Position
                     : float3.zero;
-                CombatDamageObservationUtility.Append(
+                Combat.CombatDamageObservationUtility.Append(
                     em,
-                    observationQueue,
+                    damageQueue,
                     pending.HasMixedObservationSources != 0 ? Entity.Null : pending.ObservationSource,
                     target,
                     CombatDamageSourceKind.DirectFire,

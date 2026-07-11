@@ -77,10 +77,7 @@ namespace Game.UI.Shell.Ecs
                 TransitionSequenceId = 0,
                 IsTransitionRunning = 0
             });
-            state.EntityManager.AddComponentData(boundary, new UiShellStartupDispositionComponent
-            {
-                Value = UiShellStartupDisposition.Pending
-            });
+            AddStartupDisposition(ref state, boundary);
             state.EntityManager.AddComponentData(boundary, new UiShellLoadingProgressComponent
             {
                 Progress01 = 0f,
@@ -160,31 +157,6 @@ namespace Game.UI.Shell.Ecs
                 state.EntityManager.DestroyEntity(boundaries[i]);
 
             return primary;
-        }
-
-        private static void EnsureShellStateComponent(ref SystemState state, Entity boundary)
-        {
-            if (state.EntityManager.HasComponent<UiShellStateComponent>(boundary))
-                return;
-
-            state.EntityManager.AddComponentData(boundary, new UiShellStateComponent
-            {
-                CurrentMode = UiShellMode.None,
-                ActiveRoute = UIRoute.Splash,
-                Phase = UiShellTransitionPhase.Idle,
-                TransitionSequenceId = 0,
-                IsTransitionRunning = 0
-            });
-        }
-
-        private static void EnsureStartupDispositionComponent(ref SystemState state, Entity boundary)
-        {
-            if (state.EntityManager.HasComponent<UiShellStartupDispositionComponent>(boundary))
-                return;
-            state.EntityManager.AddComponentData(boundary, new UiShellStartupDispositionComponent
-            {
-                Value = UiShellStartupDisposition.Pending
-            });
         }
 
         private static void EnsureLoadingProgressComponent(ref SystemState state, Entity boundary)

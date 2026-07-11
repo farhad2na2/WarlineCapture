@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
+using Game.Catalog.Contracts;
 using Game.Configs;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-
 namespace Game.Composition
 {
-    internal sealed class FirstLaunchNarrativePlayerSystemHelper
+    internal sealed class FirstLaunchNarrativePlayer
     {
         private const float TimingEpsilonSeconds = 0.001f;
         private readonly Dictionary<string, NarrativeStateRecord> states = new(StringComparer.Ordinal);
@@ -16,9 +16,9 @@ namespace Game.Composition
         private NarrativeSequenceConfig config;
         private NarrativePunctuationProfile punctuation;
         private NarrativeSequenceView view;
-        private NarrativeSequencePresentationSystemHelper presentation;
-        private NarrativePanelMotionSystemHelper panelMotion;
-        private readonly NarrativePanelAssetResidencySystemHelper panelResidency = new();
+        private NarrativeSequencePresenter presentation;
+        private NarrativePanelMotion panelMotion;
+        private readonly NarrativePanelAssetResidency panelResidency = new();
         private IGameTextResolver textResolver = FallbackGameTextResolver.Instance;
         private UISettingsModel settings;
         private NarrativeStateRecord currentState;
@@ -82,8 +82,8 @@ namespace Game.Composition
                     return false;
             }
 
-            presentation = new NarrativeSequencePresentationSystemHelper(view);
-            panelMotion = new NarrativePanelMotionSystemHelper(view.PanelMotionRoot);
+            presentation = new NarrativeSequencePresenter(view);
+            panelMotion = new NarrativePanelMotion(view.PanelMotionRoot);
             view.BindActions(HandleUiAction);
             return true;
         }
@@ -351,7 +351,7 @@ namespace Game.Composition
                 speakerModel,
                 line.VoiceClip,
                 Mathf.Max(0.1f, line.DeadlineSeconds - line.StartSeconds),
-                punctuation,
+                NarrativePunctuationAdapter.From(punctuation),
                 settings);
         }
 

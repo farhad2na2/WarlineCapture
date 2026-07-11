@@ -1,15 +1,11 @@
 {
-    "name": "Game.Configs",
-    "rootNamespace": "Game.Configs",
+    "name": "Game.Runtime.Combat",
+    "rootNamespace": "Game.Runtime.Combat",
     "references": [
-        "Game.Catalog.Contracts",
         "Game.Components",
-        "Unity.Addressables",
         "Unity.Collections",
         "Unity.Entities",
-        "Unity.Mathematics",
-        "Unity.RenderPipelines.Core.Runtime",
-        "Unity.RenderPipelines.Universal.Runtime"
+        "Unity.Mathematics"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

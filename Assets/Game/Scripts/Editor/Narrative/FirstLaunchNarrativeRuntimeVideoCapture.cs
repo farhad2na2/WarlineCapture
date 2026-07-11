@@ -110,7 +110,7 @@ namespace Game.Editor
             settings.Accessibility.ReducedMotion = false;
             settings.Audio.VoiceEnabled = false;
 
-            FirstLaunchNarrativePlayerSystemHelper player = new();
+            FirstLaunchNarrativePlayer player = new();
             if (!player.Initialize(sequence, speakers, punctuation, view, FallbackGameTextResolver.Instance, settings))
                 throw new InvalidOperationException("Unable to initialize the First Launch narrative player.");
 
@@ -189,7 +189,7 @@ namespace Game.Editor
             WriteTimingReport(transitions, elapsed);
         }
 
-        private static void BypassLiveInteractiveScreens(FirstLaunchNarrativePlayerSystemHelper player)
+        private static void BypassLiveInteractiveScreens(FirstLaunchNarrativePlayer player)
         {
             while (player.CurrentStateId == "first_launch.commander_identity" || player.CurrentStateId == "first_launch.guidance_choice")
                 player.CommitInteractiveState(player.CurrentStateId);
@@ -270,7 +270,7 @@ namespace Game.Editor
                 RenderTexture target,
                 Texture2D readback,
                 NarrativeSequenceView view,
-                FirstLaunchNarrativePlayerSystemHelper player)
+                FirstLaunchNarrativePlayer player)
             {
                 this.cameraObject = cameraObject;
                 this.canvasObject = canvasObject;
@@ -286,7 +286,7 @@ namespace Game.Editor
             public RenderTexture Target { get; }
             public Texture2D Readback { get; }
             public NarrativeSequenceView View { get; }
-            public FirstLaunchNarrativePlayerSystemHelper Player { get; }
+            public FirstLaunchNarrativePlayer Player { get; }
 
             public void Dispose()
             {

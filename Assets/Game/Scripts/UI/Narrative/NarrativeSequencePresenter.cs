@@ -1,13 +1,12 @@
-using Game.Configs;
 using UnityEngine;
 
 namespace Game.UI.Runtime
 {
-    public sealed class NarrativeSequencePresentationSystemHelper
+    public sealed class NarrativeSequencePresenter
     {
         private readonly NarrativeSequenceView view;
-        private readonly NarrativeDialogueRevealSystemHelper reveal = new();
-        private readonly NarrativeVoicePlaybackSystemHelper voice;
+        private readonly NarrativeDialogueReveal reveal = new();
+        private readonly NarrativeVoicePlayback voice;
         private float elapsed;
         private float readyElapsed;
         private float tailHold;
@@ -16,10 +15,10 @@ namespace Game.UI.Runtime
         private bool autoAdvanceRequested;
         private int appliedVisibleCharacters = -1;
 
-        public NarrativeSequencePresentationSystemHelper(NarrativeSequenceView view)
+        public NarrativeSequencePresenter(NarrativeSequenceView view)
         {
             this.view = view;
-            voice = new NarrativeVoicePlaybackSystemHelper(view != null ? view.VoiceSource : null);
+            voice = new NarrativeVoicePlayback(view != null ? view.VoiceSource : null);
         }
 
         public bool IsPaused => paused;
@@ -30,10 +29,10 @@ namespace Game.UI.Runtime
             in NarrativeSpeakerPresentationModel speaker,
             AudioClip voiceClip,
             float availableSeconds,
-            NarrativePunctuationProfile punctuation,
+            in NarrativePunctuationPresentationModel punctuation,
             in UISettingsModel settings)
         {
-            if (view == null || punctuation == null)
+            if (view == null)
                 return;
 
             Cancel();

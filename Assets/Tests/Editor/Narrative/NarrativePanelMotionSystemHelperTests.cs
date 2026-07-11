@@ -1,16 +1,17 @@
 using System;
+using Game.Catalog.Contracts;
 using Game.Configs;
 using Game.UI.Runtime;
 using NUnit.Framework;
 using UnityEngine;
 
-public sealed class NarrativePanelMotionSystemHelperTests
+public sealed class NarrativePanelMotionTests
 {
     public static void RunFocusedValidation()
     {
         try
         {
-            NarrativePanelMotionSystemHelperTests tests = new();
+            NarrativePanelMotionTests tests = new();
             foreach (NarrativeMotionPreset preset in new[]
                      {
                          NarrativeMotionPreset.PushIn,
@@ -43,7 +44,7 @@ public sealed class NarrativePanelMotionSystemHelperTests
     {
         GameObject target = new("Panel", typeof(RectTransform));
         RectTransform rect = target.GetComponent<RectTransform>();
-        NarrativePanelMotionSystemHelper motion = new(rect);
+        NarrativePanelMotion motion = new(rect);
 
         motion.Start(preset, 4f, false);
         for (int i = 0; i < 8; i++)
@@ -63,7 +64,7 @@ public sealed class NarrativePanelMotionSystemHelperTests
     {
         GameObject target = new("Panel", typeof(RectTransform));
         RectTransform rect = target.GetComponent<RectTransform>();
-        NarrativePanelMotionSystemHelper motion = new(rect);
+        NarrativePanelMotion motion = new(rect);
 
         motion.Start(NarrativeMotionPreset.DriftRight, 4f, true);
         motion.Tick(2f);

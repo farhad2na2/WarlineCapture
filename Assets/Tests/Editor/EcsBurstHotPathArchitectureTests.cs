@@ -78,7 +78,7 @@ public sealed class EcsBurstHotPathArchitectureTests
         ["Assets/Game/Scripts/Systems/AIFactionControlStartupSystem.cs"] = "startup projection boundary; writes initial AI faction control state from runtime setup data.",
         ["Assets/Game/Scripts/Systems/AIPlanEntryStartupSystem.cs"] = "startup projection boundary; initializes AI plan entries before recurring AI systems consume them.",
         ["Assets/Game/Scripts/Systems/AIStartupSystem.cs"] = "startup orchestration boundary; creates AI runtime entities and buffers rather than running recurring simulation.",
-        ["Assets/Game/Scripts/Systems/CombatDamageObservationSystem.cs"] = "combat telemetry bootstrap boundary; OnCreate establishes the bounded observation queue while the scheduled OnUpdate is intentionally empty.",
+        ["Assets/Game/Scripts/Systems/Combat/Observation/CombatDamageObservationSystem.cs"] = "combat telemetry bootstrap boundary; OnCreate establishes the bounded observation queue while the scheduled OnUpdate is intentionally empty.",
         ["Assets/Game/Scripts/Systems/DynamicBlockerInitSystem.cs"] = "startup/native-container initialization boundary; not a recurring simulation hot path.",
         ["Assets/Game/Scripts/Systems/FactionEconomyStartupSystem.cs"] = "startup projection boundary; initializes faction economy state before recurring economy ticks.",
         ["Assets/Game/Scripts/Systems/FixedWingRunwayHomeInitializationSystem.cs"] = "startup initialization boundary; resolves runway home state for fixed-wing units.",

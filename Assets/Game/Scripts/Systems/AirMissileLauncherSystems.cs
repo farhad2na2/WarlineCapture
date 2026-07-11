@@ -940,11 +940,11 @@ namespace Game.Runtime
     [UpdateAfter(typeof(AirMissileHomingProjectileSystem))]
     public partial struct AirMissileImpactSystem : ISystem
     {
-        private EntityQuery _observationQueueQuery;
+        private EntityQuery _damageQueueQuery;
 
         public void OnCreate(ref SystemState state)
         {
-            _observationQueueQuery = state.GetEntityQuery(
+            _damageQueueQuery = state.GetEntityQuery(
                 ComponentType.ReadWrite<CombatDamageObservationQueueComponent>());
             state.RequireForUpdate<AirMissileImpactRequestComponent>();
         }
@@ -953,7 +953,7 @@ namespace Game.Runtime
         {
             EntityManager em = state.EntityManager;
             AudioEventRequestSystem.EnsureAudioEntity(em);
-            Entity observationQueue = CombatDamageObservationUtility.TryGetQueue(_observationQueueQuery);
+            Entity damageQueue = Combat.CombatDamageObservationUtility.TryGetQueue(_damageQueueQuery);
             float now = (float)SystemAPI.Time.ElapsedTime;
             var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
 
@@ -994,9 +994,9 @@ namespace Game.Runtime
                     float3 targetPosition = em.HasComponent<LocalTransform>(request.Target)
                         ? em.GetComponentData<LocalTransform>(request.Target).Position
                         : request.Position;
-                    CombatDamageObservationUtility.Append(
+                    Combat.CombatDamageObservationUtility.Append(
                         em,
-                        observationQueue,
+                        damageQueue,
                         request.Source,
                         request.Target,
                         CombatDamageSourceKind.AirMissile,

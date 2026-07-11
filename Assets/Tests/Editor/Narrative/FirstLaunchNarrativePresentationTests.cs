@@ -1,4 +1,5 @@
 using System;
+using Game.Catalog.Contracts;
 using Game.Editor;
 using Game.UI.Runtime;
 using NUnit.Framework;
@@ -54,8 +55,8 @@ public sealed class FirstLaunchNarrativePresentationTests
     [Test]
     public void RevealSchedule_IsMonotonicPunctuationAwareAndDeadlineBound()
     {
-        NarrativeDialogueRevealSystemHelper plain = Build("Alpha beta gamma", 10f);
-        NarrativeDialogueRevealSystemHelper punctuated = Build("Alpha, beta... gamma!", 10f);
+        NarrativeDialogueReveal plain = Build("Alpha beta gamma", 10f);
+        NarrativeDialogueReveal punctuated = Build("Alpha, beta... gamma!", 10f);
 
         Assert.Greater(punctuated.Duration, plain.Duration);
         Assert.LessOrEqual(punctuated.Duration, 10f);
@@ -68,7 +69,7 @@ public sealed class FirstLaunchNarrativePresentationTests
             previous = visible;
         }
 
-        NarrativeDialogueRevealSystemHelper compressed = Build("One, two; three: four. Five? Six!", 0.25f);
+        NarrativeDialogueReveal compressed = Build("One, two; three: four. Five? Six!", 0.25f);
         Assert.AreEqual(0.25f, compressed.Duration, 0.0001f);
         Assert.AreEqual(compressed.VisibleCharacterCount, compressed.GetVisibleCharacterCount(0.25f));
     }
@@ -82,7 +83,7 @@ public sealed class FirstLaunchNarrativePresentationTests
         Assert.DoesNotThrow(() => Build(string.Empty, 1f));
         Assert.DoesNotThrow(() => Build("   ", 1f));
 
-        NarrativeDialogueRevealSystemHelper instant = Build("Immediate", 3f, true);
+        NarrativeDialogueReveal instant = Build("Immediate", 3f, true);
         Assert.AreEqual(0f, instant.Duration);
         Assert.AreEqual(instant.VisibleCharacterCount, instant.GetVisibleCharacterCount(0f));
     }
@@ -139,14 +140,22 @@ public sealed class FirstLaunchNarrativePresentationTests
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(FirstLaunchNarrativePresentationPrefabBuilder.PrefabPath);
         GameObject instance = UnityEngine.Object.Instantiate(prefab);
         NarrativeSequenceView view = instance.GetComponent<NarrativeSequenceView>();
-        Game.Configs.NarrativePunctuationProfile punctuation = ScriptableObject.CreateInstance<Game.Configs.NarrativePunctuationProfile>();
-        NarrativeSequencePresentationSystemHelper helper = new(view);
+        NarrativePunctuationPresentationModel punctuation = new()
+        {
+            CharactersPerSecond = 28f,
+            CommaPauseSeconds = 0.11f,
+            ClausePauseSeconds = 0.16f,
+            SentencePauseSeconds = 0.24f,
+            EllipsisPauseSeconds = 0.32f,
+            TailHoldSeconds = 0.25f
+        };
+        NarrativeSequencePresenter helper = new(view);
         UISettingsModel settings = Game.UI.Runtime.SettingsService.Defaults;
         NarrativeSpeakerPresentationModel speaker = new()
         {
             DisplayName = "ARIA",
             Role = "CIVIC RELAY ASSISTANT",
-            Treatment = Game.Configs.NarrativeSpeakerTreatment.AriaIcon,
+            Treatment = NarrativeSpeakerTreatment.AriaIcon,
             AccentColor = Color.cyan
         };
 
@@ -169,13 +178,12 @@ public sealed class FirstLaunchNarrativePresentationTests
         helper.Cancel();
         Assert.AreEqual(NarrativeDialoguePhase.Hidden, view.DialogueView.Phase);
 
-        UnityEngine.Object.DestroyImmediate(punctuation);
         UnityEngine.Object.DestroyImmediate(instance);
     }
 
-    private static NarrativeDialogueRevealSystemHelper Build(string text, float deadline, bool instant = false)
+    private static NarrativeDialogueReveal Build(string text, float deadline, bool instant = false)
     {
-        NarrativeDialogueRevealSystemHelper helper = new();
+        NarrativeDialogueReveal helper = new();
         helper.Prepare(text, deadline, 28f, 0.11f, 0.16f, 0.24f, 0.32f, instant);
         return helper;
     }

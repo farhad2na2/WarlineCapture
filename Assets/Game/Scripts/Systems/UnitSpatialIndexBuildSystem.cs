@@ -24,6 +24,7 @@ namespace Game.Runtime
         public const int MaxBuckets = 4096;
 
         private Entity _indexEntity;
+        private EntityQuery _indexQuery;
         private ComponentLookup<UnitHealth> _healthLookup;
         private ComponentLookup<LocalTransform> _localTransformLookup;
         private ComponentLookup<LocalToWorld> _localToWorldLookup;
@@ -47,13 +48,27 @@ namespace Game.Runtime
 
         public void OnCreate(ref SystemState state)
         {
-            _indexEntity = state.EntityManager.CreateEntity(typeof(UnitSpatialIndexState));
+            _indexQuery = state.GetEntityQuery(
+                ComponentType.ReadWrite<UnitSpatialIndexState>(),
+                ComponentType.ReadWrite<UnitSpatialIndexEntry>(),
+                ComponentType.ReadWrite<UnitSpatialIndexBucketRange>(),
+                ComponentType.ReadWrite<UnitSpatialIndexBucketEntry>());
+            using (var ecb = new EntityCommandBuffer(Allocator.Temp))
+            {
+                Entity indexEntity = ecb.CreateEntity();
+                ecb.AddComponent(indexEntity, new UnitSpatialIndexState());
+                ecb.AddBuffer<UnitSpatialIndexEntry>(indexEntity);
+                ecb.AddBuffer<UnitSpatialIndexBucketRange>(indexEntity);
+                ecb.AddBuffer<UnitSpatialIndexBucketEntry>(indexEntity);
+                ecb.Playback(state.EntityManager);
+            }
+            _indexEntity = _indexQuery.GetSingletonEntity();
             DynamicBuffer<UnitSpatialIndexEntry> entries =
-                state.EntityManager.AddBuffer<UnitSpatialIndexEntry>(_indexEntity);
+                state.EntityManager.GetBuffer<UnitSpatialIndexEntry>(_indexEntity);
             DynamicBuffer<UnitSpatialIndexBucketRange> ranges =
-                state.EntityManager.AddBuffer<UnitSpatialIndexBucketRange>(_indexEntity);
+                state.EntityManager.GetBuffer<UnitSpatialIndexBucketRange>(_indexEntity);
             DynamicBuffer<UnitSpatialIndexBucketEntry> bucketEntries =
-                state.EntityManager.AddBuffer<UnitSpatialIndexBucketEntry>(_indexEntity);
+                state.EntityManager.GetBuffer<UnitSpatialIndexBucketEntry>(_indexEntity);
             entries.Capacity = MaxEntries;
             ranges.Capacity = MaxBuckets;
             bucketEntries.Capacity = MaxEntries;
@@ -87,7 +102,11 @@ namespace Game.Runtime
         public void OnDestroy(ref SystemState state)
         {
             if (_indexEntity != Entity.Null && state.EntityManager.Exists(_indexEntity))
-                state.EntityManager.DestroyEntity(_indexEntity);
+            {
+                using var ecb = new EntityCommandBuffer(Allocator.Temp);
+                ecb.DestroyEntity(_indexEntity);
+                ecb.Playback(state.EntityManager);
+            }
         }
 
         [BurstCompile]
@@ -129,7 +148,7 @@ namespace Game.Runtime
                 overflowCount,
                 indexState.Version + 1u,
                 out indexState);
-            state.EntityManager.SetComponentData(_indexEntity, indexState);
+            SystemAPI.GetSingletonRW<UnitSpatialIndexState>().ValueRW = indexState;
         }
 
         private void UpdateLookups(ref SystemState state)

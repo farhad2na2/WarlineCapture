@@ -1,8 +1,8 @@
 {
-  "acceptedBaselineVersion": 3,
-  "acceptedAtUtc": "2026-07-10",
+  "acceptedBaselineVersion": 4,
+  "acceptedAtUtc": "2026-07-11",
   "source": "Game.Editor.MatchRuntimeShellSmokeValidation.RunPerformanceRegressionBaseline",
-  "editorP95FrameBudgetMs": 50,
+  "editorP95FrameBudgetMs": 20,
   "currentThreadAllocatedBytesBudget": 0,
   "minimumFrameCount": 180,
   "minimumUnitCount": 700,

@@ -50,6 +50,8 @@ Use warmup windows and percentile thresholds. Do not fail a test only because of
 
 `Design/Architecture/performance_regression_accepted_baseline.json` is the authoritative tracked config for the existing editor regression gate and product budgets established by `APH-009` and `APH-501`. The editor fields remain consumed by `MatchRuntimeShellSmokeValidation`; `productBudgets` records device-tier, package, memory, and release-evidence requirements without converting unmeasured values into invented limits.
 
+APH-802 ratcheted the Editor Match p95 budget from `50 ms` to `20 ms` after five accepted fresh-process captures at exact commit `d2a41ac97879f01f4285fdb92831dbe34276d42c`. Their p95 range was `9.087-12.905 ms`, mean `10.6316 ms`, median `10.231 ms`, sample deviation `1.518106 ms`, and coefficient of variation `14.2792%`. The `20 ms` limit retains approximately 55% headroom over the worst accepted run while removing the former large-regression-only allowance. Android development and release budgets remain independent.
+
 - Android p95 frame budgets use an exclusive comparison: less than `33 ms` for baseline/recommended and less than `25 ms` for high-end.
 - The validated same-device peak allocated-memory baseline is `1054-1075 MB`. Acceptance requires at least a 10 percent same-device reduction. The absolute release limit remains measurement-required because the existing evidence supports the relative comparison but does not establish a product-approved absolute limit.
 - The `APH-008` inventory establishes dependency reachability and selected imported sizes, not simultaneous runtime residency or unload lifetime. Runtime-residency uncertainty remains explicit in the config and requires device evidence.

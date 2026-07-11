@@ -4,6 +4,8 @@ Date: 2026-07-11
 Scope: report-only review of existing tracked editor performance evidence
 Decision: **Do not ratchet the current 50 ms editor p95 budget yet.**
 
+> Resolution: this initial four-run historical analysis is superseded by the accepted same-revision series under `Design/AgentReports/aph802/2026-07-11_d2a41ac97/`. Five fresh-process captures at one exact commit established a `9.087-12.905 ms` p95 range and `14.2792%` coefficient of variation. Accepted-baseline version 4 therefore ratchets the Editor p95 budget to `20 ms`; the post-ratchet canonical gate passed at `4.495 ms` p95 with zero current-thread allocation.
+
 ## Requirement
 
 `APH-802` permits the editor p95 budget to move below its intentionally lenient `50 ms` value only after at least five stable captures establish variance. A Markdown summary and its JSON representation describe one capture, not two independent samples.

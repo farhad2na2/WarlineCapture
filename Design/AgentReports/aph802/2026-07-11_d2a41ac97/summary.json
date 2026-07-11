@@ -1,0 +1,110 @@
+{
+  "acceptedRunCount": 5,
+  "declaredOutliers": [],
+  "environment": {
+    "cacheStatePolicy": "retained Library cache; fresh Unity process per run",
+    "captureMode": "windowed batchmode; Metal enabled; no -nographics",
+    "commandLine": "Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture --timeout 1200 -- -executeMethod Game.Editor.MatchRuntimeShellSmokeValidation.RunPerformanceRegressionBaseline",
+    "graphicsDevice": "Apple M5 (Metal)",
+    "machineId": "Farhads-Air-2",
+    "os": "macOS 26.5.1 (25F80)",
+    "qualityLevel": "Mobile (index 1)",
+    "resolution": {
+      "height": 1,
+      "width": 1
+    },
+    "unityVersion": "6000.5.2f1"
+  },
+  "exactCommit": "d2a41ac97879f01f4285fdb92831dbe34276d42c",
+  "fixture": {
+    "allocatedBytesBudget": 0,
+    "fixtureId": "match-runtime-baseline-733-units-628-buildings",
+    "minimumRuntimeBuildingCount": 600,
+    "minimumUnitCount": 700,
+    "observationSeconds": 4.0,
+    "readyGate": "mode=MatchHud route=Match phase=MatchHudReady transition=0 playRequested=1 matchIntro=Complete inputLocked=0 matchSceneLoaded=1 hudLoaded=1 curtainHidden=1",
+    "stableGate": "playRequested=1 spawnConfigs=1/1 progressing=0 sourceKeys=733"
+  },
+  "generatedAtUtc": "2026-07-11T19:39:04Z",
+  "maximumInputAgeHours": 24.0,
+  "rejectedRunCount": 0,
+  "result": "Passed",
+  "runCount": 5,
+  "runner": {
+    "executeMethod": "Game.Editor.MatchRuntimeShellSmokeValidation.RunPerformanceRegressionBaseline",
+    "measurementSemantics": "post-ready four-second Match delta-time observation"
+  },
+  "runs": [
+    {
+      "artifactId": "aph802-d2a41ac97-run01",
+      "capturedAtUtc": "2026-07-11T19:31:13Z",
+      "declaredOutlier": false,
+      "jsonPath": "Design/AgentReports/aph802/2026-07-11_d2a41ac97/runs/aph802-d2a41ac97-run01.json",
+      "jsonSha256": "72de5d3e9d286a7e2d879a719da5cd085b3524c4558c8c4806bd92298c8a2f24",
+      "markdownPath": "Design/AgentReports/aph802/2026-07-11_d2a41ac97/runs/aph802-d2a41ac97-run01.md",
+      "markdownSha256": "7a87ed8a8a99282867b261e7a9077221bcb8b07ec84c227d52a40da998ae333f",
+      "p95FrameMs": 10.231,
+      "rejectionReasons": [],
+      "status": "Accepted"
+    },
+    {
+      "artifactId": "aph802-d2a41ac97-run02",
+      "capturedAtUtc": "2026-07-11T19:32:18Z",
+      "declaredOutlier": false,
+      "jsonPath": "Design/AgentReports/aph802/2026-07-11_d2a41ac97/runs/aph802-d2a41ac97-run02.json",
+      "jsonSha256": "cc242b9efee5ceee4225f4542fb0528950312d23b8b62dfd07da11c9efe5fc9b",
+      "markdownPath": "Design/AgentReports/aph802/2026-07-11_d2a41ac97/runs/aph802-d2a41ac97-run02.md",
+      "markdownSha256": "55974b15c2d3aa1f62479f7ecbd87d869caf893b31438ca5ea4578aed113b6b9",
+      "p95FrameMs": 12.905,
+      "rejectionReasons": [],
+      "status": "Accepted"
+    },
+    {
+      "artifactId": "aph802-d2a41ac97-run03",
+      "capturedAtUtc": "2026-07-11T19:33:18Z",
+      "declaredOutlier": false,
+      "jsonPath": "Design/AgentReports/aph802/2026-07-11_d2a41ac97/runs/aph802-d2a41ac97-run03.json",
+      "jsonSha256": "b51c821bb03a7c00786c7a141beebf57b38c1ab7293c8af1516d639a17424a26",
+      "markdownPath": "Design/AgentReports/aph802/2026-07-11_d2a41ac97/runs/aph802-d2a41ac97-run03.md",
+      "markdownSha256": "79fbb85cc731a6be680fa6bb9f3b1b1fe3b8e7b4779f8e6c09ced266e0a83cb9",
+      "p95FrameMs": 9.087,
+      "rejectionReasons": [],
+      "status": "Accepted"
+    },
+    {
+      "artifactId": "aph802-d2a41ac97-run04",
+      "capturedAtUtc": "2026-07-11T19:34:13Z",
+      "declaredOutlier": false,
+      "jsonPath": "Design/AgentReports/aph802/2026-07-11_d2a41ac97/runs/aph802-d2a41ac97-run04.json",
+      "jsonSha256": "14d4ecbb00af53c3b472dad6e25fde66be22ec333edc4b72b390a966820f8343",
+      "markdownPath": "Design/AgentReports/aph802/2026-07-11_d2a41ac97/runs/aph802-d2a41ac97-run04.md",
+      "markdownSha256": "976d9baa79d5389500d9ccd4b2593d5c4b42e1b856d1636b97e8da70eda25c34",
+      "p95FrameMs": 11.319,
+      "rejectionReasons": [],
+      "status": "Accepted"
+    },
+    {
+      "artifactId": "aph802-d2a41ac97-run05",
+      "capturedAtUtc": "2026-07-11T19:34:58Z",
+      "declaredOutlier": false,
+      "jsonPath": "Design/AgentReports/aph802/2026-07-11_d2a41ac97/runs/aph802-d2a41ac97-run05.json",
+      "jsonSha256": "06957fb519c1492dd21650327857470e7d8b4f71037c19771c59ba138e2a5658",
+      "markdownPath": "Design/AgentReports/aph802/2026-07-11_d2a41ac97/runs/aph802-d2a41ac97-run05.md",
+      "markdownSha256": "135e19e8d26e294d7a9c2393d1e1e9a00e46ec48d7c900cfb2fd51c5d076dfb3",
+      "p95FrameMs": 9.616,
+      "rejectionReasons": [],
+      "status": "Accepted"
+    }
+  ],
+  "schema": "WarlineCapture.APH802EditorP95Series.v1",
+  "statistics": {
+    "coefficientOfVariation": 0.14279183393579598,
+    "coefficientOfVariationPercent": 14.279183393579599,
+    "maximumP95FrameMs": 12.905,
+    "meanP95FrameMs": 10.6316,
+    "medianP95FrameMs": 10.231,
+    "minimumP95FrameMs": 9.087,
+    "sampleCount": 5,
+    "sampleStandardDeviationMs": 1.5181056616718087
+  }
+}

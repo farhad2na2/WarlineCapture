@@ -251,9 +251,9 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `74 / 106` |
-| Checklist percent complete | `69.8%` |
-| Checklist in progress | `14 / 106`: `APH-311`, `APH-408`, `APH-501`, `APH-502`, `APH-507`, `APH-508`, `APH-509`, `APH-601`, `APH-609`, `APH-610`, `APH-704`, `APH-705`, `APH-802`, `APH-803` |
+| Checklist complete | `75 / 106` |
+| Checklist percent complete | `70.8%` |
+| Checklist in progress | `13 / 106`: `APH-311`, `APH-408`, `APH-501`, `APH-502`, `APH-507`, `APH-508`, `APH-509`, `APH-601`, `APH-609`, `APH-610`, `APH-704`, `APH-705`, `APH-803` |
 | Complete plus active coverage | `88 / 106` (`83.0%`); this is visibility only, not accepted completion |
 | Current phase | Phase 3 Android device evidence, Phase 5 product budgets, Phase 6 map closeout, and bounded Phase 8 automation |
 | Current task | Complete map Read/Write proof and the Android visual soak, then close remaining FPS, memory, startup, package, and device gates |
@@ -261,7 +261,7 @@ The program is complete only when all of the following are true:
 | Red performance gates | `1`: steady-state Match GC `234,324 / 1,024` bytes; improved 13.0% from the APH-007 baseline without weakening the budget |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
 | Last verified commit | `f8ef8b2b7`; category-wide Voice rollout and objective Android playback-path smoke are pushed to `main` |
-| Last update | 2026-07-11 - same-revision Editor p95-series tooling and the fail-closed Android evidence layer pass non-Unity contracts |
+| Last update | 2026-07-11 - five same-revision Editor p95 captures pass and ratchet the authoritative budget from 50 ms to 20 ms |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -636,9 +636,9 @@ Goal: prevent recurrence and cover behavior that source-scanning tests cannot pr
 - [x] `APH-801` Add the editor Match performance baseline and steady-state GC capture to a scheduled or pre-merge performance lane; fail when the unchanged 1,024-byte GC budget is exceeded.
   - Result: Jenkins runs the existing Match baseline and steady-state GC execute methods weekly or when `RUN_EDITOR_MATCH_PERFORMANCE=true`, reuses the fail-closed APH-800 wrapper, rejects missing/stale/malformed evidence, preserves the `1,024`-byte budget, and archives logs plus machine-readable summary evidence.
   - Validation: focused and combined CI Python tests pass `24/24`; source contract and syntax checks pass. Windows Jenkins execution remains the first live scheduled-lane proof.
-- [~] `APH-802` Ratchet the editor p95 budget from the current lenient `50 ms` only after at least five stable captures establish variance.
-  - Active result: four exact-runner historical captures range from `3.824` to `7.186 ms` p95 with `25.97%` coefficient of variation, but span different revisions and fixtures. New fail-closed series tooling preserves unique JSON/Markdown pairs, rejects mixed/stale/environment-drifted inputs, requires at least five accepted runs, and computes min/max/mean/median/sample deviation/CV plus declared outliers. Focused contracts pass `14/14`.
-  - Evidence: `Design/AgentReports/2026-07-11_aph-802_editor_p95_variance_analysis.md` and `Tools/CI/aph802_editor_p95_series.py`. Remaining: collect five to seven independent captures at one frozen revision/environment and evaluate a ratchet; the `50 ms` budget remains unchanged.
+- [x] `APH-802` Ratchet the editor p95 budget from the current lenient `50 ms` only after at least five stable captures establish variance.
+  - Result: five accepted fresh-process captures at exact commit `d2a41ac97879f01f4285fdb92831dbe34276d42c` use the same Unity/OS/machine/GPU/quality/cache policy, 733-unit/628-building fixture, four-second runner, and zero-allocation gate. P95 values span `9.087-12.905 ms`, mean `10.6316 ms`, median `10.231 ms`, sample deviation `1.518106 ms`, and CV `14.2792%`; no outlier is declared.
+  - Ratchet: accepted-baseline version 4 lowers the Editor p95 budget from `50 ms` to `20 ms`, retaining approximately 55% headroom above the worst accepted run. Append-only run pairs and summary are under `Design/AgentReports/aph802/2026-07-11_d2a41ac97/`; preservation/series contracts pass and reject mixed, stale, overwritten, or incomplete evidence. The post-ratchet canonical Unity gate passed at `4.495 ms` p95 with zero current-thread allocation and the full 733/628 fixture.
 - [~] `APH-803` Add an Android development-build gate for p95/p99 frame, peak memory, startup time, and thermal status on the reference device profile.
   - Active result: the fail-closed non-Unity evidence layer now enforces the reference device/APK/revision/build profile, exactly five cold and five warm starts, a 60-second warmup, 600-second sustained run with at least 9,000 structured samples, recomputed percentiles, peak memory, zero thermal/cooling status, hashed recorder/log/screenshot evidence, PNG dimensions, process survival, and raw crash scanning. It intentionally reports `acceptanceReady=false` while p99 and startup limits remain unset; focused contracts pass `17/17`.
   - Evidence: `Design/AgentReports/2026-07-11_aph-803_android_development_gate_plan.md` and `Tools/CI/android_development_performance_gate.py`. Remaining work is the flag-gated runtime recorder, Match-ready timestamp, accepted p99/startup limits, and live reference-device proof.

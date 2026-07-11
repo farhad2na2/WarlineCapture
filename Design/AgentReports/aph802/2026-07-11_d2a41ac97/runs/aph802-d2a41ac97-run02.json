@@ -1,0 +1,51 @@
+{
+  "artifactId": "aph802-d2a41ac97-run02",
+  "capturedAtUtc": "2026-07-11T19:32:18Z",
+  "decision": {
+    "rejectionReasons": [],
+    "status": "Accepted"
+  },
+  "environment": {
+    "cacheStatePolicy": "retained Library cache; fresh Unity process per run",
+    "captureMode": "windowed batchmode; Metal enabled; no -nographics",
+    "commandLine": "Tools/CI/invoke_unity_macos.sh --project /Users/farhad/Projects/WarlineCapture --timeout 1200 -- -executeMethod Game.Editor.MatchRuntimeShellSmokeValidation.RunPerformanceRegressionBaseline",
+    "graphicsDevice": "Apple M5 (Metal)",
+    "machineId": "Farhads-Air-2",
+    "os": "macOS 26.5.1 (25F80)",
+    "qualityLevel": "Mobile (index 1)",
+    "resolution": {
+      "height": 1,
+      "width": 1
+    },
+    "unityVersion": "6000.5.2f1"
+  },
+  "exactCommit": "d2a41ac97879f01f4285fdb92831dbe34276d42c",
+  "fixture": {
+    "allocatedBytesBudget": 0,
+    "fixtureId": "match-runtime-baseline-733-units-628-buildings",
+    "minimumRuntimeBuildingCount": 600,
+    "minimumUnitCount": 700,
+    "observationSeconds": 4.0,
+    "readyGate": "mode=MatchHud route=Match phase=MatchHudReady transition=0 playRequested=1 matchIntro=Complete inputLocked=0 matchSceneLoaded=1 hudLoaded=1 curtainHidden=1",
+    "stableGate": "playRequested=1 spawnConfigs=1/1 progressing=0 sourceKeys=733"
+  },
+  "measurements": {
+    "allocatedBytesCurrentThread": 0,
+    "frameCount": 538,
+    "p95FrameMs": 12.905,
+    "readyGatePassed": true,
+    "runtimeBuildingCount": 628,
+    "stableGatePassed": true,
+    "unitCount": 733
+  },
+  "outlier": {
+    "declared": false,
+    "reason": "",
+    "rule": ""
+  },
+  "runner": {
+    "executeMethod": "Game.Editor.MatchRuntimeShellSmokeValidation.RunPerformanceRegressionBaseline",
+    "measurementSemantics": "post-ready four-second Match delta-time observation"
+  },
+  "schema": "WarlineCapture.APH802EditorP95Run.v1"
+}

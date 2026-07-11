@@ -1,7 +1,7 @@
 # APH-700 First-Party Assembly Dependency Report
 
 - Task: `APH-700`
-- Source fingerprint (SHA-256): `13405427ecd913342c639ca357335800f9203d7e1fe4345aeceacab6b18b37bb`
+- Source fingerprint (SHA-256): `483a52b72f9b7b57c1b4585310cb6f4100cae8a9cd21583560822593fa3e91cd`
 - Determinism: No timestamp or mutable VCS state; ordinal path ordering, normalized LF output, and a content-derived source fingerprint.
 - Scope: Direct dependencies and source-level cross-domain type references for first-party asmdefs under Assets/Game, Assets/Tests, and Assets/Editor.
 

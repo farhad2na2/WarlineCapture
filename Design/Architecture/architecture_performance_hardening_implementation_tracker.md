@@ -251,17 +251,17 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `60 / 106` |
-| Checklist percent complete | `56.6%` |
-| Checklist in progress | `5 / 106`: `APH-311`, `APH-501`, `APH-502`, `APH-509`, `APH-601` |
-| Complete plus active coverage | `65 / 106` (`61.3%`); this is visibility only, not accepted completion |
+| Checklist complete | `61 / 106` |
+| Checklist percent complete | `57.5%` |
+| Checklist in progress | `6 / 106`: `APH-311`, `APH-501`, `APH-502`, `APH-509`, `APH-601`, `APH-609` |
+| Complete plus active coverage | `67 / 106` (`63.2%`); this is visibility only, not accepted completion |
 | Current phase | Phase 3 Android device evidence, Phase 5 product budgets, and Phase 6 shared-mesh presentation streaming |
-| Current task | Enable and validate Unity mobile GPU instancing for repeated map visuals; texture and package inventories retain their clean-evidence/implementation gates |
+| Current task | Complete the Android map-performance comparison and close the remaining FPS, memory, startup, package, and visual-soak gates |
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: steady-state Match GC `234,324 / 1,024` bytes; improved 13.0% from the APH-007 baseline without weakening the budget |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
-| Last verified commit | `417333ed3`; texture/package evidence inventories and all earlier accepted slices are pushed to `main` |
-| Last update | 2026-07-11 - bounded map presentation streaming and chunk-first Match teardown accepted |
+| Last verified commit | `7986d7c9c`; bounded map presentation streaming and all earlier accepted slices are pushed to `main` |
+| Last update | 2026-07-11 - Android GPU instanced drawing accepted as an intermediate win; 60 FPS remains red |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -560,8 +560,12 @@ Quality lock:
   - Result: one plain managed composition-owned streamer uses a 64-entry queue, one active operation, one start per frame, a one-ring preload, two-ring unload hysteresis, and at most 16 scene-state checks per update. Match start remains blocked until preload readiness, and Match unload remains blocked until all presentation chunks drain.
   - Lifecycle safety: route reversal waits for drain completion before rebinding; preload failures can still drain; detached operations retain scene ownership and clean up completed loads even if no replacement Match binds; repeated cleanup failure is fail-closed with explicit status.
   - Validation: focused behavior and composition tests pass `31/31`; production source-growth architecture validation passes `15/15`; APH-700 dependency validation passes `7/7`; all 12 first-party assemblies passed with zero errors before final review changes and the four changed-scope assemblies passed again with zero errors afterward. Independent review closed with no actionable findings.
-- [ ] `APH-608` Enable Unity 6 GPU Resident Drawer `InstancedDrawing` for the Mobile URP asset, retain BRG shader variants, disable Android static batching, and preserve a measured fallback for incompatible renderers. Do not add a new gameplay `ISystem` or `SystemBase` owner.
-- [ ] `APH-609` Compare canonical/runtime-batched and shared-mesh chunked/GRD screenshots plus draw calls, triangles, CPU/GPU frame time, memory, package size, and startup time. Require pixel/visual review, not metrics alone.
+- [x] `APH-608` Enable Unity 6 GPU Resident Drawer `InstancedDrawing` for the Mobile URP asset, retain BRG shader variants, disable Android static batching, and preserve a measured fallback for incompatible renderers. Do not add a new gameplay `ISystem` or `SystemBase` owner.
+  - Result: Mobile Forward+ now uses `InstancedDrawing`; GPU occlusion and small-mesh culling remain disabled; BRG and standard instancing variants remain Keep All; Android static and dynamic batching are disabled. Unity retains incompatible renderers on the ordinary URP path without a custom gameplay owner.
+  - Device evidence: instanced drawing improved stable FPS `32.6 -> 36.3`, GPU `28.82 -> 21.69 ms`, render thread `5.24 -> 3.07 ms`, and SetPass `49.2 -> 45.0` on Xiaomi 24090RA29G. Visual captures retained the map and HUD; no shader/BRG/crash errors occurred. The 60 FPS gate remains red.
+- [~] `APH-609` Compare canonical/runtime-batched and shared-mesh chunked/GRD screenshots plus draw calls, triangles, CPU/GPU frame time, memory, package size, and startup time. Require pixel/visual review, not metrics alone.
+  - Captured: same-source profiler comparison, final instanced screenshot, control screenshot, frame/GPU/render-thread/draw/SetPass/geometry metrics, development PSS, APK hash, thermal status, and crash/shader scan.
+  - Remaining: cold-device repeat, release package/startup/memory evidence, canonical/runtime-batched comparison normalization, and full visual matrix before final acceptance.
 - [ ] `APH-610` After acceptance, disable runtime mesh combination when a valid presentation manifest is present, remove duplicated base-scene visual renderers represented by validated chunk entries, and disable Read/Write only on meshes no accepted runtime path needs. Keep development-only stale/missing-manifest diagnostics.
 - [ ] `APH-611` Run a full Android 10-minute soak and reject any missing interiors, floating/buried props, road changes, lighting changes, culling holes, or terrain-quality regression.
 
@@ -1334,6 +1338,21 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Tooling note: final report generation emitted its success marker and wrote both reports before Unity 6000.5.2f1 crashed during domain-unload shutdown; the subsequent APH-700 test run exited normally and passed `7/7`
 - Residual risk: Android frame-time, memory, package, screenshot, and 10-minute visual-soak acceptance remain in the next map-optimization tasks
 - Next ready task: enable Unity mobile GPU instancing for repeated map visuals, retain a measured fallback, then compare device performance and screenshots
+
+### 2026-07-11 - APH-608 and partial APH-609 - Android GPU instancing
+
+- Status: GPU instancing configuration complete; full device comparison active
+- Commit or worktree baseline: `7986d7c9c`
+- Stable commit/push: pending coordinated stable-slice commit
+- Files changed: Mobile URP asset, Android batching setting, refreshed static-map manifest dependency hash, Android visual-quality validation, comparison report, and this tracker
+- Behavior preserved/changed: repeated compatible map renderers now use Unity GPU Resident Drawer `InstancedDrawing`; incompatible renderers stay on Unity's ordinary URP path. GPU occlusion and small-mesh culling remain disabled. No gameplay system or custom render owner was added.
+- Validation: Android visual-quality plus build-scene resolver tests pass `36/36`; dependency/source architecture tests pass `22/22`; changed Editor-test assembly builds with zero errors; profiler APK builds with zero shader/compiler errors; runtime emits `GPU Resident Drawer created.`; final screenshot retains terrain, buildings, props, units, HUD textures, command controls, and minimap; no shader/BRG/crash/missing-reference errors
+- Same-source device comparison: instanced versus prior settings measured `36.3 vs 32.6 FPS`, `21.69 vs 28.82 ms GPU`, `3.07 vs 5.24 ms render thread`, and `45.0 vs 49.2 SetPass`; draw calls and geometry remained effectively unchanged
+- Memory tradeoff: development PSS increased approximately 75 MB and graphics PSS approximately 45 MB; this requires release-device budget evidence before product acceptance
+- Build evidence: ignored profiler APK SHA-256 `e230e52a40a45bbbc2afd82a52f83227f5cf519ee562afbd93f1edcadf48e57d`; generated map rebake reused all 525 scenes with zero scene writes/deletes
+- Artifact: `Design/AgentReports/2026-07-11_gpu_instancing_android_comparison.md`
+- Residual risk: 60 FPS remains red; comparison order was not thermally randomized; cold release startup, package, memory, full visual matrix, and extended soak evidence remain open
+- Next ready task: isolate the remaining GPU geometry cost and release-memory overhead before enabling any additional culling or removing the validated fallback path
 
 ### 2026-07-10 - APH-501 - Tracked package and memory budget authority
 

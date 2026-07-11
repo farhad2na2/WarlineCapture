@@ -31,7 +31,10 @@ public sealed class AndroidVisualQualityValidationTests
         {
             int passed = 0;
             RunCase(() => MobileRenderPipelineUsesBalancedScaleAndMsaa(), ref passed);
+            RunCase(() => MobileRenderPipelineUsesGpuInstancedDrawingDefaults(), ref passed);
             RunCase(() => MobileRendererUsesForwardPlusForEntitiesGraphics(), ref passed);
+            RunCase(() => GraphicsSettingsRetainsBatchRendererGroupShaderVariants(), ref passed);
+            RunCase(() => AndroidBuildDisablesStaticBatchingForGpuResidentDrawer(), ref passed);
             RunCase(() => VisualQualityProfileUsesBalancedAndroidMatchRendering(), ref passed);
             RunCase(() => HighModeKeepsCameraPostProcessingDisabled(), ref passed);
             RunCase(() => MobileQualityTierUsesBalancedMsaaAndShadows(), ref passed);
@@ -103,6 +106,54 @@ public sealed class AndroidVisualQualityValidationTests
             2,
             renderingMode.intValue,
             "Android/mobile renderer should use URP Forward+ so Entities Graphics remains on its supported compatibility path.");
+    }
+
+    [Test]
+    public static void MobileRenderPipelineUsesGpuInstancedDrawingDefaults()
+    {
+        UnityEngine.Object asset =
+            AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(MobileRenderPipelinePath);
+        Assert.NotNull(asset, $"Missing mobile render pipeline asset at {MobileRenderPipelinePath}.");
+
+        SerializedObject serializedAsset = new(asset);
+        SerializedProperty mode = serializedAsset.FindProperty("m_GPUResidentDrawerMode");
+        SerializedProperty smallMeshPercentage = serializedAsset.FindProperty("m_SmallMeshScreenPercentage");
+        SerializedProperty occlusion = serializedAsset.FindProperty(
+            "m_GPUResidentDrawerEnableOcclusionCullingInCameras");
+        Assert.NotNull(mode, "Mobile URP asset is missing serialized m_GPUResidentDrawerMode.");
+        Assert.NotNull(smallMeshPercentage, "Mobile URP asset is missing serialized m_SmallMeshScreenPercentage.");
+        Assert.NotNull(occlusion, "Mobile URP asset is missing serialized GPU Resident Drawer occlusion setting.");
+        Assert.AreEqual(1, mode.intValue, "Android/mobile must use GPU Resident Drawer InstancedDrawing.");
+        Assert.That(
+            smallMeshPercentage.floatValue,
+            Is.Zero.Within(0.001f),
+            "Initial acceptance must not add small-mesh culling before visual comparison.");
+        Assert.False(
+            occlusion.boolValue,
+            "Initial acceptance must retain frustum-only culling until device visual evidence approves occlusion.");
+    }
+
+    [Test]
+    public static void GraphicsSettingsRetainsBatchRendererGroupShaderVariants()
+    {
+        string path = Path.GetFullPath(Path.Combine(Application.dataPath, "../ProjectSettings/GraphicsSettings.asset"));
+        string settings = File.ReadAllText(path);
+        StringAssert.Contains(
+            "m_BrgStripping: 0",
+            settings,
+            "GPU Resident Drawer requires BatchRendererGroup shader stripping mode Keep All.");
+        StringAssert.Contains(
+            "m_InstancingStripping: 0",
+            settings,
+            "Standard instancing variants must remain available for renderers outside GPU Resident Drawer.");
+    }
+
+    [Test]
+    public static void AndroidBuildDisablesStaticBatchingForGpuResidentDrawer()
+    {
+        Assert.False(
+            PlayerSettings.GetStaticBatchingForPlatform(BuildTarget.Android),
+            "Android static batching must remain disabled when GPU Resident Drawer owns instanced submission.");
     }
 
     [Test]

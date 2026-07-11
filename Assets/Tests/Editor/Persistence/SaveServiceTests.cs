@@ -81,4 +81,55 @@ public sealed class SaveServiceTests
         Assert.NotNull(migrated.profile.ownedUnitUnlocks);
         Assert.AreEqual(0, migrated.profile.ownedUnitUnlocks.Length);
     }
+
+    [Test]
+    public void LoadProfile_NewProfileStartsFirstLaunchAndRoundTripsHandoffState()
+    {
+        PlayerProfileSaveData fresh = _service.LoadProfile();
+        Assert.AreEqual(FirstLaunchProfileState.NotStarted, fresh.firstLaunchStatus);
+        Assert.AreEqual(FirstLaunchProfileState.CurrentSchemaVersion, fresh.profileSchemaVersion);
+
+        fresh.firstLaunchStatus = FirstLaunchProfileState.HandoffPending;
+        fresh.firstLaunchCommanderCallsign = "RAVEN";
+        fresh.firstLaunchCommanderDisplayName = "Alex Morgan";
+        fresh.firstLaunchCommanderPortraitIndex = 2;
+        fresh.firstLaunchGuidance = "Contextual";
+        fresh.firstLaunchLastCompletedStateId = "FL-P18";
+        fresh.firstLaunchWatched = true;
+        _service.SaveProfile(fresh);
+
+        PlayerProfileSaveData loaded = _service.LoadProfile();
+        Assert.AreEqual(FirstLaunchProfileState.HandoffPending, loaded.firstLaunchStatus);
+        Assert.AreEqual("RAVEN", loaded.firstLaunchCommanderCallsign);
+        Assert.AreEqual("Alex Morgan", loaded.firstLaunchCommanderDisplayName);
+        Assert.AreEqual(2, loaded.firstLaunchCommanderPortraitIndex);
+        Assert.AreEqual("Contextual", loaded.firstLaunchGuidance);
+        Assert.AreEqual("FL-P18", loaded.firstLaunchLastCompletedStateId);
+        Assert.IsTrue(loaded.firstLaunchWatched);
+    }
+
+    [Test]
+    public void LoadProfile_LegacyProfileIsTreatedAsEstablishedPlayer()
+    {
+        Directory.CreateDirectory(_saveRoot);
+        File.WriteAllText(_repository.GetPath(SaveService.ProfileFileName), "{\"commanderName\":\"Legacy\",\"commanderLevel\":9}");
+
+        PlayerProfileSaveData loaded = _service.LoadProfile();
+
+        Assert.AreEqual("Legacy", loaded.commanderName);
+        Assert.AreEqual(9, loaded.commanderLevel);
+        Assert.AreEqual(FirstLaunchProfileState.Completed, loaded.firstLaunchStatus);
+        Assert.IsTrue(loaded.firstLaunchWatched);
+    }
+
+    [Test]
+    public void LoadProfile_UnknownFirstLaunchStateFallsBackSafely()
+    {
+        Directory.CreateDirectory(_saveRoot);
+        File.WriteAllText(_repository.GetPath(SaveService.ProfileFileName), "{\"firstLaunchStatus\":\"Corrupt\"}");
+        PlayerProfileSaveData loaded = _service.LoadProfile();
+        Assert.AreEqual(FirstLaunchProfileState.NotStarted, loaded.firstLaunchStatus);
+        Assert.AreEqual("COMMANDER", loaded.firstLaunchCommanderCallsign);
+        Assert.AreEqual("Full", loaded.firstLaunchGuidance);
+    }
 }

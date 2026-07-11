@@ -51,6 +51,15 @@ Assets/**/.DS_Store
 # Addressables / generated caches
 Assets/AddressableAssetsData/*/*.bin*
 
+# Narrative review render intermediates (retain final review/evidence outputs only)
+Design/NarrativeVision/**/.build/
+
+# Narrative review videos stay local; commit still-image and report evidence instead
+Design/NarrativeVision/**/*.mp4
+Design/NarrativeVision/**/*.mov
+Design/NarrativeVision/**/*.mkv
+Design/NarrativeVision/**/*.webm
+
 # Transient Android build-scene optimization output
 Assets/Game/GeneratedAndroidBuild/
 Assets/Game/GeneratedAndroidBuild.meta

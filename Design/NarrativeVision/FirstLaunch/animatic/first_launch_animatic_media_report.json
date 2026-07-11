@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "expectedDurationSeconds": 108.5,
+  "normalVideoDurationSeconds": 108.500000,
+  "reducedMotionVideoDurationSeconds": 108.500000,
+  "gameplayHandoffSeconds": 88.5,
+  "stateCount": 25,
+  "normalVideo": "first_launch_animatic.mp4",
+  "reducedMotionVideo": "first_launch_animatic_reduced_motion.mp4"
+}

@@ -8,6 +8,18 @@ namespace Game.UI.Shell.Contracts.Ecs
     {
     }
 
+    public enum UiShellStartupDisposition : byte
+    {
+        Pending = 0,
+        FirstLaunch = 1,
+        EnterMenu = 2
+    }
+
+    public struct UiShellStartupDispositionComponent : IComponentData
+    {
+        public UiShellStartupDisposition Value;
+    }
+
     public struct UiShellStateComponent : IComponentData
     {
         public UiShellMode CurrentMode;

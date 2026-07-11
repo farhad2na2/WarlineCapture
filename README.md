@@ -80,6 +80,11 @@ Key project documents:
   Complete gameplay/story contract, readiness fallback, clue, consequence, and narrative handoff for all 25 missions.
 - [Campaign Narrative Sequence And Comic Catalog](Design/Campaign_Narrative_Sequence_And_Comic_Catalog.md)
   Complete 92-record Campaign inventory covering prologue, identity, every mission brief/comms/debrief, chapter transitions, Protocol Fragments, epilogue, consequence emphasis, and postscript.
+- [First-Launch Narrative Vision Slice Tracker](Design/NarrativeVision/FirstLaunch/IMPLEMENTATION_TRACKER.md)
+- [First-Launch Runtime Presentation Specification](Design/NarrativeVision/FirstLaunch/RUNTIME_DIALOGUE_IMPLEMENTATION_SPEC.md)
+  Step-by-step production and implementation tracker for reference art, style approval, storyboard, animatic, layered comic panels, reviewer mode, Skip-to-game, 3D handoff, and acceptance.
+- [First-Launch Gate 6 Final-Art Review](Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/GATE6_REVIEW_PACKAGE.md)
+  Current 22-panel review package, safe-area boards, storyboard comparisons, motion proof, provenance, and approval ledger.
 - `Design/Project_State_Source.json`
   Machine-readable project state. Update this before regenerating dashboard output.
 - `Design/Project_State_Dashboard.md`
@@ -115,6 +120,7 @@ Core design reading order starts in `Design/README.md`. The current high-priorit
 - `Design/Narrative_Presentation_And_Cutscene_Design.md`
 - `Design/Campaign_Mission_High_Level_Design_Catalog.md`
 - `Design/Campaign_Narrative_Sequence_And_Comic_Catalog.md`
+- `Design/NarrativeVision/FirstLaunch/IMPLEMENTATION_TRACKER.md`
 - `Design/Gameplay_North_Star_And_Content_Grammar.md`
 - `Design/3D_SingleMap_Gameplay_Direction.md`
 - `Design/LargeScale_Grid_Movement_Design.md`
@@ -180,6 +186,7 @@ The linked hierarchy below is the maintained documentation map. The older `Desig
     - [Narrative Presentation And Cutscene Design](Design/Narrative_Presentation_And_Cutscene_Design.md)
     - [Campaign Mission High-Level Design Catalog](Design/Campaign_Mission_High_Level_Design_Catalog.md)
     - [Campaign Narrative Sequence And Comic Catalog](Design/Campaign_Narrative_Sequence_And_Comic_Catalog.md)
+      - [First-Launch Narrative Vision Slice Tracker](Design/NarrativeVision/FirstLaunch/IMPLEMENTATION_TRACKER.md)
     - [3D Single-Map Gameplay Direction](Design/3D_SingleMap_Gameplay_Direction.md)
     - [Level And Mission Content Plan](Design/Level_And_Mission_Content_Plan.md)
       - [Chapter 1: First Response](Design/SagaChapters/Saga_Chapter01_First_Response.md)

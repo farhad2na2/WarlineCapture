@@ -8,8 +8,6 @@ namespace Game.UI.Runtime
     [DisallowMultipleComponent]
     public sealed class UIMotionFeedbackView : MonoBehaviour, IPointerClickHandler
     {
-        private const string ReducedMotionPlayerPrefKey = "Game.ReducedMotion";
-
         [SerializeField] private RectTransform motionTarget;
         [SerializeField] private Graphic flashGraphic;
         [SerializeField] private bool playAcceptedPulseOnClick = true;
@@ -386,7 +384,7 @@ namespace Game.UI.Runtime
 
         private static bool UseReducedMotion()
         {
-            return PlayerPrefs.GetInt(ReducedMotionPlayerPrefKey, 0) != 0;
+            return SettingsService.LoadReducedMotionPreference();
         }
 
         private static float Smooth01(float value)

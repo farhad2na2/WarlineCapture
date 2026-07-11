@@ -13,10 +13,14 @@
         "Game.UI.Shell.Ecs",
         "Game.UI.Runtime",
         "Game.Runtime",
+        "Unity.Addressables",
         "Unity.Collections",
         "Unity.Entities",
         "Unity.Mathematics",
-        "Unity.Transforms"
+        "Unity.ResourceManager",
+        "Unity.TextMeshPro",
+        "Unity.Transforms",
+        "UnityEngine.UI"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

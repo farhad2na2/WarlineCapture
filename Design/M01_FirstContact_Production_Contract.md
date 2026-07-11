@@ -4,6 +4,8 @@ Date: 2026-05-07
 
 2026-07-10 design dependency note: the tactical contract remains in force, but first-launch routing and narrative context now come from `First_Player_Experience_And_Story_Onboarding_Design.md`, `Campaign_Narrative_Bible.md`, and the amended Chapter 1 document. A fresh player reaches M01 from the cold open and diegetic identity flow, then sees the revoked-ARIA-credential debrief before the command-base menu. A later implementation-planning pass must reconcile this production contract in detail; this high-level pass does not add implementation steps.
 
+2026-07-11 implementation hold: M01 planning may be studied, but M01 implementation and player-facing integration must not begin until `Design/NarrativeVision/FirstLaunch/IMPLEMENTATION_TRACKER.md` Phase 10R passes Gate 9R. That gate requires the second live FirstLaunch review to accept readable UI scale, clean speech-frame rendering, HUD-consistent controls, explicit Sahrin/Dalia/Samira/ARIA introductions, and layered runtime music/ambience/conflict/vehicle audio. This hold is independent of the later M01-camera and Android-device Gate 10 evidence.
+
 ## Purpose
 
 This is the implementation handoff for the first production tactical slice:

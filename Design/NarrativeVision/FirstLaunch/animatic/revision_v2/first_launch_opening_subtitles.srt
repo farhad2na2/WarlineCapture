@@ -1,0 +1,67 @@
+1
+00:00:17,800 --> 00:00:24,880
+[RADIO] Multiple explosions across Old Market. Power is failing. The main clinic road is blocked.
+
+2
+00:00:25,800 --> 00:00:33,144
+[RADIO] Joint Response Command, respond. The district relay is down. The command channel is silent.
+
+3
+00:00:35,000 --> 00:00:43,112
+[DALIA] Major Dalia Rahim, J R C field command. Convoy survivors located. Extraction is underway.
+
+4
+00:00:47,000 --> 00:00:53,936
+[SAMIRA] Engineer Samira Haddad, civil infrastructure. Families and road crews are trapped beyond the clinic route.
+
+5
+00:00:59,000 --> 00:01:06,200
+[ARIA] I am ARIA, the Civic Relay assistant. Relay integrity is partial. Command channels are offline.
+
+6
+00:01:09,000 --> 00:01:14,760
+[ARIA] Emergency continuity protocol active. One valid command authority remains.
+
+7
+00:01:19,000 --> 00:01:24,904
+[ARIA] Old Market is the immediate priority. Armed movement is closing on the blocked clinic route.
+
+8
+00:01:29,000 --> 00:01:35,168
+[ARIA] Commander identity confirmed. I will advise. Authority remains yours.
+
+9
+00:01:37,000 --> 00:01:42,352
+[ARIA] This was coordinated. Power, roads, and command failed in sequence.
+
+10
+00:01:45,000 --> 00:01:50,592
+[DALIA] Two J R C squads are still responding. The nearest forward post is dark.
+
+11
+00:01:54,000 --> 00:01:58,704
+[SAMIRA] Civilians, clinic staff, and municipal crews remain behind the closure.
+
+12
+00:02:03,000 --> 00:02:08,136
+[ARIA] The pattern suggests coordination. Attribution is not yet reliable.
+
+13
+00:02:11,000 --> 00:02:17,888
+[COMMANDER] Connect the response. Protect the clinic corridor. Confirm targets before engagement.
+
+14
+00:02:19,000 --> 00:02:24,688
+[DALIA] Confirmed armed Ash Line patrol approaching Old Market. No heavy weapons observed.
+
+15
+00:02:29,000 --> 00:02:36,560
+[ARIA] Three armed hostiles confirmed. Civilians remain behind the barriers. Keep fire inside the marked corridor.
+
+16
+00:02:39,000 --> 00:02:43,776
+[DALIA] Field units are ready. Tactical control is yours, Commander.
+
+17
+00:02:47,000 --> 00:02:52,592
+[ARIA] Select the rifle squad. Move to cover. Secure the corridor.

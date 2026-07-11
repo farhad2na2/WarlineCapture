@@ -1,0 +1,24 @@
+clip_id	start_seconds	deadline_seconds	speaker	backend	voice	rate	volume	pitch	text
+p02_radio	7.7	12.0	RADIO	edge	en-US-EricNeural	+30%	+0%	-6Hz	Multiple failures. Power, roads, and command.
+p03_radio	12.2	16.0	RADIO	edge	en-US-EricNeural	+30%	+0%	-6Hz	Command channel is silent. Reports conflict.
+p04_dalia	16.2	19.2	DALIA	edge	en-US-MichelleNeural	+30%	+0%	-4Hz	Survivors found. Extracting.
+p04_samira	19.3	22.0	SAMIRA	edge	en-US-AvaNeural	+20%	+0%	+2Hz	Civilians cut off beyond the clinic road.
+p05_aria	22.2	26.5	ARIA	edge	en-US-AriaNeural	+20%	+0%	-2Hz	Civic Relay online. System integrity partial.
+p06_aria	26.7	31.5	ARIA	edge	en-US-AriaNeural	+20%	+0%	-2Hz	Emergency continuity search. One valid authority found.
+p07_aria	31.7	36.0	ARIA	edge	en-US-AriaNeural	+20%	+0%	-2Hz	Old Market. Civilian access is compromised.
+p08_aria	36.3	42.0	ARIA	edge	en-US-AriaNeural	+20%	+0%	-2Hz	Select a Commander identity, or continue with the default.
+p09_aria	42.2	46.5	ARIA	edge	en-US-AriaNeural	+20%	+0%	-2Hz	Commander confirmed. Give me one bounded order.
+guidance_aria	46.8	51.5	ARIA	edge	en-US-AriaNeural	+20%	+0%	-2Hz	Guidance can be changed later.
+p10_aria	51.7	55.0	ARIA	edge	en-US-AriaNeural	+20%	+0%	-2Hz	Power, roads, and command links are failing.
+p11_dalia	55.2	59.5	DALIA	edge	en-US-MichelleNeural	+30%	+0%	-4Hz	Two J R C squads responding. Forward post dark.
+p12_samira	59.7	63.0	SAMIRA	edge	en-US-AvaNeural	+25%	+0%	+2Hz	Families and crews remain beyond the clinic.
+p13_aria	63.2	68.0	ARIA	edge	en-US-AriaNeural	+20%	+0%	-2Hz	Coordination is probable. Attribution remains uncertain.
+p14_commander	68.2	71.5	COMMANDER	edge	en-US-ChristopherNeural	+30%	+0%	-5Hz	Connect responders. Protect the corridor.
+p15_dalia	71.7	75.5	DALIA	edge	en-US-MichelleNeural	+30%	+0%	-4Hz	Confirmed armed patrol approaching Old Market.
+p16_aria	75.7	80.5	ARIA	edge	en-US-AriaNeural	+20%	+0%	-2Hz	Three hostiles confirmed. Civilians remain behind the barrier.
+p17_dalia	80.7	84.5	DALIA	edge	en-US-MichelleNeural	+30%	+0%	-4Hz	Field units are ready. Tactical control is yours.
+p18_aria	84.7	88.5	ARIA	edge	en-US-AriaNeural	+20%	+0%	-2Hz	Move to cover. Secure the corridor.
+p19_samira	90.7	94.5	SAMIRA	edge	en-US-AvaNeural	+20%	+0%	+2Hz	The route is open. Responders are moving.
+p20_aria	94.7	99.5	ARIA	edge	en-US-AriaNeural	+20%	+0%	-2Hz	Orders share a timing pattern. Credential trace incomplete.
+p21_dalia	99.7	103.5	DALIA	edge	en-US-MichelleNeural	+30%	+0%	-4Hz	A second cell is moving toward the abandoned post.
+p22_aria	103.7	108.5	ARIA	edge	en-US-AriaNeural	+20%	+0%	-2Hz	District coordination restored. Awaiting your next command.

@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "panelCount": 22,
+  "panelIdRange": "FL-P01..FL-P22",
+  "sourceSheetSizes": ["1672x941", "1672x941", "1672x941"],
+  "normalizedFrameSize": "640x360",
+  "contactSheetSize": "3000x1296",
+  "safeAreaLegend": {"cyan": "centered story-safe area", "yellow": "skip control reserve", "dark": "subtitle reserve"}
+}

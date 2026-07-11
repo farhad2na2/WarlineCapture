@@ -20,11 +20,18 @@ namespace Game.UI.Runtime
         private const string HighContrastKey = Prefix + "Accessibility.HighContrastUi";
         private const string LargeTextKey = Prefix + "Accessibility.LargeText";
         private const string ColorblindModeKey = Prefix + "Accessibility.ColorblindMode";
+        private const string ReducedMotionKey = Prefix + "Accessibility.ReducedMotion";
+        private const string LegacyReducedMotionKey = "Game.ReducedMotion";
         private const string LanguageKey = Prefix + "Localization.Language";
         private const string AssistanceLevelKey = Prefix + "Assistant.AssistanceLevel";
         private const string AssistantNarrationModeKey = Prefix + "Assistant.NarrationMode";
         private const string AssistantAllowTakeoverKey = Prefix + "Assistant.AllowTakeover";
         private const string AssistantSubtitlesEnabledKey = Prefix + "Assistant.SubtitlesEnabled";
+        private const string NarrativeSubtitlesEnabledKey = Prefix + "Narrative.SubtitlesEnabled";
+        private const string NarrativeSubtitleSizeKey = Prefix + "Narrative.SubtitleSize";
+        private const string NarrativeBackgroundOpacityKey = Prefix + "Narrative.BackgroundOpacity";
+        private const string NarrativeInstantTextKey = Prefix + "Narrative.InstantText";
+        private const string NarrativeAutoAdvanceKey = Prefix + "Narrative.AutoAdvance";
 
         public static event System.Action<UISettingsModel> RuntimeApplied;
 
@@ -68,7 +75,8 @@ namespace Game.UI.Runtime
                 {
                     HighContrastUi = false,
                     LargeText = false,
-                    ColorblindMode = UIColorblindMode.Off
+                    ColorblindMode = UIColorblindMode.Off,
+                    ReducedMotion = false
                 },
                 Localization = new LocalizationSettingsModel
                 {
@@ -80,6 +88,14 @@ namespace Game.UI.Runtime
                     NarrationMode = UIAssistantNarrationMode.Important,
                     AllowTakeover = true,
                     SubtitlesEnabled = true
+                },
+                Narrative = new NarrativeSettingsModel
+                {
+                    SubtitlesEnabled = true,
+                    SubtitleSize = UISubtitleSize.Standard,
+                    BackgroundOpacity = UISubtitleBackgroundOpacity.SeventyFivePercent,
+                    InstantText = false,
+                    AutoAdvance = true
                 }
             };
         }
@@ -124,7 +140,8 @@ namespace Game.UI.Runtime
                 {
                     HighContrastUi = PlayerPrefs.GetInt(HighContrastKey, defaults.Accessibility.HighContrastUi ? 1 : 0) == 1,
                     LargeText = PlayerPrefs.GetInt(LargeTextKey, defaults.Accessibility.LargeText ? 1 : 0) == 1,
-                    ColorblindMode = GetEnum(ColorblindModeKey, defaults.Accessibility.ColorblindMode)
+                    ColorblindMode = GetEnum(ColorblindModeKey, defaults.Accessibility.ColorblindMode),
+                    ReducedMotion = LoadReducedMotionPreference(defaults.Accessibility.ReducedMotion)
                 },
                 Localization = new LocalizationSettingsModel
                 {
@@ -136,6 +153,14 @@ namespace Game.UI.Runtime
                     NarrationMode = GetEnum(AssistantNarrationModeKey, defaults.Assistant.NarrationMode),
                     AllowTakeover = PlayerPrefs.GetInt(AssistantAllowTakeoverKey, defaults.Assistant.AllowTakeover ? 1 : 0) == 1,
                     SubtitlesEnabled = PlayerPrefs.GetInt(AssistantSubtitlesEnabledKey, defaults.Assistant.SubtitlesEnabled ? 1 : 0) == 1
+                },
+                Narrative = new NarrativeSettingsModel
+                {
+                    SubtitlesEnabled = GetBool(NarrativeSubtitlesEnabledKey, defaults.Narrative.SubtitlesEnabled),
+                    SubtitleSize = GetEnum(NarrativeSubtitleSizeKey, defaults.Narrative.SubtitleSize),
+                    BackgroundOpacity = GetEnum(NarrativeBackgroundOpacityKey, defaults.Narrative.BackgroundOpacity),
+                    InstantText = GetBool(NarrativeInstantTextKey, defaults.Narrative.InstantText),
+                    AutoAdvance = GetBool(NarrativeAutoAdvanceKey, defaults.Narrative.AutoAdvance)
                 }
             };
         }
@@ -164,11 +189,19 @@ namespace Game.UI.Runtime
             PlayerPrefs.SetInt(HighContrastKey, model.Accessibility.HighContrastUi ? 1 : 0);
             PlayerPrefs.SetInt(LargeTextKey, model.Accessibility.LargeText ? 1 : 0);
             PlayerPrefs.SetInt(ColorblindModeKey, (int)model.Accessibility.ColorblindMode);
+            int reducedMotion = model.Accessibility.ReducedMotion ? 1 : 0;
+            PlayerPrefs.SetInt(ReducedMotionKey, reducedMotion);
+            PlayerPrefs.SetInt(LegacyReducedMotionKey, reducedMotion);
             PlayerPrefs.SetInt(LanguageKey, (int)model.Localization.Language);
             PlayerPrefs.SetInt(AssistanceLevelKey, (int)model.Assistant.AssistanceLevel);
             PlayerPrefs.SetInt(AssistantNarrationModeKey, (int)model.Assistant.NarrationMode);
             PlayerPrefs.SetInt(AssistantAllowTakeoverKey, model.Assistant.AllowTakeover ? 1 : 0);
             PlayerPrefs.SetInt(AssistantSubtitlesEnabledKey, model.Assistant.SubtitlesEnabled ? 1 : 0);
+            PlayerPrefs.SetInt(NarrativeSubtitlesEnabledKey, model.Narrative.SubtitlesEnabled ? 1 : 0);
+            PlayerPrefs.SetInt(NarrativeSubtitleSizeKey, (int)model.Narrative.SubtitleSize);
+            PlayerPrefs.SetInt(NarrativeBackgroundOpacityKey, (int)model.Narrative.BackgroundOpacity);
+            PlayerPrefs.SetInt(NarrativeInstantTextKey, model.Narrative.InstantText ? 1 : 0);
+            PlayerPrefs.SetInt(NarrativeAutoAdvanceKey, model.Narrative.AutoAdvance ? 1 : 0);
             PlayerPrefs.Save();
         }
 
@@ -222,6 +255,11 @@ namespace Game.UI.Runtime
 
         private static bool IsAndroidRuntime => Application.platform == RuntimePlatform.Android;
 
+        internal static bool LoadReducedMotionPreference()
+        {
+            return LoadReducedMotionPreference(Defaults.Accessibility.ReducedMotion);
+        }
+
         private static int ResolveUnityQualityIndex(UIGraphicsQuality quality)
         {
             if (QualitySettings.names.Length == 0)
@@ -255,6 +293,20 @@ namespace Game.UI.Runtime
         private static bool GetBool(string key, bool fallback)
         {
             return PlayerPrefs.GetInt(key, fallback ? 1 : 0) != 0;
+        }
+
+        private static bool LoadReducedMotionPreference(bool fallback)
+        {
+            if (PlayerPrefs.HasKey(ReducedMotionKey))
+                return GetBool(ReducedMotionKey, fallback);
+
+            if (!PlayerPrefs.HasKey(LegacyReducedMotionKey))
+                return fallback;
+
+            bool reducedMotion = GetBool(LegacyReducedMotionKey, fallback);
+            PlayerPrefs.SetInt(ReducedMotionKey, reducedMotion ? 1 : 0);
+            PlayerPrefs.Save();
+            return reducedMotion;
         }
     }
 }

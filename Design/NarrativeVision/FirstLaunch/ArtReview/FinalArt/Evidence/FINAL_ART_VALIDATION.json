@@ -1,0 +1,925 @@
+{
+  "schemaVersion": 1,
+  "gate": "Gate 6",
+  "status": "pass",
+  "workspace": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt",
+  "expectedPanelCount": 22,
+  "requirements": {
+    "sourceMasterDimensions": "1672x941",
+    "sourceMasterAspect": "16:9",
+    "previewDimensions": {
+      "16x9": "1920x1080",
+      "20x9": "2400x1080"
+    },
+    "acceptedSourceNaming": "FL-P##_FinalCandidate_R#.png; FL-P08_BackgroundCandidate_R#.png is also accepted",
+    "pngIntegrity": "single-frame PNG fully decodable by ImageMagick",
+    "runtimeAssetFilesAllowed": false
+  },
+  "panels": [
+    {
+      "panelId": "FL-P01",
+      "sourceMasters": [
+        {
+          "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P01_FinalCandidate_R1.png",
+          "candidateType": "FinalCandidate",
+          "revision": 1,
+          "dimensions": "1672x941",
+          "expectedDimensions": "1672x941",
+          "dimensionsValid": true,
+          "aspectValid": true,
+          "pngIntegrityValid": true
+        }
+      ],
+      "previews": {
+        "16x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P01_16x9_R1.png",
+            "aspect": "16x9",
+            "revision": 1,
+            "dimensions": "1920x1080",
+            "expectedDimensions": "1920x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ],
+        "20x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P01_20x9_R1.png",
+            "aspect": "20x9",
+            "revision": 1,
+            "dimensions": "2400x1080",
+            "expectedDimensions": "2400x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ]
+      }
+    },
+    {
+      "panelId": "FL-P02",
+      "sourceMasters": [
+        {
+          "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P02_FinalCandidate_R1.png",
+          "candidateType": "FinalCandidate",
+          "revision": 1,
+          "dimensions": "1672x941",
+          "expectedDimensions": "1672x941",
+          "dimensionsValid": true,
+          "aspectValid": true,
+          "pngIntegrityValid": true
+        }
+      ],
+      "previews": {
+        "16x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P02_16x9_R1.png",
+            "aspect": "16x9",
+            "revision": 1,
+            "dimensions": "1920x1080",
+            "expectedDimensions": "1920x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ],
+        "20x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P02_20x9_R1.png",
+            "aspect": "20x9",
+            "revision": 1,
+            "dimensions": "2400x1080",
+            "expectedDimensions": "2400x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ]
+      }
+    },
+    {
+      "panelId": "FL-P03",
+      "sourceMasters": [
+        {
+          "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P03_FinalCandidate_R1.png",
+          "candidateType": "FinalCandidate",
+          "revision": 1,
+          "dimensions": "1672x941",
+          "expectedDimensions": "1672x941",
+          "dimensionsValid": true,
+          "aspectValid": true,
+          "pngIntegrityValid": true
+        }
+      ],
+      "previews": {
+        "16x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P03_16x9_R1.png",
+            "aspect": "16x9",
+            "revision": 1,
+            "dimensions": "1920x1080",
+            "expectedDimensions": "1920x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ],
+        "20x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P03_20x9_R1.png",
+            "aspect": "20x9",
+            "revision": 1,
+            "dimensions": "2400x1080",
+            "expectedDimensions": "2400x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ]
+      }
+    },
+    {
+      "panelId": "FL-P04",
+      "sourceMasters": [
+        {
+          "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P04_FinalCandidate_R1.png",
+          "candidateType": "FinalCandidate",
+          "revision": 1,
+          "dimensions": "1672x941",
+          "expectedDimensions": "1672x941",
+          "dimensionsValid": true,
+          "aspectValid": true,
+          "pngIntegrityValid": true
+        }
+      ],
+      "previews": {
+        "16x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P04_16x9_R1.png",
+            "aspect": "16x9",
+            "revision": 1,
+            "dimensions": "1920x1080",
+            "expectedDimensions": "1920x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ],
+        "20x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P04_20x9_R1.png",
+            "aspect": "20x9",
+            "revision": 1,
+            "dimensions": "2400x1080",
+            "expectedDimensions": "2400x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ]
+      }
+    },
+    {
+      "panelId": "FL-P05",
+      "sourceMasters": [
+        {
+          "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P05_FinalCandidate_R1.png",
+          "candidateType": "FinalCandidate",
+          "revision": 1,
+          "dimensions": "1672x941",
+          "expectedDimensions": "1672x941",
+          "dimensionsValid": true,
+          "aspectValid": true,
+          "pngIntegrityValid": true
+        }
+      ],
+      "previews": {
+        "16x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P05_16x9_R1.png",
+            "aspect": "16x9",
+            "revision": 1,
+            "dimensions": "1920x1080",
+            "expectedDimensions": "1920x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ],
+        "20x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P05_20x9_R1.png",
+            "aspect": "20x9",
+            "revision": 1,
+            "dimensions": "2400x1080",
+            "expectedDimensions": "2400x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ]
+      }
+    },
+    {
+      "panelId": "FL-P06",
+      "sourceMasters": [
+        {
+          "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P06_FinalCandidate_R1.png",
+          "candidateType": "FinalCandidate",
+          "revision": 1,
+          "dimensions": "1672x941",
+          "expectedDimensions": "1672x941",
+          "dimensionsValid": true,
+          "aspectValid": true,
+          "pngIntegrityValid": true
+        }
+      ],
+      "previews": {
+        "16x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P06_16x9_R1.png",
+            "aspect": "16x9",
+            "revision": 1,
+            "dimensions": "1920x1080",
+            "expectedDimensions": "1920x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ],
+        "20x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P06_20x9_R1.png",
+            "aspect": "20x9",
+            "revision": 1,
+            "dimensions": "2400x1080",
+            "expectedDimensions": "2400x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ]
+      }
+    },
+    {
+      "panelId": "FL-P07",
+      "sourceMasters": [
+        {
+          "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P07_FinalCandidate_R1.png",
+          "candidateType": "FinalCandidate",
+          "revision": 1,
+          "dimensions": "1672x941",
+          "expectedDimensions": "1672x941",
+          "dimensionsValid": true,
+          "aspectValid": true,
+          "pngIntegrityValid": true
+        }
+      ],
+      "previews": {
+        "16x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P07_16x9_R1.png",
+            "aspect": "16x9",
+            "revision": 1,
+            "dimensions": "1920x1080",
+            "expectedDimensions": "1920x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ],
+        "20x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P07_20x9_R1.png",
+            "aspect": "20x9",
+            "revision": 1,
+            "dimensions": "2400x1080",
+            "expectedDimensions": "2400x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ]
+      }
+    },
+    {
+      "panelId": "FL-P08",
+      "sourceMasters": [
+        {
+          "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P08_BackgroundCandidate_R1.png",
+          "candidateType": "BackgroundCandidate",
+          "revision": 1,
+          "dimensions": "1672x941",
+          "expectedDimensions": "1672x941",
+          "dimensionsValid": true,
+          "aspectValid": true,
+          "pngIntegrityValid": true
+        }
+      ],
+      "previews": {
+        "16x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P08_16x9_R1.png",
+            "aspect": "16x9",
+            "revision": 1,
+            "dimensions": "1920x1080",
+            "expectedDimensions": "1920x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ],
+        "20x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P08_20x9_R1.png",
+            "aspect": "20x9",
+            "revision": 1,
+            "dimensions": "2400x1080",
+            "expectedDimensions": "2400x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ]
+      }
+    },
+    {
+      "panelId": "FL-P09",
+      "sourceMasters": [
+        {
+          "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P09_FinalCandidate_R1.png",
+          "candidateType": "FinalCandidate",
+          "revision": 1,
+          "dimensions": "1672x941",
+          "expectedDimensions": "1672x941",
+          "dimensionsValid": true,
+          "aspectValid": true,
+          "pngIntegrityValid": true
+        }
+      ],
+      "previews": {
+        "16x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P09_16x9_R1.png",
+            "aspect": "16x9",
+            "revision": 1,
+            "dimensions": "1920x1080",
+            "expectedDimensions": "1920x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ],
+        "20x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P09_20x9_R1.png",
+            "aspect": "20x9",
+            "revision": 1,
+            "dimensions": "2400x1080",
+            "expectedDimensions": "2400x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ]
+      }
+    },
+    {
+      "panelId": "FL-P10",
+      "sourceMasters": [
+        {
+          "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P10_FinalCandidate_R1.png",
+          "candidateType": "FinalCandidate",
+          "revision": 1,
+          "dimensions": "1672x941",
+          "expectedDimensions": "1672x941",
+          "dimensionsValid": true,
+          "aspectValid": true,
+          "pngIntegrityValid": true
+        }
+      ],
+      "previews": {
+        "16x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P10_16x9_R1.png",
+            "aspect": "16x9",
+            "revision": 1,
+            "dimensions": "1920x1080",
+            "expectedDimensions": "1920x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ],
+        "20x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P10_20x9_R1.png",
+            "aspect": "20x9",
+            "revision": 1,
+            "dimensions": "2400x1080",
+            "expectedDimensions": "2400x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ]
+      }
+    },
+    {
+      "panelId": "FL-P11",
+      "sourceMasters": [
+        {
+          "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P11_FinalCandidate_R1.png",
+          "candidateType": "FinalCandidate",
+          "revision": 1,
+          "dimensions": "1672x941",
+          "expectedDimensions": "1672x941",
+          "dimensionsValid": true,
+          "aspectValid": true,
+          "pngIntegrityValid": true
+        }
+      ],
+      "previews": {
+        "16x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P11_16x9_R1.png",
+            "aspect": "16x9",
+            "revision": 1,
+            "dimensions": "1920x1080",
+            "expectedDimensions": "1920x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ],
+        "20x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P11_20x9_R1.png",
+            "aspect": "20x9",
+            "revision": 1,
+            "dimensions": "2400x1080",
+            "expectedDimensions": "2400x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ]
+      }
+    },
+    {
+      "panelId": "FL-P12",
+      "sourceMasters": [
+        {
+          "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P12_FinalCandidate_R2.png",
+          "candidateType": "FinalCandidate",
+          "revision": 2,
+          "dimensions": "1672x941",
+          "expectedDimensions": "1672x941",
+          "dimensionsValid": true,
+          "aspectValid": true,
+          "pngIntegrityValid": true
+        }
+      ],
+      "previews": {
+        "16x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P12_16x9_R2.png",
+            "aspect": "16x9",
+            "revision": 2,
+            "dimensions": "1920x1080",
+            "expectedDimensions": "1920x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ],
+        "20x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P12_20x9_R2.png",
+            "aspect": "20x9",
+            "revision": 2,
+            "dimensions": "2400x1080",
+            "expectedDimensions": "2400x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ]
+      }
+    },
+    {
+      "panelId": "FL-P13",
+      "sourceMasters": [
+        {
+          "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P13_FinalCandidate_R1.png",
+          "candidateType": "FinalCandidate",
+          "revision": 1,
+          "dimensions": "1672x941",
+          "expectedDimensions": "1672x941",
+          "dimensionsValid": true,
+          "aspectValid": true,
+          "pngIntegrityValid": true
+        }
+      ],
+      "previews": {
+        "16x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P13_16x9_R1.png",
+            "aspect": "16x9",
+            "revision": 1,
+            "dimensions": "1920x1080",
+            "expectedDimensions": "1920x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ],
+        "20x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P13_20x9_R1.png",
+            "aspect": "20x9",
+            "revision": 1,
+            "dimensions": "2400x1080",
+            "expectedDimensions": "2400x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ]
+      }
+    },
+    {
+      "panelId": "FL-P14",
+      "sourceMasters": [
+        {
+          "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P14_FinalCandidate_R1.png",
+          "candidateType": "FinalCandidate",
+          "revision": 1,
+          "dimensions": "1672x941",
+          "expectedDimensions": "1672x941",
+          "dimensionsValid": true,
+          "aspectValid": true,
+          "pngIntegrityValid": true
+        }
+      ],
+      "previews": {
+        "16x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P14_16x9_R1.png",
+            "aspect": "16x9",
+            "revision": 1,
+            "dimensions": "1920x1080",
+            "expectedDimensions": "1920x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ],
+        "20x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P14_20x9_R1.png",
+            "aspect": "20x9",
+            "revision": 1,
+            "dimensions": "2400x1080",
+            "expectedDimensions": "2400x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ]
+      }
+    },
+    {
+      "panelId": "FL-P15",
+      "sourceMasters": [
+        {
+          "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P15_FinalCandidate_R1.png",
+          "candidateType": "FinalCandidate",
+          "revision": 1,
+          "dimensions": "1672x941",
+          "expectedDimensions": "1672x941",
+          "dimensionsValid": true,
+          "aspectValid": true,
+          "pngIntegrityValid": true
+        }
+      ],
+      "previews": {
+        "16x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P15_16x9_R1.png",
+            "aspect": "16x9",
+            "revision": 1,
+            "dimensions": "1920x1080",
+            "expectedDimensions": "1920x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ],
+        "20x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P15_20x9_R1.png",
+            "aspect": "20x9",
+            "revision": 1,
+            "dimensions": "2400x1080",
+            "expectedDimensions": "2400x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ]
+      }
+    },
+    {
+      "panelId": "FL-P16",
+      "sourceMasters": [
+        {
+          "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P16_FinalCandidate_R2.png",
+          "candidateType": "FinalCandidate",
+          "revision": 2,
+          "dimensions": "1672x941",
+          "expectedDimensions": "1672x941",
+          "dimensionsValid": true,
+          "aspectValid": true,
+          "pngIntegrityValid": true
+        }
+      ],
+      "previews": {
+        "16x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P16_16x9_R2.png",
+            "aspect": "16x9",
+            "revision": 2,
+            "dimensions": "1920x1080",
+            "expectedDimensions": "1920x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ],
+        "20x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P16_20x9_R2.png",
+            "aspect": "20x9",
+            "revision": 2,
+            "dimensions": "2400x1080",
+            "expectedDimensions": "2400x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ]
+      }
+    },
+    {
+      "panelId": "FL-P17",
+      "sourceMasters": [
+        {
+          "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P17_FinalCandidate_R1.png",
+          "candidateType": "FinalCandidate",
+          "revision": 1,
+          "dimensions": "1672x941",
+          "expectedDimensions": "1672x941",
+          "dimensionsValid": true,
+          "aspectValid": true,
+          "pngIntegrityValid": true
+        }
+      ],
+      "previews": {
+        "16x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P17_16x9_R1.png",
+            "aspect": "16x9",
+            "revision": 1,
+            "dimensions": "1920x1080",
+            "expectedDimensions": "1920x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ],
+        "20x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P17_20x9_R1.png",
+            "aspect": "20x9",
+            "revision": 1,
+            "dimensions": "2400x1080",
+            "expectedDimensions": "2400x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ]
+      }
+    },
+    {
+      "panelId": "FL-P18",
+      "sourceMasters": [
+        {
+          "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P18_FinalCandidate_R1.png",
+          "candidateType": "FinalCandidate",
+          "revision": 1,
+          "dimensions": "1672x941",
+          "expectedDimensions": "1672x941",
+          "dimensionsValid": true,
+          "aspectValid": true,
+          "pngIntegrityValid": true
+        }
+      ],
+      "previews": {
+        "16x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P18_16x9_R1.png",
+            "aspect": "16x9",
+            "revision": 1,
+            "dimensions": "1920x1080",
+            "expectedDimensions": "1920x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ],
+        "20x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P18_20x9_R1.png",
+            "aspect": "20x9",
+            "revision": 1,
+            "dimensions": "2400x1080",
+            "expectedDimensions": "2400x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ]
+      }
+    },
+    {
+      "panelId": "FL-P19",
+      "sourceMasters": [
+        {
+          "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P19_FinalCandidate_R2.png",
+          "candidateType": "FinalCandidate",
+          "revision": 2,
+          "dimensions": "1672x941",
+          "expectedDimensions": "1672x941",
+          "dimensionsValid": true,
+          "aspectValid": true,
+          "pngIntegrityValid": true
+        }
+      ],
+      "previews": {
+        "16x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P19_16x9_R2.png",
+            "aspect": "16x9",
+            "revision": 2,
+            "dimensions": "1920x1080",
+            "expectedDimensions": "1920x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ],
+        "20x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P19_20x9_R2.png",
+            "aspect": "20x9",
+            "revision": 2,
+            "dimensions": "2400x1080",
+            "expectedDimensions": "2400x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ]
+      }
+    },
+    {
+      "panelId": "FL-P20",
+      "sourceMasters": [
+        {
+          "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P20_FinalCandidate_R1.png",
+          "candidateType": "FinalCandidate",
+          "revision": 1,
+          "dimensions": "1672x941",
+          "expectedDimensions": "1672x941",
+          "dimensionsValid": true,
+          "aspectValid": true,
+          "pngIntegrityValid": true
+        }
+      ],
+      "previews": {
+        "16x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P20_16x9_R1.png",
+            "aspect": "16x9",
+            "revision": 1,
+            "dimensions": "1920x1080",
+            "expectedDimensions": "1920x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ],
+        "20x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P20_20x9_R1.png",
+            "aspect": "20x9",
+            "revision": 1,
+            "dimensions": "2400x1080",
+            "expectedDimensions": "2400x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ]
+      }
+    },
+    {
+      "panelId": "FL-P21",
+      "sourceMasters": [
+        {
+          "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P21_FinalCandidate_R1.png",
+          "candidateType": "FinalCandidate",
+          "revision": 1,
+          "dimensions": "1672x941",
+          "expectedDimensions": "1672x941",
+          "dimensionsValid": true,
+          "aspectValid": true,
+          "pngIntegrityValid": true
+        }
+      ],
+      "previews": {
+        "16x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P21_16x9_R1.png",
+            "aspect": "16x9",
+            "revision": 1,
+            "dimensions": "1920x1080",
+            "expectedDimensions": "1920x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ],
+        "20x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P21_20x9_R1.png",
+            "aspect": "20x9",
+            "revision": 1,
+            "dimensions": "2400x1080",
+            "expectedDimensions": "2400x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ]
+      }
+    },
+    {
+      "panelId": "FL-P22",
+      "sourceMasters": [
+        {
+          "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/SourceMasters/FL-P22_FinalCandidate_R1.png",
+          "candidateType": "FinalCandidate",
+          "revision": 1,
+          "dimensions": "1672x941",
+          "expectedDimensions": "1672x941",
+          "dimensionsValid": true,
+          "aspectValid": true,
+          "pngIntegrityValid": true
+        }
+      ],
+      "previews": {
+        "16x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P22_16x9_R1.png",
+            "aspect": "16x9",
+            "revision": 1,
+            "dimensions": "1920x1080",
+            "expectedDimensions": "1920x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ],
+        "20x9": [
+          {
+            "file": "Design/NarrativeVision/FirstLaunch/ArtReview/FinalArt/Previews/FL-P22_20x9_R1.png",
+            "aspect": "20x9",
+            "revision": 1,
+            "dimensions": "2400x1080",
+            "expectedDimensions": "2400x1080",
+            "dimensionsValid": true,
+            "aspectValid": true,
+            "pngIntegrityValid": true
+          }
+        ]
+      }
+    }
+  ],
+  "assetLeaks": [],
+  "unexpectedFiles": [],
+  "errors": []
+}

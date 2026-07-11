@@ -1,0 +1,18 @@
+clip_id	start_seconds	deadline_seconds	speaker	backend	voice	rate	volume	pitch	text
+p02_radio	17.8	25.5	RADIO	edge	en-US-EricNeural	+15%	+0%	-6Hz	Multiple explosions across Old Market. Power is failing. The main clinic road is blocked.
+p03_radio	25.8	34.5	RADIO	edge	en-US-EricNeural	+15%	+0%	-6Hz	Joint Response Command, respond. The district relay is down. The command channel is silent.
+p04_dalia	35.0	46.5	DALIA	edge	en-US-MichelleNeural	+10%	+0%	-4Hz	Major Dalia Rahim, J R C field command. Convoy survivors located. Extraction is underway.
+p04_samira	47.0	58.5	SAMIRA	edge	en-US-AvaNeural	+5%	+0%	+2Hz	Engineer Samira Haddad, civil infrastructure. Families and road crews are trapped beyond the clinic route.
+p05_aria	59.0	68.5	ARIA	edge	en-US-AriaNeural	+20%	+0%	-2Hz	I am ARIA, the Civic Relay assistant. Relay integrity is partial. Command channels are offline.
+p06_aria	69.0	78.5	ARIA	edge	en-US-AriaNeural	+15%	+0%	-2Hz	Emergency continuity protocol active. One valid command authority remains.
+p07_aria	79.0	88.5	ARIA	edge	en-US-AriaNeural	+15%	+0%	-2Hz	Old Market is the immediate priority. Armed movement is closing on the blocked clinic route.
+p09_aria	89.0	96.5	ARIA	edge	en-US-AriaNeural	+15%	+0%	-2Hz	Commander identity confirmed. I will advise. Authority remains yours.
+p10_aria	97.0	104.5	ARIA	edge	en-US-AriaNeural	+15%	+0%	-2Hz	This was coordinated. Power, roads, and command failed in sequence.
+p11_dalia	105.0	113.5	DALIA	edge	en-US-MichelleNeural	+15%	+0%	-4Hz	Two J R C squads are still responding. The nearest forward post is dark.
+p12_samira	114.0	122.5	SAMIRA	edge	en-US-AvaNeural	+10%	+0%	+2Hz	Civilians, clinic staff, and municipal crews remain behind the closure.
+p13_aria	123.0	130.5	ARIA	edge	en-US-AriaNeural	+15%	+0%	-2Hz	The pattern suggests coordination. Attribution is not yet reliable.
+p14_commander	131.0	138.5	COMMANDER	edge	en-US-ChristopherNeural	+10%	+0%	-5Hz	Connect the response. Protect the clinic corridor. Confirm targets before engagement.
+p15_dalia	139.0	148.5	DALIA	edge	en-US-MichelleNeural	+15%	+0%	-4Hz	Confirmed armed Ash Line patrol approaching Old Market. No heavy weapons observed.
+p16_aria	149.0	158.5	ARIA	edge	en-US-AriaNeural	+20%	+0%	-2Hz	Three armed hostiles confirmed. Civilians remain behind the barriers. Keep fire inside the marked corridor.
+p17_dalia	159.0	166.5	DALIA	edge	en-US-MichelleNeural	+15%	+0%	-4Hz	Field units are ready. Tactical control is yours, Commander.
+p18_aria	167.0	176.5	ARIA	edge	en-US-AriaNeural	+15%	+0%	-2Hz	Select the rifle squad. Move to cover. Secure the corridor.

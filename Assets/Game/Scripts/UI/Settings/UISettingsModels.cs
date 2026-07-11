@@ -56,6 +56,24 @@ namespace Game.UI.Runtime
     }
 
     [Serializable]
+    public enum UISubtitleSize
+    {
+        Small = 0,
+        Standard = 1,
+        Large = 2,
+        ExtraLarge = 3
+    }
+
+    [Serializable]
+    public enum UISubtitleBackgroundOpacity
+    {
+        ZeroPercent = 0,
+        FiftyPercent = 1,
+        SeventyFivePercent = 2,
+        OneHundredPercent = 3
+    }
+
+    [Serializable]
     public struct AudioSettingsModel
     {
         public float MasterVolume;
@@ -93,6 +111,7 @@ namespace Game.UI.Runtime
         public bool HighContrastUi;
         public bool LargeText;
         public UIColorblindMode ColorblindMode;
+        public bool ReducedMotion;
     }
 
     [Serializable]
@@ -111,6 +130,16 @@ namespace Game.UI.Runtime
     }
 
     [Serializable]
+    public struct NarrativeSettingsModel
+    {
+        public bool SubtitlesEnabled;
+        public UISubtitleSize SubtitleSize;
+        public UISubtitleBackgroundOpacity BackgroundOpacity;
+        public bool InstantText;
+        public bool AutoAdvance;
+    }
+
+    [Serializable]
     public struct UISettingsModel
     {
         public AudioSettingsModel Audio;
@@ -120,5 +149,6 @@ namespace Game.UI.Runtime
         public AccessibilitySettingsModel Accessibility;
         public LocalizationSettingsModel Localization;
         public AssistantSettingsModel Assistant;
+        public NarrativeSettingsModel Narrative;
     }
 }

@@ -15,6 +15,7 @@
         "Game.UI.Runtime",
         "Game.Runtime",
         "Unity.Collections",
+        "Unity.Addressables",
         "Unity.Entities",
         "Unity.InputSystem",
         "Unity.Mathematics",

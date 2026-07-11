@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "assetStatus": "TEMP_INTERNAL_ONLY_DISTRIBUTION_RIGHTS_UNVERIFIED",
+  "provider": "Microsoft Edge neural voice",
+  "usage": "Offline imported AudioClip assets for internal development and review only",
+  "shippingApproved": false,
+  "runtimeNetworkTts": false,
+  "sourceRoot": "Design/NarrativeVision/FirstLaunch/animatic/revision_v2/audio/temp_voice",
+  "clips": [
+    { "clipId": "p02_radio", "voice": "en-US-EricNeural", "sha256": "851fbf2081f92f649bb05b9cda8072ab5427077e0419a4c66555ecf6aa8377d5", "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/p02_radio.wav" },
+    { "clipId": "p03_radio", "voice": "en-US-EricNeural", "sha256": "1e5489b85913bf2b6d90c16543b05604c5d7b94acfac99876a5cb58d4665741b", "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/p03_radio.wav" },
+    { "clipId": "p04_dalia", "voice": "en-US-MichelleNeural", "sha256": "fcb23ff847e750c8b1cbd27df04e30bca31e925207711e8ea7f1eb9e944aa9fc", "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/p04_dalia.wav" },
+    { "clipId": "p04_samira", "voice": "en-US-AvaNeural", "sha256": "b2243d730255768d1cc7b40b7bf9eb2c290a3ba7101ae4b0fc40a32621cca924", "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/p04_samira.wav" },
+    { "clipId": "p05_aria", "voice": "en-US-AriaNeural", "sha256": "7f1285da31ada886c5d42f94958d45e5371edf499bbc1a2114189cdd9bd436fd", "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/p05_aria.wav" },
+    { "clipId": "p06_aria", "voice": "en-US-AriaNeural", "sha256": "5f0a5154d3ddb05b411796910b48491b0f6aa135811ddce07282a8076438d6f7", "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/p06_aria.wav" },
+    { "clipId": "p07_aria", "voice": "en-US-AriaNeural", "sha256": "7bc154498d2cb6a0963b2cfc9f06c20d14038cf73065f91a8a92eefa4267d13c", "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/p07_aria.wav" },
+    { "clipId": "p09_aria", "voice": "en-US-AriaNeural", "sha256": "6e46e9efa8d1d92515659e6b22389111e8c2409114e089468c4e3a2a56808e8b", "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/p09_aria.wav" },
+    { "clipId": "p10_aria", "voice": "en-US-AriaNeural", "sha256": "72c082e757545ae879e5684384ef0d3027d7830cf509938e7ffa7be330873da0", "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/p10_aria.wav" },
+    { "clipId": "p11_dalia", "voice": "en-US-MichelleNeural", "sha256": "39fa2ac8e8a690fba3e8bd100793346e4e2b36ad40572e6764cf7fdb58b990e8", "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/p11_dalia.wav" },
+    { "clipId": "p12_samira", "voice": "en-US-AvaNeural", "sha256": "343fa624ea0e12ea5115ad9ed6cc37e065d64fdbe4c04ce5e3200ba85ec95ac0", "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/p12_samira.wav" },
+    { "clipId": "p13_aria", "voice": "en-US-AriaNeural", "sha256": "c5d0598775b64e83a4fe3ee420346b75096d0cd29f35aaf87e2c2859c21e5648", "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/p13_aria.wav" },
+    { "clipId": "p14_commander", "voice": "en-US-ChristopherNeural", "sha256": "30db0bb0fa59a6ec5d04f7c175afb299e2261db3eb83ad8939cbaeed1125251b", "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/p14_commander.wav" },
+    { "clipId": "p15_dalia", "voice": "en-US-MichelleNeural", "sha256": "89938c425af60ea161ac61ae170f85f902d87d70ef3f1e5df9eaab9b4e414c20", "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/p15_dalia.wav" },
+    { "clipId": "p16_aria", "voice": "en-US-AriaNeural", "sha256": "c07d75138f347cbf0e8904ebd4378c5216b5e4bf585eb1c11f74ed33131ff11c", "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/p16_aria.wav" },
+    { "clipId": "p17_dalia", "voice": "en-US-MichelleNeural", "sha256": "0400f0291ae1e65fc621b5c75113ede140e0804c5521ce80debd13d8d9e058db", "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/p17_dalia.wav" },
+    { "clipId": "p18_aria", "voice": "en-US-AriaNeural", "sha256": "6689b12cce3ea3de47fc9a0391e410759fff7968102a4b932b0edb2742557f40", "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/p18_aria.wav" }
+  ]
+}

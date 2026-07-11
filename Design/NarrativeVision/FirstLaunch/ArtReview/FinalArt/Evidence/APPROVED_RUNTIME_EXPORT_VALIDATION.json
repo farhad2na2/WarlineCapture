@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "status": "pass",
+  "gate": "Gate 6",
+  "approvedOn": "2026-07-11",
+  "panelCount": 22,
+  "runtimeTextureCount": 44,
+  "unityLayeredComposition": true,
+  "verifiedPanels": [
+    {
+      "panelId": "FL-P01",
+      "revision": "R1",
+      "valid": true
+    },
+    {
+      "panelId": "FL-P02",
+      "revision": "R1",
+      "valid": true
+    },
+    {
+      "panelId": "FL-P03",
+      "revision": "R1",
+      "valid": true
+    },
+    {
+      "panelId": "FL-P04",
+      "revision": "R1",
+      "valid": true
+    },
+    {
+      "panelId": "FL-P05",
+      "revision": "R1",
+      "valid": true
+    },
+    {
+      "panelId": "FL-P06",
+      "revision": "R1",
+      "valid": true
+    },
+    {
+      "panelId": "FL-P07",
+      "revision": "R1",
+      "valid": true
+    },
+    {
+      "panelId": "FL-P08",
+      "revision": "R1",
+      "valid": true
+    },
+    {
+      "panelId": "FL-P09",
+      "revision": "R1",
+      "valid": true
+    },
+    {
+      "panelId": "FL-P10",
+      "revision": "R1",
+      "valid": true
+    },
+    {
+      "panelId": "FL-P11",
+      "revision": "R1",
+      "valid": true
+    },
+    {
+      "panelId": "FL-P12",
+      "revision": "R2",
+      "valid": true
+    },
+    {
+      "panelId": "FL-P13",
+      "revision": "R1",
+      "valid": true
+    },
+    {
+      "panelId": "FL-P14",
+      "revision": "R1",
+      "valid": true
+    },
+    {
+      "panelId": "FL-P15",
+      "revision": "R1",
+      "valid": true
+    },
+    {
+      "panelId": "FL-P16",
+      "revision": "R2",
+      "valid": true
+    },
+    {
+      "panelId": "FL-P17",
+      "revision": "R1",
+      "valid": true
+    },
+    {
+      "panelId": "FL-P18",
+      "revision": "R1",
+      "valid": true
+    },
+    {
+      "panelId": "FL-P19",
+      "revision": "R2",
+      "valid": true
+    },
+    {
+      "panelId": "FL-P20",
+      "revision": "R1",
+      "valid": true
+    },
+    {
+      "panelId": "FL-P21",
+      "revision": "R1",
+      "valid": true
+    },
+    {
+      "panelId": "FL-P22",
+      "revision": "R1",
+      "valid": true
+    }
+  ],
+  "errors": []
+}

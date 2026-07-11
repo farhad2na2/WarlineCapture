@@ -12,4 +12,5 @@ EditorBuildSettings:
     path: Assets/Game/Scenes/Match.unity
     guid: cc4f48a57793d4597b4ffac2906c515e
   m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: d7d6cc765056046789e5068d65f9957e, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

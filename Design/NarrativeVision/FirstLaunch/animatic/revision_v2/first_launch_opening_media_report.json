@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 2,
+  "purpose": "reference-only",
+  "expectedDurationSeconds": 176.5,
+  "normalVideoDurationSeconds": 176.500000,
+  "reducedMotionVideoDurationSeconds": 176.500000,
+  "gameplayHandoffSeconds": 176.5,
+  "stateCount": 18,
+  "interactiveStatesExcludedFromVideo": true,
+  "normalVideo": "first_launch_opening_reference_v2.mp4",
+  "reducedMotionVideo": "first_launch_opening_reference_v2_reduced_motion.mp4"
+}

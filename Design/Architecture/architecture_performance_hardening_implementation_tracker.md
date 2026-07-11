@@ -251,17 +251,17 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `69 / 106` |
-| Checklist percent complete | `65.1%` |
+| Checklist complete | `73 / 106` |
+| Checklist percent complete | `68.9%` |
 | Checklist in progress | `11 / 106`: `APH-311`, `APH-501`, `APH-502`, `APH-507`, `APH-508`, `APH-509`, `APH-601`, `APH-609`, `APH-610`, `APH-705`, `APH-802` |
-| Complete plus active coverage | `80 / 106` (`75.5%`); this is visibility only, not accepted completion |
+| Complete plus active coverage | `84 / 106` (`79.2%`); this is visibility only, not accepted completion |
 | Current phase | Phase 3 Android device evidence, Phase 5 product budgets, Phase 6 map closeout, and bounded Phase 8 automation |
 | Current task | Complete map Read/Write proof and the Android visual soak, then close remaining FPS, memory, startup, package, and device gates |
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: steady-state Match GC `234,324 / 1,024` bytes; improved 13.0% from the APH-007 baseline without weakening the budget |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
-| Last verified commit | `c2d4158ef`; bounded Voice pilot, scheduled performance lane, animation-texture evidence, and the initial missing-reference gate are pushed to `main` |
-| Last update | 2026-07-11 - missing-reference and Menu-Match-Menu lifecycle gates pass cleanly; catalog split declined pending Android Voice-pilot evidence |
+| Last verified commit | `cdd1c9649`; missing-reference, listener authority, GPU-animation teardown, and Menu-Match-Menu lifecycle fixes are pushed to `main` |
+| Last update | 2026-07-11 - four critical gameplay PlayMode flows, the visual-evidence contract, and the Android Voice pilot pass |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -498,7 +498,10 @@ Known baseline:
 - [x] `APH-404` Change the Voice import profile pilot to `CompressedInMemory`, `preloadAudioData=false`, and `loadInBackground=true` for a representative ARIA subset.
   - Result: JSON-driven import profiles now define an explicit `VoicePilot` profile and an eight-clip ARIA allowlist spanning warnings, command instructions, command rejection, tactical feedback, and confirmation. The remaining Voice catalog retains the prior decompressed/preloaded policy until Android evidence accepts expansion.
   - Validation: importer application covered 234 catalog clips with exactly eight overrides; the bounded pilot contract passed `8/8`, and `AudioConfigContractTests.RunFocusedValidation` passed `14/14` in Unity.
-- [ ] `APH-405` Measure first-play latency, repeated-play latency, decoded memory, compressed memory, and audio glitches on Android for the pilot.
+- [x] `APH-405` Measure first-play latency, repeated-play latency, decoded memory, compressed memory, and audio glitches on Android for the pilot.
+  - Result: the explicit development-build probe discovered and passed exactly eight on-demand compressed Voice clips on Xiaomi 24090RA29G. Cold audible-start latency measured `16.361-33.396 ms` (`27.456 ms` average), repeated latency measured `16.264-33.724 ms` (`20.236 ms` average), and total loaded runtime clip memory was `157,184` bytes versus `2,103,058` compressed inventory bytes and a `3,734,052`-byte decoded estimate.
+  - Glitch evidence: primary AudioFlinger partial/empty underruns and delayed writes remained `0`; the existing device track-underrun counter remained `20` before and after. Probe summary passed `8/8` with no failed marker, fatal exception, or ANR. Subjective speaker/headphone quality remains owned by the later audible-smoke gate.
+  - Validation: probe contract `6/6`, Android profiler APK build passed with zero compiler errors, deterministic static-map rebake reused all 525 scenes, and evidence is recorded in `Design/AgentReports/2026-07-11_aph-405_android_voice_pilot.md`.
 - [ ] `APH-406` If the pilot passes, apply the Voice policy through the existing JSON-driven audio importer workflow and update contract tests. If it fails, record the failing devices/clips and use a bounded prewarm set instead of reverting to global preload.
 - [x] `APH-407` Evaluate splitting the persistent catalog into Core/Menu, Match, and Voice catalogs. Open a separate implementation slice only if importer changes do not meet the memory target.
   - Decision: do not open a catalog-split implementation now. Current evidence attributes `39.84 MiB` of the `43.34 MiB` loaded baseline to 163 Voice clips, while Core/Menu accounts for `0.81 MiB` and Match for `2.69 MiB`; the theoretical `42.53 MiB` Core/Menu-only reduction is not accepted because unload behavior is unproven.
@@ -634,13 +637,17 @@ Goal: prevent recurrence and cover behavior that source-scanning tests cannot pr
 - [x] `APH-805` Add a Menu -> Match -> Menu lifecycle PlayMode test covering serialized references, world creation, UI binding, and cleanup.
   - Result: the focused production-route PlayMode flow proves serialized references, persistent-world and single lifecycle-root ownership, HUD dependency binding, Match unload, UI removal, settings unsubscription, and helper cleanup. Listener authority now remains with Match until additive unload completes, and a project-owned teardown fence flushes pending GPU-animation structural changes before converted render entities are destroyed.
   - Validation: listener scene-binding tests pass `6/6`; teardown-fence tests pass `3/3`; the final lifecycle run passes `1/1` in `13.45 s` with zero duplicate-listener warnings and zero `MaterialAlphaSetup`/invalid-entity/ECB teardown exceptions.
-- [ ] `APH-806` Add deterministic PlayMode flows for selection/move/attack and building placement/production.
-- [ ] `APH-807` Add deterministic PlayMode flows for boarding/disembark and resource exchange.
+- [x] `APH-806` Add deterministic PlayMode flows for selection/move/attack and building placement/production.
+  - Validation: two production-gateway PlayMode flows pass `2/2`, covering committed rectangle selection, preserved focus, immediate move result/target, accepted attack result/engage target, valid placement commit, and exactly-once production queueing.
+- [x] `APH-807` Add deterministic PlayMode flows for boarding/disembark and resource exchange.
+  - Validation: two production-gateway PlayMode flows pass `2/2`, covering TB-001 boarding/disembark state transitions and export request reservation, settlement, credit award, and duplicate-settlement protection.
 - [x] `APH-808` Add a scene/prefab missing-reference gate for the two enabled build scenes and runtime UI content prefabs.
   - Result: a deterministic Unity 6-compatible validator scans both enabled build scenes and all six direct runtime UI content prefabs, including inactive objects, missing scripts, and broken object references. A precise asset repair restored the authoritative status-chip sprite, cleared 17 obsolete broken Menu route-prefab entries, and cleared two inactive legacy Menu sprites without unrelated prefab layout churn.
   - Validation: focused validator tests pass `11/11`; Editor and Editor-test assemblies compile with zero errors; the live gate improved from 25 findings to `[APH-808 MissingSerializedReferenceValidation] result=Passed buildScenes=2 runtimeUiContentPrefabs=6`.
 - [ ] `APH-809` Add required visual captures for graphics tiers, Day/Night, static map chunks, and mip streaming. A visual task cannot pass from logs alone.
-- [ ] `APH-810` When Unity MCP is connected, require agents to inspect affected scene/prefab hierarchy, console, Play Mode state, and screenshots through MCP. When unavailable, record the fallback runner and screenshots used.
+- [x] `APH-810` When Unity MCP is connected, require agents to inspect affected scene/prefab hierarchy, console, Play Mode state, and screenshots through MCP. When unavailable, record the fallback runner and screenshots used.
+  - Result: fail-closed JSON schema, validator, and report template require exactly one evidence path. MCP evidence must name hierarchy, console, Play Mode, and screenshot tools; fallback evidence must record the failed probe/reason, exact runner command, log path, pass marker, and screenshots, with optional on-disk artifact/marker verification.
+  - Validation: focused contract tests pass `12/12`; Python compilation, JSON schema parsing, CLI smoke, and whitespace checks pass.
 - [x] `APH-811` Add a tracked performance dashboard generated from JSON artifacts rather than manually copied metrics.
   - Result: deterministic Python tooling derives a JSON/Markdown dashboard from seven tracked architecture, build, content-residency, runtime-performance, and audio JSON artifacts. Missing, invalid, stale, current, and revision-unknown inputs remain explicit rather than silently accepted.
   - Validation: dedicated dashboard tests pass `6/6`, Python/JSON checks pass, every configured input is tracked, and consecutive generation hashes are byte-identical.

@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://warlinecapture.local/schemas/aph810-visual-evidence-v1.json",
+  "title": "APH-810 Visual Evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "taskId", "subject", "revision", "mcp", "mcpEvidence", "fallback", "conclusion"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "taskId": { "const": "APH-810" },
+    "subject": { "$ref": "#/$defs/nonEmptyString" },
+    "revision": { "$ref": "#/$defs/nonEmptyString" },
+    "conclusion": { "$ref": "#/$defs/nonEmptyString" },
+    "mcp": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "probe", "unavailableReason"],
+      "properties": {
+        "status": { "enum": ["connected", "unavailable"] },
+        "probe": { "$ref": "#/$defs/nonEmptyString" },
+        "unavailableReason": { "type": ["string", "null"] }
+      }
+    },
+    "mcpEvidence": { "oneOf": [{ "$ref": "#/$defs/mcpEvidence" }, { "type": "null" }] },
+    "fallback": { "oneOf": [{ "$ref": "#/$defs/fallback" }, { "type": "null" }] }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "mcp": { "properties": { "status": { "const": "connected" } } } } },
+      "then": {
+        "properties": {
+          "mcp": { "properties": { "unavailableReason": { "type": "null" } } },
+          "mcpEvidence": { "$ref": "#/$defs/mcpEvidence" },
+          "fallback": { "type": "null" }
+        }
+      },
+      "else": {
+        "properties": {
+          "mcp": { "properties": { "unavailableReason": { "$ref": "#/$defs/nonEmptyString" } } },
+          "mcpEvidence": { "type": "null" },
+          "fallback": { "$ref": "#/$defs/fallback" }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "nonEmptyString": { "type": "string", "minLength": 1, "pattern": ".*\\S.*" },
+    "mcpOperation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tool", "target", "result"],
+      "properties": {
+        "tool": { "$ref": "#/$defs/nonEmptyString" },
+        "target": { "$ref": "#/$defs/nonEmptyString" },
+        "result": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "mcpScreenshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tool", "path", "view", "description"],
+      "properties": {
+        "tool": { "$ref": "#/$defs/nonEmptyString" },
+        "path": { "$ref": "#/$defs/nonEmptyString" },
+        "view": { "$ref": "#/$defs/nonEmptyString" },
+        "description": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "fallbackScreenshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "view", "description"],
+      "properties": {
+        "path": { "$ref": "#/$defs/nonEmptyString" },
+        "view": { "$ref": "#/$defs/nonEmptyString" },
+        "description": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "mcpEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["hierarchy", "console", "playMode", "screenshots"],
+      "properties": {
+        "hierarchy": { "$ref": "#/$defs/mcpOperation" },
+        "console": { "$ref": "#/$defs/mcpOperation" },
+        "playMode": { "$ref": "#/$defs/mcpOperation" },
+        "screenshots": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/mcpScreenshot" } }
+      }
+    },
+    "fallback": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["runnerCommand", "logPath", "resultMarker", "screenshots"],
+      "properties": {
+        "runnerCommand": { "$ref": "#/$defs/nonEmptyString" },
+        "logPath": { "$ref": "#/$defs/nonEmptyString" },
+        "resultMarker": { "$ref": "#/$defs/nonEmptyString" },
+        "screenshots": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/fallbackScreenshot" } }
+      }
+    }
+  }
+}

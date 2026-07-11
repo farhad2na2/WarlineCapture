@@ -253,15 +253,15 @@ The program is complete only when all of the following are true:
 |---|---|
 | Checklist complete | `74 / 106` |
 | Checklist percent complete | `69.8%` |
-| Checklist in progress | `13 / 106`: `APH-311`, `APH-501`, `APH-502`, `APH-507`, `APH-508`, `APH-509`, `APH-601`, `APH-609`, `APH-610`, `APH-704`, `APH-705`, `APH-802`, `APH-803` |
-| Complete plus active coverage | `87 / 106` (`82.1%`); this is visibility only, not accepted completion |
+| Checklist in progress | `14 / 106`: `APH-311`, `APH-408`, `APH-501`, `APH-502`, `APH-507`, `APH-508`, `APH-509`, `APH-601`, `APH-609`, `APH-610`, `APH-704`, `APH-705`, `APH-802`, `APH-803` |
+| Complete plus active coverage | `88 / 106` (`83.0%`); this is visibility only, not accepted completion |
 | Current phase | Phase 3 Android device evidence, Phase 5 product budgets, Phase 6 map closeout, and bounded Phase 8 automation |
 | Current task | Complete map Read/Write proof and the Android visual soak, then close remaining FPS, memory, startup, package, and device gates |
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: steady-state Match GC `234,324 / 1,024` bytes; improved 13.0% from the APH-007 baseline without weakening the budget |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
 | Last verified commit | `cdd1c9649`; missing-reference, listener authority, GPU-animation teardown, and Menu-Match-Menu lifecycle fixes are pushed to `main` |
-| Last update | 2026-07-11 - four critical gameplay PlayMode flows, the visual-evidence contract, and the Android Voice pilot pass |
+| Last update | 2026-07-11 - category-wide Voice rollout passes Editor gates and objective Android playback-path smoke; human listening confirmation remains open |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -509,7 +509,9 @@ Known baseline:
 - [x] `APH-407` Evaluate splitting the persistent catalog into Core/Menu, Match, and Voice catalogs. Open a separate implementation slice only if importer changes do not meet the memory target.
   - Decision: do not open a catalog-split implementation now. Current evidence attributes `39.84 MiB` of the `43.34 MiB` loaded baseline to 163 Voice clips, while Core/Menu accounts for `0.81 MiB` and Match for `2.69 MiB`; the theoretical `42.53 MiB` Core/Menu-only reduction is not accepted because unload behavior is unproven.
   - Reopen condition: only if the measured full Voice importer policy still misses the accepted memory target. Evidence and deterministic tooling: `Design/AgentReports/2026-07-11_aph-407_audio_catalog_split_analysis.{json,md}` with focused tests `6/6`.
-- [ ] `APH-408` Run `AudioConfigContractTests.RunFocusedValidation`, `AudioPerformanceValidationTests.RunFocusedValidation`, audio scene binding tests, and an Android audible smoke pass.
+- [~] `APH-408` Run `AudioConfigContractTests.RunFocusedValidation`, `AudioPerformanceValidationTests.RunFocusedValidation`, audio scene binding tests, and an Android audible smoke pass.
+  - Active result: config/importer `14/14`, performance `4/4`, and scene/listener binding `6/6` pass. A fresh full-policy APK reached Match, remained alive for 90 seconds, produced non-zero AudioTrack output amplitude, emitted no listener/clip/crash/ANR error, and added zero primary mixer underruns or delayed writes.
+  - Remaining: record a human speaker/headphone listening confirmation for clarity, clipping, and perceived glitches. Objective evidence: `Design/AgentReports/2026-07-11_aph-408_full_voice_android_smoke.md`.
 
 ## Phase 5 - Texture, Animation, Build, and Memory Policy
 

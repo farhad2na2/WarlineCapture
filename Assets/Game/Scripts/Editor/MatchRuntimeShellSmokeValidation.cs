@@ -58,7 +58,9 @@ namespace Game.Editor
         private const double InitialBuildingPostAiObservationSeconds = 10d;
         private const double FuelReadinessObservationSeconds = 8d;
         private const double ResourceHaulerMovementObservationSeconds = 10d;
-        private const float ResourceHaulerMovementMinDistance = 0.35f;
+        private const double ResourceHaulerMovementMinObservationSeconds = 2d;
+        private const float ResourceHaulerMovementMinDistance = 4f;
+        private const int ResourceHaulerMovementMinGoalProgressCells = 3;
         private const int BaselineMetricsFrameTarget = 180;
         private const string AirLauncherConfigPath = "Assets/Game/Configs/Weapons/AirMissileLauncher_Air_Config.asset";
 
@@ -83,6 +85,8 @@ namespace Game.Editor
         private static double _airSmokeStartedAt;
         private static Entity _resourceHaulerObservedEntity = Entity.Null;
         private static float3 _resourceHaulerObservedStartPosition;
+        private static int2 _resourceHaulerObservedStartCell;
+        private static int2 _resourceHaulerObservedGoalCell;
         private static double _resourceHaulerObservedStartedAt;
         private static bool _resourceHaulerScenarioSeeded;
         private static readonly List<double> BaselineFrameTimesMs = new(BaselineMetricsFrameTarget + 16);
@@ -553,6 +557,12 @@ namespace Game.Editor
                 status = "[ResourceHaulerMovement] result=Waiting reason=NoOilHaulerWithOrder " + scenarioStatus;
                 return false;
             }
+            if (!em.HasComponent<UnitGrid>(hauler))
+            {
+                ResetResourceHaulerMovementState();
+                status = "[ResourceHaulerMovement] result=Waiting reason=OilHaulerMissingGrid " + scenarioStatus;
+                return false;
+            }
 
             if (_resourceHaulerObservedEntity != hauler ||
                 _resourceHaulerObservedEntity == Entity.Null ||
@@ -560,6 +570,8 @@ namespace Game.Editor
             {
                 _resourceHaulerObservedEntity = hauler;
                 _resourceHaulerObservedStartPosition = transform.Position;
+                _resourceHaulerObservedStartCell = em.GetComponentData<UnitGrid>(hauler).Cell;
+                _resourceHaulerObservedGoalCell = order.TargetCell;
                 _resourceHaulerObservedStartedAt = EditorApplication.timeSinceStartup;
             }
 
@@ -568,7 +580,13 @@ namespace Game.Editor
             float distance = math.distance(start, current);
             bool hasActivePath = HasActivePath(em, hauler);
             double observedSeconds = EditorApplication.timeSinceStartup - _resourceHaulerObservedStartedAt;
-            bool passed = distance >= ResourceHaulerMovementMinDistance;
+            int2 currentCell = em.GetComponentData<UnitGrid>(hauler).Cell;
+            int startGoalDistance = ManhattanDistance(_resourceHaulerObservedStartCell, _resourceHaulerObservedGoalCell);
+            int currentGoalDistance = ManhattanDistance(currentCell, _resourceHaulerObservedGoalCell);
+            int goalProgressCells = startGoalDistance - currentGoalDistance;
+            bool passed = observedSeconds >= ResourceHaulerMovementMinObservationSeconds &&
+                          distance >= ResourceHaulerMovementMinDistance &&
+                          goalProgressCells >= ResourceHaulerMovementMinGoalProgressCells;
             status =
                 "[ResourceHaulerMovement] " +
                 $"result={(passed ? "Passed" : "Waiting")} " +
@@ -576,10 +594,16 @@ namespace Game.Editor
                 $"phase={(ResourceHaulerUtilitySystemHelper.ResourceHaulPhase)order.Phase} " +
                 $"target={order.TargetCell.x},{order.TargetCell.y} activePath={(hasActivePath ? 1 : 0)} " +
                 $"distance={distance.ToString("0.###", CultureInfo.InvariantCulture)} " +
+                $"goalProgressCells={goalProgressCells} " +
                 $"observedSeconds={observedSeconds.ToString("0.###", CultureInfo.InvariantCulture)} " +
                 DescribeResourceHaulerMovementState(em, hauler) + " " +
                 scenarioStatus;
             return passed;
+        }
+
+        private static int ManhattanDistance(int2 a, int2 b)
+        {
+            return math.abs(a.x - b.x) + math.abs(a.y - b.y);
         }
 
         private static string DescribeResourceHaulerMovementState(EntityManager em, Entity entity)
@@ -2489,6 +2513,8 @@ namespace Game.Editor
         {
             _resourceHaulerObservedEntity = Entity.Null;
             _resourceHaulerObservedStartPosition = default;
+            _resourceHaulerObservedStartCell = default;
+            _resourceHaulerObservedGoalCell = default;
             _resourceHaulerObservedStartedAt = 0d;
         }
 

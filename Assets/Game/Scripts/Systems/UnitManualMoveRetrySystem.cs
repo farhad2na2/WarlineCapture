@@ -111,8 +111,11 @@ namespace Game.Runtime
                 else
                     Ecb.AddComponent(entity, new UnitTarget { Cell = longMove.FinalGoal });
 
-                if (!ManualMoveLookup.HasComponent(entity))
+                bool hasManualMove = ManualMoveLookup.HasComponent(entity);
+                if (longMove.ManualMove != 0 && !hasManualMove)
                     Ecb.AddComponent<ManualMoveOrderTag>(entity);
+                else if (longMove.ManualMove == 0 && hasManualMove)
+                    Ecb.RemoveComponent<ManualMoveOrderTag>(entity);
 
                 Ecb.AddComponent(entity, new UnitPathRequest { Goal = longMove.FinalGoal });
             }

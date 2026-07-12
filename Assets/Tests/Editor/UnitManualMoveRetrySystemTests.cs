@@ -69,7 +69,11 @@ public sealed class UnitManualMoveRetrySystemTests
         EntityManager em = world.EntityManager;
         CreateGrid(em);
         Entity unit = em.CreateEntity(typeof(UnitLongDistanceMove));
-        em.SetComponentData(unit, new UnitLongDistanceMove { FinalGoal = new int2(9, 10) });
+        em.SetComponentData(unit, new UnitLongDistanceMove
+        {
+            FinalGoal = new int2(9, 10),
+            ManualMove = 1
+        });
 
         SystemHandle system = world.CreateSystem<UnitManualMoveRetrySystem>();
         system.Update(world.Unmanaged);
@@ -79,6 +83,29 @@ public sealed class UnitManualMoveRetrySystemTests
         Assert.IsTrue(em.HasComponent<UnitPathRequest>(unit));
         Assert.AreEqual(new int2(9, 10), em.GetComponentData<UnitTarget>(unit).Cell);
         Assert.AreEqual(new int2(9, 10), em.GetComponentData<UnitPathRequest>(unit).Goal);
+    }
+
+    [Test]
+    public void AutomatedLongDistanceMove_RestoresWithoutManualMoveTag()
+    {
+        using var world = new World("UnitManualMoveRetrySystemTests_AutomatedLongDistance");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em);
+        Entity unit = em.CreateEntity(typeof(UnitLongDistanceMove), typeof(ManualMoveOrderTag));
+        em.SetComponentData(unit, new UnitLongDistanceMove
+        {
+            FinalGoal = new int2(11, 12),
+            ManualMove = 0
+        });
+
+        SystemHandle system = world.CreateSystem<UnitManualMoveRetrySystem>();
+        system.Update(world.Unmanaged);
+
+        Assert.IsTrue(em.HasComponent<UnitTarget>(unit));
+        Assert.IsFalse(em.HasComponent<ManualMoveOrderTag>(unit));
+        Assert.IsTrue(em.HasComponent<UnitPathRequest>(unit));
+        Assert.AreEqual(new int2(11, 12), em.GetComponentData<UnitTarget>(unit).Cell);
+        Assert.AreEqual(new int2(11, 12), em.GetComponentData<UnitPathRequest>(unit).Goal);
     }
 
     private static Entity CreateGrid(EntityManager em)

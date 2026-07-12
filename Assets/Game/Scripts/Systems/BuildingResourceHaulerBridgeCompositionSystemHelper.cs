@@ -512,6 +512,7 @@ namespace Game.Runtime
                 !em.HasComponent<UnitSourcePrefabKey>(unit) ||
                 !em.HasComponent<Faction>(unit) ||
                 !em.HasComponent<UnitGrid>(unit) ||
+                em.HasComponent<ManualMoveOrderTag>(unit) ||
                 em.HasComponent<UnitAirMovement>(unit))
             {
                 return false;
@@ -848,13 +849,16 @@ namespace Game.Runtime
 
             var walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
             var occupied = em.GetComponentData<DynamicOccupancyComponent>(gridEntity).Occupied;
+            if (context.GetEffectivePlacementRect == null)
+                return false;
+
+            RectInt buildingRect = context.GetEffectivePlacementRect(building, grid);
             return TryFindBuildingApproachCell(
                 grid,
                 walkable,
                 blockerData.Blocked,
                 occupied,
-                building.OriginCell,
-                building.Definition.FootprintCells,
+                buildingRect,
                 unitFootprint,
                 referenceCell,
                 out goal);
@@ -1277,7 +1281,11 @@ namespace Game.Runtime
             int2 unitFootprint = em.HasComponent<UnitFootprint>(unit)
                 ? em.GetComponentData<UnitFootprint>(unit).Size
                 : new int2(1, 1);
-            if (!TryFindBuildingApproachCell(grid, walkable, blockerData.Blocked, occupied, building.OriginCell, building.Definition.FootprintCells, unitFootprint, referenceCell, out goal))
+            if (context.GetEffectivePlacementRect == null)
+                return false;
+
+            RectInt buildingRect = context.GetEffectivePlacementRect(building, grid);
+            if (!TryFindBuildingApproachCell(grid, walkable, blockerData.Blocked, occupied, buildingRect, unitFootprint, referenceCell, out goal))
                 return false;
 
             if (em.HasComponent<EngageTarget>(unit))
@@ -1291,8 +1299,8 @@ namespace Game.Runtime
 
             UnitMoveOrderRequestSystem.EnqueueAndProcessTargetPathMoveOrder(em, unit, goal);
 
-            if (!em.HasComponent<ManualMoveOrderTag>(unit))
-                em.AddComponent<ManualMoveOrderTag>(unit);
+            if (em.HasComponent<ManualMoveOrderTag>(unit))
+                em.RemoveComponent<ManualMoveOrderTag>(unit);
 
             return true;
         }
@@ -1555,8 +1563,7 @@ namespace Game.Runtime
             in NativeArray<GridWalkable> walkable,
             in NativeBitArray blocked,
             in NativeBitArray occupied,
-            Vector2Int originCell,
-            Vector2Int footprintCells,
+            RectInt buildingRect,
             int2 unitFootprint,
             int2 referenceCell,
             out int2 goal)
@@ -1565,15 +1572,14 @@ namespace Game.Runtime
             int maxRadius = math.max(grid.Width, grid.Height);
             int bestScore = int.MaxValue;
             bool found = false;
-            RectInt buildingRect = new(originCell, footprintCells);
             int2 clampedUnitFootprint = UnitFootprintUtility.ClampSize(unitFootprint);
 
             for (int extraRadius = 1; extraRadius <= maxRadius; extraRadius++)
             {
-                int minX = originCell.x - extraRadius;
-                int minY = originCell.y - extraRadius;
-                int maxX = originCell.x + footprintCells.x - 1 + extraRadius;
-                int maxY = originCell.y + footprintCells.y - 1 + extraRadius;
+                int minX = buildingRect.xMin - extraRadius;
+                int minY = buildingRect.yMin - extraRadius;
+                int maxX = buildingRect.xMax - 1 + extraRadius;
+                int maxY = buildingRect.yMax - 1 + extraRadius;
 
                 for (int x = minX; x <= maxX; x++)
                 {

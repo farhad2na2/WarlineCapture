@@ -644,14 +644,18 @@ namespace Game.Runtime
                 if (LongDistanceMoveLookup.HasComponent(entity) && UnitGridLookup.HasComponent(entity))
                 {
                     int2 currentCell = UnitGridLookup[entity].Cell;
-                    int2 finalGoal = LongDistanceMoveLookup[entity].FinalGoal;
+                    UnitLongDistanceMove longDistanceMove = LongDistanceMoveLookup[entity];
+                    int2 finalGoal = longDistanceMove.FinalGoal;
                     if (!currentCell.Equals(finalGoal))
                     {
                         Ecb.RemoveComponent<UnitTarget>(sortKey, entity);
                         Ecb.AddComponent(sortKey, entity, new UnitTarget { Cell = finalGoal });
                         Ecb.AddComponent(sortKey, entity, new UnitPathRequest { Goal = finalGoal });
-                        if (!ManualMoveLookup.HasComponent(entity))
+                        bool hasManualMove = ManualMoveLookup.HasComponent(entity);
+                        if (longDistanceMove.ManualMove != 0 && !hasManualMove)
                             Ecb.AddComponent<ManualMoveOrderTag>(sortKey, entity);
+                        else if (longDistanceMove.ManualMove == 0 && hasManualMove)
+                            Ecb.RemoveComponent<ManualMoveOrderTag>(sortKey, entity);
                         return;
                     }
 

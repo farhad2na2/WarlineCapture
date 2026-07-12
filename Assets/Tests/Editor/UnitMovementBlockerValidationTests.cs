@@ -36,6 +36,7 @@ public sealed class UnitMovementBlockerValidationTests
             tests.MapVehiclePlacementProgressStateTracksEmptyConfigCompletion();
             tests.MapVehiclePlacementClearanceRemovesBlockersUnderVehicleFootprint();
             tests.MapVehiclePlacementDepartureClearanceRemovesPaddedBlockers();
+            tests.MapVehiclePlacementDepartureCorridorConnectsBlockedPocketToOpenGrid();
             tests.VehiclePathingCanDepartFromCurrentDynamicBlockedFootprint();
             tests.VehiclePathingStillRejectsNewDynamicBlockedFootprintCells();
             tests.PathRequestIgnoredOccupancyDefaultsToMovingUnitFootprint();
@@ -81,7 +82,8 @@ public sealed class UnitMovementBlockerValidationTests
             tests.MapVehiclePlacementProgressStateTracksEmptyConfigCompletion();
             tests.MapVehiclePlacementClearanceRemovesBlockersUnderVehicleFootprint();
             tests.MapVehiclePlacementDepartureClearanceRemovesPaddedBlockers();
-            Debug.Log("[MapVehiclePlacementValidation] result=Passed tests=4");
+            tests.MapVehiclePlacementDepartureCorridorConnectsBlockedPocketToOpenGrid();
+            Debug.Log("[MapVehiclePlacementValidation] result=Passed tests=5");
             ValidationExit.Passed();
         }
         catch (System.Exception ex)
@@ -1487,6 +1489,84 @@ public sealed class UnitMovementBlockerValidationTests
             Assert.IsTrue(blocked.IsSet(adjacentOutsidePaddingIndex), "Blockers outside the one-cell departure pad must not be cleared.");
             Assert.AreEqual(3, blockerCounts[adjacentOutsidePaddingIndex]);
             Assert.AreEqual(7, friendlyPassFactionIds[adjacentOutsidePaddingIndex]);
+        }
+        finally
+        {
+            friendlyPassFactionIds.Dispose();
+            blocked.Dispose();
+            blockerCounts.Dispose();
+        }
+    }
+
+    [Test]
+    public void MapVehiclePlacementDepartureCorridorConnectsBlockedPocketToOpenGrid()
+    {
+        var grid = new GridConfig
+        {
+            Width = 20,
+            Height = 20,
+            CellSize = 1f,
+            Origin = float3.zero
+        };
+        int gridSize = grid.Width * grid.Height;
+        var blockerCounts = new NativeArray<int>(gridSize, Allocator.Temp);
+        var blocked = new NativeBitArray(gridSize, Allocator.Temp, NativeArrayOptions.ClearMemory);
+        var friendlyPassFactionIds = new NativeArray<byte>(gridSize, Allocator.Temp);
+
+        try
+        {
+            for (int y = 4; y <= 10; y++)
+            {
+                for (int x = 4; x <= 10; x++)
+                {
+                    int index = GridUtils.CellToIndex(new int2(x, y), grid.Width);
+                    blocked.Set(index, true);
+                    blockerCounts[index] = 1;
+                    friendlyPassFactionIds[index] = 7;
+                }
+            }
+
+            var blockerData = new DynamicBlockerComponent
+            {
+                GridSize = gridSize,
+                Counts = blockerCounts,
+                Blocked = blocked,
+                FriendlyPassFactionIds = friendlyPassFactionIds
+            };
+            int2 center = new(7, 7);
+            int2 footprint = new(3, 3);
+            MapVehiclePlacementSpawnPrefabSystemHelper.ClearRuntimeBlockersInFootprint(
+                grid,
+                ref blockerData,
+                center,
+                footprint,
+                UnitPathPlacementValidation.VehicleOccupancyPaddingCells);
+
+            int cleared = MapVehiclePlacementSpawnPrefabSystemHelper.ClearRuntimeBlockerDepartureCorridor(
+                grid,
+                ref blockerData,
+                center,
+                footprint,
+                headingDegrees: 90f,
+                maxDistanceCells: 12);
+
+            Assert.Greater(cleared, 0);
+            for (int centerX = center.x; centerX <= 13; centerX++)
+            {
+                int2 min = UnitFootprintUtility.GetMinCell(new int2(centerX, center.y), footprint) - new int2(1, 1);
+                int2 max = min + footprint + new int2(2, 2);
+                for (int y = min.y; y < max.y; y++)
+                {
+                    for (int x = min.x; x < max.x; x++)
+                    {
+                        int index = GridUtils.CellToIndex(new int2(x, y), grid.Width);
+                        Assert.IsFalse(blocked.IsSet(index), $"Departure corridor remained blocked at {x},{y}.");
+                    }
+                }
+            }
+
+            Assert.IsTrue(blocked.IsSet(GridUtils.CellToIndex(new int2(4, 4), grid.Width)),
+                "The corridor must preserve blocker cells outside its narrow swept footprint.");
         }
         finally
         {

@@ -121,10 +121,15 @@ namespace Game.Runtime
 
                     if (segmented[i] != 0)
                     {
+                        UnitLongDistanceMove longDistanceMove = new()
+                        {
+                            FinalGoal = requests[i].Goal,
+                            ManualMove = manualMoves[i]
+                        };
                         if (em.HasComponent<UnitLongDistanceMove>(entity))
-                            em.SetComponentData(entity, new UnitLongDistanceMove { FinalGoal = requests[i].Goal });
+                            em.SetComponentData(entity, longDistanceMove);
                         else
-                            em.AddComponentData(entity, new UnitLongDistanceMove { FinalGoal = requests[i].Goal });
+                            em.AddComponentData(entity, longDistanceMove);
                     }
                     else if (em.HasComponent<UnitLongDistanceMove>(entity))
                     {

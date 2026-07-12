@@ -13,6 +13,7 @@ namespace Game.Runtime
     {
         private const int MaxPlacementsPerUpdate = 32;
         private const int VehicleDepartureClearancePaddingCells = UnitPathPlacementValidation.VehicleOccupancyPaddingCells;
+        private const int VehicleDepartureCorridorMaxCells = 32;
         private const float UniformScaleEpsilon = 0.0001f;
 
         public delegate bool TryGetGridDataDelegate(
@@ -309,6 +310,13 @@ namespace Game.Runtime
 
                 int2 centerCell = GridUtils.WorldToCell(grid, ToFloat3(placement.WorldCenter));
                 clearedCells += ClearRuntimeBlockersInFootprint(grid, ref blockerData, centerCell, footprintSize, VehicleDepartureClearancePaddingCells);
+                clearedCells += ClearRuntimeBlockerDepartureCorridor(
+                    grid,
+                    ref blockerData,
+                    centerCell,
+                    footprintSize,
+                    placement.WorldEulerAngles.y,
+                    VehicleDepartureCorridorMaxCells);
             }
 
             progress.LastClearedBlockerCells = clearedCells;
@@ -451,6 +459,109 @@ namespace Game.Runtime
             }
 
             return clearedCells;
+        }
+
+        internal static int ClearRuntimeBlockerDepartureCorridor(
+            in GridConfig grid,
+            ref DynamicBlockerComponent blockerData,
+            int2 centerCell,
+            int2 footprintSize,
+            float headingDegrees,
+            int maxDistanceCells)
+        {
+            if (!blockerData.Blocked.IsCreated || maxDistanceCells <= 0)
+                return 0;
+
+            int2 forward = ResolveCardinalHeading(headingDegrees);
+            int2 right = new(forward.y, -forward.x);
+            int2 bestDirection = int2.zero;
+            int bestDistance = int.MaxValue;
+            for (int directionIndex = 0; directionIndex < 4; directionIndex++)
+            {
+                int2 direction = directionIndex switch
+                {
+                    0 => forward,
+                    1 => right,
+                    2 => -right,
+                    _ => -forward
+                };
+
+                for (int distance = 1; distance <= maxDistanceCells; distance++)
+                {
+                    int2 candidate = centerCell + direction * distance;
+                    if (!IsBlockerClearanceOpen(
+                            grid,
+                            blockerData.Blocked,
+                            candidate,
+                            footprintSize,
+                            VehicleDepartureClearancePaddingCells))
+                    {
+                        continue;
+                    }
+
+                    if (distance < bestDistance)
+                    {
+                        bestDistance = distance;
+                        bestDirection = direction;
+                    }
+
+                    break;
+                }
+            }
+
+            if (bestDistance == int.MaxValue)
+                return 0;
+
+            int clearedCells = 0;
+            for (int distance = 1; distance <= bestDistance; distance++)
+            {
+                clearedCells += ClearRuntimeBlockersInFootprint(
+                    grid,
+                    ref blockerData,
+                    centerCell + bestDirection * distance,
+                    footprintSize,
+                    VehicleDepartureClearancePaddingCells);
+            }
+
+            return clearedCells;
+        }
+
+        private static int2 ResolveCardinalHeading(float headingDegrees)
+        {
+            float radians = math.radians(headingDegrees);
+            float2 forward = new(math.sin(radians), math.cos(radians));
+            if (math.abs(forward.x) >= math.abs(forward.y))
+                return new int2(forward.x >= 0f ? 1 : -1, 0);
+
+            return new int2(0, forward.y >= 0f ? 1 : -1);
+        }
+
+        private static bool IsBlockerClearanceOpen(
+            in GridConfig grid,
+            in NativeBitArray blocked,
+            int2 centerCell,
+            int2 footprintSize,
+            int paddingCells)
+        {
+            int2 clampedSize = UnitFootprintUtility.ClampSize(footprintSize);
+            int padding = math.max(0, paddingCells);
+            int2 min = UnitFootprintUtility.GetMinCell(centerCell, clampedSize) - new int2(padding, padding);
+            int2 max = min + clampedSize + new int2(padding * 2, padding * 2);
+            if (min.x < 0 || min.y < 0 || max.x > grid.Width || max.y > grid.Height)
+                return false;
+
+            for (int y = min.y; y < max.y; y++)
+            {
+                int row = y * grid.Width;
+                for (int x = min.x; x < max.x; x++)
+                {
+                    int index = row + x;
+                    if (blocked.IsSet(index))
+                        return false;
+                }
+            }
+
+            return true;
         }
 
         private static float3 ToFloat3(Vector3 value)

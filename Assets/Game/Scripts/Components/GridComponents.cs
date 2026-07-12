@@ -381,6 +381,7 @@ namespace Game.Components
     public struct UnitLongDistanceMove : IComponentData
     {
         public int2 FinalGoal;
+        public byte ManualMove;
     }
 
     public struct UnitPathRetryCooldown : IComponentData

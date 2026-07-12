@@ -33,10 +33,15 @@ namespace Game.Runtime
                 manualRetriedCount++;
             if (segmented != 0)
             {
+                UnitLongDistanceMove longDistanceMove = new()
+                {
+                    FinalGoal = request.Goal,
+                    ManualMove = manualMove
+                };
                 if (em.HasComponent<UnitLongDistanceMove>(entity))
-                    em.SetComponentData(entity, new UnitLongDistanceMove { FinalGoal = request.Goal });
+                    em.SetComponentData(entity, longDistanceMove);
                 else
-                    em.AddComponentData(entity, new UnitLongDistanceMove { FinalGoal = request.Goal });
+                    em.AddComponentData(entity, longDistanceMove);
 
                 if (em.HasComponent<UnitTarget>(entity))
                     em.SetComponentData(entity, new UnitTarget { Cell = request.Goal });

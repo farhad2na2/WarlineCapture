@@ -25,9 +25,17 @@ namespace Game.Editor
     {
         private const string MenuScenePath = "Assets/Game/Scenes/Menu.unity";
         private const string RuntimeUiConfigPath = "Assets/Game/Data/UI/RuntimeUiConfig.asset";
+        private const string MainMenuContentPrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN02_MainMenuContent.prefab";
         private const string ScreenshotPath = "/private/tmp/warline-canvas-menu-fallback.png";
         private const int DefaultScreenshotWidth = 1280;
         private const int DefaultScreenshotHeight = 720;
+        private const float MinimumScreenshotDetail = 0.015f;
+        private const string CommanderCapturePendingSessionKey = "Warline.CommanderCapture.Pending";
+        private const string CommanderCapturePathSessionKey = "Warline.CommanderCapture.Path";
+        private const string CommanderCaptureWidthSessionKey = "Warline.CommanderCapture.Width";
+        private const string CommanderCaptureHeightSessionKey = "Warline.CommanderCapture.Height";
+        private const string CommanderCapturePreviousFastPlayModeSessionKey = "Warline.CommanderCapture.PreviousFastPlayMode";
+        private const string CommanderCapturePreviousPlayModeOptionsSessionKey = "Warline.CommanderCapture.PreviousPlayModeOptions";
 
         private static int frameCount;
         private static int screenshotRequestedFrame;
@@ -81,6 +89,36 @@ namespace Game.Editor
         private static long performanceTrianglesTotal;
         private static long performanceVerticesTotal;
         private static int performanceProfilerSamples;
+
+        [InitializeOnLoadMethod]
+        private static void ResumeCommanderCaptureAfterDomainReload()
+        {
+            if (!SessionState.GetBool(CommanderCapturePendingSessionKey, false))
+                return;
+
+            screenshotPath = SessionState.GetString(CommanderCapturePathSessionKey, string.Empty);
+            screenshotWidth = SessionState.GetInt(CommanderCaptureWidthSessionKey, 1920);
+            screenshotHeight = SessionState.GetInt(CommanderCaptureHeightSessionKey, 1080);
+            routeCaptureRoute = UIRoute.CommandFeed;
+            routeCaptureShouldShowPopup = false;
+            routeCapturePopup = default;
+            routeCaptureOverlay = string.Empty;
+            routeCaptureModal = string.Empty;
+            routeCaptureStaticContentPrefabPath = string.Empty;
+            routeCaptureStaticContentFullRoot = false;
+            routeCaptureShouldSetArmoryCategory = false;
+            routeCaptureArmoryCategory = default;
+            routeCaptureSelectButtonName = string.Empty;
+            routeCaptureSettleFrames = 90;
+            routeCaptureFrameCount = 0;
+            routeCaptureConfiguredFrame = 0;
+            routeCaptureStartedAt = EditorApplication.timeSinceStartup;
+            routeCaptureCompleted = false;
+            routeCaptureConfigured = false;
+            routeCaptureButtonSelectionApplied = false;
+            EditorApplication.update -= ContinueRouteCapture;
+            EditorApplication.update += ContinueRouteCapture;
+        }
 
         public static void Run()
         {
@@ -192,6 +230,65 @@ namespace Game.Editor
             }
         }
 
+        public static void RunCommanderProfileRouteCapture()
+        {
+            try
+            {
+                RuntimeUiConfig config = AssetDatabase.LoadAssetAtPath<RuntimeUiConfig>(RuntimeUiConfigPath);
+                if (config == null)
+                    throw new InvalidOperationException($"Missing runtime UI config: {RuntimeUiConfigPath}");
+
+                SetRuntimeUiMode(config, RuntimeUiMode.Canvas);
+                EditorUtility.SetDirty(config);
+                AssetDatabase.SaveAssets();
+
+                string configuredCapturePath = Environment.GetEnvironmentVariable("WARLINE_COMMANDER_CAPTURE_PATH");
+                screenshotPath = Path.GetFullPath(string.IsNullOrWhiteSpace(configuredCapturePath)
+                    ? "Design/AgentReports/Captures/commander_profile_route_capture.png"
+                    : configuredCapturePath.Trim());
+                Directory.CreateDirectory(Path.GetDirectoryName(screenshotPath) ?? ".");
+                screenshotWidth = ResolveScreenshotDimension("WARLINE_CANVAS_SCREENSHOT_WIDTH", 1920);
+                screenshotHeight = ResolveScreenshotDimension("WARLINE_CANVAS_SCREENSHOT_HEIGHT", 1080);
+                routeCaptureRoute = UIRoute.CommandFeed;
+                routeCaptureShouldShowPopup = false;
+                routeCapturePopup = default;
+                routeCaptureOverlay = string.Empty;
+                routeCaptureModal = string.Empty;
+                routeCaptureStaticContentPrefabPath = string.Empty;
+                routeCaptureStaticContentFullRoot = false;
+                routeCaptureShouldSetArmoryCategory = false;
+                routeCaptureArmoryCategory = default;
+                routeCaptureSelectButtonName = string.Empty;
+                routeCaptureSettleFrames = 90;
+                EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
+                if (File.Exists(screenshotPath))
+                    File.Delete(screenshotPath);
+
+                routeCaptureFrameCount = 0;
+                routeCaptureConfiguredFrame = 0;
+                routeCaptureStartedAt = EditorApplication.timeSinceStartup;
+                routeCaptureCompleted = false;
+                routeCaptureConfigured = false;
+                routeCaptureButtonSelectionApplied = false;
+                EditorApplication.update -= ContinueRouteCapture;
+                EditorApplication.update += ContinueRouteCapture;
+                SessionState.SetBool(CommanderCapturePendingSessionKey, true);
+                SessionState.SetString(CommanderCapturePathSessionKey, screenshotPath);
+                SessionState.SetInt(CommanderCaptureWidthSessionKey, screenshotWidth);
+                SessionState.SetInt(CommanderCaptureHeightSessionKey, screenshotHeight);
+                SessionState.SetBool(CommanderCapturePreviousFastPlayModeSessionKey, EditorSettings.enterPlayModeOptionsEnabled);
+                SessionState.SetInt(CommanderCapturePreviousPlayModeOptionsSessionKey, (int)EditorSettings.enterPlayModeOptions);
+                EditorSettings.enterPlayModeOptionsEnabled = false;
+                EditorApplication.EnterPlaymode();
+            }
+            catch (Exception exception)
+            {
+                RestoreCommanderCapturePlayModeSettings();
+                Debug.LogError($"[CanvasRouteCaptureValidation] result=Failed\n{exception}");
+                EditorApplication.Exit(1);
+            }
+        }
+
         public static void RunCanvasPerformanceBaseline()
         {
             try
@@ -242,12 +339,12 @@ namespace Game.Editor
                 if (left == null || middle == null || right == null || footer == null)
                     throw new InvalidOperationException("SCN-03 prefab is missing one or more shell content roots.");
 
-                SetActive(FindChild(root.transform, "HeaderContent")?.gameObject, false);
-                HideAllChildren(FindChild(root.transform, "MenuBackgroundContent"));
-                SetRectFromTopLeft(left.gameObject, 52f, 310f, 800f, 1500f);
-                SetRectFromTopLeft(middle.gameObject, 980f, 300f, 1880f, 1700f);
-                SetRectFromTopLeft(right.gameObject, 2980f, 300f, 1740f, 1700f);
-                SetRectFromTopLeft(footer.gameObject, 980f, 1905f, 2860f, 210f);
+                RemoveDirectChild(root.transform, "HeaderContent");
+                RemoveDirectChild(root.transform, "MenuBackgroundContent");
+                SetRectFromTopLeft(left.gameObject, 0f, 0f, 760f, 1700f);
+                SetRectFromTopLeft(middle.gameObject, 0f, 0f, 1760f, 1700f);
+                SetRectFromTopLeft(right.gameObject, 0f, 0f, 1500f, 1700f);
+                SetRectFromTopLeft(footer.gameObject, 0f, 0f, 3500f, 260f);
 
                 GameObject backButton = FindChild(root.transform, "BackButton")?.gameObject;
                 GameObject identityPanel = FindChild(root.transform, "CommanderIdentityPanel")?.gameObject;
@@ -262,67 +359,124 @@ namespace Game.Editor
                 GameObject detailButton = FindChild(root.transform, "DetailButton")?.gameObject;
 
                 MoveTo(backButton, left);
-                SetRectFromTopLeft(backButton, 0f, 0f, 500f, 135f);
-                ApplyButtonFrame(backButton, FrameKind.Secondary);
-                LayoutIconLabelButton(backButton, 64f, 42f, 68f, 52f, 156f, 0f, 310f, 135f, 46f);
+                SetRectFromTopLeft(backButton, 36f, 0f, 480f, 120f);
+                EnsureButtonInteraction(backButton);
+                ApplyNavButtonState(backButton, false);
+                ConfigureRouteButton(backButton, UiShellRouteIntent.BackMenuRoute, UIRoute.MainMenu, false);
+                LayoutIconLabelButton(backButton, 38f, 28f, 64f, 60f, 122f, 0f, 350f, 120f, 40f);
+                SetActive(FindChild(backButton != null ? backButton.transform : null, "Icon")?.gameObject, false);
+                ConfigureSpriteChild(backButton, "NavIcon", "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_08_back_arrow.png", 38f, 28f, 64f, 60f);
+                HideDirectChildrenExcept(backButton != null ? backButton.transform : null, "NavIcon", "Label");
 
                 string[] tabNames = { "OverviewTab", "StatsTab", "BadgesTab", "HistoryTab", "UpgradesTab" };
                 string[] tabIconPaths =
                 {
-                    "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_icon_hold_shield.png",
-                    "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_icon_units_group.png",
-                    "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_badge_owned_checkmark.png",
-                    "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_icon_attack_reticle.png",
-                    "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_icon_upgrades_chevrons.png"
+                    "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_command_shield_icon.png",
+                    "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_resource_diamond_icon.png",
+                    "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_10_badge_shield.png",
+                    "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_16_history_crossed_swords.png",
+                    "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_tech_tree_nodes_icon.png"
                 };
                 for (int i = 0; i < tabNames.Length; i++)
                 {
                     GameObject tab = FindChild(root.transform, tabNames[i])?.gameObject;
                     MoveTo(tab, left);
-                    SetRectFromTopLeft(tab, 0f, 215f + (i * 235f), 800f, 205f);
+                    SetRectFromTopLeft(tab, 36f, 165f + (i * 155f), 700f, 132f);
+                    EnsureButtonInteraction(tab);
                     ApplyNavButtonState(tab, i == 0);
-                    SetChildSprite(tab, "Icon", tabIconPaths[i], true);
-                    LayoutIconLabelButton(tab, 54f, 52f, 124f, 98f, 220f, 0f, 520f, 205f, 56f);
+                    LayoutIconLabelButton(tab, 48f, 27f, 78f, 78f, 154f, 0f, 490f, 132f, 46f);
+                    SetActive(FindChild(tab != null ? tab.transform : null, "Icon")?.gameObject, false);
+                    ConfigureSpriteChild(tab, "NavIcon", tabIconPaths[i], 48f, 27f, 78f, 78f);
+                    if (i > 0)
+                    {
+                        ConfigureSpriteChild(
+                            tab,
+                            "LockedState",
+                            "Assets/Game/Art/UI/Generated/ResourceExchange/LayeredOneGo/pop12_icon_12_lock_badge.png",
+                            620f,
+                            39f,
+                            38f,
+                            52f);
+                    }
+                    else
+                    {
+                        SetActive(FindChild(tab != null ? tab.transform : null, "LockedState")?.gameObject, false);
+                    }
+                    HideDirectChildrenExcept(tab != null ? tab.transform : null, "NavIcon", "Label", "LockedState");
+                    SetButtonAvailability(tab, false, i == 0 ? 1f : 0.62f);
                 }
                 HideDirectChildrenExcept(left, "BackButton", "OverviewTab", "StatsTab", "BadgesTab", "HistoryTab", "UpgradesTab");
 
                 MoveTo(identityPanel, middle);
-                SetRectFromTopLeft(identityPanel, 0f, 0f, 1880f, 760f);
-                ApplyPanelFrame(identityPanel, "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_02_commander_identity_panel_frame.png", 4.2f);
+                SetRectFromTopLeft(identityPanel, 120f, -240f, 1650f, 720f);
+                ApplyPanelFrame(identityPanel, "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_panel_frame_large.png", 1f);
                 LayoutCommanderIdentity(identityPanel);
 
                 MoveTo(overviewPanel, middle);
-                SetRectFromTopLeft(overviewPanel, 0f, 800f, 1880f, 350f);
-                ApplyPanelFrame(overviewPanel, "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_03_overview_panel_frame.png", 4.4f);
+                SetRectFromTopLeft(overviewPanel, 120f, 510f, 1650f, 360f);
+                ApplyPanelFrame(overviewPanel, "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_panel_frame_large.png", 1f);
                 LayoutOverviewStats(overviewPanel);
 
                 MoveTo(accountPanel, middle);
-                SetRectFromTopLeft(accountPanel, 0f, 1220f, 1880f, 430f);
-                ApplyPanelFrame(accountPanel, "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_panel_frame_large.png", 4.2f);
+                SetRectFromTopLeft(accountPanel, 120f, 900f, 1650f, 700f);
+                ApplyPanelFrame(accountPanel, "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_panel_frame_large.png", 1f);
                 LayoutAccountSnapshot(accountPanel);
+                ConfigureCommanderProfileBinding(middle.gameObject, identityPanel);
                 HideDirectChildrenExcept(middle, "CommanderIdentityPanel", "OverviewPanel", "AccountSnapshotPanel");
 
                 MoveTo(rewardPanel, right);
-                SetRectFromTopLeft(rewardPanel, 0f, 0f, 1740f, 760f);
-                ApplyPanelFrame(rewardPanel, "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_05_reward_track_panel_frame.png", 4.2f);
+                SetRectFromTopLeft(rewardPanel, -1500f, 20f, 1380f, 760f);
+                ApplyPanelFrame(rewardPanel, "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_panel_frame_large.png", 1f);
                 LayoutRewardTrack(rewardPanel);
 
                 MoveTo(historyPanel, right);
-                SetRectFromTopLeft(historyPanel, 0f, 810f, 1740f, 890f);
-                ApplyPanelFrame(historyPanel, "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_06_recent_history_panel_frame.png", 4.3f);
+                SetRectFromTopLeft(historyPanel, -1500f, 810f, 1380f, 1020f);
+                ApplyPanelFrame(historyPanel, "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_panel_frame_large.png", 1f);
                 LayoutRecentHistory(historyPanel);
                 HideDirectChildrenExcept(right, "RewardTrackPanel", "RecentHistoryPanel");
 
                 SetActive(armoryPanel, false);
                 SetActive(profileRewardsPanel, false);
 
-                PrepareFooterButton(openArmoryButton, footer, 0f, "OPEN ARMORY", FrameKind.Primary);
-                PrepareFooterButton(detailButton, footer, 960f, "DETAIL", FrameKind.Secondary);
-                PrepareFooterButton(replayButton, footer, 1780f, "REPLAY", FrameKind.Primary);
-                HideFooterBreadcrumbs(footer, openArmoryButton, detailButton, replayButton);
-                HideDirectChildrenExcept(footer, "OpenArmoryButton", "DetailButton", "ReplayButton");
+                GameObject footerRail = ConfigureSolidImageChildAndReturn(
+                    footer.gameObject,
+                    "CommanderFooterRail",
+                    720f,
+                    -220f,
+                    2760f,
+                    230f,
+                    new Color(0.015f, 0.018f, 0.015f, 0.88f));
+                ApplyPanelFrame(footerRail, "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_20_route_strip_frame.png", 0.76f);
+                PrepareFooterButton(openArmoryButton, footer, 800f, "OPEN ARMORY", FrameKind.Primary);
+                PrepareFooterButton(detailButton, footer, 1700f, "DETAIL", FrameKind.Secondary);
+                PrepareFooterButton(replayButton, footer, 2450f, "REPLAY", FrameKind.Primary);
+                RemoveDuplicateDirectChildren(footer, "OpenArmoryButton", openArmoryButton);
+                RemoveDuplicateDirectChildren(footer, "DetailButton", detailButton);
+                RemoveDuplicateDirectChildren(footer, "ReplayButton", replayButton);
+                ConfigureFooterActionIcon(openArmoryButton, "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_04_supplies_crate.png");
+                ConfigureFooterActionIcon(detailButton, "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_05_command_shield.png");
+                ConfigureFooterActionIcon(replayButton, "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_20_claim_chevron.png");
+                ConfigureRouteButton(openArmoryButton, UiShellRouteIntent.OpenMenuRoute, UIRoute.Armory, true);
+                SetButtonAvailability(openArmoryButton, true, 1f);
+                SetButtonAvailability(detailButton, false, 0.62f);
+                SetButtonAvailability(replayButton, false, 0.62f);
+                HideFooterBreadcrumbs(footer, footerRail, openArmoryButton, detailButton, replayButton);
+                HideDirectChildrenExcept(footer, "CommanderFooterRail", "OpenArmoryButton", "DetailButton", "ReplayButton");
 
-                ApplyPanelBackground(root);
+                ConfigureCommanderProfileResponsiveLayout(
+                    middle.gameObject,
+                    right.gameObject,
+                    footer.gameObject,
+                    identityPanel,
+                    overviewPanel,
+                    accountPanel,
+                    rewardPanel,
+                    historyPanel,
+                    footerRail,
+                    openArmoryButton,
+                    detailButton,
+                    replayButton);
+                ConfigureCommanderProfileContentSections(root);
                 PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
                 Debug.Log($"[CanvasCommanderProfileTargetLockLayout] result=Passed prefab={PrefabPath}");
             }
@@ -338,6 +492,7 @@ namespace Game.Editor
                     PrefabUtility.UnloadPrefabContents(root);
             }
 
+            ApplyMainMenuCommanderRouteWiring();
             AssetDatabase.SaveAssets();
             EditorApplication.Exit(0);
         }
@@ -409,7 +564,7 @@ namespace Game.Editor
                 if (frameCount - screenshotRequestedFrame < 12)
                     return;
 
-                if (!TryRenderCameraLuma(bootstrap.UiCamera, screenshotPath, screenshotWidth, screenshotHeight, out float luma, out string renderError))
+                if (!TryRenderCameraMetrics(bootstrap.UiCamera, screenshotPath, screenshotWidth, screenshotHeight, out float luma, out float detail, out string renderError))
                 {
                     Complete(false, renderError);
                     return;
@@ -421,7 +576,13 @@ namespace Game.Editor
                     return;
                 }
 
-                Complete(true, $"Canvas menu deploy UI is visible. luma={luma:0.000} size={screenshotWidth}x{screenshotHeight} path={screenshotPath}");
+                if (detail < MinimumScreenshotDetail)
+                {
+                    Complete(false, $"Captured Canvas menu screenshot is visually flat. luma={luma:0.000} detail={detail:0.000} minimumDetail={MinimumScreenshotDetail:0.000} path={screenshotPath}");
+                    return;
+                }
+
+                Complete(true, $"Canvas menu deploy UI is visible. luma={luma:0.000} detail={detail:0.000} size={screenshotWidth}x{screenshotHeight} path={screenshotPath}");
             }
             catch (Exception exception)
             {
@@ -571,7 +732,8 @@ namespace Game.Editor
                 if (waitForSelectionSettle)
                     return;
 
-                if (!TryRenderCameraLuma(bootstrap.UiCamera, screenshotPath, screenshotWidth, screenshotHeight, out float luma, out string renderError))
+                ApplyCommanderResponsiveCaptureLayout();
+                if (!TryRenderCameraMetrics(bootstrap.UiCamera, screenshotPath, screenshotWidth, screenshotHeight, out float luma, out float detail, out string renderError))
                 {
                     CompleteRouteCapture(false, renderError);
                     return;
@@ -584,7 +746,13 @@ namespace Game.Editor
                     return;
                 }
 
-                CompleteRouteCapture(true, $"Canvas route is visible. route={routeCaptureRoute} popup={DescribeRouteCapturePopup()} overlay={DescribeRouteCaptureOverlay()} modal={DescribeRouteCaptureModal()} armoryCategory={DescribeRouteCaptureArmoryCategory()} selectedButton={DescribeRouteCaptureSelectedButton()} luma={luma:0.000} size={screenshotWidth}x{screenshotHeight} path={screenshotPath}");
+                if (detail < MinimumScreenshotDetail)
+                {
+                    CompleteRouteCapture(false, $"Captured Canvas route screenshot is visually flat. route={routeCaptureRoute} popup={DescribeRouteCapturePopup()} overlay={DescribeRouteCaptureOverlay()} modal={DescribeRouteCaptureModal()} armoryCategory={DescribeRouteCaptureArmoryCategory()} selectedButton={DescribeRouteCaptureSelectedButton()} luma={luma:0.000} detail={detail:0.000} minimumDetail={MinimumScreenshotDetail:0.000} path={screenshotPath}");
+                    return;
+                }
+
+                CompleteRouteCapture(true, $"Canvas route is visible. route={routeCaptureRoute} popup={DescribeRouteCapturePopup()} overlay={DescribeRouteCaptureOverlay()} modal={DescribeRouteCaptureModal()} armoryCategory={DescribeRouteCaptureArmoryCategory()} selectedButton={DescribeRouteCaptureSelectedButton()} luma={luma:0.000} detail={detail:0.000} size={screenshotWidth}x{screenshotHeight} path={screenshotPath}");
             }
             catch (Exception exception)
             {
@@ -729,6 +897,26 @@ namespace Game.Editor
                     if (!TryConfigureRouteCaptureArmoryCategory(out error))
                         return false;
                     break;
+                case UIRoute.CommandFeed:
+                    content.PrepareForCommandSequence(new[]
+                    {
+                        new UiShellPresentationCommandModel(
+                            UiShellCommandKind.EnterMenu,
+                            UiShellRegionId.None,
+                            UIRoute.MainMenu,
+                            UiShellMode.MainMenu,
+                            1)
+                    });
+                    content.InstallMenuRouteBody(UIRoute.CommandFeed);
+                    ResetRouteCaptureRegions(
+                        bootstrap,
+                        UIShellRegionId.MenuBackgroundRegion,
+                        UIShellRegionId.HeaderRegion,
+                        UIShellRegionId.LeftRegion,
+                        UIShellRegionId.MiddleRegion,
+                        UIShellRegionId.RightRegion,
+                        UIShellRegionId.FooterRegion);
+                    break;
                 case UIRoute.Match:
                     content.PrepareForCommandSequence(new[]
                     {
@@ -741,7 +929,7 @@ namespace Game.Editor
                     });
                     break;
                 default:
-                    error = $"Canvas route capture does not support route={routeCaptureRoute}. Supported routes: Splash, MainMenu, Armory, Match.";
+                    error = $"Canvas route capture does not support route={routeCaptureRoute}. Supported routes: Splash, MainMenu, Armory, CommandFeed, Match.";
                     return false;
                 }
             }
@@ -1252,6 +1440,7 @@ namespace Game.Editor
 
             routeCaptureCompleted = true;
             EditorApplication.update -= ContinueRouteCapture;
+            RestoreCommanderCapturePlayModeSettings();
             if (success)
                 Debug.Log($"[CanvasRouteCaptureValidation] result=Passed {message}");
             else
@@ -1260,6 +1449,39 @@ namespace Game.Editor
             if (EditorApplication.isPlaying)
                 EditorApplication.ExitPlaymode();
             EditorApplication.Exit(success ? 0 : 1);
+        }
+
+        private static void RestoreCommanderCapturePlayModeSettings()
+        {
+            if (!SessionState.GetBool(CommanderCapturePendingSessionKey, false))
+                return;
+
+            bool previousFastPlayMode = SessionState.GetBool(CommanderCapturePreviousFastPlayModeSessionKey, false);
+            int previousOptions = SessionState.GetInt(
+                CommanderCapturePreviousPlayModeOptionsSessionKey,
+                (int)EnterPlayModeOptions.None);
+            EditorSettings.enterPlayModeOptions = (EnterPlayModeOptions)previousOptions;
+            EditorSettings.enterPlayModeOptionsEnabled = previousFastPlayMode;
+            SessionState.SetBool(CommanderCapturePendingSessionKey, false);
+        }
+
+        private static void ApplyCommanderResponsiveCaptureLayout()
+        {
+            if (routeCaptureRoute != UIRoute.CommandFeed || screenshotWidth <= 0 || screenshotHeight <= 0)
+                return;
+
+            const float referenceWidth = 4800f;
+            const float referenceHeight = 2160f;
+            float scale = Mathf.Min(screenshotWidth / referenceWidth, screenshotHeight / referenceHeight);
+            if (scale <= 0f)
+                return;
+
+            float logicalCanvasHeight = screenshotHeight / scale;
+            CommanderProfileResponsiveLayoutView[] layouts = UnityEngine.Object.FindObjectsByType<CommanderProfileResponsiveLayoutView>(FindObjectsInactive.Include);
+            for (int i = 0; i < layouts.Length; i++)
+                layouts[i]?.ApplyLayout(logicalCanvasHeight);
+
+            Canvas.ForceUpdateCanvases();
         }
 
         private static void CompleteCanvasPerformanceBaseline(bool success, string message)
@@ -1589,28 +1811,56 @@ namespace Game.Editor
             return builder.ToString();
         }
 
-        private static float EstimateAverageLuma(Texture2D texture)
+        private static void EstimateImageMetrics(Texture2D texture, out float luma, out float detail)
         {
+            luma = 0f;
+            detail = 0f;
             Color32[] pixels = texture.GetPixels32();
             if (pixels == null || pixels.Length == 0)
-                return 0f;
+                return;
 
             int step = Mathf.Max(1, pixels.Length / 4096);
             double total = 0d;
+            float minLuma = 1f;
+            float maxLuma = 0f;
+            byte minR = byte.MaxValue;
+            byte minG = byte.MaxValue;
+            byte minB = byte.MaxValue;
+            byte maxR = byte.MinValue;
+            byte maxG = byte.MinValue;
+            byte maxB = byte.MinValue;
             int count = 0;
             for (int i = 0; i < pixels.Length; i += step)
             {
                 Color32 pixel = pixels[i];
-                total += (0.2126d * pixel.r + 0.7152d * pixel.g + 0.0722d * pixel.b) / 255d;
+                float pixelLuma = (float)((0.2126d * pixel.r + 0.7152d * pixel.g + 0.0722d * pixel.b) / 255d);
+                total += pixelLuma;
+                minLuma = Mathf.Min(minLuma, pixelLuma);
+                maxLuma = Mathf.Max(maxLuma, pixelLuma);
+                minR = Math.Min(minR, pixel.r);
+                minG = Math.Min(minG, pixel.g);
+                minB = Math.Min(minB, pixel.b);
+                maxR = Math.Max(maxR, pixel.r);
+                maxG = Math.Max(maxG, pixel.g);
+                maxB = Math.Max(maxB, pixel.b);
                 count++;
             }
 
-            return count > 0 ? (float)(total / count) : 0f;
+            if (count <= 0)
+                return;
+
+            luma = (float)(total / count);
+            float lumaRange = maxLuma - minLuma;
+            float colorRange =
+                ((maxR - minR) + (maxG - minG) + (maxB - minB)) /
+                (255f * 3f);
+            detail = Mathf.Max(lumaRange, colorRange);
         }
 
-        private static bool TryRenderCameraLuma(Camera camera, string screenshotPath, int width, int height, out float luma, out string error)
+        private static bool TryRenderCameraMetrics(Camera camera, string screenshotPath, int width, int height, out float luma, out float detail, out string error)
         {
             luma = 0f;
+            detail = 0f;
             if (camera == null)
             {
                 error = "Canvas menu validation could not render because the UI camera reference is missing.";
@@ -1635,7 +1885,7 @@ namespace Game.Editor
                 texture.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
                 texture.Apply(false, false);
                 File.WriteAllBytes(screenshotPath, texture.EncodeToPNG());
-                luma = EstimateAverageLuma(texture);
+                EstimateImageMetrics(texture, out luma, out detail);
                 error = null;
                 return true;
             }
@@ -1880,6 +2130,13 @@ namespace Game.Editor
             return null;
         }
 
+        private static void RemoveDirectChild(Transform root, string childName)
+        {
+            Transform child = FindDirectChild(root, childName);
+            if (child != null)
+                UnityEngine.Object.DestroyImmediate(child.gameObject);
+        }
+
         private static void MoveTo(GameObject target, Transform parent)
         {
             if (target == null || parent == null)
@@ -1887,6 +2144,72 @@ namespace Game.Editor
 
             target.transform.SetParent(parent, false);
             target.SetActive(true);
+        }
+
+        private static void ApplyMainMenuCommanderRouteWiring()
+        {
+            GameObject root = null;
+            try
+            {
+                root = PrefabUtility.LoadPrefabContents(MainMenuContentPrefabPath);
+                GameObject hotspot = FindChild(root.transform, "CommanderPanelHotspot")?.gameObject;
+                if (hotspot == null)
+                    throw new InvalidOperationException("SCN-02 main menu prefab is missing CommanderPanelHotspot.");
+
+                Stretch(hotspot.transform as RectTransform);
+                EnsureButtonInteraction(hotspot);
+                ConfigureRouteButton(hotspot, UiShellRouteIntent.OpenMenuRoute, UIRoute.CommandFeed, true);
+
+                GameObject portraitButton = FindChild(root.transform, "CommanderPortraitButton")?.gameObject;
+                if (portraitButton != null)
+                    ConfigureRouteButton(portraitButton, UiShellRouteIntent.OpenMenuRoute, UIRoute.CommandFeed, true);
+
+                PrefabUtility.SaveAsPrefabAsset(root, MainMenuContentPrefabPath);
+                Debug.Log($"[CanvasCommanderProfileTargetLockLayout] commanderRoute=Passed prefab={MainMenuContentPrefabPath}");
+            }
+            finally
+            {
+                if (root != null)
+                    PrefabUtility.UnloadPrefabContents(root);
+            }
+        }
+
+        private static Button EnsureButtonInteraction(GameObject target)
+        {
+            if (target == null)
+                return null;
+
+            Image image = GetOrAddImage(target);
+            if (image != null)
+                image.raycastTarget = true;
+
+            Button button = target.GetComponent<Button>();
+            if (button == null)
+                button = target.AddComponent<Button>();
+
+            if (button.targetGraphic == null)
+                button.targetGraphic = image;
+
+            button.interactable = true;
+            return button;
+        }
+
+        private static UIShellRouteButtonView ConfigureRouteButton(
+            GameObject target,
+            UiShellRouteIntent intent,
+            UIRoute route,
+            bool pushHistory)
+        {
+            if (target == null)
+                return null;
+
+            EnsureButtonInteraction(target);
+            UIShellRouteButtonView routeButton = target.GetComponent<UIShellRouteButtonView>();
+            if (routeButton == null)
+                routeButton = target.AddComponent<UIShellRouteButtonView>();
+
+            routeButton.Configure(intent, route, pushHistory);
+            return routeButton;
         }
 
         private static void SetActive(GameObject target, bool active)
@@ -1964,7 +2287,7 @@ namespace Game.Editor
                 ? "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_cta_primary_gold_frame.png"
                 : "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_10_selected_small_button_frame.png";
 
-            ApplySlicedSprite(image, normalPath, frameKind == FrameKind.Primary ? 2.8f : 3.2f);
+            ApplySlicedSprite(image, normalPath, 1f);
             DisableDecorativeChrome(buttonObject.transform);
             ConfigureButtonState(buttonObject.GetComponent<Button>(), image, normalPath, selectedPath);
         }
@@ -1979,7 +2302,7 @@ namespace Game.Editor
                 ? "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_button_frame_selected.png"
                 : "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_button_frame_default.png";
             string selectedPath = "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_button_frame_selected.png";
-            ApplySlicedSprite(image, normalPath, 4.4f);
+            ApplySlicedSprite(image, normalPath, 1f);
             DisableDecorativeChrome(buttonObject.transform);
             ConfigureButtonState(buttonObject.GetComponent<Button>(), image, normalPath, selectedPath);
         }
@@ -2001,6 +2324,29 @@ namespace Game.Editor
             state.selectedSprite = selected;
             state.disabledSprite = normal;
             button.spriteState = state;
+        }
+
+        private static void SetButtonAvailability(GameObject buttonObject, bool available, float visualStrength)
+        {
+            if (buttonObject == null)
+                return;
+
+            Button button = buttonObject.GetComponent<Button>();
+            if (button != null)
+                button.interactable = available;
+
+            Image image = buttonObject.GetComponent<Image>();
+            if (image != null)
+            {
+                float strength = Mathf.Clamp01(visualStrength);
+                image.color = new Color(strength, strength, strength, 1f);
+            }
+
+            TMP_Text label = FindChild(buttonObject.transform, "Label")?.GetComponent<TMP_Text>();
+            if (label != null)
+                label.color = available || visualStrength >= 0.99f
+                    ? new Color(0.95f, 0.88f, 0.66f, 1f)
+                    : new Color(0.58f, 0.56f, 0.49f, 1f);
         }
 
         private static void LayoutIconLabelButton(
@@ -2040,6 +2386,7 @@ namespace Game.Editor
             if (child == null)
                 return;
 
+            child.SetActive(true);
             Image image = GetOrAddImage(child);
             Sprite sprite = LoadSprite(spritePath);
             if (sprite == null)
@@ -2064,6 +2411,8 @@ namespace Game.Editor
             Color color)
         {
             GameObject child = FindChild(root, childName)?.gameObject;
+            if (child != null)
+                child.SetActive(true);
             SetRectFromTopLeft(child, left, top, width, height);
             TMP_Text text = child != null ? child.GetComponent<TMP_Text>() : null;
             if (text == null)
@@ -2136,6 +2485,7 @@ namespace Game.Editor
             if (existing == null)
                 child.transform.SetParent(parent.transform, false);
 
+            child.SetActive(true);
             SetRectFromTopLeft(child, left, top, width, height);
             child.transform.SetAsFirstSibling();
             Image image = GetOrAddImage(child);
@@ -2146,6 +2496,51 @@ namespace Game.Editor
             image.type = Image.Type.Simple;
             image.color = color;
             image.raycastTarget = false;
+        }
+
+        private static GameObject ConfigureSolidImageChildAndReturn(
+            GameObject parent,
+            string name,
+            float left,
+            float top,
+            float width,
+            float height,
+            Color color)
+        {
+            ConfigureSolidImageChild(parent, name, left, top, width, height, color);
+            return parent != null ? parent.transform.Find(name)?.gameObject : null;
+        }
+
+        private static GameObject ConfigureSpriteChild(
+            GameObject parent,
+            string name,
+            string spritePath,
+            float left,
+            float top,
+            float width,
+            float height,
+            bool preserveAspect = true)
+        {
+            if (parent == null)
+                return null;
+
+            Transform existing = parent.transform.Find(name);
+            GameObject child = existing != null ? existing.gameObject : new GameObject(name, typeof(RectTransform), typeof(Image));
+            if (existing == null)
+                child.transform.SetParent(parent.transform, false);
+
+            SetRectFromTopLeft(child, left, top, width, height);
+            Image image = GetOrAddImage(child);
+            Sprite sprite = LoadSprite(spritePath);
+            if (image == null || sprite == null)
+                return child;
+
+            image.sprite = sprite;
+            image.type = Image.Type.Simple;
+            image.preserveAspect = preserveAspect;
+            image.color = Color.white;
+            image.raycastTarget = false;
+            return child;
         }
 
         private static void ApplySlicedSprite(Image image, string spritePath, float pixelsPerUnitMultiplier)
@@ -2293,15 +2688,15 @@ namespace Game.Editor
                 return;
 
             GameObject portraitPanel = FindChild(panel.transform, "PortraitPanel")?.gameObject;
-            SetRectFromTopLeft(portraitPanel, 80f, 90f, 620f, 600f);
-            ApplyPanelFrame(portraitPanel, "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_frame_selected.png", 4.4f);
+            SetRectFromTopLeft(portraitPanel, 40f, 38f, 560f, 642f);
+            ApplyPanelFrame(portraitPanel, "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_frame_selected.png", 1f);
 
             GameObject portrait = FindChild(panel.transform, "Portrait")?.gameObject;
             if (portraitPanel != null)
                 MoveTo(portrait, portraitPanel.transform);
-            SetRectFromTopLeft(portrait, 58f, 54f, 504f, 492f);
+            SetRectFromTopLeft(portrait, 34f, 28f, 492f, 586f);
             Image portraitImage = GetOrAddImage(portrait);
-            Sprite portraitSprite = LoadSprite("Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_portrait_01_commander_portrait_shadowed.png");
+            Sprite portraitSprite = LoadSprite("Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_commander_portrait.png");
             if (portraitImage != null && portraitSprite != null)
             {
                 portraitImage.sprite = portraitSprite;
@@ -2311,31 +2706,61 @@ namespace Game.Editor
             }
 
             GameObject identityCard = FindChild(panel.transform, "IdentityCard")?.gameObject;
-            SetRectFromTopLeft(identityCard, 760f, 115f, 1040f, 535f);
+            SetRectFromTopLeft(identityCard, 620f, 42f, 970f, 630f);
             DisableImage(identityCard);
-            ConfigureSolidImageChild(identityCard, "IdentityTextBacking", 190f, 30f, 825f, 420f, new Color(0.02f, 0.025f, 0.022f, 0.58f));
-            SetChildSprite(identityCard, "Badge", "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_02_commander_rank_shield.png", true);
-            ConfigureTextChild(identityCard, "RoleLabel", "FIELD COMMANDER", 235f, 45f, 760f, 64f, 38f, TextAlignmentOptions.MidlineLeft, new Color(0.62f, 0.83f, 0.22f));
-            ConfigureTextChild(identityCard, "CommanderNameLabel", "COL. ALEX MORGAN", 235f, 132f, 790f, 118f, 62f, TextAlignmentOptions.MidlineLeft, new Color(0.95f, 0.9f, 0.76f));
-            ConfigureTextChild(identityCard, "MottoLabel", "VICTORY IS PLANNED", 235f, 275f, 790f, 58f, 34f, TextAlignmentOptions.MidlineLeft, new Color(0.84f, 0.78f, 0.55f));
-            ConfigureTextChild(identityCard, "CommanderLevelLabel", "LEVEL 38", 235f, 370f, 520f, 68f, 40f, TextAlignmentOptions.MidlineLeft, new Color(0.92f, 0.74f, 0.22f));
-            GameObject rankBadge = FindChild(identityCard.transform, "Badge")?.gameObject;
-            SetRectFromTopLeft(rankBadge, 44f, 112f, 160f, 160f);
+            ConfigureSolidImageChild(identityCard, "IdentityTextBacking", 0f, 0f, 970f, 630f, new Color(0.02f, 0.025f, 0.022f, 0.76f));
+            SetActive(FindChild(identityCard != null ? identityCard.transform : null, "Badge")?.gameObject, false);
+            ConfigureSpriteChild(
+                identityCard,
+                "RankEmblem",
+                "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_02_commander_rank_shield.png",
+                26f,
+                54f,
+                166f,
+                166f);
+            ConfigureTextChild(identityCard, "RoleLabel", "FIELD COMMANDER", 200f, 34f, 740f, 60f, 42f, TextAlignmentOptions.MidlineLeft, new Color(0.62f, 0.83f, 0.22f));
+            ConfigureTextChild(identityCard, "CommanderNameLabel", "COL. ALEX MORGAN", 200f, 98f, 740f, 112f, 76f, TextAlignmentOptions.MidlineLeft, new Color(0.95f, 0.9f, 0.76f));
+            ConfigureTextChild(identityCard, "MottoLabel", "VICTORY IS PLANNED", 200f, 224f, 740f, 60f, 42f, TextAlignmentOptions.MidlineLeft, new Color(0.72f, 0.83f, 0.26f));
+            ConfigureSolidImageChild(identityCard, "MottoRule", 200f, 294f, 710f, 3f, new Color(0.57f, 0.44f, 0.13f, 0.9f));
+            ConfigureSpriteChild(
+                identityCard,
+                "LevelMedallion",
+                "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_18_reward_node_active.png",
+                20f,
+                344f,
+                176f,
+                176f);
+            ConfigureTextChild(identityCard, "CommanderLevelLabel", "38", 28f, 354f, 160f, 112f, 88f, TextAlignmentOptions.Center, new Color(0.92f, 0.74f, 0.22f));
+            SetActive(FindChild(identityCard != null ? identityCard.transform : null, "LevelCaption")?.gameObject, false);
+            ConfigureTextChild(identityCard, "ProgressCaption", "COMMAND XP", 220f, 350f, 300f, 40f, 27f, TextAlignmentOptions.MidlineLeft, new Color(0.68f, 0.66f, 0.55f));
+            ConfigureTextChild(identityCard, "LevelProgressLabel", "15,680 / 24,000 XP", 220f, 378f, 690f, 54f, 34f, TextAlignmentOptions.MidlineLeft, new Color(0.9f, 0.84f, 0.65f));
+            ConfigureSolidImageChild(identityCard, "LevelProgressFill", 220f, 458f, 448f, 40f, new Color(0.55f, 0.66f, 0.08f, 1f));
+            ConfigureSolidImageChild(identityCard, "LevelProgressTrack", 220f, 458f, 690f, 40f, new Color(0.08f, 0.08f, 0.065f, 0.9f));
+            ApplyPanelFrame(
+                FindChild(identityCard != null ? identityCard.transform : null, "LevelProgressTrack")?.gameObject,
+                "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_12_small_chip_frame.png",
+                0.82f);
+            ConfigureTextChild(identityCard, "ServiceRecordLabel", "ACTIVE COMMAND  /  246 OPERATIONS", 220f, 530f, 690f, 54f, 31f, TextAlignmentOptions.MidlineLeft, new Color(0.72f, 0.69f, 0.55f));
+            FindChild(identityCard != null ? identityCard.transform : null, "CommanderLevelLabel")?.SetAsLastSibling();
 
             GameObject editButton = FindChild(panel.transform, "EditIdButton")?.gameObject;
             if (portraitPanel != null)
                 MoveTo(editButton, portraitPanel.transform);
-            SetRectFromTopLeft(editButton, 480f, 42f, 105f, 105f);
+            SetRectFromTopLeft(editButton, 464f, 28f, 72f, 72f);
             ApplyButtonFrame(editButton, FrameKind.Secondary);
             SetChildSprite(editButton, "Icon", "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_09_edit_pencil.png", true);
             GameObject editIcon = FindChild(editButton != null ? editButton.transform : null, "Icon")?.gameObject;
-            SetRectFromTopLeft(editIcon, 28f, 28f, 49f, 49f);
+            SetRectFromTopLeft(editIcon, 19f, 19f, 34f, 34f);
             HideDirectChildrenExcept(editButton != null ? editButton.transform : null, "Icon");
             HideDirectChildrenExcept(portraitPanel != null ? portraitPanel.transform : null, "Portrait", "EditIdButton");
 
             GameObject badgesButton = FindChild(panel.transform, "BadgesButton")?.gameObject;
             SetActive(badgesButton, false);
-            HideDirectChildrenExcept(identityCard != null ? identityCard.transform : null, "IdentityTextBacking", "Badge", "RoleLabel", "CommanderNameLabel", "MottoLabel", "CommanderLevelLabel");
+            HideDirectChildrenExcept(identityCard != null ? identityCard.transform : null,
+                "IdentityTextBacking", "RankEmblem", "RoleLabel", "CommanderNameLabel", "MottoLabel", "MottoRule",
+                "LevelMedallion", "ProgressCaption",
+                "CommanderLevelLabel", "LevelProgressLabel", "LevelProgressTrack",
+                "LevelProgressFill", "ServiceRecordLabel");
             HideDirectChildrenExcept(panel.transform, "PortraitPanel", "IdentityCard");
         }
 
@@ -2344,7 +2769,8 @@ namespace Game.Editor
             if (panel == null)
                 return;
 
-            SetTextBlock(panel.transform, "Title", 70f, 28f, 600f, 70f, 44f, TextAlignmentOptions.MidlineLeft, new Color(0.96f, 0.88f, 0.62f));
+            SetTextValue(panel.transform, "Title", "SERVICE RECORD");
+            SetTextBlock(panel.transform, "Title", 44f, 18f, 560f, 60f, 42f, TextAlignmentOptions.MidlineLeft, new Color(0.96f, 0.88f, 0.62f));
             string[] cards = { "VictoriesStatCard", "MissionsStatCard", "CiviliansStatCard", "LostStatCard" };
             string[] labels = { "VICTORIES", "MISSIONS", "CIVILIANS", "UNITS LOST" };
             string[] values = { "128", "246", "8,642", "312" };
@@ -2360,18 +2786,17 @@ namespace Game.Editor
             for (int i = 0; i < cards.Length; i++)
             {
                 GameObject card = FindChild(panel.transform, cards[i])?.gameObject;
-                SetRectFromTopLeft(card, 60f + (i * 455f), 115f, 420f, 190f);
-                ApplyPanelFrame(card, "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_12_small_chip_frame.png", 5.2f);
-                SetChildSprite(card, "Icon", iconPaths[i], true);
-                GameObject icon = FindChild(card != null ? card.transform : null, "Icon")?.gameObject;
-                SetRectFromTopLeft(icon, 40f, 58f, 76f, 76f);
+                SetRectFromTopLeft(card, 38f + (i * 398f), 88f, 370f, 242f);
+                ApplyPanelFrame(card, "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_squad_card_frame.png", 0.74f);
+                SetActive(FindChild(card != null ? card.transform : null, "Icon")?.gameObject, false);
+                ConfigureSpriteChild(card, "StatIcon", iconPaths[i], 28f, 72f, 94f, 94f);
                 SetTextValue(card != null ? card.transform : null, "Label", labels[i]);
                 SetTextValue(card != null ? card.transform : null, "Value", values[i]);
                 SetTextValue(card != null ? card.transform : null, "Suffix", suffixes[i]);
-                SetTextBlock(card != null ? card.transform : null, "Label", 142f, 25f, 230f, 48f, 30f, TextAlignmentOptions.Midline, new Color(0.94f, 0.88f, 0.68f));
-                SetTextBlock(card != null ? card.transform : null, "Value", 140f, 74f, 230f, 72f, 54f, TextAlignmentOptions.Midline, new Color(0.92f, 0.74f, 0.22f));
-                SetTextBlock(card != null ? card.transform : null, "Suffix", 140f, 140f, 230f, 38f, 24f, TextAlignmentOptions.Midline, new Color(0.64f, 0.78f, 0.32f));
-                HideDirectChildrenExcept(card != null ? card.transform : null, "Icon", "Label", "Value", "Suffix");
+                SetTextBlock(card != null ? card.transform : null, "Label", 142f, 30f, 200f, 46f, 32f, TextAlignmentOptions.MidlineLeft, new Color(0.94f, 0.88f, 0.68f));
+                SetTextBlock(card != null ? card.transform : null, "Value", 140f, 76f, 202f, 78f, 66f, TextAlignmentOptions.MidlineLeft, new Color(0.92f, 0.74f, 0.22f));
+                SetTextBlock(card != null ? card.transform : null, "Suffix", 142f, 166f, 200f, 44f, 27f, TextAlignmentOptions.MidlineLeft, new Color(0.64f, 0.78f, 0.32f));
+                HideDirectChildrenExcept(card != null ? card.transform : null, "StatIcon", "Label", "Value", "Suffix");
             }
 
             HideDirectChildrenExcept(panel.transform, "Title", "VictoriesStatCard", "MissionsStatCard", "CiviliansStatCard", "LostStatCard");
@@ -2382,31 +2807,42 @@ namespace Game.Editor
             if (panel == null)
                 return;
 
-            SetTextBlock(panel.transform, "Title", 70f, 34f, 720f, 70f, 44f, TextAlignmentOptions.MidlineLeft, new Color(0.96f, 0.88f, 0.62f));
-            string[] names = { "CampaignSnapshot", "OperationsSnapshot", "SkirmishSnapshot", "ReadinessSnapshot" };
-            string[] labels = { "CAMPAIGN", "OPERATIONS", "SKIRMISH", "READINESS" };
-            string[] values = { "1,750", "1,620", "1,480", "HIGH" };
-            Vector2[] positions =
+            SetTextBlock(panel.transform, "Title", 44f, 18f, 660f, 60f, 42f, TextAlignmentOptions.MidlineLeft, new Color(0.96f, 0.88f, 0.62f));
+            ConfigureTextChild(panel, "ModeHeader", "MODE", 164f, 82f, 300f, 42f, 29f, TextAlignmentOptions.MidlineLeft, new Color(0.62f, 0.61f, 0.52f));
+            ConfigureTextChild(panel, "RatingHeader", "RATING", 570f, 82f, 220f, 42f, 29f, TextAlignmentOptions.MidlineLeft, new Color(0.62f, 0.61f, 0.52f));
+            ConfigureTextChild(panel, "RankHeader", "RANK", 838f, 82f, 220f, 42f, 29f, TextAlignmentOptions.MidlineLeft, new Color(0.62f, 0.61f, 0.52f));
+            ConfigureTextChild(panel, "WinRateHeader", "WIN RATE", 1098f, 82f, 220f, 42f, 29f, TextAlignmentOptions.MidlineLeft, new Color(0.62f, 0.61f, 0.52f));
+            ConfigureTextChild(panel, "LastPlayedHeader", "LAST PLAYED", 1330f, 82f, 250f, 42f, 29f, TextAlignmentOptions.MidlineLeft, new Color(0.62f, 0.61f, 0.52f));
+
+            string[] names = { "CampaignSnapshot", "OperationsSnapshot", "SkirmishSnapshot" };
+            string[] labels = { "CAMPAIGN", "OPERATIONS", "SKIRMISH" };
+            string[] ratings = { "1,750", "1,620", "1,480" };
+            string[] ranks = { "#2,134", "#3,987", "#6,412" };
+            string[] winRates = { "76%", "64%", "58%" };
+            string[] lastPlayed = { "1h ago", "3h ago", "5h ago" };
+            string[] iconPaths =
             {
-                new(70f, 145f),
-                new(980f, 145f),
-                new(70f, 315f),
-                new(980f, 315f)
+                "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_02_commander_rank_shield.png",
+                "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_10_badge_shield.png",
+                "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_16_history_crossed_swords.png"
             };
 
             for (int i = 0; i < names.Length; i++)
             {
                 GameObject row = FindChild(panel.transform, names[i])?.gameObject;
-                SetRectFromTopLeft(row, positions[i].x, positions[i].y, 830f, 130f);
-                ApplyPanelFrame(row, "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_12_small_chip_frame.png", 5.2f);
-                SetTextValue(row != null ? row.transform : null, "Label", labels[i]);
-                SetTextValue(row != null ? row.transform : null, "Value", values[i]);
-                SetTextBlock(row != null ? row.transform : null, "Label", 58f, 16f, 420f, 42f, 32f, TextAlignmentOptions.MidlineLeft, new Color(0.94f, 0.88f, 0.68f));
-                SetTextBlock(row != null ? row.transform : null, "Value", 58f, 64f, 420f, 52f, 40f, TextAlignmentOptions.MidlineLeft, new Color(0.95f, 0.9f, 0.76f));
-                HideDirectChildrenExcept(row != null ? row.transform : null, "Icon", "Label", "Value");
+                SetRectFromTopLeft(row, 38f, 130f + (i * 172f), 1570f, 144f);
+                ApplyPanelFrame(row, "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_20_route_strip_frame.png", 1f);
+                ConfigureSpriteChild(row, "Icon", iconPaths[i], 28f, 28f, 88f, 88f);
+                ConfigureTextChild(row, "Mode", labels[i], 140f, 0f, 340f, 144f, 44f, TextAlignmentOptions.MidlineLeft, new Color(0.94f, 0.88f, 0.68f));
+                ConfigureTextChild(row, "Rating", ratings[i], 530f, 0f, 220f, 144f, 44f, TextAlignmentOptions.MidlineLeft, new Color(0.63f, 0.79f, 0.14f));
+                ConfigureTextChild(row, "Rank", ranks[i], 800f, 0f, 220f, 144f, 44f, TextAlignmentOptions.MidlineLeft, new Color(0.63f, 0.79f, 0.14f));
+                ConfigureTextChild(row, "WinRate", winRates[i], 1060f, 0f, 220f, 144f, 44f, TextAlignmentOptions.MidlineLeft, new Color(0.63f, 0.79f, 0.14f));
+                ConfigureTextChild(row, "LastPlayed", lastPlayed[i], 1298f, 0f, 230f, 144f, 38f, TextAlignmentOptions.MidlineLeft, new Color(0.73f, 0.7f, 0.59f));
+                HideDirectChildrenExcept(row != null ? row.transform : null, "Icon", "Mode", "Rating", "Rank", "WinRate", "LastPlayed");
             }
 
-            HideDirectChildrenExcept(panel.transform, "Title", "CampaignSnapshot", "OperationsSnapshot", "SkirmishSnapshot", "ReadinessSnapshot");
+            SetActive(FindChild(panel.transform, "ReadinessSnapshot")?.gameObject, false);
+            HideDirectChildrenExcept(panel.transform, "Title", "ModeHeader", "RatingHeader", "RankHeader", "WinRateHeader", "LastPlayedHeader", "CampaignSnapshot", "OperationsSnapshot", "SkirmishSnapshot");
         }
 
         private static void LayoutRewardTrack(GameObject panel)
@@ -2414,37 +2850,81 @@ namespace Game.Editor
             if (panel == null)
                 return;
 
-            SetTextBlock(panel.transform, "Title", 80f, 35f, 920f, 70f, 46f, TextAlignmentOptions.MidlineLeft, new Color(0.96f, 0.88f, 0.62f));
-            GameObject progress = FindChild(panel.transform, "XpProgress")?.gameObject;
-            SetRectFromTopLeft(progress, 100f, 145f, 1180f, 160f);
-            GameObject track = FindChild(progress != null ? progress.transform : null, "Track")?.gameObject;
-            SetRectFromTopLeft(track, 0f, 36f, 980f, 62f);
-            ApplyPanelFrame(track, "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_progress_meter_empty_frame.png", 4.2f);
-            GameObject fill = FindChild(track != null ? track.transform : null, "Fill")?.gameObject;
-            SetRectFromTopLeft(fill, 22f, 18f, 680f, 28f);
-            SetChildSprite(track, "Fill", "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_progress_fill_olive_segment.png", false);
-            SetTextBlock(progress != null ? progress.transform : null, "XpLabel", 0f, 105f, 980f, 48f, 30f, TextAlignmentOptions.Midline, new Color(0.9f, 0.84f, 0.64f));
+            SetTextBlock(panel.transform, "Title", 50f, 24f, 800f, 64f, 42f, TextAlignmentOptions.MidlineLeft, new Color(0.96f, 0.88f, 0.62f));
+            ConfigureSolidImageChild(panel, "LevelBadge", 50f, 104f, 196f, 196f, new Color(0.035f, 0.04f, 0.035f, 0.95f));
+            GameObject levelBadge = panel.transform.Find("LevelBadge")?.gameObject;
+            ApplyPanelFrame(levelBadge, "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_square_panel_frame.png", 0.8f);
+            ConfigureTextChild(levelBadge, "LevelValue", "38", 0f, 14f, 196f, 112f, 80f, TextAlignmentOptions.Center, new Color(0.92f, 0.74f, 0.22f));
+            ConfigureTextChild(levelBadge, "LevelCaption", "LEVEL", 0f, 124f, 196f, 46f, 28f, TextAlignmentOptions.Center, new Color(0.9f, 0.84f, 0.65f));
+            HideDirectChildrenExcept(levelBadge != null ? levelBadge.transform : null, "LevelValue", "LevelCaption");
 
-            string[] nodeNames = { "Node35", "Node36", "Node37", "Node38", "Node39", "Node40" };
+            GameObject progress = FindChild(panel.transform, "XpProgress")?.gameObject;
+            SetActive(progress, false);
+            GameObject rewardXpBar = ConfigureSolidImageChildAndReturn(
+                panel,
+                "RewardXpBar",
+                270f,
+                116f,
+                770f,
+                126f,
+                new Color(0.02f, 0.024f, 0.02f, 0.92f));
+            ApplyPanelFrame(
+                rewardXpBar,
+                "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_20_route_strip_frame.png",
+                0.72f);
+            ConfigureTextChild(rewardXpBar, "Label", "15,680 / 24,000 XP", 26f, 14f, 710f, 44f, 32f, TextAlignmentOptions.MidlineLeft, new Color(0.9f, 0.84f, 0.64f));
+            ConfigureSolidImageChild(rewardXpBar, "Fill", 42f, 78f, 468f, 18f, new Color(0.58f, 0.68f, 0.08f, 1f));
+            ConfigureSolidImageChild(rewardXpBar, "Track", 24f, 68f, 720f, 38f, new Color(0.055f, 0.06f, 0.045f, 0.96f));
+            HideDirectChildrenExcept(rewardXpBar != null ? rewardXpBar.transform : null, "Label", "Track", "Fill");
+
+            GameObject nextReward = ConfigureSolidImageChildAndReturn(panel, "NextReward", 1070f, 92f, 260f, 220f, new Color(0.03f, 0.035f, 0.03f, 0.92f));
+            ApplyPanelFrame(nextReward, "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_squad_card_frame.png", 0.65f);
+            ConfigureTextChild(nextReward, "Caption", "NEXT REWARD", 24f, 26f, 212f, 42f, 26f, TextAlignmentOptions.Center, new Color(0.82f, 0.77f, 0.62f));
+            ConfigureSpriteChild(nextReward, "Icon", "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_04_supplies_crate.png", 66f, 72f, 128f, 128f);
+            HideDirectChildrenExcept(nextReward != null ? nextReward.transform : null, "Caption", "Icon");
+
+            ConfigureSolidImageChild(panel, "MilestoneTrack", 136f, 360f, 1110f, 6f, new Color(0.55f, 0.42f, 0.12f, 0.9f));
+
+            SetActive(FindChild(panel.transform, "Node35")?.gameObject, false);
+            string[] nodeNames = { "Node36", "Node37", "Node38", "Node39", "Node40" };
+            string[] nodeValues = { "36", "37", "38", "39", "40" };
+            string[] rewardIcons =
+            {
+                "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_15_reward_wreath.png",
+                "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_04_supplies_crate.png",
+                "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_05_command_shield.png",
+                "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_13_building.png",
+                "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_10_badge_shield.png"
+            };
             for (int i = 0; i < nodeNames.Length; i++)
             {
                 GameObject node = FindChild(panel.transform, nodeNames[i])?.gameObject;
-                SetRectFromTopLeft(node, 115f + (i * 238f), 350f, 145f, 145f);
-                ApplySlicedSprite(GetOrAddImage(node), i == 3
+                SetRectFromTopLeft(node, 112f + (i * 252f), 302f, 120f, 120f);
+                ApplySlicedSprite(GetOrAddImage(node), i == 2
                     ? "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_18_reward_node_active.png"
-                    : "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_19_reward_node_locked.png", 4.6f);
-                SetTextBlock(node != null ? node.transform : null, "Level", 0f, 0f, 145f, 145f, 38f, TextAlignmentOptions.Center, new Color(0.92f, 0.82f, 0.45f));
+                    : i < 2
+                        ? "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_17_reward_node_claimed.png"
+                        : "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_19_reward_node_locked.png", 1f);
+                SetTextValue(node != null ? node.transform : null, "Level", nodeValues[i]);
+                SetTextBlock(node != null ? node.transform : null, "Level", 0f, 0f, 120f, 120f, 34f, TextAlignmentOptions.Center, new Color(0.92f, 0.82f, 0.45f));
                 HideDirectChildrenExcept(node != null ? node.transform : null, "Level");
+
+                GameObject rewardCard = ConfigureSolidImageChildAndReturn(panel, $"RewardCard{nodeValues[i]}", 72f + (i * 252f), 430f, 200f, 190f, new Color(0.025f, 0.03f, 0.025f, 0.94f));
+                ApplyPanelFrame(rewardCard, "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_squad_card_frame.png", i == 2 ? 0.76f : 0.56f);
+                ConfigureSpriteChild(rewardCard, "Icon", rewardIcons[i], 52f, 30f, 96f, 96f);
+                ConfigureTextChild(rewardCard, "State", i < 2 ? "CLAIMED" : i == 2 ? "ACTIVE" : "LOCKED", 22f, 126f, 156f, 36f, 27f, TextAlignmentOptions.Center, i <= 2 ? new Color(0.65f, 0.8f, 0.16f) : new Color(0.58f, 0.56f, 0.49f));
+                HideDirectChildrenExcept(rewardCard != null ? rewardCard.transform : null, "Icon", "State");
             }
 
-            SetTextBlock(panel.transform, "RewardText", 105f, 540f, 920f, 55f, 30f, TextAlignmentOptions.MidlineLeft, new Color(0.92f, 0.84f, 0.58f));
+            SetActive(FindChild(panel.transform, "RewardText")?.gameObject, false);
             GameObject claimButton = FindChild(panel.transform, "ClaimButton")?.gameObject;
-            SetRectFromTopLeft(claimButton, 1170f, 560f, 430f, 140f);
+            SetRectFromTopLeft(claimButton, 1060f, 626f, 280f, 78f);
             ApplyButtonFrame(claimButton, FrameKind.Primary);
-            LayoutIconLabelButton(claimButton, 312f, 42f, 58f, 56f, 44f, 0f, 260f, 140f, 42f);
+            SetButtonLabel(claimButton, "CLAIM");
+            LayoutIconLabelButton(claimButton, 212f, 17f, 44f, 44f, 32f, 0f, 176f, 78f, 31f);
             SetChildSprite(claimButton, "Icon", "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_20_claim_chevron.png", true);
             HideDirectChildrenExcept(claimButton != null ? claimButton.transform : null, "Icon", "Label");
-            HideDirectChildrenExcept(panel.transform, "Title", "XpProgress", "Node35", "Node36", "Node37", "Node38", "Node39", "Node40", "RewardText", "ClaimButton");
+            HideDirectChildrenExcept(panel.transform, "Title", "LevelBadge", "RewardXpBar", "NextReward", "MilestoneTrack", "Node36", "Node37", "Node38", "Node39", "Node40", "RewardCard36", "RewardCard37", "RewardCard38", "RewardCard39", "RewardCard40", "ClaimButton");
         }
 
         private static void LayoutRecentHistory(GameObject panel)
@@ -2452,23 +2932,39 @@ namespace Game.Editor
             if (panel == null)
                 return;
 
-            SetTextBlock(panel.transform, "Title", 80f, 34f, 720f, 70f, 46f, TextAlignmentOptions.MidlineLeft, new Color(0.96f, 0.88f, 0.62f));
-            string[] rows = { "FirstContactRow", "OldMarketRow" };
+            SetTextBlock(panel.transform, "Title", 50f, 22f, 700f, 68f, 44f, TextAlignmentOptions.MidlineLeft, new Color(0.96f, 0.88f, 0.62f));
+            ConfigureSolidImageChild(panel, "ViewAllBacking", 1060f, 22f, 270f, 70f, new Color(0.03f, 0.035f, 0.03f, 0.92f));
+            ConfigureTextChild(panel, "ViewAllLabel", "VIEW ALL", 1080f, 22f, 230f, 70f, 30f, TextAlignmentOptions.Center, new Color(0.9f, 0.82f, 0.58f));
+            string[] rows = { "FirstContactRow", "OldMarketRow", "ConvoyEscortRow", "BridgeStrikeRow", "FrontlineClashRow" };
+            string[] titles = { "HOSTILE PATROL", "SUPPLY RUN", "CONVOY ESCORT", "BRIDGE STRIKE", "FRONTLINE CLASH" };
+            string[] modes = { "CAMPAIGN", "OPERATIONS", "OPERATIONS", "SKIRMISH", "SKIRMISH" };
+            string[] results = { "VICTORY", "VICTORY", "DEFEAT", "VICTORY", "VICTORY" };
+            string[] times = { "1h ago", "3h ago", "5h ago", "7h ago", "9h ago" };
+            string[] iconPaths =
+            {
+                "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_15_reward_wreath.png",
+                "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_10_badge_shield.png",
+                "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_10_badge_shield.png",
+                "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_16_history_crossed_swords.png",
+                "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_16_history_crossed_swords.png"
+            };
             for (int i = 0; i < rows.Length; i++)
             {
                 GameObject row = FindChild(panel.transform, rows[i])?.gameObject;
-                SetRectFromTopLeft(row, 75f, 150f + (i * 165f), 1590f, 135f);
-                ApplyPanelFrame(row, "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_12_small_chip_frame.png", 5.2f);
-                SetTextValue(row != null ? row.transform : null, "Title", i == 0 ? "HOSTILE PATROL" : "SUPPLY RUN");
-                SetTextValue(row != null ? row.transform : null, "Subtitle", i == 0 ? "CAMPAIGN  |  VICTORY" : "OPERATIONS  |  VICTORY");
-                SetTextValue(row != null ? row.transform : null, "Time", i == 0 ? "1h ago" : "3h ago");
-                SetTextBlock(row != null ? row.transform : null, "Title", 72f, 18f, 900f, 46f, 36f, TextAlignmentOptions.MidlineLeft, new Color(0.95f, 0.89f, 0.68f));
-                SetTextBlock(row != null ? row.transform : null, "Subtitle", 72f, 72f, 1040f, 38f, 26f, TextAlignmentOptions.MidlineLeft, new Color(0.76f, 0.72f, 0.58f));
-                SetTextBlock(row != null ? row.transform : null, "Time", 1250f, 22f, 250f, 42f, 28f, TextAlignmentOptions.MidlineRight, new Color(0.64f, 0.78f, 0.32f));
-                HideDirectChildrenExcept(row != null ? row.transform : null, "Icon", "Title", "Subtitle", "Time");
+                if (row == null)
+                    row = ConfigureSolidImageChildAndReturn(panel, rows[i], 42f, 108f + (i * 172f), 1296f, 152f, new Color(0.025f, 0.03f, 0.025f, 0.94f));
+
+                SetRectFromTopLeft(row, 42f, 108f + (i * 172f), 1296f, 152f);
+                ApplyPanelFrame(row, "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_20_route_strip_frame.png", 1f);
+                ConfigureSpriteChild(row, "Icon", iconPaths[i], 26f, 32f, 88f, 88f);
+                ConfigureTextChild(row, "Title", titles[i], 138f, 16f, 560f, 60f, 42f, TextAlignmentOptions.MidlineLeft, new Color(0.95f, 0.89f, 0.68f));
+                ConfigureTextChild(row, "Subtitle", modes[i], 138f, 78f, 420f, 44f, 32f, TextAlignmentOptions.MidlineLeft, new Color(0.76f, 0.72f, 0.58f));
+                ConfigureTextChild(row, "Result", results[i], 790f, 0f, 280f, 152f, 38f, TextAlignmentOptions.MidlineRight, i == 2 ? new Color(0.9f, 0.25f, 0.12f) : new Color(0.63f, 0.79f, 0.14f));
+                ConfigureTextChild(row, "Time", times[i], 1100f, 0f, 150f, 152f, 32f, TextAlignmentOptions.MidlineRight, new Color(0.7f, 0.68f, 0.59f));
+                HideDirectChildrenExcept(row != null ? row.transform : null, "Icon", "Title", "Subtitle", "Result", "Time");
             }
 
-            HideDirectChildrenExcept(panel.transform, "Title", "FirstContactRow", "OldMarketRow");
+            HideDirectChildrenExcept(panel.transform, "Title", "ViewAllBacking", "ViewAllLabel", "FirstContactRow", "OldMarketRow", "ConvoyEscortRow", "BridgeStrikeRow", "FrontlineClashRow");
         }
 
         private static void PrepareFooterButton(
@@ -2479,12 +2975,23 @@ namespace Game.Editor
             FrameKind frameKind)
         {
             MoveTo(button, footer);
+            EnsureButtonInteraction(button);
             float width = frameKind == FrameKind.Primary ? 820f : 680f;
-            SetRectFromTopLeft(button, x, 22f, width, 170f);
+            SetRectFromTopLeft(button, x, -150f, width, 170f);
             ApplyButtonFrame(button, frameKind);
             SetButtonLabel(button, labelText);
-            LayoutIconLabelButton(button, 65f, 46f, 78f, 72f, 170f, 0f, width - 215f, 170f, 56f);
+            LayoutIconLabelButton(button, 58f, 39f, 92f, 92f, 176f, 0f, width - 224f, 170f, 56f);
             HideDirectChildrenExcept(button != null ? button.transform : null, "Icon", "Label");
+        }
+
+        private static void ConfigureFooterActionIcon(GameObject button, string spritePath)
+        {
+            if (button == null)
+                return;
+
+            SetActive(FindChild(button.transform, "Icon")?.gameObject, false);
+            ConfigureSpriteChild(button, "ActionIcon", spritePath, 58f, 39f, 92f, 92f);
+            HideDirectChildrenExcept(button.transform, "ActionIcon", "Label");
         }
 
         private static void SetButtonLabel(GameObject button, string text)
@@ -2497,6 +3004,7 @@ namespace Game.Editor
 
         private static void HideFooterBreadcrumbs(
             Transform footer,
+            GameObject footerRail,
             GameObject openArmoryButton,
             GameObject detailButton,
             GameObject replayButton)
@@ -2507,8 +3015,21 @@ namespace Game.Editor
             for (int i = 0; i < footer.childCount; i++)
             {
                 GameObject child = footer.GetChild(i).gameObject;
-                if (child != openArmoryButton && child != detailButton && child != replayButton)
+                if (child != footerRail && child != openArmoryButton && child != detailButton && child != replayButton)
                     child.SetActive(false);
+            }
+        }
+
+        private static void RemoveDuplicateDirectChildren(Transform parent, string childName, GameObject keep)
+        {
+            if (parent == null || string.IsNullOrWhiteSpace(childName))
+                return;
+
+            for (int i = parent.childCount - 1; i >= 0; i--)
+            {
+                GameObject child = parent.GetChild(i).gameObject;
+                if (child != keep && string.Equals(child.name, childName, StringComparison.Ordinal))
+                    UnityEngine.Object.DestroyImmediate(child);
             }
         }
 
@@ -2528,6 +3049,144 @@ namespace Game.Editor
             image.preserveAspect = false;
             image.raycastTarget = false;
             image.color = Color.white;
+        }
+
+        private static void ConfigureCommanderProfileContentSections(GameObject root)
+        {
+            if (root == null)
+                return;
+
+            UIShellContentSectionsView sectionsView = root.GetComponent<UIShellContentSectionsView>();
+            if (sectionsView == null)
+                sectionsView = root.AddComponent<UIShellContentSectionsView>();
+
+            var sections = new List<UIShellContentSectionsView.SectionReference>(4);
+            AddContentSection(sections, root.transform, UIShellContentSectionId.Left, "LeftContent");
+            AddContentSection(sections, root.transform, UIShellContentSectionId.Middle, "MiddleContent");
+            AddContentSection(sections, root.transform, UIShellContentSectionId.Right, "RightContent");
+            AddContentSection(sections, root.transform, UIShellContentSectionId.Footer, "FooterContent");
+            sectionsView.ConfigureSections(sections.ToArray());
+        }
+
+        private static void ConfigureCommanderProfileBinding(GameObject middle, GameObject identityPanel)
+        {
+            if (middle == null || identityPanel == null)
+                return;
+
+            CommanderProfileContentView view = middle.GetComponent<CommanderProfileContentView>();
+            if (view == null)
+                view = middle.AddComponent<CommanderProfileContentView>();
+
+            TMP_Text nameLabel = FindChild(identityPanel.transform, "CommanderNameLabel")?.GetComponent<TMP_Text>();
+            TMP_Text subtitleLabel = FindChild(identityPanel.transform, "MottoLabel")?.GetComponent<TMP_Text>();
+            view.Configure(nameLabel, subtitleLabel);
+        }
+
+        private static void ConfigureCommanderProfileResponsiveLayout(
+            GameObject middle,
+            GameObject right,
+            GameObject footer,
+            GameObject identityPanel,
+            GameObject overviewPanel,
+            GameObject accountPanel,
+            GameObject rewardPanel,
+            GameObject historyPanel,
+            GameObject footerRail,
+            GameObject openArmoryButton,
+            GameObject detailButton,
+            GameObject replayButton)
+        {
+            if (middle != null)
+            {
+                CommanderProfileResponsiveLayoutView middleLayout = middle.GetComponent<CommanderProfileResponsiveLayoutView>();
+                if (middleLayout == null)
+                    middleLayout = middle.AddComponent<CommanderProfileResponsiveLayoutView>();
+
+                middleLayout.Configure(
+                    CommanderProfileResponsiveSection.Middle,
+                    new[]
+                    {
+                        identityPanel != null ? identityPanel.transform as RectTransform : null,
+                        overviewPanel != null ? overviewPanel.transform as RectTransform : null,
+                        accountPanel != null ? accountPanel.transform as RectTransform : null,
+                        FindChild(accountPanel != null ? accountPanel.transform : null, "CampaignSnapshot") as RectTransform,
+                        FindChild(accountPanel != null ? accountPanel.transform : null, "OperationsSnapshot") as RectTransform,
+                        FindChild(accountPanel != null ? accountPanel.transform : null, "SkirmishSnapshot") as RectTransform
+                    },
+                    new[] { 0f, 750f, 1140f, 130f, 258f, 386f },
+                    new[] { -240f, 510f, 900f, 130f, 302f, 474f },
+                    new[] { 720f, 360f, 540f, 112f, 112f, 112f },
+                    new[] { 720f, 360f, 700f, 144f, 144f, 144f });
+            }
+
+            if (right != null)
+            {
+                CommanderProfileResponsiveLayoutView rightLayout = right.GetComponent<CommanderProfileResponsiveLayoutView>();
+                if (rightLayout == null)
+                    rightLayout = right.AddComponent<CommanderProfileResponsiveLayoutView>();
+
+                rightLayout.Configure(
+                    CommanderProfileResponsiveSection.Right,
+                    new[]
+                    {
+                        rewardPanel != null ? rewardPanel.transform as RectTransform : null,
+                        historyPanel != null ? historyPanel.transform as RectTransform : null,
+                        FindChild(historyPanel != null ? historyPanel.transform : null, "FirstContactRow") as RectTransform,
+                        FindChild(historyPanel != null ? historyPanel.transform : null, "OldMarketRow") as RectTransform,
+                        FindChild(historyPanel != null ? historyPanel.transform : null, "ConvoyEscortRow") as RectTransform,
+                        FindChild(historyPanel != null ? historyPanel.transform : null, "BridgeStrikeRow") as RectTransform,
+                        FindChild(historyPanel != null ? historyPanel.transform : null, "FrontlineClashRow") as RectTransform
+                    },
+                    new[] { 20f, 770f, 108f, 250f, 392f, 534f, 676f },
+                    new[] { 20f, 810f, 108f, 280f, 452f, 624f, 796f },
+                    new[] { 720f, 900f, 132f, 132f, 132f, 132f, 132f },
+                    new[] { 760f, 1020f, 152f, 152f, 152f, 152f, 152f });
+            }
+
+            if (footer != null)
+            {
+                CommanderProfileResponsiveLayoutView footerLayout = footer.GetComponent<CommanderProfileResponsiveLayoutView>();
+                if (footerLayout == null)
+                    footerLayout = footer.AddComponent<CommanderProfileResponsiveLayoutView>();
+
+                footerLayout.Configure(
+                    CommanderProfileResponsiveSection.Footer,
+                    new[]
+                    {
+                        footerRail != null ? footerRail.transform as RectTransform : null,
+                        openArmoryButton != null ? openArmoryButton.transform as RectTransform : null,
+                        detailButton != null ? detailButton.transform as RectTransform : null,
+                        replayButton != null ? replayButton.transform as RectTransform : null
+                    },
+                    new[] { 30f, 100f, 100f, 100f },
+                    new[] { -220f, -150f, -150f, -150f });
+            }
+        }
+
+        private static void AddContentSection(
+            List<UIShellContentSectionsView.SectionReference> sections,
+            Transform root,
+            UIShellContentSectionId sectionId,
+            string childName)
+        {
+            Transform child = FindDirectChild(root, childName);
+            if (child != null)
+                sections.Add(new UIShellContentSectionsView.SectionReference(sectionId, child.gameObject));
+        }
+
+        private static Transform FindDirectChild(Transform root, string childName)
+        {
+            if (root == null || string.IsNullOrWhiteSpace(childName))
+                return null;
+
+            for (int i = 0; i < root.childCount; i++)
+            {
+                Transform child = root.GetChild(i);
+                if (child != null && string.Equals(child.name, childName, StringComparison.Ordinal))
+                    return child;
+            }
+
+            return null;
         }
 
         private sealed class RouteCaptureBuildingUiCommand : IBuildingUiCommand

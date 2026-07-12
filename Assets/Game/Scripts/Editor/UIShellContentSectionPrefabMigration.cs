@@ -10,6 +10,7 @@ namespace Game.Editor
     public static class UIShellContentSectionPrefabMigration
     {
         private const string MainMenuContentPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN02_MainMenuContent.prefab";
+        private const string CommanderProfileContentPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN03_CommanderProfileContent.prefab";
         private const string MatchHudContentPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab";
         private const string ArmoryContentPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN19_ArmoryContent.prefab";
 
@@ -31,6 +32,14 @@ namespace Game.Editor
             new(UIShellContentSectionId.Footer, "FooterContent")
         };
 
+        private static readonly SectionBinding[] CommanderProfileSections =
+        {
+            new(UIShellContentSectionId.Left, "LeftContent"),
+            new(UIShellContentSectionId.Middle, "MiddleContent"),
+            new(UIShellContentSectionId.Right, "RightContent"),
+            new(UIShellContentSectionId.Footer, "FooterContent")
+        };
+
         private static readonly SectionBinding[] ArmorySections =
         {
             new(UIShellContentSectionId.Left, "LeftContent"),
@@ -43,6 +52,7 @@ namespace Game.Editor
         public static void PopulateAll()
         {
             Populate(MainMenuContentPath, MainMenuSections);
+            Populate(CommanderProfileContentPath, CommanderProfileSections);
             Populate(MatchHudContentPath, MatchHudSections);
             Populate(ArmoryContentPath, ArmorySections);
             AssetDatabase.SaveAssets();

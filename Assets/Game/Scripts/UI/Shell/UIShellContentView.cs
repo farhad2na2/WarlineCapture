@@ -10,9 +10,11 @@ namespace Game.UI.Runtime
     [DisallowMultipleComponent]
     public sealed class UIShellContentView : MonoBehaviour
     {
+        internal const string CommanderBackgroundScrimName = "CommanderBackgroundScrim";
         [SerializeField] private UIShellView shellView;
         [SerializeField] private GameObject loadingContentPrefab;
         [SerializeField] private GameObject mainMenuContentPrefab;
+        [SerializeField] private GameObject commanderProfileContentPrefab;
         [SerializeField] private GameObject armoryContentPrefab;
         [SerializeField] private GameObject matchHudContentPrefab;
         [SerializeField] private GameObject buildDrawerPopupPrefab;
@@ -59,6 +61,7 @@ namespace Game.UI.Runtime
         public UIShellView ShellView => shellView;
         public GameObject LoadingContentPrefab => loadingContentPrefab;
         public GameObject MainMenuContentPrefab => mainMenuContentPrefab;
+        public GameObject CommanderProfileContentPrefab => commanderProfileContentPrefab;
         public GameObject ArmoryContentPrefab => armoryContentPrefab;
         public GameObject MatchHudContentPrefab => matchHudContentPrefab;
         public GameObject BuildDrawerPopupPrefab => buildDrawerPopupPrefab;
@@ -81,7 +84,8 @@ namespace Game.UI.Runtime
             GameObject buildPlacementConfirmationPrefab = null,
             GameObject settingsPrefab = null,
             GameObject resourceExchangePrefab = null,
-            GameObject ariaCommandAssistantPrefab = null)
+            GameObject ariaCommandAssistantPrefab = null,
+            GameObject commanderProfilePrefab = null)
         {
             shellView = view;
             loadingContentPrefab = loadingPrefab;
@@ -89,6 +93,8 @@ namespace Game.UI.Runtime
             armoryContentPrefab = armoryPrefab;
             matchHudContentPrefab = matchHudPrefab;
             buildDrawerPopupPrefab = buildDrawerPrefab;
+            if (commanderProfilePrefab != null)
+                commanderProfileContentPrefab = commanderProfilePrefab;
             if (fullMapPrefab != null)
                 fullMapPopupPrefab = fullMapPrefab;
             if (buildPlacementConfirmationPrefab != null)
@@ -239,6 +245,7 @@ namespace Game.UI.Runtime
 
         private void InstallMainMenuBody()
         {
+            SetCommanderBackgroundScrim(false);
             GameObject left = InstallSection(mainMenuContentPrefab, UIShellContentSectionId.Left, UIShellRegionId.LeftRegion);
             GameObject middle = InstallSection(mainMenuContentPrefab, UIShellContentSectionId.Middle, UIShellRegionId.MiddleRegion);
             GameObject right = InstallSection(mainMenuContentPrefab, UIShellContentSectionId.Right, UIShellRegionId.RightRegion);
@@ -256,7 +263,64 @@ namespace Game.UI.Runtime
                 return;
             }
 
+            if (route == UIRoute.CommandFeed)
+            {
+                InstallCommanderProfileBody();
+                return;
+            }
+
             InstallMainMenuBody();
+        }
+
+        private void InstallCommanderProfileBody()
+        {
+            UnbindMatchHudThreatWarningHeader();
+            SetCommanderBackgroundScrim(true);
+            InstallSection(commanderProfileContentPrefab, UIShellContentSectionId.Left, UIShellRegionId.LeftRegion);
+            GameObject middle = InstallSection(commanderProfileContentPrefab, UIShellContentSectionId.Middle, UIShellRegionId.MiddleRegion);
+            InstallSection(commanderProfileContentPrefab, UIShellContentSectionId.Right, UIShellRegionId.RightRegion);
+            InstallSection(commanderProfileContentPrefab, UIShellContentSectionId.Footer, UIShellRegionId.FooterRegion);
+            BindCommanderProfile(middle);
+            ClearRegion(UIShellRegionId.PopupLayer);
+        }
+
+        private void SetCommanderBackgroundScrim(bool visible)
+        {
+            if (!TryGetRegionContentRoot(UIShellRegionId.MenuBackgroundRegion, out RectTransform contentRoot))
+                return;
+
+            Transform existing = contentRoot.Find(CommanderBackgroundScrimName);
+            if (!visible)
+            {
+                if (existing != null)
+                {
+                    DestroyRegionObject(existing.gameObject);
+                    MarkContentChanged();
+                }
+                return;
+            }
+
+            GameObject scrim = existing != null
+                ? existing.gameObject
+                : new GameObject(CommanderBackgroundScrimName, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+            if (existing == null)
+                scrim.transform.SetParent(contentRoot, false);
+
+            RectTransform rect = scrim.GetComponent<RectTransform>();
+            Stretch(rect);
+            Image image = scrim.GetComponent<Image>();
+            image.color = new Color(0.015f, 0.018f, 0.014f, 0.34f);
+            image.raycastTarget = false;
+            scrim.transform.SetAsLastSibling();
+            MarkContentChanged();
+        }
+
+        private static void BindCommanderProfile(GameObject middle)
+        {
+            if (middle == null || !UiShellRuntimeGateway.TryReadCommanderProfile(out UiShellCommanderProfileModel profile))
+                return;
+
+            middle.GetComponent<CommanderProfileContentView>()?.Bind(profile);
         }
 
         private void InstallArmoryBody()

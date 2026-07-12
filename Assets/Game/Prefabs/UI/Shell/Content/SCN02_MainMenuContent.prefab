@@ -2465,7 +2465,7 @@ RectTransform:
   m_Father: {fileID: 8268543917935768284}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -2565,7 +2565,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UIShellRouteButtonView
   intent: 0
   route: 10
-  pushHistory: 0
+  pushHistory: 1
 --- !u!1 &901234567890123476
 GameObject:
   m_ObjectHideFlags: 0
@@ -11554,7 +11554,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UIShellRouteButtonView
   intent: 0
   route: 10
-  pushHistory: 0
+  pushHistory: 1
 --- !u!1 &7422285677485439217
 GameObject:
   m_ObjectHideFlags: 0

@@ -260,7 +260,7 @@ The program is complete only when all of the following are true:
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: current integrated-head steady-state Match GC `145,792 / 1,024` bytes; building production, road-command, scene-root, tactical-camera, and audio gameplay-state rows are absent, while remaining recurring owners stay assigned to APH-710/711 |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
-| Last verified commit | `5e8db8d97`; road command entity caching and integrated validation evidence are committed on `main` |
+| Last verified commit | `cd652978e`; building production command entity caching and integrated validation evidence are committed on `main` |
 | Last update | 2026-07-12 - both building production command lookups use positive/negative world/entity caching; their recurring query rows are absent and recovery/adoption behavior is covered |
 
 ## Phase 0 - Baseline and Safety Freeze

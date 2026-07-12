@@ -121,6 +121,17 @@ namespace Game.Runtime
                 em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
             DynamicBuffer<RtsSelectionCommandResultElement> commandResults =
                 em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+            bool hasPreResolvedRequest = false;
+            for (int i = 0; i < commandRequests.Length; i++)
+            {
+                if (!TransportBoardingCommandRoutingSystemHelper.IsPreResolvedTransportCommandIntent(commandRequests[i]))
+                    continue;
+                hasPreResolvedRequest = true;
+                break;
+            }
+            if (!hasPreResolvedRequest)
+                return false;
+
             bool handledAny = false;
             var transportCapacitySystem = new UnitTransportCapacitySystem();
             var transportAirPickupSystem = new UnitTransportAirPickupSystem();

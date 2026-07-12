@@ -87,6 +87,7 @@ public sealed class UnitTransportValidationTests
             RunTest(test => test.TransportPlanePureEcs_StaticGuardRejectsManagedRuntimeBridgePatterns());
             RunTest(test => test.GroundPersonnelTransport_BoardOrderCapsAtAvailableSeats());
             RunTest(test => test.BoardTransportCommandSystem_OnUpdateConsumesPreResolvedTransportRequest());
+            RunTest(test => test.BoardTransportCommandSystem_EmptyQueueSteadyStateAllocatesNoManagedMemory());
             RunTest(test => test.BoardAllSelectedTransportCommand_ConsumesRequestAndOrdersNearestSoldiers());
             RunTest(test => test.BoardAllSelectedTransportCommand_RetryRefreshesPendingPassengersForSameTransport());
             RunTest(test => test.BoardAllSelectedTransportCommand_IgnoresDistantPassengers());
@@ -109,7 +110,7 @@ public sealed class UnitTransportValidationTests
             RunTest(test => test.SelectionFallback_FindsNearbyTransportHelicopterWhenHelipadCellWasClicked());
             RunTest(test => test.FocusedTransportReadModel_PublishesPassengerCapacityAndRows());
             RunTest(test => test.FocusedTransportReadModel_PublishesPlaneCargoCapacityBreakdown());
-            Debug.Log("[UnitTransportValidation] result=Passed tests=78");
+            Debug.Log("[UnitTransportValidation] result=Passed tests=79");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -2423,6 +2424,25 @@ public sealed class UnitTransportValidationTests
         Assert.AreEqual(1, results[0].HasCommandResult);
         Assert.AreEqual(1, CountBoardingTargets(em, passenger), "The resolved board request should produce the same passenger boarding target as the old screen-click command path.");
         AssertBoardingMoveOrder(em, passenger, transport);
+    }
+
+    [Test]
+    public void BoardTransportCommandSystem_EmptyQueueSteadyStateAllocatesNoManagedMemory()
+    {
+        using var world = new World("BoardTransportCommandSystem_EmptyQueueAllocationTest");
+        EntityManager em = world.EntityManager;
+        Entity commandEntity = em.CreateEntity(typeof(RtsSelectionInputStateComponent));
+        em.AddBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
+        em.AddBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        SystemHandle transportCommandSystem = world.CreateSystem<TransportBoardingCommandSystem>();
+
+        transportCommandSystem.Update(world.Unmanaged);
+        long allocationStart = GC.GetAllocatedBytesForCurrentThread();
+        for (int i = 0; i < 300; i++)
+            transportCommandSystem.Update(world.Unmanaged);
+        long allocatedBytes = GC.GetAllocatedBytesForCurrentThread() - allocationStart;
+
+        Assert.AreEqual(0L, allocatedBytes, "Warm empty transport command updates must not construct managed routing helpers.");
     }
 
     [Test]

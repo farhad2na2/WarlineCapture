@@ -138,6 +138,9 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             tests.BuildingUiCampItemCommandRequest_StartsConfiguredPlacementAndWritesResult();
             tests.BuildingUiCampItemCommandRequest_QueuesUnitProductionAndWritesResult();
             tests.BuildingUiCampItemCommandRequest_RejectsFullProductionSlotsAndRefunds();
+            tests.BuildingUiCommandEntityCache_ReusesWarmEntitiesWithoutManagedAllocation();
+            tests.BuildingUiCommandEntityCache_RebindsWhenWorldChanges();
+            tests.BuildingUiCommandEntityCache_RecoversDestroyedEntitiesAndRepairsBuffers();
             tests.BuildingRuntimeState_ProcessesQueuedUiProductionCommand();
             tests.BuildingRuntimeState_ProcessesQueuedCampItemCommand();
             tests.CountRuntimeProducedUnitsForFaction_UsesProducedUnitReadModel();
@@ -152,7 +155,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             tests.BuildingSpawnCompositionSystemHelper_UsesBoundarySpawnPointWithoutManagedSlotArray();
             tests.BuildingSpawnCompositionSystemHelper_UsesBoundarySpawnPointForOverrideHelicopterSlot();
             tests.BuildingSpawnCompositionSystemHelper_UsesBoundarySpawnPointForAutomaticHelicopterSpawn();
-            Debug.Log("[BuildingProductionRequestValidation] result=Passed tests=23");
+            Debug.Log("[BuildingProductionRequestValidation] result=Passed tests=26");
             ValidationExit.Passed();
         }
         catch (Exception ex)
@@ -161,6 +164,97 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             Debug.LogError("[BuildingProductionRequestValidation] result=Failed");
             ValidationExit.Failed();
         }
+    }
+
+    [Test]
+    public void BuildingUiCommandEntityCache_ReusesWarmEntitiesWithoutManagedAllocation()
+    {
+        using World world = new("BuildingUiCommandEntityCacheAllocationTest");
+        var requestSystem = new BuildingProductionRequestSystemHelper();
+
+        requestSystem.ProcessPendingUiProductionCommandsIfPresent(world.EntityManager, default, 0);
+        requestSystem.ProcessPendingUiCampItemCommandsIfPresent(world.EntityManager, default, 0);
+        long idleAllocationStart = GC.GetAllocatedBytesForCurrentThread();
+        for (int i = 0; i < 300; i++)
+        {
+            requestSystem.ProcessPendingUiProductionCommandsIfPresent(world.EntityManager, default, 0);
+            requestSystem.ProcessPendingUiCampItemCommandsIfPresent(world.EntityManager, default, 0);
+        }
+        long idleAllocatedBytes = GC.GetAllocatedBytesForCurrentThread() - idleAllocationStart;
+
+        requestSystem.TryGetUiProductionCommandResult(world.EntityManager, -1, out _);
+        requestSystem.TryGetUiCampItemCommandResult(world.EntityManager, -1, out _);
+
+        long allocationStart = GC.GetAllocatedBytesForCurrentThread();
+        for (int i = 0; i < 300; i++)
+        {
+            requestSystem.TryGetUiProductionCommandResult(world.EntityManager, -1, out _);
+            requestSystem.TryGetUiCampItemCommandResult(world.EntityManager, -1, out _);
+        }
+        long allocatedBytes = GC.GetAllocatedBytesForCurrentThread() - allocationStart;
+
+        Assert.AreEqual(0L, idleAllocatedBytes, "Warm idle building command polling must reuse negative queue lookups.");
+        Assert.AreEqual(0L, allocatedBytes, "Warm building command reads must reuse both queue entities.");
+    }
+
+    [Test]
+    public void BuildingUiCommandEntityCache_RebindsWhenWorldChanges()
+    {
+        var requestSystem = new BuildingProductionRequestSystemHelper();
+
+        using (World firstWorld = new("BuildingUiCommandEntityCacheRebind.First"))
+        {
+            requestSystem.TryGetUiProductionCommandResult(firstWorld.EntityManager, -1, out _);
+            requestSystem.TryGetUiCampItemCommandResult(firstWorld.EntityManager, -1, out _);
+        }
+
+        using (World secondWorld = new("BuildingUiCommandEntityCacheRebind.Second"))
+        {
+            requestSystem.TryGetUiProductionCommandResult(secondWorld.EntityManager, -1, out _);
+            requestSystem.TryGetUiCampItemCommandResult(secondWorld.EntityManager, -1, out _);
+
+            Assert.AreEqual(1, CountEntitiesWith<BuildingUiProductionCommandQueueComponent>(secondWorld.EntityManager));
+            Assert.AreEqual(1, CountEntitiesWith<BuildingUiCampItemCommandQueueComponent>(secondWorld.EntityManager));
+        }
+    }
+
+    [Test]
+    public void BuildingUiCommandEntityCache_RecoversDestroyedEntitiesAndRepairsBuffers()
+    {
+        using World world = new("BuildingUiCommandEntityCacheRecoveryTest");
+        EntityManager em = world.EntityManager;
+        var requestSystem = new BuildingProductionRequestSystemHelper();
+
+        requestSystem.TryGetUiProductionCommandResult(em, -1, out _);
+        requestSystem.TryGetUiCampItemCommandResult(em, -1, out _);
+        Entity productionEntity = GetSingletonEntity<BuildingUiProductionCommandQueueComponent>(em);
+        Entity campItemEntity = GetSingletonEntity<BuildingUiCampItemCommandQueueComponent>(em);
+        em.DestroyEntity(productionEntity);
+        em.DestroyEntity(campItemEntity);
+
+        Entity adoptedProduction = em.CreateEntity(typeof(BuildingUiProductionCommandQueueComponent));
+        Entity adoptedCampItem = em.CreateEntity(typeof(BuildingUiCampItemCommandQueueComponent));
+        requestSystem.TryGetUiProductionCommandResult(em, -1, out _);
+        requestSystem.TryGetUiCampItemCommandResult(em, -1, out _);
+
+        Assert.IsTrue(em.HasBuffer<BuildingUiProductionCommandRequestElement>(adoptedProduction));
+        Assert.IsTrue(em.HasBuffer<BuildingUiProductionCommandResultElement>(adoptedProduction));
+        Assert.IsTrue(em.HasBuffer<BuildingUiCampItemCommandRequestElement>(adoptedCampItem));
+        Assert.IsTrue(em.HasBuffer<BuildingUiCampItemCommandResultElement>(adoptedCampItem));
+    }
+
+    private static int CountEntitiesWith<T>(EntityManager entityManager)
+        where T : unmanaged, IComponentData
+    {
+        using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<T>());
+        return query.CalculateEntityCount();
+    }
+
+    private static Entity GetSingletonEntity<T>(EntityManager entityManager)
+        where T : unmanaged, IComponentData
+    {
+        using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<T>());
+        return query.GetSingletonEntity();
     }
 
     [Test]

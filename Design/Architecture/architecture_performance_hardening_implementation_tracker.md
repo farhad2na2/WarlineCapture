@@ -258,10 +258,10 @@ The program is complete only when all of the following are true:
 | Current phase | Phase 3 Android device evidence, Phase 5 product budgets, Phase 6 map closeout, and bounded Phase 8 automation |
 | Current task | Close remaining FPS, memory, startup, package, architecture, and device gates; select the next bounded decomposition only when dependency-ready |
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
-| Red performance gates | `1`: current integrated-head steady-state Match GC `187,690 / 1,024` bytes; road-command, scene-root, tactical-camera, and audio gameplay-state rows are absent, while remaining recurring owners stay assigned to APH-710/711 |
+| Red performance gates | `1`: current integrated-head steady-state Match GC `145,792 / 1,024` bytes; building production, road-command, scene-root, tactical-camera, and audio gameplay-state rows are absent, while remaining recurring owners stay assigned to APH-710/711 |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
 | Last verified commit | `5e8db8d97`; road command entity caching and integrated validation evidence are committed on `main` |
-| Last update | 2026-07-12 - road-build command polling uses a world/entity cache; its recurring query row is absent and recovery/adoption behavior is covered |
+| Last update | 2026-07-12 - both building production command lookups use positive/negative world/entity caching; their recurring query rows are absent and recovery/adoption behavior is covered |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -629,7 +629,7 @@ The `APH-007` raw-metadata GC report is mandatory measured input for this phase.
 - [x] `APH-709` Decompose selection/HUD files only where profiler or change-frequency evidence identifies risk; do not split for line count alone.
   - Result: only the profiler-backed tactical-follow camera query seam was extracted. A 47-line world-bound cache replaces two per-tick query constructions totaling 23,920 bytes in APH-007/213; a 300-tick warmed test allocates zero bytes, world-rebind behavior is covered, and both owner rows are absent from the fresh 180-warmup/300-frame raw capture. Camera `31/31`, selection `60/60`, selection/move/attack PlayMode `1/1`, source growth `15/15`, boundary `31/31`, ECS/Burst `10/10`, and Match p95 `4.31 ms` pass. Evidence: `Design/AgentReports/2026-07-12_aph-709_selection_camera_query_decomposition.md`.
 - [~] `APH-710` Remove classified hidden world lookups and recurring per-frame allocation owners as each domain receives explicit World/EntityManager/query dependencies or cached non-allocating state.
-  - Active result: world/entity caches removed both tactical-camera rows, the audio gameplay-state row, two scene-root rows, and the road command-query row. The warmed current capture is `187,690 / 1,024` bytes; cross-run pathfinding/build-production variance remains explicit. Camera `31/31`, audio `8/8`, scene reference `5/5`, road command `11/11`, Menu-to-Match-to-Menu PlayMode `1/1`, source growth `15/15`, boundary `31/31`, ECS/Burst `10/10`, and project builds pass. Remaining transport, UI shell, building command-query, pathfinding, selection-panel, and hidden-world owners keep this task active. Evidence: `Design/AgentReports/2026-07-12_aph-710_audio_gameplay_state_query_cache.md`, `Design/AgentReports/2026-07-12_aph-710_match_scene_root_lookup.md`, and `Design/AgentReports/2026-07-12_aph-710_road_command_entity_cache.md`.
+  - Active result: world/entity caches removed both tactical-camera rows, the audio gameplay-state row, two scene-root rows, the road command-query row, and both building production command-query rows. The warmed current capture is `145,792 / 1,024` bytes; cross-run pathfinding variance remains explicit. Camera `31/31`, audio `8/8`, scene reference `5/5`, road command `11/11`, building production `26/26`, Menu-to-Match-to-Menu PlayMode `1/1`, source growth `15/15`, boundary `31/31`, ECS/Burst `10/10`, and project builds pass. Remaining transport, UI shell, building placement, pathfinding, selection-panel, and hidden-world owners keep this task active. Evidence: `Design/AgentReports/2026-07-12_aph-710_audio_gameplay_state_query_cache.md`, `Design/AgentReports/2026-07-12_aph-710_match_scene_root_lookup.md`, `Design/AgentReports/2026-07-12_aph-710_road_command_entity_cache.md`, and `Design/AgentReports/2026-07-12_aph-710_building_production_command_entity_cache.md`.
 - [ ] `APH-711` Re-run compile time, domain reload time, architecture gates, focused tests, Match performance, and the unchanged steady-state GC capture after every physical asmdef split and final allocation-remediation slice.
 
 ## Phase 8 - CI, PlayMode, Visual, and Device Gates
@@ -1546,6 +1546,18 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Evidence: `Design/AgentReports/2026-07-12_aph-710_road_command_entity_cache.md`, `/private/tmp/warline-aph710-road-command-final.log`, `/private/tmp/warline-aph710-road-growth.log`, `/private/tmp/warline-aph710-road-boundary.log`, `/private/tmp/warline-aph710-road-burst.log`, and `/private/tmp/warline-aph710-road-gc-r2.log`
 - Residual risk: building camp/production/placement command queries, transport helper construction, UI shell attribution, pathfinding diagnostics, selection-panel allocations, and hidden world lookups remain
 - Next ready task: cache the building production command entities behind one world-bound owner without changing production semantics
+
+### 2026-07-12 - APH-710 - Building production command entity cache
+
+- Status: Stable partial slice; APH-710 remains active
+- Baseline: `012feb64f`
+- Behavior preserved/changed: production and camp-item request/result semantics are unchanged; one cache now owns positive and absent queue resolution, world rebinding, destroyed-entity recovery, and buffer repair
+- Integrated repair: runtime faction summary publication ensures both boundary buffers before retaining writable handles, preventing structural-change invalidation exposed by the broad production runner
+- Measured result: both recurring 11,960-byte building production command-query rows are absent; the warmed full capture improves from `187,690` to `145,792 / 1,024` bytes and remains red from unrelated owners
+- Validation: building production `26/26`, source growth `15/15`, assembly boundary `31/31`, ECS/Burst `10/10`, Runtime and Editor-test builds with zero errors, and `git diff --check`
+- Evidence: `Design/AgentReports/2026-07-12_aph-710_building_production_command_entity_cache.md`, `/private/tmp/warline-aph710-building-command-cache-negative-focused.log`, `/private/tmp/warline-aph710-building-command-cache-negative-source-growth.log`, `/private/tmp/warline-aph710-building-command-cache-negative-boundary.log`, `/private/tmp/warline-aph710-building-command-cache-negative-ecs-burst.log`, and `/private/tmp/warline-aph710-building-command-cache-match-gc-r2.log`
+- Residual risk: building placement, transport helper construction, UI shell attribution, pathfinding, selection-panel allocations, and hidden world lookups remain
+- Next ready task: remove the isolated building placement command-query owner with the same absent-entity evidence requirement
 
 ## Decision Log
 

@@ -165,6 +165,7 @@ namespace Game.Runtime
         }
 
         private readonly Dictionary<FixedString128Bytes, string> _unitIdStringCache = new();
+        private readonly BuildingProductionCommandEntityCache _commandEntityCache = new();
 
         public int EnqueueCreateUnitFromSelectedBuilding(EntityManager em, int? activeBuildingId, int productionIndex, int frameCount)
         {
@@ -1161,7 +1162,7 @@ namespace Game.Runtime
             return false;
         }
 
-        private static int EnqueueUiProductionCommand(
+        private int EnqueueUiProductionCommand(
             EntityManager em,
             byte requestKind,
             int buildingId,
@@ -1361,70 +1362,24 @@ namespace Game.Runtime
             };
         }
 
-        private static Entity EnsureUiCampItemCommandEntity(EntityManager em)
+        private Entity EnsureUiCampItemCommandEntity(EntityManager em)
         {
-            if (TryGetUiCampItemCommandEntity(em, out Entity existing))
-                return existing;
-
-            Entity entity = em.CreateEntity(typeof(BuildingUiCampItemCommandQueueComponent));
-            em.SetName(entity, "BuildingUiCampItemCommands");
-            EnsureUiCampItemCommandBuffers(em, entity);
-            return entity;
+            return _commandEntityCache.GetOrCreateCampItem(em);
         }
 
-        private static bool TryGetUiCampItemCommandEntity(EntityManager em, out Entity entity)
+        private bool TryGetUiCampItemCommandEntity(EntityManager em, out Entity entity)
         {
-            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingUiCampItemCommandQueueComponent>());
-            if (!query.IsEmptyIgnoreFilter)
-            {
-                entity = query.GetSingletonEntity();
-                EnsureUiCampItemCommandBuffers(em, entity);
-                return true;
-            }
-
-            entity = Entity.Null;
-            return false;
+            return _commandEntityCache.TryGetCampItem(em, out entity);
         }
 
-        private static void EnsureUiCampItemCommandBuffers(EntityManager em, Entity entity)
+        private Entity EnsureUiProductionCommandEntity(EntityManager em)
         {
-            if (!em.HasBuffer<BuildingUiCampItemCommandRequestElement>(entity))
-                em.AddBuffer<BuildingUiCampItemCommandRequestElement>(entity);
-            if (!em.HasBuffer<BuildingUiCampItemCommandResultElement>(entity))
-                em.AddBuffer<BuildingUiCampItemCommandResultElement>(entity);
+            return _commandEntityCache.GetOrCreateProduction(em);
         }
 
-        private static Entity EnsureUiProductionCommandEntity(EntityManager em)
+        private bool TryGetUiProductionCommandEntity(EntityManager em, out Entity entity)
         {
-            if (TryGetUiProductionCommandEntity(em, out Entity existing))
-                return existing;
-
-            Entity entity = em.CreateEntity(typeof(BuildingUiProductionCommandQueueComponent));
-            em.SetName(entity, "BuildingUiProductionCommands");
-            EnsureUiProductionCommandBuffers(em, entity);
-            return entity;
-        }
-
-        private static bool TryGetUiProductionCommandEntity(EntityManager em, out Entity entity)
-        {
-            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingUiProductionCommandQueueComponent>());
-            if (!query.IsEmptyIgnoreFilter)
-            {
-                entity = query.GetSingletonEntity();
-                EnsureUiProductionCommandBuffers(em, entity);
-                return true;
-            }
-
-            entity = Entity.Null;
-            return false;
-        }
-
-        private static void EnsureUiProductionCommandBuffers(EntityManager em, Entity entity)
-        {
-            if (!em.HasBuffer<BuildingUiProductionCommandRequestElement>(entity))
-                em.AddBuffer<BuildingUiProductionCommandRequestElement>(entity);
-            if (!em.HasBuffer<BuildingUiProductionCommandResultElement>(entity))
-                em.AddBuffer<BuildingUiProductionCommandResultElement>(entity);
+            return _commandEntityCache.TryGetProduction(em, out entity);
         }
 
         private static bool IsFriendlyProducerBuildingForPass(RuntimeBuildingEntity building, int pass)

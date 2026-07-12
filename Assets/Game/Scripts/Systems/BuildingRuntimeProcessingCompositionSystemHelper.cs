@@ -690,11 +690,10 @@ namespace Game.Runtime
             IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
         {
             RefreshFactionIds(runtimeBuildings);
-            DynamicBuffer<BuildingRuntimeFactionSummary> buffer =
-                EnsureBoundaryBuffer<BuildingRuntimeFactionSummary>(em, boundaryEntity);
+            EnsureBoundaryBuffer<BuildingRuntimeFactionSummary>(em, boundaryEntity);
+            var usableFuelBuffer = EnsureBoundaryBuffer<BuildingRuntimeFactionUsableFuelSummary>(em, boundaryEntity);
+            var buffer = em.GetBuffer<BuildingRuntimeFactionSummary>(boundaryEntity);
             buffer.Clear();
-            DynamicBuffer<BuildingRuntimeFactionUsableFuelSummary> usableFuelBuffer =
-                EnsureBoundaryBuffer<BuildingRuntimeFactionUsableFuelSummary>(em, boundaryEntity);
             usableFuelBuffer.Clear();
 
             for (int i = 0; i < _factionIds.Count; i++)

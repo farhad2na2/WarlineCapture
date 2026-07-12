@@ -15,6 +15,8 @@ namespace Game.Configs
         [SerializeField, Min(0.01f)] private float respawnDelaySeconds = 10f;
         [SerializeField, Min(1)] private uint randomSeed = 1;
         [SerializeField, Min(0)] private int initialDollars;
+        [SerializeField, Min(0)] private int initialMaterials;
+        [SerializeField, Min(0)] private int materialsCapacity;
         [SerializeField, Min(0)] private int initialOil;
         [SerializeField, Min(0)] private int initialFuel;
         [SerializeField] private bool createFactionBases = true;
@@ -38,6 +40,8 @@ namespace Game.Configs
         public float RespawnDelaySeconds => respawnDelaySeconds;
         public uint RandomSeed => randomSeed;
         public int InitialDollars => initialDollars;
+        public int InitialMaterials => Mathf.Max(0, initialMaterials);
+        public int MaterialsCapacity => Mathf.Max(InitialMaterials, materialsCapacity);
         public int InitialOil => initialOil;
         public int InitialFuel => initialFuel;
         public bool CreateFactionBases => createFactionBases;

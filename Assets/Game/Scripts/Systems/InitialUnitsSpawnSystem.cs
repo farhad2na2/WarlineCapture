@@ -825,38 +825,91 @@ namespace Game.Runtime
 
         internal static void ApplyInitialResourceTotals(EntityManager em, InitialUnitsSpawnConfig config)
         {
-            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<FactionEconomy>());
-            EntityTypeHandle entityType = em.GetEntityTypeHandle();
-            ComponentTypeHandle<FactionEconomy> economyType = em.GetComponentTypeHandle<FactionEconomy>(false);
-            using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
-            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+            Entity playerEconomyEntity = Entity.Null;
+            using NativeList<FactionMaterialsSeed> materialSeeds = new(Allocator.Temp);
+            using (EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<FactionEconomy>()))
+            using (NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp))
             {
-                ArchetypeChunk chunk = chunks[chunkIndex];
-                NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
-                NativeArray<FactionEconomy> economies = chunk.GetNativeArray(ref economyType);
-                for (int i = 0; i < entities.Length; i++)
+                EntityTypeHandle entityType = em.GetEntityTypeHandle();
+                ComponentTypeHandle<FactionEconomy> economyType = em.GetComponentTypeHandle<FactionEconomy>(false);
+                for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
                 {
-                    FactionEconomy economy = economies[i];
-                    if (!FactionIdentity.IsPlayerControlled(economy.FactionId))
-                        continue;
+                    ArchetypeChunk chunk = chunks[chunkIndex];
+                    NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
+                    NativeArray<FactionEconomy> economies = chunk.GetNativeArray(ref economyType);
+                    for (int i = 0; i < entities.Length; i++)
+                    {
+                        Entity economyEntity = entities[i];
+                        FactionEconomy economy = economies[i];
+                        if (FactionIdentity.IsPlayerControlled(economy.FactionId))
+                        {
+                            economy.Money = math.max(0, config.InitialDollars);
+                            economies[i] = economy;
+                            playerEconomyEntity = economyEntity;
+                        }
 
-                    economy.Money = math.max(0, config.InitialDollars);
-                    economies[i] = economy;
-                    return;
+                        materialSeeds.Add(new FactionMaterialsSeed(economyEntity, economy.FactionId));
+                    }
                 }
             }
 
-            Entity economyEntity = em.CreateEntity(typeof(FactionEconomy), typeof(FactionEconomyPolicy));
-            em.SetComponentData(economyEntity, new FactionEconomy
+            for (int i = 0; i < materialSeeds.Length; i++)
+            {
+                FactionMaterialsSeed seed = materialSeeds[i];
+                ApplyInitialMaterials(em, seed.Entity, seed.FactionId, config);
+            }
+
+            if (playerEconomyEntity != Entity.Null)
+                return;
+
+            playerEconomyEntity = em.CreateEntity(typeof(FactionEconomy), typeof(FactionEconomyPolicy));
+            em.SetComponentData(playerEconomyEntity, new FactionEconomy
             {
                 FactionId = FactionIdentity.PlayerFactionId,
                 Money = math.max(0, config.InitialDollars)
             });
-            em.SetComponentData(economyEntity, new FactionEconomyPolicy
+            em.SetComponentData(playerEconomyEntity, new FactionEconomyPolicy
             {
                 Enabled = 0,
                 IncomeMultiplier = 1f
             });
+            ApplyInitialMaterials(em, playerEconomyEntity, FactionIdentity.PlayerFactionId, config);
+        }
+
+        private readonly struct FactionMaterialsSeed
+        {
+            public readonly Entity Entity;
+            public readonly byte FactionId;
+
+            public FactionMaterialsSeed(Entity entity, byte factionId)
+            {
+                Entity = entity;
+                FactionId = factionId;
+            }
+        }
+
+        private static void ApplyInitialMaterials(
+            EntityManager em,
+            Entity economyEntity,
+            byte factionId,
+            in InitialUnitsSpawnConfig config)
+        {
+            int capacity = math.max(0, config.MaterialsCapacity);
+            int current = FactionIdentity.IsPlayerControlled(factionId)
+                ? math.min(math.max(0, config.InitialMaterials), capacity)
+                : 0;
+            FactionTacticalMaterialsComponent materials = new()
+            {
+                FactionId = factionId,
+                Current = current,
+                Capacity = capacity,
+                Version = 1u
+            };
+
+            if (em.HasComponent<FactionTacticalMaterialsComponent>(economyEntity))
+                em.SetComponentData(economyEntity, materials);
+            else
+                em.AddComponentData(economyEntity, materials);
         }
 
         internal static float ApplyInitialUsableFuelStorage(EntityManager em, int initialFuel)

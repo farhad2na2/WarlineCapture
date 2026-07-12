@@ -73,7 +73,7 @@ Dependency direction remains inward toward components/config/contracts/runtime. 
 
 ## Progress Summary
 
-Overall implementation progress: 11% (11/103 checklist items complete).
+Overall implementation progress: 16% (16/103 checklist items complete).
 
 Planning and inventory findings are complete. Runtime implementation is 0% complete.
 
@@ -81,8 +81,8 @@ Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation 
 
 | Phase | Status | Complete | Total | Progress | Gate |
 |---|---|---:|---:|---:|---|
-| 0. Inventory and baseline | In progress | 11 | 12 | 92% | Ownership and file targets are locked; measured profiler/GC baseline remains. |
-| 1. Canonical tactical Materials and Credits | Pending | 0 | 13 | 0% | One source of truth per resource; Exchange/player migration has no dual writes. |
+| 0. Inventory and baseline | Complete | 12 | 12 | 100% | Ownership, file targets, compile state, focused behavior, p95/p99, and managed-allocation baselines are recorded. |
+| 1. Canonical tactical Materials and Credits | In progress | 4 | 13 | 31% | Canonical Materials data, deterministic mutation math, authored startup fields, and participating-faction projection are validated. Consumer migration remains. |
 | 2. Config and building projection | Pending | 0 | 10 | 0% | Depot config is valid, authored, and projected consistently. |
 | 3. Oil destination routing | Pending | 0 | 11 | 0% | Tray routing is deterministic, reserved, and stable. |
 | 4. Oil-to-Materials conversion | Pending | 0 | 11 | 0% | Conversion is deterministic, capped, typed, and no-GC. |
@@ -104,7 +104,7 @@ Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation 
 - [x] Trace every runtime read/write of `ResourceExchangeWalletComponent.Materials` and classify startup, simulation, UI, test, or compatibility ownership.
 - [x] Trace the authoritative active-match Credits mutation used by build placement and Exchange; identify the consolidation requirement.
 - [x] Trace placement accept/cancel/refund flow and record the exact point where cost is committed.
-- [ ] Capture baseline profiler markers and `GC.Alloc` call stacks for fuel logistics, Match HUD, build placement, and active Exchange.
+- [x] Capture baseline profiler markers and `GC.Alloc` call stacks for fuel logistics, Match HUD, build placement, and active Exchange.
 - [x] Record the exact initial implementation file list after the ownership traces; add files only with a tracker note explaining responsibility and assembly.
 
 Inventory findings:
@@ -142,10 +142,10 @@ Phase 0 exit criteria:
 
 ## Phase 1: Canonical Tactical Materials And Credits
 
-- [ ] Add `FactionTacticalMaterialsComponent` in `Game.Components` with faction id, current amount, capacity, produced/imported/exported/spent counters as required, and version.
-- [ ] Define overflow-safe integer mutation rules and deterministic version increments.
-- [ ] Project one component for each participating faction at scenario startup.
-- [ ] Seed starting Materials and capacity from authored scenario/config data.
+- [x] Add `FactionTacticalMaterialsComponent` in `Game.Components` with faction id, current amount, capacity, produced/imported/exported/spent counters as required, and version.
+- [x] Define overflow-safe integer mutation rules and deterministic version increments.
+- [x] Project one component for each participating faction at scenario startup.
+- [x] Seed starting Materials and capacity from authored scenario/config data.
 - [ ] Establish `FactionEconomy.Money` as the one ECS tactical Credits authority for player and AI factions.
 - [ ] Migrate player build affordability/spend away from `RuntimeResourceUtilitySystemHelper._dollars` ownership to typed ECS transactions against `FactionEconomy.Money`.
 - [ ] Migrate Exchange Credits and Materials import/export to `FactionEconomy.Money` plus `FactionTacticalMaterialsComponent`.
@@ -370,4 +370,29 @@ For every completed batch append:
 - Added the high-level Field Fabrication and Materials design and this implementation tracker.
 - Locked player-facing identity, V1 compatibility id, local-production-first economy, canonical Materials requirement, assembly map, naming, no-GC rules, and implementation gates.
 - Confirmed that runtime implementation has not started.
-- Remaining Phase 0 work is the exact Materials/Credits/placement mutation trace and profiler baseline.
+- At this point, the remaining Phase 0 work was the profiler/GC baseline; it is completed in the next log entry.
+
+### 2026-07-12 - Phase 0 Compile, GC, And Performance Baseline
+
+- Source commit: `d42e515e4`.
+- The live clone was open in Unity, so validation used an isolated APFS copy at `/private/tmp/wlc-field-fabrication-baseline-d42e515e4`; no live Editor process was closed and no runtime source was changed.
+- Sequential compile validation passed with zero errors for `Game.Components`, `Game.Runtime`, `Game.UI.Shell.Ecs`, and `Game.Tests.Editor`. Unity-generated projects reported their existing warnings only.
+- Fuel/logistics baseline passed `BuildingResourceProductionEcsSystemTests.RunFocusedValidation`: 38 tests, including `AutomaticFuelLogisticsSteadyState_DoesNotAllocateManagedMemory` at 0 managed bytes. Log: `/private/tmp/wlc-field-fabrication-baseline-fuel.log`.
+- Placement baseline passed `BuildingPlacementValidationUtilitySystemHelperTests.RunPlacementCommandRequestValidation`: 16 tests, including warm command-cache allocation checks. Log: `/private/tmp/wlc-field-fabrication-baseline-placement.log`.
+- HUD baseline passed all 8 `UiShellEcsGatewayResourceHeaderTests`, including `MatchHudHeader_CachedVersionedUsableFuelSummaryReadDoesNotAllocate` at 0 managed bytes. Results: `/private/tmp/wlc-field-fabrication-baseline-hud-results.xml`; log: `/private/tmp/wlc-field-fabrication-baseline-hud.log`.
+- Exchange GC baseline passed 2 tests: queue/validation steady state allocated 0 bytes over 512 measured frames after 64 warmup frames; multi-entity `ResourceExchangeRequestValidationSystem` updates also allocated 0 bytes over 512 measured updates. Log: `/private/tmp/wlc-field-fabrication-baseline-exchange-gc.log`.
+- Exchange active steady-state baseline passed over 240 measured frames after 64 warmup frames: average 0.020 ms, p95 0.019 ms, p99 0.025 ms, max 0.050 ms, and 0 managed bytes. Report: `/private/tmp/warlinecapture-resource-exchange-steady-state-performance.json`; log: `/private/tmp/wlc-field-fabrication-baseline-exchange-performance.log`.
+- Phase 0 is complete. Phase 1 may begin from these exact before-state gates.
+
+### 2026-07-12 - Phase 1A Canonical Materials Data And Startup Projection
+
+- Added `FactionTacticalMaterialsComponent` and typed source, spend, and mutation-result enums in `Game.Components`. The component owns current/capacity, fabricated/imported/rewarded/exported/spent lifetime counters, faction id, and version.
+- Added `FactionTacticalMaterialsUtilitySystemHelper` in `Game.Runtime` as a pure stateless math boundary with the architecture-approved `UtilitySystemHelper` suffix. It performs exact capacity/affordability mutation, saturating lifetime counters, and version wrap without managed allocation.
+- Added authored `initialMaterials` and `materialsCapacity` fields to `InitialUnitsSpawnerAuthoringConfig` and `CustomGameMapConfig`, projected them through `InitialUnitsSpawnConfig`, and seeded the companion component on every participating `FactionEconomy` entity. Only the player receives the configured starting amount; all factions receive the authored capacity.
+- Extended `FactionEconomyStartupSystem` to project a zeroed companion component when an AI/player-auto economy is created before initial-unit resource seeding.
+- The first projection implementation used `ToEntityArray`; `EcsBurstHotPathArchitectureTests` rejected the new snapshot debt. It was replaced with chunk iteration plus a temporary native list of compact faction/entity seed records, and the ratchet returned to baseline.
+- Added 7 focused mutation tests, including capacity rejection, insufficient spend, invalid state, saturated telemetry, version wrap, and 512 grant/spend iterations at 0 managed bytes.
+- Validation passed in the isolated Unity project: `FactionTacticalMaterialsFocusedValidation` 7 tests, `InitialUnitsSpawnFocusedValidation` 12 tests, `FactionEconomyStartupValidation` 3 tests, `ScriptArchitectureBoundaryValidation` 31 tests, and `EcsBurstHotPathArchitectureValidation` 10 tests.
+- Unity-regenerated project builds passed with zero errors for `Game.Components`, `Game.Configs`, `Game.Authoring`, `Game.Runtime`, and `Game.Tests.Editor`. The checked-in workspace `.csproj` files remained untouched because the live Editor owns their generation.
+- Logs: `/private/tmp/wlc-field-fabrication-materials-data-validation.log`, `/private/tmp/wlc-field-fabrication-materials-startup-validation.log`, `/private/tmp/wlc-field-fabrication-faction-economy-startup-validation.log`, `/private/tmp/wlc-field-fabrication-architecture-validation.log`, and `/private/tmp/wlc-field-fabrication-burst-validation.log`.
+- New files are in existing explicit assemblies only: component data in `Game.Components`, pure mutation math in `Game.Runtime`, and validation in `Game.Tests.Editor`. No runtime default-assembly fallback or new assembly reference was added.

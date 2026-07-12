@@ -219,7 +219,7 @@ namespace Game.Runtime
                         assignedGoal = pathGoal;
                     assignedGoals[i] = assignedGoal;
 
-                    if (isManualMove && manualTraceCount < 12)
+                    if (isManualMove && SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace && manualTraceCount < 12)
                     {
                         bool startInBounds = startIndex >= 0;
                         bool startWalkable = startInBounds && walkable[startIndex].Value != 0;

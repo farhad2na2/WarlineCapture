@@ -80,7 +80,7 @@ namespace Game.Runtime
                 }
                 reader.EndForEachIndex();
 
-                if (manualMoves[i] != 0 && manualTraceCount < 12)
+                if (manualMoves[i] != 0 && SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace && manualTraceCount < 12)
                 {
                     SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
                         $"pathResult frame={UnityEngine.Time.frameCount} index={i} entity={DescribePathEntity(em, entity)} " +

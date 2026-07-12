@@ -52,6 +52,8 @@ namespace Game.Authoring
                     RespawnDelaySeconds = math.max(0.01f, authoring.RespawnDelaySeconds),
                     RandomSeed = math.max(1u, authoring.RandomSeed),
                     InitialDollars = authoring.config != null ? authoring.config.InitialDollars : 0,
+                    InitialMaterials = authoring.config != null ? authoring.config.InitialMaterials : 0,
+                    MaterialsCapacity = authoring.config != null ? authoring.config.MaterialsCapacity : 0,
                     InitialOil = authoring.config != null ? authoring.config.InitialOil : 0,
                     InitialFuel = authoring.config != null ? authoring.config.InitialFuel : 0,
                     CreateFactionBases = authoring.CreateFactionBases ? (byte)1 : (byte)0,

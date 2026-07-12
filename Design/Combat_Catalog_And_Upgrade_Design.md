@@ -98,9 +98,9 @@ Upgrade currencies are `Credits`, `Materials`, and item-specific `BlueprintParts
 | Base Defense | Guard Towers, walls, road barrier. | Breach prevention and defensive preparation. | HP, repair cost, detection support where applicable. |
 | Sensor Network | Satellite Dish, Coastal Radar, Radar Tank support path. | Threat warnings, air/ground/naval ETA clarity. | Detection radius and warning lead time. |
 | Air Operations | Helipad, Airport, Water Tank. | Helicopter, drone, transport, jet production and air support. | Queue slots, fuel efficiency, air support cooldown. |
-| Resource Chain | Oil Pump, Fuel Bladder, Refinery, Large Refinery, Logistics Dock. | Tactical and Operation fuel/material pressure. `Automated_Fuel_Logistics_Design.md` defines the automated tray/tanker loop and stored usable Fuel meaning. | Output, storage, conversion efficiency, logistics throughput. |
+| Resource Chain | Oil Pump, Fuel Bladder, Refinery, Large Refinery, Field Fabrication Depot, Logistics Dock. | Tactical and Operation fuel/material pressure. `Automated_Fuel_Logistics_Design.md` defines the automated tray/tanker loop and stored usable Fuel meaning. `Field_Fabrication_Materials_Design.md` defines the Oil-to-Materials branch. | Output, storage, conversion efficiency, logistics throughput. |
 | Civic Support | House, Shops, City Hall, Refugee Tent, Medical Station, Portable Toilet. | Civilian density, trust, shelter, recovery. | Capacity, trust gain, civilian penalty reduction. |
-| Armory Supply | Ammunition Depot and gear-support path. | Gear modules, parts, support ability tuning. | Parts crafting, material discounts, power budget. |
+| Fabrication Support | Field Fabrication Depot and construction-support path. | Local Materials production, construction resilience, and industrial recovery. | Conversion efficiency, Oil input capacity, production cadence, Materials capacity. |
 | Naval Operations | Naval Yard, Dock, Coastal Radar. | Sea-unit production, harbor threats, port missions. | Production, fuel costs, naval support cooldown. |
 | Command Post | Forward Command Post. | Rally, readiness, and command support. | Command cooldown, rally radius, readiness gain. |
 
@@ -211,6 +211,8 @@ Every upgrade track in `BalanceConfigs/Combat_Balance_Config_v0_1.json` now has 
 | `upgrade.vehicle.logistics_trucks` | `saga.ch02.m02.supply_line.reward` | `playerUpgradeTrack` | `PreMissionLoadoutOrOperationPrep` | Unit_Veh_Truck_Canopy, Unit_Veh_Truck_Tanker, Unit_Veh_Truck_Tray |
 | `upgrade.vehicle.missile_fire_control` | `saga.ch04.m03.split_front.reward` | `playerUpgradeTrack` | `PreMissionLoadoutOrOperationPrep` | Unit_Veh_Missle_Launcher_Air, Unit_Veh_Missle_Launcher_Ground |
 | `upgrade.vehicle.radar_sensor` | `saga.ch01.m03.radar_warning.reward` | `playerUpgradeTrack` | `PreMissionLoadoutOrOperationPrep` | Unit_Veh_Radar_Tank |
+
+Compatibility note: `upgrade.building.armory_supply` and `Building_Ammunition_Depot` remain stable internal ids in V1. After `Field_Fabrication_Materials_Design.md` is implemented, player-facing copy presents the track as Fabrication Support and its authored effects target conversion efficiency, Oil input capacity, production cadence, or Materials capacity. Do not expose ammunition storage or ammunition crafting mechanics that do not exist.
 
 Upgrade implementation fields required in JSON:
 

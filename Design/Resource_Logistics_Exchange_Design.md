@@ -14,6 +14,7 @@ The system should feel like a AAA mobile RTS logistics layer, not an instant sho
 - `Economy_Reward_Design.md` owns canonical resource names, reward types, lifecycle rules, store boundaries, and conversion guardrails.
 - `Field_Logistics_Oil_Fuel_Design.md` owns tactical Oil/Fuel extraction, refinery, storage, tray truck, and tanker truck rules.
 - `Automated_Fuel_Logistics_Design.md` owns autonomous Oil -> Fuel logistics and usable faction Fuel rules.
+- `Field_Fabrication_Materials_Design.md` owns local Oil -> Materials production, canonical tactical Materials ownership, and the rule that local fabrication is more efficient than Materials import.
 - `Match_HUD_And_Gameplay_Implementation_Spec.md` owns `SCN-08` header/resource bar behavior and match-owned popups.
 - `SCN09_Build_Placement_Mode_Implementation_Spec.md` owns the existing build placement confirmation pattern that this popup should visually align with.
 - `UIUX_Target_To_Canvas_Workflow_Guide.md` and `UI_Screen_Reference_To_Icons_Panels_GreenKey_Workflow.md` own target-to-layered-Canvas and green-key asset workflows.
@@ -76,6 +77,8 @@ Resource Header
 8. Paid or account-store resources must not be injected into an active match unless an authored scenario explicitly grants them through match setup.
 9. All resource deltas must become economy events for balancing and telemetry.
 10. UI must expose exact affordability, queue, timer, storage, cap, and disabled reasons. No silent failure.
+11. `Credits -> Materials` is emergency recovery. Local Field Fabrication Depot production is the normal sustained source and must have the better effective rate.
+12. Exchange, fabrication, construction, HUD, and AI must use one canonical faction tactical Materials value; the Exchange must not own a parallel Materials wallet.
 
 ## Scenario Gate Rules
 
@@ -98,7 +101,7 @@ Resource Exchange is an authored scenario feature, not a default FTUE mechanic.
 | `Oil -> Credits` | Export Oil | Yes when Oil logistics is active. | Reserve/spend Oil at confirm. | Credits on completion. | Strong fiction fit. Requires active tactical Oil pool or storage. |
 | `Materials -> Credits` | Export Materials | Yes when Materials are active in the match. | Spend Materials at confirm. | Credits on completion. | Useful for surplus construction stock. Rate should be worse than mission rewards. |
 | `Fuel -> Credits` | Export Fuel | Optional, inefficient. | Spend Fuel at confirm. | Credits on completion. | Should warn that mobility readiness is reduced. |
-| `Credits -> Materials` | Import Materials | Yes when build/repair economy is active. | Spend Credits at confirm. | Materials on completion. | Core player recovery route. |
+| `Credits -> Materials` | Import Materials | Yes when build/repair economy is active. | Spend Credits at confirm. | Materials on completion. | Expensive emergency recovery route. Local Field Fabrication Depot production is the efficient sustained source. |
 | `Credits -> Fuel` | Import Fuel | Yes when Fuel logistics is active. | Spend Credits at confirm. | Fuel on completion. | Important for vehicles, aircraft, and emergency logistics. |
 | `Credits -> Oil` | Import Oil | Normally no. | N/A | N/A | Prefer Oil extraction through pumps. If needed later, call it `Import Crude` and gate it to authored logistics missions. |
 | `Credits -> Intel` | Buy Intel | No for this feature. | N/A | N/A | Intel reveal belongs to scouting, rewards, Operations, or Store dossier products. |
@@ -135,11 +138,13 @@ Each recipe should be authored as data:
 Balance recommendation:
 
 - Keep export rates clearly below mission reward value to avoid farming.
-- Keep import rates expensive enough that players still care about building Oil/Fuel infrastructure.
+- Keep Materials import at least 1.5x to 2.0x the modeled local fabrication opportunity cost for initial tuning, then validate through the balance harness.
+- Keep Fuel import expensive enough that players still care about building Oil/Fuel infrastructure.
 - Use queue time as a pressure lever, not as a punishment.
 - Use storage caps to avoid overfilling imported Fuel/Materials.
 - Limit simultaneous exchange jobs per faction to a small number for readability and performance.
 - Config validation should reject unsafe economy data before runtime: single exchange amounts above 100,000, per-recipe output rates above 5x, queue base duration below 1 second, per-job rush caps above 10 tickets, and any paired Credits export/import loop that retains more than 85% of the original resource after fees.
+- Balance validation must also reject profitable `Oil -> Materials -> Credits` loops and any recipe set where repeated Materials import is cheaper than sustained local fabrication after modeled infrastructure and logistics cost.
 
 ## Queue Rules
 

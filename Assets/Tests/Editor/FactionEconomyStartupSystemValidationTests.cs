@@ -69,6 +69,11 @@ public sealed class FactionEconomyStartupSystemValidationTests
         Assert.AreEqual(150, policy.OilSellPrice);
         Assert.AreEqual(220, policy.FuelSellPrice);
         Assert.AreEqual(8f, policy.SellIntervalSeconds, 0.0001f);
+        FactionTacticalMaterialsComponent materials =
+            em.GetComponentData<FactionTacticalMaterialsComponent>(economyEntity);
+        Assert.AreEqual(FactionIdentity.EnemyFactionId, materials.FactionId);
+        Assert.AreEqual(0, materials.Current);
+        Assert.AreEqual(0, materials.Capacity);
     }
 
     [Test]
@@ -104,6 +109,7 @@ public sealed class FactionEconomyStartupSystemValidationTests
         system.Initialize(em, new[] { ToStartupEntry(enemy) }, AISettingsRuntimeState.CurrentSnapshot);
 
         Assert.IsTrue(em.HasComponent<FactionEconomyPolicy>(economyEntity));
+        Assert.IsTrue(em.HasComponent<FactionTacticalMaterialsComponent>(economyEntity));
         Assert.AreEqual(75000, em.GetComponentData<FactionEconomy>(economyEntity).Money);
         Assert.AreEqual(1.15f, em.GetComponentData<FactionEconomyPolicy>(economyEntity).IncomeMultiplier, 0.0001f);
     }

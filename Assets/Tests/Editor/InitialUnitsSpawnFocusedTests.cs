@@ -15,6 +15,7 @@ public sealed class InitialUnitsSpawnFocusedTests
         string[] methodNames =
         {
             nameof(InitialUnitsSpawnSystem_CreatesPlayerEconomyWithConfiguredDollars),
+            nameof(InitialUnitsSpawnSystem_ProjectsConfiguredMaterialsForParticipatingFactions),
             nameof(InitialUnitsSpawnSystem_AppliesConfiguredInitialFuelToPlayerUsableStorage),
             nameof(InitialUnitsSpawnSystem_ClampsConfiguredInitialFuelToPlayerUsableStorageCapacity),
             nameof(InitialUnitsSpawnSystem_DoesNotMarkConfiguredInitialFuelAppliedBeforeStorageExists),
@@ -112,6 +113,47 @@ public sealed class InitialUnitsSpawnFocusedTests
         Assert.IsFalse(policyQuery.IsEmptyIgnoreFilter);
         FactionEconomyPolicy policy = em.GetComponentData<FactionEconomyPolicy>(policyQuery.GetSingletonEntity());
         Assert.AreEqual(0, policy.Enabled);
+    }
+
+    [Test]
+    public void InitialUnitsSpawnSystem_ProjectsConfiguredMaterialsForParticipatingFactions()
+    {
+        using var world = new World("InitialUnitsSpawnMaterialsTest");
+        EntityManager em = world.EntityManager;
+        Entity enemyEconomy = em.CreateEntity(typeof(FactionEconomy), typeof(FactionEconomyPolicy));
+        em.SetComponentData(enemyEconomy, new FactionEconomy
+        {
+            FactionId = FactionIdentity.EnemyFactionId,
+            Money = 100
+        });
+
+        InitialUnitsSpawnSystem.ApplyInitialResourceTotals(
+            em,
+            new InitialUnitsSpawnConfig
+            {
+                InitialDollars = 345,
+                InitialMaterials = 25,
+                MaterialsCapacity = 100
+            });
+
+        using EntityQuery economyQuery = em.CreateEntityQuery(
+            ComponentType.ReadOnly<FactionEconomy>(),
+            ComponentType.ReadOnly<FactionTacticalMaterialsComponent>());
+        using NativeArray<Entity> economies = economyQuery.ToEntityArray(Allocator.Temp);
+        Assert.AreEqual(2, economies.Length);
+
+        for (int i = 0; i < economies.Length; i++)
+        {
+            FactionEconomy economy = em.GetComponentData<FactionEconomy>(economies[i]);
+            FactionTacticalMaterialsComponent materials =
+                em.GetComponentData<FactionTacticalMaterialsComponent>(economies[i]);
+            Assert.AreEqual(economy.FactionId, materials.FactionId);
+            Assert.AreEqual(100, materials.Capacity);
+            Assert.AreEqual(
+                FactionIdentity.IsPlayerControlled(economy.FactionId) ? 25 : 0,
+                materials.Current);
+            Assert.AreEqual(1u, materials.Version);
+        }
     }
 
     [Test]

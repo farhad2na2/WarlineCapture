@@ -14,6 +14,8 @@ namespace Game.Components
         public float RespawnDelaySeconds;
         public uint RandomSeed;
         public int InitialDollars;
+        public int InitialMaterials;
+        public int MaterialsCapacity;
         public int InitialOil;
         public int InitialFuel;
         public byte CreateFactionBases;

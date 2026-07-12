@@ -116,6 +116,14 @@ namespace Game.Runtime
                     FuelSellPrice = config.FuelSellPrice < 0 ? 0 : config.FuelSellPrice,
                     SellIntervalSeconds = config.BuildIntervalSeconds < 1f ? 1f : config.BuildIntervalSeconds
                 });
+
+                if (!em.HasComponent<FactionTacticalMaterialsComponent>(economyEntity))
+                {
+                    em.AddComponentData(economyEntity, new FactionTacticalMaterialsComponent
+                    {
+                        FactionId = factionId
+                    });
+                }
             }
         }
 

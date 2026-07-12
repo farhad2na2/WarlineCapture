@@ -189,7 +189,7 @@ Useful first-slice examples:
 | Civilians | Civilian Male I, Civilian Male II, Civilian Female I, Civilian Female II |
 | Fast movement | Fast APC, Light Armored Car, Cargo Truck, Canopy Truck |
 | Recon and air | Recon Drone, Attack Helicopter, Light Attack Helicopter, Transport Helicopter |
-| Base and defense | Barracks, Guard Tower, Heavy Guard Tower, Ammunition Depot, Helipad, Satellite Dish |
+| Base and defense | Barracks, Guard Tower, Heavy Guard Tower, Field Fabrication Depot, Helipad, Satellite Dish |
 | Town/civilian context | House, Shop, Market Shop, City Hall, Refugee Tent |
 | Barriers and routes | Road Barrier, Dirt Wall, Fence Wall |
 

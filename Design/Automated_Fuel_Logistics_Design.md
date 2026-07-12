@@ -9,15 +9,17 @@ Read these files together before changing Oil/Fuel gameplay:
 
 1. `Field_Logistics_Oil_Fuel_Design.md`
 2. `Automated_Fuel_Logistics_Design.md`
-3. `Resource_Logistics_Exchange_Design.md`
-4. `Economy_Reward_Design.md`
-5. `Combat_Catalog_And_Upgrade_Design.md`
-6. `Gameplay_Features_High_Level_Spec.md`
-7. `Architecture/gameplay_solid_ecs_contract.md`
-8. `Architecture/performance_regression_contract.md`
-9. `Architecture/automated_fuel_logistics_implementation_tracker.md`
+3. `Field_Fabrication_Materials_Design.md`
+4. `Resource_Logistics_Exchange_Design.md`
+5. `Economy_Reward_Design.md`
+6. `Combat_Catalog_And_Upgrade_Design.md`
+7. `Gameplay_Features_High_Level_Spec.md`
+8. `Architecture/gameplay_solid_ecs_contract.md`
+9. `Architecture/performance_regression_contract.md`
+10. `Architecture/automated_fuel_logistics_implementation_tracker.md`
 
 `Field_Logistics_Oil_Fuel_Design.md` remains the catalog-aligned baseline for Oil Pump, Refinery, Fuel Bladder, oil truck, and tanker roles. This document defines the player-facing automation model and the meaning of usable Fuel.
+`Field_Fabrication_Materials_Design.md` extends tray-truck destination selection so delivered Oil can feed a Field Fabrication Depot. That branch produces tactical Materials and must preserve the reservation, deterministic tie-break, no-oscillation, ECS, and no-GC rules defined here.
 `Resource_Logistics_Exchange_Design.md` is a separate optional exchange-queue feature for import/export jobs. It must not replace or bypass the autonomous Oil Pump -> Refinery -> Fuel storage loop.
 
 ## Goal
@@ -86,10 +88,11 @@ Important rule: Fuel becomes the shared match header pool only when it is delive
 `Unit_Veh_Truck_Tray` should automatically:
 
 - find friendly Oil Pump buffers with available Oil
-- find friendly refineries with input capacity
+- find friendly refineries or Field Fabrication Depots with input capacity
 - reserve a pickup amount and destination before moving
 - travel to pickup, load Oil, travel to destination, unload Oil
-- idle when no source, no destination, no route, or no refinery capacity exists
+- preserve a valid assignment and use stable demand, route-cost, and id tie-breakers so it does not oscillate between destinations
+- idle when no source, no destination, no route, or no industrial input capacity exists
 - resume when any relevant source, destination, route, or capacity changes
 
 The player should not need to select a tray truck and manually target pumps/refineries for the normal economy loop.
@@ -171,6 +174,7 @@ UI should consume versioned ECS read models and avoid rebuilding logistics summa
 The intended decisions are:
 
 - build more Oil Pumps, refineries, storage, or logistics trucks
+- allocate Oil between Fuel production and Materials fabrication
 - protect routes and fuel buildings
 - raid enemy logistics
 - choose whether to spend Fuel on tanks, aircraft, transports, support, or extraction
@@ -194,6 +198,9 @@ The intended decision is not:
 | Refinery conversion rate | Controls Fuel production pace. |
 | Refinery efficiency | Controls Oil-to-Fuel ratio. |
 | Refinery input/output capacity | Controls bottlenecks and stall behavior. |
+| Fabrication Oil input capacity | Controls competition with refinery demand. |
+| Fabrication conversion rate | Controls local Materials production pace. |
+| Fabrication Oil-to-Materials ratio | Controls the strategic cost of construction versus mobility. |
 | Tanker cargo capacity | Controls Fuel delivery throughput. |
 | Tanker speed | Controls storage fill cadence. |
 | Fuel storage capacity | Controls usable pool ceiling. |

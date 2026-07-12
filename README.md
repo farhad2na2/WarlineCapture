@@ -220,6 +220,8 @@ The linked hierarchy below is the maintained documentation map. The older `Desig
       - [Combat Balance Config](Design/BalanceConfigs/Combat_Balance_Config_v0_1.json)
       - [Combat Visual Config](Design/VisualConfigs/Combat_Visual_Config_v0_1.json)
     - [Field Logistics Oil And Fuel Design](Design/Field_Logistics_Oil_Fuel_Design.md)
+      - [Field Fabrication And Materials Design](Design/Field_Fabrication_Materials_Design.md)
+      - [Field Fabrication And Materials Implementation Tracker](Design/Architecture/field_fabrication_materials_implementation_tracker.md)
       - [Resource Logistics Exchange Design](Design/Resource_Logistics_Exchange_Design.md)
       - [Resource Logistics Exchange Implementation Tracker](Design/Architecture/resource_logistics_exchange_implementation_tracker.md)
     - [Economy And Reward Design](Design/Economy_Reward_Design.md)

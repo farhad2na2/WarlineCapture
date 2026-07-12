@@ -52,6 +52,7 @@ Maturity is an audit snapshot, not a percentage or permanent promise. Implementa
 | Roads and route construction | Partial/Scaffolded | Reconnect hospitals, markets, fuel, evacuation, and convoy access. | Ch2 M01 after readiness | Ch2 M04-M05 | Ch5 M04 | A clear player entry, connected placement behavior, route validation, visuals, and objective hooks must be available. |
 | Oil extraction, refinery, Fuel storage | Implemented/Partial | Make civilian services and combined arms depend on a visible logistics chain. | Ch2 M02 | Ch2 M04-M05 | Ch4 and Ch5 | End-to-end Oil-to-Fuel flow, capacity, resource feedback, mission start state, and failure recovery must be validated. |
 | Automated tray-truck and tanker hauling | Implemented/Partial | Let the player design and protect a network without truck micromanagement. | Ch2 M02 | Ch2 M05 | Ch4 M02 and Ch5 M04 | Automation must be observable, interruptible through world conditions, and recover from blocked routes. |
+| Field Fabrication Depot and tactical Materials | Designed | Turn Oil allocation into a choice between mobility and construction while giving Materials a local production path. | Ch2 M02 only after readiness | Ch2 M04-M05 | Ch5 M04 | One canonical tactical Materials value, stable tray routing, Oil-to-Materials conversion, dual-cost building placement, live HUD, recovery rules, and no-GC validation must pass. |
 | Resource import/export | Scaffolded | Frame emergency trade, shortages, and logistics compromise. | Ch2 M03 only after enablement | Ch2 M05 | Ch5 M04 | Recipes, bootstrap, UI access, timing, rewards, and non-premium completion path must work in the active Campaign route. |
 | APC boarding and transport | Implemented | Solve protected movement, evacuation, and evidence transport. | Ch1 M04 | Ch3 M04 | Ch5 M02-M04 | Capacity, board/unboard, ownership, destruction, objective tracking, and mobile feedback must be reliable. |
 | Helicopter boarding, insertion, extraction | Implemented/Partial | Create landing-zone risk, urgent rescue, and fast reinforcement. | Ch1 M04 | Ch3 M04 | Ch5 M04 | Landing, boarding, rope/exit state, Fuel, anti-air interaction, and extraction objective must be validated. |
@@ -78,7 +79,7 @@ Maturity is an audit snapshot, not a percentage or permanent promise. Implementa
 | Chapter | New dominant systems | Systems deliberately deferred |
 |---|---|---|
 | 1. First Response | Core command, build, produce, warnings, basic boarding, breach. | Roads, full Oil/Fuel network, exchange, Intel deception, G2G/G2A mastery, parachute/cargo. |
-| 2. Broken Grid | Roads, Oil/Fuel, automated hauling, repair, later exchange, displacement. | Full Intel campaign, proxy military escalation, long-range fire. |
+| 2. Broken Grid | Roads, Oil/Fuel, automated hauling, local Materials fabrication after readiness, repair, later exchange, displacement. | Full Intel campaign, proxy military escalation, long-range fire. |
 | 3. Hidden Network | Scan/Intel, target confirmation, evidence, civilian-risk raids, extraction. | Heavy conventional combined-arms mastery. |
 | 4. Air And Armor | G2A, armor, G2G, aircraft, parachute, cargo, high Fuel pressure. | Full citywide multi-objective synthesis. |
 | 5. Citywide Command | Combination and mastery of all campaign-ready systems. | No major new mechanic in the finale. |
@@ -89,7 +90,7 @@ Maturity is an audit snapshot, not a percentage or permanent promise. Implementa
 |---|---|
 | ARIA | Objectives, Intel, warnings, recommendations, bounded automation, central mystery. |
 | Major Dalia Rahim | Core command, production, boarding, combined arms, troop survival. |
-| Engineer Samira Haddad | Roads, Oil/Fuel, import/export, power, civilians, refugees, infrastructure consequences. |
+| Engineer Samira Haddad | Roads, Oil/Fuel, Field Fabrication, import/export, power, civilians, refugees, infrastructure consequences. |
 | Captain Laila Nasser | Helicopter, aircraft, air corridors, G2A, Fuel, extraction. |
 | Chief Yusuf Darzi | Hazardous objectives, controlled breach, EOD context. |
 | Nadir Qassem | Sabotage, false Intel, infrastructure capture, military escalation, unrestricted control. |
@@ -123,4 +124,5 @@ Before a mission moves from high-level design into implementation planning, clas
 - `Campaign_Mission_High_Level_Design_Catalog.md`
 - `FTUE_And_Command_Assistant_Design.md`
 - `ARIA_Assistant_ECS_Design.md`
+- `Field_Fabrication_Materials_Design.md`
 - `Campaign_Narrative_And_Content_Redesign_Recommendations.md`

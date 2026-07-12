@@ -29,9 +29,12 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
             tests.BuildingUiPlacementCommandRequest_ExitBuildModeHonorsClearSelectionFlag();
             tests.BuildingUiPlacementCommandRequest_BeginConfiguredPlacementWritesAcceptedResult();
             tests.BuildingUiPlacementCommandRequest_BeginConfiguredPlacementRejectsMissingConfig();
+            tests.BuildingUiPlacementCommandEntityCache_ReusesWarmPositiveAndNegativeLookupsWithoutManagedAllocation();
+            tests.BuildingUiPlacementCommandEntityCache_RebindsWhenWorldChanges();
+            tests.BuildingUiPlacementCommandEntityCache_RecoversDestroyedEntityAndRepairsBuffers();
             tests.BuildingPlacementInputRuntimeTick_ProcessesQueuedPlacementCommandBeforeCameraGate();
             tests.BuildingPlacementInputScratchLists_ReuseImmediatePreviewStorageWithoutSharingOwnedResults();
-            Debug.Log("[BuildingPlacementCommandRequestValidation] result=Passed tests=13");
+            Debug.Log("[BuildingPlacementCommandRequestValidation] result=Passed tests=16");
             ValidationExit.Passed();
         }
         catch (Exception ex)
@@ -40,6 +43,77 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
             Debug.LogError("[BuildingPlacementCommandRequestValidation] result=Failed");
             ValidationExit.Failed();
         }
+    }
+
+    [Test]
+    public void BuildingUiPlacementCommandEntityCache_ReusesWarmPositiveAndNegativeLookupsWithoutManagedAllocation()
+    {
+        using World world = new("BuildingUiPlacementCommandEntityCacheAllocationTest");
+        var commandSystem = new BuildingPlacementCommandRequestCompositionSystemHelper();
+
+        commandSystem.ProcessPendingUiPlacementCommandsIfPresent(world.EntityManager, default);
+        long idleAllocationStart = GC.GetAllocatedBytesForCurrentThread();
+        for (int i = 0; i < 300; i++)
+        {
+            commandSystem.ProcessPendingUiPlacementCommandsIfPresent(world.EntityManager, default);
+            commandSystem.HasPendingUiPlacementCommands(world.EntityManager);
+        }
+        long idleAllocatedBytes = GC.GetAllocatedBytesForCurrentThread() - idleAllocationStart;
+
+        commandSystem.TryGetUiPlacementCommandResult(world.EntityManager, -1, out _);
+        long queueAllocationStart = GC.GetAllocatedBytesForCurrentThread();
+        for (int i = 0; i < 300; i++)
+            commandSystem.TryGetUiPlacementCommandResult(world.EntityManager, -1, out _);
+        long queueAllocatedBytes = GC.GetAllocatedBytesForCurrentThread() - queueAllocationStart;
+
+        Assert.AreEqual(0L, idleAllocatedBytes, "Warm idle placement command polling must reuse the negative queue lookup.");
+        Assert.AreEqual(0L, queueAllocatedBytes, "Warm placement command reads must reuse the queue entity.");
+    }
+
+    [Test]
+    public void BuildingUiPlacementCommandEntityCache_RebindsWhenWorldChanges()
+    {
+        var commandSystem = new BuildingPlacementCommandRequestCompositionSystemHelper();
+        using (World firstWorld = new("BuildingUiPlacementCommandEntityCacheRebind.First"))
+            commandSystem.TryGetUiPlacementCommandResult(firstWorld.EntityManager, -1, out _);
+
+        using (World secondWorld = new("BuildingUiPlacementCommandEntityCacheRebind.Second"))
+        {
+            commandSystem.TryGetUiPlacementCommandResult(secondWorld.EntityManager, -1, out _);
+            Assert.AreEqual(1, CountEntitiesWith<BuildingUiPlacementCommandQueueComponent>(secondWorld.EntityManager));
+        }
+    }
+
+    [Test]
+    public void BuildingUiPlacementCommandEntityCache_RecoversDestroyedEntityAndRepairsBuffers()
+    {
+        using World world = new("BuildingUiPlacementCommandEntityCacheRecoveryTest");
+        EntityManager em = world.EntityManager;
+        var commandSystem = new BuildingPlacementCommandRequestCompositionSystemHelper();
+
+        commandSystem.TryGetUiPlacementCommandResult(em, -1, out _);
+        Entity cachedEntity = GetSingletonEntity<BuildingUiPlacementCommandQueueComponent>(em);
+        em.DestroyEntity(cachedEntity);
+        Entity adoptedEntity = em.CreateEntity(typeof(BuildingUiPlacementCommandQueueComponent));
+
+        commandSystem.TryGetUiPlacementCommandResult(em, -1, out _);
+
+        Assert.IsTrue(em.HasBuffer<BuildingUiPlacementCommandRequestElement>(adoptedEntity));
+        Assert.IsTrue(em.HasBuffer<BuildingUiPlacementCommandResultElement>(adoptedEntity));
+    }
+
+    private static int CountEntitiesWith<T>(EntityManager entityManager)
+        where T : unmanaged, IComponentData
+    {
+        using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<T>());
+        return query.CalculateEntityCount();
+    }
+
+    private static Entity GetSingletonEntity<T>(EntityManager entityManager)
+        where T : unmanaged, IComponentData
+    {
+        using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<T>());
+        return query.GetSingletonEntity();
     }
 
     [TearDown]

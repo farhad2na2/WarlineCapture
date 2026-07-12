@@ -10,6 +10,8 @@ namespace Game.Runtime
 {
     internal sealed class BuildingPlacementCommandRequestCompositionSystemHelper
     {
+        private readonly BuildingPlacementCommandEntityCache _commandEntityCache = new();
+
         internal readonly struct Context
         {
             public readonly BuildingPlacementStartupSystemHelper StartupSystem;
@@ -388,7 +390,7 @@ namespace Game.Runtime
             };
         }
 
-        private static int EnqueueUiPlacementCommand(
+        private int EnqueueUiPlacementCommand(
             EntityManager em,
             byte requestKind,
             bool clearBuildingSelection,
@@ -423,37 +425,14 @@ namespace Game.Runtime
                 : string.Empty;
         }
 
-        private static Entity EnsureUiPlacementCommandEntity(EntityManager em)
+        private Entity EnsureUiPlacementCommandEntity(EntityManager em)
         {
-            if (TryGetUiPlacementCommandEntity(em, out Entity existing))
-                return existing;
-
-            Entity entity = em.CreateEntity(typeof(BuildingUiPlacementCommandQueueComponent));
-            em.SetName(entity, "BuildingUiPlacementCommands");
-            EnsureUiPlacementCommandBuffers(em, entity);
-            return entity;
+            return _commandEntityCache.GetOrCreate(em);
         }
 
-        private static bool TryGetUiPlacementCommandEntity(EntityManager em, out Entity entity)
+        private bool TryGetUiPlacementCommandEntity(EntityManager em, out Entity entity)
         {
-            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingUiPlacementCommandQueueComponent>());
-            if (!query.IsEmptyIgnoreFilter)
-            {
-                entity = query.GetSingletonEntity();
-                EnsureUiPlacementCommandBuffers(em, entity);
-                return true;
-            }
-
-            entity = Entity.Null;
-            return false;
-        }
-
-        private static void EnsureUiPlacementCommandBuffers(EntityManager em, Entity entity)
-        {
-            if (!em.HasBuffer<BuildingUiPlacementCommandRequestElement>(entity))
-                em.AddBuffer<BuildingUiPlacementCommandRequestElement>(entity);
-            if (!em.HasBuffer<BuildingUiPlacementCommandResultElement>(entity))
-                em.AddBuffer<BuildingUiPlacementCommandResultElement>(entity);
+            return _commandEntityCache.TryGet(em, out entity);
         }
     }
 }

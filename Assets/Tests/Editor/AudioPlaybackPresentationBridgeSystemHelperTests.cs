@@ -30,6 +30,10 @@ public sealed class AudioPlaybackPresentationBridgeSystemHelperTests
             passed++;
             RunCase(test => test.DrainAcceptedRequests_CullsGameplayVoiceWhileSimulationInactive());
             passed++;
+            RunCase(test => test.DrainAcceptedRequests_ReusesGameplayStateQueryWithoutManagedAllocation());
+            passed++;
+            RunCase(test => test.DrainAcceptedRequests_RebindsGameplayStateQueryWhenWorldChanges());
+            passed++;
             RunCase(test => test.DrainAcceptedRequests_FadesSettingsChangesOnActiveMusicSource());
             passed++;
 
@@ -281,6 +285,77 @@ public sealed class AudioPlaybackPresentationBridgeSystemHelperTests
             InitialUnitsRuntimeState.PlayRequested = false;
             InitialUnitsRuntimeState.SimulationActive = false;
         }
+    }
+
+    [Test]
+    public void DrainAcceptedRequests_ReusesGameplayStateQueryWithoutManagedAllocation()
+    {
+        RuntimeGameplayStateTestHelper.SetPlayRequested(_entityManager, true);
+        RuntimeGameplayStateTestHelper.SetSimulationActive(_entityManager, true);
+        AudioEventCatalogConfig catalog = CreateCatalog();
+        AudioMixerBusConfig buses = CreateBuses();
+        using AudioPlaybackPresentationSystemHelper playback = new(initialPoolSize: 0, maxPoolSize: 1);
+        using AudioPlaybackPresentationBridgeSystemHelper bridge = new();
+
+        bridge.DrainAcceptedRequests(_entityManager, catalog, buses, playback, now: 1f);
+        long allocationStart = GC.GetAllocatedBytesForCurrentThread();
+        for (int i = 0; i < 300; i++)
+            bridge.DrainAcceptedRequests(_entityManager, catalog, buses, playback, now: 1f + i);
+        long allocatedBytes = GC.GetAllocatedBytesForCurrentThread() - allocationStart;
+
+        Assert.AreEqual(0L, allocatedBytes, "Warm audio bridge drains must reuse the gameplay-state query.");
+    }
+
+    [Test]
+    public void DrainAcceptedRequests_RebindsGameplayStateQueryWhenWorldChanges()
+    {
+        AudioEventCatalogConfig catalog = CreateCatalog(CreateEntry(
+            AudioEventIds.VOARIAMessageWarningGroundAttackType,
+            "Voice",
+            CreateClip("aria_world_rebind")));
+        AudioMixerBusConfig buses = CreateBuses(CreateBus("Voice"));
+        using AudioPlaybackPresentationSystemHelper playback = new(initialPoolSize: 1, maxPoolSize: 1);
+        using AudioPlaybackPresentationBridgeSystemHelper bridge = new();
+
+        RuntimeGameplayStateTestHelper.SetPlayRequested(_entityManager, true);
+        RuntimeGameplayStateTestHelper.SetSimulationActive(_entityManager, false);
+        EnqueueVoiceRequest(_entityManager, requestedAt: 1f);
+        AudioPlaybackPresentationBridgeResult inactiveResult = bridge.DrainAcceptedRequests(
+            _entityManager,
+            catalog,
+            buses,
+            playback,
+            now: 1.1f);
+        Assert.AreEqual(0, inactiveResult.PlayedCount);
+        Assert.AreEqual(1, inactiveResult.FailedCount);
+
+        using var secondWorld = new World("AudioPlaybackPresentationBridgeSystemHelperTests.SecondWorld");
+        RuntimeGameplayStateTestHelper.SetPlayRequested(secondWorld.EntityManager, true);
+        RuntimeGameplayStateTestHelper.SetSimulationActive(secondWorld.EntityManager, true);
+        EnqueueVoiceRequest(secondWorld.EntityManager, requestedAt: 2f);
+        bridge.ResetCursor();
+
+        AudioPlaybackPresentationBridgeResult activeResult = bridge.DrainAcceptedRequests(
+            secondWorld.EntityManager,
+            catalog,
+            buses,
+            playback,
+            now: 2.1f);
+
+        Assert.AreEqual(1, activeResult.PlayedCount);
+        Assert.AreEqual(0, activeResult.FailedCount);
+    }
+
+    private static void EnqueueVoiceRequest(EntityManager entityManager, float requestedAt)
+    {
+        AudioEventRequestSystem.EnqueueOneShot(
+            entityManager,
+            new FixedString64Bytes(AudioEventIds.VOARIAMessageWarningGroundAttackType),
+            AudioEventIds.VOARIAMessageWarningGroundAttackTypeHash,
+            new FixedString32Bytes("Voice"),
+            AudioPlaybackPriority.Critical,
+            requestedAt);
+        AudioCooldownSystem.ProcessPendingRequests(entityManager, requestedAt);
     }
 
     [Test]

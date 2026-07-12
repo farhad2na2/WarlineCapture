@@ -49,6 +49,7 @@ namespace Game.Runtime
 
         private void OnDestroy()
         {
+            _bridge.Dispose();
             _playbackHelper?.Dispose();
             _playbackHelper = null;
         }

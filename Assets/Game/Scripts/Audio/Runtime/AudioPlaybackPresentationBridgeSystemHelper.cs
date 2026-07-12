@@ -22,7 +22,7 @@ namespace Game.Runtime
         public int LastPresentedRequestId { get; }
     }
 
-    public sealed class AudioPlaybackPresentationBridgeSystemHelper
+    public sealed class AudioPlaybackPresentationBridgeSystemHelper : System.IDisposable
     {
         private const float SettingsMusicFadeSeconds = 0.35f;
 
@@ -32,6 +32,7 @@ namespace Game.Runtime
         private AudioMixerBusConfig _mixerBusConfig;
         private int _lastPresentedRequestId;
         private uint _lastAppliedSettingsVersion;
+        private readonly AudioGameplayStateQueryCache _simulationStateQuery = new();
 
         public int LastPresentedRequestId => _lastPresentedRequestId;
 
@@ -115,6 +116,10 @@ namespace Game.Runtime
             _lastPresentedRequestId = 0;
             _lastAppliedSettingsVersion = 0;
         }
+        public void Dispose()
+        {
+            _simulationStateQuery.Dispose();
+        }
 
         private void RebuildCachesIfNeeded(AudioEventCatalogConfig eventCatalog, AudioMixerBusConfig mixerBusConfig)
         {
@@ -175,14 +180,9 @@ namespace Game.Runtime
             return _busesById.TryGetValue(busId, out AudioMixerBusEntry bus) ? bus : null;
         }
 
-        private static bool IsGameplaySimulationActive(EntityManager em)
+        private bool IsGameplaySimulationActive(EntityManager em)
         {
-            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<RuntimeGameplayStateComponent>());
-            if (query.CalculateEntityCount() == 0)
-                return false;
-
-            RuntimeGameplayStateComponent state = query.GetSingleton<RuntimeGameplayStateComponent>();
-            return state.PlayRequested != 0 && state.SimulationActive != 0;
+            return _simulationStateQuery.IsSimulationActive(em);
         }
 
         private static bool ShouldCullGameplayOnlyRequestWhileInactive(

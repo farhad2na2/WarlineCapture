@@ -253,15 +253,15 @@ The program is complete only when all of the following are true:
 |---|---|
 | Checklist complete | `82 / 106` |
 | Checklist percent complete | `77.4%` |
-| Checklist in progress | `11 / 106`: `APH-311`, `APH-408`, `APH-501`, `APH-502`, `APH-507`, `APH-508`, `APH-509`, `APH-601`, `APH-609`, `APH-704`, `APH-803` |
-| Complete plus active coverage | `93 / 106` (`87.7%`); this is visibility only, not accepted completion |
+| Checklist in progress | `12 / 106`: `APH-311`, `APH-408`, `APH-501`, `APH-502`, `APH-507`, `APH-508`, `APH-509`, `APH-601`, `APH-609`, `APH-704`, `APH-710`, `APH-803` |
+| Complete plus active coverage | `94 / 106` (`88.7%`); this is visibility only, not accepted completion |
 | Current phase | Phase 3 Android device evidence, Phase 5 product budgets, Phase 6 map closeout, and bounded Phase 8 automation |
 | Current task | Close remaining FPS, memory, startup, package, architecture, and device gates; select the next bounded decomposition only when dependency-ready |
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
-| Red performance gates | `1`: current integrated-head steady-state Match GC `266,974 / 1,024` bytes; APH-709 removed both tactical-camera rows, while remaining recurring owners stay assigned to APH-710/711 |
+| Red performance gates | `1`: current integrated-head steady-state Match GC `235,496 / 1,024` bytes; tactical-camera and audio gameplay-state rows are absent, while remaining recurring owners stay assigned to APH-710/711 |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
 | Last verified commit | `80b68a244`; selection-camera query decomposition and integrated validation evidence are committed on `main` |
-| Last update | 2026-07-12 - tactical-follow camera state reads use a world-bound query cache; both measured camera allocation rows are absent and the Match p95 gate remains green |
+| Last update | 2026-07-12 - audio gameplay-state reads use a lifecycle-bound query cache; the measured audio row is absent and APH-710 continues with the remaining recurring owners |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -628,7 +628,8 @@ The `APH-007` raw-metadata GC report is mandatory measured input for this phase.
   - Result: the 2,802-line gateway is now a 252-line registered facade over private route, action, settings, and bounded read-model adapters; every new file remains below 500 lines and no view references an ECS adapter. Shell content `11/11`, assistant command `6/6`, assistant cache/allocation `2/2`, resource header `8/8`, resource routing `5/5`, lifecycle PlayMode `1/1`, source growth `15/15`, boundary `31/31`, broad-shell `1/1`, ECS/Burst `10/10`, and three project builds pass with zero compiler errors. Evidence: `Design/AgentReports/2026-07-12_aph-708_ui_shell_gateway_decomposition.md`.
 - [x] `APH-709` Decompose selection/HUD files only where profiler or change-frequency evidence identifies risk; do not split for line count alone.
   - Result: only the profiler-backed tactical-follow camera query seam was extracted. A 47-line world-bound cache replaces two per-tick query constructions totaling 23,920 bytes in APH-007/213; a 300-tick warmed test allocates zero bytes, world-rebind behavior is covered, and both owner rows are absent from the fresh 180-warmup/300-frame raw capture. Camera `31/31`, selection `60/60`, selection/move/attack PlayMode `1/1`, source growth `15/15`, boundary `31/31`, ECS/Burst `10/10`, and Match p95 `4.31 ms` pass. Evidence: `Design/AgentReports/2026-07-12_aph-709_selection_camera_query_decomposition.md`.
-- [ ] `APH-710` Remove classified hidden world lookups and recurring per-frame allocation owners as each domain receives explicit World/EntityManager/query dependencies or cached non-allocating state.
+- [~] `APH-710` Remove classified hidden world lookups and recurring per-frame allocation owners as each domain receives explicit World/EntityManager/query dependencies or cached non-allocating state.
+  - Active result: the audio presentation bridge now owns a lifecycle-bound gameplay-state query cache. Its 11,960-byte/299-frame owner is absent from the fresh raw capture, a 300-drain focused test allocates zero bytes, world rebinding is covered, and the current integrated total improves to `235,496 / 1,024` bytes. Audio `8/8`, source growth `15/15`, boundary `31/31`, ECS/Burst `10/10`, and project builds pass. Remaining scene-root, transport, UI shell, command-query, pathfinding, selection-panel, and hidden-world owners keep this task active. Evidence: `Design/AgentReports/2026-07-12_aph-710_audio_gameplay_state_query_cache.md`.
 - [ ] `APH-711` Re-run compile time, domain reload time, architecture gates, focused tests, Match performance, and the unchanged steady-state GC capture after every physical asmdef split and final allocation-remediation slice.
 
 ## Phase 8 - CI, PlayMode, Visual, and Device Gates
@@ -1512,6 +1513,17 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Evidence: `Design/AgentReports/2026-07-12_aph-709_selection_camera_query_decomposition.md`, `/private/tmp/warline-aph709-camera-final.log`, `/private/tmp/warline-aph709-selection.log`, `/private/tmp/warline-aph709-playmode-r2.xml`, `/private/tmp/warline-aph709-growth.log`, `/private/tmp/warline-aph709-boundary.log`, `/private/tmp/warline-aph709-burst.log`, `/private/tmp/warline-aph709-performance.log`, and `/private/tmp/warline-aph709-gc-r2.log`
 - Residual risk: the unchanged 1,024-byte global GC gate remains red; APH-710 owns remaining explicit-dependency/allocation remediation and APH-711 owns final integrated recapture
 - Next ready task: remove the smallest independently testable APH-710 recurring allocation owner, beginning with the audio gameplay-state query cache
+
+### 2026-07-12 - APH-710 - Audio gameplay-state query cache
+
+- Status: Stable partial slice; APH-710 remains active
+- Baseline: `1616ef8c4`
+- Behavior preserved/changed: audio event routing, gameplay-only culling, source pooling, settings fades, mixer behavior, and serialized configuration are unchanged; the existing bridge/view lifecycle now owns one world-bound gameplay-state query
+- Measured result: the recurring 11,960-byte audio owner is absent, camera owners remain absent, and full Match GC improves from `266,974` to `235,496` bytes while the unchanged `1,024`-byte gate remains red
+- Validation: audio bridge `8/8`, source growth `15/15`, assembly boundary `31/31`, ECS/Burst `10/10`, Runtime and Editor-test builds with zero errors, and `git diff --check`
+- Evidence: `Design/AgentReports/2026-07-12_aph-710_audio_gameplay_state_query_cache.md`, `/private/tmp/warline-aph710-audio-final-r2.log`, `/private/tmp/warline-aph710-audio-growth-r2.log`, `/private/tmp/warline-aph710-audio-boundary.log`, `/private/tmp/warline-aph710-audio-burst.log`, and `/private/tmp/warline-aph710-audio-gc-r2.log`
+- Residual risk: scene-root, transport, UI shell, road/building command-query, pathfinding, selection-panel, and hidden-world owners remain; APH-710 cannot close until each is removed or explicitly reassigned and APH-711 repeats the integrated lane
+- Next ready task: design the lifecycle-safe non-allocating Match scene-view cache or remove another independent command-query owner
 
 ## Decision Log
 

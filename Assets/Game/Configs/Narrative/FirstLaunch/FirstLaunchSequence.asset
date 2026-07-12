@@ -38,6 +38,10 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 15
     motionPreset: 1
+    locationTitleKey: narrative.first_launch.location.sahrin.name
+    locationTitleFallback: SAHRIN
+    locationSubtitleKey: narrative.first_launch.location.old_market.context
+    locationSubtitleFallback: OLD MARKET / 06:42 LOCAL
   - stateId: FL-P02
     kind: 0
     panel16x9: {fileID: 0}
@@ -69,6 +73,10 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 8
     motionPreset: 5
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
   - stateId: FL-P03
     kind: 0
     panel16x9: {fileID: 0}
@@ -100,6 +108,10 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 9
     motionPreset: 4
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
   - stateId: FL-P04
     kind: 0
     panel16x9: {fileID: 0}
@@ -140,6 +152,10 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 24
     motionPreset: 1
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
   - stateId: FL-P05
     kind: 0
     panel16x9: {fileID: 0}
@@ -171,6 +187,10 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 10
     motionPreset: 1
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
   - stateId: FL-P06
     kind: 0
     panel16x9: {fileID: 0}
@@ -202,6 +222,10 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 10
     motionPreset: 3
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
   - stateId: FL-P07
     kind: 0
     panel16x9: {fileID: 0}
@@ -233,6 +257,10 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 10
     motionPreset: 1
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
   - stateId: first_launch.commander_identity
     kind: 1
     panel16x9: {fileID: 0}
@@ -255,6 +283,10 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 0
     motionPreset: 6
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
   - stateId: first_launch.guidance_choice
     kind: 2
     panel16x9: {fileID: 0}
@@ -277,6 +309,10 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 0
     motionPreset: 6
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
   - stateId: FL-P09
     kind: 0
     panel16x9: {fileID: 0}
@@ -308,6 +344,10 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 8
     motionPreset: 1
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
   - stateId: FL-P10
     kind: 0
     panel16x9: {fileID: 0}
@@ -339,6 +379,10 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 8
     motionPreset: 4
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
   - stateId: FL-P11
     kind: 0
     panel16x9: {fileID: 0}
@@ -370,6 +414,10 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 9
     motionPreset: 1
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
   - stateId: FL-P12
     kind: 0
     panel16x9: {fileID: 0}
@@ -401,6 +449,10 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 9
     motionPreset: 1
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
   - stateId: FL-P13
     kind: 0
     panel16x9: {fileID: 0}
@@ -432,6 +484,10 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 8
     motionPreset: 3
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
   - stateId: FL-P14
     kind: 0
     panel16x9: {fileID: 0}
@@ -463,6 +519,10 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 8
     motionPreset: 1
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
   - stateId: FL-P15
     kind: 0
     panel16x9: {fileID: 0}
@@ -494,6 +554,10 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 10
     motionPreset: 1
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
   - stateId: FL-P16
     kind: 0
     panel16x9: {fileID: 0}
@@ -525,6 +589,10 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 10
     motionPreset: 4
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
   - stateId: FL-P17
     kind: 0
     panel16x9: {fileID: 0}
@@ -555,6 +623,10 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 8
     motionPreset: 1
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
   - stateId: FL-P18
     kind: 0
     panel16x9: {fileID: 0}
@@ -585,6 +657,10 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 10
     motionPreset: 1
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
   - stateId: first_launch.m01_handoff
     kind: 3
     panel16x9: {fileID: 0}
@@ -607,6 +683,10 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 0
     motionPreset: 0
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
   - stateId: first_launch.gameplay_placeholder
     kind: 4
     panel16x9: {fileID: 0}
@@ -629,6 +709,10 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 0
     motionPreset: 0
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
   - stateId: FL-P19
     kind: 0
     panel16x9: {fileID: 0}
@@ -651,6 +735,10 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 4
     motionPreset: 4
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
   - stateId: FL-P20
     kind: 0
     panel16x9: {fileID: 0}
@@ -673,6 +761,10 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 5
     motionPreset: 1
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
   - stateId: FL-P21
     kind: 0
     panel16x9: {fileID: 0}
@@ -695,6 +787,10 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 4
     motionPreset: 3
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
   - stateId: FL-P22
     kind: 0
     panel16x9: {fileID: 0}
@@ -717,6 +813,10 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 5
     motionPreset: 2
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
   - stateId: first_launch.command_base_reveal
     kind: 5
     panel16x9: {fileID: 0}
@@ -739,3 +839,7 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 0
     motionPreset: 0
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:

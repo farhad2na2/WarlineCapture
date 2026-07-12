@@ -127,6 +127,7 @@ namespace Game.Composition
                 return;
 
             stateElapsed += Mathf.Max(0f, unscaledDeltaTime);
+            ApplyAudioVolumes();
             panelMotion?.Tick(unscaledDeltaTime);
             if (currentState.Kind != NarrativeStateKind.PanelDialogue)
                 return;
@@ -158,6 +159,7 @@ namespace Game.Composition
                 return;
             paused = true;
             presentation?.Pause();
+            view.SequenceAudioView?.Pause();
         }
 
         public void Resume()
@@ -166,6 +168,7 @@ namespace Game.Composition
                 return;
             paused = false;
             presentation?.Resume();
+            view.SequenceAudioView?.Resume();
         }
 
         public bool Restart()
@@ -226,6 +229,7 @@ namespace Game.Composition
                 view.SetInteractiveState(NarrativeInteractiveStateKind.None);
                 view.ClearPanel();
                 view.SetVisible(false);
+                view.SequenceAudioView?.StopAll();
             }
             presentation?.Cancel();
             panelMotion?.Cancel();
@@ -250,6 +254,8 @@ namespace Game.Composition
             view.SetActionContext(config.SequenceId, state.StateId, string.Empty, transitionToken);
             view.SetSkipState(!string.IsNullOrEmpty(state.SkipStateId), true, "SKIP");
             view.SetInteractiveState(NarrativeInteractiveStateKind.None);
+            view.ApplyLocation(ResolveLocation(state));
+            EnterAudioState(state.StateId);
             view.CommanderIdentityView?.UnbindActions();
             view.GuidanceChoiceView?.UnbindActions();
 
@@ -321,6 +327,95 @@ namespace Game.Composition
                     TransitionToken = transitionToken
                 });
             }
+        }
+
+        private NarrativeLocationPresentationModel ResolveLocation(NarrativeStateRecord state)
+        {
+            bool isOpeningLocation = string.Equals(state.StateId, "FL-P01", StringComparison.Ordinal);
+            if (!isOpeningLocation && string.IsNullOrEmpty(state.LocationTitleFallback))
+                return default;
+
+            string titleFallback = string.IsNullOrEmpty(state.LocationTitleFallback) ? "SAHRIN" : state.LocationTitleFallback;
+            string subtitleFallback = string.IsNullOrEmpty(state.LocationSubtitleFallback) ? "OLD MARKET / 06:42 LOCAL" : state.LocationSubtitleFallback;
+            string titleKey = string.IsNullOrEmpty(state.LocationTitleKey)
+                ? "narrative.first_launch.location.sahrin.name"
+                : state.LocationTitleKey;
+            string subtitleKey = string.IsNullOrEmpty(state.LocationSubtitleKey)
+                ? "narrative.first_launch.location.old_market.context"
+                : state.LocationSubtitleKey;
+            return new NarrativeLocationPresentationModel
+            {
+                Visible = true,
+                Title = textResolver.Get(titleKey, titleFallback),
+                Subtitle = textResolver.Get(subtitleKey, subtitleFallback)
+            };
+        }
+
+        private void EnterAudioState(string stateId)
+        {
+            NarrativeSequenceAudioView audio = view?.SequenceAudioView;
+            if (audio == null)
+                return;
+
+            ApplyAudioVolumes();
+            audio.ApplyClips(
+                IsConflictAudioState(stateId) ? audio.ConflictMusic : audio.BriefingMusic,
+                ResolveAmbience(audio, stateId),
+                IsVehicleAudioState(stateId) ? audio.VehicleEngine : null,
+                ResolveAudioCue(audio, stateId));
+        }
+
+        private void ApplyAudioVolumes()
+        {
+            NarrativeSequenceAudioView audio = view?.SequenceAudioView;
+            if (audio == null)
+                return;
+
+            float master = Mathf.Clamp01(settings.Audio.MasterVolume / 100f);
+            float music = settings.Audio.MusicEnabled
+                ? master * Mathf.Clamp01(settings.Audio.MusicVolume / 100f) * 0.32f
+                : 0f;
+            float sound = settings.Audio.SoundEnabled
+                ? master * Mathf.Clamp01(settings.Audio.SfxVolume / 100f)
+                : 0f;
+            audio.ApplyVolumes(music, sound * 0.55f, sound * 0.32f, sound * 0.28f);
+        }
+
+        private static AudioClip ResolveAmbience(NarrativeSequenceAudioView audio, string stateId)
+        {
+            if (stateId == "FL-P01")
+                return audio.CityDayAmbience;
+            if (stateId == "FL-P02" || stateId == "FL-P03" || stateId == "FL-P15" ||
+                stateId == "FL-P16" || stateId == "FL-P17" || stateId == "FL-P18")
+                return audio.BattlefieldAmbience;
+            return audio.CityConflictAmbience;
+        }
+
+        private static AudioClip ResolveAudioCue(NarrativeSequenceAudioView audio, string stateId)
+        {
+            return stateId switch
+            {
+                "FL-P02" => audio.AttackCue,
+                "FL-P03" or "FL-P04" => audio.RadioCue,
+                "FL-P05" => audio.AriaBootCue,
+                "FL-P06" => audio.BlackoutCue,
+                "FL-P07" or "FL-P16" => audio.SmallArmsCue,
+                "FL-P09" or "FL-P18" => audio.TransitionCue,
+                "FL-P10" or "FL-P15" => audio.AttackCue,
+                _ => null
+            };
+        }
+
+        private static bool IsConflictAudioState(string stateId)
+        {
+            return stateId == "FL-P02" || stateId == "FL-P03" || stateId == "FL-P07" ||
+                   stateId == "FL-P10" || stateId == "FL-P15" || stateId == "FL-P16" ||
+                   stateId == "FL-P17" || stateId == "FL-P18";
+        }
+
+        private static bool IsVehicleAudioState(string stateId)
+        {
+            return stateId == "FL-P04" || stateId == "FL-P11" || stateId == "FL-P15" || stateId == "FL-P17";
         }
 
         private void StartLine(int index)

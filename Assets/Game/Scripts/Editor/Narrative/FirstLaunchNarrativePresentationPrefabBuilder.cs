@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.IO;
 using Game.Catalog.Contracts;
 using Game.UI.Runtime;
@@ -7,6 +9,7 @@ using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 namespace Game.Editor
 {
@@ -15,6 +18,11 @@ namespace Game.Editor
         public const string PrefabPath = "Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab";
         private const string BoldFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Bold SDF.asset";
         private const string MediumFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium SDF.asset";
+        private const string HudPanelPath = "Assets/Game/Art/UI/Panels/scn09_panel_detail_tall_frame.png";
+        private const string HudButtonPath = "Assets/Game/Art/UI/Panels/scn09_panel_secondary_button_bg.png";
+        private const string HudPrimaryButtonPath = "Assets/Game/Art/UI/Panels/scn09_panel_gold_action_button_bg.png";
+        private const float LiveMenuPresentationScale = 2.2f;
+        private static readonly Vector2 LiveMenuReferenceResolution = new(4800f, 2160f);
 
         [MenuItem("Game/Narrative/First Launch/Build Presentation Prefab")]
         public static void Build()
@@ -26,6 +34,10 @@ namespace Game.Editor
             TMP_FontAsset medium = RequireAsset<TMP_FontAsset>(MediumFontPath);
             Sprite frame = RequireAsset<Sprite>(FirstLaunchNarrativeDialogueAssetImporter.FramePath);
             Sprite pointer = RequireAsset<Sprite>(FirstLaunchNarrativeDialogueAssetImporter.PointerPath);
+            Sprite hudPanel = RequireAsset<Sprite>(HudPanelPath);
+            Sprite hudButton = RequireAsset<Sprite>(HudButtonPath);
+            Sprite hudPrimaryButton = RequireAsset<Sprite>(HudPrimaryButtonPath);
+            Sprite locationFrame = RequireAsset<Sprite>("Assets/Game/Art/UI/Panels/scn08_title_banner_frame.png");
 
             RectTransform root = CreateRect("FirstLaunchNarrativeSequence", null);
             Stretch(root);
@@ -38,6 +50,28 @@ namespace Game.Editor
             voiceSource.playOnAwake = false;
             voiceSource.loop = false;
             voiceSource.spatialBlend = 0f;
+            NarrativeSequenceAudioView sequenceAudioView = root.gameObject.AddComponent<NarrativeSequenceAudioView>();
+            AudioSource musicSource = CreateAudioSource("NarrativeMusic", root, true);
+            AudioSource ambienceSource = CreateAudioSource("NarrativeAmbience", root, true);
+            AudioSource vehicleSource = CreateAudioSource("NarrativeVehicle", root, true);
+            AudioSource eventSource = CreateAudioSource("NarrativeEvents", root, false);
+            SetObject(sequenceAudioView, "musicSource", musicSource);
+            SetObject(sequenceAudioView, "ambienceSource", ambienceSource);
+            SetObject(sequenceAudioView, "vehicleSource", vehicleSource);
+            SetObject(sequenceAudioView, "eventSource", eventSource);
+            const string environment = "Assets/Game/Audio/Narrative/FirstLaunch/Environment/";
+            SetObject(sequenceAudioView, "briefingMusic", RequireAsset<AudioClip>(environment + "first_launch_story_calm_loop_01.wav"));
+            SetObject(sequenceAudioView, "conflictMusic", RequireAsset<AudioClip>(environment + "first_launch_story_crisis_loop_01.wav"));
+            SetObject(sequenceAudioView, "cityDayAmbience", RequireAsset<AudioClip>(environment + "first_launch_city_market_loop_01.wav"));
+            SetObject(sequenceAudioView, "cityConflictAmbience", RequireAsset<AudioClip>(environment + "first_launch_command_room_loop_01.wav"));
+            SetObject(sequenceAudioView, "battlefieldAmbience", RequireAsset<AudioClip>(environment + "first_launch_city_attack_loop_01.wav"));
+            SetObject(sequenceAudioView, "vehicleEngine", RequireAsset<AudioClip>(environment + "first_launch_convoy_interior_loop_01.wav"));
+            SetObject(sequenceAudioView, "attackCue", RequireAsset<AudioClip>(environment + "first_launch_distant_attack_event_01.wav"));
+            SetObject(sequenceAudioView, "smallArmsCue", null);
+            SetObject(sequenceAudioView, "radioCue", null);
+            SetObject(sequenceAudioView, "blackoutCue", null);
+            SetObject(sequenceAudioView, "ariaBootCue", RequireAsset<AudioClip>("Assets/Game/Audio/Gameplay/game_command_scan_targeting_01.wav"));
+            SetObject(sequenceAudioView, "transitionCue", null);
 
             Image panel = CreateImage("Panel", root, null, Color.white, false);
             Stretch(panel.rectTransform);
@@ -52,13 +86,15 @@ namespace Game.Editor
             safeArea.offsetMin = Vector2.zero;
             safeArea.offsetMax = Vector2.zero;
             GameObject safeAreaPreview = BuildSafeAreaPreview(safeArea);
+            NarrativeLocationIntroView locationIntroView = BuildLocationIntroSurface(safeArea, locationFrame, bold, medium);
 
             RectTransform dialogue = CreateRect("Dialogue", safeArea);
             dialogue.anchorMin = new Vector2(0.5f, 0f);
             dialogue.anchorMax = new Vector2(0.5f, 0f);
             dialogue.pivot = new Vector2(0.5f, 0f);
-            dialogue.sizeDelta = new Vector2(1540f, 350f);
+            dialogue.sizeDelta = new Vector2(1540f, 292f);
             dialogue.anchoredPosition = new Vector2(0f, 28f);
+            ApplyLiveMenuScale(dialogue);
             CanvasGroup dialogueGroup = dialogue.gameObject.AddComponent<CanvasGroup>();
             NarrativeDialogueView dialogueView = dialogue.gameObject.AddComponent<NarrativeDialogueView>();
 
@@ -67,34 +103,34 @@ namespace Game.Editor
             Button inputButton = inputSurface.gameObject.AddComponent<Button>();
             inputButton.transition = Selectable.Transition.None;
 
+            Image pointerImage = CreateImage("Pointer", dialogue, pointer, Color.white, false);
+            SetRect(pointerImage.rectTransform, new Vector2(1f, 0.45f), new Vector2(1f, 0.45f), new Vector2(145f, 116f), new Vector2(58f, 0f));
+            pointerImage.preserveAspect = true;
+            pointerImage.gameObject.SetActive(false);
+
+            // Keep the pointer below the body so transparent edge pixels cannot overpaint the frame seam.
             Image frameImage = CreateImage("Frame", dialogue, frame, Color.white, false);
             Stretch(frameImage.rectTransform);
             frameImage.type = Image.Type.Sliced;
 
-            Image pointerImage = CreateImage("Pointer", dialogue, pointer, Color.white, false);
-            SetRect(pointerImage.rectTransform, new Vector2(1f, 0.47f), new Vector2(1f, 0.47f), new Vector2(174f, 138f), new Vector2(76f, 0f));
-            pointerImage.preserveAspect = true;
-
             Image portrait = CreateImage("Portrait", dialogue, null, Color.white, false);
-            SetRect(portrait.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(218f, 218f), new Vector2(154f, 0f));
+            SetRect(portrait.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(220f, 220f), new Vector2(160f, 0f));
             portrait.preserveAspect = true;
 
             Image ariaIcon = CreateImage("AriaIcon", dialogue, null, new Color(0.2f, 0.92f, 1f, 1f), false);
-            SetRect(ariaIcon.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(150f, 150f), new Vector2(154f, 0f));
+            SetRect(ariaIcon.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(192f, 192f), new Vector2(160f, 0f));
             ariaIcon.preserveAspect = true;
             ariaIcon.gameObject.SetActive(false);
 
-            TMP_Text speakerName = CreateText("SpeakerName", dialogue, "DALIA RAHIM", bold, 31f, TextAlignmentOptions.Left, new Color(0.08f, 0.075f, 0.06f, 1f));
-            SetStretchOffsets(speakerName.rectTransform, new Vector2(296f, 250f), new Vector2(-210f, -48f));
-            TMP_Text speakerRole = CreateText("SpeakerRole", dialogue, "JRC FIELD COMMAND", medium, 20f, TextAlignmentOptions.Left, new Color(0.25f, 0.23f, 0.18f, 1f));
-            SetStretchOffsets(speakerRole.rectTransform, new Vector2(296f, 210f), new Vector2(-210f, -102f));
-            TMP_Text line = CreateText("DialogueText", dialogue, "", medium, 30f, TextAlignmentOptions.TopLeft, new Color(0.07f, 0.065f, 0.055f, 1f));
-            SetStretchOffsets(line.rectTransform, new Vector2(296f, 70f), new Vector2(-210f, -145f));
+            TMP_Text speakerName = CreateText("SpeakerName", dialogue, "DALIA RAHIM", bold, 54f, TextAlignmentOptions.Left, new Color(0.08f, 0.075f, 0.06f, 1f));
+            SetTopStretchOffsets(speakerName.rectTransform, 290f, 176f, 63f, 55f);
+            TMP_Text speakerRole = CreateText("SpeakerRole", dialogue, "JRC FIELD COMMAND", medium, 30f, TextAlignmentOptions.Left, new Color(0.1f, 0.48f, 0.52f, 1f));
+            SetTopStretchOffsets(speakerRole.rectTransform, 290f, 176f, 110f, 42f);
+            TMP_Text line = CreateText("DialogueText", dialogue, "", medium, 50f, TextAlignmentOptions.TopLeft, new Color(0.07f, 0.065f, 0.055f, 1f));
+            SetStretchOffsets(line.rectTransform, new Vector2(290f, 78f), new Vector2(-176f, -155f));
             line.textWrappingMode = TextWrappingModes.Normal;
-            line.enableAutoSizing = true;
-            line.fontSizeMin = 18f;
-            line.fontSizeMax = 44f;
-            line.overflowMode = TextOverflowModes.Ellipsis;
+            line.enableAutoSizing = false;
+            line.overflowMode = TextOverflowModes.Overflow;
 
             TMP_Text accessibility = CreateText("AccessibilityText", dialogue, "", medium, 1f, TextAlignmentOptions.Left, Color.clear);
             accessibility.raycastTarget = false;
@@ -104,27 +140,29 @@ namespace Game.Editor
             SetRect(advance.rectTransform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(52f, 52f), new Vector2(-75f, 54f));
             advance.gameObject.SetActive(false);
 
-            NarrativeCommanderIdentityView identityView = BuildIdentitySurface(safeArea, frame, bold, medium);
-            NarrativeGuidanceChoiceView guidanceView = BuildGuidanceSurface(safeArea, frame, bold, medium);
-            NarrativeSkipConfirmationView skipConfirmationView = BuildSkipConfirmationSurface(safeArea, frame, bold, medium);
+            NarrativeCommanderIdentityView identityView = BuildIdentitySurface(safeArea, hudPanel, hudButton, hudPrimaryButton, bold, medium);
+            NarrativeGuidanceChoiceView guidanceView = BuildGuidanceSurface(safeArea, hudPanel, hudButton, hudPrimaryButton, bold, medium);
+            NarrativeSkipConfirmationView skipConfirmationView = BuildSkipConfirmationSurface(safeArea, hudPanel, hudButton, hudPrimaryButton, bold, medium);
 
             RectTransform controls = CreateRect("PlaybackControls", safeArea);
             controls.anchorMin = new Vector2(1f, 1f);
             controls.anchorMax = new Vector2(1f, 1f);
             controls.pivot = new Vector2(1f, 1f);
-            controls.sizeDelta = new Vector2(190f, 68f);
+            controls.sizeDelta = new Vector2(224f, 92f);
             controls.anchoredPosition = new Vector2(-8f, -8f);
+            ApplyLiveMenuScale(controls);
             CanvasGroup skipGroup = controls.gameObject.AddComponent<CanvasGroup>();
             NarrativePlaybackControlsView controlsView = controls.gameObject.AddComponent<NarrativePlaybackControlsView>();
-            Image skipBacking = CreateImage("SkipButton", controls, frame, new Color(1f, 1f, 1f, 0.94f), true);
+            Image skipBacking = CreateImage("SkipButton", controls, hudButton, Color.white, true);
             Stretch(skipBacking.rectTransform);
             skipBacking.type = Image.Type.Sliced;
             Button skipButton = skipBacking.gameObject.AddComponent<Button>();
-            TMP_Text skipLabel = CreateText("Label", skipBacking.transform, "SKIP", bold, 23f, TextAlignmentOptions.Center, new Color(0.07f, 0.065f, 0.055f, 1f));
+            TMP_Text skipLabel = CreateText("Label", skipBacking.transform, "SKIP  >", bold, 38f, TextAlignmentOptions.Center, new Color(0.94f, 0.91f, 0.78f, 1f));
             Stretch(skipLabel.rectTransform);
-            NarrativeReviewerControlsView reviewerView = BuildReviewerSurface(safeArea, frame, bold, medium);
+            NarrativeReviewerControlsView reviewerView = BuildReviewerSurface(safeArea, hudPanel, hudButton, bold, medium);
 
             SetObject(dialogueView, "dialogueGroup", dialogueGroup);
+            SetObject(dialogueView, "dialogueRect", dialogue);
             SetObject(dialogueView, "frameImage", frameImage);
             SetObject(dialogueView, "pointerImage", pointerImage);
             SetObject(dialogueView, "portraitImage", portrait);
@@ -145,6 +183,7 @@ namespace Game.Editor
             SetObject(sequenceView, "panelAspectFitter", panelAspectFitter);
             SetObject(sequenceView, "panelMotionRoot", panel.rectTransform);
             SetObject(sequenceView, "dialogueView", dialogueView);
+            SetObject(sequenceView, "locationIntroView", locationIntroView);
             SetObject(sequenceView, "playbackControls", controlsView);
             SetObject(sequenceView, "commanderIdentityView", identityView);
             SetObject(sequenceView, "guidanceChoiceView", guidanceView);
@@ -152,6 +191,7 @@ namespace Game.Editor
             SetObject(sequenceView, "reviewerControlsView", reviewerView);
             SetObject(sequenceView, "safeAreaPreview", safeAreaPreview);
             SetObject(sequenceView, "voiceSource", voiceSource);
+            SetObject(sequenceView, "sequenceAudioView", sequenceAudioView);
             skipConfirmationView.transform.SetAsLastSibling();
 
             PrefabUtility.SaveAsPrefabAsset(root.gameObject, PrefabPath);
@@ -160,45 +200,78 @@ namespace Game.Editor
             Debug.Log($"[FirstLaunchNarrativePresentationPrefabBuilder] Built {PrefabPath}");
         }
 
-        private static NarrativeReviewerControlsView BuildReviewerSurface(Transform parent, Sprite frame, TMP_FontAsset bold, TMP_FontAsset medium)
+        private static AudioSource CreateAudioSource(string name, Transform parent, bool loop)
+        {
+            RectTransform rect = CreateRect(name, parent);
+            AudioSource source = rect.gameObject.AddComponent<AudioSource>();
+            source.playOnAwake = false;
+            source.loop = loop;
+            source.spatialBlend = 0f;
+            return source;
+        }
+
+        private static NarrativeLocationIntroView BuildLocationIntroSurface(Transform parent, Sprite frame, TMP_FontAsset bold, TMP_FontAsset medium)
+        {
+            Image surface = CreateImage("LocationIntroduction", parent, frame, Color.white, false);
+            surface.rectTransform.pivot = new Vector2(0f, 1f);
+            SetRect(surface.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(650f, 156f), new Vector2(0f, -18f));
+            ApplyLiveMenuScale(surface.rectTransform);
+            surface.preserveAspect = true;
+            CanvasGroup group = surface.gameObject.AddComponent<CanvasGroup>();
+            group.alpha = 0f;
+            NarrativeLocationIntroView view = surface.gameObject.AddComponent<NarrativeLocationIntroView>();
+
+            TMP_Text title = CreateText("LocationName", surface.transform, "SAHRIN", bold, 56f, TextAlignmentOptions.Left, new Color(0.96f, 0.78f, 0.3f, 1f));
+            SetStretchOffsets(title.rectTransform, new Vector2(74f, 66f), new Vector2(-54f, -24f));
+            TMP_Text subtitle = CreateText("DistrictAndTime", surface.transform, "OLD MARKET / 06:42 LOCAL", medium, 34f, TextAlignmentOptions.Left, new Color(0.9f, 0.88f, 0.8f, 1f));
+            SetStretchOffsets(subtitle.rectTransform, new Vector2(74f, 24f), new Vector2(-54f, -78f));
+            SetObject(view, "group", group);
+            SetObject(view, "titleText", title);
+            SetObject(view, "subtitleText", subtitle);
+            return view;
+        }
+
+        private static NarrativeReviewerControlsView BuildReviewerSurface(Transform parent, Sprite hudPanel, Sprite hudButton, TMP_FontAsset bold, TMP_FontAsset medium)
         {
             RectTransform surface = CreateRect("DevelopmentReviewerControls", parent);
-            SetRect(surface, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(1420f, 142f), new Vector2(-130f, -4f));
+            SetRect(surface, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(1450f, 188f), new Vector2(-132f, -4f));
+            surface.pivot = new Vector2(0.5f, 1f);
+            ApplyLiveMenuScale(surface);
             CanvasGroup group = surface.gameObject.AddComponent<CanvasGroup>();
             group.alpha = 0f;
             group.interactable = false;
             group.blocksRaycasts = false;
             Image backing = surface.gameObject.AddComponent<Image>();
-            backing.sprite = frame;
+            backing.sprite = hudPanel;
             backing.type = Image.Type.Sliced;
-            backing.color = new Color(1f, 1f, 1f, 0.96f);
+            backing.color = new Color(1f, 1f, 1f, 0.97f);
             NarrativeReviewerControlsView view = surface.gameObject.AddComponent<NarrativeReviewerControlsView>();
 
-            Button previous = CreateFramedButton("PreviousButton", surface, frame, bold, "PREV", new Vector2(116f, 50f));
-            Button playPause = CreateFramedButton("PlayPauseButton", surface, frame, bold, "PAUSE", new Vector2(116f, 50f));
-            Button next = CreateFramedButton("NextButton", surface, frame, bold, "NEXT", new Vector2(116f, 50f));
-            Button restart = CreateFramedButton("RestartButton", surface, frame, bold, "RESTART", new Vector2(132f, 50f));
-            Button skipToGame = CreateFramedButton("SkipToGameButton", surface, frame, bold, "GAME", new Vector2(132f, 50f));
-            Button jumpDebrief = CreateFramedButton("JumpToDebriefButton", surface, frame, bold, "DEBRIEF", new Vector2(160f, 50f));
-            Button capture = CreateFramedButton("CaptureButton", surface, frame, bold, "CAPTURE", new Vector2(148f, 50f));
+            Button previous = CreateFramedButton("PreviousButton", surface, hudButton, bold, "PREV", new Vector2(132f, 68f));
+            Button playPause = CreateFramedButton("PlayPauseButton", surface, hudButton, bold, "PAUSE", new Vector2(132f, 68f));
+            Button next = CreateFramedButton("NextButton", surface, hudButton, bold, "NEXT", new Vector2(132f, 68f));
+            Button restart = CreateFramedButton("RestartButton", surface, hudButton, bold, "RESTART", new Vector2(146f, 68f));
+            Button skipToGame = CreateFramedButton("SkipToGameButton", surface, hudButton, bold, "GAME", new Vector2(136f, 68f));
+            Button jumpDebrief = CreateFramedButton("JumpToDebriefButton", surface, hudButton, bold, "DEBRIEF", new Vector2(168f, 68f));
+            Button capture = CreateFramedButton("CaptureButton", surface, hudButton, bold, "CAPTURE", new Vector2(156f, 68f));
             Button[] buttons = { previous, playPause, next, restart, skipToGame, jumpDebrief, capture };
-            float[] x = { -627f, -499f, -371f, -232f, -88f, 70f, 236f };
+            float[] x = { -634f, -492f, -350f, -202f, -51f, 111f, 283f };
             for (int i = 0; i < buttons.Length; i++)
-                SetRect(buttons[i].GetComponent<RectTransform>(), new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), buttons[i].GetComponent<RectTransform>().sizeDelta, new Vector2(x[i], -36f));
+                SetRect(buttons[i].GetComponent<RectTransform>(), new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), buttons[i].GetComponent<RectTransform>().sizeDelta, new Vector2(x[i], -47f));
 
             TMP_Text playPauseLabel = playPause.GetComponentInChildren<TMP_Text>(true);
-            TMP_Text stateLabel = CreateText("StateIdLabel", surface, "FL-P01", medium, 17f, TextAlignmentOptions.Left, new Color(0.08f, 0.075f, 0.06f, 1f));
-            SetRect(stateLabel.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(350f, 38f), new Vector2(-512f, 32f));
-            TMP_Text positionLabel = CreateText("PositionLabel", surface, "1 / 26", bold, 17f, TextAlignmentOptions.Center, new Color(0.08f, 0.075f, 0.06f, 1f));
-            SetRect(positionLabel.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(100f, 38f), new Vector2(-278f, 32f));
+            TMP_Text stateLabel = CreateText("StateIdLabel", surface, "FL-P01", medium, 22f, TextAlignmentOptions.Left, new Color(0.94f, 0.91f, 0.78f, 1f));
+            SetRect(stateLabel.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(350f, 48f), new Vector2(-510f, 44f));
+            TMP_Text positionLabel = CreateText("PositionLabel", surface, "1 / 26", bold, 22f, TextAlignmentOptions.Center, new Color(0.94f, 0.91f, 0.78f, 1f));
+            SetRect(positionLabel.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(110f, 48f), new Vector2(-274f, 44f));
 
             Image sliderTrack = CreateImage("Timeline", surface, null, new Color(0.14f, 0.13f, 0.1f, 0.8f), true);
-            SetRect(sliderTrack.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(500f, 24f), new Vector2(35f, 34f));
+            SetRect(sliderTrack.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(510f, 34f), new Vector2(45f, 46f));
             Slider slider = sliderTrack.gameObject.AddComponent<Slider>();
             Image fill = CreateImage("Fill", sliderTrack.transform, null, new Color(0.15f, 0.73f, 0.86f, 1f), false);
             Stretch(fill.rectTransform);
             Image handle = CreateImage("Handle", sliderTrack.transform, null, new Color(0.96f, 0.95f, 0.88f, 1f), true);
-            SetRect(handle.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(24f, 38f), Vector2.zero);
+            SetRect(handle.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(34f, 52f), Vector2.zero);
             slider.fillRect = fill.rectTransform;
             slider.handleRect = handle.rectTransform;
             slider.targetGraphic = handle;
@@ -206,7 +279,7 @@ namespace Game.Editor
             slider.maxValue = 1f;
 
             Image toggleBox = CreateImage("ReducedMotionToggle", surface, null, new Color(0.14f, 0.13f, 0.1f, 0.9f), true);
-            SetRect(toggleBox.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(38f, 38f), new Vector2(430f, -37f));
+            SetRect(toggleBox.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(48f, 48f), new Vector2(454f, -48f));
             Toggle reducedMotion = toggleBox.gameObject.AddComponent<Toggle>();
             Image checkmark = CreateImage("Checkmark", toggleBox.transform, null, new Color(0.15f, 0.73f, 0.86f, 1f), false);
             checkmark.rectTransform.anchorMin = new Vector2(0.22f, 0.22f);
@@ -215,11 +288,11 @@ namespace Game.Editor
             checkmark.rectTransform.offsetMax = Vector2.zero;
             reducedMotion.targetGraphic = toggleBox;
             reducedMotion.graphic = checkmark;
-            TMP_Text reducedLabel = CreateText("ReducedMotionLabel", surface, "REDUCED MOTION", medium, 17f, TextAlignmentOptions.Left, new Color(0.08f, 0.075f, 0.06f, 1f));
-            SetRect(reducedLabel.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(220f, 38f), new Vector2(576f, -37f));
+            TMP_Text reducedLabel = CreateText("ReducedMotionLabel", surface, "REDUCED MOTION", medium, 21f, TextAlignmentOptions.Left, new Color(0.94f, 0.91f, 0.78f, 1f));
+            SetRect(reducedLabel.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(230f, 48f), new Vector2(604f, -48f));
 
-            Toggle subtitles = CreateReviewerToggle(surface, "SubtitlesToggle", "SUBTITLES", medium, new Vector2(345f, 32f));
-            Toggle safeAreaToggle = CreateReviewerToggle(surface, "SafeAreaToggle", "SAFE AREA", medium, new Vector2(535f, 32f));
+            Toggle subtitles = CreateReviewerToggle(surface, "SubtitlesToggle", "SUBTITLES", medium, new Vector2(354f, 44f));
+            Toggle safeAreaToggle = CreateReviewerToggle(surface, "SafeAreaToggle", "SAFE AREA", medium, new Vector2(566f, 44f));
             subtitles.SetIsOnWithoutNotify(true);
 
             SetObject(view, "playPauseButton", playPause);
@@ -243,7 +316,7 @@ namespace Game.Editor
         private static Toggle CreateReviewerToggle(Transform parent, string name, string label, TMP_FontAsset font, Vector2 position)
         {
             Image box = CreateImage(name, parent, null, new Color(0.14f, 0.13f, 0.1f, 0.9f), true);
-            SetRect(box.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(30f, 30f), position);
+            SetRect(box.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(42f, 42f), position);
             Toggle toggle = box.gameObject.AddComponent<Toggle>();
             Image checkmark = CreateImage("Checkmark", box.transform, null, new Color(0.15f, 0.73f, 0.86f, 1f), false);
             checkmark.rectTransform.anchorMin = new Vector2(0.22f, 0.22f);
@@ -252,8 +325,8 @@ namespace Game.Editor
             checkmark.rectTransform.offsetMax = Vector2.zero;
             toggle.targetGraphic = box;
             toggle.graphic = checkmark;
-            TMP_Text text = CreateText("Label", parent, label, font, 15f, TextAlignmentOptions.Left, new Color(0.08f, 0.075f, 0.06f, 1f));
-            SetRect(text.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(145f, 30f), position + new Vector2(91f, 0f));
+            TMP_Text text = CreateText("Label", parent, label, font, 20f, TextAlignmentOptions.Left, new Color(0.94f, 0.91f, 0.78f, 1f));
+            SetRect(text.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(160f, 42f), position + new Vector2(106f, 0f));
             return toggle;
         }
 
@@ -274,36 +347,65 @@ namespace Game.Editor
             return preview.gameObject;
         }
 
-        private static NarrativeCommanderIdentityView BuildIdentitySurface(Transform parent, Sprite frame, TMP_FontAsset bold, TMP_FontAsset medium)
+        private static NarrativeCommanderIdentityView BuildIdentitySurface(Transform parent, Sprite hudPanel, Sprite hudButton, Sprite hudPrimaryButton, TMP_FontAsset bold, TMP_FontAsset medium)
         {
             RectTransform surface = CreateRect("CommanderIdentitySurface", parent);
             SetRect(surface, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(1480f, 760f), Vector2.zero);
+            ApplyLiveMenuScale(surface);
             Image backing = surface.gameObject.AddComponent<Image>();
-            backing.sprite = frame;
+            backing.sprite = hudPanel;
             backing.type = Image.Type.Sliced;
             NarrativeCommanderIdentityView view = surface.gameObject.AddComponent<NarrativeCommanderIdentityView>();
 
-            TMP_Text title = CreateText("Title", surface, "ESTABLISH COMMAND AUTHORITY", bold, 38f, TextAlignmentOptions.Center, new Color(0.08f, 0.075f, 0.06f, 1f));
-            SetRect(title.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(900f, 66f), new Vector2(0f, -96f));
-            TMP_Text instruction = CreateText("Instruction", surface, "Confirm the identity ARIA will use for command communications.", medium, 23f, TextAlignmentOptions.Center, new Color(0.2f, 0.18f, 0.14f, 1f));
-            SetRect(instruction.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(1040f, 54f), new Vector2(0f, -150f));
+            TMP_Text title = CreateText("Title", surface, "EMERGENCY CONTINUITY AUTHENTICATION", bold, 46f, TextAlignmentOptions.Left, new Color(0.96f, 0.93f, 0.82f, 1f));
+            SetRect(title.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(1120f, 64f), new Vector2(45f, -64f));
+            TMP_Text instruction = CreateText("Instruction", surface, "CHOOSE YOUR COMMANDER IDENTITY", medium, 25f, TextAlignmentOptions.Left, new Color(0.15f, 0.78f, 0.84f, 1f));
+            SetRect(instruction.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(1120f, 40f), new Vector2(45f, -112f));
 
-            Sprite neutralPortrait = RequireAsset<Sprite>("Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_portrait_01_commander_portrait_shadowed.png");
-            Image selectedPortrait = CreateImage("SelectedPortrait", surface, neutralPortrait, Color.white, false);
-            SetRect(selectedPortrait.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(320f, 320f), new Vector2(250f, -20f));
-            selectedPortrait.preserveAspect = true;
+            List<Sprite> portraits = LoadCommanderPortraits();
+            Sprite selectedFrame = RequireAsset<Sprite>("Assets/Game/Art/UI/Panels/scn09_build_card_frame_selected_check.png");
+            Button[] portraitButtons = new Button[portraits.Count];
+            Image[] portraitImages = new Image[portraits.Count];
+            Image[] selectionImages = new Image[portraits.Count];
+            TMP_Text[] portraitAccess = new TMP_Text[portraits.Count];
+            Vector2[] portraitPositions =
+            {
+                new(-450f, 125f), new(-150f, 125f), new(150f, 125f), new(450f, 125f),
+                new(-300f, -70f), new(0f, -70f), new(300f, -70f)
+            };
+            for (int i = 0; i < portraits.Count; i++)
+            {
+                Image card = CreateImage($"PortraitButton_{i + 1:00}", surface, hudButton, Color.white, true);
+                card.type = Image.Type.Sliced;
+                SetRect(card.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(250f, 175f), portraitPositions[i]);
+                portraitButtons[i] = card.gameObject.AddComponent<Button>();
+                Image portrait = CreateImage("Portrait", card.transform, portraits[i], Color.white, false);
+                portrait.rectTransform.anchorMin = new Vector2(0.04f, 0.06f);
+                portrait.rectTransform.anchorMax = new Vector2(0.96f, 0.94f);
+                portrait.rectTransform.offsetMin = Vector2.zero;
+                portrait.rectTransform.offsetMax = Vector2.zero;
+                portrait.preserveAspect = true;
+                portraitImages[i] = portrait;
+                Image selected = CreateImage("Selection", card.transform, selectedFrame, Color.white, false);
+                Stretch(selected.rectTransform);
+                selected.type = Image.Type.Sliced;
+                selectionImages[i] = selected;
+                portraitAccess[i] = CreateHiddenAccessibilityText("AccessibilityLabel", card.transform, medium);
+            }
 
-            TMP_Text callsignLabel = CreateText("CallsignLabel", surface, "CALLSIGN", medium, 18f, TextAlignmentOptions.Left, new Color(0.28f, 0.25f, 0.2f, 1f));
-            SetRect(callsignLabel.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(650f, 30f), new Vector2(820f, 152f));
-            TMP_InputField callsign = CreateInputField("CallsignInput", surface, frame, bold, medium, "COMMANDER");
-            SetRect(callsign.GetComponent<RectTransform>(), new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(650f, 112f), new Vector2(820f, 75f));
-            TMP_Text displayLabel = CreateText("DisplayNameLabel", surface, "DISPLAY NAME", medium, 18f, TextAlignmentOptions.Left, new Color(0.28f, 0.25f, 0.2f, 1f));
-            SetRect(displayLabel.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(650f, 30f), new Vector2(820f, 2f));
-            TMP_InputField displayName = CreateInputField("DisplayNameInput", surface, frame, bold, medium, "Commander");
-            SetRect(displayName.GetComponent<RectTransform>(), new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(650f, 112f), new Vector2(820f, -75f));
+            Image selectedPortrait = CreateImage("SelectedPortrait", surface, portraits[^1], Color.white, false);
+            SetRect(selectedPortrait.rectTransform, new Vector2(0f, 0f), new Vector2(0f, 0f), Vector2.one, Vector2.zero);
+            selectedPortrait.gameObject.SetActive(false);
 
-            Button continueButton = CreateFramedButton("ContinueButton", surface, frame, bold, "CONTINUE", new Vector2(430f, 96f));
-            SetRect(continueButton.GetComponent<RectTransform>(), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(430f, 96f), new Vector2(0f, 95f));
+            TMP_Text callsignLabel = CreateText("CallsignLabel", surface, "COMMANDER", medium, 22f, TextAlignmentOptions.Left, new Color(0.15f, 0.78f, 0.84f, 1f));
+            SetRect(callsignLabel.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(650f, 30f), new Vector2(0f, 196f));
+            TMP_InputField callsign = CreateInputField("CallsignInput", surface, hudButton, bold, medium, "COMMANDER");
+            SetRect(callsign.GetComponent<RectTransform>(), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(650f, 86f), new Vector2(0f, 136f));
+            TMP_InputField displayName = CreateInputField("DisplayNameInput", surface, hudButton, bold, medium, "Commander");
+            displayName.gameObject.SetActive(false);
+
+            Button continueButton = CreateFramedButton("ContinueButton", surface, hudPrimaryButton, bold, "CONTINUE  >", new Vector2(650f, 88f));
+            SetRect(continueButton.GetComponent<RectTransform>(), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(650f, 88f), new Vector2(0f, 56f));
 
             TMP_Text callsignAccess = CreateHiddenAccessibilityText("CallsignAccessibilityLabel", callsign.transform, medium);
             TMP_Text nameAccess = CreateHiddenAccessibilityText("DisplayNameAccessibilityLabel", displayName.transform, medium);
@@ -311,7 +413,12 @@ namespace Game.Editor
             SetObject(view, "callsignInput", callsign);
             SetObject(view, "displayNameInput", displayName);
             SetObject(view, "selectedPortraitImage", selectedPortrait);
-            SetObject(view, "defaultPortrait", neutralPortrait);
+            SetObject(view, "defaultPortrait", portraits[^1]);
+            SetArray(view, "portraitButtons", portraitButtons);
+            SetArray(view, "portraitImages", portraitImages);
+            SetArray(view, "portraitSelectionImages", selectionImages);
+            SetArray(view, "portraitAccessibilityLabels", portraitAccess);
+            SetInt(view, "defaultPortraitIndex", portraits.Count - 1);
             SetObject(view, "continueButton", continueButton);
             SetObject(view, "callsignAccessibilityLabel", callsignAccess);
             SetObject(view, "displayNameAccessibilityLabel", nameAccess);
@@ -320,32 +427,33 @@ namespace Game.Editor
             return view;
         }
 
-        private static NarrativeGuidanceChoiceView BuildGuidanceSurface(Transform parent, Sprite frame, TMP_FontAsset bold, TMP_FontAsset medium)
+        private static NarrativeGuidanceChoiceView BuildGuidanceSurface(Transform parent, Sprite hudPanel, Sprite hudButton, Sprite hudPrimaryButton, TMP_FontAsset bold, TMP_FontAsset medium)
         {
             RectTransform surface = CreateRect("GuidanceChoiceSurface", parent);
             SetRect(surface, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(1480f, 760f), Vector2.zero);
+            ApplyLiveMenuScale(surface);
             Image backing = surface.gameObject.AddComponent<Image>();
-            backing.sprite = frame;
+            backing.sprite = hudPanel;
             backing.type = Image.Type.Sliced;
             NarrativeGuidanceChoiceView view = surface.gameObject.AddComponent<NarrativeGuidanceChoiceView>();
 
-            TMP_Text title = CreateText("Title", surface, "CHOOSE ARIA GUIDANCE", bold, 38f, TextAlignmentOptions.Center, new Color(0.08f, 0.075f, 0.06f, 1f));
+            TMP_Text title = CreateText("Title", surface, "CHOOSE ARIA GUIDANCE", bold, 44f, TextAlignmentOptions.Center, new Color(0.96f, 0.78f, 0.3f, 1f));
             SetRect(title.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(900f, 66f), new Vector2(0f, -100f));
-            TMP_Text instruction = CreateText("Instruction", surface, "This can be changed later in Command Settings.", medium, 23f, TextAlignmentOptions.Center, new Color(0.2f, 0.18f, 0.14f, 1f));
+            TMP_Text instruction = CreateText("Instruction", surface, "This can be changed later in Command Settings.", medium, 30f, TextAlignmentOptions.Center, new Color(0.9f, 0.88f, 0.8f, 1f));
             SetRect(instruction.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(900f, 50f), new Vector2(0f, -154f));
 
-            Button full = CreateFramedButton("FullGuidanceButton", surface, frame, bold, "FULL GUIDANCE", new Vector2(360f, 180f));
-            Button contextual = CreateFramedButton("ContextualGuidanceButton", surface, frame, bold, "TACTICAL HINTS", new Vector2(360f, 180f));
-            Button minimal = CreateFramedButton("MinimalGuidanceButton", surface, frame, bold, "VETERAN", new Vector2(360f, 180f));
-            SetRect(full.GetComponent<RectTransform>(), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(360f, 180f), new Vector2(-410f, 10f));
-            SetRect(contextual.GetComponent<RectTransform>(), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(360f, 180f), new Vector2(0f, 10f));
-            SetRect(minimal.GetComponent<RectTransform>(), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(360f, 180f), new Vector2(410f, 10f));
+            Button full = CreateFramedButton("FullGuidanceButton", surface, hudButton, bold, "FULL GUIDANCE", new Vector2(360f, 200f));
+            Button contextual = CreateFramedButton("ContextualGuidanceButton", surface, hudButton, bold, "TACTICAL HINTS", new Vector2(360f, 200f));
+            Button minimal = CreateFramedButton("MinimalGuidanceButton", surface, hudButton, bold, "VETERAN", new Vector2(360f, 200f));
+            SetRect(full.GetComponent<RectTransform>(), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(360f, 200f), new Vector2(-410f, 10f));
+            SetRect(contextual.GetComponent<RectTransform>(), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(360f, 200f), new Vector2(0f, 10f));
+            SetRect(minimal.GetComponent<RectTransform>(), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(360f, 200f), new Vector2(410f, 10f));
             Image fullSelection = CreateSelectionRail(full.transform);
             Image contextualSelection = CreateSelectionRail(contextual.transform);
             Image minimalSelection = CreateSelectionRail(minimal.transform);
 
-            Button continueButton = CreateFramedButton("ContinueButton", surface, frame, bold, "CONTINUE", new Vector2(430f, 96f));
-            SetRect(continueButton.GetComponent<RectTransform>(), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(430f, 96f), new Vector2(0f, 95f));
+            Button continueButton = CreateFramedButton("ContinueButton", surface, hudPrimaryButton, bold, "CONTINUE", new Vector2(430f, 112f));
+            SetRect(continueButton.GetComponent<RectTransform>(), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(430f, 112f), new Vector2(0f, 104f));
             TMP_Text fullAccess = CreateHiddenAccessibilityText("FullAccessibilityLabel", full.transform, medium);
             TMP_Text contextualAccess = CreateHiddenAccessibilityText("ContextualAccessibilityLabel", contextual.transform, medium);
             TMP_Text minimalAccess = CreateHiddenAccessibilityText("MinimalAccessibilityLabel", minimal.transform, medium);
@@ -365,7 +473,7 @@ namespace Game.Editor
             return view;
         }
 
-        private static NarrativeSkipConfirmationView BuildSkipConfirmationSurface(Transform parent, Sprite frame, TMP_FontAsset bold, TMP_FontAsset medium)
+        private static NarrativeSkipConfirmationView BuildSkipConfirmationSurface(Transform parent, Sprite hudPanel, Sprite hudButton, Sprite hudPrimaryButton, TMP_FontAsset bold, TMP_FontAsset medium)
         {
             RectTransform surface = CreateRect("SkipConfirmationSurface", parent);
             Stretch(surface);
@@ -377,18 +485,19 @@ namespace Game.Editor
             Image dim = CreateImage("Dim", surface, null, new Color(0f, 0f, 0f, 0.72f), true);
             Stretch(dim.rectTransform);
             RectTransform modal = CreateRect("Confirmation", surface);
-            SetRect(modal, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(900f, 430f), Vector2.zero);
+            SetRect(modal, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(980f, 520f), Vector2.zero);
+            ApplyLiveMenuScale(modal);
             Image backing = modal.gameObject.AddComponent<Image>();
-            backing.sprite = frame;
+            backing.sprite = hudPanel;
             backing.type = Image.Type.Sliced;
-            TMP_Text title = CreateText("Title", modal, "SKIP TO TACTICAL COMMAND?", bold, 34f, TextAlignmentOptions.Center, new Color(0.08f, 0.075f, 0.06f, 1f));
-            SetRect(title.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(720f, 60f), new Vector2(0f, -92f));
-            TMP_Text body = CreateText("Body", modal, "Default Commander identity and Full Guidance will be used. You can change both later.", medium, 23f, TextAlignmentOptions.Center, new Color(0.18f, 0.16f, 0.12f, 1f));
-            SetRect(body.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(690f, 100f), new Vector2(0f, 28f));
-            Button cancel = CreateFramedButton("CancelButton", modal, frame, bold, "KEEP WATCHING", new Vector2(320f, 82f));
-            Button confirm = CreateFramedButton("ConfirmButton", modal, frame, bold, "SKIP INTRO", new Vector2(320f, 82f));
-            SetRect(cancel.GetComponent<RectTransform>(), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(320f, 82f), new Vector2(-185f, 76f));
-            SetRect(confirm.GetComponent<RectTransform>(), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(320f, 82f), new Vector2(185f, 76f));
+            TMP_Text title = CreateText("Title", modal, "SKIP TO TACTICAL COMMAND?", bold, 42f, TextAlignmentOptions.Center, new Color(0.96f, 0.78f, 0.3f, 1f));
+            SetRect(title.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(800f, 70f), new Vector2(0f, -110f));
+            TMP_Text body = CreateText("Body", modal, "Default Commander identity and Full Guidance will be used. You can change both later.", medium, 30f, TextAlignmentOptions.Center, new Color(0.9f, 0.88f, 0.8f, 1f));
+            SetRect(body.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(760f, 126f), new Vector2(0f, 32f));
+            Button cancel = CreateFramedButton("CancelButton", modal, hudButton, bold, "KEEP WATCHING", new Vector2(350f, 100f));
+            Button confirm = CreateFramedButton("ConfirmButton", modal, hudPrimaryButton, bold, "SKIP INTRO", new Vector2(350f, 100f));
+            SetRect(cancel.GetComponent<RectTransform>(), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(350f, 100f), new Vector2(-202f, 92f));
+            SetRect(confirm.GetComponent<RectTransform>(), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(350f, 100f), new Vector2(202f, 92f));
             TMP_Text accessible = CreateHiddenAccessibilityText("AccessibilityLabel", modal, medium);
             SetObject(view, "group", group);
             SetObject(view, "confirmButton", confirm);
@@ -402,9 +511,9 @@ namespace Game.Editor
             Image backing = CreateImage(name, parent, frame, Color.white, true);
             backing.type = Image.Type.Sliced;
             TMP_InputField input = backing.gameObject.AddComponent<TMP_InputField>();
-            TMP_Text text = CreateText("Text", backing.transform, value, bold, 30f, TextAlignmentOptions.Left, new Color(0.08f, 0.075f, 0.06f, 1f));
+            TMP_Text text = CreateText("Text", backing.transform, value, bold, 36f, TextAlignmentOptions.Left, new Color(0.94f, 0.91f, 0.78f, 1f));
             SetStretchOffsets(text.rectTransform, new Vector2(90f, 16f), new Vector2(-70f, -40f));
-            TMP_Text placeholder = CreateText("Placeholder", backing.transform, string.Empty, medium, 18f, TextAlignmentOptions.Left, new Color(0.35f, 0.32f, 0.26f, 0.75f));
+            TMP_Text placeholder = CreateText("Placeholder", backing.transform, string.Empty, medium, 24f, TextAlignmentOptions.Left, new Color(0.62f, 0.6f, 0.54f, 0.8f));
             SetStretchOffsets(placeholder.rectTransform, new Vector2(42f, 54f), new Vector2(-42f, -12f));
             input.textComponent = text;
             input.placeholder = placeholder;
@@ -418,7 +527,7 @@ namespace Game.Editor
             Image image = CreateImage(name, parent, frame, Color.white, true);
             image.type = Image.Type.Sliced;
             Button button = image.gameObject.AddComponent<Button>();
-            TMP_Text text = CreateText("Label", image.transform, label, font, 26f, TextAlignmentOptions.Center, new Color(0.08f, 0.075f, 0.06f, 1f));
+            TMP_Text text = CreateText("Label", image.transform, label, font, 30f, TextAlignmentOptions.Center, new Color(0.96f, 0.93f, 0.82f, 1f));
             Stretch(text.rectTransform);
             image.rectTransform.sizeDelta = size;
             return button;
@@ -520,6 +629,26 @@ namespace Game.Editor
             Debug.Log($"[FirstLaunchNarrativePresentationPrefabBuilder] Device aspect evidence written to {evidenceRoot}.");
         }
 
+        [MenuItem("Game/Narrative/First Launch/Capture Phase 10R Revision Evidence")]
+        public static void CapturePhase10RRevisionEvidence()
+        {
+            Build();
+            const string evidenceRoot = "Design/NarrativeVision/FirstLaunch/evidence/runtime/phase10r";
+            Directory.CreateDirectory(evidenceRoot);
+            const string text = "Families and road crews are trapped beyond the clinic route.";
+            const string longText = "Commander, the eastern clinic corridor remains blocked while civil crews, families, and the surviving response convoy wait beyond the damaged relay junction.";
+            Capture(1920, 1080, "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P04.png", UISubtitleSize.Standard, UISubtitleBackgroundOpacity.SeventyFivePercent, text, evidenceRoot + "/dialogue_standard_1920x1080.png");
+            Capture(1920, 1080, "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P04.png", UISubtitleSize.Standard, UISubtitleBackgroundOpacity.SeventyFivePercent, longText, evidenceRoot + "/dialogue_long_1920x1080.png");
+            Capture(2400, 1080, "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P04.png", UISubtitleSize.Standard, UISubtitleBackgroundOpacity.SeventyFivePercent, text, evidenceRoot + "/dialogue_standard_2400x1080.png");
+            Capture(1920, 1200, "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P04.png", UISubtitleSize.Standard, UISubtitleBackgroundOpacity.SeventyFivePercent, text, evidenceRoot + "/dialogue_tablet_1920x1200.png");
+            Capture(1920, 1080, "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P01.png", UISubtitleSize.Standard, UISubtitleBackgroundOpacity.SeventyFivePercent, string.Empty, evidenceRoot + "/location_intro_1920x1080.png", true, false);
+            CaptureInteractive(1920, 1080, "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P08.png", NarrativeInteractiveStateKind.CommanderIdentity, false, evidenceRoot + "/identity_1920x1080.png");
+            CaptureInteractive(1920, 1080, "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P09.png", NarrativeInteractiveStateKind.GuidanceChoice, false, evidenceRoot + "/guidance_1920x1080.png");
+            CaptureInteractive(1920, 1080, "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P04.png", NarrativeInteractiveStateKind.None, true, evidenceRoot + "/skip_confirmation_1920x1080.png");
+            CaptureReviewer(1920, 1080, "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P16.png", "FL-P16", 17, false, evidenceRoot + "/reviewer_controls_1920x1080.png");
+            Debug.Log($"[FirstLaunchNarrativePresentationPrefabBuilder] Phase 10R revision evidence written to {evidenceRoot}.");
+        }
+
         private static void Capture(
             int width,
             int height,
@@ -527,7 +656,9 @@ namespace Game.Editor
             UISubtitleSize subtitleSize,
             UISubtitleBackgroundOpacity opacity,
             string text,
-            string outputPath)
+            string outputPath,
+            bool showLocation = false,
+            bool showDialogue = true)
         {
             GameObject cameraObject = new("NarrativeCaptureCamera", typeof(Camera));
             Camera camera = cameraObject.GetComponent<Camera>();
@@ -543,7 +674,7 @@ namespace Game.Editor
             canvas.planeDistance = 1f;
             CanvasScaler scaler = canvasObject.GetComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(width, height);
+            scaler.referenceResolution = LiveMenuReferenceResolution;
             scaler.matchWidthOrHeight = 0.5f;
 
             GameObject prefab = RequireAsset<GameObject>(PrefabPath);
@@ -552,9 +683,15 @@ namespace Game.Editor
             view.SetVisible(true);
             view.ApplyPanel(new NarrativePanelPresentationModel
             {
-                StateId = "FL-P04",
+                StateId = showLocation ? "FL-P01" : "FL-P04",
                 PanelSprite = RequireAsset<Sprite>(panelPath),
                 Tint = Color.white
+            });
+            view.ApplyLocation(new NarrativeLocationPresentationModel
+            {
+                Visible = showLocation,
+                Title = "SAHRIN",
+                Subtitle = "OLD MARKET / 06:42 LOCAL"
             });
             view.DialogueView.ApplySpeaker(new NarrativeSpeakerPresentationModel
             {
@@ -569,8 +706,15 @@ namespace Game.Editor
             UISettingsModel settings = Game.UI.Runtime.SettingsService.Defaults;
             settings.Narrative.SubtitleSize = subtitleSize;
             settings.Narrative.BackgroundOpacity = opacity;
-            view.DialogueView.PrepareLine(text, NarrativeSubtitleStyleResolver.Resolve(settings));
-            view.DialogueView.CompleteLine();
+            if (showDialogue)
+            {
+                view.DialogueView.PrepareLine(text, NarrativeSubtitleStyleResolver.Resolve(settings));
+                view.DialogueView.CompleteLine();
+            }
+            else
+            {
+                view.DialogueView.SetPhase(NarrativeDialoguePhase.Hidden);
+            }
             view.SetSkipState(true, true, "SKIP");
 
             RenderTexture target = new(width, height, 24, RenderTextureFormat.ARGB32);
@@ -607,7 +751,7 @@ namespace Game.Editor
             canvas.planeDistance = 1f;
             CanvasScaler scaler = canvasObject.GetComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(width, height);
+            scaler.referenceResolution = LiveMenuReferenceResolution;
             scaler.matchWidthOrHeight = 0.5f;
             GameObject instance = PrefabUtility.InstantiatePrefab(RequireAsset<GameObject>(PrefabPath), canvas.transform) as GameObject;
             NarrativeSequenceView view = instance.GetComponent<NarrativeSequenceView>();
@@ -670,7 +814,7 @@ namespace Game.Editor
             canvas.planeDistance = 1f;
             CanvasScaler scaler = canvasObject.GetComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(width, height);
+            scaler.referenceResolution = LiveMenuReferenceResolution;
             scaler.matchWidthOrHeight = 0.5f;
             GameObject instance = PrefabUtility.InstantiatePrefab(RequireAsset<GameObject>(PrefabPath), canvas.transform) as GameObject;
             NarrativeSequenceView view = instance.GetComponent<NarrativeSequenceView>();
@@ -710,6 +854,21 @@ namespace Game.Editor
             if (asset == null)
                 throw new UnityException($"Required asset missing: {path}");
             return asset;
+        }
+
+        private static List<Sprite> LoadCommanderPortraits()
+        {
+            Object[] assets = AssetDatabase.LoadAllAssetRepresentationsAtPath(FirstLaunchNarrativeDialogueAssetImporter.CommanderPortraitSheetPath);
+            List<Sprite> portraits = new();
+            for (int i = 0; i < assets.Length; i++)
+            {
+                if (assets[i] is Sprite sprite && sprite.name.StartsWith("commander_", StringComparison.Ordinal))
+                    portraits.Add(sprite);
+            }
+            portraits.Sort((left, right) => string.CompareOrdinal(left.name, right.name));
+            if (portraits.Count != 7)
+                throw new UnityException($"Commander portrait sheet must provide 7 sprites; found {portraits.Count}.");
+            return portraits;
         }
 
         private static RectTransform CreateRect(string name, Transform parent)
@@ -768,6 +927,20 @@ namespace Game.Editor
             rect.offsetMax = offsetMax;
         }
 
+        private static void SetTopStretchOffsets(RectTransform rect, float left, float right, float top, float height)
+        {
+            rect.anchorMin = new Vector2(0f, 1f);
+            rect.anchorMax = Vector2.one;
+            rect.pivot = new Vector2(0.5f, 1f);
+            rect.offsetMin = new Vector2(left, -top - height);
+            rect.offsetMax = new Vector2(-right, -top);
+        }
+
+        private static void ApplyLiveMenuScale(RectTransform rect)
+        {
+            rect.localScale = Vector3.one * LiveMenuPresentationScale;
+        }
+
         private static void SetObject(Object target, string propertyName, Object value)
         {
             SerializedObject serialized = new(target);
@@ -775,6 +948,28 @@ namespace Game.Editor
             if (property == null)
                 throw new UnityException($"Missing serialized property {target.GetType().Name}.{propertyName}");
             property.objectReferenceValue = value;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static void SetArray<T>(Object target, string propertyName, T[] values) where T : Object
+        {
+            SerializedObject serialized = new(target);
+            SerializedProperty property = serialized.FindProperty(propertyName);
+            if (property == null || !property.isArray)
+                throw new UnityException($"Missing serialized array {target.GetType().Name}.{propertyName}");
+            property.arraySize = values?.Length ?? 0;
+            for (int i = 0; i < property.arraySize; i++)
+                property.GetArrayElementAtIndex(i).objectReferenceValue = values[i];
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static void SetInt(Object target, string propertyName, int value)
+        {
+            SerializedObject serialized = new(target);
+            SerializedProperty property = serialized.FindProperty(propertyName);
+            if (property == null)
+                throw new UnityException($"Missing serialized integer {target.GetType().Name}.{propertyName}");
+            property.intValue = value;
             serialized.ApplyModifiedPropertiesWithoutUndo();
         }
     }

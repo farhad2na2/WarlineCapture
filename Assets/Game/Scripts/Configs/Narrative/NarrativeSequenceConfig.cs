@@ -43,6 +43,10 @@ namespace Game.Configs
         [SerializeField] private bool reducedMotionSupported = true;
         [SerializeField, Min(0f)] private float durationSeconds;
         [SerializeField] private NarrativeMotionPreset motionPreset;
+        [SerializeField] private string locationTitleKey;
+        [SerializeField] private string locationTitleFallback;
+        [SerializeField] private string locationSubtitleKey;
+        [SerializeField] private string locationSubtitleFallback;
 
         public string StateId => stateId;
         public NarrativeStateKind Kind => kind;
@@ -56,6 +60,10 @@ namespace Game.Configs
         public bool ReducedMotionSupported => reducedMotionSupported;
         public float DurationSeconds => durationSeconds;
         public NarrativeMotionPreset MotionPreset => motionPreset;
+        public string LocationTitleKey => locationTitleKey;
+        public string LocationTitleFallback => locationTitleFallback;
+        public string LocationSubtitleKey => locationSubtitleKey;
+        public string LocationSubtitleFallback => locationSubtitleFallback;
     }
 
     [CreateAssetMenu(menuName = "Game/Narrative/Sequence Config", fileName = "NarrativeSequenceConfig")]

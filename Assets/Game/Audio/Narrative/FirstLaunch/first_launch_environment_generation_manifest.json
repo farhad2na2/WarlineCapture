@@ -1,0 +1,381 @@
+{
+  "schema": "WarlineCapture.ElevenLabsSfxGeneration.v0.1",
+  "generatedAtUtc": "2026-07-12T06:37:47.073278+00:00",
+  "endpoint": "https://api.elevenlabs.io/v1/sound-generation",
+  "modelId": "eleven_text_to_sound_v2",
+  "outputFormat": "mp3_44100_128",
+  "mapped": true,
+  "events": [
+    {
+      "spec": {
+        "event_id": "Narrative.FirstLaunch.Music.Calm",
+        "asset_path": "Assets/Game/Audio/Narrative/FirstLaunch/Environment/first_launch_story_calm_loop_01.wav",
+        "duration_seconds": 24.0,
+        "prompt": "Seamless cinematic story underscore for a Middle Eastern city at dawn, restrained cello, soft oud texture, warm low strings, quiet human tension, no drums, no pulse, no impacts, no whooshes, no voice, spacious mix beneath dialogue.",
+        "loop": true,
+        "prompt_influence": 0.55,
+        "min_score": 72.0,
+        "min_rms_db": -34.0,
+        "max_rms_db": -14.0,
+        "max_silence_ratio": 0.55,
+        "min_crest_db": 3.0,
+        "max_crest_db": 18.0,
+        "transient_expected": false
+      },
+      "bestCandidateIndex": 1,
+      "bestScore": 100.0,
+      "bestPassed": true,
+      "mapped": true,
+      "candidates": [
+        {
+          "event_id": "Narrative.FirstLaunch.Music.Calm",
+          "index": 1,
+          "mp3_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260711T220620Z/narrative_firstlaunch_music_calm/candidate_01.mp3",
+          "wav_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260711T220620Z/narrative_firstlaunch_music_calm/candidate_01.wav",
+          "score": 100.0,
+          "passed": true,
+          "reasons": [],
+          "metrics": {
+            "duration_seconds": 24.0,
+            "sample_rate": 44100,
+            "channels": 1,
+            "rms_db": -15.103751559297994,
+            "peak_db": -2.454004731709838,
+            "crest_db": 12.649746827588157,
+            "clipped_ratio": 0.0,
+            "near_clip_ratio": 0.0,
+            "silence_ratio": 0.004819538926681784,
+            "zero_crossing_rate": 0.02047713529856387
+          }
+        }
+      ]
+    },
+    {
+      "spec": {
+        "event_id": "Narrative.FirstLaunch.Music.Crisis",
+        "asset_path": "Assets/Game/Audio/Narrative/FirstLaunch/Environment/first_launch_story_crisis_loop_01.wav",
+        "duration_seconds": 24.0,
+        "prompt": "Seamless restrained cinematic crisis underscore for a tactical story scene, low strings, subtle bowed metal and distant frame drum texture, evolving tension without rhythmic thumps, no trailer hits, no booms, no whooshes, no voice, clear space for dialogue.",
+        "loop": true,
+        "prompt_influence": 0.55,
+        "min_score": 72.0,
+        "min_rms_db": -34.0,
+        "max_rms_db": -13.0,
+        "max_silence_ratio": 0.55,
+        "min_crest_db": 3.0,
+        "max_crest_db": 18.0,
+        "transient_expected": false
+      },
+      "bestCandidateIndex": 1,
+      "bestScore": 82.0,
+      "bestPassed": true,
+      "mapped": true,
+      "candidates": [
+        {
+          "event_id": "Narrative.FirstLaunch.Music.Crisis",
+          "index": 1,
+          "mp3_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260711T220620Z/narrative_firstlaunch_music_crisis/candidate_01.mp3",
+          "wav_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260711T220620Z/narrative_firstlaunch_music_crisis/candidate_01.wav",
+          "score": 82.0,
+          "passed": true,
+          "reasons": [
+            "spiky_crest=18.0dB",
+            "low_high_frequency_content=0.0039"
+          ],
+          "metrics": {
+            "duration_seconds": 24.0,
+            "sample_rate": 44100,
+            "channels": 1,
+            "rms_db": -22.389047663796276,
+            "peak_db": -4.352475847487792,
+            "crest_db": 18.036571816308484,
+            "clipped_ratio": 0.0,
+            "near_clip_ratio": 0.0,
+            "silence_ratio": 0.08109504913076342,
+            "zero_crossing_rate": 0.003924792139077853
+          }
+        }
+      ]
+    },
+    {
+      "spec": {
+        "event_id": "Narrative.FirstLaunch.Ambience.CityMarket",
+        "asset_path": "Assets/Game/Audio/Narrative/FirstLaunch/Environment/first_launch_city_market_loop_01.wav",
+        "duration_seconds": 24.0,
+        "prompt": "Seamless realistic Middle Eastern city edge market ambience at early morning, light road traffic, old cars and small trucks passing at varied distances, sparse vendors and pedestrians, birds, dry breeze, occasional bicycle bell, no music, no explosions, no alarms, no rhythmic sounds, no isolated whoosh.",
+        "loop": true,
+        "prompt_influence": 0.62,
+        "min_score": 72.0,
+        "min_rms_db": -34.0,
+        "max_rms_db": -14.0,
+        "max_silence_ratio": 0.55,
+        "min_crest_db": 3.0,
+        "max_crest_db": 19.0,
+        "transient_expected": false
+      },
+      "bestCandidateIndex": 1,
+      "bestScore": 86.34,
+      "bestPassed": true,
+      "mapped": true,
+      "candidates": [
+        {
+          "event_id": "Narrative.FirstLaunch.Ambience.CityMarket",
+          "index": 1,
+          "mp3_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260711T220620Z/narrative_firstlaunch_ambience_citymarket/candidate_01.mp3",
+          "wav_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260711T220620Z/narrative_firstlaunch_ambience_citymarket/candidate_01.wav",
+          "score": 86.34,
+          "passed": true,
+          "reasons": [
+            "quiet_rms=-37.1dB",
+            "spiky_crest=20.6dB"
+          ],
+          "metrics": {
+            "duration_seconds": 24.0,
+            "sample_rate": 44100,
+            "channels": 1,
+            "rms_db": -37.05286839172289,
+            "peak_db": -16.430943877873148,
+            "crest_db": 20.62192451384974,
+            "clipped_ratio": 0.0,
+            "near_clip_ratio": 0.0,
+            "silence_ratio": 0.0684608843537415,
+            "zero_crossing_rate": 0.03263416477702192
+          }
+        }
+      ]
+    },
+    {
+      "spec": {
+        "event_id": "Narrative.FirstLaunch.Ambience.CityAttack",
+        "asset_path": "Assets/Game/Audio/Narrative/FirstLaunch/Environment/first_launch_city_attack_loop_01.wav",
+        "duration_seconds": 24.0,
+        "prompt": "Seamless realistic city-under-attack ambience heard from a protected street, continuous distant traffic, hurried footsteps and movement without voices, irregular far-away artillery rumbles, two faint distant explosions with long natural echoes, intermittent civil-defense siren far away, radio carrier static without speech, absolutely no human voice or spoken syllable, no close blast, no repeated thump, no pulse, no whoosh, no music.",
+        "loop": true,
+        "prompt_influence": 0.64,
+        "min_score": 72.0,
+        "min_rms_db": -34.0,
+        "max_rms_db": -12.0,
+        "max_silence_ratio": 0.55,
+        "min_crest_db": 3.0,
+        "max_crest_db": 20.0,
+        "transient_expected": false
+      },
+      "bestCandidateIndex": 1,
+      "bestScore": 77.56,
+      "bestPassed": true,
+      "mapped": true,
+      "candidates": [
+        {
+          "event_id": "Narrative.FirstLaunch.Ambience.CityAttack",
+          "index": 1,
+          "mp3_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T063747Z/narrative_firstlaunch_ambience_cityattack/candidate_01.mp3",
+          "wav_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T063747Z/narrative_firstlaunch_ambience_cityattack/candidate_01.wav",
+          "score": 77.56,
+          "passed": true,
+          "reasons": [
+            "quiet_rms=-37.7dB",
+            "spiky_crest=28.8dB",
+            "low_high_frequency_content=0.0029"
+          ],
+          "metrics": {
+            "duration_seconds": 24.0,
+            "sample_rate": 44100,
+            "channels": 1,
+            "rms_db": -37.70055856447478,
+            "peak_db": -8.93118761403565,
+            "crest_db": 28.769370950439132,
+            "clipped_ratio": 0.0,
+            "near_clip_ratio": 0.0,
+            "silence_ratio": 0.13752362055933484,
+            "zero_crossing_rate": 0.002851473922902494
+          }
+        }
+      ]
+    },
+    {
+      "spec": {
+        "event_id": "Narrative.FirstLaunch.Ambience.CommandRoom",
+        "asset_path": "Assets/Game/Audio/Narrative/FirstLaunch/Environment/first_launch_command_room_loop_01.wav",
+        "duration_seconds": 24.0,
+        "prompt": "Seamless damaged military command-room ambience, steady generator and ventilation hum, quiet electronics, occasional radio carrier static and squelch without transmission, distant city siren and traffic through thick walls, absolutely no human voice, no speech, no spoken syllable, no alarm loop, no boom, no pulse, no whoosh, no music.",
+        "loop": true,
+        "prompt_influence": 0.62,
+        "min_score": 72.0,
+        "min_rms_db": -34.0,
+        "max_rms_db": -15.0,
+        "max_silence_ratio": 0.55,
+        "min_crest_db": 3.0,
+        "max_crest_db": 18.0,
+        "transient_expected": false
+      },
+      "bestCandidateIndex": 1,
+      "bestScore": 92.0,
+      "bestPassed": true,
+      "mapped": true,
+      "candidates": [
+        {
+          "event_id": "Narrative.FirstLaunch.Ambience.CommandRoom",
+          "index": 1,
+          "mp3_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T063747Z/narrative_firstlaunch_ambience_commandroom/candidate_01.mp3",
+          "wav_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T063747Z/narrative_firstlaunch_ambience_commandroom/candidate_01.wav",
+          "score": 92.0,
+          "passed": true,
+          "reasons": [
+            "low_high_frequency_content=0.0012"
+          ],
+          "metrics": {
+            "duration_seconds": 24.0,
+            "sample_rate": 44100,
+            "channels": 1,
+            "rms_db": -23.27784649103741,
+            "peak_db": -18.60655497305805,
+            "crest_db": 4.671291517979359,
+            "clipped_ratio": 0.0,
+            "near_clip_ratio": 0.0,
+            "silence_ratio": 0.006466364323507181,
+            "zero_crossing_rate": 0.0012244897959183673
+          }
+        }
+      ]
+    },
+    {
+      "spec": {
+        "event_id": "Narrative.FirstLaunch.Ambience.Convoy",
+        "asset_path": "Assets/Game/Audio/Narrative/FirstLaunch/Environment/first_launch_convoy_interior_loop_01.wav",
+        "duration_seconds": 18.0,
+        "prompt": "Seamless interior ambience of a moving armored personnel carrier in a city, steady low diesel engine, tire and suspension vibration, loose equipment gently rattling, muffled road traffic outside, no horn, no weapon fire, no boom, no pulse, no whoosh, no music, no voice.",
+        "loop": true,
+        "prompt_influence": 0.62,
+        "min_score": 72.0,
+        "min_rms_db": -34.0,
+        "max_rms_db": -12.0,
+        "max_silence_ratio": 0.55,
+        "min_crest_db": 3.0,
+        "max_crest_db": 18.0,
+        "transient_expected": false
+      },
+      "bestCandidateIndex": 1,
+      "bestScore": 92.0,
+      "bestPassed": true,
+      "mapped": true,
+      "candidates": [
+        {
+          "event_id": "Narrative.FirstLaunch.Ambience.Convoy",
+          "index": 1,
+          "mp3_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260711T220620Z/narrative_firstlaunch_ambience_convoy/candidate_01.mp3",
+          "wav_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260711T220620Z/narrative_firstlaunch_ambience_convoy/candidate_01.wav",
+          "score": 92.0,
+          "passed": true,
+          "reasons": [
+            "low_high_frequency_content=0.0041"
+          ],
+          "metrics": {
+            "duration_seconds": 18.0,
+            "sample_rate": 44100,
+            "channels": 1,
+            "rms_db": -32.13583053722885,
+            "peak_db": -21.406259324928275,
+            "crest_db": 10.729571212300574,
+            "clipped_ratio": 0.0,
+            "near_clip_ratio": 0.0,
+            "silence_ratio": 0.02560594608213656,
+            "zero_crossing_rate": 0.004081632653061225
+          }
+        }
+      ]
+    },
+    {
+      "spec": {
+        "event_id": "Narrative.FirstLaunch.Event.DistantAttack",
+        "asset_path": "Assets/Game/Audio/Narrative/FirstLaunch/Environment/first_launch_distant_attack_event_01.wav",
+        "duration_seconds": 6.0,
+        "prompt": "Two irregular very distant urban explosions heard across a city, low natural rumble and long building reflections, subtle debris tail, no close impact, no bass hit, no trailer boom, no whoosh, no pulse, no music, no voice, ample headroom.",
+        "loop": false,
+        "prompt_influence": 0.62,
+        "min_score": 72.0,
+        "min_rms_db": -34.0,
+        "max_rms_db": -14.0,
+        "max_silence_ratio": 0.55,
+        "min_crest_db": 3.0,
+        "max_crest_db": 22.0,
+        "transient_expected": true
+      },
+      "bestCandidateIndex": 1,
+      "bestScore": 100.0,
+      "bestPassed": true,
+      "mapped": true,
+      "candidates": [
+        {
+          "event_id": "Narrative.FirstLaunch.Event.DistantAttack",
+          "index": 1,
+          "mp3_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260711T220620Z/narrative_firstlaunch_event_distantattack/candidate_01.mp3",
+          "wav_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260711T220620Z/narrative_firstlaunch_event_distantattack/candidate_01.wav",
+          "score": 100.0,
+          "passed": true,
+          "reasons": [],
+          "metrics": {
+            "duration_seconds": 6.0,
+            "sample_rate": 44100,
+            "channels": 1,
+            "rms_db": -25.106379251405944,
+            "peak_db": -4.151379579429296,
+            "crest_db": 20.954999671976648,
+            "clipped_ratio": 0.0,
+            "near_clip_ratio": 0.0,
+            "silence_ratio": 0.3193159486016629,
+            "zero_crossing_rate": 0.006870748299319728
+          }
+        }
+      ]
+    },
+    {
+      "spec": {
+        "event_id": "Narrative.FirstLaunch.Event.RadioEmergency",
+        "asset_path": "Assets/Game/Audio/Narrative/FirstLaunch/Environment/first_launch_radio_emergency_event_01.wav",
+        "duration_seconds": 7.0,
+        "prompt": "Military emergency radio carrier texture, brief squelch, static and signal breakup only, absolutely no human voice, no speech, no spoken syllable, no alarm beep, no explosion, no boom, no music.",
+        "loop": false,
+        "prompt_influence": 0.62,
+        "min_score": 72.0,
+        "min_rms_db": -34.0,
+        "max_rms_db": -13.0,
+        "max_silence_ratio": 0.55,
+        "min_crest_db": 3.0,
+        "max_crest_db": 20.0,
+        "transient_expected": false
+      },
+      "bestCandidateIndex": 1,
+      "bestScore": 100.0,
+      "bestPassed": true,
+      "mapped": true,
+      "candidates": [
+        {
+          "event_id": "Narrative.FirstLaunch.Event.RadioEmergency",
+          "index": 1,
+          "mp3_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T063747Z/narrative_firstlaunch_event_radioemergency/candidate_01.mp3",
+          "wav_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T063747Z/narrative_firstlaunch_event_radioemergency/candidate_01.wav",
+          "score": 100.0,
+          "passed": true,
+          "reasons": [],
+          "metrics": {
+            "duration_seconds": 7.0,
+            "sample_rate": 44100,
+            "channels": 1,
+            "rms_db": -16.13718264015703,
+            "peak_db": -1.1559016148251624,
+            "crest_db": 14.981281025331867,
+            "clipped_ratio": 0.0,
+            "near_clip_ratio": 0.0,
+            "silence_ratio": 0.06958535795270489,
+            "zero_crossing_rate": 0.07352769679300292
+          }
+        }
+      ]
+    }
+  ],
+  "regeneratedEvents": [
+    "Narrative.FirstLaunch.Ambience.CityAttack",
+    "Narrative.FirstLaunch.Ambience.CommandRoom",
+    "Narrative.FirstLaunch.Event.RadioEmergency"
+  ]
+}

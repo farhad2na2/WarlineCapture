@@ -9,6 +9,7 @@ namespace Game.UI.Runtime
     {
         [Header("Structure")]
         [SerializeField] private CanvasGroup dialogueGroup;
+        [SerializeField] private RectTransform dialogueRect;
         [SerializeField] private Image frameImage;
         [SerializeField] private Image pointerImage;
         [SerializeField] private Image portraitImage;
@@ -24,6 +25,14 @@ namespace Game.UI.Runtime
         private Action<NarrativeDialoguePhase> inputHandler;
         private bool subtitlesVisible = true;
         private bool inputBound;
+        private const float StandardHeight = 292f;
+        private const float ExpandedHeight = 376f;
+        private const float DialogueTextTopInset = 155f;
+        private const float DialogueTextBottomInset = 78f;
+        private const float DialogueTextHeightPadding = 10f;
+        private const float DialogueTextHorizontalInsets = 466f;
+        private const float FallbackTextWidth = 1074f;
+        private const float FallbackMaximumHeight = 720f;
 
         public NarrativeDialoguePhase Phase => phase;
 
@@ -75,6 +84,7 @@ namespace Game.UI.Runtime
 
         public void PrepareLine(string resolvedText, NarrativeSubtitleStyle style)
         {
+            Canvas.ForceUpdateCanvases();
             subtitlesVisible = style.Visible;
             if (dialogueText != null)
             {
@@ -86,6 +96,14 @@ namespace Game.UI.Runtime
                     dialogueText.fontSizeMin = Mathf.Min(18f, style.FontSize);
                 }
                 dialogueText.maxVisibleCharacters = style.InstantText ? int.MaxValue : 0;
+                dialogueText.overflowMode = TextOverflowModes.Overflow;
+            }
+
+            if (dialogueRect != null)
+            {
+                Vector2 size = dialogueRect.sizeDelta;
+                size.y = CalculateRequiredHeight(resolvedText, style);
+                dialogueRect.sizeDelta = size;
             }
 
             if (frameImage != null)
@@ -97,9 +115,55 @@ namespace Game.UI.Runtime
             }
 
             if (pointerImage != null)
-                pointerImage.gameObject.SetActive(!style.ReducedMotion);
+                pointerImage.gameObject.SetActive(false);
 
             SetPhase(style.InstantText ? NarrativeDialoguePhase.AdvanceReady : NarrativeDialoguePhase.Revealing);
+        }
+
+        private float CalculateRequiredHeight(string resolvedText, in NarrativeSubtitleStyle style)
+        {
+            float minimumHeight = style.FontSize >= 60f ? ExpandedHeight : StandardHeight;
+            if (dialogueText == null)
+                return minimumHeight;
+
+            float textWidth = dialogueRect != null
+                ? dialogueRect.rect.width - DialogueTextHorizontalInsets
+                : dialogueText.rectTransform.rect.width;
+            if (textWidth <= 1f)
+                textWidth = FallbackTextWidth;
+
+            dialogueRect?.ForceUpdateRectTransforms();
+            dialogueText.rectTransform.ForceUpdateRectTransforms();
+            dialogueText.ForceMeshUpdate(true, true);
+            float preferredTextHeight = CalculateRenderedTextHeight(resolvedText, textWidth);
+            float requiredHeight = DialogueTextTopInset + DialogueTextBottomInset +
+                                   preferredTextHeight + DialogueTextHeightPadding;
+            return Mathf.Clamp(Mathf.Ceil(requiredHeight), minimumHeight, CalculateMaximumHeight());
+        }
+
+        private float CalculateRenderedTextHeight(string resolvedText, float textWidth)
+        {
+            TMP_TextInfo textInfo = dialogueText.textInfo;
+            if (textInfo != null && textInfo.lineCount > 0)
+            {
+                TMP_LineInfo first = textInfo.lineInfo[0];
+                TMP_LineInfo last = textInfo.lineInfo[textInfo.lineCount - 1];
+                float renderedHeight = first.ascender - last.descender;
+                if (renderedHeight > 1f)
+                    return renderedHeight;
+            }
+
+            return dialogueText.GetPreferredValues(resolvedText ?? string.Empty, textWidth, 0f).y;
+        }
+
+        private float CalculateMaximumHeight()
+        {
+            if (dialogueRect == null || dialogueRect.parent is not RectTransform parentRect || parentRect.rect.height <= 1f)
+                return FallbackMaximumHeight;
+
+            float scale = Mathf.Max(0.01f, Mathf.Abs(dialogueRect.localScale.y));
+            float availableHeight = parentRect.rect.height / scale - dialogueRect.anchoredPosition.y - 24f;
+            return Mathf.Max(ExpandedHeight, availableHeight);
         }
 
         public void SetVisibleCharacterCount(int count)

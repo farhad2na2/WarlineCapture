@@ -30,10 +30,10 @@ namespace Game.UI.Runtime
                 Visible = settings.Narrative.SubtitlesEnabled,
                 FontSize = settings.Narrative.SubtitleSize switch
                 {
-                    UISubtitleSize.Small => 24f,
-                    UISubtitleSize.Large => 36f,
-                    UISubtitleSize.ExtraLarge => 44f,
-                    _ => 30f
+                    UISubtitleSize.Small => 40f,
+                    UISubtitleSize.Large => 60f,
+                    UISubtitleSize.ExtraLarge => 72f,
+                    _ => 50f
                 },
                 BackgroundOpacity = settings.Narrative.BackgroundOpacity switch
                 {
@@ -77,5 +77,13 @@ namespace Game.UI.Runtime
         public float SentencePauseSeconds;
         public float EllipsisPauseSeconds;
         public float TailHoldSeconds;
+    }
+
+    [Serializable]
+    public struct NarrativeLocationPresentationModel
+    {
+        public bool Visible;
+        public string Title;
+        public string Subtitle;
     }
 }

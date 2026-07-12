@@ -19,3 +19,21 @@ Microsoft Edge, Microsoft Azure, or any other network/cloud text-to-speech servi
 `first_launch_temp_voice_manifest.json` records the stable IDs, source hashes, voice
 mapping, and status. `Game/Narrative/Configure FirstLaunch Temporary Voice Imports`
 applies the folder-specific import contract; the adjacent Validate menu item checks it.
+
+## Environment and score assets
+
+`Environment/` contains dedicated AI-generated FirstLaunch music, location ambience,
+vehicle ambience, and restrained event textures. These clips replace the generic
+gameplay explosion and battlefield assets previously used by the narrative prototype.
+
+- Generator: ElevenLabs `eleven_text_to_sound_v2` through
+  `Tools/Audio/generate_elevenlabs_sfx.py`.
+- Runtime: imported local `AudioClip` assets only; no network generation occurs in-game.
+- Mix intent: continuous city/command-room context under dialogue, with no rhythmic
+  impact loop, close explosion, trailer boom, repeated whoosh, generated dispatch
+  speech, or other human voice competing with narration.
+- Evidence: `first_launch_environment_generation_manifest.json` records prompts,
+  duration, loudness, clipping, silence, crest, and selected-candidate results.
+
+Shipping rights remain subject to the commercial-use terms of the ElevenLabs account
+used for generation and must be verified during release clearance.

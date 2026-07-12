@@ -12,6 +12,7 @@ namespace Game.UI.Runtime
         [SerializeField] private AspectRatioFitter panelAspectFitter;
         [SerializeField] private RectTransform panelMotionRoot;
         [SerializeField] private NarrativeDialogueView dialogueView;
+        [SerializeField] private NarrativeLocationIntroView locationIntroView;
         [SerializeField] private NarrativePlaybackControlsView playbackControls;
         [SerializeField] private NarrativeCommanderIdentityView commanderIdentityView;
         [SerializeField] private NarrativeGuidanceChoiceView guidanceChoiceView;
@@ -19,6 +20,7 @@ namespace Game.UI.Runtime
         [SerializeField] private NarrativeReviewerControlsView reviewerControlsView;
         [SerializeField] private GameObject safeAreaPreview;
         [SerializeField] private AudioSource voiceSource;
+        [SerializeField] private NarrativeSequenceAudioView sequenceAudioView;
 
         private Action<NarrativeUiAction> actionHandler;
         private string sequenceId;
@@ -29,12 +31,14 @@ namespace Game.UI.Runtime
 
         public NarrativeDialogueView DialogueView => dialogueView;
         public AudioSource VoiceSource => voiceSource;
+        public NarrativeSequenceAudioView SequenceAudioView => sequenceAudioView;
         public RectTransform PanelMotionRoot => panelMotionRoot != null ? panelMotionRoot : panelImage != null ? panelImage.rectTransform : null;
         public NarrativeCommanderIdentityView CommanderIdentityView => commanderIdentityView;
         public NarrativeGuidanceChoiceView GuidanceChoiceView => guidanceChoiceView;
         public NarrativeSkipConfirmationView SkipConfirmationView => skipConfirmationView;
         public NarrativeReviewerControlsView ReviewerControlsView => reviewerControlsView;
         public Sprite CurrentPanelSprite => panelImage != null ? panelImage.sprite : null;
+        public NarrativeLocationIntroView LocationIntroView => locationIntroView;
 
         private void Awake()
         {
@@ -86,6 +90,11 @@ namespace Game.UI.Runtime
         {
             if (panelImage != null)
                 panelImage.sprite = null;
+        }
+
+        public void ApplyLocation(in NarrativeLocationPresentationModel model)
+        {
+            locationIntroView?.Apply(model);
         }
 
         public void SetSafeAreaPreview(bool visible)

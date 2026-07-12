@@ -3,6 +3,7 @@ using Game.Catalog.Contracts;
 using Game.Editor;
 using Game.UI.Runtime;
 using NUnit.Framework;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,7 +21,10 @@ public sealed class FirstLaunchNarrativePresentationTests
             tests.DialogueAssets_UseSeparatePointerProductionAriaIconAndNineSliceBorder();
             tests.PresentationPrefab_HasBoundViewsSkipAndDedicatedVoiceSource();
             tests.PresentationHelper_RespectsAutoAdvancePauseAndCancel();
-            Debug.Log("[FirstLaunchNarrativePresentationValidation] result=Passed tests=6");
+            tests.Phase10RPresentation_UsesReadableTypeMobileTargetsAndCleanFrame();
+            tests.Dialogue_LongTextExpandsFrameWithoutEllipsis();
+            tests.Phase10RAudio_UsesIndependentSettingsAwareLayersAndCancelsCleanly();
+            Debug.Log("[FirstLaunchNarrativePresentationValidation] result=Passed tests=9");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -36,7 +40,7 @@ public sealed class FirstLaunchNarrativePresentationTests
     {
         UISettingsModel model = Game.UI.Runtime.SettingsService.Defaults;
         Assert.IsTrue(NarrativeSubtitleStyleResolver.Resolve(model).Visible);
-        Assert.AreEqual(30f, NarrativeSubtitleStyleResolver.Resolve(model).FontSize);
+        Assert.AreEqual(50f, NarrativeSubtitleStyleResolver.Resolve(model).FontSize);
         Assert.AreEqual(0.75f, NarrativeSubtitleStyleResolver.Resolve(model).BackgroundOpacity);
 
         model.Narrative.SubtitleSize = UISubtitleSize.ExtraLarge;
@@ -46,7 +50,7 @@ public sealed class FirstLaunchNarrativePresentationTests
         model.Accessibility.ReducedMotion = true;
         NarrativeSubtitleStyle style = NarrativeSubtitleStyleResolver.Resolve(model);
         Assert.IsFalse(style.Visible);
-        Assert.AreEqual(44f, style.FontSize);
+        Assert.AreEqual(72f, style.FontSize);
         Assert.AreEqual(0f, style.BackgroundOpacity);
         Assert.IsTrue(style.InstantText);
         Assert.IsTrue(style.ReducedMotion);
@@ -179,6 +183,129 @@ public sealed class FirstLaunchNarrativePresentationTests
         Assert.AreEqual(NarrativeDialoguePhase.Hidden, view.DialogueView.Phase);
 
         UnityEngine.Object.DestroyImmediate(instance);
+    }
+
+    [Test]
+    public void Phase10RPresentation_UsesReadableTypeMobileTargetsAndCleanFrame()
+    {
+        FirstLaunchNarrativePresentationPrefabBuilder.Build();
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(FirstLaunchNarrativePresentationPrefabBuilder.PrefabPath);
+        Assert.NotNull(prefab);
+
+        RectTransform dialogue = prefab.transform.Find("SafeArea/Dialogue") as RectTransform;
+        Assert.NotNull(dialogue);
+        Assert.AreEqual(292f, dialogue.sizeDelta.y, 0.01f);
+        Assert.AreEqual(2.2f, dialogue.localScale.x, 0.01f);
+        TMP_Text body = Array.Find(dialogue.GetComponentsInChildren<TMP_Text>(true), text => text.name == "DialogueText");
+        TMP_Text speaker = Array.Find(dialogue.GetComponentsInChildren<TMP_Text>(true), text => text.name == "SpeakerName");
+        TMP_Text role = Array.Find(dialogue.GetComponentsInChildren<TMP_Text>(true), text => text.name == "SpeakerRole");
+        Assert.AreEqual(50f, body.fontSize);
+        Assert.IsFalse(body.enableAutoSizing);
+        Assert.AreEqual(54f, speaker.fontSize);
+        Assert.AreEqual(30f, role.fontSize);
+        Assert.IsFalse(dialogue.Find("Pointer").gameObject.activeSelf, "The artifact-producing pointer attachment must remain disabled.");
+
+        RectTransform skip = prefab.transform.Find("SafeArea/PlaybackControls") as RectTransform;
+        Assert.GreaterOrEqual(skip.sizeDelta.x, 88f);
+        Assert.GreaterOrEqual(skip.sizeDelta.y, 88f);
+        Assert.AreEqual(38f, skip.GetComponentInChildren<TMP_Text>(true).fontSize);
+
+        Transform identity = prefab.transform.Find("SafeArea/CommanderIdentitySurface");
+        Transform guidance = prefab.transform.Find("SafeArea/GuidanceChoiceSurface");
+        Assert.NotNull(identity);
+        Assert.NotNull(guidance);
+        foreach (Button button in identity.GetComponentsInChildren<Button>(true))
+            Assert.GreaterOrEqual(button.GetComponent<RectTransform>().rect.height, 88f, button.name);
+        foreach (Button button in guidance.GetComponentsInChildren<Button>(true))
+            Assert.GreaterOrEqual(button.GetComponent<RectTransform>().rect.height, 88f, button.name);
+
+        RectTransform reviewer = prefab.transform.Find("SafeArea/DevelopmentReviewerControls") as RectTransform;
+        Assert.AreEqual(1f, reviewer.pivot.y, 0.001f);
+        NarrativeLocationIntroView location = prefab.GetComponent<NarrativeSequenceView>().LocationIntroView;
+        Assert.NotNull(location);
+        Assert.AreEqual(0f, location.GetComponent<RectTransform>().pivot.x, 0.001f);
+    }
+
+    [Test]
+    public void Phase10RAudio_UsesIndependentSettingsAwareLayersAndCancelsCleanly()
+    {
+        FirstLaunchNarrativePresentationPrefabBuilder.Build();
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(FirstLaunchNarrativePresentationPrefabBuilder.PrefabPath);
+        GameObject instance = UnityEngine.Object.Instantiate(prefab);
+        NarrativeSequenceAudioView audio = instance.GetComponent<NarrativeSequenceAudioView>();
+        Assert.NotNull(audio);
+        Assert.AreNotSame(audio.MusicSource, audio.AmbienceSource);
+        Assert.AreNotSame(audio.AmbienceSource, audio.VehicleSource);
+        Assert.AreNotSame(audio.VehicleSource, audio.EventSource);
+        Assert.AreNotSame(prefab.GetComponent<NarrativeSequenceView>().VoiceSource, audio.MusicSource);
+        Assert.AreNotSame(prefab.GetComponent<NarrativeSequenceView>().VoiceSource, audio.AmbienceSource);
+        Assert.AreNotSame(prefab.GetComponent<NarrativeSequenceView>().VoiceSource, audio.VehicleSource);
+        Assert.AreNotSame(prefab.GetComponent<NarrativeSequenceView>().VoiceSource, audio.EventSource);
+        Assert.IsNull(audio.RadioCue, "Background/event layers must not contain generated dispatch speech beside narration.");
+
+        audio.ApplyVolumes(0.2f, 0.3f, 0.1f, 0.4f);
+        audio.ApplyClips(audio.BriefingMusic, audio.CityDayAmbience, null, null);
+        Assert.AreEqual("first_launch_story_calm_loop_01", audio.MusicSource.clip.name);
+        Assert.AreEqual("first_launch_city_market_loop_01", audio.AmbienceSource.clip.name);
+        Assert.IsNull(audio.VehicleSource.clip);
+
+        audio.ApplyClips(audio.ConflictMusic, audio.BattlefieldAmbience, audio.VehicleEngine, audio.AttackCue);
+        Assert.AreEqual("first_launch_story_crisis_loop_01", audio.MusicSource.clip.name);
+        Assert.AreEqual("first_launch_city_attack_loop_01", audio.AmbienceSource.clip.name);
+        Assert.AreEqual("first_launch_convoy_interior_loop_01", audio.VehicleSource.clip.name);
+        Assert.AreEqual("first_launch_distant_attack_event_01", audio.EventSource.clip.name);
+
+        audio.ApplyClips(audio.ConflictMusic, audio.BattlefieldAmbience, null, null);
+        Assert.IsNull(audio.EventSource.clip, "State changes without a cue must clear a previous one-shot.");
+
+        audio.ApplyVolumes(0f, 0f, 0f, 0f);
+        Assert.AreEqual(0f, audio.MusicSource.volume);
+        Assert.AreEqual(0f, audio.AmbienceSource.volume);
+        Assert.AreEqual(0f, audio.VehicleSource.volume);
+        Assert.AreEqual(0f, audio.EventSource.volume);
+
+        audio.StopAll();
+        Assert.IsNull(audio.MusicSource.clip);
+        Assert.IsNull(audio.AmbienceSource.clip);
+        Assert.IsNull(audio.VehicleSource.clip);
+        Assert.IsNull(audio.EventSource.clip);
+        UnityEngine.Object.DestroyImmediate(instance);
+    }
+
+    [Test]
+    public void Dialogue_LongTextExpandsFrameWithoutEllipsis()
+    {
+        FirstLaunchNarrativePresentationPrefabBuilder.Build();
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(FirstLaunchNarrativePresentationPrefabBuilder.PrefabPath);
+        GameObject canvasObject = new("DialogueMeasurementCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler));
+        Canvas canvas = canvasObject.GetComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        CanvasScaler scaler = canvasObject.GetComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(4800f, 2160f);
+        scaler.matchWidthOrHeight = 0.5f;
+        GameObject instance = UnityEngine.Object.Instantiate(prefab);
+        instance.transform.SetParent(canvas.transform, false);
+        Canvas.ForceUpdateCanvases();
+        NarrativeDialogueView view = instance.GetComponentInChildren<NarrativeDialogueView>(true);
+        TMP_Text body = Array.Find(view.GetComponentsInChildren<TMP_Text>(true), text => text.name == "DialogueText");
+        RectTransform frame = view.GetComponent<RectTransform>();
+        const string longLine = "Commander, the eastern clinic corridor remains blocked while civil crews, families, and the surviving response convoy wait beyond the damaged relay junction.";
+        NarrativeSubtitleStyle style = NarrativeSubtitleStyleResolver.Resolve(Game.UI.Runtime.SettingsService.Defaults);
+
+        view.PrepareLine(longLine, style);
+        Canvas.ForceUpdateCanvases();
+
+        body.ForceMeshUpdate(true, true);
+        TMP_TextInfo textInfo = body.textInfo;
+        Assert.GreaterOrEqual(textInfo.lineCount, 3);
+        float measuredHeight = textInfo.lineInfo[0].ascender - textInfo.lineInfo[textInfo.lineCount - 1].descender;
+        Assert.Greater(frame.sizeDelta.y, 292f);
+        Assert.AreEqual(TextOverflowModes.Overflow, body.overflowMode);
+        Assert.GreaterOrEqual(body.rectTransform.rect.height + 0.5f, measuredHeight);
+        Assert.GreaterOrEqual(frame.sizeDelta.y, 155f + 78f + measuredHeight + 10f);
+        UnityEngine.Object.DestroyImmediate(instance);
+        UnityEngine.Object.DestroyImmediate(canvasObject);
     }
 
     private static NarrativeDialogueReveal Build(string text, float deadline, bool instant = false)

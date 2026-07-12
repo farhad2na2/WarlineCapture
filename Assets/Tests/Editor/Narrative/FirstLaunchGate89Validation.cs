@@ -41,6 +41,9 @@ public static class FirstLaunchGate89Validation
             FirstLaunchNarrativePresentationTests presentation = new();
             presentation.PresentationPrefab_HasBoundViewsSkipAndDedicatedVoiceSource();
             presentation.PresentationHelper_RespectsAutoAdvancePauseAndCancel();
+            presentation.Phase10RPresentation_UsesReadableTypeMobileTargetsAndCleanFrame();
+            presentation.Dialogue_LongTextExpandsFrameWithoutEllipsis();
+            presentation.Phase10RAudio_UsesIndependentSettingsAwareLayersAndCancelsCleanly();
 
             FirstLaunchNarrativePlayerTests player = new();
             player.Player_AdvancesStaticAndDialogueStatesWithoutHierarchyLookup();
@@ -57,7 +60,7 @@ public static class FirstLaunchGate89Validation
             integration.ReviewerMode_ProvidesNavigationWithoutMutatingCompletedProfile();
             integration.CommittedIdentity_SkipRoutesDirectlyAndPreservesSelection();
 
-            Debug.Log("[FirstLaunchGate89Validation] result=Passed tests=26");
+            Debug.Log("[FirstLaunchGate89Validation] result=Passed tests=29");
             ValidationExit.Passed();
         }
         catch (Exception exception)

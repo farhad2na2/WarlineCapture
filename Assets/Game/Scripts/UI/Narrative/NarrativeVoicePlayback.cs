@@ -28,7 +28,7 @@ namespace Game.UI.Runtime
             source.spatialBlend = 0f;
             source.clip = clip;
             source.volume = settings.VoiceEnabled
-                ? Mathf.Clamp01(settings.VoiceVolume / 100f)
+                ? Mathf.Clamp01(settings.MasterVolume / 100f) * Mathf.Clamp01(settings.VoiceVolume / 100f)
                 : 0f;
 
             if (clip != null)

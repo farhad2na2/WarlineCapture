@@ -7,10 +7,10 @@ Platform: OSXEditor
 
 | Measure | Result |
 |---|---:|
-| Cold FL-P01 Addressables load | 130.052 ms |
-| Warm panel transition average | 0.235 ms |
-| Warm panel transition maximum | 1.052 ms |
-| Stable playback sample | 1800 ticks / 0.447 ms |
+| Cold FL-P01 Addressables load | 142.120 ms |
+| Warm panel transition average | 4.095 ms |
+| Warm panel transition maximum | 40.290 ms |
+| Stable playback sample | 1800 ticks / 0.745 ms |
 | Stable managed allocation after warmup | 0 bytes |
 | Resident panel handles after transition | 2 (current + optional next, maximum 2) |
 | Current decoded panel texture estimate | 0.88 MiB |

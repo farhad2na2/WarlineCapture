@@ -2,7 +2,7 @@
 
 Date: 2026-07-11
 
-Status: Gate 6 passed; Phase 8 implementation and Gate 7 evidence are in progress
+Status: Gate 6 passed; corrected Phase 10R live package is ready for Gate 9R review
 
 Scope: Build a reviewable first-launch motion-comic slice from minimal logo through the M01 gameplay handoff, plus a review-only gameplay placeholder, M01 debrief, and command-base reveal. This tracker owns execution order, artifact manifests, approval gates, Unity boundaries, review controls, skip behavior, evidence, and completion status.
 
@@ -172,15 +172,15 @@ Last reconciled: 2026-07-11
 | Measure | Current state |
 |---|---|
 | Passed gates | Gate 0, Gate 1A, Gate 1B, Gate 2, Gate 3, Gate 4, Gate 5, Gate 6, and Gate 8 architecture; prior Gate 7/9 presentation acceptance is reopened by user review |
-| Active gate | Gate 9R: second live FirstLaunch presentation review before any M01 implementation handoff |
+| Active gate | Gate 9R: corrected live FirstLaunch presentation confirmation before any M01 implementation handoff |
 | Art-first phases 1-7 | Complete; all approved panel revisions are exported and source-to-runtime hash verified |
 | Final narrative panels | `22/22` user-approved, exported in 16:9 and 20:9, and configured as Unity sprites |
-| Checklist completion | `216/249` complete (`86.7%`), with 1 partial and 1 blocked item |
-| Runtime phases 8-12 | Started; reusable architecture and routing remain accepted, while live UI presentation, introductions, and non-voice runtime audio require revision |
-| Current blocker | None for Gate 9R implementation; M01 camera, Android-device profiling, and the pre-existing `statusChipSprite` regression remain later Gate 10 prerequisites |
-| Next action | Rebuild dialogue/control scale and 9-slice quality, then implement live city/character introductions and layered runtime music/ambience/event sound |
-| User approval required now | No; implementation proceeds from recorded feedback. User re-review is required only when the complete Gate 9R live package is ready |
-| Autonomous continuation | No heartbeat is active; the prior heartbeat was deleted when Gate 10 was blocked, before this new user review reopened unblocked FirstLaunch work |
+| Checklist completion | `232/249` complete (`93.2%`), with 1 partial and 1 blocked item |
+| Runtime phases 8-12 | Phase 10R implementation complete; reusable architecture, routing, revised UI, introductions, and dedicated AI-generated narrative audio pass focused and live Menu validation |
+| Current blocker | Gate 9R requires user confirmation of the no-overlap narration and dynamic dialogue fixes; M01 camera, Android-device profiling, the unrelated shell naming-inventory drift, and the pre-existing `statusChipSprite` regression remain later Gate 10 prerequisites |
+| Next action | User reviews the revised live sequence through `Game/Narrative/First Launch/Review In Play Mode`; reconcile Gate 9R feedback before any M01 handoff |
+| User approval required now | Yes; replay the corrected Commander-to-FL-P09 path and one longer dialogue line |
+| Autonomous continuation | The Phase 10R heartbeat is stopped at its configured review gate; resume after user feedback |
 
 ## Current Baseline
 
@@ -788,24 +788,24 @@ Skip is a product route, not merely a visual hide operation.
 
 This revision is a hard prerequisite to M01. The first live Unity review supersedes the earlier internal visual/audio acceptance while preserving the accepted sequence-player, persistence, routing, Addressables, and panel-art architecture.
 
-- [x] Record first live-playback feedback: text is too small, default dialogue frame is oversized, frame edges show artifacts, controls/popups are undersized and visually inconsistent, runtime lacks layered environmental audio, and location/character introductions are not clear enough.
-- [ ] Capture and measure the current live dialogue, Skip, confirmation, identity, guidance, and reviewer controls at 16:9, 20:9, and tablet dimensions against the approved mockup and current HUD language.
-- [ ] Increase standard dialogue body, speaker, role, and control typography for phone readability without relying on TMP auto-size.
-- [ ] Reduce the default speech-frame footprint and unused interior space while retaining an explicit expanded layout for long/accessibility text.
-- [ ] Remove 9-slice edge, corner, alpha-fringe, and pointer-attachment artifacts at every required aspect and scale.
-- [ ] Increase shipping Skip, confirmation, identity, guidance, and popup touch targets and labels to the project's mobile HUD scale.
-- [ ] Restyle shipping controls to use the current HUD visual language while preserving the approved graphic-novel dialogue treatment.
-- [ ] Increase and restyle development reviewer Pause, navigation, slider, toggle, and state controls so review mode remains legible and efficient.
-- [ ] Add a live, localization-ready `SAHRIN / OLD MARKET` location introduction over FL-P01; no title or context text may be baked into panel art.
-- [ ] Give the city introduction enough quiet visual and audio time to establish ordinary life before the attack.
-- [ ] Give Dalia a distinct live introduction beat with approved portrait, name, role, voice, and readable hold before Samira speaks.
-- [ ] Give Samira a distinct live introduction beat with approved portrait, name, role, voice, and readable hold separate from Dalia.
-- [ ] Give ARIA a distinct activation/introduction beat with the production icon, role, boot cue, and non-human audio identity before Commander selection.
-- [ ] Integrate continuous live city/market ambience from sequence start, routed through the existing sound settings and paused/cancelled with the sequence.
-- [ ] Integrate a restrained runtime score arc through the existing music settings; it must not mask voice or begin as silence.
-- [ ] Integrate authored attack, distant conflict, radio, blackout, vehicle, and transition cues at state-specific times instead of relying on the review-video post-mix.
-- [ ] Verify voice, music, ambience, vehicle/conflict cues, mute settings, pause/resume, seek/restart, Skip, and route cancellation remain independently controllable and leave no stale audio.
-- [ ] Re-run tests and capture complete 16:9/20:9/tablet normal, reduced-motion, subtitles-off, audio-layer, identity/guidance, Skip, and full-playback evidence; pass Gate 9R through a second user live review before M01 begins.
+- [x] Record live-playback feedback rounds: initial text/control scale, frame artifact, environmental audio, and introduction issues; second review found generated background speech overlapping narration after Commander selection and longer dialogue lines clipping outside the fixed-height frame.
+- [x] Capture and measure the current live dialogue, Skip, confirmation, identity, guidance, and reviewer controls at 16:9, 20:9, and tablet dimensions against the approved mockup and current HUD language. The first harness incorrectly used output size as its Canvas reference; live `Menu` uses `4800 x 2160`, making the old proof approximately `2.2x` too optimistic. Corrected GPU evidence uses the real Menu contract and is retained under `evidence/runtime/phase10r/`; headless gray captures were rejected and regenerated.
+- [x] Increase standard dialogue body, speaker, role, and control typography for phone readability without relying on TMP auto-size. Standard body/name/role are fixed at `50/54/30 px`, and the narrative surfaces use a `2.2x` live presentation scale inside the existing `4800 x 2160` Menu canvas contract.
+- [x] Reduce the default speech-frame footprint and unused interior space while retaining measured expansion for long/localized/accessibility text. Standard minimum height is `292 px`, Large/Extra Large minimum is `376 px`, and the frame grows upward from its bottom anchor using forced TMP mesh line metrics while respecting the live safe area. Ellipsis clipping is disabled.
+- [x] Remove 9-slice edge, corner, alpha-fringe, and pointer-attachment artifacts at every required aspect and scale. Slice borders were corrected and the artifact-producing pointer attachment is intentionally disabled.
+- [x] Increase shipping Skip, confirmation, identity, guidance, and popup touch targets and labels to the project's mobile HUD scale. Shipping command targets are at least `88 px` high.
+- [x] Restyle shipping controls to use the current HUD visual language while preserving the approved graphic-novel dialogue treatment.
+- [x] Increase and restyle development reviewer Pause, navigation, slider, toggle, and state controls so review mode remains legible and efficient.
+- [x] Add a live, localization-ready `SAHRIN / OLD MARKET` location introduction over FL-P01; no title or context text is baked into panel art. The enlarged plate is top-left pivoted and verified fully inside the safe area.
+- [x] Give the city introduction enough quiet visual and audio time to establish ordinary life before the attack. FL-P01 retains its 15-second dialogue-free establishment with city ambience and restrained score from frame one.
+- [x] Give Dalia a distinct live introduction beat with approved portrait, name, role, voice, and readable hold before Samira speaks.
+- [x] Give Samira a distinct live introduction beat with approved portrait, name, role, voice, and readable hold separate from Dalia.
+- [x] Give ARIA a distinct activation/introduction beat with the production icon, role, boot cue, and non-human audio identity before Commander selection.
+- [x] Integrate continuous live city/market, city-under-attack, and command-room ambience from sequence start, routed through the existing sound settings and paused/cancelled with the sequence.
+- [x] Integrate dedicated restrained calm/crisis score loops through the existing music settings; playback does not begin as silence and remains mixed below voice.
+- [x] Replace the rejected generic explosion/battlefield/objective mix with eight AI-generated FirstLaunch assets: calm/crisis score, city market, city attack, command room, convoy, distant attack, and emergency radio. Prompts, candidate metrics, rights note, and selected files are recorded under `Assets/Game/Audio/Narrative/FirstLaunch/`; generic large-explosion and transition cues are no longer wired. After second review, city-attack, command-room, and radio textures were regenerated with an explicit no-human-speech contract, and the radio event layer was disconnected from dialogue states.
+- [x] Verify voice, music, ambience, vehicle/conflict cues, mute settings, pause/resume, seek/restart, Skip, and route cancellation remain independently controllable and leave no stale audio. Clip/state/mix policy lives in `Game.Composition`; `NarrativeSequenceAudioView` is a passive serialized-reference/audio presentation view; `Game.UI.Runtime` has no `Game.Configs` dependency. Focused presentation/audio validation passes `9/9`, and assembly-boundary validation passes `31/31`; final live playback remains part of the next item.
+- [~] Re-run tests and capture complete 16:9/20:9/tablet normal, reduced-motion, subtitles-off, audio-layer, identity/guidance, Skip, and full-playback evidence; pass Gate 9R through another user live review before M01 begins. Corrected standard/long GPU layout evidence, `31/31` assembly-boundary checks, `29/29` focused checks, performance/residency validation, and strengthened `1/1` live Menu PlayMode integration pass through actual Commander/Guidance commits and single-source FL-P09 narration; only user playback confirmation remains.
 
 ### Phase 11: Visual, Device, Memory, And Regression QA
 

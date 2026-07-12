@@ -104,6 +104,13 @@ namespace Game.Editor
             SetPanelReferences(state, id);
             Set(state, "motionPreset", ResolveMotion(id));
             Set(state, "durationSeconds", ResolveDuration(id));
+            if (id == "FL-P01")
+            {
+                Set(state, "locationTitleKey", "narrative.first_launch.location.sahrin.name");
+                Set(state, "locationTitleFallback", "SAHRIN");
+                Set(state, "locationSubtitleKey", "narrative.first_launch.location.old_market.context");
+                Set(state, "locationSubtitleFallback", "OLD MARKET / 06:42 LOCAL");
+            }
             List<NarrativeDialogueLineRecord> records = new();
             foreach (LineDefinition definition in Lines)
             {

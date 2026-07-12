@@ -1,210 +1,938 @@
 {
-  "schema": "WarlineCapture.ElevenLabsSfxGeneration.v0.1",
-  "generatedAtUtc": "2026-07-12T08:14:38.316924+00:00",
-  "endpoint": "https://api.elevenlabs.io/v1/sound-generation",
-  "modelId": "eleven_text_to_sound_v2",
-  "outputFormat": "mp3_44100_128",
-  "mapped": true,
-  "events": [
+  "schema": "WarlineCapture.ArrangedBackgroundMusic.v2",
+  "generator": "Tools/Audio/generate_background_music.py",
+  "license": {
+    "source": "GarageBand royalty-free Apple Loops",
+    "terms": "https://support.apple.com/102034",
+    "restriction": "Rendered original arrangements may ship; source loops must not be redistributed standalone."
+  },
+  "intent": "Military tactical score led by marching cadence, brass, and orchestral movement, with restrained Middle Eastern regional color.",
+  "sources": [
+    {
+      "source_id": "persian_tar_100",
+      "relative_path": "Apple Loops for GarageBand/Persian Market Tar 01.caf",
+      "native_bars": 2,
+      "native_tempo": 100.0,
+      "role": "Persian melodic lead"
+    },
+    {
+      "source_id": "persian_tar_85",
+      "relative_path": "Apple Loops for GarageBand/Persian Market Tar 02.caf",
+      "native_bars": 2,
+      "native_tempo": 85.0,
+      "role": "Persian melodic lead"
+    },
+    {
+      "source_id": "oud_gold_a",
+      "relative_path": "Apple Loops for GarageBand/Eastern Gold Oud 07.caf",
+      "native_bars": 2,
+      "native_tempo": 85.0,
+      "role": "Oud answer phrase"
+    },
+    {
+      "source_id": "oud_gold_b",
+      "relative_path": "Apple Loops for GarageBand/Eastern Gold Oud 08.caf",
+      "native_bars": 2,
+      "native_tempo": 85.0,
+      "role": "Oud answer phrase"
+    },
+    {
+      "source_id": "oud_gold_turn",
+      "relative_path": "Apple Loops for GarageBand/Eastern Gold Oud 12.caf",
+      "native_bars": 1,
+      "native_tempo": 85.0,
+      "role": "Oud transition phrase"
+    },
+    {
+      "source_id": "oud_storm_a",
+      "relative_path": "Apple Loops for GarageBand/Eastern Storm Oud 01.caf",
+      "native_bars": 1,
+      "native_tempo": 81.0,
+      "role": "Urgent oud motif"
+    },
+    {
+      "source_id": "oud_storm_b",
+      "relative_path": "Apple Loops for GarageBand/Eastern Storm Oud 02.caf",
+      "native_bars": 1,
+      "native_tempo": 81.0,
+      "role": "Urgent oud motif"
+    },
+    {
+      "source_id": "darbuka_a",
+      "relative_path": "Apple Loops for GarageBand/Egyptian Nile Darbouka 01.caf",
+      "native_bars": 2,
+      "native_tempo": 100.0,
+      "role": "Middle Eastern hand percussion"
+    },
+    {
+      "source_id": "darbuka_b",
+      "relative_path": "Apple Loops for GarageBand/Egyptian Nile Darbouka 02.caf",
+      "native_bars": 2,
+      "native_tempo": 100.0,
+      "role": "Middle Eastern hand percussion"
+    },
+    {
+      "source_id": "darbuka_c",
+      "relative_path": "Apple Loops for GarageBand/Egyptian Nile Darbouka 03.caf",
+      "native_bars": 2,
+      "native_tempo": 100.0,
+      "role": "Middle Eastern hand percussion"
+    },
+    {
+      "source_id": "orchestra_strings",
+      "relative_path": "Apple Loops for GarageBand/Orchestra Strings 27.caf",
+      "native_bars": 4,
+      "native_tempo": 100.0,
+      "role": "Orchestral harmonic movement"
+    },
+    {
+      "source_id": "command_brass",
+      "relative_path": "01 Hip Hop/Rise Up Strings and Brass.caf",
+      "native_bars": 4,
+      "native_tempo": 81.0,
+      "role": "Command-theme brass and strings"
+    },
+    {
+      "source_id": "military_roll",
+      "relative_path": "02 Electro House/Military Roll Topper.caf",
+      "native_bars": 2,
+      "native_tempo": 128.0,
+      "role": "Restrained military snare pulse"
+    },
+    {
+      "source_id": "marching_drum",
+      "relative_path": "02 Electro House/Marching Drum Topper.caf",
+      "native_bars": 2,
+      "native_tempo": 128.0,
+      "role": "Restrained marching pulse"
+    }
+  ],
+  "tracks": [
     {
       "spec": {
-        "event_id": "Music.Menu.Loop",
-        "asset_path": "Assets/Game/Audio/Music/music_menu_loop_01.wav",
-        "duration_seconds": 30.0,
-        "prompt": "Seamless cinematic main-menu underscore for a modern Middle Eastern military strategy game, measured command-room confidence, warm cello and low strings, restrained oud motif, subtle airy ney texture, sparse soft frame drum accents, evolving harmony without a repetitive pulse, no vocals, no chant, no spoken words, no trailer hits, no booms, no alarms, no sound effects, clean headroom.",
-        "loop": true,
-        "prompt_influence": 0.57,
-        "min_score": 72.0,
-        "min_rms_db": -34.0,
-        "max_rms_db": -14.0,
-        "max_silence_ratio": 0.55,
-        "min_crest_db": 3.0,
-        "max_crest_db": 19.0,
-        "transient_expected": false,
-        "target_lufs": -16.0
+        "track_id": "Music.Menu.Loop",
+        "output_name": "music_menu_loop_01.wav",
+        "title": "Command at Dawn",
+        "tempo": 81.0,
+        "bars": 24,
+        "target_rms_db": -18.0,
+        "layers": [
+          {
+            "source_id": "command_brass",
+            "start_bar": 0,
+            "bars": 4,
+            "gain_db": -10.5,
+            "pan": 0.0
+          },
+          {
+            "source_id": "command_brass",
+            "start_bar": 4,
+            "bars": 4,
+            "gain_db": -10.5,
+            "pan": 0.0
+          },
+          {
+            "source_id": "command_brass",
+            "start_bar": 8,
+            "bars": 4,
+            "gain_db": -10.5,
+            "pan": 0.0
+          },
+          {
+            "source_id": "command_brass",
+            "start_bar": 12,
+            "bars": 4,
+            "gain_db": -10.5,
+            "pan": 0.0
+          },
+          {
+            "source_id": "command_brass",
+            "start_bar": 16,
+            "bars": 4,
+            "gain_db": -10.5,
+            "pan": 0.0
+          },
+          {
+            "source_id": "command_brass",
+            "start_bar": 20,
+            "bars": 4,
+            "gain_db": -10.5,
+            "pan": 0.0
+          },
+          {
+            "source_id": "orchestra_strings",
+            "start_bar": 0,
+            "bars": 4,
+            "gain_db": -19.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "orchestra_strings",
+            "start_bar": 4,
+            "bars": 4,
+            "gain_db": -19.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "orchestra_strings",
+            "start_bar": 8,
+            "bars": 4,
+            "gain_db": -19.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "orchestra_strings",
+            "start_bar": 12,
+            "bars": 4,
+            "gain_db": -19.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "orchestra_strings",
+            "start_bar": 16,
+            "bars": 4,
+            "gain_db": -19.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "orchestra_strings",
+            "start_bar": 20,
+            "bars": 4,
+            "gain_db": -19.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "military_roll",
+            "start_bar": 4,
+            "bars": 2,
+            "gain_db": -15.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "military_roll",
+            "start_bar": 8,
+            "bars": 2,
+            "gain_db": -15.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "military_roll",
+            "start_bar": 12,
+            "bars": 2,
+            "gain_db": -15.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "military_roll",
+            "start_bar": 16,
+            "bars": 2,
+            "gain_db": -15.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "military_roll",
+            "start_bar": 20,
+            "bars": 2,
+            "gain_db": -15.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "marching_drum",
+            "start_bar": 6,
+            "bars": 2,
+            "gain_db": -17.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "marching_drum",
+            "start_bar": 10,
+            "bars": 2,
+            "gain_db": -17.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "marching_drum",
+            "start_bar": 14,
+            "bars": 2,
+            "gain_db": -17.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "marching_drum",
+            "start_bar": 18,
+            "bars": 2,
+            "gain_db": -17.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "marching_drum",
+            "start_bar": 22,
+            "bars": 2,
+            "gain_db": -17.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "darbuka_a",
+            "start_bar": 4,
+            "bars": 2,
+            "gain_db": -22.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "darbuka_a",
+            "start_bar": 8,
+            "bars": 2,
+            "gain_db": -22.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "darbuka_a",
+            "start_bar": 12,
+            "bars": 2,
+            "gain_db": -22.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "darbuka_a",
+            "start_bar": 16,
+            "bars": 2,
+            "gain_db": -22.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "darbuka_a",
+            "start_bar": 20,
+            "bars": 2,
+            "gain_db": -22.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "persian_tar_85",
+            "start_bar": 4,
+            "bars": 2,
+            "gain_db": -15.0,
+            "pan": -0.12
+          },
+          {
+            "source_id": "oud_gold_a",
+            "start_bar": 10,
+            "bars": 2,
+            "gain_db": -16.0,
+            "pan": 0.14
+          },
+          {
+            "source_id": "persian_tar_85",
+            "start_bar": 16,
+            "bars": 2,
+            "gain_db": -15.0,
+            "pan": -0.1
+          },
+          {
+            "source_id": "oud_gold_turn",
+            "start_bar": 23,
+            "bars": 1,
+            "gain_db": -17.0,
+            "pan": 0.1
+          }
+        ]
       },
-      "bestCandidateIndex": 1,
-      "bestScore": 100.0,
-      "bestPassed": true,
-      "mapped": true,
-      "candidates": [
-        {
-          "event_id": "Music.Menu.Loop",
-          "index": 1,
-          "mp3_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T081438Z/music_menu_loop/candidate_01.mp3",
-          "wav_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T081438Z/music_menu_loop/candidate_01.wav",
-          "score": 100.0,
-          "passed": true,
-          "reasons": [],
-          "metrics": {
-            "duration_seconds": 30.0,
-            "sample_rate": 44100,
-            "channels": 1,
-            "rms_db": -21.665365450819905,
-            "peak_db": -3.0266126913791225,
-            "crest_db": 18.638752759440784,
-            "clipped_ratio": 0.0,
-            "near_clip_ratio": 0.0,
-            "silence_ratio": 0.38568480725623583,
-            "zero_crossing_rate": 0.015711262282690854
-          }
-        },
-        {
-          "event_id": "Music.Menu.Loop",
-          "index": 2,
-          "mp3_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T081438Z/music_menu_loop/candidate_02.mp3",
-          "wav_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T081438Z/music_menu_loop/candidate_02.wav",
-          "score": 90.0,
-          "passed": true,
-          "reasons": [
-            "spiky_crest=19.3dB"
-          ],
-          "metrics": {
-            "duration_seconds": 30.0,
-            "sample_rate": 44100,
-            "channels": 1,
-            "rms_db": -22.781556250250844,
-            "peak_db": -3.523946018540366,
-            "crest_db": 19.25761023171048,
-            "clipped_ratio": 0.0,
-            "near_clip_ratio": 0.0,
-            "silence_ratio": 0.30639455782312924,
-            "zero_crossing_rate": 0.011614512471655328
-          }
-        }
-      ]
+      "assetPath": "Assets/Game/Audio/Music/music_menu_loop_01.wav",
+      "metrics": {
+        "duration_seconds": 71.11111111111111,
+        "sample_rate": 44100,
+        "channels": 2,
+        "rms_db": -18.88104478645766,
+        "peak_db": -2.0,
+        "crest_db": 16.88104478645766,
+        "silence_ratio": 0.007738679846938775,
+        "window_rms_range_db": 4.55361318925166,
+        "max_window_rms_jump_db": 5.5644957426756925,
+        "active_window_ratio": 1.0,
+        "seam_delta": 0.0
+      },
+      "passed": true,
+      "failures": []
     },
     {
       "spec": {
-        "event_id": "Music.Match.CalmLoop",
-        "asset_path": "Assets/Game/Audio/Music/music_match_calm_loop_01.wav",
-        "duration_seconds": 30.0,
-        "prompt": "Seamless tactical battlefield underscore for a modern Middle Eastern RTS match, focused anticipation rather than constant action, low strings, restrained oud phrases, quiet irregular frame drum and muted hand percussion, subtle evolving tension with generous space for engines, weapons, alerts, and radio, no vocals, no chant, no spoken words, no explosions, no trailer hits, no repetitive bass thump, clean headroom.",
-        "loop": true,
-        "prompt_influence": 0.58,
-        "min_score": 72.0,
-        "min_rms_db": -34.0,
-        "max_rms_db": -15.0,
-        "max_silence_ratio": 0.55,
-        "min_crest_db": 3.0,
-        "max_crest_db": 20.0,
-        "transient_expected": false,
-        "target_lufs": -16.0
+        "track_id": "Music.Match.CalmLoop",
+        "output_name": "music_match_calm_loop_01.wav",
+        "title": "Patrol Through Dust",
+        "tempo": 95.0,
+        "bars": 24,
+        "target_rms_db": -19.0,
+        "layers": [
+          {
+            "source_id": "command_brass",
+            "start_bar": 0,
+            "bars": 4,
+            "gain_db": -11.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "command_brass",
+            "start_bar": 4,
+            "bars": 4,
+            "gain_db": -11.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "command_brass",
+            "start_bar": 8,
+            "bars": 4,
+            "gain_db": -11.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "command_brass",
+            "start_bar": 12,
+            "bars": 4,
+            "gain_db": -11.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "command_brass",
+            "start_bar": 16,
+            "bars": 4,
+            "gain_db": -11.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "command_brass",
+            "start_bar": 20,
+            "bars": 4,
+            "gain_db": -11.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "orchestra_strings",
+            "start_bar": 0,
+            "bars": 4,
+            "gain_db": -19.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "orchestra_strings",
+            "start_bar": 4,
+            "bars": 4,
+            "gain_db": -19.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "orchestra_strings",
+            "start_bar": 8,
+            "bars": 4,
+            "gain_db": -19.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "orchestra_strings",
+            "start_bar": 12,
+            "bars": 4,
+            "gain_db": -19.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "orchestra_strings",
+            "start_bar": 16,
+            "bars": 4,
+            "gain_db": -19.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "orchestra_strings",
+            "start_bar": 20,
+            "bars": 4,
+            "gain_db": -19.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "military_roll",
+            "start_bar": 0,
+            "bars": 2,
+            "gain_db": -15.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "military_roll",
+            "start_bar": 4,
+            "bars": 2,
+            "gain_db": -15.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "military_roll",
+            "start_bar": 8,
+            "bars": 2,
+            "gain_db": -15.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "military_roll",
+            "start_bar": 12,
+            "bars": 2,
+            "gain_db": -15.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "military_roll",
+            "start_bar": 16,
+            "bars": 2,
+            "gain_db": -15.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "military_roll",
+            "start_bar": 20,
+            "bars": 2,
+            "gain_db": -15.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "marching_drum",
+            "start_bar": 2,
+            "bars": 2,
+            "gain_db": -16.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "marching_drum",
+            "start_bar": 6,
+            "bars": 2,
+            "gain_db": -16.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "marching_drum",
+            "start_bar": 10,
+            "bars": 2,
+            "gain_db": -16.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "marching_drum",
+            "start_bar": 14,
+            "bars": 2,
+            "gain_db": -16.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "marching_drum",
+            "start_bar": 18,
+            "bars": 2,
+            "gain_db": -16.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "marching_drum",
+            "start_bar": 22,
+            "bars": 2,
+            "gain_db": -16.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "darbuka_a",
+            "start_bar": 2,
+            "bars": 2,
+            "gain_db": -20.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "darbuka_a",
+            "start_bar": 6,
+            "bars": 2,
+            "gain_db": -20.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "darbuka_a",
+            "start_bar": 10,
+            "bars": 2,
+            "gain_db": -20.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "darbuka_a",
+            "start_bar": 14,
+            "bars": 2,
+            "gain_db": -20.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "darbuka_a",
+            "start_bar": 18,
+            "bars": 2,
+            "gain_db": -20.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "darbuka_a",
+            "start_bar": 22,
+            "bars": 2,
+            "gain_db": -20.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "persian_tar_100",
+            "start_bar": 4,
+            "bars": 2,
+            "gain_db": -15.0,
+            "pan": -0.12
+          },
+          {
+            "source_id": "oud_storm_b",
+            "start_bar": 11,
+            "bars": 1,
+            "gain_db": -17.0,
+            "pan": 0.15
+          },
+          {
+            "source_id": "persian_tar_100",
+            "start_bar": 16,
+            "bars": 2,
+            "gain_db": -15.0,
+            "pan": -0.12
+          }
+        ]
       },
-      "bestCandidateIndex": 1,
-      "bestScore": 100.0,
-      "bestPassed": true,
-      "mapped": true,
-      "candidates": [
-        {
-          "event_id": "Music.Match.CalmLoop",
-          "index": 1,
-          "mp3_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T081438Z/music_match_calmloop/candidate_01.mp3",
-          "wav_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T081438Z/music_match_calmloop/candidate_01.wav",
-          "score": 100.0,
-          "passed": true,
-          "reasons": [],
-          "metrics": {
-            "duration_seconds": 30.0,
-            "sample_rate": 44100,
-            "channels": 1,
-            "rms_db": -21.726099089974934,
-            "peak_db": -3.903164314403152,
-            "crest_db": 17.82293477557178,
-            "clipped_ratio": 0.0,
-            "near_clip_ratio": 0.0,
-            "silence_ratio": 0.2672947845804989,
-            "zero_crossing_rate": 0.01000755857898715
-          }
-        },
-        {
-          "event_id": "Music.Match.CalmLoop",
-          "index": 2,
-          "mp3_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T081438Z/music_match_calmloop/candidate_02.mp3",
-          "wav_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T081438Z/music_match_calmloop/candidate_02.wav",
-          "score": 100.0,
-          "passed": true,
-          "reasons": [],
-          "metrics": {
-            "duration_seconds": 30.0,
-            "sample_rate": 44100,
-            "channels": 1,
-            "rms_db": -21.362911281738988,
-            "peak_db": -2.7800146072480283,
-            "crest_db": 18.58289667449096,
-            "clipped_ratio": 0.0,
-            "near_clip_ratio": 0.0,
-            "silence_ratio": 0.30969236583522297,
-            "zero_crossing_rate": 0.015342403628117915
-          }
-        }
-      ]
+      "assetPath": "Assets/Game/Audio/Music/music_match_calm_loop_01.wav",
+      "metrics": {
+        "duration_seconds": 60.6315873015873,
+        "sample_rate": 44100,
+        "channels": 2,
+        "rms_db": -19.293695096323766,
+        "peak_db": -2.0,
+        "crest_db": 17.293695096323766,
+        "silence_ratio": 0.008054855670824089,
+        "window_rms_range_db": 4.633589997840925,
+        "max_window_rms_jump_db": 5.48373438361401,
+        "active_window_ratio": 1.0,
+        "seam_delta": 0.0
+      },
+      "passed": true,
+      "failures": []
     },
     {
       "spec": {
-        "event_id": "Music.Match.CombatLoop",
-        "asset_path": "Assets/Game/Audio/Music/music_match_combat_loop_01.wav",
-        "duration_seconds": 30.0,
-        "prompt": "Seamless elevated-combat variation for a modern Middle Eastern RTS match, urgent low strings, evolving oud ostinato, controlled irregular frame drums and deep hand percussion, tactical momentum without a constant pounding beat, space for weapon and warning audio, no vocals, no chant, no spoken words, no explosions, no trailer booms, no risers, clean headroom.",
-        "loop": true,
-        "prompt_influence": 0.58,
-        "min_score": 72.0,
-        "min_rms_db": -34.0,
-        "max_rms_db": -13.0,
-        "max_silence_ratio": 0.55,
-        "min_crest_db": 3.0,
-        "max_crest_db": 21.0,
-        "transient_expected": false,
-        "target_lufs": -16.0
+        "track_id": "Music.Match.CombatLoop",
+        "output_name": "music_match_combat_loop_01.wav",
+        "title": "Armored Advance",
+        "tempo": 100.0,
+        "bars": 24,
+        "target_rms_db": -17.5,
+        "layers": [
+          {
+            "source_id": "command_brass",
+            "start_bar": 0,
+            "bars": 4,
+            "gain_db": -8.5,
+            "pan": 0.0
+          },
+          {
+            "source_id": "command_brass",
+            "start_bar": 4,
+            "bars": 4,
+            "gain_db": -8.5,
+            "pan": 0.0
+          },
+          {
+            "source_id": "command_brass",
+            "start_bar": 8,
+            "bars": 4,
+            "gain_db": -8.5,
+            "pan": 0.0
+          },
+          {
+            "source_id": "command_brass",
+            "start_bar": 12,
+            "bars": 4,
+            "gain_db": -8.5,
+            "pan": 0.0
+          },
+          {
+            "source_id": "command_brass",
+            "start_bar": 16,
+            "bars": 4,
+            "gain_db": -8.5,
+            "pan": 0.0
+          },
+          {
+            "source_id": "command_brass",
+            "start_bar": 20,
+            "bars": 4,
+            "gain_db": -8.5,
+            "pan": 0.0
+          },
+          {
+            "source_id": "orchestra_strings",
+            "start_bar": 0,
+            "bars": 4,
+            "gain_db": -16.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "orchestra_strings",
+            "start_bar": 4,
+            "bars": 4,
+            "gain_db": -16.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "orchestra_strings",
+            "start_bar": 8,
+            "bars": 4,
+            "gain_db": -16.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "orchestra_strings",
+            "start_bar": 12,
+            "bars": 4,
+            "gain_db": -16.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "orchestra_strings",
+            "start_bar": 16,
+            "bars": 4,
+            "gain_db": -16.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "orchestra_strings",
+            "start_bar": 20,
+            "bars": 4,
+            "gain_db": -16.0,
+            "pan": 0.0
+          },
+          {
+            "source_id": "military_roll",
+            "start_bar": 0,
+            "bars": 2,
+            "gain_db": -10.5,
+            "pan": 0.0
+          },
+          {
+            "source_id": "military_roll",
+            "start_bar": 4,
+            "bars": 2,
+            "gain_db": -10.5,
+            "pan": 0.0
+          },
+          {
+            "source_id": "military_roll",
+            "start_bar": 8,
+            "bars": 2,
+            "gain_db": -10.5,
+            "pan": 0.0
+          },
+          {
+            "source_id": "military_roll",
+            "start_bar": 12,
+            "bars": 2,
+            "gain_db": -10.5,
+            "pan": 0.0
+          },
+          {
+            "source_id": "military_roll",
+            "start_bar": 16,
+            "bars": 2,
+            "gain_db": -10.5,
+            "pan": 0.0
+          },
+          {
+            "source_id": "military_roll",
+            "start_bar": 20,
+            "bars": 2,
+            "gain_db": -10.5,
+            "pan": 0.0
+          },
+          {
+            "source_id": "marching_drum",
+            "start_bar": 2,
+            "bars": 2,
+            "gain_db": -11.5,
+            "pan": 0.0
+          },
+          {
+            "source_id": "marching_drum",
+            "start_bar": 6,
+            "bars": 2,
+            "gain_db": -11.5,
+            "pan": 0.0
+          },
+          {
+            "source_id": "marching_drum",
+            "start_bar": 10,
+            "bars": 2,
+            "gain_db": -11.5,
+            "pan": 0.0
+          },
+          {
+            "source_id": "marching_drum",
+            "start_bar": 14,
+            "bars": 2,
+            "gain_db": -11.5,
+            "pan": 0.0
+          },
+          {
+            "source_id": "marching_drum",
+            "start_bar": 18,
+            "bars": 2,
+            "gain_db": -11.5,
+            "pan": 0.0
+          },
+          {
+            "source_id": "marching_drum",
+            "start_bar": 22,
+            "bars": 2,
+            "gain_db": -11.5,
+            "pan": 0.0
+          },
+          {
+            "source_id": "darbuka_a",
+            "start_bar": 0,
+            "bars": 2,
+            "gain_db": -15.0,
+            "pan": -0.08
+          },
+          {
+            "source_id": "darbuka_a",
+            "start_bar": 6,
+            "bars": 2,
+            "gain_db": -15.0,
+            "pan": -0.08
+          },
+          {
+            "source_id": "darbuka_a",
+            "start_bar": 12,
+            "bars": 2,
+            "gain_db": -15.0,
+            "pan": -0.08
+          },
+          {
+            "source_id": "darbuka_a",
+            "start_bar": 18,
+            "bars": 2,
+            "gain_db": -15.0,
+            "pan": -0.08
+          },
+          {
+            "source_id": "darbuka_b",
+            "start_bar": 2,
+            "bars": 2,
+            "gain_db": -15.0,
+            "pan": 0.08
+          },
+          {
+            "source_id": "darbuka_b",
+            "start_bar": 8,
+            "bars": 2,
+            "gain_db": -15.0,
+            "pan": 0.08
+          },
+          {
+            "source_id": "darbuka_b",
+            "start_bar": 14,
+            "bars": 2,
+            "gain_db": -15.0,
+            "pan": 0.08
+          },
+          {
+            "source_id": "darbuka_b",
+            "start_bar": 20,
+            "bars": 2,
+            "gain_db": -15.0,
+            "pan": 0.08
+          },
+          {
+            "source_id": "darbuka_c",
+            "start_bar": 4,
+            "bars": 2,
+            "gain_db": -14.5,
+            "pan": 0.0
+          },
+          {
+            "source_id": "darbuka_c",
+            "start_bar": 10,
+            "bars": 2,
+            "gain_db": -14.5,
+            "pan": 0.0
+          },
+          {
+            "source_id": "darbuka_c",
+            "start_bar": 16,
+            "bars": 2,
+            "gain_db": -14.5,
+            "pan": 0.0
+          },
+          {
+            "source_id": "darbuka_c",
+            "start_bar": 22,
+            "bars": 2,
+            "gain_db": -14.5,
+            "pan": 0.0
+          },
+          {
+            "source_id": "persian_tar_100",
+            "start_bar": 4,
+            "bars": 2,
+            "gain_db": -14.0,
+            "pan": -0.14
+          },
+          {
+            "source_id": "persian_tar_100",
+            "start_bar": 12,
+            "bars": 2,
+            "gain_db": -14.0,
+            "pan": -0.14
+          },
+          {
+            "source_id": "persian_tar_100",
+            "start_bar": 20,
+            "bars": 2,
+            "gain_db": -14.0,
+            "pan": -0.14
+          },
+          {
+            "source_id": "oud_storm_b",
+            "start_bar": 7,
+            "bars": 1,
+            "gain_db": -16.0,
+            "pan": 0.14
+          },
+          {
+            "source_id": "oud_storm_b",
+            "start_bar": 15,
+            "bars": 1,
+            "gain_db": -16.0,
+            "pan": 0.14
+          },
+          {
+            "source_id": "oud_storm_b",
+            "start_bar": 23,
+            "bars": 1,
+            "gain_db": -16.0,
+            "pan": 0.14
+          }
+        ]
       },
-      "bestCandidateIndex": 1,
-      "bestScore": 100.0,
-      "bestPassed": true,
-      "mapped": true,
-      "candidates": [
-        {
-          "event_id": "Music.Match.CombatLoop",
-          "index": 1,
-          "mp3_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T081438Z/music_match_combatloop/candidate_01.mp3",
-          "wav_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T081438Z/music_match_combatloop/candidate_01.wav",
-          "score": 100.0,
-          "passed": true,
-          "reasons": [],
-          "metrics": {
-            "duration_seconds": 30.0,
-            "sample_rate": 44100,
-            "channels": 1,
-            "rms_db": -20.13821411002437,
-            "peak_db": -1.9998490310736532,
-            "crest_db": 18.13836507895072,
-            "clipped_ratio": 0.0,
-            "near_clip_ratio": 0.0,
-            "silence_ratio": 0.1752207105064248,
-            "zero_crossing_rate": 0.006373393801965231
-          }
-        },
-        {
-          "event_id": "Music.Match.CombatLoop",
-          "index": 2,
-          "mp3_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T081438Z/music_match_combatloop/candidate_02.mp3",
-          "wav_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T081438Z/music_match_combatloop/candidate_02.wav",
-          "score": 100.0,
-          "passed": true,
-          "reasons": [],
-          "metrics": {
-            "duration_seconds": 30.0,
-            "sample_rate": 44100,
-            "channels": 1,
-            "rms_db": -22.196641709933495,
-            "peak_db": -2.0085295795586617,
-            "crest_db": 20.188112130374833,
-            "clipped_ratio": 0.0,
-            "near_clip_ratio": 0.0,
-            "silence_ratio": 0.40499244142101287,
-            "zero_crossing_rate": 0.03317762660619804
-          }
-        }
-      ]
+      "assetPath": "Assets/Game/Audio/Music/music_match_combat_loop_01.wav",
+      "metrics": {
+        "duration_seconds": 57.6,
+        "sample_rate": 44100,
+        "channels": 2,
+        "rms_db": -19.268987736051834,
+        "peak_db": -2.0,
+        "crest_db": 17.268987736051834,
+        "silence_ratio": 0.008256960191484001,
+        "window_rms_range_db": 4.370604358303979,
+        "max_window_rms_jump_db": 5.183437969551331,
+        "active_window_ratio": 1.0,
+        "seam_delta": 0.0
+      },
+      "passed": true,
+      "failures": []
     }
   ]
 }

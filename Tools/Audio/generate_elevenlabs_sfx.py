@@ -31,6 +31,13 @@ DEFAULT_WORK_ROOT = Path("/private/tmp/warlinecapture-elevenlabs-sfx")
 API_URL = "https://api.elevenlabs.io/v1/sound-generation"
 MODEL_ID = "eleven_text_to_sound_v2"
 GENERATED_STATUS = "generated-elevenlabs"
+ARRANGED_MUSIC_EVENT_IDS = frozenset(
+    {
+        "Music.Menu.Loop",
+        "Music.Match.CalmLoop",
+        "Music.Match.CombatLoop",
+    }
+)
 
 
 @dataclass(frozen=True)
@@ -546,7 +553,11 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--api-key-file", type=Path, default=DEFAULT_SECRET_PATH)
     parser.add_argument("--work-root", type=Path, default=DEFAULT_WORK_ROOT)
-    parser.add_argument("--events", nargs="*", default=[spec.event_id for spec in SPECS])
+    parser.add_argument(
+        "--events",
+        nargs="*",
+        default=[spec.event_id for spec in SPECS if spec.event_id not in ARRANGED_MUSIC_EVENT_IDS],
+    )
     parser.add_argument("--candidate-count", type=int, default=2)
     parser.add_argument("--max-candidates", type=int, default=4)
     parser.add_argument("--min-score", type=float, default=None)
@@ -810,6 +821,13 @@ def map_candidate(spec: SfxSpec, candidate: CandidateResult) -> None:
 
 
 def find_specs(event_ids: list[str]) -> list[SfxSpec]:
+    arranged_music = sorted(set(event_ids) & ARRANGED_MUSIC_EVENT_IDS)
+    if arranged_music:
+        raise RuntimeError(
+            "Arranged music cannot be generated or mapped through the ElevenLabs SFX pipeline: "
+            f"{', '.join(arranged_music)}. Use Tools/Audio/generate_background_music.py."
+        )
+
     by_id = {spec.event_id: spec for spec in SPECS}
     missing = [event_id for event_id in event_ids if event_id not in by_id]
     if missing:

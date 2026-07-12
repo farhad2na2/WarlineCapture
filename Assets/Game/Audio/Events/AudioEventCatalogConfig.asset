@@ -899,7 +899,7 @@ MonoBehaviour:
     busId: Music
     priority: 3
     cooldownMilliseconds: 0
-    volumeDecibels: -8
+    volumeDecibels: -11
     pitchVariance: {x: 0, y: 0}
     playback:
       loop: 1
@@ -927,7 +927,7 @@ MonoBehaviour:
     busId: Music
     priority: 3
     cooldownMilliseconds: 0
-    volumeDecibels: -10
+    volumeDecibels: -13
     pitchVariance: {x: 0, y: 0}
     playback:
       loop: 1
@@ -941,7 +941,7 @@ MonoBehaviour:
     busId: Music
     priority: 3
     cooldownMilliseconds: 0
-    volumeDecibels: -8.5
+    volumeDecibels: -11.5
     pitchVariance: {x: 0, y: 0}
     playback:
       loop: 1

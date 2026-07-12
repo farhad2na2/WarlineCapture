@@ -62,6 +62,8 @@ public sealed class MenuMatchMusicPlayModeTests
 
         Assert.That(musicSource.clip, Is.Not.Null);
         Assert.That(musicSource.clip.name, Is.EqualTo(MenuMusicClipName));
+        Assert.That(musicSource.clip.channels, Is.EqualTo(2));
+        Assert.That(musicSource.clip.length, Is.GreaterThanOrEqualTo(45f));
         Assert.That(musicSource.loop, Is.True);
         Assert.That(musicSource.spatialBlend, Is.Zero);
 
@@ -119,6 +121,8 @@ public sealed class MenuMatchMusicPlayModeTests
 
         Assert.That(matchSource.loop, Is.True);
         Assert.That(matchSource.spatialBlend, Is.Zero);
+        Assert.That(matchSource.clip.channels, Is.EqualTo(2));
+        Assert.That(matchSource.clip.length, Is.GreaterThanOrEqualTo(45f));
 
         UISettingsModel settings = SettingsService.Load();
         settings.Audio.MusicEnabled = false;

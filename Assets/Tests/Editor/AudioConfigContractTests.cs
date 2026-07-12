@@ -88,7 +88,8 @@ public sealed class AudioConfigContractTests
             tests.SerializedRuntimeCatalogMatchesSourceJson();
             tests.AudioImportProfileConfigExists();
             tests.CatalogAudioImportSettingsMatchProfiles();
-            Debug.Log("[AudioConfigContractValidation] result=Passed tests=14");
+            tests.MenuAndMatchMusicUseLongStereoBackgroundMasters();
+            Debug.Log("[AudioConfigContractValidation] result=Passed tests=15");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -120,6 +121,24 @@ public sealed class AudioConfigContractTests
     {
         for (int i = 0; i < ConfigPaths.Length; i++)
             Assert.IsTrue(File.Exists(ConfigPaths[i]), $"Missing audio config contract: {ConfigPaths[i]}");
+    }
+
+    [Test]
+    public void MenuAndMatchMusicUseLongStereoBackgroundMasters()
+    {
+        foreach (string path in new[]
+                 {
+                     "Assets/Game/Audio/Music/music_menu_loop_01.wav",
+                     "Assets/Game/Audio/Music/music_match_calm_loop_01.wav",
+                     "Assets/Game/Audio/Music/music_match_combat_loop_01.wav",
+                 })
+        {
+            AudioClip clip = AssetDatabase.LoadAssetAtPath<AudioClip>(path);
+            Assert.NotNull(clip, path);
+            Assert.AreEqual(2, clip.channels, $"{path} must remain stereo so it reads as music rather than a centered SFX cue.");
+            Assert.GreaterOrEqual(clip.length, 45f, $"{path} must be a long-form background loop.");
+            Assert.AreEqual(44100, clip.frequency, path);
+        }
     }
 
     [Test]

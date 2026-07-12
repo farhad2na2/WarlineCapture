@@ -1561,7 +1561,7 @@
       "busId": "Music",
       "priority": "Critical",
       "cooldownMs": 0,
-      "volumeDb": -8.0,
+      "volumeDb": -11.0,
       "pitchVariance": {
         "min": 0.0,
         "max": 0.0
@@ -1575,7 +1575,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Music/music_menu_loop_01.wav",
-          "status": "generated-elevenlabs",
+          "status": "generated-arranged-music",
           "weight": 1
         }
       ]
@@ -1609,7 +1609,7 @@
       "busId": "Music",
       "priority": "Critical",
       "cooldownMs": 0,
-      "volumeDb": -10.0,
+      "volumeDb": -13.0,
       "pitchVariance": {
         "min": 0.0,
         "max": 0.0
@@ -1623,7 +1623,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Music/music_match_calm_loop_01.wav",
-          "status": "generated-elevenlabs",
+          "status": "generated-arranged-music",
           "weight": 1
         }
       ]
@@ -1633,7 +1633,7 @@
       "busId": "Music",
       "priority": "Critical",
       "cooldownMs": 0,
-      "volumeDb": -8.5,
+      "volumeDb": -11.5,
       "pitchVariance": {
         "min": 0.0,
         "max": 0.0
@@ -1647,7 +1647,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Music/music_match_combat_loop_01.wav",
-          "status": "generated-elevenlabs",
+          "status": "generated-arranged-music",
           "weight": 1
         }
       ]

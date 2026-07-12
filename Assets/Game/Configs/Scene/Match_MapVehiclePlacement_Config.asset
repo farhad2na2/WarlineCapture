@@ -30,8 +30,8 @@ MonoBehaviour:
     vehiclePrefab: {fileID: 5616646512338707422, guid: ba129d3b5a0324b82a9046e6a52c1149, type: 3}
     vehicleSourceKey: unit_veh_helicopter_attack
     factionId: 1
-    worldCenter: {x: 1000.60004, y: 2.7001143, z: 365.92065}
-    worldPosition: {x: 1000.60004, y: 0.49, z: 364.29996}
+    worldCenter: {x: 1000.60004, y: 2.7001143, z: 360.92065}
+    worldPosition: {x: 1000.60004, y: 0.49, z: 359.29996}
     worldEulerAngles: {x: 0, y: 181.48375, z: 0}
     worldScale: {x: 1.0000008, y: 1, z: 1.0000008}
   - sourcePath: Map/Vehicles/MapVehicle_Helicopter_Attack_Small/SM_Veh_Helicopter_Attack_02
@@ -78,8 +78,8 @@ MonoBehaviour:
     vehiclePrefab: {fileID: 5616646512338707422, guid: e540888d7cd8a489f9472b3456bf2406, type: 3}
     vehicleSourceKey: unit_veh_helicopter_transport
     factionId: 1
-    worldCenter: {x: 1001.1528, y: 3.232976, z: 390.75995}
-    worldPosition: {x: 1002.9801, y: 0.5, z: 390.75995}
+    worldCenter: {x: 1008.0727, y: 3.232976, z: 390.79993}
+    worldPosition: {x: 1009.9, y: 0.5, z: 390.79996}
     worldEulerAngles: {x: -0, y: 90, z: -0}
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
   - sourcePath: Map/Vehicles/MapVehicle_Jet_01/SM_Veh_Jet_01

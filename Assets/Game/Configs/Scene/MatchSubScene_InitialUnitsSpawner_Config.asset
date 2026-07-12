@@ -15,45 +15,7 @@ MonoBehaviour:
   blockerPrefab: {fileID: 1237425064649014, guid: f6662b2cec4426449a750eba281d5fb0, type: 3}
   unitSelectionMarkerPrefab: {fileID: 7141789922891347094, guid: d2834fbab75454c99b0b283a44cef502, type: 3}
   unitHealthBarPrefab: {fileID: 4330714435077561203, guid: b6790ac587427481c8b1718ba9b38a3f, type: 3}
-  factions:
-  - factionId: 1
-    spawnCell: {x: 150, y: 100}
-    units:
-    - prefab: {fileID: 3282182154612916099, guid: b3a1493b12f414f31a0d79a02ec4321d, type: 3}
-      count: 20
-      spawnOffset: {x: -72, y: 36}
-    - prefab: {fileID: 5616646512338707422, guid: bff0a8791ec564632b7bddbe3e544ac4, type: 3}
-      count: 1
-      spawnOffset: {x: -30, y: 36}
-    - prefab: {fileID: 796293600797947088, guid: 2cf8e4b8426144120a8e7033e5bee021, type: 3}
-      count: 1
-      spawnOffset: {x: -30, y: 36}
-    - prefab: {fileID: 5616646512338707422, guid: c0213638ba0c6466fadcd5bbe8fe0149, type: 3}
-      count: 1
-      spawnOffset: {x: 0, y: 0}
-    - prefab: {fileID: 5616646512338707422, guid: e540888d7cd8a489f9472b3456bf2406, type: 3}
-      count: 1
-      spawnOffset: {x: 0, y: -50}
-    - prefab: {fileID: 8579631638336695248, guid: 57f2dccc00faf49bca391aa1cc44d70a, type: 3}
-      count: 1
-      spawnOffset: {x: 24, y: -42}
-    - prefab: {fileID: 8579631638336695248, guid: e9015a8d3f0294ca6ac7bf8614ac2e7e, type: 3}
-      count: 1
-      spawnOffset: {x: 36, y: -42}
-    buildings: []
-  - factionId: 2
-    spawnCell: {x: 150, y: 50}
-    units:
-    - prefab: {fileID: 3282182154612916099, guid: df81751e398174cd2bbc879d76a72b94, type: 3}
-      count: 25
-      spawnOffset: {x: -150, y: -250}
-    - prefab: {fileID: 8579631638336695248, guid: 57f2dccc00faf49bca391aa1cc44d70a, type: 3}
-      count: 1
-      spawnOffset: {x: 24, y: -42}
-    - prefab: {fileID: 8579631638336695248, guid: e9015a8d3f0294ca6ac7bf8614ac2e7e, type: 3}
-      count: 1
-      spawnOffset: {x: 36, y: -42}
-    buildings: []
+  factions: []
   blockerCount: 0
   spawnRadiusCells: 10
   respawnDelaySeconds: 1

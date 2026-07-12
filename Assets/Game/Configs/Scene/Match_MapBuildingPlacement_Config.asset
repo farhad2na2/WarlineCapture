@@ -239,8 +239,8 @@ MonoBehaviour:
     category: Building_Helipad
     buildingPrefab: {fileID: 3689421368615084249, guid: 077763b7910da4a67be0c118c091c302, type: 3}
     factionId: 1
-    worldCenter: {x: 1000, y: 0.121525705, z: 365.39996}
-    worldPosition: {x: 1000, y: -0.27, z: 365.39996}
+    worldCenter: {x: 1000, y: 0.121525705, z: 359.99994}
+    worldPosition: {x: 1000, y: -0.27, z: 359.99994}
     worldEulerAngles: {x: -0, y: 90, z: -0}
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 90
@@ -249,8 +249,8 @@ MonoBehaviour:
     category: Building_Helipad
     buildingPrefab: {fileID: 3689421368615084249, guid: 077763b7910da4a67be0c118c091c302, type: 3}
     factionId: 1
-    worldCenter: {x: 1000.0101, y: 0.121525705, z: 393.21994}
-    worldPosition: {x: 1000.0101, y: -0.27, z: 393.21994}
+    worldCenter: {x: 1006.93, y: 0.121525705, z: 393.25995}
+    worldPosition: {x: 1006.93, y: -0.27, z: 393.25995}
     worldEulerAngles: {x: -0, y: 90, z: -0}
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 90

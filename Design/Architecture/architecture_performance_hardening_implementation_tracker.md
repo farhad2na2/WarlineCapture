@@ -251,17 +251,17 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `80 / 106` |
-| Checklist percent complete | `75.5%` |
+| Checklist complete | `81 / 106` |
+| Checklist percent complete | `76.4%` |
 | Checklist in progress | `11 / 106`: `APH-311`, `APH-408`, `APH-501`, `APH-502`, `APH-507`, `APH-508`, `APH-509`, `APH-601`, `APH-609`, `APH-704`, `APH-803` |
-| Complete plus active coverage | `91 / 106` (`85.8%`); this is visibility only, not accepted completion |
+| Complete plus active coverage | `92 / 106` (`86.8%`); this is visibility only, not accepted completion |
 | Current phase | Phase 3 Android device evidence, Phase 5 product budgets, Phase 6 map closeout, and bounded Phase 8 automation |
 | Current task | Close remaining FPS, memory, startup, package, architecture, and device gates; select the next bounded decomposition only when dependency-ready |
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: steady-state Match GC `234,324 / 1,024` bytes; improved 13.0% from the APH-007 baseline without weakening the budget |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
 | Last verified commit | `921336a00`; transport boarding decomposition and integrated validation evidence are committed on `main` |
-| Last update | 2026-07-11 - transport boarding is decomposed into sub-500-line partials with exact method-token parity and green behavior, scenario, performance, source-growth, Burst, and boundary gates |
+| Last update | 2026-07-12 - the UI shell ECS gateway is a bounded facade over private route, action, settings, and read-model adapters with green lifecycle, allocation, architecture, and source-growth gates |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -624,7 +624,8 @@ The `APH-007` raw-metadata GC report is mandatory measured input for this phase.
   - Result: `CombatDamageObservationBootstrapSystem` and `CombatDamageObservationUtility` now live in the dedicated combat assembly with their source GUID preserved. The regenerated dependency report contains the intended runtime/test edges and no reverse combat-to-runtime edge. Assembly boundary `31/31`, ECS/Burst `10/10`, source growth `15/15`, combat observation `9/9`, unit combat `3/3`, building defense `13/13`, ground missile `5/5`, air missile, and narrative regression validations pass with zero compiler errors. Evidence: `Design/AgentReports/2026-07-11_aph-706_combat_observation_assembly_split.md`.
 - [x] `APH-707` Decompose `TransportBoardingCommandSystem` by its existing planning/routing/application seams while preserving public behavior and scenario tests.
   - Result: the original 3,226-line unmanaged owner is now a 181-line shell plus nine cohesive partials between 241 and 416 lines. Ordered partial reconstruction exactly matches all 16,571 original implementation tokens. Transport `78/78`, selection `60/60`, scenario `15/15`, extraction `33/33`, DR-001 `2/2`, gateway PlayMode `1/1`, performance/allocation, source growth `15/15`, ECS/Burst `10/10`, and assembly boundary `31/31` validations pass with zero compiler errors. Evidence: `Design/AgentReports/2026-07-11_aph-707_transport_boarding_decomposition.md`.
-- [ ] `APH-708` Decompose `UiShellEcsGateway` into route, read-model, action, and settings adapters behind existing contracts; views remain passive.
+- [x] `APH-708` Decompose `UiShellEcsGateway` into route, read-model, action, and settings adapters behind existing contracts; views remain passive.
+  - Result: the 2,802-line gateway is now a 252-line registered facade over private route, action, settings, and bounded read-model adapters; every new file remains below 500 lines and no view references an ECS adapter. Shell content `11/11`, assistant command `6/6`, assistant cache/allocation `2/2`, resource header `8/8`, resource routing `5/5`, lifecycle PlayMode `1/1`, source growth `15/15`, boundary `31/31`, broad-shell `1/1`, ECS/Burst `10/10`, and three project builds pass with zero compiler errors. Evidence: `Design/AgentReports/2026-07-12_aph-708_ui_shell_gateway_decomposition.md`.
 - [ ] `APH-709` Decompose selection/HUD files only where profiler or change-frequency evidence identifies risk; do not split for line count alone.
 - [ ] `APH-710` Remove classified hidden world lookups and recurring per-frame allocation owners as each domain receives explicit World/EntityManager/query dependencies or cached non-allocating state.
 - [ ] `APH-711` Re-run compile time, domain reload time, architecture gates, focused tests, Match performance, and the unchanged steady-state GC capture after every physical asmdef split and final allocation-remediation slice.
@@ -1486,6 +1487,18 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Residual evidence: the broader scene transport fixture passes `8/9`; its existing soldier parachute visual offset expectation is `1.0` while runtime is `1.2`, and no visual-height code changed in this slice
 - Evidence: `Design/AgentReports/2026-07-11_aph-707_transport_boarding_decomposition.md`
 - Next ready task: close an active device/product gate or begin APH-708 only after assigning a disjoint UI gateway ownership boundary
+
+### 2026-07-12 - APH-708 - UI shell gateway decomposition
+
+- Status: Complete
+- Baseline: `dc13f0d44`
+- Behavior preserved/changed: the same registered facade, contracts, public signatures, explicit interface surface, cache reset, and view call sites remain; implementation ownership moved into private route, action, settings, and read-model adapters
+- Structural result: gateway reduced from 2,802 to 252 lines; all adapter files remain below 500 lines and inside `Game.UI.Shell.Ecs`; no serialized class, prefab, contract, or assembly edge changed
+- Integrated repair: authoritative empty fuel summaries no longer expose mock header fuel, Entities buffer tests reacquire after structural changes, Hold/Stop HUD tests match the established pressable-rejection design, and a stale narrative `Presenter` type name was removed with GUID preservation
+- Validation: shell content `11/11`, assistant commands `6/6`, assistant panel `2/2`, resource header `8/8`, resource routing `5/5`, lifecycle PlayMode `1/1`, narrative presentation `6/6`, source growth `15/15`, boundary `31/31`, broad shell `1/1`, ECS/Burst `10/10`, APH-700 generation pass, three project builds with zero errors, and `git diff --check` pass
+- Evidence: `Design/AgentReports/2026-07-12_aph-708_ui_shell_gateway_decomposition.md`
+- Residual risk: shared static cache ownership and default-world lookups remain for APH-710/711; this slice does not claim a Match FPS or GC reduction
+- Next ready task: close an active Android/product gate or select APH-709 only when profiler/change-frequency evidence proves a bounded selection/HUD target
 
 ## Decision Log
 

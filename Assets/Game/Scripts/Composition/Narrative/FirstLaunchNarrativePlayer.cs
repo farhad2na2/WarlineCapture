@@ -16,7 +16,7 @@ namespace Game.Composition
         private NarrativeSequenceConfig config;
         private NarrativePunctuationProfile punctuation;
         private NarrativeSequenceView view;
-        private NarrativeSequencePresenter presentation;
+        private NarrativeSequencePresentation presentation;
         private NarrativePanelMotion panelMotion;
         private readonly NarrativePanelAssetResidency panelResidency = new();
         private IGameTextResolver textResolver = FallbackGameTextResolver.Instance;
@@ -82,7 +82,7 @@ namespace Game.Composition
                     return false;
             }
 
-            presentation = new NarrativeSequencePresenter(view);
+            presentation = new NarrativeSequencePresentation(view);
             panelMotion = new NarrativePanelMotion(view.PanelMotionRoot);
             view.BindActions(HandleUiAction);
             return true;

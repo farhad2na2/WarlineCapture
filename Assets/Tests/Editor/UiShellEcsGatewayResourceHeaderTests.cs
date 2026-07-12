@@ -166,6 +166,7 @@ public sealed class UiShellEcsGatewayResourceHeaderTests
             Assert.AreSame(first.OilText, steady.OilText);
             Assert.AreSame(first.FuelText, steady.FuelText);
 
+            summaries = em.GetBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundary);
             BuildingRuntimeFactionUsableFuelSummary updated = summaries[0];
             updated.StoredOilBarrels = 3f;
             updated.StoredFuelBarrels = 16f;

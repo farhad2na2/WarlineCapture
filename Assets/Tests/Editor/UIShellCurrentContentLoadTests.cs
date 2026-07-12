@@ -368,8 +368,8 @@ public sealed class UIShellCurrentContentLoadTests
         readModel.ScanReason = TacticalCommandReasonCode.None;
         content.RefreshMatchHudCommandControlState();
 
-        Assert.IsFalse(controls.HoldButton.interactable, "Hold should disable when the read model rejects hold.");
-        Assert.IsFalse(controls.StopButton.interactable, "Stop should disable when the read model rejects stop.");
+        Assert.IsTrue(controls.HoldButton.interactable, "Hold stays pressable so the HUD can explain why the order is unavailable.");
+        Assert.IsTrue(controls.StopButton.interactable, "Stop stays pressable so the HUD can explain why the order is unavailable.");
         if (controls.CommandWheelStopButton != null)
             Assert.IsFalse(controls.CommandWheelStopButton.interactable, "Command wheel Stop should keep sharing the Stop capability model.");
         Assert.IsTrue(controls.ScanButton.interactable, "Scan should enable when the read model allows scan.");

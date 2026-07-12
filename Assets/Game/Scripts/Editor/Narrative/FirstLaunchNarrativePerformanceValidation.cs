@@ -124,7 +124,7 @@ namespace Game.Editor
         {
             UISettingsModel settings = Game.UI.Runtime.SettingsService.Defaults;
             settings.Narrative.AutoAdvance = true;
-            NarrativeSequencePresenter presentation = new(view);
+            NarrativeSequencePresentation presentation = new(view);
             presentation.StartDialogue(
                 "Optional voice unavailable. Continue with readable text.",
                 new NarrativeSpeakerPresentationModel

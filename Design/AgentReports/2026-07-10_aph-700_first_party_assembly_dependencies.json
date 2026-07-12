@@ -3,14 +3,14 @@
   "taskId": "APH-700",
   "scope": "Direct dependencies and source-level cross-domain type references for first-party asmdefs under Assets/Game, Assets/Tests, and Assets/Editor.",
   "determinismContract": "No timestamp or mutable VCS state; ordinal path ordering, normalized LF output, and a content-derived source fingerprint.",
-  "sourceFingerprintSha256": "1906317b59596637bd9ba1bcd6a7521c9e332f8c2efaff381e07f38c878f1ff1",
+  "sourceFingerprintSha256": "db7cb94973912224612530a6649b259360bc0e394255b06631b934dbbe8ea692",
   "summary": {
     "assemblyCount": 19,
     "firstPartyEdgeCount": 82,
     "externalReferenceCount": 99,
-    "sourceFileCount": 1208,
+    "sourceFileCount": 1229,
     "declaredTypeCount": 2573,
-    "resolvedCrossDomainTypeOccurrenceCount": 30514,
+    "resolvedCrossDomainTypeOccurrenceCount": 30542,
     "distinctCrossDomainTypeReferenceCount": 2762,
     "ambiguousTypeTokenOccurrenceCount": 53,
     "unownedScopedSourceFileCount": 0
@@ -92,7 +92,7 @@
       "name": "Game.Runtime",
       "asmdefPath": "Assets/Game/Scripts/Game.Runtime.asmdef",
       "asmdefGuid": "361d0433287ed4a42bf3fd161956446a",
-      "sourceFileCount": 473,
+      "sourceFileCount": 482,
       "declaredTypeCount": 1056,
       "firstPartyDependencyCount": 7,
       "externalDependencyCount": 11
@@ -173,7 +173,7 @@
       "name": "Game.UI.Shell.Ecs",
       "asmdefPath": "Assets/Game/Scripts/UI/Shell/Ecs/Game.UI.Shell.Ecs.asmdef",
       "asmdefGuid": "7fd1b0c6978e4c088f6be3617b2cb9f4",
-      "sourceFileCount": 24,
+      "sourceFileCount": 36,
       "declaredTypeCount": 28,
       "firstPartyDependencyCount": 8,
       "externalDependencyCount": 4
@@ -3169,9 +3169,9 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Game.Runtime.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Components/Game.Components.asmdef",
       "declaredReference": "Game.Components",
-      "resolvedTypeOccurrenceCount": 9678,
+      "resolvedTypeOccurrenceCount": 9677,
       "distinctResolvedTypeCount": 398,
-      "referencingSourceFileCount": 315,
+      "referencingSourceFileCount": 324,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Runtime",
@@ -3179,7 +3179,7 @@
           "fullTypeName": "Game.Components.GridConfig",
           "typeName": "GridConfig",
           "occurrenceCount": 686,
-          "sourceFileCount": 124,
+          "sourceFileCount": 132,
           "sourceFiles": [
             "Assets/Game/Scripts/Environment/RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper.cs",
             "Assets/Game/Scripts/Environment/RuntimeCityChainUtilitySystemHelper.cs",
@@ -3199,7 +3199,7 @@
           "fullTypeName": "Game.Components.UnitGrid",
           "typeName": "UnitGrid",
           "occurrenceCount": 383,
-          "sourceFileCount": 80,
+          "sourceFileCount": 87,
           "sourceFiles": [
             "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs",
             "Assets/Game/Scripts/Environment/RuntimeGridBlockerPresentationSystemHelper.cs",
@@ -3219,7 +3219,7 @@
           "fullTypeName": "Game.Components.Faction",
           "typeName": "Faction",
           "occurrenceCount": 319,
-          "sourceFileCount": 73,
+          "sourceFileCount": 75,
           "sourceFiles": [
             "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs",
             "Assets/Game/Scripts/ScenarioLab/BattleScenarioDr001Runner.cs",
@@ -3259,7 +3259,7 @@
           "fullTypeName": "Game.Components.UnitFootprint",
           "typeName": "UnitFootprint",
           "occurrenceCount": 233,
-          "sourceFileCount": 49,
+          "sourceFileCount": 56,
           "sourceFiles": [
             "Assets/Game/Scripts/Balance/GameRuntimeStats.cs",
             "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
@@ -3279,7 +3279,7 @@
           "fullTypeName": "Game.Components.RtsSelectionCommandIntentRequestElement",
           "typeName": "RtsSelectionCommandIntentRequestElement",
           "occurrenceCount": 179,
-          "sourceFileCount": 21,
+          "sourceFileCount": 22,
           "sourceFiles": [
             "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
             "Assets/Game/Scripts/Systems/AttackOrderCommandSystem.cs",
@@ -3299,7 +3299,7 @@
           "fullTypeName": "Game.Components.GridWalkable",
           "typeName": "GridWalkable",
           "occurrenceCount": 174,
-          "sourceFileCount": 34,
+          "sourceFileCount": 41,
           "sourceFiles": [
             "Assets/Game/Scripts/Environment/RuntimeGridBlockerPresentationSystemHelper.cs",
             "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
@@ -3319,7 +3319,7 @@
           "fullTypeName": "Game.Components.DynamicBlockerComponent",
           "typeName": "DynamicBlockerComponent",
           "occurrenceCount": 162,
-          "sourceFileCount": 53,
+          "sourceFileCount": 57,
           "sourceFiles": [
             "Assets/Game/Scripts/Environment/RuntimeCityReadinessQueryCompositionSystemHelper.cs",
             "Assets/Game/Scripts/Environment/RuntimeDecorationSpawnerPresentationSystemHelper.cs",
@@ -3356,21 +3356,21 @@
         {
           "sourceAssembly": "Game.Runtime",
           "targetAssembly": "Game.Components",
-          "fullTypeName": "Game.Components.UnitTarget",
-          "typeName": "UnitTarget",
+          "fullTypeName": "Game.Components.EngageTarget",
+          "typeName": "EngageTarget",
           "occurrenceCount": 132,
-          "sourceFileCount": 43,
+          "sourceFileCount": 42,
           "sourceFiles": [
-            "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
             "Assets/Game/Scripts/Systems/AICombatOrderSystem.cs",
+            "Assets/Game/Scripts/Systems/AIFactionControlSystem.cs",
+            "Assets/Game/Scripts/Systems/AISquadSystem.cs",
             "Assets/Game/Scripts/Systems/AircraftFuelSafetyReturnSystem.cs",
             "Assets/Game/Scripts/Systems/BaseBreachOrderSystem.cs",
+            "Assets/Game/Scripts/Systems/BuildingDefenseAttackSystem.cs",
             "Assets/Game/Scripts/Systems/BuildingPlacementRedirectCompositionSystemHelper.cs",
             "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
             "Assets/Game/Scripts/Systems/BuildingSpawnCompositionSystemHelper.cs",
-            "Assets/Game/Scripts/Systems/BuildingTargetMoveOrderSystem.cs",
-            "Assets/Game/Scripts/Systems/CitizenVisibleUnitPresentationSystemHelper.cs",
-            "Assets/Game/Scripts/Systems/EngageTargetValidateSystem.cs"
+            "Assets/Game/Scripts/Systems/EngageTargetSyncSystem.cs"
           ]
         }
       ]
@@ -3628,7 +3628,7 @@
       "declaredReference": "Game.Tactical.Contracts",
       "resolvedTypeOccurrenceCount": 153,
       "distinctResolvedTypeCount": 3,
-      "referencingSourceFileCount": 26,
+      "referencingSourceFileCount": 29,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Runtime",
@@ -3636,7 +3636,7 @@
           "fullTypeName": "Game.Tactical.Contracts.TacticalCommandReasonCode",
           "typeName": "TacticalCommandReasonCode",
           "occurrenceCount": 75,
-          "sourceFileCount": 20,
+          "sourceFileCount": 23,
           "sourceFiles": [
             "Assets/Game/Scripts/Systems/AttackOrderCommandSystem.cs",
             "Assets/Game/Scripts/Systems/BuildingPlacementCommandRequestCompositionSystemHelper.cs",
@@ -4105,7 +4105,7 @@
       "sourceAsmdefPath": "Assets/Tests/Editor/Game.Tests.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Components/Game.Components.asmdef",
       "declaredReference": "Game.Components",
-      "resolvedTypeOccurrenceCount": 9395,
+      "resolvedTypeOccurrenceCount": 9398,
       "distinctResolvedTypeCount": 369,
       "referencingSourceFileCount": 147,
       "topTypeReferences": [
@@ -4154,7 +4154,7 @@
           "targetAssembly": "Game.Components",
           "fullTypeName": "Game.Components.RtsSelectionCommandIntentRequestElement",
           "typeName": "RtsSelectionCommandIntentRequestElement",
-          "occurrenceCount": 342,
+          "occurrenceCount": 343,
           "sourceFileCount": 16,
           "sourceFiles": [
             "Assets/Tests/Editor/AssistantCommandIntentSystemTests.cs",
@@ -4270,7 +4270,7 @@
           "targetAssembly": "Game.Components",
           "fullTypeName": "Game.Components.RtsSelectionCommandResultElement",
           "typeName": "RtsSelectionCommandResultElement",
-          "occurrenceCount": 183,
+          "occurrenceCount": 184,
           "sourceFileCount": 15,
           "sourceFiles": [
             "Assets/Tests/Editor/GroundMissileLauncherRuntimeTests.cs",
@@ -6829,7 +6829,7 @@
       "declaredReference": "Game.Components",
       "resolvedTypeOccurrenceCount": 830,
       "distinctResolvedTypeCount": 100,
-      "referencingSourceFileCount": 16,
+      "referencingSourceFileCount": 24,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.UI.Shell.Ecs",
@@ -6837,13 +6837,14 @@
           "fullTypeName": "Game.Components.AssistantMessageElement",
           "typeName": "AssistantMessageElement",
           "occurrenceCount": 43,
-          "sourceFileCount": 5,
+          "sourceFileCount": 6,
           "sourceFiles": [
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantCommandIntentSystem.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantMessagePrioritySystem.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantNarrationRequestSystem.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantReadModelSystems.cs",
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs"
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Assistant.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.AssistantSettings.cs"
           ]
         },
         {
@@ -6860,7 +6861,7 @@
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantMessagePrioritySystem.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantReadModelSystems.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantTargetLockReadModelSystem.cs",
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs"
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Actions.cs"
           ]
         },
         {
@@ -6869,7 +6870,7 @@
           "fullTypeName": "Game.Components.AssistantStateComponent",
           "typeName": "AssistantStateComponent",
           "occurrenceCount": 35,
-          "sourceFileCount": 9,
+          "sourceFileCount": 10,
           "sourceFiles": [
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantCommandIntentSystem.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantCommandResultBridgeSystem.cs",
@@ -6879,7 +6880,8 @@
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantReadModelSystems.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantSettingsPersistenceSystem.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantThreatReadModelSystem.cs",
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs"
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Assistant.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Settings.cs"
           ]
         },
         {
@@ -6888,14 +6890,15 @@
           "fullTypeName": "Game.Components.AssistantSettingsComponent",
           "typeName": "AssistantSettingsComponent",
           "occurrenceCount": 32,
-          "sourceFileCount": 6,
+          "sourceFileCount": 7,
           "sourceFiles": [
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantNarrationAudioRequestSystem.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantNarrationAudioResultProjectionSystem.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantNarrationRequestSystem.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantReadModelSystems.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantSettingsPersistenceSystem.cs",
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs"
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Assistant.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.AssistantSettings.cs"
           ]
         },
         {
@@ -6904,12 +6907,13 @@
           "fullTypeName": "Game.Components.AssistantRecommendationElement",
           "typeName": "AssistantRecommendationElement",
           "occurrenceCount": 31,
-          "sourceFileCount": 4,
+          "sourceFileCount": 5,
           "sourceFiles": [
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantCommandIntentSystem.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantReadModelSystems.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantTargetLockReadModelSystem.cs",
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs"
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Actions.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Assistant.cs"
           ]
         },
         {
@@ -6918,13 +6922,14 @@
           "fullTypeName": "Game.Components.AssistantNarrationRequestElement",
           "typeName": "AssistantNarrationRequestElement",
           "occurrenceCount": 29,
-          "sourceFileCount": 5,
+          "sourceFileCount": 6,
           "sourceFiles": [
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantNarrationAudioRequestSystem.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantNarrationAudioResultProjectionSystem.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantNarrationRequestSystem.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantReadModelSystems.cs",
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs"
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Assistant.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.AssistantSettings.cs"
           ]
         },
         {
@@ -6963,7 +6968,7 @@
           "sourceFiles": [
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantCommandIntentSystem.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantReadModelSystems.cs",
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs"
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Actions.cs"
           ]
         },
         {
@@ -6972,13 +6977,14 @@
           "fullTypeName": "Game.Components.AssistantNarrationStateComponent",
           "typeName": "AssistantNarrationStateComponent",
           "occurrenceCount": 25,
-          "sourceFileCount": 5,
+          "sourceFileCount": 6,
           "sourceFiles": [
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantNarrationAudioRequestSystem.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantNarrationAudioResultProjectionSystem.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantNarrationRequestSystem.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantSettingsPersistenceSystem.cs",
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs"
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Assistant.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.AssistantSettings.cs"
           ]
         }
       ]
@@ -7035,7 +7041,7 @@
           "sourceFileCount": 2,
           "sourceFiles": [
             "Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs",
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs"
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.CommandHeader.cs"
           ]
         }
       ]
@@ -7046,9 +7052,9 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/UI/Shell/Ecs/Game.UI.Shell.Ecs.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/UI/Contracts/Game.UI.Contracts.asmdef",
       "declaredReference": "Game.UI.Contracts",
-      "resolvedTypeOccurrenceCount": 232,
+      "resolvedTypeOccurrenceCount": 258,
       "distinctResolvedTypeCount": 58,
-      "referencingSourceFileCount": 7,
+      "referencingSourceFileCount": 18,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.UI.Shell.Ecs",
@@ -7058,7 +7064,7 @@
           "occurrenceCount": 15,
           "sourceFileCount": 1,
           "sourceFiles": [
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs"
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.MinimapBuild.cs"
           ]
         },
         {
@@ -7067,9 +7073,24 @@
           "fullTypeName": "Game.UI.Contracts.UiAssistantMessageRowModel",
           "typeName": "UiAssistantMessageRowModel",
           "occurrenceCount": 13,
-          "sourceFileCount": 1,
+          "sourceFileCount": 2,
           "sourceFiles": [
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs"
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Assistant.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.AssistantSettings.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.UI.Shell.Ecs",
+          "targetAssembly": "Game.UI.Contracts",
+          "fullTypeName": "Game.UI.Contracts.UIRoute",
+          "typeName": "UIRoute",
+          "occurrenceCount": 11,
+          "sourceFileCount": 4,
+          "sourceFiles": [
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Contracts.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Routes.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellFlowSystem.cs"
           ]
         },
         {
@@ -7087,13 +7108,25 @@
         {
           "sourceAssembly": "Game.UI.Shell.Ecs",
           "targetAssembly": "Game.UI.Contracts",
-          "fullTypeName": "Game.UI.Contracts.UIRoute",
-          "typeName": "UIRoute",
+          "fullTypeName": "Game.UI.Contracts.UiBuildDrawerCatalogItemModel",
+          "typeName": "UiBuildDrawerCatalogItemModel",
           "occurrenceCount": 10,
           "sourceFileCount": 2,
           "sourceFiles": [
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellFlowSystem.cs"
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.MinimapBuild.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Presentation.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.UI.Shell.Ecs",
+          "targetAssembly": "Game.UI.Contracts",
+          "fullTypeName": "Game.UI.Contracts.UiResourceExchangeRecipeCardModel",
+          "typeName": "UiResourceExchangeRecipeCardModel",
+          "occurrenceCount": 10,
+          "sourceFileCount": 2,
+          "sourceFiles": [
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.MinimapBuild.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Presentation.cs"
           ]
         },
         {
@@ -7105,28 +7138,6 @@
           "sourceFileCount": 1,
           "sourceFiles": [
             "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.UI.Shell.Ecs",
-          "targetAssembly": "Game.UI.Contracts",
-          "fullTypeName": "Game.UI.Contracts.UiBuildDrawerCatalogItemModel",
-          "typeName": "UiBuildDrawerCatalogItemModel",
-          "occurrenceCount": 10,
-          "sourceFileCount": 1,
-          "sourceFiles": [
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.UI.Shell.Ecs",
-          "targetAssembly": "Game.UI.Contracts",
-          "fullTypeName": "Game.UI.Contracts.UiResourceExchangeRecipeCardModel",
-          "typeName": "UiResourceExchangeRecipeCardModel",
-          "occurrenceCount": 10,
-          "sourceFileCount": 1,
-          "sourceFiles": [
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs"
           ]
         },
         {
@@ -7147,19 +7158,22 @@
           "fullTypeName": "Game.UI.Contracts.UiAssistantGoalRowModel",
           "typeName": "UiAssistantGoalRowModel",
           "occurrenceCount": 8,
-          "sourceFileCount": 1,
+          "sourceFileCount": 2,
           "sourceFiles": [
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs"
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Assistant.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.AssistantSettings.cs"
           ]
         },
         {
           "sourceAssembly": "Game.UI.Shell.Ecs",
           "targetAssembly": "Game.UI.Contracts",
-          "fullTypeName": "Game.UI.Contracts.UiResourceExchangeQueueRowModel",
-          "typeName": "UiResourceExchangeQueueRowModel",
+          "fullTypeName": "Game.UI.Contracts.UiMatchHudHeaderModel",
+          "typeName": "UiMatchHudHeaderModel",
           "occurrenceCount": 7,
-          "sourceFileCount": 1,
+          "sourceFileCount": 3,
           "sourceFiles": [
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Contracts.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.CommandHeader.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs"
           ]
         }
@@ -7266,7 +7280,7 @@
       "declaredReference": "Game.UI.Shell.Contracts.Ecs",
       "resolvedTypeOccurrenceCount": 519,
       "distinctResolvedTypeCount": 39,
-      "referencingSourceFileCount": 21,
+      "referencingSourceFileCount": 30,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.UI.Shell.Ecs",
@@ -7274,7 +7288,7 @@
           "fullTypeName": "Game.UI.Shell.Contracts.Ecs.UiShellStateComponent",
           "typeName": "UiShellStateComponent",
           "occurrenceCount": 44,
-          "sourceFileCount": 20,
+          "sourceFileCount": 21,
           "sourceFiles": [
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantControlOwnerSystem.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantMessagePrioritySystem.cs",
@@ -7294,10 +7308,27 @@
           "fullTypeName": "Game.UI.Shell.Contracts.Ecs.UiBuildDrawerCatalogItemComponent",
           "typeName": "UiBuildDrawerCatalogItemComponent",
           "occurrenceCount": 24,
-          "sourceFileCount": 3,
+          "sourceFileCount": 5,
           "sourceFiles": [
             "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs",
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.DefaultState.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.MinimapBuild.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Presentation.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellStateSystem.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.UI.Shell.Ecs",
+          "targetAssembly": "Game.UI.Shell.Contracts.Ecs",
+          "fullTypeName": "Game.UI.Shell.Contracts.Ecs.UiBuildDrawerQueueRowComponent",
+          "typeName": "UiBuildDrawerQueueRowComponent",
+          "occurrenceCount": 22,
+          "sourceFileCount": 5,
+          "sourceFiles": [
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.DefaultState.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.MinimapBuild.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Presentation.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/UiShellStateSystem.cs"
           ]
         },
@@ -7310,36 +7341,9 @@
           "sourceFileCount": 5,
           "sourceFiles": [
             "Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs",
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Routes.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/UiShellFlowSystem.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/UiShellStartupFlow.cs",
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellStateSystem.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.UI.Shell.Ecs",
-          "targetAssembly": "Game.UI.Shell.Contracts.Ecs",
-          "fullTypeName": "Game.UI.Shell.Contracts.Ecs.UiBuildDrawerQueueRowComponent",
-          "typeName": "UiBuildDrawerQueueRowComponent",
-          "occurrenceCount": 22,
-          "sourceFileCount": 3,
-          "sourceFiles": [
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs",
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellStateSystem.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.UI.Shell.Ecs",
-          "targetAssembly": "Game.UI.Shell.Contracts.Ecs",
-          "fullTypeName": "Game.UI.Shell.Contracts.Ecs.UiResourceExchangeStateComponent",
-          "typeName": "UiResourceExchangeStateComponent",
-          "occurrenceCount": 20,
-          "sourceFileCount": 4,
-          "sourceFiles": [
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs",
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeReadModelSystem.cs",
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/UiShellStateSystem.cs"
           ]
         },
@@ -7349,10 +7353,12 @@
           "fullTypeName": "Game.UI.Shell.Contracts.Ecs.UiResourceExchangeQueueRowComponent",
           "typeName": "UiResourceExchangeQueueRowComponent",
           "occurrenceCount": 20,
-          "sourceFileCount": 3,
+          "sourceFileCount": 5,
           "sourceFiles": [
             "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeReadModelSystem.cs",
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.DefaultState.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.MinimapBuild.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Presentation.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/UiShellStateSystem.cs"
           ]
         },
@@ -7362,10 +7368,27 @@
           "fullTypeName": "Game.UI.Shell.Contracts.Ecs.UiResourceExchangeRecipeCardComponent",
           "typeName": "UiResourceExchangeRecipeCardComponent",
           "occurrenceCount": 20,
-          "sourceFileCount": 3,
+          "sourceFileCount": 5,
           "sourceFiles": [
             "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeReadModelSystem.cs",
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.DefaultState.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.MinimapBuild.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Presentation.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellStateSystem.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.UI.Shell.Ecs",
+          "targetAssembly": "Game.UI.Shell.Contracts.Ecs",
+          "fullTypeName": "Game.UI.Shell.Contracts.Ecs.UiResourceExchangeStateComponent",
+          "typeName": "UiResourceExchangeStateComponent",
+          "occurrenceCount": 20,
+          "sourceFileCount": 5,
+          "sourceFiles": [
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeReadModelSystem.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.DefaultState.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.MinimapBuild.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/UiShellStateSystem.cs"
           ]
         },
@@ -7380,7 +7403,7 @@
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantControlOwnerSystem.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeReadModelSystem.cs",
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.CommandHeader.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/UiShellFlowSystem.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/UiShellStateSystem.cs"
           ]
@@ -7391,13 +7414,15 @@
           "fullTypeName": "Game.UI.Shell.Contracts.Ecs.UiMatchHudHeaderComponent",
           "typeName": "UiMatchHudHeaderComponent",
           "occurrenceCount": 18,
-          "sourceFileCount": 7,
+          "sourceFileCount": 9,
           "sourceFiles": [
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantMessagePrioritySystem.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantNarrationRequestSystem.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantReadModelSystems.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantTargetLockReadModelSystem.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantThreatReadModelSystem.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.CommandHeader.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.DefaultState.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/UiShellStateSystem.cs"
           ]
@@ -7408,10 +7433,11 @@
           "fullTypeName": "Game.UI.Shell.Contracts.Ecs.UiResourceExchangeDetailComponent",
           "typeName": "UiResourceExchangeDetailComponent",
           "occurrenceCount": 18,
-          "sourceFileCount": 3,
+          "sourceFileCount": 4,
           "sourceFiles": [
             "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeReadModelSystem.cs",
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.DefaultState.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.MinimapBuild.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/UiShellStateSystem.cs"
           ]
         }
@@ -8021,7 +8047,7 @@
       "fullTypeName": "Game.Components.GridConfig",
       "typeName": "GridConfig",
       "occurrenceCount": 686,
-      "sourceFileCount": 124,
+      "sourceFileCount": 132,
       "sourceFiles": [
         "Assets/Game/Scripts/Environment/RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper.cs",
         "Assets/Game/Scripts/Environment/RuntimeCityChainUtilitySystemHelper.cs",
@@ -8041,7 +8067,7 @@
       "fullTypeName": "Game.Components.UnitGrid",
       "typeName": "UnitGrid",
       "occurrenceCount": 383,
-      "sourceFileCount": 80,
+      "sourceFileCount": 87,
       "sourceFiles": [
         "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs",
         "Assets/Game/Scripts/Environment/RuntimeGridBlockerPresentationSystemHelper.cs",
@@ -8100,7 +8126,7 @@
       "targetAssembly": "Game.Components",
       "fullTypeName": "Game.Components.RtsSelectionCommandIntentRequestElement",
       "typeName": "RtsSelectionCommandIntentRequestElement",
-      "occurrenceCount": 342,
+      "occurrenceCount": 343,
       "sourceFileCount": 16,
       "sourceFiles": [
         "Assets/Tests/Editor/AssistantCommandIntentSystemTests.cs",
@@ -8121,7 +8147,7 @@
       "fullTypeName": "Game.Components.Faction",
       "typeName": "Faction",
       "occurrenceCount": 319,
-      "sourceFileCount": 73,
+      "sourceFileCount": 75,
       "sourceFiles": [
         "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs",
         "Assets/Game/Scripts/ScenarioLab/BattleScenarioDr001Runner.cs",
@@ -8221,7 +8247,7 @@
       "fullTypeName": "Game.Components.UnitFootprint",
       "typeName": "UnitFootprint",
       "occurrenceCount": 233,
-      "sourceFileCount": 49,
+      "sourceFileCount": 56,
       "sourceFiles": [
         "Assets/Game/Scripts/Balance/GameRuntimeStats.cs",
         "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
@@ -8296,7 +8322,7 @@
       "targetAssembly": "Game.Components",
       "fullTypeName": "Game.Components.RtsSelectionCommandResultElement",
       "typeName": "RtsSelectionCommandResultElement",
-      "occurrenceCount": 183,
+      "occurrenceCount": 184,
       "sourceFileCount": 15,
       "sourceFiles": [
         "Assets/Tests/Editor/GroundMissileLauncherRuntimeTests.cs",
@@ -8335,7 +8361,7 @@
       "fullTypeName": "Game.Components.RtsSelectionCommandIntentRequestElement",
       "typeName": "RtsSelectionCommandIntentRequestElement",
       "occurrenceCount": 179,
-      "sourceFileCount": 21,
+      "sourceFileCount": 22,
       "sourceFiles": [
         "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
         "Assets/Game/Scripts/Systems/AttackOrderCommandSystem.cs",
@@ -8375,7 +8401,7 @@
       "fullTypeName": "Game.Components.GridWalkable",
       "typeName": "GridWalkable",
       "occurrenceCount": 174,
-      "sourceFileCount": 34,
+      "sourceFileCount": 41,
       "sourceFiles": [
         "Assets/Game/Scripts/Environment/RuntimeGridBlockerPresentationSystemHelper.cs",
         "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
@@ -8435,7 +8461,7 @@
       "fullTypeName": "Game.Components.DynamicBlockerComponent",
       "typeName": "DynamicBlockerComponent",
       "occurrenceCount": 162,
-      "sourceFileCount": 53,
+      "sourceFileCount": 57,
       "sourceFiles": [
         "Assets/Game/Scripts/Environment/RuntimeCityReadinessQueryCompositionSystemHelper.cs",
         "Assets/Game/Scripts/Environment/RuntimeDecorationSpawnerPresentationSystemHelper.cs",
@@ -8568,26 +8594,6 @@
     {
       "sourceAssembly": "Game.Runtime",
       "targetAssembly": "Game.Components",
-      "fullTypeName": "Game.Components.UnitTarget",
-      "typeName": "UnitTarget",
-      "occurrenceCount": 132,
-      "sourceFileCount": 43,
-      "sourceFiles": [
-        "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
-        "Assets/Game/Scripts/Systems/AICombatOrderSystem.cs",
-        "Assets/Game/Scripts/Systems/AircraftFuelSafetyReturnSystem.cs",
-        "Assets/Game/Scripts/Systems/BaseBreachOrderSystem.cs",
-        "Assets/Game/Scripts/Systems/BuildingPlacementRedirectCompositionSystemHelper.cs",
-        "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
-        "Assets/Game/Scripts/Systems/BuildingSpawnCompositionSystemHelper.cs",
-        "Assets/Game/Scripts/Systems/BuildingTargetMoveOrderSystem.cs",
-        "Assets/Game/Scripts/Systems/CitizenVisibleUnitPresentationSystemHelper.cs",
-        "Assets/Game/Scripts/Systems/EngageTargetValidateSystem.cs"
-      ]
-    },
-    {
-      "sourceAssembly": "Game.Runtime",
-      "targetAssembly": "Game.Components",
       "fullTypeName": "Game.Components.EngageTarget",
       "typeName": "EngageTarget",
       "occurrenceCount": 132,
@@ -8603,6 +8609,26 @@
         "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
         "Assets/Game/Scripts/Systems/BuildingSpawnCompositionSystemHelper.cs",
         "Assets/Game/Scripts/Systems/EngageTargetSyncSystem.cs"
+      ]
+    },
+    {
+      "sourceAssembly": "Game.Runtime",
+      "targetAssembly": "Game.Components",
+      "fullTypeName": "Game.Components.UnitTarget",
+      "typeName": "UnitTarget",
+      "occurrenceCount": 131,
+      "sourceFileCount": 43,
+      "sourceFiles": [
+        "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
+        "Assets/Game/Scripts/Systems/AICombatOrderSystem.cs",
+        "Assets/Game/Scripts/Systems/AircraftFuelSafetyReturnSystem.cs",
+        "Assets/Game/Scripts/Systems/BaseBreachOrderSystem.cs",
+        "Assets/Game/Scripts/Systems/BuildingPlacementRedirectCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingSpawnCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingTargetMoveOrderSystem.cs",
+        "Assets/Game/Scripts/Systems/CitizenVisibleUnitPresentationSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/EngageTargetValidateSystem.cs"
       ]
     },
     {
@@ -8671,7 +8697,7 @@
       "fullTypeName": "Game.Components.UnitAirMovement",
       "typeName": "UnitAirMovement",
       "occurrenceCount": 114,
-      "sourceFileCount": 56,
+      "sourceFileCount": 58,
       "sourceFiles": [
         "Assets/Game/Scripts/ScenarioLab/BattleScenarioDr001Runner.cs",
         "Assets/Game/Scripts/ScenarioLab/BattleScenarioEcsSpawnHelpers.cs",
@@ -8691,7 +8717,7 @@
       "fullTypeName": "Game.Components.UnitAirComponent",
       "typeName": "UnitAirComponent",
       "occurrenceCount": 114,
-      "sourceFileCount": 25,
+      "sourceFileCount": 27,
       "sourceFiles": [
         "Assets/Game/Scripts/Balance/GameRuntimeStats.cs",
         "Assets/Game/Scripts/ScenarioLab/BattleScenarioAd011Runner.cs",
@@ -8828,7 +8854,7 @@
       "fullTypeName": "Game.Components.RtsSelectionCommandResultElement",
       "typeName": "RtsSelectionCommandResultElement",
       "occurrenceCount": 102,
-      "sourceFileCount": 10,
+      "sourceFileCount": 11,
       "sourceFiles": [
         "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
         "Assets/Game/Scripts/Systems/AttackOrderCommandSystem.cs",
@@ -8838,8 +8864,8 @@
         "Assets/Game/Scripts/Systems/ScanIntelCommandSystem.cs",
         "Assets/Game/Scripts/Systems/SelectedMoveOrderCommandSystem.cs",
         "Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs",
-        "Assets/Game/Scripts/Systems/TransportBoardingCommandRoutingSystemHelper.cs",
-        "Assets/Game/Scripts/Systems/TransportBoardingCommandSystem.cs"
+        "Assets/Game/Scripts/Systems/TransportBoardingCommandRouting.cs",
+        "Assets/Game/Scripts/Systems/TransportBoardingCommandRoutingSystemHelper.cs"
       ]
     },
     {
@@ -8848,18 +8874,18 @@
       "fullTypeName": "Game.Components.UnitTransportPassengerElement",
       "typeName": "UnitTransportPassengerElement",
       "occurrenceCount": 100,
-      "sourceFileCount": 15,
+      "sourceFileCount": 17,
       "sourceFiles": [
         "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
         "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs",
         "Assets/Game/Scripts/Systems/SelectionUiReadModelLookup.cs",
         "Assets/Game/Scripts/Systems/TransportBoardingCapacitySystemHelper.cs",
-        "Assets/Game/Scripts/Systems/TransportBoardingCommandSystem.cs",
+        "Assets/Game/Scripts/Systems/TransportBoardingCommandAirdropPlanning.cs",
+        "Assets/Game/Scripts/Systems/TransportBoardingCommandDisembarkApplication.cs",
+        "Assets/Game/Scripts/Systems/TransportBoardingCommandDisembarkPlanning.cs",
         "Assets/Game/Scripts/Systems/TransportBoardingDiagnosticSystemHelper.cs",
         "Assets/Game/Scripts/Systems/UnitTargetOrderSystem.cs",
-        "Assets/Game/Scripts/Systems/UnitTransportAirdropSystem.cs",
-        "Assets/Game/Scripts/Systems/UnitTransportAttackPayloadUtility.cs",
-        "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs"
+        "Assets/Game/Scripts/Systems/UnitTransportAirdropSystem.cs"
       ]
     },
     {
@@ -8948,7 +8974,7 @@
       "fullTypeName": "Game.Components.UnitMove",
       "typeName": "UnitMove",
       "occurrenceCount": 89,
-      "sourceFileCount": 37,
+      "sourceFileCount": 38,
       "sourceFiles": [
         "Assets/Game/Scripts/ScenarioLab/BattleScenarioDr001Runner.cs",
         "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",

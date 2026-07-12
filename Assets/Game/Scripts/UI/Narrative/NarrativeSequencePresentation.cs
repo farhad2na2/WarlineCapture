@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Game.UI.Runtime
 {
-    public sealed class NarrativeSequencePresenter
+    public sealed class NarrativeSequencePresentation
     {
         private readonly NarrativeSequenceView view;
         private readonly NarrativeDialogueReveal reveal = new();
@@ -15,7 +15,7 @@ namespace Game.UI.Runtime
         private bool autoAdvanceRequested;
         private int appliedVisibleCharacters = -1;
 
-        public NarrativeSequencePresenter(NarrativeSequenceView view)
+        public NarrativeSequencePresentation(NarrativeSequenceView view)
         {
             this.view = view;
             voice = new NarrativeVoicePlayback(view != null ? view.VoiceSource : null);

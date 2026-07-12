@@ -149,7 +149,7 @@ public sealed class FirstLaunchNarrativePresentationTests
             EllipsisPauseSeconds = 0.32f,
             TailHoldSeconds = 0.25f
         };
-        NarrativeSequencePresenter helper = new(view);
+        NarrativeSequencePresentation helper = new(view);
         UISettingsModel settings = Game.UI.Runtime.SettingsService.Defaults;
         NarrativeSpeakerPresentationModel speaker = new()
         {

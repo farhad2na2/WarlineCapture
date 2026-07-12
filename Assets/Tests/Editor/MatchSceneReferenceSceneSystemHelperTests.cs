@@ -21,6 +21,18 @@ public sealed class MatchSceneReferenceSceneSystemHelperTests
                 nameof(ReturnsFalseWhenMatchSceneIsNotLoaded),
                 test => test.ReturnsFalseWhenMatchSceneIsNotLoaded(),
                 ref passed);
+            RunValidationStep(
+                nameof(RepeatedLookup_ReusesRootScratchWithoutManagedAllocation),
+                test => test.RepeatedLookup_ReusesRootScratchWithoutManagedAllocation(),
+                ref passed);
+            RunValidationStep(
+                nameof(SceneReplacement_DoesNotReturnStaleView),
+                test => test.SceneReplacement_DoesNotReturnStaleView(),
+                ref passed);
+            RunValidationStep(
+                nameof(ViewReplacementWithinLoadedScene_ReturnsReplacement),
+                test => test.ViewReplacementWithinLoadedScene_ReturnsReplacement(),
+                ref passed);
 
             Debug.Log($"[MatchSceneReferenceFocusedValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -60,6 +72,58 @@ public sealed class MatchSceneReferenceSceneSystemHelperTests
 
         Assert.IsFalse(referenceSystem.TryGetLoadedMatchSceneView(out MatchSceneView view));
         Assert.IsNull(view);
+    }
+
+    [Test]
+    public void RepeatedLookup_ReusesRootScratchWithoutManagedAllocation()
+    {
+        Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene);
+        new GameObject("Bootstrap").AddComponent<MatchSceneView>();
+        for (int i = 0; i < 11; i++)
+            new GameObject($"AuthoredRoot{i}");
+        MatchSceneReferenceSceneSystemHelper referenceSystem = new();
+
+        Assert.IsTrue(referenceSystem.TryGetLoadedSceneView(scene, out _));
+        long allocationStart = GC.GetAllocatedBytesForCurrentThread();
+        for (int i = 0; i < 300; i++)
+            referenceSystem.TryGetLoadedSceneView(scene, out _);
+        long allocatedBytes = GC.GetAllocatedBytesForCurrentThread() - allocationStart;
+
+        Assert.AreEqual(0L, allocatedBytes, "Warm scene-root lookup must reuse its capacity-stable list.");
+    }
+
+    [Test]
+    public void SceneReplacement_DoesNotReturnStaleView()
+    {
+        Scene firstScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene);
+        MatchSceneView firstView = new GameObject("FirstBootstrap").AddComponent<MatchSceneView>();
+        MatchSceneReferenceSceneSystemHelper referenceSystem = new();
+        Assert.IsTrue(referenceSystem.TryGetLoadedSceneView(firstScene, out MatchSceneView resolvedFirst));
+        Assert.AreEqual(firstView, resolvedFirst);
+
+        Scene secondScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene);
+        Assert.IsFalse(referenceSystem.TryGetLoadedSceneView(firstScene, out _));
+        Assert.IsFalse(referenceSystem.TryGetLoadedSceneView(secondScene, out _));
+
+        MatchSceneView secondView = new GameObject("SecondBootstrap").AddComponent<MatchSceneView>();
+        Assert.IsTrue(referenceSystem.TryGetLoadedSceneView(secondScene, out MatchSceneView resolvedSecond));
+        Assert.AreEqual(secondView, resolvedSecond);
+    }
+
+    [Test]
+    public void ViewReplacementWithinLoadedScene_ReturnsReplacement()
+    {
+        Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene);
+        MatchSceneView firstView = new GameObject("FirstBootstrap").AddComponent<MatchSceneView>();
+        MatchSceneReferenceSceneSystemHelper referenceSystem = new();
+        Assert.IsTrue(referenceSystem.TryGetLoadedSceneView(scene, out MatchSceneView resolvedFirst));
+        Assert.AreEqual(firstView, resolvedFirst);
+
+        UnityEngine.Object.DestroyImmediate(firstView.gameObject);
+        MatchSceneView replacementView = new GameObject("ReplacementBootstrap").AddComponent<MatchSceneView>();
+
+        Assert.IsTrue(referenceSystem.TryGetLoadedSceneView(scene, out MatchSceneView resolvedReplacement));
+        Assert.AreEqual(replacementView, resolvedReplacement);
     }
 
     private static void RunValidationStep(

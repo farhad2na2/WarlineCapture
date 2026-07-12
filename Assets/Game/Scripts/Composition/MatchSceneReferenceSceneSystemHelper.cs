@@ -6,6 +6,8 @@ namespace Game.Composition
 {
     public sealed class MatchSceneReferenceSceneSystemHelper
     {
+        private readonly System.Collections.Generic.List<GameObject> _roots = new(16);
+
         public bool TryGetLoadedMatchSceneView(out MatchSceneView view)
         {
             return TryGetLoadedSceneView(SceneLifecycleSceneSystemHelper.MatchSceneName, out view);
@@ -25,21 +27,19 @@ namespace Game.Composition
         public bool TryGetLoadedSceneView(Scene scene, out MatchSceneView view)
         {
             view = null;
-
+            _roots.Clear();
             if (!scene.IsValid() || !scene.isLoaded)
                 return false;
 
-            GameObject[] roots = scene.GetRootGameObjects();
-            for (int i = 0; i < roots.Length; i++)
+            scene.GetRootGameObjects(_roots);
+            for (int i = 0; i < _roots.Count; i++)
             {
-                GameObject root = roots[i];
-                if (root == null)
+                GameObject root = _roots[i];
+                if (root == null || !root.TryGetComponent(out MatchSceneView candidate))
                     continue;
 
-                if (!root.TryGetComponent(out MatchSceneView candidate))
-                    continue;
-
-                if (!IsLoadedSceneView(candidate, scene))
+                Scene candidateScene = candidate.gameObject.scene;
+                if (!candidateScene.IsValid() || !candidateScene.isLoaded || candidateScene != scene)
                     continue;
 
                 view = candidate;
@@ -47,17 +47,6 @@ namespace Game.Composition
             }
 
             return false;
-        }
-
-        private static bool IsLoadedSceneView(MatchSceneView view, Scene expectedScene)
-        {
-            if (view == null || view.gameObject == null)
-                return false;
-
-            Scene scene = view.gameObject.scene;
-            return scene.IsValid() &&
-                   scene.isLoaded &&
-                   scene == expectedScene;
         }
     }
 }

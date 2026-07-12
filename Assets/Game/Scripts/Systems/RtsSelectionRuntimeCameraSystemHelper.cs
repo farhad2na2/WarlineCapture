@@ -13,6 +13,8 @@ namespace Game.Runtime
         private const float MatchIntroSettleSmoothTime = 1.1f;
         private const float MatchIntroZoomEpsilon = 0.1f;
 
+        private readonly TacticalFollowCameraStateQueryCache _tacticalFollowStateQueries = new();
+
         public delegate bool TryGetEntityManagerAction(out EntityManager em);
         public delegate bool IsPointerOverGameplayUiAction(Vector2 screenPosition, out string source);
 
@@ -378,13 +380,13 @@ namespace Game.Runtime
             ProcessCameraRequests(context, em);
         }
 
-        private static bool IsTacticalFollowPanLocked(Context context)
+        private bool IsTacticalFollowPanLocked(Context context)
         {
             return context.TryGetDefaultEntityManager(out EntityManager em) &&
                    IsTacticalFollowPanLocked(em);
         }
 
-        private static bool TacticalFollowOwnsCamera(Context context)
+        private bool TacticalFollowOwnsCamera(Context context)
         {
             if (!context.TryGetDefaultEntityManager(out EntityManager em))
                 return false;
@@ -392,26 +394,14 @@ namespace Game.Runtime
             return IsTacticalFollowPanLocked(em) || HasValidTacticalFollowPose(em);
         }
 
-        private static bool IsTacticalFollowPanLocked(EntityManager em)
+        private bool IsTacticalFollowPanLocked(EntityManager em)
         {
-            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<TacticalFollowCameraModeComponent>());
-            if (query.IsEmptyIgnoreFilter)
-                return false;
-
-            TacticalFollowCameraModeComponent mode =
-                em.GetComponentData<TacticalFollowCameraModeComponent>(query.GetSingletonEntity());
-            return mode.Enabled != 0 && mode.PanInputLocked != 0;
+            return _tacticalFollowStateQueries.IsPanInputLocked(em);
         }
 
-        private static bool HasValidTacticalFollowPose(EntityManager em)
+        private bool HasValidTacticalFollowPose(EntityManager em)
         {
-            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<TacticalFollowCameraPoseComponent>());
-            if (query.IsEmptyIgnoreFilter)
-                return false;
-
-            TacticalFollowCameraPoseComponent pose =
-                em.GetComponentData<TacticalFollowCameraPoseComponent>(query.GetSingletonEntity());
-            return pose.Valid != 0;
+            return _tacticalFollowStateQueries.HasValidPose(em);
         }
 
         private void ClearTacticalFollowConflictingCameraState(Context context)

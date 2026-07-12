@@ -28,6 +28,8 @@ public sealed class RtsCameraSystemTests
             RunCase(nameof(ResolveClampSafePerspectiveHeight_LeavesPanRoomAtMaxZoom), test => test.ResolveClampSafePerspectiveHeight_LeavesPanRoomAtMaxZoom());
             RunCase(nameof(ProcessPendingRequests_ClampsInitialCameraViewportInsideGrid), test => test.ProcessPendingRequests_ClampsInitialCameraViewportInsideGrid());
             RunCase(nameof(RuntimePanCamera_IgnoresDirectPanAndDragWhenTacticalFollowLocked), test => test.RuntimePanCamera_IgnoresDirectPanAndDragWhenTacticalFollowLocked());
+            RunCase(nameof(RuntimeCameraTick_ReusesTacticalFollowQueriesWithoutManagedAllocation), test => test.RuntimeCameraTick_ReusesTacticalFollowQueriesWithoutManagedAllocation());
+            RunCase(nameof(TacticalFollowQueryCache_RebindsWhenWorldChanges), test => test.TacticalFollowQueryCache_RebindsWhenWorldChanges());
             RunCase(nameof(RuntimePanCamera_IgnoresBuildModeDragPanWhenTacticalFollowLocked), test => test.RuntimePanCamera_IgnoresBuildModeDragPanWhenTacticalFollowLocked());
             RunCase(nameof(RuntimePanCamera_IgnoresFullscreenIsoDragPanWhenTacticalFollowLocked), test => test.RuntimePanCamera_IgnoresFullscreenIsoDragPanWhenTacticalFollowLocked());
             RunCase(nameof(RuntimeCameraTick_DoesNotApplyNormalCameraMotionWhileTacticalFollowPoseValid), test => test.RuntimeCameraTick_DoesNotApplyNormalCameraMotionWhileTacticalFollowPoseValid());
@@ -47,7 +49,7 @@ public sealed class RtsCameraSystemTests
             RunCase(nameof(RuntimeCameraTick_DoesNotAutoSettleManualZoomOutAfterIntroComplete), test => test.RuntimeCameraTick_DoesNotAutoSettleManualZoomOutAfterIntroComplete());
             RunCase(nameof(MatchIntroFirstPlay_StartsZoomedOutAndTransitionsToNormalThroughRequests), test => test.MatchIntroFirstPlay_StartsZoomedOutAndTransitionsToNormalThroughRequests());
             RunCase(nameof(MatchIntroFirstPlay_HoldsZoomedOutUntilIntroCompletes), test => test.MatchIntroFirstPlay_HoldsZoomedOutUntilIntroCompletes());
-            Debug.Log("[RtsCameraFocusedValidation] result=Passed tests=29");
+            Debug.Log("[RtsCameraFocusedValidation] result=Passed tests=31");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -323,6 +325,91 @@ public sealed class RtsCameraSystemTests
         {
             entityManager = world.EntityManager;
             return world.IsCreated;
+        }
+    }
+
+    [Test]
+    public void RuntimeCameraTick_ReusesTacticalFollowQueriesWithoutManagedAllocation()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        var world = new World("RtsCameraSystemTests.TacticalFollowQueryAllocation");
+        World.DefaultGameObjectInjectionWorld = world;
+
+        try
+        {
+            var runtime = new RuntimeGameplayStateSystem { PlayRequested = true };
+            RtsCameraSystem cameraSystem = world.GetOrCreateSystemManaged<RtsCameraSystem>();
+            RtsCameraRequestSystem cameraRequestSystem = world.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
+            var runtimeCameraSystem = new RtsSelectionRuntimeCameraSystemHelper();
+            Camera camera = CreateCamera(new Vector3(0f, 10f, -10f), Quaternion.Euler(45f, 0f, 0f));
+            world.EntityManager.CreateEntity(typeof(TacticalFollowCameraModeComponent));
+            Entity poseEntity = world.EntityManager.CreateEntity(typeof(TacticalFollowCameraPoseComponent));
+            world.EntityManager.SetComponentData(poseEntity, new TacticalFollowCameraPoseComponent { Valid = 1 });
+            var context = CreateRuntimeCameraContext(
+                runtime,
+                new RtsSelectionInputCompositionSystemHelper(),
+                cameraSystem,
+                cameraRequestSystem,
+                camera,
+                TryGetDefaultEntityManager);
+
+            Assert.IsTrue(runtimeCameraSystem.UpdateRuntimeCameraTick(context));
+            long allocationStart = GC.GetAllocatedBytesForCurrentThread();
+            for (int i = 0; i < 300; i++)
+                runtimeCameraSystem.UpdateRuntimeCameraTick(context);
+            long allocatedBytes = GC.GetAllocatedBytesForCurrentThread() - allocationStart;
+
+            Assert.AreEqual(0L, allocatedBytes, "Warm tactical-follow camera reads must reuse world-bound ECS queries.");
+        }
+        finally
+        {
+            if (world.IsCreated)
+                world.Dispose();
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
+
+        bool TryGetDefaultEntityManager(out EntityManager entityManager)
+        {
+            entityManager = world.EntityManager;
+            return world.IsCreated;
+        }
+    }
+
+    [Test]
+    public void TacticalFollowQueryCache_RebindsWhenWorldChanges()
+    {
+        var cache = new TacticalFollowCameraStateQueryCache();
+        var firstWorld = new World("RtsCameraSystemTests.TacticalFollowQueryCache.First");
+        var secondWorld = new World("RtsCameraSystemTests.TacticalFollowQueryCache.Second");
+
+        try
+        {
+            Entity firstModeEntity = firstWorld.EntityManager.CreateEntity(typeof(TacticalFollowCameraModeComponent));
+            firstWorld.EntityManager.SetComponentData(firstModeEntity, new TacticalFollowCameraModeComponent
+            {
+                Enabled = 1,
+                PanInputLocked = 1
+            });
+            Assert.IsTrue(cache.IsPanInputLocked(firstWorld.EntityManager));
+            Assert.IsFalse(cache.HasValidPose(firstWorld.EntityManager));
+
+            firstWorld.Dispose();
+
+            secondWorld.EntityManager.CreateEntity(typeof(TacticalFollowCameraModeComponent));
+            Entity secondPoseEntity = secondWorld.EntityManager.CreateEntity(typeof(TacticalFollowCameraPoseComponent));
+            secondWorld.EntityManager.SetComponentData(
+                secondPoseEntity,
+                new TacticalFollowCameraPoseComponent { Valid = 1 });
+
+            Assert.IsFalse(cache.IsPanInputLocked(secondWorld.EntityManager));
+            Assert.IsTrue(cache.HasValidPose(secondWorld.EntityManager));
+        }
+        finally
+        {
+            if (firstWorld.IsCreated)
+                firstWorld.Dispose();
+            if (secondWorld.IsCreated)
+                secondWorld.Dispose();
         }
     }
 

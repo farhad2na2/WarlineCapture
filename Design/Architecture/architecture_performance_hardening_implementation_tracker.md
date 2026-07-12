@@ -251,17 +251,17 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `81 / 106` |
-| Checklist percent complete | `76.4%` |
+| Checklist complete | `82 / 106` |
+| Checklist percent complete | `77.4%` |
 | Checklist in progress | `11 / 106`: `APH-311`, `APH-408`, `APH-501`, `APH-502`, `APH-507`, `APH-508`, `APH-509`, `APH-601`, `APH-609`, `APH-704`, `APH-803` |
-| Complete plus active coverage | `92 / 106` (`86.8%`); this is visibility only, not accepted completion |
+| Complete plus active coverage | `93 / 106` (`87.7%`); this is visibility only, not accepted completion |
 | Current phase | Phase 3 Android device evidence, Phase 5 product budgets, Phase 6 map closeout, and bounded Phase 8 automation |
 | Current task | Close remaining FPS, memory, startup, package, architecture, and device gates; select the next bounded decomposition only when dependency-ready |
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
-| Red performance gates | `1`: steady-state Match GC `234,324 / 1,024` bytes; improved 13.0% from the APH-007 baseline without weakening the budget |
+| Red performance gates | `1`: current integrated-head steady-state Match GC `266,974 / 1,024` bytes; APH-709 removed both tactical-camera rows, while remaining recurring owners stay assigned to APH-710/711 |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
 | Last verified commit | `234162691`; UI shell gateway decomposition and integrated validation evidence are committed on `main` |
-| Last update | 2026-07-12 - the UI shell ECS gateway is a bounded facade over private route, action, settings, and read-model adapters with green lifecycle, allocation, architecture, and source-growth gates |
+| Last update | 2026-07-12 - tactical-follow camera state reads use a world-bound query cache; both measured camera allocation rows are absent and the Match p95 gate remains green |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -626,7 +626,8 @@ The `APH-007` raw-metadata GC report is mandatory measured input for this phase.
   - Result: the original 3,226-line unmanaged owner is now a 181-line shell plus nine cohesive partials between 241 and 416 lines. Ordered partial reconstruction exactly matches all 16,571 original implementation tokens. Transport `78/78`, selection `60/60`, scenario `15/15`, extraction `33/33`, DR-001 `2/2`, gateway PlayMode `1/1`, performance/allocation, source growth `15/15`, ECS/Burst `10/10`, and assembly boundary `31/31` validations pass with zero compiler errors. Evidence: `Design/AgentReports/2026-07-11_aph-707_transport_boarding_decomposition.md`.
 - [x] `APH-708` Decompose `UiShellEcsGateway` into route, read-model, action, and settings adapters behind existing contracts; views remain passive.
   - Result: the 2,802-line gateway is now a 252-line registered facade over private route, action, settings, and bounded read-model adapters; every new file remains below 500 lines and no view references an ECS adapter. Shell content `11/11`, assistant command `6/6`, assistant cache/allocation `2/2`, resource header `8/8`, resource routing `5/5`, lifecycle PlayMode `1/1`, source growth `15/15`, boundary `31/31`, broad-shell `1/1`, ECS/Burst `10/10`, and three project builds pass with zero compiler errors. Evidence: `Design/AgentReports/2026-07-12_aph-708_ui_shell_gateway_decomposition.md`.
-- [ ] `APH-709` Decompose selection/HUD files only where profiler or change-frequency evidence identifies risk; do not split for line count alone.
+- [x] `APH-709` Decompose selection/HUD files only where profiler or change-frequency evidence identifies risk; do not split for line count alone.
+  - Result: only the profiler-backed tactical-follow camera query seam was extracted. A 47-line world-bound cache replaces two per-tick query constructions totaling 23,920 bytes in APH-007/213; a 300-tick warmed test allocates zero bytes, world-rebind behavior is covered, and both owner rows are absent from the fresh 180-warmup/300-frame raw capture. Camera `31/31`, selection `60/60`, selection/move/attack PlayMode `1/1`, source growth `15/15`, boundary `31/31`, ECS/Burst `10/10`, and Match p95 `4.31 ms` pass. Evidence: `Design/AgentReports/2026-07-12_aph-709_selection_camera_query_decomposition.md`.
 - [ ] `APH-710` Remove classified hidden world lookups and recurring per-frame allocation owners as each domain receives explicit World/EntityManager/query dependencies or cached non-allocating state.
 - [ ] `APH-711` Re-run compile time, domain reload time, architecture gates, focused tests, Match performance, and the unchanged steady-state GC capture after every physical asmdef split and final allocation-remediation slice.
 
@@ -1499,6 +1500,18 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Evidence: `Design/AgentReports/2026-07-12_aph-708_ui_shell_gateway_decomposition.md`
 - Residual risk: shared static cache ownership and default-world lookups remain for APH-710/711; this slice does not claim a Match FPS or GC reduction
 - Next ready task: close an active Android/product gate or select APH-709 only when profiler/change-frequency evidence proves a bounded selection/HUD target
+
+### 2026-07-12 - APH-709 - Selection camera query decomposition
+
+- Status: Complete
+- Baseline: `3b305ffd1`
+- Behavior preserved/changed: the public runtime camera helper, request routing, pan/zoom behavior, tactical-follow ownership, views, serialized types, and assembly edges are unchanged; only tactical-follow mode/pose query ownership moved into a world-bound cache
+- Measured result: the two recurring 11,960-byte tactical-camera rows from APH-007/213 are absent; a warmed 300-tick focused test allocates zero bytes and the same cache correctly rebinds across world replacement
+- Integrated result: current full Match GC is `266,974 / 1,024` bytes and remains red because unrelated scene-root, transport, UI shell, command-query, audio, and pathfinding owners remain; Match performance passes at average/p95/p99/max `2.75/4.31/5.42/15.59 ms` with zero current-thread allocation
+- Validation: camera `31/31`, selection `60/60`, selection/move/attack PlayMode `1/1`, source growth `15/15`, assembly boundary `31/31`, ECS/Burst `10/10`, and Runtime/Editor-test project builds pass with zero compiler errors
+- Evidence: `Design/AgentReports/2026-07-12_aph-709_selection_camera_query_decomposition.md`, `/private/tmp/warline-aph709-camera-final.log`, `/private/tmp/warline-aph709-selection.log`, `/private/tmp/warline-aph709-playmode-r2.xml`, `/private/tmp/warline-aph709-growth.log`, `/private/tmp/warline-aph709-boundary.log`, `/private/tmp/warline-aph709-burst.log`, `/private/tmp/warline-aph709-performance.log`, and `/private/tmp/warline-aph709-gc-r2.log`
+- Residual risk: the unchanged 1,024-byte global GC gate remains red; APH-710 owns remaining explicit-dependency/allocation remediation and APH-711 owns final integrated recapture
+- Next ready task: remove the smallest independently testable APH-710 recurring allocation owner, beginning with the audio gameplay-state query cache
 
 ## Decision Log
 

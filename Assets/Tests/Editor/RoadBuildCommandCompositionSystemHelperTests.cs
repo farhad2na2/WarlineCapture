@@ -20,7 +20,11 @@ public sealed class RoadBuildCommandCompositionSystemHelperTests
             tests.RoadBuildCommandRequest_ExitWritesAcceptedResult();
             tests.RoadBuildRuntimeAction_UpdateProcessesQueuedEnterCommand();
             tests.RoadBuildCommandRequest_EnqueueAndProcessExitWritesAcceptedResult();
-            Debug.Log("[RoadBuildCommandRequestValidation] result=Passed tests=7");
+            tests.ProcessPendingRoadBuildCommands_ReusesQueueEntityWithoutManagedAllocation();
+            tests.CommandEntityCache_RebindsWhenWorldChanges();
+            tests.CommandEntityCache_RecoversWhenCachedEntityIsDestroyed();
+            tests.CommandEntityCache_AdoptsExistingQueueAndRepairsBuffers();
+            Debug.Log("[RoadBuildCommandRequestValidation] result=Passed tests=11");
             ValidationExit.Passed();
         }
         catch (Exception ex)
@@ -221,6 +225,64 @@ public sealed class RoadBuildCommandCompositionSystemHelperTests
         Assert.AreEqual(RoadBuildSessionCompositionSystemHelper.BuildToolMode.None, state.SessionState.ActiveBuildTool);
         Assert.AreEqual(1, state.ClearRoadBuildDragStateCount);
         AssertRequestBufferCleared(world.EntityManager);
+    }
+
+    [Test]
+    public void ProcessPendingRoadBuildCommands_ReusesQueueEntityWithoutManagedAllocation()
+    {
+        using World world = new("RoadBuildCommandAllocationTest");
+        RoadBuildCommandTestState state = new();
+        state.CommandSystem.ProcessPendingRoadBuildCommands(world.EntityManager, state.CommandContext);
+
+        long allocationStart = GC.GetAllocatedBytesForCurrentThread();
+        for (int i = 0; i < 300; i++)
+            state.CommandSystem.ProcessPendingRoadBuildCommands(world.EntityManager, state.CommandContext);
+        long allocatedBytes = GC.GetAllocatedBytesForCurrentThread() - allocationStart;
+
+        Assert.AreEqual(0L, allocatedBytes, "Warm road command polling must reuse the queue entity.");
+    }
+
+    [Test]
+    public void CommandEntityCache_RebindsWhenWorldChanges()
+    {
+        RoadBuildCommandCompositionSystemHelper commandSystem = new();
+        using (World firstWorld = new("RoadBuildCommandWorldRebind.First"))
+            Assert.AreEqual(1, commandSystem.EnqueueEnterRoadBuildMode(firstWorld.EntityManager));
+        using (World secondWorld = new("RoadBuildCommandWorldRebind.Second"))
+            Assert.AreEqual(1, commandSystem.EnqueueEnterRoadBuildMode(secondWorld.EntityManager));
+    }
+
+    [Test]
+    public void CommandEntityCache_RecoversWhenCachedEntityIsDestroyed()
+    {
+        using World world = new("RoadBuildCommandEntityRecoveryTest");
+        RoadBuildCommandCompositionSystemHelper commandSystem = new();
+        Assert.AreEqual(1, commandSystem.EnqueueEnterRoadBuildMode(world.EntityManager));
+        using EntityQuery query = world.EntityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<RoadBuildCommandQueueComponent>());
+        Entity firstEntity = query.GetSingletonEntity();
+        world.EntityManager.DestroyEntity(firstEntity);
+
+        Assert.AreEqual(1, commandSystem.EnqueueEnterRoadBuildMode(world.EntityManager));
+        Entity replacementEntity = query.GetSingletonEntity();
+        Assert.AreNotEqual(firstEntity, replacementEntity);
+        Assert.IsTrue(world.EntityManager.HasBuffer<RoadBuildCommandRequestElement>(replacementEntity));
+        Assert.IsTrue(world.EntityManager.HasBuffer<RoadBuildCommandResultElement>(replacementEntity));
+    }
+
+    [Test]
+    public void CommandEntityCache_AdoptsExistingQueueAndRepairsBuffers()
+    {
+        using World world = new("RoadBuildCommandEntityAdoptionTest");
+        Entity existing = world.EntityManager.CreateEntity(typeof(RoadBuildCommandQueueComponent));
+        RoadBuildCommandCompositionSystemHelper commandSystem = new();
+
+        Assert.AreEqual(1, commandSystem.EnqueueEnterRoadBuildMode(world.EntityManager));
+        using EntityQuery query = world.EntityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<RoadBuildCommandQueueComponent>());
+        Assert.AreEqual(existing, query.GetSingletonEntity());
+        Assert.IsTrue(world.EntityManager.HasBuffer<RoadBuildCommandRequestElement>(existing));
+        Assert.IsTrue(world.EntityManager.HasBuffer<RoadBuildCommandResultElement>(existing));
     }
 
     private static void AssertRoadBuildResult(

@@ -7,6 +7,8 @@ namespace Game.Runtime
 {
     public sealed class RoadBuildCommandCompositionSystemHelper
     {
+        private readonly RoadBuildCommandEntityCache _commandEntity = new();
+
         public struct Context
         {
             public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
@@ -192,7 +194,7 @@ namespace Game.Runtime
             }
         }
 
-        private static int EnqueueRoadBuildCommand(EntityManager em, byte requestKind)
+        private int EnqueueRoadBuildCommand(EntityManager em, byte requestKind)
         {
             Entity queueEntity = EnsureRoadBuildCommandEntity(em);
             RoadBuildCommandQueueComponent queue =
@@ -207,28 +209,9 @@ namespace Game.Runtime
             return queue.LastRequestId;
         }
 
-        private static Entity EnsureRoadBuildCommandEntity(EntityManager em)
+        private Entity EnsureRoadBuildCommandEntity(EntityManager em)
         {
-            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<RoadBuildCommandQueueComponent>());
-            if (!query.IsEmptyIgnoreFilter)
-            {
-                Entity existing = query.GetSingletonEntity();
-                EnsureRoadBuildCommandBuffers(em, existing);
-                return existing;
-            }
-
-            Entity entity = em.CreateEntity(typeof(RoadBuildCommandQueueComponent));
-            em.SetName(entity, "RoadBuildCommands");
-            EnsureRoadBuildCommandBuffers(em, entity);
-            return entity;
-        }
-
-        private static void EnsureRoadBuildCommandBuffers(EntityManager em, Entity entity)
-        {
-            if (!em.HasBuffer<RoadBuildCommandRequestElement>(entity))
-                em.AddBuffer<RoadBuildCommandRequestElement>(entity);
-            if (!em.HasBuffer<RoadBuildCommandResultElement>(entity))
-                em.AddBuffer<RoadBuildCommandResultElement>(entity);
+            return _commandEntity.GetOrCreate(em);
         }
     }
 }

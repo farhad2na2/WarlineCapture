@@ -73,7 +73,7 @@ Dependency direction remains inward toward components/config/contracts/runtime. 
 
 ## Progress Summary
 
-Overall implementation progress: 16% (16/103 checklist items complete).
+Overall implementation progress: 17% (18/103 checklist items complete).
 
 Planning and inventory findings are complete. Runtime implementation is 0% complete.
 
@@ -82,7 +82,7 @@ Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation 
 | Phase | Status | Complete | Total | Progress | Gate |
 |---|---|---:|---:|---:|---|
 | 0. Inventory and baseline | Complete | 12 | 12 | 100% | Ownership, file targets, compile state, focused behavior, p95/p99, and managed-allocation baselines are recorded. |
-| 1. Canonical tactical Materials and Credits | In progress | 4 | 13 | 31% | Canonical Materials data, deterministic mutation math, authored startup fields, and participating-faction projection are validated. Consumer migration remains. |
+| 1. Canonical tactical Materials and Credits | In progress | 6 | 13 | 46% | Canonical Materials data/startup and player Credits ownership are validated. Exchange, HUD/build affordability, profile policy, combined tests, and ownership ratchet remain. |
 | 2. Config and building projection | Pending | 0 | 10 | 0% | Depot config is valid, authored, and projected consistently. |
 | 3. Oil destination routing | Pending | 0 | 11 | 0% | Tray routing is deterministic, reserved, and stable. |
 | 4. Oil-to-Materials conversion | Pending | 0 | 11 | 0% | Conversion is deterministic, capped, typed, and no-GC. |
@@ -146,8 +146,8 @@ Phase 0 exit criteria:
 - [x] Define overflow-safe integer mutation rules and deterministic version increments.
 - [x] Project one component for each participating faction at scenario startup.
 - [x] Seed starting Materials and capacity from authored scenario/config data.
-- [ ] Establish `FactionEconomy.Money` as the one ECS tactical Credits authority for player and AI factions.
-- [ ] Migrate player build affordability/spend away from `RuntimeResourceUtilitySystemHelper._dollars` ownership to typed ECS transactions against `FactionEconomy.Money`.
+- [x] Establish `FactionEconomy.Money` as the one ECS tactical Credits authority for player and AI factions.
+- [x] Migrate player build affordability/spend away from `RuntimeResourceUtilitySystemHelper._dollars` ownership to typed ECS transactions against `FactionEconomy.Money`.
 - [ ] Migrate Exchange Credits and Materials import/export to `FactionEconomy.Money` plus `FactionTacticalMaterialsComponent`.
 - [ ] Migrate Match HUD and build affordability to read this canonical component.
 - [ ] Remove `ResourceExchangeWalletComponent.Credits` and `.Materials` authority without a steady-state dual-write period.
@@ -396,3 +396,13 @@ For every completed batch append:
 - Unity-regenerated project builds passed with zero errors for `Game.Components`, `Game.Configs`, `Game.Authoring`, `Game.Runtime`, and `Game.Tests.Editor`. The checked-in workspace `.csproj` files remained untouched because the live Editor owns their generation.
 - Logs: `/private/tmp/wlc-field-fabrication-materials-data-validation.log`, `/private/tmp/wlc-field-fabrication-materials-startup-validation.log`, `/private/tmp/wlc-field-fabrication-faction-economy-startup-validation.log`, `/private/tmp/wlc-field-fabrication-architecture-validation.log`, and `/private/tmp/wlc-field-fabrication-burst-validation.log`.
 - New files are in existing explicit assemblies only: component data in `Game.Components`, pure mutation math in `Game.Runtime`, and validation in `Game.Tests.Editor`. No runtime default-assembly fallback or new assembly reference was added.
+
+### 2026-07-12 - Phase 1B Player Credits ECS Ownership
+
+- Removed `_dollars` ownership from `RuntimeResourceUtilitySystemHelper`. The helper now stores only an authored pending startup seed until composition configures an `EntityManager`; all live reads, grants, citizen spending, build affordability, production spending, placement confirmation spending, and refunds mutate the cached player `FactionEconomy.Money` value.
+- `BuildingGameplayStartupCompositionSystemHelper` configures the helper once through the existing `BuildingEntityManagerAccessSystem`. No new bootstrap, manager, service, global wallet, or per-frame query was added.
+- Player economy resolution uses archetype-chunk iteration during configuration, caches the resolved entity, and projects missing `FactionEconomyPolicy` / `FactionTacticalMaterialsComponent` companions. Warm reads and mutations use direct component access only.
+- Added 5 focused tests for player economy creation, existing-entity reuse, exact spend/add behavior, citizen-context ownership, and 512 spend/add cycles at 0 managed bytes.
+- Validation passed in the isolated Unity project: `RuntimeResourceUtilityFocusedValidation` 5 tests, `BuildingProductionRequestValidation` 26 tests, `BuildingPlacementCommandRequestValidation` 16 tests, `ScriptArchitectureBoundaryValidation` 31 tests, and `EcsBurstHotPathArchitectureValidation` 10 tests.
+- Unity-regenerated `Game.Runtime` and `Game.Tests.Editor` builds passed with zero errors. Existing warnings remain unchanged.
+- Logs: `/private/tmp/wlc-field-fabrication-player-credits-validation.log`, `/private/tmp/wlc-field-fabrication-building-production-regression.log`, `/private/tmp/wlc-field-fabrication-building-placement-regression.log`, `/private/tmp/wlc-field-fabrication-player-credits-architecture.log`, and `/private/tmp/wlc-field-fabrication-player-credits-burst.log`.

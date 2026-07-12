@@ -16,6 +16,8 @@ namespace Game.Runtime
         {
             childSystems.RuntimeResourceUtilitySystemHelper.SetInitialDollars(
                 BuildingStartupConfigProjectionSystem.ResolveInitialDollars(buildingPlacementConfig));
+            if (childSystems.BuildingEntityManagerAccessSystem.TryGetEntityManager(out Unity.Entities.EntityManager entityManager))
+                childSystems.RuntimeResourceUtilitySystemHelper.Configure(entityManager);
             childSystems.BuildingGameplayDependencyCompositionSystemHelper.SetStartupDependencies(
                 null,
                 factionVisuals,

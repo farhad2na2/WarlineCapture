@@ -260,7 +260,7 @@ The program is complete only when all of the following are true:
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: current integrated-head steady-state Match GC `122,248 / 1,024` bytes; transport helper construction, placement, building production, road-command, scene-root, tactical-camera, and audio gameplay-state rows are absent, while remaining recurring owners stay assigned to APH-710/711 |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
-| Last verified commit | `597f02f76`; placement command entity caching, narrative source-growth repair, and integrated validation evidence are committed on `main` |
+| Last verified commit | `5186307af`; transport idle-helper gating and integrated validation evidence are committed on `main` |
 | Last update | 2026-07-12 - transport command polling now exits before helper construction when no pre-resolved request exists; both recurring transport rows are absent |
 
 ## Phase 0 - Baseline and Safety Freeze

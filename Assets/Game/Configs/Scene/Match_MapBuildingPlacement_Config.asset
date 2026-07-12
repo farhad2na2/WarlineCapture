@@ -25,32 +25,12 @@ MonoBehaviour:
     worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
     yawDegrees: 179.99985
     rotateVertical: 0
-  - sourcePath: Map/Buildings/Building_Airport/SM_Bld_ControlTower_01
-    category: Building_Airport
-    buildingPrefab: {fileID: 3689421368615084249, guid: 37ac92ce4e0e7473891bdb9b135724f2, type: 3}
-    factionId: 2
-    worldCenter: {x: 1851.4501, y: 17.34438, z: 263.2808}
-    worldPosition: {x: 1851.021, y: 2.5, z: 263.1098}
-    worldEulerAngles: {x: -0, y: 179.99985, z: -0}
-    worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
-    yawDegrees: 179.99985
-    rotateVertical: 0
   - sourcePath: Map/Buildings/Building_Ammunition_Depot/SM_Bld_Hangar_01 (1)
     category: Building_Ammunition_Depot
     buildingPrefab: {fileID: 285046366580341150, guid: 2855f5d3fe13f49c89f79a6914af636b, type: 3}
     factionId: 1
     worldCenter: {x: 959.8801, y: 5.6775165, z: 364.56995}
     worldPosition: {x: 959.8801, y: 0.04, z: 364.56995}
-    worldEulerAngles: {x: -0, y: 0.000013660377, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 0.000013660377
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Building_Ammunition_Depot/SM_Bld_Hangar_01 (1)
-    category: Building_Ammunition_Depot
-    buildingPrefab: {fileID: 285046366580341150, guid: 2855f5d3fe13f49c89f79a6914af636b, type: 3}
-    factionId: 2
-    worldCenter: {x: 1874.281, y: 8.277517, z: 279.56982}
-    worldPosition: {x: 1874.281, y: 2.6400013, z: 279.5699}
     worldEulerAngles: {x: -0, y: 0.000013660377, z: -0}
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 0.000013660377
@@ -85,52 +65,12 @@ MonoBehaviour:
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 90
     rotateVertical: 1
-  - sourcePath: Map/Buildings/Building_Barrack/SM_Bld_Barracks_01
-    category: Building_Barrack
-    buildingPrefab: {fileID: 6603657636351658259, guid: 683195b1e21c94df7add42ab26cd2a33, type: 3}
-    factionId: 2
-    worldCenter: {x: 1789.5902, y: 5.8334026, z: 314.7698}
-    worldPosition: {x: 1795.4609, y: 3.7399998, z: 314.76984}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Building_Barrack/SM_Bld_Barracks_01 (1)
-    category: Building_Barrack
-    buildingPrefab: {fileID: 6603657636351658259, guid: 683195b1e21c94df7add42ab26cd2a33, type: 3}
-    factionId: 2
-    worldCenter: {x: 1789.4114, y: 5.8334026, z: 305.47977}
-    worldPosition: {x: 1795.4609, y: 3.7399998, z: 305.4798}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Building_Barrack/SM_Bld_Barracks_01 (2)
-    category: Building_Barrack
-    buildingPrefab: {fileID: 6603657636351658259, guid: 683195b1e21c94df7add42ab26cd2a33, type: 3}
-    factionId: 2
-    worldCenter: {x: 1831.2083, y: 5.8334026, z: 273.73975}
-    worldPosition: {x: 1837.271, y: 3.7399998, z: 273.7398}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
   - sourcePath: Map/Buildings/Building_Fuel_Bladder/SM_Prop_Fuel_Bladder_01
     category: Building_Fuel_Bladder
     buildingPrefab: {fileID: 6603657636351658259, guid: 60d6c2b9b0e504ae898d745fa2ace790, type: 3}
     factionId: 1
     worldCenter: {x: 829.71594, y: 2.1634657, z: 374.7975}
     worldPosition: {x: 829.7101, y: 1.25, z: 374.70996}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Building_Fuel_Bladder/SM_Prop_Fuel_Bladder_01
-    category: Building_Fuel_Bladder
-    buildingPrefab: {fileID: 6603657636351658259, guid: 60d6c2b9b0e504ae898d745fa2ace790, type: 3}
-    factionId: 2
-    worldCenter: {x: 1851.2422, y: 3.473467, z: 302.17578}
-    worldPosition: {x: 1851.2363, y: 2.5600014, z: 302.08832}
     worldEulerAngles: {x: -0, y: 90, z: -0}
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 90
@@ -145,46 +85,6 @@ MonoBehaviour:
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 0.00016392453
     rotateVertical: 0
-  - sourcePath: Map/Buildings/Building_Fuel_Bladder/SM_Prop_Fuel_Bladder_01 (1)
-    category: Building_Fuel_Bladder
-    buildingPrefab: {fileID: 6603657636351658259, guid: 60d6c2b9b0e504ae898d745fa2ace790, type: 3}
-    factionId: 2
-    worldCenter: {x: 1745.5231, y: 4.8334656, z: 276.88565}
-    worldPosition: {x: 1745.6106, y: 3.92, z: 276.87982}
-    worldEulerAngles: {x: -0, y: 0.00016392453, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 0.00016392453
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Building_Fuel_Bladder/SM_Prop_Fuel_Bladder_01 (2)
-    category: Building_Fuel_Bladder
-    buildingPrefab: {fileID: 6603657636351658259, guid: 60d6c2b9b0e504ae898d745fa2ace790, type: 3}
-    factionId: 2
-    worldCenter: {x: 1744.1165, y: 4.763466, z: 289.7974}
-    worldPosition: {x: 1744.1106, y: 3.8500004, z: 289.7099}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Building_Fuel_Bladder/SM_Prop_Fuel_Bladder_02
-    category: Building_Fuel_Bladder
-    buildingPrefab: {fileID: 6603657636351658259, guid: 60d6c2b9b0e504ae898d745fa2ace790, type: 3}
-    factionId: 2
-    worldCenter: {x: 1851.0544, y: 3.241606, z: 312.27576}
-    worldPosition: {x: 1850.9763, y: 2.5599995, z: 312.1883}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Building_Fuel_Bladder/SM_Prop_Fuel_Bladder_02 (1)
-    category: Building_Fuel_Bladder
-    buildingPrefab: {fileID: 6603657636351658259, guid: 60d6c2b9b0e504ae898d745fa2ace790, type: 3}
-    factionId: 2
-    worldCenter: {x: 1744.0188, y: 4.461607, z: 299.47733}
-    worldPosition: {x: 1743.9407, y: 3.7800007, z: 299.38983}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
   - sourcePath: Map/Buildings/Building_GuardTower/SM_Bld_GuardTower_01 (9)
     category: Building_GuardTower
     buildingPrefab: {fileID: 3689421368615084249, guid: 93fba5e426a2347d4821b7b7112064f9, type: 3}
@@ -285,56 +185,6 @@ MonoBehaviour:
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 89.99981
     rotateVertical: 1
-  - sourcePath: Map/Buildings/Building_GuardTower/SM_Bld_GuardTower_01 (7)
-    category: Building_GuardTower
-    buildingPrefab: {fileID: 3689421368615084249, guid: 93fba5e426a2347d4821b7b7112064f9, type: 3}
-    factionId: 2
-    worldCenter: {x: 1808.1709, y: 6.817664, z: 319.68985}
-    worldPosition: {x: 1808.1709, y: 2.3900013, z: 319.68988}
-    worldEulerAngles: {x: 0, y: -0.000027320753, z: 0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: -0.000027320753
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Building_GuardTower/SM_Bld_GuardTower_01 (3)
-    category: Building_GuardTower
-    buildingPrefab: {fileID: 3689421368615084249, guid: 93fba5e426a2347d4821b7b7112064f9, type: 3}
-    factionId: 2
-    worldCenter: {x: 1838.8408, y: 6.817664, z: 319.8599}
-    worldPosition: {x: 1838.8408, y: 2.3900013, z: 319.85992}
-    worldEulerAngles: {x: -0, y: 89.99981, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 89.99981
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Building_GuardTower/SM_Bld_GuardTower_01 (6)
-    category: Building_GuardTower
-    buildingPrefab: {fileID: 3689421368615084249, guid: 93fba5e426a2347d4821b7b7112064f9, type: 3}
-    factionId: 2
-    worldCenter: {x: 1813.531, y: 6.817664, z: 269.6798}
-    worldPosition: {x: 1813.531, y: 2.3900013, z: 269.67987}
-    worldEulerAngles: {x: 0, y: 180.00027, z: 0}
-    worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
-    yawDegrees: 180.00027
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Building_GuardTower/SM_Bld_GuardTower_01 (4)
-    category: Building_GuardTower
-    buildingPrefab: {fileID: 3689421368615084249, guid: 93fba5e426a2347d4821b7b7112064f9, type: 3}
-    factionId: 2
-    worldCenter: {x: 1739.6809, y: 6.817664, z: 309.45987}
-    worldPosition: {x: 1739.6809, y: 2.3900013, z: 309.4599}
-    worldEulerAngles: {x: 0, y: 270.00012, z: 0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 270.00012
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Building_GuardTower/SM_Bld_GuardTower_01 (5)
-    category: Building_GuardTower
-    buildingPrefab: {fileID: 3689421368615084249, guid: 93fba5e426a2347d4821b7b7112064f9, type: 3}
-    factionId: 2
-    worldCenter: {x: 1739.6809, y: 6.817664, z: 271.04984}
-    worldPosition: {x: 1739.6809, y: 2.3900013, z: 271.04987}
-    worldEulerAngles: {x: 0, y: 270.00012, z: 0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 270.00012
-    rotateVertical: 1
   - sourcePath: Map/Buildings/Building_GuardTower_Big/SM_Bld_GuardTower_02 (2)
     category: Building_GuardTower_Big
     buildingPrefab: {fileID: 3689421368615084249, guid: fd1419b2db8a44e4caae68cd82a177e2, type: 3}
@@ -395,16 +245,6 @@ MonoBehaviour:
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 90
     rotateVertical: 1
-  - sourcePath: Map/Buildings/Building_Helipad/SM_Env_Helipad_01
-    category: Building_Helipad
-    buildingPrefab: {fileID: 3689421368615084249, guid: 077763b7910da4a67be0c118c091c302, type: 3}
-    factionId: 2
-    worldCenter: {x: 1914.4106, y: 3.191527, z: 273.00977}
-    worldPosition: {x: 1914.4106, y: 2.8000011, z: 273.00983}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
   - sourcePath: Map/Buildings/Building_Helipad/SM_Env_Helipad_01 (1)
     category: Building_Helipad
     buildingPrefab: {fileID: 3689421368615084249, guid: 077763b7910da4a67be0c118c091c302, type: 3}
@@ -415,32 +255,12 @@ MonoBehaviour:
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 90
     rotateVertical: 1
-  - sourcePath: Map/Buildings/Building_Helipad/SM_Env_Helipad_01 (1)
-    category: Building_Helipad
-    buildingPrefab: {fileID: 3689421368615084249, guid: 077763b7910da4a67be0c118c091c302, type: 3}
-    factionId: 2
-    worldCenter: {x: 1914.4106, y: 2.7215257, z: 308.21985}
-    worldPosition: {x: 1914.4106, y: 2.33, z: 308.2199}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
   - sourcePath: Map/Buildings/Building_Helipad/SM_Env_Helipad_01 (2)
     category: Building_Helipad
     buildingPrefab: {fileID: 3689421368615084249, guid: 077763b7910da4a67be0c118c091c302, type: 3}
     factionId: 1
     worldCenter: {x: 975.9001, y: 0.121525705, z: 393.32996}
     worldPosition: {x: 975.9001, y: -0.27, z: 393.32996}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Building_Helipad/SM_Env_Helipad_01 (2)
-    category: Building_Helipad
-    buildingPrefab: {fileID: 3689421368615084249, guid: 077763b7910da4a67be0c118c091c302, type: 3}
-    factionId: 2
-    worldCenter: {x: 1890.3005, y: 2.7215257, z: 308.32983}
-    worldPosition: {x: 1890.3005, y: 2.33, z: 308.3299}
     worldEulerAngles: {x: -0, y: 90, z: -0}
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 90
@@ -641,16 +461,6 @@ MonoBehaviour:
     factionId: 1
     worldCenter: {x: 823.88434, y: 4.2866163, z: 282.80725}
     worldPosition: {x: 825.5, y: 0.7, z: 282.79996}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Building_OilPump/SM_Prop_Pipline_OilPump_01
-    category: Building_OilPump
-    buildingPrefab: {fileID: 7546298519455943663, guid: 0012eb42b25984abdbd97abd513b16de, type: 3}
-    factionId: 2
-    worldCenter: {x: 1786.885, y: 6.186617, z: 192.50697}
-    worldPosition: {x: 1788.5007, y: 2.6000004, z: 192.4997}
     worldEulerAngles: {x: -0, y: 90, z: -0}
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 90
@@ -1366,16 +1176,6 @@ MonoBehaviour:
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 0.000013660377
     rotateVertical: 0
-  - sourcePath: Map/Buildings/Building_Road_Barrier/SM_Prop_Road_Barrier_01
-    category: Building_Road_Barrier
-    buildingPrefab: {fileID: 3689421368615084249, guid: f37001b3891c2408b882eed3ce395d9c, type: 3}
-    factionId: 2
-    worldCenter: {x: 1800.6462, y: 4.2740984, z: 325.35983}
-    worldPosition: {x: 1798.3696, y: 3.7380009, z: 325.35986}
-    worldEulerAngles: {x: -0, y: 0.000013660377, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 0.000013660377
-    rotateVertical: 0
   - sourcePath: Map/Buildings/Building_Road_Barrier/SM_Prop_Road_Barrier_01 (1)
     category: Building_Road_Barrier
     buildingPrefab: {fileID: 3689421368615084249, guid: f37001b3891c2408b882eed3ce395d9c, type: 3}
@@ -1386,32 +1186,12 @@ MonoBehaviour:
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 270
     rotateVertical: 1
-  - sourcePath: Map/Buildings/Building_Road_Barrier/SM_Prop_Road_Barrier_01 (1)
-    category: Building_Road_Barrier
-    buildingPrefab: {fileID: 3689421368615084249, guid: f37001b3891c2408b882eed3ce395d9c, type: 3}
-    factionId: 2
-    worldCenter: {x: 1735.2708, y: 4.2740984, z: 316.92126}
-    worldPosition: {x: 1735.2708, y: 3.7380009, z: 314.27887}
-    worldEulerAngles: {x: 0, y: 270, z: 0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 270
-    rotateVertical: 1
   - sourcePath: Map/Buildings/Building_Road_Barrier/SM_Prop_Road_Barrier_01 (2)
     category: Building_Road_Barrier
     buildingPrefab: {fileID: 3689421368615084249, guid: f37001b3891c2408b882eed3ce395d9c, type: 3}
     factionId: 1
     worldCenter: {x: 890.4631, y: 1.6740977, z: 350.85995}
     worldPosition: {x: 893.33905, y: 1.138, z: 350.85992}
-    worldEulerAngles: {x: 0, y: 180, z: 0}
-    worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
-    yawDegrees: 180
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Building_Road_Barrier/SM_Prop_Road_Barrier_01 (2)
-    category: Building_Road_Barrier
-    buildingPrefab: {fileID: 3689421368615084249, guid: f37001b3891c2408b882eed3ce395d9c, type: 3}
-    factionId: 2
-    worldCenter: {x: 1804.8639, y: 4.2740984, z: 265.85974}
-    worldPosition: {x: 1807.7397, y: 3.7380009, z: 265.8598}
     worldEulerAngles: {x: 0, y: 180, z: 0}
     worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
     yawDegrees: 180
@@ -1436,26 +1216,6 @@ MonoBehaviour:
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 0.00028686793
     rotateVertical: 0
-  - sourcePath: Map/Buildings/Building_Satelite_Dish/SM_Prop_Satelite_Dish_02 (1)
-    category: Building_Satelite_Dish
-    buildingPrefab: {fileID: 6603657636351658259, guid: 77550b2e24f244cdfac66cc7bacec90a, type: 3}
-    factionId: 2
-    worldCenter: {x: 1842.4921, y: 7.64673, z: 295.32242}
-    worldPosition: {x: 1841.8306, y: 3.5900002, z: 294.55988}
-    worldEulerAngles: {x: -0, y: 0.00028686793, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 0.00028686793
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Building_Satelite_Dish/SM_Prop_Satelite_Dish_02 (2)
-    category: Building_Satelite_Dish
-    buildingPrefab: {fileID: 6603657636351658259, guid: 77550b2e24f244cdfac66cc7bacec90a, type: 3}
-    factionId: 2
-    worldCenter: {x: 1781.6521, y: 6.4014297, z: 261.3098}
-    worldPosition: {x: 1781.2437, y: 2.3446999, z: 261.30988}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
   - sourcePath: Map/Buildings/Building_Shop/SM_Bld_Shop_01_Destroyed (1)
     category: Building_Shop
     buildingPrefab: {fileID: 3689421368615084249, guid: f36edf329571a4ff7836cde8a5622ede, type: 3}
@@ -2576,26 +2336,6 @@ MonoBehaviour:
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 90
     rotateVertical: 1
-  - sourcePath: Map/Buildings/Building_WaterTank/SM_Bld_WaterTank_01 (2)
-    category: Building_WaterTank
-    buildingPrefab: {fileID: 3689421368615084249, guid: 3313a6a43a5a74dc0a0c0f85c45af1d8, type: 3}
-    factionId: 2
-    worldCenter: {x: 1809.4849, y: 7.5022106, z: 284.69672}
-    worldPosition: {x: 1809.8208, y: 4.0300007, z: 284.67987}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Building_WaterTank/SM_Bld_WaterTank_01 (1)
-    category: Building_WaterTank
-    buildingPrefab: {fileID: 3689421368615084249, guid: 3313a6a43a5a74dc0a0c0f85c45af1d8, type: 3}
-    factionId: 2
-    worldCenter: {x: 1738.9778, y: 7.5022106, z: 283.16586}
-    worldPosition: {x: 1738.9609, y: 4.0300007, z: 282.8299}
-    worldEulerAngles: {x: 0, y: 180.00008, z: 0}
-    worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
-    yawDegrees: 180.00008
-    rotateVertical: 0
   - sourcePath: Map/Buildings/Building_WaterTank/SM_Bld_WaterTank_01 (3)
     category: Building_WaterTank
     buildingPrefab: {fileID: 3689421368615084249, guid: 3313a6a43a5a74dc0a0c0f85c45af1d8, type: 3}
@@ -2636,42 +2376,12 @@ MonoBehaviour:
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 90
     rotateVertical: 1
-  - sourcePath: Map/Buildings/Tent_Contractor/SM_Bld_Tent_01 (17)
-    category: Tent_Contractor
-    buildingPrefab: {fileID: 7909703279963890070, guid: e09079772b6a5445e9527a5751f3cc35, type: 3}
-    factionId: 2
-    worldCenter: {x: 1815.741, y: 5.6661863, z: 314.00024}
-    worldPosition: {x: 1815.741, y: 3.6599998, z: 314.03986}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Tent_Contractor/SM_Bld_Tent_01 (15)
-    category: Tent_Contractor
-    buildingPrefab: {fileID: 7909703279963890070, guid: e09079772b6a5445e9527a5751f3cc35, type: 3}
-    factionId: 2
-    worldCenter: {x: 1830.6008, y: 5.6661863, z: 292.9694}
-    worldPosition: {x: 1830.6008, y: 3.6599998, z: 292.92987}
-    worldEulerAngles: {x: 0, y: 269.99994, z: 0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 269.99994
-    rotateVertical: 1
   - sourcePath: Map/Buildings/Tent_Expert/SM_Bld_Tent_Entrance_01
     category: Tent_Expert
     buildingPrefab: {fileID: 3710053084082713453, guid: 13e6b9b365a824e8789b89885d9e67e9, type: 3}
     factionId: 1
     worldCenter: {x: 900.0197, y: 3.0960193, z: 377.88995}
     worldPosition: {x: 900.14014, y: 1.06, z: 377.88995}
-    worldEulerAngles: {x: 0, y: 269.99966, z: 0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 269.99966
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Tent_Expert/SM_Bld_Tent_Entrance_01
-    category: Tent_Expert
-    buildingPrefab: {fileID: 3710053084082713453, guid: 13e6b9b365a824e8789b89885d9e67e9, type: 3}
-    factionId: 2
-    worldCenter: {x: 1814.4207, y: 5.696019, z: 292.8898}
-    worldPosition: {x: 1814.541, y: 3.6599998, z: 292.88983}
     worldEulerAngles: {x: 0, y: 269.99966, z: 0}
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 269.99966
@@ -2836,26 +2546,6 @@ MonoBehaviour:
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 0.000013660377
     rotateVertical: 0
-  - sourcePath: Map/Buildings/Portaloo/SM_Prop_Portaloo_01 (7)
-    category: Portaloo
-    buildingPrefab: {fileID: 3297871969661906962, guid: be8c3e7774ae74fe6967758eb5e858bf, type: 3}
-    factionId: 2
-    worldCenter: {x: 1822.4907, y: 5.248694, z: 268.46548}
-    worldPosition: {x: 1822.4907, y: 3.678524, z: 268.43988}
-    worldEulerAngles: {x: -0, y: 0.000013660377, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 0.000013660377
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Portaloo/SM_Prop_Portaloo_01 (8)
-    category: Portaloo
-    buildingPrefab: {fileID: 3297871969661906962, guid: be8c3e7774ae74fe6967758eb5e858bf, type: 3}
-    factionId: 2
-    worldCenter: {x: 1774.9653, y: 5.0601697, z: 269.1968}
-    worldPosition: {x: 1774.9397, y: 3.4899998, z: 269.19684}
-    worldEulerAngles: {x: -0, y: 90.00017, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90.00017
-    rotateVertical: 1
   - sourcePath: Map/Buildings/Portaloo/SM_Prop_Portaloo_01 (8)
     category: Portaloo
     buildingPrefab: {fileID: 3297871969661906962, guid: be8c3e7774ae74fe6967758eb5e858bf, type: 3}
@@ -2886,16 +2576,6 @@ MonoBehaviour:
     worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
     yawDegrees: 180
     rotateVertical: 0
-  - sourcePath: Map/Buildings/Portaloo/SM_Prop_Portaloo_01 (9)
-    category: Portaloo
-    buildingPrefab: {fileID: 3297871969661906962, guid: be8c3e7774ae74fe6967758eb5e858bf, type: 3}
-    factionId: 2
-    worldCenter: {x: 1775.1683, y: 5.0601697, z: 271.08682}
-    worldPosition: {x: 1774.9397, y: 3.4899998, z: 271.08685}
-    worldEulerAngles: {x: -0, y: 90.00017, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90.00017
-    rotateVertical: 1
   - sourcePath: Map/Buildings/Portaloo/SM_Prop_Portaloo_01 (10)
     category: Portaloo
     buildingPrefab: {fileID: 3297871969661906962, guid: be8c3e7774ae74fe6967758eb5e858bf, type: 3}
@@ -2906,26 +2586,6 @@ MonoBehaviour:
     worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
     yawDegrees: 180
     rotateVertical: 0
-  - sourcePath: Map/Buildings/Portaloo/SM_Prop_Portaloo_01 (10)
-    category: Portaloo
-    buildingPrefab: {fileID: 3297871969661906962, guid: be8c3e7774ae74fe6967758eb5e858bf, type: 3}
-    factionId: 2
-    worldCenter: {x: 1774.9607, y: 5.0601697, z: 272.95682}
-    worldPosition: {x: 1774.9397, y: 3.4899998, z: 272.95685}
-    worldEulerAngles: {x: -0, y: 93.90794, z: -0}
-    worldScale: {x: 1.0000004, y: 1, z: 1.0000004}
-    yawDegrees: 93.90794
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Portaloo/SM_Prop_Portaloo_01 (11)
-    category: Portaloo
-    buildingPrefab: {fileID: 3297871969661906962, guid: be8c3e7774ae74fe6967758eb5e858bf, type: 3}
-    factionId: 2
-    worldCenter: {x: 1775.1829, y: 5.0601697, z: 274.89688}
-    worldPosition: {x: 1774.9397, y: 3.4899998, z: 274.8969}
-    worldEulerAngles: {x: -0, y: 90.00017, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90.00017
-    rotateVertical: 1
   - sourcePath: Map/Buildings/Portaloo/SM_Prop_Portaloo_01 (11)
     category: Portaloo
     buildingPrefab: {fileID: 3297871969661906962, guid: be8c3e7774ae74fe6967758eb5e858bf, type: 3}
@@ -2935,46 +2595,6 @@ MonoBehaviour:
     worldEulerAngles: {x: 0, y: 180, z: 0}
     worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
     yawDegrees: 180
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Portaloo/SM_Prop_Portaloo_01 (12)
-    category: Portaloo
-    buildingPrefab: {fileID: 3297871969661906962, guid: be8c3e7774ae74fe6967758eb5e858bf, type: 3}
-    factionId: 2
-    worldCenter: {x: 1775.2103, y: 5.0601697, z: 276.90677}
-    worldPosition: {x: 1774.9397, y: 3.4899998, z: 276.9068}
-    worldEulerAngles: {x: -0, y: 82.65922, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 82.65922
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Portaloo/SM_Prop_Portaloo_01 (13)
-    category: Portaloo
-    buildingPrefab: {fileID: 3297871969661906962, guid: be8c3e7774ae74fe6967758eb5e858bf, type: 3}
-    factionId: 2
-    worldCenter: {x: 1780.2207, y: 5.0601697, z: 268.9854}
-    worldPosition: {x: 1780.2207, y: 3.4899998, z: 268.95978}
-    worldEulerAngles: {x: -0, y: 0.00031077358, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 0.00031077358
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Portaloo/SM_Prop_Portaloo_01 (14)
-    category: Portaloo
-    buildingPrefab: {fileID: 3297871969661906962, guid: be8c3e7774ae74fe6967758eb5e858bf, type: 3}
-    factionId: 2
-    worldCenter: {x: 1778.3306, y: 5.0601697, z: 269.54016}
-    worldPosition: {x: 1778.3306, y: 3.4899998, z: 268.95978}
-    worldEulerAngles: {x: -0, y: 0.00031077358, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 0.00031077358
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Portaloo/SM_Prop_Portaloo_01 (15)
-    category: Portaloo
-    buildingPrefab: {fileID: 3297871969661906962, guid: be8c3e7774ae74fe6967758eb5e858bf, type: 3}
-    factionId: 2
-    worldCenter: {x: 1820.3606, y: 5.248694, z: 268.66058}
-    worldPosition: {x: 1820.3606, y: 3.678524, z: 268.43988}
-    worldEulerAngles: {x: -0, y: 0.000013660377, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 0.000013660377
     rotateVertical: 0
   - sourcePath: Map/Buildings/Tent_Refugee/SM_Bld_Tent_Refugee_01
     category: Tent_Refugee
@@ -2986,32 +2606,12 @@ MonoBehaviour:
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 0.00016392453
     rotateVertical: 0
-  - sourcePath: Map/Buildings/Tent_Refugee/SM_Bld_Tent_Refugee_01
-    category: Tent_Refugee
-    buildingPrefab: {fileID: 3297871969661906962, guid: 838332c818d3f492d90cc082ec20e5fb, type: 3}
-    factionId: 2
-    worldCenter: {x: 1756.8308, y: 5.1375046, z: 315.27982}
-    worldPosition: {x: 1756.8308, y: 3.689001, z: 315.27985}
-    worldEulerAngles: {x: -0, y: 0.00016392453, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 0.00016392453
-    rotateVertical: 0
   - sourcePath: Map/Buildings/Tent_Refugee/SM_Bld_Tent_Refugee_Closed_01
     category: Tent_Refugee
     buildingPrefab: {fileID: 3297871969661906962, guid: 838332c818d3f492d90cc082ec20e5fb, type: 3}
     factionId: 1
     worldCenter: {x: 849.68005, y: 2.5593588, z: 400.30997}
     worldPosition: {x: 849.68005, y: 1.12, z: 400.30997}
-    worldEulerAngles: {x: -0, y: 0.00016392453, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 0.00016392453
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Tent_Refugee/SM_Bld_Tent_Refugee_Closed_01
-    category: Tent_Refugee
-    buildingPrefab: {fileID: 3297871969661906962, guid: 838332c818d3f492d90cc082ec20e5fb, type: 3}
-    factionId: 2
-    worldCenter: {x: 1764.0806, y: 5.15936, z: 315.30984}
-    worldPosition: {x: 1764.0806, y: 3.7200012, z: 315.30988}
     worldEulerAngles: {x: -0, y: 0.00016392453, z: -0}
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 0.00016392453
@@ -3045,36 +2645,6 @@ MonoBehaviour:
     worldEulerAngles: {x: -0, y: 90, z: -0}
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 90
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Tent_Regular/SM_Bld_Tent_01 (16)
-    category: Tent_Regular
-    buildingPrefab: {fileID: 3297871969661906962, guid: 772ca690e3298408b98dffdf84c31019, type: 3}
-    factionId: 2
-    worldCenter: {x: 1815.741, y: 5.696019, z: 303.73978}
-    worldPosition: {x: 1815.741, y: 3.6599998, z: 303.7398}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Tent_Regular/SM_Bld_Tent_01 (14)
-    category: Tent_Regular
-    buildingPrefab: {fileID: 3297871969661906962, guid: 772ca690e3298408b98dffdf84c31019, type: 3}
-    factionId: 2
-    worldCenter: {x: 1830.6008, y: 5.696019, z: 303.4198}
-    worldPosition: {x: 1830.6008, y: 3.6599998, z: 303.41986}
-    worldEulerAngles: {x: 0, y: 269.99994, z: 0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 269.99994
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Tent_Regular/SM_Bld_Tent_01 (13)
-    category: Tent_Regular
-    buildingPrefab: {fileID: 3297871969661906962, guid: 772ca690e3298408b98dffdf84c31019, type: 3}
-    factionId: 2
-    worldCenter: {x: 1830.6008, y: 5.696019, z: 314.2798}
-    worldPosition: {x: 1830.6008, y: 3.6599998, z: 314.27985}
-    worldEulerAngles: {x: 0, y: 269.99994, z: 0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 269.99994
     rotateVertical: 1
   - sourcePath: Map/Buildings/Wall_Fence_Straight/SM_Prop_Fence_01
     category: Wall_Fence_Straight
@@ -3586,96 +3156,6 @@ MonoBehaviour:
     worldScale: {x: 1.244648, y: 2.4157069, z: 1.7421921}
     yawDegrees: 269.99966
     rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Dirt_02 (9)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1735.9147, y: 4.27163, z: 274.25058}
-    worldPosition: {x: 1735.9006, y: 3.4700012, z: 274.24982}
-    worldEulerAngles: {x: 0, y: 269.99966, z: 0}
-    worldScale: {x: 1.2446482, y: 2.4157069, z: 1.7421927}
-    yawDegrees: 269.99966
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Dirt_02 (10)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1735.9147, y: 4.27163, z: 284.31064}
-    worldPosition: {x: 1735.9006, y: 3.4700012, z: 284.30988}
-    worldEulerAngles: {x: 0, y: 269.99966, z: 0}
-    worldScale: {x: 1.2446482, y: 2.4157069, z: 1.7421927}
-    yawDegrees: 269.99966
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Dirt_02 (11)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1735.8446, y: 4.27163, z: 295.21066}
-    worldPosition: {x: 1735.8306, y: 3.4700012, z: 295.2099}
-    worldEulerAngles: {x: 0, y: 269.99966, z: 0}
-    worldScale: {x: 1.2446482, y: 2.4157069, z: 1.7421927}
-    yawDegrees: 269.99966
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Dirt_02 (12)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1735.8446, y: 4.27163, z: 306.08066}
-    worldPosition: {x: 1735.8306, y: 3.4700012, z: 306.0799}
-    worldEulerAngles: {x: 0, y: 269.99966, z: 0}
-    worldScale: {x: 1.2446482, y: 2.4157069, z: 1.7421927}
-    yawDegrees: 269.99966
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Dirt_02 (13)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1746.3098, y: 4.3830214, z: 322.12387}
-    worldPosition: {x: 1746.3105, y: 3.6499996, z: 322.10986}
-    worldEulerAngles: {x: -0, y: 179.99985, z: -0}
-    worldScale: {x: 1.2446487, y: 2.208961, z: 1.7421935}
-    yawDegrees: 179.99985
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Dirt_02 (14)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1789.78, y: 4.227562, z: 322.12384}
-    worldPosition: {x: 1789.7808, y: 3.3099995, z: 322.10986}
-    worldEulerAngles: {x: -0, y: 179.99985, z: -0}
-    worldScale: {x: 1.2446487, y: 2.765074, z: 1.7421935}
-    yawDegrees: 179.99985
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Dirt_02 (15)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1778.7898, y: 4.3830214, z: 322.12384}
-    worldPosition: {x: 1778.7905, y: 3.6499996, z: 322.10986}
-    worldEulerAngles: {x: -0, y: 179.99985, z: -0}
-    worldScale: {x: 1.2446487, y: 2.208961, z: 1.7421935}
-    yawDegrees: 179.99985
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Dirt_02 (16)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1769.48, y: 4.3830214, z: 322.12384}
-    worldPosition: {x: 1769.4807, y: 3.6499996, z: 322.10986}
-    worldEulerAngles: {x: -0, y: 179.99985, z: -0}
-    worldScale: {x: 1.2446487, y: 2.208961, z: 1.7421935}
-    yawDegrees: 179.99985
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Dirt_02 (17)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1757.25, y: 4.3830214, z: 322.12384}
-    worldPosition: {x: 1757.2507, y: 3.6499996, z: 322.10986}
-    worldEulerAngles: {x: -0, y: 179.99985, z: -0}
-    worldScale: {x: 1.2446487, y: 2.208961, z: 1.7421935}
-    yawDegrees: 179.99985
-    rotateVertical: 0
   - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Group_01
     category: Wall_Dirt_Straight
     buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
@@ -3776,76 +3256,6 @@ MonoBehaviour:
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 90
     rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Group_03 (9)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1805.4119, y: 4.5727715, z: 305.35846}
-    worldPosition: {x: 1805.4407, y: 3.4639435, z: 305.3698}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Group_03 (10)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1796.1519, y: 4.5488286, z: 323.86853}
-    worldPosition: {x: 1796.1807, y: 3.4400005, z: 323.87988}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Group_03 (11)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1805.5693, y: 4.5488286, z: 323.89117}
-    worldPosition: {x: 1805.5405, y: 3.4400005, z: 323.87988}
-    worldEulerAngles: {x: 0, y: 269.99966, z: 0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 269.99966
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Group_03 (12)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1810.4119, y: 4.5488286, z: 263.85843}
-    worldPosition: {x: 1810.4407, y: 3.4400005, z: 263.8698}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Group_03 (13)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1798.5496, y: 4.5488286, z: 263.8585}
-    worldPosition: {x: 1798.5208, y: 3.4400005, z: 263.84723}
-    worldEulerAngles: {x: 0, y: 270.00034, z: 0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 270.00034
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Group_03 (14)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1798.5493, y: 4.5488286, z: 271.7184}
-    worldPosition: {x: 1798.5781, y: 3.4400005, z: 271.7298}
-    worldEulerAngles: {x: -0, y: 90.00012, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90.00012
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Group_03 (15)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1805.5852, y: 4.5727715, z: 315.87848}
-    worldPosition: {x: 1805.614, y: 3.4639435, z: 315.88983}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
   - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Group_04
     category: Wall_Dirt_Straight
     buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
@@ -3879,32 +3289,12 @@ MonoBehaviour:
   - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Group_04 (3)
     category: Wall_Dirt_Straight
     buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1736.0208, y: 4.6972227, z: 322.60986}
-    worldPosition: {x: 1736.0208, y: 3.6000004, z: 322.60986}
-    worldEulerAngles: {x: 0, y: 186.08966, z: 0}
-    worldScale: {x: 1.000001, y: 1, z: 1.000001}
-    yawDegrees: 186.08966
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Group_04 (3)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
     factionId: 1
     worldCenter: {x: 821.62, y: 2.0972223, z: 407.61}
     worldPosition: {x: 821.62, y: 1, z: 407.61}
     worldEulerAngles: {x: 0, y: 186.08966, z: 0}
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 186.08966
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Group_04 (4)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1727.8306, y: 4.6972227, z: 322.42987}
-    worldPosition: {x: 1727.8306, y: 3.6000004, z: 322.42987}
-    worldEulerAngles: {x: -0, y: 172.38257, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 172.38257
     rotateVertical: 0
   - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Group_04 (4)
     category: Wall_Dirt_Straight
@@ -3926,16 +3316,6 @@ MonoBehaviour:
     worldScale: {x: 1.0000004, y: 1, z: 1.0000004}
     yawDegrees: 273.12048
     rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Group_04 (5)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1731.2607, y: 4.6972227, z: 312.20987}
-    worldPosition: {x: 1731.2607, y: 3.6000004, z: 312.2099}
-    worldEulerAngles: {x: -0, y: 3.1203272, z: -0}
-    worldScale: {x: 1.0000001, y: 1, z: 1.0000001}
-    yawDegrees: 3.1203272
-    rotateVertical: 0
   - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Group_04 (6)
     category: Wall_Dirt_Straight
     buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
@@ -3945,16 +3325,6 @@ MonoBehaviour:
     worldEulerAngles: {x: 0, y: 273.12048, z: 0}
     worldScale: {x: 0.95904845, y: 1, z: 1.0000004}
     yawDegrees: 273.12048
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Group_04 (6)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1751.9607, y: 4.6972227, z: 317.3199}
-    worldPosition: {x: 1751.9607, y: 3.6000004, z: 317.3199}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
     rotateVertical: 1
   - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Group_04 (7)
     category: Wall_Dirt_Straight
@@ -3966,16 +3336,6 @@ MonoBehaviour:
     worldScale: {x: 1.0000004, y: 1, z: 1.0000004}
     yawDegrees: 276.08948
     rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Group_04 (7)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1777.5305, y: 3.5072222, z: 261.29984}
-    worldPosition: {x: 1777.5305, y: 2.4099998, z: 261.29987}
-    worldEulerAngles: {x: 0, y: 273.12048, z: 0}
-    worldScale: {x: 1.0000004, y: 1, z: 1.0000004}
-    yawDegrees: 273.12048
-    rotateVertical: 1
   - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Group_04 (8)
     category: Wall_Dirt_Straight
     buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
@@ -3985,26 +3345,6 @@ MonoBehaviour:
     worldEulerAngles: {x: -0, y: 89.65863, z: -0}
     worldScale: {x: 1.0000004, y: 1, z: 1.0000004}
     yawDegrees: 89.65863
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Group_04 (8)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1735.7607, y: 3.5072222, z: 264.23978}
-    worldPosition: {x: 1735.7607, y: 2.4099998, z: 264.2398}
-    worldEulerAngles: {x: 0, y: 273.12048, z: 0}
-    worldScale: {x: 0.9590486, y: 1, z: 1.0000004}
-    yawDegrees: 273.12048
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Group_04 (9)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1735.5906, y: 3.667222, z: 326.8899}
-    worldPosition: {x: 1735.5906, y: 2.5699997, z: 326.8899}
-    worldEulerAngles: {x: 0, y: 276.08948, z: 0}
-    worldScale: {x: 1.0000006, y: 1, z: 1.0000006}
-    yawDegrees: 276.08948
     rotateVertical: 1
   - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Group_04 (9)
     category: Wall_Dirt_Straight
@@ -4024,16 +3364,6 @@ MonoBehaviour:
     worldPosition: {x: 926.71, y: -0.028403759, z: 412.22995}
     worldEulerAngles: {x: 359.6578, y: 269.41168, z: 356.92804}
     worldScale: {x: 0.9530202, y: 1, z: 1.0000006}
-    yawDegrees: 269.41168
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Group_04 (10)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1841.1166, y: 3.6672223, z: 327.28876}
-    worldPosition: {x: 1841.1106, y: 2.5715961, z: 327.22992}
-    worldEulerAngles: {x: 359.6578, y: 269.41168, z: 356.92804}
-    worldScale: {x: 0.95302063, y: 1, z: 1.0000006}
     yawDegrees: 269.41168
     rotateVertical: 1
   - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Group_04 (11)
@@ -4069,16 +3399,6 @@ MonoBehaviour:
   - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_01 (3)
     category: Wall_Dirt_Straight
     buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1737.4062, y: 4.1365066, z: 268.24783}
-    worldPosition: {x: 1737.4062, y: 3.6100006, z: 268.24786}
-    worldEulerAngles: {x: -0, y: 15.000139, z: -0}
-    worldScale: {x: 1.0000001, y: 1, z: 1.0000001}
-    yawDegrees: 15.000139
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_01 (3)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
     factionId: 1
     worldCenter: {x: 823.0056, y: 1.5365059, z: 353.248}
     worldPosition: {x: 823.0056, y: 1.01, z: 353.248}
@@ -4089,42 +3409,12 @@ MonoBehaviour:
   - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_01 (4)
     category: Wall_Dirt_Straight
     buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1736.7598, y: 4.1365066, z: 267.22977}
-    worldPosition: {x: 1736.7598, y: 3.6100006, z: 267.2298}
-    worldEulerAngles: {x: -0, y: 15.000139, z: -0}
-    worldScale: {x: 1.0000001, y: 1, z: 1.0000001}
-    yawDegrees: 15.000139
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_01 (4)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
     factionId: 1
     worldCenter: {x: 822.359, y: 1.5365059, z: 352.22998}
     worldPosition: {x: 822.359, y: 1.01, z: 352.22998}
     worldEulerAngles: {x: -0, y: 15.000146, z: -0}
     worldScale: {x: 1.0000001, y: 1, z: 1.0000001}
     yawDegrees: 15.000146
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_01 (5)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1841.0457, y: 4.1365066, z: 321.7299}
-    worldPosition: {x: 1841.0457, y: 3.6100006, z: 321.72992}
-    worldEulerAngles: {x: -0, y: 0.00016392453, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 0.00016392453
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_01 (6)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1841.0457, y: 4.1365066, z: 322.81985}
-    worldPosition: {x: 1841.0457, y: 3.6100006, z: 322.8199}
-    worldEulerAngles: {x: -0, y: 0.00016392453, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 0.00016392453
     rotateVertical: 0
   - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_02
     category: Wall_Dirt_Straight
@@ -4199,31 +3489,11 @@ MonoBehaviour:
   - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_02 (7)
     category: Wall_Dirt_Straight
     buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1843.4807, y: 4.1595054, z: 291.35974}
-    worldPosition: {x: 1843.4807, y: 3.6329994, z: 291.3598}
-    worldEulerAngles: {x: -0, y: 179.99986, z: -0}
-    worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
-    yawDegrees: 179.99986
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_02 (7)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
     factionId: 1
     worldCenter: {x: 929.08, y: 1.5595059, z: 376.35995}
     worldPosition: {x: 929.08, y: 1.033, z: 376.35992}
     worldEulerAngles: {x: -0, y: 179.99986, z: -0}
     worldScale: {x: 1, y: 1, z: 1}
-    yawDegrees: 179.99986
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_02 (8)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1843.4807, y: 4.106506, z: 290.26978}
-    worldPosition: {x: 1843.4807, y: 3.58, z: 290.26984}
-    worldEulerAngles: {x: -0, y: 179.99986, z: -0}
-    worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
     yawDegrees: 179.99986
     rotateVertical: 0
   - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_02 (8)
@@ -4235,76 +3505,6 @@ MonoBehaviour:
     worldEulerAngles: {x: -0, y: 175.81953, z: -0}
     worldScale: {x: 0.9451041, y: 1, z: 1.0000004}
     yawDegrees: 175.81953
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_02 (9)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1843.2727, y: 5.120506, z: 290.58276}
-    worldPosition: {x: 1843.2727, y: 4.594, z: 290.58282}
-    worldEulerAngles: {x: -0, y: 175.81952, z: -0}
-    worldScale: {x: 0.9451045, y: 1, z: 1.0000004}
-    yawDegrees: 175.81952
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_02 (10)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1845.6406, y: 4.106506, z: 294.63977}
-    worldPosition: {x: 1845.6406, y: 3.58, z: 294.63983}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_02 (11)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1845.3835, y: 5.111507, z: 294.07776}
-    worldPosition: {x: 1845.3835, y: 4.585001, z: 294.07782}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0167667, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_02 (12)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1844.5508, y: 4.2265067, z: 294.63977}
-    worldPosition: {x: 1844.5508, y: 3.7000008, z: 294.63983}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_02 (13)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1843.5127, y: 5.144506, z: 298.81677}
-    worldPosition: {x: 1843.5127, y: 4.618, z: 298.81683}
-    worldEulerAngles: {x: -0, y: 4.594629, z: -0}
-    worldScale: {x: 0.9451043, y: 1, z: 1.0000002}
-    yawDegrees: 4.594629
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_02 (14)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1843.5208, y: 4.1665072, z: 297.86975}
-    worldPosition: {x: 1843.5208, y: 3.6400013, z: 297.8698}
-    worldEulerAngles: {x: -0, y: 0.00016392453, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 0.00016392453
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_02 (15)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1843.5208, y: 4.106506, z: 298.95984}
-    worldPosition: {x: 1843.5208, y: 3.58, z: 298.9599}
-    worldEulerAngles: {x: -0, y: 0.00016392453, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 0.00016392453
     rotateVertical: 0
   - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03
     category: Wall_Dirt_Straight
@@ -5086,26 +4286,6 @@ MonoBehaviour:
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 90
     rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (80)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1772.031, y: 5.286506, z: 272.44583}
-    worldPosition: {x: 1772.031, y: 4.76, z: 272.44586}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (81)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1771.4609, y: 4.2965064, z: 272.98477}
-    worldPosition: {x: 1771.4609, y: 3.7700005, z: 272.9848}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
   - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (81)
     category: Wall_Dirt_Straight
     buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
@@ -5115,16 +4295,6 @@ MonoBehaviour:
     worldEulerAngles: {x: -0, y: 90, z: -0}
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 90
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (82)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1735.481, y: 4.186506, z: 274.06985}
-    worldPosition: {x: 1735.481, y: 3.6599998, z: 274.0699}
-    worldEulerAngles: {x: 0, y: 269.99966, z: 0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 269.99966
     rotateVertical: 1
   - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (82)
     category: Wall_Dirt_Straight
@@ -5142,786 +4312,6 @@ MonoBehaviour:
     factionId: 1
     worldCenter: {x: 849.77, y: 1.696506, z: 357.98495}
     worldPosition: {x: 849.77, y: 1.17, z: 357.985}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (83)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1736.6208, y: 4.186506, z: 274.06985}
-    worldPosition: {x: 1736.6208, y: 3.6599998, z: 274.0699}
-    worldEulerAngles: {x: 0, y: 269.99966, z: 0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 269.99966
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (84)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1735.9009, y: 5.186506, z: 274.06985}
-    worldPosition: {x: 1735.9009, y: 4.66, z: 274.0699}
-    worldEulerAngles: {x: 0, y: 269.99966, z: 0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 269.99966
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (85)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1735.481, y: 4.186506, z: 284.9998}
-    worldPosition: {x: 1735.481, y: 3.6599998, z: 284.99982}
-    worldEulerAngles: {x: 0, y: 269.99966, z: 0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 269.99966
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (86)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1735.9009, y: 5.186506, z: 284.9998}
-    worldPosition: {x: 1735.9009, y: 4.66, z: 284.99982}
-    worldEulerAngles: {x: 0, y: 269.99966, z: 0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 269.99966
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (87)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1736.6208, y: 4.186506, z: 284.9998}
-    worldPosition: {x: 1736.6208, y: 3.6599998, z: 284.99982}
-    worldEulerAngles: {x: 0, y: 269.99966, z: 0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 269.99966
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (88)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1735.8308, y: 5.186506, z: 295.8998}
-    worldPosition: {x: 1735.8308, y: 4.66, z: 295.89984}
-    worldEulerAngles: {x: 0, y: 269.99966, z: 0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 269.99966
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (89)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1736.5508, y: 4.186506, z: 295.8998}
-    worldPosition: {x: 1736.5508, y: 3.6599998, z: 295.89984}
-    worldEulerAngles: {x: 0, y: 269.99966, z: 0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 269.99966
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (90)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1735.4109, y: 4.186506, z: 295.8998}
-    worldPosition: {x: 1735.4109, y: 3.6599998, z: 295.89984}
-    worldEulerAngles: {x: 0, y: 269.99966, z: 0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 269.99966
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (91)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1736.5508, y: 4.186506, z: 306.7698}
-    worldPosition: {x: 1736.5508, y: 3.6599998, z: 306.76984}
-    worldEulerAngles: {x: 0, y: 269.99966, z: 0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 269.99966
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (92)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1735.8308, y: 5.186506, z: 306.7698}
-    worldPosition: {x: 1735.8308, y: 4.66, z: 306.76984}
-    worldEulerAngles: {x: 0, y: 269.99966, z: 0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 269.99966
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (93)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1735.4109, y: 4.186506, z: 306.7698}
-    worldPosition: {x: 1735.4109, y: 3.6599998, z: 306.76984}
-    worldEulerAngles: {x: 0, y: 269.99966, z: 0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 269.99966
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (94)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1745.6208, y: 5.186506, z: 322.10986}
-    worldPosition: {x: 1745.6208, y: 4.66, z: 322.10986}
-    worldEulerAngles: {x: -0, y: 179.99985, z: -0}
-    worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
-    yawDegrees: 179.99985
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (95)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1745.6208, y: 4.186506, z: 321.68988}
-    worldPosition: {x: 1745.6208, y: 3.6599998, z: 321.68988}
-    worldEulerAngles: {x: -0, y: 179.99985, z: -0}
-    worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
-    yawDegrees: 179.99985
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (96)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1745.6208, y: 4.186506, z: 322.8299}
-    worldPosition: {x: 1745.6208, y: 3.6599998, z: 322.8299}
-    worldEulerAngles: {x: -0, y: 179.99985, z: -0}
-    worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
-    yawDegrees: 179.99985
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (97)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1789.241, y: 5.186506, z: 322.10983}
-    worldPosition: {x: 1789.241, y: 4.66, z: 322.10986}
-    worldEulerAngles: {x: -0, y: 179.99985, z: -0}
-    worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
-    yawDegrees: 179.99985
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (98)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1789.241, y: 4.186506, z: 321.68985}
-    worldPosition: {x: 1789.241, y: 3.6599998, z: 321.68988}
-    worldEulerAngles: {x: -0, y: 179.99985, z: -0}
-    worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
-    yawDegrees: 179.99985
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (99)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1789.241, y: 4.186506, z: 322.82986}
-    worldPosition: {x: 1789.241, y: 3.6599998, z: 322.8299}
-    worldEulerAngles: {x: -0, y: 179.99985, z: -0}
-    worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
-    yawDegrees: 179.99985
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (100)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1778.281, y: 5.186506, z: 322.10983}
-    worldPosition: {x: 1778.281, y: 4.66, z: 322.10986}
-    worldEulerAngles: {x: -0, y: 179.99985, z: -0}
-    worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
-    yawDegrees: 179.99985
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (101)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1778.281, y: 4.186506, z: 322.82986}
-    worldPosition: {x: 1778.281, y: 3.6599998, z: 322.8299}
-    worldEulerAngles: {x: -0, y: 179.99985, z: -0}
-    worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
-    yawDegrees: 179.99985
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (102)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1778.281, y: 4.186506, z: 321.68985}
-    worldPosition: {x: 1778.281, y: 3.6599998, z: 321.68988}
-    worldEulerAngles: {x: -0, y: 179.99985, z: -0}
-    worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
-    yawDegrees: 179.99985
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (103)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1767.3909, y: 5.186506, z: 322.10983}
-    worldPosition: {x: 1767.3909, y: 4.66, z: 322.10986}
-    worldEulerAngles: {x: -0, y: 179.99985, z: -0}
-    worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
-    yawDegrees: 179.99985
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (104)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1767.3909, y: 4.186506, z: 321.68985}
-    worldPosition: {x: 1767.3909, y: 3.6599998, z: 321.68988}
-    worldEulerAngles: {x: -0, y: 179.99985, z: -0}
-    worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
-    yawDegrees: 179.99985
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (105)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1767.3909, y: 4.186506, z: 322.82986}
-    worldPosition: {x: 1767.3909, y: 3.6599998, z: 322.8299}
-    worldEulerAngles: {x: -0, y: 179.99985, z: -0}
-    worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
-    yawDegrees: 179.99985
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (106)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1756.5608, y: 5.186506, z: 322.10983}
-    worldPosition: {x: 1756.5608, y: 4.66, z: 322.10986}
-    worldEulerAngles: {x: -0, y: 179.99985, z: -0}
-    worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
-    yawDegrees: 179.99985
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (107)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1756.5608, y: 4.186506, z: 321.68985}
-    worldPosition: {x: 1756.5608, y: 3.6599998, z: 321.68988}
-    worldEulerAngles: {x: -0, y: 179.99985, z: -0}
-    worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
-    yawDegrees: 179.99985
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (108)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1756.5608, y: 4.186506, z: 322.82986}
-    worldPosition: {x: 1756.5608, y: 3.6599998, z: 322.8299}
-    worldEulerAngles: {x: -0, y: 179.99985, z: -0}
-    worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
-    yawDegrees: 179.99985
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (109)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1772.6309, y: 4.2965064, z: 272.98477}
-    worldPosition: {x: 1772.6309, y: 3.7700005, z: 272.9848}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (110)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1812.3208, y: 5.186506, z: 322.1099}
-    worldPosition: {x: 1812.3208, y: 4.66, z: 322.10992}
-    worldEulerAngles: {x: -0, y: 179.99985, z: -0}
-    worldScale: {x: 0.9840984, y: 1, z: 1.0000007}
-    yawDegrees: 179.99985
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (111)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1812.281, y: 4.186506, z: 321.68985}
-    worldPosition: {x: 1812.281, y: 3.6599998, z: 321.68988}
-    worldEulerAngles: {x: -0, y: 179.99985, z: -0}
-    worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
-    yawDegrees: 179.99985
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (112)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1812.281, y: 4.186506, z: 322.82986}
-    worldPosition: {x: 1812.281, y: 3.6599998, z: 322.8299}
-    worldEulerAngles: {x: -0, y: 179.99985, z: -0}
-    worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
-    yawDegrees: 179.99985
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (113)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1823.1108, y: 5.186506, z: 322.1099}
-    worldPosition: {x: 1823.1108, y: 4.66, z: 322.10992}
-    worldEulerAngles: {x: -0, y: 179.99985, z: -0}
-    worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
-    yawDegrees: 179.99985
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (114)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1823.1108, y: 4.186506, z: 321.68985}
-    worldPosition: {x: 1823.1108, y: 3.6599998, z: 321.68988}
-    worldEulerAngles: {x: -0, y: 179.99985, z: -0}
-    worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
-    yawDegrees: 179.99985
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (115)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1823.1108, y: 4.186506, z: 322.82986}
-    worldPosition: {x: 1823.1108, y: 3.6599998, z: 322.8299}
-    worldEulerAngles: {x: -0, y: 179.99985, z: -0}
-    worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
-    yawDegrees: 179.99985
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (116)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1833.76, y: 5.186506, z: 322.1099}
-    worldPosition: {x: 1833.76, y: 4.66, z: 322.10992}
-    worldEulerAngles: {x: -0, y: 179.99985, z: -0}
-    worldScale: {x: 0.95761895, y: 1, z: 1.0000007}
-    yawDegrees: 179.99985
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (117)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1833.9409, y: 4.186506, z: 321.68985}
-    worldPosition: {x: 1833.9409, y: 3.6599998, z: 321.68988}
-    worldEulerAngles: {x: -0, y: 179.99985, z: -0}
-    worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
-    yawDegrees: 179.99985
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (118)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1833.9409, y: 4.186506, z: 322.82986}
-    worldPosition: {x: 1833.9409, y: 3.6599998, z: 322.8299}
-    worldEulerAngles: {x: -0, y: 179.99985, z: -0}
-    worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
-    yawDegrees: 179.99985
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (119)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1841.7109, y: 5.186506, z: 315.76978}
-    worldPosition: {x: 1841.7109, y: 4.66, z: 315.76984}
-    worldEulerAngles: {x: 0, y: 269.99966, z: 0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 269.99966
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (120)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1841.1709, y: 4.186506, z: 315.76978}
-    worldPosition: {x: 1841.1709, y: 3.6599998, z: 315.76984}
-    worldEulerAngles: {x: 0, y: 269.99966, z: 0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 269.99966
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (121)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1842.3108, y: 4.186506, z: 315.76978}
-    worldPosition: {x: 1842.3108, y: 3.6599998, z: 315.76984}
-    worldEulerAngles: {x: 0, y: 269.99966, z: 0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 269.99966
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (122)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1841.7109, y: 5.186506, z: 304.9198}
-    worldPosition: {x: 1841.7109, y: 4.66, z: 304.91986}
-    worldEulerAngles: {x: 0, y: 269.99966, z: 0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 269.99966
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (123)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1841.1709, y: 4.186506, z: 304.9198}
-    worldPosition: {x: 1841.1709, y: 3.6599998, z: 304.91986}
-    worldEulerAngles: {x: 0, y: 269.99966, z: 0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 269.99966
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (124)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1842.3108, y: 4.186506, z: 304.9198}
-    worldPosition: {x: 1842.3108, y: 3.6599998, z: 304.91986}
-    worldEulerAngles: {x: 0, y: 269.99966, z: 0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 269.99966
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (125)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1841.7109, y: 5.186506, z: 283.23975}
-    worldPosition: {x: 1841.7109, y: 4.66, z: 283.2398}
-    worldEulerAngles: {x: 0, y: 269.99966, z: 0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 269.99966
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (126)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1841.1709, y: 4.186506, z: 283.23975}
-    worldPosition: {x: 1841.1709, y: 3.6599998, z: 283.2398}
-    worldEulerAngles: {x: 0, y: 269.99966, z: 0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 269.99966
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (127)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1842.3108, y: 4.186506, z: 283.23975}
-    worldPosition: {x: 1842.3108, y: 3.6599998, z: 283.2398}
-    worldEulerAngles: {x: 0, y: 269.99966, z: 0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 269.99966
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (128)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1841.7109, y: 5.186506, z: 272.6598}
-    worldPosition: {x: 1841.7109, y: 4.66, z: 272.65985}
-    worldEulerAngles: {x: 0, y: 269.99966, z: 0}
-    worldScale: {x: 0.94425124, y: 1, z: 1.0000002}
-    yawDegrees: 269.99966
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (129)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1841.1709, y: 4.186506, z: 272.6598}
-    worldPosition: {x: 1841.1709, y: 3.6599998, z: 272.65985}
-    worldEulerAngles: {x: 0, y: 269.99966, z: 0}
-    worldScale: {x: 0.94425124, y: 1, z: 1.0000002}
-    yawDegrees: 269.99966
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (130)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1842.3108, y: 4.186506, z: 272.6598}
-    worldPosition: {x: 1842.3108, y: 3.6599998, z: 272.65985}
-    worldEulerAngles: {x: 0, y: 269.99966, z: 0}
-    worldScale: {x: 0.94425124, y: 1, z: 1.0000002}
-    yawDegrees: 269.99966
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (131)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1836.5808, y: 5.186506, z: 266.46973}
-    worldPosition: {x: 1836.5808, y: 4.66, z: 266.4698}
-    worldEulerAngles: {x: 0, y: -0.0004917736, z: 0}
-    worldScale: {x: 0.84955996, y: 1, z: 1.0000002}
-    yawDegrees: -0.0004917736
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (132)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1837.4509, y: 4.186506, z: 267.00977}
-    worldPosition: {x: 1837.4509, y: 3.6599998, z: 267.00983}
-    worldEulerAngles: {x: 0, y: -0.0004917736, z: 0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: -0.0004917736
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (133)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1837.4509, y: 4.186506, z: 265.86975}
-    worldPosition: {x: 1837.4509, y: 3.6599998, z: 265.8698}
-    worldEulerAngles: {x: 0, y: -0.0004917736, z: 0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: -0.0004917736
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (134)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1826.751, y: 5.186506, z: 266.46973}
-    worldPosition: {x: 1826.751, y: 4.66, z: 266.4698}
-    worldEulerAngles: {x: 0, y: -0.0004917736, z: 0}
-    worldScale: {x: 0.96281433, y: 1, z: 1.0000002}
-    yawDegrees: -0.0004917736
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (135)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1826.751, y: 4.186506, z: 267.00977}
-    worldPosition: {x: 1826.751, y: 3.6599998, z: 267.00983}
-    worldEulerAngles: {x: 0, y: -0.0004917736, z: 0}
-    worldScale: {x: 0.96281433, y: 1, z: 1.0000002}
-    yawDegrees: -0.0004917736
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (136)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1826.751, y: 4.186506, z: 265.86975}
-    worldPosition: {x: 1826.751, y: 3.6599998, z: 265.8698}
-    worldEulerAngles: {x: 0, y: -0.0004917736, z: 0}
-    worldScale: {x: 0.96281433, y: 1, z: 1.0000002}
-    yawDegrees: -0.0004917736
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (137)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1816.8208, y: 5.186506, z: 266.46973}
-    worldPosition: {x: 1816.8208, y: 4.66, z: 266.4698}
-    worldEulerAngles: {x: 0, y: -0.0004917736, z: 0}
-    worldScale: {x: 0.85580015, y: 1, z: 1.0000002}
-    yawDegrees: -0.0004917736
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (138)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1816.471, y: 4.186506, z: 267.00977}
-    worldPosition: {x: 1816.471, y: 3.6599998, z: 267.00983}
-    worldEulerAngles: {x: 0, y: -0.0004917736, z: 0}
-    worldScale: {x: 0.9254796, y: 1, z: 1.0000002}
-    yawDegrees: -0.0004917736
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (139)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1816.471, y: 4.186506, z: 265.86975}
-    worldPosition: {x: 1816.471, y: 3.6599998, z: 265.8698}
-    worldEulerAngles: {x: 0, y: -0.0004917736, z: 0}
-    worldScale: {x: 0.9254796, y: 1, z: 1.0000002}
-    yawDegrees: -0.0004917736
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (140)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1792.0908, y: 5.186506, z: 266.46973}
-    worldPosition: {x: 1792.0908, y: 4.66, z: 266.4698}
-    worldEulerAngles: {x: 0, y: -0.0004917736, z: 0}
-    worldScale: {x: 0.8791592, y: 1, z: 1.0000002}
-    yawDegrees: -0.0004917736
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (141)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1792.3809, y: 4.186506, z: 267.00977}
-    worldPosition: {x: 1792.3809, y: 3.6599998, z: 267.00983}
-    worldEulerAngles: {x: 0, y: -0.0004917736, z: 0}
-    worldScale: {x: 0.9254796, y: 1, z: 1.0000002}
-    yawDegrees: -0.0004917736
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (142)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1792.3809, y: 4.186506, z: 265.86975}
-    worldPosition: {x: 1792.3809, y: 3.6599998, z: 265.8698}
-    worldEulerAngles: {x: 0, y: -0.0004917736, z: 0}
-    worldScale: {x: 0.9254796, y: 1, z: 1.0000002}
-    yawDegrees: -0.0004917736
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (143)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1782.3108, y: 5.186506, z: 266.46976}
-    worldPosition: {x: 1782.3108, y: 4.66, z: 266.4698}
-    worldEulerAngles: {x: 0, y: -0.0004917736, z: 0}
-    worldScale: {x: 0.9254796, y: 1, z: 1.0000002}
-    yawDegrees: -0.0004917736
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (144)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1782.3108, y: 4.186506, z: 267.0098}
-    worldPosition: {x: 1782.3108, y: 3.6599998, z: 267.00983}
-    worldEulerAngles: {x: 0, y: -0.0004917736, z: 0}
-    worldScale: {x: 0.9254796, y: 1, z: 1.0000002}
-    yawDegrees: -0.0004917736
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (145)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1782.3108, y: 4.186506, z: 265.86978}
-    worldPosition: {x: 1782.3108, y: 3.6599998, z: 265.8698}
-    worldEulerAngles: {x: 0, y: -0.0004917736, z: 0}
-    worldScale: {x: 0.9254796, y: 1, z: 1.0000002}
-    yawDegrees: -0.0004917736
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (146)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1772.2708, y: 5.186506, z: 266.46976}
-    worldPosition: {x: 1772.2708, y: 4.66, z: 266.4698}
-    worldEulerAngles: {x: 0, y: -0.0004917736, z: 0}
-    worldScale: {x: 0.9254796, y: 1, z: 1.0000002}
-    yawDegrees: -0.0004917736
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (147)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1772.2708, y: 4.186506, z: 267.0098}
-    worldPosition: {x: 1772.2708, y: 3.6599998, z: 267.00983}
-    worldEulerAngles: {x: 0, y: -0.0004917736, z: 0}
-    worldScale: {x: 0.9254796, y: 1, z: 1.0000002}
-    yawDegrees: -0.0004917736
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (148)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1772.271, y: 4.186506, z: 265.86978}
-    worldPosition: {x: 1772.271, y: 3.6599998, z: 265.8698}
-    worldEulerAngles: {x: 0, y: -0.0004917736, z: 0}
-    worldScale: {x: 0.9254796, y: 1, z: 1.0000002}
-    yawDegrees: -0.0004917736
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (149)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1762.2908, y: 5.186506, z: 266.46976}
-    worldPosition: {x: 1762.2908, y: 4.66, z: 266.4698}
-    worldEulerAngles: {x: 0, y: -0.0004917736, z: 0}
-    worldScale: {x: 0.9254796, y: 1, z: 1.0000002}
-    yawDegrees: -0.0004917736
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (150)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1762.2908, y: 4.186506, z: 267.0098}
-    worldPosition: {x: 1762.2908, y: 3.6599998, z: 267.00983}
-    worldEulerAngles: {x: 0, y: -0.0004917736, z: 0}
-    worldScale: {x: 0.9254796, y: 1, z: 1.0000002}
-    yawDegrees: -0.0004917736
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (151)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1762.291, y: 4.186506, z: 265.86978}
-    worldPosition: {x: 1762.291, y: 3.6599998, z: 265.8698}
-    worldEulerAngles: {x: 0, y: -0.0004917736, z: 0}
-    worldScale: {x: 0.9254796, y: 1, z: 1.0000002}
-    yawDegrees: -0.0004917736
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (152)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1752.5608, y: 5.186506, z: 266.63992}
-    worldPosition: {x: 1752.5608, y: 4.66, z: 266.63995}
-    worldEulerAngles: {x: -0, y: 1.5213598, z: -0}
-    worldScale: {x: 0.8676355, y: 1, z: 1.0000004}
-    yawDegrees: 1.5213598
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (153)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1752.5708, y: 4.186506, z: 267.17984}
-    worldPosition: {x: 1752.5708, y: 3.6599998, z: 267.17987}
-    worldEulerAngles: {x: -0, y: 1.5213598, z: -0}
-    worldScale: {x: 0.8676355, y: 1, z: 1.0000004}
-    yawDegrees: 1.5213598
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (154)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1752.5508, y: 4.186506, z: 266.0402}
-    worldPosition: {x: 1752.5508, y: 3.6599998, z: 266.04022}
-    worldEulerAngles: {x: -0, y: 1.5213598, z: -0}
-    worldScale: {x: 0.8676355, y: 1, z: 1.0000004}
-    yawDegrees: 1.5213598
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (155)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1743.3909, y: 5.186506, z: 266.93985}
-    worldPosition: {x: 1743.3909, y: 4.66, z: 266.93988}
-    worldEulerAngles: {x: -0, y: 1.5213598, z: -0}
-    worldScale: {x: 0.8137474, y: 1, z: 1.0000004}
-    yawDegrees: 1.5213598
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (156)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1743.4009, y: 4.186506, z: 267.47964}
-    worldPosition: {x: 1743.4009, y: 3.6599998, z: 267.47968}
-    worldEulerAngles: {x: -0, y: 1.5213598, z: -0}
-    worldScale: {x: 0.8137474, y: 1, z: 1.0000004}
-    yawDegrees: 1.5213598
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (157)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1743.3809, y: 4.186506, z: 266.34}
-    worldPosition: {x: 1743.3809, y: 3.6599998, z: 266.34003}
-    worldEulerAngles: {x: -0, y: 1.5213598, z: -0}
-    worldScale: {x: 0.8137474, y: 1, z: 1.0000004}
-    yawDegrees: 1.5213598
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (158)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1763.5708, y: 5.286506, z: 272.44583}
-    worldPosition: {x: 1763.5708, y: 4.76, z: 272.44586}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (159)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1763.001, y: 4.2965064, z: 272.98477}
-    worldPosition: {x: 1763.001, y: 3.7700005, z: 272.9848}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Row_03 (160)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1764.1709, y: 4.2965064, z: 272.98477}
-    worldPosition: {x: 1764.1709, y: 3.7700005, z: 272.9848}
     worldEulerAngles: {x: -0, y: 90, z: -0}
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 90
@@ -5986,26 +4376,6 @@ MonoBehaviour:
     worldScale: {x: 1.0000005, y: 1, z: 1.0750679}
     yawDegrees: 178.18147
     rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Single_01 (5)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1735.9255, y: 5.1646166, z: 268.06485}
-    worldPosition: {x: 1735.9255, y: 4.6480007, z: 268.06488}
-    worldEulerAngles: {x: -0, y: 178.18147, z: -0}
-    worldScale: {x: 1.0000001, y: 1, z: 1.0750679}
-    yawDegrees: 178.18147
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Single_01 (6)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1737.0806, y: 5.1646166, z: 267.57083}
-    worldPosition: {x: 1737.0806, y: 4.6480007, z: 267.57086}
-    worldEulerAngles: {x: -0, y: 15.000139, z: -0}
-    worldScale: {x: 1.107615, y: 1, z: 1.0000001}
-    yawDegrees: 15.000139
-    rotateVertical: 0
   - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Single_01 (6)
     category: Wall_Dirt_Straight
     buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
@@ -6025,26 +4395,6 @@ MonoBehaviour:
     worldEulerAngles: {x: -0, y: 15.000146, z: -0}
     worldScale: {x: 1.1076148, y: 1, z: 1.0000001}
     yawDegrees: 15.000146
-    rotateVertical: 0
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Single_01 (7)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1738.3647, y: 5.1646166, z: 267.15482}
-    worldPosition: {x: 1738.3647, y: 4.6480007, z: 267.15485}
-    worldEulerAngles: {x: -0, y: 95.38762, z: -0}
-    worldScale: {x: 1.0000005, y: 1, z: 1.1618922}
-    yawDegrees: 95.38762
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Single_01 (8)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1840.7056, y: 5.1646166, z: 322.0579}
-    worldPosition: {x: 1840.7056, y: 4.6480007, z: 322.05792}
-    worldEulerAngles: {x: -0, y: 0.00016392453, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 0.00016392453
     rotateVertical: 0
   - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Single_01 (8)
     category: Wall_Dirt_Straight
@@ -6066,16 +4416,6 @@ MonoBehaviour:
     worldScale: {x: 1.0000004, y: 1, z: 1.0452344}
     yawDegrees: 92.40804
     rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Single_01 (9)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1841.8105, y: 5.1646166, z: 321.8909}
-    worldPosition: {x: 1841.8105, y: 4.6480007, z: 321.89093}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.2379516, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
   - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Single_01 (10)
     category: Wall_Dirt_Straight
     buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
@@ -6086,16 +4426,6 @@ MonoBehaviour:
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 90
     rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Single_01 (10)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1839.5386, y: 5.1646166, z: 322.0579}
-    worldPosition: {x: 1839.5386, y: 4.6480007, z: 322.05792}
-    worldEulerAngles: {x: -0, y: 179.99985, z: -0}
-    worldScale: {x: 1.0000007, y: 1, z: 1.0000007}
-    yawDegrees: 179.99985
-    rotateVertical: 0
   - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Single_01 (11)
     category: Wall_Dirt_Straight
     buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
@@ -6105,36 +4435,6 @@ MonoBehaviour:
     worldEulerAngles: {x: -0, y: 90, z: -0}
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 90
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Single_01 (11)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1841.7488, y: 5.1646166, z: 266.8058}
-    worldPosition: {x: 1841.7488, y: 4.6480007, z: 266.80585}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.262711, y: 1, z: 1.0651398}
-    yawDegrees: 90
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Single_01 (12)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1797.4167, y: 5.1646166, z: 266.37183}
-    worldPosition: {x: 1797.4167, y: 4.6480007, z: 266.3719}
-    worldEulerAngles: {x: -0, y: 95.38762, z: -0}
-    worldScale: {x: 1.0000005, y: 1, z: 1.0452342}
-    yawDegrees: 95.38762
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Single_01 (13)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1811.5928, y: 5.1646166, z: 266.4568}
-    worldPosition: {x: 1811.5928, y: 4.6480007, z: 266.45685}
-    worldEulerAngles: {x: -0, y: 92.40804, z: -0}
-    worldScale: {x: 1.0000004, y: 1, z: 1.0452347}
-    yawDegrees: 92.40804
     rotateVertical: 1
   - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Single_02
     category: Wall_Dirt_Straight
@@ -6206,26 +4506,6 @@ MonoBehaviour:
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 90
     rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Single_02 (6)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1841.4136, y: 5.0769205, z: 289.27478}
-    worldPosition: {x: 1841.4136, y: 4.5410004, z: 289.27484}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Single_02 (7)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1841.2375, y: 4.1479197, z: 289.21277}
-    worldPosition: {x: 1841.2375, y: 3.6119995, z: 289.21283}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
   - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Single_02 (7)
     category: Wall_Dirt_Straight
     buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
@@ -6246,53 +4526,3 @@ MonoBehaviour:
     worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
     yawDegrees: 90
     rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Single_02 (8)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1842.2917, y: 4.1479197, z: 289.19482}
-    worldPosition: {x: 1842.2917, y: 3.6119995, z: 289.1949}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Single_02 (9)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1845.4707, y: 5.1549196, z: 297.50977}
-    worldPosition: {x: 1845.4707, y: 4.6189995, z: 297.50983}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Single_02 (10)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1795.1807, y: 5.077901, z: 322.19986}
-    worldPosition: {x: 1795.1807, y: 4.5419807, z: 322.1999}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 1.0000002}
-    yawDegrees: 90
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Single_02 (11)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1806.4807, y: 5.077901, z: 322.19986}
-    worldPosition: {x: 1806.4807, y: 4.5419807, z: 322.1999}
-    worldEulerAngles: {x: -0, y: 90, z: -0}
-    worldScale: {x: 1.0000002, y: 1, z: 0.9499119}
-    yawDegrees: 90
-    rotateVertical: 1
-  - sourcePath: Map/Buildings/Wall_Dirt_Straight/SM_Prop_Barrier_Base_Single_02 (12)
-    category: Wall_Dirt_Straight
-    buildingPrefab: {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
-    factionId: 2
-    worldCenter: {x: 1805.5457, y: 5.077946, z: 319.88785}
-    worldPosition: {x: 1805.5457, y: 4.5849, z: 319.88788}
-    worldEulerAngles: {x: -0, y: 0.00016392453, z: -0}
-    worldScale: {x: 0.9200004, y: 0.92, z: 0.873919}
-    yawDegrees: 0.00016392453
-    rotateVertical: 0

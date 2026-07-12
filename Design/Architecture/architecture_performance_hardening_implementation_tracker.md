@@ -260,7 +260,7 @@ The program is complete only when all of the following are true:
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: current integrated-head steady-state Match GC `235,496 / 1,024` bytes; tactical-camera and audio gameplay-state rows are absent, while remaining recurring owners stay assigned to APH-710/711 |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
-| Last verified commit | `80b68a244`; selection-camera query decomposition and integrated validation evidence are committed on `main` |
+| Last verified commit | `577a0ef63`; audio gameplay-state query caching and integrated validation evidence are committed on `main` |
 | Last update | 2026-07-12 - audio gameplay-state reads use a lifecycle-bound query cache; the measured audio row is absent and APH-710 continues with the remaining recurring owners |
 
 ## Phase 0 - Baseline and Safety Freeze

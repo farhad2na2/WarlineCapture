@@ -79,7 +79,9 @@ namespace Game.Runtime
             AudioPlaybackRequestElement request,
             AudioEventCatalogEntry entry,
             AudioMixerBusEntry bus,
-            AudioSettingsComponent settings)
+            AudioSettingsComponent settings,
+            float now = 0f,
+            float musicTransitionSeconds = 0f)
         {
             if (request.Status != AudioPlaybackRequestStatus.Accepted)
             {
@@ -103,11 +105,31 @@ namespace Game.Runtime
                 return new AudioPlaybackPresentationResult(false, AudioPlaybackRequestStatus.Culled, "MaxInstances", -1);
             }
 
-            int sourceIndex = RentSource();
+            bool isMusicState = request.Kind == AudioPlaybackRequestKind.MusicState;
+            float transitionSeconds = math.max(0f, musicTransitionSeconds);
+            int sourceIndex;
+            if (isMusicState && transitionSeconds <= 0f)
+            {
+                StopActiveMusicExcept(request.EventHash);
+                sourceIndex = RentSource();
+            }
+            else
+            {
+                sourceIndex = RentSource();
+                if (sourceIndex < 0 && isMusicState)
+                {
+                    StopActiveMusicExcept(request.EventHash);
+                    sourceIndex = RentSource();
+                }
+            }
+
             if (sourceIndex < 0)
             {
                 return new AudioPlaybackPresentationResult(false, AudioPlaybackRequestStatus.Culled, "PoolFull", -1);
             }
+
+            if (isMusicState && transitionSeconds > 0f)
+                FadeOutActiveMusicExcept(request.EventHash, now, transitionSeconds);
 
             PooledAudioSource pooledSource = _sources[sourceIndex];
             ConfigureSource(pooledSource.Source, request, entry, bus, settings, clip);
@@ -117,6 +139,17 @@ namespace Game.Runtime
             pooledSource.BusId = ResolveBusId(request, entry);
             pooledSource.VolumeDecibels = ResolveTotalDecibels(request, entry, bus);
             pooledSource.InUse = true;
+            pooledSource.ReleaseAfterFade = false;
+            if (isMusicState && transitionSeconds > 0f)
+            {
+                float targetVolume = pooledSource.Source.volume;
+                pooledSource.Source.volume = 0f;
+                pooledSource.FadeActive = true;
+                pooledSource.FadeStartVolume = 0f;
+                pooledSource.FadeTargetVolume = targetVolume;
+                pooledSource.FadeStartTime = now;
+                pooledSource.FadeDuration = transitionSeconds;
+            }
             _sources[sourceIndex] = pooledSource;
 
             pooledSource.Source.Play();
@@ -143,7 +176,16 @@ namespace Game.Runtime
                 }
 
                 if (AdvanceFade(ref pooledSource, now))
+                {
+                    if (!pooledSource.FadeActive && pooledSource.ReleaseAfterFade)
+                    {
+                        pooledSource.Source.Stop();
+                        ReleaseSource(i);
+                        continue;
+                    }
+
                     _sources[i] = pooledSource;
+                }
             }
         }
 
@@ -172,6 +214,8 @@ namespace Game.Runtime
             {
                 PooledAudioSource pooledSource = _sources[i];
                 if (!pooledSource.InUse || pooledSource.Source == null)
+                    continue;
+                if (pooledSource.ReleaseAfterFade)
                     continue;
 
                 AdvanceFade(ref pooledSource, now);
@@ -328,7 +372,49 @@ namespace Game.Runtime
             pooledSource.FadeTargetVolume = 0f;
             pooledSource.FadeStartTime = 0f;
             pooledSource.FadeDuration = 0f;
+            pooledSource.ReleaseAfterFade = false;
             _sources[index] = pooledSource;
+        }
+
+        private void StopActiveMusicExcept(uint eventHash)
+        {
+            for (int i = 0; i < _sources.Count; i++)
+            {
+                PooledAudioSource pooledSource = _sources[i];
+                if (!pooledSource.InUse ||
+                    pooledSource.EventHash == eventHash ||
+                    !IsMusicBus(pooledSource.BusId))
+                {
+                    continue;
+                }
+
+                pooledSource.Source?.Stop();
+                ReleaseSource(i);
+            }
+        }
+
+        private void FadeOutActiveMusicExcept(uint eventHash, float now, float duration)
+        {
+            for (int i = 0; i < _sources.Count; i++)
+            {
+                PooledAudioSource pooledSource = _sources[i];
+                if (!pooledSource.InUse ||
+                    pooledSource.Source == null ||
+                    pooledSource.EventHash == eventHash ||
+                    !IsMusicBus(pooledSource.BusId))
+                {
+                    continue;
+                }
+
+                AdvanceFade(ref pooledSource, now);
+                pooledSource.FadeActive = true;
+                pooledSource.FadeStartVolume = pooledSource.Source.volume;
+                pooledSource.FadeTargetVolume = 0f;
+                pooledSource.FadeStartTime = now;
+                pooledSource.FadeDuration = duration;
+                pooledSource.ReleaseAfterFade = true;
+                _sources[i] = pooledSource;
+            }
         }
 
         private int CountActiveInstances(uint eventHash)
@@ -456,6 +542,7 @@ namespace Game.Runtime
             public float FadeTargetVolume;
             public float FadeStartTime;
             public float FadeDuration;
+            public bool ReleaseAfterFade;
         }
     }
 }

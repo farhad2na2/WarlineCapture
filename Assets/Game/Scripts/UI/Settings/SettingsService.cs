@@ -11,6 +11,8 @@ namespace Game.UI.Runtime
         private const string AlertsVolumeKey = Prefix + "Audio.AlertsVolume";
         private const string VoiceVolumeKey = Prefix + "Audio.VoiceVolume";
         private const string MusicEnabledKey = Prefix + "Audio.MusicEnabled";
+        private const string MusicSoundtrackVersionKey = Prefix + "Audio.MusicSoundtrackVersion";
+        private const int CurrentMusicSoundtrackVersion = 1;
         private const string SoundEnabledKey = Prefix + "Audio.SoundEnabled";
         private const string VoiceEnabledKey = Prefix + "Audio.VoiceEnabled";
         private const string GraphicsQualityKey = Prefix + "Graphics.Quality";
@@ -117,7 +119,7 @@ namespace Game.UI.Runtime
                     SfxVolume = PlayerPrefs.GetFloat(SfxVolumeKey, defaults.Audio.SfxVolume),
                     AlertsVolume = PlayerPrefs.GetFloat(AlertsVolumeKey, defaults.Audio.AlertsVolume),
                     VoiceVolume = PlayerPrefs.GetFloat(VoiceVolumeKey, defaults.Audio.VoiceVolume),
-                    MusicEnabled = GetBool(MusicEnabledKey, defaults.Audio.MusicEnabled),
+                    MusicEnabled = LoadMusicEnabled(defaults.Audio.MusicEnabled),
                     SoundEnabled = GetBool(SoundEnabledKey, defaults.Audio.SoundEnabled),
                     VoiceEnabled = GetBool(VoiceEnabledKey, defaults.Audio.VoiceEnabled)
                 },
@@ -178,6 +180,7 @@ namespace Game.UI.Runtime
             PlayerPrefs.SetFloat(AlertsVolumeKey, Mathf.Clamp(model.Audio.AlertsVolume, 0f, 100f));
             PlayerPrefs.SetFloat(VoiceVolumeKey, Mathf.Clamp(model.Audio.VoiceVolume, 0f, 100f));
             PlayerPrefs.SetInt(MusicEnabledKey, model.Audio.MusicEnabled ? 1 : 0);
+            PlayerPrefs.SetInt(MusicSoundtrackVersionKey, CurrentMusicSoundtrackVersion);
             PlayerPrefs.SetInt(SoundEnabledKey, model.Audio.SoundEnabled ? 1 : 0);
             PlayerPrefs.SetInt(VoiceEnabledKey, model.Audio.VoiceEnabled ? 1 : 0);
             PlayerPrefs.SetInt(GraphicsQualityKey, (int)model.Graphics.Quality);
@@ -293,6 +296,18 @@ namespace Game.UI.Runtime
         private static bool GetBool(string key, bool fallback)
         {
             return PlayerPrefs.GetInt(key, fallback ? 1 : 0) != 0;
+        }
+
+        private static bool LoadMusicEnabled(bool fallback)
+        {
+            int appliedSoundtrackVersion = PlayerPrefs.GetInt(MusicSoundtrackVersionKey, 0);
+            if (appliedSoundtrackVersion >= CurrentMusicSoundtrackVersion)
+                return GetBool(MusicEnabledKey, fallback);
+
+            PlayerPrefs.SetInt(MusicEnabledKey, 1);
+            PlayerPrefs.SetInt(MusicSoundtrackVersionKey, CurrentMusicSoundtrackVersion);
+            PlayerPrefs.Save();
+            return true;
         }
 
         private static bool LoadReducedMotionPreference(bool fallback)

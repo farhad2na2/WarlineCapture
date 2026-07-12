@@ -80,12 +80,21 @@ namespace Game.Runtime
 
                 AudioEventCatalogEntry entry = ResolveEvent(request);
                 AudioMixerBusEntry bus = ResolveBus(entry, request);
+                float musicTransitionSeconds = request.Kind == AudioPlaybackRequestKind.MusicState
+                    ? em.GetComponentData<AudioMusicStateComponent>(audioEntity).TransitionSeconds
+                    : 0f;
                 AudioPlaybackPresentationResult result = ShouldCullGameplayOnlyRequestWhileInactive(
                         simulationActive,
                         request,
                         entry)
                     ? new AudioPlaybackPresentationResult(false, AudioPlaybackRequestStatus.Culled, "GameplayInactive", -1)
-                    : playbackHelper.PlayAcceptedRequest(request, entry, bus, settings);
+                    : playbackHelper.PlayAcceptedRequest(
+                        request,
+                        entry,
+                        bus,
+                        settings,
+                        now,
+                        musicTransitionSeconds);
                 request.Status = result.Played
                     ? AudioPlaybackRequestStatus.Presented
                     : result.Status;

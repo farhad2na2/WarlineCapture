@@ -6,6 +6,8 @@ using UnityEngine;
 public sealed class NarrativeSettingsPersistenceTests
 {
     private const string Prefix = "Game.Settings.";
+    private const string MusicEnabledKey = Prefix + "Audio.MusicEnabled";
+    private const string MusicSoundtrackVersionKey = Prefix + "Audio.MusicSoundtrackVersion";
     private const string ReducedMotionKey = Prefix + "Accessibility.ReducedMotion";
     private const string LegacyReducedMotionKey = "Game.ReducedMotion";
     private const string NarrativeSubtitlesEnabledKey = Prefix + "Narrative.SubtitlesEnabled";
@@ -16,7 +18,8 @@ public sealed class NarrativeSettingsPersistenceTests
 
     private static readonly string[] IntKeys =
     {
-        Prefix + "Audio.MusicEnabled",
+        MusicEnabledKey,
+        MusicSoundtrackVersionKey,
         Prefix + "Audio.SoundEnabled",
         Prefix + "Audio.VoiceEnabled",
         Prefix + "Graphics.Quality",
@@ -149,6 +152,26 @@ public sealed class NarrativeSettingsPersistenceTests
 
         Assert.IsFalse(canonical.Accessibility.ReducedMotion);
         Assert.AreEqual(1, PlayerPrefs.GetInt(LegacyReducedMotionKey));
+    }
+
+    [Test]
+    public void Load_NewSoundtrackReenablesMusicOnceThenPreservesUserChoice()
+    {
+        PlayerPrefs.SetInt(MusicEnabledKey, 0);
+        PlayerPrefs.DeleteKey(MusicSoundtrackVersionKey);
+
+        UISettingsModel migrated = SettingsService.Load();
+
+        Assert.IsTrue(migrated.Audio.MusicEnabled);
+        Assert.AreEqual(1, PlayerPrefs.GetInt(MusicEnabledKey));
+        Assert.AreEqual(1, PlayerPrefs.GetInt(MusicSoundtrackVersionKey));
+
+        migrated.Audio.MusicEnabled = false;
+        SettingsService.Save(migrated);
+        UISettingsModel disabledByUser = SettingsService.Load();
+
+        Assert.IsFalse(disabledByUser.Audio.MusicEnabled);
+        Assert.AreEqual(1, PlayerPrefs.GetInt(MusicSoundtrackVersionKey));
     }
 
     [Test]

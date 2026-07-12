@@ -35,6 +35,8 @@ public sealed class AudioPlaybackPresentationSystemHelperTests
             passed++;
             RunCase(test => test.ApplySettingsToActiveSources_FadesMusicLoopVolumeWhenRequested());
             passed++;
+            RunCase(test => test.PlayAcceptedRequest_CrossfadesMusicStatesAndReleasesOutgoingLoop());
+            passed++;
 
             Debug.Log($"[AudioPlaybackPresentationHelperValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -307,6 +309,59 @@ public sealed class AudioPlaybackPresentationSystemHelperTests
 
         helper.UpdatePool(now: 10.4f);
         Assert.That(source.volume, Is.EqualTo(0f).Within(0.001f));
+    }
+
+    [Test]
+    public void PlayAcceptedRequest_CrossfadesMusicStatesAndReleasesOutgoingLoop()
+    {
+        using AudioPlaybackPresentationSystemHelper helper = new(initialPoolSize: 2, maxPoolSize: 2);
+        AudioSettingsComponent settings = CreateSettings();
+        AudioEventCatalogEntry menuEntry = CreateEntry(
+            AudioEventIds.MusicMenuLoop,
+            busId: "Music",
+            maxInstances: 1,
+            clip: CreateClip("music_menu_loop"));
+        AudioPlaybackRequestElement menuRequest = CreateAcceptedRequest(
+            1,
+            AudioEventIds.MusicMenuLoop,
+            AudioEventIds.MusicMenuLoopHash);
+        menuRequest.Kind = AudioPlaybackRequestKind.MusicState;
+
+        Assert.IsTrue(helper.PlayAcceptedRequest(menuRequest, menuEntry, null, settings).Played);
+        Assert.IsTrue(helper.TryGetActiveSource(menuRequest.RequestId, out AudioSource menuSource));
+        Assert.That(menuSource.volume, Is.EqualTo(1f).Within(0.001f));
+
+        AudioEventCatalogEntry matchEntry = CreateEntry(
+            AudioEventIds.MusicMatchCalmLoop,
+            busId: "Music",
+            maxInstances: 1,
+            clip: CreateClip("music_match_calm_loop"));
+        AudioPlaybackRequestElement matchRequest = CreateAcceptedRequest(
+            2,
+            AudioEventIds.MusicMatchCalmLoop,
+            AudioEventIds.MusicMatchCalmLoopHash);
+        matchRequest.Kind = AudioPlaybackRequestKind.MusicState;
+
+        AudioPlaybackPresentationResult transition = helper.PlayAcceptedRequest(
+            matchRequest,
+            matchEntry,
+            null,
+            settings,
+            now: 10f,
+            musicTransitionSeconds: 2f);
+
+        Assert.IsTrue(transition.Played);
+        Assert.IsTrue(helper.TryGetActiveSource(matchRequest.RequestId, out AudioSource matchSource));
+        Assert.That(matchSource.volume, Is.EqualTo(0f).Within(0.001f));
+
+        helper.UpdatePool(now: 11f);
+        Assert.That(menuSource.volume, Is.EqualTo(0.5f).Within(0.05f));
+        Assert.That(matchSource.volume, Is.EqualTo(0.5f).Within(0.05f));
+
+        helper.UpdatePool(now: 12f);
+        Assert.IsFalse(helper.TryGetActiveSource(menuRequest.RequestId, out _));
+        Assert.IsTrue(helper.TryGetActiveSource(matchRequest.RequestId, out matchSource));
+        Assert.That(matchSource.volume, Is.EqualTo(1f).Within(0.001f));
     }
 
     private AudioClip CreateClip(string name)

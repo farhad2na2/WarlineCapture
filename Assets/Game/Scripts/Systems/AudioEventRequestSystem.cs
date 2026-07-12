@@ -171,7 +171,7 @@ namespace Game.Runtime
             musicState.IsTransitioning = 1;
             em.SetComponentData(audioEntity, musicState);
 
-            return EnqueueOneShot(
+            int requestId = EnqueueOneShot(
                 em,
                 eventId,
                 eventHash,
@@ -179,6 +179,14 @@ namespace Game.Runtime
                 AudioPlaybackPriority.High,
                 requestedAt,
                 cooldownSeconds: 0f);
+
+            DynamicBuffer<AudioPlaybackRequestElement> requests =
+                em.GetBuffer<AudioPlaybackRequestElement>(audioEntity);
+            int requestIndex = requests.Length - 1;
+            AudioPlaybackRequestElement request = requests[requestIndex];
+            request.Kind = AudioPlaybackRequestKind.MusicState;
+            requests[requestIndex] = request;
+            return requestId;
         }
 
         private static AudioSettingsComponent CreateDefaultSettings()

@@ -48,6 +48,7 @@ class SfxSpec:
     min_crest_db: float = 3.0
     max_crest_db: float = 25.0
     transient_expected: bool = False
+    target_lufs: float | None = None
 
 
 SPECS: tuple[SfxSpec, ...] = (
@@ -388,10 +389,49 @@ SPECS: tuple[SfxSpec, ...] = (
     SfxSpec("Ambience.City.DayLoop", "Assets/Game/Audio/Ambience/amb_city_day_loop_01.wav", 8.0, "Loopable modern city daytime ambience near a military operation, distant traffic, wind, faint urban room tone, no music, no voice, seamless loop with clean headroom.", loop=True, prompt_influence=0.50, max_rms_db=-12.0, max_crest_db=22.0),
     SfxSpec("Ambience.Base.DistantLoop", "Assets/Game/Audio/Ambience/amb_base_distant_loop_01.wav", 8.0, "Loopable military base distant ambience, low generators, far vehicles, wind over concrete, subtle radio texture, no music, no voice, seamless loop with clean headroom.", loop=True, prompt_influence=0.52, max_rms_db=-12.0, max_crest_db=22.0),
     SfxSpec("Music.Splash.Intro", "Assets/Game/Audio/Music/music_splash_intro_01.wav", 5.0, "Short military strategy game splash intro sting, cinematic percussion and low brass texture, no voice, clean headroom.", prompt_influence=0.48, max_rms_db=-6.0),
-    SfxSpec("Music.Menu.Loop", "Assets/Game/Audio/Music/music_menu_loop_01.wav", 10.0, "Loopable military strategy game main menu music bed, restrained cinematic pulse, subtle percussion, tactical tension, no voice, seamless loop.", loop=True, prompt_influence=0.46, max_rms_db=-8.0),
+    SfxSpec(
+        "Music.Menu.Loop",
+        "Assets/Game/Audio/Music/music_menu_loop_01.wav",
+        30.0,
+        "Seamless cinematic main-menu underscore for a modern Middle Eastern military strategy game, "
+        "measured command-room confidence, warm cello and low strings, restrained oud motif, subtle airy "
+        "ney texture, sparse soft frame drum accents, evolving harmony without a repetitive pulse, no vocals, "
+        "no chant, no spoken words, no trailer hits, no booms, no alarms, no sound effects, clean headroom.",
+        loop=True,
+        prompt_influence=0.57,
+        max_rms_db=-14.0,
+        max_crest_db=19.0,
+        target_lufs=-16.0,
+    ),
     SfxSpec("Music.Briefing.Loop", "Assets/Game/Audio/Music/music_briefing_loop_01.wav", 10.0, "Loopable mission briefing music bed, quiet military command room tension, low drones and subtle pulse, no voice, seamless loop.", loop=True, prompt_influence=0.46, max_rms_db=-9.0),
-    SfxSpec("Music.Match.CalmLoop", "Assets/Game/Audio/Music/music_match_calm_loop_01.wav", 10.0, "Loopable calm RTS battlefield music bed, low tactical tension, restrained percussion and drones, no voice, seamless loop.", loop=True, prompt_influence=0.46, max_rms_db=-9.0),
-    SfxSpec("Music.Match.CombatLoop", "Assets/Game/Audio/Music/music_match_combat_loop_01.wav", 10.0, "Loopable RTS combat music bed, military action pulse, cinematic percussion, tense low strings, no voice, seamless loop.", loop=True, prompt_influence=0.46, max_rms_db=-8.0),
+    SfxSpec(
+        "Music.Match.CalmLoop",
+        "Assets/Game/Audio/Music/music_match_calm_loop_01.wav",
+        30.0,
+        "Seamless tactical battlefield underscore for a modern Middle Eastern RTS match, focused anticipation "
+        "rather than constant action, low strings, restrained oud phrases, quiet irregular frame drum and muted "
+        "hand percussion, subtle evolving tension with generous space for engines, weapons, alerts, and radio, "
+        "no vocals, no chant, no spoken words, no explosions, no trailer hits, no repetitive bass thump, clean headroom.",
+        loop=True,
+        prompt_influence=0.58,
+        max_rms_db=-15.0,
+        max_crest_db=20.0,
+        target_lufs=-16.0,
+    ),
+    SfxSpec(
+        "Music.Match.CombatLoop",
+        "Assets/Game/Audio/Music/music_match_combat_loop_01.wav",
+        30.0,
+        "Seamless elevated-combat variation for a modern Middle Eastern RTS match, urgent low strings, evolving "
+        "oud ostinato, controlled irregular frame drums and deep hand percussion, tactical momentum without a "
+        "constant pounding beat, space for weapon and warning audio, no vocals, no chant, no spoken words, no "
+        "explosions, no trailer booms, no risers, clean headroom.",
+        loop=True,
+        prompt_influence=0.58,
+        max_rms_db=-13.0,
+        max_crest_db=21.0,
+        target_lufs=-16.0,
+    ),
     SfxSpec("Music.Result.Victory", "Assets/Game/Audio/Music/music_result_victory_01.wav", 4.0, "Short military strategy victory result sting, confident cinematic brass and percussion, no voice, clean ending.", prompt_influence=0.48, max_rms_db=-6.0),
     SfxSpec("Music.Result.Defeat", "Assets/Game/Audio/Music/music_result_defeat_01.wav", 4.0, "Short military strategy defeat result sting, somber low brass and percussion, no voice, clean ending.", prompt_influence=0.48, max_rms_db=-6.0),
     SfxSpec(
@@ -588,7 +628,11 @@ def request_sound(
         raise RuntimeError(f"ElevenLabs request failed for {spec.event_id}: {exc}") from exc
 
 
-def convert_to_wav(source: Path, destination: Path) -> None:
+def convert_to_wav(source: Path, destination: Path, spec: SfxSpec) -> None:
+    audio_filter = "volume=-1.5dB"
+    if spec.target_lufs is not None:
+        audio_filter = f"loudnorm=I={spec.target_lufs}:TP=-2:LRA=7"
+
     subprocess.run(
         [
             "ffmpeg",
@@ -604,7 +648,7 @@ def convert_to_wav(source: Path, destination: Path) -> None:
             "-sample_fmt",
             "s16",
             "-filter:a",
-            "volume=-1.5dB",
+            audio_filter,
             str(destination),
         ],
         check=True,
@@ -797,7 +841,7 @@ def generate_for_spec(
         )
         if args.dry_run:
             continue
-        convert_to_wav(mp3_path, wav_path)
+        convert_to_wav(mp3_path, wav_path, spec)
         metrics = analyze_wav(wav_path)
         score, passed, reasons = score_candidate(spec, metrics, args.min_score)
         result = CandidateResult(

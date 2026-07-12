@@ -1,0 +1,210 @@
+{
+  "schema": "WarlineCapture.ElevenLabsSfxGeneration.v0.1",
+  "generatedAtUtc": "2026-07-12T08:14:38.316924+00:00",
+  "endpoint": "https://api.elevenlabs.io/v1/sound-generation",
+  "modelId": "eleven_text_to_sound_v2",
+  "outputFormat": "mp3_44100_128",
+  "mapped": true,
+  "events": [
+    {
+      "spec": {
+        "event_id": "Music.Menu.Loop",
+        "asset_path": "Assets/Game/Audio/Music/music_menu_loop_01.wav",
+        "duration_seconds": 30.0,
+        "prompt": "Seamless cinematic main-menu underscore for a modern Middle Eastern military strategy game, measured command-room confidence, warm cello and low strings, restrained oud motif, subtle airy ney texture, sparse soft frame drum accents, evolving harmony without a repetitive pulse, no vocals, no chant, no spoken words, no trailer hits, no booms, no alarms, no sound effects, clean headroom.",
+        "loop": true,
+        "prompt_influence": 0.57,
+        "min_score": 72.0,
+        "min_rms_db": -34.0,
+        "max_rms_db": -14.0,
+        "max_silence_ratio": 0.55,
+        "min_crest_db": 3.0,
+        "max_crest_db": 19.0,
+        "transient_expected": false,
+        "target_lufs": -16.0
+      },
+      "bestCandidateIndex": 1,
+      "bestScore": 100.0,
+      "bestPassed": true,
+      "mapped": true,
+      "candidates": [
+        {
+          "event_id": "Music.Menu.Loop",
+          "index": 1,
+          "mp3_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T081438Z/music_menu_loop/candidate_01.mp3",
+          "wav_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T081438Z/music_menu_loop/candidate_01.wav",
+          "score": 100.0,
+          "passed": true,
+          "reasons": [],
+          "metrics": {
+            "duration_seconds": 30.0,
+            "sample_rate": 44100,
+            "channels": 1,
+            "rms_db": -21.665365450819905,
+            "peak_db": -3.0266126913791225,
+            "crest_db": 18.638752759440784,
+            "clipped_ratio": 0.0,
+            "near_clip_ratio": 0.0,
+            "silence_ratio": 0.38568480725623583,
+            "zero_crossing_rate": 0.015711262282690854
+          }
+        },
+        {
+          "event_id": "Music.Menu.Loop",
+          "index": 2,
+          "mp3_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T081438Z/music_menu_loop/candidate_02.mp3",
+          "wav_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T081438Z/music_menu_loop/candidate_02.wav",
+          "score": 90.0,
+          "passed": true,
+          "reasons": [
+            "spiky_crest=19.3dB"
+          ],
+          "metrics": {
+            "duration_seconds": 30.0,
+            "sample_rate": 44100,
+            "channels": 1,
+            "rms_db": -22.781556250250844,
+            "peak_db": -3.523946018540366,
+            "crest_db": 19.25761023171048,
+            "clipped_ratio": 0.0,
+            "near_clip_ratio": 0.0,
+            "silence_ratio": 0.30639455782312924,
+            "zero_crossing_rate": 0.011614512471655328
+          }
+        }
+      ]
+    },
+    {
+      "spec": {
+        "event_id": "Music.Match.CalmLoop",
+        "asset_path": "Assets/Game/Audio/Music/music_match_calm_loop_01.wav",
+        "duration_seconds": 30.0,
+        "prompt": "Seamless tactical battlefield underscore for a modern Middle Eastern RTS match, focused anticipation rather than constant action, low strings, restrained oud phrases, quiet irregular frame drum and muted hand percussion, subtle evolving tension with generous space for engines, weapons, alerts, and radio, no vocals, no chant, no spoken words, no explosions, no trailer hits, no repetitive bass thump, clean headroom.",
+        "loop": true,
+        "prompt_influence": 0.58,
+        "min_score": 72.0,
+        "min_rms_db": -34.0,
+        "max_rms_db": -15.0,
+        "max_silence_ratio": 0.55,
+        "min_crest_db": 3.0,
+        "max_crest_db": 20.0,
+        "transient_expected": false,
+        "target_lufs": -16.0
+      },
+      "bestCandidateIndex": 1,
+      "bestScore": 100.0,
+      "bestPassed": true,
+      "mapped": true,
+      "candidates": [
+        {
+          "event_id": "Music.Match.CalmLoop",
+          "index": 1,
+          "mp3_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T081438Z/music_match_calmloop/candidate_01.mp3",
+          "wav_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T081438Z/music_match_calmloop/candidate_01.wav",
+          "score": 100.0,
+          "passed": true,
+          "reasons": [],
+          "metrics": {
+            "duration_seconds": 30.0,
+            "sample_rate": 44100,
+            "channels": 1,
+            "rms_db": -21.726099089974934,
+            "peak_db": -3.903164314403152,
+            "crest_db": 17.82293477557178,
+            "clipped_ratio": 0.0,
+            "near_clip_ratio": 0.0,
+            "silence_ratio": 0.2672947845804989,
+            "zero_crossing_rate": 0.01000755857898715
+          }
+        },
+        {
+          "event_id": "Music.Match.CalmLoop",
+          "index": 2,
+          "mp3_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T081438Z/music_match_calmloop/candidate_02.mp3",
+          "wav_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T081438Z/music_match_calmloop/candidate_02.wav",
+          "score": 100.0,
+          "passed": true,
+          "reasons": [],
+          "metrics": {
+            "duration_seconds": 30.0,
+            "sample_rate": 44100,
+            "channels": 1,
+            "rms_db": -21.362911281738988,
+            "peak_db": -2.7800146072480283,
+            "crest_db": 18.58289667449096,
+            "clipped_ratio": 0.0,
+            "near_clip_ratio": 0.0,
+            "silence_ratio": 0.30969236583522297,
+            "zero_crossing_rate": 0.015342403628117915
+          }
+        }
+      ]
+    },
+    {
+      "spec": {
+        "event_id": "Music.Match.CombatLoop",
+        "asset_path": "Assets/Game/Audio/Music/music_match_combat_loop_01.wav",
+        "duration_seconds": 30.0,
+        "prompt": "Seamless elevated-combat variation for a modern Middle Eastern RTS match, urgent low strings, evolving oud ostinato, controlled irregular frame drums and deep hand percussion, tactical momentum without a constant pounding beat, space for weapon and warning audio, no vocals, no chant, no spoken words, no explosions, no trailer booms, no risers, clean headroom.",
+        "loop": true,
+        "prompt_influence": 0.58,
+        "min_score": 72.0,
+        "min_rms_db": -34.0,
+        "max_rms_db": -13.0,
+        "max_silence_ratio": 0.55,
+        "min_crest_db": 3.0,
+        "max_crest_db": 21.0,
+        "transient_expected": false,
+        "target_lufs": -16.0
+      },
+      "bestCandidateIndex": 1,
+      "bestScore": 100.0,
+      "bestPassed": true,
+      "mapped": true,
+      "candidates": [
+        {
+          "event_id": "Music.Match.CombatLoop",
+          "index": 1,
+          "mp3_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T081438Z/music_match_combatloop/candidate_01.mp3",
+          "wav_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T081438Z/music_match_combatloop/candidate_01.wav",
+          "score": 100.0,
+          "passed": true,
+          "reasons": [],
+          "metrics": {
+            "duration_seconds": 30.0,
+            "sample_rate": 44100,
+            "channels": 1,
+            "rms_db": -20.13821411002437,
+            "peak_db": -1.9998490310736532,
+            "crest_db": 18.13836507895072,
+            "clipped_ratio": 0.0,
+            "near_clip_ratio": 0.0,
+            "silence_ratio": 0.1752207105064248,
+            "zero_crossing_rate": 0.006373393801965231
+          }
+        },
+        {
+          "event_id": "Music.Match.CombatLoop",
+          "index": 2,
+          "mp3_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T081438Z/music_match_combatloop/candidate_02.mp3",
+          "wav_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T081438Z/music_match_combatloop/candidate_02.wav",
+          "score": 100.0,
+          "passed": true,
+          "reasons": [],
+          "metrics": {
+            "duration_seconds": 30.0,
+            "sample_rate": 44100,
+            "channels": 1,
+            "rms_db": -22.196641709933495,
+            "peak_db": -2.0085295795586617,
+            "crest_db": 20.188112130374833,
+            "clipped_ratio": 0.0,
+            "near_clip_ratio": 0.0,
+            "silence_ratio": 0.40499244142101287,
+            "zero_crossing_rate": 0.03317762660619804
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -82,7 +82,7 @@ Current catalog groups include:
 | Ground vehicles | Light Armored Car, Fast APC, Armored APC, Heavy APC, Battle Tank, Radar Tank, Cargo Truck, Canopy Truck, Tanker Truck |
 | Air and support vehicles | Recon Drone, Attack Helicopter, Light Attack Helicopter, Transport Helicopter, Transport Plane, Strike Jet, Fighter Jet |
 | Heavy support | Air Missile Launcher, Ground Missile Launcher |
-| Military buildings | Barracks, Guard Tower, Heavy Guard Tower, Ammunition Depot, Helipad, Airport, Satellite Dish, Soldier Tent, Contractor Tent, Expert Tent |
+| Military buildings | Barracks, Guard Tower, Heavy Guard Tower, Field Fabrication Depot, Helipad, Airport, Satellite Dish, Soldier Tent, Contractor Tent, Expert Tent |
 | Civilian and town buildings | House, Shop, Market Shop, City Hall, Refugee Tent, Portable Toilet |
 | Resource and utility buildings | Oil Pump, Oil Refinery, Large Oil Refinery, Fuel Bladder, Water Tank |
 | Barriers and perimeter | Road Barrier, Dirt Wall, Fence Wall |

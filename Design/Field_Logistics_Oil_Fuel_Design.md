@@ -21,11 +21,13 @@ Related economy source:
 
 - `Economy_Reward_Design.md`
 - `Automated_Fuel_Logistics_Design.md`
+- `Field_Fabrication_Materials_Design.md`
 - `Resource_Logistics_Exchange_Design.md`
 
 Automation rule:
 
 - `Automated_Fuel_Logistics_Design.md` supersedes manual logistics micro for the normal match economy. Oil trucks and tanker trucks should work autonomously; Fuel becomes the shared header pool only after tanker delivery into Fuel Bladder/base storage.
+- `Field_Fabrication_Materials_Design.md` extends tray-truck Oil logistics with a second valid consumer. Delivered Oil may feed either a Refinery for Fuel or a Field Fabrication Depot for Materials. It owns the Materials branch, canonical tactical Materials rules, and related building costs.
 - `Resource_Logistics_Exchange_Design.md` owns the optional timed import/export popup opened from the match resource header. It can export surplus Oil/Materials/Fuel or import Materials/Fuel through authored exchange recipes, but it must not replace the normal Oil Pump -> Refinery -> Fuel storage loop.
 
 ## Resource Positioning
@@ -33,7 +35,7 @@ Automation rule:
 | Resource | Layer | Meaning | Where Shown |
 |---|---|---|---|
 | `Credits` | Account + tactical display label | Money/spendable currency. | Main Menu, Build Drawer, Mission Result, Store, Operation. |
-| `Supplies` / `Materials` | Account/logistics display layer | Military supplies, materials, construction stock. | Main Menu, Build Drawer, Operation, rewards. |
+| `Materials` | Account + tactical construction layer | Construction, repair, infrastructure, and upgrade stock. Tactical Materials can be fabricated locally from delivered Oil. | Match header, Main Menu, Build Drawer, Operation, rewards. |
 | `Command` / `Command Authority` | Account authority layer | Premium/authority resource for strong actions, convenience, cosmetics, or controlled unlocks. | Main Menu, Store, Commander Profile. |
 | `Oil` | Tactical match raw resource | Raw extracted resource from oil deposits. | Only in missions where extraction/refining matters. |
 | `Fuel` | Tactical + account logistics resource | Processed mobility resource for vehicles, air, deployment, extraction, or readiness. | Battle HUD/Build Drawer in fuel missions; rewards/account only through authored grants. |
@@ -57,11 +59,13 @@ The intended loop is:
 ```text
 Oil Deposit
   -> Oil Pump extracts raw Oil
-  -> Oil Truck automatically moves Oil to Refinery input
-  -> Oil Refinery converts Oil into local output Fuel
-  -> Tanker Truck automatically moves Fuel to storage
-  -> Fuel Bladder / Fuel Depot stores usable Fuel
-  -> Vehicles, aircraft, generators, radar, or support actions consume shared faction Fuel
+  -> Oil Truck automatically moves Oil to a valid industrial input
+      -> Oil Refinery converts Oil into local output Fuel
+          -> Tanker Truck automatically moves Fuel to storage
+          -> Fuel Bladder / Fuel Depot stores usable Fuel
+          -> Vehicles, aircraft, generators, radar, or support actions consume shared faction Fuel
+      -> Field Fabrication Depot converts Oil into faction tactical Materials
+          -> Buildings, repairs, and infrastructure consume Materials
 ```
 
 ## Existing Config-Aligned Roles
@@ -72,7 +76,8 @@ Oil Deposit
 | `Prefab_BuildingDefinition_OilRefinery_Config.asset` | Oil Refinery | Converts Oil into usable Fuel and related logistics output. |
 | `Prefab_BuildingDefinition_OilRefinery_Big_Config.asset` | Large Oil Refinery | Higher-capacity refinery for larger fuel-production missions. |
 | `Prefab_BuildingDefinition_Fuel_Bladder_Config.asset` | Fuel Bladder | Temporary field storage for Fuel; supports vehicles, aircraft, and logistics. |
-| `Prefab_UnitGrid_Veh_Truck_Tray.asset` | Oil transport truck | Moves Oil barrels from pumps/storage to refinery or storage. |
+| `Prefab_BuildingDefinition_Ammunition_Depot_Config.asset` | Field Fabrication Depot | Converts delivered Oil into tactical Materials; V1 preserves the internal Ammunition Depot lookup id. |
+| `Prefab_UnitGrid_Veh_Truck_Tray.asset` | Oil transport truck | Moves Oil barrels from pumps/storage to refinery or fabrication input. |
 | `Prefab_UnitGrid_Veh_Truck_Tanker.asset` | Fuel tanker truck | Moves Fuel to storage or refuels vehicles directly. |
 
 Do not delete these configs. Treat them as existing production intent that needs clear UI/gameplay wiring.
@@ -94,7 +99,7 @@ Build Drawer tab behavior:
 
 | Tab | Oil/Fuel Role |
 |---|---|
-| Buildings | Contains Oil Pump, Oil Refinery, Large Oil Refinery, Fuel Bladder/Fuel Depot when mission allows fuel logistics. Buildings require map placement. |
+| Buildings | Contains Oil Pump, Oil Refinery, Large Oil Refinery, Fuel Bladder/Fuel Depot, and Field Fabrication Depot when the mission allows the corresponding logistics. Buildings require map placement. |
 | Vehicles | Vehicles may cost Fuel or require Fuel production/storage. Tanker and oil trucks appear here when logistics is enabled. Vehicles spawn from valid base/vehicle bay/rally locations. |
 | Soldiers | Usually do not cost Fuel. Specialist support squads may require Credits/Supplies but should not consume Oil directly. |
 
@@ -108,6 +113,7 @@ UI rule:
 When a mission uses fuel logistics, the Battle HUD should show:
 
 - tactical Credits/Money
+- tactical Materials current/capacity when fabrication or Materials construction is active
 - Fuel
 - Oil only if raw extraction is active and player needs to understand the conversion chain
 - build capacity / population if relevant
@@ -130,6 +136,8 @@ Players acquire tactical Oil/Fuel through:
 - completing fuel objectives in a match
 - Skirmish preset starting grants, if configured
 
+Players acquire tactical Materials through a supplied Field Fabrication Depot, authored tactical grants, or an enabled expensive Resource Exchange recovery job. Local Oil-to-Materials conversion is the normal sustained source.
+
 Players acquire account-level Fuel only through authored rewards:
 
 - Mission Result `RewardConfig`
@@ -148,10 +156,12 @@ Players may export or import tactical resources through `Resource_Logistics_Exch
 | Oil Pump | Produces tactical Oil over time if connected/valid. |
 | Oil Truck | Automatically moves Oil; does not create resources by itself. |
 | Oil Refinery | Converts tactical Oil into tactical Fuel. |
+| Field Fabrication Depot | Converts delivered tactical Oil into faction tactical Materials. |
 | Fuel Bladder / Depot | Raises storage or enables local refuel. |
 | Tanker Truck | Automatically moves Fuel to storage or refuel endpoints; does not create Fuel by itself. |
 | Vehicle production | May spend Credits + Fuel, depending on unit. |
 | Air production/support | May spend Fuel and/or Command depending on mission rules. |
+| Building placement/repair | Spends authored Credits + Materials when the Materials economy is active. |
 | Match result | May grant account Fuel through `RewardConfig`; never auto-banks all tactical Fuel unless the mission explicitly rewards it. |
 
 ## Mission Usage
@@ -192,7 +202,9 @@ Use clear player-facing language:
 - Oil Refinery: "Turns Oil into Fuel."
 - Fuel Bladder: "Stores Fuel for vehicles and aircraft."
 - Oil Truck: "Moves Oil to refineries."
+- Field Fabrication Depot: "Converts Oil into Materials."
 - Tanker Truck: "Delivers Fuel and refuels vehicles."
+- Insufficient Materials: "Need more Materials."
 - Insufficient Fuel: "Need more Fuel."
 - No Refinery: "Build a Refinery to turn Oil into Fuel."
 
@@ -204,6 +216,8 @@ Implementation should prove:
 - Build Drawer shows Oil/Fuel buildings only when the mission allows fuel logistics.
 - Vehicle rows can require Fuel and show `InsufficientFuel` when short.
 - Tactical Oil converts to Fuel only through refinery/production gameplay.
+- Tactical Oil converts to Materials only through Field Fabrication Depot gameplay.
+- Local Materials fabrication is more efficient than Resource Exchange import.
 - Fuel storage/capacity affects production or refuel rules when active.
 - M01 has no Oil/Fuel HUD or build dependency.
 - Main Menu top strip remains Credits, Supplies, Command.

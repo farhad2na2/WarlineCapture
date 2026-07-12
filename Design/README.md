@@ -48,7 +48,7 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - Visual direction: new gameplay-facing battlefield art should use 3D town/base operation scenes with runtime units, buildings, civilians, vehicles, aircraft, markers, VFX, and metadata-backed command overlays.
 - Main menu visual direction: `UIUX_MainMenu_Visual_Contract.md` now points at the command-base style with Campaign, Operations, Skirmish, Store, Commander, Settings, Credits, Supplies, Command, and Deploy Operation.
 - Economy and rewards are locked by `Economy_Reward_Design.md`. Monetization and marketing claims use the same canonical resources, reward types, and disabled purchase states as the UI/gameplay alignment docs.
-- Field logistics: `Field_Logistics_Oil_Fuel_Design.md` formalizes the existing Oil Pump, Oil Refinery, Fuel Bladder, oil truck, and tanker truck configs as a tactical Oil -> Fuel logistics loop for base-building, vehicle, air, and Skirmish missions. `Automated_Fuel_Logistics_Design.md` defines the automation model: tray trucks and tankers work without direct micro, Fuel becomes usable only after delivery to storage, and vehicles spend a shared faction Fuel pool. `Resource_Logistics_Exchange_Design.md` defines the timed in-match Resource Exchange popup, import/export recipes, Rush Ticket acceleration, and non-authoritative truck/transport-plane presentation.
+- Field logistics: `Field_Logistics_Oil_Fuel_Design.md` formalizes the existing Oil Pump, Oil Refinery, Fuel Bladder, oil truck, and tanker truck configs as a tactical Oil -> Fuel logistics loop for base-building, vehicle, air, and Skirmish missions. `Automated_Fuel_Logistics_Design.md` defines the automation model: tray trucks and tankers work without direct micro, Fuel becomes usable only after delivery to storage, and vehicles spend a shared faction Fuel pool. `Field_Fabrication_Materials_Design.md` gives `Building_Ammunition_Depot` the player-facing Field Fabrication Depot role, branches delivered Oil into Materials production, locks one tactical Materials authority, and makes local fabrication more efficient than Exchange import. `Resource_Logistics_Exchange_Design.md` defines the timed in-match Resource Exchange popup, import/export recipes, Rush Ticket acceleration, and non-authoritative truck/transport-plane presentation.
 
 ## Campaign High-Level Coverage Status
 
@@ -83,6 +83,7 @@ This does not mean production is complete. Chapters 2-5 still need detailed miss
 | Campaign mission contracts | [Campaign Mission High-Level Design Catalog](Campaign_Mission_High_Level_Design_Catalog.md) | Bible, North Star, feature truth, and shared mission template. | All 25 detailed mission specs, chapter docs, level art briefs, balance, and validation. |
 | Campaign story inventory | [Campaign Narrative Sequence And Comic Catalog](Campaign_Narrative_Sequence_And_Comic_Catalog.md) | Bible, FPE, presentation rules, and mission contracts. | Scripts, storyboards, Story Archive, art/audio/localization, and sequence implementation. |
 | World and map | [3D Single-Map Gameplay Direction](3D_SingleMap_Gameplay_Direction.md) | GDD v0.2 and gameplay grammar. | Operation maps, map metadata, camera/minimap contracts, art, and tactical UI. |
+| Tactical economy and logistics | [Economy And Reward Design](Economy_Reward_Design.md), [Field Logistics](Field_Logistics_Oil_Fuel_Design.md), [Automated Fuel Logistics](Automated_Fuel_Logistics_Design.md), [Field Fabrication And Materials](Field_Fabrication_Materials_Design.md), and [Resource Logistics Exchange](Resource_Logistics_Exchange_Design.md) | Product economy, current building catalog, and runtime feature truth. | Balance configs, Match HUD/Build Drawer, AI economy, scenario authoring, and feature implementation trackers. |
 | Runtime architecture | [Gameplay SOLID/ECS Contract](Architecture/gameplay_solid_ecs_contract.md) | Product/system contracts and measured runtime constraints. | System implementation plans, source ownership, tests, and the active hardening tracker. |
 | Implementation status | [Architecture/Performance Hardening Tracker](Architecture/architecture_performance_hardening_implementation_tracker.md) and feature-specific trackers | Architecture contracts and current evidence. | Task execution and validation only; trackers do not redefine product or narrative intent. |
 
@@ -147,28 +148,31 @@ Connection rule: a lower-level document may narrow or implement an upstream deci
 29. `Gameplay_Features_Detailed_Spec.md`
 30. `Field_Logistics_Oil_Fuel_Design.md`
 31. `Automated_Fuel_Logistics_Design.md`
-32. `Resource_Logistics_Exchange_Design.md`
-33. `Economy_Reward_Design.md`
-34. `Balancing_Automated_Test_Plan.md`
-35. `UIUX_Gameplay_Element_Alignment.md`
-36. `UIUX_Implementation_High_Level_Spec.md`
-37. `UIUX_Implementation_Detailed_Spec.md`
-38. `Visual_Feedback_VFX_Recommendations.md`
-39. `Audio_Design_Guidelines.md`
-40. `Audio_Config_Driven_Implementation_Spec.md`
-41. `UIUX_MainMenu_Visual_Contract.md`
-42. `UIUX_Mockup_To_Canvas_Conversion_Plan.md`
-43. `UIUX_Target_To_Canvas_Workflow_Guide.md`
-44. `Architecture/gameplay_solid_ecs_contract.md`
-45. `Architecture/architecture_performance_hardening_implementation_tracker.md`
-46. `Architecture/performance_regression_contract.md`
-47. `Designer_Role_And_Documentation_Workflow.md`
-48. `Agent_Coordination_Workflow.md`
+32. `Field_Fabrication_Materials_Design.md`
+33. `Resource_Logistics_Exchange_Design.md`
+34. `Economy_Reward_Design.md`
+35. `Balancing_Automated_Test_Plan.md`
+36. `UIUX_Gameplay_Element_Alignment.md`
+37. `UIUX_Implementation_High_Level_Spec.md`
+38. `UIUX_Implementation_Detailed_Spec.md`
+39. `Visual_Feedback_VFX_Recommendations.md`
+40. `Audio_Design_Guidelines.md`
+41. `Audio_Config_Driven_Implementation_Spec.md`
+42. `UIUX_MainMenu_Visual_Contract.md`
+43. `UIUX_Mockup_To_Canvas_Conversion_Plan.md`
+44. `UIUX_Target_To_Canvas_Workflow_Guide.md`
+45. `Architecture/gameplay_solid_ecs_contract.md`
+46. `Architecture/architecture_performance_hardening_implementation_tracker.md`
+47. `Architecture/performance_regression_contract.md`
+48. `Designer_Role_And_Documentation_Workflow.md`
+49. `Agent_Coordination_Workflow.md`
 
 ## Core Product And Gameplay
 
 - `GAME_DESIGN_REFERENCE.md` - compact reference for the currently implemented RTS simulation.
 - `Combat_Catalog_And_Upgrade_Design.md` - canonical unit, vehicle, air, sea, building, skill, ability, and upgrade-track design, with availability, unlock, implementation, and balance/visual data separation rules.
+- `Field_Fabrication_Materials_Design.md` - high-level source for the Field Fabrication Depot, Oil-to-Materials branch, local-production-first economy, construction Materials costs, canonical tactical Materials ownership, and implementation acceptance.
+- `Architecture/field_fabrication_materials_implementation_tracker.md` - step-by-step architecture, naming, assembly, GC, performance, balance, UI, AI, and validation plan for that feature.
 - `BalanceConfigs/README.md` - balance config folder rules.
 - `BalanceConfigs/Combat_Balance_Config_v0_1.json` - gameplay/economy config for 57 units, 30 buildings, 27 skills/abilities, and 40 upgrade tracks.
 - `VisualConfigs/README.md` - visual config folder rules.

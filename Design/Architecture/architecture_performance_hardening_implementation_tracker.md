@@ -260,7 +260,7 @@ The program is complete only when all of the following are true:
 | Red architecture gates | `0`: UI boundary `31/31` and ECS/Burst hot-path `10/10` pass on the integrated head |
 | Red performance gates | `1`: current integrated-head steady-state Match GC `161,180 / 1,024` bytes; placement, building production, road-command, scene-root, tactical-camera, and audio gameplay-state rows are absent, while remaining recurring owners stay assigned to APH-710/711 |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
-| Last verified commit | `cd652978e`; building production command entity caching and integrated validation evidence are committed on `main` |
+| Last verified commit | `597f02f76`; placement command entity caching, narrative source-growth repair, and integrated validation evidence are committed on `main` |
 | Last update | 2026-07-12 - placement command caching removes its recurring query row; the narrative source-growth blocker was resolved by shrinking the player below 500 lines without an exception |
 
 ## Phase 0 - Baseline and Safety Freeze

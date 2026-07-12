@@ -4,6 +4,7 @@
     "references": [
         "Game.Catalog.Contracts",
         "Game.Components",
+        "Game.Narrative.Contracts",
         "Unity.Addressables",
         "Unity.Collections",
         "Unity.Entities",

@@ -2,8 +2,8 @@ using UnityEngine;
 
 namespace Game.Configs
 {
-    [CreateAssetMenu(menuName = "Game/Narrative/Punctuation Profile", fileName = "NarrativePunctuationProfile")]
-    public sealed class NarrativePunctuationProfile : ScriptableObject
+    [CreateAssetMenu(menuName = "Game/Narrative/Punctuation Profile", fileName = "NarrativePunctuationConfig")]
+    public sealed class NarrativePunctuationConfig : ScriptableObject
     {
         [SerializeField, Min(0f)] private float charactersPerSecond = 28f;
         [SerializeField, Min(0f)] private float commaPauseSeconds = 0.11f;

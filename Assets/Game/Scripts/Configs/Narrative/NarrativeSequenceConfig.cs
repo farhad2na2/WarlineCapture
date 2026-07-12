@@ -1,11 +1,42 @@
 using System;
 using System.Collections.Generic;
 using Game.Catalog.Contracts;
+using Game.Narrative.Contracts;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
 namespace Game.Configs
 {
+    public enum NarrativeMusicCue
+    {
+        Briefing = 0,
+        Conflict = 1
+    }
+
+    public enum NarrativeAmbienceCue
+    {
+        CityConflict = 0,
+        CityDay = 1,
+        Battlefield = 2
+    }
+
+    public enum NarrativeVehicleCue
+    {
+        None = 0,
+        Engine = 1
+    }
+
+    public enum NarrativeEventCue
+    {
+        None = 0,
+        Attack = 1,
+        SmallArms = 2,
+        Radio = 3,
+        Blackout = 4,
+        AriaBoot = 5,
+        Transition = 6
+    }
+
     [Serializable]
     public sealed class NarrativeDialogueLineRecord
     {
@@ -47,6 +78,14 @@ namespace Game.Configs
         [SerializeField] private string locationTitleFallback;
         [SerializeField] private string locationSubtitleKey;
         [SerializeField] private string locationSubtitleFallback;
+        [SerializeField] private NarrativeMusicCue musicCue;
+        [SerializeField] private NarrativeAmbienceCue ambienceCue;
+        [SerializeField] private NarrativeVehicleCue vehicleCue;
+        [SerializeField] private NarrativeEventCue eventCue;
+        [SerializeField] private NarrativeRouteRole routeRole;
+        [SerializeField] private string completionPayloadId;
+        [SerializeField] private string[] evidenceIds = Array.Empty<string>();
+        [SerializeField] private string[] missionContextFlags = Array.Empty<string>();
 
         public string StateId => stateId;
         public NarrativeStateKind Kind => kind;
@@ -64,6 +103,14 @@ namespace Game.Configs
         public string LocationTitleFallback => locationTitleFallback;
         public string LocationSubtitleKey => locationSubtitleKey;
         public string LocationSubtitleFallback => locationSubtitleFallback;
+        public NarrativeMusicCue MusicCue => musicCue;
+        public NarrativeAmbienceCue AmbienceCue => ambienceCue;
+        public NarrativeVehicleCue VehicleCue => vehicleCue;
+        public NarrativeEventCue EventCue => eventCue;
+        public NarrativeRouteRole RouteRole => routeRole;
+        public string CompletionPayloadId => completionPayloadId;
+        public string[] EvidenceIds => evidenceIds;
+        public string[] MissionContextFlags => missionContextFlags;
     }
 
     [CreateAssetMenu(menuName = "Game/Narrative/Sequence Config", fileName = "NarrativeSequenceConfig")]

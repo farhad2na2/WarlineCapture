@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Game.Catalog.Contracts;
+using Game.Narrative.Contracts;
 using Game.UI.Runtime;
 using Game.Configs;
 using Game.UI.Contracts;
@@ -418,7 +419,6 @@ namespace Game.Editor
             SetArray(view, "portraitImages", portraitImages);
             SetArray(view, "portraitSelectionImages", selectionImages);
             SetArray(view, "portraitAccessibilityLabels", portraitAccess);
-            SetInt(view, "defaultPortraitIndex", portraits.Count - 1);
             SetObject(view, "continueButton", continueButton);
             SetObject(view, "callsignAccessibilityLabel", callsignAccess);
             SetObject(view, "displayNameAccessibilityLabel", nameAccess);
@@ -708,7 +708,7 @@ namespace Game.Editor
             settings.Narrative.BackgroundOpacity = opacity;
             if (showDialogue)
             {
-                view.DialogueView.PrepareLine(text, NarrativeSubtitleStyleResolver.Resolve(settings));
+                view.DialogueView.PrepareLine(text, NarrativeSubtitleStyleUtilitySystemHelper.Resolve(settings));
                 view.DialogueView.CompleteLine();
             }
             else
@@ -761,9 +761,15 @@ namespace Game.Editor
             view.SetSkipState(true, true, "SKIP");
             view.SetInteractiveState(kind);
             if (kind == NarrativeInteractiveStateKind.CommanderIdentity)
-                view.CommanderIdentityView.ResetToDefaults();
+            {
+                view.CommanderIdentityView.SetIdentity("COMMANDER", "Commander", 6);
+                view.CommanderIdentityView.SetControlsInteractable(true);
+            }
             else if (kind == NarrativeInteractiveStateKind.GuidanceChoice)
-                view.GuidanceChoiceView.ResetToDefault();
+            {
+                view.GuidanceChoiceView.SetSelectedGuidance(NarrativeGuidanceMode.Full);
+                view.GuidanceChoiceView.SetControlsInteractable(true);
+            }
             view.SkipConfirmationView.SetVisible(showSkipConfirmation);
             if (showSkipConfirmation)
             {
@@ -777,7 +783,7 @@ namespace Game.Editor
                     Treatment = NarrativeSpeakerTreatment.HumanPortrait,
                     AccentColor = Color.white
                 });
-                view.DialogueView.PrepareLine("Families and road crews are trapped beyond the clinic route.", NarrativeSubtitleStyleResolver.Resolve(settings));
+                view.DialogueView.PrepareLine("Families and road crews are trapped beyond the clinic route.", NarrativeSubtitleStyleUtilitySystemHelper.Resolve(settings));
                 view.DialogueView.CompleteLine();
             }
             RenderTexture target = new(width, height, 24, RenderTextureFormat.ARGB32);

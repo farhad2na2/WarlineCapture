@@ -70,7 +70,7 @@ namespace Game.Editor
         {
             NarrativeSequenceConfig sequence = RequireAsset<NarrativeSequenceConfig>(FirstLaunchNarrativeConfigBuilder.SequencePath);
             NarrativeSpeakerCatalog speakers = RequireAsset<NarrativeSpeakerCatalog>(FirstLaunchNarrativeConfigBuilder.SpeakerPath);
-            NarrativePunctuationProfile punctuation = RequireAsset<NarrativePunctuationProfile>(FirstLaunchNarrativeConfigBuilder.PunctuationPath);
+            NarrativePunctuationConfig punctuation = RequireAsset<NarrativePunctuationConfig>(FirstLaunchNarrativeConfigBuilder.PunctuationPath);
             GameObject prefab = RequireAsset<GameObject>(FirstLaunchNarrativePresentationPrefabBuilder.PrefabPath);
 
             GameObject cameraObject = new("FirstLaunchRuntimeCaptureCamera", typeof(Camera));
@@ -110,7 +110,7 @@ namespace Game.Editor
             settings.Accessibility.ReducedMotion = false;
             settings.Audio.VoiceEnabled = false;
 
-            FirstLaunchNarrativePlayer player = new();
+            FirstLaunchNarrativeSequencePresentationSystemHelper player = new();
             if (!player.Initialize(sequence, speakers, punctuation, view, FallbackGameTextResolver.Instance, settings))
                 throw new InvalidOperationException("Unable to initialize the First Launch narrative player.");
 
@@ -189,7 +189,7 @@ namespace Game.Editor
             WriteTimingReport(transitions, elapsed);
         }
 
-        private static void BypassLiveInteractiveScreens(FirstLaunchNarrativePlayer player)
+        private static void BypassLiveInteractiveScreens(FirstLaunchNarrativeSequencePresentationSystemHelper player)
         {
             while (player.CurrentStateId == "first_launch.commander_identity" || player.CurrentStateId == "first_launch.guidance_choice")
                 player.CommitInteractiveState(player.CurrentStateId);
@@ -270,7 +270,7 @@ namespace Game.Editor
                 RenderTexture target,
                 Texture2D readback,
                 NarrativeSequenceView view,
-                FirstLaunchNarrativePlayer player)
+                FirstLaunchNarrativeSequencePresentationSystemHelper player)
             {
                 this.cameraObject = cameraObject;
                 this.canvasObject = canvasObject;
@@ -286,7 +286,7 @@ namespace Game.Editor
             public RenderTexture Target { get; }
             public Texture2D Readback { get; }
             public NarrativeSequenceView View { get; }
-            public FirstLaunchNarrativePlayer Player { get; }
+            public FirstLaunchNarrativeSequencePresentationSystemHelper Player { get; }
 
             public void Dispose()
             {

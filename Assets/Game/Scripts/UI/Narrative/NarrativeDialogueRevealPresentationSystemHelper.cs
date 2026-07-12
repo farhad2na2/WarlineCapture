@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace Game.UI.Runtime
 {
-    public sealed class NarrativeDialogueReveal
+    public sealed class NarrativeDialogueRevealPresentationSystemHelper
     {
         private float[] revealTimes = Array.Empty<float>();
         private int visibleCharacterCount;

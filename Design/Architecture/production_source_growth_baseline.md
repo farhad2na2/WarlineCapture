@@ -2002,6 +2002,150 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
   ],
   "approvedExceptions": [
     {
+      "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeAudioPresentationSystemHelper.cs",
+      "trackerTaskId": "APH-712",
+      "decisionId": "D-024",
+      "maxLines": 76,
+      "maxBytes": 3040,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-712",
+      "decisionId": "D-025",
+      "maxLines": 453,
+      "maxBytes": 19785,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeInteractivePresentationSystemHelper.cs",
+      "trackerTaskId": "APH-712",
+      "decisionId": "D-047",
+      "maxLines": 159,
+      "maxBytes": 6036,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeModelUtilitySystemHelper.cs",
+      "trackerTaskId": "APH-712",
+      "decisionId": "D-042",
+      "maxLines": 71,
+      "maxBytes": 3132,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativePanelPresentationSystemHelper.cs",
+      "trackerTaskId": "APH-712",
+      "decisionId": "D-044",
+      "maxLines": 130,
+      "maxBytes": 5310,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeProfileCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-712",
+      "decisionId": "D-041",
+      "maxLines": 135,
+      "maxBytes": 5172,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeReviewUtilitySystemHelper.cs",
+      "trackerTaskId": "APH-712",
+      "decisionId": "D-027",
+      "maxLines": 28,
+      "maxBytes": 653,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeReviewPresentationSystemHelper.cs",
+      "trackerTaskId": "APH-712",
+      "decisionId": "D-037",
+      "maxLines": 161,
+      "maxBytes": 6297,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeShellCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-712",
+      "decisionId": "D-036",
+      "maxLines": 84,
+      "maxBytes": 3061,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeSequencePresentationSystemHelper.cs",
+      "trackerTaskId": "APH-712",
+      "decisionId": "D-048",
+      "maxLines": 441,
+      "maxBytes": 19352,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/Narrative/NarrativePunctuationUtilitySystemHelper.cs",
+      "trackerTaskId": "APH-712",
+      "decisionId": "D-029",
+      "maxLines": 23,
+      "maxBytes": 847,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Narrative/Runtime/FirstLaunchNarrativeRouteUtilitySystemHelper.cs",
+      "trackerTaskId": "APH-712",
+      "decisionId": "D-038",
+      "maxLines": 96,
+      "maxBytes": 3640,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Narrative/Runtime/FirstLaunchNarrativeSequenceUtilitySystemHelper.cs",
+      "trackerTaskId": "APH-712",
+      "decisionId": "D-039",
+      "maxLines": 321,
+      "maxBytes": 12366,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Narrative/NarrativeDialoguePresentationSystemHelper.cs",
+      "trackerTaskId": "APH-712",
+      "decisionId": "D-030",
+      "maxLines": 140,
+      "maxBytes": 4693,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Narrative/NarrativeDialogueRevealPresentationSystemHelper.cs",
+      "trackerTaskId": "APH-712",
+      "decisionId": "D-031",
+      "maxLines": 132,
+      "maxBytes": 4335,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Narrative/NarrativePanelAssetResidencyPresentationSystemHelper.cs",
+      "trackerTaskId": "APH-712",
+      "decisionId": "D-045",
+      "maxLines": 170,
+      "maxBytes": 6456,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Narrative/NarrativePanelMotionPresentationSystemHelper.cs",
+      "trackerTaskId": "APH-712",
+      "decisionId": "D-033",
+      "maxLines": 135,
+      "maxBytes": 4542,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Narrative/NarrativeVoicePlaybackPresentationSystemHelper.cs",
+      "trackerTaskId": "APH-712",
+      "decisionId": "D-034",
+      "maxLines": 59,
+      "maxBytes": 1633,
+      "scope": "system-helper"
+    },
+    {
       "path": "Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs",
       "trackerTaskId": "APH-607",
       "decisionId": "D-022",

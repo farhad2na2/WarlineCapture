@@ -5,13 +5,13 @@ using Game.UI.Runtime;
 using NUnit.Framework;
 using UnityEngine;
 
-public sealed class NarrativePanelMotionTests
+public sealed class NarrativePanelMotionPresentationSystemHelperTests
 {
     public static void RunFocusedValidation()
     {
         try
         {
-            NarrativePanelMotionTests tests = new();
+            NarrativePanelMotionPresentationSystemHelperTests tests = new();
             foreach (NarrativeMotionPreset preset in new[]
                      {
                          NarrativeMotionPreset.PushIn,
@@ -24,13 +24,13 @@ public sealed class NarrativePanelMotionTests
                 tests.MotionPresets_RemainFullBleedAndBounded(preset);
             }
             tests.ReducedMotion_IsStaticWithoutChangingTimeline();
-            Debug.Log("[NarrativePanelMotionValidation] result=Passed tests=6");
+            Debug.Log("[NarrativePanelMotionPresentationSystemHelperValidation] result=Passed tests=6");
             ValidationExit.Passed();
         }
         catch (Exception exception)
         {
             Debug.LogException(exception);
-            Debug.Log("[NarrativePanelMotionValidation] result=Failed");
+            Debug.Log("[NarrativePanelMotionPresentationSystemHelperValidation] result=Failed");
             ValidationExit.Failed();
         }
     }
@@ -44,7 +44,7 @@ public sealed class NarrativePanelMotionTests
     {
         GameObject target = new("Panel", typeof(RectTransform));
         RectTransform rect = target.GetComponent<RectTransform>();
-        NarrativePanelMotion motion = new(rect);
+        NarrativePanelMotionPresentationSystemHelper motion = new(rect);
 
         motion.Start(preset, 4f, false);
         for (int i = 0; i < 8; i++)
@@ -64,7 +64,7 @@ public sealed class NarrativePanelMotionTests
     {
         GameObject target = new("Panel", typeof(RectTransform));
         RectTransform rect = target.GetComponent<RectTransform>();
-        NarrativePanelMotion motion = new(rect);
+        NarrativePanelMotionPresentationSystemHelper motion = new(rect);
 
         motion.Start(NarrativeMotionPreset.DriftRight, 4f, true);
         motion.Tick(2f);

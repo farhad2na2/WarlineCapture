@@ -16,7 +16,7 @@ public sealed class FirstLaunchNarrativePlayModeTests
     [UnityTest]
     public IEnumerator ReviewerBoot_AddressablesPlaybackAndDebriefSkipCompleteInLiveMenu()
     {
-        FirstLaunchNarrativeReviewSession.Request();
+        FirstLaunchNarrativeReviewUtilitySystemHelper.Request();
         AsyncOperation load = SceneManager.LoadSceneAsync("Assets/Game/Scenes/Menu.unity", LoadSceneMode.Single);
         Assert.NotNull(load);
         while (!load.isDone)
@@ -35,7 +35,11 @@ public sealed class FirstLaunchNarrativePlayModeTests
         Assert.AreEqual(2.2f, dialogue.localScale.x, 0.01f);
         Assert.AreEqual(0f, narrative.LocationIntroView.GetComponent<RectTransform>().pivot.x, 0.001f);
         Assert.Greater(narrative.GetComponent<CanvasGroup>().alpha, 0.99f);
+        float openingPanelDeadline = Time.realtimeSinceStartup + 5f;
+        while (narrative.CurrentPanelSprite == null && Time.realtimeSinceStartup < openingPanelDeadline)
+            yield return null;
         Assert.NotNull(narrative.CurrentPanelSprite, "FL-P01 must load through Addressables before live presentation.");
+        Sprite openingPanel = narrative.CurrentPanelSprite;
         Assert.AreEqual(1f, narrative.ReviewerControlsView.GetComponent<CanvasGroup>().alpha);
 
         TMP_Text stateLabel = Array.Find(narrative.GetComponentsInChildren<TMP_Text>(true), value => value.name == "StateIdLabel");
@@ -57,7 +61,10 @@ public sealed class FirstLaunchNarrativePlayModeTests
         Assert.AreEqual("FL-P01", stateLabel.text);
 
         next.onClick.Invoke();
-        yield return null;
+        float nextPanelDeadline = Time.realtimeSinceStartup + 5f;
+        while ((narrative.CurrentPanelSprite == null || narrative.CurrentPanelSprite == openingPanel) &&
+               Time.realtimeSinceStartup < nextPanelDeadline)
+            yield return null;
         Assert.AreEqual("FL-P02", stateLabel.text);
         Assert.NotNull(narrative.CurrentPanelSprite);
 
@@ -76,14 +83,21 @@ public sealed class FirstLaunchNarrativePlayModeTests
         subtitles.isOn = true;
 
         debrief.onClick.Invoke();
-        yield return null;
+        float debriefDeadline = Time.realtimeSinceStartup + 5f;
+        while (stateLabel.text != "FL-P19" && Time.realtimeSinceStartup < debriefDeadline)
+            yield return null;
         Assert.AreEqual("FL-P19", stateLabel.text);
         skip.onClick.Invoke();
-        yield return null;
+        float debriefSkipDeadline = Time.realtimeSinceStartup + 5f;
+        while (stateLabel.text != "first_launch.command_base_reveal" &&
+               Time.realtimeSinceStartup < debriefSkipDeadline)
+            yield return null;
         Assert.AreEqual("first_launch.command_base_reveal", stateLabel.text);
 
         restart.onClick.Invoke();
-        yield return null;
+        float restartDeadline = Time.realtimeSinceStartup + 5f;
+        while (stateLabel.text != "FL-P01" && Time.realtimeSinceStartup < restartDeadline)
+            yield return null;
         HashSet<string> visited = new(StringComparer.Ordinal);
         bool identitySurfaceValidated = false;
         for (int step = 0; step < 32; step++)
@@ -105,7 +119,10 @@ public sealed class FirstLaunchNarrativePlayModeTests
                     value => value.name == "ContinueButton");
                 Assert.NotNull(identityContinue);
                 identityContinue.onClick.Invoke();
-                yield return null;
+                float guidanceDeadline = Time.realtimeSinceStartup + 5f;
+                while (stateLabel.text != "first_launch.guidance_choice" &&
+                       Time.realtimeSinceStartup < guidanceDeadline)
+                    yield return null;
                 Assert.AreEqual("first_launch.guidance_choice", stateLabel.text);
                 visited.Add(stateLabel.text);
 
@@ -116,7 +133,9 @@ public sealed class FirstLaunchNarrativePlayModeTests
                     value => value.name == "ContinueButton");
                 Assert.NotNull(guidanceContinue);
                 guidanceContinue.onClick.Invoke();
-                yield return null;
+                float postGuidanceDeadline = Time.realtimeSinceStartup + 5f;
+                while (stateLabel.text != "FL-P09" && Time.realtimeSinceStartup < postGuidanceDeadline)
+                    yield return null;
                 Assert.AreEqual("FL-P09", stateLabel.text);
                 visited.Add(stateLabel.text);
                 float voiceDeadline = Time.realtimeSinceStartup + 2f;

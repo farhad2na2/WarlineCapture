@@ -33,11 +33,11 @@ namespace Game.Editor
 
             NarrativeSequenceConfig sequence = RequireAsset<NarrativeSequenceConfig>(FirstLaunchNarrativeConfigBuilder.SequencePath);
             NarrativeSpeakerCatalog speakers = RequireAsset<NarrativeSpeakerCatalog>(FirstLaunchNarrativeConfigBuilder.SpeakerPath);
-            NarrativePunctuationProfile punctuation = RequireAsset<NarrativePunctuationProfile>(FirstLaunchNarrativeConfigBuilder.PunctuationPath);
+            NarrativePunctuationConfig punctuation = RequireAsset<NarrativePunctuationConfig>(FirstLaunchNarrativeConfigBuilder.PunctuationPath);
             GameObject prefab = RequireAsset<GameObject>(FirstLaunchNarrativePresentationPrefabBuilder.PrefabPath);
             GameObject instance = Object.Instantiate(prefab);
             NarrativeSequenceView view = instance.GetComponent<NarrativeSequenceView>();
-            FirstLaunchNarrativePlayer player = new();
+            FirstLaunchNarrativeSequencePresentationSystemHelper player = new();
             try
             {
                 UISettingsModel settings = Game.UI.Runtime.SettingsService.Defaults;
@@ -112,7 +112,7 @@ namespace Game.Editor
             }
         }
 
-        private static void AssertResidency(FirstLaunchNarrativePlayer player, string context)
+        private static void AssertResidency(FirstLaunchNarrativeSequencePresentationSystemHelper player, string context)
         {
             if (player.ResidentPanelAssetCount < 1 || player.ResidentPanelAssetCount > 2)
                 throw new InvalidOperationException($"{context} retained {player.ResidentPanelAssetCount} panel assets; expected current and optional next only.");
@@ -120,11 +120,11 @@ namespace Game.Editor
                 throw new InvalidOperationException($"{context} did not retain a current Addressables panel key.");
         }
 
-        private static void ValidateMissingAudioFallback(NarrativeSequenceView view, NarrativePunctuationProfile punctuation)
+        private static void ValidateMissingAudioFallback(NarrativeSequenceView view, NarrativePunctuationConfig punctuation)
         {
             UISettingsModel settings = Game.UI.Runtime.SettingsService.Defaults;
             settings.Narrative.AutoAdvance = true;
-            NarrativeSequencePresentation presentation = new(view);
+            NarrativeDialoguePresentationSystemHelper presentation = new(view);
             presentation.StartDialogue(
                 "Optional voice unavailable. Continue with readable text.",
                 new NarrativeSpeakerPresentationModel
@@ -147,7 +147,7 @@ namespace Game.Editor
         }
 
         private static NarrativePunctuationPresentationModel BuildPunctuationModel(
-            NarrativePunctuationProfile profile)
+            NarrativePunctuationConfig profile)
         {
             return new NarrativePunctuationPresentationModel
             {

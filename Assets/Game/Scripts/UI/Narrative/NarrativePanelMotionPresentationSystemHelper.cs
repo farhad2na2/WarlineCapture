@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Game.UI.Runtime
 {
-    public sealed class NarrativePanelMotion
+    public sealed class NarrativePanelMotionPresentationSystemHelper
     {
         private const float PushScale = 1.035f;
         private const float DriftScale = 1.04f;
@@ -18,7 +18,7 @@ namespace Game.UI.Runtime
         private float elapsed;
         private bool reducedMotion;
 
-        public NarrativePanelMotion(RectTransform target)
+        public NarrativePanelMotionPresentationSystemHelper(RectTransform target)
         {
             panelRoot = target;
             if (panelRoot != null)

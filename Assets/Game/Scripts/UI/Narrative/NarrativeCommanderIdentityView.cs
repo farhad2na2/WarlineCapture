@@ -1,5 +1,4 @@
 using System;
-using Game.UI.Contracts;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -10,14 +9,9 @@ namespace Game.UI.Runtime
     [DisallowMultipleComponent]
     public sealed class NarrativeCommanderIdentityView : MonoBehaviour
     {
-        private const string FallbackCallsign = "COMMANDER";
-        private const string FallbackDisplayName = "Commander";
-
         [Header("Identity")]
         [SerializeField] private TMP_InputField callsignInput;
         [SerializeField] private TMP_InputField displayNameInput;
-        [SerializeField] private string defaultCallsign = FallbackCallsign;
-        [SerializeField] private string defaultDisplayName = FallbackDisplayName;
 
         [Header("Portraits")]
         [SerializeField] private Image selectedPortraitImage;
@@ -25,7 +19,6 @@ namespace Game.UI.Runtime
         [SerializeField] private Button[] portraitButtons;
         [SerializeField] private Image[] portraitImages;
         [SerializeField] private Image[] portraitSelectionImages;
-        [SerializeField] private int defaultPortraitIndex;
 
         [Header("Actions")]
         [SerializeField] private Button continueButton;
@@ -36,35 +29,25 @@ namespace Game.UI.Runtime
         [SerializeField] private TMP_Text[] portraitAccessibilityLabels;
         [SerializeField] private TMP_Text continueAccessibilityLabel;
 
-        private Action<NarrativeUiAction> actionHandler;
+        private Action<int> portraitSelectionHandler;
+        private Action continueHandler;
         private UnityAction[] portraitListeners;
-        private string sequenceId;
-        private string stateId;
-        private string lineId;
-        private ulong transitionToken;
         private int selectedPortraitIndex = -1;
-        private bool commitRequested;
         private bool eventsWired;
 
-        public NarrativeCommanderIdentityData SelectedIdentity => new()
-        {
-            Callsign = ReadOrDefault(callsignInput, defaultCallsign, FallbackCallsign),
-            DisplayName = ReadOrDefault(displayNameInput, defaultDisplayName, FallbackDisplayName)
-        };
-
+        public string CallsignText => callsignInput != null ? callsignInput.text : string.Empty;
+        public string DisplayNameText => displayNameInput != null ? displayNameInput.text : string.Empty;
         public int SelectedPortraitIndex => selectedPortraitIndex;
         public Sprite SelectedPortrait => selectedPortraitImage != null ? selectedPortraitImage.sprite : null;
-        public bool CommitRequested => commitRequested;
+        public int PortraitOptionCount => PortraitCount;
 
         private void Awake()
         {
-            InitializeControls();
             WireEvents();
         }
 
         private void OnEnable()
         {
-            InitializeControls();
             WireEvents();
         }
 
@@ -76,71 +59,38 @@ namespace Game.UI.Runtime
         private void OnDestroy()
         {
             UnwireEvents();
-            actionHandler = null;
+            UnbindIntents();
         }
 
-        public void BindActions(Action<NarrativeUiAction> handler)
+        public void BindIntents(Action<int> portraitSelected, Action continueRequested)
         {
-            actionHandler = handler;
-            commitRequested = false;
-            SetControlsInteractable(true);
-            InitializeControls();
+            portraitSelectionHandler = portraitSelected;
+            continueHandler = continueRequested;
             WireEvents();
         }
 
-        public void UnbindActions()
+        public void UnbindIntents()
         {
-            actionHandler = null;
+            portraitSelectionHandler = null;
+            continueHandler = null;
         }
 
-        public void Bind(Action<NarrativeUiAction> handler)
+        public void SetIdentity(string callsign, string displayName, int portraitIndex)
         {
-            BindActions(handler);
+            callsignInput?.SetTextWithoutNotify(callsign ?? string.Empty);
+            displayNameInput?.SetTextWithoutNotify(displayName ?? string.Empty);
+            SetPortraitSelection(portraitIndex);
         }
 
-        public void Unbind()
-        {
-            UnbindActions();
-        }
-
-        public void SetActionContext(
-            string nextSequenceId,
-            string nextStateId,
-            string nextLineId,
-            ulong nextTransitionToken)
-        {
-            sequenceId = nextSequenceId;
-            stateId = nextStateId;
-            lineId = nextLineId;
-            transitionToken = nextTransitionToken;
-        }
-
-        public void ApplyIdentity(in NarrativeCommanderIdentityData identity, int portraitIndex = 0)
-        {
-            SetInputText(callsignInput, Normalize(identity.Callsign, defaultCallsign, FallbackCallsign));
-            SetInputText(displayNameInput, Normalize(identity.DisplayName, defaultDisplayName, FallbackDisplayName));
-            SelectPortrait(portraitIndex);
-            commitRequested = false;
-            SetControlsInteractable(true);
-        }
-
-        public void ResetToDefaults()
-        {
-            SetInputText(callsignInput, Normalize(defaultCallsign, FallbackCallsign, FallbackCallsign));
-            SetInputText(displayNameInput, Normalize(defaultDisplayName, FallbackDisplayName, FallbackDisplayName));
-            SelectPortrait(defaultPortraitIndex);
-            commitRequested = false;
-            SetControlsInteractable(true);
-        }
-
-        public void SelectPortrait(int portraitIndex)
+        public void SetPortraitSelection(int portraitIndex)
         {
             int count = PortraitCount;
             selectedPortraitIndex = count > 0 ? Mathf.Clamp(portraitIndex, 0, count - 1) : -1;
 
             if (selectedPortraitImage != null)
             {
-                Sprite portrait = selectedPortraitIndex >= 0 && portraitImages != null && selectedPortraitIndex < portraitImages.Length
+                Sprite portrait = selectedPortraitIndex >= 0 && portraitImages != null &&
+                                  selectedPortraitIndex < portraitImages.Length
                     ? portraitImages[selectedPortraitIndex]?.sprite
                     : null;
                 selectedPortraitImage.sprite = portrait != null ? portrait : defaultPortrait;
@@ -149,25 +99,35 @@ namespace Game.UI.Runtime
             ApplyPortraitSelectionVisuals();
         }
 
+        public void SetControlsInteractable(bool interactable)
+        {
+            if (callsignInput != null)
+                callsignInput.interactable = interactable;
+            if (displayNameInput != null)
+                displayNameInput.interactable = interactable;
+            if (continueButton != null)
+                continueButton.interactable = interactable;
+
+            ApplyPortraitSelectionVisuals(interactable);
+        }
+
         public void SetAccessibilityLabels(
             string callsignLabel,
             string displayNameLabel,
             string continueLabel,
             string[] portraitLabels = null)
         {
-            SetText(callsignAccessibilityLabel, callsignLabel, "Commander callsign");
-            SetText(displayNameAccessibilityLabel, displayNameLabel, "Commander display name");
-            SetText(continueAccessibilityLabel, continueLabel, "Continue with commander identity");
+            SetText(callsignAccessibilityLabel, callsignLabel);
+            SetText(displayNameAccessibilityLabel, displayNameLabel);
+            SetText(continueAccessibilityLabel, continueLabel);
 
-            if (portraitAccessibilityLabels == null)
-                return;
-
-            for (int i = 0; i < portraitAccessibilityLabels.Length; i++)
+            int count = portraitAccessibilityLabels?.Length ?? 0;
+            for (int i = 0; i < count; i++)
             {
                 string label = portraitLabels != null && i < portraitLabels.Length
                     ? portraitLabels[i]
-                    : $"Commander portrait {i + 1}";
-                SetText(portraitAccessibilityLabels[i], label, $"Commander portrait {i + 1}");
+                    : string.Empty;
+                SetText(portraitAccessibilityLabels[i], label);
             }
         }
 
@@ -175,36 +135,12 @@ namespace Game.UI.Runtime
             portraitButtons?.Length ?? 0,
             Mathf.Max(portraitImages?.Length ?? 0, portraitSelectionImages?.Length ?? 0));
 
-        private void InitializeControls()
-        {
-            if (callsignInput != null)
-            {
-                callsignInput.readOnly = false;
-                if (string.IsNullOrWhiteSpace(callsignInput.text))
-                    SetInputText(callsignInput, Normalize(defaultCallsign, FallbackCallsign, FallbackCallsign));
-            }
-
-            if (displayNameInput != null)
-            {
-                displayNameInput.readOnly = false;
-                if (string.IsNullOrWhiteSpace(displayNameInput.text))
-                    SetInputText(displayNameInput, Normalize(defaultDisplayName, FallbackDisplayName, FallbackDisplayName));
-            }
-
-            if (selectedPortraitIndex < 0)
-                SelectPortrait(defaultPortraitIndex);
-
-            ApplyDefaultAccessibilityLabels();
-        }
-
         private void WireEvents()
         {
             if (eventsWired)
                 return;
 
-            if (continueButton != null)
-                continueButton.onClick.AddListener(HandleContinue);
-
+            continueButton?.onClick.AddListener(HandleContinue);
             int count = portraitButtons?.Length ?? 0;
             portraitListeners = count > 0 ? new UnityAction[count] : null;
             for (int i = 0; i < count; i++)
@@ -214,7 +150,7 @@ namespace Game.UI.Runtime
                     continue;
 
                 int capturedIndex = i;
-                UnityAction listener = () => SelectPortrait(capturedIndex);
+                UnityAction listener = () => portraitSelectionHandler?.Invoke(capturedIndex);
                 portraitListeners[i] = listener;
                 button.onClick.AddListener(listener);
             }
@@ -227,9 +163,7 @@ namespace Game.UI.Runtime
             if (!eventsWired)
                 return;
 
-            if (continueButton != null)
-                continueButton.onClick.RemoveListener(HandleContinue);
-
+            continueButton?.onClick.RemoveListener(HandleContinue);
             int count = Mathf.Min(portraitButtons?.Length ?? 0, portraitListeners?.Length ?? 0);
             for (int i = 0; i < count; i++)
             {
@@ -243,31 +177,7 @@ namespace Game.UI.Runtime
 
         private void HandleContinue()
         {
-            if (commitRequested || actionHandler == null)
-                return;
-
-            commitRequested = true;
-            SetControlsInteractable(false);
-            actionHandler.Invoke(new NarrativeUiAction
-            {
-                SequenceId = sequenceId,
-                StateId = stateId,
-                LineId = lineId,
-                Kind = NarrativeUiActionKind.CommitCommanderIdentity,
-                TransitionToken = transitionToken
-            });
-        }
-
-        private void SetControlsInteractable(bool interactable)
-        {
-            if (callsignInput != null)
-                callsignInput.interactable = interactable;
-            if (displayNameInput != null)
-                displayNameInput.interactable = interactable;
-            if (continueButton != null)
-                continueButton.interactable = interactable;
-
-            ApplyPortraitSelectionVisuals(interactable);
+            continueHandler?.Invoke();
         }
 
         private void ApplyPortraitSelectionVisuals(bool controlsInteractable = true)
@@ -287,58 +197,10 @@ namespace Game.UI.Runtime
             }
         }
 
-        private static string ReadOrDefault(TMP_InputField input, string configuredDefault, string hardFallback)
-        {
-            return Normalize(input != null ? input.text : null, configuredDefault, hardFallback);
-        }
-
-        private static string Normalize(string value, string configuredDefault, string hardFallback)
-        {
-            if (!string.IsNullOrWhiteSpace(value))
-                return value.Trim();
-            if (!string.IsNullOrWhiteSpace(configuredDefault))
-                return configuredDefault.Trim();
-            return hardFallback;
-        }
-
-        private static void SetInputText(TMP_InputField input, string value)
-        {
-            input?.SetTextWithoutNotify(value ?? string.Empty);
-        }
-
-        private static void SetText(TMP_Text text, string value, string fallback)
+        private static void SetText(TMP_Text text, string value)
         {
             if (text != null)
-                text.text = string.IsNullOrWhiteSpace(value) ? fallback : value;
+                text.text = value ?? string.Empty;
         }
-
-        private void ApplyDefaultAccessibilityLabels()
-        {
-            SetTextIfBlank(callsignAccessibilityLabel, "Commander callsign");
-            SetTextIfBlank(displayNameAccessibilityLabel, "Commander display name");
-            SetTextIfBlank(continueAccessibilityLabel, "Continue with commander identity");
-
-            int count = portraitAccessibilityLabels?.Length ?? 0;
-            for (int i = 0; i < count; i++)
-                SetTextIfBlank(portraitAccessibilityLabels[i], $"Commander portrait {i + 1}");
-        }
-
-        private static void SetTextIfBlank(TMP_Text text, string fallback)
-        {
-            if (text != null && string.IsNullOrWhiteSpace(text.text))
-                text.text = fallback;
-        }
-
-#if UNITY_EDITOR
-        private void OnValidate()
-        {
-            if ((callsignInput == null && displayNameInput == null) || selectedPortraitImage == null ||
-                continueButton == null || callsignAccessibilityLabel == null ||
-                displayNameAccessibilityLabel == null || continueAccessibilityLabel == null)
-            {
-                Debug.LogWarning($"[{nameof(NarrativeCommanderIdentityView)}] Missing required serialized reference on {name}.", this);
-            }
-        }
-#endif
     }
 }

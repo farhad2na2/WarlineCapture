@@ -17,7 +17,7 @@ namespace Game.Editor
                 return;
 
             EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
-            FirstLaunchNarrativeReviewSession.Request();
+            FirstLaunchNarrativeReviewUtilitySystemHelper.Request();
             EditorApplication.isPlaying = true;
         }
     }

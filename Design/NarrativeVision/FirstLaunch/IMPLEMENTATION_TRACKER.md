@@ -460,6 +460,16 @@ The JSON manifest is a production/evidence artifact. Runtime content is authored
 
 The runtime implementation must preserve existing assembly and naming rules.
 
+### Architecture Alignment Evidence (2026-07-12)
+
+- The focused architecture refactor is complete and tracked in `Design/Architecture/first_launch_architecture_alignment_refactor_tracker.md`.
+- Narrative domain contracts now live in dependency-free `Game.Narrative.Contracts`; deterministic route and sequence progression live in `Game.Narrative.Runtime` without UI, composition, ECS, Addressables, or editor dependencies.
+- Canvas/audio/Addressables work remains in managed presentation edges. Narrative `*View` types are serialized-reference, visual-projection, and raw-intent boundaries; identity/guidance defaults, normalization, transition context, accessibility copy, and one-shot commit policy live in `FirstLaunchNarrativeInteractivePresentationSystemHelper`.
+- Panel acquisition is asynchronous, retains current/next only, rejects stale completions by transition token, and preserves direct-sprite diagnostics fallback.
+- The checked-in `FirstLaunchSequence.asset` contains its authored audio cues, semantic route roles, completion/evidence metadata, and mission flags; production behavior does not rely on an editor installer running before play.
+- Final evidence: integrated gate `56/56` (`/private/tmp/warline-firstlaunch-gate89-closeout.log`), live Menu PlayMode `1/1` (`/private/tmp/warline-firstlaunch-playmode-closeout-r4.xml`), assembly boundaries `31/31`, broad naming `1/1`, non-ECS naming `9/9`, passive-view architecture `10/10`, and async residency `7/7`.
+- The repository-wide source-growth runner still reports only the unrelated pre-existing `AudioPlaybackPresentationSystemHelper.cs` 548-line review debt. Exact FirstLaunch helper-path and authorization checks pass.
+
 ### Ownership
 
 | Responsibility | Planned owner | Boundary |

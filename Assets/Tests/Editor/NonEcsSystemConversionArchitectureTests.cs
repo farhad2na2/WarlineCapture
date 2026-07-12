@@ -30,7 +30,11 @@ public sealed class NonEcsSystemConversionArchitectureTests
         RegexOptions.CultureInvariant);
 
     private static readonly Regex TopLevelTypeDeclarationRegex = new(
-        @"^(?:(?:public|internal|private|protected|sealed|abstract|static|partial|readonly)\s+)*(?<kind>class|struct|interface|enum)\s+(?<name>[A-Za-z_]\w*)\b",
+        @"^(?<indent>[ \t]*)(?:(?:public|internal|private|protected|sealed|abstract|static|partial|readonly)\s+)*(?<kind>class|struct|interface|enum)\s+(?<name>[A-Za-z_]\w*)\b",
+        RegexOptions.CultureInvariant | RegexOptions.Multiline);
+
+    private static readonly Regex NamespaceDeclarationRegex = new(
+        @"^(?<indent>[ \t]*)namespace\s+[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*\s*(?<fileScoped>;)?\s*$",
         RegexOptions.CultureInvariant | RegexOptions.Multiline);
 
     private static readonly Regex NamingEscapeSuffixRegex = new(
@@ -75,6 +79,7 @@ public sealed class NonEcsSystemConversionArchitectureTests
         "Assets/Game/Scripts/Components/GridComponents.cs|UnitPathCell",
         "Assets/Game/Scripts/Components/MapSurfaceComponents.cs|MapSurfaceCell",
         "Assets/Game/Scripts/Composition/MatchIntroEcsStateQuery.cs|MatchIntroEcsStateQuery",
+        "Assets/Game/Scripts/Composition/GameTextResolverAdapter.cs|GameTextResolverAdapter",
         "Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs|BuildingUiCommandAdapter",
         "Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs|BuildingUiQueryAdapter",
         "Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs|MatchHudCameraControlAdapter",
@@ -84,8 +89,12 @@ public sealed class NonEcsSystemConversionArchitectureTests
         "Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs|SelectionRectangleStateAdapter",
         "Assets/Game/Scripts/Persistence/SaveService.cs|SaveService",
         "Assets/Game/Scripts/Systems/NullMatchIntroStateQuery.cs|NullMatchIntroStateQuery",
+        "Assets/Game/Scripts/Systems/UnitSpatialIndexQuery.cs|UnitSpatialIndexQuery",
+        "Assets/Game/Scripts/UI/Contracts/FallbackGameTextResolver.cs|FallbackGameTextResolver",
+        "Assets/Game/Scripts/UI/Contracts/IGameTextResolver.cs|IGameTextResolver",
         "Assets/Game/Scripts/UI/Contracts/IMatchIntroStateQuery.cs|IMatchIntroStateQuery",
         "Assets/Game/Scripts/UI/Contracts/UiRuntimeContracts.cs|IBuildingUiQuery",
+        "Assets/Game/Scripts/UI/Settings/SettingsPopupView.cs|SettingsPopupContext",
         "Assets/Game/Scripts/UI/Settings/SettingsService.cs|SettingsService"
     };
 
@@ -485,14 +494,35 @@ public sealed class NonEcsSystemConversionArchitectureTests
     private static IEnumerable<NamingEscapeType> FindTopLevelNamingEscapeTypes(string path)
     {
         string text = File.ReadAllText(path);
+        int expectedIndent = ResolveTopLevelTypeIndent(text);
         foreach (Match match in TopLevelTypeDeclarationRegex.Matches(text))
         {
+            if (MeasureIndent(match.Groups["indent"].Value) != expectedIndent)
+                continue;
+
             string name = match.Groups["name"].Value;
             if (!NamingEscapeSuffixRegex.IsMatch(name))
                 continue;
 
             yield return new NamingEscapeType(path, name, GetLineNumber(text, match.Index));
         }
+    }
+
+    private static int ResolveTopLevelTypeIndent(string text)
+    {
+        Match namespaceMatch = NamespaceDeclarationRegex.Match(text);
+        if (!namespaceMatch.Success || namespaceMatch.Groups["fileScoped"].Success)
+            return MeasureIndent(namespaceMatch.Success ? namespaceMatch.Groups["indent"].Value : string.Empty);
+
+        return MeasureIndent(namespaceMatch.Groups["indent"].Value) + 4;
+    }
+
+    private static int MeasureIndent(string indent)
+    {
+        int width = 0;
+        for (int index = 0; index < indent.Length; index++)
+            width += indent[index] == '\t' ? 4 : 1;
+        return width;
     }
 
     private static bool IsUnityEcsSystem(SystemDeclaration declaration)

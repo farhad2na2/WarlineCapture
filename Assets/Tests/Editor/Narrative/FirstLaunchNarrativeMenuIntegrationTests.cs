@@ -204,7 +204,7 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
             instance.GetComponent<NarrativeSequenceView>(),
             AssetDatabase.LoadAssetAtPath<NarrativeSequenceConfig>(FirstLaunchNarrativeConfigBuilder.SequencePath),
             AssetDatabase.LoadAssetAtPath<NarrativeSpeakerCatalog>(FirstLaunchNarrativeConfigBuilder.SpeakerPath),
-            AssetDatabase.LoadAssetAtPath<NarrativePunctuationProfile>(FirstLaunchNarrativeConfigBuilder.PunctuationPath));
+            AssetDatabase.LoadAssetAtPath<NarrativePunctuationConfig>(FirstLaunchNarrativeConfigBuilder.PunctuationPath));
     }
 
     private sealed class Context : IDisposable
@@ -215,9 +215,9 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
         public readonly NarrativeSequenceView View;
         public readonly NarrativeSequenceConfig Sequence;
         public readonly NarrativeSpeakerCatalog Speakers;
-        public readonly NarrativePunctuationProfile Punctuation;
-        public readonly FirstLaunchNarrativeCoordinator Helper = new();
-        public Context(string root, SaveService saveService, GameObject instance, NarrativeSequenceView view, NarrativeSequenceConfig sequence, NarrativeSpeakerCatalog speakers, NarrativePunctuationProfile punctuation) { Root = root; SaveService = saveService; Instance = instance; View = view; Sequence = sequence; Speakers = speakers; Punctuation = punctuation; }
+        public readonly NarrativePunctuationConfig Punctuation;
+        public readonly FirstLaunchNarrativeCompositionSystemHelper Helper = new();
+        public Context(string root, SaveService saveService, GameObject instance, NarrativeSequenceView view, NarrativeSequenceConfig sequence, NarrativeSpeakerCatalog speakers, NarrativePunctuationConfig punctuation) { Root = root; SaveService = saveService; Instance = instance; View = view; Sequence = sequence; Speakers = speakers; Punctuation = punctuation; }
         public void Dispose() { Helper.Shutdown(); UnityEngine.Object.DestroyImmediate(Instance); if (Directory.Exists(Root)) Directory.Delete(Root, true); }
     }
 }

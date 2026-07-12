@@ -8,6 +8,8 @@
         "Game.Composition",
         "Game.Configs",
         "Game.Editor",
+        "Game.Narrative.Contracts",
+        "Game.Narrative.Runtime",
         "Game.Rendering",
         "Game.Rendering.Contracts",
         "Game.Tactical.Contracts",

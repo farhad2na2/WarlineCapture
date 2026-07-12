@@ -29,7 +29,7 @@ namespace Game.Composition
         private readonly MatchLaunchCommand matchLaunchCommand = new();
         private readonly IGameTextResolver gameTextResolver = new GameTextResolverAdapter();
         private readonly StaticMapPresentationStreamer staticMapPresentationStreamer;
-        private readonly FirstLaunchNarrativeCoordinator firstLaunchNarrativeSystem = new();
+        private readonly FirstLaunchNarrativeCompositionSystemHelper firstLaunchNarrative = new();
 
         private EntityQuery boundaryQuery;
         private Entity cachedBoundaryEntity;
@@ -107,8 +107,8 @@ namespace Game.Composition
             if (!wasInitialized)
             {
                 ResetShellForFreshMenuScene();
-                bool reviewerMode = FirstLaunchNarrativeReviewSession.ConsumeRequest();
-                firstLaunchNarrativeSystem.InitializeShell(
+                bool reviewerMode = FirstLaunchNarrativeReviewUtilitySystemHelper.ConsumeRequest();
+                firstLaunchNarrative.InitializeShell(
                     view,
                     gameTextResolver,
                     autoStartMatchRequested && !reviewerMode,
@@ -125,7 +125,7 @@ namespace Game.Composition
                 Initialize(view);
             if (view == null)
                 return;
-            firstLaunchNarrativeSystem.Tick(unscaledDeltaTime);
+            firstLaunchNarrative.Tick(unscaledDeltaTime);
             TryApplyStartupRuntimeSettings();
             view.ApplyRuntimeUiMode();
 
@@ -137,16 +137,16 @@ namespace Game.Composition
             if (!TryGetBoundary(entityManager, out Entity boundary))
                 return;
 
-            firstLaunchNarrativeSystem.ApplyShellState(entityManager, boundary);
+            firstLaunchNarrative.ApplyShellState(entityManager, boundary);
 
             UiShellStateComponent shellState = entityManager.GetComponentData<UiShellStateComponent>(boundary);
             UpdateStaticMapPresentation(shellState);
             if (CanAdvanceMatchStart(shellState))
                 matchStartSystem.Update(entityManager);
             if (shellState.ActiveRoute == UIRoute.Match && shellState.CurrentMode == UiShellMode.Loading)
-                firstLaunchNarrativeSystem.OnMatchRouteAccepted();
+                firstLaunchNarrative.OnMatchRouteAccepted();
             if (shellState.CurrentMode == UiShellMode.MatchHud)
-                firstLaunchNarrativeSystem.MarkMatchHudReady();
+                firstLaunchNarrative.MarkMatchHudReady();
             QueueAutoStartMatchIfRequested(entityManager, boundary, shellState);
             ApplyUiPresentationMode(view.UiCamera, view.UiCanvas, shellState, entityManager);
             QueueDeferredMatchLoadAfterLoadingFeedback(entityManager, shellState);
@@ -172,7 +172,7 @@ namespace Game.Composition
             streamedMatchView = null;
             ClearBoundMatchRuntimeUi();
             autoStartMatchSubmitted = false;
-            firstLaunchNarrativeSystem.Shutdown();
+            firstLaunchNarrative.Shutdown();
             if (!diagnosticsInitialized)
                 return;
 
@@ -837,7 +837,7 @@ namespace Game.Composition
                 TransitionSequenceId = 0,
                 IsTransitionRunning = 0
             });
-            FirstLaunchNarrativeCoordinator.ResetShellState(entityManager, boundary);
+            FirstLaunchNarrativeCompositionSystemHelper.ResetShellState(entityManager, boundary);
             entityManager.SetComponentData(boundary, new UiShellLoadingProgressComponent
             {
                 Progress01 = 0f,

@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 using Game.Catalog.Contracts;
 using Game.Configs;
+using Game.Narrative.Contracts;
 using Game.UI.Contracts;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
@@ -79,21 +80,40 @@ namespace Game.Editor
             string[] opening = { "FL-P01", "FL-P02", "FL-P03", "FL-P04", "FL-P05", "FL-P06", "FL-P07" };
             foreach (string id in opening)
                 states.Add(CreatePanelState(id, NextOpening(id), "first_launch.m01_handoff"));
-            states.Add(CreateInteractiveState("first_launch.commander_identity", NarrativeStateKind.InteractiveIdentity, "first_launch.guidance_choice", "first_launch.m01_handoff", "FL-P08"));
-            states.Add(CreateInteractiveState("first_launch.guidance_choice", NarrativeStateKind.InteractiveGuidance, "FL-P09", "first_launch.m01_handoff", null));
+            NarrativeStateRecord identity = CreateInteractiveState("first_launch.commander_identity", NarrativeStateKind.InteractiveIdentity, "first_launch.guidance_choice", "first_launch.m01_handoff", "FL-P08");
+            Set(identity, "routeRole", NarrativeRouteRole.CommanderIdentity);
+            states.Add(identity);
+            NarrativeStateRecord guidance = CreateInteractiveState("first_launch.guidance_choice", NarrativeStateKind.InteractiveGuidance, "FL-P09", "first_launch.m01_handoff", null);
+            Set(guidance, "routeRole", NarrativeRouteRole.GuidanceChoice);
+            states.Add(guidance);
             for (int panel = 9; panel <= 18; panel++)
             {
                 string id = $"FL-P{panel:00}";
                 states.Add(CreatePanelState(id, panel == 18 ? "first_launch.m01_handoff" : $"FL-P{panel + 1:00}", "first_launch.m01_handoff"));
             }
-            states.Add(CreateBareState("first_launch.m01_handoff", NarrativeStateKind.RouteHandoff, "first_launch.gameplay_placeholder", "first_launch.m01_handoff"));
-            states.Add(CreateBareState("first_launch.gameplay_placeholder", NarrativeStateKind.ReviewOnlyPlaceholder, "FL-P19", "FL-P19"));
+            NarrativeStateRecord handoff = CreateBareState("first_launch.m01_handoff", NarrativeStateKind.RouteHandoff, "first_launch.gameplay_placeholder", "first_launch.m01_handoff");
+            Set(handoff, "routeRole", NarrativeRouteRole.MissionHandoff);
+            SetCompletion(handoff, "first_launch.m01_handoff_completion");
+            states.Add(handoff);
+            NarrativeStateRecord gameplay = CreateBareState("first_launch.gameplay_placeholder", NarrativeStateKind.ReviewOnlyPlaceholder, "FL-P19", "FL-P19");
+            Set(gameplay, "routeRole", NarrativeRouteRole.ReviewerGameplay);
+            states.Add(gameplay);
             for (int panel = 19; panel <= 22; panel++)
             {
                 string id = $"FL-P{panel:00}";
-                states.Add(CreatePanelState(id, panel == 22 ? "first_launch.command_base_reveal" : $"FL-P{panel + 1:00}", "first_launch.command_base_reveal"));
+                NarrativeStateRecord debrief = CreatePanelState(id, panel == 22 ? "first_launch.command_base_reveal" : $"FL-P{panel + 1:00}", "first_launch.command_base_reveal");
+                if (panel == 19)
+                    Set(debrief, "routeRole", NarrativeRouteRole.DebriefOpening);
+                states.Add(debrief);
             }
-            states.Add(CreateBareState("first_launch.command_base_reveal", NarrativeStateKind.RouteArrival, string.Empty, string.Empty));
+            NarrativeStateRecord arrival = CreateBareState("first_launch.command_base_reveal", NarrativeStateKind.RouteArrival, string.Empty, string.Empty);
+            Set(arrival, "routeRole", NarrativeRouteRole.DebriefArrival);
+            SetCompletion(
+                arrival,
+                "first_launch.m01_debrief_completion",
+                new[] { "evidence.aria.revoked_credential_fragment" },
+                new[] { "story.m01.corridor_secured", "story.aria.revoked_credential_clue_found" });
+            states.Add(arrival);
             Set(config, "states", states);
             EditorUtility.SetDirty(config);
         }
@@ -104,6 +124,10 @@ namespace Game.Editor
             SetPanelReferences(state, id);
             Set(state, "motionPreset", ResolveMotion(id));
             Set(state, "durationSeconds", ResolveDuration(id));
+            Set(state, "musicCue", ResolveMusic(id));
+            Set(state, "ambienceCue", ResolveAmbience(id));
+            Set(state, "vehicleCue", ResolveVehicle(id));
+            Set(state, "eventCue", ResolveEvent(id));
             if (id == "FL-P01")
             {
                 Set(state, "locationTitleKey", "narrative.first_launch.location.sahrin.name");
@@ -183,7 +207,26 @@ namespace Game.Editor
             Set(state, "skipStateId", skip);
             Set(state, "reducedMotionSupported", true);
             Set(state, "lines", new List<NarrativeDialogueLineRecord>());
+            Set(state, "musicCue", NarrativeMusicCue.Briefing);
+            Set(state, "ambienceCue", NarrativeAmbienceCue.CityConflict);
+            Set(state, "vehicleCue", NarrativeVehicleCue.None);
+            Set(state, "eventCue", NarrativeEventCue.None);
+            Set(state, "routeRole", NarrativeRouteRole.None);
+            Set(state, "completionPayloadId", string.Empty);
+            Set(state, "evidenceIds", Array.Empty<string>());
+            Set(state, "missionContextFlags", Array.Empty<string>());
             return state;
+        }
+
+        private static void SetCompletion(
+            NarrativeStateRecord state,
+            string payloadId,
+            string[] evidenceIds = null,
+            string[] missionContextFlags = null)
+        {
+            Set(state, "completionPayloadId", payloadId);
+            Set(state, "evidenceIds", evidenceIds ?? Array.Empty<string>());
+            Set(state, "missionContextFlags", missionContextFlags ?? Array.Empty<string>());
         }
 
         private static void BuildSpeakers()
@@ -220,7 +263,7 @@ namespace Game.Editor
 
         private static void BuildPunctuation()
         {
-            NarrativePunctuationProfile profile = GetOrCreateAsset<NarrativePunctuationProfile>(PunctuationPath);
+            NarrativePunctuationConfig profile = GetOrCreateAsset<NarrativePunctuationConfig>(PunctuationPath);
             EditorUtility.SetDirty(profile);
         }
 
@@ -266,6 +309,32 @@ namespace Game.Editor
             _ => 0f
         };
         private static NarrativeMotionPreset ResolveMotion(string id) => id switch { "FL-P02" => NarrativeMotionPreset.StaticImpact, "FL-P03" or "FL-P10" or "FL-P16" or "FL-P19" => NarrativeMotionPreset.DriftRight, "FL-P06" or "FL-P13" or "FL-P21" => NarrativeMotionPreset.DriftLeft, "FL-P22" => NarrativeMotionPreset.PullBack, _ => NarrativeMotionPreset.PushIn };
+
+        private static NarrativeMusicCue ResolveMusic(string id) => id is "FL-P02" or "FL-P03" or "FL-P07" or "FL-P10" or "FL-P15" or "FL-P16" or "FL-P17" or "FL-P18"
+            ? NarrativeMusicCue.Conflict
+            : NarrativeMusicCue.Briefing;
+
+        private static NarrativeAmbienceCue ResolveAmbience(string id) => id switch
+        {
+            "FL-P01" => NarrativeAmbienceCue.CityDay,
+            "FL-P02" or "FL-P03" or "FL-P15" or "FL-P16" or "FL-P17" or "FL-P18" => NarrativeAmbienceCue.Battlefield,
+            _ => NarrativeAmbienceCue.CityConflict
+        };
+
+        private static NarrativeVehicleCue ResolveVehicle(string id) => id is "FL-P04" or "FL-P11" or "FL-P15" or "FL-P17"
+            ? NarrativeVehicleCue.Engine
+            : NarrativeVehicleCue.None;
+
+        private static NarrativeEventCue ResolveEvent(string id) => id switch
+        {
+            "FL-P02" or "FL-P10" or "FL-P15" => NarrativeEventCue.Attack,
+            "FL-P03" or "FL-P04" => NarrativeEventCue.Radio,
+            "FL-P05" => NarrativeEventCue.AriaBoot,
+            "FL-P06" => NarrativeEventCue.Blackout,
+            "FL-P07" or "FL-P16" => NarrativeEventCue.SmallArms,
+            "FL-P09" or "FL-P18" => NarrativeEventCue.Transition,
+            _ => NarrativeEventCue.None
+        };
 
         private static T GetOrCreateAsset<T>(string path) where T : ScriptableObject
         {

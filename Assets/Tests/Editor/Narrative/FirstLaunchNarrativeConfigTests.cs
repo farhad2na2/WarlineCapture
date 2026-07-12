@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Game.Catalog.Contracts;
 using Game.Configs;
 using Game.Editor;
+using Game.Narrative.Contracts;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
@@ -16,10 +17,11 @@ public sealed class FirstLaunchNarrativeConfigTests
         {
             FirstLaunchNarrativeConfigTests tests = new();
             tests.SequenceConfig_HasUniqueConnectedStatesAndAllApprovedPanels();
+            tests.SequenceConfig_AuthorsAudioRouteAndCompletionPolicy();
             tests.DialogueLines_HaveStableKeysSpeakersTimingAndVoiceClips();
             tests.SpeakerCatalog_UsesDistinctPortraitsAndProductionAriaIcon();
             tests.SequenceConfig_DoesNotDirectlyRetainPanelTextures();
-            Debug.Log("[FirstLaunchNarrativeConfigValidation] result=Passed tests=4 states=26 panels=22 lines=17 speakers=5");
+            Debug.Log("[FirstLaunchNarrativeConfigValidation] result=Passed tests=5 states=26 panels=22 lines=17 speakers=5");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -75,6 +77,43 @@ public sealed class FirstLaunchNarrativeConfigTests
         string[] dependencies = AssetDatabase.GetDependencies(FirstLaunchNarrativeConfigBuilder.SequencePath, true);
         foreach (string dependency in dependencies)
             StringAssert.DoesNotContain("/Art/Narrative/FirstLaunch/Panels/", dependency);
+    }
+
+    [Test]
+    public void SequenceConfig_AuthorsAudioRouteAndCompletionPolicy()
+    {
+        NarrativeSequenceConfig config = AssetDatabase.LoadAssetAtPath<NarrativeSequenceConfig>(
+            FirstLaunchNarrativeConfigBuilder.SequencePath);
+        Dictionary<string, NarrativeStateRecord> states = new(StringComparer.Ordinal);
+        foreach (NarrativeStateRecord state in config.States)
+        {
+            Assert.IsTrue(states.TryAdd(state.StateId, state), state.StateId);
+            Assert.NotNull(state.EvidenceIds, state.StateId);
+            Assert.NotNull(state.MissionContextFlags, state.StateId);
+        }
+
+        Assert.AreEqual(NarrativeMusicCue.Briefing, states["FL-P01"].MusicCue);
+        Assert.AreEqual(NarrativeAmbienceCue.CityDay, states["FL-P01"].AmbienceCue);
+        Assert.AreEqual(NarrativeMusicCue.Conflict, states["FL-P02"].MusicCue);
+        Assert.AreEqual(NarrativeAmbienceCue.Battlefield, states["FL-P02"].AmbienceCue);
+        Assert.AreEqual(NarrativeEventCue.Attack, states["FL-P02"].EventCue);
+        Assert.AreEqual(NarrativeVehicleCue.Engine, states["FL-P04"].VehicleCue);
+        Assert.AreEqual(NarrativeEventCue.Radio, states["FL-P04"].EventCue);
+
+        NarrativeStateRecord handoff = states["first_launch.m01_handoff"];
+        Assert.AreEqual(NarrativeRouteRole.MissionHandoff, handoff.RouteRole);
+        Assert.AreEqual("first_launch.m01_handoff_completion", handoff.CompletionPayloadId);
+        Assert.AreEqual("first_launch.gameplay_placeholder", handoff.ContinueStateId);
+        Assert.AreEqual(
+            NarrativeRouteRole.ReviewerGameplay,
+            states["first_launch.gameplay_placeholder"].RouteRole);
+        Assert.AreEqual(NarrativeRouteRole.DebriefOpening, states["FL-P19"].RouteRole);
+
+        NarrativeStateRecord arrival = states["first_launch.command_base_reveal"];
+        Assert.AreEqual(NarrativeRouteRole.DebriefArrival, arrival.RouteRole);
+        Assert.AreEqual("first_launch.m01_debrief_completion", arrival.CompletionPayloadId);
+        CollectionAssert.Contains(arrival.EvidenceIds, "evidence.aria.revoked_credential_fragment");
+        CollectionAssert.Contains(arrival.MissionContextFlags, "story.aria.revoked_credential_clue_found");
     }
 
     [Test]

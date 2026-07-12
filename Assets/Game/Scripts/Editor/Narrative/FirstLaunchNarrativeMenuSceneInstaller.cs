@@ -42,7 +42,7 @@ namespace Game.Editor
             Set(serialized, "firstLaunchNarrativeView", instance.GetComponent<NarrativeSequenceView>());
             Set(serialized, "firstLaunchNarrativeConfig", AssetDatabase.LoadAssetAtPath<NarrativeSequenceConfig>(FirstLaunchNarrativeConfigBuilder.SequencePath));
             Set(serialized, "firstLaunchSpeakerCatalog", AssetDatabase.LoadAssetAtPath<NarrativeSpeakerCatalog>(FirstLaunchNarrativeConfigBuilder.SpeakerPath));
-            Set(serialized, "firstLaunchPunctuationProfile", AssetDatabase.LoadAssetAtPath<NarrativePunctuationProfile>(FirstLaunchNarrativeConfigBuilder.PunctuationPath));
+            Set(serialized, "firstLaunchPunctuationProfile", AssetDatabase.LoadAssetAtPath<NarrativePunctuationConfig>(FirstLaunchNarrativeConfigBuilder.PunctuationPath));
             serialized.ApplyModifiedPropertiesWithoutUndo();
 
             EditorSceneManager.MarkSceneDirty(scene);

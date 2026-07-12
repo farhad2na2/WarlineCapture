@@ -1,4 +1,3 @@
-using System;
 using Game.UI.Contracts;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,14 +21,8 @@ namespace Game.UI.Runtime
         [SerializeField] private AudioSource voiceSource;
         [SerializeField] private NarrativeSequenceAudioView sequenceAudioView;
 
-        private Action<NarrativeUiAction> actionHandler;
-        private string sequenceId;
-        private string stateId;
-        private string lineId;
-        private ulong transitionToken;
-        private bool childBindingsInitialized;
-
         public NarrativeDialogueView DialogueView => dialogueView;
+        public NarrativePlaybackControlsView PlaybackControlsView => playbackControls;
         public AudioSource VoiceSource => voiceSource;
         public NarrativeSequenceAudioView SequenceAudioView => sequenceAudioView;
         public RectTransform PanelMotionRoot => panelMotionRoot != null ? panelMotionRoot : panelImage != null ? panelImage.rectTransform : null;
@@ -40,43 +33,8 @@ namespace Game.UI.Runtime
         public Sprite CurrentPanelSprite => panelImage != null ? panelImage.sprite : null;
         public NarrativeLocationIntroView LocationIntroView => locationIntroView;
 
-        private void Awake()
-        {
-            EnsureChildBindings();
-        }
-
-        private void OnDestroy()
-        {
-            if (dialogueView != null)
-                dialogueView.UnbindInput();
-            if (playbackControls != null)
-                playbackControls.UnbindSkip();
-            reviewerControlsView?.Unbind();
-            actionHandler = null;
-        }
-
-        public void BindActions(Action<NarrativeUiAction> handler)
-        {
-            EnsureChildBindings();
-            actionHandler = handler;
-        }
-
-        public void UnbindActions()
-        {
-            actionHandler = null;
-        }
-
-        public void SetActionContext(string nextSequenceId, string nextStateId, string nextLineId, ulong nextTransitionToken)
-        {
-            sequenceId = nextSequenceId;
-            stateId = nextStateId;
-            lineId = nextLineId;
-            transitionToken = nextTransitionToken;
-        }
-
         public void ApplyPanel(in NarrativePanelPresentationModel model)
         {
-            stateId = model.StateId;
             if (panelImage != null)
             {
                 panelImage.sprite = model.PanelSprite;
@@ -126,39 +84,5 @@ namespace Game.UI.Runtime
                 guidanceChoiceView.gameObject.SetActive(kind == NarrativeInteractiveStateKind.GuidanceChoice);
         }
 
-        private void HandleDialogueInput(NarrativeDialoguePhase phase)
-        {
-            Emit(phase == NarrativeDialoguePhase.Revealing
-                ? NarrativeUiActionKind.CompleteText
-                : NarrativeUiActionKind.Continue);
-        }
-
-        private void HandleSkip()
-        {
-            Emit(NarrativeUiActionKind.Skip);
-        }
-
-        private void Emit(NarrativeUiActionKind kind)
-        {
-            actionHandler?.Invoke(new NarrativeUiAction
-            {
-                SequenceId = sequenceId,
-                StateId = stateId,
-                LineId = lineId,
-                Kind = kind,
-                TransitionToken = transitionToken
-            });
-        }
-
-        private void EnsureChildBindings()
-        {
-            if (childBindingsInitialized)
-                return;
-            if (dialogueView != null)
-                dialogueView.BindInput(HandleDialogueInput);
-            if (playbackControls != null)
-                playbackControls.BindSkip(HandleSkip);
-            childBindingsInitialized = true;
-        }
     }
 }

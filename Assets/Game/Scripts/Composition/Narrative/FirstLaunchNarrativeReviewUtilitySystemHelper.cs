@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Game.Composition
 {
-    public static class FirstLaunchNarrativeReviewSession
+    public static class FirstLaunchNarrativeReviewUtilitySystemHelper
     {
         private const string RequestKey = "WarlineCapture.FirstLaunch.ReviewerRequested";
 

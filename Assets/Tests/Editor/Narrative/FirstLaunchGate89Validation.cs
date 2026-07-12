@@ -12,12 +12,48 @@ public static class FirstLaunchGate89Validation
         {
             FirstLaunchNarrativeMenuSceneInstaller.Install();
 
+            FirstLaunchArchitectureAlignmentTests architecture = new();
+            architecture.RuntimeTypeNamesUseApprovedFirstLaunchBoundaries();
+            architecture.UiRuntimeAssemblyPreservesNarrativeDependencyDirection();
+            architecture.MenuBootstrapUsesOnlyTheFirstLaunchCompositionBoundary();
+            architecture.CompositionOwnerUsesDedicatedProfileShellAndReviewBoundaries();
+            architecture.NarrativeRuntimeOwnsRoutePolicyWithoutUiCompositionOrEcsDependencies();
+            architecture.SequenceProgressionStaysInPureNarrativeRuntime();
+            architecture.NarrativeContractsOwnDomainDataWithoutUiDependencies();
+            architecture.ProductionPolicyConsumesAuthoredNarrativeMetadata();
+            architecture.PanelResidencyIsAsynchronousAndOutsideSequenceProgression();
+            architecture.NarrativeViewsRemainPassiveReferenceAndIntentBoundaries();
+            new ScriptArchitectureAlignmentContractTests().RuntimeTypeNamesMustNotIntroduceBroadApplicationLayerSuffixes();
+            new NonEcsSystemConversionArchitectureTests().TopLevelGameplayNamingEscapesStayOnApprovedBoundaryList();
+
+            FirstLaunchNarrativeCompositionBoundaryTests compositionBoundaries = new();
+            compositionBoundaries.ProfileBoundary_ProjectsStartupDispositionWithoutUiOrEcs();
+            compositionBoundaries.ProfileBoundary_PersistsProductionChoicesAndHandoffState();
+            compositionBoundaries.ProfileBoundary_ReviewerChoicesDoNotMutateSavedProfile();
+            compositionBoundaries.ShellBoundary_ProjectsStartupAndPublishesOneRouteRequest();
+
+            FirstLaunchNarrativeRouteUtilitySystemHelperTests routes = new();
+            routes.HandoffRule_SeparatesProductionReviewerAndDebriefRoutes();
+            routes.SkipRule_RequiresIdentityOrConfirmationAndKeepsDebriefRoute();
+            routes.ConfirmedSkipRule_SeparatesReviewerPreviewFromProductionPersistence();
+
+            FirstLaunchNarrativeSequenceUtilitySystemHelperTests sequenceRuntime = new();
+            sequenceRuntime.Configure_RejectsDuplicateUnknownAndDisconnectedStates();
+            sequenceRuntime.Timeline_EmitsAuthoredLinesAndTransitionsDeterministically();
+            sequenceRuntime.ActionValidation_RejectsStaleTokensAndEmitsCurrentSkipOnce();
+            sequenceRuntime.NavigationPauseAndSeekRemainDeterministic();
+
             FirstLaunchNarrativeConfigTests config = new();
             config.SequenceConfig_HasUniqueConnectedStatesAndAllApprovedPanels();
+            config.SequenceConfig_AuthorsAudioRouteAndCompletionPolicy();
             config.SequenceConfig_DoesNotDirectlyRetainPanelTextures();
-            new NarrativePanelAssetResidencyTests().Residency_KeepsOnlyCurrentAndNextHandles();
+            NarrativePanelAssetResidencyPresentationSystemHelperTests residency = new();
+            residency.Residency_KeepsOnlyCurrentAndNextHandles();
+            residency.Residency_InvalidReferencesReturnDirectFallbackWithoutHandles();
+            residency.Residency_RapidSeekReleasesSupersededRequests();
+            residency.Residency_ReleaseAllClearsPendingRequests();
 
-            NarrativePanelMotionTests motion = new();
+            NarrativePanelMotionPresentationSystemHelperTests motion = new();
             foreach (NarrativeMotionPreset preset in new[]
                      {
                          NarrativeMotionPreset.PushIn,
@@ -45,7 +81,7 @@ public static class FirstLaunchGate89Validation
             presentation.Dialogue_LongTextExpandsFrameWithoutEllipsis();
             presentation.Phase10RAudio_UsesIndependentSettingsAwareLayersAndCancelsCleanly();
 
-            FirstLaunchNarrativePlayerTests player = new();
+            FirstLaunchNarrativeSequencePresentationSystemHelperTests player = new();
             player.Player_AdvancesStaticAndDialogueStatesWithoutHierarchyLookup();
             player.Player_EmitsInteractiveSkipAndTypedHandoffOnce();
             player.Player_PauseStepRestartAndCancelAreDeterministic();
@@ -60,7 +96,7 @@ public static class FirstLaunchGate89Validation
             integration.ReviewerMode_ProvidesNavigationWithoutMutatingCompletedProfile();
             integration.CommittedIdentity_SkipRoutesDirectlyAndPreservesSelection();
 
-            Debug.Log("[FirstLaunchGate89Validation] result=Passed tests=29");
+            Debug.Log("[FirstLaunchGate89Validation] result=Passed tests=56");
             ValidationExit.Passed();
         }
         catch (Exception exception)

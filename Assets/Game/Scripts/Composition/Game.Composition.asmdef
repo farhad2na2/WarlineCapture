@@ -6,6 +6,8 @@
         "Game.Catalog.Contracts",
         "Game.Components",
         "Game.Configs",
+        "Game.Narrative.Contracts",
+        "Game.Narrative.Runtime",
         "Game.Rendering",
         "Game.Rendering.Contracts",
         "Game.Tactical.Contracts",

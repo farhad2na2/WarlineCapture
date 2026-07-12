@@ -24,7 +24,7 @@ namespace Game.Composition
         [SerializeField] private NarrativeSequenceView firstLaunchNarrativeView;
         [SerializeField] private NarrativeSequenceConfig firstLaunchNarrativeConfig;
         [SerializeField] private NarrativeSpeakerCatalog firstLaunchSpeakerCatalog;
-        [SerializeField] private NarrativePunctuationProfile firstLaunchPunctuationProfile;
+        [SerializeField] private NarrativePunctuationConfig firstLaunchPunctuationProfile;
 
         public RuntimeUiConfig RuntimeUiConfig => runtimeUiConfig;
         public RuntimeUiMode UiMode => runtimeUiConfig != null ? runtimeUiConfig.Mode : RuntimeUiMode.Canvas;
@@ -37,7 +37,7 @@ namespace Game.Composition
         public NarrativeSequenceView FirstLaunchNarrativeView => firstLaunchNarrativeView;
         public NarrativeSequenceConfig FirstLaunchNarrativeConfig => firstLaunchNarrativeConfig;
         public NarrativeSpeakerCatalog FirstLaunchSpeakerCatalog => firstLaunchSpeakerCatalog;
-        public NarrativePunctuationProfile FirstLaunchPunctuationProfile => firstLaunchPunctuationProfile;
+        public NarrativePunctuationConfig FirstLaunchPunctuationProfile => firstLaunchPunctuationProfile;
         public PerformanceDiagnosticsSystemHelper PerformanceDiagnostics => menuBootstrapSystem.PerformanceDiagnostics;
         public bool IsPerformanceDiagnosticsInitialized => menuBootstrapSystem.IsPerformanceDiagnosticsInitialized;
 
@@ -72,7 +72,7 @@ namespace Game.Composition
             NarrativeSequenceView configuredFirstLaunchNarrativeView = null,
             NarrativeSequenceConfig configuredFirstLaunchNarrativeConfig = null,
             NarrativeSpeakerCatalog configuredFirstLaunchSpeakerCatalog = null,
-            NarrativePunctuationProfile configuredFirstLaunchPunctuationProfile = null)
+            NarrativePunctuationConfig configuredFirstLaunchPunctuationProfile = null)
         {
             if (configuredRuntimeUiConfig != null)
                 runtimeUiConfig = configuredRuntimeUiConfig;

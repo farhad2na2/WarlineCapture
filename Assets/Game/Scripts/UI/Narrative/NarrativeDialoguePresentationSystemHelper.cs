@@ -2,11 +2,11 @@ using UnityEngine;
 
 namespace Game.UI.Runtime
 {
-    public sealed class NarrativeSequencePresentation
+    public sealed class NarrativeDialoguePresentationSystemHelper
     {
         private readonly NarrativeSequenceView view;
-        private readonly NarrativeDialogueReveal reveal = new();
-        private readonly NarrativeVoicePlayback voice;
+        private readonly NarrativeDialogueRevealPresentationSystemHelper reveal = new();
+        private readonly NarrativeVoicePlaybackPresentationSystemHelper voice;
         private float elapsed;
         private float readyElapsed;
         private float tailHold;
@@ -15,10 +15,10 @@ namespace Game.UI.Runtime
         private bool autoAdvanceRequested;
         private int appliedVisibleCharacters = -1;
 
-        public NarrativeSequencePresentation(NarrativeSequenceView view)
+        public NarrativeDialoguePresentationSystemHelper(NarrativeSequenceView view)
         {
             this.view = view;
-            voice = new NarrativeVoicePlayback(view != null ? view.VoiceSource : null);
+            voice = new NarrativeVoicePlaybackPresentationSystemHelper(view != null ? view.VoiceSource : null);
         }
 
         public bool IsPaused => paused;
@@ -36,7 +36,7 @@ namespace Game.UI.Runtime
                 return;
 
             Cancel();
-            NarrativeSubtitleStyle style = NarrativeSubtitleStyleResolver.Resolve(settings);
+            NarrativeSubtitleStyle style = NarrativeSubtitleStyleUtilitySystemHelper.Resolve(settings);
             view.DialogueView.ApplySpeaker(speaker);
             view.DialogueView.SetAccessibilityText(resolvedText);
             view.DialogueView.PrepareLine(resolvedText, style);

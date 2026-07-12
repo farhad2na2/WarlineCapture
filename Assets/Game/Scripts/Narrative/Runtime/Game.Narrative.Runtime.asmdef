@@ -1,0 +1,17 @@
+{
+    "name": "Game.Narrative.Runtime",
+    "rootNamespace": "Game.Narrative.Runtime",
+    "references": [
+        "Game.Catalog.Contracts",
+        "Game.Narrative.Contracts"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

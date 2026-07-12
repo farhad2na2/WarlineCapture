@@ -42,6 +42,14 @@ MonoBehaviour:
     locationTitleFallback: SAHRIN
     locationSubtitleKey: narrative.first_launch.location.old_market.context
     locationSubtitleFallback: OLD MARKET / 06:42 LOCAL
+    musicCue: 0
+    ambienceCue: 1
+    vehicleCue: 0
+    eventCue: 0
+    routeRole: 0
+    completionPayloadId:
+    evidenceIds: []
+    missionContextFlags: []
   - stateId: FL-P02
     kind: 0
     panel16x9: {fileID: 0}
@@ -77,6 +85,14 @@ MonoBehaviour:
     locationTitleFallback:
     locationSubtitleKey:
     locationSubtitleFallback:
+    musicCue: 1
+    ambienceCue: 2
+    vehicleCue: 0
+    eventCue: 1
+    routeRole: 0
+    completionPayloadId:
+    evidenceIds: []
+    missionContextFlags: []
   - stateId: FL-P03
     kind: 0
     panel16x9: {fileID: 0}
@@ -112,6 +128,14 @@ MonoBehaviour:
     locationTitleFallback:
     locationSubtitleKey:
     locationSubtitleFallback:
+    musicCue: 1
+    ambienceCue: 2
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId:
+    evidenceIds: []
+    missionContextFlags: []
   - stateId: FL-P04
     kind: 0
     panel16x9: {fileID: 0}
@@ -156,6 +180,14 @@ MonoBehaviour:
     locationTitleFallback:
     locationSubtitleKey:
     locationSubtitleFallback:
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 1
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId:
+    evidenceIds: []
+    missionContextFlags: []
   - stateId: FL-P05
     kind: 0
     panel16x9: {fileID: 0}
@@ -191,6 +223,14 @@ MonoBehaviour:
     locationTitleFallback:
     locationSubtitleKey:
     locationSubtitleFallback:
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 5
+    routeRole: 0
+    completionPayloadId:
+    evidenceIds: []
+    missionContextFlags: []
   - stateId: FL-P06
     kind: 0
     panel16x9: {fileID: 0}
@@ -226,6 +266,14 @@ MonoBehaviour:
     locationTitleFallback:
     locationSubtitleKey:
     locationSubtitleFallback:
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 4
+    routeRole: 0
+    completionPayloadId:
+    evidenceIds: []
+    missionContextFlags: []
   - stateId: FL-P07
     kind: 0
     panel16x9: {fileID: 0}
@@ -261,6 +309,14 @@ MonoBehaviour:
     locationTitleFallback:
     locationSubtitleKey:
     locationSubtitleFallback:
+    musicCue: 1
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 2
+    routeRole: 0
+    completionPayloadId:
+    evidenceIds: []
+    missionContextFlags: []
   - stateId: first_launch.commander_identity
     kind: 1
     panel16x9: {fileID: 0}
@@ -287,6 +343,14 @@ MonoBehaviour:
     locationTitleFallback:
     locationSubtitleKey:
     locationSubtitleFallback:
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 0
+    routeRole: 5
+    completionPayloadId:
+    evidenceIds: []
+    missionContextFlags: []
   - stateId: first_launch.guidance_choice
     kind: 2
     panel16x9: {fileID: 0}
@@ -313,6 +377,14 @@ MonoBehaviour:
     locationTitleFallback:
     locationSubtitleKey:
     locationSubtitleFallback:
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 0
+    routeRole: 6
+    completionPayloadId:
+    evidenceIds: []
+    missionContextFlags: []
   - stateId: FL-P09
     kind: 0
     panel16x9: {fileID: 0}
@@ -348,6 +420,14 @@ MonoBehaviour:
     locationTitleFallback:
     locationSubtitleKey:
     locationSubtitleFallback:
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 6
+    routeRole: 0
+    completionPayloadId:
+    evidenceIds: []
+    missionContextFlags: []
   - stateId: FL-P10
     kind: 0
     panel16x9: {fileID: 0}
@@ -383,6 +463,14 @@ MonoBehaviour:
     locationTitleFallback:
     locationSubtitleKey:
     locationSubtitleFallback:
+    musicCue: 1
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 1
+    routeRole: 0
+    completionPayloadId:
+    evidenceIds: []
+    missionContextFlags: []
   - stateId: FL-P11
     kind: 0
     panel16x9: {fileID: 0}
@@ -418,6 +506,14 @@ MonoBehaviour:
     locationTitleFallback:
     locationSubtitleKey:
     locationSubtitleFallback:
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 1
+    eventCue: 0
+    routeRole: 0
+    completionPayloadId:
+    evidenceIds: []
+    missionContextFlags: []
   - stateId: FL-P12
     kind: 0
     panel16x9: {fileID: 0}
@@ -453,6 +549,14 @@ MonoBehaviour:
     locationTitleFallback:
     locationSubtitleKey:
     locationSubtitleFallback:
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 0
+    routeRole: 0
+    completionPayloadId:
+    evidenceIds: []
+    missionContextFlags: []
   - stateId: FL-P13
     kind: 0
     panel16x9: {fileID: 0}
@@ -488,6 +592,14 @@ MonoBehaviour:
     locationTitleFallback:
     locationSubtitleKey:
     locationSubtitleFallback:
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 0
+    routeRole: 0
+    completionPayloadId:
+    evidenceIds: []
+    missionContextFlags: []
   - stateId: FL-P14
     kind: 0
     panel16x9: {fileID: 0}
@@ -523,6 +635,14 @@ MonoBehaviour:
     locationTitleFallback:
     locationSubtitleKey:
     locationSubtitleFallback:
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 0
+    routeRole: 0
+    completionPayloadId:
+    evidenceIds: []
+    missionContextFlags: []
   - stateId: FL-P15
     kind: 0
     panel16x9: {fileID: 0}
@@ -558,6 +678,14 @@ MonoBehaviour:
     locationTitleFallback:
     locationSubtitleKey:
     locationSubtitleFallback:
+    musicCue: 1
+    ambienceCue: 2
+    vehicleCue: 1
+    eventCue: 1
+    routeRole: 0
+    completionPayloadId:
+    evidenceIds: []
+    missionContextFlags: []
   - stateId: FL-P16
     kind: 0
     panel16x9: {fileID: 0}
@@ -593,6 +721,14 @@ MonoBehaviour:
     locationTitleFallback:
     locationSubtitleKey:
     locationSubtitleFallback:
+    musicCue: 1
+    ambienceCue: 2
+    vehicleCue: 0
+    eventCue: 2
+    routeRole: 0
+    completionPayloadId:
+    evidenceIds: []
+    missionContextFlags: []
   - stateId: FL-P17
     kind: 0
     panel16x9: {fileID: 0}
@@ -627,6 +763,14 @@ MonoBehaviour:
     locationTitleFallback:
     locationSubtitleKey:
     locationSubtitleFallback:
+    musicCue: 1
+    ambienceCue: 2
+    vehicleCue: 1
+    eventCue: 0
+    routeRole: 0
+    completionPayloadId:
+    evidenceIds: []
+    missionContextFlags: []
   - stateId: FL-P18
     kind: 0
     panel16x9: {fileID: 0}
@@ -661,6 +805,14 @@ MonoBehaviour:
     locationTitleFallback:
     locationSubtitleKey:
     locationSubtitleFallback:
+    musicCue: 1
+    ambienceCue: 2
+    vehicleCue: 0
+    eventCue: 6
+    routeRole: 0
+    completionPayloadId:
+    evidenceIds: []
+    missionContextFlags: []
   - stateId: first_launch.m01_handoff
     kind: 3
     panel16x9: {fileID: 0}
@@ -687,6 +839,14 @@ MonoBehaviour:
     locationTitleFallback:
     locationSubtitleKey:
     locationSubtitleFallback:
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 0
+    routeRole: 1
+    completionPayloadId: first_launch.m01_handoff_completion
+    evidenceIds: []
+    missionContextFlags: []
   - stateId: first_launch.gameplay_placeholder
     kind: 4
     panel16x9: {fileID: 0}
@@ -713,6 +873,14 @@ MonoBehaviour:
     locationTitleFallback:
     locationSubtitleKey:
     locationSubtitleFallback:
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 0
+    routeRole: 2
+    completionPayloadId:
+    evidenceIds: []
+    missionContextFlags: []
   - stateId: FL-P19
     kind: 0
     panel16x9: {fileID: 0}
@@ -739,6 +907,14 @@ MonoBehaviour:
     locationTitleFallback:
     locationSubtitleKey:
     locationSubtitleFallback:
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 0
+    routeRole: 3
+    completionPayloadId:
+    evidenceIds: []
+    missionContextFlags: []
   - stateId: FL-P20
     kind: 0
     panel16x9: {fileID: 0}
@@ -765,6 +941,14 @@ MonoBehaviour:
     locationTitleFallback:
     locationSubtitleKey:
     locationSubtitleFallback:
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 0
+    routeRole: 0
+    completionPayloadId:
+    evidenceIds: []
+    missionContextFlags: []
   - stateId: FL-P21
     kind: 0
     panel16x9: {fileID: 0}
@@ -791,6 +975,14 @@ MonoBehaviour:
     locationTitleFallback:
     locationSubtitleKey:
     locationSubtitleFallback:
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 0
+    routeRole: 0
+    completionPayloadId:
+    evidenceIds: []
+    missionContextFlags: []
   - stateId: FL-P22
     kind: 0
     panel16x9: {fileID: 0}
@@ -817,6 +1009,14 @@ MonoBehaviour:
     locationTitleFallback:
     locationSubtitleKey:
     locationSubtitleFallback:
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 0
+    routeRole: 0
+    completionPayloadId:
+    evidenceIds: []
+    missionContextFlags: []
   - stateId: first_launch.command_base_reveal
     kind: 5
     panel16x9: {fileID: 0}
@@ -843,3 +1043,14 @@ MonoBehaviour:
     locationTitleFallback:
     locationSubtitleKey:
     locationSubtitleFallback:
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 0
+    routeRole: 4
+    completionPayloadId: first_launch.m01_debrief_completion
+    evidenceIds:
+    - evidence.aria.revoked_credential_fragment
+    missionContextFlags:
+    - story.m01.corridor_secured
+    - story.aria.revoked_credential_clue_found

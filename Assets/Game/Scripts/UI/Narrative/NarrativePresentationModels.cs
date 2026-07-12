@@ -21,7 +21,7 @@ namespace Game.UI.Runtime
         public bool ReducedMotion;
     }
 
-    public static class NarrativeSubtitleStyleResolver
+    public static class NarrativeSubtitleStyleUtilitySystemHelper
     {
         public static NarrativeSubtitleStyle Resolve(in UISettingsModel settings)
         {

@@ -2,11 +2,11 @@ using UnityEngine;
 
 namespace Game.UI.Runtime
 {
-    public sealed class NarrativeVoicePlayback
+    public sealed class NarrativeVoicePlaybackPresentationSystemHelper
     {
         private readonly AudioSource source;
 
-        public NarrativeVoicePlayback(AudioSource source)
+        public NarrativeVoicePlaybackPresentationSystemHelper(AudioSource source)
         {
             this.source = source;
         }

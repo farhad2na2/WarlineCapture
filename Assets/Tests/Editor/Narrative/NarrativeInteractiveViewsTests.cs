@@ -1,5 +1,7 @@
 using System;
 using System.Reflection;
+using Game.Composition;
+using Game.Narrative.Contracts;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
 using NUnit.Framework;
@@ -63,15 +65,21 @@ public sealed class NarrativeInteractiveViewsTests
 
             NarrativeUiAction emitted = default;
             int emissionCount = 0;
-            view.SetActionContext("first_launch", "first_launch.commander_identity", "", 41UL);
-            view.BindActions(action =>
+            FirstLaunchNarrativeInteractivePresentationSystemHelper interaction = new(view, null);
+            interaction.Bind(action =>
             {
                 emitted = action;
                 emissionCount++;
             });
+            interaction.Enter("first_launch", "first_launch.commander_identity", 41UL);
+            interaction.ApplyCommanderIdentity(new NarrativeCommanderIdentityData
+            {
+                Callsign = "COMMANDER",
+                DisplayName = "Commander"
+            }, 0);
 
-            Assert.IsNotEmpty(view.SelectedIdentity.Callsign);
-            Assert.IsNotEmpty(view.SelectedIdentity.DisplayName);
+            Assert.IsNotEmpty(interaction.SelectedIdentity.Callsign);
+            Assert.IsNotEmpty(interaction.SelectedIdentity.DisplayName);
             Assert.AreEqual(0, view.SelectedPortraitIndex);
             Assert.AreEqual("Commander callsign", callsignLabel.text);
 
@@ -87,10 +95,10 @@ public sealed class NarrativeInteractiveViewsTests
             Assert.AreEqual("first_launch", emitted.SequenceId);
             Assert.AreEqual("first_launch.commander_identity", emitted.StateId);
             Assert.AreEqual(41UL, emitted.TransitionToken);
-            Assert.AreEqual("RAVEN", view.SelectedIdentity.Callsign);
-            Assert.AreEqual("Alex Morgan", view.SelectedIdentity.DisplayName);
+            Assert.AreEqual("RAVEN", interaction.SelectedIdentity.Callsign);
+            Assert.AreEqual("Alex Morgan", interaction.SelectedIdentity.DisplayName);
             Assert.AreEqual(1, view.SelectedPortraitIndex);
-            Assert.IsTrue(view.CommitRequested);
+            Assert.IsTrue(interaction.CommitRequested);
             Assert.IsFalse(continueButton.interactable);
         }
         finally
@@ -118,12 +126,15 @@ public sealed class NarrativeInteractiveViewsTests
             root.SetActive(true);
 
             int emissionCount = 0;
-            view.BindActions(_ => emissionCount++);
-            view.UnbindActions();
+            FirstLaunchNarrativeInteractivePresentationSystemHelper interaction = new(view, null);
+            interaction.Bind(_ => emissionCount++);
+            interaction.Enter("first_launch", "identity", 1UL);
+            interaction.Unbind();
             continueButton.onClick.Invoke();
             Assert.AreEqual(0, emissionCount);
 
-            view.BindActions(_ => emissionCount++);
+            interaction.Bind(_ => emissionCount++);
+            interaction.Enter("first_launch", "identity", 2UL);
             continueButton.onClick.Invoke();
             continueButton.onClick.Invoke();
             Assert.AreEqual(1, emissionCount);
@@ -161,12 +172,14 @@ public sealed class NarrativeInteractiveViewsTests
 
             NarrativeUiAction emitted = default;
             int emissionCount = 0;
-            view.SetActionContext("first_launch", "first_launch.guidance_choice", null, 42UL);
-            view.BindActions(action =>
+            FirstLaunchNarrativeInteractivePresentationSystemHelper interaction = new(null, view);
+            interaction.Bind(action =>
             {
                 emitted = action;
                 emissionCount++;
             });
+            interaction.Enter("first_launch", "first_launch.guidance_choice", 42UL);
+            interaction.ApplyGuidance(NarrativeGuidanceMode.Full);
 
             Assert.AreEqual(NarrativeGuidanceMode.Full, view.SelectedGuidance);
             Assert.IsTrue(fullButton.interactable);
@@ -182,7 +195,7 @@ public sealed class NarrativeInteractiveViewsTests
             Assert.AreEqual("first_launch.guidance_choice", emitted.StateId);
             Assert.AreEqual(42UL, emitted.TransitionToken);
             Assert.AreEqual(NarrativeGuidanceMode.Contextual, view.SelectedGuidance);
-            Assert.IsTrue(view.CommitRequested);
+            Assert.IsTrue(interaction.CommitRequested);
         }
         finally
         {
@@ -226,13 +239,15 @@ public sealed class NarrativeInteractiveViewsTests
             Assert.AreEqual("Confirm guidance", continueLabel.text);
 
             int emissionCount = 0;
-            view.BindActions(_ => emissionCount++);
-            view.UnbindActions();
+            FirstLaunchNarrativeInteractivePresentationSystemHelper interaction = new(null, view);
+            interaction.Bind(_ => emissionCount++);
+            interaction.Enter("first_launch", "guidance", 1UL);
+            interaction.Unbind();
             continueButton.onClick.Invoke();
             Assert.AreEqual(0, emissionCount);
 
-            view.SetSelectedGuidance((NarrativeGuidanceMode)99);
-            Assert.AreEqual(NarrativeGuidanceMode.Full, view.SelectedGuidance);
+            interaction.ApplyGuidance((NarrativeGuidanceMode)99);
+            Assert.AreEqual(NarrativeGuidanceMode.Full, interaction.SelectedGuidance);
         }
         finally
         {

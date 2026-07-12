@@ -39,16 +39,16 @@ public sealed class FirstLaunchNarrativePresentationTests
     public void SubtitleStyleResolver_MapsAllAccessibilityPresets()
     {
         UISettingsModel model = Game.UI.Runtime.SettingsService.Defaults;
-        Assert.IsTrue(NarrativeSubtitleStyleResolver.Resolve(model).Visible);
-        Assert.AreEqual(50f, NarrativeSubtitleStyleResolver.Resolve(model).FontSize);
-        Assert.AreEqual(0.75f, NarrativeSubtitleStyleResolver.Resolve(model).BackgroundOpacity);
+        Assert.IsTrue(NarrativeSubtitleStyleUtilitySystemHelper.Resolve(model).Visible);
+        Assert.AreEqual(50f, NarrativeSubtitleStyleUtilitySystemHelper.Resolve(model).FontSize);
+        Assert.AreEqual(0.75f, NarrativeSubtitleStyleUtilitySystemHelper.Resolve(model).BackgroundOpacity);
 
         model.Narrative.SubtitleSize = UISubtitleSize.ExtraLarge;
         model.Narrative.BackgroundOpacity = UISubtitleBackgroundOpacity.ZeroPercent;
         model.Narrative.InstantText = true;
         model.Narrative.SubtitlesEnabled = false;
         model.Accessibility.ReducedMotion = true;
-        NarrativeSubtitleStyle style = NarrativeSubtitleStyleResolver.Resolve(model);
+        NarrativeSubtitleStyle style = NarrativeSubtitleStyleUtilitySystemHelper.Resolve(model);
         Assert.IsFalse(style.Visible);
         Assert.AreEqual(72f, style.FontSize);
         Assert.AreEqual(0f, style.BackgroundOpacity);
@@ -59,8 +59,8 @@ public sealed class FirstLaunchNarrativePresentationTests
     [Test]
     public void RevealSchedule_IsMonotonicPunctuationAwareAndDeadlineBound()
     {
-        NarrativeDialogueReveal plain = Build("Alpha beta gamma", 10f);
-        NarrativeDialogueReveal punctuated = Build("Alpha, beta... gamma!", 10f);
+        NarrativeDialogueRevealPresentationSystemHelper plain = Build("Alpha beta gamma", 10f);
+        NarrativeDialogueRevealPresentationSystemHelper punctuated = Build("Alpha, beta... gamma!", 10f);
 
         Assert.Greater(punctuated.Duration, plain.Duration);
         Assert.LessOrEqual(punctuated.Duration, 10f);
@@ -73,7 +73,7 @@ public sealed class FirstLaunchNarrativePresentationTests
             previous = visible;
         }
 
-        NarrativeDialogueReveal compressed = Build("One, two; three: four. Five? Six!", 0.25f);
+        NarrativeDialogueRevealPresentationSystemHelper compressed = Build("One, two; three: four. Five? Six!", 0.25f);
         Assert.AreEqual(0.25f, compressed.Duration, 0.0001f);
         Assert.AreEqual(compressed.VisibleCharacterCount, compressed.GetVisibleCharacterCount(0.25f));
     }
@@ -87,7 +87,7 @@ public sealed class FirstLaunchNarrativePresentationTests
         Assert.DoesNotThrow(() => Build(string.Empty, 1f));
         Assert.DoesNotThrow(() => Build("   ", 1f));
 
-        NarrativeDialogueReveal instant = Build("Immediate", 3f, true);
+        NarrativeDialogueRevealPresentationSystemHelper instant = Build("Immediate", 3f, true);
         Assert.AreEqual(0f, instant.Duration);
         Assert.AreEqual(instant.VisibleCharacterCount, instant.GetVisibleCharacterCount(0f));
     }
@@ -153,7 +153,7 @@ public sealed class FirstLaunchNarrativePresentationTests
             EllipsisPauseSeconds = 0.32f,
             TailHoldSeconds = 0.25f
         };
-        NarrativeSequencePresentation helper = new(view);
+        NarrativeDialoguePresentationSystemHelper helper = new(view);
         UISettingsModel settings = Game.UI.Runtime.SettingsService.Defaults;
         NarrativeSpeakerPresentationModel speaker = new()
         {
@@ -291,7 +291,7 @@ public sealed class FirstLaunchNarrativePresentationTests
         TMP_Text body = Array.Find(view.GetComponentsInChildren<TMP_Text>(true), text => text.name == "DialogueText");
         RectTransform frame = view.GetComponent<RectTransform>();
         const string longLine = "Commander, the eastern clinic corridor remains blocked while civil crews, families, and the surviving response convoy wait beyond the damaged relay junction.";
-        NarrativeSubtitleStyle style = NarrativeSubtitleStyleResolver.Resolve(Game.UI.Runtime.SettingsService.Defaults);
+        NarrativeSubtitleStyle style = NarrativeSubtitleStyleUtilitySystemHelper.Resolve(Game.UI.Runtime.SettingsService.Defaults);
 
         view.PrepareLine(longLine, style);
         Canvas.ForceUpdateCanvases();
@@ -308,9 +308,9 @@ public sealed class FirstLaunchNarrativePresentationTests
         UnityEngine.Object.DestroyImmediate(canvasObject);
     }
 
-    private static NarrativeDialogueReveal Build(string text, float deadline, bool instant = false)
+    private static NarrativeDialogueRevealPresentationSystemHelper Build(string text, float deadline, bool instant = false)
     {
-        NarrativeDialogueReveal helper = new();
+        NarrativeDialogueRevealPresentationSystemHelper helper = new();
         helper.Prepare(text, deadline, 28f, 0.11f, 0.16f, 0.24f, 0.32f, instant);
         return helper;
     }

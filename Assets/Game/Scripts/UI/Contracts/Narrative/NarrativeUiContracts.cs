@@ -24,13 +24,6 @@ namespace Game.UI.Contracts
         ReviewGameplayPlaceholder = 4
     }
 
-    public enum NarrativeGuidanceMode
-    {
-        Full = 0,
-        Contextual = 1,
-        Minimal = 2
-    }
-
     [Serializable]
     public struct NarrativeUiAction
     {
@@ -41,31 +34,4 @@ namespace Game.UI.Contracts
         public ulong TransitionToken;
     }
 
-    [Serializable]
-    public struct NarrativeCommanderIdentityData
-    {
-        public string Callsign;
-        public string DisplayName;
-    }
-
-    [Serializable]
-    public struct NarrativeCompletionPayload
-    {
-        public string PayloadId;
-        public bool Watched;
-        public bool Skipped;
-        public string LastCompletedStateId;
-        public string[] EvidenceIds;
-        public string[] MissionContextFlags;
-    }
-
-    [Serializable]
-    public struct NarrativeHandoffResult
-    {
-        public string DestinationId;
-        public NarrativeCommanderIdentityData Commander;
-        public NarrativeGuidanceMode Guidance;
-        public NarrativeCompletionPayload Completion;
-        public ulong TransitionToken;
-    }
 }

@@ -3,9 +3,9 @@ using Game.UI.Runtime;
 
 namespace Game.Composition
 {
-    internal static class NarrativePunctuationAdapter
+    internal static class NarrativePunctuationUtilitySystemHelper
     {
-        public static NarrativePunctuationPresentationModel From(NarrativePunctuationProfile profile)
+        public static NarrativePunctuationPresentationModel From(NarrativePunctuationConfig profile)
         {
             return profile == null
                 ? default

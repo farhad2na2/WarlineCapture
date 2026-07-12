@@ -1,5 +1,5 @@
 using System;
-using Game.UI.Contracts;
+using Game.Narrative.Contracts;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -26,29 +26,20 @@ namespace Game.UI.Runtime
         [SerializeField] private TMP_Text minimalAccessibilityLabel;
         [SerializeField] private TMP_Text continueAccessibilityLabel;
 
-        private Action<NarrativeUiAction> actionHandler;
-        private string sequenceId;
-        private string stateId;
-        private string lineId;
-        private ulong transitionToken;
-        private NarrativeGuidanceMode selectedGuidance = NarrativeGuidanceMode.Full;
-        private bool commitRequested;
+        private Action<NarrativeGuidanceMode> selectionHandler;
+        private Action continueHandler;
+        private NarrativeGuidanceMode selectedGuidance;
         private bool eventsWired;
 
         public NarrativeGuidanceMode SelectedGuidance => selectedGuidance;
-        public bool CommitRequested => commitRequested;
 
         private void Awake()
         {
-            ApplySelectionVisuals();
-            ApplyDefaultAccessibilityLabels();
             WireEvents();
         }
 
         private void OnEnable()
         {
-            ApplySelectionVisuals();
-            ApplyDefaultAccessibilityLabels();
             WireEvents();
         }
 
@@ -60,55 +51,33 @@ namespace Game.UI.Runtime
         private void OnDestroy()
         {
             UnwireEvents();
-            actionHandler = null;
+            UnbindIntents();
         }
 
-        public void BindActions(Action<NarrativeUiAction> handler)
+        public void BindIntents(Action<NarrativeGuidanceMode> selected, Action continueRequested)
         {
-            actionHandler = handler;
-            commitRequested = false;
-            SetControlsInteractable(true);
+            selectionHandler = selected;
+            continueHandler = continueRequested;
             WireEvents();
         }
 
-        public void UnbindActions()
+        public void UnbindIntents()
         {
-            actionHandler = null;
-        }
-
-        public void Bind(Action<NarrativeUiAction> handler)
-        {
-            BindActions(handler);
-        }
-
-        public void Unbind()
-        {
-            UnbindActions();
-        }
-
-        public void SetActionContext(
-            string nextSequenceId,
-            string nextStateId,
-            string nextLineId,
-            ulong nextTransitionToken)
-        {
-            sequenceId = nextSequenceId;
-            stateId = nextStateId;
-            lineId = nextLineId;
-            transitionToken = nextTransitionToken;
+            selectionHandler = null;
+            continueHandler = null;
         }
 
         public void SetSelectedGuidance(NarrativeGuidanceMode guidance)
         {
-            selectedGuidance = IsSupported(guidance) ? guidance : NarrativeGuidanceMode.Full;
-            ApplySelectionVisuals(!commitRequested);
+            selectedGuidance = guidance;
+            ApplySelectionVisuals();
         }
 
-        public void ResetToDefault()
+        public void SetControlsInteractable(bool interactable)
         {
-            selectedGuidance = NarrativeGuidanceMode.Full;
-            commitRequested = false;
-            SetControlsInteractable(true);
+            if (continueButton != null)
+                continueButton.interactable = interactable;
+            ApplySelectionVisuals(interactable);
         }
 
         public void SetAccessibilityLabels(
@@ -117,10 +86,10 @@ namespace Game.UI.Runtime
             string minimalLabel,
             string continueLabel)
         {
-            SetText(fullAccessibilityLabel, fullLabel, "Full guidance");
-            SetText(contextualAccessibilityLabel, contextualLabel, "Contextual guidance");
-            SetText(minimalAccessibilityLabel, minimalLabel, "Minimal guidance");
-            SetText(continueAccessibilityLabel, continueLabel, "Continue with selected guidance");
+            SetText(fullAccessibilityLabel, fullLabel);
+            SetText(contextualAccessibilityLabel, contextualLabel);
+            SetText(minimalAccessibilityLabel, minimalLabel);
+            SetText(continueAccessibilityLabel, continueLabel);
         }
 
         private void WireEvents()
@@ -149,41 +118,22 @@ namespace Game.UI.Runtime
 
         private void HandleFullSelected()
         {
-            SetSelectedGuidance(NarrativeGuidanceMode.Full);
+            selectionHandler?.Invoke(NarrativeGuidanceMode.Full);
         }
 
         private void HandleContextualSelected()
         {
-            SetSelectedGuidance(NarrativeGuidanceMode.Contextual);
+            selectionHandler?.Invoke(NarrativeGuidanceMode.Contextual);
         }
 
         private void HandleMinimalSelected()
         {
-            SetSelectedGuidance(NarrativeGuidanceMode.Minimal);
+            selectionHandler?.Invoke(NarrativeGuidanceMode.Minimal);
         }
 
         private void HandleContinue()
         {
-            if (commitRequested || actionHandler == null)
-                return;
-
-            commitRequested = true;
-            SetControlsInteractable(false);
-            actionHandler.Invoke(new NarrativeUiAction
-            {
-                SequenceId = sequenceId,
-                StateId = stateId,
-                LineId = lineId,
-                Kind = NarrativeUiActionKind.CommitGuidance,
-                TransitionToken = transitionToken
-            });
-        }
-
-        private void SetControlsInteractable(bool interactable)
-        {
-            if (continueButton != null)
-                continueButton.interactable = interactable;
-            ApplySelectionVisuals(interactable);
+            continueHandler?.Invoke();
         }
 
         private void ApplySelectionVisuals(bool controlsInteractable = true)
@@ -206,44 +156,10 @@ namespace Game.UI.Runtime
                 selectionImage.enabled = selected;
         }
 
-        private void ApplyDefaultAccessibilityLabels()
-        {
-            SetTextIfBlank(fullAccessibilityLabel, "Full guidance");
-            SetTextIfBlank(contextualAccessibilityLabel, "Contextual guidance");
-            SetTextIfBlank(minimalAccessibilityLabel, "Minimal guidance");
-            SetTextIfBlank(continueAccessibilityLabel, "Continue with selected guidance");
-        }
-
-        private static bool IsSupported(NarrativeGuidanceMode guidance)
-        {
-            return guidance == NarrativeGuidanceMode.Full ||
-                   guidance == NarrativeGuidanceMode.Contextual ||
-                   guidance == NarrativeGuidanceMode.Minimal;
-        }
-
-        private static void SetText(TMP_Text text, string value, string fallback)
+        private static void SetText(TMP_Text text, string value)
         {
             if (text != null)
-                text.text = string.IsNullOrWhiteSpace(value) ? fallback : value;
+                text.text = value ?? string.Empty;
         }
-
-        private static void SetTextIfBlank(TMP_Text text, string fallback)
-        {
-            if (text != null && string.IsNullOrWhiteSpace(text.text))
-                text.text = fallback;
-        }
-
-#if UNITY_EDITOR
-        private void OnValidate()
-        {
-            if (fullButton == null || contextualButton == null || minimalButton == null || continueButton == null ||
-                fullSelectionImage == null || contextualSelectionImage == null || minimalSelectionImage == null ||
-                fullAccessibilityLabel == null || contextualAccessibilityLabel == null ||
-                minimalAccessibilityLabel == null || continueAccessibilityLabel == null)
-            {
-                Debug.LogWarning($"[{nameof(NarrativeGuidanceChoiceView)}] Missing required serialized reference on {name}.", this);
-            }
-        }
-#endif
     }
 }

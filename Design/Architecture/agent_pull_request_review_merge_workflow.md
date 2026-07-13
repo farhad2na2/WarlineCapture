@@ -10,10 +10,11 @@ It supplements lane-specific product and validation contracts. When another live
 
 - This workflow activates when the bootstrap commit containing this document reaches `main`.
 - A task already in progress at that moment is grandfathered. It may finish using its existing worktree and direct `main` commit/push procedure.
-- A task starts when an implementation agent begins task-owned edits, not when it was discussed or placed in a backlog. Every task that starts after activation must use the pull request workflow below.
+- An explicitly active long-running tracker or automation program is one grandfathered assignment for its already-assigned program scope. In particular, the running Architecture and Performance Hardening coordinator assignment remains grandfathered through genuine `107 / 107` completion and closeout. Dependency-ready slices inside that scope remain part of the assignment even when their implementation begins after activation; they do not become new PR tasks merely because they start later.
+- Outside that exception, a task starts when an implementation agent begins task-owned edits, not when it was discussed or placed in a backlog. Every task that starts after activation must use the pull request workflow below.
 - The task handoff must say `Workflow path: grandfathered direct-main` or `Workflow path: pull request` so the transition is auditable.
 - A grandfathered task is not converted mid-flight unless the user or review/merge coordinator explicitly chooses to move it to a feature branch.
-- Follow-up work or a new substantive revision dispatched after a grandfathered task closes is a new task and must use a pull request.
+- Work outside a grandfathered program's assigned scope, or substantive follow-up dispatched after that program closes, is a new task and must use a pull request.
 
 Direct pushes to `main` remain technically open for now. GitHub branch protection or ruleset activation is deferred and may occur only after an explicit user instruction. No agent may claim that protection, required reviews, or push restrictions are active until that separate instruction has been implemented and verified.
 
@@ -66,7 +67,7 @@ Every new task uses this naming contract:
 
 ```text
 Branch: codex/<task-id>-<slug>
-Worktree: /private/tmp/warline-<task-id>-<slug>
+Worktree: /Users/farhad/Projects/WarlineCapture-Worktrees/<task-id>-<slug>
 ```
 
 Use a lowercase stable task ID and a short lowercase kebab-case slug. Examples:
@@ -77,13 +78,15 @@ codex/ui-214-command-feedback
 codex/qa-088-device-smoke
 ```
 
+The standard worktree root is the durable sibling directory `/Users/farhad/Projects/WarlineCapture-Worktrees`. `/private/tmp` is acceptable for disposable logs and generated artifacts, but it must not be the default worktree root: operating-system cleanup can remove it during day-long or Unity tasks.
+
 Each checkout is a `git worktree` attached to the canonical repository. Worktrees share the repository object database and refs; they are not independent clones. Consequently:
 
 - One branch may be checked out in only one worktree at a time.
 - A fetch, branch creation, commit, rebase, or branch deletion is visible to sibling worktrees through shared repository metadata.
 - Never copy a dirty tree over another worktree or use one worktree to clean/revert another agent's files.
 - Never delete, reset, restore, or reformat changes outside the task allowlist.
-- Unity workspaces may still be separate project copies because their `Library` and editor lock state must not be shared. The git worktree and assigned Unity validation workspace serve different purposes.
+- Prefer the task worktree for Unity validation when its `Library`, editor lock, and lease state make that safe. A separate Unity project copy may be used when those states must not be shared, but before validation it must be clean and checked out or detached at the exact PR head or combined integration SHA being tested. Record its path plus the output of `git status --short --branch` and `git rev-parse HEAD`; stale, dirty, or wrong-revision workspaces cannot provide acceptance evidence.
 
 ### Create The Task Worktree
 
@@ -92,8 +95,9 @@ Start from the current remote baseline; the new task worktree itself must be cle
 ```bash
 cd /Users/farhad/Projects/WarlineCapture
 git fetch origin main
-git worktree add -b codex/<task-id>-<slug> /private/tmp/warline-<task-id>-<slug> origin/main
-cd /private/tmp/warline-<task-id>-<slug>
+mkdir -p /Users/farhad/Projects/WarlineCapture-Worktrees
+git worktree add -b codex/<task-id>-<slug> /Users/farhad/Projects/WarlineCapture-Worktrees/<task-id>-<slug> origin/main
+cd /Users/farhad/Projects/WarlineCapture-Worktrees/<task-id>-<slug>
 git status --short --branch
 git rev-parse HEAD
 ```
@@ -195,17 +199,23 @@ The coordinator rereviews the complete final diff, not only the newest commit. R
 
 ### 7. Integration Gate And Administrative Reconciliation
 
-After substantive review passes, the coordinator:
+After substantive review passes, the coordinator must validate the actual combined result with the latest `origin/main`; overlap inspection alone is not acceptance. Use one of these methods:
 
-1. Fetches `origin/main` and confirms whether the PR is current or needs integration.
-2. Inspects overlap with commits merged since the task baseline.
-3. Returns content-changing conflict resolution to the implementation agent; the coordinator resolves only purely administrative tracker/evidence conflicts.
-4. Runs `git diff --check origin/main...HEAD` and the relevant integration gate rows on the final PR head.
-5. Confirms compiler logs contain zero task-attributable errors and test evidence belongs to the final revision.
+1. **Implementation-branch integration:** the implementation agent integrates the fetched latest `origin/main` into the feature branch, resolves every content-changing conflict, and reruns all task-required integration gates plus every gate affected by the integration. The resulting feature head is the combined validation SHA.
+2. **Temporary merge-result validation:** the coordinator creates a clean temporary integration branch/worktree at fetched latest `origin/main`, merges the final PR head without changing the feature branch, then runs the full required integration gates at that exact commit and tree. The temporary merge commit is never pushed as task work.
+
+For either method, the coordinator:
+
+1. Records the latest `origin/main` SHA, final PR-head SHA, integration method, exact combined validation commit SHA, and combined tree SHA.
+2. Inspects the complete combined diff, allowlist, unrelated-work exclusions, and commits merged since the task baseline.
+3. Returns substantive integration or conflict work to the implementation agent; the coordinator resolves only purely administrative tracker/evidence conflicts.
+4. Runs `git diff --check` and every risk-based integration gate required by the task against the exact combined validation tree.
+5. Confirms compiler logs contain zero task-attributable errors and all test, Unity, device, performance, and visual evidence belongs to that revision. Any separate Unity validation workspace must satisfy the clean status and exact-SHA contract above.
 6. Confirms Jenkins-required work still uses the established Jenkins contracts. It may wait for or inspect Jenkins evidence; it does not add a GitHub Actions substitute.
 7. Adds only truthful tracker/evidence administration, if required, as a focused coordinator commit on the feature branch.
-8. Reruns diff checks and any gate affected by that administrative commit.
-9. Updates the PR checklist with final commit-bound evidence and merge disposition.
+8. Repeats combined-result validation when that administrative commit changes the feature head, and reruns every affected gate.
+9. Fetches `origin/main` again immediately before merge. If its SHA or the remote PR-head SHA differs from the recorded inputs, the combined result is stale and this gate must be repeated.
+10. Updates the PR checklist with commit-bound evidence and the recorded input and combined-validation SHAs.
 
 If a required gate fails, the PR does not merge. The coordinator returns substantive fixes to the implementer or records the exact external blocker and owner.
 
@@ -215,6 +225,7 @@ The review/merge coordinator alone merges an accepted PR. Immediately before mer
 
 - the PR targets `main` from the expected `codex/<task-id>-<slug>` branch;
 - the reviewed head SHA matches the current remote head;
+- the current `origin/main`, PR head, and validated combined result match the recorded integration inputs and combined tree;
 - all substantive findings are resolved;
 - required risk gates and final diff checks pass;
 - tracker/evidence administration identifies the actual PR and revision;
@@ -228,7 +239,7 @@ Use a normal merge commit by default so implementation and administrative eviden
 After confirming the PR is merged, the coordinator deletes the remote branch and removes the local worktree/branch:
 
 ```bash
-git worktree remove /private/tmp/warline-<task-id>-<slug>
+git worktree remove /Users/farhad/Projects/WarlineCapture-Worktrees/<task-id>-<slug>
 git branch -d codex/<task-id>-<slug>
 git push origin --delete codex/<task-id>-<slug>
 git worktree prune
@@ -269,6 +280,8 @@ Branch:
 Worktree:
 Baseline commit:
 Head commit tested:
+Latest origin/main SHA used for integration:
+Combined integration commit and tree SHAs tested:
 PR URL:
 File allowlist:
 Files changed:
@@ -280,6 +293,7 @@ Tests run:
 Compiler/build result:
 GC/performance/memory result:
 Unity hierarchy/console/Play Mode evidence:
+Unity validation workspace status and HEAD:
 Device/visual evidence:
 Jenkins/CI evidence:
 Artifacts and logs:
@@ -300,7 +314,7 @@ Implement task <task-id>: <objective>.
 Use the authoritative workflow in Design/Architecture/agent_pull_request_review_merge_workflow.md. This task started after that workflow reached main and is not grandfathered.
 
 Branch: codex/<task-id>-<slug>
-Shared-object git worktree: /private/tmp/warline-<task-id>-<slug>
+Shared-object git worktree: /Users/farhad/Projects/WarlineCapture-Worktrees/<task-id>-<slug>
 Baseline: current origin/main at dispatch
 File allowlist: <paths>
 Files intentionally excluded: <paths>
@@ -320,10 +334,10 @@ Act as the independent review/merge coordinator for <task-id> in a separate role
 Authority: Design/Architecture/agent_pull_request_review_merge_workflow.md
 PR: <url-or-number>
 Branch: codex/<task-id>-<slug>
-Worktree: /private/tmp/warline-<task-id>-<slug>
+Worktree: /Users/farhad/Projects/WarlineCapture-Worktrees/<task-id>-<slug>
 Expected baseline: <hash>
 File allowlist: <paths>
 Required contracts and gates: <contracts/commands/evidence>
 
-Review the complete origin/main...PR-head diff and report findings first, ordered by severity with file/line references. Return every substantive fix to the implementation agent and rereview all revisions. Run the risk-based integration gates on the final head. You may add only administrative tracker/evidence commits. Preserve Jenkins and existing CI/performance contracts; do not add GitHub Actions. If accepted, merge the PR, delete the remote branch, remove the clean worktree/local branch, and report the required handoff fields, final merge commit, PR URL, validation, cleanup, and residual risks. Do not require a GitHub approval count because all agents currently share one GitHub identity. Do not enable or claim branch protection/rulesets without explicit user instruction.
+Review the complete origin/main...PR-head diff and report findings first, ordered by severity with file/line references. Return every substantive fix to the implementation agent and rereview all revisions. Validate the actual combined result with latest origin/main using one of the two authorized integration methods; overlap inspection alone is insufficient. Record origin/main, PR-head, and combined-validation SHAs, and run all required gates at the exact combined tree. Prefer the task worktree for Unity; any separate Unity workspace must be clean at that exact SHA with status and rev-parse recorded. You may add only administrative tracker/evidence commits. Preserve Jenkins and existing CI/performance contracts; do not add GitHub Actions. If accepted, merge the PR, delete the remote branch, remove the clean worktree/local branch, and report the required handoff fields, final merge commit, PR URL, validation, cleanup, and residual risks. Do not require a GitHub approval count because all agents currently share one GitHub identity. Do not enable or claim branch protection/rulesets without explicit user instruction.
 ```

@@ -2,7 +2,7 @@
 
 - Task ID:
 - Objective:
-- Workflow path: `pull request` / `grandfathered direct-main`
+- Workflow path: `pull request` (grandfathered direct-main tasks do not open or use this template unless explicitly converted to the PR workflow)
 - Baseline commit:
 - Head commit tested:
 - Branch: `codex/<task-id>-<slug>`

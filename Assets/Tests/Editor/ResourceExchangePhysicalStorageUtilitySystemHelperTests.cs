@@ -205,10 +205,8 @@ public sealed class ResourceExchangePhysicalStorageUtilitySystemHelperTests
         };
         ResourceExchangeWalletComponent wallet = new ResourceExchangeWalletComponent
         {
-            Oil = 999,
-            Fuel = 888,
-            OilCapacity = 1000,
-            FuelCapacity = 1000
+            RushTickets = 3,
+            Version = 17
         };
         ResourceExchangeSummaryComponent summary = default;
 
@@ -231,8 +229,8 @@ public sealed class ResourceExchangePhysicalStorageUtilitySystemHelperTests
             usePhysicalStorage: true);
 
         Assert.AreEqual(1, queue.Length);
-        Assert.AreEqual(999, wallet.Oil);
-        Assert.AreEqual(888, wallet.Fuel);
+        Assert.AreEqual(3, wallet.RushTickets);
+        Assert.AreEqual(17u, wallet.Version);
         Assert.AreEqual(40f, _entityManager
             .GetComponentData<BuildingResourceStorageComponent>(source)
             .ReservedOilOutboundBarrels, 0.001f);
@@ -261,8 +259,8 @@ public sealed class ResourceExchangePhysicalStorageUtilitySystemHelperTests
             usePhysicalStorage: true);
 
         Assert.AreEqual(ResourceExchangeQueueState.Completed, queue[0].State);
-        Assert.AreEqual(999, wallet.Oil);
-        Assert.AreEqual(888, wallet.Fuel);
+        Assert.AreEqual(3, wallet.RushTickets);
+        Assert.AreEqual(17u, wallet.Version);
         Assert.AreEqual(20f, _entityManager
             .GetComponentData<BuildingResourceStorageComponent>(source)
             .StoredOilBarrels, 0.001f);
@@ -270,6 +268,100 @@ public sealed class ResourceExchangePhysicalStorageUtilitySystemHelperTests
             .GetComponentData<BuildingResourceStorageComponent>(destination)
             .StoredFuelBarrels, 0.001f);
         Assert.AreEqual(0, reservations.Length);
+    }
+
+    [Test]
+    public void ExchangeSystems_RejectPhysicalRecipesWithoutStorageReservationContext()
+    {
+        _entityManager.AddBuffer<ResourceExchangeRecipeComponent>(_exchangeEntity);
+        _entityManager.AddBuffer<ResourceExchangeRequestComponent>(_exchangeEntity);
+        _entityManager.AddBuffer<ResourceExchangeQueueComponent>(_exchangeEntity);
+        _entityManager.AddBuffer<ResourceExchangeResultComponent>(_exchangeEntity);
+        _entityManager.AddBuffer<ResourceExchangeEconomyEventComponent>(_exchangeEntity);
+        DynamicBuffer<ResourceExchangeRecipeComponent> recipes =
+            _entityManager.GetBuffer<ResourceExchangeRecipeComponent>(_exchangeEntity);
+        DynamicBuffer<ResourceExchangeRequestComponent> requests =
+            _entityManager.GetBuffer<ResourceExchangeRequestComponent>(_exchangeEntity);
+        DynamicBuffer<ResourceExchangeQueueComponent> queue =
+            _entityManager.GetBuffer<ResourceExchangeQueueComponent>(_exchangeEntity);
+        DynamicBuffer<ResourceExchangeResultComponent> results =
+            _entityManager.GetBuffer<ResourceExchangeResultComponent>(_exchangeEntity);
+        DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents =
+            _entityManager.GetBuffer<ResourceExchangeEconomyEventComponent>(_exchangeEntity);
+        recipes.Add(new ResourceExchangeRecipeComponent
+        {
+            RecipeId = new FixedString128Bytes("OilExport"),
+            Enabled = 1,
+            InputResource = ResourceExchangeResourceKind.Oil,
+            OutputResource = ResourceExchangeResourceKind.Credits,
+            InputAmountMin = 10,
+            InputAmountMax = 10,
+            InputStep = 1,
+            OutputPerInput = 1f
+        });
+        requests.Add(new ResourceExchangeRequestComponent
+        {
+            RequestId = 1,
+            RequestKind = ResourceExchangeRequestKind.Start,
+            FactionId = 1,
+            RecipeId = new FixedString128Bytes("OilExport"),
+            InputAmount = 10
+        });
+        ResourceExchangeRequestQueueComponent requestQueue = default;
+        ResourceExchangeEnabledComponent enabled = new ResourceExchangeEnabledComponent
+        {
+            Enabled = 1,
+            FactionId = 1,
+            MaxQueueItems = 1
+        };
+        FactionEconomy economy = new FactionEconomy { FactionId = 1 };
+        FactionTacticalMaterialsComponent materials = new FactionTacticalMaterialsComponent
+        {
+            FactionId = 1,
+            Capacity = 100
+        };
+        ResourceExchangeWalletComponent wallet = new ResourceExchangeWalletComponent { FactionId = 1 };
+        ResourceExchangeSummaryComponent summary = default;
+
+        ResourceExchangeRequestValidationSystem.ProcessRequests(
+            ref requestQueue,
+            enabled,
+            ref economy,
+            ref materials,
+            ref wallet,
+            ref summary,
+            recipes,
+            requests,
+            queue,
+            results,
+            economyEvents,
+            elapsedSeconds: 0f);
+
+        Assert.AreEqual(0, queue.Length);
+        Assert.AreEqual(1, results.Length);
+        Assert.AreEqual(0, results[0].Accepted);
+        Assert.AreEqual(ResourceExchangeReason.StorageMissing, results[0].Reason);
+
+        queue.Add(QueueItem(
+            queueItemId: 2,
+            inputResource: ResourceExchangeResourceKind.Credits,
+            inputAmount: 10,
+            outputResource: ResourceExchangeResourceKind.Fuel,
+            outputAmount: 10));
+        queue[0] = WithRemainingSeconds(queue[0], 0f);
+        ResourceExchangeQueueTickSystem.TickQueue(
+            enabled,
+            ref economy,
+            ref materials,
+            ref wallet,
+            ref summary,
+            queue,
+            results,
+            economyEvents,
+            deltaSeconds: 1f);
+
+        Assert.AreEqual(ResourceExchangeQueueState.Blocked, queue[0].State);
+        Assert.AreEqual(ResourceExchangeReason.StorageMissing, queue[0].StateReason);
     }
 
     [Test]
@@ -368,5 +460,14 @@ public sealed class ResourceExchangePhysicalStorageUtilitySystemHelperTests
             OutputResource = outputResource,
             OutputAmount = outputAmount
         };
+    }
+
+    private static ResourceExchangeQueueComponent WithRemainingSeconds(
+        ResourceExchangeQueueComponent item,
+        float remainingSeconds)
+    {
+        item.RemainingSeconds = remainingSeconds;
+        item.State = ResourceExchangeQueueState.InProgress;
+        return item;
     }
 }

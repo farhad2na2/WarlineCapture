@@ -54,10 +54,7 @@ public sealed class ResourceExchangeToastSystemTests
     {
         using World world = new(nameof(StartRequest_Accepted_EmitsQueueStartedToast));
         EntityManager em = world.EntityManager;
-        Entity exchange = CreateExchangeEntity(em, wallet: new ResourceExchangeWalletComponent
-        {
-            Oil = 500
-        });
+        Entity exchange = CreateExchangeEntity(em, oil: 500);
         AddRecipe(em, exchange, ExportOilRecipe());
 
         ResourceExchangeRequestValidationSystem.EnqueueStartRequest(
@@ -89,10 +86,7 @@ public sealed class ResourceExchangeToastSystemTests
     {
         using World world = new(nameof(StartRequest_Rejected_UsesTypedReasonText));
         EntityManager em = world.EntityManager;
-        Entity exchange = CreateExchangeEntity(em, wallet: new ResourceExchangeWalletComponent
-        {
-            Oil = 50
-        });
+        Entity exchange = CreateExchangeEntity(em, oil: 50);
         AddRecipe(em, exchange, ExportOilRecipe());
 
         ResourceExchangeRequestValidationSystem.EnqueueStartRequest(
@@ -125,7 +119,11 @@ public sealed class ResourceExchangeToastSystemTests
         using World world = new(nameof(TickQueue_Completed_EmitsCompletionToast));
         EntityManager em = world.EntityManager;
         Entity exchange = CreateExchangeEntity(em);
-        em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Add(CreateQueueItem(outputAmount: 93, remainingSeconds: 0.1f));
+        em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Add(CreateQueueItem(
+            inputResource: ResourceExchangeResourceKind.Credits,
+            reservedInputAmount: 0,
+            outputAmount: 93,
+            remainingSeconds: 0.1f));
 
         TickQueue(em, exchange, 0.2f);
 
@@ -149,11 +147,10 @@ public sealed class ResourceExchangeToastSystemTests
     {
         using World world = new(nameof(CancelRequest_RefundsReservedInput_EmitsCancelledToast));
         EntityManager em = world.EntityManager;
-        Entity exchange = CreateExchangeEntity(em, wallet: new ResourceExchangeWalletComponent
-        {
-            Oil = 300
-        });
-        em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Add(CreateQueueItem(reservedInputAmount: 200));
+        Entity exchange = CreateExchangeEntity(em, oil: 500);
+        ResourceExchangeQueueComponent item = CreateQueueItem(reservedInputAmount: 200);
+        Assert.IsTrue(ResourceExchangePhysicalStorageTestHelper.TryReserve(em, exchange, item, out _));
+        em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Add(item);
 
         ResourceExchangeRequestValidationSystem.EnqueueCancelRequest(em, exchange, 1, 1, 0);
         UpdateValidationSystem(world);
@@ -178,12 +175,14 @@ public sealed class ResourceExchangeToastSystemTests
     {
         using World world = new(nameof(RushRequest_CompletesImmediately_EmitsCompletionAndRushToasts));
         EntityManager em = world.EntityManager;
-        Entity exchange = CreateExchangeEntity(em, wallet: new ResourceExchangeWalletComponent
-        {
-            RushTickets = 3
-        });
+        Entity exchange = CreateExchangeEntity(
+            em,
+            wallet: new ResourceExchangeWalletComponent { RushTickets = 3 },
+            oil: 100);
         AddRecipe(em, exchange, RushableRecipe(secondsPerTicket: 30, maxTickets: 3));
-        em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Add(CreateQueueItem(remainingSeconds: 10f, outputAmount: 93));
+        ResourceExchangeQueueComponent item = CreateQueueItem(remainingSeconds: 10f, outputAmount: 93);
+        Assert.IsTrue(ResourceExchangePhysicalStorageTestHelper.TryReserve(em, exchange, item, out _));
+        em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Add(item);
 
         ResourceExchangeRequestValidationSystem.EnqueueRushRequest(em, exchange, 1, 1, 1, 0);
         UpdateValidationSystem(world);
@@ -209,7 +208,11 @@ public sealed class ResourceExchangeToastSystemTests
 
     private static Entity CreateExchangeEntity(
         EntityManager em,
-        ResourceExchangeWalletComponent wallet = default)
+        ResourceExchangeWalletComponent wallet = default,
+        float oil = 0f,
+        float fuel = 0f,
+        int oilCapacity = 1000,
+        int fuelCapacity = 1000)
     {
         Entity entity = em.CreateEntity(
             typeof(ResourceExchangeRequestQueueComponent),
@@ -244,6 +247,14 @@ public sealed class ResourceExchangeToastSystemTests
         em.AddBuffer<ResourceExchangeEconomyEventComponent>(entity);
         em.AddBuffer<ResourceExchangeDeltaFlyoutComponent>(entity);
         em.AddBuffer<ResourceExchangeToastComponent>(entity);
+        ResourceExchangePhysicalStorageTestHelper.AddStorage(
+            em,
+            entity,
+            wallet.FactionId,
+            oil,
+            fuel,
+            oilCapacity,
+            fuelCapacity);
         return entity;
     }
 
@@ -284,6 +295,7 @@ public sealed class ResourceExchangeToastSystemTests
 
     private static ResourceExchangeQueueComponent CreateQueueItem(
         int queueItemId = 1,
+        ResourceExchangeResourceKind inputResource = ResourceExchangeResourceKind.Oil,
         int reservedInputAmount = 100,
         int outputAmount = 100,
         float remainingSeconds = 30f)
@@ -294,7 +306,7 @@ public sealed class ResourceExchangeToastSystemTests
             FactionId = 1,
             RecipeId = new FixedString128Bytes("exchange.rush.test"),
             RouteType = ResourceExchangeRouteType.Export,
-            InputResource = ResourceExchangeResourceKind.Oil,
+            InputResource = inputResource,
             OutputResource = ResourceExchangeResourceKind.Credits,
             InputAmount = reservedInputAmount,
             ReservedInputAmount = reservedInputAmount,
@@ -333,7 +345,12 @@ public sealed class ResourceExchangeToastSystemTests
             true,
             em.GetBuffer<ResourceExchangeToastComponent>(exchange),
             true,
-            deltaSeconds);
+            default,
+            false,
+            deltaSeconds,
+            em,
+            em.GetBuffer<ResourceExchangePhysicalReservationComponent>(exchange),
+            usePhysicalStorage: true);
         em.SetComponentData(exchange, economy);
         em.SetComponentData(exchange, materials);
         em.SetComponentData(exchange, wallet);

@@ -718,10 +718,14 @@ namespace Game.Runtime
             DynamicBuffer<ResourceExchangePhysicalReservationComponent> physicalReservations,
             bool usePhysicalStorage)
         {
-            if (usePhysicalStorage &&
-                (ResourceExchangePhysicalStorageUtilitySystemHelper.IsPhysicalResource(item.InputResource) ||
-                 ResourceExchangePhysicalStorageUtilitySystemHelper.IsPhysicalResource(item.OutputResource)))
+            bool physicalResource =
+                ResourceExchangePhysicalStorageUtilitySystemHelper.IsPhysicalResource(item.InputResource) ||
+                ResourceExchangePhysicalStorageUtilitySystemHelper.IsPhysicalResource(item.OutputResource);
+            if (physicalResource)
             {
+                if (!usePhysicalStorage)
+                    return ResourceExchangeReason.StorageMissing;
+
                 return ResourceExchangePhysicalStorageUtilitySystemHelper.ValidateCompletion(
                     entityManager,
                     physicalReservations,

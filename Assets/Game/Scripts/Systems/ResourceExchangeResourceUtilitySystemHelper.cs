@@ -17,10 +17,6 @@ namespace Game.Runtime
                     return economy.Money;
                 case ResourceExchangeResourceKind.Materials:
                     return materials.Current;
-                case ResourceExchangeResourceKind.Oil:
-                    return wallet.Oil;
-                case ResourceExchangeResourceKind.Fuel:
-                    return wallet.Fuel;
                 case ResourceExchangeResourceKind.RushTickets:
                     return wallet.RushTickets;
                 default:
@@ -37,10 +33,6 @@ namespace Game.Runtime
             {
                 case ResourceExchangeResourceKind.Materials:
                     return materials.Capacity;
-                case ResourceExchangeResourceKind.Oil:
-                    return wallet.OilCapacity;
-                case ResourceExchangeResourceKind.Fuel:
-                    return wallet.FuelCapacity;
                 default:
                     return int.MaxValue;
             }
@@ -69,18 +61,6 @@ namespace Game.Runtime
                                amount,
                                FactionTacticalMaterialsSpendKind.Export) ==
                            FactionTacticalMaterialsMutationResult.Applied;
-                case ResourceExchangeResourceKind.Oil:
-                    if (wallet.Oil < amount)
-                        return false;
-                    wallet.Oil -= amount;
-                    wallet.Version++;
-                    return true;
-                case ResourceExchangeResourceKind.Fuel:
-                    if (wallet.Fuel < amount)
-                        return false;
-                    wallet.Fuel -= amount;
-                    wallet.Version++;
-                    return true;
                 case ResourceExchangeResourceKind.RushTickets:
                     if (wallet.RushTickets < amount)
                         return false;
@@ -113,14 +93,6 @@ namespace Game.Runtime
                                amount,
                                FactionTacticalMaterialsSourceKind.Import) ==
                            FactionTacticalMaterialsMutationResult.Applied;
-                case ResourceExchangeResourceKind.Oil:
-                    wallet.Oil = SaturatingAdd(wallet.Oil, amount);
-                    wallet.Version++;
-                    return true;
-                case ResourceExchangeResourceKind.Fuel:
-                    wallet.Fuel = SaturatingAdd(wallet.Fuel, amount);
-                    wallet.Version++;
-                    return true;
                 case ResourceExchangeResourceKind.RushTickets:
                     wallet.RushTickets = SaturatingAdd(wallet.RushTickets, amount);
                     wallet.Version++;
@@ -144,6 +116,41 @@ namespace Game.Runtime
             }
 
             return TryGrantImport(ref economy, ref materials, ref wallet, resourceKind, amount);
+        }
+
+        public static int GetAmount(
+            in FactionEconomy economy,
+            in FactionTacticalMaterialsComponent materials,
+            in ResourceExchangeWalletComponent wallet,
+            in BuildingRuntimeFactionUsableFuelSummary physicalResources,
+            ResourceExchangeResourceKind resourceKind)
+        {
+            switch (resourceKind)
+            {
+                case ResourceExchangeResourceKind.Oil:
+                    return math.max(0, (int)math.floor(physicalResources.StoredOilBarrels));
+                case ResourceExchangeResourceKind.Fuel:
+                    return math.max(0, (int)math.floor(physicalResources.StoredFuelBarrels));
+                default:
+                    return GetAmount(economy, materials, wallet, resourceKind);
+            }
+        }
+
+        public static int GetCapacity(
+            in FactionTacticalMaterialsComponent materials,
+            in ResourceExchangeWalletComponent wallet,
+            in BuildingRuntimeFactionUsableFuelSummary physicalResources,
+            ResourceExchangeResourceKind resourceKind)
+        {
+            switch (resourceKind)
+            {
+                case ResourceExchangeResourceKind.Oil:
+                    return math.max(0, physicalResources.OilStorageCapacity);
+                case ResourceExchangeResourceKind.Fuel:
+                    return math.max(0, physicalResources.FuelStorageCapacity);
+                default:
+                    return GetCapacity(materials, wallet, resourceKind);
+            }
         }
 
         private static int SaturatingAdd(int current, int amount)

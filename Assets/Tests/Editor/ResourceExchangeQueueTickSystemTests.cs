@@ -50,12 +50,14 @@ public sealed class ResourceExchangeQueueTickSystemTests
     {
         using World world = new(nameof(TickQueue_CompletesOnceAndGrantsOutput));
         EntityManager em = world.EntityManager;
-        Entity exchange = CreateExchangeEntity(em, new ResourceExchangeWalletComponent
-        {
-            FactionId = 1
-        });
+        Entity exchange = CreateExchangeEntity(em);
         DynamicBuffer<ResourceExchangeQueueComponent> queue = em.GetBuffer<ResourceExchangeQueueComponent>(exchange);
-        queue.Add(CreateQueueItem(outputResource: ResourceExchangeResourceKind.Credits, outputAmount: 93, remainingSeconds: 0.25f));
+        queue.Add(CreateQueueItem(
+            inputResource: ResourceExchangeResourceKind.Credits,
+            outputResource: ResourceExchangeResourceKind.Credits,
+            reservedInputAmount: 0,
+            outputAmount: 93,
+            remainingSeconds: 0.25f));
 
         Tick(em, exchange, 0.5f);
 
@@ -85,21 +87,24 @@ public sealed class ResourceExchangeQueueTickSystemTests
     {
         using World world = new(nameof(TickQueue_BlocksWhenOutputStorageFullAndResumesWhenAvailable));
         EntityManager em = world.EntityManager;
-        Entity exchange = CreateExchangeEntity(em, new ResourceExchangeWalletComponent
-        {
-            FactionId = 1,
-            Fuel = 980,
-            FuelCapacity = 1000
-        });
+        Entity exchange = CreateExchangeEntity(em, fuel: 930, fuelCapacity: 1000);
         DynamicBuffer<ResourceExchangeQueueComponent> queue = em.GetBuffer<ResourceExchangeQueueComponent>(exchange);
-        queue.Add(CreateQueueItem(outputResource: ResourceExchangeResourceKind.Fuel, outputAmount: 50, remainingSeconds: 0.1f));
+        ResourceExchangeQueueComponent item = CreateQueueItem(
+            inputResource: ResourceExchangeResourceKind.Credits,
+            outputResource: ResourceExchangeResourceKind.Fuel,
+            reservedInputAmount: 0,
+            outputAmount: 50,
+            remainingSeconds: 0.1f);
+        ReservePhysicalResources(em, exchange, item);
+        queue.Add(item);
+        SetStoredFuel(em, 980f);
 
         Tick(em, exchange, 0.1f);
 
         queue = em.GetBuffer<ResourceExchangeQueueComponent>(exchange);
         Assert.AreEqual(ResourceExchangeQueueState.Blocked, queue[0].State);
         Assert.AreEqual(ResourceExchangeReason.StorageFull, queue[0].StateReason);
-        Assert.AreEqual(980, em.GetComponentData<ResourceExchangeWalletComponent>(exchange).Fuel);
+        Assert.AreEqual(980f, GetStoredFuel(em), 0.001f);
         DynamicBuffer<ResourceExchangeEconomyEventComponent> events =
             em.GetBuffer<ResourceExchangeEconomyEventComponent>(exchange);
         Assert.AreEqual(1, events.Length);
@@ -107,16 +112,13 @@ public sealed class ResourceExchangeQueueTickSystemTests
         Assert.AreEqual(ResourceExchangeResourceKind.Fuel, events[0].ResourceKind);
         Assert.AreEqual(0, events[0].Amount);
 
-        ResourceExchangeWalletComponent wallet = em.GetComponentData<ResourceExchangeWalletComponent>(exchange);
-        wallet.Fuel = 940;
-        em.SetComponentData(exchange, wallet);
+        SetStoredFuel(em, 940f);
 
         Tick(em, exchange, 0.1f);
 
-        wallet = em.GetComponentData<ResourceExchangeWalletComponent>(exchange);
         queue = em.GetBuffer<ResourceExchangeQueueComponent>(exchange);
         Assert.AreEqual(ResourceExchangeQueueState.Completed, queue[0].State);
-        Assert.AreEqual(990, wallet.Fuel);
+        Assert.AreEqual(990f, GetStoredFuel(em), 0.001f);
         events = em.GetBuffer<ResourceExchangeEconomyEventComponent>(exchange);
         Assert.AreEqual(2, events.Length);
         Assert.AreEqual(ResourceExchangeResultKind.QueueCompleted, events[1].ResultKind);
@@ -128,12 +130,10 @@ public sealed class ResourceExchangeQueueTickSystemTests
     {
         using World world = new(nameof(CancelRequest_RefundsReservedInputBeforePresentation));
         EntityManager em = world.EntityManager;
-        Entity exchange = CreateExchangeEntity(em, new ResourceExchangeWalletComponent
-        {
-            FactionId = 1,
-            Oil = 300
-        });
-        em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Add(CreateQueueItem(reservedInputAmount: 200));
+        Entity exchange = CreateExchangeEntity(em, oil: 500);
+        ResourceExchangeQueueComponent item = CreateQueueItem(reservedInputAmount: 200);
+        ReservePhysicalResources(em, exchange, item);
+        em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Add(item);
 
         int requestId = ResourceExchangeRequestValidationSystem.EnqueueCancelRequest(em, exchange, 1, 1, 20);
 
@@ -143,7 +143,7 @@ public sealed class ResourceExchangeQueueTickSystemTests
         Assert.AreEqual(1, result.Accepted);
         Assert.AreEqual(ResourceExchangeResultKind.QueueCancelled, result.ResultKind);
         Assert.AreEqual(200, result.InputAmount);
-        Assert.AreEqual(500, em.GetComponentData<ResourceExchangeWalletComponent>(exchange).Oil);
+        Assert.AreEqual(500f, GetStoredOil(em), 0.001f);
         Assert.AreEqual(ResourceExchangeQueueState.Cancelled, em.GetBuffer<ResourceExchangeQueueComponent>(exchange)[0].State);
         Assert.AreEqual(1, em.GetBuffer<ResourceExchangeEconomyEventComponent>(exchange).Length);
     }
@@ -153,12 +153,12 @@ public sealed class ResourceExchangeQueueTickSystemTests
     {
         using World world = new(nameof(CancelRequest_DoesNotRefundAfterPresentationStarted));
         EntityManager em = world.EntityManager;
-        Entity exchange = CreateExchangeEntity(em, new ResourceExchangeWalletComponent
-        {
-            FactionId = 1,
-            Oil = 300
-        });
-        em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Add(CreateQueueItem(reservedInputAmount: 200, presentationStarted: 1));
+        Entity exchange = CreateExchangeEntity(em, oil: 500);
+        ResourceExchangeQueueComponent item = CreateQueueItem(
+            reservedInputAmount: 200,
+            presentationStarted: 1);
+        ReservePhysicalResources(em, exchange, item);
+        em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Add(item);
 
         int requestId = ResourceExchangeRequestValidationSystem.EnqueueCancelRequest(em, exchange, 1, 1, 20);
 
@@ -167,7 +167,7 @@ public sealed class ResourceExchangeQueueTickSystemTests
         Assert.IsTrue(ResourceExchangeRequestValidationSystem.TryGetResult(em, exchange, requestId, out ResourceExchangeResultComponent result));
         Assert.AreEqual(1, result.Accepted);
         Assert.AreEqual(0, result.InputAmount);
-        Assert.AreEqual(300, em.GetComponentData<ResourceExchangeWalletComponent>(exchange).Oil);
+        Assert.AreEqual(300f, GetStoredOil(em), 0.001f);
         Assert.AreEqual(ResourceExchangeQueueState.Cancelled, em.GetBuffer<ResourceExchangeQueueComponent>(exchange)[0].State);
         DynamicBuffer<ResourceExchangeEconomyEventComponent> events =
             em.GetBuffer<ResourceExchangeEconomyEventComponent>(exchange);
@@ -182,14 +182,17 @@ public sealed class ResourceExchangeQueueTickSystemTests
     {
         using World world = new(nameof(MissionEnd_CancelsActiveJobsAndAppliesRefundPolicy));
         EntityManager em = world.EntityManager;
-        Entity exchange = CreateExchangeEntity(em, new ResourceExchangeWalletComponent
-        {
-            FactionId = 1,
-            Oil = 300
-        });
+        Entity exchange = CreateExchangeEntity(em, oil: 600);
         DynamicBuffer<ResourceExchangeQueueComponent> queue = em.GetBuffer<ResourceExchangeQueueComponent>(exchange);
-        queue.Add(CreateQueueItem(queueItemId: 1, reservedInputAmount: 200));
-        queue.Add(CreateQueueItem(queueItemId: 2, reservedInputAmount: 100, presentationStarted: 1));
+        ResourceExchangeQueueComponent firstItem = CreateQueueItem(queueItemId: 1, reservedInputAmount: 200);
+        ResourceExchangeQueueComponent secondItem = CreateQueueItem(
+            queueItemId: 2,
+            reservedInputAmount: 100,
+            presentationStarted: 1);
+        ReservePhysicalResources(em, exchange, firstItem);
+        ReservePhysicalResources(em, exchange, secondItem);
+        queue.Add(firstItem);
+        queue.Add(secondItem);
 
         int requestId = ResourceExchangeRequestValidationSystem.EnqueueMissionEndRequest(em, exchange, 1, 50);
 
@@ -200,7 +203,7 @@ public sealed class ResourceExchangeQueueTickSystemTests
         Assert.AreEqual(ResourceExchangeReason.MissionEnding, result.Reason);
         Assert.AreEqual(200, result.InputAmount);
         Assert.AreEqual(2, result.OutputAmount);
-        Assert.AreEqual(500, em.GetComponentData<ResourceExchangeWalletComponent>(exchange).Oil);
+        Assert.AreEqual(500f, GetStoredOil(em), 0.001f);
 
         queue = em.GetBuffer<ResourceExchangeQueueComponent>(exchange);
         Assert.AreEqual(ResourceExchangeQueueState.Cancelled, queue[0].State);
@@ -216,7 +219,12 @@ public sealed class ResourceExchangeQueueTickSystemTests
         Assert.AreEqual(0, events[1].Amount);
     }
 
-    private static Entity CreateExchangeEntity(EntityManager em, ResourceExchangeWalletComponent wallet)
+    private static Entity CreateExchangeEntity(
+        EntityManager em,
+        float oil = 0f,
+        float fuel = 0f,
+        int oilCapacity = 1000,
+        int fuelCapacity = 1000)
     {
         Entity entity = em.CreateEntity(
             typeof(ResourceExchangeRequestQueueComponent),
@@ -235,8 +243,7 @@ public sealed class ResourceExchangeQueueTickSystemTests
             ScenarioTag = new FixedString64Bytes("mission.active")
         });
 
-        if (wallet.FactionId == 0)
-            wallet.FactionId = 1;
+        ResourceExchangeWalletComponent wallet = new ResourceExchangeWalletComponent { FactionId = 1 };
         em.SetComponentData(entity, wallet);
         em.SetComponentData(entity, new FactionEconomy { FactionId = wallet.FactionId });
         em.SetComponentData(entity, new FactionTacticalMaterialsComponent
@@ -249,7 +256,66 @@ public sealed class ResourceExchangeQueueTickSystemTests
         em.AddBuffer<ResourceExchangeQueueComponent>(entity);
         em.AddBuffer<ResourceExchangeResultComponent>(entity);
         em.AddBuffer<ResourceExchangeEconomyEventComponent>(entity);
+        em.AddBuffer<ResourceExchangePhysicalReservationComponent>(entity);
+        Entity storage = em.CreateEntity(typeof(BuildingResourceStorageComponent));
+        em.SetComponentData(storage, new BuildingResourceStorageComponent
+        {
+            RuntimeBuildingId = entity.Index + 1,
+            OwnerFactionId = 1,
+            StoredOilBarrels = oil,
+            StoredFuelBarrels = fuel,
+            OilStorageCapacity = oilCapacity,
+            FuelStorageCapacity = fuelCapacity
+        });
         return entity;
+    }
+
+    private static void ReservePhysicalResources(
+        EntityManager em,
+        Entity exchange,
+        in ResourceExchangeQueueComponent item)
+    {
+        EntityQuery storageQuery = em.CreateEntityQuery(typeof(BuildingResourceStorageComponent));
+        bool reserved = ResourceExchangePhysicalStorageUtilitySystemHelper.TryReserveForQueue(
+            em,
+            storageQuery,
+            em.GetBuffer<ResourceExchangePhysicalReservationComponent>(exchange),
+            item.QueueItemId,
+            item.FactionId,
+            item.InputResource,
+            item.InputAmount,
+            item.OutputResource,
+            item.OutputAmount,
+            out ResourceExchangeReason reason);
+        storageQuery.Dispose();
+        Assert.IsTrue(reserved, $"Physical reservation failed: {reason}");
+    }
+
+    private static float GetStoredOil(EntityManager em)
+    {
+        return em.GetComponentData<BuildingResourceStorageComponent>(GetStorageEntity(em)).StoredOilBarrels;
+    }
+
+    private static float GetStoredFuel(EntityManager em)
+    {
+        return em.GetComponentData<BuildingResourceStorageComponent>(GetStorageEntity(em)).StoredFuelBarrels;
+    }
+
+    private static void SetStoredFuel(EntityManager em, float amount)
+    {
+        Entity storageEntity = GetStorageEntity(em);
+        BuildingResourceStorageComponent storage =
+            em.GetComponentData<BuildingResourceStorageComponent>(storageEntity);
+        storage.StoredFuelBarrels = amount;
+        em.SetComponentData(storageEntity, storage);
+    }
+
+    private static Entity GetStorageEntity(EntityManager em)
+    {
+        EntityQuery query = em.CreateEntityQuery(typeof(BuildingResourceStorageComponent));
+        Entity storage = query.GetSingletonEntity();
+        query.Dispose();
+        return storage;
     }
 
     private static ResourceExchangeQueueComponent CreateQueueItem(
@@ -296,7 +362,16 @@ public sealed class ResourceExchangeQueueTickSystemTests
             em.GetBuffer<ResourceExchangeQueueComponent>(exchange),
             em.GetBuffer<ResourceExchangeResultComponent>(exchange),
             em.GetBuffer<ResourceExchangeEconomyEventComponent>(exchange),
-            deltaSeconds);
+            default,
+            false,
+            default,
+            false,
+            default,
+            false,
+            deltaSeconds,
+            em,
+            em.GetBuffer<ResourceExchangePhysicalReservationComponent>(exchange),
+            usePhysicalStorage: true);
         em.SetComponentData(exchange, economy);
         em.SetComponentData(exchange, materials);
         em.SetComponentData(exchange, wallet);

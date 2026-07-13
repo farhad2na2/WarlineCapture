@@ -15,6 +15,7 @@ namespace Game.UI.Shell.Ecs
         private const int MaxQueueRows = 4;
 
         private EntityQuery boundaryQuery;
+        private EntityQuery physicalResourceQuery;
 
         public void OnCreate(ref SystemState state)
         {
@@ -26,6 +27,9 @@ namespace Game.UI.Shell.Ecs
                 ComponentType.ReadWrite<UiResourceExchangeRecipeCardComponent>(),
                 ComponentType.ReadWrite<UiResourceExchangeQueueRowComponent>());
             state.RequireForUpdate(boundaryQuery);
+            physicalResourceQuery = state.GetEntityQuery(
+                ComponentType.ReadOnly<BuildingRuntimeStateTag>(),
+                ComponentType.ReadOnly<BuildingRuntimeFactionUsableFuelSummary>());
         }
 
         public void OnUpdate(ref SystemState state)
@@ -44,6 +48,16 @@ namespace Game.UI.Shell.Ecs
                 state.EntityManager.GetBuffer<UiResourceExchangeRecipeCardComponent>(boundary);
             DynamicBuffer<UiResourceExchangeQueueRowComponent> queueRows =
                 state.EntityManager.GetBuffer<UiResourceExchangeQueueRowComponent>(boundary);
+            BuildingRuntimeFactionUsableFuelSummary physicalResources = default;
+            if (!physicalResourceQuery.IsEmptyIgnoreFilter)
+            {
+                Entity physicalResourceBoundary = physicalResourceQuery.GetSingletonEntity();
+                DynamicBuffer<BuildingRuntimeFactionUsableFuelSummary> summaries =
+                    state.EntityManager.GetBuffer<BuildingRuntimeFactionUsableFuelSummary>(
+                        physicalResourceBoundary,
+                        true);
+                TryReadPhysicalResources(summaries, out physicalResources);
+            }
 
             bool wroteExchange = false;
             foreach (var (
@@ -68,6 +82,7 @@ namespace Game.UI.Shell.Ecs
                     economy.ValueRO,
                     materials.ValueRO,
                     wallet.ValueRO,
+                    physicalResources,
                     summary.ValueRO,
                     recipes,
                     queue,
@@ -91,6 +106,7 @@ namespace Game.UI.Shell.Ecs
             in FactionEconomy economy,
             in FactionTacticalMaterialsComponent materials,
             in ResourceExchangeWalletComponent wallet,
+            in BuildingRuntimeFactionUsableFuelSummary physicalResources,
             in ResourceExchangeSummaryComponent summary,
             DynamicBuffer<ResourceExchangeRecipeComponent> recipes,
             DynamicBuffer<ResourceExchangeQueueComponent> queue,
@@ -109,14 +125,34 @@ namespace Game.UI.Shell.Ecs
             uiState.QueueCapacityText = ToFixed32($"{summary.ActiveCount}/{math.max(0, enabled.MaxQueueItems)}");
             uiState.CreditsText = ToFixed32(economy.Money.ToString(CultureInfo.InvariantCulture));
             uiState.MaterialsText = ToFixed32(materials.Current.ToString(CultureInfo.InvariantCulture));
-            uiState.OilText = ToFixed32(wallet.Oil.ToString(CultureInfo.InvariantCulture));
-            uiState.FuelText = ToFixed32(wallet.Fuel.ToString(CultureInfo.InvariantCulture));
+            uiState.OilText = ToFixed32(ResourceExchangeResourceUtilitySystemHelper.GetAmount(
+                economy,
+                materials,
+                wallet,
+                physicalResources,
+                ResourceExchangeResourceKind.Oil).ToString(CultureInfo.InvariantCulture));
+            uiState.FuelText = ToFixed32(ResourceExchangeResourceUtilitySystemHelper.GetAmount(
+                economy,
+                materials,
+                wallet,
+                physicalResources,
+                ResourceExchangeResourceKind.Fuel).ToString(CultureInfo.InvariantCulture));
             uiState.RushTicketsText = ToFixed32(wallet.RushTickets.ToString(CultureInfo.InvariantCulture));
             uiState.RushAllEnabled = HasRushableQueueItem(wallet, recipes, queue) ? (byte)1 : (byte)0;
             uiState.ClearCompletedEnabled = HasCompletedQueueItem(queue) ? (byte)1 : (byte)0;
             uiState.Version = math.max(uiState.Version + 1u, summary.Version);
 
-            WriteRecipeCards(enabled, economy, materials, wallet, recipes, queue, ref uiState, ref detail, cards);
+            WriteRecipeCards(
+                enabled,
+                economy,
+                materials,
+                wallet,
+                physicalResources,
+                recipes,
+                queue,
+                ref uiState,
+                ref detail,
+                cards);
             WriteQueueRows(wallet, recipes, queue, queueRows);
         }
 
@@ -153,6 +189,7 @@ namespace Game.UI.Shell.Ecs
             in FactionEconomy economy,
             in FactionTacticalMaterialsComponent materials,
             in ResourceExchangeWalletComponent wallet,
+            in BuildingRuntimeFactionUsableFuelSummary physicalResources,
             DynamicBuffer<ResourceExchangeRecipeComponent> recipes,
             DynamicBuffer<ResourceExchangeQueueComponent> queue,
             ref UiResourceExchangeStateComponent uiState,
@@ -214,6 +251,7 @@ namespace Game.UI.Shell.Ecs
                     economy,
                     materials,
                     wallet,
+                    physicalResources,
                     recipes[selectedRecipeIndex],
                     queue,
                     selectedAmount);
@@ -230,6 +268,7 @@ namespace Game.UI.Shell.Ecs
             in FactionEconomy economy,
             in FactionTacticalMaterialsComponent materials,
             in ResourceExchangeWalletComponent wallet,
+            in BuildingRuntimeFactionUsableFuelSummary physicalResources,
             in ResourceExchangeRecipeComponent recipe,
             DynamicBuffer<ResourceExchangeQueueComponent> queue,
             int amount)
@@ -241,6 +280,7 @@ namespace Game.UI.Shell.Ecs
                 economy,
                 materials,
                 wallet,
+                physicalResources,
                 recipe,
                 amount,
                 outputAmount,
@@ -430,6 +470,7 @@ namespace Game.UI.Shell.Ecs
             in FactionEconomy economy,
             in FactionTacticalMaterialsComponent materials,
             in ResourceExchangeWalletComponent wallet,
+            in BuildingRuntimeFactionUsableFuelSummary physicalResources,
             in ResourceExchangeRecipeComponent recipe,
             int inputAmount,
             int outputAmount,
@@ -447,6 +488,7 @@ namespace Game.UI.Shell.Ecs
                     economy,
                     materials,
                     wallet,
+                    physicalResources,
                     recipe.InputResource) < inputAmount)
                 return InsufficientReason(recipe.InputResource);
 
@@ -455,6 +497,7 @@ namespace Game.UI.Shell.Ecs
                 int capacity = ResourceExchangeResourceUtilitySystemHelper.GetCapacity(
                     materials,
                     wallet,
+                    physicalResources,
                     recipe.OutputResource);
                 if (capacity <= 0)
                     return ResourceExchangeReason.StorageMissing;
@@ -463,6 +506,7 @@ namespace Game.UI.Shell.Ecs
                     economy,
                     materials,
                     wallet,
+                    physicalResources,
                     recipe.OutputResource);
                 if (currentOutput < 0 || outputAmount < 0 || outputAmount > capacity - currentOutput)
                     return ResourceExchangeReason.StorageFull;
@@ -511,6 +555,23 @@ namespace Game.UI.Shell.Ecs
                 default:
                     return ResourceExchangeReason.InvalidResource;
             }
+        }
+
+        private static bool TryReadPhysicalResources(
+            DynamicBuffer<BuildingRuntimeFactionUsableFuelSummary> summaries,
+            out BuildingRuntimeFactionUsableFuelSummary physicalResources)
+        {
+            for (int i = 0; i < summaries.Length; i++)
+            {
+                if (!FactionIdentity.IsPlayerControlled(summaries[i].FactionId))
+                    continue;
+
+                physicalResources = summaries[i];
+                return true;
+            }
+
+            physicalResources = default;
+            return false;
         }
 
         private static ResourceExchangeRouteType ToRouteType(UiResourceExchangeTab tab)

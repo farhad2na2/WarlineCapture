@@ -178,10 +178,6 @@ public sealed class ResourceExchangeSteadyStatePerformanceValidation
         em.SetComponentData(entity, new ResourceExchangeWalletComponent
         {
             FactionId = 1,
-            Oil = 4000,
-            Fuel = 3000,
-            OilCapacity = 8000,
-            FuelCapacity = 8000,
             RushTickets = 8
         });
         em.SetComponentData(entity, new FactionEconomy { FactionId = 1, Money = 5000 });
@@ -210,6 +206,13 @@ public sealed class ResourceExchangeSteadyStatePerformanceValidation
         em.AddBuffer<ResourceExchangeVisualRequestComponent>(entity);
         em.AddBuffer<ResourceExchangeVfxMarkerComponent>(entity);
         em.AddBuffer<ResourceExchangePresentationAnchorComponent>(entity);
+        ResourceExchangePhysicalStorageTestHelper.AddStorage(
+            em,
+            entity,
+            oil: 4000,
+            fuel: 3000,
+            oilCapacity: 8000,
+            fuelCapacity: 8000);
 
         DynamicBuffer<ResourceExchangeRecipeComponent> recipes =
             em.GetBuffer<ResourceExchangeRecipeComponent>(entity);
@@ -242,9 +245,13 @@ public sealed class ResourceExchangeSteadyStatePerformanceValidation
         recipes.Add(CreateRecipe("exchange.performance.import_fuel", ResourceExchangeRouteType.Import, ResourceExchangeResourceKind.Credits, ResourceExchangeResourceKind.Fuel));
         recipes.Add(CreateRecipe("exchange.performance.import_materials", ResourceExchangeRouteType.Import, ResourceExchangeResourceKind.Credits, ResourceExchangeResourceKind.Materials));
 
-        queue.Add(CreateQueueItem(1, "exchange.performance.export_oil", ResourceExchangeRouteType.Export, ResourceExchangeResourceKind.Oil, ResourceExchangeResourceKind.Credits, 400, 170));
+        ResourceExchangeQueueComponent oilExport = CreateQueueItem(1, "exchange.performance.export_oil", ResourceExchangeRouteType.Export, ResourceExchangeResourceKind.Oil, ResourceExchangeResourceKind.Credits, 400, 170);
+        Assert.IsTrue(ResourceExchangePhysicalStorageTestHelper.TryReserve(em, entity, oilExport, out _));
+        queue.Add(oilExport);
         queue.Add(CreateQueueItem(2, "exchange.performance.export_materials", ResourceExchangeRouteType.Export, ResourceExchangeResourceKind.Materials, ResourceExchangeResourceKind.Credits, 300, 125));
-        queue.Add(CreateQueueItem(3, "exchange.performance.import_fuel", ResourceExchangeRouteType.Import, ResourceExchangeResourceKind.Credits, ResourceExchangeResourceKind.Fuel, 500, 160));
+        ResourceExchangeQueueComponent fuelImport = CreateQueueItem(3, "exchange.performance.import_fuel", ResourceExchangeRouteType.Import, ResourceExchangeResourceKind.Credits, ResourceExchangeResourceKind.Fuel, 500, 160);
+        Assert.IsTrue(ResourceExchangePhysicalStorageTestHelper.TryReserve(em, entity, fuelImport, out _));
+        queue.Add(fuelImport);
         queue.Add(CreateQueueItem(4, "exchange.performance.import_materials", ResourceExchangeRouteType.Import, ResourceExchangeResourceKind.Credits, ResourceExchangeResourceKind.Materials, 450, 180));
 
         anchors.Add(CreateAnchor(ResourceExchangePresentationAnchorKind.BaseDepot, "base_depot", new float3(0f, 0f, 0f)));

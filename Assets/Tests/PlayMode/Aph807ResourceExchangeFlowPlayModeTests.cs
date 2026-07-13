@@ -33,9 +33,13 @@ public sealed class Aph807ResourceExchangeFlowPlayModeTests
             Assert.IsTrue(
                 ResourceExchangeRequestValidationSystem.TryGetResult(em, exchange, requestId, out ResourceExchangeResultComponent result));
             Assert.AreEqual(1, result.Accepted);
-            ResourceExchangeWalletComponent reservedWallet =
-                em.GetComponentData<ResourceExchangeWalletComponent>(exchange);
-            Assert.AreEqual(300, reservedWallet.Oil, "The accepted export must reserve oil immediately.");
+            BuildingResourceStorageComponent reservedStorage = GetStorage(em);
+            Assert.AreEqual(500f, reservedStorage.StoredOilBarrels, 0.001f);
+            Assert.AreEqual(
+                200f,
+                reservedStorage.ReservedOilOutboundBarrels,
+                0.001f,
+                "The accepted export must reserve physical oil immediately.");
             Assert.AreEqual(0, em.GetComponentData<FactionEconomy>(exchange).Money);
             Assert.AreEqual(1, em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Length);
             Assert.AreEqual(
@@ -46,9 +50,9 @@ public sealed class Aph807ResourceExchangeFlowPlayModeTests
             world.SetTime(new TimeData(2.1d, 2f));
             queueTick.Update(world.Unmanaged);
 
-            ResourceExchangeWalletComponent settledWallet =
-                em.GetComponentData<ResourceExchangeWalletComponent>(exchange);
-            Assert.AreEqual(300, settledWallet.Oil);
+            BuildingResourceStorageComponent settledStorage = GetStorage(em);
+            Assert.AreEqual(300f, settledStorage.StoredOilBarrels, 0.001f);
+            Assert.AreEqual(0f, settledStorage.ReservedOilOutboundBarrels, 0.001f);
             Assert.AreEqual(100, em.GetComponentData<FactionEconomy>(exchange).Money);
             Assert.AreEqual(
                 ResourceExchangeQueueState.Completed,
@@ -86,10 +90,7 @@ public sealed class Aph807ResourceExchangeFlowPlayModeTests
         });
         em.SetComponentData(exchange, new ResourceExchangeWalletComponent
         {
-            FactionId = FactionIdentity.PlayerFactionId,
-            Oil = 500,
-            OilCapacity = 1000,
-            FuelCapacity = 1000
+            FactionId = FactionIdentity.PlayerFactionId
         });
         em.SetComponentData(exchange, new FactionEconomy { FactionId = FactionIdentity.PlayerFactionId });
         em.SetComponentData(exchange, new FactionTacticalMaterialsComponent
@@ -121,6 +122,25 @@ public sealed class Aph807ResourceExchangeFlowPlayModeTests
         em.AddBuffer<ResourceExchangeQueueComponent>(exchange);
         em.AddBuffer<ResourceExchangeResultComponent>(exchange);
         em.AddBuffer<ResourceExchangeEconomyEventComponent>(exchange);
+        em.AddBuffer<ResourceExchangePhysicalReservationComponent>(exchange);
+        Entity storage = em.CreateEntity(typeof(BuildingResourceStorageComponent));
+        em.SetComponentData(storage, new BuildingResourceStorageComponent
+        {
+            RuntimeBuildingId = 1,
+            OwnerFactionId = FactionIdentity.PlayerFactionId,
+            StoredOilBarrels = 500f,
+            OilStorageCapacity = 1000,
+            FuelStorageCapacity = 1000
+        });
         return exchange;
+    }
+
+    private static BuildingResourceStorageComponent GetStorage(EntityManager em)
+    {
+        EntityQuery query = em.CreateEntityQuery(typeof(BuildingResourceStorageComponent));
+        BuildingResourceStorageComponent storage =
+            em.GetComponentData<BuildingResourceStorageComponent>(query.GetSingletonEntity());
+        query.Dispose();
+        return storage;
     }
 }

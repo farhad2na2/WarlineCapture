@@ -65,6 +65,9 @@ public sealed class ResourceExchangeGcAllocationValidationTests
             em.GetBuffer<ResourceExchangeResultComponent>(exchange);
         DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents =
             em.GetBuffer<ResourceExchangeEconomyEventComponent>(exchange);
+        DynamicBuffer<ResourceExchangePhysicalReservationComponent> physicalReservations =
+            em.GetBuffer<ResourceExchangePhysicalReservationComponent>(exchange);
+        EntityQuery storageQuery = em.CreateEntityQuery(typeof(BuildingResourceStorageComponent));
 
         for (int i = 0; i < WarmupFrames; i++)
         {
@@ -80,6 +83,9 @@ public sealed class ResourceExchangeGcAllocationValidationTests
                 queue,
                 results,
                 economyEvents,
+                em,
+                storageQuery,
+                physicalReservations,
                 elapsedSeconds: i * DeltaSeconds);
         }
 
@@ -102,10 +108,14 @@ public sealed class ResourceExchangeGcAllocationValidationTests
                 queue,
                 results,
                 economyEvents,
+                em,
+                storageQuery,
+                physicalReservations,
                 elapsedSeconds: (WarmupFrames + i) * DeltaSeconds);
         }
 
         long allocatedBytes = GC.GetAllocatedBytesForCurrentThread() - allocatedBefore;
+        storageQuery.Dispose();
 
         Assert.AreEqual(0, requests.Length, "Steady-state validation should not leave pending exchange requests.");
         Assert.AreEqual(0, results.Length, "Steady-state queue ticking should not emit result rows before completion.");
@@ -266,10 +276,6 @@ public sealed class ResourceExchangeGcAllocationValidationTests
         em.SetComponentData(entity, new ResourceExchangeWalletComponent
         {
             FactionId = factionId,
-            Oil = 1000,
-            Fuel = 1000,
-            OilCapacity = 2000,
-            FuelCapacity = 2000,
             RushTickets = 5
         });
         em.SetComponentData(entity, new FactionEconomy { FactionId = factionId, Money = 1000 });
@@ -295,6 +301,14 @@ public sealed class ResourceExchangeGcAllocationValidationTests
         em.AddBuffer<ResourceExchangeQueueComponent>(entity);
         em.AddBuffer<ResourceExchangeResultComponent>(entity);
         em.AddBuffer<ResourceExchangeEconomyEventComponent>(entity);
+        ResourceExchangePhysicalStorageTestHelper.AddStorage(
+            em,
+            entity,
+            factionId,
+            oil: 1000,
+            fuel: 1000,
+            oilCapacity: 2000,
+            fuelCapacity: 2000);
 
         DynamicBuffer<ResourceExchangeRecipeComponent> recipes =
             em.GetBuffer<ResourceExchangeRecipeComponent>(entity);
@@ -331,9 +345,25 @@ public sealed class ResourceExchangeGcAllocationValidationTests
         results.EnsureCapacity(4);
         economyEvents.EnsureCapacity(4);
 
-        queue.Add(CreateQueueItem(1, factionId, ResourceExchangeResourceKind.Oil, ResourceExchangeResourceKind.Credits, 100, 42));
+        ResourceExchangeQueueComponent oilExport = CreateQueueItem(
+            1,
+            factionId,
+            ResourceExchangeResourceKind.Oil,
+            ResourceExchangeResourceKind.Credits,
+            100,
+            42);
+        Assert.IsTrue(ResourceExchangePhysicalStorageTestHelper.TryReserve(em, entity, oilExport, out _));
+        queue.Add(oilExport);
         queue.Add(CreateQueueItem(2, factionId, ResourceExchangeResourceKind.Materials, ResourceExchangeResourceKind.Credits, 120, 50));
-        queue.Add(CreateQueueItem(3, factionId, ResourceExchangeResourceKind.Credits, ResourceExchangeResourceKind.Fuel, 180, 60));
+        ResourceExchangeQueueComponent fuelImport = CreateQueueItem(
+            3,
+            factionId,
+            ResourceExchangeResourceKind.Credits,
+            ResourceExchangeResourceKind.Fuel,
+            180,
+            60);
+        Assert.IsTrue(ResourceExchangePhysicalStorageTestHelper.TryReserve(em, entity, fuelImport, out _));
+        queue.Add(fuelImport);
 
         return entity;
     }
@@ -376,6 +406,9 @@ public sealed class ResourceExchangeGcAllocationValidationTests
         DynamicBuffer<ResourceExchangeQueueComponent> queue,
         DynamicBuffer<ResourceExchangeResultComponent> results,
         DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
+        EntityManager entityManager,
+        EntityQuery storageQuery,
+        DynamicBuffer<ResourceExchangePhysicalReservationComponent> physicalReservations,
         float elapsedSeconds)
     {
         ResourceExchangeRequestValidationSystem.ProcessRequests(
@@ -390,7 +423,11 @@ public sealed class ResourceExchangeGcAllocationValidationTests
             queue,
             results,
             economyEvents,
-            elapsedSeconds);
+            elapsedSeconds,
+            entityManager,
+            storageQuery,
+            physicalReservations,
+            usePhysicalStorage: true);
         ResourceExchangeQueueTickSystem.TickQueue(
             enabled,
             ref economy,
@@ -400,7 +437,16 @@ public sealed class ResourceExchangeGcAllocationValidationTests
             queue,
             results,
             economyEvents,
-            DeltaSeconds);
+            default,
+            false,
+            default,
+            false,
+            default,
+            false,
+            DeltaSeconds,
+            entityManager,
+            physicalReservations,
+            usePhysicalStorage: true);
     }
 
     private static void RunValidationStep(

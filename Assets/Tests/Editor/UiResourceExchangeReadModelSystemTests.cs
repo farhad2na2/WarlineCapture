@@ -45,6 +45,7 @@ public sealed class UiResourceExchangeReadModelSystemTests
             Economy(),
             Materials(),
             Wallet(),
+            PhysicalResources(),
             new ResourceExchangeSummaryComponent
             {
                 ActiveCount = 1,
@@ -120,7 +121,8 @@ public sealed class UiResourceExchangeReadModelSystemTests
             Enabled(maxQueueItems: 3),
             Economy(),
             Materials(),
-            Wallet(fuel: 490, fuelCapacity: 500),
+            Wallet(),
+            PhysicalResources(fuel: 490, fuelCapacity: 500),
             new ResourceExchangeSummaryComponent(),
             em.GetBuffer<ResourceExchangeRecipeComponent>(exchange),
             em.GetBuffer<ResourceExchangeQueueComponent>(exchange),
@@ -161,6 +163,7 @@ public sealed class UiResourceExchangeReadModelSystemTests
             Economy(),
             Materials(),
             Wallet(),
+            PhysicalResources(),
             new ResourceExchangeSummaryComponent(),
             em.GetBuffer<ResourceExchangeRecipeComponent>(exchange),
             em.GetBuffer<ResourceExchangeQueueComponent>(exchange),
@@ -206,16 +209,26 @@ public sealed class UiResourceExchangeReadModelSystemTests
         };
     }
 
-    private static ResourceExchangeWalletComponent Wallet(int fuel = 20, int fuelCapacity = 500)
+    private static ResourceExchangeWalletComponent Wallet()
     {
         return new ResourceExchangeWalletComponent
         {
             FactionId = 1,
-            Oil = 400,
-            Fuel = fuel,
-            RushTickets = 2,
-            OilCapacity = 800,
-            FuelCapacity = fuelCapacity
+            RushTickets = 2
+        };
+    }
+
+    private static BuildingRuntimeFactionUsableFuelSummary PhysicalResources(
+        float fuel = 20f,
+        int fuelCapacity = 500)
+    {
+        return new BuildingRuntimeFactionUsableFuelSummary
+        {
+            FactionId = 1,
+            StoredOilBarrels = 400f,
+            StoredFuelBarrels = fuel,
+            OilStorageCapacity = 800,
+            FuelStorageCapacity = fuelCapacity
         };
     }
 

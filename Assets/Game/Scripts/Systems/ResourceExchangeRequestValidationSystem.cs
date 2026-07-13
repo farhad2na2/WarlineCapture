@@ -430,12 +430,13 @@ namespace Game.Runtime
                 return Rejected(request, recipe, ResourceExchangeReason.QueueFull);
 
             int outputAmount = CalculateOutputAmount(recipe, request.InputAmount);
-            bool physicalInput = usePhysicalStorage &&
-                                 ResourceExchangePhysicalStorageUtilitySystemHelper.IsPhysicalResource(
-                                     recipe.InputResource);
-            bool physicalOutput = usePhysicalStorage &&
-                                  ResourceExchangePhysicalStorageUtilitySystemHelper.IsPhysicalResource(
-                                      recipe.OutputResource);
+            bool physicalInput = ResourceExchangePhysicalStorageUtilitySystemHelper.IsPhysicalResource(
+                recipe.InputResource);
+            bool physicalOutput = ResourceExchangePhysicalStorageUtilitySystemHelper.IsPhysicalResource(
+                recipe.OutputResource);
+            if ((physicalInput || physicalOutput) && !usePhysicalStorage)
+                return Rejected(request, recipe, ResourceExchangeReason.StorageMissing);
+
             ResourceExchangeReason storageReason = physicalOutput
                 ? ResourceExchangeReason.None
                 : ValidateOutputStorage(economy, materials, wallet, recipe, outputAmount);

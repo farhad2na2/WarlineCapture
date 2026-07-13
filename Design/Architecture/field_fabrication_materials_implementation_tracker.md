@@ -73,16 +73,16 @@ Dependency direction remains inward toward components/config/contracts/runtime. 
 
 ## Progress Summary
 
-Overall implementation progress: 25% (26/103 checklist items complete).
+Overall implementation progress: 26% (27/103 checklist items complete).
 
-Planning and inventory findings are complete. Canonical Materials, player Credits, Resource Exchange Credits/Materials ownership, the V1 lifetime policy, and the live Match header projection are implemented. The physical Exchange transaction now reserves and mutates authoritative building Oil/Fuel storage when its reservation buffer is present; removal of the legacy wallet fields and migration of the Exchange UI read model remain before the ownership item can close.
+Planning and inventory findings are complete. Canonical Materials, player Credits, Resource Exchange Credits/Materials ownership, the V1 lifetime policy, and the live Match header projection are implemented. Exchange Oil/Fuel transactions and UI projection now use authoritative physical building storage and faction summaries; the Exchange wallet retains only faction identity, Rush Tickets, and version.
 
 Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation row counts. Update the numerator, denominator, table, status, and evidence log in the same commit as each completed batch.
 
 | Phase | Status | Complete | Total | Progress | Gate |
 |---|---|---:|---:|---:|---|
 | 0. Inventory and baseline | Complete | 12 | 12 | 100% | Ownership, file targets, compile state, focused behavior, p95/p99, and managed-allocation baselines are recorded. |
-| 1. Canonical tactical Materials and Credits | In progress | 10 | 13 | 77% | Canonical Materials data/startup, player Credits, Exchange Credits/Materials ownership, profile/tactical lifetime policy, ownership ratchet, and physical Oil/Fuel reservation transactions are complete. Build affordability, legacy Oil/Fuel field/UI removal, and combined transaction tests remain. |
+| 1. Canonical tactical Materials and Credits | In progress | 11 | 13 | 85% | Canonical Materials data/startup, player Credits, Exchange resource ownership, profile/tactical lifetime policy, ownership ratchet, and physical Oil/Fuel reservation transactions/read models are complete. Build affordability and combined deterministic transaction tests remain. |
 | 2. Config and building projection | Pending | 0 | 10 | 0% | Depot config is valid, authored, and projected consistently. |
 | 3. Oil destination routing | Pending | 0 | 11 | 0% | Tray routing is deterministic, reserved, and stable. |
 | 4. Oil-to-Materials conversion | Pending | 0 | 11 | 0% | Conversion is deterministic, capped, typed, and no-GC. |
@@ -151,7 +151,7 @@ Phase 0 exit criteria:
 - [x] Migrate Exchange Credits and Materials import/export to `FactionEconomy.Money` plus `FactionTacticalMaterialsComponent`.
 - [ ] Migrate Match HUD and build affordability to read this canonical component.
 - [x] Remove `ResourceExchangeWalletComponent.Credits` and `.Materials` authority without a steady-state dual-write period.
-- [ ] Remove or narrow Exchange wallet Oil/Fuel mirrors so physical storage/summaries remain authoritative.
+- [x] Remove or narrow Exchange wallet Oil/Fuel mirrors so physical storage/summaries remain authoritative.
 - [x] Document persistent profile Materials/Rush Tickets projection and tactical match-end policy.
 - [ ] Add deterministic tests for Credit/Materials grant, atomic spend, capacity, overflow rejection, and version behavior.
 - [x] Add an ownership contract test that fails if another tactical Credits or Materials authority is introduced.
@@ -434,15 +434,20 @@ For every completed batch append:
 - Unity compilation and generated assembly builds for `Game.UI.Shell.Ecs` and `Game.Tests.Editor` completed with zero errors. `git diff --check` passed. Existing generated-project reference-version warnings remain unchanged.
 - Next action: narrow the Exchange Oil/Fuel mirror against physical storage/summaries, then implement authored Materials build costs and the combined Credits/Materials transaction in Phase 5.
 
-### 2026-07-13 - Phase 1E Physical Exchange Oil/Fuel Transactions (In Progress)
+### 2026-07-13 - Phase 1E Physical Exchange Oil/Fuel Transactions And Ownership Closure
 
 - Added `ResourceExchangePhysicalReservationComponent` in `Game.Components` as an eight-line internal-capacity buffer. Each line identifies the queue item, authoritative `BuildingResourceStorageComponent` entity, Oil/Fuel kind, input/output reservation role, and amount; it is a transaction ledger, not another resource owner.
 - Extended `BuildingResourceStorageTransferSystemHelper` with exact reserved-input consumption and reserved-output delivery mutations. Both paths reject missing reservation, insufficient stock, or capacity overflow and increment the existing storage version only on mutation.
 - Added `ResourceExchangePhysicalStorageUtilitySystemHelper` in `Game.Runtime`. Start requests deterministically sort eligible same-faction storage by runtime building id and entity, reserve physical input plus output capacity atomically, and roll back all lines on failure. Completion consumes reserved input and delivers reserved output; cancellation either releases or consumes input according to the existing refund window and always releases output capacity.
-- Wired request start, cancel, mission end, normal completion, blocked retry, rush completion, and rush-all completion through the physical transaction whenever the Exchange entity has the reservation buffer. Existing static overloads remain for fixture compatibility during this bounded migration; buffered transactions deliberately ignore contradictory wallet Oil/Fuel values.
+- Wired request start, cancel, mission end, normal completion, blocked retry, rush completion, and rush-all completion through the physical transaction whenever the Exchange entity has the reservation buffer. Legacy static overloads now reject Oil/Fuel recipes with typed `StorageMissing` instead of mutating or granting a nonphysical fallback.
 - The event-driven start path uses temporary native chunk/candidate data only when a request is processed. The recurring active-queue validation iterates the internal buffer and performs direct component reads with no snapshot or managed collection. No new ECS system, managed shell, MonoBehaviour update, assembly reference, or runtime default-assembly fallback was added.
 - Added six focused tests for deterministic multi-storage ordering, atomic rollback when output storage is missing, refundable/non-refundable cancellation, end-to-end request plus completion against physical storage, legacy-wallet non-mutation, and 512 steady-state completion validations at 0 managed bytes.
 - Validation passed in the isolated Unity project: physical transaction tests 6/6; existing request/queue/rush/GC Exchange regressions 22/22; Resource Exchange architecture plus ECS Burst guardrails 16/16. `Game.Runtime` and `Game.Tests.Editor` generated-project builds passed with zero errors; existing Unity reference-version warnings remain unchanged.
 - Evidence: `/private/tmp/wlc-field-fabrication-physical-storage-results.xml`, `/private/tmp/wlc-field-fabrication-physical-storage.log`, `/private/tmp/wlc-field-fabrication-exchange-regression-results.xml`, `/private/tmp/wlc-field-fabrication-exchange-regression.log`, `/private/tmp/wlc-field-fabrication-physical-architecture-results.xml`, and `/private/tmp/wlc-field-fabrication-physical-architecture.log`.
-- Checklist count remains 26/103 intentionally. The Phase 1 Oil/Fuel ownership item will be checked only after `ResourceExchangeWalletComponent.Oil/Fuel/OilCapacity/FuelCapacity` are removed, `UiResourceExchangeReadModelSystem` reads the canonical physical faction summary, all fixture fallbacks are migrated, and the no-mirror architecture ratchet passes.
-- Next action: migrate the Exchange read model and fixtures to `BuildingRuntimeFactionUsableFuelSummary`, remove the four legacy wallet fields and compatibility fallback, then rerun the complete Exchange/architecture/GC suite before checking the Phase 1 item.
+- Removed `ResourceExchangeWalletComponent.Oil`, `.Fuel`, `.OilCapacity`, and `.FuelCapacity`. `UiResourceExchangeReadModelSystem` now reads the player `BuildingRuntimeFactionUsableFuelSummary`; whole-barrel UI amounts floor fractional physical stock so displayed affordability cannot exceed reservable stock.
+- Migrated request, queue, rush, event, presentation, GC, performance, and PlayMode fixtures to authoritative `BuildingResourceStorageComponent` setup and reservation behavior. Added a test-only `ResourceExchangePhysicalStorageTestHelper`; no runtime assembly or dependency changed.
+- Added `ResourceExchangeWalletDoesNotMirrorPhysicalOilOrFuel` to the focused architecture guardrail and explicit legacy-overload rejection coverage.
+- Final isolated Unity validation passed 62/62 Exchange, ownership, Burst, GC, UI-read-model, and performance EditMode tests. The active Exchange path measured 0 managed bytes over 240 frames, average 0.029 ms, p95 0.027 ms, p99 0.032 ms, and max 0.039 ms. Queue/request GC tests remained 0 bytes over 512 measured frames. The focused PlayMode export flow passed 1/1 and verified immediate physical reservation, settlement consumption, and exact-once Credits output.
+- Evidence: `/private/tmp/wlc-field-fabrication-wallet-regression-rerun-results.xml`, `/private/tmp/wlc-field-fabrication-wallet-regression-rerun.log`, `/private/tmp/wlc-field-fabrication-wallet-playmode-rerun-results.xml`, `/private/tmp/wlc-field-fabrication-wallet-playmode-rerun.log`, and `/private/tmp/warlinecapture-resource-exchange-steady-state-performance.json`.
+- Checklist count is 27/103. Phase 1 is 11/13; canonical build-affordability projection and combined deterministic Credits/Materials transaction tests remain.
+- Next action: inspect the existing build affordability read model and placement transaction owner, then close the two remaining Phase 1 items without introducing UI-owned policy or dual resource writes.

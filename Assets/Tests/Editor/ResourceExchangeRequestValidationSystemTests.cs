@@ -46,12 +46,7 @@ public sealed class ResourceExchangeRequestValidationSystemTests
     {
         using World world = new(nameof(StartRequest_Accepted_ReservesInputAndCreatesQueueItem));
         EntityManager em = world.EntityManager;
-        Entity exchange = CreateExchangeEntity(em, wallet: new ResourceExchangeWalletComponent
-        {
-            FactionId = 1,
-            Oil = 500,
-            FuelCapacity = 1000
-        });
+        Entity exchange = CreateExchangeEntity(em, oil: 500);
         AddRecipe(em, exchange, ExportOilRecipe());
 
         int requestId = ResourceExchangeRequestValidationSystem.EnqueueStartRequest(
@@ -72,8 +67,9 @@ public sealed class ResourceExchangeRequestValidationSystemTests
         Assert.AreEqual(93, result.OutputAmount);
 
         ResourceExchangeWalletComponent wallet = em.GetComponentData<ResourceExchangeWalletComponent>(exchange);
-        Assert.AreEqual(300, wallet.Oil);
-        Assert.AreEqual(1u, wallet.Version);
+        Assert.AreEqual(500f, GetStoredOil(em, 1), 0.001f);
+        Assert.AreEqual(200f, GetReservedOil(em, 1), 0.001f);
+        Assert.AreEqual(0u, wallet.Version);
 
         DynamicBuffer<ResourceExchangeQueueComponent> queue = em.GetBuffer<ResourceExchangeQueueComponent>(exchange);
         Assert.AreEqual(1, queue.Length);
@@ -95,23 +91,14 @@ public sealed class ResourceExchangeRequestValidationSystemTests
         EntityManager em = world.EntityManager;
         Entity exportExchange = CreateExchangeEntity(
             em,
-            wallet: new ResourceExchangeWalletComponent
-            {
-                FactionId = 1,
-                Oil = 700
-            },
             factionId: 1,
+            oil: 700,
             maxQueueItems: 2);
         Entity importExchange = CreateExchangeEntity(
             em,
             allowAiExchange: true,
-            wallet: new ResourceExchangeWalletComponent
-            {
-                FactionId = 2,
-                Fuel = 100,
-                FuelCapacity = 1000
-            },
             factionId: 2,
+            fuel: 100,
             maxQueueItems: 2,
             credits: 1000);
         AddRecipe(em, exportExchange, ExportOilRecipe());
@@ -165,14 +152,15 @@ public sealed class ResourceExchangeRequestValidationSystemTests
         ResourceExchangeWalletComponent exportWallet =
             em.GetComponentData<ResourceExchangeWalletComponent>(exportExchange);
         Assert.AreEqual(1, exportWallet.FactionId);
-        Assert.AreEqual(400, exportWallet.Oil);
+        Assert.AreEqual(700f, GetStoredOil(em, 1), 0.001f);
+        Assert.AreEqual(300f, GetReservedOil(em, 1), 0.001f);
         Assert.AreEqual(0, em.GetComponentData<FactionEconomy>(exportExchange).Money);
-        Assert.AreEqual(2u, exportWallet.Version);
+        Assert.AreEqual(0u, exportWallet.Version);
         ResourceExchangeWalletComponent importWallet =
             em.GetComponentData<ResourceExchangeWalletComponent>(importExchange);
         Assert.AreEqual(2, importWallet.FactionId);
         Assert.AreEqual(600, em.GetComponentData<FactionEconomy>(importExchange).Money);
-        Assert.AreEqual(100, importWallet.Fuel);
+        Assert.AreEqual(100f, GetStoredFuel(em, 2), 0.001f);
         Assert.AreEqual(0u, importWallet.Version);
 
         DynamicBuffer<ResourceExchangeQueueComponent> exportQueue =
@@ -224,11 +212,7 @@ public sealed class ResourceExchangeRequestValidationSystemTests
         Entity exchange = CreateExchangeEntity(
             em,
             enabled: false,
-            wallet: new ResourceExchangeWalletComponent
-            {
-                FactionId = 1,
-                Oil = 500
-            });
+            oil: 500);
         AddRecipe(em, exchange, ExportOilRecipe());
 
         int requestId = ResourceExchangeRequestValidationSystem.EnqueueStartRequest(
@@ -242,7 +226,7 @@ public sealed class ResourceExchangeRequestValidationSystemTests
         UpdateSystem(world);
 
         AssertRejected(em, exchange, requestId, ResourceExchangeReason.ExchangeUnavailable);
-        Assert.AreEqual(500, em.GetComponentData<ResourceExchangeWalletComponent>(exchange).Oil);
+        Assert.AreEqual(500f, GetStoredOil(em, 1), 0.001f);
         Assert.AreEqual(0, em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Length);
     }
 
@@ -254,11 +238,7 @@ public sealed class ResourceExchangeRequestValidationSystemTests
         Entity exchange = CreateExchangeEntity(
             em,
             allowAiExchange: true,
-            wallet: new ResourceExchangeWalletComponent
-            {
-                FactionId = 1,
-                Oil = 500
-            });
+            oil: 500);
         AddRecipe(em, exchange, ExportOilRecipe());
 
         int requestId = ResourceExchangeRequestValidationSystem.EnqueueStartRequest(
@@ -285,11 +265,7 @@ public sealed class ResourceExchangeRequestValidationSystemTests
     {
         using World world = new(nameof(StartRequest_RejectsMissingRecipeLockedMissionAndInvalidAmount));
         EntityManager em = world.EntityManager;
-        Entity exchange = CreateExchangeEntity(em, wallet: new ResourceExchangeWalletComponent
-        {
-            FactionId = 1,
-            Oil = 500
-        });
+        Entity exchange = CreateExchangeEntity(em, oil: 500);
         AddRecipe(em, exchange, ExportOilRecipe(missionTag: "mission.other"));
 
         int missingRecipeRequest = ResourceExchangeRequestValidationSystem.EnqueueStartRequest(
@@ -319,7 +295,7 @@ public sealed class ResourceExchangeRequestValidationSystemTests
         AssertRejected(em, exchange, missingRecipeRequest, ResourceExchangeReason.RecipeLocked);
         AssertRejected(em, exchange, lockedRequest, ResourceExchangeReason.RecipeLocked);
         AssertRejected(em, exchange, stepRequest, ResourceExchangeReason.RecipeLocked);
-        Assert.AreEqual(500, em.GetComponentData<ResourceExchangeWalletComponent>(exchange).Oil);
+        Assert.AreEqual(500f, GetStoredOil(em, 1), 0.001f);
         Assert.AreEqual(0, em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Length);
     }
 
@@ -328,11 +304,7 @@ public sealed class ResourceExchangeRequestValidationSystemTests
     {
         using World world = new(nameof(StartRequest_RejectsInsufficientInput));
         EntityManager em = world.EntityManager;
-        Entity exchange = CreateExchangeEntity(em, wallet: new ResourceExchangeWalletComponent
-        {
-            FactionId = 1,
-            Oil = 100
-        });
+        Entity exchange = CreateExchangeEntity(em, oil: 100);
         AddRecipe(em, exchange, ExportOilRecipe());
 
         int insufficient = ResourceExchangeRequestValidationSystem.EnqueueStartRequest(
@@ -345,7 +317,7 @@ public sealed class ResourceExchangeRequestValidationSystemTests
         UpdateSystem(world);
 
         AssertRejected(em, exchange, insufficient, ResourceExchangeReason.InsufficientOil);
-        Assert.AreEqual(100, em.GetComponentData<ResourceExchangeWalletComponent>(exchange).Oil);
+        Assert.AreEqual(100f, GetStoredOil(em, 1), 0.001f);
         Assert.AreEqual(0, em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Length);
     }
 
@@ -354,12 +326,7 @@ public sealed class ResourceExchangeRequestValidationSystemTests
     {
         using World world = new(nameof(StartRequest_RejectsStorageFull));
         EntityManager em = world.EntityManager;
-        Entity exchange = CreateExchangeEntity(em, wallet: new ResourceExchangeWalletComponent
-        {
-            FactionId = 1,
-            Fuel = 990,
-            FuelCapacity = 1000
-        }, credits: 1000);
+        Entity exchange = CreateExchangeEntity(em, fuel: 990, fuelCapacity: 1000, credits: 1000);
         AddRecipe(em, exchange, ImportFuelRecipe());
 
         int requestId = ResourceExchangeRequestValidationSystem.EnqueueStartRequest(
@@ -382,11 +349,7 @@ public sealed class ResourceExchangeRequestValidationSystemTests
     {
         using World world = new(nameof(StartRequest_RejectsQueueFull));
         EntityManager em = world.EntityManager;
-        Entity exchange = CreateExchangeEntity(em, wallet: new ResourceExchangeWalletComponent
-        {
-            FactionId = 1,
-            Oil = 500
-        });
+        Entity exchange = CreateExchangeEntity(em, oil: 500);
         AddRecipe(em, exchange, ExportOilRecipe());
         DynamicBuffer<ResourceExchangeQueueComponent> queue = em.GetBuffer<ResourceExchangeQueueComponent>(exchange);
         queue.Add(new ResourceExchangeQueueComponent
@@ -406,7 +369,7 @@ public sealed class ResourceExchangeRequestValidationSystemTests
         UpdateSystem(world);
 
         AssertRejected(em, exchange, queueFull, ResourceExchangeReason.QueueFull);
-        Assert.AreEqual(500, em.GetComponentData<ResourceExchangeWalletComponent>(exchange).Oil);
+        Assert.AreEqual(500f, GetStoredOil(em, 1), 0.001f);
     }
 
     [Test]
@@ -462,7 +425,11 @@ public sealed class ResourceExchangeRequestValidationSystemTests
         int maxQueueItems = 1,
         int credits = 0,
         int materials = 0,
-        int materialsCapacity = 1000)
+        int materialsCapacity = 1000,
+        float oil = 0f,
+        float fuel = 0f,
+        int oilCapacity = 1000,
+        int fuelCapacity = 1000)
     {
         Entity entity = em.CreateEntity(
             typeof(ResourceExchangeRequestQueueComponent),
@@ -497,7 +464,66 @@ public sealed class ResourceExchangeRequestValidationSystemTests
         em.AddBuffer<ResourceExchangeQueueComponent>(entity);
         em.AddBuffer<ResourceExchangeResultComponent>(entity);
         em.AddBuffer<ResourceExchangeEconomyEventComponent>(entity);
+        em.AddBuffer<ResourceExchangePhysicalReservationComponent>(entity);
+        Entity storage = em.CreateEntity(typeof(BuildingResourceStorageComponent));
+        em.SetComponentData(storage, new BuildingResourceStorageComponent
+        {
+            RuntimeBuildingId = entity.Index + 1,
+            OwnerFactionId = factionId,
+            StoredOilBarrels = oil,
+            StoredFuelBarrels = fuel,
+            OilStorageCapacity = oilCapacity,
+            FuelStorageCapacity = fuelCapacity
+        });
         return entity;
+    }
+
+    private static float GetStoredOil(EntityManager em, byte factionId)
+    {
+        EntityQuery query = em.CreateEntityQuery(typeof(BuildingResourceStorageComponent));
+        using NativeArray<BuildingResourceStorageComponent> storages = query
+            .ToComponentDataArray<BuildingResourceStorageComponent>(Allocator.Temp);
+        float total = 0f;
+        for (int i = 0; i < storages.Length; i++)
+        {
+            if (storages[i].OwnerFactionId == factionId)
+                total += storages[i].StoredOilBarrels;
+        }
+
+        query.Dispose();
+        return total;
+    }
+
+    private static float GetStoredFuel(EntityManager em, byte factionId)
+    {
+        EntityQuery query = em.CreateEntityQuery(typeof(BuildingResourceStorageComponent));
+        using NativeArray<BuildingResourceStorageComponent> storages = query
+            .ToComponentDataArray<BuildingResourceStorageComponent>(Allocator.Temp);
+        float total = 0f;
+        for (int i = 0; i < storages.Length; i++)
+        {
+            if (storages[i].OwnerFactionId == factionId)
+                total += storages[i].StoredFuelBarrels;
+        }
+
+        query.Dispose();
+        return total;
+    }
+
+    private static float GetReservedOil(EntityManager em, byte factionId)
+    {
+        EntityQuery query = em.CreateEntityQuery(typeof(BuildingResourceStorageComponent));
+        using NativeArray<BuildingResourceStorageComponent> storages =
+            query.ToComponentDataArray<BuildingResourceStorageComponent>(Allocator.Temp);
+        float total = 0f;
+        for (int i = 0; i < storages.Length; i++)
+        {
+            if (storages[i].OwnerFactionId == factionId)
+                total += storages[i].ReservedOilOutboundBarrels;
+        }
+
+        query.Dispose();
+        return total;
     }
 
     private static void AddRecipe(EntityManager em, Entity exchange, ResourceExchangeRecipeComponent recipe)

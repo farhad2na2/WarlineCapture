@@ -56,7 +56,7 @@ public sealed class ResourceExchangeRushSystemTests
         EntityManager em = world.EntityManager;
         Entity exchange = CreateExchangeEntity(em, rushTickets: 5);
         AddRecipe(em, exchange, RushableRecipe(secondsPerTicket: 10, maxTickets: 3));
-        em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Add(CreateQueueItem(remainingSeconds: 30f));
+        AddQueueItem(em, exchange, CreateQueueItem(remainingSeconds: 30f));
 
         int requestId = ResourceExchangeRequestValidationSystem.EnqueueRushRequest(em, exchange, 1, 2, 1, 10);
 
@@ -85,7 +85,7 @@ public sealed class ResourceExchangeRushSystemTests
         EntityManager em = world.EntityManager;
         Entity exchange = CreateExchangeEntity(em, rushTickets: 1);
         AddRecipe(em, exchange, RushableRecipe(secondsPerTicket: 10, maxTickets: 3));
-        em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Add(CreateQueueItem(remainingSeconds: 30f));
+        AddQueueItem(em, exchange, CreateQueueItem(remainingSeconds: 30f));
 
         int requestId = ResourceExchangeRequestValidationSystem.EnqueueRushRequest(em, exchange, 1, 2, 1, 10);
 
@@ -104,7 +104,7 @@ public sealed class ResourceExchangeRushSystemTests
         EntityManager em = world.EntityManager;
         Entity exchange = CreateExchangeEntity(em, rushTickets: 5);
         AddRecipe(em, exchange, RushableRecipe(secondsPerTicket: 10, maxTickets: 3));
-        em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Add(CreateQueueItem(
+        AddQueueItem(em, exchange, CreateQueueItem(
             remainingSeconds: 30f,
             rushTicketsSpent: 2));
 
@@ -126,7 +126,7 @@ public sealed class ResourceExchangeRushSystemTests
         EntityManager em = world.EntityManager;
         Entity exchange = CreateExchangeEntity(em, rushTickets: 5);
         AddRecipe(em, exchange, RushableRecipe(secondsPerTicket: 10, maxTickets: 3));
-        em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Add(CreateQueueItem(
+        AddQueueItem(em, exchange, CreateQueueItem(
             remainingSeconds: 30f,
             state: ResourceExchangeQueueState.Blocked));
 
@@ -146,7 +146,7 @@ public sealed class ResourceExchangeRushSystemTests
         EntityManager em = world.EntityManager;
         Entity exchange = CreateExchangeEntity(em, rushTickets: 3);
         AddRecipe(em, exchange, RushableRecipe(secondsPerTicket: 30, maxTickets: 3));
-        em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Add(CreateQueueItem(
+        AddQueueItem(em, exchange, CreateQueueItem(
             remainingSeconds: 10f,
             outputAmount: 93));
 
@@ -178,9 +178,8 @@ public sealed class ResourceExchangeRushSystemTests
         EntityManager em = world.EntityManager;
         Entity exchange = CreateExchangeEntity(em, rushTickets: 4);
         AddRecipe(em, exchange, RushableRecipe(secondsPerTicket: 10, maxTickets: 3));
-        DynamicBuffer<ResourceExchangeQueueComponent> queue = em.GetBuffer<ResourceExchangeQueueComponent>(exchange);
-        queue.Add(CreateQueueItem(queueItemId: 1, remainingSeconds: 25f));
-        queue.Add(CreateQueueItem(queueItemId: 2, remainingSeconds: 15f));
+        AddQueueItem(em, exchange, CreateQueueItem(queueItemId: 1, remainingSeconds: 25f));
+        AddQueueItem(em, exchange, CreateQueueItem(queueItemId: 2, remainingSeconds: 15f));
 
         int requestId = ResourceExchangeRequestValidationSystem.EnqueueRushAllRequest(em, exchange, 4, 1, 10);
 
@@ -188,7 +187,8 @@ public sealed class ResourceExchangeRushSystemTests
 
         AssertRushAccepted(em, exchange, requestId, 4);
         Assert.AreEqual(0, em.GetComponentData<ResourceExchangeWalletComponent>(exchange).RushTickets);
-        queue = em.GetBuffer<ResourceExchangeQueueComponent>(exchange);
+        DynamicBuffer<ResourceExchangeQueueComponent> queue =
+            em.GetBuffer<ResourceExchangeQueueComponent>(exchange);
         Assert.AreEqual(ResourceExchangeQueueState.Completed, queue[0].State);
         Assert.AreEqual(ResourceExchangeQueueState.InProgress, queue[1].State);
         Assert.AreEqual(5f, queue[1].RemainingSeconds);
@@ -224,7 +224,19 @@ public sealed class ResourceExchangeRushSystemTests
         em.AddBuffer<ResourceExchangeQueueComponent>(entity);
         em.AddBuffer<ResourceExchangeResultComponent>(entity);
         em.AddBuffer<ResourceExchangeEconomyEventComponent>(entity);
+        ResourceExchangePhysicalStorageTestHelper.AddStorage(em, entity, oil: 1000);
         return entity;
+    }
+
+    private static void AddQueueItem(
+        EntityManager em,
+        Entity exchange,
+        in ResourceExchangeQueueComponent item)
+    {
+        Assert.IsTrue(
+            ResourceExchangePhysicalStorageTestHelper.TryReserve(em, exchange, item, out ResourceExchangeReason reason),
+            $"Physical reservation failed: {reason}");
+        em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Add(item);
     }
 
     private static void AddRecipe(EntityManager em, Entity exchange, ResourceExchangeRecipeComponent recipe)

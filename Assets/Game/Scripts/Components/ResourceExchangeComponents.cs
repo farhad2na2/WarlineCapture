@@ -166,11 +166,7 @@ namespace Game.Components
     public struct ResourceExchangeWalletComponent : IComponentData
     {
         public byte FactionId;
-        public int Oil;
-        public int Fuel;
         public int RushTickets;
-        public int OilCapacity;
-        public int FuelCapacity;
         public uint Version;
     }
 

@@ -50,10 +50,7 @@ public sealed class ResourceExchangeAriaAnnouncementSystemTests
     {
         using World world = new(nameof(StartRequest_Accepted_EmitsExchangeStartedAnnouncement));
         EntityManager em = world.EntityManager;
-        Entity exchange = CreateExchangeEntity(em, wallet: new ResourceExchangeWalletComponent
-        {
-            Oil = 500
-        });
+        Entity exchange = CreateExchangeEntity(em, oil: 500);
         AddRecipe(em, exchange, ExportOilRecipe());
 
         ResourceExchangeRequestValidationSystem.EnqueueStartRequest(
@@ -85,10 +82,7 @@ public sealed class ResourceExchangeAriaAnnouncementSystemTests
     {
         using World world = new(nameof(StartRequest_Rejected_EmitsInsufficientResourceAnnouncement));
         EntityManager em = world.EntityManager;
-        Entity exchange = CreateExchangeEntity(em, wallet: new ResourceExchangeWalletComponent
-        {
-            Oil = 50
-        });
+        Entity exchange = CreateExchangeEntity(em, oil: 50);
         AddRecipe(em, exchange, ExportOilRecipe());
 
         ResourceExchangeRequestValidationSystem.EnqueueStartRequest(
@@ -121,7 +115,11 @@ public sealed class ResourceExchangeAriaAnnouncementSystemTests
         using World world = new(nameof(TickQueue_Completed_EmitsExchangeCompleteAnnouncement));
         EntityManager em = world.EntityManager;
         Entity exchange = CreateExchangeEntity(em);
-        em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Add(CreateQueueItem(outputAmount: 93, remainingSeconds: 0.1f));
+        em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Add(CreateQueueItem(
+            inputResource: ResourceExchangeResourceKind.Credits,
+            reservedInputAmount: 0,
+            outputAmount: 93,
+            remainingSeconds: 0.1f));
 
         TickQueue(em, exchange, 0.2f);
 
@@ -144,15 +142,18 @@ public sealed class ResourceExchangeAriaAnnouncementSystemTests
     {
         using World world = new(nameof(TickQueue_StorageFull_EmitsExchangeBlockedAnnouncement));
         EntityManager em = world.EntityManager;
-        Entity exchange = CreateExchangeEntity(em, wallet: new ResourceExchangeWalletComponent
-        {
-            Fuel = 90,
-            FuelCapacity = 100
-        });
-        em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Add(CreateQueueItem(
+        Entity exchange = CreateExchangeEntity(em, fuel: 65, fuelCapacity: 100);
+        ResourceExchangeQueueComponent item = CreateQueueItem(
+            inputResource: ResourceExchangeResourceKind.Credits,
             outputResource: ResourceExchangeResourceKind.Fuel,
+            reservedInputAmount: 0,
             outputAmount: 25,
-            remainingSeconds: 10f));
+            remainingSeconds: 10f);
+        Assert.IsTrue(ResourceExchangePhysicalStorageTestHelper.TryReserve(em, exchange, item, out _));
+        BuildingResourceStorageComponent storage = ResourceExchangePhysicalStorageTestHelper.GetStorage(em);
+        storage.StoredFuelBarrels = 90f;
+        ResourceExchangePhysicalStorageTestHelper.SetStorage(em, storage);
+        em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Add(item);
 
         TickQueue(em, exchange, 0.2f);
 
@@ -212,7 +213,11 @@ public sealed class ResourceExchangeAriaAnnouncementSystemTests
 
     private static Entity CreateExchangeEntity(
         EntityManager em,
-        ResourceExchangeWalletComponent wallet = default)
+        ResourceExchangeWalletComponent wallet = default,
+        float oil = 0f,
+        float fuel = 0f,
+        int oilCapacity = 1000,
+        int fuelCapacity = 1000)
     {
         Entity entity = em.CreateEntity(
             typeof(ResourceExchangeRequestQueueComponent),
@@ -246,6 +251,14 @@ public sealed class ResourceExchangeAriaAnnouncementSystemTests
         em.AddBuffer<ResourceExchangeResultComponent>(entity);
         em.AddBuffer<ResourceExchangeEconomyEventComponent>(entity);
         em.AddBuffer<ResourceExchangeAriaAnnouncementComponent>(entity);
+        ResourceExchangePhysicalStorageTestHelper.AddStorage(
+            em,
+            entity,
+            wallet.FactionId,
+            oil,
+            fuel,
+            oilCapacity,
+            fuelCapacity);
         return entity;
     }
 
@@ -276,6 +289,7 @@ public sealed class ResourceExchangeAriaAnnouncementSystemTests
 
     private static ResourceExchangeQueueComponent CreateQueueItem(
         int queueItemId = 1,
+        ResourceExchangeResourceKind inputResource = ResourceExchangeResourceKind.Oil,
         ResourceExchangeResourceKind outputResource = ResourceExchangeResourceKind.Credits,
         int reservedInputAmount = 100,
         int outputAmount = 100,
@@ -287,7 +301,7 @@ public sealed class ResourceExchangeAriaAnnouncementSystemTests
             FactionId = 1,
             RecipeId = new FixedString128Bytes("exchange.rush.test"),
             RouteType = ResourceExchangeRouteType.Export,
-            InputResource = ResourceExchangeResourceKind.Oil,
+            InputResource = inputResource,
             OutputResource = outputResource,
             InputAmount = reservedInputAmount,
             ReservedInputAmount = reservedInputAmount,
@@ -346,7 +360,10 @@ public sealed class ResourceExchangeAriaAnnouncementSystemTests
             false,
             em.GetBuffer<ResourceExchangeAriaAnnouncementComponent>(exchange),
             true,
-            deltaSeconds);
+            deltaSeconds,
+            em,
+            em.GetBuffer<ResourceExchangePhysicalReservationComponent>(exchange),
+            usePhysicalStorage: true);
         em.SetComponentData(exchange, economy);
         em.SetComponentData(exchange, materials);
         em.SetComponentData(exchange, wallet);

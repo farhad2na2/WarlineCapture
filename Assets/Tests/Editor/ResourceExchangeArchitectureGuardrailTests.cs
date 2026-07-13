@@ -13,6 +13,8 @@ public sealed class ResourceExchangeArchitectureGuardrailTests
         "Assets/Game/Scripts/Systems/ResourceExchangeVisualPresentationSystemHelper.cs";
     private const string RequestValidationSystemPath =
         "Assets/Game/Scripts/Systems/ResourceExchangeRequestValidationSystem.cs";
+    private const string ResourceExchangeComponentsPath =
+        "Assets/Game/Scripts/Components/ResourceExchangeComponents.cs";
 
     private static readonly Regex TypeDeclarationRegex =
         new(@"\b(class|struct|interface)\s+([A-Za-z_][A-Za-z0-9_]*)", RegexOptions.Compiled);
@@ -157,6 +159,10 @@ public sealed class ResourceExchangeArchitectureGuardrailTests
                 nameof(ResourceExchangeManagedPresentationBoundaryDoesNotMutateAuthoritativeExchangeState),
                 test => test.ResourceExchangeManagedPresentationBoundaryDoesNotMutateAuthoritativeExchangeState(),
                 ref passed);
+            RunValidationStep(
+                nameof(ResourceExchangeWalletDoesNotMirrorPhysicalOilOrFuel),
+                test => test.ResourceExchangeWalletDoesNotMirrorPhysicalOilOrFuel(),
+                ref passed);
 
             Debug.Log($"[ResourceExchangeArchitectureGuardrail] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -291,6 +297,28 @@ public sealed class ResourceExchangeArchitectureGuardrailTests
             ManagedPresentationHelperPath,
             contents,
             PresentationBoundaryForbiddenAuthorityTokens);
+    }
+
+    [Test]
+    public void ResourceExchangeWalletDoesNotMirrorPhysicalOilOrFuel()
+    {
+        Assert.IsTrue(
+            File.Exists(ResourceExchangeComponentsPath),
+            $"{ResourceExchangeComponentsPath} was not found.");
+
+        string source = File.ReadAllText(ResourceExchangeComponentsPath);
+        Match declaration = Regex.Match(
+            source,
+            @"public\s+struct\s+ResourceExchangeWalletComponent\s*:\s*IComponentData\s*\{(?<body>[\s\S]*?)\n\s*\}",
+            RegexOptions.CultureInvariant);
+        Assert.IsTrue(declaration.Success, "ResourceExchangeWalletComponent declaration was not found.");
+
+        string body = declaration.Groups["body"].Value;
+        StringAssert.DoesNotContain(" Oil;", body);
+        StringAssert.DoesNotContain(" Fuel;", body);
+        StringAssert.DoesNotContain(" OilCapacity;", body);
+        StringAssert.DoesNotContain(" FuelCapacity;", body);
+        StringAssert.Contains(" RushTickets;", body);
     }
 
     private static List<string> FindProductionResourceExchangeFiles()

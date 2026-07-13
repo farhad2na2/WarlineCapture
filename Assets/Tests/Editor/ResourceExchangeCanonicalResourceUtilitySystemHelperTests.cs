@@ -6,11 +6,11 @@ using NUnit.Framework;
 public sealed class ResourceExchangeCanonicalResourceUtilitySystemHelperTests
 {
     [Test]
-    public void Credits_UseFactionEconomyWithoutMutatingOperationalWallet()
+    public void Credits_UseFactionEconomyWithoutMutatingRushWallet()
     {
         FactionEconomy economy = new FactionEconomy { FactionId = 1, Money = 1000 };
         FactionTacticalMaterialsComponent materials = Materials(current: 50, capacity: 100);
-        ResourceExchangeWalletComponent wallet = new ResourceExchangeWalletComponent { FactionId = 1, Oil = 20 };
+        ResourceExchangeWalletComponent wallet = new ResourceExchangeWalletComponent { FactionId = 1 };
 
         Assert.IsTrue(ResourceExchangeResourceUtilitySystemHelper.TrySpend(
             ref economy,
@@ -26,8 +26,59 @@ public sealed class ResourceExchangeCanonicalResourceUtilitySystemHelperTests
             40));
 
         Assert.AreEqual(790, economy.Money);
-        Assert.AreEqual(20, wallet.Oil);
         Assert.AreEqual(0u, wallet.Version);
+    }
+
+    [Test]
+    public void PhysicalResources_AreReadOnlyFromFactionStorageSummary()
+    {
+        FactionEconomy economy = new FactionEconomy { FactionId = 1 };
+        FactionTacticalMaterialsComponent materials = Materials(current: 0, capacity: 100);
+        ResourceExchangeWalletComponent wallet = new ResourceExchangeWalletComponent { FactionId = 1 };
+        BuildingRuntimeFactionUsableFuelSummary physicalResources =
+            new BuildingRuntimeFactionUsableFuelSummary
+            {
+                FactionId = 1,
+                StoredOilBarrels = 20.4f,
+                StoredFuelBarrels = 30.6f,
+                OilStorageCapacity = 80,
+                FuelStorageCapacity = 90
+            };
+
+        Assert.AreEqual(20, ResourceExchangeResourceUtilitySystemHelper.GetAmount(
+            economy,
+            materials,
+            wallet,
+            physicalResources,
+            ResourceExchangeResourceKind.Oil));
+        Assert.AreEqual(30, ResourceExchangeResourceUtilitySystemHelper.GetAmount(
+            economy,
+            materials,
+            wallet,
+            physicalResources,
+            ResourceExchangeResourceKind.Fuel));
+        Assert.AreEqual(80, ResourceExchangeResourceUtilitySystemHelper.GetCapacity(
+            materials,
+            wallet,
+            physicalResources,
+            ResourceExchangeResourceKind.Oil));
+        Assert.AreEqual(90, ResourceExchangeResourceUtilitySystemHelper.GetCapacity(
+            materials,
+            wallet,
+            physicalResources,
+            ResourceExchangeResourceKind.Fuel));
+        Assert.IsFalse(ResourceExchangeResourceUtilitySystemHelper.TrySpend(
+            ref economy,
+            ref materials,
+            ref wallet,
+            ResourceExchangeResourceKind.Oil,
+            1));
+        Assert.IsFalse(ResourceExchangeResourceUtilitySystemHelper.TryGrantImport(
+            ref economy,
+            ref materials,
+            ref wallet,
+            ResourceExchangeResourceKind.Fuel,
+            1));
     }
 
     [Test]

@@ -10,11 +10,11 @@ namespace Game.UI.Runtime
     [DisallowMultipleComponent]
     public sealed class UIShellContentView : MonoBehaviour
     {
-        internal const string CommanderBackgroundScrimName = "CommanderBackgroundScrim";
         [SerializeField] private UIShellView shellView;
         [SerializeField] private GameObject loadingContentPrefab;
         [SerializeField] private GameObject mainMenuContentPrefab;
         [SerializeField] private GameObject commanderProfileContentPrefab;
+        [SerializeField] private GameObject skirmishSetupContentPrefab;
         [SerializeField] private GameObject armoryContentPrefab;
         [SerializeField] private GameObject matchHudContentPrefab;
         [SerializeField] private GameObject buildDrawerPopupPrefab;
@@ -62,6 +62,7 @@ namespace Game.UI.Runtime
         public GameObject LoadingContentPrefab => loadingContentPrefab;
         public GameObject MainMenuContentPrefab => mainMenuContentPrefab;
         public GameObject CommanderProfileContentPrefab => commanderProfileContentPrefab;
+        public GameObject SkirmishSetupContentPrefab => skirmishSetupContentPrefab;
         public GameObject ArmoryContentPrefab => armoryContentPrefab;
         public GameObject MatchHudContentPrefab => matchHudContentPrefab;
         public GameObject BuildDrawerPopupPrefab => buildDrawerPopupPrefab;
@@ -85,7 +86,8 @@ namespace Game.UI.Runtime
             GameObject settingsPrefab = null,
             GameObject resourceExchangePrefab = null,
             GameObject ariaCommandAssistantPrefab = null,
-            GameObject commanderProfilePrefab = null)
+            GameObject commanderProfilePrefab = null,
+            GameObject skirmishSetupPrefab = null)
         {
             shellView = view;
             loadingContentPrefab = loadingPrefab;
@@ -95,6 +97,8 @@ namespace Game.UI.Runtime
             buildDrawerPopupPrefab = buildDrawerPrefab;
             if (commanderProfilePrefab != null)
                 commanderProfileContentPrefab = commanderProfilePrefab;
+            if (skirmishSetupPrefab != null)
+                skirmishSetupContentPrefab = skirmishSetupPrefab;
             if (fullMapPrefab != null)
                 fullMapPopupPrefab = fullMapPrefab;
             if (buildPlacementConfirmationPrefab != null)
@@ -125,7 +129,7 @@ namespace Game.UI.Runtime
                         InstallLoading();
                         break;
                     case UiShellCommandKind.EnterMenu:
-                        InstallMainMenu();
+                        CommanderProfileRouteLifecyclePresentation.InstallMainMenu(this);
                         break;
                     case UiShellCommandKind.EnterMatchHud:
                         InstallMatchHud();
@@ -234,96 +238,24 @@ namespace Game.UI.Runtime
             InstallRoot(loadingContentPrefab, UIShellRegionId.LoadingLayer);
         }
 
-        private void InstallMainMenu()
-        {
-            UnbindMatchHudThreatWarningHeader();
-            InstallSection(mainMenuContentPrefab, UIShellContentSectionId.MenuBackground, UIShellRegionId.MenuBackgroundRegion);
-            InstallSection(mainMenuContentPrefab, UIShellContentSectionId.Header, UIShellRegionId.HeaderRegion);
-            InstallMainMenuBody();
-            ClearRegion(UIShellRegionId.PopupLayer);
-        }
-
-        private void InstallMainMenuBody()
-        {
-            SetCommanderBackgroundScrim(false);
-            GameObject left = InstallSection(mainMenuContentPrefab, UIShellContentSectionId.Left, UIShellRegionId.LeftRegion);
-            GameObject middle = InstallSection(mainMenuContentPrefab, UIShellContentSectionId.Middle, UIShellRegionId.MiddleRegion);
-            GameObject right = InstallSection(mainMenuContentPrefab, UIShellContentSectionId.Right, UIShellRegionId.RightRegion);
-            GameObject footer = InstallSection(mainMenuContentPrefab, UIShellContentSectionId.Footer, UIShellRegionId.FooterRegion);
-            BindQuickCustomScreens(left, middle, right, footer);
-            BindGameStartButtons(left, middle, right, footer);
-            ClearRegion(UIShellRegionId.PopupLayer);
-        }
-
         public void InstallMenuRouteBody(UIRoute route)
         {
-            if (route == UIRoute.Armory)
-            {
-                InstallArmoryBody();
-                return;
-            }
-
-            if (route == UIRoute.CommandFeed)
-            {
-                InstallCommanderProfileBody();
-                return;
-            }
-
-            InstallMainMenuBody();
+            CommanderProfileRouteLifecyclePresentation.InstallMenuRouteBody(this, route);
         }
 
-        private void InstallCommanderProfileBody()
+        internal void InstallSkirmishSetupBody()
         {
             UnbindMatchHudThreatWarningHeader();
-            SetCommanderBackgroundScrim(true);
-            InstallSection(commanderProfileContentPrefab, UIShellContentSectionId.Left, UIShellRegionId.LeftRegion);
-            GameObject middle = InstallSection(commanderProfileContentPrefab, UIShellContentSectionId.Middle, UIShellRegionId.MiddleRegion);
-            InstallSection(commanderProfileContentPrefab, UIShellContentSectionId.Right, UIShellRegionId.RightRegion);
-            InstallSection(commanderProfileContentPrefab, UIShellContentSectionId.Footer, UIShellRegionId.FooterRegion);
-            BindCommanderProfile(middle);
-            ClearRegion(UIShellRegionId.PopupLayer);
+            CommanderProfileRouteLifecyclePresentation.ExitCommanderRoute(this);
+            ClearRegion(UIShellRegionId.LeftRegion);
+            ClearRegion(UIShellRegionId.MiddleRegion);
+            ClearRegion(UIShellRegionId.RightRegion);
+            ClearRegion(UIShellRegionId.FooterRegion);
+            GameObject setup = InstallRoot(skirmishSetupContentPrefab, UIShellRegionId.PopupLayer);
+            BindQuickCustomScreens(setup);
         }
 
-        private void SetCommanderBackgroundScrim(bool visible)
-        {
-            if (!TryGetRegionContentRoot(UIShellRegionId.MenuBackgroundRegion, out RectTransform contentRoot))
-                return;
-
-            Transform existing = contentRoot.Find(CommanderBackgroundScrimName);
-            if (!visible)
-            {
-                if (existing != null)
-                {
-                    DestroyRegionObject(existing.gameObject);
-                    MarkContentChanged();
-                }
-                return;
-            }
-
-            GameObject scrim = existing != null
-                ? existing.gameObject
-                : new GameObject(CommanderBackgroundScrimName, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
-            if (existing == null)
-                scrim.transform.SetParent(contentRoot, false);
-
-            RectTransform rect = scrim.GetComponent<RectTransform>();
-            Stretch(rect);
-            Image image = scrim.GetComponent<Image>();
-            image.color = new Color(0.015f, 0.018f, 0.014f, 0.34f);
-            image.raycastTarget = false;
-            scrim.transform.SetAsLastSibling();
-            MarkContentChanged();
-        }
-
-        private static void BindCommanderProfile(GameObject middle)
-        {
-            if (middle == null || !UiShellRuntimeGateway.TryReadCommanderProfile(out UiShellCommanderProfileModel profile))
-                return;
-
-            middle.GetComponent<CommanderProfileContentView>()?.Bind(profile);
-        }
-
-        private void InstallArmoryBody()
+        internal void InstallArmoryBody()
         {
             UnbindMatchHudThreatWarningHeader();
             InstallSection(armoryContentPrefab, UIShellContentSectionId.MenuBackground, UIShellRegionId.MenuBackgroundRegion);
@@ -351,7 +283,7 @@ namespace Game.UI.Runtime
             listView.SetInspectionPanel(rightView.InspectionPanel);
         }
 
-        private void BindQuickCustomScreens(params GameObject[] roots)
+        internal void BindQuickCustomScreens(params GameObject[] roots)
         {
             if (roots == null)
                 return;
@@ -368,7 +300,7 @@ namespace Game.UI.Runtime
             }
         }
 
-        private void BindGameStartButtons(params GameObject[] roots)
+        internal void BindGameStartButtons(params GameObject[] roots)
         {
             if (roots == null)
                 return;
@@ -850,7 +782,7 @@ namespace Game.UI.Runtime
             return instance;
         }
 
-        private GameObject InstallSection(GameObject prefab, UIShellContentSectionId sectionId, UIShellRegionId regionId)
+        internal GameObject InstallSection(GameObject prefab, UIShellContentSectionId sectionId, UIShellRegionId regionId)
         {
             if (prefab == null || !TryGetRegionContentRoot(regionId, out RectTransform contentRoot))
                 return null;
@@ -867,7 +799,7 @@ namespace Game.UI.Runtime
             return instance;
         }
 
-        private void ClearRegion(UIShellRegionId regionId)
+        internal void ClearRegion(UIShellRegionId regionId)
         {
             if (regionId == UIShellRegionId.RightRegion)
                 UnbindRightQuickRailBuildButton();
@@ -927,7 +859,7 @@ namespace Game.UI.Runtime
             }
         }
 
-        private void MarkContentChanged()
+        internal void MarkContentChanged()
         {
             unchecked
             {
@@ -935,7 +867,7 @@ namespace Game.UI.Runtime
             }
         }
 
-        private void UnbindMatchHudThreatWarningHeader()
+        internal void UnbindMatchHudThreatWarningHeader()
         {
             _matchHudHeaderContent = null;
             _mainMenuPlayUi?.BindMatchHudThreatJumpPanel(null);
@@ -972,7 +904,7 @@ namespace Game.UI.Runtime
             _mainMenuPlayUi.FullMapPopupCloseRequested -= CloseFullMapPopup;
         }
 
-        private bool TryGetRegionContentRoot(UIShellRegionId regionId, out RectTransform contentRoot)
+        internal bool TryGetRegionContentRoot(UIShellRegionId regionId, out RectTransform contentRoot)
         {
             contentRoot = null;
             if (shellView == null || !shellView.TryGetRegion(regionId, out UIShellRegionView region) || region == null)
@@ -991,7 +923,7 @@ namespace Game.UI.Runtime
             }
         }
 
-        private static void DestroyRegionObject(UnityEngine.Object target)
+        internal static void DestroyRegionObject(UnityEngine.Object target)
         {
             if (target == null)
                 return;
@@ -1002,7 +934,7 @@ namespace Game.UI.Runtime
                 DestroyImmediate(target);
         }
 
-        private static void Stretch(RectTransform rect)
+        internal static void Stretch(RectTransform rect)
         {
             if (rect == null)
                 return;

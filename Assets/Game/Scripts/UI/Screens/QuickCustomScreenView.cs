@@ -27,12 +27,15 @@ namespace Game.UI.Runtime
         [SerializeField] private TMP_Dropdown targetPriorityDropdown;
         [SerializeField] private UIToggleRowView playerAutoToggle;
         [SerializeField] private TMP_Dropdown winConditionDropdown;
+        [SerializeField] private UISegmentedControlView winConditionSegmented;
         [SerializeField] private UIToggleRowView fogOfWarToggle;
         [SerializeField] private UIToggleRowView intelRevealToggle;
         [SerializeField] private TMP_Dropdown startingResourcesDropdown;
+        [SerializeField] private UISegmentedControlView startingResourcesSegmented;
         [SerializeField] private TMP_InputField seedInput;
         [SerializeField] private TMP_Text mapNameText;
         [SerializeField] private Button resetButton;
+        [SerializeField] private Button randomizeSeedButton;
         [SerializeField] private Button launchButton;
 
         private static readonly string[] DifficultyLabels = { "EASY", "NORMAL", "HARD", "BRUTAL" };
@@ -42,6 +45,8 @@ namespace Game.UI.Runtime
         private static readonly string[] AttackFrequencyLabels = { "RARE", "NORMAL", "FREQUENT" };
         private static readonly string[] AggressionLabels = { "DEFENSIVE", "BALANCED", "AGGRESSIVE" };
         private static readonly string[] ExpansionLabels = { "OFF", "SLOW", "NORMAL", "FAST" };
+        private static readonly string[] WinConditionLabels = { "DESTROY", "SURVIVE", "SANDBOX" };
+        private static readonly string[] StartingResourcesLabels = { "STANDARD", "LOW", "HIGH" };
 
         private UiQuickCustomGameConfig _config;
         private IQuickCustomGameConfigStore _configStore;
@@ -60,6 +65,9 @@ namespace Game.UI.Runtime
 
             if (resetButton != null)
                 resetButton.onClick.RemoveListener(ResetToDefaults);
+
+            if (randomizeSeedButton != null)
+                randomizeSeedButton.onClick.RemoveListener(RandomizeSeed);
         }
 
         public void Bind(UiQuickCustomGameConfig config)
@@ -82,10 +90,16 @@ namespace Game.UI.Runtime
             BindSegment(expansionSegmented, ExpansionLabels, (int)config.Expansion);
             SetDropdownValue(targetPriorityDropdown, (int)config.TargetPriority);
             playerAutoToggle?.Bind("Player Auto AI", "Let the AI control your faction for simulation tests.", config.PlayerAutoAIEnabled);
-            SetDropdownValue(winConditionDropdown, (int)config.WinCondition);
+            if (winConditionSegmented != null)
+                BindSegment(winConditionSegmented, WinConditionLabels, (int)config.WinCondition);
+            else
+                SetDropdownValue(winConditionDropdown, (int)config.WinCondition);
             fogOfWarToggle?.Bind("FOG OF WAR", "Hide unexplored areas.", config.FogOfWar);
             intelRevealToggle?.Bind("INTEL REVEAL", "Reveal enemy tech on scout.", config.IntelReveal);
-            SetDropdownValue(startingResourcesDropdown, (int)config.StartingResources);
+            if (startingResourcesSegmented != null)
+                BindSegment(startingResourcesSegmented, StartingResourcesLabels, (int)config.StartingResources);
+            else
+                SetDropdownValue(startingResourcesDropdown, (int)config.StartingResources);
 
             if (seedInput != null)
                 seedInput.SetTextWithoutNotify(config.MapSeed.ToString());
@@ -126,10 +140,14 @@ namespace Game.UI.Runtime
             _config.Expansion = (UiAiExpansionSetting)GetSelectedSegment(expansionSegmented, (int)_config.Expansion);
             _config.TargetPriority = (UiAiTargetPriority)GetDropdownValue(targetPriorityDropdown, (int)_config.TargetPriority);
             _config.PlayerAutoAIEnabled = GetToggleValue(playerAutoToggle, _config.PlayerAutoAIEnabled);
-            _config.WinCondition = (UiQuickGameWinCondition)GetDropdownValue(winConditionDropdown, (int)_config.WinCondition);
+            _config.WinCondition = winConditionSegmented != null
+                ? (UiQuickGameWinCondition)GetSelectedSegment(winConditionSegmented, (int)_config.WinCondition)
+                : (UiQuickGameWinCondition)GetDropdownValue(winConditionDropdown, (int)_config.WinCondition);
             _config.FogOfWar = GetToggleValue(fogOfWarToggle, _config.FogOfWar);
             _config.IntelReveal = GetToggleValue(intelRevealToggle, _config.IntelReveal);
-            _config.StartingResources = (UiQuickGameStartingResources)GetDropdownValue(startingResourcesDropdown, (int)_config.StartingResources);
+            _config.StartingResources = startingResourcesSegmented != null
+                ? (UiQuickGameStartingResources)GetSelectedSegment(startingResourcesSegmented, (int)_config.StartingResources)
+                : (UiQuickGameStartingResources)GetDropdownValue(startingResourcesDropdown, (int)_config.StartingResources);
             _config.MapSeed = ReadSeed(_config.MapSeed);
             return _config;
         }
@@ -152,6 +170,9 @@ namespace Game.UI.Runtime
             if (resetButton != null)
                 resetButton.onClick.AddListener(ResetToDefaults);
 
+            if (randomizeSeedButton != null)
+                randomizeSeedButton.onClick.AddListener(RandomizeSeed);
+
             WireEnemyCountStepper();
             WireSegment(difficultySegmented, DifficultyLabels);
             WireSegment(startingMoneySegmented, StartingMoneyLabels);
@@ -161,11 +182,22 @@ namespace Game.UI.Runtime
             WireSegment(attackFrequencySegmented, AttackFrequencyLabels);
             WireSegment(aggressionSegmented, AggressionLabels);
             WireSegment(expansionSegmented, ExpansionLabels);
+            WireSegment(winConditionSegmented, WinConditionLabels);
+            WireSegment(startingResourcesSegmented, StartingResourcesLabels);
         }
 
         private void ResetToDefaults()
         {
             flowSystem.ResetToDefaults(this, _configStore);
+        }
+
+        private void RandomizeSeed()
+        {
+            _config.MapSeed = Random.Range(1, int.MaxValue);
+            if (seedInput != null)
+                seedInput.SetTextWithoutNotify(_config.MapSeed.ToString());
+
+            _configStore?.Apply(ReadConfigFromControls());
         }
 
         private void WireEnemyCountStepper()
@@ -375,11 +407,11 @@ namespace Game.UI.Runtime
         {
             return config.EnemyType switch
             {
-                UiQuickGameEnemyType.Defensive => "DISTRICT FORTRESS",
-                UiQuickGameEnemyType.Air => "AIRFIELD EDGE",
-                UiQuickGameEnemyType.Swarm => "DENSE CITY GRID",
-                UiQuickGameEnemyType.Random => "RANDOMIZED CITY",
-                _ => "PROJECT CITY OUTSKIRTS"
+                UiQuickGameEnemyType.Defensive => "SAHRIN FORTRESS",
+                UiQuickGameEnemyType.Air => "SAHRIN AIRFIELD",
+                UiQuickGameEnemyType.Swarm => "SAHRIN CITY GRID",
+                UiQuickGameEnemyType.Random => "RANDOMIZED SAHRIN",
+                _ => "SAHRIN OUTSKIRTS"
             };
         }
     }

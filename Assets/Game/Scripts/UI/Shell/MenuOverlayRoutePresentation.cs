@@ -25,6 +25,12 @@ namespace Game.UI.Runtime
                 return;
             }
 
+            if (route == UIRoute.Operations)
+            {
+                InstallOperationsBody(contentView);
+                return;
+            }
+
             CommanderProfileRouteLifecyclePresentation.InstallMenuRouteBody(contentView, route);
         }
 
@@ -42,6 +48,11 @@ namespace Game.UI.Runtime
         internal static void InstallMissionBriefingBody(this UIShellContentView contentView)
         {
             InstallBody(contentView, contentView.MissionBriefingContentPrefab);
+        }
+
+        internal static void InstallOperationsBody(this UIShellContentView contentView)
+        {
+            InstallBody(contentView, contentView.OperationsContentPrefab);
         }
 
         private static GameObject InstallBody(UIShellContentView contentView, GameObject prefab)

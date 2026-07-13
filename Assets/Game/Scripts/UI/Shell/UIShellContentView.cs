@@ -17,6 +17,7 @@ namespace Game.UI.Runtime
         [SerializeField] private GameObject skirmishSetupContentPrefab;
         [SerializeField] private GameObject campaignContentPrefab;
         [SerializeField] private GameObject missionBriefingContentPrefab;
+        [SerializeField] private GameObject operationsContentPrefab;
         [SerializeField] private GameObject armoryContentPrefab;
         [SerializeField] private GameObject matchHudContentPrefab;
         [SerializeField] private GameObject buildDrawerPopupPrefab;
@@ -67,6 +68,7 @@ namespace Game.UI.Runtime
         public GameObject SkirmishSetupContentPrefab => skirmishSetupContentPrefab;
         public GameObject CampaignContentPrefab => campaignContentPrefab;
         public GameObject MissionBriefingContentPrefab => missionBriefingContentPrefab;
+        public GameObject OperationsContentPrefab => operationsContentPrefab;
         public GameObject ArmoryContentPrefab => armoryContentPrefab;
         public GameObject MatchHudContentPrefab => matchHudContentPrefab;
         public GameObject BuildDrawerPopupPrefab => buildDrawerPopupPrefab;
@@ -93,7 +95,8 @@ namespace Game.UI.Runtime
             GameObject commanderProfilePrefab = null,
             GameObject skirmishSetupPrefab = null,
             GameObject campaignPrefab = null,
-            GameObject missionBriefingPrefab = null)
+            GameObject missionBriefingPrefab = null,
+            GameObject operationsPrefab = null)
         {
             shellView = view;
             loadingContentPrefab = loadingPrefab;
@@ -109,6 +112,8 @@ namespace Game.UI.Runtime
                 campaignContentPrefab = campaignPrefab;
             if (missionBriefingPrefab != null)
                 missionBriefingContentPrefab = missionBriefingPrefab;
+            if (operationsPrefab != null)
+                operationsContentPrefab = operationsPrefab;
             if (fullMapPrefab != null)
                 fullMapPopupPrefab = fullMapPrefab;
             if (buildPlacementConfirmationPrefab != null)

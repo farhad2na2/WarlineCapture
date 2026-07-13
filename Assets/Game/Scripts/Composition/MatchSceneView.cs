@@ -48,6 +48,7 @@ namespace Game.Composition
         [SerializeField] private GameStringsConfig gameStringsConfig;
         [SerializeField] private PrefabPreviewCameraConfig prefabPreviewCameraConfig;
         [SerializeField] private AIPlanEntryStartupConfig aiPlanEntryConfig;
+        [SerializeField] private ResourceExchangeRecipeConfigSet resourceExchangeConfig;
         [SerializeField] private List<AIControllerConfig> aiControllerConfigs = new();
 
         public Camera WorldCamera => worldCamera;
@@ -76,6 +77,7 @@ namespace Game.Composition
         public GameStringsConfig GameStringsConfig => gameStringsConfig;
         public PrefabPreviewCameraConfig PrefabPreviewCameraConfig => prefabPreviewCameraConfig;
         public AIPlanEntryStartupConfig AIPlanEntryConfig => aiPlanEntryConfig;
+        public ResourceExchangeRecipeConfigSet ResourceExchangeConfig => resourceExchangeConfig;
         public IReadOnlyList<AIControllerConfig> AIControllerConfigs => aiControllerConfigs;
 
         internal MatchBootstrapCompositionSystemHelper MatchBootstrap => matchBootstrapSystem;

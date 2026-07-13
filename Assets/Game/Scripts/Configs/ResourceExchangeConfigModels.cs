@@ -10,9 +10,27 @@ namespace Game.Configs
     {
         [SerializeField] private List<ResourceExchangeRecipeConfigEntry> recipes = new();
         [SerializeField] private List<ResourceExchangeScenarioGateConfigEntry> scenarioGates = new();
+        [SerializeField] private ResourceExchangeMaterialsBalanceConfig materialsBalance = new();
 
         public IReadOnlyList<ResourceExchangeRecipeConfigEntry> Recipes => recipes;
         public IReadOnlyList<ResourceExchangeScenarioGateConfigEntry> ScenarioGates => scenarioGates;
+        public ResourceExchangeMaterialsBalanceConfig MaterialsBalance => materialsBalance;
+    }
+
+    [Serializable]
+    public sealed class ResourceExchangeMaterialsBalanceConfig
+    {
+        [SerializeField, Min(0.01f)] private float oilOpportunityCreditsPerBarrel = 5f;
+        [SerializeField, Min(1)] private int depotAmortizationCycles = 300;
+        [SerializeField, Min(0f)] private float logisticsCreditsPerMaterial = 2f;
+        [SerializeField, Min(1f)] private float minimumImportMarkup = 1.5f;
+        [SerializeField, Min(1f)] private float maximumImportMarkup = 2f;
+
+        public float OilOpportunityCreditsPerBarrel => Mathf.Max(0f, oilOpportunityCreditsPerBarrel);
+        public int DepotAmortizationCycles => Mathf.Max(1, depotAmortizationCycles);
+        public float LogisticsCreditsPerMaterial => Mathf.Max(0f, logisticsCreditsPerMaterial);
+        public float MinimumImportMarkup => Mathf.Max(1f, minimumImportMarkup);
+        public float MaximumImportMarkup => Mathf.Max(MinimumImportMarkup, maximumImportMarkup);
     }
 
     [Serializable]

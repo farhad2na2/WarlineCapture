@@ -1,0 +1,136 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9242380c1e674cc5b0a925b70e88cbfc, type: 3}
+  m_Name: Game_ResourceExchange_Config
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.ResourceExchangeRecipeConfigSet
+  recipes:
+  - recipeId: exchange.export_oil_credits.standard
+    displayName: Export Oil
+    routeType: 0
+    inputResource: 2
+    outputResource: 0
+    inputAmountMin: 100
+    inputAmountMax: 1000
+    inputStep: 100
+    outputPerInput: 5
+    feePercent: 0.15
+    durationSecondsBase: 45
+    durationSecondsPerStep: 5
+    rushTicketSecondsPerTicket: 30
+    maxRushTickets: 3
+    requiresStorage: 1
+    requiresTransportPlane: 1
+    requiresTruckPresentation: 1
+    missionTag: custom.skirmish.legacy
+    disabledReason: 0
+    sortOrder: 10
+  - recipeId: exchange.export_materials_credits.standard
+    displayName: Export Materials
+    routeType: 0
+    inputResource: 1
+    outputResource: 0
+    inputAmountMin: 25
+    inputAmountMax: 500
+    inputStep: 25
+    outputPerInput: 1
+    feePercent: 0.2
+    durationSecondsBase: 45
+    durationSecondsPerStep: 5
+    rushTicketSecondsPerTicket: 30
+    maxRushTickets: 3
+    requiresStorage: 0
+    requiresTransportPlane: 1
+    requiresTruckPresentation: 1
+    missionTag: custom.skirmish.legacy
+    disabledReason: 0
+    sortOrder: 20
+  - recipeId: exchange.export_fuel_credits.standard
+    displayName: Export Fuel
+    routeType: 0
+    inputResource: 3
+    outputResource: 0
+    inputAmountMin: 100
+    inputAmountMax: 1000
+    inputStep: 100
+    outputPerInput: 4.5
+    feePercent: 0.2
+    durationSecondsBase: 45
+    durationSecondsPerStep: 5
+    rushTicketSecondsPerTicket: 30
+    maxRushTickets: 3
+    requiresStorage: 1
+    requiresTransportPlane: 1
+    requiresTruckPresentation: 1
+    missionTag: custom.skirmish.legacy
+    disabledReason: 0
+    sortOrder: 30
+  - recipeId: exchange.import_materials.emergency
+    displayName: Emergency Materials Airlift
+    routeType: 1
+    inputResource: 0
+    outputResource: 1
+    inputAmountMin: 1800
+    inputAmountMax: 9000
+    inputStep: 1800
+    outputPerInput: 0.05555556
+    feePercent: 0
+    durationSecondsBase: 90
+    durationSecondsPerStep: 15
+    rushTicketSecondsPerTicket: 30
+    maxRushTickets: 3
+    requiresStorage: 1
+    requiresTransportPlane: 1
+    requiresTruckPresentation: 1
+    missionTag: custom.skirmish.legacy
+    disabledReason: 0
+    sortOrder: 40
+  - recipeId: exchange.import_fuel.emergency
+    displayName: Emergency Fuel Airlift
+    routeType: 1
+    inputResource: 0
+    outputResource: 3
+    inputAmountMin: 2000
+    inputAmountMax: 10000
+    inputStep: 2000
+    outputPerInput: 0.05
+    feePercent: 0.1
+    durationSecondsBase: 90
+    durationSecondsPerStep: 15
+    rushTicketSecondsPerTicket: 30
+    maxRushTickets: 3
+    requiresStorage: 1
+    requiresTransportPlane: 1
+    requiresTruckPresentation: 1
+    missionTag: custom.skirmish.legacy
+    disabledReason: 0
+    sortOrder: 50
+  scenarioGates:
+  - scenarioTag: chapter.01.ftue
+    exchangeEnabled: 0
+    maxQueueItems: 0
+    allowRush: 0
+    allowWorldPresentation: 0
+    allowAiExchange: 0
+    disabledReason: 1
+  - scenarioTag: custom.skirmish.legacy
+    exchangeEnabled: 1
+    maxQueueItems: 2
+    allowRush: 1
+    allowWorldPresentation: 1
+    allowAiExchange: 0
+    disabledReason: 1
+  materialsBalance:
+    oilOpportunityCreditsPerBarrel: 5
+    depotAmortizationCycles: 300
+    logisticsCreditsPerMaterial: 2
+    minimumImportMarkup: 1.5
+    maximumImportMarkup: 2

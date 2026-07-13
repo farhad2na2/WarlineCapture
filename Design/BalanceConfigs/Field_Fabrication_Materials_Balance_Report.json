@@ -1,0 +1,49 @@
+{
+  "scenarioTag": "custom.skirmish.legacy",
+  "generatedFrom": {
+    "exchangeConfig": "Assets/Game/Configs/Scene/Game_ResourceExchange_Config.asset",
+    "depotConfig": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Ammunition_Depot_Config.asset"
+  },
+  "assumptions": {
+    "oilConsumedPerCycle": 4.0,
+    "materialsProducedPerCycle": 20,
+    "cycleDurationSeconds": 30.0,
+    "oilOpportunityCreditsPerBarrel": 5.0,
+    "depotInvestmentCredits": 45000,
+    "depotAmortizationCycles": 300,
+    "logisticsCreditsPerMaterial": 2.0,
+    "minimumImportMarkup": 1.5,
+    "maximumImportMarkup": 2.0
+  },
+  "localProduction": {
+    "materials": 6000,
+    "credits": 63000,
+    "creditsPerMaterial": 10.5,
+    "elapsedSeconds": 9000
+  },
+  "repeatedImports": {
+    "materials": 6000,
+    "credits": 108000,
+    "creditsPerMaterial": 18.0,
+    "minimumQueueSecondsAtCapacityTwo": 2700
+  },
+  "mixedStrategy": {
+    "materials": 6000,
+    "credits": 85500,
+    "creditsPerMaterial": 14.25,
+    "localShare": 0.5
+  },
+  "destroyedDepotRecovery": {
+    "materials": 1000,
+    "credits": 18000,
+    "creditsPerMaterial": 18.0,
+    "purpose": "Emergency construction recovery while local fabrication is unavailable"
+  },
+  "importMarkup": 1.7142857,
+  "materialsRoundTripRetention": 0.04444445,
+  "materialsRoundTripSafe": true,
+  "oilDirectExportCreditsPerBarrel": 4.25,
+  "oilFabricationExportCreditsPerBarrel": 4.0,
+  "oilFabricationExportSafe": true,
+  "conclusion": "Local fabrication is the dominant sustained strategy; imports restore agency at a 1.71x premium and neither tested conversion loop creates profit."
+}

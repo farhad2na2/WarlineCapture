@@ -1,7 +1,7 @@
 # Field Fabrication And Materials Implementation Tracker
 
 Date: 2026-07-12
-Status: In progress - Phase 7 Exchange and balance safety
+Status: In progress - Phase 8 AI, telemetry, and scenario safety
 Design source: `../Field_Fabrication_Materials_Design.md`
 
 ## Objective
@@ -73,9 +73,9 @@ Dependency direction remains inward toward components/config/contracts/runtime. 
 
 ## Progress Summary
 
-Overall implementation progress: 77% (79/103 checklist items complete).
+Overall implementation progress: 84% (87/103 checklist items complete).
 
-Planning, canonical resource ownership, depot config/projection, automated Oil routing, Oil-to-Materials conversion, authored construction costs, atomic dual-resource placement, typed Build Drawer affordability, versioned selected-depot status, typed depot production control, scenario-gated Resource Header routing, and responsive Phase 6 UI validation are complete. Active depots consume only unreserved physical Oil at the existing one-second cadence. Player placement resolves authored costs, reserves canonical Credits and Materials after geometry validation, and finalizes or refunds both by a typed transaction id. Phase 7 begins with production Exchange capability/config inspection before emergency-import balance is authored.
+Planning, canonical resource ownership, depot config/projection, automated Oil routing, Oil-to-Materials conversion, authored construction costs, atomic dual-resource placement, HUD/depot controls, and Exchange balance safety are complete. Active depots consume only unreserved physical Oil at the existing one-second cadence. The shipping Match now projects an explicitly gated Resource Exchange onto the canonical player faction entity; emergency Materials import costs 1.71x modeled local production, queue/capacity rules remain active, and tested conversion loops cannot create profit. Phase 8 begins with AI resource behavior, typed telemetry, and scenario recovery validation.
 
 Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation row counts. Update the numerator, denominator, table, status, and evidence log in the same commit as each completed batch.
 
@@ -88,7 +88,7 @@ Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation 
 | 4. Oil-to-Materials conversion | Complete | 11 | 11 | 100% | Conversion is deterministic, capacity-safe, typed, reservation-aware, and no-GC. |
 | 5. Credits + Materials construction | Complete | 11 | 11 | 100% | Atomic placement, rollback, authored cost projection, and Build Drawer dual-cost presentation pass. |
 | 6. HUD and selected-building UI | Complete | 11 | 11 | 100% | Live canonical header, typed Build Drawer affordability, selected-depot status/control, fail-closed Exchange routing, and responsive validation pass. |
-| 7. Exchange and balance safety | Pending | 0 | 8 | 0% | Import is expensive recovery; no arbitrage exists. |
+| 7. Exchange and balance safety | Complete | 8 | 8 | 100% | Shipping startup projection, emergency import markup, queue/capacity gates, anti-arbitrage tests, and strategy report pass. |
 | 8. AI, telemetry, and scenario safety | Pending | 0 | 7 | 0% | AI shares rules; scenarios cannot deadlock silently. |
 | 9. Integration, performance, and closeout | Pending | 0 | 9 | 0% | Architecture, GC, profiler, gameplay, and docs pass. |
 
@@ -274,14 +274,14 @@ Phase 6 exit criteria:
 
 ## Phase 7: Exchange And Balance Safety
 
-- [ ] Reclassify `Credits -> Materials` as an expensive emergency recovery recipe in config and UI copy.
-- [ ] Calculate local opportunity value from authored Oil value, conversion rate/time, depot investment, and logistics assumptions.
-- [ ] Start import pricing at 1.5x to 2.0x modeled local effective cost.
-- [ ] Keep Exchange queue duration, caps, and scenario gates active.
-- [ ] Ensure Exchange capacity validation uses canonical tactical Materials.
-- [ ] Add balance tests for `Materials -> Credits -> Materials` round-trip retention at or below 85%.
-- [ ] Add balance tests proving `Oil -> Materials -> Credits` cannot create Credits profit.
-- [ ] Add a simulation report comparing local production, repeated imports, mixed strategy, and destroyed-depot recovery.
+- [x] Reclassify `Credits -> Materials` as an expensive emergency recovery recipe in config and UI copy.
+- [x] Calculate local opportunity value from authored Oil value, conversion rate/time, depot investment, and logistics assumptions.
+- [x] Start import pricing at 1.5x to 2.0x modeled local effective cost.
+- [x] Keep Exchange queue duration, caps, and scenario gates active.
+- [x] Ensure Exchange capacity validation uses canonical tactical Materials.
+- [x] Add balance tests for `Materials -> Credits -> Materials` round-trip retention at or below 85%.
+- [x] Add balance tests proving `Oil -> Materials -> Credits` cannot create Credits profit.
+- [x] Add a simulation report comparing local production, repeated imports, mixed strategy, and destroyed-depot recovery.
 
 Phase 7 exit criteria:
 
@@ -553,3 +553,14 @@ For every completed batch append:
 - Unity validation passed after a full compile: Exchange read-model ownership 5/5, header routing/input safety 7/7, selected-depot responsive presentation 4/4, assembly/naming boundaries 31/31, and ECS Burst hot-path architecture 10/10. The architecture process emitted its passing marker before a Unity shutdown exit 133; all other final runs exited 0. `git diff --check` passed, with no compiler errors in the Unity runs.
 - Evidence: `/private/tmp/wlc-field-fabrication-phase6-read-model.log`, `/private/tmp/wlc-field-fabrication-phase6-header-routing-final.log`, `/private/tmp/wlc-field-fabrication-phase6-responsive-hud-final.log`, `/private/tmp/wlc-field-fabrication-phase6-architecture-final.log`, and `/private/tmp/wlc-field-fabrication-phase6-burst-final.log`.
 - Phase 6 is complete at 11/11. Checklist count is 79/103. Next action: begin Phase 7 by locating the production startup/projector and authored recipe source that create the player Exchange capability, then author and validate expensive emergency Materials import without assuming test-fixture capability exists in live scenarios.
+
+### 2026-07-13 - Phase 7 Production Exchange And Balance Safety
+
+- Added the shipping `Game_ResourceExchange_Config` and serialized it on `MatchSceneView`. The active `custom.skirmish.legacy` gate enables two queue slots with timed recipes; `chapter.01.ftue` remains explicitly disabled. `Emergency Materials Airlift` is the player-facing recovery route, with a 90-second base duration and canonical Materials capacity validation.
+- Added one-shot `ResourceExchangeStartupProjectionSystemHelper` execution after faction economy startup and before HUD binding. It resolves exactly one canonical player entity already owning `FactionEconomy` and `FactionTacticalMaterialsComponent`, adds/clears Exchange-only data at startup, and projects only recipes matching `CustomGameStartupStateComponent.GameModeId`. Missing gates and duplicate player economies fail closed. No parallel Credits/Materials owner, recurring managed loop, or runtime default-assembly fallback was added.
+- Authored balance assumptions produce a local effective cost of 10.5 Credits per Material and an import cost of 18 Credits per Material, a 1.71x emergency markup. Materials round-trip retention is 0.0445 (below 0.85), and Oil -> fabrication -> Materials export returns 4.0 Credits per Oil versus 4.25 for direct Oil export, so fabrication cannot be used to create export profit.
+- Added `Field_Fabrication_Materials_Balance_Report.json` comparing 6,000 Materials from local production (63,000 Credits modeled cost), repeated imports (108,000 Credits), a 50/50 mixed strategy (85,500 Credits), and destroyed-depot emergency recovery (18 Credits per Material).
+- Focused Unity validation passed after full compilation: shipping startup/balance/capacity/report 8/8, existing config guardrails 10/10, request validation 4/4, queue completion/refund 5/5, assembly/naming boundaries 31/31, and Burst hot-path architecture 10/10. The first Burst run detected one startup `ToEntityArray` debt increase; it was replaced with the established chunk iteration pattern and the rerun passed without raising the ceiling.
+- Resource Exchange steady-state GC validation measured 0 allocated bytes across 512 frames after 64 warmup frames. Several Unity processes emitted shutdown-only exits 133/139 after their passing markers; the final startup, request, architecture, and Burst runs exited 0 and no compiler errors were reported.
+- Evidence: `/private/tmp/wlc-field-fabrication-phase7-balance.log`, `/private/tmp/wlc-field-fabrication-phase7-config-regression.log`, `/private/tmp/wlc-field-fabrication-phase7-request-regression.log`, `/private/tmp/wlc-field-fabrication-phase7-queue-regression.log`, `/private/tmp/wlc-field-fabrication-phase7-gc.log`, `/private/tmp/wlc-field-fabrication-phase7-architecture.log`, and `/private/tmp/wlc-field-fabrication-phase7-burst-rerun.log`.
+- Phase 7 is complete at 8/8. Checklist count is 87/103. Next action: inspect current AI construction affordability and Oil destination pressure inputs, then add shared-rule AI behavior and typed Materials/logistics telemetry without hidden resources or managed hot-path work.

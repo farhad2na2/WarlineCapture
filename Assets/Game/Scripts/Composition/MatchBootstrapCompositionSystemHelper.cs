@@ -25,6 +25,7 @@ namespace Game.Composition
             ProjectStartupConfig,
             CustomGameStartup,
             AiStartup,
+            ResourceExchangeStartup,
             BindMainMenu,
             InitializeGameplayFeatures,
             FinalizeRuntimeState,
@@ -43,6 +44,7 @@ namespace Game.Composition
         private RuntimeGridBootstrapStartupSystemHelper _runtimeGridBootstrapSystem;
         private MapSurfaceRuntimeBootstrapSceneSystemHelper _mapSurfaceRuntimeBootstrapSystem;
         private CustomGameStartupSystemHelper _customGameStartupSystem;
+        private ResourceExchangeStartupProjectionSystemHelper _resourceExchangeStartupProjectionSystem;
         private readonly PerformanceDiagnosticsReferenceDiagnosticsSystemHelper _performanceDiagnosticsReferenceSystem = new();
         private readonly MatchIntroEcsStateQuery matchIntroStateQuery = new();
 
@@ -80,6 +82,8 @@ namespace Game.Composition
         public DayNightSystemConfig DayNightConfig => MatchScene != null ? MatchScene.DayNightConfig : null;
         public GameStringsConfig GameStringsConfig => MatchScene != null ? MatchScene.GameStringsConfig : null;
         public AIPlanEntryStartupConfig AIPlanEntryConfig => MatchScene != null ? MatchScene.AIPlanEntryConfig : null;
+        private ResourceExchangeRecipeConfigSet ResourceExchangeConfig =>
+            MatchScene != null ? MatchScene.ResourceExchangeConfig : null;
         public IReadOnlyList<AIControllerConfig> AIControllerConfigs => MatchScene != null ? MatchScene.AIControllerConfigs : Array.Empty<AIControllerConfig>();
         private FactionVisualSettingsConfig FactionVisualConfig => MatchScene != null ? MatchScene.FactionVisualConfig : null;
         private PrefabPreviewCameraConfig PrefabPreviewCameraConfig => MatchScene != null ? MatchScene.PrefabPreviewCameraConfig : null;
@@ -744,6 +748,24 @@ namespace Game.Composition
                         ResolveInitialFactionSpawnCell);
                     if (_pendingAiStartupResult.HasPlayerAutoMode)
                         _runtimeGameplayStateSystem.PlayerAutoModeEnabled = _pendingAiStartupResult.PlayerAutoModeEnabled;
+                    _gameplayStartStep = GameplayStartStep.ResourceExchangeStartup;
+                    break;
+
+                case GameplayStartStep.ResourceExchangeStartup:
+                    SetGameplayStartProgress(0.60f, "Preparing resource exchange");
+                    ResourceExchangeStartupProjectionSystemHelper exchangeStartup =
+                        ResolveResourceExchangeStartupProjectionSystemHelper(
+                            World.DefaultGameObjectInjectionWorld);
+                    ResourceExchangeStartupProjectionSystemHelper.Result exchangeResult =
+                        exchangeStartup != null
+                            ? exchangeStartup.Initialize(ResourceExchangeConfig)
+                            : default;
+                    if (!exchangeResult.Projected)
+                    {
+                        Debug.LogWarning(
+                            $"[MatchBootstrap] resourceExchangeProjectionSkipped reason={exchangeResult.Reason}");
+                    }
+
                     _gameplayStartStep = GameplayStartStep.BindMainMenu;
                     break;
 
@@ -822,6 +844,17 @@ namespace Game.Composition
 
             _customGameStartupSystem ??= new CustomGameStartupSystemHelper(world.EntityManager);
             return _customGameStartupSystem;
+        }
+
+        private ResourceExchangeStartupProjectionSystemHelper ResolveResourceExchangeStartupProjectionSystemHelper(
+            World world)
+        {
+            if (world == null || !world.IsCreated)
+                return null;
+
+            _resourceExchangeStartupProjectionSystem ??=
+                new ResourceExchangeStartupProjectionSystemHelper(world.EntityManager);
+            return _resourceExchangeStartupProjectionSystem;
         }
 
         private AIStartupSystem ResolveAIStartupSystem(World world)

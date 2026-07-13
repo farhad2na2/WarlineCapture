@@ -8,6 +8,10 @@ Treat `Design/AgentTasks/support-ftue_current.md` as the only source of current 
 
 If `Design/AgentTasks/support-ftue_current.md` says `Status: held`, stop. Do not scan `Design/AgentReports/` for new work, do not edit support behavior, do not write a report, and do not route another lane. Respond only that Support/FTUE is held for the 3D fresh-start reset and waiting for PM/user dispatch.
 
+## Pull Request Workflow
+
+For a task started after `Design/Architecture/agent_pull_request_review_merge_workflow.md` reaches `main`, work only in the assigned `codex/<task-id>-<slug>` worktree/branch, push and open/update the PR, and never merge it. A task already active at activation may finish through its grandfathered direct-`main` path. Record the workflow path in the handoff; the independent coordinator owns tracker administration, review, merge, and cleanup.
+
 ## On Every Heartbeat
 
 - Read `Design/AgentTasks/support-ftue_current.md`.
@@ -23,4 +27,4 @@ If `Design/AgentTasks/support-ftue_current.md` says `Status: held`, stop. Do not
 
 - Do not assume a task outside `Design/AgentTasks/support-ftue_current.md`.
 - Do not modify source docs or other lane task files unless explicitly asked.
-- Do not run `git add`, `git commit`, or `git push` unless PM/user explicitly assigns that git operation to Support/FTUE for a named file set.
+- Git commit/push authority for a new task is limited to its assigned feature branch and file allowlist. Never push that task directly to `main`, merge its PR, or delete its branch/worktree.

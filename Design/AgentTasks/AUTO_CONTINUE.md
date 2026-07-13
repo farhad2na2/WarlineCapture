@@ -2,6 +2,17 @@
 
 Use this when an agent should keep checking for work without the user manually typing `continue`.
 
+## Pull Request Workflow Activation
+
+`Design/Architecture/agent_pull_request_review_merge_workflow.md` is authoritative for git integration after it reaches `main`.
+
+- A task already in progress at activation is grandfathered and may finish through its existing direct-`main` procedure.
+- A task started afterward must run in its assigned isolated shared-object worktree on `codex/<task-id>-<slug>`. The implementation agent commits and pushes that branch, opens/updates the PR, and never merges it.
+- The independent review/merge coordinator owns findings, integration gates, administrative tracker/evidence commits, merge, and cleanup. All substantive fixes return to the implementation agent.
+- Record `Workflow path: pull request` or `Workflow path: grandfathered direct-main` in the required handoff.
+- Direct pushes remain technically open; branch protection/rulesets are not active through this bootstrap and require explicit user instruction.
+- Existing Jenkins and CI/performance contracts remain in force. Do not add GitHub Actions as a substitute.
+
 ## 2026-05-22 Global Fresh-Start Hold Override
 
 The project direction has shifted from the earlier 2D target-lock/M01 implementation loop to a fresh 3D direction.
@@ -68,21 +79,22 @@ On each heartbeat:
    - Designer M01 exception: if `Design/AgentTasks/designer_current.md` says `Status: active`, continue the assigned Designer report before report-history triage. Existing Gameplay, runtime, and QA reports are source context only for concrete conflicts in this flow.
    - Support/FTUE: `Design/AgentTasks/support-ftue_current.md`
    - QA/HCI: `Design/AgentTasks/qa-hci_current.md`
-4. Check whether your current task is still active and advances the M01 critical path.
-5. If your task is active and not completed, continue it.
-6. If your task is active and you cannot make visible progress before the next heartbeat, immediately write the required blocker report with the exact failed command, workspace, log path, missing dependency, and unblock owner.
-7. If you have changed files, generated captures, or completed/attempted validation and no matching report exists under `Design/AgentReports/`, stop and write the report before doing anything else.
-8. If validation just finished, immediately update the required report with the command/checks, output paths, pass/fail result, known gaps, cross-lane impacts, and next recommended task.
-9. If validation failed, was interrupted, or could not run because Codex/tool sandbox approval is required, immediately write the report with the exact command/log path and blocker owner.
-10. If your task is completed, verify that you wrote the required report under `Design/AgentReports/`.
-11. Before reporting `waiting`, `blocked`, or `idle`, identify who owns the next concrete deliverable.
-12. If your lane owns the next deliverable, do not wait. Continue the task or write the exact technical blocker in your required report file.
-13. If another lane owns the next deliverable, report the blocker clearly and wait.
-14. If no active lane task exists, the task is blocked by another lane, or the next task would drift outside the critical path, report the blocker clearly and wait.
+4. Classify the task under the pull request activation rule. For a new task, verify the assigned branch/worktree before editing; for an active grandfathered task, record that status and keep its established path.
+5. Check whether your current task is still active and advances the M01 critical path.
+6. If your task is active and not completed, continue it in the assigned task worktree.
+7. If your task is active and you cannot make visible progress before the next heartbeat, immediately write the required blocker report with the exact failed command, workspace, log path, missing dependency, and unblock owner.
+8. If you have changed files, generated captures, or completed/attempted validation and no matching report exists under `Design/AgentReports/`, stop and write the report before doing anything else.
+9. If validation just finished, immediately update the required report with the command/checks, output paths, pass/fail result, known gaps, cross-lane impacts, and next recommended task.
+10. If validation failed, was interrupted, or could not run because Codex/tool sandbox approval is required, immediately write the report with the exact command/log path and blocker owner.
+11. If your task is completed, verify that you wrote the required report under `Design/AgentReports/`; for a PR task, push the feature branch and open/update the PR without merging it.
+12. Before reporting `waiting`, `blocked`, or `idle`, identify who owns the next concrete deliverable.
+13. If your lane owns the next deliverable, do not wait. Continue the task or write the exact technical blocker in your required report file.
+14. If another lane owns the next deliverable, report the blocker clearly and wait.
+15. If no active lane task exists, the task is blocked by another lane, or the next task would drift outside the critical path, report the blocker clearly and wait.
 
 Do not start a task from another lane. Do not invent new tasks. Do not modify `Design/AgentTasks/` unless explicitly assigned by the PM assistant or user.
 
-Do not run `git add`, `git commit`, or `git push` unless PM/user explicitly assigns that git operation to your lane for a named file set. Default lane behavior is to write the required report and leave changed files for PM review and commit/push.
+For a new PR task, git commit/push authority is limited to the assigned feature branch and allowlist. Push and open/update the PR, but never merge, push directly to `main`, edit coordinator-owned tracker state, or delete the branch/worktree. Grandfathered tasks retain their established direct-`main` closeout only for the already-active scope.
 
 ## M01 Golden Playthrough Rule
 

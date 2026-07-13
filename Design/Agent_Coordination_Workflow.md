@@ -8,6 +8,8 @@ This document defines how the WarlineCapture PM assistant keeps the gameplay, UI
 
 Use it when an agent finishes work, gets blocked, changes a contract another lane depends on, or needs the next task. It does not replace the design docs. It is the operating layer that keeps those docs, the repo, and the active agents in sync.
 
+Git branch, shared-object worktree, pull request, review, merge, tracker-administration, and cleanup authority lives in `Design/Architecture/agent_pull_request_review_merge_workflow.md`. When this document or a lane heartbeat conflicts with that authority on git integration, the pull request workflow wins.
+
 ## Source Of Truth
 
 Primary project state:
@@ -15,6 +17,11 @@ Primary project state:
 - `Design/Project_State_Source.json`
 - `Design/Project_State_Dashboard.md`
 - `Tools/ProjectState/generate_project_state_dashboard.py`
+
+Git integration authority:
+
+- `Design/Architecture/agent_pull_request_review_merge_workflow.md`
+- `.github/pull_request_template.md`
 
 Active agent task board:
 
@@ -54,28 +61,40 @@ Rule: update the source document first, then regenerate generated outputs. Do no
 | Build agent | Jenkins-triggered builds, build queue/watch automation, build-log inspection, failure-summary reports, and CI handoff reporting for PM. It may trigger approved builds and investigate resulting logs, but it does not own gameplay/UI/art fixes unless PM explicitly reassigns them. | PM for priority and escalation, Gameplay/UI/QA when failures map to lane-owned code or validation gaps, Support/docs when CI workflow docs or task wiring must change. |
 | Support/docs/FTUE agent | FTUE design, ARIA tutorial flow, contracts, asset checklist, project-state tracking, handoff docs, priority lists. | Gameplay for typed tutorial actions and mission ids. UI for surfaces, assistant button/panel/card visuals, validation captures. |
 | Designer | Product/design coherence, README and design-index optimization, terminology alignment, source-of-truth hierarchy, player-facing flow clarity, UI/readability design review, and documentation pruning recommendations. | PM for priorities and accepted source-of-truth changes. Gameplay/UI/support/QA/art for cross-lane impacts, implementation feasibility, captures, and validation evidence. |
-| PM assistant | Intake, sync review, validation gate, priority ordering, cross-lane impact calls, progress tracking. | All lanes. |
+| PM assistant / review-merge coordinator | Intake, task dispatch, independent findings-first review, validation gate, priority ordering, cross-lane impact calls, tracker administration, PR merge, and branch/worktree cleanup. | All lanes. The implementation agent retains all substantive fixes and never merges its own PR. |
 
 ## Completion Report Required From Every Agent
 
 When an agent says work is done, require this report before accepting it:
 
 ```text
+Role and context:
 Lane:
-Task:
+Task ID and objective:
+Workflow path: pull request / grandfathered direct-main
+Branch:
+Worktree:
+Baseline commit:
+Head commit tested:
+PR URL:
 Files changed:
+Files intentionally not touched:
 Contracts touched:
 User-visible behavior:
+Architecture impact:
 Validation run:
 Validation result:
-Known gaps:
+Artifacts and logs:
+Risks:
+Untested paths:
 Cross-lane impacts:
-Next recommended task:
+Merge disposition:
+Next owner and action:
 ```
 
 `Contracts touched` means any changed API, prefab path, route id, mission id, data schema, asset path, reason code, UI element id, FTUE target id, or validation command.
 
-Codex completion reports must use this exact same template in final responses after implementation work, reviews, fixes, validation passes, or handoff/spec updates. If a field does not apply, write `None` or `Not run` instead of omitting it.
+Codex completion reports must use this template in final responses after implementation work, reviews, fixes, validation passes, or handoff/spec updates. The authoritative pull request workflow contains the complete handoff field set for PR implementation and review/merge work. If a field does not apply, write `None` or `Not run` instead of omitting it.
 
 Codex must also save the same completion report to:
 
@@ -106,6 +125,8 @@ If a heartbeat fires and the agent has changed files or generated captures but h
 ## Continue Workflow
 
 When the user tells an agent `continue`, that agent should read its lane file under `Design/AgentTasks/` and continue that task unless the user gives a newer direct instruction.
+
+For a task started after the pull request workflow reaches `main`, `continue` means resume the assigned isolated worktree and `codex/<task-id>-<slug>` branch. The implementation agent pushes and opens/updates the PR but never merges it. A task already in progress at activation may finish through its grandfathered direct-`main` path; record the workflow path in its handoff.
 
 The PM assistant owns task dispatch updates in `Design/AgentTasks/` after reviewing reports and cross-lane dependencies.
 
@@ -332,27 +353,20 @@ WarlineCapture tactical gameplay is ECS-first. Only Canvas UI is allowed to be n
 - Periodic hygiene: whenever the PM assistant closes a major milestone slice (example: moving off M01 critical path), skim this document for rules that never triggered during the slice and propose deletes or merges.
 - Token/credit instrumentation is optional and lightweight: per-provider dashboards already give ground-truth spend. Do **not** require per-message token counting unless tooling exposes it reliably. Prefer **cheap proxy metrics** you can jot in weekly notes: lane, task id, approximate round trips to acceptance, oversize-context incidents (whole-tree scans), rework count ( reopened reports). Review proxies against weekly spend totals and adjust habits, not individual chat micro-optimizations.
 
-## Commit And Push Policy
+## Pull Request Integration Policy
 
-The PM assistant should commit and push coherent accepted WarlineCapture work when it is safe to do so.
+For every task started after `Design/Architecture/agent_pull_request_review_merge_workflow.md` reaches `main`:
 
-Lane agents must not run `git add`, `git commit`, or `git push` unless the user or PM assistant explicitly asks that lane to do so for a named file set. By default, lane agents write reports and leave changed files in the worktree for PM review.
+- Use a short-lived `codex/<task-id>-<slug>` branch in an isolated shared-object git worktree.
+- The implementation agent commits substantive task work, pushes the feature branch, opens the PR, and handles substantive review revisions. It never merges.
+- The independent review/merge coordinator reports findings first, returns substantive fixes to the implementation agent, runs the final risk-based integration gates, and may add only administrative tracker/evidence commits.
+- The coordinator merges accepted work and deletes the branch/worktree. Do not mix unrelated user/agent changes into the PR.
+- Existing tasks at activation are grandfathered and may finish through their established direct-`main` procedure.
+- Direct pushes remain technically open. This workflow does not activate or claim GitHub branch protection/rulesets; those require a later explicit user instruction.
+- All agents currently share one GitHub identity, so independence is proven by role/context separation and evidence, not a GitHub approval count.
+- Preserve Jenkins and existing CI/performance contracts. Do not add GitHub Actions as part of this bootstrap.
 
-Safe means:
-
-- The task or PM update is complete enough to preserve.
-- Validation has passed, or any missing/failing validation is explicitly documented in the report.
-- The staged set is related and does not mix unrelated user changes into the PM batch.
-- Active task files and critical-path routing are not left stale.
-- The worktree is not in the middle of a partially edited file set.
-- The PM assistant has checked `git status --short` and staged only the accepted, coherent file set for the commit.
-
-Default behavior:
-
-- Commit after accepted handoff reviews, PM task-board reconciliation, tracking/dashboard updates, or validated implementation batches.
-- Push the commit to the active remote branch after the commit succeeds.
-- Do not commit/push if the repo contains unrelated or ambiguous changes that need user confirmation first.
-- Keep commits scoped by lane or PM coordination topic. Do not sweep all dirty files into a single mixed commit.
+The authoritative workflow defines the exact commands, handoff fields, revision loop, validation matrix, merge checks, and cleanup procedure.
 
 ## PM Assistant Review Response
 
@@ -360,16 +374,18 @@ When reviewing an agent handoff, the PM assistant should respond with:
 
 ```text
 Status: accepted / needs fixes / blocked
+PR and head reviewed:
+Findings, highest severity first:
 Reason:
 Validation accepted:
 Validation still needed:
 Cross-lane notices:
 Tracking updates:
-Next task:
+Next owner and action:
 ```
 
 If the agent is accepted and has no next task, assign the next highest-priority task from this workflow and the current project-state source.
 
 ## PM Assistant Limitation
 
-The PM assistant can only see work that is available in this repo, in terminal output, or pasted into the thread. Agents working in separate conversations must either commit/edit shared files, provide their changed file list and validation report, or paste their completion report here for review.
+The PM assistant can only see work that is available in this repo, a pushed feature branch/PR, terminal output, or pasted into the thread. Agents working in separate conversations must push their assigned PR branch and provide the required handoff, or provide the branch diff and evidence needed for review. Unpushed changes in another worktree are not reviewable integration evidence.

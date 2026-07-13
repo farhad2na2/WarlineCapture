@@ -91,6 +91,8 @@ Key project documents:
   Generated project-state dashboard. Regenerate with `python3 Tools/ProjectState/generate_project_state_dashboard.py`; do not edit by hand.
 - `Design/Agent_Coordination_Workflow.md`
   PM workflow for handoffs, validation gates, cross-lane contracts, lane ownership, and commit/push rules.
+- `Design/Architecture/agent_pull_request_review_merge_workflow.md`
+  Authoritative workflow for task worktrees, `codex/<task-id>-<slug>` branches, implementation ownership, independent review, risk-based validation, PR merge, and cleanup.
 - `Design/Designer_Role_And_Documentation_Workflow.md`
   Designer workflow for README/design-index clarity, terminology alignment, source-of-truth hierarchy, and documentation pruning.
 - `Design/Architecture/gameplay_solid_ecs_contract.md`
@@ -303,7 +305,9 @@ Current work routing:
 - The old M01 critical path is currently held for the 3D fresh-start reset unless PM/user explicitly reactivates it.
 - Do not infer active work from old `Design/AgentReports/` history.
 - Current assignments come from the relevant lane current-task file or a newer direct PM/user instruction.
-- PM owns final acceptance and commit/push routing.
+- New tasks started after the PR workflow bootstrap reaches `main` use the authoritative pull request workflow; tasks already in progress at activation are grandfathered and may finish through their existing direct-`main` path.
+- The implementation agent owns the feature branch, pushes it, and opens the PR but never merges it. The independent review/merge coordinator owns findings, integration gates, administrative tracker/evidence reconciliation, merge, and branch/worktree cleanup.
+- Direct pushes remain technically open. GitHub branch protection/rulesets are not active through this bootstrap and may be enabled only after explicit user instruction.
 
 ## UI/UX Roadmap Summary
 

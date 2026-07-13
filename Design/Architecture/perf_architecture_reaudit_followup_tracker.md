@@ -1,5 +1,7 @@
 # Performance / Architecture Re-audit Follow-up Tracker
 
+> **SUPERSEDED ACTIVE INSTRUCTIONS - 2026-07-13:** This file is retained as a historical task record and evidence index. Do not start or route new work from its Goal, Global Guardrails, phase checklists, Suggested Execution Order, or direct-`main` instructions. Current architecture/performance task authority is `Design/Architecture/architecture_performance_hardening_implementation_tracker.md`; git worktree, branch, pull request, review, merge, tracker-administration, and cleanup authority is `Design/Architecture/agent_pull_request_review_merge_workflow.md`. Preserve the historical checklist, progress snapshot, commands, and evidence below without rewriting them to match the newer workflow.
+
 ## Goal
 Turn the 2026-07-06 re-audit and work order into a fast, measurable implementation plan. Start with the remaining quick wins, especially Burst coverage, then move into visual verification and measured decomposition work. Keep every slice behavior-preserving unless a phase explicitly calls out a user-approved visual/config choice.
 

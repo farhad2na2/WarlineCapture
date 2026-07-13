@@ -16,7 +16,7 @@ namespace Game.Editor
         public const string ConfigPath =
             "Design/Architecture/performance_regression_accepted_baseline.json";
 
-        private const int ExpectedSchemaVersion = 3;
+        private const int ExpectedSchemaVersion = 4;
         private const double MaximumEditorP95Ms = 50d;
         private const double MaximumBaselineAndroidP95Ms = 33d;
         private const double MaximumRecommendedAndroidP95Ms = 33d;

@@ -40,8 +40,8 @@ public sealed class PerformanceProductBudgetValidatorTests
         PerformanceProductBudgetValidator.ValidateJson(json);
 
         JsonObject root = ParseConfig(json);
-        Assert.AreEqual(3, root["acceptedBaselineVersion"].GetValue<int>());
-        Assert.AreEqual(50d, root["editorP95FrameBudgetMs"].GetValue<double>());
+        Assert.AreEqual(4, root["acceptedBaselineVersion"].GetValue<int>());
+        Assert.AreEqual(20d, root["editorP95FrameBudgetMs"].GetValue<double>());
 
         JsonNode frames = root["productBudgets"]["androidFrameP95AfterWarmup"];
         Assert.AreEqual("lessThan", frames["comparison"].GetValue<string>());

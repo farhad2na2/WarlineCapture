@@ -253,8 +253,8 @@ The program is complete only when all of the following are true:
 | Red architecture gates | `2`: Campaign shell content is back below its frozen source ceiling. The current source-growth run now stops at four pre-existing resource/tactical `*SystemHelper` paths that lack exact ledger entries; separately owned audio and building-defense growth remain known downstream findings. The complete Phase 7 gate reports only the audio runtime view `Update`. The Resource Exchange popup no longer owns an `Update`; change-driven projection, a cheap version read, and the existing shell presentation loop replace its per-frame full model/string/UI rebuild. All 24 Scenario Lab coroutines are explicitly registered as lab-only after confirming enabled production scenes contain only `Menu` and `Match`. Tactical-materials config/startup and resource-hauler movement growth are exactly bounded; initial spawning, route clearance/hauling, Commander shell lifecycle, and Resource Exchange text projection are decomposed below their frozen ceilings. |
 | Red performance gates | `0`: the unchanged steady-state Match GC gate passes at `930 / 1,024` player-relevant bytes over 300 measured frames after 180 warmup frames, with every production runtime probe at zero. The latest canonical Match baseline passes over 766 frames at `5.23 ms` average, `8.16 ms` p95, `10.33 ms` p99, and zero measured allocation. |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
-| Last verified commit | `c786b9f64` on `main`; the APH-803/804 recorder, release evidence, CI, and device-collection integration passes focused Unity/Python contracts and affected assembly builds with zero compiler errors. |
-| Last update | 2026-07-13 - APH-803/804 implementation and CI evidence are integrated on `main`; clean package/device acceptance remains active. Campaign, Skirmish, and Mission Briefing overlay installation is extracted into a stateless presentation helper, returning `UIShellContentView` to `946 / 41,020` under its accepted `955 / 41,029` ceiling. All three route suites pass `4/4`, UI Runtime and Editor-test builds have zero errors, and Campaign is no longer a source-growth violation. The global source-growth run now stops first on four pre-existing resource/tactical helper ledger entries; audio/building-defense findings remain separately owned. A validated map rebake, clean package-compliant APK, unplugged-device evidence, and visual/texture pilots remain open. |
+| Last verified commit | `708345122` on `main`; the bounded menu-overlay extraction passes Skirmish, Campaign, and Mission Briefing route suites plus UI assembly builds with zero compiler errors. |
+| Last update | 2026-07-13 - APH-803/804 implementation and CI evidence are integrated on `main`; clean package/device acceptance remains active. Campaign shell content is back below its frozen source ceiling in `708345122`. APH-501 schema drift is corrected locally: the validator/test now require accepted baseline version 4 and the exact 20 ms Editor p95 ratchet; focused product-budget validation passes `5/5` with no budget value changed. The global source-growth run stops first on four pre-existing resource/tactical helper ledger entries; audio/building-defense findings remain separately owned. A validated map rebake, clean package-compliant APK, unplugged-device evidence, and visual/texture pilots remain open. |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -515,7 +515,7 @@ Goal: make residency and package size intentional while preserving visible quali
   - Validation: focused aggregation/evidence contract `6/6`, Unity compile clean, `git diff --check` clean; tooling commit `671a009aa` pushed to `main`.
   - Evidence: clean ARM64 IL2CPP release APK and AAB reports were generated and reviewed. APK artifact `463,359,198` bytes with SHA-256 `cb18f212...824f20`; AAB artifact `426,399,778` bytes with SHA-256 `c03558f2...7ac29`; evidence commits `a527e151e` and `ddfca3b27` are pushed to `main`.
 - [~] `APH-501` Add tracked budgets for APK/AAB size, installed size, peak allocated memory, texture memory, mesh memory, audio memory, and graphics-driver memory.
-  - Active result: schema 3 pins clean ARM64 IL2CPP release budgets at APK `<= 463,359,198` bytes and AAB `<= 426,399,778` bytes, including exact artifact commit, SHA-256, immutable evidence commit, and report path. Installed size and absolute peak/texture/mesh/audio/graphics-driver memory limits remain fail-closed `null` until accepted release-device captures provide the required measurements.
+  - Active result: schema 4 pins clean ARM64 IL2CPP release budgets at APK `<= 463,359,198` bytes and AAB `<= 426,399,778` bytes, including exact artifact commit, SHA-256, immutable evidence commit, and report path. The validator/test now follow schema 4 and the accepted 20 ms Editor p95 ratchet. Installed size and absolute peak/texture/mesh/audio/graphics-driver memory limits remain fail-closed `null` until accepted release-device captures provide the required measurements. Evidence: `Design/AgentReports/2026-07-13_aph-501_product_budget_evidence_handoff.md`.
 - [~] `APH-502` Classify texture importers into UI, world albedo, world normal/mask, VFX, impostor/atlas, generated source/reference, and excluded/unreferenced groups.
   - Active result: deterministic tooling provisionally classifies all 3,464 tracked importers by semantic path/YAML evidence and exposes 105 overlaps. Final inclusion/exclusion buckets remain explicitly unaccepted until a clean same-revision Unity residency inventory and complete BuildReport texture-path export are available.
 - [x] `APH-503` Add an editor guard preventing mip streaming on UI, font, animation-data, sprite-atlas, and generated reference/source textures.
@@ -1416,11 +1416,21 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Status: Active; clean release package budgets accepted, release-device memory limits pending
 - Commit or worktree baseline: `1224f9bf4`
 - Stable commit/push: pending coordinated stable-slice commit
-- Files changed: schema-3 accepted baseline JSON, product-budget validator and focused tests, and performance regression contract
+- Files changed: schema-4 accepted baseline JSON, product-budget validator and focused tests, and performance regression contract
 - Behavior preserved/changed: tooling/config only; APK and AAB budgets now ratchet against exact clean APH-500 artifacts. Unmeasured installed size and absolute peak/texture/mesh/audio/graphics-driver memory limits remain fail-closed `null`.
 - Validation: `[PerformanceProductBudgetValidation] result=Passed tests=5`, Game Editor and Editor-test assemblies plus the complete 12-assembly matrix build with zero errors, and `git diff --check` passes
 - Residual risk: accepted release-device captures are still required before absolute installed-size and memory limits can replace measurement-required states
 - Next action: collect the required release artifact/device/scenario/profiler metrics under the serialized Android evidence lane
+
+### 2026-07-13 - APH-501 - Budget authority audit and schema-4 alignment
+
+- Status: stable contract repair; APH-501 remains active for measured release-device limits
+- Authority: accepted clean APK `<= 463,359,198` bytes and AAB `<= 426,399,778` bytes remain unchanged and resolve to their immutable release BuildReport evidence
+- Fail-closed limits: installed size and absolute peak/texture/mesh/audio/graphics-driver memory stay `null`; no current evidence supports inventing a numeric ceiling
+- Contract repair: the validator and focused test now require accepted baseline version 4 and the exact accepted 20 ms Editor p95 ratchet instead of stale schema-3/50 ms assertions
+- Validation: product-budget contract `5/5`, Editor-test build with zero errors, scoped whitespace passes, and the non-Unity Android gate audit passes `46/46`
+- Evidence: `Design/AgentReports/2026-07-13_aph-501_product_budget_evidence_handoff.md` and `/private/tmp/warline-aph501-budget-schema-r2.log`
+- Next action: produce a clean package-compliant release APK, collect accepted APH-804 device evidence, then capture same-artifact category residency before replacing any `null` limit
 
 ### 2026-07-10 - APH-311 and APH-601 - Android 96 m combine candidate rejection
 

@@ -36,7 +36,7 @@ public sealed class Aph807ResourceExchangeFlowPlayModeTests
             ResourceExchangeWalletComponent reservedWallet =
                 em.GetComponentData<ResourceExchangeWalletComponent>(exchange);
             Assert.AreEqual(300, reservedWallet.Oil, "The accepted export must reserve oil immediately.");
-            Assert.AreEqual(0, reservedWallet.Credits);
+            Assert.AreEqual(0, em.GetComponentData<FactionEconomy>(exchange).Money);
             Assert.AreEqual(1, em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Length);
             Assert.AreEqual(
                 ResourceExchangeQueueState.InProgress,
@@ -49,7 +49,7 @@ public sealed class Aph807ResourceExchangeFlowPlayModeTests
             ResourceExchangeWalletComponent settledWallet =
                 em.GetComponentData<ResourceExchangeWalletComponent>(exchange);
             Assert.AreEqual(300, settledWallet.Oil);
-            Assert.AreEqual(100, settledWallet.Credits);
+            Assert.AreEqual(100, em.GetComponentData<FactionEconomy>(exchange).Money);
             Assert.AreEqual(
                 ResourceExchangeQueueState.Completed,
                 em.GetBuffer<ResourceExchangeQueueComponent>(exchange)[0].State);
@@ -58,7 +58,7 @@ public sealed class Aph807ResourceExchangeFlowPlayModeTests
             queueTick.Update(world.Unmanaged);
             Assert.AreEqual(
                 100,
-                em.GetComponentData<ResourceExchangeWalletComponent>(exchange).Credits,
+                em.GetComponentData<FactionEconomy>(exchange).Money,
                 "A completed exchange must not apply its output twice.");
         }
         finally
@@ -72,6 +72,8 @@ public sealed class Aph807ResourceExchangeFlowPlayModeTests
         Entity exchange = em.CreateEntity(
             typeof(ResourceExchangeEnabledComponent),
             typeof(ResourceExchangeRequestQueueComponent),
+            typeof(FactionEconomy),
+            typeof(FactionTacticalMaterialsComponent),
             typeof(ResourceExchangeWalletComponent),
             typeof(ResourceExchangeSummaryComponent));
         em.SetComponentData(exchange, new ResourceExchangeEnabledComponent
@@ -87,8 +89,13 @@ public sealed class Aph807ResourceExchangeFlowPlayModeTests
             FactionId = FactionIdentity.PlayerFactionId,
             Oil = 500,
             OilCapacity = 1000,
-            MaterialsCapacity = 1000,
             FuelCapacity = 1000
+        });
+        em.SetComponentData(exchange, new FactionEconomy { FactionId = FactionIdentity.PlayerFactionId });
+        em.SetComponentData(exchange, new FactionTacticalMaterialsComponent
+        {
+            FactionId = FactionIdentity.PlayerFactionId,
+            Capacity = 1000
         });
         em.SetComponentData(exchange, new ResourceExchangeSummaryComponent
         {

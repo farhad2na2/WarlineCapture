@@ -157,7 +157,7 @@ public sealed class ResourceExchangeRushSystemTests
         AssertRushAccepted(em, exchange, requestId, 1);
         ResourceExchangeWalletComponent wallet = em.GetComponentData<ResourceExchangeWalletComponent>(exchange);
         Assert.AreEqual(2, wallet.RushTickets);
-        Assert.AreEqual(93, wallet.Credits);
+        Assert.AreEqual(93, em.GetComponentData<FactionEconomy>(exchange).Money);
 
         DynamicBuffer<ResourceExchangeQueueComponent> queue = em.GetBuffer<ResourceExchangeQueueComponent>(exchange);
         Assert.AreEqual(ResourceExchangeQueueState.Completed, queue[0].State);
@@ -199,6 +199,8 @@ public sealed class ResourceExchangeRushSystemTests
         Entity entity = em.CreateEntity(
             typeof(ResourceExchangeRequestQueueComponent),
             typeof(ResourceExchangeEnabledComponent),
+            typeof(FactionEconomy),
+            typeof(FactionTacticalMaterialsComponent),
             typeof(ResourceExchangeWalletComponent),
             typeof(ResourceExchangeSummaryComponent));
         em.SetComponentData(entity, new ResourceExchangeEnabledComponent
@@ -215,6 +217,8 @@ public sealed class ResourceExchangeRushSystemTests
             FactionId = 1,
             RushTickets = rushTickets
         });
+        em.SetComponentData(entity, new FactionEconomy { FactionId = 1 });
+        em.SetComponentData(entity, new FactionTacticalMaterialsComponent { FactionId = 1 });
         em.AddBuffer<ResourceExchangeRecipeComponent>(entity);
         em.AddBuffer<ResourceExchangeRequestComponent>(entity);
         em.AddBuffer<ResourceExchangeQueueComponent>(entity);

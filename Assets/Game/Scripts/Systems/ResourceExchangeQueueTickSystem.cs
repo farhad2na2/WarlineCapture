@@ -12,19 +12,22 @@ namespace Game.Runtime
             float deltaSeconds = (float)SystemAPI.Time.DeltaTime;
             foreach (var (
                          enabled,
+                         economy,
+                         materials,
                          wallet,
                          summary,
                          queue,
                          results,
-                         economyEvents,
                          exchangeEntity)
                      in SystemAPI.Query<
                          RefRO<ResourceExchangeEnabledComponent>,
+                         RefRW<FactionEconomy>,
+                         RefRW<FactionTacticalMaterialsComponent>,
                          RefRW<ResourceExchangeWalletComponent>,
                          RefRW<ResourceExchangeSummaryComponent>,
                          DynamicBuffer<ResourceExchangeQueueComponent>,
-                         DynamicBuffer<ResourceExchangeResultComponent>,
-                         DynamicBuffer<ResourceExchangeEconomyEventComponent>>()
+                         DynamicBuffer<ResourceExchangeResultComponent>>()
+                         .WithAll<ResourceExchangeEconomyEventComponent>()
                          .WithEntityAccess())
             {
                 bool hasDeltaFlyouts =
@@ -42,8 +45,12 @@ namespace Game.Runtime
                 DynamicBuffer<ResourceExchangeAriaAnnouncementComponent> ariaAnnouncements = hasAriaAnnouncements
                     ? state.EntityManager.GetBuffer<ResourceExchangeAriaAnnouncementComponent>(exchangeEntity)
                     : default;
+                DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents =
+                    SystemAPI.GetBuffer<ResourceExchangeEconomyEventComponent>(exchangeEntity);
                 TickQueue(
                     enabled.ValueRO,
+                    ref economy.ValueRW,
+                    ref materials.ValueRW,
                     ref wallet.ValueRW,
                     ref summary.ValueRW,
                     queue,
@@ -61,6 +68,8 @@ namespace Game.Runtime
 
         public static void TickQueue(
             in ResourceExchangeEnabledComponent enabled,
+            ref FactionEconomy economy,
+            ref FactionTacticalMaterialsComponent materials,
             ref ResourceExchangeWalletComponent wallet,
             ref ResourceExchangeSummaryComponent summary,
             DynamicBuffer<ResourceExchangeQueueComponent> queue,
@@ -70,6 +79,8 @@ namespace Game.Runtime
         {
             TickQueue(
                 enabled,
+                ref economy,
+                ref materials,
                 ref wallet,
                 ref summary,
                 queue,
@@ -86,6 +97,8 @@ namespace Game.Runtime
 
         public static void TickQueue(
             in ResourceExchangeEnabledComponent enabled,
+            ref FactionEconomy economy,
+            ref FactionTacticalMaterialsComponent materials,
             ref ResourceExchangeWalletComponent wallet,
             ref ResourceExchangeSummaryComponent summary,
             DynamicBuffer<ResourceExchangeQueueComponent> queue,
@@ -97,6 +110,8 @@ namespace Game.Runtime
         {
             TickQueue(
                 enabled,
+                ref economy,
+                ref materials,
                 ref wallet,
                 ref summary,
                 queue,
@@ -113,6 +128,8 @@ namespace Game.Runtime
 
         public static void TickQueue(
             in ResourceExchangeEnabledComponent enabled,
+            ref FactionEconomy economy,
+            ref FactionTacticalMaterialsComponent materials,
             ref ResourceExchangeWalletComponent wallet,
             ref ResourceExchangeSummaryComponent summary,
             DynamicBuffer<ResourceExchangeQueueComponent> queue,
@@ -126,6 +143,8 @@ namespace Game.Runtime
         {
             TickQueue(
                 enabled,
+                ref economy,
+                ref materials,
                 ref wallet,
                 ref summary,
                 queue,
@@ -142,6 +161,8 @@ namespace Game.Runtime
 
         public static void TickQueue(
             in ResourceExchangeEnabledComponent enabled,
+            ref FactionEconomy economy,
+            ref FactionTacticalMaterialsComponent materials,
             ref ResourceExchangeWalletComponent wallet,
             ref ResourceExchangeSummaryComponent summary,
             DynamicBuffer<ResourceExchangeQueueComponent> queue,
@@ -168,7 +189,7 @@ namespace Game.Runtime
 
                 if (item.State == ResourceExchangeQueueState.Blocked)
                 {
-                    ResourceExchangeReason blockedReason = ValidateOutputStorage(wallet, item);
+                    ResourceExchangeReason blockedReason = ValidateOutputStorage(economy, materials, wallet, item);
                     if (blockedReason != ResourceExchangeReason.None)
                         continue;
 
@@ -181,6 +202,8 @@ namespace Game.Runtime
                 if (item.State == ResourceExchangeQueueState.Completing)
                 {
                     CompleteQueueItem(
+                        ref economy,
+                        ref materials,
                         ref wallet,
                         item,
                         ref stateChanged,
@@ -203,7 +226,7 @@ namespace Game.Runtime
                     continue;
                 }
 
-                ResourceExchangeReason storageReason = ValidateOutputStorage(wallet, item);
+                ResourceExchangeReason storageReason = ValidateOutputStorage(economy, materials, wallet, item);
                 if (storageReason != ResourceExchangeReason.None)
                 {
                     item.State = ResourceExchangeQueueState.Blocked;
@@ -232,6 +255,8 @@ namespace Game.Runtime
                 if (item.RemainingSeconds <= 0f)
                 {
                     CompleteQueueItem(
+                        ref economy,
+                        ref materials,
                         ref wallet,
                         item,
                         ref stateChanged,
@@ -254,6 +279,8 @@ namespace Game.Runtime
         }
 
         public static bool TryCompleteQueueItem(
+            ref FactionEconomy economy,
+            ref FactionTacticalMaterialsComponent materials,
             ref ResourceExchangeWalletComponent wallet,
             in ResourceExchangeQueueComponent source,
             DynamicBuffer<ResourceExchangeResultComponent> results,
@@ -261,6 +288,8 @@ namespace Game.Runtime
             out ResourceExchangeQueueComponent completed)
         {
             return TryCompleteQueueItem(
+                ref economy,
+                ref materials,
                 ref wallet,
                 source,
                 results,
@@ -275,6 +304,8 @@ namespace Game.Runtime
         }
 
         public static bool TryCompleteQueueItem(
+            ref FactionEconomy economy,
+            ref FactionTacticalMaterialsComponent materials,
             ref ResourceExchangeWalletComponent wallet,
             in ResourceExchangeQueueComponent source,
             DynamicBuffer<ResourceExchangeResultComponent> results,
@@ -284,6 +315,8 @@ namespace Game.Runtime
             out ResourceExchangeQueueComponent completed)
         {
             return TryCompleteQueueItem(
+                ref economy,
+                ref materials,
                 ref wallet,
                 source,
                 results,
@@ -298,6 +331,8 @@ namespace Game.Runtime
         }
 
         public static bool TryCompleteQueueItem(
+            ref FactionEconomy economy,
+            ref FactionTacticalMaterialsComponent materials,
             ref ResourceExchangeWalletComponent wallet,
             in ResourceExchangeQueueComponent source,
             DynamicBuffer<ResourceExchangeResultComponent> results,
@@ -309,6 +344,8 @@ namespace Game.Runtime
             out ResourceExchangeQueueComponent completed)
         {
             return TryCompleteQueueItem(
+                ref economy,
+                ref materials,
                 ref wallet,
                 source,
                 results,
@@ -323,6 +360,8 @@ namespace Game.Runtime
         }
 
         public static bool TryCompleteQueueItem(
+            ref FactionEconomy economy,
+            ref FactionTacticalMaterialsComponent materials,
             ref ResourceExchangeWalletComponent wallet,
             in ResourceExchangeQueueComponent source,
             DynamicBuffer<ResourceExchangeResultComponent> results,
@@ -337,6 +376,8 @@ namespace Game.Runtime
         {
             bool stateChanged = false;
             CompleteQueueItem(
+                ref economy,
+                ref materials,
                 ref wallet,
                 source,
                 ref stateChanged,
@@ -353,6 +394,8 @@ namespace Game.Runtime
         }
 
         private static void CompleteQueueItem(
+            ref FactionEconomy economy,
+            ref FactionTacticalMaterialsComponent materials,
             ref ResourceExchangeWalletComponent wallet,
             in ResourceExchangeQueueComponent source,
             ref bool stateChanged,
@@ -367,7 +410,7 @@ namespace Game.Runtime
             out ResourceExchangeQueueComponent completed)
         {
             completed = source;
-            ResourceExchangeReason storageReason = ValidateOutputStorage(wallet, completed);
+            ResourceExchangeReason storageReason = ValidateOutputStorage(economy, materials, wallet, completed);
             if (storageReason != ResourceExchangeReason.None)
             {
                 completed.State = ResourceExchangeQueueState.Blocked;
@@ -394,7 +437,12 @@ namespace Game.Runtime
                 return;
             }
 
-            AddResourceAmount(ref wallet, completed.OutputResource, completed.OutputAmount);
+            ResourceExchangeResourceUtilitySystemHelper.TryGrantImport(
+                ref economy,
+                ref materials,
+                ref wallet,
+                completed.OutputResource,
+                completed.OutputAmount);
             completed.OutputApplied = 1;
             completed.ReservedInputAmount = 0;
             completed.RemainingSeconds = 0f;
@@ -481,18 +529,27 @@ namespace Game.Runtime
         }
 
         private static ResourceExchangeReason ValidateOutputStorage(
+            in FactionEconomy economy,
+            in FactionTacticalMaterialsComponent materials,
             in ResourceExchangeWalletComponent wallet,
             in ResourceExchangeQueueComponent item)
         {
             if (item.OutputResource == ResourceExchangeResourceKind.Credits)
                 return ResourceExchangeReason.None;
 
-            int capacity = GetCapacity(wallet, item.OutputResource);
+            int capacity = ResourceExchangeResourceUtilitySystemHelper.GetCapacity(
+                materials,
+                wallet,
+                item.OutputResource);
             if (capacity <= 0)
                 return ResourceExchangeReason.StorageMissing;
 
-            int current = GetResourceAmount(wallet, item.OutputResource);
-            return current + item.OutputAmount <= capacity
+            int current = ResourceExchangeResourceUtilitySystemHelper.GetAmount(
+                economy,
+                materials,
+                wallet,
+                item.OutputResource);
+            return current >= 0 && item.OutputAmount >= 0 && item.OutputAmount <= capacity - current
                 ? ResourceExchangeReason.None
                 : ResourceExchangeReason.StorageFull;
         }
@@ -529,80 +586,5 @@ namespace Game.Runtime
             summary.Version++;
         }
 
-        private static int GetResourceAmount(
-            in ResourceExchangeWalletComponent wallet,
-            ResourceExchangeResourceKind resourceKind)
-        {
-            switch (resourceKind)
-            {
-                case ResourceExchangeResourceKind.Credits:
-                    return wallet.Credits;
-                case ResourceExchangeResourceKind.Materials:
-                    return wallet.Materials;
-                case ResourceExchangeResourceKind.Oil:
-                    return wallet.Oil;
-                case ResourceExchangeResourceKind.Fuel:
-                    return wallet.Fuel;
-                case ResourceExchangeResourceKind.RushTickets:
-                    return wallet.RushTickets;
-                default:
-                    return 0;
-            }
-        }
-
-        private static void SetResourceAmount(
-            ref ResourceExchangeWalletComponent wallet,
-            ResourceExchangeResourceKind resourceKind,
-            int amount)
-        {
-            amount = math.max(0, amount);
-            switch (resourceKind)
-            {
-                case ResourceExchangeResourceKind.Credits:
-                    wallet.Credits = amount;
-                    break;
-                case ResourceExchangeResourceKind.Materials:
-                    wallet.Materials = amount;
-                    break;
-                case ResourceExchangeResourceKind.Oil:
-                    wallet.Oil = amount;
-                    break;
-                case ResourceExchangeResourceKind.Fuel:
-                    wallet.Fuel = amount;
-                    break;
-                case ResourceExchangeResourceKind.RushTickets:
-                    wallet.RushTickets = amount;
-                    break;
-            }
-        }
-
-        private static int GetCapacity(
-            in ResourceExchangeWalletComponent wallet,
-            ResourceExchangeResourceKind resourceKind)
-        {
-            switch (resourceKind)
-            {
-                case ResourceExchangeResourceKind.Materials:
-                    return wallet.MaterialsCapacity;
-                case ResourceExchangeResourceKind.Oil:
-                    return wallet.OilCapacity;
-                case ResourceExchangeResourceKind.Fuel:
-                    return wallet.FuelCapacity;
-                default:
-                    return int.MaxValue;
-            }
-        }
-
-        private static void AddResourceAmount(
-            ref ResourceExchangeWalletComponent wallet,
-            ResourceExchangeResourceKind resourceKind,
-            int amount)
-        {
-            if (amount <= 0)
-                return;
-
-            SetResourceAmount(ref wallet, resourceKind, GetResourceAmount(wallet, resourceKind) + amount);
-            wallet.Version++;
-        }
     }
 }

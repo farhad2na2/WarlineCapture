@@ -1,5 +1,6 @@
 using System.Globalization;
 using Game.Components;
+using Game.Runtime;
 using Game.UI.Shell.Contracts.Ecs;
 using Unity.Collections;
 using Unity.Entities;
@@ -47,12 +48,16 @@ namespace Game.UI.Shell.Ecs
             bool wroteExchange = false;
             foreach (var (
                          enabled,
+                         economy,
+                         materials,
                          wallet,
                          summary,
                          recipes,
                          queue)
                      in SystemAPI.Query<
                          RefRO<ResourceExchangeEnabledComponent>,
+                         RefRO<FactionEconomy>,
+                         RefRO<FactionTacticalMaterialsComponent>,
                          RefRO<ResourceExchangeWalletComponent>,
                          RefRO<ResourceExchangeSummaryComponent>,
                          DynamicBuffer<ResourceExchangeRecipeComponent>,
@@ -60,6 +65,8 @@ namespace Game.UI.Shell.Ecs
             {
                 WriteReadModel(
                     enabled.ValueRO,
+                    economy.ValueRO,
+                    materials.ValueRO,
                     wallet.ValueRO,
                     summary.ValueRO,
                     recipes,
@@ -81,6 +88,8 @@ namespace Game.UI.Shell.Ecs
 
         public static void WriteReadModel(
             in ResourceExchangeEnabledComponent enabled,
+            in FactionEconomy economy,
+            in FactionTacticalMaterialsComponent materials,
             in ResourceExchangeWalletComponent wallet,
             in ResourceExchangeSummaryComponent summary,
             DynamicBuffer<ResourceExchangeRecipeComponent> recipes,
@@ -98,8 +107,8 @@ namespace Game.UI.Shell.Ecs
             uiState.CompletedCount = summary.CompletedCount;
             uiState.MaxQueueItems = enabled.MaxQueueItems;
             uiState.QueueCapacityText = ToFixed32($"{summary.ActiveCount}/{math.max(0, enabled.MaxQueueItems)}");
-            uiState.CreditsText = ToFixed32(wallet.Credits.ToString(CultureInfo.InvariantCulture));
-            uiState.MaterialsText = ToFixed32(wallet.Materials.ToString(CultureInfo.InvariantCulture));
+            uiState.CreditsText = ToFixed32(economy.Money.ToString(CultureInfo.InvariantCulture));
+            uiState.MaterialsText = ToFixed32(materials.Current.ToString(CultureInfo.InvariantCulture));
             uiState.OilText = ToFixed32(wallet.Oil.ToString(CultureInfo.InvariantCulture));
             uiState.FuelText = ToFixed32(wallet.Fuel.ToString(CultureInfo.InvariantCulture));
             uiState.RushTicketsText = ToFixed32(wallet.RushTickets.ToString(CultureInfo.InvariantCulture));
@@ -107,7 +116,7 @@ namespace Game.UI.Shell.Ecs
             uiState.ClearCompletedEnabled = HasCompletedQueueItem(queue) ? (byte)1 : (byte)0;
             uiState.Version = math.max(uiState.Version + 1u, summary.Version);
 
-            WriteRecipeCards(enabled, wallet, recipes, queue, ref uiState, ref detail, cards);
+            WriteRecipeCards(enabled, economy, materials, wallet, recipes, queue, ref uiState, ref detail, cards);
             WriteQueueRows(wallet, recipes, queue, queueRows);
         }
 
@@ -141,6 +150,8 @@ namespace Game.UI.Shell.Ecs
 
         private static void WriteRecipeCards(
             in ResourceExchangeEnabledComponent enabled,
+            in FactionEconomy economy,
+            in FactionTacticalMaterialsComponent materials,
             in ResourceExchangeWalletComponent wallet,
             DynamicBuffer<ResourceExchangeRecipeComponent> recipes,
             DynamicBuffer<ResourceExchangeQueueComponent> queue,
@@ -198,7 +209,14 @@ namespace Game.UI.Shell.Ecs
             {
                 int selectedAmount = NormalizeInputAmount(recipes[selectedRecipeIndex], uiState.SelectedInputAmount);
                 uiState.SelectedInputAmount = selectedAmount;
-                detail = BuildDetail(enabled, wallet, recipes[selectedRecipeIndex], queue, selectedAmount);
+                detail = BuildDetail(
+                    enabled,
+                    economy,
+                    materials,
+                    wallet,
+                    recipes[selectedRecipeIndex],
+                    queue,
+                    selectedAmount);
             }
             else
             {
@@ -209,6 +227,8 @@ namespace Game.UI.Shell.Ecs
 
         private static UiResourceExchangeDetailComponent BuildDetail(
             in ResourceExchangeEnabledComponent enabled,
+            in FactionEconomy economy,
+            in FactionTacticalMaterialsComponent materials,
             in ResourceExchangeWalletComponent wallet,
             in ResourceExchangeRecipeComponent recipe,
             DynamicBuffer<ResourceExchangeQueueComponent> queue,
@@ -218,6 +238,8 @@ namespace Game.UI.Shell.Ecs
             float duration = CalculateDuration(recipe, amount);
             ResourceExchangeReason reason = ValidateConfirm(
                 enabled,
+                economy,
+                materials,
                 wallet,
                 recipe,
                 amount,
@@ -405,6 +427,8 @@ namespace Game.UI.Shell.Ecs
 
         private static ResourceExchangeReason ValidateConfirm(
             in ResourceExchangeEnabledComponent enabled,
+            in FactionEconomy economy,
+            in FactionTacticalMaterialsComponent materials,
             in ResourceExchangeWalletComponent wallet,
             in ResourceExchangeRecipeComponent recipe,
             int inputAmount,
@@ -419,16 +443,28 @@ namespace Game.UI.Shell.Ecs
             if (maxQueueItems <= 0 || activeQueueCount >= maxQueueItems)
                 return ResourceExchangeReason.QueueFull;
 
-            if (GetResourceAmount(wallet, recipe.InputResource) < inputAmount)
+            if (ResourceExchangeResourceUtilitySystemHelper.GetAmount(
+                    economy,
+                    materials,
+                    wallet,
+                    recipe.InputResource) < inputAmount)
                 return InsufficientReason(recipe.InputResource);
 
             if (recipe.RequiresStorage != 0 && recipe.OutputResource != ResourceExchangeResourceKind.Credits)
             {
-                int capacity = GetCapacity(wallet, recipe.OutputResource);
+                int capacity = ResourceExchangeResourceUtilitySystemHelper.GetCapacity(
+                    materials,
+                    wallet,
+                    recipe.OutputResource);
                 if (capacity <= 0)
                     return ResourceExchangeReason.StorageMissing;
 
-                if (GetResourceAmount(wallet, recipe.OutputResource) + outputAmount > capacity)
+                int currentOutput = ResourceExchangeResourceUtilitySystemHelper.GetAmount(
+                    economy,
+                    materials,
+                    wallet,
+                    recipe.OutputResource);
+                if (currentOutput < 0 || outputAmount < 0 || outputAmount > capacity - currentOutput)
                     return ResourceExchangeReason.StorageFull;
             }
 
@@ -456,40 +492,6 @@ namespace Game.UI.Shell.Ecs
             amount = math.clamp(amount, min, max);
             int completedSteps = (amount - min) / step;
             return math.clamp(min + completedSteps * step, min, max);
-        }
-
-        private static int GetResourceAmount(in ResourceExchangeWalletComponent wallet, ResourceExchangeResourceKind resourceKind)
-        {
-            switch (resourceKind)
-            {
-                case ResourceExchangeResourceKind.Credits:
-                    return wallet.Credits;
-                case ResourceExchangeResourceKind.Materials:
-                    return wallet.Materials;
-                case ResourceExchangeResourceKind.Oil:
-                    return wallet.Oil;
-                case ResourceExchangeResourceKind.Fuel:
-                    return wallet.Fuel;
-                case ResourceExchangeResourceKind.RushTickets:
-                    return wallet.RushTickets;
-                default:
-                    return 0;
-            }
-        }
-
-        private static int GetCapacity(in ResourceExchangeWalletComponent wallet, ResourceExchangeResourceKind resourceKind)
-        {
-            switch (resourceKind)
-            {
-                case ResourceExchangeResourceKind.Materials:
-                    return wallet.MaterialsCapacity;
-                case ResourceExchangeResourceKind.Oil:
-                    return wallet.OilCapacity;
-                case ResourceExchangeResourceKind.Fuel:
-                    return wallet.FuelCapacity;
-                default:
-                    return int.MaxValue;
-            }
         }
 
         private static ResourceExchangeReason InsufficientReason(ResourceExchangeResourceKind resourceKind)

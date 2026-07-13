@@ -48,6 +48,9 @@ public sealed class ResourceExchangeGcAllocationValidationTests
             em.GetComponentData<ResourceExchangeRequestQueueComponent>(exchange);
         ResourceExchangeEnabledComponent enabled =
             em.GetComponentData<ResourceExchangeEnabledComponent>(exchange);
+        FactionEconomy economy = em.GetComponentData<FactionEconomy>(exchange);
+        FactionTacticalMaterialsComponent materials =
+            em.GetComponentData<FactionTacticalMaterialsComponent>(exchange);
         ResourceExchangeWalletComponent wallet =
             em.GetComponentData<ResourceExchangeWalletComponent>(exchange);
         ResourceExchangeSummaryComponent summary =
@@ -68,6 +71,8 @@ public sealed class ResourceExchangeGcAllocationValidationTests
             RunSteadyStateFrame(
                 ref requestQueue,
                 enabled,
+                ref economy,
+                ref materials,
                 ref wallet,
                 ref summary,
                 recipes,
@@ -88,6 +93,8 @@ public sealed class ResourceExchangeGcAllocationValidationTests
             RunSteadyStateFrame(
                 ref requestQueue,
                 enabled,
+                ref economy,
+                ref materials,
                 ref wallet,
                 ref summary,
                 recipes,
@@ -242,6 +249,8 @@ public sealed class ResourceExchangeGcAllocationValidationTests
         Entity entity = em.CreateEntity(
             typeof(ResourceExchangeRequestQueueComponent),
             typeof(ResourceExchangeEnabledComponent),
+            typeof(FactionEconomy),
+            typeof(FactionTacticalMaterialsComponent),
             typeof(ResourceExchangeWalletComponent),
             typeof(ResourceExchangeSummaryComponent));
         em.SetComponentData(entity, new ResourceExchangeEnabledComponent
@@ -257,14 +266,18 @@ public sealed class ResourceExchangeGcAllocationValidationTests
         em.SetComponentData(entity, new ResourceExchangeWalletComponent
         {
             FactionId = factionId,
-            Credits = 1000,
-            Materials = 1000,
             Oil = 1000,
             Fuel = 1000,
-            MaterialsCapacity = 2000,
             OilCapacity = 2000,
             FuelCapacity = 2000,
             RushTickets = 5
+        });
+        em.SetComponentData(entity, new FactionEconomy { FactionId = factionId, Money = 1000 });
+        em.SetComponentData(entity, new FactionTacticalMaterialsComponent
+        {
+            FactionId = factionId,
+            Current = 1000,
+            Capacity = 2000
         });
         em.SetComponentData(entity, new ResourceExchangeSummaryComponent
         {
@@ -354,6 +367,8 @@ public sealed class ResourceExchangeGcAllocationValidationTests
     private static void RunSteadyStateFrame(
         ref ResourceExchangeRequestQueueComponent requestQueue,
         in ResourceExchangeEnabledComponent enabled,
+        ref FactionEconomy economy,
+        ref FactionTacticalMaterialsComponent materials,
         ref ResourceExchangeWalletComponent wallet,
         ref ResourceExchangeSummaryComponent summary,
         DynamicBuffer<ResourceExchangeRecipeComponent> recipes,
@@ -366,6 +381,8 @@ public sealed class ResourceExchangeGcAllocationValidationTests
         ResourceExchangeRequestValidationSystem.ProcessRequests(
             ref requestQueue,
             enabled,
+            ref economy,
+            ref materials,
             ref wallet,
             ref summary,
             recipes,
@@ -376,6 +393,8 @@ public sealed class ResourceExchangeGcAllocationValidationTests
             elapsedSeconds);
         ResourceExchangeQueueTickSystem.TickQueue(
             enabled,
+            ref economy,
+            ref materials,
             ref wallet,
             ref summary,
             queue,

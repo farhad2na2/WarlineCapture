@@ -13,33 +13,40 @@ namespace Game.Runtime
             foreach (var (
                          requestQueue,
                          enabled,
+                         economy,
+                         materials,
                          wallet,
                          summary,
-                         recipes,
-                         requests,
                          queue,
                          exchangeEntity)
                      in SystemAPI.Query<
                          RefRW<ResourceExchangeRequestQueueComponent>,
                          RefRO<ResourceExchangeEnabledComponent>,
+                         RefRW<FactionEconomy>,
+                         RefRW<FactionTacticalMaterialsComponent>,
                          RefRW<ResourceExchangeWalletComponent>,
                          RefRW<ResourceExchangeSummaryComponent>,
-                         DynamicBuffer<ResourceExchangeRecipeComponent>,
-                         DynamicBuffer<ResourceExchangeRequestComponent>,
                          DynamicBuffer<ResourceExchangeQueueComponent>>()
-                         .WithAll<
-                             ResourceExchangeResultComponent,
-                             ResourceExchangeEconomyEventComponent>()
+                         .WithAll<ResourceExchangeRecipeComponent>()
+                         .WithAll<ResourceExchangeRequestComponent>()
+                         .WithAll<ResourceExchangeResultComponent>()
+                         .WithAll<ResourceExchangeEconomyEventComponent>()
                          .WithEntityAccess())
             {
                 DynamicBuffer<ResourceExchangeResultComponent> results =
                     SystemAPI.GetBuffer<ResourceExchangeResultComponent>(exchangeEntity);
                 DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents =
                     SystemAPI.GetBuffer<ResourceExchangeEconomyEventComponent>(exchangeEntity);
+                DynamicBuffer<ResourceExchangeRecipeComponent> recipes =
+                    SystemAPI.GetBuffer<ResourceExchangeRecipeComponent>(exchangeEntity);
+                DynamicBuffer<ResourceExchangeRequestComponent> requests =
+                    SystemAPI.GetBuffer<ResourceExchangeRequestComponent>(exchangeEntity);
 
                 ProcessRequests(
                     ref requestQueue.ValueRW,
                     enabled.ValueRO,
+                    ref economy.ValueRW,
+                    ref materials.ValueRW,
                     ref wallet.ValueRW,
                     ref summary.ValueRW,
                     recipes,
@@ -213,6 +220,8 @@ namespace Game.Runtime
         public static void ProcessRequests(
             ref ResourceExchangeRequestQueueComponent requestQueue,
             in ResourceExchangeEnabledComponent enabled,
+            ref FactionEconomy economy,
+            ref FactionTacticalMaterialsComponent materials,
             ref ResourceExchangeWalletComponent wallet,
             ref ResourceExchangeSummaryComponent summary,
             DynamicBuffer<ResourceExchangeRecipeComponent> recipes,
@@ -236,6 +245,8 @@ namespace Game.Runtime
                         result = ProcessStartRequest(
                             ref requestQueue,
                             enabled,
+                            ref economy,
+                            ref materials,
                             ref wallet,
                             recipes,
                             queue,
@@ -246,6 +257,8 @@ namespace Game.Runtime
                     case ResourceExchangeRequestKind.Cancel:
                         result = ProcessCancelRequest(
                             enabled,
+                            ref economy,
+                            ref materials,
                             ref wallet,
                             queue,
                             economyEvents,
@@ -255,6 +268,8 @@ namespace Game.Runtime
                     case ResourceExchangeRequestKind.Rush:
                         result = ProcessRushRequest(
                             enabled,
+                            ref economy,
+                            ref materials,
                             ref wallet,
                             recipes,
                             queue,
@@ -265,6 +280,8 @@ namespace Game.Runtime
                     case ResourceExchangeRequestKind.RushAll:
                         result = ProcessRushAllRequest(
                             enabled,
+                            ref economy,
+                            ref materials,
                             ref wallet,
                             recipes,
                             queue,
@@ -281,6 +298,8 @@ namespace Game.Runtime
                     case ResourceExchangeRequestKind.MissionEnd:
                         result = ProcessMissionEndRequest(
                             enabled,
+                            ref economy,
+                            ref materials,
                             ref wallet,
                             queue,
                             economyEvents,
@@ -301,6 +320,8 @@ namespace Game.Runtime
         private static ResourceExchangeResultComponent ProcessStartRequest(
             ref ResourceExchangeRequestQueueComponent requestQueue,
             in ResourceExchangeEnabledComponent enabled,
+            ref FactionEconomy economy,
+            ref FactionTacticalMaterialsComponent materials,
             ref ResourceExchangeWalletComponent wallet,
             DynamicBuffer<ResourceExchangeRecipeComponent> recipes,
             DynamicBuffer<ResourceExchangeQueueComponent> queue,
@@ -335,11 +356,17 @@ namespace Game.Runtime
                 return Rejected(request, recipe, ResourceExchangeReason.QueueFull);
 
             int outputAmount = CalculateOutputAmount(recipe, request.InputAmount);
-            ResourceExchangeReason storageReason = ValidateOutputStorage(wallet, recipe, outputAmount);
+            ResourceExchangeReason storageReason = ValidateOutputStorage(economy, materials, wallet, recipe, outputAmount);
             if (storageReason != ResourceExchangeReason.None)
                 return Rejected(request, recipe, storageReason);
 
-            if (!TrySpendInput(ref wallet, recipe.InputResource, request.InputAmount, out ResourceExchangeReason spendReason))
+            if (!TrySpendInput(
+                    ref economy,
+                    ref materials,
+                    ref wallet,
+                    recipe.InputResource,
+                    request.InputAmount,
+                    out ResourceExchangeReason spendReason))
                 return Rejected(request, recipe, spendReason);
 
             requestQueue.LastQueueItemId = math.max(requestQueue.LastQueueItemId, MaxQueueItemId(queue)) + 1;
@@ -379,6 +406,8 @@ namespace Game.Runtime
 
         private static ResourceExchangeResultComponent ProcessCancelRequest(
             in ResourceExchangeEnabledComponent enabled,
+            ref FactionEconomy economy,
+            ref FactionTacticalMaterialsComponent materials,
             ref ResourceExchangeWalletComponent wallet,
             DynamicBuffer<ResourceExchangeQueueComponent> queue,
             DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
@@ -401,7 +430,12 @@ namespace Game.Runtime
                 int refundAmount = CalculateRefundAmount(item);
                 if (refundAmount > 0)
                 {
-                    AddResourceAmount(ref wallet, item.InputResource, refundAmount);
+                    ResourceExchangeResourceUtilitySystemHelper.TryRefundReservedInput(
+                        ref economy,
+                        ref materials,
+                        ref wallet,
+                        item.InputResource,
+                        refundAmount);
                     economyEvents.Add(new ResourceExchangeEconomyEventComponent
                     {
                         QueueItemId = item.QueueItemId,
@@ -409,6 +443,18 @@ namespace Game.Runtime
                         ResultKind = ResourceExchangeResultKind.QueueCancelled,
                         ResourceKind = item.InputResource,
                         Amount = refundAmount,
+                        RecipeId = item.RecipeId
+                    });
+                }
+                else
+                {
+                    economyEvents.Add(new ResourceExchangeEconomyEventComponent
+                    {
+                        QueueItemId = item.QueueItemId,
+                        FactionId = item.FactionId,
+                        ResultKind = ResourceExchangeResultKind.QueueCancelled,
+                        ResourceKind = item.InputResource,
+                        Amount = 0,
                         RecipeId = item.RecipeId
                     });
                 }
@@ -441,6 +487,8 @@ namespace Game.Runtime
 
         private static ResourceExchangeResultComponent ProcessRushRequest(
             in ResourceExchangeEnabledComponent enabled,
+            ref FactionEconomy economy,
+            ref FactionTacticalMaterialsComponent materials,
             ref ResourceExchangeWalletComponent wallet,
             DynamicBuffer<ResourceExchangeRecipeComponent> recipes,
             DynamicBuffer<ResourceExchangeQueueComponent> queue,
@@ -485,6 +533,8 @@ namespace Game.Runtime
             }
 
             ApplyRushTickets(
+                ref economy,
+                ref materials,
                 ref wallet,
                 queue,
                 results,
@@ -500,6 +550,8 @@ namespace Game.Runtime
 
         private static ResourceExchangeResultComponent ProcessRushAllRequest(
             in ResourceExchangeEnabledComponent enabled,
+            ref FactionEconomy economy,
+            ref FactionTacticalMaterialsComponent materials,
             ref ResourceExchangeWalletComponent wallet,
             DynamicBuffer<ResourceExchangeRecipeComponent> recipes,
             DynamicBuffer<ResourceExchangeQueueComponent> queue,
@@ -550,6 +602,8 @@ namespace Game.Runtime
                 }
 
                 ApplyRushTickets(
+                    ref economy,
+                    ref materials,
                     ref wallet,
                     queue,
                     results,
@@ -605,6 +659,8 @@ namespace Game.Runtime
 
         private static ResourceExchangeResultComponent ProcessMissionEndRequest(
             in ResourceExchangeEnabledComponent enabled,
+            ref FactionEconomy economy,
+            ref FactionTacticalMaterialsComponent materials,
             ref ResourceExchangeWalletComponent wallet,
             DynamicBuffer<ResourceExchangeQueueComponent> queue,
             DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
@@ -625,7 +681,12 @@ namespace Game.Runtime
                 int refundAmount = CalculateRefundAmount(item);
                 if (refundAmount > 0)
                 {
-                    AddResourceAmount(ref wallet, item.InputResource, refundAmount);
+                    ResourceExchangeResourceUtilitySystemHelper.TryRefundReservedInput(
+                        ref economy,
+                        ref materials,
+                        ref wallet,
+                        item.InputResource,
+                        refundAmount);
                     economyEvents.Add(new ResourceExchangeEconomyEventComponent
                     {
                         QueueItemId = item.QueueItemId,
@@ -636,6 +697,18 @@ namespace Game.Runtime
                         RecipeId = item.RecipeId
                     });
                     totalRefund += refundAmount;
+                }
+                else
+                {
+                    economyEvents.Add(new ResourceExchangeEconomyEventComponent
+                    {
+                        QueueItemId = item.QueueItemId,
+                        FactionId = item.FactionId,
+                        ResultKind = ResourceExchangeResultKind.QueueCancelled,
+                        ResourceKind = item.InputResource,
+                        Amount = 0,
+                        RecipeId = item.RecipeId
+                    });
                 }
 
                 item.State = ResourceExchangeQueueState.Cancelled;
@@ -750,6 +823,8 @@ namespace Game.Runtime
         }
 
         private static ResourceExchangeReason ValidateOutputStorage(
+            in FactionEconomy economy,
+            in FactionTacticalMaterialsComponent materials,
             in ResourceExchangeWalletComponent wallet,
             in ResourceExchangeRecipeComponent recipe,
             int outputAmount)
@@ -757,14 +832,55 @@ namespace Game.Runtime
             if (recipe.RequiresStorage == 0 || recipe.OutputResource == ResourceExchangeResourceKind.Credits)
                 return ResourceExchangeReason.None;
 
-            int capacity = GetCapacity(wallet, recipe.OutputResource);
+            int capacity = ResourceExchangeResourceUtilitySystemHelper.GetCapacity(
+                materials,
+                wallet,
+                recipe.OutputResource);
             if (capacity <= 0)
                 return ResourceExchangeReason.StorageMissing;
 
-            int current = GetResourceAmount(wallet, recipe.OutputResource);
-            return current + outputAmount <= capacity
+            int current = ResourceExchangeResourceUtilitySystemHelper.GetAmount(
+                economy,
+                materials,
+                wallet,
+                recipe.OutputResource);
+            return current >= 0 && outputAmount >= 0 && outputAmount <= capacity - current
                 ? ResourceExchangeReason.None
                 : ResourceExchangeReason.StorageFull;
+        }
+
+        private static bool TrySpendInput(
+            ref FactionEconomy economy,
+            ref FactionTacticalMaterialsComponent materials,
+            ref ResourceExchangeWalletComponent wallet,
+            ResourceExchangeResourceKind resourceKind,
+            int amount,
+            out ResourceExchangeReason reason)
+        {
+            int current = ResourceExchangeResourceUtilitySystemHelper.GetAmount(
+                economy,
+                materials,
+                wallet,
+                resourceKind);
+            if (current < amount)
+            {
+                reason = InsufficientReason(resourceKind);
+                return false;
+            }
+
+            if (!ResourceExchangeResourceUtilitySystemHelper.TrySpend(
+                    ref economy,
+                    ref materials,
+                    ref wallet,
+                    resourceKind,
+                    amount))
+            {
+                reason = InsufficientReason(resourceKind);
+                return false;
+            }
+
+            reason = ResourceExchangeReason.None;
+            return true;
         }
 
         private static bool TrySpendInput(
@@ -773,14 +889,15 @@ namespace Game.Runtime
             int amount,
             out ResourceExchangeReason reason)
         {
-            int current = GetResourceAmount(wallet, resourceKind);
-            if (current < amount)
+            if (resourceKind != ResourceExchangeResourceKind.RushTickets ||
+                amount <= 0 ||
+                wallet.RushTickets < amount)
             {
                 reason = InsufficientReason(resourceKind);
                 return false;
             }
 
-            SetResourceAmount(ref wallet, resourceKind, current - amount);
+            wallet.RushTickets -= amount;
             wallet.Version++;
             reason = ResourceExchangeReason.None;
             return true;
@@ -869,70 +986,6 @@ namespace Game.Runtime
             summary.Version++;
         }
 
-        private static int GetResourceAmount(
-            in ResourceExchangeWalletComponent wallet,
-            ResourceExchangeResourceKind resourceKind)
-        {
-            switch (resourceKind)
-            {
-                case ResourceExchangeResourceKind.Credits:
-                    return wallet.Credits;
-                case ResourceExchangeResourceKind.Materials:
-                    return wallet.Materials;
-                case ResourceExchangeResourceKind.Oil:
-                    return wallet.Oil;
-                case ResourceExchangeResourceKind.Fuel:
-                    return wallet.Fuel;
-                case ResourceExchangeResourceKind.RushTickets:
-                    return wallet.RushTickets;
-                default:
-                    return 0;
-            }
-        }
-
-        private static void SetResourceAmount(
-            ref ResourceExchangeWalletComponent wallet,
-            ResourceExchangeResourceKind resourceKind,
-            int amount)
-        {
-            amount = math.max(0, amount);
-            switch (resourceKind)
-            {
-                case ResourceExchangeResourceKind.Credits:
-                    wallet.Credits = amount;
-                    break;
-                case ResourceExchangeResourceKind.Materials:
-                    wallet.Materials = amount;
-                    break;
-                case ResourceExchangeResourceKind.Oil:
-                    wallet.Oil = amount;
-                    break;
-                case ResourceExchangeResourceKind.Fuel:
-                    wallet.Fuel = amount;
-                    break;
-                case ResourceExchangeResourceKind.RushTickets:
-                    wallet.RushTickets = amount;
-                    break;
-            }
-        }
-
-        private static int GetCapacity(
-            in ResourceExchangeWalletComponent wallet,
-            ResourceExchangeResourceKind resourceKind)
-        {
-            switch (resourceKind)
-            {
-                case ResourceExchangeResourceKind.Materials:
-                    return wallet.MaterialsCapacity;
-                case ResourceExchangeResourceKind.Oil:
-                    return wallet.OilCapacity;
-                case ResourceExchangeResourceKind.Fuel:
-                    return wallet.FuelCapacity;
-                default:
-                    return int.MaxValue;
-            }
-        }
-
         private static ResourceExchangeReason InsufficientReason(ResourceExchangeResourceKind resourceKind)
         {
             switch (resourceKind)
@@ -1019,6 +1072,8 @@ namespace Game.Runtime
         }
 
         private static void ApplyRushTickets(
+            ref FactionEconomy economy,
+            ref FactionTacticalMaterialsComponent materials,
             ref ResourceExchangeWalletComponent wallet,
             DynamicBuffer<ResourceExchangeQueueComponent> queue,
             DynamicBuffer<ResourceExchangeResultComponent> results,
@@ -1048,6 +1103,8 @@ namespace Game.Runtime
             if (item.RemainingSeconds <= 0f)
             {
                 ResourceExchangeQueueTickSystem.TryCompleteQueueItem(
+                    ref economy,
+                    ref materials,
                     ref wallet,
                     item,
                     results,
@@ -1118,16 +1175,5 @@ namespace Game.Runtime
                 : 0;
         }
 
-        private static void AddResourceAmount(
-            ref ResourceExchangeWalletComponent wallet,
-            ResourceExchangeResourceKind resourceKind,
-            int amount)
-        {
-            if (amount <= 0)
-                return;
-
-            SetResourceAmount(ref wallet, resourceKind, GetResourceAmount(wallet, resourceKind) + amount);
-            wallet.Version++;
-        }
     }
 }

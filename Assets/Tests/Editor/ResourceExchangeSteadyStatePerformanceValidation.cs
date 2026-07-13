@@ -162,6 +162,8 @@ public sealed class ResourceExchangeSteadyStatePerformanceValidation
         Entity entity = em.CreateEntity(
             typeof(ResourceExchangeRequestQueueComponent),
             typeof(ResourceExchangeEnabledComponent),
+            typeof(FactionEconomy),
+            typeof(FactionTacticalMaterialsComponent),
             typeof(ResourceExchangeWalletComponent),
             typeof(ResourceExchangeSummaryComponent));
         em.SetComponentData(entity, new ResourceExchangeEnabledComponent
@@ -176,14 +178,18 @@ public sealed class ResourceExchangeSteadyStatePerformanceValidation
         em.SetComponentData(entity, new ResourceExchangeWalletComponent
         {
             FactionId = 1,
-            Credits = 5000,
-            Materials = 4000,
             Oil = 4000,
             Fuel = 3000,
-            MaterialsCapacity = 8000,
             OilCapacity = 8000,
             FuelCapacity = 8000,
             RushTickets = 8
+        });
+        em.SetComponentData(entity, new FactionEconomy { FactionId = 1, Money = 5000 });
+        em.SetComponentData(entity, new FactionTacticalMaterialsComponent
+        {
+            FactionId = 1,
+            Current = 4000,
+            Capacity = 8000
         });
         em.SetComponentData(entity, new ResourceExchangeSummaryComponent
         {

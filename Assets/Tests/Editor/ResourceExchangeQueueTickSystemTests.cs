@@ -60,8 +60,8 @@ public sealed class ResourceExchangeQueueTickSystemTests
         Tick(em, exchange, 0.5f);
 
         ResourceExchangeWalletComponent wallet = em.GetComponentData<ResourceExchangeWalletComponent>(exchange);
-        Assert.AreEqual(93, wallet.Credits);
-        Assert.AreEqual(1u, wallet.Version);
+        Assert.AreEqual(93, em.GetComponentData<FactionEconomy>(exchange).Money);
+        Assert.AreEqual(0u, wallet.Version);
         queue = em.GetBuffer<ResourceExchangeQueueComponent>(exchange);
         Assert.AreEqual(ResourceExchangeQueueState.Completed, queue[0].State);
         Assert.AreEqual(1, queue[0].OutputApplied);
@@ -76,7 +76,7 @@ public sealed class ResourceExchangeQueueTickSystemTests
         Tick(em, exchange, 1f);
 
         wallet = em.GetComponentData<ResourceExchangeWalletComponent>(exchange);
-        Assert.AreEqual(93, wallet.Credits);
+        Assert.AreEqual(93, em.GetComponentData<FactionEconomy>(exchange).Money);
         Assert.AreEqual(1, em.GetBuffer<ResourceExchangeEconomyEventComponent>(exchange).Length);
     }
 
@@ -221,6 +221,8 @@ public sealed class ResourceExchangeQueueTickSystemTests
         Entity entity = em.CreateEntity(
             typeof(ResourceExchangeRequestQueueComponent),
             typeof(ResourceExchangeEnabledComponent),
+            typeof(FactionEconomy),
+            typeof(FactionTacticalMaterialsComponent),
             typeof(ResourceExchangeWalletComponent),
             typeof(ResourceExchangeSummaryComponent));
         em.SetComponentData(entity, new ResourceExchangeEnabledComponent
@@ -236,6 +238,12 @@ public sealed class ResourceExchangeQueueTickSystemTests
         if (wallet.FactionId == 0)
             wallet.FactionId = 1;
         em.SetComponentData(entity, wallet);
+        em.SetComponentData(entity, new FactionEconomy { FactionId = wallet.FactionId });
+        em.SetComponentData(entity, new FactionTacticalMaterialsComponent
+        {
+            FactionId = wallet.FactionId,
+            Capacity = 1000
+        });
         em.AddBuffer<ResourceExchangeRecipeComponent>(entity);
         em.AddBuffer<ResourceExchangeRequestComponent>(entity);
         em.AddBuffer<ResourceExchangeQueueComponent>(entity);
@@ -275,16 +283,22 @@ public sealed class ResourceExchangeQueueTickSystemTests
     private static void Tick(EntityManager em, Entity exchange, float deltaSeconds)
     {
         ResourceExchangeEnabledComponent enabled = em.GetComponentData<ResourceExchangeEnabledComponent>(exchange);
+        FactionEconomy economy = em.GetComponentData<FactionEconomy>(exchange);
+        FactionTacticalMaterialsComponent materials = em.GetComponentData<FactionTacticalMaterialsComponent>(exchange);
         ResourceExchangeWalletComponent wallet = em.GetComponentData<ResourceExchangeWalletComponent>(exchange);
         ResourceExchangeSummaryComponent summary = em.GetComponentData<ResourceExchangeSummaryComponent>(exchange);
         ResourceExchangeQueueTickSystem.TickQueue(
             enabled,
+            ref economy,
+            ref materials,
             ref wallet,
             ref summary,
             em.GetBuffer<ResourceExchangeQueueComponent>(exchange),
             em.GetBuffer<ResourceExchangeResultComponent>(exchange),
             em.GetBuffer<ResourceExchangeEconomyEventComponent>(exchange),
             deltaSeconds);
+        em.SetComponentData(exchange, economy);
+        em.SetComponentData(exchange, materials);
         em.SetComponentData(exchange, wallet);
         em.SetComponentData(exchange, summary);
     }

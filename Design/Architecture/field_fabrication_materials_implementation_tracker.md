@@ -1,7 +1,7 @@
 # Field Fabrication And Materials Implementation Tracker
 
 Date: 2026-07-12
-Status: Planned - implementation not started
+Status: In progress - Phase 1 canonical resource ownership
 Design source: `../Field_Fabrication_Materials_Design.md`
 
 ## Objective
@@ -73,16 +73,16 @@ Dependency direction remains inward toward components/config/contracts/runtime. 
 
 ## Progress Summary
 
-Overall implementation progress: 17% (18/103 checklist items complete).
+Overall implementation progress: 19% (20/103 checklist items complete).
 
-Planning and inventory findings are complete. Runtime implementation is 0% complete.
+Planning and inventory findings are complete. Canonical Materials, player Credits, and Resource Exchange ownership are implemented and validated; HUD/build migration remains.
 
 Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation row counts. Update the numerator, denominator, table, status, and evidence log in the same commit as each completed batch.
 
 | Phase | Status | Complete | Total | Progress | Gate |
 |---|---|---:|---:|---:|---|
 | 0. Inventory and baseline | Complete | 12 | 12 | 100% | Ownership, file targets, compile state, focused behavior, p95/p99, and managed-allocation baselines are recorded. |
-| 1. Canonical tactical Materials and Credits | In progress | 6 | 13 | 46% | Canonical Materials data/startup and player Credits ownership are validated. Exchange, HUD/build affordability, profile policy, combined tests, and ownership ratchet remain. |
+| 1. Canonical tactical Materials and Credits | In progress | 8 | 13 | 62% | Canonical Materials data/startup, player Credits, and Exchange Credits/Materials ownership are validated. HUD/build affordability, Oil/Fuel narrowing, profile policy, combined tests, and ownership ratchet remain. |
 | 2. Config and building projection | Pending | 0 | 10 | 0% | Depot config is valid, authored, and projected consistently. |
 | 3. Oil destination routing | Pending | 0 | 11 | 0% | Tray routing is deterministic, reserved, and stable. |
 | 4. Oil-to-Materials conversion | Pending | 0 | 11 | 0% | Conversion is deterministic, capped, typed, and no-GC. |
@@ -148,9 +148,9 @@ Phase 0 exit criteria:
 - [x] Seed starting Materials and capacity from authored scenario/config data.
 - [x] Establish `FactionEconomy.Money` as the one ECS tactical Credits authority for player and AI factions.
 - [x] Migrate player build affordability/spend away from `RuntimeResourceUtilitySystemHelper._dollars` ownership to typed ECS transactions against `FactionEconomy.Money`.
-- [ ] Migrate Exchange Credits and Materials import/export to `FactionEconomy.Money` plus `FactionTacticalMaterialsComponent`.
+- [x] Migrate Exchange Credits and Materials import/export to `FactionEconomy.Money` plus `FactionTacticalMaterialsComponent`.
 - [ ] Migrate Match HUD and build affordability to read this canonical component.
-- [ ] Remove `ResourceExchangeWalletComponent.Credits` and `.Materials` authority without a steady-state dual-write period.
+- [x] Remove `ResourceExchangeWalletComponent.Credits` and `.Materials` authority without a steady-state dual-write period.
 - [ ] Remove or narrow Exchange wallet Oil/Fuel mirrors so physical storage/summaries remain authoritative.
 - [ ] Document persistent profile Materials/Rush Tickets projection and tactical match-end policy.
 - [ ] Add deterministic tests for Credit/Materials grant, atomic spend, capacity, overflow rejection, and version behavior.
@@ -406,3 +406,16 @@ For every completed batch append:
 - Validation passed in the isolated Unity project: `RuntimeResourceUtilityFocusedValidation` 5 tests, `BuildingProductionRequestValidation` 26 tests, `BuildingPlacementCommandRequestValidation` 16 tests, `ScriptArchitectureBoundaryValidation` 31 tests, and `EcsBurstHotPathArchitectureValidation` 10 tests.
 - Unity-regenerated `Game.Runtime` and `Game.Tests.Editor` builds passed with zero errors. Existing warnings remain unchanged.
 - Logs: `/private/tmp/wlc-field-fabrication-player-credits-validation.log`, `/private/tmp/wlc-field-fabrication-building-production-regression.log`, `/private/tmp/wlc-field-fabrication-building-placement-regression.log`, `/private/tmp/wlc-field-fabrication-player-credits-architecture.log`, and `/private/tmp/wlc-field-fabrication-player-credits-burst.log`.
+
+### 2026-07-13 - Phase 1C Resource Exchange Canonical Ownership
+
+- Removed `Credits`, `Materials`, and `MaterialsCapacity` from `ResourceExchangeWalletComponent`. The narrowed wallet now retains only operational Oil, Fuel, Rush Tickets, Oil/Fuel capacities, faction id, and version pending the separate physical Oil/Fuel ownership slice.
+- Migrated request validation, cancellation/mission-end refunds, rush completion, queue completion, storage validation, and the Exchange UI read model to `FactionEconomy.Money` and `FactionTacticalMaterialsComponent`.
+- Added `ResourceExchangeResourceUtilitySystemHelper` in `Game.Runtime` for allocation-free typed reads, spends, imports, and reserved-input refunds. Materials exports update exported/spent counters, imports update imported counters, and cancellation reverses only the refunded reservation.
+- Kept the generated ECS queries within the package's seven-element limit by querying both canonical components directly and resolving ancillary dynamic buffers by entity. No snapshots, LINQ, structural tick changes, managed collections, new update loop, or assembly reference was added.
+- Migrated focused EditMode and PlayMode fixtures to project canonical faction components. Added canonical Credits/Materials ownership, capacity, accounting, and 512-iteration no-allocation tests.
+- Isolated Unity compile passed with zero errors. Core Exchange simulation, UI projection, architecture, Materials accounting, GC, and performance validation passed 44/44 tests.
+- Active Exchange steady-state after the final overflow-safe storage check: average 0.018 ms, p95 0.017 ms, p99 0.019 ms, max 0.021 ms, and 0 managed bytes over 240 measured frames. This is below the Phase 0 p95 baseline of 0.019 ms.
+- The focused PlayMode export flow passed 1/1 and confirmed exact-once completion credits the faction economy. `EcsBurstHotPathArchitectureTests` passed 10/10. The broader script architecture suite passed 50/58; its eight failures are existing unrelated project debt in rendering/UI/camera/static-registry ratchets, and none names a file in this slice. Resource Exchange's focused architecture guardrail passed in the 44-test core batch.
+- Evidence: `/private/tmp/wlc-field-exchange-compile-2.log`, `/private/tmp/wlc-field-exchange-core-tests-final.xml`, `/private/tmp/wlc-field-exchange-core-tests-final.log`, `/private/tmp/wlc-field-exchange-playmode.xml`, `/private/tmp/wlc-field-exchange-playmode.log`, `/private/tmp/wlc-field-exchange-architecture.xml`, and `/private/tmp/warlinecapture-resource-exchange-steady-state-performance.json`.
+- Next action: migrate live Match HUD/build affordability to canonical Materials, then address physical Exchange Oil/Fuel narrowing as its own ownership slice.

@@ -15,10 +15,11 @@ public sealed class FactionTacticalMaterialsUtilitySystemHelperTests
             tests.Grant_RejectsCapacityOverflowWithoutMutation();
             tests.Spend_UpdatesCanonicalAmountCountersAndVersion();
             tests.Spend_RejectsInsufficientMaterialsWithoutMutation();
+            tests.RefundExport_ReversesOnlyRefundedReservation();
             tests.Mutations_RejectInvalidStateAndAmount();
             tests.Mutations_SaturateLifetimeCountersAndWrapVersion();
             tests.Mutations_DoNotAllocateManagedMemoryAfterWarmup();
-            Debug.Log("[FactionTacticalMaterialsFocusedValidation] result=Passed tests=7");
+            Debug.Log("[FactionTacticalMaterialsFocusedValidation] result=Passed tests=8");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -97,6 +98,27 @@ public sealed class FactionTacticalMaterialsUtilitySystemHelperTests
         Assert.AreEqual(4, materials.Current);
         Assert.AreEqual(0, materials.LifetimeSpent);
         Assert.AreEqual(9u, materials.Version);
+    }
+
+    [Test]
+    public void RefundExport_ReversesOnlyRefundedReservation()
+    {
+        FactionTacticalMaterialsComponent materials = CreateMaterials(current: 80, capacity: 100, version: 2u);
+
+        Assert.AreEqual(
+            FactionTacticalMaterialsMutationResult.Applied,
+            FactionTacticalMaterialsUtilitySystemHelper.TrySpend(
+                ref materials,
+                30,
+                FactionTacticalMaterialsSpendKind.Export));
+        Assert.AreEqual(
+            FactionTacticalMaterialsMutationResult.Applied,
+            FactionTacticalMaterialsUtilitySystemHelper.TryRefundExport(ref materials, 18));
+
+        Assert.AreEqual(68, materials.Current);
+        Assert.AreEqual(12, materials.LifetimeSpent);
+        Assert.AreEqual(12, materials.LifetimeExported);
+        Assert.AreEqual(4u, materials.Version);
     }
 
     [Test]

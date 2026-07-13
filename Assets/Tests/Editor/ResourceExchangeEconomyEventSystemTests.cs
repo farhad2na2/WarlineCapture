@@ -227,6 +227,8 @@ public sealed class ResourceExchangeEconomyEventSystemTests
         Entity entity = em.CreateEntity(
             typeof(ResourceExchangeRequestQueueComponent),
             typeof(ResourceExchangeEnabledComponent),
+            typeof(FactionEconomy),
+            typeof(FactionTacticalMaterialsComponent),
             typeof(ResourceExchangeWalletComponent),
             typeof(ResourceExchangeSummaryComponent));
         em.SetComponentData(entity, new ResourceExchangeEnabledComponent
@@ -242,6 +244,12 @@ public sealed class ResourceExchangeEconomyEventSystemTests
         if (wallet.FactionId == 0)
             wallet.FactionId = 1;
         em.SetComponentData(entity, wallet);
+        em.SetComponentData(entity, new FactionEconomy { FactionId = wallet.FactionId });
+        em.SetComponentData(entity, new FactionTacticalMaterialsComponent
+        {
+            FactionId = wallet.FactionId,
+            Capacity = 1000
+        });
         em.AddBuffer<ResourceExchangeRecipeComponent>(entity);
         em.AddBuffer<ResourceExchangeRequestComponent>(entity);
         em.AddBuffer<ResourceExchangeQueueComponent>(entity);
@@ -310,16 +318,22 @@ public sealed class ResourceExchangeEconomyEventSystemTests
     private static void Tick(EntityManager em, Entity exchange, float deltaSeconds)
     {
         ResourceExchangeEnabledComponent enabled = em.GetComponentData<ResourceExchangeEnabledComponent>(exchange);
+        FactionEconomy economy = em.GetComponentData<FactionEconomy>(exchange);
+        FactionTacticalMaterialsComponent materials = em.GetComponentData<FactionTacticalMaterialsComponent>(exchange);
         ResourceExchangeWalletComponent wallet = em.GetComponentData<ResourceExchangeWalletComponent>(exchange);
         ResourceExchangeSummaryComponent summary = em.GetComponentData<ResourceExchangeSummaryComponent>(exchange);
         ResourceExchangeQueueTickSystem.TickQueue(
             enabled,
+            ref economy,
+            ref materials,
             ref wallet,
             ref summary,
             em.GetBuffer<ResourceExchangeQueueComponent>(exchange),
             em.GetBuffer<ResourceExchangeResultComponent>(exchange),
             em.GetBuffer<ResourceExchangeEconomyEventComponent>(exchange),
             deltaSeconds);
+        em.SetComponentData(exchange, economy);
+        em.SetComponentData(exchange, materials);
         em.SetComponentData(exchange, wallet);
         em.SetComponentData(exchange, summary);
     }

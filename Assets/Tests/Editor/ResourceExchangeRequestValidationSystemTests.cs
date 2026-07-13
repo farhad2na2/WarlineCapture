@@ -50,8 +50,7 @@ public sealed class ResourceExchangeRequestValidationSystemTests
         {
             FactionId = 1,
             Oil = 500,
-            FuelCapacity = 1000,
-            MaterialsCapacity = 1000
+            FuelCapacity = 1000
         });
         AddRecipe(em, exchange, ExportOilRecipe());
 
@@ -109,12 +108,12 @@ public sealed class ResourceExchangeRequestValidationSystemTests
             wallet: new ResourceExchangeWalletComponent
             {
                 FactionId = 2,
-                Credits = 1000,
                 Fuel = 100,
                 FuelCapacity = 1000
             },
             factionId: 2,
-            maxQueueItems: 2);
+            maxQueueItems: 2,
+            credits: 1000);
         AddRecipe(em, exportExchange, ExportOilRecipe());
         AddRecipe(em, importExchange, ImportFuelRecipe());
 
@@ -167,14 +166,14 @@ public sealed class ResourceExchangeRequestValidationSystemTests
             em.GetComponentData<ResourceExchangeWalletComponent>(exportExchange);
         Assert.AreEqual(1, exportWallet.FactionId);
         Assert.AreEqual(400, exportWallet.Oil);
-        Assert.AreEqual(0, exportWallet.Credits);
+        Assert.AreEqual(0, em.GetComponentData<FactionEconomy>(exportExchange).Money);
         Assert.AreEqual(2u, exportWallet.Version);
         ResourceExchangeWalletComponent importWallet =
             em.GetComponentData<ResourceExchangeWalletComponent>(importExchange);
         Assert.AreEqual(2, importWallet.FactionId);
-        Assert.AreEqual(600, importWallet.Credits);
+        Assert.AreEqual(600, em.GetComponentData<FactionEconomy>(importExchange).Money);
         Assert.AreEqual(100, importWallet.Fuel);
-        Assert.AreEqual(2u, importWallet.Version);
+        Assert.AreEqual(0u, importWallet.Version);
 
         DynamicBuffer<ResourceExchangeQueueComponent> exportQueue =
             em.GetBuffer<ResourceExchangeQueueComponent>(exportExchange);
@@ -358,10 +357,9 @@ public sealed class ResourceExchangeRequestValidationSystemTests
         Entity exchange = CreateExchangeEntity(em, wallet: new ResourceExchangeWalletComponent
         {
             FactionId = 1,
-            Credits = 1000,
             Fuel = 990,
             FuelCapacity = 1000
-        });
+        }, credits: 1000);
         AddRecipe(em, exchange, ImportFuelRecipe());
 
         int requestId = ResourceExchangeRequestValidationSystem.EnqueueStartRequest(
@@ -375,7 +373,7 @@ public sealed class ResourceExchangeRequestValidationSystemTests
         UpdateSystem(world);
 
         AssertRejected(em, exchange, requestId, ResourceExchangeReason.StorageFull);
-        Assert.AreEqual(1000, em.GetComponentData<ResourceExchangeWalletComponent>(exchange).Credits);
+        Assert.AreEqual(1000, em.GetComponentData<FactionEconomy>(exchange).Money);
         Assert.AreEqual(0, em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Length);
     }
 
@@ -461,11 +459,16 @@ public sealed class ResourceExchangeRequestValidationSystemTests
         bool allowAiExchange = false,
         ResourceExchangeWalletComponent wallet = default,
         byte factionId = 1,
-        int maxQueueItems = 1)
+        int maxQueueItems = 1,
+        int credits = 0,
+        int materials = 0,
+        int materialsCapacity = 1000)
     {
         Entity entity = em.CreateEntity(
             typeof(ResourceExchangeRequestQueueComponent),
             typeof(ResourceExchangeEnabledComponent),
+            typeof(FactionEconomy),
+            typeof(FactionTacticalMaterialsComponent),
             typeof(ResourceExchangeWalletComponent),
             typeof(ResourceExchangeSummaryComponent));
         em.SetComponentData(entity, new ResourceExchangeEnabledComponent
@@ -482,6 +485,13 @@ public sealed class ResourceExchangeRequestValidationSystemTests
         if (wallet.FactionId == 0)
             wallet.FactionId = factionId;
         em.SetComponentData(entity, wallet);
+        em.SetComponentData(entity, new FactionEconomy { FactionId = wallet.FactionId, Money = credits });
+        em.SetComponentData(entity, new FactionTacticalMaterialsComponent
+        {
+            FactionId = wallet.FactionId,
+            Current = materials,
+            Capacity = materialsCapacity
+        });
         em.AddBuffer<ResourceExchangeRecipeComponent>(entity);
         em.AddBuffer<ResourceExchangeRequestComponent>(entity);
         em.AddBuffer<ResourceExchangeQueueComponent>(entity);

@@ -214,6 +214,8 @@ public sealed class ResourceExchangeToastSystemTests
         Entity entity = em.CreateEntity(
             typeof(ResourceExchangeRequestQueueComponent),
             typeof(ResourceExchangeEnabledComponent),
+            typeof(FactionEconomy),
+            typeof(FactionTacticalMaterialsComponent),
             typeof(ResourceExchangeWalletComponent),
             typeof(ResourceExchangeSummaryComponent));
         em.SetComponentData(entity, new ResourceExchangeEnabledComponent
@@ -229,6 +231,12 @@ public sealed class ResourceExchangeToastSystemTests
         if (wallet.FactionId == 0)
             wallet.FactionId = 1;
         em.SetComponentData(entity, wallet);
+        em.SetComponentData(entity, new FactionEconomy { FactionId = wallet.FactionId });
+        em.SetComponentData(entity, new FactionTacticalMaterialsComponent
+        {
+            FactionId = wallet.FactionId,
+            Capacity = 1000
+        });
         em.AddBuffer<ResourceExchangeRecipeComponent>(entity);
         em.AddBuffer<ResourceExchangeRequestComponent>(entity);
         em.AddBuffer<ResourceExchangeQueueComponent>(entity);
@@ -308,10 +316,14 @@ public sealed class ResourceExchangeToastSystemTests
     private static void TickQueue(EntityManager em, Entity exchange, float deltaSeconds)
     {
         ResourceExchangeEnabledComponent enabled = em.GetComponentData<ResourceExchangeEnabledComponent>(exchange);
+        FactionEconomy economy = em.GetComponentData<FactionEconomy>(exchange);
+        FactionTacticalMaterialsComponent materials = em.GetComponentData<FactionTacticalMaterialsComponent>(exchange);
         ResourceExchangeWalletComponent wallet = em.GetComponentData<ResourceExchangeWalletComponent>(exchange);
         ResourceExchangeSummaryComponent summary = em.GetComponentData<ResourceExchangeSummaryComponent>(exchange);
         ResourceExchangeQueueTickSystem.TickQueue(
             enabled,
+            ref economy,
+            ref materials,
             ref wallet,
             ref summary,
             em.GetBuffer<ResourceExchangeQueueComponent>(exchange),
@@ -322,6 +334,8 @@ public sealed class ResourceExchangeToastSystemTests
             em.GetBuffer<ResourceExchangeToastComponent>(exchange),
             true,
             deltaSeconds);
+        em.SetComponentData(exchange, economy);
+        em.SetComponentData(exchange, materials);
         em.SetComponentData(exchange, wallet);
         em.SetComponentData(exchange, summary);
     }

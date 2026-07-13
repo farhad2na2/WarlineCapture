@@ -22,13 +22,15 @@ public sealed class ResourceExchangeArchitectureGuardrailTests
         RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
     private static readonly Regex RequestValidationRequiredBufferFilterRegex = new(
-        @"\.WithAll\s*<\s*ResourceExchangeResultComponent\s*,\s*ResourceExchangeEconomyEventComponent\s*>\s*\(\s*\)",
+        @"\.WithAll\s*<\s*ResourceExchangeResultComponent\s*>\s*\(\s*\)[\s\S]*\.WithAll\s*<\s*ResourceExchangeEconomyEventComponent\s*>\s*\(\s*\)",
         RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
     private static readonly string[] RequestValidationRequiredQueryTypes =
     {
         "ResourceExchangeRequestQueueComponent",
         "ResourceExchangeEnabledComponent",
+        "FactionEconomy",
+        "FactionTacticalMaterialsComponent",
         "ResourceExchangeWalletComponent",
         "ResourceExchangeSummaryComponent",
         "ResourceExchangeRecipeComponent",

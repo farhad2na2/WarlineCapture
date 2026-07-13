@@ -42,6 +42,8 @@ public sealed class UiResourceExchangeReadModelSystemTests
 
         UiResourceExchangeReadModelSystem.WriteReadModel(
             Enabled(maxQueueItems: 3),
+            Economy(),
+            Materials(),
             Wallet(),
             new ResourceExchangeSummaryComponent
             {
@@ -116,6 +118,8 @@ public sealed class UiResourceExchangeReadModelSystemTests
 
         UiResourceExchangeReadModelSystem.WriteReadModel(
             Enabled(maxQueueItems: 3),
+            Economy(),
+            Materials(),
             Wallet(fuel: 490, fuelCapacity: 500),
             new ResourceExchangeSummaryComponent(),
             em.GetBuffer<ResourceExchangeRecipeComponent>(exchange),
@@ -154,6 +158,8 @@ public sealed class UiResourceExchangeReadModelSystemTests
 
         UiResourceExchangeReadModelSystem.WriteReadModel(
             Enabled(maxQueueItems: 3),
+            Economy(),
+            Materials(),
             Wallet(),
             new ResourceExchangeSummaryComponent(),
             em.GetBuffer<ResourceExchangeRecipeComponent>(exchange),
@@ -205,15 +211,22 @@ public sealed class UiResourceExchangeReadModelSystemTests
         return new ResourceExchangeWalletComponent
         {
             FactionId = 1,
-            Credits = 1000,
-            Materials = 50,
             Oil = 400,
             Fuel = fuel,
             RushTickets = 2,
-            MaterialsCapacity = 200,
             OilCapacity = 800,
             FuelCapacity = fuelCapacity
         };
+    }
+
+    private static FactionEconomy Economy()
+    {
+        return new FactionEconomy { FactionId = 1, Money = 1000 };
+    }
+
+    private static FactionTacticalMaterialsComponent Materials()
+    {
+        return new FactionTacticalMaterialsComponent { FactionId = 1, Current = 50, Capacity = 200 };
     }
 
     private static ResourceExchangeRecipeComponent ExportOilRecipe()

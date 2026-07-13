@@ -42,6 +42,7 @@ namespace Game.Runtime
             public readonly BuildingRuntimeReadModelCompositionSystemHelper.TryResolveBuildingWorldPositionDelegate TryResolveBuildingFocusWorldPosition;
             public readonly BuildingResourceHaulerBridgeCompositionSystemHelper.TryGetRuntimeBuildingDelegate TryGetRuntimeBuilding;
             public readonly BuildingResourceHaulerBridgeCompositionSystemHelper.GetEffectivePlacementRectDelegate GetEffectivePlacementRect;
+            public readonly BuildingResourceHaulerBridgeCompositionSystemHelper.TryResolveFactionAIOilAllocationInputDelegate TryResolveFactionAIOilAllocationInput;
             public readonly BuildingCombatUtilitySystemHelper.BuildingAction<RuntimeBuildingEntity> RememberOpenBaseBreach;
             public readonly BuildingCombatUtilitySystemHelper.BuildingIdAction NotifyHomeBuildingDestroyed;
             public readonly BuildingCombatUtilitySystemHelper.ObjectAction DestroyObject;
@@ -83,6 +84,7 @@ namespace Game.Runtime
                 BuildingRuntimeReadModelCompositionSystemHelper.TryResolveBuildingWorldPositionDelegate tryResolveBuildingFocusWorldPosition,
                 BuildingResourceHaulerBridgeCompositionSystemHelper.TryGetRuntimeBuildingDelegate tryGetRuntimeBuilding,
                 BuildingResourceHaulerBridgeCompositionSystemHelper.GetEffectivePlacementRectDelegate getEffectivePlacementRect,
+                BuildingResourceHaulerBridgeCompositionSystemHelper.TryResolveFactionAIOilAllocationInputDelegate tryResolveFactionAIOilAllocationInput,
                 BuildingCombatUtilitySystemHelper.BuildingAction<RuntimeBuildingEntity> rememberOpenBaseBreach,
                 BuildingCombatUtilitySystemHelper.BuildingIdAction notifyHomeBuildingDestroyed,
                 BuildingCombatUtilitySystemHelper.ObjectAction destroyObject,
@@ -123,6 +125,7 @@ namespace Game.Runtime
                 TryResolveBuildingFocusWorldPosition = tryResolveBuildingFocusWorldPosition;
                 TryGetRuntimeBuilding = tryGetRuntimeBuilding;
                 GetEffectivePlacementRect = getEffectivePlacementRect;
+                TryResolveFactionAIOilAllocationInput = tryResolveFactionAIOilAllocationInput;
                 RememberOpenBaseBreach = rememberOpenBaseBreach;
                 NotifyHomeBuildingDestroyed = notifyHomeBuildingDestroyed;
                 DestroyObject = destroyObject;
@@ -539,7 +542,8 @@ namespace Game.Runtime
                 () => source.SelectedUnitsQuery,
                 source.TryGetRuntimeBuilding,
                 building => source.TryResolveBuildingFocusWorldPosition(building, out Vector3 worldPosition) ? worldPosition : Vector3.zero,
-                source.GetEffectivePlacementRect);
+                source.GetEffectivePlacementRect,
+                source.TryResolveFactionAIOilAllocationInput);
         }
 
         public bool TryAssignSelectedHaulerOrders(RuntimeSource source, int clickedBuildingId)

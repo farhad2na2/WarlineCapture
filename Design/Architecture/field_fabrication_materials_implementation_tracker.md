@@ -73,9 +73,9 @@ Dependency direction remains inward toward components/config/contracts/runtime. 
 
 ## Progress Summary
 
-Overall implementation progress: 85% (88/103 checklist items complete).
+Overall implementation progress: 86% (89/103 checklist items complete).
 
-Planning, canonical resource ownership, depot config/projection, automated Oil routing, Oil-to-Materials conversion, authored construction costs, atomic dual-resource placement, HUD/depot controls, Exchange balance safety, and canonical AI construction affordability are complete. Active depots consume only unreserved physical Oil at the existing one-second cadence. The shipping Match now projects an explicitly gated Resource Exchange onto the canonical player faction entity; emergency Materials import costs 1.71x modeled local production, queue/capacity rules remain active, and tested conversion loops cannot create profit. Phase 8 continues with AI Oil allocation, recovery gating, typed telemetry, and scenario deadlock validation.
+Planning, canonical resource ownership, depot config/projection, automated Oil routing, Oil-to-Materials conversion, authored construction costs, atomic dual-resource placement, HUD/depot controls, Exchange balance safety, canonical AI construction affordability, and demand-aware AI Oil allocation are complete. Active depots consume only unreserved physical Oil at the existing one-second cadence. The shipping Match now projects an explicitly gated Resource Exchange onto the canonical player faction entity; emergency Materials import costs 1.71x modeled local production, queue/capacity rules remain active, and tested conversion loops cannot create profit. Phase 8 continues with AI recovery gating, typed telemetry, and scenario deadlock validation.
 
 Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation row counts. Update the numerator, denominator, table, status, and evidence log in the same commit as each completed batch.
 
@@ -89,7 +89,7 @@ Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation 
 | 5. Credits + Materials construction | Complete | 11 | 11 | 100% | Atomic placement, rollback, authored cost projection, and Build Drawer dual-cost presentation pass. |
 | 6. HUD and selected-building UI | Complete | 11 | 11 | 100% | Live canonical header, typed Build Drawer affordability, selected-depot status/control, fail-closed Exchange routing, and responsive validation pass. |
 | 7. Exchange and balance safety | Complete | 8 | 8 | 100% | Shipping startup projection, emergency import markup, queue/capacity gates, anti-arbitrage tests, and strategy report pass. |
-| 8. AI, telemetry, and scenario safety | Active | 1 | 7 | 14% | AI shares rules; scenarios cannot deadlock silently. |
+| 8. AI, telemetry, and scenario safety | Active | 2 | 7 | 29% | AI shares rules; scenarios cannot deadlock silently. |
 | 9. Integration, performance, and closeout | Pending | 0 | 9 | 0% | Architecture, GC, profiler, gameplay, and docs pass. |
 
 ## Phase 0: Inventory And Baseline
@@ -292,7 +292,7 @@ Phase 7 exit criteria:
 ## Phase 8: AI, Telemetry, And Scenario Safety
 
 - [x] Teach AI affordability/build plans to use canonical Materials and authored costs.
-- [ ] Teach AI Oil allocation to consider Fuel pressure and construction plans without hidden resources.
+- [x] Teach AI Oil allocation to consider Fuel pressure and construction plans without hidden resources.
 - [ ] Gate AI Exchange imports by scenario and recovery need.
 - [ ] Record Materials fabricated/imported/exported/rewarded/spent and depot blocked time by typed reason.
 - [ ] Record tray assignments/reassignments/failures and refinery-versus-depot Oil delivery.
@@ -575,3 +575,13 @@ For every completed batch append:
 - Assembly/naming boundary and ECS Burst hot-path validation passed. Generated `Game.Runtime` and `Game.Tests.Editor` builds compile with zero errors; task-scoped `git diff --check` passes. No performance ceiling or Burst exception was added.
 - Evidence: `/private/tmp/wlc-field-fabrication-phase8-ai-build.log`, `/private/tmp/wlc-field-fabrication-phase8-initial-units.log`, `/private/tmp/wlc-field-fabrication-phase8-config.log`, `/private/tmp/wlc-field-fabrication-phase8-ai-e2e.log`, `/private/tmp/wlc-field-fabrication-phase8-architecture.log`, and `/private/tmp/wlc-field-fabrication-phase8-burst.log`.
 - Phase 8 is 1/7. Checklist count is 88/103. Next action: extend existing deterministic Oil destination scoring with derived AI construction demand and Fuel pressure while preserving active assignments, physical storage authority, and stable no-GC routing.
+
+### 2026-07-13 - Phase 8B Demand-Aware AI Oil Allocation
+
+- Existing automatic Oil destination scoring now derives AI pressure from the enabled `AIBuildPlan`, canonical `FactionControlEntry`, `FactionEconomy` and `FactionTacticalMaterialsComponent`, authored construction costs, and the existing faction usable-Fuel summary. It prioritizes an enabled Field Fabrication Depot when a reachable selected construction plan lacks Materials, prioritizes a refinery when Fuel pressure remains, and gives critical Fuel reserve the highest band to prevent logistics deadlock.
+- The pressure band is evaluated only for an idle Oil hauler during the existing two-second assignment scan. Active delivery orders are not reassigned, physical building storage remains authoritative, and player/non-AI routing retains the previous starvation, capacity, distance, and stable-id ordering.
+- Query discovery uses native archetype-chunk iteration rather than `ToEntityArray`/`ToComponentDataArray`. AI pressure is resolved once per faction per assignment scan through a fixed-capacity unmanaged cache, including cached negative results. Focused warmup validation measured 0 managed bytes across 128 AI Oil input reads, and the Burst architecture gate confirms array-snapshot debt remains at its zero ceiling.
+- Focused production/logistics validation passed 50/50, including AI-to-player control transition, critical Fuel versus construction pressure, unreachable Materials cost above canonical capacity, and one resolver read per faction per scan. Assembly/naming boundary validation passed 31/31, ECS Burst hot-path validation passed 10/10, task-scoped `git diff --check` passed, and serial `Game.Runtime` plus `Game.Tests.Editor` builds completed with zero errors.
+- Graphics-capable Menu-to-Match smoke passed through the production shell: `mode=MatchHud`, `route=Match`, `phase=MatchHudReady`, `playRequested=1`, `matchIntro=Complete`, `inputLocked=0`, `matchSceneLoaded=1`, `hudLoaded=1`, and `curtainHidden=1`. No crash, fatal exception, or failed result was logged after readiness.
+- Evidence: `/private/tmp/wlc-field-fabrication-phase8-ai-oil-final.log`, `/private/tmp/wlc-field-fabrication-phase8-ai-oil-architecture-final.log`, `/private/tmp/wlc-field-fabrication-phase8-ai-oil-burst-final-rerun.log`, and `/private/tmp/wlc-field-fabrication-phase8-menu-to-match-smoke-final.log`.
+- Phase 8 is 2/7. Checklist count is 89/103. Next action: gate AI Exchange imports by explicit scenario permission and typed recovery need without adding hidden resources, parallel authority, or a managed update loop.

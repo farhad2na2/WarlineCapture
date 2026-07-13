@@ -71,7 +71,8 @@ namespace Game.Runtime
                 runtimeSource.TryGetRuntimeBuilding,
                 runtimeSource.GetEffectivePlacementRect,
                 source.PrepareTransportDropVisual,
-                source.RuntimeResourceUtilitySystemHelper.EvaluateConstructionResources);
+                source.RuntimeResourceUtilitySystemHelper.EvaluateConstructionResources,
+                source.BuildingGameplayEcsQueryCompositionSystemHelper.TryResolveFactionAIOilAllocationInput);
             return productionSource;
         }
 

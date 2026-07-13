@@ -33,6 +33,12 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.AutomaticFuelLogisticsRoute_PairsTrayWithFactionOilAndRefinery();
             tests.AutomaticFuelLogisticsRoute_PairsTrayWithFactionOilAndFabricationDepot();
             tests.AutomaticFuelLogisticsRoute_PrioritizesStarvationThenStableBuildingId();
+            tests.AutomaticFuelLogisticsRoute_AIFuelPressurePrioritizesRefinery();
+            tests.AutomaticFuelLogisticsRoute_AIConstructionPressurePrioritizesFabricationDepot();
+            tests.AutomaticFuelLogisticsRoute_AICriticalFuelPressurePreventsLogisticsDeadlock();
+            tests.AutomaticFuelLogisticsRoute_AIUnreachableMaterialsDemandDoesNotOverrideFuel();
+            tests.AutomaticFuelLogisticsAIInput_UsesCanonicalPlanMaterialsAndFuelSummary();
+            tests.AutomaticFuelLogisticsAIInput_ResolvesOncePerFactionPerScan();
             tests.AutomaticFuelLogisticsRoute_PairsTankerWithFactionRefineryAndFuelStorage();
             tests.AutomaticFuelLogisticsSignature_ChangesOnlyWhenRelevantStateChanges();
             tests.AutomaticFuelLogisticsAssignmentScan_SkipsWithinStableRefreshWindow();
@@ -59,7 +65,7 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.AutomaticFuelLogisticsTanker_FullFuelStorageSetsTypedIdleReason();
             tests.AutomaticFuelLogisticsTanker_NoRouteSetsTypedIdleReason();
             tests.AutomaticFuelLogisticsTanker_NoAvailableTankerDoesNotReserveFuel();
-            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=44");
+            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=50");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -1227,6 +1233,258 @@ public sealed class BuildingResourceProductionEcsSystemTests
         finally
         {
             world.Dispose();
+        }
+    }
+
+    [Test]
+    public void AutomaticFuelLogisticsRoute_AIFuelPressurePrioritizesRefinery()
+    {
+        AssertAIOilAllocationDestination(
+            nameof(AutomaticFuelLogisticsRoute_AIFuelPressurePrioritizesRefinery),
+            new BuildingResourceHaulerBridgeCompositionSystemHelper.FactionAIOilAllocationInput(
+                plannedMaterialsCost: 100,
+                availableMaterials: 100,
+                materialsCapacity: 200,
+                storedFuelBarrels: 5f,
+                fuelStorageCapacity: 100),
+            expectRefinery: true);
+    }
+
+    [Test]
+    public void AutomaticFuelLogisticsRoute_AIConstructionPressurePrioritizesFabricationDepot()
+    {
+        AssertAIOilAllocationDestination(
+            nameof(AutomaticFuelLogisticsRoute_AIConstructionPressurePrioritizesFabricationDepot),
+            new BuildingResourceHaulerBridgeCompositionSystemHelper.FactionAIOilAllocationInput(
+                plannedMaterialsCost: 100,
+                availableMaterials: 0,
+                materialsCapacity: 200,
+                storedFuelBarrels: 80f,
+                fuelStorageCapacity: 100),
+            expectRefinery: false);
+    }
+
+    [Test]
+    public void AutomaticFuelLogisticsRoute_AICriticalFuelPressurePreventsLogisticsDeadlock()
+    {
+        AssertAIOilAllocationDestination(
+            nameof(AutomaticFuelLogisticsRoute_AICriticalFuelPressurePreventsLogisticsDeadlock),
+            new BuildingResourceHaulerBridgeCompositionSystemHelper.FactionAIOilAllocationInput(
+                plannedMaterialsCost: 100,
+                availableMaterials: 0,
+                materialsCapacity: 200,
+                storedFuelBarrels: 5f,
+                fuelStorageCapacity: 100),
+            expectRefinery: true);
+    }
+
+    [Test]
+    public void AutomaticFuelLogisticsRoute_AIUnreachableMaterialsDemandDoesNotOverrideFuel()
+    {
+        AssertAIOilAllocationDestination(
+            nameof(AutomaticFuelLogisticsRoute_AIUnreachableMaterialsDemandDoesNotOverrideFuel),
+            new BuildingResourceHaulerBridgeCompositionSystemHelper.FactionAIOilAllocationInput(
+                plannedMaterialsCost: 300,
+                availableMaterials: 0,
+                materialsCapacity: 200,
+                storedFuelBarrels: 20f,
+                fuelStorageCapacity: 100),
+            expectRefinery: true);
+    }
+
+    [Test]
+    public void AutomaticFuelLogisticsAIInput_UsesCanonicalPlanMaterialsAndFuelSummary()
+    {
+        using var world = new World(nameof(AutomaticFuelLogisticsAIInput_UsesCanonicalPlanMaterialsAndFuelSummary));
+        EntityManager em = world.EntityManager;
+        Entity boundary = em.CreateEntity(typeof(BuildingRuntimeStateTag));
+        em.AddBuffer<BuildingConfiguredSpawnableReadModel>(boundary).Add(
+            new BuildingConfiguredSpawnableReadModel
+            {
+                BuildingId = new FixedString128Bytes("building_ammunition_depot"),
+                DisplayName = new FixedString128Bytes("Field Fabrication Depot"),
+                Price = 900,
+                MaterialsCost = 80,
+                CanRequest = 1
+            });
+        em.AddBuffer<BuildingRuntimeOwnedBuildingSummary>(boundary);
+        em.AddBuffer<BuildingRuntimeSpawnRequest>(boundary);
+        em.AddBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundary).Add(
+            new BuildingRuntimeFactionUsableFuelSummary
+            {
+                FactionId = 2,
+                StoredFuelBarrels = 12f,
+                FuelStorageCapacity = 240
+            });
+
+        Entity economyEntity = em.CreateEntity(
+            typeof(FactionEconomy),
+            typeof(FactionTacticalMaterialsComponent));
+        em.SetComponentData(economyEntity, new FactionEconomy
+        {
+            FactionId = 2,
+            Money = 1000
+        });
+        em.SetComponentData(economyEntity, new FactionTacticalMaterialsComponent
+        {
+            FactionId = 2,
+            Current = 25,
+            Capacity = 200
+        });
+
+        Entity planEntity = em.CreateEntity(typeof(AIBuildPlan));
+        em.SetComponentData(planEntity, new AIBuildPlan
+        {
+            FactionId = 2,
+            Enabled = 1
+        });
+        em.AddBuffer<AIBuildPlanEntry>(planEntity).Add(new AIBuildPlanEntry
+        {
+            BuildingId = new FixedString64Bytes("Building_Ammunition_Depot")
+        });
+
+        Entity controlEntity = em.CreateEntity(typeof(FactionControlConfigTag));
+        DynamicBuffer<FactionControlEntry> controls = em.AddBuffer<FactionControlEntry>(controlEntity);
+        controls.Add(new FactionControlEntry
+        {
+            FactionId = 2,
+            AIControlled = 0
+        });
+
+        var queries = new BuildingGameplayEcsQueryCompositionSystemHelper();
+        Assert.IsFalse(queries.TryResolveFactionAIOilAllocationInput(em, 2, out _));
+        FactionControlEntry enabledControl = controls[0];
+        enabledControl.AIControlled = 1;
+        controls[0] = enabledControl;
+        bool found = queries.TryResolveFactionAIOilAllocationInput(em, 2, out var input);
+
+        Assert.IsTrue(found);
+        Assert.AreEqual(80, input.PlannedMaterialsCost);
+        Assert.AreEqual(25, input.AvailableMaterials);
+        Assert.AreEqual(200, input.MaterialsCapacity);
+        Assert.AreEqual(12f, input.StoredFuelBarrels, 0.001f);
+        Assert.AreEqual(240, input.FuelStorageCapacity);
+
+        for (int i = 0; i < 16; i++)
+            queries.TryResolveFactionAIOilAllocationInput(em, 2, out _);
+        System.GC.Collect();
+        System.GC.WaitForPendingFinalizers();
+        System.GC.Collect();
+        bool resolvedAll = true;
+        long before = System.GC.GetAllocatedBytesForCurrentThread();
+        for (int i = 0; i < 128; i++)
+            resolvedAll &= queries.TryResolveFactionAIOilAllocationInput(em, 2, out _);
+        long allocated = System.GC.GetAllocatedBytesForCurrentThread() - before;
+        Assert.IsTrue(resolvedAll);
+        Assert.AreEqual(0L, allocated, $"AI Oil allocation input reads allocated {allocated} managed bytes.");
+    }
+
+    [Test]
+    public void AutomaticFuelLogisticsAIInput_ResolvesOncePerFactionPerScan()
+    {
+        using var world = new World(nameof(AutomaticFuelLogisticsAIInput_ResolvesOncePerFactionPerScan));
+        EntityManager em = world.EntityManager;
+        int resolveCount = 0;
+        var bridge = new BuildingResourceHaulerBridgeCompositionSystemHelper();
+        BuildingResourceHaulerBridgeCompositionSystemHelper.Context context =
+            CreateAutomaticRouteContext(
+                new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity>(),
+                ResolveInput);
+
+        bridge.ResetAIOilAllocationInputCacheForTests();
+        Assert.IsTrue(bridge.TryResolveCachedFactionAIOilAllocationInputForTests(context, em, 2, out _));
+        Assert.IsTrue(bridge.TryResolveCachedFactionAIOilAllocationInputForTests(context, em, 2, out _));
+        Assert.AreEqual(1, resolveCount);
+
+        bridge.ResetAIOilAllocationInputCacheForTests();
+        Assert.IsTrue(bridge.TryResolveCachedFactionAIOilAllocationInputForTests(context, em, 2, out _));
+        Assert.AreEqual(2, resolveCount);
+
+        bool ResolveInput(
+            EntityManager _,
+            byte factionId,
+            out BuildingResourceHaulerBridgeCompositionSystemHelper.FactionAIOilAllocationInput input)
+        {
+            resolveCount++;
+            input = new BuildingResourceHaulerBridgeCompositionSystemHelper.FactionAIOilAllocationInput(
+                plannedMaterialsCost: 80,
+                availableMaterials: 20,
+                materialsCapacity: 200,
+                storedFuelBarrels: 40f,
+                fuelStorageCapacity: 100);
+            return factionId == 2;
+        }
+    }
+
+    private static void AssertAIOilAllocationDestination(
+        string worldName,
+        BuildingResourceHaulerBridgeCompositionSystemHelper.FactionAIOilAllocationInput input,
+        bool expectRefinery)
+    {
+        using var world = new World(worldName);
+        EntityManager em = world.EntityManager;
+        RuntimeBuildingEntity oilPump = CreateResourceBuilding(
+            em,
+            9,
+            1,
+            new Vector2Int(8, 8),
+            oilCapacity: 100,
+            fuelCapacity: 0,
+            oilRate: 80f,
+            fuelRate: 0f,
+            storedOil: 40f,
+            storedFuel: 0f);
+        RuntimeBuildingEntity refinery = CreateResourceBuilding(
+            em,
+            10,
+            1,
+            new Vector2Int(16, 8),
+            oilCapacity: 100,
+            fuelCapacity: 100,
+            oilRate: 0f,
+            fuelRate: 40f,
+            storedOil: 0f,
+            storedFuel: 0f);
+        RuntimeBuildingEntity depot = CreateResourceBuilding(
+            em,
+            11,
+            1,
+            new Vector2Int(12, 8),
+            oilCapacity: 24,
+            fuelCapacity: 0,
+            oilRate: 0f,
+            fuelRate: 0f,
+            storedOil: 0f,
+            storedFuel: 0f);
+        AddMaterialFabricationInput(em, depot, productionEnabled: true);
+        var runtimeBuildings = new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity>
+        {
+            { oilPump.Id, oilPump },
+            { refinery.Id, refinery },
+            { depot.Id, depot }
+        };
+
+        bool found = BuildingResourceHaulerBridgeCompositionSystemHelper.TryFindAutomaticHaulerRouteForTests(
+            CreateAutomaticRouteContext(runtimeBuildings, ResolveInput),
+            em,
+            CreateTestGrid(),
+            1,
+            new int2(0, 0),
+            ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil,
+            8f,
+            out _,
+            out RuntimeBuildingEntity destination);
+
+        Assert.IsTrue(found);
+        Assert.AreSame(expectRefinery ? refinery : depot, destination);
+
+        bool ResolveInput(
+            EntityManager _,
+            byte factionId,
+            out BuildingResourceHaulerBridgeCompositionSystemHelper.FactionAIOilAllocationInput resolved)
+        {
+            resolved = input;
+            return factionId == 1;
         }
     }
 
@@ -3035,7 +3293,9 @@ public sealed class BuildingResourceProductionEcsSystemTests
     }
 
     private static BuildingResourceHaulerBridgeCompositionSystemHelper.Context CreateAutomaticRouteContext(
-        System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
+        System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
+        BuildingResourceHaulerBridgeCompositionSystemHelper.TryResolveFactionAIOilAllocationInputDelegate
+            tryResolveFactionAIOilAllocationInput = null)
     {
         return new BuildingResourceHaulerBridgeCompositionSystemHelper.Context(
             runtimeBuildings,
@@ -3048,7 +3308,8 @@ public sealed class BuildingResourceProductionEcsSystemTests
             null,
             null,
             ResolveBuildingFocusWorldPosition,
-            null);
+            null,
+            tryResolveFactionAIOilAllocationInput);
     }
 
     private static BuildingResourceHaulerBridgeCompositionSystemHelper.Context CreateBridgeCycleContext(

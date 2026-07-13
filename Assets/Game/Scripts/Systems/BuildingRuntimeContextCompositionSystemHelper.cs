@@ -242,6 +242,7 @@ namespace Game.Runtime
                 (RuntimeBuildingEntity building, out Vector3 worldPosition) => tryResolveBuildingFocusWorldPosition(source, building, out worldPosition),
                 (int id, out RuntimeBuildingEntity building) => tryGetRuntimeBuilding(source, id, out building),
                 (building, grid) => getEffectivePlacementRect(source, building.Definition, building.OriginCell, grid, false),
+                source.BuildingGameplayEcsQueryCompositionSystemHelper.TryResolveFactionAIOilAllocationInput,
                 building => source.BuildingBarrierUtilitySystemHelper.RememberOpenBaseBreach(
                     barrierContext,
                     building),

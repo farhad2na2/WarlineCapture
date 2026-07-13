@@ -49,6 +49,7 @@ namespace Game.Runtime
             public readonly BuildingResourceHaulerBridgeCompositionSystemHelper.GetEntityQueryDelegate GetSelectedUnitsQuery;
             public readonly BuildingResourceHaulerBridgeCompositionSystemHelper.TryGetRuntimeBuildingDelegate TryGetRuntimeBuilding;
             public readonly BuildingResourceHaulerBridgeCompositionSystemHelper.GetEffectivePlacementRectDelegate GetEffectivePlacementRect;
+            public readonly BuildingResourceHaulerBridgeCompositionSystemHelper.TryResolveFactionAIOilAllocationInputDelegate TryResolveFactionAIOilAllocationInput;
             public readonly BuildingProductionTransportPresentationSystemHelper.PrepareTransportDropVisualDelegate PrepareTransportDropVisual;
             public readonly BuildingProductionRequestSystemHelper.EvaluateConstructionResourcesDelegate EvaluateConstructionResources;
 
@@ -93,7 +94,8 @@ namespace Game.Runtime
                 BuildingResourceHaulerBridgeCompositionSystemHelper.TryGetRuntimeBuildingDelegate tryGetRuntimeBuilding,
                 BuildingResourceHaulerBridgeCompositionSystemHelper.GetEffectivePlacementRectDelegate getEffectivePlacementRect,
                 BuildingProductionTransportPresentationSystemHelper.PrepareTransportDropVisualDelegate prepareTransportDropVisual = null,
-                BuildingProductionRequestSystemHelper.EvaluateConstructionResourcesDelegate evaluateConstructionResources = null)
+                BuildingProductionRequestSystemHelper.EvaluateConstructionResourcesDelegate evaluateConstructionResources = null,
+                BuildingResourceHaulerBridgeCompositionSystemHelper.TryResolveFactionAIOilAllocationInputDelegate tryResolveFactionAIOilAllocationInput = null)
             {
                 RuntimeBuildings = runtimeBuildings;
                 WorldCamera = worldCamera;
@@ -134,6 +136,7 @@ namespace Game.Runtime
                 GetSelectedUnitsQuery = getSelectedUnitsQuery;
                 TryGetRuntimeBuilding = tryGetRuntimeBuilding;
                 GetEffectivePlacementRect = getEffectivePlacementRect;
+                TryResolveFactionAIOilAllocationInput = tryResolveFactionAIOilAllocationInput;
                 PrepareTransportDropVisual = prepareTransportDropVisual;
                 EvaluateConstructionResources = evaluateConstructionResources;
             }
@@ -180,7 +183,8 @@ namespace Game.Runtime
             BuildingResourceHaulerBridgeCompositionSystemHelper.TryGetRuntimeBuildingDelegate tryGetRuntimeBuilding,
             BuildingResourceHaulerBridgeCompositionSystemHelper.GetEffectivePlacementRectDelegate getEffectivePlacementRect,
             BuildingProductionTransportPresentationSystemHelper.PrepareTransportDropVisualDelegate prepareTransportDropVisual = null,
-            BuildingProductionRequestSystemHelper.EvaluateConstructionResourcesDelegate evaluateConstructionResources = null)
+            BuildingProductionRequestSystemHelper.EvaluateConstructionResourcesDelegate evaluateConstructionResources = null,
+            BuildingResourceHaulerBridgeCompositionSystemHelper.TryResolveFactionAIOilAllocationInputDelegate tryResolveFactionAIOilAllocationInput = null)
         {
             return new Source(
                 runtimeBuildings,
@@ -223,7 +227,8 @@ namespace Game.Runtime
                 tryGetRuntimeBuilding,
                 getEffectivePlacementRect,
                 prepareTransportDropVisual,
-                evaluateConstructionResources);
+                evaluateConstructionResources,
+                tryResolveFactionAIOilAllocationInput);
         }
 
         public BuildingProductionUpdateCompositionSystemHelper.Context CreateProductionUpdateContext(Source source)
@@ -362,7 +367,8 @@ namespace Game.Runtime
                 source.GetSelectedUnitsQuery,
                 source.TryGetRuntimeBuilding,
                 building => source.ResolveBuildingFocusWorldPosition(building),
-                source.GetEffectivePlacementRect);
+                source.GetEffectivePlacementRect,
+                source.TryResolveFactionAIOilAllocationInput);
         }
     }
 }

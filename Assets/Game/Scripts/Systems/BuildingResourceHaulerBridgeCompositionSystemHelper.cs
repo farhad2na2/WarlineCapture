@@ -15,6 +15,7 @@ namespace Game.Runtime
         private const float AutomaticAssignmentStableRefreshSeconds = 2f;
         private readonly List<Entity> _haulerEntities = new();
         private readonly HashSet<Entity> _invalidCapacityWarningEntities = new();
+        private FixedList512Bytes<FactionAIOilAllocationCacheEntry> _aiOilAllocationInputCache;
         private uint _lastAutomaticAssignmentSignature;
         private uint _nextReservationId = 1u;
         private float _nextAutomaticAssignmentRefreshAt;
@@ -27,6 +28,40 @@ namespace Game.Runtime
         public delegate bool TryGetRuntimeBuildingDelegate(int id, out RuntimeBuildingEntity building);
         public delegate Vector3 ResolveBuildingFocusWorldPositionDelegate(RuntimeBuildingEntity building);
         public delegate RectInt GetEffectivePlacementRectDelegate(RuntimeBuildingEntity building, GridConfig grid);
+        public delegate bool TryResolveFactionAIOilAllocationInputDelegate(
+            EntityManager entityManager,
+            byte factionId,
+            out FactionAIOilAllocationInput input);
+
+        internal readonly struct FactionAIOilAllocationInput
+        {
+            public readonly int PlannedMaterialsCost;
+            public readonly int AvailableMaterials;
+            public readonly int MaterialsCapacity;
+            public readonly float StoredFuelBarrels;
+            public readonly int FuelStorageCapacity;
+
+            public FactionAIOilAllocationInput(
+                int plannedMaterialsCost,
+                int availableMaterials,
+                int materialsCapacity,
+                float storedFuelBarrels,
+                int fuelStorageCapacity)
+            {
+                PlannedMaterialsCost = math.max(0, plannedMaterialsCost);
+                AvailableMaterials = math.max(0, availableMaterials);
+                MaterialsCapacity = math.max(0, materialsCapacity);
+                StoredFuelBarrels = math.max(0f, storedFuelBarrels);
+                FuelStorageCapacity = math.max(0, fuelStorageCapacity);
+            }
+        }
+
+        private struct FactionAIOilAllocationCacheEntry
+        {
+            public byte FactionId;
+            public byte HasInput;
+            public FactionAIOilAllocationInput Input;
+        }
 
         public readonly struct Context
         {
@@ -41,6 +76,7 @@ namespace Game.Runtime
             public readonly TryGetRuntimeBuildingDelegate TryGetRuntimeBuilding;
             public readonly ResolveBuildingFocusWorldPositionDelegate ResolveBuildingFocusWorldPosition;
             public readonly GetEffectivePlacementRectDelegate GetEffectivePlacementRect;
+            public readonly TryResolveFactionAIOilAllocationInputDelegate TryResolveFactionAIOilAllocationInput;
 
             public Context(
                 IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
@@ -53,7 +89,8 @@ namespace Game.Runtime
                 GetEntityQueryDelegate getSelectedUnitsQuery,
                 TryGetRuntimeBuildingDelegate tryGetRuntimeBuilding,
                 ResolveBuildingFocusWorldPositionDelegate resolveBuildingFocusWorldPosition,
-                GetEffectivePlacementRectDelegate getEffectivePlacementRect)
+                GetEffectivePlacementRectDelegate getEffectivePlacementRect,
+                TryResolveFactionAIOilAllocationInputDelegate tryResolveFactionAIOilAllocationInput = null)
             {
                 RuntimeBuildings = runtimeBuildings;
                 ResourceHaulerUtilitySystemHelper = resourceHaulerSystem;
@@ -66,6 +103,7 @@ namespace Game.Runtime
                 TryGetRuntimeBuilding = tryGetRuntimeBuilding;
                 ResolveBuildingFocusWorldPosition = resolveBuildingFocusWorldPosition;
                 GetEffectivePlacementRect = getEffectivePlacementRect;
+                TryResolveFactionAIOilAllocationInput = tryResolveFactionAIOilAllocationInput;
             }
         }
 
@@ -107,6 +145,8 @@ namespace Game.Runtime
             }
 
             bool runAutomaticAssignment = ShouldRunAutomaticAssignmentScan(context, em, grid, _haulerEntities, now);
+            if (runAutomaticAssignment)
+                _aiOilAllocationInputCache.Clear();
             for (int i = 0; i < _haulerEntities.Count; i++)
             {
                 Entity hauler = _haulerEntities[i];
@@ -246,6 +286,9 @@ namespace Game.Runtime
 
             byte factionId = em.GetComponentData<Faction>(unit).Id;
             int2 unitCell = em.GetComponentData<UnitGrid>(unit).Cell;
+            FactionAIOilAllocationInput aiInput = default;
+            bool hasAIInput = resourceKind == ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil &&
+                              TryResolveCachedFactionAIOilAllocationInput(context, em, factionId, out aiInput);
             if (!TryFindAutomaticHaulerRoute(
                     context,
                     em,
@@ -254,6 +297,8 @@ namespace Game.Runtime
                     unitCell,
                     resourceKind,
                     loadAmount,
+                    hasAIInput,
+                    aiInput,
                     out RuntimeBuildingEntity source,
                     out RuntimeBuildingEntity destination))
             {
@@ -261,7 +306,16 @@ namespace Game.Runtime
                     em,
                     unit,
                     FuelLogisticsTaskStatusCode.Blocked,
-                    ResolveAutomaticAssignmentBlockReason(context, em, grid, factionId, unitCell, resourceKind, loadAmount),
+                    ResolveAutomaticAssignmentBlockReason(
+                        context,
+                        em,
+                        grid,
+                        factionId,
+                        unitCell,
+                        resourceKind,
+                        loadAmount,
+                        hasAIInput,
+                        aiInput),
                     resourceKind);
                 return false;
             }
@@ -362,6 +416,54 @@ namespace Game.Runtime
             _nextAutomaticAssignmentRefreshAt = now + AutomaticAssignmentStableRefreshSeconds;
             return true;
         }
+
+        private bool TryResolveCachedFactionAIOilAllocationInput(
+            Context context,
+            EntityManager em,
+            byte factionId,
+            out FactionAIOilAllocationInput input)
+        {
+            input = default;
+            for (int i = 0; i < _aiOilAllocationInputCache.Length; i++)
+            {
+                FactionAIOilAllocationCacheEntry entry = _aiOilAllocationInputCache[i];
+                if (entry.FactionId != factionId)
+                    continue;
+
+                input = entry.Input;
+                return entry.HasInput != 0;
+            }
+
+            bool hasInput = context.TryResolveFactionAIOilAllocationInput != null &&
+                            context.TryResolveFactionAIOilAllocationInput(em, factionId, out input);
+            if (_aiOilAllocationInputCache.Length < _aiOilAllocationInputCache.Capacity)
+            {
+                _aiOilAllocationInputCache.Add(new FactionAIOilAllocationCacheEntry
+                {
+                    FactionId = factionId,
+                    HasInput = hasInput ? (byte)1 : (byte)0,
+                    Input = input
+                });
+            }
+
+            return hasInput;
+        }
+
+#if UNITY_INCLUDE_TESTS
+        internal void ResetAIOilAllocationInputCacheForTests()
+        {
+            _aiOilAllocationInputCache.Clear();
+        }
+
+        internal bool TryResolveCachedFactionAIOilAllocationInputForTests(
+            Context context,
+            EntityManager em,
+            byte factionId,
+            out FactionAIOilAllocationInput input)
+        {
+            return TryResolveCachedFactionAIOilAllocationInput(context, em, factionId, out input);
+        }
+#endif
 
         private static uint CalculateAutomaticAssignmentSignature(
             Context context,
@@ -565,6 +667,8 @@ namespace Game.Runtime
             int2 unitCell,
             ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind,
             float loadAmount,
+            bool hasAIInput,
+            in FactionAIOilAllocationInput aiInput,
             out RuntimeBuildingEntity source,
             out RuntimeBuildingEntity destination)
         {
@@ -593,6 +697,8 @@ namespace Game.Runtime
                 factionId,
                 resourceKind,
                 loadAmount,
+                hasAIInput,
+                aiInput,
                 out destination);
         }
 
@@ -603,7 +709,9 @@ namespace Game.Runtime
             byte factionId,
             int2 unitCell,
             ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind,
-            float loadAmount)
+            float loadAmount,
+            bool hasAIInput,
+            in FactionAIOilAllocationInput aiInput)
         {
             if (!TryFindNearestAutomaticSourceToCell(
                     context,
@@ -628,6 +736,8 @@ namespace Game.Runtime
                     factionId,
                     resourceKind,
                     loadAmount,
+                    hasAIInput,
+                    aiInput,
                     out _))
             {
                 return FuelLogisticsBlockReasonCode.DestinationFull;
@@ -648,6 +758,10 @@ namespace Game.Runtime
             out RuntimeBuildingEntity source,
             out RuntimeBuildingEntity destination)
         {
+            FactionAIOilAllocationInput aiInput = default;
+            bool hasAIInput = resourceKind == ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil &&
+                              context.TryResolveFactionAIOilAllocationInput != null &&
+                              context.TryResolveFactionAIOilAllocationInput(em, factionId, out aiInput);
             return TryFindAutomaticHaulerRoute(
                 context,
                 em,
@@ -656,6 +770,8 @@ namespace Game.Runtime
                 unitCell,
                 resourceKind,
                 loadAmount,
+                hasAIInput,
+                aiInput,
                 out source,
                 out destination);
         }
@@ -710,6 +826,8 @@ namespace Game.Runtime
             byte factionId,
             ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind,
             float loadAmount,
+            bool hasAIInput,
+            in FactionAIOilAllocationInput aiInput,
             out RuntimeBuildingEntity result)
         {
             result = null;
@@ -718,9 +836,9 @@ namespace Game.Runtime
 
             Vector3 origin = context.ResolveBuildingFocusWorldPosition(source);
             float bestDistanceSq = float.MaxValue;
+            int bestStrategicPriority = -1;
             int bestStarvationPriority = -1;
             float bestFreeCapacityRatio = -1f;
-
             foreach (var pair in context.RuntimeBuildings)
             {
                 RuntimeBuildingEntity candidate = pair.Value;
@@ -734,6 +852,7 @@ namespace Game.Runtime
 
                 Vector3 candidatePosition = context.ResolveBuildingFocusWorldPosition(candidate);
                 float distanceSq = (candidatePosition - origin).sqrMagnitude;
+                int strategicPriority = 0;
                 int starvationPriority = 0;
                 float freeCapacityRatio = 0f;
                 if (resourceKind == ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil)
@@ -743,11 +862,16 @@ namespace Game.Runtime
                         em,
                         candidate,
                         loadAmount,
+                        hasAIInput,
+                        aiInput,
+                        out strategicPriority,
                         out starvationPriority,
                         out freeCapacityRatio);
                     if (!IsBetterOilDestinationCandidate(
                             candidate,
                             result,
+                            strategicPriority,
+                            bestStrategicPriority,
                             starvationPriority,
                             bestStarvationPriority,
                             freeCapacityRatio,
@@ -762,6 +886,7 @@ namespace Game.Runtime
                 }
 
                 bestDistanceSq = distanceSq;
+                bestStrategicPriority = strategicPriority;
                 bestStarvationPriority = starvationPriority;
                 bestFreeCapacityRatio = freeCapacityRatio;
                 result = candidate;
@@ -901,6 +1026,9 @@ namespace Game.Runtime
             EntityManager em,
             RuntimeBuildingEntity candidate,
             float loadAmount,
+            bool hasAIInput,
+            in FactionAIOilAllocationInput aiInput,
+            out int strategicPriority,
             out int starvationPriority,
             out float freeCapacityRatio)
         {
@@ -912,6 +1040,9 @@ namespace Game.Runtime
             if (TryGetMaterialFabrication(em, candidate, out MaterialFabricationComponent fabrication))
                 requiredOil = math.max(requiredOil, fabrication.OilConsumedPerCycle);
 
+            strategicPriority = hasAIInput
+                ? ResolveAIOilDestinationStrategicPriority(context, em, candidate, aiInput)
+                : 0;
             starvationPriority = storedOil + 0.0001f < requiredOil ? 1 : 0;
             float freeCapacity = context.ResourceHaulerUtilitySystemHelper.GetReceivingFreeCapacity(
                 em,
@@ -923,6 +1054,8 @@ namespace Game.Runtime
         private static bool IsBetterOilDestinationCandidate(
             RuntimeBuildingEntity candidate,
             RuntimeBuildingEntity current,
+            int strategicPriority,
+            int currentStrategicPriority,
             int starvationPriority,
             int currentStarvationPriority,
             float freeCapacityRatio,
@@ -930,12 +1063,55 @@ namespace Game.Runtime
             float distanceSq,
             float currentDistanceSq)
         {
+            if (current == null || strategicPriority != currentStrategicPriority)
+                return current == null || strategicPriority > currentStrategicPriority;
             if (current == null || starvationPriority != currentStarvationPriority)
                 return current == null || starvationPriority > currentStarvationPriority;
             if (math.abs(freeCapacityRatio - currentFreeCapacityRatio) > 0.0001f)
                 return freeCapacityRatio > currentFreeCapacityRatio;
 
             return IsBetterDistanceCandidate(candidate, current, distanceSq, currentDistanceSq);
+        }
+
+        private static int ResolveAIOilDestinationStrategicPriority(
+            Context context,
+            EntityManager em,
+            RuntimeBuildingEntity candidate,
+            in FactionAIOilAllocationInput input)
+        {
+            if (TryGetMaterialFabrication(em, candidate, out _))
+                return ResolveConstructionPressureBand(
+                    input.PlannedMaterialsCost,
+                    input.AvailableMaterials,
+                    input.MaterialsCapacity);
+
+            return context.ResourceHaulerUtilitySystemHelper.IsFuelBuilding(candidate)
+                ? ResolveFuelPressureBand(input.StoredFuelBarrels, input.FuelStorageCapacity)
+                : 0;
+        }
+
+        internal static int ResolveConstructionPressureBand(
+            int plannedMaterialsCost,
+            int availableMaterials,
+            int materialsCapacity)
+        {
+            int cost = math.max(0, plannedMaterialsCost);
+            if (cost == 0 || cost > math.max(0, materialsCapacity) || availableMaterials >= cost)
+                return 0;
+
+            return availableMaterials <= 0 || availableMaterials * 2 < cost ? 2 : 1;
+        }
+
+        internal static int ResolveFuelPressureBand(float storedFuelBarrels, int fuelStorageCapacity)
+        {
+            int capacity = math.max(0, fuelStorageCapacity);
+            if (capacity == 0)
+                return 0;
+
+            float ratio = math.saturate(math.max(0f, storedFuelBarrels) / capacity);
+            if (ratio <= 0.1f)
+                return 3;
+            return ratio <= 0.25f ? 1 : 0;
         }
 
         private static bool IsBetterDistanceCandidate(

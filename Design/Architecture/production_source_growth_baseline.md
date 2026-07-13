@@ -2240,6 +2240,14 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
       "maxLines": 88,
       "maxBytes": 3680,
       "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/MapVehiclePlacementClearanceSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-070",
+      "maxLines": 244,
+      "maxBytes": 9254,
+      "scope": "system-helper"
     }
   ]
 }

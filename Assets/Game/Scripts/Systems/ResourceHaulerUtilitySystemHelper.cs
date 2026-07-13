@@ -305,6 +305,23 @@ namespace Game.Runtime
             return HasReceivingCapacity((FactionResourceCompositionSystemHelper.IResourceBuilding)destination, resourceKind, cargo);
         }
 
+        internal float GetReceivingFreeCapacity(
+            EntityManager entityManager,
+            RuntimeBuildingEntity destination,
+            ResourceHaulKind resourceKind)
+        {
+            if (destination == null)
+                return 0f;
+
+            BuildingResourceStorageComponent storage =
+                TryGetEntityResourceStorage(entityManager, destination, out BuildingResourceStorageComponent entityStorage)
+                    ? entityStorage
+                    : CreateResourceStorage(destination);
+            return resourceKind == ResourceHaulKind.Fuel
+                ? BuildingResourceStorageTransferSystemHelper.GetFuelReceivingFreeCapacity(storage)
+                : BuildingResourceStorageTransferSystemHelper.GetOilReceivingFreeCapacity(storage);
+        }
+
         internal bool TryReserveSource(
             EntityManager entityManager,
             RuntimeBuildingEntity source,

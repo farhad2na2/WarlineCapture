@@ -150,8 +150,9 @@ namespace Game.Runtime
 
             bool clickedIsOilSource = context.ResourceHaulerUtilitySystemHelper.IsOilSourceBuilding(clickedBuilding);
             bool clickedIsFuelBuilding = context.ResourceHaulerUtilitySystemHelper.IsFuelBuilding(clickedBuilding);
+            bool clickedIsFabricationInput = IsEnabledMaterialFabricationInput(em, clickedBuilding);
             bool clickedIsStorage = context.FactionResourceCompositionSystemHelper.IsResourceStorageBuilding(clickedBuilding);
-            if (!clickedIsOilSource && !clickedIsFuelBuilding && !clickedIsStorage)
+            if (!clickedIsOilSource && !clickedIsFuelBuilding && !clickedIsFabricationInput && !clickedIsStorage)
                 return false;
 
             RuntimeBuildingEntity source = clickedBuilding;
@@ -159,11 +160,15 @@ namespace Game.Runtime
             ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind = ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil;
             if (clickedIsOilSource)
             {
-                if (!TryFindNearestBuilding(context, clickedBuilding, candidate => context.ResourceHaulerUtilitySystemHelper.IsFuelBuilding(candidate), out destination))
+                if (!TryFindNearestBuilding(
+                        context,
+                        clickedBuilding,
+                        candidate => IsAutomaticOilDestination(context, em, candidate),
+                        out destination))
                     return false;
                 resourceKind = ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil;
             }
-            else if (clickedIsFuelBuilding)
+            else if (clickedIsFuelBuilding || clickedIsFabricationInput)
             {
                 if (!TryFindNearestBuilding(context, clickedBuilding, candidate => context.ResourceHaulerUtilitySystemHelper.IsOilSourceBuilding(candidate), out source))
                     return false;
@@ -457,6 +462,11 @@ namespace Game.Runtime
                     hash = AppendHash(hash, QuantizeResource(storage.ReservedFuelInboundBarrels));
                     hash = AppendHash(hash, QuantizeResource(storage.ReservedFuelOutboundBarrels));
                 }
+                if (TryGetMaterialFabrication(em, building, out MaterialFabricationComponent fabrication))
+                {
+                    hash = AppendHash(hash, fabrication.ProductionEnabled);
+                    hash = AppendHash(hash, (int)fabrication.Version);
+                }
             }
 
             return hash;
@@ -683,7 +693,7 @@ namespace Game.Runtime
 
                 Vector3 candidatePosition = context.ResolveBuildingFocusWorldPosition(candidate);
                 float distanceSq = (candidatePosition - origin).sqrMagnitude;
-                if (distanceSq >= bestDistanceSq)
+                if (!IsBetterDistanceCandidate(candidate, result, distanceSq, bestDistanceSq))
                     continue;
 
                 bestDistanceSq = distanceSq;
@@ -708,6 +718,8 @@ namespace Game.Runtime
 
             Vector3 origin = context.ResolveBuildingFocusWorldPosition(source);
             float bestDistanceSq = float.MaxValue;
+            int bestStarvationPriority = -1;
+            float bestFreeCapacityRatio = -1f;
 
             foreach (var pair in context.RuntimeBuildings)
             {
@@ -722,10 +734,36 @@ namespace Game.Runtime
 
                 Vector3 candidatePosition = context.ResolveBuildingFocusWorldPosition(candidate);
                 float distanceSq = (candidatePosition - origin).sqrMagnitude;
-                if (distanceSq >= bestDistanceSq)
+                int starvationPriority = 0;
+                float freeCapacityRatio = 0f;
+                if (resourceKind == ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil)
+                {
+                    ResolveOilDestinationDemand(
+                        context,
+                        em,
+                        candidate,
+                        loadAmount,
+                        out starvationPriority,
+                        out freeCapacityRatio);
+                    if (!IsBetterOilDestinationCandidate(
+                            candidate,
+                            result,
+                            starvationPriority,
+                            bestStarvationPriority,
+                            freeCapacityRatio,
+                            bestFreeCapacityRatio,
+                            distanceSq,
+                            bestDistanceSq))
+                        continue;
+                }
+                else if (!IsBetterDistanceCandidate(candidate, result, distanceSq, bestDistanceSq))
+                {
                     continue;
+                }
 
                 bestDistanceSq = distanceSq;
+                bestStarvationPriority = starvationPriority;
+                bestFreeCapacityRatio = freeCapacityRatio;
                 result = candidate;
             }
 
@@ -769,7 +807,7 @@ namespace Game.Runtime
 
             if (resourceKind == ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil)
             {
-                return context.ResourceHaulerUtilitySystemHelper.IsFuelBuilding(candidate) &&
+                return IsAutomaticOilDestination(context, em, candidate) &&
                        context.ResourceHaulerUtilitySystemHelper.HasReceivingCapacity(
                            em,
                            candidate,
@@ -809,7 +847,7 @@ namespace Game.Runtime
 
                 if (resourceKind == ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil)
                 {
-                    if (context.ResourceHaulerUtilitySystemHelper.IsFuelBuilding(candidate))
+                    if (IsAutomaticOilDestination(context, em, candidate))
                         return true;
                     continue;
                 }
@@ -822,6 +860,93 @@ namespace Game.Runtime
             }
 
             return false;
+        }
+
+        private static bool IsAutomaticOilDestination(
+            Context context,
+            EntityManager em,
+            RuntimeBuildingEntity candidate)
+        {
+            return context.ResourceHaulerUtilitySystemHelper.IsFuelBuilding(candidate) ||
+                   IsEnabledMaterialFabricationInput(em, candidate);
+        }
+
+        private static bool IsEnabledMaterialFabricationInput(
+            EntityManager em,
+            RuntimeBuildingEntity candidate)
+        {
+            return TryGetMaterialFabrication(em, candidate, out MaterialFabricationComponent fabrication) &&
+                   fabrication.ProductionEnabled != 0;
+        }
+
+        private static bool TryGetMaterialFabrication(
+            EntityManager em,
+            RuntimeBuildingEntity candidate,
+            out MaterialFabricationComponent fabrication)
+        {
+            fabrication = default;
+            if (candidate == null ||
+                candidate.CombatEntity == Entity.Null ||
+                !em.Exists(candidate.CombatEntity) ||
+                !em.HasComponent<MaterialFabricationInputTag>(candidate.CombatEntity) ||
+                !em.HasComponent<MaterialFabricationComponent>(candidate.CombatEntity))
+                return false;
+
+            fabrication = em.GetComponentData<MaterialFabricationComponent>(candidate.CombatEntity);
+            return fabrication.OwnerFactionId == candidate.OwnerFactionId;
+        }
+
+        private static void ResolveOilDestinationDemand(
+            Context context,
+            EntityManager em,
+            RuntimeBuildingEntity candidate,
+            float loadAmount,
+            out int starvationPriority,
+            out float freeCapacityRatio)
+        {
+            float storedOil = context.ResourceHaulerUtilitySystemHelper.GetStoredResource(
+                em,
+                candidate,
+                ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil);
+            float requiredOil = loadAmount;
+            if (TryGetMaterialFabrication(em, candidate, out MaterialFabricationComponent fabrication))
+                requiredOil = math.max(requiredOil, fabrication.OilConsumedPerCycle);
+
+            starvationPriority = storedOil + 0.0001f < requiredOil ? 1 : 0;
+            float freeCapacity = context.ResourceHaulerUtilitySystemHelper.GetReceivingFreeCapacity(
+                em,
+                candidate,
+                ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil);
+            freeCapacityRatio = freeCapacity / math.max(1f, candidate.OilStorageCapacity);
+        }
+
+        private static bool IsBetterOilDestinationCandidate(
+            RuntimeBuildingEntity candidate,
+            RuntimeBuildingEntity current,
+            int starvationPriority,
+            int currentStarvationPriority,
+            float freeCapacityRatio,
+            float currentFreeCapacityRatio,
+            float distanceSq,
+            float currentDistanceSq)
+        {
+            if (current == null || starvationPriority != currentStarvationPriority)
+                return current == null || starvationPriority > currentStarvationPriority;
+            if (math.abs(freeCapacityRatio - currentFreeCapacityRatio) > 0.0001f)
+                return freeCapacityRatio > currentFreeCapacityRatio;
+
+            return IsBetterDistanceCandidate(candidate, current, distanceSq, currentDistanceSq);
+        }
+
+        private static bool IsBetterDistanceCandidate(
+            RuntimeBuildingEntity candidate,
+            RuntimeBuildingEntity current,
+            float distanceSq,
+            float currentDistanceSq)
+        {
+            if (current == null || distanceSq + 0.0001f < currentDistanceSq)
+                return true;
+            return math.abs(distanceSq - currentDistanceSq) <= 0.0001f && candidate.Id < current.Id;
         }
 
         private static bool IsSameFactionResourceBuilding(RuntimeBuildingEntity building, byte factionId)

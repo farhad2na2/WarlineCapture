@@ -31,6 +31,8 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.ProductionRuntimeTick_SyncsResourceStorageMirrorAfterProductionUpdate();
             tests.ProductionRuntimeTick_SyncsResourceStorageMirrorAfterHaulerUpdate();
             tests.AutomaticFuelLogisticsRoute_PairsTrayWithFactionOilAndRefinery();
+            tests.AutomaticFuelLogisticsRoute_PairsTrayWithFactionOilAndFabricationDepot();
+            tests.AutomaticFuelLogisticsRoute_PrioritizesStarvationThenStableBuildingId();
             tests.AutomaticFuelLogisticsRoute_PairsTankerWithFactionRefineryAndFuelStorage();
             tests.AutomaticFuelLogisticsSignature_ChangesOnlyWhenRelevantStateChanges();
             tests.AutomaticFuelLogisticsAssignmentScan_SkipsWithinStableRefreshWindow();
@@ -48,6 +50,8 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.AutomaticFuelLogisticsTray_RouteInvalidationClearsReservation();
             tests.AutomaticFuelLogisticsSteadyState_DoesNotAllocateManagedMemory();
             tests.AutomaticFuelLogisticsCycle_TrayTransfersOilWithoutManualCommand();
+            tests.AutomaticFuelLogisticsCycle_TrayTransfersOilToFabricationDepotWithoutManualCommand();
+            tests.AutomaticFuelLogisticsActiveFabricationAssignment_IsNotRecalculated();
             tests.AutomaticFuelLogisticsCycle_TankerTransfersFuelWithoutManualCommand();
             tests.AutomaticFuelLogisticsEnemyFaction_ProducesAndDeliversFuel();
             tests.AutomaticFuelLogisticsTanker_NoRefineryFuelSetsTypedIdleReason();
@@ -55,7 +59,7 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.AutomaticFuelLogisticsTanker_FullFuelStorageSetsTypedIdleReason();
             tests.AutomaticFuelLogisticsTanker_NoRouteSetsTypedIdleReason();
             tests.AutomaticFuelLogisticsTanker_NoAvailableTankerDoesNotReserveFuel();
-            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=40");
+            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=44");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -1067,6 +1071,149 @@ public sealed class BuildingResourceProductionEcsSystemTests
             Assert.IsTrue(found);
             Assert.AreSame(oilPump, source);
             Assert.AreSame(refinery, destination);
+        }
+        finally
+        {
+            world.Dispose();
+        }
+    }
+
+    [Test]
+    public void AutomaticFuelLogisticsRoute_PairsTrayWithFactionOilAndFabricationDepot()
+    {
+        var world = new World(nameof(AutomaticFuelLogisticsRoute_PairsTrayWithFactionOilAndFabricationDepot));
+        try
+        {
+            EntityManager em = world.EntityManager;
+            RuntimeBuildingEntity oilPump = CreateResourceBuilding(
+                em,
+                4,
+                1,
+                new Vector2Int(8, 8),
+                oilCapacity: 100,
+                fuelCapacity: 0,
+                oilRate: 80f,
+                fuelRate: 0f,
+                storedOil: 40f,
+                storedFuel: 0f);
+            RuntimeBuildingEntity depot = CreateResourceBuilding(
+                em,
+                5,
+                1,
+                new Vector2Int(16, 8),
+                oilCapacity: 24,
+                fuelCapacity: 0,
+                oilRate: 0f,
+                fuelRate: 0f,
+                storedOil: 0f,
+                storedFuel: 0f);
+            AddMaterialFabricationInput(em, depot, productionEnabled: true);
+            var runtimeBuildings = new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity>
+            {
+                { depot.Id, depot },
+                { oilPump.Id, oilPump }
+            };
+
+            bool found = BuildingResourceHaulerBridgeCompositionSystemHelper.TryFindAutomaticHaulerRouteForTests(
+                CreateAutomaticRouteContext(runtimeBuildings),
+                em,
+                CreateTestGrid(),
+                1,
+                new int2(0, 0),
+                ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil,
+                8f,
+                out RuntimeBuildingEntity source,
+                out RuntimeBuildingEntity destination);
+
+            Assert.IsTrue(found);
+            Assert.AreSame(oilPump, source);
+            Assert.AreSame(depot, destination);
+        }
+        finally
+        {
+            world.Dispose();
+        }
+    }
+
+    [Test]
+    public void AutomaticFuelLogisticsRoute_PrioritizesStarvationThenStableBuildingId()
+    {
+        var world = new World(nameof(AutomaticFuelLogisticsRoute_PrioritizesStarvationThenStableBuildingId));
+        try
+        {
+            EntityManager em = world.EntityManager;
+            RuntimeBuildingEntity oilPump = CreateResourceBuilding(
+                em,
+                6,
+                1,
+                new Vector2Int(8, 8),
+                100,
+                0,
+                80f,
+                0f,
+                40f,
+                0f);
+            RuntimeBuildingEntity refinery = CreateResourceBuilding(
+                em,
+                8,
+                1,
+                new Vector2Int(10, 8),
+                100,
+                100,
+                0f,
+                40f,
+                40f,
+                0f);
+            RuntimeBuildingEntity depot = CreateResourceBuilding(
+                em,
+                7,
+                1,
+                new Vector2Int(20, 8),
+                24,
+                0,
+                0f,
+                0f,
+                0f,
+                0f);
+            AddMaterialFabricationInput(em, depot, productionEnabled: true);
+            var runtimeBuildings = new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity>
+            {
+                { refinery.Id, refinery },
+                { depot.Id, depot },
+                { oilPump.Id, oilPump }
+            };
+            BuildingResourceHaulerBridgeCompositionSystemHelper.Context context =
+                CreateAutomaticRouteContext(runtimeBuildings);
+
+            Assert.IsTrue(BuildingResourceHaulerBridgeCompositionSystemHelper.TryFindAutomaticHaulerRouteForTests(
+                context,
+                em,
+                CreateTestGrid(),
+                1,
+                new int2(0, 0),
+                ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil,
+                8f,
+                out _,
+                out RuntimeBuildingEntity starvingDestination));
+            Assert.AreSame(depot, starvingDestination, "Starved demand must win before distance.");
+
+            BuildingResourceStorageComponent refineryStorage =
+                em.GetComponentData<BuildingResourceStorageComponent>(refinery.CombatEntity);
+            refineryStorage.StoredOilBarrels = 0f;
+            em.SetComponentData(refinery.CombatEntity, refineryStorage);
+            refinery.OriginCell = depot.OriginCell;
+
+            Assert.IsTrue(BuildingResourceHaulerBridgeCompositionSystemHelper.TryFindAutomaticHaulerRouteForTests(
+                context,
+                em,
+                CreateTestGrid(),
+                1,
+                new int2(0, 0),
+                ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil,
+                8f,
+                out _,
+                out RuntimeBuildingEntity stableDestination));
+            Assert.AreSame(depot, stableDestination, "Equal demand and distance must use the lower stable building id.");
         }
         finally
         {
@@ -2320,6 +2467,169 @@ public sealed class BuildingResourceProductionEcsSystemTests
     }
 
     [Test]
+    public void AutomaticFuelLogisticsCycle_TrayTransfersOilToFabricationDepotWithoutManualCommand()
+    {
+        var world = new World(nameof(AutomaticFuelLogisticsCycle_TrayTransfersOilToFabricationDepotWithoutManualCommand));
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        try
+        {
+            EntityManager em = world.EntityManager;
+            Entity gridEntity = CreateTestGridEntity(em, 32, 32, out blocked, out occupied);
+            RuntimeBuildingEntity oilPump = CreateResourceBuilding(
+                em,
+                43,
+                1,
+                new Vector2Int(8, 8),
+                100,
+                0,
+                80f,
+                0f,
+                40f,
+                0f);
+            RuntimeBuildingEntity depot = CreateResourceBuilding(
+                em,
+                44,
+                1,
+                new Vector2Int(16, 8),
+                24,
+                0,
+                0f,
+                0f,
+                0f,
+                0f);
+            AddMaterialFabricationInput(em, depot, productionEnabled: true);
+            var runtimeBuildings = new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity>
+            {
+                { oilPump.Id, oilPump },
+                { depot.Id, depot }
+            };
+            Entity hauler = CreateFuelLogisticsHauler(
+                em,
+                "Unit_Veh_Truck_Tray",
+                1,
+                new int2(0, 0));
+            var bridge = new BuildingResourceHaulerBridgeCompositionSystemHelper();
+            BuildingResourceHaulerBridgeCompositionSystemHelper.Context context =
+                CreateBridgeCycleContext(em, gridEntity, runtimeBuildings);
+
+            bridge.UpdateResourceHaulers(context, false, 0f);
+            UnitResourceHaulOrder order = em.GetComponentData<UnitResourceHaulOrder>(hauler);
+            Assert.AreEqual(depot.Id, order.DestinationBuildingId);
+            MoveHaulerToOrderTarget(em, hauler, order);
+
+            bridge.UpdateResourceHaulers(context, false, 0.1f);
+            bridge.UpdateResourceHaulers(context, false, 0.2f);
+            bridge.UpdateResourceHaulers(context, false, 1.3f);
+            order = em.GetComponentData<UnitResourceHaulOrder>(hauler);
+            MoveHaulerToOrderTarget(em, hauler, order);
+
+            bridge.UpdateResourceHaulers(context, false, 1.4f);
+            bridge.UpdateResourceHaulers(context, false, 1.5f);
+            bridge.UpdateResourceHaulers(context, false, 2.6f);
+
+            BuildingResourceStorageComponent sourceStorage =
+                em.GetComponentData<BuildingResourceStorageComponent>(oilPump.CombatEntity);
+            BuildingResourceStorageComponent depotStorage =
+                em.GetComponentData<BuildingResourceStorageComponent>(depot.CombatEntity);
+            Assert.AreEqual(32f, sourceStorage.StoredOilBarrels);
+            Assert.AreEqual(8f, depotStorage.StoredOilBarrels);
+            Assert.AreEqual(0f, sourceStorage.ReservedOilOutboundBarrels);
+            Assert.AreEqual(0f, depotStorage.ReservedOilInboundBarrels);
+            Assert.IsFalse(em.HasComponent<UnitResourceHaulOrder>(hauler));
+            Assert.IsFalse(em.HasComponent<UnitResourceHaulReservation>(hauler));
+        }
+        finally
+        {
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (occupied.IsCreated)
+                occupied.Dispose();
+            world.Dispose();
+        }
+    }
+
+    [Test]
+    public void AutomaticFuelLogisticsActiveFabricationAssignment_IsNotRecalculated()
+    {
+        var world = new World(nameof(AutomaticFuelLogisticsActiveFabricationAssignment_IsNotRecalculated));
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        try
+        {
+            EntityManager em = world.EntityManager;
+            Entity gridEntity = CreateTestGridEntity(em, 32, 32, out blocked, out occupied);
+            RuntimeBuildingEntity oilPump = CreateResourceBuilding(
+                em,
+                45,
+                1,
+                new Vector2Int(8, 8),
+                100,
+                0,
+                80f,
+                0f,
+                40f,
+                0f);
+            RuntimeBuildingEntity refinery = CreateResourceBuilding(
+                em,
+                46,
+                1,
+                new Vector2Int(12, 8),
+                100,
+                100,
+                0f,
+                40f,
+                40f,
+                0f);
+            RuntimeBuildingEntity depot = CreateResourceBuilding(
+                em,
+                47,
+                1,
+                new Vector2Int(18, 8),
+                24,
+                0,
+                0f,
+                0f,
+                0f,
+                0f);
+            AddMaterialFabricationInput(em, depot, productionEnabled: true);
+            var runtimeBuildings = new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity>
+            {
+                { oilPump.Id, oilPump },
+                { refinery.Id, refinery },
+                { depot.Id, depot }
+            };
+            Entity hauler = CreateFuelLogisticsHauler(em, "Unit_Veh_Truck_Tray", 1, new int2(0, 0));
+            var bridge = new BuildingResourceHaulerBridgeCompositionSystemHelper();
+            BuildingResourceHaulerBridgeCompositionSystemHelper.Context context =
+                CreateBridgeCycleContext(em, gridEntity, runtimeBuildings);
+
+            bridge.UpdateResourceHaulers(context, false, 0f);
+            UnitResourceHaulOrder initialOrder = em.GetComponentData<UnitResourceHaulOrder>(hauler);
+            Assert.AreEqual(depot.Id, initialOrder.DestinationBuildingId);
+
+            BuildingResourceStorageComponent depotStorage =
+                em.GetComponentData<BuildingResourceStorageComponent>(depot.CombatEntity);
+            depotStorage.StoredOilBarrels = 16f;
+            em.SetComponentData(depot.CombatEntity, depotStorage);
+            bridge.UpdateResourceHaulers(context, false, 0.1f);
+
+            UnitResourceHaulOrder retainedOrder = em.GetComponentData<UnitResourceHaulOrder>(hauler);
+            Assert.AreEqual(initialOrder.SourceBuildingId, retainedOrder.SourceBuildingId);
+            Assert.AreEqual(initialOrder.DestinationBuildingId, retainedOrder.DestinationBuildingId);
+            Assert.AreEqual(8f, depotStorage.ReservedOilInboundBarrels);
+        }
+        finally
+        {
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (occupied.IsCreated)
+                occupied.Dispose();
+            world.Dispose();
+        }
+    }
+
+    [Test]
     public void AutomaticFuelLogisticsCycle_TankerTransfersFuelWithoutManualCommand()
     {
         var world = new World(nameof(AutomaticFuelLogisticsCycle_TankerTransfersFuelWithoutManualCommand));
@@ -2818,6 +3128,31 @@ public sealed class BuildingResourceProductionEcsSystemTests
                 FuelBarrelsPerDay = fuelRate
             }
         };
+    }
+
+    private static void AddMaterialFabricationInput(
+        EntityManager em,
+        RuntimeBuildingEntity building,
+        bool productionEnabled)
+    {
+        em.AddComponentData(building.CombatEntity, new MaterialFabricationComponent
+        {
+            RuntimeBuildingId = building.Id,
+            OwnerFactionId = building.OwnerFactionId,
+            ProductionEnabled = productionEnabled ? (byte)1 : (byte)0,
+            OutputCapacityPolicy = MaterialFabricationOutputCapacityPolicyCode.RequireFullCycleCapacity,
+            OilConsumedPerCycle = 4f,
+            MaterialsOutputPerCycle = 20,
+            CycleDurationSeconds = 30f,
+            Status = productionEnabled
+                ? MaterialFabricationStatusCode.Blocked
+                : MaterialFabricationStatusCode.Disabled,
+            BlockReason = productionEnabled
+                ? MaterialFabricationBlockReasonCode.NoOilInput
+                : MaterialFabricationBlockReasonCode.ProductionDisabled,
+            Version = 1u
+        });
+        em.AddComponent<MaterialFabricationInputTag>(building.CombatEntity);
     }
 
     private static Entity CreateFuelLogisticsHauler(

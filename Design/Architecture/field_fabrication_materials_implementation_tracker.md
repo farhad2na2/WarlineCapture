@@ -1,7 +1,7 @@
 # Field Fabrication And Materials Implementation Tracker
 
 Date: 2026-07-12
-Status: In progress - Phase 3 Oil destination routing
+Status: In progress - Phase 4 Oil-to-Materials conversion
 Design source: `../Field_Fabrication_Materials_Design.md`
 
 ## Objective
@@ -73,9 +73,9 @@ Dependency direction remains inward toward components/config/contracts/runtime. 
 
 ## Progress Summary
 
-Overall implementation progress: 38% (39/103 checklist items complete).
+Overall implementation progress: 49% (50/103 checklist items complete).
 
-Planning, canonical resource ownership, and depot config/projection are complete. The existing `Building_Ammunition_Depot` asset now presents as the Field Fabrication Depot, reuses generic physical Oil storage, and projects typed fabrication data identically for map-placed and player-built structures. Canonical Materials, player Credits, combined construction spending, Exchange ownership, and the live Match header are also implemented.
+Planning, canonical resource ownership, depot config/projection, and automated Oil routing are complete. Tray trucks now recognize enabled same-faction fabrication inputs, use the existing reservation/movement/unload lifecycle, prioritize starved demand deterministically, and preserve valid active assignments. The existing `Building_Ammunition_Depot` compatibility id and refinery/tanker behavior remain intact.
 
 Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation row counts. Update the numerator, denominator, table, status, and evidence log in the same commit as each completed batch.
 
@@ -84,8 +84,8 @@ Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation 
 | 0. Inventory and baseline | Complete | 12 | 12 | 100% | Ownership, file targets, compile state, focused behavior, p95/p99, and managed-allocation baselines are recorded. |
 | 1. Canonical tactical Materials and Credits | Complete | 13 | 13 | 100% | Canonical Materials/Credits ownership, combined allocation-free construction transaction, HUD projection, Exchange ownership, and deterministic mutation coverage pass. |
 | 2. Config and building projection | Complete | 10 | 10 | 100% | Depot identity, authored balance, typed data, compatibility id, and map/runtime projection are validated. |
-| 3. Oil destination routing | In progress | 0 | 11 | 0% | Tray routing is deterministic, reserved, and stable. |
-| 4. Oil-to-Materials conversion | Pending | 0 | 11 | 0% | Conversion is deterministic, capped, typed, and no-GC. |
+| 3. Oil destination routing | Complete | 11 | 11 | 100% | Tray delivery, demand scoring, stable assignment, reservations, cleanup, and refinery regressions pass. |
+| 4. Oil-to-Materials conversion | In progress | 0 | 11 | 0% | Conversion is deterministic, capped, typed, and no-GC. |
 | 5. Credits + Materials construction | Pending | 0 | 11 | 0% | Placement spends both resources exactly once. |
 | 6. HUD and selected-building UI | In progress | 4 | 11 | 36% | Live canonical Credits/Materials header projection is validated at 0 managed bytes. Build Drawer and selected-depot UI remain. |
 | 7. Exchange and balance safety | Pending | 0 | 8 | 0% | Import is expensive recovery; no arbitrage exists. |
@@ -187,17 +187,17 @@ Phase 2 exit criteria:
 
 ## Phase 3: Oil Destination Routing
 
-- [ ] Extend the existing tray destination candidate path to include same-faction fabrication inputs.
-- [ ] Reuse existing movement, cargo, pickup, unload, and reservation data; do not add a second truck movement system.
-- [ ] Reserve source Oil and destination input capacity before assignment.
-- [ ] Preserve valid active assignments until completion or an explicit invalidation.
-- [ ] Score eligible demand deterministically using starvation/free capacity, route cost, and stable-id tie-breakers.
-- [ ] Add reassignment hysteresis/cooldown so nearly equal refinery/depot scores cannot cause oscillation.
-- [ ] Release reservations exactly once on death, destruction, route loss, cancellation, or destination invalidation.
-- [ ] Publish typed idle/block reasons rather than formatted strings.
-- [ ] Test one pump/one truck/one depot delivery.
-- [ ] Test one pump/one truck/refinery/depot competition and deterministic destination selection.
-- [ ] Test no oscillation, no double reservation, invalid route cleanup, destruction cleanup, and capacity changes.
+- [x] Extend the existing tray destination candidate path to include same-faction fabrication inputs.
+- [x] Reuse existing movement, cargo, pickup, unload, and reservation data; do not add a second truck movement system.
+- [x] Reserve source Oil and destination input capacity before assignment.
+- [x] Preserve valid active assignments until completion or an explicit invalidation.
+- [x] Score eligible demand deterministically using starvation/free capacity, route cost, and stable-id tie-breakers.
+- [x] Add reassignment hysteresis/cooldown so nearly equal refinery/depot scores cannot cause oscillation.
+- [x] Release reservations exactly once on death, destruction, route loss, cancellation, or destination invalidation.
+- [x] Publish typed idle/block reasons rather than formatted strings.
+- [x] Test one pump/one truck/one depot delivery.
+- [x] Test one pump/one truck/refinery/depot competition and deterministic destination selection.
+- [x] Test no oscillation, no double reservation, invalid route cleanup, destruction cleanup, and capacity changes.
 
 Performance rules:
 
@@ -473,3 +473,15 @@ For every completed batch append:
 - Isolated Unity validation passed: config/compatibility/metadata 3/3, full resource production and logistics regression 40/40, script assembly boundaries 31/31, and ECS Burst hot-path architecture 10/10.
 - Evidence: `/private/tmp/wlc-field-fabrication-phase2-config.log`, `/private/tmp/wlc-field-fabrication-phase2-resource-regression.log`, `/private/tmp/wlc-field-fabrication-phase2-architecture.log`, and `/private/tmp/wlc-field-fabrication-phase2-burst.log`.
 - Phase 2 is complete at 10/10. Checklist count is 39/103. Next action: extend the existing tray destination candidate and reservation path to include same-faction `MaterialFabricationInputTag` Oil demand while preserving active assignments and refinery regressions.
+
+### 2026-07-13 - Phase 3 Automated Oil Destination Routing
+
+- Extended the existing `BuildingResourceHaulerBridgeCompositionSystemHelper` Oil destination predicate to accept enabled, same-faction entities with `MaterialFabricationInputTag` and `MaterialFabricationComponent`. Disabled fabrication inputs remain ineligible.
+- Reused the existing tray-truck query, `UnitResourceHaulOrder`, `UnitResourceHaulReservation`, movement requests, timed loading/unloading, physical `BuildingResourceStorageComponent`, and exact release paths. No second movement system, new updating behavior, new resource owner, or new recurring managed collection was added.
+- Added deterministic Oil destination ordering: production starvation first, normalized unreserved input capacity second, existing world-route distance third, and runtime building id last. Source and non-Oil destination distance ties now also use stable building id instead of dictionary iteration order.
+- Included fabrication enabled/version state in the existing automatic-assignment signature. Existing active orders are still processed without re-selection, and the existing two-second stable refresh window prevents idle rescans from oscillating on unchanged state.
+- Manual tray assignment recognizes fabrication inputs through the same eligibility predicate. Reservation occurs before movement, and all existing death, source/destination destruction, route loss, manual override, orphan, unload, and capacity cleanup paths remain shared.
+- Added depot route, refinery/depot competition, starvation priority, stable-id tie, complete pump/tray/depot transfer, and active-assignment retention tests. The full resource/logistics fixture passed 44/44, including its unchanged steady-state 0 managed-byte test and all refinery/tanker/reservation cleanup regressions.
+- Script assembly boundaries passed 31/31 and ECS Burst hot-path architecture passed 10/10. The touched runtime remains in `Game.Runtime`; no assembly reference changed.
+- Evidence: `/private/tmp/wlc-field-fabrication-phase3-routing-final.log`, `/private/tmp/wlc-field-fabrication-phase3-architecture.log`, and `/private/tmp/wlc-field-fabrication-phase3-burst.log`.
+- Phase 3 is complete at 11/11. Checklist count is 50/103. Next action: implement the Burst-compatible unmanaged `MaterialFabricationSystem` against projected fabrication, physical Oil storage, and canonical faction Materials, with exact cycle/capacity/status behavior.

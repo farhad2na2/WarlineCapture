@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   portraitSprite: {fileID: 21300000, guid: f4147fc79ad046c8a17a3233ecfc0bc1, type: 3}
   portraitCardSprite: {fileID: 21300000, guid: 9fcc810943cf447db62482b9c84e2447, type: 3}
+  portraitActionSprite: {fileID: 21300000, guid: ef6ae6dd94421428d94ed6173319c288, type: 3}
   displayName: Dirt Wall
   description: Earthen defensive wall segment for blocking movement and reinforcing the perimeter.
   maxHealth: 2500

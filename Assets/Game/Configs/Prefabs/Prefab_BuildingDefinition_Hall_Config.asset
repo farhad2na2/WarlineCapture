@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   displayName: City Hall
   description: Civic administration building used by civilians and city services.
-  portraitSprite: {fileID: 0}
-  portraitCardSprite: {fileID: 0}
-  portraitActionSprite: {fileID: 0}
+  portraitSprite: {fileID: 21300000, guid: 1da7d22f40bb041abafcfc0cf99a91e1, type: 3}
+  portraitCardSprite: {fileID: 21300000, guid: 1cfd2972dc07f4924bad2b2e18ca2295, type: 3}
+  portraitActionSprite: {fileID: 21300000, guid: f97f69fcf50cd4c579135639aed459b7, type: 3}
   maxHealth: 1200
   role: 3
   isWall: 0

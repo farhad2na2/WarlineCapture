@@ -1495,8 +1495,8 @@ namespace Game.Runtime
                 return SelectionSummaryPortraitKind.MixedForce;
             if (soldierCount > 0)
                 return SelectionSummaryPortraitKind.Soldiers;
-            if (transportCount > 0)
-                return SelectionSummaryPortraitKind.Vehicles;
+            if (transportCount > 0 && vehicleCount == 0)
+                return SelectionSummaryPortraitKind.Transports;
             if (aircraftCount > 0)
                 return SelectionSummaryPortraitKind.Aircraft;
             if (vehicleCount > 0)

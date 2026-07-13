@@ -2,6 +2,7 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!687078895 &4343727234628468602
 SpriteAtlas:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -64,6 +65,8 @@ SpriteAtlas:
     - {fileID: 2800000, guid: 9a7fe689e4974c7c896d6de9b59166c4, type: 3}
     - {fileID: 2800000, guid: 35c0e33091ef48f6b4433d8fd639940d, type: 3}
     - {fileID: 2800000, guid: d977cc0dacbd4cf3a6e157a3ed93cdf7, type: 3}
+    - {fileID: 2800000, guid: 1da7d22f40bb041abafcfc0cf99a91e1, type: 3}
+    - {fileID: 2800000, guid: 10c45baa87b63430dbfe14f44c52ceb3, type: 3}
     - {fileID: 2800000, guid: 0e43a879ab9d481a852f3eed0a2ed7db, type: 3}
     - {fileID: 2800000, guid: 1d3fb3151ecda4acb8b2e0a6911296f1, type: 3}
     - {fileID: 2800000, guid: 15b0c7725bf34a2fb540f476d1ab7fec, type: 3}
@@ -89,3 +92,4 @@ SpriteAtlas:
   m_RenderDataMap: {}
   m_Tag: Portraits_Buildings
   m_IsVariant: 0
+  m_Guid: 00000000000000000000000000000000

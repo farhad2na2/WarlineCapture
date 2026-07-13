@@ -200,7 +200,7 @@ namespace Game.UI.Runtime
                 SelectionSummaryPortraitKind.Soldiers => FirstNonNull(soldierSquadPortraitSprite, genericSquadPortraitSprite),
                 SelectionSummaryPortraitKind.Vehicles => FirstNonNull(vehicleSquadPortraitSprite, genericSquadPortraitSprite),
                 SelectionSummaryPortraitKind.Aircraft => FirstNonNull(aircraftSquadPortraitSprite, genericSquadPortraitSprite),
-                SelectionSummaryPortraitKind.Transports => FirstNonNull(vehicleSquadPortraitSprite, transportSquadPortraitSprite, genericSquadPortraitSprite),
+                SelectionSummaryPortraitKind.Transports => FirstNonNull(transportSquadPortraitSprite, vehicleSquadPortraitSprite, genericSquadPortraitSprite),
                 SelectionSummaryPortraitKind.Buildings => FirstNonNull(buildingSquadPortraitSprite, genericSquadPortraitSprite),
                 SelectionSummaryPortraitKind.MixedSoldierVehicle => FirstNonNull(mixedSoldierVehiclePortraitSprite, mixedForcePortraitSprite, genericSquadPortraitSprite),
                 SelectionSummaryPortraitKind.MixedSoldierAircraft => FirstNonNull(mixedSoldierAircraftPortraitSprite, mixedForcePortraitSprite, genericSquadPortraitSprite),

@@ -14757,13 +14757,13 @@ MonoBehaviour:
   passengerChipButton: {fileID: 2058273197910707725}
   passengerChipLabel: {fileID: 5839155888377869773}
   passengerDrawer: {fileID: 3185656278503629633}
-  genericSquadPortraitSprite: {fileID: 21300000, guid: 0d555c7e15624083aa3f5b91e2d60159, type: 3}
-  soldierSquadPortraitSprite: {fileID: 21300000, guid: 2f04b49df707614692d1898031e3694c, type: 3}
+  genericSquadPortraitSprite: {fileID: 21300000, guid: 2f04b49df707614692d1898031e3694c, type: 3}
+  soldierSquadPortraitSprite: {fileID: 21300000, guid: 0d555c7e15624083aa3f5b91e2d60159, type: 3}
   vehicleSquadPortraitSprite: {fileID: 21300000, guid: b4dc1494954f4b31bbefb58fac5f6785, type: 3}
-  aircraftSquadPortraitSprite: {fileID: 21300000, guid: 9775b44f6e3641e4845b7efaa2d29bb7, type: 3}
-  transportSquadPortraitSprite: {fileID: 21300000, guid: ab5e976b12f24cb59ee6bf779c667463, type: 3}
-  buildingSquadPortraitSprite: {fileID: 21300000, guid: f6f9cbee6ba04c379de851460c113e6d, type: 3}
-  mixedForcePortraitSprite: {fileID: 21300000, guid: c301b721b9674bf795c466580caecee2, type: 3}
+  aircraftSquadPortraitSprite: {fileID: 21300000, guid: 68f8fcaf27b01445abcbe9d1c3ab73bb, type: 3}
+  transportSquadPortraitSprite: {fileID: 21300000, guid: 4c61b3a9f577e43329dc9beec5de620c, type: 3}
+  buildingSquadPortraitSprite: {fileID: 21300000, guid: f458e15903ddf4a7b9f4a752d27600ca, type: 3}
+  mixedForcePortraitSprite: {fileID: 21300000, guid: 6cde4f4e367504e31b0754ace74bda8a, type: 3}
   mixedSoldierVehiclePortraitSprite: {fileID: 21300000, guid: 48adb2f5eafd4db797abdc1dc76d93e3, type: 3}
   mixedSoldierAircraftPortraitSprite: {fileID: 21300000, guid: 342c006c39704857bf89b628b5762bb9, type: 3}
   mixedVehicleAircraftPortraitSprite: {fileID: 21300000, guid: eabe42234a604ee3861a759d61fd240f, type: 3}

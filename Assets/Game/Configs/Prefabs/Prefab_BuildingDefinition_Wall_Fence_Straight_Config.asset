@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   portraitSprite: {fileID: 21300000, guid: da0c4d76bfa94887a97477ebc3b2e55b, type: 3}
   portraitCardSprite: {fileID: 21300000, guid: 7bd3754539804e2b94c8570a330aeb3a, type: 3}
+  portraitActionSprite: {fileID: 21300000, guid: 9da3ee488af324969b1a5d1e15c05fc1, type: 3}
   displayName: Fence Wall
   description: Fence barrier segment used to shape access routes and protect controlled
     areas.

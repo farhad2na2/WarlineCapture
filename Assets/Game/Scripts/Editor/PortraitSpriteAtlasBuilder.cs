@@ -11,6 +11,8 @@ namespace Game.Editor
     {
         private const string PortraitRoot = "Assets/Game/Art/UI/Portraits/Generated";
         private const string SecondaryPortraitRoot = "Assets/Game/Art/UI/Portraits/Secondary";
+        private const string MatchHudTargetLockRoot = "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02";
+        private const string MatchHudSquadTrayRoot = "Assets/Game/Art/UI/Generated/MatchHUD/SquadTray";
         private const string AtlasRoot = "Assets/Game/Art/UI/Portraits/Atlases";
 
         [MenuItem("Game/UI/Rebuild Portrait Sprite Atlases")]
@@ -36,7 +38,7 @@ namespace Game.Editor
             BuildAtlas(
                 $"{AtlasRoot}/Portraits_Secondary.spriteatlas",
                 "Portraits_Secondary",
-                FindPortraitTextures(SecondaryPortraitRoot, "Portrait_"));
+                FindSecondaryPortraitTextures());
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -60,6 +62,23 @@ namespace Game.Editor
 
             textures.Sort((a, b) => string.CompareOrdinal(AssetDatabase.GetAssetPath(a), AssetDatabase.GetAssetPath(b)));
             return textures.ToArray();
+        }
+
+        private static Object[] FindSecondaryPortraitTextures()
+        {
+            var textures = new List<Object>(FindPortraitTextures(SecondaryPortraitRoot, string.Empty));
+            AddTexture(textures, $"{MatchHudTargetLockRoot}/scn08_v02_selected_squad_group_portrait.png");
+            AddTexture(textures, $"{MatchHudTargetLockRoot}/scn08_v02_squad_rifle_portrait.png");
+            textures.AddRange(FindPortraitTextures(MatchHudSquadTrayRoot, "SquadTray_"));
+            textures.Sort((a, b) => string.CompareOrdinal(AssetDatabase.GetAssetPath(a), AssetDatabase.GetAssetPath(b)));
+            return textures.ToArray();
+        }
+
+        private static void AddTexture(List<Object> textures, string path)
+        {
+            Texture2D texture = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+            if (texture != null)
+                textures.Add(texture);
         }
 
         private static void BuildAtlas(string atlasPath, string tag, Object[] packables)

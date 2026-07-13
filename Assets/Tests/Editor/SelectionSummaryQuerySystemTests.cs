@@ -28,7 +28,7 @@ public sealed class SelectionSummaryQuerySystemTests
             RunCase(test => test.MixedSoldierVehicleAndAircraftUsesCombinedArmsPortraitKind());
             RunCase(test => test.MixedVehicleAndAircraftUsesAirVehiclePortraitKind());
             RunCase(test => test.MultiVehicleSelectionUsesVehiclePortraitKind());
-            RunCase(test => test.MultiTransportSelectionUsesVehiclePortraitKind());
+            RunCase(test => test.MultiTransportSelectionUsesTransportPortraitKind());
             RunCase(test => test.MixedGroundVehicleAndTransportUsesVehiclePortraitKind());
             RunCase(test => test.GroundTransportAndAirTransportUsesAirVehiclePortraitKind());
             RunCase(test => test.MixedSelectedOrdersDisplaysMixedOrders());
@@ -223,7 +223,7 @@ public sealed class SelectionSummaryQuerySystemTests
     }
 
     [Test]
-    public void MultiTransportSelectionUsesVehiclePortraitKind()
+    public void MultiTransportSelectionUsesTransportPortraitKind()
     {
         EntityManager em = _world.EntityManager;
         Entity firstTransport = CreatePlayerUnit(em, "APC Transport", new int2(2, 1), 75);
@@ -242,7 +242,7 @@ public sealed class SelectionSummaryQuerySystemTests
 
         Assert.AreEqual(2, summary.TransportCount);
         Assert.AreEqual("2 TRANSPORTS", summary.Title);
-        Assert.AreEqual(SelectionSummaryPortraitKind.Vehicles, summary.PortraitKind);
+        Assert.AreEqual(SelectionSummaryPortraitKind.Transports, summary.PortraitKind);
     }
 
     [Test]
@@ -317,10 +317,12 @@ public sealed class SelectionSummaryQuerySystemTests
 
         Texture2D genericTexture = new Texture2D(1, 1);
         Texture2D vehicleTexture = new Texture2D(1, 1);
+        Texture2D transportTexture = new Texture2D(1, 1);
         Texture2D mixedTexture = new Texture2D(1, 1);
         Texture2D mixedAirTexture = new Texture2D(1, 1);
         Sprite genericSprite = Sprite.Create(genericTexture, new Rect(0f, 0f, 1f, 1f), Vector2.one * 0.5f);
         Sprite vehicleSprite = Sprite.Create(vehicleTexture, new Rect(0f, 0f, 1f, 1f), Vector2.one * 0.5f);
+        Sprite transportSprite = Sprite.Create(transportTexture, new Rect(0f, 0f, 1f, 1f), Vector2.one * 0.5f);
         Sprite mixedSprite = Sprite.Create(mixedTexture, new Rect(0f, 0f, 1f, 1f), Vector2.one * 0.5f);
         Sprite mixedAirSprite = Sprite.Create(mixedAirTexture, new Rect(0f, 0f, 1f, 1f), Vector2.one * 0.5f);
         try
@@ -328,12 +330,13 @@ public sealed class SelectionSummaryQuerySystemTests
             var panel = panelHost.AddComponent<MatchHudSelectionPanelView>();
             SetPrivateField(panel, "genericSquadPortraitSprite", genericSprite);
             SetPrivateField(panel, "vehicleSquadPortraitSprite", vehicleSprite);
+            SetPrivateField(panel, "transportSquadPortraitSprite", transportSprite);
             SetPrivateField(panel, "mixedForcePortraitSprite", mixedSprite);
             SetPrivateField(panel, "mixedSoldierAircraftPortraitSprite", mixedAirSprite);
 
             Assert.AreSame(genericSprite, panel.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.Soldiers));
             Assert.AreSame(vehicleSprite, panel.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.Vehicles));
-            Assert.AreSame(vehicleSprite, panel.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.Transports));
+            Assert.AreSame(transportSprite, panel.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.Transports));
             Assert.AreSame(mixedSprite, panel.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.MixedForce));
             Assert.AreSame(mixedAirSprite, panel.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.MixedSoldierAircraft));
         }
@@ -341,10 +344,12 @@ public sealed class SelectionSummaryQuerySystemTests
         {
             Object.DestroyImmediate(genericSprite);
             Object.DestroyImmediate(vehicleSprite);
+            Object.DestroyImmediate(transportSprite);
             Object.DestroyImmediate(mixedSprite);
             Object.DestroyImmediate(mixedAirSprite);
             Object.DestroyImmediate(genericTexture);
             Object.DestroyImmediate(vehicleTexture);
+            Object.DestroyImmediate(transportTexture);
             Object.DestroyImmediate(mixedTexture);
             Object.DestroyImmediate(mixedAirTexture);
         }

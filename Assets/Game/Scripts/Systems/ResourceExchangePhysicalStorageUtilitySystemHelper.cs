@@ -1,4 +1,3 @@
-using System;
 using Game.Components;
 using Unity.Collections;
 using Unity.Entities;
@@ -9,25 +8,6 @@ namespace Game.Runtime
     public static class ResourceExchangePhysicalStorageUtilitySystemHelper
     {
         private const float Epsilon = 0.001f;
-
-        private struct StorageCandidate : IComparable<StorageCandidate>
-        {
-            public Entity Entity;
-            public int RuntimeBuildingId;
-            public float Available;
-
-            public int CompareTo(StorageCandidate other)
-            {
-                int runtimeIdComparison = RuntimeBuildingId.CompareTo(other.RuntimeBuildingId);
-                if (runtimeIdComparison != 0)
-                    return runtimeIdComparison;
-
-                int indexComparison = Entity.Index.CompareTo(other.Entity.Index);
-                return indexComparison != 0
-                    ? indexComparison
-                    : Entity.Version.CompareTo(other.Entity.Version);
-            }
-        }
 
         public static bool IsPhysicalResource(ResourceExchangeResourceKind resourceKind)
         {
@@ -47,7 +27,11 @@ namespace Game.Runtime
             int outputAmount,
             out ResourceExchangeReason reason)
         {
-            RemoveQueueReservations(entityManager, reservations, queueItemId, true);
+            ResourceExchangePhysicalStorageReservationMutationSystemHelper.RemoveQueueReservations(
+                entityManager,
+                reservations,
+                queueItemId,
+                true);
             if (IsPhysicalResource(inputResource) &&
                 !TryReserveResource(
                     entityManager,
@@ -75,7 +59,11 @@ namespace Game.Runtime
                     outputAmount,
                     out reason))
             {
-                RemoveQueueReservations(entityManager, reservations, queueItemId, true);
+                ResourceExchangePhysicalStorageReservationMutationSystemHelper.RemoveQueueReservations(
+                    entityManager,
+                    reservations,
+                    queueItemId,
+                    true);
                 return false;
             }
 
@@ -180,7 +168,9 @@ namespace Game.Runtime
                 entityManager.SetComponentData(reservation.StorageEntity, storage);
             }
 
-            RemoveQueueLinesOnly(reservations, item.QueueItemId);
+            ResourceExchangePhysicalStorageReservationMutationSystemHelper.RemoveQueueLinesOnly(
+                reservations,
+                item.QueueItemId);
             reason = ResourceExchangeReason.None;
             return true;
         }
@@ -191,7 +181,11 @@ namespace Game.Runtime
             int queueItemId,
             bool refundInput)
         {
-            RemoveQueueReservations(entityManager, reservations, queueItemId, refundInput);
+            ResourceExchangePhysicalStorageReservationMutationSystemHelper.RemoveQueueReservations(
+                entityManager,
+                reservations,
+                queueItemId,
+                refundInput);
         }
 
         private static bool TryReserveResource(
@@ -213,8 +207,10 @@ namespace Game.Runtime
 
             byte storageResourceKind = ToStorageResourceKind(resourceKind);
             int firstAddedReservation = reservations.Length;
-            using var candidates = new NativeList<StorageCandidate>(Allocator.Temp);
-            float totalAvailable = CollectCandidates(
+            using var candidates =
+                new NativeList<ResourceExchangePhysicalStorageCandidateQuerySystemHelper.StorageCandidate>(
+                    Allocator.Temp);
+            float totalAvailable = ResourceExchangePhysicalStorageCandidateQuerySystemHelper.CollectCandidates(
                 entityManager,
                 storageQuery,
                 factionId,
@@ -235,7 +231,7 @@ namespace Game.Runtime
             float remaining = amount;
             for (int i = 0; i < candidates.Length && remaining > Epsilon; i++)
             {
-                StorageCandidate candidate = candidates[i];
+                ResourceExchangePhysicalStorageCandidateQuerySystemHelper.StorageCandidate candidate = candidates[i];
                 float reservedAmount = math.min(candidate.Available, remaining);
                 BuildingResourceStorageComponent storage =
                     entityManager.GetComponentData<BuildingResourceStorageComponent>(candidate.Entity);
@@ -250,7 +246,7 @@ namespace Game.Runtime
                         reservedAmount);
                 if (!reserved)
                 {
-                    RollBackAddedReservations(
+                    ResourceExchangePhysicalStorageReservationMutationSystemHelper.RollBackAddedReservations(
                         entityManager,
                         reservations,
                         firstAddedReservation);
@@ -276,109 +272,6 @@ namespace Game.Runtime
             return true;
         }
 
-        private static float CollectCandidates(
-            EntityManager entityManager,
-            EntityQuery storageQuery,
-            byte factionId,
-            byte resourceKind,
-            ResourceExchangePhysicalReservationKind reservationKind,
-            NativeList<StorageCandidate> candidates)
-        {
-            float total = 0f;
-            using NativeArray<ArchetypeChunk> chunks = storageQuery.ToArchetypeChunkArray(Allocator.Temp);
-            EntityTypeHandle entityType = entityManager.GetEntityTypeHandle();
-            ComponentTypeHandle<BuildingResourceStorageComponent> storageType =
-                entityManager.GetComponentTypeHandle<BuildingResourceStorageComponent>(true);
-            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
-            {
-                ArchetypeChunk chunk = chunks[chunkIndex];
-                NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
-                NativeArray<BuildingResourceStorageComponent> storages = chunk.GetNativeArray(ref storageType);
-                for (int i = 0; i < chunk.Count; i++)
-                {
-                    BuildingResourceStorageComponent storage = storages[i];
-                    if (storage.OwnerFactionId != factionId)
-                        continue;
-
-                    float available = reservationKind == ResourceExchangePhysicalReservationKind.Input
-                        ? BuildingResourceStorageTransferSystemHelper.GetAvailableSourceResource(storage, resourceKind)
-                        : resourceKind == BuildingResourceStorageTransferSystemHelper.FuelResourceKind
-                            ? BuildingResourceStorageTransferSystemHelper.GetFuelReceivingFreeCapacity(storage)
-                            : BuildingResourceStorageTransferSystemHelper.GetOilReceivingFreeCapacity(storage);
-                    if (available <= Epsilon)
-                        continue;
-
-                    candidates.Add(new StorageCandidate
-                    {
-                        Entity = entities[i],
-                        RuntimeBuildingId = storage.RuntimeBuildingId,
-                        Available = available
-                    });
-                    total += available;
-                }
-            }
-
-            return total;
-        }
-
-        private static void RemoveQueueReservations(
-            EntityManager entityManager,
-            DynamicBuffer<ResourceExchangePhysicalReservationComponent> reservations,
-            int queueItemId,
-            bool refundInput)
-        {
-            for (int i = reservations.Length - 1; i >= 0; i--)
-            {
-                ResourceExchangePhysicalReservationComponent reservation = reservations[i];
-                if (reservation.QueueItemId != queueItemId)
-                    continue;
-
-                if (entityManager.Exists(reservation.StorageEntity) &&
-                    entityManager.HasComponent<BuildingResourceStorageComponent>(reservation.StorageEntity))
-                {
-                    BuildingResourceStorageComponent storage =
-                        entityManager.GetComponentData<BuildingResourceStorageComponent>(reservation.StorageEntity);
-                    byte resourceKind = ToStorageResourceKind(reservation.ResourceKind);
-                    if (reservation.ReservationKind == ResourceExchangePhysicalReservationKind.Output)
-                    {
-                        BuildingResourceStorageTransferSystemHelper.ReleaseDestinationReservation(
-                            ref storage,
-                            resourceKind,
-                            reservation.Amount);
-                    }
-                    else if (refundInput)
-                    {
-                        BuildingResourceStorageTransferSystemHelper.ReleaseSourceReservation(
-                            ref storage,
-                            resourceKind,
-                            reservation.Amount);
-                    }
-                    else
-                    {
-                        BuildingResourceStorageTransferSystemHelper.TryConsumeSourceReservation(
-                            ref storage,
-                            resourceKind,
-                            reservation.Amount);
-                    }
-
-                    entityManager.SetComponentData(reservation.StorageEntity, storage);
-                }
-
-                reservations.RemoveAt(i);
-            }
-        }
-
-        private static void RemoveQueueLinesOnly(
-            DynamicBuffer<ResourceExchangePhysicalReservationComponent> reservations,
-            int queueItemId)
-        {
-            for (int i = reservations.Length - 1; i >= 0; i--)
-            {
-                if (reservations[i].QueueItemId == queueItemId)
-                    reservations.RemoveAt(i);
-            }
-        }
-
         private static bool CanCompleteDelivery(
             in BuildingResourceStorageComponent storage,
             byte resourceKind,
@@ -396,43 +289,7 @@ namespace Game.Runtime
                    (capacity > 0 && stored + amount <= capacity + Epsilon);
         }
 
-        private static void RollBackAddedReservations(
-            EntityManager entityManager,
-            DynamicBuffer<ResourceExchangePhysicalReservationComponent> reservations,
-            int firstAddedReservation)
-        {
-            for (int i = reservations.Length - 1; i >= firstAddedReservation; i--)
-            {
-                ResourceExchangePhysicalReservationComponent reservation = reservations[i];
-                if (entityManager.Exists(reservation.StorageEntity) &&
-                    entityManager.HasComponent<BuildingResourceStorageComponent>(reservation.StorageEntity))
-                {
-                    BuildingResourceStorageComponent storage =
-                        entityManager.GetComponentData<BuildingResourceStorageComponent>(reservation.StorageEntity);
-                    byte resourceKind = ToStorageResourceKind(reservation.ResourceKind);
-                    if (reservation.ReservationKind == ResourceExchangePhysicalReservationKind.Input)
-                    {
-                        BuildingResourceStorageTransferSystemHelper.ReleaseSourceReservation(
-                            ref storage,
-                            resourceKind,
-                            reservation.Amount);
-                    }
-                    else
-                    {
-                        BuildingResourceStorageTransferSystemHelper.ReleaseDestinationReservation(
-                            ref storage,
-                            resourceKind,
-                            reservation.Amount);
-                    }
-
-                    entityManager.SetComponentData(reservation.StorageEntity, storage);
-                }
-
-                reservations.RemoveAt(i);
-            }
-        }
-
-        private static byte ToStorageResourceKind(ResourceExchangeResourceKind resourceKind)
+        internal static byte ToStorageResourceKind(ResourceExchangeResourceKind resourceKind)
         {
             return resourceKind == ResourceExchangeResourceKind.Fuel
                 ? BuildingResourceStorageTransferSystemHelper.FuelResourceKind

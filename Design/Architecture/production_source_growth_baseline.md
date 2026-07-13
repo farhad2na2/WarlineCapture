@@ -2160,6 +2160,78 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
       "maxLines": 932,
       "maxBytes": 38015,
       "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/UnitGridMovementSystem.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-053",
+      "maxLines": 824,
+      "maxBytes": 37358,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/FactionTacticalMaterialsUtilitySystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-060",
+      "maxLines": 136,
+      "maxBytes": 6083,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/FactionConstructionResourceUtilitySystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-061",
+      "maxLines": 85,
+      "maxBytes": 3813,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ResourceExchangeResourceUtilitySystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-062",
+      "maxLines": 162,
+      "maxBytes": 6360,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ResourceExchangePhysicalStorageUtilitySystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-063",
+      "maxLines": 306,
+      "maxBytes": 13630,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ResourceExchangePhysicalStorageCandidateQuerySystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-064",
+      "maxLines": 76,
+      "maxBytes": 3275,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ResourceExchangePhysicalStorageReservationMutationSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-065",
+      "maxLines": 104,
+      "maxBytes": 4588,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ResourceExchangeStartupProjectionSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-066",
+      "maxLines": 268,
+      "maxBytes": 13520,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/MaterialFabricationCommandUtilitySystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-067",
+      "maxLines": 133,
+      "maxBytes": 5318,
+      "scope": "system-helper"
     }
   ]
 }

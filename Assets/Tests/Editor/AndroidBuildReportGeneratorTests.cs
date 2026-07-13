@@ -16,12 +16,14 @@ public sealed class AndroidBuildReportGeneratorTests
             tests.AggregationNormalizesAndCombinesSourcePathsAcrossPackedFiles();
             tests.EqualPackedSizesUseOrdinalPathTieBreak();
             tests.IncludedAssetTableIsCappedAtOneHundredRows();
+            tests.CompleteTextureInventoryIncludesTexturesOutsideTopOneHundred();
+            tests.CompleteTextureInventoryIsNormalizedDeduplicatedAndPathSorted();
             tests.AggregationRetainsDistinctObjectTypesInOrdinalOrder();
             tests.AccountingSeparatesAttributedUnattributedOverheadAndSummaryRemainder();
             tests.ReportCarriesRequiredEvidenceAndExplicitSizeSemantics();
             tests.ReleaseBuildOptionsRequireDetailedReport();
             tests.ReleaseBuildOptionsRejectDebugAndProfilerFlags();
-            Debug.Log("[AndroidBuildReportGeneratorValidation] result=Passed tests=8");
+            Debug.Log("[AndroidBuildReportGeneratorValidation] result=Passed tests=10");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -89,6 +91,56 @@ public sealed class AndroidBuildReportGeneratorTests
     }
 
     [Test]
+    public void CompleteTextureInventoryIncludesTexturesOutsideTopOneHundred()
+    {
+        var contributions = new List<AndroidPackedAssetContribution>();
+        for (int index = 0; index < 100; index++)
+        {
+            contributions.Add(Contribution(
+                $"Assets/Mesh{index:D3}.asset",
+                "UnityEngine.Mesh",
+                checked((ulong)(1000 - index))));
+        }
+        contributions.Add(Contribution(
+            "Assets/Textures/LowRanked.png",
+            "UnityEngine.Texture2D",
+            1));
+
+        AndroidPackedAssetAggregation result = Aggregate(
+            contributions,
+            Array.Empty<ulong>(),
+            95051);
+
+        Assert.AreEqual(100, result.TopAssets.Count);
+        Assert.IsFalse(result.TopAssets.Any(asset => asset.SourceAssetPath.EndsWith("LowRanked.png")));
+        Assert.AreEqual(1, result.AllIncludedTextures.Count);
+        Assert.AreEqual("Assets/Textures/LowRanked.png", result.AllIncludedTextures[0].SourceAssetPath);
+    }
+
+    [Test]
+    public void CompleteTextureInventoryIsNormalizedDeduplicatedAndPathSorted()
+    {
+        AndroidPackedAssetAggregation result = Aggregate(
+            new[]
+            {
+                Contribution("Assets\\Textures\\Z.png", "UnityEngine.Texture2D", 10),
+                Contribution("./Assets/Textures/A.png", "UnityEngine.Texture2D", 20),
+                Contribution("Assets/Textures/A.png", "UnityEngine.Sprite", 30),
+                Contribution("Assets/Mesh.asset", "UnityEngine.Mesh", 40)
+            },
+            Array.Empty<ulong>(),
+            100);
+
+        CollectionAssert.AreEqual(
+            new[] { "Assets/Textures/A.png", "Assets/Textures/Z.png" },
+            result.AllIncludedTextures.Select(asset => asset.SourceAssetPath));
+        Assert.AreEqual(50ul, result.AllIncludedTextures[0].PackedBytes);
+        CollectionAssert.AreEqual(
+            new[] { "UnityEngine.Sprite", "UnityEngine.Texture2D" },
+            result.AllIncludedTextures[0].ObjectTypes);
+    }
+
+    [Test]
     public void AggregationRetainsDistinctObjectTypesInOrdinalOrder()
     {
         AndroidPackedAssetAggregation result = Aggregate(
@@ -134,7 +186,7 @@ public sealed class AndroidBuildReportGeneratorTests
     public void ReportCarriesRequiredEvidenceAndExplicitSizeSemantics()
     {
         AndroidPackedAssetAggregation aggregation = Aggregate(
-            new[] { Contribution("Assets/A.asset", "UnityEngine.Object", 100) },
+            new[] { Contribution("Assets/A.asset", "UnityEngine.Texture2D", 100) },
             new ulong[] { 10 },
             150);
         var evidence = new AndroidBuildReportEvidence
@@ -167,7 +219,12 @@ public sealed class AndroidBuildReportGeneratorTests
         Assert.AreEqual("Build/AndroidAPK/WarlineCapture.apk", report.ArtifactPath);
         Assert.AreEqual(75ul, report.ArtifactBytes);
         Assert.AreEqual(new string('a', 64), report.ArtifactSha256);
+        Assert.IsTrue(report.AllIncludedTexturePathsExported);
+        Assert.AreEqual(1, report.BuildReportIncludedTextures.Count);
+        Assert.AreEqual("Assets/A.asset", report.BuildReportIncludedTextures[0].SourceAssetPath);
         StringAssert.Contains("\"buildReportIncludedAssets\"", json);
+        StringAssert.Contains("\"allIncludedTexturePathsExported\": true", json);
+        StringAssert.Contains("\"buildReportIncludedTextures\"", json);
         StringAssert.Contains("Compressed APK/AAB package", json);
         StringAssert.Contains("not a per-asset compressed-byte attribution", markdown);
     }

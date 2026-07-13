@@ -165,16 +165,24 @@ namespace Game.Editor
             long summaryUnaccountedBytes = checked(
                 (long)buildReportSummaryTotalSizeBytes - (long)accountedPackedFileBytes);
 
-            List<AndroidBuildIncludedAsset> topAssets = assetsByPath.Values
+            List<AndroidBuildIncludedAsset> allAssets = assetsByPath.Values
                 .Select(accumulator => new AndroidBuildIncludedAsset
                 {
                     SourceAssetPath = accumulator.SourceAssetPath,
                     PackedBytes = accumulator.PackedBytes,
                     ObjectTypes = accumulator.ObjectTypes.OrderBy(value => value, StringComparer.Ordinal).ToList()
                 })
+                .ToList();
+
+            List<AndroidBuildIncludedAsset> topAssets = allAssets
                 .OrderByDescending(asset => asset.PackedBytes)
                 .ThenBy(asset => asset.SourceAssetPath, StringComparer.Ordinal)
                 .Take(topAssetLimit)
+                .ToList();
+
+            List<AndroidBuildIncludedAsset> allIncludedTextures = allAssets
+                .Where(asset => asset.ObjectTypes.Contains("UnityEngine.Texture2D", StringComparer.Ordinal))
+                .OrderBy(asset => asset.SourceAssetPath, StringComparer.Ordinal)
                 .ToList();
 
             return new AndroidPackedAssetAggregation
@@ -191,7 +199,8 @@ namespace Game.Editor
                 AccountedPackedFileBytes = accountedPackedFileBytes,
                 BuildReportSummaryTotalSizeBytes = buildReportSummaryTotalSizeBytes,
                 BuildReportSummaryUnaccountedBytes = summaryUnaccountedBytes,
-                TopAssets = topAssets
+                TopAssets = topAssets,
+                AllIncludedTextures = allIncludedTextures
             };
         }
 
@@ -243,7 +252,9 @@ namespace Game.Editor
                 AccountedPackedFileBytes = aggregation.AccountedPackedFileBytes,
                 BuildReportSummaryTotalSizeBytes = aggregation.BuildReportSummaryTotalSizeBytes,
                 BuildReportSummaryUnaccountedBytes = aggregation.BuildReportSummaryUnaccountedBytes,
-                BuildReportIncludedAssets = aggregation.TopAssets.Select(CloneAsset).ToList()
+                BuildReportIncludedAssets = aggregation.TopAssets.Select(CloneAsset).ToList(),
+                AllIncludedTexturePathsExported = true,
+                BuildReportIncludedTextures = aggregation.AllIncludedTextures.Select(CloneAsset).ToList()
             };
         }
 
@@ -569,6 +580,7 @@ namespace Game.Editor
         public ulong BuildReportSummaryTotalSizeBytes { get; set; }
         public long BuildReportSummaryUnaccountedBytes { get; set; }
         public List<AndroidBuildIncludedAsset> TopAssets { get; set; } = new();
+        public List<AndroidBuildIncludedAsset> AllIncludedTextures { get; set; } = new();
     }
 
     public sealed class AndroidBuildReportEvidence
@@ -616,6 +628,8 @@ namespace Game.Editor
         public ulong BuildReportSummaryTotalSizeBytes { get; set; }
         public long BuildReportSummaryUnaccountedBytes { get; set; }
         public List<AndroidBuildIncludedAsset> BuildReportIncludedAssets { get; set; } = new();
+        public bool AllIncludedTexturePathsExported { get; set; }
+        public List<AndroidBuildIncludedAsset> BuildReportIncludedTextures { get; set; } = new();
     }
 }
 

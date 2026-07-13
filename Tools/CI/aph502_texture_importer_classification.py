@@ -65,13 +65,75 @@ def current_revision() -> tuple[str, list[str]]:
     return head, entries
 
 
+def texture_paths_from_top_assets(report: dict[str, object]) -> set[str]:
+    rows = report.get("buildReportIncludedAssets", [])
+    if not isinstance(rows, list):
+        return set()
+    return {
+        row["sourceAssetPath"]
+        for row in rows
+        if isinstance(row, dict)
+        and isinstance(row.get("objectTypes"), list)
+        and "UnityEngine.Texture2D" in row["objectTypes"]
+        and isinstance(row.get("sourceAssetPath"), str)
+    }
+
+
+def complete_texture_path_export(report: dict[str, object]) -> tuple[set[str], bool]:
+    if (
+        report.get("schemaVersion") != 1
+        or report.get("allIncludedTexturePathsExported") is not True
+    ):
+        return set(), False
+
+    rows = report.get("buildReportIncludedTextures")
+    if not isinstance(rows, list):
+        return set(), False
+
+    ordered_paths: list[str] = []
+    for row in rows:
+        if not isinstance(row, dict):
+            return set(), False
+        source_path = row.get("sourceAssetPath")
+        object_types = row.get("objectTypes")
+        if (
+            not isinstance(source_path, str)
+            or not source_path
+            or source_path != source_path.strip()
+            or "\\" in source_path
+            or source_path.startswith("./")
+            or "//" in source_path
+            or not isinstance(object_types, list)
+            or "UnityEngine.Texture2D" not in object_types
+        ):
+            return set(), False
+        ordered_paths.append(source_path)
+
+    unique_paths = set(ordered_paths)
+    is_deterministic_complete_export = (
+        len(unique_paths) == len(ordered_paths)
+        and ordered_paths == sorted(ordered_paths)
+    )
+    return unique_paths, is_deterministic_complete_export
+
+
+def evidence_path_label(path: Path) -> str:
+    try:
+        return path.relative_to(ROOT).as_posix()
+    except ValueError:
+        return path.as_posix()
+
+
 def revision_checked_evidence(
-    head: str, tracked_worktree_dirty: bool
+    head: str,
+    tracked_worktree_dirty: bool,
+    content_residency_path: Path = CONTENT_RESIDENCY,
+    build_report_paths: tuple[Path, ...] = BUILD_REPORTS,
 ) -> tuple[set[str], dict[str, object], bool]:
     current_included: set[str] = set()
     details: dict[str, object] = {"contentResidency": {}, "buildReports": []}
 
-    content = json.loads(CONTENT_RESIDENCY.read_text(encoding="utf-8"))
+    content = json.loads(content_residency_path.read_text(encoding="utf-8"))
     content_paths = {
         row["assetPath"]
         for row in content.get("assets", [])
@@ -95,36 +157,40 @@ def revision_checked_evidence(
     }
 
     complete_current_build_report_exists = False
-    for report_path in BUILD_REPORTS:
+    for report_path in build_report_paths:
         report = json.loads(report_path.read_text(encoding="utf-8"))
         report_revision = report.get("exactCommit")
         accepted = (
-            report.get("status") == "complete"
+            report.get("schemaVersion") == 1
+            and report.get("taskId") == "APH-500"
+            and report.get("status") == "complete"
             and report.get("dirty") is False
+            and report.get("releaseBuildType") == "release"
+            and report.get("buildTarget") == "Android"
+            and report.get("detailedBuildReport") is True
             and report_revision == head
             and not tracked_worktree_dirty
         )
-        complete_texture_path_export = report.get("allIncludedTexturePathsExported") is True
-        if accepted and complete_texture_path_export:
+        complete_paths, complete_export_valid = complete_texture_path_export(report)
+        if accepted and complete_export_valid:
             complete_current_build_report_exists = True
-        report_paths = {
-            row["sourceAssetPath"]
-            for row in report.get("buildReportIncludedAssets", [])
-            if "UnityEngine.Texture2D" in row.get("objectTypes", [])
-            and isinstance(row.get("sourceAssetPath"), str)
-        }
+        top_table_paths = texture_paths_from_top_assets(report)
+        report_paths = complete_paths if complete_export_valid else top_table_paths
         if accepted:
             current_included.update(report_paths)
         details["buildReports"].append(
             {
-                "path": report_path.relative_to(ROOT).as_posix(),
+                "path": evidence_path_label(report_path),
                 "status": report.get("status"),
                 "dirty": report.get("dirty"),
                 "evidenceRevision": report_revision,
                 "reportedTextureRows": len(report_paths),
+                "topTableTextureRows": len(top_table_paths),
+                "completeTextureRows": len(complete_paths),
                 "revisionMatchesCurrent": report_revision == head,
                 "acceptedForCurrentRevision": accepted,
-                "completeTexturePathExport": complete_texture_path_export,
+                "completeTexturePathExportMarker": report.get("allIncludedTexturePathsExported") is True,
+                "completeTexturePathExport": complete_export_valid,
                 "disposition": "current accepted inclusion evidence" if accepted else "historical/rejected only",
             }
         )

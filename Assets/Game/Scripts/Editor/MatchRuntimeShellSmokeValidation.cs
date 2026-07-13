@@ -1385,7 +1385,11 @@ namespace Game.Editor
                 ComponentType.ReadOnly<RuntimeGameplayStateComponent>());
             if (runtimeQuery.IsEmptyIgnoreFilter)
             {
-                status = "runtimeState=missing";
+                using EntityQuery matchStartQuery = entityManager.CreateEntityQuery(
+                    ComponentType.ReadOnly<MatchStartProgressComponent>());
+                status = matchStartQuery.CalculateEntityCount() == 1
+                    ? $"runtimeState=missing matchStart={matchStartQuery.GetSingleton<MatchStartProgressComponent>().Status}"
+                    : "runtimeState=missing matchStart=missing";
                 return false;
             }
 

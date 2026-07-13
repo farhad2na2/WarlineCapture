@@ -7,6 +7,94 @@ using Game.Components;
 
 namespace Game.Runtime
 {
+    public readonly struct UiMaterialFabricationReadModel
+    {
+        public readonly int RuntimeBuildingId;
+        public readonly byte OwnerFactionId;
+        public readonly int OilInputCurrentBarrels;
+        public readonly int OilInputCapacityBarrels;
+        public readonly float OilConsumedPerCycle;
+        public readonly float CycleDurationSeconds;
+        public readonly float CycleProgressSeconds;
+        public readonly float Progress01;
+        public readonly int MaterialsOutputPerCycle;
+        public readonly int FactionMaterialsCurrent;
+        public readonly int FactionMaterialsCapacity;
+        public readonly bool ProductionEnabled;
+        public readonly MaterialFabricationStatusCode Status;
+        public readonly MaterialFabricationBlockReasonCode BlockReason;
+        public readonly uint Version;
+
+        public UiMaterialFabricationReadModel(
+            int runtimeBuildingId,
+            byte ownerFactionId,
+            int oilInputCurrentBarrels,
+            int oilInputCapacityBarrels,
+            float oilConsumedPerCycle,
+            float cycleDurationSeconds,
+            float cycleProgressSeconds,
+            float progress01,
+            int materialsOutputPerCycle,
+            int factionMaterialsCurrent,
+            int factionMaterialsCapacity,
+            bool productionEnabled,
+            MaterialFabricationStatusCode status,
+            MaterialFabricationBlockReasonCode blockReason,
+            uint version)
+        {
+            RuntimeBuildingId = runtimeBuildingId;
+            OwnerFactionId = ownerFactionId;
+            OilInputCurrentBarrels = oilInputCurrentBarrels;
+            OilInputCapacityBarrels = oilInputCapacityBarrels;
+            OilConsumedPerCycle = oilConsumedPerCycle;
+            CycleDurationSeconds = cycleDurationSeconds;
+            CycleProgressSeconds = cycleProgressSeconds;
+            Progress01 = progress01;
+            MaterialsOutputPerCycle = materialsOutputPerCycle;
+            FactionMaterialsCurrent = factionMaterialsCurrent;
+            FactionMaterialsCapacity = factionMaterialsCapacity;
+            ProductionEnabled = productionEnabled;
+            Status = status;
+            BlockReason = blockReason;
+            Version = version;
+        }
+
+        public UiMaterialFabricationReadModel(
+            int runtimeBuildingId,
+            byte ownerFactionId,
+            float oilInputCurrentBarrels,
+            int oilInputCapacityBarrels,
+            float oilConsumedPerCycle,
+            float cycleDurationSeconds,
+            float cycleProgressSeconds,
+            float progress01,
+            int materialsOutputPerCycle,
+            int factionMaterialsCurrent,
+            int factionMaterialsCapacity,
+            bool productionEnabled,
+            MaterialFabricationStatusCode status,
+            MaterialFabricationBlockReasonCode blockReason,
+            uint version)
+            : this(
+                runtimeBuildingId,
+                ownerFactionId,
+                Mathf.FloorToInt(Mathf.Max(0f, oilInputCurrentBarrels)),
+                oilInputCapacityBarrels,
+                oilConsumedPerCycle,
+                cycleDurationSeconds,
+                cycleProgressSeconds,
+                progress01,
+                materialsOutputPerCycle,
+                factionMaterialsCurrent,
+                factionMaterialsCapacity,
+                productionEnabled,
+                status,
+                blockReason,
+                version)
+        {
+        }
+    }
+
     public sealed class BuildingUiQueryUiSystemHelper
     {
         public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
@@ -14,6 +102,7 @@ namespace Game.Runtime
         public delegate bool TryGetSelectedBuildingPreviewPrefabDelegate(out GameObject prefab);
         public delegate bool TryGetRuntimeBuildingOwnerFactionDelegate(int buildingId, out byte ownerFactionId);
         public delegate bool TryResolveLiveUnitPreviewPrefabDelegate(Entity unitEntity, out GameObject prefab);
+        public delegate bool TryGetFactionResourceEntityDelegate(byte factionId, out Entity entity);
 
         public readonly struct Context
         {
@@ -37,6 +126,8 @@ namespace Game.Runtime
             internal readonly TryGetRuntimeBuildingOwnerFactionDelegate TryGetRuntimeBuildingOwnerFaction;
             internal readonly Func<Camera, bool> HasVisibleSelectableBuilding;
             internal readonly TryResolveLiveUnitPreviewPrefabDelegate TryResolveLiveUnitPreviewPrefab;
+            internal readonly IReadOnlyList<Entity> FactionResourceEntities;
+            internal readonly TryGetFactionResourceEntityDelegate TryGetFactionResourceEntity;
 
             internal Context(
                 IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
@@ -58,7 +149,9 @@ namespace Game.Runtime
                 Func<int, bool> isRuntimeBuildingCityGenerated,
                 TryGetRuntimeBuildingOwnerFactionDelegate tryGetRuntimeBuildingOwnerFaction,
                 Func<Camera, bool> hasVisibleSelectableBuilding,
-                TryResolveLiveUnitPreviewPrefabDelegate tryResolveLiveUnitPreviewPrefab)
+                TryResolveLiveUnitPreviewPrefabDelegate tryResolveLiveUnitPreviewPrefab,
+                IReadOnlyList<Entity> factionResourceEntities = null,
+                TryGetFactionResourceEntityDelegate tryGetFactionResourceEntity = null)
             {
                 RuntimeBuildings = runtimeBuildings;
                 GetActiveBuildingId = getActiveBuildingId;
@@ -80,7 +173,229 @@ namespace Game.Runtime
                 TryGetRuntimeBuildingOwnerFaction = tryGetRuntimeBuildingOwnerFaction;
                 HasVisibleSelectableBuilding = hasVisibleSelectableBuilding;
                 TryResolveLiveUnitPreviewPrefab = tryResolveLiveUnitPreviewPrefab;
+                FactionResourceEntities = factionResourceEntities;
+                TryGetFactionResourceEntity = tryGetFactionResourceEntity;
             }
+        }
+
+        private bool _hasMaterialFabricationReadModelState;
+        private int _materialFabricationRuntimeBuildingId;
+        private Entity _materialFabricationCombatEntity;
+        private Entity _materialFabricationFactionEntity;
+        private BuildingResourceStorageComponent _materialFabricationStorage;
+        private MaterialFabricationComponent _materialFabrication;
+        private FactionTacticalMaterialsComponent _materialFabricationFactionMaterials;
+        private uint _materialFabricationReadModelVersion;
+
+        internal bool TryGetSelectedMaterialFabricationReadModel(
+            Context context,
+            out UiMaterialFabricationReadModel readModel)
+        {
+            readModel = default;
+            if (context.RuntimeBuildings == null ||
+                context.GetActiveBuildingId == null ||
+                context.TryGetEntityManager == null ||
+                (context.FactionResourceEntities == null && context.TryGetFactionResourceEntity == null) ||
+                !context.TryGetEntityManager(out EntityManager entityManager))
+            {
+                InvalidateMaterialFabricationReadModelState();
+                return false;
+            }
+
+            int? selectedBuildingId = context.GetActiveBuildingId();
+            if (!selectedBuildingId.HasValue ||
+                !context.RuntimeBuildings.TryGetValue(selectedBuildingId.Value, out RuntimeBuildingEntity building) ||
+                building == null ||
+                building.CombatEntity == Entity.Null ||
+                !entityManager.Exists(building.CombatEntity) ||
+                !entityManager.HasComponent<MaterialFabricationComponent>(building.CombatEntity) ||
+                !entityManager.HasComponent<MaterialFabricationInputTag>(building.CombatEntity) ||
+                !entityManager.HasComponent<BuildingResourceStorageComponent>(building.CombatEntity))
+            {
+                InvalidateMaterialFabricationReadModelState();
+                return false;
+            }
+
+            MaterialFabricationComponent fabrication =
+                entityManager.GetComponentData<MaterialFabricationComponent>(building.CombatEntity);
+            BuildingResourceStorageComponent storage =
+                entityManager.GetComponentData<BuildingResourceStorageComponent>(building.CombatEntity);
+            if (fabrication.RuntimeBuildingId != selectedBuildingId.Value ||
+                storage.RuntimeBuildingId != selectedBuildingId.Value ||
+                storage.OwnerFactionId != fabrication.OwnerFactionId ||
+                !TryResolveFactionMaterialsEntity(
+                    context,
+                    entityManager,
+                    fabrication.OwnerFactionId,
+                    out Entity factionEntity,
+                    out FactionTacticalMaterialsComponent factionMaterials))
+            {
+                InvalidateMaterialFabricationReadModelState();
+                return false;
+            }
+
+            if (!_hasMaterialFabricationReadModelState ||
+                _materialFabricationRuntimeBuildingId != selectedBuildingId.Value ||
+                _materialFabricationCombatEntity != building.CombatEntity ||
+                _materialFabricationFactionEntity != factionEntity ||
+                !HasSameStorageReadState(_materialFabricationStorage, storage) ||
+                !HasSameFabricationReadState(_materialFabrication, fabrication) ||
+                !HasSameFactionMaterialsReadState(_materialFabricationFactionMaterials, factionMaterials))
+            {
+                _hasMaterialFabricationReadModelState = true;
+                _materialFabricationRuntimeBuildingId = selectedBuildingId.Value;
+                _materialFabricationCombatEntity = building.CombatEntity;
+                _materialFabricationFactionEntity = factionEntity;
+                _materialFabricationStorage = storage;
+                _materialFabrication = fabrication;
+                _materialFabricationFactionMaterials = factionMaterials;
+                _materialFabricationReadModelVersion = NextVersion(_materialFabricationReadModelVersion);
+            }
+
+            float progress01 = fabrication.CycleDurationSeconds > 0f
+                ? Mathf.Clamp01(fabrication.CycleProgressSeconds / fabrication.CycleDurationSeconds)
+                : 0f;
+            int oilInputCurrent = Mathf.RoundToInt(Mathf.Max(0f, storage.StoredOilBarrels));
+            if (storage.OilStorageCapacity > 0)
+                oilInputCurrent = Mathf.Min(oilInputCurrent, storage.OilStorageCapacity);
+            readModel = new UiMaterialFabricationReadModel(
+                selectedBuildingId.Value,
+                fabrication.OwnerFactionId,
+                oilInputCurrent,
+                storage.OilStorageCapacity,
+                fabrication.OilConsumedPerCycle,
+                fabrication.CycleDurationSeconds,
+                fabrication.CycleProgressSeconds,
+                progress01,
+                fabrication.MaterialsOutputPerCycle,
+                factionMaterials.Current,
+                factionMaterials.Capacity,
+                fabrication.ProductionEnabled != 0,
+                fabrication.Status,
+                fabrication.BlockReason,
+                _materialFabricationReadModelVersion);
+            return true;
+        }
+
+        private static bool TryResolveUniqueFactionMaterialsEntity(
+            IReadOnlyList<Entity> factionResourceEntities,
+            EntityManager entityManager,
+            byte ownerFactionId,
+            out Entity factionEntity,
+            out FactionTacticalMaterialsComponent factionMaterials)
+        {
+            factionEntity = Entity.Null;
+            factionMaterials = default;
+            for (int i = 0; i < factionResourceEntities.Count; i++)
+            {
+                Entity candidate = factionResourceEntities[i];
+                if (candidate == Entity.Null ||
+                    !entityManager.Exists(candidate) ||
+                    !entityManager.HasComponent<FactionEconomy>(candidate) ||
+                    !entityManager.HasComponent<FactionTacticalMaterialsComponent>(candidate))
+                {
+                    continue;
+                }
+
+                FactionEconomy economy = entityManager.GetComponentData<FactionEconomy>(candidate);
+                FactionTacticalMaterialsComponent materials =
+                    entityManager.GetComponentData<FactionTacticalMaterialsComponent>(candidate);
+                bool economyMatches = economy.FactionId == ownerFactionId;
+                bool materialsMatch = materials.FactionId == ownerFactionId;
+                if (economyMatches != materialsMatch)
+                    return false;
+                if (!economyMatches)
+                    continue;
+                if (factionEntity != Entity.Null)
+                    return false;
+
+                factionEntity = candidate;
+                factionMaterials = materials;
+            }
+
+            return factionEntity != Entity.Null;
+        }
+
+        private static bool TryResolveFactionMaterialsEntity(
+            Context context,
+            EntityManager entityManager,
+            byte ownerFactionId,
+            out Entity factionEntity,
+            out FactionTacticalMaterialsComponent factionMaterials)
+        {
+            if (context.FactionResourceEntities != null)
+            {
+                return TryResolveUniqueFactionMaterialsEntity(
+                    context.FactionResourceEntities,
+                    entityManager,
+                    ownerFactionId,
+                    out factionEntity,
+                    out factionMaterials);
+            }
+
+            factionEntity = Entity.Null;
+            factionMaterials = default;
+            if (context.TryGetFactionResourceEntity == null ||
+                !context.TryGetFactionResourceEntity(ownerFactionId, out factionEntity) ||
+                factionEntity == Entity.Null ||
+                !entityManager.Exists(factionEntity) ||
+                !entityManager.HasComponent<FactionEconomy>(factionEntity) ||
+                !entityManager.HasComponent<FactionTacticalMaterialsComponent>(factionEntity))
+            {
+                return false;
+            }
+
+            FactionEconomy economy = entityManager.GetComponentData<FactionEconomy>(factionEntity);
+            factionMaterials = entityManager.GetComponentData<FactionTacticalMaterialsComponent>(factionEntity);
+            return economy.FactionId == ownerFactionId && factionMaterials.FactionId == ownerFactionId;
+        }
+
+        private static bool HasSameStorageReadState(
+            in BuildingResourceStorageComponent left,
+            in BuildingResourceStorageComponent right)
+        {
+            return left.RuntimeBuildingId == right.RuntimeBuildingId &&
+                   left.OwnerFactionId == right.OwnerFactionId &&
+                   left.OilStorageCapacity == right.OilStorageCapacity &&
+                   left.StoredOilBarrels == right.StoredOilBarrels &&
+                   left.Version == right.Version;
+        }
+
+        private static bool HasSameFabricationReadState(
+            in MaterialFabricationComponent left,
+            in MaterialFabricationComponent right)
+        {
+            return left.RuntimeBuildingId == right.RuntimeBuildingId &&
+                   left.OwnerFactionId == right.OwnerFactionId &&
+                   left.ProductionEnabled == right.ProductionEnabled &&
+                   left.OilConsumedPerCycle == right.OilConsumedPerCycle &&
+                   left.MaterialsOutputPerCycle == right.MaterialsOutputPerCycle &&
+                   left.CycleDurationSeconds == right.CycleDurationSeconds &&
+                   left.CycleProgressSeconds == right.CycleProgressSeconds &&
+                   left.Status == right.Status &&
+                   left.BlockReason == right.BlockReason &&
+                   left.Version == right.Version;
+        }
+
+        private static bool HasSameFactionMaterialsReadState(
+            in FactionTacticalMaterialsComponent left,
+            in FactionTacticalMaterialsComponent right)
+        {
+            return left.FactionId == right.FactionId &&
+                   left.Current == right.Current &&
+                   left.Capacity == right.Capacity &&
+                   left.Version == right.Version;
+        }
+
+        private void InvalidateMaterialFabricationReadModelState()
+        {
+            _hasMaterialFabricationReadModelState = false;
+        }
+
+        private static uint NextVersion(uint version)
+        {
+            version++;
+            return version != 0 ? version : 1;
         }
 
         public readonly struct ProducedUnitUiEntry

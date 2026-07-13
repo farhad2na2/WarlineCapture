@@ -259,6 +259,8 @@ namespace Game.Runtime
                 roadBuildReadModel,
                 building.Interaction,
                 building.InteractionContext,
+                building.UiQuery,
+                building.UiQueryContext,
                 building.TrySelectFirstBuildingInScreenRect,
                 ResolveSelectionPortraitSprite,
                 ResolveSelectionCardPortraitSprite,

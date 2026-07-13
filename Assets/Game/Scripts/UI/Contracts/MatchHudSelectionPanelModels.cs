@@ -98,7 +98,8 @@ namespace Game.UI.Contracts
         OilBarrels = 1,
         FuelBarrels = 2,
         OilAndFuel = 3,
-        ResourceCargo = 4
+        ResourceCargo = 4,
+        MaterialFabrication = 5
     }
 
     public readonly struct MatchHudTransportPassengersModel
@@ -120,6 +121,13 @@ namespace Game.UI.Contracts
         public readonly bool ExitAllEnabled;
         public readonly IReadOnlyList<MatchHudSelectionPanelPassengerItemModel> Passengers;
         public readonly string StatusText;
+        public readonly int MaterialsCurrent;
+        public readonly int MaterialsCapacity;
+        public readonly float OilConsumedPerCycle;
+        public readonly int MaterialsOutputPerCycle;
+        public readonly float CycleDurationSeconds;
+        public readonly float CycleProgress01;
+        public readonly bool ProductionEnabled;
 
         public MatchHudTransportPassengersModel(
             bool visible,
@@ -138,7 +146,14 @@ namespace Game.UI.Contracts
             int oilCapacity = 0,
             int fuelCurrent = 0,
             int fuelCapacity = 0,
-            string statusText = null)
+            string statusText = null,
+            int materialsCurrent = 0,
+            int materialsCapacity = 0,
+            float oilConsumedPerCycle = 0f,
+            int materialsOutputPerCycle = 0,
+            float cycleDurationSeconds = 0f,
+            float cycleProgress01 = 0f,
+            bool productionEnabled = false)
         {
             Visible = visible;
             DrawerOpen = drawerOpen;
@@ -157,6 +172,13 @@ namespace Game.UI.Contracts
             ExitAllEnabled = exitAllEnabled;
             Passengers = passengers;
             StatusText = statusText;
+            MaterialsCurrent = materialsCurrent;
+            MaterialsCapacity = materialsCapacity;
+            OilConsumedPerCycle = oilConsumedPerCycle;
+            MaterialsOutputPerCycle = materialsOutputPerCycle;
+            CycleDurationSeconds = cycleDurationSeconds;
+            CycleProgress01 = cycleProgress01;
+            ProductionEnabled = productionEnabled;
         }
 
         public static MatchHudTransportPassengersModel Hidden => new(false, false, UiEntityHandle.Null, 0, 0, false, null);

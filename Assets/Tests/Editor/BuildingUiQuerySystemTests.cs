@@ -19,7 +19,12 @@ public sealed class BuildingUiQuerySystemTests
             tests.AddProducedUnitEntries_ResolvesReadyPrefabFromPassivePreviewDelegate();
             tests.SelectedBuildingProducedUnits_ReadsProducedUnitReadModel();
             tests.GetFriendlyPendingProductionUiEntries_IncludesPlayerOwnedProducerQueues();
-            Debug.Log("[BuildingUiQueryValidation] result=Passed tests=5");
+            tests.SelectedMaterialFabricationReadModel_JoinsAuthoritativeEcsStateAndShapesProgress();
+            tests.SelectedMaterialFabricationReadModel_RejectsMissingDuplicateAndMismatchedOwners();
+            tests.SelectedMaterialFabricationReadModel_RejectsNonDepotSelection();
+            tests.SelectedMaterialFabricationReadModel_AdvancesVersionOnlyWhenSourceStateChanges();
+            tests.SelectedMaterialFabricationReadModel_UnchangedReadAllocatesNoManagedMemory();
+            Debug.Log("[BuildingUiQueryValidation] result=Passed tests=10");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -347,6 +352,317 @@ public sealed class BuildingUiQuerySystemTests
         {
             UnityEngine.Object.DestroyImmediate(prefab);
         }
+    }
+
+    [Test]
+    public void SelectedMaterialFabricationReadModel_JoinsAuthoritativeEcsStateAndShapesProgress()
+    {
+        using World world = new("BuildingUiQuerySystemTests_MaterialFabricationReadModel");
+        EntityManager entityManager = world.EntityManager;
+        RuntimeBuildingEntity selectedBuilding = CreateMaterialFabricationBuilding(
+            entityManager,
+            runtimeBuildingId: 41,
+            ownerFactionId: FactionIdentity.PlayerFactionId,
+            storedOilBarrels: 18.5f,
+            oilStorageCapacity: 60,
+            cycleProgressSeconds: 4f,
+            cycleDurationSeconds: 10f);
+        selectedBuilding.StoredOilBarrels = 999f;
+
+        Entity playerEconomy = CreateFactionMaterialsEntity(
+            entityManager,
+            FactionIdentity.PlayerFactionId,
+            current: 23,
+            capacity: 90,
+            version: 7);
+        Entity enemyEconomy = CreateFactionMaterialsEntity(
+            entityManager,
+            FactionIdentity.EnemyFactionId,
+            current: 70,
+            capacity: 80,
+            version: 3);
+        BuildingUiQueryUiSystemHelper.Context context = CreateMaterialFabricationContext(
+            entityManager,
+            selectedBuilding,
+            new[] { enemyEconomy, playerEconomy });
+
+        var query = new BuildingUiQueryUiSystemHelper();
+        Assert.IsTrue(query.TryGetSelectedMaterialFabricationReadModel(context, out UiMaterialFabricationReadModel model));
+
+        Assert.AreEqual(41, model.RuntimeBuildingId);
+        Assert.AreEqual(FactionIdentity.PlayerFactionId, model.OwnerFactionId);
+        Assert.AreEqual(18, model.OilInputCurrentBarrels);
+        Assert.AreEqual(60, model.OilInputCapacityBarrels);
+        Assert.AreEqual(5f, model.OilConsumedPerCycle);
+        Assert.AreEqual(10f, model.CycleDurationSeconds);
+        Assert.AreEqual(4f, model.CycleProgressSeconds);
+        Assert.AreEqual(0.4f, model.Progress01, 0.0001f);
+        Assert.AreEqual(3, model.MaterialsOutputPerCycle);
+        Assert.AreEqual(23, model.FactionMaterialsCurrent);
+        Assert.AreEqual(90, model.FactionMaterialsCapacity);
+        Assert.IsTrue(model.ProductionEnabled);
+        Assert.AreEqual(MaterialFabricationStatusCode.Producing, model.Status);
+        Assert.AreEqual(MaterialFabricationBlockReasonCode.None, model.BlockReason);
+        Assert.Greater(model.Version, 0u);
+    }
+
+    [Test]
+    public void SelectedMaterialFabricationReadModel_RejectsMissingDuplicateAndMismatchedOwners()
+    {
+        using World world = new("BuildingUiQuerySystemTests_MaterialFabricationOwnerValidation");
+        EntityManager entityManager = world.EntityManager;
+        RuntimeBuildingEntity selectedBuilding = CreateMaterialFabricationBuilding(
+            entityManager,
+            runtimeBuildingId: 42,
+            ownerFactionId: FactionIdentity.PlayerFactionId);
+        var query = new BuildingUiQueryUiSystemHelper();
+
+        BuildingUiQueryUiSystemHelper.Context missingContext = CreateMaterialFabricationContext(
+            entityManager,
+            selectedBuilding,
+            System.Array.Empty<Entity>());
+        Assert.IsFalse(query.TryGetSelectedMaterialFabricationReadModel(missingContext, out _));
+
+        Entity mismatchedEconomy = entityManager.CreateEntity(
+            typeof(FactionEconomy),
+            typeof(FactionTacticalMaterialsComponent));
+        entityManager.SetComponentData(mismatchedEconomy, new FactionEconomy
+        {
+            FactionId = FactionIdentity.PlayerFactionId
+        });
+        entityManager.SetComponentData(mismatchedEconomy, new FactionTacticalMaterialsComponent
+        {
+            FactionId = FactionIdentity.EnemyFactionId,
+            Current = 10,
+            Capacity = 50
+        });
+        BuildingUiQueryUiSystemHelper.Context mismatchContext = CreateMaterialFabricationContext(
+            entityManager,
+            selectedBuilding,
+            new[] { mismatchedEconomy });
+        Assert.IsFalse(query.TryGetSelectedMaterialFabricationReadModel(mismatchContext, out _));
+
+        Entity first = CreateFactionMaterialsEntity(
+            entityManager,
+            FactionIdentity.PlayerFactionId,
+            current: 10,
+            capacity: 50);
+        Entity second = CreateFactionMaterialsEntity(
+            entityManager,
+            FactionIdentity.PlayerFactionId,
+            current: 20,
+            capacity: 60);
+        BuildingUiQueryUiSystemHelper.Context duplicateContext = CreateMaterialFabricationContext(
+            entityManager,
+            selectedBuilding,
+            new[] { first, second });
+        Assert.IsFalse(query.TryGetSelectedMaterialFabricationReadModel(duplicateContext, out _));
+    }
+
+    [Test]
+    public void SelectedMaterialFabricationReadModel_RejectsNonDepotSelection()
+    {
+        using World world = new("BuildingUiQuerySystemTests_NonMaterialFabricationBuilding");
+        EntityManager entityManager = world.EntityManager;
+        Entity combatEntity = entityManager.CreateEntity(typeof(BuildingResourceStorageComponent));
+        entityManager.SetComponentData(combatEntity, new BuildingResourceStorageComponent
+        {
+            RuntimeBuildingId = 43,
+            OwnerFactionId = FactionIdentity.PlayerFactionId,
+            StoredOilBarrels = 12f,
+            OilStorageCapacity = 40
+        });
+        RuntimeBuildingEntity selectedBuilding = new()
+        {
+            Id = 43,
+            CombatEntity = combatEntity
+        };
+        Entity playerEconomy = CreateFactionMaterialsEntity(
+            entityManager,
+            FactionIdentity.PlayerFactionId,
+            current: 10,
+            capacity: 50);
+        BuildingUiQueryUiSystemHelper.Context context = CreateMaterialFabricationContext(
+            entityManager,
+            selectedBuilding,
+            new[] { playerEconomy });
+
+        var query = new BuildingUiQueryUiSystemHelper();
+        Assert.IsFalse(query.TryGetSelectedMaterialFabricationReadModel(context, out _));
+    }
+
+    [Test]
+    public void SelectedMaterialFabricationReadModel_AdvancesVersionOnlyWhenSourceStateChanges()
+    {
+        using World world = new("BuildingUiQuerySystemTests_MaterialFabricationVersion");
+        EntityManager entityManager = world.EntityManager;
+        RuntimeBuildingEntity selectedBuilding = CreateMaterialFabricationBuilding(
+            entityManager,
+            runtimeBuildingId: 44,
+            ownerFactionId: FactionIdentity.PlayerFactionId);
+        Entity playerEconomy = CreateFactionMaterialsEntity(
+            entityManager,
+            FactionIdentity.PlayerFactionId,
+            current: 10,
+            capacity: 50,
+            version: 2);
+        BuildingUiQueryUiSystemHelper.Context context = CreateMaterialFabricationContext(
+            entityManager,
+            selectedBuilding,
+            new[] { playerEconomy });
+        var query = new BuildingUiQueryUiSystemHelper();
+
+        Assert.IsTrue(query.TryGetSelectedMaterialFabricationReadModel(context, out UiMaterialFabricationReadModel first));
+        Assert.IsTrue(query.TryGetSelectedMaterialFabricationReadModel(context, out UiMaterialFabricationReadModel unchanged));
+        Assert.AreEqual(first.Version, unchanged.Version);
+
+        FactionTacticalMaterialsComponent materials =
+            entityManager.GetComponentData<FactionTacticalMaterialsComponent>(playerEconomy);
+        materials.Current++;
+        entityManager.SetComponentData(playerEconomy, materials);
+
+        Assert.IsTrue(query.TryGetSelectedMaterialFabricationReadModel(context, out UiMaterialFabricationReadModel changed));
+        Assert.Greater(changed.Version, unchanged.Version);
+        Assert.AreEqual(materials.Current, changed.FactionMaterialsCurrent);
+        Assert.IsTrue(query.TryGetSelectedMaterialFabricationReadModel(context, out UiMaterialFabricationReadModel stableAgain));
+        Assert.AreEqual(changed.Version, stableAgain.Version);
+    }
+
+    [Test]
+    public void SelectedMaterialFabricationReadModel_UnchangedReadAllocatesNoManagedMemory()
+    {
+        using World world = new("BuildingUiQuerySystemTests_MaterialFabricationNoGc");
+        EntityManager entityManager = world.EntityManager;
+        RuntimeBuildingEntity selectedBuilding = CreateMaterialFabricationBuilding(
+            entityManager,
+            runtimeBuildingId: 45,
+            ownerFactionId: FactionIdentity.PlayerFactionId);
+        Entity playerEconomy = CreateFactionMaterialsEntity(
+            entityManager,
+            FactionIdentity.PlayerFactionId,
+            current: 10,
+            capacity: 50);
+        BuildingUiQueryUiSystemHelper.Context context = CreateMaterialFabricationContext(
+            entityManager,
+            selectedBuilding,
+            new[] { playerEconomy });
+        var query = new BuildingUiQueryUiSystemHelper();
+
+        for (int i = 0; i < 8; i++)
+            Assert.IsTrue(query.TryGetSelectedMaterialFabricationReadModel(context, out _));
+
+        bool allReadsSucceeded = true;
+        long before = System.GC.GetAllocatedBytesForCurrentThread();
+        for (int i = 0; i < 128; i++)
+            allReadsSucceeded &= query.TryGetSelectedMaterialFabricationReadModel(context, out _);
+        long allocatedBytes = System.GC.GetAllocatedBytesForCurrentThread() - before;
+
+        Assert.IsTrue(allReadsSucceeded);
+        Assert.AreEqual(0L, allocatedBytes);
+    }
+
+    private static RuntimeBuildingEntity CreateMaterialFabricationBuilding(
+        EntityManager entityManager,
+        int runtimeBuildingId,
+        byte ownerFactionId,
+        float storedOilBarrels = 20f,
+        int oilStorageCapacity = 80,
+        float cycleProgressSeconds = 2f,
+        float cycleDurationSeconds = 8f)
+    {
+        Entity combatEntity = entityManager.CreateEntity(
+            typeof(BuildingResourceStorageComponent),
+            typeof(MaterialFabricationComponent),
+            typeof(MaterialFabricationInputTag));
+        entityManager.SetComponentData(combatEntity, new BuildingResourceStorageComponent
+        {
+            RuntimeBuildingId = runtimeBuildingId,
+            OwnerFactionId = ownerFactionId,
+            StoredOilBarrels = storedOilBarrels,
+            OilStorageCapacity = oilStorageCapacity,
+            Version = 4
+        });
+        entityManager.SetComponentData(combatEntity, new MaterialFabricationComponent
+        {
+            RuntimeBuildingId = runtimeBuildingId,
+            OwnerFactionId = ownerFactionId,
+            ProductionEnabled = 1,
+            OilConsumedPerCycle = 5f,
+            MaterialsOutputPerCycle = 3,
+            CycleDurationSeconds = cycleDurationSeconds,
+            CycleProgressSeconds = cycleProgressSeconds,
+            Status = MaterialFabricationStatusCode.Producing,
+            BlockReason = MaterialFabricationBlockReasonCode.None,
+            Version = 5
+        });
+        return new RuntimeBuildingEntity
+        {
+            Id = runtimeBuildingId,
+            CombatEntity = combatEntity,
+            HasOwnerFaction = true,
+            OwnerFactionId = ownerFactionId
+        };
+    }
+
+    private static Entity CreateFactionMaterialsEntity(
+        EntityManager entityManager,
+        byte factionId,
+        int current,
+        int capacity,
+        uint version = 1)
+    {
+        Entity entity = entityManager.CreateEntity(
+            typeof(FactionEconomy),
+            typeof(FactionTacticalMaterialsComponent));
+        entityManager.SetComponentData(entity, new FactionEconomy
+        {
+            FactionId = factionId
+        });
+        entityManager.SetComponentData(entity, new FactionTacticalMaterialsComponent
+        {
+            FactionId = factionId,
+            Current = current,
+            Capacity = capacity,
+            Version = version
+        });
+        return entity;
+    }
+
+    private static BuildingUiQueryUiSystemHelper.Context CreateMaterialFabricationContext(
+        EntityManager entityManager,
+        RuntimeBuildingEntity selectedBuilding,
+        IReadOnlyList<Entity> factionResourceEntities)
+    {
+        var runtimeBuildings = new Dictionary<int, RuntimeBuildingEntity>
+        {
+            [selectedBuilding.Id] = selectedBuilding
+        };
+        return new BuildingUiQueryUiSystemHelper.Context(
+            runtimeBuildings,
+            () => selectedBuilding.Id,
+            (out EntityManager em) =>
+            {
+                em = entityManager;
+                return true;
+            },
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            factionResourceEntities);
     }
 
     private sealed class TestPendingProduction : BuildingProductionQueueCompositionSystemHelper.IPendingProduction

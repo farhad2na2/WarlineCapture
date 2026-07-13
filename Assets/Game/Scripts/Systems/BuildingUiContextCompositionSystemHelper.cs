@@ -289,7 +289,9 @@ namespace Game.Runtime
                 source.IsRuntimeBuildingCityGenerated,
                 source.TryGetRuntimeBuildingOwnerFaction,
                 source.HasVisibleSelectableBuilding,
-                source.TryResolveLiveUnitPreviewPrefab);
+                source.TryResolveLiveUnitPreviewPrefab,
+                factionResourceEntities: null,
+                tryGetFactionResourceEntity: source.RuntimeResourceUtilitySystemHelper.TryGetFactionResourceEntity);
         }
 
         private static BuildingUiCommandSystemHelper.CampRequestFailure InvalidCampRequest(out string requiredBuildingDisplayName)

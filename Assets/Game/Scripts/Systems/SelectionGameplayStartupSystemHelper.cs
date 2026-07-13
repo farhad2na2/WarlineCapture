@@ -75,6 +75,8 @@ namespace Game.Runtime
             RoadBuildReadModelCompositionSystemHelper roadBuildReadModel,
             BuildingPlacementInteractionCompositionSystemHelper buildingInteraction,
             BuildingPlacementInteractionCompositionSystemHelper.Context buildingInteractionContext,
+            BuildingUiQueryUiSystemHelper buildingUiQuery,
+            BuildingUiQueryUiSystemHelper.Context buildingUiQueryContext,
             System.Func<Rect, bool> trySelectFirstBuildingInScreenRect,
             SelectionHudFeedbackUiSystemHelper.ResolveSelectionPortraitSpriteDelegate resolveSelectionPortraitSprite,
             SelectionHudFeedbackUiSystemHelper.ResolveSelectionPortraitSpriteDelegate resolveSelectionCardPortraitSprite,
@@ -174,6 +176,8 @@ namespace Game.Runtime
                 TryGetSelectedBuildingResourceStorage;
             SelectionHudFeedbackUiSystemHelper.TryGetSelectedBuildingResourceStorageSnapshotDelegate tryGetSelectedBuildingResourceStorageSnapshotAction =
                 TryGetSelectedBuildingResourceStorageSnapshot;
+            SelectionHudFeedbackUiSystemHelper.TryGetSelectedMaterialFabricationReadModelDelegate tryGetSelectedMaterialFabricationReadModelAction =
+                TryGetSelectedMaterialFabricationReadModel;
             SelectionHudFeedbackUiSystemHelper.IsBoardCommandAvailableDelegate isBoardCommandAvailableAction =
                 IsBoardCommandAvailable;
             SelectionHudFeedbackUiSystemHelper.HasSelectedBoardActionDelegate hasSelectedBoardAction =
@@ -447,6 +451,7 @@ namespace Game.Runtime
                             selectedBuildingLabelAction,
                             tryGetSelectedBuildingResourceStorageAction,
                             tryGetSelectedBuildingResourceStorageSnapshotAction,
+                            tryGetSelectedMaterialFabricationReadModelAction,
                             isBoardCommandAvailableAction,
                             hasSelectedBoardAction);
                     }
@@ -1235,6 +1240,15 @@ namespace Game.Runtime
                        buildingPlacementInteractionSystem.TryGetSelectedBuildingResourceStorageSnapshot(
                            buildingPlacementInteractionContext,
                            out snapshot);
+            }
+
+            bool TryGetSelectedMaterialFabricationReadModel(out UiMaterialFabricationReadModel readModel)
+            {
+                readModel = default;
+                return buildingUiQuery != null &&
+                       buildingUiQuery.TryGetSelectedMaterialFabricationReadModel(
+                           buildingUiQueryContext,
+                           out readModel);
             }
 
             bool IsBoardCommandAvailable(EntityManager em, Entity entity)

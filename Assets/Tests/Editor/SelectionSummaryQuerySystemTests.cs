@@ -39,7 +39,10 @@ public sealed class SelectionSummaryQuerySystemTests
             RunCase(test => test.SelectedBuildingSelectionPanelReplacesStaleOilFuelStorageValues());
             RunCase(test => test.SelectedBuildingResourceStoragePanelSkipsApplyUntilVersionChanges());
             RunCase(test => test.SelectedBuildingRefineryStoragePanelReportsConversionStatus());
-            Debug.Log("[SelectionSummaryFocusedValidation] result=Passed tests=17");
+            RunCase(test => test.SelectedBuildingFabricationPanelPrefersFabricationReadModel());
+            RunCase(test => test.SelectedBuildingFabricationPanelSkipsApplyUntilVersionChanges());
+            RunCase(test => test.SelectedBuildingFabricationPanelShowsTypedStatusCopy());
+            Debug.Log("[SelectionSummaryFocusedValidation] result=Passed tests=20");
         }
         catch (System.Exception ex)
         {
@@ -831,6 +834,231 @@ public sealed class SelectionSummaryQuerySystemTests
                 null,
                 null);
         }
+    }
+
+    [Test]
+    public void SelectedBuildingFabricationPanelPrefersFabricationReadModel()
+    {
+        EntityManager em = _world.EntityManager;
+        var selectionState = new SelectionStateCompositionSystemHelper();
+        var lifecycle = new FocusedUnitLifecycleCompositionSystemHelper();
+        var panel = new RecordingSelectionPanelView(null);
+        var feedback = new SelectionHudFeedbackUiSystemHelper();
+        feedback.BindMatchHudSelectionPanel(panel);
+
+        var context = new SelectionHudFeedbackUiSystemHelper.Context(new SelectionUiReadModelLookup(), TryGetEntityManager);
+        bool genericStorageRead = false;
+
+        feedback.UpdateMatchHudSelectionPanel(
+            context,
+            selectionState,
+            lifecycle,
+            null,
+            new List<MatchHudSelectionPanelPassengerItemModel>(),
+            null,
+            null,
+            null,
+            null,
+            null,
+            () => true,
+            () => "Field Fabrication Depot",
+            TryGetGenericStorage,
+            null,
+            TryGetFabrication,
+            null,
+            null);
+
+        MatchHudTransportPassengersModel model = panel.AppliedTransportPassengers;
+        Assert.IsTrue(panel.AppliedModel.Visible);
+        Assert.AreEqual("Field Fabrication Depot", panel.AppliedModel.Title);
+        Assert.IsFalse(genericStorageRead, "Fabrication must take precedence over the generic storage fallback.");
+        Assert.IsTrue(model.Visible);
+        Assert.AreEqual(MatchHudStorageChipKind.MaterialFabrication, model.StorageKind);
+        Assert.AreEqual(18, model.OilCurrent);
+        Assert.AreEqual(60, model.OilCapacity);
+        Assert.AreEqual(3.5f, model.OilConsumedPerCycle, 0.001f);
+        Assert.AreEqual(7, model.MaterialsOutputPerCycle);
+        Assert.AreEqual(12f, model.CycleDurationSeconds, 0.001f);
+        Assert.AreEqual(0.45f, model.CycleProgress01, 0.001f);
+        Assert.AreEqual(32, model.MaterialsCurrent);
+        Assert.AreEqual(80, model.MaterialsCapacity);
+        Assert.IsTrue(model.ProductionEnabled);
+        Assert.AreEqual("FABRICATING", model.StatusText);
+
+        bool TryGetEntityManager(out EntityManager entityManager)
+        {
+            entityManager = em;
+            return true;
+        }
+
+        bool TryGetGenericStorage(out int oilCurrent, out int oilCapacity, out int fuelCurrent, out int fuelCapacity)
+        {
+            genericStorageRead = true;
+            oilCurrent = 1;
+            oilCapacity = 2;
+            fuelCurrent = 3;
+            fuelCapacity = 4;
+            return true;
+        }
+
+        bool TryGetFabrication(out UiMaterialFabricationReadModel readModel)
+        {
+            readModel = CreateMaterialFabricationReadModel(
+                version: 9u,
+                status: MaterialFabricationStatusCode.Producing,
+                blockReason: MaterialFabricationBlockReasonCode.None);
+            return true;
+        }
+    }
+
+    [Test]
+    public void SelectedBuildingFabricationPanelSkipsApplyUntilVersionChanges()
+    {
+        EntityManager em = _world.EntityManager;
+        var selectionState = new SelectionStateCompositionSystemHelper();
+        var lifecycle = new FocusedUnitLifecycleCompositionSystemHelper();
+        var panel = new RecordingSelectionPanelView(null);
+        var feedback = new SelectionHudFeedbackUiSystemHelper();
+        feedback.BindMatchHudSelectionPanel(panel);
+
+        var context = new SelectionHudFeedbackUiSystemHelper.Context(new SelectionUiReadModelLookup(), TryGetEntityManager);
+        uint version = 14u;
+
+        ApplyBuildingSelection();
+        ApplyBuildingSelection();
+
+        Assert.AreEqual(1, panel.ApplyCount);
+        Assert.AreEqual(1, panel.ApplyTransportPassengersCount);
+
+        version++;
+        ApplyBuildingSelection();
+
+        Assert.AreEqual(1, panel.ApplyCount);
+        Assert.AreEqual(2, panel.ApplyTransportPassengersCount);
+
+        bool TryGetEntityManager(out EntityManager entityManager)
+        {
+            entityManager = em;
+            return true;
+        }
+
+        bool TryGetFabrication(out UiMaterialFabricationReadModel readModel)
+        {
+            readModel = CreateMaterialFabricationReadModel(
+                version,
+                MaterialFabricationStatusCode.Producing,
+                MaterialFabricationBlockReasonCode.None);
+            return true;
+        }
+
+        void ApplyBuildingSelection()
+        {
+            feedback.UpdateMatchHudSelectionPanel(
+                context,
+                selectionState,
+                lifecycle,
+                null,
+                new List<MatchHudSelectionPanelPassengerItemModel>(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                () => true,
+                () => "Field Fabrication Depot",
+                null,
+                null,
+                TryGetFabrication,
+                null,
+                null);
+        }
+    }
+
+    [Test]
+    public void SelectedBuildingFabricationPanelShowsTypedStatusCopy()
+    {
+        EntityManager em = _world.EntityManager;
+        var selectionState = new SelectionStateCompositionSystemHelper();
+        var lifecycle = new FocusedUnitLifecycleCompositionSystemHelper();
+        var panel = new RecordingSelectionPanelView(null);
+        var feedback = new SelectionHudFeedbackUiSystemHelper();
+        feedback.BindMatchHudSelectionPanel(panel);
+
+        var context = new SelectionHudFeedbackUiSystemHelper.Context(new SelectionUiReadModelLookup(), TryGetEntityManager);
+        uint version = 1u;
+        MaterialFabricationStatusCode status = MaterialFabricationStatusCode.Producing;
+        MaterialFabricationBlockReasonCode blockReason = MaterialFabricationBlockReasonCode.None;
+
+        AssertStatus("FABRICATING");
+        status = MaterialFabricationStatusCode.Blocked;
+        blockReason = MaterialFabricationBlockReasonCode.NoOilInput;
+        AssertStatus("WAITING OIL");
+        blockReason = MaterialFabricationBlockReasonCode.MaterialsCapacityFull;
+        AssertStatus("MATERIALS FULL");
+        blockReason = MaterialFabricationBlockReasonCode.BuildingDisabled;
+        AssertStatus("BUILDING DISABLED");
+        status = MaterialFabricationStatusCode.Disabled;
+        blockReason = MaterialFabricationBlockReasonCode.ProductionDisabled;
+        AssertStatus("PRODUCTION DISABLED");
+        Assert.AreEqual(5, panel.ApplyTransportPassengersCount);
+
+        bool TryGetEntityManager(out EntityManager entityManager)
+        {
+            entityManager = em;
+            return true;
+        }
+
+        bool TryGetFabrication(out UiMaterialFabricationReadModel readModel)
+        {
+            readModel = CreateMaterialFabricationReadModel(version++, status, blockReason);
+            return true;
+        }
+
+        void AssertStatus(string expectedStatus)
+        {
+            feedback.UpdateMatchHudSelectionPanel(
+                context,
+                selectionState,
+                lifecycle,
+                null,
+                new List<MatchHudSelectionPanelPassengerItemModel>(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                () => true,
+                () => "Field Fabrication Depot",
+                null,
+                null,
+                TryGetFabrication,
+                null,
+                null);
+            Assert.AreEqual(expectedStatus, panel.AppliedTransportPassengers.StatusText);
+        }
+    }
+
+    private static UiMaterialFabricationReadModel CreateMaterialFabricationReadModel(
+        uint version,
+        MaterialFabricationStatusCode status,
+        MaterialFabricationBlockReasonCode blockReason)
+    {
+        return new UiMaterialFabricationReadModel(
+            runtimeBuildingId: 117,
+            ownerFactionId: FactionIdentity.PlayerFactionId,
+            oilInputCurrentBarrels: 18f,
+            oilInputCapacityBarrels: 60,
+            oilConsumedPerCycle: 3.5f,
+            cycleDurationSeconds: 12f,
+            cycleProgressSeconds: 5.4f,
+            progress01: 0.45f,
+            materialsOutputPerCycle: 7,
+            factionMaterialsCurrent: 32,
+            factionMaterialsCapacity: 80,
+            productionEnabled: status != MaterialFabricationStatusCode.Disabled,
+            status,
+            blockReason,
+            version);
     }
 
     private void AssertSelectedBuildingStorageChip(

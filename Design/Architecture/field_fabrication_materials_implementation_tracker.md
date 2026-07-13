@@ -73,9 +73,9 @@ Dependency direction remains inward toward components/config/contracts/runtime. 
 
 ## Progress Summary
 
-Overall implementation progress: 72% (74/103 checklist items complete).
+Overall implementation progress: 74% (76/103 checklist items complete).
 
-Planning, canonical resource ownership, depot config/projection, automated Oil routing, Oil-to-Materials conversion, authored construction costs, atomic dual-resource placement, Build Drawer dual-cost presentation, and typed affordability reasons are complete. Active depots consume only unreserved physical Oil at the existing one-second cadence. Player placement resolves authored costs, reserves canonical Credits and Materials after geometry validation, and finalizes or refunds both by a typed transaction id. Phase 6 continues with selected-depot status and controls.
+Planning, canonical resource ownership, depot config/projection, automated Oil routing, Oil-to-Materials conversion, authored construction costs, atomic dual-resource placement, typed Build Drawer affordability, and versioned selected-depot status are complete. Active depots consume only unreserved physical Oil at the existing one-second cadence. Player placement resolves authored costs, reserves canonical Credits and Materials after geometry validation, and finalizes or refunds both by a typed transaction id. Phase 6 continues with the depot production command, header routing, and responsive UI validation.
 
 Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation row counts. Update the numerator, denominator, table, status, and evidence log in the same commit as each completed batch.
 
@@ -87,7 +87,7 @@ Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation 
 | 3. Oil destination routing | Complete | 11 | 11 | 100% | Tray delivery, demand scoring, stable assignment, reservations, cleanup, and refinery regressions pass. |
 | 4. Oil-to-Materials conversion | Complete | 11 | 11 | 100% | Conversion is deterministic, capacity-safe, typed, reservation-aware, and no-GC. |
 | 5. Credits + Materials construction | Complete | 11 | 11 | 100% | Atomic placement, rollback, authored cost projection, and Build Drawer dual-cost presentation pass. |
-| 6. HUD and selected-building UI | In progress | 6 | 11 | 55% | Live canonical Credits/Materials header, Build Drawer dual-cost projection, and typed affordability reasons pass. Selected-depot status remains. |
+| 6. HUD and selected-building UI | In progress | 8 | 11 | 73% | Live canonical header, typed Build Drawer affordability, and versioned selected-depot status pass. Production control, header routing, and responsive validation remain. |
 | 7. Exchange and balance safety | Pending | 0 | 8 | 0% | Import is expensive recovery; no arbitrage exists. |
 | 8. AI, telemetry, and scenario safety | Pending | 0 | 7 | 0% | AI shares rules; scenarios cannot deadlock silently. |
 | 9. Integration, performance, and closeout | Pending | 0 | 9 | 0% | Architecture, GC, profiler, gameplay, and docs pass. |
@@ -260,11 +260,11 @@ Phase 5 exit criteria:
 - [x] Avoid per-frame Materials string formatting when source version is unchanged.
 - [x] Extend Build Drawer cards/details to show Credits and Materials costs.
 - [x] Bind typed disabled reasons without calculating affordability in Canvas views.
-- [ ] Add a versioned selected-depot read model with Oil input, rate, progress, output, faction Materials, and status.
+- [x] Add a versioned selected-depot read model with Oil input, rate, progress, output, faction Materials, and status.
 - [ ] Add production enabled/disabled command only through typed ECS request/result data.
 - [ ] Keep Resource Header tap routing to Exchange scenario-gated and input-safe.
 - [ ] Validate 16:9 and 20:9 layouts, localization expansion, touch sizes, and no text clipping.
-- [ ] Add no-GC unchanged-state read tests and UI contract/prefab tests.
+- [x] Add no-GC unchanged-state read tests and UI contract/prefab tests.
 
 Phase 6 exit criteria:
 
@@ -524,3 +524,13 @@ For every completed batch append:
 - Focused Unity validation passed: Build Drawer dual-cost and disabled-reason projection 6/6, building production request regression 30/30, assembly/naming boundaries 31/31, and ECS Burst hot-path architecture 10/10. Generated `Game.Runtime` and `Game.Tests.Editor` builds completed with zero errors; `git diff --check` passed.
 - Evidence: `/private/tmp/wlc-field-fabrication-phase6-build-drawer.log`, `/private/tmp/wlc-field-fabrication-phase6-production.log`, `/private/tmp/wlc-field-fabrication-phase6-architecture.log`, and `/private/tmp/wlc-field-fabrication-phase6-burst.log`.
 - Checklist count is 74/103. Phase 6 is 6/11. Next action: add the versioned selected-depot read model by joining authoritative fabrication, physical Oil storage, and faction Materials data through the existing selected-building UI query boundary.
+
+### 2026-07-13 - Phase 6B Selected Depot Read Model And HUD Presentation
+
+- Added `UiMaterialFabricationReadModel` in `Game.Runtime`. It joins the selected runtime building's ECS combat entity with `MaterialFabricationComponent`, `MaterialFabricationInputTag`, physical `BuildingResourceStorageComponent`, and the canonical matching `FactionEconomy` plus `FactionTacticalMaterialsComponent` entity.
+- Live composition resolves the canonical player faction resource entity directly through `RuntimeResourceUtilitySystemHelper`; recurring selected-building reads perform no query creation, ECS snapshots, managed collections, or scene searches. Test contexts retain explicit multi-faction candidate validation for missing, duplicate, and mismatched owners.
+- The read model publishes Oil input, authored Oil consumption and Materials output per cycle, duration, elapsed progress and normalized progress, faction Materials current/capacity, enabled state, typed status/reason, and a changed-only version. Fractional physical Oil is floored so presentation never overstates consumable whole barrels.
+- Extended the immutable Match HUD selection contract with a dedicated `MaterialFabrication` storage mode. The selected-depot chip presents Oil, conversion rate/output, progress, faction Materials, and localized typed status; ordinary Oil/Fuel buildings retain the existing storage path. Selection presentation caches on read-model version and does not reformat unchanged state.
+- Focused Unity validation passed: building UI query/read model and unchanged-state no-GC 10/10, selected-summary/presentation caching and typed status 20/20, real Match HUD prefab binding and hidden reset 4/4, assembly/naming boundaries 31/31, and ECS Burst hot-path architecture 10/10. Generated runtime and editor-test builds completed with zero errors; `git diff --check` passed.
+- Evidence: `/private/tmp/wlc-field-fabrication-phase6-depot-query.log`, `/private/tmp/wlc-field-fabrication-phase6-depot-presentation.log`, `/private/tmp/wlc-field-fabrication-phase6-depot-prefab.log`, `/private/tmp/wlc-field-fabrication-phase6-depot-architecture.log`, and `/private/tmp/wlc-field-fabrication-phase6-depot-burst.log`.
+- Checklist count is 76/103. Phase 6 is 8/11. Next action: add typed ECS production enable/disable request/result data and bind the selected-depot control without introducing a new update loop.

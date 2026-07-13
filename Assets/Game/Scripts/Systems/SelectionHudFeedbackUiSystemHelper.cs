@@ -26,6 +26,8 @@ namespace Game.Runtime
             out int fuelCapacity);
         public delegate bool TryGetSelectedBuildingResourceStorageSnapshotDelegate(
             out SelectedBuildingResourceStorageSnapshot snapshot);
+        public delegate bool TryGetSelectedMaterialFabricationReadModelDelegate(
+            out UiMaterialFabricationReadModel readModel);
 
         public readonly struct Context
         {
@@ -386,6 +388,45 @@ namespace Game.Runtime
             IsBoardCommandAvailableDelegate isBoardCommandAvailable,
             HasSelectedBoardActionDelegate hasSelectedBoardAction)
         {
+            UpdateMatchHudSelectionPanel(
+                context,
+                selectionStateSystem,
+                focusedUnitLifecycleSystem,
+                focusedUnitUiReadModelSystem,
+                transportPassengerPanelItems,
+                ensureEntityQueries,
+                tryGetAttackModeOrderSnapshot,
+                resolveSelectionCardPortraitSprite,
+                resolveSelectedBuildingPortraitSprite,
+                resolveActiveSquadTrayPortraitSprite,
+                hasSelectedBuilding,
+                selectedBuildingLabel,
+                tryGetSelectedBuildingResourceStorage,
+                tryGetSelectedBuildingResourceStorageSnapshot,
+                null,
+                isBoardCommandAvailable,
+                hasSelectedBoardAction);
+        }
+
+        public void UpdateMatchHudSelectionPanel(
+            Context context,
+            SelectionStateCompositionSystemHelper selectionStateSystem,
+            FocusedUnitLifecycleCompositionSystemHelper focusedUnitLifecycleSystem,
+            FocusedUnitUiReadModelUiSystemHelper focusedUnitUiReadModelSystem,
+            List<MatchHudSelectionPanelPassengerItemModel> transportPassengerPanelItems,
+            EnsureEntityQueriesDelegate ensureEntityQueries,
+            TryGetAttackModeOrderSnapshotDelegate tryGetAttackModeOrderSnapshot,
+            ResolveSelectionPortraitSpriteDelegate resolveSelectionCardPortraitSprite,
+            System.Func<Sprite> resolveSelectedBuildingPortraitSprite,
+            System.Func<Sprite> resolveActiveSquadTrayPortraitSprite,
+            System.Func<bool> hasSelectedBuilding,
+            System.Func<string> selectedBuildingLabel,
+            TryGetSelectedBuildingResourceStorageDelegate tryGetSelectedBuildingResourceStorage,
+            TryGetSelectedBuildingResourceStorageSnapshotDelegate tryGetSelectedBuildingResourceStorageSnapshot,
+            TryGetSelectedMaterialFabricationReadModelDelegate tryGetSelectedMaterialFabricationReadModel,
+            IsBoardCommandAvailableDelegate isBoardCommandAvailable,
+            HasSelectedBoardActionDelegate hasSelectedBoardAction)
+        {
             if (_matchHudSelectionPanelView == null)
                 return;
 
@@ -522,11 +563,20 @@ namespace Game.Runtime
                     _hasLastSelectedBuildingPanelKey = true;
                 }
 
-                MatchHudTransportPassengersModel storageModel =
-                    BuildSelectedBuildingResourceStoragePanelModel(
+                MatchHudTransportPassengersModel storageModel;
+                TransportPanelCacheKey storageKey;
+                if (tryGetSelectedMaterialFabricationReadModel != null &&
+                    tryGetSelectedMaterialFabricationReadModel(out UiMaterialFabricationReadModel fabrication))
+                {
+                    storageModel = BuildSelectedMaterialFabricationPanelModel(fabrication, out storageKey);
+                }
+                else
+                {
+                    storageModel = BuildSelectedBuildingResourceStoragePanelModel(
                         tryGetSelectedBuildingResourceStorage,
                         tryGetSelectedBuildingResourceStorageSnapshot,
-                        out TransportPanelCacheKey storageKey);
+                        out storageKey);
+                }
                 if (!_hasLastTransportKey || !_lastTransportKey.Equals(storageKey))
                 {
                     _matchHudSelectionPanelView.ApplyTransportPassengers(storageModel);
@@ -1181,6 +1231,66 @@ namespace Game.Runtime
                 fuelCurrent: snapshot.FuelCurrent,
                 fuelCapacity: snapshot.FuelCapacity,
                 statusText: statusText);
+        }
+
+        private static MatchHudTransportPassengersModel BuildSelectedMaterialFabricationPanelModel(
+            UiMaterialFabricationReadModel readModel,
+            out TransportPanelCacheKey cacheKey)
+        {
+            string statusText = ResolveMaterialFabricationStatusText(readModel);
+            cacheKey = new TransportPanelCacheKey(
+                UiEntityHandle.Null,
+                true,
+                MatchHudStorageChipKind.MaterialFabrication,
+                readModel.FactionMaterialsCurrent,
+                readModel.FactionMaterialsCapacity,
+                0,
+                0,
+                0,
+                0,
+                readModel.OilInputCurrentBarrels,
+                readModel.OilInputCapacityBarrels,
+                0,
+                0,
+                unchecked((int)readModel.Version));
+
+            return new MatchHudTransportPassengersModel(
+                true,
+                false,
+                UiEntityHandle.Null,
+                readModel.FactionMaterialsCurrent,
+                readModel.FactionMaterialsCapacity,
+                false,
+                null,
+                storageKind: MatchHudStorageChipKind.MaterialFabrication,
+                oilCurrent: readModel.OilInputCurrentBarrels,
+                oilCapacity: readModel.OilInputCapacityBarrels,
+                statusText: statusText,
+                materialsCurrent: readModel.FactionMaterialsCurrent,
+                materialsCapacity: readModel.FactionMaterialsCapacity,
+                oilConsumedPerCycle: readModel.OilConsumedPerCycle,
+                materialsOutputPerCycle: readModel.MaterialsOutputPerCycle,
+                cycleDurationSeconds: readModel.CycleDurationSeconds,
+                cycleProgress01: readModel.Progress01,
+                productionEnabled: readModel.ProductionEnabled);
+        }
+
+        private static string ResolveMaterialFabricationStatusText(UiMaterialFabricationReadModel readModel)
+        {
+            return readModel.Status switch
+            {
+                MaterialFabricationStatusCode.Producing => Text("selection.fabrication.producing", "FABRICATING"),
+                MaterialFabricationStatusCode.Blocked => readModel.BlockReason switch
+                {
+                    MaterialFabricationBlockReasonCode.NoOilInput => Text("selection.fabrication.no_oil", "WAITING OIL"),
+                    MaterialFabricationBlockReasonCode.MaterialsCapacityFull => Text("selection.fabrication.materials_full", "MATERIALS FULL"),
+                    MaterialFabricationBlockReasonCode.NoOilRoute => Text("selection.fabrication.no_route", "NO OIL ROUTE"),
+                    MaterialFabricationBlockReasonCode.BuildingDisabled => Text("selection.fabrication.building_disabled", "BUILDING DISABLED"),
+                    _ => Text("selection.fabrication.blocked", "BLOCKED")
+                },
+                MaterialFabricationStatusCode.Disabled => Text("selection.fabrication.disabled", "PRODUCTION DISABLED"),
+                _ => Text("selection.fabrication.idle", "IDLE")
+            };
         }
 
         private static string ResolveSelectedBuildingResourceStorageStatusText(

@@ -515,6 +515,8 @@ namespace Game.UI.Runtime
                         model.StatusText),
                 MatchHudStorageChipKind.ResourceCargo =>
                     ResolveResourceCargoChipLabel(model),
+                MatchHudStorageChipKind.MaterialFabrication =>
+                    ResolveMaterialFabricationChipLabel(model),
                 _ =>
                     $"PASSENGERS {Mathf.Max(0, model.PassengerCount)}/{Mathf.Max(0, model.Capacity)}"
             };
@@ -541,6 +543,17 @@ namespace Game.UI.Runtime
                 label = $"OIL {oil}/{capacity}";
             else
                 label = $"CARGO 0/{capacity}";
+            return AppendStatus(label, model.StatusText);
+        }
+
+        private static string ResolveMaterialFabricationChipLabel(MatchHudTransportPassengersModel model)
+        {
+            int progressPercent = Mathf.RoundToInt(Mathf.Clamp01(model.CycleProgress01) * 100f);
+            int cycleSeconds = Mathf.Max(0, Mathf.RoundToInt(model.CycleDurationSeconds));
+            string label =
+                $"OIL {Mathf.Max(0, model.OilCurrent)}/{Mathf.Max(0, model.OilCapacity)} | " +
+                $"{Mathf.Max(0, model.OilConsumedPerCycle)} OIL > {Mathf.Max(0, model.MaterialsOutputPerCycle)} MATERIALS / {cycleSeconds}s | " +
+                $"{progressPercent}% | MATERIALS {Mathf.Max(0, model.MaterialsCurrent)}/{Mathf.Max(0, model.MaterialsCapacity)}";
             return AppendStatus(label, model.StatusText);
         }
 

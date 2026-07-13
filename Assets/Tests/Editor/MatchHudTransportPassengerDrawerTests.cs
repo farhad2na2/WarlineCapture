@@ -24,8 +24,9 @@ public sealed class MatchHudTransportPassengerDrawerTests
         {
             RunTest(test => test.MatchHudPrefabSerializesTransportPassengerDrawerReferences());
             RunTest(test => test.TransportPassengerModelShowsChipAndDrawerRows());
+            RunTest(test => test.MaterialFabricationModelShowsCompleteChipAndResetsHiddenState());
             RunTest(test => test.DisembarkPassengerRequestStoresTransportAndPassenger());
-            Debug.Log("[MatchHudTransportPassengerDrawerValidation] result=Passed tests=3");
+            Debug.Log("[MatchHudTransportPassengerDrawerValidation] result=Passed tests=4");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -127,6 +128,53 @@ public sealed class MatchHudTransportPassengerDrawerTests
         Assert.IsTrue(exitButton.interactable);
         exitButton.onClick.Invoke();
         Assert.AreEqual(passengers[0].Passenger, exitedPassenger);
+    }
+
+    [Test]
+    public void MaterialFabricationModelShowsCompleteChipAndResetsHiddenState()
+    {
+        MatchHudSelectionPanelView view = InstantiateSelectionPanelView();
+        SerializedObject serialized = new(view);
+        GameObject chip = GetReference<GameObject>(serialized, "passengerChipRoot");
+        Button chipButton = GetReference<Button>(serialized, "passengerChipButton");
+        TMP_Text chipLabel = GetReference<TMP_Text>(serialized, "passengerChipLabel");
+        MatchHudTransportPassengerDrawerView drawer = GetReference<MatchHudTransportPassengerDrawerView>(serialized, "passengerDrawer");
+        GameObject drawerRoot = GetReference<GameObject>(new SerializedObject(drawer), "drawerRoot");
+
+        view.ApplyTransportPassengers(new MatchHudTransportPassengersModel(
+            true,
+            false,
+            UiEntityHandle.Null,
+            32,
+            80,
+            false,
+            null,
+            storageKind: MatchHudStorageChipKind.MaterialFabrication,
+            oilCurrent: 18,
+            oilCapacity: 60,
+            statusText: "FABRICATING",
+            materialsCurrent: 32,
+            materialsCapacity: 80,
+            oilConsumedPerCycle: 3.5f,
+            materialsOutputPerCycle: 7,
+            cycleDurationSeconds: 12f,
+            cycleProgress01: 0.45f,
+            productionEnabled: true));
+
+        Assert.IsTrue(chip.activeSelf);
+        Assert.IsFalse(chipButton.interactable);
+        Assert.IsFalse(drawerRoot.activeSelf);
+        StringAssert.Contains("OIL 18/60", chipLabel.text);
+        StringAssert.Contains("3.5 OIL > 7 MATERIALS / 12s", chipLabel.text);
+        StringAssert.Contains("45%", chipLabel.text);
+        StringAssert.Contains("MATERIALS 32/80", chipLabel.text);
+        StringAssert.Contains("FABRICATING", chipLabel.text);
+
+        view.ApplyTransportPassengers(MatchHudTransportPassengersModel.Hidden);
+
+        Assert.IsFalse(chip.activeSelf);
+        Assert.IsFalse(drawerRoot.activeSelf);
+        Assert.AreEqual(string.Empty, chipLabel.text);
     }
 
     [Test]

@@ -103,6 +103,16 @@ namespace Game.Runtime
                 : FactionConstructionResourceMutationResult.InvalidState;
         }
 
+        public bool TryGetFactionResourceEntity(byte factionId, out Entity entity)
+        {
+            entity = Entity.Null;
+            if (!TryGetPlayerEconomy(out FactionEconomy economy) || economy.FactionId != factionId)
+                return false;
+
+            entity = _playerEconomyEntity;
+            return _entityManager.HasComponent<FactionTacticalMaterialsComponent>(entity);
+        }
+
         public FactionConstructionResourceMutationResult TryReserveConstructionResources(
             int transactionId,
             int creditsCost,

@@ -30,6 +30,7 @@ namespace Game.Editor
         private const int DefaultScreenshotWidth = 1280;
         private const int DefaultScreenshotHeight = 720;
         private const float MinimumScreenshotDetail = 0.015f;
+        private const double MinimumRouteCaptureSettleSeconds = 0.35d;
         private const string CommanderCapturePendingSessionKey = "Warline.CommanderCapture.Pending";
         private const string CommanderCapturePathSessionKey = "Warline.CommanderCapture.Path";
         private const string CommanderCaptureWidthSessionKey = "Warline.CommanderCapture.Width";
@@ -54,6 +55,7 @@ namespace Game.Editor
         private static int routeCaptureConfiguredFrame;
         private static int routeCaptureSettleFrames;
         private static double routeCaptureStartedAt;
+        private static double routeCaptureConfiguredAt;
         private static bool routeCaptureCompleted;
         private static bool routeCaptureConfigured;
         private static UIRoute routeCaptureRoute;
@@ -113,6 +115,7 @@ namespace Game.Editor
             routeCaptureFrameCount = 0;
             routeCaptureConfiguredFrame = 0;
             routeCaptureStartedAt = EditorApplication.timeSinceStartup;
+            routeCaptureConfiguredAt = 0d;
             routeCaptureCompleted = false;
             routeCaptureConfigured = false;
             routeCaptureButtonSelectionApplied = false;
@@ -216,6 +219,7 @@ namespace Game.Editor
                 routeCaptureFrameCount = 0;
                 routeCaptureConfiguredFrame = 0;
                 routeCaptureStartedAt = EditorApplication.timeSinceStartup;
+                routeCaptureConfiguredAt = 0d;
                 routeCaptureCompleted = false;
                 routeCaptureConfigured = false;
                 routeCaptureButtonSelectionApplied = false;
@@ -716,11 +720,13 @@ namespace Game.Editor
 
                     routeCaptureConfigured = true;
                     routeCaptureConfiguredFrame = routeCaptureFrameCount;
+                    routeCaptureConfiguredAt = EditorApplication.timeSinceStartup;
                     DisableMenuDiagnosticsOverlay();
                     return;
                 }
 
-                if (routeCaptureFrameCount - routeCaptureConfiguredFrame < routeCaptureSettleFrames)
+                if (routeCaptureFrameCount - routeCaptureConfiguredFrame < routeCaptureSettleFrames ||
+                    EditorApplication.timeSinceStartup - routeCaptureConfiguredAt < MinimumRouteCaptureSettleSeconds)
                     return;
 
                 DisableMenuDiagnosticsOverlay();
@@ -938,6 +944,27 @@ namespace Game.Editor
                         UIShellRegionId.FooterRegion,
                         UIShellRegionId.PopupLayer);
                     break;
+                case UIRoute.Campaign:
+                    content.PrepareForCommandSequence(new[]
+                    {
+                        new UiShellPresentationCommandModel(
+                            UiShellCommandKind.EnterMenu,
+                            UiShellRegionId.None,
+                            UIRoute.MainMenu,
+                            UiShellMode.MainMenu,
+                            1)
+                    });
+                    content.InstallMenuRouteBody(UIRoute.Campaign);
+                    ResetRouteCaptureRegions(
+                        bootstrap,
+                        UIShellRegionId.MenuBackgroundRegion,
+                        UIShellRegionId.HeaderRegion,
+                        UIShellRegionId.LeftRegion,
+                        UIShellRegionId.MiddleRegion,
+                        UIShellRegionId.RightRegion,
+                        UIShellRegionId.FooterRegion,
+                        UIShellRegionId.PopupLayer);
+                    break;
                 case UIRoute.Match:
                     content.PrepareForCommandSequence(new[]
                     {
@@ -950,7 +977,7 @@ namespace Game.Editor
                     });
                     break;
                 default:
-                    error = $"Canvas route capture does not support route={routeCaptureRoute}. Supported routes: Splash, MainMenu, Armory, CommandFeed, QuickCustomSetup, Match.";
+                    error = $"Canvas route capture does not support route={routeCaptureRoute}. Supported routes: Splash, MainMenu, Armory, CommandFeed, QuickCustomSetup, Campaign, Match.";
                     return false;
                 }
             }

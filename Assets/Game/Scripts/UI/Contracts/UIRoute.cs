@@ -13,6 +13,7 @@ namespace Game.UI.Contracts
         Events,
         Ranking,
         CommandFeed,
-        LoadoutSquadPrep
+        LoadoutSquadPrep,
+        Campaign
     }
 }

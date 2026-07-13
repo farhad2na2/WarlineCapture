@@ -37,6 +37,12 @@ namespace Game.UI.Runtime
                 return;
             }
 
+            if (route == UIRoute.Campaign)
+            {
+                contentView.InstallCampaignBody();
+                return;
+            }
+
             InstallMainMenuBody(contentView);
         }
 

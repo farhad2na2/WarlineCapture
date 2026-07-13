@@ -15,6 +15,7 @@ namespace Game.UI.Runtime
         [SerializeField] private GameObject mainMenuContentPrefab;
         [SerializeField] private GameObject commanderProfileContentPrefab;
         [SerializeField] private GameObject skirmishSetupContentPrefab;
+        [SerializeField] private GameObject campaignContentPrefab;
         [SerializeField] private GameObject armoryContentPrefab;
         [SerializeField] private GameObject matchHudContentPrefab;
         [SerializeField] private GameObject buildDrawerPopupPrefab;
@@ -63,6 +64,7 @@ namespace Game.UI.Runtime
         public GameObject MainMenuContentPrefab => mainMenuContentPrefab;
         public GameObject CommanderProfileContentPrefab => commanderProfileContentPrefab;
         public GameObject SkirmishSetupContentPrefab => skirmishSetupContentPrefab;
+        public GameObject CampaignContentPrefab => campaignContentPrefab;
         public GameObject ArmoryContentPrefab => armoryContentPrefab;
         public GameObject MatchHudContentPrefab => matchHudContentPrefab;
         public GameObject BuildDrawerPopupPrefab => buildDrawerPopupPrefab;
@@ -87,7 +89,8 @@ namespace Game.UI.Runtime
             GameObject resourceExchangePrefab = null,
             GameObject ariaCommandAssistantPrefab = null,
             GameObject commanderProfilePrefab = null,
-            GameObject skirmishSetupPrefab = null)
+            GameObject skirmishSetupPrefab = null,
+            GameObject campaignPrefab = null)
         {
             shellView = view;
             loadingContentPrefab = loadingPrefab;
@@ -99,6 +102,8 @@ namespace Game.UI.Runtime
                 commanderProfileContentPrefab = commanderProfilePrefab;
             if (skirmishSetupPrefab != null)
                 skirmishSetupContentPrefab = skirmishSetupPrefab;
+            if (campaignPrefab != null)
+                campaignContentPrefab = campaignPrefab;
             if (fullMapPrefab != null)
                 fullMapPopupPrefab = fullMapPrefab;
             if (buildPlacementConfirmationPrefab != null)
@@ -253,6 +258,17 @@ namespace Game.UI.Runtime
             ClearRegion(UIShellRegionId.FooterRegion);
             GameObject setup = InstallRoot(skirmishSetupContentPrefab, UIShellRegionId.PopupLayer);
             BindQuickCustomScreens(setup);
+        }
+
+        internal void InstallCampaignBody()
+        {
+            UnbindMatchHudThreatWarningHeader();
+            CommanderProfileRouteLifecyclePresentation.ExitCommanderRoute(this);
+            ClearRegion(UIShellRegionId.LeftRegion);
+            ClearRegion(UIShellRegionId.MiddleRegion);
+            ClearRegion(UIShellRegionId.RightRegion);
+            ClearRegion(UIShellRegionId.FooterRegion);
+            InstallRoot(campaignContentPrefab, UIShellRegionId.PopupLayer);
         }
 
         internal void InstallArmoryBody()

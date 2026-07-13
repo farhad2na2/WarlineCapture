@@ -377,9 +377,15 @@ public sealed class BuildingResourceProductionEcsSystemTests
             Assert.IsTrue(em.HasComponent<MaterialFabricationComponent>(mapEntity));
             Assert.IsTrue(em.HasComponent<MaterialFabricationInputTag>(mapEntity));
             Assert.IsTrue(em.HasComponent<BuildingResourceStorageComponent>(mapEntity));
+            Assert.IsTrue(em.HasComponent<MaterialFabricationCommandQueueComponent>(mapEntity));
+            Assert.IsTrue(em.HasBuffer<MaterialFabricationRequestComponent>(mapEntity));
+            Assert.IsTrue(em.HasBuffer<MaterialFabricationResultComponent>(mapEntity));
             Assert.IsTrue(em.HasComponent<MaterialFabricationComponent>(runtimeEntity));
             Assert.IsTrue(em.HasComponent<MaterialFabricationInputTag>(runtimeEntity));
             Assert.IsTrue(em.HasComponent<BuildingResourceStorageComponent>(runtimeEntity));
+            Assert.IsTrue(em.HasComponent<MaterialFabricationCommandQueueComponent>(runtimeEntity));
+            Assert.IsTrue(em.HasBuffer<MaterialFabricationRequestComponent>(runtimeEntity));
+            Assert.IsTrue(em.HasBuffer<MaterialFabricationResultComponent>(runtimeEntity));
 
             MaterialFabricationComponent mapFabrication =
                 em.GetComponentData<MaterialFabricationComponent>(mapEntity);
@@ -480,6 +486,9 @@ public sealed class BuildingResourceProductionEcsSystemTests
                     Quaternion.identity);
                 Assert.IsFalse(em.HasComponent<MaterialFabricationComponent>(entity));
                 Assert.IsFalse(em.HasComponent<MaterialFabricationInputTag>(entity));
+                Assert.IsFalse(em.HasComponent<MaterialFabricationCommandQueueComponent>(entity));
+                Assert.IsFalse(em.HasBuffer<MaterialFabricationRequestComponent>(entity));
+                Assert.IsFalse(em.HasBuffer<MaterialFabricationResultComponent>(entity));
             }
 
             BuildingDefinition overflowRisk =

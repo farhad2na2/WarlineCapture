@@ -1180,6 +1180,10 @@ public sealed class SelectionSummaryQuerySystemTests
         {
         }
 
+        public void BindMaterialFabricationProductionAction(System.Action<bool> productionEnabledRequested)
+        {
+        }
+
         public void HideSelection()
         {
             AppliedModel = MatchHudSelectionPanelModel.Hidden;

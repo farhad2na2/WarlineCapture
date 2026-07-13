@@ -15,6 +15,8 @@ namespace Game.UI.Contracts
             Action passengerExitAllRequested,
             Action<UiEntityHandle> passengerExitRequested);
 
+        void BindMaterialFabricationProductionAction(Action<bool> productionEnabledRequested);
+
         void HideSelection();
 
         void SetSelectionVisible(bool visible);

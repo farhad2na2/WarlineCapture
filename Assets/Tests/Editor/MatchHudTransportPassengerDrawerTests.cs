@@ -140,6 +140,8 @@ public sealed class MatchHudTransportPassengerDrawerTests
         TMP_Text chipLabel = GetReference<TMP_Text>(serialized, "passengerChipLabel");
         MatchHudTransportPassengerDrawerView drawer = GetReference<MatchHudTransportPassengerDrawerView>(serialized, "passengerDrawer");
         GameObject drawerRoot = GetReference<GameObject>(new SerializedObject(drawer), "drawerRoot");
+        bool? requestedProductionEnabled = null;
+        view.BindMaterialFabricationProductionAction(enabled => requestedProductionEnabled = enabled);
 
         view.ApplyTransportPassengers(new MatchHudTransportPassengersModel(
             true,
@@ -162,13 +164,20 @@ public sealed class MatchHudTransportPassengerDrawerTests
             productionEnabled: true));
 
         Assert.IsTrue(chip.activeSelf);
-        Assert.IsFalse(chipButton.interactable);
+        Assert.IsTrue(chipButton.interactable);
         Assert.IsFalse(drawerRoot.activeSelf);
         StringAssert.Contains("OIL 18/60", chipLabel.text);
         StringAssert.Contains("3.5 OIL > 7 MATERIALS / 12s", chipLabel.text);
         StringAssert.Contains("45%", chipLabel.text);
         StringAssert.Contains("MATERIALS 32/80", chipLabel.text);
         StringAssert.Contains("FABRICATING", chipLabel.text);
+
+        chipButton.onClick.Invoke();
+        Assert.AreEqual(false, requestedProductionEnabled);
+        Assert.IsFalse(drawerRoot.activeSelf);
+        chipButton.onClick.Invoke();
+        Assert.AreEqual(true, requestedProductionEnabled);
+        Assert.IsFalse(drawerRoot.activeSelf);
 
         view.ApplyTransportPassengers(MatchHudTransportPassengersModel.Hidden);
 

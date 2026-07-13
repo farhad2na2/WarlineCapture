@@ -192,6 +192,8 @@ namespace Game.Runtime
             Vector2 lastNormalPointerPosition = Vector2.zero;
             bool lastNormalPointerPressed = false;
             bool lastCommandPreviewActive = false;
+            Entity pendingMaterialFabricationEntity = Entity.Null;
+            int pendingMaterialFabricationRequestId = 0;
 
             selectionUiCamera.Init(rtsSelectionConfig, worldCamera);
             selectionBuildingInteraction.Init(selectionStateSystem, selectionScreenMarkers, worldCamera);
@@ -253,6 +255,40 @@ namespace Game.Runtime
                     () => { },
                     () => selectionUiCommand.RequestFocusedTransportDisembark(),
                     passenger => selectionUiCommand.RequestFocusedTransportPassengerDisembark(ToEntity(passenger)));
+                view?.BindMaterialFabricationProductionAction(RequestSelectedMaterialFabricationProduction);
+            }
+
+            void RequestSelectedMaterialFabricationProduction(bool productionEnabled)
+            {
+                if (!TryGetDefaultEntityManager(out EntityManager entityManager) ||
+                    buildingUiQueryContext.RuntimeBuildings == null ||
+                    buildingUiQueryContext.GetActiveBuildingId == null)
+                {
+                    return;
+                }
+
+                int? selectedBuildingId = buildingUiQueryContext.GetActiveBuildingId();
+                if (!selectedBuildingId.HasValue ||
+                    !buildingUiQueryContext.RuntimeBuildings.TryGetValue(
+                        selectedBuildingId.Value,
+                        out RuntimeBuildingEntity building) ||
+                    building == null)
+                {
+                    return;
+                }
+
+                if (!MaterialFabricationSystem.TryEnqueueProductionRequest(
+                    entityManager,
+                    building.CombatEntity,
+                    FactionIdentity.PlayerFactionId,
+                    productionEnabled,
+                    out int requestId))
+                {
+                    return;
+                }
+
+                pendingMaterialFabricationEntity = building.CombatEntity;
+                pendingMaterialFabricationRequestId = requestId;
             }
 
             void BindBattleHudRuntimeFeedback(IBattleHudRuntimeFeedbackSink feedbackSink)
@@ -322,6 +358,7 @@ namespace Game.Runtime
 #endif
                 using (SelectionCommandFlushMarker.Auto())
                 {
+                    FlushMaterialFabricationProductionResult();
                     if (commandSummary.HasTransportCommandRequestsOrResults)
                         rtsSelectionCommandResultFlushSystem.ProcessTransportCommandRequests(GetCommandResultFlushContext());
                     if (commandSummary.HasMoveCommandRequestsOrResults)
@@ -506,6 +543,39 @@ namespace Game.Runtime
                     UpdateTacticalFollowCameraPose();
                 }
                 }
+            }
+
+            void FlushMaterialFabricationProductionResult()
+            {
+                if (pendingMaterialFabricationRequestId <= 0 ||
+                    !TryGetDefaultEntityManager(out EntityManager entityManager) ||
+                    !MaterialFabricationSystem.TryGetProductionResult(
+                        entityManager,
+                        pendingMaterialFabricationEntity,
+                        pendingMaterialFabricationRequestId,
+                        out MaterialFabricationResultComponent result))
+                {
+                    return;
+                }
+
+                pendingMaterialFabricationEntity = Entity.Null;
+                pendingMaterialFabricationRequestId = 0;
+                if (result.Accepted != 0)
+                {
+                    string message = result.ProductionEnabled != 0
+                        ? GameText.Get("fabrication.production.enabled", "Fabrication production enabled.")
+                        : GameText.Get("fabrication.production.disabled", "Fabrication production paused.");
+                    selectionHudFeedbackSystem.ApplyCommandResult(
+                        GetHudFeedbackContext(),
+                        TacticalCommandResult.Success(message));
+                    return;
+                }
+
+                selectionHudFeedbackSystem.ApplyCommandResult(
+                    GetHudFeedbackContext(),
+                    TacticalCommandResult.Rejected(
+                        TacticalCommandReasonCode.CommandUnavailable,
+                        GameText.Get("fabrication.production.unavailable", "Fabrication production control unavailable.")));
             }
 
             bool ShouldUpdateNormalPointerInput(RtsSelectionInputCompositionSystemHelper.PendingCommandSummary commandSummary)

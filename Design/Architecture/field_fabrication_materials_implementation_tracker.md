@@ -1,7 +1,7 @@
 # Field Fabrication And Materials Implementation Tracker
 
 Date: 2026-07-12
-Status: In progress - Phase 6 selected-depot UI
+Status: In progress - Phase 6 header routing and responsive UI validation
 Design source: `../Field_Fabrication_Materials_Design.md`
 
 ## Objective
@@ -73,9 +73,9 @@ Dependency direction remains inward toward components/config/contracts/runtime. 
 
 ## Progress Summary
 
-Overall implementation progress: 74% (76/103 checklist items complete).
+Overall implementation progress: 75% (77/103 checklist items complete).
 
-Planning, canonical resource ownership, depot config/projection, automated Oil routing, Oil-to-Materials conversion, authored construction costs, atomic dual-resource placement, typed Build Drawer affordability, and versioned selected-depot status are complete. Active depots consume only unreserved physical Oil at the existing one-second cadence. Player placement resolves authored costs, reserves canonical Credits and Materials after geometry validation, and finalizes or refunds both by a typed transaction id. Phase 6 continues with the depot production command, header routing, and responsive UI validation.
+Planning, canonical resource ownership, depot config/projection, automated Oil routing, Oil-to-Materials conversion, authored construction costs, atomic dual-resource placement, typed Build Drawer affordability, versioned selected-depot status, and typed depot production control are complete. Active depots consume only unreserved physical Oil at the existing one-second cadence. Player placement resolves authored costs, reserves canonical Credits and Materials after geometry validation, and finalizes or refunds both by a typed transaction id. Phase 6 continues with header routing and responsive UI validation.
 
 Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation row counts. Update the numerator, denominator, table, status, and evidence log in the same commit as each completed batch.
 
@@ -87,7 +87,7 @@ Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation 
 | 3. Oil destination routing | Complete | 11 | 11 | 100% | Tray delivery, demand scoring, stable assignment, reservations, cleanup, and refinery regressions pass. |
 | 4. Oil-to-Materials conversion | Complete | 11 | 11 | 100% | Conversion is deterministic, capacity-safe, typed, reservation-aware, and no-GC. |
 | 5. Credits + Materials construction | Complete | 11 | 11 | 100% | Atomic placement, rollback, authored cost projection, and Build Drawer dual-cost presentation pass. |
-| 6. HUD and selected-building UI | In progress | 8 | 11 | 73% | Live canonical header, typed Build Drawer affordability, and versioned selected-depot status pass. Production control, header routing, and responsive validation remain. |
+| 6. HUD and selected-building UI | In progress | 9 | 11 | 82% | Live canonical header, typed Build Drawer affordability, versioned selected-depot status, and typed production control pass. Header routing and responsive validation remain. |
 | 7. Exchange and balance safety | Pending | 0 | 8 | 0% | Import is expensive recovery; no arbitrage exists. |
 | 8. AI, telemetry, and scenario safety | Pending | 0 | 7 | 0% | AI shares rules; scenarios cannot deadlock silently. |
 | 9. Integration, performance, and closeout | Pending | 0 | 9 | 0% | Architecture, GC, profiler, gameplay, and docs pass. |
@@ -261,7 +261,7 @@ Phase 5 exit criteria:
 - [x] Extend Build Drawer cards/details to show Credits and Materials costs.
 - [x] Bind typed disabled reasons without calculating affordability in Canvas views.
 - [x] Add a versioned selected-depot read model with Oil input, rate, progress, output, faction Materials, and status.
-- [ ] Add production enabled/disabled command only through typed ECS request/result data.
+- [x] Add production enabled/disabled command only through typed ECS request/result data.
 - [ ] Keep Resource Header tap routing to Exchange scenario-gated and input-safe.
 - [ ] Validate 16:9 and 20:9 layouts, localization expansion, touch sizes, and no text clipping.
 - [x] Add no-GC unchanged-state read tests and UI contract/prefab tests.
@@ -534,3 +534,13 @@ For every completed batch append:
 - Focused Unity validation passed: building UI query/read model and unchanged-state no-GC 10/10, selected-summary/presentation caching and typed status 20/20, real Match HUD prefab binding and hidden reset 4/4, assembly/naming boundaries 31/31, and ECS Burst hot-path architecture 10/10. Generated runtime and editor-test builds completed with zero errors; `git diff --check` passed.
 - Evidence: `/private/tmp/wlc-field-fabrication-phase6-depot-query.log`, `/private/tmp/wlc-field-fabrication-phase6-depot-presentation.log`, `/private/tmp/wlc-field-fabrication-phase6-depot-prefab.log`, `/private/tmp/wlc-field-fabrication-phase6-depot-architecture.log`, and `/private/tmp/wlc-field-fabrication-phase6-depot-burst.log`.
 - Checklist count is 76/103. Phase 6 is 8/11. Next action: add typed ECS production enable/disable request/result data and bind the selected-depot control without introducing a new update loop.
+
+### 2026-07-13 - Phase 6C Typed Depot Production Control
+
+- Added fixed-capacity `MaterialFabricationRequestComponent` and `MaterialFabricationResultComponent` buffers plus a per-depot sequence owner in `Game.Components`. Both map-placed and player-built valid depots receive the boundary during existing runtime entity projection; invalid definitions receive none.
+- The existing selected-depot HUD chip now issues explicit enable/disable requests and never writes `MaterialFabricationComponent` directly. Rapid taps retain request correlation, use optimistic presentation only until the authoritative read model refreshes, and never open the passenger drawer.
+- `MaterialFabricationSystem` drains requests before simulation gating, validates requester ownership and typed payloads, mutates enabled/status/version exactly once, and publishes bounded correlated results. Paused simulation and temporarily missing faction Materials do not stall command acknowledgement.
+- The existing selection startup composition boundary captures the selected depot entity, tracks the latest request id, consumes the typed result, and publishes accepted/rejected HUD feedback. No new managed update loop, manager/controller/service shell, assembly dependency, or runtime structural churn was added.
+- Focused Unity validation passed: fabrication request/result behavior, idempotence, paused processing, and no-GC 17/17; map/runtime command projection and resource/logistics regression 44/44; Match HUD interaction 4/4; assembly/naming boundaries 31/31; and ECS Burst hot-path architecture 10/10. Generated `Game.Runtime` and `Game.Tests.Editor` builds completed with zero errors; `git diff --check` passed.
+- Evidence: `/private/tmp/wlc-field-fabrication-phase6-command.log`, `/private/tmp/wlc-field-fabrication-phase6-command-projection.log`, `/private/tmp/wlc-field-fabrication-phase6-command-hud.log`, `/private/tmp/wlc-field-fabrication-phase6-command-architecture.log`, and `/private/tmp/wlc-field-fabrication-phase6-command-burst.log`.
+- Checklist count is 77/103. Phase 6 is 9/11. Next action: make Resource Header tap routing to Exchange scenario-gated and input-safe, then validate responsive layouts, localization expansion, touch sizes, and text clipping.

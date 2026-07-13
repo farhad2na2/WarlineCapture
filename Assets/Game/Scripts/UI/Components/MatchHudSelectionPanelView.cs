@@ -49,6 +49,7 @@ namespace Game.UI.Runtime
         private Action _passengerDrawerCloseRequested;
         private Action _passengerExitAllRequested;
         private Action<UiEntityHandle> _passengerExitRequested;
+        private Action<bool> _materialFabricationProductionRequested;
         private Button _boundReturnAction;
         private Button _boundDestroyAction;
         private Button _boundBoardAction;
@@ -67,6 +68,8 @@ namespace Game.UI.Runtime
         private bool _cameraActionEnabled;
         private bool _passengerDrawerOpen;
         private UiEntityHandle _passengerDrawerTransport;
+        private MatchHudStorageChipKind _storageChipKind;
+        private bool _materialFabricationProductionEnabled;
         private readonly List<MatchHudSelectionPanelPassengerItemModel> _emptyPassengers = new();
 
         private void Awake()
@@ -115,6 +118,12 @@ namespace Game.UI.Runtime
             passengerDrawer?.BindActions(HandlePassengerExitAll, HandlePassengerDrawerClose, HandlePassengerExit);
         }
 
+        public void BindMaterialFabricationProductionAction(Action<bool> productionEnabledRequested)
+        {
+            BindUnityEvents();
+            _materialFabricationProductionRequested = productionEnabledRequested;
+        }
+
         public void ClearActions()
         {
             _returnRequested = null;
@@ -129,6 +138,7 @@ namespace Game.UI.Runtime
             _passengerDrawerCloseRequested = null;
             _passengerExitAllRequested = null;
             _passengerExitRequested = null;
+            _materialFabricationProductionRequested = null;
             passengerDrawer?.ClearActions();
         }
 
@@ -457,6 +467,14 @@ namespace Game.UI.Runtime
 
         private void HandlePassengerChip()
         {
+            if (_storageChipKind == MatchHudStorageChipKind.MaterialFabrication)
+            {
+                bool productionEnabled = !_materialFabricationProductionEnabled;
+                _materialFabricationProductionEnabled = productionEnabled;
+                _materialFabricationProductionRequested?.Invoke(productionEnabled);
+                return;
+            }
+
             ToggleTransportPassengerDrawer();
             _passengerChipRequested?.Invoke();
         }
@@ -480,12 +498,16 @@ namespace Game.UI.Runtime
         private void ApplyPassengerChip(MatchHudTransportPassengersModel model)
         {
             bool visible = model.Visible;
+            _storageChipKind = model.StorageKind;
+            _materialFabricationProductionEnabled = model.ProductionEnabled;
             if (passengerChipRoot != null && passengerChipRoot.activeSelf != visible)
                 passengerChipRoot.SetActive(visible);
 
             if (passengerChipButton != null)
             {
-                bool interactable = visible && model.StorageKind == MatchHudStorageChipKind.Passengers;
+                bool interactable = visible &&
+                                    (model.StorageKind == MatchHudStorageChipKind.Passengers ||
+                                     model.StorageKind == MatchHudStorageChipKind.MaterialFabrication);
                 if (passengerChipButton.interactable != interactable)
                     passengerChipButton.interactable = interactable;
             }

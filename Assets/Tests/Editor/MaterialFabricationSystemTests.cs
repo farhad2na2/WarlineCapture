@@ -23,9 +23,14 @@ public sealed class MaterialFabricationSystemTests
             tests.ApplyTick_ProcessesLargeDeltaArithmeticallyWithoutFrameDrift();
             tests.ApplyTick_IncrementsOnlyChangedVersions();
             tests.ApplyTick_DoesNotAllocateManagedMemoryAfterWarmup();
+            tests.ApplyProductionRequest_ValidOwnerDisablesAndEnablesFabrication();
+            tests.ApplyProductionRequest_RejectsOwnerMismatchWithoutMutation();
+            tests.ApplyProductionRequest_UnchangedIsAcceptedWithoutVersionWrite();
+            tests.ApplyProductionRequest_DoesNotAllocateManagedMemoryAfterWarmup();
+            tests.SystemUpdate_ProcessesCorrelatedProductionRequestWhileSimulationPaused();
             tests.SystemUpdate_UsesCanonicalFactionMaterialsAtOneSecondCadence();
             tests.SystemUpdate_SteadyStateDoesNotAllocateManagedMemory();
-            Debug.Log("[MaterialFabricationFocusedValidation] result=Passed tests=12");
+            Debug.Log("[MaterialFabricationFocusedValidation] result=Passed tests=17");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -246,6 +251,151 @@ public sealed class MaterialFabricationSystemTests
         long allocatedBytes = GC.GetAllocatedBytesForCurrentThread() - before;
 
         Assert.AreEqual(0L, allocatedBytes);
+    }
+
+    [Test]
+    public void ApplyProductionRequest_ValidOwnerDisablesAndEnablesFabrication()
+    {
+        MaterialFabricationComponent fabrication = CreateFabrication();
+        uint initialVersion = fabrication.Version;
+        MaterialFabricationRequestComponent disableRequest = new()
+        {
+            RequestId = 1,
+            RequesterFactionId = fabrication.OwnerFactionId,
+            ProductionEnabled = 0,
+            Kind = MaterialFabricationRequestKind.SetProductionEnabled
+        };
+
+        MaterialFabricationResultComponent disabled =
+            MaterialFabricationSystem.ApplyProductionRequest(ref fabrication, disableRequest);
+
+        Assert.AreEqual(1, disabled.Accepted);
+        Assert.AreEqual(MaterialFabricationResultCode.Applied, disabled.Code);
+        Assert.AreEqual(0, fabrication.ProductionEnabled);
+        Assert.AreEqual(MaterialFabricationStatusCode.Disabled, fabrication.Status);
+        Assert.AreEqual(MaterialFabricationBlockReasonCode.ProductionDisabled, fabrication.BlockReason);
+        Assert.AreEqual(initialVersion + 1u, fabrication.Version);
+
+        MaterialFabricationRequestComponent enableRequest = disableRequest;
+        enableRequest.RequestId = 2;
+        enableRequest.ProductionEnabled = 1;
+        MaterialFabricationResultComponent enabled =
+            MaterialFabricationSystem.ApplyProductionRequest(ref fabrication, enableRequest);
+
+        Assert.AreEqual(1, enabled.Accepted);
+        Assert.AreEqual(MaterialFabricationResultCode.Applied, enabled.Code);
+        Assert.AreEqual(1, fabrication.ProductionEnabled);
+        Assert.AreEqual(MaterialFabricationStatusCode.None, fabrication.Status);
+        Assert.AreEqual(MaterialFabricationBlockReasonCode.None, fabrication.BlockReason);
+        Assert.AreEqual(initialVersion + 2u, fabrication.Version);
+    }
+
+    [Test]
+    public void ApplyProductionRequest_RejectsOwnerMismatchWithoutMutation()
+    {
+        MaterialFabricationComponent fabrication = CreateFabrication();
+        MaterialFabricationComponent initial = fabrication;
+        MaterialFabricationRequestComponent request = new()
+        {
+            RequestId = 3,
+            RequesterFactionId = (byte)(fabrication.OwnerFactionId + 1),
+            ProductionEnabled = 0,
+            Kind = MaterialFabricationRequestKind.SetProductionEnabled
+        };
+
+        MaterialFabricationResultComponent result =
+            MaterialFabricationSystem.ApplyProductionRequest(ref fabrication, request);
+
+        Assert.AreEqual(0, result.Accepted);
+        Assert.AreEqual(MaterialFabricationResultCode.OwnerMismatch, result.Code);
+        Assert.AreEqual(initial.ProductionEnabled, fabrication.ProductionEnabled);
+        Assert.AreEqual(initial.Status, fabrication.Status);
+        Assert.AreEqual(initial.BlockReason, fabrication.BlockReason);
+        Assert.AreEqual(initial.Version, fabrication.Version);
+    }
+
+    [Test]
+    public void ApplyProductionRequest_UnchangedIsAcceptedWithoutVersionWrite()
+    {
+        MaterialFabricationComponent fabrication = CreateFabrication();
+        uint initialVersion = fabrication.Version;
+        MaterialFabricationRequestComponent request = new()
+        {
+            RequestId = 4,
+            RequesterFactionId = fabrication.OwnerFactionId,
+            ProductionEnabled = fabrication.ProductionEnabled,
+            Kind = MaterialFabricationRequestKind.SetProductionEnabled
+        };
+
+        MaterialFabricationResultComponent result =
+            MaterialFabricationSystem.ApplyProductionRequest(ref fabrication, request);
+
+        Assert.AreEqual(1, result.Accepted);
+        Assert.AreEqual(MaterialFabricationResultCode.Unchanged, result.Code);
+        Assert.AreEqual(initialVersion, fabrication.Version);
+    }
+
+    [Test]
+    public void ApplyProductionRequest_DoesNotAllocateManagedMemoryAfterWarmup()
+    {
+        MaterialFabricationComponent fabrication = CreateFabrication();
+        MaterialFabricationRequestComponent request = new()
+        {
+            RequestId = 1,
+            RequesterFactionId = fabrication.OwnerFactionId,
+            ProductionEnabled = 0,
+            Kind = MaterialFabricationRequestKind.SetProductionEnabled
+        };
+        MaterialFabricationSystem.ApplyProductionRequest(ref fabrication, request);
+
+        long before = GC.GetAllocatedBytesForCurrentThread();
+        for (int i = 0; i < 512; i++)
+        {
+            request.RequestId++;
+            request.ProductionEnabled = (byte)(i & 1);
+            MaterialFabricationSystem.ApplyProductionRequest(ref fabrication, request);
+        }
+        long allocatedBytes = GC.GetAllocatedBytesForCurrentThread() - before;
+
+        Assert.AreEqual(0L, allocatedBytes);
+    }
+
+    [Test]
+    public void SystemUpdate_ProcessesCorrelatedProductionRequestWhileSimulationPaused()
+    {
+        using World world = new(nameof(SystemUpdate_ProcessesCorrelatedProductionRequestWhileSimulationPaused));
+        EntityManager em = world.EntityManager;
+        Entity gameplayState = em.CreateEntity(typeof(RuntimeGameplayStateComponent));
+        em.SetComponentData(gameplayState, new RuntimeGameplayStateComponent { SimulationActive = 0 });
+        Entity depot = em.CreateEntity(
+            typeof(MaterialFabricationComponent),
+            typeof(MaterialFabricationInputTag),
+            typeof(MaterialFabricationCommandQueueComponent));
+        em.AddBuffer<MaterialFabricationRequestComponent>(depot)
+            .EnsureCapacity(MaterialFabricationCommandQueueComponent.Capacity);
+        em.AddBuffer<MaterialFabricationResultComponent>(depot)
+            .EnsureCapacity(MaterialFabricationCommandQueueComponent.Capacity);
+        em.SetComponentData(depot, CreateFabrication());
+        SystemHandle system = world.CreateSystem<MaterialFabricationSystem>();
+
+        Assert.IsTrue(MaterialFabricationSystem.TryEnqueueProductionRequest(
+            em,
+            depot,
+            FactionIdentity.PlayerFactionId,
+            productionEnabled: false,
+            out int requestId));
+
+        UpdateSystem(world, system);
+
+        Assert.AreEqual(0, em.GetBuffer<MaterialFabricationRequestComponent>(depot).Length);
+        Assert.IsTrue(MaterialFabricationSystem.TryGetProductionResult(em, depot, requestId, out var result));
+        Assert.AreEqual(requestId, result.RequestId);
+        Assert.AreEqual(1, result.Accepted);
+        Assert.AreEqual(MaterialFabricationResultCode.Applied, result.Code);
+        Assert.AreEqual(0, em.GetComponentData<MaterialFabricationComponent>(depot).ProductionEnabled);
+
+        UpdateSystem(world, system);
+        Assert.AreEqual(1, em.GetBuffer<MaterialFabricationResultComponent>(depot).Length);
     }
 
     [Test]

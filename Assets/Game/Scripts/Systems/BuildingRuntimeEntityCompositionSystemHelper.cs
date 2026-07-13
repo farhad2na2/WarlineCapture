@@ -298,6 +298,11 @@ namespace Game.Runtime
                 Version = 1u
             });
             em.AddComponent<MaterialFabricationInputTag>(entity);
+            em.AddComponentData(entity, new MaterialFabricationCommandQueueComponent());
+            em.AddBuffer<MaterialFabricationRequestComponent>(entity)
+                .EnsureCapacity(MaterialFabricationCommandQueueComponent.Capacity);
+            em.AddBuffer<MaterialFabricationResultComponent>(entity)
+                .EnsureCapacity(MaterialFabricationCommandQueueComponent.Capacity);
         }
 
         private static void AddAirDefenseSupportProvider(

@@ -31,6 +31,20 @@ namespace Game.Components
         StatusChanged = 1
     }
 
+    public enum MaterialFabricationRequestKind : byte
+    {
+        SetProductionEnabled = 0
+    }
+
+    public enum MaterialFabricationResultCode : byte
+    {
+        None = 0,
+        Applied = 1,
+        Unchanged = 2,
+        OwnerMismatch = 3,
+        InvalidRequest = 4
+    }
+
     public struct MaterialFabricationComponent : IComponentData
     {
         public int RuntimeBuildingId;
@@ -48,6 +62,32 @@ namespace Game.Components
 
     public struct MaterialFabricationInputTag : IComponentData
     {
+    }
+
+    public struct MaterialFabricationCommandQueueComponent : IComponentData
+    {
+        public const int Capacity = 8;
+
+        public int LastRequestId;
+    }
+
+    [InternalBufferCapacity(MaterialFabricationCommandQueueComponent.Capacity)]
+    public struct MaterialFabricationRequestComponent : IBufferElementData
+    {
+        public int RequestId;
+        public byte RequesterFactionId;
+        public byte ProductionEnabled;
+        public MaterialFabricationRequestKind Kind;
+    }
+
+    [InternalBufferCapacity(MaterialFabricationCommandQueueComponent.Capacity)]
+    public struct MaterialFabricationResultComponent : IBufferElementData
+    {
+        public int RequestId;
+        public byte Accepted;
+        public byte ProductionEnabled;
+        public MaterialFabricationResultCode Code;
+        public uint FabricationVersion;
     }
 
     public struct MaterialFabricationEconomyEventQueueComponent : IComponentData

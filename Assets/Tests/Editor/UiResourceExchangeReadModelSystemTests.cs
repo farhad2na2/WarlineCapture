@@ -1,13 +1,93 @@
 using Game.Components;
+using Game.UI.Contracts;
 using Game.UI.Shell.Contracts.Ecs;
 using Game.UI.Shell.Ecs;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
+using System;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
+using UnityEngine;
 
 public sealed class UiResourceExchangeReadModelSystemTests
 {
+    public static void RunFocusedValidation()
+    {
+        int passed = 0;
+        try
+        {
+            RunValidationStep(
+                nameof(Update_ProjectsOnlyThePlayerOwnedExchange),
+                test => test.Update_ProjectsOnlyThePlayerOwnedExchange(),
+                ref passed);
+            RunValidationStep(
+                nameof(Update_DuplicatePlayerExchanges_FailsClosed),
+                test => test.Update_DuplicatePlayerExchanges_FailsClosed(),
+                ref passed);
+            RunValidationStep(
+                nameof(WriteReadModel_ProjectsExportCardsDetailWalletAndQueue),
+                test => test.WriteReadModel_ProjectsExportCardsDetailWalletAndQueue(),
+                ref passed);
+            RunValidationStep(
+                nameof(WriteReadModel_DisablesImportConfirmWhenStorageWouldOverflow),
+                test => test.WriteReadModel_DisablesImportConfirmWhenStorageWouldOverflow(),
+                ref passed);
+            RunValidationStep(
+                nameof(WriteReadModel_UsesEmptyDetailWhenActiveTabHasNoRoutes),
+                test => test.WriteReadModel_UsesEmptyDetailWhenActiveTabHasNoRoutes(),
+                ref passed);
+
+            Debug.Log($"[UiResourceExchangeReadModelValidation] result=Passed tests={passed}");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[UiResourceExchangeReadModelValidation] result=Failed passed={passed}\n{exception}");
+            ValidationExit.Exit(1);
+        }
+    }
+
+    [Test]
+    public void Update_ProjectsOnlyThePlayerOwnedExchange()
+    {
+        using World world = new(nameof(Update_ProjectsOnlyThePlayerOwnedExchange));
+        EntityManager em = world.EntityManager;
+        Entity boundary = CreatePopupBoundary(em);
+        CreateCompleteExchange(em, FactionIdentity.EnemyFactionId, 9000);
+        CreateCompleteExchange(em, FactionIdentity.PlayerFactionId, 1000);
+
+        SystemHandle system = world.CreateSystem<UiResourceExchangeReadModelSystem>();
+        UpdateSystem(world, system);
+
+        UiResourceExchangeStateComponent state =
+            em.GetComponentData<UiResourceExchangeStateComponent>(boundary);
+        Assert.AreEqual(1, state.ExchangeEnabled);
+        Assert.AreEqual("1000", state.CreditsText.ToString());
+        Assert.AreEqual(1, em.GetBuffer<UiResourceExchangeRecipeCardComponent>(boundary).Length);
+    }
+
+    [Test]
+    public void Update_DuplicatePlayerExchanges_FailsClosed()
+    {
+        using World world = new(nameof(Update_DuplicatePlayerExchanges_FailsClosed));
+        EntityManager em = world.EntityManager;
+        Entity boundary = CreatePopupBoundary(em);
+        CreateCompleteExchange(em, FactionIdentity.PlayerFactionId, 1000);
+        CreateCompleteExchange(em, FactionIdentity.PlayerFactionId, 2000);
+
+        SystemHandle system = world.CreateSystem<UiResourceExchangeReadModelSystem>();
+        UpdateSystem(world, system);
+
+        UiResourceExchangeStateComponent state =
+            em.GetComponentData<UiResourceExchangeStateComponent>(boundary);
+        UiResourceExchangeDetailComponent detail =
+            em.GetComponentData<UiResourceExchangeDetailComponent>(boundary);
+        Assert.AreEqual(0, state.ExchangeEnabled);
+        Assert.AreEqual("Exchange unavailable.", detail.RequirementsText.ToString());
+        Assert.AreEqual(0, em.GetBuffer<UiResourceExchangeRecipeCardComponent>(boundary).Length);
+        Assert.AreEqual(0, em.GetBuffer<UiResourceExchangeQueueRowComponent>(boundary).Length);
+    }
+
     [Test]
     public void WriteReadModel_ProjectsExportCardsDetailWalletAndQueue()
     {
@@ -189,6 +269,61 @@ public sealed class UiResourceExchangeReadModelSystemTests
         return entity;
     }
 
+    private static Entity CreatePopupBoundary(EntityManager em)
+    {
+        Entity entity = em.CreateEntity(
+            typeof(UiShellStateComponent),
+            typeof(UiShellActivePopupComponent),
+            typeof(UiResourceExchangeStateComponent),
+            typeof(UiResourceExchangeDetailComponent));
+        em.SetComponentData(entity, new UiShellActivePopupComponent
+        {
+            PopupKind = UiShellPopupKind.ResourceExchange,
+            Visible = 1
+        });
+        em.AddBuffer<UiResourceExchangeRecipeCardComponent>(entity);
+        em.AddBuffer<UiResourceExchangeQueueRowComponent>(entity);
+        return entity;
+    }
+
+    private static Entity CreateCompleteExchange(EntityManager em, byte factionId, int credits)
+    {
+        Entity entity = em.CreateEntity(
+            typeof(ResourceExchangeEnabledComponent),
+            typeof(FactionEconomy),
+            typeof(FactionTacticalMaterialsComponent),
+            typeof(ResourceExchangeWalletComponent),
+            typeof(ResourceExchangeSummaryComponent));
+        em.SetComponentData(entity, new ResourceExchangeEnabledComponent
+        {
+            Enabled = 1,
+            FactionId = factionId,
+            MaxQueueItems = 3,
+            ScenarioTag = new FixedString64Bytes("mission.active")
+        });
+        em.SetComponentData(entity, new FactionEconomy { FactionId = factionId, Money = credits });
+        em.SetComponentData(entity, new FactionTacticalMaterialsComponent
+        {
+            FactionId = factionId,
+            Current = 50,
+            Capacity = 200
+        });
+        em.SetComponentData(entity, new ResourceExchangeWalletComponent
+        {
+            FactionId = factionId,
+            RushTickets = 2
+        });
+        em.SetComponentData(entity, new ResourceExchangeSummaryComponent
+        {
+            FactionId = factionId,
+            Enabled = 1,
+            MaxQueueItems = 3
+        });
+        em.AddBuffer<ResourceExchangeRecipeComponent>(entity).Add(ExportOilRecipe());
+        em.AddBuffer<ResourceExchangeQueueComponent>(entity);
+        return entity;
+    }
+
     private static Entity CreateUiData(EntityManager em)
     {
         Entity entity = em.CreateEntity();
@@ -285,6 +420,23 @@ public sealed class UiResourceExchangeReadModelSystemTests
             RequiresStorage = 1,
             Enabled = 1
         };
+    }
+
+    private static void UpdateSystem(World world, SystemHandle system)
+    {
+        world.Unmanaged.GetUnsafeSystemRef<UiResourceExchangeReadModelSystem>(system)
+            .OnUpdate(ref world.Unmanaged.ResolveSystemStateRef(system));
+    }
+
+    private static void RunValidationStep(
+        string name,
+        Action<UiResourceExchangeReadModelSystemTests> action,
+        ref int passed)
+    {
+        UiResourceExchangeReadModelSystemTests test = new();
+        action(test);
+        passed++;
+        Debug.Log($"[UiResourceExchangeReadModelValidation] pass={name}");
     }
 }
 #endif

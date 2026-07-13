@@ -59,7 +59,7 @@ namespace Game.UI.Shell.Ecs
                 TryReadPhysicalResources(summaries, out physicalResources);
             }
 
-            bool wroteExchange = false;
+            int playerExchangeCount = 0;
             foreach (var (
                          enabled,
                          economy,
@@ -77,6 +77,19 @@ namespace Game.UI.Shell.Ecs
                          DynamicBuffer<ResourceExchangeRecipeComponent>,
                          DynamicBuffer<ResourceExchangeQueueComponent>>())
             {
+                byte factionId = enabled.ValueRO.FactionId;
+                if (factionId != FactionIdentity.PlayerFactionId ||
+                    economy.ValueRO.FactionId != factionId ||
+                    materials.ValueRO.FactionId != factionId ||
+                    wallet.ValueRO.FactionId != factionId)
+                {
+                    continue;
+                }
+
+                playerExchangeCount++;
+                if (playerExchangeCount > 1)
+                    break;
+
                 WriteReadModel(
                     enabled.ValueRO,
                     economy.ValueRO,
@@ -90,11 +103,9 @@ namespace Game.UI.Shell.Ecs
                     ref detail,
                     cards,
                     queueRows);
-                wroteExchange = true;
-                break;
             }
 
-            if (!wroteExchange)
+            if (playerExchangeCount != 1)
                 WriteUnavailable(ref uiState, ref detail, cards, queueRows);
 
             state.EntityManager.SetComponentData(boundary, uiState);

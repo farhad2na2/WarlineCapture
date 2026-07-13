@@ -154,7 +154,7 @@ public sealed class MatchHudTransportPassengerDrawerTests
             storageKind: MatchHudStorageChipKind.MaterialFabrication,
             oilCurrent: 18,
             oilCapacity: 60,
-            statusText: "FABRICATING",
+            statusText: "FABRICATING MATERIALS - OUTPUT ACTIVE",
             materialsCurrent: 32,
             materialsCapacity: 80,
             oilConsumedPerCycle: 3.5f,
@@ -166,11 +166,25 @@ public sealed class MatchHudTransportPassengerDrawerTests
         Assert.IsTrue(chip.activeSelf);
         Assert.IsTrue(chipButton.interactable);
         Assert.IsFalse(drawerRoot.activeSelf);
+        RectTransform chipRect = chip.transform as RectTransform;
+        Assert.NotNull(chipRect);
+        Assert.AreEqual(new Vector2(610f, 156f), chipRect.sizeDelta);
+        Assert.GreaterOrEqual(chipRect.rect.height, 44f, "Fabrication control must retain a mobile touch target.");
+        Assert.IsTrue(chipLabel.enableAutoSizing);
+        Assert.AreEqual(TextWrappingModes.Normal, chipLabel.textWrappingMode);
+        Assert.AreEqual(20f, chipLabel.fontSizeMin);
+        Assert.LessOrEqual(chipRect.rect.width, ((RectTransform)chipRect.parent).rect.width);
         StringAssert.Contains("OIL 18/60", chipLabel.text);
         StringAssert.Contains("3.5 OIL > 7 MATERIALS / 12s", chipLabel.text);
         StringAssert.Contains("45%", chipLabel.text);
         StringAssert.Contains("MATERIALS 32/80", chipLabel.text);
         StringAssert.Contains("FABRICATING", chipLabel.text);
+        Assert.AreEqual(2, CountCharacter(chipLabel.text, '\n'));
+        Canvas.ForceUpdateCanvases();
+        chipLabel.ForceMeshUpdate();
+        Assert.IsFalse(chipLabel.isTextOverflowing);
+        AssertChipInsideSelectionFrameAtResolution(_instance, chipRect, 1920f, 1080f);
+        AssertChipInsideSelectionFrameAtResolution(_instance, chipRect, 2400f, 1080f);
 
         chipButton.onClick.Invoke();
         Assert.AreEqual(false, requestedProductionEnabled);
@@ -184,6 +198,8 @@ public sealed class MatchHudTransportPassengerDrawerTests
         Assert.IsFalse(chip.activeSelf);
         Assert.IsFalse(drawerRoot.activeSelf);
         Assert.AreEqual(string.Empty, chipLabel.text);
+        Assert.AreEqual(new Vector2(445.6f, 73.2f), chipRect.sizeDelta);
+        Assert.IsFalse(chipLabel.enableAutoSizing);
     }
 
     [Test]
@@ -225,6 +241,44 @@ public sealed class MatchHudTransportPassengerDrawerTests
         MatchHudSelectionPanelView view = _instance.GetComponentInChildren<MatchHudSelectionPanelView>(true);
         Assert.NotNull(view);
         return view;
+    }
+
+    private static int CountCharacter(string value, char character)
+    {
+        int count = 0;
+        for (int i = 0; i < value.Length; i++)
+        {
+            if (value[i] == character)
+                count++;
+        }
+
+        return count;
+    }
+
+    private static void AssertChipInsideSelectionFrameAtResolution(
+        GameObject prefabRoot,
+        RectTransform chipRect,
+        float width,
+        float height)
+    {
+        RectTransform rootRect = prefabRoot.transform as RectTransform;
+        Assert.NotNull(rootRect);
+        rootRect.sizeDelta = new Vector2(width, height);
+        Canvas.ForceUpdateCanvases();
+        LayoutRebuilder.ForceRebuildLayoutImmediate(rootRect);
+
+        RectTransform frameRect = chipRect.parent as RectTransform;
+        Assert.NotNull(frameRect);
+        var corners = new Vector3[4];
+        chipRect.GetWorldCorners(corners);
+        Rect frame = frameRect.rect;
+        for (int i = 0; i < corners.Length; i++)
+        {
+            Vector2 localCorner = frameRect.InverseTransformPoint(corners[i]);
+            Assert.IsTrue(
+                frame.Contains(localCorner),
+                $"Fabrication chip corner {i} must stay inside the selection frame at {width}x{height}.");
+        }
     }
 
     private static int CountActivePassengerRows(RectTransform contentRoot)

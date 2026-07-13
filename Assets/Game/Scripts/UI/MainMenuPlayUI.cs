@@ -425,6 +425,15 @@ namespace Game.UI.Runtime
             _matchHudOilSlotRoot = oilSlot.gameObject;
             BindMatchHudResourceSlot(oilSlot, out _matchHudOilSlotLabel, out _matchHudOilSlotValue);
             BindMatchHudResourceSlot(fuelSlot, out _matchHudFuelSlotLabel, out _matchHudFuelSlotValue);
+            BindMatchHudResourceSlot(resourceStrip.Find("SupplySlot"), out TMP_Text materialsLabel, out _);
+            if (materialsLabel != null)
+            {
+                materialsLabel.enableAutoSizing = true;
+                materialsLabel.fontSizeMin = Mathf.Min(18f, materialsLabel.fontSize);
+                materialsLabel.fontSizeMax = materialsLabel.fontSize;
+                materialsLabel.textWrappingMode = TextWrappingModes.NoWrap;
+                materialsLabel.text = _gameTextResolver.Get("resource.materials.label", "Materials");
+            }
             ApplyMatchHudHeaderResourceState();
             _nextHeaderResourceRefreshTime = Time.unscaledTime + HeaderResourceRefreshIntervalSeconds;
         }

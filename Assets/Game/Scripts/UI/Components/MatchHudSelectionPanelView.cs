@@ -10,6 +10,8 @@ namespace Game.UI.Runtime
     [DisallowMultipleComponent]
     public sealed class MatchHudSelectionPanelView : MonoBehaviour, IMatchHudSelectionPanelView
     {
+        private static readonly Vector2 MaterialFabricationChipSize = new(610f, 156f);
+
         [SerializeField] private GameObject selectedSquadPanel;
         [SerializeField] private Image selectedPortraitImage;
         [SerializeField] private TMP_Text titleText;
@@ -70,6 +72,15 @@ namespace Game.UI.Runtime
         private UiEntityHandle _passengerDrawerTransport;
         private MatchHudStorageChipKind _storageChipKind;
         private bool _materialFabricationProductionEnabled;
+        private RectTransform _passengerChipRect;
+        private Vector2 _passengerChipDefaultSize;
+        private bool _passengerChipDefaultAutoSizing;
+        private float _passengerChipDefaultFontSizeMin;
+        private float _passengerChipDefaultFontSizeMax;
+        private TextWrappingModes _passengerChipDefaultWrappingMode;
+        private TextOverflowModes _passengerChipDefaultOverflowMode;
+        private Vector4 _passengerChipDefaultMargin;
+        private bool _passengerChipLayoutCached;
         private readonly List<MatchHudSelectionPanelPassengerItemModel> _emptyPassengers = new();
 
         private void Awake()
@@ -78,6 +89,7 @@ namespace Game.UI.Runtime
             BindUnityEvents();
             CacheBoardActionNormalSprite();
             CacheCameraActionNormalSprite();
+            CachePassengerChipLayout();
             _cameraActionEnabled = cameraAction != null && cameraAction.interactable;
             ApplyTransportPassengers(MatchHudTransportPassengersModel.Hidden);
             HideSelection();
@@ -500,6 +512,7 @@ namespace Game.UI.Runtime
             bool visible = model.Visible;
             _storageChipKind = model.StorageKind;
             _materialFabricationProductionEnabled = model.ProductionEnabled;
+            ApplyPassengerChipLayout(model.StorageKind == MatchHudStorageChipKind.MaterialFabrication);
             if (passengerChipRoot != null && passengerChipRoot.activeSelf != visible)
                 passengerChipRoot.SetActive(visible);
 
@@ -574,9 +587,62 @@ namespace Game.UI.Runtime
             int cycleSeconds = Mathf.Max(0, Mathf.RoundToInt(model.CycleDurationSeconds));
             string label =
                 $"OIL {Mathf.Max(0, model.OilCurrent)}/{Mathf.Max(0, model.OilCapacity)} | " +
-                $"{Mathf.Max(0, model.OilConsumedPerCycle)} OIL > {Mathf.Max(0, model.MaterialsOutputPerCycle)} MATERIALS / {cycleSeconds}s | " +
-                $"{progressPercent}% | MATERIALS {Mathf.Max(0, model.MaterialsCurrent)}/{Mathf.Max(0, model.MaterialsCapacity)}";
+                $"MATERIALS {Mathf.Max(0, model.MaterialsCurrent)}/{Mathf.Max(0, model.MaterialsCapacity)}\n" +
+                $"{Mathf.Max(0, model.OilConsumedPerCycle)} OIL > {Mathf.Max(0, model.MaterialsOutputPerCycle)} MATERIALS / {cycleSeconds}s\n" +
+                $"{progressPercent}%";
             return AppendStatus(label, model.StatusText);
+        }
+
+        private void CachePassengerChipLayout()
+        {
+            if (_passengerChipLayoutCached)
+                return;
+
+            _passengerChipRect = passengerChipRoot != null
+                ? passengerChipRoot.transform as RectTransform
+                : null;
+            if (_passengerChipRect != null)
+                _passengerChipDefaultSize = _passengerChipRect.sizeDelta;
+            if (passengerChipLabel != null)
+            {
+                _passengerChipDefaultAutoSizing = passengerChipLabel.enableAutoSizing;
+                _passengerChipDefaultFontSizeMin = passengerChipLabel.fontSizeMin;
+                _passengerChipDefaultFontSizeMax = passengerChipLabel.fontSizeMax;
+                _passengerChipDefaultWrappingMode = passengerChipLabel.textWrappingMode;
+                _passengerChipDefaultOverflowMode = passengerChipLabel.overflowMode;
+                _passengerChipDefaultMargin = passengerChipLabel.margin;
+            }
+
+            _passengerChipLayoutCached = true;
+        }
+
+        private void ApplyPassengerChipLayout(bool materialFabrication)
+        {
+            CachePassengerChipLayout();
+            if (_passengerChipRect != null)
+            {
+                Vector2 size = materialFabrication
+                    ? MaterialFabricationChipSize
+                    : _passengerChipDefaultSize;
+                if (_passengerChipRect.sizeDelta != size)
+                    _passengerChipRect.sizeDelta = size;
+            }
+
+            if (passengerChipLabel == null)
+                return;
+
+            passengerChipLabel.enableAutoSizing = materialFabrication || _passengerChipDefaultAutoSizing;
+            passengerChipLabel.fontSizeMin = materialFabrication ? 20f : _passengerChipDefaultFontSizeMin;
+            passengerChipLabel.fontSizeMax = materialFabrication ? 32f : _passengerChipDefaultFontSizeMax;
+            passengerChipLabel.textWrappingMode = materialFabrication
+                ? TextWrappingModes.Normal
+                : _passengerChipDefaultWrappingMode;
+            passengerChipLabel.overflowMode = materialFabrication
+                ? TextOverflowModes.Overflow
+                : _passengerChipDefaultOverflowMode;
+            passengerChipLabel.margin = materialFabrication
+                ? new Vector4(18f, 8f, 18f, 8f)
+                : _passengerChipDefaultMargin;
         }
 
         private void SetHealthFill(float health01)

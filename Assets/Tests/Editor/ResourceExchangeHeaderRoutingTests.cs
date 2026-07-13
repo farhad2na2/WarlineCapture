@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+using TMPro;
 using Unity.Entities;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -29,6 +30,14 @@ public sealed class ResourceExchangeHeaderRoutingTests
             RunValidationStep(
                 nameof(UiActionRequestSystem_OpenResourceExchangeRequiresEnabledExchange),
                 test => test.UiActionRequestSystem_OpenResourceExchangeRequiresEnabledExchange(),
+                ref passed);
+            RunValidationStep(
+                nameof(UiActionRequestSystem_OpenResourceExchangeRejectsEnemyOnlyCapability),
+                test => test.UiActionRequestSystem_OpenResourceExchangeRejectsEnemyOnlyCapability(),
+                ref passed);
+            RunValidationStep(
+                nameof(UiActionRequestSystem_IntroLockedTapIsConsumedWithoutStaleOpen),
+                test => test.UiActionRequestSystem_IntroLockedTapIsConsumedWithoutStaleOpen(),
                 ref passed);
             RunValidationStep(
                 nameof(UiActionRequestSystem_CloseResourceExchangeHidesPopupAndSuppressesWorldClick),
@@ -80,6 +89,11 @@ public sealed class ResourceExchangeHeaderRoutingTests
             Assert.NotNull(oilButton, "Oil slot must be clickable for Resource Exchange access.");
             Assert.NotNull(fuelButton, "Fuel slot must be clickable for Resource Exchange access.");
             Assert.NotNull(supplyButton, "Supply slot must be clickable for Resource Exchange access.");
+            TMP_Text materialsLabel =
+                header.transform.Find("ResourceStrip/SupplySlot/Label").GetComponent<TMP_Text>();
+            Assert.AreEqual("Materials", materialsLabel.text);
+            Assert.IsTrue(materialsLabel.enableAutoSizing);
+            Assert.GreaterOrEqual(materialsLabel.rectTransform.rect.width, 300f);
 
             oilButton.onClick.Invoke();
 
@@ -110,6 +124,59 @@ public sealed class ResourceExchangeHeaderRoutingTests
         Assert.AreEqual(0, disabledResult.ActionRequestCount, "OpenResourceExchange action should be consumed when exchange is disabled.");
         Assert.AreEqual(0, disabledResult.PopupRequestCount, "OpenResourceExchange must not show the popup when exchange is disabled.");
         Assert.IsTrue(disabledResult.WorldInputSuppressed, "Disabled Resource Exchange clicks still need to suppress the matching world click.");
+    }
+
+    [Test]
+    public void UiActionRequestSystem_OpenResourceExchangeRejectsEnemyOnlyCapability()
+    {
+        using World world = new(nameof(UiActionRequestSystem_OpenResourceExchangeRejectsEnemyOnlyCapability));
+        EntityManager entityManager = world.EntityManager;
+        Entity boundary = CreateUiBoundary(entityManager);
+        Entity selectionInput = CreateSelectionInput(entityManager);
+        CreateResourceExchange(entityManager, enabled: true, factionId: 2);
+        entityManager.GetBuffer<UiActionRequestComponent>(boundary).Add(new UiActionRequestComponent
+        {
+            Kind = UiActionKind.OpenResourceExchange
+        });
+
+        SystemHandle system = world.CreateSystem<UiActionRequestSystem>();
+        system.Update(world.Unmanaged);
+
+        Assert.AreEqual(0, entityManager.GetBuffer<UiActionRequestComponent>(boundary).Length);
+        Assert.AreEqual(0, entityManager.GetBuffer<UiShellPopupRequestComponent>(boundary).Length);
+        RtsSelectionInputStateComponent inputState =
+            entityManager.GetComponentData<RtsSelectionInputStateComponent>(selectionInput);
+        Assert.AreEqual(1, inputState.IgnoreUiClickUntilRelease);
+        Assert.AreEqual(1, inputState.IgnoreNextLeftMouseRelease);
+    }
+
+    [Test]
+    public void UiActionRequestSystem_IntroLockedTapIsConsumedWithoutStaleOpen()
+    {
+        using World world = new(nameof(UiActionRequestSystem_IntroLockedTapIsConsumedWithoutStaleOpen));
+        EntityManager entityManager = world.EntityManager;
+        Entity boundary = CreateUiBoundary(entityManager, introInputLocked: true);
+        Entity selectionInput = CreateSelectionInput(entityManager);
+        CreateResourceExchange(entityManager, enabled: true);
+        entityManager.GetBuffer<UiActionRequestComponent>(boundary).Add(new UiActionRequestComponent
+        {
+            Kind = UiActionKind.OpenResourceExchange
+        });
+
+        SystemHandle system = world.CreateSystem<UiActionRequestSystem>();
+        system.Update(world.Unmanaged);
+
+        Assert.AreEqual(0, entityManager.GetBuffer<UiActionRequestComponent>(boundary).Length);
+        Assert.AreEqual(0, entityManager.GetBuffer<UiShellPopupRequestComponent>(boundary).Length);
+        MatchIntroTransitionComponent intro =
+            entityManager.GetComponentData<MatchIntroTransitionComponent>(boundary);
+        intro.InputLocked = 0;
+        entityManager.SetComponentData(boundary, intro);
+        system.Update(world.Unmanaged);
+        Assert.AreEqual(0, entityManager.GetBuffer<UiShellPopupRequestComponent>(boundary).Length);
+        RtsSelectionInputStateComponent inputState =
+            entityManager.GetComponentData<RtsSelectionInputStateComponent>(selectionInput);
+        Assert.AreEqual(1, inputState.IgnoreUiClickUntilRelease);
     }
 
     [Test]
@@ -254,11 +321,12 @@ public sealed class ResourceExchangeHeaderRoutingTests
             inputState.PointerPressedOverUi != 0);
     }
 
-    private static Entity CreateUiBoundary(EntityManager entityManager)
+    private static Entity CreateUiBoundary(EntityManager entityManager, bool introInputLocked = false)
     {
         Entity boundary = entityManager.CreateEntity(
             typeof(UiShellRootComponent),
             typeof(UiShellStateComponent),
+            typeof(MatchIntroTransitionComponent),
             typeof(UiDiagnosticsOverlayComponent),
             typeof(UiMatchHudPassengerDrawerStateComponent),
             typeof(UiMatchHudSquadTrayStateComponent),
@@ -269,6 +337,16 @@ public sealed class ResourceExchangeHeaderRoutingTests
         entityManager.AddBuffer<UiBuildCatalogRequestComponent>(boundary);
         entityManager.AddBuffer<UiBuildProductionRequestComponent>(boundary);
         entityManager.AddBuffer<UiBuildPrimaryRequestComponent>(boundary);
+        entityManager.SetComponentData(boundary, new UiShellStateComponent
+        {
+            CurrentMode = UiShellMode.MatchHud,
+            ActiveRoute = UIRoute.Match,
+            IsTransitionRunning = 0
+        });
+        entityManager.SetComponentData(boundary, new MatchIntroTransitionComponent
+        {
+            InputLocked = introInputLocked ? (byte)1 : (byte)0
+        });
         return boundary;
     }
 
@@ -312,15 +390,30 @@ public sealed class ResourceExchangeHeaderRoutingTests
         return selectionInput;
     }
 
-    private static Entity CreateResourceExchange(EntityManager entityManager, bool enabled)
+    private static Entity CreateResourceExchange(
+        EntityManager entityManager,
+        bool enabled,
+        byte factionId = FactionIdentity.PlayerFactionId)
     {
-        Entity exchange = entityManager.CreateEntity(typeof(ResourceExchangeEnabledComponent));
+        Entity exchange = entityManager.CreateEntity(
+            typeof(ResourceExchangeEnabledComponent),
+            typeof(ResourceExchangeRequestQueueComponent));
         entityManager.SetComponentData(exchange, new ResourceExchangeEnabledComponent
         {
             Enabled = enabled ? (byte)1 : (byte)0,
-            FactionId = 1,
+            FactionId = factionId,
             AllowRush = 1,
-            MaxQueueItems = 6
+            MaxQueueItems = 6,
+            ScenarioTag = new Unity.Collections.FixedString64Bytes("mission.header-routing")
+        });
+        entityManager.AddBuffer<ResourceExchangeRequestComponent>(exchange);
+        DynamicBuffer<ResourceExchangeRecipeComponent> recipes =
+            entityManager.AddBuffer<ResourceExchangeRecipeComponent>(exchange);
+        recipes.Add(new ResourceExchangeRecipeComponent
+        {
+            RecipeId = new Unity.Collections.FixedString128Bytes("credits-to-materials"),
+            Enabled = 1,
+            MissionTag = new Unity.Collections.FixedString64Bytes("mission.header-routing")
         });
         return exchange;
     }
@@ -345,6 +438,13 @@ public sealed class ResourceExchangeHeaderRoutingTests
         slot.transform.SetParent(parent, false);
         slot.GetComponent<RectTransform>().sizeDelta = new Vector2(300f, 80f);
         slot.GetComponent<Image>().raycastTarget = true;
+        GameObject label = new("Label", typeof(RectTransform), typeof(TextMeshProUGUI));
+        label.transform.SetParent(slot.transform, false);
+        RectTransform labelRect = label.GetComponent<RectTransform>();
+        labelRect.anchorMin = Vector2.zero;
+        labelRect.anchorMax = Vector2.one;
+        labelRect.sizeDelta = Vector2.zero;
+        label.GetComponent<TMP_Text>().text = name == "SupplySlot" ? "Supply" : name;
     }
 
     private static T FindInScene<T>(Scene scene) where T : UnityEngine.Object

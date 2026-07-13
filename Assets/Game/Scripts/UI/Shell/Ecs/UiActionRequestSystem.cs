@@ -16,7 +16,6 @@ namespace Game.UI.Shell.Ecs
         private EntityQuery boundaryQuery;
         private EntityQuery selectionInputQuery;
         private EntityQuery buildingPlacementCommandQuery;
-        private EntityQuery resourceExchangeEnabledQuery;
         private EntityQuery resourceExchangeRequestQuery;
 
         public void OnCreate(ref SystemState state)
@@ -40,8 +39,6 @@ namespace Game.UI.Shell.Ecs
             buildingPlacementCommandQuery = state.GetEntityQuery(
                 ComponentType.ReadWrite<BuildingUiPlacementCommandQueueComponent>(),
                 ComponentType.ReadWrite<BuildingUiPlacementCommandRequestElement>());
-            resourceExchangeEnabledQuery = state.GetEntityQuery(
-                ComponentType.ReadOnly<ResourceExchangeEnabledComponent>());
             resourceExchangeRequestQuery = state.GetEntityQuery(
                 ComponentType.ReadOnly<ResourceExchangeEnabledComponent>(),
                 ComponentType.ReadWrite<ResourceExchangeRequestQueueComponent>(),
@@ -100,12 +97,24 @@ namespace Game.UI.Shell.Ecs
                 state.EntityManager.GetComponentData<RtsSelectionInputStateComponent>(selectionInput);
             RtsSelectionInputRequestQueueComponent queue =
                 state.EntityManager.GetComponentData<RtsSelectionInputRequestQueueComponent>(selectionInput);
-            bool resourceExchangeEnabled = IsResourceExchangeEnabled();
             bool hasResourceExchangeRequestEntity =
-                TryResolveResourceExchangeRequestEntity(
+                TryResolvePlayerResourceExchangeRequestEntity(
                     ref state,
                     out Entity resourceExchangeRequestEntity,
                     out ResourceExchangeEnabledComponent resourceExchangeRuntimeState);
+            UiShellStateComponent shellState =
+                state.EntityManager.GetComponentData<UiShellStateComponent>(boundary);
+            bool matchIntroInputLocked =
+                state.EntityManager.HasComponent<MatchIntroTransitionComponent>(boundary) &&
+                state.EntityManager.GetComponentData<MatchIntroTransitionComponent>(boundary).InputLocked != 0;
+            bool canOpenResourceExchange =
+                CanOpenResourceExchange(
+                    shellState,
+                    matchIntroInputLocked,
+                    hasResourceExchangeRequestEntity,
+                    resourceExchangeRuntimeState,
+                    state.EntityManager,
+                    resourceExchangeRequestEntity);
             DynamicBuffer<BuildingUiPlacementCommandRequestElement> placementRequests = default;
             BuildingUiPlacementCommandQueueComponent placementQueue = default;
             if (needsPlacementCommandQueue)
@@ -135,7 +144,7 @@ namespace Game.UI.Shell.Ecs
                     ref resourceExchangeState,
                     hasResourceExchangeState,
                     ref placementQueue,
-                    resourceExchangeEnabled,
+                    canOpenResourceExchange,
                     state.EntityManager,
                     resourceExchangeRequestEntity,
                     resourceExchangeRuntimeState,
@@ -225,41 +234,67 @@ namespace Game.UI.Shell.Ecs
             return entities.Length > 0 ? entities[0] : Entity.Null;
         }
 
-        private bool IsResourceExchangeEnabled()
-        {
-            int count = resourceExchangeEnabledQuery.CalculateEntityCount();
-            if (count == 0)
-                return false;
-            if (count == 1)
-                return resourceExchangeEnabledQuery.GetSingleton<ResourceExchangeEnabledComponent>().Enabled != 0;
-
-            using NativeArray<ResourceExchangeEnabledComponent> exchangeStates =
-                resourceExchangeEnabledQuery.ToComponentDataArray<ResourceExchangeEnabledComponent>(Allocator.Temp);
-            for (int i = 0; i < exchangeStates.Length; i++)
-            {
-                if (exchangeStates[i].Enabled != 0)
-                    return true;
-            }
-
-            return false;
-        }
-
-        private bool TryResolveResourceExchangeRequestEntity(
+        private bool TryResolvePlayerResourceExchangeRequestEntity(
             ref SystemState state,
             out Entity entity,
             out ResourceExchangeEnabledComponent enabled)
         {
             entity = Entity.Null;
             enabled = default;
-            if (resourceExchangeRequestQuery.IsEmptyIgnoreFilter)
-                return false;
+            using NativeArray<Entity> entities = resourceExchangeRequestQuery.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                ResourceExchangeEnabledComponent candidate =
+                    state.EntityManager.GetComponentData<ResourceExchangeEnabledComponent>(entities[i]);
+                if (candidate.FactionId != FactionIdentity.PlayerFactionId)
+                    continue;
+                if (entity != Entity.Null)
+                    return false;
 
-            entity = ResolveFirstEntity(resourceExchangeRequestQuery);
-            if (entity == Entity.Null)
-                return false;
+                entity = entities[i];
+                enabled = candidate;
+            }
 
-            enabled = state.EntityManager.GetComponentData<ResourceExchangeEnabledComponent>(entity);
-            return true;
+            return entity != Entity.Null;
+        }
+
+        private static bool CanOpenResourceExchange(
+            in UiShellStateComponent shellState,
+            bool matchIntroInputLocked,
+            bool hasResourceExchangeRequestEntity,
+            in ResourceExchangeEnabledComponent enabled,
+            EntityManager entityManager,
+            Entity exchangeEntity)
+        {
+            if (shellState.ActiveRoute != UIRoute.Match ||
+                shellState.CurrentMode != UiShellMode.MatchHud ||
+                shellState.IsTransitionRunning != 0 ||
+                matchIntroInputLocked ||
+                !hasResourceExchangeRequestEntity ||
+                enabled.Enabled == 0 ||
+                enabled.FactionId != FactionIdentity.PlayerFactionId ||
+                enabled.MaxQueueItems <= 0 ||
+                enabled.ScenarioTag.Length == 0 ||
+                exchangeEntity == Entity.Null ||
+                !entityManager.Exists(exchangeEntity) ||
+                !entityManager.HasBuffer<ResourceExchangeRecipeComponent>(exchangeEntity))
+            {
+                return false;
+            }
+
+            DynamicBuffer<ResourceExchangeRecipeComponent> recipes =
+                entityManager.GetBuffer<ResourceExchangeRecipeComponent>(exchangeEntity);
+            for (int i = 0; i < recipes.Length; i++)
+            {
+                ResourceExchangeRecipeComponent recipe = recipes[i];
+                if (recipe.Enabled != 0 &&
+                    (recipe.MissionTag.Length == 0 || recipe.MissionTag.Equals(enabled.ScenarioTag)))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static void ProcessRequest(
@@ -280,7 +315,7 @@ namespace Game.UI.Shell.Ecs
             ref UiResourceExchangeStateComponent resourceExchangeState,
             bool hasResourceExchangeState,
             ref BuildingUiPlacementCommandQueueComponent placementQueue,
-            bool resourceExchangeEnabled,
+            bool canOpenResourceExchange,
             EntityManager entityManager,
             Entity resourceExchangeRequestEntity,
             in ResourceExchangeEnabledComponent resourceExchangeRuntimeState,
@@ -306,7 +341,7 @@ namespace Game.UI.Shell.Ecs
                     break;
                 case UiActionKind.OpenResourceExchange:
                     CaptureUiClickSequence(ref inputState, commandRequests, frame);
-                    if (resourceExchangeEnabled)
+                    if (canOpenResourceExchange)
                         EnqueuePopup(popupRequests, UiShellPopupKind.ResourceExchange, UiShellPopupIntent.Show, request.PayloadId);
                     break;
                 case UiActionKind.CloseResourceExchange:

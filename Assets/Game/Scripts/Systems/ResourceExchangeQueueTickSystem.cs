@@ -7,6 +7,13 @@ namespace Game.Runtime
 {
     public partial struct ResourceExchangeQueueTickSystem : ISystem
     {
+        private EntityQuery _storageQuery;
+
+        public void OnCreate(ref SystemState state)
+        {
+            _storageQuery = state.GetEntityQuery(ComponentType.ReadOnly<BuildingResourceStorageComponent>());
+        }
+
         public void OnUpdate(ref SystemState state)
         {
             float deltaSeconds = (float)SystemAPI.Time.DeltaTime;
@@ -47,6 +54,12 @@ namespace Game.Runtime
                     : default;
                 DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents =
                     SystemAPI.GetBuffer<ResourceExchangeEconomyEventComponent>(exchangeEntity);
+                bool usePhysicalStorage =
+                    state.EntityManager.HasBuffer<ResourceExchangePhysicalReservationComponent>(exchangeEntity);
+                DynamicBuffer<ResourceExchangePhysicalReservationComponent> physicalReservations =
+                    usePhysicalStorage
+                        ? state.EntityManager.GetBuffer<ResourceExchangePhysicalReservationComponent>(exchangeEntity)
+                        : default;
                 TickQueue(
                     enabled.ValueRO,
                     ref economy.ValueRW,
@@ -62,7 +75,10 @@ namespace Game.Runtime
                     hasToasts,
                     ariaAnnouncements,
                     hasAriaAnnouncements,
-                    deltaSeconds);
+                    deltaSeconds,
+                    state.EntityManager,
+                    physicalReservations,
+                    usePhysicalStorage);
             }
         }
 
@@ -176,6 +192,47 @@ namespace Game.Runtime
             bool emitAriaAnnouncements,
             float deltaSeconds)
         {
+            TickQueue(
+                enabled,
+                ref economy,
+                ref materials,
+                ref wallet,
+                ref summary,
+                queue,
+                results,
+                economyEvents,
+                deltaFlyouts,
+                emitDeltaFlyouts,
+                toasts,
+                emitToasts,
+                ariaAnnouncements,
+                emitAriaAnnouncements,
+                deltaSeconds,
+                default,
+                default,
+                false);
+        }
+
+        public static void TickQueue(
+            in ResourceExchangeEnabledComponent enabled,
+            ref FactionEconomy economy,
+            ref FactionTacticalMaterialsComponent materials,
+            ref ResourceExchangeWalletComponent wallet,
+            ref ResourceExchangeSummaryComponent summary,
+            DynamicBuffer<ResourceExchangeQueueComponent> queue,
+            DynamicBuffer<ResourceExchangeResultComponent> results,
+            DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
+            DynamicBuffer<ResourceExchangeDeltaFlyoutComponent> deltaFlyouts,
+            bool emitDeltaFlyouts,
+            DynamicBuffer<ResourceExchangeToastComponent> toasts,
+            bool emitToasts,
+            DynamicBuffer<ResourceExchangeAriaAnnouncementComponent> ariaAnnouncements,
+            bool emitAriaAnnouncements,
+            float deltaSeconds,
+            EntityManager entityManager,
+            DynamicBuffer<ResourceExchangePhysicalReservationComponent> physicalReservations,
+            bool usePhysicalStorage)
+        {
             if (queue.Length == 0)
                 return;
 
@@ -189,7 +246,14 @@ namespace Game.Runtime
 
                 if (item.State == ResourceExchangeQueueState.Blocked)
                 {
-                    ResourceExchangeReason blockedReason = ValidateOutputStorage(economy, materials, wallet, item);
+                    ResourceExchangeReason blockedReason = ValidateOutputStorage(
+                        economy,
+                        materials,
+                        wallet,
+                        item,
+                        entityManager,
+                        physicalReservations,
+                        usePhysicalStorage);
                     if (blockedReason != ResourceExchangeReason.None)
                         continue;
 
@@ -215,6 +279,9 @@ namespace Game.Runtime
                         emitToasts,
                         ariaAnnouncements,
                         emitAriaAnnouncements,
+                        entityManager,
+                        physicalReservations,
+                        usePhysicalStorage,
                         out item);
                     queue[i] = item;
                     continue;
@@ -226,7 +293,14 @@ namespace Game.Runtime
                     continue;
                 }
 
-                ResourceExchangeReason storageReason = ValidateOutputStorage(economy, materials, wallet, item);
+                ResourceExchangeReason storageReason = ValidateOutputStorage(
+                    economy,
+                    materials,
+                    wallet,
+                    item,
+                    entityManager,
+                    physicalReservations,
+                    usePhysicalStorage);
                 if (storageReason != ResourceExchangeReason.None)
                 {
                     item.State = ResourceExchangeQueueState.Blocked;
@@ -268,6 +342,9 @@ namespace Game.Runtime
                         emitToasts,
                         ariaAnnouncements,
                         emitAriaAnnouncements,
+                        entityManager,
+                        physicalReservations,
+                        usePhysicalStorage,
                         out item);
                 }
 
@@ -374,6 +451,74 @@ namespace Game.Runtime
             bool emitAriaAnnouncements,
             out ResourceExchangeQueueComponent completed)
         {
+            return TryCompleteQueueItem(
+                ref economy,
+                ref materials,
+                ref wallet,
+                source,
+                results,
+                economyEvents,
+                deltaFlyouts,
+                emitDeltaFlyouts,
+                toasts,
+                emitToasts,
+                ariaAnnouncements,
+                emitAriaAnnouncements,
+                default,
+                default,
+                false,
+                out completed);
+        }
+
+        public static bool TryCompleteQueueItem(
+            ref FactionEconomy economy,
+            ref FactionTacticalMaterialsComponent materials,
+            ref ResourceExchangeWalletComponent wallet,
+            in ResourceExchangeQueueComponent source,
+            DynamicBuffer<ResourceExchangeResultComponent> results,
+            DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
+            EntityManager entityManager,
+            DynamicBuffer<ResourceExchangePhysicalReservationComponent> physicalReservations,
+            bool usePhysicalStorage,
+            out ResourceExchangeQueueComponent completed)
+        {
+            return TryCompleteQueueItem(
+                ref economy,
+                ref materials,
+                ref wallet,
+                source,
+                results,
+                economyEvents,
+                default,
+                false,
+                default,
+                false,
+                default,
+                false,
+                entityManager,
+                physicalReservations,
+                usePhysicalStorage,
+                out completed);
+        }
+
+        private static bool TryCompleteQueueItem(
+            ref FactionEconomy economy,
+            ref FactionTacticalMaterialsComponent materials,
+            ref ResourceExchangeWalletComponent wallet,
+            in ResourceExchangeQueueComponent source,
+            DynamicBuffer<ResourceExchangeResultComponent> results,
+            DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
+            DynamicBuffer<ResourceExchangeDeltaFlyoutComponent> deltaFlyouts,
+            bool emitDeltaFlyouts,
+            DynamicBuffer<ResourceExchangeToastComponent> toasts,
+            bool emitToasts,
+            DynamicBuffer<ResourceExchangeAriaAnnouncementComponent> ariaAnnouncements,
+            bool emitAriaAnnouncements,
+            EntityManager entityManager,
+            DynamicBuffer<ResourceExchangePhysicalReservationComponent> physicalReservations,
+            bool usePhysicalStorage,
+            out ResourceExchangeQueueComponent completed)
+        {
             bool stateChanged = false;
             CompleteQueueItem(
                 ref economy,
@@ -389,6 +534,9 @@ namespace Game.Runtime
                 emitToasts,
                 ariaAnnouncements,
                 emitAriaAnnouncements,
+                entityManager,
+                physicalReservations,
+                usePhysicalStorage,
                 out completed);
             return completed.State == ResourceExchangeQueueState.Completed;
         }
@@ -407,10 +555,20 @@ namespace Game.Runtime
             bool emitToasts,
             DynamicBuffer<ResourceExchangeAriaAnnouncementComponent> ariaAnnouncements,
             bool emitAriaAnnouncements,
+            EntityManager entityManager,
+            DynamicBuffer<ResourceExchangePhysicalReservationComponent> physicalReservations,
+            bool usePhysicalStorage,
             out ResourceExchangeQueueComponent completed)
         {
             completed = source;
-            ResourceExchangeReason storageReason = ValidateOutputStorage(economy, materials, wallet, completed);
+            ResourceExchangeReason storageReason = ValidateOutputStorage(
+                economy,
+                materials,
+                wallet,
+                completed,
+                entityManager,
+                physicalReservations,
+                usePhysicalStorage);
             if (storageReason != ResourceExchangeReason.None)
             {
                 completed.State = ResourceExchangeQueueState.Blocked;
@@ -437,12 +595,35 @@ namespace Game.Runtime
                 return;
             }
 
-            ResourceExchangeResourceUtilitySystemHelper.TryGrantImport(
-                ref economy,
-                ref materials,
-                ref wallet,
-                completed.OutputResource,
-                completed.OutputAmount);
+            bool physicalResource = usePhysicalStorage &&
+                                    (ResourceExchangePhysicalStorageUtilitySystemHelper.IsPhysicalResource(
+                                         completed.InputResource) ||
+                                     ResourceExchangePhysicalStorageUtilitySystemHelper.IsPhysicalResource(
+                                         completed.OutputResource));
+            if (physicalResource &&
+                !ResourceExchangePhysicalStorageUtilitySystemHelper.TryCompleteQueueItem(
+                    entityManager,
+                    physicalReservations,
+                    completed,
+                    out ResourceExchangeReason physicalReason))
+            {
+                completed.State = ResourceExchangeQueueState.Blocked;
+                completed.StateReason = physicalReason;
+                completed.Version++;
+                stateChanged = true;
+                return;
+            }
+
+            if (!usePhysicalStorage ||
+                !ResourceExchangePhysicalStorageUtilitySystemHelper.IsPhysicalResource(completed.OutputResource))
+            {
+                ResourceExchangeResourceUtilitySystemHelper.TryGrantImport(
+                    ref economy,
+                    ref materials,
+                    ref wallet,
+                    completed.OutputResource,
+                    completed.OutputAmount);
+            }
             completed.OutputApplied = 1;
             completed.ReservedInputAmount = 0;
             completed.RemainingSeconds = 0f;
@@ -532,8 +713,21 @@ namespace Game.Runtime
             in FactionEconomy economy,
             in FactionTacticalMaterialsComponent materials,
             in ResourceExchangeWalletComponent wallet,
-            in ResourceExchangeQueueComponent item)
+            in ResourceExchangeQueueComponent item,
+            EntityManager entityManager,
+            DynamicBuffer<ResourceExchangePhysicalReservationComponent> physicalReservations,
+            bool usePhysicalStorage)
         {
+            if (usePhysicalStorage &&
+                (ResourceExchangePhysicalStorageUtilitySystemHelper.IsPhysicalResource(item.InputResource) ||
+                 ResourceExchangePhysicalStorageUtilitySystemHelper.IsPhysicalResource(item.OutputResource)))
+            {
+                return ResourceExchangePhysicalStorageUtilitySystemHelper.ValidateCompletion(
+                    entityManager,
+                    physicalReservations,
+                    item);
+            }
+
             if (item.OutputResource == ResourceExchangeResourceKind.Credits)
                 return ResourceExchangeReason.None;
 

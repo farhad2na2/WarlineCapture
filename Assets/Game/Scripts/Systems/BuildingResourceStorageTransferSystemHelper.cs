@@ -127,6 +127,83 @@ namespace Game.Runtime
                 IncrementVersion(ref destination);
         }
 
+        public static bool TryConsumeSourceReservation(
+            ref BuildingResourceStorageComponent source,
+            byte resourceKind,
+            float amount)
+        {
+            amount = math.max(0f, amount);
+            if (amount <= 0f)
+                return false;
+
+            float reserved = resourceKind == FuelResourceKind
+                ? source.ReservedFuelOutboundBarrels
+                : source.ReservedOilOutboundBarrels;
+            float stored = resourceKind == FuelResourceKind
+                ? source.StoredFuelBarrels
+                : source.StoredOilBarrels;
+            if (reserved + 0.001f < amount || stored + 0.001f < amount)
+                return false;
+
+            if (resourceKind == FuelResourceKind)
+            {
+                source.StoredFuelBarrels = math.max(0f, source.StoredFuelBarrels - amount);
+                source.ReservedFuelOutboundBarrels = math.max(0f, source.ReservedFuelOutboundBarrels - amount);
+            }
+            else
+            {
+                source.StoredOilBarrels = math.max(0f, source.StoredOilBarrels - amount);
+                source.ReservedOilOutboundBarrels = math.max(0f, source.ReservedOilOutboundBarrels - amount);
+            }
+
+            IncrementVersion(ref source);
+            return true;
+        }
+
+        public static bool TryCompleteReservedDelivery(
+            ref BuildingResourceStorageComponent destination,
+            byte resourceKind,
+            float amount)
+        {
+            amount = math.max(0f, amount);
+            if (amount <= 0f)
+                return false;
+
+            float reserved = resourceKind == FuelResourceKind
+                ? destination.ReservedFuelInboundBarrels
+                : destination.ReservedOilInboundBarrels;
+            float stored = resourceKind == FuelResourceKind
+                ? destination.StoredFuelBarrels
+                : destination.StoredOilBarrels;
+            int capacity = resourceKind == FuelResourceKind
+                ? destination.FuelStorageCapacity
+                : destination.OilStorageCapacity;
+            bool unlimitedOilInput = resourceKind == OilResourceKind &&
+                                     capacity <= 0 &&
+                                     destination.FuelBarrelsPerDay > 0f;
+            if (reserved + 0.001f < amount ||
+                (!unlimitedOilInput && (capacity <= 0 || stored + amount > capacity + 0.001f)))
+            {
+                return false;
+            }
+
+            if (resourceKind == FuelResourceKind)
+            {
+                destination.StoredFuelBarrels += amount;
+                destination.ReservedFuelInboundBarrels =
+                    math.max(0f, destination.ReservedFuelInboundBarrels - amount);
+            }
+            else
+            {
+                destination.StoredOilBarrels += amount;
+                destination.ReservedOilInboundBarrels =
+                    math.max(0f, destination.ReservedOilInboundBarrels - amount);
+            }
+
+            IncrementVersion(ref destination);
+            return true;
+        }
+
         public static bool TryCompleteLoad(
             ref BuildingResourceStorageComponent source,
             byte resourceKind,

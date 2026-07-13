@@ -7,6 +7,13 @@ namespace Game.Runtime
 {
     public partial struct ResourceExchangeRequestValidationSystem : ISystem
     {
+        private EntityQuery _storageQuery;
+
+        public void OnCreate(ref SystemState state)
+        {
+            _storageQuery = state.GetEntityQuery(ComponentType.ReadOnly<BuildingResourceStorageComponent>());
+        }
+
         public void OnUpdate(ref SystemState state)
         {
             float elapsedSeconds = (float)SystemAPI.Time.ElapsedTime;
@@ -41,6 +48,12 @@ namespace Game.Runtime
                     SystemAPI.GetBuffer<ResourceExchangeRecipeComponent>(exchangeEntity);
                 DynamicBuffer<ResourceExchangeRequestComponent> requests =
                     SystemAPI.GetBuffer<ResourceExchangeRequestComponent>(exchangeEntity);
+                bool usePhysicalStorage =
+                    state.EntityManager.HasBuffer<ResourceExchangePhysicalReservationComponent>(exchangeEntity);
+                DynamicBuffer<ResourceExchangePhysicalReservationComponent> physicalReservations =
+                    usePhysicalStorage
+                        ? state.EntityManager.GetBuffer<ResourceExchangePhysicalReservationComponent>(exchangeEntity)
+                        : default;
 
                 ProcessRequests(
                     ref requestQueue.ValueRW,
@@ -54,7 +67,11 @@ namespace Game.Runtime
                     queue,
                     results,
                     economyEvents,
-                    elapsedSeconds);
+                    elapsedSeconds,
+                    state.EntityManager,
+                    _storageQuery,
+                    physicalReservations,
+                    usePhysicalStorage);
             }
         }
 
@@ -231,6 +248,43 @@ namespace Game.Runtime
             DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
             float elapsedSeconds)
         {
+            ProcessRequests(
+                ref requestQueue,
+                enabled,
+                ref economy,
+                ref materials,
+                ref wallet,
+                ref summary,
+                recipes,
+                requests,
+                queue,
+                results,
+                economyEvents,
+                elapsedSeconds,
+                default,
+                default,
+                default,
+                false);
+        }
+
+        public static void ProcessRequests(
+            ref ResourceExchangeRequestQueueComponent requestQueue,
+            in ResourceExchangeEnabledComponent enabled,
+            ref FactionEconomy economy,
+            ref FactionTacticalMaterialsComponent materials,
+            ref ResourceExchangeWalletComponent wallet,
+            ref ResourceExchangeSummaryComponent summary,
+            DynamicBuffer<ResourceExchangeRecipeComponent> recipes,
+            DynamicBuffer<ResourceExchangeRequestComponent> requests,
+            DynamicBuffer<ResourceExchangeQueueComponent> queue,
+            DynamicBuffer<ResourceExchangeResultComponent> results,
+            DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
+            float elapsedSeconds,
+            EntityManager entityManager,
+            EntityQuery storageQuery,
+            DynamicBuffer<ResourceExchangePhysicalReservationComponent> physicalReservations,
+            bool usePhysicalStorage)
+        {
             if (requests.Length == 0)
                 return;
 
@@ -252,7 +306,11 @@ namespace Game.Runtime
                             queue,
                             economyEvents,
                             request,
-                            elapsedSeconds);
+                            elapsedSeconds,
+                            entityManager,
+                            storageQuery,
+                            physicalReservations,
+                            usePhysicalStorage);
                         break;
                     case ResourceExchangeRequestKind.Cancel:
                         result = ProcessCancelRequest(
@@ -263,7 +321,10 @@ namespace Game.Runtime
                             queue,
                             economyEvents,
                             request,
-                            ResourceExchangeReason.None);
+                            ResourceExchangeReason.None,
+                            entityManager,
+                            physicalReservations,
+                            usePhysicalStorage);
                         break;
                     case ResourceExchangeRequestKind.Rush:
                         result = ProcessRushRequest(
@@ -275,7 +336,10 @@ namespace Game.Runtime
                             queue,
                             results,
                             economyEvents,
-                            request);
+                            request,
+                            entityManager,
+                            physicalReservations,
+                            usePhysicalStorage);
                         break;
                     case ResourceExchangeRequestKind.RushAll:
                         result = ProcessRushAllRequest(
@@ -287,7 +351,10 @@ namespace Game.Runtime
                             queue,
                             results,
                             economyEvents,
-                            request);
+                            request,
+                            entityManager,
+                            physicalReservations,
+                            usePhysicalStorage);
                         break;
                     case ResourceExchangeRequestKind.ClearCompleted:
                         result = ProcessClearCompletedRequest(
@@ -303,7 +370,10 @@ namespace Game.Runtime
                             ref wallet,
                             queue,
                             economyEvents,
-                            request);
+                            request,
+                            entityManager,
+                            physicalReservations,
+                            usePhysicalStorage);
                         break;
                     default:
                         result = Rejected(request, default, ResourceExchangeReason.InvalidRecipe);
@@ -327,7 +397,11 @@ namespace Game.Runtime
             DynamicBuffer<ResourceExchangeQueueComponent> queue,
             DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
             in ResourceExchangeRequestComponent request,
-            float elapsedSeconds)
+            float elapsedSeconds,
+            EntityManager entityManager,
+            EntityQuery storageQuery,
+            DynamicBuffer<ResourceExchangePhysicalReservationComponent> physicalReservations,
+            bool usePhysicalStorage)
         {
             if (request.RequestKind != ResourceExchangeRequestKind.Start)
                 return Rejected(request, default, ResourceExchangeReason.InvalidRecipe);
@@ -356,22 +430,59 @@ namespace Game.Runtime
                 return Rejected(request, recipe, ResourceExchangeReason.QueueFull);
 
             int outputAmount = CalculateOutputAmount(recipe, request.InputAmount);
-            ResourceExchangeReason storageReason = ValidateOutputStorage(economy, materials, wallet, recipe, outputAmount);
+            bool physicalInput = usePhysicalStorage &&
+                                 ResourceExchangePhysicalStorageUtilitySystemHelper.IsPhysicalResource(
+                                     recipe.InputResource);
+            bool physicalOutput = usePhysicalStorage &&
+                                  ResourceExchangePhysicalStorageUtilitySystemHelper.IsPhysicalResource(
+                                      recipe.OutputResource);
+            ResourceExchangeReason storageReason = physicalOutput
+                ? ResourceExchangeReason.None
+                : ValidateOutputStorage(economy, materials, wallet, recipe, outputAmount);
             if (storageReason != ResourceExchangeReason.None)
                 return Rejected(request, recipe, storageReason);
 
-            if (!TrySpendInput(
+            int queueItemId = math.max(requestQueue.LastQueueItemId, MaxQueueItemId(queue)) + 1;
+            if ((physicalInput || physicalOutput) &&
+                !ResourceExchangePhysicalStorageUtilitySystemHelper.TryReserveForQueue(
+                    entityManager,
+                    storageQuery,
+                    physicalReservations,
+                    queueItemId,
+                    factionId,
+                    recipe.InputResource,
+                    request.InputAmount,
+                    recipe.OutputResource,
+                    outputAmount,
+                    out ResourceExchangeReason physicalStorageReason))
+            {
+                return Rejected(request, recipe, physicalStorageReason);
+            }
+
+            if (!physicalInput &&
+                !TrySpendInput(
                     ref economy,
                     ref materials,
                     ref wallet,
                     recipe.InputResource,
                     request.InputAmount,
                     out ResourceExchangeReason spendReason))
-                return Rejected(request, recipe, spendReason);
+            {
+                if (physicalOutput)
+                {
+                    ResourceExchangePhysicalStorageUtilitySystemHelper.CancelQueueItem(
+                        entityManager,
+                        physicalReservations,
+                        queueItemId,
+                        true);
+                }
 
-            requestQueue.LastQueueItemId = math.max(requestQueue.LastQueueItemId, MaxQueueItemId(queue)) + 1;
+                return Rejected(request, recipe, spendReason);
+            }
+
+            requestQueue.LastQueueItemId = queueItemId;
             ResourceExchangeQueueComponent queueItem = CreateQueueItem(
-                requestQueue.LastQueueItemId,
+                queueItemId,
                 factionId,
                 recipe,
                 request.InputAmount,
@@ -412,7 +523,10 @@ namespace Game.Runtime
             DynamicBuffer<ResourceExchangeQueueComponent> queue,
             DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
             in ResourceExchangeRequestComponent request,
-            ResourceExchangeReason stateReason)
+            ResourceExchangeReason stateReason,
+            EntityManager entityManager,
+            DynamicBuffer<ResourceExchangePhysicalReservationComponent> physicalReservations,
+            bool usePhysicalStorage)
         {
             byte factionId = request.FactionId != 0 ? request.FactionId : enabled.FactionId;
             if (enabled.FactionId != 0 && factionId != enabled.FactionId)
@@ -428,7 +542,22 @@ namespace Game.Runtime
                     return Rejected(request, default, ResourceExchangeReason.CancelUnavailable);
 
                 int refundAmount = CalculateRefundAmount(item);
-                if (refundAmount > 0)
+                bool physicalInput = usePhysicalStorage &&
+                                     ResourceExchangePhysicalStorageUtilitySystemHelper.IsPhysicalResource(
+                                         item.InputResource);
+                bool physicalOutput = usePhysicalStorage &&
+                                      ResourceExchangePhysicalStorageUtilitySystemHelper.IsPhysicalResource(
+                                          item.OutputResource);
+                if (physicalInput || physicalOutput)
+                {
+                    ResourceExchangePhysicalStorageUtilitySystemHelper.CancelQueueItem(
+                        entityManager,
+                        physicalReservations,
+                        item.QueueItemId,
+                        refundAmount > 0);
+                }
+
+                if (refundAmount > 0 && !physicalInput)
                 {
                     ResourceExchangeResourceUtilitySystemHelper.TryRefundReservedInput(
                         ref economy,
@@ -436,28 +565,17 @@ namespace Game.Runtime
                         ref wallet,
                         item.InputResource,
                         refundAmount);
-                    economyEvents.Add(new ResourceExchangeEconomyEventComponent
-                    {
-                        QueueItemId = item.QueueItemId,
-                        FactionId = item.FactionId,
-                        ResultKind = ResourceExchangeResultKind.QueueCancelled,
-                        ResourceKind = item.InputResource,
-                        Amount = refundAmount,
-                        RecipeId = item.RecipeId
-                    });
                 }
-                else
+
+                economyEvents.Add(new ResourceExchangeEconomyEventComponent
                 {
-                    economyEvents.Add(new ResourceExchangeEconomyEventComponent
-                    {
-                        QueueItemId = item.QueueItemId,
-                        FactionId = item.FactionId,
-                        ResultKind = ResourceExchangeResultKind.QueueCancelled,
-                        ResourceKind = item.InputResource,
-                        Amount = 0,
-                        RecipeId = item.RecipeId
-                    });
-                }
+                    QueueItemId = item.QueueItemId,
+                    FactionId = item.FactionId,
+                    ResultKind = ResourceExchangeResultKind.QueueCancelled,
+                    ResourceKind = item.InputResource,
+                    Amount = refundAmount,
+                    RecipeId = item.RecipeId
+                });
 
                 item.State = ResourceExchangeQueueState.Cancelled;
                 item.StateReason = stateReason;
@@ -494,7 +612,10 @@ namespace Game.Runtime
             DynamicBuffer<ResourceExchangeQueueComponent> queue,
             DynamicBuffer<ResourceExchangeResultComponent> results,
             DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
-            in ResourceExchangeRequestComponent request)
+            in ResourceExchangeRequestComponent request,
+            EntityManager entityManager,
+            DynamicBuffer<ResourceExchangePhysicalReservationComponent> physicalReservations,
+            bool usePhysicalStorage)
         {
             ResourceExchangeReason gateReason = ValidateRushGate(enabled, request, out byte factionId);
             if (gateReason != ResourceExchangeReason.None)
@@ -542,7 +663,10 @@ namespace Game.Runtime
                 queueIndex,
                 item,
                 recipe,
-                request.RushTickets);
+                request.RushTickets,
+                entityManager,
+                physicalReservations,
+                usePhysicalStorage);
 
             item = queue[queueIndex];
             return RushAccepted(request, item, request.RushTickets, 1);
@@ -557,7 +681,10 @@ namespace Game.Runtime
             DynamicBuffer<ResourceExchangeQueueComponent> queue,
             DynamicBuffer<ResourceExchangeResultComponent> results,
             DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
-            in ResourceExchangeRequestComponent request)
+            in ResourceExchangeRequestComponent request,
+            EntityManager entityManager,
+            DynamicBuffer<ResourceExchangePhysicalReservationComponent> physicalReservations,
+            bool usePhysicalStorage)
         {
             ResourceExchangeReason gateReason = ValidateRushGate(enabled, request, out byte factionId);
             if (gateReason != ResourceExchangeReason.None)
@@ -611,7 +738,10 @@ namespace Game.Runtime
                     i,
                     item,
                     recipe,
-                    ticketsToSpend);
+                    ticketsToSpend,
+                    entityManager,
+                    physicalReservations,
+                    usePhysicalStorage);
                 lastAffectedItem = queue[i];
                 remainingBudget -= ticketsToSpend;
                 totalSpent += ticketsToSpend;
@@ -664,7 +794,10 @@ namespace Game.Runtime
             ref ResourceExchangeWalletComponent wallet,
             DynamicBuffer<ResourceExchangeQueueComponent> queue,
             DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
-            in ResourceExchangeRequestComponent request)
+            in ResourceExchangeRequestComponent request,
+            EntityManager entityManager,
+            DynamicBuffer<ResourceExchangePhysicalReservationComponent> physicalReservations,
+            bool usePhysicalStorage)
         {
             byte factionId = request.FactionId != 0 ? request.FactionId : enabled.FactionId;
             if (enabled.FactionId != 0 && factionId != enabled.FactionId)
@@ -679,14 +812,32 @@ namespace Game.Runtime
                     continue;
 
                 int refundAmount = CalculateRefundAmount(item);
+                bool physicalInput = usePhysicalStorage &&
+                                     ResourceExchangePhysicalStorageUtilitySystemHelper.IsPhysicalResource(
+                                         item.InputResource);
+                bool physicalOutput = usePhysicalStorage &&
+                                      ResourceExchangePhysicalStorageUtilitySystemHelper.IsPhysicalResource(
+                                          item.OutputResource);
+                if (physicalInput || physicalOutput)
+                {
+                    ResourceExchangePhysicalStorageUtilitySystemHelper.CancelQueueItem(
+                        entityManager,
+                        physicalReservations,
+                        item.QueueItemId,
+                        refundAmount > 0);
+                }
+
                 if (refundAmount > 0)
                 {
-                    ResourceExchangeResourceUtilitySystemHelper.TryRefundReservedInput(
-                        ref economy,
-                        ref materials,
-                        ref wallet,
-                        item.InputResource,
-                        refundAmount);
+                    if (!physicalInput)
+                    {
+                        ResourceExchangeResourceUtilitySystemHelper.TryRefundReservedInput(
+                            ref economy,
+                            ref materials,
+                            ref wallet,
+                            item.InputResource,
+                            refundAmount);
+                    }
                     economyEvents.Add(new ResourceExchangeEconomyEventComponent
                     {
                         QueueItemId = item.QueueItemId,
@@ -1081,7 +1232,10 @@ namespace Game.Runtime
             int queueIndex,
             in ResourceExchangeQueueComponent source,
             in ResourceExchangeRecipeComponent recipe,
-            int rushTickets)
+            int rushTickets,
+            EntityManager entityManager,
+            DynamicBuffer<ResourceExchangePhysicalReservationComponent> physicalReservations,
+            bool usePhysicalStorage)
         {
             ResourceExchangeQueueComponent item = source;
             item.RushTicketsSpent += rushTickets;
@@ -1109,6 +1263,9 @@ namespace Game.Runtime
                     item,
                     results,
                     economyEvents,
+                    entityManager,
+                    physicalReservations,
+                    usePhysicalStorage,
                     out item);
             }
 

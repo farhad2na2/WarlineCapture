@@ -174,6 +174,22 @@ namespace Game.Components
         public uint Version;
     }
 
+    public enum ResourceExchangePhysicalReservationKind : byte
+    {
+        Input = 0,
+        Output = 1
+    }
+
+    [InternalBufferCapacity(8)]
+    public struct ResourceExchangePhysicalReservationComponent : IBufferElementData
+    {
+        public int QueueItemId;
+        public Entity StorageEntity;
+        public ResourceExchangeResourceKind ResourceKind;
+        public ResourceExchangePhysicalReservationKind ReservationKind;
+        public float Amount;
+    }
+
     public struct ResourceExchangeRequestQueueComponent : IComponentData
     {
         public int LastRequestId;

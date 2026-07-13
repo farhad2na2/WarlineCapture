@@ -14,28 +14,28 @@ public sealed class UnitSpatialIndexPerformanceValidation
     private const int TowerCount = 32;
     private const int WarmupIterations = 32;
     private const int MeasuredIterations = 128;
+    private const double MaxAcquisitionMilliseconds = 1.025d;
+    private const double MinimumRelativeImprovementPercent = 10d;
+    private const long MaxPayloadBytes = 256L * 1024L;
     private static int s_benchmarkSink;
 
-    [TestCase(16)]
-    [TestCase(32)]
-    [TestCase(64)]
-    public void AlternatingShadowBenchmark_PreservesResultsAndAllocatesNoManagedMemory(int bucketSize)
+    [Test]
+    public void BoundedLinkedCellBenchmark_BeatsDirectGeometryScanWithoutManagedAllocation()
     {
         using var fixture = new UnitSpatialIndexEquivalenceTests.IndexFixture(
             EntryCount,
             GridSize,
-            bucketSize);
+            GridSize);
         Populate(fixture);
         var origins = new int2[TowerCount];
         for (int i = 0; i < origins.Length; i++)
             origins[i] = new int2(512 + i * 11, 768 + i * 7);
 
         AssertEquivalent(fixture, origins, version: 1u);
-
         for (int i = 0; i < WarmupIterations; i++)
         {
             RunDirect(fixture, origins);
-            RunIndexed(fixture, origins, (uint)i + 1u);
+            RunIndexed(fixture, origins, (uint)i + 2u);
         }
 
         GC.Collect();
@@ -60,24 +60,35 @@ public sealed class UnitSpatialIndexPerformanceValidation
         }
         long allocatedBytes = GC.GetAllocatedBytesForCurrentThread() - allocatedBefore;
 
-        fixture.Rebuild(1000u);
+        fixture.Rebuild(version: 1000u, builtAtElapsedTime: 1000d);
         long payloadBytes =
             (long)fixture.Entries.Length * UnsafeUtility.SizeOf<UnitSpatialIndexEntry>() +
-            (long)fixture.State.BucketCount * UnsafeUtility.SizeOf<UnitSpatialIndexBucketRange>() +
-            (long)fixture.State.BucketReferenceCount * UnsafeUtility.SizeOf<UnitSpatialIndexBucketEntry>();
+            (long)fixture.Heads.Length * UnsafeUtility.SizeOf<UnitSpatialIndexBucketHead>();
+        double tickToMs = 1000d / Stopwatch.Frequency;
+        double directAcquisitionMs = directTicks * tickToMs / MeasuredIterations;
+        double indexedAcquisitionMs = indexedTicks * tickToMs / MeasuredIterations;
+        double relativeImprovementPercent = (directTicks - indexedTicks) * 100d / directTicks;
 
-        Assert.AreEqual(0, allocatedBytes, "The warmed shadow build/query path must not allocate managed memory.");
-        Assert.LessOrEqual(payloadBytes, 256L * 1024L, "The 740-entry shadow payload exceeds the APH-704 memory ceiling.");
+        Assert.AreEqual(0, allocatedBytes, "The warmed fixed-head build/query path must not allocate managed memory.");
+        Assert.AreEqual(18_784L, payloadBytes, "The 740-entry payload must remain 24-byte entries plus 256 integer heads.");
+        Assert.LessOrEqual(payloadBytes, MaxPayloadBytes, "The candidate exceeds the APH-704 payload ceiling.");
         Assert.AreEqual(0, fixture.State.OverflowCount);
         Assert.AreEqual(EntryCount, fixture.State.EntryCount);
+        Assert.AreEqual(UnitSpatialIndexBuildSystem.BucketHeadCount, fixture.State.BucketCount);
         Assert.Greater(directTicks, 0);
         Assert.Greater(indexedTicks, 0);
+        Assert.Less(indexedAcquisitionMs, MaxAcquisitionMilliseconds,
+            "The complete build-plus-query acquisition must remain below the fixed APH-704 gate.");
+        Assert.GreaterOrEqual(relativeImprovementPercent, MinimumRelativeImprovementPercent,
+            "The complete build-plus-query acquisition must improve the direct baseline by at least ten percent.");
 
-        double tickToMs = 1000d / Stopwatch.Frequency;
         Debug.Log(
-            $"[UnitSpatialIndexShadowBenchmark] bucketSize={bucketSize} entries={EntryCount} towers={TowerCount} " +
+            $"[UnitSpatialIndexBoundedBenchmark] bucketSize={UnitSpatialIndexBuildSystem.BucketSizeCells} " +
+            $"heads={UnitSpatialIndexBuildSystem.BucketHeadCount} entries={EntryCount} towers={TowerCount} " +
             $"warmup={WarmupIterations} measured={MeasuredIterations} " +
-            $"directMs={directTicks * tickToMs:0.###} indexedBuildAndQueryMs={indexedTicks * tickToMs:0.###} " +
+            $"directAcquisitionMs={directAcquisitionMs:0.###} " +
+            $"indexedBuildAndQueryAcquisitionMs={indexedAcquisitionMs:0.###} " +
+            $"relativeImprovementPercent={relativeImprovementPercent:0.##} " +
             $"managedBytes={allocatedBytes} payloadBytes={payloadBytes}");
     }
 
@@ -107,16 +118,14 @@ public sealed class UnitSpatialIndexPerformanceValidation
         int checksum = 0;
         for (int i = 0; i < origins.Length; i++)
         {
-            var result = UnitSpatialIndexEquivalenceTests.FindNearestDirect(
-                fixture.Entries.AsNativeArray(),
-                origins[i],
-                rangeCells: 96,
-                FactionIdentity.PlayerFactionId);
-            if (result.Length > 0 && result[0].SourceOrder < 0)
-                throw new InvalidOperationException("Invalid direct benchmark result.");
-            if (result.Length > 0)
-                checksum += result[0].SourceOrder;
+            UnitSpatialIndexEquivalenceTests.NearestFour result =
+                UnitSpatialIndexEquivalenceTests.FindNearestDirect(
+                    fixture.Entries.AsNativeArray(),
+                    origins[i],
+                    rangeCells: 96);
+            checksum += result.Count > 0 ? result.Order0 : 0;
         }
+
         s_benchmarkSink = checksum;
     }
 
@@ -125,21 +134,19 @@ public sealed class UnitSpatialIndexPerformanceValidation
         int2[] origins,
         uint version)
     {
-        fixture.Rebuild(version);
+        fixture.Rebuild(version, builtAtElapsedTime: version);
         UnitSpatialIndexQuery query = fixture.CreateQuery();
         int checksum = 0;
         for (int i = 0; i < origins.Length; i++)
         {
-            var indexed = UnitSpatialIndexEquivalenceTests.FindNearestIndexed(
-                query,
-                origins[i],
-                rangeCells: 96,
-                FactionIdentity.PlayerFactionId);
-            if (indexed.Length > 0 && indexed[0].SourceOrder < 0)
-                throw new InvalidOperationException("Invalid indexed benchmark result.");
-            if (indexed.Length > 0)
-                checksum += indexed[0].SourceOrder;
+            UnitSpatialIndexEquivalenceTests.NearestFour result =
+                UnitSpatialIndexEquivalenceTests.FindNearestIndexed(
+                    query,
+                    origins[i],
+                    rangeCells: 96);
+            checksum += result.Count > 0 ? result.Order0 : 0;
         }
+
         s_benchmarkSink = checksum;
     }
 
@@ -148,23 +155,25 @@ public sealed class UnitSpatialIndexPerformanceValidation
         int2[] origins,
         uint version)
     {
-        fixture.Rebuild(version);
+        fixture.Rebuild(version, builtAtElapsedTime: version);
         UnitSpatialIndexQuery query = fixture.CreateQuery();
         for (int i = 0; i < origins.Length; i++)
         {
-            var direct = UnitSpatialIndexEquivalenceTests.FindNearestDirect(
-                fixture.Entries.AsNativeArray(),
-                origins[i],
-                rangeCells: 96,
-                FactionIdentity.PlayerFactionId);
-            var indexed = UnitSpatialIndexEquivalenceTests.FindNearestIndexed(
-                query,
-                origins[i],
-                rangeCells: 96,
-                FactionIdentity.PlayerFactionId);
-            Assert.AreEqual(direct.Length, indexed.Length);
-            for (int rank = 0; rank < direct.Length; rank++)
-                Assert.AreEqual(direct[rank].SourceOrder, indexed[rank].SourceOrder);
+            UnitSpatialIndexEquivalenceTests.NearestFour direct =
+                UnitSpatialIndexEquivalenceTests.FindNearestDirect(
+                    fixture.Entries.AsNativeArray(),
+                    origins[i],
+                    rangeCells: 96);
+            UnitSpatialIndexEquivalenceTests.NearestFour indexed =
+                UnitSpatialIndexEquivalenceTests.FindNearestIndexed(
+                    query,
+                    origins[i],
+                    rangeCells: 96);
+            Assert.AreEqual(direct.Count, indexed.Count);
+            Assert.AreEqual(direct.Order0, indexed.Order0);
+            Assert.AreEqual(direct.Order1, indexed.Order1);
+            Assert.AreEqual(direct.Order2, indexed.Order2);
+            Assert.AreEqual(direct.Order3, indexed.Order3);
         }
     }
 
@@ -173,25 +182,15 @@ public sealed class UnitSpatialIndexPerformanceValidation
         var random = new Unity.Mathematics.Random(0xA704u);
         for (int i = 0; i < EntryCount; i++)
         {
-            int2 cell = random.NextInt2(int2.zero, new int2(GridSize));
             fixture.Add(new UnitSpatialIndexEntry
             {
                 Entity = new Unity.Entities.Entity { Index = i + 1, Version = 1 },
+                Cell = random.NextInt2(int2.zero, new int2(GridSize)),
                 SourceOrder = i,
-                Cell = cell,
-                Position = new float3(cell.x + 0.5f, 0f, cell.y + 0.5f),
-                SelectionPosition = new float3(cell.x + 0.5f, 0f, cell.y + 0.5f),
-                HealthCurrent = 100,
-                HealthMax = 100,
-                FactionId = (byte)((i & 1) == 0
-                    ? FactionIdentity.EnemyFactionId
-                    : FactionIdentity.PlayerFactionId),
-                Flags = UnitSpatialIndexFlags.HasHealth |
-                        UnitSpatialIndexFlags.HasLocalTransform |
-                        UnitSpatialIndexFlags.HasLocalToWorld |
-                        UnitSpatialIndexFlags.Selectable
+                NextEntryIndex = UnitSpatialIndexBuilder.InvalidEntryIndex
             });
         }
+
         fixture.Rebuild();
     }
 }

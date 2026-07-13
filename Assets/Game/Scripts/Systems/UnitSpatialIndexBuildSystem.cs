@@ -3,7 +3,6 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Transforms;
 
 namespace Game.Runtime
 {
@@ -19,83 +18,38 @@ namespace Game.Runtime
     [UpdateBefore(typeof(VisibleUnitSelectionCandidateSystem))]
     public partial struct UnitSpatialIndexBuildSystem : ISystem
     {
-        public const int DefaultBucketSizeCells = 32;
+        public const int BucketSizeCells = 128;
+        public const int BucketHeadCount = 256;
         public const int MaxEntries = 2048;
-        public const int MaxBuckets = 4096;
+        public const double RefreshIntervalSeconds = 0.12d;
 
         private Entity _indexEntity;
         private EntityQuery _indexQuery;
-        private ComponentLookup<UnitHealth> _healthLookup;
-        private ComponentLookup<LocalTransform> _localTransformLookup;
-        private ComponentLookup<LocalToWorld> _localToWorldLookup;
-        private ComponentLookup<UnitAirMovement> _airMovementLookup;
-        private ComponentLookup<DebugFireTargetTag> _debugTargetLookup;
-        private ComponentLookup<RuntimeBuildingCombatTag> _runtimeBuildingLookup;
-        private ComponentLookup<StaticGridBlocker> _staticGridBlockerLookup;
-        private ComponentLookup<UnitMovementBehavior> _movementBehaviorLookup;
-        private ComponentLookup<UnitSourcePrefabKey> _sourcePrefabKeyLookup;
-        private ComponentLookup<UnitFootprint> _footprintLookup;
-        private ComponentLookup<UnitAttack> _attackLookup;
-        private ComponentLookup<UnitCombat> _combatLookup;
-        private ComponentLookup<UnitResourceHauler> _resourceHaulerLookup;
-        private ComponentLookup<FuelLogisticsOilSourceTag> _oilSourceLookup;
-        private ComponentLookup<FuelLogisticsRefineryInputTag> _refineryInputLookup;
-        private ComponentLookup<FuelLogisticsRefineryOutputTag> _refineryOutputLookup;
-        private ComponentLookup<FuelLogisticsFuelStorageTag> _fuelStorageLookup;
-        private ComponentLookup<UnitMove> _moveLookup;
-        private ComponentLookup<UnitSpawnTransitTag> _spawnTransitLookup;
-        private ComponentLookup<UnitSelectionHitbox> _selectionHitboxLookup;
+        private double _nextRefreshTime;
 
         public void OnCreate(ref SystemState state)
         {
             _indexQuery = state.GetEntityQuery(
                 ComponentType.ReadWrite<UnitSpatialIndexState>(),
                 ComponentType.ReadWrite<UnitSpatialIndexEntry>(),
-                ComponentType.ReadWrite<UnitSpatialIndexBucketRange>(),
-                ComponentType.ReadWrite<UnitSpatialIndexBucketEntry>());
+                ComponentType.ReadWrite<UnitSpatialIndexBucketHead>());
             using (var ecb = new EntityCommandBuffer(Allocator.Temp))
             {
                 Entity indexEntity = ecb.CreateEntity();
                 ecb.AddComponent(indexEntity, new UnitSpatialIndexState());
                 ecb.AddBuffer<UnitSpatialIndexEntry>(indexEntity);
-                ecb.AddBuffer<UnitSpatialIndexBucketRange>(indexEntity);
-                ecb.AddBuffer<UnitSpatialIndexBucketEntry>(indexEntity);
+                ecb.AddBuffer<UnitSpatialIndexBucketHead>(indexEntity);
                 ecb.Playback(state.EntityManager);
             }
+
             _indexEntity = _indexQuery.GetSingletonEntity();
             DynamicBuffer<UnitSpatialIndexEntry> entries =
                 state.EntityManager.GetBuffer<UnitSpatialIndexEntry>(_indexEntity);
-            DynamicBuffer<UnitSpatialIndexBucketRange> ranges =
-                state.EntityManager.GetBuffer<UnitSpatialIndexBucketRange>(_indexEntity);
-            DynamicBuffer<UnitSpatialIndexBucketEntry> bucketEntries =
-                state.EntityManager.GetBuffer<UnitSpatialIndexBucketEntry>(_indexEntity);
+            DynamicBuffer<UnitSpatialIndexBucketHead> heads =
+                state.EntityManager.GetBuffer<UnitSpatialIndexBucketHead>(_indexEntity);
             entries.Capacity = MaxEntries;
-            ranges.Capacity = MaxBuckets;
-            bucketEntries.Capacity = MaxEntries;
-            ranges.ResizeUninitialized(MaxBuckets);
-            bucketEntries.ResizeUninitialized(MaxEntries);
-            UnitSpatialIndexBuilder.ClearRanges(ranges, MaxBuckets);
-
-            _healthLookup = state.GetComponentLookup<UnitHealth>(true);
-            _localTransformLookup = state.GetComponentLookup<LocalTransform>(true);
-            _localToWorldLookup = state.GetComponentLookup<LocalToWorld>(true);
-            _airMovementLookup = state.GetComponentLookup<UnitAirMovement>(true);
-            _debugTargetLookup = state.GetComponentLookup<DebugFireTargetTag>(true);
-            _runtimeBuildingLookup = state.GetComponentLookup<RuntimeBuildingCombatTag>(true);
-            _staticGridBlockerLookup = state.GetComponentLookup<StaticGridBlocker>(true);
-            _movementBehaviorLookup = state.GetComponentLookup<UnitMovementBehavior>(true);
-            _sourcePrefabKeyLookup = state.GetComponentLookup<UnitSourcePrefabKey>(true);
-            _footprintLookup = state.GetComponentLookup<UnitFootprint>(true);
-            _attackLookup = state.GetComponentLookup<UnitAttack>(true);
-            _combatLookup = state.GetComponentLookup<UnitCombat>(true);
-            _resourceHaulerLookup = state.GetComponentLookup<UnitResourceHauler>(true);
-            _oilSourceLookup = state.GetComponentLookup<FuelLogisticsOilSourceTag>(true);
-            _refineryInputLookup = state.GetComponentLookup<FuelLogisticsRefineryInputTag>(true);
-            _refineryOutputLookup = state.GetComponentLookup<FuelLogisticsRefineryOutputTag>(true);
-            _fuelStorageLookup = state.GetComponentLookup<FuelLogisticsFuelStorageTag>(true);
-            _moveLookup = state.GetComponentLookup<UnitMove>(true);
-            _spawnTransitLookup = state.GetComponentLookup<UnitSpawnTransitTag>(true);
-            _selectionHitboxLookup = state.GetComponentLookup<UnitSelectionHitbox>(true);
+            heads.ResizeUninitialized(BucketHeadCount);
+            UnitSpatialIndexBuilder.ClearHeads(heads);
             state.RequireForUpdate<GridConfig>();
         }
 
@@ -112,295 +66,178 @@ namespace Game.Runtime
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            UpdateLookups(ref state);
+            double elapsedTime = SystemAPI.Time.ElapsedTime;
+            if (elapsedTime < _nextRefreshTime)
+                return;
+
+            _nextRefreshTime = elapsedTime + RefreshIntervalSeconds;
             GridConfig grid = SystemAPI.GetSingleton<GridConfig>();
             DynamicBuffer<UnitSpatialIndexEntry> entries =
                 state.EntityManager.GetBuffer<UnitSpatialIndexEntry>(_indexEntity);
-            DynamicBuffer<UnitSpatialIndexBucketRange> ranges =
-                state.EntityManager.GetBuffer<UnitSpatialIndexBucketRange>(_indexEntity);
-            DynamicBuffer<UnitSpatialIndexBucketEntry> bucketEntries =
-                state.EntityManager.GetBuffer<UnitSpatialIndexBucketEntry>(_indexEntity);
-            UnitSpatialIndexState indexState = state.EntityManager.GetComponentData<UnitSpatialIndexState>(_indexEntity);
+            DynamicBuffer<UnitSpatialIndexBucketHead> heads =
+                state.EntityManager.GetBuffer<UnitSpatialIndexBucketHead>(_indexEntity);
+            UnitSpatialIndexState previousState =
+                state.EntityManager.GetComponentData<UnitSpatialIndexState>(_indexEntity);
+
             entries.Clear();
-            int overflowCount = 0;
-            int sourceOrder = 0;
-
-            foreach (var (faction, unitGrid, entity) in
-                     SystemAPI.Query<RefRO<Faction>, RefRO<UnitGrid>>().WithEntityAccess())
-            {
-                if (entries.Length >= entries.Capacity)
-                {
-                    overflowCount++;
-                    sourceOrder++;
-                    continue;
-                }
-
-                entries.Add(CreateEntry(entity, sourceOrder++, faction.ValueRO, unitGrid.ValueRO, grid));
-            }
-
-            UnitSpatialIndexBuilder.BuildBuckets(
-                entries,
-                ranges,
-                bucketEntries,
+            UnitSpatialIndexBuilder.ClearHeads(heads);
+            bool layoutValid = UnitSpatialIndexBuilder.TryGetBucketLayout(
                 grid.Width,
                 grid.Height,
-                DefaultBucketSizeCells,
-                overflowCount,
-                indexState.Version + 1u,
-                out indexState);
-            SystemAPI.GetSingletonRW<UnitSpatialIndexState>().ValueRW = indexState;
-        }
+                out int bucketCountX,
+                out int bucketCountY,
+                out int bucketCount);
+            int sourceOrder = 0;
+            int overflowCount = 0;
 
-        private void UpdateLookups(ref SystemState state)
-        {
-            _healthLookup.Update(ref state);
-            _localTransformLookup.Update(ref state);
-            _localToWorldLookup.Update(ref state);
-            _airMovementLookup.Update(ref state);
-            _debugTargetLookup.Update(ref state);
-            _runtimeBuildingLookup.Update(ref state);
-            _staticGridBlockerLookup.Update(ref state);
-            _movementBehaviorLookup.Update(ref state);
-            _sourcePrefabKeyLookup.Update(ref state);
-            _footprintLookup.Update(ref state);
-            _attackLookup.Update(ref state);
-            _combatLookup.Update(ref state);
-            _resourceHaulerLookup.Update(ref state);
-            _oilSourceLookup.Update(ref state);
-            _refineryInputLookup.Update(ref state);
-            _refineryOutputLookup.Update(ref state);
-            _fuelStorageLookup.Update(ref state);
-            _moveLookup.Update(ref state);
-            _spawnTransitLookup.Update(ref state);
-            _selectionHitboxLookup.Update(ref state);
-        }
-
-        private UnitSpatialIndexEntry CreateEntry(
-            Entity entity,
-            int sourceOrder,
-            in Faction faction,
-            in UnitGrid unitGrid,
-            in GridConfig grid)
-        {
-            UnitSpatialIndexFlags flags = UnitSpatialIndexFlags.None;
-            UnitHealth health = default;
-            if (_healthLookup.HasComponent(entity))
+            if (layoutValid)
             {
-                health = _healthLookup[entity];
-                flags |= UnitSpatialIndexFlags.HasHealth;
+                foreach (var (unitGrid, entity) in
+                         SystemAPI.Query<RefRO<UnitGrid>>().WithEntityAccess())
+                {
+                    if (!UnitSpatialIndexBuilder.TryInsert(
+                            entries,
+                            heads,
+                            entity,
+                            unitGrid.ValueRO.Cell,
+                            sourceOrder,
+                            grid.Width,
+                            grid.Height,
+                            bucketCountX))
+                    {
+                        overflowCount++;
+                    }
+
+                    sourceOrder++;
+                }
             }
 
-            float3 fallbackPosition = grid.Origin + new float3(
-                (unitGrid.Cell.x + 0.5f) * grid.CellSize,
-                0f,
-                (unitGrid.Cell.y + 0.5f) * grid.CellSize);
-            float3 position = fallbackPosition;
-            float3 selectionPosition = fallbackPosition;
-            if (_localTransformLookup.HasComponent(entity))
+            var indexState = new UnitSpatialIndexState
             {
-                position = _localTransformLookup[entity].Position;
-                flags |= UnitSpatialIndexFlags.HasLocalTransform;
-            }
-            if (_localToWorldLookup.HasComponent(entity))
-            {
-                selectionPosition = _localToWorldLookup[entity].Position;
-                flags |= UnitSpatialIndexFlags.HasLocalToWorld;
-            }
-            else
-            {
-                selectionPosition = position;
-            }
-
-            flags |= FlagIf(_airMovementLookup.HasComponent(entity), UnitSpatialIndexFlags.Air);
-            flags |= FlagIf(_debugTargetLookup.HasComponent(entity), UnitSpatialIndexFlags.DebugTarget);
-            flags |= FlagIf(_runtimeBuildingLookup.HasComponent(entity), UnitSpatialIndexFlags.RuntimeBuilding);
-            flags |= FlagIf(_staticGridBlockerLookup.HasComponent(entity), UnitSpatialIndexFlags.StaticGridBlocker);
-            flags |= FlagIf(_attackLookup.HasComponent(entity), UnitSpatialIndexFlags.CanAttack);
-            flags |= FlagIf(_combatLookup.HasComponent(entity), UnitSpatialIndexFlags.HasCombat);
-            flags |= FlagIf(_resourceHaulerLookup.HasComponent(entity), UnitSpatialIndexFlags.ResourceHauler);
-            flags |= FlagIf(_oilSourceLookup.HasComponent(entity), UnitSpatialIndexFlags.FuelOilSource);
-            flags |= FlagIf(_refineryInputLookup.HasComponent(entity), UnitSpatialIndexFlags.FuelRefineryInput);
-            flags |= FlagIf(_refineryOutputLookup.HasComponent(entity), UnitSpatialIndexFlags.FuelRefineryOutput);
-            flags |= FlagIf(_fuelStorageLookup.HasComponent(entity), UnitSpatialIndexFlags.FuelStorage);
-            flags |= FlagIf(_spawnTransitLookup.HasComponent(entity), UnitSpatialIndexFlags.SpawnTransit);
-            flags |= FlagIf(_selectionHitboxLookup.HasComponent(entity), UnitSpatialIndexFlags.HasSelectionHitbox);
-
-            bool hasMovementBehavior = _movementBehaviorLookup.HasComponent(entity);
-            bool groundVehicle = hasMovementBehavior && _movementBehaviorLookup[entity].UsesVehicleMotion != 0;
-            flags |= FlagIf(groundVehicle, UnitSpatialIndexFlags.GroundVehicle);
-            bool selectable = _moveLookup.HasComponent(entity) && !_staticGridBlockerLookup.HasComponent(entity);
-            flags |= FlagIf(selectable, UnitSpatialIndexFlags.Selectable);
-            flags |= FlagIf(IsSelectionVehicle(entity, groundVehicle), UnitSpatialIndexFlags.SelectionVehicle);
-
-            return new UnitSpatialIndexEntry
-            {
-                Entity = entity,
-                SourceOrder = sourceOrder,
-                Cell = unitGrid.Cell,
-                Position = position,
-                SelectionPosition = selectionPosition,
-                HealthCurrent = health.Current,
-                HealthMax = health.Max,
-                FactionId = faction.Id,
-                Flags = flags
+                Version = previousState.Version + 1u,
+                BuiltAtElapsedTime = elapsedTime,
+                EntryCount = entries.Length,
+                OverflowCount = overflowCount,
+                GridWidth = math.max(1, grid.Width),
+                GridHeight = math.max(1, grid.Height),
+                BucketCountX = bucketCountX,
+                BucketCountY = bucketCountY,
+                BucketCount = bucketCount,
+                Ready = layoutValid ? (byte)1 : (byte)0
             };
-        }
-
-        private bool IsSelectionVehicle(Entity entity, bool fallback)
-        {
-            if (_sourcePrefabKeyLookup.HasComponent(entity))
-            {
-                FixedString64Bytes key = _sourcePrefabKeyLookup[entity].Value;
-                if (HasUnitPrefixIgnoreCase(key, (byte)'V', (byte)'e', (byte)'h'))
-                    return true;
-                if (HasUnitPrefixIgnoreCase(key, (byte)'C', (byte)'h', (byte)'r'))
-                    return false;
-            }
-
-            if (_footprintLookup.HasComponent(entity) && _movementBehaviorLookup.HasComponent(entity))
-            {
-                return UnitVehicleMovementUtility.IsVehicle(
-                    _footprintLookup[entity],
-                    _movementBehaviorLookup[entity]);
-            }
-
-            return fallback;
-        }
-
-        private static UnitSpatialIndexFlags FlagIf(bool condition, UnitSpatialIndexFlags flag)
-        {
-            return condition ? flag : UnitSpatialIndexFlags.None;
-        }
-
-        private static bool HasUnitPrefixIgnoreCase(
-            FixedString64Bytes value,
-            byte type0,
-            byte type1,
-            byte type2)
-        {
-            return value.Length >= 9 &&
-                   ToLowerAscii(value[0]) == (byte)'u' &&
-                   ToLowerAscii(value[1]) == (byte)'n' &&
-                   ToLowerAscii(value[2]) == (byte)'i' &&
-                   ToLowerAscii(value[3]) == (byte)'t' &&
-                   value[4] == (byte)'_' &&
-                   ToLowerAscii(value[5]) == ToLowerAscii(type0) &&
-                   ToLowerAscii(value[6]) == ToLowerAscii(type1) &&
-                   ToLowerAscii(value[7]) == ToLowerAscii(type2) &&
-                   value[8] == (byte)'_';
-        }
-
-        private static byte ToLowerAscii(byte value)
-        {
-            return value >= (byte)'A' && value <= (byte)'Z'
-                ? (byte)(value + 32)
-                : value;
+            SystemAPI.GetSingletonRW<UnitSpatialIndexState>().ValueRW = indexState;
         }
     }
 
     internal static class UnitSpatialIndexBuilder
     {
-        public static void BuildBuckets(
-            DynamicBuffer<UnitSpatialIndexEntry> entries,
-            DynamicBuffer<UnitSpatialIndexBucketRange> ranges,
-            DynamicBuffer<UnitSpatialIndexBucketEntry> bucketEntries,
+        public const int InvalidEntryIndex = -1;
+
+        public static bool TryGetBucketLayout(
             int gridWidth,
             int gridHeight,
-            int bucketSizeCells,
-            int overflowCount,
-            uint version,
-            out UnitSpatialIndexState state)
+            out int bucketCountX,
+            out int bucketCountY,
+            out int bucketCount)
         {
-            int safeWidth = math.max(1, gridWidth);
-            int safeHeight = math.max(1, gridHeight);
-            int safeBucketSize = math.max(1, bucketSizeCells);
-            int bucketCountX = (safeWidth + safeBucketSize - 1) / safeBucketSize;
-            int bucketCountY = (safeHeight + safeBucketSize - 1) / safeBucketSize;
-            int requiredBucketCount = bucketCountX * bucketCountY;
-            int acceptedEntryCount = math.min(entries.Length, bucketEntries.Length);
-            bool capacityValid = requiredBucketCount <= ranges.Length;
-
-            int clearCount = math.min(requiredBucketCount, ranges.Length);
-            ClearRanges(ranges, clearCount);
-            if (!capacityValid)
+            if (gridWidth <= 0 || gridHeight <= 0)
             {
-                state = new UnitSpatialIndexState
-                {
-                    Version = version,
-                    EntryCount = entries.Length,
-                    OverflowCount = overflowCount + entries.Length,
-                    GridWidth = safeWidth,
-                    GridHeight = safeHeight,
-                    BucketSizeCells = safeBucketSize,
-                    BucketCountX = bucketCountX,
-                    BucketCountY = bucketCountY,
-                    BucketCount = requiredBucketCount,
-                    Ready = 0
-                };
-                return;
+                bucketCountX = 0;
+                bucketCountY = 0;
+                bucketCount = 0;
+                return false;
             }
 
-            for (int i = 0; i < acceptedEntryCount; i++)
-            {
-                int bucketIndex = BucketIndex(entries[i].Cell, safeWidth, safeHeight, safeBucketSize, bucketCountX);
-                UnitSpatialIndexBucketRange range = ranges[bucketIndex];
-                range.Count++;
-                ranges[bucketIndex] = range;
-            }
-
-            int start = 0;
-            for (int i = 0; i < requiredBucketCount; i++)
-            {
-                UnitSpatialIndexBucketRange range = ranges[i];
-                range.Start = start;
-                range.WriteCursor = 0;
-                start += range.Count;
-                ranges[i] = range;
-            }
-
-            for (int i = 0; i < acceptedEntryCount; i++)
-            {
-                int bucketIndex = BucketIndex(entries[i].Cell, safeWidth, safeHeight, safeBucketSize, bucketCountX);
-                UnitSpatialIndexBucketRange range = ranges[bucketIndex];
-                int destination = range.Start + range.WriteCursor;
-                bucketEntries[destination] = new UnitSpatialIndexBucketEntry { EntryIndex = i };
-                range.WriteCursor++;
-                ranges[bucketIndex] = range;
-            }
-
-            state = new UnitSpatialIndexState
-            {
-                Version = version,
-                EntryCount = entries.Length,
-                BucketReferenceCount = acceptedEntryCount,
-                OverflowCount = overflowCount + math.max(0, entries.Length - acceptedEntryCount),
-                GridWidth = safeWidth,
-                GridHeight = safeHeight,
-                BucketSizeCells = safeBucketSize,
-                BucketCountX = bucketCountX,
-                BucketCountY = bucketCountY,
-                BucketCount = requiredBucketCount,
-                Ready = 1
-            };
+            bucketCountX = (gridWidth + UnitSpatialIndexBuildSystem.BucketSizeCells - 1) /
+                           UnitSpatialIndexBuildSystem.BucketSizeCells;
+            bucketCountY = (gridHeight + UnitSpatialIndexBuildSystem.BucketSizeCells - 1) /
+                           UnitSpatialIndexBuildSystem.BucketSizeCells;
+            long requiredBucketCount = (long)bucketCountX * bucketCountY;
+            bucketCount = requiredBucketCount <= int.MaxValue ? (int)requiredBucketCount : int.MaxValue;
+            return requiredBucketCount <= UnitSpatialIndexBuildSystem.BucketHeadCount;
         }
 
-        public static void ClearRanges(DynamicBuffer<UnitSpatialIndexBucketRange> ranges, int count)
+        public static void ClearHeads(DynamicBuffer<UnitSpatialIndexBucketHead> heads)
         {
-            int clearCount = math.min(math.max(0, count), ranges.Length);
+            int clearCount = math.min(UnitSpatialIndexBuildSystem.BucketHeadCount, heads.Length);
             for (int i = 0; i < clearCount; i++)
-                ranges[i] = default;
+                heads[i] = new UnitSpatialIndexBucketHead { EntryIndex = InvalidEntryIndex };
+        }
+
+        public static bool TryInsert(
+            DynamicBuffer<UnitSpatialIndexEntry> entries,
+            DynamicBuffer<UnitSpatialIndexBucketHead> heads,
+            Entity entity,
+            int2 cell,
+            int sourceOrder,
+            int gridWidth,
+            int gridHeight,
+            int bucketCountX)
+        {
+            if (entries.Length >= entries.Capacity ||
+                heads.Length < UnitSpatialIndexBuildSystem.BucketHeadCount ||
+                bucketCountX <= 0)
+            {
+                return false;
+            }
+
+            int entryIndex = entries.Length;
+            entries.Add(new UnitSpatialIndexEntry
+            {
+                Entity = entity,
+                Cell = cell,
+                SourceOrder = sourceOrder,
+                NextEntryIndex = InvalidEntryIndex
+            });
+            return TryLinkEntry(
+                entries,
+                heads,
+                entryIndex,
+                gridWidth,
+                gridHeight,
+                bucketCountX);
+        }
+
+        public static bool TryLinkEntry(
+            DynamicBuffer<UnitSpatialIndexEntry> entries,
+            DynamicBuffer<UnitSpatialIndexBucketHead> heads,
+            int entryIndex,
+            int gridWidth,
+            int gridHeight,
+            int bucketCountX)
+        {
+            if ((uint)entryIndex >= (uint)entries.Length ||
+                heads.Length < UnitSpatialIndexBuildSystem.BucketHeadCount ||
+                bucketCountX <= 0)
+            {
+                return false;
+            }
+
+            UnitSpatialIndexEntry entry = entries[entryIndex];
+            int bucketIndex = BucketIndex(entry.Cell, gridWidth, gridHeight, bucketCountX);
+            if ((uint)bucketIndex >= (uint)UnitSpatialIndexBuildSystem.BucketHeadCount)
+                return false;
+
+            UnitSpatialIndexBucketHead head = heads[bucketIndex];
+            entry.NextEntryIndex = head.EntryIndex;
+            entries[entryIndex] = entry;
+            head.EntryIndex = entryIndex;
+            heads[bucketIndex] = head;
+            return true;
         }
 
         private static int BucketIndex(
             int2 cell,
             int gridWidth,
             int gridHeight,
-            int bucketSize,
             int bucketCountX)
         {
-            int x = math.clamp(cell.x, 0, gridWidth - 1) / bucketSize;
-            int y = math.clamp(cell.y, 0, gridHeight - 1) / bucketSize;
-            return y * bucketCountX + x;
+            int2 clampedCell = math.clamp(
+                cell,
+                int2.zero,
+                new int2(math.max(0, gridWidth - 1), math.max(0, gridHeight - 1)));
+            int2 bucket = clampedCell / UnitSpatialIndexBuildSystem.BucketSizeCells;
+            return bucket.y * bucketCountX + bucket.x;
         }
     }
 }

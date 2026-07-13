@@ -3278,7 +3278,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 8384749091806373520}
+  m_TargetGraphic: {fileID: 4045673363490697777}
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
@@ -3295,8 +3295,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIShellRouteButtonView
   intent: 0
-  route: 1
-  pushHistory: 0
+  route: 3
+  pushHistory: 1
 --- !u!1 &1102363950445185618
 GameObject:
   m_ObjectHideFlags: 0

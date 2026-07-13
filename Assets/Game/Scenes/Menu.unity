@@ -2167,6 +2167,7 @@ MonoBehaviour:
   loadingContentPrefab: {fileID: 3981841928839128331, guid: 1e63ba198df9a4dfebad255997466d77, type: 3}
   mainMenuContentPrefab: {fileID: 1175976757770164416, guid: 28a740560e67f41888ea431b45bb7d33, type: 3}
   commanderProfileContentPrefab: {fileID: 8407661843437986972, guid: 79afaec0dd6b448b080f049c0be5f8db, type: 3}
+  skirmishSetupContentPrefab: {fileID: 964225400410988824, guid: 55d7c0139800d4cde8c2e97e255e423c, type: 3}
   armoryContentPrefab: {fileID: 9110356883670810265, guid: a7e0ec72317936b4d9150a40a0699a66, type: 3}
   matchHudContentPrefab: {fileID: 8032040054424849745, guid: 19831a366284140cbabb9f7e0acc1858, type: 3}
   buildDrawerPopupPrefab: {fileID: 6681354990523575241, guid: f8fdfa57f1e92e74dbc1987ff731b3b3, type: 3}

@@ -92,7 +92,7 @@ namespace Game.Runtime
                     (grid, origin, footprint) => source.BuildingPlacementInvalidCellCacheCompositionSystemHelper.HasRoadInFootprint(source.BuildingPlacementStartupSystemHelper, grid, origin, footprint)),
                 (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
                     tryGetGridData(source, out gridEntity, out grid, out roads, out blockerData),
-                BuildingPlacementGridCameraSystemHelper.GetPlacementFootprint,
+                source.BuildingPlacementGridCameraSystemHelper.GetPlacementFootprint,
                 (definition, origin, grid, rotateVertical) => getEffectivePlacementRect(source, definition, origin, grid, rotateVertical),
                 (definition, origin, footprint, rotateVertical, grid, roads, blockerData) => source.BuildingPlacementAdapterCompositionSystemHelper.IsPlacementValid(
                     source,
@@ -114,7 +114,7 @@ namespace Game.Runtime
                     definition,
                     grid,
                     rotateVertical,
-                    BuildingPlacementGridCameraSystemHelper.GetPlacementFootprint,
+                    source.BuildingPlacementGridCameraSystemHelper.GetPlacementFootprint,
                     (origin, footprint, gridConfig) => source.BuildingPlacementGridCameraSystemHelper.GetFootprintCenter(origin, footprint, gridConfig, source.BuildingPlacementStartupSystemHelper.BuildPlaneY),
                     (Vector2Int origin, BuildingDefinition definition, out bool gateVertical) => source.BuildingPlacementAdapterCompositionSystemHelper.TryAlignGateToNearbyWall(
                         source,

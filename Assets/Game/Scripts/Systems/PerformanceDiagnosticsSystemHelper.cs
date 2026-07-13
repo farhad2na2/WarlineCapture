@@ -138,6 +138,7 @@ namespace Game.Runtime
 
             bool canReportFrameGap =
                 gameplayActive &&
+                !PerformanceDiagnosticsCapturePolicy.SuppressLogging &&
                 applicationFocused &&
                 !_applicationPaused &&
                 now >= _suppressFrameGapUntilTimestamp;
@@ -242,7 +243,8 @@ namespace Game.Runtime
             double now = UnityEngine.Time.realtimeSinceStartupAsDouble;
             double totalSeconds = now - _frameStartTimestamp;
             RecordUpdateFrameStats(totalSeconds);
-            if (gameplayActive && (hadSlowStep || totalSeconds >= FreezeLogThresholdSeconds))
+            if (!PerformanceDiagnosticsCapturePolicy.SuppressLogging &&
+                gameplayActive && (hadSlowStep || totalSeconds >= FreezeLogThresholdSeconds))
             {
                 if (_freezeLogBuilder.Length > 0)
                     _freezeLogBuilder.Append(", ");
@@ -283,14 +285,14 @@ namespace Game.Runtime
         public void EndLateUpdate(double start, int impostorCount)
         {
             double elapsed = UnityEngine.Time.realtimeSinceStartupAsDouble - start;
-            if (elapsed >= FreezeLogThresholdSeconds)
+            if (!PerformanceDiagnosticsCapturePolicy.SuppressLogging && elapsed >= FreezeLogThresholdSeconds)
                 LogNoStackTrace($"[FreezeDetect] LateUpdate hitch frame={UnityEngine.Time.frameCount} UnitRenderLate={FormatMilliseconds(elapsed)}ms impostors={impostorCount} GC={BuildGcDeltaString()}");
         }
 
         public void EndOnGui(double start)
         {
             double elapsed = UnityEngine.Time.realtimeSinceStartupAsDouble - start;
-            if (elapsed >= FreezeLogThresholdSeconds)
+            if (!PerformanceDiagnosticsCapturePolicy.SuppressLogging && elapsed >= FreezeLogThresholdSeconds)
                 LogNoStackTrace($"[FreezeDetect] OnGUI hitch frame={UnityEngine.Time.frameCount} Total={FormatMilliseconds(elapsed)}ms GC={BuildGcDeltaString()}");
         }
 
@@ -584,6 +586,12 @@ namespace Game.Runtime
             if (!_enableFrameRateDiagnostics)
                 return;
 
+            if (PerformanceDiagnosticsCapturePolicy.SuppressLogging)
+            {
+                ResetFrameRateDiagnosticWindow(now);
+                return;
+            }
+
             if (_applicationPaused || (!Application.isFocused && !Application.isBatchMode))
             {
                 ResetFrameRateDiagnosticWindow(now);
@@ -741,7 +749,8 @@ namespace Game.Runtime
             bool playRequested,
             bool simulationActive)
         {
-            if (!_enableSlowFrameDiagnostics || totalSeconds < SlowFrameDiagThresholdSeconds || now < _nextSlowFrameDiagTimestamp)
+            if (PerformanceDiagnosticsCapturePolicy.SuppressLogging || !_enableSlowFrameDiagnostics ||
+                totalSeconds < SlowFrameDiagThresholdSeconds || now < _nextSlowFrameDiagTimestamp)
                 return;
             if (!Application.isFocused && !Application.isBatchMode)
                 return;

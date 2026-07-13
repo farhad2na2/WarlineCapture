@@ -32,6 +32,10 @@ public sealed class PerformanceDiagnosticsSystemHelperAllocationTests
                 nameof(ReferenceResolverReturnsInitializedMenuDiagnostics),
                 test => test.ReferenceResolverReturnsInitializedMenuDiagnostics(),
                 ref passed);
+            RunValidationStep(
+                nameof(CapturePolicySuppressesAndRestoresDiagnosticLogging),
+                test => test.CapturePolicySuppressesAndRestoresDiagnosticLogging(),
+                ref passed);
 
             UnityEngine.Debug.Log($"[PerformanceDiagnosticsAllocationValidation] result=Passed tests={passed}");
         }
@@ -129,6 +133,32 @@ public sealed class PerformanceDiagnosticsSystemHelperAllocationTests
         finally
         {
             InvokeLifecycle(view, "OnDisable");
+        }
+    }
+
+    [Test]
+    public void CapturePolicySuppressesAndRestoresDiagnosticLogging()
+    {
+        PerformanceDiagnosticsSystemHelper diagnostics = new();
+        bool logged = false;
+        void OnLog(string condition, string stackTrace, LogType type) =>
+            logged |= condition.StartsWith("[FreezeDetect] LateUpdate hitch", StringComparison.Ordinal);
+
+        Application.logMessageReceived += OnLog;
+        try
+        {
+            PerformanceDiagnosticsCapturePolicy.SetSuppressLogging(true);
+            diagnostics.EndLateUpdate(Time.realtimeSinceStartupAsDouble - 1d, 0);
+            Assert.IsFalse(logged);
+
+            PerformanceDiagnosticsCapturePolicy.SetSuppressLogging(false);
+            diagnostics.EndLateUpdate(Time.realtimeSinceStartupAsDouble - 1d, 0);
+            Assert.IsTrue(logged);
+        }
+        finally
+        {
+            PerformanceDiagnosticsCapturePolicy.SetSuppressLogging(false);
+            Application.logMessageReceived -= OnLog;
         }
     }
 

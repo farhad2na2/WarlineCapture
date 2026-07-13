@@ -480,6 +480,7 @@ namespace Game.Components
         public Entity PlanEntity;
         public int EntryIndex;
         public int Cost;
+        public int MaterialsCost;
         public FixedString128Bytes DisplayName;
         public int BuildingRuntimeId;
         public int2 ActualOrigin;

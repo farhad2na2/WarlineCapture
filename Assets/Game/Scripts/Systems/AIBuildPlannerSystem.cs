@@ -19,6 +19,7 @@ namespace Game.Runtime
         private EntityQuery _gridQuery;
         private EntityTypeHandle _entityType;
         private ComponentTypeHandle<FactionEconomy> _economyType;
+        private ComponentTypeHandle<FactionTacticalMaterialsComponent> _materialsType;
 
         internal enum BuildDecisionResult : byte
         {
@@ -26,7 +27,10 @@ namespace Game.Runtime
             Pending = 1,
             MissingConfig = 2,
             InsufficientFunds = 3,
-            Request = 4
+            InsufficientMaterials = 4,
+            InsufficientCreditsAndMaterials = 5,
+            InvalidResources = 6,
+            Request = 7
         }
 
         internal struct BuildDecision
@@ -36,6 +40,7 @@ namespace Game.Runtime
             public FixedString128Bytes BuildingId;
             public BuildingConfiguredSpawnableReadModel Spawnable;
             public int Cost;
+            public int MaterialsCost;
             public int2 PreferredOrigin;
         }
 
@@ -52,13 +57,17 @@ namespace Game.Runtime
                 ComponentType.ReadOnly<AIDiagnosticLogQueueComponent>(),
                 ComponentType.ReadWrite<AIDiagnosticLogComponent>());
             _planQuery = state.GetEntityQuery(ComponentType.ReadWrite<AIBuildPlan>(), ComponentType.ReadOnly<AIBuildPlanEntry>());
-            _economyQuery = state.GetEntityQuery(ComponentType.ReadOnly<FactionEconomy>());
+            _economyQuery = state.GetEntityQuery(
+                ComponentType.ReadOnly<FactionEconomy>(),
+                ComponentType.ReadOnly<FactionTacticalMaterialsComponent>());
             _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
             _entityType = state.GetEntityTypeHandle();
             _economyType = state.GetComponentTypeHandle<FactionEconomy>(true);
+            _materialsType = state.GetComponentTypeHandle<FactionTacticalMaterialsComponent>(true);
             state.RequireForUpdate(_buildingRuntimeBoundaryQuery);
             state.RequireForUpdate<AIBuildPlan>();
             state.RequireForUpdate<FactionEconomy>();
+            state.RequireForUpdate<FactionTacticalMaterialsComponent>();
             state.RequireForUpdate(_gridQuery);
             state.RequireForUpdate<RuntimeGameplayStateComponent>();
         }
@@ -84,6 +93,7 @@ namespace Game.Runtime
             EntityManager em = state.EntityManager;
             _entityType.Update(ref state);
             _economyType.Update(ref state);
+            _materialsType.Update(ref state);
             using NativeArray<ArchetypeChunk> planChunks = _planQuery.ToArchetypeChunkArray(Allocator.Temp);
             using NativeList<Entity> planEntities = new(_planQuery.CalculateEntityCount(), Allocator.Temp);
             for (int chunkIndex = 0; chunkIndex < planChunks.Length; chunkIndex++)
@@ -107,9 +117,26 @@ namespace Game.Runtime
 
                     Entity economyEntity = economyRecord.Entity;
                     FactionEconomy economy = economyRecord.Economy;
-                    ProcessCompletedSpawnRequests(ref state, boundaryEntity, planEntity, ref plan, ref economy, shouldLog);
+                    FactionTacticalMaterialsComponent materials = economyRecord.Materials;
+                    bool hasUnsettledRequest = ProcessCompletedSpawnRequests(
+                        ref state,
+                        boundaryEntity,
+                        planEntity,
+                        ref plan,
+                        ref economy,
+                        ref materials,
+                        shouldLog);
                     em.SetComponentData(economyEntity, economy);
-                    economyRecords[economyRecordIndex] = new FactionEconomyRecord(economyEntity, economy);
+                    if (HasMaterialsChanged(economyRecord.Materials, materials))
+                        em.SetComponentData(economyEntity, materials);
+                    economyRecords[economyRecordIndex] = new FactionEconomyRecord(economyEntity, economy, materials);
+
+                    if (hasUnsettledRequest)
+                    {
+                        plan.LastBuildTime = now;
+                        em.SetComponentData(planEntity, plan);
+                        continue;
+                    }
 
                     float interval = math.max(0.1f, plan.BuildIntervalSeconds);
                     if (now - plan.LastBuildTime < interval)
@@ -135,7 +162,8 @@ namespace Game.Runtime
                         em.GetBuffer<BuildingRuntimeOwnedBuildingSummary>(boundaryEntity, true),
                         em.GetBuffer<BuildingRuntimeSpawnRequest>(boundaryEntity, true),
                         plan,
-                        economy.Money);
+                        economy,
+                        materials);
                     bool handledDecision = decision.Result != BuildDecisionResult.None;
                     switch (decision.Result)
                     {
@@ -153,10 +181,38 @@ namespace Game.Runtime
                         case BuildDecisionResult.InsufficientFunds:
                             plan.LastBuildTime = now;
                             if (shouldLog)
-                                EnqueueDiagnostic(ref state, $"[AIBuild] faction={plan.FactionId} building={decision.Spawnable.DisplayName.ToString()} cost={decision.Cost} result=InsufficientFunds money={economy.Money}");
+                                EnqueueDiagnostic(ref state, $"[AIBuild] faction={plan.FactionId} building={decision.Spawnable.DisplayName.ToString()} cost={decision.Cost} materialsCost={decision.MaterialsCost} result=InsufficientFunds money={economy.Money} materials={materials.Current}");
+                            break;
+
+                        case BuildDecisionResult.InsufficientMaterials:
+                            plan.LastBuildTime = now;
+                            if (shouldLog)
+                                EnqueueDiagnostic(ref state, $"[AIBuild] faction={plan.FactionId} building={decision.Spawnable.DisplayName.ToString()} cost={decision.Cost} materialsCost={decision.MaterialsCost} result=InsufficientMaterials money={economy.Money} materials={materials.Current}");
+                            break;
+
+                        case BuildDecisionResult.InsufficientCreditsAndMaterials:
+                            plan.LastBuildTime = now;
+                            if (shouldLog)
+                                EnqueueDiagnostic(ref state, $"[AIBuild] faction={plan.FactionId} building={decision.Spawnable.DisplayName.ToString()} cost={decision.Cost} materialsCost={decision.MaterialsCost} result=InsufficientCreditsAndMaterials money={economy.Money} materials={materials.Current}");
+                            break;
+
+                        case BuildDecisionResult.InvalidResources:
+                            plan.LastBuildTime = now;
+                            if (shouldLog)
+                                EnqueueDiagnostic(ref state, $"[AIBuild] faction={plan.FactionId} building={decision.Spawnable.DisplayName.ToString()} result=InvalidResources");
                             break;
 
                         case BuildDecisionResult.Request:
+                            if (FactionConstructionResourceUtilitySystemHelper.TrySpend(
+                                    ref economy,
+                                    ref materials,
+                                    decision.Cost,
+                                    decision.MaterialsCost) != FactionConstructionResourceMutationResult.Applied)
+                            {
+                                plan.LastBuildTime = now;
+                                break;
+                            }
+
                             EnqueueSpawnRequest(
                                 ref state,
                                 boundaryEntity,
@@ -166,10 +222,15 @@ namespace Game.Runtime
                                 decision.EntryIndex,
                                 decision.PreferredOrigin,
                                 decision.Cost,
+                                decision.MaterialsCost,
                                 decision.Spawnable.DisplayName);
+                            em.SetComponentData(economyEntity, economy);
+                            if (decision.MaterialsCost > 0)
+                                em.SetComponentData(economyEntity, materials);
+                            economyRecords[economyRecordIndex] = new FactionEconomyRecord(economyEntity, economy, materials);
                             plan.LastBuildTime = now;
                             if (shouldLog)
-                                EnqueueDiagnostic(ref state, $"[AIBuild] faction={plan.FactionId} building={decision.Spawnable.DisplayName.ToString()} cell={decision.PreferredOrigin} cost={decision.Cost} result=Requested");
+                                EnqueueDiagnostic(ref state, $"[AIBuild] faction={plan.FactionId} building={decision.Spawnable.DisplayName.ToString()} cell={decision.PreferredOrigin} cost={decision.Cost} materialsCost={decision.MaterialsCost} result=Requested");
                             break;
                     }
 
@@ -203,8 +264,9 @@ namespace Game.Runtime
                 ArchetypeChunk chunk = chunks[chunkIndex];
                 NativeArray<Entity> entities = chunk.GetNativeArray(_entityType);
                 NativeArray<FactionEconomy> economies = chunk.GetNativeArray(ref _economyType);
+                NativeArray<FactionTacticalMaterialsComponent> materials = chunk.GetNativeArray(ref _materialsType);
                 for (int i = 0; i < chunk.Count; i++)
-                    records.Add(new FactionEconomyRecord(entities[i], economies[i]));
+                    records.Add(new FactionEconomyRecord(entities[i], economies[i], materials[i]));
             }
 
             return records;
@@ -217,7 +279,8 @@ namespace Game.Runtime
             DynamicBuffer<BuildingRuntimeOwnedBuildingSummary> ownedSummaries,
             DynamicBuffer<BuildingRuntimeSpawnRequest> spawnRequests,
             AIBuildPlan plan,
-            int economyMoney)
+            in FactionEconomy economy,
+            in FactionTacticalMaterialsComponent materials)
         {
             BuildDecision decision = default;
             if (entries.Length == 0)
@@ -253,11 +316,19 @@ namespace Game.Runtime
                 }
 
                 int cost = math.max(0, spawnable.Price);
+                int materialsCost = math.max(0, spawnable.MaterialsCost);
                 decision.Spawnable = spawnable;
                 decision.Cost = cost;
-                if (economyMoney < cost)
+                decision.MaterialsCost = materialsCost;
+                FactionConstructionResourceMutationResult affordability =
+                    FactionConstructionResourceUtilitySystemHelper.Evaluate(
+                        economy,
+                        materials,
+                        cost,
+                        materialsCost);
+                if (affordability != FactionConstructionResourceMutationResult.Applied)
                 {
-                    decision.Result = BuildDecisionResult.InsufficientFunds;
+                    decision.Result = ToBuildDecisionResult(affordability);
                     break;
                 }
 
@@ -267,6 +338,19 @@ namespace Game.Runtime
             }
 
             return decision;
+        }
+
+        private static BuildDecisionResult ToBuildDecisionResult(
+            FactionConstructionResourceMutationResult result)
+        {
+            return result switch
+            {
+                FactionConstructionResourceMutationResult.InsufficientCredits => BuildDecisionResult.InsufficientFunds,
+                FactionConstructionResourceMutationResult.InsufficientMaterials => BuildDecisionResult.InsufficientMaterials,
+                FactionConstructionResourceMutationResult.InsufficientCreditsAndMaterials => BuildDecisionResult.InsufficientCreditsAndMaterials,
+                FactionConstructionResourceMutationResult.Applied => BuildDecisionResult.Request,
+                _ => BuildDecisionResult.InvalidResources
+            };
         }
 
         private static FixedString128Bytes NormalizeBuildId(FixedString64Bytes buildingId)
@@ -459,6 +543,7 @@ namespace Game.Runtime
             int entryIndex,
             int2 preferredOrigin,
             int cost,
+            int materialsCost,
             FixedString128Bytes displayName)
         {
             DynamicBuffer<BuildingRuntimeSpawnRequest> requests =
@@ -474,21 +559,24 @@ namespace Game.Runtime
                 PlanEntity = planEntity,
                 EntryIndex = entryIndex,
                 Cost = cost,
+                MaterialsCost = materialsCost,
                 DisplayName = displayName
             });
         }
 
-        private void ProcessCompletedSpawnRequests(
+        private bool ProcessCompletedSpawnRequests(
             ref SystemState state,
             Entity boundaryEntity,
             Entity planEntity,
             ref AIBuildPlan plan,
             ref FactionEconomy economy,
+            ref FactionTacticalMaterialsComponent materials,
             bool shouldLog)
         {
             if (!state.EntityManager.HasBuffer<BuildingRuntimeSpawnRequest>(boundaryEntity))
-                return;
+                return false;
 
+            bool hasUnsettledRequest = false;
             DynamicBuffer<BuildingRuntimeSpawnRequest> requests =
                 state.EntityManager.GetBuffer<BuildingRuntimeSpawnRequest>(boundaryEntity);
             for (int i = requests.Length - 1; i >= 0; i--)
@@ -502,23 +590,54 @@ namespace Game.Runtime
 
                 if (request.Status == BuildingRuntimeSpawnRequest.Succeeded)
                 {
-                    economy.Money = math.max(0, economy.Money - math.max(0, request.Cost));
                     plan.NextBuildIndex = request.EntryIndex + 1;
                 }
-                else if (request.ResultCode == BuildingRuntimeSpawnRequest.MissingConfig)
+                else
                 {
-                    plan.NextBuildIndex = request.EntryIndex + 1;
+                    FactionConstructionResourceMutationResult rollback =
+                        FactionConstructionResourceUtilitySystemHelper.TryRollback(
+                            ref economy,
+                            ref materials,
+                            request.Cost,
+                            request.MaterialsCost);
+                    if (rollback != FactionConstructionResourceMutationResult.Applied)
+                    {
+                        hasUnsettledRequest = true;
+                        if (shouldLog)
+                            EnqueueDiagnostic(ref state, $"[AIBuild] faction={request.FactionId} building={request.DisplayName.ToString()} result=RollbackPending reason={(byte)rollback}");
+                        continue;
+                    }
+
+                    if (request.ResultCode == BuildingRuntimeSpawnRequest.MissingConfig)
+                        plan.NextBuildIndex = request.EntryIndex + 1;
                 }
 
                 if (shouldLog)
                 {
                     EnqueueDiagnostic(
                         ref state,
-                        $"[AIBuild] faction={request.FactionId} building={request.DisplayName.ToString()} cell={request.ActualOrigin} cost={request.Cost} result={SpawnResultLabel(request)}");
+                        $"[AIBuild] faction={request.FactionId} building={request.DisplayName.ToString()} cell={request.ActualOrigin} cost={request.Cost} materialsCost={request.MaterialsCost} result={SpawnResultLabel(request)}");
                 }
 
                 requests.RemoveAt(i);
             }
+
+            return hasUnsettledRequest;
+        }
+
+        private static bool HasMaterialsChanged(
+            in FactionTacticalMaterialsComponent previous,
+            in FactionTacticalMaterialsComponent current)
+        {
+            return previous.FactionId != current.FactionId ||
+                   previous.Current != current.Current ||
+                   previous.Capacity != current.Capacity ||
+                   previous.LifetimeFabricated != current.LifetimeFabricated ||
+                   previous.LifetimeImported != current.LifetimeImported ||
+                   previous.LifetimeRewarded != current.LifetimeRewarded ||
+                   previous.LifetimeExported != current.LifetimeExported ||
+                   previous.LifetimeSpent != current.LifetimeSpent ||
+                   previous.Version != current.Version;
         }
 
         private static bool IsFactionAIControlled(byte factionId, bool hasControls, DynamicBuffer<FactionControlEntry> controls)
@@ -621,14 +740,19 @@ namespace Game.Runtime
 
         private readonly struct FactionEconomyRecord
         {
-            public FactionEconomyRecord(Entity entity, FactionEconomy economy)
+            public FactionEconomyRecord(
+                Entity entity,
+                FactionEconomy economy,
+                FactionTacticalMaterialsComponent materials)
             {
                 Entity = entity;
                 Economy = economy;
+                Materials = materials;
             }
 
             public readonly Entity Entity;
             public readonly FactionEconomy Economy;
+            public readonly FactionTacticalMaterialsComponent Materials;
         }
     }
 }

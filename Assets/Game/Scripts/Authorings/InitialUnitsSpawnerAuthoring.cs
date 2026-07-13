@@ -54,6 +54,8 @@ namespace Game.Authoring
                     InitialDollars = authoring.config != null ? authoring.config.InitialDollars : 0,
                     InitialMaterials = authoring.config != null ? authoring.config.InitialMaterials : 0,
                     MaterialsCapacity = authoring.config != null ? authoring.config.MaterialsCapacity : 0,
+                    InitialAiMaterials = authoring.config != null ? authoring.config.InitialAiMaterials : 0,
+                    AiMaterialsCapacity = authoring.config != null ? authoring.config.AiMaterialsCapacity : 0,
                     InitialOil = authoring.config != null ? authoring.config.InitialOil : 0,
                     InitialFuel = authoring.config != null ? authoring.config.InitialFuel : 0,
                     CreateFactionBases = authoring.CreateFactionBases ? (byte)1 : (byte)0,

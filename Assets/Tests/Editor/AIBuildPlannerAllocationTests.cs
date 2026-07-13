@@ -39,6 +39,7 @@ public sealed class AIBuildPlannerAllocationTests
                 BuildingId = new FixedString128Bytes("barracks"),
                 DisplayName = new FixedString128Bytes("Barracks"),
                 Price = 250,
+                MaterialsCost = 75,
                 CanRequest = 1
             });
         entityManager.GetBuffer<BuildingRuntimeOwnedBuildingSummary>(boundaryEntity).Add(
@@ -63,6 +64,13 @@ public sealed class AIBuildPlannerAllocationTests
             BaseCenterCell = new int2(20, 30)
         };
         AIBuildPlannerSystem.BuildDecision decision = default;
+        FactionEconomy economy = new() { FactionId = 2, Money = 500 };
+        FactionTacticalMaterialsComponent materials = new()
+        {
+            FactionId = 2,
+            Current = 100,
+            Capacity = 100
+        };
 
         for (int i = 0; i < WarmupCalls; i++)
         {
@@ -72,7 +80,8 @@ public sealed class AIBuildPlannerAllocationTests
                 ownedSummaries,
                 spawnRequests,
                 plan,
-                economyMoney: 500);
+                economy,
+                materials);
         }
 
         long before = GC.GetAllocatedBytesForCurrentThread();
@@ -84,7 +93,8 @@ public sealed class AIBuildPlannerAllocationTests
                 ownedSummaries,
                 spawnRequests,
                 plan,
-                economyMoney: 500);
+                economy,
+                materials);
         }
         long allocatedBytes = GC.GetAllocatedBytesForCurrentThread() - before;
 
@@ -92,6 +102,7 @@ public sealed class AIBuildPlannerAllocationTests
         Assert.AreEqual(1, decision.EntryIndex);
         Assert.AreEqual(new FixedString128Bytes("barracks"), decision.BuildingId);
         Assert.AreEqual(250, decision.Cost);
+        Assert.AreEqual(75, decision.MaterialsCost);
         Assert.AreEqual(new int2(34, 30), decision.PreferredOrigin);
         Assert.AreEqual(
             0L,
@@ -144,6 +155,8 @@ public sealed class AIBuildPlannerAllocationTests
             BaseCenterCell = new int2(10, 10)
         };
         AIBuildPlannerSystem.BuildDecision decision = default;
+        FactionEconomy economy = new() { FactionId = 3, Money = 0 };
+        FactionTacticalMaterialsComponent materials = new() { FactionId = 3, Capacity = 0 };
 
         for (int i = 0; i < WarmupCalls; i++)
         {
@@ -153,7 +166,8 @@ public sealed class AIBuildPlannerAllocationTests
                 ownedSummaries,
                 spawnRequests,
                 plan,
-                economyMoney: 0);
+                economy,
+                materials);
         }
 
         long before = GC.GetAllocatedBytesForCurrentThread();
@@ -165,7 +179,8 @@ public sealed class AIBuildPlannerAllocationTests
                 ownedSummaries,
                 spawnRequests,
                 plan,
-                economyMoney: 0);
+                economy,
+                materials);
         }
         long allocatedBytes = GC.GetAllocatedBytesForCurrentThread() - before;
 
@@ -176,6 +191,70 @@ public sealed class AIBuildPlannerAllocationTests
             0L,
             allocatedBytes,
             $"Warmed owned-skip and pending build decisions allocated {allocatedBytes} managed bytes over {MeasuredCalls} calls.");
+    }
+
+    [Test]
+    public void SelectBuildDecision_UsesAuthoredMaterialsCostForAffordability()
+    {
+        using World world = new(nameof(SelectBuildDecision_UsesAuthoredMaterialsCostForAffordability));
+        EntityManager entityManager = world.EntityManager;
+        Entity planEntity = entityManager.CreateEntity(typeof(AIBuildPlanEntry));
+        Entity boundaryEntity = CreateBoundaryEntity(entityManager);
+        entityManager.GetBuffer<AIBuildPlanEntry>(planEntity).Add(new AIBuildPlanEntry
+        {
+            BuildingId = new FixedString64Bytes("DEPOT")
+        });
+        entityManager.GetBuffer<BuildingConfiguredSpawnableReadModel>(boundaryEntity).Add(
+            new BuildingConfiguredSpawnableReadModel
+            {
+                BuildingId = new FixedString128Bytes("depot"),
+                DisplayName = new FixedString128Bytes("Depot"),
+                Price = 200,
+                MaterialsCost = 80,
+                CanRequest = 1
+            });
+
+        DynamicBuffer<AIBuildPlanEntry> entries = entityManager.GetBuffer<AIBuildPlanEntry>(planEntity, true);
+        DynamicBuffer<BuildingConfiguredSpawnableReadModel> spawnables =
+            entityManager.GetBuffer<BuildingConfiguredSpawnableReadModel>(boundaryEntity, true);
+        DynamicBuffer<BuildingRuntimeOwnedBuildingSummary> ownedSummaries =
+            entityManager.GetBuffer<BuildingRuntimeOwnedBuildingSummary>(boundaryEntity, true);
+        DynamicBuffer<BuildingRuntimeSpawnRequest> spawnRequests =
+            entityManager.GetBuffer<BuildingRuntimeSpawnRequest>(boundaryEntity, true);
+        AIBuildPlan plan = new() { FactionId = 4 };
+
+        FactionEconomy economy = new() { FactionId = 4, Money = 500 };
+        FactionTacticalMaterialsComponent materials = new()
+        {
+            FactionId = 4,
+            Current = 79,
+            Capacity = 100
+        };
+        AIBuildPlannerSystem.BuildDecision materialsDecision = AIBuildPlannerSystem.SelectBuildDecision(
+            entries,
+            spawnables,
+            ownedSummaries,
+            spawnRequests,
+            plan,
+            economy,
+            materials);
+
+        economy.Money = 199;
+        materials.Current = 79;
+        AIBuildPlannerSystem.BuildDecision combinedDecision = AIBuildPlannerSystem.SelectBuildDecision(
+            entries,
+            spawnables,
+            ownedSummaries,
+            spawnRequests,
+            plan,
+            economy,
+            materials);
+
+        Assert.AreEqual(AIBuildPlannerSystem.BuildDecisionResult.InsufficientMaterials, materialsDecision.Result);
+        Assert.AreEqual(80, materialsDecision.MaterialsCost);
+        Assert.AreEqual(
+            AIBuildPlannerSystem.BuildDecisionResult.InsufficientCreditsAndMaterials,
+            combinedDecision.Result);
     }
 
     private static Entity CreateBoundaryEntity(EntityManager entityManager)

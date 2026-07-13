@@ -16,6 +16,8 @@ namespace Game.Components
         public int InitialDollars;
         public int InitialMaterials;
         public int MaterialsCapacity;
+        public int InitialAiMaterials;
+        public int AiMaterialsCapacity;
         public int InitialOil;
         public int InitialFuel;
         public byte CreateFactionBases;

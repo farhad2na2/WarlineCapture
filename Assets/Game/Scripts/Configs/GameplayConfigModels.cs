@@ -758,6 +758,8 @@ namespace Game.Configs
         [SerializeField, Min(0)] private int initialDollars;
         [SerializeField, Min(0)] private int initialMaterials;
         [SerializeField, Min(0)] private int materialsCapacity;
+        [SerializeField, Min(0)] private int initialAiMaterials;
+        [SerializeField, Min(0)] private int aiMaterialsCapacity;
         [SerializeField, Min(0)] private int initialOil;
         [SerializeField, Min(0)] private int initialFuel;
         [SerializeField] private bool createFactionBases = true;
@@ -782,6 +784,8 @@ namespace Game.Configs
         public int InitialDollars => Mathf.Max(0, initialDollars);
         public int InitialMaterials => Mathf.Max(0, initialMaterials);
         public int MaterialsCapacity => Mathf.Max(InitialMaterials, materialsCapacity);
+        public int InitialAiMaterials => Mathf.Max(0, initialAiMaterials);
+        public int AiMaterialsCapacity => Mathf.Max(InitialAiMaterials, aiMaterialsCapacity);
         public int InitialOil => Mathf.Max(0, initialOil);
         public int InitialFuel => Mathf.Max(0, initialFuel);
         public bool CreateFactionBases => createFactionBases;

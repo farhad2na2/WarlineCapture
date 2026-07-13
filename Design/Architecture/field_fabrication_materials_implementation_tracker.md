@@ -73,9 +73,9 @@ Dependency direction remains inward toward components/config/contracts/runtime. 
 
 ## Progress Summary
 
-Overall implementation progress: 84% (87/103 checklist items complete).
+Overall implementation progress: 85% (88/103 checklist items complete).
 
-Planning, canonical resource ownership, depot config/projection, automated Oil routing, Oil-to-Materials conversion, authored construction costs, atomic dual-resource placement, HUD/depot controls, and Exchange balance safety are complete. Active depots consume only unreserved physical Oil at the existing one-second cadence. The shipping Match now projects an explicitly gated Resource Exchange onto the canonical player faction entity; emergency Materials import costs 1.71x modeled local production, queue/capacity rules remain active, and tested conversion loops cannot create profit. Phase 8 begins with AI resource behavior, typed telemetry, and scenario recovery validation.
+Planning, canonical resource ownership, depot config/projection, automated Oil routing, Oil-to-Materials conversion, authored construction costs, atomic dual-resource placement, HUD/depot controls, Exchange balance safety, and canonical AI construction affordability are complete. Active depots consume only unreserved physical Oil at the existing one-second cadence. The shipping Match now projects an explicitly gated Resource Exchange onto the canonical player faction entity; emergency Materials import costs 1.71x modeled local production, queue/capacity rules remain active, and tested conversion loops cannot create profit. Phase 8 continues with AI Oil allocation, recovery gating, typed telemetry, and scenario deadlock validation.
 
 Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation row counts. Update the numerator, denominator, table, status, and evidence log in the same commit as each completed batch.
 
@@ -89,7 +89,7 @@ Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation 
 | 5. Credits + Materials construction | Complete | 11 | 11 | 100% | Atomic placement, rollback, authored cost projection, and Build Drawer dual-cost presentation pass. |
 | 6. HUD and selected-building UI | Complete | 11 | 11 | 100% | Live canonical header, typed Build Drawer affordability, selected-depot status/control, fail-closed Exchange routing, and responsive validation pass. |
 | 7. Exchange and balance safety | Complete | 8 | 8 | 100% | Shipping startup projection, emergency import markup, queue/capacity gates, anti-arbitrage tests, and strategy report pass. |
-| 8. AI, telemetry, and scenario safety | Pending | 0 | 7 | 0% | AI shares rules; scenarios cannot deadlock silently. |
+| 8. AI, telemetry, and scenario safety | Active | 1 | 7 | 14% | AI shares rules; scenarios cannot deadlock silently. |
 | 9. Integration, performance, and closeout | Pending | 0 | 9 | 0% | Architecture, GC, profiler, gameplay, and docs pass. |
 
 ## Phase 0: Inventory And Baseline
@@ -291,7 +291,7 @@ Phase 7 exit criteria:
 
 ## Phase 8: AI, Telemetry, And Scenario Safety
 
-- [ ] Teach AI affordability/build plans to use canonical Materials and authored costs.
+- [x] Teach AI affordability/build plans to use canonical Materials and authored costs.
 - [ ] Teach AI Oil allocation to consider Fuel pressure and construction plans without hidden resources.
 - [ ] Gate AI Exchange imports by scenario and recovery need.
 - [ ] Record Materials fabricated/imported/exported/rewarded/spent and depot blocked time by typed reason.
@@ -564,3 +564,14 @@ For every completed batch append:
 - Resource Exchange steady-state GC validation measured 0 allocated bytes across 512 frames after 64 warmup frames. Several Unity processes emitted shutdown-only exits 133/139 after their passing markers; the final startup, request, architecture, and Burst runs exited 0 and no compiler errors were reported.
 - Evidence: `/private/tmp/wlc-field-fabrication-phase7-balance.log`, `/private/tmp/wlc-field-fabrication-phase7-config-regression.log`, `/private/tmp/wlc-field-fabrication-phase7-request-regression.log`, `/private/tmp/wlc-field-fabrication-phase7-queue-regression.log`, `/private/tmp/wlc-field-fabrication-phase7-gc.log`, `/private/tmp/wlc-field-fabrication-phase7-architecture.log`, and `/private/tmp/wlc-field-fabrication-phase7-burst-rerun.log`.
 - Phase 7 is complete at 8/8. Checklist count is 87/103. Next action: inspect current AI construction affordability and Oil destination pressure inputs, then add shared-rule AI behavior and typed Materials/logistics telemetry without hidden resources or managed hot-path work.
+
+### 2026-07-13 - Phase 8A Canonical AI Construction Affordability
+
+- `AIBuildPlannerSystem` now resolves each authored building's Credits and Materials costs from the configured runtime read model and evaluates both through `FactionConstructionResourceUtilitySystemHelper`. Typed results distinguish Credits, Materials, combined shortages, and invalid resource state without adding another wallet or AI-only balance path.
+- AI construction reserves `FactionEconomy.Money` and `FactionTacticalMaterialsComponent` atomically before enqueue. Successful placement retains the exact reservation; failed placement restores both values and corrects lifetime Materials spend. A rollback that cannot yet fit remains unsettled and blocks another reservation until it can complete.
+- Spawn requests carry both authored costs for exact settlement and typed diagnostics. The planner updates Materials only when changed, retains deterministic plan/request ordering, and adds no managed collection, new update loop, structural hot-path mutation, or runtime assembly dependency.
+- The shipping enemy scenario now authors 655 starting Materials with 655 capacity, exactly matching the current six-building AI construction plan. Player starting Materials remain unchanged; legacy/custom scenarios preserve zero AI Materials unless they explicitly author a reserve. This is visible startup data consumed through the canonical component, not a hidden runtime grant.
+- Focused Unity validation passed: AI planner transaction, rollback, typed affordability, and warmed no-GC decision paths 5/5; initial resource projection; shipping authored-cost projection; and the complete AI build, production, squad, targeting, and combat-order integration loop. Synchronous integration fixtures use the existing force-scan boundary because editor batch time does not advance through the production idle-probe intervals.
+- Assembly/naming boundary and ECS Burst hot-path validation passed. Generated `Game.Runtime` and `Game.Tests.Editor` builds compile with zero errors; task-scoped `git diff --check` passes. No performance ceiling or Burst exception was added.
+- Evidence: `/private/tmp/wlc-field-fabrication-phase8-ai-build.log`, `/private/tmp/wlc-field-fabrication-phase8-initial-units.log`, `/private/tmp/wlc-field-fabrication-phase8-config.log`, `/private/tmp/wlc-field-fabrication-phase8-ai-e2e.log`, `/private/tmp/wlc-field-fabrication-phase8-architecture.log`, and `/private/tmp/wlc-field-fabrication-phase8-burst.log`.
+- Phase 8 is 1/7. Checklist count is 88/103. Next action: extend existing deterministic Oil destination scoring with derived AI construction demand and Fuel pressure while preserving active assignments, physical storage authority, and stable no-GC routing.

@@ -112,9 +112,17 @@ public sealed class AIEndToEndValidationTests
         CreateBuildingPlacementHarness();
         RuntimeGameplayStateTestHelper.SetBuildingPlacement(em, TickBuildingRuntime);
 
-        Entity economyEntity = em.CreateEntity(typeof(FactionEconomy), typeof(FactionEconomyPolicy));
+        Entity economyEntity = em.CreateEntity(
+            typeof(FactionEconomy),
+            typeof(FactionEconomyPolicy),
+            typeof(FactionTacticalMaterialsComponent));
         em.SetComponentData(economyEntity, new FactionEconomy { FactionId = FactionIdentity.EnemyFactionId, Money = 100000, LastLogTime = -999f });
         em.SetComponentData(economyEntity, new FactionEconomyPolicy { Enabled = 1, SellIntervalSeconds = 8f });
+        em.SetComponentData(economyEntity, new FactionTacticalMaterialsComponent
+        {
+            FactionId = FactionIdentity.EnemyFactionId,
+            Capacity = 0
+        });
 
         Entity controlEntity = em.CreateEntity(typeof(FactionControlConfigTag));
         DynamicBuffer<FactionControlEntry> controls = em.AddBuffer<FactionControlEntry>(controlEntity);
@@ -146,6 +154,7 @@ public sealed class AIEndToEndValidationTests
         logFlushSystem.Update(_world.Unmanaged);
         if (assertDiagnosticLog)
             LogAssert.NoUnexpectedReceived();
+        ProcessPendingRuntimeSpawnRequests(em);
         RuntimeGameplayStateTestHelper.PublishBuildingRuntimeState(em, TickBuildingRuntime);
 
         if (assertDiagnosticLog)
@@ -163,6 +172,10 @@ public sealed class AIEndToEndValidationTests
         logFlushSystem.Update(_world.Unmanaged);
         if (assertDiagnosticLog)
             LogAssert.NoUnexpectedReceived();
+        SetPrivateField(
+            _buildingGameplay.RuntimeCitySpawnContext.RuntimeBoundarySystem,
+            "_nextProductionRequestProbeAt",
+            0f);
         RuntimeGameplayStateTestHelper.PublishBuildingRuntimeState(em, TickBuildingRuntime);
 
         if (assertDiagnosticLog)
@@ -249,6 +262,22 @@ public sealed class AIEndToEndValidationTests
     {
         if (_buildingGameplayInitialized)
             _buildingGameplay.RuntimeUpdate.Update(_buildingGameplay.RuntimeUpdateContext);
+    }
+
+    private void ProcessPendingRuntimeSpawnRequests(EntityManager entityManager)
+    {
+        using EntityQuery boundaryQuery = entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<BuildingRuntimeStateTag>(),
+            ComponentType.ReadWrite<BuildingRuntimeSpawnRequest>());
+        Entity boundaryEntity = boundaryQuery.GetSingletonEntity();
+        BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context context =
+            _buildingGameplay.RuntimeCitySpawnContext;
+        context.RuntimeBoundarySystem.ProcessRuntimeSpawnRequestsForBoundary(
+            context.DefinitionSystem,
+            context.RuntimeSpawnCommandContext.RuntimeSpawnSystem,
+            context.RuntimeSpawnCommandContext.SpawnContext,
+            entityManager,
+            boundaryEntity);
     }
 
     private static void CreateBuildPlan(EntityManager em)

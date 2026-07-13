@@ -23,6 +23,8 @@ MonoBehaviour:
   initialDollars: 30000000
   initialMaterials: 120
   materialsCapacity: 600
+  initialAiMaterials: 655
+  aiMaterialsCapacity: 655
   initialOil: 50
   initialFuel: 10000
   createFactionBases: 0

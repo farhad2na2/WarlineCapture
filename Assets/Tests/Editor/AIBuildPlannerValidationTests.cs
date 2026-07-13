@@ -33,8 +33,16 @@ public sealed class AIBuildPlannerValidationTests
         try
         {
             tests.SetUp();
-            tests.AssertPlacesConfiguredBuildingAndSpendsFactionMoney(assertDiagnosticLog: false);
-            UnityEngine.Debug.Log("[AIBuildPlannerFocusedValidation] result=Passed tests=1");
+            tests.AssertConfiguredBuildingTransaction(assertDiagnosticLog: false, failPlacement: false);
+            tests.TearDown();
+            tests.SetUp();
+            tests.AssertConfiguredBuildingTransaction(assertDiagnosticLog: false, failPlacement: true);
+
+            var allocationTests = new AIBuildPlannerAllocationTests();
+            allocationTests.SelectBuildDecision_WarmedNormalizedRequestPathDoesNotAllocateManagedMemory();
+            allocationTests.SelectBuildDecision_WarmedOwnedSkipToPendingPathDoesNotAllocateManagedMemory();
+            allocationTests.SelectBuildDecision_UsesAuthoredMaterialsCostForAffordability();
+            UnityEngine.Debug.Log("[AIBuildPlannerFocusedValidation] result=Passed tests=5");
         }
         catch (System.Exception ex)
         {
@@ -88,12 +96,18 @@ public sealed class AIBuildPlannerValidationTests
     }
 
     [Test]
-    public void AIBuildPlannerSystem_PlacesConfiguredBuildingAndSpendsFactionMoney()
+    public void AIBuildPlannerSystem_PlacesConfiguredBuildingAndSpendsCanonicalResources()
     {
-        AssertPlacesConfiguredBuildingAndSpendsFactionMoney(assertDiagnosticLog: true);
+        AssertConfiguredBuildingTransaction(assertDiagnosticLog: true, failPlacement: false);
     }
 
-    private void AssertPlacesConfiguredBuildingAndSpendsFactionMoney(bool assertDiagnosticLog)
+    [Test]
+    public void AIBuildPlannerSystem_FailedPlacementRollsBackCanonicalResources()
+    {
+        AssertConfiguredBuildingTransaction(assertDiagnosticLog: true, failPlacement: true);
+    }
+
+    private void AssertConfiguredBuildingTransaction(bool assertDiagnosticLog, bool failPlacement)
     {
         _previousDefaultWorld = World.DefaultGameObjectInjectionWorld;
         _world = new World("AIBuildPlannerValidationTests");
@@ -101,7 +115,7 @@ public sealed class AIBuildPlannerValidationTests
         EntityManager em = _world.EntityManager;
 
         CreateGrid(em, 64, 64);
-        _buildingPrefab = CreateBuildingPrefab("Tent_Regular", 2, 2, 20000);
+        _buildingPrefab = CreateBuildingPrefab("Tent_Regular", 2, 2, 20000, 40);
         _buildingConfig = ScriptableObject.CreateInstance<BuildingPlacementSystemConfig>();
         SetPrivateField(_buildingConfig, "spawnables", new System.Collections.Generic.List<GameObject> { _buildingPrefab });
 
@@ -121,9 +135,15 @@ public sealed class AIBuildPlannerValidationTests
         _buildingGameplayInitialized = true;
         RuntimeGameplayStateTestHelper.SetBuildingPlacement(em, TickBuildingRuntime);
 
-        Entity economyEntity = em.CreateEntity(typeof(FactionEconomy), typeof(FactionEconomyPolicy));
+        Entity economyEntity = FindFactionEconomyEntity(em, FactionIdentity.PlayerFactionId);
         em.SetComponentData(economyEntity, new FactionEconomy { FactionId = 1, Money = 30000, LastLogTime = -999f });
         em.SetComponentData(economyEntity, new FactionEconomyPolicy { Enabled = 1, SellIntervalSeconds = 8f });
+        em.SetComponentData(economyEntity, new FactionTacticalMaterialsComponent
+        {
+            FactionId = 1,
+            Current = 100,
+            Capacity = 100
+        });
 
         Entity controlEntity = em.CreateEntity(typeof(FactionControlConfigTag));
         DynamicBuffer<FactionControlEntry> controls = em.AddBuffer<FactionControlEntry>(controlEntity);
@@ -148,27 +168,87 @@ public sealed class AIBuildPlannerValidationTests
         SystemHandle logFlushSystem = _world.CreateSystem<AIDiagnosticLogFlushSystem>();
 
         if (assertDiagnosticLog)
-            LogAssert.Expect(LogType.Log, new Regex(@"\[AIBuild\] faction=1 building=Tent_Regular cell=int2\(\d+, \d+\) cost=20000 result=Requested"));
+            LogAssert.Expect(LogType.Log, new Regex(@"\[AIBuild\] faction=1 building=Tent_Regular cell=int2\(\d+, \d+\) cost=20000 materialsCost=40 result=Requested"));
         system.Update(_world.Unmanaged);
         logFlushSystem.Update(_world.Unmanaged);
         if (assertDiagnosticLog)
             LogAssert.NoUnexpectedReceived();
-        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeState(em, TickBuildingRuntime);
+        Assert.AreEqual(10000, em.GetComponentData<FactionEconomy>(economyEntity).Money);
+        Assert.AreEqual(60, em.GetComponentData<FactionTacticalMaterialsComponent>(economyEntity).Current);
+
+        if (failPlacement)
+        {
+            using EntityQuery boundaryQuery = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingRuntimeStateTag>());
+            Entity boundaryEntity = boundaryQuery.GetSingletonEntity();
+            DynamicBuffer<BuildingRuntimeSpawnRequest> requests = em.GetBuffer<BuildingRuntimeSpawnRequest>(boundaryEntity);
+            Assert.AreEqual(1, requests.Length);
+            BuildingRuntimeSpawnRequest request = requests[0];
+            request.Status = BuildingRuntimeSpawnRequest.Failed;
+            request.ResultCode = BuildingRuntimeSpawnRequest.Blocked;
+            requests[0] = request;
+        }
+        else
+        {
+            ProcessPendingRuntimeSpawnRequests(em);
+            RuntimeGameplayStateTestHelper.PublishBuildingRuntimeState(em, TickBuildingRuntime);
+        }
 
         if (assertDiagnosticLog)
-            LogAssert.Expect(LogType.Log, new Regex(@"\[AIBuild\] faction=1 building=Tent_Regular cell=int2\(\d+, \d+\) cost=20000 result=Placed"));
+        {
+            string result = failPlacement ? "Blocked" : "Placed";
+            LogAssert.Expect(LogType.Log, new Regex($@"\[AIBuild\] faction=1 building=Tent_Regular cell=int2\(\d+, \d+\) cost=20000 materialsCost=40 result={result}"));
+        }
         system.Update(_world.Unmanaged);
         logFlushSystem.Update(_world.Unmanaged);
         if (assertDiagnosticLog)
             LogAssert.NoUnexpectedReceived();
 
         FactionEconomy economy = em.GetComponentData<FactionEconomy>(economyEntity);
-        Assert.AreEqual(10000, economy.Money);
+        FactionTacticalMaterialsComponent materials = em.GetComponentData<FactionTacticalMaterialsComponent>(economyEntity);
+        Assert.AreEqual(failPlacement ? 30000 : 10000, economy.Money);
+        Assert.AreEqual(failPlacement ? 100 : 60, materials.Current);
+        Assert.AreEqual(failPlacement ? 0 : 40, materials.LifetimeSpent);
         RuntimeGameplayStateTestHelper.PublishBuildingRuntimeState(em, TickBuildingRuntime);
-        Assert.AreEqual(1, RuntimeGameplayStateTestHelper.CountRuntimeBuildingsForFaction(em, (byte)1, "Tent_Regular"));
+        Assert.AreEqual(
+            failPlacement ? 0 : 1,
+            RuntimeGameplayStateTestHelper.CountRuntimeBuildingsForFaction(em, (byte)1, "Tent_Regular"));
 
         AIBuildPlan plan = em.GetComponentData<AIBuildPlan>(planEntity);
-        Assert.AreEqual(1, plan.NextBuildIndex);
+        Assert.AreEqual(failPlacement ? 0 : 1, plan.NextBuildIndex);
+    }
+
+    private void ProcessPendingRuntimeSpawnRequests(EntityManager entityManager)
+    {
+        using EntityQuery boundaryQuery = entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<BuildingRuntimeStateTag>(),
+            ComponentType.ReadWrite<BuildingRuntimeSpawnRequest>());
+        Entity boundaryEntity = boundaryQuery.GetSingletonEntity();
+        BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.Context context =
+            _buildingGameplay.RuntimeCitySpawnContext;
+        context.RuntimeBoundarySystem.ProcessRuntimeSpawnRequestsForBoundary(
+            context.DefinitionSystem,
+            context.RuntimeSpawnCommandContext.RuntimeSpawnSystem,
+            context.RuntimeSpawnCommandContext.SpawnContext,
+            entityManager,
+            boundaryEntity);
+    }
+
+    private static Entity FindFactionEconomyEntity(EntityManager entityManager, byte factionId)
+    {
+        using EntityQuery query = entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<FactionEconomy>(),
+            ComponentType.ReadOnly<FactionEconomyPolicy>(),
+            ComponentType.ReadOnly<FactionTacticalMaterialsComponent>());
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < entities.Length; i++)
+        {
+            Entity entity = entities[i];
+            if (entityManager.GetComponentData<FactionEconomy>(entity).FactionId == factionId)
+                return entity;
+        }
+
+        Assert.Fail($"Missing canonical faction economy for faction {factionId}.");
+        return Entity.Null;
     }
 
     private void TickBuildingRuntime()
@@ -211,7 +291,12 @@ public sealed class AIBuildPlannerValidationTests
             walkable[i] = new GridWalkable { Value = 1 };
     }
 
-    private static GameObject CreateBuildingPrefab(string id, int width, int height, int price)
+    private static GameObject CreateBuildingPrefab(
+        string id,
+        int width,
+        int height,
+        int price,
+        int materialsCost)
     {
         GameObject prefab = new(id);
         BuildingDefinitionAuthoring authoring = prefab.AddComponent<BuildingDefinitionAuthoring>();
@@ -221,6 +306,7 @@ public sealed class AIBuildPlannerValidationTests
         SetPrivateField(authoring, "maxHealth", 500);
         SetPrivateField(authoring, "canRequest", true);
         SetPrivateField(authoring, "price", price);
+        SetPrivateField(authoring, "materialsCost", materialsCost);
         return prefab;
     }
 

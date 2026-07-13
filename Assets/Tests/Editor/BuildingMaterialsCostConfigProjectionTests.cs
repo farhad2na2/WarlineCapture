@@ -168,6 +168,8 @@ public sealed class BuildingMaterialsCostConfigProjectionTests
         Assert.IsNotNull(config, $"Missing config: {MatchConfigPath}");
         Assert.AreEqual(120, config.InitialMaterials);
         Assert.AreEqual(600, config.MaterialsCapacity);
+        Assert.AreEqual(655, config.InitialAiMaterials);
+        Assert.AreEqual(655, config.AiMaterialsCapacity);
     }
 
     [Test]

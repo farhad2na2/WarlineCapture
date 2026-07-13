@@ -133,7 +133,9 @@ public sealed class InitialUnitsSpawnFocusedTests
             {
                 InitialDollars = 345,
                 InitialMaterials = 25,
-                MaterialsCapacity = 100
+                MaterialsCapacity = 100,
+                InitialAiMaterials = 40,
+                AiMaterialsCapacity = 80
             });
 
         using EntityQuery economyQuery = em.CreateEntityQuery(
@@ -148,10 +150,9 @@ public sealed class InitialUnitsSpawnFocusedTests
             FactionTacticalMaterialsComponent materials =
                 em.GetComponentData<FactionTacticalMaterialsComponent>(economies[i]);
             Assert.AreEqual(economy.FactionId, materials.FactionId);
-            Assert.AreEqual(100, materials.Capacity);
-            Assert.AreEqual(
-                FactionIdentity.IsPlayerControlled(economy.FactionId) ? 25 : 0,
-                materials.Current);
+            bool isPlayerControlled = FactionIdentity.IsPlayerControlled(economy.FactionId);
+            Assert.AreEqual(isPlayerControlled ? 100 : 80, materials.Capacity);
+            Assert.AreEqual(isPlayerControlled ? 25 : 40, materials.Current);
             Assert.AreEqual(1u, materials.Version);
         }
     }

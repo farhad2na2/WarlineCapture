@@ -894,10 +894,15 @@ namespace Game.Runtime
             byte factionId,
             in InitialUnitsSpawnConfig config)
         {
-            int capacity = math.max(0, config.MaterialsCapacity);
-            int current = FactionIdentity.IsPlayerControlled(factionId)
-                ? math.min(math.max(0, config.InitialMaterials), capacity)
-                : 0;
+            bool isPlayerControlled = FactionIdentity.IsPlayerControlled(factionId);
+            int configuredAiCapacity = math.max(0, config.AiMaterialsCapacity);
+            int capacity = isPlayerControlled || configuredAiCapacity == 0
+                ? math.max(0, config.MaterialsCapacity)
+                : configuredAiCapacity;
+            int configuredCurrent = isPlayerControlled
+                ? config.InitialMaterials
+                : config.InitialAiMaterials;
+            int current = math.min(math.max(0, configuredCurrent), capacity);
             FactionTacticalMaterialsComponent materials = new()
             {
                 FactionId = factionId,

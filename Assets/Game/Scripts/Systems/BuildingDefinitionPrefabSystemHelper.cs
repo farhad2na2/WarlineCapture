@@ -33,6 +33,11 @@ namespace Game.Runtime
             public int OilStorageCapacity;
             public float FuelBarrelsPerDay;
             public int FuelStorageCapacity;
+            public bool MaterialFabricationEnabled;
+            public float MaterialFabricationOilConsumedPerCycle;
+            public int MaterialFabricationMaterialsOutputPerCycle;
+            public float MaterialFabricationCycleDurationSeconds;
+            public MaterialFabricationOutputCapacityPolicyCode MaterialFabricationOutputCapacityPolicy;
             public int RefugeeCapacity;
             public int RefugeeUpkeepPerCitizenPerDay;
             public ThreatDetectionKind ThreatDetectionKind;
@@ -405,6 +410,11 @@ namespace Game.Runtime
                 OilStorageCapacity = metadata.HasDefinitionMetadata ? Mathf.Max(0, metadata.DefinitionMetadata.OilStorageCapacity) : 0,
                 FuelBarrelsPerDay = metadata.HasDefinitionMetadata ? Mathf.Max(0f, metadata.DefinitionMetadata.FuelBarrelsPerDay) : 0f,
                 FuelStorageCapacity = metadata.HasDefinitionMetadata ? Mathf.Max(0, metadata.DefinitionMetadata.FuelStorageCapacity) : 0,
+                MaterialFabricationEnabled = metadata.HasDefinitionMetadata && metadata.DefinitionMetadata.MaterialFabricationEnabled,
+                MaterialFabricationOilConsumedPerCycle = metadata.HasDefinitionMetadata ? Mathf.Max(0f, metadata.DefinitionMetadata.MaterialFabricationOilConsumedPerCycle) : 0f,
+                MaterialFabricationMaterialsOutputPerCycle = metadata.HasDefinitionMetadata ? Mathf.Max(0, metadata.DefinitionMetadata.MaterialFabricationMaterialsOutputPerCycle) : 0,
+                MaterialFabricationCycleDurationSeconds = metadata.HasDefinitionMetadata ? Mathf.Max(0.01f, metadata.DefinitionMetadata.MaterialFabricationCycleDurationSeconds) : 30f,
+                MaterialFabricationOutputCapacityPolicy = metadata.HasDefinitionMetadata ? metadata.DefinitionMetadata.MaterialFabricationOutputCapacityPolicy : MaterialFabricationOutputCapacityPolicyCode.RequireFullCycleCapacity,
                 RefugeeCapacity = metadata.HasDefinitionMetadata ? Mathf.Max(0, metadata.DefinitionMetadata.RefugeeCapacity) : 0,
                 RefugeeUpkeepPerCitizenPerDay = metadata.HasDefinitionMetadata ? Mathf.Max(0, metadata.DefinitionMetadata.RefugeeUpkeepPerCitizenPerDay) : 0,
                 ThreatDetectionKind = metadata.HasDefinitionMetadata ? metadata.DefinitionMetadata.ThreatDetectionKind : ThreatDetectionKind.None,
@@ -485,6 +495,11 @@ namespace Game.Runtime
                 OilStorageCapacity = hasMetadata ? Mathf.Max(0, metadata.OilStorageCapacity) : 0,
                 FuelBarrelsPerDay = hasMetadata ? Mathf.Max(0f, metadata.FuelBarrelsPerDay) : 0f,
                 FuelStorageCapacity = hasMetadata ? Mathf.Max(0, metadata.FuelStorageCapacity) : 0,
+                MaterialFabricationEnabled = hasMetadata && metadata.MaterialFabricationEnabled,
+                MaterialFabricationOilConsumedPerCycle = hasMetadata ? Mathf.Max(0f, metadata.MaterialFabricationOilConsumedPerCycle) : 0f,
+                MaterialFabricationMaterialsOutputPerCycle = hasMetadata ? Mathf.Max(0, metadata.MaterialFabricationMaterialsOutputPerCycle) : 0,
+                MaterialFabricationCycleDurationSeconds = hasMetadata ? Mathf.Max(0.01f, metadata.MaterialFabricationCycleDurationSeconds) : 30f,
+                MaterialFabricationOutputCapacityPolicy = hasMetadata ? metadata.MaterialFabricationOutputCapacityPolicy : MaterialFabricationOutputCapacityPolicyCode.RequireFullCycleCapacity,
                 RefugeeCapacity = hasMetadata ? Mathf.Max(0, metadata.RefugeeCapacity) : 0,
                 RefugeeUpkeepPerCitizenPerDay = hasMetadata ? Mathf.Max(0, metadata.RefugeeUpkeepPerCitizenPerDay) : 0,
                 ThreatDetectionKind = hasMetadata ? metadata.ThreatDetectionKind : ThreatDetectionKind.None,

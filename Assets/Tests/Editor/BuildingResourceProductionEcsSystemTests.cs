@@ -18,6 +18,8 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.ApplyTick_FullOilStorageDoesNotOverflowVersionOrAllocate();
             tests.CreateBuildingCombatEntity_UsesSameResourceStorageForMapAndRuntimeOilPumps();
             tests.CreateBuildingCombatEntity_UsesSameResourceStorageForMapAndRuntimeFuelBladders();
+            tests.CreateBuildingCombatEntity_UsesSameMaterialFabricationProjectionForMapAndRuntimeDepots();
+            tests.CreateBuildingCombatEntity_RejectsInvalidMaterialFabricationDefinitions();
             tests.ApplyStorageQuery_WritesOilToEcsStorageWithCapacityAndVersion();
             tests.ApplyStorageQuery_ConvertsRefineryOilIntoFuelWithEfficiencyAndCapacity();
             tests.ApplyStorageQuery_ConvertsStandardAndLargeRefineriesWithDifferentRates();
@@ -53,7 +55,7 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.AutomaticFuelLogisticsTanker_FullFuelStorageSetsTypedIdleReason();
             tests.AutomaticFuelLogisticsTanker_NoRouteSetsTypedIdleReason();
             tests.AutomaticFuelLogisticsTanker_NoAvailableTankerDoesNotReserveFuel();
-            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=38");
+            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=40");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -304,6 +306,240 @@ public sealed class BuildingResourceProductionEcsSystemTests
                     grid.Origin.x + (originCell.x + footprintCells.x * 0.5f) * grid.CellSize,
                     grid.Origin.y,
                     grid.Origin.z + (originCell.y + footprintCells.y * 0.5f) * grid.CellSize);
+            }
+        }
+        finally
+        {
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (occupied.IsCreated)
+                occupied.Dispose();
+            world.Dispose();
+        }
+    }
+
+    [Test]
+    public void CreateBuildingCombatEntity_UsesSameMaterialFabricationProjectionForMapAndRuntimeDepots()
+    {
+        var world = new World(nameof(CreateBuildingCombatEntity_UsesSameMaterialFabricationProjectionForMapAndRuntimeDepots));
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        try
+        {
+            EntityManager em = world.EntityManager;
+            Entity gridEntity = CreateTestGridEntity(em, 32, 32, out blocked, out occupied);
+            var helper = new BuildingRuntimeEntityCompositionSystemHelper();
+            var context = new BuildingRuntimeEntityCompositionSystemHelper.Context(
+                TryGetEntityManager,
+                TryGetGridData,
+                GetFootprintCenter,
+                null,
+                default,
+                null,
+                0f);
+            var mapDefinition = new BuildingDefinition
+            {
+                DisplayName = "Field Fabrication Depot",
+                MaxHealth = 900,
+                FootprintCells = new Vector2Int(4, 4),
+                OilStorageCapacity = 24,
+                MaterialFabricationEnabled = true,
+                MaterialFabricationOilConsumedPerCycle = 4f,
+                MaterialFabricationMaterialsOutputPerCycle = 20,
+                MaterialFabricationCycleDurationSeconds = 30f,
+                MaterialFabricationOutputCapacityPolicy =
+                    MaterialFabricationOutputCapacityPolicyCode.RequireFullCycleCapacity
+            };
+            BuildingDefinition runtimeDefinition =
+                BuildingRuntimeSpawnCompositionSystemHelper.CloneDefinitionWithFootprint(
+                    mapDefinition,
+                    new Vector2Int(5, 4));
+
+            Entity mapEntity = helper.CreateBuildingCombatEntity(
+                context,
+                321,
+                new Vector2Int(4, 6),
+                mapDefinition,
+                FactionIdentity.PlayerFactionId,
+                Quaternion.identity);
+            Entity runtimeEntity = helper.CreateBuildingCombatEntity(
+                context,
+                322,
+                new Vector2Int(12, 6),
+                runtimeDefinition,
+                FactionIdentity.PlayerFactionId,
+                Quaternion.identity);
+
+            Assert.IsTrue(em.HasComponent<MaterialFabricationComponent>(mapEntity));
+            Assert.IsTrue(em.HasComponent<MaterialFabricationInputTag>(mapEntity));
+            Assert.IsTrue(em.HasComponent<BuildingResourceStorageComponent>(mapEntity));
+            Assert.IsTrue(em.HasComponent<MaterialFabricationComponent>(runtimeEntity));
+            Assert.IsTrue(em.HasComponent<MaterialFabricationInputTag>(runtimeEntity));
+            Assert.IsTrue(em.HasComponent<BuildingResourceStorageComponent>(runtimeEntity));
+
+            MaterialFabricationComponent mapFabrication =
+                em.GetComponentData<MaterialFabricationComponent>(mapEntity);
+            MaterialFabricationComponent runtimeFabrication =
+                em.GetComponentData<MaterialFabricationComponent>(runtimeEntity);
+            Assert.AreEqual(321, mapFabrication.RuntimeBuildingId);
+            Assert.AreEqual(322, runtimeFabrication.RuntimeBuildingId);
+            Assert.AreEqual(FactionIdentity.PlayerFactionId, mapFabrication.OwnerFactionId);
+            Assert.AreEqual(mapFabrication.OilConsumedPerCycle, runtimeFabrication.OilConsumedPerCycle);
+            Assert.AreEqual(mapFabrication.MaterialsOutputPerCycle, runtimeFabrication.MaterialsOutputPerCycle);
+            Assert.AreEqual(mapFabrication.CycleDurationSeconds, runtimeFabrication.CycleDurationSeconds);
+            Assert.AreEqual(MaterialFabricationStatusCode.Blocked, mapFabrication.Status);
+            Assert.AreEqual(MaterialFabricationBlockReasonCode.NoOilInput, mapFabrication.BlockReason);
+            Assert.AreEqual(1u, mapFabrication.Version);
+
+            BuildingResourceStorageComponent mapStorage =
+                em.GetComponentData<BuildingResourceStorageComponent>(mapEntity);
+            BuildingResourceStorageComponent runtimeStorage =
+                em.GetComponentData<BuildingResourceStorageComponent>(runtimeEntity);
+            Assert.AreEqual(24, mapStorage.OilStorageCapacity);
+            Assert.AreEqual(mapStorage.OilStorageCapacity, runtimeStorage.OilStorageCapacity);
+
+            bool TryGetEntityManager(out EntityManager entityManager)
+            {
+                entityManager = em;
+                return true;
+            }
+
+            bool TryGetGridData(
+                out Entity entity,
+                out GridConfig grid,
+                out DynamicBuffer<GridRoad> roads,
+                out DynamicBlockerComponent blockerData)
+            {
+                entity = gridEntity;
+                grid = em.GetComponentData<GridConfig>(gridEntity);
+                roads = em.GetBuffer<GridRoad>(gridEntity);
+                blockerData = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
+                return true;
+            }
+
+            static Vector3 GetFootprintCenter(
+                Vector2Int originCell,
+                Vector2Int footprintCells,
+                GridConfig grid)
+            {
+                return new Vector3(
+                    grid.Origin.x + (originCell.x + footprintCells.x * 0.5f) * grid.CellSize,
+                    grid.Origin.y,
+                    grid.Origin.z + (originCell.y + footprintCells.y * 0.5f) * grid.CellSize);
+            }
+        }
+        finally
+        {
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (occupied.IsCreated)
+                occupied.Dispose();
+            world.Dispose();
+        }
+    }
+
+    [Test]
+    public void CreateBuildingCombatEntity_RejectsInvalidMaterialFabricationDefinitions()
+    {
+        var world = new World(nameof(CreateBuildingCombatEntity_RejectsInvalidMaterialFabricationDefinitions));
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        try
+        {
+            EntityManager em = world.EntityManager;
+            Entity gridEntity = CreateTestGridEntity(em, 32, 32, out blocked, out occupied);
+            var helper = new BuildingRuntimeEntityCompositionSystemHelper();
+            var context = new BuildingRuntimeEntityCompositionSystemHelper.Context(
+                TryGetEntityManager,
+                TryGetGridData,
+                GetFootprintCenter,
+                null,
+                default,
+                null,
+                0f);
+            BuildingDefinition[] invalidDefinitions =
+            {
+                CreateDefinition(oilCapacity: 0, oilPerCycle: 4f, output: 20, cycleSeconds: 30f),
+                CreateDefinition(oilCapacity: 24, oilPerCycle: 0f, output: 20, cycleSeconds: 30f),
+                CreateDefinition(oilCapacity: 24, oilPerCycle: 4f, output: 0, cycleSeconds: 30f),
+                CreateDefinition(oilCapacity: 24, oilPerCycle: 4f, output: 20, cycleSeconds: 0f)
+            };
+
+            for (int i = 0; i < invalidDefinitions.Length; i++)
+            {
+                Entity entity = helper.CreateBuildingCombatEntity(
+                    context,
+                    330 + i,
+                    new Vector2Int(2 + i * 4, 2),
+                    invalidDefinitions[i],
+                    FactionIdentity.PlayerFactionId,
+                    Quaternion.identity);
+                Assert.IsFalse(em.HasComponent<MaterialFabricationComponent>(entity));
+                Assert.IsFalse(em.HasComponent<MaterialFabricationInputTag>(entity));
+            }
+
+            BuildingDefinition overflowRisk =
+                CreateDefinition(24, 4f, int.MaxValue, 30f);
+            Entity overflowRiskEntity = helper.CreateBuildingCombatEntity(
+                context,
+                340,
+                new Vector2Int(20, 2),
+                overflowRisk,
+                FactionIdentity.PlayerFactionId,
+                Quaternion.identity);
+            Assert.AreEqual(
+                int.MaxValue,
+                em.GetComponentData<MaterialFabricationComponent>(overflowRiskEntity).MaterialsOutputPerCycle);
+
+            bool TryGetEntityManager(out EntityManager entityManager)
+            {
+                entityManager = em;
+                return true;
+            }
+
+            bool TryGetGridData(
+                out Entity entity,
+                out GridConfig grid,
+                out DynamicBuffer<GridRoad> roads,
+                out DynamicBlockerComponent blockerData)
+            {
+                entity = gridEntity;
+                grid = em.GetComponentData<GridConfig>(gridEntity);
+                roads = em.GetBuffer<GridRoad>(gridEntity);
+                blockerData = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
+                return true;
+            }
+
+            static Vector3 GetFootprintCenter(
+                Vector2Int originCell,
+                Vector2Int footprintCells,
+                GridConfig grid)
+            {
+                return new Vector3(
+                    grid.Origin.x + (originCell.x + footprintCells.x * 0.5f) * grid.CellSize,
+                    grid.Origin.y,
+                    grid.Origin.z + (originCell.y + footprintCells.y * 0.5f) * grid.CellSize);
+            }
+
+            static BuildingDefinition CreateDefinition(
+                int oilCapacity,
+                float oilPerCycle,
+                int output,
+                float cycleSeconds)
+            {
+                return new BuildingDefinition
+                {
+                    DisplayName = "Field Fabrication Depot",
+                    MaxHealth = 900,
+                    FootprintCells = new Vector2Int(2, 2),
+                    OilStorageCapacity = oilCapacity,
+                    MaterialFabricationEnabled = true,
+                    MaterialFabricationOilConsumedPerCycle = oilPerCycle,
+                    MaterialFabricationMaterialsOutputPerCycle = output,
+                    MaterialFabricationCycleDurationSeconds = cycleSeconds,
+                    MaterialFabricationOutputCapacityPolicy =
+                        MaterialFabricationOutputCapacityPolicyCode.RequireFullCycleCapacity
+                };
             }
         }
         finally

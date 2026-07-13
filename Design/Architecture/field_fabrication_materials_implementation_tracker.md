@@ -1,7 +1,7 @@
 # Field Fabrication And Materials Implementation Tracker
 
 Date: 2026-07-12
-Status: In progress - Phase 2 depot config and building projection
+Status: In progress - Phase 3 Oil destination routing
 Design source: `../Field_Fabrication_Materials_Design.md`
 
 ## Objective
@@ -73,9 +73,9 @@ Dependency direction remains inward toward components/config/contracts/runtime. 
 
 ## Progress Summary
 
-Overall implementation progress: 28% (29/103 checklist items complete).
+Overall implementation progress: 38% (39/103 checklist items complete).
 
-Planning, inventory, and canonical resource ownership are complete. Canonical Materials, player Credits, combined construction affordability/spending, Resource Exchange ownership, the V1 lifetime policy, and the live Match header projection are implemented. Exchange Oil/Fuel transactions and UI projection use authoritative physical building storage and faction summaries; the Exchange wallet retains only faction identity, Rush Tickets, and version.
+Planning, canonical resource ownership, and depot config/projection are complete. The existing `Building_Ammunition_Depot` asset now presents as the Field Fabrication Depot, reuses generic physical Oil storage, and projects typed fabrication data identically for map-placed and player-built structures. Canonical Materials, player Credits, combined construction spending, Exchange ownership, and the live Match header are also implemented.
 
 Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation row counts. Update the numerator, denominator, table, status, and evidence log in the same commit as each completed batch.
 
@@ -83,8 +83,8 @@ Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation 
 |---|---|---:|---:|---:|---|
 | 0. Inventory and baseline | Complete | 12 | 12 | 100% | Ownership, file targets, compile state, focused behavior, p95/p99, and managed-allocation baselines are recorded. |
 | 1. Canonical tactical Materials and Credits | Complete | 13 | 13 | 100% | Canonical Materials/Credits ownership, combined allocation-free construction transaction, HUD projection, Exchange ownership, and deterministic mutation coverage pass. |
-| 2. Config and building projection | In progress | 0 | 10 | 0% | Depot config is valid, authored, and projected consistently. |
-| 3. Oil destination routing | Pending | 0 | 11 | 0% | Tray routing is deterministic, reserved, and stable. |
+| 2. Config and building projection | Complete | 10 | 10 | 100% | Depot identity, authored balance, typed data, compatibility id, and map/runtime projection are validated. |
+| 3. Oil destination routing | In progress | 0 | 11 | 0% | Tray routing is deterministic, reserved, and stable. |
 | 4. Oil-to-Materials conversion | Pending | 0 | 11 | 0% | Conversion is deterministic, capped, typed, and no-GC. |
 | 5. Credits + Materials construction | Pending | 0 | 11 | 0% | Placement spends both resources exactly once. |
 | 6. HUD and selected-building UI | In progress | 4 | 11 | 36% | Live canonical Credits/Materials header projection is validated at 0 managed bytes. Build Drawer and selected-depot UI remain. |
@@ -168,16 +168,16 @@ Phase 1 exit criteria:
 
 ## Phase 2: Config And Building Projection
 
-- [ ] Change only the player-facing display name and description of the existing Ammunition Depot config.
-- [ ] Preserve `Building_Ammunition_Depot` and serialized prefab references.
-- [ ] Add authored Oil input capacity, Oil consumed per cycle, Materials output per cycle, cycle duration, Materials capacity policy, and enabled state.
-- [ ] Prefer an existing generic building conversion config if it represents Oil-to-faction-output without special-case code.
-- [ ] If required, add a focused `MaterialFabricationConfig`; keep it in `Game.Configs` and validate all fields.
-- [ ] Project `MaterialFabricationComponent` and `MaterialFabricationInputTag` for map-placed and player-built depots through the same path.
-- [ ] Project required data at creation time; do not add components during every tick.
-- [ ] Add stable typed status and block-reason enums.
-- [ ] Update AI/catalog-facing display role without changing compatibility ids.
-- [ ] Add config/projection tests for missing, negative, zero, overflow-risk, map-placed, and player-built cases.
+- [x] Change only the player-facing display name and description of the existing Ammunition Depot config.
+- [x] Preserve `Building_Ammunition_Depot` and serialized prefab references.
+- [x] Add authored Oil input capacity, Oil consumed per cycle, Materials output per cycle, cycle duration, Materials capacity policy, and enabled state.
+- [x] Prefer an existing generic building conversion config if it represents Oil-to-faction-output without special-case code.
+- [x] Confirm a focused `MaterialFabricationConfig` is not required; keep fabrication fields in the existing `Game.Configs` building definition and validate all fields.
+- [x] Project `MaterialFabricationComponent` and `MaterialFabricationInputTag` for map-placed and player-built depots through the same path.
+- [x] Project required data at creation time; do not add components during every tick.
+- [x] Add stable typed status and block-reason enums.
+- [x] Update AI/catalog-facing display role without changing compatibility ids.
+- [x] Add config/projection tests for missing, negative, zero, overflow-risk, map-placed, and player-built cases.
 
 Phase 2 exit criteria:
 
@@ -461,3 +461,15 @@ For every completed batch append:
 - Isolated Unity validation passed: atomic helper 6/6, runtime player resource boundary 6/6, building placement regression 16/16, tactical ownership architecture 1/1, and ECS Burst hot-path architecture 10/10. Existing Materials grant/spend tests already cover capacity overflow, counter saturation, invalid state, and version wrap.
 - Evidence: `/private/tmp/wlc-field-fabrication-construction-resource.log`, `/private/tmp/wlc-field-fabrication-runtime-resource-rerun.log`, `/private/tmp/wlc-field-fabrication-placement-rerun.log`, `/private/tmp/wlc-field-fabrication-phase1-ownership-rerun.log`, and `/private/tmp/wlc-field-fabrication-phase1-burst-rerun.log`.
 - Phase 1 is complete at 13/13. Checklist count is 29/103. Next action: begin Phase 2 by locating the exact `Building_Ammunition_Depot` config and tracing map-placed/player-built building projection through the existing generic storage/production data path.
+
+### 2026-07-13 - Phase 2 Depot Config And Building Projection
+
+- Changed only the existing Ammunition Depot config's player-facing identity to `Field Fabrication Depot` and the approved Oil-to-Materials description. The prefab name, `Building_Ammunition_Depot` lookup id, serialized prefab reference, price, durability, portraits, and existing scene/AI/custom-game references remain unchanged.
+- Reused `BuildingDefinitionAuthoringConfig.oilStorageCapacity` and `BuildingResourceStorageComponent` as the authoritative physical Oil input capacity. Added focused building-definition fields for fabrication enabled state, Oil consumed per cycle, integer Materials output, cycle duration, and full-cycle capacity policy; no second config asset or Oil storage owner was introduced.
+- Added `MaterialFabricationComponent`, `MaterialFabricationInputTag`, `MaterialFabricationStatusCode`, `MaterialFabricationBlockReasonCode`, and `MaterialFabricationOutputCapacityPolicyCode` in `Game.Components`.
+- Extended the existing config -> hidden authoring -> composition metadata -> runtime definition -> cloned definition path. `BuildingRuntimeEntityCompositionSystemHelper.CreateBuildingCombatEntity` is the single projection point for both map-placed and player-built depots and adds all required components at creation time.
+- Authored initial tuning is 24 Oil input capacity, 4 Oil consumed per 30-second cycle, and 20 Materials output per cycle. These values remain config data and are not hard-coded in simulation.
+- Added typed config validation for missing Oil capacity, invalid/negative Oil consumption, invalid Materials output, invalid cycle duration, and unsupported capacity policy. Invalid runtime definitions do not receive fabrication components; `int.MaxValue` output metadata projects without arithmetic so later conversion must capacity-check before mutation.
+- Isolated Unity validation passed: config/compatibility/metadata 3/3, full resource production and logistics regression 40/40, script assembly boundaries 31/31, and ECS Burst hot-path architecture 10/10.
+- Evidence: `/private/tmp/wlc-field-fabrication-phase2-config.log`, `/private/tmp/wlc-field-fabrication-phase2-resource-regression.log`, `/private/tmp/wlc-field-fabrication-phase2-architecture.log`, and `/private/tmp/wlc-field-fabrication-phase2-burst.log`.
+- Phase 2 is complete at 10/10. Checklist count is 39/103. Next action: extend the existing tray destination candidate and reservation path to include same-faction `MaterialFabricationInputTag` Oil demand while preserving active assignments and refinery regressions.

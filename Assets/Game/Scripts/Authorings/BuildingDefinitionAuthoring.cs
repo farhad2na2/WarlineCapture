@@ -41,6 +41,11 @@ namespace Game.Authoring
         [SerializeField, HideInInspector, Min(0)] private int oilStorageCapacity;
         [SerializeField, HideInInspector, Min(0f)] private float fuelBarrelsPerDay;
         [SerializeField, HideInInspector, Min(0)] private int fuelStorageCapacity;
+        [SerializeField, HideInInspector] private bool materialFabricationEnabled;
+        [SerializeField, HideInInspector, Min(0f)] private float materialFabricationOilConsumedPerCycle;
+        [SerializeField, HideInInspector, Min(0)] private int materialFabricationMaterialsOutputPerCycle;
+        [SerializeField, HideInInspector, Min(0.01f)] private float materialFabricationCycleDurationSeconds = 30f;
+        [SerializeField, HideInInspector] private MaterialFabricationOutputCapacityPolicyCode materialFabricationOutputCapacityPolicy;
         [SerializeField, HideInInspector, Min(0)] private int refugeeCapacity;
         [SerializeField, HideInInspector, Min(0)] private int refugeeUpkeepPerCitizenPerDay;
         [SerializeField, HideInInspector] private ThreatDetectionKind threatDetectionKind;
@@ -92,6 +97,11 @@ namespace Game.Authoring
         public int ConfiguredOilStorageCapacity => oilStorageCapacity;
         public float ConfiguredFuelBarrelsPerDay => fuelBarrelsPerDay;
         public int ConfiguredFuelStorageCapacity => fuelStorageCapacity;
+        public bool ConfiguredMaterialFabricationEnabled => materialFabricationEnabled;
+        public float ConfiguredMaterialFabricationOilConsumedPerCycle => Mathf.Max(0f, materialFabricationOilConsumedPerCycle);
+        public int ConfiguredMaterialFabricationMaterialsOutputPerCycle => Mathf.Max(0, materialFabricationMaterialsOutputPerCycle);
+        public float ConfiguredMaterialFabricationCycleDurationSeconds => Mathf.Max(0.01f, materialFabricationCycleDurationSeconds);
+        public MaterialFabricationOutputCapacityPolicyCode ConfiguredMaterialFabricationOutputCapacityPolicy => materialFabricationOutputCapacityPolicy;
         public int ConfiguredRefugeeCapacity => refugeeCapacity;
         public int ConfiguredRefugeeUpkeepPerCitizenPerDay => refugeeUpkeepPerCitizenPerDay;
         public ThreatDetectionKind ConfiguredThreatDetectionKind => threatDetectionKind;
@@ -158,6 +168,11 @@ namespace Game.Authoring
             oilStorageCapacity = config.OilStorageCapacity;
             fuelBarrelsPerDay = config.FuelBarrelsPerDay;
             fuelStorageCapacity = config.FuelStorageCapacity;
+            materialFabricationEnabled = config.MaterialFabricationEnabled;
+            materialFabricationOilConsumedPerCycle = config.MaterialFabricationOilConsumedPerCycle;
+            materialFabricationMaterialsOutputPerCycle = config.MaterialFabricationMaterialsOutputPerCycle;
+            materialFabricationCycleDurationSeconds = config.MaterialFabricationCycleDurationSeconds;
+            materialFabricationOutputCapacityPolicy = config.MaterialFabricationOutputCapacityPolicy;
             refugeeCapacity = config.RefugeeCapacity;
             refugeeUpkeepPerCitizenPerDay = config.RefugeeUpkeepPerCitizenPerDay;
             threatDetectionKind = config.ThreatDetectionKind;

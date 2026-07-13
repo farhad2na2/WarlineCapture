@@ -420,10 +420,20 @@ namespace Game.Configs
         public Vector2Int Size => size;
     }
 
+    public enum MaterialFabricationConfigValidationCode : byte
+    {
+        Valid = 0,
+        MissingOilInputCapacity = 1,
+        InvalidOilConsumption = 2,
+        InvalidMaterialsOutput = 3,
+        InvalidCycleDuration = 4,
+        UnsupportedOutputCapacityPolicy = 5
+    }
+
     [CreateAssetMenu(menuName = "Game/Config/Building Definition Authoring")]
     public class BuildingDefinitionAuthoringConfig : ScriptableObject
     { [SerializeField] private string displayName = "Building";
-        [TextArea, SerializeField] private string description = "Operational building."; [SerializeField] private Sprite portraitSprite; [SerializeField] private Sprite portraitCardSprite; [SerializeField] private Sprite portraitActionSprite; [SerializeField] private int maxHealth = 500; [SerializeField] private BuildingRole role; [SerializeField] private bool isWall; [SerializeField] private bool canRequest = true; [SerializeField, Min(0)] private int price = 20000; [SerializeField, Min(0.01f)] private float productionDurationSeconds = 30f; [SerializeField, Min(0f)] private float oilBarrelsPerDay; [SerializeField, Min(0)] private int oilStorageCapacity; [SerializeField, Min(0f)] private float fuelBarrelsPerDay; [SerializeField, Min(0)] private int fuelStorageCapacity; [Header("Refugees")] [SerializeField, Min(0)] private int refugeeCapacity; [SerializeField, Min(0)] private int refugeeUpkeepPerCitizenPerDay; [Header("Threat Detection")] [SerializeField] private ThreatDetectionKind threatDetectionKind; [SerializeField, Min(0)] private int threatDetectionRadiusCells; [Header("Defense")] [SerializeField] private bool canAttack; [SerializeField, Min(1)] private int maxConcurrentAttacks = 1; [SerializeField, Min(0f)] private float attackRange; [SerializeField, Min(0.01f)] private float attackCooldownSeconds = 1f; [SerializeField, Min(0)] private int attackDamage; [SerializeField] private GameObject attackImpactPrefab; [SerializeField] private GameObject muzzleFlashPrefab; [SerializeField, Min(0f)] private float muzzleFlashHeightOffset = 0.95f; [SerializeField, Min(0f)] private float muzzleFlashForwardOffset = 0.5f; [SerializeField] private Color attackTraceColor = new(1f, 0.62f, 0.25f, 1f); [SerializeField, Min(0.01f)] private float attackTraceWidth = 0.14f; [SerializeField, Min(0.1f)] private float attackTraceScrollSpeed = 24f; [SerializeField, Min(1f)] private float attackTraceDashDensity = 4f; [SerializeField, Min(0.01f)] private float attackTraceVisibleSeconds = 0.1f; [SerializeField, Min(1)] private int attackTracerEveryNthShot = 3; [Header("Destroyed Visual")] [SerializeField] private GameObject destroyedVisualPrefab; [SerializeField] private List<BuildingProductionConfigEntry> productions = new();
+        [TextArea, SerializeField] private string description = "Operational building."; [SerializeField] private Sprite portraitSprite; [SerializeField] private Sprite portraitCardSprite; [SerializeField] private Sprite portraitActionSprite; [SerializeField] private int maxHealth = 500; [SerializeField] private BuildingRole role; [SerializeField] private bool isWall; [SerializeField] private bool canRequest = true; [SerializeField, Min(0)] private int price = 20000; [SerializeField, Min(0.01f)] private float productionDurationSeconds = 30f; [SerializeField, Min(0f)] private float oilBarrelsPerDay; [SerializeField, Min(0)] private int oilStorageCapacity; [SerializeField, Min(0f)] private float fuelBarrelsPerDay; [SerializeField, Min(0)] private int fuelStorageCapacity; [Header("Material Fabrication")] [SerializeField] private bool materialFabricationEnabled; [SerializeField, Min(0f)] private float materialFabricationOilConsumedPerCycle; [SerializeField, Min(0)] private int materialFabricationMaterialsOutputPerCycle; [SerializeField, Min(0.01f)] private float materialFabricationCycleDurationSeconds = 30f; [SerializeField] private MaterialFabricationOutputCapacityPolicyCode materialFabricationOutputCapacityPolicy; [Header("Refugees")] [SerializeField, Min(0)] private int refugeeCapacity; [SerializeField, Min(0)] private int refugeeUpkeepPerCitizenPerDay; [Header("Threat Detection")] [SerializeField] private ThreatDetectionKind threatDetectionKind; [SerializeField, Min(0)] private int threatDetectionRadiusCells; [Header("Defense")] [SerializeField] private bool canAttack; [SerializeField, Min(1)] private int maxConcurrentAttacks = 1; [SerializeField, Min(0f)] private float attackRange; [SerializeField, Min(0.01f)] private float attackCooldownSeconds = 1f; [SerializeField, Min(0)] private int attackDamage; [SerializeField] private GameObject attackImpactPrefab; [SerializeField] private GameObject muzzleFlashPrefab; [SerializeField, Min(0f)] private float muzzleFlashHeightOffset = 0.95f; [SerializeField, Min(0f)] private float muzzleFlashForwardOffset = 0.5f; [SerializeField] private Color attackTraceColor = new(1f, 0.62f, 0.25f, 1f); [SerializeField, Min(0.01f)] private float attackTraceWidth = 0.14f; [SerializeField, Min(0.1f)] private float attackTraceScrollSpeed = 24f; [SerializeField, Min(1f)] private float attackTraceDashDensity = 4f; [SerializeField, Min(0.01f)] private float attackTraceVisibleSeconds = 0.1f; [SerializeField, Min(1)] private int attackTracerEveryNthShot = 3; [Header("Destroyed Visual")] [SerializeField] private GameObject destroyedVisualPrefab; [SerializeField] private List<BuildingProductionConfigEntry> productions = new();
 
         private void OnValidate()
         {
@@ -446,6 +456,32 @@ namespace Game.Configs
         public int OilStorageCapacity => Mathf.Max(0, oilStorageCapacity);
         public float FuelBarrelsPerDay => Mathf.Max(0f, fuelBarrelsPerDay);
         public int FuelStorageCapacity => Mathf.Max(0, fuelStorageCapacity);
+        public bool MaterialFabricationEnabled => materialFabricationEnabled;
+        public float MaterialFabricationOilConsumedPerCycle => Mathf.Max(0f, materialFabricationOilConsumedPerCycle);
+        public int MaterialFabricationMaterialsOutputPerCycle => Mathf.Max(0, materialFabricationMaterialsOutputPerCycle);
+        public float MaterialFabricationCycleDurationSeconds => Mathf.Max(0.01f, materialFabricationCycleDurationSeconds);
+        public MaterialFabricationOutputCapacityPolicyCode MaterialFabricationOutputCapacityPolicy => materialFabricationOutputCapacityPolicy;
+
+        public MaterialFabricationConfigValidationCode ValidateMaterialFabricationConfiguration()
+        {
+            if (!materialFabricationEnabled)
+                return MaterialFabricationConfigValidationCode.Valid;
+            if (oilStorageCapacity <= 0)
+                return MaterialFabricationConfigValidationCode.MissingOilInputCapacity;
+            if (!float.IsFinite(materialFabricationOilConsumedPerCycle) ||
+                materialFabricationOilConsumedPerCycle <= 0f)
+                return MaterialFabricationConfigValidationCode.InvalidOilConsumption;
+            if (materialFabricationMaterialsOutputPerCycle <= 0)
+                return MaterialFabricationConfigValidationCode.InvalidMaterialsOutput;
+            if (!float.IsFinite(materialFabricationCycleDurationSeconds) ||
+                materialFabricationCycleDurationSeconds <= 0f)
+                return MaterialFabricationConfigValidationCode.InvalidCycleDuration;
+            if (materialFabricationOutputCapacityPolicy !=
+                MaterialFabricationOutputCapacityPolicyCode.RequireFullCycleCapacity)
+                return MaterialFabricationConfigValidationCode.UnsupportedOutputCapacityPolicy;
+
+            return MaterialFabricationConfigValidationCode.Valid;
+        }
         public int RefugeeCapacity => Mathf.Max(0, refugeeCapacity);
         public int RefugeeUpkeepPerCitizenPerDay => Mathf.Max(0, refugeeUpkeepPerCitizenPerDay);
         public ThreatDetectionKind ThreatDetectionKind => threatDetectionKind;

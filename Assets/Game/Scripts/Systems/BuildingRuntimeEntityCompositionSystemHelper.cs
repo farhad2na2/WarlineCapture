@@ -126,6 +126,7 @@ namespace Game.Runtime
                 IsGate = BuildingBarrierUtilitySystemHelper.IsWallGateDefinition(definition) ? (byte)1 : (byte)0
             });
             AddResourceStorageComponent(em, entity, runtimeBuildingId, ownerFactionId, definition);
+            AddMaterialFabricationComponents(em, entity, runtimeBuildingId, ownerFactionId, definition);
             em.AddComponentData(entity, new UnitGridInitialized());
             em.AddComponentData(entity, new Faction { Id = ownerFactionId });
             em.AddComponentData(entity, new UnitHealth { Current = maxHealth, Max = maxHealth });
@@ -264,6 +265,39 @@ namespace Game.Runtime
                 StoredOilBarrels = 0f,
                 StoredFuelBarrels = 0f
             });
+        }
+
+        private static void AddMaterialFabricationComponents(
+            EntityManager em,
+            Entity entity,
+            int runtimeBuildingId,
+            byte ownerFactionId,
+            BuildingDefinition definition)
+        {
+            if (!definition.MaterialFabricationEnabled ||
+                definition.OilStorageCapacity <= 0 ||
+                definition.MaterialFabricationOilConsumedPerCycle <= 0f ||
+                definition.MaterialFabricationMaterialsOutputPerCycle <= 0 ||
+                definition.MaterialFabricationCycleDurationSeconds <= 0f ||
+                definition.MaterialFabricationOutputCapacityPolicy !=
+                MaterialFabricationOutputCapacityPolicyCode.RequireFullCycleCapacity)
+                return;
+
+            em.AddComponentData(entity, new MaterialFabricationComponent
+            {
+                RuntimeBuildingId = runtimeBuildingId,
+                OwnerFactionId = ownerFactionId,
+                ProductionEnabled = 1,
+                OutputCapacityPolicy = definition.MaterialFabricationOutputCapacityPolicy,
+                OilConsumedPerCycle = definition.MaterialFabricationOilConsumedPerCycle,
+                MaterialsOutputPerCycle = definition.MaterialFabricationMaterialsOutputPerCycle,
+                CycleDurationSeconds = definition.MaterialFabricationCycleDurationSeconds,
+                CycleProgressSeconds = 0f,
+                Status = MaterialFabricationStatusCode.Blocked,
+                BlockReason = MaterialFabricationBlockReasonCode.NoOilInput,
+                Version = 1u
+            });
+            em.AddComponent<MaterialFabricationInputTag>(entity);
         }
 
         private static void AddAirDefenseSupportProvider(

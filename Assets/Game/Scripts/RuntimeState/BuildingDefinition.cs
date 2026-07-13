@@ -32,6 +32,11 @@ namespace Game.Runtime
         public int OilStorageCapacity;
         public float FuelBarrelsPerDay;
         public int FuelStorageCapacity;
+        public bool MaterialFabricationEnabled;
+        public float MaterialFabricationOilConsumedPerCycle;
+        public int MaterialFabricationMaterialsOutputPerCycle;
+        public float MaterialFabricationCycleDurationSeconds;
+        public MaterialFabricationOutputCapacityPolicyCode MaterialFabricationOutputCapacityPolicy;
         public int RefugeeCapacity;
         public int RefugeeUpkeepPerCitizenPerDay;
         public ThreatDetectionKind ThreatDetectionKind;

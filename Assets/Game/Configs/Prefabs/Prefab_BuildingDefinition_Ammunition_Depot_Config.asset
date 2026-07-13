@@ -15,8 +15,8 @@ MonoBehaviour:
   portraitSprite: {fileID: 21300000, guid: 6471f74de2fa4944a90d3792ef3f3629, type: 3}
   portraitCardSprite: {fileID: 21300000, guid: 40b519b51c9346bcbb090264ce0a3090, type: 3}
   portraitActionSprite: {fileID: 21300000, guid: 05e334f194de4fb6a0f9f6e15293aa53, type: 3}
-  displayName: Ammunition Depot
-  description: Secure storage facility for ammunition, explosives, and combat supplies.
+  displayName: Field Fabrication Depot
+  description: Consumes Oil to operate fabrication lines that produce Materials for construction, repairs, and battlefield infrastructure.
   maxHealth: 900
   role: 0
   isWall: 0
@@ -24,9 +24,14 @@ MonoBehaviour:
   price: 45000
   productionDurationSeconds: 30
   oilBarrelsPerDay: 0
-  oilStorageCapacity: 0
+  oilStorageCapacity: 24
   fuelBarrelsPerDay: 0
   fuelStorageCapacity: 0
+  materialFabricationEnabled: 1
+  materialFabricationOilConsumedPerCycle: 4
+  materialFabricationMaterialsOutputPerCycle: 20
+  materialFabricationCycleDurationSeconds: 30
+  materialFabricationOutputCapacityPolicy: 0
   refugeeCapacity: 0
   refugeeUpkeepPerCitizenPerDay: 0
   threatDetectionKind: 0

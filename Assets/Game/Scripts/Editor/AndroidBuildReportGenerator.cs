@@ -337,16 +337,31 @@ namespace Game.Editor
                 throw new InvalidOperationException($"Cannot report an unsuccessful build: {summary.result}.");
             if (summary.platform != BuildTarget.Android)
                 throw new InvalidOperationException($"APH-500 only supports Android builds, not {summary.platform}.");
-            if ((summary.options & BuildOptions.DetailedBuildReport) == 0)
-                throw new InvalidOperationException("APH-500 requires BuildOptions.DetailedBuildReport.");
-            if ((summary.options & BuildOptions.Development) != 0)
-                throw new InvalidOperationException("APH-500 reports release APK/AAB builds only.");
+            ValidateReleaseBuildOptions(summary.options);
 
             string expectedExtension = packageType == "AAB" ? ".aab" : ".apk";
             if (!string.Equals(Path.GetExtension(summary.outputPath), expectedExtension, StringComparison.OrdinalIgnoreCase))
             {
                 throw new InvalidOperationException(
                     $"Package type {packageType} does not match build output '{summary.outputPath}'.");
+            }
+        }
+
+        internal static void ValidateReleaseBuildOptions(BuildOptions options)
+        {
+            if ((options & BuildOptions.DetailedBuildReport) == 0)
+                throw new InvalidOperationException("APH-500 requires BuildOptions.DetailedBuildReport.");
+
+            const BuildOptions forbidden =
+                BuildOptions.Development |
+                BuildOptions.AllowDebugging |
+                BuildOptions.ConnectWithProfiler |
+                BuildOptions.EnableDeepProfilingSupport;
+            BuildOptions enabledForbiddenOptions = options & forbidden;
+            if (enabledForbiddenOptions != BuildOptions.None)
+            {
+                throw new InvalidOperationException(
+                    $"APH-500 reports clean release APK/AAB builds only; forbidden options: {enabledForbiddenOptions}.");
             }
         }
 

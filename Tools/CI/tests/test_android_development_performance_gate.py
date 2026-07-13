@@ -12,6 +12,12 @@ from Tools.CI.android_development_performance_gate import (
     load_profile,
     validate_evidence,
 )
+from Tools.CI.android_performance_evidence_gate import (
+    GatePolicy,
+    build_orchestration_contract as build_shared_contract,
+    load_profile as load_shared_profile,
+    validate_evidence as validate_shared_evidence,
+)
 
 
 REVISION = "1" * 40
@@ -58,9 +64,7 @@ class AndroidDevelopmentPerformanceGateTests(unittest.TestCase):
             path.write_bytes(self.artifact_data[key])
         self.apk_sha = digest(self.artifact_data["apk"])
         self.evidence = self.make_evidence()
-        recorder_bytes = json.dumps(
-            self.evidence["sustainedRun"], sort_keys=True
-        ).encode("utf-8")
+        recorder_bytes = json.dumps(self.recorder_payload(self.evidence), sort_keys=True).encode("utf-8")
         self.artifact_data["structuredRecorder"] = recorder_bytes
         (self.root / self.paths["structuredRecorder"]).write_bytes(recorder_bytes)
         self.evidence["artifacts"]["structuredRecorder"]["sha256"] = digest(recorder_bytes)
@@ -169,11 +173,24 @@ class AndroidDevelopmentPerformanceGateTests(unittest.TestCase):
         )
 
     def sync_recorder_artifact(self, evidence: dict) -> None:
-        recorder_bytes = json.dumps(
-            evidence["sustainedRun"], sort_keys=True
-        ).encode("utf-8")
+        recorder_bytes = json.dumps(self.recorder_payload(evidence), sort_keys=True).encode("utf-8")
         (self.root / self.paths["structuredRecorder"]).write_bytes(recorder_bytes)
         evidence["artifacts"]["structuredRecorder"]["sha256"] = digest(recorder_bytes)
+
+    @staticmethod
+    def recorder_payload(evidence: dict) -> dict:
+        return {
+            "schemaVersion": 1,
+            "taskId": "APH-803",
+            "complete": True,
+            "failure": "",
+            "launchRealtimeSeconds": 0.25,
+            "matchReadyRealtimeSeconds": 1.25,
+            "processToMatchReadyMs": 1000.0,
+            "cpuTimingSampleCount": len(evidence["sustainedRun"]["frameTimesMs"]),
+            "gpuTimingSampleCount": len(evidence["sustainedRun"]["frameTimesMs"]),
+            "sustainedRun": evidence["sustainedRun"],
+        }
 
     def test_reference_profile_pins_device_and_keeps_unapproved_limits_unset(self) -> None:
         profile = load_profile(DEFAULT_PROFILE)
@@ -210,6 +227,26 @@ class AndroidDevelopmentPerformanceGateTests(unittest.TestCase):
         self.assertEqual("Passed", result["result"])
         self.assertEqual(5, result["coldStartSampleCount"])
         self.assertEqual(5, result["warmStartSampleCount"])
+
+    def test_shared_core_is_behaviorally_identical_for_aph803(self) -> None:
+        policy = GatePolicy("APH-803", "APH-803 AndroidDevelopmentGate", "development")
+        shared_profile = load_shared_profile(DEFAULT_PROFILE, policy)
+        self.assertEqual(load_profile(DEFAULT_PROFILE), shared_profile)
+        self.assertEqual(
+            build_orchestration_contract(self.profile, REVISION, self.apk_sha),
+            build_shared_contract(self.profile, REVISION, self.apk_sha, policy),
+        )
+        self.assertEqual(
+            self.validate(),
+            validate_shared_evidence(
+                self.evidence,
+                self.profile,
+                expected_revision=REVISION,
+                expected_apk_sha256=self.apk_sha,
+                artifact_root=self.root,
+                policy=policy,
+            ),
+        )
 
     def test_unset_p99_limit_fails_closed(self) -> None:
         profile = copy.deepcopy(self.profile)
@@ -338,7 +375,7 @@ class AndroidDevelopmentPerformanceGateTests(unittest.TestCase):
         recorder_path.write_text("{}", encoding="utf-8")
         evidence = copy.deepcopy(self.evidence)
         evidence["artifacts"]["structuredRecorder"]["sha256"] = digest(b"{}")
-        with self.assertRaisesRegex(GateValidationError, "does not exactly match"):
+        with self.assertRaisesRegex(GateValidationError, "missing"):
             self.validate(evidence=evidence)
 
         recorder_path.write_bytes(self.artifact_data["structuredRecorder"])
@@ -347,6 +384,25 @@ class AndroidDevelopmentPerformanceGateTests(unittest.TestCase):
         evidence = copy.deepcopy(self.evidence)
         evidence["artifacts"]["screenshot"]["sha256"] = digest(b"not a png")
         with self.assertRaisesRegex(GateValidationError, "not a valid PNG"):
+            self.validate(evidence=evidence)
+
+    def test_rejects_incomplete_or_timingless_recorder(self) -> None:
+        evidence = copy.deepcopy(self.evidence)
+        payload = self.recorder_payload(evidence)
+        payload["complete"] = False
+        payload["failure"] = "capture interrupted"
+        recorder_bytes = json.dumps(payload, sort_keys=True).encode("utf-8")
+        (self.root / self.paths["structuredRecorder"]).write_bytes(recorder_bytes)
+        evidence["artifacts"]["structuredRecorder"]["sha256"] = digest(recorder_bytes)
+        with self.assertRaisesRegex(GateValidationError, "did not complete"):
+            self.validate(evidence=evidence)
+
+        payload = self.recorder_payload(evidence)
+        payload["gpuTimingSampleCount"] = 0
+        recorder_bytes = json.dumps(payload, sort_keys=True).encode("utf-8")
+        (self.root / self.paths["structuredRecorder"]).write_bytes(recorder_bytes)
+        evidence["artifacts"]["structuredRecorder"]["sha256"] = digest(recorder_bytes)
+        with self.assertRaisesRegex(GateValidationError, "integer >= 1"):
             self.validate(evidence=evidence)
 
     def test_scans_hashed_raw_log_instead_of_trusting_empty_marker_list(self) -> None:

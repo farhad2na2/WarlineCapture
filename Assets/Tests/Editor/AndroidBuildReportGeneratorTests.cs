@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Game.Editor;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEngine;
 
 public sealed class AndroidBuildReportGeneratorTests
@@ -18,7 +19,9 @@ public sealed class AndroidBuildReportGeneratorTests
             tests.AggregationRetainsDistinctObjectTypesInOrdinalOrder();
             tests.AccountingSeparatesAttributedUnattributedOverheadAndSummaryRemainder();
             tests.ReportCarriesRequiredEvidenceAndExplicitSizeSemantics();
-            Debug.Log("[AndroidBuildReportGeneratorValidation] result=Passed tests=6");
+            tests.ReleaseBuildOptionsRequireDetailedReport();
+            tests.ReleaseBuildOptionsRejectDebugAndProfilerFlags();
+            Debug.Log("[AndroidBuildReportGeneratorValidation] result=Passed tests=8");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -167,6 +170,35 @@ public sealed class AndroidBuildReportGeneratorTests
         StringAssert.Contains("\"buildReportIncludedAssets\"", json);
         StringAssert.Contains("Compressed APK/AAB package", json);
         StringAssert.Contains("not a per-asset compressed-byte attribution", markdown);
+    }
+
+    [Test]
+    public void ReleaseBuildOptionsRequireDetailedReport()
+    {
+        Assert.Throws<InvalidOperationException>(
+            () => AndroidBuildReportGenerator.ValidateReleaseBuildOptions(BuildOptions.None));
+        Assert.DoesNotThrow(
+            () => AndroidBuildReportGenerator.ValidateReleaseBuildOptions(BuildOptions.DetailedBuildReport));
+    }
+
+    [Test]
+    public void ReleaseBuildOptionsRejectDebugAndProfilerFlags()
+    {
+        BuildOptions[] forbiddenOptions =
+        {
+            BuildOptions.Development,
+            BuildOptions.AllowDebugging,
+            BuildOptions.ConnectWithProfiler,
+            BuildOptions.EnableDeepProfilingSupport
+        };
+
+        for (int index = 0; index < forbiddenOptions.Length; index++)
+        {
+            BuildOptions options = BuildOptions.DetailedBuildReport | forbiddenOptions[index];
+            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(
+                () => AndroidBuildReportGenerator.ValidateReleaseBuildOptions(options));
+            StringAssert.Contains("clean release", exception.Message);
+        }
     }
 
     private static AndroidPackedAssetAggregation Aggregate(

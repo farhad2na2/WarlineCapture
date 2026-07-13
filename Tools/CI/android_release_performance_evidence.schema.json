@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://warlinecapture.local/schemas/aph804-android-release-performance-v1.json",
+  "title": "APH-804 Android Release Performance Evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "taskId", "provenance", "device", "build", "startup", "sustainedRun", "installedSizeBytes", "thermal", "artifacts", "crashScan"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "taskId": { "const": "APH-804" },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["exactCommit", "dirty", "apkSha256"],
+      "properties": {
+        "exactCommit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "dirty": { "const": false },
+        "apkSha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "device": { "$ref": "#/$defs/device" },
+    "build": { "$ref": "#/$defs/build" },
+    "startup": { "$ref": "#/$defs/startup" },
+    "sustainedRun": { "$ref": "#/$defs/sustainedRun" },
+    "installedSizeBytes": { "type": "integer", "minimum": 1 },
+    "thermal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["parser", "snapshots"],
+      "properties": {
+        "parser": { "const": "dumpsys-thermalservice-v1" },
+        "snapshots": { "type": "array", "minItems": 3, "items": { "$ref": "#/$defs/thermalSnapshot" } }
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["apk", "structuredRecorder", "rawDeviceLog", "screenshot"],
+      "properties": {
+        "apk": { "$ref": "#/$defs/apkArtifact" },
+        "structuredRecorder": { "$ref": "#/$defs/artifact" },
+        "rawDeviceLog": { "$ref": "#/$defs/artifact" },
+        "screenshot": { "$ref": "#/$defs/screenshot" }
+      }
+    },
+    "crashScan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["processSurvived", "fatalMarkers"],
+      "properties": {
+        "processSurvived": { "const": true },
+        "fatalMarkers": { "type": "array", "maxItems": 0 }
+      }
+    }
+  },
+  "$defs": {
+    "nonEmptyString": { "type": "string", "minLength": 1, "pattern": ".*\\S.*" },
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "nonNegativeNumber": { "type": "number", "minimum": 0 },
+    "device": {
+      "type": "object", "additionalProperties": false,
+      "required": ["serial", "manufacturer", "model", "deviceCodeName", "soc", "androidRelease", "sdkLevel", "resolutionWidth", "resolutionHeight"],
+      "properties": {
+        "serial": { "$ref": "#/$defs/nonEmptyString" }, "manufacturer": { "const": "Xiaomi" },
+        "model": { "const": "24090RA29G" }, "deviceCodeName": { "$ref": "#/$defs/nonEmptyString" },
+        "soc": { "$ref": "#/$defs/nonEmptyString" }, "androidRelease": { "$ref": "#/$defs/nonEmptyString" },
+        "sdkLevel": { "type": "integer", "minimum": 1 }, "resolutionWidth": { "type": "integer", "minimum": 1 },
+        "resolutionHeight": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "build": {
+      "type": "object", "additionalProperties": false,
+      "required": ["packageName", "activity", "apkPath", "buildType", "scriptingBackend", "architecture", "qualityTier", "requestedFrameRate", "actualFrameRate", "launchArguments"],
+      "properties": {
+        "packageName": { "const": "com.warlinecapture.game" }, "activity": { "$ref": "#/$defs/nonEmptyString" },
+        "apkPath": { "const": "Build/AndroidAPK/WarlineCapture.apk" }, "buildType": { "const": "release" },
+        "scriptingBackend": { "const": "IL2CPP" }, "architecture": { "const": "ARM64" },
+        "qualityTier": { "const": "Mobile" }, "requestedFrameRate": { "const": 60 }, "actualFrameRate": { "const": 60 },
+        "launchArguments": { "type": "array", "minItems": 5, "maxItems": 5, "uniqueItems": true, "items": { "$ref": "#/$defs/nonEmptyString" } }
+      }
+    },
+    "startup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["launchDefinition", "coldStartSamplesMs", "warmStartSamplesMs", "coldP50Ms", "coldP95Ms", "coldMaximumMs", "warmP50Ms", "warmP95Ms", "warmMaximumMs"],
+      "properties": {
+        "launchDefinition": { "$ref": "#/$defs/nonEmptyString" },
+        "coldStartSamplesMs": { "type": "array", "minItems": 5, "maxItems": 5, "items": { "type": "number", "exclusiveMinimum": 0 } },
+        "warmStartSamplesMs": { "type": "array", "minItems": 5, "maxItems": 5, "items": { "type": "number", "exclusiveMinimum": 0 } },
+        "coldP50Ms": { "$ref": "#/$defs/nonNegativeNumber" }, "coldP95Ms": { "$ref": "#/$defs/nonNegativeNumber" },
+        "coldMaximumMs": { "$ref": "#/$defs/nonNegativeNumber" }, "warmP50Ms": { "$ref": "#/$defs/nonNegativeNumber" },
+        "warmP95Ms": { "$ref": "#/$defs/nonNegativeNumber" }, "warmMaximumMs": { "$ref": "#/$defs/nonNegativeNumber" }
+      }
+    },
+    "sustainedRun": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source", "startupFramesExcluded", "warmupSeconds", "sampleDurationSeconds", "frameTimesMs", "averageFrameMs", "p95FrameMs", "p99FrameMs", "maximumFrameMs", "gc", "memory", "battery", "counters"],
+      "properties": {
+        "source": { "const": "structured-per-frame-recorder" }, "startupFramesExcluded": { "const": true },
+        "warmupSeconds": { "$ref": "#/$defs/nonNegativeNumber" }, "sampleDurationSeconds": { "$ref": "#/$defs/nonNegativeNumber" },
+        "frameTimesMs": { "type": "array", "minItems": 9000, "items": { "type": "number", "exclusiveMinimum": 0 } },
+        "averageFrameMs": { "$ref": "#/$defs/nonNegativeNumber" }, "p95FrameMs": { "$ref": "#/$defs/nonNegativeNumber" },
+        "p99FrameMs": { "$ref": "#/$defs/nonNegativeNumber" }, "maximumFrameMs": { "$ref": "#/$defs/nonNegativeNumber" },
+        "gc": { "$ref": "#/$defs/gc" }, "memory": { "$ref": "#/$defs/memory" },
+        "battery": { "$ref": "#/$defs/battery" }, "counters": { "$ref": "#/$defs/counters" }
+      }
+    },
+    "gc": { "type": "object", "additionalProperties": false, "required": ["totalAllocatedBytes", "averageAllocatedBytesPerFrame", "collectionCount"], "properties": { "totalAllocatedBytes": { "type": "integer", "minimum": 0 }, "averageAllocatedBytesPerFrame": { "$ref": "#/$defs/nonNegativeNumber" }, "collectionCount": { "type": "integer", "minimum": 0 } } },
+    "memory": { "type": "object", "additionalProperties": false, "required": ["peakAllocatedMemoryMB", "peakMonoMemoryMB", "peakResidentSetMB"], "properties": { "peakAllocatedMemoryMB": { "$ref": "#/$defs/nonNegativeNumber" }, "peakMonoMemoryMB": { "$ref": "#/$defs/nonNegativeNumber" }, "peakResidentSetMB": { "$ref": "#/$defs/nonNegativeNumber" } } },
+    "battery": { "type": "object", "additionalProperties": false, "required": ["startPercent", "endPercent", "drainPercent"], "properties": { "startPercent": { "type": "number", "minimum": 0, "maximum": 100 }, "endPercent": { "type": "number", "minimum": 0, "maximum": 100 }, "drainPercent": { "type": "number", "minimum": 0, "maximum": 100 } } },
+    "counters": { "type": "object", "additionalProperties": false, "required": ["cpuTimingSampleCount", "gpuTimingSampleCount", "averageCpuFrameMs", "p95CpuFrameMs", "averageGpuFrameMs", "p95GpuFrameMs", "averageBatches", "averageSetPassCalls", "averageTriangles", "averageVertices"], "properties": { "cpuTimingSampleCount": { "type": "integer", "minimum": 1 }, "gpuTimingSampleCount": { "type": "integer", "minimum": 1 }, "averageCpuFrameMs": { "$ref": "#/$defs/nonNegativeNumber" }, "p95CpuFrameMs": { "$ref": "#/$defs/nonNegativeNumber" }, "averageGpuFrameMs": { "$ref": "#/$defs/nonNegativeNumber" }, "p95GpuFrameMs": { "$ref": "#/$defs/nonNegativeNumber" }, "averageBatches": { "$ref": "#/$defs/nonNegativeNumber" }, "averageSetPassCalls": { "$ref": "#/$defs/nonNegativeNumber" }, "averageTriangles": { "$ref": "#/$defs/nonNegativeNumber" }, "averageVertices": { "$ref": "#/$defs/nonNegativeNumber" } } },
+    "thermalSnapshot": { "type": "object", "additionalProperties": false, "required": ["phase", "status", "coolingDevices", "temperatures"], "properties": { "phase": { "enum": ["before", "during", "after"] }, "status": { "type": "integer", "minimum": 0 }, "coolingDevices": { "type": "array", "minItems": 1, "items": { "type": "object", "additionalProperties": false, "required": ["name", "value"], "properties": { "name": { "$ref": "#/$defs/nonEmptyString" }, "value": { "type": "integer", "minimum": 0 } } } }, "temperatures": { "type": "array", "minItems": 1, "items": { "type": "object", "additionalProperties": false, "required": ["name", "valueC"], "properties": { "name": { "$ref": "#/$defs/nonEmptyString" }, "valueC": { "type": "number" } } } } } },
+    "artifact": { "type": "object", "additionalProperties": false, "required": ["path", "sha256"], "properties": { "path": { "$ref": "#/$defs/nonEmptyString" }, "sha256": { "$ref": "#/$defs/sha256" } } },
+    "apkArtifact": { "type": "object", "additionalProperties": false, "required": ["path", "sha256", "sizeBytes"], "properties": { "path": { "$ref": "#/$defs/nonEmptyString" }, "sha256": { "$ref": "#/$defs/sha256" }, "sizeBytes": { "type": "integer", "minimum": 1 } } },
+    "screenshot": { "type": "object", "additionalProperties": false, "required": ["path", "sha256", "capturedPackage", "width", "height"], "properties": { "path": { "$ref": "#/$defs/nonEmptyString" }, "sha256": { "$ref": "#/$defs/sha256" }, "capturedPackage": { "$ref": "#/$defs/nonEmptyString" }, "width": { "type": "integer", "minimum": 1 }, "height": { "type": "integer", "minimum": 1 } } }
+  }
+}

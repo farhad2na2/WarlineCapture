@@ -146,7 +146,7 @@ namespace Game.Composition
             if (shellState.ActiveRoute == UIRoute.Match && shellState.CurrentMode == UiShellMode.Loading)
                 firstLaunchNarrative.OnMatchRouteAccepted();
             if (shellState.CurrentMode == UiShellMode.MatchHud)
-                firstLaunchNarrative.MarkMatchHudReady();
+                MarkMatchHudReady();
             QueueAutoStartMatchIfRequested(entityManager, boundary, shellState);
             ApplyUiPresentationMode(view.UiCamera, view.UiCanvas, shellState, entityManager);
             QueueDeferredMatchLoadAfterLoadingFeedback(entityManager, shellState);
@@ -214,7 +214,7 @@ namespace Game.Composition
                 return false;
             }
 
-            SettingsService.ApplyRuntime(SettingsService.Load());
+            ApplyStartupRuntimeSettings();
 #if UNITY_EDITOR
             // Unity's desktop software limiter adds pacing overhead in Play Mode; keep Editor profiling uncapped.
             QualitySettings.vSyncCount = 0;

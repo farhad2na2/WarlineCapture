@@ -12,7 +12,7 @@ using Game.Rendering;
 
 namespace Game.Runtime
 {
-    public sealed class PerformanceDiagnosticsSystemHelper
+    public sealed partial class PerformanceDiagnosticsSystemHelper
     {
         private const string EnableProfilerMarkerDiagnosticsEnvironmentVariable = "WARLINE_ENABLE_PROFILER_MARKERS";
         private const string EnableProfilerMarkerDiagnosticsCommandLineArg = "-warlineProfilerMarkers";
@@ -122,6 +122,7 @@ namespace Game.Runtime
             _lastUpdateTimestamp = UnityEngine.Time.realtimeSinceStartupAsDouble;
             _nextFrameRateDiagTimestamp = _lastUpdateTimestamp + FrameRateDiagIntervalSeconds;
             StartProfilerRecorders();
+            InitializeAndroidPerformanceRecorder();
             CaptureGcCounts();
         }
 
@@ -159,10 +160,7 @@ namespace Game.Runtime
             _lastStepSampleCount = 0;
         }
 
-        public double BeginStep()
-        {
-            return UnityEngine.Time.realtimeSinceStartupAsDouble;
-        }
+        public double BeginStep() => UnityEngine.Time.realtimeSinceStartupAsDouble;
 
         public bool EndStep(string name, double start)
         {
@@ -227,10 +225,7 @@ namespace Game.Runtime
             builder.Append(fraction);
         }
 
-        private static string FormatMilliseconds(double seconds)
-        {
-            return (seconds * 1000d).ToString("F1");
-        }
+        private static string FormatMilliseconds(double seconds) => (seconds * 1000d).ToString("F1");
 
         public void EndUpdate(
             bool gameplayActive,
@@ -243,6 +238,7 @@ namespace Game.Runtime
             double now = UnityEngine.Time.realtimeSinceStartupAsDouble;
             double totalSeconds = now - _frameStartTimestamp;
             RecordUpdateFrameStats(totalSeconds);
+            SampleAndroidPerformanceRecorder(gameplayActive);
             if (!PerformanceDiagnosticsCapturePolicy.SuppressLogging &&
                 gameplayActive && (hadSlowStep || totalSeconds >= FreezeLogThresholdSeconds))
             {
@@ -277,10 +273,7 @@ namespace Game.Runtime
             _suppressFrameGapUntilTimestamp = _lastUpdateTimestamp + 0.5d;
         }
 
-        public double BeginTimedSection()
-        {
-            return UnityEngine.Time.realtimeSinceStartupAsDouble;
-        }
+        public double BeginTimedSection() => UnityEngine.Time.realtimeSinceStartupAsDouble;
 
         public void EndLateUpdate(double start, int impostorCount)
         {
@@ -298,6 +291,7 @@ namespace Game.Runtime
 
         public void Dispose()
         {
+            DisposeAndroidPerformanceRecorder();
             DisposeProfilerRecorders();
         }
 
@@ -349,14 +343,11 @@ namespace Game.Runtime
             return false;
         }
 
-        private static bool IsTruthy(string value)
-        {
-            return
+        private static bool IsTruthy(string value) =>
                 string.Equals(value, "1", StringComparison.OrdinalIgnoreCase) ||
                 string.Equals(value, "true", StringComparison.OrdinalIgnoreCase) ||
                 string.Equals(value, "yes", StringComparison.OrdinalIgnoreCase) ||
                 string.Equals(value, "on", StringComparison.OrdinalIgnoreCase);
-        }
 
         private ProfilerRecorder StartProfilerRecorder(ProfilerCategory category, string statName)
         {

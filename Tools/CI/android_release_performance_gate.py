@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build and validate the non-Unity APH-803 Android evidence contract."""
+"""Build and validate the non-Unity APH-804 Android release evidence contract."""
 
 from __future__ import annotations
 
@@ -8,28 +8,24 @@ from typing import Any
 
 try:
     from Tools.CI.android_performance_evidence_gate import (
-        COMMIT_PATTERN, FATAL_PATTERNS, PNG_SIGNATURE, SHA256_PATTERN,
         GatePolicy, GateValidationError,
         build_orchestration_contract as _build_orchestration_contract,
-        detect_fatal_markers, load_json, load_profile as _load_profile, percentile,
-        read_png_dimensions, run_cli,
+        load_json, load_profile as _load_profile, percentile, run_cli,
         validate_evidence as _validate_evidence,
     )
 except ModuleNotFoundError:  # Direct execution adds Tools/CI, not the repository root.
     from android_performance_evidence_gate import (
-        COMMIT_PATTERN, FATAL_PATTERNS, PNG_SIGNATURE, SHA256_PATTERN,
         GatePolicy, GateValidationError,
         build_orchestration_contract as _build_orchestration_contract,
-        detect_fatal_markers, load_json, load_profile as _load_profile, percentile,
-        read_png_dimensions, run_cli,
+        load_json, load_profile as _load_profile, percentile, run_cli,
         validate_evidence as _validate_evidence,
     )
 
 
 SCHEMA_VERSION = 1
-TASK_ID = "APH-803"
-DEFAULT_PROFILE = Path("Tools/CI/android_reference_device_profile.json")
-POLICY = GatePolicy(TASK_ID, "APH-803 AndroidDevelopmentGate", "development")
+TASK_ID = "APH-804"
+DEFAULT_PROFILE = Path("Tools/CI/android_release_30fps_reference_device_profile.json")
+POLICY = GatePolicy(TASK_ID, "APH-804 AndroidReleaseGate", "release")
 
 
 def load_profile(path: Path = DEFAULT_PROFILE) -> dict[str, Any]:

@@ -75,6 +75,23 @@ pipeline {
             }
         }
 
+        stage('APH-803 Android Development Performance Preflight') {
+            steps {
+                powershell '''
+                $ErrorActionPreference = "Stop"
+                & "$env:PROJECT_PATH\\Tools\\CI\\InvokeAndroidDevelopmentPerformanceContract.ps1" `
+                    -ProjectPath "$env:PROJECT_PATH" `
+                    -GitCommit "$env:GIT_COMMIT" `
+                    -OutputDirectory "$env:PROJECT_PATH\\TestResults"
+                '''
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'TestResults/AndroidDevelopmentPerformanceContract.json,TestResults/AndroidDevelopmentPerformanceContract.log', allowEmptyArchive: true
+                }
+            }
+        }
+
         stage('Resolve Unity Editor') {
             steps {
                 script {
@@ -501,6 +518,26 @@ pipeline {
             post {
                 success {
                     archiveArtifacts artifacts: 'Build/AndroidAPK/WarlineCapture.apk,Design/AgentReports/architecture_performance_android_apk_build_report.json,Design/AgentReports/architecture_performance_android_apk_build_report.md', fingerprint: true
+                }
+            }
+        }
+
+        stage('APH-804 Android Release Artifact Contract') {
+            when { expression { return params.BUILD_ANDROID_APK == true || params.BUILD_ANDROID_APK?.toString()?.equalsIgnoreCase('true') } }
+            steps {
+                powershell '''
+                $ErrorActionPreference = "Stop"
+                & "$env:PROJECT_PATH\\Tools\\CI\\InvokeAndroidReleasePerformanceContract.ps1" `
+                    -ProjectPath "$env:PROJECT_PATH" `
+                    -GitCommit "$env:GIT_COMMIT" `
+                    -OutputDirectory "$env:PROJECT_PATH\\TestResults" `
+                    -ApkPath "$env:PROJECT_PATH\\Build\\AndroidAPK\\WarlineCapture.apk" `
+                    -BuildReportPath "$env:PROJECT_PATH\\Design\\AgentReports\\architecture_performance_android_apk_build_report.json"
+                '''
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'TestResults/AndroidReleasePerformanceContract.json,TestResults/AndroidReleasePerformanceContract.log', allowEmptyArchive: true
                 }
             }
         }

@@ -73,9 +73,9 @@ Dependency direction remains inward toward components/config/contracts/runtime. 
 
 ## Progress Summary
 
-Overall implementation progress: 86% (89/103 checklist items complete).
+Overall implementation progress: 87% (90/103 checklist items complete).
 
-Planning, canonical resource ownership, depot config/projection, automated Oil routing, Oil-to-Materials conversion, authored construction costs, atomic dual-resource placement, HUD/depot controls, Exchange balance safety, canonical AI construction affordability, and demand-aware AI Oil allocation are complete. Active depots consume only unreserved physical Oil at the existing one-second cadence. The shipping Match now projects an explicitly gated Resource Exchange onto the canonical player faction entity; emergency Materials import costs 1.71x modeled local production, queue/capacity rules remain active, and tested conversion loops cannot create profit. Phase 8 continues with AI recovery gating, typed telemetry, and scenario deadlock validation.
+Planning, canonical resource ownership, depot config/projection, automated Oil routing, Oil-to-Materials conversion, authored construction costs, atomic dual-resource placement, HUD/depot controls, Exchange balance safety, canonical AI construction affordability, demand-aware AI Oil allocation, and explicitly gated AI Materials recovery are complete. Active depots consume only unreserved physical Oil at the existing one-second cadence. The shipping Match now projects an explicitly gated Resource Exchange onto the canonical player faction entity; emergency Materials import costs 1.71x modeled local production, queue/capacity rules remain active, and tested conversion loops cannot create profit. Phase 8 continues with typed telemetry and scenario deadlock validation.
 
 Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation row counts. Update the numerator, denominator, table, status, and evidence log in the same commit as each completed batch.
 
@@ -89,7 +89,7 @@ Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation 
 | 5. Credits + Materials construction | Complete | 11 | 11 | 100% | Atomic placement, rollback, authored cost projection, and Build Drawer dual-cost presentation pass. |
 | 6. HUD and selected-building UI | Complete | 11 | 11 | 100% | Live canonical header, typed Build Drawer affordability, selected-depot status/control, fail-closed Exchange routing, and responsive validation pass. |
 | 7. Exchange and balance safety | Complete | 8 | 8 | 100% | Shipping startup projection, emergency import markup, queue/capacity gates, anti-arbitrage tests, and strategy report pass. |
-| 8. AI, telemetry, and scenario safety | Active | 2 | 7 | 29% | AI shares rules; scenarios cannot deadlock silently. |
+| 8. AI, telemetry, and scenario safety | Active | 3 | 7 | 43% | AI shares rules; scenarios cannot deadlock silently. |
 | 9. Integration, performance, and closeout | Pending | 0 | 9 | 0% | Architecture, GC, profiler, gameplay, and docs pass. |
 
 ## Phase 0: Inventory And Baseline
@@ -293,7 +293,7 @@ Phase 7 exit criteria:
 
 - [x] Teach AI affordability/build plans to use canonical Materials and authored costs.
 - [x] Teach AI Oil allocation to consider Fuel pressure and construction plans without hidden resources.
-- [ ] Gate AI Exchange imports by scenario and recovery need.
+- [x] Gate AI Exchange imports by scenario and recovery need.
 - [ ] Record Materials fabricated/imported/exported/rewarded/spent and depot blocked time by typed reason.
 - [ ] Record tray assignments/reassignments/failures and refinery-versus-depot Oil delivery.
 - [ ] Add scenario validation requiring starting Materials, a viable fabrication chain, rebuildability, or enabled Exchange recovery.
@@ -585,3 +585,13 @@ For every completed batch append:
 - Graphics-capable Menu-to-Match smoke passed through the production shell: `mode=MatchHud`, `route=Match`, `phase=MatchHudReady`, `playRequested=1`, `matchIntro=Complete`, `inputLocked=0`, `matchSceneLoaded=1`, `hudLoaded=1`, and `curtainHidden=1`. No crash, fatal exception, or failed result was logged after readiness.
 - Evidence: `/private/tmp/wlc-field-fabrication-phase8-ai-oil-final.log`, `/private/tmp/wlc-field-fabrication-phase8-ai-oil-architecture-final.log`, `/private/tmp/wlc-field-fabrication-phase8-ai-oil-burst-final-rerun.log`, and `/private/tmp/wlc-field-fabrication-phase8-menu-to-match-smoke-final.log`.
 - Phase 8 is 2/7. Checklist count is 89/103. Next action: gate AI Exchange imports by explicit scenario permission and typed recovery need without adding hidden resources, parallel authority, or a managed update loop.
+
+### 2026-07-13 - Phase 8C Scenario-Gated AI Materials Recovery
+
+- `AIBuildPlannerSystem` now publishes a typed `AIMaterialsRecoveryNeedComponent` on the preallocated AI build-plan entity when an authored build is blocked by canonical Materials. The need preserves the first blocked time for the same build, carries the authored Credits reserve and Materials requirement, recomputes missing Materials from canonical state, rejects requirements above canonical capacity, and clears on manual control, pending/affordable/complete plans, invalid resources, or missing economy ownership.
+- Match startup preprojects the existing Resource Exchange boundary onto canonical non-player faction economy entities only when the authored scenario enables both Exchange and AI Exchange. It snapshots eligible faction ids before structural projection, rejects duplicate faction controls and duplicate canonical ownership, supports later manual/AI transitions, clears stale non-player boundaries when a same-world scenario restart disables the capability, and leaves both shipping AI gates disabled.
+- Added Burst `ResourceExchangeAIRecoverySystem` after AI planning and fabrication and before Exchange request validation. It requires canonical AI control and the explicit `AllowAiExchange` gate, preserves Credits needed by the blocked build, respects authored recipe steps, fee/floor output, scenario tag, duration, Materials capacity, queue capacity, active/pending imports, and deterministic recipe order. Existing request validation remains the only input-spend authority and queue completion remains the only import-grant authority.
+- Local recovery projection sums all enabled faction depots over the authored import duration, bounded by cycle progress, cycle output, and unreserved physical Oil. An import is suppressed when local output covers the shortage; Oil-starved or route-starved depots receive one authored-duration grace period before the expensive fallback. Player-auto uses the existing player Exchange boundary, and manual takeover stops new AI requests without cancelling accepted canonical jobs.
+- Focused validation passed: AI recovery behavior, orphan-plan rejection, canonical request validation, and the 512-update warmed GC path 9/9 with 0 managed bytes; Exchange startup projection and enabled-to-disabled boundary cleanup 12/12; AI startup 1/1; AI planner transaction/recovery 7/7; AI Exchange guardrails 4/4; assembly/naming boundaries 31/31; and ECS Burst hot-path architecture 10/10. `Game.Runtime` and `Game.Tests.Editor` compiled with zero errors. The production Menu-to-Match smoke reached `MatchHudReady` with Match/HUD scenes loaded, intro complete, input unlocked, curtain hidden, and no crash or fatal result. Task-scoped diff checks passed.
+- Evidence: `/private/tmp/wlc-field-fabrication-phase8-ai-exchange-review-fixes.log`, `/private/tmp/wlc-field-fabrication-phase8-ai-exchange-startup-transition-final.log`, `/private/tmp/wlc-field-fabrication-phase8-ai-exchange-ai-startup.log`, `/private/tmp/wlc-field-fabrication-phase8-ai-exchange-planner-post-rebase.log`, `/private/tmp/wlc-field-fabrication-phase8-ai-exchange-guardrail-post-rebase.log`, `/private/tmp/wlc-field-fabrication-phase8-ai-exchange-architecture-post-rebase.log`, `/private/tmp/wlc-field-fabrication-phase8-ai-exchange-burst-post-rebase.log`, and `/private/tmp/wlc-field-fabrication-phase8-ai-exchange-menu-to-match-post-rebase-rerun.log`.
+- Phase 8 is 3/7. Checklist count is 90/103. Next action: add typed Materials source/spend and depot blocked-time telemetry without introducing per-frame managed aggregation or another resource authority.

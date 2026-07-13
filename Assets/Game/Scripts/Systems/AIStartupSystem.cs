@@ -301,7 +301,9 @@ namespace Game.Runtime
                 byte factionId = (byte)Mathf.Clamp(config.FactionId, 0, byte.MaxValue);
                 if (!planEntitiesByFaction.TryGetValue(factionId, out Entity planEntity) || planEntity == Entity.Null)
                 {
-                    planEntity = em.CreateEntity(typeof(AIBuildPlan));
+                    planEntity = em.CreateEntity(
+                        typeof(AIBuildPlan),
+                        typeof(AIMaterialsRecoveryNeedComponent));
                     em.AddBuffer<AIBuildPlanEntry>(planEntity);
                     planEntitiesByFaction[factionId] = planEntity;
                 }
@@ -309,6 +311,9 @@ namespace Game.Runtime
                 {
                     em.AddBuffer<AIBuildPlanEntry>(planEntity);
                 }
+
+                if (!em.HasComponent<AIMaterialsRecoveryNeedComponent>(planEntity))
+                    em.AddComponent<AIMaterialsRecoveryNeedComponent>(planEntity);
 
                 int2 baseCenterCell = resolveFactionSpawnCell != null && resolveFactionSpawnCell(factionId, out int2 configuredCell)
                     ? configuredCell
@@ -322,6 +327,13 @@ namespace Game.Runtime
                     BuildIntervalSeconds = aiSettings.ApplyBuildInterval(config.BuildIntervalSeconds, config.Role),
                     LastBuildTime = startupTime,
                     LastLogTime = -999f
+                });
+                em.SetComponentData(planEntity, new AIMaterialsRecoveryNeedComponent
+                {
+                    FactionId = factionId,
+                    FirstBlockedTimeSeconds = startupTime,
+                    LastEvaluatedTimeSeconds = startupTime,
+                    Version = 1
                 });
 
                 DynamicBuffer<AIBuildPlanEntry> entries = em.GetBuffer<AIBuildPlanEntry>(planEntity);

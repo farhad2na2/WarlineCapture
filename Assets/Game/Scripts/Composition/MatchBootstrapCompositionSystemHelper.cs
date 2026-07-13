@@ -766,6 +766,21 @@ namespace Game.Composition
                             $"[MatchBootstrap] resourceExchangeProjectionSkipped reason={exchangeResult.Reason}");
                     }
 
+                    if (exchangeStartup != null)
+                    {
+                        ResourceExchangeStartupProjectionSystemHelper.AIProjectionResult aiExchangeResult =
+                            exchangeStartup.InitializeEligibleAIFactions(ResourceExchangeConfig);
+                        if (aiExchangeResult.ScenarioAllowsAIExchange &&
+                            aiExchangeResult.ProjectedFactionCount != aiExchangeResult.EligibleFactionCount)
+                        {
+                            Debug.LogWarning(
+                                $"[MatchBootstrap] aiResourceExchangeProjectionIncomplete " +
+                                $"eligible={aiExchangeResult.EligibleFactionCount} " +
+                                $"projected={aiExchangeResult.ProjectedFactionCount} " +
+                                $"reason={aiExchangeResult.Reason}");
+                        }
+                    }
+
                     _gameplayStartStep = GameplayStartStep.BindMainMenu;
                     break;
 

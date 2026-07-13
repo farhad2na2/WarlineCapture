@@ -46,6 +46,18 @@ namespace Game.Components
         public FixedString64Bytes BuildingId;
     }
 
+    public struct AIMaterialsRecoveryNeedComponent : IComponentData
+    {
+        public byte FactionId;
+        public byte Active;
+        public int RequiredCredits;
+        public int RequiredMaterials;
+        public int MissingMaterials;
+        public float FirstBlockedTimeSeconds;
+        public float LastEvaluatedTimeSeconds;
+        public uint Version;
+    }
+
     public struct AIProductionPlan : IComponentData
     {
         public byte FactionId;

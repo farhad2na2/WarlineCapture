@@ -75,6 +75,7 @@ public sealed class AIStartupSystemValidationTests
         FactionEconomy enemyEconomy = GetComponentForFaction<FactionEconomy>(em, FactionIdentity.EnemyFactionId, economy => economy.FactionId);
         FactionEconomyPolicy enemyPolicy = em.GetComponentData<FactionEconomyPolicy>(enemyEconomyEntity);
         AIBuildPlan enemyBuildPlan = GetComponentForFaction<AIBuildPlan>(em, FactionIdentity.EnemyFactionId, plan => plan.FactionId);
+        Entity enemyBuildPlanEntity = GetEntityForFaction<AIBuildPlan>(em, FactionIdentity.EnemyFactionId, plan => plan.FactionId);
         AIProductionPlan enemyProductionPlan = GetComponentForFaction<AIProductionPlan>(em, FactionIdentity.EnemyFactionId, plan => plan.FactionId);
         AISquadPlan enemySquadPlan = GetComponentForFaction<AISquadPlan>(em, FactionIdentity.EnemyFactionId, plan => plan.FactionId);
         AITargetPrioritySetting enemyTargetPriority = GetComponentForFaction<AITargetPrioritySetting>(em, FactionIdentity.EnemyFactionId, setting => setting.FactionId);
@@ -85,6 +86,11 @@ public sealed class AIStartupSystemValidationTests
         Assert.AreEqual(1, enemyPolicy.Enabled);
         Assert.AreEqual(new int2(42, 54), enemyBuildPlan.BaseCenterCell);
         Assert.AreEqual(1, enemyBuildPlan.Enabled);
+        Assert.IsTrue(em.HasComponent<AIMaterialsRecoveryNeedComponent>(enemyBuildPlanEntity));
+        AIMaterialsRecoveryNeedComponent recoveryNeed =
+            em.GetComponentData<AIMaterialsRecoveryNeedComponent>(enemyBuildPlanEntity);
+        Assert.AreEqual(FactionIdentity.EnemyFactionId, recoveryNeed.FactionId);
+        Assert.AreEqual(0, recoveryNeed.Active);
         Assert.AreEqual(1, enemyProductionPlan.Enabled);
         Assert.AreEqual(1, enemySquadPlan.Enabled);
         Assert.AreEqual((byte)AITargetPriority.Balanced, enemyTargetPriority.Priority);

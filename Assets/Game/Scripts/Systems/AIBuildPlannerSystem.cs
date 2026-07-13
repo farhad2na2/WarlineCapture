@@ -110,10 +110,16 @@ namespace Game.Runtime
                     Entity planEntity = planEntities[i];
                     AIBuildPlan plan = em.GetComponentData<AIBuildPlan>(planEntity);
                     if (plan.Enabled == 0 || !IsFactionAIControlled(plan.FactionId, hasControls, controls))
+                    {
+                        ClearMaterialsRecoveryNeed(em, planEntity, plan.FactionId, now);
                         continue;
+                    }
 
                     if (!TryFindEconomyRecord(economyRecords, plan.FactionId, out int economyRecordIndex, out FactionEconomyRecord economyRecord))
+                    {
+                        ClearMaterialsRecoveryNeed(em, planEntity, plan.FactionId, now);
                         continue;
+                    }
 
                     Entity economyEntity = economyRecord.Entity;
                     FactionEconomy economy = economyRecord.Economy;
@@ -133,6 +139,7 @@ namespace Game.Runtime
 
                     if (hasUnsettledRequest)
                     {
+                        ClearMaterialsRecoveryNeed(em, planEntity, plan.FactionId, now);
                         plan.LastBuildTime = now;
                         em.SetComponentData(planEntity, plan);
                         continue;
@@ -148,6 +155,7 @@ namespace Game.Runtime
                     DynamicBuffer<AIBuildPlanEntry> entries = em.GetBuffer<AIBuildPlanEntry>(planEntity, true);
                     if (entries.Length == 0)
                     {
+                        ClearMaterialsRecoveryNeed(em, planEntity, plan.FactionId, now);
                         LogNoPlanIfNeeded(ref state, ref plan, now, shouldLog);
                         em.SetComponentData(planEntity, plan);
                         continue;
@@ -168,10 +176,12 @@ namespace Game.Runtime
                     switch (decision.Result)
                     {
                         case BuildDecisionResult.Pending:
+                            ClearMaterialsRecoveryNeed(em, planEntity, plan.FactionId, now);
                             plan.LastBuildTime = now;
                             break;
 
                         case BuildDecisionResult.MissingConfig:
+                            ClearMaterialsRecoveryNeed(em, planEntity, plan.FactionId, now);
                             plan.NextBuildIndex = decision.EntryIndex + 1;
                             plan.LastBuildTime = now;
                             if (shouldLog)
@@ -179,30 +189,49 @@ namespace Game.Runtime
                             break;
 
                         case BuildDecisionResult.InsufficientFunds:
+                            ClearMaterialsRecoveryNeed(em, planEntity, plan.FactionId, now);
                             plan.LastBuildTime = now;
                             if (shouldLog)
                                 EnqueueDiagnostic(ref state, $"[AIBuild] faction={plan.FactionId} building={decision.Spawnable.DisplayName.ToString()} cost={decision.Cost} materialsCost={decision.MaterialsCost} result=InsufficientFunds money={economy.Money} materials={materials.Current}");
                             break;
 
                         case BuildDecisionResult.InsufficientMaterials:
+                            PublishMaterialsRecoveryNeed(
+                                em,
+                                planEntity,
+                                plan.FactionId,
+                                decision.Cost,
+                                decision.MaterialsCost,
+                                materials,
+                                now);
                             plan.LastBuildTime = now;
                             if (shouldLog)
                                 EnqueueDiagnostic(ref state, $"[AIBuild] faction={plan.FactionId} building={decision.Spawnable.DisplayName.ToString()} cost={decision.Cost} materialsCost={decision.MaterialsCost} result=InsufficientMaterials money={economy.Money} materials={materials.Current}");
                             break;
 
                         case BuildDecisionResult.InsufficientCreditsAndMaterials:
+                            PublishMaterialsRecoveryNeed(
+                                em,
+                                planEntity,
+                                plan.FactionId,
+                                decision.Cost,
+                                decision.MaterialsCost,
+                                materials,
+                                now);
                             plan.LastBuildTime = now;
                             if (shouldLog)
                                 EnqueueDiagnostic(ref state, $"[AIBuild] faction={plan.FactionId} building={decision.Spawnable.DisplayName.ToString()} cost={decision.Cost} materialsCost={decision.MaterialsCost} result=InsufficientCreditsAndMaterials money={economy.Money} materials={materials.Current}");
                             break;
 
                         case BuildDecisionResult.InvalidResources:
+                            ClearMaterialsRecoveryNeed(em, planEntity, plan.FactionId, now);
                             plan.LastBuildTime = now;
                             if (shouldLog)
                                 EnqueueDiagnostic(ref state, $"[AIBuild] faction={plan.FactionId} building={decision.Spawnable.DisplayName.ToString()} result=InvalidResources");
                             break;
 
                         case BuildDecisionResult.Request:
+                            ClearMaterialsRecoveryNeed(em, planEntity, plan.FactionId, now);
                             if (FactionConstructionResourceUtilitySystemHelper.TrySpend(
                                     ref economy,
                                     ref materials,
@@ -234,13 +263,17 @@ namespace Game.Runtime
                             break;
                     }
 
-                    if (!handledDecision && now - plan.LastLogTime >= LogIntervalSeconds)
+                    if (!handledDecision)
                     {
-                        plan.LastLogTime = now;
-                        if (shouldLog)
+                        ClearMaterialsRecoveryNeed(em, planEntity, plan.FactionId, now);
+                        if (now - plan.LastLogTime >= LogIntervalSeconds)
                         {
-                            TryGetFactionBuildingCount(ref state, boundaryEntity, plan.FactionId, out int ownedBuildings);
-                            EnqueueDiagnostic(ref state, $"[AIBuild] faction={plan.FactionId} result=Complete ownedBuildings={ownedBuildings}");
+                            plan.LastLogTime = now;
+                            if (shouldLog)
+                            {
+                                TryGetFactionBuildingCount(ref state, boundaryEntity, plan.FactionId, out int ownedBuildings);
+                                EnqueueDiagnostic(ref state, $"[AIBuild] faction={plan.FactionId} result=Complete ownedBuildings={ownedBuildings}");
+                            }
                         }
                     }
 
@@ -252,6 +285,74 @@ namespace Game.Runtime
                 economyRecords.Dispose();
             }
 
+        }
+
+        internal static void PublishMaterialsRecoveryNeed(
+            EntityManager em,
+            Entity planEntity,
+            byte factionId,
+            int requiredCredits,
+            int requiredMaterials,
+            in FactionTacticalMaterialsComponent materials,
+            float now)
+        {
+            if (!em.HasComponent<AIMaterialsRecoveryNeedComponent>(planEntity))
+                return;
+
+            AIMaterialsRecoveryNeedComponent need =
+                em.GetComponentData<AIMaterialsRecoveryNeedComponent>(planEntity);
+            int safeRequiredMaterials = math.max(0, requiredMaterials);
+            int missingMaterials = math.max(0, safeRequiredMaterials - math.max(0, materials.Current));
+            bool sameNeed = need.Active != 0 &&
+                            need.FactionId == factionId &&
+                            need.RequiredCredits == math.max(0, requiredCredits) &&
+                            need.RequiredMaterials == safeRequiredMaterials;
+            float firstBlockedTime = sameNeed ? need.FirstBlockedTimeSeconds : now;
+            byte active = missingMaterials > 0 && safeRequiredMaterials <= math.max(0, materials.Capacity)
+                ? (byte)1
+                : (byte)0;
+
+            AIMaterialsRecoveryNeedComponent next = new()
+            {
+                FactionId = factionId,
+                Active = active,
+                RequiredCredits = math.max(0, requiredCredits),
+                RequiredMaterials = safeRequiredMaterials,
+                MissingMaterials = missingMaterials,
+                FirstBlockedTimeSeconds = firstBlockedTime,
+                LastEvaluatedTimeSeconds = now,
+                Version = need.Version + 1u
+            };
+            em.SetComponentData(planEntity, next);
+        }
+
+        internal static void ClearMaterialsRecoveryNeed(
+            EntityManager em,
+            Entity planEntity,
+            byte factionId,
+            float now)
+        {
+            if (!em.HasComponent<AIMaterialsRecoveryNeedComponent>(planEntity))
+                return;
+
+            AIMaterialsRecoveryNeedComponent need =
+                em.GetComponentData<AIMaterialsRecoveryNeedComponent>(planEntity);
+            if (need.Active == 0 &&
+                need.FactionId == factionId &&
+                need.RequiredCredits == 0 &&
+                need.RequiredMaterials == 0 &&
+                need.MissingMaterials == 0)
+                return;
+
+            need.FactionId = factionId;
+            need.Active = 0;
+            need.RequiredCredits = 0;
+            need.RequiredMaterials = 0;
+            need.MissingMaterials = 0;
+            need.FirstBlockedTimeSeconds = now;
+            need.LastEvaluatedTimeSeconds = now;
+            need.Version++;
+            em.SetComponentData(planEntity, need);
         }
 
         private NativeList<FactionEconomyRecord> BuildFactionEconomyRecords()

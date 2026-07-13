@@ -257,6 +257,104 @@ public sealed class AIBuildPlannerAllocationTests
             combinedDecision.Result);
     }
 
+    [Test]
+    public void MaterialsRecoveryNeed_PreservesFirstBlockedTimeAndRejectsImpossibleCapacity()
+    {
+        using World world = new(nameof(MaterialsRecoveryNeed_PreservesFirstBlockedTimeAndRejectsImpossibleCapacity));
+        EntityManager entityManager = world.EntityManager;
+        Entity planEntity = entityManager.CreateEntity(typeof(AIMaterialsRecoveryNeedComponent));
+        FactionTacticalMaterialsComponent materials = new()
+        {
+            FactionId = 2,
+            Current = 20,
+            Capacity = 100
+        };
+
+        AIBuildPlannerSystem.PublishMaterialsRecoveryNeed(
+            entityManager,
+            planEntity,
+            factionId: 2,
+            requiredCredits: 1000,
+            requiredMaterials: 60,
+            materials: materials,
+            now: 10f);
+        AIBuildPlannerSystem.PublishMaterialsRecoveryNeed(
+            entityManager,
+            planEntity,
+            factionId: 2,
+            requiredCredits: 1000,
+            requiredMaterials: 60,
+            materials: materials,
+            now: 20f);
+
+        AIMaterialsRecoveryNeedComponent need =
+            entityManager.GetComponentData<AIMaterialsRecoveryNeedComponent>(planEntity);
+        Assert.AreEqual(1, need.Active);
+        Assert.AreEqual(1000, need.RequiredCredits);
+        Assert.AreEqual(60, need.RequiredMaterials);
+        Assert.AreEqual(40, need.MissingMaterials);
+        Assert.AreEqual(10f, need.FirstBlockedTimeSeconds);
+        Assert.AreEqual(20f, need.LastEvaluatedTimeSeconds);
+
+        materials.Capacity = 50;
+        AIBuildPlannerSystem.PublishMaterialsRecoveryNeed(
+            entityManager,
+            planEntity,
+            factionId: 2,
+            requiredCredits: 1000,
+            requiredMaterials: 60,
+            materials: materials,
+            now: 30f);
+        Assert.AreEqual(
+            0,
+            entityManager.GetComponentData<AIMaterialsRecoveryNeedComponent>(planEntity).Active);
+        AIBuildPlannerSystem.ClearMaterialsRecoveryNeed(
+            entityManager,
+            planEntity,
+            factionId: 2,
+            now: 31f);
+        need = entityManager.GetComponentData<AIMaterialsRecoveryNeedComponent>(planEntity);
+        Assert.AreEqual(0, need.RequiredCredits);
+        Assert.AreEqual(0, need.RequiredMaterials);
+        Assert.AreEqual(0, need.MissingMaterials);
+    }
+
+    [Test]
+    public void MaterialsRecoveryNeed_ClearRemovesPublishedDemand()
+    {
+        using World world = new(nameof(MaterialsRecoveryNeed_ClearRemovesPublishedDemand));
+        EntityManager entityManager = world.EntityManager;
+        Entity planEntity = entityManager.CreateEntity(typeof(AIMaterialsRecoveryNeedComponent));
+        FactionTacticalMaterialsComponent materials = new()
+        {
+            FactionId = 3,
+            Current = 0,
+            Capacity = 100
+        };
+        AIBuildPlannerSystem.PublishMaterialsRecoveryNeed(
+            entityManager,
+            planEntity,
+            factionId: 3,
+            requiredCredits: 500,
+            requiredMaterials: 50,
+            materials: materials,
+            now: 5f);
+
+        AIBuildPlannerSystem.ClearMaterialsRecoveryNeed(
+            entityManager,
+            planEntity,
+            factionId: 3,
+            now: 6f);
+
+        AIMaterialsRecoveryNeedComponent need =
+            entityManager.GetComponentData<AIMaterialsRecoveryNeedComponent>(planEntity);
+        Assert.AreEqual(0, need.Active);
+        Assert.AreEqual(0, need.RequiredCredits);
+        Assert.AreEqual(0, need.RequiredMaterials);
+        Assert.AreEqual(0, need.MissingMaterials);
+        Assert.AreEqual(6f, need.LastEvaluatedTimeSeconds);
+    }
+
     private static Entity CreateBoundaryEntity(EntityManager entityManager)
     {
         return entityManager.CreateEntity(

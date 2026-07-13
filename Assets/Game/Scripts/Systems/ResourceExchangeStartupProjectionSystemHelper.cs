@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Game.Components;
 using Game.Configs;
 using Unity.Collections;
@@ -25,6 +26,26 @@ namespace Game.Runtime
                 Projected = projected;
                 BoundaryEntity = boundaryEntity;
                 RecipeCount = recipeCount;
+                Reason = reason;
+            }
+        }
+
+        public readonly struct AIProjectionResult
+        {
+            public readonly bool ScenarioAllowsAIExchange;
+            public readonly int EligibleFactionCount;
+            public readonly int ProjectedFactionCount;
+            public readonly ResourceExchangeReason Reason;
+
+            public AIProjectionResult(
+                bool scenarioAllowsAIExchange,
+                int eligibleFactionCount,
+                int projectedFactionCount,
+                ResourceExchangeReason reason)
+            {
+                ScenarioAllowsAIExchange = scenarioAllowsAIExchange;
+                EligibleFactionCount = eligibleFactionCount;
+                ProjectedFactionCount = projectedFactionCount;
                 Reason = reason;
             }
         }
@@ -147,6 +168,174 @@ namespace Game.Runtime
             return new Result(true, factionEntity, recipeCount, ResourceExchangeReason.None);
         }
 
+        public AIProjectionResult InitializeEligibleAIFactions(ResourceExchangeRecipeConfigSet config)
+        {
+            if (config == null)
+                return new AIProjectionResult(false, 0, 0, ResourceExchangeReason.InvalidRecipe);
+
+            if (!TryResolveScenarioTag(out FixedString64Bytes scenarioTag))
+                return new AIProjectionResult(false, 0, 0, ResourceExchangeReason.InvalidScenarioGate);
+
+            ResourceExchangeReason configReason =
+                ResourceExchangeRecipeConfigValidator.ValidateRecipeAndScenarioGateSet(
+                    config.Recipes,
+                    config.ScenarioGates);
+            if (configReason != ResourceExchangeReason.None)
+            {
+                DisableAllNonPlayerBoundaries(scenarioTag, configReason);
+                return new AIProjectionResult(false, 0, 0, configReason);
+            }
+            if (!TryResolveGate(config, scenarioTag, out ResourceExchangeScenarioGateConfigEntry gate))
+            {
+                DisableAllNonPlayerBoundaries(scenarioTag, ResourceExchangeReason.InvalidScenarioGate);
+                return new AIProjectionResult(false, 0, 0, ResourceExchangeReason.InvalidScenarioGate);
+            }
+
+            using EntityQuery controlQuery = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<FactionControlConfigTag>(),
+                ComponentType.ReadOnly<FactionControlEntry>());
+            if (controlQuery.CalculateEntityCount() != 1)
+            {
+                DisableAllNonPlayerBoundaries(scenarioTag, gate.DisabledReason);
+                return new AIProjectionResult(
+                    gate.ExchangeEnabled && gate.AllowAiExchange,
+                    0,
+                    0,
+                    ResourceExchangeReason.ExchangeUnavailable);
+            }
+
+            DynamicBuffer<FactionControlEntry> controls =
+                controlQuery.GetSingletonBuffer<FactionControlEntry>(true);
+            var eligibleFactionIds = new List<byte>(controls.Length);
+            var seenFactionIds = new bool[byte.MaxValue + 1];
+            bool hasDuplicateFactionControl = false;
+            for (int i = 0; i < controls.Length; i++)
+            {
+                FactionControlEntry control = controls[i];
+                if (control.IsPlayerFaction != 0 || control.FactionId == 0)
+                    continue;
+
+                if (seenFactionIds[control.FactionId])
+                {
+                    hasDuplicateFactionControl = true;
+                    continue;
+                }
+                seenFactionIds[control.FactionId] = true;
+                eligibleFactionIds.Add(control.FactionId);
+            }
+
+            bool scenarioAllowsAIExchange = gate.ExchangeEnabled && gate.AllowAiExchange;
+            if (!scenarioAllowsAIExchange || hasDuplicateFactionControl)
+            {
+                for (int i = 0; i < eligibleFactionIds.Count; i++)
+                    DisableExistingBoundary(eligibleFactionIds[i], scenarioTag, gate.DisabledReason);
+                return new AIProjectionResult(
+                    scenarioAllowsAIExchange,
+                    eligibleFactionIds.Count,
+                    0,
+                    hasDuplicateFactionControl
+                        ? ResourceExchangeReason.ExchangeUnavailable
+                        : ResourceExchangeReason.None);
+            }
+
+            int projectedFactionCount = 0;
+            for (int i = 0; i < eligibleFactionIds.Count; i++)
+            {
+                Result result = Initialize(config, eligibleFactionIds[i]);
+                if (result.Projected)
+                    projectedFactionCount++;
+            }
+
+            ResourceExchangeReason reason = projectedFactionCount == eligibleFactionIds.Count
+                ? ResourceExchangeReason.None
+                : ResourceExchangeReason.ExchangeUnavailable;
+            return new AIProjectionResult(
+                true,
+                eligibleFactionIds.Count,
+                projectedFactionCount,
+                reason);
+        }
+
+        private void DisableAllNonPlayerBoundaries(
+            in FixedString64Bytes scenarioTag,
+            ResourceExchangeReason disabledReason)
+        {
+            using EntityQuery query = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<FactionEconomy>(),
+                ComponentType.ReadOnly<ResourceExchangeEnabledComponent>());
+            ComponentTypeHandle<FactionEconomy> economyType =
+                entityManager.GetComponentTypeHandle<FactionEconomy>(true);
+            using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+            {
+                NativeArray<FactionEconomy> economies = chunks[chunkIndex].GetNativeArray(ref economyType);
+                for (int i = 0; i < economies.Length; i++)
+                {
+                    byte factionId = economies[i].FactionId;
+                    if (factionId != 0 && factionId != FactionIdentity.PlayerFactionId)
+                        DisableExistingBoundary(factionId, scenarioTag, disabledReason);
+                }
+            }
+        }
+
+        private void DisableExistingBoundary(
+            byte factionId,
+            in FixedString64Bytes scenarioTag,
+            ResourceExchangeReason disabledReason)
+        {
+            if (!TryResolveCanonicalFactionEntity(factionId, out Entity factionEntity) ||
+                !entityManager.HasComponent<ResourceExchangeEnabledComponent>(factionEntity))
+            {
+                return;
+            }
+
+            ClearBufferIfPresent<ResourceExchangeRecipeComponent>(factionEntity);
+            ClearBufferIfPresent<ResourceExchangeRequestComponent>(factionEntity);
+            ClearBufferIfPresent<ResourceExchangeQueueComponent>(factionEntity);
+            ClearBufferIfPresent<ResourceExchangeResultComponent>(factionEntity);
+            ClearBufferIfPresent<ResourceExchangeEconomyEventComponent>(factionEntity);
+            ClearBufferIfPresent<ResourceExchangePhysicalReservationComponent>(factionEntity);
+            ClearBufferIfPresent<ResourceExchangeDeltaFlyoutComponent>(factionEntity);
+            ClearBufferIfPresent<ResourceExchangeToastComponent>(factionEntity);
+            ClearBufferIfPresent<ResourceExchangeAriaAnnouncementComponent>(factionEntity);
+            ClearBufferIfPresent<ResourceExchangeVisualRequestComponent>(factionEntity);
+            ClearBufferIfPresent<ResourceExchangeVfxMarkerComponent>(factionEntity);
+            ClearBufferIfPresent<ResourceExchangePresentationAnchorComponent>(factionEntity);
+
+            ResourceExchangeEnabledComponent enabled =
+                entityManager.GetComponentData<ResourceExchangeEnabledComponent>(factionEntity);
+            enabled.Enabled = 0;
+            enabled.FactionId = factionId;
+            enabled.AllowRush = 0;
+            enabled.AllowWorldPresentation = 0;
+            enabled.AllowAiExchange = 0;
+            enabled.MaxQueueItems = 0;
+            enabled.ScenarioTag = scenarioTag;
+            enabled.Version++;
+            entityManager.SetComponentData(factionEntity, enabled);
+            if (entityManager.HasComponent<ResourceExchangeRequestQueueComponent>(factionEntity))
+                entityManager.SetComponentData(factionEntity, new ResourceExchangeRequestQueueComponent());
+            if (entityManager.HasComponent<ResourceExchangeSummaryComponent>(factionEntity))
+            {
+                ResourceExchangeSummaryComponent summary =
+                    entityManager.GetComponentData<ResourceExchangeSummaryComponent>(factionEntity);
+                summary.FactionId = factionId;
+                summary.Enabled = 0;
+                summary.AllowRush = 0;
+                summary.AllowWorldPresentation = 0;
+                summary.AllowAiExchange = 0;
+                summary.QueueCount = 0;
+                summary.ActiveCount = 0;
+                summary.CompletedCount = 0;
+                summary.MaxQueueItems = 0;
+                summary.LastReason = disabledReason == ResourceExchangeReason.None
+                    ? ResourceExchangeReason.ExchangeUnavailable
+                    : disabledReason;
+                summary.Version++;
+                entityManager.SetComponentData(factionEntity, summary);
+            }
+        }
+
         private bool TryResolveScenarioTag(out FixedString64Bytes scenarioTag)
         {
             scenarioTag = default;
@@ -263,6 +452,12 @@ namespace Game.Runtime
         {
             if (!entityManager.HasBuffer<T>(entity))
                 entityManager.AddBuffer<T>(entity);
+        }
+
+        private void ClearBufferIfPresent<T>(Entity entity) where T : unmanaged, IBufferElementData
+        {
+            if (entityManager.HasBuffer<T>(entity))
+                entityManager.GetBuffer<T>(entity).Clear();
         }
     }
 }

@@ -4,7 +4,9 @@ using Game.Configs;
 using Game.Runtime;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
@@ -59,6 +61,22 @@ public sealed class ResourceExchangeStartupProjectionSystemHelperTests
             RunValidationStep(
                 nameof(Initialize_DuplicatePlayerEconomiesFailClosed),
                 test => test.Initialize_DuplicatePlayerEconomiesFailClosed(),
+                ref passed);
+            RunValidationStep(
+                nameof(ShippingScenarioGatesKeepAIExchangeDisabled),
+                test => test.ShippingScenarioGatesKeepAIExchangeDisabled(),
+                ref passed);
+            RunValidationStep(
+                nameof(AIEnabledScenarioProjectsCanonicalNonPlayerFaction),
+                test => test.AIEnabledScenarioProjectsCanonicalNonPlayerFaction(),
+                ref passed);
+            RunValidationStep(
+                nameof(AIProjectionDuplicateFactionControlsFailClosed),
+                test => test.AIProjectionDuplicateFactionControlsFailClosed(),
+                ref passed);
+            RunValidationStep(
+                nameof(AIDisabledScenarioClearsPreviouslyProjectedBoundary),
+                test => test.AIDisabledScenarioClearsPreviouslyProjectedBoundary(),
                 ref passed);
 
             Debug.Log($"[ResourceExchangeStartupProjectionValidation] result=Passed tests={passed}");
@@ -280,6 +298,199 @@ public sealed class ResourceExchangeStartupProjectionSystemHelperTests
         Assert.AreEqual(ResourceExchangeReason.ExchangeUnavailable, result.Reason);
         Assert.IsFalse(em.HasComponent<ResourceExchangeEnabledComponent>(first));
         Assert.IsFalse(em.HasComponent<ResourceExchangeEnabledComponent>(second));
+    }
+
+    [Test]
+    public void ShippingScenarioGatesKeepAIExchangeDisabled()
+    {
+        ResourceExchangeRecipeConfigSet config = LoadExchangeConfig();
+        for (int i = 0; i < config.ScenarioGates.Count; i++)
+            Assert.IsFalse(config.ScenarioGates[i].AllowAiExchange, config.ScenarioGates[i].ScenarioTag);
+
+        using World world = new(nameof(ShippingScenarioGatesKeepAIExchangeDisabled));
+        EntityManager em = world.EntityManager;
+        CreateScenario(em, "custom.skirmish.legacy");
+        CreateFactionEconomy(em, FactionIdentity.PlayerFactionId);
+        Entity enemy = CreateFactionEconomy(em, FactionIdentity.EnemyFactionId);
+        Entity controlEntity = em.CreateEntity(typeof(FactionControlConfigTag));
+        DynamicBuffer<FactionControlEntry> controls = em.AddBuffer<FactionControlEntry>(controlEntity);
+        controls.Add(new FactionControlEntry
+        {
+            FactionId = FactionIdentity.PlayerFactionId,
+            AIControlled = 1,
+            IsPlayerFaction = 1
+        });
+        controls.Add(new FactionControlEntry
+        {
+            FactionId = FactionIdentity.EnemyFactionId,
+            AIControlled = 1
+        });
+
+        ResourceExchangeStartupProjectionSystemHelper.AIProjectionResult result =
+            new ResourceExchangeStartupProjectionSystemHelper(em).InitializeEligibleAIFactions(config);
+
+        Assert.IsFalse(result.ScenarioAllowsAIExchange);
+        Assert.AreEqual(1, result.EligibleFactionCount);
+        Assert.AreEqual(0, result.ProjectedFactionCount);
+        Assert.IsFalse(em.HasComponent<ResourceExchangeEnabledComponent>(enemy));
+    }
+
+    [Test]
+    public void AIEnabledScenarioProjectsCanonicalNonPlayerFaction()
+    {
+        ResourceExchangeRecipeConfigSet config = CreateAIConfig(allowAIExchange: true);
+        try
+        {
+            using World world = new(nameof(AIEnabledScenarioProjectsCanonicalNonPlayerFaction));
+            EntityManager em = world.EntityManager;
+            CreateScenario(em, "custom.skirmish.ai_test");
+            Entity enemy = CreateFactionEconomy(em, FactionIdentity.EnemyFactionId);
+            Entity controlEntity = em.CreateEntity(typeof(FactionControlConfigTag));
+            em.AddBuffer<FactionControlEntry>(controlEntity).Add(new FactionControlEntry
+            {
+                FactionId = FactionIdentity.EnemyFactionId,
+                AIControlled = 0,
+                IsPlayerFaction = 0
+            });
+
+            ResourceExchangeStartupProjectionSystemHelper.AIProjectionResult result =
+                new ResourceExchangeStartupProjectionSystemHelper(em).InitializeEligibleAIFactions(config);
+
+            Assert.IsTrue(result.ScenarioAllowsAIExchange);
+            Assert.AreEqual(1, result.EligibleFactionCount);
+            Assert.AreEqual(1, result.ProjectedFactionCount);
+            Assert.AreEqual(ResourceExchangeReason.None, result.Reason);
+            ResourceExchangeEnabledComponent enabled =
+                em.GetComponentData<ResourceExchangeEnabledComponent>(enemy);
+            Assert.AreEqual(1, enabled.Enabled);
+            Assert.AreEqual(1, enabled.AllowAiExchange);
+            Assert.AreEqual(FactionIdentity.EnemyFactionId, enabled.FactionId);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(config);
+        }
+    }
+
+    [Test]
+    public void AIProjectionDuplicateFactionControlsFailClosed()
+    {
+        ResourceExchangeRecipeConfigSet config = CreateAIConfig(allowAIExchange: true);
+        try
+        {
+            using World world = new(nameof(AIProjectionDuplicateFactionControlsFailClosed));
+            EntityManager em = world.EntityManager;
+            CreateScenario(em, "custom.skirmish.ai_test");
+            Entity enemy = CreateFactionEconomy(em, FactionIdentity.EnemyFactionId);
+            Entity controlEntity = em.CreateEntity(typeof(FactionControlConfigTag));
+            DynamicBuffer<FactionControlEntry> controls = em.AddBuffer<FactionControlEntry>(controlEntity);
+            controls.Add(new FactionControlEntry { FactionId = FactionIdentity.EnemyFactionId });
+            controls.Add(new FactionControlEntry { FactionId = FactionIdentity.EnemyFactionId });
+
+            ResourceExchangeStartupProjectionSystemHelper.AIProjectionResult result =
+                new ResourceExchangeStartupProjectionSystemHelper(em).InitializeEligibleAIFactions(config);
+
+            Assert.IsTrue(result.ScenarioAllowsAIExchange);
+            Assert.AreEqual(ResourceExchangeReason.ExchangeUnavailable, result.Reason);
+            Assert.AreEqual(0, result.ProjectedFactionCount);
+            Assert.IsFalse(em.HasComponent<ResourceExchangeEnabledComponent>(enemy));
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(config);
+        }
+    }
+
+    [Test]
+    public void AIDisabledScenarioClearsPreviouslyProjectedBoundary()
+    {
+        ResourceExchangeRecipeConfigSet enabledConfig = CreateAIConfig(allowAIExchange: true);
+        ResourceExchangeRecipeConfigSet disabledConfig = CreateAIConfig(allowAIExchange: false);
+        try
+        {
+            using World world = new(nameof(AIDisabledScenarioClearsPreviouslyProjectedBoundary));
+            EntityManager em = world.EntityManager;
+            CreateScenario(em, "custom.skirmish.ai_test");
+            Entity enemy = CreateFactionEconomy(em, FactionIdentity.EnemyFactionId);
+            Entity controlEntity = em.CreateEntity(typeof(FactionControlConfigTag));
+            em.AddBuffer<FactionControlEntry>(controlEntity).Add(new FactionControlEntry
+            {
+                FactionId = FactionIdentity.EnemyFactionId,
+                AIControlled = 1
+            });
+            ResourceExchangeStartupProjectionSystemHelper projection = new(em);
+            Assert.AreEqual(1, projection.InitializeEligibleAIFactions(enabledConfig).ProjectedFactionCount);
+            em.GetBuffer<ResourceExchangeRequestComponent>(enemy).Add(new ResourceExchangeRequestComponent
+            {
+                RequestId = 7,
+                RequestKind = ResourceExchangeRequestKind.Start,
+                FactionId = FactionIdentity.EnemyFactionId
+            });
+            em.GetBuffer<ResourceExchangeQueueComponent>(enemy).Add(new ResourceExchangeQueueComponent
+            {
+                QueueItemId = 8,
+                FactionId = FactionIdentity.EnemyFactionId,
+                State = ResourceExchangeQueueState.InProgress
+            });
+
+            ResourceExchangeStartupProjectionSystemHelper.AIProjectionResult result =
+                projection.InitializeEligibleAIFactions(disabledConfig);
+
+            Assert.IsFalse(result.ScenarioAllowsAIExchange);
+            Assert.AreEqual(1, result.EligibleFactionCount);
+            Assert.AreEqual(0, result.ProjectedFactionCount);
+            ResourceExchangeEnabledComponent enabled =
+                em.GetComponentData<ResourceExchangeEnabledComponent>(enemy);
+            Assert.AreEqual(0, enabled.Enabled);
+            Assert.AreEqual(0, enabled.AllowAiExchange);
+            Assert.AreEqual(0, em.GetBuffer<ResourceExchangeRecipeComponent>(enemy).Length);
+            Assert.AreEqual(0, em.GetBuffer<ResourceExchangeRequestComponent>(enemy).Length);
+            Assert.AreEqual(0, em.GetBuffer<ResourceExchangeQueueComponent>(enemy).Length);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(enabledConfig);
+            UnityEngine.Object.DestroyImmediate(disabledConfig);
+        }
+    }
+
+    private static ResourceExchangeRecipeConfigSet CreateAIConfig(bool allowAIExchange)
+    {
+        ResourceExchangeRecipeConfigSet config =
+            ScriptableObject.CreateInstance<ResourceExchangeRecipeConfigSet>();
+        var recipes = new List<ResourceExchangeRecipeConfigEntry>
+        {
+            new(
+                "exchange.import_materials.ai_test",
+                ResourceExchangeRouteType.Import,
+                ResourceExchangeResourceKind.Credits,
+                ResourceExchangeResourceKind.Materials,
+                inputAmountMin: 1800,
+                inputAmountMax: 9000,
+                inputStep: 1800,
+                outputPerInput: 1f / 18f,
+                feePercent: 0f,
+                durationSecondsBase: 90f,
+                missionTag: "custom.skirmish.ai_test")
+        };
+        var gates = new List<ResourceExchangeScenarioGateConfigEntry>
+        {
+            new(
+                "custom.skirmish.ai_test",
+                exchangeEnabled: true,
+                maxQueueItems: 2,
+                allowAiExchange: allowAIExchange)
+        };
+        SetPrivateField(config, "recipes", recipes);
+        SetPrivateField(config, "scenarioGates", gates);
+        return config;
+    }
+
+    private static void SetPrivateField<T>(object target, string fieldName, T value)
+    {
+        FieldInfo field = target.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.NotNull(field, $"Missing private field {fieldName} on {target.GetType().Name}.");
+        field.SetValue(target, value);
     }
 
     private static ResourceExchangeRecipeConfigSet LoadExchangeConfig()

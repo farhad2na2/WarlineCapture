@@ -50,6 +50,10 @@ public sealed class ResourceExchangeAiPlannerGuardrailTests
                 nameof(ResourceExchangeAiPlannerQueueRequestsRequireExplicitAiGateRead),
                 test => test.ResourceExchangeAiPlannerQueueRequestsRequireExplicitAiGateRead(),
                 ref passed);
+            RunValidationStep(
+                nameof(ResourceExchangeAiRecoveryUsesBurstSystemContract),
+                test => test.ResourceExchangeAiRecoveryUsesBurstSystemContract(),
+                ref passed);
 
             Debug.Log($"[ResourceExchangeAiPlannerGuardrail] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -105,6 +109,19 @@ public sealed class ResourceExchangeAiPlannerGuardrailTests
                 contents,
                 $"{path} queues Resource Exchange starts but does not read the explicit AI exchange scenario gate.");
         }
+    }
+
+    [Test]
+    public void ResourceExchangeAiRecoveryUsesBurstSystemContract()
+    {
+        const string path = SystemsRoot + "/ResourceExchangeAIRecoverySystem.cs";
+        Assert.IsTrue(File.Exists(path), $"Missing AI recovery system: {path}");
+        string contents = File.ReadAllText(path);
+        StringAssert.Contains("partial struct ResourceExchangeAIRecoverySystem : ISystem", contents);
+        StringAssert.Contains("[BurstCompile]", contents);
+        StringAssert.Contains("AllowAiExchange", contents);
+        StringAssert.Contains("UpdateBefore(typeof(ResourceExchangeRequestValidationSystem))", contents);
+        StringAssert.Contains("AIMaterialsRecoveryNeedComponent", contents);
     }
 
     private static List<string> FindResourceExchangeAiPlannerScripts()

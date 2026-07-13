@@ -42,7 +42,9 @@ public sealed class AIBuildPlannerValidationTests
             allocationTests.SelectBuildDecision_WarmedNormalizedRequestPathDoesNotAllocateManagedMemory();
             allocationTests.SelectBuildDecision_WarmedOwnedSkipToPendingPathDoesNotAllocateManagedMemory();
             allocationTests.SelectBuildDecision_UsesAuthoredMaterialsCostForAffordability();
-            UnityEngine.Debug.Log("[AIBuildPlannerFocusedValidation] result=Passed tests=5");
+            allocationTests.MaterialsRecoveryNeed_PreservesFirstBlockedTimeAndRejectsImpossibleCapacity();
+            allocationTests.MaterialsRecoveryNeed_ClearRemovesPublishedDemand();
+            UnityEngine.Debug.Log("[AIBuildPlannerFocusedValidation] result=Passed tests=7");
         }
         catch (System.Exception ex)
         {

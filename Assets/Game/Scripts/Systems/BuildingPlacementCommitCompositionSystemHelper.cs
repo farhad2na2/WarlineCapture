@@ -62,6 +62,7 @@ namespace Game.Runtime
             public readonly CreateVisualDelegate CreateVisual;
             public readonly PositionVisualDelegate PositionVisual;
             public readonly RegisterRuntimeBuildingDelegate RegisterRuntimeBuilding;
+            public readonly RollbackRuntimeBuildingDelegate RollbackRuntimeBuilding;
             public readonly CloneDefinitionWithFootprintDelegate CloneDefinitionWithFootprint;
             public readonly GetPlacementFootprintDelegate GetPlacementFootprint;
             public readonly GetWallSegmentFootprintDelegate GetWallSegmentFootprint;
@@ -74,6 +75,7 @@ namespace Game.Runtime
                 CreateVisualDelegate createVisual,
                 PositionVisualDelegate positionVisual,
                 RegisterRuntimeBuildingDelegate registerRuntimeBuilding,
+                RollbackRuntimeBuildingDelegate rollbackRuntimeBuilding,
                 CloneDefinitionWithFootprintDelegate cloneDefinitionWithFootprint,
                 GetPlacementFootprintDelegate getPlacementFootprint,
                 GetWallSegmentFootprintDelegate getWallSegmentFootprint,
@@ -85,6 +87,7 @@ namespace Game.Runtime
                 CreateVisual = createVisual;
                 PositionVisual = positionVisual;
                 RegisterRuntimeBuilding = registerRuntimeBuilding;
+                RollbackRuntimeBuilding = rollbackRuntimeBuilding;
                 CloneDefinitionWithFootprint = cloneDefinitionWithFootprint;
                 GetPlacementFootprint = getPlacementFootprint;
                 GetWallSegmentFootprint = getWallSegmentFootprint;
@@ -92,9 +95,32 @@ namespace Game.Runtime
             }
         }
 
+        public readonly struct CommitOutcome
+        {
+            public readonly RuntimeBuildingEntity AutoSelectBuilding;
+            public readonly int CommittedInstanceCount;
+            public readonly int ExpectedInstanceCount;
+
+            public bool PlacementCommitted => CommittedInstanceCount > 0;
+            public bool FullyCommitted => ExpectedInstanceCount > 0 && CommittedInstanceCount == ExpectedInstanceCount;
+
+            public CommitOutcome(RuntimeBuildingEntity autoSelectBuilding, int committedInstanceCount)
+                : this(autoSelectBuilding, committedInstanceCount, committedInstanceCount)
+            {
+            }
+
+            public CommitOutcome(RuntimeBuildingEntity autoSelectBuilding, int committedInstanceCount, int expectedInstanceCount)
+            {
+                AutoSelectBuilding = autoSelectBuilding;
+                CommittedInstanceCount = committedInstanceCount;
+                ExpectedInstanceCount = expectedInstanceCount;
+            }
+        }
+
         public delegate GameObject CreateVisualDelegate(BuildingDefinition definition, Transform parent);
         public delegate void PositionVisualDelegate(GameObject instance, Vector2Int originCell, BuildingDefinition definition, GridConfig grid, bool rotateVertical);
         public delegate RuntimeBuildingEntity RegisterRuntimeBuildingDelegate(BuildingDefinition definition, GameObject instance, Vector2Int originCell, bool removeOverlappingBlockers);
+        public delegate bool RollbackRuntimeBuildingDelegate(RuntimeBuildingEntity building);
         public delegate BuildingDefinition CloneDefinitionWithFootprintDelegate(BuildingDefinition definition, Vector2Int footprintCells);
         public delegate Vector2Int GetPlacementFootprintDelegate(BuildingDefinition definition, bool rotateVertical);
         public delegate Vector2Int GetWallSegmentFootprintDelegate(BuildingDefinition definition, bool vertical);
@@ -153,10 +179,10 @@ namespace Game.Runtime
             return rotateNinety ? Quaternion.Euler(0f, 90f, 0f) : Quaternion.identity;
         }
 
-        public RuntimeBuildingEntity CommitPlacement(CommitRequest request, CommitContext context)
+        public CommitOutcome CommitPlacement(CommitRequest request, CommitContext context)
         {
             if (request.Definition == null || context.RegisterRuntimeBuilding == null || context.CloneDefinitionWithFootprint == null)
-                return null;
+                return default;
 
             if (request.IsWall && context.HasGrid)
                 return CommitWallPlacement(request, context);
@@ -164,11 +190,23 @@ namespace Game.Runtime
             return CommitSinglePlacement(request, context);
         }
 
-        private RuntimeBuildingEntity CommitWallPlacement(CommitRequest request, CommitContext context)
+        private CommitOutcome CommitWallPlacement(CommitRequest request, CommitContext context)
         {
-            RuntimeBuildingEntity lastBuilding = null;
+            if (context.CreateVisual == null || context.PositionVisual == null || context.GetWallSegmentFootprint == null ||
+                context.RollbackRuntimeBuilding == null || context.DestroyRuntimeObject == null)
+                return default;
+
+            RuntimeBuildingEntity autoSelectBuilding = null;
+            int expectedInstanceCount = 0;
             var wallRuns = new List<WallRun>();
             BuildFinalWallRuns(request, wallRuns);
+            for (int runIndex = 0; runIndex < wallRuns.Count; runIndex++)
+                expectedInstanceCount += wallRuns[runIndex].Origins?.Count ?? 0;
+
+            if (expectedInstanceCount == 0)
+                return default;
+
+            var committedBuildings = new List<RuntimeBuildingEntity>(expectedInstanceCount);
             for (int runIndex = 0; runIndex < wallRuns.Count; runIndex++)
             {
                 WallRun run = wallRuns[runIndex];
@@ -180,24 +218,55 @@ namespace Game.Runtime
                 {
                     GameObject instance = context.CreateVisual(request.Definition, context.BuildingRoot);
                     if (instance == null)
-                        continue;
+                        return RollbackWallPlacement(context, committedBuildings, expectedInstanceCount);
 
                     context.PositionVisual(instance, run.Origins[i], request.Definition, context.Grid, run.Vertical);
                     BuildingDefinition segmentDefinition = context.CloneDefinitionWithFootprint(request.Definition, wallFootprint);
-                    lastBuilding = context.RegisterRuntimeBuilding(segmentDefinition, instance, run.Origins[i], true);
+                    RuntimeBuildingEntity building = context.RegisterRuntimeBuilding(segmentDefinition, instance, run.Origins[i], true);
+                    if (building == null)
+                    {
+                        context.DestroyRuntimeObject(instance);
+                        return RollbackWallPlacement(context, committedBuildings, expectedInstanceCount);
+                    }
+
+                    committedBuildings.Add(building);
+                    if (ShouldAutoSelectAfterPlacement(building.Definition))
+                        autoSelectBuilding = building;
                 }
             }
 
             if (request.PreviewInstance != null)
                 context.DestroyRuntimeObject(request.PreviewInstance);
 
-            return ShouldAutoSelectAfterPlacement(lastBuilding?.Definition) ? lastBuilding : null;
+            return new CommitOutcome(autoSelectBuilding, committedBuildings.Count, expectedInstanceCount);
         }
 
-        private RuntimeBuildingEntity CommitSinglePlacement(CommitRequest request, CommitContext context)
+        private static CommitOutcome RollbackWallPlacement(
+            CommitContext context,
+            List<RuntimeBuildingEntity> committedBuildings,
+            int expectedInstanceCount)
         {
-            if (request.PreviewInstance == null)
-                return null;
+            int rollbackFailureCount = 0;
+            for (int i = committedBuildings.Count - 1; i >= 0; i--)
+            {
+                RuntimeBuildingEntity building = committedBuildings[i];
+                if (building == null || !context.RollbackRuntimeBuilding(building))
+                {
+                    rollbackFailureCount++;
+                    continue;
+                }
+
+                if (building.Instance != null)
+                    context.DestroyRuntimeObject(building.Instance);
+            }
+
+            return new CommitOutcome(null, rollbackFailureCount, expectedInstanceCount);
+        }
+
+        private CommitOutcome CommitSinglePlacement(CommitRequest request, CommitContext context)
+        {
+            if (request.PreviewInstance == null || context.GetPlacementFootprint == null)
+                return default;
 
             if (context.HasGrid && context.PositionVisual != null)
                 context.PositionVisual(request.PreviewInstance, request.OriginCell, request.Definition, context.Grid, request.AutoRotateVertical);
@@ -205,7 +274,11 @@ namespace Game.Runtime
             Vector2Int footprint = context.GetPlacementFootprint(request.Definition, request.AutoRotateVertical);
             BuildingDefinition committedDefinition = context.CloneDefinitionWithFootprint(request.Definition, footprint);
             RuntimeBuildingEntity building = context.RegisterRuntimeBuilding(committedDefinition, request.PreviewInstance, request.OriginCell, true);
-            return ShouldAutoSelectAfterPlacement(building?.Definition) ? building : null;
+            if (building == null)
+                return new CommitOutcome(null, 0, 1);
+
+            RuntimeBuildingEntity autoSelectBuilding = ShouldAutoSelectAfterPlacement(building.Definition) ? building : null;
+            return new CommitOutcome(autoSelectBuilding, 1, 1);
         }
 
         private static void BuildFinalWallRuns(CommitRequest request, List<WallRun> runs)

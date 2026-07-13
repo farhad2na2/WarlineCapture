@@ -11,6 +11,7 @@ namespace Game.Runtime
     internal sealed class BuildingPlacementCommandRequestCompositionSystemHelper
     {
         private readonly BuildingPlacementCommandEntityCache _commandEntityCache = new();
+        private int _lastEconomyTransactionId;
 
         internal readonly struct Context
         {
@@ -200,6 +201,7 @@ namespace Game.Runtime
                 results.Add(new BuildingUiPlacementCommandResultElement
                 {
                     RequestId = request.RequestId,
+                    EconomyTransactionId = request.EconomyTransactionId,
                     RequestKind = request.RequestKind,
                     Accepted = accepted ? (byte)1 : (byte)0,
                     ResultCode = resultCode,
@@ -291,6 +293,7 @@ namespace Game.Runtime
                 case BuildingUiPlacementCommandRequestElement.KindConfirmPlacement:
                     if (context.SessionSystem.ConfirmBuildingPlacement(
                             context.SessionContext,
+                            request.EconomyTransactionId,
                             out BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason confirmFailureReason))
                     {
                         resultCode = BuildingUiPlacementCommandResultElement.Completed;
@@ -370,8 +373,18 @@ namespace Game.Runtime
                     BuildingUiPlacementCommandResultElement.BlockedPlacement,
                 BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.InvalidPlacement =>
                     BuildingUiPlacementCommandResultElement.InvalidPlacement,
-                BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.NotEnoughMoney =>
+                BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.InsufficientCredits =>
                     BuildingUiPlacementCommandResultElement.NotEnoughMoney,
+                BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.InsufficientMaterials =>
+                    BuildingUiPlacementCommandResultElement.InsufficientMaterials,
+                BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.InsufficientCreditsAndMaterials =>
+                    BuildingUiPlacementCommandResultElement.InsufficientCreditsAndMaterials,
+                BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.DuplicateTransaction =>
+                    BuildingUiPlacementCommandResultElement.DuplicateTransaction,
+                BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.RegistrationFailed =>
+                    BuildingUiPlacementCommandResultElement.RegistrationFailed,
+                BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.TransactionRejected =>
+                    BuildingUiPlacementCommandResultElement.TransactionRejected,
                 _ => BuildingUiPlacementCommandResultElement.Rejected
             };
         }
@@ -384,6 +397,8 @@ namespace Game.Runtime
                 BuildingUiPlacementCommandResultElement.BlockedPlacement => TacticalCommandReasonCode.TargetBlocked,
                 BuildingUiPlacementCommandResultElement.InvalidPlacement => TacticalCommandReasonCode.TargetUnreachable,
                 BuildingUiPlacementCommandResultElement.NotEnoughMoney => TacticalCommandReasonCode.InsufficientResources,
+                BuildingUiPlacementCommandResultElement.InsufficientMaterials => TacticalCommandReasonCode.InsufficientResources,
+                BuildingUiPlacementCommandResultElement.InsufficientCreditsAndMaterials => TacticalCommandReasonCode.InsufficientResources,
                 BuildingUiPlacementCommandResultElement.MissingActivePlacement => TacticalCommandReasonCode.BuildUnavailable,
                 BuildingUiPlacementCommandResultElement.MissingConfig => TacticalCommandReasonCode.BuildUnavailable,
                 _ => TacticalCommandReasonCode.CommandUnavailable
@@ -404,11 +419,21 @@ namespace Game.Runtime
             em.GetBuffer<BuildingUiPlacementCommandRequestElement>(queueEntity).Add(new BuildingUiPlacementCommandRequestElement
             {
                 RequestId = queue.LastRequestId,
+                EconomyTransactionId = requestKind == BuildingUiPlacementCommandRequestElement.KindConfirmPlacement
+                    ? NextEconomyTransactionId()
+                    : 0,
                 BuildingId = new FixedString128Bytes(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(buildingId)),
                 RequestKind = requestKind,
                 ClearBuildingSelection = clearBuildingSelection ? (byte)1 : (byte)0
             });
             return queue.LastRequestId;
+        }
+
+        private int NextEconomyTransactionId()
+        {
+            if (_lastEconomyTransactionId == int.MaxValue)
+                _lastEconomyTransactionId = 0;
+            return ++_lastEconomyTransactionId;
         }
 
         private static string ResolveDefinitionLookupKey(BuildingDefinition definition)

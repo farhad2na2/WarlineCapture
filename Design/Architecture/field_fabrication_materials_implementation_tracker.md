@@ -1,7 +1,7 @@
 # Field Fabrication And Materials Implementation Tracker
 
 Date: 2026-07-12
-Status: In progress - Phase 5 Credits plus Materials construction
+Status: In progress - Phase 6 selected-depot UI and typed disabled reasons
 Design source: `../Field_Fabrication_Materials_Design.md`
 
 ## Objective
@@ -73,9 +73,9 @@ Dependency direction remains inward toward components/config/contracts/runtime. 
 
 ## Progress Summary
 
-Overall implementation progress: 59% (61/103 checklist items complete).
+Overall implementation progress: 71% (73/103 checklist items complete).
 
-Planning, canonical resource ownership, depot config/projection, automated Oil routing, and Oil-to-Materials conversion are complete. Active depots now consume only unreserved physical Oil at the existing one-second cadence, grant canonical faction Materials atomically, publish bounded typed events, and expose deterministic status/progress without managed allocation. The existing `Building_Ammunition_Depot` compatibility id and refinery/tanker behavior remain intact.
+Planning, canonical resource ownership, depot config/projection, automated Oil routing, Oil-to-Materials conversion, authored construction costs, atomic dual-resource placement, and Build Drawer dual-cost presentation are complete. Active depots consume only unreserved physical Oil at the existing one-second cadence. Player placement resolves authored costs, reserves canonical Credits and Materials after geometry validation, and finalizes or refunds both by a typed transaction id. Phase 6 continues with selected-depot status and typed disabled reasons.
 
 Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation row counts. Update the numerator, denominator, table, status, and evidence log in the same commit as each completed batch.
 
@@ -86,8 +86,8 @@ Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation 
 | 2. Config and building projection | Complete | 10 | 10 | 100% | Depot identity, authored balance, typed data, compatibility id, and map/runtime projection are validated. |
 | 3. Oil destination routing | Complete | 11 | 11 | 100% | Tray delivery, demand scoring, stable assignment, reservations, cleanup, and refinery regressions pass. |
 | 4. Oil-to-Materials conversion | Complete | 11 | 11 | 100% | Conversion is deterministic, capacity-safe, typed, reservation-aware, and no-GC. |
-| 5. Credits + Materials construction | In progress | 0 | 11 | 0% | Placement spends both resources exactly once. |
-| 6. HUD and selected-building UI | In progress | 4 | 11 | 36% | Live canonical Credits/Materials header projection is validated at 0 managed bytes. Build Drawer and selected-depot UI remain. |
+| 5. Credits + Materials construction | Complete | 11 | 11 | 100% | Atomic placement, rollback, authored cost projection, and Build Drawer dual-cost presentation pass. |
+| 6. HUD and selected-building UI | In progress | 5 | 11 | 45% | Live canonical Credits/Materials header and Build Drawer dual-cost projection pass. Selected-depot status and typed disabled reasons remain. |
 | 7. Exchange and balance safety | Pending | 0 | 8 | 0% | Import is expensive recovery; no arbitrage exists. |
 | 8. AI, telemetry, and scenario safety | Pending | 0 | 7 | 0% | AI shares rules; scenarios cannot deadlock silently. |
 | 9. Integration, performance, and closeout | Pending | 0 | 9 | 0% | Architecture, GC, profiler, gameplay, and docs pass. |
@@ -234,17 +234,17 @@ Phase 4 exit criteria:
 
 ## Phase 5: Credits Plus Materials Construction
 
-- [ ] Add authored Materials cost to the existing building definition/config path.
-- [ ] Keep current Credits price and show both currencies.
-- [ ] Stop trusting the UI-supplied `Price`; resolve authored Credits and Materials costs from the stable building id inside the authoritative request path.
-- [ ] Add typed affordability evaluation using `FactionEconomy.Money` and `FactionTacticalMaterialsComponent`.
-- [ ] Extend request/result data with an economy transaction/reservation id and typed `InsufficientCredits`, `InsufficientMaterials`, and combined-cost rejection behavior.
-- [ ] Atomically reserve or spend Credits and Materials exactly once after geometry validation and before managed visual/runtime registration.
-- [ ] Finalize the transaction on successful registration; issue an exact-once rollback result if registration fails. Cancelling a preview before confirmation spends nothing.
-- [ ] Ensure map-authored structures do not spend tactical resources.
-- [ ] Seed enough starting Materials or an authored recovery path in Materials-enabled scenarios.
-- [ ] Add tests for affordable, insufficient Credits, insufficient Materials, both insufficient, preview cancel, invalid placement, failed registration rollback, and duplicate requests.
-- [ ] Add regression tests for production/build flows that remain Credits-only by authored configuration.
+- [x] Add authored Materials cost to the existing building definition/config path.
+- [x] Keep current Credits price and show both currencies.
+- [x] Stop trusting the UI-supplied `Price`; resolve authored Credits and Materials costs from the stable building id inside the authoritative request path.
+- [x] Add typed affordability evaluation using `FactionEconomy.Money` and `FactionTacticalMaterialsComponent`.
+- [x] Extend request/result data with an economy transaction/reservation id and typed `InsufficientCredits`, `InsufficientMaterials`, and combined-cost rejection behavior.
+- [x] Atomically reserve or spend Credits and Materials exactly once after geometry validation and before managed visual/runtime registration.
+- [x] Finalize the transaction on successful registration; issue an exact-once rollback result if registration fails. Cancelling a preview before confirmation spends nothing.
+- [x] Ensure map-authored structures do not spend tactical resources.
+- [x] Seed enough starting Materials or an authored recovery path in Materials-enabled scenarios.
+- [x] Add tests for affordable, insufficient Credits, insufficient Materials, both insufficient, preview cancel, invalid placement, failed registration rollback, and duplicate requests.
+- [x] Add regression tests for production/build flows that remain Credits-only by authored configuration.
 
 Phase 5 exit criteria:
 
@@ -258,7 +258,7 @@ Phase 5 exit criteria:
 - [x] Preserve a non-gameplay placeholder only in isolated UI preview/test fixtures if explicitly required.
 - [x] Add a versioned header Materials read model in the existing UI shell ECS boundary.
 - [x] Avoid per-frame Materials string formatting when source version is unchanged.
-- [ ] Extend Build Drawer cards/details to show Credits and Materials costs.
+- [x] Extend Build Drawer cards/details to show Credits and Materials costs.
 - [ ] Bind typed disabled reasons without calculating affordability in Canvas views.
 - [ ] Add a versioned selected-depot read model with Oil input, rate, progress, output, faction Materials, and status.
 - [ ] Add production enabled/disabled command only through typed ECS request/result data.
@@ -499,3 +499,19 @@ For every completed batch append:
 - Existing regressions passed: resource production/logistics 44/44, assembly boundaries 31/31, and ECS Burst hot-path architecture 10/10. The broad 58-test architecture suite still reports eight unrelated existing debts in rendering/UI/camera/static-registry ratchets; its temporary ninth failure was this slice's exported struct-return Burst annotation and was removed before final validation.
 - Evidence: `/private/tmp/wlc-field-fabrication-phase4-final.log`, `/private/tmp/wlc-field-fabrication-phase4-resource-regression.log`, `/private/tmp/wlc-field-fabrication-phase4-architecture.log`, `/private/tmp/wlc-field-fabrication-phase4-burst.log`, and `/private/tmp/wlc-field-fabrication-phase4-architecture.xml`.
 - Phase 4 is complete at 11/11. Checklist count is 61/103. Next action: add authored Materials construction costs and replace the UI-supplied building price path with stable-id-resolved atomic Credits plus Materials placement transactions.
+
+### 2026-07-13 - Phase 5 Authored Costs And Atomic Placement Core
+
+- Added authored Materials costs to all 23 requestable building configs and preserved their existing Credits prices. Both costs project through config, hidden authoring, metadata, runtime definitions, ECS catalog read models, and footprint clones. Match starts with 120 tactical Materials and 600 capacity, enough to build the 100-Materials Field Fabrication Depot recovery path.
+- Added `BuildingDefinition.CreditsCost` so the resolved runtime definition owns both construction costs. Configured-building request and result paths now use the authored Credits cost; the UI-supplied `Price` remains only for legacy unit-production requests and cannot alter building affordability or spending.
+- Extended placement request/result data with an economy transaction id and typed Credits, Materials, combined-shortage, duplicate, registration-failure, and transaction-rejection outcomes.
+- Added a single in-flight exact-once reservation boundary to `RuntimeResourceUtilitySystemHelper`. It spends `FactionEconomy.Money` and `FactionTacticalMaterialsComponent` atomically after geometry validation, then finalizes on registration or refunds both resources on complete registration failure. Settled or repeated transaction ids are rejected without mutation.
+- Replaced the ambiguous null commit contract with `CommitOutcome`, which reports expected and committed instance counts plus optional auto-selection. Failed wall registrations destroy their newly created visual; non-auto-select buildings now report successful registration explicitly.
+- Map-authored placement remains on the separate map spawn path and never enters the player placement transaction. Existing zero-Materials definitions and unit-production requests remain Credits-only.
+- Focused validation passed: authored cost projection 3/3, lifecycle construction transaction 5/5, commit outcome 5/5, placement command regression 17/17, production request regression 26/26, runtime resource transaction 9/9, assembly boundaries 31/31, and Burst hot-path architecture 10/10. The runtime resource fixture measured 0 managed bytes across 512 reserve/rollback cycles. The resource and final placement reruns logged their passing markers before a Unity Asset Import Worker shutdown crash; the other listed runs exited cleanly.
+- Evidence: `/private/tmp/wlc-field-fabrication-phase5-cost-projection.log`, `/private/tmp/wlc-field-fabrication-phase5-placement-transaction.log`, `/private/tmp/wlc-field-fabrication-phase5-commit-outcome.log`, `/private/tmp/wlc-field-fabrication-phase5-placement-regression.log`, `/private/tmp/wlc-field-fabrication-phase5-production-regression.log`, `/private/tmp/wlc-field-fabrication-phase5-resource-transaction.log`, `/private/tmp/wlc-field-fabrication-phase5-architecture.log`, and `/private/tmp/wlc-field-fabrication-phase5-burst.log`.
+- Extended the existing Build Drawer catalog contract and read model with authored Materials cost while preserving the existing Credits price. Building cards now populate the existing Supplies fields with grouped invariant Materials values; unit-production cards retain zero Materials cost and do not display a false secondary price.
+- Build Drawer dual-cost validation passed 2/2 after Unity compiled the combined runtime and UI changes. No view-owned economy policy, new update loop, default-assembly fallback, or assembly reference was added. Evidence: `/private/tmp/wlc-field-fabrication-phase5-build-drawer.log`.
+- Final review found that a failed multi-segment wall registration could previously leave paid partial structures. Wall commit is now atomic: any failed segment immediately removes all registrations and ECS blocker/combat entities created by that command, destroys their visuals, preserves the preview for retry, and permits the resource transaction to roll back. Focused wall commit passed 5/5 and construction settlement passed 6/6, including exact Credits and Materials restoration. Evidence: `/private/tmp/wlc-field-fabrication-phase5-atomic-wall-commit.log` and `/private/tmp/wlc-field-fabrication-phase5-atomic-wall-transaction.log`.
+- Final combined validation passed the 31-test assembly/naming boundary contract and the 10-test Burst hot-path ratchet after a full Unity compile. The assembly run emitted its passing marker before Unity force-closed a lingering Asset Import Worker during shutdown; the Burst run exited cleanly. Evidence: `/private/tmp/wlc-field-fabrication-phase5-final-architecture.log` and `/private/tmp/wlc-field-fabrication-phase5-final-burst.log`.
+- Phase 5 is complete at 11/11. Checklist count is 73/103. Next action: implement selected Field Fabrication Depot status/progress and typed disabled reasons through the existing selected-building read-model and presentation boundaries.

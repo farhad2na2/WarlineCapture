@@ -1,0 +1,247 @@
+using System;
+using System.Collections.Generic;
+using Game.Authoring;
+using Game.Configs;
+using Game.Runtime;
+using Game.UI.Contracts;
+using Game.UI.Runtime;
+using Game.UI.Shell.Contracts.Ecs;
+using Game.UI.Shell.Ecs;
+using NUnit.Framework;
+using Unity.Entities;
+using UnityEditor;
+using UnityEngine;
+using Object = UnityEngine.Object;
+
+public sealed class UiBuildDrawerDualCostReadModelTests
+{
+    private readonly List<Object> _createdObjects = new();
+
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            RunCase(test => test.WriteReadModel_BuildingDisplaysGroupedCreditsAndMaterials());
+            RunCase(test => test.WriteReadModel_UnitRetainsGroupedCreditsAndEmptyMaterials());
+            Debug.Log("[UiBuildDrawerDualCostReadModelValidation] result=Passed tests=2");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[UiBuildDrawerDualCostReadModelValidation] result=Failed");
+            ValidationExit.Exit(1);
+        }
+    }
+
+    private static void RunCase(Action<UiBuildDrawerDualCostReadModelTests> testCase)
+    {
+        var tests = new UiBuildDrawerDualCostReadModelTests();
+        try
+        {
+            testCase(tests);
+        }
+        finally
+        {
+            tests.TearDown();
+        }
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        UiBuildDrawerReadModelSource.Clear();
+        for (int i = _createdObjects.Count - 1; i >= 0; i--)
+        {
+            if (_createdObjects[i] != null)
+                Object.DestroyImmediate(_createdObjects[i]);
+        }
+
+        _createdObjects.Clear();
+    }
+
+    [Test]
+    public void WriteReadModel_BuildingDisplaysGroupedCreditsAndMaterials()
+    {
+        BuildingPlacementSystemConfig buildings = CreateAsset<BuildingPlacementSystemConfig>();
+        GameObject building = CreateBuilding("Field Fabricator", 1234, 5678);
+        buildings.Spawnables.Add(building);
+
+        var query = ConfigureQuery();
+        var items = new List<BuildDrawerCatalogItem>();
+        query.Collect(null, buildings, BuildDrawerCategory.Buildings, items);
+
+        Assert.AreEqual(1, items.Count);
+        Assert.AreEqual(1234, items[0].Price);
+        Assert.AreEqual(5678, items[0].MaterialsCost);
+
+        UiBuildDrawerReadModelSource.Configure(
+            null,
+            buildings,
+            new AvailableBuildingUiCommand(),
+            null,
+            Game.Composition.UiCatalogAuthoringMetadataUiSystemHelper.TryGetBuildingMetadata,
+            Game.Composition.UiCatalogAuthoringMetadataUiSystemHelper.TryGetUnitMetadata);
+
+        using World world = new(nameof(WriteReadModel_BuildingDisplaysGroupedCreditsAndMaterials));
+        EntityManager entityManager = world.EntityManager;
+        Entity boundary = CreateBoundary(entityManager);
+        UiBuildDrawerStateComponent state = new() { ActiveCategory = BuildDrawerCategory.Buildings };
+
+        UiBuildDrawerReadModelSource.WriteReadModel(
+            entityManager,
+            boundary,
+            ref state,
+            entityManager.GetBuffer<UiBuildDrawerCatalogItemComponent>(boundary),
+            entityManager.GetBuffer<UiBuildDrawerQueueRowComponent>(boundary));
+
+        DynamicBuffer<UiBuildDrawerCatalogItemComponent> catalog =
+            entityManager.GetBuffer<UiBuildDrawerCatalogItemComponent>(boundary);
+        UiBuildDrawerDetailComponent detail =
+            entityManager.GetComponentData<UiBuildDrawerDetailComponent>(boundary);
+        Assert.AreEqual(1, catalog.Length);
+        Assert.AreEqual("1,234", catalog[0].CreditsText.ToString());
+        Assert.AreEqual("5,678", catalog[0].SuppliesText.ToString());
+        Assert.AreEqual("1,234", detail.CreditsCostText.ToString());
+        Assert.AreEqual("5,678", detail.SuppliesCostText.ToString());
+    }
+
+    [Test]
+    public void WriteReadModel_UnitRetainsGroupedCreditsAndEmptyMaterials()
+    {
+        UnitPrefabRegistryAuthoringConfig units = CreateAsset<UnitPrefabRegistryAuthoringConfig>();
+        GameObject unit = CreateUnit("Field Contractor", 5678);
+        units.UnitSpawnPrefabs.Add(unit);
+
+        var query = ConfigureQuery();
+        var items = new List<BuildDrawerCatalogItem>();
+        query.Collect(units, null, BuildDrawerCategory.Soldiers, items);
+
+        Assert.AreEqual(1, items.Count);
+        Assert.AreEqual(5678, items[0].Price);
+        Assert.Zero(items[0].MaterialsCost);
+
+        UiBuildDrawerReadModelSource.Configure(
+            units,
+            null,
+            new AvailableBuildingUiCommand(),
+            null,
+            Game.Composition.UiCatalogAuthoringMetadataUiSystemHelper.TryGetBuildingMetadata,
+            Game.Composition.UiCatalogAuthoringMetadataUiSystemHelper.TryGetUnitMetadata);
+
+        using World world = new(nameof(WriteReadModel_UnitRetainsGroupedCreditsAndEmptyMaterials));
+        EntityManager entityManager = world.EntityManager;
+        Entity boundary = CreateBoundary(entityManager);
+        UiBuildDrawerStateComponent state = new() { ActiveCategory = BuildDrawerCategory.Soldiers };
+
+        UiBuildDrawerReadModelSource.WriteReadModel(
+            entityManager,
+            boundary,
+            ref state,
+            entityManager.GetBuffer<UiBuildDrawerCatalogItemComponent>(boundary),
+            entityManager.GetBuffer<UiBuildDrawerQueueRowComponent>(boundary));
+
+        DynamicBuffer<UiBuildDrawerCatalogItemComponent> catalog =
+            entityManager.GetBuffer<UiBuildDrawerCatalogItemComponent>(boundary);
+        UiBuildDrawerDetailComponent detail =
+            entityManager.GetComponentData<UiBuildDrawerDetailComponent>(boundary);
+        Assert.AreEqual(1, catalog.Length);
+        Assert.AreEqual("5,678", catalog[0].CreditsText.ToString());
+        Assert.IsEmpty(catalog[0].SuppliesText.ToString());
+        Assert.AreEqual("5,678", detail.CreditsCostText.ToString());
+        Assert.IsEmpty(detail.SuppliesCostText.ToString());
+    }
+
+    private static BuildDrawerCatalogQueryUiSystemHelper ConfigureQuery()
+    {
+        var query = new BuildDrawerCatalogQueryUiSystemHelper();
+        query.ConfigureMetadataResolvers(
+            Game.Composition.UiCatalogAuthoringMetadataUiSystemHelper.TryGetBuildingMetadata,
+            Game.Composition.UiCatalogAuthoringMetadataUiSystemHelper.TryGetUnitMetadata);
+        return query;
+    }
+
+    private static Entity CreateBoundary(EntityManager entityManager)
+    {
+        Entity boundary = entityManager.CreateEntity(
+            typeof(UiBuildDrawerDetailComponent),
+            typeof(UiBuildDrawerActiveProductionComponent));
+        entityManager.AddBuffer<UiBuildDrawerCatalogItemComponent>(boundary);
+        entityManager.AddBuffer<UiBuildDrawerQueueRowComponent>(boundary);
+        return boundary;
+    }
+
+    private T CreateAsset<T>() where T : ScriptableObject
+    {
+        T asset = ScriptableObject.CreateInstance<T>();
+        _createdObjects.Add(asset);
+        return asset;
+    }
+
+    private GameObject CreateBuilding(string displayName, int price, int materialsCost)
+    {
+        GameObject prefab = new(displayName);
+        _createdObjects.Add(prefab);
+        BuildingDefinitionAuthoring authoring = prefab.AddComponent<BuildingDefinitionAuthoring>();
+        SerializedObject serialized = new(authoring);
+        serialized.FindProperty("displayName").stringValue = displayName;
+        serialized.FindProperty("description").stringValue = "Fabricates field structures.";
+        serialized.FindProperty("canRequest").boolValue = true;
+        serialized.FindProperty("price").intValue = price;
+        serialized.FindProperty("materialsCost").intValue = materialsCost;
+        serialized.FindProperty("footprintCells").vector2IntValue = new Vector2Int(2, 2);
+        serialized.ApplyModifiedPropertiesWithoutUndo();
+        return prefab;
+    }
+
+    private GameObject CreateUnit(string displayName, int price)
+    {
+        GameObject prefab = new(displayName);
+        _createdObjects.Add(prefab);
+        UnitGridAuthoring authoring = prefab.AddComponent<UnitGridAuthoring>();
+        SerializedObject serialized = new(authoring);
+        serialized.FindProperty("displayName").stringValue = displayName;
+        serialized.FindProperty("description").stringValue = "Field fabrication unit.";
+        serialized.FindProperty("canRequest").boolValue = true;
+        serialized.FindProperty("price").intValue = price;
+        serialized.FindProperty("footprintCells").vector2IntValue = Vector2Int.one;
+        serialized.FindProperty("productionDurationSeconds").floatValue = 42f;
+        serialized.ApplyModifiedPropertiesWithoutUndo();
+        return prefab;
+    }
+
+    private sealed class AvailableBuildingUiCommand : IBuildingUiCommand
+    {
+        public int CurrentDollars => int.MaxValue;
+        public bool HasPendingBuildingPlacement => false;
+        public bool CanConfirmBuildingPlacement => false;
+        public string PlacementStatusText => string.Empty;
+        public int ActivePlacementCost => 0;
+        public float ActivePlacementDurationSeconds => 0f;
+        public int MaxQueuedUnitProductions => 25;
+
+        public BuildingUiCommandFailure GetCampRequestFailure(
+            GameObject prefab,
+            int price,
+            out string requiredBuildingDisplayName)
+        {
+            requiredBuildingDisplayName = string.Empty;
+            return BuildingUiCommandFailure.None;
+        }
+
+        public BuildingUiCommandFailure TryRequestCampItem(
+            GameObject prefab,
+            int price,
+            out string requiredBuildingDisplayName,
+            bool focusProducerOnSuccess)
+        {
+            requiredBuildingDisplayName = string.Empty;
+            return BuildingUiCommandFailure.None;
+        }
+
+        public bool CancelProduction(int buildingId, int pendingProductionIndex) => false;
+        public bool ConfirmBuildingPlacement() => false;
+        public void CancelBuildingPlacement() { }
+        public bool RotateBuildingPlacement() => false;
+    }
+}

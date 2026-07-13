@@ -23,6 +23,7 @@ MonoBehaviour:
   isWall: 0
   canRequest: 1
   price: 30000
+  materialsCost: 70
   productionDurationSeconds: 30
   oilBarrelsPerDay: 0
   oilStorageCapacity: 10000

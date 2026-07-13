@@ -16,6 +16,7 @@ MonoBehaviour:
   description: Landing pad for helicopters, rapid air support, and short-range aerial deployment.
   maxHealth: 700
   price: 35000
+  materialsCost: 80
   productionDurationSeconds: 30
   productions:
   - spawnUnitPrefab: {fileID: 5616646512338707422, guid: fcc8f80798992470f8b8769d3bc4c41a, type: 3}

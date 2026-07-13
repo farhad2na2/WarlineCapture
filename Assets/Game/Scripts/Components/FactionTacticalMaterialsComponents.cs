@@ -34,7 +34,8 @@ namespace Game.Components
         InvalidState = 2,
         InsufficientCredits = 3,
         InsufficientMaterials = 4,
-        InsufficientCreditsAndMaterials = 5
+        InsufficientCreditsAndMaterials = 5,
+        DuplicateTransaction = 6
     }
 
     public struct FactionTacticalMaterialsComponent : IComponentData

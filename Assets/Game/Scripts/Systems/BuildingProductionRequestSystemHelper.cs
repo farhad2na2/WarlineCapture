@@ -490,12 +490,17 @@ namespace Game.Runtime
             if (prefab == null)
                 return CampRequestFailure.InvalidSelection;
 
+            if (context.ConfiguredDefinitionsByPrefab != null &&
+                context.ConfiguredDefinitionsByPrefab.TryGetValue(prefab, out BuildingDefinition buildingDefinition))
+            {
+                if (context.ResourceDollars < Mathf.Max(0, buildingDefinition?.CreditsCost ?? 0))
+                    return CampRequestFailure.NotEnoughMoney;
+                return CampRequestFailure.None;
+            }
+
             int normalizedPrice = Mathf.Max(0, price);
             if (context.ResourceDollars < normalizedPrice)
                 return CampRequestFailure.NotEnoughMoney;
-
-            if (context.ConfiguredDefinitionsByPrefab != null && context.ConfiguredDefinitionsByPrefab.ContainsKey(prefab))
-                return CampRequestFailure.None;
 
             if (!TryFindFirstFriendlyProducerBuilding(context, prefab, requireQueueCapacity: false, out _, out _, out string producerDisplayName))
             {
@@ -530,7 +535,6 @@ namespace Game.Runtime
                 if (context.BeginPlacementForConfiguredSpawnable == null || !context.BeginPlacementForConfiguredSpawnable(prefab))
                     return CampRequestFailure.InvalidSelection;
 
-                context.SetActivePlacementCost?.Invoke(Mathf.Max(0, price));
                 return CampRequestFailure.None;
             }
 
@@ -704,7 +708,7 @@ namespace Game.Runtime
                     RequestId = request.RequestId,
                     ItemId = request.ItemId,
                     RequiredBuildingDisplayName = requiredBuildingDisplayName,
-                    Price = request.Price,
+                    Price = ResolveCampItemResultPrice(context, request),
                     Accepted = accepted ? (byte)1 : (byte)0,
                     ResultCode = resultCode,
                     ReasonCode = (int)ToCampItemReasonCode(resultCode)
@@ -1217,6 +1221,20 @@ namespace Game.Runtime
         {
             return TryResolveConfiguredBuildingPrefab(context, normalizedItemId, out prefab) ||
                    TryResolveConfiguredUnitPrefab(context, normalizedItemId, out prefab);
+        }
+
+        private static int ResolveCampItemResultPrice(
+            Context context,
+            BuildingUiCampItemCommandRequestElement request)
+        {
+            if (TryResolveConfiguredBuildingPrefab(context, request.ItemId.ToString(), out GameObject prefab) &&
+                context.ConfiguredDefinitionsByPrefab != null &&
+                context.ConfiguredDefinitionsByPrefab.TryGetValue(prefab, out BuildingDefinition definition))
+            {
+                return Mathf.Max(0, definition?.CreditsCost ?? 0);
+            }
+
+            return Mathf.Max(0, request.Price);
         }
 
         private static bool TryResolveConfiguredBuildingPrefab(Context context, string normalizedItemId, out GameObject prefab)

@@ -2016,7 +2016,8 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             BuildingDefinition definition = new()
             {
                 DisplayName = "Requestable Airport",
-                Prefab = buildingPrefab
+                Prefab = buildingPrefab,
+                CreditsCost = 4321
             };
             bool beganPlacement = false;
             int activePlacementCost = -1;
@@ -2048,10 +2049,10 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                 out BuildingUiCampItemCommandResultElement result));
             Assert.AreEqual(1, result.Accepted);
             Assert.AreEqual(BuildingUiCampItemCommandResultElement.PlacementStarted, result.ResultCode);
-            Assert.AreEqual(1234, result.Price);
+            Assert.AreEqual(4321, result.Price);
             Assert.AreEqual(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(buildingPrefab.name), result.ItemId.ToString());
             Assert.IsTrue(beganPlacement);
-            Assert.AreEqual(1234, activePlacementCost);
+            Assert.AreEqual(-1, activePlacementCost, "UI-supplied price must not become the placement charge.");
 
             using EntityQuery queueQuery = world.EntityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<BuildingUiCampItemCommandQueueComponent>());

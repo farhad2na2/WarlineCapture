@@ -295,18 +295,20 @@ namespace Game.Runtime
                         createBuildingSelectionContext);
             BuildingPlacementCommandCompositionSystemHelper.PlaceBuildingDelegate placeBuilding =
                 (source, placementInteractionContext, placementMarkerPropertyBlock, placement) =>
-                    source.BuildingPlacementVisualCompositionPresentationSystemHelper?.PlaceBuilding(
-                        source,
-                        placementInteractionContext,
-                        placementMarkerPropertyBlock,
-                        placement,
-                        tryGetGridCell,
-                        tryGetGridData,
-                        isActivePlacementValid,
-                        tryAlignGateForVisual,
-                        createPlacementContextSource,
-                        createRuntimeContextSource,
-                        createBuildingSelectionContext);
+                    source.BuildingPlacementVisualCompositionPresentationSystemHelper != null
+                        ? source.BuildingPlacementVisualCompositionPresentationSystemHelper.PlaceBuilding(
+                            source,
+                            placementInteractionContext,
+                            placementMarkerPropertyBlock,
+                            placement,
+                            tryGetGridCell,
+                            tryGetGridData,
+                            isActivePlacementValid,
+                            tryAlignGateForVisual,
+                            createPlacementContextSource,
+                            createRuntimeContextSource,
+                            createBuildingSelectionContext)
+                        : default;
             BuildingPlacementCommandCompositionSystemHelper.UpdatePlacementDelegate updatePlacement =
                 (source, placementInteractionContext, placementMarkerPropertyBlock, screenPosition) =>
                     source.BuildingPlacementVisualCompositionPresentationSystemHelper?.UpdatePlacement(

@@ -32,9 +32,10 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
             tests.BuildingUiPlacementCommandEntityCache_ReusesWarmPositiveAndNegativeLookupsWithoutManagedAllocation();
             tests.BuildingUiPlacementCommandEntityCache_RebindsWhenWorldChanges();
             tests.BuildingUiPlacementCommandEntityCache_RecoversDestroyedEntityAndRepairsBuffers();
+            tests.BuildingUiPlacementEconomyTransactionId_SurvivesQueueEntityRecreation();
             tests.BuildingPlacementInputRuntimeTick_ProcessesQueuedPlacementCommandBeforeCameraGate();
             tests.BuildingPlacementInputScratchLists_ReuseImmediatePreviewStorageWithoutSharingOwnedResults();
-            Debug.Log("[BuildingPlacementCommandRequestValidation] result=Passed tests=16");
+            Debug.Log("[BuildingPlacementCommandRequestValidation] result=Passed tests=17");
             ValidationExit.Passed();
         }
         catch (Exception ex)
@@ -100,6 +101,28 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
 
         Assert.IsTrue(em.HasBuffer<BuildingUiPlacementCommandRequestElement>(adoptedEntity));
         Assert.IsTrue(em.HasBuffer<BuildingUiPlacementCommandResultElement>(adoptedEntity));
+    }
+
+    [Test]
+    public void BuildingUiPlacementEconomyTransactionId_SurvivesQueueEntityRecreation()
+    {
+        using World world = new(nameof(BuildingUiPlacementEconomyTransactionId_SurvivesQueueEntityRecreation));
+        EntityManager em = world.EntityManager;
+        var commandSystem = new BuildingPlacementCommandRequestCompositionSystemHelper();
+
+        commandSystem.EnqueueConfirmBuildingPlacement(em);
+        Entity firstQueue = GetSingletonEntity<BuildingUiPlacementCommandQueueComponent>(em);
+        int firstTransactionId = em.GetBuffer<BuildingUiPlacementCommandRequestElement>(firstQueue)[0]
+            .EconomyTransactionId;
+        em.DestroyEntity(firstQueue);
+
+        commandSystem.EnqueueConfirmBuildingPlacement(em);
+        Entity replacementQueue = GetSingletonEntity<BuildingUiPlacementCommandQueueComponent>(em);
+        int replacementTransactionId = em.GetBuffer<BuildingUiPlacementCommandRequestElement>(replacementQueue)[0]
+            .EconomyTransactionId;
+
+        Assert.Greater(firstTransactionId, 0);
+        Assert.Greater(replacementTransactionId, firstTransactionId);
     }
 
     private static int CountEntitiesWith<T>(EntityManager entityManager)
@@ -263,9 +286,9 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
                 new BuildingDefinition
                 {
                     Prefab = prefab,
-                    FootprintCells = new Vector2Int(1, 1)
+                    FootprintCells = new Vector2Int(1, 1),
+                    CreditsCost = 50
                 });
-            context.SessionSystem.SetActivePlacementCost(context.SessionContext, 50);
 
             int requestId = commandSystem.EnqueueConfirmBuildingPlacement(world.EntityManager);
             commandSystem.ProcessPendingUiPlacementCommands(world.EntityManager, context);
@@ -724,7 +747,7 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
         Action<BuildingPlacementLifecycleCompositionSystemHelper.PlacementState> updatePlacement = null,
         Action<BuildingPlacementLifecycleCompositionSystemHelper.PlacementState> commitPlacement = null,
         BuildingPlacementLifecycleCompositionSystemHelper.ValidateConfirmDelegate validateConfirm = null,
-        BuildingPlacementLifecycleCompositionSystemHelper.TrySpendCostDelegate trySpendCost = null,
+        Func<int, bool> trySpendCost = null,
         BuildingDefinitionPrefabSystemHelper definitionSystem = null)
     {
         var runtimeStateSystem = new RuntimeGameplayStateSystem();
@@ -763,8 +786,16 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
                 null),
             () => new BuildingPlacementLifecycleCompositionSystemHelper.ConfirmContext(
                 validateConfirm ?? (placement => placement.IsValid),
-                trySpendCost ?? (_ => true),
-                placement => commitPlacement?.Invoke(placement)),
+                (_, creditsCost, _) => trySpendCost?.Invoke(creditsCost) == false
+                    ? FactionConstructionResourceMutationResult.InsufficientCredits
+                    : FactionConstructionResourceMutationResult.Applied,
+                _ => FactionConstructionResourceMutationResult.Applied,
+                _ => FactionConstructionResourceMutationResult.Applied,
+                placement =>
+                {
+                    commitPlacement?.Invoke(placement);
+                    return new BuildingPlacementCommitCompositionSystemHelper.CommitOutcome(null, 1);
+                }),
             () => new BuildingPlacementLifecycleCompositionSystemHelper.RotateContext(updatePlacementVisual),
             null,
             null,
@@ -794,6 +825,10 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
         Assert.AreEqual(accepted ? 1 : 0, result.Accepted);
         Assert.AreEqual(requestKind, result.RequestKind);
         Assert.AreEqual(resultCode, result.ResultCode);
+        if (requestKind == BuildingUiPlacementCommandRequestElement.KindConfirmPlacement)
+            Assert.Greater(result.EconomyTransactionId, 0);
+        else
+            Assert.AreEqual(0, result.EconomyTransactionId);
     }
 
     private static BuildingPlacementCommandRequestCompositionSystemHelper.Context CreatePlacementCommandContext(

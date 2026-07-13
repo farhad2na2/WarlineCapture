@@ -32,6 +32,7 @@ namespace Game.Composition
                 IsWall = authoring.ConfiguredIsWall,
                 CanRequest = authoring.ConfiguredCanRequest,
                 Price = authoring.ConfiguredPrice,
+                MaterialsCost = authoring.ConfiguredMaterialsCost,
                 ProductionDurationSeconds = authoring.ConfiguredProductionDurationSeconds,
                 OilBarrelsPerDay = authoring.ConfiguredOilBarrelsPerDay,
                 OilStorageCapacity = authoring.ConfiguredOilStorageCapacity,

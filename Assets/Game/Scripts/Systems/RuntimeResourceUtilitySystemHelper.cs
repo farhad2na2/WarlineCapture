@@ -9,6 +9,10 @@ namespace Game.Runtime
         private EntityManager _entityManager;
         private Entity _playerEconomyEntity;
         private int _pendingInitialDollars;
+        private int _activeConstructionTransactionId;
+        private int _activeConstructionCreditsCost;
+        private int _activeConstructionMaterialsCost;
+        private int _highestSettledConstructionTransactionId;
         private bool _isConfigured;
 
         public int CurrentDollars => TryGetPlayerEconomy(out FactionEconomy economy) ? economy.Money : 0;
@@ -30,6 +34,10 @@ namespace Game.Runtime
         {
             _entityManager = entityManager;
             _playerEconomyEntity = Entity.Null;
+            _activeConstructionTransactionId = 0;
+            _activeConstructionCreditsCost = 0;
+            _activeConstructionMaterialsCost = 0;
+            _highestSettledConstructionTransactionId = 0;
             _isConfigured = true;
             EnsurePlayerEconomy();
         }
@@ -80,6 +88,93 @@ namespace Game.Runtime
             return result;
         }
 
+        public FactionConstructionResourceMutationResult EvaluateConstructionResources(
+            int creditsCost,
+            int materialsCost)
+        {
+            return TryGetPlayerResources(
+                out FactionEconomy economy,
+                out FactionTacticalMaterialsComponent materials)
+                ? FactionConstructionResourceUtilitySystemHelper.Evaluate(
+                    economy,
+                    materials,
+                    creditsCost,
+                    materialsCost)
+                : FactionConstructionResourceMutationResult.InvalidState;
+        }
+
+        public FactionConstructionResourceMutationResult TryReserveConstructionResources(
+            int transactionId,
+            int creditsCost,
+            int materialsCost)
+        {
+            if (transactionId <= 0)
+                return FactionConstructionResourceMutationResult.InvalidState;
+            if (transactionId <= _highestSettledConstructionTransactionId ||
+                transactionId == _activeConstructionTransactionId)
+                return FactionConstructionResourceMutationResult.DuplicateTransaction;
+            if (_activeConstructionTransactionId != 0)
+                return FactionConstructionResourceMutationResult.InvalidState;
+
+            FactionConstructionResourceMutationResult result =
+                TrySpendConstructionResources(creditsCost, materialsCost);
+            if (result != FactionConstructionResourceMutationResult.Applied)
+                return result;
+
+            _activeConstructionTransactionId = transactionId;
+            _activeConstructionCreditsCost = Mathf.Max(0, creditsCost);
+            _activeConstructionMaterialsCost = Mathf.Max(0, materialsCost);
+            return result;
+        }
+
+        public FactionConstructionResourceMutationResult TryFinalizeConstructionResources(int transactionId)
+        {
+            if (transactionId <= 0 || transactionId != _activeConstructionTransactionId)
+                return FactionConstructionResourceMutationResult.InvalidState;
+
+            SettleConstructionTransaction(transactionId);
+            return FactionConstructionResourceMutationResult.Applied;
+        }
+
+        public FactionConstructionResourceMutationResult TryRollbackConstructionResources(int transactionId)
+        {
+            if (transactionId <= 0 || transactionId != _activeConstructionTransactionId)
+                return FactionConstructionResourceMutationResult.InvalidState;
+
+            FactionConstructionResourceMutationResult result = TryRollbackConstructionResources(
+                _activeConstructionCreditsCost,
+                _activeConstructionMaterialsCost);
+            if (result != FactionConstructionResourceMutationResult.Applied)
+                return result;
+
+            SettleConstructionTransaction(transactionId);
+            return result;
+        }
+
+        public FactionConstructionResourceMutationResult TryRollbackConstructionResources(
+            int creditsCost,
+            int materialsCost)
+        {
+            if (!TryGetPlayerResources(
+                    out FactionEconomy economy,
+                    out FactionTacticalMaterialsComponent materials))
+                return FactionConstructionResourceMutationResult.InvalidState;
+
+            FactionConstructionResourceMutationResult result =
+                FactionConstructionResourceUtilitySystemHelper.TryRollback(
+                    ref economy,
+                    ref materials,
+                    creditsCost,
+                    materialsCost);
+            if (result != FactionConstructionResourceMutationResult.Applied)
+                return result;
+
+            _entityManager.SetComponentData(_playerEconomyEntity, economy);
+            if (materialsCost > 0)
+                _entityManager.SetComponentData(_playerEconomyEntity, materials);
+            return result;
+        }
+
         public CitizenResourceCompositionSystemHelper.Context CreateCitizenResourceContext()
         {
             return new CitizenResourceCompositionSystemHelper.Context(
@@ -94,6 +189,14 @@ namespace Game.Runtime
 
             economy.Money = Mathf.Max(0, value);
             _entityManager.SetComponentData(_playerEconomyEntity, economy);
+        }
+
+        private void SettleConstructionTransaction(int transactionId)
+        {
+            _highestSettledConstructionTransactionId = transactionId;
+            _activeConstructionTransactionId = 0;
+            _activeConstructionCreditsCost = 0;
+            _activeConstructionMaterialsCost = 0;
         }
 
         private void EnsurePlayerEconomy()

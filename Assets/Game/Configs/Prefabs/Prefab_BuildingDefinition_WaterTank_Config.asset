@@ -18,6 +18,7 @@ MonoBehaviour:
   description: Water storage structure that supports base utilities and field operations.
   maxHealth: 700
   price: 14000
+  materialsCost: 30
   productionDurationSeconds: 30
   productions:
   - spawnUnitPrefab: {fileID: 5616646512338707422, guid: fcc8f80798992470f8b8769d3bc4c41a, type: 3}

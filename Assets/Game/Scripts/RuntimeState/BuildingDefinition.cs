@@ -27,6 +27,8 @@ namespace Game.Runtime
         public Vector2Int FootprintCells;
         public BuildingRole Role;
         public bool IsWall;
+        public int CreditsCost;
+        public int MaterialsCost;
         public float ProductionDurationSeconds;
         public float OilBarrelsPerDay;
         public int OilStorageCapacity;

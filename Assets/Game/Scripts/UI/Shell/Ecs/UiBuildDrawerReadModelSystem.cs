@@ -180,8 +180,8 @@ namespace Game.UI.Shell.Ecs
                     ThumbnailSpriteKey = ToSpriteKey(item.CardPortrait),
                     Title = ToFixed64(item.DisplayName),
                     Role = ToFixed32(item.TypeLabel),
-                    CreditsText = ToFixed32(FormatPrice(item.Price)),
-                    SuppliesText = default,
+                    CreditsText = ToFixed32(FormatCost(item.Price)),
+                    SuppliesText = ToFixed32(FormatMaterialsCost(item.MaterialsCost)),
                     TimeText = ToFixed32(FormatDuration(item))
                 });
             }
@@ -219,8 +219,8 @@ namespace Game.UI.Shell.Ecs
                 RequirementsText = ToFixed64(FormatRequirements(item)),
                 PlacementText = ToFixed64(FormatPlacement(item)),
                 ProductionTimeText = ToFixed32(FormatDuration(item)),
-                CreditsCostText = ToFixed32(FormatPrice(item.Price)),
-                SuppliesCostText = default,
+                CreditsCostText = ToFixed32(FormatCost(item.Price)),
+                SuppliesCostText = ToFixed32(FormatMaterialsCost(item.MaterialsCost)),
                 InstructionText = ToFixed128(instruction),
                 ProductionTitle = ToFixed32(GameText.Get("build.drawer.production.title", "PRODUCTION")),
                 ProductionCountText = ToFixed32(PendingProductions.Count.ToString(CultureInfo.InvariantCulture)),
@@ -324,9 +324,14 @@ namespace Game.UI.Shell.Ecs
                 : null;
         }
 
-        private static string FormatPrice(int price)
+        private static string FormatCost(int cost)
         {
-            return Mathf.Max(0, price).ToString(CultureInfo.InvariantCulture);
+            return Mathf.Max(0, cost).ToString("N0", CultureInfo.InvariantCulture);
+        }
+
+        private static string FormatMaterialsCost(int materialsCost)
+        {
+            return materialsCost > 0 ? FormatCost(materialsCost) : string.Empty;
         }
 
         private static string FormatDuration(BuildDrawerCatalogItem item)

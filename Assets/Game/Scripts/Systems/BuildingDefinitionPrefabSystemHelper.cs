@@ -28,6 +28,7 @@ namespace Game.Runtime
             public bool IsWall;
             public bool CanRequest;
             public int Price;
+            public int MaterialsCost;
             public float ProductionDurationSeconds;
             public float OilBarrelsPerDay;
             public int OilStorageCapacity;
@@ -405,6 +406,8 @@ namespace Game.Runtime
                         : fallbackFootprint,
                 Role = metadata.HasDefinitionMetadata ? metadata.DefinitionMetadata.Role : BuildingRole.None,
                 IsWall = metadata.HasDefinitionMetadata && metadata.DefinitionMetadata.IsWall,
+                CreditsCost = metadata.HasDefinitionMetadata ? Mathf.Max(0, metadata.DefinitionMetadata.Price) : 0,
+                MaterialsCost = metadata.HasDefinitionMetadata ? Mathf.Max(0, metadata.DefinitionMetadata.MaterialsCost) : 0,
                 ProductionDurationSeconds = metadata.HasDefinitionMetadata ? Mathf.Max(0.01f, metadata.DefinitionMetadata.ProductionDurationSeconds) : 30f,
                 OilBarrelsPerDay = metadata.HasDefinitionMetadata ? Mathf.Max(0f, metadata.DefinitionMetadata.OilBarrelsPerDay) : 0f,
                 OilStorageCapacity = metadata.HasDefinitionMetadata ? Mathf.Max(0, metadata.DefinitionMetadata.OilStorageCapacity) : 0,
@@ -490,6 +493,8 @@ namespace Game.Runtime
                 FootprintCells = hasVisualFootprint ? visualFootprint : configuredFootprint,
                 Role = hasMetadata ? metadata.Role : BuildingRole.None,
                 IsWall = hasMetadata && metadata.IsWall,
+                CreditsCost = hasMetadata ? Mathf.Max(0, metadata.Price) : 0,
+                MaterialsCost = hasMetadata ? Mathf.Max(0, metadata.MaterialsCost) : 0,
                 ProductionDurationSeconds = hasMetadata ? Mathf.Max(0.01f, metadata.ProductionDurationSeconds) : 30f,
                 OilBarrelsPerDay = hasMetadata ? Mathf.Max(0f, metadata.OilBarrelsPerDay) : 0f,
                 OilStorageCapacity = hasMetadata ? Mathf.Max(0, metadata.OilStorageCapacity) : 0,

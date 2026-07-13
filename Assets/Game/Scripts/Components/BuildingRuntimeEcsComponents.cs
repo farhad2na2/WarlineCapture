@@ -59,6 +59,7 @@ namespace Game.Components
         public FixedString128Bytes BuildingId;
         public FixedString128Bytes DisplayName;
         public int Price;
+        public int MaterialsCost;
         public int2 FootprintCells;
         public byte CanRequest;
     }
@@ -296,6 +297,7 @@ namespace Game.Components
         public const byte KindBeginConfiguredPlacement = 4;
 
         public int RequestId;
+        public int EconomyTransactionId;
         public FixedString128Bytes BuildingId;
         public byte RequestKind;
         public byte ClearBuildingSelection;
@@ -311,8 +313,14 @@ namespace Game.Components
         public const byte BlockedPlacement = 5;
         public const byte NotEnoughMoney = 6;
         public const byte MissingConfig = 7;
+        public const byte InsufficientMaterials = 8;
+        public const byte InsufficientCreditsAndMaterials = 9;
+        public const byte DuplicateTransaction = 10;
+        public const byte RegistrationFailed = 11;
+        public const byte TransactionRejected = 12;
 
         public int RequestId;
+        public int EconomyTransactionId;
         public byte RequestKind;
         public byte Accepted;
         public byte ResultCode;

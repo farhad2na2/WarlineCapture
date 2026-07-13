@@ -12,6 +12,7 @@ namespace Game.UI.Contracts
         public readonly string Description;
         public readonly bool CanRequest;
         public readonly int Price;
+        public readonly int MaterialsCost;
         public readonly float ProductionDurationSeconds;
         public readonly Vector2Int FootprintCells;
         public readonly Sprite Portrait;
@@ -30,6 +31,7 @@ namespace Game.UI.Contracts
             string description,
             bool canRequest,
             int price,
+            int materialsCost,
             float productionDurationSeconds,
             Vector2Int footprintCells,
             Sprite portrait,
@@ -47,6 +49,7 @@ namespace Game.UI.Contracts
             Description = description;
             CanRequest = canRequest;
             Price = Mathf.Max(0, price);
+            MaterialsCost = Mathf.Max(0, materialsCost);
             ProductionDurationSeconds = Mathf.Max(0f, productionDurationSeconds);
             FootprintCells = new Vector2Int(Mathf.Max(1, footprintCells.x), Mathf.Max(1, footprintCells.y));
             Portrait = portrait;

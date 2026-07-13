@@ -472,6 +472,8 @@ namespace Game.Runtime
                 FootprintCells = footprintCells,
                 Role = definition.Role,
                 IsWall = definition.IsWall,
+                CreditsCost = definition.CreditsCost,
+                MaterialsCost = definition.MaterialsCost,
                 ProductionDurationSeconds = definition.ProductionDurationSeconds,
                 OilBarrelsPerDay = definition.OilBarrelsPerDay,
                 OilStorageCapacity = definition.OilStorageCapacity,

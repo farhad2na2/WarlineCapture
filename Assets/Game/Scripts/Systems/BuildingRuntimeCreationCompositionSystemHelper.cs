@@ -170,6 +170,30 @@ namespace Game.Runtime
             return building;
         }
 
+        public bool RollbackRuntimeBuildingRegistration(Context context, RuntimeBuildingEntity building)
+        {
+            if (context.RuntimeBuildingSystem == null || building == null ||
+                !context.RuntimeBuildingSystem.ContainsBuilding(building.Id))
+            {
+                return false;
+            }
+
+            if (context.TryGetEntityManager != null && context.TryGetEntityManager(out EntityManager entityManager))
+            {
+                if (building.CombatEntity != Entity.Null && entityManager.Exists(building.CombatEntity))
+                    entityManager.DestroyEntity(building.CombatEntity);
+                if (building.BlockerEntity != Entity.Null && entityManager.Exists(building.BlockerEntity))
+                    entityManager.DestroyEntity(building.BlockerEntity);
+            }
+
+            building.CombatEntity = Entity.Null;
+            building.BlockerEntity = Entity.Null;
+            bool removed = context.RuntimeBuildingSystem.RemoveBuilding(building.Id);
+            if (removed)
+                context.RefreshMarkers?.Invoke();
+            return removed;
+        }
+
         private bool TryEvaluateRuntimeBuildingSurface(
             Context context,
             BuildingDefinition definition,

@@ -21,6 +21,8 @@ MonoBehaviour:
   respawnDelaySeconds: 1
   randomSeed: 1
   initialDollars: 30000000
+  initialMaterials: 120
+  materialsCapacity: 600
   initialOil: 50
   initialFuel: 10000
   createFactionBases: 0

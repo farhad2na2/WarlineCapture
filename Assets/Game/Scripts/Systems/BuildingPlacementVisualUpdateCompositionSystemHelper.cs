@@ -197,20 +197,25 @@ namespace Game.Runtime
             return context.GetFootprintCenter(placement.OriginCell, footprint, grid);
         }
 
-        internal void PlaceBuilding(Context context, PlacementState placement)
+        internal BuildingPlacementCommitCompositionSystemHelper.CommitOutcome PlaceBuilding(
+            Context context,
+            PlacementState placement)
         {
             if (placement == null)
-                return;
+                return default;
 
             bool hasGrid = context.TryGetGridData(out _, out GridConfig placementGrid, out _, out _);
             BuildingPlacementContextCompositionSystemHelper.Source placementContextSource = context.CreatePlacementContextSource();
             BuildingPlacementCommitCompositionSystemHelper.CommitRequest request = context.ContextSystem.CreateCommitRequest(placementContextSource, placement);
             BuildingPlacementCommitCompositionSystemHelper.CommitContext commitContext = context.ContextSystem.CreateCommitContext(placementContextSource, hasGrid, placementGrid);
 
-            RuntimeBuildingEntity building = context.CommitSystem.CommitPlacement(request, commitContext);
-            context.LifecycleSystem.ReleasePreviewOwnership(placement);
-            if (building != null)
-                context.SelectAndFocusBuilding(building);
+            BuildingPlacementCommitCompositionSystemHelper.CommitOutcome outcome =
+                context.CommitSystem.CommitPlacement(request, commitContext);
+            if (outcome.PlacementCommitted)
+                context.LifecycleSystem.ReleasePreviewOwnership(placement);
+            if (outcome.AutoSelectBuilding != null)
+                context.SelectAndFocusBuilding(outcome.AutoSelectBuilding);
+            return outcome;
         }
 
         private static void UpdateWallPlacementVisual(

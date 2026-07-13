@@ -19,5 +19,6 @@ MonoBehaviour:
   maxHealth: 2500
   isWall: 1
   price: 10000
+  materialsCost: 15
   productionDurationSeconds: 30
   productions: []

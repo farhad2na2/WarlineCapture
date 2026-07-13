@@ -39,7 +39,7 @@ namespace Game.Runtime
             MaterialPropertyBlock markerPropertyBlock,
             PlacementState placement);
 
-        internal delegate void PlaceBuildingDelegate(
+        internal delegate BuildingPlacementCommitCompositionSystemHelper.CommitOutcome PlaceBuildingDelegate(
             BuildingGameplaySourceCompositionSystemHelper source,
             BuildingPlacementInteractionCompositionSystemHelper.Context interactionContext,
             MaterialPropertyBlock markerPropertyBlock,
@@ -143,7 +143,9 @@ namespace Game.Runtime
                 (placement, updateCellFromPointer, screenPosition) => updatePlacementVisual(source, interactionContext, markerPropertyBlock, placement, updateCellFromPointer, screenPosition),
                 placement => focusActivePlacement(source, interactionContext, markerPropertyBlock, placement),
                 placement => validateActivePlacementForConfirm(source, interactionContext, markerPropertyBlock, placement),
-                source.RuntimeResourceUtilitySystemHelper.TrySpendDollars,
+                source.RuntimeResourceUtilitySystemHelper.TryReserveConstructionResources,
+                source.RuntimeResourceUtilitySystemHelper.TryFinalizeConstructionResources,
+                source.RuntimeResourceUtilitySystemHelper.TryRollbackConstructionResources,
                 placement => placeBuilding(source, interactionContext, markerPropertyBlock, placement),
                 source.BuildingGameplayDependencyCompositionSystemHelper.ApplyBuildCommandMode,
                 () => source.BuildingSelectionRuntimeCompositionSystemHelper.ClearSelectedBuilding(createBuildingSelectionContext(source)),
@@ -169,6 +171,10 @@ namespace Game.Runtime
                     instance,
                     originCell,
                     removeOverlappingBlockers),
+                building => source.BuildingRuntimeCreationCompositionSystemHelper.RollbackRuntimeBuildingRegistration(
+                    source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateCreationContext(
+                        createBuildingRuntimeContextSource(source, interactionContext, markerPropertyBlock)),
+                    building),
                 BuildingRuntimeSpawnCompositionSystemHelper.CloneDefinitionWithFootprint,
                 source.BuildingPlacementGridCameraSystemHelper.GetPlacementFootprint,
                 source.RuntimeObjectPresentationHelper.DestroyRuntimeObject);

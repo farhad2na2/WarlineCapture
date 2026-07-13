@@ -70,11 +70,22 @@ namespace Game.Runtime
             Context context,
             out BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason failureReason)
         {
+            return ConfirmBuildingPlacement(context, 0, out failureReason);
+        }
+
+        public bool ConfirmBuildingPlacement(
+            Context context,
+            int transactionId,
+            out BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason failureReason)
+        {
             failureReason = BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.MissingActivePlacement;
             if (context.LifecycleSystem == null)
                 return false;
 
-            if (!context.LifecycleSystem.Confirm(context.CreateConfirmContext(), out failureReason))
+            bool confirmed = transactionId > 0
+                ? context.LifecycleSystem.Confirm(transactionId, context.CreateConfirmContext(), out failureReason)
+                : context.LifecycleSystem.Confirm(context.CreateConfirmContext(), out failureReason);
+            if (!confirmed)
                 return false;
 
             context.RecordBuildingBuilt?.Invoke();

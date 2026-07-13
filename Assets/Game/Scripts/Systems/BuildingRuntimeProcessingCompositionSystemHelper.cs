@@ -589,7 +589,7 @@ namespace Game.Runtime
             _surfaceOverlaySystem.Publish(em, boundaryEntity, runtimeBuildings);
         }
 
-        private void PublishConfiguredSpawnablesReadModel(BuildingDefinitionPrefabSystemHelper definitionSystem, EntityManager em, Entity boundaryEntity)
+        internal void PublishConfiguredSpawnablesReadModel(BuildingDefinitionPrefabSystemHelper definitionSystem, EntityManager em, Entity boundaryEntity)
         {
             DynamicBuffer<BuildingConfiguredSpawnableReadModel> buffer =
                 EnsureBoundaryBuffer<BuildingConfiguredSpawnableReadModel>(em, boundaryEntity);
@@ -609,7 +609,8 @@ namespace Game.Runtime
                 {
                     BuildingId = ResolveBoundaryId(entry.Prefab, entry.DisplayName),
                     DisplayName = ToFixedString128(entry.DisplayName),
-                    Price = Mathf.Max(0, entry.Price),
+                    Price = Mathf.Max(0, definition.CreditsCost),
+                    MaterialsCost = Mathf.Max(0, definition.MaterialsCost),
                     FootprintCells = new int2(
                         Mathf.Max(1, definition.FootprintCells.x),
                         Mathf.Max(1, definition.FootprintCells.y)),

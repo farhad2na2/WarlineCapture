@@ -17,9 +17,12 @@ public sealed class RuntimeResourceUtilitySystemHelperTests
             tests.Configure_ReusesExistingPlayerEconomy();
             tests.CreditMutations_WriteFactionEconomyOnly();
             tests.ConstructionSpend_WritesCanonicalCreditsAndMaterialsAtomically();
+            tests.ConstructionRollback_RestoresCanonicalCreditsAndMaterialsAtomically();
+            tests.ConstructionReservation_FinalizesOrRollsBackExactlyOnce();
+            tests.WarmedConstructionReservations_DoNotAllocateManagedMemory();
             tests.CitizenContext_WritesSameFactionEconomy();
             tests.WarmedCreditMutations_DoNotAllocateManagedMemory();
-            Debug.Log("[RuntimeResourceUtilityFocusedValidation] result=Passed tests=6");
+            Debug.Log("[RuntimeResourceUtilityFocusedValidation] result=Passed tests=9");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -135,6 +138,115 @@ public sealed class RuntimeResourceUtilitySystemHelperTests
         Assert.AreEqual(75, resources.CurrentDollars);
         Assert.AreEqual(28, resources.CurrentMaterials);
     }
+
+    [Test]
+        public void ConstructionRollback_RestoresCanonicalCreditsAndMaterialsAtomically()
+    {
+        using var world = new World(nameof(ConstructionRollback_RestoresCanonicalCreditsAndMaterialsAtomically));
+        EntityManager em = world.EntityManager;
+        var resources = new RuntimeResourceUtilitySystemHelper();
+        resources.SetInitialDollars(500);
+        resources.Configure(em);
+        Entity player = GetPlayerEconomyEntity(em);
+        em.SetComponentData(player, new FactionTacticalMaterialsComponent
+        {
+            FactionId = FactionIdentity.PlayerFactionId,
+            Current = 80,
+            Capacity = 100,
+            Version = 4u
+        });
+
+        Assert.AreEqual(
+            FactionConstructionResourceMutationResult.Applied,
+            resources.TrySpendConstructionResources(120, 30));
+        Assert.AreEqual(
+            FactionConstructionResourceMutationResult.Applied,
+            resources.TryRollbackConstructionResources(120, 30));
+
+        Assert.AreEqual(500, resources.CurrentDollars);
+        Assert.AreEqual(80, resources.CurrentMaterials);
+        FactionTacticalMaterialsComponent materials =
+            em.GetComponentData<FactionTacticalMaterialsComponent>(player);
+        Assert.AreEqual(0, materials.LifetimeSpent);
+            Assert.AreEqual(6u, materials.Version);
+        }
+
+        [Test]
+        public void ConstructionReservation_FinalizesOrRollsBackExactlyOnce()
+        {
+            using var world = new World(nameof(ConstructionReservation_FinalizesOrRollsBackExactlyOnce));
+            EntityManager em = world.EntityManager;
+            var resources = new RuntimeResourceUtilitySystemHelper();
+            resources.SetInitialDollars(500);
+            resources.Configure(em);
+            Entity player = GetPlayerEconomyEntity(em);
+            em.SetComponentData(player, new FactionTacticalMaterialsComponent
+            {
+                FactionId = FactionIdentity.PlayerFactionId,
+                Current = 80,
+                Capacity = 100
+            });
+
+            Assert.AreEqual(
+                FactionConstructionResourceMutationResult.Applied,
+                resources.TryReserveConstructionResources(1, 120, 30));
+            Assert.AreEqual(
+                FactionConstructionResourceMutationResult.DuplicateTransaction,
+                resources.TryReserveConstructionResources(1, 120, 30));
+            Assert.AreEqual(
+                FactionConstructionResourceMutationResult.Applied,
+                resources.TryFinalizeConstructionResources(1));
+            Assert.AreEqual(
+                FactionConstructionResourceMutationResult.InvalidState,
+                resources.TryFinalizeConstructionResources(1));
+            Assert.AreEqual(380, resources.CurrentDollars);
+            Assert.AreEqual(50, resources.CurrentMaterials);
+
+            Assert.AreEqual(
+                FactionConstructionResourceMutationResult.Applied,
+                resources.TryReserveConstructionResources(2, 80, 20));
+            Assert.AreEqual(
+                FactionConstructionResourceMutationResult.Applied,
+                resources.TryRollbackConstructionResources(2));
+            Assert.AreEqual(
+                FactionConstructionResourceMutationResult.InvalidState,
+                resources.TryRollbackConstructionResources(2));
+            Assert.AreEqual(380, resources.CurrentDollars);
+            Assert.AreEqual(50, resources.CurrentMaterials);
+        }
+
+        [Test]
+        public void WarmedConstructionReservations_DoNotAllocateManagedMemory()
+        {
+            using var world = new World(nameof(WarmedConstructionReservations_DoNotAllocateManagedMemory));
+            EntityManager em = world.EntityManager;
+            var resources = new RuntimeResourceUtilitySystemHelper();
+            resources.SetInitialDollars(1000);
+            resources.Configure(em);
+            Entity player = GetPlayerEconomyEntity(em);
+            em.SetComponentData(player, new FactionTacticalMaterialsComponent
+            {
+                FactionId = FactionIdentity.PlayerFactionId,
+                Current = 100,
+                Capacity = 100
+            });
+
+            bool allMutationsApplied = true;
+            long before = GC.GetAllocatedBytesForCurrentThread();
+            for (int transactionId = 1; transactionId <= 512; transactionId++)
+            {
+                allMutationsApplied &= resources.TryReserveConstructionResources(transactionId, 1, 1) ==
+                                       FactionConstructionResourceMutationResult.Applied;
+                allMutationsApplied &= resources.TryRollbackConstructionResources(transactionId) ==
+                                       FactionConstructionResourceMutationResult.Applied;
+            }
+
+            long allocatedBytes = GC.GetAllocatedBytesForCurrentThread() - before;
+            Assert.IsTrue(allMutationsApplied);
+            Assert.AreEqual(0L, allocatedBytes);
+            Assert.AreEqual(1000, resources.CurrentDollars);
+            Assert.AreEqual(100, resources.CurrentMaterials);
+        }
 
     [Test]
     public void WarmedCreditMutations_DoNotAllocateManagedMemory()

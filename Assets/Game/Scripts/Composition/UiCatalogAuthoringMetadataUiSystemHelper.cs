@@ -21,6 +21,7 @@ namespace Game.Composition
                 authoring.ConfiguredDescription,
                 authoring.ConfiguredCanRequest,
                 authoring.ConfiguredPrice,
+                authoring.ConfiguredMaterialsCost,
                 authoring.ConfiguredProductionDurationSeconds,
                 authoring.ConfiguredFootprintCells,
                 authoring.ConfiguredPortraitSprite,

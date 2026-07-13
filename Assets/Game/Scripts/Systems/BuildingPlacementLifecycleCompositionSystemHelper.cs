@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Game.Components;
 using UnityEngine;
 
 namespace Game.Runtime
@@ -30,8 +31,12 @@ namespace Game.Runtime
         public delegate void UpdatePlacementVisualDelegate(PlacementState placement, bool updateCellFromPointer, Vector2 screenPosition);
         public delegate void FocusPlacementDelegate(PlacementState placement);
         public delegate bool ValidateConfirmDelegate(PlacementState placement);
-        public delegate bool TrySpendCostDelegate(int cost);
-        public delegate void CommitPlacementDelegate(PlacementState placement);
+        public delegate FactionConstructionResourceMutationResult TryReserveCostDelegate(
+            int transactionId,
+            int creditsCost,
+            int materialsCost);
+        public delegate FactionConstructionResourceMutationResult SettleCostDelegate(int transactionId);
+        public delegate BuildingPlacementCommitCompositionSystemHelper.CommitOutcome CommitPlacementDelegate(PlacementState placement);
 
         public enum ConfirmFailureReason
         {
@@ -39,7 +44,12 @@ namespace Game.Runtime
             MissingActivePlacement,
             BlockedPlacement,
             InvalidPlacement,
-            NotEnoughMoney
+            InsufficientCredits,
+            InsufficientMaterials,
+            InsufficientCreditsAndMaterials,
+            DuplicateTransaction,
+            TransactionRejected,
+            RegistrationFailed
         }
 
         public readonly struct CancelContext
@@ -111,16 +121,22 @@ namespace Game.Runtime
         public readonly struct ConfirmContext
         {
             public readonly ValidateConfirmDelegate ValidateConfirm;
-            public readonly TrySpendCostDelegate TrySpendCost;
+            public readonly TryReserveCostDelegate TryReserveCost;
+            public readonly SettleCostDelegate FinalizeCost;
+            public readonly SettleCostDelegate RollbackCost;
             public readonly CommitPlacementDelegate CommitPlacement;
 
             public ConfirmContext(
                 ValidateConfirmDelegate validateConfirm,
-                TrySpendCostDelegate trySpendCost,
+                TryReserveCostDelegate tryReserveCost,
+                SettleCostDelegate finalizeCost,
+                SettleCostDelegate rollbackCost,
                 CommitPlacementDelegate commitPlacement)
             {
                 ValidateConfirm = validateConfirm;
-                TrySpendCost = trySpendCost;
+                TryReserveCost = tryReserveCost;
+                FinalizeCost = finalizeCost;
+                RollbackCost = rollbackCost;
                 CommitPlacement = commitPlacement;
             }
         }
@@ -136,13 +152,14 @@ namespace Game.Runtime
         }
 
         public PlacementState ActivePlacement { get; private set; }
-        public int ActivePlacementCost { get; private set; }
+        public int ActivePlacementCost => Mathf.Max(0, ActivePlacement?.Definition?.CreditsCost ?? 0);
         public bool HasPendingBuildingPlacement => ActivePlacement != null;
         public bool CanConfirmBuildingPlacement => ActivePlacement != null && ActivePlacement.IsValid;
+        private int _nextLocalTransactionId;
 
         public void SetActivePlacementCost(int cost)
         {
-            ActivePlacementCost = Mathf.Max(0, cost);
+            // Compatibility entry point for legacy UI callers. Authored definition costs are authoritative.
         }
 
         public void NotifyPlacementUiPointerDown(BuildingPlacementInputUiSystemHelper inputSystem)
@@ -158,7 +175,6 @@ namespace Game.Runtime
             context.ApplyBuildCommandMode?.Invoke();
             context.ClearSelectedBuilding?.Invoke();
             Cancel(context.ToCancelContext());
-            SetActivePlacementCost(0);
             context.InputSystem?.Reset();
 
             if (definition == null || definition.Prefab == null || context.BuildingRoot == null)
@@ -194,10 +210,18 @@ namespace Game.Runtime
 
         public bool Confirm(ConfirmContext context)
         {
-            return Confirm(context, out _);
+            return Confirm(NextLocalTransactionId(), context, out _);
         }
 
         public bool Confirm(ConfirmContext context, out ConfirmFailureReason failureReason)
+        {
+            return Confirm(NextLocalTransactionId(), context, out failureReason);
+        }
+
+        public bool Confirm(
+            int transactionId,
+            ConfirmContext context,
+            out ConfirmFailureReason failureReason)
         {
             PlacementState placement = ActivePlacement;
             if (placement == null)
@@ -218,16 +242,50 @@ namespace Game.Runtime
                 return false;
             }
 
-            int placementCost = Mathf.Max(0, ActivePlacementCost);
-            if (placementCost > 0 && context.TrySpendCost != null && !context.TrySpendCost(placementCost))
+            int creditsCost = Mathf.Max(0, placement.Definition?.CreditsCost ?? 0);
+            int materialsCost = Mathf.Max(0, placement.Definition?.MaterialsCost ?? 0);
+            if (context.TryReserveCost == null)
             {
-                failureReason = ConfirmFailureReason.NotEnoughMoney;
+                failureReason = ConfirmFailureReason.TransactionRejected;
+                return false;
+            }
+
+            FactionConstructionResourceMutationResult reserveResult =
+                context.TryReserveCost(transactionId, creditsCost, materialsCost);
+            if (reserveResult != FactionConstructionResourceMutationResult.Applied)
+            {
+                failureReason = ToConfirmFailureReason(reserveResult);
                 return false;
             }
 
             placement.OriginCell = placement.CommittedOriginCell;
-            ActivePlacementCost = 0;
-            context.CommitPlacement?.Invoke(placement);
+            BuildingPlacementCommitCompositionSystemHelper.CommitOutcome commitOutcome =
+                context.CommitPlacement != null ? context.CommitPlacement(placement) : default;
+            if (!commitOutcome.FullyCommitted)
+            {
+                if (commitOutcome.PlacementCommitted)
+                {
+                    failureReason = context.FinalizeCost != null &&
+                                    context.FinalizeCost(transactionId) == FactionConstructionResourceMutationResult.Applied
+                        ? ConfirmFailureReason.RegistrationFailed
+                        : ConfirmFailureReason.TransactionRejected;
+                    return false;
+                }
+
+                failureReason = context.RollbackCost != null &&
+                                context.RollbackCost(transactionId) == FactionConstructionResourceMutationResult.Applied
+                    ? ConfirmFailureReason.RegistrationFailed
+                    : ConfirmFailureReason.TransactionRejected;
+                return false;
+            }
+
+            if (context.FinalizeCost == null ||
+                context.FinalizeCost(transactionId) != FactionConstructionResourceMutationResult.Applied)
+            {
+                failureReason = ConfirmFailureReason.TransactionRejected;
+                return false;
+            }
+
             failureReason = ConfirmFailureReason.None;
             return true;
         }
@@ -255,9 +313,28 @@ namespace Game.Runtime
                 context.DestroyPreview?.Invoke(ActivePlacement.PreviewInstance);
 
             ActivePlacement = null;
-            ActivePlacementCost = 0;
             context.InputSystem?.Reset();
             context.PreviewSystem?.HideOutline();
+        }
+
+        private int NextLocalTransactionId()
+        {
+            if (_nextLocalTransactionId == int.MaxValue)
+                _nextLocalTransactionId = 0;
+            return ++_nextLocalTransactionId;
+        }
+
+        private static ConfirmFailureReason ToConfirmFailureReason(
+            FactionConstructionResourceMutationResult result)
+        {
+            return result switch
+            {
+                FactionConstructionResourceMutationResult.InsufficientCredits => ConfirmFailureReason.InsufficientCredits,
+                FactionConstructionResourceMutationResult.InsufficientMaterials => ConfirmFailureReason.InsufficientMaterials,
+                FactionConstructionResourceMutationResult.InsufficientCreditsAndMaterials => ConfirmFailureReason.InsufficientCreditsAndMaterials,
+                FactionConstructionResourceMutationResult.DuplicateTransaction => ConfirmFailureReason.DuplicateTransaction,
+                _ => ConfirmFailureReason.TransactionRejected
+            };
         }
     }
 }

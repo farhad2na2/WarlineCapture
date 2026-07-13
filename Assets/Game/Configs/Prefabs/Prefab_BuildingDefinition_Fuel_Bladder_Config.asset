@@ -19,6 +19,7 @@ MonoBehaviour:
   description: Temporary fuel storage used to support vehicles, aircraft, and field logistics.
   maxHealth: 500
   price: 18000
+  materialsCost: 40
   productionDurationSeconds: 30
   oilBarrelsPerDay: 0
   oilStorageCapacity: 0

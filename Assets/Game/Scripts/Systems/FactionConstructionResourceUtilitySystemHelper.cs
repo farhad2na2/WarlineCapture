@@ -56,5 +56,30 @@ namespace Game.Runtime
             materials = nextMaterials;
             return FactionConstructionResourceMutationResult.Applied;
         }
+
+        public static FactionConstructionResourceMutationResult TryRollback(
+            ref FactionEconomy economy,
+            ref FactionTacticalMaterialsComponent materials,
+            int creditsCost,
+            int materialsCost)
+        {
+            if (creditsCost < 0 || materialsCost < 0)
+                return FactionConstructionResourceMutationResult.InvalidCost;
+            if (economy.FactionId != materials.FactionId ||
+                economy.Money < 0 ||
+                creditsCost > int.MaxValue - economy.Money)
+                return FactionConstructionResourceMutationResult.InvalidState;
+
+            FactionTacticalMaterialsComponent nextMaterials = materials;
+            if (materialsCost > 0 &&
+                FactionTacticalMaterialsUtilitySystemHelper.TryRefundConstruction(
+                    ref nextMaterials,
+                    materialsCost) != FactionTacticalMaterialsMutationResult.Applied)
+                return FactionConstructionResourceMutationResult.InvalidState;
+
+            economy.Money += creditsCost;
+            materials = nextMaterials;
+            return FactionConstructionResourceMutationResult.Applied;
+        }
     }
 }

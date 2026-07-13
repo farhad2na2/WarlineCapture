@@ -21,7 +21,11 @@ public sealed class Aph806BuildingPlacementProductionPlayModeTests
         {
             bool placementCommitted = false;
             BuildingPlacementCommandRequestCompositionSystemHelper.Context placementContext =
-                CreatePlacementContext(placementRoot.transform, placement => placementCommitted = placement.IsValid);
+                CreatePlacementContext(placementRoot.transform, placement =>
+                {
+                    placementCommitted = placement.IsValid;
+                    return new BuildingPlacementCommitCompositionSystemHelper.CommitOutcome(null, 1);
+                });
             BuildingPlacementSessionCompositionSystemHelper session = placementContext.SessionSystem;
             session.BeginPlacement(
                 placementContext.SessionContext,
@@ -29,9 +33,9 @@ public sealed class Aph806BuildingPlacementProductionPlayModeTests
                 {
                     DisplayName = "APH806 Barracks",
                     Prefab = buildingPrefab,
-                    FootprintCells = Vector2Int.one
+                    FootprintCells = Vector2Int.one,
+                    CreditsCost = 300
                 });
-            session.SetActivePlacementCost(placementContext.SessionContext, 300);
 
             var placementGateway = new BuildingPlacementCommandRequestCompositionSystemHelper();
             int placementRequestId = placementGateway.EnqueueConfirmBuildingPlacement(em);
@@ -109,7 +113,9 @@ public sealed class Aph806BuildingPlacementProductionPlayModeTests
                 null),
             () => new BuildingPlacementLifecycleCompositionSystemHelper.ConfirmContext(
                 placement => placement.IsValid,
-                _ => true,
+                (_, _, _) => FactionConstructionResourceMutationResult.Applied,
+                _ => FactionConstructionResourceMutationResult.Applied,
+                _ => FactionConstructionResourceMutationResult.Applied,
                 commitPlacement),
             () => new BuildingPlacementLifecycleCompositionSystemHelper.RotateContext(updateVisual),
             null,

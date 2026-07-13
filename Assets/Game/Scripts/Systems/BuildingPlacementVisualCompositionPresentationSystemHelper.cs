@@ -214,7 +214,7 @@ namespace Game.Runtime
                 screenPosition);
         }
 
-        public void PlaceBuilding(
+        public BuildingPlacementCommitCompositionSystemHelper.CommitOutcome PlaceBuilding(
             BuildingGameplaySourceCompositionSystemHelper source,
             BuildingPlacementInteractionCompositionSystemHelper.Context interactionContext,
             MaterialPropertyBlock markerPropertyBlock,
@@ -228,9 +228,9 @@ namespace Game.Runtime
             System.Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionRuntimeCompositionSystemHelper.Context> createBuildingSelectionContext)
         {
             if (source?.BuildingPlacementVisualUpdateCompositionSystemHelper == null)
-                return;
+                return default;
 
-            source.BuildingPlacementVisualUpdateCompositionSystemHelper.PlaceBuilding(
+            return source.BuildingPlacementVisualUpdateCompositionSystemHelper.PlaceBuilding(
                 CreateUpdateContext(
                     source,
                     interactionContext,

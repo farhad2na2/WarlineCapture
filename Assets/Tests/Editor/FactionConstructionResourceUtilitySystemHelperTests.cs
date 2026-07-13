@@ -16,8 +16,10 @@ public sealed class FactionConstructionResourceUtilitySystemHelperTests
             tests.TrySpend_RejectionDoesNotMutateEitherResource();
             tests.TrySpend_ZeroMaterialsCostPreservesMaterialsVersion();
             tests.TrySpend_RejectsMismatchedFactionWithoutMutation();
+            tests.TryRollback_RestoresExactConstructionSpend();
+            tests.TryRollback_RejectsInvalidStateWithoutMutation();
             tests.TrySpend_DoesNotAllocateManagedMemoryAfterWarmup();
-            Debug.Log("[FactionConstructionResourceFocusedValidation] result=Passed tests=6");
+            Debug.Log("[FactionConstructionResourceFocusedValidation] result=Passed tests=8");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -120,6 +122,56 @@ public sealed class FactionConstructionResourceUtilitySystemHelperTests
         Assert.AreEqual(10, economy.Money);
         Assert.AreEqual(5, materials.Current);
         Assert.AreEqual(3u, materials.Version);
+    }
+
+    [Test]
+    public void TryRollback_RestoresExactConstructionSpend()
+    {
+        FactionEconomy economy = Economy(credits: 500);
+        FactionTacticalMaterialsComponent materials = Materials(current: 80, capacity: 100, version: 4u);
+        Assert.AreEqual(
+            FactionConstructionResourceMutationResult.Applied,
+            FactionConstructionResourceUtilitySystemHelper.TrySpend(
+                ref economy,
+                ref materials,
+                120,
+                30));
+
+        FactionConstructionResourceMutationResult result =
+            FactionConstructionResourceUtilitySystemHelper.TryRollback(
+                ref economy,
+                ref materials,
+                120,
+                30);
+
+        Assert.AreEqual(FactionConstructionResourceMutationResult.Applied, result);
+        Assert.AreEqual(500, economy.Money);
+        Assert.AreEqual(80, materials.Current);
+        Assert.AreEqual(0, materials.LifetimeSpent);
+        Assert.AreEqual(6u, materials.Version);
+    }
+
+    [Test]
+    public void TryRollback_RejectsInvalidStateWithoutMutation()
+    {
+        FactionEconomy economy = Economy(credits: int.MaxValue);
+        FactionTacticalMaterialsComponent materials = Materials(current: 40, capacity: 100, version: 7u);
+        materials.LifetimeSpent = 10;
+        FactionEconomy originalEconomy = economy;
+        FactionTacticalMaterialsComponent originalMaterials = materials;
+
+        FactionConstructionResourceMutationResult result =
+            FactionConstructionResourceUtilitySystemHelper.TryRollback(
+                ref economy,
+                ref materials,
+                1,
+                20);
+
+        Assert.AreEqual(FactionConstructionResourceMutationResult.InvalidState, result);
+        Assert.AreEqual(originalEconomy.Money, economy.Money);
+        Assert.AreEqual(originalMaterials.Current, materials.Current);
+        Assert.AreEqual(originalMaterials.LifetimeSpent, materials.LifetimeSpent);
+        Assert.AreEqual(originalMaterials.Version, materials.Version);
     }
 
     [Test]

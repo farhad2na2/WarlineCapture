@@ -92,6 +92,25 @@ namespace Game.Runtime
             return FactionTacticalMaterialsMutationResult.Applied;
         }
 
+        public static FactionTacticalMaterialsMutationResult TryRefundConstruction(
+            ref FactionTacticalMaterialsComponent materials,
+            int amount)
+        {
+            if (amount <= 0)
+                return FactionTacticalMaterialsMutationResult.InvalidAmount;
+            if (!HasValidState(materials))
+                return FactionTacticalMaterialsMutationResult.InvalidState;
+            if (amount > materials.Capacity - materials.Current)
+                return FactionTacticalMaterialsMutationResult.CapacityExceeded;
+            if (amount > materials.LifetimeSpent)
+                return FactionTacticalMaterialsMutationResult.InvalidState;
+
+            materials.Current += amount;
+            materials.LifetimeSpent -= amount;
+            IncrementVersion(ref materials);
+            return FactionTacticalMaterialsMutationResult.Applied;
+        }
+
         private static bool HasValidState(in FactionTacticalMaterialsComponent materials)
         {
             return materials.Capacity >= 0 &&

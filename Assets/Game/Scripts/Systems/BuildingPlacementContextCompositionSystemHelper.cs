@@ -25,7 +25,9 @@ namespace Game.Runtime
             public readonly BuildingPlacementLifecycleCompositionSystemHelper.UpdatePlacementVisualDelegate UpdatePlacementVisual;
             public readonly BuildingPlacementLifecycleCompositionSystemHelper.FocusPlacementDelegate FocusPlacement;
             public readonly BuildingPlacementLifecycleCompositionSystemHelper.ValidateConfirmDelegate ValidateConfirm;
-            public readonly BuildingPlacementLifecycleCompositionSystemHelper.TrySpendCostDelegate TrySpendCost;
+            public readonly BuildingPlacementLifecycleCompositionSystemHelper.TryReserveCostDelegate TryReserveCost;
+            public readonly BuildingPlacementLifecycleCompositionSystemHelper.SettleCostDelegate FinalizeCost;
+            public readonly BuildingPlacementLifecycleCompositionSystemHelper.SettleCostDelegate RollbackCost;
             public readonly BuildingPlacementLifecycleCompositionSystemHelper.CommitPlacementDelegate CommitPlacement;
             public readonly Action ApplyBuildCommandMode;
             public readonly Action ClearSelectedBuildingForBegin;
@@ -38,6 +40,7 @@ namespace Game.Runtime
             public readonly BuildingPlacementCommitCompositionSystemHelper.CreateVisualDelegate CreateBuildingVisualInstance;
             public readonly BuildingPlacementCommitCompositionSystemHelper.PositionVisualDelegate PositionBuildingObject;
             public readonly BuildingPlacementCommitCompositionSystemHelper.RegisterRuntimeBuildingDelegate RegisterRuntimeBuilding;
+            public readonly BuildingPlacementCommitCompositionSystemHelper.RollbackRuntimeBuildingDelegate RollbackRuntimeBuilding;
             public readonly BuildingPlacementCommitCompositionSystemHelper.CloneDefinitionWithFootprintDelegate CloneDefinitionWithFootprint;
             public readonly BuildingPlacementCommitCompositionSystemHelper.GetPlacementFootprintDelegate GetPlacementFootprint;
             public readonly BuildingPlacementCommitCompositionSystemHelper.DestroyRuntimeObjectDelegate DestroyRuntimeObject;
@@ -57,7 +60,9 @@ namespace Game.Runtime
                 BuildingPlacementLifecycleCompositionSystemHelper.UpdatePlacementVisualDelegate updatePlacementVisual,
                 BuildingPlacementLifecycleCompositionSystemHelper.FocusPlacementDelegate focusPlacement,
                 BuildingPlacementLifecycleCompositionSystemHelper.ValidateConfirmDelegate validateConfirm,
-                BuildingPlacementLifecycleCompositionSystemHelper.TrySpendCostDelegate trySpendCost,
+                BuildingPlacementLifecycleCompositionSystemHelper.TryReserveCostDelegate tryReserveCost,
+                BuildingPlacementLifecycleCompositionSystemHelper.SettleCostDelegate finalizeCost,
+                BuildingPlacementLifecycleCompositionSystemHelper.SettleCostDelegate rollbackCost,
                 BuildingPlacementLifecycleCompositionSystemHelper.CommitPlacementDelegate commitPlacement,
                 Action applyBuildCommandMode,
                 Action clearSelectedBuildingForBegin,
@@ -70,6 +75,7 @@ namespace Game.Runtime
                 BuildingPlacementCommitCompositionSystemHelper.CreateVisualDelegate createBuildingVisualInstance,
                 BuildingPlacementCommitCompositionSystemHelper.PositionVisualDelegate positionBuildingObject,
                 BuildingPlacementCommitCompositionSystemHelper.RegisterRuntimeBuildingDelegate registerRuntimeBuilding,
+                BuildingPlacementCommitCompositionSystemHelper.RollbackRuntimeBuildingDelegate rollbackRuntimeBuilding,
                 BuildingPlacementCommitCompositionSystemHelper.CloneDefinitionWithFootprintDelegate cloneDefinitionWithFootprint,
                 BuildingPlacementCommitCompositionSystemHelper.GetPlacementFootprintDelegate getPlacementFootprint,
                 BuildingPlacementCommitCompositionSystemHelper.DestroyRuntimeObjectDelegate destroyRuntimeObject)
@@ -88,7 +94,9 @@ namespace Game.Runtime
                 UpdatePlacementVisual = updatePlacementVisual;
                 FocusPlacement = focusPlacement;
                 ValidateConfirm = validateConfirm;
-                TrySpendCost = trySpendCost;
+                TryReserveCost = tryReserveCost;
+                FinalizeCost = finalizeCost;
+                RollbackCost = rollbackCost;
                 CommitPlacement = commitPlacement;
                 ApplyBuildCommandMode = applyBuildCommandMode;
                 ClearSelectedBuildingForBegin = clearSelectedBuildingForBegin;
@@ -101,6 +109,7 @@ namespace Game.Runtime
                 CreateBuildingVisualInstance = createBuildingVisualInstance;
                 PositionBuildingObject = positionBuildingObject;
                 RegisterRuntimeBuilding = registerRuntimeBuilding;
+                RollbackRuntimeBuilding = rollbackRuntimeBuilding;
                 CloneDefinitionWithFootprint = cloneDefinitionWithFootprint;
                 GetPlacementFootprint = getPlacementFootprint;
                 DestroyRuntimeObject = destroyRuntimeObject;
@@ -148,7 +157,9 @@ namespace Game.Runtime
         {
             return new BuildingPlacementLifecycleCompositionSystemHelper.ConfirmContext(
                 source.ValidateConfirm,
-                source.TrySpendCost,
+                source.TryReserveCost,
+                source.FinalizeCost,
+                source.RollbackCost,
                 source.CommitPlacement);
         }
 
@@ -258,6 +269,7 @@ namespace Game.Runtime
                 source.CreateBuildingVisualInstance,
                 source.PositionBuildingObject,
                 source.RegisterRuntimeBuilding,
+                source.RollbackRuntimeBuilding,
                 source.CloneDefinitionWithFootprint,
                 source.GetPlacementFootprint,
                 BuildingPlacementCommitCompositionSystemHelper.GetWallSegmentFootprint,

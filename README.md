@@ -431,6 +431,8 @@ Current architecture source files:
   Current `SystemBase` to `ISystem` migration inventory and managed-boundary exception list.
 - `Design/Architecture/non_ecs_system_helper_naming_refactor_tracker.md`
   Active refactor tracker reserving bare `*System` names for ECS systems and renaming non-ECS helpers with reason suffixes.
+- `Design/Architecture/game_scripts_namespace_migration_tracker.md`
+  Completed namespace migration record and validation evidence for assembly-aligned root namespaces.
 - `Design/Architecture/file_naming_architecture_contract.md`
   Naming contract for source files, runtime `*System` ownership, and project-name avoidance.
 - `Design/GC_Allocation_Elimination_Plan.md`
@@ -438,7 +440,7 @@ Current architecture source files:
 - `Design/Architecture/performance_regression_contract.md`
   Performance validation rules and metrics.
 
-Current refactor note: the architecture/performance hardening tracker is the execution authority. Assembly-boundary repair, GC allocation cleanup, Burst hot-path work, `SystemBase` to `ISystem` migration, and non-ECS helper naming remain active or tracked concerns. Treat the README and contracts as no-new-debt guidance; copy neither tracker percentages nor transient task status into this README.
+Current refactor note: the architecture/performance hardening tracker is the execution authority. Assembly separation and the game-script namespace migration are established guardrails; GC evidence, bounded hot-path work, managed-edge review, source-growth enforcement, and device residency remain active or tracked concerns. Treat the README and contracts as no-new-debt guidance; copy neither tracker percentages nor transient task status into this README.
 
 Code and systems architecture overview:
 
@@ -458,22 +460,22 @@ The monolithic [Code Systems Architecture](Design/Architecture/CodeSystemsArchit
 
 Current runtime assembly boundaries:
 
-- `Game.Components`: ECS components, buffers, tags, and pure data contracts.
-- `Game.Catalog.Contracts`: catalog-facing data contracts.
-- `Game.Configs`: ScriptableObject config data.
-- `Game.Runtime`: gameplay runtime systems and ECS behavior.
-- `Game.Composition`: menu/app and match-scene composition boundaries.
-- `Game.UI.Contracts`: UI-facing contracts that runtime/shell code may depend on.
-- `Game.UI.Runtime`: concrete Canvas views and UI shell runtime.
-- `Game.UI.Shell.Contracts.Ecs`: UI shell ECS-facing contracts.
-- `Game.UI.Shell.Ecs`: UI shell ECS request/data boundary.
-- `Game.Rendering.Contracts`: rendering-facing contracts.
-- `Game.Rendering`: concrete rendering implementation.
-- `Game.Authoring`: authoring and baker conversion edge.
-- `Game.Editor`: editor-only tooling.
-- `Game.Tests.Editor` and `Game.Tests.PlayMode`: validation only.
+- Foundation and contracts:
+  `Game.Catalog.Contracts`, `Game.Narrative.Contracts`, `Game.Rendering.Contracts`, `Game.Tactical.Contracts`, `Game.UI.Contracts`, and `Game.UI.Shell.Contracts.Ecs` contain narrow interfaces and data shared across boundaries.
+- ECS data and authored configuration:
+  `Game.Components` owns ECS components, buffers, and tags. `Game.Configs` owns ScriptableObject configuration and config projection data.
+- Bounded domain implementations:
+  `Game.Runtime.Combat`, `Game.Runtime.Pathfinding`, `Game.Narrative.Runtime`, and `Game.Rendering` isolate combat, pathfinding, pure narrative progression/routing, and rendering implementation from the broader runtime.
+- Core gameplay runtime:
+  `Game.Runtime` owns gameplay ECS behavior and depends inward on components, configs, bounded domain runtime assemblies, and contracts. It does not depend on concrete UI, composition, authoring, editor, or test assemblies.
+- Presentation and shell integration:
+  `Game.UI.Runtime` owns concrete Canvas views and UI presentation and does not depend on `Game.Runtime`. `Game.UI.Shell.Ecs` is the explicit ECS/UI integration bridge and may depend on both runtime and UI assemblies; `Game.UI.Shell.Contracts.Ecs` remains its narrow contract/data boundary.
+- Composition and Unity edges:
+  `Game.Composition` is the concrete menu/app and match-scene wiring root and may reference runtime, UI, rendering, narrative, authoring, and their contracts. `Game.Authoring` owns authorings and bakers. `Game.Editor` is editor-only tooling, while `Game.Tests.Editor` and `Game.Tests.PlayMode` are validation-only assemblies.
 
-Runtime code must not fall back into the default `Assembly-CSharp` assembly. Add code under an appropriate existing `.asmdef` or add a focused bounded assembly definition when a new domain genuinely needs one. Runtime dependencies must stay directional: runtime data/systems may depend on data, config, contracts, and ECS packages, but not concrete UI runtime, rendering implementation, authoring, editor, or tests.
+Runtime code must not fall back into the default `Assembly-CSharp` assembly. Add code under an appropriate existing `.asmdef` or add a focused bounded assembly definition when a new domain genuinely needs one. Runtime dependencies must stay directional: core gameplay may depend on data, config, contracts, and bounded domain implementations, but not concrete UI runtime, rendering implementation, composition, authoring, editor, or tests. Concrete cross-boundary binding belongs in `Game.Composition` or the explicit `Game.UI.Shell.Ecs` bridge, never as a reverse dependency into `Game.Runtime`.
+
+Namespaces follow the assembly boundary. Every first-party game asmdef defines a matching `rootNamespace`, and source types use that block-scoped namespace, for example `Game.Runtime.Pathfinding` or `Game.UI.Runtime`. Folder nesting may add narrower child namespaces. The only game-script files intentionally without a namespace declaration are assembly-attribute-only `AssemblyInfo.cs` files. Do not introduce new global-namespace types or a namespace that implies ownership by a different assembly.
 
 Current code ownership:
 
@@ -606,6 +608,19 @@ The active performance architecture direction is:
 - Burst belongs in pure ECS/data transforms, not in UI views, GameObject/prefab presentation, config loading, bootstrap composition, editor tooling, or diagnostics flushing.
 - Hot ECS work should prefer chunk/job iteration over per-frame `ToEntityArray` / `ToComponentDataArray` snapshots, managed arrays, LINQ, closures, boxing, string formatting, or sync points.
 - Frequent structural changes should go through `EntityCommandBuffer` unless same-frame playback is required and documented.
+- Runtime content loading must be asynchronous, bounded, and owned by an explicit residency/presentation boundary with preload, cancellation, failure, and teardown behavior. Synchronous waits and unbounded gameplay-frame loading are prohibited.
+
+Current accepted performance gates and evidence:
+
+| Gate | Current authority |
+|---|---|
+| Editor Match frame time | Active p95 budget is `20 ms`; the current accepted canonical capture is `5.23 ms` average, `8.16 ms` p95, and `10.33 ms` p99 with zero measured allocation. |
+| Match steady-state GC | Design target remains `0 B/frame` after warmup. The fail-closed evidence gate is at most `1,024` player-relevant bytes over 300 measured frames after 180 warmup frames; the current accepted capture passes at `930` bytes with production runtime probes at zero. |
+| Android frame time | Exclusive p95 budgets are less than `33 ms` for baseline/recommended devices and less than `25 ms` for high-end devices. The representative Android baseline is `26.2 ms` p95, so the 30 FPS tier passes while the high-end target is not yet met. |
+| Android package size | Clean ARM64 IL2CPP release budgets are APK `<= 463,359,198` bytes and AAB `<= 426,399,778` bytes, tied to immutable accepted artifact evidence. |
+| Device memory | The measured same-device peak baseline is `1,054-1,075 MB`; acceptance requires at least a 10 percent reduction until an approved absolute budget exists. Texture, mesh, audio, driver, installed-size, and absolute peak limits remain measurement-required. |
+
+Open performance acceptance work is device-evidence work, not permission for speculative broad rewrites: complete the bounded world-texture streaming visual/memory pilot, verify animation-texture CPU-copy and unload residency, capture installed and category memory budgets, close the remaining visual matrix, and preserve the accepted frame/GC/package gates. Use the hardening tracker and `Design/Architecture/performance_regression_accepted_baseline.json` for exact current status and artifact identities.
 
 Required metric families:
 
@@ -638,7 +653,7 @@ Avoid introducing:
 - new runtime controller MonoBehaviours placed directly in the scene
 - per-frame LINQ, closures, delegate churn, interface-enumeration boxing, or managed array churn in gameplay/runtime hot paths
 - per-frame string interpolation or log construction in gameplay/runtime hot paths
-- runtime asset loading during gameplay frames
+- synchronous or unbounded asset loading during gameplay frames; use approved bounded residency/streaming owners instead
 - instantiate/destroy churn during steady-state gameplay outside approved pooling or presentation paths
 
 Editor PlayMode budgets catch large regressions only. Android device development builds are the primary mobile-performance gate, and Android release builds are the milestone acceptance gate. Headless or `-nographics` Unity runs can validate logic and rough timing, but they are not rendering-performance acceptance.

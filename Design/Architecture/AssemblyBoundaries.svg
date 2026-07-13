@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1040" viewBox="0 0 1600 1040" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1180" viewBox="0 0 1600 1180" role="img" aria-labelledby="title desc">
   <title id="title">Assembly Boundaries</title>
-  <desc id="desc">Assembly definition dependency map showing allowed directional dependencies and prohibited runtime dependencies.</desc>
+  <desc id="desc">Current first-party assembly definition dependency map. Dependencies flow from Unity edges and integration bridges toward bounded implementations, data, and contracts.</desc>
   <defs>
     <style>
       .bg { fill: #07100d; }
@@ -13,96 +13,103 @@
       .asmGold { fill: #251f13; stroke: #c7a84f; stroke-width: 2; rx: 12; }
       .asmPink { fill: #251722; stroke: #a86e9b; stroke-width: 2; rx: 12; }
       .h { fill: #f0e6b6; font: 700 23px Arial, sans-serif; }
-      .label { fill: #eef4df; font: 700 19px Arial, sans-serif; }
-      .small { fill: #cad7c1; font: 15px Arial, sans-serif; }
+      .label { fill: #eef4df; font: 700 17px Arial, sans-serif; }
+      .small { fill: #cad7c1; font: 14px Arial, sans-serif; }
       .tiny { fill: #9faf9e; font: 13px Arial, sans-serif; }
       .arrow { stroke: #d7bf63; stroke-width: 3; fill: none; marker-end: url(#arrowGold); }
       .arrowBlue { stroke: #69a9ca; stroke-width: 3; fill: none; marker-end: url(#arrowBlue); }
       .bad { stroke: #db6a5f; stroke-width: 3; fill: none; stroke-dasharray: 8 8; marker-end: url(#arrowBad); }
-      .x { fill: #db6a5f; font: 700 28px Arial, sans-serif; }
+      .x { fill: #db6a5f; font: 700 26px Arial, sans-serif; }
     </style>
     <marker id="arrowGold" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto"><polygon points="0 0,12 4,0 8" fill="#d7bf63"/></marker>
     <marker id="arrowBlue" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto"><polygon points="0 0,12 4,0 8" fill="#69a9ca"/></marker>
     <marker id="arrowBad" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto"><polygon points="0 0,12 4,0 8" fill="#db6a5f"/></marker>
   </defs>
 
-  <rect class="bg" width="1600" height="1040"/>
+  <rect class="bg" width="1600" height="1180"/>
   <text class="title" x="56" y="64">Assembly Boundaries</text>
-  <text class="subtitle" x="58" y="96">Dependencies point inward to data/contracts. Runtime implementation must stay in bounded asmdefs, not default Assembly-CSharp.</text>
+  <text class="subtitle" x="58" y="96">Current first-party graph. Dependencies flow inward; Unity/package references are omitted for readability.</text>
 
-  <rect class="band2" x="60" y="135" width="1480" height="165"/>
-  <text class="h" x="90" y="176">Outer Unity Edges</text>
-  <rect class="asmGold" x="250" y="170" width="230" height="82"/>
-  <text class="label" x="275" y="203">Game.Authoring</text>
-  <text class="small" x="275" y="229">Authorings and bakers</text>
-  <rect class="asmGold" x="540" y="170" width="230" height="82"/>
-  <text class="label" x="565" y="203">Game.Editor</text>
-  <text class="small" x="565" y="229">Tools and validation</text>
-  <rect class="asmGold" x="830" y="170" width="260" height="82"/>
-  <text class="label" x="855" y="203">Game.Tests.Editor</text>
-  <text class="small" x="855" y="229">Architecture and focused tests</text>
-  <rect class="asmGold" x="1150" y="170" width="260" height="82"/>
-  <text class="label" x="1175" y="203">Game.Tests.PlayMode</text>
-  <text class="small" x="1175" y="229">Scene and runtime smoke</text>
+  <rect class="band2" x="60" y="130" width="1480" height="165"/>
+  <text class="h" x="90" y="171">Unity Edges And Composition Roots</text>
+  <rect class="asmGold" x="145" y="190" width="270" height="72"/>
+  <text class="label" x="170" y="220">Game.Composition</text>
+  <text class="small" x="170" y="245">Concrete menu/match wiring root</text>
+  <rect class="asmGold" x="465" y="190" width="270" height="72"/>
+  <text class="label" x="490" y="220">Game.Authoring</text>
+  <text class="small" x="490" y="245">Authorings and bakers</text>
+  <rect class="asmGold" x="785" y="190" width="270" height="72"/>
+  <text class="label" x="810" y="220">Game.Editor</text>
+  <text class="small" x="810" y="245">Editor-only tools and validation</text>
+  <rect class="asmGold" x="1105" y="190" width="350" height="72"/>
+  <text class="label" x="1130" y="220">Game.Tests.Editor / PlayMode</text>
+  <text class="small" x="1130" y="245">Validation-only outer assemblies</text>
 
-  <rect class="band" x="60" y="340" width="1480" height="205"/>
-  <text class="h" x="90" y="381">Concrete Runtime Implementations</text>
-  <rect class="asmBlue" x="210" y="410" width="260" height="86"/>
-  <text class="label" x="235" y="443">Game.Composition</text>
-  <text class="small" x="235" y="469">Menu/match lifetime wiring</text>
-  <rect class="asmBlue" x="530" y="410" width="260" height="86"/>
-  <text class="label" x="555" y="443">Game.Runtime</text>
-  <text class="small" x="555" y="469">ECS gameplay systems</text>
-  <rect class="asmBlue" x="850" y="410" width="260" height="86"/>
-  <text class="label" x="875" y="443">Game.UI.Runtime</text>
-  <text class="small" x="875" y="469">Canvas views and shell</text>
-  <rect class="asmBlue" x="1170" y="410" width="260" height="86"/>
-  <text class="label" x="1195" y="443">Game.Rendering</text>
-  <text class="small" x="1195" y="469">Visual quality and render systems</text>
+  <rect class="band" x="60" y="330" width="1480" height="165"/>
+  <text class="h" x="90" y="371">Explicit Integration Bridges</text>
+  <rect class="asmPink" x="220" y="400" width="330" height="64"/>
+  <text class="label" x="245" y="427">Game.UI.Shell.Ecs</text>
+  <text class="small" x="245" y="451">Runtime + UI request/read-model bridge</text>
+  <rect class="asmPink" x="635" y="400" width="330" height="64"/>
+  <text class="label" x="660" y="427">Game.UI.Runtime</text>
+  <text class="small" x="660" y="451">Canvas views and presentation; no Runtime ref</text>
+  <rect class="asmPink" x="1050" y="400" width="330" height="64"/>
+  <text class="label" x="1075" y="427">Game.Rendering</text>
+  <text class="small" x="1075" y="451">Concrete visual implementation</text>
 
-  <rect class="band2" x="60" y="585" width="1480" height="175"/>
-  <text class="h" x="90" y="626">Contracts And Configs</text>
-  <rect class="asm" x="170" y="655" width="245" height="76"/>
-  <text class="label" x="235" y="687">Game.UI.Contracts</text>
-  <text class="small" x="235" y="712">UI-facing interfaces/data</text>
-  <rect class="asm" x="455" y="655" width="270" height="76"/>
-  <text class="label" x="555" y="687">Game.Rendering.Contracts</text>
-  <text class="small" x="555" y="712">Rendering-facing contracts</text>
-  <rect class="asm" x="765" y="655" width="230" height="76"/>
-  <text class="label" x="875" y="687">Game.Configs</text>
-  <text class="small" x="875" y="712">ScriptableObject data</text>
-  <rect class="asm" x="1035" y="655" width="245" height="76"/>
-  <text class="label" x="1195" y="687">Game.Components</text>
-  <text class="small" x="1195" y="712">ECS data contracts</text>
-  <rect class="asm" x="1320" y="655" width="170" height="76"/>
-  <text class="label" x="1340" y="687">Catalog</text>
-  <text class="small" x="1340" y="712">Contracts</text>
+  <rect class="band2" x="60" y="530" width="1480" height="200"/>
+  <text class="h" x="90" y="571">Bounded Domain Runtime</text>
+  <rect class="asmBlue" x="140" y="610" width="300" height="78"/>
+  <text class="label" x="165" y="640">Game.Runtime</text>
+  <text class="small" x="165" y="665">Core gameplay ECS</text>
+  <rect class="asmBlue" x="500" y="610" width="300" height="78"/>
+  <text class="label" x="525" y="640">Game.Runtime.Combat</text>
+  <text class="small" x="525" y="665">Combat observations/data flow</text>
+  <rect class="asmBlue" x="860" y="610" width="300" height="78"/>
+  <text class="label" x="885" y="640">Game.Runtime.Pathfinding</text>
+  <text class="small" x="885" y="665">Pathfinding surface/runtime</text>
+  <rect class="asmBlue" x="1220" y="610" width="300" height="78"/>
+  <text class="label" x="1245" y="640">Game.Narrative.Runtime</text>
+  <text class="small" x="1245" y="665">Pure sequence and route policy</text>
 
-  <rect class="band" x="60" y="800" width="1480" height="150"/>
-  <text class="h" x="90" y="841">ECS Shell Boundary</text>
-  <rect class="asmPink" x="170" y="870" width="315" height="54"/>
-  <text class="label" x="235" y="904">Game.UI.Shell.Ecs</text>
-  <rect class="asmPink" x="545" y="870" width="315" height="54"/>
-  <text class="label" x="610" y="904">Requests / Route Data</text>
-  <rect class="asmPink" x="920" y="870" width="315" height="54"/>
-  <text class="label" x="945" y="904">Shell Contracts ECS</text>
-  <rect class="asmPink" x="1290" y="870" width="200" height="54"/>
-  <text class="label" x="1310" y="904">No UI in runtime</text>
+  <rect class="band" x="60" y="765" width="1480" height="285"/>
+  <text class="h" x="90" y="806">Data, Configuration, And Contracts</text>
+  <rect class="asm" x="115" y="845" width="315" height="64"/>
+  <text class="label" x="140" y="872">Game.Components</text>
+  <text class="small" x="140" y="896">ECS components, buffers, tags</text>
+  <rect class="asm" x="465" y="845" width="315" height="64"/>
+  <text class="label" x="490" y="872">Game.Configs</text>
+  <text class="small" x="490" y="896">ScriptableObject configuration</text>
+  <rect class="asm" x="815" y="845" width="315" height="64"/>
+  <text class="label" x="840" y="872">Game.Rendering.Contracts</text>
+  <text class="small" x="840" y="896">Rendering-facing data/contracts</text>
+  <rect class="asm" x="1165" y="845" width="315" height="64"/>
+  <text class="label" x="1190" y="872">Game.Tactical.Contracts</text>
+  <text class="small" x="1190" y="896">Tactical shared contracts</text>
+  <rect class="asm" x="115" y="940" width="315" height="64"/>
+  <text class="label" x="140" y="967">Game.Catalog.Contracts</text>
+  <text class="small" x="140" y="991">Catalog-facing data</text>
+  <rect class="asm" x="465" y="940" width="315" height="64"/>
+  <text class="label" x="490" y="967">Game.Narrative.Contracts</text>
+  <text class="small" x="490" y="991">Narrative-facing data</text>
+  <rect class="asm" x="815" y="940" width="315" height="64"/>
+  <text class="label" x="840" y="967">Game.UI.Contracts</text>
+  <text class="small" x="840" y="991">UI-facing interfaces/read models</text>
+  <rect class="asm" x="1165" y="940" width="315" height="64"/>
+  <text class="label" x="1190" y="967">Game.UI.Shell.Contracts.Ecs</text>
+  <text class="small" x="1190" y="991">Shell ECS request/data boundary</text>
 
-  <path class="arrow" d="M340 410 V300"/>
-  <path class="arrow" d="M655 410 V300"/>
-  <path class="arrow" d="M980 410 V300"/>
-  <path class="arrow" d="M1300 410 V300"/>
-  <path class="arrowBlue" d="M660 496 C660 585 1295 585 1295 655"/>
-  <path class="arrowBlue" d="M660 496 C660 585 980 585 980 655"/>
-  <path class="arrowBlue" d="M980 496 V655"/>
-  <path class="arrowBlue" d="M1300 496 C1300 585 660 585 660 655"/>
-  <path class="arrowBlue" d="M340 496 C340 585 980 585 980 655"/>
-  <path class="arrowBlue" d="M370 870 C370 800 340 800 340 731"/>
-  <path class="arrowBlue" d="M745 870 C745 800 1295 800 1295 731"/>
-  <path class="bad" d="M980 410 C980 345 655 345 655 410"/>
-  <text class="x" x="805" y="375">X</text>
-  <text class="tiny" x="735" y="350">UI runtime must not be a gameplay dependency</text>
+  <path class="arrow" d="M280 262 V330"/>
+  <path class="arrowBlue" d="M385 464 V610"/>
+  <path class="arrowBlue" d="M290 688 V765"/>
+  <path class="arrowBlue" d="M650 688 V765"/>
+  <path class="arrowBlue" d="M1010 688 V765"/>
+  <path class="arrowBlue" d="M1370 688 V765"/>
+  <path class="bad" d="M800 464 C800 505 420 505 420 610"/>
+  <text class="x" x="540" y="520">X</text>
+  <text class="tiny" x="570" y="520">Game.UI.Runtime must not depend on Game.Runtime</text>
 
-  <text class="tiny" x="80" y="990">Rule: add source under the correct asmdef; runtime gameplay depends on data/config/contracts, not concrete UI/rendering/authoring/editor/tests. Do not create catch-all assemblies.</text>
+  <text class="tiny" x="80" y="1090">Namespaces match asmdef rootNamespace values. Source belongs under an explicit bounded asmdef; no first-party runtime code may fall back into Assembly-CSharp.</text>
+  <text class="tiny" x="80" y="1118">Game.Composition is the broad concrete wiring root. Game.UI.Shell.Ecs is the deliberate Runtime/UI bridge. Neither pattern authorizes reverse dependencies into Game.Runtime.</text>
+  <text class="tiny" x="80" y="1146">Arrows show layer direction and selected bridge relationships, not every Unity package or first-party reference. The .asmdef files remain the executable graph authority.</text>
 </svg>

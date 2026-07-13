@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="960" viewBox="0 0 1600 960" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1040" viewBox="0 0 1600 1040" role="img" aria-labelledby="title desc">
   <title id="title">Architecture Guardrails</title>
   <desc id="desc">Allowed and prohibited architecture patterns for gameplay, UI, configs, authoring, and runtime naming.</desc>
   <defs>
@@ -20,9 +20,9 @@
     </style>
   </defs>
 
-  <rect class="bg" width="1600" height="960"/>
+  <rect class="bg" width="1600" height="1040"/>
   <text class="title" x="56" y="64">Architecture Guardrails</text>
-  <text class="subtitle" x="58" y="96">Keep new work aligned while SystemBase, non-ECS helper naming, GC, and Burst migration debt is retired slice by slice.</text>
+  <text class="subtitle" x="58" y="96">Established asmdef, namespace, ECS, UI-edge, naming, and evidence rules for all new work.</text>
 
   <rect class="okPanel" x="70" y="150" width="700" height="560"/>
   <text class="h" x="105" y="195">Allowed For New Work</text>
@@ -44,8 +44,11 @@
   <rect class="bad" x="1190" y="465" width="280" height="82"/><text class="x" x="1210" y="502">X</text><text class="label" x="1255" y="500">static Instance</text><text class="small" x="1255" y="526">No gameplay singletons</text>
   <rect class="bad" x="870" y="580" width="600" height="82"/><text class="x" x="890" y="617">X</text><text class="label" x="935" y="615">Find*, service locators, broad facades</text><text class="small" x="935" y="641">Use serialized refs, ECS data, or injected boundaries</text>
 
-  <rect class="neutral" x="70" y="760" width="1460" height="105"/>
-  <text class="h" x="105" y="804">Migration Rule</text>
-  <text class="small" x="105" y="835">Existing legacy names are debt, not a precedent. Do not expand them. Retire them by domain slice when touching related behavior.</text>
-  <text class="small" x="105" y="862">Current direction: raise ISystem/Burst coverage, keep SystemBase as documented managed exceptions, and rename plain helpers with reason suffixes.</text>
+  <rect class="neutral" x="70" y="760" width="1460" height="210"/>
+  <text class="h" x="105" y="804">Boundary Rules</text>
+  <text class="small" x="105" y="835">Namespace source types under the asmdef rootNamespace. Only AssemblyInfo attribute files may omit a namespace.</text>
+  <text class="small" x="105" y="862">Compile first-party runtime source through explicit bounded asmdefs, never Assembly-CSharp.</text>
+  <text class="small" x="105" y="889">Keep reverse UI, Composition, Authoring, Editor, and Test dependencies out of Game.Runtime.</text>
+  <text class="small" x="105" y="916">Existing managed edges and helper names are bounded debt, not precedent. Retire them without weakening gates.</text>
+  <text class="small" x="105" y="943">Prefer ISystem/Burst for eligible pure hot paths; retain SystemBase only for documented managed edges.</text>
 </svg>

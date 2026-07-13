@@ -10,6 +10,7 @@
         "Game.UI.Contracts",
         "Game.UI.Runtime",
         "Game.UI.Shell.Contracts.Ecs",
+        "Unity.Burst",
         "Unity.Collections",
         "Unity.Entities",
         "Unity.Mathematics",

@@ -319,7 +319,8 @@ namespace Game.UI.Shell.Ecs
             in UiMatchHudHeaderComponent left,
             in UiMatchHudHeaderComponent right)
         {
-            return left.OrderText.Equals(right.OrderText) &&
+            return left.ResourceVersion == right.ResourceVersion &&
+                   left.OrderText.Equals(right.OrderText) &&
                    left.SquadText.Equals(right.SquadText) &&
                    left.CreditsText.Equals(right.CreditsText) &&
                    left.FuelText.Equals(right.FuelText) &&

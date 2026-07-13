@@ -96,6 +96,7 @@ namespace Game.UI.Shell.Contracts.Ecs
 
     public struct UiMatchHudHeaderComponent : IComponentData
     {
+        public uint ResourceVersion;
         public FixedString32Bytes OrderText;
         public FixedString32Bytes SquadText;
         public FixedString32Bytes CreditsText;

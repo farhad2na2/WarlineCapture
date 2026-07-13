@@ -1216,7 +1216,7 @@ namespace Game.UI.Contracts
         }
 
         public static UiMatchHudHeaderModel Default =>
-            new("MOVE ORDER", "RIFLE SQUAD", "187,540", "2,860", "92/120", "MED", "0");
+            new("MOVE ORDER", "RIFLE SQUAD", "0", "2,860", "0/0", "MED", "0");
     }
 
     public enum UiMatchHudObjectiveIconKind : byte

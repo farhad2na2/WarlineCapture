@@ -670,9 +670,9 @@ namespace Game.UI.Shell.Ecs
             {
                 OrderText = new FixedString32Bytes("MOVE ORDER"),
                 SquadText = new FixedString32Bytes("RIFLE SQUAD"),
-                CreditsText = new FixedString32Bytes("187,540"),
+                CreditsText = new FixedString32Bytes("0"),
                 FuelText = new FixedString32Bytes("2,860"),
-                SupplyText = new FixedString32Bytes("92/120"),
+                SupplyText = new FixedString32Bytes("0/0"),
                 CivilianRiskText = new FixedString32Bytes("MED")
             };
         }

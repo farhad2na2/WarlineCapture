@@ -1,7 +1,7 @@
 # Field Fabrication And Materials Implementation Tracker
 
 Date: 2026-07-12
-Status: In progress - Phase 1 canonical resource ownership
+Status: In progress - Phase 1 canonical resource ownership and live HUD projection
 Design source: `../Field_Fabrication_Materials_Design.md`
 
 ## Objective
@@ -73,21 +73,21 @@ Dependency direction remains inward toward components/config/contracts/runtime. 
 
 ## Progress Summary
 
-Overall implementation progress: 19% (20/103 checklist items complete).
+Overall implementation progress: 25% (26/103 checklist items complete).
 
-Planning and inventory findings are complete. Canonical Materials, player Credits, and Resource Exchange ownership are implemented and validated; HUD/build migration remains.
+Planning and inventory findings are complete. Canonical Materials, player Credits, Resource Exchange ownership, the V1 lifetime policy, and the live Match header projection are implemented. Build affordability and the remaining ownership work remain.
 
 Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation row counts. Update the numerator, denominator, table, status, and evidence log in the same commit as each completed batch.
 
 | Phase | Status | Complete | Total | Progress | Gate |
 |---|---|---:|---:|---:|---|
 | 0. Inventory and baseline | Complete | 12 | 12 | 100% | Ownership, file targets, compile state, focused behavior, p95/p99, and managed-allocation baselines are recorded. |
-| 1. Canonical tactical Materials and Credits | In progress | 8 | 13 | 62% | Canonical Materials data/startup, player Credits, and Exchange Credits/Materials ownership are validated. HUD/build affordability, Oil/Fuel narrowing, profile policy, combined tests, and ownership ratchet remain. |
+| 1. Canonical tactical Materials and Credits | In progress | 10 | 13 | 77% | Canonical Materials data/startup, player Credits, Exchange Credits/Materials ownership, profile/tactical lifetime policy, and ownership ratchet are complete. Build affordability, Oil/Fuel narrowing, and combined transaction tests remain. |
 | 2. Config and building projection | Pending | 0 | 10 | 0% | Depot config is valid, authored, and projected consistently. |
 | 3. Oil destination routing | Pending | 0 | 11 | 0% | Tray routing is deterministic, reserved, and stable. |
 | 4. Oil-to-Materials conversion | Pending | 0 | 11 | 0% | Conversion is deterministic, capped, typed, and no-GC. |
 | 5. Credits + Materials construction | Pending | 0 | 11 | 0% | Placement spends both resources exactly once. |
-| 6. HUD and selected-building UI | Pending | 0 | 11 | 0% | No placeholder Supply text; read models are versioned. |
+| 6. HUD and selected-building UI | In progress | 4 | 11 | 36% | Live canonical Credits/Materials header projection is implemented and compile-clean; the focused Unity/GC run is pending an available license lane. Build Drawer and selected-depot UI remain. |
 | 7. Exchange and balance safety | Pending | 0 | 8 | 0% | Import is expensive recovery; no arbitrage exists. |
 | 8. AI, telemetry, and scenario safety | Pending | 0 | 7 | 0% | AI shares rules; scenarios cannot deadlock silently. |
 | 9. Integration, performance, and closeout | Pending | 0 | 9 | 0% | Architecture, GC, profiler, gameplay, and docs pass. |
@@ -152,9 +152,9 @@ Phase 0 exit criteria:
 - [ ] Migrate Match HUD and build affordability to read this canonical component.
 - [x] Remove `ResourceExchangeWalletComponent.Credits` and `.Materials` authority without a steady-state dual-write period.
 - [ ] Remove or narrow Exchange wallet Oil/Fuel mirrors so physical storage/summaries remain authoritative.
-- [ ] Document persistent profile Materials/Rush Tickets projection and tactical match-end policy.
+- [x] Document persistent profile Materials/Rush Tickets projection and tactical match-end policy.
 - [ ] Add deterministic tests for Credit/Materials grant, atomic spend, capacity, overflow rejection, and version behavior.
-- [ ] Add an ownership contract test that fails if another tactical Credits or Materials authority is introduced.
+- [x] Add an ownership contract test that fails if another tactical Credits or Materials authority is introduced.
 
 Implementation rule:
 
@@ -254,10 +254,10 @@ Phase 5 exit criteria:
 
 ## Phase 6: HUD And Selected-Building UI
 
-- [ ] Replace live Match `SupplyText = 92/120` with canonical Materials current/capacity projection.
-- [ ] Preserve a non-gameplay placeholder only in isolated UI preview/test fixtures if explicitly required.
-- [ ] Add a versioned header Materials read model in the existing UI shell ECS boundary.
-- [ ] Avoid per-frame Materials string formatting when source version is unchanged.
+- [x] Replace live Match `SupplyText = 92/120` with canonical Materials current/capacity projection.
+- [x] Preserve a non-gameplay placeholder only in isolated UI preview/test fixtures if explicitly required.
+- [x] Add a versioned header Materials read model in the existing UI shell ECS boundary.
+- [x] Avoid per-frame Materials string formatting when source version is unchanged.
 - [ ] Extend Build Drawer cards/details to show Credits and Materials costs.
 - [ ] Bind typed disabled reasons without calculating affordability in Canvas views.
 - [ ] Add a versioned selected-depot read model with Oil input, rate, progress, output, faction Materials, and status.
@@ -419,3 +419,17 @@ For every completed batch append:
 - The focused PlayMode export flow passed 1/1 and confirmed exact-once completion credits the faction economy. `EcsBurstHotPathArchitectureTests` passed 10/10. The broader script architecture suite passed 50/58; its eight failures are existing unrelated project debt in rendering/UI/camera/static-registry ratchets, and none names a file in this slice. Resource Exchange's focused architecture guardrail passed in the 44-test core batch.
 - Evidence: `/private/tmp/wlc-field-exchange-compile-2.log`, `/private/tmp/wlc-field-exchange-core-tests-final.xml`, `/private/tmp/wlc-field-exchange-core-tests-final.log`, `/private/tmp/wlc-field-exchange-playmode.xml`, `/private/tmp/wlc-field-exchange-playmode.log`, `/private/tmp/wlc-field-exchange-architecture.xml`, and `/private/tmp/warlinecapture-resource-exchange-steady-state-performance.json`.
 - Next action: migrate live Match HUD/build affordability to canonical Materials, then address physical Exchange Oil/Fuel narrowing as its own ownership slice.
+
+### 2026-07-13 - Phase 1D Lifetime Policy, Match Header, And Ownership Ratchet
+
+- Locked the V1 lifetime policy in `Design/Field_Fabrication_Materials_Design.md`: persistent profile Materials and Rush Tickets remain account resources; tactical Materials are scenario-seeded and discarded at match end; mission rewards settle through the typed reward/save path; future profile-funded deployment requires explicit launch reservation and exact-once settlement contracts.
+- Added `UiMatchHudResourceReadModelSystem` to `Game.UI.Shell.Ecs`. It selects the player `FactionEconomy` plus `FactionTacticalMaterialsComponent`, writes grouped Credits and Materials current/capacity into the existing shell boundary, and increments `UiMatchHudHeaderComponent.ResourceVersion` only when the boundary or canonical source values change.
+- Removed runtime `187,540` Credits and `92/120` Supply seeds from the UI contract fallback, shell startup, and gateway fallback. Explicit test/preview fixtures may retain authored sample values.
+- The projection is a Burst-compiled unmanaged `ISystem` using fixed strings, no LINQ, no snapshots, no structural tick changes, no new managed shell, and no new MonoBehaviour update loop. The existing `Game.UI.Shell.Ecs -> Game.Components` project-assembly direction is unchanged; `Game.UI.Shell.Ecs` adds only the package-level `Unity.Burst` reference required to compile the new hot path.
+- Added `TacticalResourceOwnershipArchitectureTests`. It rejects `_dollars`, a second ECS Credits/Money field, a direct ECS Materials currency field, or another faction Materials component owner.
+- Unity EditMode validation passed `UiMatchHudResourceReadModelSystemTests` 2/2, including player-versus-AI selection, grouped formatting, version changes, and 512 unchanged updates at 0 managed bytes. The first architecture run rejected the system as unclassified non-Burst work; the final implementation Burst-compiles `OnUpdate` while keeping query construction in `OnCreate` outside Burst. Final results: `/private/tmp/wlc-field-hud-burst-corrected-results.xml`; log: `/private/tmp/wlc-field-hud-burst-corrected.log`.
+- The ownership architecture ratchet passed 1/1. Results: `/private/tmp/wlc-field-ownership-results.xml`; log: `/private/tmp/wlc-field-ownership.log`.
+- Existing `UiShellEcsGatewayResourceHeaderTests` passed 8/8. Results: `/private/tmp/wlc-field-hud-regression-results.xml`; log: `/private/tmp/wlc-field-hud-regression.log`.
+- `EcsBurstHotPathArchitectureTests` passed 10/10 with 60 Burst OnUpdate files, 94/94 classified non-Burst systems, and zero unclassified systems. Results: `/private/tmp/wlc-field-hud-burst-corrected-architecture-results.xml`; log: `/private/tmp/wlc-field-hud-burst-corrected-architecture.log`.
+- Unity compilation and generated assembly builds for `Game.UI.Shell.Ecs` and `Game.Tests.Editor` completed with zero errors. `git diff --check` passed. Existing generated-project reference-version warnings remain unchanged.
+- Next action: narrow the Exchange Oil/Fuel mirror against physical storage/summaries, then implement authored Materials build costs and the combined Credits/Materials transaction in Phase 5.

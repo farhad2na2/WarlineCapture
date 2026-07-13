@@ -94,6 +94,15 @@ There must be exactly one authoritative tactical Materials value per faction.
 - Migration must not use steady-state dual writes or periodic reconciliation.
 - Persistent profile Materials and active-match tactical Materials remain distinct lifetimes. Scenario startup explicitly seeds the tactical value from authored match rules or an approved profile projection.
 
+V1 lifetime policy is locked as follows:
+
+- `PlayerProfileSaveData.materials` is persistent account/progression state. Active-match simulation does not read or mutate it directly.
+- `FactionTacticalMaterialsComponent` is match-scoped. Scenario startup seeds it from authored match rules; V1 does not automatically withdraw profile Materials.
+- Unspent tactical Materials are discarded when the match ends. Mission rewards grant persistent profile Materials through the existing typed reward/save path, not by copying the remaining tactical balance.
+- A future mode may opt into profile-funded deployment only through an explicit launch reservation/result and match-settlement transaction. It must define withdrawal, cancellation refund, victory/defeat settlement, overflow, and duplicate-result behavior before implementation.
+- `PlayerProfileSaveData.rushTickets` is the persistent Rush Ticket owner. A Rush-enabled match receives an explicit scenario-approved tactical allowance projected once into the Exchange boundary. Rush spending never writes the profile during simulation; an approved future persistent-spend flow must reserve tickets before launch and settle exactly once after the match.
+- Tactical Materials and Rush Ticket telemetry may update match results, but telemetry counters are not currency settlement and cannot mutate profile balances.
+
 Oil and Fuel continue to use their existing physical building storage and faction summary contracts. The fabrication feature must not mirror Oil or Fuel into a new wallet.
 
 Tactical Credits must likewise converge on the ECS faction economy. The current managed player-dollar field, AI `FactionEconomy.Money`, and Exchange Credits field are implementation debt, not three valid economies. The implementation tracker requires a single authoritative Credits mutation path before Credits + Materials construction ships.

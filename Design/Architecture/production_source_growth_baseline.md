@@ -2232,6 +2232,14 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
       "maxLines": 133,
       "maxBytes": 5318,
       "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ResourceHaulerStorageAccessSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-068",
+      "maxLines": 88,
+      "maxBytes": 3680,
+      "scope": "system-helper"
     }
   ]
 }

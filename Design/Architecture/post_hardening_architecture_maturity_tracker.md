@@ -6,6 +6,8 @@ Move WarlineCapture from the approximately `8.8 / 10` architecture expected afte
 
 This is a post-hardening program, not a replacement for `architecture_performance_hardening_implementation_tracker.md`. It must not begin until that tracker is complete and every one of its compiler, architecture, performance, GC, memory, visual, and device gates is genuinely green.
 
+When this program activates, every task must follow `Design/Architecture/agent_pull_request_review_merge_workflow.md` for shared-object worktrees, `codex/<task-id>-<slug>` branches, implementation ownership, independent findings-first review, risk-based integration, tracker administration, PR merge, and cleanup. This tracker remains authoritative for maturity scope, dependencies, acceptance, and evidence; the PR workflow is authoritative for git integration and role separation.
+
 A literal `10 / 10` is treated as a sustained operating standard, not a one-time checkbox. The program can establish `9.5+` quality and the controls needed to retain it; production history must supply the final evidence.
 
 ## Authority And Entry Contract
@@ -14,6 +16,7 @@ A literal `10 / 10` is treated as a sustained operating standard, not a one-time
 |---|---|
 | Document date | 2026-07-13 |
 | Prerequisite tracker | `Design/Architecture/architecture_performance_hardening_implementation_tracker.md` |
+| Git integration authority | `Design/Architecture/agent_pull_request_review_merge_workflow.md` |
 | Required prerequisite state | `107 / 107`, with no waived or stale required gate |
 | Assumed entry rating | approximately `8.8 / 10` |
 | Practical target | evidence-backed `9.5+ / 10` |
@@ -50,6 +53,9 @@ The final rating is an engineering assessment supported by the gates below. It i
 - Preserve Unity `.meta` files, serialized references, ECS update order, and existing user-owned work.
 - Do not combine balance changes, art changes, or unrelated gameplay features with architecture slices.
 - New findings do not silently increase the active checklist. Record them in the Decision Log and obtain explicit scope approval.
+- Implementation agents push their task branch and open a PR but never merge or self-accept tracker state. The independent review/merge coordinator owns findings, final integration gates, administrative tracker/evidence commits, merge, and branch/worktree cleanup.
+- Direct pushes may still be technically possible, but this planned program uses PRs. Do not claim branch protection/rulesets are active or require GitHub approval counts while all agents share one GitHub identity.
+- Preserve Jenkins and existing CI/performance contracts; do not introduce GitHub Actions as a substitute.
 
 ## Global Architecture Guardrails
 
@@ -313,8 +319,8 @@ Every implementation slice runs the rows relevant to its ownership. Every phase 
 
 Each implementation package must record:
 
-- Task ID and prerequisite state.
-- Baseline commit and dirty-worktree exclusions.
+- Role/context, task ID, prerequisite state, and workflow path.
+- Branch, isolated shared-object worktree, PR URL, baseline commit, tested head, and dirty-worktree exclusions.
 - Exact files changed and files intentionally not touched.
 - Ownership change and behavior-preservation statement.
 - Before/after source responsibility, dependency, performance, allocation, and memory metrics as applicable.
@@ -322,7 +328,7 @@ Each implementation package must record:
 - Residual risks and unexercised paths.
 - Recommended next task and focused commit message.
 
-The coordinator updates the shared snapshot, checklist, Decision Log, and Implementation Log only after reviewing the handoff and passing integrated validation.
+The implementation agent owns substantive commits, pushes, PR creation, and review revisions but never merges. The independent coordinator reports findings first, returns substantive fixes to the implementer, runs integrated validation on the final head, and may then add only administrative snapshot, checklist, Decision Log, Implementation Log, or evidence commits. Proposed completion becomes authoritative only when the coordinator merges the PR to `main` and records cleanup.
 
 ## Decision Log
 

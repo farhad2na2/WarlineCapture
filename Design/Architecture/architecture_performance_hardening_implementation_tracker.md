@@ -2,9 +2,11 @@
 
 ## Purpose
 
-Turn the 2026-07-09 architecture and performance audit into an executable, multi-agent remediation program. This tracker is the source of truth for this program. An agent should be able to select one ready checklist item, implement it, validate it, and record evidence here without repeating the audit.
+Turn the 2026-07-09 architecture and performance audit into an executable, multi-agent remediation program. This tracker is the source of truth for program scope, task state, gates, and evidence. `Design/Architecture/agent_pull_request_review_merge_workflow.md` is the authority for branch, worktree, implementation/review ownership, PR revision, merge, tracker administration, and cleanup. An agent should be able to select one ready checklist item, implement it, validate it, and record evidence here without repeating the audit.
 
 This tracker follows the completed historical program in `Design/Architecture/architecture_performance_audit_followup_tracker.md`. Do not reopen or rewrite that completed tracker. Carry forward its accepted baselines and lessons through this document.
+
+**Workflow transition:** The Architecture and Performance Hardening coordinator assignment was already active when the pull request workflow was introduced. Its existing assigned scope through genuine `107 / 107` completion and closeout is one grandfathered direct-`main` program. Dependency-ready `APH-*` slices inside that scope keep the established coordinator integration procedure. Work outside this tracker scope, or substantive follow-up dispatched after this program closes, uses the pull request workflow.
 
 ## Authority and Baseline
 
@@ -44,8 +46,8 @@ Before changing production code, the Phase 0 agents must reproduce current-head 
 - `[x]` complete with validation evidence recorded in this file
 - `[!]` blocked with the exact blocker and next unblocking action recorded
 - A task is not complete because code compiles. Its stated focused tests, architecture gates, and behavior checks must pass.
-- The coordinator updates `Progress Snapshot`, task checkboxes, and `Implementation Log` in the same integration change. Parallel workers return handoff evidence and do not edit these shared tracker sections.
-- A completed implementation slice must be committed and pushed by the coordinator after the Stable Integration and Push Gate passes. Do not mark a task complete while its accepted changes exist only in a local worktree.
+- The coordinator owns `Progress Snapshot`, task checkboxes, decisions, and `Implementation Log`. Implementation agents return evidence and do not self-accept these shared tracker sections. The coordinator normally adds the final tracker/evidence reconciliation as an administrative commit to the implementation PR.
+- A future pull-request slice must pass the Stable Integration and Pull Request Gate and merge through its PR. A proposed `[x]` in an open PR becomes authoritative only when that PR reaches `main`. A slice inside this grandfathered hardening assignment instead uses the direct-main path in that same gate and becomes authoritative only after its validated commit reaches `main`; accepted changes that exist only in a worktree or unmerged branch are not complete.
 - Never raise a budget, allowlist a violation, or weaken a test merely to obtain a pass. A budget or allowlist change requires a before/after report and explicit approval in the Decision Log.
 - Run `git diff --check` after every implementation slice.
 - Preserve Unity `.meta` files and serialized scene/prefab references.
@@ -53,13 +55,13 @@ Before changing production code, the Phase 0 agents must reproduce current-head 
 
 ## Multi-Agent Operating Model
 
-The program may use multiple coding agents, but the coordinator owns the critical path and integration state. Parallelism is allowed only for tasks with satisfied dependencies and non-overlapping file ownership.
+The program may use multiple coding agents. During the grandfathered hardening assignment, the existing coordinator retains tracker state, integration, commit, and push ownership under `D-013` and `D-017`. For future pull-request tasks, the review/merge coordinator owns the critical path, tracker administration, independent acceptance, merge, and cleanup while the implementation agent owns substantive feature-branch work and revisions. Parallelism is allowed only for tasks with satisfied dependencies and non-overlapping file ownership.
 
 ### Roles and Initial Allocation
 
 | Role | Initial assignment | Ownership |
 |---|---|---|
-| Coordinator | Program control and integration | tracker state, dependency checks, work allocation, conflict review, final validation, commits, and pushes |
+| Review/merge coordinator | Program control and independent integration | tracker state, dependency checks, work allocation, findings-first review, final validation, administrative tracker/evidence commits, PR merge, and cleanup |
 | Build agent | `APH-006` | sequential first-party build matrix and categorized warning report; no Unity lease required |
 | Performance agent | `APH-007` | current-head Match performance and steady-state GC captures; exclusive Unity lease required |
 | Residency agent | `APH-008` | machine-readable content-residency inventory and Markdown summary; Unity importer inspection requires the Unity lease |
@@ -67,32 +69,34 @@ The program may use multiple coding agents, but the coordinator owns the critica
 
 ### Coordination Rules
 
-1. The coordinator is the only agent that claims tasks in this tracker, edits shared progress/log sections, integrates commits, rebases, or pushes.
+1. The coordinator is the only agent that reserves tracker tasks, edits shared progress/decision/log sections, and accepts evidence. In this grandfathered program it also owns stable integration commits/pushes; for future PR tasks it alone merges while the implementation agent owns substantive commits, pushes, PR creation, and review revisions on `codex/<task-id>-<slug>`.
 2. Workers receive a bounded task, an explicit file allowlist, required validations, and a prohibition on touching unrelated dirty work.
 3. Workers must not edit the same production file, test file, generated artifact, scene, prefab, or importer concurrently. If overlap becomes necessary, stop one worker and serialize the work.
-4. Workers operating in the canonical shared worktree do not commit, rebase, or push. They return a handoff; the coordinator reviews and integrates it. A worker may commit only when the coordinator explicitly assigns an isolated worktree and commit ownership.
+4. Every task outside this grandfathered `107 / 107` assignment that starts after PR-workflow activation uses an isolated shared-object git worktree and short-lived feature branch. The implementation agent commits/pushes only that branch, opens the PR, and never merges it.
 5. Only one Unity Editor or Unity batchmode process may use a project workspace at a time. The coordinator grants an exclusive Unity lease. Other agents may continue non-Unity builds, source analysis, or report work while that lease is active.
 6. An isolated Unity workspace may run concurrently only when it already exists, points at the same execution baseline, has no shared `Library` directory, and the coordinator records its path and result. Never create an ad hoc clone merely to bypass a lock or licensing failure.
 7. Use `Tools/CI/invoke_unity_macos.sh` in windowed batchmode without `-nographics`. If licensing fails in the sandbox, rerun once with the documented escalated/out-of-sandbox workaround before reporting a blocker.
-8. The coordinator runs cross-slice validation after integration. A worker's focused pass is necessary evidence, not permission to skip the integrated build and architecture gates.
-9. When the integrated slice is stable and has no compiler errors, the coordinator stages only task-owned files, commits one focused slice, reconciles with the latest remote branch without overwriting other work, and pushes. Never commit or push a known-broken slice or unrelated dirty work.
+8. For future PR tasks, the coordinator reviews findings first and runs cross-slice validation on the final PR head and combined latest-main result. The implementation agent's focused pass is necessary evidence, not permission to skip integrated build and architecture gates. The grandfathered coordinator keeps its established handoff review and cross-slice validation before direct integration.
+9. For future PR tasks, every substantive finding returns to the implementation agent. The coordinator may add only administrative tracker/evidence commits, then merges an accepted PR and deletes its remote branch and clean worktree/local branch. In the grandfathered program, the coordinator may integrate reviewed worker handoffs as already assigned. Never merge or push a known-broken slice or unrelated change.
 
 ### Worker Handoff Contract
 
-Every worker handoff must contain: task ID, baseline commit, files changed, files intentionally not touched, behavior statement, exact commands and pass markers, artifact/log paths, metrics before/after, visual result when applicable, residual risks, recommended next task, and a proposed focused commit message. The coordinator rejects incomplete handoffs and leaves the task pending or blocked.
+Every implementation handoff must contain: role/context, task ID, workflow path, branch, worktree, baseline and tested head commits, PR URL, allowlist, files changed, files intentionally not touched, behavior and architecture statements, exact commands/pass markers, compiler/build result, artifact/log paths, metrics before/after, Unity/device/visual/Jenkins evidence when applicable, residual risks, untested paths, recommended next owner, and focused commit identities. The coordinator rejects incomplete handoffs and leaves the task pending or blocked. Use the complete field set in the authoritative PR workflow.
 
 ## Agent Start Procedure
 
-1. Read this document completely.
-2. Read only the source files and focused tests named by the selected task.
-3. Run `git status --short`, record the baseline commit, and preserve unrelated work.
-4. Confirm every dependency in the Phase Dependency table is complete and obtain the task/file claim from the coordinator.
-5. The coordinator changes the selected task to `[~]` and updates `Current task` in the Progress Snapshot before implementation begins.
-6. Implement the narrowest behavior-preserving slice within the assigned file allowlist.
-7. Run the task-specific commands and relevant rows of the Common Validation Matrix.
-8. Inspect Unity console output and, for visual work, capture the required views while holding the Unity lease.
-9. Return the Worker Handoff Contract evidence to the coordinator. Do not edit shared tracker state from a parallel worker.
-10. The coordinator reviews the diff, runs integrated validation, writes the Implementation Log entry, commits and pushes the stable slice, and marks the task `[x]` only after all acceptance criteria and the Stable Integration and Push Gate pass.
+The numbered procedure below applies to future PR tasks. For a dependency-ready slice inside the grandfathered hardening assignment, the existing coordinator claims disjoint ownership, uses its persistent integration checkout, accepts structured worker handoffs, runs the required focused and integrated gates, fetches and integrates latest `origin/main`, reruns every affected check, and commits/pushes only the stable task-owned slice directly to `main`. PR-only branch, template, review, merge, and cleanup steps are not applicable; the handoff records `Workflow path: grandfathered direct-main`.
+
+1. Read this tracker and `Design/Architecture/agent_pull_request_review_merge_workflow.md` completely.
+2. Confirm every phase dependency is complete and obtain a coordinator dispatch containing the task ID, allowlist, exclusions, required gates, Unity lease needs, branch, and worktree path.
+3. The coordinator records the reservation in the dispatch/current-task context. The open draft PR is the visible in-progress claim; do not push an in-progress tracker mutation directly to `main`.
+4. The implementation agent creates the isolated shared-object worktree from current `origin/main` on `codex/<task-id>-<slug>`, verifies `git status --short --branch`, and records the baseline commit.
+5. The implementation agent pushes the feature branch and may open a draft PR before substantive edits, then implements the narrowest behavior-preserving slice within the allowlist.
+6. Run task-specific commands and relevant Common Validation Matrix rows. Inspect Unity console output and capture required views while holding the assigned Unity lease.
+7. Commit/push the substantive slice, complete the PR template, and return the full implementation handoff. Never merge or self-accept tracker state.
+8. The independent coordinator reviews findings first. The implementation agent resolves substantive findings in new commits and reruns affected gates until accepted or blocked.
+9. The coordinator runs the Stable Integration and Pull Request Gate on the final head and may add only the administrative Progress Snapshot, checklist, Decision Log, Implementation Log, and evidence reconciliation commit.
+10. The coordinator merges the accepted PR, deletes its branch/worktree, and treats the proposed `[x]`/Implementation Log update as authoritative only after the merge reaches `main`.
 
 ## Current Evidence Snapshot
 
@@ -211,6 +215,7 @@ The program is complete only when all of the following are true:
 | `D-019` | Reject direct 96 m and 32 m transient Match mesh-combine output. Phase 6 uses shared-mesh, overlay-safe presentation chunks and measured GPU culling instead. |
 | `D-020` | APH-701/702 freeze the verified `9280ead85` baseline of 265 helper paths, 108 production files above 500 lines, and 27 production files above 1,000 lines. Shrinkage passes; additions or growth require an exact tracker task and Decision Log exception. |
 | `D-021` | Static-map structural parity keeps object/asset/state identity exact while allowing only Unity serialization precision of `0.0005` for transforms and `0.005` for derived world bounds. |
+| `D-069` | For tasks started after the PR workflow reaches `main`, `agent_pull_request_review_merge_workflow.md` supersedes the direct-integration portions of `D-013` and `D-017`: the implementation agent owns substantive branch commits/pushes and PR revisions; the independent coordinator owns tracker administration, final gates, merge, and cleanup. Already-active tasks are grandfathered. |
 
 ## Phase Dependency Order
 
@@ -685,21 +690,24 @@ Goal: prove the complete program improved production readiness without gameplay 
 - [ ] `APH-903` Compare final architecture/performance metrics against this baseline and write `Design/AgentReports/architecture_performance_hardening_final_report.md`.
 - [ ] `APH-904` Re-rate architecture and performance, list residual risks, update the root architecture index, and mark this tracker complete only when no required task remains.
 
-## Stable Integration and Push Gate
+## Stable Integration and Pull Request Gate
 
-Run this gate after each implementation slice and before changing its task status to `[x]`:
+Select the path declared in the task handoff:
 
-1. Inspect `git status --short` and the complete diff. Identify task-owned files and preserve all unrelated work.
-2. Run `git diff --check`.
-3. Build the owning assembly and every directly affected first-party dependent assembly with `0` errors. For shared runtime or composition changes, include `Game.Runtime`, `Game.Editor`, and the relevant test assembly at minimum.
-4. Run every focused test and architecture gate required by the task. Unity-required slices must reach their execute method and required pass marker; a licensing failure is handled through the documented wrapper/escalation retry first.
-5. Inspect the relevant Unity log or live Editor console for `error CS`, compiler failure, unhandled exception, test failure, or asset import failure attributable to the slice. Existing unrelated warnings must be categorized in the handoff.
-6. Stage only task-owned implementation files, tests, generated evidence, and the coordinated tracker update. Review `git diff --cached --check` and `git diff --cached --stat` before committing.
-7. Create one focused commit for the stable slice. Do not use the commit as a checkpoint for broken compilation or incomplete acceptance criteria.
-8. Fetch the latest remote branch before pushing. If it advanced, inspect overlap and rebase or integrate without overwriting other work. Rerun affected validation after any conflict resolution or content-changing integration.
-9. Push the current branch and confirm local/remote divergence is zero. Record the final commit hash and branch in the Implementation Log.
+- **Future pull-request task:** run this gate on the final PR head and the actual combined result with latest `origin/main` before the coordinator merges. Record the latest-main SHA, PR-head SHA, combined integration commit/tree SHAs, clean validation workspace status, and exact evidence.
+- **Grandfathered hardening slice:** run the same substantive diff, allowlist, compiler, architecture, behavior, GC/performance, Unity/device, Jenkins, and unrelated-work checks in the persistent integration checkout. Fetch latest `origin/main`; inspect overlap; integrate it before final acceptance; rerun every affected gate on the combined result; confirm the candidate commit and worktree are clean; then push the stable coordinator-owned commit directly to `main`. PR target, PR template, PR merge, and branch-cleanup items are `Not applicable - grandfathered direct-main`, not silently omitted.
 
-If any required check fails, do not commit or push the slice. Keep the task `[~]`, or mark it `[!]` only with the exact blocker and next unblocking action. A documentation-only coordination change may be committed separately when `git diff --check` passes and it does not claim implementation acceptance.
+1. For a PR task, confirm it targets `main` from the assigned `codex/<task-id>-<slug>` branch. For either path, inspect `git status --short`, the complete candidate diff, the allowlist, and all unrelated-work exclusions.
+2. Fetch current `origin/main` and validate the actual combined result. For PR work, use an integration method authorized by the PR workflow and return content-changing conflicts to the implementation agent. For a grandfathered slice, the coordinator integrates latest main in its persistent checkout. Rerun every gate affected by the integration.
+3. Run `git diff --check` against the exact combined result and confirm no unrelated file entered the candidate.
+4. Build the owning assembly and every directly affected first-party dependent assembly with `0` errors. For shared runtime or composition changes, include `Game.Runtime`, `Game.Editor`, and the relevant test assembly at minimum.
+5. Run every focused test and architecture gate required by the task. Unity-required slices must reach their execute method and required pass marker; handle licensing through the documented wrapper/escalation retry first.
+6. Inspect the relevant Unity log or live Editor console for `error CS`, compiler failure, unhandled exception, test failure, or asset import failure attributable to the slice. Categorize existing unrelated warnings in the handoff.
+7. Verify all required GC/performance, visual, device, package, and Jenkins evidence is tied to the final tested revision and satisfies the unchanged accepted contracts. Do not add GitHub Actions as a substitute.
+8. For a PR task, return every substantive finding to the implementation agent; after resolution, the coordinator may add only administrative tracker/evidence reconciliation. For a grandfathered slice, preserve the existing coordinator-owned worker review and integration boundary. Rerun checks affected by every accepted content or administrative commit.
+9. Confirm the remote candidate matches the reviewed/tested revision, risks and untested paths are explicit, and no required gate was weakened. For PR work, confirm the template, merge, PR URL, feature head, merge commit, and cleanup. For grandfathered work, record the direct-main commit/push and the explicit PR-only `Not applicable` fields.
+
+If any required check fails, do not merge or push the candidate. Keep the task pending/in progress, or propose `[!]` only with the exact blocker and next unblocking action. For PR tasks, substantive fixes belong to the implementation agent and the coordinator does not repair product code under the administrative-commit exception. The grandfathered coordinator retains only the broader integration ownership already assigned before activation.
 
 ## Common Validation Matrix
 
@@ -810,10 +818,12 @@ Append one entry per completed or blocked task. Keep entries concise but include
 
 - Status: Complete / Blocked
 - Commit or worktree baseline: `<hash>`
-- Stable commit/push: `<final hash>` pushed to `<branch>`, or `not pushed` with reason
+- Workflow path: `pull request` or `grandfathered direct-main`
+- PR/branch: `<PR URL>` from `<branch>`, or grandfathered path with reason
+- Stable revision/merge: feature head `<hash>` merged as `<hash>`, or `not merged` with reason
 - Files changed: `path`, `path`
 - Behavior preserved/changed: exact statement
-- Validation: command plus required pass marker; include Stable Integration and Push Gate result
+- Validation: command plus required pass marker; include Stable Integration and Pull Request Gate result
 - Artifacts: log/report/screenshot paths
 - Metrics before: values or `not applicable`
 - Metrics after: values or `not applicable`
@@ -1968,3 +1978,4 @@ Append approved deviations here. Do not silently alter Fixed Architecture Decisi
 | 2026-07-13 | `D-066` | Register the Resource Exchange startup projection boundary | Scenario-gate validation, canonical faction resolution, exchange component/buffer initialization, and recipe projection run once through the existing startup composition path and add no player-loop owner | `source-growth-exception(path=Assets/Game/Scripts/Systems/ResourceExchangeStartupProjectionSystemHelper.cs;scope=system-helper;maxLines=268;maxBytes=13520;task=APH-710)` |
 | 2026-07-13 | `D-067` | Register the material-fabrication command utility boundary | Request validation, bounded queue mutation, correlated result lookup, and version wrapping form one stateless command responsibility extracted from the fabrication `ISystem`; the helper adds no scheduling owner | `source-growth-exception(path=Assets/Game/Scripts/Systems/MaterialFabricationCommandUtilitySystemHelper.cs;scope=system-helper;maxLines=133;maxBytes=5318;task=APH-710)` |
 | 2026-07-14 | `D-068` | Register the resource-hauler storage-access boundary | Resource-kind conversion, storage snapshots, ECS lookup/commit, metadata synchronization, and managed storage mirroring form one stateless storage responsibility extracted from the existing hauling utility without adding scheduling ownership | `source-growth-exception(path=Assets/Game/Scripts/Systems/ResourceHaulerStorageAccessSystemHelper.cs;scope=system-helper;maxLines=88;maxBytes=3680;task=APH-710)` |
+| 2026-07-13 | `D-069` | Supersede the direct-integration portions of `D-013` and `D-017` with the authoritative agent pull request workflow for new tasks; grandfather tasks already in progress at activation | Separate substantive implementation from independent findings-first acceptance while retaining coordinator tracker control, existing validation gates, historical evidence, and a bounded transition | User-approved bootstrap; `Design/Architecture/agent_pull_request_review_merge_workflow.md` |

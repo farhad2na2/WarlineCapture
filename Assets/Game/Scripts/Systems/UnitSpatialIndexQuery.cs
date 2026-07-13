@@ -8,31 +8,47 @@ namespace Game.Runtime
     {
         private readonly UnitSpatialIndexState _state;
         private readonly NativeArray<UnitSpatialIndexEntry> _entries;
-        private readonly NativeArray<UnitSpatialIndexBucketRange> _ranges;
-        private readonly NativeArray<UnitSpatialIndexBucketEntry> _bucketEntries;
+        private readonly NativeArray<UnitSpatialIndexBucketHead> _heads;
 
         public UnitSpatialIndexQuery(
             in UnitSpatialIndexState state,
             NativeArray<UnitSpatialIndexEntry> entries,
-            NativeArray<UnitSpatialIndexBucketRange> ranges,
-            NativeArray<UnitSpatialIndexBucketEntry> bucketEntries)
+            NativeArray<UnitSpatialIndexBucketHead> heads)
         {
             _state = state;
             _entries = entries;
-            _ranges = ranges;
-            _bucketEntries = bucketEntries;
+            _heads = heads;
         }
 
         public bool IsReady =>
             _state.Ready != 0 &&
-            _state.BucketSizeCells > 0 &&
+            _state.Version != 0u &&
+            _state.OverflowCount == 0 &&
+            _state.GridWidth > 0 &&
+            _state.GridHeight > 0 &&
             _state.BucketCountX > 0 &&
             _state.BucketCountY > 0 &&
+            _state.BucketCount == _state.BucketCountX * _state.BucketCountY &&
+            _state.BucketCount <= UnitSpatialIndexBuildSystem.BucketHeadCount &&
+            _state.EntryCount >= 0 &&
+            _state.EntryCount <= _entries.Length &&
             _entries.IsCreated &&
-            _ranges.IsCreated &&
-            _bucketEntries.IsCreated;
+            _heads.IsCreated &&
+            _heads.Length >= UnitSpatialIndexBuildSystem.BucketHeadCount;
 
         public NativeArray<UnitSpatialIndexEntry> Entries => _entries;
+
+        public bool IsCurrent(double elapsedTime)
+        {
+            return IsReady && _state.BuiltAtElapsedTime == elapsedTime;
+        }
+
+        public bool MatchesGrid(in GridConfig grid)
+        {
+            return grid.Width == _state.GridWidth &&
+                   grid.Height == _state.GridHeight &&
+                   grid.CellSize > 0f;
+        }
 
         public Enumerator QueryCells(int2 minInclusive, int2 maxInclusive)
         {
@@ -47,73 +63,72 @@ namespace Game.Runtime
                 math.max(minInclusive, maxInclusive),
                 int2.zero,
                 new int2(_state.GridWidth - 1, _state.GridHeight - 1));
-            int2 minBucket = clampedMin / _state.BucketSizeCells;
-            int2 maxBucket = clampedMax / _state.BucketSizeCells;
-            return new Enumerator(
-                _state,
-                _ranges,
-                _bucketEntries,
-                minBucket,
-                maxBucket);
+            int2 minBucket = clampedMin / UnitSpatialIndexBuildSystem.BucketSizeCells;
+            int2 maxBucket = clampedMax / UnitSpatialIndexBuildSystem.BucketSizeCells;
+            return new Enumerator(_state, _entries, _heads, minBucket, maxBucket);
         }
 
         public struct Enumerator
         {
             private UnitSpatialIndexState _state;
-            private NativeArray<UnitSpatialIndexBucketRange> _ranges;
-            private NativeArray<UnitSpatialIndexBucketEntry> _bucketEntries;
+            private NativeArray<UnitSpatialIndexEntry> _entries;
+            private NativeArray<UnitSpatialIndexBucketHead> _heads;
             private int2 _minBucket;
             private int2 _maxBucket;
             private int _bucketX;
             private int _bucketY;
-            private int _rangeOffset;
-            private int _rangeCount;
-            private int _rangeIndex;
+            private int _nextEntryIndex;
+            private int _remainingEntries;
             private byte _initialized;
 
             internal Enumerator(
                 in UnitSpatialIndexState state,
-                NativeArray<UnitSpatialIndexBucketRange> ranges,
-                NativeArray<UnitSpatialIndexBucketEntry> bucketEntries,
+                NativeArray<UnitSpatialIndexEntry> entries,
+                NativeArray<UnitSpatialIndexBucketHead> heads,
                 int2 minBucket,
                 int2 maxBucket)
             {
                 _state = state;
-                _ranges = ranges;
-                _bucketEntries = bucketEntries;
+                _entries = entries;
+                _heads = heads;
                 _minBucket = minBucket;
                 _maxBucket = maxBucket;
                 _bucketX = minBucket.x;
                 _bucketY = minBucket.y;
-                _rangeOffset = 0;
-                _rangeCount = 0;
-                _rangeIndex = 0;
+                _nextEntryIndex = UnitSpatialIndexBuilder.InvalidEntryIndex;
+                _remainingEntries = math.min(state.EntryCount, entries.Length);
                 _initialized = 0;
-                CurrentEntryIndex = -1;
+                CurrentEntryIndex = UnitSpatialIndexBuilder.InvalidEntryIndex;
             }
 
             public int CurrentEntryIndex { get; private set; }
 
             public bool MoveNext()
             {
-                while (true)
+                while (_remainingEntries > 0)
                 {
-                    if (_rangeIndex < _rangeCount)
+                    if (_nextEntryIndex != UnitSpatialIndexBuilder.InvalidEntryIndex)
                     {
-                        int referenceIndex = _rangeOffset + _rangeIndex++;
-                        if ((uint)referenceIndex >= (uint)_state.BucketReferenceCount ||
-                            (uint)referenceIndex >= (uint)_bucketEntries.Length)
+                        int entryIndex = _nextEntryIndex;
+                        if ((uint)entryIndex >= (uint)_state.EntryCount ||
+                            (uint)entryIndex >= (uint)_entries.Length)
                         {
+                            _nextEntryIndex = UnitSpatialIndexBuilder.InvalidEntryIndex;
                             continue;
                         }
 
-                        CurrentEntryIndex = _bucketEntries[referenceIndex].EntryIndex;
+                        UnitSpatialIndexEntry entry = _entries[entryIndex];
+                        _nextEntryIndex = entry.NextEntryIndex;
+                        _remainingEntries--;
+                        CurrentEntryIndex = entryIndex;
                         return true;
                     }
 
                     if (!MoveToNextBucket())
                         return false;
                 }
+
+                return false;
             }
 
             private bool MoveToNextBucket()
@@ -136,13 +151,10 @@ namespace Game.Runtime
                 {
                     int bucketIndex = _bucketY * _state.BucketCountX + _bucketX;
                     if ((uint)bucketIndex < (uint)_state.BucketCount &&
-                        (uint)bucketIndex < (uint)_ranges.Length)
+                        (uint)bucketIndex < (uint)_heads.Length)
                     {
-                        UnitSpatialIndexBucketRange range = _ranges[bucketIndex];
-                        _rangeOffset = range.Start;
-                        _rangeCount = range.Count;
-                        _rangeIndex = 0;
-                        if (_rangeCount > 0)
+                        _nextEntryIndex = _heads[bucketIndex].EntryIndex;
+                        if (_nextEntryIndex != UnitSpatialIndexBuilder.InvalidEntryIndex)
                             return true;
                     }
 

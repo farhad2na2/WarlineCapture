@@ -12,6 +12,9 @@ namespace Game.Runtime
         private bool _isConfigured;
 
         public int CurrentDollars => TryGetPlayerEconomy(out FactionEconomy economy) ? economy.Money : 0;
+        public int CurrentMaterials => TryGetPlayerResources(out _, out FactionTacticalMaterialsComponent materials)
+            ? materials.Current
+            : 0;
 
         public void SetInitialDollars(int dollars)
         {
@@ -48,12 +51,33 @@ namespace Game.Runtime
             amount = Mathf.Max(0, amount);
             if (amount <= 0)
                 return true;
-            if (!TryGetPlayerEconomy(out FactionEconomy economy) || economy.Money < amount)
-                return false;
 
-            economy.Money -= amount;
+            return TrySpendConstructionResources(amount, 0) ==
+                   FactionConstructionResourceMutationResult.Applied;
+        }
+
+        public FactionConstructionResourceMutationResult TrySpendConstructionResources(
+            int creditsCost,
+            int materialsCost)
+        {
+            if (!TryGetPlayerResources(
+                    out FactionEconomy economy,
+                    out FactionTacticalMaterialsComponent materials))
+                return FactionConstructionResourceMutationResult.InvalidState;
+
+            FactionConstructionResourceMutationResult result =
+                FactionConstructionResourceUtilitySystemHelper.TrySpend(
+                    ref economy,
+                    ref materials,
+                    creditsCost,
+                    materialsCost);
+            if (result != FactionConstructionResourceMutationResult.Applied)
+                return result;
+
             _entityManager.SetComponentData(_playerEconomyEntity, economy);
-            return true;
+            if (materialsCost > 0)
+                _entityManager.SetComponentData(_playerEconomyEntity, materials);
+            return result;
         }
 
         public CitizenResourceCompositionSystemHelper.Context CreateCitizenResourceContext()
@@ -171,6 +195,19 @@ namespace Game.Runtime
 
             economy = _entityManager.GetComponentData<FactionEconomy>(_playerEconomyEntity);
             return FactionIdentity.IsPlayerControlled(economy.FactionId);
+        }
+
+        private bool TryGetPlayerResources(
+            out FactionEconomy economy,
+            out FactionTacticalMaterialsComponent materials)
+        {
+            materials = default;
+            if (!TryGetPlayerEconomy(out economy) ||
+                !_entityManager.HasComponent<FactionTacticalMaterialsComponent>(_playerEconomyEntity))
+                return false;
+
+            materials = _entityManager.GetComponentData<FactionTacticalMaterialsComponent>(_playerEconomyEntity);
+            return materials.FactionId == economy.FactionId;
         }
 
         private bool IsEntityManagerAvailable()

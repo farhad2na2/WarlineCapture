@@ -1,7 +1,7 @@
 # Field Fabrication And Materials Implementation Tracker
 
 Date: 2026-07-12
-Status: In progress - Phase 1 canonical resource ownership and live HUD projection
+Status: In progress - Phase 2 depot config and building projection
 Design source: `../Field_Fabrication_Materials_Design.md`
 
 ## Objective
@@ -73,21 +73,21 @@ Dependency direction remains inward toward components/config/contracts/runtime. 
 
 ## Progress Summary
 
-Overall implementation progress: 26% (27/103 checklist items complete).
+Overall implementation progress: 28% (29/103 checklist items complete).
 
-Planning and inventory findings are complete. Canonical Materials, player Credits, Resource Exchange Credits/Materials ownership, the V1 lifetime policy, and the live Match header projection are implemented. Exchange Oil/Fuel transactions and UI projection now use authoritative physical building storage and faction summaries; the Exchange wallet retains only faction identity, Rush Tickets, and version.
+Planning, inventory, and canonical resource ownership are complete. Canonical Materials, player Credits, combined construction affordability/spending, Resource Exchange ownership, the V1 lifetime policy, and the live Match header projection are implemented. Exchange Oil/Fuel transactions and UI projection use authoritative physical building storage and faction summaries; the Exchange wallet retains only faction identity, Rush Tickets, and version.
 
 Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation row counts. Update the numerator, denominator, table, status, and evidence log in the same commit as each completed batch.
 
 | Phase | Status | Complete | Total | Progress | Gate |
 |---|---|---:|---:|---:|---|
 | 0. Inventory and baseline | Complete | 12 | 12 | 100% | Ownership, file targets, compile state, focused behavior, p95/p99, and managed-allocation baselines are recorded. |
-| 1. Canonical tactical Materials and Credits | In progress | 11 | 13 | 85% | Canonical Materials data/startup, player Credits, Exchange resource ownership, profile/tactical lifetime policy, ownership ratchet, and physical Oil/Fuel reservation transactions/read models are complete. Build affordability and combined deterministic transaction tests remain. |
-| 2. Config and building projection | Pending | 0 | 10 | 0% | Depot config is valid, authored, and projected consistently. |
+| 1. Canonical tactical Materials and Credits | Complete | 13 | 13 | 100% | Canonical Materials/Credits ownership, combined allocation-free construction transaction, HUD projection, Exchange ownership, and deterministic mutation coverage pass. |
+| 2. Config and building projection | In progress | 0 | 10 | 0% | Depot config is valid, authored, and projected consistently. |
 | 3. Oil destination routing | Pending | 0 | 11 | 0% | Tray routing is deterministic, reserved, and stable. |
 | 4. Oil-to-Materials conversion | Pending | 0 | 11 | 0% | Conversion is deterministic, capped, typed, and no-GC. |
 | 5. Credits + Materials construction | Pending | 0 | 11 | 0% | Placement spends both resources exactly once. |
-| 6. HUD and selected-building UI | In progress | 4 | 11 | 36% | Live canonical Credits/Materials header projection is implemented and compile-clean; the focused Unity/GC run is pending an available license lane. Build Drawer and selected-depot UI remain. |
+| 6. HUD and selected-building UI | In progress | 4 | 11 | 36% | Live canonical Credits/Materials header projection is validated at 0 managed bytes. Build Drawer and selected-depot UI remain. |
 | 7. Exchange and balance safety | Pending | 0 | 8 | 0% | Import is expensive recovery; no arbitrage exists. |
 | 8. AI, telemetry, and scenario safety | Pending | 0 | 7 | 0% | AI shares rules; scenarios cannot deadlock silently. |
 | 9. Integration, performance, and closeout | Pending | 0 | 9 | 0% | Architecture, GC, profiler, gameplay, and docs pass. |
@@ -149,11 +149,11 @@ Phase 0 exit criteria:
 - [x] Establish `FactionEconomy.Money` as the one ECS tactical Credits authority for player and AI factions.
 - [x] Migrate player build affordability/spend away from `RuntimeResourceUtilitySystemHelper._dollars` ownership to typed ECS transactions against `FactionEconomy.Money`.
 - [x] Migrate Exchange Credits and Materials import/export to `FactionEconomy.Money` plus `FactionTacticalMaterialsComponent`.
-- [ ] Migrate Match HUD and build affordability to read this canonical component.
+- [x] Migrate Match HUD and build affordability to read this canonical component.
 - [x] Remove `ResourceExchangeWalletComponent.Credits` and `.Materials` authority without a steady-state dual-write period.
 - [x] Remove or narrow Exchange wallet Oil/Fuel mirrors so physical storage/summaries remain authoritative.
 - [x] Document persistent profile Materials/Rush Tickets projection and tactical match-end policy.
-- [ ] Add deterministic tests for Credit/Materials grant, atomic spend, capacity, overflow rejection, and version behavior.
+- [x] Add deterministic tests for Credit/Materials grant, atomic spend, capacity, overflow rejection, and version behavior.
 - [x] Add an ownership contract test that fails if another tactical Credits or Materials authority is introduced.
 
 Implementation rule:
@@ -451,3 +451,13 @@ For every completed batch append:
 - Evidence: `/private/tmp/wlc-field-fabrication-wallet-regression-rerun-results.xml`, `/private/tmp/wlc-field-fabrication-wallet-regression-rerun.log`, `/private/tmp/wlc-field-fabrication-wallet-playmode-rerun-results.xml`, `/private/tmp/wlc-field-fabrication-wallet-playmode-rerun.log`, and `/private/tmp/warlinecapture-resource-exchange-steady-state-performance.json`.
 - Checklist count is 27/103. Phase 1 is 11/13; canonical build-affordability projection and combined deterministic Credits/Materials transaction tests remain.
 - Next action: inspect the existing build affordability read model and placement transaction owner, then close the two remaining Phase 1 items without introducing UI-owned policy or dual resource writes.
+
+### 2026-07-13 - Phase 1F Atomic Construction Resource Boundary And Phase Exit
+
+- Added `FactionConstructionResourceMutationResult` in `Game.Components` and `FactionConstructionResourceUtilitySystemHelper` in `Game.Runtime`. The pure stateless helper evaluates typed insufficient-Credits, insufficient-Materials, and combined failures, then applies both struct mutations only after complete validation.
+- Routed the existing player Credits spend through this canonical combined transaction with a zero Materials cost for current legacy building definitions. `RuntimeResourceUtilitySystemHelper` now exposes the same player entity's canonical Materials and a typed combined spend method for Phase 5 wiring; no second wallet, reservation owner, UI policy, or steady-state dual write was introduced.
+- Existing zero-Materials-cost behavior preserves the Materials amount, counters, and version. Positive Materials construction spend updates `Current`, `LifetimeSpent`, and `Version` exactly once. Rejected transactions mutate neither `FactionEconomy.Money` nor `FactionTacticalMaterialsComponent`.
+- Added six deterministic helper tests for typed affordability, atomic success, atomic rejection, zero-cost compatibility, faction mismatch, and 512 measured spends at 0 managed bytes. Extended the runtime resource fixture with an ECS persistence and combined rejection test.
+- Isolated Unity validation passed: atomic helper 6/6, runtime player resource boundary 6/6, building placement regression 16/16, tactical ownership architecture 1/1, and ECS Burst hot-path architecture 10/10. Existing Materials grant/spend tests already cover capacity overflow, counter saturation, invalid state, and version wrap.
+- Evidence: `/private/tmp/wlc-field-fabrication-construction-resource.log`, `/private/tmp/wlc-field-fabrication-runtime-resource-rerun.log`, `/private/tmp/wlc-field-fabrication-placement-rerun.log`, `/private/tmp/wlc-field-fabrication-phase1-ownership-rerun.log`, and `/private/tmp/wlc-field-fabrication-phase1-burst-rerun.log`.
+- Phase 1 is complete at 13/13. Checklist count is 29/103. Next action: begin Phase 2 by locating the exact `Building_Ammunition_Depot` config and tracing map-placed/player-built building projection through the existing generic storage/production data path.

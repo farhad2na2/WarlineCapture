@@ -16,9 +16,10 @@ public sealed class RuntimeResourceUtilitySystemHelperTests
             tests.Configure_CreatesCanonicalPlayerEconomyAndCompanions();
             tests.Configure_ReusesExistingPlayerEconomy();
             tests.CreditMutations_WriteFactionEconomyOnly();
+            tests.ConstructionSpend_WritesCanonicalCreditsAndMaterialsAtomically();
             tests.CitizenContext_WritesSameFactionEconomy();
             tests.WarmedCreditMutations_DoNotAllocateManagedMemory();
-            Debug.Log("[RuntimeResourceUtilityFocusedValidation] result=Passed tests=5");
+            Debug.Log("[RuntimeResourceUtilityFocusedValidation] result=Passed tests=6");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -98,6 +99,41 @@ public sealed class RuntimeResourceUtilitySystemHelperTests
         Entity player = GetPlayerEconomyEntity(world.EntityManager);
         Assert.AreEqual(60, resources.CurrentDollars);
         Assert.AreEqual(60, world.EntityManager.GetComponentData<FactionEconomy>(player).Money);
+    }
+
+    [Test]
+    public void ConstructionSpend_WritesCanonicalCreditsAndMaterialsAtomically()
+    {
+        using var world = new World(nameof(ConstructionSpend_WritesCanonicalCreditsAndMaterialsAtomically));
+        EntityManager em = world.EntityManager;
+        var resources = new RuntimeResourceUtilitySystemHelper();
+        resources.SetInitialDollars(100);
+        resources.Configure(em);
+        Entity player = GetPlayerEconomyEntity(em);
+        em.SetComponentData(player, new FactionTacticalMaterialsComponent
+        {
+            FactionId = FactionIdentity.PlayerFactionId,
+            Current = 40,
+            Capacity = 80,
+            Version = 2u
+        });
+
+        Assert.AreEqual(
+            FactionConstructionResourceMutationResult.Applied,
+            resources.TrySpendConstructionResources(25, 12));
+        Assert.AreEqual(75, resources.CurrentDollars);
+        Assert.AreEqual(28, resources.CurrentMaterials);
+
+        FactionTacticalMaterialsComponent materials =
+            em.GetComponentData<FactionTacticalMaterialsComponent>(player);
+        Assert.AreEqual(12, materials.LifetimeSpent);
+        Assert.AreEqual(3u, materials.Version);
+
+        Assert.AreEqual(
+            FactionConstructionResourceMutationResult.InsufficientCreditsAndMaterials,
+            resources.TrySpendConstructionResources(76, 29));
+        Assert.AreEqual(75, resources.CurrentDollars);
+        Assert.AreEqual(28, resources.CurrentMaterials);
     }
 
     [Test]

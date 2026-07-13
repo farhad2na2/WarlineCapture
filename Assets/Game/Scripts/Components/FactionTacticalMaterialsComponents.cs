@@ -27,6 +27,16 @@ namespace Game.Components
         InsufficientMaterials = 4
     }
 
+    public enum FactionConstructionResourceMutationResult : byte
+    {
+        Applied = 0,
+        InvalidCost = 1,
+        InvalidState = 2,
+        InsufficientCredits = 3,
+        InsufficientMaterials = 4,
+        InsufficientCreditsAndMaterials = 5
+    }
+
     public struct FactionTacticalMaterialsComponent : IComponentData
     {
         public byte FactionId;

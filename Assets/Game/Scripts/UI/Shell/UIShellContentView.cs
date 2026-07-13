@@ -248,44 +248,7 @@ namespace Game.UI.Runtime
             InstallRoot(loadingContentPrefab, UIShellRegionId.LoadingLayer);
         }
 
-        public void InstallMenuRouteBody(UIRoute route)
-        {
-            CommanderProfileRouteLifecyclePresentation.InstallMenuRouteBody(this, route);
-        }
-
-        internal void InstallSkirmishSetupBody()
-        {
-            UnbindMatchHudThreatWarningHeader();
-            CommanderProfileRouteLifecyclePresentation.ExitCommanderRoute(this);
-            ClearRegion(UIShellRegionId.LeftRegion);
-            ClearRegion(UIShellRegionId.MiddleRegion);
-            ClearRegion(UIShellRegionId.RightRegion);
-            ClearRegion(UIShellRegionId.FooterRegion);
-            GameObject setup = InstallRoot(skirmishSetupContentPrefab, UIShellRegionId.PopupLayer);
-            BindQuickCustomScreens(setup);
-        }
-
-        internal void InstallCampaignBody()
-        {
-            UnbindMatchHudThreatWarningHeader();
-            CommanderProfileRouteLifecyclePresentation.ExitCommanderRoute(this);
-            ClearRegion(UIShellRegionId.LeftRegion);
-            ClearRegion(UIShellRegionId.MiddleRegion);
-            ClearRegion(UIShellRegionId.RightRegion);
-            ClearRegion(UIShellRegionId.FooterRegion);
-            InstallRoot(campaignContentPrefab, UIShellRegionId.PopupLayer);
-        }
-
-        internal void InstallMissionBriefingBody()
-        {
-            UnbindMatchHudThreatWarningHeader();
-            CommanderProfileRouteLifecyclePresentation.ExitCommanderRoute(this);
-            ClearRegion(UIShellRegionId.LeftRegion);
-            ClearRegion(UIShellRegionId.MiddleRegion);
-            ClearRegion(UIShellRegionId.RightRegion);
-            ClearRegion(UIShellRegionId.FooterRegion);
-            InstallRoot(missionBriefingContentPrefab, UIShellRegionId.PopupLayer);
-        }
+        public void InstallMenuRouteBody(UIRoute route) => MenuOverlayRoutePresentation.Install(this, route);
 
         internal void InstallArmoryBody()
         {
@@ -799,7 +762,7 @@ namespace Game.UI.Runtime
             _resourceExchangePopupCloseButtonListener = null;
         }
 
-        private GameObject InstallRoot(GameObject prefab, UIShellRegionId regionId)
+        internal GameObject InstallRoot(GameObject prefab, UIShellRegionId regionId)
         {
             if (prefab == null || !TryGetRegionContentRoot(regionId, out RectTransform contentRoot))
                 return null;

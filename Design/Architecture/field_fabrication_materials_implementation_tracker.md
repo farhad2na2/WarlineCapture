@@ -1,7 +1,7 @@
 # Field Fabrication And Materials Implementation Tracker
 
 Date: 2026-07-12
-Status: In progress - Phase 6 selected-depot UI and typed disabled reasons
+Status: In progress - Phase 6 selected-depot UI
 Design source: `../Field_Fabrication_Materials_Design.md`
 
 ## Objective
@@ -73,9 +73,9 @@ Dependency direction remains inward toward components/config/contracts/runtime. 
 
 ## Progress Summary
 
-Overall implementation progress: 71% (73/103 checklist items complete).
+Overall implementation progress: 72% (74/103 checklist items complete).
 
-Planning, canonical resource ownership, depot config/projection, automated Oil routing, Oil-to-Materials conversion, authored construction costs, atomic dual-resource placement, and Build Drawer dual-cost presentation are complete. Active depots consume only unreserved physical Oil at the existing one-second cadence. Player placement resolves authored costs, reserves canonical Credits and Materials after geometry validation, and finalizes or refunds both by a typed transaction id. Phase 6 continues with selected-depot status and typed disabled reasons.
+Planning, canonical resource ownership, depot config/projection, automated Oil routing, Oil-to-Materials conversion, authored construction costs, atomic dual-resource placement, Build Drawer dual-cost presentation, and typed affordability reasons are complete. Active depots consume only unreserved physical Oil at the existing one-second cadence. Player placement resolves authored costs, reserves canonical Credits and Materials after geometry validation, and finalizes or refunds both by a typed transaction id. Phase 6 continues with selected-depot status and controls.
 
 Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation row counts. Update the numerator, denominator, table, status, and evidence log in the same commit as each completed batch.
 
@@ -87,7 +87,7 @@ Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation 
 | 3. Oil destination routing | Complete | 11 | 11 | 100% | Tray delivery, demand scoring, stable assignment, reservations, cleanup, and refinery regressions pass. |
 | 4. Oil-to-Materials conversion | Complete | 11 | 11 | 100% | Conversion is deterministic, capacity-safe, typed, reservation-aware, and no-GC. |
 | 5. Credits + Materials construction | Complete | 11 | 11 | 100% | Atomic placement, rollback, authored cost projection, and Build Drawer dual-cost presentation pass. |
-| 6. HUD and selected-building UI | In progress | 5 | 11 | 45% | Live canonical Credits/Materials header and Build Drawer dual-cost projection pass. Selected-depot status and typed disabled reasons remain. |
+| 6. HUD and selected-building UI | In progress | 6 | 11 | 55% | Live canonical Credits/Materials header, Build Drawer dual-cost projection, and typed affordability reasons pass. Selected-depot status remains. |
 | 7. Exchange and balance safety | Pending | 0 | 8 | 0% | Import is expensive recovery; no arbitrage exists. |
 | 8. AI, telemetry, and scenario safety | Pending | 0 | 7 | 0% | AI shares rules; scenarios cannot deadlock silently. |
 | 9. Integration, performance, and closeout | Pending | 0 | 9 | 0% | Architecture, GC, profiler, gameplay, and docs pass. |
@@ -259,7 +259,7 @@ Phase 5 exit criteria:
 - [x] Add a versioned header Materials read model in the existing UI shell ECS boundary.
 - [x] Avoid per-frame Materials string formatting when source version is unchanged.
 - [x] Extend Build Drawer cards/details to show Credits and Materials costs.
-- [ ] Bind typed disabled reasons without calculating affordability in Canvas views.
+- [x] Bind typed disabled reasons without calculating affordability in Canvas views.
 - [ ] Add a versioned selected-depot read model with Oil input, rate, progress, output, faction Materials, and status.
 - [ ] Add production enabled/disabled command only through typed ECS request/result data.
 - [ ] Keep Resource Header tap routing to Exchange scenario-gated and input-safe.
@@ -515,3 +515,12 @@ For every completed batch append:
 - Final review found that a failed multi-segment wall registration could previously leave paid partial structures. Wall commit is now atomic: any failed segment immediately removes all registrations and ECS blocker/combat entities created by that command, destroys their visuals, preserves the preview for retry, and permits the resource transaction to roll back. Focused wall commit passed 5/5 and construction settlement passed 6/6, including exact Credits and Materials restoration. Evidence: `/private/tmp/wlc-field-fabrication-phase5-atomic-wall-commit.log` and `/private/tmp/wlc-field-fabrication-phase5-atomic-wall-transaction.log`.
 - Final combined validation passed the 31-test assembly/naming boundary contract and the 10-test Burst hot-path ratchet after a full Unity compile. The assembly run emitted its passing marker before Unity force-closed a lingering Asset Import Worker during shutdown; the Burst run exited cleanly. Evidence: `/private/tmp/wlc-field-fabrication-phase5-final-architecture.log` and `/private/tmp/wlc-field-fabrication-phase5-final-burst.log`.
 - Phase 5 is complete at 11/11. Checklist count is 73/103. Next action: implement selected Field Fabrication Depot status/progress and typed disabled reasons through the existing selected-building read-model and presentation boundaries.
+
+### 2026-07-13 - Phase 6A Typed Build Affordability Presentation
+
+- Extended configured-building preflight to evaluate authored Credits and Materials through the canonical `FactionConstructionResourceUtilitySystemHelper` boundary. Runtime and UI contracts preserve typed insufficient-Credits, insufficient-Materials, and combined failures without introducing another wallet or affordability calculation.
+- Build Drawer ECS catalog rows now publish `Enabled` plus `DisabledReason`; selected detail publishes the same reason and derives `BuildEnabled` from it. The managed gateway preserves the typed row reason.
+- The active Canvas Build Drawer consumes `IBuildingUiCommand.GetCampRequestFailure` for row and primary-action state. It no longer subtracts UI prices from a displayed Credits balance or calculates missing resources in the view. Typed localized feedback covers Credits, Materials, and combined shortages.
+- Focused Unity validation passed: Build Drawer dual-cost and disabled-reason projection 6/6, building production request regression 30/30, assembly/naming boundaries 31/31, and ECS Burst hot-path architecture 10/10. Generated `Game.Runtime` and `Game.Tests.Editor` builds completed with zero errors; `git diff --check` passed.
+- Evidence: `/private/tmp/wlc-field-fabrication-phase6-build-drawer.log`, `/private/tmp/wlc-field-fabrication-phase6-production.log`, `/private/tmp/wlc-field-fabrication-phase6-architecture.log`, and `/private/tmp/wlc-field-fabrication-phase6-burst.log`.
+- Checklist count is 74/103. Phase 6 is 6/11. Next action: add the versioned selected-depot read model by joining authoritative fabrication, physical Oil storage, and faction Materials data through the existing selected-building UI query boundary.

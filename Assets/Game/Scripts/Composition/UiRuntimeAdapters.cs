@@ -77,6 +77,9 @@ namespace Game.Composition
                 BuildingUiCommandSystemHelper.CampRequestFailure.InvalidSelection => BuildingUiCommandFailure.InvalidSelection,
                 BuildingUiCommandSystemHelper.CampRequestFailure.ProductionQueueFull => BuildingUiCommandFailure.ProductionQueueFull,
                 BuildingUiCommandSystemHelper.CampRequestFailure.GlobalProductionQueueFull => BuildingUiCommandFailure.GlobalProductionQueueFull,
+                BuildingUiCommandSystemHelper.CampRequestFailure.InsufficientCredits => BuildingUiCommandFailure.InsufficientCredits,
+                BuildingUiCommandSystemHelper.CampRequestFailure.InsufficientMaterials => BuildingUiCommandFailure.InsufficientMaterials,
+                BuildingUiCommandSystemHelper.CampRequestFailure.InsufficientCreditsAndMaterials => BuildingUiCommandFailure.InsufficientCreditsAndMaterials,
                 _ => BuildingUiCommandFailure.InvalidSelection
             };
         }

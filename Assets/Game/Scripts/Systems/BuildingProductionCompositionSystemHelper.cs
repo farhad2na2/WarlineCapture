@@ -70,7 +70,8 @@ namespace Game.Runtime
                 () => source.BuildingGameplayEcsQueryCompositionSystemHelper.SelectedUnitsQuery,
                 runtimeSource.TryGetRuntimeBuilding,
                 runtimeSource.GetEffectivePlacementRect,
-                source.PrepareTransportDropVisual);
+                source.PrepareTransportDropVisual,
+                source.RuntimeResourceUtilitySystemHelper.EvaluateConstructionResources);
             return productionSource;
         }
 

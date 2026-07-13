@@ -50,6 +50,7 @@ namespace Game.Runtime
             public readonly BuildingResourceHaulerBridgeCompositionSystemHelper.TryGetRuntimeBuildingDelegate TryGetRuntimeBuilding;
             public readonly BuildingResourceHaulerBridgeCompositionSystemHelper.GetEffectivePlacementRectDelegate GetEffectivePlacementRect;
             public readonly BuildingProductionTransportPresentationSystemHelper.PrepareTransportDropVisualDelegate PrepareTransportDropVisual;
+            public readonly BuildingProductionRequestSystemHelper.EvaluateConstructionResourcesDelegate EvaluateConstructionResources;
 
             public Source(
                 IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
@@ -91,7 +92,8 @@ namespace Game.Runtime
                 BuildingResourceHaulerBridgeCompositionSystemHelper.GetEntityQueryDelegate getSelectedUnitsQuery,
                 BuildingResourceHaulerBridgeCompositionSystemHelper.TryGetRuntimeBuildingDelegate tryGetRuntimeBuilding,
                 BuildingResourceHaulerBridgeCompositionSystemHelper.GetEffectivePlacementRectDelegate getEffectivePlacementRect,
-                BuildingProductionTransportPresentationSystemHelper.PrepareTransportDropVisualDelegate prepareTransportDropVisual = null)
+                BuildingProductionTransportPresentationSystemHelper.PrepareTransportDropVisualDelegate prepareTransportDropVisual = null,
+                BuildingProductionRequestSystemHelper.EvaluateConstructionResourcesDelegate evaluateConstructionResources = null)
             {
                 RuntimeBuildings = runtimeBuildings;
                 WorldCamera = worldCamera;
@@ -133,6 +135,7 @@ namespace Game.Runtime
                 TryGetRuntimeBuilding = tryGetRuntimeBuilding;
                 GetEffectivePlacementRect = getEffectivePlacementRect;
                 PrepareTransportDropVisual = prepareTransportDropVisual;
+                EvaluateConstructionResources = evaluateConstructionResources;
             }
         }
 
@@ -176,7 +179,8 @@ namespace Game.Runtime
             BuildingResourceHaulerBridgeCompositionSystemHelper.GetEntityQueryDelegate getSelectedUnitsQuery,
             BuildingResourceHaulerBridgeCompositionSystemHelper.TryGetRuntimeBuildingDelegate tryGetRuntimeBuilding,
             BuildingResourceHaulerBridgeCompositionSystemHelper.GetEffectivePlacementRectDelegate getEffectivePlacementRect,
-            BuildingProductionTransportPresentationSystemHelper.PrepareTransportDropVisualDelegate prepareTransportDropVisual = null)
+            BuildingProductionTransportPresentationSystemHelper.PrepareTransportDropVisualDelegate prepareTransportDropVisual = null,
+            BuildingProductionRequestSystemHelper.EvaluateConstructionResourcesDelegate evaluateConstructionResources = null)
         {
             return new Source(
                 runtimeBuildings,
@@ -218,7 +222,8 @@ namespace Game.Runtime
                 getSelectedUnitsQuery,
                 tryGetRuntimeBuilding,
                 getEffectivePlacementRect,
-                prepareTransportDropVisual);
+                prepareTransportDropVisual,
+                evaluateConstructionResources);
         }
 
         public BuildingProductionUpdateCompositionSystemHelper.Context CreateProductionUpdateContext(Source source)
@@ -307,7 +312,8 @@ namespace Game.Runtime
                 source.TryGetEntityManager == null
                     ? null
                     : (BuildingProductionRequestSystemHelper.TryGetEntityManagerDelegate)(
-                        (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager)));
+                        (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager)),
+                source.EvaluateConstructionResources);
         }
 
         public BuildingProductionQueueCompositionSystemHelper.QueueContext CreateProductionQueueContext(Source source)

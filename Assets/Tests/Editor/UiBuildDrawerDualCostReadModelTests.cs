@@ -23,7 +23,11 @@ public sealed class UiBuildDrawerDualCostReadModelTests
         {
             RunCase(test => test.WriteReadModel_BuildingDisplaysGroupedCreditsAndMaterials());
             RunCase(test => test.WriteReadModel_UnitRetainsGroupedCreditsAndEmptyMaterials());
-            Debug.Log("[UiBuildDrawerDualCostReadModelValidation] result=Passed tests=2");
+            RunCase(test => test.WriteReadModel_AvailableBuildingEnablesCatalogAndSelectedDetail());
+            RunCase(test => test.WriteReadModel_InsufficientCreditsDisablesCatalogAndSelectedDetail());
+            RunCase(test => test.WriteReadModel_InsufficientMaterialsDisablesCatalogAndSelectedDetail());
+            RunCase(test => test.WriteReadModel_InsufficientCreditsAndMaterialsDisablesCatalogAndSelectedDetail());
+            Debug.Log("[UiBuildDrawerDualCostReadModelValidation] result=Passed tests=6");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -152,6 +156,82 @@ public sealed class UiBuildDrawerDualCostReadModelTests
         Assert.IsEmpty(detail.SuppliesCostText.ToString());
     }
 
+    [Test]
+    public void WriteReadModel_AvailableBuildingEnablesCatalogAndSelectedDetail()
+    {
+        AssertBuildingAvailability(
+            BuildingUiCommandFailure.None,
+            expectedEnabled: true);
+    }
+
+    [Test]
+    public void WriteReadModel_InsufficientCreditsDisablesCatalogAndSelectedDetail()
+    {
+        AssertBuildingAvailability(
+            BuildingUiCommandFailure.InsufficientCredits,
+            expectedEnabled: false);
+    }
+
+    [Test]
+    public void WriteReadModel_InsufficientMaterialsDisablesCatalogAndSelectedDetail()
+    {
+        AssertBuildingAvailability(
+            BuildingUiCommandFailure.InsufficientMaterials,
+            expectedEnabled: false);
+    }
+
+    [Test]
+    public void WriteReadModel_InsufficientCreditsAndMaterialsDisablesCatalogAndSelectedDetail()
+    {
+        AssertBuildingAvailability(
+            BuildingUiCommandFailure.InsufficientCreditsAndMaterials,
+            expectedEnabled: false);
+    }
+
+    private void AssertBuildingAvailability(
+        BuildingUiCommandFailure failure,
+        bool expectedEnabled)
+    {
+        BuildingPlacementSystemConfig buildings = CreateAsset<BuildingPlacementSystemConfig>();
+        GameObject building = CreateBuilding("Field Fabricator", 1234, 5678);
+        buildings.Spawnables.Add(building);
+
+        UiBuildDrawerReadModelSource.Configure(
+            null,
+            buildings,
+            new ConfigurableBuildingUiCommand(failure),
+            null,
+            Game.Composition.UiCatalogAuthoringMetadataUiSystemHelper.TryGetBuildingMetadata,
+            Game.Composition.UiCatalogAuthoringMetadataUiSystemHelper.TryGetUnitMetadata);
+
+        using World world = new($"{nameof(AssertBuildingAvailability)}_{failure}");
+        EntityManager entityManager = world.EntityManager;
+        Entity boundary = CreateBoundary(entityManager);
+        UiBuildDrawerStateComponent state = new()
+        {
+            ActiveCategory = BuildDrawerCategory.Buildings,
+            SelectedCatalogSlot = 0
+        };
+
+        UiBuildDrawerReadModelSource.WriteReadModel(
+            entityManager,
+            boundary,
+            ref state,
+            entityManager.GetBuffer<UiBuildDrawerCatalogItemComponent>(boundary),
+            entityManager.GetBuffer<UiBuildDrawerQueueRowComponent>(boundary));
+
+        DynamicBuffer<UiBuildDrawerCatalogItemComponent> catalog =
+            entityManager.GetBuffer<UiBuildDrawerCatalogItemComponent>(boundary);
+        UiBuildDrawerDetailComponent detail =
+            entityManager.GetComponentData<UiBuildDrawerDetailComponent>(boundary);
+
+        Assert.AreEqual(1, catalog.Length);
+        Assert.AreEqual(expectedEnabled ? (byte)1 : (byte)0, catalog[0].Enabled);
+        Assert.AreEqual(failure, catalog[0].DisabledReason);
+        Assert.AreEqual(expectedEnabled ? (byte)1 : (byte)0, detail.BuildEnabled);
+        Assert.AreEqual(failure, detail.DisabledReason);
+    }
+
     private static BuildDrawerCatalogQueryUiSystemHelper ConfigureQuery()
     {
         var query = new BuildDrawerCatalogQueryUiSystemHelper();
@@ -210,8 +290,23 @@ public sealed class UiBuildDrawerDualCostReadModelTests
         return prefab;
     }
 
-    private sealed class AvailableBuildingUiCommand : IBuildingUiCommand
+    private sealed class AvailableBuildingUiCommand : ConfigurableBuildingUiCommand
     {
+        public AvailableBuildingUiCommand()
+            : base(BuildingUiCommandFailure.None)
+        {
+        }
+    }
+
+    private class ConfigurableBuildingUiCommand : IBuildingUiCommand
+    {
+        private readonly BuildingUiCommandFailure _failure;
+
+        public ConfigurableBuildingUiCommand(BuildingUiCommandFailure failure)
+        {
+            _failure = failure;
+        }
+
         public int CurrentDollars => int.MaxValue;
         public bool HasPendingBuildingPlacement => false;
         public bool CanConfirmBuildingPlacement => false;
@@ -226,7 +321,7 @@ public sealed class UiBuildDrawerDualCostReadModelTests
             out string requiredBuildingDisplayName)
         {
             requiredBuildingDisplayName = string.Empty;
-            return BuildingUiCommandFailure.None;
+            return _failure;
         }
 
         public BuildingUiCommandFailure TryRequestCampItem(
@@ -236,7 +331,7 @@ public sealed class UiBuildDrawerDualCostReadModelTests
             bool focusProducerOnSuccess)
         {
             requiredBuildingDisplayName = string.Empty;
-            return BuildingUiCommandFailure.None;
+            return _failure;
         }
 
         public bool CancelProduction(int buildingId, int pendingProductionIndex) => false;

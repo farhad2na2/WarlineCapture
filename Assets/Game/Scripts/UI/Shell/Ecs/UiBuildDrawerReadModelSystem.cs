@@ -171,11 +171,13 @@ namespace Game.UI.Shell.Ecs
             for (int i = 0; i < visibleCatalogCount; i++)
             {
                 BuildDrawerCatalogItem item = CatalogItems[i];
+                BuildingUiCommandFailure failure = GetCampRequestFailure(item, out _);
                 catalog.Add(new UiBuildDrawerCatalogItemComponent
                 {
                     Visible = 1,
-                    Enabled = 1,
+                    Enabled = failure == BuildingUiCommandFailure.None ? (byte)1 : (byte)0,
                     Selected = i == selectedSlot ? (byte)1 : (byte)0,
+                    DisabledReason = failure,
                     Category = item.Category,
                     ThumbnailSpriteKey = ToSpriteKey(item.CardPortrait),
                     Title = ToFixed64(item.DisplayName),
@@ -189,10 +191,7 @@ namespace Game.UI.Shell.Ecs
 
         private static UiBuildDrawerDetailComponent BuildDetail(BuildDrawerCatalogItem item)
         {
-            string requiredBuildingDisplayName = string.Empty;
-            BuildingUiCommandFailure failure = buildingUiCommand != null
-                ? buildingUiCommand.GetCampRequestFailure(item.Prefab, item.Price, out requiredBuildingDisplayName)
-                : BuildingUiCommandFailure.InvalidSelection;
+            BuildingUiCommandFailure failure = GetCampRequestFailure(item, out string requiredBuildingDisplayName);
 
             bool canBuild = buildingUiCommand != null && failure == BuildingUiCommandFailure.None;
             string instruction = canBuild
@@ -224,6 +223,7 @@ namespace Game.UI.Shell.Ecs
                 InstructionText = ToFixed128(instruction),
                 ProductionTitle = ToFixed32(GameText.Get("build.drawer.production.title", "PRODUCTION")),
                 ProductionCountText = ToFixed32(PendingProductions.Count.ToString(CultureInfo.InvariantCulture)),
+                DisabledReason = failure,
                 BuildEnabled = canBuild ? (byte)1 : (byte)0,
                 RushEnabled = 0,
                 ClearEnabled = buildingUiCommand != null && PendingProductions.Count > 0 ? (byte)1 : (byte)0,
@@ -247,6 +247,7 @@ namespace Game.UI.Shell.Ecs
                 InstructionText = ToFixed128(FormatEmptyCategoryInstruction(category)),
                 ProductionTitle = ToFixed32(GameText.Get("build.drawer.production.title", "PRODUCTION")),
                 ProductionCountText = ToFixed32(PendingProductions.Count.ToString(CultureInfo.InvariantCulture)),
+                DisabledReason = BuildingUiCommandFailure.InvalidSelection,
                 BuildEnabled = 0,
                 RushEnabled = 0,
                 ClearEnabled = buildingUiCommand != null && PendingProductions.Count > 0 ? (byte)1 : (byte)0,
@@ -403,7 +404,13 @@ namespace Game.UI.Shell.Ecs
             return failure switch
             {
                 BuildingUiCommandFailure.NotEnoughMoney =>
-                    GameText.Format("build.drawer.failure.not_enough_money", "Need {0} more credits to {1} {2}.", FormatMissingCredits(item.Price), FormatActionVerb(item.Category).ToLowerInvariant(), item.DisplayName),
+                    GameText.Format("build.drawer.failure.insufficient_credits", "Cannot {0} {1}: insufficient credits.", FormatActionVerb(item.Category).ToLowerInvariant(), item.DisplayName),
+                BuildingUiCommandFailure.InsufficientCredits =>
+                    GameText.Format("build.drawer.failure.insufficient_credits", "Cannot {0} {1}: insufficient credits.", FormatActionVerb(item.Category).ToLowerInvariant(), item.DisplayName),
+                BuildingUiCommandFailure.InsufficientMaterials =>
+                    GameText.Format("build.drawer.failure.insufficient_materials", "Cannot {0} {1}: insufficient materials.", FormatActionVerb(item.Category).ToLowerInvariant(), item.DisplayName),
+                BuildingUiCommandFailure.InsufficientCreditsAndMaterials =>
+                    GameText.Format("build.drawer.failure.insufficient_credits_and_materials", "Cannot {0} {1}: insufficient credits and materials.", FormatActionVerb(item.Category).ToLowerInvariant(), item.DisplayName),
                 BuildingUiCommandFailure.MissingProducerBuilding when !string.IsNullOrWhiteSpace(requiredBuildingDisplayName) =>
                     GameText.Format("build.drawer.failure.missing_producer_named", "Cannot {0} {1}: requires {2}.", FormatActionVerb(item.Category).ToLowerInvariant(), item.DisplayName, requiredBuildingDisplayName),
                 BuildingUiCommandFailure.MissingProducerBuilding =>
@@ -424,10 +431,14 @@ namespace Game.UI.Shell.Ecs
             return Mathf.Max(0, buildingUiCommand != null ? buildingUiCommand.MaxQueuedUnitProductions : 25);
         }
 
-        private static int FormatMissingCredits(int price)
+        private static BuildingUiCommandFailure GetCampRequestFailure(
+            BuildDrawerCatalogItem item,
+            out string requiredBuildingDisplayName)
         {
-            int current = buildingUiCommand != null ? buildingUiCommand.CurrentDollars : 0;
-            return Mathf.Max(0, price - current);
+            requiredBuildingDisplayName = string.Empty;
+            return buildingUiCommand != null
+                ? buildingUiCommand.GetCampRequestFailure(item.Prefab, item.Price, out requiredBuildingDisplayName)
+                : BuildingUiCommandFailure.InvalidSelection;
         }
 
         private static string FormatActionVerb(BuildDrawerCategory category)

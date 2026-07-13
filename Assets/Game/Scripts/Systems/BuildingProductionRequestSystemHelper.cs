@@ -61,6 +61,9 @@ namespace Game.Runtime
         public delegate void LogWarningDelegate(string message);
         public delegate int CountFactionUnitsDelegate(byte factionId, string unitId);
         public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
+        public delegate FactionConstructionResourceMutationResult EvaluateConstructionResourcesDelegate(
+            int creditsCost,
+            int materialsCost);
         public delegate bool TryGetConfiguredUnitReadModelDelegate(
             int index,
             out GameObject prefab,
@@ -100,6 +103,7 @@ namespace Game.Runtime
             public readonly CountFactionUnitsDelegate CountRuntimeProducedUnitsForFaction;
             public readonly TryGetConfiguredUnitReadModelDelegate TryGetConfiguredUnitReadModel;
             public readonly TryGetEntityManagerDelegate TryGetEntityManager;
+            public readonly EvaluateConstructionResourcesDelegate EvaluateConstructionResources;
 
             public Context(
                 IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
@@ -130,7 +134,8 @@ namespace Game.Runtime
                 CountFactionUnitsDelegate countPendingProductionsForFaction,
                 CountFactionUnitsDelegate countRuntimeProducedUnitsForFaction,
                 TryGetConfiguredUnitReadModelDelegate tryGetConfiguredUnitReadModel = null,
-                TryGetEntityManagerDelegate tryGetEntityManager = null)
+                TryGetEntityManagerDelegate tryGetEntityManager = null,
+                EvaluateConstructionResourcesDelegate evaluateConstructionResources = null)
             {
                 RuntimeBuildings = runtimeBuildings;
                 ConfiguredSpawnableDefinitions = configuredSpawnableDefinitions;
@@ -161,6 +166,7 @@ namespace Game.Runtime
                 CountRuntimeProducedUnitsForFaction = countRuntimeProducedUnitsForFaction;
                 TryGetConfiguredUnitReadModel = tryGetConfiguredUnitReadModel;
                 TryGetEntityManager = tryGetEntityManager;
+                EvaluateConstructionResources = evaluateConstructionResources;
             }
         }
 
@@ -493,9 +499,13 @@ namespace Game.Runtime
             if (context.ConfiguredDefinitionsByPrefab != null &&
                 context.ConfiguredDefinitionsByPrefab.TryGetValue(prefab, out BuildingDefinition buildingDefinition))
             {
-                if (context.ResourceDollars < Mathf.Max(0, buildingDefinition?.CreditsCost ?? 0))
-                    return CampRequestFailure.NotEnoughMoney;
-                return CampRequestFailure.None;
+                int creditsCost = Mathf.Max(0, buildingDefinition?.CreditsCost ?? 0);
+                int materialsCost = Mathf.Max(0, buildingDefinition?.MaterialsCost ?? 0);
+                if (context.EvaluateConstructionResources == null)
+                    return context.ResourceDollars < creditsCost ? CampRequestFailure.InsufficientCredits : CampRequestFailure.None;
+
+                return MapConstructionResourceFailure(
+                    context.EvaluateConstructionResources(creditsCost, materialsCost));
             }
 
             int normalizedPrice = Mathf.Max(0, price);
@@ -516,6 +526,19 @@ namespace Game.Runtime
 
             requiredBuildingDisplayName = producerDisplayName;
             return CampRequestFailure.ProductionQueueFull;
+        }
+
+        private static CampRequestFailure MapConstructionResourceFailure(
+            FactionConstructionResourceMutationResult result)
+        {
+            return result switch
+            {
+                FactionConstructionResourceMutationResult.Applied => CampRequestFailure.None,
+                FactionConstructionResourceMutationResult.InsufficientCredits => CampRequestFailure.InsufficientCredits,
+                FactionConstructionResourceMutationResult.InsufficientMaterials => CampRequestFailure.InsufficientMaterials,
+                FactionConstructionResourceMutationResult.InsufficientCreditsAndMaterials => CampRequestFailure.InsufficientCreditsAndMaterials,
+                _ => CampRequestFailure.InvalidSelection
+            };
         }
 
         public CampRequestFailure TryRequestCampItem(

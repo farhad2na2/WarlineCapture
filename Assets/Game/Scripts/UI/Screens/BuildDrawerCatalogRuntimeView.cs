@@ -318,7 +318,8 @@ namespace Game.UI.Runtime
                 FormatDuration(model),
                 FormatRequirements(model));
             item.BindThumbnail(model.CardPortrait);
-            item.SetInteractable(true);
+            BuildingUiCommandFailure failure = GetCampRequestFailure(model, out _);
+            item.SetInteractable(failure == BuildingUiCommandFailure.None);
             item.SetSelected(false, view.SelectedItemFrameSprite);
 
             Button button = item.SelectionButton;
@@ -535,6 +536,7 @@ namespace Game.UI.Runtime
 
         private void BindDetail(BuildDrawerCatalogItem model)
         {
+            BuildingUiCommandFailure failure = GetCampRequestFailure(model, out _);
             view.BindDetail(
                 model.DisplayName,
                 model.TypeLabel,
@@ -547,7 +549,7 @@ namespace Game.UI.Runtime
                 model.ActionPortrait,
                 model.CardPortrait,
                 model.ActionLabel,
-                true);
+                failure == BuildingUiCommandFailure.None);
         }
 
         private void ClearDetail()
@@ -843,7 +845,7 @@ namespace Game.UI.Runtime
             string requiredBuildingDisplayName)
         {
             ApplyInstruction(FormatInstructionFailureMessage(failure, requiredBuildingDisplayName), BuildDrawerInstructionSeverity.Error);
-            TacticalCommandReasonCode reason = failure == BuildingUiCommandFailure.NotEnoughMoney
+            TacticalCommandReasonCode reason = IsResourceFailure(failure)
                 ? TacticalCommandReasonCode.InsufficientResources
                 : TacticalCommandReasonCode.BuildUnavailable;
             BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Rejected(
@@ -858,6 +860,9 @@ namespace Game.UI.Runtime
             return failure switch
             {
                 BuildingUiCommandFailure.NotEnoughMoney => _gameTextResolver.Get("build.drawer.failure.short.not_enough_money", "Insufficient credits."),
+                BuildingUiCommandFailure.InsufficientCredits => _gameTextResolver.Get("build.drawer.failure.short.insufficient_credits", "Insufficient credits."),
+                BuildingUiCommandFailure.InsufficientMaterials => _gameTextResolver.Get("build.drawer.failure.short.insufficient_materials", "Insufficient materials."),
+                BuildingUiCommandFailure.InsufficientCreditsAndMaterials => _gameTextResolver.Get("build.drawer.failure.short.insufficient_credits_and_materials", "Insufficient credits and materials."),
                 BuildingUiCommandFailure.MissingProducerBuilding when !string.IsNullOrWhiteSpace(requiredBuildingDisplayName) =>
                     _gameTextResolver.Format("build.drawer.failure.short.requires_named", "Requires {0}.", requiredBuildingDisplayName),
                 BuildingUiCommandFailure.MissingProducerBuilding => _gameTextResolver.Get("build.drawer.failure.short.missing_producer", "Required producer is missing."),
@@ -927,7 +932,13 @@ namespace Game.UI.Runtime
             return failure switch
             {
                 BuildingUiCommandFailure.NotEnoughMoney =>
-                    _gameTextResolver.Format("build.drawer.failure.not_enough_money", "Need {0} more credits to {1} {2}.", FormatMissingCredits(), FormatActionVerb(_selectedItem.Category).ToLowerInvariant(), itemName),
+                    _gameTextResolver.Format("build.drawer.failure.insufficient_credits", "Cannot {0} {1}: insufficient credits.", FormatActionVerb(_selectedItem.Category).ToLowerInvariant(), itemName),
+                BuildingUiCommandFailure.InsufficientCredits =>
+                    _gameTextResolver.Format("build.drawer.failure.insufficient_credits", "Cannot {0} {1}: insufficient credits.", FormatActionVerb(_selectedItem.Category).ToLowerInvariant(), itemName),
+                BuildingUiCommandFailure.InsufficientMaterials =>
+                    _gameTextResolver.Format("build.drawer.failure.insufficient_materials", "Cannot {0} {1}: insufficient materials.", FormatActionVerb(_selectedItem.Category).ToLowerInvariant(), itemName),
+                BuildingUiCommandFailure.InsufficientCreditsAndMaterials =>
+                    _gameTextResolver.Format("build.drawer.failure.insufficient_credits_and_materials", "Cannot {0} {1}: insufficient credits and materials.", FormatActionVerb(_selectedItem.Category).ToLowerInvariant(), itemName),
                 BuildingUiCommandFailure.MissingProducerBuilding when !string.IsNullOrWhiteSpace(requiredBuildingDisplayName) =>
                     _gameTextResolver.Format("build.drawer.failure.missing_producer_named", "Cannot {0} {1}: requires {2}.", FormatActionVerb(_selectedItem.Category).ToLowerInvariant(), itemName, requiredBuildingDisplayName),
                 BuildingUiCommandFailure.MissingProducerBuilding =>
@@ -948,12 +959,22 @@ namespace Game.UI.Runtime
             return Mathf.Max(0, _uiCommandSystem != null ? _uiCommandSystem.MaxQueuedUnitProductions : 25);
         }
 
-        private int FormatMissingCredits()
+        private BuildingUiCommandFailure GetCampRequestFailure(
+            BuildDrawerCatalogItem item,
+            out string requiredBuildingDisplayName)
         {
-            int current = _uiCommandSystem != null
-                ? _uiCommandSystem.CurrentDollars
-                : 0;
-            return Mathf.Max(0, _selectedItem.Price - current);
+            requiredBuildingDisplayName = string.Empty;
+            return _uiCommandSystem != null
+                ? _uiCommandSystem.GetCampRequestFailure(item.Prefab, item.Price, out requiredBuildingDisplayName)
+                : BuildingUiCommandFailure.InvalidSelection;
+        }
+
+        private static bool IsResourceFailure(BuildingUiCommandFailure failure)
+        {
+            return failure == BuildingUiCommandFailure.NotEnoughMoney ||
+                   failure == BuildingUiCommandFailure.InsufficientCredits ||
+                   failure == BuildingUiCommandFailure.InsufficientMaterials ||
+                   failure == BuildingUiCommandFailure.InsufficientCreditsAndMaterials;
         }
 
         private string FormatReadyInstruction(BuildDrawerCatalogItem model)

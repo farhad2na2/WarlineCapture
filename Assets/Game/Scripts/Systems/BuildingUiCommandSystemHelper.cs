@@ -50,7 +50,10 @@ namespace Game.Runtime
             MissingProducerBuilding = 2,
             InvalidSelection = 3,
             ProductionQueueFull = 4,
-            GlobalProductionQueueFull = 5
+            GlobalProductionQueueFull = 5,
+            InsufficientCredits = 6,
+            InsufficientMaterials = 7,
+            InsufficientCreditsAndMaterials = 8
         }
 
         public delegate bool TryGetConfiguredSpawnableDelegate(int index, out ConfiguredSpawnableEntry entry);

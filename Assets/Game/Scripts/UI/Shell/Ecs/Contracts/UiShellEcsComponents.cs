@@ -167,6 +167,7 @@ namespace Game.UI.Shell.Contracts.Ecs
         public FixedString128Bytes InstructionText;
         public FixedString32Bytes ProductionTitle;
         public FixedString32Bytes ProductionCountText;
+        public BuildingUiCommandFailure DisabledReason;
         public byte BuildEnabled;
         public byte RushEnabled;
         public byte ClearEnabled;
@@ -198,6 +199,7 @@ namespace Game.UI.Shell.Contracts.Ecs
         public byte Visible;
         public byte Enabled;
         public byte Selected;
+        public BuildingUiCommandFailure DisabledReason;
         public BuildDrawerCategory Category;
         public FixedString64Bytes ThumbnailSpriteKey;
         public FixedString64Bytes Title;

@@ -415,6 +415,7 @@ namespace Game.UI.Contracts
         public readonly bool Visible;
         public readonly bool Enabled;
         public readonly bool Selected;
+        public readonly BuildingUiCommandFailure DisabledReason;
         public readonly Sprite ThumbnailSprite;
         public readonly string Title;
         public readonly string Role;
@@ -430,7 +431,7 @@ namespace Game.UI.Contracts
             string creditsText,
             string suppliesText,
             string timeText)
-            : this(visible, enabled, false, null, title, role, creditsText, suppliesText, timeText)
+            : this(visible, enabled, false, BuildingUiCommandFailure.None, null, title, role, creditsText, suppliesText, timeText)
         {
         }
 
@@ -443,7 +444,7 @@ namespace Game.UI.Contracts
             string creditsText,
             string suppliesText,
             string timeText)
-            : this(visible, enabled, selected, null, title, role, creditsText, suppliesText, timeText)
+            : this(visible, enabled, selected, BuildingUiCommandFailure.None, null, title, role, creditsText, suppliesText, timeText)
         {
         }
 
@@ -457,10 +458,26 @@ namespace Game.UI.Contracts
             string creditsText,
             string suppliesText,
             string timeText)
+            : this(visible, enabled, selected, BuildingUiCommandFailure.None, thumbnailSprite, title, role, creditsText, suppliesText, timeText)
+        {
+        }
+
+        public UiBuildDrawerCatalogItemModel(
+            bool visible,
+            bool enabled,
+            bool selected,
+            BuildingUiCommandFailure disabledReason,
+            Sprite thumbnailSprite,
+            string title,
+            string role,
+            string creditsText,
+            string suppliesText,
+            string timeText)
         {
             Visible = visible;
             Enabled = enabled;
             Selected = selected;
+            DisabledReason = disabledReason;
             ThumbnailSprite = thumbnailSprite;
             Title = title;
             Role = role;

@@ -138,6 +138,10 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             tests.BuildingUiCampItemCommandRequest_StartsConfiguredPlacementAndWritesResult();
             tests.BuildingUiCampItemCommandRequest_QueuesUnitProductionAndWritesResult();
             tests.BuildingUiCampItemCommandRequest_RejectsFullProductionSlotsAndRefunds();
+            tests.GetCampRequestFailure_ConfiguredBuildingMapsAppliedConstructionResources();
+            tests.GetCampRequestFailure_ConfiguredBuildingMapsInsufficientCredits();
+            tests.GetCampRequestFailure_ConfiguredBuildingMapsInsufficientMaterials();
+            tests.GetCampRequestFailure_ConfiguredBuildingMapsInsufficientCreditsAndMaterials();
             tests.BuildingUiCommandEntityCache_ReusesWarmEntitiesWithoutManagedAllocation();
             tests.BuildingUiCommandEntityCache_RebindsWhenWorldChanges();
             tests.BuildingUiCommandEntityCache_RecoversDestroyedEntitiesAndRepairsBuffers();
@@ -155,7 +159,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             tests.BuildingSpawnCompositionSystemHelper_UsesBoundarySpawnPointWithoutManagedSlotArray();
             tests.BuildingSpawnCompositionSystemHelper_UsesBoundarySpawnPointForOverrideHelicopterSlot();
             tests.BuildingSpawnCompositionSystemHelper_UsesBoundarySpawnPointForAutomaticHelicopterSpawn();
-            Debug.Log("[BuildingProductionRequestValidation] result=Passed tests=26");
+            Debug.Log("[BuildingProductionRequestValidation] result=Passed tests=30");
             ValidationExit.Passed();
         }
         catch (Exception ex)
@@ -3229,6 +3233,91 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         }
     }
 
+    [Test]
+    public void GetCampRequestFailure_ConfiguredBuildingMapsAppliedConstructionResources()
+    {
+        AssertConfiguredBuildingPreflight(
+            FactionConstructionResourceMutationResult.Applied,
+            BuildingUiCommandSystemHelper.CampRequestFailure.None);
+    }
+
+    [Test]
+    public void GetCampRequestFailure_ConfiguredBuildingMapsInsufficientCredits()
+    {
+        AssertConfiguredBuildingPreflight(
+            FactionConstructionResourceMutationResult.InsufficientCredits,
+            BuildingUiCommandSystemHelper.CampRequestFailure.InsufficientCredits);
+    }
+
+    [Test]
+    public void GetCampRequestFailure_ConfiguredBuildingMapsInsufficientMaterials()
+    {
+        AssertConfiguredBuildingPreflight(
+            FactionConstructionResourceMutationResult.InsufficientMaterials,
+            BuildingUiCommandSystemHelper.CampRequestFailure.InsufficientMaterials);
+    }
+
+    [Test]
+    public void GetCampRequestFailure_ConfiguredBuildingMapsInsufficientCreditsAndMaterials()
+    {
+        AssertConfiguredBuildingPreflight(
+            FactionConstructionResourceMutationResult.InsufficientCreditsAndMaterials,
+            BuildingUiCommandSystemHelper.CampRequestFailure.InsufficientCreditsAndMaterials);
+    }
+
+    private static void AssertConfiguredBuildingPreflight(
+        FactionConstructionResourceMutationResult evaluationResult,
+        BuildingUiCommandSystemHelper.CampRequestFailure expectedFailure)
+    {
+        var prefab = new GameObject("Field Fabricator");
+        try
+        {
+            const int creditsCost = 1234;
+            const int materialsCost = 5678;
+            var definition = new BuildingDefinition
+            {
+                Prefab = prefab,
+                CreditsCost = creditsCost,
+                MaterialsCost = materialsCost
+            };
+            var definitions = new Dictionary<GameObject, BuildingDefinition>
+            {
+                [prefab] = definition
+            };
+            int evaluatedCreditsCost = -1;
+            int evaluatedMaterialsCost = -1;
+            BuildingProductionRequestSystemHelper.Context context = CreateCampItemRequestContext(
+                new Dictionary<int, RuntimeBuildingEntity>(),
+                new List<BuildingDefinition> { definition },
+                definitions,
+                Array.Empty<GameObject>(),
+                new Dictionary<string, GameObject>(),
+                _ => true,
+                _ => true,
+                _ => { },
+                _ => { },
+                (requestedCreditsCost, requestedMaterialsCost) =>
+                {
+                    evaluatedCreditsCost = requestedCreditsCost;
+                    evaluatedMaterialsCost = requestedMaterialsCost;
+                    return evaluationResult;
+                });
+
+            var requestSystem = new BuildingProductionRequestSystemHelper();
+            BuildingUiCommandSystemHelper.CampRequestFailure failure =
+                requestSystem.GetCampRequestFailure(context, prefab, price: 999999, out string requiredBuildingDisplayName);
+
+            Assert.AreEqual(expectedFailure, failure);
+            Assert.AreEqual(creditsCost, evaluatedCreditsCost);
+            Assert.AreEqual(materialsCost, evaluatedMaterialsCost);
+            Assert.IsEmpty(requiredBuildingDisplayName);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(prefab);
+        }
+    }
+
     private sealed class TestPendingProduction : BuildingProductionQueueCompositionSystemHelper.IPendingProduction
     {
         public int ProductionIndex { get; set; }
@@ -3300,7 +3389,8 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         BuildingProductionRequestSystemHelper.BeginPlacementForConfiguredSpawnableDelegate beginPlacement,
         BuildingProductionRequestSystemHelper.TrySpendDollarsDelegate trySpendDollars,
         BuildingProductionRequestSystemHelper.RefundDollarsDelegate refundDollars,
-        BuildingProductionRequestSystemHelper.SetActivePlacementCostDelegate setActivePlacementCost)
+        BuildingProductionRequestSystemHelper.SetActivePlacementCostDelegate setActivePlacementCost,
+        BuildingProductionRequestSystemHelper.EvaluateConstructionResourcesDelegate evaluateConstructionResources = null)
     {
         var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
         BuildingProductionQueueCompositionSystemHelper.QueueContext queueContext = new(
@@ -3337,7 +3427,8 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             _ => { },
             Debug.LogWarning,
             (_, _) => 0,
-            (_, _) => 0);
+            (_, _) => 0,
+            evaluateConstructionResources: evaluateConstructionResources);
     }
 
     private static BuildingProductionRequestSystemHelper.Context CreateProducerSelectionContext(

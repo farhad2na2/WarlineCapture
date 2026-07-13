@@ -75,6 +75,7 @@ namespace Game.UI.Shell.Ecs
                 item.Visible != 0,
                 item.Enabled != 0,
                 item.Selected != 0,
+                item.DisabledReason,
                 ResolveBuildDrawerSprite(item.ThumbnailSpriteKey),
                 item.Title.ToString(),
                 item.Role.ToString(),

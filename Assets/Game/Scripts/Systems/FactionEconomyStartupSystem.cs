@@ -124,7 +124,21 @@ namespace Game.Runtime
                         FactionId = factionId
                     });
                 }
+
+                EnsureMaterialFabricationEventQueue(em, economyEntity);
             }
+        }
+
+        private static void EnsureMaterialFabricationEventQueue(EntityManager em, Entity economyEntity)
+        {
+            if (!em.HasComponent<MaterialFabricationEconomyEventQueueComponent>(economyEntity))
+                em.AddComponentData(economyEntity, new MaterialFabricationEconomyEventQueueComponent());
+
+            DynamicBuffer<MaterialFabricationEconomyEventElement> events =
+                em.HasBuffer<MaterialFabricationEconomyEventElement>(economyEntity)
+                    ? em.GetBuffer<MaterialFabricationEconomyEventElement>(economyEntity)
+                    : em.AddBuffer<MaterialFabricationEconomyEventElement>(economyEntity);
+            events.EnsureCapacity(MaterialFabricationEconomyEventQueueComponent.Capacity);
         }
 
         private static bool ShouldIncludeAIConfig(

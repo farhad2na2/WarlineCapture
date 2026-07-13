@@ -25,6 +25,12 @@ namespace Game.Components
         BuildingDisabled = 5
     }
 
+    public enum MaterialFabricationEconomyEventKind : byte
+    {
+        CycleCompleted = 0,
+        StatusChanged = 1
+    }
+
     public struct MaterialFabricationComponent : IComponentData
     {
         public int RuntimeBuildingId;
@@ -42,5 +48,27 @@ namespace Game.Components
 
     public struct MaterialFabricationInputTag : IComponentData
     {
+    }
+
+    public struct MaterialFabricationEconomyEventQueueComponent : IComponentData
+    {
+        public const int Capacity = 16;
+
+        public int LastEventId;
+        public uint Version;
+    }
+
+    [InternalBufferCapacity(MaterialFabricationEconomyEventQueueComponent.Capacity)]
+    public struct MaterialFabricationEconomyEventElement : IBufferElementData
+    {
+        public int EventId;
+        public int RuntimeBuildingId;
+        public byte FactionId;
+        public MaterialFabricationEconomyEventKind EventKind;
+        public MaterialFabricationStatusCode Status;
+        public MaterialFabricationBlockReasonCode BlockReason;
+        public int CompletedCycles;
+        public float OilConsumedBarrels;
+        public int MaterialsProduced;
     }
 }

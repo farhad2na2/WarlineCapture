@@ -55,6 +55,30 @@ namespace Game.Runtime
             }
 
             em.SetComponentData(building.CombatEntity, new Faction { Id = building.OwnerFactionId });
+            if (em.HasComponent<BuildingResourceStorageComponent>(building.CombatEntity))
+            {
+                BuildingResourceStorageComponent storage =
+                    em.GetComponentData<BuildingResourceStorageComponent>(building.CombatEntity);
+                if (storage.OwnerFactionId != building.OwnerFactionId)
+                {
+                    storage.OwnerFactionId = building.OwnerFactionId;
+                    storage.Version = storage.Version == uint.MaxValue ? 1u : storage.Version + 1u;
+                    em.SetComponentData(building.CombatEntity, storage);
+                }
+            }
+
+            if (em.HasComponent<MaterialFabricationComponent>(building.CombatEntity))
+            {
+                MaterialFabricationComponent fabrication =
+                    em.GetComponentData<MaterialFabricationComponent>(building.CombatEntity);
+                if (fabrication.OwnerFactionId != building.OwnerFactionId)
+                {
+                    fabrication.OwnerFactionId = building.OwnerFactionId;
+                    fabrication.Version = fabrication.Version == uint.MaxValue ? 1u : fabrication.Version + 1u;
+                    em.SetComponentData(building.CombatEntity, fabrication);
+                }
+            }
+
             if (em.HasComponent<RuntimeBuildingCombatInfo>(building.CombatEntity))
             {
                 RuntimeBuildingCombatInfo info = em.GetComponentData<RuntimeBuildingCombatInfo>(building.CombatEntity);

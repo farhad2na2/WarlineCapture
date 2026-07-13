@@ -160,6 +160,24 @@ namespace Game.Runtime
             return true;
         }
 
+        public static bool TryConsumeAvailableSourceResource(
+            ref BuildingResourceStorageComponent source,
+            byte resourceKind,
+            float amount)
+        {
+            amount = math.max(0f, amount);
+            if (amount <= 0f || !HasEnoughSourceResource(source, resourceKind, amount))
+                return false;
+
+            if (resourceKind == FuelResourceKind)
+                source.StoredFuelBarrels = math.max(0f, source.StoredFuelBarrels - amount);
+            else
+                source.StoredOilBarrels = math.max(0f, source.StoredOilBarrels - amount);
+
+            IncrementVersion(ref source);
+            return true;
+        }
+
         public static bool TryCompleteReservedDelivery(
             ref BuildingResourceStorageComponent destination,
             byte resourceKind,

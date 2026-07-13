@@ -1,7 +1,7 @@
 # Field Fabrication And Materials Implementation Tracker
 
 Date: 2026-07-12
-Status: In progress - Phase 4 Oil-to-Materials conversion
+Status: In progress - Phase 5 Credits plus Materials construction
 Design source: `../Field_Fabrication_Materials_Design.md`
 
 ## Objective
@@ -73,9 +73,9 @@ Dependency direction remains inward toward components/config/contracts/runtime. 
 
 ## Progress Summary
 
-Overall implementation progress: 49% (50/103 checklist items complete).
+Overall implementation progress: 59% (61/103 checklist items complete).
 
-Planning, canonical resource ownership, depot config/projection, and automated Oil routing are complete. Tray trucks now recognize enabled same-faction fabrication inputs, use the existing reservation/movement/unload lifecycle, prioritize starved demand deterministically, and preserve valid active assignments. The existing `Building_Ammunition_Depot` compatibility id and refinery/tanker behavior remain intact.
+Planning, canonical resource ownership, depot config/projection, automated Oil routing, and Oil-to-Materials conversion are complete. Active depots now consume only unreserved physical Oil at the existing one-second cadence, grant canonical faction Materials atomically, publish bounded typed events, and expose deterministic status/progress without managed allocation. The existing `Building_Ammunition_Depot` compatibility id and refinery/tanker behavior remain intact.
 
 Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation row counts. Update the numerator, denominator, table, status, and evidence log in the same commit as each completed batch.
 
@@ -85,8 +85,8 @@ Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation 
 | 1. Canonical tactical Materials and Credits | Complete | 13 | 13 | 100% | Canonical Materials/Credits ownership, combined allocation-free construction transaction, HUD projection, Exchange ownership, and deterministic mutation coverage pass. |
 | 2. Config and building projection | Complete | 10 | 10 | 100% | Depot identity, authored balance, typed data, compatibility id, and map/runtime projection are validated. |
 | 3. Oil destination routing | Complete | 11 | 11 | 100% | Tray delivery, demand scoring, stable assignment, reservations, cleanup, and refinery regressions pass. |
-| 4. Oil-to-Materials conversion | In progress | 0 | 11 | 0% | Conversion is deterministic, capped, typed, and no-GC. |
-| 5. Credits + Materials construction | Pending | 0 | 11 | 0% | Placement spends both resources exactly once. |
+| 4. Oil-to-Materials conversion | Complete | 11 | 11 | 100% | Conversion is deterministic, capacity-safe, typed, reservation-aware, and no-GC. |
+| 5. Credits + Materials construction | In progress | 0 | 11 | 0% | Placement spends both resources exactly once. |
 | 6. HUD and selected-building UI | In progress | 4 | 11 | 36% | Live canonical Credits/Materials header projection is validated at 0 managed bytes. Build Drawer and selected-depot UI remain. |
 | 7. Exchange and balance safety | Pending | 0 | 8 | 0% | Import is expensive recovery; no arbitrage exists. |
 | 8. AI, telemetry, and scenario safety | Pending | 0 | 7 | 0% | AI shares rules; scenarios cannot deadlock silently. |
@@ -213,17 +213,17 @@ Phase 3 exit criteria:
 
 ## Phase 4: Oil-To-Materials Conversion
 
-- [ ] Implement `MaterialFabricationSystem` as Burst-compatible unmanaged `ISystem` unless profiling proves a documented managed boundary is unavoidable.
-- [ ] Tick at the existing authored/fixed building production cadence.
-- [ ] Consume Oil and grant integer Materials deterministically.
-- [ ] Clamp or reject output before Materials capacity overflow.
-- [ ] Stall with `NoOilInput`, `MaterialsCapacityFull`, `ProductionDisabled`, or applicable typed building state.
-- [ ] Resume automatically when the blocking condition clears.
-- [ ] Increment building and faction versions only when values/status actually change.
-- [ ] Emit typed economy/telemetry events without string formatting in simulation.
-- [ ] Test deterministic conversion across different render frame rates.
-- [ ] Test empty input, partial input, full Materials capacity, disable/resume, ownership, destruction, and exact-once output.
-- [ ] Warm and measure steady-state conversion at `0 B/frame` managed allocation.
+- [x] Implement `MaterialFabricationSystem` as Burst-compatible unmanaged `ISystem` unless profiling proves a documented managed boundary is unavoidable.
+- [x] Tick at the existing authored/fixed building production cadence.
+- [x] Consume Oil and grant integer Materials deterministically.
+- [x] Clamp or reject output before Materials capacity overflow.
+- [x] Stall with `NoOilInput`, `MaterialsCapacityFull`, `ProductionDisabled`, or applicable typed building state.
+- [x] Resume automatically when the blocking condition clears.
+- [x] Increment building and faction versions only when values/status actually change.
+- [x] Emit typed economy/telemetry events without string formatting in simulation.
+- [x] Test deterministic conversion across different render frame rates.
+- [x] Test empty input, partial input, full Materials capacity, disable/resume, ownership, destruction, and exact-once output.
+- [x] Warm and measure steady-state conversion at `0 B/frame` managed allocation.
 
 Phase 4 exit criteria:
 
@@ -485,3 +485,17 @@ For every completed batch append:
 - Script assembly boundaries passed 31/31 and ECS Burst hot-path architecture passed 10/10. The touched runtime remains in `Game.Runtime`; no assembly reference changed.
 - Evidence: `/private/tmp/wlc-field-fabrication-phase3-routing-final.log`, `/private/tmp/wlc-field-fabrication-phase3-architecture.log`, and `/private/tmp/wlc-field-fabrication-phase3-burst.log`.
 - Phase 3 is complete at 11/11. Checklist count is 50/103. Next action: implement the Burst-compatible unmanaged `MaterialFabricationSystem` against projected fabrication, physical Oil storage, and canonical faction Materials, with exact cycle/capacity/status behavior.
+
+### 2026-07-13 - Phase 4 Oil-To-Materials Conversion
+
+- Added active `MaterialFabricationSystem` in `Game.Runtime` as a Burst-compiled unmanaged `ISystem`. It accumulates simulation delta and processes depots at the existing one-second building-resource cadence only while `RuntimeGameplayStateComponent.SimulationActive` is set.
+- Added reusable persistent 256-faction entity/count arrays owned by the system. The arrays rebuild without snapshots or managed collections, require exactly one matching `FactionEconomy` plus `FactionTacticalMaterialsComponent` owner, and reject missing, duplicate, or mismatched ownership deterministically.
+- Conversion computes completed cycles arithmetically in O(1), consumes only Oil not reserved for outbound logistics, grants integer Materials through `FactionTacticalMaterialsUtilitySystemHelper`, and commits copied storage/materials state only after both mutations validate. Oil cannot become negative and output cannot exceed the authored Materials capacity.
+- Large deltas process every feasible cycle without a catch-up loop or hard cycle cap. Time after the exact point at which Oil or capacity blocks production is discarded, while valid sub-cycle progress is retained only while the next cycle can run. Render-frame partition tests produce identical resource totals.
+- Added typed `NoOilInput`, `MaterialsCapacityFull`, `ProductionDisabled`, and `BuildingDisabled` runtime transitions with automatic resume. `Disabled`, dead, and death-animation building state is rejected; ownership changes now update `Faction`, `RuntimeBuildingCombatInfo`, physical storage, and fabrication owner data coherently.
+- Added a startup-projected, fixed-capacity per-faction `MaterialFabricationEconomyEventElement` buffer. It emits aggregate cycle-completed and status-transition records with typed ids/status/reasons and no simulation strings; `LifetimeFabricated` remains the cumulative Materials telemetry authority.
+- Added `BuildingResourceStorageTransferSystemHelper.TryConsumeAvailableSourceResource` so fabrication shares existing reservation and changed-only storage-version rules. Fabrication and faction versions advance only when their values, progress, status, or reason actually change.
+- Focused validation passed 12/12: exact-once conversion, 30/60 fps partitioning, empty/partial/reserved Oil, full capacity and resume, production/building disable and resume, ownership mismatch, arithmetic large delta, changed-only versions, pure helper `0 B`, active world system behavior, bounded typed events, and 256 measured active world updates at `0 B` managed allocation after warmup.
+- Existing regressions passed: resource production/logistics 44/44, assembly boundaries 31/31, and ECS Burst hot-path architecture 10/10. The broad 58-test architecture suite still reports eight unrelated existing debts in rendering/UI/camera/static-registry ratchets; its temporary ninth failure was this slice's exported struct-return Burst annotation and was removed before final validation.
+- Evidence: `/private/tmp/wlc-field-fabrication-phase4-final.log`, `/private/tmp/wlc-field-fabrication-phase4-resource-regression.log`, `/private/tmp/wlc-field-fabrication-phase4-architecture.log`, `/private/tmp/wlc-field-fabrication-phase4-burst.log`, and `/private/tmp/wlc-field-fabrication-phase4-architecture.xml`.
+- Phase 4 is complete at 11/11. Checklist count is 61/103. Next action: add authored Materials construction costs and replace the UI-supplied building price path with stable-id-resolved atomic Credits plus Materials placement transactions.

@@ -910,6 +910,14 @@ namespace Game.Runtime
                 em.SetComponentData(economyEntity, materials);
             else
                 em.AddComponentData(economyEntity, materials);
+
+            if (!em.HasComponent<MaterialFabricationEconomyEventQueueComponent>(economyEntity))
+                em.AddComponentData(economyEntity, new MaterialFabricationEconomyEventQueueComponent());
+            DynamicBuffer<MaterialFabricationEconomyEventElement> events =
+                em.HasBuffer<MaterialFabricationEconomyEventElement>(economyEntity)
+                    ? em.GetBuffer<MaterialFabricationEconomyEventElement>(economyEntity)
+                    : em.AddBuffer<MaterialFabricationEconomyEventElement>(economyEntity);
+            events.EnsureCapacity(MaterialFabricationEconomyEventQueueComponent.Capacity);
         }
 
         internal static float ApplyInitialUsableFuelStorage(EntityManager em, int initialFuel)

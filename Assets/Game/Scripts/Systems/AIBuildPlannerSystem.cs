@@ -1,7 +1,6 @@
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Jobs;
 using Unity.Mathematics;
 using Game.Components;
 
@@ -21,7 +20,7 @@ namespace Game.Runtime
         private EntityTypeHandle _entityType;
         private ComponentTypeHandle<FactionEconomy> _economyType;
 
-        private enum BuildDecisionResult : byte
+        internal enum BuildDecisionResult : byte
         {
             None = 0,
             Pending = 1,
@@ -30,14 +29,7 @@ namespace Game.Runtime
             Request = 4
         }
 
-        private struct BuildCandidateEntry
-        {
-            public int EntryIndex;
-            public FixedString128Bytes BuildingId;
-            public byte IsValid;
-        }
-
-        private struct BuildDecision
+        internal struct BuildDecision
         {
             public BuildDecisionResult Result;
             public int EntryIndex;
@@ -126,7 +118,7 @@ namespace Game.Runtime
                         continue;
                     }
 
-                    DynamicBuffer<AIBuildPlanEntry> entries = em.GetBuffer<AIBuildPlanEntry>(planEntity);
+                    DynamicBuffer<AIBuildPlanEntry> entries = em.GetBuffer<AIBuildPlanEntry>(planEntity, true);
                     if (entries.Length == 0)
                     {
                         LogNoPlanIfNeeded(ref state, ref plan, now, shouldLog);
@@ -137,7 +129,13 @@ namespace Game.Runtime
                     if (plan.BaseCenterCell.x <= 0 && plan.BaseCenterCell.y <= 0)
                         plan.BaseCenterCell = ResolveDefaultBaseCenter(plan.FactionId, grid);
 
-                    BuildDecision decision = SelectBuildDecision(ref state, boundaryEntity, entries, plan, economy.Money);
+                    BuildDecision decision = SelectBuildDecision(
+                        entries,
+                        em.GetBuffer<BuildingConfiguredSpawnableReadModel>(boundaryEntity, true),
+                        em.GetBuffer<BuildingRuntimeOwnedBuildingSummary>(boundaryEntity, true),
+                        em.GetBuffer<BuildingRuntimeSpawnRequest>(boundaryEntity, true),
+                        plan,
+                        economy.Money);
                     bool handledDecision = decision.Result != BuildDecisionResult.None;
                     switch (decision.Result)
                     {
@@ -164,7 +162,7 @@ namespace Game.Runtime
                                 boundaryEntity,
                                 planEntity,
                                 plan.FactionId,
-                                decision.BuildingId.ToString(),
+                                decision.BuildingId,
                                 decision.EntryIndex,
                                 decision.PreferredOrigin,
                                 decision.Cost,
@@ -212,198 +210,191 @@ namespace Game.Runtime
             return records;
         }
 
-        private BuildDecision SelectBuildDecision(
-            ref SystemState state,
-            Entity boundaryEntity,
+        [BurstCompile]
+        internal static BuildDecision SelectBuildDecision(
             DynamicBuffer<AIBuildPlanEntry> entries,
+            DynamicBuffer<BuildingConfiguredSpawnableReadModel> spawnables,
+            DynamicBuffer<BuildingRuntimeOwnedBuildingSummary> ownedSummaries,
+            DynamicBuffer<BuildingRuntimeSpawnRequest> spawnRequests,
             AIBuildPlan plan,
             int economyMoney)
         {
-            using NativeList<BuildCandidateEntry> normalizedEntries = BuildNormalizedBuildEntries(entries);
-            using NativeArray<BuildingConfiguredSpawnableReadModel> spawnables =
-                CopyBoundaryBuffer<BuildingConfiguredSpawnableReadModel>(state.EntityManager, boundaryEntity, Allocator.TempJob);
-            using NativeArray<BuildingRuntimeOwnedBuildingSummary> ownedSummaries =
-                CopyBoundaryBuffer<BuildingRuntimeOwnedBuildingSummary>(state.EntityManager, boundaryEntity, Allocator.TempJob);
-            using NativeArray<BuildingRuntimeSpawnRequest> spawnRequests =
-                CopyBoundaryBuffer<BuildingRuntimeSpawnRequest>(state.EntityManager, boundaryEntity, Allocator.TempJob);
-            using NativeReference<BuildDecision> decision = new(Allocator.TempJob);
+            BuildDecision decision = default;
+            if (entries.Length == 0)
+                return decision;
 
-            new SelectBuildDecisionJob
+            int attempts = math.max(1, entries.Length);
+            for (int attempt = 0; attempt < attempts; attempt++)
             {
-                Entries = normalizedEntries.AsArray(),
-                Spawnables = spawnables,
-                OwnedSummaries = ownedSummaries,
-                SpawnRequests = spawnRequests,
-                Plan = plan,
-                EconomyMoney = economyMoney,
-                Decision = decision
-            }.Schedule(state.Dependency).Complete();
+                int candidateIndex = PositiveModulo(plan.NextBuildIndex + attempt, entries.Length);
+                FixedString128Bytes buildingId = NormalizeBuildId(entries[candidateIndex].BuildingId);
+                if (buildingId.Length == 0)
+                    continue;
 
-            return decision.Value;
-        }
-
-        private static NativeList<BuildCandidateEntry> BuildNormalizedBuildEntries(DynamicBuffer<AIBuildPlanEntry> entries)
-        {
-            NativeList<BuildCandidateEntry> normalizedEntries = new(entries.Length, Allocator.TempJob);
-            for (int i = 0; i < entries.Length; i++)
-            {
-                string buildingId = entries[i].BuildingId.ToString();
-                if (string.IsNullOrWhiteSpace(buildingId))
+                if (TryGetOwnedBuildingCount(ownedSummaries, buildingId, plan.FactionId, out int ownedCount) &&
+                    ownedCount > 0)
                 {
-                    normalizedEntries.Add(new BuildCandidateEntry
-                    {
-                        EntryIndex = i,
-                        IsValid = 0
-                    });
                     continue;
                 }
 
-                normalizedEntries.Add(new BuildCandidateEntry
+                decision.EntryIndex = candidateIndex;
+                decision.BuildingId = buildingId;
+                if (HasPendingSpawnRequest(spawnRequests, buildingId, plan.FactionId))
                 {
-                    EntryIndex = i,
-                    BuildingId = ToFixedString128(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(buildingId)),
-                    IsValid = 1
-                });
-            }
-
-            return normalizedEntries;
-        }
-
-        private static NativeArray<T> CopyBoundaryBuffer<T>(
-            EntityManager em,
-            Entity boundaryEntity,
-            Allocator allocator)
-            where T : unmanaged, IBufferElementData
-        {
-            if (!em.HasBuffer<T>(boundaryEntity))
-                return new NativeArray<T>(0, allocator);
-
-            DynamicBuffer<T> buffer = em.GetBuffer<T>(boundaryEntity, true);
-            NativeArray<T> copy = new(buffer.Length, allocator);
-            for (int i = 0; i < buffer.Length; i++)
-                copy[i] = buffer[i];
-
-            return copy;
-        }
-
-        [BurstCompile]
-        private struct SelectBuildDecisionJob : IJob
-        {
-            [ReadOnly] public NativeArray<BuildCandidateEntry> Entries;
-            [ReadOnly] public NativeArray<BuildingConfiguredSpawnableReadModel> Spawnables;
-            [ReadOnly] public NativeArray<BuildingRuntimeOwnedBuildingSummary> OwnedSummaries;
-            [ReadOnly] public NativeArray<BuildingRuntimeSpawnRequest> SpawnRequests;
-            public AIBuildPlan Plan;
-            public int EconomyMoney;
-            public NativeReference<BuildDecision> Decision;
-
-            public void Execute()
-            {
-                BuildDecision decision = default;
-                if (Entries.Length == 0)
-                {
-                    Decision.Value = decision;
-                    return;
-                }
-
-                int attempts = math.max(1, Entries.Length);
-                for (int attempt = 0; attempt < attempts; attempt++)
-                {
-                    int candidateIndex = PositiveModulo(Plan.NextBuildIndex + attempt, Entries.Length);
-                    BuildCandidateEntry entry = Entries[candidateIndex];
-                    if (entry.IsValid == 0)
-                        continue;
-
-                    if (TryGetOwnedBuildingCount(entry.BuildingId, Plan.FactionId, out int ownedCount) &&
-                        ownedCount > 0)
-                    {
-                        continue;
-                    }
-
-                    decision.EntryIndex = entry.EntryIndex;
-                    decision.BuildingId = entry.BuildingId;
-                    if (HasPendingSpawnRequest(entry.BuildingId, Plan.FactionId))
-                    {
-                        decision.Result = BuildDecisionResult.Pending;
-                        break;
-                    }
-
-                    if (!TryResolveSpawnableReadModel(entry.BuildingId, out BuildingConfiguredSpawnableReadModel spawnable) ||
-                        spawnable.CanRequest == 0)
-                    {
-                        decision.Result = BuildDecisionResult.MissingConfig;
-                        break;
-                    }
-
-                    int cost = math.max(0, spawnable.Price);
-                    decision.Spawnable = spawnable;
-                    decision.Cost = cost;
-                    if (EconomyMoney < cost)
-                    {
-                        decision.Result = BuildDecisionResult.InsufficientFunds;
-                        break;
-                    }
-
-                    decision.Result = BuildDecisionResult.Request;
-                    decision.PreferredOrigin = ResolvePreferredOriginCell(Plan.BaseCenterCell, entry.EntryIndex);
+                    decision.Result = BuildDecisionResult.Pending;
                     break;
                 }
 
-                Decision.Value = decision;
+                if (!TryResolveSpawnableReadModel(spawnables, buildingId, out BuildingConfiguredSpawnableReadModel spawnable) ||
+                    spawnable.CanRequest == 0)
+                {
+                    decision.Result = BuildDecisionResult.MissingConfig;
+                    break;
+                }
+
+                int cost = math.max(0, spawnable.Price);
+                decision.Spawnable = spawnable;
+                decision.Cost = cost;
+                if (economyMoney < cost)
+                {
+                    decision.Result = BuildDecisionResult.InsufficientFunds;
+                    break;
+                }
+
+                decision.Result = BuildDecisionResult.Request;
+                decision.PreferredOrigin = ResolvePreferredOriginCell(plan.BaseCenterCell, candidateIndex);
+                break;
             }
 
-            private bool TryResolveSpawnableReadModel(
-                FixedString128Bytes buildingId,
-                out BuildingConfiguredSpawnableReadModel spawnable)
-            {
-                for (int i = 0; i < Spawnables.Length; i++)
-                {
-                    BuildingConfiguredSpawnableReadModel candidate = Spawnables[i];
-                    if (!candidate.BuildingId.Equals(buildingId))
-                        continue;
+            return decision;
+        }
 
-                    spawnable = candidate;
+        private static FixedString128Bytes NormalizeBuildId(FixedString64Bytes buildingId)
+        {
+            FixedString128Bytes source = buildingId;
+            int start = 0;
+            while (start < source.Length)
+            {
+                int whitespaceBytes = GetWhitespaceByteCount(ref source, start);
+                if (whitespaceBytes == 0)
+                    break;
+
+                start += whitespaceBytes;
+            }
+
+            int end = source.Length;
+            while (end > start)
+            {
+                int whitespaceBytes = GetTrailingWhitespaceByteCount(ref source, end);
+                if (whitespaceBytes == 0)
+                    break;
+
+                end -= whitespaceBytes;
+            }
+
+            FixedString128Bytes normalized = source.Substring(start, end - start);
+            return normalized.ToLowerAscii();
+        }
+
+        private static int GetTrailingWhitespaceByteCount(ref FixedString128Bytes value, int end)
+        {
+            int oneByteStart = end - 1;
+            if (GetWhitespaceByteCount(ref value, oneByteStart) == 1)
+                return 1;
+            if (end >= 2 && GetWhitespaceByteCount(ref value, end - 2) == 2)
+                return 2;
+            return end >= 3 && GetWhitespaceByteCount(ref value, end - 3) == 3 ? 3 : 0;
+        }
+
+        private static int GetWhitespaceByteCount(ref FixedString128Bytes value, int index)
+        {
+            if (index < 0 || index >= value.Length)
+                return 0;
+
+            byte first = value[index];
+            if (first == (byte)' ' || (first >= 0x09 && first <= 0x0d))
+                return 1;
+
+            if (index + 1 < value.Length && first == 0xc2)
+            {
+                byte second = value[index + 1];
+                if (second == 0x85 || second == 0xa0)
+                    return 2;
+            }
+
+            if (index + 2 >= value.Length)
+                return 0;
+
+            byte middle = value[index + 1];
+            byte last = value[index + 2];
+            if (first == 0xe1 && middle == 0x9a && last == 0x80)
+                return 3;
+            if (first == 0xe2 && middle == 0x80 &&
+                ((last >= 0x80 && last <= 0x8a) || last == 0xa8 || last == 0xa9 || last == 0xaf))
+            {
+                return 3;
+            }
+            if (first == 0xe2 && middle == 0x81 && last == 0x9f)
+                return 3;
+            return first == 0xe3 && middle == 0x80 && last == 0x80 ? 3 : 0;
+        }
+
+        private static bool TryResolveSpawnableReadModel(
+            DynamicBuffer<BuildingConfiguredSpawnableReadModel> spawnables,
+            FixedString128Bytes buildingId,
+            out BuildingConfiguredSpawnableReadModel spawnable)
+        {
+            for (int i = 0; i < spawnables.Length; i++)
+            {
+                BuildingConfiguredSpawnableReadModel candidate = spawnables[i];
+                if (!candidate.BuildingId.Equals(buildingId))
+                    continue;
+
+                spawnable = candidate;
+                return true;
+            }
+
+            spawnable = default;
+            return false;
+        }
+
+        private static bool TryGetOwnedBuildingCount(
+            DynamicBuffer<BuildingRuntimeOwnedBuildingSummary> ownedSummaries,
+            FixedString128Bytes buildingId,
+            byte factionId,
+            out int count)
+        {
+            for (int i = 0; i < ownedSummaries.Length; i++)
+            {
+                BuildingRuntimeOwnedBuildingSummary summary = ownedSummaries[i];
+                if (summary.FactionId != factionId || !summary.BuildingId.Equals(buildingId))
+                    continue;
+
+                count = summary.Count;
+                return true;
+            }
+
+            count = 0;
+            return false;
+        }
+
+        private static bool HasPendingSpawnRequest(
+            DynamicBuffer<BuildingRuntimeSpawnRequest> spawnRequests,
+            FixedString128Bytes buildingId,
+            byte factionId)
+        {
+            for (int i = 0; i < spawnRequests.Length; i++)
+            {
+                BuildingRuntimeSpawnRequest request = spawnRequests[i];
+                if (request.FactionId == factionId &&
+                    request.BuildingId.Equals(buildingId) &&
+                    request.Status == BuildingRuntimeSpawnRequest.Pending)
+                {
                     return true;
                 }
-
-                spawnable = default;
-                return false;
             }
 
-            private bool TryGetOwnedBuildingCount(
-                FixedString128Bytes buildingId,
-                byte factionId,
-                out int count)
-            {
-                for (int i = 0; i < OwnedSummaries.Length; i++)
-                {
-                    BuildingRuntimeOwnedBuildingSummary summary = OwnedSummaries[i];
-                    if (summary.FactionId != factionId || !summary.BuildingId.Equals(buildingId))
-                        continue;
-
-                    count = summary.Count;
-                    return true;
-                }
-
-                count = 0;
-                return false;
-            }
-
-            private bool HasPendingSpawnRequest(FixedString128Bytes buildingId, byte factionId)
-            {
-                for (int i = 0; i < SpawnRequests.Length; i++)
-                {
-                    BuildingRuntimeSpawnRequest request = SpawnRequests[i];
-                    if (request.FactionId == factionId &&
-                        request.BuildingId.Equals(buildingId) &&
-                        request.Status == BuildingRuntimeSpawnRequest.Pending)
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
+            return false;
         }
 
         private static bool TryFindEconomyRecord(
@@ -464,7 +455,7 @@ namespace Game.Runtime
             Entity boundaryEntity,
             Entity planEntity,
             byte factionId,
-            string buildingId,
+            FixedString128Bytes buildingId,
             int entryIndex,
             int2 preferredOrigin,
             int cost,
@@ -477,7 +468,7 @@ namespace Game.Runtime
                 RequestId = ++_nextBuildSpawnRequestId,
                 FactionId = factionId,
                 HasOwnerFaction = 1,
-                BuildingId = ToFixedString128(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(buildingId)),
+                BuildingId = buildingId,
                 PreferredOrigin = preferredOrigin,
                 Status = BuildingRuntimeSpawnRequest.Pending,
                 PlanEntity = planEntity,
@@ -626,11 +617,6 @@ namespace Game.Runtime
             plan.LastLogTime = now;
             if (shouldLog)
                 EnqueueDiagnostic(ref state, $"[AIBuild] faction={plan.FactionId} result=NoPlan");
-        }
-
-        private static FixedString128Bytes ToFixedString128(string value)
-        {
-            return new FixedString128Bytes(value ?? string.Empty);
         }
 
         private readonly struct FactionEconomyRecord

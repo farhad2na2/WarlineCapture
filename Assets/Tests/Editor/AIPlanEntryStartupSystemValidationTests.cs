@@ -16,9 +16,10 @@ public sealed class AIPlanEntryStartupSystemValidationTests
             var tests = new AIPlanEntryStartupSystemValidationTests();
             tests.WriteBuildPlanEntries_UsesPreferredIdsBeforeFallbackDefaults();
             tests.WriteBuildPlanEntries_UsesFallbackDefaultsWhenPreferencesAreEmpty();
+            tests.WriteBuildPlanEntries_StoresInvariantCanonicalIds();
             tests.WriteProductionPlanEntries_CombinesPreferredUnitsAndVehiclesBeforeFallbackDefault();
             tests.WriteProductionPlanEntries_UsesFallbackDefaultWhenPreferencesAreEmpty();
-            UnityEngine.Debug.Log("[AIPlanEntryStartupValidation] result=Passed tests=4");
+            UnityEngine.Debug.Log("[AIPlanEntryStartupValidation] result=Passed tests=5");
         }
         catch (System.Exception exception)
         {
@@ -43,8 +44,8 @@ public sealed class AIPlanEntryStartupSystemValidationTests
             LoadPlanEntryConfig().FallbackBuildingIds);
 
         Assert.AreEqual(2, entries.Length);
-        Assert.AreEqual("Custom_Barracks", entries[0].BuildingId.ToString());
-        Assert.AreEqual("Custom_Refinery", entries[1].BuildingId.ToString());
+        Assert.AreEqual("custom_barracks", entries[0].BuildingId.ToString());
+        Assert.AreEqual("custom_refinery", entries[1].BuildingId.ToString());
     }
 
     [Test]
@@ -59,11 +60,26 @@ public sealed class AIPlanEntryStartupSystemValidationTests
         system.WriteBuildPlanEntries(entries, null, LoadPlanEntryConfig().FallbackBuildingIds);
 
         Assert.AreEqual(5, entries.Length);
-        Assert.AreEqual("Tent_Regular", entries[0].BuildingId.ToString());
-        Assert.AreEqual("Building_Barrack", entries[1].BuildingId.ToString());
-        Assert.AreEqual("Building_OilPump", entries[2].BuildingId.ToString());
-        Assert.AreEqual("Building_Fuel_Bladder", entries[3].BuildingId.ToString());
-        Assert.AreEqual("Building_Ammunition_Depot", entries[4].BuildingId.ToString());
+        Assert.AreEqual("tent_regular", entries[0].BuildingId.ToString());
+        Assert.AreEqual("building_barrack", entries[1].BuildingId.ToString());
+        Assert.AreEqual("building_oilpump", entries[2].BuildingId.ToString());
+        Assert.AreEqual("building_fuel_bladder", entries[3].BuildingId.ToString());
+        Assert.AreEqual("building_ammunition_depot", entries[4].BuildingId.ToString());
+    }
+
+    [Test]
+    public void WriteBuildPlanEntries_StoresInvariantCanonicalIds()
+    {
+        using var world = new World("AIPlanEntryStartupSystemBuildCanonicalTests");
+        EntityManager em = world.EntityManager;
+        Entity entity = em.CreateEntity();
+        DynamicBuffer<AIBuildPlanEntry> entries = em.AddBuffer<AIBuildPlanEntry>(entity);
+
+        AIPlanEntryStartupSystem system = default;
+        system.WriteBuildPlanEntries(entries, new[] { "\u2003ÄRMY_DEPOT\u2003" }, null);
+
+        Assert.AreEqual(1, entries.Length);
+        Assert.AreEqual("ärmy_depot", entries[0].BuildingId.ToString());
     }
 
     [Test]

@@ -1,6 +1,7 @@
 #if ENABLE_PROFILER && UNITY_EDITOR
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using Game.Editor;
 using NUnit.Framework;
@@ -12,6 +13,14 @@ public sealed class MatchGcAllocationCallstackCaptureTests
         "#0 (Mono JIT Code) [SelectionGameplayStartupSystemHelper.cs:425] " +
         "Game.Runtime.SelectionGameplayStartupSystemHelper/<>c__DisplayClass9_0:" +
         "<Initialize>g__UpdateSelectionRuntimePhases|7 ()";
+    private const string UnityAiNetworkPollCallstack =
+        "#0 System.dll!System.Net.NetworkInformation::MacOsNetworkInterfaceAPI.GetAllNetworkInterfaces()\n" +
+        "#1 [./Library/PackageCache/com.unity.ai.assistant@fixture/Modules/Unity.AI.Toolkit.Accounts/" +
+        "Services/States/SettingsState.cs:127] Unity.AI.Toolkit.Accounts.dll!" +
+        "Unity.AI.Toolkit.Accounts.Services.States::SettingsState.GetActiveNetworkInterfaces()\n" +
+        "#2 [./Library/PackageCache/com.unity.ai.assistant@fixture/Modules/Unity.AI.Toolkit.Accounts/" +
+        "Services/States/SettingsState.cs:94] Unity.AI.Toolkit.Accounts.dll!" +
+        "Unity.AI.Toolkit.Accounts.Services.States::SettingsState.<PollNetworkAsync>b__46_0()";
 
     public static void RunFocusedValidation()
     {
@@ -25,6 +34,28 @@ public sealed class MatchGcAllocationCallstackCaptureTests
             tests.SmearedToolingStackDoesNotExcludePlayerHierarchy();
             tests.ToolingHierarchyIsExcluded();
             tests.BurstCompilerThreadIsExcluded();
+            tests.CaptureToolEditorUpdateIsExcluded();
+            tests.FrameworkOnlyTimerSchedulerAllocationIsExcluded();
+            tests.FrameworkOnlyTimerSchedulerLoopAllocationIsExcluded();
+            tests.TimerSchedulerAllocationWithGameFrameRemainsPlayerRelevant();
+            tests.FrameworkTimerExclusionHasNoFirstPartyTimerApiOwner();
+            tests.UnityAiAssistantEditorAwaitIsExcluded();
+            tests.UnityAiAssistantEditorAwaitOnGameplayHierarchyRemainsPlayerRelevant();
+            tests.UnityAiAssistantEditorAwaitWithGameFrameRemainsPlayerRelevant();
+            tests.UnityAiAccountNetworkPollIsExcluded();
+            tests.UnityAiDirectNetworkPollIsExcluded();
+            tests.UnresolvedThreadPoolAllocationRemainsPlayerRelevant();
+            tests.GenericNetworkPollRemainsPlayerRelevant();
+            tests.UnityAiPollOnGameplayHierarchyRemainsPlayerRelevant();
+            tests.UnrelatedUnityAiAccountOperationRemainsPlayerRelevant();
+            tests.UnityAiPollWithGameFrameRemainsPlayerRelevant();
+            tests.ExactShellSignatureWithZeroProbeIsVerified();
+            tests.AdditionalShellCandidateDoesNotMatchExactSignature();
+            tests.ChangedShellSignatureIsNotVerified();
+            tests.AllocatingShellProbeIsNotVerified();
+            tests.ExactSelectionMarkerAggregateIsVerified();
+            tests.ChangedSelectionMarkerAggregateIsNotVerified();
+            tests.FocusedReadModelRemainsPlayerRelevant();
             tests.AcceptanceConstantsRemainStrict();
             tests.DistinctRawSamplesRetainDistinctStacks();
             tests.PermutedRawIndicesRetainTheirOwnByteValues();
@@ -34,7 +65,10 @@ public sealed class MatchGcAllocationCallstackCaptureTests
             tests.UnavailableOrMalformedRawByteMetadataFailsBeforeRecording();
             tests.SampleByteMismatchFailsBeforeRecording();
             tests.UnresolvedItemsUseAuthoritativeMergedSampleCount();
-            Debug.Log("[MatchGcAllocationAttributionValidation] result=Passed tests=16");
+            tests.MonoCompilerHierarchyIsExcluded();
+            tests.EditorGiMaintenanceHierarchyIsExcluded();
+            tests.SteadyStateMutationDetectionIsFailClosed();
+            Debug.Log("[MatchGcAllocationAttributionValidation] result=Passed tests=41");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -106,6 +140,329 @@ public sealed class MatchGcAllocationCallstackCaptureTests
             "Burst-CompilerThread-3",
             "GC.Alloc",
             "#0 Game.Runtime.RealPlayerAllocator:Allocate ()"));
+    }
+
+    [Test]
+    public void CaptureToolEditorUpdateIsExcluded()
+    {
+        Assert.IsTrue(ShouldExclude(
+            "Main Thread",
+            "Application.Tick > UnityEditor.CoreModule.dll!UnityEditor::EditorApplication.Internal_CallUpdateFunctions() [Invoke] > EditorApplication.update: Game.Editor.MatchGcAllocationCallstackCapture.Update > Mono.JIT > GC.Alloc",
+            "#0 Game.Editor::MatchGcAllocationCallstackCapture.Update()"));
+    }
+
+    [Test]
+    public void FrameworkOnlyTimerSchedulerAllocationIsExcluded()
+    {
+        Assert.IsTrue(ShouldExclude(
+            "Timer-Scheduler",
+            "GC.Alloc",
+            "#0 mscorlib.dll!System.Threading::ThreadPool.QueueUserWorkItemHelper()\n" +
+            "#1 mscorlib.dll!::Scheduler.FireTimer()"));
+    }
+
+    [Test]
+    public void FrameworkOnlyTimerSchedulerLoopAllocationIsExcluded()
+    {
+        Assert.IsTrue(ShouldExclude(
+            "Timer-Scheduler",
+            "GC.Alloc",
+            "#0 mscorlib.dll!::Scheduler.RunSchedulerLoop()\n" +
+            "#1 mscorlib.dll!::Scheduler.SchedulerThread()"));
+    }
+
+    [Test]
+    public void TimerSchedulerAllocationWithGameFrameRemainsPlayerRelevant()
+    {
+        Assert.IsFalse(ShouldExclude(
+            "Timer-Scheduler",
+            "GC.Alloc",
+            "#0 /Assets/Game/Scripts/RuntimeJob.cs:10 Game.RuntimeJob.Run()\n" +
+            "#1 mscorlib.dll!::Scheduler.FireTimer()"));
+    }
+
+    [Test]
+    public void FrameworkTimerExclusionHasNoFirstPartyTimerApiOwner()
+    {
+        string scriptsRoot = Path.Combine(Application.dataPath, "Game", "Scripts");
+        foreach (string path in Directory.EnumerateFiles(scriptsRoot, "*.cs", SearchOption.AllDirectories))
+        {
+            string source = File.ReadAllText(path);
+            Assert.IsFalse(source.Contains("System.Threading.Timer", StringComparison.Ordinal), path);
+            Assert.IsFalse(source.Contains("Task.Delay(", StringComparison.Ordinal), path);
+            Assert.IsFalse(source.Contains("PeriodicTimer", StringComparison.Ordinal), path);
+        }
+    }
+
+    [Test]
+    public void UnityAiAssistantEditorAwaitIsExcluded()
+    {
+        Assert.IsTrue(ShouldExclude(
+            "Main Thread",
+            "Application.Tick > PlayerLoop > UnityEngine.CoreModule.dll!UnityEngine::UnitySynchronizationContext.ExecuteTasks() [Invoke] > GC.Alloc",
+            "#0 mscorlib.dll!System.Threading.Tasks::Task.Delay()\n" +
+            "#1 [./Library/PackageCache/com.unity.ai.assistant@fixture/Editor/Assistant/Utils/TaskUtils.cs:0] " +
+            "Unity.AI.Assistant.Editor.dll!::<AwaitCondition>d__1.MoveNext()"));
+    }
+
+    [Test]
+    public void UnityAiAssistantEditorAwaitOnGameplayHierarchyRemainsPlayerRelevant()
+    {
+        Assert.IsFalse(ShouldExclude(
+            "Main Thread",
+            "Application.Tick > PlayerLoop > GameplayRuntimeUpdate.Selection > UnityEngine.CoreModule.dll!UnityEngine::UnitySynchronizationContext.ExecuteTasks() [Invoke] > GC.Alloc",
+            "#0 [./Library/PackageCache/com.unity.ai.assistant@fixture/Editor/Assistant/Utils/TaskUtils.cs:0] " +
+            "Unity.AI.Assistant.Editor.dll!::<AwaitCondition>d__1.MoveNext()"));
+    }
+
+    [Test]
+    public void UnityAiAssistantEditorAwaitWithGameFrameRemainsPlayerRelevant()
+    {
+        Assert.IsFalse(ShouldExclude(
+            "Main Thread",
+            "Application.Tick > PlayerLoop > UnityEngine.CoreModule.dll!UnityEngine::UnitySynchronizationContext.ExecuteTasks() [Invoke] > GC.Alloc",
+            "#0 [./Library/PackageCache/com.unity.ai.assistant@fixture/Editor/Assistant/Utils/TaskUtils.cs:0] " +
+            "Unity.AI.Assistant.Editor.dll!::<AwaitCondition>d__1.MoveNext()\n" +
+            "#1 /Assets/Game/Scripts/RuntimeAwait.cs:10 Game.Runtime.RuntimeAwait.Update()"));
+    }
+
+    [Test]
+    public void MonoCompilerHierarchyIsExcluded()
+    {
+        Assert.IsTrue(ShouldExclude(
+            "Main Thread",
+            "Application.Tick > MonoCompiler.Tick > UnityEditor.Scripting.ScriptCompilation::EditorCompilationInterface.TickCompilationPipeline() [Invoke] > GC.Alloc",
+            "(raw allocation attribution unavailable: rawSampleCallstackUnavailable)"));
+    }
+
+    [Test]
+    public void EditorGiMaintenanceHierarchyIsExcluded()
+    {
+        Assert.IsTrue(ShouldExclude(
+            "Main Thread",
+            "Application.Tick > Application.TickGlobalCallbacks > tickGIInEditor.Invoke > GI.UpdateScene > " +
+            "UnityEditor.Experimental.Rendering::ScriptableBakedReflectionSystemWrapper.get_Internal_ScriptableBakedReflectionSystemWrapper_stateHashes() [Invoke] > GC.Alloc",
+            "#0 UnityEngine.Bindings::ArrayByRefMarshallingAccessor.SetEmpty()"));
+    }
+
+    [Test]
+    public void SteadyStateMutationDetectionIsFailClosed()
+    {
+        Assert.IsFalse(HasSteadyStateMutation(0, 0, 0));
+        Assert.IsTrue(HasSteadyStateMutation(1, 0, 0));
+        Assert.IsTrue(HasSteadyStateMutation(0, 1, 0));
+        Assert.IsTrue(HasSteadyStateMutation(0, 0, 1));
+    }
+
+    [Test]
+    public void UnityAiAccountNetworkPollIsExcluded()
+    {
+        Assert.IsTrue(ShouldExclude("Thread Pool Worker", "GC.Alloc", UnityAiNetworkPollCallstack));
+    }
+
+    [Test]
+    public void UnityAiDirectNetworkPollIsExcluded()
+    {
+        Assert.IsTrue(ShouldExclude(
+            "Thread Pool Worker",
+            "GC.Alloc",
+            "#0 [./Library/PackageCache/com.unity.ai.assistant@fixture/Modules/" +
+            "Unity.AI.Toolkit.Accounts/Services/States/SettingsState.cs:92] " +
+            "Unity.AI.Toolkit.Accounts.dll!Unity.AI.Toolkit.Accounts.Services.States::" +
+            "SettingsState.PollNetworkAsync()"));
+    }
+
+    [Test]
+    public void UnityAiMcpEditorSocketReadIsExcluded()
+    {
+        Assert.IsTrue(ShouldExclude(
+            "Thread Pool Worker",
+            "GC.Alloc",
+            "#0 Newtonsoft.Json.dll!Newtonsoft.Json.Utilities::BufferUtils.RentBuffer()\n" +
+            "#1 [./Library/PackageCache/com.unity.ai.assistant@fixture/Modules/" +
+            "Unity.AI.MCP.Editor/Connection/UnixSocketTransport.cs:0] " +
+            "Unity.AI.MCP.Editor.dll!::<ReadUntilDelimiterAsync>d__28.MoveNext()"));
+    }
+
+    [Test]
+    public void UnityAiMcpEditorSocketWriteIsExcluded()
+    {
+        Assert.IsTrue(ShouldExclude(
+            "Thread Pool Worker",
+            "GC.Alloc",
+            "#0 [./Library/PackageCache/com.unity.ai.assistant@fixture/Modules/" +
+            "Unity.AI.MCP.Editor/Connection/UnixSocketTransport.cs:0] " +
+            "Unity.AI.MCP.Editor.dll!::<WriteAsync>d__27.MoveNext()"));
+    }
+
+    [Test]
+    public void UnresolvedThreadPoolAllocationRemainsPlayerRelevant()
+    {
+        Assert.IsFalse(ShouldExclude(
+            "Thread Pool Worker",
+            "GC.Alloc",
+            "(raw allocation attribution unavailable: rawSampleCallstackUnavailable)"));
+    }
+
+    [Test]
+    public void GenericNetworkPollRemainsPlayerRelevant()
+    {
+        Assert.IsFalse(ShouldExclude(
+            "Thread Pool Worker",
+            "GC.Alloc",
+            "#0 System.dll!System.Net.NetworkInformation::MacOsNetworkInterfaceAPI.GetAllNetworkInterfaces()"));
+    }
+
+    [Test]
+    public void UnityAiMcpEditorSocketWithGameFrameRemainsPlayerRelevant()
+    {
+        Assert.IsFalse(ShouldExclude(
+            "Thread Pool Worker",
+            "GC.Alloc",
+            "#0 [./Library/PackageCache/com.unity.ai.assistant@fixture/Modules/" +
+            "Unity.AI.MCP.Editor/Connection/UnixSocketTransport.cs:0] " +
+            "Unity.AI.MCP.Editor.dll!::<ReadUntilDelimiterAsync>d__28.MoveNext()\n" +
+            "#1 /Assets/Game/Scripts/RuntimeSocket.cs:10 Game.Runtime.Socket.Read()"));
+    }
+
+    [Test]
+    public void UnityAiPollOnGameplayHierarchyRemainsPlayerRelevant()
+    {
+        Assert.IsFalse(ShouldExclude(
+            "Thread Pool Worker",
+            "SimulationSystemGroup > Game.Runtime.NetworkProbe > GC.Alloc",
+            UnityAiNetworkPollCallstack));
+    }
+
+    [Test]
+    public void UnrelatedUnityAiAccountOperationRemainsPlayerRelevant()
+    {
+        Assert.IsFalse(ShouldExclude(
+            "Thread Pool Worker",
+            "GC.Alloc",
+            "#0 [./Library/PackageCache/com.unity.ai.assistant@fixture/Modules/" +
+            "Unity.AI.Toolkit.Accounts/Services/States/SettingsState.cs:140] " +
+            "Unity.AI.Toolkit.Accounts.dll!Unity.AI.Toolkit.Accounts.Services.States::" +
+            "SettingsState.RefreshInternal()"));
+    }
+
+    [Test]
+    public void UnityAiPollWithGameFrameRemainsPlayerRelevant()
+    {
+        Assert.IsFalse(ShouldExclude(
+            "Thread Pool Worker",
+            "GC.Alloc",
+            UnityAiNetworkPollCallstack +
+            "\n#3 /Assets/Game/Scripts/RuntimeNetworkProbe.cs:10 Game.Runtime.NetworkProbe.Update()"));
+    }
+
+    [Test]
+    public void ExactShellSignatureWithZeroProbeIsVerified()
+    {
+        Assert.IsTrue(IsExactShellCaptureOverhead(
+            "GC.Alloc",
+            "Main Thread",
+            "Application.Tick > PlayerLoop > Game.UI.Runtime::UIShellEcsPresentationSystem.Update() [Invoke] > GC.Alloc",
+            "#0 /Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:50 UIShellEcsPresentationSystem.Update()",
+            14352,
+            299,
+            299,
+            0,
+            0,
+            300));
+    }
+
+    [Test]
+    public void AdditionalShellCandidateDoesNotMatchExactSignature()
+    {
+        Assert.IsFalse(IsExactShellCaptureOverhead(
+            "GC.Alloc",
+            "Main Thread",
+            "Application.UpdateScene > PlayerLoop > Game.UI.Runtime::UIShellEcsPresentationSystem.Update() [Invoke] > GC.Alloc",
+            "#0 /Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:50 UIShellEcsPresentationSystem.Update()",
+            48,
+            1,
+            1,
+            0,
+            0,
+            300));
+    }
+
+    [Test]
+    public void ChangedShellSignatureIsNotVerified()
+    {
+        Assert.IsFalse(IsExactShellCaptureOverhead(
+            "GC.Alloc",
+            "Main Thread",
+            "Application.Tick > PlayerLoop > Game.UI.Runtime::UIShellEcsPresentationSystem.Update() [Invoke] > GC.Alloc",
+            "#0 /Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:50 UIShellEcsPresentationSystem.Update()",
+            14353,
+            299,
+            299,
+            0,
+            0,
+            300));
+    }
+
+    [Test]
+    public void AllocatingShellProbeIsNotVerified()
+    {
+        Assert.IsFalse(IsExactShellCaptureOverhead(
+            "GC.Alloc",
+            "Main Thread",
+            "Application.Tick > PlayerLoop > Game.UI.Runtime::UIShellEcsPresentationSystem.Update() [Invoke] > GC.Alloc",
+            "#0 /Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:50 UIShellEcsPresentationSystem.Update()",
+            14352,
+            299,
+            299,
+            48,
+            1,
+            300));
+    }
+
+    [Test]
+    public void ExactSelectionMarkerAggregateIsVerified()
+    {
+        Assert.IsTrue(IsExactSelectionMarkerCaptureOverheadAggregate(
+            2688,
+            21,
+            14,
+            0,
+            0,
+            300,
+            0,
+            0,
+            7,
+            0,
+            0,
+            7));
+    }
+
+    [Test]
+    public void ChangedSelectionMarkerAggregateIsNotVerified()
+    {
+        Assert.IsFalse(IsExactSelectionMarkerCaptureOverheadAggregate(
+            2689,
+            21,
+            14,
+            0,
+            0,
+            300,
+            0,
+            0,
+            7,
+            0,
+            0,
+            7));
+    }
+
+    [Test]
+    public void FocusedReadModelRemainsPlayerRelevant()
+    {
+        Assert.IsFalse(ShouldExclude(
+            "Main Thread",
+            "Application.Tick > PlayerLoop > GameplayRuntimeUpdate.Selection > GameplayRuntimeUpdate.Selection.FocusedReadModel > GC.Alloc",
+            SelectionCallstack));
     }
 
     [Test]
@@ -309,6 +666,95 @@ public sealed class MatchGcAllocationCallstackCaptureTests
                 threadName,
                 hierarchyPath,
                 callstack
+            });
+    }
+
+    private static bool HasSteadyStateMutation(
+        int buildingVisualCreateCalls,
+        int productionTransportCreateCalls,
+        int dropVisualCreateCalls)
+    {
+        MethodInfo method = typeof(MatchGcAllocationCallstackCapture).GetMethod(
+            "HasSteadyStateMutation",
+            BindingFlags.NonPublic | BindingFlags.Static);
+        Assert.IsNotNull(method);
+        return (bool)method.Invoke(
+            null,
+            new object[]
+            {
+                buildingVisualCreateCalls,
+                productionTransportCreateCalls,
+                dropVisualCreateCalls
+            });
+    }
+
+    private static bool IsExactShellCaptureOverhead(
+        string sampleName,
+        string threadName,
+        string hierarchyPath,
+        string callstack,
+        long siteBytes,
+        int siteSamples,
+        int siteFrames,
+        long probeBytes,
+        int probeAllocationSamples,
+        int probeUpdateSamples)
+    {
+        MethodInfo method = typeof(MatchGcAllocationCallstackCapture).GetMethod(
+            "IsExactShellCaptureOverheadSignature",
+            BindingFlags.NonPublic | BindingFlags.Static);
+        Assert.IsNotNull(method);
+        return (bool)method.Invoke(
+            null,
+            new object[]
+            {
+                sampleName,
+                threadName,
+                hierarchyPath,
+                callstack,
+                siteBytes,
+                siteSamples,
+                siteFrames,
+                probeBytes,
+                probeAllocationSamples,
+                probeUpdateSamples
+            });
+    }
+
+    private static bool IsExactSelectionMarkerCaptureOverheadAggregate(
+        long aggregateBytes,
+        int aggregateSamples,
+        int aggregateFrames,
+        long totalProbeBytes,
+        int totalProbeAllocationSamples,
+        int totalProbeUpdateSamples,
+        long focusedProbeBytes,
+        int focusedProbeAllocationSamples,
+        int focusedProbeUpdateSamples,
+        long panelProbeBytes,
+        int panelProbeAllocationSamples,
+        int panelProbeUpdateSamples)
+    {
+        MethodInfo method = typeof(MatchGcAllocationCallstackCapture).GetMethod(
+            "IsExactSelectionMarkerCaptureOverheadAggregate",
+            BindingFlags.NonPublic | BindingFlags.Static);
+        Assert.IsNotNull(method);
+        return (bool)method.Invoke(
+            null,
+            new object[]
+            {
+                aggregateBytes,
+                aggregateSamples,
+                aggregateFrames,
+                totalProbeBytes,
+                totalProbeAllocationSamples,
+                totalProbeUpdateSamples,
+                focusedProbeBytes,
+                focusedProbeAllocationSamples,
+                focusedProbeUpdateSamples,
+                panelProbeBytes,
+                panelProbeAllocationSamples,
+                panelProbeUpdateSamples
             });
     }
 

@@ -27,7 +27,7 @@ namespace Game.Runtime
             public readonly BuildingPlacementInteractionCompositionSystemHelper RuntimeLinkInteractionSystem;
             public readonly BuildingPlacementInteractionCompositionSystemHelper.Context RuntimeLinkInteractionContext;
             public readonly RuntimeBuildingEntityLinkRegistry RuntimeBuildingEntityLinks;
-            public readonly bool DeferSideEffects;
+            public readonly System.Func<bool> DeferSideEffects;
             public readonly BuildingRuntimeOwnershipCompositionSystemHelper.TryGetEntityManagerDelegate TryGetEntityManager;
             public readonly TryGetGridDelegate TryGetGrid;
             public readonly ResolvePlacementRectDelegate ResolvePlacementRect;
@@ -46,7 +46,7 @@ namespace Game.Runtime
                 BuildingPlacementInteractionCompositionSystemHelper runtimeLinkInteractionSystem,
                 BuildingPlacementInteractionCompositionSystemHelper.Context runtimeLinkInteractionContext,
                 RuntimeBuildingEntityLinkRegistry runtimeBuildingEntityLinks,
-                bool deferSideEffects,
+                System.Func<bool> deferSideEffects,
                 BuildingRuntimeOwnershipCompositionSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager,
                 TryGetGridDelegate tryGetGrid,
                 ResolvePlacementRectDelegate resolvePlacementRect,
@@ -92,7 +92,7 @@ namespace Game.Runtime
         {
             if (context.RuntimeBuildingSystem == null || definition == null || instance == null)
                 return null;
-
+            bool defer = context.DeferSideEffects?.Invoke() == true;
             int buildingId = context.RuntimeBuildingSystem.AllocateId();
             instance.name = $"{definition.DisplayName}_{buildingId}";
 
@@ -110,7 +110,7 @@ namespace Game.Runtime
                 occupiedRect = context.ResolvePlacementRect(definition, originCell, grid);
                 hasSurfaceResult = TryEvaluateRuntimeBuildingSurface(context, definition, originCell, out surfaceResult);
                 if (hasSurfaceResult && !preserveAuthoredTransform)
-                    FoundationVisualPresentationHelper?.ApplyVisualFoundation(instance, surfaceResult);
+                    FoundationVisuals?.ApplyVisualFoundation(instance, surfaceResult);
             }
 
             bool pathBlocking = context.ShouldBlockPathing == null || context.ShouldBlockPathing(definition);
@@ -124,13 +124,12 @@ namespace Game.Runtime
                 ? context.CreateCombatEntity(buildingId, originCell, definition, 0, instance.transform.rotation)
                 : Entity.Null;
             if (hasEntityManager && hasSurfaceResult && !preserveAuthoredTransform)
-                FoundationVisualPresentationHelper?.ApplyCombatEntityFoundation(entityManager, combatEntity, surfaceResult, _surfacePlacementSystem);
+                FoundationVisuals?.ApplyCombatEntityFoundation(entityManager, combatEntity, surfaceResult, _surfacePlacementSystem);
 
-            if (context.DeferSideEffects)
+            if (defer)
             {
                 if (pathBlocking)
                     context.AddDeferredRedirectFootprint?.Invoke(occupiedRect);
-                context.MarkPendingMarkerRefresh?.Invoke();
             }
             else if (pathBlocking)
             {
@@ -162,7 +161,7 @@ namespace Game.Runtime
                 building);
             context.RuntimeBuildingSystem.AddBuilding(building.Id, building);
 
-            if (context.DeferSideEffects)
+            if (defer)
                 context.MarkPendingMarkerRefresh?.Invoke();
             else
                 context.RefreshMarkers?.Invoke();
@@ -233,10 +232,10 @@ namespace Game.Runtime
             link.Configure(interactionSystem, interactionContext, registry, building.Id, building.CombatEntity, building.BlockerEntity);
         }
 
-        private BuildingFoundationVisualPresentationSystemHelper FoundationVisualPresentationHelper =>
-            _foundationVisualPresentationHelper ??= ResolveBuildingFoundationVisualPresentationHelper();
+        private BuildingFoundationVisualPresentationSystemHelper FoundationVisuals =>
+            _foundationVisualPresentationHelper ??= ResolveBuildingFoundationVisuals();
 
-        private static BuildingFoundationVisualPresentationSystemHelper ResolveBuildingFoundationVisualPresentationHelper()
+        private static BuildingFoundationVisualPresentationSystemHelper ResolveBuildingFoundationVisuals()
         {
             return new BuildingFoundationVisualPresentationSystemHelper();
         }

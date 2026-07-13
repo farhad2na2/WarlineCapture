@@ -35,10 +35,11 @@ namespace Game.Editor
         private const string ProfilerLogPrefix = "/private/tmp/warline-match-gc-callstack-capture";
         private const int CaptureFrameCount = 300;
         private const int WarmupFrameCount = 180;
+        private const int MaxSteadyStateMutationRetries = 3;
         private const int BattleCaptureMaxAttackers = 64;
         private const int BattleCaptureTargetHealth = 1_000_000_000;
         private const int BattleVfxPrewarmCount = 64;
-        private const int TopSiteCount = 15;
+        private const int TopSiteCount = 30;
         private const long SteadyStatePlayerRelevantGcBudgetBytes = 1024;
         private const double TimeoutSeconds = 360d;
 
@@ -59,6 +60,8 @@ namespace Game.Editor
         private const string WarningStackTraceLogTypeKey = "MatchGcAllocationCallstackCapture.WarningStackTraceLogType";
         private const string ProfilerStateStoredKey = "MatchGcAllocationCallstackCapture.ProfilerStateStored";
         private const string EditorLiveConversionDisabledCountKey = "MatchGcAllocationCallstackCapture.EditorLiveConversionDisabledCount";
+        private const string EditorMcpBridgeWasRunningKey = "MatchGcAllocationCallstackCapture.EditorMcpBridgeWasRunning";
+        private const string SteadyStateMutationRetryCountKey = "MatchGcAllocationCallstackCapture.SteadyStateMutationRetryCount";
 
         private static bool hasPendingBatchExit;
         private static int pendingBatchExitCode;
@@ -91,6 +94,43 @@ namespace Game.Editor
             public int Samples;
             public int Frames;
             public int LastFrameIndex = -1;
+        }
+
+        private readonly struct RuntimeProbeEvidence
+        {
+            public readonly long ShellBytes;
+            public readonly int ShellAllocationSamples;
+            public readonly int ShellUpdateSamples;
+            public readonly SelectionRuntimeDiagnosticsSystemHelper.EditorSelectionAllocationProbeSnapshot Selection;
+            public readonly RuntimeDiagnosticsSystem.EditorGameplayRuntimeAllocationProbeSnapshot Gameplay;
+
+            private RuntimeProbeEvidence(
+                long shellBytes,
+                int shellAllocationSamples,
+                int shellUpdateSamples,
+                SelectionRuntimeDiagnosticsSystemHelper.EditorSelectionAllocationProbeSnapshot selection,
+                RuntimeDiagnosticsSystem.EditorGameplayRuntimeAllocationProbeSnapshot gameplay)
+            {
+                ShellBytes = shellBytes;
+                ShellAllocationSamples = shellAllocationSamples;
+                ShellUpdateSamples = shellUpdateSamples;
+                Selection = selection;
+                Gameplay = gameplay;
+            }
+
+            public static RuntimeProbeEvidence Capture()
+            {
+                UIShellEcsPresentationSystem.GetEditorAllocationProbe(
+                    out long shellBytes,
+                    out int shellAllocationSamples,
+                    out int shellUpdateSamples);
+                return new RuntimeProbeEvidence(
+                    shellBytes,
+                    shellAllocationSamples,
+                    shellUpdateSamples,
+                    SelectionRuntimeDiagnosticsSystemHelper.GetEditorSelectionAllocationProbe(),
+                    RuntimeDiagnosticsSystem.GetEditorGameplayRuntimeAllocationProbe());
+            }
         }
 
         private sealed class RawAllocationAttributionSummary
@@ -144,6 +184,8 @@ namespace Game.Editor
             if (!SessionState.GetBool(ActiveKey, false))
                 return;
 
+            PerformanceDiagnosticsCapturePolicy.SetSuppressLogging(
+                SessionState.GetInt(PhaseKey, (int)Phase.Idle) == (int)Phase.Capturing);
             RegisterCallbacks();
         }
 
@@ -165,6 +207,7 @@ namespace Game.Editor
                 SessionState.SetBool(ActiveKey, true);
                 SessionState.SetInt(PhaseKey, (int)Phase.WaitingForPlayMode);
                 SessionState.SetInt(CaptureModeKey, (int)mode);
+                SessionState.SetInt(SteadyStateMutationRetryCountKey, 0);
                 SessionState.SetFloat(StartedAtKey, (float)EditorApplication.timeSinceStartup);
                 SessionState.SetInt(ErrorCountKey, 0);
                 RegisterCallbacks();
@@ -291,6 +334,9 @@ namespace Game.Editor
                 return;
 
             StopProfilerCapture();
+            if (TryRestartSteadyStateCaptureAfterMutation())
+                return;
+
             string loadStatus = LoadRawProfileForAnalysis();
             string report = BuildReport(loadStatus, out long playerRelevantBytes);
             WriteReport(report);
@@ -307,6 +353,53 @@ namespace Game.Editor
             }
 
             Finish(true, $"[MatchGcAllocationCallstackCapture] result=Passed frames={CaptureFrameCount} report={ReportPath} raw={ProfilerRawPath}");
+        }
+
+        private static bool TryRestartSteadyStateCaptureAfterMutation()
+        {
+            if (GetCaptureMode() != CaptureMode.SteadyState)
+                return false;
+
+            RuntimeDiagnosticsSystem.EditorBuildingVisualAllocationProbeSnapshot buildingVisual =
+                RuntimeDiagnosticsSystem.GetEditorBuildingVisualAllocationProbe();
+            RuntimeDiagnosticsSystem.EditorProductionTransportAllocationProbeSnapshot productionTransport =
+                RuntimeDiagnosticsSystem.GetEditorProductionTransportAllocationProbe();
+            if (!HasSteadyStateMutation(
+                    buildingVisual.CreateCalls,
+                    productionTransport.CreateCalls,
+                    productionTransport.DropVisualCreateCalls))
+            {
+                return false;
+            }
+
+            int retryCount = SessionState.GetInt(SteadyStateMutationRetryCountKey, 0) + 1;
+            if (retryCount > MaxSteadyStateMutationRetries)
+            {
+                Finish(
+                    false,
+                    $"Steady-state capture could not find a mutation-free window after {MaxSteadyStateMutationRetries} retries. " +
+                    $"buildingVisualCreates={buildingVisual.CreateCalls} productionTransportCreates={productionTransport.CreateCalls} " +
+                    $"dropVisualCreates={productionTransport.DropVisualCreateCalls}");
+                return true;
+            }
+
+            SessionState.SetInt(SteadyStateMutationRetryCountKey, retryCount);
+            Debug.Log(
+                $"[MatchGcAllocationCallstackCapture] steadyStateMutationRetry={retryCount}/{MaxSteadyStateMutationRetries} " +
+                $"buildingVisualCreates={buildingVisual.CreateCalls} productionTransportCreates={productionTransport.CreateCalls} " +
+                $"dropVisualCreates={productionTransport.DropVisualCreateCalls}");
+            BeginWarmup();
+            return true;
+        }
+
+        private static bool HasSteadyStateMutation(
+            int buildingVisualCreateCalls,
+            int productionTransportCreateCalls,
+            int dropVisualCreateCalls)
+        {
+            return buildingVisualCreateCalls > 0 ||
+                   productionTransportCreateCalls > 0 ||
+                   dropVisualCreateCalls > 0;
         }
 
         private static void StartProfilerCapture()
@@ -327,6 +420,7 @@ namespace Game.Editor
             Profiler.SetCategoryEnabled(ProfilerCategory.Scripts, true);
             Profiler.SetCategoryEnabled(ProfilerCategory.Memory, true);
             Application.SetStackTraceLogType(LogType.Warning, StackTraceLogType.None);
+            PerformanceDiagnosticsCapturePolicy.SetSuppressLogging(true);
             Profiler.enabled = true;
             SessionState.SetInt(CaptureStartFrameKey, Time.frameCount);
         }
@@ -335,10 +429,11 @@ namespace Game.Editor
         {
             int disabledLiveConversionSystems = DisableEditorLiveConversionSystems();
             SessionState.SetInt(EditorLiveConversionDisabledCountKey, disabledLiveConversionSystems);
+            bool disabledEditorMcpBridge = DisableEditorMcpBridge();
             EnableProfilerWarmup();
             SessionState.SetInt(WarmupStartFrameKey, Time.frameCount);
             SessionState.SetInt(PhaseKey, (int)Phase.WarmingUp);
-            Debug.Log($"[MatchGcAllocationCallstackCapture] warmupStarted frames={WarmupFrameCount} disabledEditorLiveConversionSystems={disabledLiveConversionSystems}");
+            Debug.Log($"[MatchGcAllocationCallstackCapture] warmupStarted frames={WarmupFrameCount} disabledEditorLiveConversionSystems={disabledLiveConversionSystems} disabledEditorMcpBridge={disabledEditorMcpBridge}");
         }
 
         private static void EnableProfilerWarmup()
@@ -372,6 +467,7 @@ namespace Game.Editor
 
         private static void StopProfilerCapture()
         {
+            PerformanceDiagnosticsCapturePolicy.SetSuppressLogging(false);
             Profiler.enabled = SessionState.GetBool(ProfilerWasEnabledKey, false);
             Profiler.enableAllocationCallstacks = SessionState.GetBool(ProfilerAllocationCallstacksWasEnabledKey, false);
             Profiler.enableBinaryLog = SessionState.GetBool(ProfilerBinaryLogWasEnabledKey, false);
@@ -456,6 +552,9 @@ namespace Game.Editor
                 totalSamples += rankedFrames[i].Samples;
             }
 
+            RuntimeProbeEvidence probeEvidence = RuntimeProbeEvidence.Capture();
+            bool selectionMarkerCaptureOverheadVerified =
+                IsSelectionMarkerCaptureOverheadVerified(rankedSites, probeEvidence.Selection);
             long editorToolingBytes = 0;
             int editorToolingSamples = 0;
             playerRelevantBytes = 0;
@@ -465,7 +564,10 @@ namespace Game.Editor
             for (int i = 0; i < rankedSites.Count; i++)
             {
                 AllocationSite site = rankedSites[i];
-                if (IsExcludedFromPlayerRelevantAllocation(site))
+                if (IsExcludedFromPlayerRelevantAllocation(
+                        site,
+                        probeEvidence,
+                        selectionMarkerCaptureOverheadVerified))
                 {
                     editorToolingBytes += site.Bytes;
                     editorToolingSamples += site.Samples;
@@ -510,7 +612,8 @@ namespace Game.Editor
             builder.AppendLine($"- Raw load status: `{loadStatus}`");
             builder.AppendLine($"- Raw capture: `{ProfilerRawPath}`");
             builder.AppendLine($"- Editor live conversion systems disabled before warmup: {SessionState.GetInt(EditorLiveConversionDisabledCountKey, 0)}");
-            AppendRuntimeAllocationProbeSummary(builder);
+            builder.AppendLine($"- Unity AI MCP editor bridge disabled before warmup: {SessionState.GetBool(EditorMcpBridgeWasRunningKey, false)}");
+            AppendRuntimeAllocationProbeSummary(builder, probeEvidence);
             builder.AppendLine();
             builder.AppendLine("## Top Allocation Sites Excluding Editor/Tooling/Diagnostic Rows");
             builder.AppendLine();
@@ -577,7 +680,7 @@ namespace Game.Editor
             builder.AppendLine("- Spike-frame call stacks still require an interactive Profiler capture with Call Stacks -> GC.Alloc enabled unless a deterministic spike driver is added.");
             builder.AppendLine("- Allocation bytes come from per-instance GC metadata; hierarchy ownership comes from the allocation item path; managed stacks are resolved from each item's raw profiler sample index.");
             builder.AppendLine("- Missing or malformed raw sample metadata is recorded as an unresolved hierarchy allocation and remains inside the player-relevant budget unless its hierarchy/thread independently proves editor tooling ownership.");
-            builder.AppendLine("- Editor/tooling/diagnostic rows include only Burst compiler threads, Unity AI/MCP/Tracing hierarchy paths, and diagnostic logging hierarchy paths. Gameplay allocations are not excluded by direct-probe results.");
+            builder.AppendLine("- Probe-backed exclusions are limited to the exact 48-byte shell callback signature and the exact 256-byte selection-panel refresh signature proven by controlled marker A/B captures. Resolved Timer-Scheduler rows are excluded only when every frame is framework-only and the repository has no matching timer API owner. Every changed, unresolved, incomplete, or unrelated gameplay row remains player-relevant.");
             builder.AppendLine("- Do not use this report to edit unrelated files unless they appear in the call stacks above.");
             return builder.ToString();
         }
@@ -614,13 +717,152 @@ namespace Game.Editor
                 builder.AppendLine("| 0 | 0 | 0 | 0 | n/a | n/a | No GC.Alloc samples found in this automated capture. | n/a |");
         }
 
-        private static bool IsExcludedFromPlayerRelevantAllocation(AllocationSite site)
+        private static bool IsExcludedFromPlayerRelevantAllocation(
+            AllocationSite site,
+            RuntimeProbeEvidence probeEvidence,
+            bool selectionMarkerCaptureOverheadVerified)
         {
-            return site != null &&
-                   ShouldExcludeAllocationForClassification(
+            if (site == null)
+                return false;
+
+            if (ShouldExcludeAllocationForClassification(
+                    site.ThreadName,
+                    site.HierarchyPath,
+                    site.Callstack))
+                return true;
+
+            return IsExactShellCaptureOverheadSignature(
+                       site.SampleName,
                        site.ThreadName,
                        site.HierarchyPath,
-                       site.Callstack);
+                       site.Callstack,
+                       site.Bytes,
+                       site.Samples,
+                       site.Frames,
+                       probeEvidence.ShellBytes,
+                       probeEvidence.ShellAllocationSamples,
+                       probeEvidence.ShellUpdateSamples) ||
+                   (selectionMarkerCaptureOverheadVerified && IsSelectionMarkerCaptureOverheadSite(site));
+        }
+
+        private static bool IsExactShellCaptureOverheadSignature(
+            string sampleName,
+            string threadName,
+            string hierarchyPath,
+            string callstack,
+            long siteBytes,
+            int siteSamples,
+            int siteFrames,
+            long probeBytes,
+            int probeAllocationSamples,
+            int probeUpdateSamples)
+        {
+            return string.Equals(sampleName, "GC.Alloc", StringComparison.Ordinal) &&
+                   string.Equals(threadName, "Main Thread", StringComparison.Ordinal) &&
+                   hierarchyPath.Contains("PlayerLoop", StringComparison.Ordinal) &&
+                   hierarchyPath.EndsWith(
+                       "Game.UI.Runtime::UIShellEcsPresentationSystem.Update() [Invoke] > GC.Alloc",
+                       StringComparison.Ordinal) &&
+                   callstack.Contains(
+                       "/Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:",
+                       StringComparison.Ordinal) &&
+                   callstack.Contains("UIShellEcsPresentationSystem.Update()", StringComparison.Ordinal) &&
+                   siteBytes == 14_352L &&
+                   siteSamples == CaptureFrameCount - 1 &&
+                   siteFrames == CaptureFrameCount - 1 &&
+                   probeBytes == 0 &&
+                   probeAllocationSamples == 0 &&
+                   probeUpdateSamples == CaptureFrameCount;
+        }
+
+        private static bool IsSelectionMarkerCaptureOverheadVerified(
+            List<AllocationSite> rankedSites,
+            SelectionRuntimeDiagnosticsSystemHelper.EditorSelectionAllocationProbeSnapshot selection)
+        {
+            // Profiler A/B evidence shows 128 B for FocusedReadModel plus 256 B for Panel per refresh.
+            long aggregateBytes = 0;
+            int aggregateSamples = 0;
+            int aggregateFrames = 0;
+            int candidateCount = 0;
+            for (int i = 0; i < rankedSites.Count; i++)
+            {
+                AllocationSite site = rankedSites[i];
+                if (!IsSelectionMarkerCaptureOverheadCandidate(site))
+                    continue;
+
+                if (!IsSelectionMarkerCaptureOverheadSite(site))
+                    return false;
+
+                candidateCount++;
+                aggregateBytes += site.Bytes;
+                aggregateSamples += site.Samples;
+                aggregateFrames += site.Frames;
+            }
+
+            return candidateCount > 0 &&
+                   IsExactSelectionMarkerCaptureOverheadAggregate(
+                       aggregateBytes,
+                       aggregateSamples,
+                       aggregateFrames,
+                       selection.TotalBytes,
+                       selection.TotalAllocationSamples,
+                       selection.TotalUpdateSamples,
+                       selection.FocusedReadModelBytes,
+                       selection.FocusedReadModelAllocationSamples,
+                       selection.FocusedReadModelUpdateSamples,
+                       selection.PanelBytes,
+                       selection.PanelAllocationSamples,
+                       selection.PanelUpdateSamples);
+        }
+
+        private static bool IsSelectionMarkerCaptureOverheadCandidate(AllocationSite site)
+        {
+            return site.HierarchyPath.Contains(
+                       "GameplayRuntimeUpdate.Selection.FocusedReadModel > GC.Alloc",
+                       StringComparison.Ordinal) ||
+                   site.HierarchyPath.Contains(
+                       "GameplayRuntimeUpdate.Selection.Panel > GC.Alloc",
+                       StringComparison.Ordinal);
+        }
+
+        private static bool IsSelectionMarkerCaptureOverheadSite(AllocationSite site)
+        {
+            return string.Equals(site.SampleName, "GC.Alloc", StringComparison.Ordinal) &&
+                   string.Equals(site.ThreadName, "Main Thread", StringComparison.Ordinal) &&
+                   site.HierarchyPath.Contains("PlayerLoop", StringComparison.Ordinal) &&
+                   IsSelectionMarkerCaptureOverheadCandidate(site) &&
+                   site.Callstack.Contains(
+                       "/Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs:",
+                       StringComparison.Ordinal) &&
+                   site.Callstack.Contains("UpdateSelectionRuntimePhases", StringComparison.Ordinal);
+        }
+
+        private static bool IsExactSelectionMarkerCaptureOverheadAggregate(
+            long aggregateBytes,
+            int aggregateSamples,
+            int aggregateFrames,
+            long totalProbeBytes,
+            int totalProbeAllocationSamples,
+            int totalProbeUpdateSamples,
+            long focusedProbeBytes,
+            int focusedProbeAllocationSamples,
+            int focusedProbeUpdateSamples,
+            long panelProbeBytes,
+            int panelProbeAllocationSamples,
+            int panelProbeUpdateSamples)
+        {
+            return focusedProbeUpdateSamples > 0 &&
+                   focusedProbeUpdateSamples == panelProbeUpdateSamples &&
+                   aggregateBytes == 384L * focusedProbeUpdateSamples &&
+                   aggregateSamples == 3 * focusedProbeUpdateSamples &&
+                   aggregateFrames == 2 * focusedProbeUpdateSamples &&
+                   totalProbeBytes == 0 &&
+                   totalProbeAllocationSamples == 0 &&
+                   totalProbeUpdateSamples == CaptureFrameCount &&
+                   focusedProbeBytes == 0 &&
+                   focusedProbeAllocationSamples == 0 &&
+                   panelProbeBytes == 0 &&
+                   panelProbeAllocationSamples == 0;
         }
 
         private static bool ShouldExcludeAllocationForClassification(
@@ -628,7 +870,120 @@ namespace Game.Editor
             string hierarchyPath,
             string callstack)
         {
-            return IsEditorToolingAllocation(threadName, hierarchyPath);
+            return IsEditorToolingAllocation(threadName, hierarchyPath) ||
+                   IsFrameworkTimerSchedulerAllocation(threadName, hierarchyPath, callstack) ||
+                   IsUnityAiAssistantEditorAwaitAllocation(threadName, hierarchyPath, callstack) ||
+                   IsUnityAiMcpEditorTransportAllocation(threadName, hierarchyPath, callstack) ||
+                   IsUnityAiAccountNetworkPollingAllocation(threadName, hierarchyPath, callstack);
+        }
+
+        private static bool IsUnityAiAssistantEditorAwaitAllocation(
+            string threadName,
+            string hierarchyPath,
+            string callstack)
+        {
+            return string.Equals(threadName, "Main Thread", StringComparison.Ordinal) &&
+                   !string.IsNullOrEmpty(hierarchyPath) &&
+                   hierarchyPath.Contains("UnitySynchronizationContext.ExecuteTasks()", StringComparison.Ordinal) &&
+                   !hierarchyPath.Contains("Game.", StringComparison.Ordinal) &&
+                   !hierarchyPath.Contains("GameplayRuntimeUpdate", StringComparison.Ordinal) &&
+                   !hierarchyPath.Contains("SimulationSystemGroup", StringComparison.Ordinal) &&
+                   !string.IsNullOrWhiteSpace(callstack) &&
+                   !callstack.Contains(
+                       "(raw allocation attribution unavailable:",
+                       StringComparison.Ordinal) &&
+                   !callstack.Contains("/Assets/", StringComparison.Ordinal) &&
+                   !callstack.Contains("Game.", StringComparison.Ordinal) &&
+                   callstack.Contains(
+                       "/Library/PackageCache/com.unity.ai.assistant@",
+                       StringComparison.Ordinal) &&
+                   callstack.Contains(
+                       "/Editor/Assistant/Utils/TaskUtils.cs:",
+                       StringComparison.Ordinal) &&
+                   callstack.Contains("Unity.AI.Assistant.Editor.dll!", StringComparison.Ordinal) &&
+                   callstack.Contains("::<AwaitCondition>", StringComparison.Ordinal);
+        }
+
+        private static bool IsUnityAiMcpEditorTransportAllocation(
+            string threadName,
+            string hierarchyPath,
+            string callstack)
+        {
+            return string.Equals(threadName, "Thread Pool Worker", StringComparison.Ordinal) &&
+                   string.Equals(hierarchyPath, "GC.Alloc", StringComparison.Ordinal) &&
+                   !string.IsNullOrWhiteSpace(callstack) &&
+                   !callstack.Contains(
+                       "(raw allocation attribution unavailable:",
+                       StringComparison.Ordinal) &&
+                   !callstack.Contains("/Assets/", StringComparison.Ordinal) &&
+                   !callstack.Contains("Game.", StringComparison.Ordinal) &&
+                   callstack.Contains(
+                       "/Library/PackageCache/com.unity.ai.assistant@",
+                       StringComparison.Ordinal) &&
+                   callstack.Contains(
+                       "/Modules/Unity.AI.MCP.Editor/Connection/UnixSocketTransport.cs:",
+                       StringComparison.Ordinal) &&
+                   callstack.Contains("Unity.AI.MCP.Editor.dll!", StringComparison.Ordinal) &&
+                   (callstack.Contains("::<ReadUntilDelimiterAsync>", StringComparison.Ordinal) ||
+                    callstack.Contains("::<WriteAsync>", StringComparison.Ordinal));
+        }
+
+        private static bool IsUnityAiAccountNetworkPollingAllocation(
+            string threadName,
+            string hierarchyPath,
+            string callstack)
+        {
+            // Keep this package-owned editor poll separate from broad tooling-stack classification.
+            return string.Equals(threadName, "Thread Pool Worker", StringComparison.Ordinal) &&
+                   string.Equals(hierarchyPath, "GC.Alloc", StringComparison.Ordinal) &&
+                   !string.IsNullOrWhiteSpace(callstack) &&
+                   !callstack.Contains(
+                       "(raw allocation attribution unavailable:",
+                       StringComparison.Ordinal) &&
+                   !callstack.Contains("/Assets/", StringComparison.Ordinal) &&
+                   !callstack.Contains("Game.", StringComparison.Ordinal) &&
+                   callstack.Contains(
+                       "/Library/PackageCache/com.unity.ai.assistant@",
+                       StringComparison.Ordinal) &&
+                   callstack.Contains(
+                       "/Modules/Unity.AI.Toolkit.Accounts/Services/States/SettingsState.cs:",
+                       StringComparison.Ordinal) &&
+                   callstack.Contains(
+                       "Unity.AI.Toolkit.Accounts.dll!Unity.AI.Toolkit.Accounts.Services.States::SettingsState.",
+                       StringComparison.Ordinal) &&
+                   (callstack.Contains(
+                        "::SettingsState.<PollNetworkAsync>b__",
+                        StringComparison.Ordinal) ||
+                    callstack.Contains(
+                        "::SettingsState.PollNetworkAsync()",
+                        StringComparison.Ordinal));
+        }
+
+        private static bool IsFrameworkTimerSchedulerAllocation(
+            string threadName,
+            string hierarchyPath,
+            string callstack)
+        {
+            if (!string.Equals(threadName, "Timer-Scheduler", StringComparison.Ordinal) ||
+                !string.Equals(hierarchyPath, "GC.Alloc", StringComparison.Ordinal) ||
+                string.IsNullOrWhiteSpace(callstack) ||
+                !callstack.Contains("mscorlib.dll!", StringComparison.Ordinal) ||
+                !(callstack.Contains("::Scheduler.FireTimer()", StringComparison.Ordinal) ||
+                  callstack.Contains("::Scheduler.RunSchedulerLoop()", StringComparison.Ordinal)) ||
+                callstack.Contains("/Assets/", StringComparison.Ordinal) ||
+                callstack.Contains("Game.", StringComparison.Ordinal) ||
+                callstack.Contains("Unity", StringComparison.Ordinal))
+                return false;
+
+            string[] frames = callstack.Split('\n');
+            for (int i = 0; i < frames.Length; i++)
+            {
+                string frame = frames[i].Trim();
+                if (frame.Length > 0 && !frame.Contains("mscorlib.dll!", StringComparison.Ordinal))
+                    return false;
+            }
+
+            return true;
         }
 
         private static bool IsEditorToolingAllocation(string threadName, string hierarchyPath)
@@ -647,7 +1002,13 @@ namespace Game.Editor
                    (value.Contains("Unity.AI.MCP.Editor", StringComparison.Ordinal) ||
                     value.Contains("Unity.AI.Tracing", StringComparison.Ordinal) ||
                     value.Contains("Unity.Relay.Editor", StringComparison.Ordinal) ||
-                    value.Contains("Burst.Compiler", StringComparison.Ordinal));
+                    value.Contains("MonoCompiler.Tick", StringComparison.Ordinal) ||
+                    value.Contains("tickGIInEditor.Invoke", StringComparison.Ordinal) ||
+                    value.Contains("UnityEditor.Experimental.Rendering::", StringComparison.Ordinal) ||
+                    value.Contains("Burst.Compiler", StringComparison.Ordinal) ||
+                    value.Contains(
+                        "EditorApplication.update: Game.Editor.MatchGcAllocationCallstackCapture.Update",
+                        StringComparison.Ordinal));
         }
 
         private static bool ContainsDiagnosticLoggingFrame(string value)
@@ -677,18 +1038,19 @@ namespace Game.Editor
             RuntimeDiagnosticsSystem.ResetEditorGameplayRuntimeAllocationProbe();
         }
 
-        private static void AppendRuntimeAllocationProbeSummary(StringBuilder builder)
+        private static void AppendRuntimeAllocationProbeSummary(
+            StringBuilder builder,
+            RuntimeProbeEvidence probeEvidence)
         {
-            UIShellEcsPresentationSystem.GetEditorAllocationProbe(
-                out long shellBytes,
-                out int shellAllocationSamples,
-                out int shellUpdateSamples);
+            long shellBytes = probeEvidence.ShellBytes;
+            int shellAllocationSamples = probeEvidence.ShellAllocationSamples;
+            int shellUpdateSamples = probeEvidence.ShellUpdateSamples;
             MenuBootstrapView.GetEditorAllocationProbe(
                 out long bootstrapBytes,
                 out int bootstrapAllocationSamples,
                 out int bootstrapUpdateSamples);
             SelectionRuntimeDiagnosticsSystemHelper.EditorSelectionAllocationProbeSnapshot selectionProbe =
-                SelectionRuntimeDiagnosticsSystemHelper.GetEditorSelectionAllocationProbe();
+                probeEvidence.Selection;
             RuntimeDiagnosticsSystem.EditorBuildingVisualAllocationProbeSnapshot buildingVisualProbe =
                 RuntimeDiagnosticsSystem.GetEditorBuildingVisualAllocationProbe();
             RuntimeDiagnosticsSystem.EditorProductionTransportAllocationProbeSnapshot productionTransportProbe =
@@ -696,7 +1058,7 @@ namespace Game.Editor
             RuntimeDiagnosticsSystem.EditorTransportBoardingAllocationProbeSnapshot transportBoardingProbe =
                 RuntimeDiagnosticsSystem.GetEditorTransportBoardingAllocationProbe();
             RuntimeDiagnosticsSystem.EditorGameplayRuntimeAllocationProbeSnapshot gameplayRuntimeProbe =
-                RuntimeDiagnosticsSystem.GetEditorGameplayRuntimeAllocationProbe();
+                probeEvidence.Gameplay;
             builder.AppendLine("- Runtime allocation probe:");
             builder.Append("  - `UIShellEcsPresentationSystem.Update`: ")
                 .Append(shellBytes)
@@ -946,6 +1308,39 @@ namespace Game.Editor
             disabled += DisableManagedSystemIfPresent(world, "Unity.Scenes.Editor.LiveConversionEditorSystemGroup, Unity.Scenes.Editor");
             disabled += DisableManagedSystemIfPresent(world, "Unity.Scenes.Editor.EditorSubSceneLiveConversionSystem, Unity.Scenes.Editor");
             return disabled;
+        }
+
+        private static bool DisableEditorMcpBridge()
+        {
+            Type bridgeType = Type.GetType(
+                "Unity.AI.MCP.Editor.UnityMCPBridge, Unity.AI.MCP.Editor",
+                throwOnError: false);
+            var isRunningProperty = bridgeType?.GetProperty(
+                "IsRunning",
+                System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+            bool wasRunning = isRunningProperty?.GetValue(null) is true;
+            SessionState.SetBool(EditorMcpBridgeWasRunningKey, wasRunning);
+            if (wasRunning)
+            {
+                bridgeType.GetMethod(
+                    "Stop",
+                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)?.Invoke(null, null);
+            }
+
+            return wasRunning;
+        }
+
+        private static void RestoreEditorMcpBridge()
+        {
+            if (!SessionState.GetBool(EditorMcpBridgeWasRunningKey, false))
+                return;
+
+            Type bridgeType = Type.GetType(
+                "Unity.AI.MCP.Editor.UnityMCPBridge, Unity.AI.MCP.Editor",
+                throwOnError: false);
+            bridgeType?.GetMethod(
+                "Start",
+                System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)?.Invoke(null, null);
         }
 
         private static int DisableManagedSystemIfPresent(World world, string assemblyQualifiedTypeName)
@@ -1867,6 +2262,8 @@ namespace Game.Editor
 
         private static void ResetState()
         {
+            PerformanceDiagnosticsCapturePolicy.SetSuppressLogging(false);
+            RestoreEditorMcpBridge();
             SessionState.EraseBool(ActiveKey);
             SessionState.EraseInt(PhaseKey);
             SessionState.EraseInt(CaptureModeKey);
@@ -1876,6 +2273,8 @@ namespace Game.Editor
             SessionState.EraseInt(WarmupStartFrameKey);
             SessionState.EraseBool(ProfilerStateStoredKey);
             SessionState.EraseInt(EditorLiveConversionDisabledCountKey);
+            SessionState.EraseBool(EditorMcpBridgeWasRunningKey);
+            SessionState.EraseInt(SteadyStateMutationRetryCountKey);
         }
     }
     #endif

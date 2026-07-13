@@ -285,12 +285,13 @@ namespace Game.Runtime
 
         public BuildingRuntimeCreationCompositionSystemHelper.Context CreateCreationContext(Source source)
         {
+            var redirectContext = CreateCreationRedirectContext(source);
             return new BuildingRuntimeCreationCompositionSystemHelper.Context(
                 source.RuntimeBuildingSystem,
                 source.RuntimeLinkInteractionSystem,
                 source.RuntimeLinkInteractionContext,
                 source.RuntimeBuildingEntityLinks,
-                source.IsDeferringSideEffects?.Invoke() == true,
+                source.IsDeferringSideEffects,
                 source.TryGetEntityManager,
                 source.TryGetGridForRuntimeCreation,
                 source.ResolvePlacementRect,
@@ -302,7 +303,7 @@ namespace Game.Runtime
                 (runtimeBuildingId, originCell, definition, ownerFactionId, worldRotation) => source.RuntimeEntitySystem != null
                     ? source.RuntimeEntitySystem.CreateBuildingCombatEntity(source.RuntimeEntityContext, runtimeBuildingId, originCell, definition, ownerFactionId, worldRotation)
                     : Entity.Null,
-                footprint => source.PlacementRedirectSystem?.RedirectUnitsAroundPlacedBuilding(CreateCreationRedirectContext(source), footprint),
+                footprint => source.PlacementRedirectSystem?.RedirectUnitsAroundPlacedBuilding(redirectContext, footprint),
                 footprint => source.PlacementRedirectSystem?.AddDeferredRedirectFootprint(footprint),
                 () => source.PlacementRedirectSystem?.MarkPendingMarkerRefresh(),
                 source.InitializeVisuals,
@@ -348,10 +349,9 @@ namespace Game.Runtime
                 BuildingDefinitionPrefabSystemHelper.RuntimeBuildingMatchesId,
                 BuildingDefinitionPrefabSystemHelper.TryGetProductionSourceKey,
                 (EntityManager em, out Entity boundaryEntity) =>
-                    TryGetRuntimeBoundaryEntity(source.BuildingRuntimeStateQuery, em, out boundaryEntity));
+                    TryGetBoundary(source.BuildingRuntimeStateQuery, em, out boundaryEntity));
         }
-
-        private static bool TryGetRuntimeBoundaryEntity(EntityQuery boundaryQuery, EntityManager em, out Entity boundaryEntity)
+        private static bool TryGetBoundary(EntityQuery boundaryQuery, EntityManager em, out Entity boundaryEntity)
         {
             boundaryEntity = Entity.Null;
             if (em.World == null || !em.World.IsCreated || boundaryQuery.IsEmptyIgnoreFilter)
@@ -446,7 +446,7 @@ namespace Game.Runtime
                 source.RuntimeBuildingSystem.Buildings,
                 (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager),
                 (EntityManager em, out Entity boundaryEntity) =>
-                    TryGetRuntimeBoundaryEntity(source.BuildingRuntimeStateQuery, em, out boundaryEntity),
+                    TryGetBoundary(source.BuildingRuntimeStateQuery, em, out boundaryEntity),
                 source.ProductionSystem,
                 BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey,
                 source.IsHouseBuilding,

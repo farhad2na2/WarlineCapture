@@ -56,28 +56,32 @@ namespace Game.Runtime
             Action<BuildingGameplaySourceCompositionSystemHelper> endDeferredRuntimeBuildingSideEffects,
             float destroyedBuildingLifetimeSeconds)
         {
-            BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource CreateRuntimeSource() =>
-                CreateRuntimeContextSource(
-                    source,
-                    tryGetEntityManager,
-                    tryGetGridData,
-                    isHouseBuilding,
-                    tryResolveBuildingFocusWorldPosition,
-                    tryGetRuntimeBuilding,
-                    getEffectivePlacementRect);
-
-            BuildingRuntimeEntityCompositionSystemHelper.Context CreateRuntimeEntityContext() =>
-                CreateBuildingRuntimeEntityContext(
-                    source,
-                    tryGetEntityManager,
-                    tryGetGridData,
-                    isHouseBuilding,
-                    tryResolveBuildingFocusWorldPosition,
-                    tryGetRuntimeBuilding,
-                    getEffectivePlacementRect,
-                    destroyedBuildingLifetimeSeconds);
-
-            return new BuildingRuntimeContextFactoryCompositionSystemHelper.Source(
+            BuildingRuntimeContextFactoryCompositionSystemHelper factory = source.BuildingRuntimeContextFactoryCompositionSystemHelper;
+            BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource runtimeSource = CreateRuntimeContextSource(
+                source,
+                tryGetEntityManager,
+                tryGetGridData,
+                isHouseBuilding,
+                tryResolveBuildingFocusWorldPosition,
+                tryGetRuntimeBuilding,
+                getEffectivePlacementRect);
+            BuildingCombatUtilitySystemHelper.Context<RuntimeBuildingEntity> combatContext = factory.CreateCombatContext(runtimeSource);
+            BuildingRuntimeEntityCompositionSystemHelper.Context runtimeEntityContext = factory.CreateRuntimeEntityContext(
+                runtimeSource,
+                source.BuildingCombatUtilitySystemHelper,
+                combatContext,
+                () => Time.time,
+                destroyedBuildingLifetimeSeconds);
+            BuildingRuntimeVisualPresentationSystemHelper.Context runtimeVisualContext = factory.CreateRuntimeVisualContext(runtimeSource);
+            BuildingSelectionMarkerPresentationSystemHelper.Context selectionMarkerContext = factory.CreateSelectionMarkerContext(
+                runtimeSource,
+                source.BuildingPlacementStartupSystemHelper.BuildingSelectionMarkerPrefab,
+                source.BuildingPlacementStartupSystemHelper.BuildingRoot,
+                markerPropertyBlock,
+                source.RuntimeObjectPresentationHelper.DestroyRuntimeObject);
+            BuildingRuntimeCreationCompositionSystemHelper.Context creationContext = default;
+            BuildingRuntimeOwnershipCompositionSystemHelper.Context ownershipContext = default;
+            BuildingRuntimeContextFactoryCompositionSystemHelper.Source result = new(
                 source.BuildingPlacementStartupSystemHelper.BuildingRoot,
                 source.BuildingDefinitionPrefabSystemHelper,
                 source.BuildingRunwaySystem,
@@ -88,7 +92,7 @@ namespace Game.Runtime
                     (grid, origin, footprint) => source.BuildingPlacementInvalidCellCacheCompositionSystemHelper.HasRoadInFootprint(source.BuildingPlacementStartupSystemHelper, grid, origin, footprint)),
                 (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
                     tryGetGridData(source, out gridEntity, out grid, out roads, out blockerData),
-                source.BuildingPlacementGridCameraSystemHelper.GetPlacementFootprint,
+                BuildingPlacementGridCameraSystemHelper.GetPlacementFootprint,
                 (definition, origin, grid, rotateVertical) => getEffectivePlacementRect(source, definition, origin, grid, rotateVertical),
                 (definition, origin, footprint, rotateVertical, grid, roads, blockerData) => source.BuildingPlacementAdapterCompositionSystemHelper.IsPlacementValid(
                     source,
@@ -110,55 +114,22 @@ namespace Game.Runtime
                     definition,
                     grid,
                     rotateVertical,
-                    source.BuildingPlacementGridCameraSystemHelper.GetPlacementFootprint,
+                    BuildingPlacementGridCameraSystemHelper.GetPlacementFootprint,
                     (origin, footprint, gridConfig) => source.BuildingPlacementGridCameraSystemHelper.GetFootprintCenter(origin, footprint, gridConfig, source.BuildingPlacementStartupSystemHelper.BuildPlaneY),
                     (Vector2Int origin, BuildingDefinition definition, out bool gateVertical) => source.BuildingPlacementAdapterCompositionSystemHelper.TryAlignGateToNearbyWall(
                         source,
                         origin,
                         definition,
-                        runtimeSourceSource => CreateRuntimeContextSource(
-                            runtimeSourceSource,
-                            tryGetEntityManager,
-                            tryGetGridData,
-                            isHouseBuilding,
-                            tryResolveBuildingFocusWorldPosition,
-                            tryGetRuntimeBuilding,
-                            getEffectivePlacementRect),
+                        _ => runtimeSource,
                         out gateVertical)),
                 (definition, instance, originCell, removeOverlappingBlockers) => source.BuildingRuntimeCreationCompositionSystemHelper.RegisterRuntimeBuilding(
-                    source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateCreationContext(CreateBuildingRuntimeContextSource(
-                        source,
-                        interactionContext,
-                        markerPropertyBlock,
-                        tryGetEntityManager,
-                        tryGetGridData,
-                        getEffectivePlacementRect,
-                        overlapsAnyRuntimeBuilding,
-                        isHouseBuilding,
-                        tryResolveBuildingFocusWorldPosition,
-                        tryGetRuntimeBuilding,
-                        beginDeferredRuntimeBuildingSideEffects,
-                        endDeferredRuntimeBuildingSideEffects,
-                        destroyedBuildingLifetimeSeconds)),
+                    creationContext,
                     definition,
                     instance,
                     originCell,
                     removeOverlappingBlockers),
                 (building, ownerFactionId) => source.BuildingRuntimeOwnershipCompositionSystemHelper.SetRuntimeBuildingOwnerFaction(
-                    source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateOwnershipContext(CreateBuildingRuntimeContextSource(
-                        source,
-                        interactionContext,
-                        markerPropertyBlock,
-                        tryGetEntityManager,
-                        tryGetGridData,
-                        getEffectivePlacementRect,
-                        overlapsAnyRuntimeBuilding,
-                        isHouseBuilding,
-                        tryResolveBuildingFocusWorldPosition,
-                        tryGetRuntimeBuilding,
-                        beginDeferredRuntimeBuildingSideEffects,
-                        endDeferredRuntimeBuildingSideEffects,
-                        destroyedBuildingLifetimeSeconds)),
+                    ownershipContext,
                     building,
                     ownerFactionId),
                 source.RuntimeBuildingSystem,
@@ -170,29 +141,27 @@ namespace Game.Runtime
                 (definition, origin, grid) => getEffectivePlacementRect(source, definition, origin, grid, false),
                 source.BuildingGameplayDependencyCompositionSystemHelper.RemoveBlockersOverlappingFootprint,
                 source.BuildingRuntimeEntityCompositionSystemHelper,
-                CreateRuntimeEntityContext(),
+                runtimeEntityContext,
                 source.BuildingPlacementRedirectCompositionSystemHelper,
                 source.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries,
                 () => source.BuildingGameplayEcsQueryCompositionSystemHelper.RedirectUnitsQuery,
                 building => source.BuildingRuntimeVisualPresentationSystemHelper.InitializeBuildingVisuals(
-                    source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRuntimeVisualContext(CreateRuntimeSource()),
+                    runtimeVisualContext,
                     building),
                 () => source.BuildingSelectionMarkerPresentationSystemHelper.Refresh(
-                    source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateSelectionMarkerContext(
-                        CreateRuntimeSource(),
-                        source.BuildingPlacementStartupSystemHelper.BuildingSelectionMarkerPrefab,
-                        source.BuildingPlacementStartupSystemHelper.BuildingRoot,
-                        markerPropertyBlock,
-                        source.RuntimeObjectPresentationHelper.DestroyRuntimeObject)),
+                    selectionMarkerContext),
                 (out EntityManager entityManager) => tryGetEntityManager(out entityManager),
                 source.BuildingVisualSystem,
                 source.BuildingFactionVisualSystem,
                 source.BuildingGameplayDependencyCompositionSystemHelper.FactionVisualSettings,
                 markerPropertyBlock,
                 source.BuildingGameplayDependencyCompositionSystemHelper.BuildingFactionTintStrength,
-                buildingId => source.BuildingRuntimeEntityCompositionSystemHelper.DeleteBuildingById(CreateRuntimeEntityContext(), buildingId),
+                buildingId => source.BuildingRuntimeEntityCompositionSystemHelper.DeleteBuildingById(runtimeEntityContext, buildingId),
                 () => beginDeferredRuntimeBuildingSideEffects(source),
                 () => endDeferredRuntimeBuildingSideEffects(source));
+            creationContext = factory.CreateCreationContext(result);
+            ownershipContext = factory.CreateOwnershipContext(result);
+            return result;
         }
 
         public BuildingRuntimeEntityCompositionSystemHelper.Context CreateBuildingRuntimeEntityContext(
@@ -232,7 +201,10 @@ namespace Game.Runtime
             TryGetRuntimeBuildingDelegate tryGetRuntimeBuilding,
             GetEffectivePlacementRectDelegate getEffectivePlacementRect)
         {
-            return new BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource(
+            BuildingRuntimeContextFactoryCompositionSystemHelper factory = source.BuildingRuntimeContextFactoryCompositionSystemHelper;
+            BuildingBarrierUtilitySystemHelper.Context barrierContext = default;
+            BuildingSelectionMarkerPresentationSystemHelper.Context markerContext = default;
+            BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource result = new(
                 source.RuntimeBuildingSystem,
                 source.BuildingProductionQueueCompositionSystemHelper,
                 source.BuildingProductionSlotUtilitySystemHelper,
@@ -271,34 +243,23 @@ namespace Game.Runtime
                 (int id, out RuntimeBuildingEntity building) => tryGetRuntimeBuilding(source, id, out building),
                 (building, grid) => getEffectivePlacementRect(source, building.Definition, building.OriginCell, grid, false),
                 building => source.BuildingBarrierUtilitySystemHelper.RememberOpenBaseBreach(
-                    source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateBarrierContext(CreateRuntimeContextSource(
-                        source,
-                        tryGetEntityManager,
-                        tryGetGridData,
-                        isHouseBuilding,
-                        tryResolveBuildingFocusWorldPosition,
-                        tryGetRuntimeBuilding,
-                        getEffectivePlacementRect)),
+                    barrierContext,
                     building),
                 source.BuildingGameplayDependencyCompositionSystemHelper.NotifyHomeBuildingDestroyed,
                 source.RuntimeObjectPresentationHelper.DestroyRuntimeObject,
                 () => source.BuildingSelectionMarkerPresentationSystemHelper.Refresh(
-                    source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateSelectionMarkerContext(
-                        CreateRuntimeContextSource(
-                            source,
-                            tryGetEntityManager,
-                            tryGetGridData,
-                            isHouseBuilding,
-                            tryResolveBuildingFocusWorldPosition,
-                            tryGetRuntimeBuilding,
-                            getEffectivePlacementRect),
-                        source.BuildingPlacementStartupSystemHelper.BuildingSelectionMarkerPrefab,
-                        source.BuildingPlacementStartupSystemHelper.BuildingRoot,
-                        null,
-                        source.RuntimeObjectPresentationHelper.DestroyRuntimeObject)),
+                    markerContext),
                 source.BuildingGameplayDependencyCompositionSystemHelper.NotifyStaticMinimapChanged,
                 message => Debug.Log(message),
                 false);
+            barrierContext = factory.CreateBarrierContext(result);
+            markerContext = factory.CreateSelectionMarkerContext(
+                result,
+                source.BuildingPlacementStartupSystemHelper.BuildingSelectionMarkerPrefab,
+                source.BuildingPlacementStartupSystemHelper.BuildingRoot,
+                null,
+                source.RuntimeObjectPresentationHelper.DestroyRuntimeObject);
+            return result;
         }
     }
 }

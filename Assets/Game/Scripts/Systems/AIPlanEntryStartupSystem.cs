@@ -59,7 +59,11 @@ namespace Game.Runtime
                 if (string.IsNullOrWhiteSpace(buildingId))
                     continue;
 
-                entries.Add(new AIBuildPlanEntry { BuildingId = new FixedString64Bytes(buildingId) });
+                entries.Add(new AIBuildPlanEntry
+                {
+                    BuildingId = new FixedString64Bytes(
+                        BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(buildingId))
+                });
             }
         }
 

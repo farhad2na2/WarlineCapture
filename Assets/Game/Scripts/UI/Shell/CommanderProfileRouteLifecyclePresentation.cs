@@ -43,6 +43,12 @@ namespace Game.UI.Runtime
                 return;
             }
 
+            if (route == UIRoute.MissionBriefing)
+            {
+                contentView.InstallMissionBriefingBody();
+                return;
+            }
+
             InstallMainMenuBody(contentView);
         }
 

@@ -965,6 +965,27 @@ namespace Game.Editor
                         UIShellRegionId.FooterRegion,
                         UIShellRegionId.PopupLayer);
                     break;
+                case UIRoute.MissionBriefing:
+                    content.PrepareForCommandSequence(new[]
+                    {
+                        new UiShellPresentationCommandModel(
+                            UiShellCommandKind.EnterMenu,
+                            UiShellRegionId.None,
+                            UIRoute.Campaign,
+                            UiShellMode.MainMenu,
+                            1)
+                    });
+                    content.InstallMenuRouteBody(UIRoute.MissionBriefing);
+                    ResetRouteCaptureRegions(
+                        bootstrap,
+                        UIShellRegionId.MenuBackgroundRegion,
+                        UIShellRegionId.HeaderRegion,
+                        UIShellRegionId.LeftRegion,
+                        UIShellRegionId.MiddleRegion,
+                        UIShellRegionId.RightRegion,
+                        UIShellRegionId.FooterRegion,
+                        UIShellRegionId.PopupLayer);
+                    break;
                 case UIRoute.Match:
                     content.PrepareForCommandSequence(new[]
                     {
@@ -977,7 +998,7 @@ namespace Game.Editor
                     });
                     break;
                 default:
-                    error = $"Canvas route capture does not support route={routeCaptureRoute}. Supported routes: Splash, MainMenu, Armory, CommandFeed, QuickCustomSetup, Campaign, Match.";
+                    error = $"Canvas route capture does not support route={routeCaptureRoute}. Supported routes: Splash, MainMenu, Armory, CommandFeed, QuickCustomSetup, Campaign, MissionBriefing, Match.";
                     return false;
                 }
             }

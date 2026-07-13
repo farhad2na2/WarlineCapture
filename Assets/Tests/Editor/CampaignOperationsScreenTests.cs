@@ -105,7 +105,12 @@ public sealed class CampaignOperationsScreenTests
 
         Assert.IsFalse(campaignView.StoryArchiveButton.interactable);
         Assert.IsFalse(campaignView.ChapterIntelButton.interactable);
-        Assert.IsFalse(campaignView.LaunchMissionButton.interactable);
+        Assert.IsTrue(campaignView.LaunchMissionButton.interactable, "Selected Campaign missions must open their briefing screen.");
+        UIShellRouteButtonView missionBriefingRoute = campaignView.LaunchMissionButton.GetComponent<UIShellRouteButtonView>();
+        Assert.NotNull(missionBriefingRoute);
+        Assert.AreEqual(UiShellRouteIntent.OpenMenuRoute, missionBriefingRoute.Intent);
+        Assert.AreEqual(UIRoute.MissionBriefing, missionBriefingRoute.Route);
+        Assert.IsTrue(missionBriefingRoute.PushHistory);
         Assert.IsNull(ResolveComponentInHierarchy<UIGameStartButtonView>(content.CampaignContentPrefab.transform),
             "SCN-05 must not launch the default Skirmish Match path while Campaign launch data is unavailable.");
 

@@ -345,8 +345,10 @@ namespace Game.Editor
             CreateIcon("Icon", intel.transform, IntelIconPath, 72f, 54f, 118f, 118f, Olive);
             SetTextRect(intelLabel.rectTransform, 220f, 0f, 930f, 230f);
 
-            launch = CreateButton("LaunchMissionButton", root, 2810f, 1870f, 1910f, 250f, "LAUNCH MISSION", GoldSpritePath, 108f, Muted, out _);
+            launch = CreateButton("LaunchMissionButton", root, 2810f, 1870f, 1910f, 250f, "LAUNCH MISSION", GoldSpritePath, 108f, Text, out _);
             SetBottomAnchored(launch.GetComponent<RectTransform>(), 2810f, 35f, 1910f, 250f);
+            UIShellRouteButtonView briefingRoute = launch.gameObject.AddComponent<UIShellRouteButtonView>();
+            briefingRoute.Configure(UiShellRouteIntent.OpenMenuRoute, UIRoute.MissionBriefing, true);
             CreateIcon("LeftChevron", launch.transform, LeftChevronPath, 95f, 70f, 150f, 105f, new Color(0.82f, 0.61f, 0.17f, 0.72f));
             CreateIcon("RightChevron", launch.transform, RightChevronPath, 1665f, 70f, 150f, 105f, new Color(0.82f, 0.61f, 0.17f, 0.72f));
             AddButtonBacking(archive, new Color(0.025f, 0.03f, 0.028f, 0.96f));
@@ -354,7 +356,6 @@ namespace Game.Editor
             AddButtonBacking(launch, new Color(0.17f, 0.13f, 0.045f, 0.985f));
             SetUnavailable(archive);
             SetUnavailable(intel);
-            SetUnavailable(launch);
         }
 
         private static void SetUnavailable(Button button)

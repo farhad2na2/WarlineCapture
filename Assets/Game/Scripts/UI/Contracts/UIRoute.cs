@@ -14,6 +14,7 @@ namespace Game.UI.Contracts
         Ranking,
         CommandFeed,
         LoadoutSquadPrep,
-        Campaign
+        Campaign,
+        MissionBriefing
     }
 }

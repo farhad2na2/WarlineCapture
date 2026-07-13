@@ -16,6 +16,7 @@ namespace Game.UI.Runtime
         [SerializeField] private GameObject commanderProfileContentPrefab;
         [SerializeField] private GameObject skirmishSetupContentPrefab;
         [SerializeField] private GameObject campaignContentPrefab;
+        [SerializeField] private GameObject missionBriefingContentPrefab;
         [SerializeField] private GameObject armoryContentPrefab;
         [SerializeField] private GameObject matchHudContentPrefab;
         [SerializeField] private GameObject buildDrawerPopupPrefab;
@@ -65,6 +66,7 @@ namespace Game.UI.Runtime
         public GameObject CommanderProfileContentPrefab => commanderProfileContentPrefab;
         public GameObject SkirmishSetupContentPrefab => skirmishSetupContentPrefab;
         public GameObject CampaignContentPrefab => campaignContentPrefab;
+        public GameObject MissionBriefingContentPrefab => missionBriefingContentPrefab;
         public GameObject ArmoryContentPrefab => armoryContentPrefab;
         public GameObject MatchHudContentPrefab => matchHudContentPrefab;
         public GameObject BuildDrawerPopupPrefab => buildDrawerPopupPrefab;
@@ -90,7 +92,8 @@ namespace Game.UI.Runtime
             GameObject ariaCommandAssistantPrefab = null,
             GameObject commanderProfilePrefab = null,
             GameObject skirmishSetupPrefab = null,
-            GameObject campaignPrefab = null)
+            GameObject campaignPrefab = null,
+            GameObject missionBriefingPrefab = null)
         {
             shellView = view;
             loadingContentPrefab = loadingPrefab;
@@ -104,6 +107,8 @@ namespace Game.UI.Runtime
                 skirmishSetupContentPrefab = skirmishSetupPrefab;
             if (campaignPrefab != null)
                 campaignContentPrefab = campaignPrefab;
+            if (missionBriefingPrefab != null)
+                missionBriefingContentPrefab = missionBriefingPrefab;
             if (fullMapPrefab != null)
                 fullMapPopupPrefab = fullMapPrefab;
             if (buildPlacementConfirmationPrefab != null)
@@ -269,6 +274,17 @@ namespace Game.UI.Runtime
             ClearRegion(UIShellRegionId.RightRegion);
             ClearRegion(UIShellRegionId.FooterRegion);
             InstallRoot(campaignContentPrefab, UIShellRegionId.PopupLayer);
+        }
+
+        internal void InstallMissionBriefingBody()
+        {
+            UnbindMatchHudThreatWarningHeader();
+            CommanderProfileRouteLifecyclePresentation.ExitCommanderRoute(this);
+            ClearRegion(UIShellRegionId.LeftRegion);
+            ClearRegion(UIShellRegionId.MiddleRegion);
+            ClearRegion(UIShellRegionId.RightRegion);
+            ClearRegion(UIShellRegionId.FooterRegion);
+            InstallRoot(missionBriefingContentPrefab, UIShellRegionId.PopupLayer);
         }
 
         internal void InstallArmoryBody()

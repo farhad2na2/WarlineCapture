@@ -344,7 +344,7 @@ Threat detection logic:
 | ID | Display Name | Cost | HP | Role/Function | Production / Special |
 |---|---:|---:|---:|---|---|
 | Airport | Airport | 120000 | 1800 | Air operations | Transport Plane, Drone, Strike Jet, Fighter Jet |
-| Ammunition_Depot | Field Fabrication Depot | 45000 | 900 | Converts delivered Oil into tactical Materials for construction and repair | Planned by `Field_Fabrication_Materials_Design.md`; internal id remains `Building_Ammunition_Depot` |
+| Ammunition_Depot | Field Fabrication Depot | 45000 | 900 | Converts delivered Oil into tactical Materials for construction and repair | Implemented through the canonical faction Materials and tray-logistics path; internal id remains `Building_Ammunition_Depot` |
 | Building_Barrack | Barracks | 40000 | 1200 | Military housing/training | No current production |
 | Building_Satelite_Dish | Satellite Dish | 20000 | 450 | Air threat detection | Air detector, radius 240 |
 | Fuel_Bladder | Fuel Bladder | 18000 | 500 | Vehicle/fuel support | APCs, armored car, tank, missile launchers, trucks, Radar Tank |

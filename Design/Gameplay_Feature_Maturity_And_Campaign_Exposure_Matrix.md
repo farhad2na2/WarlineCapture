@@ -1,6 +1,6 @@
 # WarlineCapture Gameplay Feature Maturity And Campaign Exposure Matrix
 
-Date: 2026-07-10
+Date: 2026-07-14
 
 Status: Active high-level campaign exposure authority
 
@@ -52,8 +52,8 @@ Maturity is an audit snapshot, not a percentage or permanent promise. Implementa
 | Roads and route construction | Partial/Scaffolded | Reconnect hospitals, markets, fuel, evacuation, and convoy access. | Ch2 M01 after readiness | Ch2 M04-M05 | Ch5 M04 | A clear player entry, connected placement behavior, route validation, visuals, and objective hooks must be available. |
 | Oil extraction, refinery, Fuel storage | Implemented/Partial | Make civilian services and combined arms depend on a visible logistics chain. | Ch2 M02 | Ch2 M04-M05 | Ch4 and Ch5 | End-to-end Oil-to-Fuel flow, capacity, resource feedback, mission start state, and failure recovery must be validated. |
 | Automated tray-truck and tanker hauling | Implemented/Partial | Let the player design and protect a network without truck micromanagement. | Ch2 M02 | Ch2 M05 | Ch4 M02 and Ch5 M04 | Automation must be observable, interruptible through world conditions, and recover from blocked routes. |
-| Field Fabrication Depot and tactical Materials | Designed | Turn Oil allocation into a choice between mobility and construction while giving Materials a local production path. | Ch2 M02 only after readiness | Ch2 M04-M05 | Ch5 M04 | One canonical tactical Materials value, stable tray routing, Oil-to-Materials conversion, dual-cost building placement, live HUD, recovery rules, and no-GC validation must pass. |
-| Resource import/export | Scaffolded | Frame emergency trade, shortages, and logistics compromise. | Ch2 M03 only after enablement | Ch2 M05 | Ch5 M04 | Recipes, bootstrap, UI access, timing, rewards, and non-premium completion path must work in the active Campaign route. |
+| Field Fabrication Depot and tactical Materials | Implemented/Partial | Turn Oil allocation into a choice between mobility and construction while giving Materials a local production path. | Ch2 M02 only after readiness | Ch2 M04-M05 | Ch5 M04 | Runtime ownership, routing, conversion, dual-cost placement, HUD, recovery, architecture, GC, and p95 gates pass. Connect an Android target and validate the authored Campaign route before making it a required objective. |
+| Resource import/export | Implemented/Partial | Frame emergency trade, shortages, and logistics compromise. | Ch2 M03 only after enablement | Ch2 M05 | Ch5 M04 | Match recipes, bootstrap, UI routing, timing, canonical settlement, and capacity safety pass. Validate the enabled Campaign route and Android presentation before required exposure. |
 | APC boarding and transport | Implemented | Solve protected movement, evacuation, and evidence transport. | Ch1 M04 | Ch3 M04 | Ch5 M02-M04 | Capacity, board/unboard, ownership, destruction, objective tracking, and mobile feedback must be reliable. |
 | Helicopter boarding, insertion, extraction | Implemented/Partial | Create landing-zone risk, urgent rescue, and fast reinforcement. | Ch1 M04 | Ch3 M04 | Ch5 M04 | Landing, boarding, rope/exit state, Fuel, anti-air interaction, and extraction objective must be validated. |
 | Transport plane runway unload | Implemented | Provide safe high-capacity reinforcement when airfield control is possible. | Ch4 M04 | Ch5 M04 | Optional late mastery | Runway access, unload location, capacity, Fuel, and mission objective state must be clear. |

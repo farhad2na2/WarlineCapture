@@ -123,7 +123,7 @@ public sealed class StaticMapAndroidBuildSceneResolverTests
 
         CollectionAssert.AreEqual(expectedBaseScenes.Concat(expectedChunks).ToArray(), result);
         Assert.AreEqual(result.Length, result.Distinct(StringComparer.Ordinal).Count());
-        Assert.AreEqual(525, expectedChunks.Length, "The accepted APH-606 manifest must include all generated chunks.");
+        Assert.AreEqual(514, expectedChunks.Length, "The audited current-map manifest must include all generated chunks.");
     }
 
     [Test]

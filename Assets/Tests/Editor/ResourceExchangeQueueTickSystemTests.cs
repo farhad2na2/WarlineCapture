@@ -23,6 +23,10 @@ public sealed class ResourceExchangeQueueTickSystemTests
                 test => test.TickQueue_BlocksWhenOutputStorageFullAndResumesWhenAvailable(),
                 ref passed);
             RunValidationStep(
+                nameof(TickQueue_DefersOutputStorageValidationUntilArrival),
+                test => test.TickQueue_DefersOutputStorageValidationUntilArrival(),
+                ref passed);
+            RunValidationStep(
                 nameof(CancelRequest_RefundsReservedInputBeforePresentation),
                 test => test.CancelRequest_RefundsReservedInputBeforePresentation(),
                 ref passed);
@@ -123,6 +127,37 @@ public sealed class ResourceExchangeQueueTickSystemTests
         Assert.AreEqual(2, events.Length);
         Assert.AreEqual(ResourceExchangeResultKind.QueueCompleted, events[1].ResultKind);
         Assert.AreEqual(50, events[1].Amount);
+    }
+
+    [Test]
+    public void TickQueue_DefersOutputStorageValidationUntilArrival()
+    {
+        using World world = new(nameof(TickQueue_DefersOutputStorageValidationUntilArrival));
+        EntityManager em = world.EntityManager;
+        Entity exchange = CreateExchangeEntity(em, fuel: 930, fuelCapacity: 1000);
+        DynamicBuffer<ResourceExchangeQueueComponent> queue = em.GetBuffer<ResourceExchangeQueueComponent>(exchange);
+        ResourceExchangeQueueComponent item = CreateQueueItem(
+            inputResource: ResourceExchangeResourceKind.Credits,
+            outputResource: ResourceExchangeResourceKind.Fuel,
+            reservedInputAmount: 0,
+            outputAmount: 50,
+            remainingSeconds: 10f);
+        ReservePhysicalResources(em, exchange, item);
+        queue.Add(item);
+        SetStoredFuel(em, 980f);
+
+        Tick(em, exchange, 0.5f);
+
+        queue = em.GetBuffer<ResourceExchangeQueueComponent>(exchange);
+        Assert.AreEqual(ResourceExchangeQueueState.InProgress, queue[0].State);
+        Assert.AreEqual(9.5f, queue[0].RemainingSeconds, 0.001f);
+        Assert.AreEqual(0, em.GetBuffer<ResourceExchangeEconomyEventComponent>(exchange).Length);
+
+        Tick(em, exchange, 9.5f);
+
+        queue = em.GetBuffer<ResourceExchangeQueueComponent>(exchange);
+        Assert.AreEqual(ResourceExchangeQueueState.Blocked, queue[0].State);
+        Assert.AreEqual(ResourceExchangeReason.StorageFull, queue[0].StateReason);
     }
 
     [Test]

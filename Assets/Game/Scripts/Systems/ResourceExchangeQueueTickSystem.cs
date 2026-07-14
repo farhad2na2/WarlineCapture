@@ -293,38 +293,6 @@ namespace Game.Runtime
                     continue;
                 }
 
-                ResourceExchangeReason storageReason = ValidateOutputStorage(
-                    economy,
-                    materials,
-                    wallet,
-                    item,
-                    entityManager,
-                    physicalReservations,
-                    usePhysicalStorage);
-                if (storageReason != ResourceExchangeReason.None)
-                {
-                    item.State = ResourceExchangeQueueState.Blocked;
-                    item.StateReason = storageReason;
-                    item.Version++;
-                    queue[i] = item;
-                    stateChanged = true;
-                    ResourceExchangeResultComponent result =
-                        CreateResult(item, ResourceExchangeResultKind.QueueBlocked, 0, storageReason);
-                    results.Add(result);
-                    economyEvents.Add(new ResourceExchangeEconomyEventComponent
-                    {
-                        QueueItemId = item.QueueItemId,
-                        FactionId = item.FactionId,
-                        ResultKind = ResourceExchangeResultKind.QueueBlocked,
-                        ResourceKind = item.OutputResource,
-                        Amount = 0,
-                        RecipeId = item.RecipeId
-                    });
-                    ResourceExchangeToastTextUtility.TryAppendToast(toasts, emitToasts, result);
-                    ResourceExchangeAriaTextUtility.TryAppendAnnouncement(ariaAnnouncements, emitAriaAnnouncements, result);
-                    continue;
-                }
-
                 item.RemainingSeconds = math.max(0f, item.RemainingSeconds - safeDeltaSeconds);
                 if (item.RemainingSeconds <= 0f)
                 {

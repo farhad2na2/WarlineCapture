@@ -14,6 +14,14 @@ namespace Game.Composition
 #endif
         }
 
+        public static void ClearRequest()
+        {
+#if UNITY_EDITOR
+            PlayerPrefs.DeleteKey(RequestKey);
+            PlayerPrefs.Save();
+#endif
+        }
+
         internal static bool ConsumeRequest()
         {
 #if UNITY_EDITOR

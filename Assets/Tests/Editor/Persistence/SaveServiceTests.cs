@@ -132,4 +132,40 @@ public sealed class SaveServiceTests
         Assert.AreEqual("COMMANDER", loaded.firstLaunchCommanderCallsign);
         Assert.AreEqual("Full", loaded.firstLaunchGuidance);
     }
+
+    [Test]
+    public void ResetFirstLaunchProgress_PreservesUnrelatedProfileProgress()
+    {
+        _service.SaveProfile(new PlayerProfileSaveData
+        {
+            commanderName = "Mandel",
+            commanderLevel = 12,
+            credits = 4500,
+            ownedUnitUnlocks = new[] { "unit.raven" },
+            firstLaunchStatus = FirstLaunchProfileState.Completed,
+            firstLaunchLastCompletedStateId = "first_launch.command_base_reveal",
+            firstLaunchCommanderCallsign = "RAVEN",
+            firstLaunchCommanderDisplayName = "Alex Morgan",
+            firstLaunchCommanderPortraitIndex = 2,
+            firstLaunchGuidance = "Contextual",
+            firstLaunchWatched = true,
+            firstLaunchSkipped = true
+        });
+
+        _service.ResetFirstLaunchProgress();
+
+        PlayerProfileSaveData loaded = _service.LoadProfile();
+        Assert.AreEqual("Mandel", loaded.commanderName);
+        Assert.AreEqual(12, loaded.commanderLevel);
+        Assert.AreEqual(4500, loaded.credits);
+        CollectionAssert.AreEqual(new[] { "unit.raven" }, loaded.ownedUnitUnlocks);
+        Assert.AreEqual(FirstLaunchProfileState.NotStarted, loaded.firstLaunchStatus);
+        Assert.AreEqual(string.Empty, loaded.firstLaunchLastCompletedStateId);
+        Assert.AreEqual("COMMANDER", loaded.firstLaunchCommanderCallsign);
+        Assert.AreEqual("Commander", loaded.firstLaunchCommanderDisplayName);
+        Assert.AreEqual(0, loaded.firstLaunchCommanderPortraitIndex);
+        Assert.AreEqual("Full", loaded.firstLaunchGuidance);
+        Assert.IsFalse(loaded.firstLaunchWatched);
+        Assert.IsFalse(loaded.firstLaunchSkipped);
+    }
 }

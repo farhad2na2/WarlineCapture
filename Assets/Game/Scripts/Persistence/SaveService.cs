@@ -65,6 +65,20 @@ namespace Game.Runtime
             _repository.Save(ProfileFileName, NormalizeProfile(data, false));
         }
 
+        public void ResetFirstLaunchProgress()
+        {
+            PlayerProfileSaveData profile = LoadProfile();
+            profile.firstLaunchStatus = FirstLaunchProfileState.NotStarted;
+            profile.firstLaunchLastCompletedStateId = string.Empty;
+            profile.firstLaunchCommanderCallsign = "COMMANDER";
+            profile.firstLaunchCommanderDisplayName = "Commander";
+            profile.firstLaunchCommanderPortraitIndex = 0;
+            profile.firstLaunchGuidance = "Full";
+            profile.firstLaunchWatched = false;
+            profile.firstLaunchSkipped = false;
+            SaveProfile(profile);
+        }
+
         private static PlayerProfileSaveData NormalizeProfile(PlayerProfileSaveData profile, bool legacyProfile)
         {
             profile ??= new PlayerProfileSaveData();

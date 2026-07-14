@@ -1,0 +1,430 @@
+{
+  "schemaVersion": 1,
+  "taskId": "APH-504",
+  "reportDate": "2026-07-14",
+  "status": "candidate-plan-valid-rollout-blocked",
+  "selectorValid": true,
+  "pilotReadyForMutation": false,
+  "readOnlyCollection": true,
+  "mutationAuthorized": false,
+  "expansionAuthorized": false,
+  "pilotLimit": 2,
+  "proposedCandidatePaths": [
+    "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_A.png",
+    "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_02_A.png"
+  ],
+  "proposedCandidateCount": 2,
+  "selectorErrors": [],
+  "unresolvedEvidence": [
+    "aph502-final-buckets-unaccepted",
+    "aph505-near-medium-far-before-after-visual-evidence-absent",
+    "aph506-ten-minute-memory-io-evidence-absent",
+    "candidate-material-renderer-camera-coverage-unresolved",
+    "current-revision-clean-complete-texture-build-report-absent",
+    "current-revision-clean-residency-inventory-absent",
+    "full-source-near-mips-not-preserved:globalTextureMipmapLimit=1",
+    "historical-aab-export-incomplete:100/6104",
+    "historical-aab-revision-mismatch:a527e151e9e43a491ba30f4c19a0320dc54faf5c->d5b2ddeb8166010bbe5337e00243e74015ee4e94",
+    "normal-mask-representative-not-selected:explicit-streaming-fields-absent",
+    "pilot-importer-settings-not-applied",
+    "selected-readable-texture-cpu-copy-memory-unmeasured"
+  ],
+  "aph502Revision": "bc0287616ac225de524d836cd8409c4fd0d49eb0",
+  "analyzedRevision": "d5b2ddeb8166010bbe5337e00243e74015ee4e94",
+  "trackedWorktreeClean": true,
+  "trackedWorktreeChangeCount": 0,
+  "scopedTrackedInputsClean": true,
+  "scopedTrackedInputChanges": [],
+  "controlInputHashesUnchangedDuringRead": true,
+  "historicalAabEvidence": {
+    "path": "Design/AgentReports/architecture_performance_android_aab_build_report.json",
+    "exactCommit": "a527e151e9e43a491ba30f4c19a0320dc54faf5c",
+    "dirty": false,
+    "reportedIncludedAssetCount": 100,
+    "totalIncludedAssetCount": 6104,
+    "exportComplete": false,
+    "errors": []
+  },
+  "mobileQuality": {
+    "path": "ProjectSettings/QualitySettings.asset",
+    "globalTextureMipmapLimit": 1,
+    "streamingMipmapsActive": 1,
+    "streamingMipmapsAddAllCameras": 1,
+    "streamingMipmapsMemoryBudgetMiB": 256,
+    "streamingMipmapsMaxLevelReduction": 2,
+    "streamingMipmapsMaxFileIORequests": 1024,
+    "errors": []
+  },
+  "candidates": [
+    {
+      "assetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_A.png",
+      "metaPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_A.png.meta",
+      "textureFamily": "01",
+      "sourceDimensions": [
+        4096,
+        4096
+      ],
+      "aph502Category": "world albedo",
+      "currentCategory": "world albedo",
+      "historicalAabPackedBytes": 22369788,
+      "unchangedSinceHistoricalAab": true,
+      "unchangedSinceAph502": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 1,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": true,
+      "selectionReasons": [
+        "pilot-rank:1",
+        "texture-family-representative:01",
+        "world-albedo",
+        "clean-historical-aab-positive-inclusion",
+        "asset-and-meta-unchanged-since-aph502-and-aab",
+        "mipmaps-enabled",
+        "explicit-streaming-baseline-disabled"
+      ],
+      "exclusionReasons": []
+    },
+    {
+      "assetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_A_Normals.png",
+      "metaPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_A_Normals.png.meta",
+      "textureFamily": "01",
+      "sourceDimensions": [
+        4096,
+        4096
+      ],
+      "aph502Category": "world normal/mask",
+      "currentCategory": "world normal/mask",
+      "historicalAabPackedBytes": 9961684,
+      "unchangedSinceHistoricalAab": true,
+      "unchangedSinceAph502": true,
+      "currentImporter": {
+        "serializedVersion": 4,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": null,
+        "ignoreMipmapLimit": null,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "ignoreMipmapLimit-field-absent",
+        "streamingMipmaps-field-absent"
+      ]
+    },
+    {
+      "assetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_B.png",
+      "metaPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_B.png.meta",
+      "textureFamily": "01",
+      "sourceDimensions": [
+        4096,
+        4096
+      ],
+      "aph502Category": "world albedo",
+      "currentCategory": "world albedo",
+      "historicalAabPackedBytes": 9961676,
+      "unchangedSinceHistoricalAab": true,
+      "unchangedSinceAph502": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 1,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "texture-family-quota-filled:01"
+      ]
+    },
+    {
+      "assetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_C.png",
+      "metaPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_C.png.meta",
+      "textureFamily": "01",
+      "sourceDimensions": [
+        4096,
+        4096
+      ],
+      "aph502Category": "world albedo",
+      "currentCategory": "world albedo",
+      "historicalAabPackedBytes": 9961676,
+      "unchangedSinceHistoricalAab": true,
+      "unchangedSinceAph502": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 1,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "texture-family-quota-filled:01"
+      ]
+    },
+    {
+      "assetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_02_A.png",
+      "metaPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_02_A.png.meta",
+      "textureFamily": "02",
+      "sourceDimensions": [
+        4096,
+        4096
+      ],
+      "aph502Category": "world albedo",
+      "currentCategory": "world albedo",
+      "historicalAabPackedBytes": 9961676,
+      "unchangedSinceHistoricalAab": true,
+      "unchangedSinceAph502": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 1,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": true,
+      "selectionReasons": [
+        "pilot-rank:2",
+        "texture-family-representative:02",
+        "world-albedo",
+        "clean-historical-aab-positive-inclusion",
+        "asset-and-meta-unchanged-since-aph502-and-aab",
+        "mipmaps-enabled",
+        "explicit-streaming-baseline-disabled"
+      ],
+      "exclusionReasons": []
+    },
+    {
+      "assetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_02_B.png",
+      "metaPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_02_B.png.meta",
+      "textureFamily": "02",
+      "sourceDimensions": [
+        4096,
+        4096
+      ],
+      "aph502Category": "world albedo",
+      "currentCategory": "world albedo",
+      "historicalAabPackedBytes": 9961676,
+      "unchangedSinceHistoricalAab": true,
+      "unchangedSinceAph502": true,
+      "currentImporter": {
+        "serializedVersion": 4,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": null,
+        "ignoreMipmapLimit": null,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "ignoreMipmapLimit-field-absent",
+        "streamingMipmaps-field-absent"
+      ]
+    },
+    {
+      "assetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_02_C.png",
+      "metaPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_02_C.png.meta",
+      "textureFamily": "02",
+      "sourceDimensions": [
+        4096,
+        4096
+      ],
+      "aph502Category": "world albedo",
+      "currentCategory": "world albedo",
+      "historicalAabPackedBytes": 9961676,
+      "unchangedSinceHistoricalAab": true,
+      "unchangedSinceAph502": true,
+      "currentImporter": {
+        "serializedVersion": 4,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": null,
+        "ignoreMipmapLimit": null,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "ignoreMipmapLimit-field-absent",
+        "streamingMipmaps-field-absent"
+      ]
+    },
+    {
+      "assetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_03_A.png",
+      "metaPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_03_A.png.meta",
+      "textureFamily": "03",
+      "sourceDimensions": [
+        4096,
+        4096
+      ],
+      "aph502Category": "world albedo",
+      "currentCategory": "world albedo",
+      "historicalAabPackedBytes": 9961676,
+      "unchangedSinceHistoricalAab": true,
+      "unchangedSinceAph502": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 1,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "pilot-cap-reached:2"
+      ]
+    },
+    {
+      "assetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_03_B.png",
+      "metaPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_03_B.png.meta",
+      "textureFamily": "03",
+      "sourceDimensions": [
+        4096,
+        4096
+      ],
+      "aph502Category": "world albedo",
+      "currentCategory": "world albedo",
+      "historicalAabPackedBytes": 9961676,
+      "unchangedSinceHistoricalAab": true,
+      "unchangedSinceAph502": true,
+      "currentImporter": {
+        "serializedVersion": 4,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": null,
+        "ignoreMipmapLimit": null,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "ignoreMipmapLimit-field-absent",
+        "streamingMipmaps-field-absent"
+      ]
+    },
+    {
+      "assetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_03_C.png",
+      "metaPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_03_C.png.meta",
+      "textureFamily": "03",
+      "sourceDimensions": [
+        4096,
+        4096
+      ],
+      "aph502Category": "world albedo",
+      "currentCategory": "world albedo",
+      "historicalAabPackedBytes": 9961676,
+      "unchangedSinceHistoricalAab": true,
+      "unchangedSinceAph502": true,
+      "currentImporter": {
+        "serializedVersion": 4,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": null,
+        "ignoreMipmapLimit": null,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "ignoreMipmapLimit-field-absent",
+        "streamingMipmaps-field-absent"
+      ]
+    },
+    {
+      "assetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_04_A.png",
+      "metaPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_04_A.png.meta",
+      "textureFamily": "04",
+      "sourceDimensions": [
+        4096,
+        4096
+      ],
+      "aph502Category": "world albedo",
+      "currentCategory": "world albedo",
+      "historicalAabPackedBytes": 9961676,
+      "unchangedSinceHistoricalAab": true,
+      "unchangedSinceAph502": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 1,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "pilot-cap-reached:2"
+      ]
+    },
+    {
+      "assetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_04_B.png",
+      "metaPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_04_B.png.meta",
+      "textureFamily": "04",
+      "sourceDimensions": [
+        4096,
+        4096
+      ],
+      "aph502Category": "world albedo",
+      "currentCategory": "world albedo",
+      "historicalAabPackedBytes": 9961676,
+      "unchangedSinceHistoricalAab": true,
+      "unchangedSinceAph502": true,
+      "currentImporter": {
+        "serializedVersion": 4,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": null,
+        "ignoreMipmapLimit": null,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "ignoreMipmapLimit-field-absent",
+        "streamingMipmaps-field-absent"
+      ]
+    },
+    {
+      "assetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_04_C.png",
+      "metaPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_04_C.png.meta",
+      "textureFamily": "04",
+      "sourceDimensions": [
+        4096,
+        4096
+      ],
+      "aph502Category": "world albedo",
+      "currentCategory": "world albedo",
+      "historicalAabPackedBytes": 9961676,
+      "unchangedSinceHistoricalAab": true,
+      "unchangedSinceAph502": true,
+      "currentImporter": {
+        "serializedVersion": 4,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": null,
+        "ignoreMipmapLimit": null,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "ignoreMipmapLimit-field-absent",
+        "streamingMipmaps-field-absent"
+      ]
+    }
+  ]
+}

@@ -2304,6 +2304,14 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
       "maxLines": 312,
       "maxBytes": 13094,
       "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/FactionFuelLogisticsTelemetryUtilitySystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-080",
+      "maxLines": 71,
+      "maxBytes": 2445,
+      "scope": "system-helper"
     }
   ]
 }

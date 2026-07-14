@@ -73,9 +73,9 @@ Dependency direction remains inward toward components/config/contracts/runtime. 
 
 ## Progress Summary
 
-Overall implementation progress: 89% (92/103 checklist items complete).
+Overall implementation progress: 97% (100/103 checklist items complete).
 
-Planning, canonical resource ownership, depot config/projection, automated Oil routing, Oil-to-Materials conversion, authored construction costs, atomic dual-resource placement, HUD/depot controls, Exchange balance safety, canonical AI construction affordability, demand-aware AI Oil allocation, explicitly gated AI Materials recovery, faction-owned Materials/fabrication telemetry, and faction-owned tray logistics telemetry are complete. Active depots consume only unreserved physical Oil at the existing one-second cadence. The shipping Match now projects an explicitly gated Resource Exchange onto the canonical player faction entity; emergency Materials import costs 1.71x modeled local production, queue/capacity rules remain active, and tested conversion loops cannot create profit. Phase 8 continues with scenario viability and deterministic deadlock validation.
+Planning, canonical resource ownership, depot config/projection, automated Oil routing, Oil-to-Materials conversion, authored construction costs, atomic dual-resource placement, HUD/depot controls, Exchange balance safety, canonical AI construction affordability, demand-aware AI Oil allocation, explicitly gated AI Materials recovery, faction-owned Materials/fabrication telemetry, faction-owned tray logistics telemetry, and fail-closed deterministic scenario recovery validation are complete. Active depots consume only unreserved physical Oil at the existing one-second cadence. The shipping Match now projects an explicitly gated Resource Exchange onto the canonical player faction entity; emergency Materials import costs 1.71x modeled local production, queue/capacity rules remain active, and tested conversion loops cannot create profit. Phase 9 behavior, architecture, Burst, Match-start, HUD, placement, and zero-allocation gates pass. Relative p95 and Android target-device evidence remain open and are recorded as explicit blockers below.
 
 Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation row counts. Update the numerator, denominator, table, status, and evidence log in the same commit as each completed batch.
 
@@ -89,8 +89,8 @@ Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation 
 | 5. Credits + Materials construction | Complete | 11 | 11 | 100% | Atomic placement, rollback, authored cost projection, and Build Drawer dual-cost presentation pass. |
 | 6. HUD and selected-building UI | Complete | 11 | 11 | 100% | Live canonical header, typed Build Drawer affordability, selected-depot status/control, fail-closed Exchange routing, and responsive validation pass. |
 | 7. Exchange and balance safety | Complete | 8 | 8 | 100% | Shipping startup projection, emergency import markup, queue/capacity gates, anti-arbitrage tests, and strategy report pass. |
-| 8. AI, telemetry, and scenario safety | Active | 5 | 7 | 71% | AI shares rules; scenarios cannot deadlock silently. |
-| 9. Integration, performance, and closeout | Pending | 0 | 9 | 0% | Architecture, GC, profiler, gameplay, and docs pass. |
+| 8. AI, telemetry, and scenario safety | Complete | 7 | 7 | 100% | AI shares rules; invalid Materials scenarios fail startup with typed evidence. |
+| 9. Integration, performance, and closeout | Active | 6 | 9 | 67% | Behavior, architecture, Burst, GC, HUD, and Match start pass; p95 and Android evidence remain open. |
 
 ## Phase 0: Inventory And Baseline
 
@@ -296,8 +296,8 @@ Phase 7 exit criteria:
 - [x] Gate AI Exchange imports by scenario and recovery need.
 - [x] Record Materials fabricated/imported/exported/rewarded/spent and depot blocked time by typed reason.
 - [x] Record tray assignments/reassignments/failures and refinery-versus-depot Oil delivery.
-- [ ] Add scenario validation requiring starting Materials, a viable fabrication chain, rebuildability, or enabled Exchange recovery.
-- [ ] Add deterministic AI and deadlock validation scenarios.
+- [x] Add scenario validation requiring starting Materials, a viable fabrication chain, rebuildability, or enabled Exchange recovery.
+- [x] Add deterministic AI and deadlock validation scenarios.
 
 Phase 8 exit criteria:
 
@@ -307,12 +307,12 @@ Phase 8 exit criteria:
 
 ## Phase 9: Integration, Performance, And Closeout
 
-- [ ] Run `ScriptArchitectureAlignmentContractTests.RunAssemblyBoundaryValidation`.
-- [ ] Run `EcsBurstHotPathArchitectureTests.RunFocusedValidation` and classify any intentional managed boundary.
-- [ ] Run focused component/config/conversion/logistics/build/UI/Exchange tests.
-- [ ] Re-run existing automated fuel logistics, Resource Exchange, building placement, Match HUD, AI build-plan, and Match start tests.
-- [ ] Capture before/after profiler evidence for the same seeded scenario and device/editor configuration.
-- [ ] Verify `0 B/frame` managed allocation after warmup for fabrication, unchanged HUD/read-model reads, and stable tray routing.
+- [x] Run `ScriptArchitectureAlignmentContractTests.RunAssemblyBoundaryValidation`.
+- [x] Run `EcsBurstHotPathArchitectureTests.RunFocusedValidation` and classify any intentional managed boundary.
+- [x] Run focused component/config/conversion/logistics/build/UI/Exchange tests.
+- [x] Re-run existing automated fuel logistics, Resource Exchange, building placement, Match HUD, AI build-plan, and Match start tests.
+- [x] Capture before/after profiler evidence for the same seeded scenario and device/editor configuration.
+- [x] Verify `0 B/frame` managed allocation after warmup for fabrication, unchanged HUD/read-model reads, and stable tray routing.
 - [ ] Verify no greater than 5% p95 regression in affected accepted steady-state markers unless a stricter existing budget applies.
 - [ ] Run Android target-device validation for touch UI, sustained frame time, memory, and thermal behavior if the feature ships in the mobile build.
 - [ ] Reconcile all connected design docs, update this tracker to complete, and attach final evidence paths.
@@ -616,3 +616,24 @@ For every completed batch append:
 - Validation passed: resource-hauler utility and warmed telemetry mutation 28/28 with 0 managed bytes; production/logistics assignment, reassignment, same-route suppression, blocked retry, capture, and delivery regression 52/52; faction startup 3/3; initial-resource lifecycle/reset 12/12; balance reports 6/6; tactical ownership 1/1; assembly/naming boundaries 31/31; and ECS Burst hot-path architecture 10/10. Unity compilation and generated `Game.Components`, `Game.Runtime`, and `Game.Tests.Editor` builds completed with zero errors. Task-scoped diff checks passed.
 - Evidence: `/private/tmp/warline-phase8e-resource-hauler.log`, `/private/tmp/warline-phase8e-production-final.log`, `/private/tmp/warline-phase8e-startup.log`, `/private/tmp/warline-phase8e-initial-units.log`, `/private/tmp/warline-phase8e-balance.log`, `/private/tmp/warline-phase8e-ownership.log`, `/private/tmp/warline-phase8e-architecture.log`, `/private/tmp/warline-phase8e-burst.log`, and `/private/tmp/warline-phase8e-compile.log`.
 - Phase 8 is 5/7. Checklist count is 92/103. Next action: add startup/scenario validation requiring starting Materials, a viable fabrication chain, rebuildability, or explicitly enabled Exchange recovery.
+
+### 2026-07-14 - Phase 8F Deterministic Scenario Recovery Safety
+
+- Added one non-updating `MaterialsScenarioRecoveryValidationSystemHelper` in `Game.Runtime`. It evaluates every participating faction against typed Starting Materials, seeded depot/Oil-source/tray chain, affordable rebuild chain, and exact scenario-gated Credits-to-Materials Exchange paths. It rejects duplicate factions, missing capacity, unresolved enabled AI construction plans, and scenarios with no recovery path.
+- Manual/player factions require enough starting Materials and capacity for at least one authored requestable construction. AI-controlled factions require starting Materials for the complete enabled authored build plan while capacity must fit its largest single planned build; local fabrication, rebuild, or explicitly AI-enabled Exchange can recover a short reserve. Arithmetic is saturating and plan/recipe iteration order is deterministic.
+- Match startup runs validation after the existing building startup tick publishes the configured catalog. Catalog readiness has a bounded wait, then fails closed. Startup failures are captured once by `MatchBootstrapCompositionSystemHelper`, surfaced through the existing terminal `MatchStartStatusKind.Failed`, and use bounded FixedString messages instead of retrying forever or throwing truncation errors.
+- Focused scenario/deadlock validation passed 10/10, including all four recovery paths, capacity and partial-reserve rejection, duplicate-faction rejection, explicit AI Exchange permission, shipping player/AI reserves, deterministic repeated decisions, and 0 managed bytes across 512 evaluations after warmup. Custom/legacy startup passed 4/4, AI build-plan regression passed 7/7, and Resource Exchange startup passed 12/12.
+- Assembly/naming boundaries passed 31/31 and ECS Burst hot-path architecture passed 10/10. The graphics-capable production Menu-to-Match smoke reached `MatchHudReady` with Match/HUD loaded, intro complete, input unlocked, curtain hidden, and no crash or scenario failure. Task-scoped diff checks pass; unrelated Operations Dashboard prefab whitespace remains outside this slice.
+- Evidence: `/private/tmp/wlc-field-fabrication-phase8f-scenario.log`, `/private/tmp/wlc-field-fabrication-phase8f-custom-startup.log`, `/private/tmp/wlc-field-fabrication-phase8f-ai-plan.log`, `/private/tmp/wlc-field-fabrication-phase8f-exchange-startup.log`, `/private/tmp/wlc-field-fabrication-phase8f-architecture.log`, `/private/tmp/wlc-field-fabrication-phase8f-burst.log`, and `/private/tmp/wlc-field-fabrication-phase8f-menu-to-match.log`.
+- Phase 8 is complete at 7/7. Checklist count is 94/103. Next action: execute Phase 9 integration, profiler/GC comparison, Android target-device validation where available, documentation reconciliation, and final acceptance closeout.
+
+### 2026-07-14 - Phase 9 Integration, GC, And Open Performance Gates
+
+- Added a closeout runner that suppresses the focused suites' individual batch exits and fails the process only after inspecting every suite result. The 17-suite matrix passed conversion, automated fuel logistics, authored cost projection, dual-resource placement, Build Drawer presentation and interaction, Exchange routing/request/queue/startup, faction/custom startup, AI planning/end-to-end behavior, and initial-unit spawn completion. A stale Build Drawer test was reconciled with the existing fail-closed command binding and `BuildingDefinition` cost ownership; production code was not weakened.
+- Assembly/naming boundaries passed 31/31. ECS Burst hot-path architecture passed 10/10 with 177 `OnUpdate` files, 62 Burst systems, 44 job-backed systems, 94/94 classified non-Burst `ISystem` files, and zero unclassified systems.
+- Existing regressions passed: building placement 17/17, Match HUD 8/8, Match-start PlayMode 1/1, AI planner 7/7, Resource Exchange request/queue/startup, automated fuel logistics 52/52, and the graphics-capable production Menu-to-Match smoke. The Match reached `MatchHudReady` with scenes loaded, intro complete, input unlocked, and no startup crash.
+- Fabrication warmed simulation, tray/logistics telemetry, Match HUD cached reads, scenario evaluation, and Exchange request/queue steady state remain at 0 managed bytes. Exchange GC validation measured 0 bytes across 512 frames after 64 warmup frames. Added a no-request early-out to avoid resolving unused Exchange recipe/result/event/physical-reservation buffers during accepted idle steady state; focused request validation remains 4/4.
+- The exact Phase 0 Exchange p95 baseline was 0.019 ms. Repeated post-change samples were 0.024 ms, 0.031 ms, and 0.053 ms with 0 allocated bytes, all far below the existing 10 ms absolute budget but above the tracker-owned 5% relative threshold. This gate remains unchecked; the variation at microsecond scale does not justify silently waiving the authored contract.
+- Android tooling is installed but `adb devices -l` reports no connected target. Touch, sustained frame time, memory, and thermal validation therefore remains unchecked and requires a physical target device.
+- Evidence: `/private/tmp/wlc-field-fabrication-phase9-focused-matrix.log`, `/private/tmp/wlc-field-fabrication-phase9-architecture-final.log`, `/private/tmp/wlc-field-fabrication-phase9-burst-final.log`, `/private/tmp/wlc-field-fabrication-phase9-placement.log`, `/private/tmp/wlc-field-fabrication-phase9-hud-results.xml`, `/private/tmp/wlc-field-fabrication-phase9-match-start-results.xml`, `/private/tmp/wlc-field-fabrication-phase9-exchange-gc-final.log`, `/private/tmp/wlc-field-fabrication-phase9-exchange-performance.log`, `/private/tmp/wlc-field-fabrication-phase9-exchange-performance-run2.log`, `/private/tmp/wlc-field-fabrication-phase9-exchange-performance-optimized.log`, and `/private/tmp/wlc-field-fabrication-phase9-request-early-out.log`.
+- Phase 9 is 6/9. Checklist count is 100/103. Next action: establish a statistically stable same-scenario p95 comparison or optimize below the 5% threshold, connect an Android target for device evidence, then reconcile final documentation and close the tracker.

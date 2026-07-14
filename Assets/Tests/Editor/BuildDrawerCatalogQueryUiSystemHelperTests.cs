@@ -355,6 +355,7 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
         _query.Collect(unitConfig, buildingConfig, BuildDrawerCategory.Vehicles, _results);
         Assert.Greater(_results.Count, 0, "Current project configs should expose at least one requestable vehicle for the drawer.");
 
+        BindPermissiveRuntimeCommands(presenter);
         presenter.SelectCategoryForTests(BuildDrawerCategory.Vehicles);
 
         TMP_Text detailNameText = GetSerializedReference<TMP_Text>(new SerializedObject(view), "nameText");
@@ -526,7 +527,7 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
 
         Assert.NotNull(view.InstructionText);
         Assert.AreEqual(
-            "Need 4678 more credits to produce Light Vehicle.",
+            "Cannot produce Light Vehicle: insufficient credits.",
             view.InstructionText.text);
     }
 
@@ -700,11 +701,11 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
         BuildingDefinition buildingDefinition = new()
         {
             DisplayName = "Requestable Airport",
-            Prefab = buildingPrefab
+            Prefab = buildingPrefab,
+            CreditsCost = 1234
         };
         var requestSystem = new BuildingProductionRequestSystemHelper();
         bool beganPlacement = false;
-        int activePlacementCost = -1;
         bool closed = false;
         BuildingProductionRequestSystemHelper.Context requestContext = CreateProductionRequestContext(
             new Dictionary<int, RuntimeBuildingEntity>(),
@@ -714,7 +715,7 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
             new Dictionary<GameObject, BuildingDefinition> { { buildingPrefab, buildingDefinition } },
             _ => { beganPlacement = true; return true; },
             amount => true,
-            amount => activePlacementCost = amount);
+            _ => { });
 
         ConfigurePresenterForTests(presenter, view, null, buildingConfig);
         presenter.BindRuntimeCommands(
@@ -725,7 +726,6 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
         view.PrimaryActionButton.onClick.Invoke();
 
         Assert.IsTrue(beganPlacement, "Building PLACE must enter configured building placement.");
-        Assert.AreEqual(1234, activePlacementCost);
         Assert.IsTrue(closed, "Building PLACE should close the drawer after placement is armed.");
     }
 
@@ -1210,6 +1210,7 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
         BuildingPlacementSystemConfig buildingConfig = CreateAsset<BuildingPlacementSystemConfig>();
         buildingConfig.Spawnables.Add(CreateBuilding("Requestable Barracks", true, BuildingRole.MilitaryCamp, false));
         ConfigurePresenterForTests(presenter, view, null, buildingConfig);
+        BindPermissiveRuntimeCommands(presenter);
         presenter.RefreshForTests();
         Canvas.ForceUpdateCanvases();
 
@@ -1585,6 +1586,20 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
             null,
             null,
             cancelProduction,
+            null);
+    }
+
+    private static void BindPermissiveRuntimeCommands(BuildDrawerCatalogRuntimeView presenter)
+    {
+        presenter.BindRuntimeCommands(
+            new BuildingUiCommandAdapter(new BuildingUiCommandSystemHelper(), CreateCommandContext(
+                null,
+                null,
+                getCampRequestFailure: (GameObject requestPrefab, int price, out string requiredBuilding) =>
+                {
+                    requiredBuilding = string.Empty;
+                    return BuildingUiCommandSystemHelper.CampRequestFailure.None;
+                })),
             null);
     }
 

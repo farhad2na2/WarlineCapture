@@ -40,14 +40,17 @@ namespace Game.Runtime
                          .WithAll<ResourceExchangeEconomyEventComponent>()
                          .WithEntityAccess())
             {
+                DynamicBuffer<ResourceExchangeRequestComponent> requests =
+                    SystemAPI.GetBuffer<ResourceExchangeRequestComponent>(exchangeEntity);
+                if (requests.IsEmpty)
+                    continue;
+
                 DynamicBuffer<ResourceExchangeResultComponent> results =
                     SystemAPI.GetBuffer<ResourceExchangeResultComponent>(exchangeEntity);
                 DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents =
                     SystemAPI.GetBuffer<ResourceExchangeEconomyEventComponent>(exchangeEntity);
                 DynamicBuffer<ResourceExchangeRecipeComponent> recipes =
                     SystemAPI.GetBuffer<ResourceExchangeRecipeComponent>(exchangeEntity);
-                DynamicBuffer<ResourceExchangeRequestComponent> requests =
-                    SystemAPI.GetBuffer<ResourceExchangeRequestComponent>(exchangeEntity);
                 bool usePhysicalStorage =
                     state.EntityManager.HasBuffer<ResourceExchangePhysicalReservationComponent>(exchangeEntity);
                 DynamicBuffer<ResourceExchangePhysicalReservationComponent> physicalReservations =

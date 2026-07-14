@@ -73,6 +73,16 @@ namespace Game.Composition
             if (!TryStartLoadedMatch(out MatchStartStatusKind waitStatus, out string message, out float progress01))
             {
                 SetProgress(em, entity, progress01, message);
+                if (waitStatus == MatchStartStatusKind.Failed)
+                {
+                    queue.IsStartPending = 0;
+                    queue.HasStarted = 0;
+                    queue.LastStatus = MatchStartStatusKind.Failed;
+                    em.SetComponentData(entity, queue);
+                    EnqueueResult(em, entity, queue.ActiveRequestId, MatchStartStatusKind.Failed, message);
+                    return;
+                }
+
                 EnqueueResultIfStatusChanged(em, entity, ref queue, waitStatus, message);
                 return;
             }
@@ -164,6 +174,16 @@ namespace Game.Composition
                 if (!matchScene.GameplayStartRequested)
                     matchScene.BeginGameplay();
 
+                if (matchScene.GameplayStartFailed)
+                {
+                    waitStatus = MatchStartStatusKind.Failed;
+                    message = string.IsNullOrEmpty(matchScene.GameplayStartFailureMessage)
+                        ? "Match gameplay startup failed."
+                        : matchScene.GameplayStartFailureMessage;
+                    progress01 = matchScene.GameplayStartProgress01;
+                    return false;
+                }
+
                 if (!matchScene.GameplayStartComplete)
                 {
                     waitStatus = MatchStartStatusKind.Starting;
@@ -230,7 +250,7 @@ namespace Game.Composition
             {
                 RequestId = requestId,
                 Status = status,
-                Message = new FixedString128Bytes(message ?? string.Empty)
+                Message = new FixedString128Bytes(ToFixed128Message(message))
             });
         }
 
@@ -250,6 +270,14 @@ namespace Game.Composition
             if (string.IsNullOrEmpty(status))
                 return "Starting match";
             return status.Length <= MaxAsciiChars ? status : status.Substring(0, MaxAsciiChars);
+        }
+
+        private static string ToFixed128Message(string message)
+        {
+            const int MaxAsciiChars = 120;
+            if (string.IsNullOrEmpty(message))
+                return string.Empty;
+            return message.Length <= MaxAsciiChars ? message : message.Substring(0, MaxAsciiChars);
         }
 
         private static void EnqueueResultIfStatusChanged(

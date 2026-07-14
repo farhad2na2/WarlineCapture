@@ -28,6 +28,7 @@ namespace Game.Composition
             ResourceExchangeStartup,
             BindMainMenu,
             InitializeGameplayFeatures,
+            ValidateScenarioRecovery,
             FinalizeRuntimeState,
             Complete
         }
@@ -44,6 +45,7 @@ namespace Game.Composition
         private RuntimeGridBootstrapStartupSystemHelper _runtimeGridBootstrapSystem;
         private MapSurfaceRuntimeBootstrapSceneSystemHelper _mapSurfaceRuntimeBootstrapSystem;
         private CustomGameStartupSystemHelper _customGameStartupSystem;
+        private MaterialsScenarioRecoveryValidationSystemHelper _materialsScenarioRecoveryValidationSystem;
         private ResourceExchangeStartupProjectionSystemHelper _resourceExchangeStartupProjectionSystem;
         private readonly PerformanceDiagnosticsReferenceDiagnosticsSystemHelper _performanceDiagnosticsReferenceSystem = new();
         private readonly MatchIntroEcsStateQuery matchIntroStateQuery = new();
@@ -159,6 +161,9 @@ namespace Game.Composition
         private bool _gameplayStartPending;
         private bool _gameplayStartRequested;
         private bool _gameplayStartComplete;
+        private bool _gameplayStartFailed;
+        private string _gameplayStartFailureMessage = string.Empty;
+        private double _materialsScenarioValidationStartedAt = -1d;
         private bool _managedRuntimeInitialized;
         private bool _visualQualitySettingsInitialized;
         private bool _runtimeSettingsChangeSubscribed;
@@ -176,6 +181,8 @@ namespace Game.Composition
 
         public bool GameplayStartRequested => _gameplayStartRequested;
         public bool GameplayStartComplete => _gameplayStartComplete && !_gameplayStartPending;
+        public bool GameplayStartFailed => _gameplayStartFailed;
+        public string GameplayStartFailureMessage => _gameplayStartFailureMessage;
         public float GameplayStartProgress01 => _gameplayStartComplete && _gameplayStartPending
             ? 0.98f
             : _gameplayStartProgress01;
@@ -214,7 +221,22 @@ namespace Game.Composition
 
         public void Update()
         {
-            AdvanceGameplayStartPipeline();
+            if (!_gameplayStartFailed)
+            {
+                try
+                {
+                    AdvanceGameplayStartPipeline();
+                }
+                catch (Exception exception)
+                {
+                    _gameplayStartFailed = true;
+                    _gameplayStartPending = false;
+                    _gameplayStartFailureMessage = exception.Message;
+                    _gameplayStartStatus = exception.Message;
+                    Debug.LogException(exception);
+                }
+            }
+
             UpdateRuntime(
                 GameplayInitialized,
                 _runtimeGameplayStateSystem,
@@ -793,6 +815,39 @@ namespace Game.Composition
                 case GameplayStartStep.InitializeGameplayFeatures:
                     SetGameplayStartProgress(0.80f, "Starting gameplay systems");
                     InitializeGameplaySystemsIfNeeded();
+                    _gameplayStartStep = GameplayStartStep.ValidateScenarioRecovery;
+                    break;
+
+                case GameplayStartStep.ValidateScenarioRecovery:
+                    SetGameplayStartProgress(0.86f, "Validating scenario recovery");
+                    if (_materialsScenarioValidationStartedAt < 0d)
+                        _materialsScenarioValidationStartedAt = Time.realtimeSinceStartupAsDouble;
+                    BuildingRuntimeUpdate?.UpdateStartup(_buildingRuntimeUpdateContext);
+                    MaterialsScenarioRecoveryValidationSystemHelper materialsRecoveryValidation =
+                        ResolveMaterialsScenarioRecoveryValidationSystemHelper(
+                            World.DefaultGameObjectInjectionWorld);
+                    MaterialsScenarioRecoveryValidationResult materialsRecoveryResult =
+                        materialsRecoveryValidation != null
+                            ? materialsRecoveryValidation.Validate(ResourceExchangeConfig)
+                            : default;
+                    if (materialsRecoveryResult.Code == MaterialsScenarioRecoveryValidationCode.CatalogNotReady &&
+                        Time.realtimeSinceStartupAsDouble - _materialsScenarioValidationStartedAt < 15d)
+                    {
+                        SetGameplayStartProgress(0.84f, "Waiting for scenario catalog");
+                        break;
+                    }
+
+                    if (!materialsRecoveryResult.IsValid)
+                    {
+                        throw new InvalidOperationException(
+                            $"Match scenario Materials recovery validation failed: " +
+                            $"code={materialsRecoveryResult.Code} " +
+                            $"faction={materialsRecoveryResult.FactionId} " +
+                            $"detail={materialsRecoveryValidation.LastInvalidConstructionId} " +
+                            $"validatedFactions={materialsRecoveryResult.ValidatedFactionCount}.");
+                    }
+
+                    _materialsScenarioValidationStartedAt = -1d;
                     _gameplayStartStep = GameplayStartStep.FinalizeRuntimeState;
                     break;
 
@@ -870,6 +925,17 @@ namespace Game.Composition
             _resourceExchangeStartupProjectionSystem ??=
                 new ResourceExchangeStartupProjectionSystemHelper(world.EntityManager);
             return _resourceExchangeStartupProjectionSystem;
+        }
+
+        private MaterialsScenarioRecoveryValidationSystemHelper ResolveMaterialsScenarioRecoveryValidationSystemHelper(
+            World world)
+        {
+            if (world == null || !world.IsCreated)
+                return null;
+
+            _materialsScenarioRecoveryValidationSystem ??=
+                new MaterialsScenarioRecoveryValidationSystemHelper(world.EntityManager);
+            return _materialsScenarioRecoveryValidationSystem;
         }
 
         private AIStartupSystem ResolveAIStartupSystem(World world)

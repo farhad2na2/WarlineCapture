@@ -83,6 +83,8 @@ namespace Game.Composition
         internal MatchBootstrapCompositionSystemHelper MatchBootstrap => matchBootstrapSystem;
         public bool GameplayStartRequested => matchBootstrapSystem.GameplayStartRequested;
         public bool GameplayStartComplete => matchBootstrapSystem.GameplayStartComplete;
+        public bool GameplayStartFailed => matchBootstrapSystem.GameplayStartFailed;
+        public string GameplayStartFailureMessage => matchBootstrapSystem.GameplayStartFailureMessage;
         public float GameplayStartProgress01 => matchBootstrapSystem.GameplayStartProgress01;
         public string GameplayStartStatus => matchBootstrapSystem.GameplayStartStatus;
 

@@ -1936,7 +1936,7 @@ Append one entry per completed or blocked task. Keep entries concise but include
 
 - Status: stable bounded decomposition; global architecture closeout remains active
 - Commit or worktree baseline: `d307e8af9`
-- Stable commit/push: pending stable integration commit
+- Stable commit/push: `cc00c2c47` pushed to `main`
 - Files changed: `BuildingRuntimeContextFactoryCompositionSystemHelper.cs`, new `BuildingRuntimePathInteractionContextFactoryCompositionSystemHelper.cs`, exact source authorization, and this tracker
 - Behavior preserved/changed: redirect, barrier, resource-hauler bridge, and selected-hauler context construction moved intact into one stateless helper; facade signatures, deferred delegate reads, barrier behavior, resource-hauler ordering, scheduling, and ECS ownership are unchanged
 - Validation: context-allocation behavior passed `5/5`; resource-hauler storage/approach behavior passed `2/2`; barrier behavior passed `2/2`; non-ECS architecture/naming passed `9/9`; exact source authorization passed `2/2`; Runtime and Editor-test builds passed with zero errors; Menu-to-Match smoke reached `MatchHudReady`, completed Match Intro, and unlocked input
@@ -1952,7 +1952,7 @@ Append one entry per completed or blocked task. Keep entries concise but include
 
 - Status: stable upstream architecture reconciliation; global architecture closeout remains active
 - Commit or worktree baseline: `8ff8eb52f`
-- Stable commit/push: pending stable integration commit
+- Stable commit/push: `ad8107181` pushed to `main`
 - Files changed: `ResourceExchangeStartupProjectionSystemHelper.cs`, new `ResourceExchangeAIStartupProjectionSystemHelper.cs`, exact source authorizations, and this tracker
 - Behavior preserved/changed: AI-faction discovery, scenario gating, existing-boundary disable/reset, and per-faction exchange projection moved intact behind the existing public startup facade; the new recovery component's AI startup initialization remains in `AIStartupSystem` under an exact reviewed ceiling
 - Validation: Resource Exchange startup projection passed `12/12`; non-ECS architecture/naming passed `9/9`; exact source authorization passed `2/2`; Runtime and Editor-test builds passed with zero errors; full source growth no longer reports either Resource Exchange startup helper or `AIStartupSystem`; Menu-to-Match smoke reached `MatchHudReady`, completed Match Intro, and unlocked input

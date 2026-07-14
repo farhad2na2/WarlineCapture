@@ -101,7 +101,7 @@ namespace Game.Runtime
                 requests[i] = request;
                 AppendPresentationResult(em, audioEntity, request, result, now);
 #if UNITY_EDITOR
-                LogPresentationDiagnostic(em, request, entry, result, now);
+                AudioPlaybackPresentationDiagnostics.Log(em, request, entry, result, now);
 #endif
 
                 presented++;
@@ -239,75 +239,5 @@ namespace Game.Runtime
             });
         }
 
-#if UNITY_EDITOR
-        private const int MaxAudioPresentationDiagnosticLogs = 64;
-        private static int s_AudioPresentationDiagnosticLogCount;
-
-        private static void LogPresentationDiagnostic(
-            EntityManager em,
-            AudioPlaybackRequestElement request,
-            AudioEventCatalogEntry entry,
-            AudioPlaybackPresentationResult result,
-            float now)
-        {
-            if (!UnityEngine.Application.isPlaying ||
-                s_AudioPresentationDiagnosticLogCount >= MaxAudioPresentationDiagnosticLogs)
-            {
-                return;
-            }
-
-            string requestBus = request.BusId.ToString();
-            string catalogBus = entry?.BusId;
-            string bus = string.IsNullOrWhiteSpace(catalogBus) ? requestBus : catalogBus;
-            if (!IsDiagnosticBus(bus))
-                return;
-
-            s_AudioPresentationDiagnosticLogCount++;
-            UnityEngine.Debug.Log(
-                $"[AudioDiag] Playback event={request.EventId} bus={bus} requestId={request.RequestId} " +
-                $"played={(result.Played ? 1 : 0)} status={result.Status} reason={result.Reason} at={now:F2} " +
-                $"source={DescribeAudioSourceEntity(em, request.SourceEntity)}");
-        }
-
-        private static bool IsDiagnosticBus(string bus)
-        {
-            return string.Equals(bus, "Alerts", System.StringComparison.Ordinal) ||
-                   string.Equals(bus, "Voice", System.StringComparison.Ordinal);
-        }
-
-        private static string DescribeAudioSourceEntity(EntityManager em, Entity entity)
-        {
-            if (entity == Entity.Null || !em.Exists(entity))
-                return "null";
-
-            string displayName = em.HasComponent<UnitDisplayInfo>(entity)
-                ? em.GetComponentData<UnitDisplayInfo>(entity).Name.ToString()
-                : string.Empty;
-            string sourceKey = em.HasComponent<UnitSourcePrefabKey>(entity)
-                ? em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString()
-                : string.Empty;
-            string faction = em.HasComponent<Faction>(entity)
-                ? em.GetComponentData<Faction>(entity).Id.ToString()
-                : "?";
-            string cell = em.HasComponent<UnitGrid>(entity)
-                ? FormatCell(em.GetComponentData<UnitGrid>(entity).Cell)
-                : "(?,?)";
-            string health = em.HasComponent<UnitHealth>(entity)
-                ? FormatHealth(em.GetComponentData<UnitHealth>(entity))
-                : "?";
-
-            return $"entity={entity.Index}:{entity.Version} name='{displayName}' source='{sourceKey}' faction={faction} cell={cell} hp={health}";
-        }
-
-        private static string FormatCell(Unity.Mathematics.int2 cell)
-        {
-            return $"({cell.x},{cell.y})";
-        }
-
-        private static string FormatHealth(UnitHealth health)
-        {
-            return $"{health.Current}/{health.Max}";
-        }
-#endif
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Reflection;
 using Game.Components;
 using Game.Composition;
@@ -19,6 +20,8 @@ public sealed class AudioPlaybackPresentationSceneBindingTests
     private const string MatchScenePath = "Assets/Game/Scenes/Match.unity";
     private const string EventCatalogPath = "Assets/Game/Audio/Events/AudioEventCatalogConfig.asset";
     private const string MixerBusConfigPath = "Assets/Game/Audio/Mixers/AudioMixerBusConfig.asset";
+    private const string RuntimeViewSourcePath =
+        "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs";
 
     public static void RunFocusedValidation()
     {
@@ -38,6 +41,8 @@ public sealed class AudioPlaybackPresentationSceneBindingTests
             passed++;
             tests.ReturnRoute_DoesNotRestoreMenuListenerUntilMatchIsUnloaded();
             passed++;
+            tests.AudioRuntimeLoop_RemainsSinglePresentationOnlyOwner();
+            passed++;
 
             Debug.Log($"[AudioPlaybackPresentationSceneBindingValidation] result=Passed tests={passed}");
             ValidationExit.Passed();
@@ -48,6 +53,20 @@ public sealed class AudioPlaybackPresentationSceneBindingTests
             Debug.Log($"[AudioPlaybackPresentationSceneBindingValidation] result=Failed passed={passed}");
             ValidationExit.Failed();
         }
+    }
+
+    [Test]
+    public void AudioRuntimeLoop_RemainsSinglePresentationOnlyOwner()
+    {
+        string source = File.ReadAllText(RuntimeViewSourcePath);
+
+        Assert.AreEqual(1, CountOccurrences(source, "private void Update()"));
+        StringAssert.DoesNotContain("LateUpdate()", source);
+        StringAssert.DoesNotContain("FixedUpdate()", source);
+        StringAssert.DoesNotContain("StartCoroutine", source);
+        StringAssert.Contains("_playbackHelper.UpdatePool(Time.unscaledTime);", source);
+        StringAssert.Contains("_bridge.DrainAcceptedRequests(", source);
+        StringAssert.DoesNotContain("SystemBase", source);
     }
 
     [Test]
@@ -281,6 +300,19 @@ public sealed class AudioPlaybackPresentationSceneBindingTests
         }
 
         return false;
+    }
+
+    private static int CountOccurrences(string source, string value)
+    {
+        int count = 0;
+        int index = 0;
+        while ((index = source.IndexOf(value, index, StringComparison.Ordinal)) >= 0)
+        {
+            count++;
+            index += value.Length;
+        }
+
+        return count;
     }
 
     private static void InvokeApplyAudioListenerAuthority(MatchSceneView matchScene)

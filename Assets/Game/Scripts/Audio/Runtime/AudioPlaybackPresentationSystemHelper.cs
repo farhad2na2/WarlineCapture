@@ -29,8 +29,8 @@ namespace Game.Runtime
 
     public sealed class AudioPlaybackPresentationSystemHelper : IDisposable
     {
-        public const float SpatialSfxMinDistance = 24f;
-        public const float SpatialSfxMaxDistance = 180f;
+        public const float SpatialSfxMinDistance = AudioPlaybackSourceConfiguration.SpatialSfxMinDistance;
+        public const float SpatialSfxMaxDistance = AudioPlaybackSourceConfiguration.SpatialSfxMaxDistance;
 
         private readonly List<PooledAudioSource> _sources = new();
         private readonly int _maxPoolSize;
@@ -93,7 +93,7 @@ namespace Game.Runtime
                 return new AudioPlaybackPresentationResult(false, AudioPlaybackRequestStatus.MissingEvent, "MissingCatalogEntry", -1);
             }
 
-            AudioClip clip = SelectClip(entry);
+            AudioClip clip = AudioPlaybackSourceConfiguration.SelectClip(entry);
             if (clip == null)
             {
                 return new AudioPlaybackPresentationResult(false, AudioPlaybackRequestStatus.MissingClip, "MissingClip", -1);
@@ -132,12 +132,12 @@ namespace Game.Runtime
                 FadeOutActiveMusicExcept(request.EventHash, now, transitionSeconds);
 
             PooledAudioSource pooledSource = _sources[sourceIndex];
-            ConfigureSource(pooledSource.Source, request, entry, bus, settings, clip);
+            AudioPlaybackSourceConfiguration.Apply(pooledSource.Source, request, entry, bus, settings, clip);
             pooledSource.EventHash = request.EventHash;
             pooledSource.RequestId = request.RequestId;
             pooledSource.Priority = request.Priority;
-            pooledSource.BusId = ResolveBusId(request, entry);
-            pooledSource.VolumeDecibels = ResolveTotalDecibels(request, entry, bus);
+            pooledSource.BusId = AudioPlaybackSourceConfiguration.ResolveBusId(request, entry);
+            pooledSource.VolumeDecibels = AudioPlaybackSourceConfiguration.ResolveTotalDecibels(request, entry, bus);
             pooledSource.InUse = true;
             pooledSource.ReleaseAfterFade = false;
             if (isMusicState && transitionSeconds > 0f)
@@ -219,12 +219,12 @@ namespace Game.Runtime
                     continue;
 
                 AdvanceFade(ref pooledSource, now);
-                float targetVolume = ResolveLinearVolume(
+                float targetVolume = AudioPlaybackSourceConfiguration.ResolveLinearVolume(
                     pooledSource.BusId,
                     pooledSource.VolumeDecibels,
                     settings);
 
-                if (fadeSeconds > 0f && IsMusicBus(pooledSource.BusId))
+                if (fadeSeconds > 0f && AudioPlaybackSourceConfiguration.IsMusicBus(pooledSource.BusId))
                 {
                     pooledSource.FadeActive = true;
                     pooledSource.FadeStartVolume = pooledSource.Source.volume;
@@ -272,45 +272,12 @@ namespace Game.Runtime
             AudioMixerBusEntry bus,
             AudioSettingsComponent settings)
         {
-            string busId = ResolveBusId(request, entry);
-            float decibels = ResolveTotalDecibels(request, entry, bus);
-            return ResolveLinearVolume(busId, decibels, settings);
-        }
-
-        private static float ResolveLinearVolume(
-            string busId,
-            float decibels,
-            AudioSettingsComponent settings)
-        {
-            float busVolume = ResolveBusVolume(busId, settings);
-            return math.saturate(DecibelsToLinear(decibels) * busVolume);
+            return AudioPlaybackSourceConfiguration.ResolveLinearVolume(request, entry, bus, settings);
         }
 
         public static float DecibelsToLinear(float decibels)
         {
-            if (decibels <= -80f)
-                return 0f;
-            return math.pow(10f, decibels / 20f);
-        }
-
-        private static float ResolveBusVolume(string busId, AudioSettingsComponent settings)
-        {
-            if (settings.MasterMuted != 0)
-                return 0f;
-
-            float master = math.saturate(settings.MasterVolume);
-            string normalizedBus = string.IsNullOrWhiteSpace(busId) ? "SFX" : busId;
-            float busVolume = normalizedBus switch
-            {
-                "UI" => settings.UiMuted != 0 ? 0f : math.saturate(settings.UiVolume),
-                "Music" => settings.MusicMuted != 0 ? 0f : math.saturate(settings.MusicVolume),
-                "Ambience" => settings.AmbienceMuted != 0 ? 0f : math.saturate(settings.AmbienceVolume),
-                "Voice" => settings.VoiceMuted != 0 ? 0f : math.saturate(settings.VoiceVolume),
-                "Alerts" => settings.AlertsMuted != 0 ? 0f : math.saturate(settings.AlertsVolume),
-                _ => settings.SfxMuted != 0 ? 0f : math.saturate(settings.SfxVolume)
-            };
-
-            return master * busVolume;
+            return AudioPlaybackSourceConfiguration.DecibelsToLinear(decibels);
         }
 
         private int RentSource()
@@ -383,7 +350,7 @@ namespace Game.Runtime
                 PooledAudioSource pooledSource = _sources[i];
                 if (!pooledSource.InUse ||
                     pooledSource.EventHash == eventHash ||
-                    !IsMusicBus(pooledSource.BusId))
+                    !AudioPlaybackSourceConfiguration.IsMusicBus(pooledSource.BusId))
                 {
                     continue;
                 }
@@ -401,7 +368,7 @@ namespace Game.Runtime
                 if (!pooledSource.InUse ||
                     pooledSource.Source == null ||
                     pooledSource.EventHash == eventHash ||
-                    !IsMusicBus(pooledSource.BusId))
+                    !AudioPlaybackSourceConfiguration.IsMusicBus(pooledSource.BusId))
                 {
                     continue;
                 }
@@ -429,18 +396,6 @@ namespace Game.Runtime
             return count;
         }
 
-        private static AudioClip SelectClip(AudioEventCatalogEntry entry)
-        {
-            IReadOnlyList<AudioClipWeightEntry> clips = entry.Clips;
-            for (int i = 0; i < clips.Count; i++)
-            {
-                if (clips[i]?.Clip != null && clips[i].Weight > 0)
-                    return clips[i].Clip;
-            }
-
-            return null;
-        }
-
         private static bool AdvanceFade(ref PooledAudioSource pooledSource, float now)
         {
             if (!pooledSource.FadeActive || pooledSource.Source == null)
@@ -457,75 +412,6 @@ namespace Game.Runtime
                 pooledSource.FadeActive = false;
 
             return true;
-        }
-
-        private static string ResolveBusId(AudioPlaybackRequestElement request, AudioEventCatalogEntry entry)
-        {
-            return !string.IsNullOrWhiteSpace(entry?.BusId)
-                ? entry.BusId
-                : request.BusId.ToString();
-        }
-
-        private static bool IsMusicBus(string busId)
-        {
-            return string.Equals(busId, "Music", StringComparison.Ordinal);
-        }
-
-        private static float ResolveTotalDecibels(
-            AudioPlaybackRequestElement request,
-            AudioEventCatalogEntry entry,
-            AudioMixerBusEntry bus)
-        {
-            return (entry?.VolumeDecibels ?? 0f) +
-                request.VolumeDecibels +
-                (bus?.DefaultVolumeDecibels ?? 0f);
-        }
-
-        private static void ConfigureSource(
-            AudioSource source,
-            AudioPlaybackRequestElement request,
-            AudioEventCatalogEntry entry,
-            AudioMixerBusEntry bus,
-            AudioSettingsComponent settings,
-            AudioClip clip)
-        {
-            source.clip = clip;
-            source.outputAudioMixerGroup = bus?.MixerGroup;
-            source.loop = entry.Playback?.Loop ?? request.Kind == AudioPlaybackRequestKind.MusicState;
-            bool spatial = entry.Playback?.Spatial ?? request.Spatial != 0;
-            source.spatialBlend = spatial ? 1f : 0f;
-            ConfigureSpatialReach(source, spatial);
-            source.volume = ResolveLinearVolume(request, entry, bus, settings);
-            source.pitch = ResolvePitch(request, entry);
-
-            if (request.HasWorldPosition != 0)
-            {
-                source.transform.position = new Vector3(
-                    request.WorldPosition.x,
-                    request.WorldPosition.y,
-                    request.WorldPosition.z);
-            }
-            else
-            {
-                source.transform.localPosition = Vector3.zero;
-            }
-        }
-
-        private static float ResolvePitch(AudioPlaybackRequestElement request, AudioEventCatalogEntry entry)
-        {
-            float requestPitch = request.PitchMultiplier <= 0f ? 1f : request.PitchMultiplier;
-            Vector2 variance = entry?.PitchVariance ?? Vector2.zero;
-            float deterministicVariance = (variance.x + variance.y) * 0.5f;
-            return math.max(0.01f, requestPitch + deterministicVariance);
-        }
-
-        private static void ConfigureSpatialReach(AudioSource source, bool spatial)
-        {
-            source.rolloffMode = AudioRolloffMode.Linear;
-            source.minDistance = spatial ? SpatialSfxMinDistance : 1f;
-            source.maxDistance = spatial ? SpatialSfxMaxDistance : 500f;
-            source.dopplerLevel = 0f;
-            source.spread = 0f;
         }
 
         private struct PooledAudioSource

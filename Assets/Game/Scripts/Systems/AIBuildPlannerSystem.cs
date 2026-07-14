@@ -3,6 +3,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Game.Components;
+using FactionEconomyRecord = Game.Runtime.AIBuildPlanningReadSystemHelper.FactionEconomyRecord;
 
 namespace Game.Runtime
 {
@@ -102,20 +103,28 @@ namespace Game.Runtime
                 planEntities.AddRange(entities);
             }
 
-            NativeList<FactionEconomyRecord> economyRecords = BuildFactionEconomyRecords();
+            NativeList<FactionEconomyRecord> economyRecords =
+                AIBuildPlanningReadSystemHelper.BuildFactionEconomyRecords(
+                    _economyQuery, _entityType, _economyType, _materialsType);
             try
             {
                 for (int i = 0; i < planEntities.Length; i++)
                 {
                     Entity planEntity = planEntities[i];
                     AIBuildPlan plan = em.GetComponentData<AIBuildPlan>(planEntity);
-                    if (plan.Enabled == 0 || !IsFactionAIControlled(plan.FactionId, hasControls, controls))
+                    if (plan.Enabled == 0 ||
+                        !AIBuildPlanningReadSystemHelper.IsFactionAIControlled(
+                            plan.FactionId, hasControls, controls))
                     {
                         ClearMaterialsRecoveryNeed(em, planEntity, plan.FactionId, now);
                         continue;
                     }
 
-                    if (!TryFindEconomyRecord(economyRecords, plan.FactionId, out int economyRecordIndex, out FactionEconomyRecord economyRecord))
+                    if (!AIBuildPlanningReadSystemHelper.TryFindEconomyRecord(
+                            economyRecords,
+                            plan.FactionId,
+                            out int economyRecordIndex,
+                            out FactionEconomyRecord economyRecord))
                     {
                         ClearMaterialsRecoveryNeed(em, planEntity, plan.FactionId, now);
                         continue;
@@ -133,7 +142,9 @@ namespace Game.Runtime
                         ref materials,
                         shouldLog);
                     em.SetComponentData(economyEntity, economy);
-                    if (HasMaterialsChanged(economyRecord.Materials, materials))
+                    if (AIBuildPlanningReadSystemHelper.HasMaterialsChanged(
+                            economyRecord.Materials,
+                            materials))
                         em.SetComponentData(economyEntity, materials);
                     economyRecords[economyRecordIndex] = new FactionEconomyRecord(economyEntity, economy, materials);
 
@@ -274,7 +285,11 @@ namespace Game.Runtime
                             plan.LastLogTime = now;
                             if (shouldLog)
                             {
-                                TryGetFactionBuildingCount(ref state, boundaryEntity, plan.FactionId, out int ownedBuildings);
+                                AIBuildPlanningReadSystemHelper.TryGetFactionBuildingCount(
+                                    ref state,
+                                    boundaryEntity,
+                                    plan.FactionId,
+                                    out int ownedBuildings);
                                 EnqueueDiagnostic(ref state, $"[AIBuild] faction={plan.FactionId} result=Complete ownedBuildings={ownedBuildings}");
                             }
                         }
@@ -318,24 +333,6 @@ namespace Game.Runtime
             AIMaterialsRecoveryNeedMutationSystemHelper.Clear(em, planEntity, factionId, now);
         }
 
-        private NativeList<FactionEconomyRecord> BuildFactionEconomyRecords()
-        {
-            int count = _economyQuery.CalculateEntityCount();
-            NativeList<FactionEconomyRecord> records = new(count, Allocator.Temp);
-            using NativeArray<ArchetypeChunk> chunks = _economyQuery.ToArchetypeChunkArray(Allocator.Temp);
-            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
-            {
-                ArchetypeChunk chunk = chunks[chunkIndex];
-                NativeArray<Entity> entities = chunk.GetNativeArray(_entityType);
-                NativeArray<FactionEconomy> economies = chunk.GetNativeArray(ref _economyType);
-                NativeArray<FactionTacticalMaterialsComponent> materials = chunk.GetNativeArray(ref _materialsType);
-                for (int i = 0; i < chunk.Count; i++)
-                    records.Add(new FactionEconomyRecord(entities[i], economies[i], materials[i]));
-            }
-
-            return records;
-        }
-
         [BurstCompile]
         internal static BuildDecision SelectBuildDecision(
             DynamicBuffer<AIBuildPlanEntry> entries,
@@ -356,28 +353,6 @@ namespace Game.Runtime
                 materials);
         }
 
-        private static bool TryFindEconomyRecord(
-            NativeList<FactionEconomyRecord> records,
-            byte factionId,
-            out int index,
-            out FactionEconomyRecord record)
-        {
-            for (int i = 0; i < records.Length; i++)
-            {
-                FactionEconomyRecord candidate = records[i];
-                if (candidate.Economy.FactionId != factionId)
-                    continue;
-
-                index = i;
-                record = candidate;
-                return true;
-            }
-
-            index = -1;
-            record = default;
-            return false;
-        }
-
         private bool TryGetBuildingRuntimeStateEntity(ref SystemState state, out Entity entity)
         {
             entity = Entity.Null;
@@ -386,27 +361,6 @@ namespace Game.Runtime
 
             entity = _buildingRuntimeBoundaryQuery.GetSingletonEntity();
             return entity != Entity.Null && state.EntityManager.Exists(entity);
-        }
-
-        private bool TryGetFactionBuildingCount(ref SystemState state, Entity boundaryEntity, byte factionId, out int count)
-        {
-            count = 0;
-            if (!state.EntityManager.HasBuffer<BuildingRuntimeFactionSummary>(boundaryEntity))
-                return false;
-
-            DynamicBuffer<BuildingRuntimeFactionSummary> summaries =
-                state.EntityManager.GetBuffer<BuildingRuntimeFactionSummary>(boundaryEntity, true);
-            for (int i = 0; i < summaries.Length; i++)
-            {
-                BuildingRuntimeFactionSummary summary = summaries[i];
-                if (summary.FactionId != factionId)
-                    continue;
-
-                count = summary.BuildingCount;
-                return true;
-            }
-
-            return false;
         }
 
         private void EnqueueSpawnRequest(
@@ -491,60 +445,13 @@ namespace Game.Runtime
                 {
                     EnqueueDiagnostic(
                         ref state,
-                        $"[AIBuild] faction={request.FactionId} building={request.DisplayName.ToString()} cell={request.ActualOrigin} cost={request.Cost} materialsCost={request.MaterialsCost} result={SpawnResultLabel(request)}");
+                        $"[AIBuild] faction={request.FactionId} building={request.DisplayName.ToString()} cell={request.ActualOrigin} cost={request.Cost} materialsCost={request.MaterialsCost} result={AIBuildPlanningReadSystemHelper.SpawnResultLabel(request)}");
                 }
 
                 requests.RemoveAt(i);
             }
 
             return hasUnsettledRequest;
-        }
-
-        private static bool HasMaterialsChanged(
-            in FactionTacticalMaterialsComponent previous,
-            in FactionTacticalMaterialsComponent current)
-        {
-            return previous.FactionId != current.FactionId ||
-                   previous.Current != current.Current ||
-                   previous.Capacity != current.Capacity ||
-                   previous.LifetimeFabricated != current.LifetimeFabricated ||
-                   previous.LifetimeImported != current.LifetimeImported ||
-                   previous.LifetimeRewarded != current.LifetimeRewarded ||
-                   previous.LifetimeExported != current.LifetimeExported ||
-                   previous.LifetimeSpent != current.LifetimeSpent ||
-                   previous.LifetimeConstructionSpent != current.LifetimeConstructionSpent ||
-                   previous.LifetimeRepairSpent != current.LifetimeRepairSpent ||
-                   previous.LifetimeInfrastructureSpent != current.LifetimeInfrastructureSpent ||
-                   previous.LifetimeUpgradeSpent != current.LifetimeUpgradeSpent ||
-                   previous.Version != current.Version;
-        }
-
-        private static bool IsFactionAIControlled(byte factionId, bool hasControls, DynamicBuffer<FactionControlEntry> controls)
-        {
-            if (!hasControls)
-                return FactionIdentity.IsAiControlledByDefault(factionId);
-
-            for (int i = 0; i < controls.Length; i++)
-            {
-                FactionControlEntry control = controls[i];
-                if (control.FactionId == factionId)
-                    return control.AIControlled != 0;
-            }
-
-            return FactionIdentity.IsAiControlledByDefault(factionId);
-        }
-
-        private static string SpawnResultLabel(BuildingRuntimeSpawnRequest request)
-        {
-            if (request.Status == BuildingRuntimeSpawnRequest.Succeeded)
-                return "Placed";
-
-            return request.ResultCode switch
-            {
-                BuildingRuntimeSpawnRequest.MissingConfig => "MissingConfig",
-                BuildingRuntimeSpawnRequest.Blocked => "Blocked",
-                _ => "Failed"
-            };
         }
 
         private static bool ShouldQueueDiagnostics(EntityQuery runtimeDiagnosticsQuery)
@@ -585,21 +492,5 @@ namespace Game.Runtime
                 EnqueueDiagnostic(ref state, $"[AIBuild] faction={plan.FactionId} result=NoPlan");
         }
 
-        private readonly struct FactionEconomyRecord
-        {
-            public FactionEconomyRecord(
-                Entity entity,
-                FactionEconomy economy,
-                FactionTacticalMaterialsComponent materials)
-            {
-                Entity = entity;
-                Economy = economy;
-                Materials = materials;
-            }
-
-            public readonly Entity Entity;
-            public readonly FactionEconomy Economy;
-            public readonly FactionTacticalMaterialsComponent Materials;
-        }
     }
 }

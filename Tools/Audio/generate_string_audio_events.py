@@ -10,12 +10,19 @@ left to the audio request systems.
 from __future__ import annotations
 
 import argparse
+import concurrent.futures
+import datetime as dt
 import hashlib
 import json
+import os
 import re
 import shutil
 import subprocess
+import time
 import tempfile
+import urllib.error
+import urllib.parse
+import urllib.request
 import wave
 from dataclasses import dataclass
 from pathlib import Path
@@ -38,6 +45,16 @@ DEFAULT_EDGE_RATE = "-6%"
 DEFAULT_EDGE_VOLUME = "+0%"
 DEFAULT_EDGE_PITCH = "-2Hz"
 DEFAULT_ESPEAK_RATE = "155"
+DEFAULT_SECRET_PATH = Path(os.environ.get("LOCALAPPDATA", Path.home())) / "WarlineCapture/Secrets/elevenlabs_api_key.txt"
+ELEVENLABS_VOICE_MAP_PATH = ROOT / "Assets/Game/Data/Narrative/FirstLaunch/first_launch_elevenlabs_voice_map.json"
+ELEVENLABS_API_ROOT = "https://api.elevenlabs.io"
+ELEVENLABS_MODEL = "eleven_v3"
+ELEVENLABS_OUTPUT_FORMAT = "mp3_44100_192"
+ELEVENLABS_RIGHTS_STATUS = "ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE"
+ELEVENLABS_ARIA_SPEAKER = "ARIA"
+ELEVENLABS_SEED = 812047
+ELEVENLABS_STAGING_ROOT = GENERATED_ROOT / "ARIAElevenLabsRaw"
+ELEVENLABS_STAGING_MANIFEST = ELEVENLABS_STAGING_ROOT / "staging_manifest.json"
 
 
 EXACT_KEYS = {
@@ -420,6 +437,158 @@ def generate_voice_clip(
     return {"eventId": target.event_id, "assetPath": target.clip_asset_path, "status": status, **info}
 
 
+def read_api_key(path: Path) -> str:
+    value = os.environ.get("ELEVENLABS_API_KEY", "").strip()
+    if value:
+        return value
+    if not path.exists():
+        raise RuntimeError(f"Missing ElevenLabs API key file: {path}")
+    value = path.read_text(encoding="utf-8").strip()
+    if not value:
+        raise RuntimeError(f"Empty ElevenLabs API key file: {path}")
+    return value
+
+
+def load_elevenlabs_aria_voice(path: Path) -> tuple[str, str]:
+    voice_map = json.loads(path.read_text(encoding="utf-8"))
+    for record in voice_map.get("voices", []):
+        if record.get("speaker") == ELEVENLABS_ARIA_SPEAKER:
+            voice_id = str(record.get("voiceId", "")).strip()
+            if not voice_id:
+                break
+            return voice_id, str(record.get("name", "Warline - ARIA Civic Relay"))
+    raise RuntimeError(f"ARIA voice is missing from ElevenLabs voice map: {path}")
+
+
+def request_elevenlabs_audio(api_key: str, voice_id: str, text: str, seed: int) -> bytes:
+    query = urllib.parse.urlencode({"output_format": ELEVENLABS_OUTPUT_FORMAT})
+    body = {
+        "text": text,
+        "model_id": ELEVENLABS_MODEL,
+        "language_code": "en",
+        "seed": seed,
+        "apply_text_normalization": "on",
+    }
+    request = urllib.request.Request(
+        f"{ELEVENLABS_API_ROOT}/v1/text-to-speech/{voice_id}?{query}",
+        data=json.dumps(body).encode("utf-8"),
+        method="POST",
+        headers={"xi-api-key": api_key, "Content-Type": "application/json", "Accept": "audio/mpeg"},
+    )
+
+    for attempt in range(5):
+        try:
+            with urllib.request.urlopen(request, timeout=180) as response:
+                return response.read()
+        except urllib.error.HTTPError as exc:
+            detail = exc.read().decode("utf-8", errors="replace")
+            if exc.code not in {408, 429, 500, 502, 503, 504} or attempt == 4:
+                raise RuntimeError(f"ElevenLabs HTTP {exc.code} for voice {voice_id}: {detail}") from exc
+            time.sleep(2 ** attempt)
+    raise RuntimeError("ElevenLabs request retry loop exited unexpectedly.")
+
+
+def generate_elevenlabs_clip(
+    target: StringAudioTarget,
+    force: bool,
+    api_key: str,
+    voice_id: str) -> dict[str, Any]:
+    mp3_path = ELEVENLABS_STAGING_ROOT / Path(target.clip_asset_path).with_suffix(".mp3").name
+    staging_asset_path = mp3_path.relative_to(ROOT).as_posix()
+    if mp3_path.exists() and not force:
+        return {
+            "eventId": target.event_id,
+            "assetPath": target.clip_asset_path,
+            "stagingAssetPath": staging_asset_path,
+            "status": "preserved",
+            "voiceId": voice_id,
+        }
+
+    seed_offset = int(hashlib.sha256(target.key.encode("utf-8")).hexdigest()[:8], 16) % 100000
+    raw_audio = request_elevenlabs_audio(
+        api_key,
+        voice_id,
+        normalize_spoken_text(target.text),
+        ELEVENLABS_SEED + seed_offset)
+    temporary = mp3_path.with_suffix(".mp3.tmp")
+    temporary.write_bytes(raw_audio)
+    temporary.replace(mp3_path)
+    return {
+        "eventId": target.event_id,
+        "assetPath": target.clip_asset_path,
+        "stagingAssetPath": staging_asset_path,
+        "status": "staged-elevenlabs-commercial",
+        "voiceId": voice_id,
+        "sourceBytes": len(raw_audio),
+        "sourceSha256": hashlib.sha256(raw_audio).hexdigest(),
+    }
+
+
+def generate_elevenlabs_batch(
+    targets: list[StringAudioTarget],
+    force: bool,
+    api_key: str,
+    voice_id: str,
+    jobs: int) -> list[dict[str, Any]]:
+    def generate(index_and_target: tuple[int, StringAudioTarget]) -> tuple[int, dict[str, Any]]:
+        index, target = index_and_target
+        clip = generate_elevenlabs_clip(target, force, api_key, voice_id)
+        print(f"[{index + 1:03d}/{len(targets):03d}] {target.key}", flush=True)
+        return index, clip
+
+    clips: list[dict[str, Any] | None] = [None] * len(targets)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max(1, jobs)) as executor:
+        for index, clip in executor.map(generate, enumerate(targets)):
+            clips[index] = clip
+    return [clip for clip in clips if clip is not None]
+
+
+def write_elevenlabs_staging_manifest(
+    targets: list[StringAudioTarget],
+    staged_clips: list[dict[str, Any]],
+    voice_id: str,
+    voice_name: str) -> None:
+    manifest = {
+        "schema": "WarlineCapture.AriaMatchVoiceElevenLabsStaging.v0.1",
+        "generatedAtUtc": dt.datetime.now(dt.timezone.utc).isoformat(),
+        "voice": voice_name,
+        "voiceId": voice_id,
+        "model": ELEVENLABS_MODEL,
+        "sourceFormat": ELEVENLABS_OUTPUT_FORMAT,
+        "rightsStatus": ELEVENLABS_RIGHTS_STATUS,
+        "targetCount": len(targets),
+        "clips": staged_clips,
+    }
+    ELEVENLABS_STAGING_MANIFEST.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+
+
+def finalize_elevenlabs_outputs(targets: list[StringAudioTarget], voice_id: str, voice_name: str) -> None:
+    clips: list[dict[str, Any]] = []
+    for target in targets:
+        wav_path = ROOT / target.clip_asset_path
+        if not wav_path.exists():
+            raise RuntimeError(f"Missing Unity-converted ARIA voice clip: {target.clip_asset_path}")
+        info = read_wav_info(wav_path)
+        if info["channels"] != 1 or info["sampleRate"] != 44100:
+            raise RuntimeError(f"Invalid Unity-converted ARIA voice clip: {target.clip_asset_path} -> {info}")
+        clips.append(
+            {
+                "eventId": target.event_id,
+                "assetPath": target.clip_asset_path,
+                "status": "elevenlabs-commercial",
+                "voiceId": voice_id,
+                "sha256": hashlib.sha256(wav_path.read_bytes()).hexdigest(),
+                **info,
+            }
+        )
+
+    update_catalog(targets, "elevenlabs-commercial")
+    update_string_config(targets)
+    write_manifest(targets, clips, "elevenlabs", voice_name, "", "", "", voice_id)
+    validate_outputs(targets)
+    print(f"Finalized {len(clips)} licensed ARIA match-command voice clips.")
+
+
 def read_wav_info(path: Path) -> dict[str, Any]:
     with wave.open(str(path), "rb") as wav:
         channels = wav.getnchannels()
@@ -493,19 +662,24 @@ def write_manifest(
     voice: str,
     rate: str,
     volume: str,
-    pitch: str) -> None:
+    pitch: str,
+    voice_id: str = "") -> None:
     manifest = {
         "schema": "WarlineCapture.StringAudioEventManifest.v0.1",
         "generatedBy": "Tools/Audio/generate_string_audio_events.py",
         "backend": backend,
-        "voice": voice if backend == "edge" else "eSpeak English Prototype",
-        "voiceRate": rate if backend == "edge" else DEFAULT_ESPEAK_RATE,
-        "voiceVolume": volume if backend == "edge" else "145",
-        "voicePitch": pitch if backend == "edge" else "45",
+        "voice": voice if backend in {"edge", "elevenlabs"} else "eSpeak English Prototype",
+        "voiceId": voice_id,
+        "model": ELEVENLABS_MODEL if backend == "elevenlabs" else "",
+        "rightsStatus": ELEVENLABS_RIGHTS_STATUS if backend == "elevenlabs" else "",
+        "generatedAtUtc": dt.datetime.now(dt.timezone.utc).isoformat(),
+        "voiceRate": rate if backend == "edge" else "",
+        "voiceVolume": volume if backend == "edge" else "",
+        "voicePitch": pitch if backend == "edge" else "",
         "targetCount": len(targets),
         "catalogPath": CATALOG_PATH.relative_to(ROOT).as_posix(),
         "stringsPath": STRINGS_PATH.relative_to(ROOT).as_posix(),
-        "note": "ARIA TTS clips for feedback/alert strings. Replace with final recorded voice before release if desired.",
+        "note": "Licensed ARIA match-command voice clips generated with the persistent FirstLaunch ARIA voice." if backend == "elevenlabs" else "ARIA TTS clips for feedback/alert strings. Replace with final recorded voice before release if desired.",
         "targets": [
             {
                 "key": target.key,
@@ -550,12 +724,16 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--force", action="store_true", help="Regenerate existing message voice clips.")
     parser.add_argument("--dry-run", action="store_true", help="Print target count without writing files.")
-    parser.add_argument("--backend", choices=["edge", "espeak"], default=DEFAULT_BACKEND)
+    parser.add_argument("--backend", choices=["edge", "espeak", "elevenlabs"], default=DEFAULT_BACKEND)
     parser.add_argument("--edge-tts-path", default=DEFAULT_EDGE_TTS_PATH)
     parser.add_argument("--voice", default=DEFAULT_EDGE_VOICE)
     parser.add_argument("--rate", default=DEFAULT_EDGE_RATE)
     parser.add_argument("--volume", default=DEFAULT_EDGE_VOLUME)
     parser.add_argument("--pitch", default=DEFAULT_EDGE_PITCH)
+    parser.add_argument("--api-key-file", type=Path, default=DEFAULT_SECRET_PATH)
+    parser.add_argument("--voice-map", type=Path, default=ELEVENLABS_VOICE_MAP_PATH)
+    parser.add_argument("--jobs", type=int, default=3)
+    parser.add_argument("--finalize-elevenlabs", action="store_true")
     args = parser.parse_args()
 
     targets = parse_string_targets()
@@ -565,23 +743,39 @@ def main() -> None:
         print(f"{len(targets)} string audio targets")
         return
 
+    if args.finalize_elevenlabs:
+        voice_id, voice_name = load_elevenlabs_aria_voice(args.voice_map)
+        finalize_elevenlabs_outputs(targets, voice_id, voice_name)
+        return
+
     ensure_folders()
-    clips = [
-        generate_voice_clip(
-            target,
-            args.force,
-            args.backend,
-            args.edge_tts_path,
-            args.voice,
-            args.rate,
-            args.volume,
-            args.pitch)
-        for target in targets
-    ]
-    clip_status = "neural-tts" if args.backend == "edge" else "prototype-tts"
+    voice_id = ""
+    voice_name = args.voice
+    if args.backend == "elevenlabs":
+        api_key = read_api_key(args.api_key_file)
+        voice_id, voice_name = load_elevenlabs_aria_voice(args.voice_map)
+        ELEVENLABS_STAGING_ROOT.mkdir(parents=True, exist_ok=True)
+        clips = generate_elevenlabs_batch(targets, args.force, api_key, voice_id, args.jobs)
+        write_elevenlabs_staging_manifest(targets, clips, voice_id, voice_name)
+        print(f"Staged {len(clips)} licensed ARIA match-command MP3 files for Unity conversion.")
+        return
+    else:
+        clips = [
+            generate_voice_clip(
+                target,
+                args.force,
+                args.backend,
+                args.edge_tts_path,
+                args.voice,
+                args.rate,
+                args.volume,
+                args.pitch)
+            for target in targets
+        ]
+        clip_status = "neural-tts" if args.backend == "edge" else "prototype-tts"
     update_catalog(targets, clip_status)
     update_string_config(targets)
-    write_manifest(targets, clips, args.backend, args.voice, args.rate, args.volume, args.pitch)
+    write_manifest(targets, clips, args.backend, voice_name, args.rate, args.volume, args.pitch, voice_id)
     validate_outputs(targets)
     print(f"Generated {len(clips)} ARIA string audio mappings.")
 

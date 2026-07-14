@@ -157,12 +157,15 @@ pipeline {
                     throw "Unity editor path file is empty or invalid: $unityPathFile"
                 }
 
+                # A clean Jenkins checkout has no Library cache, so Unity must import the
+                # complete project before the EditMode runner can create its results XML.
+                # Keep the guardrail, but allow enough time for that cold import.
                 & "$env:PROJECT_PATH\\Tools\\CI\\InvokeUnity.ps1" `
                     -UnityExe $unityExe `
                     -ProjectPath "$env:PROJECT_PATH" `
                     -LogFile "$env:PROJECT_PATH\\TestResults\\EditMode.log" `
                     -NoProcessExit `
-                    -TimeoutSeconds 300 `
+                    -TimeoutSeconds 1800 `
                     -UnityArguments @("-nographics", "-quit", "-runTests", "-testPlatform", "EditMode", "-testResults", "$env:PROJECT_PATH\\TestResults\\EditMode.xml")
                 $editModeExit = $LASTEXITCODE
 

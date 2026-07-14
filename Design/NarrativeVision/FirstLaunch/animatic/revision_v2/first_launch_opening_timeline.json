@@ -11,7 +11,7 @@
     "first_launch.guidance_choice"
   ],
   "states": [
-    {"order": 0, "id": "first_launch.logo", "frame": "animatic/aux/first_launch_logo.png", "startSeconds": 0.0, "durationSeconds": 2.5, "motion": "Static"},
+    {"order": 0, "id": "first_launch.logo", "frame": "animatic/auxiliary/first_launch_logo.png", "startSeconds": 0.0, "durationSeconds": 2.5, "motion": "Static"},
     {"order": 1, "id": "FL-P01", "frame": "ArtReview/PresentationCandidates/RevisionB_UserFeedback/dialogue_candidates/LOCATION-A_SahrinOldMarket.png", "startSeconds": 2.5, "durationSeconds": 15.0, "motion": "PushIn"},
     {"order": 2, "id": "FL-P02", "frame": "ArtReview/WorldCandidates/DirectionB_MatchAligned/WORLD-OLDMARKET-03_AttackBlackout_CandidateB.png", "startSeconds": 17.5, "durationSeconds": 8.0, "motion": "StaticImpact"},
     {"order": 3, "id": "FL-P03", "frame": "ArtReview/WorldCandidates/DirectionB_MatchAligned/WORLD-RELAY-01_DamagedCommandPost.png", "startSeconds": 25.5, "durationSeconds": 9.0, "motion": "DriftRight"},

@@ -31,7 +31,7 @@ for required_file in "$timeline" "$voice_script" "$dialogue_frame" "$font"; do
     fi
 done
 
-mkdir -p "$voice_dir" "$normal_segments" "$static_segments" "$dialogue_segments" "$animatic_dir/aux" "$animatic_dir/audio"
+mkdir -p "$voice_dir" "$normal_segments" "$static_segments" "$dialogue_segments" "$animatic_dir/auxiliary" "$animatic_dir/audio"
 
 total_duration=$(jq -r '.totalDurationSeconds' "$timeline")
 frame_rate=$(jq -r '.frameRate' "$timeline")
@@ -70,7 +70,7 @@ make_auxiliary_frames() {
         -font "$font" -fill white -pointsize 58 -gravity center \
         -annotate +0-18 'WARLINE CAPTURE' \
         -fill '#7d8a91' -pointsize 24 -annotate +0+52 'FIRST RESPONSE' \
-        "$animatic_dir/aux/first_launch_logo.png"
+        "$animatic_dir/auxiliary/first_launch_logo.png"
 
     magick -size 220x220 xc:'#1c2328' \
         -stroke '#c7bca7' -strokewidth 5 -fill none -draw 'rectangle 5,5 214,214' \

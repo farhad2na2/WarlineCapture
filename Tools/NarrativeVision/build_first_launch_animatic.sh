@@ -30,7 +30,7 @@ for required_file in "$timeline" "$subtitles" "$voice_script" "$font"; do
     fi
 done
 
-mkdir -p "$voice_dir" "$normal_segments" "$static_segments" "$subtitle_segments" "$animatic_dir/aux"
+mkdir -p "$voice_dir" "$normal_segments" "$static_segments" "$subtitle_segments" "$animatic_dir/auxiliary"
 
 total_duration=$(jq -r '.totalDurationSeconds' "$timeline")
 frame_rate=$(jq -r '.frameRate' "$timeline")
@@ -66,7 +66,7 @@ make_auxiliary_frames() {
         -font "$font" -fill white -pointsize 58 -gravity center \
         -annotate +0-18 'WARLINE CAPTURE' \
         -fill '#7d8a91' -pointsize 24 -annotate +0+52 'FIRST RESPONSE' \
-        "$animatic_dir/aux/first_launch_logo.png"
+        "$animatic_dir/auxiliary/first_launch_logo.png"
 
     magick "$slice_root/storyboard/frames/FL-P08.png" \
         -resize "${width}x${height}^" -gravity center -extent "${width}x${height}" \
@@ -76,7 +76,7 @@ make_auxiliary_frames() {
         -annotate +0+205 'COMMANDER IDENTITY' \
         -fill '#9dadb4' -pointsize 22 -annotate +0+275 'DEFAULT COMMANDER' \
         -fill '#65d8e8' -pointsize 24 -annotate +0+355 'CONTINUE' \
-        "$animatic_dir/aux/first_launch_identity_hold.png"
+        "$animatic_dir/auxiliary/first_launch_identity_hold.png"
 
     magick "$slice_root/storyboard/frames/FL-P09.png" \
         -resize "${width}x${height}^" -gravity center -extent "${width}x${height}" \
@@ -87,13 +87,13 @@ make_auxiliary_frames() {
         -fill '#65d8e8' -pointsize 24 -annotate +0+270 'FULL GUIDANCE' \
         -fill '#9dadb4' -pointsize 22 -annotate +0+325 'TACTICAL HINTS' \
         -annotate +0+375 'VETERAN' \
-        "$animatic_dir/aux/first_launch_guidance_hold.png"
+        "$animatic_dir/auxiliary/first_launch_guidance_hold.png"
 
     magick -size "${width}x${height}" xc:'#111820' \
         -font "$font" -fill white -pointsize 40 -gravity center \
         -annotate +0-25 'M01 GAMEPLAY HANDOFF' \
         -fill '#9dadb4' -pointsize 22 -annotate +0+35 'REVIEW PLACEHOLDER' \
-        "$animatic_dir/aux/first_launch_gameplay_placeholder.png"
+        "$animatic_dir/auxiliary/first_launch_gameplay_placeholder.png"
 }
 
 validate_voice_clips() {

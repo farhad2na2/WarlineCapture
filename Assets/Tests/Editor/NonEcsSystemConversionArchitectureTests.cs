@@ -83,7 +83,7 @@ public sealed class NonEcsSystemConversionArchitectureTests
         "Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs|BuildingUiCommandAdapter",
         "Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs|BuildingUiQueryAdapter",
         "Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs|MatchHudCameraControlAdapter",
-        "Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs|MatchHudMinimapDataSourceAdapter",
+        "Assets/Game/Scripts/Composition/MatchHudMinimapDataSourceAdapter.cs|MatchHudMinimapDataSourceAdapter",
         "Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs|MatchRuntimeStateAdapter",
         "Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs|SelectionDiagnosticsSinkAdapter",
         "Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs|SelectionRectangleStateAdapter",

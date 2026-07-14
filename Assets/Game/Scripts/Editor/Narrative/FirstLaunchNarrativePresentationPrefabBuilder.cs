@@ -43,7 +43,7 @@ namespace Game.Editor
             RectTransform root = CreateRect("FirstLaunchNarrativeSequence", null);
             Stretch(root);
             CanvasGroup rootGroup = root.gameObject.AddComponent<CanvasGroup>();
-            rootGroup.alpha = 0f;
+            rootGroup.alpha = 1f;
             rootGroup.interactable = false;
             rootGroup.blocksRaycasts = false;
             NarrativeSequenceView sequenceView = root.gameObject.AddComponent<NarrativeSequenceView>();

@@ -33,6 +33,11 @@ namespace Game.UI.Runtime
         public Sprite CurrentPanelSprite => panelImage != null ? panelImage.sprite : null;
         public NarrativeLocationIntroView LocationIntroView => locationIntroView;
 
+        private void Awake()
+        {
+            SetVisible(false);
+        }
+
         public void ApplyPanel(in NarrativePanelPresentationModel model)
         {
             if (panelImage != null)

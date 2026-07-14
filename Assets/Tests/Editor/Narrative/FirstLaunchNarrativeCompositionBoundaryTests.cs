@@ -3,7 +3,6 @@ using System.IO;
 using Game.Composition;
 using Game.Narrative.Contracts;
 using Game.Runtime;
-using Game.UI.Contracts;
 using Game.UI.Shell.Contracts.Ecs;
 using NUnit.Framework;
 using Unity.Entities;
@@ -22,7 +21,7 @@ public sealed class FirstLaunchNarrativeCompositionBoundaryTests
             tests.ProfileBoundary_ProjectsStartupDispositionWithoutUiOrEcs();
             tests.ProfileBoundary_PersistsProductionChoicesAndHandoffState();
             tests.ProfileBoundary_ReviewerChoicesDoNotMutateSavedProfile();
-            tests.ShellBoundary_ProjectsStartupAndPublishesOneRouteRequest();
+            tests.ShellBoundary_ReleasesStartupToMenuWithoutRouteRequest();
             Debug.Log("[FirstLaunchNarrativeCompositionBoundaryValidation] result=Passed tests=4");
             ValidationExit.Passed();
         }
@@ -81,7 +80,7 @@ public sealed class FirstLaunchNarrativeCompositionBoundaryTests
         Assert.IsTrue(saved.firstLaunchWatched);
         Assert.IsFalse(saved.firstLaunchSkipped);
 
-        context.Boundary.MarkMatchHudReady();
+        context.Boundary.MarkHandoffComplete();
         Assert.AreEqual(FirstLaunchProfileState.Completed, context.SaveService.LoadProfile().firstLaunchStatus);
     }
 
@@ -109,9 +108,9 @@ public sealed class FirstLaunchNarrativeCompositionBoundaryTests
     }
 
     [Test]
-    public void ShellBoundary_ProjectsStartupAndPublishesOneRouteRequest()
+    public void ShellBoundary_ReleasesStartupToMenuWithoutRouteRequest()
     {
-        using World world = new(nameof(ShellBoundary_ProjectsStartupAndPublishesOneRouteRequest));
+        using World world = new(nameof(ShellBoundary_ReleasesStartupToMenuWithoutRouteRequest));
         EntityManager entityManager = world.EntityManager;
         Entity boundary = entityManager.CreateEntity(typeof(UiShellStartupDispositionComponent));
         entityManager.AddBuffer<UiShellRouteRequestComponent>(boundary);
@@ -125,14 +124,14 @@ public sealed class FirstLaunchNarrativeCompositionBoundaryTests
         shell.Apply(entityManager, boundary);
 
         Assert.AreEqual(
-            UiShellStartupDisposition.FirstLaunch,
+            UiShellStartupDisposition.EnterMenu,
             entityManager.GetComponentData<UiShellStartupDispositionComponent>(boundary).Value);
         DynamicBuffer<UiShellRouteRequestComponent> requests =
             entityManager.GetBuffer<UiShellRouteRequestComponent>(boundary);
-        Assert.AreEqual(1, requests.Length);
-        Assert.AreEqual(UiShellRouteIntent.EnterMatch, requests[0].Intent);
-        Assert.AreEqual(UIRoute.Match, requests[0].Route);
-        Assert.IsFalse(shell.IsRoutePending);
+        Assert.AreEqual(0, requests.Length);
+        Assert.AreEqual(UiShellStartupDisposition.EnterMenu, shell.StartupDisposition);
+        Assert.IsFalse(shell.IsHandoffPending);
+        Assert.IsTrue(shell.IsHandoffPublished);
 
         FirstLaunchNarrativeShellCompositionSystemHelper.ResetBoundary(entityManager, boundary);
         Assert.AreEqual(

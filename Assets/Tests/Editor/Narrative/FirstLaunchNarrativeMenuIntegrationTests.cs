@@ -72,7 +72,7 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
         Assert.AreEqual(FirstLaunchProfileState.InProgress, context.SaveService.LoadProfile().firstLaunchStatus);
 
         int handoffs = 0;
-        context.Helper.MatchHandoffRequested += () => handoffs++;
+        context.Helper.MenuHandoffRequested += () => handoffs++;
         Button skip = Array.Find(context.Instance.GetComponentsInChildren<Button>(true), button => button.name == "SkipButton");
         Button cancel = Array.Find(context.Instance.GetComponentsInChildren<Button>(true), button => button.name == "CancelButton");
         Button confirm = Array.Find(context.Instance.GetComponentsInChildren<Button>(true), button => button.name == "ConfirmButton");
@@ -88,7 +88,7 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
         context.Helper.Tick(0f);
         Assert.AreEqual(1, handoffs);
         PlayerProfileSaveData saved = context.SaveService.LoadProfile();
-        Assert.AreEqual(FirstLaunchProfileState.HandoffPending, saved.firstLaunchStatus);
+        Assert.AreEqual(FirstLaunchProfileState.Completed, saved.firstLaunchStatus);
         Assert.IsTrue(saved.firstLaunchSkipped);
         Assert.AreEqual("COMMANDER", saved.firstLaunchCommanderCallsign);
         Assert.AreEqual("Full", saved.firstLaunchGuidance);
@@ -106,13 +106,16 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
         using (Context pending = CreateContext(new PlayerProfileSaveData { firstLaunchStatus = FirstLaunchProfileState.HandoffPending }))
         {
             int count = 0;
-            pending.Helper.MatchHandoffRequested += () => count++;
+            pending.Helper.MenuHandoffRequested += () => count++;
             Assert.AreEqual(FirstLaunchNarrativeStartupDisposition.ResumeHandoff, pending.Helper.Initialize(
                 pending.Sequence, pending.Speakers, pending.Punctuation, pending.View,
                 Game.UI.Contracts.FallbackGameTextResolver.Instance, pending.SaveService, false));
             pending.Helper.Tick(0f);
             pending.Helper.Tick(0f);
             Assert.AreEqual(1, count);
+            Assert.AreEqual(
+                FirstLaunchProfileState.Completed,
+                pending.SaveService.LoadProfile().firstLaunchStatus);
         }
     }
 
@@ -175,7 +178,7 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
             context.Sequence, context.Speakers, context.Punctuation, context.View,
             Game.UI.Contracts.FallbackGameTextResolver.Instance, context.SaveService, false));
         int handoffs = 0;
-        context.Helper.MatchHandoffRequested += () => handoffs++;
+        context.Helper.MenuHandoffRequested += () => handoffs++;
         Button skip = Array.Find(context.Instance.GetComponentsInChildren<Button>(true), button => button.name == "SkipButton");
         skip.onClick.Invoke();
         Assert.IsFalse(context.Helper.IsSkipConfirmationPending);
@@ -183,7 +186,7 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
         Assert.AreEqual(1, handoffs);
 
         PlayerProfileSaveData saved = context.SaveService.LoadProfile();
-        Assert.AreEqual(FirstLaunchProfileState.HandoffPending, saved.firstLaunchStatus);
+        Assert.AreEqual(FirstLaunchProfileState.Completed, saved.firstLaunchStatus);
         Assert.AreEqual("NIGHTFALL", saved.firstLaunchCommanderCallsign);
         Assert.AreEqual("Farhad", saved.firstLaunchCommanderDisplayName);
         Assert.AreEqual(3, saved.firstLaunchCommanderPortraitIndex);

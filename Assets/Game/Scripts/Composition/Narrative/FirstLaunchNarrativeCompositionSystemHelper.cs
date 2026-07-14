@@ -27,7 +27,7 @@ namespace Game.Composition
         private bool initialized;
         private bool skipConfirmationPending;
         private string skipConfirmationReviewerStateId = string.Empty;
-        public event Action MatchHandoffRequested;
+        public event Action MenuHandoffRequested;
         public event Action<bool> SkipConfirmationVisibilityChanged;
 
         public bool IsPlaying => initialized && sequencePresentation.IsRunning;
@@ -120,7 +120,11 @@ namespace Game.Composition
             sequencePresentation.Tick(unscaledDeltaTime);
             reviewPresentation.Tick();
             if (shellComposition.TryPublishHandoff())
-                MatchHandoffRequested?.Invoke();
+            {
+                profileComposition.MarkHandoffComplete();
+                view?.SetVisible(false);
+                MenuHandoffRequested?.Invoke();
+            }
         }
 
         public void ApplyShellState(EntityManager entityManager, Entity boundary)
@@ -153,7 +157,7 @@ namespace Game.Composition
                 return;
             }
 
-            if (decision.Action == FirstLaunchNarrativeRouteAction.CompleteSkippedAndRequestMatch)
+            if (decision.Action == FirstLaunchNarrativeRouteAction.CompleteSkippedAndRequestMenu)
                 CompleteProductionSkip();
         }
 
@@ -178,21 +182,6 @@ namespace Game.Composition
             view?.SetSkipState(true, true, "SKIP");
             SkipConfirmationVisibilityChanged?.Invoke(false);
             sequencePresentation.Resume();
-        }
-
-        public void MarkMatchHudReady()
-        {
-            if (reviewPresentation.IsEnabled)
-                return;
-            profileComposition.MarkMatchHudReady();
-        }
-
-        public void OnMatchRouteAccepted()
-        {
-            if (reviewPresentation.IsEnabled)
-                return;
-            if (shellComposition.IsHandoffPublished)
-                view?.SetVisible(false);
         }
 
         public void Shutdown()
@@ -251,7 +240,7 @@ namespace Game.Composition
                 case FirstLaunchNarrativeRouteAction.RecordReviewerHandoff:
                     reviewPresentation.RecordHandoff(result, decision.NextStateId);
                     break;
-                case FirstLaunchNarrativeRouteAction.CompleteWatchedAndRequestMatch:
+                case FirstLaunchNarrativeRouteAction.CompleteWatchedAndRequestMenu:
                     profileComposition.MarkWatchedHandoff(result);
                     shellComposition.RequestHandoff();
                     break;
@@ -274,7 +263,7 @@ namespace Game.Composition
                         sequencePresentation.CreateCompletion(decision.NextStateId, true));
                     reviewPresentation.Refresh(true);
                     break;
-                case FirstLaunchNarrativeRouteAction.CompleteSkippedAndRequestMatch:
+                case FirstLaunchNarrativeRouteAction.CompleteSkippedAndRequestMenu:
                     CompleteProductionSkip();
                     break;
                 case FirstLaunchNarrativeRouteAction.RequestSkipConfirmation:

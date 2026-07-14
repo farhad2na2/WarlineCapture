@@ -6,7 +6,6 @@ namespace Game.Composition
     {
         private void MarkMatchHudReady()
         {
-            firstLaunchNarrative.MarkMatchHudReady();
             performanceDiagnosticsSystem.MarkMatchReady();
         }
 

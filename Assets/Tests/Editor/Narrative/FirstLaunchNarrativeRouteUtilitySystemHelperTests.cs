@@ -12,7 +12,7 @@ public sealed class FirstLaunchNarrativeRouteUtilitySystemHelperTests
                 Handoff(NarrativeRouteRole.MissionHandoff),
                 reviewerMode: false);
         Assert.AreEqual(
-            FirstLaunchNarrativeRouteAction.CompleteWatchedAndRequestMatch,
+            FirstLaunchNarrativeRouteAction.CompleteWatchedAndRequestMenu,
             production.Action);
 
         FirstLaunchNarrativeRouteDecision reviewer =
@@ -47,7 +47,7 @@ public sealed class FirstLaunchNarrativeRouteUtilitySystemHelperTests
                 hasCommittedCommanderIdentity: true,
                 confirmationPending: false);
         Assert.AreEqual(
-            FirstLaunchNarrativeRouteAction.CompleteSkippedAndRequestMatch,
+            FirstLaunchNarrativeRouteAction.CompleteSkippedAndRequestMenu,
             committedProfile.Action);
 
         FirstLaunchNarrativeRouteDecision pending =
@@ -85,7 +85,7 @@ public sealed class FirstLaunchNarrativeRouteUtilitySystemHelperTests
                 reviewerMode: false,
                 reviewerContinueStateId: "first_launch.gameplay_placeholder");
         Assert.AreEqual(
-            FirstLaunchNarrativeRouteAction.CompleteSkippedAndRequestMatch,
+            FirstLaunchNarrativeRouteAction.CompleteSkippedAndRequestMenu,
             production.Action);
         Assert.IsNull(production.NextStateId);
     }

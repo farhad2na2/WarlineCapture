@@ -6,10 +6,10 @@ namespace Game.Narrative.Runtime
     {
         None = 0,
         RecordReviewerHandoff = 1,
-        CompleteWatchedAndRequestMatch = 2,
+        CompleteWatchedAndRequestMenu = 2,
         StartSkippedDebrief = 3,
         RequestSkipConfirmation = 4,
-        CompleteSkippedAndRequestMatch = 5,
+        CompleteSkippedAndRequestMenu = 5,
         ContinueReviewerAfterConfirmedSkip = 6,
     }
 
@@ -47,7 +47,7 @@ namespace Game.Narrative.Runtime
                 return default;
 
             return new FirstLaunchNarrativeRouteDecision(
-                FirstLaunchNarrativeRouteAction.CompleteWatchedAndRequestMatch);
+                FirstLaunchNarrativeRouteAction.CompleteWatchedAndRequestMenu);
         }
 
         public static FirstLaunchNarrativeRouteDecision EvaluateSkipRequest(
@@ -69,7 +69,7 @@ namespace Game.Narrative.Runtime
             if (!reviewerMode && hasCommittedCommanderIdentity)
             {
                 return new FirstLaunchNarrativeRouteDecision(
-                    FirstLaunchNarrativeRouteAction.CompleteSkippedAndRequestMatch);
+                    FirstLaunchNarrativeRouteAction.CompleteSkippedAndRequestMenu);
             }
 
             return new FirstLaunchNarrativeRouteDecision(
@@ -86,7 +86,7 @@ namespace Game.Narrative.Runtime
                     FirstLaunchNarrativeRouteAction.ContinueReviewerAfterConfirmedSkip,
                     reviewerContinueStateId)
                 : new FirstLaunchNarrativeRouteDecision(
-                    FirstLaunchNarrativeRouteAction.CompleteSkippedAndRequestMatch);
+                    FirstLaunchNarrativeRouteAction.CompleteSkippedAndRequestMenu);
         }
 
     }

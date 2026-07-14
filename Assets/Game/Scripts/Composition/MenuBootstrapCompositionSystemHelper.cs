@@ -143,8 +143,6 @@ namespace Game.Composition
             UpdateStaticMapPresentation(shellState);
             if (CanAdvanceMatchStart(shellState))
                 matchStartSystem.Update(entityManager);
-            if (shellState.ActiveRoute == UIRoute.Match && shellState.CurrentMode == UiShellMode.Loading)
-                firstLaunchNarrative.OnMatchRouteAccepted();
             if (shellState.CurrentMode == UiShellMode.MatchHud)
                 MarkMatchHudReady();
             QueueAutoStartMatchIfRequested(entityManager, boundary, shellState);

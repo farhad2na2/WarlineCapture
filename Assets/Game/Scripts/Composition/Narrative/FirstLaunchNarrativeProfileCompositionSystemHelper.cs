@@ -100,7 +100,7 @@ namespace Game.Composition
             Save();
         }
 
-        public void MarkMatchHudReady()
+        public void MarkHandoffComplete()
         {
             if (profile == null || profile.firstLaunchStatus != FirstLaunchProfileState.HandoffPending)
                 return;

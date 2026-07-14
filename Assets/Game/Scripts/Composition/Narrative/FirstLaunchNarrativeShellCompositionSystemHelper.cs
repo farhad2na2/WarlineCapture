@@ -1,4 +1,3 @@
-using Game.UI.Contracts;
 using Game.UI.Shell.Contracts.Ecs;
 using Unity.Entities;
 
@@ -7,12 +6,10 @@ namespace Game.Composition
     internal sealed class FirstLaunchNarrativeShellCompositionSystemHelper
     {
         private UiShellStartupDisposition startupDisposition = UiShellStartupDisposition.Pending;
-        private bool routePending;
         private bool handoffPending;
         private bool handoffPublished;
 
         internal UiShellStartupDisposition StartupDisposition => startupDisposition;
-        internal bool IsRoutePending => routePending;
         internal bool IsHandoffPending => handoffPending;
         internal bool IsHandoffPublished => handoffPublished;
 
@@ -34,8 +31,9 @@ namespace Game.Composition
             if (!handoffPending || handoffPublished)
                 return false;
 
+            handoffPending = false;
             handoffPublished = true;
-            routePending = true;
+            startupDisposition = UiShellStartupDisposition.EnterMenu;
             return true;
         }
 
@@ -51,23 +49,11 @@ namespace Game.Composition
                     entityManager.SetComponentData(boundary, current);
                 }
             }
-
-            if (!routePending || !entityManager.HasBuffer<UiShellRouteRequestComponent>(boundary))
-                return;
-
-            entityManager.GetBuffer<UiShellRouteRequestComponent>(boundary).Add(new UiShellRouteRequestComponent
-            {
-                Intent = UiShellRouteIntent.EnterMatch,
-                Route = UIRoute.Match,
-                PushHistory = 0
-            });
-            routePending = false;
         }
 
         public void Reset()
         {
             startupDisposition = UiShellStartupDisposition.Pending;
-            routePending = false;
             handoffPending = false;
             handoffPublished = false;
         }

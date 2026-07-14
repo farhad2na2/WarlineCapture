@@ -97,6 +97,8 @@ namespace Game.Runtime
 
     public sealed class BuildingUiQueryUiSystemHelper
     {
+        private readonly BuildingMaterialFabricationReadModelUiSystemHelper _materialFabricationReadModel = new();
+
         public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
         public delegate bool TryGetSelectedBuildingHealthDelegate(out int current, out int max);
         public delegate bool TryGetSelectedBuildingPreviewPrefabDelegate(out GameObject prefab);
@@ -178,224 +180,11 @@ namespace Game.Runtime
             }
         }
 
-        private bool _hasMaterialFabricationReadModelState;
-        private int _materialFabricationRuntimeBuildingId;
-        private Entity _materialFabricationCombatEntity;
-        private Entity _materialFabricationFactionEntity;
-        private BuildingResourceStorageComponent _materialFabricationStorage;
-        private MaterialFabricationComponent _materialFabrication;
-        private FactionTacticalMaterialsComponent _materialFabricationFactionMaterials;
-        private uint _materialFabricationReadModelVersion;
-
         internal bool TryGetSelectedMaterialFabricationReadModel(
             Context context,
             out UiMaterialFabricationReadModel readModel)
         {
-            readModel = default;
-            if (context.RuntimeBuildings == null ||
-                context.GetActiveBuildingId == null ||
-                context.TryGetEntityManager == null ||
-                (context.FactionResourceEntities == null && context.TryGetFactionResourceEntity == null) ||
-                !context.TryGetEntityManager(out EntityManager entityManager))
-            {
-                InvalidateMaterialFabricationReadModelState();
-                return false;
-            }
-
-            int? selectedBuildingId = context.GetActiveBuildingId();
-            if (!selectedBuildingId.HasValue ||
-                !context.RuntimeBuildings.TryGetValue(selectedBuildingId.Value, out RuntimeBuildingEntity building) ||
-                building == null ||
-                building.CombatEntity == Entity.Null ||
-                !entityManager.Exists(building.CombatEntity) ||
-                !entityManager.HasComponent<MaterialFabricationComponent>(building.CombatEntity) ||
-                !entityManager.HasComponent<MaterialFabricationInputTag>(building.CombatEntity) ||
-                !entityManager.HasComponent<BuildingResourceStorageComponent>(building.CombatEntity))
-            {
-                InvalidateMaterialFabricationReadModelState();
-                return false;
-            }
-
-            MaterialFabricationComponent fabrication =
-                entityManager.GetComponentData<MaterialFabricationComponent>(building.CombatEntity);
-            BuildingResourceStorageComponent storage =
-                entityManager.GetComponentData<BuildingResourceStorageComponent>(building.CombatEntity);
-            if (fabrication.RuntimeBuildingId != selectedBuildingId.Value ||
-                storage.RuntimeBuildingId != selectedBuildingId.Value ||
-                storage.OwnerFactionId != fabrication.OwnerFactionId ||
-                !TryResolveFactionMaterialsEntity(
-                    context,
-                    entityManager,
-                    fabrication.OwnerFactionId,
-                    out Entity factionEntity,
-                    out FactionTacticalMaterialsComponent factionMaterials))
-            {
-                InvalidateMaterialFabricationReadModelState();
-                return false;
-            }
-
-            if (!_hasMaterialFabricationReadModelState ||
-                _materialFabricationRuntimeBuildingId != selectedBuildingId.Value ||
-                _materialFabricationCombatEntity != building.CombatEntity ||
-                _materialFabricationFactionEntity != factionEntity ||
-                !HasSameStorageReadState(_materialFabricationStorage, storage) ||
-                !HasSameFabricationReadState(_materialFabrication, fabrication) ||
-                !HasSameFactionMaterialsReadState(_materialFabricationFactionMaterials, factionMaterials))
-            {
-                _hasMaterialFabricationReadModelState = true;
-                _materialFabricationRuntimeBuildingId = selectedBuildingId.Value;
-                _materialFabricationCombatEntity = building.CombatEntity;
-                _materialFabricationFactionEntity = factionEntity;
-                _materialFabricationStorage = storage;
-                _materialFabrication = fabrication;
-                _materialFabricationFactionMaterials = factionMaterials;
-                _materialFabricationReadModelVersion = NextVersion(_materialFabricationReadModelVersion);
-            }
-
-            float progress01 = fabrication.CycleDurationSeconds > 0f
-                ? Mathf.Clamp01(fabrication.CycleProgressSeconds / fabrication.CycleDurationSeconds)
-                : 0f;
-            int oilInputCurrent = Mathf.RoundToInt(Mathf.Max(0f, storage.StoredOilBarrels));
-            if (storage.OilStorageCapacity > 0)
-                oilInputCurrent = Mathf.Min(oilInputCurrent, storage.OilStorageCapacity);
-            readModel = new UiMaterialFabricationReadModel(
-                selectedBuildingId.Value,
-                fabrication.OwnerFactionId,
-                oilInputCurrent,
-                storage.OilStorageCapacity,
-                fabrication.OilConsumedPerCycle,
-                fabrication.CycleDurationSeconds,
-                fabrication.CycleProgressSeconds,
-                progress01,
-                fabrication.MaterialsOutputPerCycle,
-                factionMaterials.Current,
-                factionMaterials.Capacity,
-                fabrication.ProductionEnabled != 0,
-                fabrication.Status,
-                fabrication.BlockReason,
-                _materialFabricationReadModelVersion);
-            return true;
-        }
-
-        private static bool TryResolveUniqueFactionMaterialsEntity(
-            IReadOnlyList<Entity> factionResourceEntities,
-            EntityManager entityManager,
-            byte ownerFactionId,
-            out Entity factionEntity,
-            out FactionTacticalMaterialsComponent factionMaterials)
-        {
-            factionEntity = Entity.Null;
-            factionMaterials = default;
-            for (int i = 0; i < factionResourceEntities.Count; i++)
-            {
-                Entity candidate = factionResourceEntities[i];
-                if (candidate == Entity.Null ||
-                    !entityManager.Exists(candidate) ||
-                    !entityManager.HasComponent<FactionEconomy>(candidate) ||
-                    !entityManager.HasComponent<FactionTacticalMaterialsComponent>(candidate))
-                {
-                    continue;
-                }
-
-                FactionEconomy economy = entityManager.GetComponentData<FactionEconomy>(candidate);
-                FactionTacticalMaterialsComponent materials =
-                    entityManager.GetComponentData<FactionTacticalMaterialsComponent>(candidate);
-                bool economyMatches = economy.FactionId == ownerFactionId;
-                bool materialsMatch = materials.FactionId == ownerFactionId;
-                if (economyMatches != materialsMatch)
-                    return false;
-                if (!economyMatches)
-                    continue;
-                if (factionEntity != Entity.Null)
-                    return false;
-
-                factionEntity = candidate;
-                factionMaterials = materials;
-            }
-
-            return factionEntity != Entity.Null;
-        }
-
-        private static bool TryResolveFactionMaterialsEntity(
-            Context context,
-            EntityManager entityManager,
-            byte ownerFactionId,
-            out Entity factionEntity,
-            out FactionTacticalMaterialsComponent factionMaterials)
-        {
-            if (context.FactionResourceEntities != null)
-            {
-                return TryResolveUniqueFactionMaterialsEntity(
-                    context.FactionResourceEntities,
-                    entityManager,
-                    ownerFactionId,
-                    out factionEntity,
-                    out factionMaterials);
-            }
-
-            factionEntity = Entity.Null;
-            factionMaterials = default;
-            if (context.TryGetFactionResourceEntity == null ||
-                !context.TryGetFactionResourceEntity(ownerFactionId, out factionEntity) ||
-                factionEntity == Entity.Null ||
-                !entityManager.Exists(factionEntity) ||
-                !entityManager.HasComponent<FactionEconomy>(factionEntity) ||
-                !entityManager.HasComponent<FactionTacticalMaterialsComponent>(factionEntity))
-            {
-                return false;
-            }
-
-            FactionEconomy economy = entityManager.GetComponentData<FactionEconomy>(factionEntity);
-            factionMaterials = entityManager.GetComponentData<FactionTacticalMaterialsComponent>(factionEntity);
-            return economy.FactionId == ownerFactionId && factionMaterials.FactionId == ownerFactionId;
-        }
-
-        private static bool HasSameStorageReadState(
-            in BuildingResourceStorageComponent left,
-            in BuildingResourceStorageComponent right)
-        {
-            return left.RuntimeBuildingId == right.RuntimeBuildingId &&
-                   left.OwnerFactionId == right.OwnerFactionId &&
-                   left.OilStorageCapacity == right.OilStorageCapacity &&
-                   left.StoredOilBarrels == right.StoredOilBarrels &&
-                   left.Version == right.Version;
-        }
-
-        private static bool HasSameFabricationReadState(
-            in MaterialFabricationComponent left,
-            in MaterialFabricationComponent right)
-        {
-            return left.RuntimeBuildingId == right.RuntimeBuildingId &&
-                   left.OwnerFactionId == right.OwnerFactionId &&
-                   left.ProductionEnabled == right.ProductionEnabled &&
-                   left.OilConsumedPerCycle == right.OilConsumedPerCycle &&
-                   left.MaterialsOutputPerCycle == right.MaterialsOutputPerCycle &&
-                   left.CycleDurationSeconds == right.CycleDurationSeconds &&
-                   left.CycleProgressSeconds == right.CycleProgressSeconds &&
-                   left.Status == right.Status &&
-                   left.BlockReason == right.BlockReason &&
-                   left.Version == right.Version;
-        }
-
-        private static bool HasSameFactionMaterialsReadState(
-            in FactionTacticalMaterialsComponent left,
-            in FactionTacticalMaterialsComponent right)
-        {
-            return left.FactionId == right.FactionId &&
-                   left.Current == right.Current &&
-                   left.Capacity == right.Capacity &&
-                   left.Version == right.Version;
-        }
-
-        private void InvalidateMaterialFabricationReadModelState()
-        {
-            _hasMaterialFabricationReadModelState = false;
-        }
-
-        private static uint NextVersion(uint version)
-        {
-            version++;
-            return version != 0 ? version : 1;
+            return _materialFabricationReadModel.TryGetSelected(context, out readModel);
         }
 
         public readonly struct ProducedUnitUiEntry
@@ -456,40 +245,16 @@ namespace Game.Runtime
             BuildingProductionQueueCompositionSystemHelper productionSystem,
             List<Entity> results)
         {
-            results?.Clear();
-            if (producedUnits == null || productionSystem == null || results == null)
-                return;
-
-            productionSystem.PruneProducedUnits(producedUnits, null, null, entityManager);
-            for (int i = 0; i < producedUnits.Count; i++)
-                results.Add(producedUnits[i]);
+            BuildingProductionEntriesUiSystemHelper.GetProducedUnits(
+                producedUnits,
+                entityManager,
+                productionSystem,
+                results);
         }
 
         internal void GetSelectedBuildingProducedUnits(Context context, List<Entity> results)
         {
-            results?.Clear();
-            if (results == null ||
-                context.RuntimeBuildings == null ||
-                context.GetActiveBuildingId == null ||
-                context.TryGetEntityManager == null ||
-                !context.TryGetEntityManager(out EntityManager em))
-            {
-                return;
-            }
-
-            int? buildingId = context.GetActiveBuildingId();
-            if (!buildingId.HasValue ||
-                !context.RuntimeBuildings.TryGetValue(buildingId.Value, out RuntimeBuildingEntity building) ||
-                building == null)
-            {
-                return;
-            }
-
-            if (TryAddProducedUnitsFromReadModel(building, em, results))
-                return;
-
-            building.ProducedUnits ??= new List<Entity>();
-            GetProducedUnits(building.ProducedUnits, em, context.ProductionSystem, results);
+            BuildingProductionEntriesUiSystemHelper.GetSelectedBuildingProducedUnits(context, results);
         }
 
         internal bool HasSelectedBuilding(Context context)
@@ -591,29 +356,16 @@ namespace Game.Runtime
             List<ProducedUnitUiEntry> entries,
             TryResolveLiveUnitPreviewPrefabDelegate tryResolveLiveUnitPreviewPrefab = null)
         {
-            if (entries == null)
-                return;
-
-            if (producedUnits != null)
-            {
-                productionSystem?.PruneProducedUnits(
-                    producedUnits,
-                    null,
-                    producedUnitPrefabs,
-                    entityManager,
-                    producedUnitSourceKeys);
-                for (int i = 0; i < producedUnits.Count; i++)
-                {
-                    Entity unit = producedUnits[i];
-                    GameObject prefab = null;
-                    producedUnitPrefabs?.TryGetValue(unit, out prefab);
-                    if (prefab == null && tryResolveLiveUnitPreviewPrefab != null)
-                        tryResolveLiveUnitPreviewPrefab(unit, out prefab);
-                    entries.Add(new ProducedUnitUiEntry(unit, prefab, true, 1f));
-                }
-            }
-
-            AddPendingProducedUnitEntries(pendingProductions, productionSystem, now, entries);
+            BuildingProductionEntriesUiSystemHelper.AddProducedUnitEntries(
+                producedUnits,
+                producedUnitPrefabs,
+                producedUnitSourceKeys,
+                pendingProductions,
+                entityManager,
+                productionSystem,
+                now,
+                entries,
+                tryResolveLiveUnitPreviewPrefab);
         }
 
         public void AddPendingProducedUnitEntries(
@@ -622,156 +374,16 @@ namespace Game.Runtime
             float now,
             List<ProducedUnitUiEntry> entries)
         {
-            if (pendingProductions == null || productionSystem == null || entries == null)
-                return;
-
-            foreach (BuildingProductionQueueCompositionSystemHelper.IPendingProduction pending in pendingProductions)
-            {
-                if (pending == null || pending.Prefab == null)
-                    continue;
-
-                BuildingProductionQueueCompositionSystemHelper.PendingProductionProgress progress = productionSystem.GetProgress(pending, now, true);
-                entries.Add(new ProducedUnitUiEntry(Entity.Null, pending.Prefab, false, progress.Progress01));
-            }
+            BuildingProductionEntriesUiSystemHelper.AddPendingProducedUnitEntries(
+                pendingProductions,
+                productionSystem,
+                now,
+                entries);
         }
 
         internal void GetSelectedBuildingProducedUnitEntries(Context context, List<ProducedUnitUiEntry> entries)
         {
-            entries?.Clear();
-            if (entries == null ||
-                context.RuntimeBuildings == null ||
-                context.GetActiveBuildingId == null ||
-                context.TryGetEntityManager == null ||
-                !context.TryGetEntityManager(out EntityManager em))
-            {
-                return;
-            }
-
-            int? buildingId = context.GetActiveBuildingId();
-            if (!buildingId.HasValue ||
-                !context.RuntimeBuildings.TryGetValue(buildingId.Value, out RuntimeBuildingEntity building) ||
-                building == null)
-            {
-                return;
-            }
-
-            float now = context.GetNow != null ? context.GetNow() : UnityEngine.Time.time;
-            if (TryAddProducedUnitEntriesFromReadModel(context, building, em, entries))
-            {
-                AddPendingProducedUnitEntries(building.PendingProductions, context.ProductionSystem, now, entries);
-                return;
-            }
-
-            building.ProducedUnits ??= new List<Entity>();
-            AddProducedUnitEntries(
-                building.ProducedUnits,
-                building.ProducedUnitPrefabs,
-                building.ProducedUnitSourceKeys,
-                building.PendingProductions,
-                em,
-                context.ProductionSystem,
-                now,
-                entries,
-                context.TryResolveLiveUnitPreviewPrefab);
-        }
-
-        private static bool TryAddProducedUnitsFromReadModel(
-            RuntimeBuildingEntity building,
-            EntityManager em,
-            List<Entity> results)
-        {
-            if (!TryGetProducedUnitReadModelRows(em, out DynamicBuffer<BuildingProducedUnitReadModel> producedUnits))
-                return false;
-
-            bool matchedBuilding = false;
-            for (int i = 0; i < producedUnits.Length; i++)
-            {
-                BuildingProducedUnitReadModel producedUnit = producedUnits[i];
-                if (producedUnit.BuildingRuntimeId != building.Id)
-                    continue;
-
-                matchedBuilding = true;
-                if (IsProducedUnitAlive(producedUnit.Unit, em))
-                    results.Add(producedUnit.Unit);
-            }
-
-            return matchedBuilding;
-        }
-
-        private static bool TryAddProducedUnitEntriesFromReadModel(
-            Context context,
-            RuntimeBuildingEntity building,
-            EntityManager em,
-            List<ProducedUnitUiEntry> entries)
-        {
-            if (!TryGetProducedUnitReadModelRows(em, out DynamicBuffer<BuildingProducedUnitReadModel> producedUnits))
-                return false;
-
-            bool matchedBuilding = false;
-            for (int i = 0; i < producedUnits.Length; i++)
-            {
-                BuildingProducedUnitReadModel producedUnit = producedUnits[i];
-                if (producedUnit.BuildingRuntimeId != building.Id)
-                    continue;
-
-                matchedBuilding = true;
-                Entity unit = producedUnit.Unit;
-                if (!IsProducedUnitAlive(unit, em))
-                    continue;
-
-                GameObject prefab = null;
-                context.TryResolveLiveUnitPreviewPrefab?.Invoke(unit, out prefab);
-                entries.Add(new ProducedUnitUiEntry(unit, prefab, true, 1f));
-            }
-
-            return matchedBuilding;
-        }
-
-        private static bool TryGetProducedUnitReadModelRows(
-            EntityManager em,
-            out DynamicBuffer<BuildingProducedUnitReadModel> producedUnits)
-        {
-            producedUnits = default;
-            if (em.World == null || !em.World.IsCreated)
-                return false;
-
-            using EntityQuery boundaryQuery = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingRuntimeStateTag>());
-            if (boundaryQuery.IsEmptyIgnoreFilter)
-                return false;
-
-            using NativeArray<ArchetypeChunk> boundaryChunks = boundaryQuery.ToArchetypeChunkArray(Allocator.Temp);
-            if (boundaryChunks.Length == 0)
-                return false;
-
-            EntityTypeHandle entityType = em.GetEntityTypeHandle();
-            NativeArray<Entity> firstChunkEntities = boundaryChunks[0].GetNativeArray(entityType);
-            if (firstChunkEntities.Length == 0)
-                return false;
-
-            Entity boundaryEntity = firstChunkEntities[0];
-            if (boundaryEntity == Entity.Null ||
-                !em.Exists(boundaryEntity) ||
-                !em.HasBuffer<BuildingProducedUnitReadModel>(boundaryEntity))
-            {
-                return false;
-            }
-
-            producedUnits = em.GetBuffer<BuildingProducedUnitReadModel>(boundaryEntity, true);
-            return true;
-        }
-
-        private static bool IsProducedUnitAlive(Entity unit, EntityManager em)
-        {
-            if (unit == Entity.Null ||
-                em.World == null ||
-                !em.World.IsCreated ||
-                !em.Exists(unit))
-            {
-                return false;
-            }
-
-            return !em.HasComponent<UnitHealth>(unit) ||
-                   em.GetComponentData<UnitHealth>(unit).Current > 0;
+            BuildingProductionEntriesUiSystemHelper.GetSelectedBuildingProducedUnitEntries(context, entries);
         }
 
         public void AddPendingProductionUiEntries(
@@ -782,87 +394,18 @@ namespace Game.Runtime
             List<PendingProductionUiEntry> entries,
             string producerDisplayName = "")
         {
-            if (pendingProductions == null || productionSystem == null || entries == null)
-                return;
-
-            int pendingIndex = 0;
-            foreach (BuildingProductionQueueCompositionSystemHelper.IPendingProduction pending in pendingProductions)
-            {
-                if (pending == null || pending.Prefab == null)
-                {
-                    pendingIndex++;
-                    continue;
-                }
-
-                BuildingProductionQueueCompositionSystemHelper.PendingProductionProgress progress = productionSystem.GetProgress(pending, now, false);
-                entries.Add(new PendingProductionUiEntry(
-                    buildingId,
-                    pendingIndex,
-                    pending.Prefab,
-                    progress.RemainingSeconds,
-                    progress.DurationSeconds,
-                    progress.Progress01,
-                    pending.StartedAt,
-                    pending.ReadyAt,
-                    producerDisplayName));
-                pendingIndex++;
-            }
+            BuildingProductionEntriesUiSystemHelper.AddPendingProductionUiEntries(
+                buildingId,
+                pendingProductions,
+                productionSystem,
+                now,
+                entries,
+                producerDisplayName);
         }
 
         internal void GetFriendlyPendingProductionUiEntries(Context context, List<PendingProductionUiEntry> entries)
         {
-            if (entries == null)
-                return;
-
-            entries.Clear();
-            if (context.RuntimeBuildings == null)
-                return;
-
-            float now = context.GetNow != null ? context.GetNow() : UnityEngine.Time.time;
-            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
-            {
-                RuntimeBuildingEntity building = pair.Value;
-                if (building == null ||
-                    building.IsDestroyed ||
-                    building.PendingProductions == null ||
-                    building.PendingProductions.Count == 0)
-                {
-                    continue;
-                }
-
-                if (building.IsCityGenerated)
-                    continue;
-                if (!IsFriendlyProductionBuilding(building))
-                    continue;
-
-                AddPendingProductionUiEntries(
-                    pair.Key,
-                    building.PendingProductions,
-                    context.ProductionSystem,
-                    now,
-                    entries,
-                    ResolveProducerDisplayName(pair.Key, building));
-            }
-        }
-
-        private static bool IsFriendlyProductionBuilding(RuntimeBuildingEntity building)
-        {
-            if (building == null)
-                return false;
-
-            return !building.HasOwnerFaction ||
-                   building.OwnerFactionId == FactionIdentity.NeutralFactionId ||
-                   building.OwnerFactionId == FactionIdentity.PlayerFactionId;
-        }
-
-        private static string ResolveProducerDisplayName(int buildingId, RuntimeBuildingEntity building)
-        {
-            string displayName = building != null && building.Definition != null
-                ? building.Definition.DisplayName
-                : string.Empty;
-            return string.IsNullOrWhiteSpace(displayName)
-                ? $"Building {buildingId}"
-                : displayName;
+            BuildingProductionEntriesUiSystemHelper.GetFriendlyPendingProductionUiEntries(context, entries);
         }
     }
 }

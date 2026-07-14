@@ -2172,9 +2172,9 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
     {
       "path": "Assets/Game/Scripts/Systems/FactionTacticalMaterialsUtilitySystemHelper.cs",
       "trackerTaskId": "APH-710",
-      "decisionId": "D-060",
-      "maxLines": 136,
-      "maxBytes": 6083,
+      "decisionId": "D-076",
+      "maxLines": 159,
+      "maxBytes": 7392,
       "scope": "system-helper"
     },
     {
@@ -2279,6 +2279,14 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
       "decisionId": "D-075",
       "maxLines": 70,
       "maxBytes": 4084,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/MaterialFabricationTelemetrySystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-077",
+      "maxLines": 96,
+      "maxBytes": 4027,
       "scope": "system-helper"
     }
   ]

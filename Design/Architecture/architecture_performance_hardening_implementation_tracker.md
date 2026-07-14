@@ -258,7 +258,7 @@ The program is complete only when all of the following are true:
 | Red architecture gates | `2`: exact source authorization accepts the new Resource Exchange physical-storage, material-fabrication command, resource-hauler storage, map-vehicle clearance, building path-interaction context, and building-definition footprint-clone boundaries; material fabrication, resource hauling, map-vehicle placement, the building runtime context factory, and the building runtime spawn facade are now below 500 lines. The global gate proceeds to 26 pre-existing oversized production files from later feature work, including separately owned audio, Operations Dashboard, and building-defense growth; these remain decomposition/review work rather than authorization for more growth. The complete Phase 7 gate reports only the audio runtime view `Update`. The Resource Exchange popup no longer owns an `Update`; change-driven projection, a cheap version read, and the existing shell presentation loop replace its per-frame full model/string/UI rebuild. All 24 Scenario Lab coroutines are explicitly registered as lab-only after confirming enabled production scenes contain only `Menu` and `Match`. |
 | Red performance gates | `0`: the unchanged steady-state Match GC gate passes at `930 / 1,024` player-relevant bytes over 300 measured frames after 180 warmup frames, with every production runtime probe at zero. The latest canonical Match baseline passes over 766 frames at `5.23 ms` average, `8.16 ms` p95, `10.33 ms` p99, and zero measured allocation. |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
-| Last verified commit | `e27bf8636` on `main`; the compact APH-704 candidate remains disabled after exact `9/9` equivalence, `74.88%` benchmark improvement, zero warmed allocation, and affected architecture/build gates. |
+| Last verified commit | `7a724318e` on `main`; the compact APH-704 candidate remains disabled after exact `9/9` equivalence, `74.88%` benchmark improvement, zero warmed allocation, and affected architecture/build gates. |
 | Last update | 2026-07-14 - Exact building-definition cloning moved into a 70-line stateless helper, reducing the runtime spawn facade from 531 to 473 lines. Post-rebase fabrication telemetry moved into a 96-line stateless helper, reducing its `ISystem` from 572 to 498 lines, while tactical-material spend telemetry remains frozen at its exact 159-line mutation boundary. Focused behavior, naming, exact source-policy, both project builds, and combined Menu-to-Match smoke pass. The global inventory is 26 unrelated oversized owners. |
 
 ## Phase 0 - Baseline and Safety Freeze
@@ -1966,7 +1966,7 @@ Append one entry per completed or blocked task. Keep entries concise but include
 
 - Status: stable bounded decomposition; global architecture closeout remains active
 - Commit or worktree baseline: `e27bf8636`
-- Stable commit/push: pending stable integration commit
+- Stable commit/push: `6b1e42749` pushed to `main`
 - Files changed: `BuildingRuntimeSpawnCompositionSystemHelper.cs`, new `BuildingDefinitionFootprintCloneSystemHelper.cs`, exact source authorization, and this tracker
 - Behavior preserved/changed: null handling and exact `BuildingDefinition` field-copy order moved intact into one stateless helper while the public `CloneDefinitionWithFootprint` facade, one-definition allocation, and footprint override remain unchanged; no ECS operation, scheduling owner, or mutable state was added
 - Validation: building cost/config/clone projection passed `3/3`; non-ECS architecture/naming passed `9/9`; exact source authorization passed `2/2`; Runtime and Editor-test builds passed with zero errors; pre-rebase and combined post-rebase Menu-to-Match smoke reached `MatchHudReady`, completed Match Intro, and unlocked input
@@ -1981,7 +1981,7 @@ Append one entry per completed or blocked task. Keep entries concise but include
 
 - Status: stable upstream architecture reconciliation; global architecture closeout remains active
 - Commit or worktree baseline: `9fd5fa44c`
-- Stable commit/push: pending stable integration commit
+- Stable commit/push: `7a724318e` pushed to `main`
 - Files changed: `MaterialFabricationSystem.cs`, new `MaterialFabricationTelemetrySystemHelper.cs`, exact source authorizations, and this tracker
 - Behavior preserved/changed: active/blocked duration accumulation, saturating float counters, and telemetry-version mutation moved intact behind the existing public `MaterialFabricationSystem.AccumulateTelemetry` facade; spend-kind lifetime telemetry, construction-refund symmetry, and nonnegative validation remain in the atomic tactical-material mutation utility under an exact superseding ceiling
 - Validation: fabrication behavior passed `19/19`; tactical-material and construction-resource behavior passed `17/17`; non-ECS architecture/naming passed `9/9`; exact source authorization passed `2/2`; Runtime and Editor-test builds passed with zero errors; combined Menu-to-Match smoke reached `MatchHudReady`, completed Match Intro, and unlocked input

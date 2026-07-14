@@ -39,11 +39,11 @@ pipeline {
                     cd /d "%PROJECT_PATH%"
                     git remote set-url origin https://github.com/farhad2na2/WarlineCapture.git
                     git sparse-checkout set Assets Packages ProjectSettings Tools Design
-                    if not exist "Design\Architecture\production_source_growth_baseline.md" (
+                    if not exist "Design\\Architecture\\production_source_growth_baseline.md" (
                         echo Production source growth baseline is missing from the sparse checkout.
                         exit /b 1
                     )
-                    if not exist "Design\Architecture\architecture_performance_hardening_implementation_tracker.md" (
+                    if not exist "Design\\Architecture\\architecture_performance_hardening_implementation_tracker.md" (
                         echo Architecture/performance tracker is missing from the sparse checkout.
                         exit /b 1
                     )

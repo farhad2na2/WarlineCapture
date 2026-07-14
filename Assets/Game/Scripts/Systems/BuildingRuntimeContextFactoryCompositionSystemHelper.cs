@@ -259,8 +259,7 @@ namespace Game.Runtime
         }
 
         public BuildingRuntimeSpawnCompositionSystemHelper.Context CreateSpawnContext(Source source)
-        {
-            return new BuildingRuntimeSpawnCompositionSystemHelper.Context(
+            => new BuildingRuntimeSpawnCompositionSystemHelper.Context(
                 source.BuildingRoot,
                 source.DefinitionSystem,
                 source.RunwaySystem,
@@ -275,20 +274,18 @@ namespace Game.Runtime
                 source.PositionBuildingObject,
                 source.RegisterRuntimeBuilding,
                 source.SetRuntimeBuildingOwnerFaction);
-        }
 
         public BuildingRuntimeSpawnCommandSystemHelper.Context CreateSpawnCommandContext(
             Source source,
             BuildingRuntimeSpawnCompositionSystemHelper runtimeSpawnSystem)
-        {
-            return new BuildingRuntimeSpawnCommandSystemHelper.Context(
+            => new BuildingRuntimeSpawnCommandSystemHelper.Context(
                 runtimeSpawnSystem,
                 CreateSpawnContext(source));
-        }
 
         public BuildingRuntimeCreationCompositionSystemHelper.Context CreateCreationContext(Source source)
         {
-            var redirectContext = CreateCreationRedirectContext(source);
+            var redirectContext =
+                BuildingRuntimePathInteractionContextFactoryCompositionSystemHelper.CreateCreationRedirectContext(source);
             return new BuildingRuntimeCreationCompositionSystemHelper.Context(
                 source.RuntimeBuildingSystem,
                 source.RuntimeLinkInteractionSystem,
@@ -415,14 +412,7 @@ namespace Game.Runtime
         }
 
         public BuildingPlacementRedirectCompositionSystemHelper.Context CreateRedirectContext(RuntimeSource source)
-        {
-            return new BuildingPlacementRedirectCompositionSystemHelper.Context(
-                (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager),
-                (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
-                    source.TryGetGridData(out gridEntity, out grid, out roads, out blockerData),
-                entityManager => source.EnsureEntityQueries?.Invoke(entityManager),
-                () => source.RedirectUnitsQuery);
-        }
+            => BuildingRuntimePathInteractionContextFactoryCompositionSystemHelper.CreateRedirectContext(source);
 
         public BuildingCombatUtilitySystemHelper.Context<RuntimeBuildingEntity> CreateCombatContext(RuntimeSource source)
         {
@@ -496,62 +486,14 @@ namespace Game.Runtime
         }
 
         public BuildingBarrierUtilitySystemHelper.Context CreateBarrierContext(RuntimeSource source)
-        {
-            return new BuildingBarrierUtilitySystemHelper.Context(
-                source.RuntimeBuildingSystem.Buildings,
-                (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager),
-                (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
-                    source.TryGetGridData(out gridEntity, out grid, out roads, out blockerData),
-                entityManager => source.EnsureEntityQueries?.Invoke(entityManager),
-                () => source.LiveFactionUnitsQuery,
-                source.BarrierSystem.IsWallGateDefinitionCached,
-                (RuntimeBuildingEntity building, int2 unitFootprint, int2 referenceCell, out int2 goal) =>
-                {
-                    goal = default;
-                    return source.ResourceHaulerBridgeSystem != null &&
-                        source.ResourceHaulerBridgeSystem.TryGetRuntimeBuildingApproachCell(
-                        CreateResourceHaulerBridgeContext(source),
-                        building,
-                        unitFootprint,
-                        referenceCell,
-                        out goal);
-                });
-        }
-
-        private static BuildingPlacementRedirectCompositionSystemHelper.Context CreateCreationRedirectContext(Source source)
-        {
-            return new BuildingPlacementRedirectCompositionSystemHelper.Context(
-                (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager),
-                (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
-                    source.TryGetGridData(out gridEntity, out grid, out roads, out blockerData),
-                entityManager => source.EnsureEntityQueries?.Invoke(entityManager),
-                source.GetRedirectUnitsQuery);
-        }
+            => BuildingRuntimePathInteractionContextFactoryCompositionSystemHelper.CreateBarrierContext(source);
 
         public BuildingResourceHaulerBridgeCompositionSystemHelper.Context CreateResourceHaulerBridgeContext(RuntimeSource source)
-        {
-            return new BuildingResourceHaulerBridgeCompositionSystemHelper.Context(
-                source.RuntimeBuildingSystem.Buildings,
-                source.ResourceHaulerUtilitySystemHelper,
-                source.FactionResourceCompositionSystemHelper,
-                (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager),
-                (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData) =>
-                    source.TryGetGridData(out gridEntity, out grid, out roads, out blockerData),
-                entityManager => source.EnsureEntityQueries?.Invoke(entityManager),
-                () => source.HaulerUnitsQuery,
-                () => source.SelectedUnitsQuery,
-                source.TryGetRuntimeBuilding,
-                building => source.TryResolveBuildingFocusWorldPosition(building, out Vector3 worldPosition) ? worldPosition : Vector3.zero,
-                source.GetEffectivePlacementRect,
-                source.TryResolveFactionAIOilAllocationInput);
-        }
+            => BuildingRuntimePathInteractionContextFactoryCompositionSystemHelper.CreateResourceHaulerBridgeContext(source);
 
         public bool TryAssignSelectedHaulerOrders(RuntimeSource source, int clickedBuildingId)
-        {
-            return source.ResourceHaulerBridgeSystem != null &&
-                source.ResourceHaulerBridgeSystem.TryAssignSelectedHaulerOrders(
-                    CreateResourceHaulerBridgeContext(source),
-                    clickedBuildingId);
-        }
+            => BuildingRuntimePathInteractionContextFactoryCompositionSystemHelper.TryAssignSelectedHaulerOrders(
+                source,
+                clickedBuildingId);
     }
 }

@@ -1575,7 +1575,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Music/music_menu_loop_01.wav",
-          "status": "generated-arranged-music",
+          "status": "generated-elevenlabs-music",
           "weight": 1
         }
       ]
@@ -1623,7 +1623,7 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Music/music_match_calm_loop_01.wav",
-          "status": "generated-arranged-music",
+          "status": "generated-elevenlabs-music",
           "weight": 1
         }
       ]

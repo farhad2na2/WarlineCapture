@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAtUtc": "2026-07-14T13:34:35.707385+00:00",
+  "generator": "Tools/Audio/generate_elevenlabs_music.py",
+  "provider": "ElevenLabs Eleven Music",
+  "modelId": "music_v2",
+  "rightsStatus": "ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE",
+  "commercialUseNote": "Generated while the project owner held a paid ElevenLabs Creator subscription.",
+  "postProcessing": "Unity stereo decode, 3 second rotational crossfade, RMS normalization, PCM16 WAV.",
+  "tracks": [
+    {
+      "spec": {
+        "event_id": "Music.Menu.Loop",
+        "output_name": "music_menu_loop_01.wav",
+        "title": "Quiet Authority",
+        "duration_ms": 75000,
+        "target_rms_db": -18.0,
+        "prompt": "Instrumental seamless main menu underscore for a modern military strategy game set in a fictional Middle Eastern region. Quiet command-room authority, measured and intelligent rather than heroic. Warm low strings and cello, restrained oud motif, subtle ney breath texture, sparse frame drum detail, soft analog command-console atmosphere, 82 BPM, minor mode with restrained hopeful color. Evolving but unobtrusive, no obvious melody hook, no trailer impacts, no brass fanfare, no choir, no vocals, no chant. Leave generous space for UI sounds and radio dialogue. Constant loopable energy with no intro, no ending, no fade-in, and no fade-out; begin and end naturally in the middle of the arrangement."
+      },
+      "stagedAssetPath": "Assets/Game/Audio/GeneratedSource/ElevenLabsMusicRaw/music_menu_loop_01.mp3",
+      "songId": "h05zT5GU6McHdsQvIdLX",
+      "bytes": 1800621
+    },
+    {
+      "spec": {
+        "event_id": "Music.Match.CalmLoop",
+        "output_name": "music_match_calm_loop_01.wav",
+        "title": "Dustline Vigil",
+        "duration_ms": 75000,
+        "target_rms_db": -19.0,
+        "prompt": "Instrumental seamless tactical battlefield underscore for a modern military RTS set in a fictional Middle Eastern region. Same sonic family as a restrained command-room menu theme, but more alert and spacious. Low strings, sparse oud phrases, muted irregular frame drum and hand percussion, distant bowed metal texture, subtle evolving tension, 94 BPM. Focused anticipation rather than constant combat; no trailer impacts, no pounding beat, no brass fanfare, no choir, no vocals, no chant. Preserve wide space for engines, weapons, alerts, and tactical radio. Constant loopable energy with no intro, no ending, no fade-in, and no fade-out; begin and end naturally in the middle of the arrangement."
+      },
+      "stagedAssetPath": "Assets/Game/Audio/GeneratedSource/ElevenLabsMusicRaw/music_match_calm_loop_01.mp3",
+      "songId": "mxREdHASNKhRbdR3B1mB",
+      "bytes": 1800621
+    }
+  ]
+}

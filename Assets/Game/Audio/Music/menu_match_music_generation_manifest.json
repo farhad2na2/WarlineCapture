@@ -1,6 +1,12 @@
 {
   "schema": "WarlineCapture.ArrangedBackgroundMusic.v2",
   "generator": "Tools/Audio/generate_background_music.py",
+  "status": "partially-superseded",
+  "supersededTrackIds": [
+    "Music.Menu.Loop",
+    "Music.Match.CalmLoop"
+  ],
+  "supersededBy": "Assets/Game/Audio/Music/elevenlabs_menu_match_music_manifest.json",
   "license": {
     "source": "GarageBand royalty-free Apple Loops",
     "terms": "https://support.apple.com/102034",

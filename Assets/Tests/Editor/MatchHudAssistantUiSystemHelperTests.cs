@@ -14,6 +14,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
 {
     private const string PopupPrefabPath =
         "Assets/Game/Prefabs/UI/Shell/Popups/POP13_ARIACommandAssistantPopup.prefab";
+    private const string MatchHudPrefabPath =
+        "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab";
     private const string MenuScenePath = "Assets/Game/Scenes/Menu.unity";
     private bool _openedScene;
 
@@ -24,9 +26,11 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         {
             RunCase(test => test.PopupPrefab_BindsLockedLandscapeHierarchyAndMenuReference());
             passed++;
-            RunCase(test => test.BindMatchHudAssistant_UsesObjectiveSlotAndRestoresObjectives());
+            RunCase(test => test.MatchHudPrefab_ContainsEditableAssistantButton());
             passed++;
-            RunCase(test => test.BindMatchHudAssistant_MissingSlotKeepsFallbackObjectivesVisible());
+            RunCase(test => test.BindMatchHudAssistant_UsesPrefabButtonAndRestoresObjectives());
+            passed++;
+            RunCase(test => test.BindMatchHudAssistant_MissingPrefabButtonDoesNotCreateRuntimeFallback());
             passed++;
             RunCase(test => test.BindMatchHudAssistant_AppliesStructuredRowsWithoutCreatingPopupObjects());
             passed++;
@@ -110,13 +114,31 @@ public sealed class MatchHudAssistantUiSystemHelperTests
     }
 
     [Test]
-    public void BindMatchHudAssistant_UsesObjectiveSlotAndRestoresObjectives()
+    public void MatchHudPrefab_ContainsEditableAssistantButton()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(MatchHudPrefabPath);
+        Assert.NotNull(prefab, MatchHudPrefabPath);
+
+        Transform button = FindNamed(prefab.transform, "AriaAssistantButton");
+        Assert.NotNull(button, "The Match HUD prefab must own the ARIA access button.");
+        Assert.NotNull(button.GetComponent<Image>());
+        Assert.NotNull(button.GetComponent<Button>());
+        Assert.NotNull(button.GetComponent<Canvas>());
+        Assert.NotNull(button.GetComponent<GraphicRaycaster>());
+        Assert.NotNull(FindNamed(button, "Label")?.GetComponent<TMP_Text>());
+        Assert.NotNull(FindNamed(button, "State")?.GetComponent<TMP_Text>());
+        Assert.NotNull(FindNamed(button, "AlertCue")?.GetComponent<TMP_Text>());
+    }
+
+    [Test]
+    public void BindMatchHudAssistant_UsesPrefabButtonAndRestoresObjectives()
     {
         CreateHudHarness(
-            includeDirectObjectivePanel: true,
+            includeAssistantButton: true,
             out RectTransform overlay,
             out RectTransform header,
             out RectTransform objectives);
+        RectTransform prefabButton = objectives.parent.Find("AriaAssistantButton") as RectTransform;
         var runtimeState = new FakeMatchRuntimeState();
         var ui = new MainMenuPlayUI();
         ui.Init(null, runtimeState);
@@ -125,12 +147,9 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         RectTransform button = objectives.parent.Find("AriaAssistantButton") as RectTransform;
         AriaCommandAssistantPopupView popup = overlay.GetComponentInChildren<AriaCommandAssistantPopupView>(true);
         Assert.NotNull(button);
+        Assert.AreSame(prefabButton, button, "Binding must reuse the prefab-owned button instance.");
         Assert.NotNull(popup);
         Assert.IsFalse(objectives.gameObject.activeSelf, "Objectives hide only after button and popup binding succeed.");
-        Assert.AreEqual(objectives.anchorMin, button.anchorMin);
-        Assert.AreEqual(objectives.anchorMax, button.anchorMax);
-        Assert.AreEqual(objectives.pivot, button.pivot);
-        Assert.AreEqual(objectives.anchoredPosition, button.anchoredPosition);
         Assert.AreEqual(new Vector2(454f, 155f), button.sizeDelta);
         Assert.IsFalse(popup.gameObject.activeSelf, "ARIA starts closed.");
 
@@ -142,25 +161,28 @@ public sealed class MatchHudAssistantUiSystemHelperTests
 
         ui.Dispose();
         Assert.IsTrue(objectives.gameObject.activeSelf, "Unbind must restore the old objective root.");
+        Assert.AreSame(
+            prefabButton,
+            objectives.parent.Find("AriaAssistantButton") as RectTransform,
+            "Unbind must not destroy the prefab-owned button.");
     }
 
     [Test]
-    public void BindMatchHudAssistant_MissingSlotKeepsFallbackObjectivesVisible()
+    public void BindMatchHudAssistant_MissingPrefabButtonDoesNotCreateRuntimeFallback()
     {
         CreateHudHarness(
-            includeDirectObjectivePanel: false,
+            includeAssistantButton: false,
             out RectTransform overlay,
             out RectTransform header,
-            out RectTransform nestedObjectives);
+            out RectTransform objectives);
         var ui = new MainMenuPlayUI();
         ui.Init(null, new FakeMatchRuntimeState());
         ui.BindMatchHudAssistant(header.gameObject, overlay, LoadPopupPrefab());
 
         RectTransform button = header.Find("AriaAssistantButton") as RectTransform;
-        Assert.NotNull(button, "Missing objective slot should keep the existing header fallback.");
-        Assert.AreEqual(new Vector2(228f, 78f), button.sizeDelta);
-        Assert.IsTrue(nestedObjectives.gameObject.activeSelf, "Fallback binding must never hide unresolved objectives.");
-        Assert.NotNull(overlay.GetComponentInChildren<AriaCommandAssistantPopupView>(true));
+        Assert.IsNull(button, "Runtime binding must not recreate a missing prefab button.");
+        Assert.IsTrue(objectives.gameObject.activeSelf, "A failed binding must keep objectives visible.");
+        Assert.IsNull(overlay.GetComponentInChildren<AriaCommandAssistantPopupView>(true));
 
         ui.Dispose();
     }
@@ -347,7 +369,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
     }
 
     private static void CreateHudHarness(
-        bool includeDirectObjectivePanel,
+        bool includeAssistantButton,
         out RectTransform overlay,
         out RectTransform header,
         out RectTransform objectives)
@@ -360,15 +382,41 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         header.anchoredPosition = Vector2.zero;
         header.sizeDelta = new Vector2(0f, 560f);
 
-        Transform parent = header;
-        if (!includeDirectObjectivePanel)
-            parent = CreateRect("FallbackObjectivesContainer", header);
-        objectives = CreateRect("ObjectivesPanel", parent);
+        objectives = CreateRect("ObjectivesPanel", header);
         objectives.anchorMin = new Vector2(0f, 1f);
         objectives.anchorMax = new Vector2(0f, 1f);
         objectives.pivot = new Vector2(0f, 1f);
         objectives.anchoredPosition = new Vector2(16f, -16f);
         objectives.sizeDelta = new Vector2(670f, 520f);
+
+        if (includeAssistantButton)
+            CreateAssistantButton(header);
+    }
+
+    private static void CreateAssistantButton(RectTransform parent)
+    {
+        var root = new GameObject("AriaAssistantButton", typeof(RectTransform), typeof(Image), typeof(Button));
+        root.transform.SetParent(parent, false);
+        RectTransform rect = root.GetComponent<RectTransform>();
+        rect.anchorMin = new Vector2(0f, 1f);
+        rect.anchorMax = new Vector2(0f, 1f);
+        rect.pivot = new Vector2(0f, 1f);
+        rect.anchoredPosition = new Vector2(16f, -16f);
+        rect.sizeDelta = new Vector2(454f, 155f);
+        root.GetComponent<Button>().targetGraphic = root.GetComponent<Image>();
+
+        CreateAssistantButtonText("Label", rect, "ARIA");
+        CreateAssistantButtonText("State", rect, "PLAYER CONTROL");
+        TMP_Text alertCue = CreateAssistantButtonText("AlertCue", rect, string.Empty);
+        alertCue.gameObject.SetActive(false);
+    }
+
+    private static TMP_Text CreateAssistantButtonText(string name, RectTransform parent, string value)
+    {
+        RectTransform rect = CreateRect(name, parent);
+        TMP_Text text = rect.gameObject.AddComponent<TextMeshProUGUI>();
+        text.text = value;
+        return text;
     }
 
     private static RectTransform CreateRectRoot(string name, Vector2 size)

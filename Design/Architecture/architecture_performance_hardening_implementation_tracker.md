@@ -258,7 +258,7 @@ The program is complete only when all of the following are true:
 | Red architecture gates | `2`: exact source authorization accepts the new Resource Exchange physical-storage, material-fabrication command, resource-hauler storage, map-vehicle clearance, building path-interaction context, building-definition footprint-clone, Build Drawer projection, and Resource Exchange read-model projection boundaries; material fabrication, resource hauling, map-vehicle placement, the building runtime context factory, the building runtime spawn facade, the Build Drawer read-model owner, and the Resource Exchange read-model owner are now below 500 lines. The global gate proceeds to 24 pre-existing oversized production files from later feature work, including separately owned audio, Operations Dashboard, and building-defense growth; these remain decomposition/review work rather than authorization for more growth. The complete Phase 7 gate reports only the audio runtime view `Update`. The Resource Exchange popup no longer owns an `Update`; change-driven projection, a cheap version read, and the existing shell presentation loop replace its per-frame full model/string/UI rebuild. All 24 Scenario Lab coroutines are explicitly registered as lab-only after confirming enabled production scenes contain only `Menu` and `Match`. |
 | Red performance gates | `0`: the unchanged steady-state Match GC gate passes at `930 / 1,024` player-relevant bytes over 300 measured frames after 180 warmup frames, with every production runtime probe at zero. The latest canonical Match baseline passes over 766 frames at `5.23 ms` average, `8.16 ms` p95, `10.33 ms` p99, and zero measured allocation. |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
-| Last verified commit | `80e6878f2` on `main`; the compact APH-704 candidate remains disabled after exact `9/9` equivalence, `74.88%` benchmark improvement, zero warmed allocation, and affected architecture/build gates. |
+| Last verified commit | `41d821319` on `main`; the compact APH-704 candidate remains disabled after exact `9/9` equivalence, `74.88%` benchmark improvement, zero warmed allocation, and affected architecture/build gates. |
 | Last update | 2026-07-14 - Resource Exchange route validation, amount normalization, queue projection, display formatting, and bounded fixed-string conversion moved into a 312-line stateless helper, reducing its change-driven read-model `ISystem` from 775 to 480 lines without changing queries or update ownership. After rebasing the fabrication fuel-logistics telemetry feature, the combined focused suite passes `40/40`; naming passes `9/9`; exact source authorization passes `2/2`; Runtime and Editor-test builds pass with zero errors; Menu-to-Match reaches `MatchHudReady`, completes Match Intro, and unlocks input. The global inventory is 24 unrelated oversized owners. |
 
 ## Phase 0 - Baseline and Safety Freeze
@@ -2010,7 +2010,7 @@ Append one entry per completed or blocked task. Keep entries concise but include
 
 - Status: stable bounded decomposition; global architecture closeout remains active
 - Commit or worktree baseline: `f27f2d143`
-- Stable commit/push: pending integration commit
+- Stable commit/push: `670f353de4` pushed to `main`
 - Files changed: `UiResourceExchangeReadModelSystem.cs`, new `UiResourceExchangeProjectionSystemHelper.cs`, exact source authorization, and this tracker
 - Behavior preserved/changed: route availability and confirm validation, amount normalization, output/duration calculation, queue-state mapping, presentation formatting, reason copy, and bounded fixed-string conversion moved intact into one stateless helper; player-faction query selection, physical-resource reads, change-driven fingerprinting, buffer writes, and the existing unmanaged `ISystem` schedule remain unchanged
 - Validation: Resource Exchange read-model and architecture behavior passed `12/12`; post-rebase Resource Exchange plus fuel-logistics behavior passed `40/40`; non-ECS architecture/naming passed `9/9`; exact source authorization passed `2/2`; Runtime and Editor-test builds passed with zero errors; post-rebase Menu-to-Match smoke reached `MatchHudReady`, completed Match Intro, and unlocked input
@@ -2024,7 +2024,7 @@ Append one entry per completed or blocked task. Keep entries concise but include
 
 - Status: stable upstream architecture reconciliation; global architecture closeout remains active
 - Commit or worktree baseline: `b3c905e93`
-- Stable commit/push: pending integration commit
+- Stable commit/push: `41d821319` pushed to `main`
 - Files changed: exact source authorization and this tracker; upstream feature source remains unchanged
 - Behavior preserved/changed: no runtime behavior changed; the 71-line stateless telemetry utility keeps saturating route assignment, reassignment, failure, refinery/depot delivery, and version mutation outside ECS update owners under an exact non-growth ceiling
 - Validation: Resource Hauler behavior passed `28/28` within the combined post-rebase `40/40` suite; exact source authorization passed `2/2`; naming passed `9/9`; Runtime and Editor-test builds passed with zero errors; full source inventory remains 24; Menu-to-Match reached `MatchHudReady`, completed Match Intro, and unlocked input

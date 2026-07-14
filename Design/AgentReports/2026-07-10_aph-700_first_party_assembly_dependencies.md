@@ -1,7 +1,7 @@
 # APH-700 First-Party Assembly Dependency Report
 
 - Task: `APH-700`
-- Source fingerprint (SHA-256): `756679b8a23c08a10006c324ac97c3935e4a51b33086d48651a389ccf04fdc3a`
+- Source fingerprint (SHA-256): `1c223f8f9136230aa5ed12ac4e615b3f5f39b5e5deffb085b47632aa2ad1134c`
 - Determinism: No timestamp or mutable VCS state; ordinal path ordering, normalized LF output, and a content-derived source fingerprint.
 - Scope: Direct dependencies and source-level cross-domain type references for first-party asmdefs under Assets/Game, Assets/Tests, and Assets/Editor.
 
@@ -12,8 +12,8 @@
 | First-party assemblies | 21 |
 | First-party asmdef edges | 92 |
 | External declared references | 100 |
-| Owned C# source files | 1327 |
-| Indexed visible types | 2717 |
+| Owned C# source files | 1329 |
+| Indexed visible types | 2719 |
 | Resolved cross-domain type occurrences | 33411 |
 | Distinct cross-domain type references | 2922 |
 | Ambiguous type tokens omitted | 66 |
@@ -28,7 +28,7 @@
 | `Game.Components` | `Assets/Game/Scripts/Components/Game.Components.asmdef` | 55 | 515 | 0 | 5 |
 | `Game.Composition` | `Assets/Game/Scripts/Composition/Game.Composition.asmdef` | 44 | 54 | 14 | 10 |
 | `Game.Configs` | `Assets/Game/Scripts/Configs/Game.Configs.asmdef` | 48 | 115 | 3 | 6 |
-| `Game.Editor` | `Assets/Game/Scripts/Editor/Game.Editor.asmdef` | 99 | 136 | 15 | 13 |
+| `Game.Editor` | `Assets/Game/Scripts/Editor/Game.Editor.asmdef` | 100 | 137 | 15 | 13 |
 | `Game.Narrative.Contracts` | `Assets/Game/Scripts/Narrative/Contracts/Game.Narrative.Contracts.asmdef` | 1 | 6 | 0 | 0 |
 | `Game.Narrative.Runtime` | `Assets/Game/Scripts/Narrative/Runtime/Game.Narrative.Runtime.asmdef` | 3 | 9 | 2 | 0 |
 | `Game.Rendering` | `Assets/Game/Scripts/Rendering/Game.Rendering.asmdef` | 45 | 73 | 3 | 8 |
@@ -37,7 +37,7 @@
 | `Game.Runtime.Combat` | `Assets/Game/Scripts/Systems/Combat/Game.Runtime.Combat.asmdef` | 1 | 2 | 1 | 3 |
 | `Game.Runtime.Pathfinding` | `Assets/Game/Scripts/Systems/Pathfinding/Surface/Game.Runtime.Pathfinding.asmdef` | 4 | 4 | 1 | 3 |
 | `Game.Tactical.Contracts` | `Assets/Game/Scripts/Contracts/Game.Tactical.Contracts.asmdef` | 1 | 9 | 0 | 0 |
-| `Game.Tests.Editor` | `Assets/Tests/Editor/Game.Tests.Editor.asmdef` | 275 | 281 | 18 | 12 |
+| `Game.Tests.Editor` | `Assets/Tests/Editor/Game.Tests.Editor.asmdef` | 276 | 282 | 18 | 12 |
 | `Game.Tests.PlayMode` | `Assets/Tests/PlayMode/Game.Tests.PlayMode.asmdef` | 13 | 13 | 12 | 8 |
 | `Game.UI.Contracts` | `Assets/Game/Scripts/UI/Contracts/Game.UI.Contracts.asmdef` | 21 | 116 | 1 | 0 |
 | `Game.UI.Runtime` | `Assets/Game/Scripts/UI/Game.UI.Runtime.asmdef` | 140 | 185 | 4 | 6 |

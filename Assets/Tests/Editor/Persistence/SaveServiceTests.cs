@@ -168,4 +168,21 @@ public sealed class SaveServiceTests
         Assert.IsFalse(loaded.firstLaunchWatched);
         Assert.IsFalse(loaded.firstLaunchSkipped);
     }
+
+    [Test]
+    public void DeleteAllSaveData_RemovesEverySaveFile()
+    {
+        _service.SaveProject(new SaveDataModel
+        {
+            profile = new PlayerProfileSaveData { commanderLevel = 8 },
+            settings = new SettingsSaveData { largeText = true },
+            quickGame = new QuickGameSaveData { enemyCount = 5 }
+        });
+
+        _service.DeleteAllSaveData();
+
+        Assert.IsFalse(_repository.Exists(SaveService.ProfileFileName));
+        Assert.IsFalse(_repository.Exists(SaveService.SettingsFileName));
+        Assert.IsFalse(_repository.Exists(SaveService.QuickGameFileName));
+    }
 }

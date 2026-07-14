@@ -79,6 +79,13 @@ namespace Game.Runtime
             SaveProfile(profile);
         }
 
+        public void DeleteAllSaveData()
+        {
+            _repository.Delete(ProfileFileName);
+            _repository.Delete(SettingsFileName);
+            _repository.Delete(QuickGameFileName);
+        }
+
         private static PlayerProfileSaveData NormalizeProfile(PlayerProfileSaveData profile, bool legacyProfile)
         {
             profile ??= new PlayerProfileSaveData();

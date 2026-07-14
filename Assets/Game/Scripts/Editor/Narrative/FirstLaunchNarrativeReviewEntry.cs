@@ -10,6 +10,33 @@ namespace Game.Editor
     {
         private const string MenuScenePath = "Assets/Game/Scenes/Menu.unity";
         private const string ResetProgressMenuPath = "Game/Narrative/First Launch/Reset Progress";
+        private const string ResetAllLocalDataMenuPath = "Game/Progress/Reset All Local Data (Fresh Install)";
+
+        [MenuItem(ResetAllLocalDataMenuPath)]
+        public static void ResetAllLocalData()
+        {
+            if (!EditorUtility.DisplayDialog(
+                    "Reset All Local Data",
+                    "Delete all local progress and settings for Warline Capture? The next Play will behave like a fresh installation.",
+                    "Reset Everything",
+                    "Cancel"))
+            {
+                return;
+            }
+
+            SaveService.CreateDefault().DeleteAllSaveData();
+            PlayerPrefs.DeleteAll();
+            PlayerPrefs.Save();
+            Debug.Log(
+                $"[LocalDataReset] Fresh-install reset complete. Deleted profile, settings, quick game, and PlayerPrefs. " +
+                $"SaveRoot={Application.persistentDataPath}");
+        }
+
+        [MenuItem(ResetAllLocalDataMenuPath, true)]
+        private static bool CanResetAllLocalData()
+        {
+            return !EditorApplication.isPlayingOrWillChangePlaymode;
+        }
 
         [MenuItem(ResetProgressMenuPath)]
         public static void ResetProgress()

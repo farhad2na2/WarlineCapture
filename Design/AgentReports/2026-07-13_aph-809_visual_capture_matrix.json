@@ -1,0 +1,405 @@
+{
+  "schemaVersion": 1,
+  "taskId": "APH-809",
+  "revision": null,
+  "deviceProfile": null,
+  "frameRateMode": null,
+  "rows": [
+    {
+      "id": "menu-main-16x9",
+      "surface": "menu",
+      "category": "menu",
+      "aspect": "16:9",
+      "camera": "main-menu",
+      "state": "main-menu-idle",
+      "qualityTier": "current",
+      "artifactRoles": [
+        "capture"
+      ],
+      "artifacts": [],
+      "reviewerDecision": "pending",
+      "reviewerNotes": null
+    },
+    {
+      "id": "menu-main-20x9",
+      "surface": "menu",
+      "category": "menu",
+      "aspect": "20:9",
+      "camera": "main-menu",
+      "state": "main-menu-idle",
+      "qualityTier": "current",
+      "artifactRoles": [
+        "capture"
+      ],
+      "artifacts": [],
+      "reviewerDecision": "pending",
+      "reviewerNotes": null
+    },
+    {
+      "id": "graphics-tier-gameplay-zoom-16x9",
+      "surface": "match",
+      "category": "graphics-tier",
+      "aspect": "16:9",
+      "camera": "gameplay-zoom",
+      "state": "gameplay-zoom-current-vs-candidate",
+      "qualityTier": "comparison",
+      "artifactRoles": [
+        "current",
+        "candidate"
+      ],
+      "artifacts": [],
+      "reviewerDecision": "pending",
+      "reviewerNotes": null
+    },
+    {
+      "id": "graphics-tier-max-zoom-out-16x9",
+      "surface": "match",
+      "category": "graphics-tier",
+      "aspect": "16:9",
+      "camera": "max-zoom-out",
+      "state": "max-zoom-out-current-vs-candidate",
+      "qualityTier": "comparison",
+      "artifactRoles": [
+        "current",
+        "candidate"
+      ],
+      "artifacts": [],
+      "reviewerDecision": "pending",
+      "reviewerNotes": null
+    },
+    {
+      "id": "graphics-tier-night-16x9",
+      "surface": "match",
+      "category": "graphics-tier",
+      "aspect": "16:9",
+      "camera": "gameplay-zoom",
+      "state": "night-current-vs-candidate",
+      "qualityTier": "comparison",
+      "artifactRoles": [
+        "current",
+        "candidate"
+      ],
+      "artifacts": [],
+      "reviewerDecision": "pending",
+      "reviewerNotes": null
+    },
+    {
+      "id": "graphics-tier-gameplay-zoom-20x9",
+      "surface": "match",
+      "category": "graphics-tier",
+      "aspect": "20:9",
+      "camera": "gameplay-zoom",
+      "state": "gameplay-zoom-current-vs-candidate",
+      "qualityTier": "comparison",
+      "artifactRoles": [
+        "current",
+        "candidate"
+      ],
+      "artifacts": [],
+      "reviewerDecision": "pending",
+      "reviewerNotes": null
+    },
+    {
+      "id": "graphics-tier-max-zoom-out-20x9",
+      "surface": "match",
+      "category": "graphics-tier",
+      "aspect": "20:9",
+      "camera": "max-zoom-out",
+      "state": "max-zoom-out-current-vs-candidate",
+      "qualityTier": "comparison",
+      "artifactRoles": [
+        "current",
+        "candidate"
+      ],
+      "artifacts": [],
+      "reviewerDecision": "pending",
+      "reviewerNotes": null
+    },
+    {
+      "id": "graphics-tier-night-20x9",
+      "surface": "match",
+      "category": "graphics-tier",
+      "aspect": "20:9",
+      "camera": "gameplay-zoom",
+      "state": "night-current-vs-candidate",
+      "qualityTier": "comparison",
+      "artifactRoles": [
+        "current",
+        "candidate"
+      ],
+      "artifacts": [],
+      "reviewerDecision": "pending",
+      "reviewerNotes": null
+    },
+    {
+      "id": "day-night-day-16x9",
+      "surface": "match",
+      "category": "day-night",
+      "aspect": "16:9",
+      "camera": "gameplay-zoom",
+      "state": "day-12-00",
+      "qualityTier": "current",
+      "artifactRoles": [
+        "capture"
+      ],
+      "artifacts": [],
+      "reviewerDecision": "pending",
+      "reviewerNotes": null
+    },
+    {
+      "id": "day-night-dusk-16x9",
+      "surface": "match",
+      "category": "day-night",
+      "aspect": "16:9",
+      "camera": "gameplay-zoom",
+      "state": "dusk-21-00",
+      "qualityTier": "current",
+      "artifactRoles": [
+        "capture"
+      ],
+      "artifacts": [],
+      "reviewerDecision": "pending",
+      "reviewerNotes": null
+    },
+    {
+      "id": "day-night-night-16x9",
+      "surface": "match",
+      "category": "day-night",
+      "aspect": "16:9",
+      "camera": "gameplay-zoom",
+      "state": "night-23-00",
+      "qualityTier": "current",
+      "artifactRoles": [
+        "capture"
+      ],
+      "artifacts": [],
+      "reviewerDecision": "pending",
+      "reviewerNotes": null
+    },
+    {
+      "id": "day-night-day-20x9",
+      "surface": "match",
+      "category": "day-night",
+      "aspect": "20:9",
+      "camera": "gameplay-zoom",
+      "state": "day-12-00",
+      "qualityTier": "current",
+      "artifactRoles": [
+        "capture"
+      ],
+      "artifacts": [],
+      "reviewerDecision": "pending",
+      "reviewerNotes": null
+    },
+    {
+      "id": "day-night-dusk-20x9",
+      "surface": "match",
+      "category": "day-night",
+      "aspect": "20:9",
+      "camera": "gameplay-zoom",
+      "state": "dusk-21-00",
+      "qualityTier": "current",
+      "artifactRoles": [
+        "capture"
+      ],
+      "artifacts": [],
+      "reviewerDecision": "pending",
+      "reviewerNotes": null
+    },
+    {
+      "id": "day-night-night-20x9",
+      "surface": "match",
+      "category": "day-night",
+      "aspect": "20:9",
+      "camera": "gameplay-zoom",
+      "state": "night-23-00",
+      "qualityTier": "current",
+      "artifactRoles": [
+        "capture"
+      ],
+      "artifacts": [],
+      "reviewerDecision": "pending",
+      "reviewerNotes": null
+    },
+    {
+      "id": "static-map-near-16x9",
+      "surface": "match",
+      "category": "static-map-chunks",
+      "aspect": "16:9",
+      "camera": "static-map-near",
+      "state": "near-chunk-readability",
+      "qualityTier": "current",
+      "artifactRoles": [
+        "capture"
+      ],
+      "artifacts": [],
+      "reviewerDecision": "pending",
+      "reviewerNotes": null
+    },
+    {
+      "id": "static-map-medium-16x9",
+      "surface": "match",
+      "category": "static-map-chunks",
+      "aspect": "16:9",
+      "camera": "static-map-medium",
+      "state": "medium-chunk-readability",
+      "qualityTier": "current",
+      "artifactRoles": [
+        "capture"
+      ],
+      "artifacts": [],
+      "reviewerDecision": "pending",
+      "reviewerNotes": null
+    },
+    {
+      "id": "static-map-far-16x9",
+      "surface": "match",
+      "category": "static-map-chunks",
+      "aspect": "16:9",
+      "camera": "static-map-far",
+      "state": "far-chunk-readability",
+      "qualityTier": "current",
+      "artifactRoles": [
+        "capture"
+      ],
+      "artifacts": [],
+      "reviewerDecision": "pending",
+      "reviewerNotes": null
+    },
+    {
+      "id": "static-map-near-20x9",
+      "surface": "match",
+      "category": "static-map-chunks",
+      "aspect": "20:9",
+      "camera": "static-map-near",
+      "state": "near-chunk-readability",
+      "qualityTier": "current",
+      "artifactRoles": [
+        "capture"
+      ],
+      "artifacts": [],
+      "reviewerDecision": "pending",
+      "reviewerNotes": null
+    },
+    {
+      "id": "static-map-medium-20x9",
+      "surface": "match",
+      "category": "static-map-chunks",
+      "aspect": "20:9",
+      "camera": "static-map-medium",
+      "state": "medium-chunk-readability",
+      "qualityTier": "current",
+      "artifactRoles": [
+        "capture"
+      ],
+      "artifacts": [],
+      "reviewerDecision": "pending",
+      "reviewerNotes": null
+    },
+    {
+      "id": "static-map-far-20x9",
+      "surface": "match",
+      "category": "static-map-chunks",
+      "aspect": "20:9",
+      "camera": "static-map-far",
+      "state": "far-chunk-readability",
+      "qualityTier": "current",
+      "artifactRoles": [
+        "capture"
+      ],
+      "artifacts": [],
+      "reviewerDecision": "pending",
+      "reviewerNotes": null
+    },
+    {
+      "id": "mip-streaming-near-16x9",
+      "surface": "match",
+      "category": "mip-streaming",
+      "aspect": "16:9",
+      "camera": "mip-streaming-near",
+      "state": "near-settled",
+      "qualityTier": "current",
+      "artifactRoles": [
+        "capture"
+      ],
+      "artifacts": [],
+      "reviewerDecision": "pending",
+      "reviewerNotes": null
+    },
+    {
+      "id": "mip-streaming-medium-16x9",
+      "surface": "match",
+      "category": "mip-streaming",
+      "aspect": "16:9",
+      "camera": "mip-streaming-medium",
+      "state": "medium-settled",
+      "qualityTier": "current",
+      "artifactRoles": [
+        "capture"
+      ],
+      "artifacts": [],
+      "reviewerDecision": "pending",
+      "reviewerNotes": null
+    },
+    {
+      "id": "mip-streaming-far-16x9",
+      "surface": "match",
+      "category": "mip-streaming",
+      "aspect": "16:9",
+      "camera": "mip-streaming-far",
+      "state": "far-settled",
+      "qualityTier": "current",
+      "artifactRoles": [
+        "capture"
+      ],
+      "artifacts": [],
+      "reviewerDecision": "pending",
+      "reviewerNotes": null
+    },
+    {
+      "id": "mip-streaming-near-20x9",
+      "surface": "match",
+      "category": "mip-streaming",
+      "aspect": "20:9",
+      "camera": "mip-streaming-near",
+      "state": "near-settled",
+      "qualityTier": "current",
+      "artifactRoles": [
+        "capture"
+      ],
+      "artifacts": [],
+      "reviewerDecision": "pending",
+      "reviewerNotes": null
+    },
+    {
+      "id": "mip-streaming-medium-20x9",
+      "surface": "match",
+      "category": "mip-streaming",
+      "aspect": "20:9",
+      "camera": "mip-streaming-medium",
+      "state": "medium-settled",
+      "qualityTier": "current",
+      "artifactRoles": [
+        "capture"
+      ],
+      "artifacts": [],
+      "reviewerDecision": "pending",
+      "reviewerNotes": null
+    },
+    {
+      "id": "mip-streaming-far-20x9",
+      "surface": "match",
+      "category": "mip-streaming",
+      "aspect": "20:9",
+      "camera": "mip-streaming-far",
+      "state": "far-settled",
+      "qualityTier": "current",
+      "artifactRoles": [
+        "capture"
+      ],
+      "artifacts": [],
+      "reviewerDecision": "pending",
+      "reviewerNotes": null
+    }
+  ]
+}

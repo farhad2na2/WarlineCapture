@@ -6,7 +6,19 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from Tools.CI.aph509_package_usage_inventory import Evidence, classification, collect, render_report
+from Tools.CI.aph509_package_usage_inventory import (
+    CANDIDATE_REMOVAL_BLOCKERS,
+    EXPECTED_SUMMARY,
+    ROOT,
+    Evidence,
+    build_report_data,
+    classification,
+    collect,
+    package_row,
+    render_json,
+    render_report,
+    summary_validation_errors,
+)
 
 
 class Aph509PackageUsageInventoryTests(unittest.TestCase):
@@ -24,6 +36,11 @@ class Aph509PackageUsageInventoryTests(unittest.TestCase):
         item = Evidence("pkg", "manifest-declared", "1", 0, "registry")
         self.assertEqual("candidate-unused-static-only", classification(item))
 
+        row = package_row(item)
+
+        self.assertFalse(row["removalAuthorized"])
+        self.assertEqual(list(CANDIDATE_REMOVAL_BLOCKERS), row["removalBlockers"])
+
     def test_external_editor_integration_remains_unproven(self) -> None:
         item = Evidence("com.unity.ide.rider", "manifest-declared", "1", 0, "registry")
         self.assertEqual("unproven-static-blind-spot", classification(item))
@@ -36,6 +53,30 @@ class Aph509PackageUsageInventoryTests(unittest.TestCase):
         self.assertEqual(rendered_once, rendered_twice)
         self.assertLess(rendered_once.index("`a.pkg`"), rendered_once.index("`z.pkg`"))
         self.assertIn("Source | Serialized | Build | Editor", rendered_once)
+        self.assertIn("Package removal authorized: **false**", rendered_once)
+
+    def test_json_is_sorted_and_deterministic(self) -> None:
+        data = {
+            "schemaVersion": 1,
+            "packages": [package_row(Evidence("a.pkg", "manifest-declared", "1", 0, "registry"))],
+        }
+
+        rendered_once = render_json(data)
+        rendered_twice = render_json(data)
+
+        self.assertEqual(rendered_once, rendered_twice)
+        self.assertEqual(data, json.loads(rendered_once))
+
+    def test_summary_count_drift_fails_closed(self) -> None:
+        drifted = dict(EXPECTED_SUMMARY)
+        drifted["manifestDeclaredCount"] -= 1
+
+        errors = summary_validation_errors(drifted)
+
+        self.assertEqual(
+            ["summary-mismatch:manifestDeclaredCount:expected=47:actual=46"],
+            errors,
+        )
 
     def test_collect_covers_all_required_usage_channels(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -70,6 +111,23 @@ class Aph509PackageUsageInventoryTests(unittest.TestCase):
             self.assertEqual({"Assets/Game/Config.asset"}, item.serialized_files)
             self.assertEqual({"Tools/CI/build.sh"}, item.build_files)
             self.assertEqual({"Assets/Editor/ProofWorkflow.cs"}, item.editor_files)
+
+    def test_current_repository_matches_accepted_package_contract(self) -> None:
+        data = build_report_data(ROOT)
+
+        self.assertTrue(data["inventoryValid"])
+        self.assertFalse(data["packageRemovalAuthorized"])
+        self.assertEqual(EXPECTED_SUMMARY, data["summary"])
+        self.assertTrue(data["inputEvidence"]["originPackageInputsMatch"])
+        self.assertEqual(13, len(data["candidatePackages"]))
+        self.assertEqual(5, len(data["staticBlindSpotPackages"]))
+        self.assertTrue(all(not row["removalAuthorized"] for row in data["packages"]))
+
+        rows = {row["package"]: row for row in data["packages"]}
+        self.assertEqual("usage-evidence-found", rows["com.unity.addressables"]["classification"])
+        self.assertEqual("usage-evidence-found", rows["com.unity.modules.androidjni"]["classification"])
+        self.assertNotIn("com.unity.addressables", data["candidatePackages"])
+        self.assertNotIn("com.unity.modules.androidjni", data["candidatePackages"])
 
 
 if __name__ == "__main__":

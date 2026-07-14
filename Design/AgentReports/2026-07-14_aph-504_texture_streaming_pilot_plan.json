@@ -1,13 +1,28 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "taskId": "APH-504",
-  "reportDate": "2026-07-14",
+  "reportDate": "2026-07-15",
   "status": "candidate-plan-valid-rollout-blocked",
   "selectorValid": true,
   "pilotReadyForMutation": false,
   "readOnlyCollection": true,
   "mutationAuthorized": false,
   "expansionAuthorized": false,
+  "mutationPreconditions": {
+    "selectorValid": true,
+    "trackedWorktreeClean": false,
+    "scopedTrackedInputsClean": false,
+    "controlInputsStable": true,
+    "currentRevisionCompleteTextureBuildEvidence": false,
+    "currentRevisionContentResidencyEvidence": false,
+    "aph502FinalBucketsAccepted": false,
+    "mobileStreamingConfigurationValid": true,
+    "fullResolutionNearbyTexturesPreserved": false,
+    "aph505VisualEvidenceAccepted": false,
+    "aph506PerformanceEvidenceAccepted": false,
+    "textureImporterInventoryStable": true,
+    "packageInventoryStable": true
+  },
   "pilotLimit": 2,
   "proposedCandidatePaths": [
     "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_A.png",
@@ -16,26 +31,53 @@
   "proposedCandidateCount": 2,
   "selectorErrors": [],
   "unresolvedEvidence": [
-    "aph502-final-buckets-unaccepted",
-    "aph505-near-medium-far-before-after-visual-evidence-absent",
-    "aph506-ten-minute-memory-io-evidence-absent",
-    "candidate-material-renderer-camera-coverage-unresolved",
-    "current-revision-clean-complete-texture-build-report-absent",
-    "current-revision-clean-residency-inventory-absent",
-    "full-source-near-mips-not-preserved:globalTextureMipmapLimit=1",
-    "historical-aab-export-incomplete:100/6104",
-    "historical-aab-revision-mismatch:a527e151e9e43a491ba30f4c19a0320dc54faf5c->d5b2ddeb8166010bbe5337e00243e74015ee4e94",
-    "normal-mask-representative-not-selected:explicit-streaming-fields-absent",
-    "pilot-importer-settings-not-applied",
-    "selected-readable-texture-cpu-copy-memory-unmeasured"
+    "aph505-evidence-unavailable",
+    "aph506-evidence-unavailable",
+    "complete-texture-export-marker-not-true",
+    "complete-texture-export-not-array",
+    "historical-aab-revision-mismatch:a527e151e9e43a491ba30f4c19a0320dc54faf5c->cbf6fd48846b40dd086faa0feb364fce0462a1bf",
+    "historical-aab-top-table-incomplete:100/6104",
+    "precondition-failed:aph502FinalBucketsAccepted",
+    "precondition-failed:aph505VisualEvidenceAccepted",
+    "precondition-failed:aph506PerformanceEvidenceAccepted",
+    "precondition-failed:currentRevisionCompleteTextureBuildEvidence",
+    "precondition-failed:currentRevisionContentResidencyEvidence",
+    "precondition-failed:fullResolutionNearbyTexturesPreserved",
+    "precondition-failed:scopedTrackedInputsClean",
+    "precondition-failed:trackedWorktreeClean",
+    "revision-mismatch:7084805d771142706f340e9f2e52a68570bcb72b->cbf6fd48846b40dd086faa0feb364fce0462a1bf",
+    "revision-mismatch:a527e151e9e43a491ba30f4c19a0320dc54faf5c->cbf6fd48846b40dd086faa0feb364fce0462a1bf",
+    "selected-texture-absent-from-complete-build-export:Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_A.png",
+    "selected-texture-absent-from-complete-build-export:Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_02_A.png",
+    "tracked-worktree-dirty"
   ],
-  "aph502Revision": "bc0287616ac225de524d836cd8409c4fd0d49eb0",
-  "analyzedRevision": "d5b2ddeb8166010bbe5337e00243e74015ee4e94",
-  "trackedWorktreeClean": true,
-  "trackedWorktreeChangeCount": 0,
-  "scopedTrackedInputsClean": true,
-  "scopedTrackedInputChanges": [],
+  "analyzedRevision": "cbf6fd48846b40dd086faa0feb364fce0462a1bf",
+  "trackedWorktreeClean": false,
+  "scopedTrackedInputsClean": false,
+  "scopedTrackedInputChanges": [
+    " M Design/AgentReports/architecture_performance_content_residency_baseline.json"
+  ],
   "controlInputHashesUnchangedDuringRead": true,
+  "currentRepositoryEvidence": {
+    "trackedTextureImporterCount": 3536,
+    "textureImporterInventorySha256": "5a6585672870e2787cefeea309de73448761dcedba6dc21bd4f240b24ae1e1a2",
+    "textureImporterInventoryUnchangedDuringRead": true,
+    "semanticCounts": {
+      "UI": 2952,
+      "world albedo": 401,
+      "world normal/mask": 37,
+      "VFX": 33,
+      "impostor/atlas": 39,
+      "generated source/reference": 74
+    },
+    "strictImporterParseErrorCount": 2384,
+    "historicalBuildCandidateCount": 93,
+    "manifestPackageCount": 47,
+    "lockedPackageCount": 68,
+    "packageInventorySha256": "e83851e7f6938399d76382bc4b79bb9f103b62517e1c36e4acdc920e5ac3b48c",
+    "packageInventoryUnchangedDuringRead": true,
+    "errors": []
+  },
   "historicalAabEvidence": {
     "path": "Design/AgentReports/architecture_performance_android_aab_build_report.json",
     "exactCommit": "a527e151e9e43a491ba30f4c19a0320dc54faf5c",
@@ -44,6 +86,38 @@
     "totalIncludedAssetCount": 6104,
     "exportComplete": false,
     "errors": []
+  },
+  "currentBuildEvidence": {
+    "path": "Design/AgentReports/architecture_performance_android_aab_build_report.json",
+    "accepted": false,
+    "errors": [
+      "complete-texture-export-marker-not-true",
+      "complete-texture-export-not-array",
+      "revision-mismatch:a527e151e9e43a491ba30f4c19a0320dc54faf5c->cbf6fd48846b40dd086faa0feb364fce0462a1bf",
+      "selected-texture-absent-from-complete-build-export:Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_A.png",
+      "selected-texture-absent-from-complete-build-export:Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_02_A.png"
+    ]
+  },
+  "currentResidencyEvidence": {
+    "path": "Design/AgentReports/architecture_performance_content_residency_baseline.json",
+    "accepted": false,
+    "errors": [
+      "revision-mismatch:7084805d771142706f340e9f2e52a68570bcb72b->cbf6fd48846b40dd086faa0feb364fce0462a1bf"
+    ]
+  },
+  "aph505VisualEvidence": {
+    "path": "Design/AgentReports/architecture_performance_texture_streaming_visual_evidence.json",
+    "accepted": false,
+    "errors": [
+      "aph505-evidence-unavailable"
+    ]
+  },
+  "aph506PerformanceEvidence": {
+    "path": "Design/AgentReports/architecture_performance_texture_streaming_performance_evidence.json",
+    "accepted": false,
+    "errors": [
+      "aph506-evidence-unavailable"
+    ]
   },
   "mobileQuality": {
     "path": "ProjectSettings/QualitySettings.asset",
@@ -57,18 +131,2054 @@
   },
   "candidates": [
     {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_background_command_table_no_ui.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_background_command_table_no_ui.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/mainmenubrightcommand/sprites:scn02c_background_command_table_no_ui",
+      "sourceDimensions": [
+        1672,
+        941
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 6291540,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_commander_portrait.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_commander_portrait.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/mainmenubrightcommand/sprites:scn02c_commander_portrait",
+      "sourceDimensions": [
+        1024,
+        1536
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 6292056,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_commander_portrait_frame.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_commander_portrait_frame.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/mainmenubrightcommand/sprites:scn02c_commander_portrait_frame",
+      "sourceDimensions": [
+        726,
+        1393
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 5392620,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_commander_portrait_frame_Large.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_commander_portrait_frame_Large.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/mainmenubrightcommand/sprites:scn02c_commander_portrait_frame_large",
+      "sourceDimensions": [
+        726,
+        1393
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 5392636,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_commander_portrait_frame_disabled.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_commander_portrait_frame_disabled.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/mainmenubrightcommand/sprites:scn02c_commander_portrait_frame_disabled",
+      "sourceDimensions": [
+        726,
+        1393
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 5392636,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_commander_portrait_frame_hover.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_commander_portrait_frame_hover.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/mainmenubrightcommand/sprites:scn02c_commander_portrait_frame_hover",
+      "sourceDimensions": [
+        726,
+        1393
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 5392636,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_commander_portrait_frame_pressed.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_commander_portrait_frame_pressed.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/mainmenubrightcommand/sprites:scn02c_commander_portrait_frame_pressed",
+      "sourceDimensions": [
+        726,
+        1393
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 5392636,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_commander_portrait_frame_selected.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_commander_portrait_frame_selected.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/mainmenubrightcommand/sprites:scn02c_commander_portrait_frame_selected",
+      "sourceDimensions": [
+        726,
+        1393
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 5392636,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_deploy_button_frame.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_deploy_button_frame.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/mainmenubrightcommand/sprites:scn02c_deploy_button_frame",
+      "sourceDimensions": [
+        1664,
+        499
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 3324024,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 0,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world",
+        "mipmaps-not-enabled:0"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_deploy_button_frame_disabled.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_deploy_button_frame_disabled.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/mainmenubrightcommand/sprites:scn02c_deploy_button_frame_disabled",
+      "sourceDimensions": [
+        1664,
+        499
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 3324040,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 0,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world",
+        "mipmaps-not-enabled:0"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_deploy_button_frame_hover.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_deploy_button_frame_hover.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/mainmenubrightcommand/sprites:scn02c_deploy_button_frame_hover",
+      "sourceDimensions": [
+        1664,
+        499
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 3324032,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 0,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world",
+        "mipmaps-not-enabled:0"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_deploy_button_frame_pressed.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_deploy_button_frame_pressed.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/mainmenubrightcommand/sprites:scn02c_deploy_button_frame_pressed",
+      "sourceDimensions": [
+        1664,
+        499
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 3324040,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 0,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world",
+        "mipmaps-not-enabled:0"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_deploy_button_frame_selected.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_deploy_button_frame_selected.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/mainmenubrightcommand/sprites:scn02c_deploy_button_frame_selected",
+      "sourceDimensions": [
+        1664,
+        499
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 3324040,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 0,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world",
+        "mipmaps-not-enabled:0"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_art_campaign_valley.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_art_campaign_valley.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/mainmenubrightcommand/sprites:scn02c_mode_art_campaign_valley",
+      "sourceDimensions": [
+        1024,
+        1536
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 6292064,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_art_operations_radar.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_art_operations_radar.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/mainmenubrightcommand/sprites:scn02c_mode_art_operations_radar",
+      "sourceDimensions": [
+        1024,
+        1536
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 6292064,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_art_skirmish_airbase.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_art_skirmish_airbase.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/mainmenubrightcommand/sprites:scn02c_mode_art_skirmish_airbase",
+      "sourceDimensions": [
+        1024,
+        1536
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 6292064,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_backing_amber.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_backing_amber.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/mainmenubrightcommand/sprites:scn02c_mode_card_backing_amber",
+      "sourceDimensions": [
+        776,
+        1394
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 5770036,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_backing_blue.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_backing_blue.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/mainmenubrightcommand/sprites:scn02c_mode_card_backing_blue",
+      "sourceDimensions": [
+        726,
+        1393
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 5391924,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_backing_selected.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_backing_selected.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/mainmenubrightcommand/sprites:scn02c_mode_card_backing_selected",
+      "sourceDimensions": [
+        783,
+        1390
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 5800984,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_frame_default_amber.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_frame_default_amber.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/mainmenubrightcommand/sprites:scn02c_mode_card_frame_default_amber",
+      "sourceDimensions": [
+        776,
+        1394
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 5772760,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_frame_default_blue.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_frame_default_blue.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/mainmenubrightcommand/sprites:scn02c_mode_card_frame_default_blue",
+      "sourceDimensions": [
+        726,
+        1393
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 5392628,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_frame_selected.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_frame_selected.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/mainmenubrightcommand/sprites:scn02c_mode_card_frame_selected",
+      "sourceDimensions": [
+        783,
+        1390
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 5803944,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_label_plate_amber.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_label_plate_amber.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/mainmenubrightcommand/sprites:scn02c_mode_card_label_plate_amber",
+      "sourceDimensions": [
+        1419,
+        489
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 3698604,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_label_plate_blue.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_label_plate_blue.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/mainmenubrightcommand/sprites:scn02c_mode_card_label_plate_blue",
+      "sourceDimensions": [
+        1554,
+        434
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 3596808,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_label_plate_selected.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_label_plate_selected.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/mainmenubrightcommand/sprites:scn02c_mode_card_label_plate_selected",
+      "sourceDimensions": [
+        1564,
+        434
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 3620132,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_operations_star_icon.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_operations_star_icon.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/mainmenubrightcommand/sprites:scn02c_mode_operations_star_icon",
+      "sourceDimensions": [
+        690,
+        892
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 3293096,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_skirmish_crossed_weapons_icon.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_skirmish_crossed_weapons_icon.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/mainmenubrightcommand/sprites:scn02c_mode_skirmish_crossed_weapons_icon",
+      "sourceDimensions": [
+        894,
+        873
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 4164172,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_button_backing_default.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_button_backing_default.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/mainmenubrightcommand/sprites:scn02c_nav_button_backing_default",
+      "sourceDimensions": [
+        1527,
+        485
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 3947060,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_button_frame_default.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_button_frame_default.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/mainmenubrightcommand/sprites:scn02c_nav_button_frame_default",
+      "sourceDimensions": [
+        1527,
+        485
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 3947052,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_button_frame_selected.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_button_frame_selected.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/mainmenubrightcommand/sprites:scn02c_nav_button_frame_selected",
+      "sourceDimensions": [
+        1675,
+        506
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 4519516,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_campaign_target_icon.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_campaign_target_icon.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/mainmenubrightcommand/sprites:scn02c_nav_campaign_target_icon",
+      "sourceDimensions": [
+        779,
+        788
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 3275800,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_command_shield_icon.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_command_shield_icon.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/mainmenubrightcommand/sprites:scn02c_nav_command_shield_icon",
+      "sourceDimensions": [
+        680,
+        894
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 3245852,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_settings_gear_icon.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_settings_gear_icon.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/mainmenubrightcommand/sprites:scn02c_settings_gear_icon",
+      "sourceDimensions": [
+        788,
+        799
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 3360216,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_objectives_panel_frame.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_objectives_panel_frame.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/matchhud/targetlockv02:scn08_v02_objectives_panel_frame",
+      "sourceDimensions": [
+        1152,
+        921
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 4245052,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 0,
+        "isReadable": 1,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world",
+        "mipmaps-not-enabled:0"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_selected_frame.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_selected_frame.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/matchhud/targetlockv02:scn08_v02_rect_button_selected_frame",
+      "sourceDimensions": [
+        1675,
+        506
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 3392364,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 0,
+        "isReadable": 1,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world",
+        "mipmaps-not-enabled:0"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_selected_panel_frame.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_selected_panel_frame.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/matchhud/targetlockv02:scn08_v02_selected_panel_frame",
+      "sourceDimensions": [
+        772,
+        1481
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 4574844,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 0,
+        "isReadable": 1,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world",
+        "mipmaps-not-enabled:0"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_squad_card_frame.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_squad_card_frame.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/matchhud/targetlockv02:scn08_v02_squad_card_frame",
+      "sourceDimensions": [
+        1214,
+        943
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 4580084,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 0,
+        "isReadable": 1,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world",
+        "mipmaps-not-enabled:0"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_squad_card_selected_frame.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_squad_card_selected_frame.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/matchhud/targetlockv02:scn08_v02_squad_card_selected_frame",
+      "sourceDimensions": [
+        1214,
+        943
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 4579892,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 0,
+        "isReadable": 1,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world",
+        "mipmaps-not-enabled:0"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_squad_rifle_portrait.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_squad_rifle_portrait.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/matchhud/targetlockv02:scn08_v02_squad_rifle_portrait",
+      "sourceDimensions": [
+        512,
+        512
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 4719236,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 0,
+        "isReadable": 1,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "mipmaps-not-enabled:0"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_square_button_frame.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_square_button_frame.png.meta",
+      "textureFamily": "assets/game/art/ui/generated/matchhud/targetlockv02:scn08_v02_square_button_frame",
+      "sourceDimensions": [
+        887,
+        902
+      ],
+      "currentCategory": "UI",
+      "historicalAabPackedBytes": 3201756,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 0,
+        "isReadable": 1,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "current-semantic-category-not-world",
+        "mipmaps-not-enabled:0"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Rendering/Textures/Stylized/T_GroundStylized_Desert_Albedo.png",
+      "metaPath": "Assets/Game/Rendering/Textures/Stylized/T_GroundStylized_Desert_Albedo.png.meta",
+      "textureFamily": "assets/game/rendering/textures/stylized:t_groundstylized_desert_albedo",
+      "sourceDimensions": [
+        1024,
+        1024
+      ],
+      "currentCategory": "world albedo",
+      "historicalAabPackedBytes": 4194448,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "pilot-cap-reached:2"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Rendering/Textures/Stylized/T_GroundStylized_Green_Albedo.png",
+      "metaPath": "Assets/Game/Rendering/Textures/Stylized/T_GroundStylized_Green_Albedo.png.meta",
+      "textureFamily": "assets/game/rendering/textures/stylized:t_groundstylized_green_albedo",
+      "sourceDimensions": [
+        1024,
+        1024
+      ],
+      "currentCategory": "world albedo",
+      "historicalAabPackedBytes": 4194448,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "pilot-cap-reached:2"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Rendering/Textures/Stylized/T_GroundStylized_Soft_Normal.png",
+      "metaPath": "Assets/Game/Rendering/Textures/Stylized/T_GroundStylized_Soft_Normal.png.meta",
+      "textureFamily": "assets/game/rendering/textures/stylized:t_groundstylized_soft",
+      "sourceDimensions": [
+        1024,
+        1024
+      ],
+      "currentCategory": "world normal/mask",
+      "historicalAabPackedBytes": 5592544,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 0,
+        "ignoreMipmapLimit": 0,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "pilot-cap-reached:2"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Bombsuit_Male_01.png",
+      "metaPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Bombsuit_Male_01.png.meta",
+      "textureFamily": "assets/game/textures/generated/impostors:impostoratlas_unit_chr_bombsuit_male_01",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "currentCategory": "impostor/atlas",
+      "historicalAabPackedBytes": 11184964,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 1,
+        "ignoreMipmapLimit": 1,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "ignore-mipmap-limit-not-disabled:1",
+        "streaming-baseline-not-disabled:1"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Civilian_Female_01.png",
+      "metaPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Civilian_Female_01.png.meta",
+      "textureFamily": "assets/game/textures/generated/impostors:impostoratlas_unit_chr_civilian_female_01",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "currentCategory": "impostor/atlas",
+      "historicalAabPackedBytes": 11184968,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 1,
+        "ignoreMipmapLimit": 1,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "ignore-mipmap-limit-not-disabled:1",
+        "streaming-baseline-not-disabled:1"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Civilian_Female_02.png",
+      "metaPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Civilian_Female_02.png.meta",
+      "textureFamily": "assets/game/textures/generated/impostors:impostoratlas_unit_chr_civilian_female_02",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "currentCategory": "impostor/atlas",
+      "historicalAabPackedBytes": 11184968,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 1,
+        "ignoreMipmapLimit": 1,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "ignore-mipmap-limit-not-disabled:1",
+        "streaming-baseline-not-disabled:1"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Civilian_Male_01.png",
+      "metaPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Civilian_Male_01.png.meta",
+      "textureFamily": "assets/game/textures/generated/impostors:impostoratlas_unit_chr_civilian_male_01",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "currentCategory": "impostor/atlas",
+      "historicalAabPackedBytes": 11184964,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 1,
+        "ignoreMipmapLimit": 1,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "ignore-mipmap-limit-not-disabled:1",
+        "streaming-baseline-not-disabled:1"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Civilian_Male_02.png",
+      "metaPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Civilian_Male_02.png.meta",
+      "textureFamily": "assets/game/textures/generated/impostors:impostoratlas_unit_chr_civilian_male_02",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "currentCategory": "impostor/atlas",
+      "historicalAabPackedBytes": 11184964,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 1,
+        "ignoreMipmapLimit": 1,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "ignore-mipmap-limit-not-disabled:1",
+        "streaming-baseline-not-disabled:1"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Contractor_Female_01.png",
+      "metaPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Contractor_Female_01.png.meta",
+      "textureFamily": "assets/game/textures/generated/impostors:impostoratlas_unit_chr_contractor_female_01",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "currentCategory": "impostor/atlas",
+      "historicalAabPackedBytes": 11184968,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 1,
+        "ignoreMipmapLimit": 1,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "ignore-mipmap-limit-not-disabled:1",
+        "streaming-baseline-not-disabled:1"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Contractor_Male_01.png",
+      "metaPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Contractor_Male_01.png.meta",
+      "textureFamily": "assets/game/textures/generated/impostors:impostoratlas_unit_chr_contractor_male_01",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "currentCategory": "impostor/atlas",
+      "historicalAabPackedBytes": 11184968,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 1,
+        "ignoreMipmapLimit": 1,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "ignore-mipmap-limit-not-disabled:1",
+        "streaming-baseline-not-disabled:1"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Contractor_Male_02.png",
+      "metaPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Contractor_Male_02.png.meta",
+      "textureFamily": "assets/game/textures/generated/impostors:impostoratlas_unit_chr_contractor_male_02",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "currentCategory": "impostor/atlas",
+      "historicalAabPackedBytes": 11184968,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 1,
+        "ignoreMipmapLimit": 1,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "ignore-mipmap-limit-not-disabled:1",
+        "streaming-baseline-not-disabled:1"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Ghillie_Male_01.png",
+      "metaPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Ghillie_Male_01.png.meta",
+      "textureFamily": "assets/game/textures/generated/impostors:impostoratlas_unit_chr_ghillie_male_01",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "currentCategory": "impostor/atlas",
+      "historicalAabPackedBytes": 11184964,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 1,
+        "ignoreMipmapLimit": 1,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "ignore-mipmap-limit-not-disabled:1",
+        "streaming-baseline-not-disabled:1"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Female_01.png",
+      "metaPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Female_01.png.meta",
+      "textureFamily": "assets/game/textures/generated/impostors:impostoratlas_unit_chr_insurgent_female_01",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "currentCategory": "impostor/atlas",
+      "historicalAabPackedBytes": 11184968,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 1,
+        "ignoreMipmapLimit": 1,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "ignore-mipmap-limit-not-disabled:1",
+        "streaming-baseline-not-disabled:1"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Female_02.png",
+      "metaPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Female_02.png.meta",
+      "textureFamily": "assets/game/textures/generated/impostors:impostoratlas_unit_chr_insurgent_female_02",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "currentCategory": "impostor/atlas",
+      "historicalAabPackedBytes": 11184968,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 1,
+        "ignoreMipmapLimit": 1,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "ignore-mipmap-limit-not-disabled:1",
+        "streaming-baseline-not-disabled:1"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Male_01.png",
+      "metaPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Male_01.png.meta",
+      "textureFamily": "assets/game/textures/generated/impostors:impostoratlas_unit_chr_insurgent_male_01",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "currentCategory": "impostor/atlas",
+      "historicalAabPackedBytes": 11184964,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 1,
+        "ignoreMipmapLimit": 1,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "ignore-mipmap-limit-not-disabled:1",
+        "streaming-baseline-not-disabled:1"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Male_02.png",
+      "metaPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Male_02.png.meta",
+      "textureFamily": "assets/game/textures/generated/impostors:impostoratlas_unit_chr_insurgent_male_02",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "currentCategory": "impostor/atlas",
+      "historicalAabPackedBytes": 11184964,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 1,
+        "ignoreMipmapLimit": 1,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "ignore-mipmap-limit-not-disabled:1",
+        "streaming-baseline-not-disabled:1"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Male_03.png",
+      "metaPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Male_03.png.meta",
+      "textureFamily": "assets/game/textures/generated/impostors:impostoratlas_unit_chr_insurgent_male_03",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "currentCategory": "impostor/atlas",
+      "historicalAabPackedBytes": 11184964,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 1,
+        "ignoreMipmapLimit": 1,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "ignore-mipmap-limit-not-disabled:1",
+        "streaming-baseline-not-disabled:1"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Male_04.png",
+      "metaPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Male_04.png.meta",
+      "textureFamily": "assets/game/textures/generated/impostors:impostoratlas_unit_chr_insurgent_male_04",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "currentCategory": "impostor/atlas",
+      "historicalAabPackedBytes": 11184964,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 1,
+        "ignoreMipmapLimit": 1,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "ignore-mipmap-limit-not-disabled:1",
+        "streaming-baseline-not-disabled:1"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Male_05.png",
+      "metaPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Male_05.png.meta",
+      "textureFamily": "assets/game/textures/generated/impostors:impostoratlas_unit_chr_insurgent_male_05",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "currentCategory": "impostor/atlas",
+      "historicalAabPackedBytes": 11184964,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 1,
+        "ignoreMipmapLimit": 1,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "ignore-mipmap-limit-not-disabled:1",
+        "streaming-baseline-not-disabled:1"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Leader_Male_01.png",
+      "metaPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Leader_Male_01.png.meta",
+      "textureFamily": "assets/game/textures/generated/impostors:impostoratlas_unit_chr_leader_male_01",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "currentCategory": "impostor/atlas",
+      "historicalAabPackedBytes": 11184964,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 1,
+        "ignoreMipmapLimit": 1,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "ignore-mipmap-limit-not-disabled:1",
+        "streaming-baseline-not-disabled:1"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Pilot_Female_01.png",
+      "metaPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Pilot_Female_01.png.meta",
+      "textureFamily": "assets/game/textures/generated/impostors:impostoratlas_unit_chr_pilot_female_01",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "currentCategory": "impostor/atlas",
+      "historicalAabPackedBytes": 11184964,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 1,
+        "ignoreMipmapLimit": 1,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "ignore-mipmap-limit-not-disabled:1",
+        "streaming-baseline-not-disabled:1"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Pilot_Male_01.png",
+      "metaPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Pilot_Male_01.png.meta",
+      "textureFamily": "assets/game/textures/generated/impostors:impostoratlas_unit_chr_pilot_male_01",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "currentCategory": "impostor/atlas",
+      "historicalAabPackedBytes": 11184960,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 1,
+        "ignoreMipmapLimit": 1,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "ignore-mipmap-limit-not-disabled:1",
+        "streaming-baseline-not-disabled:1"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Female_01.png",
+      "metaPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Female_01.png.meta",
+      "textureFamily": "assets/game/textures/generated/impostors:impostoratlas_unit_chr_soldier_female_01",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "currentCategory": "impostor/atlas",
+      "historicalAabPackedBytes": 11184964,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 1,
+        "ignoreMipmapLimit": 1,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "ignore-mipmap-limit-not-disabled:1",
+        "streaming-baseline-not-disabled:1"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Female_01_Alt_01.png",
+      "metaPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Female_01_Alt_01.png.meta",
+      "textureFamily": "assets/game/textures/generated/impostors:impostoratlas_unit_chr_soldier_female_01_alt_01",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "currentCategory": "impostor/atlas",
+      "historicalAabPackedBytes": 11184972,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 1,
+        "ignoreMipmapLimit": 1,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "ignore-mipmap-limit-not-disabled:1",
+        "streaming-baseline-not-disabled:1"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Female_01_Alt_02.png",
+      "metaPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Female_01_Alt_02.png.meta",
+      "textureFamily": "assets/game/textures/generated/impostors:impostoratlas_unit_chr_soldier_female_01_alt_02",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "currentCategory": "impostor/atlas",
+      "historicalAabPackedBytes": 11184972,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 1,
+        "ignoreMipmapLimit": 1,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "ignore-mipmap-limit-not-disabled:1",
+        "streaming-baseline-not-disabled:1"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Female_02.png",
+      "metaPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Female_02.png.meta",
+      "textureFamily": "assets/game/textures/generated/impostors:impostoratlas_unit_chr_soldier_female_02",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "currentCategory": "impostor/atlas",
+      "historicalAabPackedBytes": 11184964,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 1,
+        "ignoreMipmapLimit": 1,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "ignore-mipmap-limit-not-disabled:1",
+        "streaming-baseline-not-disabled:1"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Female_02_Alt_01.png",
+      "metaPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Female_02_Alt_01.png.meta",
+      "textureFamily": "assets/game/textures/generated/impostors:impostoratlas_unit_chr_soldier_female_02_alt_01",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "currentCategory": "impostor/atlas",
+      "historicalAabPackedBytes": 11184972,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 1,
+        "ignoreMipmapLimit": 1,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "ignore-mipmap-limit-not-disabled:1",
+        "streaming-baseline-not-disabled:1"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Female_02_Alt_02.png",
+      "metaPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Female_02_Alt_02.png.meta",
+      "textureFamily": "assets/game/textures/generated/impostors:impostoratlas_unit_chr_soldier_female_02_alt_02",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "currentCategory": "impostor/atlas",
+      "historicalAabPackedBytes": 11184972,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 1,
+        "ignoreMipmapLimit": 1,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "ignore-mipmap-limit-not-disabled:1",
+        "streaming-baseline-not-disabled:1"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_01.png",
+      "metaPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_01.png.meta",
+      "textureFamily": "assets/game/textures/generated/impostors:impostoratlas_unit_chr_soldier_male_01",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "currentCategory": "impostor/atlas",
+      "historicalAabPackedBytes": 11184964,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 1,
+        "ignoreMipmapLimit": 1,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "ignore-mipmap-limit-not-disabled:1",
+        "streaming-baseline-not-disabled:1"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_01_Alt_01.png",
+      "metaPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_01_Alt_01.png.meta",
+      "textureFamily": "assets/game/textures/generated/impostors:impostoratlas_unit_chr_soldier_male_01_alt_01",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "currentCategory": "impostor/atlas",
+      "historicalAabPackedBytes": 11184972,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 1,
+        "ignoreMipmapLimit": 1,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "ignore-mipmap-limit-not-disabled:1",
+        "streaming-baseline-not-disabled:1"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_01_Alt_02.png",
+      "metaPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_01_Alt_02.png.meta",
+      "textureFamily": "assets/game/textures/generated/impostors:impostoratlas_unit_chr_soldier_male_01_alt_02",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "currentCategory": "impostor/atlas",
+      "historicalAabPackedBytes": 11184972,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 1,
+        "ignoreMipmapLimit": 1,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "ignore-mipmap-limit-not-disabled:1",
+        "streaming-baseline-not-disabled:1"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_02.png",
+      "metaPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_02.png.meta",
+      "textureFamily": "assets/game/textures/generated/impostors:impostoratlas_unit_chr_soldier_male_02",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "currentCategory": "impostor/atlas",
+      "historicalAabPackedBytes": 11184964,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 1,
+        "ignoreMipmapLimit": 1,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "ignore-mipmap-limit-not-disabled:1",
+        "streaming-baseline-not-disabled:1"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_02_Alt_01.png",
+      "metaPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_02_Alt_01.png.meta",
+      "textureFamily": "assets/game/textures/generated/impostors:impostoratlas_unit_chr_soldier_male_02_alt_01",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "currentCategory": "impostor/atlas",
+      "historicalAabPackedBytes": 11184972,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 1,
+        "ignoreMipmapLimit": 1,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "ignore-mipmap-limit-not-disabled:1",
+        "streaming-baseline-not-disabled:1"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_02_Alt_02.png",
+      "metaPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_02_Alt_02.png.meta",
+      "textureFamily": "assets/game/textures/generated/impostors:impostoratlas_unit_chr_soldier_male_02_alt_02",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "currentCategory": "impostor/atlas",
+      "historicalAabPackedBytes": 11184972,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 1,
+        "ignoreMipmapLimit": 1,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "ignore-mipmap-limit-not-disabled:1",
+        "streaming-baseline-not-disabled:1"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_02_Alt_03.png",
+      "metaPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_02_Alt_03.png.meta",
+      "textureFamily": "assets/game/textures/generated/impostors:impostoratlas_unit_chr_soldier_male_02_alt_03",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "currentCategory": "impostor/atlas",
+      "historicalAabPackedBytes": 11184972,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 1,
+        "ignoreMipmapLimit": 1,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "ignore-mipmap-limit-not-disabled:1",
+        "streaming-baseline-not-disabled:1"
+      ]
+    },
+    {
+      "assetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_02_Alt_04.png",
+      "metaPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_02_Alt_04.png.meta",
+      "textureFamily": "assets/game/textures/generated/impostors:impostoratlas_unit_chr_soldier_male_02_alt_04",
+      "sourceDimensions": [
+        2048,
+        1024
+      ],
+      "currentCategory": "impostor/atlas",
+      "historicalAabPackedBytes": 11184972,
+      "unchangedSinceHistoricalAab": false,
+      "currentImporter": {
+        "serializedVersion": 13,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": 1,
+        "ignoreMipmapLimit": 1,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "asset-or-meta-changed-since-historical-aab",
+        "current-semantic-category-not-world",
+        "ignore-mipmap-limit-not-disabled:1",
+        "streaming-baseline-not-disabled:1"
+      ]
+    },
+    {
+      "assetPath": "Assets/PolygonMilitary/Textures/Air_Vehicle_Burnt.png",
+      "metaPath": "Assets/PolygonMilitary/Textures/Air_Vehicle_Burnt.png.meta",
+      "textureFamily": "assets/polygonmilitary/textures:air_vehicle_burnt",
+      "sourceDimensions": [
+        2048,
+        2048
+      ],
+      "currentCategory": "world albedo",
+      "historicalAabPackedBytes": 5592564,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 4,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": null,
+        "ignoreMipmapLimit": null,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "ignoreMipmapLimit-field-absent",
+        "streamingMipmaps-field-absent"
+      ]
+    },
+    {
       "assetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_A.png",
       "metaPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_A.png.meta",
-      "textureFamily": "01",
+      "textureFamily": "numbered-texture:01",
       "sourceDimensions": [
         4096,
         4096
       ],
-      "aph502Category": "world albedo",
       "currentCategory": "world albedo",
       "historicalAabPackedBytes": 22369788,
       "unchangedSinceHistoricalAab": true,
-      "unchangedSinceAph502": true,
       "currentImporter": {
         "serializedVersion": 13,
         "enableMipMap": 1,
@@ -80,10 +2190,11 @@
       "proposedForPilot": true,
       "selectionReasons": [
         "pilot-rank:1",
-        "texture-family-representative:01",
+        "texture-family-representative:numbered-texture:01",
         "world-albedo",
-        "clean-historical-aab-positive-inclusion",
-        "asset-and-meta-unchanged-since-aph502-and-aab",
+        "current-tracked-importer-inventory",
+        "historical-aab-positive-inclusion",
+        "asset-and-meta-unchanged-since-historical-aab",
         "mipmaps-enabled",
         "explicit-streaming-baseline-disabled"
       ],
@@ -92,16 +2203,14 @@
     {
       "assetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_A_Normals.png",
       "metaPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_A_Normals.png.meta",
-      "textureFamily": "01",
+      "textureFamily": "numbered-texture:01",
       "sourceDimensions": [
         4096,
         4096
       ],
-      "aph502Category": "world normal/mask",
       "currentCategory": "world normal/mask",
       "historicalAabPackedBytes": 9961684,
       "unchangedSinceHistoricalAab": true,
-      "unchangedSinceAph502": true,
       "currentImporter": {
         "serializedVersion": 4,
         "enableMipMap": 1,
@@ -120,16 +2229,14 @@
     {
       "assetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_B.png",
       "metaPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_B.png.meta",
-      "textureFamily": "01",
+      "textureFamily": "numbered-texture:01",
       "sourceDimensions": [
         4096,
         4096
       ],
-      "aph502Category": "world albedo",
       "currentCategory": "world albedo",
       "historicalAabPackedBytes": 9961676,
       "unchangedSinceHistoricalAab": true,
-      "unchangedSinceAph502": true,
       "currentImporter": {
         "serializedVersion": 13,
         "enableMipMap": 1,
@@ -141,22 +2248,20 @@
       "proposedForPilot": false,
       "selectionReasons": [],
       "exclusionReasons": [
-        "texture-family-quota-filled:01"
+        "texture-family-quota-filled:numbered-texture:01"
       ]
     },
     {
       "assetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_C.png",
       "metaPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_C.png.meta",
-      "textureFamily": "01",
+      "textureFamily": "numbered-texture:01",
       "sourceDimensions": [
         4096,
         4096
       ],
-      "aph502Category": "world albedo",
       "currentCategory": "world albedo",
       "historicalAabPackedBytes": 9961676,
       "unchangedSinceHistoricalAab": true,
-      "unchangedSinceAph502": true,
       "currentImporter": {
         "serializedVersion": 13,
         "enableMipMap": 1,
@@ -168,22 +2273,20 @@
       "proposedForPilot": false,
       "selectionReasons": [],
       "exclusionReasons": [
-        "texture-family-quota-filled:01"
+        "texture-family-quota-filled:numbered-texture:01"
       ]
     },
     {
       "assetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_02_A.png",
       "metaPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_02_A.png.meta",
-      "textureFamily": "02",
+      "textureFamily": "numbered-texture:02",
       "sourceDimensions": [
         4096,
         4096
       ],
-      "aph502Category": "world albedo",
       "currentCategory": "world albedo",
       "historicalAabPackedBytes": 9961676,
       "unchangedSinceHistoricalAab": true,
-      "unchangedSinceAph502": true,
       "currentImporter": {
         "serializedVersion": 13,
         "enableMipMap": 1,
@@ -195,10 +2298,11 @@
       "proposedForPilot": true,
       "selectionReasons": [
         "pilot-rank:2",
-        "texture-family-representative:02",
+        "texture-family-representative:numbered-texture:02",
         "world-albedo",
-        "clean-historical-aab-positive-inclusion",
-        "asset-and-meta-unchanged-since-aph502-and-aab",
+        "current-tracked-importer-inventory",
+        "historical-aab-positive-inclusion",
+        "asset-and-meta-unchanged-since-historical-aab",
         "mipmaps-enabled",
         "explicit-streaming-baseline-disabled"
       ],
@@ -207,16 +2311,14 @@
     {
       "assetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_02_B.png",
       "metaPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_02_B.png.meta",
-      "textureFamily": "02",
+      "textureFamily": "numbered-texture:02",
       "sourceDimensions": [
         4096,
         4096
       ],
-      "aph502Category": "world albedo",
       "currentCategory": "world albedo",
       "historicalAabPackedBytes": 9961676,
       "unchangedSinceHistoricalAab": true,
-      "unchangedSinceAph502": true,
       "currentImporter": {
         "serializedVersion": 4,
         "enableMipMap": 1,
@@ -235,16 +2337,14 @@
     {
       "assetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_02_C.png",
       "metaPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_02_C.png.meta",
-      "textureFamily": "02",
+      "textureFamily": "numbered-texture:02",
       "sourceDimensions": [
         4096,
         4096
       ],
-      "aph502Category": "world albedo",
       "currentCategory": "world albedo",
       "historicalAabPackedBytes": 9961676,
       "unchangedSinceHistoricalAab": true,
-      "unchangedSinceAph502": true,
       "currentImporter": {
         "serializedVersion": 4,
         "enableMipMap": 1,
@@ -263,16 +2363,14 @@
     {
       "assetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_03_A.png",
       "metaPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_03_A.png.meta",
-      "textureFamily": "03",
+      "textureFamily": "numbered-texture:03",
       "sourceDimensions": [
         4096,
         4096
       ],
-      "aph502Category": "world albedo",
       "currentCategory": "world albedo",
       "historicalAabPackedBytes": 9961676,
       "unchangedSinceHistoricalAab": true,
-      "unchangedSinceAph502": true,
       "currentImporter": {
         "serializedVersion": 13,
         "enableMipMap": 1,
@@ -290,16 +2388,14 @@
     {
       "assetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_03_B.png",
       "metaPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_03_B.png.meta",
-      "textureFamily": "03",
+      "textureFamily": "numbered-texture:03",
       "sourceDimensions": [
         4096,
         4096
       ],
-      "aph502Category": "world albedo",
       "currentCategory": "world albedo",
       "historicalAabPackedBytes": 9961676,
       "unchangedSinceHistoricalAab": true,
-      "unchangedSinceAph502": true,
       "currentImporter": {
         "serializedVersion": 4,
         "enableMipMap": 1,
@@ -318,16 +2414,14 @@
     {
       "assetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_03_C.png",
       "metaPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_03_C.png.meta",
-      "textureFamily": "03",
+      "textureFamily": "numbered-texture:03",
       "sourceDimensions": [
         4096,
         4096
       ],
-      "aph502Category": "world albedo",
       "currentCategory": "world albedo",
       "historicalAabPackedBytes": 9961676,
       "unchangedSinceHistoricalAab": true,
-      "unchangedSinceAph502": true,
       "currentImporter": {
         "serializedVersion": 4,
         "enableMipMap": 1,
@@ -346,16 +2440,14 @@
     {
       "assetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_04_A.png",
       "metaPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_04_A.png.meta",
-      "textureFamily": "04",
+      "textureFamily": "numbered-texture:04",
       "sourceDimensions": [
         4096,
         4096
       ],
-      "aph502Category": "world albedo",
       "currentCategory": "world albedo",
       "historicalAabPackedBytes": 9961676,
       "unchangedSinceHistoricalAab": true,
-      "unchangedSinceAph502": true,
       "currentImporter": {
         "serializedVersion": 13,
         "enableMipMap": 1,
@@ -373,16 +2465,14 @@
     {
       "assetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_04_B.png",
       "metaPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_04_B.png.meta",
-      "textureFamily": "04",
+      "textureFamily": "numbered-texture:04",
       "sourceDimensions": [
         4096,
         4096
       ],
-      "aph502Category": "world albedo",
       "currentCategory": "world albedo",
       "historicalAabPackedBytes": 9961676,
       "unchangedSinceHistoricalAab": true,
-      "unchangedSinceAph502": true,
       "currentImporter": {
         "serializedVersion": 4,
         "enableMipMap": 1,
@@ -401,16 +2491,14 @@
     {
       "assetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_04_C.png",
       "metaPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_04_C.png.meta",
-      "textureFamily": "04",
+      "textureFamily": "numbered-texture:04",
       "sourceDimensions": [
         4096,
         4096
       ],
-      "aph502Category": "world albedo",
       "currentCategory": "world albedo",
       "historicalAabPackedBytes": 9961676,
       "unchangedSinceHistoricalAab": true,
-      "unchangedSinceAph502": true,
       "currentImporter": {
         "serializedVersion": 4,
         "enableMipMap": 1,
@@ -418,6 +2506,85 @@
         "streamingMipmaps": null,
         "ignoreMipmapLimit": null,
         "defaultMaxTextureSize": 4096
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "ignoreMipmapLimit-field-absent",
+        "streamingMipmaps-field-absent"
+      ]
+    },
+    {
+      "assetPath": "Assets/PolygonMilitary/Textures/Signs 1.png",
+      "metaPath": "Assets/PolygonMilitary/Textures/Signs 1.png.meta",
+      "textureFamily": "assets/polygonmilitary/textures:signs 1",
+      "sourceDimensions": [
+        4096,
+        4096
+      ],
+      "currentCategory": "world albedo",
+      "historicalAabPackedBytes": 5592552,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 4,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": null,
+        "ignoreMipmapLimit": null,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "default-max-size-below-source:2048<4096",
+        "ignoreMipmapLimit-field-absent",
+        "streamingMipmaps-field-absent"
+      ]
+    },
+    {
+      "assetPath": "Assets/PolygonMilitary/Textures/SkyBox.png",
+      "metaPath": "Assets/PolygonMilitary/Textures/SkyBox.png.meta",
+      "textureFamily": "assets/polygonmilitary/textures:skybox",
+      "sourceDimensions": [
+        2048,
+        2048
+      ],
+      "currentCategory": "world albedo",
+      "historicalAabPackedBytes": 16777336,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 4,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": null,
+        "ignoreMipmapLimit": null,
+        "defaultMaxTextureSize": 2048
+      },
+      "proposedForPilot": false,
+      "selectionReasons": [],
+      "exclusionReasons": [
+        "ignoreMipmapLimit-field-absent",
+        "streamingMipmaps-field-absent"
+      ]
+    },
+    {
+      "assetPath": "Assets/PolygonMilitary/Textures/Vehicles/Veh_Heli_01_B.png",
+      "metaPath": "Assets/PolygonMilitary/Textures/Vehicles/Veh_Heli_01_B.png.meta",
+      "textureFamily": "assets/polygonmilitary/textures/vehicles:veh_heli_01",
+      "sourceDimensions": [
+        2048,
+        2048
+      ],
+      "currentCategory": "world albedo",
+      "historicalAabPackedBytes": 5592560,
+      "unchangedSinceHistoricalAab": true,
+      "currentImporter": {
+        "serializedVersion": 4,
+        "enableMipMap": 1,
+        "isReadable": 0,
+        "streamingMipmaps": null,
+        "ignoreMipmapLimit": null,
+        "defaultMaxTextureSize": 2048
       },
       "proposedForPilot": false,
       "selectionReasons": [],

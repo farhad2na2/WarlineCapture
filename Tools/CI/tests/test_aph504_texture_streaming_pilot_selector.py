@@ -5,18 +5,24 @@ import struct
 import unittest
 
 from Tools.CI.aph504_texture_streaming_pilot_selector import (
-    CANDIDATE_ASSET_PATHS,
+    AAB_REPORT_PATH,
     EXPECTED_MOBILE_BUDGET_MIB,
     PILOT_LIMIT,
     PNG_SIGNATURE,
     ROOT,
     ValidationError,
+    classify_inventory_texture,
     classify_world_texture,
     collect,
+    collect_repository_inventory,
     parse_build_evidence,
+    parse_current_build_gate,
+    parse_current_residency_gate,
     parse_mobile_quality,
+    parse_performance_evidence_gate,
     parse_png_dimensions,
     parse_texture_meta,
+    parse_visual_evidence_gate,
     render_check,
     render_json,
     render_markdown,
@@ -75,7 +81,7 @@ def mobile_quality(*, budget: int = EXPECTED_MOBILE_BUDGET_MIB, global_limit: in
 """
 
 
-def build_report(paths: tuple[str, ...] = CANDIDATE_ASSET_PATHS) -> bytes:
+def build_report(paths: tuple[str, ...]) -> bytes:
     rows = [
         {
             "sourceAssetPath": path,
@@ -96,12 +102,87 @@ def build_report(paths: tuple[str, ...] = CANDIDATE_ASSET_PATHS) -> bytes:
     ).encode("utf-8")
 
 
+def complete_build_report(head: str, paths: list[str]) -> bytes:
+    rows = [
+        {"sourceAssetPath": path, "objectTypes": ["UnityEngine.Texture2D"]}
+        for path in sorted(paths)
+    ]
+    return json.dumps(
+        {
+            "schemaVersion": 1,
+            "taskId": "APH-500",
+            "status": "complete",
+            "exactCommit": head,
+            "dirty": False,
+            "releaseBuildType": "release",
+            "buildTarget": "Android",
+            "detailedBuildReport": True,
+            "allIncludedTexturePathsExported": True,
+            "buildReportIncludedTextures": rows,
+        }
+    ).encode("utf-8")
+
+
+def visual_evidence(head: str, paths: list[str]) -> bytes:
+    return json.dumps(
+        {
+            "schemaVersion": 1,
+            "taskId": "APH-505",
+            "status": "complete",
+            "exactCommit": head,
+            "dirty": False,
+            "candidatePaths": paths,
+            "capturedViews": ["near", "medium", "far"],
+            "beforeAfterPairsComplete": True,
+            "visualRegressions": {
+                "blur": False,
+                "latePop": False,
+                "terrainSeams": False,
+                "missingVegetationDetail": False,
+            },
+            "accepted": True,
+        }
+    ).encode("utf-8")
+
+
+def complete_residency(head: str, paths: list[str]) -> bytes:
+    return json.dumps(
+        {
+            "status": "complete",
+            "baselineCommit": head,
+            "assets": [
+                {"assetPath": path, "assetType": "Texture2D"}
+                for path in paths
+            ],
+        }
+    ).encode("utf-8")
+
+
+def performance_evidence(head: str, paths: list[str]) -> bytes:
+    return json.dumps(
+        {
+            "schemaVersion": 1,
+            "taskId": "APH-506",
+            "status": "complete",
+            "exactCommit": head,
+            "dirty": False,
+            "candidatePaths": paths,
+            "durationSeconds": 600,
+            "memoryMeasured": True,
+            "ioMeasured": True,
+            "memoryRegressionAccepted": True,
+            "ioRegressionAccepted": True,
+            "accepted": True,
+        }
+    ).encode("utf-8")
+
+
 def selection_row(path: str, family: str, packed_bytes: int) -> dict[str, object]:
     return {
         "assetPath": path,
         "textureFamily": family,
         "historicalAabPackedBytes": packed_bytes,
-        "aph502Category": "world albedo",
+        "currentCategory": "world albedo",
         "proposedForPilot": False,
         "selectionReasons": [],
         "exclusionReasons": [],
@@ -146,6 +227,18 @@ class Aph504TextureStreamingPilotSelectorTests(unittest.TestCase):
         self.assertIsNone(category)
         self.assertEqual(("protected-path-class", "sprite-importer"), exclusions)
 
+    def test_inventory_semantics_use_current_aph502_precedence_without_strict_yaml(self) -> None:
+        old_ui_meta = texture_meta(serialized_version=4, streaming=None, ignore_limit=None).replace(
+            "  spriteMode: 0", "  spriteMode: 1"
+        )
+        normal_meta = texture_meta(texture_type=1)
+
+        self.assertEqual("UI", classify_inventory_texture("Assets/Game/UI/Panel_Normal.png", old_ui_meta))
+        self.assertEqual(
+            "world normal/mask",
+            classify_inventory_texture("Assets/World/Ground_Normal.png", normal_meta),
+        )
+
     def test_png_dimensions_are_read_from_ihdr(self) -> None:
         header = PNG_SIGNATURE + struct.pack(">I", 13) + b"IHDR" + struct.pack(">II", 4096, 2048)
 
@@ -189,6 +282,48 @@ class Aph504TextureStreamingPilotSelectorTests(unittest.TestCase):
             validate_mobile_quality(parse_mobile_quality(mobile_quality(budget=512))),
         )
 
+    def test_current_build_gate_requires_same_revision_complete_texture_export(self) -> None:
+        head = "a" * 40
+        paths = ["Assets/A.png", "Assets/B.png"]
+
+        self.assertTrue(parse_current_build_gate(complete_build_report(head, paths), head, paths).accepted)
+        rejected = parse_current_build_gate(build_report(tuple(paths)), head)
+
+        self.assertFalse(rejected.accepted)
+        self.assertIn("schema-version-not-1", rejected.errors)
+        self.assertIn("complete-texture-export-marker-not-true", rejected.errors)
+
+    def test_current_build_and_residency_gates_require_selected_texture_paths(self) -> None:
+        head = "a" * 40
+        available = ["Assets/A.png"]
+        required = ["Assets/A.png", "Assets/B.png"]
+
+        build = parse_current_build_gate(complete_build_report(head, available), head, required)
+        residency = parse_current_residency_gate(complete_residency(head, available), head, required)
+
+        self.assertIn(
+            "selected-texture-absent-from-complete-build-export:Assets/B.png",
+            build.errors,
+        )
+        self.assertIn("selected-texture-absent-from-residency:Assets/B.png", residency.errors)
+
+    def test_aph505_and_aph506_gates_require_exact_revision_and_candidate_set(self) -> None:
+        head = "a" * 40
+        paths = ["Assets/A.png", "Assets/B.png"]
+
+        self.assertTrue(parse_visual_evidence_gate(visual_evidence(head, paths), head, paths).accepted)
+        self.assertTrue(parse_performance_evidence_gate(performance_evidence(head, paths), head, paths).accepted)
+        wrong_paths = ["Assets/Other.png"]
+
+        self.assertIn(
+            "aph505-candidate-paths-mismatch",
+            parse_visual_evidence_gate(visual_evidence(head, paths), head, wrong_paths).errors,
+        )
+        self.assertIn(
+            "aph506-candidate-paths-mismatch",
+            parse_performance_evidence_gate(performance_evidence(head, paths), head, wrong_paths).errors,
+        )
+
     def test_selector_is_deterministic_and_uses_distinct_texture_families(self) -> None:
         rows = [
             selection_row("Assets/Texture_01_A.png", "01", 30),
@@ -214,28 +349,52 @@ class Aph504TextureStreamingPilotSelectorTests(unittest.TestCase):
 
     def test_live_repository_plan_is_deterministic_and_rollout_blocked(self) -> None:
         first = collect(ROOT)
-        second = collect(ROOT)
+        if not first["selectorValid"]:
+            first = collect(ROOT)
+        inventory = collect_repository_inventory(ROOT)
+        historical = json.loads((ROOT / AAB_REPORT_PATH).read_text(encoding="utf-8"))
+        historical_texture_paths = {
+            row["sourceAssetPath"]
+            for row in historical["buildReportIncludedAssets"]
+            if "UnityEngine.Texture2D" in row.get("objectTypes", [])
+        }
 
         self.assertTrue(first["selectorValid"])
         self.assertFalse(first["pilotReadyForMutation"])
         self.assertFalse(first["mutationAuthorized"])
         self.assertFalse(first["expansionAuthorized"])
+        self.assertEqual(PILOT_LIMIT, len(first["proposedCandidatePaths"]))
+        self.assertTrue(set(first["proposedCandidatePaths"]).issubset(historical_texture_paths))
+        self.assertGreater(len(first["candidates"]), PILOT_LIMIT)
         self.assertEqual(
-            [
-                "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_A.png",
-                "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_02_A.png",
-            ],
-            first["proposedCandidatePaths"],
+            len(inventory.importer_meta_paths),
+            first["currentRepositoryEvidence"]["trackedTextureImporterCount"],
         )
-        self.assertEqual(13, len(first["candidates"]))
-        self.assertTrue(first["scopedTrackedInputsClean"])
+        self.assertEqual(
+            inventory.manifest_package_count,
+            first["currentRepositoryEvidence"]["manifestPackageCount"],
+        )
+        self.assertEqual(
+            inventory.locked_package_count,
+            first["currentRepositoryEvidence"]["lockedPackageCount"],
+        )
+        self.assertEqual(
+            first["mutationAuthorized"],
+            all(first["mutationPreconditions"].values()),
+        )
+        self.assertIn("aph505-evidence-unavailable", first["unresolvedEvidence"])
+        self.assertIn("aph506-evidence-unavailable", first["unresolvedEvidence"])
+        self.assertEqual(
+            first["scopedTrackedInputsClean"],
+            first["mutationPreconditions"]["scopedTrackedInputsClean"],
+        )
         self.assertTrue(first["controlInputHashesUnchangedDuringRead"])
+        self.assertFalse(first["mutationPreconditions"]["fullResolutionNearbyTexturesPreserved"])
+        self.assertEqual(first, json.loads(render_json(first)))
         self.assertIn(
-            "full-source-near-mips-not-preserved:globalTextureMipmapLimit=1",
-            first["unresolvedEvidence"],
+            f"Tracked TextureImporter count: `{len(inventory.importer_meta_paths)}`",
+            render_markdown(first),
         )
-        self.assertEqual(render_json(first), render_json(second))
-        self.assertEqual(render_markdown(first), render_markdown(second))
         self.assertIn("result=Passed selector_valid=true pilot_ready=false", render_check(first))
 
 

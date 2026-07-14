@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import subprocess
@@ -13,7 +14,26 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-REPORT = ROOT / "Design/AgentReports/2026-07-10_aph-509_package_usage_inventory.md"
+MARKDOWN_REPORT = ROOT / "Design/AgentReports/2026-07-10_aph-509_package_usage_inventory.md"
+JSON_REPORT = ROOT / "Design/AgentReports/2026-07-10_aph-509_package_usage_inventory.json"
+REPORT = MARKDOWN_REPORT
+ORIGIN_REF = "origin/main"
+EXPECTED_SUMMARY = {
+    "totalPackageCount": 68,
+    "manifestDeclaredCount": 47,
+    "embeddedDepthZeroManifestAbsentCount": 1,
+    "lockOnlyTransitiveCount": 20,
+    "candidateUnusedStaticOnlyCount": 13,
+    "unprovenStaticBlindSpotCount": 5,
+}
+CANDIDATE_REMOVAL_BLOCKERS = (
+    "static-zero-evidence-is-not-runtime-proof",
+    "isolated-package-resolution-not-run",
+    "isolated-import-and-compile-not-run",
+    "full-test-suite-not-run",
+    "release-android-build-delta-not-measured",
+    "release-device-smoke-not-run",
+)
 SERIALIZED_SUFFIXES = {
     ".anim", ".asset", ".controller", ".inputactions", ".mat",
     ".overridecontroller", ".playable", ".prefab", ".shadergraph",
@@ -84,6 +104,20 @@ class Evidence:
 
 def read_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def sha256_bytes(content: bytes) -> str:
+    return hashlib.sha256(content).hexdigest()
+
+
+def read_git_object(root: Path, object_name: str) -> bytes | None:
+    result = subprocess.run(
+        ["git", "-C", str(root), "show", object_name],
+        check=False,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    return result.stdout if result.returncode == 0 else None
 
 
 def run_git(root: Path, *args: str, allow_empty: bool = False) -> bytes:
@@ -301,19 +335,168 @@ def classification(item: Evidence) -> str:
     return "no-first-party-evidence"
 
 
-def example(item: Evidence) -> str:
+def summarize(items: list[Evidence]) -> dict[str, int]:
+    return {
+        "totalPackageCount": len(items),
+        "manifestDeclaredCount": sum(item.state == "manifest-declared" for item in items),
+        "embeddedDepthZeroManifestAbsentCount": sum(
+            item.state == "embedded-depth-zero-manifest-absent" for item in items
+        ),
+        "lockOnlyTransitiveCount": sum(item.state == "lock-only-transitive" for item in items),
+        "candidateUnusedStaticOnlyCount": sum(
+            classification(item) == "candidate-unused-static-only" for item in items
+        ),
+        "unprovenStaticBlindSpotCount": sum(
+            classification(item) == "unproven-static-blind-spot" for item in items
+        ),
+    }
+
+
+def summary_validation_errors(
+    summary: dict[str, int],
+    expected: dict[str, int] = EXPECTED_SUMMARY,
+) -> list[str]:
+    return [
+        f"summary-mismatch:{key}:expected={value}:actual={summary.get(key)}"
+        for key, value in expected.items()
+        if summary.get(key) != value
+    ]
+
+
+def removal_blockers(item: Evidence) -> list[str]:
+    result = classification(item)
+    if result == "candidate-unused-static-only":
+        return list(CANDIDATE_REMOVAL_BLOCKERS)
+    if result == "unproven-static-blind-spot":
+        return ["static-analysis-blind-spot-unresolved", *CANDIDATE_REMOVAL_BLOCKERS]
+    if result == "usage-evidence-found":
+        return ["first-party-usage-evidence-found"]
+    if result == "dependency-graph-required":
+        return ["current-lock-graph-requires-package"]
+    return ["ordinary-lock-only-transitive-not-directly-removable"]
+
+
+def package_row(item: Evidence) -> dict[str, object]:
+    return {
+        "package": item.package,
+        "state": item.state,
+        "version": item.version,
+        "depth": item.depth,
+        "source": item.source,
+        "classification": classification(item),
+        "sourceFiles": sorted(item.source_files),
+        "serializedFiles": sorted(item.serialized_files),
+        "buildFiles": sorted(item.build_files),
+        "editorFiles": sorted(item.editor_files),
+        "requiredBy": sorted(item.required_by),
+        "removalAuthorized": False,
+        "removalBlockers": removal_blockers(item),
+    }
+
+
+def build_report_data(root: Path = ROOT) -> dict[str, object]:
+    items = collect(root)
+    summary = summarize(items)
+    manifest_bytes = (root / "Packages/manifest.json").read_bytes()
+    lock_bytes = (root / "Packages/packages-lock.json").read_bytes()
+    origin_manifest = read_git_object(root, f"{ORIGIN_REF}:Packages/manifest.json")
+    origin_lock = read_git_object(root, f"{ORIGIN_REF}:Packages/packages-lock.json")
+    origin_available = origin_manifest is not None and origin_lock is not None
+    origin_matches = (
+        origin_available
+        and manifest_bytes == origin_manifest
+        and lock_bytes == origin_lock
+    )
+    validation_errors = summary_validation_errors(summary)
+    if not origin_available:
+        validation_errors.append("origin-main-package-inputs-unavailable")
+    elif not origin_matches:
+        validation_errors.append("worktree-package-inputs-differ-from-origin-main")
+    rows = [package_row(item) for item in sorted(items, key=lambda value: value.package)]
+    return {
+        "schemaVersion": 1,
+        "taskId": "APH-509",
+        "status": "current-removal-blocked" if not validation_errors else "invalid-removal-blocked",
+        "inventoryValid": not validation_errors,
+        "packageRemovalAuthorized": False,
+        "validationErrors": validation_errors,
+        "expectedSummary": dict(EXPECTED_SUMMARY),
+        "summary": summary,
+        "inputEvidence": {
+            "manifestPath": "Packages/manifest.json",
+            "manifestSha256": sha256_bytes(manifest_bytes),
+            "lockPath": "Packages/packages-lock.json",
+            "lockSha256": sha256_bytes(lock_bytes),
+            "auditedAgainstRef": ORIGIN_REF,
+            "originPackageInputsAvailable": origin_available,
+            "originPackageInputsMatch": origin_matches,
+            "originManifestSha256": sha256_bytes(origin_manifest) if origin_manifest is not None else None,
+            "originLockSha256": sha256_bytes(origin_lock) if origin_lock is not None else None,
+            "evidenceChannels": [
+                "first-party-source-and-asmdef",
+                "text-serialized-guid-ownership",
+                "build-automation",
+                "editor-workflows",
+                "manifest-lock-reverse-dependencies",
+            ],
+        },
+        "candidatePackages": [
+            row["package"]
+            for row in rows
+            if row["classification"] == "candidate-unused-static-only"
+        ],
+        "staticBlindSpotPackages": [
+            row["package"]
+            for row in rows
+            if row["classification"] == "unproven-static-blind-spot"
+        ],
+        "candidateRemovalGate": {
+            "authorized": False,
+            "blockers": list(CANDIDATE_REMOVAL_BLOCKERS),
+        },
+        "packages": rows,
+    }
+
+
+def render_json(data: dict[str, object]) -> str:
+    return json.dumps(data, indent=2, sort_keys=False) + "\n"
+
+
+def row_example(row: dict[str, object]) -> str:
     values = sorted(
-        item.source_files | item.serialized_files | item.build_files | item.editor_files | item.required_by
+        row["sourceFiles"]
+        + row["serializedFiles"]
+        + row["buildFiles"]
+        + row["editorFiles"]
+        + row["requiredBy"]
     )
     return values[0] if values else "-"
 
 
-def render_report(items: list[Evidence]) -> str:
-    direct = sum(item.state == "manifest-declared" for item in items)
-    embedded = sum(item.state == "embedded-depth-zero-manifest-absent" for item in items)
-    transitive = sum(item.state == "lock-only-transitive" for item in items)
-    candidates = sum(classification(item) == "candidate-unused-static-only" for item in items)
-    unproven = sum(classification(item) == "unproven-static-blind-spot" for item in items)
+def render_report(data: dict[str, object] | list[Evidence]) -> str:
+    if isinstance(data, list):
+        items = sorted(data, key=lambda value: value.package)
+        summary = summarize(items)
+        rows = [package_row(item) for item in items]
+        expected = summary
+        input_evidence = {
+            "manifestSha256": "not-collected",
+            "lockSha256": "not-collected",
+            "auditedAgainstRef": "not-collected",
+            "originPackageInputsMatch": False,
+        }
+        inventory_valid = False
+        candidate_packages = [
+            row["package"] for row in rows
+            if row["classification"] == "candidate-unused-static-only"
+        ]
+    else:
+        summary = data["summary"]
+        rows = data["packages"]
+        expected = data["expectedSummary"]
+        input_evidence = data["inputEvidence"]
+        inventory_valid = data["inventoryValid"]
+        candidate_packages = data["candidatePackages"]
     lines = [
         "# APH-509 Package Usage Inventory",
         "",
@@ -330,23 +513,58 @@ def render_report(items: list[Evidence]) -> str:
         "",
         "## Summary",
         "",
-        f"- Manifest-declared packages: **{direct}**",
-        f"- Embedded depth-zero manifest discrepancies: **{embedded}**",
-        f"- Ordinary lock-only transitives: **{transitive}**",
-        f"- Static-only candidate-unused declarations: **{candidates}**",
-        f"- Unproven static blind spots: **{unproven}**",
+        f"- Inventory valid: **{str(inventory_valid).lower()}**",
+        "- Package removal authorized: **false**",
+        f"- Total package graph entries: **{summary['totalPackageCount']}**",
+        f"- Manifest-declared packages: **{summary['manifestDeclaredCount']}**",
+        "- Embedded depth-zero manifest discrepancies: "
+        f"**{summary['embeddedDepthZeroManifestAbsentCount']}**",
+        f"- Ordinary lock-only transitives: **{summary['lockOnlyTransitiveCount']}**",
+        "- Static-only candidate-unused declarations: "
+        f"**{summary['candidateUnusedStaticOnlyCount']}**",
+        f"- Unproven static blind spots: **{summary['unprovenStaticBlindSpotCount']}**",
+        "",
+        "## Accepted Current Count Contract",
+        "",
+        f"- Total graph entries: `{expected['totalPackageCount']}`",
+        f"- Manifest declarations: `{expected['manifestDeclaredCount']}`",
+        f"- Embedded depth-zero discrepancies: `{expected['embeddedDepthZeroManifestAbsentCount']}`",
+        f"- Lock-only transitives: `{expected['lockOnlyTransitiveCount']}`",
+        f"- Static-only candidates: `{expected['candidateUnusedStaticOnlyCount']}`",
+        f"- Static blind spots: `{expected['unprovenStaticBlindSpotCount']}`",
+        "",
+        "## Audited Inputs",
+        "",
+        f"- Manifest SHA-256: `{input_evidence['manifestSha256']}`",
+        f"- Lock SHA-256: `{input_evidence['lockSha256']}`",
+        f"- Upstream comparison ref: `{input_evidence['auditedAgainstRef']}`",
+        "- Worktree package inputs match upstream: "
+        f"`{str(input_evidence['originPackageInputsMatch']).lower()}`",
+        "",
+        "## Candidate Removal Blockers",
+        "",
+        "No candidate is approved for removal. Static absence only starts an isolated validation lane.",
+        "",
+        "| Candidate | Removal authorized | Blocking evidence still required |",
+        "|---|---|---|",
+    ]
+    row_by_package = {row["package"]: row for row in rows}
+    for package in candidate_packages:
+        blockers = ", ".join(row_by_package[package]["removalBlockers"])
+        lines.append(f"| `{package}` | false | {blockers} |")
+    lines += [
         "",
         "## Deterministic Evidence",
         "",
         "| Package | State | Classification | Source | Serialized | Build | Editor | Required by | Example |",
         "|---|---|---|---:|---:|---:|---:|---:|---|",
     ]
-    for item in sorted(items, key=lambda value: value.package):
+    for row in rows:
         lines.append(
-            f"| `{item.package}` | {item.state} | {classification(item)} | "
-            f"{len(item.source_files)} | {len(item.serialized_files)} | "
-            f"{len(item.build_files)} | {len(item.editor_files)} | "
-            f"{len(item.required_by)} | `{example(item)}` |"
+            f"| `{row['package']}` | {row['state']} | {row['classification']} | "
+            f"{len(row['sourceFiles'])} | {len(row['serializedFiles'])} | "
+            f"{len(row['buildFiles'])} | {len(row['editorFiles'])} | "
+            f"{len(row['requiredBy'])} | `{row_example(row)}` |"
         )
     lines += [
         "",
@@ -371,6 +589,7 @@ def render_report(items: list[Evidence]) -> str:
         "```sh",
         "python3 Tools/CI/aph509_package_usage_inventory.py --check",
         "python3 Tools/CI/aph509_package_usage_inventory.py --write-report",
+        "python3 Tools/CI/aph509_package_usage_inventory.py --json",
         "python3 -m unittest Tools.CI.tests.test_aph509_package_usage_inventory",
         "```",
         "",
@@ -383,19 +602,42 @@ def main() -> int:
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--write-report", action="store_true")
     mode.add_argument("--check", action="store_true")
+    mode.add_argument("--json", action="store_true")
     args = parser.parse_args()
-    rendered = render_report(collect(ROOT))
+    data = build_report_data(ROOT)
+    rendered_markdown = render_report(data)
+    rendered_json = render_json(data)
     if args.write_report:
-        REPORT.write_text(rendered, encoding="utf-8")
-        print(REPORT.relative_to(ROOT))
-        return 0
+        MARKDOWN_REPORT.write_text(rendered_markdown, encoding="utf-8")
+        JSON_REPORT.write_text(rendered_json, encoding="utf-8")
+        print(MARKDOWN_REPORT.relative_to(ROOT))
+        print(JSON_REPORT.relative_to(ROOT))
+        return 0 if data["inventoryValid"] else 1
     if args.check:
-        if not REPORT.exists() or REPORT.read_text(encoding="utf-8") != rendered:
-            print(f"stale: {REPORT.relative_to(ROOT)}")
-            return 1
-        print(f"current: {REPORT.relative_to(ROOT)}")
+        stale = []
+        for path, rendered in (
+            (MARKDOWN_REPORT, rendered_markdown),
+            (JSON_REPORT, rendered_json),
+        ):
+            if not path.exists() or path.read_text(encoding="utf-8") != rendered:
+                stale.append(path)
+                print(f"stale: {path.relative_to(ROOT)}")
+            else:
+                print(f"current: {path.relative_to(ROOT)}")
+        summary = data["summary"]
+        print(
+            "counts: "
+            f"total={summary['totalPackageCount']} "
+            f"manifest={summary['manifestDeclaredCount']} "
+            f"candidates={summary['candidateUnusedStaticOnlyCount']} "
+            f"blind_spots={summary['unprovenStaticBlindSpotCount']} "
+            "removal_authorized=false"
+        )
+        return 0 if not stale and data["inventoryValid"] else 1
+    if args.json:
+        print(rendered_json, end="")
         return 0
-    print(rendered, end="")
+    print(rendered_markdown, end="")
     return 0
 
 

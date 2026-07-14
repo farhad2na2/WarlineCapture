@@ -37,9 +37,10 @@ class AndroidDevelopmentPerformanceCiContractTests(unittest.TestCase):
 
     def test_python_resolution_and_nonzero_results_fail_closed(self) -> None:
         self.assertLess(
+            self.wrapper.index("$installedPython = Get-ChildItem"),
             self.wrapper.index("Get-Command py"),
-            self.wrapper.index("Get-Command python"),
         )
+        self.assertNotIn("Get-Command python", self.wrapper)
         self.assertIn('$pythonPrefixArguments = @("-3")', self.wrapper)
         self.assertIn("if ($exitCode -ne 0)", self.wrapper)
         self.assertIn("failed with exit code $exitCode", self.wrapper)

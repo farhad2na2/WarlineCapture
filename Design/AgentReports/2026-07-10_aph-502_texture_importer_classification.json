@@ -1,0 +1,1649 @@
+{
+  "taskId": "APH-502",
+  "status": "incomplete",
+  "finalBucketsAccepted": false,
+  "finalBucketsAcceptanceRequirement": "current-revision content residency plus a complete all-texture BuildReport export from a fully clean tracked worktree",
+  "analyzedRevision": "cbf6fd48846b40dd086faa0feb364fce0462a1bf",
+  "trackedWorktreeClean": false,
+  "trackedWorktreeChanges": [
+    " D Assets/Game/Scripts/Systems/MaterialsScenarioRecoveryValidationSystemHelper.cs",
+    " D Assets/Game/Scripts/Systems/MaterialsScenarioRecoveryValidationSystemHelper.cs.meta",
+    " D Assets/Game/Scripts/Systems/RuntimeResourceUtilitySystemHelper.cs",
+    " D Assets/Game/Scripts/Systems/RuntimeResourceUtilitySystemHelper.cs.meta",
+    " D Assets/Tests/Editor/MaterialsScenarioRecoveryValidationSystemHelperTests.cs",
+    " D Assets/Tests/Editor/MaterialsScenarioRecoveryValidationSystemHelperTests.cs.meta",
+    " D Assets/Tests/Editor/RuntimeResourceUtilitySystemHelperTests.cs",
+    " D Assets/Tests/Editor/RuntimeResourceUtilitySystemHelperTests.cs.meta",
+    " M Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs",
+    " M Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeProfileCompositionSystemHelper.cs",
+    " M Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeSequencePresentationSystemHelper.cs",
+    " M Assets/Game/Scripts/Systems/BuildingGameplayEcsQueryCompositionSystemHelper.cs",
+    " M Assets/Game/Scripts/Systems/BuildingGameplaySourceCompositionSystemHelper.cs",
+    " M Assets/Game/Scripts/Systems/BuildingGameplayStartupCompositionSystemHelper.cs",
+    " M Assets/Game/Scripts/Systems/BuildingPlacementCommandCompositionSystemHelper.cs",
+    " M Assets/Game/Scripts/Systems/BuildingPlacementCommandRequestCompositionSystemHelper.cs",
+    " M Assets/Game/Scripts/Systems/BuildingPlacementCommitCompositionSystemHelper.cs",
+    " M Assets/Game/Scripts/Systems/BuildingPlacementLifecycleCompositionSystemHelper.cs",
+    " M Assets/Game/Scripts/Systems/BuildingProductionCompositionSystemHelper.cs",
+    " M Assets/Game/Scripts/Systems/BuildingProductionRequestSystemHelper.cs",
+    " M Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
+    " M Assets/Game/Scripts/Systems/BuildingResourceStorageTransferSystemHelper.cs",
+    " M Assets/Game/Scripts/Systems/BuildingRuntimeResourcePrefabCompositionSystemHelper.cs",
+    " M Assets/Game/Scripts/Systems/BuildingRuntimeResourcePrefabContextCompositionSystemHelper.cs",
+    " M Assets/Game/Scripts/Systems/BuildingUiCompositionSystemHelper.cs",
+    " M Assets/Game/Scripts/Systems/BuildingUiContextCompositionSystemHelper.cs",
+    " M Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs",
+    " M Assets/Game/Scripts/Systems/ResourceExchangeRequestValidationSystem.cs",
+    " M Assets/Game/Scripts/UI/Screens/ResourceExchangePopupRuntimeView.cs",
+    " M Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeReadModelSystem.cs",
+    " M Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs",
+    " M Assets/Tests/Editor/BuildingPlacementConstructionTransactionTests.cs",
+    " M Assets/Tests/Editor/BuildingPlacementValidationSystemTests.cs",
+    " M Assets/Tests/Editor/FieldFabricationCloseoutValidationRunner.cs",
+    " M Assets/Tests/Editor/InitialUnitsSpawnFocusedTests.cs",
+    " M Assets/Tests/Editor/Narrative/FirstLaunchGate89Validation.cs",
+    " M Assets/Tests/Editor/Narrative/FirstLaunchNarrativeMenuIntegrationTests.cs",
+    " M Assets/Tests/Editor/Narrative/FirstLaunchNarrativePresentationTests.cs",
+    " M Assets/Tests/Editor/NonUiSystemBaseMigrationArchitectureTests.cs",
+    " M Assets/Tests/Editor/ResourceExchangeArchitectureGuardrailTests.cs",
+    " M Assets/Tests/Editor/ResourceHaulerUtilitySystemHelperTests.cs",
+    " M Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs",
+    " M Assets/Tests/Editor/UiResourceExchangeReadModelSystemTests.cs",
+    " M Design/AgentReports/2026-07-10_aph-509_package_usage_inventory.md",
+    " M Design/AgentReports/2026-07-10_aph-700_first_party_assembly_dependencies.json",
+    " M Design/AgentReports/2026-07-10_aph-700_first_party_assembly_dependencies.md",
+    " M Design/AgentReports/2026-07-14_aph-504_texture_streaming_pilot_plan.json",
+    " M Design/AgentReports/2026-07-14_aph-504_texture_streaming_pilot_plan.md",
+    " M Design/Architecture/architecture_performance_hardening_implementation_tracker.md",
+    " M Design/Architecture/phase7_monobehaviour_loop_baseline.md",
+    " M Design/Architecture/production_source_growth_baseline.md",
+    " M Design/Architecture/systembase_to_isystem_inventory.md",
+    " M Tools/Architecture/generate_systembase_to_isystem_inventory.py",
+    " M Tools/CI/aph502_texture_importer_classification.py",
+    " M Tools/CI/aph504_texture_streaming_pilot_selector.py",
+    " M Tools/CI/aph509_package_usage_inventory.py",
+    " M Tools/CI/tests/test_aph502_texture_importer_classification.py",
+    " M Tools/CI/tests/test_aph504_texture_streaming_pilot_selector.py",
+    " M Tools/CI/tests/test_aph509_package_usage_inventory.py"
+  ],
+  "evidence": {
+    "contentResidency": {
+      "path": "Design/AgentReports/architecture_performance_content_residency_baseline.json",
+      "status": "complete",
+      "evidenceRevision": "7084805d771142706f340e9f2e52a68570bcb72b",
+      "textureRows": 637,
+      "summaryTextureRows": 639,
+      "revisionMatchesCurrent": false,
+      "completeInventory": false,
+      "acceptedForCurrentRevision": false,
+      "validationErrors": [
+        "revision-mismatch:7084805d771142706f340e9f2e52a68570bcb72b->cbf6fd48846b40dd086faa0feb364fce0462a1bf",
+        "summary-texture-asset-count-mismatch:639!=637",
+        "tracked-worktree-dirty"
+      ],
+      "disposition": "historical/incomplete/rejected only"
+    },
+    "buildReports": [
+      {
+        "path": "Design/AgentReports/architecture_performance_android_aab_build_report.json",
+        "status": "complete",
+        "dirty": false,
+        "evidenceRevision": "a527e151e9e43a491ba30f4c19a0320dc54faf5c",
+        "reportedTextureRows": 0,
+        "topTableTextureRows": 96,
+        "completeTextureRows": 0,
+        "revisionMatchesCurrent": false,
+        "acceptedForCurrentRevision": false,
+        "completeTexturePathExportMarker": false,
+        "completeTexturePathExport": false,
+        "validationErrors": [
+          "complete-texture-export-marker-not-true",
+          "complete-texture-export-not-array",
+          "revision-mismatch:a527e151e9e43a491ba30f4c19a0320dc54faf5c->cbf6fd48846b40dd086faa0feb364fce0462a1bf",
+          "tracked-worktree-dirty"
+        ],
+        "disposition": "historical/incomplete/rejected only"
+      },
+      {
+        "path": "Design/AgentReports/architecture_performance_android_apk_build_report.json",
+        "status": "complete",
+        "dirty": false,
+        "evidenceRevision": "5a49ab8f010674ca8b364af1245fe2902401b305",
+        "reportedTextureRows": 0,
+        "topTableTextureRows": 96,
+        "completeTextureRows": 0,
+        "revisionMatchesCurrent": false,
+        "acceptedForCurrentRevision": false,
+        "completeTexturePathExportMarker": false,
+        "completeTexturePathExport": false,
+        "validationErrors": [
+          "complete-texture-export-marker-not-true",
+          "complete-texture-export-not-array",
+          "revision-mismatch:5a49ab8f010674ca8b364af1245fe2902401b305->cbf6fd48846b40dd086faa0feb364fce0462a1bf",
+          "tracked-worktree-dirty"
+        ],
+        "disposition": "historical/incomplete/rejected only"
+      }
+    ]
+  },
+  "acceptedCurrentEvidenceTexturePathCount": 0,
+  "trackedTextureImporterCount": 3536,
+  "chosenSemanticCounts": {
+    "UI": 2952,
+    "world albedo": 401,
+    "world normal/mask": 37,
+    "VFX": 33,
+    "impostor/atlas": 39,
+    "generated source/reference": 74
+  },
+  "semanticCandidateCounts": {
+    "UI": 3048,
+    "world albedo": 401,
+    "world normal/mask": 46,
+    "VFX": 33,
+    "impostor/atlas": 39,
+    "generated source/reference": 74
+  },
+  "semanticOverlapCounts": {
+    "UI + VFX": 22,
+    "UI + generated source/reference": 74,
+    "UI + world normal/mask": 7,
+    "impostor/atlas + world normal/mask": 2
+  },
+  "evidenceStatusCounts": {
+    "accepted current inclusion": 0,
+    "excluded/unreferenced": 3536
+  },
+  "acceptedCurrentEvidenceMatchedImporterCount": 0,
+  "ambiguityCount": 105,
+  "ambiguities": [
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_mode_card_thumbnail_mask_frame.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_mode_card_thumbnail_mask_frame.png.meta",
+      "chosenSemanticCategory": "UI",
+      "semanticCandidates": [
+        "UI",
+        "world normal/mask"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV01/scn08_command_button_normal_frame.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV01/scn08_command_button_normal_frame.png.meta",
+      "chosenSemanticCategory": "UI",
+      "semanticCandidates": [
+        "UI",
+        "world normal/mask"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV01/scn08_squad_card_normal_frame.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV01/scn08_squad_card_normal_frame.png.meta",
+      "chosenSemanticCategory": "UI",
+      "semanticCandidates": [
+        "UI",
+        "world normal/mask"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/SplashLoading/TargetLockV04Imagegen/Source/scn01_v04_background_no_ui_source.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/SplashLoading/TargetLockV04Imagegen/Source/scn01_v04_background_no_ui_source.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Generated/SplashLoading/TargetLockV04Imagegen/Source/scn01_v04_layers_green_source.png",
+      "metaPath": "Assets/Game/Art/UI/Generated/SplashLoading/TargetLockV04Imagegen/Source/scn01_v04_layers_green_source.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Panels/scn08_command_button_normal_frame.png",
+      "metaPath": "Assets/Game/Art/UI/Panels/scn08_command_button_normal_frame.png.meta",
+      "chosenSemanticCategory": "UI",
+      "semanticCandidates": [
+        "UI",
+        "world normal/mask"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Panels/scn08_squad_card_normal_frame.png",
+      "metaPath": "Assets/Game/Art/UI/Panels/scn08_squad_card_normal_frame.png.meta",
+      "chosenSemanticCategory": "UI",
+      "semanticCandidates": [
+        "UI",
+        "world normal/mask"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Panels/scn09_build_card_frame_normal.png",
+      "metaPath": "Assets/Game/Art/UI/Panels/scn09_build_card_frame_normal.png.meta",
+      "chosenSemanticCategory": "UI",
+      "semanticCandidates": [
+        "UI",
+        "world normal/mask"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Airport_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Airport_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Ammunition_Depot_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Ammunition_Depot_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Barrack_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Barrack_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Fuel_Bladder_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Fuel_Bladder_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_GuardTower_Big_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_GuardTower_Big_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_GuardTower_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_GuardTower_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Hall_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Hall_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_House_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_House_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_OilPump_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_OilPump_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Portaloo_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Portaloo_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Refinery_Big_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Refinery_Big_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Refinery_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Refinery_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Road_Barrier_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Road_Barrier_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Satelite_Dish_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Satelite_Dish_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Shop_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Shop_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Tent_Contractor_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Tent_Contractor_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Tent_Expert_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Tent_Expert_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Tent_Refugee_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Tent_Refugee_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Tent_Regular_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Tent_Regular_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Wall_Dirt_Straight_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Wall_Dirt_Straight_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Wall_Fence_Straight_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_Wall_Fence_Straight_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_WaterTank_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Buildings/PortraitReference_Building_WaterTank_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Bombsuit_Male_01_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Bombsuit_Male_01_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Civilian_Female_01_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Civilian_Female_01_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Civilian_Female_02_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Civilian_Female_02_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Civilian_Male_01_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Civilian_Male_01_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Civilian_Male_02_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Civilian_Male_02_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Contractor_Female_01_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Contractor_Female_01_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Contractor_Male_01_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Contractor_Male_01_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Contractor_Male_02_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Contractor_Male_02_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Ghillie_Male_01_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Ghillie_Male_01_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Insurgent_Female_01_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Insurgent_Female_01_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Insurgent_Female_02_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Insurgent_Female_02_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Insurgent_Male_01_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Insurgent_Male_01_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Insurgent_Male_02_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Insurgent_Male_02_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Insurgent_Male_03_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Insurgent_Male_03_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Insurgent_Male_04_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Insurgent_Male_04_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Insurgent_Male_05_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Insurgent_Male_05_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Leader_Male_01_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Leader_Male_01_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Pilot_Female_01_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Pilot_Female_01_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Pilot_Male_01_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Pilot_Male_01_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Soldier_Female_01_Alt_01_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Soldier_Female_01_Alt_01_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Soldier_Female_01_Alt_02_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Soldier_Female_01_Alt_02_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Soldier_Female_01_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Soldier_Female_01_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Soldier_Female_02_Alt_01_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Soldier_Female_02_Alt_01_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Soldier_Female_02_Alt_02_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Soldier_Female_02_Alt_02_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Soldier_Female_02_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Soldier_Female_02_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Soldier_Male_01_Alt_01_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Soldier_Male_01_Alt_01_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Soldier_Male_01_Alt_02_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Soldier_Male_01_Alt_02_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Soldier_Male_02_Alt_01_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Soldier_Male_02_Alt_01_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Soldier_Male_02_Alt_02_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Soldier_Male_02_Alt_02_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Soldier_Male_02_Alt_03_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Soldier_Male_02_Alt_03_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Soldier_Male_02_Alt_04_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Soldier_Male_02_Alt_04_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Soldier_Male_02_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Characters/PortraitReference_Unit_Chr_Soldier_Male_02_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_APC_Fast_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_APC_Fast_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_APC_Heavy_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_APC_Heavy_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_APC_Slow_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_APC_Slow_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_Drone_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_Drone_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_Helicopter_Attack_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_Helicopter_Attack_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_Helicopter_Attack_Small_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_Helicopter_Attack_Small_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_Helicopter_Transport_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_Helicopter_Transport_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_Jet_01_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_Jet_01_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_Jet_02_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_Jet_02_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_Light_Armored_Car_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_Light_Armored_Car_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_Missle_Launcher_Air_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_Missle_Launcher_Air_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_Missle_Launcher_Ground_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_Missle_Launcher_Ground_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_Plane_Transport_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_Plane_Transport_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_Radar_Tank_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_Radar_Tank_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_Tank_USA_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_Tank_USA_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_Truck_Canopy_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_Truck_Canopy_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_Truck_Tanker_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_Truck_Tanker_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_Truck_Tray_ChromaGreen.png",
+      "metaPath": "Assets/Game/Art/UI/Portraits/Generated/References/Vehicles/PortraitReference_Unit_Veh_Truck_Tray_ChromaGreen.png.meta",
+      "chosenSemanticCategory": "generated source/reference",
+      "semanticCandidates": [
+        "UI",
+        "generated source/reference"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/Piloto Studio/Textures/MusicalNotes_Glow.png",
+      "metaPath": "Assets/Piloto Studio/Textures/MusicalNotes_Glow.png.meta",
+      "chosenSemanticCategory": "VFX",
+      "semanticCandidates": [
+        "UI",
+        "VFX"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 0
+    },
+    {
+      "assetPath": "Assets/PolygonMilitary/Textures/Decals/Bullet_Decal_Atlas_01_Normals.png",
+      "metaPath": "Assets/PolygonMilitary/Textures/Decals/Bullet_Decal_Atlas_01_Normals.png.meta",
+      "chosenSemanticCategory": "impostor/atlas",
+      "semanticCandidates": [
+        "impostor/atlas",
+        "world normal/mask"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 1
+    },
+    {
+      "assetPath": "Assets/PolygonMilitary/Textures/Decals/Bullet_Decal_Atlas_N.png",
+      "metaPath": "Assets/PolygonMilitary/Textures/Decals/Bullet_Decal_Atlas_N.png.meta",
+      "chosenSemanticCategory": "impostor/atlas",
+      "semanticCandidates": [
+        "impostor/atlas",
+        "world normal/mask"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 0,
+      "textureType": 1
+    },
+    {
+      "assetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_BloodSplats_01.png",
+      "metaPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_BloodSplats_01.png.meta",
+      "chosenSemanticCategory": "VFX",
+      "semanticCandidates": [
+        "UI",
+        "VFX"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_BloodSplats_02.png",
+      "metaPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_BloodSplats_02.png.meta",
+      "chosenSemanticCategory": "VFX",
+      "semanticCandidates": [
+        "UI",
+        "VFX"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_BrokenGlass_01.png",
+      "metaPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_BrokenGlass_01.png.meta",
+      "chosenSemanticCategory": "VFX",
+      "semanticCandidates": [
+        "UI",
+        "VFX"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_Comms_Scanlines_Large_01.png",
+      "metaPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_Comms_Scanlines_Large_01.png.meta",
+      "chosenSemanticCategory": "VFX",
+      "semanticCandidates": [
+        "UI",
+        "VFX"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_Comms_Scanlines_Medium_01.png",
+      "metaPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_Comms_Scanlines_Medium_01.png.meta",
+      "chosenSemanticCategory": "VFX",
+      "semanticCandidates": [
+        "UI",
+        "VFX"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_DamageDirection_01_Base.png",
+      "metaPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_DamageDirection_01_Base.png.meta",
+      "chosenSemanticCategory": "VFX",
+      "semanticCandidates": [
+        "UI",
+        "VFX"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_DamageDirection_01_Main.png",
+      "metaPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_DamageDirection_01_Main.png.meta",
+      "chosenSemanticCategory": "VFX",
+      "semanticCandidates": [
+        "UI",
+        "VFX"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_DamageDirection_01_Middle.png",
+      "metaPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_DamageDirection_01_Middle.png.meta",
+      "chosenSemanticCategory": "VFX",
+      "semanticCandidates": [
+        "UI",
+        "VFX"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_DamageDirection_02_Highlight.png",
+      "metaPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_DamageDirection_02_Highlight.png.meta",
+      "chosenSemanticCategory": "VFX",
+      "semanticCandidates": [
+        "UI",
+        "VFX"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_DamageDirection_02_Inner.png",
+      "metaPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_DamageDirection_02_Inner.png.meta",
+      "chosenSemanticCategory": "VFX",
+      "semanticCandidates": [
+        "UI",
+        "VFX"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_DamageDirection_02_Outer.png",
+      "metaPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_DamageDirection_02_Outer.png.meta",
+      "chosenSemanticCategory": "VFX",
+      "semanticCandidates": [
+        "UI",
+        "VFX"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_DamageDirection_02_Triangle.png",
+      "metaPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_DamageDirection_02_Triangle.png.meta",
+      "chosenSemanticCategory": "VFX",
+      "semanticCandidates": [
+        "UI",
+        "VFX"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_Glow03.png",
+      "metaPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_Glow03.png.meta",
+      "chosenSemanticCategory": "VFX",
+      "semanticCandidates": [
+        "UI",
+        "VFX"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_GlowDot_01.png",
+      "metaPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_GlowDot_01.png.meta",
+      "chosenSemanticCategory": "VFX",
+      "semanticCandidates": [
+        "UI",
+        "VFX"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_Glow_01.png",
+      "metaPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_Glow_01.png.meta",
+      "chosenSemanticCategory": "VFX",
+      "semanticCandidates": [
+        "UI",
+        "VFX"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_Glow_02.png",
+      "metaPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_Glow_02.png.meta",
+      "chosenSemanticCategory": "VFX",
+      "semanticCandidates": [
+        "UI",
+        "VFX"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_Glow_Box_01_Stepped.png",
+      "metaPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_Glow_Box_01_Stepped.png.meta",
+      "chosenSemanticCategory": "VFX",
+      "semanticCandidates": [
+        "UI",
+        "VFX"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_Glow_Horizontal_01.png",
+      "metaPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MilitaryCombat_Glow_Horizontal_01.png.meta",
+      "chosenSemanticCategory": "VFX",
+      "semanticCandidates": [
+        "UI",
+        "VFX"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MiltaryCombat_Static_01.png",
+      "metaPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/FX/SPR_FX_MiltaryCombat_Static_01.png.meta",
+      "chosenSemanticCategory": "VFX",
+      "semanticCandidates": [
+        "UI",
+        "VFX"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Resources/ICON_SM_Chr_Attach_Gas_Mask_01_Military.png",
+      "metaPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Resources/ICON_SM_Chr_Attach_Gas_Mask_01_Military.png.meta",
+      "chosenSemanticCategory": "UI",
+      "semanticCandidates": [
+        "UI",
+        "world normal/mask"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Resources/ICON_SM_Wep_Grenade_Smoke_01_BattleRoyale.png",
+      "metaPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Resources/ICON_SM_Wep_Grenade_Smoke_01_BattleRoyale.png.meta",
+      "chosenSemanticCategory": "VFX",
+      "semanticCandidates": [
+        "UI",
+        "VFX"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    },
+    {
+      "assetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Resources/ICON_SM_Wep_Grenade_Smoke_01_Military.png",
+      "metaPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Resources/ICON_SM_Wep_Grenade_Smoke_01_Military.png.meta",
+      "chosenSemanticCategory": "VFX",
+      "semanticCandidates": [
+        "UI",
+        "VFX"
+      ],
+      "semanticAmbiguity": true,
+      "evidenceStatus": "excluded/unreferenced",
+      "evidenceMeaning": "no accepted inclusion evidence; exclusion and reference state are not proven",
+      "spriteMode": 1,
+      "textureType": 8
+    }
+  ],
+  "unclassifiedCount": 0,
+  "unclassified": [],
+  "acceptedCurrentEvidenceWithoutTrackedImporter": [],
+  "acceptanceBlockers": [
+    "android-build-report:architecture_performance_android_aab_build_report.json:complete-texture-export-marker-not-true",
+    "android-build-report:architecture_performance_android_aab_build_report.json:complete-texture-export-not-array",
+    "android-build-report:architecture_performance_android_aab_build_report.json:revision-mismatch:a527e151e9e43a491ba30f4c19a0320dc54faf5c->cbf6fd48846b40dd086faa0feb364fce0462a1bf",
+    "android-build-report:architecture_performance_android_aab_build_report.json:tracked-worktree-dirty",
+    "android-build-report:architecture_performance_android_apk_build_report.json:complete-texture-export-marker-not-true",
+    "android-build-report:architecture_performance_android_apk_build_report.json:complete-texture-export-not-array",
+    "android-build-report:architecture_performance_android_apk_build_report.json:revision-mismatch:5a49ab8f010674ca8b364af1245fe2902401b305->cbf6fd48846b40dd086faa0feb364fce0462a1bf",
+    "android-build-report:architecture_performance_android_apk_build_report.json:tracked-worktree-dirty",
+    "android-build-report:no-current-complete-texture-export",
+    "content-residency:revision-mismatch:7084805d771142706f340e9f2e52a68570bcb72b->cbf6fd48846b40dd086faa0feb364fce0462a1bf",
+    "content-residency:summary-texture-asset-count-mismatch:639!=637",
+    "content-residency:tracked-worktree-dirty",
+    "tracked-worktree-dirty:59-tracked-change-records"
+  ]
+}

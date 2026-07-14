@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://warlinecapture.local/schemas/aph809-visual-capture-matrix-v1.json",
+  "title": "APH-809 Visual Capture Matrix",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "taskId", "revision", "deviceProfile", "frameRateMode", "rows"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "taskId": { "const": "APH-809" },
+    "revision": {
+      "oneOf": [
+        { "type": "null" },
+        { "type": "string", "pattern": "^[0-9a-f]{40}$" }
+      ]
+    },
+    "deviceProfile": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/nonEmptyString" }
+      ]
+    },
+    "frameRateMode": {
+      "oneOf": [
+        { "type": "null" },
+        { "enum": ["30fps", "60fps"] }
+      ]
+    },
+    "rows": {
+      "type": "array",
+      "minItems": 26,
+      "maxItems": 26,
+      "items": { "$ref": "#/$defs/row" }
+    }
+  },
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": ".*\\S.*"
+    },
+    "vector3": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": { "type": "number" }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role",
+        "path",
+        "sha256",
+        "width",
+        "height",
+        "capturedAtUtc",
+        "revision",
+        "deviceProfile",
+        "frameRateMode",
+        "qualityTier",
+        "cameraPosition",
+        "cameraRotation",
+        "state"
+      ],
+      "properties": {
+        "role": { "enum": ["capture", "current", "candidate"] },
+        "path": { "type": "string", "pattern": "^Design/AgentReports/Captures/ArchitecturePerformanceHardening/APH-809/.+\\.png$" },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "width": { "enum": [1920, 2400] },
+        "height": { "const": 1080 },
+        "capturedAtUtc": { "type": "string", "format": "date-time" },
+        "revision": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "deviceProfile": { "$ref": "#/$defs/nonEmptyString" },
+        "frameRateMode": { "enum": ["30fps", "60fps"] },
+        "qualityTier": { "enum": ["current", "candidate"] },
+        "cameraPosition": { "$ref": "#/$defs/vector3" },
+        "cameraRotation": { "$ref": "#/$defs/vector3" },
+        "state": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "row": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "surface",
+        "category",
+        "aspect",
+        "camera",
+        "state",
+        "qualityTier",
+        "artifactRoles",
+        "artifacts",
+        "reviewerDecision",
+        "reviewerNotes"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "surface": { "enum": ["menu", "match"] },
+        "category": { "enum": ["menu", "graphics-tier", "day-night", "static-map-chunks", "mip-streaming"] },
+        "aspect": { "enum": ["16:9", "20:9"] },
+        "camera": { "$ref": "#/$defs/nonEmptyString" },
+        "state": { "$ref": "#/$defs/nonEmptyString" },
+        "qualityTier": { "enum": ["current", "comparison"] },
+        "artifactRoles": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 2,
+          "items": { "enum": ["capture", "current", "candidate"] }
+        },
+        "artifacts": {
+          "type": "array",
+          "maxItems": 2,
+          "items": { "$ref": "#/$defs/artifact" }
+        },
+        "reviewerDecision": { "enum": ["pending", "passed", "failed"] },
+        "reviewerNotes": {
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/nonEmptyString" }
+          ]
+        }
+      }
+    }
+  }
+}

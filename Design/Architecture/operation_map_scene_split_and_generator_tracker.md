@@ -1,7 +1,7 @@
 # Operation Map Scene Split And Generator Implementation Tracker
 
 Date: 2026-07-14
-Status: Audited and planned; no implementation started
+Status: Accepted design; implementation not started
 Design sources: `../3D_SingleMap_Gameplay_Direction.md`, `../Level_And_Mission_Content_Plan.md`, `../3D_Operation_Map_Texture_Mask_Workflow.md`, `../M01_FirstContact_Production_Contract.md`, `gameplay_solid_ecs_contract.md`, `performance_regression_contract.md`
 
 ## Objective
@@ -78,6 +78,230 @@ The current large map becomes the first reusable operation map through two stage
 | Match shell target | `Assets/Game/Scenes/Match.unity` | Keeps camera/runtime bootstrap and shell references; no longer owns map geometry or map-specific authored placements after cutover. |
 
 Primary use remains Skirmish, air/armor sandbox, fuel/logistics validation, and base-defense testing. The map may support multiple `ScenarioSetup` definitions. It should not become M01 merely because it already exists; M01 uses a dedicated smaller map unless visual and tutorial-readability evidence explicitly accepts a bounded reuse.
+
+## Accepted Operation-Map Portfolio, Generation, And Distribution Decision
+
+Accepted by the product owner on 2026-07-14. The production model is a hybrid editor-generated pipeline, not full runtime map generation:
+
+- Generate deterministic terrain, masks, roads, vegetation candidates, reserve zones, and base-layout candidates in the Editor from versioned inputs.
+- Review and adjust every Campaign/Operation map before accepting its canonical source scene.
+- Bake map surface/height data, blockers, ECS subscenes, static presentation chunks, combined meshes, minimap data, runways, helipads, mission anchors, and camera bounds before shipping.
+- Keep runtime variation data-driven through `ScenarioSetup`: objectives, factions, deployments, encounters, resources, weather/time profile, optional decorations, and mission events may vary without rebuilding physical topology.
+- Reserve any future runtime procedural generation for a separately designed, constrained Skirmish-only tile contract. It must not replace authored Campaign/Operation maps or bypass the accepted bake, path, camera, aircraft, minimap, package-size, and QA gates in this tracker.
+
+This direction preserves deterministic mission scripting and the current mobile render/runtime architecture. Full runtime generation would either lose or require runtime replacements for the current ECS scene bake, static presentation chunks, combined static meshes, immutable surface/height blobs, blocker/path data, minimap raster, runway/aircraft paths, cinematic anchors, and pre-release visual validation.
+
+### Current-Map Size Evidence And Twelve-Map Planning Estimate
+
+The following repository measurements are a local planning snapshot, not an accepted release budget:
+
+| Current map-owned source/bake category | Measured size |
+|---|---:|
+| `Assets/Game/Scenes/Match.unity` | `52.62 MiB` |
+| `Assets/Game/Scenes/Match/` subscene, reflection probes, and lighting data | `1.85 MiB` |
+| `Assets/Game/GeneratedStaticMapPresentation/` non-meta manifest/chunk output | `57.15 MiB` |
+| `Assets/Game/GeneratedCombinedMeshes/` generated mesh assets | `50.97 MiB` |
+| `Match_Map_MapSurfaceData.asset` | `4.79 MiB` |
+| Current map building/vehicle placement configs | `0.22 MiB` |
+| **Approximate map-specific source plus checked-in bake output** | **`167.60 MiB`** |
+
+At equal complexity, twelve physical operation maps would therefore occupy approximately `1.96 GiB` under `Assets` before `.meta` overhead, imported `Library` artifacts, platform bake caches, and build intermediates. The additional eleven maps beyond the current one would add approximately `1.80 GiB` of source plus checked-in bake output.
+
+The current Android APK provides additional player-build evidence:
+
+- compressed APK file length: `442,968,453` bytes;
+- current `MatchSubScene` Entities stream: `9,265,580` bytes;
+- current `MatchSubScene` content archive: `65,536,588` bytes;
+- all `525` packaged Unity level files, including the runtime scenes and `514` static presentation chunks: `3,034,322` compressed bytes in aggregate.
+
+Shared meshes, materials, textures, prefabs, shaders, animation data, audio, and UI must remain globally referenced and packaged once. Map-specific source scenes, surface data, probes, combined meshes, ECS streams/content archives, manifests, and static chunks remain incremental. Until a representative second map is built and compared against a one-map release artifact, use **`80-110 MB` compressed per map** and **approximately `100 MB` per map** as the package-planning range and midpoint. On the current `443 MB` APK baseline, bundling eleven additional current-scale maps is estimated to produce a complete APK of approximately **`1.32-1.65 GB`**. Unique map lightmaps, texture sets, or duplicated shared art can exceed this range and are prohibited without explicit evidence and approval.
+
+The accepted staged delivery direction is:
+
+- **Initial integrated build:** bundle every approved operation map in the application as local Addressables content. The game must be fully playable offline and must not require a remote catalog, content download, or Google Play Asset Delivery package.
+- Keep one independently addressable pack boundary per map even while every pack is local. Do not flatten all maps into one bundle and do not replace stable Addressables keys with direct scene paths.
+- Resolve shared global art from one explicit shared dependency group so bundling all maps does not duplicate common meshes, materials, textures, animation data, audio, or shaders.
+- Load only the selected map's source scene, metadata, manifest, surface data, and nearby presentation chunks. Bundling all maps on disk does not permit loading all heavyweight map content into memory.
+- **Later distribution milestone:** move selected per-map groups from local Build/Load paths to remote HTTPS/CDN paths without changing scenario data, operation-map ids, gameplay ECS contracts, or scene-loading call sites.
+- Keep Google Play Asset Delivery out of the initial implementation. It may be evaluated later as a delivery adapter, but Addressables remains the canonical content identity and loading layer.
+- Establish authoritative one-map, two-map, and all-approved-maps package costs before treating the all-bundled layout as a production store release. The current `1.32-1.65 GB` twelve-map estimate is acceptable only as a planning warning, not as release approval.
+
+## Normative Addressables Packaging And Delivery Contract
+
+This section is the implementation specification for operation-map content. It distinguishes the accepted **local all-bundled milestone** from the later **remote content milestone**. Implementing local groups must not prematurely add download UI, network retries, remote catalogs, or a second delivery backend.
+
+### Audited Baseline And Configuration Gap
+
+Repository inspection on 2026-07-14 found Addressables package `3.1.0`, only the existing local groups, an undefined `Remote.LoadPath`, no configured remote catalog paths, and no Google Play Asset Delivery package. No project setting was changed by this documentation audit.
+
+| Concern | Current repository state | Required initial state | Later remote state |
+|---|---|---|---|
+| Canonical loading API | Addressables is installed but operation maps are not grouped | Addressables for every operation-map scene and heavyweight asset | Unchanged |
+| Map content location | Existing project-local content | Local BuildPath/LoadPath included with the player | Selected map groups use versioned HTTPS/CDN BuildPath/LoadPath |
+| Catalog | Existing local catalog behavior | Local catalog; no network update on startup | Remote catalog plus hash, checked only from a non-match shell state |
+| Availability | Content present in application | Every catalog-approved map is available offline | Built-in maps remain local; remote maps have explicit availability/download state |
+| Android delivery | No accepted asset-delivery package | Normal player/AAB content produced by Addressables | CDN first; Play Asset Delivery only after a separate accepted proof |
+| Build orchestration | No operation-map-specific build contract | Explicit Addressables content build before player build | Full-build and content-update pipelines with archived content state |
+
+### Stable Content Identity
+
+The following identities are stable across local and remote delivery. Changing a map from bundled to downloadable changes content placement and catalog metadata, not gameplay identity or asset addresses.
+
+| Identity | Required format | Example |
+|---|---|---|
+| Operation-map id | `opmap.<mode-or-chapter>.<slug>` | `opmap.skirmish.desert_base_01` |
+| Content-pack id | `opmap-pack.<mode-or-chapter>.<slug>` | `opmap-pack.skirmish.desert_base_01` |
+| Address prefix | `operation-map/<operation-map-id>/` | `operation-map/opmap.skirmish.desert_base_01/` |
+| Pack label | `operation-map-pack-<sanitized-slug>` | `operation-map-pack-skirmish-desert-base-01` |
+| Content version | monotonically increasing positive integer plus immutable content hash | `7` plus SHA-256/hash string |
+| Presentation partition id | deterministic map-relative region id | `region-04-07` |
+
+Required addresses are:
+
+- `operation-map/catalog`
+- `operation-map/<id>/definition`
+- `operation-map/<id>/source-scene`
+- `operation-map/<id>/map-surface`
+- `operation-map/<id>/static-manifest`
+- `operation-map/<id>/minimap-raster`
+- `operation-map/<id>/building-placements` when required by compatibility data
+- `operation-map/<id>/vehicle-placements` when required by compatibility data
+- `operation-map/<id>/presentation/<chunk-id>` for streamable presentation scenes
+
+The optional ECS subscene is not assigned an independent public address until the Entities packaging proof below passes. Generated Entity Scene stream/content archive files must never be hand-addressed, copied, renamed, or uploaded independently from Unity's supported scene dependency chain.
+
+### Group Topology And Bundle Partitioning
+
+Use these exact logical groups. `<slug>` is the sanitized operation-map id suffix and is stable once published.
+
+| Group | Initial Build/Load path | Bundle mode | Contents |
+|---|---|---|---|
+| `Operation Maps - Catalog` | Local / Local | Pack Together | Small `OperationMapCatalogConfig` and small definition/config records only. No map manifest, scene chunks, textures, or surface payloads. |
+| `Operation Maps - Shared` | Local / Local | Pack Together by asset role when necessary | Shared binary art used by multiple maps. Assets enter this group only after dependency analysis proves reuse. |
+| `Operation Map - Local - <slug> - Core` | Local / Local | Pack Together | One map's source scene, definition, surface data, static manifest, minimap raster, placement configs, and map-exclusive core dependencies. Unity may place scene and non-scene assets in separate bundles. |
+| `Operation Map - Local - <slug> - Presentation` | Local / Local | Pack Together By Label | Map-specific streamable presentation chunk scenes partitioned into deterministic regions. |
+
+Do not put every map in one Addressables group. Do not use `Pack Separately` for hundreds of chunk scenes because bundle/file overhead would grow with every chunk. Presentation chunks use `Pack Together By Label` with exactly one partition label per chunk, targeting bounded regional bundles of approximately 16 to 32 chunk scenes; the final region size is accepted from measured load latency, memory, and bundle-count evidence.
+
+Required labels are:
+
+- `operation-map`
+- `operation-map-local` for the initial milestone
+- one `operation-map-pack-<slug>` label per map
+- one role label from `operation-map-role-definition`, `operation-map-role-source-scene`, `operation-map-role-metadata`, `operation-map-role-presentation`, or `operation-map-role-entities`
+- one `operation-map-partition-<slug>-<region-id>` label on each presentation chunk scene
+
+Every Addressables entry has one stable address, one pack label, and one role label. Presentation chunks additionally have exactly one partition label. Editor validation rejects missing, duplicate, foreign-map, or multiple-partition labels.
+
+### Initial Local Bundle Schema
+
+- Use LZ4 bundle compression to preserve acceptable local random-access/load behavior. Do not use uncompressed bundles in a player and do not select LZMA without measured transition evidence.
+- Enable bundle CRC and cache validation according to the project's accepted platform profile. Hash-derived bundle naming is required so stale artifacts cannot masquerade as current content.
+- Keep `Unique Bundle IDs` disabled for the local milestone. The later remote workflow may retain that setting only if catalog updates are restricted to a shell state with no loaded operation-map handles.
+- Addressables content is built explicitly before the player build. CI fails closed when the catalog, bundles, build layout, or operation-map validation report is absent or stale; it must not silently depend on Editor Fast Mode.
+- The all-bundled player contains every map approved by `OperationMapCatalogConfig`, but the runtime still retains handles only for one selected map and its bounded presentation working set.
+- No remote request, download-size query, dependency download, catalog update, or cache-removal command runs in the initial local-only gameplay path.
+- Remote content must never introduce scripts, assemblies, MonoScripts, or code-dependent serialized types not already present in the installed player.
+
+### Shared Dependency And Duplication Rules
+
+- A shared mesh, material, texture, shader, animation clip, audio clip, or prefab is assigned to `Operation Maps - Shared` only when at least two map groups depend on the same GUID and explicit sharing reduces measured duplication.
+- Map-generated assets such as combined meshes, map surface data, minimap rasters, probes/lightmaps, manifests, integrity ledgers, and presentation chunks remain map-owned even if filenames are similar.
+- A shared binary asset GUID may not be copied into a map-owned generated folder. Maps reference the canonical asset and preserve its `.meta` GUID.
+- Addressables Analyze and Build Layout inspection are mandatory. CI reports duplicated dependency bytes by GUID and fails when an unapproved shared dependency is duplicated across operation-map bundles.
+- Sharing must not create a global bundle so large that loading one map retains unrelated maps. If an asset family is large and only conditionally shared, split it by stable role/family rather than creating one universal content bundle.
+
+### Local Load, Activation, And Release Lifecycle
+
+1. The Match shell initializes Addressables once through the existing composition lifecycle.
+2. Composition loads `operation-map/catalog`, resolves one validated catalog entry, and verifies schema, operation-map id, local inclusion, content version, and content hash before loading a scene.
+3. `OperationMapSceneLoadingSceneSystemHelper` loads `operation-map/<id>/source-scene` additively and retains its `AsyncOperationHandle<SceneInstance>` for the entire scene lifetime.
+4. Scene activation is immediate in the initial implementation. Do not use `activateOnLoad: false`; a deferred scene activation blocks Addressables async operation processing behind it.
+5. Selected core assets are loaded lazily by stable address and their handles are retained while the scene/map consumers use them.
+6. Static presentation uses a handle-owning implementation of the existing scene API boundary. It loads chunk scenes by stable chunk address and releases each retained scene handle only after the streamer has drained it.
+7. Readiness is published only after scene identity, ECS authored content, surface data, metadata, canonical-renderer ownership, and required presentation preload belong to the same transition generation.
+8. Teardown marks readiness false, quiesces map consumers, drains chunk scenes, unbinds presentation, disposes map-owned blobs, unloads the source scene through its retained handle, releases asset handles, and clears generation state.
+9. Every successful or failed operation releases each acquired handle exactly once. Releasing a failed handle remains required.
+
+Synchronous `WaitForCompletion` is prohibited. Gameplay systems never inspect an `AsyncOperationHandle`, call Addressables, or poll local bundle state.
+
+### Later Remote Migration Contract
+
+The remote milestone is intentionally deferred, but its migration path is fixed now:
+
+- Clone/move selected `Operation Map - Local - <slug> - Core/Presentation` groups to `Operation Map - Remote - <slug> - Core/Presentation` schemas with remote BuildPath/LoadPath. Addresses, pack labels, partition labels, operation-map ids, and gameplay config links do not change.
+- Keep at least one recovery/tutorial map and the Match shell local. A missing network must never make the application unable to enter its menu or a supported offline mode.
+- Enable a remote catalog and upload its catalog JSON, hash, and bundles atomically to a versioned HTTPS/CDN release root. Catalog update checks occur only in Menu or another shell state where no operation-map handle is loaded.
+- Archive `addressables_content_state.bin` for every platform and published full content build. Content updates are generated only from the exact archived state for that release line.
+- Query `GetDownloadSizeAsync(packLabel)` before download. Cached/current content reports zero. Perform disk-headroom validation before starting.
+- Download with `DownloadDependenciesAsync(packLabel)` and publish byte-based progress from `GetDownloadStatus`, dirty/version-gated to UI at no more than 4 Hz.
+- Permit one content operation at a time. Retry only typed transient network failures, with bounded timeout and retry policy; hash/schema/version failures require a new catalog/content release rather than blind retry.
+- Verify required addresses, pack label, content version, expected hash, and zero remaining download bytes before marking the map available.
+- Cancellation is cooperative: stop activation, release operation handles, and report a typed canceled result. Do not claim partially downloaded cache bytes were removed.
+- Remove a pack only when that map is inactive and no related handle remains. Use `ClearDependencyCacheAsync(packLabel)` and report that future play requires redownload.
+- A catalog update is never applied during a match. Catalog changes are processed before loading content or after all operation-map scenes/assets have been unloaded.
+- Google Play Asset Delivery remains a future adapter decision. It requires a separate package/API/device proof and Play test-track evidence; it must not fork gameplay identity or scene-loading policy.
+
+### Entities Subscene Packaging Gate
+
+Before any operation map is declared valid, prove on Editor and Android that loading its Addressable source scene also resolves and loads the expected Entity Scene stream/content archive through Unity's supported dependency chain. The validation records source-scene GUID, subscene GUID, Entities scene hash, stream/archive sizes, entity counts, and readiness time.
+
+If a remote proof later fails, do not hand-copy generated Entities files and do not invent a custom runtime archive loader. Keep that map local until a supported Entities/Addressables packaging path is designed, tested, and documented.
+
+### Typed Failure Contract
+
+| Failure code | Trigger | Initial local behavior | Later remote behavior |
+|---|---|---|---|
+| `InvalidMapId` | Catalog has no exact id | Reject transition; remain in shell | Same |
+| `MapNotIncluded` | Entry exists but is excluded from this build/catalog | Reject with actionable diagnostic | Offer availability/download route only when remote metadata is valid |
+| `CatalogSchemaMismatch` | Catalog schema unsupported | Fail closed | Fail closed; do not download |
+| `ContentVersionMismatch` | Definition, pack, manifest, or catalog versions disagree | Fail closed and report build defect | Refresh catalog only from shell, then fail closed if still incompatible |
+| `ContentHashMismatch` | Expected and resolved hashes differ | Fail closed and report corrupt/stale build | Clear only the inactive affected cache, then bounded redownload |
+| `MissingRequiredAddress` | Definition/core/scene/manifest/surface address absent | Fail closed and report build defect | Fail before activation; do not partially start match |
+| `SceneLoadFailed` | Addressable scene operation fails | Release acquired handles and return to shell | Same plus typed network/cache cause |
+| `EntitiesContentNotReady` | Expected subscene content does not become ready | Abort activation and unload map | Same; never bypass authored ECS content |
+| `InsufficientStorage` | Later download lacks required headroom | Not applicable | Refuse download before transfer |
+| `NetworkUnavailable` | Later remote map is not cached and network is unavailable | Not applicable | Keep local maps playable and expose typed offline status |
+| `OperationCanceled` | User/session cancels pending remote operation | Not applicable | Release handles, do not activate, preserve truthful cache state |
+
+Control flow uses typed enums/reason codes. Diagnostic strings are bounded and produced only on transition/result changes, never every frame.
+
+### Performance, Memory, And Storage Budgets
+
+- Steady-state Addressables/map orchestration: `0 B/frame` managed allocation after readiness.
+- Active heavyweight content: one operation map, one full map surface blob, one static manifest/index, and a bounded presentation chunk working set.
+- Concurrent content operations: one. Concurrent source-map loads: one unless a separately measured transition budget accepts overlap.
+- Local map transition progress publication: dirty/versioned, maximum 10 Hz. Later remote byte-progress publication: maximum 4 Hz.
+- Presentation partition target: approximately 16 to 32 chunk scenes per bundle, accepted only after bundle-count, chunk-latency, peak-memory, and Android storage evidence.
+- Provisional compressed incremental map budget: `80-110 MB`; warn at `100 MB` and require explicit approval above `110 MB` until measured budgets replace these values.
+- Later remote download disk headroom: at least the greater of twice the reported download size or reported size plus `256 MiB`, unless platform evidence establishes a stricter policy.
+- No all-map manifest preload, no broad Addressables label load for heavyweight content, no synchronous completion, and no per-frame catalog/address lookup.
+
+### Build, CI, And Release Artifacts
+
+Every all-bundled build produces and archives:
+
+- Addressables catalog and hash;
+- local bundle directory and checksums;
+- Addressables Build Layout report;
+- operation-map catalog validation report;
+- per-map address/label/group/partition manifest;
+- duplicate-dependency report with byte totals by GUID;
+- per-map compressed bundle bytes and all-maps aggregate bytes;
+- Entities stream/content archive identities and sizes;
+- player APK/AAB size, installed size, startup/load time, peak/retained memory, and sustained device performance evidence.
+
+CI performs an explicit Addressables content build followed by the player build. Editor validation must include `Use Existing Build` or the equivalent real-bundle path; Fast Mode alone is insufficient. A later remote pipeline additionally archives the platform-specific content-state file, remote catalog/hash, uploaded bundle checksums, content-update report, and CDN release root.
+
+Official implementation references:
+
+- [Unity Addressables remote content](https://docs.unity3d.com/Packages/com.unity.addressables@3.1/manual/remote-content-intro.html)
+- [Unity Addressables scene loading](https://docs.unity3d.com/Packages/com.unity.addressables@3.1/manual/LoadingScenes.html)
+- [Unity Addressables bundle packing](https://docs.unity3d.com/Packages/com.unity.addressables@3.1/manual/PackingGroupsAsBundles.html)
+- [Unity Addressables operation handles](https://docs.unity3d.com/Packages/com.unity.addressables@3.1/manual/AddressableAssetsAsyncOperationHandle.html)
+- [Unity Addressables content updates](https://docs.unity3d.com/Packages/com.unity.addressables@3.1/manual/ContentUpdateWorkflow.html)
+- [Android Play Asset Delivery](https://developer.android.com/guide/playcore/asset-delivery)
+- [Android Play Asset Delivery testing](https://developer.android.com/guide/playcore/asset-delivery/test)
 
 ## Target Ownership Contract
 
@@ -204,13 +428,16 @@ No planned runtime assembly may reference `Game.Editor`. `Game.Components`, `Gam
 | Planned type | C# kind | Namespace / assembly | Planned file | Responsibility and constraints |
 |---|---|---|---|---|
 | `OperationMapDefinition` | `sealed ScriptableObject` | `Game.Configs` / `Game.Configs` | `Assets/Game/Scripts/Configs/OperationMapDefinition.cs` | Small canonical metadata for one map. Stores id/schema/content version, bounds/camera/minimap/anchors, and lazy `AssetReference` values for source scene, optional heavy metadata, map surface, placement configs, and static manifest. No concrete rendering type and no per-frame method. |
-| `OperationMapCatalogConfig` | `sealed ScriptableObject` | `Game.Configs` / `Game.Configs` | `Assets/Game/Scripts/Configs/OperationMapCatalogConfig.cs` | Ordered built-in definitions and shipping policy. Direct references to small definition assets are allowed; heavyweight map data remains lazy. Composition builds one lookup at transition/launch, not in gameplay updates. |
+| `OperationMapCatalogConfig` | `sealed ScriptableObject` | `Game.Configs` / `Game.Configs` | `Assets/Game/Scripts/Configs/OperationMapCatalogConfig.cs` | Ordered catalog entries and staged delivery policy. The initial catalog includes every approved map as `BuiltInLocal`; heavyweight map data remains lazy. Composition builds one lookup at transition/launch, not in gameplay updates. |
+| `OperationMapCatalogEntryConfig` | `[Serializable] struct` | `Game.Configs` / `Game.Configs` | same file | Stable map id, pack id, definition `AssetReference`, `OperationMapContentPackConfig`, inclusion flag, and sort/display metadata. It contains no scene path and no direct heavyweight object. |
+| `OperationMapContentPackConfig` | `[Serializable] struct` | `Game.Configs` / `Game.Configs` | `Assets/Game/Scripts/Configs/OperationMapConfigModels.cs` | Delivery kind, stable pack label, content version/hash, minimum compatible app/content schema, expected compressed/download bytes, and optional remote release id. Initial entries are local; remote fields remain empty. |
 | `ScenarioSetupConfig` | `sealed ScriptableObject` | `Game.Configs` / `Game.Configs` | `Assets/Game/Scripts/Configs/ScenarioSetupConfig.cs` | Mission/skirmish policy keyed by scenario id and operation-map id. Owns starting state, objectives, rewards, restrictions, feature gates, and ARIA hooks; owns no scene path or hierarchy reference. |
 | `OperationMapBoundsConfig` | `[Serializable] struct` | `Game.Configs` / `Game.Configs` | `Assets/Game/Scripts/Configs/OperationMapConfigModels.cs` | World, camera, and playable bounds with finite-value validation. |
 | `OperationMapCameraConfig` | `[Serializable] struct` | `Game.Configs` / `Game.Configs` | same file | Stable camera id, transform, projection settings, and clamp policy. |
 | `OperationMapMinimapConfig` | `[Serializable] struct` | `Game.Configs` / `Game.Configs` | same file | Stable minimap id, projection origin/size, orientation, and lazy cached-raster reference. |
 | `OperationMapAnchorConfig` | `[Serializable] struct` | `Game.Configs` / `Game.Configs` | same file | Stable anchor id, `OperationMapAnchorKind`, position/rotation/radius, faction/lane metadata. It is config data, not an ECS buffer element. |
 | `OperationMapAnchorKind` | `enum : byte` | `Game.Components` / `Game.Components` | `Assets/Game/Scripts/Components/OperationMapComponents.cs` | Closed typed anchor taxonomy: spawn, objective, deployment, build, civilian, hostile, base, resource, runway, helipad, lane, camera, minimap, and debug. |
+| `OperationMapDeliveryKind` | `enum : byte` | `Game.Components` / `Game.Components` | same file | `BuiltInLocal` and `RemoteAddressables`. Add `AndroidAssetPack` only after a separately accepted Play Asset Delivery proof. This enum describes availability; gameplay does not branch on it. |
 
 All heavyweight fields in `OperationMapDefinition` must be lazy references. In particular, the schema-v1 compatibility manifest currently contains 16,542 source entries and mesh/material references; loading every map manifest with the catalog would violate memory and transition budgets.
 
@@ -221,7 +448,8 @@ Minimum serialized field ownership is fixed as follows:
 | Asset | Required small fields | Required lazy/heavy references |
 |---|---|---|
 | `OperationMapDefinition` | operation-map id, schema version, content version/hash, bounds, camera records, minimap projection, anchor records, generation metadata hash | canonical source scene, optional subscene/heavy metadata, `MapSurfaceDataAsset`, concrete static manifest, cached minimap raster, compatibility building/vehicle placement configs |
-| `OperationMapCatalogConfig` | catalog schema/version, ordered built-in definition references, shipping inclusion flags | No manifest, scene chunk, surface payload, texture, or mesh list. |
+| `OperationMapCatalogConfig` | catalog schema/version, ordered `OperationMapCatalogEntryConfig` records, all-bundled inclusion policy | No manifest, scene chunk, surface payload, texture, or mesh list. |
+| `OperationMapCatalogEntryConfig` | map id, pack id, definition address/reference, inclusion flag, delivery kind, content version/hash, expected byte metadata | No source scene object, manifest, surface payload, chunk list, or downloaded-state mutation. |
 | `ScenarioSetupConfig` | scenario/mission/map ids, starting-state ids, objective/reward/restriction/feature-gate data, ARIA hook ids | Scenario-specific heavy encounter/config assets only when required; no source scene, subscene, manifest, hierarchy path, or map renderer reference. |
 
 Use ordinary `UnityEngine.AddressableAssets.AssetReference` fields for cross-assembly heavyweight references when the concrete type would create an assembly cycle. Resolve and type-check those handles in `Game.Composition`; editor validation confirms that each referenced asset has the expected concrete type before a build.
@@ -249,6 +477,17 @@ Use ordinary `UnityEngine.AddressableAssets.AssetReference` fields for cross-ass
 
 The operation-map blob is deliberately small and immutable. `MapSurfaceBlob` remains the sole large height/path/surface dataset. Mutable blockers and occupancy remain in their existing ECS owners rather than being copied into either blob.
 
+The following ECS types are reserved for the deferred remote milestone and must **not** be implemented for the initial local-only build. They exist in this contract so later work extends the same data boundary instead of inventing a service/provider/controller shell:
+
+| Deferred planned type | C# kind | Namespace / assembly | Responsibility and field contract |
+|---|---|---|---|
+| `OperationMapContentStateComponent` | `IComponentData` | `Game.Components` / `Game.Components` | One selected pack's availability, operation id, byte totals, progress basis points, version, generation, and `OperationMapContentStatusKind`. No managed handle or URL. |
+| `OperationMapContentRequestElement` | `IBufferElementData` | same | Bounded request id, pack id, map id, request kind, expected version, and activation intent. |
+| `OperationMapContentResultElement` | `IBufferElementData` | same | Bounded result history with request id, pack id, result code, byte totals, generation, and one bounded diagnostic. |
+| `OperationMapContentRequestKind` | `enum : byte` | same | `CheckAvailability`, `Download`, `Cancel`, `Remove`, `RefreshCatalog`. |
+| `OperationMapContentStatusKind` | `enum : byte` | same | `Unknown`, `BuiltIn`, `Checking`, `Available`, `Downloading`, `Removing`, `Unavailable`, `Failed`. |
+| `OperationMapContentResultCode` | `enum : byte` | same | Typed success, canceled, offline, insufficient-storage, incompatible-version, hash, catalog, download, remove, busy, and active-map failures. |
+
 #### Runtime And Composition Types
 
 | Planned type | C# kind | Namespace / assembly | Planned file | Responsibility and lifecycle |
@@ -256,8 +495,11 @@ The operation-map blob is deliberately small and immutable. `MapSurfaceBlob` rem
 | `OperationMapSceneView` | `sealed MonoBehaviour` with no update methods | `Game.Composition` / `Game.Composition` | `Assets/Game/Scripts/Composition/OperationMapSceneView.cs` | Serialized references owned by the loaded map scene: map root, `MapSurfaceAuthoring`, map-owned placement configs, optional subscene reference, and source identity. Getters/binding only; no policy, hierarchy search, singleton, or self-registration loop. |
 | `OperationMapSceneReferenceSceneSystemHelper` | managed `sealed class` | `Game.Composition` / `Game.Composition` | `Assets/Game/Scripts/Composition/OperationMapSceneReferenceSceneSystemHelper.cs` | Resolve exactly one `OperationMapSceneView` from the newly loaded scene's root list once per transition, using a reused/pre-sized list. Reject zero or multiple views. Never scan all loaded objects every frame. |
 | `OperationMapSceneLoadingSceneSystemHelper` | managed `sealed class` | `Game.Composition` / `Game.Composition` | `Assets/Game/Scripts/Composition/OperationMapSceneLoadingSceneSystemHelper.cs` | Own catalog resolution result, Addressables scene/asset handles, one transition state machine, typed ECS request/result publication, failure rollback, and deterministic unload. Called by existing composition lifecycle; it introduces no `MonoBehaviour.Update`. |
+| `StaticMapPresentationAddressablesSceneApi` | managed `sealed class` implementing the existing presentation scene API contract | `Game.Composition` / `Game.Composition` | `Assets/Game/Scripts/Composition/StaticMapPresentationAddressablesSceneApi.cs` | Initial local milestone owner for presentation chunk `AsyncOperationHandle<SceneInstance>` values. Maps stable chunk addresses to retained handles, enforces one load/unload per chunk, and releases every handle during drain/disposal. It does not own camera policy or a new update loop. |
 | `OperationMapRuntimeBootstrapSceneSystemHelper` | managed `sealed class` | `Game.Composition` / `Game.Composition` | `Assets/Game/Scripts/Composition/OperationMapRuntimeBootstrapSceneSystemHelper.cs` | Convert small config metadata to one persistent `OperationMapBlob`, publish active metadata/bounds/readiness components, coordinate the existing map-surface bootstrap, and dispose only blobs it owns. |
 | `OperationMapMetadataUtility` | Burst-compatible static class | `Game.Runtime` / `Game.Runtime` | `Assets/Game/Scripts/Systems/OperationMapMetadataUtility.cs` | Pure lookup/clamp/projection helpers over components/blob refs. No cached managed collections, Unity object access, logging, or hidden state. |
+
+`OperationMapContentDeliverySceneSystemHelper` is a deferred remote-milestone managed `sealed class` in `Game.Composition`, planned at `Assets/Game/Scripts/Composition/OperationMapContentDeliverySceneSystemHelper.cs`. It will own catalog-check, size-query, download, cancellation, and cache-removal handles and publish the reserved content ECS state. It is not part of the initial all-local implementation and must not be created as an empty forwarding shell.
 
 No new recurring operation-map `ISystem` is approved solely for loading. Scene/Addressables transitions are infrequent managed work and already require Unity APIs. New gameplay systems are allowed only when they own real data-parallel behavior. Such a type must be a `struct : ISystem`, use `[BurstCompile]` on `OnCreate`/`OnUpdate` where supported, declare `RequireForUpdate`, schedule jobs only when work exists, and be added to the Burst hot-path classification tests.
 
@@ -281,7 +523,9 @@ The lifecycle state machines remain nested and non-duplicated:
 | `OperationMapGenerationResult` | internal `readonly struct`, `Game.Editor` | Written/reused/stale counts, hashes, metadata bytes, validation result, and exact output paths. |
 | `OperationMapTextureMaskGenerator` | internal static class, `Game.Editor` | Deterministically converts reviewed texture/mask inputs into canonical metadata and source-scene inputs. It never runs in a player and never writes static presentation chunks. |
 | `OperationMapSourceSceneBuilder` | internal static class, `Game.Editor` | Deterministically creates/updates canonical source scene/subscene content from generation output while referencing shared assets. |
-| `OperationMapAndroidBuildSceneResolver` | internal static class, `Game.Editor` | Resolves only catalog-approved built-in map source/chunk scenes and rejects stale, missing, duplicate, or foreign-owned outputs. The existing resolver delegates here after compatibility tests pass. |
+| `OperationMapAndroidBuildSceneResolver` | internal static class, `Game.Editor` | Resolves only catalog-approved local map source/chunk scenes and rejects stale, missing, duplicate, unapproved, or foreign-owned outputs. The existing resolver delegates here after compatibility tests pass. |
+| `OperationMapAddressablesLayoutValidator` | internal static class, `Game.Editor` | Validates exact group names, local/remote schema, addresses, pack/role/partition labels, one-map ownership, partition size, shared dependencies, Entities scene linkage, and catalog inclusion. |
+| `OperationMapAddressablesBuildReport` | internal `readonly struct`, `Game.Editor` | Immutable report model for per-map bundle bytes, partition count, duplicate bytes/GUIDs, required address coverage, Entities artifacts, and all-maps aggregate. It owns no build behavior. |
 
 Editor production files should remain below the current source-growth ratchet (preferably below 500 lines each). Split generation, ownership, integrity, scene construction, and build resolution by responsibility instead of creating one large generator shell.
 
@@ -347,6 +591,11 @@ A failure at any stage unwinds only resources acquired by that transition genera
 | Validation area | Required test/runner ownership |
 |---|---|
 | Config/catalog/schema | Add `OperationMapConfigValidationTests` in `Game.Tests.Editor`: duplicate/oversized ids, missing lazy refs, invalid bounds, duplicate anchors, stale hashes, unresolved scenarios, catalog shipping policy. |
+| Addressables local layout | Add `OperationMapAddressablesLayoutValidationTests` in `Game.Tests.Editor`: exact groups/paths, stable addresses, one pack/role label, presentation partition labels, every approved entry local, no remote path requirement, and no heavyweight catalog preload. |
+| Addressables build output | Validate real local bundles with Build Layout evidence: required addresses, group ownership, duplicate dependency bytes/GUIDs, bounded partition counts, catalog/hash presence, and per-map/all-map byte reports. Fast Mode is not evidence. |
+| Addressables handle lifetime | Extend helper/streamer tests with fake operations and PlayMode probes for retained source/chunk handles, failed-handle release, drain ordering, sequential maps, duplicate requests, and zero leaked handles after teardown. |
+| Entities scene packaging | Add Editor and Android probes proving an Addressable operation-map source scene resolves its expected subscene stream/content archive and reaches matching entity/readiness counts. |
+| Deferred remote delivery | When Phase 11 starts, add availability/size/download/cancel/remove/catalog-update tests, offline and storage failures, content-state archive validation, and device/CDN update evidence. No remote test is required for the initial local milestone. |
 | Assembly direction | Extend `ScriptArchitectureAlignmentContractTests.RunAssemblyBoundaryValidation` and run `RunBroadShellValidation` so configs cannot reference rendering/composition and runtime cannot reference composition/editor. |
 | Naming/managed exceptions | Run `NonEcsSystemConversionArchitectureTests.RunFocusedValidation`; add every planned helper to the narrow reason-suffix path, not an allowlisted forbidden shell. |
 | Burst/system classification | Run `EcsBurstHotPathArchitectureTests.RunFocusedValidation`, `RunTypeHandleValidation`, and `RunNoBurstISystemClassificationValidation`. |
@@ -368,7 +617,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 - Cache map-id resolution and immutable metadata. Do not perform broad scene searches, `Resources.FindObjectsOfTypeAll`, hierarchy walks, or asset loads in gameplay hot paths.
 - Precompute minimap projection/raster data. Marker updates remain dirty/version-gated and must not rebuild the full map each frame.
 - Camera clamp and ground/surface queries use map metadata/blobs or existing ECS surface data, not repeated physics scans.
-- Define a build-content policy before adding a second shipping map: built-in map set, optional downloadable content, or an accepted equivalent. Do not automatically append all future maps/chunks to Android builds.
+- Include every map explicitly approved by `OperationMapCatalogConfig` in the initial local Addressables build. Discovery by folder/name is prohibited: unapproved future maps and stale chunks must never enter Android builds automatically.
 - Measure per-map loaded memory, peak transition memory, chunk load latency, sustained FPS, draw calls, triangles, GC, APK size, and installed size.
 - Keep the accepted release/device gates in `performance_regression_contract.md`; a visually correct map migration cannot waive performance or package-size failures.
 
@@ -377,7 +626,9 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 | Priority | Risk | Required Mitigation |
 |---|---|---|
 | P0 | A second map bake deletes or rewrites the current 514 scenes. | Per-map output roots, manifest identity, integrity ledgers, and ownership tests precede extraction. |
-| P0 | Android build resolver includes stale chunks or every future map. | Catalog-driven build inclusion with exact manifest/hash/integrity validation and package-size evidence. |
+| P0 | Android build resolver includes stale chunks or unapproved future maps. | Catalog-driven all-approved-map inclusion with exact manifest/hash/integrity validation and package-size evidence. |
+| P0 | Bundling all approved maps creates one monolithic bundle or duplicates shared art. | Per-map Core/Presentation groups, bounded presentation partitions, explicit shared group, Build Layout analysis, and duplicate-byte CI gates. |
+| P0 | The all-bundled twelve-map player exceeds practical Android store/install budgets. | Treat all-local as the initial integration milestone, measure one/two/all-map artifacts, and complete Phase 11 remote migration before production release if accepted budgets fail. |
 | P0 | `Match.unity` is stripped before the new map is loadable. | Compatibility registration first; shell stripping is a later atomic cutover with rollback. |
 | P0 | Scene duplication changes GlobalObjectIds and invalidates presentation/authoring references. | New manifest and map-owned placement configs are baked from the duplicated source; compare source-path and entity parity. |
 | P1 | Map-authored buildings/vehicles duplicate, disappear, or use wrong ownership. | Move map-specific configs with the operation map and validate conversion plus source hiding. |
@@ -388,7 +639,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 0% (0/138 checklist items complete).
+Overall implementation progress: 0% (0/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
@@ -397,6 +648,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 | 0. Reproducible baseline and rollback | Not started | 0 | 12 | 0% | Required before any scene or bake edit. |
 | 1. Operation-map and scenario data contracts | Not started | 0 | 12 | 0% | Defines typed identity, metadata, and catalog ownership. |
 | 2. Per-map static presentation ownership | Not started | 0 | 14 | 0% | Removes the single global bake/manifest assumption. |
+| 2A. Local Addressables packaging foundation | Not started | 0 | 20 | 0% | Bundles every approved map locally while preserving per-map pack boundaries. |
 | 3. Current-map compatibility registration | Not started | 0 | 10 | 0% | Makes the existing map addressable without moving it. |
 | 4. Non-destructive scene ownership split | Not started | 0 | 14 | 0% | Extracts current map only after map-specific baking is safe. |
 | 5. Runtime selection, loading, and teardown | Not started | 0 | 14 | 0% | Loads one selected operation map through existing lifecycle. |
@@ -404,7 +656,8 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 | 7. M01 operation-map slice | Not started / gated | 0 | 10 | 0% | No player-facing integration before the M01 hold is released. |
 | 8. Editor-time texture/mask generator | Not started | 0 | 12 | 0% | Produces canonical map/metadata inputs, not runtime maps. |
 | 9. Mission and Skirmish scenario rollout | Not started | 0 | 10 | 0% | Reuses maps through config-driven setup. |
-| 10. Full validation and rollout | Not started | 0 | 18 | 0% | Bake, parity, architecture, performance, build, and device gates. |
+| 10. Full validation and all-bundled rollout | Not started | 0 | 21 | 0% | Bake, parity, architecture, performance, all-local build, and device gates. |
+| 11. Deferred remote content migration | Deferred | 0 | 16 | 0% | Moves selected stable map packs to HTTPS/CDN delivery without gameplay changes. |
 
 ## Phase 0: Reproducible Baseline And Rollback
 
@@ -469,6 +722,36 @@ Exit criteria:
 - The current map still produces its accepted output through the compatibility entry point.
 - Two operation maps can coexist without shared mutable generated ownership.
 - An identical rebake writes no scenes and deletes no scenes.
+
+## Phase 2A: Local Addressables Packaging Foundation
+
+- [ ] Approve the exact `Operation Maps - Catalog`, `Operation Maps - Shared`, and per-map Local Core/Presentation group contract from this document.
+- [ ] Add `OperationMapCatalogEntryConfig`, `OperationMapContentPackConfig`, and `OperationMapDeliveryKind` with every initial approved entry set to `BuiltInLocal`.
+- [ ] Create the small local catalog group without any heavyweight map scene, manifest, surface, texture, mesh, or chunk dependency.
+- [ ] Create the explicit local shared group and admit assets only from measured cross-map GUID dependency evidence.
+- [ ] Create one local Core group per approved operation map using stable map-pack identity and local Build/Load paths.
+- [ ] Create one local Presentation group per approved operation map using stable map-pack identity and local Build/Load paths.
+- [ ] Assign and validate every required stable address without using direct scene paths in gameplay/composition policy.
+- [ ] Assign and validate exactly one map-pack label and one role label per operation-map entry.
+- [ ] Partition presentation chunk scenes by deterministic region labels, targeting 16 to 32 chunks per bundle pending measured acceptance.
+- [ ] Configure LZ4, CRC/cache policy, hash-derived bundle naming, and explicit content build settings for operation-map groups.
+- [ ] Add `OperationMapAddressablesLayoutValidator` for groups, paths, addresses, labels, partitions, catalog inclusion, and one-map ownership.
+- [ ] Add `OperationMapAddressablesBuildReport` output for per-map bytes, aggregate bytes, partition counts, required addresses, Entities artifacts, and duplicate dependencies.
+- [ ] Add an explicit CI/editor Addressables content-build step that fails when local content, catalog, layout report, or operation-map validation is absent or stale.
+- [ ] Load the selected source scene by stable Addressables address, retain its scene handle for the full map lifetime, and release it through deterministic teardown.
+- [ ] Add `StaticMapPresentationAddressablesSceneApi` so local presentation chunks use stable addresses and retained handles through the existing bounded streamer.
+- [ ] Add focused fake-operation and PlayMode tests for source/chunk handle ownership, duplicate requests, failed-handle release, drain ordering, and sequential maps.
+- [ ] Prove that an Addressable source scene resolves its expected Entities subscene stream/content archive in Editor and Android without hand-addressing generated files.
+- [ ] Run Addressables Analyze and Build Layout checks and fail on unapproved cross-map duplicate dependency bytes/GUIDs.
+- [ ] Produce clean one-map, representative two-map, and all-approved-maps local artifacts with APK/AAB, installed-size, bundle, Entities, memory, and load-time deltas.
+- [ ] Validate every approved map launches offline from real local bundles on Editor and Android with no remote catalog, download query, network call, or remote helper implementation.
+
+Exit criteria:
+
+- Every catalog-approved map is bundled locally but remains an independently addressable map pack.
+- Runtime loads only the selected map and bounded presentation partitions, not all maps or manifests.
+- Real-bundle Editor and Android evidence proves address coverage, Entities linkage, deterministic handle release, shared-dependency deduplication, and accepted package/load budgets.
+- No deferred remote content ECS type/helper or download UI is implemented in this phase.
 
 ## Phase 3: Current-Map Compatibility Registration
 
@@ -611,7 +894,7 @@ Exit criteria:
 - Multiple scenarios can reuse one operation map without modifying its scene.
 - Scenario data, not scene contents alone, controls game rules and starting state.
 
-## Phase 10: Full Validation And Rollout
+## Phase 10: Full Validation And All-Bundled Rollout
 
 - [ ] Run `git diff --check` and scoped asset/meta integrity checks.
 - [ ] Run `ScriptArchitectureAlignmentContractTests.RunAssemblyBoundaryValidation`/`RunBroadShellValidation`, `NonEcsSystemConversionArchitectureTests.RunFocusedValidation`, `EcsBurstHotPathArchitectureTests` focused/type-handle/non-Burst classification runners, and `ProductionSourceGrowthArchitectureTests.RunFocusedValidation`.
@@ -626,8 +909,11 @@ Exit criteria:
 - [ ] Run map-authored building/vehicle/aircraft conversion and source-hiding regression validation.
 - [ ] Run editor generator deterministic/no-op and connectivity validation.
 - [ ] Run Editor performance comparison for load time, frame time, draw, triangles, memory, and GC.
+- [ ] Produce clean one-map, representative two-map, and all-approved-maps release artifacts; record the exact incremental APK/AAB, installed-size, Entities stream/archive, static-presentation, combined-mesh, shared-dependency, and aggregate cost.
+- [ ] Replace the provisional `80-110 MB` compressed per-map planning range with an accepted measured budget before approving broader map production.
+- [ ] Validate every approved operation map from real local Addressables bundles, including stable identity, shared dependency deduplication, offline launch, content-version mismatch, load failure unwind, teardown, and sequential switching.
 - [ ] Run Android build-scene inclusion, APK/installed size, startup, memory, sustained FPS, and thermal validation.
-- [ ] Verify only the approved built-in operation-map set is packaged and no stale generated scenes are included.
+- [ ] Verify every catalog-approved local operation map and only those maps are packaged; no unapproved map, stale generated scene, foreign-owned chunk, or remote dependency is included.
 - [ ] Capture accepted screenshots for top-down, oblique, low-ground, minimap, bounds, and map transition states.
 - [ ] Update `README.md`, `Design/README.md`, this percentage table, and exact command/log evidence.
 - [ ] Commit and push only after each stable slice passes its owned gates; keep scene extraction and shell cutover independently revertable.
@@ -640,6 +926,34 @@ Exit criteria:
 - Build inclusion is explicit and Android package/performance evidence remains acceptable.
 - M01 and future missions have a validated path without putting every level in one scene.
 
+## Phase 11: Deferred Remote Content Migration
+
+This phase starts only after the all-bundled implementation is stable and the product owner explicitly requests remote delivery. It does not block the initial all-local milestone, but it is the accepted path when package/install budgets require downloadable maps.
+
+- [ ] Reconfirm the remote-delivery product gate, select which maps remain local, and record measured package/storage evidence for the migration.
+- [ ] Approve HTTPS/CDN ownership, authentication/public-read policy, immutable release-root naming, retention, rollback, and regional availability requirements.
+- [ ] Configure staging and production remote BuildPath/LoadPath profiles plus remote catalog/hash paths without changing stable map addresses or labels.
+- [ ] Archive platform-specific `addressables_content_state.bin`, catalog/hash, checksums, Build Layout, and operation-map build report for every published full build.
+- [ ] Move selected map Core/Presentation groups to remote schemas while preserving operation-map ids, pack ids, addresses, role labels, and partition labels.
+- [ ] Add the reserved `OperationMapContent*` ECS components, buffers, and enums without managed handles, URLs, or per-frame string policy.
+- [ ] Add `OperationMapContentDeliverySceneSystemHelper` as the single managed owner for catalog-check, size, download, cancellation, and removal handles through the existing composition lifecycle.
+- [ ] Restrict catalog checks/updates to Menu or another shell state with no loaded operation-map scene, asset, manifest, or chunk handles.
+- [ ] Add download-size and disk-headroom preflight with typed insufficient-storage results before any transfer starts.
+- [ ] Add one-at-a-time dependency download with byte-based dirty/versioned progress publication capped at 4 Hz.
+- [ ] Add bounded timeout/retry for typed transient failures and cooperative cancellation that never reports partial cache bytes as removed.
+- [ ] Verify pack version/hash, required stable addresses, compatible schema/app version, and zero remaining download bytes before availability becomes ready.
+- [ ] Add inactive-pack removal through dependency-cache clearing and reject removal while any related map/asset/scene handle is active.
+- [ ] Validate offline behavior: local recovery/tutorial maps remain playable, cached remote maps remain usable, and uncached maps expose typed unavailable status.
+- [ ] Add full-content and content-update CI paths from exact archived state, atomic upload ordering, catalog rollback, checksum verification, and stale-release cleanup policy.
+- [ ] Validate install, first download, interruption, retry, update, rollback, removal, redownload, offline launch, memory, load time, FPS, and thermal behavior on Android/CDN; evaluate Play Asset Delivery only as a separate adapter proof.
+
+Exit criteria:
+
+- Selected maps move from local to remote delivery without changing mission/scenario data, gameplay ECS contracts, stable addresses, or map-loading call sites.
+- Catalog/content updates cannot invalidate an active match and every handle/cache transition is deterministic and typed.
+- At least one local recovery map remains playable with no network.
+- CDN/device evidence meets package, storage, reliability, performance, and rollback budgets before remote delivery becomes production policy.
+
 ## Validation Log
 
 | Date | Slice | Commands / Evidence | Result | Notes |
@@ -647,6 +961,9 @@ Exit criteria:
 | 2026-07-14 | Initial tracker creation | `git diff --check` | Passed | Documentation only; no scene, code, prefab, bake, or asset migration. |
 | 2026-07-14 | Architecture and bake audit | Repository inspection of current baker, manifest, integrity ledger, streamer, Android resolver, `MatchSceneView`, map placement configs, M01 hold, and map workflow; `git diff --check` | Passed | Corrected migration order, current 514-chunk/16,542-source baseline snapshot, per-map ownership requirement, build-size risk, scene GUID rules, and M01 gating. No Unity validation claimed. |
 | 2026-07-14 | Technical architecture contract | Inspected active asmdefs, `SceneLifecycle*`, `MapSurfaceComponent`/`MapSurfaceBlob`, `MapSurfaceRuntimeBootstrapSceneSystemHelper`, `StaticMapPresentationManifest`/index/streamer/baker, `TacticalMapDefinition`, and architecture runner entry points; verified 138 checklist items; `git diff --check -- Design/Architecture/operation_map_scene_split_and_generator_tracker.md` | Passed | Added exact planned type kinds, namespaces, files, assembly direction, lifecycle/data ownership, managed-versus-ISystem boundary, blob reuse, no-GC/performance budgets, naming rules, and technical validation matrix. Documentation only; no Unity validation claimed. |
+| 2026-07-14 | Portfolio generation and package-size decision | Measured current map source scene, subscene/probes, map surface, placement configs, 514-chunk static-presentation output, generated combined meshes, current Android APK, Entities stream/content archive, and packaged Unity levels; `git diff --check -- Design/Architecture/operation_map_scene_split_and_generator_tracker.md` | Passed | Recorded editor-generated/reviewed/baked maps as the production direction, runtime variation through scenarios, runtime procedural generation as a future constrained Skirmish-only concern, and provisional twelve-map source/package estimates. Its earlier starter/download split was superseded by the all-local acceptance below; the size evidence remains valid. Documentation only; estimates are not accepted release measurements. |
+| 2026-07-14 | Product direction acceptance | Product-owner decision in this task; tracker accounting audit (`177` checklist items; Phase 2A `20`; Phase 10 `21`; Phase 11 `16`) | Accepted | Hybrid editor generation, reviewed canonical maps, downstream bakes, scenario-driven runtime variation, and every approved map bundled as an independent local Addressables pack are documented initial scope. HTTPS/CDN delivery is a deferred migration that preserves stable identity. Implementation remains deferred until an explicit start request; Phase 0 has not started. |
+| 2026-07-14 | Addressables packaging and staged delivery specification | Inspected installed Addressables `3.1.0`, current local-only group/settings baseline, official Unity Addressables scene/bundle/handle/content-update guidance, and Android Play Asset Delivery guidance; audited all phase totals (`177`); `git diff --check -- Design/Architecture/operation_map_scene_split_and_generator_tracker.md` | Passed | Added normative local group/address/label/partition schemas, handle and Entities-content gates, build/CI artifacts, typed failures, exact planned type ownership, 20-step all-local foundation, and 16-step deferred CDN migration. Documentation only; no Unity process, project setting, scene, code, Addressables asset, or build output was changed. |
 
 ## Open Decisions
 
@@ -657,6 +974,6 @@ Exit criteria:
 | Current map subscene | Make it map-owned if its authored ECS content is map-specific; keep only truly shared runtime ECS setup in shell composition. | Decide from Phase 0 inventory, not filename alone. |
 | Manifest schema migration | Keep schema-v1 compatibility while introducing map id/source GUID and map-scoped outputs in a new schema. | Approve with multi-map ownership and no-op tests in Phase 2. |
 | Runtime loading | Keep `Match.unity` as enabled base scene and load one operation-map source/subscene additively through existing lifecycle. | Validate in Phase 5. |
-| Build inclusion | Start with an explicit built-in map catalog; do not package every future map automatically. Evaluate downloadable content only when content volume requires it. | Prove APK/installed-size behavior before second shipping map. |
+| Remote migration trigger | Bundle every catalog-approved map locally for the initial milestone. Move selected stable per-map groups to HTTPS/CDN only after all-local stability and measured package/install evidence justify it. | Explicit Phase 11 product gate; no remote implementation during Phase 2A/10. |
 | M01 source | Dedicated `opmap.ch01.district_edge_01`. | Reconfirm after FirstLaunch releases the M01 hold. |
-| Generator | Editor-time deterministic source/metadata generation only; static presentation remains a separate downstream bake. | Runtime procedural generation stays out of scope. |
+| Generator | Editor-time deterministic source/metadata generation followed by review and the existing downstream bakes. Runtime data varies scenarios, not physical topology. | Full runtime procedural generation stays out of scope; any future constrained Skirmish-only generator requires a separate design and performance contract. |

@@ -738,6 +738,10 @@ namespace Game.Runtime
                    previous.LifetimeRewarded != current.LifetimeRewarded ||
                    previous.LifetimeExported != current.LifetimeExported ||
                    previous.LifetimeSpent != current.LifetimeSpent ||
+                   previous.LifetimeConstructionSpent != current.LifetimeConstructionSpent ||
+                   previous.LifetimeRepairSpent != current.LifetimeRepairSpent ||
+                   previous.LifetimeInfrastructureSpent != current.LifetimeInfrastructureSpent ||
+                   previous.LifetimeUpgradeSpent != current.LifetimeUpgradeSpent ||
                    previous.Version != current.Version;
         }
 

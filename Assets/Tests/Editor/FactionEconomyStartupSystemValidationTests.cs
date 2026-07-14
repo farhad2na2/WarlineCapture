@@ -74,6 +74,10 @@ public sealed class FactionEconomyStartupSystemValidationTests
         Assert.AreEqual(FactionIdentity.EnemyFactionId, materials.FactionId);
         Assert.AreEqual(0, materials.Current);
         Assert.AreEqual(0, materials.Capacity);
+        FactionMaterialFabricationTelemetryComponent telemetry =
+            em.GetComponentData<FactionMaterialFabricationTelemetryComponent>(economyEntity);
+        Assert.AreEqual(FactionIdentity.EnemyFactionId, telemetry.FactionId);
+        Assert.AreEqual(0f, telemetry.ActiveSeconds);
     }
 
     [Test]
@@ -110,6 +114,7 @@ public sealed class FactionEconomyStartupSystemValidationTests
 
         Assert.IsTrue(em.HasComponent<FactionEconomyPolicy>(economyEntity));
         Assert.IsTrue(em.HasComponent<FactionTacticalMaterialsComponent>(economyEntity));
+        Assert.IsTrue(em.HasComponent<FactionMaterialFabricationTelemetryComponent>(economyEntity));
         Assert.AreEqual(75000, em.GetComponentData<FactionEconomy>(economyEntity).Money);
         Assert.AreEqual(1.15f, em.GetComponentData<FactionEconomyPolicy>(economyEntity).IncomeMultiplier, 0.0001f);
     }

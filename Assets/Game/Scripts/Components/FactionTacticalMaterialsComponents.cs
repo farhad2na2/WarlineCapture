@@ -48,6 +48,22 @@ namespace Game.Components
         public int LifetimeRewarded;
         public int LifetimeExported;
         public int LifetimeSpent;
+        public int LifetimeConstructionSpent;
+        public int LifetimeRepairSpent;
+        public int LifetimeInfrastructureSpent;
+        public int LifetimeUpgradeSpent;
+        public uint Version;
+    }
+
+    public struct FactionMaterialFabricationTelemetryComponent : IComponentData
+    {
+        public byte FactionId;
+        public float ActiveSeconds;
+        public float NoOilInputBlockedSeconds;
+        public float MaterialsCapacityFullBlockedSeconds;
+        public float NoOilRouteBlockedSeconds;
+        public float ProductionDisabledSeconds;
+        public float BuildingDisabledSeconds;
         public uint Version;
     }
 }

@@ -22,6 +22,14 @@ public sealed class BalanceHarnessContractTests
                 nameof(BalanceReportWriter_IncludesResourceExchangeFields),
                 test => test.BalanceReportWriter_IncludesResourceExchangeFields(),
                 ref passed);
+            RunCase(
+                nameof(BalanceMetrics_FieldFabricationTelemetrySummarizesTypedCounters),
+                test => test.BalanceMetrics_FieldFabricationTelemetrySummarizesTypedCounters(),
+                ref passed);
+            RunCase(
+                nameof(BalanceReportWriter_IncludesFieldFabricationFields),
+                test => test.BalanceReportWriter_IncludesFieldFabricationFields(),
+                ref passed);
 
             Debug.Log($"[BalanceHarnessContractValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -316,6 +324,95 @@ public sealed class BalanceHarnessContractTests
             StringAssert.Contains("ResourceExchangeRouteSummary", json);
             StringAssert.Contains("ResourceExchangeCompletionRatePercent", json);
             StringAssert.Contains("ResourceExchangeCreditsDelta", json);
+        }
+        finally
+        {
+            if (Directory.Exists(reportDirectory))
+                Directory.Delete(reportDirectory, true);
+        }
+    }
+
+    [Test]
+    [Category("Balance")]
+    public void BalanceMetrics_FieldFabricationTelemetrySummarizesTypedCounters()
+    {
+        var metrics = new BalanceMetrics();
+        metrics.ApplyFieldFabricationTelemetry(
+            new FactionTacticalMaterialsComponent
+            {
+                Current = 75,
+                Capacity = 200,
+                LifetimeFabricated = 120,
+                LifetimeImported = 30,
+                LifetimeRewarded = 10,
+                LifetimeExported = 15,
+                LifetimeSpent = 80,
+                LifetimeConstructionSpent = 40,
+                LifetimeRepairSpent = 10,
+                LifetimeInfrastructureSpent = 8,
+                LifetimeUpgradeSpent = 7
+            },
+            new FactionMaterialFabricationTelemetryComponent
+            {
+                ActiveSeconds = 90f,
+                NoOilInputBlockedSeconds = 12f,
+                MaterialsCapacityFullBlockedSeconds = 8f,
+                NoOilRouteBlockedSeconds = 4f,
+                ProductionDisabledSeconds = 3f,
+                BuildingDisabledSeconds = 2f
+            });
+
+        Assert.AreEqual(120, metrics.MaterialsFabricated);
+        Assert.AreEqual(30, metrics.MaterialsImported);
+        Assert.AreEqual(10, metrics.MaterialsRewarded);
+        Assert.AreEqual(15, metrics.MaterialsExported);
+        Assert.AreEqual(80, metrics.MaterialsGrossSpent);
+        Assert.AreEqual(40, metrics.MaterialsConstructionSpent);
+        Assert.AreEqual(90f, metrics.FabricationActiveSeconds);
+        Assert.AreEqual(29f, metrics.FabricationBlockedSeconds);
+    }
+
+    [Test]
+    [Category("Balance")]
+    public void BalanceReportWriter_IncludesFieldFabricationFields()
+    {
+        string reportDirectory = Path.Combine(
+            Path.GetTempPath(),
+            "BalanceReportTests",
+            Guid.NewGuid().ToString("N"));
+
+        try
+        {
+            var metrics = new BalanceMetrics
+            {
+                ProbeId = "Field_Fabrication_Report_Test",
+                ProbeDisplayName = "Field Fabrication Report Test"
+            };
+            metrics.ApplyFieldFabricationTelemetry(
+                new FactionTacticalMaterialsComponent
+                {
+                    Current = 50,
+                    Capacity = 100,
+                    LifetimeFabricated = 80,
+                    LifetimeSpent = 30,
+                    LifetimeConstructionSpent = 30
+                },
+                new FactionMaterialFabricationTelemetryComponent
+                {
+                    ActiveSeconds = 60f,
+                    NoOilInputBlockedSeconds = 15f
+                });
+
+            BalanceReportWriter.ReportPaths paths = BalanceReportWriter.WriteReport(metrics, reportDirectory);
+            string markdown = File.ReadAllText(paths.MarkdownPath);
+            StringAssert.Contains("## Materials And Field Fabrication", markdown);
+            StringAssert.Contains("Gross spent including exports", markdown);
+            StringAssert.Contains("Blocked, no Oil input", markdown);
+
+            string json = File.ReadAllText(paths.JsonPath);
+            StringAssert.Contains("MaterialsFabricated", json);
+            StringAssert.Contains("MaterialsConstructionSpent", json);
+            StringAssert.Contains("FabricationNoOilInputBlockedSeconds", json);
         }
         finally
         {

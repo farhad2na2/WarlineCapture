@@ -124,6 +124,13 @@ namespace Game.Runtime
                         FactionId = factionId
                     });
                 }
+                if (!em.HasComponent<FactionMaterialFabricationTelemetryComponent>(economyEntity))
+                {
+                    em.AddComponentData(economyEntity, new FactionMaterialFabricationTelemetryComponent
+                    {
+                        FactionId = factionId
+                    });
+                }
 
                 EnsureMaterialFabricationEventQueue(em, economyEntity);
             }

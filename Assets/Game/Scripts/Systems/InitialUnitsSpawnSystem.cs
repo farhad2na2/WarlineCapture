@@ -916,6 +916,15 @@ namespace Game.Runtime
             else
                 em.AddComponentData(economyEntity, materials);
 
+            FactionMaterialFabricationTelemetryComponent fabricationTelemetry = new()
+            {
+                FactionId = factionId
+            };
+            if (em.HasComponent<FactionMaterialFabricationTelemetryComponent>(economyEntity))
+                em.SetComponentData(economyEntity, fabricationTelemetry);
+            else
+                em.AddComponentData(economyEntity, fabricationTelemetry);
+
             if (!em.HasComponent<MaterialFabricationEconomyEventQueueComponent>(economyEntity))
                 em.AddComponentData(economyEntity, new MaterialFabricationEconomyEventQueueComponent());
             DynamicBuffer<MaterialFabricationEconomyEventElement> events =

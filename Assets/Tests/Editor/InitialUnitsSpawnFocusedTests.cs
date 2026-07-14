@@ -154,6 +154,11 @@ public sealed class InitialUnitsSpawnFocusedTests
             Assert.AreEqual(isPlayerControlled ? 100 : 80, materials.Capacity);
             Assert.AreEqual(isPlayerControlled ? 25 : 40, materials.Current);
             Assert.AreEqual(1u, materials.Version);
+            FactionMaterialFabricationTelemetryComponent telemetry =
+                em.GetComponentData<FactionMaterialFabricationTelemetryComponent>(economies[i]);
+            Assert.AreEqual(economy.FactionId, telemetry.FactionId);
+            Assert.AreEqual(0f, telemetry.ActiveSeconds);
+            Assert.AreEqual(0u, telemetry.Version);
         }
     }
 

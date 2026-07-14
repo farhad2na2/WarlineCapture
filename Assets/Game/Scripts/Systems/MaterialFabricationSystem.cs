@@ -23,12 +23,18 @@ namespace Game.Runtime
             public readonly int CompletedCycles;
             public readonly float OilConsumedBarrels;
             public readonly int MaterialsProduced;
+            public readonly float ActiveSeconds;
 
-            public TickResult(int completedCycles, float oilConsumedBarrels, int materialsProduced)
+            public TickResult(
+                int completedCycles,
+                float oilConsumedBarrels,
+                int materialsProduced,
+                float activeSeconds)
             {
                 CompletedCycles = completedCycles;
                 OilConsumedBarrels = oilConsumedBarrels;
                 MaterialsProduced = materialsProduced;
+                ActiveSeconds = activeSeconds;
             }
         }
 
@@ -69,6 +75,8 @@ namespace Game.Runtime
                 SystemAPI.GetComponentLookup<MaterialFabricationEconomyEventQueueComponent>();
             BufferLookup<MaterialFabricationEconomyEventElement> eventBufferLookup =
                 SystemAPI.GetBufferLookup<MaterialFabricationEconomyEventElement>();
+            ComponentLookup<FactionMaterialFabricationTelemetryComponent> telemetryLookup =
+                SystemAPI.GetComponentLookup<FactionMaterialFabricationTelemetryComponent>();
             ComponentLookup<Disabled> disabledLookup = SystemAPI.GetComponentLookup<Disabled>(true);
             ComponentLookup<UnitDeathAnimationComponent> deathAnimationLookup =
                 SystemAPI.GetComponentLookup<UnitDeathAnimationComponent>(true);
@@ -114,6 +122,12 @@ namespace Game.Runtime
                     ref materials,
                     fabricationDeltaTime,
                     buildingOperational);
+                AccumulateTelemetry(
+                    telemetryLookup,
+                    materialsEntity,
+                    fabrication,
+                    result,
+                    fabricationDeltaTime);
                 if (materials.Version != previousMaterialsVersion)
                     materialsLookup[materialsEntity] = materials;
 
@@ -206,6 +220,7 @@ namespace Game.Runtime
             }
 
             float progress = ClampProgress(fabrication.CycleProgressSeconds, cycleDuration);
+            float startingProgress = progress;
             if (!buildingOperational)
             {
                 SetFabricationState(
@@ -259,7 +274,7 @@ namespace Game.Runtime
                     (float)totalProgress,
                     MaterialFabricationStatusCode.Producing,
                     MaterialFabricationBlockReasonCode.None);
-                return default;
+                return new TickResult(0, 0f, 0, safeDeltaTime);
             }
 
             float availableOil = BuildingResourceStorageTransferSystemHelper.GetAvailableSourceResource(
@@ -332,7 +347,66 @@ namespace Game.Runtime
                 progress = 0f;
 
             SetFabricationState(ref fabrication, progress, nextStatus, nextBlockReason);
-            return new TickResult(completedCycles, oilConsumed, materialsProduced);
+            float activeSeconds = safeDeltaTime;
+            if (completedCycles < elapsedCycles)
+            {
+                double activeUntilBlocked = completedCycles * (double)cycleDuration - startingProgress;
+                activeSeconds = (float)math.clamp(activeUntilBlocked, 0d, safeDeltaTime);
+            }
+            return new TickResult(completedCycles, oilConsumed, materialsProduced, activeSeconds);
+        }
+
+        public static void AccumulateTelemetry(
+            ref FactionMaterialFabricationTelemetryComponent telemetry,
+            in TickResult result,
+            float deltaTime,
+            MaterialFabricationStatusCode status,
+            MaterialFabricationBlockReasonCode blockReason)
+        {
+            float safeDeltaTime = math.isfinite(deltaTime) ? math.max(0f, deltaTime) : 0f;
+            float activeSeconds = math.clamp(result.ActiveSeconds, 0f, safeDeltaTime);
+            float blockedSeconds = safeDeltaTime - activeSeconds;
+            bool changed = false;
+            if (activeSeconds > 0f)
+            {
+                telemetry.ActiveSeconds = SaturatingAdd(telemetry.ActiveSeconds, activeSeconds);
+                changed = true;
+            }
+
+            if (blockedSeconds > 0f && status != MaterialFabricationStatusCode.Producing)
+            {
+                switch (blockReason)
+                {
+                    case MaterialFabricationBlockReasonCode.NoOilInput:
+                        telemetry.NoOilInputBlockedSeconds =
+                            SaturatingAdd(telemetry.NoOilInputBlockedSeconds, blockedSeconds);
+                        changed = true;
+                        break;
+                    case MaterialFabricationBlockReasonCode.MaterialsCapacityFull:
+                        telemetry.MaterialsCapacityFullBlockedSeconds =
+                            SaturatingAdd(telemetry.MaterialsCapacityFullBlockedSeconds, blockedSeconds);
+                        changed = true;
+                        break;
+                    case MaterialFabricationBlockReasonCode.NoOilRoute:
+                        telemetry.NoOilRouteBlockedSeconds =
+                            SaturatingAdd(telemetry.NoOilRouteBlockedSeconds, blockedSeconds);
+                        changed = true;
+                        break;
+                    case MaterialFabricationBlockReasonCode.ProductionDisabled:
+                        telemetry.ProductionDisabledSeconds =
+                            SaturatingAdd(telemetry.ProductionDisabledSeconds, blockedSeconds);
+                        changed = true;
+                        break;
+                    case MaterialFabricationBlockReasonCode.BuildingDisabled:
+                        telemetry.BuildingDisabledSeconds =
+                            SaturatingAdd(telemetry.BuildingDisabledSeconds, blockedSeconds);
+                        changed = true;
+                        break;
+                }
+            }
+
+            if (changed)
+                IncrementVersion(ref telemetry.Version);
         }
 
         public static MaterialFabricationResultComponent ApplyProductionRequest(
@@ -464,6 +538,35 @@ namespace Game.Runtime
         private static void IncrementVersion(ref uint version)
         {
             version = version == uint.MaxValue ? 1u : version + 1u;
+        }
+
+        private static float SaturatingAdd(float value, float amount)
+        {
+            if (!math.isfinite(value) || value < 0f)
+                value = 0f;
+            if (!math.isfinite(amount) || amount <= 0f)
+                return value;
+            return value >= float.MaxValue - amount ? float.MaxValue : value + amount;
+        }
+
+        private static void AccumulateTelemetry(
+            ComponentLookup<FactionMaterialFabricationTelemetryComponent> telemetryLookup,
+            Entity entity,
+            in MaterialFabricationComponent fabrication,
+            in TickResult result,
+            float deltaTime)
+        {
+            if (!telemetryLookup.HasComponent(entity))
+                return;
+
+            FactionMaterialFabricationTelemetryComponent telemetry = telemetryLookup[entity];
+            AccumulateTelemetry(
+                ref telemetry,
+                result,
+                deltaTime,
+                fabrication.Status,
+                fabrication.BlockReason);
+            telemetryLookup[entity] = telemetry;
         }
     }
 }

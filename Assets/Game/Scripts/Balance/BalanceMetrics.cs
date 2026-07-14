@@ -58,6 +58,24 @@ namespace Game.Runtime
         public int ResourceExchangeFuelDelta;
         public int ResourceExchangeRushTicketsDelta;
         public int ResourceExchangeNetResourceDelta;
+        public int MaterialsCurrent;
+        public int MaterialsCapacity;
+        public int MaterialsFabricated;
+        public int MaterialsImported;
+        public int MaterialsRewarded;
+        public int MaterialsExported;
+        public int MaterialsGrossSpent;
+        public int MaterialsConstructionSpent;
+        public int MaterialsRepairSpent;
+        public int MaterialsInfrastructureSpent;
+        public int MaterialsUpgradeSpent;
+        public float FabricationActiveSeconds;
+        public float FabricationBlockedSeconds;
+        public float FabricationNoOilInputBlockedSeconds;
+        public float FabricationMaterialsCapacityFullBlockedSeconds;
+        public float FabricationNoOilRouteBlockedSeconds;
+        public float FabricationProductionDisabledSeconds;
+        public float FabricationBuildingDisabledSeconds;
         public string MatchDurationClassification;
         public string EconomyActivityClassification;
         public string CasualtyClassification;
@@ -215,6 +233,42 @@ namespace Game.Runtime
             ResourceExchangeCompletionRatePercent = ResourceExchangeStartedCount > 0
                 ? Mathf.Clamp01((float)ResourceExchangeCompletedCount / ResourceExchangeStartedCount) * 100f
                 : 0f;
+        }
+
+        public void ApplyFieldFabricationTelemetry(
+            in FactionTacticalMaterialsComponent materials,
+            in FactionMaterialFabricationTelemetryComponent fabrication)
+        {
+            MaterialsCurrent = Mathf.Max(0, materials.Current);
+            MaterialsCapacity = Mathf.Max(0, materials.Capacity);
+            MaterialsFabricated = Mathf.Max(0, materials.LifetimeFabricated);
+            MaterialsImported = Mathf.Max(0, materials.LifetimeImported);
+            MaterialsRewarded = Mathf.Max(0, materials.LifetimeRewarded);
+            MaterialsExported = Mathf.Max(0, materials.LifetimeExported);
+            MaterialsGrossSpent = Mathf.Max(0, materials.LifetimeSpent);
+            MaterialsConstructionSpent = Mathf.Max(0, materials.LifetimeConstructionSpent);
+            MaterialsRepairSpent = Mathf.Max(0, materials.LifetimeRepairSpent);
+            MaterialsInfrastructureSpent = Mathf.Max(0, materials.LifetimeInfrastructureSpent);
+            MaterialsUpgradeSpent = Mathf.Max(0, materials.LifetimeUpgradeSpent);
+
+            FabricationActiveSeconds = ClampDuration(fabrication.ActiveSeconds);
+            FabricationNoOilInputBlockedSeconds = ClampDuration(fabrication.NoOilInputBlockedSeconds);
+            FabricationMaterialsCapacityFullBlockedSeconds =
+                ClampDuration(fabrication.MaterialsCapacityFullBlockedSeconds);
+            FabricationNoOilRouteBlockedSeconds = ClampDuration(fabrication.NoOilRouteBlockedSeconds);
+            FabricationProductionDisabledSeconds = ClampDuration(fabrication.ProductionDisabledSeconds);
+            FabricationBuildingDisabledSeconds = ClampDuration(fabrication.BuildingDisabledSeconds);
+            FabricationBlockedSeconds =
+                FabricationNoOilInputBlockedSeconds +
+                FabricationMaterialsCapacityFullBlockedSeconds +
+                FabricationNoOilRouteBlockedSeconds +
+                FabricationProductionDisabledSeconds +
+                FabricationBuildingDisabledSeconds;
+        }
+
+        private static float ClampDuration(float value)
+        {
+            return float.IsNaN(value) || float.IsInfinity(value) ? 0f : Mathf.Max(0f, value);
         }
 
         private static string BuildRouteSummary(int exportCount, int importCount)

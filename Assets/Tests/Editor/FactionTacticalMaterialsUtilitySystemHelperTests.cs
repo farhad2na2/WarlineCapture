@@ -14,12 +14,13 @@ public sealed class FactionTacticalMaterialsUtilitySystemHelperTests
             tests.Grant_UpdatesCanonicalAmountCounterAndVersion();
             tests.Grant_RejectsCapacityOverflowWithoutMutation();
             tests.Spend_UpdatesCanonicalAmountCountersAndVersion();
+            tests.Spend_RecordsTypedReasonsAndConstructionRefund();
             tests.Spend_RejectsInsufficientMaterialsWithoutMutation();
             tests.RefundExport_ReversesOnlyRefundedReservation();
             tests.Mutations_RejectInvalidStateAndAmount();
             tests.Mutations_SaturateLifetimeCountersAndWrapVersion();
             tests.Mutations_DoNotAllocateManagedMemoryAfterWarmup();
-            Debug.Log("[FactionTacticalMaterialsFocusedValidation] result=Passed tests=8");
+            Debug.Log("[FactionTacticalMaterialsFocusedValidation] result=Passed tests=9");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -98,6 +99,39 @@ public sealed class FactionTacticalMaterialsUtilitySystemHelperTests
         Assert.AreEqual(4, materials.Current);
         Assert.AreEqual(0, materials.LifetimeSpent);
         Assert.AreEqual(9u, materials.Version);
+    }
+
+    [Test]
+    public void Spend_RecordsTypedReasonsAndConstructionRefund()
+    {
+        FactionTacticalMaterialsComponent materials = CreateMaterials(current: 1000, capacity: 1000, version: 1u);
+
+        Assert.AreEqual(FactionTacticalMaterialsMutationResult.Applied,
+            FactionTacticalMaterialsUtilitySystemHelper.TrySpend(
+                ref materials, 10, FactionTacticalMaterialsSpendKind.Construction));
+        Assert.AreEqual(FactionTacticalMaterialsMutationResult.Applied,
+            FactionTacticalMaterialsUtilitySystemHelper.TrySpend(
+                ref materials, 20, FactionTacticalMaterialsSpendKind.Repair));
+        Assert.AreEqual(FactionTacticalMaterialsMutationResult.Applied,
+            FactionTacticalMaterialsUtilitySystemHelper.TrySpend(
+                ref materials, 30, FactionTacticalMaterialsSpendKind.Infrastructure));
+        Assert.AreEqual(FactionTacticalMaterialsMutationResult.Applied,
+            FactionTacticalMaterialsUtilitySystemHelper.TrySpend(
+                ref materials, 40, FactionTacticalMaterialsSpendKind.Upgrade));
+        Assert.AreEqual(FactionTacticalMaterialsMutationResult.Applied,
+            FactionTacticalMaterialsUtilitySystemHelper.TrySpend(
+                ref materials, 50, FactionTacticalMaterialsSpendKind.Export));
+        Assert.AreEqual(FactionTacticalMaterialsMutationResult.Applied,
+            FactionTacticalMaterialsUtilitySystemHelper.TryRefundConstruction(ref materials, 4));
+
+        Assert.AreEqual(854, materials.Current);
+        Assert.AreEqual(146, materials.LifetimeSpent);
+        Assert.AreEqual(6, materials.LifetimeConstructionSpent);
+        Assert.AreEqual(20, materials.LifetimeRepairSpent);
+        Assert.AreEqual(30, materials.LifetimeInfrastructureSpent);
+        Assert.AreEqual(40, materials.LifetimeUpgradeSpent);
+        Assert.AreEqual(50, materials.LifetimeExported);
+        Assert.AreEqual(7u, materials.Version);
     }
 
     [Test]

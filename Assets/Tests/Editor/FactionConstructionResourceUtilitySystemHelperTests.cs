@@ -64,6 +64,7 @@ public sealed class FactionConstructionResourceUtilitySystemHelperTests
         Assert.AreEqual(75, economy.Money);
         Assert.AreEqual(28, materials.Current);
         Assert.AreEqual(12, materials.LifetimeSpent);
+        Assert.AreEqual(12, materials.LifetimeConstructionSpent);
         Assert.AreEqual(8u, materials.Version);
     }
 
@@ -84,6 +85,7 @@ public sealed class FactionConstructionResourceUtilitySystemHelperTests
         Assert.AreEqual(10, economy.Money);
         Assert.AreEqual(5, materials.Current);
         Assert.AreEqual(0, materials.LifetimeSpent);
+        Assert.AreEqual(0, materials.LifetimeConstructionSpent);
         Assert.AreEqual(3u, materials.Version);
     }
 

@@ -76,6 +76,13 @@ namespace Game.Runtime
         public float FabricationNoOilRouteBlockedSeconds;
         public float FabricationProductionDisabledSeconds;
         public float FabricationBuildingDisabledSeconds;
+        public int FuelLogisticsFactionId;
+        public int TrayRouteAssignmentCount;
+        public int TrayRouteReassignmentCount;
+        public int TrayRouteFailureCount;
+        public float OilDeliveredToRefineries;
+        public float OilDeliveredToFabricationDepots;
+        public uint FuelLogisticsTelemetryVersion;
         public string MatchDurationClassification;
         public string EconomyActivityClassification;
         public string CasualtyClassification;
@@ -266,7 +273,24 @@ namespace Game.Runtime
                 FabricationBuildingDisabledSeconds;
         }
 
+        public void ApplyFuelLogisticsTelemetry(in FactionFuelLogisticsTelemetryComponent telemetry)
+        {
+            FuelLogisticsFactionId = telemetry.FactionId;
+            TrayRouteAssignmentCount = Mathf.Max(0, telemetry.TrayRouteAssignmentCount);
+            TrayRouteReassignmentCount = Mathf.Max(0, telemetry.TrayRouteReassignmentCount);
+            TrayRouteFailureCount = Mathf.Max(0, telemetry.TrayRouteFailureCount);
+            OilDeliveredToRefineries = ClampFiniteNonNegative(telemetry.OilDeliveredToRefineries);
+            OilDeliveredToFabricationDepots =
+                ClampFiniteNonNegative(telemetry.OilDeliveredToFabricationDepots);
+            FuelLogisticsTelemetryVersion = telemetry.Version;
+        }
+
         private static float ClampDuration(float value)
+        {
+            return ClampFiniteNonNegative(value);
+        }
+
+        private static float ClampFiniteNonNegative(float value)
         {
             return float.IsNaN(value) || float.IsInfinity(value) ? 0f : Mathf.Max(0f, value);
         }

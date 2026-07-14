@@ -52,11 +52,13 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.AutomaticFuelLogisticsTray_NoRefineryCapacitySetsTypedIdleReason();
             tests.AutomaticFuelLogisticsTray_DestroyedSourceClearsReservation();
             tests.AutomaticFuelLogisticsTray_DestroyedDestinationClearsReservation();
+            tests.AutomaticFuelLogisticsTray_CapturedDestinationClearsReservationAndCountsFailure();
             tests.AutomaticFuelLogisticsTray_DeadHaulerClearsReservation();
             tests.AutomaticFuelLogisticsTray_RouteInvalidationClearsReservation();
             tests.AutomaticFuelLogisticsSteadyState_DoesNotAllocateManagedMemory();
             tests.AutomaticFuelLogisticsCycle_TrayTransfersOilWithoutManualCommand();
             tests.AutomaticFuelLogisticsCycle_TrayTransfersOilToFabricationDepotWithoutManualCommand();
+            tests.ManualFuelLogisticsTray_ReassignmentCountsOnlyChangedSuccessfulRoute();
             tests.AutomaticFuelLogisticsActiveFabricationAssignment_IsNotRecalculated();
             tests.AutomaticFuelLogisticsCycle_TankerTransfersFuelWithoutManualCommand();
             tests.AutomaticFuelLogisticsEnemyFaction_ProducesAndDeliversFuel();
@@ -65,7 +67,7 @@ public sealed class BuildingResourceProductionEcsSystemTests
             tests.AutomaticFuelLogisticsTanker_FullFuelStorageSetsTypedIdleReason();
             tests.AutomaticFuelLogisticsTanker_NoRouteSetsTypedIdleReason();
             tests.AutomaticFuelLogisticsTanker_NoAvailableTankerDoesNotReserveFuel();
-            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=50");
+            Debug.Log("[BuildingResourceProductionEcsFocusedValidation] result=Passed tests=52");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -2463,6 +2465,7 @@ public sealed class BuildingResourceProductionEcsSystemTests
         try
         {
             EntityManager em = world.EntityManager;
+            Entity telemetryEntity = CreateFuelLogisticsTelemetryEntity(em, 1);
             Entity gridEntity = CreateTestGridEntity(em, 48, 48, out blocked, out occupied);
             RuntimeBuildingEntity oilPump = CreateResourceBuilding(
                 em,
@@ -2512,6 +2515,66 @@ public sealed class BuildingResourceProductionEcsSystemTests
                 oilPump,
                 refinery,
                 FuelLogisticsBlockReasonCode.RouteUnavailable);
+            bridge.UpdateResourceHaulers(context, hasPendingPathJob: false, now: 2.2f);
+            FactionFuelLogisticsTelemetryComponent telemetry =
+                em.GetComponentData<FactionFuelLogisticsTelemetryComponent>(telemetryEntity);
+            Assert.AreEqual(1, telemetry.TrayRouteAssignmentCount);
+            Assert.AreEqual(1, telemetry.TrayRouteFailureCount);
+        }
+        finally
+        {
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (occupied.IsCreated)
+                occupied.Dispose();
+            world.Dispose();
+        }
+    }
+
+    [Test]
+    public void AutomaticFuelLogisticsTray_CapturedDestinationClearsReservationAndCountsFailure()
+    {
+        var world = new World(nameof(AutomaticFuelLogisticsTray_CapturedDestinationClearsReservationAndCountsFailure));
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        try
+        {
+            EntityManager em = world.EntityManager;
+            Entity telemetryEntity = CreateFuelLogisticsTelemetryEntity(em, 1);
+            Entity gridEntity = CreateTestGridEntity(em, 48, 48, out blocked, out occupied);
+            RuntimeBuildingEntity oilPump = CreateResourceBuilding(
+                em, 64, 1, new Vector2Int(8, 10), 100, 0, 80f, 0f, 40f, 0f);
+            RuntimeBuildingEntity refinery = CreateResourceBuilding(
+                em, 65, 1, new Vector2Int(20, 10), 100, 100, 0f, 40f, 0f, 0f);
+            var runtimeBuildings = new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity>
+            {
+                { oilPump.Id, oilPump },
+                { refinery.Id, refinery }
+            };
+            Entity tray = CreateFuelLogisticsHauler(em, "Unit_Veh_Truck_Tray", 1, new int2(4, 12));
+            var bridge = new BuildingResourceHaulerBridgeCompositionSystemHelper();
+            BuildingResourceHaulerBridgeCompositionSystemHelper.Context context =
+                CreateBridgeCycleContext(em, gridEntity, runtimeBuildings);
+
+            bridge.UpdateResourceHaulers(context, false, 0f);
+            refinery.OwnerFactionId = 2;
+            BuildingResourceStorageComponent capturedStorage =
+                em.GetComponentData<BuildingResourceStorageComponent>(refinery.CombatEntity);
+            capturedStorage.OwnerFactionId = 2;
+            em.SetComponentData(refinery.CombatEntity, capturedStorage);
+
+            bridge.UpdateResourceHaulers(context, false, 0.1f);
+
+            AssertClearedOilReservationWithStatus(
+                em,
+                tray,
+                oilPump,
+                refinery,
+                FuelLogisticsBlockReasonCode.DestinationUnavailable);
+            FactionFuelLogisticsTelemetryComponent telemetry =
+                em.GetComponentData<FactionFuelLogisticsTelemetryComponent>(telemetryEntity);
+            Assert.AreEqual(1, telemetry.TrayRouteAssignmentCount);
+            Assert.AreEqual(1, telemetry.TrayRouteFailureCount);
         }
         finally
         {
@@ -2641,6 +2704,7 @@ public sealed class BuildingResourceProductionEcsSystemTests
         try
         {
             EntityManager em = world.EntityManager;
+            Entity telemetryEntity = CreateFuelLogisticsTelemetryEntity(em, 1);
             Entity gridEntity = CreateTestGridEntity(em, 32, 32, out blocked, out occupied);
             RuntimeBuildingEntity oilPump = CreateResourceBuilding(
                 em,
@@ -2722,6 +2786,13 @@ public sealed class BuildingResourceProductionEcsSystemTests
             Assert.AreEqual(0f, destinationStorage.ReservedOilInboundBarrels);
             Assert.IsFalse(em.HasComponent<UnitResourceHaulOrder>(hauler));
             Assert.IsFalse(em.HasComponent<UnitResourceHaulReservation>(hauler));
+            FactionFuelLogisticsTelemetryComponent telemetry =
+                em.GetComponentData<FactionFuelLogisticsTelemetryComponent>(telemetryEntity);
+            Assert.AreEqual(1, telemetry.TrayRouteAssignmentCount);
+            Assert.AreEqual(0, telemetry.TrayRouteReassignmentCount);
+            Assert.AreEqual(0, telemetry.TrayRouteFailureCount);
+            Assert.AreEqual(8f, telemetry.OilDeliveredToRefineries);
+            Assert.AreEqual(0f, telemetry.OilDeliveredToFabricationDepots);
         }
         finally
         {
@@ -2742,6 +2813,7 @@ public sealed class BuildingResourceProductionEcsSystemTests
         try
         {
             EntityManager em = world.EntityManager;
+            Entity telemetryEntity = CreateFuelLogisticsTelemetryEntity(em, 1);
             Entity gridEntity = CreateTestGridEntity(em, 32, 32, out blocked, out occupied);
             RuntimeBuildingEntity oilPump = CreateResourceBuilding(
                 em,
@@ -2805,6 +2877,66 @@ public sealed class BuildingResourceProductionEcsSystemTests
             Assert.AreEqual(0f, depotStorage.ReservedOilInboundBarrels);
             Assert.IsFalse(em.HasComponent<UnitResourceHaulOrder>(hauler));
             Assert.IsFalse(em.HasComponent<UnitResourceHaulReservation>(hauler));
+            FactionFuelLogisticsTelemetryComponent telemetry =
+                em.GetComponentData<FactionFuelLogisticsTelemetryComponent>(telemetryEntity);
+            Assert.AreEqual(1, telemetry.TrayRouteAssignmentCount);
+            Assert.AreEqual(0f, telemetry.OilDeliveredToRefineries);
+            Assert.AreEqual(8f, telemetry.OilDeliveredToFabricationDepots);
+        }
+        finally
+        {
+            if (blocked.IsCreated)
+                blocked.Dispose();
+            if (occupied.IsCreated)
+                occupied.Dispose();
+            world.Dispose();
+        }
+    }
+
+    [Test]
+    public void ManualFuelLogisticsTray_ReassignmentCountsOnlyChangedSuccessfulRoute()
+    {
+        var world = new World(nameof(ManualFuelLogisticsTray_ReassignmentCountsOnlyChangedSuccessfulRoute));
+        NativeBitArray blocked = default;
+        NativeBitArray occupied = default;
+        try
+        {
+            EntityManager em = world.EntityManager;
+            Entity telemetryEntity = CreateFuelLogisticsTelemetryEntity(em, 1);
+            Entity gridEntity = CreateTestGridEntity(em, 48, 48, out blocked, out occupied);
+            RuntimeBuildingEntity firstOilPump = CreateResourceBuilding(
+                em, 61, 1, new Vector2Int(8, 8), 100, 0, 80f, 0f, 40f, 0f);
+            RuntimeBuildingEntity secondOilPump = CreateResourceBuilding(
+                em, 62, 1, new Vector2Int(14, 8), 100, 0, 80f, 0f, 40f, 0f);
+            RuntimeBuildingEntity refinery = CreateResourceBuilding(
+                em, 63, 1, new Vector2Int(24, 8), 100, 100, 0f, 40f, 0f, 0f);
+            var runtimeBuildings = new System.Collections.Generic.Dictionary<int, RuntimeBuildingEntity>
+            {
+                { firstOilPump.Id, firstOilPump },
+                { secondOilPump.Id, secondOilPump },
+                { refinery.Id, refinery }
+            };
+            Entity tray = CreateFuelLogisticsHauler(em, "Unit_Veh_Truck_Tray", 1, new int2(2, 8));
+            em.AddComponentData(tray, new UnitMove { Speed = 4f });
+            em.AddComponent<SelectedUnitTag>(tray);
+            var bridge = new BuildingResourceHaulerBridgeCompositionSystemHelper();
+            BuildingResourceHaulerBridgeCompositionSystemHelper.Context context =
+                CreateBridgeCycleContext(em, gridEntity, runtimeBuildings);
+
+            bridge.UpdateResourceHaulers(context, false, 0f);
+            Assert.IsTrue(bridge.TryAssignSelectedHaulerOrders(context, secondOilPump.Id));
+            UnitResourceHaulOrder reassignedOrder = em.GetComponentData<UnitResourceHaulOrder>(tray);
+            Assert.AreEqual(secondOilPump.Id, reassignedOrder.SourceBuildingId);
+
+            FactionFuelLogisticsTelemetryComponent telemetry =
+                em.GetComponentData<FactionFuelLogisticsTelemetryComponent>(telemetryEntity);
+            Assert.AreEqual(1, telemetry.TrayRouteAssignmentCount);
+            Assert.AreEqual(1, telemetry.TrayRouteReassignmentCount);
+
+            Assert.IsTrue(bridge.TryAssignSelectedHaulerOrders(context, secondOilPump.Id));
+            telemetry = em.GetComponentData<FactionFuelLogisticsTelemetryComponent>(telemetryEntity);
+            Assert.AreEqual(1, telemetry.TrayRouteAssignmentCount);
+            Assert.AreEqual(1, telemetry.TrayRouteReassignmentCount);
         }
         finally
         {
@@ -3321,6 +3453,10 @@ public sealed class BuildingResourceProductionEcsSystemTests
         EntityQuery haulerQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<UnitResourceHauler>(),
             ComponentType.ReadOnly<UnitGrid>());
+        EntityQuery selectedQuery = em.CreateEntityQuery(
+            ComponentType.ReadOnly<SelectedUnitTag>(),
+            ComponentType.ReadOnly<UnitGrid>(),
+            ComponentType.ReadOnly<UnitMove>());
         return new BuildingResourceHaulerBridgeCompositionSystemHelper.Context(
             runtimeBuildings,
             new ResourceHaulerUtilitySystemHelper(),
@@ -3329,7 +3465,7 @@ public sealed class BuildingResourceProductionEcsSystemTests
             TryGetGridData,
             null,
             () => haulerQuery,
-            null,
+            () => selectedQuery,
             TryGetRuntimeBuilding,
             ResolveBuildingFocusWorldPosition,
             getEffectivePlacementRect ?? GetEffectivePlacementRect);
@@ -3398,6 +3534,16 @@ public sealed class BuildingResourceProductionEcsSystemTests
                 FuelBarrelsPerDay = fuelRate
             }
         };
+    }
+
+    private static Entity CreateFuelLogisticsTelemetryEntity(EntityManager em, byte factionId)
+    {
+        Entity entity = em.CreateEntity(
+            typeof(FactionEconomy),
+            typeof(FactionFuelLogisticsTelemetryComponent));
+        em.SetComponentData(entity, new FactionEconomy { FactionId = factionId });
+        em.SetComponentData(entity, new FactionFuelLogisticsTelemetryComponent { FactionId = factionId });
+        return entity;
     }
 
     private static void AddMaterialFabricationInput(

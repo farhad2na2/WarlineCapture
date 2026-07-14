@@ -102,6 +102,16 @@ namespace Game.Runtime
             builder.AppendLine($"- Production disabled seconds: `{metrics.FabricationProductionDisabledSeconds:0.##}`");
             builder.AppendLine($"- Building disabled seconds: `{metrics.FabricationBuildingDisabledSeconds:0.##}`");
             builder.AppendLine();
+            builder.AppendLine("## Fuel Logistics");
+            builder.AppendLine();
+            builder.AppendLine($"- Faction id: `{metrics.FuelLogisticsFactionId}`");
+            builder.AppendLine($"- Telemetry version: `{metrics.FuelLogisticsTelemetryVersion}`");
+            builder.AppendLine($"- Tray route assignments: `{metrics.TrayRouteAssignmentCount}`");
+            builder.AppendLine($"- Tray route reassignments: `{metrics.TrayRouteReassignmentCount}`");
+            builder.AppendLine($"- Tray route failures: `{metrics.TrayRouteFailureCount}`");
+            builder.AppendLine($"- Oil delivered to refineries: `{metrics.OilDeliveredToRefineries:0.##}`");
+            builder.AppendLine($"- Oil delivered to fabrication depots: `{metrics.OilDeliveredToFabricationDepots:0.##}`");
+            builder.AppendLine();
             builder.AppendLine("## Resource Exchange");
             builder.AppendLine();
             builder.AppendLine($"- Source mode: `{metrics.ResourceExchangeSourceMode ?? "Unspecified"}`");

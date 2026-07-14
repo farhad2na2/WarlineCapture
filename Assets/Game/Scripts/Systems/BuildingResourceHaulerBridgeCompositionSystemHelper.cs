@@ -16,6 +16,8 @@ namespace Game.Runtime
         private readonly List<Entity> _haulerEntities = new();
         private readonly HashSet<Entity> _invalidCapacityWarningEntities = new();
         private FixedList512Bytes<FactionAIOilAllocationCacheEntry> _aiOilAllocationInputCache;
+        private World _fuelLogisticsTelemetryQueryWorld;
+        private EntityQuery _fuelLogisticsTelemetryQuery;
         private uint _lastAutomaticAssignmentSignature;
         private uint _nextReservationId = 1u;
         private float _nextAutomaticAssignmentRefreshAt;
@@ -235,15 +237,47 @@ namespace Game.Runtime
 
                 UnitResourceHauler hauler = em.GetComponentData<UnitResourceHauler>(unit);
                 float loadAmount = context.ResourceHaulerUtilitySystemHelper.GetLoadAmount(hauler);
+                bool hadActiveOrder = em.HasComponent<UnitResourceHaulOrder>(unit);
+                UnitResourceHaulOrder previousOrder = hadActiveOrder
+                    ? em.GetComponentData<UnitResourceHaulOrder>(unit)
+                    : default;
+                bool isSameRoute = hadActiveOrder &&
+                                   previousOrder.SourceBuildingId == source.Id &&
+                                   previousOrder.DestinationBuildingId == destination.Id &&
+                                   previousOrder.ResourceKind == (byte)resourceKind;
                 ReleaseOrderReservations(context, em, unit);
-                if (em.HasComponent<UnitResourceHaulOrder>(unit))
+                if (hadActiveOrder)
                     em.RemoveComponent<UnitResourceHaulOrder>(unit);
-                if (!TryReserveHaulCapacity(context, em, source, destination, resourceKind, loadAmount, out UnitResourceHaulReservation reservation))
+                if (loadAmount <= 0f)
+                {
+                    SetResourceHaulStatus(
+                        em,
+                        unit,
+                        FuelLogisticsTaskStatusCode.Blocked,
+                        FuelLogisticsBlockReasonCode.HaulerUnavailable,
+                        resourceKind);
                     continue;
+                }
+                if (!TryReserveHaulCapacity(context, em, source, destination, resourceKind, loadAmount, out UnitResourceHaulReservation reservation))
+                {
+                    SetResourceHaulStatus(
+                        em,
+                        unit,
+                        FuelLogisticsTaskStatusCode.Blocked,
+                        FuelLogisticsBlockReasonCode.ReservationFailed,
+                        resourceKind);
+                    continue;
+                }
 
                 if (!TryIssueHaulerMoveToBuilding(context, em, unit, source, out int2 sourceGoal))
                 {
                     ReleaseReservation(context, em, reservation);
+                    SetResourceHaulStatus(
+                        em,
+                        unit,
+                        FuelLogisticsTaskStatusCode.Blocked,
+                        FuelLogisticsBlockReasonCode.RouteUnavailable,
+                        resourceKind);
                     continue;
                 }
 
@@ -254,6 +288,14 @@ namespace Game.Runtime
                 else
                     em.AddComponentData(unit, order);
                 SetOrAddResourceHaulReservation(em, unit, reservation);
+                SetResourceHaulStatus(
+                    em,
+                    unit,
+                    FuelLogisticsTaskStatusCode.Assigned,
+                    FuelLogisticsBlockReasonCode.None,
+                    resourceKind);
+                if (!isSameRoute)
+                    RecordRouteAssignmentTelemetry(em, unit, resourceKind, hadActiveOrder);
 
                 assignedAny = true;
             }
@@ -366,6 +408,7 @@ namespace Game.Runtime
                 FuelLogisticsTaskStatusCode.Assigned,
                 FuelLogisticsBlockReasonCode.None,
                 resourceKind);
+            RecordRouteAssignmentTelemetry(em, unit, resourceKind, isReassignment: false);
             return true;
         }
 
@@ -1230,6 +1273,25 @@ namespace Game.Runtime
                 return;
             }
 
+            byte haulerFactionId = em.HasComponent<Faction>(entity)
+                ? em.GetComponentData<Faction>(entity).Id
+                : byte.MaxValue;
+            if (!IsSameFactionResourceBuilding(source, haulerFactionId) ||
+                !IsSameFactionResourceBuilding(destination, haulerFactionId))
+            {
+                ReleaseOrderReservations(context, em, entity);
+                em.RemoveComponent<UnitResourceHaulOrder>(entity);
+                SetResourceHaulStatus(
+                    em,
+                    entity,
+                    FuelLogisticsTaskStatusCode.Blocked,
+                    !IsSameFactionResourceBuilding(source, haulerFactionId)
+                        ? FuelLogisticsBlockReasonCode.SourceUnavailable
+                        : FuelLogisticsBlockReasonCode.DestinationUnavailable,
+                    resourceKind);
+                return;
+            }
+
             int2 currentCell = em.GetComponentData<UnitGrid>(entity).Cell;
             switch ((ResourceHaulerUtilitySystemHelper.ResourceHaulPhase)order.Phase)
             {
@@ -1286,7 +1348,7 @@ namespace Game.Runtime
             SetOrAddResourceHaulOrder(em, entity, order);
         }
 
-        private static void UpdateTravelToSourcePhase(
+        private void UpdateTravelToSourcePhase(
             Context context,
             EntityManager em,
             GridConfig grid,
@@ -1348,6 +1410,12 @@ namespace Game.Runtime
                     Debug.LogWarning($"[ResourceHauler] entity={entity} invalid-capacity capacity={hauler.BarrelCapacity}");
                 ReleaseOrderReservations(context, em, entity);
                 em.RemoveComponent<UnitResourceHaulOrder>(entity);
+                SetResourceHaulStatus(
+                    em,
+                    entity,
+                    FuelLogisticsTaskStatusCode.Blocked,
+                    FuelLogisticsBlockReasonCode.HaulerUnavailable,
+                    resourceKind);
                 return;
             }
 
@@ -1408,6 +1476,12 @@ namespace Game.Runtime
                 context.ResourceHaulerUtilitySystemHelper.RevertLoad(em, source, resourceKind, loadAmount, ref hauler);
                 em.SetComponentData(entity, hauler);
                 em.RemoveComponent<UnitResourceHaulOrder>(entity);
+                SetResourceHaulStatus(
+                    em,
+                    entity,
+                    FuelLogisticsTaskStatusCode.Blocked,
+                    FuelLogisticsBlockReasonCode.RouteUnavailable,
+                    resourceKind);
                 if (VerboseResourceHaulerLogs)
                     Debug.LogWarning($"[ResourceHauler] entity={entity} failed-destination-move destination={destination.Id} revertedLoad={loadAmount:0.##}");
                 return;
@@ -1419,7 +1493,7 @@ namespace Game.Runtime
                 Debug.Log($"[ResourceHauler] entity={entity} to-destination destination={destination.Id} target={destinationGoal}");
         }
 
-        private static void UpdateTravelToDestinationPhase(
+        private void UpdateTravelToDestinationPhase(
             Context context,
             EntityManager em,
             GridConfig grid,
@@ -1457,7 +1531,7 @@ namespace Game.Runtime
             em.SetComponentData(entity, order);
         }
 
-        private static void UpdateUnloadingPhase(
+        private void UpdateUnloadingPhase(
             Context context,
             EntityManager em,
             Entity entity,
@@ -1505,6 +1579,7 @@ namespace Game.Runtime
                 ReleaseDestinationReservationForOrder(context, em, entity, destination, resourceKind, cargo);
             if (!context.ResourceHaulerUtilitySystemHelper.TryCompleteUnload(em, destination, resourceKind, ref hauler))
                 return;
+            RecordOilDeliveryTelemetry(em, entity, destination, resourceKind, cargo);
             em.SetComponentData(entity, hauler);
             if (em.HasComponent<UnitResourceHaulReservation>(entity))
                 em.RemoveComponent<UnitResourceHaulReservation>(entity);
@@ -1642,13 +1717,17 @@ namespace Game.Runtime
                 em.AddComponentData(entity, reservation);
         }
 
-        private static void SetResourceHaulStatus(
+        private void SetResourceHaulStatus(
             EntityManager em,
             Entity entity,
             FuelLogisticsTaskStatusCode statusCode,
             FuelLogisticsBlockReasonCode reasonCode,
             ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind)
         {
+            bool enteredBlockedEpisode = statusCode == FuelLogisticsTaskStatusCode.Blocked &&
+                                         (!em.HasComponent<UnitResourceHaulStatus>(entity) ||
+                                          em.GetComponentData<UnitResourceHaulStatus>(entity).StatusCode !=
+                                          (byte)FuelLogisticsTaskStatusCode.Blocked);
             UnitResourceHaulStatus status = new()
             {
                 StatusCode = (byte)statusCode,
@@ -1659,6 +1738,151 @@ namespace Game.Runtime
                 em.SetComponentData(entity, status);
             else
                 em.AddComponentData(entity, status);
+
+            if (enteredBlockedEpisode)
+                RecordRouteFailureTelemetry(em, entity, resourceKind);
+        }
+
+        private static bool IsTrayOilTelemetryEligible(
+            EntityManager em,
+            Entity entity,
+            ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind,
+            out byte factionId)
+        {
+            factionId = default;
+            if (resourceKind != ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil ||
+                !em.Exists(entity) ||
+                !em.HasComponent<UnitSourcePrefabKey>(entity) ||
+                !em.HasComponent<Faction>(entity) ||
+                !em.GetComponentData<UnitSourcePrefabKey>(entity).Value.Equals(TrayTruckSourceKey))
+            {
+                return false;
+            }
+
+            factionId = em.GetComponentData<Faction>(entity).Id;
+            return true;
+        }
+
+        private void RecordRouteAssignmentTelemetry(
+            EntityManager em,
+            Entity entity,
+            ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind,
+            bool isReassignment)
+        {
+            if (!IsTrayOilTelemetryEligible(em, entity, resourceKind, out byte factionId) ||
+                !TryResolveFuelLogisticsTelemetryEntity(em, factionId, out Entity telemetryEntity))
+            {
+                return;
+            }
+
+            FactionFuelLogisticsTelemetryComponent telemetry =
+                em.GetComponentData<FactionFuelLogisticsTelemetryComponent>(telemetryEntity);
+            FactionFuelLogisticsTelemetryUtilitySystemHelper.RecordRouteAssignment(ref telemetry, isReassignment);
+            em.SetComponentData(telemetryEntity, telemetry);
+        }
+
+        private void RecordRouteFailureTelemetry(
+            EntityManager em,
+            Entity entity,
+            ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind)
+        {
+            if (!IsTrayOilTelemetryEligible(em, entity, resourceKind, out byte factionId) ||
+                !TryResolveFuelLogisticsTelemetryEntity(em, factionId, out Entity telemetryEntity))
+            {
+                return;
+            }
+
+            FactionFuelLogisticsTelemetryComponent telemetry =
+                em.GetComponentData<FactionFuelLogisticsTelemetryComponent>(telemetryEntity);
+            FactionFuelLogisticsTelemetryUtilitySystemHelper.RecordRouteFailure(ref telemetry);
+            em.SetComponentData(telemetryEntity, telemetry);
+        }
+
+        private void RecordOilDeliveryTelemetry(
+            EntityManager em,
+            Entity entity,
+            RuntimeBuildingEntity destination,
+            ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind,
+            float deliveredBarrels)
+        {
+            if (!IsTrayOilTelemetryEligible(em, entity, resourceKind, out byte factionId) ||
+                destination == null ||
+                destination.OwnerFactionId != factionId ||
+                !TryResolveFuelLogisticsTelemetryEntity(em, factionId, out Entity telemetryEntity))
+            {
+                return;
+            }
+
+            bool isFabricationDepot = TryGetMaterialFabrication(
+                em,
+                destination,
+                out MaterialFabricationComponent fabrication) &&
+                fabrication.OwnerFactionId == factionId;
+            bool isRefinery = !isFabricationDepot && destination.FuelBarrelsPerDay > 0f;
+            FactionFuelLogisticsTelemetryComponent telemetry =
+                em.GetComponentData<FactionFuelLogisticsTelemetryComponent>(telemetryEntity);
+            if (FactionFuelLogisticsTelemetryUtilitySystemHelper.RecordOilDelivery(
+                    ref telemetry,
+                    deliveredBarrels,
+                    isFabricationDepot,
+                    isRefinery))
+            {
+                em.SetComponentData(telemetryEntity, telemetry);
+            }
+        }
+
+        private bool TryResolveFuelLogisticsTelemetryEntity(
+            EntityManager em,
+            byte factionId,
+            out Entity telemetryEntity)
+        {
+            telemetryEntity = Entity.Null;
+            EnsureFuelLogisticsTelemetryQuery(em);
+            EntityTypeHandle entityType = em.GetEntityTypeHandle();
+            ComponentTypeHandle<FactionEconomy> economyType =
+                em.GetComponentTypeHandle<FactionEconomy>(true);
+            ComponentTypeHandle<FactionFuelLogisticsTelemetryComponent> telemetryType =
+                em.GetComponentTypeHandle<FactionFuelLogisticsTelemetryComponent>(true);
+            using NativeArray<ArchetypeChunk> chunks =
+                _fuelLogisticsTelemetryQuery.ToArchetypeChunkArray(Allocator.Temp);
+            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+            {
+                ArchetypeChunk chunk = chunks[chunkIndex];
+                NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
+                NativeArray<FactionEconomy> economies = chunk.GetNativeArray(ref economyType);
+                NativeArray<FactionFuelLogisticsTelemetryComponent> telemetry =
+                    chunk.GetNativeArray(ref telemetryType);
+                for (int entityIndex = 0; entityIndex < entities.Length; entityIndex++)
+                {
+                    if (economies[entityIndex].FactionId != factionId ||
+                        telemetry[entityIndex].FactionId != factionId)
+                    {
+                        continue;
+                    }
+
+                    if (telemetryEntity != Entity.Null)
+                    {
+                        telemetryEntity = Entity.Null;
+                        return false;
+                    }
+
+                    telemetryEntity = entities[entityIndex];
+                }
+            }
+
+            return telemetryEntity != Entity.Null;
+        }
+
+        private void EnsureFuelLogisticsTelemetryQuery(EntityManager em)
+        {
+            World world = em.World;
+            if (_fuelLogisticsTelemetryQueryWorld == world && world != null && world.IsCreated)
+                return;
+
+            _fuelLogisticsTelemetryQueryWorld = world;
+            _fuelLogisticsTelemetryQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<FactionEconomy>(),
+                ComponentType.ReadOnly<FactionFuelLogisticsTelemetryComponent>());
         }
 
         private static bool IsHaulerDeadOrUnavailable(EntityManager em, Entity entity)

@@ -73,9 +73,9 @@ Dependency direction remains inward toward components/config/contracts/runtime. 
 
 ## Progress Summary
 
-Overall implementation progress: 88% (91/103 checklist items complete).
+Overall implementation progress: 89% (92/103 checklist items complete).
 
-Planning, canonical resource ownership, depot config/projection, automated Oil routing, Oil-to-Materials conversion, authored construction costs, atomic dual-resource placement, HUD/depot controls, Exchange balance safety, canonical AI construction affordability, demand-aware AI Oil allocation, explicitly gated AI Materials recovery, and faction-owned Materials/fabrication telemetry are complete. Active depots consume only unreserved physical Oil at the existing one-second cadence. The shipping Match now projects an explicitly gated Resource Exchange onto the canonical player faction entity; emergency Materials import costs 1.71x modeled local production, queue/capacity rules remain active, and tested conversion loops cannot create profit. Phase 8 continues with logistics telemetry and scenario deadlock validation.
+Planning, canonical resource ownership, depot config/projection, automated Oil routing, Oil-to-Materials conversion, authored construction costs, atomic dual-resource placement, HUD/depot controls, Exchange balance safety, canonical AI construction affordability, demand-aware AI Oil allocation, explicitly gated AI Materials recovery, faction-owned Materials/fabrication telemetry, and faction-owned tray logistics telemetry are complete. Active depots consume only unreserved physical Oil at the existing one-second cadence. The shipping Match now projects an explicitly gated Resource Exchange onto the canonical player faction entity; emergency Materials import costs 1.71x modeled local production, queue/capacity rules remain active, and tested conversion loops cannot create profit. Phase 8 continues with scenario viability and deterministic deadlock validation.
 
 Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation row counts. Update the numerator, denominator, table, status, and evidence log in the same commit as each completed batch.
 
@@ -89,7 +89,7 @@ Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation 
 | 5. Credits + Materials construction | Complete | 11 | 11 | 100% | Atomic placement, rollback, authored cost projection, and Build Drawer dual-cost presentation pass. |
 | 6. HUD and selected-building UI | Complete | 11 | 11 | 100% | Live canonical header, typed Build Drawer affordability, selected-depot status/control, fail-closed Exchange routing, and responsive validation pass. |
 | 7. Exchange and balance safety | Complete | 8 | 8 | 100% | Shipping startup projection, emergency import markup, queue/capacity gates, anti-arbitrage tests, and strategy report pass. |
-| 8. AI, telemetry, and scenario safety | Active | 3 | 7 | 43% | AI shares rules; scenarios cannot deadlock silently. |
+| 8. AI, telemetry, and scenario safety | Active | 5 | 7 | 71% | AI shares rules; scenarios cannot deadlock silently. |
 | 9. Integration, performance, and closeout | Pending | 0 | 9 | 0% | Architecture, GC, profiler, gameplay, and docs pass. |
 
 ## Phase 0: Inventory And Baseline
@@ -295,7 +295,7 @@ Phase 7 exit criteria:
 - [x] Teach AI Oil allocation to consider Fuel pressure and construction plans without hidden resources.
 - [x] Gate AI Exchange imports by scenario and recovery need.
 - [x] Record Materials fabricated/imported/exported/rewarded/spent and depot blocked time by typed reason.
-- [ ] Record tray assignments/reassignments/failures and refinery-versus-depot Oil delivery.
+- [x] Record tray assignments/reassignments/failures and refinery-versus-depot Oil delivery.
 - [ ] Add scenario validation requiring starting Materials, a viable fabrication chain, rebuildability, or enabled Exchange recovery.
 - [ ] Add deterministic AI and deadlock validation scenarios.
 
@@ -605,3 +605,14 @@ For every completed batch append:
 - Focused validation passed: fabrication behavior/exact time splitting/warmed GC 19/19 with 0 managed bytes; canonical typed Materials mutations 9/9; faction startup 3/3; initial resource projection 12/12; balance report contracts 4/4; construction transaction regression 8/8; tactical resource ownership 1/1; assembly/naming boundaries 31/31; and ECS Burst hot-path architecture 10/10. `Game.Runtime` and `Game.Tests.Editor` compiled with zero errors. Task-scoped diff checks passed.
 - Evidence: `/private/tmp/wlc-field-fabrication-phase8-faction-telemetry-focused-rerun.log`, `/private/tmp/wlc-field-fabrication-phase8-materials-typed-telemetry.log`, `/private/tmp/wlc-field-fabrication-phase8-telemetry-startup.log`, `/private/tmp/wlc-field-fabrication-phase8-telemetry-initial-units.log`, `/private/tmp/wlc-field-fabrication-phase8-telemetry-balance-report.log`, `/private/tmp/wlc-field-fabrication-phase8-telemetry-construction.log`, `/private/tmp/wlc-field-fabrication-phase8-telemetry-ownership.log`, `/private/tmp/wlc-field-fabrication-phase8-telemetry-architecture.log`, and `/private/tmp/wlc-field-fabrication-phase8-telemetry-burst.log`.
 - Phase 8 is 4/7. Checklist count is 91/103. Next action: record tray assignments, reassignments, failures, and refinery-versus-depot Oil delivery through the existing resource-hauler/logistics owners.
+
+### 2026-07-14 - Phase 8E Faction-Owned Tray Logistics Telemetry
+
+- Added one unmanaged `FactionFuelLogisticsTelemetryComponent` beside the canonical faction economy and Materials authorities. Faction startup preprojects it and same-world initial-resource startup resets it, so cumulative logistics evidence survives truck/building destruction but never leaks between matches.
+- The existing resource-hauler bridge remains the sole route owner. Successful automatic Oil tray routes count assignments; successful manual route changes count reassignments; same-route refreshes do not count. A failure counts only when a tray enters a blocked episode, so stable automatic retries cannot inflate totals. Fuel tankers are excluded.
+- Active routes now fail closed when a source or destination is captured by another faction. Reservations are released and the dispatching faction retains the historical assignment/failure evidence.
+- Oil delivery is recorded only after physical unload succeeds, using the pre-unload cargo amount. A valid faction-owned fabrication input is classified as a depot before the refinery predicate is evaluated, preventing malformed dual-purpose content from double counting; generic Oil storage is not attributed.
+- `BalanceMetrics` and `BalanceReportWriter` expose assignment, reassignment, failure, refinery-delivery, and depot-delivery totals in JSON and Markdown. Mutation uses saturating counters, finite non-negative barrel totals, version wrapping, chunk-based unique faction resolution, and no new ECS system, managed update loop, recurring structural tick change, or parallel resource authority.
+- Validation passed: resource-hauler utility and warmed telemetry mutation 28/28 with 0 managed bytes; production/logistics assignment, reassignment, same-route suppression, blocked retry, capture, and delivery regression 52/52; faction startup 3/3; initial-resource lifecycle/reset 12/12; balance reports 6/6; tactical ownership 1/1; assembly/naming boundaries 31/31; and ECS Burst hot-path architecture 10/10. Unity compilation and generated `Game.Components`, `Game.Runtime`, and `Game.Tests.Editor` builds completed with zero errors. Task-scoped diff checks passed.
+- Evidence: `/private/tmp/warline-phase8e-resource-hauler.log`, `/private/tmp/warline-phase8e-production-final.log`, `/private/tmp/warline-phase8e-startup.log`, `/private/tmp/warline-phase8e-initial-units.log`, `/private/tmp/warline-phase8e-balance.log`, `/private/tmp/warline-phase8e-ownership.log`, `/private/tmp/warline-phase8e-architecture.log`, `/private/tmp/warline-phase8e-burst.log`, and `/private/tmp/warline-phase8e-compile.log`.
+- Phase 8 is 5/7. Checklist count is 92/103. Next action: add startup/scenario validation requiring starting Materials, a viable fabrication chain, rebuildability, or explicitly enabled Exchange recovery.

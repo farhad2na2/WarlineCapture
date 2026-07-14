@@ -66,4 +66,15 @@ namespace Game.Components
         public float BuildingDisabledSeconds;
         public uint Version;
     }
+
+    public struct FactionFuelLogisticsTelemetryComponent : IComponentData
+    {
+        public byte FactionId;
+        public int TrayRouteAssignmentCount;
+        public int TrayRouteReassignmentCount;
+        public int TrayRouteFailureCount;
+        public float OilDeliveredToRefineries;
+        public float OilDeliveredToFabricationDepots;
+        public uint Version;
+    }
 }

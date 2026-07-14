@@ -40,7 +40,10 @@ public sealed class ResourceHaulerUtilitySystemHelperTests
             tests.StorageTransfer_MutationsIncrementVersion();
             tests.FuelLogisticsRoleTags_AreQueryableEcsTags();
             tests.FuelLogisticsReasonCodes_AreTypedForUiAndCommands();
-            Debug.Log("[ResourceHaulerFocusedValidation] result=Passed tests=25");
+            tests.FuelLogisticsTelemetry_RecordsAssignmentsFailuresAndDeliveries();
+            tests.FuelLogisticsTelemetry_SaturatesAndWrapsVersion();
+            tests.FuelLogisticsTelemetry_WarmedMutationsDoNotAllocateManagedMemory();
+            Debug.Log("[ResourceHaulerFocusedValidation] result=Passed tests=28");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -717,6 +720,68 @@ public sealed class ResourceHaulerUtilitySystemHelperTests
         Assert.AreNotEqual(TacticalCommandReasonCode.None, TacticalCommandReasonCode.FuelLogisticsDestinationFull);
         Assert.AreNotEqual(TacticalCommandReasonCode.None, TacticalCommandReasonCode.FuelLogisticsRouteUnavailable);
         Assert.AreNotEqual(TacticalCommandReasonCode.None, TacticalCommandReasonCode.FuelLogisticsReservationFailed);
+    }
+
+    [Test]
+    public void FuelLogisticsTelemetry_RecordsAssignmentsFailuresAndDeliveries()
+    {
+        FactionFuelLogisticsTelemetryComponent telemetry = new() { FactionId = 1 };
+
+        Assert.IsTrue(FactionFuelLogisticsTelemetryUtilitySystemHelper.RecordRouteAssignment(ref telemetry, false));
+        Assert.IsTrue(FactionFuelLogisticsTelemetryUtilitySystemHelper.RecordRouteAssignment(ref telemetry, true));
+        Assert.IsTrue(FactionFuelLogisticsTelemetryUtilitySystemHelper.RecordRouteFailure(ref telemetry));
+        Assert.IsTrue(FactionFuelLogisticsTelemetryUtilitySystemHelper.RecordOilDelivery(ref telemetry, 8f, false, true));
+        Assert.IsTrue(FactionFuelLogisticsTelemetryUtilitySystemHelper.RecordOilDelivery(ref telemetry, 6f, true, true));
+        Assert.IsFalse(FactionFuelLogisticsTelemetryUtilitySystemHelper.RecordOilDelivery(ref telemetry, float.NaN, true, false));
+
+        Assert.AreEqual(1, telemetry.TrayRouteAssignmentCount);
+        Assert.AreEqual(1, telemetry.TrayRouteReassignmentCount);
+        Assert.AreEqual(1, telemetry.TrayRouteFailureCount);
+        Assert.AreEqual(8f, telemetry.OilDeliveredToRefineries);
+        Assert.AreEqual(6f, telemetry.OilDeliveredToFabricationDepots);
+        Assert.AreEqual(5u, telemetry.Version);
+    }
+
+    [Test]
+    public void FuelLogisticsTelemetry_SaturatesAndWrapsVersion()
+    {
+        FactionFuelLogisticsTelemetryComponent telemetry = new()
+        {
+            TrayRouteAssignmentCount = int.MaxValue,
+            TrayRouteFailureCount = int.MaxValue,
+            OilDeliveredToRefineries = float.MaxValue,
+            Version = uint.MaxValue
+        };
+
+        FactionFuelLogisticsTelemetryUtilitySystemHelper.RecordRouteAssignment(ref telemetry, false);
+        Assert.AreEqual(int.MaxValue, telemetry.TrayRouteAssignmentCount);
+        Assert.AreEqual(1u, telemetry.Version);
+        FactionFuelLogisticsTelemetryUtilitySystemHelper.RecordRouteFailure(ref telemetry);
+        FactionFuelLogisticsTelemetryUtilitySystemHelper.RecordOilDelivery(ref telemetry, float.MaxValue, false, true);
+
+        Assert.AreEqual(int.MaxValue, telemetry.TrayRouteFailureCount);
+        Assert.AreEqual(float.MaxValue, telemetry.OilDeliveredToRefineries);
+        Assert.AreEqual(3u, telemetry.Version);
+    }
+
+    [Test]
+    public void FuelLogisticsTelemetry_WarmedMutationsDoNotAllocateManagedMemory()
+    {
+        FactionFuelLogisticsTelemetryComponent telemetry = default;
+        FactionFuelLogisticsTelemetryUtilitySystemHelper.RecordRouteAssignment(ref telemetry, false);
+        FactionFuelLogisticsTelemetryUtilitySystemHelper.RecordRouteFailure(ref telemetry);
+        FactionFuelLogisticsTelemetryUtilitySystemHelper.RecordOilDelivery(ref telemetry, 1f, true, false);
+
+        long before = System.GC.GetAllocatedBytesForCurrentThread();
+        for (int i = 0; i < 128; i++)
+        {
+            FactionFuelLogisticsTelemetryUtilitySystemHelper.RecordRouteAssignment(ref telemetry, false);
+            FactionFuelLogisticsTelemetryUtilitySystemHelper.RecordRouteFailure(ref telemetry);
+            FactionFuelLogisticsTelemetryUtilitySystemHelper.RecordOilDelivery(ref telemetry, 1f, true, false);
+        }
+        long allocated = System.GC.GetAllocatedBytesForCurrentThread() - before;
+
+        Assert.AreEqual(0L, allocated);
     }
 
     private sealed class TestHaulerBuilding : FactionResourceCompositionSystemHelper.IResourceBuilding

@@ -30,6 +30,14 @@ public sealed class BalanceHarnessContractTests
                 nameof(BalanceReportWriter_IncludesFieldFabricationFields),
                 test => test.BalanceReportWriter_IncludesFieldFabricationFields(),
                 ref passed);
+            RunCase(
+                nameof(BalanceMetrics_FuelLogisticsTelemetrySummarizesClampedCounters),
+                test => test.BalanceMetrics_FuelLogisticsTelemetrySummarizesClampedCounters(),
+                ref passed);
+            RunCase(
+                nameof(BalanceReportWriter_IncludesFuelLogisticsFields),
+                test => test.BalanceReportWriter_IncludesFuelLogisticsFields(),
+                ref passed);
 
             Debug.Log($"[BalanceHarnessContractValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -413,6 +421,95 @@ public sealed class BalanceHarnessContractTests
             StringAssert.Contains("MaterialsFabricated", json);
             StringAssert.Contains("MaterialsConstructionSpent", json);
             StringAssert.Contains("FabricationNoOilInputBlockedSeconds", json);
+        }
+        finally
+        {
+            if (Directory.Exists(reportDirectory))
+                Directory.Delete(reportDirectory, true);
+        }
+    }
+
+    [Test]
+    [Category("Balance")]
+    public void BalanceMetrics_FuelLogisticsTelemetrySummarizesClampedCounters()
+    {
+        var metrics = new BalanceMetrics();
+        metrics.ApplyFuelLogisticsTelemetry(
+            new FactionFuelLogisticsTelemetryComponent
+            {
+                FactionId = 2,
+                TrayRouteAssignmentCount = 7,
+                TrayRouteReassignmentCount = -3,
+                TrayRouteFailureCount = 4,
+                OilDeliveredToRefineries = float.NaN,
+                OilDeliveredToFabricationDepots = 125.5f,
+                Version = 9
+            });
+
+        Assert.AreEqual(2, metrics.FuelLogisticsFactionId);
+        Assert.AreEqual(7, metrics.TrayRouteAssignmentCount);
+        Assert.AreEqual(0, metrics.TrayRouteReassignmentCount);
+        Assert.AreEqual(4, metrics.TrayRouteFailureCount);
+        Assert.AreEqual(0f, metrics.OilDeliveredToRefineries);
+        Assert.AreEqual(125.5f, metrics.OilDeliveredToFabricationDepots);
+        Assert.AreEqual(9u, metrics.FuelLogisticsTelemetryVersion);
+
+        metrics.ApplyFuelLogisticsTelemetry(
+            new FactionFuelLogisticsTelemetryComponent
+            {
+                OilDeliveredToRefineries = float.PositiveInfinity,
+                OilDeliveredToFabricationDepots = -1f
+            });
+
+        Assert.AreEqual(0f, metrics.OilDeliveredToRefineries);
+        Assert.AreEqual(0f, metrics.OilDeliveredToFabricationDepots);
+    }
+
+    [Test]
+    [Category("Balance")]
+    public void BalanceReportWriter_IncludesFuelLogisticsFields()
+    {
+        string reportDirectory = Path.Combine(
+            Path.GetTempPath(),
+            "BalanceReportTests",
+            Guid.NewGuid().ToString("N"));
+
+        try
+        {
+            var metrics = new BalanceMetrics
+            {
+                ProbeId = "Fuel_Logistics_Report_Test",
+                ProbeDisplayName = "Fuel Logistics Report Test"
+            };
+            metrics.ApplyFuelLogisticsTelemetry(
+                new FactionFuelLogisticsTelemetryComponent
+                {
+                    FactionId = 1,
+                    TrayRouteAssignmentCount = 5,
+                    TrayRouteReassignmentCount = 2,
+                    TrayRouteFailureCount = 1,
+                    OilDeliveredToRefineries = 75.25f,
+                    OilDeliveredToFabricationDepots = 40.5f,
+                    Version = 12
+                });
+
+            BalanceReportWriter.ReportPaths paths = BalanceReportWriter.WriteReport(metrics, reportDirectory);
+            string markdown = File.ReadAllText(paths.MarkdownPath);
+            StringAssert.Contains("## Fuel Logistics", markdown);
+            StringAssert.Contains("Tray route reassignments", markdown);
+            StringAssert.Contains("Oil delivered to refineries", markdown);
+            StringAssert.Contains("Oil delivered to fabrication depots", markdown);
+            StringAssert.Contains("`75.25`", markdown);
+            StringAssert.Contains("`40.5`", markdown);
+
+            string json = File.ReadAllText(paths.JsonPath);
+            StringAssert.Contains("FuelLogisticsFactionId", json);
+            StringAssert.Contains("TrayRouteAssignmentCount", json);
+            StringAssert.Contains("TrayRouteReassignmentCount", json);
+            StringAssert.Contains("TrayRouteFailureCount", json);
+            StringAssert.Contains("OilDeliveredToRefineries", json);
+            StringAssert.Contains("OilDeliveredToFabricationDepots", json);
+            StringAssert.Contains("FuelLogisticsTelemetryVersion", json);
         }
         finally
         {

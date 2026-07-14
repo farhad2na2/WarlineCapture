@@ -126,6 +126,14 @@ public sealed class InitialUnitsSpawnFocusedTests
             FactionId = FactionIdentity.EnemyFactionId,
             Money = 100
         });
+        em.AddComponentData(enemyEconomy, new FactionFuelLogisticsTelemetryComponent
+        {
+            FactionId = FactionIdentity.EnemyFactionId,
+            TrayRouteAssignmentCount = 9,
+            TrayRouteFailureCount = 4,
+            OilDeliveredToFabricationDepots = 24f,
+            Version = 7u
+        });
 
         InitialUnitsSpawnSystem.ApplyInitialResourceTotals(
             em,
@@ -159,6 +167,11 @@ public sealed class InitialUnitsSpawnFocusedTests
             Assert.AreEqual(economy.FactionId, telemetry.FactionId);
             Assert.AreEqual(0f, telemetry.ActiveSeconds);
             Assert.AreEqual(0u, telemetry.Version);
+            FactionFuelLogisticsTelemetryComponent logisticsTelemetry =
+                em.GetComponentData<FactionFuelLogisticsTelemetryComponent>(economies[i]);
+            Assert.AreEqual(economy.FactionId, logisticsTelemetry.FactionId);
+            Assert.AreEqual(0, logisticsTelemetry.TrayRouteAssignmentCount);
+            Assert.AreEqual(0u, logisticsTelemetry.Version);
         }
     }
 

@@ -2288,6 +2288,46 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
       "maxLines": 96,
       "maxBytes": 4027,
       "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerProjectionSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-078",
+      "maxLines": 188,
+      "maxBytes": 10563,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeProjectionSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-079",
+      "maxLines": 312,
+      "maxBytes": 13094,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/FactionFuelLogisticsTelemetryUtilitySystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-080",
+      "maxLines": 71,
+      "maxBytes": 2445,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestDispatchSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-081",
+      "maxLines": 487,
+      "maxBytes": 24721,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiActionResourceExchangeRequestSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-082",
+      "maxLines": 113,
+      "maxBytes": 4101,
+      "scope": "system-helper"
     }
   ]
 }

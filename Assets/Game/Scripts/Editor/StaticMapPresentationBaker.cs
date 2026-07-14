@@ -100,7 +100,7 @@ namespace Game.Editor
             public int OverlaySources;
         }
 
-        [MenuItem("Warline Capture/Performance/Bake Static Map Presentation")]
+        [MenuItem("Game/Tools/Performance/Bake Static Map Presentation")]
         public static void Bake()
         {
             if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())

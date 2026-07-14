@@ -11,7 +11,7 @@ namespace Game.Editor
         public const string EventCatalogAssetPath = "Assets/Game/Audio/Events/AudioEventCatalogConfig.asset";
         public const string MixerBusAssetPath = "Assets/Game/Audio/Mixers/AudioMixerBusConfig.asset";
 
-        [MenuItem("WarlineCapture/Audio/Build Runtime Config Assets")]
+        [MenuItem("Game/Audio/Build Runtime Config Assets")]
         public static void BuildDefaultAssetsMenu()
         {
             BuildDefaultAssets();

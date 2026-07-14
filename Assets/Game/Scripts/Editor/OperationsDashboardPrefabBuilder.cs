@@ -51,7 +51,7 @@ namespace Game.Editor
         private static TMP_FontAsset boldFont;
         private static TMP_FontAsset mediumFont;
 
-        [MenuItem("WarlineCapture/UI/Build SCN-11 Operations Dashboard")]
+        [MenuItem("Game/UI/Build SCN-11 Operations Dashboard")]
         public static void Build()
         {
             LoadStyleAssets();
@@ -69,7 +69,7 @@ namespace Game.Editor
             Debug.Log($"[OperationsDashboardPrefabBuilder] result=Passed prefab={PrefabPath}");
         }
 
-        [MenuItem("WarlineCapture/UI/Capture SCN-11 Operations Dashboard")]
+        [MenuItem("Game/UI/Capture SCN-11 Operations Dashboard")]
         public static void CaptureOperations()
         {
             string path = ResolveCapturePath();

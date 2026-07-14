@@ -49,7 +49,7 @@ namespace Game.Editor
         private static TMP_FontAsset boldFont;
         private static TMP_FontAsset mediumFont;
 
-        [MenuItem("WarlineCapture/UI/Build SCN-06 Mission Briefing")]
+        [MenuItem("Game/UI/Build SCN-06 Mission Briefing")]
         public static void Build()
         {
             ImportProductionArt();
@@ -67,7 +67,7 @@ namespace Game.Editor
             Debug.Log($"[MissionBriefingPrefabBuilder] result=Passed prefab={PrefabPath}");
         }
 
-        [MenuItem("WarlineCapture/UI/Capture SCN-06 Mission Briefing")]
+        [MenuItem("Game/UI/Capture SCN-06 Mission Briefing")]
         public static void CaptureMissionBriefing()
         {
             string path = ResolveCapturePath();

@@ -40,7 +40,7 @@ namespace Game.Editor
         private static readonly Color Text = new(0.93f, 0.90f, 0.80f, 1f);
         private static readonly Color Muted = new(0.66f, 0.65f, 0.56f, 1f);
 
-        [MenuItem("WarlineCapture/UI/Build SCN-13 Skirmish Setup")]
+        [MenuItem("Game/UI/Build SCN-13 Skirmish Setup")]
         public static void Build()
         {
             EnsurePreviewIsSprite();

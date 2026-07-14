@@ -13,7 +13,7 @@ namespace Game.Editor
     {
         private const string ManifestFieldName = "staticMapPresentationManifest";
 
-        [MenuItem("Warline Capture/Performance/Wire Static Map Presentation Manifest")]
+        [MenuItem("Game/Tools/Performance/Wire Static Map Presentation Manifest")]
         public static void Wire()
         {
             if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())

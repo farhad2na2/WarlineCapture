@@ -38,6 +38,9 @@ pipeline {
                     git clone --sparse --branch main "https://%GIT_USER%:%GIT_TOKEN%@github.com/farhad2na2/WarlineCapture.git" "%PROJECT_PATH%"
                     cd /d "%PROJECT_PATH%"
                     git remote set-url origin https://github.com/farhad2na2/WarlineCapture.git
+                    rem The sparse Design checkout contains archived assets whose full paths exceed 260 characters.
+                    rem Git for Windows needs this explicit opt-in to materialize them in the Jenkins workspace.
+                    git config --global core.longpaths true
                     git sparse-checkout set Assets Packages ProjectSettings Tools Design
                     if not exist "Design\\Architecture\\production_source_growth_baseline.md" (
                         echo Production source growth baseline is missing from the sparse checkout.

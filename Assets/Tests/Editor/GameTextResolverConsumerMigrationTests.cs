@@ -8,12 +8,14 @@ using UnityEngine;
 
 public sealed class GameTextResolverConsumerMigrationTests
 {
-    private const string ExpectedLiteralCallHash = "6a7ca45cd08cd8de0470e61c99a0b938c511d3300f80056c87d61ddc8d1d5d92";
+    private const string ExpectedLiteralCallHash = "229b5e5091a6e12e95823c5c74ad598f67f84905cc52c731e11b31a3e3f3a792";
     private const string MainMenuPlayUiPath = "Assets/Game/Scripts/UI/MainMenuPlayUI.cs";
     private const string BattleFeedbackSinkPath = "Assets/Game/Scripts/UI/Screens/BattleHudRuntimeFeedbackSink.cs";
     private const string UiShellContentViewPath = "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs";
     private const string BattleFeedbackPath = "Assets/Game/Scripts/UI/Screens/BattleHudRuntimeFeedbackUiSystemHelper.cs";
     private const string BuildDrawerPath = "Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogRuntimeView.cs";
+    private const string BuildDrawerPresentationPath = "Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogPresentationSystemHelper.cs";
+    private const string BuildDrawerQueuePath = "Assets/Game/Scripts/UI/Screens/BuildDrawerProductionQueueUiSystemHelper.cs";
     private const string BuildPlacementPath = "Assets/Game/Scripts/UI/Screens/BuildPlacementConfirmationBarView.cs";
     private const string CurrentOrderPath = "Assets/Game/Scripts/UI/Screens/MatchHudCurrentOrderBannerUiSystemHelper.cs";
     private const string RightQuickRailPath = "Assets/Game/Scripts/UI/Screens/MatchHudRightQuickRailView.cs";
@@ -24,6 +26,8 @@ public sealed class GameTextResolverConsumerMigrationTests
     {
         BattleFeedbackPath,
         BuildDrawerPath,
+        BuildDrawerPresentationPath,
+        BuildDrawerQueuePath,
         BuildPlacementPath,
         CurrentOrderPath,
         RightQuickRailPath,
@@ -32,11 +36,11 @@ public sealed class GameTextResolverConsumerMigrationTests
     };
 
     private static readonly Regex ResolverCallRegex = new(
-        @"(?:_gameTextResolver|textResolver)\.(Get|Format)\s*\(",
+        @"(?:_gameTextResolver|textResolver|context\.TextResolver)\.(Get|Format)\s*\(",
         RegexOptions.CultureInvariant);
 
     private static readonly Regex LiteralCallRegex = new(
-        @"(?:_gameTextResolver|textResolver)\.(Get|Format)\(\s*""((?:\\.|[^""])*)""\s*,\s*""((?:\\.|[^""])*)""",
+        @"(?:_gameTextResolver|textResolver|context\.TextResolver)\.(Get|Format)\(\s*""((?:\\.|[^""])*)""\s*,\s*""((?:\\.|[^""])*)""",
         RegexOptions.CultureInvariant | RegexOptions.Singleline);
 
     public static void RunFocusedValidation()
@@ -44,11 +48,11 @@ public sealed class GameTextResolverConsumerMigrationTests
         try
         {
             var tests = new GameTextResolverConsumerMigrationTests();
-            tests.ConsumerCalls_MigrateExactlySixtyTwoGetsAndTwentyThreeFormats();
+            tests.ConsumerCalls_MigrateExactlySixtyFiveGetsAndTwentySixFormats();
             tests.ConsumerCalls_PreserveOrderedLiteralKeysAndFallbacks();
             tests.ConsumerCalls_PreserveDynamicKeyAndFallbackShapes();
             tests.ResolverPropagation_UsesExistingRootsAndFallbackOnlyNullHandling();
-            Debug.Log("[GameTextResolverConsumerMigrationValidation] result=Passed tests=4 gets=62 formats=23 expressions=85");
+            Debug.Log("[GameTextResolverConsumerMigrationValidation] result=Passed tests=4 gets=65 formats=26 expressions=91");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -60,7 +64,7 @@ public sealed class GameTextResolverConsumerMigrationTests
     }
 
     [Test]
-    public void ConsumerCalls_MigrateExactlySixtyTwoGetsAndTwentyThreeFormats()
+    public void ConsumerCalls_MigrateExactlySixtyFiveGetsAndTwentySixFormats()
     {
         int getCount = 0;
         int formatCount = 0;
@@ -82,8 +86,8 @@ public sealed class GameTextResolverConsumerMigrationTests
             }
         }
 
-        Assert.AreEqual(62, getCount);
-        Assert.AreEqual(23, formatCount);
+        Assert.AreEqual(65, getCount);
+        Assert.AreEqual(26, formatCount);
     }
 
     [Test]
@@ -108,7 +112,7 @@ public sealed class GameTextResolverConsumerMigrationTests
             }
         }
 
-        Assert.AreEqual(80, literalCallCount);
+        Assert.AreEqual(86, literalCallCount);
         Assert.AreEqual(ExpectedLiteralCallHash, ComputeSha256(canonicalCalls.ToString()));
     }
 

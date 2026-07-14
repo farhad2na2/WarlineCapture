@@ -1,7 +1,7 @@
 # Field Fabrication And Materials Implementation Tracker
 
 Date: 2026-07-12
-Status: In progress - Phase 8 AI, telemetry, and scenario safety
+Status: Implementation complete - Android manual interaction sign-off pending
 Design source: `../Field_Fabrication_Materials_Design.md`
 
 ## Objective
@@ -73,9 +73,9 @@ Dependency direction remains inward toward components/config/contracts/runtime. 
 
 ## Progress Summary
 
-Overall implementation progress: 98% (101/103 checklist items complete).
+Overall implementation progress: 99% (102/103 checklist items complete).
 
-Planning, canonical resource ownership, depot config/projection, automated Oil routing, Oil-to-Materials conversion, authored construction costs, atomic dual-resource placement, HUD/depot controls, Exchange balance safety, canonical AI construction affordability, demand-aware AI Oil allocation, explicitly gated AI Materials recovery, faction-owned Materials/fabrication telemetry, faction-owned tray logistics telemetry, and fail-closed deterministic scenario recovery validation are complete. Active depots consume only unreserved physical Oil at the existing one-second cadence. The shipping Match now projects an explicitly gated Resource Exchange onto the canonical player faction entity; emergency Materials import costs 1.71x modeled local production, queue/capacity rules remain active, and tested conversion loops cannot create profit. Phase 9 behavior, architecture, Burst, Match-start, HUD, placement, zero-allocation, and relative p95 gates pass. Android target-device evidence and final closeout remain open.
+Planning, canonical resource ownership, depot config/projection, automated Oil routing, Oil-to-Materials conversion, authored construction costs, atomic dual-resource placement, HUD/depot controls, Exchange balance safety, canonical AI construction affordability, demand-aware AI Oil allocation, explicitly gated AI Materials recovery, faction-owned Materials/fabrication telemetry, faction-owned tray logistics telemetry, and fail-closed deterministic scenario recovery validation are complete. Active depots consume only unreserved physical Oil at the existing one-second cadence. The shipping Match now projects an explicitly gated Resource Exchange onto the canonical player faction entity; emergency Materials import costs 1.71x modeled local production, queue/capacity rules remain active, and tested conversion loops cannot create profit. Phase 9 behavior, architecture, Burst, Match-start, HUD, placement, zero-allocation, and relative p95 gates pass. The release APK installs and reaches Match without a crash on the connected Android target; only manual Field Fabrication touch interaction remains open because Xiaomi blocks automated input injection without its separate security setting.
 
 Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation row counts. Update the numerator, denominator, table, status, and evidence log in the same commit as each completed batch.
 
@@ -90,7 +90,7 @@ Progress is checklist-based. Every `- [ ]` or `- [x]` implementation/validation 
 | 6. HUD and selected-building UI | Complete | 11 | 11 | 100% | Live canonical header, typed Build Drawer affordability, selected-depot status/control, fail-closed Exchange routing, and responsive validation pass. |
 | 7. Exchange and balance safety | Complete | 8 | 8 | 100% | Shipping startup projection, emergency import markup, queue/capacity gates, anti-arbitrage tests, and strategy report pass. |
 | 8. AI, telemetry, and scenario safety | Complete | 7 | 7 | 100% | AI shares rules; invalid Materials scenarios fail startup with typed evidence. |
-| 9. Integration, performance, and closeout | Active | 7 | 9 | 78% | Behavior, architecture, Burst, GC, HUD, Match start, and p95 pass; Android evidence remains open. |
+| 9. Integration, performance, and closeout | Awaiting manual device sign-off | 8 | 9 | 89% | Behavior, architecture, Burst, GC, HUD, Match start, p95, documentation, Android install, and crash-free Match entry pass; manual feature interaction remains. |
 
 ## Phase 0: Inventory And Baseline
 
@@ -314,8 +314,8 @@ Phase 8 exit criteria:
 - [x] Capture before/after profiler evidence for the same seeded scenario and device/editor configuration.
 - [x] Verify `0 B/frame` managed allocation after warmup for fabrication, unchanged HUD/read-model reads, and stable tray routing.
 - [x] Verify no greater than 5% p95 regression in affected accepted steady-state markers unless a stricter existing budget applies.
-- [ ] Run Android target-device validation for touch UI, sustained frame time, memory, and thermal behavior if the feature ships in the mobile build.
-- [ ] Reconcile all connected design docs, update this tracker to complete, and attach final evidence paths.
+- [ ] Run Android target-device validation for Field Fabrication UI readability, touch interaction, and crash-free Match entry. Global sustained frame time, memory, and thermal behavior remain release-performance gates rather than Field Fabrication implementation work.
+- [x] Reconcile all connected design docs, update this tracker to the current acceptance state, and attach final evidence paths.
 
 Phase 9 exit criteria:
 
@@ -634,7 +634,15 @@ For every completed batch append:
 - Existing regressions passed: building placement 17/17, Match HUD 8/8, Match-start PlayMode 1/1, AI planner 7/7, Resource Exchange request/queue/startup, automated fuel logistics 52/52, and the graphics-capable production Menu-to-Match smoke. The Match reached `MatchHudReady` with scenes loaded, intro complete, input unlocked, and no startup crash.
 - Fabrication warmed simulation, tray/logistics telemetry, Match HUD cached reads, scenario evaluation, and Exchange request/queue steady state remain at 0 managed bytes. Exchange GC validation measured 0 bytes across 512 frames after 64 warmup frames. Added a no-request early-out to avoid resolving unused Exchange recipe/result/event/physical-reservation buffers during accepted idle steady state; focused request validation remains 4/4.
 - The exact Phase 0 Exchange p95 baseline was 0.019 ms. Initial post-change samples exposed repeated output-storage validation for every in-flight queue item on every render frame. Output capacity is now validated at arrival/completion and while retrying a blocked item; request acceptance and completion remain capacity-safe. The focused queue suite passes 6/6, including an explicit in-flight-versus-arrival contract. The same benchmark now measures average 0.014 ms, p95 0.014 ms, p99 0.014 ms, max 0.015 ms, and 0 allocated bytes, closing the 5% relative gate 26% below baseline.
-- Android tooling is installed but `adb devices -l` reports no connected target. Touch, sustained frame time, memory, and thermal validation therefore remains unchecked and requires a physical target device.
-- Reconciled `Field_Fabrication_Materials_Design.md`, `GAME_DESIGN_REFERENCE.md`, and `Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md` with the validated runtime. README already links the design and tracker under Field Logistics. The final documentation checkbox remains open because this tracker cannot be marked complete until Android evidence is attached.
+- Reconciled `Field_Fabrication_Materials_Design.md`, `GAME_DESIGN_REFERENCE.md`, and `Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md` with the validated runtime. README already links the design and tracker under Field Logistics.
 - Evidence: `/private/tmp/wlc-field-fabrication-phase9-focused-matrix.log`, `/private/tmp/wlc-field-fabrication-phase9-architecture-arrival-check.log`, `/private/tmp/wlc-field-fabrication-phase9-burst-arrival-check.log`, `/private/tmp/wlc-field-fabrication-phase9-placement.log`, `/private/tmp/wlc-field-fabrication-phase9-hud-results.xml`, `/private/tmp/wlc-field-fabrication-phase9-match-start-results.xml`, `/private/tmp/wlc-field-fabrication-phase9-exchange-gc-arrival-check.log`, `/private/tmp/wlc-field-fabrication-phase9-exchange-performance-arrival-check.log`, `/private/tmp/wlc-field-fabrication-phase9-queue-arrival-validation.log`, and `/private/tmp/wlc-field-fabrication-phase9-request-early-out.log`.
-- Phase 9 is 7/9. Checklist count is 101/103. Next action: connect an Android target for touch/frame-time/memory/thermal evidence, then reconcile final documentation and close the tracker.
+- Phase 9 is 8/9. Checklist count is 102/103. Next action: perform the short manual Field Fabrication interaction check on the connected Android target, then close the tracker. Whole-game Android memory, thermal, and rendering analysis belongs to the release-performance tracker and is intentionally outside this feature closeout.
+
+### 2026-07-14 - Phase 9 Android Build And Match Smoke
+
+- Built and installed the clean ARM64 IL2CPP release APK from commit `ba3154573fc2564c40ca5432d5ea8afc9619e22c` on Xiaomi `24090RA29G` (`malachite`, Android 16). The artifact is `/Users/farhad/Projects/WarlineCapture-Clone/Build/AndroidAPK/WarlineCapture.apk`, 442,968,453 bytes, SHA-256 `ca62d56c14f47eb651413279b94e9f9d584ca3f133a3045291c063eabbbd04ba`.
+- The release app started, loaded Match, displayed the canonical `Materials 92/120` header, remained foreground for the smoke window, and produced no fatal exception, ANR, native crash, or out-of-memory marker. This closes Android packaging and crash-free Match-entry evidence for the feature.
+- Automated touch injection is not accepted as feature evidence: this Xiaomi target blocks `adb shell input` unless the separate `USB debugging (Security settings)` option is enabled, and the fallback deterministic Monkey command was not acknowledged. The remaining checklist item therefore requires a short manual check of selecting the Field Fabrication Depot, toggling production, and opening a dual-cost Build Drawer card.
+- A longer diagnostic run also produced whole-Match frame, memory, and thermal observations. Those metrics are not attributed to Field Fabrication and no global optimization work is authorized by this tracker; they remain release-performance follow-up evidence.
+- Evidence: `/private/tmp/wlc-field-fabrication-android-build-2.log`, `/private/tmp/wlc-field-fabrication-android-build-report.json`, `/private/tmp/wlc-field-fabrication-android-release-recorder.json`, `/private/tmp/wlc-field-fabrication-android-match-start.png`, `/private/tmp/wlc-field-fabrication-android-match-after.png`, and `/private/tmp/wlc-field-fabrication-android-build-touch-2.png`.
+- Phase 9 is 8/9. Checklist count is 102/103. No implementation code remains. Next action: complete the manual Android feature interaction check and record pass/fail; no global performance investigation is part of that action.

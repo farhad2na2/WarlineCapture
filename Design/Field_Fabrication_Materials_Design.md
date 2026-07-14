@@ -1,9 +1,9 @@
 # WarlineCapture Field Fabrication And Materials Design
 
 Date: 2026-07-14
-Status: Implemented high-level design source of truth; Android target-device closeout pending
+Status: Implemented high-level design source of truth; Android manual interaction sign-off pending
 
-Implementation evidence and the two remaining acceptance items are maintained in `Architecture/field_fabrication_materials_implementation_tracker.md`. The active runtime now includes canonical faction Materials, physical Oil delivery, Oil-to-Materials conversion, dual-cost construction, live HUD/depot controls, expensive Exchange recovery, shared AI rules, telemetry, deterministic scenario recovery validation, and allocation/performance gates. This document remains the gameplay authority; the tracker remains the implementation/evidence authority.
+Implementation evidence and the remaining manual Android interaction sign-off are maintained in `Architecture/field_fabrication_materials_implementation_tracker.md`. The active runtime now includes canonical faction Materials, physical Oil delivery, Oil-to-Materials conversion, dual-cost construction, live HUD/depot controls, expensive Exchange recovery, shared AI rules, telemetry, deterministic scenario recovery validation, and allocation/performance gates. The release APK installs and reaches Match without a crash on the connected Android target. This document remains the gameplay authority; the tracker remains the implementation/evidence authority.
 
 ## Purpose
 

@@ -84,19 +84,30 @@ try {
         throw "[APH-803 CI Preflight] Schema/profile identity does not match APH-803 version 1."
     }
 
-    $pythonLauncher = Get-Command py -CommandType Application -ErrorAction SilentlyContinue |
+    # Prefer an installed interpreter over the Windows Store python.exe alias, which
+    # reports as an Application but exits with an error when invoked by Jenkins.
+    $installedPython = Get-ChildItem `
+        -Path (Join-Path $env:LOCALAPPDATA "Programs\Python") `
+        -Filter "python.exe" `
+        -Recurse `
+        -File `
+        -ErrorAction SilentlyContinue |
+        Where-Object { $_.FullName -notmatch "\\Lib\\venv\\" } |
+        Sort-Object FullName -Descending |
         Select-Object -First 1
-    if ($null -ne $pythonLauncher) {
+
+    if ($null -ne $installedPython) {
+        $pythonExecutable = $installedPython.FullName
+        $pythonPrefixArguments = @()
+    } else {
+        $pythonLauncher = Get-Command py -CommandType Application -ErrorAction SilentlyContinue |
+            Select-Object -First 1
+        if ($null -eq $pythonLauncher) {
+            throw "[APH-803 CI Preflight] Python 3 was not found. Install Python 3 or set up the Windows py launcher."
+        }
+
         $pythonExecutable = $pythonLauncher.Source
         $pythonPrefixArguments = @("-3")
-    } else {
-        $pythonCommand = Get-Command python -CommandType Application -ErrorAction SilentlyContinue |
-            Select-Object -First 1
-        if ($null -eq $pythonCommand) {
-            throw "[APH-803 CI Preflight] Python 3 was not found as 'py -3' or 'python'."
-        }
-        $pythonExecutable = $pythonCommand.Source
-        $pythonPrefixArguments = @()
     }
 
     Push-Location $ProjectPath

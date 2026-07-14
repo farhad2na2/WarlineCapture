@@ -8,6 +8,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.TestTools;
 using UnityEngine.UI;
 
 public sealed class MatchHudAssistantUiSystemHelperTests
@@ -177,6 +178,9 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             out RectTransform objectives);
         var ui = new MainMenuPlayUI();
         ui.Init(null, new FakeMatchRuntimeState());
+        LogAssert.Expect(
+            LogType.Error,
+            "[ARIA] Match HUD prefab is missing HeaderContent/AriaAssistantButton; runtime button creation is disabled.");
         ui.BindMatchHudAssistant(header.gameObject, overlay, LoadPopupPrefab());
 
         RectTransform button = header.Find("AriaAssistantButton") as RectTransform;

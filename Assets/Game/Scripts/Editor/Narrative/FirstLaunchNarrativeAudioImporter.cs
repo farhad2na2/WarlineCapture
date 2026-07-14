@@ -10,7 +10,7 @@ namespace Game.Editor
     public static class FirstLaunchNarrativeAudioImporter
     {
         public const string VoiceRoot = "Assets/Game/Audio/Narrative/FirstLaunch/Voice";
-        public const string RightsStatus = "TEMP_INTERNAL_ONLY_DISTRIBUTION_RIGHTS_UNVERIFIED";
+        public const string RightsStatus = "ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE";
         public const float VorbisQuality = 0.7f;
 
         private static readonly string[] ClipIds =
@@ -38,7 +38,7 @@ namespace Game.Editor
 
         public static IReadOnlyList<string> StableClipIds => StableClipIdsView;
 
-        [MenuItem("Game/Narrative/Configure FirstLaunch Temporary Voice Imports")]
+        [MenuItem("Game/Narrative/Configure FirstLaunch Voice Imports")]
         public static void ConfigureTemporaryVoiceImports()
         {
             ValidateAssetSet();
@@ -68,10 +68,10 @@ namespace Game.Editor
             }
 
             ValidateTemporaryVoiceImports();
-            Debug.Log($"Configured {ClipIds.Length} FirstLaunch temporary voice clips.");
+            Debug.Log($"Configured {ClipIds.Length} FirstLaunch voice clips.");
         }
 
-        [MenuItem("Game/Narrative/Validate FirstLaunch Temporary Voice Imports")]
+        [MenuItem("Game/Narrative/Validate FirstLaunch Voice Imports")]
         public static void ValidateTemporaryVoiceImports()
         {
             ValidateAssetSet();
@@ -79,7 +79,7 @@ namespace Game.Editor
             foreach (string clipId in ClipIds)
                 ValidateClip(clipId);
 
-            Debug.Log($"Validated {ClipIds.Length} FirstLaunch temporary voice clips.");
+            Debug.Log($"Validated {ClipIds.Length} FirstLaunch voice clips.");
         }
 
         public static string GetAssetPath(string clipId)
@@ -126,7 +126,7 @@ namespace Game.Editor
             Require(settings.sampleRateSetting == AudioSampleRateSetting.PreserveSampleRate, assetPath, "Sample rate must be preserved");
             Require(clip.channels == 1, assetPath, "Imported clip must be mono");
             Require(clip.name == clipId, assetPath, $"AudioClip name must retain stable ID '{clipId}'");
-            Require(importer.userData == BuildUserData(clipId), assetPath, "Temporary rights/runtime TTS metadata is missing");
+            Require(importer.userData == BuildUserData(clipId), assetPath, "Rights/runtime TTS metadata is missing");
 
             if (TryGetNormalize(importer, out bool normalize))
                 Require(!normalize, assetPath, "Normalize must be disabled when the importer exposes the setting");

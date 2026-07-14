@@ -26,11 +26,13 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[2]
 AUDIO_ROOT = ROOT / "Assets" / "Game" / "Audio"
 CATALOG_PATH = AUDIO_ROOT / "Config" / "audio_event_catalog_v0_1.json"
-DEFAULT_SECRET_PATH = Path("/private/tmp/warlinecapture-secrets/elevenlabs_api_key")
-DEFAULT_WORK_ROOT = Path("/private/tmp/warlinecapture-elevenlabs-sfx")
+DEFAULT_SECRET_PATH = Path(os.environ.get("LOCALAPPDATA", Path.home())) / "WarlineCapture/Secrets/elevenlabs_api_key.txt"
+DEFAULT_WORK_ROOT = Path(os.environ.get("TEMP", "/tmp")) / "warlinecapture-elevenlabs-sfx"
 API_URL = "https://api.elevenlabs.io/v1/sound-generation"
+SUBSCRIPTION_URL = "https://api.elevenlabs.io/v1/user/subscription"
 MODEL_ID = "eleven_text_to_sound_v2"
 GENERATED_STATUS = "generated-elevenlabs"
+RIGHTS_STATUS = "ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE"
 ARRANGED_MUSIC_EVENT_IDS = frozenset(
     {
         "Music.Menu.Loop",
@@ -562,6 +564,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-candidates", type=int, default=4)
     parser.add_argument("--min-score", type=float, default=None)
     parser.add_argument("--output-format", default="mp3_44100_128")
+    parser.add_argument("--ffmpeg", default="ffmpeg")
     parser.add_argument("--timeout-seconds", type=float, default=120.0)
     parser.add_argument("--map", action="store_true", help="Copy selected passing WAVs to catalog asset paths.")
     parser.add_argument("--allow-failed-map", action="store_true", help="Map the best candidate even if QA did not pass.")
@@ -579,6 +582,28 @@ def read_api_key(path: Path) -> str:
     if not key:
         raise RuntimeError(f"Empty ElevenLabs API key file: {path}")
     return key
+
+
+def subscription_snapshot(api_key: str, timeout_seconds: float) -> dict[str, Any]:
+    request = urllib.request.Request(
+        SUBSCRIPTION_URL,
+        method="GET",
+        headers={"xi-api-key": api_key, "Accept": "application/json"},
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=timeout_seconds) as response:
+            data = json.loads(response.read().decode("utf-8"))
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="replace")
+        raise RuntimeError(f"ElevenLabs subscription check failed ({exc.code}): {detail}") from exc
+    if data.get("status") != "active" or data.get("tier") in {None, "free"}:
+        raise RuntimeError("An active paid ElevenLabs subscription is required for shipping audio generation.")
+    return {
+        "tier": data.get("tier"),
+        "status": data.get("status"),
+        "creditLimit": data.get("character_limit"),
+        "creditsUsedBeforeGeneration": data.get("character_count"),
+    }
 
 
 def slug(value: str) -> str:
@@ -639,14 +664,14 @@ def request_sound(
         raise RuntimeError(f"ElevenLabs request failed for {spec.event_id}: {exc}") from exc
 
 
-def convert_to_wav(source: Path, destination: Path, spec: SfxSpec) -> None:
+def convert_to_wav(source: Path, destination: Path, spec: SfxSpec, ffmpeg: str) -> None:
     audio_filter = "volume=-1.5dB"
     if spec.target_lufs is not None:
         audio_filter = f"loudnorm=I={spec.target_lufs}:TP=-2:LRA=7"
 
     subprocess.run(
         [
-            "ffmpeg",
+            ffmpeg,
             "-y",
             "-v",
             "error",
@@ -859,7 +884,7 @@ def generate_for_spec(
         )
         if args.dry_run:
             continue
-        convert_to_wav(mp3_path, wav_path, spec)
+        convert_to_wav(mp3_path, wav_path, spec, args.ffmpeg)
         metrics = analyze_wav(wav_path)
         score, passed, reasons = score_candidate(spec, metrics, args.min_score)
         result = CandidateResult(
@@ -903,6 +928,7 @@ def main() -> int:
         return 0
 
     api_key = read_api_key(args.api_key_file)
+    subscription = subscription_snapshot(api_key, args.timeout_seconds)
     run_path = run_dir(args.work_root)
     print(f"[run] writing candidates to {run_path}", flush=True)
 
@@ -912,20 +938,23 @@ def main() -> int:
         "endpoint": API_URL,
         "modelId": MODEL_ID,
         "outputFormat": args.output_format,
+        "rightsStatus": RIGHTS_STATUS,
+        "accountTierAtGeneration": subscription["tier"],
+        "commercialUseEligible": True,
+        "runtimeNetworkGeneration": False,
+        "subscriptionSnapshot": subscription,
         "mapped": args.map,
         "events": [],
     }
     mapped_events: set[str] = set()
+    selected_candidates: list[tuple[SfxSpec, CandidateResult]] = []
     failures: list[str] = []
 
     for spec in specs:
         best, candidates = generate_for_spec(api_key, spec, run_path / slug(spec.event_id), args)
         can_map = best.passed or args.allow_failed_map
-        if args.map and can_map and not args.dry_run:
-            map_candidate(spec, best)
-            mapped_events.add(spec.event_id)
-            update_catalog_status({spec.event_id})
-            print(f"[map] {spec.event_id} -> {spec.asset_path} candidate={best.index} score={best.score}", flush=True)
+        if args.map and can_map:
+            selected_candidates.append((spec, best))
         elif args.map and not can_map:
             failures.append(f"{spec.event_id}: best score {best.score} failed QA")
             print(f"[skip] {spec.event_id} best candidate failed QA; not mapped", flush=True)
@@ -936,7 +965,7 @@ def main() -> int:
                 "bestCandidateIndex": best.index,
                 "bestScore": best.score,
                 "bestPassed": best.passed,
-                "mapped": spec.event_id in mapped_events,
+                "mapped": False,
                 "candidates": [
                     {
                         **asdict(candidate),
@@ -946,6 +975,15 @@ def main() -> int:
                 ],
             }
         )
+
+    if args.map and not failures:
+        for spec, best in selected_candidates:
+            map_candidate(spec, best)
+            mapped_events.add(spec.event_id)
+            print(f"[map] {spec.event_id} -> {spec.asset_path} candidate={best.index} score={best.score}", flush=True)
+        update_catalog_status(mapped_events)
+        for event in manifest["events"]:
+            event["mapped"] = event["spec"]["event_id"] in mapped_events
 
     manifest_path = run_path / "manifest.json"
     manifest_path.write_text(json.dumps(manifest, indent=2) + "\n")

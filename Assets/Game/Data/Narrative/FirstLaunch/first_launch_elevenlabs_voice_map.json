@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "provider": "ElevenLabs",
+  "designModel": "eleven_ttv_v3",
+  "createdAtUtc": "2026-07-14T10:21:33.946702+00:00",
+  "voices": [
+    {
+      "speaker": "RADIO",
+      "voiceId": "W6gzkYnU5Yxt0ihqIa71",
+      "name": "Warline - District Dispatch",
+      "category": "generated",
+      "description": "A middle-aged male emergency operations dispatcher speaking English with a subtle Levantine accent. Medium-low pitch, disciplined breath control, crisp consonants, brisk professional cadence, controlled urgency, credible military and civil-response radio operator, never theatrical.",
+      "designSeed": 812003,
+      "selectedPreviewDurationSeconds": 10.267958333333333
+    },
+    {
+      "speaker": "DALIA",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "name": "Warline - Major Dalia Rahim",
+      "category": "generated",
+      "description": "A woman in her early forties speaking English with a natural, subtle Levantine accent. Grounded mezzo-alto voice, calm authority, concise military cadence, emotionally restrained under pressure, experienced field commander, warm enough to inspire trust without sounding soft.",
+      "designSeed": 812017,
+      "selectedPreviewDurationSeconds": 11.469625
+    },
+    {
+      "speaker": "SAMIRA",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "name": "Warline - Engineer Samira Haddad",
+      "category": "generated",
+      "description": "A woman in her early thirties speaking English with a gentle Levantine accent. Clear intelligent delivery, medium pitch, practical civil engineer, compassionate but composed during emergencies, natural conversational rhythm, urgent when lives are at risk without melodrama.",
+      "designSeed": 812031,
+      "selectedPreviewDurationSeconds": 10.921041666666667
+    },
+    {
+      "speaker": "ARIA",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "name": "Warline - ARIA Civic Relay",
+      "category": "generated",
+      "description": "A distinctive feminine synthetic civic assistant speaking neutral international English. Human-adjacent and reassuring rather than robotic, precise diction, smooth medium pitch, measured tempo, calm tactical clarity, subtle intelligence and empathy, consistent enough for frequent RTS commands.",
+      "designSeed": 812047,
+      "selectedPreviewDurationSeconds": 14.107958333333332
+    },
+    {
+      "speaker": "COMMANDER",
+      "voiceId": "N2yn1e9QeLHJNAg4zbMW",
+      "name": "Warline - Commander",
+      "category": "generated",
+      "description": "A man in his early forties with a neutral international English accent. Grounded medium-low voice, quiet confidence, restrained authority, concise command cadence, thoughtful and humane, never a trailer announcer, credible as an experienced joint-response commander.",
+      "designSeed": 812063,
+      "selectedPreviewDurationSeconds": 11.965958333333333
+    }
+  ]
+}

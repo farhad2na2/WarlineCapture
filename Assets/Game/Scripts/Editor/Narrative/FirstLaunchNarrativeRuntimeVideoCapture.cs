@@ -37,7 +37,7 @@ namespace Game.Editor
             if (!File.Exists(FfmpegPath))
                 throw new FileNotFoundException("The First Launch capture requires ffmpeg.", FfmpegPath);
             if (!File.Exists(SourceAudioPath))
-                throw new FileNotFoundException("The approved temporary voice and ambience mix is missing.", SourceAudioPath);
+                throw new FileNotFoundException("The approved voice and ambience mix is missing.", SourceAudioPath);
 
             FirstLaunchNarrativeConfigBuilder.Build();
             FirstLaunchNarrativePresentationPrefabBuilder.Build();

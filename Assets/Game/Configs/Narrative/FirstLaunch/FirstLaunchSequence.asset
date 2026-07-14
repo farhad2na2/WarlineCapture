@@ -23,14 +23,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 409e1cc180a1a4ed08b60143f25f6cb2
       m_SubObjectName: FL-P01
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 3d16701ed07fd460cbbde170b7951682
       m_SubObjectName: FL-P01
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines: []
     continueStateId: FL-P02
@@ -47,7 +47,7 @@ MonoBehaviour:
     vehicleCue: 0
     eventCue: 0
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: FL-P02
@@ -57,20 +57,20 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 0131c3d7f6e604616badfe03584892a2
       m_SubObjectName: FL-P02
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 9e3cdbdf80624493a91ce5bda57764c7
       m_SubObjectName: FL-P02
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: p02_radio
       textKey: narrative.first_launch.line.p02_radio
-      englishFallback: Multiple explosions across Old Market. Power is failing. The
-        main clinic road is blocked.
+      englishFallback: Multiple explosions reported across Old Market. Power is failing.
+        The main road to the clinic is blocked.
       speaker: 0
       voiceClip: {fileID: 8300000, guid: ac4b7b9092d3a42b086ee90292c336e0, type: 3}
       startSeconds: 0.29999924
@@ -81,16 +81,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 8
     motionPreset: 5
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 1
     ambienceCue: 2
     vehicleCue: 0
     eventCue: 1
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: FL-P03
@@ -100,20 +100,20 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: b54532df642214add92fd6821e5aaa49
       m_SubObjectName: FL-P03
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 3c5d6db7b0dd84f8a80cd79b97ac57f3
       m_SubObjectName: FL-P03
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: p03_radio
       textKey: narrative.first_launch.line.p03_radio
-      englishFallback: Joint Response Command, respond. The district relay is down.
-        The command channel is silent.
+      englishFallback: Joint Response Command, this is District Dispatch. Do you
+        copy? The district relay is down. The command channel has gone silent.
       speaker: 0
       voiceClip: {fileID: 8300000, guid: 5a812bb9556bc40408a5a891e990b0c1, type: 3}
       startSeconds: 0.29999924
@@ -124,16 +124,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 9
     motionPreset: 4
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 1
     ambienceCue: 2
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: FL-P04
@@ -143,20 +143,20 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 87b13419d9d0e4a9e9a85dd030bafdb5
       m_SubObjectName: FL-P04
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 47c949cf75e5e4586ac1bbbc57d617bb
       m_SubObjectName: FL-P04
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: p04_dalia
       textKey: narrative.first_launch.line.p04_dalia
-      englishFallback: Major Dalia Rahim, J R C field command. Convoy survivors located.
-        Extraction is underway.
+      englishFallback: District Dispatch, Major Dalia Rahim, JRC Field Command. We
+        found the convoy survivors. Extraction is underway.
       speaker: 1
       voiceClip: {fileID: 8300000, guid: 6f0c66b02f248426680bf00fed9d852a, type: 3}
       startSeconds: 0.5
@@ -164,8 +164,8 @@ MonoBehaviour:
       essentialCaption: 0
     - lineId: p04_samira
       textKey: narrative.first_launch.line.p04_samira
-      englishFallback: Engineer Samira Haddad, civil infrastructure. Families and
-        road crews are trapped beyond the clinic route.
+      englishFallback: Field Command, this is Engineer Samira Haddad with Civil Infrastructure.
+        Families and road crews are trapped beyond the clinic route.
       speaker: 2
       voiceClip: {fileID: 8300000, guid: c14c2861f4b8d4964a5fec5cfaf5f084, type: 3}
       startSeconds: 12.5
@@ -176,16 +176,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 24
     motionPreset: 1
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 1
     eventCue: 3
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: FL-P05
@@ -195,20 +195,20 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 9457aa5b564ef4b1d9489f2b87ab4b28
       m_SubObjectName: FL-P05
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 912532a9edda7432786a1c5e3174ac21
       m_SubObjectName: FL-P05
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: p05_aria
       textKey: narrative.first_launch.line.p05_aria
-      englishFallback: I am ARIA, the Civic Relay assistant. Relay integrity is partial.
-        Command channels are offline.
+      englishFallback: I'm ARIA, the Civic Relay assistant. Relay integrity is degraded.
+        Command channels remain offline.
       speaker: 3
       voiceClip: {fileID: 8300000, guid: 12686ade48d6b4d5ca22d97d1e13a58d, type: 3}
       startSeconds: 0.5
@@ -219,16 +219,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 10
     motionPreset: 1
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 5
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: FL-P06
@@ -238,20 +238,20 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: e29677a7bc21c4a1e849ffeca7ba5502
       m_SubObjectName: FL-P06
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 4151bd31b96c44d7d84a230017b55d74
       m_SubObjectName: FL-P06
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: p06_aria
       textKey: narrative.first_launch.line.p06_aria
-      englishFallback: Emergency continuity protocol active. One valid command authority
-        remains.
+      englishFallback: Emergency continuity protocol is now active. One verified
+        command authority remains.
       speaker: 3
       voiceClip: {fileID: 8300000, guid: 6f4be792f4a7046689fdac93d87b1a87, type: 3}
       startSeconds: 0.5
@@ -262,16 +262,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 10
     motionPreset: 3
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 4
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: FL-P07
@@ -281,20 +281,20 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 75872a18e90664813b3b06e8a0675939
       m_SubObjectName: FL-P07
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 7c6bcb695c7074afdaabca91fbbef738
       m_SubObjectName: FL-P07
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: p07_aria
       textKey: narrative.first_launch.line.p07_aria
-      englishFallback: Old Market is the immediate priority. Armed movement is closing
-        on the blocked clinic route.
+      englishFallback: Old Market is the immediate priority. Armed units are closing
+        in on the blocked clinic route.
       speaker: 3
       voiceClip: {fileID: 8300000, guid: 061156a308c154a35bae723c790ac264, type: 3}
       startSeconds: 0.5
@@ -305,16 +305,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 10
     motionPreset: 1
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 1
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 2
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: first_launch.commander_identity
@@ -324,14 +324,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: afa267ddf70894b19b889bf9f779de79
       m_SubObjectName: FL-P08
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 600d0c0257a614f76b61f9f858049326
       m_SubObjectName: FL-P08
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines: []
     continueStateId: first_launch.guidance_choice
@@ -339,16 +339,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 0
     motionPreset: 6
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 0
     routeRole: 5
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: first_launch.guidance_choice
@@ -356,16 +356,16 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines: []
     continueStateId: FL-P09
@@ -373,16 +373,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 0
     motionPreset: 6
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 0
     routeRole: 6
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: FL-P09
@@ -392,20 +392,20 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 230fab8cd3ae144dfb69e19309232146
       m_SubObjectName: FL-P09
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: fafc9341884924168937c160257e08b1
       m_SubObjectName: FL-P09
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: p09_aria
       textKey: narrative.first_launch.line.p09_aria
-      englishFallback: Commander identity confirmed. I will advise. Authority remains
-        yours.
+      englishFallback: Commander identity confirmed. I will provide tactical support.
+        You retain command authority.
       speaker: 3
       voiceClip: {fileID: 8300000, guid: 98c56279595e54b3cb38343195997463, type: 3}
       startSeconds: 0.5
@@ -416,16 +416,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 8
     motionPreset: 1
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 6
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: FL-P10
@@ -435,20 +435,19 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 9f79ba8a3a00443a29b6ea77e9df0458
       m_SubObjectName: FL-P10
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 90c1052fd673b49d3a553055bdf3e5c3
       m_SubObjectName: FL-P10
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: p10_aria
       textKey: narrative.first_launch.line.p10_aria
-      englishFallback: This was coordinated. Power, roads, and command failed in
-        sequence.
+      englishFallback: 'The failures were deliberate: power, roads, then command.'
       speaker: 3
       voiceClip: {fileID: 8300000, guid: 160891e1efb7541848a9555183dc4058, type: 3}
       startSeconds: 0.5
@@ -459,16 +458,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 8
     motionPreset: 4
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 1
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 1
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: FL-P11
@@ -478,20 +477,20 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 98302256f8f444e31a64f097ece6e197
       m_SubObjectName: FL-P11
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 23f10b3eb214c4832b124fb9010480d6
       m_SubObjectName: FL-P11
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: p11_dalia
       textKey: narrative.first_launch.line.p11_dalia
-      englishFallback: Two J R C squads are still responding. The nearest forward
-        post is dark.
+      englishFallback: Two JRC squads still active. The nearest forward post has
+        gone dark.
       speaker: 1
       voiceClip: {fileID: 8300000, guid: 0c8fa5cb8fb204ed0a2d2f37400a3344, type: 3}
       startSeconds: 0.5
@@ -502,16 +501,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 9
     motionPreset: 1
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 1
     eventCue: 0
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: FL-P12
@@ -521,20 +520,20 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: ff62841cd9ab84640a67a8ee760c90b5
       m_SubObjectName: FL-P12
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 59851a1f00200443a93bb2b599ddd5ce
       m_SubObjectName: FL-P12
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: p12_samira
       textKey: narrative.first_launch.line.p12_samira
-      englishFallback: Civilians, clinic staff, and municipal crews remain behind
-        the closure.
+      englishFallback: Civilians, clinic staff, and municipal crews are still trapped
+        beyond the roadblock.
       speaker: 2
       voiceClip: {fileID: 8300000, guid: b80d11c348c8a48f1bd431b88d4ede85, type: 3}
       startSeconds: 0.5
@@ -545,16 +544,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 9
     motionPreset: 1
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 0
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: FL-P13
@@ -564,20 +563,20 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 3bb9afcfc28eb4c37b328dd5549005fe
       m_SubObjectName: FL-P13
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 1a28085fb649840ff81408dc91aa0c60
       m_SubObjectName: FL-P13
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: p13_aria
       textKey: narrative.first_launch.line.p13_aria
-      englishFallback: The pattern suggests coordination. Attribution is not yet
-        reliable.
+      englishFallback: We do not yet have enough evidence to identify who is behind
+        the attack.
       speaker: 3
       voiceClip: {fileID: 8300000, guid: ba6dc3d681a9c417d82dea2dd1791640, type: 3}
       startSeconds: 0.5
@@ -588,16 +587,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 8
     motionPreset: 3
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 0
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: FL-P14
@@ -607,20 +606,20 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 54f665aa12c89484988ccb0732f7db81
       m_SubObjectName: FL-P14
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 7bc10a4d59b384fb7832bd742e2cdbd9
       m_SubObjectName: FL-P14
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: p14_commander
       textKey: narrative.first_launch.line.p14_commander
-      englishFallback: Connect the response. Protect the clinic corridor. Confirm
-        targets before engagement.
+      englishFallback: Link the response teams. Secure the clinic corridor. Confirm
+        targets before engaging.
       speaker: 4
       voiceClip: {fileID: 8300000, guid: 1e9b5f4cd8b114591825f160e20bdc26, type: 3}
       startSeconds: 0.5
@@ -631,16 +630,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 8
     motionPreset: 1
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 0
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: FL-P15
@@ -650,19 +649,19 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 0f795c0c7d1f844768bdb12e26af778f
       m_SubObjectName: FL-P15
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: efc14f9882e6143b386a717cb1f61705
       m_SubObjectName: FL-P15
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: p15_dalia
       textKey: narrative.first_launch.line.p15_dalia
-      englishFallback: Confirmed armed Ash Line patrol approaching Old Market. No
+      englishFallback: Confirmed. Armed Ash Line patrol approaching Old Market. No
         heavy weapons observed.
       speaker: 1
       voiceClip: {fileID: 8300000, guid: 67f3b30311bbb447ba651ffadf498f46, type: 3}
@@ -674,16 +673,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 10
     motionPreset: 1
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 1
     ambienceCue: 2
     vehicleCue: 1
     eventCue: 1
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: FL-P16
@@ -693,20 +692,20 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: fec15b7d93077442bb9e63cde3be5767
       m_SubObjectName: FL-P16
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 6f1179d47e52746679172ffb0d2870f8
       m_SubObjectName: FL-P16
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: p16_aria
       textKey: narrative.first_launch.line.p16_aria
-      englishFallback: Three armed hostiles confirmed. Civilians remain behind the
-        barriers. Keep fire inside the marked corridor.
+      englishFallback: Three armed hostiles confirmed. Civilians are still behind
+        the barriers. Engage only within the marked corridor.
       speaker: 3
       voiceClip: {fileID: 8300000, guid: 7fdf86cbf0dfa41228ea0b13959a33d2, type: 3}
       startSeconds: 0.5
@@ -717,16 +716,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 10
     motionPreset: 4
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 1
     ambienceCue: 2
     vehicleCue: 0
     eventCue: 2
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: FL-P17
@@ -736,19 +735,19 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 10f8b08382ea8453d9695ee6dc436600
       m_SubObjectName: FL-P17
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: fcd3bc20b0ff641b781db07d10e2877d
       m_SubObjectName: FL-P17
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: p17_dalia
       textKey: narrative.first_launch.line.p17_dalia
-      englishFallback: Field units are ready. Tactical control is yours, Commander.
+      englishFallback: Field units standing by. You have tactical control, Commander.
       speaker: 1
       voiceClip: {fileID: 8300000, guid: 2a2bd0a3833284ef889671c36e0c1959, type: 3}
       startSeconds: 0.5
@@ -759,16 +758,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 8
     motionPreset: 1
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 1
     ambienceCue: 2
     vehicleCue: 1
     eventCue: 0
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: FL-P18
@@ -778,19 +777,19 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 6392133aa688d4e518170426da77854c
       m_SubObjectName: FL-P18
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: c1f9d6b2be4e344629e274ed6af0d379
       m_SubObjectName: FL-P18
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: p18_aria
       textKey: narrative.first_launch.line.p18_aria
-      englishFallback: Select the rifle squad. Move to cover. Secure the corridor.
+      englishFallback: Select the rifle squad. Move them into cover. Secure the corridor.
       speaker: 3
       voiceClip: {fileID: 8300000, guid: 03269cef6e35a4c4e988f35ab7982d0a, type: 3}
       startSeconds: 0.5
@@ -801,16 +800,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 10
     motionPreset: 1
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 1
     ambienceCue: 2
     vehicleCue: 0
     eventCue: 6
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: first_launch.m01_handoff
@@ -818,16 +817,16 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines: []
     continueStateId: first_launch.gameplay_placeholder
@@ -835,10 +834,10 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 0
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
@@ -852,16 +851,16 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines: []
     continueStateId: FL-P19
@@ -869,16 +868,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 0
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 0
     routeRole: 2
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: FL-P19
@@ -888,14 +887,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 8d61a11e527ef466989d0d0777dd2e2c
       m_SubObjectName: FL-P19
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 2fb360b87793d42acac6bb22cf73f190
       m_SubObjectName: FL-P19
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines: []
     continueStateId: FL-P20
@@ -903,16 +902,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 4
     motionPreset: 4
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 0
     routeRole: 3
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: FL-P20
@@ -922,14 +921,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 8ac2bc3079ee64333b123ac89c773d22
       m_SubObjectName: FL-P20
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 5984932e220a04fb08e9e0d718c1947e
       m_SubObjectName: FL-P20
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines: []
     continueStateId: FL-P21
@@ -937,16 +936,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 5
     motionPreset: 1
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 0
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: FL-P21
@@ -956,14 +955,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 66d151689307b478b82c943da90ccf4e
       m_SubObjectName: FL-P21
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 9830da87ebf8f4e8ab25214ca29b3007
       m_SubObjectName: FL-P21
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines: []
     continueStateId: FL-P22
@@ -971,16 +970,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 4
     motionPreset: 3
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 0
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: FL-P22
@@ -990,14 +989,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 99d526daa261444eaa9a1afdd2757930
       m_SubObjectName: FL-P22
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: edf129e0bf21e4f8f9850c723f7260b2
       m_SubObjectName: FL-P22
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines: []
     continueStateId: first_launch.command_base_reveal
@@ -1005,16 +1004,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 5
     motionPreset: 2
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 0
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: first_launch.command_base_reveal
@@ -1022,27 +1021,27 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines: []
-    continueStateId:
-    skipStateId:
+    continueStateId: 
+    skipStateId: 
     reducedMotionSupported: 1
     durationSeconds: 0
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0

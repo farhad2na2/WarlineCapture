@@ -28,23 +28,23 @@ namespace Game.Editor
 
         private static readonly LineDefinition[] Lines =
         {
-            new("FL-P02", "p02_radio", NarrativeSpeakerId.Radio, 17.8f, 25.5f, "Multiple explosions across Old Market. Power is failing. The main clinic road is blocked."),
-            new("FL-P03", "p03_radio", NarrativeSpeakerId.Radio, 25.8f, 34.5f, "Joint Response Command, respond. The district relay is down. The command channel is silent."),
-            new("FL-P04", "p04_dalia", NarrativeSpeakerId.Dalia, 35f, 46.5f, "Major Dalia Rahim, J R C field command. Convoy survivors located. Extraction is underway."),
-            new("FL-P04", "p04_samira", NarrativeSpeakerId.Samira, 47f, 58.5f, "Engineer Samira Haddad, civil infrastructure. Families and road crews are trapped beyond the clinic route."),
-            new("FL-P05", "p05_aria", NarrativeSpeakerId.Aria, 59f, 68.5f, "I am ARIA, the Civic Relay assistant. Relay integrity is partial. Command channels are offline."),
-            new("FL-P06", "p06_aria", NarrativeSpeakerId.Aria, 69f, 78.5f, "Emergency continuity protocol active. One valid command authority remains."),
-            new("FL-P07", "p07_aria", NarrativeSpeakerId.Aria, 79f, 88.5f, "Old Market is the immediate priority. Armed movement is closing on the blocked clinic route."),
-            new("FL-P09", "p09_aria", NarrativeSpeakerId.Aria, 89f, 96.5f, "Commander identity confirmed. I will advise. Authority remains yours."),
-            new("FL-P10", "p10_aria", NarrativeSpeakerId.Aria, 97f, 104.5f, "This was coordinated. Power, roads, and command failed in sequence."),
-            new("FL-P11", "p11_dalia", NarrativeSpeakerId.Dalia, 105f, 113.5f, "Two J R C squads are still responding. The nearest forward post is dark."),
-            new("FL-P12", "p12_samira", NarrativeSpeakerId.Samira, 114f, 122.5f, "Civilians, clinic staff, and municipal crews remain behind the closure."),
-            new("FL-P13", "p13_aria", NarrativeSpeakerId.Aria, 123f, 130.5f, "The pattern suggests coordination. Attribution is not yet reliable."),
-            new("FL-P14", "p14_commander", NarrativeSpeakerId.Commander, 131f, 138.5f, "Connect the response. Protect the clinic corridor. Confirm targets before engagement."),
-            new("FL-P15", "p15_dalia", NarrativeSpeakerId.Dalia, 139f, 148.5f, "Confirmed armed Ash Line patrol approaching Old Market. No heavy weapons observed."),
-            new("FL-P16", "p16_aria", NarrativeSpeakerId.Aria, 149f, 158.5f, "Three armed hostiles confirmed. Civilians remain behind the barriers. Keep fire inside the marked corridor."),
-            new("FL-P17", "p17_dalia", NarrativeSpeakerId.Dalia, 159f, 166.5f, "Field units are ready. Tactical control is yours, Commander."),
-            new("FL-P18", "p18_aria", NarrativeSpeakerId.Aria, 167f, 176.5f, "Select the rifle squad. Move to cover. Secure the corridor.")
+            new("FL-P02", "p02_radio", NarrativeSpeakerId.Radio, 17.8f, 25.5f, "Multiple explosions reported across Old Market. Power is failing. The main road to the clinic is blocked."),
+            new("FL-P03", "p03_radio", NarrativeSpeakerId.Radio, 25.8f, 34.5f, "Joint Response Command, this is District Dispatch. Do you copy? The district relay is down. The command channel has gone silent."),
+            new("FL-P04", "p04_dalia", NarrativeSpeakerId.Dalia, 35f, 46.5f, "District Dispatch, Major Dalia Rahim, JRC Field Command. We found the convoy survivors. Extraction is underway."),
+            new("FL-P04", "p04_samira", NarrativeSpeakerId.Samira, 47f, 58.5f, "Field Command, this is Engineer Samira Haddad with Civil Infrastructure. Families and road crews are trapped beyond the clinic route."),
+            new("FL-P05", "p05_aria", NarrativeSpeakerId.Aria, 59f, 68.5f, "I'm ARIA, the Civic Relay assistant. Relay integrity is degraded. Command channels remain offline."),
+            new("FL-P06", "p06_aria", NarrativeSpeakerId.Aria, 69f, 78.5f, "Emergency continuity protocol is now active. One verified command authority remains."),
+            new("FL-P07", "p07_aria", NarrativeSpeakerId.Aria, 79f, 88.5f, "Old Market is the immediate priority. Armed units are closing in on the blocked clinic route."),
+            new("FL-P09", "p09_aria", NarrativeSpeakerId.Aria, 89f, 96.5f, "Commander identity confirmed. I will provide tactical support. You retain command authority."),
+            new("FL-P10", "p10_aria", NarrativeSpeakerId.Aria, 97f, 104.5f, "The failures were deliberate: power, roads, then command."),
+            new("FL-P11", "p11_dalia", NarrativeSpeakerId.Dalia, 105f, 113.5f, "Two JRC squads still active. The nearest forward post has gone dark."),
+            new("FL-P12", "p12_samira", NarrativeSpeakerId.Samira, 114f, 122.5f, "Civilians, clinic staff, and municipal crews are still trapped beyond the roadblock."),
+            new("FL-P13", "p13_aria", NarrativeSpeakerId.Aria, 123f, 130.5f, "We do not yet have enough evidence to identify who is behind the attack."),
+            new("FL-P14", "p14_commander", NarrativeSpeakerId.Commander, 131f, 138.5f, "Link the response teams. Secure the clinic corridor. Confirm targets before engaging."),
+            new("FL-P15", "p15_dalia", NarrativeSpeakerId.Dalia, 139f, 148.5f, "Confirmed. Armed Ash Line patrol approaching Old Market. No heavy weapons observed."),
+            new("FL-P16", "p16_aria", NarrativeSpeakerId.Aria, 149f, 158.5f, "Three armed hostiles confirmed. Civilians are still behind the barriers. Engage only within the marked corridor."),
+            new("FL-P17", "p17_dalia", NarrativeSpeakerId.Dalia, 159f, 166.5f, "Field units standing by. You have tactical control, Commander."),
+            new("FL-P18", "p18_aria", NarrativeSpeakerId.Aria, 167f, 176.5f, "Select the rifle squad. Move them into cover. Secure the corridor.")
         };
 
         [MenuItem("Game/Narrative/First Launch/Build Config Assets")]
@@ -234,7 +234,7 @@ namespace Game.Editor
             NarrativeSpeakerCatalog catalog = GetOrCreateAsset<NarrativeSpeakerCatalog>(SpeakerPath);
             List<NarrativeSpeakerRecord> records = new()
             {
-                Speaker(NarrativeSpeakerId.Radio, "DISTRICT RADIO", "EMERGENCY BROADCAST", NarrativeSpeakerTreatment.Radio, null, new Color(0.76f, 0.72f, 0.6f)),
+                Speaker(NarrativeSpeakerId.Radio, "DISTRICT DISPATCH", "EMERGENCY OPERATIONS", NarrativeSpeakerTreatment.Radio, null, new Color(0.76f, 0.72f, 0.6f), "District emergency dispatcher"),
                 Speaker(NarrativeSpeakerId.Dalia, "DALIA RAHIM", "JRC FIELD COMMAND", NarrativeSpeakerTreatment.HumanPortrait, FirstLaunchNarrativeDialogueAssetImporter.DaliaPortraitPath, new Color(0.82f, 0.68f, 0.42f)),
                 Speaker(NarrativeSpeakerId.Samira, "SAMIRA HADDAD", "CIVIL INFRASTRUCTURE", NarrativeSpeakerTreatment.HumanPortrait, FirstLaunchNarrativeDialogueAssetImporter.SamiraPortraitPath, new Color(0.72f, 0.62f, 0.42f)),
                 Speaker(NarrativeSpeakerId.Aria, "ARIA", "CIVIC RELAY ASSISTANT", NarrativeSpeakerTreatment.AriaIcon, FirstLaunchNarrativeDialogueAssetImporter.AriaIconPath, new Color(0.2f, 0.92f, 1f)),
@@ -244,7 +244,7 @@ namespace Game.Editor
             EditorUtility.SetDirty(catalog);
         }
 
-        private static NarrativeSpeakerRecord Speaker(NarrativeSpeakerId id, string name, string role, NarrativeSpeakerTreatment treatment, string spritePath, Color color)
+        private static NarrativeSpeakerRecord Speaker(NarrativeSpeakerId id, string name, string role, NarrativeSpeakerTreatment treatment, string spritePath, Color color, string accessibleLabel = null)
         {
             NarrativeSpeakerRecord record = new();
             string key = id.ToString().ToLowerInvariant();
@@ -254,7 +254,7 @@ namespace Game.Editor
             Set(record, "roleKey", $"narrative.first_launch.speaker.{key}.role");
             Set(record, "roleFallback", role);
             Set(record, "accessibleLabelKey", $"narrative.first_launch.speaker.{key}.accessible_label");
-            Set(record, "accessibleLabelFallback", $"{name}, {role}");
+            Set(record, "accessibleLabelFallback", string.IsNullOrEmpty(accessibleLabel) ? $"{name}, {role}" : accessibleLabel);
             Set(record, "treatment", treatment);
             Set(record, "identitySprite", string.IsNullOrEmpty(spritePath) ? null : Load<Sprite>(spritePath));
             Set(record, "accentColor", color);

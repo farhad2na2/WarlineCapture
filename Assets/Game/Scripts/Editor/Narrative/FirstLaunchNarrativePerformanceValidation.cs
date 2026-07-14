@@ -240,7 +240,7 @@ namespace Game.Editor
             report.AppendLine($"| Stable managed allocation after warmup | {stableAllocatedBytes} bytes |");
             report.AppendLine($"| Resident panel handles after transition | {residentPanels} (current + optional next, maximum 2) |");
             report.AppendLine($"| Current decoded panel texture estimate | {FormatBytes(currentPanelBytes)} |");
-            report.AppendLine($"| Referenced temporary voice clips | {audioClipCount} / {FormatBytes(audioBytes)} runtime memory |");
+            report.AppendLine($"| Referenced voice clips | {audioClipCount} / {FormatBytes(audioBytes)} runtime memory |");
             report.AppendLine();
             report.AppendLine("## Failure And Route Checks");
             report.AppendLine();

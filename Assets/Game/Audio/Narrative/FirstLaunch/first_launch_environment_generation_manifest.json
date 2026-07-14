@@ -1,9 +1,19 @@
 {
   "schema": "WarlineCapture.ElevenLabsSfxGeneration.v0.1",
-  "generatedAtUtc": "2026-07-12T06:37:47.073278+00:00",
+  "generatedAtUtc": "2026-07-14T10:39:54.481864+00:00",
   "endpoint": "https://api.elevenlabs.io/v1/sound-generation",
   "modelId": "eleven_text_to_sound_v2",
-  "outputFormat": "mp3_44100_128",
+  "outputFormat": "mp3_44100_192",
+  "rightsStatus": "ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE",
+  "accountTierAtGeneration": "creator",
+  "commercialUseEligible": true,
+  "runtimeNetworkGeneration": false,
+  "subscriptionSnapshot": {
+    "tier": "creator",
+    "status": "active",
+    "creditLimit": 121024,
+    "creditsUsedBeforeGeneration": 2911
+  },
   "mapped": true,
   "events": [
     {
@@ -20,9 +30,10 @@
         "max_silence_ratio": 0.55,
         "min_crest_db": 3.0,
         "max_crest_db": 18.0,
-        "transient_expected": false
+        "transient_expected": false,
+        "target_lufs": null
       },
-      "bestCandidateIndex": 1,
+      "bestCandidateIndex": 2,
       "bestScore": 100.0,
       "bestPassed": true,
       "mapped": true,
@@ -30,8 +41,31 @@
         {
           "event_id": "Narrative.FirstLaunch.Music.Calm",
           "index": 1,
-          "mp3_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260711T220620Z/narrative_firstlaunch_music_calm/candidate_01.mp3",
-          "wav_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260711T220620Z/narrative_firstlaunch_music_calm/candidate_01.wav",
+          "mp3_path": "D:\\Projects\\WarlineCapture\\Logs\\ElevenLabsFirstLaunchSfx\\20260714T103954Z\\narrative_firstlaunch_music_calm\\candidate_01.mp3",
+          "wav_path": "D:\\Projects\\WarlineCapture\\Logs\\ElevenLabsFirstLaunchSfx\\20260714T103954Z\\narrative_firstlaunch_music_calm\\candidate_01.wav",
+          "score": 99.3,
+          "passed": true,
+          "reasons": [
+            "hot_rms=-13.6dB"
+          ],
+          "metrics": {
+            "duration_seconds": 24.0,
+            "sample_rate": 44100,
+            "channels": 1,
+            "rms_db": -13.648589882621478,
+            "peak_db": -2.275819249291314,
+            "crest_db": 11.372770633330163,
+            "clipped_ratio": 0.0,
+            "near_clip_ratio": 0.0,
+            "silence_ratio": 0.00499244142101285,
+            "zero_crossing_rate": 0.018252078609221466
+          }
+        },
+        {
+          "event_id": "Narrative.FirstLaunch.Music.Calm",
+          "index": 2,
+          "mp3_path": "D:\\Projects\\WarlineCapture\\Logs\\ElevenLabsFirstLaunchSfx\\20260714T103954Z\\narrative_firstlaunch_music_calm\\candidate_02.mp3",
+          "wav_path": "D:\\Projects\\WarlineCapture\\Logs\\ElevenLabsFirstLaunchSfx\\20260714T103954Z\\narrative_firstlaunch_music_calm\\candidate_02.wav",
           "score": 100.0,
           "passed": true,
           "reasons": [],
@@ -39,13 +73,13 @@
             "duration_seconds": 24.0,
             "sample_rate": 44100,
             "channels": 1,
-            "rms_db": -15.103751559297994,
-            "peak_db": -2.454004731709838,
-            "crest_db": 12.649746827588157,
+            "rms_db": -20.658668836711037,
+            "peak_db": -3.7712263010456177,
+            "crest_db": 16.887442535665418,
             "clipped_ratio": 0.0,
             "near_clip_ratio": 0.0,
-            "silence_ratio": 0.004819538926681784,
-            "zero_crossing_rate": 0.02047713529856387
+            "silence_ratio": 0.01117819349962207,
+            "zero_crossing_rate": 0.023219954648526078
           }
         }
       ]
@@ -64,35 +98,57 @@
         "max_silence_ratio": 0.55,
         "min_crest_db": 3.0,
         "max_crest_db": 18.0,
-        "transient_expected": false
+        "transient_expected": false,
+        "target_lufs": null
       },
       "bestCandidateIndex": 1,
-      "bestScore": 82.0,
+      "bestScore": 100.0,
       "bestPassed": true,
       "mapped": true,
       "candidates": [
         {
           "event_id": "Narrative.FirstLaunch.Music.Crisis",
           "index": 1,
-          "mp3_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260711T220620Z/narrative_firstlaunch_music_crisis/candidate_01.mp3",
-          "wav_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260711T220620Z/narrative_firstlaunch_music_crisis/candidate_01.wav",
+          "mp3_path": "D:\\Projects\\WarlineCapture\\Logs\\ElevenLabsFirstLaunchSfx\\20260714T103954Z\\narrative_firstlaunch_music_crisis\\candidate_01.mp3",
+          "wav_path": "D:\\Projects\\WarlineCapture\\Logs\\ElevenLabsFirstLaunchSfx\\20260714T103954Z\\narrative_firstlaunch_music_crisis\\candidate_01.wav",
+          "score": 100.0,
+          "passed": true,
+          "reasons": [],
+          "metrics": {
+            "duration_seconds": 24.0,
+            "sample_rate": 44100,
+            "channels": 1,
+            "rms_db": -17.62963732183141,
+            "peak_db": -2.0995278446277488,
+            "crest_db": 15.530109477203661,
+            "clipped_ratio": 0.0,
+            "near_clip_ratio": 0.0,
+            "silence_ratio": 0.15191798941798942,
+            "zero_crossing_rate": 0.010873015873015873
+          }
+        },
+        {
+          "event_id": "Narrative.FirstLaunch.Music.Crisis",
+          "index": 2,
+          "mp3_path": "D:\\Projects\\WarlineCapture\\Logs\\ElevenLabsFirstLaunchSfx\\20260714T103954Z\\narrative_firstlaunch_music_crisis\\candidate_02.mp3",
+          "wav_path": "D:\\Projects\\WarlineCapture\\Logs\\ElevenLabsFirstLaunchSfx\\20260714T103954Z\\narrative_firstlaunch_music_crisis\\candidate_02.wav",
           "score": 82.0,
           "passed": true,
           "reasons": [
-            "spiky_crest=18.0dB",
-            "low_high_frequency_content=0.0039"
+            "spiky_crest=18.4dB",
+            "low_high_frequency_content=0.0033"
           ],
           "metrics": {
             "duration_seconds": 24.0,
             "sample_rate": 44100,
             "channels": 1,
-            "rms_db": -22.389047663796276,
-            "peak_db": -4.352475847487792,
-            "crest_db": 18.036571816308484,
+            "rms_db": -25.53000907422758,
+            "peak_db": -7.0966272512048825,
+            "crest_db": 18.433381823022696,
             "clipped_ratio": 0.0,
             "near_clip_ratio": 0.0,
-            "silence_ratio": 0.08109504913076342,
-            "zero_crossing_rate": 0.003924792139077853
+            "silence_ratio": 0.17217781557067272,
+            "zero_crossing_rate": 0.0033314436885865458
           }
         }
       ]
@@ -111,35 +167,60 @@
         "max_silence_ratio": 0.55,
         "min_crest_db": 3.0,
         "max_crest_db": 19.0,
-        "transient_expected": false
+        "transient_expected": false,
+        "target_lufs": null
       },
       "bestCandidateIndex": 1,
-      "bestScore": 86.34,
+      "bestScore": 86.97,
       "bestPassed": true,
       "mapped": true,
       "candidates": [
         {
           "event_id": "Narrative.FirstLaunch.Ambience.CityMarket",
           "index": 1,
-          "mp3_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260711T220620Z/narrative_firstlaunch_ambience_citymarket/candidate_01.mp3",
-          "wav_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260711T220620Z/narrative_firstlaunch_ambience_citymarket/candidate_01.wav",
-          "score": 86.34,
+          "mp3_path": "D:\\Projects\\WarlineCapture\\Logs\\ElevenLabsFirstLaunchSfx\\20260714T103954Z\\narrative_firstlaunch_ambience_citymarket\\candidate_01.mp3",
+          "wav_path": "D:\\Projects\\WarlineCapture\\Logs\\ElevenLabsFirstLaunchSfx\\20260714T103954Z\\narrative_firstlaunch_ambience_citymarket\\candidate_01.wav",
+          "score": 86.97,
           "passed": true,
           "reasons": [
-            "quiet_rms=-37.1dB",
-            "spiky_crest=20.6dB"
+            "quiet_rms=-36.5dB",
+            "spiky_crest=27.5dB"
           ],
           "metrics": {
             "duration_seconds": 24.0,
             "sample_rate": 44100,
             "channels": 1,
-            "rms_db": -37.05286839172289,
-            "peak_db": -16.430943877873148,
-            "crest_db": 20.62192451384974,
+            "rms_db": -36.521567102842354,
+            "peak_db": -9.010858156001637,
+            "crest_db": 27.510708946840715,
             "clipped_ratio": 0.0,
             "near_clip_ratio": 0.0,
-            "silence_ratio": 0.0684608843537415,
-            "zero_crossing_rate": 0.03263416477702192
+            "silence_ratio": 0.0995738851095994,
+            "zero_crossing_rate": 0.0513718820861678
+          }
+        },
+        {
+          "event_id": "Narrative.FirstLaunch.Ambience.CityMarket",
+          "index": 2,
+          "mp3_path": "D:\\Projects\\WarlineCapture\\Logs\\ElevenLabsFirstLaunchSfx\\20260714T103954Z\\narrative_firstlaunch_ambience_citymarket\\candidate_02.mp3",
+          "wav_path": "D:\\Projects\\WarlineCapture\\Logs\\ElevenLabsFirstLaunchSfx\\20260714T103954Z\\narrative_firstlaunch_ambience_citymarket\\candidate_02.wav",
+          "score": 83.7,
+          "passed": true,
+          "reasons": [
+            "quiet_rms=-39.3dB",
+            "spiky_crest=26.6dB"
+          ],
+          "metrics": {
+            "duration_seconds": 24.0,
+            "sample_rate": 44100,
+            "channels": 1,
+            "rms_db": -39.25044036525497,
+            "peak_db": -12.673319587326667,
+            "crest_db": 26.5771207779283,
+            "clipped_ratio": 0.0,
+            "near_clip_ratio": 0.0,
+            "silence_ratio": 0.10484410430839003,
+            "zero_crossing_rate": 0.06161092214663643
           }
         }
       ]
@@ -158,36 +239,60 @@
         "max_silence_ratio": 0.55,
         "min_crest_db": 3.0,
         "max_crest_db": 20.0,
-        "transient_expected": false
+        "transient_expected": false,
+        "target_lufs": null
       },
       "bestCandidateIndex": 1,
-      "bestScore": 77.56,
+      "bestScore": 82.0,
       "bestPassed": true,
       "mapped": true,
       "candidates": [
         {
           "event_id": "Narrative.FirstLaunch.Ambience.CityAttack",
           "index": 1,
-          "mp3_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T063747Z/narrative_firstlaunch_ambience_cityattack/candidate_01.mp3",
-          "wav_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T063747Z/narrative_firstlaunch_ambience_cityattack/candidate_01.wav",
-          "score": 77.56,
+          "mp3_path": "D:\\Projects\\WarlineCapture\\Logs\\ElevenLabsFirstLaunchSfx\\20260714T103954Z\\narrative_firstlaunch_ambience_cityattack\\candidate_01.mp3",
+          "wav_path": "D:\\Projects\\WarlineCapture\\Logs\\ElevenLabsFirstLaunchSfx\\20260714T103954Z\\narrative_firstlaunch_ambience_cityattack\\candidate_01.wav",
+          "score": 82.0,
           "passed": true,
           "reasons": [
-            "quiet_rms=-37.7dB",
-            "spiky_crest=28.8dB",
-            "low_high_frequency_content=0.0029"
+            "spiky_crest=25.3dB",
+            "low_high_frequency_content=0.0031"
           ],
           "metrics": {
             "duration_seconds": 24.0,
             "sample_rate": 44100,
             "channels": 1,
-            "rms_db": -37.70055856447478,
-            "peak_db": -8.93118761403565,
-            "crest_db": 28.769370950439132,
+            "rms_db": -33.38967096044238,
+            "peak_db": -8.040159619887929,
+            "crest_db": 25.34951134055445,
             "clipped_ratio": 0.0,
             "near_clip_ratio": 0.0,
-            "silence_ratio": 0.13752362055933484,
-            "zero_crossing_rate": 0.002851473922902494
+            "silence_ratio": 0.23692365835222978,
+            "zero_crossing_rate": 0.0030839002267573695
+          }
+        },
+        {
+          "event_id": "Narrative.FirstLaunch.Ambience.CityAttack",
+          "index": 2,
+          "mp3_path": "D:\\Projects\\WarlineCapture\\Logs\\ElevenLabsFirstLaunchSfx\\20260714T103954Z\\narrative_firstlaunch_ambience_cityattack\\candidate_02.mp3",
+          "wav_path": "D:\\Projects\\WarlineCapture\\Logs\\ElevenLabsFirstLaunchSfx\\20260714T103954Z\\narrative_firstlaunch_ambience_cityattack\\candidate_02.wav",
+          "score": 82.0,
+          "passed": true,
+          "reasons": [
+            "spiky_crest=21.6dB",
+            "low_high_frequency_content=0.0043"
+          ],
+          "metrics": {
+            "duration_seconds": 24.0,
+            "sample_rate": 44100,
+            "channels": 1,
+            "rms_db": -24.848273354149192,
+            "peak_db": -3.2503058280059576,
+            "crest_db": 21.597967526143236,
+            "clipped_ratio": 0.0,
+            "near_clip_ratio": 0.0,
+            "silence_ratio": 0.14024943310657598,
+            "zero_crossing_rate": 0.0043310657596371885
           }
         }
       ]
@@ -206,34 +311,57 @@
         "max_silence_ratio": 0.55,
         "min_crest_db": 3.0,
         "max_crest_db": 18.0,
-        "transient_expected": false
+        "transient_expected": false,
+        "target_lufs": null
       },
       "bestCandidateIndex": 1,
-      "bestScore": 92.0,
+      "bestScore": 100.0,
       "bestPassed": true,
       "mapped": true,
       "candidates": [
         {
           "event_id": "Narrative.FirstLaunch.Ambience.CommandRoom",
           "index": 1,
-          "mp3_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T063747Z/narrative_firstlaunch_ambience_commandroom/candidate_01.mp3",
-          "wav_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T063747Z/narrative_firstlaunch_ambience_commandroom/candidate_01.wav",
-          "score": 92.0,
+          "mp3_path": "D:\\Projects\\WarlineCapture\\Logs\\ElevenLabsFirstLaunchSfx\\20260714T103954Z\\narrative_firstlaunch_ambience_commandroom\\candidate_01.mp3",
+          "wav_path": "D:\\Projects\\WarlineCapture\\Logs\\ElevenLabsFirstLaunchSfx\\20260714T103954Z\\narrative_firstlaunch_ambience_commandroom\\candidate_01.wav",
+          "score": 100.0,
+          "passed": true,
+          "reasons": [],
+          "metrics": {
+            "duration_seconds": 24.0,
+            "sample_rate": 44100,
+            "channels": 1,
+            "rms_db": -32.31009527618616,
+            "peak_db": -21.857201902164714,
+            "crest_db": 10.452893374021446,
+            "clipped_ratio": 0.0,
+            "near_clip_ratio": 0.0,
+            "silence_ratio": 0.026335034013605443,
+            "zero_crossing_rate": 0.0061281179138322
+          }
+        },
+        {
+          "event_id": "Narrative.FirstLaunch.Ambience.CommandRoom",
+          "index": 2,
+          "mp3_path": "D:\\Projects\\WarlineCapture\\Logs\\ElevenLabsFirstLaunchSfx\\20260714T103954Z\\narrative_firstlaunch_ambience_commandroom\\candidate_02.mp3",
+          "wav_path": "D:\\Projects\\WarlineCapture\\Logs\\ElevenLabsFirstLaunchSfx\\20260714T103954Z\\narrative_firstlaunch_ambience_commandroom\\candidate_02.wav",
+          "score": 89.1,
           "passed": true,
           "reasons": [
-            "low_high_frequency_content=0.0012"
+            "quiet_rms=-36.4dB",
+            "low_high_frequency_content=0.0036"
           ],
           "metrics": {
             "duration_seconds": 24.0,
             "sample_rate": 44100,
             "channels": 1,
-            "rms_db": -23.27784649103741,
-            "peak_db": -18.60655497305805,
-            "crest_db": 4.671291517979359,
+            "rms_db": -36.415227033483994,
+            "peak_db": -28.32920591117081,
+            "crest_db": 8.086021122313184,
             "clipped_ratio": 0.0,
             "near_clip_ratio": 0.0,
-            "silence_ratio": 0.006466364323507181,
-            "zero_crossing_rate": 0.0012244897959183673
+            "silence_ratio": 0.031346371882086166,
+            "zero_crossing_rate": 0.00363567649281935
           }
         }
       ]
@@ -252,7 +380,8 @@
         "max_silence_ratio": 0.55,
         "min_crest_db": 3.0,
         "max_crest_db": 18.0,
-        "transient_expected": false
+        "transient_expected": false,
+        "target_lufs": null
       },
       "bestCandidateIndex": 1,
       "bestScore": 92.0,
@@ -262,24 +391,47 @@
         {
           "event_id": "Narrative.FirstLaunch.Ambience.Convoy",
           "index": 1,
-          "mp3_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260711T220620Z/narrative_firstlaunch_ambience_convoy/candidate_01.mp3",
-          "wav_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260711T220620Z/narrative_firstlaunch_ambience_convoy/candidate_01.wav",
+          "mp3_path": "D:\\Projects\\WarlineCapture\\Logs\\ElevenLabsFirstLaunchSfx\\20260714T103954Z\\narrative_firstlaunch_ambience_convoy\\candidate_01.mp3",
+          "wav_path": "D:\\Projects\\WarlineCapture\\Logs\\ElevenLabsFirstLaunchSfx\\20260714T103954Z\\narrative_firstlaunch_ambience_convoy\\candidate_01.wav",
           "score": 92.0,
           "passed": true,
           "reasons": [
-            "low_high_frequency_content=0.0041"
+            "low_high_frequency_content=0.0016"
           ],
           "metrics": {
             "duration_seconds": 18.0,
             "sample_rate": 44100,
             "channels": 1,
-            "rms_db": -32.13583053722885,
-            "peak_db": -21.406259324928275,
-            "crest_db": 10.729571212300574,
+            "rms_db": -28.845906852213265,
+            "peak_db": -16.29319427170742,
+            "crest_db": 12.552712580505844,
             "clipped_ratio": 0.0,
             "near_clip_ratio": 0.0,
-            "silence_ratio": 0.02560594608213656,
-            "zero_crossing_rate": 0.004081632653061225
+            "silence_ratio": 0.021242126480221717,
+            "zero_crossing_rate": 0.0016099773242630386
+          }
+        },
+        {
+          "event_id": "Narrative.FirstLaunch.Ambience.Convoy",
+          "index": 2,
+          "mp3_path": "D:\\Projects\\WarlineCapture\\Logs\\ElevenLabsFirstLaunchSfx\\20260714T103954Z\\narrative_firstlaunch_ambience_convoy\\candidate_02.mp3",
+          "wav_path": "D:\\Projects\\WarlineCapture\\Logs\\ElevenLabsFirstLaunchSfx\\20260714T103954Z\\narrative_firstlaunch_ambience_convoy\\candidate_02.wav",
+          "score": 92.0,
+          "passed": true,
+          "reasons": [
+            "low_high_frequency_content=0.0047"
+          ],
+          "metrics": {
+            "duration_seconds": 18.0,
+            "sample_rate": 44100,
+            "channels": 1,
+            "rms_db": -33.01028920085068,
+            "peak_db": -21.31326175947889,
+            "crest_db": 11.697027441371787,
+            "clipped_ratio": 0.0,
+            "near_clip_ratio": 0.0,
+            "silence_ratio": 0.03636306374401613,
+            "zero_crossing_rate": 0.004686318972033258
           }
         }
       ]
@@ -298,9 +450,10 @@
         "max_silence_ratio": 0.55,
         "min_crest_db": 3.0,
         "max_crest_db": 22.0,
-        "transient_expected": true
+        "transient_expected": true,
+        "target_lufs": null
       },
-      "bestCandidateIndex": 1,
+      "bestCandidateIndex": 2,
       "bestScore": 100.0,
       "bestPassed": true,
       "mapped": true,
@@ -308,8 +461,31 @@
         {
           "event_id": "Narrative.FirstLaunch.Event.DistantAttack",
           "index": 1,
-          "mp3_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260711T220620Z/narrative_firstlaunch_event_distantattack/candidate_01.mp3",
-          "wav_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260711T220620Z/narrative_firstlaunch_event_distantattack/candidate_01.wav",
+          "mp3_path": "D:\\Projects\\WarlineCapture\\Logs\\ElevenLabsFirstLaunchSfx\\20260714T103954Z\\narrative_firstlaunch_event_distantattack\\candidate_01.mp3",
+          "wav_path": "D:\\Projects\\WarlineCapture\\Logs\\ElevenLabsFirstLaunchSfx\\20260714T103954Z\\narrative_firstlaunch_event_distantattack\\candidate_01.wav",
+          "score": 94.66,
+          "passed": true,
+          "reasons": [
+            "quiet_rms=-38.4dB"
+          ],
+          "metrics": {
+            "duration_seconds": 6.0,
+            "sample_rate": 44100,
+            "channels": 1,
+            "rms_db": -38.44696469274105,
+            "peak_db": -20.200572147528742,
+            "crest_db": 18.246392545212306,
+            "clipped_ratio": 0.0,
+            "near_clip_ratio": 0.0,
+            "silence_ratio": 0.4696334089191232,
+            "zero_crossing_rate": 0.011315192743764172
+          }
+        },
+        {
+          "event_id": "Narrative.FirstLaunch.Event.DistantAttack",
+          "index": 2,
+          "mp3_path": "D:\\Projects\\WarlineCapture\\Logs\\ElevenLabsFirstLaunchSfx\\20260714T103954Z\\narrative_firstlaunch_event_distantattack\\candidate_02.mp3",
+          "wav_path": "D:\\Projects\\WarlineCapture\\Logs\\ElevenLabsFirstLaunchSfx\\20260714T103954Z\\narrative_firstlaunch_event_distantattack\\candidate_02.wav",
           "score": 100.0,
           "passed": true,
           "reasons": [],
@@ -317,13 +493,13 @@
             "duration_seconds": 6.0,
             "sample_rate": 44100,
             "channels": 1,
-            "rms_db": -25.106379251405944,
-            "peak_db": -4.151379579429296,
-            "crest_db": 20.954999671976648,
+            "rms_db": -30.30666951127969,
+            "peak_db": -10.554779836588242,
+            "crest_db": 19.751889674691448,
             "clipped_ratio": 0.0,
             "near_clip_ratio": 0.0,
-            "silence_ratio": 0.3193159486016629,
-            "zero_crossing_rate": 0.006870748299319728
+            "silence_ratio": 0.297891156462585,
+            "zero_crossing_rate": 0.010895691609977325
           }
         }
       ]
@@ -342,7 +518,8 @@
         "max_silence_ratio": 0.55,
         "min_crest_db": 3.0,
         "max_crest_db": 20.0,
-        "transient_expected": false
+        "transient_expected": false,
+        "target_lufs": null
       },
       "bestCandidateIndex": 1,
       "bestScore": 100.0,
@@ -352,8 +529,8 @@
         {
           "event_id": "Narrative.FirstLaunch.Event.RadioEmergency",
           "index": 1,
-          "mp3_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T063747Z/narrative_firstlaunch_event_radioemergency/candidate_01.mp3",
-          "wav_path": "/private/tmp/warlinecapture-elevenlabs-sfx/20260712T063747Z/narrative_firstlaunch_event_radioemergency/candidate_01.wav",
+          "mp3_path": "D:\\Projects\\WarlineCapture\\Logs\\ElevenLabsFirstLaunchSfx\\20260714T103954Z\\narrative_firstlaunch_event_radioemergency\\candidate_01.mp3",
+          "wav_path": "D:\\Projects\\WarlineCapture\\Logs\\ElevenLabsFirstLaunchSfx\\20260714T103954Z\\narrative_firstlaunch_event_radioemergency\\candidate_01.wav",
           "score": 100.0,
           "passed": true,
           "reasons": [],
@@ -361,21 +538,37 @@
             "duration_seconds": 7.0,
             "sample_rate": 44100,
             "channels": 1,
-            "rms_db": -16.13718264015703,
-            "peak_db": -1.1559016148251624,
-            "crest_db": 14.981281025331867,
+            "rms_db": -16.377873661149255,
+            "peak_db": -1.6573085906899407,
+            "crest_db": 14.720565070459315,
             "clipped_ratio": 0.0,
             "near_clip_ratio": 0.0,
-            "silence_ratio": 0.06958535795270489,
-            "zero_crossing_rate": 0.07352769679300292
+            "silence_ratio": 0.07978620019436346,
+            "zero_crossing_rate": 0.06732102364755425
+          }
+        },
+        {
+          "event_id": "Narrative.FirstLaunch.Event.RadioEmergency",
+          "index": 2,
+          "mp3_path": "D:\\Projects\\WarlineCapture\\Logs\\ElevenLabsFirstLaunchSfx\\20260714T103954Z\\narrative_firstlaunch_event_radioemergency\\candidate_02.mp3",
+          "wav_path": "D:\\Projects\\WarlineCapture\\Logs\\ElevenLabsFirstLaunchSfx\\20260714T103954Z\\narrative_firstlaunch_event_radioemergency\\candidate_02.wav",
+          "score": 100.0,
+          "passed": true,
+          "reasons": [],
+          "metrics": {
+            "duration_seconds": 7.0,
+            "sample_rate": 44100,
+            "channels": 1,
+            "rms_db": -13.590326113199957,
+            "peak_db": -1.5517687032899268,
+            "crest_db": 12.03855740991003,
+            "clipped_ratio": 0.0,
+            "near_clip_ratio": 0.0,
+            "silence_ratio": 0.040647878198898604,
+            "zero_crossing_rate": 0.06382572076449627
           }
         }
       ]
     }
-  ],
-  "regeneratedEvents": [
-    "Narrative.FirstLaunch.Ambience.CityAttack",
-    "Narrative.FirstLaunch.Ambience.CommandRoom",
-    "Narrative.FirstLaunch.Event.RadioEmergency"
   ]
 }

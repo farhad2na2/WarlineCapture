@@ -127,6 +127,7 @@ Core design reading order starts in `Design/README.md`. The current high-priorit
 - `Design/3D_SingleMap_Gameplay_Direction.md`
 - `Design/LargeScale_Grid_Movement_Design.md`
 - `Design/3D_Operation_Map_Texture_Mask_Workflow.md`
+- `Design/Architecture/operation_map_scene_split_and_generator_tracker.md`
 - `Design/Skirmish_Mode_Implementation_Spec.md`
 - `Design/Match_HUD_And_Gameplay_Implementation_Spec.md`
 - `Design/Match_Selection_Implementation_Spec.md`
@@ -203,6 +204,7 @@ The linked hierarchy below is the maintained documentation map. The older `Desig
   - Product Gameplay
     - [Large-Scale Grid Movement Design](Design/LargeScale_Grid_Movement_Design.md)
     - [3D Operation Map Texture/Mask Workflow](Design/3D_Operation_Map_Texture_Mask_Workflow.md)
+      - [Operation Map Scene Split, Per-Map Bake, And Generator Tracker](Design/Architecture/operation_map_scene_split_and_generator_tracker.md)
     - [Skirmish Mode Implementation Spec](Design/Skirmish_Mode_Implementation_Spec.md)
     - [Match HUD And Gameplay Implementation Spec](Design/Match_HUD_And_Gameplay_Implementation_Spec.md)
       - [Match Selection Implementation Spec](Design/Match_Selection_Implementation_Spec.md)

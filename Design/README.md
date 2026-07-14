@@ -33,6 +33,7 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - Mission result states: `Mission_Result_State_Spec.md` is the active contract for `POP-05` victory, partial success, defeat, withdrawal, operation-resolved states, result data, CTA order, rewards, consequences, and routes.
 - Map contract: the active map contract is one large 3D operation map with planning, briefing, minimap, deployment, threat, and battle views as overlays/camera states on the same world.
 - Operation map texture/mask workflow: `3D_Operation_Map_Texture_Mask_Workflow.md` defines how gameplay/editor tooling consumes 2024x2024 base visuals, blocker masks, tree/rock density masks, and height masks to generate 3D operation-map metadata.
+- Operation map scene split: `Architecture/operation_map_scene_split_and_generator_tracker.md` is the audited implementation tracker for registering and then extracting the current big map as a reusable operation map, migrating `Match.unity` into a runtime shell, introducing per-map static-presentation ownership and config-driven `ScenarioSetup -> OperationMapDefinition` loading, and adding editor-time generator/bake-safety gates without breaking current map baking or Android build inclusion.
 - FTUE and assistant: `FTUE_And_Command_Assistant_Design.md` defines the reusable ARIA command assistant, Chapter 1 FTUE flow, contextual recommendations, and safe assistant control takeover model. `ARIA_Assistant_ECS_Design.md` is the current assistant architecture and naming contract for match-header ARIA, panel goals/recommendations, read-aloud alerts, bounded control, ECS data ownership, and no service/provider/controller drift. The ECS vertical slice is now implemented for the match HUD header/panel, `Show Me`, `Do It`, bounded `Give Control`, `Stop`, prioritized alerts/reports, narration subtitle fallback, assistant settings, and validation/performance gates. `AssistantPanel_M01_Implementation_Contract.md` is the historical support/UI/gameplay handoff for `PREFAB-05_AssistantPanel` and M01 ARIA recommendation states; use the ECS design and tracker when it conflicts with older service/provider/controller wording. `Architecture/aria_assistant_ecs_implementation_tracker.md` is the implementation and validation source.
 - Agent coordination: `Agent_Coordination_Workflow.md` defines PM handoff, validation, cross-lane sync, tracking workflow, lane ownership, and commit/push rules for agents.
 - Gameplay architecture: `Architecture/gameplay_solid_ecs_contract.md` defines the SOLID/ECS runtime contract, bootstrap responsibility boundaries, service/logging rules, and no-new-drift guardrails.
@@ -136,36 +137,37 @@ Connection rule: a lower-level document may narrow or implement an upstream deci
 17. `LargeScale_Grid_Movement_Design.md`
 18. `AAA_Mobile_Technical_Targets.md`
 19. `3D_Operation_Map_Texture_Mask_Workflow.md`
-20. `M01_FirstContact_Production_Contract.md`
-21. `FTUE_And_Command_Assistant_Design.md`
-22. `ARIA_Assistant_ECS_Design.md`
-23. `Mission_Result_State_Spec.md`
-24. `Skirmish_Mode_Implementation_Spec.md`
-25. `Match_HUD_And_Gameplay_Implementation_Spec.md`
-26. `Match_Selection_Implementation_Spec.md`
-27. `Match_Unit_Command_Behavior_Spec.md`
-28. `Gameplay_Features_High_Level_Spec.md`
-29. `Gameplay_Features_Detailed_Spec.md`
-30. `Field_Logistics_Oil_Fuel_Design.md`
-31. `Automated_Fuel_Logistics_Design.md`
-32. `Field_Fabrication_Materials_Design.md`
-33. `Resource_Logistics_Exchange_Design.md`
-34. `Economy_Reward_Design.md`
-35. `Balancing_Automated_Test_Plan.md`
-36. `UIUX_Gameplay_Element_Alignment.md`
-37. `UIUX_Implementation_High_Level_Spec.md`
-38. `UIUX_Implementation_Detailed_Spec.md`
-39. `Visual_Feedback_VFX_Recommendations.md`
-40. `Audio_Design_Guidelines.md`
-41. `Audio_Config_Driven_Implementation_Spec.md`
-42. `UIUX_MainMenu_Visual_Contract.md`
-43. `UIUX_Mockup_To_Canvas_Conversion_Plan.md`
-44. `UIUX_Target_To_Canvas_Workflow_Guide.md`
-45. `Architecture/gameplay_solid_ecs_contract.md`
-46. `Architecture/architecture_performance_hardening_implementation_tracker.md`
-47. `Architecture/performance_regression_contract.md`
-48. `Designer_Role_And_Documentation_Workflow.md`
-49. `Agent_Coordination_Workflow.md`
+20. `Architecture/operation_map_scene_split_and_generator_tracker.md`
+21. `M01_FirstContact_Production_Contract.md`
+22. `FTUE_And_Command_Assistant_Design.md`
+23. `ARIA_Assistant_ECS_Design.md`
+24. `Mission_Result_State_Spec.md`
+25. `Skirmish_Mode_Implementation_Spec.md`
+26. `Match_HUD_And_Gameplay_Implementation_Spec.md`
+27. `Match_Selection_Implementation_Spec.md`
+28. `Match_Unit_Command_Behavior_Spec.md`
+29. `Gameplay_Features_High_Level_Spec.md`
+30. `Gameplay_Features_Detailed_Spec.md`
+31. `Field_Logistics_Oil_Fuel_Design.md`
+32. `Automated_Fuel_Logistics_Design.md`
+33. `Field_Fabrication_Materials_Design.md`
+34. `Resource_Logistics_Exchange_Design.md`
+35. `Economy_Reward_Design.md`
+36. `Balancing_Automated_Test_Plan.md`
+37. `UIUX_Gameplay_Element_Alignment.md`
+38. `UIUX_Implementation_High_Level_Spec.md`
+39. `UIUX_Implementation_Detailed_Spec.md`
+40. `Visual_Feedback_VFX_Recommendations.md`
+41. `Audio_Design_Guidelines.md`
+42. `Audio_Config_Driven_Implementation_Spec.md`
+43. `UIUX_MainMenu_Visual_Contract.md`
+44. `UIUX_Mockup_To_Canvas_Conversion_Plan.md`
+45. `UIUX_Target_To_Canvas_Workflow_Guide.md`
+46. `Architecture/gameplay_solid_ecs_contract.md`
+47. `Architecture/architecture_performance_hardening_implementation_tracker.md`
+48. `Architecture/performance_regression_contract.md`
+49. `Designer_Role_And_Documentation_Workflow.md`
+50. `Agent_Coordination_Workflow.md`
 
 ## Core Product And Gameplay
 
@@ -195,6 +197,7 @@ Connection rule: a lower-level document may narrow or implement an upstream deci
 - `Command_Offensive_Premise_Alignment.md` - proactive command-operation framing aligned to the 3D single-map direction.
 - `LargeScale_Grid_Movement_Design.md` - AAA mobile movement design for staged large-scale grid movement, squad-scale command, metadata-backed 3D operation maps, UI feedback, mission patterns, and validation gates.
 - `3D_Operation_Map_Texture_Mask_Workflow.md` - workflow for consuming 2024x2024 base terrain visuals, blocker masks, tree/rock density masks, and height masks into 3D operation-map metadata and editor-generated placement.
+- `Architecture/operation_map_scene_split_and_generator_tracker.md` - audited step-by-step tracker for compatibility-registering and extracting the current big map, migrating `Match.unity` into a runtime shell, making static-presentation manifests/chunks map-scoped, adding `ScenarioSetup -> OperationMapDefinition` loading, and protecting deterministic baking, Android build inclusion, size, and performance.
 - `AAA_Mobile_Technical_Targets.md` - concrete device-tier, frame, scale, marker, readability, and validation targets for the AAA mobile promise.
 - `M01_Metric_Scale_Readability_Contract.md` - M01 tactical metric scale and readability contract for soldier/building anchors, selection treatment, movement animation, and ECS/atlas-backed public unit presentation.
 - `Level_And_Mission_Content_Plan.md` - required mission spec template, high-level Campaign chapter set, Operations mission hooks, Skirmish probe mapping, balance targets, and mission acceptance gate.

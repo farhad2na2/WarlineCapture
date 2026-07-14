@@ -2,6 +2,7 @@
 
 Date: 2026-07-14
 Status: Accepted design; implementation not started
+Workflow path: `pull request`
 Design sources: `../3D_SingleMap_Gameplay_Direction.md`, `../Level_And_Mission_Content_Plan.md`, `../3D_Operation_Map_Texture_Mask_Workflow.md`, `../M01_FirstContact_Production_Contract.md`, `gameplay_solid_ecs_contract.md`, `performance_regression_contract.md`
 
 ## Objective
@@ -66,6 +67,23 @@ These values are an inspection snapshot, not an accepted Phase 0 baseline. Phase
 - Keep runtime gameplay policy in ECS data and systems. Scene references may use a non-updating serialized-reference view; loading, authoring, baking, UI, and Unity-object projection remain narrow managed boundaries.
 - Keep Campaign map generation editor-time, deterministic, reviewed, and committed. Runtime procedural generation is out of scope for this tracker.
 - Do not begin player-facing M01 implementation while the hold in `../M01_FirstContact_Production_Contract.md` remains active.
+
+## Pull Request Implementation Workflow
+
+All implementation work started from this tracker follows `agent_pull_request_review_merge_workflow.md`. The tracker was created after that workflow activated on `main`, so its implementation is not a grandfathered direct-main assignment.
+
+- Treat each stable, reviewable implementation slice as a distinct PR task. Do not attempt to implement this 177-item tracker in one branch or one PR.
+- The review/merge coordinator assigns a stable task id, objective, latest `origin/main` baseline, exact file allowlist, excluded files, required contracts, risk-based validation, evidence ownership, and tracker/report paths before task-owned edits begin.
+- Use branch `codex/<task-id>-<slug>` in durable worktree `/Users/farhad/Projects/WarlineCapture-Worktrees/<task-id>-<slug>`, created from fetched `origin/main`. Never implement a tracker slice directly on `main`.
+- The implementation agent owns substantive code, tests, assets, configuration, and task-owned documentation. It commits coherent changes, leaves the task worktree clean, pushes the feature branch, completes `.github/pull_request_template.md`, and opens a PR targeting `main`.
+- The implementation agent reports the exact baseline, tested head, changed files, validation commands/pass markers, logs/artifacts, risks, and untested paths. It does not merge, delete the branch/worktree, or mark its own shared tracker slice accepted.
+- A separate review/merge coordinator context reviews findings first against the complete `origin/main...PR-head` diff. Substantive fixes return to the implementation agent as new commits and require complete rereview.
+- Before merge, the coordinator validates the actual combined result with latest `origin/main`, records the input/head/combined SHAs, runs every triggered integration gate at that exact tree, and adds only truthful tracker/evidence administration.
+- The coordinator alone merges an accepted PR, updates this tracker with the actual PR/merge/evidence disposition, deletes the remote branch, removes the clean worktree/local branch, and records cleanup.
+- Scene extraction, per-map bake ownership, Addressables packaging, runtime loading, shell cutover, map generation, M01, and remote delivery are separate high-risk PR slices. In particular, scene extraction and shell cutover must never share one irreversible PR.
+- Direct pushes remain technically possible but are not an accepted path for new operation-map implementation. Do not claim branch protection, required GitHub approvals, or rulesets are active unless the user separately enables and verifies them.
+
+Documentation-only PRs require scoped authority/path checks and `git diff --check`. Code, Unity assets, scenes, Addressables, ECS/runtime, performance, Android, or build changes trigger the corresponding risk rows in the authoritative PR workflow plus every validation gate already required by this tracker. The PR workflow changes integration ownership; it does not relax architecture, performance, bake, package, Unity, or device acceptance.
 
 ## Current Map Disposition
 
@@ -916,7 +934,7 @@ Exit criteria:
 - [ ] Verify every catalog-approved local operation map and only those maps are packaged; no unapproved map, stale generated scene, foreign-owned chunk, or remote dependency is included.
 - [ ] Capture accepted screenshots for top-down, oblique, low-ground, minimap, bounds, and map transition states.
 - [ ] Update `README.md`, `Design/README.md`, this percentage table, and exact command/log evidence.
-- [ ] Commit and push only after each stable slice passes its owned gates; keep scene extraction and shell cutover independently revertable.
+- [ ] For every stable slice, use the authoritative feature-branch/worktree PR workflow, provide commit-bound evidence, obtain independent coordinator review/integration acceptance, and keep scene extraction and shell cutover in independently revertable PRs.
 
 Exit criteria:
 
@@ -964,6 +982,7 @@ Exit criteria:
 | 2026-07-14 | Portfolio generation and package-size decision | Measured current map source scene, subscene/probes, map surface, placement configs, 514-chunk static-presentation output, generated combined meshes, current Android APK, Entities stream/content archive, and packaged Unity levels; `git diff --check -- Design/Architecture/operation_map_scene_split_and_generator_tracker.md` | Passed | Recorded editor-generated/reviewed/baked maps as the production direction, runtime variation through scenarios, runtime procedural generation as a future constrained Skirmish-only concern, and provisional twelve-map source/package estimates. Its earlier starter/download split was superseded by the all-local acceptance below; the size evidence remains valid. Documentation only; estimates are not accepted release measurements. |
 | 2026-07-14 | Product direction acceptance | Product-owner decision in this task; tracker accounting audit (`177` checklist items; Phase 2A `20`; Phase 10 `21`; Phase 11 `16`) | Accepted | Hybrid editor generation, reviewed canonical maps, downstream bakes, scenario-driven runtime variation, and every approved map bundled as an independent local Addressables pack are documented initial scope. HTTPS/CDN delivery is a deferred migration that preserves stable identity. Implementation remains deferred until an explicit start request; Phase 0 has not started. |
 | 2026-07-14 | Addressables packaging and staged delivery specification | Inspected installed Addressables `3.1.0`, current local-only group/settings baseline, official Unity Addressables scene/bundle/handle/content-update guidance, and Android Play Asset Delivery guidance; audited all phase totals (`177`); `git diff --check -- Design/Architecture/operation_map_scene_split_and_generator_tracker.md` | Passed | Added normative local group/address/label/partition schemas, handle and Entities-content gates, build/CI artifacts, typed failures, exact planned type ownership, 20-step all-local foundation, and 16-step deferred CDN migration. Documentation only; no Unity process, project setting, scene, code, Addressables asset, or build output was changed. |
+| 2026-07-14 | Pull request workflow adoption | `agent_pull_request_review_merge_workflow.md`, `.github/pull_request_template.md`, README activation/grandfathering rules, scoped authority search, checklist recount (`177`), and `git diff --check origin/main...HEAD` | Pending PR review | Declares all operation-map implementation as new PR work, one stable slice per task branch/worktree, with implementation-agent and independent coordinator ownership. This documentation PR does not self-accept or merge the change. |
 
 ## Open Decisions
 

@@ -2312,6 +2312,22 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
       "maxLines": 71,
       "maxBytes": 2445,
       "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestDispatchSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-081",
+      "maxLines": 487,
+      "maxBytes": 24721,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiActionResourceExchangeRequestSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-082",
+      "maxLines": 113,
+      "maxBytes": 4101,
+      "scope": "system-helper"
     }
   ]
 }

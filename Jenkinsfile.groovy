@@ -169,7 +169,7 @@ pipeline {
                     -LogFile "$env:PROJECT_PATH\\TestResults\\EditMode.log" `
                     -NoProcessExit `
                     -TimeoutSeconds 1800 `
-                    -UnityArguments @("-nographics", "-quit", "-runTests", "-testPlatform", "EditMode", "-testResults", "$env:PROJECT_PATH\\TestResults\\EditMode.xml")
+                    -UnityArguments @("-nographics", "-runTests", "-testPlatform", "EditMode", "-testResults", "$env:PROJECT_PATH\\TestResults\\EditMode.xml")
                 $editModeExit = $LASTEXITCODE
 
                 powershell -NoProfile -ExecutionPolicy Bypass -File "$env:PROJECT_PATH\\Tools\\CI\\PrintUnityTestFailures.ps1" -ResultsPath "$env:PROJECT_PATH\\TestResults\\EditMode.xml" -PlatformName "EditMode"

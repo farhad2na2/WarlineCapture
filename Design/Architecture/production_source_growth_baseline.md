@@ -2272,6 +2272,14 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
       "maxLines": 554,
       "maxBytes": 25422,
       "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingDefinitionFootprintCloneSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-075",
+      "maxLines": 70,
+      "maxBytes": 4084,
+      "scope": "system-helper"
     }
   ]
 }

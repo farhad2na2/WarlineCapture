@@ -1,7 +1,7 @@
 # APH-700 First-Party Assembly Dependency Report
 
 - Task: `APH-700`
-- Source fingerprint (SHA-256): `ed4bfb5c47cedda9d82ce09f34126d4d14e36f32b8dae3437613896395689084`
+- Source fingerprint (SHA-256): `fd3f129de6b278bca4ebdee1d8404dcd11a23f8d4b7ea8a6d9504ac19784d306`
 - Determinism: No timestamp or mutable VCS state; ordinal path ordering, normalized LF output, and a content-derived source fingerprint.
 - Scope: Direct dependencies and source-level cross-domain type references for first-party asmdefs under Assets/Game, Assets/Tests, and Assets/Editor.
 
@@ -14,7 +14,7 @@
 | External declared references | 100 |
 | Owned C# source files | 1332 |
 | Indexed visible types | 2722 |
-| Resolved cross-domain type occurrences | 33421 |
+| Resolved cross-domain type occurrences | 33426 |
 | Distinct cross-domain type references | 2922 |
 | Ambiguous type tokens omitted | 66 |
 | Unowned scoped C# source files | 0 |
@@ -54,7 +54,7 @@
 | `Game.Composition` | `Game.Authoring` | 34 | 5 | 13 |
 | `Game.Composition` | `Game.Catalog.Contracts` | 1 | 1 | 1 |
 | `Game.Composition` | `Game.Components` | 162 | 46 | 7 |
-| `Game.Composition` | `Game.Configs` | 153 | 46 | 14 |
+| `Game.Composition` | `Game.Configs` | 154 | 46 | 14 |
 | `Game.Composition` | `Game.Narrative.Contracts` | 38 | 6 | 6 |
 | `Game.Composition` | `Game.Narrative.Runtime` | 22 | 6 | 2 |
 | `Game.Composition` | `Game.Rendering` | 32 | 9 | 5 |
@@ -69,10 +69,10 @@
 | `Game.Configs` | `Game.Components` | 78 | 14 | 4 |
 | `Game.Configs` | `Game.Narrative.Contracts` | 2 | 1 | 1 |
 | `Game.Editor` | `Game.Authoring` | 139 | 8 | 20 |
-| `Game.Editor` | `Game.Catalog.Contracts` | 7 | 4 | 1 |
+| `Game.Editor` | `Game.Catalog.Contracts` | 9 | 4 | 1 |
 | `Game.Editor` | `Game.Components` | 627 | 123 | 19 |
 | `Game.Editor` | `Game.Composition` | 90 | 3 | 17 |
-| `Game.Editor` | `Game.Configs` | 193 | 35 | 30 |
+| `Game.Editor` | `Game.Configs` | 194 | 35 | 30 |
 | `Game.Editor` | `Game.Narrative.Contracts` | 0 | 0 | 0 |
 | `Game.Editor` | `Game.Rendering` | 29 | 4 | 4 |
 | `Game.Editor` | `Game.Rendering.Contracts` | 0 | 0 | 0 |
@@ -103,7 +103,7 @@
 | `Game.Tests.Editor` | `Game.Composition` | 136 | 19 | 16 |
 | `Game.Tests.Editor` | `Game.Configs` | 510 | 58 | 53 |
 | `Game.Tests.Editor` | `Game.Editor` | 107 | 23 | 12 |
-| `Game.Tests.Editor` | `Game.Narrative.Contracts` | 13 | 5 | 4 |
+| `Game.Tests.Editor` | `Game.Narrative.Contracts` | 14 | 5 | 4 |
 | `Game.Tests.Editor` | `Game.Narrative.Runtime` | 35 | 6 | 2 |
 | `Game.Tests.Editor` | `Game.Rendering` | 270 | 49 | 13 |
 | `Game.Tests.Editor` | `Game.Rendering.Contracts` | 0 | 0 | 0 |

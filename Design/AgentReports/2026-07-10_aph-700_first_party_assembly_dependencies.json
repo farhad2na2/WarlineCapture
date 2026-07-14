@@ -3,14 +3,14 @@
   "taskId": "APH-700",
   "scope": "Direct dependencies and source-level cross-domain type references for first-party asmdefs under Assets/Game, Assets/Tests, and Assets/Editor.",
   "determinismContract": "No timestamp or mutable VCS state; ordinal path ordering, normalized LF output, and a content-derived source fingerprint.",
-  "sourceFingerprintSha256": "ed4bfb5c47cedda9d82ce09f34126d4d14e36f32b8dae3437613896395689084",
+  "sourceFingerprintSha256": "fd3f129de6b278bca4ebdee1d8404dcd11a23f8d4b7ea8a6d9504ac19784d306",
   "summary": {
     "assemblyCount": 21,
     "firstPartyEdgeCount": 92,
     "externalReferenceCount": 100,
     "sourceFileCount": 1332,
     "declaredTypeCount": 2722,
-    "resolvedCrossDomainTypeOccurrenceCount": 33421,
+    "resolvedCrossDomainTypeOccurrenceCount": 33426,
     "distinctCrossDomainTypeReferenceCount": 2922,
     "ambiguousTypeTokenOccurrenceCount": 66,
     "unownedScopedSourceFileCount": 0
@@ -698,7 +698,7 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Composition/Game.Composition.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Configs/Game.Configs.asmdef",
       "declaredReference": "Game.Configs",
-      "resolvedTypeOccurrenceCount": 153,
+      "resolvedTypeOccurrenceCount": 154,
       "distinctResolvedTypeCount": 46,
       "referencingSourceFileCount": 14,
       "topTypeReferences": [
@@ -2067,7 +2067,7 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Editor/Game.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Catalog/Contracts/Game.Catalog.Contracts.asmdef",
       "declaredReference": "Game.Catalog.Contracts",
-      "resolvedTypeOccurrenceCount": 7,
+      "resolvedTypeOccurrenceCount": 9,
       "distinctResolvedTypeCount": 4,
       "referencingSourceFileCount": 1,
       "topTypeReferences": [
@@ -2076,7 +2076,18 @@
           "targetAssembly": "Game.Catalog.Contracts",
           "fullTypeName": "Game.Catalog.Contracts.NarrativeSpeakerId",
           "typeName": "NarrativeSpeakerId",
-          "occurrenceCount": 3,
+          "occurrenceCount": 4,
+          "sourceFileCount": 1,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Editor/Narrative/FirstLaunchNarrativeConfigBuilder.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Editor",
+          "targetAssembly": "Game.Catalog.Contracts",
+          "fullTypeName": "Game.Catalog.Contracts.NarrativeSpeakerTreatment",
+          "typeName": "NarrativeSpeakerTreatment",
+          "occurrenceCount": 2,
           "sourceFileCount": 1,
           "sourceFiles": [
             "Assets/Game/Scripts/Editor/Narrative/FirstLaunchNarrativeConfigBuilder.cs"
@@ -2098,17 +2109,6 @@
           "targetAssembly": "Game.Catalog.Contracts",
           "fullTypeName": "Game.Catalog.Contracts.NarrativeMotionPreset",
           "typeName": "NarrativeMotionPreset",
-          "occurrenceCount": 1,
-          "sourceFileCount": 1,
-          "sourceFiles": [
-            "Assets/Game/Scripts/Editor/Narrative/FirstLaunchNarrativeConfigBuilder.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Editor",
-          "targetAssembly": "Game.Catalog.Contracts",
-          "fullTypeName": "Game.Catalog.Contracts.NarrativeSpeakerTreatment",
-          "typeName": "NarrativeSpeakerTreatment",
           "occurrenceCount": 1,
           "sourceFileCount": 1,
           "sourceFiles": [
@@ -2334,7 +2334,7 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Editor/Game.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Configs/Game.Configs.asmdef",
       "declaredReference": "Game.Configs",
-      "resolvedTypeOccurrenceCount": 193,
+      "resolvedTypeOccurrenceCount": 194,
       "distinctResolvedTypeCount": 35,
       "referencingSourceFileCount": 30,
       "topTypeReferences": [
@@ -5055,10 +5055,23 @@
       "sourceAsmdefPath": "Assets/Tests/Editor/Game.Tests.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Narrative/Contracts/Game.Narrative.Contracts.asmdef",
       "declaredReference": "Game.Narrative.Contracts",
-      "resolvedTypeOccurrenceCount": 13,
+      "resolvedTypeOccurrenceCount": 14,
       "distinctResolvedTypeCount": 5,
       "referencingSourceFileCount": 4,
       "topTypeReferences": [
+        {
+          "sourceAssembly": "Game.Tests.Editor",
+          "targetAssembly": "Game.Narrative.Contracts",
+          "fullTypeName": "Game.Narrative.Contracts.NarrativeCommanderIdentityData",
+          "typeName": "NarrativeCommanderIdentityData",
+          "occurrenceCount": 4,
+          "sourceFileCount": 3,
+          "sourceFiles": [
+            "Assets/Tests/Editor/Narrative/FirstLaunchNarrativeCompositionBoundaryTests.cs",
+            "Assets/Tests/Editor/Narrative/FirstLaunchNarrativeSequencePresentationSystemHelperTests.cs",
+            "Assets/Tests/Editor/Narrative/NarrativeInteractiveViewsTests.cs"
+          ]
+        },
         {
           "sourceAssembly": "Game.Tests.Editor",
           "targetAssembly": "Game.Narrative.Contracts",
@@ -5070,18 +5083,6 @@
             "Assets/Tests/Editor/Narrative/FirstLaunchNarrativeCompositionBoundaryTests.cs",
             "Assets/Tests/Editor/Narrative/FirstLaunchNarrativeRouteUtilitySystemHelperTests.cs",
             "Assets/Tests/Editor/Narrative/FirstLaunchNarrativeSequencePresentationSystemHelperTests.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Tests.Editor",
-          "targetAssembly": "Game.Narrative.Contracts",
-          "fullTypeName": "Game.Narrative.Contracts.NarrativeCommanderIdentityData",
-          "typeName": "NarrativeCommanderIdentityData",
-          "occurrenceCount": 3,
-          "sourceFileCount": 2,
-          "sourceFiles": [
-            "Assets/Tests/Editor/Narrative/FirstLaunchNarrativeCompositionBoundaryTests.cs",
-            "Assets/Tests/Editor/Narrative/NarrativeInteractiveViewsTests.cs"
           ]
         },
         {

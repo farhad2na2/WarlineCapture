@@ -2368,6 +2368,30 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
       "maxLines": 415,
       "maxBytes": 16853,
       "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/AIBuildPlanningPolicySystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-088",
+      "maxLines": 257,
+      "maxBytes": 9792,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/AIMaterialsRecoveryNeedMutationSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-089",
+      "maxLines": 79,
+      "maxBytes": 2988,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/AIBuildPlanningReadSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-090",
+      "maxLines": 147,
+      "maxBytes": 5711,
+      "scope": "system-helper"
     }
   ]
 }

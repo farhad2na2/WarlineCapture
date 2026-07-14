@@ -3,14 +3,14 @@
   "taskId": "APH-700",
   "scope": "Direct dependencies and source-level cross-domain type references for first-party asmdefs under Assets/Game, Assets/Tests, and Assets/Editor.",
   "determinismContract": "No timestamp or mutable VCS state; ordinal path ordering, normalized LF output, and a content-derived source fingerprint.",
-  "sourceFingerprintSha256": "1c223f8f9136230aa5ed12ac4e615b3f5f39b5e5deffb085b47632aa2ad1134c",
+  "sourceFingerprintSha256": "ed4bfb5c47cedda9d82ce09f34126d4d14e36f32b8dae3437613896395689084",
   "summary": {
     "assemblyCount": 21,
     "firstPartyEdgeCount": 92,
     "externalReferenceCount": 100,
-    "sourceFileCount": 1329,
-    "declaredTypeCount": 2719,
-    "resolvedCrossDomainTypeOccurrenceCount": 33411,
+    "sourceFileCount": 1332,
+    "declaredTypeCount": 2722,
+    "resolvedCrossDomainTypeOccurrenceCount": 33421,
     "distinctCrossDomainTypeReferenceCount": 2922,
     "ambiguousTypeTokenOccurrenceCount": 66,
     "unownedScopedSourceFileCount": 0
@@ -110,8 +110,8 @@
       "name": "Game.Runtime",
       "asmdefPath": "Assets/Game/Scripts/Game.Runtime.asmdef",
       "asmdefGuid": "361d0433287ed4a42bf3fd161956446a",
-      "sourceFileCount": 512,
-      "declaredTypeCount": 1099,
+      "sourceFileCount": 515,
+      "declaredTypeCount": 1102,
       "firstPartyDependencyCount": 7,
       "externalDependencyCount": 11
     },
@@ -3479,9 +3479,9 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Game.Runtime.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Components/Game.Components.asmdef",
       "declaredReference": "Game.Components",
-      "resolvedTypeOccurrenceCount": 10403,
+      "resolvedTypeOccurrenceCount": 10413,
       "distinctResolvedTypeCount": 417,
-      "referencingSourceFileCount": 350,
+      "referencingSourceFileCount": 353,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Runtime",
@@ -3489,7 +3489,7 @@
           "fullTypeName": "Game.Components.GridConfig",
           "typeName": "GridConfig",
           "occurrenceCount": 690,
-          "sourceFileCount": 135,
+          "sourceFileCount": 136,
           "sourceFiles": [
             "Assets/Game/Scripts/Environment/RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper.cs",
             "Assets/Game/Scripts/Environment/RuntimeCityChainUtilitySystemHelper.cs",
@@ -8629,7 +8629,7 @@
       "fullTypeName": "Game.Components.GridConfig",
       "typeName": "GridConfig",
       "occurrenceCount": 690,
-      "sourceFileCount": 135,
+      "sourceFileCount": 136,
       "sourceFiles": [
         "Assets/Game/Scripts/Environment/RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper.cs",
         "Assets/Game/Scripts/Environment/RuntimeCityChainUtilitySystemHelper.cs",
@@ -9241,19 +9241,19 @@
       "targetAssembly": "Game.Components",
       "fullTypeName": "Game.Components.FactionEconomy",
       "typeName": "FactionEconomy",
-      "occurrenceCount": 134,
-      "sourceFileCount": 20,
+      "occurrenceCount": 136,
+      "sourceFileCount": 22,
       "sourceFiles": [
         "Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs",
         "Assets/Game/Scripts/Systems/AIBuildPlannerSystem.cs",
+        "Assets/Game/Scripts/Systems/AIBuildPlanningPolicySystemHelper.cs",
+        "Assets/Game/Scripts/Systems/AIBuildPlanningReadSystemHelper.cs",
         "Assets/Game/Scripts/Systems/AIEconomySystem.cs",
         "Assets/Game/Scripts/Systems/AIProductionSystem.cs",
         "Assets/Game/Scripts/Systems/BuildingGameplayEcsQueryCompositionSystemHelper.cs",
         "Assets/Game/Scripts/Systems/BuildingMaterialFabricationReadModelUiSystemHelper.cs",
         "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
-        "Assets/Game/Scripts/Systems/FactionConstructionResourceUtilitySystemHelper.cs",
-        "Assets/Game/Scripts/Systems/FactionEconomyStartupSystem.cs",
-        "Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs"
+        "Assets/Game/Scripts/Systems/FactionConstructionResourceUtilitySystemHelper.cs"
       ]
     },
     {
@@ -9379,6 +9379,26 @@
     {
       "sourceAssembly": "Game.Runtime",
       "targetAssembly": "Game.Components",
+      "fullTypeName": "Game.Components.FactionTacticalMaterialsComponent",
+      "typeName": "FactionTacticalMaterialsComponent",
+      "occurrenceCount": 114,
+      "sourceFileCount": 19,
+      "sourceFiles": [
+        "Assets/Game/Scripts/Balance/BalanceMetrics.cs",
+        "Assets/Game/Scripts/Systems/AIBuildPlannerSystem.cs",
+        "Assets/Game/Scripts/Systems/AIBuildPlanningPolicySystemHelper.cs",
+        "Assets/Game/Scripts/Systems/AIBuildPlanningReadSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/AIMaterialsRecoveryNeedMutationSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingGameplayEcsQueryCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingMaterialFabricationReadModelUiSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/FactionConstructionResourceUtilitySystemHelper.cs",
+        "Assets/Game/Scripts/Systems/FactionEconomyStartupSystem.cs",
+        "Assets/Game/Scripts/Systems/FactionTacticalMaterialsUtilitySystemHelper.cs"
+      ]
+    },
+    {
+      "sourceAssembly": "Game.Runtime",
+      "targetAssembly": "Game.Components",
       "fullTypeName": "Game.Components.UnitAirMovement",
       "typeName": "UnitAirMovement",
       "occurrenceCount": 112,
@@ -9414,26 +9434,6 @@
         "Assets/Tests/Editor/BuildingRuntimeContextAllocationTests.cs",
         "Assets/Tests/Editor/BuildingRuntimeValidationTests.cs",
         "Assets/Tests/Editor/CombatDeathValidationTests.cs"
-      ]
-    },
-    {
-      "sourceAssembly": "Game.Runtime",
-      "targetAssembly": "Game.Components",
-      "fullTypeName": "Game.Components.FactionTacticalMaterialsComponent",
-      "typeName": "FactionTacticalMaterialsComponent",
-      "occurrenceCount": 111,
-      "sourceFileCount": 16,
-      "sourceFiles": [
-        "Assets/Game/Scripts/Balance/BalanceMetrics.cs",
-        "Assets/Game/Scripts/Systems/AIBuildPlannerSystem.cs",
-        "Assets/Game/Scripts/Systems/BuildingGameplayEcsQueryCompositionSystemHelper.cs",
-        "Assets/Game/Scripts/Systems/BuildingMaterialFabricationReadModelUiSystemHelper.cs",
-        "Assets/Game/Scripts/Systems/FactionConstructionResourceUtilitySystemHelper.cs",
-        "Assets/Game/Scripts/Systems/FactionEconomyStartupSystem.cs",
-        "Assets/Game/Scripts/Systems/FactionTacticalMaterialsUtilitySystemHelper.cs",
-        "Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs",
-        "Assets/Game/Scripts/Systems/MaterialFabricationSystem.cs",
-        "Assets/Game/Scripts/Systems/ResourceExchangeAIRecoverySystem.cs"
       ]
     },
     {

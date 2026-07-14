@@ -1,7 +1,7 @@
 # APH-700 First-Party Assembly Dependency Report
 
 - Task: `APH-700`
-- Source fingerprint (SHA-256): `1c223f8f9136230aa5ed12ac4e615b3f5f39b5e5deffb085b47632aa2ad1134c`
+- Source fingerprint (SHA-256): `ed4bfb5c47cedda9d82ce09f34126d4d14e36f32b8dae3437613896395689084`
 - Determinism: No timestamp or mutable VCS state; ordinal path ordering, normalized LF output, and a content-derived source fingerprint.
 - Scope: Direct dependencies and source-level cross-domain type references for first-party asmdefs under Assets/Game, Assets/Tests, and Assets/Editor.
 
@@ -12,9 +12,9 @@
 | First-party assemblies | 21 |
 | First-party asmdef edges | 92 |
 | External declared references | 100 |
-| Owned C# source files | 1329 |
-| Indexed visible types | 2719 |
-| Resolved cross-domain type occurrences | 33411 |
+| Owned C# source files | 1332 |
+| Indexed visible types | 2722 |
+| Resolved cross-domain type occurrences | 33421 |
 | Distinct cross-domain type references | 2922 |
 | Ambiguous type tokens omitted | 66 |
 | Unowned scoped C# source files | 0 |
@@ -33,7 +33,7 @@
 | `Game.Narrative.Runtime` | `Assets/Game/Scripts/Narrative/Runtime/Game.Narrative.Runtime.asmdef` | 3 | 9 | 2 | 0 |
 | `Game.Rendering` | `Assets/Game/Scripts/Rendering/Game.Rendering.asmdef` | 45 | 73 | 3 | 8 |
 | `Game.Rendering.Contracts` | `Assets/Game/Scripts/Rendering/Contracts/Game.Rendering.Contracts.asmdef` | 2 | 3 | 0 | 1 |
-| `Game.Runtime` | `Assets/Game/Scripts/Game.Runtime.asmdef` | 512 | 1099 | 7 | 11 |
+| `Game.Runtime` | `Assets/Game/Scripts/Game.Runtime.asmdef` | 515 | 1102 | 7 | 11 |
 | `Game.Runtime.Combat` | `Assets/Game/Scripts/Systems/Combat/Game.Runtime.Combat.asmdef` | 1 | 2 | 1 | 3 |
 | `Game.Runtime.Pathfinding` | `Assets/Game/Scripts/Systems/Pathfinding/Surface/Game.Runtime.Pathfinding.asmdef` | 4 | 4 | 1 | 3 |
 | `Game.Tactical.Contracts` | `Assets/Game/Scripts/Contracts/Game.Tactical.Contracts.asmdef` | 1 | 9 | 0 | 0 |
@@ -88,7 +88,7 @@
 | `Game.Rendering` | `Game.Components` | 514 | 72 | 31 |
 | `Game.Rendering` | `Game.Configs` | 19 | 6 | 5 |
 | `Game.Rendering` | `Game.Rendering.Contracts` | 2 | 2 | 2 |
-| `Game.Runtime` | `Game.Components` | 10403 | 417 | 350 |
+| `Game.Runtime` | `Game.Components` | 10413 | 417 | 353 |
 | `Game.Runtime` | `Game.Configs` | 241 | 54 | 42 |
 | `Game.Runtime` | `Game.Rendering.Contracts` | 3 | 2 | 1 |
 | `Game.Runtime` | `Game.Runtime.Combat` | 0 | 0 | 0 |
@@ -146,7 +146,7 @@
 
 | Rank | Source | Target | Type | Occurrences | Source files |
 |---:|---|---|---|---:|---:|
-| 1 | `Game.Runtime` | `Game.Components` | `Game.Components.GridConfig` | 690 | 135 |
+| 1 | `Game.Runtime` | `Game.Components` | `Game.Components.GridConfig` | 690 | 136 |
 | 2 | `Game.Runtime` | `Game.Components` | `Game.Components.UnitGrid` | 382 | 87 |
 | 3 | `Game.Tests.Editor` | `Game.Components` | `Game.Components.Faction` | 380 | 57 |
 | 4 | `Game.Tests.Editor` | `Game.Components` | `Game.Components.UnitGrid` | 377 | 51 |
@@ -177,16 +177,16 @@
 | 29 | `Game.Tests.Editor` | `Game.Components` | `Game.Components.UnitAirComponent` | 140 | 15 |
 | 30 | `Game.Tests.Editor` | `Game.Components` | `Game.Components.UnitTarget` | 139 | 21 |
 | 31 | `Game.Tests.Editor` | `Game.Components` | `Game.Components.UnitPathRequest` | 138 | 22 |
-| 32 | `Game.Runtime` | `Game.Components` | `Game.Components.FactionEconomy` | 134 | 20 |
+| 32 | `Game.Runtime` | `Game.Components` | `Game.Components.FactionEconomy` | 136 | 22 |
 | 33 | `Game.Runtime` | `Game.Components` | `Game.Components.EngageTarget` | 132 | 42 |
 | 34 | `Game.Runtime` | `Game.Components` | `Game.Components.UnitTarget` | 131 | 43 |
 | 35 | `Game.Runtime` | `Game.Components` | `Game.Components.RtsSelectionInputStateComponent` | 124 | 18 |
 | 36 | `Game.Tests.Editor` | `Game.Components` | `Game.Components.AudioPlaybackRequestElement` | 123 | 17 |
 | 37 | `Game.Tests.Editor` | `Game.Components` | `Game.Components.UnitMovementBehavior` | 118 | 25 |
 | 38 | `Game.Runtime` | `Game.Components` | `Game.Components.UnitAirComponent` | 114 | 27 |
-| 39 | `Game.Runtime` | `Game.Components` | `Game.Components.UnitAirMovement` | 112 | 57 |
-| 40 | `Game.Tests.Editor` | `Game.Components` | `Game.Components.DynamicBlockerComponent` | 112 | 24 |
-| 41 | `Game.Runtime` | `Game.Components` | `Game.Components.FactionTacticalMaterialsComponent` | 111 | 16 |
+| 39 | `Game.Runtime` | `Game.Components` | `Game.Components.FactionTacticalMaterialsComponent` | 114 | 19 |
+| 40 | `Game.Runtime` | `Game.Components` | `Game.Components.UnitAirMovement` | 112 | 57 |
+| 41 | `Game.Tests.Editor` | `Game.Components` | `Game.Components.DynamicBlockerComponent` | 112 | 24 |
 | 42 | `Game.Runtime` | `Game.Components` | `Game.Components.UnitSourcePrefabKey` | 108 | 38 |
 | 43 | `Game.Runtime` | `Game.Components` | `Game.Components.GridRoad` | 107 | 38 |
 | 44 | `Game.Tests.Editor` | `Game.Runtime` | `Game.Runtime.RtsSelectionInputCompositionSystemHelper` | 107 | 7 |

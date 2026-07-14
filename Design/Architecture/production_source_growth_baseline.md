@@ -2220,9 +2220,9 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
     {
       "path": "Assets/Game/Scripts/Systems/ResourceExchangeStartupProjectionSystemHelper.cs",
       "trackerTaskId": "APH-710",
-      "decisionId": "D-066",
-      "maxLines": 268,
-      "maxBytes": 13520,
+      "decisionId": "D-073",
+      "maxLines": 294,
+      "maxBytes": 14551,
       "scope": "system-helper"
     },
     {
@@ -2256,6 +2256,22 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
       "maxLines": 99,
       "maxBytes": 5222,
       "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ResourceExchangeAIStartupProjectionSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-072",
+      "maxLines": 239,
+      "maxBytes": 11012,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/AIStartupSystem.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-074",
+      "maxLines": 554,
+      "maxBytes": 25422,
+      "scope": "production-over-500-review"
     }
   ]
 }

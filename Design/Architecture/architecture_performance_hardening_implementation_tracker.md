@@ -2132,6 +2132,15 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Production code: unchanged by this acceptance update
 - Residual risk: remaining audio architecture work is tracked separately and is not closed by audible-smoke acceptance
 
+### 2026-07-14 - Editor FPS rendering-configuration regression closeout
+
+- Status: stable regression repair integrated in `c47c4e47b`; no checklist count changes because the repair restores accepted APH-608 behavior
+- Root causes: Standalone Editor quality fallback selected desktop `Ultra` when the authored `Mobile` tier was excluded; BatchRendererGroup shader stripping prevented GPU Resident Drawer activation; URP runtime settings omitted the GPU Resident Drawer resource; idle missile audio still entered its update path without projectiles
+- Repair: semantic quality-tier fallback now preserves mobile intent across platform tier lists, BatchRendererGroup variants use `KeepAll`, the URP runtime resource registry retains `GPUResidentDrawerResources`, and `MissileFlightAudioSystem` requires a matching projectile query before updating
+- Validation: `AndroidVisualQualityValidationTests.RunFocusedValidation` passes `15/15`; `CombatMotionAudioSystemTests.RunFocusedValidation` passes `4/4`; `Game.Runtime` and `Game.Tests.Editor` build with zero compiler errors; `git diff --check` passes
+- Evidence: `/private/tmp/warline-fps-graphics-focused.log` and `/private/tmp/warline-fps-audio-focused.log`
+- Residual risk: final Editor FPS comparison requires a full Editor restart after importing `c47c4e47b`, identical Game-view resolution, and idle indexing/security processes; the previously captured compact-minimap refresh remains the next measured CPU target only if the regression persists
+
 ## Decision Log
 
 Append approved deviations here. Do not silently alter Fixed Architecture Decisions.

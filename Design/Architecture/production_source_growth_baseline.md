@@ -2344,6 +2344,22 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
       "maxLines": 399,
       "maxBytes": 15735,
       "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingMaterialFabricationReadModelUiSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-085",
+      "maxLines": 230,
+      "maxBytes": 10323,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingProductionEntriesUiSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-086",
+      "maxLines": 351,
+      "maxBytes": 13949,
+      "scope": "system-helper"
     }
   ]
 }

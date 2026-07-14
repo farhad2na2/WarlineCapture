@@ -3,13 +3,13 @@
   "taskId": "APH-700",
   "scope": "Direct dependencies and source-level cross-domain type references for first-party asmdefs under Assets/Game, Assets/Tests, and Assets/Editor.",
   "determinismContract": "No timestamp or mutable VCS state; ordinal path ordering, normalized LF output, and a content-derived source fingerprint.",
-  "sourceFingerprintSha256": "f3706f8a3d3a1910bffebca198a5ec7b7583e6e860d233a724bc200c3b69bd1c",
+  "sourceFingerprintSha256": "1bcbfdf43885d0262cdb1c9ed5f26c5081eb856ca22d04cbcca34e18e9e1bc2c",
   "summary": {
     "assemblyCount": 21,
     "firstPartyEdgeCount": 92,
     "externalReferenceCount": 100,
-    "sourceFileCount": 1324,
-    "declaredTypeCount": 2714,
+    "sourceFileCount": 1326,
+    "declaredTypeCount": 2716,
     "resolvedCrossDomainTypeOccurrenceCount": 33369,
     "distinctCrossDomainTypeReferenceCount": 2922,
     "ambiguousTypeTokenOccurrenceCount": 66,
@@ -110,8 +110,8 @@
       "name": "Game.Runtime",
       "asmdefPath": "Assets/Game/Scripts/Game.Runtime.asmdef",
       "asmdefGuid": "361d0433287ed4a42bf3fd161956446a",
-      "sourceFileCount": 509,
-      "declaredTypeCount": 1096,
+      "sourceFileCount": 511,
+      "declaredTypeCount": 1098,
       "firstPartyDependencyCount": 7,
       "externalDependencyCount": 11
     },
@@ -3481,7 +3481,7 @@
       "declaredReference": "Game.Components",
       "resolvedTypeOccurrenceCount": 10361,
       "distinctResolvedTypeCount": 417,
-      "referencingSourceFileCount": 347,
+      "referencingSourceFileCount": 349,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Runtime",
@@ -3652,6 +3652,7 @@
           "sourceFileCount": 26,
           "sourceFiles": [
             "Assets/Game/Scripts/Systems/AircraftFuelSafetyReturnSystem.cs",
+            "Assets/Game/Scripts/Systems/BuildingMaterialFabricationReadModelUiSystemHelper.cs",
             "Assets/Game/Scripts/Systems/BuildingPlacementQueryUiSystemHelper.cs",
             "Assets/Game/Scripts/Systems/BuildingProductionTickCompositionSystemHelper.cs",
             "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
@@ -3659,8 +3660,7 @@
             "Assets/Game/Scripts/Systems/BuildingResourceProductionEcsSystem.cs",
             "Assets/Game/Scripts/Systems/BuildingResourceStorageTransferSystemHelper.cs",
             "Assets/Game/Scripts/Systems/BuildingRuntimeEntityCompositionSystemHelper.cs",
-            "Assets/Game/Scripts/Systems/BuildingRuntimeOwnershipCompositionSystemHelper.cs",
-            "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs"
+            "Assets/Game/Scripts/Systems/BuildingRuntimeOwnershipCompositionSystemHelper.cs"
           ]
         },
         {
@@ -9108,6 +9108,7 @@
       "sourceFileCount": 26,
       "sourceFiles": [
         "Assets/Game/Scripts/Systems/AircraftFuelSafetyReturnSystem.cs",
+        "Assets/Game/Scripts/Systems/BuildingMaterialFabricationReadModelUiSystemHelper.cs",
         "Assets/Game/Scripts/Systems/BuildingPlacementQueryUiSystemHelper.cs",
         "Assets/Game/Scripts/Systems/BuildingProductionTickCompositionSystemHelper.cs",
         "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
@@ -9115,8 +9116,7 @@
         "Assets/Game/Scripts/Systems/BuildingResourceProductionEcsSystem.cs",
         "Assets/Game/Scripts/Systems/BuildingResourceStorageTransferSystemHelper.cs",
         "Assets/Game/Scripts/Systems/BuildingRuntimeEntityCompositionSystemHelper.cs",
-        "Assets/Game/Scripts/Systems/BuildingRuntimeOwnershipCompositionSystemHelper.cs",
-        "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs"
+        "Assets/Game/Scripts/Systems/BuildingRuntimeOwnershipCompositionSystemHelper.cs"
       ]
     },
     {
@@ -9289,8 +9289,8 @@
         "Assets/Game/Scripts/Systems/AIEconomySystem.cs",
         "Assets/Game/Scripts/Systems/AIProductionSystem.cs",
         "Assets/Game/Scripts/Systems/BuildingGameplayEcsQueryCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingMaterialFabricationReadModelUiSystemHelper.cs",
         "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
-        "Assets/Game/Scripts/Systems/BuildingUiQueryUiSystemHelper.cs",
         "Assets/Game/Scripts/Systems/FactionConstructionResourceUtilitySystemHelper.cs",
         "Assets/Game/Scripts/Systems/FactionEconomyStartupSystem.cs",
         "Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs"
@@ -9484,7 +9484,7 @@
         "Assets/Game/Scripts/Balance/BalanceMetrics.cs",
         "Assets/Game/Scripts/Systems/AIBuildPlannerSystem.cs",
         "Assets/Game/Scripts/Systems/BuildingGameplayEcsQueryCompositionSystemHelper.cs",
-        "Assets/Game/Scripts/Systems/BuildingUiQueryUiSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingMaterialFabricationReadModelUiSystemHelper.cs",
         "Assets/Game/Scripts/Systems/FactionConstructionResourceUtilitySystemHelper.cs",
         "Assets/Game/Scripts/Systems/FactionEconomyStartupSystem.cs",
         "Assets/Game/Scripts/Systems/FactionTacticalMaterialsUtilitySystemHelper.cs",

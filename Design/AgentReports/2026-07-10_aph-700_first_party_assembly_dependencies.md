@@ -1,7 +1,7 @@
 # APH-700 First-Party Assembly Dependency Report
 
 - Task: `APH-700`
-- Source fingerprint (SHA-256): `f3706f8a3d3a1910bffebca198a5ec7b7583e6e860d233a724bc200c3b69bd1c`
+- Source fingerprint (SHA-256): `1bcbfdf43885d0262cdb1c9ed5f26c5081eb856ca22d04cbcca34e18e9e1bc2c`
 - Determinism: No timestamp or mutable VCS state; ordinal path ordering, normalized LF output, and a content-derived source fingerprint.
 - Scope: Direct dependencies and source-level cross-domain type references for first-party asmdefs under Assets/Game, Assets/Tests, and Assets/Editor.
 
@@ -12,8 +12,8 @@
 | First-party assemblies | 21 |
 | First-party asmdef edges | 92 |
 | External declared references | 100 |
-| Owned C# source files | 1324 |
-| Indexed visible types | 2714 |
+| Owned C# source files | 1326 |
+| Indexed visible types | 2716 |
 | Resolved cross-domain type occurrences | 33369 |
 | Distinct cross-domain type references | 2922 |
 | Ambiguous type tokens omitted | 66 |
@@ -33,7 +33,7 @@
 | `Game.Narrative.Runtime` | `Assets/Game/Scripts/Narrative/Runtime/Game.Narrative.Runtime.asmdef` | 3 | 9 | 2 | 0 |
 | `Game.Rendering` | `Assets/Game/Scripts/Rendering/Game.Rendering.asmdef` | 45 | 73 | 3 | 8 |
 | `Game.Rendering.Contracts` | `Assets/Game/Scripts/Rendering/Contracts/Game.Rendering.Contracts.asmdef` | 2 | 3 | 0 | 1 |
-| `Game.Runtime` | `Assets/Game/Scripts/Game.Runtime.asmdef` | 509 | 1096 | 7 | 11 |
+| `Game.Runtime` | `Assets/Game/Scripts/Game.Runtime.asmdef` | 511 | 1098 | 7 | 11 |
 | `Game.Runtime.Combat` | `Assets/Game/Scripts/Systems/Combat/Game.Runtime.Combat.asmdef` | 1 | 2 | 1 | 3 |
 | `Game.Runtime.Pathfinding` | `Assets/Game/Scripts/Systems/Pathfinding/Surface/Game.Runtime.Pathfinding.asmdef` | 4 | 4 | 1 | 3 |
 | `Game.Tactical.Contracts` | `Assets/Game/Scripts/Contracts/Game.Tactical.Contracts.asmdef` | 1 | 9 | 0 | 0 |
@@ -88,7 +88,7 @@
 | `Game.Rendering` | `Game.Components` | 514 | 72 | 31 |
 | `Game.Rendering` | `Game.Configs` | 19 | 6 | 5 |
 | `Game.Rendering` | `Game.Rendering.Contracts` | 2 | 2 | 2 |
-| `Game.Runtime` | `Game.Components` | 10361 | 417 | 347 |
+| `Game.Runtime` | `Game.Components` | 10361 | 417 | 349 |
 | `Game.Runtime` | `Game.Configs` | 241 | 54 | 42 |
 | `Game.Runtime` | `Game.Rendering.Contracts` | 3 | 2 | 1 |
 | `Game.Runtime` | `Game.Runtime.Combat` | 0 | 0 | 0 |

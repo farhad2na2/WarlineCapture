@@ -25,6 +25,9 @@ namespace Game.Composition
         private UISettingsModel settings;
         private NarrativeCompletionPayload routeCompletionOverride;
         private bool hasRouteCompletionOverride;
+        private int commanderPortraitIndex = NeutralCommanderPortraitIndex;
+        private Sprite commanderPortrait;
+        private const int NeutralCommanderPortraitIndex = 6;
         public event Action<NarrativeStateRecord> InteractiveStateRequested;
         public event Action<NarrativeCommanderIdentityData, int> CommanderIdentityCommitted;
         public event Action<NarrativeGuidanceMode> GuidanceCommitted;
@@ -55,6 +58,8 @@ namespace Game.Composition
             view = sequenceView;
             textResolver = resolver ?? FallbackGameTextResolver.Instance;
             settings = runtimeSettings;
+            commanderPortraitIndex = NeutralCommanderPortraitIndex;
+            commanderPortrait = null;
             states.Clear();
             speakers.Clear();
             sequenceRuntime.Output -= HandleSequenceOutput;
@@ -294,14 +299,16 @@ namespace Game.Composition
                 DisplayName = textResolver.Get(speaker.NameKey, speaker.NameFallback),
                 Role = textResolver.Get(speaker.RoleKey, speaker.RoleFallback),
                 AccessibleLabel = textResolver.Get(speaker.AccessibleLabelKey, speaker.AccessibleLabelFallback),
-                IdentitySprite = speaker.IdentitySprite,
+                IdentitySprite = line.Speaker == NarrativeSpeakerId.Commander && commanderPortrait != null
+                    ? commanderPortrait
+                    : speaker.IdentitySprite,
                 AccentColor = speaker.AccentColor,
                 Treatment = speaker.Treatment
             };
             presentation.StartDialogue(
                 resolvedText,
                 speakerModel,
-                line.VoiceClip,
+                ResolveVoiceClip(line),
                 Mathf.Max(0.1f, line.DeadlineSeconds - line.StartSeconds),
                 NarrativePunctuationUtilitySystemHelper.From(punctuation),
                 settings);
@@ -325,6 +332,7 @@ namespace Game.Composition
                 return;
             if (action.Kind == NarrativeUiActionKind.CommitCommanderIdentity && view.CommanderIdentityView != null)
             {
+                CaptureCommanderSelection(interactivePresentation.SelectedPortraitIndex);
                 CommanderIdentityCommitted?.Invoke(
                     interactivePresentation.SelectedIdentity,
                     interactivePresentation.SelectedPortraitIndex);
@@ -342,6 +350,26 @@ namespace Game.Composition
         public void ApplyCommanderIdentity(in NarrativeCommanderIdentityData identity, int portraitIndex)
         {
             interactivePresentation?.ApplyCommanderIdentity(identity, portraitIndex);
+            CaptureCommanderSelection(portraitIndex);
+        }
+
+        private void CaptureCommanderSelection(int portraitIndex)
+        {
+            commanderPortraitIndex = portraitIndex;
+            commanderPortrait = view?.CommanderIdentityView?.SelectedPortrait;
+        }
+
+        private AudioClip ResolveVoiceClip(NarrativeDialogueLineRecord line)
+        {
+            if (line.Speaker != NarrativeSpeakerId.Commander)
+                return line.VoiceClip;
+
+            return commanderPortraitIndex switch
+            {
+                0 or 2 or 5 => line.FemaleVoiceClip != null ? line.FemaleVoiceClip : line.VoiceClip,
+                NeutralCommanderPortraitIndex => line.NeutralVoiceClip != null ? line.NeutralVoiceClip : line.VoiceClip,
+                _ => line.VoiceClip
+            };
         }
 
         public void ApplyGuidance(NarrativeGuidanceMode guidance)

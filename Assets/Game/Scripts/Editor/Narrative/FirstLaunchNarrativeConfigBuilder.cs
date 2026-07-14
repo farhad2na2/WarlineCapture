@@ -146,6 +146,12 @@ namespace Game.Editor
                 Set(line, "englishFallback", definition.Text);
                 Set(line, "speaker", definition.Speaker);
                 Set(line, "voiceClip", Load<AudioClip>($"Assets/Game/Audio/Narrative/FirstLaunch/Voice/{definition.LineId}.wav"));
+                Set(line, "femaleVoiceClip", definition.Speaker == NarrativeSpeakerId.Commander
+                    ? Load<AudioClip>("Assets/Game/Audio/Narrative/FirstLaunch/Voice/p14_commander_female.wav")
+                    : null);
+                Set(line, "neutralVoiceClip", definition.Speaker == NarrativeSpeakerId.Commander
+                    ? Load<AudioClip>("Assets/Game/Audio/Narrative/FirstLaunch/Voice/p14_commander_neutral.wav")
+                    : null);
                 float stateStart = ResolveTimelineStart(id);
                 Set(line, "startSeconds", definition.Start - stateStart);
                 Set(line, "deadlineSeconds", definition.Deadline - stateStart - DialogueTailHoldSeconds);
@@ -234,17 +240,22 @@ namespace Game.Editor
             NarrativeSpeakerCatalog catalog = GetOrCreateAsset<NarrativeSpeakerCatalog>(SpeakerPath);
             List<NarrativeSpeakerRecord> records = new()
             {
-                Speaker(NarrativeSpeakerId.Radio, "DISTRICT DISPATCH", "EMERGENCY OPERATIONS", NarrativeSpeakerTreatment.Radio, null, new Color(0.76f, 0.72f, 0.6f), "District emergency dispatcher"),
+                Speaker(NarrativeSpeakerId.Radio, "DISTRICT DISPATCH", "EMERGENCY OPERATIONS", NarrativeSpeakerTreatment.Radio, FirstLaunchNarrativeDialogueAssetImporter.RadioPortraitPath, new Color(0.76f, 0.72f, 0.6f), "District emergency dispatcher"),
                 Speaker(NarrativeSpeakerId.Dalia, "DALIA RAHIM", "JRC FIELD COMMAND", NarrativeSpeakerTreatment.HumanPortrait, FirstLaunchNarrativeDialogueAssetImporter.DaliaPortraitPath, new Color(0.82f, 0.68f, 0.42f)),
                 Speaker(NarrativeSpeakerId.Samira, "SAMIRA HADDAD", "CIVIL INFRASTRUCTURE", NarrativeSpeakerTreatment.HumanPortrait, FirstLaunchNarrativeDialogueAssetImporter.SamiraPortraitPath, new Color(0.72f, 0.62f, 0.42f)),
-                Speaker(NarrativeSpeakerId.Aria, "ARIA", "CIVIC RELAY ASSISTANT", NarrativeSpeakerTreatment.AriaIcon, FirstLaunchNarrativeDialogueAssetImporter.AriaIconPath, new Color(0.2f, 0.92f, 1f)),
-                Speaker(NarrativeSpeakerId.Commander, "COMMANDER", "JOINT RESPONSE AUTHORITY", NarrativeSpeakerTreatment.Commander, null, new Color(0.86f, 0.82f, 0.7f))
+                Speaker(NarrativeSpeakerId.Aria, "ARIA", "CIVIC RELAY ASSISTANT", NarrativeSpeakerTreatment.AriaIcon, FirstLaunchNarrativeDialogueAssetImporter.AriaPortraitPath, new Color(0.2f, 0.92f, 1f)),
+                Speaker(NarrativeSpeakerId.Commander, "COMMANDER", "JOINT RESPONSE AUTHORITY", NarrativeSpeakerTreatment.Commander, CommanderFallbackPortrait(), new Color(0.86f, 0.82f, 0.7f))
             };
             Set(catalog, "speakers", records);
             EditorUtility.SetDirty(catalog);
         }
 
         private static NarrativeSpeakerRecord Speaker(NarrativeSpeakerId id, string name, string role, NarrativeSpeakerTreatment treatment, string spritePath, Color color, string accessibleLabel = null)
+        {
+            return Speaker(id, name, role, treatment, string.IsNullOrEmpty(spritePath) ? null : Load<Sprite>(spritePath), color, accessibleLabel);
+        }
+
+        private static NarrativeSpeakerRecord Speaker(NarrativeSpeakerId id, string name, string role, NarrativeSpeakerTreatment treatment, Sprite identitySprite, Color color, string accessibleLabel = null)
         {
             NarrativeSpeakerRecord record = new();
             string key = id.ToString().ToLowerInvariant();
@@ -256,9 +267,22 @@ namespace Game.Editor
             Set(record, "accessibleLabelKey", $"narrative.first_launch.speaker.{key}.accessible_label");
             Set(record, "accessibleLabelFallback", string.IsNullOrEmpty(accessibleLabel) ? $"{name}, {role}" : accessibleLabel);
             Set(record, "treatment", treatment);
-            Set(record, "identitySprite", string.IsNullOrEmpty(spritePath) ? null : Load<Sprite>(spritePath));
+            Set(record, "identitySprite", identitySprite);
             Set(record, "accentColor", color);
             return record;
+        }
+
+        private static Sprite CommanderFallbackPortrait()
+        {
+            UnityEngine.Object[] assets = AssetDatabase.LoadAllAssetsAtPath(
+                FirstLaunchNarrativeDialogueAssetImporter.CommanderPortraitSheetPath);
+            for (int i = 0; i < assets.Length; i++)
+            {
+                if (assets[i] is Sprite sprite && sprite.name == "commander_07_faceless")
+                    return sprite;
+            }
+
+            throw new InvalidOperationException("Missing commander_07_faceless sprite in the Commander portrait sheet.");
         }
 
         private static void BuildPunctuation()

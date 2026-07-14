@@ -22,7 +22,8 @@ public sealed class FirstLaunchNarrativeSequencePresentationSystemHelperTests
             tests.Player_PauseStepRestartAndCancelAreDeterministic();
             tests.Player_DebriefWatchedAndSkippedRoutesShareMandatoryCluePayload();
             tests.Player_AutoAdvanceHonorsAuthoredPanelAndLineTiming();
-            Debug.Log("[FirstLaunchNarrativeSequencePresentationSystemHelperValidation] result=Passed tests=5");
+            tests.Player_UsesSelectedCommanderPortraitAndMatchingVoice();
+            Debug.Log("[FirstLaunchNarrativeSequencePresentationSystemHelperValidation] result=Passed tests=6");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -161,6 +162,35 @@ public sealed class FirstLaunchNarrativeSequencePresentationSystemHelperTests
         Assert.AreEqual(0, context.SequencePresentation.CurrentLineIndex);
         context.SequencePresentation.Tick(0.02f);
         Assert.AreEqual(1, context.SequencePresentation.CurrentLineIndex);
+        context.Dispose();
+    }
+
+    [Test]
+    public void Player_UsesSelectedCommanderPortraitAndMatchingVoice()
+    {
+        AssertCommanderPresentation(0, "p14_commander_female");
+        AssertCommanderPresentation(1, "p14_commander");
+        AssertCommanderPresentation(6, "p14_commander_neutral");
+    }
+
+    private static void AssertCommanderPresentation(int portraitIndex, string expectedClipName)
+    {
+        TestContext context = CreateContext();
+        context.SequencePresentation.ApplyCommanderIdentity(new NarrativeCommanderIdentityData
+        {
+            Callsign = "NOMAD",
+            DisplayName = "TEST COMMANDER"
+        }, portraitIndex);
+
+        Sprite selectedPortrait = context.View.CommanderIdentityView.SelectedPortrait;
+        Assert.NotNull(selectedPortrait, $"Commander portrait {portraitIndex}");
+        Assert.IsTrue(context.SequencePresentation.StartAt("FL-P14"));
+        context.SequencePresentation.Tick(0.51f);
+
+        Assert.AreSame(selectedPortrait, context.View.DialogueView.CurrentPortraitSprite);
+        Assert.IsTrue(context.View.DialogueView.IsPortraitVisible);
+        Assert.NotNull(context.View.VoiceSource.clip);
+        Assert.AreEqual(expectedClipName, context.View.VoiceSource.clip.name);
         context.Dispose();
     }
 

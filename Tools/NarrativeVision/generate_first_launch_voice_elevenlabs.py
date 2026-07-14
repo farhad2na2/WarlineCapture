@@ -124,6 +124,34 @@ VOICE_DESIGNS: dict[str, dict[str, Any]] = {
         ),
         "selection": "median",
     },
+    "COMMANDER_FEMALE": {
+        "name": "Warline - Commander Female",
+        "seed": 812079,
+        "description": (
+            "A woman in her early forties with a neutral international English accent. Grounded mezzo-alto "
+            "voice, quiet confidence, restrained authority, concise command cadence, thoughtful and humane, "
+            "credible as an experienced joint-response commander, never theatrical or breathy."
+        ),
+        "preview": (
+            "Link the response teams. Secure the clinic corridor and confirm every target before engaging. "
+            "Civilians remain behind the barriers, so keep the operation controlled and precise."
+        ),
+        "selection": "median",
+    },
+    "COMMANDER_NEUTRAL": {
+        "name": "Warline - Commander Neutral",
+        "seed": 812093,
+        "description": (
+            "An adult androgynous command voice speaking neutral international English. Balanced middle pitch "
+            "without strongly masculine or feminine markers, composed authority, concise tactical cadence, "
+            "human and credible, suitable for a deliberately anonymous commander identity."
+        ),
+        "preview": (
+            "Link the response teams. Secure the clinic corridor and confirm every target before engaging. "
+            "Civilians remain behind the barriers, so keep the operation controlled and precise."
+        ),
+        "selection": "median",
+    },
 }
 
 TRIM_START = "silenceremove=start_periods=1:start_duration=0.03:start_threshold=-55dB"
@@ -178,6 +206,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--ffmpeg", default="ffmpeg")
     parser.add_argument("--line-ids", nargs="*", default=[])
     parser.add_argument("--candidate-count", type=int, default=1)
+    parser.add_argument("--commander-variants", action="store_true")
     parser.add_argument("--create-missing-voices", action="store_true")
     return parser.parse_args()
 
@@ -573,13 +602,135 @@ def generate_batch(args: argparse.Namespace, api_key: str, subscription: dict[st
     write_json_atomic(args.manifest, manifest)
 
 
+def generate_commander_variants(
+    args: argparse.Namespace,
+    api_key: str,
+    subscription: dict[str, Any],
+    voice_map: dict[str, Any],
+) -> None:
+    if args.candidate_count < 1 or args.candidate_count > 5:
+        raise RuntimeError("--candidate-count must be between 1 and 5.")
+    catalog = json.loads(args.catalog.read_text(encoding="utf-8"))
+    source_line = next((line for line in catalog.get("lines", []) if line["lineId"] == "p14_commander"), None)
+    if source_line is None:
+        raise RuntimeError("The p14_commander source line is missing from the FirstLaunch catalog.")
+
+    voice_records = {record["speaker"]: record for record in voice_map["voices"]}
+    ffmpeg = shutil.which(args.ffmpeg) or (str(Path(args.ffmpeg).resolve()) if Path(args.ffmpeg).exists() else None)
+    if not ffmpeg:
+        raise RuntimeError(f"Could not resolve ffmpeg executable: {args.ffmpeg}")
+
+    jobs = (
+        ("p14_commander_female", "COMMANDER_FEMALE", "[urgent] [controlled]", 4.8),
+        ("p14_commander_neutral", "COMMANDER_NEUTRAL", "[focused] [controlled]", 4.8),
+    )
+    maximum = MAX_DURATIONS["p14_commander"]
+    minimum = max(1.0, len(source_line["text"].split()) / 4.6)
+    variant_records: list[dict[str, Any]] = []
+
+    with tempfile.TemporaryDirectory(prefix="warline-first-launch-commander-variants-") as temporary:
+        work = Path(temporary)
+        staged = work / "staged"
+        staged.mkdir()
+        for job_index, (clip_id, speaker, tags, target_duration) in enumerate(jobs):
+            voice = voice_records[speaker]
+            candidates: list[dict[str, Any]] = []
+            for candidate_index in range(1, args.candidate_count + 1):
+                raw_mp3 = work / f"{clip_id}_candidate_{candidate_index:02d}.mp3"
+                output_wav = work / f"{clip_id}_candidate_{candidate_index:02d}.wav"
+                seed = 923000 + job_index * 10 + candidate_index
+                generated, headers = request_audio(
+                    api_key,
+                    voice["voiceId"],
+                    f"{tags} {spoken_text(source_line['text'])}",
+                    seed,
+                )
+                raw_mp3.write_bytes(generated)
+                tempo = 1.02
+                convert_audio(ffmpeg, raw_mp3, output_wav, "commander-clean", tempo)
+                duration = wav_duration(output_wav)
+                if duration > maximum:
+                    tempo *= duration / (maximum - 0.08)
+                    if tempo > 1.18:
+                        raise RuntimeError(f"{clip_id} candidate {candidate_index} requires excessive compression.")
+                    convert_audio(ffmpeg, raw_mp3, output_wav, "commander-clean", tempo)
+                    duration = wav_duration(output_wav)
+                if duration < minimum or duration > maximum:
+                    raise RuntimeError(
+                        f"{clip_id} candidate {candidate_index} duration {duration:.3f}s is outside "
+                        f"{minimum:.3f}-{maximum:.3f}s."
+                    )
+                candidates.append(
+                    {
+                        "index": candidate_index,
+                        "path": output_wav,
+                        "duration": duration,
+                        "tempo": tempo,
+                        "seed": seed,
+                        "requestId": headers.get("request-id") or headers.get("x-request-id"),
+                        "characterCost": headers.get("character-cost"),
+                    }
+                )
+                print(f"[candidate] {clip_id} #{candidate_index}: {duration:.3f}s {tags}", flush=True)
+
+            selected = min(candidates, key=lambda candidate: abs(candidate["duration"] - target_duration))
+            staged_wav = staged / f"{clip_id}.wav"
+            shutil.copy2(selected["path"], staged_wav)
+            variant_records.append(
+                {
+                    "clipId": clip_id,
+                    "sourceLineId": "p14_commander",
+                    "speaker": speaker,
+                    "voiceId": voice["voiceId"],
+                    "voiceName": voice["name"],
+                    "modelId": TTS_MODEL,
+                    "performanceDirection": tags,
+                    "durationSeconds": round(selected["duration"], 3),
+                    "minimumDurationSeconds": round(minimum, 3),
+                    "maximumDurationSeconds": maximum,
+                    "targetDurationSeconds": target_duration,
+                    "selectedCandidate": selected["index"],
+                    "candidateCount": len(candidates),
+                    "candidateDurationsSeconds": [round(candidate["duration"], 3) for candidate in candidates],
+                    "requestId": selected["requestId"],
+                    "characterCost": selected["characterCost"],
+                    "generationSeed": selected["seed"],
+                    "sha256": hashlib.sha256(staged_wav.read_bytes()).hexdigest(),
+                    "assetPath": (args.voice_root / f"{clip_id}.wav").relative_to(ROOT).as_posix(),
+                }
+            )
+            print(
+                f"[clip] selected {clip_id} candidate {selected['index']}: {selected['duration']:.3f}s",
+                flush=True,
+            )
+
+        args.voice_root.mkdir(parents=True, exist_ok=True)
+        for record in variant_records:
+            shutil.copy2(staged / f"{record['clipId']}.wav", args.voice_root / f"{record['clipId']}.wav")
+
+    manifest = json.loads(args.manifest.read_text(encoding="utf-8")) if args.manifest.exists() else {}
+    manifest["lastUpdatedAtUtc"] = dt.datetime.now(dt.timezone.utc).isoformat()
+    manifest["subscriptionSnapshotLastUpdate"] = subscription
+    manifest["commanderVoiceSelection"] = {
+        "femalePortraitIndices": [0, 2, 5],
+        "malePortraitIndices": [1, 3, 4],
+        "neutralPortraitIndices": [6],
+    }
+    manifest["voiceVariants"] = variant_records
+    write_json_atomic(args.manifest, manifest)
+
+
 def main() -> int:
     args = parse_args()
     api_key = read_api_key(args.api_key_file)
     subscription = subscription_snapshot(api_key)
     voice_map = ensure_voice_map(api_key, args.voice_map, args.create_missing_voices)
-    generate_batch(args, api_key, subscription, voice_map)
-    generated_count = len(args.line_ids) if args.line_ids else len(MAX_DURATIONS)
+    if args.commander_variants:
+        generate_commander_variants(args, api_key, subscription, voice_map)
+        generated_count = 2
+    else:
+        generate_batch(args, api_key, subscription, voice_map)
+        generated_count = len(args.line_ids) if args.line_ids else len(MAX_DURATIONS)
     print(f"[complete] generated {generated_count} licensed FirstLaunch voice clips", flush=True)
     return 0
 

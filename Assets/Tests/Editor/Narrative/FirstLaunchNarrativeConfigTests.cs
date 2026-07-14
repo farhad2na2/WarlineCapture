@@ -133,6 +133,13 @@ public sealed class FirstLaunchNarrativeConfigTests
                 Assert.NotNull(line.VoiceClip, line.LineId);
                 Assert.Greater(line.DeadlineSeconds, line.StartSeconds, line.LineId);
                 StringAssert.Contains(line.LineId, AssetDatabase.GetAssetPath(line.VoiceClip));
+                if (line.Speaker == NarrativeSpeakerId.Commander)
+                {
+                    Assert.NotNull(line.FemaleVoiceClip, line.LineId);
+                    Assert.NotNull(line.NeutralVoiceClip, line.LineId);
+                    StringAssert.EndsWith("p14_commander_female.wav", AssetDatabase.GetAssetPath(line.FemaleVoiceClip));
+                    StringAssert.EndsWith("p14_commander_neutral.wav", AssetDatabase.GetAssetPath(line.NeutralVoiceClip));
+                }
             }
         }
         Assert.AreEqual(17, lineCount);
@@ -148,8 +155,12 @@ public sealed class FirstLaunchNarrativeConfigTests
         foreach (NarrativeSpeakerRecord speaker in catalog.Speakers)
             Assert.IsTrue(byId.TryAdd(speaker.SpeakerId, speaker), speaker.SpeakerId.ToString());
         Assert.AreNotSame(byId[NarrativeSpeakerId.Dalia].IdentitySprite, byId[NarrativeSpeakerId.Samira].IdentitySprite);
-        Assert.AreEqual(FirstLaunchNarrativeDialogueAssetImporter.AriaIconPath,
+        Assert.AreEqual(FirstLaunchNarrativeDialogueAssetImporter.AriaPortraitPath,
             AssetDatabase.GetAssetPath(byId[NarrativeSpeakerId.Aria].IdentitySprite));
+        Assert.AreEqual(FirstLaunchNarrativeDialogueAssetImporter.RadioPortraitPath,
+            AssetDatabase.GetAssetPath(byId[NarrativeSpeakerId.Radio].IdentitySprite));
+        Assert.NotNull(byId[NarrativeSpeakerId.Commander].IdentitySprite);
+        Assert.AreEqual("commander_07_faceless", byId[NarrativeSpeakerId.Commander].IdentitySprite.name);
         Assert.AreEqual(NarrativeSpeakerTreatment.AriaIcon, byId[NarrativeSpeakerId.Aria].Treatment);
     }
 }

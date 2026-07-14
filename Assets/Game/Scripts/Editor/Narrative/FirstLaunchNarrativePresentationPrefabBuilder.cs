@@ -119,7 +119,7 @@ namespace Game.Editor
             portrait.preserveAspect = true;
 
             Image ariaIcon = CreateImage("AriaIcon", dialogue, null, new Color(0.2f, 0.92f, 1f, 1f), false);
-            SetRect(ariaIcon.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(192f, 192f), new Vector2(160f, 0f));
+            SetRect(ariaIcon.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(220f, 220f), new Vector2(160f, 0f));
             ariaIcon.preserveAspect = true;
             ariaIcon.gameObject.SetActive(false);
 

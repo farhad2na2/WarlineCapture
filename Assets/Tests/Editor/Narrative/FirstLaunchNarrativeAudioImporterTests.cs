@@ -22,6 +22,8 @@ public sealed class FirstLaunchNarrativeAudioImporterTests
         "p12_samira",
         "p13_aria",
         "p14_commander",
+        "p14_commander_female",
+        "p14_commander_neutral",
         "p15_dalia",
         "p16_aria",
         "p17_dalia",
@@ -34,7 +36,7 @@ public sealed class FirstLaunchNarrativeAudioImporterTests
         {
             FirstLaunchNarrativeAudioImporterTests tests = new();
             tests.TemporaryVoiceBatch_HasStableMonoClipIdsAndRequiredImportSettings();
-            Debug.Log("[FirstLaunchNarrativeAudioImporterValidation] result=Passed tests=1 clips=17");
+            Debug.Log("[FirstLaunchNarrativeAudioImporterValidation] result=Passed tests=1 clips=19");
             ValidationExit.Passed();
         }
         catch (Exception exception)

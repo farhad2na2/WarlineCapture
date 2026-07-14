@@ -45,6 +45,8 @@ namespace Game.Configs
         [SerializeField, TextArea] private string englishFallback;
         [SerializeField] private NarrativeSpeakerId speaker;
         [SerializeField] private AudioClip voiceClip;
+        [SerializeField] private AudioClip femaleVoiceClip;
+        [SerializeField] private AudioClip neutralVoiceClip;
         [SerializeField, Min(0f)] private float startSeconds;
         [SerializeField, Min(0f)] private float deadlineSeconds;
         [SerializeField] private bool essentialCaption;
@@ -54,6 +56,8 @@ namespace Game.Configs
         public string EnglishFallback => englishFallback;
         public NarrativeSpeakerId Speaker => speaker;
         public AudioClip VoiceClip => voiceClip;
+        public AudioClip FemaleVoiceClip => femaleVoiceClip;
+        public AudioClip NeutralVoiceClip => neutralVoiceClip;
         public float StartSeconds => startSeconds;
         public float DeadlineSeconds => deadlineSeconds;
         public bool EssentialCaption => essentialCaption;

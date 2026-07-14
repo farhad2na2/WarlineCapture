@@ -341,11 +341,78 @@
       "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/p18_aria.wav"
     }
   ],
-  "lastUpdatedAtUtc": "2026-07-14T11:00:31.690789+00:00",
+  "lastUpdatedAtUtc": "2026-07-14T11:31:54.183367+00:00",
   "subscriptionSnapshotLastUpdate": {
     "tier": "creator",
     "status": "active",
     "creditLimit": 121024,
-    "creditsUsedBeforeGeneration": 6233
-  }
+    "creditsUsedBeforeGeneration": 6944
+  },
+  "commanderVoiceSelection": {
+    "femalePortraitIndices": [
+      0,
+      2,
+      5
+    ],
+    "malePortraitIndices": [
+      1,
+      3,
+      4
+    ],
+    "neutralPortraitIndices": [
+      6
+    ]
+  },
+  "voiceVariants": [
+    {
+      "clipId": "p14_commander_female",
+      "sourceLineId": "p14_commander",
+      "speaker": "COMMANDER_FEMALE",
+      "voiceId": "CeoZEQcJ58ClpEHgRyKe",
+      "voiceName": "Warline - Commander Female",
+      "modelId": "eleven_v3",
+      "performanceDirection": "[urgent] [controlled]",
+      "durationSeconds": 5.56,
+      "minimumDurationSeconds": 2.609,
+      "maximumDurationSeconds": 7.25,
+      "targetDurationSeconds": 4.8,
+      "selectedCandidate": 1,
+      "candidateCount": 3,
+      "candidateDurationsSeconds": [
+        5.56,
+        5.981,
+        6.053
+      ],
+      "requestId": "mtOfjg00sKw6bHLbKGOk",
+      "characterCost": "59",
+      "generationSeed": 923001,
+      "sha256": "1035bd23a58a58d1352a38d23b31baa8fc426cf8c49a9d12e669bae03fff541c",
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/p14_commander_female.wav"
+    },
+    {
+      "clipId": "p14_commander_neutral",
+      "sourceLineId": "p14_commander",
+      "speaker": "COMMANDER_NEUTRAL",
+      "voiceId": "RaldHBrhNdVemVVS3wAW",
+      "voiceName": "Warline - Commander Neutral",
+      "modelId": "eleven_v3",
+      "performanceDirection": "[focused] [controlled]",
+      "durationSeconds": 5.716,
+      "minimumDurationSeconds": 2.609,
+      "maximumDurationSeconds": 7.25,
+      "targetDurationSeconds": 4.8,
+      "selectedCandidate": 2,
+      "candidateCount": 3,
+      "candidateDurationsSeconds": [
+        5.728,
+        5.716,
+        5.784
+      ],
+      "requestId": "CMe9kEfsNK7qhrDuJ7Uu",
+      "characterCost": "59",
+      "generationSeed": 923012,
+      "sha256": "4d6ff53837cdcec7810f79f89f19ceb2347134e289acbb4d343a4833abc36ade",
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/p14_commander_neutral.wav"
+    }
+  ]
 }

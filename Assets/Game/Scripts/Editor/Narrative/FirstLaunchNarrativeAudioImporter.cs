@@ -28,6 +28,8 @@ namespace Game.Editor
             "p12_samira",
             "p13_aria",
             "p14_commander",
+            "p14_commander_female",
+            "p14_commander_neutral",
             "p15_dalia",
             "p16_aria",
             "p17_dalia",

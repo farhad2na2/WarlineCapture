@@ -73,6 +73,8 @@ MonoBehaviour:
         The main road to the clinic is blocked.
       speaker: 0
       voiceClip: {fileID: 8300000, guid: ac4b7b9092d3a42b086ee90292c336e0, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
       startSeconds: 0.29999924
       deadlineSeconds: 7.75
       essentialCaption: 0
@@ -116,6 +118,8 @@ MonoBehaviour:
         copy? The district relay is down. The command channel has gone silent.
       speaker: 0
       voiceClip: {fileID: 8300000, guid: 5a812bb9556bc40408a5a891e990b0c1, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
       startSeconds: 0.29999924
       deadlineSeconds: 8.75
       essentialCaption: 0
@@ -159,6 +163,8 @@ MonoBehaviour:
         found the convoy survivors. Extraction is underway.
       speaker: 1
       voiceClip: {fileID: 8300000, guid: 6f0c66b02f248426680bf00fed9d852a, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
       startSeconds: 0.5
       deadlineSeconds: 11.75
       essentialCaption: 0
@@ -168,6 +174,8 @@ MonoBehaviour:
         Families and road crews are trapped beyond the clinic route.
       speaker: 2
       voiceClip: {fileID: 8300000, guid: c14c2861f4b8d4964a5fec5cfaf5f084, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
       startSeconds: 12.5
       deadlineSeconds: 23.75
       essentialCaption: 0
@@ -211,6 +219,8 @@ MonoBehaviour:
         Command channels remain offline.
       speaker: 3
       voiceClip: {fileID: 8300000, guid: 12686ade48d6b4d5ca22d97d1e13a58d, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
       startSeconds: 0.5
       deadlineSeconds: 9.75
       essentialCaption: 0
@@ -254,6 +264,8 @@ MonoBehaviour:
         command authority remains.
       speaker: 3
       voiceClip: {fileID: 8300000, guid: 6f4be792f4a7046689fdac93d87b1a87, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
       startSeconds: 0.5
       deadlineSeconds: 9.75
       essentialCaption: 0
@@ -297,6 +309,8 @@ MonoBehaviour:
         in on the blocked clinic route.
       speaker: 3
       voiceClip: {fileID: 8300000, guid: 061156a308c154a35bae723c790ac264, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
       startSeconds: 0.5
       deadlineSeconds: 9.75
       essentialCaption: 0
@@ -408,6 +422,8 @@ MonoBehaviour:
         You retain command authority.
       speaker: 3
       voiceClip: {fileID: 8300000, guid: 98c56279595e54b3cb38343195997463, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
       startSeconds: 0.5
       deadlineSeconds: 7.75
       essentialCaption: 0
@@ -450,6 +466,8 @@ MonoBehaviour:
       englishFallback: 'The failures were deliberate: power, roads, then command.'
       speaker: 3
       voiceClip: {fileID: 8300000, guid: 160891e1efb7541848a9555183dc4058, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
       startSeconds: 0.5
       deadlineSeconds: 7.75
       essentialCaption: 0
@@ -493,6 +511,8 @@ MonoBehaviour:
         gone dark.
       speaker: 1
       voiceClip: {fileID: 8300000, guid: 0c8fa5cb8fb204ed0a2d2f37400a3344, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
       startSeconds: 0.5
       deadlineSeconds: 8.75
       essentialCaption: 0
@@ -536,6 +556,8 @@ MonoBehaviour:
         beyond the roadblock.
       speaker: 2
       voiceClip: {fileID: 8300000, guid: b80d11c348c8a48f1bd431b88d4ede85, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
       startSeconds: 0.5
       deadlineSeconds: 8.75
       essentialCaption: 0
@@ -579,6 +601,8 @@ MonoBehaviour:
         the attack.
       speaker: 3
       voiceClip: {fileID: 8300000, guid: ba6dc3d681a9c417d82dea2dd1791640, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
       startSeconds: 0.5
       deadlineSeconds: 7.75
       essentialCaption: 0
@@ -622,6 +646,8 @@ MonoBehaviour:
         targets before engaging.
       speaker: 4
       voiceClip: {fileID: 8300000, guid: 1e9b5f4cd8b114591825f160e20bdc26, type: 3}
+      femaleVoiceClip: {fileID: 8300000, guid: 7dc09e8eae4c7fb458f8bb6ba7ae695f, type: 3}
+      neutralVoiceClip: {fileID: 8300000, guid: 78b891ab4ee7fab4a97d7ef61c782595, type: 3}
       startSeconds: 0.5
       deadlineSeconds: 7.75
       essentialCaption: 0
@@ -665,6 +691,8 @@ MonoBehaviour:
         heavy weapons observed.
       speaker: 1
       voiceClip: {fileID: 8300000, guid: 67f3b30311bbb447ba651ffadf498f46, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
       startSeconds: 0.5
       deadlineSeconds: 9.75
       essentialCaption: 0
@@ -708,6 +736,8 @@ MonoBehaviour:
         the barriers. Engage only within the marked corridor.
       speaker: 3
       voiceClip: {fileID: 8300000, guid: 7fdf86cbf0dfa41228ea0b13959a33d2, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
       startSeconds: 0.5
       deadlineSeconds: 9.75
       essentialCaption: 0
@@ -750,6 +780,8 @@ MonoBehaviour:
       englishFallback: Field units standing by. You have tactical control, Commander.
       speaker: 1
       voiceClip: {fileID: 8300000, guid: 2a2bd0a3833284ef889671c36e0c1959, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
       startSeconds: 0.5
       deadlineSeconds: 7.75
       essentialCaption: 0
@@ -792,6 +824,8 @@ MonoBehaviour:
       englishFallback: Select the rifle squad. Move them into cover. Secure the corridor.
       speaker: 3
       voiceClip: {fileID: 8300000, guid: 03269cef6e35a4c4e988f35ab7982d0a, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
       startSeconds: 0.5
       deadlineSeconds: 9.75
       essentialCaption: 0

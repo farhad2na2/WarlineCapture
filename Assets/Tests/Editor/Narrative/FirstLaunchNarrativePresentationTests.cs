@@ -18,7 +18,7 @@ public sealed class FirstLaunchNarrativePresentationTests
             tests.RevealSchedule_IsMonotonicPunctuationAwareAndDeadlineBound();
             tests.RevealSchedule_HandlesRichTextMalformedAndInstantInputs();
             tests.SubtitleStyleResolver_MapsAllAccessibilityPresets();
-            tests.DialogueAssets_UseSeparatePointerProductionAriaIconAndNineSliceBorder();
+            tests.DialogueAssets_UseSeparatePointerAriaPortraitAndNineSliceBorder();
             tests.PresentationPrefab_HasBoundViewsSkipAndDedicatedVoiceSource();
             tests.PresentationHelper_RespectsAutoAdvancePauseAndCancel();
             tests.Phase10RPresentation_UsesReadableTypeMobileTargetsAndCleanFrame();
@@ -93,19 +93,19 @@ public sealed class FirstLaunchNarrativePresentationTests
     }
 
     [Test]
-    public void DialogueAssets_UseSeparatePointerProductionAriaIconAndNineSliceBorder()
+    public void DialogueAssets_UseSeparatePointerAriaPortraitAndNineSliceBorder()
     {
         FirstLaunchNarrativeDialogueAssetImporter.Configure();
         Sprite frame = AssetDatabase.LoadAssetAtPath<Sprite>(FirstLaunchNarrativeDialogueAssetImporter.FramePath);
         Sprite pointer = AssetDatabase.LoadAssetAtPath<Sprite>(FirstLaunchNarrativeDialogueAssetImporter.PointerPath);
-        Sprite aria = AssetDatabase.LoadAssetAtPath<Sprite>(FirstLaunchNarrativeDialogueAssetImporter.AriaIconPath);
+        Sprite aria = AssetDatabase.LoadAssetAtPath<Sprite>(FirstLaunchNarrativeDialogueAssetImporter.AriaPortraitPath);
 
         Assert.NotNull(frame);
         Assert.NotNull(pointer);
         Assert.NotNull(aria);
         Assert.AreNotEqual(AssetDatabase.AssetPathToGUID(FirstLaunchNarrativeDialogueAssetImporter.FramePath),
             AssetDatabase.AssetPathToGUID(FirstLaunchNarrativeDialogueAssetImporter.PointerPath));
-        Assert.AreEqual("Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_focus_reticle.png",
+        Assert.AreEqual(FirstLaunchNarrativeDialogueAssetImporter.AriaPortraitPath,
             AssetDatabase.GetAssetPath(aria));
         Assert.Greater(frame.border.x, 0f);
         Assert.Greater(frame.border.y, 0f);

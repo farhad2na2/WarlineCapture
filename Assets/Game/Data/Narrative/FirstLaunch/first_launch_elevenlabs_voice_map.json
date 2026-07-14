@@ -48,6 +48,24 @@
       "description": "A man in his early forties with a neutral international English accent. Grounded medium-low voice, quiet confidence, restrained authority, concise command cadence, thoughtful and humane, never a trailer announcer, credible as an experienced joint-response commander.",
       "designSeed": 812063,
       "selectedPreviewDurationSeconds": 11.965958333333333
+    },
+    {
+      "speaker": "COMMANDER_FEMALE",
+      "voiceId": "CeoZEQcJ58ClpEHgRyKe",
+      "name": "Warline - Commander Female",
+      "category": "generated",
+      "description": "A woman in her early forties with a neutral international English accent. Grounded mezzo-alto voice, quiet confidence, restrained authority, concise command cadence, thoughtful and humane, credible as an experienced joint-response commander, never theatrical or breathy.",
+      "designSeed": 812079,
+      "selectedPreviewDurationSeconds": 13.324291666666667
+    },
+    {
+      "speaker": "COMMANDER_NEUTRAL",
+      "voiceId": "RaldHBrhNdVemVVS3wAW",
+      "name": "Warline - Commander Neutral",
+      "category": "generated",
+      "description": "An adult androgynous command voice speaking neutral international English. Balanced middle pitch without strongly masculine or feminine markers, composed authority, concise tactical cadence, human and credible, suitable for a deliberately anonymous commander identity.",
+      "designSeed": 812093,
+      "selectedPreviewDurationSeconds": 12.592875
     }
   ]
 }

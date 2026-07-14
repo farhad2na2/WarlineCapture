@@ -9,7 +9,8 @@ namespace Game.Editor
         public const string PointerPath = "Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Frames/dialogue_pointer_right.png";
         public const string DaliaPortraitPath = "Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Portraits/portrait_dalia.png";
         public const string SamiraPortraitPath = "Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Portraits/portrait_samira.png";
-        public const string AriaIconPath = "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_focus_reticle.png";
+        public const string RadioPortraitPath = "Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Portraits/portrait_radio_dispatch.png";
+        public const string AriaPortraitPath = "Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Portraits/portrait_aria.png";
         public const string CommanderPortraitSheetPath = "Assets/Game/Art/Narrative/FirstLaunch/Commander/commander_portrait_choices.png";
 
         private static readonly string[] Paths =
@@ -18,7 +19,8 @@ namespace Game.Editor
             PointerPath,
             DaliaPortraitPath,
             SamiraPortraitPath,
-            AriaIconPath
+            RadioPortraitPath,
+            AriaPortraitPath
         };
 
         [MenuItem("Game/Narrative/First Launch/Configure Dialogue Art")]
@@ -38,7 +40,7 @@ namespace Game.Editor
                 AssetDatabase.Refresh();
             }
 
-            Debug.Log("[FirstLaunchNarrativeDialogueAssetImporter] Configured frame, pointer, portraits, and production ARIA icon.");
+            Debug.Log("[FirstLaunchNarrativeDialogueAssetImporter] Configured frame, pointer, and complete speaker portrait set.");
         }
 
         private static void ConfigureCommanderPortraitSheet()
@@ -55,7 +57,7 @@ namespace Game.Editor
             importer.mipmapEnabled = false;
             importer.wrapMode = TextureWrapMode.Clamp;
             importer.filterMode = FilterMode.Bilinear;
-            importer.textureCompression = TextureImporterCompression.Uncompressed;
+            importer.textureCompression = TextureImporterCompression.CompressedHQ;
             importer.maxTextureSize = 2048;
 #pragma warning disable CS0618
             importer.spritesheet = new[]
@@ -93,12 +95,18 @@ namespace Game.Editor
             importer.textureType = TextureImporterType.Sprite;
             importer.spriteImportMode = SpriteImportMode.Single;
             importer.sRGBTexture = true;
-            importer.alphaIsTransparency = true;
+            bool isPortrait = path == DaliaPortraitPath ||
+                              path == SamiraPortraitPath ||
+                              path == RadioPortraitPath ||
+                              path == AriaPortraitPath;
+            importer.alphaIsTransparency = !isPortrait;
             importer.isReadable = false;
             importer.mipmapEnabled = false;
             importer.wrapMode = TextureWrapMode.Clamp;
             importer.filterMode = FilterMode.Bilinear;
-            importer.textureCompression = TextureImporterCompression.Uncompressed;
+            importer.textureCompression = isPortrait
+                ? TextureImporterCompression.CompressedHQ
+                : TextureImporterCompression.Uncompressed;
             importer.maxTextureSize = path == FramePath ? 2048 : 512;
 
             TextureImporterSettings settings = new();

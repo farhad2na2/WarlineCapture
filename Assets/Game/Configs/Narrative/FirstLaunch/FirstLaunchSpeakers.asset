@@ -21,7 +21,7 @@ MonoBehaviour:
     accessibleLabelKey: narrative.first_launch.speaker.radio.accessible_label
     accessibleLabelFallback: District emergency dispatcher
     treatment: 0
-    identitySprite: {fileID: 0}
+    identitySprite: {fileID: 21300000, guid: e55bc599fb75dfa4e8874b05daf7ec7e, type: 3}
     accentColor: {r: 0.76, g: 0.72, b: 0.6, a: 1}
   - speakerId: 1
     nameKey: narrative.first_launch.speaker.dalia.name
@@ -51,7 +51,7 @@ MonoBehaviour:
     accessibleLabelKey: narrative.first_launch.speaker.aria.accessible_label
     accessibleLabelFallback: ARIA, CIVIC RELAY ASSISTANT
     treatment: 2
-    identitySprite: {fileID: 21300000, guid: b0b75785da0c46789ce737fe7ad0ad6b, type: 3}
+    identitySprite: {fileID: 21300000, guid: dc9591266e13be945a7292bda68d7404, type: 3}
     accentColor: {r: 0.2, g: 0.92, b: 1, a: 1}
   - speakerId: 4
     nameKey: narrative.first_launch.speaker.commander.name
@@ -61,5 +61,5 @@ MonoBehaviour:
     accessibleLabelKey: narrative.first_launch.speaker.commander.accessible_label
     accessibleLabelFallback: COMMANDER, JOINT RESPONSE AUTHORITY
     treatment: 3
-    identitySprite: {fileID: 0}
+    identitySprite: {fileID: 4710768086762683539, guid: e63d567176bd64921a7ee78ea94c72fb, type: 3}
     accentColor: {r: 0.86, g: 0.82, b: 0.7, a: 1}

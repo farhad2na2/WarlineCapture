@@ -35,6 +35,8 @@ namespace Game.UI.Runtime
         private const float FallbackMaximumHeight = 720f;
 
         public NarrativeDialoguePhase Phase => phase;
+        public Sprite CurrentPortraitSprite => portraitImage != null ? portraitImage.sprite : null;
+        public bool IsPortraitVisible => portraitImage != null && portraitImage.gameObject.activeSelf;
 
         private void Awake()
         {
@@ -78,7 +80,7 @@ namespace Game.UI.Runtime
             {
                 ariaIconImage.gameObject.SetActive(isAria);
                 ariaIconImage.sprite = isAria ? model.IdentitySprite : null;
-                ariaIconImage.color = model.AccentColor;
+                ariaIconImage.color = Color.white;
             }
         }
 

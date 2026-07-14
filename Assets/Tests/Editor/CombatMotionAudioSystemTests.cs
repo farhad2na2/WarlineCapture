@@ -25,6 +25,10 @@ public sealed class CombatMotionAudioSystemTests
             passed++;
             tests.MissileFlightAudioSystem_ProjectilesEnqueueFlightSfx();
             passed++;
+            tests.MissileFlightAudioSystem_NoRelevantProjectiles_SkipsAudioBootstrap();
+            passed++;
+            tests.MissileFlightAudioSystem_RequiredQueryMatchesEitherProjectileKind();
+            passed++;
 
             Debug.Log($"[CombatMotionAudioValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -145,6 +149,57 @@ public sealed class CombatMotionAudioSystemTests
         Assert.AreEqual(2, requests.Length);
         AssertHasAudioEvent(requests, AudioEventIds.GameplayWeaponMissileFlight, groundMissile);
         AssertHasAudioEvent(requests, AudioEventIds.GameplayWeaponMissileFlight, airMissile);
+    }
+
+    [Test]
+    public void MissileFlightAudioSystem_NoRelevantProjectiles_SkipsAudioBootstrap()
+    {
+        using World world = new("CombatMotionAudioSystemTests_MissilesIdle");
+        EntityManager em = world.EntityManager;
+        em.CreateEntity(typeof(LocalTransform));
+        em.CreateEntity(typeof(GroundMissileProjectileComponent));
+
+        SystemHandle system = world.CreateSystem<MissileFlightAudioSystem>();
+        ref SystemState systemState = ref world.Unmanaged.ResolveSystemStateRef(system);
+        Assert.IsFalse(systemState.ShouldRunSystem(),
+            "The system must remain gated when no entity matches the complete projectile query.");
+
+        world.SetTime(new TimeData(4d, 0.1f));
+        system.Update(world.Unmanaged);
+
+        using EntityQuery audioQuery = em.CreateEntityQuery(
+            ComponentType.ReadOnly<AudioPlaybackRequestQueueComponent>());
+        Assert.IsTrue(audioQuery.IsEmptyIgnoreFilter,
+            "An idle missile-audio update must not create the shared audio singleton.");
+    }
+
+    [Test]
+    public void MissileFlightAudioSystem_RequiredQueryMatchesEitherProjectileKind()
+    {
+        using World world = new("CombatMotionAudioSystemTests_MissileQueryGate");
+        EntityManager em = world.EntityManager;
+        SystemHandle system = world.CreateSystem<MissileFlightAudioSystem>();
+        ref SystemState systemState = ref world.Unmanaged.ResolveSystemStateRef(system);
+
+        Assert.IsFalse(systemState.ShouldRunSystem());
+
+        Entity groundMissile = em.CreateEntity(
+            typeof(LocalTransform),
+            typeof(GroundMissileProjectileComponent));
+        Assert.IsTrue(systemState.ShouldRunSystem(),
+            "A ground missile with a transform must satisfy the required query.");
+
+        em.DestroyEntity(groundMissile);
+        Assert.IsFalse(systemState.ShouldRunSystem());
+
+        Entity airMissile = em.CreateEntity(
+            typeof(LocalTransform),
+            typeof(AirMissileProjectileComponent));
+        Assert.IsTrue(systemState.ShouldRunSystem(),
+            "An air missile with a transform must satisfy the required query.");
+
+        em.DestroyEntity(airMissile);
+        Assert.IsFalse(systemState.ShouldRunSystem());
     }
 
     private static Entity CreateMotionUnit(EntityManager em, float3 position, bool vehicle, bool aircraft)

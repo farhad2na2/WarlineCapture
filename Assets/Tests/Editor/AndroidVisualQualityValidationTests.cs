@@ -34,6 +34,7 @@ public sealed class AndroidVisualQualityValidationTests
             RunCase(() => MobileRenderPipelineUsesGpuInstancedDrawingDefaults(), ref passed);
             RunCase(() => MobileRendererUsesForwardPlusForEntitiesGraphics(), ref passed);
             RunCase(() => GraphicsSettingsRetainsBatchRendererGroupShaderVariants(), ref passed);
+            RunCase(() => UniversalRenderPipelineGlobalSettingsRetainRuntimeResources(), ref passed);
             RunCase(() => AndroidBuildDisablesStaticBatchingForGpuResidentDrawer(), ref passed);
             RunCase(() => VisualQualityProfileUsesBalancedAndroidMatchRendering(), ref passed);
             RunCase(() => HighModeKeepsCameraPostProcessingDisabled(), ref passed);
@@ -41,6 +42,7 @@ public sealed class AndroidVisualQualityValidationTests
             RunCase(() => AndroidFrameRatePolicyClampsOneTwentyToSixty(), ref passed);
             RunCase(() => AndroidFrameRatePolicyPreservesThirtyAndSixty(), ref passed);
             RunCase(() => AndroidFrameRatePersistenceMigratesOneTwentyToSixty(), ref passed);
+            RunCase(() => QualitySelectionPreservesMobileIntentAcrossPlatformTierLists(), ref passed);
             RunCase(() => MatchCompositionRoutesVisualQualityChangesAndUnsubscribes(), ref passed);
             RunCase(() => VisualQualityRoutingRemainsEventDriven(), ref passed);
             RunCase(() => DayNightRemainsAuthoritativeAcrossQualityChanges(), ref passed);
@@ -139,13 +141,31 @@ public sealed class AndroidVisualQualityValidationTests
         string path = Path.GetFullPath(Path.Combine(Application.dataPath, "../ProjectSettings/GraphicsSettings.asset"));
         string settings = File.ReadAllText(path);
         StringAssert.Contains(
-            "m_BrgStripping: 0",
+            "m_BrgStripping: 2",
             settings,
             "GPU Resident Drawer requires BatchRendererGroup shader stripping mode Keep All.");
         StringAssert.Contains(
             "m_InstancingStripping: 0",
             settings,
             "Standard instancing variants must remain available for renderers outside GPU Resident Drawer.");
+    }
+
+    [Test]
+    public static void UniversalRenderPipelineGlobalSettingsRetainRuntimeResources()
+    {
+        string path = Path.GetFullPath(Path.Combine(
+            Application.dataPath,
+            "../Assets/Settings/UniversalRenderPipelineGlobalSettings.asset"));
+        string settings = File.ReadAllText(path);
+
+        StringAssert.DoesNotContain(
+            "m_RuntimeSettings:\n      m_List: []",
+            settings,
+            "URP runtime resources must not be emptied during settings migration.");
+        StringAssert.Contains(
+            "class: GPUResidentDrawerResources",
+            settings,
+            "GPU Resident Drawer runtime resources must remain registered in URP global settings.");
     }
 
     [Test]
@@ -334,6 +354,27 @@ public sealed class AndroidVisualQualityValidationTests
         {
             SettingsService.Save(previous);
         }
+    }
+
+    [Test]
+    public static void QualitySelectionPreservesMobileIntentAcrossPlatformTierLists()
+    {
+        Assert.AreEqual(
+            0,
+            SettingsService.ResolveUnityQualityIndex(UIGraphicsQuality.High, new[] { "PC", "Ultra" }),
+            "High must fall back to PC when Standalone excludes the Mobile tier, not select Ultra.");
+        Assert.AreEqual(
+            1,
+            SettingsService.ResolveUnityQualityIndex(UIGraphicsQuality.High, new[] { "Low", "Mobile", "Ultra" }),
+            "High must select Mobile when that tier is available.");
+        Assert.AreEqual(
+            1,
+            SettingsService.ResolveUnityQualityIndex(UIGraphicsQuality.Ultra, new[] { "Low", "Mobile" }),
+            "Ultra must fall back to the best available Android tier.");
+        Assert.AreEqual(
+            0,
+            SettingsService.ResolveUnityQualityIndex(UIGraphicsQuality.Balanced, Array.Empty<string>()),
+            "An empty quality list must return the only safe index.");
     }
 
     [Test]

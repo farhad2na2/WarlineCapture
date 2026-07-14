@@ -11,6 +11,24 @@ namespace Game.Runtime
     public partial struct MissileFlightAudioSystem : ISystem
     {
         private const float MissileFlightIntervalSeconds = 0.45f;
+        private EntityQuery _projectileQuery;
+
+        public void OnCreate(ref SystemState state)
+        {
+            _projectileQuery = state.GetEntityQuery(new EntityQueryDesc
+            {
+                All = new[]
+                {
+                    ComponentType.ReadOnly<LocalTransform>()
+                },
+                Any = new[]
+                {
+                    ComponentType.ReadOnly<GroundMissileProjectileComponent>(),
+                    ComponentType.ReadOnly<AirMissileProjectileComponent>()
+                }
+            });
+            state.RequireForUpdate(_projectileQuery);
+        }
 
         public void OnUpdate(ref SystemState state)
         {

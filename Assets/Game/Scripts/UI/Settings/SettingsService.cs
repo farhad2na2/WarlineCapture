@@ -34,6 +34,10 @@ namespace Game.UI.Runtime
         private const string NarrativeBackgroundOpacityKey = Prefix + "Narrative.BackgroundOpacity";
         private const string NarrativeInstantTextKey = Prefix + "Narrative.InstantText";
         private const string NarrativeAutoAdvanceKey = Prefix + "Narrative.AutoAdvance";
+        private static readonly string[] LowQualityCandidates = { "Low", "Mobile", "PC", "Ultra" };
+        private static readonly string[] BalancedQualityCandidates = { "Mobile", "Low", "PC", "Ultra" };
+        private static readonly string[] HighQualityCandidates = { "Mobile", "PC", "Low", "Ultra" };
+        private static readonly string[] UltraQualityCandidates = { "Ultra", "PC", "Mobile", "Low" };
 
         public static event System.Action<UISettingsModel> RuntimeApplied;
 
@@ -265,25 +269,38 @@ namespace Game.UI.Runtime
 
         private static int ResolveUnityQualityIndex(UIGraphicsQuality quality)
         {
-            if (QualitySettings.names.Length == 0)
+            return ResolveUnityQualityIndex(quality, QualitySettings.names);
+        }
+
+        internal static int ResolveUnityQualityIndex(UIGraphicsQuality quality, string[] qualityNames)
+        {
+            if (qualityNames == null || qualityNames.Length == 0)
                 return 0;
 
-            string qualityName = quality switch
+            string[] candidates = quality switch
             {
-                UIGraphicsQuality.Low => "Low",
-                UIGraphicsQuality.Balanced => "Mobile",
-                UIGraphicsQuality.High => "Mobile",
-                UIGraphicsQuality.Ultra => "Ultra",
-                _ => "Mobile"
+                UIGraphicsQuality.Low => LowQualityCandidates,
+                UIGraphicsQuality.Balanced => BalancedQualityCandidates,
+                UIGraphicsQuality.High => HighQualityCandidates,
+                UIGraphicsQuality.Ultra => UltraQualityCandidates,
+                _ => BalancedQualityCandidates
             };
 
-            for (int i = 0; i < QualitySettings.names.Length; i++)
+            for (int candidateIndex = 0; candidateIndex < candidates.Length; candidateIndex++)
             {
-                if (string.Equals(QualitySettings.names[i], qualityName, System.StringComparison.OrdinalIgnoreCase))
-                    return i;
+                for (int qualityIndex = 0; qualityIndex < qualityNames.Length; qualityIndex++)
+                {
+                    if (string.Equals(
+                            qualityNames[qualityIndex],
+                            candidates[candidateIndex],
+                            System.StringComparison.OrdinalIgnoreCase))
+                    {
+                        return qualityIndex;
+                    }
+                }
             }
 
-            return Mathf.Clamp(1, 0, QualitySettings.names.Length - 1);
+            return 0;
         }
 
         private static T GetEnum<T>(string key, T fallback) where T : struct

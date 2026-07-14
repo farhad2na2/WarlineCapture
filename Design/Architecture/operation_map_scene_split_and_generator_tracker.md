@@ -118,6 +118,247 @@ The existing static presentation pipeline remains the render optimization path. 
 
 `MenuBootstrapCompositionSystemHelper` may continue owning the existing streamer lifecycle. Map selection should supply the resolved manifest and camera to the existing boundary rather than introduce another broad per-frame owner.
 
+## Technical Architecture Contract
+
+Design status: normative implementation contract, audited 2026-07-14. Types marked **planned** do not exist yet. Any implementation that needs a different type name, assembly dependency, or ownership direction must update and re-audit this section before code is merged. Adding a similarly named parallel abstraction is not an acceptable shortcut.
+
+This technical-design extension does not change checklist progress. Implementation remains at 0% until the checklist items below are completed and validated.
+
+### Architecture Decision Summary
+
+- Use the existing assemblies. Do not add an `OperationMap`, `MapRuntime`, or other catch-all asmdef unless a measured dependency problem proves that a new bounded assembly is necessary.
+- `Game.Configs` owns small authoring/config assets and stable Addressables references. It must not reference `Game.Rendering` because `Game.Rendering` already references `Game.Configs`.
+- `Game.Components` owns unmanaged ECS state, enums, buffers, and immutable operation-map blob layouts. It must contain no `UnityEngine.Object`, Addressables handle, scene object, managed collection, or gameplay presentation state.
+- `Game.Runtime` consumes active map ECS data and immutable blobs. It must not load scenes/assets, inspect hierarchies, or reference the concrete `StaticMapPresentationManifest` type.
+- `Game.Rendering` continues to own the concrete static-presentation manifest and rendering data. It must not choose missions, scenarios, or scene transitions.
+- `Game.Composition` is the only runtime assembly allowed to resolve config references into concrete Unity scenes, Addressables assets, map views, map-surface blobs, and static-presentation bindings.
+- `Game.Editor` owns scene splitting, generation, baking, catalog/build resolution, and deterministic validation. Generated runtime code or runtime map generation is out of scope.
+- Scene and Addressables work is a managed Unity boundary. Do not create an empty `ISystem` wrapper around `SceneManager`, `Addressables`, `AsyncOperationHandle`, or `MonoBehaviour` references merely to claim ECS coverage.
+- Immutable map lookup and gameplay math must remain Burst-compatible. Existing gameplay `ISystem`/jobs read active map components, `MapSurfaceBlob`, and operation-map metadata directly; they do not call managed config or composition helpers.
+- No new `Manager`, `Controller`, `Facade`, `Service`, `ServiceLocator`, broad `Provider`, or updating `MonoBehaviour` is permitted.
+
+### Required Assembly Dependency Direction
+
+`A -> B` means assembly A may depend on assembly B. It does not authorize a new reference unless the responsibility table requires it.
+
+```text
+Game.Editor
+  -> Game.Composition
+     -> Game.Runtime
+        -> Game.Components
+        -> Game.Configs
+        -> Game.Rendering.Contracts
+     -> Game.Rendering
+        -> Game.Components
+        -> Game.Configs
+        -> Game.Rendering.Contracts
+     -> Game.Configs
+        -> Game.Components
+        -> Game.Catalog.Contracts
+     -> Game.Authoring
+  -> Game.Runtime
+  -> Game.Rendering
+  -> Game.Configs
+  -> Game.Components
+```
+
+The concrete constraints are:
+
+| Assembly | Operation-map responsibility | Allowed new dependencies | Forbidden dependency/behavior |
+|---|---|---|---|
+| `Game.Catalog.Contracts` | Stable catalog-facing ids/enums only if an existing contract cannot represent them. | None by default. | Unity objects, scene paths, Addressables, map blobs, gameplay systems. |
+| `Game.Components` | Active-map ECS state, request/result buffers, readiness, bounds, metadata blob layouts. | Existing Unity Collections/Entities/Mathematics only. | `Game.Configs`, `Game.Rendering`, `Game.Composition`, `UnityEngine.Object`, managed arrays/lists/dictionaries. |
+| `Game.Configs` | `OperationMapDefinition`, catalog, scenario setup, small serializable metadata, lazy heavyweight asset references. | Existing `Game.Components`, `Game.Catalog.Contracts`, Addressables. | A reference to `Game.Rendering` or a typed `StaticMapPresentationManifest` field; runtime scene loading; per-frame policy. |
+| `Game.Rendering.Contracts` | Only a pure-data rendering contract if concrete rendering must cross an assembly boundary. | Existing Unity Collections only. | Config ownership, scene loading, Unity object manifests. Do not add a contract solely to mirror every manifest field. |
+| `Game.Rendering` | `StaticMapPresentationManifest` schema and render data. | Existing `Game.Components`, `Game.Configs`, rendering dependencies. | Mission/scenario selection, Addressables orchestration, shell lifecycle. |
+| `Game.Runtime` | Burst-compatible consumers of active map state, bounds, anchors, surface/path data. | Existing components/config/contracts dependencies. | Concrete rendering manifest, Addressables, hierarchy search, scene load/unload, managed cache ownership. |
+| `Game.Composition` | Resolve catalog/config once, load/unload Unity content, bind scene view/surface/presentation, publish typed ECS state. | Existing configs, runtime, rendering, Addressables, Entities. | Gameplay decisions, map generation, a new update loop, broad global object discovery. |
+| `Game.Authoring` | Optional ECS bakers only after the extracted map/subscene authoring route proves it needs them. | Existing components/configs. | Runtime loading and presentation policy. |
+| `Game.Editor` | Deterministic generation, split, bake, validation, build inclusion. | Existing runtime assemblies plus Addressables Editor. | Player runtime dependencies or hand-editing generated chunk scenes. |
+| `Game.Tests.Editor` / `Game.Tests.PlayMode` | Contract, ownership, lifecycle, deterministic output, allocation, and visual/playable probes. | Test-only references. | Production behavior hidden in test helpers. |
+
+No planned runtime assembly may reference `Game.Editor`. `Game.Components`, `Game.Configs`, `Game.Runtime`, and `Game.Rendering` may not reference `Game.Composition`.
+
+### Existing Types To Reuse Or Extend
+
+| Existing type | Kind / assembly | Required disposition |
+|---|---|---|
+| `Game.Composition.MatchSceneView` | `sealed MonoBehaviour`, `Game.Composition` | Keep as shell binder/lifecycle forwarder. Remove map-specific serialized fields only after extracted-map parity passes. Do not make it choose a map or search loaded scenes. |
+| `Game.Composition.MatchSceneReferenceSceneSystemHelper` | managed `sealed class`, `Game.Composition` | Keep for locating the shell once. Do not broaden it to locate arbitrary operation-map content every frame. |
+| `Game.Composition.MatchStartSceneSystemHelper` | managed `sealed class`, `Game.Composition` | Extend its start gate to require accepted operation-map readiness; do not duplicate match-start state. |
+| `Game.Runtime.SceneLifecycleSceneSystemHelper` | managed `sealed class`, `Game.Runtime` | Preserve Menu/Match shell lifecycle. Operation-map Addressables lifetime is a separate narrow composition boundary because arbitrary map assets and concrete manifests do not belong in this helper. |
+| `Game.Composition.MapSurfaceRuntimeBootstrapSceneSystemHelper` | managed `sealed class`, `Game.Composition` | Reuse for the selected map's existing `MapSurfaceDataAsset`. It remains the sole owner/disposer of the persistent runtime `MapSurfaceBlob`. Do not copy surface cells into a second operation-map blob. |
+| `Game.Components.MapSurfaceComponent` / `MapSurfaceBlob` | unmanaged ECS component/blob, `Game.Components` | Remain authoritative for heights, layered surfaces, roads, bridges, movement masks, and connectivity. Operation-map metadata references this active surface indirectly through ECS readiness. |
+| `Game.Rendering.StaticMapPresentationManifest` | `sealed ScriptableObject`, `Game.Rendering` | Advance through an explicit schema migration to map identity and ownership. Do not move it into configs or load all manifests with the catalog. |
+| `Game.Composition.StaticMapPresentationManifestIndex` | internal static class, `Game.Composition` | Validate and build the in-memory chunk index once per bind. Add operation-map identity/schema checks without adding per-frame allocations. |
+| `Game.Composition.StaticMapPresentationStreamer` | managed `sealed class`, `Game.Composition` | Rebind to the selected manifest/camera. Preserve queue capacity 64, bounded scene-state checks (maximum 16 per update), drain-before-unload behavior, and no per-frame collection creation. |
+| `Game.Editor.StaticMapPresentationBaker` | static editor class, `Game.Editor` | Refactor to accept a map-scoped bake input while retaining the current hardcoded menu command as a compatibility entry point. |
+| `Game.Editor.StaticMapAndroidBuildSceneResolver` | static editor class, `Game.Editor` | Retain during migration, then delegate to catalog-selected map manifests. Never include every discovered generated scene. |
+| `Game.Editor.StaticMapPresentationSceneWiring` | static editor class, `Game.Editor` | Wire a selected map's manifest explicitly and preserve current compatibility wiring until cutover. |
+| `Game.Runtime.TacticalMapDefinition` | existing `sealed ScriptableObject`, `Game.Runtime` | Treat as legacy/prototype tactical-map data. Do not extend it into the 3D operation-map scene owner and do not make `OperationMapDefinition` inherit from it. Migrate only still-required M01 ids/anchors through an explicit editor conversion or scenario adapter, then deprecate it after parity. |
+
+### Approved Planned Runtime Types
+
+#### Config And Catalog Types
+
+| Planned type | C# kind | Namespace / assembly | Planned file | Responsibility and constraints |
+|---|---|---|---|---|
+| `OperationMapDefinition` | `sealed ScriptableObject` | `Game.Configs` / `Game.Configs` | `Assets/Game/Scripts/Configs/OperationMapDefinition.cs` | Small canonical metadata for one map. Stores id/schema/content version, bounds/camera/minimap/anchors, and lazy `AssetReference` values for source scene, optional heavy metadata, map surface, placement configs, and static manifest. No concrete rendering type and no per-frame method. |
+| `OperationMapCatalogConfig` | `sealed ScriptableObject` | `Game.Configs` / `Game.Configs` | `Assets/Game/Scripts/Configs/OperationMapCatalogConfig.cs` | Ordered built-in definitions and shipping policy. Direct references to small definition assets are allowed; heavyweight map data remains lazy. Composition builds one lookup at transition/launch, not in gameplay updates. |
+| `ScenarioSetupConfig` | `sealed ScriptableObject` | `Game.Configs` / `Game.Configs` | `Assets/Game/Scripts/Configs/ScenarioSetupConfig.cs` | Mission/skirmish policy keyed by scenario id and operation-map id. Owns starting state, objectives, rewards, restrictions, feature gates, and ARIA hooks; owns no scene path or hierarchy reference. |
+| `OperationMapBoundsConfig` | `[Serializable] struct` | `Game.Configs` / `Game.Configs` | `Assets/Game/Scripts/Configs/OperationMapConfigModels.cs` | World, camera, and playable bounds with finite-value validation. |
+| `OperationMapCameraConfig` | `[Serializable] struct` | `Game.Configs` / `Game.Configs` | same file | Stable camera id, transform, projection settings, and clamp policy. |
+| `OperationMapMinimapConfig` | `[Serializable] struct` | `Game.Configs` / `Game.Configs` | same file | Stable minimap id, projection origin/size, orientation, and lazy cached-raster reference. |
+| `OperationMapAnchorConfig` | `[Serializable] struct` | `Game.Configs` / `Game.Configs` | same file | Stable anchor id, `OperationMapAnchorKind`, position/rotation/radius, faction/lane metadata. It is config data, not an ECS buffer element. |
+| `OperationMapAnchorKind` | `enum : byte` | `Game.Components` / `Game.Components` | `Assets/Game/Scripts/Components/OperationMapComponents.cs` | Closed typed anchor taxonomy: spawn, objective, deployment, build, civilian, hostile, base, resource, runway, helipad, lane, camera, minimap, and debug. |
+
+All heavyweight fields in `OperationMapDefinition` must be lazy references. In particular, the schema-v1 compatibility manifest currently contains 16,542 source entries and mesh/material references; loading every map manifest with the catalog would violate memory and transition budgets.
+
+Managed config ids are serialized as `string` for Unity authoring. `OperationMapCatalogValidator` validates non-empty canonical format, ordinal uniqueness, and UTF-8 capacity. Composition converts them once into `FixedString64Bytes` when publishing ECS state. Gameplay code never compares raw managed strings or scene paths.
+
+Minimum serialized field ownership is fixed as follows:
+
+| Asset | Required small fields | Required lazy/heavy references |
+|---|---|---|
+| `OperationMapDefinition` | operation-map id, schema version, content version/hash, bounds, camera records, minimap projection, anchor records, generation metadata hash | canonical source scene, optional subscene/heavy metadata, `MapSurfaceDataAsset`, concrete static manifest, cached minimap raster, compatibility building/vehicle placement configs |
+| `OperationMapCatalogConfig` | catalog schema/version, ordered built-in definition references, shipping inclusion flags | No manifest, scene chunk, surface payload, texture, or mesh list. |
+| `ScenarioSetupConfig` | scenario/mission/map ids, starting-state ids, objective/reward/restriction/feature-gate data, ARIA hook ids | Scenario-specific heavy encounter/config assets only when required; no source scene, subscene, manifest, hierarchy path, or map renderer reference. |
+
+Use ordinary `UnityEngine.AddressableAssets.AssetReference` fields for cross-assembly heavyweight references when the concrete type would create an assembly cycle. Resolve and type-check those handles in `Game.Composition`; editor validation confirms that each referenced asset has the expected concrete type before a build.
+
+#### ECS State And Immutable Metadata
+
+| Planned type | C# kind | Namespace / assembly | Responsibility and field contract |
+|---|---|---|---|
+| `OperationMapRootComponent` | `IComponentData` tag | `Game.Components` / `Game.Components` | Identifies the single operation-map lifecycle entity. Exactly one while a match world exists. |
+| `OperationMapQueueComponent` | `IComponentData` | same | Monotonic last request id; no managed state. |
+| `OperationMapLoadStateComponent` | `IComponentData` | same | Active request id, `OperationMapLoadStatusKind`, progress, generation, busy flag, and readiness bit mask. |
+| `ActiveOperationMapComponent` | `IComponentData` | same | `FixedString64Bytes` operation-map/scenario/mission ids, schema/content version, and generation. Published only after activation succeeds. |
+| `OperationMapBoundsComponent` | `IComponentData` | same | Burst-readable world/playable/camera min/max values. No `UnityEngine.Bounds` or `Rect`. |
+| `OperationMapMetadataComponent` | `IComponentData` | same | `BlobAssetReference<OperationMapBlob>` and metadata hash. Its owning composition helper must dispose the blob exactly once during teardown/world disposal. |
+| `OperationMapReadinessComponent` | `IComponentData` | same | Versioned source-scene, subscene, surface, authored-conversion, manifest, and required-preload flags. Match start reads one component instead of polling Unity objects. |
+| `OperationMapLoadRequestElement` | `IBufferElementData` | same | Request kind, request id, `FixedString64Bytes` map/scenario ids, and activation flag. `Element` is used because this is an ECS dynamic-buffer element. |
+| `OperationMapLoadResultElement` | `IBufferElementData` | same | Request/status/result code, ids, progress/generation, and `FixedString128Bytes` diagnostic message. Bounded history; old results are removed. |
+| `OperationMapLoadRequestKind` | `enum : byte` | same | `Load`, `Unload`, `Switch`, `Retry`. |
+| `OperationMapLoadStatusKind` | `enum : byte` | same | `None`, `Resolving`, `LoadingScene`, `LoadingSubScene`, `BindingMetadata`, `PreloadingPresentation`, `Ready`, `Draining`, `Unloading`, `Failed`. |
+| `OperationMapLoadResultCode` | `enum : byte` | same | Typed accepted/duplicate/invalid-id/missing-asset/stale-content/load/bind/preload/unload failures; no string parsing for control flow. |
+| `OperationMapBlob` | blob root `struct` | same | Immutable map-level anchors, camera records, minimap projection, logical lanes, and small lookup metadata. It must not duplicate `MapSurfaceBlob` cells, samples, connections, blocker grids, meshes, textures, or manifest source entries. |
+| `OperationMapAnchorBlob` | blob element `struct` | same | `FixedString64Bytes` id, kind, transform/radius, faction/lane values. Linear lookup is acceptable for small anchor sets; add a sorted index only after measured evidence. |
+| `OperationMapCameraBlob` | blob element `struct` | same | Stable camera id plus Burst-readable transform/projection/clamp data. |
+| `OperationMapMinimapBlob` | blob value `struct` | same | Projection math and cached-raster identity only; no `Texture`, `Sprite`, or managed array. |
+
+The operation-map blob is deliberately small and immutable. `MapSurfaceBlob` remains the sole large height/path/surface dataset. Mutable blockers and occupancy remain in their existing ECS owners rather than being copied into either blob.
+
+#### Runtime And Composition Types
+
+| Planned type | C# kind | Namespace / assembly | Planned file | Responsibility and lifecycle |
+|---|---|---|---|---|
+| `OperationMapSceneView` | `sealed MonoBehaviour` with no update methods | `Game.Composition` / `Game.Composition` | `Assets/Game/Scripts/Composition/OperationMapSceneView.cs` | Serialized references owned by the loaded map scene: map root, `MapSurfaceAuthoring`, map-owned placement configs, optional subscene reference, and source identity. Getters/binding only; no policy, hierarchy search, singleton, or self-registration loop. |
+| `OperationMapSceneReferenceSceneSystemHelper` | managed `sealed class` | `Game.Composition` / `Game.Composition` | `Assets/Game/Scripts/Composition/OperationMapSceneReferenceSceneSystemHelper.cs` | Resolve exactly one `OperationMapSceneView` from the newly loaded scene's root list once per transition, using a reused/pre-sized list. Reject zero or multiple views. Never scan all loaded objects every frame. |
+| `OperationMapSceneLoadingSceneSystemHelper` | managed `sealed class` | `Game.Composition` / `Game.Composition` | `Assets/Game/Scripts/Composition/OperationMapSceneLoadingSceneSystemHelper.cs` | Own catalog resolution result, Addressables scene/asset handles, one transition state machine, typed ECS request/result publication, failure rollback, and deterministic unload. Called by existing composition lifecycle; it introduces no `MonoBehaviour.Update`. |
+| `OperationMapRuntimeBootstrapSceneSystemHelper` | managed `sealed class` | `Game.Composition` / `Game.Composition` | `Assets/Game/Scripts/Composition/OperationMapRuntimeBootstrapSceneSystemHelper.cs` | Convert small config metadata to one persistent `OperationMapBlob`, publish active metadata/bounds/readiness components, coordinate the existing map-surface bootstrap, and dispose only blobs it owns. |
+| `OperationMapMetadataUtility` | Burst-compatible static class | `Game.Runtime` / `Game.Runtime` | `Assets/Game/Scripts/Systems/OperationMapMetadataUtility.cs` | Pure lookup/clamp/projection helpers over components/blob refs. No cached managed collections, Unity object access, logging, or hidden state. |
+
+No new recurring operation-map `ISystem` is approved solely for loading. Scene/Addressables transitions are infrequent managed work and already require Unity APIs. New gameplay systems are allowed only when they own real data-parallel behavior. Such a type must be a `struct : ISystem`, use `[BurstCompile]` on `OnCreate`/`OnUpdate` where supported, declare `RequireForUpdate`, schedule jobs only when work exists, and be added to the Burst hot-path classification tests.
+
+Existing Burst/jobified camera, minimap, movement, placement, aircraft, and objective systems should consume `ActiveOperationMapComponent`, `OperationMapBoundsComponent`, `OperationMapMetadataComponent`, and the existing `MapSurfaceComponent`; they must not receive a new managed map provider.
+
+The lifecycle state machines remain nested and non-duplicated:
+
+- `SceneLifecycleSceneSystemHelper` and `SceneLifecycle*` ECS data own only the outer Menu/Match shell transition.
+- `OperationMapSceneLoadingSceneSystemHelper` and `OperationMap*` ECS data own selected content inside an already loaded Match shell.
+- `MatchStartSceneSystemHelper` is the single join point: it waits for both the Match shell and the selected operation-map generation to be ready.
+- Do not add operation-map ids to `SceneLifecycleSceneId`; that enum is a small shell-scene identity, not a content catalog.
+
+### Approved Planned Editor Types
+
+| Planned type | C# kind / assembly | Responsibility |
+|---|---|---|
+| `StaticMapPresentationBakeInput` | internal `readonly struct`, `Game.Editor` | Map id, source scene/root identity, output root, manifest path, integrity path, chunk size, and compatibility flags passed to `StaticMapPresentationBaker`. |
+| `OperationMapCatalogValidator` | internal static class, `Game.Editor` | Validate ids, lazy references, unique scene/manifest ownership, scenario links, bounds, anchors, hashes, and shipping policy. |
+| `OperationMapSceneSplitBuilder` | internal static class, `Game.Editor` | AssetDatabase-safe staged extraction of classified map roots; preserves source assets and Unity `.meta` GUIDs and never edits generated chunk scenes directly. |
+| `OperationMapGenerationInput` | internal `readonly struct`, `Game.Editor` | Reviewed source pack paths, map id, seed/version, generation bounds, output ownership, and dry-run policy. |
+| `OperationMapGenerationResult` | internal `readonly struct`, `Game.Editor` | Written/reused/stale counts, hashes, metadata bytes, validation result, and exact output paths. |
+| `OperationMapTextureMaskGenerator` | internal static class, `Game.Editor` | Deterministically converts reviewed texture/mask inputs into canonical metadata and source-scene inputs. It never runs in a player and never writes static presentation chunks. |
+| `OperationMapSourceSceneBuilder` | internal static class, `Game.Editor` | Deterministically creates/updates canonical source scene/subscene content from generation output while referencing shared assets. |
+| `OperationMapAndroidBuildSceneResolver` | internal static class, `Game.Editor` | Resolves only catalog-approved built-in map source/chunk scenes and rejects stale, missing, duplicate, or foreign-owned outputs. The existing resolver delegates here after compatibility tests pass. |
+
+Editor production files should remain below the current source-growth ratchet (preferably below 500 lines each). Split generation, ownership, integrity, scene construction, and build resolution by responsibility instead of creating one large generator shell.
+
+### Load, Activation, And Teardown Sequence
+
+One operation-map transition follows this order:
+
+1. Mission selection publishes one `OperationMapLoadRequestElement` containing typed ids only.
+2. `OperationMapSceneLoadingSceneSystemHelper` resolves `OperationMapCatalogConfig` once and validates the selected `OperationMapDefinition` before any load begins.
+3. The helper marks readiness false, drains/unbinds prior static presentation when switching, and unloads the prior map before loading another large map unless an accepted transition explicitly permits overlap.
+4. The helper loads the selected source scene additively and retains the Addressables scene handle.
+5. `OperationMapSceneReferenceSceneSystemHelper` resolves exactly one `OperationMapSceneView` from that scene and validates source identity.
+6. The optional map ECS subscene is loaded/awaited through the accepted Entities path; authored conversion readiness is recorded.
+7. Heavy assets are loaded lazily: selected `MapSurfaceDataAsset`, concrete `StaticMapPresentationManifest`, cached minimap raster, and compatibility placement configs only when required.
+8. `OperationMapRuntimeBootstrapSceneSystemHelper` creates the small metadata blob once, invokes the existing map-surface bootstrap once, and publishes bounds/active/readiness ECS data.
+9. The existing `StaticMapPresentationStreamer` binds the selected manifest and world camera, then reaches required preload readiness through bounded updates.
+10. `MatchStartSceneSystemHelper` permits `BeginGameplay` only when all required readiness flags belong to the same transition generation.
+11. During gameplay, config assets and scene handles are not polled by gameplay systems. ECS consumers read immutable active components/blobs.
+12. Teardown disables readiness first, stops map-dependent gameplay work, completes/coordinates outstanding map consumers, drains presentation, clears map-owned ECS state, disposes owned blobs, unloads subscene/source scene, releases Addressables handles, and publishes a typed result.
+
+A failure at any stage unwinds only resources acquired by that transition generation. It must not suppress canonical renderers, retain a stale active-map id, leak a blob/handle, or silently fall back to the large compatibility map in production.
+
+### Data Lifetime And Memory Rules
+
+| Data | Owner | Creation/load frequency | Disposal/release rule |
+|---|---|---|---|
+| Catalog lookup | `OperationMapSceneLoadingSceneSystemHelper` | Once per shell/session or when catalog version changes. | Clear on shell/world disposal. No rebuild per frame. |
+| Definition/scenario assets | Addressables/composition transition | Selected entries only; small catalog metadata may remain resident. | Release selected handles after teardown unless an explicit cache budget retains them. |
+| Static manifest/index | Addressables + existing streamer | Selected map only; index built once per bind. | Drain/unbind, release handle, clear arrays/sets before next map. |
+| `OperationMapBlob` | `OperationMapRuntimeBootstrapSceneSystemHelper` | Once per successful map activation. | Dispose exactly once after map consumers are quiescent or during world disposal. |
+| `MapSurfaceBlob` | existing `MapSurfaceRuntimeBootstrapSceneSystemHelper` | Once per selected map. | Use its existing owner-tagged disposal path; never dispose from operation-map metadata code. |
+| Generator/source metadata | `Game.Editor` | Editor command only. | No player runtime copy beyond selected compressed assets/blob data. |
+| Static chunk scenes | existing streamer/scene API | Camera-proximity bounded. | Drain before source map unload; no second streamer. |
+
+### Performance And Allocation Budgets
+
+- Steady-state operation-map orchestration must allocate `0 B/frame` managed memory after readiness. No LINQ, iterator allocation, string formatting, `ToArray`, hierarchy query, dictionary rebuild, or Addressables lookup in a gameplay frame.
+- Loading may allocate managed objects required by Unity/Addressables, but each allocation source must be transition-scoped and absent from post-load profiling. Record peak transition memory and retained memory separately.
+- Keep exactly one active large `MapSurfaceBlob` and one small `OperationMapBlob`. Do not duplicate the 2024x2024 (or future equivalent) surface/grid payload into config arrays, UI read models, minimap data, or operation metadata.
+- Do not retain more than one full static manifest/index during normal gameplay. For switches, drain/release the old manifest before loading the next unless a measured transition budget explicitly permits overlap.
+- Preserve the streamer's queue capacity of 64 and at most 16 scene-state checks per update. Any change requires focused streamer tests and profiler evidence.
+- Root-scene enumeration is transition-only and uses reused/pre-sized storage. `FindObjectsByType`, `Resources.FindObjectsOfTypeAll`, repeated `GetComponentsInChildren`, and scene-wide searches are prohibited after bind.
+- Map ids, scenario ids, anchor ids, and reason codes in ECS use bounded `FixedString64Bytes`/`FixedString128Bytes`. Editor validation rejects UTF-8 values that exceed capacity instead of truncating them.
+- Anchor, camera, and minimap lookups are immutable. Use direct indices or small linear scans first; introduce a native hash map only when profiling proves lookup cost matters and its lifetime can be persistent/no-GC.
+- Do not schedule a job every frame merely to copy unchanged map metadata. Jobs run only for genuine bulk generation or gameplay work and use dependency-correct persistent/read-only data.
+- Minimap raster/projection is generated or loaded once, then marker updates remain dirty/version-gated. The compact minimap must not render or process the whole operation map every frame.
+- Camera clamps and ground/air clearance use bounds and existing surface/blob queries. No repeated physics sweep is permitted as the primary map query path.
+- Generated source/chunk scenes reference shared meshes/materials/textures. The generator may partition renderers, but it must not clone shared binary art or combine the entire map into a unique giant mesh.
+- Each stable slice records Editor frame time/GC and, at rollout gates, Android sustained FPS, CPU/GPU frame time, loaded/peak memory, APK size, and installed size against `performance_regression_contract.md`.
+
+### Naming And Source-Shape Guardrails
+
+- Bare `*System` names are reserved for ECS `ISystem`/`SystemBase` implementations. Managed Unity boundaries use approved suffixes such as `SceneSystemHelper` and `CompositionSystemHelper`.
+- `Element` suffix means `IBufferElementData`; `Component` means `IComponentData`; `Blob` means an immutable blob layout; `Config` means serialized authoring data; `View` means a non-updating serialized-reference boundary.
+- Do not introduce `OperationMapManager`, `OperationMapController`, `OperationMapFacade`, `OperationMapService`, `OperationMapProvider`, `OperationMapLoaderSystem`, or `OperationMapRuntime` as replacement shells.
+- Do not hide scene loading behind a static global singleton. The owner is explicit composition state created/disposed with the match shell.
+- One public production type per file unless tightly coupled serializable config/blob records remain small and the established local file pattern supports grouping.
+- New production files must stay inside the owning asmdef root and should stay below 500 lines. A source-growth baseline update is not approval for a broad class.
+- Any unavoidable non-Burst `ISystem.OnUpdate` must be explicitly classified in `EcsBurstHotPathArchitectureTests`; the preferred outcome is no new non-Burst map system.
+
+### Required Technical Validation Matrix
+
+| Validation area | Required test/runner ownership |
+|---|---|
+| Config/catalog/schema | Add `OperationMapConfigValidationTests` in `Game.Tests.Editor`: duplicate/oversized ids, missing lazy refs, invalid bounds, duplicate anchors, stale hashes, unresolved scenarios, catalog shipping policy. |
+| Assembly direction | Extend `ScriptArchitectureAlignmentContractTests.RunAssemblyBoundaryValidation` and run `RunBroadShellValidation` so configs cannot reference rendering/composition and runtime cannot reference composition/editor. |
+| Naming/managed exceptions | Run `NonEcsSystemConversionArchitectureTests.RunFocusedValidation`; add every planned helper to the narrow reason-suffix path, not an allowlisted forbidden shell. |
+| Burst/system classification | Run `EcsBurstHotPathArchitectureTests.RunFocusedValidation`, `RunTypeHandleValidation`, and `RunNoBurstISystemClassificationValidation`. |
+| Source size | Run `ProductionSourceGrowthArchitectureTests.RunFocusedValidation`; do not accept a baseline increase until responsibility splitting is reviewed. |
+| Static presentation | Extend existing manifest index, streamer, ownership, integrity, rollback, structural, no-op, stale cleanup, scene wiring, and Android resolver tests for two independently owned maps. |
+| Scene lifecycle | Add `OperationMapSceneLoadingSceneSystemHelperTests` in `Game.Tests.Editor` using injected/fake scene and asset operations: load, duplicate, failure unwind, drain, unload, retry, sequential switch, and generation mismatch. |
+| Runtime activation | Add `OperationMapLifecyclePlayModeTests` in `Game.Tests.PlayMode`: one root, readiness ordering, active ids, surface/blob publication, teardown, second load, and no stale ECS data. |
+| Allocation/performance | Add a focused post-readiness allocation probe and extend match performance validation with operation-map state markers. Acceptance is 0 B/frame from map orchestration and no regression to streamer bounds. |
+| Current-map parity | Existing current-map bake/launch, map-authored conversion, source hiding, camera, minimap, movement, aircraft, and Android probes remain mandatory before and after shell extraction. |
+
+At the end of every stable implementation slice, run at minimum `git diff --check`, the affected focused tests, the four architecture runners named above where relevant, and a Unity compile. Scene, Addressables, serialized-reference, or visual behavior is not considered validated by text inspection alone.
+
 ## Performance And Build Contract
 
 - Keep static presentation chunked and streamable. Do not combine a whole operation map into one mesh or one always-loaded scene.
@@ -190,14 +431,14 @@ Exit criteria:
 
 - [ ] Approve canonical operation-map ids: `opmap.<mode-or-chapter>.<slug>`.
 - [ ] Approve canonical scenario ids: `scenario.<chapter>.<mission>.<slug>` and `scenario.skirmish.<slug>`.
-- [ ] Add the `OperationMapDefinition` config/data contract without storing hot runtime policy in a managed asset.
-- [ ] Add the `ScenarioSetup` config/data contract or align with an already accepted concrete config type before implementation.
-- [ ] Add source-scene, optional subscene, static presentation manifest, and map-content version references.
-- [ ] Add planning camera, battle camera, and minimap projection ids.
+- [ ] Add the planned `Game.Configs.OperationMapDefinition` `ScriptableObject` without storing hot runtime policy or heavyweight direct asset references in it.
+- [ ] Add the planned `Game.Configs.ScenarioSetupConfig` `ScriptableObject`, or update this technical contract to an already accepted concrete config type before implementation.
+- [ ] Add lazy source-scene, optional subscene/heavy metadata, static presentation manifest, map-surface, and map-content version references without introducing a `Game.Configs -> Game.Rendering` dependency.
+- [ ] Add `OperationMapBoundsConfig`, `OperationMapCameraConfig`, `OperationMapMinimapConfig`, and planning/battle/minimap ids.
 - [ ] Add typed ids for spawn, objective, deployment, build, civilian, hostile, base, resource, runway, helipad, lane, and debug anchors.
 - [ ] Add map bounds, camera bounds, grid, surface/height, and blocker/path metadata references.
 - [ ] Add source identity, schema version, content hash, and generated-metadata hash fields.
-- [ ] Add an operation-map catalog/registry resolved once at launch or match transition, with no hot-path asset search.
+- [ ] Add `Game.Configs.OperationMapCatalogConfig`, resolved once by composition at launch or match transition with no hot-path asset search.
 - [ ] Add validation for unique ids, missing assets, invalid bounds, duplicate anchors, stale hashes, and unresolved scenario-to-map references.
 - [ ] Update architecture docs with the exact `Mission -> ScenarioSetup -> OperationMapDefinition -> scene/subscene/manifest` ownership chain.
 
@@ -208,7 +449,7 @@ Exit criteria:
 
 ## Phase 2: Per-Map Static Presentation Ownership
 
-- [ ] Introduce an editor bake input descriptor carrying operation-map id, source scene, source map root, output root, manifest path, integrity path, and chunk size.
+- [ ] Introduce `Game.Editor.StaticMapPresentationBakeInput` carrying operation-map id, source scene, source map root, output root, manifest path, integrity path, and chunk size.
 - [ ] Refactor `StaticMapPresentationBaker` so the current hardcoded constants remain only a compatibility entry point during migration.
 - [ ] Advance the manifest schema to include operation-map id and canonical scene GUID/path identity with an explicit migration test.
 - [ ] Use one generated output root per operation map.
@@ -252,7 +493,7 @@ Exit criteria:
 - [ ] Finalize the shell-owned versus map-owned dependency inventory from Phase 0.
 - [ ] Create `Assets/Game/Scenes/OperationMaps/Skirmish/` and its Unity folder `.meta` files through Unity/AssetDatabase-safe tooling.
 - [ ] Create `opmap_skirmish_desert_base_01.unity` as a staged duplicate with a new scene GUID; do not copy generated chunks or their `.meta` files.
-- [ ] Add a non-updating operation-map serialized-reference view only if direct scene references require it.
+- [ ] Add `Game.Composition.OperationMapSceneView` as a non-updating serialized-reference view only if direct scene references require it.
 - [ ] Keep the original `Match.unity` fully functional until the extracted map passes all parity gates.
 - [ ] Move/copy only classified map roots into the staged operation-map scene while shared binary assets remain referenced, not duplicated.
 - [ ] Assign or create the map-owned subscene without breaking the original `MatchSubScene` compatibility path.
@@ -272,12 +513,12 @@ Exit criteria:
 
 ## Phase 5: Runtime Selection, Loading, And Teardown
 
-- [ ] Carry active mission, scenario, and operation-map ids in typed session/ECS state.
+- [ ] Add the planned operation-map root/queue/state/active/bounds/metadata/readiness ECS components and request/result buffers, carrying mission, scenario, and operation-map ids as bounded fixed strings.
 - [ ] Resolve the operation-map catalog entry before beginning the match load transition.
-- [ ] Load the selected canonical operation-map scene additively through the existing scene lifecycle boundary.
+- [ ] Load the selected canonical operation-map scene additively through `OperationMapSceneLoadingSceneSystemHelper`, called by the existing composition lifecycle with no new update-loop `MonoBehaviour`.
 - [ ] Load and await the selected map's optional ECS subscene through the accepted Entities scene path.
-- [ ] Bind the map's serialized-reference view/config only after scene load succeeds.
-- [ ] Publish active map ids, immutable metadata/blob references, and readiness state to ECS.
+- [ ] Resolve exactly one `OperationMapSceneView` through `OperationMapSceneReferenceSceneSystemHelper` only after scene load succeeds.
+- [ ] Use `OperationMapRuntimeBootstrapSceneSystemHelper` to publish active ids, bounds, one small immutable `OperationMapBlob`, and readiness while reusing the existing `MapSurfaceBlob` owner.
 - [ ] Bind the existing static presentation streamer to the selected manifest and world camera.
 - [ ] Gate `BeginGameplay` on source scene, subscene, metadata, authored conversion, and required presentation preload readiness.
 - [ ] On exit/switch, stop map gameplay, drain presentation chunks, and then unload map/subscene content in a deterministic order.
@@ -335,14 +576,14 @@ Exit criteria:
 ## Phase 8: Editor-Time Texture/Mask Generator
 
 - [ ] Define the reviewed map-pack folder/manifest contract for base visual, blocker mask, height mask, tree/rock masks, and generation seed/version.
-- [ ] Add an editor-only generator entry point under existing tooling conventions.
+- [ ] Add the editor-only `OperationMapTextureMaskGenerator` entry point and its `OperationMapGenerationInput`/`OperationMapGenerationResult` value types under existing tooling conventions.
 - [ ] Generate/update operation-map metadata without writing static presentation outputs directly.
 - [ ] Generate blocker/grid metadata deterministically.
 - [ ] Generate compressed/chunked height and surface samples deterministically.
 - [ ] Generate tree, rock, and decoration placement candidates deterministically.
 - [ ] Generate reserve zones, lanes, and connectivity metadata.
 - [ ] Generate debug overlays for blockers, height, anchors, reserve zones, lanes, and camera bounds.
-- [ ] Generate canonical source scene/subscene content in deterministic chunks while referencing shared assets.
+- [ ] Generate canonical source scene/subscene content through `OperationMapSourceSceneBuilder` in deterministic chunks while referencing shared assets.
 - [ ] Preserve generated source/metadata file and `.meta` stability on an identical generation.
 - [ ] Validate connected playable zones, blocked outer belts, clear build reserves, and map bounds.
 - [ ] Log source hashes, seed/version, written/reused/stale counts, metadata size, scene count, and validation results.
@@ -373,9 +614,9 @@ Exit criteria:
 ## Phase 10: Full Validation And Rollout
 
 - [ ] Run `git diff --check` and scoped asset/meta integrity checks.
-- [ ] Run architecture/naming guardrails for forbidden manager/controller/facade/service/runtime-loop drift.
+- [ ] Run `ScriptArchitectureAlignmentContractTests.RunAssemblyBoundaryValidation`/`RunBroadShellValidation`, `NonEcsSystemConversionArchitectureTests.RunFocusedValidation`, `EcsBurstHotPathArchitectureTests` focused/type-handle/non-Burst classification runners, and `ProductionSourceGrowthArchitectureTests.RunFocusedValidation`.
 - [ ] Run compile validation with zero new errors.
-- [ ] Run operation-map/scenario/catalog/config validation tests.
+- [ ] Run `OperationMapConfigValidationTests`, operation-map lifecycle/helper tests, and operation-map scenario/catalog/config validation.
 - [ ] Run current and multi-map static presentation ownership, integrity, rollback, structural, no-op, and stale-cleanup tests.
 - [ ] Run scene-reference validation for the shell, current map, subscenes, manifests, configs, and M01 only when allowed.
 - [ ] Run original current-map launch before extraction and compatibility launch after each migration phase.
@@ -405,6 +646,7 @@ Exit criteria:
 |---|---|---|---|---|
 | 2026-07-14 | Initial tracker creation | `git diff --check` | Passed | Documentation only; no scene, code, prefab, bake, or asset migration. |
 | 2026-07-14 | Architecture and bake audit | Repository inspection of current baker, manifest, integrity ledger, streamer, Android resolver, `MatchSceneView`, map placement configs, M01 hold, and map workflow; `git diff --check` | Passed | Corrected migration order, current 514-chunk/16,542-source baseline snapshot, per-map ownership requirement, build-size risk, scene GUID rules, and M01 gating. No Unity validation claimed. |
+| 2026-07-14 | Technical architecture contract | Inspected active asmdefs, `SceneLifecycle*`, `MapSurfaceComponent`/`MapSurfaceBlob`, `MapSurfaceRuntimeBootstrapSceneSystemHelper`, `StaticMapPresentationManifest`/index/streamer/baker, `TacticalMapDefinition`, and architecture runner entry points; verified 138 checklist items; `git diff --check -- Design/Architecture/operation_map_scene_split_and_generator_tracker.md` | Passed | Added exact planned type kinds, namespaces, files, assembly direction, lifecycle/data ownership, managed-versus-ISystem boundary, blob reuse, no-GC/performance budgets, naming rules, and technical validation matrix. Documentation only; no Unity validation claimed. |
 
 ## Open Decisions
 

@@ -69,7 +69,7 @@ namespace Game.Editor
             SetObject(sequenceAudioView, "vehicleEngine", RequireAsset<AudioClip>(environment + "first_launch_convoy_interior_loop_01.wav"));
             SetObject(sequenceAudioView, "attackCue", RequireAsset<AudioClip>(environment + "first_launch_distant_attack_event_01.wav"));
             SetObject(sequenceAudioView, "smallArmsCue", null);
-            SetObject(sequenceAudioView, "radioCue", null);
+            SetObject(sequenceAudioView, "radioCue", RequireAsset<AudioClip>(environment + "first_launch_radio_emergency_event_01.wav"));
             SetObject(sequenceAudioView, "blackoutCue", null);
             SetObject(sequenceAudioView, "ariaBootCue", RequireAsset<AudioClip>("Assets/Game/Audio/Gameplay/game_command_scan_targeting_01.wav"));
             SetObject(sequenceAudioView, "transitionCue", null);
@@ -437,14 +437,14 @@ namespace Game.Editor
             backing.type = Image.Type.Sliced;
             NarrativeGuidanceChoiceView view = surface.gameObject.AddComponent<NarrativeGuidanceChoiceView>();
 
-            TMP_Text title = CreateText("Title", surface, "CHOOSE ARIA GUIDANCE", bold, 44f, TextAlignmentOptions.Center, new Color(0.96f, 0.78f, 0.3f, 1f));
+            TMP_Text title = CreateText("Title", surface, "CHOOSE ARIA'S GUIDANCE LEVEL", bold, 44f, TextAlignmentOptions.Center, new Color(0.96f, 0.78f, 0.3f, 1f));
             SetRect(title.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(900f, 66f), new Vector2(0f, -100f));
             TMP_Text instruction = CreateText("Instruction", surface, "This can be changed later in Command Settings.", medium, 30f, TextAlignmentOptions.Center, new Color(0.9f, 0.88f, 0.8f, 1f));
             SetRect(instruction.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(900f, 50f), new Vector2(0f, -154f));
 
             Button full = CreateFramedButton("FullGuidanceButton", surface, hudButton, bold, "FULL GUIDANCE", new Vector2(360f, 200f));
             Button contextual = CreateFramedButton("ContextualGuidanceButton", surface, hudButton, bold, "TACTICAL HINTS", new Vector2(360f, 200f));
-            Button minimal = CreateFramedButton("MinimalGuidanceButton", surface, hudButton, bold, "VETERAN", new Vector2(360f, 200f));
+            Button minimal = CreateFramedButton("MinimalGuidanceButton", surface, hudButton, bold, "MINIMAL GUIDANCE", new Vector2(360f, 200f));
             SetRect(full.GetComponent<RectTransform>(), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(360f, 200f), new Vector2(-410f, 10f));
             SetRect(contextual.GetComponent<RectTransform>(), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(360f, 200f), new Vector2(0f, 10f));
             SetRect(minimal.GetComponent<RectTransform>(), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(360f, 200f), new Vector2(410f, 10f));
@@ -492,7 +492,7 @@ namespace Game.Editor
             backing.type = Image.Type.Sliced;
             TMP_Text title = CreateText("Title", modal, "SKIP TO TACTICAL COMMAND?", bold, 42f, TextAlignmentOptions.Center, new Color(0.96f, 0.78f, 0.3f, 1f));
             SetRect(title.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(800f, 70f), new Vector2(0f, -110f));
-            TMP_Text body = CreateText("Body", modal, "Default Commander identity and Full Guidance will be used. You can change both later.", medium, 30f, TextAlignmentOptions.Center, new Color(0.9f, 0.88f, 0.8f, 1f));
+            TMP_Text body = CreateText("Body", modal, "The default commander identity and Full Guidance setting will be used. You can change both later.", medium, 30f, TextAlignmentOptions.Center, new Color(0.9f, 0.88f, 0.8f, 1f));
             SetRect(body.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(760f, 126f), new Vector2(0f, 32f));
             Button cancel = CreateFramedButton("CancelButton", modal, hudButton, bold, "KEEP WATCHING", new Vector2(350f, 100f));
             Button confirm = CreateFramedButton("ConfirmButton", modal, hudPrimaryButton, bold, "SKIP INTRO", new Vector2(350f, 100f));

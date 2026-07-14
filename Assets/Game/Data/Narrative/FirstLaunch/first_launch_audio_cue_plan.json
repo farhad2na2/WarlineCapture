@@ -8,8 +8,8 @@
   },
   "cues": [
     { "stateId": "FL-P01", "purpose": "market ambience", "asset": "Assets/Game/Audio/Ambience/amb_city_strategic_loop_01.wav", "bus": "Ambience" },
-    { "stateId": "FL-P02", "purpose": "market impact", "asset": "Assets/Game/Audio/Gameplay/game_explosion_large_01.wav", "bus": "Sfx" },
-    { "stateId": "FL-P02", "purpose": "radio interruption", "asset": "Assets/Game/Audio/Alerts/alert_threat_critical_01.wav", "bus": "Alerts" },
+    { "stateId": "FL-P02", "purpose": "distant urban attack", "asset": "Assets/Game/Audio/Narrative/FirstLaunch/Environment/first_launch_distant_attack_event_01.wav", "bus": "Sfx" },
+    { "stateId": "FL-P03", "purpose": "military command-radio carrier and squelch", "asset": "Assets/Game/Audio/Narrative/FirstLaunch/Environment/first_launch_radio_emergency_event_01.wav", "bus": "Sfx" },
     { "stateId": "FL-P03", "purpose": "relay blackout", "asset": "Assets/Game/Audio/UI/ui_feedback_toast_error_01.wav", "bus": "Sfx" },
     { "stateId": "FL-P05", "purpose": "ARIA boot", "asset": "Assets/Game/Audio/UI/ui_screen_forward_01.wav", "bus": "Sfx" },
     { "stateId": "FL-P09", "purpose": "identity confirmed", "asset": "Assets/Game/Audio/UI/ui_feedback_toast_positive_01.wav", "bus": "Sfx" },

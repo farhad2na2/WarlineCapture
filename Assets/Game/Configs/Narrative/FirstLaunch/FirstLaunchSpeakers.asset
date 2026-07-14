@@ -15,11 +15,11 @@ MonoBehaviour:
   speakers:
   - speakerId: 0
     nameKey: narrative.first_launch.speaker.radio.name
-    nameFallback: DISTRICT RADIO
+    nameFallback: DISTRICT DISPATCH
     roleKey: narrative.first_launch.speaker.radio.role
-    roleFallback: EMERGENCY BROADCAST
+    roleFallback: EMERGENCY OPERATIONS
     accessibleLabelKey: narrative.first_launch.speaker.radio.accessible_label
-    accessibleLabelFallback: DISTRICT RADIO, EMERGENCY BROADCAST
+    accessibleLabelFallback: District emergency dispatcher
     treatment: 0
     identitySprite: {fileID: 0}
     accentColor: {r: 0.76, g: 0.72, b: 0.6, a: 1}

@@ -225,7 +225,7 @@
             "decisionOwner": ""
         },
         {
-            "stableIdentity": "Game.Authoring.GridAuthoring.Baker::Bake(Game.Authoring.GridAuthoring)",
+            "stableIdentity": "Game.Authoring.GridAuthoring.GridBaker::Bake(Game.Authoring.GridAuthoring)",
             "subject": "Grid bounds bake",
             "currentAuthority": "Grid authoring baker",
             "currentType": "Unity.Entities.Baker<GridAuthoring> -> Game.Components.GridConfig",
@@ -489,7 +489,7 @@
             "decisionOwner": "Mission UX owner and assistant architecture owner"
         },
         {
-            "stableIdentity": "Game.UI.Shell.Ecs.UiShellEcsGateway::ToAssistantCommandIntentKind(Game.UI.Contracts.UiAssistantCommandIntentKind,Game.Components.AssistantRecommendationKind)",
+            "stableIdentity": "Game.UI.Shell.Ecs.UiShellEcsGateway.UiShellActionAdapter::ToAssistantCommandIntentKind(Game.UI.Contracts.UiAssistantCommandIntentKind,Game.Components.AssistantRecommendationKind)",
             "subject": "Assistant camera-focus UI mapping",
             "currentAuthority": "UI shell ECS gateway",
             "currentType": "AssistantRecommendationKind.CameraFocus -> AssistantCommandIntentKind.FocusCamera",

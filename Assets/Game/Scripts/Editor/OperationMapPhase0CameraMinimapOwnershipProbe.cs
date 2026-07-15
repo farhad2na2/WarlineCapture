@@ -30,11 +30,20 @@ namespace Game.Editor
         private const string TrackerPath =
             "Design/Architecture/operation_map_scene_split_and_generator_tracker.md";
         private static readonly UTF8Encoding Utf8WithoutBom = new(false);
+        private static readonly Type AssistantCommandIntentAdapterType =
+            typeof(Game.UI.Shell.Ecs.UiShellEcsGateway).GetNestedType(
+                "UiShellActionAdapter",
+                BindingFlags.NonPublic);
         private static readonly string AssistantCommandIntentMappingIdentity =
-            typeof(Game.UI.Shell.Ecs.UiShellEcsGateway).FullName +
+            StableDeclaringTypeName(AssistantCommandIntentAdapterType) +
             "::ToAssistantCommandIntentKind(" +
             typeof(Game.UI.Contracts.UiAssistantCommandIntentKind).FullName + "," +
             typeof(Game.Components.AssistantRecommendationKind).FullName + ")";
+        private static readonly Type GridBakerType =
+            typeof(Game.Authoring.GridAuthoring).GetNestedType("GridBaker", BindingFlags.NonPublic);
+        private static readonly string GridBakeIdentity =
+            StableDeclaringTypeName(GridBakerType) + "::Bake(" +
+            typeof(Game.Authoring.GridAuthoring).FullName + ")";
 
         public enum OwnershipClassification
         {
@@ -231,9 +240,10 @@ namespace Game.Editor
                 throw new InvalidOperationException("A validated camera/minimap report destination is required.");
 
             ValidateDestinationIdentity(destination);
-            string outputPath = destination.canonicalPath;
+            string outputName = Path.GetFileName(destination.canonicalPath);
             string mutexName = "WarlineOpmap007-" +
-                               OperationMapPhase0BaselineProbe.ComputeSha256(Utf8WithoutBom.GetBytes(outputPath));
+                               OperationMapPhase0BaselineProbe.ComputeSha256(
+                                   Utf8WithoutBom.GetBytes(destination.canonicalPath));
             using var publicationMutex = new Mutex(false, mutexName);
             bool lockTaken = false;
             try
@@ -249,33 +259,34 @@ namespace Game.Editor
                 if (!lockTaken)
                     throw new InvalidOperationException("Timed out waiting for exclusive camera/minimap report publication.");
 
-                ValidateDestinationIdentity(destination);
-                InvalidateOutput(destination);
+                using PublicationDirectory directory = PublicationDirectory.Open(destination);
+                directory.ValidateIdentity();
+                InvalidateOutput(directory, outputName);
                 if (!HasRequiredReportShape(json))
                     throw new InvalidOperationException("Refusing to publish an invalid camera/minimap ownership report.");
 
-                string temporaryPath = Path.Combine(
-                    destination.canonicalParent,
-                    Path.GetFileName(outputPath) + "." + Guid.NewGuid().ToString("N") + ".tmp");
-                File.WriteAllText(temporaryPath, json, Utf8WithoutBom);
+                string temporaryName = outputName + "." + Guid.NewGuid().ToString("N") + ".tmp";
+                directory.WriteAllText(temporaryName, json);
                 try
                 {
-                    if (!HasRequiredReportShape(File.ReadAllText(temporaryPath, Utf8WithoutBom)))
+                    if (!HasRequiredReportShape(directory.ReadAllText(temporaryName)))
                         throw new InvalidOperationException("Persisted camera/minimap ownership report is invalid.");
+
+                    directory.ValidateIdentity();
                     beforeReplace?.Invoke();
-                    ValidateDestinationIdentity(destination);
-                    File.Move(temporaryPath, outputPath);
-                    if (!string.Equals(File.ReadAllText(outputPath, Utf8WithoutBom), json, StringComparison.Ordinal))
+                    directory.Replace(temporaryName, outputName);
+                    if (!string.Equals(directory.ReadAllText(outputName), json, StringComparison.Ordinal))
                         throw new InvalidOperationException("Published camera/minimap ownership report bytes drifted.");
+                    directory.ValidateIdentity();
                 }
                 catch
                 {
-                    DeleteIfPresent(destination.canonicalPath);
+                    directory.DeleteIfPresent(outputName);
                     throw;
                 }
                 finally
                 {
-                    DeleteIfPresent(temporaryPath);
+                    directory.DeleteIfPresent(temporaryName);
                 }
             }
             finally
@@ -285,11 +296,11 @@ namespace Game.Editor
             }
         }
 
-        internal static void InvalidateOutput(ValidatedReportDestination destination)
+        private static void InvalidateOutput(PublicationDirectory directory, string outputName)
         {
-            ValidateDestinationIdentity(destination);
-            DeleteIfPresent(destination.canonicalPath);
-            DeleteIfPresent(destination.canonicalPath + ".tmp");
+            directory.ValidateIdentity();
+            directory.DeleteIfPresent(outputName);
+            directory.DeleteIfPresent(outputName + ".tmp");
         }
 
         internal static void ValidateNoUnexpectedProducerCandidates(string projectRoot)
@@ -669,9 +680,7 @@ namespace Game.Editor
 
         internal static void ValidateDeclaredMethodSignatures()
         {
-            Type gatewayType = typeof(Game.UI.Shell.Ecs.UiShellEcsGateway);
-            Type adapterType = gatewayType.GetNestedType("UiShellActionAdapter", BindingFlags.NonPublic);
-            MethodInfo[] declarations = adapterType?
+            MethodInfo[] declarations = AssistantCommandIntentAdapterType?
                 .GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
                 .Where(method => string.Equals(
                     method.Name,
@@ -696,7 +705,8 @@ namespace Game.Editor
                 throw new InvalidOperationException("ToAssistantCommandIntentKind declaration no longer matches the pinned signature.");
             }
 
-            string declaredIdentity = gatewayType.FullName + "::" + declaration.Name + "(" +
+            string declaredIdentity = StableDeclaringTypeName(declaration.DeclaringType) +
+                                      "::" + declaration.Name + "(" +
                                       string.Join(",", parameterTypes.Select(type => type.FullName)) + ")";
             if (!string.Equals(
                     declaredIdentity,
@@ -705,6 +715,37 @@ namespace Game.Editor
             {
                 throw new InvalidOperationException("ToAssistantCommandIntentKind stable identity drifted from its declaration.");
             }
+
+            MethodInfo[] bakeDeclarations = GridBakerType?
+                .GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
+                .Where(method => string.Equals(method.Name, "Bake", StringComparison.Ordinal))
+                .ToArray();
+            if (bakeDeclarations == null || bakeDeclarations.Length != 1)
+                throw new InvalidOperationException("Expected exactly one GridBaker.Bake declaration.");
+
+            MethodInfo bakeDeclaration = bakeDeclarations[0];
+            Type[] bakeParameterTypes = bakeDeclaration.GetParameters()
+                .Select(parameter => parameter.ParameterType)
+                .ToArray();
+            if (bakeDeclaration.ReturnType != typeof(void) ||
+                bakeParameterTypes.Length != 1 ||
+                bakeParameterTypes[0] != typeof(Game.Authoring.GridAuthoring))
+            {
+                throw new InvalidOperationException("GridBaker.Bake no longer matches the pinned signature.");
+            }
+
+            string declaredBakeIdentity = StableDeclaringTypeName(bakeDeclaration.DeclaringType) +
+                                          "::" + bakeDeclaration.Name + "(" +
+                                          string.Join(",", bakeParameterTypes.Select(type => type.FullName)) + ")";
+            if (!string.Equals(declaredBakeIdentity, GridBakeIdentity, StringComparison.Ordinal))
+                throw new InvalidOperationException("GridBaker.Bake stable identity drifted from its declaration.");
+        }
+
+        private static string StableDeclaringTypeName(Type type)
+        {
+            if (type == null || string.IsNullOrWhiteSpace(type.FullName))
+                throw new InvalidOperationException("Unable to resolve a stable declaring type name.");
+            return type.FullName.Replace('+', '.');
         }
 
         [DllImport("libc", EntryPoint = "realpath", SetLastError = true)]
@@ -712,6 +753,43 @@ namespace Game.Editor
 
         [DllImport("libc", EntryPoint = "free")]
         private static extern void Free(IntPtr pointer);
+
+        [DllImport("libc", EntryPoint = "open", SetLastError = true)]
+        private static extern int UnixOpen(string path, int flags);
+
+        [DllImport("libc", EntryPoint = "openat", SetLastError = true)]
+        private static extern int UnixOpenAt(int directoryDescriptor, string path, int flags, int mode);
+
+        [DllImport("libc", EntryPoint = "renameat", SetLastError = true)]
+        private static extern int UnixRenameAt(
+            int oldDirectoryDescriptor,
+            string oldPath,
+            int newDirectoryDescriptor,
+            string newPath);
+
+        [DllImport("libc", EntryPoint = "unlinkat", SetLastError = true)]
+        private static extern int UnixUnlinkAt(int directoryDescriptor, string path, int flags);
+
+        [DllImport("libc", EntryPoint = "read", SetLastError = true)]
+        private static extern IntPtr UnixRead(int descriptor, byte[] buffer, UIntPtr count);
+
+        [DllImport("libc", EntryPoint = "write", SetLastError = true)]
+        private static extern IntPtr UnixWrite(int descriptor, IntPtr buffer, UIntPtr count);
+
+        [DllImport("libc", EntryPoint = "fsync", SetLastError = true)]
+        private static extern int UnixFsync(int descriptor);
+
+        [DllImport("libc", EntryPoint = "fchmod", SetLastError = true)]
+        private static extern int UnixFchmod(int descriptor, int mode);
+
+        [DllImport("libc", EntryPoint = "fstat", SetLastError = true)]
+        private static extern int UnixFstat(int descriptor, IntPtr status);
+
+        [DllImport("libc", EntryPoint = "stat", SetLastError = true)]
+        private static extern int UnixStat(string path, IntPtr status);
+
+        [DllImport("libc", EntryPoint = "close", SetLastError = true)]
+        private static extern int UnixClose(int descriptor);
 
         private static void DeleteIfPresent(string path)
         {
@@ -789,7 +867,7 @@ namespace Game.Editor
             AddRow(rows, "Assets/Game/Configs/Scene/Game_RTSSelection_Config.asset::worldCamera", "Initial camera override", "Shared RTS selection config asset; current serialized value is null", "UnityEngine.Camera serialized reference", OwnershipClassification.TemporaryCompatibility, new[] { "Assets/Game/Configs/Scene/Game_RTSSelection_Config.asset", Opmap004Path }, "The scene camera remains the effective source, but shared config can override it if populated.", "RetireCameraReferenceOverride", "");
             AddRow(rows, "Assets/Game/Scenes/Match.unity::Main Camera[5]|type:UnityEngine.Camera", "Initial camera source", "Match shell scene", "UnityEngine.Camera at localId 1220593093; transform position (870.0283,42.030247,325.60086)", OwnershipClassification.ShellOwned, new[] { "Assets/Game/Scenes/Match.unity", Opmap004Path }, "opmap-004 pins this exact shell-owned camera identity and the scene supplies the initial transform.", "KeepInMatchShell", "");
             AddRow(rows, "Assets/Game/Scenes/Match/MatchSubScene.unity::Grid[0]", "Grid bounds authoring source", "Operation-map subscene", "Game.Authoring.GridAuthoring", OwnershipClassification.MapOwned, new[] { "Assets/Game/Scenes/Match/MatchSubScene.unity", Opmap004Path }, "opmap-004 already identifies this exact map-owned grid root; this probe follows its runtime projection instead of rescanning ownership.", "MoveWithOperationMapSubScene", "");
-            AddRow(rows, "Game.Authoring.GridAuthoring.Baker::Bake(Game.Authoring.GridAuthoring)", "Grid bounds bake", "Grid authoring baker", "Unity.Entities.Baker<GridAuthoring> -> Game.Components.GridConfig", OwnershipClassification.MapOwned, new[] { "Assets/Game/Scripts/Authorings/GridAuthoring.cs", "Assets/Game/Scripts/Components/GridComponents.cs" }, "Width, height, cell size, and origin are baked into the ECS grid singleton.", "BakeIntoOperationMapMetadata", "");
+            AddRow(rows, GridBakeIdentity, "Grid bounds bake", "Grid authoring baker", "Unity.Entities.Baker<GridAuthoring> -> Game.Components.GridConfig", OwnershipClassification.MapOwned, new[] { "Assets/Game/Scripts/Authorings/GridAuthoring.cs", "Assets/Game/Scripts/Components/GridComponents.cs" }, "Width, height, cell size, and origin are baked into the ECS grid singleton.", "BakeIntoOperationMapMetadata", "");
             AddRow(rows, "Game.Components.GridConfig", "Runtime grid bounds authority", "ECS map metadata singleton", "Unity.Entities.IComponentData", OwnershipClassification.MapOwned, new[] { "Assets/Game/Scripts/Components/GridComponents.cs" }, "Camera clamp and minimap projection both derive world bounds from this component.", "PublishFromOperationMapMetadata", "");
             AddRow(rows, "Game.Composition.MatchHudMinimapDataSourceAdapter::TryGetGrid(out Game.UI.Contracts.MatchHudMinimapGridModel)", "Minimap grid projection source", "Managed UI adapter reading ECS GridConfig", "Game.Composition.MatchHudMinimapDataSourceAdapter", OwnershipClassification.MapOwned, new[] { "Assets/Game/Scripts/Composition/MatchHudMinimapDataSourceAdapter.cs", "Assets/Game/Scripts/Components/GridComponents.cs" }, "The adapter preserves the map-owned origin, dimensions, and cell size for UI projection.", "ReadOperationMapMetadata", "");
             AddRow(rows, "Game.Runtime.InitialUnitsSpawnSystem::ProcessInitialBuildingCompletion(Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,Game.Components.GridConfig,int,ref Game.Runtime.InitialUnitsSpawnSystem.InitialSpawnDiagnosticLogWriter)", "Initial focus producer", "Initial spawn ECS system writing legacy static state", "Game.Runtime.InitialUnitsSpawnSystem", OwnershipClassification.Mixed, new[] { "Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs", "Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs" }, "The initial player-base footprint is scenario-derived while its world center uses map GridConfig; the producer bypasses the ECS focus-request writer.", "DecisionRequired", "Gameplay scenario owner and camera architecture owner");
@@ -948,6 +1026,240 @@ namespace Game.Editor
                 this.rationale = rationale;
                 this.migrationDisposition = migrationDisposition;
                 this.decisionOwner = decisionOwner;
+            }
+        }
+
+        private sealed class PublicationDirectory : IDisposable
+        {
+            private const int UnixMissingEntryError = 2;
+            private const int UnixOwnerReadWriteMode = 384;
+
+            private readonly ValidatedReportDestination destination;
+            private readonly int directoryDescriptor;
+
+            private PublicationDirectory(
+                ValidatedReportDestination destination,
+                int directoryDescriptor)
+            {
+                this.destination = destination;
+                this.directoryDescriptor = directoryDescriptor;
+            }
+
+            public static PublicationDirectory Open(ValidatedReportDestination destination)
+            {
+                ValidateDestinationIdentity(destination);
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    throw new InvalidOperationException(
+                        "Camera/minimap report publication requires descriptor-relative filesystem operations.");
+                }
+
+                int descriptor = UnixOpen(destination.canonicalParent, UnixDirectoryOpenFlags());
+                if (descriptor < 0)
+                    throw UnixIoFailure("open canonical publication directory");
+
+                var directory = new PublicationDirectory(destination, descriptor);
+                try
+                {
+                    directory.ValidateIdentity();
+                    return directory;
+                }
+                catch
+                {
+                    directory.Dispose();
+                    throw;
+                }
+            }
+
+            public void ValidateIdentity()
+            {
+                ValidateDestinationIdentity(destination);
+                DirectoryIdentity descriptorIdentity = ReadDescriptorIdentity(directoryDescriptor);
+                DirectoryIdentity pathIdentity = ReadPathIdentity(destination.canonicalParent);
+                if (!descriptorIdentity.Equals(pathIdentity))
+                {
+                    throw new InvalidOperationException(
+                        "Camera/minimap canonical publication directory was replaced after opening.");
+                }
+            }
+
+            private static DirectoryIdentity ReadDescriptorIdentity(int descriptor)
+            {
+                return ReadIdentity(status => UnixFstat(descriptor, status), "inspect publication directory descriptor");
+            }
+
+            private static DirectoryIdentity ReadPathIdentity(string path)
+            {
+                return ReadIdentity(status => UnixStat(path, status), "inspect canonical publication directory path");
+            }
+
+            private static DirectoryIdentity ReadIdentity(
+                Func<IntPtr, int> readStatus,
+                string operation)
+            {
+                IntPtr status = Marshal.AllocHGlobal(512);
+                try
+                {
+                    if (readStatus(status) != 0)
+                        throw UnixIoFailure(operation);
+                    long device = RuntimeInformation.IsOSPlatform(OSPlatform.OSX)
+                        ? unchecked((uint)Marshal.ReadInt32(status, 0))
+                        : Marshal.ReadInt64(status, 0);
+                    long inode = Marshal.ReadInt64(status, 8);
+                    return new DirectoryIdentity(device, inode);
+                }
+                finally
+                {
+                    Marshal.FreeHGlobal(status);
+                }
+            }
+
+            private readonly struct DirectoryIdentity : IEquatable<DirectoryIdentity>
+            {
+                private readonly long device;
+                private readonly long inode;
+
+                public DirectoryIdentity(long device, long inode)
+                {
+                    this.device = device;
+                    this.inode = inode;
+                }
+
+                public bool Equals(DirectoryIdentity other)
+                {
+                    return device == other.device && inode == other.inode;
+                }
+            }
+
+            public void WriteAllText(string name, string value)
+            {
+                RequireBasename(name);
+                int descriptor = UnixOpenAt(
+                    directoryDescriptor,
+                    name,
+                    UnixCreateExclusiveWriteFlags(),
+                    UnixOwnerReadWriteMode);
+                if (descriptor < 0)
+                    throw UnixIoFailure("create temporary publication file");
+
+                byte[] bytes = Utf8WithoutBom.GetBytes(value);
+                IntPtr buffer = Marshal.AllocHGlobal(bytes.Length);
+                try
+                {
+                    if (UnixFchmod(descriptor, UnixOwnerReadWriteMode) != 0)
+                        throw UnixIoFailure("secure temporary publication file permissions");
+                    Marshal.Copy(bytes, 0, buffer, bytes.Length);
+                    int offset = 0;
+                    while (offset < bytes.Length)
+                    {
+                        long written = UnixWrite(
+                            descriptor,
+                            IntPtr.Add(buffer, offset),
+                            (UIntPtr)(uint)(bytes.Length - offset)).ToInt64();
+                        if (written <= 0)
+                            throw UnixIoFailure("write temporary publication file");
+                        offset += checked((int)written);
+                    }
+                    if (UnixFsync(descriptor) != 0)
+                        throw UnixIoFailure("flush temporary publication file");
+                }
+                finally
+                {
+                    Marshal.FreeHGlobal(buffer);
+                    UnixClose(descriptor);
+                }
+            }
+
+            public string ReadAllText(string name)
+            {
+                RequireBasename(name);
+                int descriptor = UnixOpenAt(directoryDescriptor, name, UnixReadOnlyFlags(), 0);
+                if (descriptor < 0)
+                    throw UnixIoFailure("open publication file for verification");
+                try
+                {
+                    using var bytes = new MemoryStream();
+                    var buffer = new byte[8192];
+                    while (true)
+                    {
+                        long read = UnixRead(descriptor, buffer, (UIntPtr)(uint)buffer.Length).ToInt64();
+                        if (read < 0)
+                            throw UnixIoFailure("read publication file for verification");
+                        if (read == 0)
+                            break;
+                        bytes.Write(buffer, 0, checked((int)read));
+                    }
+                    return Utf8WithoutBom.GetString(bytes.ToArray());
+                }
+                finally
+                {
+                    UnixClose(descriptor);
+                }
+            }
+
+            public void Replace(string temporaryName, string outputName)
+            {
+                RequireBasename(temporaryName);
+                RequireBasename(outputName);
+                if (UnixRenameAt(
+                        directoryDescriptor,
+                        temporaryName,
+                        directoryDescriptor,
+                        outputName) != 0)
+                {
+                    throw UnixIoFailure("atomically publish validated report");
+                }
+            }
+
+            public void DeleteIfPresent(string name)
+            {
+                RequireBasename(name);
+                if (UnixUnlinkAt(directoryDescriptor, name, 0) == 0)
+                    return;
+                int error = Marshal.GetLastWin32Error();
+                if (error != UnixMissingEntryError)
+                    throw new InvalidOperationException(
+                        "Failed to remove descriptor-relative publication file; errno=" + error + ".");
+            }
+
+            public void Dispose()
+            {
+                if (directoryDescriptor >= 0)
+                    UnixClose(directoryDescriptor);
+            }
+
+            private static void RequireBasename(string name)
+            {
+                if (string.IsNullOrWhiteSpace(name) ||
+                    !string.Equals(name, Path.GetFileName(name), StringComparison.Ordinal))
+                {
+                    throw new InvalidOperationException("Publication entries must use basename-only identities.");
+                }
+            }
+
+            private static int UnixDirectoryOpenFlags()
+            {
+                return RuntimeInformation.IsOSPlatform(OSPlatform.OSX)
+                    ? 0x100000 | 0x1000000
+                    : 0x10000 | 0x80000;
+            }
+
+            private static int UnixCreateExclusiveWriteFlags()
+            {
+                return RuntimeInformation.IsOSPlatform(OSPlatform.OSX)
+                    ? 0x0001 | 0x0200 | 0x0800 | 0x1000000
+                    : 0x0001 | 0x0040 | 0x0080 | 0x80000;
+            }
+
+            private static int UnixReadOnlyFlags()
+            {
+                return RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? 0x1000000 : 0x80000;
+            }
+
+            private static InvalidOperationException UnixIoFailure(string operation)
+            {
+                return new InvalidOperationException(
+                    "Failed to " + operation + "; errno=" + Marshal.GetLastWin32Error() + ".");
             }
         }
 

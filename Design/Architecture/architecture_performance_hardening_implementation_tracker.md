@@ -256,8 +256,8 @@ The program is complete only when all of the following are true:
 | Red architecture gates | `0`: the rebased 23-suite closeout, bootstrap guard, source-growth ratchet, naming/static-registry rules, and `ISystem` inventory all pass |
 | Red performance gates | `0`: the unchanged steady-state Match GC gate passes at `292 / 1,024` player-relevant bytes over 300 measured frames after 180 warmup frames. The latest canonical Match baseline passes over 557 frames at `7.20 ms` average, `11.48 ms` p95, `13.16 ms` p99, and zero measured allocation with 733 units and 628 buildings. |
 | Red visual gates | `2`: 23:00 Match readability is too dark, and the current near static-map capture contains black/missing surface regions |
-| Last verified commit | `7f51f8e3ddbd378ece9f10183e334fc116172db6` on `origin/main`; architecture implementation commit `98cb2bb6d4321132574ebc5247aa3f2c93359eac` |
-| Last update | 2026-07-15 - the Xiaomi reference device is connected with thermal status `0`; the exact-revision profiler APK build failed closed on a stale operation-map static presentation manifest, and the diagnostic 16:9 visual session was rejected for night readability and near-map missing surfaces |
+| Last verified commit | `48d38c1c4685ca2413bfb8ec0a0e7d2d41b8c82f` on `origin/main`; architecture implementation commit `98cb2bb6d4321132574ebc5247aa3f2c93359eac` |
+| Last update | 2026-07-15 - the Xiaomi reference device is connected with thermal status `0`; Android/visual evidence remains blocked by operation-map-owned manifest and visual defects, while APH-509 now has explicit deterministic probes for all five former hard-coded package blind spots |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -537,8 +537,8 @@ Goal: make residency and package size intentional while preserving visible quali
   - Validation: deterministic audit coverage passes `13/13`. Build inclusion for the legacy three textures, runtime unload behavior, and device residency remain unproven.
   - Remaining: measure device residency, CPU-copy retention, and post-unload memory, then establish or reject an explicit production release path. Evidence: `Design/AgentReports/2026-07-11_aph-508_animation_texture_audit.md`.
 - [~] `APH-509` Remove unused packages only after a package-usage report proves no source, serialized asset, build script, or editor workflow dependency.
-  - Active result: a deterministic read-only inventory classifies 46 manifest packages, one embedded depth-zero manifest discrepancy, 20 ordinary lock-only transitives, 14 static candidate-unused packages, and five unresolved static blind spots across source, serialized assets, build scripts, and editor workflows. No package removal is accepted until isolated import/compile/test/build/device validation proves it safe.
-  - Validation: six dedicated inventory tests plus syntax and deterministic-report checks pass; evidence commit `e9dcf183e` is pushed to `main`.
+  - Active result: a deterministic read-only inventory classifies 47 manifest packages, one embedded depth-zero manifest discrepancy, 20 ordinary lock-only transitives, 15 static candidate-unused packages, and two evidence-derived external-editor blind spots across source, serialized assets, build scripts, editor workflows, built-in component signatures, and ambiguity evidence. Explicit probes classify Cloth and Wind as static-only candidates, preserve Rider and Visual Studio as fail-closed external-workflow ambiguities, and retain Umbra because first-party occlusion usage exists. No package removal is accepted until isolated import/compile/test/build/device validation proves it safe.
+  - Validation: 12 dedicated inventory tests, deterministic report regeneration, report freshness/count checks, and whitespace checks pass. Evidence: `Tools/CI/aph509_package_usage_inventory.py`, `Tools/CI/tests/test_aph509_package_usage_inventory.py`, and `Design/AgentReports/2026-07-10_aph-509_package_usage_inventory.md` plus `.json`.
 - [~] `APH-510` Rebuild Android, compare BuildReport/memory/frame metrics, and record per-category deltas.
   - Active result: `Tools/CI/aph510_android_category_comparison.py` binds baseline/candidate evidence to exact revision, APK/AAB hashes, build profile, and device identity; compares package, installed, allocated/PSS, texture, mesh, audio, graphics-driver, frame, startup, and I/O metrics; and emits deterministic JSON/Markdown while null measurement-required limits remain explicit blockers. Focused contracts pass `9/9`.
   - Remaining: produce clean same-artifact APK/AAB, device-performance, category-residency, and I/O evidence, then run and accept the comparison.
@@ -2174,6 +2174,15 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Preserved evidence: visual artifacts are staged outside Git at `/private/tmp/warline-aph809-current-16x9-staging`; Android build log is `/private/tmp/warline-aph803-profiler-apk-829730c1a.log`
 - Ownership boundary: no operation-map or First Launch file was edited; the operation-map owner must refresh and validate the generated static presentation manifest
 - Next action: after the manifest refresh lands, build clean exact-revision profiler and release artifacts, collect the required device runs, and recapture all four APH-809 visual sessions from that same revision
+
+### 2026-07-15 - APH-509 - Explicit package static probes
+
+- Status: stable non-removal slice; APH-509 remains active because isolated Unity/build/device removal proof has not run
+- Result: five hard-coded unknowns were replaced by deterministic source, editor-workflow, external-configuration, and built-in YAML/class-signature probes
+- Classification: Cloth and Wind are static-only candidates; Umbra has first-party occlusion evidence; Rider and Visual Studio remain fail-closed because their ignored external configuration cannot be proven from tracked files
+- Safety: all 15 candidates retain `packageRemovalAuthorized=false` and the complete import/compile/test/build/device blocker set; no package manifest, lockfile, map, First Launch, runtime, scene, or prefab file changed
+- Validation: focused inventory `12/12`; report regeneration and `--check` pass with `68` total, `47` manifest, `15` candidates, and `2` blind spots; `git diff --check` passes
+- Evidence: `/private/tmp/aph509-focused-tests-r3.log`, `/private/tmp/aph509-write-report-r2.log`, `/private/tmp/aph509-report-check-r2.log`, `Design/AgentReports/2026-07-10_aph-509_package_usage_inventory.md`, and `.json`
 
 ## Decision Log
 

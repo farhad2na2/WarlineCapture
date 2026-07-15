@@ -23,8 +23,8 @@ EXPECTED_SUMMARY = {
     "manifestDeclaredCount": 47,
     "embeddedDepthZeroManifestAbsentCount": 1,
     "lockOnlyTransitiveCount": 20,
-    "candidateUnusedStaticOnlyCount": 13,
-    "unprovenStaticBlindSpotCount": 5,
+    "candidateUnusedStaticOnlyCount": 15,
+    "unprovenStaticBlindSpotCount": 2,
 }
 CANDIDATE_REMOVAL_BLOCKERS = (
     "static-zero-evidence-is-not-runtime-proof",
@@ -59,10 +59,17 @@ SOURCE_TOKENS = {
     "com.unity.modules.ai": ("UnityEngine.AI",),
     "com.unity.modules.androidjni": ("AndroidJava", "AndroidJNI"),
     "com.unity.modules.audio": ("AudioSource", "AudioClip", "AudioMixer"),
+    "com.unity.modules.cloth": (
+        "UnityEngine.Cloth", "ClothSkinningCoefficient", "ClothSphereColliderPair",
+    ),
     "com.unity.modules.imageconversion": ("ImageConversion", "LoadImage("),
     "com.unity.modules.jsonserialize": ("JsonUtility",),
     "com.unity.modules.screencapture": ("ScreenCapture",),
     "com.unity.modules.tilemap": ("UnityEngine.Tilemaps",),
+    "com.unity.modules.umbra": (
+        "OcclusionArea", "OcclusionPortal", "StaticOcclusionCulling",
+        "useOcclusionCulling", "allowOcclusionWhenDynamic",
+    ),
     "com.unity.modules.unityanalytics": ("UnityEngine.Analytics",),
     "com.unity.modules.unitywebrequest": ("UnityWebRequest",),
     "com.unity.modules.unitywebrequestassetbundle": ("UnityWebRequestAssetBundle",),
@@ -70,14 +77,36 @@ SOURCE_TOKENS = {
     "com.unity.modules.unitywebrequesttexture": ("UnityWebRequestTexture",),
     "com.unity.modules.video": ("UnityEngine.Video", "VideoPlayer"),
     "com.unity.modules.vehicles": ("WheelCollider",),
+    "com.unity.modules.wind": ("UnityEngine.WindZone", "WindZoneMode"),
     "com.unity.modules.xr": ("UnityEngine.XR",),
+    "com.unity.ide.rider": (
+        "Unity.Rider.Editor", "Packages.Rider.Editor", "RiderScriptEditor",
+    ),
+    "com.unity.ide.visualstudio": (
+        "Unity.VisualStudio.Editor", "VisualStudioEditor", "VisualStudioIntegration",
+    ),
 }
-STATIC_BLIND_SPOT_PACKAGES = {
-    "com.unity.ide.rider",
-    "com.unity.ide.visualstudio",
-    "com.unity.modules.cloth",
-    "com.unity.modules.umbra",
-    "com.unity.modules.wind",
+IDE_TRACKED_CONFIG_PREFIXES = {
+    "com.unity.ide.rider": (".idea/",),
+    "com.unity.ide.visualstudio": (".vs/", ".vsconfig"),
+}
+IDE_IGNORED_CONFIG_TOKENS = {
+    "com.unity.ide.rider": (".idea/", "Rider"),
+    "com.unity.ide.visualstudio": (".vs/", "Visual Studio"),
+}
+BUILTIN_SERIALIZED_PATTERNS = {
+    "com.unity.modules.cloth": (
+        re.compile(r"(?m)^--- !u!183\b[^\r\n]*\r?\nCloth:\s*$"),
+    ),
+    "com.unity.modules.umbra": (
+        re.compile(r"(?m)^--- !u!41\b[^\r\n]*\r?\nOcclusionPortal:\s*$"),
+        re.compile(r"(?m)^--- !u!192\b[^\r\n]*\r?\nOcclusionArea:\s*$"),
+        re.compile(r"(?m)^--- !u!363\b[^\r\n]*\r?\nOcclusionCullingData:\s*$"),
+        re.compile(r"m_OcclusionCullingData:\s*\{fileID:\s*(?!0(?:\D|$))-?\d+"),
+    ),
+    "com.unity.modules.wind": (
+        re.compile(r"(?m)^--- !u!182\b[^\r\n]*\r?\nWindZone:\s*$"),
+    ),
 }
 
 
@@ -93,6 +122,7 @@ class Evidence:
     serialized_files: set[str] = field(default_factory=set)
     build_files: set[str] = field(default_factory=set)
     editor_files: set[str] = field(default_factory=set)
+    ambiguous_files: set[str] = field(default_factory=set)
 
     @property
     def evidence_count(self) -> int:
@@ -100,6 +130,10 @@ class Evidence:
             self.source_files, self.serialized_files,
             self.build_files, self.editor_files,
         )))
+
+    @property
+    def ambiguity_count(self) -> int:
+        return len(self.ambiguous_files)
 
 
 def read_json(path: Path) -> dict:
@@ -189,6 +223,41 @@ def read_small_text(path: Path, limit: int = 5_000_000) -> str:
 
 def contains_any(content: str, tokens: set[str] | tuple[str, ...]) -> bool:
     return any(token and token in content for token in tokens)
+
+
+def collect_static_probe_evidence(
+    root: Path,
+    paths: list[Path],
+    evidence: dict[str, Evidence],
+) -> None:
+    gitignore = root / ".gitignore"
+    if gitignore in paths:
+        content = read_small_text(gitignore)
+        for package, tokens in IDE_IGNORED_CONFIG_TOKENS.items():
+            item = evidence.get(package)
+            if item and contains_any(content, tokens):
+                item.ambiguous_files.add(".gitignore")
+
+    for path in paths:
+        relative = path.relative_to(root).as_posix()
+        for package, prefixes in IDE_TRACKED_CONFIG_PREFIXES.items():
+            item = evidence.get(package)
+            if item and any(
+                relative == prefix or (prefix.endswith("/") and relative.startswith(prefix))
+                for prefix in prefixes
+            ):
+                item.editor_files.add(relative)
+
+        if (
+            not relative.startswith(("Assets/", "ProjectSettings/"))
+            or path.suffix.lower() not in {".asset", ".prefab", ".unity"}
+        ):
+            continue
+        content = read_small_text(path)
+        for package, patterns in BUILTIN_SERIALIZED_PATTERNS.items():
+            item = evidence.get(package)
+            if item and any(pattern.search(content) for pattern in patterns):
+                item.serialized_files.add(relative)
 
 
 def collect(root: Path) -> list[Evidence]:
@@ -309,6 +378,8 @@ def collect(root: Path) -> list[Evidence]:
                 target = evidence[package].build_files if is_build else evidence[package].editor_files
                 target.add(relative)
 
+    collect_static_probe_evidence(root, paths, evidence)
+
     # SVG ScriptedImporter state is direct editor-workflow proof for Vector Graphics.
     vector = evidence.get("com.unity.modules.vectorgraphics")
     if vector:
@@ -328,7 +399,7 @@ def classification(item: Evidence) -> str:
         return "usage-evidence-found"
     if item.required_by:
         return "dependency-graph-required"
-    if item.package in STATIC_BLIND_SPOT_PACKAGES:
+    if item.ambiguity_count:
         return "unproven-static-blind-spot"
     if item.state == "manifest-declared":
         return "candidate-unused-static-only"
@@ -388,6 +459,7 @@ def package_row(item: Evidence) -> dict[str, object]:
         "serializedFiles": sorted(item.serialized_files),
         "buildFiles": sorted(item.build_files),
         "editorFiles": sorted(item.editor_files),
+        "ambiguousFiles": sorted(item.ambiguous_files),
         "requiredBy": sorted(item.required_by),
         "removalAuthorized": False,
         "removalBlockers": removal_blockers(item),
@@ -435,8 +507,10 @@ def build_report_data(root: Path = ROOT) -> dict[str, object]:
             "evidenceChannels": [
                 "first-party-source-and-asmdef",
                 "text-serialized-guid-ownership",
+                "built-in-module-source-and-yaml-signatures",
                 "build-automation",
                 "editor-workflows",
+                "external-editor-configuration-ambiguity",
                 "manifest-lock-reverse-dependencies",
             ],
         },
@@ -468,6 +542,7 @@ def row_example(row: dict[str, object]) -> str:
         + row["serializedFiles"]
         + row["buildFiles"]
         + row["editorFiles"]
+        + row["ambiguousFiles"]
         + row["requiredBy"]
     )
     return values[0] if values else "-"
@@ -507,8 +582,9 @@ def render_report(data: dict[str, object] | list[Evidence]) -> str:
         "",
         "- First-party source and asmdef references under `Assets/`.",
         "- Text-serialized asset references resolved through package `.meta` GUID ownership.",
+        "- Built-in Cloth, Umbra, and Wind source/YAML signatures whose packages do not expose stable GUID ownership.",
         "- Build automation under `Tools/CI`, `.github`, build-named editor files, and Jenkins.",
-        "- Editor workflows from editor source, package/assembly mentions, documentation, and SVG importer state.",
+        "- Editor workflows from editor source, package/assembly mentions, documentation, external IDE configuration, and SVG importer state.",
         "- Manifest/lock state and reverse package dependencies.",
         "",
         "## Summary",
@@ -556,21 +632,23 @@ def render_report(data: dict[str, object] | list[Evidence]) -> str:
         "",
         "## Deterministic Evidence",
         "",
-        "| Package | State | Classification | Source | Serialized | Build | Editor | Required by | Example |",
-        "|---|---|---|---:|---:|---:|---:|---:|---|",
+        "| Package | State | Classification | Source | Serialized | Build | Editor | Ambiguous | Required by | Example |",
+        "|---|---|---|---:|---:|---:|---:|---:|---:|---|",
     ]
     for row in rows:
         lines.append(
             f"| `{row['package']}` | {row['state']} | {row['classification']} | "
             f"{len(row['sourceFiles'])} | {len(row['serializedFiles'])} | "
             f"{len(row['buildFiles'])} | {len(row['editorFiles'])} | "
-            f"{len(row['requiredBy'])} | `{row_example(row)}` |"
+            f"{len(row['ambiguousFiles'])} | {len(row['requiredBy'])} | "
+            f"`{row_example(row)}` |"
         )
     lines += [
         "",
         "## Fail-Closed Limitations",
         "",
-        "- Built-in component class IDs, binary assets, reflection, generated code, native plugins, shader includes, and external editor services can evade static attribution.",
+        "- Binary assets, reflection, generated code, native plugins, shader includes, and untracked external editor services can evade static attribution.",
+        "- Explicit built-in component probes cover known Cloth, Umbra, and Wind source/YAML signatures; unknown signatures remain a fail-closed limitation.",
         "- Namespace and workflow text matches are evidence to inspect, not proof that every reference is semantically required.",
         "- A zero in all columns means only that this inventory found no static evidence. It never proves runtime safety.",
         "- Lock reverse dependencies describe the current graph; Unity must resolve the lock after any isolated manifest experiment.",

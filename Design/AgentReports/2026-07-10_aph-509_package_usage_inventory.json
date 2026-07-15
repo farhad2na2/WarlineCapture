@@ -10,16 +10,16 @@
     "manifestDeclaredCount": 47,
     "embeddedDepthZeroManifestAbsentCount": 1,
     "lockOnlyTransitiveCount": 20,
-    "candidateUnusedStaticOnlyCount": 13,
-    "unprovenStaticBlindSpotCount": 5
+    "candidateUnusedStaticOnlyCount": 15,
+    "unprovenStaticBlindSpotCount": 2
   },
   "summary": {
     "totalPackageCount": 68,
     "manifestDeclaredCount": 47,
     "embeddedDepthZeroManifestAbsentCount": 1,
     "lockOnlyTransitiveCount": 20,
-    "candidateUnusedStaticOnlyCount": 13,
-    "unprovenStaticBlindSpotCount": 5
+    "candidateUnusedStaticOnlyCount": 15,
+    "unprovenStaticBlindSpotCount": 2
   },
   "inputEvidence": {
     "manifestPath": "Packages/manifest.json",
@@ -34,8 +34,10 @@
     "evidenceChannels": [
       "first-party-source-and-asmdef",
       "text-serialized-guid-ownership",
+      "built-in-module-source-and-yaml-signatures",
       "build-automation",
       "editor-workflows",
+      "external-editor-configuration-ambiguity",
       "manifest-lock-reverse-dependencies"
     ]
   },
@@ -44,22 +46,21 @@
     "com.unity.modules.accessibility",
     "com.unity.modules.adaptiveperformance",
     "com.unity.modules.ai",
+    "com.unity.modules.cloth",
     "com.unity.modules.screencapture",
     "com.unity.modules.tilemap",
     "com.unity.modules.unitywebrequesttexture",
     "com.unity.modules.unitywebrequestwww",
     "com.unity.modules.vehicles",
     "com.unity.modules.video",
+    "com.unity.modules.wind",
     "com.unity.modules.xr",
     "com.unity.multiplayer.center",
     "com.unity.visualscripting"
   ],
   "staticBlindSpotPackages": [
     "com.unity.ide.rider",
-    "com.unity.ide.visualstudio",
-    "com.unity.modules.cloth",
-    "com.unity.modules.umbra",
-    "com.unity.modules.wind"
+    "com.unity.ide.visualstudio"
   ],
   "candidateRemovalGate": {
     "authorized": false,
@@ -250,6 +251,7 @@
         "Packages/com.sniveler-code.gpu-animation/Editor/Scripts/GenerateWindowComponents.cs",
         "Packages/com.sniveler-code.gpu-animation/Editor/Scripts/PackageResourceLoader.cs"
       ],
+      "ambiguousFiles": [],
       "requiredBy": [],
       "removalAuthorized": false,
       "removalBlockers": [
@@ -267,6 +269,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.ai.assistant"
       ],
@@ -306,8 +309,10 @@
       "buildFiles": [],
       "editorFiles": [
         "Assets/Game/Scripts/Editor/Game.Editor.asmdef",
-        "Assets/Tests/Editor/Game.Tests.Editor.asmdef"
+        "Assets/Tests/Editor/Game.Tests.Editor.asmdef",
+        "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
       ],
+      "ambiguousFiles": [],
       "requiredBy": [],
       "removalAuthorized": false,
       "removalBlockers": [
@@ -328,6 +333,7 @@
         "Assets/Game/Scripts/Editor/MatchGcAllocationCallstackCapture.cs",
         "Assets/Tests/Editor/MatchGcAllocationCallstackCaptureTests.cs"
       ],
+      "ambiguousFiles": [],
       "requiredBy": [],
       "removalAuthorized": false,
       "removalBlockers": [
@@ -424,6 +430,7 @@
         "Assets/Tests/Editor/ResourceExchangeAiPlannerGuardrailTests.cs",
         "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs"
       ],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.sniveler-code.gpu-animation",
         "com.unity.collections",
@@ -447,6 +454,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [],
       "removalAuthorized": false,
       "removalBlockers": [
@@ -580,6 +588,7 @@
         "Assets/Game/Scripts/Systems/BuildingCombatUtilitySystemHelper.cs",
         "Assets/Game/Scripts/Systems/BuildingDefenseAttackSystem.cs",
         "Assets/Game/Scripts/Systems/BuildingDefinitionPrefabSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingFactionAIOilAllocationInputSystemHelper.cs",
         "Assets/Game/Scripts/Systems/BuildingPlacementCommandRequestCompositionSystemHelper.cs",
         "Assets/Game/Scripts/Systems/BuildingPlacementRedirectCompositionSystemHelper.cs",
         "Assets/Game/Scripts/Systems/BuildingPlacementValidationUtilitySystemHelper.cs",
@@ -614,6 +623,8 @@
         "Assets/Game/Scripts/Systems/EngageTargetSyncSystem.cs",
         "Assets/Game/Scripts/Systems/EngageTargetValidateSystem.cs",
         "Assets/Game/Scripts/Systems/FactionEconomyStartupSystem.cs",
+        "Assets/Game/Scripts/Systems/FactionFuelLogisticsTelemetryBridgeCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/FactionTacticalMaterialsStartupSystemHelper.cs",
         "Assets/Game/Scripts/Systems/FixedWingRunwayHomeInitializationSystem.cs",
         "Assets/Game/Scripts/Systems/FocusableUnitLookupCameraSystemHelper.cs",
         "Assets/Game/Scripts/Systems/FocusedUnitCommandSystem.cs",
@@ -632,6 +643,7 @@
         "Assets/Game/Scripts/Systems/MatchHudMinimapMarkerSystem.cs",
         "Assets/Game/Scripts/Systems/MatchHudSquadTraySelectionUiSystemHelper.cs",
         "Assets/Game/Scripts/Systems/MaterialFabricationSystem.cs",
+        "Assets/Game/Scripts/Systems/MaterialsScenarioRecoveryStartupSystemHelper.cs",
         "Assets/Game/Scripts/Systems/MissileFlightAudioSystem.cs",
         "Assets/Game/Scripts/Systems/Pathfinding/PathfindBatchJob.cs",
         "Assets/Game/Scripts/Systems/Pathfinding/Surface/Game.Runtime.Pathfinding.asmdef",
@@ -641,9 +653,11 @@
         "Assets/Game/Scripts/Systems/ResourceExchangePhysicalStorageCandidateQuerySystemHelper.cs",
         "Assets/Game/Scripts/Systems/ResourceExchangePhysicalStorageUtilitySystemHelper.cs",
         "Assets/Game/Scripts/Systems/ResourceExchangeQueueCompletionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/ResourceExchangeRequestQueueSystemHelper.cs",
         "Assets/Game/Scripts/Systems/ResourceExchangeRequestValidationSystem.cs",
         "Assets/Game/Scripts/Systems/ResourceExchangeStartupProjectionSystemHelper.cs",
         "Assets/Game/Scripts/Systems/ResourceExchangeToastTextUtility.cs",
+        "Assets/Game/Scripts/Systems/ResourceHaulerAIOilAllocationPolicySystemHelper.cs",
         "Assets/Game/Scripts/Systems/RoadBuildCommandCompositionSystemHelper.cs",
         "Assets/Game/Scripts/Systems/RoadBuildEcsCompositionSystemHelper.cs",
         "Assets/Game/Scripts/Systems/RtsSelectionAttackTargetModeCommandSystem.cs",
@@ -654,6 +668,7 @@
         "Assets/Game/Scripts/Systems/RtsSelectionMissileLauncherRadarAttackCommandSystem.cs",
         "Assets/Game/Scripts/Systems/RtsSelectionMoveTargetModeCommandSystem.cs",
         "Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RuntimeFactionResourceSystemHelper.cs",
         "Assets/Game/Scripts/Systems/RuntimeGridBootstrapStartupSystemHelper.cs",
         "Assets/Game/Scripts/Systems/RuntimeGridDeduplicationSystem.cs",
         "Assets/Game/Scripts/Systems/RuntimeUnitPrefabSystem.cs",
@@ -760,8 +775,10 @@
         "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildPlacementReadModelSystem.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiDiagnosticsReadModelSystem.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiMatchHudResourceReadModelSystem.cs",
+        "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeProjectionFingerprintUtilitySystemHelper.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeProjectionSystemHelper.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeReadModelSystem.cs",
+        "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeTextProjectionUtilitySystemHelper.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Actions.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Contracts.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Assistant.cs",
@@ -771,6 +788,7 @@
         "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.DefaultState.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.MinimapBuild.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Presentation.cs",
+        "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.ResourceValues.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Selection.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Routes.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Settings.cs",
@@ -809,6 +827,7 @@
         "Assets/Game/Scripts/Editor/MapSurfacePreviewOverlaySystem.cs",
         "Assets/Game/Scripts/Editor/MatchGcAllocationCallstackCapture.cs",
         "Assets/Game/Scripts/Editor/MatchHudTacticalFollowCameraPlayModeValidation.cs",
+        "Assets/Game/Scripts/Editor/MatchPerformanceFixtureSeed.cs",
         "Assets/Game/Scripts/Editor/MatchRuntimeShellSmokeValidation.cs",
         "Assets/Game/Scripts/Editor/ScenarioLab/BattleScenarioLabValidationRunner.cs",
         "Assets/Game/Scripts/Editor/StaticMapMeshReadbackUtility.cs",
@@ -864,6 +883,8 @@
         "Assets/Tests/Editor/MatchHudCommandControlsCurrentPrefabTests.cs",
         "Assets/Tests/Editor/MatchHudMinimapMarkerSystemTests.cs",
         "Assets/Tests/Editor/MatchHudSquadTraySelectionSystemTests.cs",
+        "Assets/Tests/Editor/MatchPerformanceFixtureSeedTests.cs",
+        "Assets/Tests/Editor/MaterialsScenarioRecoveryStartupSystemHelperTests.cs",
         "Assets/Tests/Editor/MissileLauncherRadarAttackValidationTests.cs",
         "Assets/Tests/Editor/ResourceExchangeAIRecoverySystemTests.cs",
         "Assets/Tests/Editor/ResourceExchangeAriaAnnouncementSystemTests.cs",
@@ -885,6 +906,7 @@
         "Assets/Tests/Editor/ResourceExchangeVisualCueSystemTests.cs",
         "Assets/Tests/Editor/ResourceExchangeVisualPresentationSystemHelperTests.cs",
         "Assets/Tests/Editor/RtsSelectionInputSystemTests.cs",
+        "Assets/Tests/Editor/RuntimeFactionResourceSystemHelperTests.cs",
         "Assets/Tests/Editor/ScenarioLab/TransportBoardingScenarioLabTests.cs",
         "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs",
         "Assets/Tests/Editor/SelectedUnitDebugFireSystemTests.cs",
@@ -898,6 +920,7 @@
         "Assets/Tests/Editor/TransportBoardingPerformanceValidation.cs",
         "Assets/Tests/Editor/UIShellCurrentContentLoadTests.cs",
         "Assets/Tests/Editor/UiResourceExchangeReadModelSystemTests.cs",
+        "Assets/Tests/Editor/UiShellEcsGatewayResourceHeaderTests.cs",
         "Assets/Tests/Editor/UnitIdleWanderSystemTests.cs",
         "Assets/Tests/Editor/UnitMoveOrderSystemTests.cs",
         "Assets/Tests/Editor/UnitMovementBlockerValidationTests.cs",
@@ -912,6 +935,7 @@
         "Assets/Tests/Editor/UnitTransportValidationTests.cs",
         "Assets/Tests/Editor/VehicleVisualAdornmentsSystemTests.cs"
       ],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.entities",
         "com.unity.render-pipelines.core",
@@ -1003,6 +1027,7 @@
         "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs",
         "Assets/Game/Scripts/Composition/MatchBootstrapStartupConfigProjection.cs",
         "Assets/Game/Scripts/Composition/MatchBuildingRuntimeBootstrapStartupSystemHelper.cs",
+        "Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs",
         "Assets/Game/Scripts/Composition/MatchHudMinimapDataSourceAdapter.cs",
         "Assets/Game/Scripts/Composition/MatchIntroEcsStateQuery.cs",
         "Assets/Game/Scripts/Composition/MatchSceneView.cs",
@@ -1100,6 +1125,7 @@
         "Assets/Game/Scripts/Systems/BuildingDefenseAttackSystem.cs",
         "Assets/Game/Scripts/Systems/BuildingDefinitionPrefabSystemHelper.cs",
         "Assets/Game/Scripts/Systems/BuildingEntityManagerAccessSystem.cs",
+        "Assets/Game/Scripts/Systems/BuildingFactionAIOilAllocationInputSystemHelper.cs",
         "Assets/Game/Scripts/Systems/BuildingFactionVisualSystem.cs",
         "Assets/Game/Scripts/Systems/BuildingFoundationVisualPresentationSystemHelper.cs",
         "Assets/Game/Scripts/Systems/BuildingGameplayChildSystem.cs",
@@ -1140,6 +1166,7 @@
         "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
         "Assets/Game/Scripts/Systems/BuildingResourceHaulerTransferEcsSystem.cs",
         "Assets/Game/Scripts/Systems/BuildingResourceProductionEcsSystem.cs",
+        "Assets/Game/Scripts/Systems/BuildingResourceStorageQueryCache.cs",
         "Assets/Game/Scripts/Systems/BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.cs",
         "Assets/Game/Scripts/Systems/BuildingRuntimeContextCompositionSystemHelper.cs",
         "Assets/Game/Scripts/Systems/BuildingRuntimeContextFactoryCompositionSystemHelper.cs",
@@ -1186,7 +1213,9 @@
         "Assets/Game/Scripts/Systems/EngageTargetSyncSystem.cs",
         "Assets/Game/Scripts/Systems/EngageTargetValidateSystem.cs",
         "Assets/Game/Scripts/Systems/FactionEconomyStartupSystem.cs",
+        "Assets/Game/Scripts/Systems/FactionFuelLogisticsTelemetryBridgeCompositionSystemHelper.cs",
         "Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/FactionTacticalMaterialsStartupSystemHelper.cs",
         "Assets/Game/Scripts/Systems/FixedWingRunwayHomeInitializationSystem.cs",
         "Assets/Game/Scripts/Systems/FocusableUnitLookupCameraSystemHelper.cs",
         "Assets/Game/Scripts/Systems/FocusedUnitCommandSystem.cs",
@@ -1218,6 +1247,7 @@
         "Assets/Game/Scripts/Systems/MaterialFabricationCommandUtilitySystemHelper.cs",
         "Assets/Game/Scripts/Systems/MaterialFabricationSystem.cs",
         "Assets/Game/Scripts/Systems/MaterialFabricationTelemetrySystemHelper.cs",
+        "Assets/Game/Scripts/Systems/MaterialsScenarioRecoveryStartupSystemHelper.cs",
         "Assets/Game/Scripts/Systems/MissileFlightAudioSystem.cs",
         "Assets/Game/Scripts/Systems/PathPoolMaintenanceSystem.cs",
         "Assets/Game/Scripts/Systems/Pathfinding/PathfindBatchJob.cs",
@@ -1233,11 +1263,15 @@
         "Assets/Game/Scripts/Systems/ResourceExchangePresentationAnchorUtility.cs",
         "Assets/Game/Scripts/Systems/ResourceExchangeQueueCompletionSystemHelper.cs",
         "Assets/Game/Scripts/Systems/ResourceExchangeQueueTickSystem.cs",
+        "Assets/Game/Scripts/Systems/ResourceExchangeRequestQueueSystemHelper.cs",
         "Assets/Game/Scripts/Systems/ResourceExchangeRequestValidationSystem.cs",
+        "Assets/Game/Scripts/Systems/ResourceExchangeRushPolicySystemHelper.cs",
         "Assets/Game/Scripts/Systems/ResourceExchangeStartupProjectionSystemHelper.cs",
         "Assets/Game/Scripts/Systems/ResourceExchangeToastTextUtility.cs",
         "Assets/Game/Scripts/Systems/ResourceExchangeVisualCueSystem.cs",
         "Assets/Game/Scripts/Systems/ResourceExchangeVisualPresentationSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/ResourceHaulerAIOilAllocationPolicySystemHelper.cs",
+        "Assets/Game/Scripts/Systems/ResourceHaulerAutomaticRoutePolicySystemHelper.cs",
         "Assets/Game/Scripts/Systems/ResourceHaulerStorageAccessSystemHelper.cs",
         "Assets/Game/Scripts/Systems/ResourceHaulerUtilitySystemHelper.cs",
         "Assets/Game/Scripts/Systems/RoadBuildBuildingPlacementCompositionSystemHelper.cs",
@@ -1278,6 +1312,7 @@
         "Assets/Game/Scripts/Systems/RtsSelectionScanTargetModeCommandSystem.cs",
         "Assets/Game/Scripts/Systems/RtsSelectionSelectAllCommandSystem.cs",
         "Assets/Game/Scripts/Systems/RuntimeDiagnosticsSystem.cs",
+        "Assets/Game/Scripts/Systems/RuntimeFactionResourceSystemHelper.cs",
         "Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs",
         "Assets/Game/Scripts/Systems/RuntimeGridBootstrapStartupSystemHelper.cs",
         "Assets/Game/Scripts/Systems/RuntimeGridDeduplicationSystem.cs",
@@ -1341,6 +1376,8 @@
         "Assets/Game/Scripts/Systems/UnitLookAtTargetSystem.cs",
         "Assets/Game/Scripts/Systems/UnitManualMoveRetrySystem.cs",
         "Assets/Game/Scripts/Systems/UnitMotionAudioSystem.cs",
+        "Assets/Game/Scripts/Systems/UnitMoveOrderQueueQueryCache.cs",
+        "Assets/Game/Scripts/Systems/UnitMoveOrderQueueRequest.cs",
         "Assets/Game/Scripts/Systems/UnitMoveOrderRequestSystem.cs",
         "Assets/Game/Scripts/Systems/UnitMoveOrderSystem.cs",
         "Assets/Game/Scripts/Systems/UnitMoveTargetDiagnosticSystem.cs",
@@ -1411,6 +1448,7 @@
         "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildPlacementReadModelSystem.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiDiagnosticsReadModelSystem.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiMatchHudResourceReadModelSystem.cs",
+        "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeProjectionFingerprintUtilitySystemHelper.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeReadModelSystem.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiShellArmoryCategorySystem.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Actions.cs",
@@ -1422,6 +1460,7 @@
         "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.DefaultState.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.MinimapBuild.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Presentation.cs",
+        "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.ResourceValues.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Selection.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Routes.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Settings.cs",
@@ -1458,6 +1497,7 @@
         "Assets/Tests/Editor/BuildingAudioFeedbackTests.cs",
         "Assets/Tests/Editor/BuildingBarrierSystemTests.cs",
         "Assets/Tests/Editor/BuildingCombatSystemTests.cs",
+        "Assets/Tests/Editor/BuildingConstructionResourceTransactionSystemHelperTests.cs",
         "Assets/Tests/Editor/BuildingDefenseAttackSystemTests.cs",
         "Assets/Tests/Editor/BuildingDestroyedVisualPresentationSystemHelperTests.cs",
         "Assets/Tests/Editor/BuildingFactionVisualSystemTests.cs",
@@ -1488,8 +1528,11 @@
         "Assets/Game/Scripts/Editor/MatchGcAllocationCallstackCapture.cs",
         "Assets/Game/Scripts/Editor/MatchHudFullMapPopupPrefabSetup.cs",
         "Assets/Game/Scripts/Editor/MatchHudTacticalFollowCameraPlayModeValidation.cs",
+        "Assets/Game/Scripts/Editor/MatchPerformanceFixtureSeed.cs",
         "Assets/Game/Scripts/Editor/MatchRuntimeShellSmokeValidation.cs",
         "Assets/Game/Scripts/Editor/MatchStartRequestValidationRunner.cs",
+        "Assets/Game/Scripts/Editor/OperationMapPhase0BaselineProbe.cs",
+        "Assets/Game/Scripts/Editor/OperationMapPhase0OwnershipProbe.cs",
         "Assets/Game/Scripts/Editor/ScenarioLab/BattleScenarioLabSceneBuilder.cs",
         "Assets/Game/Scripts/Editor/ScenarioLab/BattleScenarioLabValidationRunner.cs",
         "Assets/Game/Scripts/Editor/SceneLifecycleValidationRunner.cs",
@@ -1538,6 +1581,7 @@
         "Assets/Tests/Editor/BuildingAudioFeedbackTests.cs",
         "Assets/Tests/Editor/BuildingBarrierSystemTests.cs",
         "Assets/Tests/Editor/BuildingCombatSystemTests.cs",
+        "Assets/Tests/Editor/BuildingConstructionResourceTransactionSystemHelperTests.cs",
         "Assets/Tests/Editor/BuildingDefenseAttackSystemTests.cs",
         "Assets/Tests/Editor/BuildingDestroyedVisualPresentationSystemHelperTests.cs",
         "Assets/Tests/Editor/BuildingFactionVisualSystemTests.cs",
@@ -1584,7 +1628,9 @@
         "Assets/Tests/Editor/MatchHudMinimapMarkerSystemTests.cs",
         "Assets/Tests/Editor/MatchHudSquadTraySelectionSystemTests.cs",
         "Assets/Tests/Editor/MatchHudTransportPassengerDrawerTests.cs",
+        "Assets/Tests/Editor/MatchPerformanceFixtureSeedTests.cs",
         "Assets/Tests/Editor/MaterialFabricationSystemTests.cs",
+        "Assets/Tests/Editor/MaterialsScenarioRecoveryStartupSystemHelperTests.cs",
         "Assets/Tests/Editor/MissileLauncherRadarAttackValidationTests.cs",
         "Assets/Tests/Editor/MissionBriefingScreenTests.cs",
         "Assets/Tests/Editor/Narrative/FirstLaunchArchitectureAlignmentTests.cs",
@@ -1620,6 +1666,7 @@
         "Assets/Tests/Editor/RuntimeCameraReferenceSystemTests.cs",
         "Assets/Tests/Editor/RuntimeCityGenerationFocusedTests.cs",
         "Assets/Tests/Editor/RuntimeDiagnosticsSystemTests.cs",
+        "Assets/Tests/Editor/RuntimeFactionResourceSystemHelperTests.cs",
         "Assets/Tests/Editor/RuntimeGameplayStateSystemTests.cs",
         "Assets/Tests/Editor/RuntimeGameplayStateTestHelper.cs",
         "Assets/Tests/Editor/RuntimeGridDeduplicationSystemTests.cs",
@@ -1669,6 +1716,7 @@
         "Assets/Tests/Editor/VehicleFuelConsumptionSystemTests.cs",
         "Assets/Tests/Editor/VehicleVisualAdornmentsSystemTests.cs"
       ],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.sniveler-code.gpu-animation",
         "com.unity.entities.graphics"
@@ -1724,6 +1772,7 @@
         "Assets/Tests/Editor/UnitRenderBudgetSystemTests.cs",
         "Assets/Tests/Editor/VehicleVisualAdornmentsSystemTests.cs"
       ],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.sniveler-code.gpu-animation"
       ],
@@ -1743,6 +1792,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.ide.rider",
         "com.unity.test-framework"
@@ -1763,6 +1813,9 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [
+        ".gitignore"
+      ],
       "requiredBy": [],
       "removalAuthorized": false,
       "removalBlockers": [
@@ -1786,6 +1839,9 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [
+        ".gitignore"
+      ],
       "requiredBy": [],
       "removalAuthorized": false,
       "removalBlockers": [
@@ -1829,6 +1885,7 @@
       "editorFiles": [
         "Assets/Game/Scripts/Editor/ScenarioLab/BattleScenarioLabSceneBuilder.cs"
       ],
+      "ambiguousFiles": [],
       "requiredBy": [],
       "removalAuthorized": false,
       "removalBlockers": [
@@ -1892,6 +1949,7 @@
         "Assets/Game/Scripts/Composition/Game.Composition.asmdef",
         "Assets/Game/Scripts/Composition/MapSurfaceRuntimeBootstrapSceneSystemHelper.cs",
         "Assets/Game/Scripts/Composition/MatchBootstrapStartupConfigProjection.cs",
+        "Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs",
         "Assets/Game/Scripts/Composition/MatchHudMinimapDataSourceAdapter.cs",
         "Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs",
         "Assets/Game/Scripts/Configs/Game.Configs.asmdef",
@@ -1989,6 +2047,7 @@
         "Assets/Game/Scripts/Systems/BuildingProductionTransportPresentationSystemHelper.cs",
         "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
         "Assets/Game/Scripts/Systems/BuildingResourceProductionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingResourceStorageReservationSystemHelper.cs",
         "Assets/Game/Scripts/Systems/BuildingResourceStorageTransferSystemHelper.cs",
         "Assets/Game/Scripts/Systems/BuildingRuntimeContextFactoryCompositionSystemHelper.cs",
         "Assets/Game/Scripts/Systems/BuildingRuntimeEntityCompositionSystemHelper.cs",
@@ -2012,6 +2071,7 @@
         "Assets/Game/Scripts/Systems/DynamicBlockerInitSystem.cs",
         "Assets/Game/Scripts/Systems/DynamicOccupancyRebuildSystem.cs",
         "Assets/Game/Scripts/Systems/FactionFuelLogisticsTelemetryUtilitySystemHelper.cs",
+        "Assets/Game/Scripts/Systems/FactionTacticalMaterialsStartupSystemHelper.cs",
         "Assets/Game/Scripts/Systems/FixedWingRunwayHomeInitializationSystem.cs",
         "Assets/Game/Scripts/Systems/FocusableUnitLookupCameraSystemHelper.cs",
         "Assets/Game/Scripts/Systems/FocusedUnitCommandSystem.cs",
@@ -2046,10 +2106,14 @@
         "Assets/Game/Scripts/Systems/ResourceExchangePhysicalStorageUtilitySystemHelper.cs",
         "Assets/Game/Scripts/Systems/ResourceExchangePresentationAnchorUtility.cs",
         "Assets/Game/Scripts/Systems/ResourceExchangeQueueTickSystem.cs",
+        "Assets/Game/Scripts/Systems/ResourceExchangeRequestQueueSystemHelper.cs",
         "Assets/Game/Scripts/Systems/ResourceExchangeRequestValidationSystem.cs",
         "Assets/Game/Scripts/Systems/ResourceExchangeResourceUtilitySystemHelper.cs",
+        "Assets/Game/Scripts/Systems/ResourceExchangeRushPolicySystemHelper.cs",
         "Assets/Game/Scripts/Systems/ResourceExchangeVisualCueSystem.cs",
         "Assets/Game/Scripts/Systems/ResourceExchangeVisualPresentationSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/ResourceHaulerAIOilAllocationPolicySystemHelper.cs",
+        "Assets/Game/Scripts/Systems/ResourceHaulerAutomaticRoutePolicySystemHelper.cs",
         "Assets/Game/Scripts/Systems/ResourceHaulerUtilitySystemHelper.cs",
         "Assets/Game/Scripts/Systems/RoadBuildBuildingPlacementCompositionSystemHelper.cs",
         "Assets/Game/Scripts/Systems/RoadBuildCompositionContextCompositionSystemHelper.cs",
@@ -2115,6 +2179,7 @@
         "Assets/Game/Scripts/Systems/UnitHierarchicalPathPlanner.cs",
         "Assets/Game/Scripts/Systems/UnitIdleWanderSystem.cs",
         "Assets/Game/Scripts/Systems/UnitLookAtTargetSystem.cs",
+        "Assets/Game/Scripts/Systems/UnitMoveOrderQueueRequest.cs",
         "Assets/Game/Scripts/Systems/UnitMoveOrderRequestSystem.cs",
         "Assets/Game/Scripts/Systems/UnitMoveOrderSystem.cs",
         "Assets/Game/Scripts/Systems/UnitMoveTargetDiagnosticSystem.cs",
@@ -2167,8 +2232,10 @@
         "Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestDispatchSystemHelper.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiActionResourceExchangeRequestSystemHelper.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiMatchHudResourceReadModelSystem.cs",
+        "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeProjectionFingerprintUtilitySystemHelper.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeProjectionSystemHelper.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeReadModelSystem.cs",
+        "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeTextProjectionUtilitySystemHelper.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Actions.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Contracts.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Assistant.cs",
@@ -2178,6 +2245,7 @@
         "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.DefaultState.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.MinimapBuild.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Presentation.cs",
+        "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.ResourceValues.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Selection.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Routes.cs",
         "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Settings.cs",
@@ -2215,6 +2283,7 @@
         "Assets/Game/Scripts/Editor/MapSurfacePreviewOverlaySystem.cs",
         "Assets/Game/Scripts/Editor/MatchGcAllocationCallstackCapture.cs",
         "Assets/Game/Scripts/Editor/MatchHudTacticalFollowCameraPlayModeValidation.cs",
+        "Assets/Game/Scripts/Editor/MatchPerformanceFixtureSeed.cs",
         "Assets/Game/Scripts/Editor/MatchRuntimeShellSmokeValidation.cs",
         "Assets/Game/Scripts/Editor/ScenarioLab/BattleScenarioLabValidationRunner.cs",
         "Assets/Game/Scripts/Editor/TacticalFollowAttackCinematicPlayModeValidation.cs",
@@ -2324,6 +2393,7 @@
         "Packages/com.sniveler-code.gpu-animation/Editor/Scripts/GenerateProcessor.cs",
         "Packages/com.sniveler-code.gpu-animation/Editor/Scripts/GenerateWindow.cs"
       ],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.ai.assistant",
         "com.unity.burst"
@@ -2344,6 +2414,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [],
       "removalAuthorized": false,
       "removalBlockers": [
@@ -2366,6 +2437,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [],
       "removalAuthorized": false,
       "removalBlockers": [
@@ -2388,6 +2460,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [],
       "removalAuthorized": false,
       "removalBlockers": [
@@ -2412,6 +2485,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [],
       "removalAuthorized": false,
       "removalBlockers": [
@@ -2429,6 +2503,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.modules.director",
         "com.unity.modules.uielements",
@@ -2450,6 +2525,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.addressables",
         "com.unity.entities",
@@ -2475,6 +2551,7 @@
         "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationSystemHelper.cs",
         "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackSourceConfiguration.cs",
         "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeAudioPresentationSystemHelper.cs",
+        "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativePortraitVoiceSelectionPresentationSystemHelper.cs",
         "Assets/Game/Scripts/Configs/Audio/AudioEventCatalogEntry.cs",
         "Assets/Game/Scripts/Configs/Audio/AudioMixerBusConfig.cs",
         "Assets/Game/Scripts/Configs/Narrative/NarrativeSequenceConfig.cs",
@@ -2519,6 +2596,7 @@
         "Assets/Tests/Editor/ResourceExchangeAudioConfigTests.cs",
         "Assets/Tests/Editor/ResourceExchangeAudioWiringContractTests.cs"
       ],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.entities",
         "com.unity.modules.director",
@@ -2539,15 +2617,15 @@
       "version": "1.0.0",
       "depth": 0,
       "source": "builtin",
-      "classification": "unproven-static-blind-spot",
+      "classification": "candidate-unused-static-only",
       "sourceFiles": [],
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [],
       "removalAuthorized": false,
       "removalBlockers": [
-        "static-analysis-blind-spot-unresolved",
         "static-zero-evidence-is-not-runtime-proof",
         "isolated-package-resolution-not-run",
         "isolated-import-and-compile-not-run",
@@ -2567,6 +2645,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.timeline"
       ],
@@ -2586,6 +2665,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.entities"
       ],
@@ -2605,6 +2685,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.modules.hierarchy",
         "com.unity.modules.uielements"
@@ -2629,6 +2710,7 @@
         "Assets/Game/Scripts/Editor/MatchHudCurrentOrderBannerVisualProofCapture.cs",
         "Assets/Game/Scripts/Editor/ScenarioLab/BattleScenarioLabVisualProofCapture.cs"
       ],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.addressables",
         "com.unity.modules.screencapture",
@@ -2652,6 +2734,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.modules.hierarchy",
         "com.unity.modules.uielements",
@@ -2690,13 +2773,19 @@
         "Assets/Game/Scripts/Editor/MapVehicleHierarchyEditor.cs",
         "Assets/Game/Scripts/Editor/MapVehiclePlacementBakeEditor.cs",
         "Assets/Game/Scripts/Editor/MatchRuntimeShellSmokeValidation.cs",
+        "Assets/Game/Scripts/Editor/MobileVisualQualityCaptureMatrix.cs",
+        "Assets/Game/Scripts/Editor/OperationMapPhase0BaselineProbe.cs",
+        "Assets/Game/Scripts/Editor/OperationMapPhase0OwnershipProbe.cs",
         "Assets/Game/Scripts/Editor/StaticMapPresentationOutputOwnership.cs",
         "Assets/Tests/Editor/AndroidPerformanceRecorderTests.cs",
         "Assets/Tests/Editor/AudioConfigContractTests.cs",
         "Assets/Tests/Editor/Narrative/FirstLaunchNarrativeTextCatalogTests.cs",
+        "Assets/Tests/Editor/OperationMapPhase0BaselineProbeTests.cs",
+        "Assets/Tests/Editor/OperationMapPhase0OwnershipProbeTests.cs",
         "Assets/Tests/Editor/ResourceExchangeAudioConfigTests.cs",
         "Assets/Tests/Editor/ResourceExchangeStartupProjectionSystemHelperTests.cs"
       ],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.addressables",
         "com.unity.burst",
@@ -2726,6 +2815,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.entities.graphics",
         "com.unity.timeline"
@@ -2746,6 +2836,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.entities",
         "com.unity.modules.cloth",
@@ -2771,6 +2862,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.modules.tilemap",
         "com.unity.ugui"
@@ -2791,6 +2883,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.modules.physics2d"
       ],
@@ -2810,6 +2903,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [],
       "removalAuthorized": false,
       "removalBlockers": [
@@ -2832,6 +2926,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.modules.adaptiveperformance",
         "com.unity.modules.xr"
@@ -2852,6 +2947,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.render-pipelines.core"
       ],
@@ -2871,6 +2967,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [],
       "removalAuthorized": false,
       "removalBlockers": [
@@ -2893,6 +2990,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.modules.uielements",
         "com.unity.modules.video",
@@ -2914,6 +3012,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.ai.assistant",
         "com.unity.entities",
@@ -2933,21 +3032,31 @@
       "version": "1.0.0",
       "depth": 0,
       "source": "builtin",
-      "classification": "unproven-static-blind-spot",
-      "sourceFiles": [],
+      "classification": "usage-evidence-found",
+      "sourceFiles": [
+        "Assets/Game/Scripts/Systems/PremiumWorldSelectionObjectOutlineView.cs",
+        "Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs",
+        "Assets/Game/Scripts/UI/Screens/AssistantHighlightPresentationSystemHelper.cs"
+      ],
       "serializedFiles": [],
-      "buildFiles": [],
-      "editorFiles": [],
+      "buildFiles": [
+        "Assets/Game/Scripts/Editor/PremiumWorldMarkerPrefabBuilder.cs"
+      ],
+      "editorFiles": [
+        "Assets/Editor/SkinnedPrefabCombinerWindow.cs",
+        "Assets/Game/Scripts/Editor/PremiumWorldMarkerPrefabBuilder.cs",
+        "Assets/Game/Scripts/Editor/PremiumWorldMarkerVisualProofCapture.cs",
+        "Assets/Game/Scripts/Editor/StaticMapPresentationBaker.cs",
+        "Assets/Game/Scripts/Editor/UnitMidLodGenerator.cs",
+        "Assets/Game/Scripts/Editor/UnitRenderPrefabSanitizer.cs",
+        "Assets/Tests/Editor/SelectionOrderMarkerPresentationSystemHelperTests.cs",
+        "Assets/Tests/Editor/StaticMapPresentationStructuralValidationTests.cs"
+      ],
+      "ambiguousFiles": [],
       "requiredBy": [],
       "removalAuthorized": false,
       "removalBlockers": [
-        "static-analysis-blind-spot-unresolved",
-        "static-zero-evidence-is-not-runtime-proof",
-        "isolated-package-resolution-not-run",
-        "isolated-import-and-compile-not-run",
-        "full-test-suite-not-run",
-        "release-android-build-delta-not-measured",
-        "release-device-smoke-not-run"
+        "first-party-usage-evidence-found"
       ]
     },
     {
@@ -2961,6 +3070,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.entities"
       ],
@@ -2982,6 +3092,7 @@
       "editorFiles": [
         "Assets/Game/Scripts/Editor/Narrative/FirstLaunchNarrativePerformanceValidation.cs"
       ],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.addressables",
         "com.unity.ai.assistant",
@@ -3009,6 +3120,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.addressables",
         "com.unity.modules.unitywebrequestwww"
@@ -3029,6 +3141,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.modules.unitywebrequestwww"
       ],
@@ -3048,6 +3161,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [],
       "removalAuthorized": false,
       "removalBlockers": [
@@ -3070,6 +3184,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [],
       "removalAuthorized": false,
       "removalBlockers": [
@@ -3369,6 +3484,7 @@
         "Assets/GUI/Pannel/panel_type3.svg.svg",
         "Assets/GUI/Pannel/panel_type4.svg.svg"
       ],
+      "ambiguousFiles": [],
       "requiredBy": [],
       "removalAuthorized": false,
       "removalBlockers": [
@@ -3386,6 +3502,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [],
       "removalAuthorized": false,
       "removalBlockers": [
@@ -3408,6 +3525,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [],
       "removalAuthorized": false,
       "removalBlockers": [
@@ -3425,15 +3543,15 @@
       "version": "1.0.0",
       "depth": 0,
       "source": "builtin",
-      "classification": "unproven-static-blind-spot",
+      "classification": "candidate-unused-static-only",
       "sourceFiles": [],
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [],
       "removalAuthorized": false,
       "removalBlockers": [
-        "static-analysis-blind-spot-unresolved",
         "static-zero-evidence-is-not-runtime-proof",
         "isolated-package-resolution-not-run",
         "isolated-import-and-compile-not-run",
@@ -3453,6 +3571,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [],
       "removalAuthorized": false,
       "removalBlockers": [
@@ -3475,6 +3594,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [],
       "removalAuthorized": false,
       "removalBlockers": [
@@ -3497,6 +3617,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.ai.assistant",
         "com.unity.collections",
@@ -3518,6 +3639,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.ai.assistant"
       ],
@@ -3549,6 +3671,7 @@
         "Assets/Editor/ProBuilderShapeBakerWindow.cs",
         "Assets/Editor/ProjectTools.Editor.asmdef"
       ],
+      "ambiguousFiles": [],
       "requiredBy": [],
       "removalAuthorized": false,
       "removalBlockers": [
@@ -3566,6 +3689,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.addressables",
         "com.unity.entities"
@@ -3647,6 +3771,7 @@
         "Assets/Game/Scripts/Editor/MatchHudTacticalFollowCameraPlayModeValidation.cs",
         "Assets/Game/Scripts/Editor/MobileVisualQualityPlayModeCapture.cs",
         "Assets/Game/Scripts/Editor/Narrative/FirstLaunchNarrativeRuntimeVideoCapture.cs",
+        "Assets/Game/Scripts/Editor/OperationMapPhase0OwnershipProbe.cs",
         "Assets/Game/Scripts/Editor/PortraitSpritePrefabRenderer.cs",
         "Assets/Game/Scripts/Editor/PremiumWorldMarkerPrefabBuilder.cs",
         "Assets/Game/Scripts/Editor/PremiumWorldMarkerVisualProofCapture.cs",
@@ -3666,6 +3791,7 @@
         "Assets/Tests/Editor/VehicleVisualAdornmentsSystemTests.cs",
         "Packages/com.sniveler-code.gpu-animation/Editor/Scripts/GenerateProcessor.cs"
       ],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.entities.graphics",
         "com.unity.render-pipelines.universal",
@@ -4142,8 +4268,10 @@
       ],
       "buildFiles": [],
       "editorFiles": [
+        "Assets/Game/Scripts/Editor/OperationMapPhase0OwnershipProbe.cs",
         "Assets/Tests/Editor/AndroidVisualQualityValidationTests.cs"
       ],
+      "ambiguousFiles": [],
       "requiredBy": [],
       "removalAuthorized": false,
       "removalBlockers": [
@@ -4161,6 +4289,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.render-pipelines.universal"
       ],
@@ -4180,6 +4309,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.addressables",
         "com.unity.entities"
@@ -4200,6 +4330,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.shadergraph"
       ],
@@ -4219,6 +4350,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.entities"
       ],
@@ -4238,6 +4370,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.probuilder"
       ],
@@ -4579,6 +4712,7 @@
       ],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.probuilder",
         "com.unity.render-pipelines.universal"
@@ -4620,6 +4754,7 @@
         "Assets/Tests/Editor/BuildingAudioFeedbackTests.cs",
         "Assets/Tests/Editor/BuildingBarrierSystemTests.cs",
         "Assets/Tests/Editor/BuildingCombatSystemTests.cs",
+        "Assets/Tests/Editor/BuildingConstructionResourceTransactionSystemHelperTests.cs",
         "Assets/Tests/Editor/BuildingDefenseAttackSystemTests.cs",
         "Assets/Tests/Editor/BuildingDestroyedVisualPresentationSystemHelperTests.cs",
         "Assets/Tests/Editor/BuildingFactionVisualSystemTests.cs",
@@ -4700,6 +4835,7 @@
         "Assets/Tests/Editor/BuildingAudioFeedbackTests.cs",
         "Assets/Tests/Editor/BuildingBarrierSystemTests.cs",
         "Assets/Tests/Editor/BuildingCombatSystemTests.cs",
+        "Assets/Tests/Editor/BuildingConstructionResourceTransactionSystemHelperTests.cs",
         "Assets/Tests/Editor/BuildingDefenseAttackSystemTests.cs",
         "Assets/Tests/Editor/BuildingDestroyedVisualPresentationSystemHelperTests.cs",
         "Assets/Tests/Editor/BuildingFactionVisualSystemTests.cs",
@@ -4761,6 +4897,7 @@
         "Assets/Tests/Editor/MapSurfaceRuntimeBootstrapSceneSystemHelperTests.cs",
         "Assets/Tests/Editor/MapVehiclePlacementStartupCompletionTests.cs",
         "Assets/Tests/Editor/MatchCommandAudioFeedbackTests.cs",
+        "Assets/Tests/Editor/MatchGameplayStartupCompositionSystemHelperTests.cs",
         "Assets/Tests/Editor/MatchGcAllocationCallstackCaptureTests.cs",
         "Assets/Tests/Editor/MatchHudAssistantUiSystemHelperTests.cs",
         "Assets/Tests/Editor/MatchHudCommandControlsCurrentPrefabTests.cs",
@@ -4771,12 +4908,15 @@
         "Assets/Tests/Editor/MatchHudSquadTrayQuickSelectTests.cs",
         "Assets/Tests/Editor/MatchHudSquadTraySelectionSystemTests.cs",
         "Assets/Tests/Editor/MatchHudTransportPassengerDrawerTests.cs",
+        "Assets/Tests/Editor/MatchPerformanceFixtureSeedTests.cs",
         "Assets/Tests/Editor/MatchSceneAuthoringNameValidationTests.cs",
         "Assets/Tests/Editor/MatchSceneReferenceSceneSystemHelperTests.cs",
         "Assets/Tests/Editor/MaterialFabricationConfigProjectionTests.cs",
         "Assets/Tests/Editor/MaterialFabricationSystemTests.cs",
+        "Assets/Tests/Editor/MaterialsScenarioRecoveryStartupSystemHelperTests.cs",
         "Assets/Tests/Editor/MissileLauncherRadarAttackValidationTests.cs",
         "Assets/Tests/Editor/MissionBriefingScreenTests.cs",
+        "Assets/Tests/Editor/MobileVisualQualityCaptureMatrixTests.cs",
         "Assets/Tests/Editor/Narrative/FirstLaunchArchitectureAlignmentTests.cs",
         "Assets/Tests/Editor/Narrative/FirstLaunchNarrativeAudioImporterTests.cs",
         "Assets/Tests/Editor/Narrative/FirstLaunchNarrativeCompositionBoundaryTests.cs",
@@ -4796,6 +4936,8 @@
         "Assets/Tests/Editor/Narrative/NarrativeSettingsPersistenceTests.cs",
         "Assets/Tests/Editor/NonEcsSystemConversionArchitectureTests.cs",
         "Assets/Tests/Editor/NonUiSystemBaseMigrationArchitectureTests.cs",
+        "Assets/Tests/Editor/OperationMapPhase0BaselineProbeTests.cs",
+        "Assets/Tests/Editor/OperationMapPhase0OwnershipProbeTests.cs",
         "Assets/Tests/Editor/OperationsDashboardScreenTests.cs",
         "Assets/Tests/Editor/PerformanceDiagnosticsSystemAllocationTests.cs",
         "Assets/Tests/Editor/PerformanceProductBudgetValidatorTests.cs",
@@ -4834,6 +4976,7 @@
         "Assets/Tests/Editor/RuntimeCameraReferenceSystemTests.cs",
         "Assets/Tests/Editor/RuntimeCityGenerationFocusedTests.cs",
         "Assets/Tests/Editor/RuntimeDiagnosticsSystemTests.cs",
+        "Assets/Tests/Editor/RuntimeFactionResourceSystemHelperTests.cs",
         "Assets/Tests/Editor/RuntimeGameplayStateSystemTests.cs",
         "Assets/Tests/Editor/RuntimeGridDeduplicationSystemTests.cs",
         "Assets/Tests/Editor/ScanIntelCommandSystemTests.cs",
@@ -4911,6 +5054,7 @@
         "Assets/Tests/Editor/VehicleFuelConsumptionSystemTests.cs",
         "Assets/Tests/Editor/VehicleVisualAdornmentsSystemTests.cs"
       ],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.addressables",
         "com.unity.collections",
@@ -4934,6 +5078,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.collections",
         "com.unity.entities"
@@ -4957,6 +5102,7 @@
         "Design/Campaign_Narrative_And_Content_Redesign_Recommendations.md",
         "Design/Narrative_Presentation_And_Cutscene_Design.md"
       ],
+      "ambiguousFiles": [],
       "requiredBy": [],
       "removalAuthorized": false,
       "removalBlockers": [
@@ -5029,6 +5175,7 @@
         "Assets/Game/Scripts/UI/Screens/CommandWheelPanelView.cs",
         "Assets/Game/Scripts/UI/Screens/MainMenuNavigationTabView.cs",
         "Assets/Game/Scripts/UI/Screens/MainMenuNavigationView.cs",
+        "Assets/Game/Scripts/UI/Screens/MatchHudAssistantReferenceUiSystemHelper.cs",
         "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.cs",
         "Assets/Game/Scripts/UI/Screens/MatchHudCurrentOrderBannerView.cs",
         "Assets/Game/Scripts/UI/Screens/MatchHudFullMapPopupView.cs",
@@ -5533,6 +5680,7 @@
         "Packages/com.sniveler-code.gpu-animation/Editor/Scripts/GenerateWindow.cs",
         "Packages/com.sniveler-code.gpu-animation/Editor/Scripts/PackageResourceLoader.cs"
       ],
+      "ambiguousFiles": [],
       "requiredBy": [
         "com.unity.visualscripting"
       ],
@@ -5552,6 +5700,7 @@
       "serializedFiles": [],
       "buildFiles": [],
       "editorFiles": [],
+      "ambiguousFiles": [],
       "requiredBy": [],
       "removalAuthorized": false,
       "removalBlockers": [

@@ -1,8 +1,8 @@
 # Operation Map Scene Split And Generator Implementation Tracker
 
 Date: 2026-07-14
-Status: Implementation in progress; Phase 0 evidence capture
-Workflow path: `pull request`
+Status: Shared-foundation implementation in progress; map-delivery direction pending R&D
+Workflow path: serial validated commits directly on `main`
 Design sources: `../3D_SingleMap_Gameplay_Direction.md`, `../Level_And_Mission_Content_Plan.md`, `../3D_Operation_Map_Texture_Mask_Workflow.md`, `../M01_FirstContact_Production_Contract.md`, `gameplay_solid_ecs_contract.md`, `performance_regression_contract.md`
 
 ## Objective
@@ -18,6 +18,27 @@ Menu shell -> Match.unity runtime shell -> selected OperationMap loaded additive
 ```
 
 The current large desert/base map must remain playable and become the first reusable operation map. It must not be deleted, flattened into a giant mesh, or copied together with its generated presentation chunks. `Match.unity` becomes a stable runtime shell only after the existing map has a validated map-specific bake, load, camera, minimap, authoring-conversion, and rollback path.
+
+## Current Shared-Foundation Scope: 2026-07-15
+
+Implementation is temporarily restricted to work that is required by both an editor-authored map direction and a runtime scene-based map direction. Runtime scene-based map R&D is proceeding separately. No delivery-direction-specific implementation may begin until that R&D is accepted or rejected and this tracker is updated with the selected direction.
+
+| Tracker Area | Current Disposition |
+|---|---|
+| Phase 0 baseline, ownership inventory, and rollback | Active; shared by both directions. |
+| Phase 1 typed map/scenario identity and metadata contracts | Active only where independent of asset production and loading technology. |
+| Phase 2 ownership of the current map's existing static presentation | Active only as required to preserve and split the current baked map safely. Future-map presentation generation remains undecided. |
+| Phase 3 current-map compatibility registration | Active; shared by both directions. |
+| Phase 4 non-destructive ownership split from `Match.unity` | Active; this is the primary implementation objective. |
+| Phase 5 readiness, one-active-map, failure-unwind, and teardown contracts | Contract work only. Concrete Addressables or runtime-scene loading/unloading implementation is later. |
+| Phase 6 bounds, grid, surface, blocker, camera, minimap, runway, helipad, and movement metadata | Active; shared by both directions. |
+| Phase 7 and Phase 9 scenario/map ids and map-neutral mission anchors | Shared contract work only; physical map rollout remains later. |
+| Phase 10 parity, architecture, ECS, memory, FPS, GC, camera, minimap, and rollback validation | Active when triggered by shared-foundation changes. Addressables/build-layout checks remain later. |
+| Phase 2A local Addressables packaging | Later, only if the selected direction requires it. |
+| Phase 8 editor-time texture/mask generator | Later, only if the editor-authored direction is selected. |
+| Phase 11 remote content migration | Later and independently gated. |
+
+The checklist count remains unchanged so deferred work is not lost or misreported as complete. Items marked later must not be implemented, checked off, or used to block the shared `Match.unity` ownership split.
 
 ## Audit Result: 2026-07-14
 
@@ -68,22 +89,18 @@ These values are an inspection snapshot, not an accepted Phase 0 baseline. Phase
 - Keep Campaign map generation editor-time, deterministic, reviewed, and committed. Runtime procedural generation is out of scope for this tracker.
 - Do not begin player-facing M01 implementation while the hold in `../M01_FirstContact_Production_Contract.md` remains active.
 
-## Pull Request Implementation Workflow
+## Direct-Main Serial Workflow
 
-All implementation work started from this tracker follows `agent_pull_request_review_merge_workflow.md`. The tracker was created after that workflow activated on `main`, so its implementation is not a grandfathered direct-main assignment.
+Operation-map work now runs serially in `/Users/farhad/Projects/WarlineCapture-Clone` without secondary clones, Git worktrees, or pull requests.
 
-- Treat each stable, reviewable implementation slice as a distinct PR task. Do not attempt to implement this 177-item tracker in one branch or one PR.
-- The review/merge coordinator assigns a stable task id, objective, latest `origin/main` baseline, exact file allowlist, excluded files, required contracts, risk-based validation, evidence ownership, and tracker/report paths before task-owned edits begin.
-- Use branch `codex/<task-id>-<slug>` in durable worktree `/Users/farhad/Projects/WarlineCapture-Worktrees/<task-id>-<slug>`, created from fetched `origin/main`. Never implement a tracker slice directly on `main`.
-- The implementation agent owns substantive code, tests, assets, configuration, and task-owned documentation. It commits coherent changes, leaves the task worktree clean, pushes the feature branch, completes `.github/pull_request_template.md`, and opens a PR targeting `main`.
-- The implementation agent reports the exact baseline, tested head, changed files, validation commands/pass markers, logs/artifacts, risks, and untested paths. It does not merge, delete the branch/worktree, or mark its own shared tracker slice accepted.
-- A separate review/merge coordinator context reviews findings first against the complete `origin/main...PR-head` diff. Substantive fixes return to the implementation agent as new commits and require complete rereview.
-- Before merge, the coordinator validates the actual combined result with latest `origin/main`, records the input/head/combined SHAs, runs every triggered integration gate at that exact tree, and adds only truthful tracker/evidence administration.
-- The coordinator alone merges an accepted PR, updates this tracker with the actual PR/merge/evidence disposition, deletes the remote branch, removes the clean worktree/local branch, and records cleanup.
-- Scene extraction, per-map bake ownership, Addressables packaging, runtime loading, shell cutover, map generation, M01, and remote delivery are separate high-risk PR slices. In particular, scene extraction and shell cutover must never share one irreversible PR.
-- Direct pushes remain technically possible but are not an accepted path for new operation-map implementation. Do not claim branch protection, required GitHub approvals, or rulesets are active unless the user separately enables and verifies them.
+- Work on one dependency-ready shared-foundation slice at a time directly on `main`.
+- Keep the slice allowlist narrow and do not mix scene extraction, shell cutover, generated presentation output, or unrelated gameplay changes.
+- Run `git diff --check`, affected focused tests, compile checks, architecture/naming guardrails, and Unity/device validation according to risk before committing.
+- Review the complete local diff and record truthful commands, results, logs, risks, and untested paths in this tracker or its linked evidence report.
+- Commit and push only stable validated changes. Do not mark unresolved ownership evidence or deferred direction-specific work complete.
+- Preserve independently revertable commits for scene extraction and later shell cutover even though both are integrated directly through `main`.
 
-Documentation-only PRs require scoped authority/path checks and `git diff --check`. Code, Unity assets, scenes, Addressables, ECS/runtime, performance, Android, or build changes trigger the corresponding risk rows in the authoritative PR workflow plus every validation gate already required by this tracker. The PR workflow changes integration ownership; it does not relax architecture, performance, bake, package, Unity, or device acceptance.
+Historical PR references in the validation log remain immutable audit evidence for work completed before this workflow changed; they do not require future slices to use PRs.
 
 ## Current Map Disposition
 
@@ -663,19 +680,19 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 
 | Phase | Status | Complete | Total | Progress | Notes |
 |---|---|---:|---:|---:|---|
-| 0. Reproducible baseline and rollback | Not started | 0 | 12 | 0% | Required before any scene or bake edit. |
-| 1. Operation-map and scenario data contracts | Not started | 0 | 12 | 0% | Defines typed identity, metadata, and catalog ownership. |
-| 2. Per-map static presentation ownership | Not started | 0 | 14 | 0% | Removes the single global bake/manifest assumption. |
-| 2A. Local Addressables packaging foundation | Not started | 0 | 20 | 0% | Bundles every approved map locally while preserving per-map pack boundaries. |
-| 3. Current-map compatibility registration | Not started | 0 | 10 | 0% | Makes the existing map addressable without moving it. |
-| 4. Non-destructive scene ownership split | Not started | 0 | 14 | 0% | Extracts current map only after map-specific baking is safe. |
-| 5. Runtime selection, loading, and teardown | Not started | 0 | 14 | 0% | Loads one selected operation map through existing lifecycle. |
-| 6. Metadata, camera, minimap, and movement binding | Not started | 0 | 12 | 0% | Removes raw scene-name dependence from map behavior. |
-| 7. M01 operation-map slice | Not started / gated | 0 | 10 | 0% | No player-facing integration before the M01 hold is released. |
-| 8. Editor-time texture/mask generator | Not started | 0 | 12 | 0% | Produces canonical map/metadata inputs, not runtime maps. |
-| 9. Mission and Skirmish scenario rollout | Not started | 0 | 10 | 0% | Reuses maps through config-driven setup. |
-| 10. Full validation and all-bundled rollout | Not started | 0 | 21 | 0% | Bake, parity, architecture, performance, all-local build, and device gates. |
-| 11. Deferred remote content migration | Deferred | 0 | 16 | 0% | Moves selected stable map packs to HTTPS/CDN delivery without gameplay changes. |
+| 0. Reproducible baseline and rollback | In progress / shared | 0 | 12 | 0% | Required by both directions before scene edits. |
+| 1. Operation-map and scenario data contracts | Not started / shared subset | 0 | 12 | 0% | Typed identity and metadata only; delivery-specific references remain later. |
+| 2. Per-map static presentation ownership | Not started / compatibility subset | 0 | 14 | 0% | Preserve the current baked map safely; future-map generation remains undecided. |
+| 2A. Local Addressables packaging foundation | Later / direction-specific | 0 | 20 | 0% | Do not implement before the map-delivery direction is selected. |
+| 3. Current-map compatibility registration | Not started / shared | 0 | 10 | 0% | Registers the current map without choosing a loader. |
+| 4. Non-destructive scene ownership split | Not started / shared priority | 0 | 14 | 0% | Primary objective: separate current map ownership from `Match.unity`. |
+| 5. Runtime selection, loading, and teardown | Contract-only / shared subset | 0 | 14 | 0% | Readiness/failure/teardown contracts only; concrete loading is later. |
+| 6. Metadata, camera, minimap, and movement binding | Not started / shared | 0 | 12 | 0% | Shared bounds, surface, grid, blockers, camera, minimap, runway, and helipad metadata. |
+| 7. M01 operation-map slice | Later / shared contracts only | 0 | 10 | 0% | Map-neutral ids/anchors may proceed; physical rollout remains gated. |
+| 8. Editor-time texture/mask generator | Later / editor direction only | 0 | 12 | 0% | Implement only if the editor-authored map direction is selected. |
+| 9. Mission and Skirmish scenario rollout | Later / shared contracts only | 0 | 10 | 0% | Scenario-to-map identity may proceed; physical rollout remains later. |
+| 10. Full validation and all-bundled rollout | Shared validation subset only | 0 | 21 | 0% | Run shared parity/performance gates; Addressables/build-layout gates are later. |
+| 11. Deferred remote content migration | Later / direction-specific | 0 | 16 | 0% | Remote delivery remains independently gated. |
 
 ## Phase 0: Reproducible Baseline And Rollback
 
@@ -742,6 +759,8 @@ Exit criteria:
 - An identical rebake writes no scenes and deletes no scenes.
 
 ## Phase 2A: Local Addressables Packaging Foundation
+
+**Later / direction-specific:** do not implement this phase while runtime scene-based map R&D is unresolved.
 
 - [ ] Approve the exact `Operation Maps - Catalog`, `Operation Maps - Shared`, and per-map Local Core/Presentation group contract from this document.
 - [ ] Add `OperationMapCatalogEntryConfig`, `OperationMapContentPackConfig`, and `OperationMapDeliveryKind` with every initial approved entry set to `BuiltInLocal`.
@@ -814,6 +833,8 @@ Exit criteria:
 
 ## Phase 5: Runtime Selection, Loading, And Teardown
 
+**Shared subset only:** define readiness, ownership, failure-unwind, and teardown contracts. Defer concrete Addressables and runtime-scene loading/unloading implementation until the delivery direction is selected.
+
 - [ ] Add the planned operation-map root/queue/state/active/bounds/metadata/readiness ECS components and request/result buffers, carrying mission, scenario, and operation-map ids as bounded fixed strings.
 - [ ] Resolve the operation-map catalog entry before beginning the match load transition.
 - [ ] Load the selected canonical operation-map scene additively through `OperationMapSceneLoadingSceneSystemHelper`, called by the existing composition lifecycle with no new update-loop `MonoBehaviour`.
@@ -876,6 +897,8 @@ Exit criteria:
 
 ## Phase 8: Editor-Time Texture/Mask Generator
 
+**Later / editor direction only:** do not implement this phase unless the editor-authored map direction is selected after R&D.
+
 - [ ] Define the reviewed map-pack folder/manifest contract for base visual, blocker mask, height mask, tree/rock masks, and generation seed/version.
 - [ ] Add the editor-only `OperationMapTextureMaskGenerator` entry point and its `OperationMapGenerationInput`/`OperationMapGenerationResult` value types under existing tooling conventions.
 - [ ] Generate/update operation-map metadata without writing static presentation outputs directly.
@@ -934,7 +957,7 @@ Exit criteria:
 - [ ] Verify every catalog-approved local operation map and only those maps are packaged; no unapproved map, stale generated scene, foreign-owned chunk, or remote dependency is included.
 - [ ] Capture accepted screenshots for top-down, oblique, low-ground, minimap, bounds, and map transition states.
 - [ ] Update `README.md`, `Design/README.md`, this percentage table, and exact command/log evidence.
-- [ ] For every stable slice, use the authoritative feature-branch/worktree PR workflow, provide commit-bound evidence, obtain independent coordinator review/integration acceptance, and keep scene extraction and shell cutover in independently revertable PRs.
+- [ ] For every stable slice, use the serial direct-main workflow, provide commit-bound validation evidence, self-review the complete diff, and keep scene extraction and shell cutover in independently revertable commits.
 
 Exit criteria:
 
@@ -945,6 +968,8 @@ Exit criteria:
 - M01 and future missions have a validated path without putting every level in one scene.
 
 ## Phase 11: Deferred Remote Content Migration
+
+**Later / direction-specific:** this phase remains out of scope regardless of shared-foundation progress.
 
 This phase starts only after the all-bundled implementation is stable and the product owner explicitly requests remote delivery. It does not block the initial all-local milestone, but it is the accepted path when package/install budgets require downloadable maps.
 

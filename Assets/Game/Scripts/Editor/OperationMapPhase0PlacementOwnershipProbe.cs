@@ -50,6 +50,12 @@ namespace Game.Editor
         private const int ExpectedVehicleCount = 29;
         private const string ExpectedGeneratedAggregate =
             "574afec991fbc1a684531c9f727c20eb296271260e7a4e1c4a8c300a2b642e79";
+        private const string ExpectedIdentityPayloadSha256 =
+            "76859d5eaadb49b9a05d494b34d7232ff6bbe6c0a710620f42996b513fb4317a";
+        private const string ResolvedState = "Resolved";
+        private const string UnresolvedState = "Unresolved";
+        private const string MixedOwnership = "Mixed";
+        private const string ResolvedSourceHiding = "HiddenAfterSpawn";
 
         private static readonly UTF8Encoding Utf8WithoutBom = new(false);
 
@@ -131,6 +137,7 @@ namespace Game.Editor
                 placementConfigs = orderedPlacements,
                 decisions = decisions
             };
+            report.identityPayloadSha256 = ComputeIdentityPayloadSha256(report.placementConfigs);
 
             ValidateBaselineReference(report.opmap002Baseline);
             ValidateInputHashes(report.directInputHashes);
@@ -144,6 +151,9 @@ namespace Game.Editor
                 throw new InvalidOperationException("Vehicle placement schema validation failed.");
             if (!HasExpectedDecisions(report.decisions))
                 throw new InvalidOperationException("Placement ownership decision schema validation failed.");
+            if (!HasExpectedIdentityPayload(report))
+                throw new InvalidOperationException(
+                    $"Placement identity payload drifted: {report.identityPayloadSha256}");
             if (!HasRequiredReportShape(JsonUtility.ToJson(report, true)))
                 throw new InvalidOperationException("Placement ownership report failed schema validation.");
             return report;
@@ -180,7 +190,8 @@ namespace Game.Editor
                     !IsStrictlyOrdered(report.placementConfigs.Select(entry => entry.kind)) ||
                     !HasExpectedPlacementReport(report.placementConfigs[0], BuildingSpec()) ||
                     !HasExpectedPlacementReport(report.placementConfigs[1], VehicleSpec()) ||
-                    !HasExpectedDecisions(report.decisions))
+                    !HasExpectedDecisions(report.decisions) ||
+                    !HasExpectedIdentityPayload(report))
                 {
                     return false;
                 }
@@ -237,6 +248,7 @@ namespace Game.Editor
             Dictionary<string, int> pathCounts = config.Placements
                 .GroupBy(entry => entry?.SourcePath ?? string.Empty, StringComparer.Ordinal)
                 .ToDictionary(group => group.Key, group => group.Count(), StringComparer.Ordinal);
+            Dictionary<string, SourcePathGroupReport> sourceGroups = BuildSourcePathGroups(pathCounts, scenePaths);
             var entries = new List<PlacementEntryReport>(config.Placements.Count);
             for (int i = 0; i < config.Placements.Count; i++)
             {
@@ -244,12 +256,11 @@ namespace Game.Editor
                 if (entry == null || entry.BuildingPrefab == null)
                     throw new InvalidOperationException($"Building placement identity is missing at index {i}.");
                 entries.Add(BuildPlacementEntry(
-                    entry.SourcePath,
+                    sourceGroups[entry.SourcePath],
                     entry.Category,
                     string.Empty,
                     entry.FactionId,
                     pathCounts[entry.SourcePath],
-                    scenePaths,
                     entry.WorldCenter,
                     entry.WorldPosition,
                     entry.WorldEulerAngles,
@@ -263,6 +274,7 @@ namespace Game.Editor
                 config.SpawnOnMatchStart,
                 config.HideAuthoringVisualsAfterSpawn,
                 entries,
+                sourceGroups.Values.OrderBy(group => group.sourcePath, StringComparer.Ordinal).ToList(),
                 config,
                 root,
                 view);
@@ -282,6 +294,7 @@ namespace Game.Editor
             Dictionary<string, int> pathCounts = config.Placements
                 .GroupBy(entry => entry?.SourcePath ?? string.Empty, StringComparer.Ordinal)
                 .ToDictionary(group => group.Key, group => group.Count(), StringComparer.Ordinal);
+            Dictionary<string, SourcePathGroupReport> sourceGroups = BuildSourcePathGroups(pathCounts, scenePaths);
             var entries = new List<PlacementEntryReport>(config.Placements.Count);
             for (int i = 0; i < config.Placements.Count; i++)
             {
@@ -290,12 +303,11 @@ namespace Game.Editor
                     string.IsNullOrWhiteSpace(entry.VehicleSourceKey))
                     throw new InvalidOperationException($"Vehicle placement identity is missing at index {i}.");
                 entries.Add(BuildPlacementEntry(
-                    entry.SourcePath,
+                    sourceGroups[entry.SourcePath],
                     entry.Category,
                     entry.VehicleSourceKey,
                     entry.FactionId,
                     pathCounts[entry.SourcePath],
-                    scenePaths,
                     entry.WorldCenter,
                     entry.WorldPosition,
                     entry.WorldEulerAngles,
@@ -309,18 +321,18 @@ namespace Game.Editor
                 config.SpawnOnMatchStart,
                 config.HideAuthoringVisualsAfterSpawn,
                 entries,
+                sourceGroups.Values.OrderBy(group => group.sourcePath, StringComparer.Ordinal).ToList(),
                 config,
                 root,
                 view);
         }
 
         private static PlacementEntryReport BuildPlacementEntry(
-            string sourcePath,
+            SourcePathGroupReport sourceGroup,
             string category,
             string sourceKey,
             byte factionId,
             int sourceOccurrenceCount,
-            IReadOnlyDictionary<string, List<string>> scenePaths,
             Vector3 worldCenter,
             Vector3 worldPosition,
             Vector3 worldEulerAngles,
@@ -329,22 +341,24 @@ namespace Game.Editor
             bool rotateVertical,
             GameObject prefab)
         {
-            if (string.IsNullOrWhiteSpace(sourcePath) ||
-                !scenePaths.TryGetValue(sourcePath, out List<string> hierarchyPaths) ||
-                hierarchyPaths.Count == 0)
-            {
-                throw new InvalidOperationException($"Placement source path does not resolve in Match: {sourcePath}");
-            }
+            if (sourceGroup == null)
+                throw new InvalidOperationException("Placement source group is missing.");
+            bool uniqueSource = sourceGroup.configEntryCount == 1 && sourceGroup.sceneCandidateCount == 1;
 
             var report = new PlacementEntryReport
             {
-                sourcePath = sourcePath,
+                sourcePath = sourceGroup.sourcePath,
+                sourcePathGroupSha256 = sourceGroup.stableIdentitySha256,
+                sourceResolution = uniqueSource ? ResolvedState : UnresolvedState,
+                resolvedHierarchyPath = uniqueSource ? sourceGroup.candidates[0] : string.Empty,
+                sourceOwnership = uniqueSource ? CurrentOwner : MixedOwnership,
+                sourceHiding = uniqueSource ? ResolvedSourceHiding : UnresolvedState,
+                decisionOwner = uniqueSource ? string.Empty : DecisionOwner,
                 category = category,
                 sourceKey = sourceKey ?? string.Empty,
                 factionId = factionId,
                 configSourcePathOccurrenceCount = sourceOccurrenceCount,
-                sceneMatchCount = hierarchyPaths.Count,
-                hierarchyPaths = hierarchyPaths.OrderBy(path => path, StringComparer.Ordinal).ToList(),
+                sceneCandidateCount = sourceGroup.sceneCandidateCount,
                 worldCenter = worldCenter,
                 worldPosition = worldPosition,
                 worldEulerAngles = worldEulerAngles,
@@ -357,11 +371,58 @@ namespace Game.Editor
             return report;
         }
 
+        private static Dictionary<string, SourcePathGroupReport> BuildSourcePathGroups(
+            IReadOnlyDictionary<string, int> configPathCounts,
+            IReadOnlyDictionary<string, List<string>> scenePaths)
+        {
+            var groups = new Dictionary<string, SourcePathGroupReport>(StringComparer.Ordinal);
+            foreach (KeyValuePair<string, int> pair in configPathCounts)
+            {
+                if (string.IsNullOrWhiteSpace(pair.Key) || pair.Value <= 0 ||
+                    !scenePaths.TryGetValue(pair.Key, out List<string> candidates) ||
+                    candidates.Count == 0)
+                {
+                    throw new InvalidOperationException(
+                        $"Placement source path does not resolve in Match: {pair.Key}");
+                }
+
+                bool uniqueSource = pair.Value == 1 && candidates.Count == 1;
+                var group = new SourcePathGroupReport
+                {
+                    sourcePath = pair.Key,
+                    configEntryCount = pair.Value,
+                    sceneCandidateCount = candidates.Count,
+                    candidates = candidates.OrderBy(path => path, StringComparer.Ordinal).ToList(),
+                    resolution = uniqueSource ? ResolvedState : UnresolvedState,
+                    decisionOwner = uniqueSource ? string.Empty : DecisionOwner
+                };
+                group.stableIdentitySha256 = ComputeSha256(BuildSourcePathGroupStableIdentity(group));
+                groups.Add(pair.Key, group);
+            }
+            return groups;
+        }
+
+        internal static string BuildSourcePathGroupStableIdentity(SourcePathGroupReport group)
+        {
+            if (group == null)
+                throw new ArgumentNullException(nameof(group));
+            var builder = new StringBuilder(320);
+            AppendIdentity(builder, group.sourcePath);
+            builder.Append(group.configEntryCount).Append('|')
+                .Append(group.sceneCandidateCount).Append('|');
+            foreach (string candidate in group.candidates)
+                AppendIdentity(builder, candidate);
+            AppendIdentity(builder, group.resolution);
+            AppendIdentity(builder, group.decisionOwner);
+            return builder.ToString();
+        }
+
         private static PlacementConfigReport BuildPlacementConfigReport(
             PlacementSpec spec,
             bool spawnOnMatchStart,
             bool hideAuthoringVisualsAfterSpawn,
             List<PlacementEntryReport> entries,
+            List<SourcePathGroupReport> sourcePathGroups,
             UnityEngine.Object config,
             Transform root,
             MatchSceneView view)
@@ -389,6 +450,9 @@ namespace Game.Editor
                 spawnOnMatchStart = spawnOnMatchStart,
                 hideAuthoringVisualsAfterSpawn = hideAuthoringVisualsAfterSpawn,
                 count = entries.Count,
+                duplicateSourcePathGroupCount = sourcePathGroups.Count(group => group.configEntryCount > 1),
+                duplicateSourcePathEntryCount = sourcePathGroups.Where(group => group.configEntryCount > 1)
+                    .Sum(group => group.configEntryCount),
                 factionCounts = entries.GroupBy(entry => entry.factionId)
                     .OrderBy(group => group.Key)
                     .Select(group => new FactionCountReport
@@ -397,6 +461,7 @@ namespace Game.Editor
                         count = group.Count()
                     }).ToList(),
                 identityAggregateSha256 = ComputePlacementAggregate(entries),
+                sourcePathGroups = sourcePathGroups,
                 entries = entries
             };
         }
@@ -451,6 +516,8 @@ namespace Game.Editor
                     typeof(Transform).FullName) ||
                 !report.spawnOnMatchStart || !report.hideAuthoringVisualsAfterSpawn ||
                 report.count != spec.count || report.entries == null || report.entries.Count != spec.count ||
+                report.duplicateSourcePathGroupCount != spec.duplicateGroupCount ||
+                report.duplicateSourcePathEntryCount != spec.duplicateEntryCount ||
                 !HasFactionCounts(report.factionCounts, spec.faction0Count, spec.faction1Count))
             {
                 return false;
@@ -463,12 +530,31 @@ namespace Game.Editor
                 .Where(entry => entry != null)
                 .GroupBy(entry => entry.factionId)
                 .ToDictionary(group => group.Key, group => group.Count());
-            if (report.factionCounts.Sum(entry => entry.count) != report.count ||
+            if (report.sourcePathGroups == null ||
+                report.sourcePathGroups.Count != sourcePathCounts.Count ||
+                !IsStrictlyOrdered(report.sourcePathGroups.Select(group => group.sourcePath)) ||
+                report.sourcePathGroups.Count(group => group.configEntryCount > 1) !=
+                    report.duplicateSourcePathGroupCount ||
+                report.sourcePathGroups.Where(group => group.configEntryCount > 1)
+                    .Sum(group => group.configEntryCount) != report.duplicateSourcePathEntryCount ||
+                report.factionCounts.Sum(entry => entry.count) != report.count ||
                 factionCounts.Count != report.factionCounts.Count ||
                 report.factionCounts.Any(entry =>
                     !factionCounts.TryGetValue(entry.factionId, out int count) || count != entry.count))
             {
                 return false;
+            }
+
+            var groupsByIdentity = new Dictionary<string, SourcePathGroupReport>(StringComparer.Ordinal);
+            foreach (SourcePathGroupReport group in report.sourcePathGroups)
+            {
+                if (!IsCompleteSourcePathGroup(group) ||
+                    !sourcePathCounts.TryGetValue(group.sourcePath, out int entryCount) ||
+                    group.configEntryCount != entryCount ||
+                    !groupsByIdentity.TryAdd(group.stableIdentitySha256, group))
+                {
+                    return false;
+                }
             }
 
             PlacementEntryReport previous = null;
@@ -478,6 +564,8 @@ namespace Game.Editor
                 if (!IsCompletePlacementEntry(entry) ||
                     !sourcePathCounts.TryGetValue(entry.sourcePath, out int occurrenceCount) ||
                     entry.configSourcePathOccurrenceCount != occurrenceCount ||
+                    !groupsByIdentity.TryGetValue(entry.sourcePathGroupSha256, out SourcePathGroupReport group) ||
+                    !HasExpectedEntrySourceResolution(entry, group) ||
                     (previous != null && ComparePlacementEntries(previous, entry) >= 0) ||
                     !string.Equals(
                         entry.stableIdentitySha256,
@@ -499,17 +587,64 @@ namespace Game.Editor
         {
             return entry != null &&
                    !string.IsNullOrWhiteSpace(entry.sourcePath) &&
+                   IsSha256(entry.sourcePathGroupSha256) &&
+                   !string.IsNullOrWhiteSpace(entry.sourceResolution) &&
+                   !string.IsNullOrWhiteSpace(entry.sourceOwnership) &&
+                   !string.IsNullOrWhiteSpace(entry.sourceHiding) &&
                    !string.IsNullOrWhiteSpace(entry.category) &&
-                   entry.configSourcePathOccurrenceCount > 0 && entry.sceneMatchCount > 0 &&
-                   entry.hierarchyPaths != null && entry.hierarchyPaths.Count == entry.sceneMatchCount &&
-                   IsStrictlyOrdered(entry.hierarchyPaths) &&
-                   entry.hierarchyPaths.All(path => path.StartsWith("Map[10]/", StringComparison.Ordinal)) &&
+                   entry.configSourcePathOccurrenceCount > 0 && entry.sceneCandidateCount > 0 &&
                    IsFinite(entry.worldCenter) && IsFinite(entry.worldPosition) &&
                    IsFinite(entry.worldEulerAngles) && IsFinite(entry.worldScale) &&
                    IsFinite(entry.yawDegrees) && IsSha256(entry.stableIdentitySha256) &&
                    entry.prefab != null && !string.IsNullOrWhiteSpace(entry.prefab.assetPath) &&
                    !string.IsNullOrWhiteSpace(entry.prefab.assetGuid) && entry.prefab.localId != 0 &&
                    string.Equals(entry.prefab.type, typeof(GameObject).FullName, StringComparison.Ordinal);
+        }
+
+        private static bool IsCompleteSourcePathGroup(SourcePathGroupReport group)
+        {
+            if (group == null || string.IsNullOrWhiteSpace(group.sourcePath) ||
+                group.configEntryCount <= 0 || group.sceneCandidateCount <= 0 ||
+                group.candidates == null || group.candidates.Count != group.sceneCandidateCount ||
+                !IsStrictlyOrdered(group.candidates) ||
+                group.candidates.Any(path => !path.StartsWith("Map[10]/", StringComparison.Ordinal)) ||
+                !string.Equals(
+                    group.stableIdentitySha256,
+                    ComputeSha256(BuildSourcePathGroupStableIdentity(group)),
+                    StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            bool uniqueSource = group.configEntryCount == 1 && group.sceneCandidateCount == 1;
+            return string.Equals(
+                       group.resolution,
+                       uniqueSource ? ResolvedState : UnresolvedState,
+                       StringComparison.Ordinal) &&
+                   string.Equals(
+                       group.decisionOwner,
+                       uniqueSource ? string.Empty : DecisionOwner,
+                       StringComparison.Ordinal);
+        }
+
+        private static bool HasExpectedEntrySourceResolution(
+            PlacementEntryReport entry,
+            SourcePathGroupReport group)
+        {
+            bool uniqueSource = group.configEntryCount == 1 && group.sceneCandidateCount == 1;
+            return string.Equals(entry.sourcePath, group.sourcePath, StringComparison.Ordinal) &&
+                   entry.configSourcePathOccurrenceCount == group.configEntryCount &&
+                   entry.sceneCandidateCount == group.sceneCandidateCount &&
+                   string.Equals(entry.sourceResolution,
+                       uniqueSource ? ResolvedState : UnresolvedState, StringComparison.Ordinal) &&
+                   string.Equals(entry.resolvedHierarchyPath,
+                       uniqueSource ? group.candidates[0] : string.Empty, StringComparison.Ordinal) &&
+                   string.Equals(entry.sourceOwnership,
+                       uniqueSource ? CurrentOwner : MixedOwnership, StringComparison.Ordinal) &&
+                   string.Equals(entry.sourceHiding,
+                       uniqueSource ? ResolvedSourceHiding : UnresolvedState, StringComparison.Ordinal) &&
+                   string.Equals(entry.decisionOwner,
+                       uniqueSource ? string.Empty : DecisionOwner, StringComparison.Ordinal);
         }
 
         internal static int ComparePlacementEntries(PlacementEntryReport left, PlacementEntryReport right)
@@ -519,6 +654,18 @@ namespace Game.Editor
             if (right == null) return 1;
             int comparison = string.CompareOrdinal(left.sourcePath, right.sourcePath);
             if (comparison != 0) return comparison;
+            comparison = string.CompareOrdinal(left.sourcePathGroupSha256, right.sourcePathGroupSha256);
+            if (comparison != 0) return comparison;
+            comparison = string.CompareOrdinal(left.sourceResolution, right.sourceResolution);
+            if (comparison != 0) return comparison;
+            comparison = string.CompareOrdinal(left.resolvedHierarchyPath, right.resolvedHierarchyPath);
+            if (comparison != 0) return comparison;
+            comparison = string.CompareOrdinal(left.sourceOwnership, right.sourceOwnership);
+            if (comparison != 0) return comparison;
+            comparison = string.CompareOrdinal(left.sourceHiding, right.sourceHiding);
+            if (comparison != 0) return comparison;
+            comparison = string.CompareOrdinal(left.decisionOwner, right.decisionOwner);
+            if (comparison != 0) return comparison;
             comparison = string.CompareOrdinal(left.category, right.category);
             if (comparison != 0) return comparison;
             comparison = string.CompareOrdinal(left.sourceKey, right.sourceKey);
@@ -527,9 +674,7 @@ namespace Game.Editor
             if (comparison != 0) return comparison;
             comparison = left.configSourcePathOccurrenceCount.CompareTo(right.configSourcePathOccurrenceCount);
             if (comparison != 0) return comparison;
-            comparison = left.sceneMatchCount.CompareTo(right.sceneMatchCount);
-            if (comparison != 0) return comparison;
-            comparison = CompareStringLists(left.hierarchyPaths, right.hierarchyPaths);
+            comparison = left.sceneCandidateCount.CompareTo(right.sceneCandidateCount);
             if (comparison != 0) return comparison;
             comparison = CompareVectorBits(left.worldCenter, right.worldCenter);
             if (comparison != 0) return comparison;
@@ -543,8 +688,12 @@ namespace Game.Editor
             if (comparison != 0) return comparison;
             comparison = left.rotateVertical.CompareTo(right.rotateVertical);
             if (comparison != 0) return comparison;
+            comparison = string.CompareOrdinal(left.prefab.assetPath, right.prefab.assetPath);
+            if (comparison != 0) return comparison;
             comparison = string.CompareOrdinal(left.prefab.assetGuid, right.prefab.assetGuid);
-            return comparison != 0 ? comparison : left.prefab.localId.CompareTo(right.prefab.localId);
+            if (comparison != 0) return comparison;
+            comparison = left.prefab.localId.CompareTo(right.prefab.localId);
+            return comparison != 0 ? comparison : string.CompareOrdinal(left.prefab.type, right.prefab.type);
         }
 
         internal static string BuildPlacementStableIdentity(PlacementEntryReport entry)
@@ -553,13 +702,17 @@ namespace Game.Editor
                 throw new ArgumentNullException(nameof(entry));
             var builder = new StringBuilder(640);
             AppendIdentity(builder, entry.sourcePath);
+            AppendIdentity(builder, entry.sourcePathGroupSha256);
+            AppendIdentity(builder, entry.sourceResolution);
+            AppendIdentity(builder, entry.resolvedHierarchyPath);
+            AppendIdentity(builder, entry.sourceOwnership);
+            AppendIdentity(builder, entry.sourceHiding);
+            AppendIdentity(builder, entry.decisionOwner);
             AppendIdentity(builder, entry.category);
             AppendIdentity(builder, entry.sourceKey);
             builder.Append(entry.factionId).Append('|')
                 .Append(entry.configSourcePathOccurrenceCount).Append('|')
-                .Append(entry.sceneMatchCount).Append('|');
-            foreach (string path in entry.hierarchyPaths)
-                AppendIdentity(builder, path);
+                .Append(entry.sceneCandidateCount).Append('|');
             AppendVectorBits(builder, entry.worldCenter);
             AppendVectorBits(builder, entry.worldPosition);
             AppendVectorBits(builder, entry.worldEulerAngles);
@@ -573,7 +726,7 @@ namespace Game.Editor
             return builder.ToString();
         }
 
-        private static string ComputePlacementAggregate(IReadOnlyList<PlacementEntryReport> entries)
+        internal static string ComputePlacementAggregate(IReadOnlyList<PlacementEntryReport> entries)
         {
             var builder = new StringBuilder(entries.Count * 80);
             for (int i = 0; i < entries.Count; i++)
@@ -582,6 +735,31 @@ namespace Game.Editor
                 builder.Append(identity.Length).Append(':').Append(identity).Append('\n');
             }
             return ComputeSha256(builder.ToString());
+        }
+
+        internal static string ComputeIdentityPayloadSha256(List<PlacementConfigReport> placements)
+        {
+            if (placements == null)
+                throw new ArgumentNullException(nameof(placements));
+            var payload = new IdentityPayloadEnvelope
+            {
+                placementConfigs = placements
+                    .OrderBy(entry => entry.kind, StringComparer.Ordinal).ToList()
+            };
+            return ComputeSha256(JsonUtility.ToJson(payload, false));
+        }
+
+        private static bool HasExpectedIdentityPayload(PlacementOwnershipReport report)
+        {
+            return report != null && IsSha256(report.identityPayloadSha256) &&
+                   string.Equals(
+                       report.identityPayloadSha256,
+                       ComputeIdentityPayloadSha256(report.placementConfigs),
+                       StringComparison.Ordinal) &&
+                   string.Equals(
+                       report.identityPayloadSha256,
+                       ExpectedIdentityPayloadSha256,
+                       StringComparison.Ordinal);
         }
 
         private static Dictionary<string, List<string>> BuildScenePathIndex(Scene scene)
@@ -720,8 +898,8 @@ namespace Game.Editor
                 [VehicleAssetPath] = "898199006ec1e8be4916554c07f4e9635c8e35e5ca52c7b035a7e10375c9cf30",
                 [VehicleAssetPath + ".meta"] = "94ce2a975f2a211b8a01b40563ec100f81ee388baa71bb327a8ee1dec9b2f9d9",
                 [MatchScenePath] = "dca7c83b765ce40099ce4fd62a53cbee5bc306107f8a026abcb941a59bf53a46",
-                ["Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs"] = "bd200299767aeb0a7efd3d67d6c3e451ef3dc9327fe025163138486dbd0ff689",
-                ["Assets/Game/Scripts/Composition/MatchSceneView.cs"] = "74704998d2a0daff6c9cdc4dd370c8a7d00d0a828b08741a7cd5a03ca562d1a6",
+                ["Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs"] = "4ab539902e867989d99fc934de572a1c4958881e81d8d812cab2b45b5d17024a",
+                ["Assets/Game/Scripts/Composition/MatchSceneView.cs"] = "657c90a2d0a4d6393395235b38ebd07e1157acc628b1a9267bf825f4c92d295b",
                 ["Assets/Game/Scripts/Configs/MapBuildingPlacementConfig.cs"] = "a1d91971d5f3baebbbf85a8140780f9dd0af9f79dfce6b098e2b6d63d15cddaf",
                 ["Assets/Game/Scripts/Configs/MapVehiclePlacementConfig.cs"] = "513af70e6d5934735fa4767261be0814ae07a20c22a30abbe529583b4633fceb",
                 ["Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs"] = "3eca4ad45ed5f8f7a4303d8d7b5e1c7f8af26ada57220edcc5ea0edcb382d613",
@@ -730,7 +908,7 @@ namespace Game.Editor
                 ["Assets/Game/Scripts/Systems/MapVehiclePlacementClearanceSystemHelper.cs"] = "22d55b2424bf5b9c117ea22f338d838501a9c4ad68dc0d3005f8da2c5034c54a",
                 ["Assets/Game/Scripts/Systems/MapVehiclePlacementSpawnPrefabSystemHelper.cs"] = "ab22e1db28ec08d59f1db8b0f21a6e76682688ef1d9095b390ca45e43533b323",
                 [BaselineEvidencePath] = "d4d4674850766c5cd95e1bb5fbb6f26893e0bb019dbaf266a0c9897a3befc807",
-                [TrackerPath] = "7621e3f1c17ac7a0d7a8945cf80c8fe1ee9c1c5b0caa180d72312d9735a414e0"
+                [TrackerPath] = "157eb5ea9fb38e808538e30f134a153cb0663c98f0608b03ab4f622cf852a268"
             };
         }
 
@@ -847,12 +1025,12 @@ namespace Game.Editor
         private static PlacementSpec BuildingSpec() => new(
             "Building", BuildingAssetPath, BuildingAssetGuid, typeof(MapBuildingPlacementConfig).FullName,
             "mapBuildingPlacementConfig", "mapBuildingAuthoringRoot", "Map[10]/Buildings[18]",
-            4130205265208547405, ExpectedBuildingCount, 205, 246);
+            4130205265208547405, ExpectedBuildingCount, 205, 246, 49, 152);
 
         private static PlacementSpec VehicleSpec() => new(
             "Vehicle", VehicleAssetPath, VehicleAssetGuid, typeof(MapVehiclePlacementConfig).FullName,
             "mapVehiclePlacementConfig", "mapVehicleAuthoringRoot", "Map[10]/Vehicles[20]",
-            8246677813643586928, ExpectedVehicleCount, 7, 22);
+            8246677813643586928, ExpectedVehicleCount, 7, 22, 5, 10);
 
         private static bool HasExpectedCounts(ReportCounts counts)
         {
@@ -860,6 +1038,8 @@ namespace Game.Editor
                    counts.buildingPlacements == ExpectedBuildingCount &&
                    counts.vehiclePlacements == ExpectedVehicleCount &&
                    counts.totalPlacements == ExpectedBuildingCount + ExpectedVehicleCount &&
+                   counts.duplicateSourcePathGroups == 54 &&
+                   counts.duplicateSourcePathEntries == 162 &&
                    counts.runtimeConsumers == ExpectedRuntimeConsumerSpecs().Count &&
                    counts.needsDecision == 2;
         }
@@ -879,6 +1059,8 @@ namespace Game.Editor
                 buildingPlacements = buildingCount,
                 vehiclePlacements = vehicleCount,
                 totalPlacements = buildingCount + vehicleCount,
+                duplicateSourcePathGroups = placements.Sum(entry => entry.duplicateSourcePathGroupCount),
+                duplicateSourcePathEntries = placements.Sum(entry => entry.duplicateSourcePathEntryCount),
                 runtimeConsumers = consumers.Count,
                 needsDecision = decisions.Count(entry =>
                     string.Equals(entry.state, DecisionState, StringComparison.Ordinal))
@@ -899,6 +1081,10 @@ namespace Game.Editor
                    report.counts.buildingPlacements == building.count &&
                    report.counts.vehiclePlacements == vehicle.count &&
                    report.counts.totalPlacements == report.placementConfigs.Sum(entry => entry.count) &&
+                   report.counts.duplicateSourcePathGroups ==
+                       report.placementConfigs.Sum(entry => entry.duplicateSourcePathGroupCount) &&
+                   report.counts.duplicateSourcePathEntries ==
+                       report.placementConfigs.Sum(entry => entry.duplicateSourcePathEntryCount) &&
                    report.counts.runtimeConsumers == report.runtimeConsumers.Count &&
                    report.counts.needsDecision == report.decisions.Count(entry =>
                        string.Equals(entry.state, DecisionState, StringComparison.Ordinal));
@@ -1123,11 +1309,14 @@ namespace Game.Editor
             public readonly int count;
             public readonly int faction0Count;
             public readonly int faction1Count;
+            public readonly int duplicateGroupCount;
+            public readonly int duplicateEntryCount;
 
             public PlacementSpec(
                 string kind, string assetPath, string assetGuid, string configType,
                 string configField, string rootField, string rootHierarchyPath, long rootLocalId,
-                int count, int faction0Count, int faction1Count)
+                int count, int faction0Count, int faction1Count,
+                int duplicateGroupCount, int duplicateEntryCount)
             {
                 this.kind = kind;
                 this.assetPath = assetPath;
@@ -1140,6 +1329,8 @@ namespace Game.Editor
                 this.count = count;
                 this.faction0Count = faction0Count;
                 this.faction1Count = faction1Count;
+                this.duplicateGroupCount = duplicateGroupCount;
+                this.duplicateEntryCount = duplicateEntryCount;
             }
         }
 
@@ -1164,6 +1355,7 @@ namespace Game.Editor
             public int reportSchemaVersion;
             public string baselineCommit;
             public string result;
+            public string identityPayloadSha256;
             public ReportCounts counts;
             public BaselineReferenceReport opmap002Baseline;
             public List<InputHashReport> directInputHashes;
@@ -1179,6 +1371,8 @@ namespace Game.Editor
             public int buildingPlacements;
             public int vehiclePlacements;
             public int totalPlacements;
+            public int duplicateSourcePathGroups;
+            public int duplicateSourcePathEntries;
             public int runtimeConsumers;
             public int needsDecision;
         }
@@ -1221,9 +1415,24 @@ namespace Game.Editor
             public bool spawnOnMatchStart;
             public bool hideAuthoringVisualsAfterSpawn;
             public int count;
+            public int duplicateSourcePathGroupCount;
+            public int duplicateSourcePathEntryCount;
             public List<FactionCountReport> factionCounts;
             public string identityAggregateSha256;
+            public List<SourcePathGroupReport> sourcePathGroups;
             public List<PlacementEntryReport> entries;
+        }
+
+        [Serializable]
+        internal sealed class SourcePathGroupReport
+        {
+            public string stableIdentitySha256;
+            public string sourcePath;
+            public int configEntryCount;
+            public int sceneCandidateCount;
+            public List<string> candidates;
+            public string resolution;
+            public string decisionOwner;
         }
 
         [Serializable]
@@ -1249,12 +1458,17 @@ namespace Game.Editor
         {
             public string stableIdentitySha256;
             public string sourcePath;
+            public string sourcePathGroupSha256;
+            public string sourceResolution;
+            public string resolvedHierarchyPath;
+            public string sourceOwnership;
+            public string sourceHiding;
+            public string decisionOwner;
             public string category;
             public string sourceKey;
             public int factionId;
             public int configSourcePathOccurrenceCount;
-            public int sceneMatchCount;
-            public List<string> hierarchyPaths;
+            public int sceneCandidateCount;
             public Vector3 worldCenter;
             public Vector3 worldPosition;
             public Vector3 worldEulerAngles;
@@ -1289,6 +1503,12 @@ namespace Game.Editor
             public string migrationOwner;
             public string state;
             public string decisionOwner;
+        }
+
+        [Serializable]
+        private sealed class IdentityPayloadEnvelope
+        {
+            public List<PlacementConfigReport> placementConfigs;
         }
     }
 }

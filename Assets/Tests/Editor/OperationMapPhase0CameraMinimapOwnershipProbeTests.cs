@@ -216,7 +216,13 @@ namespace Game.Tests.Editor
             Assert.That(methodIdentities, Does.Contain(
                 "Game.Runtime.RtsCameraRequestSystem::ProcessPendingRequests(Unity.Entities.EntityManager,Game.Runtime.RtsCameraSystem,UnityEngine.Camera,System.Action)"));
             Assert.That(methodIdentities, Does.Contain(
+                "Game.UI.Shell.Ecs.UiShellEcsGateway.UiShellActionAdapter::ToAssistantCommandIntentKind(Game.UI.Contracts.UiAssistantCommandIntentKind,Game.Components.AssistantRecommendationKind)"));
+            Assert.That(methodIdentities, Does.Contain(
+                "Game.Authoring.GridAuthoring.GridBaker::Bake(Game.Authoring.GridAuthoring)"));
+            Assert.That(methodIdentities, Has.None.EqualTo(
                 "Game.UI.Shell.Ecs.UiShellEcsGateway::ToAssistantCommandIntentKind(Game.UI.Contracts.UiAssistantCommandIntentKind,Game.Components.AssistantRecommendationKind)"));
+            Assert.That(methodIdentities, Has.None.EqualTo(
+                "Game.Authoring.GridAuthoring.Baker::Bake(Game.Authoring.GridAuthoring)"));
             Assert.DoesNotThrow(
                 OperationMapPhase0CameraMinimapOwnershipProbe.ValidateDeclaredMethodSignatures);
 
@@ -249,6 +255,7 @@ namespace Game.Tests.Editor
         [Test]
         public void Publication_InvalidatesPriorSuccessAndCleansTemporaryOutput()
         {
+            RequireDescriptorRelativePublication();
             string outputPath = Path.Combine(
                 Path.GetTempPath(),
                 "opmap007-publication-" + Guid.NewGuid().ToString("N") + ".json");
@@ -273,6 +280,7 @@ namespace Game.Tests.Editor
         [Test]
         public void Publication_ConcurrentRunsPublishOnlyExactValidatedBytes()
         {
+            RequireDescriptorRelativePublication();
             string outputPath = Path.Combine(
                 Path.GetTempPath(),
                 "opmap007-race-" + Guid.NewGuid().ToString("N") + ".json");
@@ -297,6 +305,7 @@ namespace Game.Tests.Editor
         [Test]
         public void Publication_ValidInvalidRaceNeverPublishesForeignBytes()
         {
+            RequireDescriptorRelativePublication();
             string outputPath = Path.Combine(
                 Path.GetTempPath(),
                 "opmap007-negative-race-" + Guid.NewGuid().ToString("N") + ".json");
@@ -390,8 +399,47 @@ namespace Game.Tests.Editor
         }
 
         [Test]
+        public void Publication_RejectsCanonicalParentReplacementAfterFinalValidation()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                Assert.Ignore("Unix descriptor-relative parent-replacement negative.");
+
+            string container = Path.Combine(
+                Path.GetTempPath(),
+                "opmap007-parent-replace-" + Guid.NewGuid().ToString("N"));
+            string canonicalParent = Path.Combine(container, "canonical");
+            string displacedParent = Path.Combine(container, "displaced");
+            Directory.CreateDirectory(canonicalParent);
+            try
+            {
+                OperationMapPhase0CameraMinimapOwnershipProbe.ValidatedReportDestination destination =
+                    Destination(Path.Combine(canonicalParent, "report.json"));
+
+                Assert.Throws<InvalidOperationException>(() =>
+                    OperationMapPhase0CameraMinimapOwnershipProbe.PublishReportAtomically(
+                        destination,
+                        File.ReadAllText(ReportPath),
+                        () =>
+                        {
+                            Directory.Move(canonicalParent, displacedParent);
+                            Assert.That(Symlink(displacedParent, canonicalParent), Is.EqualTo(0));
+                        }));
+
+                Assert.That(File.Exists(Path.Combine(canonicalParent, "report.json")), Is.False);
+                Assert.That(File.Exists(Path.Combine(displacedParent, "report.json")), Is.False);
+                Assert.That(Directory.GetFiles(displacedParent), Is.Empty);
+            }
+            finally
+            {
+                Unlink(canonicalParent);
+                Directory.Delete(container, true);
+            }
+        }
+
+        [Test]
         public void Run_WritesOnlyExternalOutputAndLeavesAllInputsUnchanged()
         {
+            RequireDescriptorRelativePublication();
             string projectRoot = Directory.GetParent(Application.dataPath).FullName;
             string outputPath = Path.Combine(
                 Path.GetTempPath(),
@@ -479,6 +527,12 @@ namespace Game.Tests.Editor
             return OperationMapPhase0CameraMinimapOwnershipProbe.ResolveReportDestination(
                 Directory.GetParent(Application.dataPath).FullName,
                 outputPath);
+        }
+
+        private static void RequireDescriptorRelativePublication()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                Assert.Ignore("Descriptor-relative report publication is unavailable on Windows.");
         }
 
         private static string[] TemporaryOutputs(string outputPath)

@@ -233,6 +233,12 @@ def normalize_property(value: str) -> str:
     return " ".join(value.strip().split())
 
 
+def _device_identity_values_match(key: str, expected: Any, actual: Any) -> bool:
+    if key == "soc" and isinstance(expected, str) and isinstance(actual, str):
+        return normalize_property(expected).casefold() == normalize_property(actual).casefold()
+    return actual == expected
+
+
 def parse_adb_devices(output: str, expected_serial: str) -> str:
     rows: list[tuple[str, str]] = []
     for raw_line in output.splitlines():
@@ -562,10 +568,12 @@ def collect_device_identity(adb: AdbBoundary, profile: dict[str, Any]) -> dict[s
         )
     actual["resolutionWidth"], actual["resolutionHeight"] = expected_dimensions
     for key, expected in device.items():
-        if actual.get(key) != expected:
+        if not _device_identity_values_match(key, expected, actual.get(key)):
             raise CollectionError(
                 f"live device {key} mismatch: expected {expected!r}, found {actual.get(key)!r}"
             )
+        if key == "soc":
+            actual[key] = expected
     return actual
 
 

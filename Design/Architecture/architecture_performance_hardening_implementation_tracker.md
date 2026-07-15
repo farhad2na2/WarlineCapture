@@ -257,7 +257,7 @@ The program is complete only when all of the following are true:
 | Red performance gates | `0`: the unchanged steady-state Match GC gate passes at `292 / 1,024` player-relevant bytes over 300 measured frames after 180 warmup frames. The latest canonical Match baseline passes over 557 frames at `7.20 ms` average, `11.48 ms` p95, `13.16 ms` p99, and zero measured allocation with 733 units and 628 buildings. |
 | Red visual gates | `2`: 23:00 Match readability is too dark, and the current near static-map capture contains black/missing surface regions |
 | Last verified commit | `48d38c1c4685ca2413bfb8ec0a0e7d2d41b8c82f` on `origin/main`; architecture implementation commit `98cb2bb6d4321132574ebc5247aa3f2c93359eac` |
-| Last update | 2026-07-15 - the Xiaomi reference device is connected with thermal status `0`; Android/visual evidence remains blocked by operation-map-owned manifest and visual defects, while APH-509 now has explicit deterministic probes for all five former hard-coded package blind spots |
+| Last update | 2026-07-15 - clean exact-revision Android artifacts are built and the connected Xiaomi preflight now tolerates casing-only SoC vendor text drift without weakening exact serial or numeric identity checks; formal Android and visual evidence remain open |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -2169,11 +2169,12 @@ Append one entry per completed or blocked task. Keep entries concise but include
 
 - Status: the operation-map manifest blocker is resolved; formal Android development/release evidence and the visual matrix remain open; no architecture-owned map production file changed
 - Device: Xiaomi `24090RA29G` (`R4M7PZEQZ58T59ZH`) passed identity, installation, cold-launch, Menu/Campaign/Match routing, 60-second survival, crash/ANR, and thermal-status-`0` smoke checks before disconnecting from ADB prior to formal collection
-- Android build: `BuildScript.BuildAndroidProfilerApk` succeeds on clean exact revision `f850f3a5bdc6b3f4ffa8ad7ab453c07611fb5e8a`; the profiler APK is `478,122,683` bytes with SHA-256 `dcd05f8a602333bb9f48812c1caa4e5d4a590c5304dd8d85eb3adf824834a69a`
+- Android builds: clean revision `792836a043f8b30bf83f4f036b25f02ffd4d8e4d` produced a release APK of `442,922,672` bytes with SHA-256 `ec23ddb8a2b9d5e93e2c0b84878db144cc2706bc4dca89fed2dabdd87fd8e20f` and a profiler APK of `478,122,687` bytes with SHA-256 `4b265986fa36315193a9359b406707c4737ebf99abd0544f3da70f758b353649`
+- Collector preflight: the connected device reported `Mediatek MT6878` while the canonical profile records `MediaTek MT6878`; shared development/release identity validation now accepts only casing/whitespace-equivalent SoC text, emits the canonical profile value for downstream exact evidence binding, and preserves exact checks for serial and every other field. The combined development/release collector matrix passes `23/23`.
 - Visual preflight: the 16:9 current-profile session emitted all 13 expected artifacts, but final acceptance is rejected because night readability is too dark and the near static-map capture has black/missing surface regions
-- Preserved evidence: visual artifacts are staged outside Git at `/private/tmp/warline-aph809-current-16x9-staging`; the accepted profiler build log is `/private/tmp/warline-aph803-profiler-apk-f850f3a5b-r3.log`; the clean manual Match smoke is `/private/tmp/aph803-device-user-entered-match.png` plus `/private/tmp/aph803-match-check.mp4`
+- Preserved evidence: visual artifacts are staged outside Git at `/private/tmp/warline-aph809-current-16x9-staging`; accepted build logs are `/private/tmp/warline-aph803-profiler-apk-792836a04.log` and `/private/tmp/warline-aph804-release-apk-792836a04-clean-provenance.log`; the canonical release report is `/private/tmp/warline-aph804-release-apk-report-792836a04.json`; the clean manual Match smoke is `/private/tmp/aph803-device-user-entered-match.png` plus `/private/tmp/aph803-match-check.mp4`
 - Ownership boundary: no operation-map or First Launch file was edited by this architecture slice; the manifest refresh is consumed as landed external work
-- Next action: reconnect and leave the pinned phone foreground/untouched for the automatic APH-803 collector, then build clean exact-revision release artifacts, collect APH-804, and recapture all four APH-809 visual sessions from one admissible revision
+- Next action: rebuild the profiler artifact from the SoC-normalization revision, leave the pinned phone foreground/untouched for the automatic APH-803 collector, then collect APH-804 and recapture all four APH-809 visual sessions from one admissible revision
 
 ### 2026-07-15 - APH-509 - Explicit package static probes
 

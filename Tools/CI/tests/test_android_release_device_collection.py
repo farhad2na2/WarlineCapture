@@ -17,6 +17,7 @@ from Tools.CI.android_release_device_collection import (
     SustainedCollection,
     _pull_verbatim,
     assemble_evidence,
+    collect_device_identity,
     collect_startup_samples,
     collect_sustained,
     launch_argv,
@@ -195,9 +196,43 @@ class NoCallAdb:
         raise AssertionError
 
 
+class IdentityAdb:
+    def __init__(self, profile: dict, soc_manufacturer: str) -> None:
+        self.profile = profile
+        self.properties = {
+            "ro.product.manufacturer": profile["device"]["manufacturer"],
+            "ro.product.model": profile["device"]["model"],
+            "ro.product.device": profile["device"]["deviceCodeName"],
+            "ro.build.version.release": profile["device"]["androidRelease"],
+            "ro.soc.manufacturer": soc_manufacturer,
+            "ro.soc.model": "MT6878",
+            "ro.build.version.sdk": str(profile["device"]["sdkLevel"]),
+        }
+
+    def run(self, args, *, timeout=60.0, use_serial=True):
+        args = tuple(args)
+        if args[:2] == ("shell", "getprop"):
+            return result(args, f"{self.properties[args[2]]}\n")
+        if args == ("shell", "wm", "size"):
+            device = self.profile["device"]
+            return result(
+                args,
+                f"Physical size: {device['resolutionWidth']}x{device['resolutionHeight']}\n",
+            )
+        raise AssertionError(f"unexpected identity command: {args!r}")
+
+    def start_logcat(self, output_path):
+        raise AssertionError
+
+
 class AndroidReleaseDeviceCollectionTests(unittest.TestCase):
     def setUp(self) -> None:
         self.profile = load_profile(DEFAULT_PROFILE)
+
+    def test_device_identity_accepts_soc_casing_and_emits_canonical_profile_value(self) -> None:
+        actual = collect_device_identity(IdentityAdb(self.profile, "Mediatek"), self.profile)
+
+        self.assertEqual(self.profile["device"], actual)
 
     def test_exact_launch_argv_has_one_unity_extra_with_all_tokens(self) -> None:
         argv = launch_argv(self.profile)

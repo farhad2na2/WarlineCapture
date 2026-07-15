@@ -39,6 +39,7 @@ namespace Game.Editor
             "Assets/Game/GeneratedStaticMapPresentation/Scenes";
         private const string AggregateAlgorithm =
             "sha256(utf8(path\\0sha256\\n), entries sorted by ordinal path)";
+        private const int IntegritySchemaVersion = 1;
 
         private static readonly UTF8Encoding Utf8WithoutBom = new(false);
 
@@ -48,28 +49,78 @@ namespace Game.Editor
             string outputPath = ResolveReportOutputPath(
                 projectRoot,
                 Environment.GetEnvironmentVariable(ReportPathEnvironmentVariable));
-            RequireCleanLoadedScenes();
-
-            SceneSetup[] previousSetup = EditorSceneManager.GetSceneManagerSetup();
-            BaselineReport report;
-            try
+            BaselineReport report = null;
+            PublishReportAtomically(outputPath, () =>
             {
-                report = BuildReport(projectRoot, outputPath, previousSetup);
-            }
-            finally
-            {
-                RestoreSceneSetup(previousSetup);
-            }
+                RequireCleanLoadedScenes();
+                SceneSetup[] previousSetup = EditorSceneManager.GetSceneManagerSetup();
+                try
+                {
+                    report = BuildReport(projectRoot, outputPath, previousSetup);
+                    return JsonUtility.ToJson(report, true) + "\n";
+                }
+                finally
+                {
+                    RestoreSceneSetup(previousSetup);
+                }
+            });
 
-            string json = JsonUtility.ToJson(report, true) + "\n";
-            if (!HasRequiredReportShape(json))
-                throw new InvalidOperationException("Operation-map baseline report failed its schema-shape check.");
-
-            File.WriteAllText(outputPath, json, Utf8WithoutBom);
             Debug.Log(
                 $"[OperationMapPhase0BaselineProbe] result=Passed " +
                 $"chunks={report.manifest.chunkCount} sources={report.manifest.sourceCount} " +
                 $"report={outputPath}");
+        }
+
+        internal static void PublishReportAtomically(
+            string outputPath,
+            Func<string> buildJson,
+            Action<string, string, Encoding> writeAllText = null)
+        {
+            if (string.IsNullOrWhiteSpace(outputPath))
+                throw new ArgumentException("Report output path is required.", nameof(outputPath));
+            if (buildJson == null)
+                throw new ArgumentNullException(nameof(buildJson));
+
+            if (File.Exists(outputPath))
+                File.Delete(outputPath);
+
+            string temporaryPath = outputPath + ".tmp-" + Guid.NewGuid().ToString("N");
+            try
+            {
+                string json = buildJson();
+                if (!TryValidateRequiredReportShape(json, out string rejectionReason))
+                {
+                    throw new InvalidOperationException(
+                        $"Operation-map baseline report failed its schema-shape check: {rejectionReason}");
+                }
+
+                Action<string, string, Encoding> writer = writeAllText ??
+                    ((path, content, encoding) => File.WriteAllText(path, content, encoding));
+                writer(temporaryPath, json, Utf8WithoutBom);
+                if (!File.Exists(temporaryPath))
+                {
+                    throw new InvalidOperationException(
+                        "Persisted operation-map baseline report is missing after write.");
+                }
+                if (!TryValidateRequiredReportShape(
+                        File.ReadAllText(temporaryPath, Utf8WithoutBom),
+                        out string persistedRejectionReason))
+                {
+                    throw new InvalidOperationException(
+                        "Persisted operation-map baseline report failed its schema-shape check: " +
+                        persistedRejectionReason);
+                }
+
+                if (File.Exists(outputPath))
+                    File.Replace(temporaryPath, outputPath, null);
+                else
+                    File.Move(temporaryPath, outputPath);
+            }
+            finally
+            {
+                if (File.Exists(temporaryPath))
+                    File.Delete(temporaryPath);
+            }
         }
 
         internal static string ResolveReportOutputPath(string projectRoot, string configuredPath)
@@ -84,24 +135,14 @@ namespace Game.Editor
                 throw new InvalidOperationException("The operation-map baseline report path must be absolute.");
 
             string fullPath = Path.GetFullPath(candidate);
+            string normalizedRoot = Path.GetFullPath(projectRoot);
+            if (IsSameOrChildPath(fullPath, normalizedRoot))
+            {
+                throw new InvalidOperationException(
+                    $"Refusing to write the operation-map baseline report inside project root {normalizedRoot}.");
+            }
             if (!string.Equals(Path.GetExtension(fullPath), ".json", StringComparison.OrdinalIgnoreCase))
                 throw new InvalidOperationException("The operation-map baseline report path must end in .json.");
-
-            string normalizedRoot = Path.GetFullPath(projectRoot);
-            string[] protectedRoots =
-            {
-                Path.Combine(normalizedRoot, "Assets"),
-                Path.Combine(normalizedRoot, "Packages"),
-                Path.Combine(normalizedRoot, "ProjectSettings")
-            };
-            for (int i = 0; i < protectedRoots.Length; i++)
-            {
-                if (IsSameOrChildPath(fullPath, protectedRoots[i]))
-                {
-                    throw new InvalidOperationException(
-                        $"Refusing to write the operation-map baseline report under {protectedRoots[i]}.");
-                }
-            }
 
             string directory = Path.GetDirectoryName(fullPath);
             if (string.IsNullOrWhiteSpace(directory) || !Directory.Exists(directory))
@@ -145,31 +186,363 @@ namespace Game.Editor
 
         internal static bool HasRequiredReportShape(string json)
         {
+            return TryValidateRequiredReportShape(json, out _);
+        }
+
+        private static bool TryValidateRequiredReportShape(string json, out string rejectionReason)
+        {
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                rejectionReason = "empty-json";
+                return false;
+            }
+
+            try
+            {
+                BaselineReport report = JsonUtility.FromJson<BaselineReport>(json);
+                if (report == null) return Reject("missing-report", out rejectionReason);
+                if (!string.Equals(report.reportSchema, ReportSchema, StringComparison.Ordinal) ||
+                    report.reportSchemaVersion != ReportSchemaVersion)
+                    return Reject("unsupported-report-schema", out rejectionReason);
+                if (!string.Equals(report.result, "Passed", StringComparison.Ordinal))
+                    return Reject("result-not-passed", out rejectionReason);
+                if (!IsProjectReportComplete(report.project))
+                    return Reject("project-incomplete", out rejectionReason);
+                if (report.sceneSetupBeforeProbe == null)
+                    return Reject("scene-setup-missing", out rejectionReason);
+                if (!IsSceneReportSetComplete(report.scenes, report.subSceneReference))
+                    return Reject("scene-set-incomplete", out rejectionReason);
+                if (!IsMatchSceneViewReferenceSetComplete(report.matchSceneViewReferences))
+                    return Reject("match-scene-view-references-incomplete", out rejectionReason);
+                if (!IsManifestReportComplete(report.manifest))
+                    return Reject("manifest-incomplete", out rejectionReason);
+                if (!IsGeneratedOutputsReportComplete(report.generatedOutputs, report.manifest))
+                    return Reject("generated-outputs-incomplete", out rejectionReason);
+                if (!IsBuildSettingsSceneSetComplete(report.buildSettingsScenes))
+                    return Reject("build-settings-scenes-incomplete", out rejectionReason);
+                if (!IsPlacementReportComplete(report.buildingPlacements))
+                    return Reject("building-placements-incomplete", out rejectionReason);
+                if (!IsPlacementReportComplete(report.vehiclePlacements))
+                    return Reject("vehicle-placements-incomplete", out rejectionReason);
+                if (!IsMapDataReportComplete(report.mapData))
+                    return Reject("map-data-incomplete", out rejectionReason);
+                if (!Path.IsPathRooted(report.reportPath))
+                    return Reject("report-path-invalid", out rejectionReason);
+
+                rejectionReason = "none";
+                return true;
+            }
+            catch (Exception exception) when (
+                exception is ArgumentException ||
+                exception is InvalidOperationException ||
+                exception is NotSupportedException)
+            {
+                rejectionReason = "unreadable-json:" + exception.GetType().Name;
+                return false;
+            }
+        }
+
+        private static bool Reject(string reason, out string rejectionReason)
+        {
+            rejectionReason = reason;
+            return false;
+        }
+
+        internal static bool HasSupportedIntegrityDocumentShape(string json)
+        {
             if (string.IsNullOrWhiteSpace(json))
                 return false;
 
             try
             {
-                BaselineReport report = JsonUtility.FromJson<BaselineReport>(json);
-                return report != null &&
-                       string.Equals(report.reportSchema, ReportSchema, StringComparison.Ordinal) &&
-                       report.reportSchemaVersion == ReportSchemaVersion &&
-                       string.Equals(report.result, "Passed", StringComparison.Ordinal) &&
-                       report.project != null &&
-                       report.sceneSetupBeforeProbe != null &&
-                       report.scenes != null &&
-                       report.matchSceneViewReferences != null &&
-                       report.manifest != null &&
-                       report.generatedOutputs != null &&
-                       report.buildSettingsScenes != null &&
-                       report.buildingPlacements != null &&
-                       report.vehiclePlacements != null &&
-                       report.mapData != null;
+                IntegrityDocument document = JsonUtility.FromJson<IntegrityDocument>(json);
+                if (document == null || document.schemaVersion != IntegritySchemaVersion ||
+                    !IsHash128(document.contentHash) || document.scenes == null || document.scenes.Length == 0)
+                {
+                    return false;
+                }
+
+                var paths = new HashSet<string>(StringComparer.Ordinal);
+                for (int i = 0; i < document.scenes.Length; i++)
+                {
+                    IntegrityEntry entry = document.scenes[i];
+                    if (entry == null || string.IsNullOrWhiteSpace(entry.scenePath) ||
+                        !entry.scenePath.EndsWith(".unity", StringComparison.Ordinal) ||
+                        !IsSha256(entry.fileHash) || !IsSha256(entry.metaHash) ||
+                        !paths.Add(entry.scenePath))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
             }
             catch (ArgumentException)
             {
                 return false;
             }
+        }
+
+        private static bool IsProjectReportComplete(ProjectReport project)
+        {
+            return project != null &&
+                   !string.IsNullOrWhiteSpace(project.unityVersion) &&
+                   !string.IsNullOrWhiteSpace(project.projectName) &&
+                   Path.IsPathRooted(project.projectRoot) &&
+                   !string.IsNullOrWhiteSpace(project.productName) &&
+                   !string.IsNullOrWhiteSpace(project.productGuid) &&
+                   !string.IsNullOrWhiteSpace(project.companyName) &&
+                   !string.IsNullOrWhiteSpace(project.applicationIdentifier);
+        }
+
+        private static bool IsSceneReportSetComplete(
+            IReadOnlyList<SceneReport> scenes,
+            SubSceneReferenceReport subSceneReference)
+        {
+            if (scenes == null || scenes.Count != 2 || subSceneReference == null ||
+                string.IsNullOrWhiteSpace(subSceneReference.componentHierarchyPath) ||
+                string.IsNullOrWhiteSpace(subSceneReference.componentGlobalObjectId) ||
+                !string.Equals(subSceneReference.sceneAssetPath, MatchSubScenePath, StringComparison.Ordinal) ||
+                string.IsNullOrWhiteSpace(subSceneReference.sceneAssetGuid) || !subSceneReference.autoLoad)
+            {
+                return false;
+            }
+
+            SceneReport match = scenes.SingleOrDefault(
+                scene => string.Equals(scene?.path, MatchScenePath, StringComparison.Ordinal));
+            SceneReport subScene = scenes.SingleOrDefault(
+                scene => string.Equals(scene?.path, MatchSubScenePath, StringComparison.Ordinal));
+            return IsSceneReportComplete(match) && IsSceneReportComplete(subScene) &&
+                   subScene.autoLoadKnown && subScene.autoLoad;
+        }
+
+        private static bool IsSceneReportComplete(SceneReport scene)
+        {
+            return scene != null &&
+                   !string.IsNullOrWhiteSpace(scene.guid) &&
+                   !string.IsNullOrWhiteSpace(scene.loadMode) &&
+                   scene.loadedDuringInspection &&
+                   scene.rootObjectCount > 0 &&
+                   scene.hierarchyObjectCount >= scene.rootObjectCount &&
+                   IsSha256(scene.hierarchySha256) &&
+                   scene.rootObjects != null &&
+                   scene.rootObjects.Count == scene.rootObjectCount &&
+                   scene.rootObjects.All(root => root != null &&
+                       !string.IsNullOrWhiteSpace(root.name) &&
+                       !string.IsNullOrWhiteSpace(root.hierarchyPath) &&
+                       root.hierarchyObjectCount > 0 &&
+                       IsSha256(root.hierarchySha256) &&
+                       root.rootComponentTypes != null && root.rootComponentTypes.Count > 0);
+        }
+
+        private static bool IsMatchSceneViewReferenceSetComplete(
+            IReadOnlyList<SerializedObjectReferenceFieldReport> references)
+        {
+            return references != null && references.Count > 0 && references.All(reference =>
+                reference != null &&
+                !string.IsNullOrWhiteSpace(reference.propertyName) &&
+                !string.IsNullOrWhiteSpace(reference.declaredType) &&
+                reference.elementCount >= 0 &&
+                reference.targets != null &&
+                reference.targets.Count == reference.elementCount &&
+                (reference.isCollection || reference.elementCount == 1) &&
+                reference.targets.All(IsObjectIdentityComplete));
+        }
+
+        private static bool IsManifestReportComplete(ManifestReport manifest)
+        {
+            return manifest != null && IsObjectIdentityComplete(manifest.asset) &&
+                   manifest.schemaVersion == StaticMapPresentationManifest.CurrentSchemaVersion &&
+                   string.Equals(manifest.canonicalScenePath, MatchScenePath, StringComparison.Ordinal) &&
+                   !string.IsNullOrWhiteSpace(manifest.canonicalSceneGuid) &&
+                   IsHash128(manifest.canonicalSceneDependencyHash) &&
+                   string.Equals(
+                       manifest.canonicalSceneDependencyHash,
+                       manifest.computedCanonicalSceneDependencyHash,
+                       StringComparison.Ordinal) &&
+                   manifest.chunkSize > 0f && IsHash128(manifest.contentHash) &&
+                   string.Equals(manifest.contentHash, manifest.computedContentHash, StringComparison.Ordinal) &&
+                   manifest.chunkCount > 0 && manifest.sourceCount > 0 &&
+                   IsSha256(manifest.fileSha256) && IsSha256(manifest.metaSha256);
+        }
+
+        private static bool IsGeneratedOutputsReportComplete(
+            GeneratedOutputsReport generated,
+            ManifestReport manifest)
+        {
+            if (generated == null || manifest == null ||
+                !string.Equals(generated.integrityPath, IntegrityPath, StringComparison.Ordinal) ||
+                generated.integritySchemaVersion != IntegritySchemaVersion ||
+                !string.Equals(generated.integrityContentHash, manifest.contentHash, StringComparison.Ordinal) ||
+                !IsSha256(generated.integrityFileSha256) || !IsSha256(generated.integrityMetaSha256) ||
+                generated.manifestSceneCount != manifest.chunkCount ||
+                generated.manifestSceneCount <= 0 ||
+                generated.ledgerSceneCount != generated.manifestSceneCount ||
+                generated.diskSceneCount != generated.manifestSceneCount ||
+                generated.diskMetaCount != generated.manifestSceneCount ||
+                !generated.exactFileSetParity ||
+                !string.Equals(generated.aggregateAlgorithm, AggregateAlgorithm, StringComparison.Ordinal) ||
+                !IsSha256(generated.sceneFilesAggregateSha256) ||
+                !IsSha256(generated.sceneMetasAggregateSha256) ||
+                !IsSha256(generated.combinedAggregateSha256) ||
+                generated.files == null || generated.files.Count != generated.manifestSceneCount)
+            {
+                return false;
+            }
+
+            var paths = new HashSet<string>(StringComparer.Ordinal);
+            var guids = new HashSet<string>(StringComparer.Ordinal);
+            var sceneInputs = new List<HashInput>(generated.files.Count);
+            var metaInputs = new List<HashInput>(generated.files.Count);
+            var combinedInputs = new List<HashInput>(generated.files.Count * 2);
+            string previousPath = null;
+            for (int i = 0; i < generated.files.Count; i++)
+            {
+                GeneratedSceneFileReport file = generated.files[i];
+                if (file == null || string.IsNullOrWhiteSpace(file.scenePath) ||
+                    !file.scenePath.EndsWith(".unity", StringComparison.Ordinal) ||
+                    !paths.Add(file.scenePath) ||
+                    (previousPath != null && string.CompareOrdinal(previousPath, file.scenePath) >= 0) ||
+                    string.IsNullOrWhiteSpace(file.sceneGuid) || !guids.Add(file.sceneGuid) ||
+                    !IsSha256(file.sceneSha256) ||
+                    !string.Equals(file.metaPath, file.scenePath + ".meta", StringComparison.Ordinal) ||
+                    !IsSha256(file.metaSha256))
+                {
+                    return false;
+                }
+
+                sceneInputs.Add(new HashInput(file.scenePath, file.sceneSha256));
+                metaInputs.Add(new HashInput(file.metaPath, file.metaSha256));
+                combinedInputs.Add(new HashInput(file.scenePath, file.sceneSha256));
+                combinedInputs.Add(new HashInput(file.metaPath, file.metaSha256));
+                previousPath = file.scenePath;
+            }
+
+            return string.Equals(
+                       generated.sceneFilesAggregateSha256,
+                       ComputeAggregateHash(sceneInputs),
+                       StringComparison.Ordinal) &&
+                   string.Equals(
+                       generated.sceneMetasAggregateSha256,
+                       ComputeAggregateHash(metaInputs),
+                       StringComparison.Ordinal) &&
+                   string.Equals(
+                       generated.combinedAggregateSha256,
+                       ComputeAggregateHash(combinedInputs),
+                       StringComparison.Ordinal);
+        }
+
+        private static bool IsBuildSettingsSceneSetComplete(IReadOnlyList<BuildSettingsSceneReport> scenes)
+        {
+            if (scenes == null || scenes.Count == 0)
+                return false;
+
+            var paths = new HashSet<string>(StringComparer.Ordinal);
+            var guids = new HashSet<string>(StringComparer.Ordinal);
+            for (int i = 0; i < scenes.Count; i++)
+            {
+                BuildSettingsSceneReport scene = scenes[i];
+                if (scene == null || scene.buildSettingsIndex != i ||
+                    string.IsNullOrWhiteSpace(scene.path) ||
+                    !scene.path.EndsWith(".unity", StringComparison.Ordinal) ||
+                    !paths.Add(scene.path) || string.IsNullOrWhiteSpace(scene.guid) || !guids.Add(scene.guid))
+                {
+                    return false;
+                }
+            }
+
+            return paths.Contains(MatchScenePath);
+        }
+
+        private static bool IsPlacementReportComplete(PlacementReport placements)
+        {
+            if (placements == null || string.IsNullOrWhiteSpace(placements.kind) ||
+                !IsObjectIdentityComplete(placements.config) ||
+                !IsObjectIdentityComplete(placements.authoringRoot) || placements.count <= 0 ||
+                !IsSha256(placements.identityPathAggregateSha256) || placements.entries == null ||
+                placements.entries.Count != placements.count)
+            {
+                return false;
+            }
+
+            PlacementEntryReport previous = null;
+            for (int i = 0; i < placements.entries.Count; i++)
+            {
+                PlacementEntryReport entry = placements.entries[i];
+                if (entry == null || string.IsNullOrWhiteSpace(entry.sourcePath) ||
+                    string.IsNullOrWhiteSpace(entry.category) ||
+                    entry.configSourcePathOccurrenceCount <= 0 || entry.sceneMatchCount <= 0 ||
+                    !IsFinite(entry.worldCenter) || !IsFinite(entry.worldPosition) ||
+                    !IsFinite(entry.worldEulerAngles) || !IsFinite(entry.worldScale) ||
+                    !IsFinite(entry.yawDegrees) || !IsObjectIdentityComplete(entry.prefab) ||
+                    (previous != null && ComparePlacementEntries(previous, entry) >= 0))
+                {
+                    return false;
+                }
+
+                previous = entry;
+            }
+
+            return true;
+        }
+
+        private static bool IsMapDataReportComplete(MapDataReport mapData)
+        {
+            return mapData != null && IsObjectIdentityComplete(mapData.mapSurfaceAuthoring) &&
+                   IsObjectIdentityComplete(mapData.gridAsset) && IsObjectIdentityComplete(mapData.mapSurfaceAsset) &&
+                   mapData.gridWidth > 0 && mapData.gridHeight > 0 && mapData.gridCellSize > 0f &&
+                   mapData.gridCellCount == (long)mapData.gridWidth * mapData.gridHeight &&
+                   mapData.blockedCellCount >= 0 && mapData.blockedCellCount <= mapData.gridCellCount &&
+                   mapData.mapSurfaceDimensions.x == mapData.gridWidth &&
+                   mapData.mapSurfaceDimensions.y == mapData.gridHeight &&
+                   mapData.mapSurfaceCellSize == mapData.gridCellSize &&
+                   mapData.mapSurfaceOrigin == mapData.gridOrigin &&
+                   mapData.surfaceCount >= mapData.gridCellCount && mapData.connectionCount >= 0 &&
+                   mapData.payloadVersion > 0 && mapData.compressedPayloadBytes > 0 &&
+                   mapData.uncompressedPayloadBytes > 0 && IsHash128(mapData.runtimeBlobHash) &&
+                   mapData.dimensionsOriginCellSizeConsistent;
+        }
+
+        private static bool IsObjectIdentityComplete(ObjectIdentityReport identity)
+        {
+            if (identity == null || string.IsNullOrWhiteSpace(identity.name) ||
+                string.IsNullOrWhiteSpace(identity.type) || string.IsNullOrWhiteSpace(identity.globalObjectId))
+            {
+                return false;
+            }
+
+            bool assetIdentity = !string.IsNullOrWhiteSpace(identity.assetPath) &&
+                                 !string.IsNullOrWhiteSpace(identity.assetGuid) && identity.localId != 0;
+            bool sceneIdentity = !string.IsNullOrWhiteSpace(identity.scenePath) &&
+                                 !string.IsNullOrWhiteSpace(identity.sceneGuid) &&
+                                 !string.IsNullOrWhiteSpace(identity.hierarchyPath);
+            return assetIdentity || sceneIdentity;
+        }
+
+        private static bool IsSha256(string value)
+        {
+            return IsLowerHex(value, 64);
+        }
+
+        private static bool IsHash128(string value)
+        {
+            return IsLowerHex(value, 32);
+        }
+
+        private static bool IsLowerHex(string value, int length)
+        {
+            return value != null && value.Length == length &&
+                   value.All(character => character is >= '0' and <= '9' or >= 'a' and <= 'f');
+        }
+
+        private static bool IsFinite(Vector3 value)
+        {
+            return IsFinite(value.x) && IsFinite(value.y) && IsFinite(value.z);
+        }
+
+        private static bool IsFinite(float value)
+        {
+            return !float.IsNaN(value) && !float.IsInfinity(value);
         }
 
         private static BaselineReport BuildReport(
@@ -613,14 +986,25 @@ namespace Game.Editor
             StaticMapPresentationManifest manifest)
         {
             string integrityPhysicalPath = ResolveProjectPath(projectRoot, IntegrityPath);
-            IntegrityDocument ledger = JsonUtility.FromJson<IntegrityDocument>(
-                File.ReadAllText(integrityPhysicalPath));
-            if (ledger == null || ledger.schemaVersion <= 0 || ledger.scenes == null)
+            string integrityJson = File.ReadAllText(integrityPhysicalPath);
+            if (!HasSupportedIntegrityDocumentShape(integrityJson))
                 throw new InvalidOperationException("Static presentation integrity ledger is unreadable or incomplete.");
+            IntegrityDocument ledger = JsonUtility.FromJson<IntegrityDocument>(integrityJson);
             RequireEqual(manifest.ContentHash, ledger.contentHash, "Integrity ledger content hash");
 
             string[] manifestPaths = manifest.Chunks.Select(chunk => chunk.ScenePath).ToArray();
             string[] ledgerPaths = ledger.scenes.Select(entry => entry?.scenePath).ToArray();
+            if (!StaticMapPresentationSceneIntegrity.TryLoadAndValidate(
+                    projectRoot,
+                    manifest.ContentHash,
+                    manifestPaths,
+                    out _,
+                    out string integrityRejectionReason))
+            {
+                throw new InvalidOperationException(
+                    $"Authoritative static presentation integrity validation failed: {integrityRejectionReason}");
+            }
+
             string sceneFolder = ResolveProjectPath(projectRoot, GeneratedSceneFolder);
             string[] diskScenePaths = Directory.GetFiles(sceneFolder, "*.unity", SearchOption.TopDirectoryOnly)
                 .Select(path => ToAssetPath(projectRoot, path))
@@ -717,7 +1101,6 @@ namespace Game.Editor
 
             Dictionary<string, int> scenePaths = BuildNamePathCounts(scene);
             var entries = new List<PlacementEntryReport>(config.Placements.Count);
-            var uniquePlacementIdentities = new HashSet<string>(StringComparer.Ordinal);
             Dictionary<string, int> configPathCounts = config.Placements
                 .GroupBy(placement => placement?.SourcePath ?? string.Empty, StringComparer.Ordinal)
                 .ToDictionary(group => group.Key, group => group.Count(), StringComparer.Ordinal);
@@ -731,16 +1114,6 @@ namespace Game.Editor
                     i);
                 if (placement.BuildingPrefab == null)
                     throw new InvalidOperationException($"Building placement prefab is missing at index {i}.");
-                RequireUniquePlacementIdentity(
-                    uniquePlacementIdentities,
-                    BuildPlacementIdentity(
-                        placement.SourcePath,
-                        placement.BuildingPrefab,
-                        placement.WorldPosition,
-                        placement.WorldEulerAngles,
-                        placement.WorldScale),
-                    "building",
-                    i);
                 entries.Add(new PlacementEntryReport
                 {
                     sourcePath = placement.SourcePath,
@@ -760,6 +1133,7 @@ namespace Game.Editor
             }
 
             entries.Sort(PlacementEntryReportComparer.Instance);
+            RequireNoDuplicatePlacementEntries(entries, "building");
             return BuildPlacementReport(
                 "Building",
                 config,
@@ -777,7 +1151,6 @@ namespace Game.Editor
 
             Dictionary<string, int> scenePaths = BuildNamePathCounts(scene);
             var entries = new List<PlacementEntryReport>(config.Placements.Count);
-            var uniquePlacementIdentities = new HashSet<string>(StringComparer.Ordinal);
             Dictionary<string, int> configPathCounts = config.Placements
                 .GroupBy(placement => placement?.SourcePath ?? string.Empty, StringComparer.Ordinal)
                 .ToDictionary(group => group.Key, group => group.Count(), StringComparer.Ordinal);
@@ -791,16 +1164,6 @@ namespace Game.Editor
                     i);
                 if (placement.VehiclePrefab == null || string.IsNullOrWhiteSpace(placement.VehicleSourceKey))
                     throw new InvalidOperationException($"Vehicle placement identity is missing at index {i}.");
-                RequireUniquePlacementIdentity(
-                    uniquePlacementIdentities,
-                    BuildPlacementIdentity(
-                        placement.SourcePath,
-                        placement.VehiclePrefab,
-                        placement.WorldPosition,
-                        placement.WorldEulerAngles,
-                        placement.WorldScale),
-                    "vehicle",
-                    i);
                 entries.Add(new PlacementEntryReport
                 {
                     sourcePath = placement.SourcePath,
@@ -818,6 +1181,7 @@ namespace Game.Editor
             }
 
             entries.Sort(PlacementEntryReportComparer.Instance);
+            RequireNoDuplicatePlacementEntries(entries, "vehicle");
             return BuildPlacementReport(
                 "Vehicle",
                 config,
@@ -839,23 +1203,8 @@ namespace Game.Editor
                 throw new InvalidOperationException($"{kind} authoring root is missing.");
             var inputs = entries.Select(entry =>
             {
-                string identity = string.Join(
-                    "|",
-                    entry.sourcePath,
-                    FormatVector(entry.worldPosition),
-                    FormatVector(entry.worldEulerAngles),
-                    FormatVector(entry.worldScale),
-                    entry.prefab.assetGuid,
-                    entry.prefab.localId.ToString(CultureInfo.InvariantCulture));
-                string summary = string.Join(
-                    "|",
-                    entry.category,
-                    entry.sourceKey,
-                    entry.factionId.ToString(CultureInfo.InvariantCulture),
-                    entry.configSourcePathOccurrenceCount.ToString(CultureInfo.InvariantCulture),
-                    entry.sceneMatchCount.ToString(CultureInfo.InvariantCulture),
-                    identity);
-                return new HashInput(identity, ComputeSha256(Utf8WithoutBom.GetBytes(summary)));
+                string identity = BuildPlacementStableIdentity(entry);
+                return new HashInput(identity, ComputeSha256(Utf8WithoutBom.GetBytes(identity)));
             });
             return new PlacementReport
             {
@@ -953,41 +1302,152 @@ namespace Game.Editor
             return matches;
         }
 
-        private static string BuildPlacementIdentity(
-            string sourcePath,
-            Object prefab,
-            Vector3 worldPosition,
-            Vector3 worldEulerAngles,
-            Vector3 worldScale)
+        internal static int ComparePlacementEntries(
+            PlacementEntryReport left,
+            PlacementEntryReport right)
         {
-            AssetDatabase.TryGetGUIDAndLocalFileIdentifier(prefab, out string guid, out long localId);
-            return string.Join(
-                "|",
-                sourcePath,
-                guid,
-                localId.ToString(CultureInfo.InvariantCulture),
-                FormatVector(worldPosition),
-                FormatVector(worldEulerAngles),
-                FormatVector(worldScale));
+            if (ReferenceEquals(left, right))
+                return 0;
+            if (left == null)
+                return -1;
+            if (right == null)
+                return 1;
+
+            int comparison = string.CompareOrdinal(left.sourcePath, right.sourcePath);
+            if (comparison != 0) return comparison;
+            comparison = string.CompareOrdinal(left.category, right.category);
+            if (comparison != 0) return comparison;
+            comparison = string.CompareOrdinal(left.sourceKey, right.sourceKey);
+            if (comparison != 0) return comparison;
+            comparison = left.factionId.CompareTo(right.factionId);
+            if (comparison != 0) return comparison;
+            comparison = left.configSourcePathOccurrenceCount.CompareTo(right.configSourcePathOccurrenceCount);
+            if (comparison != 0) return comparison;
+            comparison = left.sceneMatchCount.CompareTo(right.sceneMatchCount);
+            if (comparison != 0) return comparison;
+            comparison = CompareVectorBits(left.worldCenter, right.worldCenter);
+            if (comparison != 0) return comparison;
+            comparison = CompareVectorBits(left.worldPosition, right.worldPosition);
+            if (comparison != 0) return comparison;
+            comparison = CompareVectorBits(left.worldEulerAngles, right.worldEulerAngles);
+            if (comparison != 0) return comparison;
+            comparison = CompareVectorBits(left.worldScale, right.worldScale);
+            if (comparison != 0) return comparison;
+            comparison = CompareFloatBits(left.yawDegrees, right.yawDegrees);
+            if (comparison != 0) return comparison;
+            comparison = left.rotateVertical.CompareTo(right.rotateVertical);
+            return comparison != 0 ? comparison : CompareObjectIdentities(left.prefab, right.prefab);
         }
 
-        private static string FormatVector(Vector3 value)
+        internal static string BuildPlacementStableIdentity(PlacementEntryReport entry)
         {
-            return string.Join(
-                ",",
-                value.x.ToString("R", CultureInfo.InvariantCulture),
-                value.y.ToString("R", CultureInfo.InvariantCulture),
-                value.z.ToString("R", CultureInfo.InvariantCulture));
+            if (entry == null)
+                throw new ArgumentNullException(nameof(entry));
+
+            var builder = new StringBuilder(512);
+            AppendIdentityString(builder, entry.sourcePath);
+            AppendIdentityString(builder, entry.category);
+            AppendIdentityString(builder, entry.sourceKey);
+            builder.Append(entry.factionId).Append('|')
+                .Append(entry.configSourcePathOccurrenceCount).Append('|')
+                .Append(entry.sceneMatchCount).Append('|');
+            AppendVectorBits(builder, entry.worldCenter);
+            AppendVectorBits(builder, entry.worldPosition);
+            AppendVectorBits(builder, entry.worldEulerAngles);
+            AppendVectorBits(builder, entry.worldScale);
+            builder.Append(BitConverter.SingleToInt32Bits(entry.yawDegrees).ToString("x8", CultureInfo.InvariantCulture))
+                .Append('|').Append(entry.rotateVertical ? '1' : '0').Append('|');
+            AppendObjectIdentity(builder, entry.prefab);
+            return builder.ToString();
         }
 
-        private static void RequireUniquePlacementIdentity(
-            HashSet<string> identities,
-            string identity,
-            string kind,
-            int index)
+        private static void RequireNoDuplicatePlacementEntries(
+            IReadOnlyList<PlacementEntryReport> entries,
+            string kind)
         {
-            if (!identities.Add(identity))
-                throw new InvalidOperationException($"Exact {kind} placement identity is duplicated at index {index}.");
+            for (int i = 1; i < entries.Count; i++)
+            {
+                if (ComparePlacementEntries(entries[i - 1], entries[i]) == 0)
+                {
+                    throw new InvalidOperationException(
+                        $"Exact {kind} placement identity is duplicated at sorted indices {i - 1} and {i}.");
+                }
+            }
+        }
+
+        private static int CompareObjectIdentities(ObjectIdentityReport left, ObjectIdentityReport right)
+        {
+            if (ReferenceEquals(left, right)) return 0;
+            if (left == null) return -1;
+            if (right == null) return 1;
+
+            int comparison = string.CompareOrdinal(left.assetGuid, right.assetGuid);
+            if (comparison != 0) return comparison;
+            comparison = left.localId.CompareTo(right.localId);
+            if (comparison != 0) return comparison;
+            comparison = string.CompareOrdinal(left.globalObjectId, right.globalObjectId);
+            if (comparison != 0) return comparison;
+            comparison = string.CompareOrdinal(left.assetPath, right.assetPath);
+            if (comparison != 0) return comparison;
+            comparison = string.CompareOrdinal(left.scenePath, right.scenePath);
+            if (comparison != 0) return comparison;
+            comparison = string.CompareOrdinal(left.sceneGuid, right.sceneGuid);
+            if (comparison != 0) return comparison;
+            comparison = string.CompareOrdinal(left.hierarchyPath, right.hierarchyPath);
+            if (comparison != 0) return comparison;
+            comparison = string.CompareOrdinal(left.type, right.type);
+            return comparison != 0 ? comparison : string.CompareOrdinal(left.name, right.name);
+        }
+
+        private static int CompareVectorBits(Vector3 left, Vector3 right)
+        {
+            int comparison = CompareFloatBits(left.x, right.x);
+            if (comparison != 0) return comparison;
+            comparison = CompareFloatBits(left.y, right.y);
+            return comparison != 0 ? comparison : CompareFloatBits(left.z, right.z);
+        }
+
+        private static int CompareFloatBits(float left, float right)
+        {
+            int comparison = left.CompareTo(right);
+            return comparison != 0
+                ? comparison
+                : BitConverter.SingleToInt32Bits(left).CompareTo(BitConverter.SingleToInt32Bits(right));
+        }
+
+        private static void AppendIdentityString(StringBuilder builder, string value)
+        {
+            string normalized = value ?? string.Empty;
+            builder.Append(normalized.Length).Append(':').Append(normalized).Append('|');
+        }
+
+        private static void AppendVectorBits(StringBuilder builder, Vector3 value)
+        {
+            builder.Append(BitConverter.SingleToInt32Bits(value.x).ToString("x8", CultureInfo.InvariantCulture))
+                .Append(',')
+                .Append(BitConverter.SingleToInt32Bits(value.y).ToString("x8", CultureInfo.InvariantCulture))
+                .Append(',')
+                .Append(BitConverter.SingleToInt32Bits(value.z).ToString("x8", CultureInfo.InvariantCulture))
+                .Append('|');
+        }
+
+        private static void AppendObjectIdentity(StringBuilder builder, ObjectIdentityReport identity)
+        {
+            if (identity == null)
+            {
+                builder.Append("null");
+                return;
+            }
+
+            AppendIdentityString(builder, identity.assetGuid);
+            builder.Append(identity.localId).Append('|');
+            AppendIdentityString(builder, identity.globalObjectId);
+            AppendIdentityString(builder, identity.assetPath);
+            AppendIdentityString(builder, identity.scenePath);
+            AppendIdentityString(builder, identity.sceneGuid);
+            AppendIdentityString(builder, identity.hierarchyPath);
+            AppendIdentityString(builder, identity.type);
+            AppendIdentityString(builder, identity.name);
         }
 
         private static MatchSceneView RequireSingleMatchSceneView(Scene scene)
@@ -1112,8 +1572,13 @@ namespace Game.Editor
         {
             string fullCandidate = Path.GetFullPath(candidate).TrimEnd(Path.DirectorySeparatorChar);
             string fullRoot = Path.GetFullPath(root).TrimEnd(Path.DirectorySeparatorChar);
-            return string.Equals(fullCandidate, fullRoot, StringComparison.Ordinal) ||
-                   fullCandidate.StartsWith(fullRoot + Path.DirectorySeparatorChar, StringComparison.Ordinal);
+            StringComparison comparison =
+                Application.platform == RuntimePlatform.WindowsEditor ||
+                Application.platform == RuntimePlatform.OSXEditor
+                    ? StringComparison.OrdinalIgnoreCase
+                    : StringComparison.Ordinal;
+            return string.Equals(fullCandidate, fullRoot, comparison) ||
+                   fullCandidate.StartsWith(fullRoot + Path.DirectorySeparatorChar, comparison);
         }
 
         private static string NormalizeSeparators(string path)
@@ -1391,13 +1856,7 @@ namespace Game.Editor
 
             public int Compare(PlacementEntryReport left, PlacementEntryReport right)
             {
-                int path = string.CompareOrdinal(left?.sourcePath, right?.sourcePath);
-                if (path != 0)
-                    return path;
-                int category = string.CompareOrdinal(left?.category, right?.category);
-                return category != 0
-                    ? category
-                    : string.CompareOrdinal(left?.sourceKey, right?.sourceKey);
+                return ComparePlacementEntries(left, right);
             }
         }
 

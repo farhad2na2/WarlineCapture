@@ -247,17 +247,17 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `89 / 107` |
-| Checklist percent complete | `83.2%` |
-| Checklist in progress | `13 / 107`: `APH-311`, `APH-501`, `APH-502`, `APH-504`, `APH-506`, `APH-508`, `APH-509`, `APH-510`, `APH-601`, `APH-609`, `APH-803`, `APH-804`, `APH-901` |
+| Checklist complete | `90 / 107` |
+| Checklist percent complete | `84.1%` |
+| Checklist in progress | `12 / 107`: `APH-311`, `APH-501`, `APH-502`, `APH-504`, `APH-506`, `APH-508`, `APH-509`, `APH-510`, `APH-601`, `APH-609`, `APH-803`, `APH-804` |
 | Complete plus active coverage | `102 / 107` (`95.3%`); this is visibility only, not accepted completion |
-| Current phase | Final device/visual/product-budget evidence and validated feature-branch integration |
-| Current task | Integrate the locally green APH-901 closeout candidate, then collect clean same-artifact Android and visual evidence |
+| Current phase | Final device/visual/product-budget evidence and report closeout |
+| Current task | Connect the Android reference device and collect clean same-artifact development, release, thermal, memory, startup, and visual evidence |
 | Red architecture gates | `0`: the rebased 23-suite closeout, bootstrap guard, source-growth ratchet, naming/static-registry rules, and `ISystem` inventory all pass |
 | Red performance gates | `0`: the unchanged steady-state Match GC gate passes at `292 / 1,024` player-relevant bytes over 300 measured frames after 180 warmup frames. The latest canonical Match baseline passes over 557 frames at `7.20 ms` average, `11.48 ms` p95, `13.16 ms` p99, and zero measured allocation with 733 units and 628 buildings. |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
-| Last verified commit | `98cb2bb6d4321132574ebc5247aa3f2c93359eac` on `codex/architecture-performance-hardening-handoff`, rebased onto `origin/main` at `df9a3271f` |
-| Last update | 2026-07-15 - the pushed APH-901 candidate is cleanly rebased and passes the post-rebase Editor compile with zero errors plus source growth `15/15`; integration and final device/visual evidence remain, and no Android device is currently visible to ADB |
+| Last verified commit | `8caf7b00c` integrated into `origin/main`; implementation commit `98cb2bb6d4321132574ebc5247aa3f2c93359eac` |
+| Last update | 2026-07-15 - APH-901 is integrated by strict fast-forward and accepted after post-rebase Editor compile with zero errors plus source growth `15/15`; final device/visual evidence remains, and no Android device is currently visible to ADB |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -687,11 +687,11 @@ Goal: prove the complete program improved production readiness without gameplay 
 
 - [x] `APH-900` Run the complete first-party build matrix with 0 errors.
   - Accepted on rebased revision `ebdba0b4bb4c59963ee07ae84a96b2071eab9f8f`: Components, Configs, Runtime.Pathfinding, Runtime, Rendering, UI Shell Contracts ECS, UI Runtime, UI Shell ECS, Composition, Editor, Editor tests, and PlayMode tests all build with `0 Error(s)`.
-- [~] `APH-901` Run architecture, ECS/Burst, focused EditMode, critical PlayMode, Match smoke, performance, GC, audio, graphics, and static-map validation gates.
+- [x] `APH-901` Run architecture, ECS/Burst, focused EditMode, critical PlayMode, Match smoke, performance, GC, audio, graphics, and static-map validation gates.
   - Local candidate result: integrated architecture closeout `23/23`, source growth `15/15`, focused move-order `18/18`, focused lifecycle/allocation/resource fixtures, five critical PlayMode flows, Menu-to-Match performance/GC routes, full static-map structural parity `2/2`, all 12 first-party builds, and `218/218` CI Python contracts pass with zero compiler errors.
   - Performance: 733 units, 628 buildings, 557 measured frames, `7.20 ms` average, `11.48 ms` p95, `13.16 ms` p99, `34.98 ms` maximum, and zero measured allocation.
   - GC: 300 measured frames after 180 warmup frames pass at `292 / 1,024` player-relevant bytes. The recurring production-cache, storage-query, and hauler move-order query rows are removed.
-  - Integration state: validation is complete in `codex/architecture-performance-hardening-handoff`; authoritative `[x]` acceptance waits for the stable task-owned commit to reach `main`.
+  - Integration state: accepted after the task-owned feature branch reached `origin/main` by strict fast-forward at `8caf7b00c`.
   - Evidence: `/private/tmp/warline-aph901-closeout-after-gc.log`, `/private/tmp/warline-aph901-performance-after-query-cache.log`, `/private/tmp/warline-aph901-gc-steady-after-query-cache-r2.log`, `/private/tmp/warline-aph901-static-map-structural-final.xml`, `/private/tmp/warline-aph8*-final.xml`, `Design/AgentReports/performance_regression_match_baseline.md`, and `Design/AgentReports/2026-06-11_perf_match-gc-callstack-capture.md`.
 - [ ] `APH-902` Produce final same-device Android development and release reports, including 10-minute thermal sessions.
 - [ ] `APH-903` Compare final architecture/performance metrics against this baseline and write `Design/AgentReports/architecture_performance_hardening_final_report.md`.
@@ -2151,7 +2151,7 @@ Append one entry per completed or blocked task. Keep entries concise but include
 
 ### 2026-07-15 - APH-901 - Local integrated closeout candidate
 
-- Status: implementation and local validation complete in pushed commit `98cb2bb6d4321132574ebc5247aa3f2c93359eac` on `codex/architecture-performance-hardening-handoff`; authoritative acceptance waits for integration to `main`
+- Status: Accepted after strict fast-forward integration into `origin/main` at `8caf7b00c`; implementation commit `98cb2bb6d4321132574ebc5247aa3f2c93359eac`
 - Allocation repair: lifecycle-owned placement delegates and tactical queries, extracted Match HUD resource formatting/read models, cached FPS strings, pre-sized production ID lookup, allocation-free canonical spawnable-key normalization, and world-aware faction-storage and resource-hauler move-order EntityQuery ownership
 - Architecture: `UnitMoveOrderRequestSystem` remains an unmanaged `ISystem` and is held at exactly 500 lines; no `SystemBase`, `*Controller`, `*Player`, second player-loop owner, mutable static gameplay registry, or map-content mutation was added
 - Validation: source growth `15/15`; integrated architecture closeout `23/23`; move order `18/18`; affected allocation/resource/UI fixtures pass; five critical PlayMode flows pass `5/5`; full static-map structural validation passes `2/2`; all 12 first-party projects build no-incremental with `0` errors; CI Python contracts pass `218/218`
@@ -2160,7 +2160,7 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Non-owned test debt: three full-fixture assertions outside the changed paths remain reproducible when run individually: two Building gameplay initialization assumptions and one managed production-tick exact-float assumption. Their production owners and tests were not changed by this slice; the tracker-required closeout and affected paths are green
 - Preserved exclusions: the combined closeout runner invokes a FirstLaunch validation that regenerates two portrait `.meta` files, the presentation prefab, and `Menu.unity`; those four validation side effects were restored to branch `HEAD` immediately and are absent from the architecture commit. No operation-map asset, scene, generator, manifest, or design document was edited.
 - Evidence: `/private/tmp/warline-aph-query-cache-source-growth-final.log`, `/private/tmp/warline-aph-query-cache-build-final.log`, `/private/tmp/warline-aph-unit-move-focused.xml`, `/private/tmp/warline-aph901-closeout-after-gc.log`, `/private/tmp/warline-aph901-performance-after-query-cache.log`, `/private/tmp/warline-aph901-gc-steady-after-query-cache-r2.log`, `/private/tmp/warline-aph901-static-map-structural-final.xml`, `/private/tmp/warline-aph8*-final.xml`, `/private/tmp/warline-aph901-build-*.log`, `/private/tmp/warline-aph901-python-contracts-final.log`, `/private/tmp/warline-aph901-editor-build-post-rebase.log`, `/private/tmp/warline-aph901-source-growth-post-rebase.log`, `Design/AgentReports/performance_regression_match_baseline.md`, and `Design/AgentReports/2026-06-11_perf_match-gc-callstack-capture.md`
-- Next action: integrate the pushed feature branch before changing APH-901 to `[x]`, then connect the Android reference device and collect the clean same-artifact development, release, thermal, memory, startup, and visual evidence
+- Next action: connect the Android reference device and collect the clean same-artifact development, release, thermal, memory, startup, and visual evidence
 
 ## Decision Log
 

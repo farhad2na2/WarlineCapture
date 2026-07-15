@@ -10,6 +10,7 @@ import json
 import math
 import os
 import re
+import shlex
 import subprocess
 import tempfile
 import time
@@ -672,7 +673,7 @@ def install_and_verify(
 
 def launch_argv(profile: dict[str, Any]) -> tuple[str, ...]:
     build = profile["build"]
-    unity_extra = " ".join(build["requiredLaunchArguments"])
+    unity_extra = shlex.quote(" ".join(build["requiredLaunchArguments"]))
     component = f"{build['packageName']}/{build['activity']}"
     return (
         "shell", "am", "start", "-W", "-S",

@@ -224,8 +224,8 @@ class AndroidDevelopmentDeviceCollectionTests(unittest.TestCase):
                 "-c", "android.intent.category.LAUNCHER",
                 "-n", "com.warlinecapture.game/com.unity3d.player.UnityPlayerGameActivity",
                 "--es", "unity",
-                "-warlineAutoStartMatch -warlineProfilerMarkers "
-                "-warlineAndroidPerformanceGate",
+                "'-warlineAutoStartMatch -warlineProfilerMarkers "
+                "-warlineAndroidPerformanceGate'",
             ),
             argv,
         )

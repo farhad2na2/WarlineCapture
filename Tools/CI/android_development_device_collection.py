@@ -9,6 +9,7 @@ import hashlib
 import json
 import math
 import re
+import shlex
 import subprocess
 import tempfile
 import time
@@ -337,12 +338,13 @@ def install_and_verify(
 def launch_argv(profile: dict[str, Any]) -> tuple[str, ...]:
     build = profile["build"]
     component = f"{build['packageName']}/{build['activity']}"
+    unity_extra = shlex.quote(" ".join(build["requiredLaunchArguments"]))
     return (
         "shell", "am", "start", "-W", "-S",
         "-a", "android.intent.action.MAIN",
         "-c", "android.intent.category.LAUNCHER",
         "-n", component,
-        "--es", "unity", " ".join(build["requiredLaunchArguments"]),
+        "--es", "unity", unity_extra,
     )
 
 

@@ -37,7 +37,7 @@ namespace Game.Editor
                         $"[APH-501 MainMenuTexturePolicy] Expected a sprite texture importer at '{path}'.");
                 }
 
-                if (!ApplyAndroidPolicy(importer))
+                if (!ApplyTrackedPolicy(importer))
                     continue;
 
                 changedCount++;
@@ -56,7 +56,7 @@ namespace Game.Editor
 
             TextureImporter importer = assetImporter as TextureImporter;
             if (importer != null)
-                ApplyAndroidPolicy(importer);
+                ApplyTrackedPolicy(importer);
         }
 
         internal static bool IsTrackedSpritePath(string assetPath)
@@ -79,19 +79,22 @@ namespace Game.Editor
                 StringComparison.OrdinalIgnoreCase);
         }
 
-        internal static bool ApplyAndroidPolicy(TextureImporter importer)
+        internal static bool ApplyTrackedPolicy(TextureImporter importer)
         {
+            bool changed = importer.mipmapEnabled;
+            importer.mipmapEnabled = false;
+
             TextureImporterPlatformSettings settings =
                 importer.GetPlatformTextureSettings(AndroidPlatform);
-            bool changed =
+            bool androidChanged =
                 !settings.overridden ||
                 settings.maxTextureSize != AndroidMaxTextureSize ||
                 settings.format != TextureImporterFormat.ASTC_4x4 ||
                 settings.textureCompression != TextureImporterCompression.CompressedHQ ||
                 settings.compressionQuality != AndroidCompressionQuality;
 
-            if (!changed)
-                return false;
+            if (!androidChanged)
+                return changed;
 
             settings.name = AndroidPlatform;
             settings.overridden = true;

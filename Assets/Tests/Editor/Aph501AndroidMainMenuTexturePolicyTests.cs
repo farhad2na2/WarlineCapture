@@ -53,6 +53,7 @@ namespace Game.Tests.Editor
                 TextureImporter importer = AssetImporter.GetAtPath(path) as TextureImporter;
                 Assert.That(importer, Is.Not.Null, path);
                 Assert.That(importer.textureType, Is.EqualTo(TextureImporterType.Sprite), path);
+                Assert.That(importer.mipmapEnabled, Is.False, $"UI mipmaps must be disabled: {path}");
 
                 TextureImporterPlatformSettings android =
                     importer.GetPlatformTextureSettings(Aph501AndroidMainMenuTexturePolicy.AndroidPlatform);

@@ -1,0 +1,931 @@
+{
+    "reportSchema": "warline.operation-map.phase0-ownership",
+    "reportSchemaVersion": 1,
+    "baselineCommit": "3b7228292db7159c3c70025cf5d1676573721cd4",
+    "result": "NeedsDecision",
+    "counts": {
+        "matchSceneViewFields": 28,
+        "matchRoots": 16,
+        "matchSubSceneRoots": 3,
+        "shellOwned": 8,
+        "mapOwned": 18,
+        "sharedConfig": 15,
+        "temporaryCompatibility": 2,
+        "mixed": 2,
+        "unresolved": 2,
+        "needsDecision": 4
+    },
+    "opmap002Baseline": {
+        "reportSchema": "warline.operation-map.phase0-baseline",
+        "reportSchemaVersion": 1,
+        "result": "Passed",
+        "evidencePath": "Design/AgentReports/2026-07-14_opmap-002_phase0_baseline_probe.md",
+        "evidenceSha256": "d4d4674850766c5cd95e1bb5fbb6f26893e0bb019dbaf266a0c9897a3befc807",
+        "generatedChunkCount": 514,
+        "manifestSourceCount": 16542,
+        "buildingPlacementCount": 451,
+        "vehiclePlacementCount": 29,
+        "generatedCombinedAggregateSha256": "574afec991fbc1a684531c9f727c20eb296271260e7a4e1c4a8c300a2b642e79"
+    },
+    "directInputHashes": [
+        {
+            "path": "Assets/Game/Scenes/Match.unity",
+            "sha256": "dca7c83b765ce40099ce4fd62a53cbee5bc306107f8a026abcb941a59bf53a46"
+        },
+        {
+            "path": "Assets/Game/Scenes/Match/MatchSubScene.unity",
+            "sha256": "bcc255f3fb140a0d91687b45b679b47fb60f01f5cfa8690bac3032ec642dadd8"
+        },
+        {
+            "path": "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+            "sha256": "74704998d2a0daff6c9cdc4dd370c8a7d00d0a828b08741a7cd5a03ca562d1a6"
+        },
+        {
+            "path": "Design/AgentReports/2026-07-14_opmap-002_phase0_baseline_probe.md",
+            "sha256": "d4d4674850766c5cd95e1bb5fbb6f26893e0bb019dbaf266a0c9897a3befc807"
+        },
+        {
+            "path": "Design/Architecture/operation_map_scene_split_and_generator_tracker.md",
+            "sha256": "7621e3f1c17ac7a0d7a8945cf80c8fe1ee9c1c5b0caa180d72312d9735a414e0"
+        }
+    ],
+    "matchSceneViewFields": [
+        {
+            "stableIdentity": "Game.Composition.MatchSceneView::aiControllerConfigs",
+            "name": "aiControllerConfigs",
+            "declaredType": "Game.Configs.AIControllerConfig",
+            "currentType": "Game.Configs.AIControllerSceneConfigAsset",
+            "currentElementCount": 2,
+            "currentTargetIdentities": [
+                "Assets/Game/Configs/Scene/Game_AI_Enemy_Config.asset|guid:fb8b5c545d7f641d3b153c2f18c57aad|localId:11400000|type:Game.Configs.AIControllerSceneConfigAsset",
+                "Assets/Game/Configs/Scene/Game_AI_PlayerAuto_Config.asset|guid:34d062317806444e2a70cd1ed240fc5a|localId:11400000|type:Game.Configs.AIControllerSceneConfigAsset"
+            ],
+            "classification": "SharedConfig",
+            "evidencePaths": [
+                "Assets/Game/Configs/Scene/Game_AI_Enemy_Config.asset",
+                "Assets/Game/Configs/Scene/Game_AI_PlayerAuto_Config.asset",
+                "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "AI policy is shared gameplay configuration; ScenarioSetup selects scenario policy.",
+            "migrationDisposition": "KeepSharedReference",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Game.Composition.MatchSceneView::aiPlanEntryConfig",
+            "name": "aiPlanEntryConfig",
+            "declaredType": "Game.Configs.AIPlanEntryStartupConfig",
+            "currentType": "Game.Configs.AIPlanEntryStartupConfig",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Configs/Scene/Game_AI_PlanEntry_Startup_Config.asset|guid:8ac55f91a18b4e56b3ef2ed875c904d7|localId:11400000|type:Game.Configs.AIPlanEntryStartupConfig"
+            ],
+            "classification": "SharedConfig",
+            "evidencePaths": [
+                "Assets/Game/Configs/Scene/Game_AI_PlanEntry_Startup_Config.asset",
+                "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "Plan-entry startup policy is shared configuration, not map geometry.",
+            "migrationDisposition": "KeepSharedReference",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Game.Composition.MatchSceneView::buildingPlacementConfig",
+            "name": "buildingPlacementConfig",
+            "declaredType": "Game.Configs.BuildingPlacementSystemConfig",
+            "currentType": "Game.Configs.BuildingPlacementSystemSceneConfigAsset",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Configs/Scene/Game_BuildingPlacement_Config.asset|guid:b2010000000000000000000000000004|localId:11400000|type:Game.Configs.BuildingPlacementSystemSceneConfigAsset"
+            ],
+            "classification": "SharedConfig",
+            "evidencePaths": [
+                "Assets/Game/Configs/Scene/Game_BuildingPlacement_Config.asset",
+                "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "Placement-system policy is shared; map-authored placements have a separate map config.",
+            "migrationDisposition": "KeepSharedReference",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Game.Composition.MatchSceneView::dayNightConfig",
+            "name": "dayNightConfig",
+            "declaredType": "Game.Configs.DayNightSystemConfig",
+            "currentType": "Game.Configs.DayNightSystemSceneConfigAsset",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Configs/Scene/Game_DayNight_Config.asset|guid:b2010000000000000000000000000009|localId:11400000|type:Game.Configs.DayNightSystemSceneConfigAsset"
+            ],
+            "classification": "Mixed",
+            "evidencePaths": [
+                "Assets/Game/Configs/Scene/Game_DayNight_Config.asset",
+                "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "The shell owns the lighting boundary while map metadata may own environment intent.",
+            "migrationDisposition": "DecisionRequired",
+            "decisionOwner": "Architecture owner and lighting owner"
+        },
+        {
+            "stableIdentity": "Game.Composition.MatchSceneView::decorationCombinedMeshBaker",
+            "name": "decorationCombinedMeshBaker",
+            "declaredType": "Game.Runtime.CombinedMeshBaker",
+            "currentType": "Game.Runtime.CombinedMeshBaker",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Scenes/Match.unity::Decorations[4]|type:Game.Runtime.CombinedMeshBaker"
+            ],
+            "classification": "MapOwned",
+            "evidencePaths": [
+                "Assets/Game/Scenes/Match.unity",
+                "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "The baker reference targets current canonical map decoration geometry.",
+            "migrationDisposition": "MoveToOperationMap",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Game.Composition.MatchSceneView::decorationRoot",
+            "name": "decorationRoot",
+            "declaredType": "UnityEngine.Transform",
+            "currentType": "UnityEngine.Transform",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Scenes/Match.unity::Decorations[4]|type:UnityEngine.Transform"
+            ],
+            "classification": "MapOwned",
+            "evidencePaths": [
+                "Assets/Game/Scenes/Match.unity",
+                "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "The referenced Decorations root is canonical map geometry.",
+            "migrationDisposition": "MoveToOperationMap",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Game.Composition.MatchSceneView::directionalLight",
+            "name": "directionalLight",
+            "declaredType": "UnityEngine.Light",
+            "currentType": "UnityEngine.Light",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Scenes/Match.unity::Directional Light[8]|type:UnityEngine.Light"
+            ],
+            "classification": "ShellOwned",
+            "evidencePaths": [
+                "Assets/Game/Scenes/Match.unity",
+                "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "The normative target contract assigns the directional-light reference to the shell-owned lighting boundary.",
+            "migrationDisposition": "KeepInMatchShell",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Game.Composition.MatchSceneView::factionVisualConfig",
+            "name": "factionVisualConfig",
+            "declaredType": "Game.Configs.FactionVisualSettingsConfig",
+            "currentType": "Game.Configs.FactionVisualSettingsSceneConfigAsset",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Configs/Scene/Game_FactionVisualSettings_Config.asset|guid:b201000000000000000000000000000a|localId:11400000|type:Game.Configs.FactionVisualSettingsSceneConfigAsset"
+            ],
+            "classification": "SharedConfig",
+            "evidencePaths": [
+                "Assets/Game/Configs/Scene/Game_FactionVisualSettings_Config.asset",
+                "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "Faction visuals are shared across operation maps.",
+            "migrationDisposition": "KeepSharedReference",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Game.Composition.MatchSceneView::gameStringsConfig",
+            "name": "gameStringsConfig",
+            "declaredType": "Game.Configs.GameStringsConfig",
+            "currentType": "Game.Configs.GameStringsSceneConfigAsset",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Configs/Scene/Game_GameStrings_Config.asset|guid:6bdf401b93264f908f8a9d6c0bfb6b93|localId:11400000|type:Game.Configs.GameStringsSceneConfigAsset"
+            ],
+            "classification": "SharedConfig",
+            "evidencePaths": [
+                "Assets/Game/Configs/Scene/Game_GameStrings_Config.asset",
+                "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "Localized game strings are not map content.",
+            "migrationDisposition": "KeepSharedReference",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Game.Composition.MatchSceneView::globalVolume",
+            "name": "globalVolume",
+            "declaredType": "UnityEngine.Rendering.Volume",
+            "currentType": "UnityEngine.Rendering.Volume",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Scenes/Match.unity::Global Volume[7]|type:UnityEngine.Rendering.Volume"
+            ],
+            "classification": "ShellOwned",
+            "evidencePaths": [
+                "Assets/Game/Scenes/Match.unity",
+                "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "The target contract assigns match post-processing to the runtime shell.",
+            "migrationDisposition": "KeepInMatchShell",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Game.Composition.MatchSceneView::mapBuildingAuthoringRoot",
+            "name": "mapBuildingAuthoringRoot",
+            "declaredType": "UnityEngine.Transform",
+            "currentType": "UnityEngine.Transform",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Scenes/Match.unity::Map[10]/Buildings[18]|type:UnityEngine.Transform"
+            ],
+            "classification": "MapOwned",
+            "evidencePaths": [
+                "Assets/Game/Scenes/Match.unity",
+                "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "The exact target is the map's Buildings authoring root.",
+            "migrationDisposition": "MoveToOperationMap",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Game.Composition.MatchSceneView::mapBuildingPlacementConfig",
+            "name": "mapBuildingPlacementConfig",
+            "declaredType": "Game.Configs.MapBuildingPlacementConfig",
+            "currentType": "Game.Configs.MapBuildingPlacementConfig",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Configs/Scene/Match_MapBuildingPlacement_Config.asset|guid:e859aa1a53b0942609e537713fd55fb7|localId:11400000|type:Game.Configs.MapBuildingPlacementConfig"
+            ],
+            "classification": "MapOwned",
+            "evidencePaths": [
+                "Assets/Game/Configs/Scene/Match_MapBuildingPlacement_Config.asset",
+                "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "The target contract explicitly assigns map-owned building placements to the operation map.",
+            "migrationDisposition": "ReferenceFromOperationMapDefinition",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Game.Composition.MatchSceneView::mapSurfaceAuthoring",
+            "name": "mapSurfaceAuthoring",
+            "declaredType": "Game.Authoring.MapSurfaceAuthoring",
+            "currentType": "Game.Authoring.MapSurfaceAuthoring",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Scenes/Match.unity::Map[10]|type:Game.Authoring.MapSurfaceAuthoring"
+            ],
+            "classification": "MapOwned",
+            "evidencePaths": [
+                "Assets/Game/Scenes/Match.unity",
+                "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "Map surface and height metadata belong to the operation map.",
+            "migrationDisposition": "MoveToOperationMap",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Game.Composition.MatchSceneView::mapVehicleAuthoringRoot",
+            "name": "mapVehicleAuthoringRoot",
+            "declaredType": "UnityEngine.Transform",
+            "currentType": "UnityEngine.Transform",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Scenes/Match.unity::Map[10]/Vehicles[20]|type:UnityEngine.Transform"
+            ],
+            "classification": "MapOwned",
+            "evidencePaths": [
+                "Assets/Game/Scenes/Match.unity",
+                "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "The exact target is the map's Vehicles authoring root.",
+            "migrationDisposition": "MoveToOperationMap",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Game.Composition.MatchSceneView::mapVehiclePlacementConfig",
+            "name": "mapVehiclePlacementConfig",
+            "declaredType": "Game.Configs.MapVehiclePlacementConfig",
+            "currentType": "Game.Configs.MapVehiclePlacementConfig",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Configs/Scene/Match_MapVehiclePlacement_Config.asset|guid:03d5c67074cde47488712cef0e5f494a|localId:11400000|type:Game.Configs.MapVehiclePlacementConfig"
+            ],
+            "classification": "MapOwned",
+            "evidencePaths": [
+                "Assets/Game/Configs/Scene/Match_MapVehiclePlacement_Config.asset",
+                "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "The target contract explicitly assigns map-owned vehicle placements to the operation map.",
+            "migrationDisposition": "ReferenceFromOperationMapDefinition",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Game.Composition.MatchSceneView::prefabPreviewCameraConfig",
+            "name": "prefabPreviewCameraConfig",
+            "declaredType": "Game.Configs.PrefabPreviewCameraConfig",
+            "currentType": "Game.Configs.PrefabPreviewCameraSceneConfigAsset",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Configs/Scene/Game_PrefabPreviewCamera_Config.asset|guid:22b4ed6a358014f0fa1ff5472f267b0c|localId:11400000|type:Game.Configs.PrefabPreviewCameraSceneConfigAsset"
+            ],
+            "classification": "SharedConfig",
+            "evidencePaths": [
+                "Assets/Game/Configs/Scene/Game_PrefabPreviewCamera_Config.asset",
+                "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "Prefab preview camera policy is shared UI/composition configuration.",
+            "migrationDisposition": "KeepSharedReference",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Game.Composition.MatchSceneView::resourceExchangeConfig",
+            "name": "resourceExchangeConfig",
+            "declaredType": "Game.Configs.ResourceExchangeRecipeConfigSet",
+            "currentType": "Game.Configs.ResourceExchangeRecipeConfigSet",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Configs/Scene/Game_ResourceExchange_Config.asset|guid:58803fa3f1c245a6822e896daeb5cc8a|localId:11400000|type:Game.Configs.ResourceExchangeRecipeConfigSet"
+            ],
+            "classification": "SharedConfig",
+            "evidencePaths": [
+                "Assets/Game/Configs/Scene/Game_ResourceExchange_Config.asset",
+                "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "Resource exchange recipes are shared gameplay data.",
+            "migrationDisposition": "KeepSharedReference",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Game.Composition.MatchSceneView::roadBuildConfig",
+            "name": "roadBuildConfig",
+            "declaredType": "Game.Configs.RoadBuildSystemConfig",
+            "currentType": "Game.Configs.RoadBuildSystemSceneConfigAsset",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Configs/Scene/Game_RoadBuild_Config.asset|guid:b2010000000000000000000000000003|localId:11400000|type:Game.Configs.RoadBuildSystemSceneConfigAsset"
+            ],
+            "classification": "SharedConfig",
+            "evidencePaths": [
+                "Assets/Game/Configs/Scene/Game_RoadBuild_Config.asset",
+                "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "Road-build system policy is shared; active map metadata supplies map constraints.",
+            "migrationDisposition": "KeepSharedReference",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Game.Composition.MatchSceneView::rtsSelectionConfig",
+            "name": "rtsSelectionConfig",
+            "declaredType": "Game.Configs.RTSSelectionSystemConfig",
+            "currentType": "Game.Configs.RTSSelectionSystemSceneConfigAsset",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Configs/Scene/Game_RTSSelection_Config.asset|guid:b2010000000000000000000000000002|localId:11400000|type:Game.Configs.RTSSelectionSystemSceneConfigAsset"
+            ],
+            "classification": "SharedConfig",
+            "evidencePaths": [
+                "Assets/Game/Configs/Scene/Game_RTSSelection_Config.asset",
+                "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "Selection policy belongs to shared match composition.",
+            "migrationDisposition": "KeepSharedReference",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Game.Composition.MatchSceneView::runtimeCitySpawnerConfig",
+            "name": "runtimeCitySpawnerConfig",
+            "declaredType": "Game.Configs.RuntimeCitySpawnerSystemConfig",
+            "currentType": "Game.Configs.RuntimeCitySpawnerSystemSceneConfigAsset",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Configs/Scene/Game_RuntimeCitySpawner_Config.asset|guid:b2010000000000000000000000000006|localId:11400000|type:Game.Configs.RuntimeCitySpawnerSystemSceneConfigAsset"
+            ],
+            "classification": "SharedConfig",
+            "evidencePaths": [
+                "Assets/Game/Configs/Scene/Game_RuntimeCitySpawner_Config.asset",
+                "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "Runtime city spawning policy is shared and consumes active map data.",
+            "migrationDisposition": "KeepSharedReference",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Game.Composition.MatchSceneView::runtimeDecorationSpawnerConfig",
+            "name": "runtimeDecorationSpawnerConfig",
+            "declaredType": "Game.Configs.RuntimeDecorationSpawnerSystemConfig",
+            "currentType": "Game.Configs.RuntimeDecorationSpawnerSystemSceneConfigAsset",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Configs/Scene/Game_RuntimeDecorationSpawner_Config.asset|guid:b2010000000000000000000000000007|localId:11400000|type:Game.Configs.RuntimeDecorationSpawnerSystemSceneConfigAsset"
+            ],
+            "classification": "SharedConfig",
+            "evidencePaths": [
+                "Assets/Game/Configs/Scene/Game_RuntimeDecorationSpawner_Config.asset",
+                "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "Decoration spawning policy is shared while decoration inputs are map-owned.",
+            "migrationDisposition": "KeepSharedReference",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Game.Composition.MatchSceneView::runtimeGridBlockerConfig",
+            "name": "runtimeGridBlockerConfig",
+            "declaredType": "Game.Configs.RuntimeGridBlockerSystemConfig",
+            "currentType": "Game.Configs.RuntimeGridBlockerSystemSceneConfigAsset",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Configs/Scene/Game_RuntimeGridBlocker_Config.asset|guid:b2010000000000000000000000000008|localId:11400000|type:Game.Configs.RuntimeGridBlockerSystemSceneConfigAsset"
+            ],
+            "classification": "SharedConfig",
+            "evidencePaths": [
+                "Assets/Game/Configs/Scene/Game_RuntimeGridBlocker_Config.asset",
+                "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "Blocker-system policy is shared while blocker metadata is map-owned.",
+            "migrationDisposition": "KeepSharedReference",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Game.Composition.MatchSceneView::runtimeGridConfig",
+            "name": "runtimeGridConfig",
+            "declaredType": "Game.Configs.GridAuthoringConfig",
+            "currentType": "Game.Configs.GridAuthoringSceneConfigAsset",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset|guid:b201000000000000000000000000000b|localId:11400000|type:Game.Configs.GridAuthoringSceneConfigAsset"
+            ],
+            "classification": "MapOwned",
+            "evidencePaths": [
+                "Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset",
+                "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "The exact MatchSubScene grid asset describes current map dimensions and origin.",
+            "migrationDisposition": "ReferenceFromOperationMapDefinition",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Game.Composition.MatchSceneView::runtimeGridDebugViews",
+            "name": "runtimeGridDebugViews",
+            "declaredType": "Game.Authoring.GridAuthoring",
+            "currentType": "<none>",
+            "currentElementCount": 0,
+            "currentTargetIdentities": [],
+            "classification": "TemporaryCompatibility",
+            "evidencePaths": [
+                "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "The serialized debug-view collection is empty and carries no current ownership target.",
+            "migrationDisposition": "RemoveAfterCompatibilityCutover",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Game.Composition.MatchSceneView::staticMapPresentationManifest",
+            "name": "staticMapPresentationManifest",
+            "declaredType": "Game.Rendering.StaticMapPresentationManifest",
+            "currentType": "Game.Rendering.StaticMapPresentationManifest",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/GeneratedStaticMapPresentation/StaticMapPresentationManifest.asset|guid:2d7b3d165106141ba81b98138bb8fa7f|localId:11400000|type:Game.Rendering.StaticMapPresentationManifest"
+            ],
+            "classification": "MapOwned",
+            "evidencePaths": [
+                "Assets/Game/GeneratedStaticMapPresentation/StaticMapPresentationManifest.asset",
+                "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "Static presentation manifests become map-scoped under the target contract.",
+            "migrationDisposition": "ReferenceFromOperationMapDefinition",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Game.Composition.MatchSceneView::unitAttackTraceConfig",
+            "name": "unitAttackTraceConfig",
+            "declaredType": "Game.Configs.UnitAttackTraceSystemConfig",
+            "currentType": "Game.Configs.UnitAttackTraceSystemSceneConfigAsset",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Configs/Scene/Game_UnitAttackTrace_Config.asset|guid:b2010000000000000000000000000005|localId:11400000|type:Game.Configs.UnitAttackTraceSystemSceneConfigAsset"
+            ],
+            "classification": "SharedConfig",
+            "evidencePaths": [
+                "Assets/Game/Configs/Scene/Game_UnitAttackTrace_Config.asset",
+                "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "Attack trace presentation policy is shared across maps.",
+            "migrationDisposition": "KeepSharedReference",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Game.Composition.MatchSceneView::visualQualityProfile",
+            "name": "visualQualityProfile",
+            "declaredType": "Game.Configs.VisualQualityProfileAsset",
+            "currentType": "Game.Configs.VisualQualityProfileAsset",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Rendering/VisualQualityConfig.asset|guid:d9e06dd77d8b4533a0efb56ed3e14cbb|localId:11400000|type:Game.Configs.VisualQualityProfileAsset"
+            ],
+            "classification": "SharedConfig",
+            "evidencePaths": [
+                "Assets/Game/Rendering/VisualQualityConfig.asset",
+                "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "Visual quality policy is shared and applied by shell composition.",
+            "migrationDisposition": "KeepSharedReference",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Game.Composition.MatchSceneView::worldCamera",
+            "name": "worldCamera",
+            "declaredType": "UnityEngine.Camera",
+            "currentType": "UnityEngine.Camera",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Scenes/Match.unity::Main Camera[5]|type:UnityEngine.Camera"
+            ],
+            "classification": "ShellOwned",
+            "evidencePaths": [
+                "Assets/Game/Scenes/Match.unity",
+                "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "The target contract explicitly assigns the world camera to the Match shell.",
+            "migrationDisposition": "KeepInMatchShell",
+            "decisionOwner": ""
+        }
+    ],
+    "matchRoots": [
+        {
+            "stableIdentity": "Assets/Game/Scenes/Match.unity::Bootstrap[0]",
+            "name": "Bootstrap",
+            "declaredType": "UnityEngine.GameObject",
+            "currentType": "Game.Composition.MatchSceneView|UnityEngine.Transform",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Scenes/Match.unity::Bootstrap[0]"
+            ],
+            "classification": "ShellOwned",
+            "evidencePaths": [
+                "Assets/Game/Scenes/Match.unity",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "The bootstrap binder and lifecycle remain in the Match shell.",
+            "migrationDisposition": "KeepInMatchShell",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Assets/Game/Scenes/Match.unity::MatchSubScene[1]",
+            "name": "MatchSubScene",
+            "declaredType": "UnityEngine.GameObject",
+            "currentType": "Unity.Scenes.SubScene|UnityEngine.Transform",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Scenes/Match.unity::MatchSubScene[1]"
+            ],
+            "classification": "TemporaryCompatibility",
+            "evidencePaths": [
+                "Assets/Game/Scenes/Match.unity",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "The current shell reference preserves the compatibility path until map-owned subscene loading exists.",
+            "migrationDisposition": "RetainUntilMapSubSceneCutover",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Assets/Game/Scenes/Match.unity::Start[2]",
+            "name": "Start",
+            "declaredType": "UnityEngine.GameObject",
+            "currentType": "UnityEngine.Transform",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Scenes/Match.unity::Start[2]"
+            ],
+            "classification": "Unresolved",
+            "evidencePaths": [
+                "Assets/Game/Scenes/Match.unity",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "A bare transform named Start has no typed contract proving camera, spawn, or objective ownership.",
+            "migrationDisposition": "DecisionRequired",
+            "decisionOwner": "Scenario design owner and architecture owner"
+        },
+        {
+            "stableIdentity": "Assets/Game/Scenes/Match.unity::End[3]",
+            "name": "End",
+            "declaredType": "UnityEngine.GameObject",
+            "currentType": "UnityEngine.Transform",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Scenes/Match.unity::End[3]"
+            ],
+            "classification": "Unresolved",
+            "evidencePaths": [
+                "Assets/Game/Scenes/Match.unity",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "A bare transform named End has no typed contract proving camera, spawn, or objective ownership.",
+            "migrationDisposition": "DecisionRequired",
+            "decisionOwner": "Scenario design owner and architecture owner"
+        },
+        {
+            "stableIdentity": "Assets/Game/Scenes/Match.unity::Decorations[4]",
+            "name": "Decorations",
+            "declaredType": "UnityEngine.GameObject",
+            "currentType": "Game.Runtime.CombinedMeshBaker|UnityEngine.Transform",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Scenes/Match.unity::Decorations[4]"
+            ],
+            "classification": "MapOwned",
+            "evidencePaths": [
+                "Assets/Game/Scenes/Match.unity",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "The root is the exact decoration geometry/bake target referenced by MatchSceneView.",
+            "migrationDisposition": "MoveToOperationMap",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Assets/Game/Scenes/Match.unity::Main Camera[5]",
+            "name": "Main Camera",
+            "declaredType": "UnityEngine.GameObject",
+            "currentType": "UnityEngine.AudioListener|UnityEngine.Camera|UnityEngine.FlareLayer|UnityEngine.Rendering.Universal.UniversalAdditionalCameraData|UnityEngine.Transform",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Scenes/Match.unity::Main Camera[5]"
+            ],
+            "classification": "ShellOwned",
+            "evidencePaths": [
+                "Assets/Game/Scenes/Match.unity",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "The target contract assigns the world camera and listener boundary to the shell.",
+            "migrationDisposition": "KeepInMatchShell",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Assets/Game/Scenes/Match.unity::Reflection Probe[6]",
+            "name": "Reflection Probe",
+            "declaredType": "UnityEngine.GameObject",
+            "currentType": "UnityEngine.ReflectionProbe|UnityEngine.Transform",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Scenes/Match.unity::Reflection Probe[6]"
+            ],
+            "classification": "MapOwned",
+            "evidencePaths": [
+                "Assets/Game/Scenes/Match.unity",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "The tracker requires probes to migrate with explicit map parity.",
+            "migrationDisposition": "MoveToOperationMap",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Assets/Game/Scenes/Match.unity::Global Volume[7]",
+            "name": "Global Volume",
+            "declaredType": "UnityEngine.GameObject",
+            "currentType": "UnityEngine.Rendering.Volume|UnityEngine.Transform",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Scenes/Match.unity::Global Volume[7]"
+            ],
+            "classification": "ShellOwned",
+            "evidencePaths": [
+                "Assets/Game/Scenes/Match.unity",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "The match post-processing boundary remains shell-owned.",
+            "migrationDisposition": "KeepInMatchShell",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Assets/Game/Scenes/Match.unity::Directional Light[8]",
+            "name": "Directional Light",
+            "declaredType": "UnityEngine.GameObject",
+            "currentType": "UnityEngine.Light|UnityEngine.Rendering.Universal.UniversalAdditionalLightData|UnityEngine.Transform",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Scenes/Match.unity::Directional Light[8]"
+            ],
+            "classification": "ShellOwned",
+            "evidencePaths": [
+                "Assets/Game/Scenes/Match.unity",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "The normative target contract assigns match lighting roots to the shell-owned lighting boundary.",
+            "migrationDisposition": "KeepInMatchShell",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Assets/Game/Scenes/Match.unity::Directional Light (1)[9]",
+            "name": "Directional Light (1)",
+            "declaredType": "UnityEngine.GameObject",
+            "currentType": "UnityEngine.Light|UnityEngine.Rendering.Universal.UniversalAdditionalLightData|UnityEngine.Transform",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Scenes/Match.unity::Directional Light (1)[9]"
+            ],
+            "classification": "ShellOwned",
+            "evidencePaths": [
+                "Assets/Game/Scenes/Match.unity",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "The normative target contract assigns match lighting roots to the shell-owned lighting boundary.",
+            "migrationDisposition": "KeepInMatchShell",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Assets/Game/Scenes/Match.unity::Map[10]",
+            "name": "Map",
+            "declaredType": "UnityEngine.GameObject",
+            "currentType": "Game.Authoring.MapSurfaceAuthoring|UnityEngine.Transform",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Scenes/Match.unity::Map[10]"
+            ],
+            "classification": "MapOwned",
+            "evidencePaths": [
+                "Assets/Game/Scenes/Match.unity",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "The canonical map hierarchy and map-surface authoring belong to the operation map.",
+            "migrationDisposition": "MoveToOperationMap",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Assets/Game/Scenes/Match.unity::Faction2[11]",
+            "name": "Faction2",
+            "declaredType": "UnityEngine.GameObject",
+            "currentType": "UnityEngine.MeshFilter|UnityEngine.MeshRenderer|UnityEngine.Transform",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Scenes/Match.unity::Faction2[11]"
+            ],
+            "classification": "MapOwned",
+            "evidencePaths": [
+                "Assets/Game/Scenes/Match.unity",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "This exact root is serialized map presentation geometry.",
+            "migrationDisposition": "MoveToOperationMap",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Assets/Game/Scenes/Match.unity::Faction3[12]",
+            "name": "Faction3",
+            "declaredType": "UnityEngine.GameObject",
+            "currentType": "UnityEngine.MeshFilter|UnityEngine.MeshRenderer|UnityEngine.Transform",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Scenes/Match.unity::Faction3[12]"
+            ],
+            "classification": "MapOwned",
+            "evidencePaths": [
+                "Assets/Game/Scenes/Match.unity",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "This exact root is serialized map presentation geometry.",
+            "migrationDisposition": "MoveToOperationMap",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Assets/Game/Scenes/Match.unity::Faction4[13]",
+            "name": "Faction4",
+            "declaredType": "UnityEngine.GameObject",
+            "currentType": "UnityEngine.MeshFilter|UnityEngine.MeshRenderer|UnityEngine.Transform",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Scenes/Match.unity::Faction4[13]"
+            ],
+            "classification": "MapOwned",
+            "evidencePaths": [
+                "Assets/Game/Scenes/Match.unity",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "This exact root is serialized map presentation geometry.",
+            "migrationDisposition": "MoveToOperationMap",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Assets/Game/Scenes/Match.unity::Faction5[14]",
+            "name": "Faction5",
+            "declaredType": "UnityEngine.GameObject",
+            "currentType": "UnityEngine.MeshFilter|UnityEngine.MeshRenderer|UnityEngine.Transform",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Scenes/Match.unity::Faction5[14]"
+            ],
+            "classification": "MapOwned",
+            "evidencePaths": [
+                "Assets/Game/Scenes/Match.unity",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "This exact root is serialized map presentation geometry.",
+            "migrationDisposition": "MoveToOperationMap",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Assets/Game/Scenes/Match.unity::Faction1[15]",
+            "name": "Faction1",
+            "declaredType": "UnityEngine.GameObject",
+            "currentType": "UnityEngine.MeshFilter|UnityEngine.MeshRenderer|UnityEngine.Transform",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Scenes/Match.unity::Faction1[15]"
+            ],
+            "classification": "MapOwned",
+            "evidencePaths": [
+                "Assets/Game/Scenes/Match.unity",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "This exact root is serialized map presentation geometry.",
+            "migrationDisposition": "MoveToOperationMap",
+            "decisionOwner": ""
+        }
+    ],
+    "matchSubSceneRoots": [
+        {
+            "stableIdentity": "Assets/Game/Scenes/Match/MatchSubScene.unity::Grid[0]",
+            "name": "Grid",
+            "declaredType": "UnityEngine.GameObject",
+            "currentType": "Game.Authoring.GridAuthoring|UnityEngine.Transform",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Scenes/Match/MatchSubScene.unity::Grid[0]"
+            ],
+            "classification": "MapOwned",
+            "evidencePaths": [
+                "Assets/Game/Scenes/Match/MatchSubScene.unity",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "Grid authoring describes map dimensions, origin, and cell ownership.",
+            "migrationDisposition": "MoveToOperationMapSubScene",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Assets/Game/Scenes/Match/MatchSubScene.unity::InitialUnitsSpawnerAuthoring[1]",
+            "name": "InitialUnitsSpawnerAuthoring",
+            "declaredType": "UnityEngine.GameObject",
+            "currentType": "Game.Authoring.InitialUnitsSpawnerAuthoring|UnityEngine.Transform",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Scenes/Match/MatchSubScene.unity::InitialUnitsSpawnerAuthoring[1]"
+            ],
+            "classification": "Mixed",
+            "evidencePaths": [
+                "Assets/Game/Scenes/Match/MatchSubScene.unity",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "ScenarioSetup owns starting units, but this authoring currently resides in the map-specific subscene.",
+            "migrationDisposition": "DecisionRequired",
+            "decisionOwner": "Gameplay scenario owner and architecture owner"
+        },
+        {
+            "stableIdentity": "Assets/Game/Scenes/Match/MatchSubScene.unity::UnitPrefabRegistryAuthoring[2]",
+            "name": "UnitPrefabRegistryAuthoring",
+            "declaredType": "UnityEngine.GameObject",
+            "currentType": "Game.Authoring.UnitPrefabRegistryAuthoring|UnityEngine.Transform",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Scenes/Match/MatchSubScene.unity::UnitPrefabRegistryAuthoring[2]"
+            ],
+            "classification": "SharedConfig",
+            "evidencePaths": [
+                "Assets/Game/Scenes/Match/MatchSubScene.unity",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "The unit prefab registry is shared runtime authoring rather than map geometry.",
+            "migrationDisposition": "KeepSharedReference",
+            "decisionOwner": ""
+        }
+    ]
+}

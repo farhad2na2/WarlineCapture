@@ -699,14 +699,14 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 7% (13/177 checklist items complete).
+Overall implementation progress: 8% (15/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
 | Phase | Status | Complete | Total | Progress | Notes |
 |---|---|---:|---:|---:|---|
 | 0. Reproducible baseline and rollback | In progress / shared | 11 | 12 | 92% | Required by both directions before scene edits. |
-| 1. Operation-map and scenario data contracts | In progress / shared subset | 2 | 12 | 17% | Typed identity and metadata only; delivery-specific references remain later. |
+| 1. Operation-map and scenario data contracts | In progress / shared subset | 4 | 12 | 33% | Typed identity and metadata only; delivery-specific references remain later. |
 | 2. Per-map static presentation ownership | Not started / compatibility subset | 0 | 14 | 0% | Preserve the current baked map safely; future-map generation remains undecided. |
 | 2A. Local Addressables packaging foundation | Later / direction-specific | 0 | 20 | 0% | Do not implement before the map-delivery direction is selected. |
 | 3. Current-map compatibility registration | Not started / shared | 0 | 10 | 0% | Registers the current map without choosing a loader. |
@@ -748,8 +748,8 @@ Exit criteria:
 
 - [x] Approve canonical operation-map ids: `opmap.<mode-or-chapter>.<slug>`. See `operation_map_and_scenario_identity_contract.md`.
 - [x] Approve canonical scenario ids: `scenario.<chapter>.<mission>.<slug>` and `scenario.skirmish.<slug>`. See the same identity contract.
-- [ ] Add the planned `Game.Configs.OperationMapDefinition` `ScriptableObject` without storing hot runtime policy or heavyweight direct asset references in it.
-- [ ] Add the planned `Game.Configs.ScenarioSetupConfig` `ScriptableObject`, or update this technical contract to an already accepted concrete config type before implementation.
+- [x] Add the planned `Game.Configs.OperationMapDefinition` `ScriptableObject` without storing hot runtime policy or heavyweight direct asset references in it. Initial identity/version slice: `Assets/Game/Scripts/Configs/OperationMapDefinition.cs`.
+- [x] Add the planned `Game.Configs.ScenarioSetupConfig` `ScriptableObject`, or update this technical contract to an already accepted concrete config type before implementation. Initial identity-link slice: `Assets/Game/Scripts/Configs/ScenarioSetupConfig.cs`.
 - [ ] Add lazy source-scene, optional subscene/heavy metadata, static presentation manifest, map-surface, and map-content version references without introducing a `Game.Configs -> Game.Rendering` dependency.
 - [ ] Add `OperationMapBoundsConfig`, `OperationMapCameraConfig`, `OperationMapMinimapConfig`, and planning/battle/minimap ids.
 - [ ] Add typed ids for spawn, objective, deployment, build, civilian, hostile, base, resource, runway, helipad, lane, and debug anchors.
@@ -1068,6 +1068,7 @@ Exit criteria:
 | 2026-07-16 | Shared Match shell/root ownership decisions | `../AgentReports/2026-07-15_opmap-004_phase0_ownership_baseline.json`; `../AgentReports/2026-07-16_operation_map_shell_root_ownership_decisions.md`; root-reference audit; `git diff --check` | Passed | Resolved the final four rows: day/night policy is `SharedConfig`; bare unreferenced Start/End roots are map-scoped `TemporaryCompatibility`; initial-unit authoring is a scenario/map `Mixed` contract. All 28 MatchSceneView fields, 16 Match roots, and 3 MatchSubScene roots now have accepted ownership. No scene move or shell stripping is authorized by this inventory decision. |
 | 2026-07-16 | Shared placement ownership decisions | `../AgentReports/2026-07-15_opmap-006_phase0_placement_ownership.json`; `../AgentReports/2026-07-16_operation_map_placement_ownership_decisions.md`; `git diff --check` | Passed | Classified both placement configs and authoring roots as `MapOwned`, with runtime spawn/hiding/teardown retained as shell policy. The 54 duplicate source-path groups are accepted `TemporaryCompatibility`; cutover must use complete placement and old/new object identity and fail on zero/multiple/reused candidates. All 451 building and 29 vehicle entries now have accepted disposition. |
 | 2026-07-16 | Shared operation-map/scenario identity contract | `operation_map_and_scenario_identity_contract.md`; design-id cross-check; checklist accounting; `git diff --check` | Passed | Approved bounded lowercase ASCII operation-map and scenario grammars, immutability, ordinal comparison, namespace separation, scenario-to-map cardinality, and explicit separation from paths, GUIDs, Addressables, bundles, display text, versions, and generator seeds. Documentation only. |
+| 2026-07-16 | Shared operation-map/scenario identity configs | `../AgentReports/2026-07-16_operation_map_identity_configs.md`; focused EditMode `23 / 23`; non-ECS `9 / 9`; SystemBase migration `19 / 19`; source growth `15 / 15`; compile and `git diff --check` | Passed | Added sealed metadata-only config assets and allocation-free canonical id validation. No loader, scene path, hierarchy name, Unity object/Addressables/rendering reference, ECS system, or update callback was introduced. Seven unrelated existing broad diagnostic failures remain recorded but do not name this slice. |
 
 ## Open Decisions
 

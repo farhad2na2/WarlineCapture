@@ -409,7 +409,9 @@ namespace Game.Tests.Editor
                 "opmap007-parent-replace-" + Guid.NewGuid().ToString("N"));
             string canonicalParent = Path.Combine(container, "canonical");
             string displacedParent = Path.Combine(container, "displaced");
+            string attackerParent = Path.Combine(container, "attacker");
             Directory.CreateDirectory(canonicalParent);
+            Directory.CreateDirectory(attackerParent);
             try
             {
                 OperationMapPhase0CameraMinimapOwnershipProbe.ValidatedReportDestination destination =
@@ -422,12 +424,14 @@ namespace Game.Tests.Editor
                         () =>
                         {
                             Directory.Move(canonicalParent, displacedParent);
-                            Assert.That(Symlink(displacedParent, canonicalParent), Is.EqualTo(0));
+                            Assert.That(Symlink(attackerParent, canonicalParent), Is.EqualTo(0));
                         }));
 
                 Assert.That(File.Exists(Path.Combine(canonicalParent, "report.json")), Is.False);
                 Assert.That(File.Exists(Path.Combine(displacedParent, "report.json")), Is.False);
+                Assert.That(File.Exists(Path.Combine(attackerParent, "report.json")), Is.False);
                 Assert.That(Directory.GetFiles(displacedParent), Is.Empty);
+                Assert.That(Directory.GetFiles(attackerParent), Is.Empty);
             }
             finally
             {

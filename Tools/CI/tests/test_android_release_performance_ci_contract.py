@@ -113,6 +113,9 @@ class AndroidReleasePerformanceCiContractTests(unittest.TestCase):
     def test_python_resolution_and_fail_closed_exit_handling(self) -> None:
         self.assertLess(self.wrapper.index("Get-Command py"), self.wrapper.index("Get-Command python"))
         self.assertIn('$pythonPrefixArguments = @("-3")', self.wrapper)
+        self.assertIn("$savedErrorActionPreference = $ErrorActionPreference", self.wrapper)
+        self.assertIn('$ErrorActionPreference = "Continue"', self.wrapper)
+        self.assertIn("$ErrorActionPreference = $savedErrorActionPreference", self.wrapper)
         self.assertIn("if ($exitCode -ne 0)", self.wrapper)
         self.assertIn("throw", self.wrapper)
 

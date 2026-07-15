@@ -55,8 +55,18 @@ function Invoke-PythonStep {
     )
 
     Write-ContractLog "[APH-804 CI Contract] Starting $Label."
-    $output = @(& $pythonExecutable @pythonPrefixArguments @PythonArguments 2>&1)
-    $exitCode = $LASTEXITCODE
+    # unittest writes its normal progress and summary to stderr. In Windows
+    # PowerShell 5.1, ErrorActionPreference=Stop otherwise turns that successful
+    # native-process output into a terminating NativeCommandError.
+    $savedErrorActionPreference = $ErrorActionPreference
+    try {
+        $ErrorActionPreference = "Continue"
+        $output = @(& $pythonExecutable @pythonPrefixArguments @PythonArguments 2>&1)
+        $exitCode = $LASTEXITCODE
+    } finally {
+        $ErrorActionPreference = $savedErrorActionPreference
+    }
+
     foreach ($line in $output) {
         Write-ContractLog ([string] $line)
     }

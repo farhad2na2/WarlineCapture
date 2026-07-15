@@ -40,6 +40,31 @@ Implementation is temporarily restricted to work that is required by both an edi
 
 The checklist count remains unchanged so deferred work is not lost or misreported as complete. Items marked later must not be implemented, checked off, or used to block the shared `Match.unity` ownership split.
 
+### Execution Labels While Map-Direction R&D Is Open
+
+These labels are normative. A task without a `Shared now` disposition must not be implemented during the current workstream.
+
+| Label | Meaning |
+|---|---|
+| `Shared now` | Required whether maps remain editor-authored scenes or become runtime scene-based maps. May be implemented now. |
+| `Shared contract now` | Loader/generator-neutral data, readiness, failure, or teardown contract only. No concrete loading or content-production implementation. |
+| `Later - direction decision` | Depends on the selected map production/loading direction. Do not implement yet. |
+| `Later - editor direction only` | Editor generator or editor-authored future-map production. Implement only if that direction is accepted. |
+| `Later - delivery` | Addressables, remote delivery, concrete loading/unloading, and packaging. Implement after the map direction is selected. |
+
+The current implementation allowlist is therefore limited to:
+
+1. All Phase 0 reproducibility, ownership classification, validation baseline, and rollback work.
+2. Phase 1 typed ids and loader-neutral map/scenario metadata contracts; asset-provider, Addressables, and concrete scene-reference fields remain later.
+3. Phase 2 compatibility work needed to preserve the current map's existing static-presentation ownership during the split; future-map generation remains later.
+4. Phase 3 registration of the current map by stable id without choosing or implementing a loader.
+5. Phase 4's non-destructive ownership split of the existing `Match.unity` map and its current bake products.
+6. Phase 5 ECS/readiness/failure/teardown contracts only; every concrete load/unload step remains later.
+7. Phase 6 loader-neutral bounds, surface, grid, blocker, camera, minimap, runway, helipad, and movement metadata.
+8. Phase 10 validation only where exercised by the shared work above.
+
+Explicitly out of scope until the R&D decision: Phase 2A Addressables, concrete Phase 5 loading/unloading, future physical M01/Skirmish maps, the entire Phase 8 editor generator, runtime map generation, all-map packaging, and Phase 11 remote content. Phases 7 and 9 may retain design ids and anchor requirements, but no physical future-map implementation may begin.
+
 ## Audit Result: 2026-07-14
 
 The original draft had the right product direction but understated the current bake/runtime coupling. The live map is not only `Match.unity`; it is the following owned set:
@@ -674,13 +699,13 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 0% (0/177 checklist items complete).
+Overall implementation progress: 3% (5/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
 | Phase | Status | Complete | Total | Progress | Notes |
 |---|---|---:|---:|---:|---|
-| 0. Reproducible baseline and rollback | In progress / shared | 0 | 12 | 0% | Required by both directions before scene edits. |
+| 0. Reproducible baseline and rollback | In progress / shared | 5 | 12 | 42% | Required by both directions before scene edits. |
 | 1. Operation-map and scenario data contracts | Not started / shared subset | 0 | 12 | 0% | Typed identity and metadata only; delivery-specific references remain later. |
 | 2. Per-map static presentation ownership | Not started / compatibility subset | 0 | 14 | 0% | Preserve the current baked map safely; future-map generation remains undecided. |
 | 2A. Local Addressables packaging foundation | Later / direction-specific | 0 | 20 | 0% | Do not implement before the map-delivery direction is selected. |
@@ -696,10 +721,12 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 
 ## Phase 0: Reproducible Baseline And Rollback
 
-- [ ] Capture the exact Unity scene setup for `Match.unity` and `MatchSubScene.unity`.
-- [ ] Reproduce the current manifest schema, canonical path/hash, content hash, chunk size, chunk count, and source count through an authoritative Unity probe.
-- [ ] Hash the manifest, integrity ledger, every generated scene, and every generated `.meta` file.
-- [ ] Record the authoritative bake, scene-wiring, structural-validation, and Android build-resolution commands and log paths.
+**Execution: `Shared now` for every checklist item.**
+
+- [x] Capture the exact Unity scene setup for `Match.unity` and `MatchSubScene.unity`.
+- [x] Reproduce the current manifest schema, canonical path/hash, content hash, chunk size, chunk count, and source count through an authoritative Unity probe.
+- [x] Hash the manifest, integrity ledger, every generated scene, and every generated `.meta` file.
+- [x] Record the authoritative bake, scene-wiring, structural-validation, and Android build-resolution commands and log paths.
 - [ ] Inventory every `MatchSceneView` serialized reference and classify it as shell-owned, map-owned, shared config, or temporary compatibility data.
 - [ ] Inventory root objects under `Match.unity` and classify map geometry, map authoring, camera, lighting, bootstrap, and runtime-only ownership.
 - [ ] Inventory `Match_MapBuildingPlacement_Config` and `Match_MapVehiclePlacement_Config`, including hierarchy-path and source-hiding assumptions.
@@ -707,7 +734,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 - [ ] Inventory ground-height, map-surface, grid, blockers, terrain, runway, and helipad metadata sources.
 - [ ] Inventory static presentation streamer, canonical-renderer suppression, teardown, and Android build-scene ownership.
 - [ ] Capture current Editor launch, Android launch, load time, loaded memory, APK/installed size, sustained FPS, draw, and GC evidence accepted for comparison.
-- [ ] Write an exact rollback recipe that restores scene setup, manifest/integrity files, generated scenes, scene references, configs, and build settings.
+- [x] Write an exact rollback recipe that restores scene setup, manifest/integrity files, generated scenes, scene references, configs, and build settings. See `operation_map_scene_split_rollback_recipe.md`.
 
 Exit criteria:
 
@@ -716,6 +743,8 @@ Exit criteria:
 - No scene, config, baker, manifest, or generated output changes occur in this phase.
 
 ## Phase 1: Operation-Map And Scenario Data Contracts
+
+**Execution: mixed.** Typed ids and loader-neutral metadata are `Shared now`; delivery-provider references and concrete scene-loading fields are `Later - direction decision`.
 
 - [ ] Approve canonical operation-map ids: `opmap.<mode-or-chapter>.<slug>`.
 - [ ] Approve canonical scenario ids: `scenario.<chapter>.<mission>.<slug>` and `scenario.skirmish.<slug>`.
@@ -736,6 +765,8 @@ Exit criteria:
 - Runtime code does not need hardcoded scene paths or raw object names to choose a map.
 
 ## Phase 2: Per-Map Static Presentation Ownership
+
+**Execution: compatibility subset is `Shared now`.** Preserve and separate the current map's accepted bake ownership. Generalized future-map generation is `Later - direction decision`.
 
 - [ ] Introduce `Game.Editor.StaticMapPresentationBakeInput` carrying operation-map id, source scene, source map root, output root, manifest path, integrity path, and chunk size.
 - [ ] Refactor `StaticMapPresentationBaker` so the current hardcoded constants remain only a compatibility entry point during migration.
@@ -759,6 +790,8 @@ Exit criteria:
 - An identical rebake writes no scenes and deletes no scenes.
 
 ## Phase 2A: Local Addressables Packaging Foundation
+
+**Execution: `Later - delivery` for every checklist item.**
 
 **Later / direction-specific:** do not implement this phase while runtime scene-based map R&D is unresolved.
 
@@ -792,6 +825,8 @@ Exit criteria:
 
 ## Phase 3: Current-Map Compatibility Registration
 
+**Execution: `Shared now` only when registration remains loader-neutral.**
+
 - [ ] Confirm the logical id `opmap.skirmish.desert_base_01` or record the approved replacement.
 - [ ] Register that id against the current `Match.unity`, `MatchSubScene.unity`, current manifest, and current map-specific configs without moving files.
 - [ ] Create the compatibility `OperationMapDefinition` with exact current bounds, grid/surface references, camera ids, minimap id, and map anchors.
@@ -809,6 +844,8 @@ Exit criteria:
 - Existing match behavior, baking, streaming, and Android inclusion remain stable.
 
 ## Phase 4: Non-Destructive Scene Ownership Split
+
+**Execution: `Shared now`.** This phase separates the existing map from the Match shell without selecting how future maps are generated or delivered.
 
 - [ ] Finalize the shell-owned versus map-owned dependency inventory from Phase 0.
 - [ ] Create `Assets/Game/Scenes/OperationMaps/Skirmish/` and its Unity folder `.meta` files through Unity/AssetDatabase-safe tooling.
@@ -833,7 +870,7 @@ Exit criteria:
 
 ## Phase 5: Runtime Selection, Loading, And Teardown
 
-**Shared subset only:** define readiness, ownership, failure-unwind, and teardown contracts. Defer concrete Addressables and runtime-scene loading/unloading implementation until the delivery direction is selected.
+**Execution: `Shared contract now` only.** Define readiness, ownership, failure-unwind, and teardown contracts. Every concrete Addressables or runtime-scene loading/unloading implementation is `Later - delivery`.
 
 - [ ] Add the planned operation-map root/queue/state/active/bounds/metadata/readiness ECS components and request/result buffers, carrying mission, scenario, and operation-map ids as bounded fixed strings.
 - [ ] Resolve the operation-map catalog entry before beginning the match load transition.
@@ -857,6 +894,8 @@ Exit criteria:
 
 ## Phase 6: Metadata, Camera, Minimap, And Movement Binding
 
+**Execution: `Shared now` where the binding consumes loader-neutral active-map metadata.**
+
 - [ ] Bind camera clamp bounds from active operation-map metadata.
 - [ ] Bind planning, battle, and initial camera transforms from typed camera ids/anchors.
 - [ ] Bind minimap projection and cached raster data from the active map.
@@ -876,6 +915,8 @@ Exit criteria:
 - Gameplay systems do not depend on raw scene object names for map-critical behavior.
 
 ## Phase 7: M01 Operation-Map Slice
+
+**Execution: `Later - direction decision` for physical map work.** Design ids and loader-neutral anchor requirements may remain documented, but no M01 map asset implementation begins now.
 
 Implementation blocker: M01 planning and scaffolding may be studied, but M01 implementation and player-facing integration must not begin until `../M01_FirstContact_Production_Contract.md` releases its FirstLaunch Phase 10R / Gate 9R hold.
 
@@ -897,7 +938,7 @@ Exit criteria:
 
 ## Phase 8: Editor-Time Texture/Mask Generator
 
-**Later / editor direction only:** do not implement this phase unless the editor-authored map direction is selected after R&D.
+**Execution: `Later - editor direction only` for every checklist item.** Do not implement this phase unless the editor-authored map direction is selected after R&D.
 
 - [ ] Define the reviewed map-pack folder/manifest contract for base visual, blocker mask, height mask, tree/rock masks, and generation seed/version.
 - [ ] Add the editor-only `OperationMapTextureMaskGenerator` entry point and its `OperationMapGenerationInput`/`OperationMapGenerationResult` value types under existing tooling conventions.
@@ -919,6 +960,8 @@ Exit criteria:
 
 ## Phase 9: Mission And Skirmish Scenario Rollout
 
+**Execution: `Later - direction decision` for physical map rollout.** Loader-neutral scenario/map ids may remain documented only.
+
 - [ ] Add a Skirmish/sandbox `ScenarioSetup` for `opmap.skirmish.desert_base_01`.
 - [ ] Gate build, scan, support, aircraft, fuel logistics, resource exchange, and fabrication per scenario.
 - [ ] Define objectives and star goals in scenario data, not scene branches.
@@ -936,6 +979,8 @@ Exit criteria:
 - Scenario data, not scene contents alone, controls game rules and starting state.
 
 ## Phase 10: Full Validation And All-Bundled Rollout
+
+**Execution: mixed.** Validation triggered by current shared work is `Shared now`; Addressables build-layout, all-map packaging, and delivery validation are `Later - delivery`.
 
 - [ ] Run `git diff --check` and scoped asset/meta integrity checks.
 - [ ] Run `ScriptArchitectureAlignmentContractTests.RunAssemblyBoundaryValidation`/`RunBroadShellValidation`, `NonEcsSystemConversionArchitectureTests.RunFocusedValidation`, `EcsBurstHotPathArchitectureTests` focused/type-handle/non-Burst classification runners, and `ProductionSourceGrowthArchitectureTests.RunFocusedValidation`.
@@ -968,6 +1013,8 @@ Exit criteria:
 - M01 and future missions have a validated path without putting every level in one scene.
 
 ## Phase 11: Deferred Remote Content Migration
+
+**Execution: `Later - delivery` for every checklist item.**
 
 **Later / direction-specific:** this phase remains out of scope regardless of shared-foundation progress.
 
@@ -1013,6 +1060,8 @@ Exit criteria:
 | 2026-07-15 | Build `#110` cross-platform canonical hash repair | PR `#11`; focused EditMode `64 / 64`; canonical hash changed from `0a587783351110d16353575d15d1b5cd` to `db252d7b61b87458dafbd30acb8a5559`; all `514` chunk scene/meta pairs and content hash remained byte-identical; merge `f850f3a5bdc6b3f4ffa8ad7ab453c07611fb5e8a` | Passed locally; Windows rerun pending | Canonical text dependency hashing now normalizes line endings, binary bytes remain exact, and Jenkins pins LF before sparse materialization. Build #110 failed because its Windows checkout could materialize different line endings than the macOS bake. The Android/Jenkins acceptance row remains open until a post-merge Windows build succeeds. |
 | 2026-07-15 | `opmap-006` placement ownership evidence | PR `#9`; focused EditMode `54 / 54`; two byte-identical probe runs; committed report SHA-256 `115270bd...f759`; architecture gates `9 / 9`, `31 / 31`, `1 / 1`; merge `2873e4dd7b2f1f5a5727c1de81bd9c86f97dc60d` | Passed; decisions remain | Deterministic evidence covers all `451` building and `29` vehicle placement entries. Duplicate hierarchy source paths are grouped and remain explicitly Mixed/Unresolved rather than claiming false one-to-one source-hiding ownership. The placement checklist row stays open pending accepted decisions. |
 | 2026-07-15 | Shared navigation metadata ownership evidence | Direct-main shared-foundation slice; schema `2`; focused EditMode `36 / 36`; two byte-identical probe runs; committed report SHA-256 `7eedc224...300f1`; architecture gates `9 / 9`, `31 / 31`, `1 / 1` | Passed; four decisions remain | Deterministic read-only evidence covers `15` authorities and `15` exact compiled consumer type/member identities, including fixed-wing runway initialization and grid movement. Authority results are `7 MapOwned`, `4 SharedConfig`, `3 Mixed`, and `1 Unresolved`; only Mixed/Unresolved rows use `DecisionRequired`, so the Phase 0 navigation checkbox remains open. A broader diagnostic architecture run retained seven unrelated pre-existing failures and is not acceptance evidence for this slice. |
+| 2026-07-15 | Shared-only scope clarification and Phase 0 evidence accounting | `2026-07-14_opmap-002_phase0_baseline_probe.md`; `2026-07-15_opmap-005_static_map_presentation_refresh.md`; `git diff --check` | Passed | Marked the four accepted reproducibility/evidence items complete: exact scene setup, authoritative manifest/count reproduction, full manifest/integrity/generated-file hashing, and recorded bake/wiring/structural/Android resolver commands and logs. Added normative execution labels so Addressables, concrete loading, future physical maps, editor/runtime generators, packaging, and remote delivery cannot start while map-direction R&D remains open. No scene, config, manifest, generated output, or runtime source changed. |
+| 2026-07-15 | Shared scene-split rollback recipe | `operation_map_scene_split_rollback_recipe.md`; ownership-path audit; `git diff --check` | Passed | Added a loader/generator-neutral rollback contract based on an immutable pre-cutover SHA, an exact cutover path ledger, an atomic revert range, byte/GUID restoration, authoritative probe parity, no-op rebakes, focused tests, Editor gameplay parity, and risk-triggered Android validation. No project asset or runtime source changed. |
 
 ## Open Decisions
 

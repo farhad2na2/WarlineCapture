@@ -1,7 +1,7 @@
 # Operation Map Scene Split And Generator Implementation Tracker
 
 Date: 2026-07-14
-Status: Accepted design; implementation not started
+Status: Implementation in progress; Phase 0 evidence capture
 Workflow path: `pull request`
 Design sources: `../3D_SingleMap_Gameplay_Direction.md`, `../Level_And_Mission_Content_Plan.md`, `../3D_Operation_Map_Texture_Mask_Workflow.md`, `../M01_FirstContact_Production_Contract.md`, `gameplay_solid_ecs_contract.md`, `performance_regression_contract.md`
 
@@ -983,6 +983,8 @@ Exit criteria:
 | 2026-07-14 | Product direction acceptance | Product-owner decision in this task; tracker accounting audit (`177` checklist items; Phase 2A `20`; Phase 10 `21`; Phase 11 `16`) | Accepted | Hybrid editor generation, reviewed canonical maps, downstream bakes, scenario-driven runtime variation, and every approved map bundled as an independent local Addressables pack are documented initial scope. HTTPS/CDN delivery is a deferred migration that preserves stable identity. Implementation remains deferred until an explicit start request; Phase 0 has not started. |
 | 2026-07-14 | Addressables packaging and staged delivery specification | Inspected installed Addressables `3.1.0`, current local-only group/settings baseline, official Unity Addressables scene/bundle/handle/content-update guidance, and Android Play Asset Delivery guidance; audited all phase totals (`177`); `git diff --check -- Design/Architecture/operation_map_scene_split_and_generator_tracker.md` | Passed | Added normative local group/address/label/partition schemas, handle and Entities-content gates, build/CI artifacts, typed failures, exact planned type ownership, 20-step all-local foundation, and 16-step deferred CDN migration. Documentation only; no Unity process, project setting, scene, code, Addressables asset, or build output was changed. |
 | 2026-07-14 | Pull request workflow adoption | `agent_pull_request_review_merge_workflow.md`, `.github/pull_request_template.md`, README activation/grandfathering rules, scoped authority search, checklist recount (`177`), and `git diff --check origin/main...HEAD` | Pending PR review | Declares all operation-map implementation as new PR work, one stable slice per task branch/worktree, with implementation-agent and independent coordinator ownership. This documentation PR does not self-accept or merge the change. |
+| 2026-07-15 | `opmap-005` static-map presentation refresh evidence | PR `#5`; no-op Android-target bakes; focused EditMode `35 / 35`; APK `442,924,488` bytes; retained report `2026-07-15_opmap-005_static_map_presentation_refresh.md`; merge `98a28b687d858118548ed6ae38037b61f4377f08` | Passed; evidence-only | Build #106's exact revision and workspace state were not retained, so its root cause remains unknown. The accepted evidence proves only that the stale-manifest failure did not reproduce from the recorded clean baseline and that no tracked source/product asset changed. No Phase 0 checkbox closed. |
+| 2026-07-15 | `opmap-004` shell/map ownership evidence | PR `#6`; focused EditMode `26 / 26`; two byte-identical probe runs; committed report SHA-256 `e1080bd9...3c49b`; architecture gates `9 / 9`, `31 / 31`, `1 / 1`; merge `98cfe8cedb3c7d18a14819759bb0d5e51c202264` | Passed; decisions remain | Deterministic read-only evidence records `28` `MatchSceneView` fields, `16` Match roots, and `3` MatchSubScene roots. The report intentionally remains `NeedsDecision`; ownership checklist rows stay open until every Mixed/Unresolved row has an accepted decision. |
 
 ## Open Decisions
 

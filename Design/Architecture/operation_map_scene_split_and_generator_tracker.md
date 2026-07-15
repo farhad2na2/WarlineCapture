@@ -699,13 +699,13 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 4% (7/177 checklist items complete).
+Overall implementation progress: 5% (8/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
 | Phase | Status | Complete | Total | Progress | Notes |
 |---|---|---:|---:|---:|---|
-| 0. Reproducible baseline and rollback | In progress / shared | 7 | 12 | 58% | Required by both directions before scene edits. |
+| 0. Reproducible baseline and rollback | In progress / shared | 8 | 12 | 67% | Required by both directions before scene edits. |
 | 1. Operation-map and scenario data contracts | Not started / shared subset | 0 | 12 | 0% | Typed identity and metadata only; delivery-specific references remain later. |
 | 2. Per-map static presentation ownership | Not started / compatibility subset | 0 | 14 | 0% | Preserve the current baked map safely; future-map generation remains undecided. |
 | 2A. Local Addressables packaging foundation | Later / direction-specific | 0 | 20 | 0% | Do not implement before the map-delivery direction is selected. |
@@ -731,7 +731,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 - [ ] Inventory root objects under `Match.unity` and classify map geometry, map authoring, camera, lighting, bootstrap, and runtime-only ownership.
 - [ ] Inventory `Match_MapBuildingPlacement_Config` and `Match_MapVehiclePlacement_Config`, including hierarchy-path and source-hiding assumptions.
 - [x] Inventory minimap projection, camera clamp, initial camera, full-map bounds, and objective-focus sources. Evidence: `../AgentReports/2026-07-15_opmap-007_phase0_camera_minimap_ownership.md`; accepted decisions: `../AgentReports/2026-07-15_operation_map_camera_minimap_ownership_decisions.md`.
-- [ ] Inventory ground-height, map-surface, grid, blockers, terrain, runway, and helipad metadata sources.
+- [x] Inventory ground-height, map-surface, grid, blockers, terrain, runway, and helipad metadata sources. Evidence: `../AgentReports/2026-07-15_opmap-008_phase0_navigation_metadata_ownership.md`; accepted decisions: `../AgentReports/2026-07-16_operation_map_navigation_metadata_ownership_decisions.md`.
 - [x] Inventory static presentation streamer, canonical-renderer suppression, teardown, and Android build-scene ownership. See `../AgentReports/2026-07-15_operation_map_static_presentation_ownership.md`.
 - [ ] Capture current Editor launch, Android launch, load time, loaded memory, APK/installed size, sustained FPS, draw, and GC evidence accepted for comparison.
 - [x] Write an exact rollback recipe that restores scene setup, manifest/integrity files, generated scenes, scene references, configs, and build settings. See `operation_map_scene_split_rollback_recipe.md`.
@@ -1064,6 +1064,7 @@ Exit criteria:
 | 2026-07-15 | Shared scene-split rollback recipe | `operation_map_scene_split_rollback_recipe.md`; ownership-path audit; `git diff --check` | Passed | Added a loader/generator-neutral rollback contract based on an immutable pre-cutover SHA, an exact cutover path ledger, an atomic revert range, byte/GUID restoration, authoritative probe parity, no-op rebakes, focused tests, Editor gameplay parity, and risk-triggered Android validation. No project asset or runtime source changed. |
 | 2026-07-15 | Shared static-presentation ownership decision | `../AgentReports/2026-07-15_operation_map_static_presentation_ownership.md`; exact type/member audit; source SHA-256 inventory; `git diff --check` | Passed | Classified map products and canonical renderers as `MapOwned`; reusable indexing, streaming, suppression transaction, and teardown as `ShellOwned`/`SharedConfig`; and current direct Match wiring, hardcoded baker binding, and Android resolver as `TemporaryCompatibility`. No unresolved ownership remains in this row and no loader/generator direction was selected. |
 | 2026-07-15 | Shared camera/minimap ownership decisions | `../AgentReports/2026-07-15_opmap-007_phase0_camera_minimap_ownership.json`; `../AgentReports/2026-07-15_operation_map_camera_minimap_ownership_decisions.md`; `git diff --check` | Passed | Resolved all five `Mixed` and two `Unresolved` evidence rows: scenarios own semantic intent, maps own bounds/anchors, shell systems own camera/minimap/ARIA policy, and the config camera override is temporary compatibility. Full-map projection is required to clamp inside canonical map bounds. This closes ownership only; behavior work remains tracked in shared phases. |
+| 2026-07-16 | Shared navigation metadata ownership decisions | `../AgentReports/2026-07-15_opmap-008_phase0_navigation_metadata_ownership.json`; `../AgentReports/2026-07-16_operation_map_navigation_metadata_ownership_decisions.md`; `git diff --check` | Passed | Resolved three `Mixed` and one `Unresolved` row. Maps own immutable grid/surface/authored blocker and authored runway metadata; runtime ECS owns mutable occupancy/blocker state; shared building definitions own prefab-local runway metadata; runtime systems publish both runway sources through one typed contract. Behavior work remains tracked in shared phases. |
 
 ## Open Decisions
 

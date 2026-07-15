@@ -9,7 +9,9 @@ namespace Game.Configs
         [SerializeField] private string operationMapId;
         [SerializeField, Min(1)] private int schemaVersion = 1;
         [SerializeField, Min(1)] private int contentVersion = 1;
+        [SerializeField] private string sourceIdentityHash;
         [SerializeField] private string contentHash;
+        [SerializeField] private string generatedMetadataHash;
         [SerializeField] private OperationMapBoundsConfig bounds;
         [SerializeField] private OperationMapCameraConfig[] cameras = Array.Empty<OperationMapCameraConfig>();
         [SerializeField] private string planningCameraId;
@@ -20,7 +22,9 @@ namespace Game.Configs
         public string OperationMapId => operationMapId;
         public int SchemaVersion => schemaVersion;
         public int ContentVersion => contentVersion;
+        public string SourceIdentityHash => sourceIdentityHash;
         public string ContentHash => contentHash;
+        public string GeneratedMetadataHash => generatedMetadataHash;
         public OperationMapBoundsConfig Bounds => bounds;
         public ReadOnlySpan<OperationMapCameraConfig> Cameras => cameras;
         public string PlanningCameraId => planningCameraId;
@@ -48,7 +52,9 @@ namespace Game.Configs
 
         public bool TryValidateMetadata(out string error)
         {
-            if (!TryValidateIdentity(out error) || !bounds.TryValidate(out error))
+            if (!TryValidateIdentity(out error) ||
+                !TryValidateHashes(out error) ||
+                !bounds.TryValidate(out error))
                 return false;
 
             if (cameras == null || cameras.Length == 0)
@@ -118,6 +124,30 @@ namespace Game.Configs
                         return false;
                     }
                 }
+            }
+
+            error = null;
+            return true;
+        }
+
+        public bool TryValidateHashes(out string error)
+        {
+            if (!OperationMapHashRules.IsValidSha256(sourceIdentityHash))
+            {
+                error = "Operation-map source identity hash must be 64 lowercase hexadecimal characters.";
+                return false;
+            }
+
+            if (!OperationMapHashRules.IsValidSha256(contentHash))
+            {
+                error = "Operation-map content hash must be 64 lowercase hexadecimal characters.";
+                return false;
+            }
+
+            if (!OperationMapHashRules.IsValidSha256(generatedMetadataHash))
+            {
+                error = "Operation-map generated-metadata hash must be 64 lowercase hexadecimal characters.";
+                return false;
             }
 
             error = null;
@@ -259,6 +289,28 @@ namespace Game.Configs
                 Start = start;
                 Length = length;
             }
+        }
+    }
+
+    public static class OperationMapHashRules
+    {
+        public const int Sha256HexLength = 64;
+
+        public static bool IsValidSha256(string value)
+        {
+            if (value == null || value.Length != Sha256HexLength)
+                return false;
+
+            for (int index = 0; index < value.Length; index++)
+            {
+                char character = value[index];
+                bool isDigit = character is >= '0' and <= '9';
+                bool isLowerHex = character is >= 'a' and <= 'f';
+                if (!isDigit && !isLowerHex)
+                    return false;
+            }
+
+            return true;
         }
     }
 }

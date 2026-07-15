@@ -699,14 +699,14 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 10% (17/177 checklist items complete).
+Overall implementation progress: 10% (18/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
 | Phase | Status | Complete | Total | Progress | Notes |
 |---|---|---:|---:|---:|---|
 | 0. Reproducible baseline and rollback | In progress / shared | 11 | 12 | 92% | Required by both directions before scene edits. |
-| 1. Operation-map and scenario data contracts | In progress / shared subset | 6 | 12 | 50% | Typed identity and spatial metadata only; delivery-specific references remain later. |
+| 1. Operation-map and scenario data contracts | In progress / shared subset | 7 | 12 | 58% | Typed identity, spatial metadata, and source/content hashes only; delivery-specific references remain later. |
 | 2. Per-map static presentation ownership | Not started / compatibility subset | 0 | 14 | 0% | Preserve the current baked map safely; future-map generation remains undecided. |
 | 2A. Local Addressables packaging foundation | Later / direction-specific | 0 | 20 | 0% | Do not implement before the map-delivery direction is selected. |
 | 3. Current-map compatibility registration | Not started / shared | 0 | 10 | 0% | Registers the current map without choosing a loader. |
@@ -754,7 +754,7 @@ Exit criteria:
 - [x] Add `OperationMapBoundsConfig`, `OperationMapCameraConfig`, `OperationMapMinimapConfig`, and planning/battle/minimap ids. See `../AgentReports/2026-07-16_operation_map_spatial_metadata_configs.md`.
 - [x] Add typed ids for spawn, objective, deployment, build, civilian, hostile, base, resource, runway, helipad, lane, and debug anchors. See the same report.
 - [ ] Add map bounds, camera bounds, grid, surface/height, and blocker/path metadata references.
-- [ ] Add source identity, schema version, content hash, and generated-metadata hash fields.
+- [x] Add source identity, schema version, content hash, and generated-metadata hash fields. See `../AgentReports/2026-07-16_operation_map_source_content_hash_contract.md`.
 - [ ] Add `Game.Configs.OperationMapCatalogConfig`, resolved once by composition at launch or match transition with no hot-path asset search.
 - [ ] Add validation for unique ids, missing assets, invalid bounds, duplicate anchors, stale hashes, and unresolved scenario-to-map references.
 - [ ] Update architecture docs with the exact `Mission -> ScenarioSetup -> OperationMapDefinition -> scene/subscene/manifest` ownership chain.
@@ -1070,6 +1070,7 @@ Exit criteria:
 | 2026-07-16 | Shared operation-map/scenario identity contract | `operation_map_and_scenario_identity_contract.md`; design-id cross-check; checklist accounting; `git diff --check` | Passed | Approved bounded lowercase ASCII operation-map and scenario grammars, immutability, ordinal comparison, namespace separation, scenario-to-map cardinality, and explicit separation from paths, GUIDs, Addressables, bundles, display text, versions, and generator seeds. Documentation only. |
 | 2026-07-16 | Shared operation-map/scenario identity configs | `../AgentReports/2026-07-16_operation_map_identity_configs.md`; focused EditMode `23 / 23`; non-ECS `9 / 9`; SystemBase migration `19 / 19`; source growth `15 / 15`; compile and `git diff --check` | Passed | Added sealed metadata-only config assets and allocation-free canonical id validation. No loader, scene path, hierarchy name, Unity object/Addressables/rendering reference, ECS system, or update callback was introduced. Seven unrelated existing broad diagnostic failures remain recorded but do not name this slice. |
 | 2026-07-16 | Shared operation-map spatial metadata configs | `../AgentReports/2026-07-16_operation_map_spatial_metadata_configs.md`; focused spatial EditMode `17 / 17`; identity regression `23 / 23`; combined architecture/naming/source-growth `43 / 43`; affected compile and `git diff --check` | Passed | Added bounded world/playable/camera metadata, camera and minimap records, scoped planning/battle/minimap ids, and a closed typed anchor taxonomy. No heavy asset, scene, loader, Addressables, rendering, runtime-system, or per-frame dependency was introduced. |
+| 2026-07-16 | Shared source/content hash contract | `../AgentReports/2026-07-16_operation_map_source_content_hash_contract.md`; focused EditMode `24 / 24`; affected compile; source-growth; `git diff --check` | Passed | Added strict lowercase SHA-256 source-identity, content, and generated-metadata evidence without encoding a source path, scene GUID, loader address, generator policy, or heavyweight reference. |
 
 ## Open Decisions
 

@@ -7,6 +7,8 @@ using UnityEngine;
 
 public sealed class OperationMapSpatialConfigTests
 {
+    private const string ValidSha256 = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+
     private static readonly OperationMapBoundsConfig ValidBounds = new(
         new Vector3(-100f, -10f, -100f),
         new Vector3(100f, 50f, 100f),
@@ -87,6 +89,19 @@ public sealed class OperationMapSpatialConfigTests
         Assert.That(OperationMapIdentityRules.IsValidAnchorId(value), Is.False);
     }
 
+    [TestCase("0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef")]
+    [TestCase("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")]
+    public void Sha256_AcceptsCanonicalLowercaseHex(string value) =>
+        Assert.That(OperationMapHashRules.IsValidSha256(value), Is.True);
+
+    [TestCase(null)]
+    [TestCase("")]
+    [TestCase("0123456789abcdef0123456789abcdef")]
+    [TestCase("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF")]
+    [TestCase("g123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef")]
+    public void Sha256_RejectsMissingWrongLengthUppercaseOrNonHex(string value) =>
+        Assert.That(OperationMapHashRules.IsValidSha256(value), Is.False);
+
     [Test]
     public void SpatialRecords_ValidateWithoutHeavyAssetReferences()
     {
@@ -129,6 +144,11 @@ public sealed class OperationMapSpatialConfigTests
         {
             Assert.That(map.TryValidateMetadata(out string validError), Is.True, validError);
 
+            Set(map, "contentHash", ValidSha256.ToUpperInvariant());
+            Assert.That(map.TryValidateMetadata(out string hashError), Is.False);
+            StringAssert.Contains("content hash", hashError);
+            Set(map, "contentHash", ValidSha256);
+
             Set(map, "anchors", new[]
             {
                 CreateAnchor("anchor.ch01.m01.objective.patrol"),
@@ -167,6 +187,9 @@ public sealed class OperationMapSpatialConfigTests
         Set(map, "operationMapId", "opmap.ch01.district_edge_01");
         Set(map, "schemaVersion", 1);
         Set(map, "contentVersion", 1);
+        Set(map, "sourceIdentityHash", ValidSha256);
+        Set(map, "contentHash", ValidSha256);
+        Set(map, "generatedMetadataHash", ValidSha256);
         Set(map, "bounds", ValidBounds);
         Set(map, "cameras", new[]
         {

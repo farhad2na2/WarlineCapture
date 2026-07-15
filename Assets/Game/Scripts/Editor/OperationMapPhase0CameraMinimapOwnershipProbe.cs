@@ -1,0 +1,926 @@
+#if UNITY_EDITOR
+
+namespace Game.Editor
+{
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Runtime.InteropServices;
+    using System.Text;
+    using System.Threading;
+    using Newtonsoft.Json.Linq;
+    using UnityEngine;
+
+    public static class OperationMapPhase0CameraMinimapOwnershipProbe
+    {
+        internal const string ReportSchema = "warline.operation-map.phase0-camera-minimap-ownership";
+        internal const int ReportSchemaVersion = 2;
+        internal const string BaselineCommit = "2a8940fa5b646a242460a965e3a91945e9a3fb34";
+        internal const string ReportPathEnvironmentVariable =
+            "WARLINE_OPERATION_MAP_PHASE0_CAMERA_MINIMAP_OWNERSHIP_REPORT_PATH";
+        internal const string DefaultReportPath =
+            "/private/tmp/warline-operation-map-phase0-camera-minimap-ownership.json";
+
+        private const string Opmap002Path =
+            "Design/AgentReports/2026-07-14_opmap-002_phase0_baseline_probe.md";
+        private const string Opmap004Path =
+            "Design/AgentReports/2026-07-15_opmap-004_phase0_ownership_baseline.json";
+        private const string TrackerPath =
+            "Design/Architecture/operation_map_scene_split_and_generator_tracker.md";
+        private static readonly UTF8Encoding Utf8WithoutBom = new(false);
+
+        public enum OwnershipClassification
+        {
+            ShellOwned = 0,
+            MapOwned = 1,
+            SharedConfig = 2,
+            TemporaryCompatibility = 3,
+            Mixed = 4,
+            Unresolved = 5
+        }
+
+        public static void Run()
+        {
+            string projectRoot = RequireProjectRoot();
+            string outputPath = ResolveReportOutputPath(
+                projectRoot,
+                Environment.GetEnvironmentVariable(ReportPathEnvironmentVariable));
+
+            ValidateNoUnexpectedProducerCandidates(projectRoot);
+            List<InputHashReport> beforeHashes = CaptureAndValidateInputs(projectRoot);
+            List<OwnershipRow> rows = BuildRows();
+            List<PresenceFinding> findings = BuildPresenceFindings();
+            List<CrossReferenceReport> references = BuildCrossReferences(beforeHashes);
+            List<InputHashReport> afterHashes = CaptureAndValidateInputs(projectRoot);
+            RequireInputHashesEqual(beforeHashes, afterHashes);
+            ValidateNoUnexpectedProducerCandidates(projectRoot);
+
+            OwnershipReport report = BuildReport(beforeHashes, references, findings, rows);
+            PublishReportAtomically(outputPath, JsonUtility.ToJson(report, true) + "\n");
+            Debug.Log(
+                $"[OperationMapPhase0CameraMinimapOwnershipProbe] result={report.result} " +
+                $"rows={report.counts.evidenceRows} needsDecision={report.counts.needsDecision} " +
+                $"runtimeObjectiveWriter={report.presenceFindings[2].status} report={outputPath}");
+        }
+
+        internal static string ResolveReportOutputPath(string projectRoot, string configuredPath)
+        {
+            string path = string.IsNullOrWhiteSpace(configuredPath) ? DefaultReportPath : configuredPath;
+            string resolved = OperationMapPhase0BaselineProbe.ResolveReportOutputPath(projectRoot, path);
+            string outputParent = Path.GetDirectoryName(resolved);
+            if (string.IsNullOrWhiteSpace(outputParent) || !Directory.Exists(outputParent))
+                throw new InvalidOperationException("Camera/minimap report output parent must already exist.");
+
+            string canonicalProjectRoot = ResolveExistingDirectory(projectRoot);
+            string canonicalOutputParent = ResolveExistingDirectory(outputParent);
+            if (IsSameOrDescendant(canonicalOutputParent, canonicalProjectRoot))
+                throw new InvalidOperationException("Camera/minimap report output resolves inside the Unity project.");
+            return resolved;
+        }
+
+        internal static OwnershipReport BuildReport(
+            List<InputHashReport> directInputHashes,
+            List<CrossReferenceReport> crossReferences,
+            List<PresenceFinding> presenceFindings,
+            List<OwnershipRow> rows)
+        {
+            ValidateInputHashes(directInputHashes);
+            ValidateCrossReferences(crossReferences);
+            ValidatePresenceFindings(presenceFindings);
+
+            List<OwnershipRow> orderedRows = rows?
+                .OrderBy(row => row.stableIdentity, StringComparer.Ordinal)
+                .ToList();
+            int needsDecision = orderedRows?.Count(IsDecisionRow) ?? 0;
+            var report = new OwnershipReport
+            {
+                reportSchema = ReportSchema,
+                reportSchemaVersion = ReportSchemaVersion,
+                baselineCommit = BaselineCommit,
+                result = needsDecision > 0 ? "NeedsDecision" : "Passed",
+                counts = BuildCounts(orderedRows, needsDecision),
+                crossReferences = crossReferences.OrderBy(entry => entry.taskId, StringComparer.Ordinal).ToList(),
+                directInputHashes = directInputHashes.OrderBy(entry => entry.path, StringComparer.Ordinal).ToList(),
+                presenceFindings = presenceFindings.OrderBy(entry => entry.stableIdentity, StringComparer.Ordinal).ToList(),
+                evidenceRows = orderedRows
+            };
+
+            if (!HasRequiredReportShape(JsonUtility.ToJson(report, true)))
+                throw new InvalidOperationException("Camera/minimap ownership report failed required-shape validation.");
+            return report;
+        }
+
+        internal static bool HasRequiredReportShape(string json)
+        {
+            if (string.IsNullOrWhiteSpace(json) || HasVolatileOrLocalData(json))
+                return false;
+
+            try
+            {
+                JObject root = JObject.Parse(json);
+                if (!HasExactJsonSchema(root))
+                    return false;
+
+                OwnershipReport report = JsonUtility.FromJson<OwnershipReport>(json);
+                if (report == null ||
+                    !string.Equals(report.reportSchema, ReportSchema, StringComparison.Ordinal) ||
+                    report.reportSchemaVersion != ReportSchemaVersion ||
+                    !string.Equals(report.baselineCommit, BaselineCommit, StringComparison.Ordinal))
+                    return false;
+
+                ValidateInputHashes(report.directInputHashes);
+                ValidateCrossReferences(report.crossReferences);
+                ValidatePresenceFindings(report.presenceFindings);
+                IReadOnlyDictionary<string, OwnershipSpec> specs = RowSpecs();
+                if (report.evidenceRows == null || report.evidenceRows.Count != specs.Count ||
+                    !HasStrictOrdering(report.evidenceRows, row => row.stableIdentity))
+                    return false;
+
+                for (int i = 0; i < report.evidenceRows.Count; i++)
+                {
+                    OwnershipRow row = report.evidenceRows[i];
+                    if (row == null || !specs.TryGetValue(row.stableIdentity, out OwnershipSpec spec) ||
+                        !RowMatchesSpec(row, spec))
+                        return false;
+                }
+
+                int needsDecision = report.evidenceRows.Count(IsDecisionRow);
+                if (report.counts == null || report.counts.evidenceRows != report.evidenceRows.Count ||
+                    report.counts.shellOwned != Count(report.evidenceRows, OwnershipClassification.ShellOwned) ||
+                    report.counts.mapOwned != Count(report.evidenceRows, OwnershipClassification.MapOwned) ||
+                    report.counts.sharedConfig != Count(report.evidenceRows, OwnershipClassification.SharedConfig) ||
+                    report.counts.temporaryCompatibility != Count(report.evidenceRows, OwnershipClassification.TemporaryCompatibility) ||
+                    report.counts.mixed != Count(report.evidenceRows, OwnershipClassification.Mixed) ||
+                    report.counts.unresolved != Count(report.evidenceRows, OwnershipClassification.Unresolved) ||
+                    report.counts.needsDecision != needsDecision)
+                    return false;
+
+                return needsDecision > 0
+                    ? string.Equals(report.result, "NeedsDecision", StringComparison.Ordinal)
+                    : string.Equals(report.result, "Passed", StringComparison.Ordinal);
+            }
+            catch (Exception exception) when (
+                exception is ArgumentException ||
+                exception is InvalidOperationException ||
+                exception is NullReferenceException)
+            {
+                return false;
+            }
+        }
+
+        internal static List<InputHashReport> CaptureAndValidateInputs(string projectRoot)
+        {
+            if (string.IsNullOrWhiteSpace(projectRoot))
+                throw new InvalidOperationException("Project root is required.");
+
+            IReadOnlyDictionary<string, SourceSpec> specs = SourceSpecs();
+            var hashes = new List<InputHashReport>(specs.Count);
+            foreach (KeyValuePair<string, SourceSpec> pair in specs.OrderBy(entry => entry.Key, StringComparer.Ordinal))
+            {
+                string fullPath = Path.Combine(projectRoot, pair.Key);
+                if (!File.Exists(fullPath))
+                    throw new InvalidOperationException("Required ownership source is missing: " + pair.Key);
+                byte[] bytes = File.ReadAllBytes(fullPath);
+                string text = Utf8WithoutBom.GetString(bytes);
+                foreach (string requiredToken in pair.Value.requiredTokens)
+                {
+                    if (!text.Contains(requiredToken, StringComparison.Ordinal))
+                        throw new InvalidOperationException(
+                            "Required ownership token is missing from " + pair.Key + ": " + requiredToken);
+                }
+                hashes.Add(new InputHashReport
+                {
+                    path = pair.Key,
+                    sha256 = OperationMapPhase0BaselineProbe.ComputeSha256(bytes)
+                });
+            }
+
+            ValidateInputHashes(hashes);
+            return hashes;
+        }
+
+        internal static void PublishReportAtomically(string outputPath, string json)
+        {
+            string mutexName = "WarlineOpmap007-" +
+                               OperationMapPhase0BaselineProbe.ComputeSha256(Utf8WithoutBom.GetBytes(Path.GetFullPath(outputPath)));
+            using var publicationMutex = new Mutex(false, mutexName);
+            bool lockTaken = false;
+            try
+            {
+                try
+                {
+                    lockTaken = publicationMutex.WaitOne(TimeSpan.FromSeconds(30));
+                }
+                catch (AbandonedMutexException)
+                {
+                    lockTaken = true;
+                }
+                if (!lockTaken)
+                    throw new InvalidOperationException("Timed out waiting for exclusive camera/minimap report publication.");
+
+                InvalidateOutput(outputPath);
+                if (!HasRequiredReportShape(json))
+                    throw new InvalidOperationException("Refusing to publish an invalid camera/minimap ownership report.");
+
+                string directory = Path.GetDirectoryName(outputPath);
+                string temporaryPath = Path.Combine(
+                    directory,
+                    Path.GetFileName(outputPath) + "." + Guid.NewGuid().ToString("N") + ".tmp");
+                File.WriteAllText(temporaryPath, json, Utf8WithoutBom);
+                try
+                {
+                    if (!HasRequiredReportShape(File.ReadAllText(temporaryPath, Utf8WithoutBom)))
+                        throw new InvalidOperationException("Persisted camera/minimap ownership report is invalid.");
+                    File.Move(temporaryPath, outputPath);
+                    if (!string.Equals(File.ReadAllText(outputPath, Utf8WithoutBom), json, StringComparison.Ordinal))
+                        throw new InvalidOperationException("Published camera/minimap ownership report bytes drifted.");
+                }
+                catch
+                {
+                    DeleteIfPresent(outputPath);
+                    throw;
+                }
+                finally
+                {
+                    DeleteIfPresent(temporaryPath);
+                }
+            }
+            finally
+            {
+                if (lockTaken)
+                    publicationMutex.ReleaseMutex();
+            }
+        }
+
+        internal static void InvalidateOutput(string outputPath)
+        {
+            DeleteIfPresent(outputPath);
+            DeleteIfPresent(outputPath + ".tmp");
+        }
+
+        internal static void ValidateNoUnexpectedProducerCandidates(string projectRoot)
+        {
+            string scriptsRoot = Path.Combine(projectRoot, "Assets/Game/Scripts");
+            if (!Directory.Exists(scriptsRoot))
+                throw new InvalidOperationException("Runtime source audit root is missing: Assets/Game/Scripts");
+
+            AuditCandidateToken(
+                projectRoot,
+                scriptsRoot,
+                "MatchObjectiveRuntimeElement",
+                new[]
+                {
+                    "Assets/Game/Scripts/Components/MatchObjectiveComponents.cs",
+                    "Assets/Game/Scripts/UI/Shell/Ecs/AssistantReadModelSystems.cs",
+                    "Assets/Game/Scripts/UI/Shell/Ecs/AssistantThreatReadModelSystem.cs",
+                    "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Assistant.cs"
+                });
+            AuditCandidateToken(
+                projectRoot,
+                scriptsRoot,
+                "AssistantRecommendationKind.CameraFocus",
+                new[]
+                {
+                    "Assets/Game/Scripts/Components/AssistantComponents.cs",
+                    "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Actions.cs"
+                });
+        }
+
+        private static List<OwnershipRow> BuildRows()
+        {
+            return RowSpecs().Select(pair => new OwnershipRow
+                {
+                    stableIdentity = pair.Key,
+                    subject = pair.Value.subject,
+                    currentAuthority = pair.Value.currentAuthority,
+                    currentType = pair.Value.currentType,
+                    classification = pair.Value.classification.ToString(),
+                    evidencePaths = pair.Value.evidencePaths.OrderBy(path => path, StringComparer.Ordinal).ToList(),
+                    rationale = pair.Value.rationale,
+                    migrationDisposition = pair.Value.migrationDisposition,
+                    decisionOwner = pair.Value.decisionOwner
+                })
+                .OrderBy(row => row.stableIdentity, StringComparer.Ordinal)
+                .ToList();
+        }
+
+        private static List<PresenceFinding> BuildPresenceFindings()
+        {
+            return PresenceSpecs().Select(pair => new PresenceFinding
+                {
+                    stableIdentity = pair.Key,
+                    status = pair.Value.status,
+                    currentAuthority = pair.Value.currentAuthority,
+                    currentType = pair.Value.currentType,
+                    evidencePaths = pair.Value.evidencePaths.OrderBy(path => path, StringComparer.Ordinal).ToList(),
+                    rationale = pair.Value.rationale,
+                    decisionOwner = pair.Value.decisionOwner
+                })
+                .OrderBy(row => row.stableIdentity, StringComparer.Ordinal)
+                .ToList();
+        }
+
+        private static List<CrossReferenceReport> BuildCrossReferences(
+            IReadOnlyList<InputHashReport> hashes)
+        {
+            Dictionary<string, string> hashByPath = hashes.ToDictionary(
+                entry => entry.path,
+                entry => entry.sha256,
+                StringComparer.Ordinal);
+            return new List<CrossReferenceReport>
+            {
+                new()
+                {
+                    taskId = "opmap-002",
+                    reportSchema = OperationMapPhase0BaselineProbe.ReportSchema,
+                    reportSchemaVersion = OperationMapPhase0BaselineProbe.ReportSchemaVersion,
+                    result = "Passed",
+                    evidencePath = Opmap002Path,
+                    evidenceSha256 = hashByPath[Opmap002Path]
+                },
+                new()
+                {
+                    taskId = "opmap-004",
+                    reportSchema = OperationMapPhase0OwnershipProbe.ReportSchema,
+                    reportSchemaVersion = OperationMapPhase0OwnershipProbe.ReportSchemaVersion,
+                    result = "NeedsDecision",
+                    evidencePath = Opmap004Path,
+                    evidenceSha256 = hashByPath[Opmap004Path]
+                }
+            };
+        }
+
+        private static OwnershipCounts BuildCounts(IReadOnlyList<OwnershipRow> rows, int needsDecision)
+        {
+            rows ??= Array.Empty<OwnershipRow>();
+            return new OwnershipCounts
+            {
+                evidenceRows = rows.Count,
+                shellOwned = Count(rows, OwnershipClassification.ShellOwned),
+                mapOwned = Count(rows, OwnershipClassification.MapOwned),
+                sharedConfig = Count(rows, OwnershipClassification.SharedConfig),
+                temporaryCompatibility = Count(rows, OwnershipClassification.TemporaryCompatibility),
+                mixed = Count(rows, OwnershipClassification.Mixed),
+                unresolved = Count(rows, OwnershipClassification.Unresolved),
+                needsDecision = needsDecision
+            };
+        }
+
+        private static int Count(IReadOnlyList<OwnershipRow> rows, OwnershipClassification classification)
+        {
+            string expected = classification.ToString();
+            return rows.Count(row => string.Equals(row.classification, expected, StringComparison.Ordinal));
+        }
+
+        private static bool RowMatchesSpec(OwnershipRow row, OwnershipSpec spec)
+        {
+            string expectedClassification = spec.classification.ToString();
+            bool decision = spec.classification == OwnershipClassification.Mixed ||
+                            spec.classification == OwnershipClassification.Unresolved;
+            return string.Equals(row.subject, spec.subject, StringComparison.Ordinal) &&
+                   string.Equals(row.currentAuthority, spec.currentAuthority, StringComparison.Ordinal) &&
+                   string.Equals(row.currentType, spec.currentType, StringComparison.Ordinal) &&
+                   string.Equals(row.classification, expectedClassification, StringComparison.Ordinal) &&
+                   SequenceEqual(row.evidencePaths, spec.evidencePaths.OrderBy(path => path, StringComparer.Ordinal)) &&
+                   string.Equals(row.rationale, spec.rationale, StringComparison.Ordinal) &&
+                   string.Equals(row.migrationDisposition, spec.migrationDisposition, StringComparison.Ordinal) &&
+                   string.Equals(row.decisionOwner, spec.decisionOwner, StringComparison.Ordinal) &&
+                   (decision ? !string.IsNullOrWhiteSpace(row.decisionOwner) : string.IsNullOrEmpty(row.decisionOwner));
+        }
+
+        private static bool IsDecisionRow(OwnershipRow row)
+        {
+            return row != null &&
+                   (string.Equals(row.classification, OwnershipClassification.Mixed.ToString(), StringComparison.Ordinal) ||
+                    string.Equals(row.classification, OwnershipClassification.Unresolved.ToString(), StringComparison.Ordinal));
+        }
+
+        private static void ValidateInputHashes(IReadOnlyList<InputHashReport> hashes)
+        {
+            IReadOnlyDictionary<string, SourceSpec> expected = SourceSpecs();
+            if (hashes == null || hashes.Count != expected.Count ||
+                !HasStrictOrdering(hashes, hash => hash.path))
+                throw new InvalidOperationException("Direct input hash set is incomplete or unordered.");
+
+            foreach (InputHashReport hash in hashes)
+            {
+                if (hash == null || !expected.TryGetValue(hash.path, out SourceSpec spec) ||
+                    !string.Equals(hash.sha256, spec.sha256, StringComparison.Ordinal))
+                    throw new InvalidOperationException("Direct input hash set contains stale evidence.");
+            }
+        }
+
+        private static void ValidateCrossReferences(IReadOnlyList<CrossReferenceReport> references)
+        {
+            IReadOnlyDictionary<string, CrossReferenceSpec> expected = CrossReferenceSpecs();
+            if (references == null || references.Count != expected.Count ||
+                !HasStrictOrdering(references, entry => entry.taskId))
+                throw new InvalidOperationException("Cross-reference set is incomplete or unordered.");
+
+            foreach (CrossReferenceReport reference in references)
+            {
+                if (reference == null || !expected.TryGetValue(reference.taskId, out CrossReferenceSpec spec) ||
+                    !string.Equals(reference.reportSchema, spec.reportSchema, StringComparison.Ordinal) ||
+                    reference.reportSchemaVersion != spec.reportSchemaVersion ||
+                    !string.Equals(reference.result, spec.result, StringComparison.Ordinal) ||
+                    !string.Equals(reference.evidencePath, spec.evidencePath, StringComparison.Ordinal) ||
+                    !string.Equals(reference.evidenceSha256, SourceSpecs()[spec.evidencePath].sha256, StringComparison.Ordinal))
+                    throw new InvalidOperationException("Cross-reference evidence is stale or unsupported.");
+            }
+        }
+
+        private static void ValidatePresenceFindings(IReadOnlyList<PresenceFinding> findings)
+        {
+            IReadOnlyDictionary<string, PresenceSpec> expected = PresenceSpecs();
+            if (findings == null || findings.Count != expected.Count ||
+                !HasStrictOrdering(findings, entry => entry.stableIdentity))
+                throw new InvalidOperationException("Presence findings are incomplete or unordered.");
+
+            foreach (PresenceFinding finding in findings)
+            {
+                if (finding == null || !expected.TryGetValue(finding.stableIdentity, out PresenceSpec spec) ||
+                    !string.Equals(finding.status, spec.status, StringComparison.Ordinal) ||
+                    !string.Equals(finding.currentAuthority, spec.currentAuthority, StringComparison.Ordinal) ||
+                    !string.Equals(finding.currentType, spec.currentType, StringComparison.Ordinal) ||
+                    !SequenceEqual(finding.evidencePaths, spec.evidencePaths.OrderBy(path => path, StringComparer.Ordinal)) ||
+                    !string.Equals(finding.rationale, spec.rationale, StringComparison.Ordinal) ||
+                    !string.Equals(finding.decisionOwner, spec.decisionOwner, StringComparison.Ordinal) ||
+                    (string.Equals(finding.status, "Unresolved", StringComparison.Ordinal)
+                        ? string.IsNullOrWhiteSpace(finding.decisionOwner)
+                        : !string.IsNullOrEmpty(finding.decisionOwner)))
+                    throw new InvalidOperationException("Presence finding drifted from current evidence.");
+            }
+        }
+
+        private static bool HasStrictOrdering<T>(IReadOnlyList<T> rows, Func<T, string> key)
+        {
+            if (rows == null)
+                return false;
+            string previous = null;
+            for (int i = 0; i < rows.Count; i++)
+            {
+                if (ReferenceEquals(rows[i], null))
+                    return false;
+                string current = key(rows[i]);
+                if (string.IsNullOrWhiteSpace(current) ||
+                    (previous != null && string.CompareOrdinal(previous, current) >= 0))
+                    return false;
+                previous = current;
+            }
+            return true;
+        }
+
+        private static bool SequenceEqual(IEnumerable<string> actual, IEnumerable<string> expected)
+        {
+            return actual != null && actual.SequenceEqual(expected, StringComparer.Ordinal);
+        }
+
+        private static void RequireInputHashesEqual(
+            IReadOnlyList<InputHashReport> before,
+            IReadOnlyList<InputHashReport> after)
+        {
+            if (before == null || after == null || before.Count != after.Count)
+                throw new InvalidOperationException("Direct input set changed during inspection.");
+            for (int i = 0; i < before.Count; i++)
+            {
+                if (!string.Equals(before[i].path, after[i].path, StringComparison.Ordinal) ||
+                    !string.Equals(before[i].sha256, after[i].sha256, StringComparison.Ordinal))
+                    throw new InvalidOperationException("Direct input changed during inspection: " + before[i].path);
+            }
+        }
+
+        private static bool HasVolatileOrLocalData(string json)
+        {
+            string[] forbidden =
+            {
+                "timestamp", "timeStamp", "sessionId", "sessionID", "reportPath",
+                "/Users/", "\\\\Users\\\\", "WarlineCapture-Worktrees", "/private/tmp"
+            };
+            return forbidden.Any(token => json.Contains(token, StringComparison.Ordinal));
+        }
+
+        private static bool HasExactJsonSchema(JObject root)
+        {
+            return HasExactProperties(root,
+                       "reportSchema", "reportSchemaVersion", "baselineCommit", "result", "counts",
+                       "crossReferences", "directInputHashes", "presenceFindings", "evidenceRows") &&
+                   HasExactObject(root["counts"],
+                       "evidenceRows", "shellOwned", "mapOwned", "sharedConfig",
+                       "temporaryCompatibility", "mixed", "unresolved", "needsDecision") &&
+                   HasExactObjectArray(root["crossReferences"],
+                       "taskId", "reportSchema", "reportSchemaVersion", "result", "evidencePath", "evidenceSha256") &&
+                   HasExactObjectArray(root["directInputHashes"], "path", "sha256") &&
+                   HasExactObjectArray(root["presenceFindings"],
+                       "stableIdentity", "status", "currentAuthority", "currentType",
+                       "evidencePaths", "rationale", "decisionOwner") &&
+                   HasExactObjectArray(root["evidenceRows"],
+                       "stableIdentity", "subject", "currentAuthority", "currentType", "classification",
+                       "evidencePaths", "rationale", "migrationDisposition", "decisionOwner");
+        }
+
+        private static bool HasExactObject(JToken token, params string[] propertyNames)
+        {
+            return token is JObject value && HasExactProperties(value, propertyNames);
+        }
+
+        private static bool HasExactObjectArray(JToken token, params string[] propertyNames)
+        {
+            return token is JArray values &&
+                   values.All(value => value is JObject item && HasExactProperties(item, propertyNames));
+        }
+
+        private static bool HasExactProperties(JObject value, params string[] propertyNames)
+        {
+            string[] actual = value.Properties().Select(property => property.Name)
+                .OrderBy(name => name, StringComparer.Ordinal)
+                .ToArray();
+            string[] expected = propertyNames.OrderBy(name => name, StringComparer.Ordinal).ToArray();
+            return actual.SequenceEqual(expected, StringComparer.Ordinal);
+        }
+
+        private static void AuditCandidateToken(
+            string projectRoot,
+            string scriptsRoot,
+            string token,
+            IEnumerable<string> allowedPaths)
+        {
+            var allowed = new HashSet<string>(allowedPaths, StringComparer.Ordinal);
+            string[] unexpected = Directory.GetFiles(scriptsRoot, "*.cs", SearchOption.AllDirectories)
+                .Select(path => new
+                {
+                    FullPath = path,
+                    RelativePath = Path.GetRelativePath(projectRoot, path).Replace('\\', '/')
+                })
+                .Where(entry => !entry.RelativePath.StartsWith("Assets/Game/Scripts/Editor/", StringComparison.Ordinal))
+                .Where(entry => File.ReadAllText(entry.FullPath, Utf8WithoutBom).Contains(token, StringComparison.Ordinal))
+                .Select(entry => entry.RelativePath)
+                .Where(path => !allowed.Contains(path))
+                .OrderBy(path => path, StringComparer.Ordinal)
+                .ToArray();
+            if (unexpected.Length > 0)
+                throw new InvalidOperationException(
+                    "New producer candidate found while auditing token `" + token + "`: " +
+                    string.Join(", ", unexpected));
+        }
+
+        private static string ResolveExistingDirectory(string path)
+        {
+            string fullPath = Path.GetFullPath(path);
+            if (!Directory.Exists(fullPath))
+                throw new InvalidOperationException("Cannot resolve missing output-containment directory: " + fullPath);
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                for (DirectoryInfo current = new(fullPath); current != null; current = current.Parent)
+                {
+                    if ((current.Attributes & FileAttributes.ReparsePoint) != 0)
+                        throw new InvalidOperationException(
+                            "Cannot safely resolve a Windows reparse point in report output containment: " + current.FullName);
+                }
+                return fullPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            }
+
+            IntPtr resolved = RealPath(fullPath, IntPtr.Zero);
+            if (resolved == IntPtr.Zero)
+                throw new InvalidOperationException("Failed to resolve report output containment path: " + fullPath);
+            try
+            {
+                return Marshal.PtrToStringAnsi(resolved)
+                    .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            }
+            finally
+            {
+                Free(resolved);
+            }
+        }
+
+        private static bool IsSameOrDescendant(string candidate, string root)
+        {
+            StringComparison comparison = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                ? StringComparison.OrdinalIgnoreCase
+                : StringComparison.Ordinal;
+            if (string.Equals(candidate, root, comparison))
+                return true;
+            string rootWithSeparator = root + Path.DirectorySeparatorChar;
+            return candidate.StartsWith(rootWithSeparator, comparison);
+        }
+
+        [DllImport("libc", EntryPoint = "realpath", SetLastError = true)]
+        private static extern IntPtr RealPath(string path, IntPtr buffer);
+
+        [DllImport("libc", EntryPoint = "free")]
+        private static extern void Free(IntPtr pointer);
+
+        private static void DeleteIfPresent(string path)
+        {
+            if (File.Exists(path))
+                File.Delete(path);
+        }
+
+        private static string RequireProjectRoot()
+        {
+            DirectoryInfo parent = Directory.GetParent(Application.dataPath);
+            if (parent == null)
+                throw new InvalidOperationException("Unable to resolve Unity project root.");
+            return parent.FullName;
+        }
+
+        private static IReadOnlyDictionary<string, CrossReferenceSpec> CrossReferenceSpecs()
+        {
+            return new SortedDictionary<string, CrossReferenceSpec>(StringComparer.Ordinal)
+            {
+                ["opmap-002"] = new(
+                    OperationMapPhase0BaselineProbe.ReportSchema,
+                    OperationMapPhase0BaselineProbe.ReportSchemaVersion,
+                    "Passed",
+                    Opmap002Path),
+                ["opmap-004"] = new(
+                    OperationMapPhase0OwnershipProbe.ReportSchema,
+                    OperationMapPhase0OwnershipProbe.ReportSchemaVersion,
+                    "NeedsDecision",
+                    Opmap004Path)
+            };
+        }
+
+        private static IReadOnlyDictionary<string, PresenceSpec> PresenceSpecs()
+        {
+            return new SortedDictionary<string, PresenceSpec>(StringComparer.Ordinal)
+            {
+                ["initial-focus-producer"] = new(
+                    "Present",
+                    "Game.Runtime.InitialUnitsSpawnSystem::ProcessInitialBuildingCompletion(Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,Game.Components.GridConfig,int,ref Game.Runtime.InitialUnitsSpawnSystem.InitialSpawnDiagnosticLogWriter)",
+                    "Legacy static write from ECS spawn completion",
+                    new[] { "Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs" },
+                    "A successful player initial-base request writes the GridConfig-derived footprint center; current evidence does not support a no-producer finding.",
+                    ""),
+                ["objective-camera-focus-recommendation-producer"] = new(
+                    "Unresolved",
+                    "No writer found in audited sources",
+                    "Dormant AssistantRecommendationKind.CameraFocus mapping",
+                    new[]
+                    {
+                        "Assets/Game/Scripts/Components/AssistantComponents.cs",
+                        "Assets/Game/Scripts/UI/Shell/Ecs/AssistantReadModelSystems.cs",
+                        "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Actions.cs"
+                    },
+                    "No writer found in audited sources. The audit covers every runtime C# source under Assets/Game/Scripts and fails closed on a new AssistantRecommendationKind.CameraFocus reference.",
+                    "Mission UX owner and assistant architecture owner"),
+                ["runtime-objective-writer"] = new(
+                    "Unresolved",
+                    "No writer found in audited sources",
+                    "MatchObjectiveRuntimeElement buffer and state contract only",
+                    new[]
+                    {
+                        "Assets/Game/Scripts/Components/MatchObjectiveComponents.cs",
+                        "Assets/Game/Scripts/UI/Shell/Ecs/AssistantReadModelSystems.cs",
+                        "Assets/Game/Scripts/UI/Shell/Ecs/AssistantThreatReadModelSystem.cs",
+                        "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Assistant.cs"
+                    },
+                    "No writer found in audited sources. The audit covers every runtime C# source under Assets/Game/Scripts and fails closed on a new MatchObjectiveRuntimeElement reference.",
+                    "Mission runtime owner and assistant architecture owner")
+            };
+        }
+
+        private static IReadOnlyDictionary<string, OwnershipSpec> RowSpecs()
+        {
+            var rows = new SortedDictionary<string, OwnershipSpec>(StringComparer.Ordinal);
+            AddRow(rows, "Assets/Game/Configs/Scene/Game_RTSSelection_Config.asset::worldCamera", "Initial camera override", "Shared RTS selection config asset; current serialized value is null", "UnityEngine.Camera serialized reference", OwnershipClassification.TemporaryCompatibility, new[] { "Assets/Game/Configs/Scene/Game_RTSSelection_Config.asset", Opmap004Path }, "The scene camera remains the effective source, but shared config can override it if populated.", "RetireCameraReferenceOverride", "");
+            AddRow(rows, "Assets/Game/Scenes/Match.unity::Main Camera[5]|type:UnityEngine.Camera", "Initial camera source", "Match shell scene", "UnityEngine.Camera at localId 1220593093; transform position (870.0283,42.030247,325.60086)", OwnershipClassification.ShellOwned, new[] { "Assets/Game/Scenes/Match.unity", Opmap004Path }, "opmap-004 pins this exact shell-owned camera identity and the scene supplies the initial transform.", "KeepInMatchShell", "");
+            AddRow(rows, "Assets/Game/Scenes/Match/MatchSubScene.unity::Grid[0]", "Grid bounds authoring source", "Operation-map subscene", "Game.Authoring.GridAuthoring", OwnershipClassification.MapOwned, new[] { "Assets/Game/Scenes/Match/MatchSubScene.unity", Opmap004Path }, "opmap-004 already identifies this exact map-owned grid root; this probe follows its runtime projection instead of rescanning ownership.", "MoveWithOperationMapSubScene", "");
+            AddRow(rows, "Game.Authoring.GridAuthoring.Baker::Bake(Game.Authoring.GridAuthoring)", "Grid bounds bake", "Grid authoring baker", "Unity.Entities.Baker<GridAuthoring> -> Game.Components.GridConfig", OwnershipClassification.MapOwned, new[] { "Assets/Game/Scripts/Authorings/GridAuthoring.cs", "Assets/Game/Scripts/Components/GridComponents.cs" }, "Width, height, cell size, and origin are baked into the ECS grid singleton.", "BakeIntoOperationMapMetadata", "");
+            AddRow(rows, "Game.Components.GridConfig", "Runtime grid bounds authority", "ECS map metadata singleton", "Unity.Entities.IComponentData", OwnershipClassification.MapOwned, new[] { "Assets/Game/Scripts/Components/GridComponents.cs" }, "Camera clamp and minimap projection both derive world bounds from this component.", "PublishFromOperationMapMetadata", "");
+            AddRow(rows, "Game.Composition.MatchHudMinimapDataSourceAdapter::TryGetGrid(out Game.UI.Contracts.MatchHudMinimapGridModel)", "Minimap grid projection source", "Managed UI adapter reading ECS GridConfig", "Game.Composition.MatchHudMinimapDataSourceAdapter", OwnershipClassification.MapOwned, new[] { "Assets/Game/Scripts/Composition/MatchHudMinimapDataSourceAdapter.cs", "Assets/Game/Scripts/Components/GridComponents.cs" }, "The adapter preserves the map-owned origin, dimensions, and cell size for UI projection.", "ReadOperationMapMetadata", "");
+            AddRow(rows, "Game.Runtime.InitialUnitsSpawnSystem::ProcessInitialBuildingCompletion(Unity.Entities.EntityManager,Unity.Entities.Entity,Unity.Entities.Entity,Game.Components.GridConfig,int,ref Game.Runtime.InitialUnitsSpawnSystem.InitialSpawnDiagnosticLogWriter)", "Initial focus producer", "Initial spawn ECS system writing legacy static state", "Game.Runtime.InitialUnitsSpawnSystem", OwnershipClassification.Mixed, new[] { "Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs", "Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs" }, "The initial player-base footprint is scenario-derived while its world center uses map GridConfig; the producer bypasses the ECS focus-request writer.", "DecisionRequired", "Gameplay scenario owner and camera architecture owner");
+            AddRow(rows, "Game.Runtime.RtsCameraRequestSystem::ProcessPendingRequests(Unity.Entities.EntityManager,Game.Runtime.RtsCameraSystem,UnityEngine.Camera,System.Action)", "Tactical-follow clamp policy", "Camera request ECS bridge", "Unity.Entities.SystemBase", OwnershipClassification.Mixed, new[] { "Assets/Game/Scripts/Components/RtsCameraRequestComponents.cs", "Assets/Game/Scripts/Components/TacticalFollowCameraComponents.cs", "Assets/Game/Scripts/Systems/RtsCameraRequestSystem.cs", "Assets/Game/Scripts/Systems/RtsCameraSystem.cs", "Assets/Game/Scripts/Systems/TacticalFollowCameraModeSystemHelper.cs" }, "A valid tactical-follow pose suppresses normal camera requests and deliberately skips GridConfig boundary clamp while applying the follow pose.", "DecisionRequired", "Camera design owner and operation-map architecture owner");
+            AddRow(rows, "Game.Runtime.RtsCameraRequestSystem::SyncGroundBoundary(Unity.Entities.EntityManager,Game.Runtime.RtsCameraSystem,UnityEngine.Camera,bool)", "Camera boundary projection", "Camera request ECS bridge reading GridConfig", "GridConfig -> UnityEngine.Rect -> RtsCameraSystem", OwnershipClassification.Mixed, new[] { "Assets/Game/Scripts/Components/GridComponents.cs", "Assets/Game/Scripts/Systems/RtsCameraRequestSystem.cs" }, "Map-owned grid bounds are projected into mutable shell camera state; the future metadata binding boundary needs an explicit owner.", "DecisionRequired", "Camera architecture owner and operation-map architecture owner");
+            AddRow(rows, "Game.Runtime.RtsCameraSystem::ClampCameraToGroundBoundary(UnityEngine.Camera)", "Camera footprint clamp", "Managed shell camera system", "Unity.Entities.SystemBase with UnityEngine.Camera mutation", OwnershipClassification.ShellOwned, new[] { "Assets/Game/Scripts/Systems/RtsCameraSystem.cs" }, "The shell camera fits and offsets its visible ground footprint within the boundary supplied by GridConfig.", "KeepShellConsumerBindMapBounds", "");
+            AddRow(rows, "Game.Runtime.RtsSelectionRuntimeCameraSystemHelper::ConsumeInitialCameraFocusRequest(Game.Runtime.RtsSelectionRuntimeCameraSystemHelper.Context)", "Initial focus consumer", "Managed selection camera helper", "RuntimeGameplayStateSystem -> RtsCameraRequestElement.MoveGroundCenterTo", OwnershipClassification.ShellOwned, new[] { "Assets/Game/Scripts/Systems/RtsSelectionRuntimeCameraSystemHelper.cs", "Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs" }, "The shell consumes the one-shot focus request and routes it through the camera request queue and grid clamp.", "KeepShellConsumer", "");
+            AddRow(rows, "Game.Runtime.RuntimeGameplayStateSystem::InitialCameraFocusRequested/InitialCameraFocusWorld", "Initial focus override chain", "Disabled ECS facade mirroring InitialUnitsRuntimeState", "RuntimeCameraFocusRequestComponent plus legacy static mirror", OwnershipClassification.TemporaryCompatibility, new[] { "Assets/Game/Scripts/Components/RuntimeGameplayStateComponents.cs", "Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs", "Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs" }, "The public ECS facade exists, but the current producer writes the legacy static fields and the facade mirrors them on read.", "ReplaceLegacyMirrorWithEcsRequestProducer", "");
+            AddRow(rows, "Game.Runtime.SelectionRuntimeConfigStartupSystemHelper::CreateStateFromConfig(Game.Configs.RTSSelectionSystemConfig,UnityEngine.Camera)", "Camera source and override resolution", "Managed selection startup helper", "Fallback MatchSceneView camera overridden by RTSSelectionSystemConfig.WorldCamera when non-null", OwnershipClassification.Mixed, new[] { "Assets/Game/Configs/Scene/Game_RTSSelection_Config.asset", "Assets/Game/Scripts/Systems/SelectionRuntimeConfigStartupSystemHelper.cs" }, "Current config is null and the shell camera wins, but the shared config contract can replace the camera identity.", "DecisionRequired", "Camera architecture owner");
+            AddRow(rows, "Game.Runtime.TacticalFollowCameraModeSystemHelper::ClampDesiredPosition(Game.Components.TacticalFollowCameraTargetComponent,Unity.Mathematics.float3,Unity.Mathematics.float3)", "Tactical-follow local clamp", "Managed tactical-follow camera helper", "Target-clearance clamp over float3 pose", OwnershipClassification.ShellOwned, new[] { "Assets/Game/Scripts/Components/TacticalFollowCameraComponents.cs", "Assets/Game/Scripts/Systems/TacticalFollowCameraModeSystemHelper.cs" }, "The method enforces height and target clearance only; it does not clamp X/Z to operation-map bounds.", "KeepShellFramingPolicy", "");
+            AddRow(rows, "Game.UI.Runtime.MatchHudMinimapInputUiSystemHelper::HandleFocusRequested(UnityEngine.Vector2)", "Minimap interaction clamp", "Managed UI input helper", "Projection normalized point -> GridConfig-clamped world point -> camera request", OwnershipClassification.ShellOwned, new[] { "Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs", "Assets/Game/Scripts/UI/Screens/MatchHudMinimapProjectionUiSystemHelper.cs" }, "Minimap interaction clamps the requested world focus back to canonical grid bounds before moving the shell camera.", "KeepShellInteractionBindMapBounds", "");
+            AddRow(rows, "Game.UI.Runtime.MatchHudMinimapInputUiSystemHelper::Update()", "Compact/full-map projection selector", "Managed UI input helper", "Runtime branch over stable full-grid, expanded full-map, and camera-centered compact grids", OwnershipClassification.ShellOwned, new[] { "Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs" }, "Compact mode follows a camera-centered window; full-map mode may expand to include the camera footprint; stable mode uses exact grid bounds.", "BindProjectionPolicyFromOperationMapMinimapConfig", "");
+            AddRow(rows, "Game.UI.Runtime.MatchHudMinimapProjectionUiSystemHelper::CreateCameraCenteredGrid(Game.UI.Contracts.MatchHudMinimapGridModel,UnityEngine.Camera,float)", "Compact minimap projection", "Managed UI projection helper", "Camera viewport-derived local projection grid", OwnershipClassification.ShellOwned, new[] { "Assets/Game/Scripts/UI/Screens/MatchHudMinimapProjectionUiSystemHelper.cs" }, "Compact projection centers on the camera and uses fixed 160-unit/4.5x window policy capped to map dimensions.", "MoveConstantsToOperationMapMinimapConfig", "");
+            AddRow(rows, "Game.UI.Runtime.MatchHudMinimapProjectionUiSystemHelper::CreateFullGridIncludingCamera(Game.UI.Contracts.MatchHudMinimapGridModel,UnityEngine.Camera)", "Expanded full-map bounds", "Managed UI projection helper", "Union of GridConfig world rectangle and camera ground footprint", OwnershipClassification.Mixed, new[] { "Assets/Game/Scripts/UI/Screens/MatchHudMinimapProjectionUiSystemHelper.cs" }, "Full-map projection can exceed canonical map bounds to keep an out-of-bounds camera footprint visible; migration behavior requires product and architecture approval.", "DecisionRequired", "Camera design owner and operation-map architecture owner");
+            AddRow(rows, "Game.UI.Shell.Ecs.AssistantCommandIntentSystem::QueueCameraPreview(ref Unity.Entities.SystemState,Unity.Mathematics.float3)", "Assistant camera-focus execution", "ECS assistant command intent system", "RtsCameraRequestElement.SetSmoothFocusTarget", OwnershipClassification.ShellOwned, new[] { "Assets/Game/Scripts/Components/RtsCameraRequestComponents.cs", "Assets/Game/Scripts/UI/Shell/Ecs/AssistantCommandIntentSystem.cs" }, "A valid focus intent queues smooth camera focus and clearing of drag state; RtsCameraSystem later clamps the target to GridConfig bounds.", "KeepEcsIntentToShellCameraRequest", "");
+            AddRow(rows, "Game.UI.Shell.Ecs.AssistantCommandIntentSystem::TryResolvePreviewTarget(ref Unity.Entities.SystemState,Game.Components.AssistantCommandIntentRequestElement,out Unity.Mathematics.float3)", "Assistant focus target resolution", "ECS assistant command intent system", "WorldPosition or LocalTransform position resolver", OwnershipClassification.ShellOwned, new[] { "Assets/Game/Scripts/UI/Shell/Ecs/AssistantCommandIntentSystem.cs" }, "The generic focus path resolves world/entity positions but has no objective-id or operation-map-anchor resolver.", "AddTypedObjectiveAnchorResolverWhenObjectivesExist", "");
+            AddRow(rows, "Game.UI.Shell.Ecs.AssistantGoalReadModelSystem::ToGoal(Game.Components.MatchObjectiveRuntimeElement,uint)", "Objective-to-assistant projection", "ECS assistant goal read-model system", "MatchObjectiveRuntimeElement -> AssistantGoalReadModelElement", OwnershipClassification.Unresolved, new[] { "Assets/Game/Scripts/Components/MatchObjectiveComponents.cs", "Assets/Game/Scripts/UI/Shell/Ecs/AssistantReadModelSystems.cs" }, "No writer found in audited sources for runtime objective rows or active objective state; the projection remains decision-owned.", "DecisionRequired", "Mission runtime owner and assistant architecture owner");
+            AddRow(rows, "Game.UI.Shell.Ecs.AssistantRecommendationSystem::BuildRecommendation(Unity.Entities.DynamicBuffer<Game.Components.AssistantGoalReadModelElement>,Unity.Entities.DynamicBuffer<Game.Components.AssistantThreatReadModelElement>,Game.Components.FocusedUnitUiReadModelComponent,Game.Components.BuildingRuntimeFactionUsableFuelSummary,uint)", "Objective recommendation projection", "ECS assistant recommendation system", "Objective goal -> Attack or Move recommendation", OwnershipClassification.Unresolved, new[] { "Assets/Game/Scripts/UI/Shell/Ecs/AssistantReadModelSystems.cs", "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Actions.cs" }, "No objective CameraFocus writer was found in audited sources; objective goals currently produce Attack or Move.", "DecisionRequired", "Mission UX owner and assistant architecture owner");
+            AddRow(rows, "Game.UI.Shell.Ecs.UiShellEcsGateway::ToAssistantCommandIntentKind(Game.Components.AssistantRecommendationKind)", "Assistant camera-focus UI mapping", "UI shell ECS gateway", "AssistantRecommendationKind.CameraFocus -> AssistantCommandIntentKind.FocusCamera", OwnershipClassification.ShellOwned, new[] { "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Actions.cs" }, "The UI-to-ECS mapping exists, but remains dormant without a CameraFocus recommendation producer.", "KeepMappingAwaitTypedProducer", "");
+            return rows;
+        }
+
+        private static IReadOnlyDictionary<string, SourceSpec> SourceSpecs()
+        {
+            var sources = new SortedDictionary<string, SourceSpec>(StringComparer.Ordinal);
+            AddSource(sources, "Assets/Game/Configs/Scene/Game_RTSSelection_Config.asset", "8ae86a1940658a3693fb86dc76afb4988f816371171c112cd8f6835da40b4041", "worldCamera: {fileID: 0}");
+            AddSource(sources, "Assets/Game/Scenes/Match.unity", "dca7c83b765ce40099ce4fd62a53cbee5bc306107f8a026abcb941a59bf53a46", "m_Name: Main Camera", "m_LocalPosition: {x: 870.0283, y: 42.030247, z: 325.60086}");
+            AddSource(sources, "Assets/Game/Scenes/Match/MatchSubScene.unity", "bcc255f3fb140a0d91687b45b679b47fb60f01f5cfa8690bac3032ec642dadd8", "m_Name: Grid");
+            AddSource(sources, "Assets/Game/Scripts/Authorings/GridAuthoring.cs", "5ac5169f0351d57ed44c89716614f177ac829d597f34780225da06eb0f4da348", "AddComponent(entity, new GridConfig");
+            AddSource(sources, "Assets/Game/Scripts/Components/AssistantComponents.cs", "ec5ea2a3110d61fd90e24a3727a02b10d88df29effe02be00ab7e0117a41423f", "CameraFocus = 6", "FocusCamera = 5");
+            AddSource(sources, "Assets/Game/Scripts/Components/GridComponents.cs", "632d66e1479fa0b0773ea1635c29a26c5efadfcc998caf5151980d4d5e20cd39", "public struct GridConfig : IComponentData");
+            AddSource(sources, "Assets/Game/Scripts/Components/MatchObjectiveComponents.cs", "1a19f8883dbc721c38137601b1ee0fc99874f21cbda5b8a1c4c943b75dccd1b9", "public struct MatchObjectiveRuntimeElement : IBufferElementData");
+            AddSource(sources, "Assets/Game/Scripts/Components/RtsCameraRequestComponents.cs", "30b9badf0516ab289699cf03611a65b1fabc43d524c4fbbb62a03340f0e6db6f", "public struct RtsCameraRequestElement : IBufferElementData");
+            AddSource(sources, "Assets/Game/Scripts/Components/RuntimeGameplayStateComponents.cs", "f9dcc4fa99369b4aa8b2406dde892d4d7c3e542695e1037d1c7a08dbcf9cfcc9", "public struct RuntimeCameraFocusRequestComponent : IComponentData");
+            AddSource(sources, "Assets/Game/Scripts/Components/TacticalFollowCameraComponents.cs", "b6e905e9bfa1140385a6903532392de79ec2fefe5a643984dd96ebc63f5f525d", "public struct TacticalFollowCameraPoseComponent : IComponentData");
+            AddSource(sources, "Assets/Game/Scripts/Composition/MatchHudMinimapDataSourceAdapter.cs", "7bc84b485bb86989b7ceb3579ee80786906f092f70d2fa5108b5647175034498", "public bool TryGetGrid(out MatchHudMinimapGridModel grid)");
+            AddSource(sources, "Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs", "89afee7610468e9a4da4d36fbdb265966553b887c0df0f20f02b5fe725934544", "public static bool InitialCameraFocusRequested;");
+            AddSource(sources, "Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs", "76b91da24026174d7ee13fd5691dfd6f75192b779e2805e212d3949748657aca", "InitialUnitsRuntimeState.InitialCameraFocusRequested = true;");
+            AddSource(sources, "Assets/Game/Scripts/Systems/RtsCameraRequestSystem.cs", "5f06bc885c6311fec72c353f8d4b7eb9f575f611d94e6ae6fb45ae47e3b08412", "skipClamp: tacticalFollowPoseValid", "cameraSystem.SetGroundBoundary(ToGroundBoundary(grid));");
+            AddSource(sources, "Assets/Game/Scripts/Systems/RtsCameraSystem.cs", "215f6e947fa074b8216899f280043de5d04a3978f82fabe34555708cc9644c9c", "public void ClampCameraToGroundBoundary(Camera worldCamera)", "focusWorldPosition = ClampGroundPositionToBoundary(focusWorldPosition);");
+            AddSource(sources, "Assets/Game/Scripts/Systems/RtsSelectionRuntimeCameraSystemHelper.cs", "012ed914ad46e349620422de90799acf3fb670b4a073753c1a3fcc99dd8f2e67", "private void ConsumeInitialCameraFocusRequest(Context context)");
+            AddSource(sources, "Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs", "f7317c834bea00e556a905821a22ace77703141496041ee6859955946ce844c7", "public bool InitialCameraFocusRequested", "LegacyCameraFocusRequest()");
+            AddSource(sources, "Assets/Game/Scripts/Systems/SelectionRuntimeConfigStartupSystemHelper.cs", "6190b548741689e982ce88b8055d3c090b14a9bd6ea7efee11a58cd458ebd768", "if (config.WorldCamera != null)", "state.WorldCamera = config.WorldCamera;");
+            AddSource(sources, "Assets/Game/Scripts/Systems/TacticalFollowCameraModeSystemHelper.cs", "d51a65befab8d93232ec33d0cf19545960457970ef86a3bc6dd9008b56e3956c", "private static Unity.Mathematics.float3 ClampDesiredPosition(");
+            AddSource(sources, "Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs", "0b428871939b67310698e385bbd977e9c30685d6704d892363a9be873e612d03", "CreateFullGridIncludingCamera(grid, worldCamera)", "CreateCameraCenteredGrid(");
+            AddSource(sources, "Assets/Game/Scripts/UI/Screens/MatchHudMinimapProjectionUiSystemHelper.cs", "96791301184e377a441405e7a0ddfe73fdd7c9ab4f7f666fcf8cacd008182bc3", "public static MatchHudMinimapProjectionGrid CreateFullGridIncludingCamera(", "public static MatchHudMinimapProjectionGrid CreateCameraCenteredGrid(");
+            AddSource(sources, "Assets/Game/Scripts/UI/Shell/Ecs/AssistantCommandIntentSystem.cs", "77f396716d63b2a772076031928b2aee85c1d13e29d66bc74e8fe86371841700", "private void QueueCameraPreview(ref SystemState state, float3 focusWorldPosition)", "request.Kind == AssistantCommandIntentKind.FocusCamera");
+            AddSource(sources, "Assets/Game/Scripts/UI/Shell/Ecs/AssistantReadModelSystems.cs", "6426e8c5b20b5588fa295a08768de880603910ec88a8c3abc6a2679f1af71d79", "private static AssistantGoalReadModelElement ToGoal(", "Kind = AssistantRecommendationKind.Move");
+            AddSource(sources, "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Actions.cs", "34f02bcf312053ad02ef69790b9c9c80d0f28409459142daa8648cd5b1764c5f", "AssistantRecommendationKind.CameraFocus => AssistantCommandIntentKind.FocusCamera");
+            AddSource(sources, Opmap002Path, "d4d4674850766c5cd95e1bb5fbb6f26893e0bb019dbaf266a0c9897a3befc807", "result=Passed chunks=514 sources=16542");
+            AddSource(sources, Opmap004Path, "e1080bd90e88140d8151755b7ef6086c02d8683b7d277708004797893fc3c49b", "\"reportSchema\": \"warline.operation-map.phase0-ownership\"", "\"result\": \"NeedsDecision\"");
+            AddSource(sources, TrackerPath, "157eb5ea9fb38e808538e30f134a153cb0663c98f0608b03ab4f622cf852a268", "Inventory minimap projection, camera clamp, initial camera, full-map bounds, and objective-focus sources.");
+            return sources;
+        }
+
+        private static void AddSource(
+            IDictionary<string, SourceSpec> sources,
+            string path,
+            string sha256,
+            params string[] tokens)
+        {
+            sources.Add(path, new SourceSpec(sha256, tokens));
+        }
+
+        private static void AddRow(
+            IDictionary<string, OwnershipSpec> rows,
+            string identity,
+            string subject,
+            string authority,
+            string currentType,
+            OwnershipClassification classification,
+            string[] evidencePaths,
+            string rationale,
+            string disposition,
+            string decisionOwner)
+        {
+            rows.Add(identity, new OwnershipSpec(
+                subject,
+                authority,
+                currentType,
+                classification,
+                evidencePaths,
+                rationale,
+                disposition,
+                decisionOwner));
+        }
+
+        private sealed class SourceSpec
+        {
+            public readonly string sha256;
+            public readonly string[] requiredTokens;
+            public SourceSpec(string sha256, string[] requiredTokens)
+            {
+                this.sha256 = sha256;
+                this.requiredTokens = requiredTokens;
+            }
+        }
+
+        private sealed class CrossReferenceSpec
+        {
+            public readonly string reportSchema;
+            public readonly int reportSchemaVersion;
+            public readonly string result;
+            public readonly string evidencePath;
+            public CrossReferenceSpec(string reportSchema, int reportSchemaVersion, string result, string evidencePath)
+            {
+                this.reportSchema = reportSchema;
+                this.reportSchemaVersion = reportSchemaVersion;
+                this.result = result;
+                this.evidencePath = evidencePath;
+            }
+        }
+
+        private sealed class PresenceSpec
+        {
+            public readonly string status;
+            public readonly string currentAuthority;
+            public readonly string currentType;
+            public readonly string[] evidencePaths;
+            public readonly string rationale;
+            public readonly string decisionOwner;
+            public PresenceSpec(
+                string status,
+                string currentAuthority,
+                string currentType,
+                string[] evidencePaths,
+                string rationale,
+                string decisionOwner)
+            {
+                this.status = status;
+                this.currentAuthority = currentAuthority;
+                this.currentType = currentType;
+                this.evidencePaths = evidencePaths;
+                this.rationale = rationale;
+                this.decisionOwner = decisionOwner;
+            }
+        }
+
+        private sealed class OwnershipSpec
+        {
+            public readonly string subject;
+            public readonly string currentAuthority;
+            public readonly string currentType;
+            public readonly OwnershipClassification classification;
+            public readonly string[] evidencePaths;
+            public readonly string rationale;
+            public readonly string migrationDisposition;
+            public readonly string decisionOwner;
+            public OwnershipSpec(string subject, string currentAuthority, string currentType, OwnershipClassification classification, string[] evidencePaths, string rationale, string migrationDisposition, string decisionOwner)
+            {
+                this.subject = subject;
+                this.currentAuthority = currentAuthority;
+                this.currentType = currentType;
+                this.classification = classification;
+                this.evidencePaths = evidencePaths;
+                this.rationale = rationale;
+                this.migrationDisposition = migrationDisposition;
+                this.decisionOwner = decisionOwner;
+            }
+        }
+
+        [Serializable]
+        internal sealed class OwnershipReport
+        {
+            public string reportSchema;
+            public int reportSchemaVersion;
+            public string baselineCommit;
+            public string result;
+            public OwnershipCounts counts;
+            public List<CrossReferenceReport> crossReferences;
+            public List<InputHashReport> directInputHashes;
+            public List<PresenceFinding> presenceFindings;
+            public List<OwnershipRow> evidenceRows;
+        }
+
+        [Serializable]
+        internal sealed class OwnershipCounts
+        {
+            public int evidenceRows;
+            public int shellOwned;
+            public int mapOwned;
+            public int sharedConfig;
+            public int temporaryCompatibility;
+            public int mixed;
+            public int unresolved;
+            public int needsDecision;
+        }
+
+        [Serializable]
+        internal sealed class CrossReferenceReport
+        {
+            public string taskId;
+            public string reportSchema;
+            public int reportSchemaVersion;
+            public string result;
+            public string evidencePath;
+            public string evidenceSha256;
+        }
+
+        [Serializable]
+        internal sealed class InputHashReport
+        {
+            public string path;
+            public string sha256;
+        }
+
+        [Serializable]
+        internal sealed class PresenceFinding
+        {
+            public string stableIdentity;
+            public string status;
+            public string currentAuthority;
+            public string currentType;
+            public List<string> evidencePaths;
+            public string rationale;
+            public string decisionOwner;
+        }
+
+        [Serializable]
+        internal sealed class OwnershipRow
+        {
+            public string stableIdentity;
+            public string subject;
+            public string currentAuthority;
+            public string currentType;
+            public string classification;
+            public List<string> evidencePaths;
+            public string rationale;
+            public string migrationDisposition;
+            public string decisionOwner;
+        }
+    }
+}
+
+#endif

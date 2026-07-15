@@ -1,6 +1,6 @@
 # M01 Visual Map Generation Implementation Tracker
 
-**Status:** Documentation planning in review; every M01 prototype and implementation phase is blocked by FirstLaunch Phase 10R / Gate 9R
+**Status:** Editor-only M01 R&D visual prototype generated and validated; production promotion and canonical integration remain blocked by FirstLaunch Phase 10R / Gate 9R
 
 **Created:** 2026-07-15
 
@@ -11,9 +11,9 @@
 
 ## 1. Purpose
 
-This tracker defines the documentation plan for the first visual-quality iteration of the dedicated M01 operation map and its use of the accepted editor-generation pipeline. It does not authorize a generator spike, prototype scene, asset, config, source scene, bake, or player-facing integration while the M01 hold remains active.
+This tracker defines the first visual-quality iteration of the dedicated M01 operation map and its eventual use of the accepted editor-generation pipeline. The project-owner R&D exception recorded below authorizes an isolated, editor-only visual scene and supporting review tooling while the M01 production hold remains active. It does not authorize a canonical source scene, bake, campaign handoff, or player-facing integration.
 
-After Gate 9R releases the hold, the first iteration may be an **editor-viewable visual prototype only**. It does not need campaign loading, units, navigation, mission logic, or playability. Its purpose is to let the project owner judge composition, density, scale, lighting, and environmental storytelling before canonical promotion.
+The first iteration is an **editor-viewable visual prototype only**. It does not need campaign loading, units, navigation, mission logic, or playability. Its purpose is to let the project owner judge composition, density, scale, lighting, and environmental storytelling before canonical promotion.
 
 Approved campaign maps are stable, reviewed, editor-baked scenes. Deterministic editor tooling may accelerate authoring; physical topology must never be generated at runtime.
 
@@ -30,18 +30,24 @@ This tracker is subordinate to:
 - [Accepted Performance Baseline](performance_regression_accepted_baseline.json)
 - [Agent Pull Request Review And Merge Workflow](agent_pull_request_review_merge_workflow.md)
 
-### Gate 9R Stop Rule
+### Gate 9R Production Stop Rule And R&D Exception
 
-The 2026-07-11 M01 hold is authoritative. FirstLaunch Phase 10R must pass Gate 9R before **any** M01 prototype or implementation work begins. Until release evidence is recorded, only documentation study and read-only audits are allowed.
+The 2026-07-11 M01 hold remains authoritative for production work. FirstLaunch Phase 10R must pass Gate 9R before canonical M01 generation, promotion, loading, or player-facing integration begins.
 
-The hold blocks all of the following, including isolated or non-player-facing forms:
+On 2026-07-15, the project owner explicitly directed that scene construction may proceed as R&D and must not be blocked by the production rules. This exception is limited to:
 
-- generator extraction, adaptation, spikes, tests, menus, config assets, and source packs created for M01;
-- M01 blueprint, prototype scene, generated hierarchy, visual dressing, lighting, and captures produced from implementation;
+- the isolated `M01_VisualPrototype.unity` editor scene;
+- editor-only prototype generation, review-camera, capture, and validation tooling;
+- prototype-only materials, lighting, visual dressing, and review evidence;
+- visual iteration that does not alter Match, Demo, Demo2, runtime loading, mission logic, Addressables, or build content.
+
+The hold continues to block all production-facing work, including:
+
+- canonical generator extraction, source packs, configs, source scenes, and bakes intended for production;
 - canonical M01 source scene, metadata, bakes, Addressables content, loading, mission integration, and promotion;
-- edits to code, assets, scenes, configs, generated outputs, build content, or runtime behavior.
+- edits to runtime behavior, campaign flow, Android content, build configuration, or the accepted operation-map pipeline.
 
-Gate 9R release is necessary but not sufficient. Each later phase also requires its own listed entry and exit evidence. A task assignment or approval of this documentation PR does not release the hold.
+Gate 9R release is necessary but not sufficient for production promotion. Each production phase still requires its listed entry and exit evidence. The R&D exception does not mark canonical phases complete and does not release Gate 9R.
 
 ## 3. Accepted Direction
 
@@ -58,6 +64,16 @@ Gate 9R release is necessary but not sufficient. Each later phase also requires 
 ## 4. Ownership Boundary
 
 Another task owns operation-map scene separation, catalogs, Addressables, loading, baking, and the canonical runtime contract. This tracker only sequences the future M01 visual slice against that accepted architecture.
+
+### Owned By The Approved R&D Slice
+
+- `Assets/Game/Scenes/MapPrototypes/Chapter01/M01_VisualPrototype.unity`
+- `Assets/Game/Scripts/Editor/MapPrototypes/M01VisualMapPrototypeBuilder*.cs`
+- `Assets/Tests/Editor/M01VisualMapPrototypeBuilderTests.cs`
+- `Assets/Game/Art/MapPrototypes/M01/`
+- `Design/ArtReview/OperationMaps/M01/`
+
+These paths are noncanonical prototype evidence. They must not be consumed by runtime map loading or treated as the final production recipe without a later promotion review.
 
 ### Owned By Future M01 Slices After Gate 9R
 
@@ -331,7 +347,7 @@ This register counts physical maps, not missions or scenarios. It contains exact
 | # | Physical map | Portfolio role | Generation/config state | Promotion state |
 |---:|---|---|---|---|
 | 01 | `opmap.skirmish.desert_base_01` (provisional) | Current existing large map | Existing authored source; candidate id pending parent-tracker Phase 3 approval | Pending parent Phase 3 id approval and parent gates |
-| 02 | `opmap.ch01.district_edge_01` | Dedicated M01 Old Market | Blocked by Gate 9R | Blocked by Gate 9R and Phases 1-8 |
+| 02 | `opmap.ch01.district_edge_01` | Dedicated M01 Old Market | Noncanonical R&D visual prototype available; production generation blocked by Gate 9R | Blocked by Gate 9R and Phases 1-8 |
 | 03 | To be assigned | Additional map 1 of 10 | Not started | Not started |
 | 04 | To be assigned | Additional map 2 of 10 | Not started | Not started |
 | 05 | To be assigned | Additional map 3 of 10 | Not started | Not started |
@@ -346,6 +362,23 @@ This register counts physical maps, not missions or scenarios. It contains exact
 Shared scenarios, variants, or mission assignments do not add physical maps to this register.
 
 ## 12. Validation
+
+### Approved R&D Prototype Evidence
+
+| Check | Result |
+|---|---|
+| Scope | Isolated editor-only scene and tooling; no Match, Demo, Demo2, runtime loading, mission logic, Addressables, Android, Jenkins, or CI changes |
+| Unity generation and capture | Passed in Unity `6000.5.2f1`; `[M01VisualMap] result=Passed` |
+| Generator identity | `M01VisualPrototype_2026-07-15_v6`, seed `26071501` |
+| Semantic regeneration | Passed with fingerprint `962F4AE1EF66319621E41C120F1CEDB200F94B6B452B3CE6089606FF4A426B36` |
+| Focused Editor validation | Passed `3/3`: asset palette, scene structure/density, and capture/manifest integrity |
+| Architecture boundary | Passed `31/31`; Unity crashed during shutdown only after emitting the pass marker |
+| Current-main compatibility | Ported onto base `2873e4dd7`; R&D assets are byte-identical to the validated commit and compile against current-main `Game.Editor` references with `0` warnings and `0` errors |
+| Capture set | Four `1600x900` review PNGs, one contact sheet, and a generated manifest under `Design/ArtReview/OperationMaps/M01/` |
+| Capture readability | Average luminance: overview `137.6`, Old Market `135.7`, aftermath `110.4`, top-down `106.2`; minimum guard is `45` |
+| Visual disposition | Internal iteration complete; project-owner visual acceptance remains pending |
+
+Unity scene YAML is not used as the determinism identity because reconstruction assigns fresh local serialization IDs. The semantic fingerprint covers hierarchy paths, prefab identities, transforms, material assets, camera settings, and lights.
 
 ### This Documentation PR
 
@@ -374,7 +407,7 @@ Shared scenarios, variants, or mission assignments do not add physical maps to t
 
 | Risk or decision | Current position | Resolution gate |
 |---|---|---|
-| Gate 9R remains active | Documentation study only; all M01 prototype/implementation work is blocked | Phase 1 entry and every later M01 phase |
+| Gate 9R remains active | Approved noncanonical editor R&D may continue; production generation, promotion, and integration remain blocked | Phase 1 production entry and every later canonical phase |
 | Legacy logic depends on runtime | Reuse only pure deterministic behavior through accepted editor boundaries | Phase 1 review |
 | M01 data needs an unsupported field | Extend accepted source-pack/config schema narrowly and map it explicitly | Parent architecture review before code |
 | Parallel architecture appears | Reject `VisualMapRecipe`, `VisualMapPlan`, M01-specific generator/builder/result types, or equivalents | Architecture review |
@@ -384,10 +417,11 @@ Shared scenarios, variants, or mission assignments do not add physical maps to t
 
 ## 14. Progress And Checklist Audit
 
-Checklist state in this revision: **64 total, 5 complete, 59 open**. The five complete items are documentation findings in Phase 0. No prototype or implementation item is complete.
+Checklist state in this revision: **64 total, 5 complete, 59 open**. The five complete items are documentation findings in Phase 0. Canonical production items remain open; the approved R&D prototype and its evidence are tracked separately below.
 
 | Phase | Checklist | Status | Notes |
 |---|---:|---|---|
+| R&D visual prototype | Evidence-only | Generated and validated | Noncanonical editor scene; project-owner visual acceptance pending |
 | 0. Documentation scope and baseline | 5/6 | In review | Merge approval open; no implementation authorized |
 | 1. Generator reuse spike | 0/6 | Blocked | Gate 9R |
 | 2. M01 authored blueprint | 0/5 | Blocked | Gate 9R and Phase 1 |
@@ -406,3 +440,7 @@ Checklist state in this revision: **64 total, 5 complete, 59 open**. The five co
 |---|---|---|
 | 2026-07-15 | Audited design contracts, references, concept, and legacy generator; created tracker | Documentation baseline; no implementation started |
 | 2026-07-15 | Reconciled Gate 9R, canonical generator types, exact 12-map portfolio, and fail-closed Editor/Android performance acceptance | Coordinator findings addressed in documentation only; all M01 implementation remains blocked |
+| 2026-07-15 | Project owner explicitly approved isolated M01 scene construction as R&D outside the production gate | Editor-only visual prototype work authorized; canonical production phases remain blocked |
+| 2026-07-15 | Implemented and iterated the isolated M01 Old Market builder, materials, lighting, story dressing, review cameras, and capture pipeline | Version 6 generated a readable four-view review set without runtime or canonical map integration |
+| 2026-07-15 | Added semantic regeneration and focused Editor validation | Determinism passed with fingerprint `962F4AE1...26B36`; focused validation passed `3/3` and architecture boundary passed `31/31` |
+| 2026-07-15 | Ported the validated R&D tree onto current-main base `2873e4dd7` and compiled the editor partials against current-main Unity references | Asset tree remained byte-identical; compatibility compile passed with `0` warnings and `0` errors |

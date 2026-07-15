@@ -586,7 +586,8 @@ def _require_success_word(result: CommandResult, label: str) -> None:
 def require_install_completion(result: CommandResult, label: str) -> None:
     _checked(result, label)
     response = _text(result.stdout).strip()
-    if response not in ("", "Success"):
+    response_lines = tuple(line.strip() for line in response.splitlines() if line.strip())
+    if response_lines not in ((), ("Success",), ("Performing Push Install", "Success")):
         raise CollectionError(f"{label} returned an unexpected response: {response!r}")
 
 

@@ -238,6 +238,10 @@ class AndroidReleaseDeviceCollectionTests(unittest.TestCase):
     def test_install_completion_accepts_empty_adb_acknowledgment_for_later_hash_proof(self) -> None:
         require_install_completion(result(("install",), stdout=""), "exact APK install")
         require_install_completion(result(("install",), stdout="Success\n"), "exact APK install")
+        require_install_completion(
+            result(("install",), stdout="Performing Push Install\nSuccess\n"),
+            "exact APK install",
+        )
 
         with self.assertRaisesRegex(CollectionError, "unexpected response"):
             require_install_completion(

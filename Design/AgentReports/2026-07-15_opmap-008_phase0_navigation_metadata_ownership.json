@@ -1,0 +1,529 @@
+{
+    "reportSchema": "warline.operation-map.phase0-navigation-metadata-ownership",
+    "reportSchemaVersion": 1,
+    "baselineCommit": "2873e4dd7b2f1f5a5727c1de81bd9c86f97dc60d",
+    "result": "NeedsDecision",
+    "counts": {
+        "authorities": 15,
+        "runtimeConsumers": 13,
+        "acceptedCrossReferences": 3,
+        "directInputs": 28,
+        "needsDecision": 15
+    },
+    "identityPayloadSha256": "f330f6914b7f48563625a083b3925bf7cee2d3490e7589a56372058338105de3",
+    "acceptedEvidence": [
+        {
+            "task": "opmap-002",
+            "path": "Design/AgentReports/2026-07-14_opmap-002_phase0_baseline_probe.md",
+            "reportSchema": "warline.operation-map.phase0-baseline",
+            "sourceRevision": "996e460029730a69832bc8df81255a1892f1bca9",
+            "evidenceSha256": "d4d4674850766c5cd95e1bb5fbb6f26893e0bb019dbaf266a0c9897a3befc807"
+        },
+        {
+            "task": "opmap-004",
+            "path": "Design/AgentReports/2026-07-15_opmap-004_phase0_ownership_baseline.json",
+            "reportSchema": "warline.operation-map.phase0-ownership",
+            "sourceRevision": "2069aa01f66040f34fa0fb48ea1d8fec41691bab",
+            "evidenceSha256": "e1080bd90e88140d8151755b7ef6086c02d8683b7d277708004797893fc3c49b"
+        },
+        {
+            "task": "opmap-006",
+            "path": "Design/AgentReports/2026-07-15_opmap-006_phase0_placement_ownership.json",
+            "reportSchema": "warline.operation-map.phase0-placement-ownership",
+            "sourceRevision": "47c84afc5f873dbf2ea665ab4875d0825b51efd8",
+            "evidenceSha256": "115270bdb5844b5df504f33b5796caa4c85c49e82f02d23ea05e5ce732d0f759"
+        }
+    ],
+    "directInputHashes": [
+        {
+            "path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Airport_Config.asset",
+            "sha256": "5d300773279e675a8a01fef21854ecc1b2f8708756ba2577395afb4f6941e333"
+        },
+        {
+            "path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Helipad_Config.asset",
+            "sha256": "3689f7caf4b8c7bdaa18ed44b272d6663d3056a31ca205aedc124c4f085eea52"
+        },
+        {
+            "path": "Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset",
+            "sha256": "8ef1b3f17074774040111a48ea82901b3355da8b8b86c8dc5c6e2a0bcccc2cfb"
+        },
+        {
+            "path": "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset",
+            "sha256": "aa08cb9115e8727bfdbc671a4a2cfd9334ef48134c00d58d7d29e350c45b752c"
+        },
+        {
+            "path": "Assets/Game/Prefabs/Buildings/Building_Airport.prefab",
+            "sha256": "1e2456eafce50f155b020b996c7a4be28646284344a3159dccecfe54bb4751cf"
+        },
+        {
+            "path": "Assets/Game/Prefabs/Buildings/Building_Helipad.prefab",
+            "sha256": "0a182d98bc33d6a4ce4b55c83252f4b974dadfb3286eccdf21fdd8d7d107da43"
+        },
+        {
+            "path": "Assets/Game/Scenes/Match.unity",
+            "sha256": "dca7c83b765ce40099ce4fd62a53cbee5bc306107f8a026abcb941a59bf53a46"
+        },
+        {
+            "path": "Assets/Game/Scenes/Match/MatchSubScene.unity",
+            "sha256": "bcc255f3fb140a0d91687b45b679b47fb60f01f5cfa8690bac3032ec642dadd8"
+        },
+        {
+            "path": "Assets/Game/Scripts/Authorings/GridAuthoring.cs",
+            "sha256": "5ac5169f0351d57ed44c89716614f177ac829d597f34780225da06eb0f4da348"
+        },
+        {
+            "path": "Assets/Game/Scripts/Authorings/MapSurfaceAuthoring.cs",
+            "sha256": "0b2f878ee56e78702d9c1f7e648a5f568caccc6c425795c6f05b665297a08789"
+        },
+        {
+            "path": "Assets/Game/Scripts/Components/GridComponents.cs",
+            "sha256": "632d66e1479fa0b0773ea1635c29a26c5efadfcc998caf5151980d4d5e20cd39"
+        },
+        {
+            "path": "Assets/Game/Scripts/Components/MapSurfaceComponents.cs",
+            "sha256": "f11cb3fa488153f20de6bf7ea4b5f1399266d38fa34dc737dc60ec6173d90036"
+        },
+        {
+            "path": "Assets/Game/Scripts/Composition/MapSurfaceRuntimeBootstrapSceneSystemHelper.cs",
+            "sha256": "3b070dee815412915960d9b4ef84bd51cb5d89603850f09401fdd31f958b84db"
+        },
+        {
+            "path": "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",
+            "sha256": "e0af3018b60ce198ad51f8a497123bcdb92c530cef04a1bb14f813da5a49e5dd"
+        },
+        {
+            "path": "Assets/Game/Scripts/Systems/BuildingRuntimeSurfaceOverlaySystem.cs",
+            "sha256": "35ecb50d19a3291336e4c10032a37ffd1fc31957e87d6beaaf1e54bf2f3ad9d0"
+        },
+        {
+            "path": "Assets/Game/Scripts/Systems/BuildingRunwaySystem.cs",
+            "sha256": "8f81e5a883e478d8ace1aa96301340526289fd6b193f0db250663e00c2f31896"
+        },
+        {
+            "path": "Assets/Game/Scripts/Systems/BuildingSpawnCompositionSystemHelper.cs",
+            "sha256": "f4b59b87e76270f9c0f750dcb3a976b9270c5d3fe6013bd13eebf05cd6d798d7"
+        },
+        {
+            "path": "Assets/Game/Scripts/Systems/DynamicBlockerInitSystem.cs",
+            "sha256": "5113911427664a72a5c0c7736aa633a6e8c4439e92fda9d14e7798230974fb7d"
+        },
+        {
+            "path": "Assets/Game/Scripts/Systems/DynamicOccupancyRebuildSystem.cs",
+            "sha256": "4ab5a347080e10c9168d21cd7be512ccb995ca056d93c4a91ffe0b751d3a0ab5"
+        },
+        {
+            "path": "Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs",
+            "sha256": "76b91da24026174d7ee13fd5691dfd6f75192b779e2805e212d3949748657aca"
+        },
+        {
+            "path": "Assets/Game/Scripts/Systems/MapSurfaceDiagnosticsSystem.cs",
+            "sha256": "e7c7ddfb49f6ed1c5a8599d0fbb96a631082addf981c6f72fb6812749f0135af"
+        },
+        {
+            "path": "Assets/Game/Scripts/Systems/MapSurfacePathfindingSnapshot.cs",
+            "sha256": "8779412fa70d6f4551a291f8086352f6c171c65f49eabdacdac1f014a4b125d6"
+        },
+        {
+            "path": "Assets/Game/Scripts/Systems/StaticGridBlockerUpdateSystem.cs",
+            "sha256": "002fe9d4f81ea7d765f750c9927264cc3745a83a72385b57ab100208b862c0ed"
+        },
+        {
+            "path": "Assets/Game/Scripts/Systems/UnitAirMovementSystem.cs",
+            "sha256": "d051537735be1409b25b000ec15298179aaa01798453ad3ff326fa23204ffbb8"
+        },
+        {
+            "path": "Assets/Game/Scripts/Systems/UnitPathGridSnapshot.cs",
+            "sha256": "53d06bc98e48817079dd31ba1b341209e9509ce31d23b72dea972519b56ac9cb"
+        },
+        {
+            "path": "Design/AgentReports/2026-07-14_opmap-002_phase0_baseline_probe.md",
+            "sha256": "d4d4674850766c5cd95e1bb5fbb6f26893e0bb019dbaf266a0c9897a3befc807"
+        },
+        {
+            "path": "Design/AgentReports/2026-07-15_opmap-004_phase0_ownership_baseline.json",
+            "sha256": "e1080bd90e88140d8151755b7ef6086c02d8683b7d277708004797893fc3c49b"
+        },
+        {
+            "path": "Design/AgentReports/2026-07-15_opmap-006_phase0_placement_ownership.json",
+            "sha256": "115270bdb5844b5df504f33b5796caa4c85c49e82f02d23ea05e5ce732d0f759"
+        }
+    ],
+    "authorities": [
+        {
+            "kind": "helipad-definition",
+            "stableIdentity": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Helipad_Config.asset",
+            "sourceRevision": "2873e4dd7b2f1f5a5727c1de81bd9c86f97dc60d",
+            "assetPath": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Helipad_Config.asset",
+            "assetGuid": "b3010000000000000000000000000004",
+            "localId": 11400000,
+            "exactType": "Game.Configs.BuildingDefinitionAuthoringPrefabConfigAsset",
+            "scenePath": "",
+            "hierarchyPath": "",
+            "metadata": "displayName=Helipad|productions=3|productionAssets=0:fcc8f80798992470f8b8769d3bc4c41a:5616646512338707422,1:ba129d3b5a0324b82a9046e6a52c1149:5616646512338707422,2:e540888d7cd8a489f9472b3456bf2406:5616646512338707422",
+            "currentOwner": "Match map compatibility content and runtime systems",
+            "targetOwner": "Operation map definition navigation metadata",
+            "migrationDisposition": "Move the exact GUID-backed metadata binding with the operation map definition, preserve asset and local-file identities, and prove runtime parity before removing Match compatibility ownership.",
+            "migrationOwner": "Operation map architecture owner and navigation gameplay owner",
+            "state": "NeedsDecision",
+            "decisionOwner": "Operation map architecture owner, navigation gameplay owner, and air operations owner"
+        },
+        {
+            "kind": "grid-config",
+            "stableIdentity": "Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset",
+            "sourceRevision": "2873e4dd7b2f1f5a5727c1de81bd9c86f97dc60d",
+            "assetPath": "Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset",
+            "assetGuid": "b201000000000000000000000000000b",
+            "localId": 11400000,
+            "exactType": "Game.Configs.GridAuthoringSceneConfigAsset",
+            "scenePath": "",
+            "hierarchyPath": "",
+            "metadata": "width=2048|height=1024|cellSize=1|origin=(0,0,0)|blockedCells=0",
+            "currentOwner": "Match map compatibility content and runtime systems",
+            "targetOwner": "Operation map definition navigation metadata",
+            "migrationDisposition": "Move the exact GUID-backed metadata binding with the operation map definition, preserve asset and local-file identities, and prove runtime parity before removing Match compatibility ownership.",
+            "migrationOwner": "Operation map architecture owner and navigation gameplay owner",
+            "state": "NeedsDecision",
+            "decisionOwner": "Operation map architecture owner, navigation gameplay owner, and air operations owner"
+        },
+        {
+            "kind": "map-surface-data",
+            "stableIdentity": "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset",
+            "sourceRevision": "2873e4dd7b2f1f5a5727c1de81bd9c86f97dc60d",
+            "assetPath": "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset",
+            "assetGuid": "12f517deb32ab49698acbfdaf7c3eac7",
+            "localId": 11400000,
+            "exactType": "Game.Configs.MapSurfaceDataAsset",
+            "scenePath": "",
+            "hierarchyPath": "",
+            "metadata": "width=2048|height=1024|cellSize=1|origin=(0,0,0)|surfaces=2097152|connections=0|payloadVersion=3|payloadEncoding=1|runtimeBlobHash=8f661e49fcdbb96314ff03d48bbb3993",
+            "currentOwner": "Match map compatibility content and runtime systems",
+            "targetOwner": "Operation map definition navigation metadata",
+            "migrationDisposition": "Move the exact GUID-backed metadata binding with the operation map definition, preserve asset and local-file identities, and prove runtime parity before removing Match compatibility ownership.",
+            "migrationOwner": "Operation map architecture owner and navigation gameplay owner",
+            "state": "NeedsDecision",
+            "decisionOwner": "Operation map architecture owner, navigation gameplay owner, and air operations owner"
+        },
+        {
+            "kind": "road-surfaces",
+            "stableIdentity": "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset#flag:Road",
+            "sourceRevision": "2873e4dd7b2f1f5a5727c1de81bd9c86f97dc60d",
+            "assetPath": "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset",
+            "assetGuid": "12f517deb32ab49698acbfdaf7c3eac7",
+            "localId": 11400000,
+            "exactType": "Game.Configs.MapSurfaceDataAsset",
+            "scenePath": "",
+            "hierarchyPath": "",
+            "metadata": "flag=Road|count=126986",
+            "currentOwner": "Match map compatibility content and runtime systems",
+            "targetOwner": "Operation map definition navigation metadata",
+            "migrationDisposition": "Move the exact GUID-backed metadata binding with the operation map definition, preserve asset and local-file identities, and prove runtime parity before removing Match compatibility ownership.",
+            "migrationOwner": "Operation map architecture owner and navigation gameplay owner",
+            "state": "NeedsDecision",
+            "decisionOwner": "Operation map architecture owner, navigation gameplay owner, and air operations owner"
+        },
+        {
+            "kind": "bridge-surfaces",
+            "stableIdentity": "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset#surface-type:BridgeDeck",
+            "sourceRevision": "2873e4dd7b2f1f5a5727c1de81bd9c86f97dc60d",
+            "assetPath": "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset",
+            "assetGuid": "12f517deb32ab49698acbfdaf7c3eac7",
+            "localId": 11400000,
+            "exactType": "Game.Configs.MapSurfaceDataAsset",
+            "scenePath": "",
+            "hierarchyPath": "",
+            "metadata": "surfaceType=BridgeDeck|count=6933|flag=Bridge",
+            "currentOwner": "Match map compatibility content and runtime systems",
+            "targetOwner": "Operation map definition navigation metadata",
+            "migrationDisposition": "Move the exact GUID-backed metadata binding with the operation map definition, preserve asset and local-file identities, and prove runtime parity before removing Match compatibility ownership.",
+            "migrationOwner": "Operation map architecture owner and navigation gameplay owner",
+            "state": "NeedsDecision",
+            "decisionOwner": "Operation map architecture owner, navigation gameplay owner, and air operations owner"
+        },
+        {
+            "kind": "terrain-surfaces",
+            "stableIdentity": "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset#surface-type:Terrain",
+            "sourceRevision": "2873e4dd7b2f1f5a5727c1de81bd9c86f97dc60d",
+            "assetPath": "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset",
+            "assetGuid": "12f517deb32ab49698acbfdaf7c3eac7",
+            "localId": 11400000,
+            "exactType": "Game.Configs.MapSurfaceDataAsset",
+            "scenePath": "",
+            "hierarchyPath": "",
+            "metadata": "surfaceType=Terrain|count=1760186|blocked=209980",
+            "currentOwner": "Match map compatibility content and runtime systems",
+            "targetOwner": "Operation map definition navigation metadata",
+            "migrationDisposition": "Move the exact GUID-backed metadata binding with the operation map definition, preserve asset and local-file identities, and prove runtime parity before removing Match compatibility ownership.",
+            "migrationOwner": "Operation map architecture owner and navigation gameplay owner",
+            "state": "NeedsDecision",
+            "decisionOwner": "Operation map architecture owner, navigation gameplay owner, and air operations owner"
+        },
+        {
+            "kind": "runway-start",
+            "stableIdentity": "Assets/Game/Prefabs/Buildings/Building_Airport.prefab#localId:1583421028472175978",
+            "sourceRevision": "2873e4dd7b2f1f5a5727c1de81bd9c86f97dc60d",
+            "assetPath": "Assets/Game/Prefabs/Buildings/Building_Airport.prefab",
+            "assetGuid": "37ac92ce4e0e7473891bdb9b135724f2",
+            "localId": 1583421028472175978,
+            "exactType": "UnityEngine.Transform",
+            "scenePath": "",
+            "hierarchyPath": "Building_Airport/Runway/Runway_Start",
+            "metadata": "localPosition=(-90.2700043,1.21,0.367861181)|localRotation=(0,1,0,4.261732E-06)",
+            "currentOwner": "Match map compatibility content and runtime systems",
+            "targetOwner": "Operation map definition navigation metadata",
+            "migrationDisposition": "Move the exact GUID-backed metadata binding with the operation map definition, preserve asset and local-file identities, and prove runtime parity before removing Match compatibility ownership.",
+            "migrationOwner": "Operation map architecture owner and navigation gameplay owner",
+            "state": "NeedsDecision",
+            "decisionOwner": "Operation map architecture owner, navigation gameplay owner, and air operations owner"
+        },
+        {
+            "kind": "runway-end",
+            "stableIdentity": "Assets/Game/Prefabs/Buildings/Building_Airport.prefab#localId:2285726051564322001",
+            "sourceRevision": "2873e4dd7b2f1f5a5727c1de81bd9c86f97dc60d",
+            "assetPath": "Assets/Game/Prefabs/Buildings/Building_Airport.prefab",
+            "assetGuid": "37ac92ce4e0e7473891bdb9b135724f2",
+            "localId": 2285726051564322001,
+            "exactType": "UnityEngine.Transform",
+            "scenePath": "",
+            "hierarchyPath": "Building_Airport/Runway/Runway_End",
+            "metadata": "localPosition=(91.030014,1.21,0.391832083)|localRotation=(0,-1.40070915E-06,0,1)",
+            "currentOwner": "Match map compatibility content and runtime systems",
+            "targetOwner": "Operation map definition navigation metadata",
+            "migrationDisposition": "Move the exact GUID-backed metadata binding with the operation map definition, preserve asset and local-file identities, and prove runtime parity before removing Match compatibility ownership.",
+            "migrationOwner": "Operation map architecture owner and navigation gameplay owner",
+            "state": "NeedsDecision",
+            "decisionOwner": "Operation map architecture owner, navigation gameplay owner, and air operations owner"
+        },
+        {
+            "kind": "helipad-spawn",
+            "stableIdentity": "Assets/Game/Prefabs/Buildings/Building_Helipad.prefab#localId:8234254015469105350",
+            "sourceRevision": "2873e4dd7b2f1f5a5727c1de81bd9c86f97dc60d",
+            "assetPath": "Assets/Game/Prefabs/Buildings/Building_Helipad.prefab",
+            "assetGuid": "077763b7910da4a67be0c118c091c302",
+            "localId": 8234254015469105350,
+            "exactType": "UnityEngine.Transform",
+            "scenePath": "",
+            "hierarchyPath": "Building_Helipad/Model/Spawn_01",
+            "metadata": "localPosition=(0,1,-0.100000381)|localRotation=(0,0,0,1)",
+            "currentOwner": "Match map compatibility content and runtime systems",
+            "targetOwner": "Operation map definition navigation metadata",
+            "migrationDisposition": "Move the exact GUID-backed metadata binding with the operation map definition, preserve asset and local-file identities, and prove runtime parity before removing Match compatibility ownership.",
+            "migrationOwner": "Operation map architecture owner and navigation gameplay owner",
+            "state": "NeedsDecision",
+            "decisionOwner": "Operation map architecture owner, navigation gameplay owner, and air operations owner"
+        },
+        {
+            "kind": "map-surface-authoring",
+            "stableIdentity": "Assets/Game/Scenes/Match.unity#localId:8387065878709727638",
+            "sourceRevision": "2873e4dd7b2f1f5a5727c1de81bd9c86f97dc60d",
+            "assetPath": "Assets/Game/Scenes/Match.unity",
+            "assetGuid": "cc4f48a57793d4597b4ffac2906c515e",
+            "localId": 8387065878709727638,
+            "exactType": "Game.Authoring.MapSurfaceAuthoring",
+            "scenePath": "Assets/Game/Scenes/Match.unity",
+            "hierarchyPath": "Map",
+            "metadata": "surfaceGuid=12f517deb32ab49698acbfdaf7c3eac7|gridGuid=b201000000000000000000000000000b|samplesPerCellAxis=2|maxSampleHeightDelta=0.05|maxBuildingSlope=8|maxInfantrySlope=35|maxVehicleSlope=22",
+            "currentOwner": "Match map compatibility content and runtime systems",
+            "targetOwner": "Operation map definition navigation metadata",
+            "migrationDisposition": "Move the exact GUID-backed metadata binding with the operation map definition, preserve asset and local-file identities, and prove runtime parity before removing Match compatibility ownership.",
+            "migrationOwner": "Operation map architecture owner and navigation gameplay owner",
+            "state": "NeedsDecision",
+            "decisionOwner": "Operation map architecture owner, navigation gameplay owner, and air operations owner"
+        },
+        {
+            "kind": "grid-authoring",
+            "stableIdentity": "Assets/Game/Scenes/Match/MatchSubScene.unity#localId:146043441",
+            "sourceRevision": "2873e4dd7b2f1f5a5727c1de81bd9c86f97dc60d",
+            "assetPath": "Assets/Game/Scenes/Match/MatchSubScene.unity",
+            "assetGuid": "8d5e3c3f2ef84b61a4d61472c40c9a11",
+            "localId": 146043441,
+            "exactType": "Game.Authoring.GridAuthoring",
+            "scenePath": "Assets/Game/Scenes/Match/MatchSubScene.unity",
+            "hierarchyPath": "Grid",
+            "metadata": "width=2048|height=1024|cellSize=1|origin=(0,0,0)|blockedCells=0",
+            "currentOwner": "Match map compatibility content and runtime systems",
+            "targetOwner": "Operation map definition navigation metadata",
+            "migrationDisposition": "Move the exact GUID-backed metadata binding with the operation map definition, preserve asset and local-file identities, and prove runtime parity before removing Match compatibility ownership.",
+            "migrationOwner": "Operation map architecture owner and navigation gameplay owner",
+            "state": "NeedsDecision",
+            "decisionOwner": "Operation map architecture owner, navigation gameplay owner, and air operations owner"
+        },
+        {
+            "kind": "dynamic-blockers",
+            "stableIdentity": "Game.Components.DynamicBlockerComponent",
+            "sourceRevision": "2873e4dd7b2f1f5a5727c1de81bd9c86f97dc60d",
+            "assetPath": "",
+            "assetGuid": "",
+            "localId": 0,
+            "exactType": "Game.Components.DynamicBlockerComponent",
+            "scenePath": "",
+            "hierarchyPath": "",
+            "metadata": "storage=counts+blocked+friendlyPassFactionIds|authority=Game.Runtime.DynamicBlockerInitSystem",
+            "currentOwner": "Match map compatibility content and runtime systems",
+            "targetOwner": "Operation map definition navigation metadata",
+            "migrationDisposition": "Move the exact GUID-backed metadata binding with the operation map definition, preserve asset and local-file identities, and prove runtime parity before removing Match compatibility ownership.",
+            "migrationOwner": "Operation map architecture owner and navigation gameplay owner",
+            "state": "NeedsDecision",
+            "decisionOwner": "Operation map architecture owner, navigation gameplay owner, and air operations owner"
+        },
+        {
+            "kind": "dynamic-occupancy",
+            "stableIdentity": "Game.Components.DynamicOccupancyComponent",
+            "sourceRevision": "2873e4dd7b2f1f5a5727c1de81bd9c86f97dc60d",
+            "assetPath": "",
+            "assetGuid": "",
+            "localId": 0,
+            "exactType": "Game.Components.DynamicOccupancyComponent",
+            "scenePath": "",
+            "hierarchyPath": "",
+            "metadata": "storage=occupied|authority=Game.Runtime.DynamicOccupancyRebuildSystem|tracked=UnitGrid+UnitFootprint",
+            "currentOwner": "Match map compatibility content and runtime systems",
+            "targetOwner": "Operation map definition navigation metadata",
+            "migrationDisposition": "Move the exact GUID-backed metadata binding with the operation map definition, preserve asset and local-file identities, and prove runtime parity before removing Match compatibility ownership.",
+            "migrationOwner": "Operation map architecture owner and navigation gameplay owner",
+            "state": "NeedsDecision",
+            "decisionOwner": "Operation map architecture owner, navigation gameplay owner, and air operations owner"
+        },
+        {
+            "kind": "static-blockers",
+            "stableIdentity": "Game.Components.StaticGridBlocker",
+            "sourceRevision": "2873e4dd7b2f1f5a5727c1de81bd9c86f97dc60d",
+            "assetPath": "",
+            "assetGuid": "",
+            "localId": 0,
+            "exactType": "Game.Components.StaticGridBlocker",
+            "scenePath": "",
+            "hierarchyPath": "",
+            "metadata": "marker=StaticGridBlocker|bounds=GridBlockerSize+StaticBlockerPrevBounds|authority=Game.Runtime.StaticGridBlockerUpdateSystem",
+            "currentOwner": "Match map compatibility content and runtime systems",
+            "targetOwner": "Operation map definition navigation metadata",
+            "migrationDisposition": "Move the exact GUID-backed metadata binding with the operation map definition, preserve asset and local-file identities, and prove runtime parity before removing Match compatibility ownership.",
+            "migrationOwner": "Operation map architecture owner and navigation gameplay owner",
+            "state": "NeedsDecision",
+            "decisionOwner": "Operation map architecture owner, navigation gameplay owner, and air operations owner"
+        },
+        {
+            "kind": "runway-metadata",
+            "stableIdentity": "Game.Runtime.BuildingRunwaySystem",
+            "sourceRevision": "2873e4dd7b2f1f5a5727c1de81bd9c86f97dc60d",
+            "assetPath": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Airport_Config.asset",
+            "assetGuid": "1b2efc28619c34a21acc851aa669589f",
+            "localId": 11400000,
+            "exactType": "Game.Runtime.BuildingRunwaySystem",
+            "scenePath": "",
+            "hierarchyPath": "Building_Airport/Runway",
+            "metadata": "airportProductions=4|runwayLocalId=4896067565179094789|startLocalId=1583421028472175978|endLocalId=2285726051564322001",
+            "currentOwner": "Match map compatibility content and runtime systems",
+            "targetOwner": "Operation map definition navigation metadata",
+            "migrationDisposition": "Move the exact GUID-backed metadata binding with the operation map definition, preserve asset and local-file identities, and prove runtime parity before removing Match compatibility ownership.",
+            "migrationOwner": "Operation map architecture owner and navigation gameplay owner",
+            "state": "NeedsDecision",
+            "decisionOwner": "Operation map architecture owner, navigation gameplay owner, and air operations owner"
+        }
+    ],
+    "runtimeConsumers": [
+        {
+            "stableIdentity": "Game.Composition.MapSurfaceRuntimeBootstrapSceneSystemHelper@Assets/Game/Scripts/Composition/MapSurfaceRuntimeBootstrapSceneSystemHelper.cs",
+            "sourceRevision": "2873e4dd7b2f1f5a5727c1de81bd9c86f97dc60d",
+            "sourcePath": "Assets/Game/Scripts/Composition/MapSurfaceRuntimeBootstrapSceneSystemHelper.cs",
+            "exactType": "Game.Composition.MapSurfaceRuntimeBootstrapSceneSystemHelper",
+            "consumes": "MapSurfaceDataAsset|MapSurfaceAuthoring|MapSurfaceComponent",
+            "responsibility": "Publishes the selected baked map surface and scene overlays into the runtime world."
+        },
+        {
+            "stableIdentity": "Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper@Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",
+            "sourceRevision": "2873e4dd7b2f1f5a5727c1de81bd9c86f97dc60d",
+            "sourcePath": "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",
+            "exactType": "Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper",
+            "consumes": "BuildingFactionProductionSpawnPointReadModel",
+            "responsibility": "Publishes exact building production spawn slots for downstream consumers."
+        },
+        {
+            "stableIdentity": "Game.Runtime.BuildingRuntimeSurfaceOverlaySystem@Assets/Game/Scripts/Systems/BuildingRuntimeSurfaceOverlaySystem.cs",
+            "sourceRevision": "2873e4dd7b2f1f5a5727c1de81bd9c86f97dc60d",
+            "sourcePath": "Assets/Game/Scripts/Systems/BuildingRuntimeSurfaceOverlaySystem.cs",
+            "exactType": "Game.Runtime.BuildingRuntimeSurfaceOverlaySystem",
+            "consumes": "BuildingRunwaySystem|BuildingRuntimeSurfaceOverlay",
+            "responsibility": "Publishes runtime runway road-surface overlays."
+        },
+        {
+            "stableIdentity": "Game.Runtime.BuildingRunwaySystem@Assets/Game/Scripts/Systems/BuildingRunwaySystem.cs",
+            "sourceRevision": "2873e4dd7b2f1f5a5727c1de81bd9c86f97dc60d",
+            "sourcePath": "Assets/Game/Scripts/Systems/BuildingRunwaySystem.cs",
+            "exactType": "Game.Runtime.BuildingRunwaySystem",
+            "consumes": "definition.HasRunway|Runway|Runway_Start|Runway_End",
+            "responsibility": "Resolves runway geometry and effective placement occupancy."
+        },
+        {
+            "stableIdentity": "Game.Runtime.BuildingSpawnCompositionSystemHelper@Assets/Game/Scripts/Systems/BuildingSpawnCompositionSystemHelper.cs",
+            "sourceRevision": "2873e4dd7b2f1f5a5727c1de81bd9c86f97dc60d",
+            "sourcePath": "Assets/Game/Scripts/Systems/BuildingSpawnCompositionSystemHelper.cs",
+            "exactType": "Game.Runtime.BuildingSpawnCompositionSystemHelper",
+            "consumes": "Building_Helipad|BuildingFactionProductionSpawnPointReadModel",
+            "responsibility": "Resolves available faction helipad spawn slots from the runtime read model."
+        },
+        {
+            "stableIdentity": "Game.Runtime.DynamicBlockerInitSystem@Assets/Game/Scripts/Systems/DynamicBlockerInitSystem.cs",
+            "sourceRevision": "2873e4dd7b2f1f5a5727c1de81bd9c86f97dc60d",
+            "sourcePath": "Assets/Game/Scripts/Systems/DynamicBlockerInitSystem.cs",
+            "exactType": "Game.Runtime.DynamicBlockerInitSystem",
+            "consumes": "GridConfig|DynamicBlockerComponent|DynamicOccupancyComponent",
+            "responsibility": "Allocates singleton dynamic blocker and occupancy storage from grid dimensions."
+        },
+        {
+            "stableIdentity": "Game.Runtime.DynamicOccupancyRebuildSystem@Assets/Game/Scripts/Systems/DynamicOccupancyRebuildSystem.cs",
+            "sourceRevision": "2873e4dd7b2f1f5a5727c1de81bd9c86f97dc60d",
+            "sourcePath": "Assets/Game/Scripts/Systems/DynamicOccupancyRebuildSystem.cs",
+            "exactType": "Game.Runtime.DynamicOccupancyRebuildSystem",
+            "consumes": "GridConfig|DynamicOccupancyComponent|UnitGrid|UnitFootprint",
+            "responsibility": "Maintains moving-unit occupancy authority."
+        },
+        {
+            "stableIdentity": "Game.Runtime.InitialUnitsSpawnSystem@Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs",
+            "sourceRevision": "2873e4dd7b2f1f5a5727c1de81bd9c86f97dc60d",
+            "sourcePath": "Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs",
+            "exactType": "Game.Runtime.InitialUnitsSpawnSystem",
+            "consumes": "Building_Helipad|BuildingFactionProductionSpawnPointReadModel",
+            "responsibility": "Selects exact initial air-platform spawn slots."
+        },
+        {
+            "stableIdentity": "Game.Runtime.MapSurfaceDiagnosticsSystem@Assets/Game/Scripts/Systems/MapSurfaceDiagnosticsSystem.cs",
+            "sourceRevision": "2873e4dd7b2f1f5a5727c1de81bd9c86f97dc60d",
+            "sourcePath": "Assets/Game/Scripts/Systems/MapSurfaceDiagnosticsSystem.cs",
+            "exactType": "Game.Runtime.MapSurfaceDiagnosticsSystem",
+            "consumes": "MapSurfaceComponent|MapSurfaceDiagnosticsComponent",
+            "responsibility": "Counts terrain, road, bridge, ramp, blocked, and layered runtime surface metadata."
+        },
+        {
+            "stableIdentity": "Game.Runtime.MapSurfacePathfindingSnapshot@Assets/Game/Scripts/Systems/MapSurfacePathfindingSnapshot.cs",
+            "sourceRevision": "2873e4dd7b2f1f5a5727c1de81bd9c86f97dc60d",
+            "sourcePath": "Assets/Game/Scripts/Systems/MapSurfacePathfindingSnapshot.cs",
+            "exactType": "Game.Runtime.MapSurfacePathfindingSnapshot",
+            "consumes": "MapSurfaceComponent|MapSurfacePathCostComponent",
+            "responsibility": "Snapshots authored surface and path-cost metadata for pathfinding."
+        },
+        {
+            "stableIdentity": "Game.Runtime.StaticGridBlockerUpdateSystem@Assets/Game/Scripts/Systems/StaticGridBlockerUpdateSystem.cs",
+            "sourceRevision": "2873e4dd7b2f1f5a5727c1de81bd9c86f97dc60d",
+            "sourcePath": "Assets/Game/Scripts/Systems/StaticGridBlockerUpdateSystem.cs",
+            "exactType": "Game.Runtime.StaticGridBlockerUpdateSystem",
+            "consumes": "StaticGridBlocker|DynamicBlockerComponent|StaticBlockerPrevBounds",
+            "responsibility": "Projects static blocker bounds into the dynamic blocker authority."
+        },
+        {
+            "stableIdentity": "Game.Runtime.UnitAirMovementSystem@Assets/Game/Scripts/Systems/UnitAirMovementSystem.cs",
+            "sourceRevision": "2873e4dd7b2f1f5a5727c1de81bd9c86f97dc60d",
+            "sourcePath": "Assets/Game/Scripts/Systems/UnitAirMovementSystem.cs",
+            "exactType": "Game.Runtime.UnitAirMovementSystem",
+            "consumes": "UnitAirComponent|RunwayTakeoffPosition|RunwayLandingPosition|MapSurfaceComponent",
+            "responsibility": "Consumes typed runway endpoints and map-surface dimensions for aircraft movement."
+        },
+        {
+            "stableIdentity": "Game.Runtime.UnitPathGridSnapshot@Assets/Game/Scripts/Systems/UnitPathGridSnapshot.cs",
+            "sourceRevision": "2873e4dd7b2f1f5a5727c1de81bd9c86f97dc60d",
+            "sourcePath": "Assets/Game/Scripts/Systems/UnitPathGridSnapshot.cs",
+            "exactType": "Game.Runtime.UnitPathGridSnapshot",
+            "consumes": "GridWalkable|GridRoad|DynamicBlocked|Occupied",
+            "responsibility": "Copies walkability, road, blocker, and occupancy buffers for pathfinding jobs."
+        }
+    ]
+}

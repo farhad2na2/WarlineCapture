@@ -46,7 +46,7 @@ public sealed class StaticMapAndroidBuildSceneResolverTests
         StaticMapAndroidBuildManifestSnapshot snapshot = Snapshot(ChunkA, ChunkB);
         string[] enabled = { Menu, Match };
         Func<string, bool> exists = _ => true;
-        Func<string, bool> canonicalDependencyMatches = _ => true;
+        Func<string> computeCanonicalDependencyHash = () => snapshot.CanonicalSceneDependencyHash;
         Func<string, IReadOnlyList<string>, bool> integrity = (_, __) => true;
 
         switch (invalidCase)
@@ -57,7 +57,7 @@ public sealed class StaticMapAndroidBuildSceneResolverTests
             case "canonical": snapshot = SnapshotWith(canonical: Menu); break;
             case "contentHash": snapshot = SnapshotWith(contentHash: " "); break;
             case "canonicalDependencyHash": snapshot = SnapshotWith(canonicalDependencyHash: " "); break;
-            case "staleCanonicalDependency": canonicalDependencyMatches = _ => false; break;
+            case "staleCanonicalDependency": computeCanonicalDependencyHash = () => "actual-canonical-dependency-hash"; break;
             case "nullChunk": snapshot = Snapshot(ChunkA, null); break;
             case "duplicateChunk": snapshot = Snapshot(ChunkA, ChunkA); break;
             case "invalidChunk": snapshot = Snapshot(ChunkA, "Assets/Game/GeneratedStaticMapPresentation/Scenes/invalid.unity"); break;
@@ -77,8 +77,26 @@ public sealed class StaticMapAndroidBuildSceneResolverTests
                 snapshot,
                 exists,
                 IsOwned,
-                canonicalDependencyMatches,
+                computeCanonicalDependencyHash,
                 integrity));
+    }
+
+    [Test]
+    public void Resolve_StaleCanonicalDependencyReportsExpectedAndActualHashes()
+    {
+        StaticMapAndroidBuildManifestSnapshot snapshot = Snapshot(ChunkA);
+
+        InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
+            StaticMapAndroidBuildSceneResolver.Resolve(
+                new[] { Match },
+                snapshot,
+                _ => true,
+                IsOwned,
+                () => "recomputed-hash",
+                (_, __) => true));
+
+        Assert.That(exception.Message, Does.Contain("Expected 'canonical-dependency-hash'"));
+        Assert.That(exception.Message, Does.Contain("actual 'recomputed-hash'"));
     }
 
     [Test]
@@ -149,7 +167,7 @@ public sealed class StaticMapAndroidBuildSceneResolverTests
             snapshot,
             _ => true,
             IsOwned,
-            _ => true,
+            () => snapshot.CanonicalSceneDependencyHash,
             integrity ?? ((_, __) => true));
     }
 

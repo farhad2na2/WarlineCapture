@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 using Game.Editor;
 using Game.Rendering;
@@ -417,6 +418,171 @@ public sealed class StaticMapPresentationOutputOwnershipTests
         }
     }
 
+    [Test]
+    public void CanonicalSourceHash_NormalizesTextSourceAndMetaLineEndings()
+    {
+        string root = Path.Combine(Path.GetTempPath(), "WarlineCapture-Build110-Text-" + Guid.NewGuid().ToString("N"));
+        const string sourcePath = "Assets/Game/Scenes/Match.unity";
+        string lfFile = Path.Combine(root, "lf.unity");
+        string crlfFile = Path.Combine(root, "crlf.unity");
+        string crFile = Path.Combine(root, "cr.unity");
+        try
+        {
+            WriteBytes(lfFile, "scene: one\nline: two\n");
+            WriteBytes(lfFile + ".meta", "guid: source\nversion: one\n");
+            WriteBytes(crlfFile, "scene: one\r\nline: two\r\n");
+            WriteBytes(crlfFile + ".meta", "guid: source\r\nversion: one\r\n");
+            WriteBytes(crFile, "scene: one\rline: two\r");
+            WriteBytes(crFile + ".meta", "guid: source\rversion: one\r");
+
+            string lfHash = ComputeCanonicalHash(sourcePath, lfFile);
+
+            Assert.That(ComputeCanonicalHash(sourcePath, crlfFile), Is.EqualTo(lfHash));
+            Assert.That(ComputeCanonicalHash(sourcePath, crFile), Is.EqualTo(lfHash));
+        }
+        finally
+        {
+            if (Directory.Exists(root))
+                Directory.Delete(root, true);
+        }
+    }
+
+    [Test]
+    public void CanonicalSourceHash_LfTextMatchesLegacyRawByteContract()
+    {
+        string root = Path.Combine(Path.GetTempPath(), "WarlineCapture-Build110-LfContract-" + Guid.NewGuid().ToString("N"));
+        const string sourcePath = "Assets/Game/Scenes/Match.unity";
+        string sourceFile = Path.Combine(root, "source.unity");
+        try
+        {
+            WriteBytes(sourceFile, "scene: one\nline: two\n");
+            WriteBytes(sourceFile + ".meta", "guid: source\nversion: one\n");
+
+            Assert.That(
+                ComputeCanonicalHash(sourcePath, sourceFile),
+                Is.EqualTo(ComputeLegacyRawCanonicalHash(sourcePath, sourceFile)));
+        }
+        finally
+        {
+            if (Directory.Exists(root))
+                Directory.Delete(root, true);
+        }
+    }
+
+    [TestCase(".hlsl")]
+    [TestCase(".glslinc")]
+    [TestCase(".inputactions")]
+    [TestCase(".md")]
+    [TestCase(".rsp")]
+    [TestCase(".tss")]
+    [TestCase(".vfx")]
+    [TestCase(".lighting")]
+    [TestCase(".preset")]
+    [TestCase(".physicMaterial")]
+    [TestCase(".renderTexture")]
+    [TestCase(".spriteatlas")]
+    [TestCase(".fontsettings")]
+    [TestCase(".customtext")]
+    public void CanonicalSourceHash_NormalizesDetectedTextRegardlessOfExtension(string extension)
+    {
+        string root = Path.Combine(Path.GetTempPath(), "WarlineCapture-Build110-Extension-" + Guid.NewGuid().ToString("N"));
+        string sourcePath = "Assets/Game/Data/source" + extension;
+        string lfFile = Path.Combine(root, "lf" + extension);
+        string crlfFile = Path.Combine(root, "crlf" + extension);
+        try
+        {
+            WriteBytes(lfFile, "first: value\nsecond: value\n");
+            WriteBytes(lfFile + ".meta", "guid: source\n");
+            WriteBytes(crlfFile, "first: value\r\nsecond: value\r\n");
+            WriteBytes(crlfFile + ".meta", "guid: source\r\n");
+
+            Assert.That(
+                ComputeCanonicalHash(sourcePath, crlfFile),
+                Is.EqualTo(ComputeCanonicalHash(sourcePath, lfFile)));
+        }
+        finally
+        {
+            if (Directory.Exists(root))
+                Directory.Delete(root, true);
+        }
+    }
+
+    [Test]
+    public void CanonicalSourceHash_PreservesBinaryBytesIncludingLineEndingSequences()
+    {
+        string root = Path.Combine(Path.GetTempPath(), "WarlineCapture-Build110-Binary-" + Guid.NewGuid().ToString("N"));
+        const string sourcePath = "Assets/Game/Data/source.asset";
+        string crlfFile = Path.Combine(root, "crlf.asset");
+        string lfFile = Path.Combine(root, "lf.asset");
+        try
+        {
+            Directory.CreateDirectory(root);
+            File.WriteAllBytes(crlfFile, new byte[] { 0, 1, 13, 10, 2, 255 });
+            WriteBytes(crlfFile + ".meta", "guid: source\n");
+            File.WriteAllBytes(lfFile, new byte[] { 0, 1, 10, 2, 255 });
+            WriteBytes(lfFile + ".meta", "guid: source\n");
+
+            Assert.That(
+                ComputeCanonicalHash(sourcePath, crlfFile),
+                Is.Not.EqualTo(ComputeCanonicalHash(sourcePath, lfFile)));
+        }
+        finally
+        {
+            if (Directory.Exists(root))
+                Directory.Delete(root, true);
+        }
+    }
+
+    [Test]
+    public void CanonicalSourceHash_PreservesValidUtf8BytesForKnownBinaryExtension()
+    {
+        string root = Path.Combine(Path.GetTempPath(), "WarlineCapture-Build110-BinaryText-" + Guid.NewGuid().ToString("N"));
+        const string sourcePath = "Assets/Game/Data/source.bytes";
+        string crlfFile = Path.Combine(root, "crlf.bytes");
+        string lfFile = Path.Combine(root, "lf.bytes");
+        try
+        {
+            WriteBytes(crlfFile, "binary-header\r\nbinary-payload\r\n");
+            WriteBytes(crlfFile + ".meta", "guid: source\n");
+            WriteBytes(lfFile, "binary-header\nbinary-payload\n");
+            WriteBytes(lfFile + ".meta", "guid: source\n");
+
+            Assert.That(
+                ComputeCanonicalHash(sourcePath, crlfFile),
+                Is.Not.EqualTo(ComputeCanonicalHash(sourcePath, lfFile)));
+        }
+        finally
+        {
+            if (Directory.Exists(root))
+                Directory.Delete(root, true);
+        }
+    }
+
+    [Test]
+    public void CanonicalSourceHash_RemainsSensitiveToTextContentOutsideLineEndings()
+    {
+        string root = Path.Combine(Path.GetTempPath(), "WarlineCapture-Build110-Content-" + Guid.NewGuid().ToString("N"));
+        const string sourcePath = "Assets/Game/Scenes/Match.unity";
+        string firstFile = Path.Combine(root, "first.unity");
+        string secondFile = Path.Combine(root, "second.unity");
+        try
+        {
+            WriteBytes(firstFile, "scene: one\nline: two\n");
+            WriteBytes(firstFile + ".meta", "guid: source\n");
+            WriteBytes(secondFile, "scene: one\r\nline: changed\r\n");
+            WriteBytes(secondFile + ".meta", "guid: source\r\n");
+
+            Assert.That(
+                ComputeCanonicalHash(sourcePath, firstFile),
+                Is.Not.EqualTo(ComputeCanonicalHash(sourcePath, secondFile)));
+        }
+        finally
+        {
+            if (Directory.Exists(root))
+                Directory.Delete(root, true);
+        }
+    }
+
     [TestCase("Assets/Game/GeneratedStaticMapPresentation", true)]
     [TestCase("Assets/Game/GeneratedStaticMapPresentation/StaticMapPresentationManifest.asset", true)]
     [TestCase("Assets/Game/GeneratedStaticMapPresentation/Scenes/StaticMapPresentation_chunk_p000_p000.unity", true)]
@@ -445,6 +611,42 @@ public sealed class StaticMapPresentationOutputOwnershipTests
         if (!string.IsNullOrEmpty(directory))
             Directory.CreateDirectory(directory);
         File.WriteAllText(path, content);
+    }
+
+    private static void WriteBytes(string path, string content)
+    {
+        string directory = Path.GetDirectoryName(path);
+        if (!string.IsNullOrEmpty(directory))
+            Directory.CreateDirectory(directory);
+        File.WriteAllBytes(path, Encoding.UTF8.GetBytes(content));
+    }
+
+    private static string ComputeCanonicalHash(string assetPath, string physicalPath)
+    {
+        return StaticMapPresentationCanonicalSourceHash.ComputeDirectDependencySetHash(
+            new[] { assetPath },
+            _ => physicalPath,
+            _ => throw new AssertionException("Physical test assets must not use fallback identity."));
+    }
+
+    private static string ComputeLegacyRawCanonicalHash(string assetPath, string physicalPath)
+    {
+        StringBuilder builder = new();
+        builder.Append(assetPath).Append('|');
+        AppendRawSha256(builder, physicalPath);
+        builder.Append('|');
+        AppendRawSha256(builder, physicalPath + ".meta");
+        builder.Append(';');
+        return Hash128.Compute(builder.ToString()).ToString();
+    }
+
+    private static void AppendRawSha256(StringBuilder builder, string path)
+    {
+        using SHA256 algorithm = SHA256.Create();
+        using FileStream stream = File.OpenRead(path);
+        byte[] hash = algorithm.ComputeHash(stream);
+        for (int index = 0; index < hash.Length; index++)
+            builder.Append(hash[index].ToString("x2"));
     }
 
     private static void DeleteTemporaryProjectRoot(string projectRoot)

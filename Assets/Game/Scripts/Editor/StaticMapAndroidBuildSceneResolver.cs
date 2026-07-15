@@ -58,11 +58,8 @@ namespace Game.Editor
                 snapshot,
                 assetPath => SceneExists(projectRoot, assetPath),
                 StaticMapPresentationOutputOwnership.IsOwnedScenePath,
-                dependencyHash => string.Equals(
-                    dependencyHash,
-                    StaticMapPresentationCanonicalSourceHash.Compute(
-                        StaticMapPresentationBaker.CanonicalMatchScenePath),
-                    StringComparison.Ordinal),
+                () => StaticMapPresentationCanonicalSourceHash.Compute(
+                    StaticMapPresentationBaker.CanonicalMatchScenePath),
                 (contentHash, scenePaths) =>
                     StaticMapPresentationSceneIntegrity.TryLoadAndValidate(
                         projectRoot,
@@ -77,7 +74,7 @@ namespace Game.Editor
             StaticMapAndroidBuildManifestSnapshot manifest,
             Func<string, bool> sceneExists,
             Func<string, bool> isOwnedChunkScene,
-            Func<string, bool> canonicalDependencyMatches,
+            Func<string> computeCanonicalDependencyHash,
             Func<string, IReadOnlyList<string>, bool> integrityMatches)
         {
             if (enabledScenePaths == null)
@@ -85,7 +82,7 @@ namespace Game.Editor
             if (manifest == null)
                 throw new InvalidOperationException("Static map presentation manifest is missing.");
             if (sceneExists == null || isOwnedChunkScene == null ||
-                canonicalDependencyMatches == null || integrityMatches == null)
+                computeCanonicalDependencyHash == null || integrityMatches == null)
                 throw new ArgumentNullException("Android scene resolver delegates are required.");
             if (manifest.SchemaVersion != StaticMapPresentationManifest.CurrentSchemaVersion)
                 throw new InvalidOperationException($"Static map presentation manifest schema is unsupported: {manifest.SchemaVersion}.");
@@ -98,11 +95,20 @@ namespace Game.Editor
             }
             if (string.IsNullOrWhiteSpace(manifest.ContentHash))
                 throw new InvalidOperationException("Static map presentation manifest content hash is missing.");
-            if (string.IsNullOrWhiteSpace(manifest.CanonicalSceneDependencyHash) ||
-                !canonicalDependencyMatches(manifest.CanonicalSceneDependencyHash))
+            if (string.IsNullOrWhiteSpace(manifest.CanonicalSceneDependencyHash))
             {
                 throw new InvalidOperationException(
-                    "Static map presentation manifest is stale for the canonical Match scene dependencies.");
+                    "Static map presentation manifest canonical dependency hash is missing.");
+            }
+            string actualCanonicalDependencyHash = computeCanonicalDependencyHash();
+            if (!string.Equals(
+                    manifest.CanonicalSceneDependencyHash,
+                    actualCanonicalDependencyHash,
+                    StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException(
+                    "Static map presentation manifest is stale for the canonical Match scene dependencies. " +
+                    $"Expected '{manifest.CanonicalSceneDependencyHash}', actual '{actualCanonicalDependencyHash ?? "<null>"}'.");
             }
             if (manifest.ChunkScenePaths == null || manifest.ChunkScenePaths.Count == 0)
                 throw new InvalidOperationException("Static map presentation manifest has no chunk scenes.");

@@ -35,13 +35,17 @@ pipeline {
                     bat '''
                     @echo off
                     git --version
-                    git clone --sparse --branch main "https://%GIT_USER%:%GIT_TOKEN%@github.com/farhad2na2/WarlineCapture.git" "%PROJECT_PATH%"
+                    git clone --no-checkout --branch main "https://%GIT_USER%:%GIT_TOKEN%@github.com/farhad2na2/WarlineCapture.git" "%PROJECT_PATH%"
                     cd /d "%PROJECT_PATH%"
                     git remote set-url origin https://github.com/farhad2na2/WarlineCapture.git
+                    rem Pin checkout conversion before sparse paths are materialized.
+                    git config core.autocrlf false
                     rem The sparse Design checkout contains archived assets whose full paths exceed 260 characters.
                     rem Git for Windows needs this explicit opt-in to materialize them in the Jenkins workspace.
                     git config --global core.longpaths true
+                    git sparse-checkout init --cone
                     git sparse-checkout set Assets Packages ProjectSettings Tools Design
+                    git checkout main
                     if not exist "Design\\Architecture\\production_source_growth_baseline.md" (
                         echo Production source growth baseline is missing from the sparse checkout.
                         exit /b 1

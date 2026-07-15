@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Game.Editor;
 using NUnit.Framework;
@@ -23,8 +24,9 @@ public sealed class AndroidBuildReportGeneratorTests
             tests.ReportCarriesRequiredEvidenceAndExplicitSizeSemantics();
             tests.ReleaseBuildOptionsRequireDetailedReportAndCleanBuildCache();
             tests.ReleaseBuildScriptOptionsIncludeCleanCacheWithoutDebugOrProfilerFlags();
+            tests.ReleaseBuildCapturesGitProvenanceBeforeAndroidBuildMutation();
             tests.ReleaseBuildOptionsRejectDebugAndProfilerFlags();
-            Debug.Log("[AndroidBuildReportGeneratorValidation] result=Passed tests=11");
+            Debug.Log("[AndroidBuildReportGeneratorValidation] result=Passed tests=12");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -261,6 +263,37 @@ public sealed class AndroidBuildReportGeneratorTests
         Assert.DoesNotThrow(
             () => AndroidBuildReportGenerator.ValidateReleaseBuildOptions(
                 BuildScript.ReleaseAndroidBuildOptions));
+    }
+
+    [Test]
+    public void ReleaseBuildCapturesGitProvenanceBeforeAndroidBuildMutation()
+    {
+        const string sourcePath = "Assets/Game/Scripts/Editor/BuildScript.cs";
+        string source = File.ReadAllText(sourcePath);
+        int methodStart = source.IndexOf(
+            "public static void BuildAndroid()",
+            StringComparison.Ordinal);
+        int methodEnd = source.IndexOf(
+            "public static void BuildAndroidProfilerApk()",
+            methodStart,
+            StringComparison.Ordinal);
+        Assert.GreaterOrEqual(methodStart, 0, "BuildAndroid method was not found.");
+        Assert.Greater(methodEnd, methodStart, "BuildAndroid method boundary was not found.");
+
+        string method = source.Substring(methodStart, methodEnd - methodStart);
+        int provenanceCapture = method.IndexOf(
+            "AndroidBuildReportGenerator.CaptureGitProvenance()",
+            StringComparison.Ordinal);
+        int buildTargetMutation = method.IndexOf(
+            "SwitchBuildTarget(BuildTargetGroup.Android, BuildTarget.Android)",
+            StringComparison.Ordinal);
+        Assert.GreaterOrEqual(provenanceCapture, 0, "Pre-build provenance capture is missing.");
+        Assert.Greater(buildTargetMutation, provenanceCapture,
+            "Git provenance must be captured before Android build settings can mutate the worktree.");
+        StringAssert.Contains(
+            "buildType,\n                buildProvenance",
+            method,
+            "Report generation must consume the pre-build provenance snapshot.");
     }
 
     [Test]

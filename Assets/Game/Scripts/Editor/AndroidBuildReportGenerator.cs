@@ -50,8 +50,18 @@ namespace Game.Editor
             BuildReport buildReport,
             string packageType)
         {
+            return GenerateAndWriteReports(buildReport, packageType, CaptureGitProvenance());
+        }
+
+        public static AndroidBuildReportDocument GenerateAndWriteReports(
+            BuildReport buildReport,
+            string packageType,
+            AndroidBuildReportProvenance provenance)
+        {
             if (buildReport == null)
                 throw new ArgumentNullException(nameof(buildReport));
+            if (provenance == null)
+                throw new ArgumentNullException(nameof(provenance));
 
             string normalizedPackageType = NormalizePackageType(packageType);
             BuildSummary summary = buildReport.summary;
@@ -89,12 +99,11 @@ namespace Game.Editor
             if (string.IsNullOrWhiteSpace(artifactFilePath) || !File.Exists(artifactFilePath))
                 throw new FileNotFoundException("Android build artifact was not found.", artifactFilePath);
 
-            GitEvidence gitEvidence = ReadGitEvidence();
             var evidence = new AndroidBuildReportEvidence
             {
                 PackageType = normalizedPackageType,
-                ExactCommit = gitEvidence.ExactCommit,
-                Dirty = gitEvidence.Dirty,
+                ExactCommit = provenance.ExactCommit,
+                Dirty = provenance.Dirty,
                 UnityVersion = UnityEngine.Application.unityVersion,
                 ScriptingBackend = PlayerSettings.GetScriptingBackend(NamedBuildTarget.Android).ToString(),
                 TargetArchitecture = FormatAndroidArchitectures(PlayerSettings.Android.targetArchitectures),
@@ -106,6 +115,12 @@ namespace Game.Editor
             AndroidBuildReportDocument document = CreateReport(evidence, aggregation);
             WriteReports(document, normalizedPackageType);
             return document;
+        }
+
+        public static AndroidBuildReportProvenance CaptureGitProvenance()
+        {
+            GitEvidence gitEvidence = ReadGitEvidence();
+            return new AndroidBuildReportProvenance(gitEvidence.ExactCommit, gitEvidence.Dirty);
         }
 
         public static AndroidPackedAssetAggregation AggregatePackedAssets(
@@ -596,6 +611,21 @@ namespace Game.Editor
         public string ArtifactPath { get; set; }
         public ulong ArtifactBytes { get; set; }
         public string ArtifactSha256 { get; set; }
+    }
+
+    public sealed class AndroidBuildReportProvenance
+    {
+        public AndroidBuildReportProvenance(string exactCommit, bool dirty)
+        {
+            if (string.IsNullOrWhiteSpace(exactCommit))
+                throw new ArgumentException("Exact commit is required.", nameof(exactCommit));
+
+            ExactCommit = exactCommit.Trim();
+            Dirty = dirty;
+        }
+
+        public string ExactCommit { get; }
+        public bool Dirty { get; }
     }
 
     public sealed class AndroidBuildReportDocument

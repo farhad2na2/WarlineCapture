@@ -66,6 +66,8 @@ namespace Game.Editor
         {
             var arg = Environment.GetCommandLineArgs();
             var buildType = GetArgument(arg, "-buildType");
+            AndroidBuildReportProvenance buildProvenance =
+                AndroidBuildReportGenerator.CaptureGitProvenance();
             SwitchBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
             ConfigureGradleUserHome();
 
@@ -100,7 +102,10 @@ namespace Game.Editor
             ConfigureAndroidBuild(buildType == "AAB");
 
             BuildReport report = ExecuteBuild(buildPlayerOptions);
-            AndroidBuildReportGenerator.GenerateAndWriteReports(report, buildType);
+            AndroidBuildReportGenerator.GenerateAndWriteReports(
+                report,
+                buildType,
+                buildProvenance);
         }
 
         public static void BuildAndroidProfilerApk()

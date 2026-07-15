@@ -699,13 +699,13 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 5% (8/177 checklist items complete).
+Overall implementation progress: 6% (10/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
 | Phase | Status | Complete | Total | Progress | Notes |
 |---|---|---:|---:|---:|---|
-| 0. Reproducible baseline and rollback | In progress / shared | 8 | 12 | 67% | Required by both directions before scene edits. |
+| 0. Reproducible baseline and rollback | In progress / shared | 10 | 12 | 83% | Required by both directions before scene edits. |
 | 1. Operation-map and scenario data contracts | Not started / shared subset | 0 | 12 | 0% | Typed identity and metadata only; delivery-specific references remain later. |
 | 2. Per-map static presentation ownership | Not started / compatibility subset | 0 | 14 | 0% | Preserve the current baked map safely; future-map generation remains undecided. |
 | 2A. Local Addressables packaging foundation | Later / direction-specific | 0 | 20 | 0% | Do not implement before the map-delivery direction is selected. |
@@ -727,8 +727,8 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 - [x] Reproduce the current manifest schema, canonical path/hash, content hash, chunk size, chunk count, and source count through an authoritative Unity probe.
 - [x] Hash the manifest, integrity ledger, every generated scene, and every generated `.meta` file.
 - [x] Record the authoritative bake, scene-wiring, structural-validation, and Android build-resolution commands and log paths.
-- [ ] Inventory every `MatchSceneView` serialized reference and classify it as shell-owned, map-owned, shared config, or temporary compatibility data.
-- [ ] Inventory root objects under `Match.unity` and classify map geometry, map authoring, camera, lighting, bootstrap, and runtime-only ownership.
+- [x] Inventory every `MatchSceneView` serialized reference and classify it as shell-owned, map-owned, shared config, or temporary compatibility data. Evidence: `../AgentReports/2026-07-15_opmap-004_phase0_ownership_baseline.md`; accepted decisions: `../AgentReports/2026-07-16_operation_map_shell_root_ownership_decisions.md`.
+- [x] Inventory root objects under `Match.unity` and classify map geometry, map authoring, camera, lighting, bootstrap, and runtime-only ownership. Evidence and accepted decisions are recorded in the same reports above.
 - [ ] Inventory `Match_MapBuildingPlacement_Config` and `Match_MapVehiclePlacement_Config`, including hierarchy-path and source-hiding assumptions.
 - [x] Inventory minimap projection, camera clamp, initial camera, full-map bounds, and objective-focus sources. Evidence: `../AgentReports/2026-07-15_opmap-007_phase0_camera_minimap_ownership.md`; accepted decisions: `../AgentReports/2026-07-15_operation_map_camera_minimap_ownership_decisions.md`.
 - [x] Inventory ground-height, map-surface, grid, blockers, terrain, runway, and helipad metadata sources. Evidence: `../AgentReports/2026-07-15_opmap-008_phase0_navigation_metadata_ownership.md`; accepted decisions: `../AgentReports/2026-07-16_operation_map_navigation_metadata_ownership_decisions.md`.
@@ -1065,6 +1065,7 @@ Exit criteria:
 | 2026-07-15 | Shared static-presentation ownership decision | `../AgentReports/2026-07-15_operation_map_static_presentation_ownership.md`; exact type/member audit; source SHA-256 inventory; `git diff --check` | Passed | Classified map products and canonical renderers as `MapOwned`; reusable indexing, streaming, suppression transaction, and teardown as `ShellOwned`/`SharedConfig`; and current direct Match wiring, hardcoded baker binding, and Android resolver as `TemporaryCompatibility`. No unresolved ownership remains in this row and no loader/generator direction was selected. |
 | 2026-07-15 | Shared camera/minimap ownership decisions | `../AgentReports/2026-07-15_opmap-007_phase0_camera_minimap_ownership.json`; `../AgentReports/2026-07-15_operation_map_camera_minimap_ownership_decisions.md`; `git diff --check` | Passed | Resolved all five `Mixed` and two `Unresolved` evidence rows: scenarios own semantic intent, maps own bounds/anchors, shell systems own camera/minimap/ARIA policy, and the config camera override is temporary compatibility. Full-map projection is required to clamp inside canonical map bounds. This closes ownership only; behavior work remains tracked in shared phases. |
 | 2026-07-16 | Shared navigation metadata ownership decisions | `../AgentReports/2026-07-15_opmap-008_phase0_navigation_metadata_ownership.json`; `../AgentReports/2026-07-16_operation_map_navigation_metadata_ownership_decisions.md`; `git diff --check` | Passed | Resolved three `Mixed` and one `Unresolved` row. Maps own immutable grid/surface/authored blocker and authored runway metadata; runtime ECS owns mutable occupancy/blocker state; shared building definitions own prefab-local runway metadata; runtime systems publish both runway sources through one typed contract. Behavior work remains tracked in shared phases. |
+| 2026-07-16 | Shared Match shell/root ownership decisions | `../AgentReports/2026-07-15_opmap-004_phase0_ownership_baseline.json`; `../AgentReports/2026-07-16_operation_map_shell_root_ownership_decisions.md`; root-reference audit; `git diff --check` | Passed | Resolved the final four rows: day/night policy is `SharedConfig`; bare unreferenced Start/End roots are map-scoped `TemporaryCompatibility`; initial-unit authoring is a scenario/map `Mixed` contract. All 28 MatchSceneView fields, 16 Match roots, and 3 MatchSubScene roots now have accepted ownership. No scene move or shell stripping is authorized by this inventory decision. |
 
 ## Open Decisions
 

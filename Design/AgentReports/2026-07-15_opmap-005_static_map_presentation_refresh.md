@@ -7,7 +7,7 @@ Workflow: pull request; implementation context does not merge.
 
 ## Result
 
-Build #106 reported a stale static-map presentation manifest during Android APK resolution. The failure did not reproduce in a clean isolated worktree at the baseline above.
+Build #106 reported a stale static-map presentation manifest during Android APK resolution. Its exact revision and workspace state were not captured, so the root cause is unknown. The failure did not reproduce in a clean isolated worktree at the baseline above.
 
 The accepted Phase 0 probe passed before regeneration with `514` chunks and `16,542` sources. Two authoritative Android-target bakes then passed with identical results:
 
@@ -18,7 +18,7 @@ The accepted Phase 0 probe passed before regeneration with `514` chunks and `16,
 - stale scenes deleted: `0`
 - reuse rejection: `none`
 
-The worktree remained clean after each bake. Therefore the checked-in manifest, integrity ledger, generated scenes, and generated `.meta` files already match the current `Match.unity` dependency state. No generated asset was changed or committed.
+Tracked and untracked source/product assets remained clean after each bake. Therefore the checked-in manifest, integrity ledger, generated scenes, and generated `.meta` files already match the current `Match.unity` dependency state. No generated asset was changed or committed.
 
 ## APK Verification
 
@@ -31,7 +31,7 @@ The worktree remained clean after each bake. Therefore the checked-in manifest, 
 
 Focused EditMode validation also passed `35 / 35` with zero failures, skips, or inconclusive tests. The suite covered `StaticMapAndroidBuildSceneResolverTests`, `StaticMapPresentationSceneWiringTests`, `StaticMapPresentationOwnershipTests`, and `StaticMapPresentationStructuralValidationTests`.
 
-Build output, Addressables transient files, pipeline reports, render-pipeline import churn, project settings churn, and scene dependency cache files are not committed. All tracked and untracked build churn was removed after artifact verification.
+Tracked and untracked source/product assets remained clean after artifact verification. Ignored artifacts remained under Build, Addressables, log, and cache paths and are not committed. The APK at `Build/AndroidAPK/WarlineCapture.apk` was intentionally retained as build evidence; the other ignored files are transient build and cache artifacts.
 
 ## Commands And Logs
 
@@ -73,4 +73,4 @@ Tools/CI/invoke_unity_macos.sh --project <worktree> --timeout 1800 \
 
 ## Disposition
 
-The clean-worktree evidence indicates Build #106 used stale imported dependency state, stale generated workspace state, or another Jenkins-local cache condition rather than stale committed static-map assets. Jenkins should rerun from a clean workspace at this baseline or later. If the resolver fails again, retain the exact Jenkins revision, manifest dependency hash, recomputed dependency hash, active build target, and workspace status before cleanup.
+Because Build #106's exact revision and workspace state were not captured, the retained evidence does not establish its root cause and does not support attributing it to Jenkins-local cache state. The clean isolated-worktree run establishes only that the failure did not reproduce at the baseline above and that the committed static-map assets matched that baseline. Jenkins should rerun from a clean workspace at this baseline or later. If the resolver fails again, retain the exact Jenkins revision, manifest dependency hash, recomputed dependency hash, active build target, and workspace status before cleanup.

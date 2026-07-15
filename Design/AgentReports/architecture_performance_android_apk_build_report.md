@@ -2,7 +2,7 @@
 
 - Task: `APH-500`
 - Status: `complete`
-- Exact commit: `17566e35605b3925c96df5d86f173f382251f12a`
+- Exact commit: `082a3533bc45652ef38525f5f76e8d8491531613`
 - Dirty: `false`
 - Unity: `6000.5.2f1`
 - Build: `release APK`
@@ -11,28 +11,28 @@
 - Target architecture: `ARM64`
 - Detailed BuildReport: `true`
 - Artifact: `Build/AndroidAPK/WarlineCapture.apk`
-- Artifact SHA-256: `7cf40efabd5e2c31298762745f4b68ad235a1b3f661065845a9c4d9487f26a0a`
+- Artifact SHA-256: `4469fecb5875b5c6f032840fb1afb3d9d1383113e39d27b8f45093a5bb70dd21`
 
 ## Size Accounting
 
 | Measure | Bytes | Meaning |
 |---|---:|---|
-| Attributed packed assets | 830,252,375 | Sum of BuildReport packed entries with a normalized sourceAssetPath |
+| Attributed packed assets | 702,488,443 | Sum of BuildReport packed entries with a normalized sourceAssetPath |
 | Unattributed packed content | 312,073 | Sum of BuildReport packed entries without a sourceAssetPath |
-| Packed file overhead | 860,406 | Sum of PackedAssets.overhead header bytes |
-| Accounted packed files | 831,424,854 | Attributed + unattributed + packed file overhead |
-| BuildReport summary total size | 3,348,817,847 | BuildSummary.totalSize for all build output |
-| BuildReport summary unaccounted | 2,517,392,993 | Summary total minus accounted packed files; signed |
-| Compressed package file length | 505,130,133 | APK/AAB artifact file length on disk |
+| Packed file overhead | 860,402 | Sum of PackedAssets.overhead header bytes |
+| Accounted packed files | 703,660,918 | Attributed + unattributed + packed file overhead |
+| BuildReport summary total size | 3,187,062,941 | BuildSummary.totalSize for all build output |
+| BuildReport summary unaccounted | 2,483,402,023 | Summary total minus accounted packed files; signed |
+| Compressed package file length | 470,365,902 | APK/AAB artifact file length on disk |
 
 Packed contributions and packed-file overhead come from `BuildReport.packedAssets`. The artifact file length is the compressed APK/AAB package size and is not a per-asset compressed-byte attribution.
 
 ## Top 100 Included Assets
 
-- Distinct attributed assets: `6432`
+- Distinct attributed assets: `6433`
 - Rows reported: `100`
 - Packed files: `554`
-- Packed entries: `23408`
+- Packed entries: `23409`
 
 | Rank | Packed bytes | MiB | Object types | Source asset path |
 |---:|---:|---:|---|---|
@@ -53,86 +53,86 @@ Packed contributions and packed-file overhead come from `BuildReport.packedAsset
 | 15 | 9,961,676 | 9.50 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_04_A.png` |
 | 16 | 9,961,676 | 9.50 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_04_B.png` |
 | 17 | 9,961,676 | 9.50 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_04_C.png` |
-| 18 | 8,389,212 | 8.00 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_art_campaign_valley.png` |
-| 19 | 8,389,212 | 8.00 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_art_operations_radar.png` |
-| 20 | 8,389,212 | 8.00 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_art_skirmish_airbase.png` |
-| 21 | 8,389,204 | 8.00 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_commander_portrait.png` |
-| 22 | 8,388,512 | 8.00 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_background_command_table_no_ui.png` |
-| 23 | 6,817,900 | 6.50 | UnityEngine.MonoBehaviour | `Assets/Game/GeneratedStaticMapPresentation/StaticMapPresentationManifest.asset` |
-| 24 | 5,803,944 | 5.54 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_frame_selected.png` |
-| 25 | 5,800,984 | 5.53 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_backing_selected.png` |
-| 26 | 5,772,760 | 5.51 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_frame_default_amber.png` |
-| 27 | 5,770,036 | 5.50 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_backing_amber.png` |
-| 28 | 5,592,564 | 5.33 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/Air_Vehicle_Burnt.png` |
-| 29 | 5,592,560 | 5.33 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/Vehicles/Veh_Heli_01_B.png` |
-| 30 | 5,592,552 | 5.33 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/Signs 1.png` |
-| 31 | 5,592,544 | 5.33 | UnityEngine.Texture2D | `Assets/Game/Rendering/Textures/Stylized/T_GroundStylized_Soft_Normal.png` |
-| 32 | 5,392,636 | 5.14 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_commander_portrait_frame_Large.png` |
-| 33 | 5,392,636 | 5.14 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_commander_portrait_frame_disabled.png` |
-| 34 | 5,392,636 | 5.14 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_commander_portrait_frame_hover.png` |
-| 35 | 5,392,636 | 5.14 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_commander_portrait_frame_pressed.png` |
-| 36 | 5,392,636 | 5.14 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_commander_portrait_frame_selected.png` |
-| 37 | 5,392,628 | 5.14 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_frame_default_blue.png` |
-| 38 | 5,392,620 | 5.14 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_commander_portrait_frame.png` |
-| 39 | 5,391,924 | 5.14 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_backing_blue.png` |
-| 40 | 4,716,792 | 4.50 | UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_operations_thumbnail_art.png` |
-| 41 | 4,716,788 | 4.50 | UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_campaign_thumbnail_art.png` |
-| 42 | 4,716,788 | 4.50 | UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_skirmish_thumbnail_art.png` |
-| 43 | 4,580,084 | 4.37 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_squad_card_frame.png` |
-| 44 | 4,579,892 | 4.37 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_squad_card_selected_frame.png` |
-| 45 | 4,574,844 | 4.36 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_selected_panel_frame.png` |
-| 46 | 4,519,516 | 4.31 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_button_frame_selected.png` |
-| 47 | 4,507,444 | 4.30 | UnityEngine.Mesh | `Assets/Game/GeneratedCombinedMeshes/Model_PolygonMilitary_Mat_01_A_Combined 10.asset` |
-| 48 | 4,356,512 | 4.15 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_square_panel_frame.png` |
-| 49 | 4,245,052 | 4.05 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_objectives_panel_frame.png` |
-| 50 | 4,194,448 | 4.00 | UnityEngine.Texture2D | `Assets/Game/Rendering/Textures/Stylized/T_GroundStylized_Desert_Albedo.png` |
-| 51 | 4,194,448 | 4.00 | UnityEngine.Texture2D | `Assets/Game/Rendering/Textures/Stylized/T_GroundStylized_Green_Albedo.png` |
-| 52 | 4,164,172 | 3.97 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_skirmish_crossed_weapons_icon.png` |
-| 53 | 3,947,060 | 3.76 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_button_backing_default.png` |
-| 54 | 3,947,052 | 3.76 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_button_frame_default.png` |
-| 55 | 3,870,252 | 3.69 | UnityEngine.AudioClip | `Assets/Game/Audio/Music/music_match_calm_loop_01.wav` |
-| 56 | 3,698,604 | 3.53 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_label_plate_amber.png` |
-| 57 | 3,620,132 | 3.45 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_label_plate_selected.png` |
-| 58 | 3,596,808 | 3.43 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_label_plate_blue.png` |
-| 59 | 3,563,224 | 3.40 | UnityEngine.Mesh | `Assets/Game/GeneratedCombinedMeshes/Model_PolygonMilitary_Mat_Gold_A_Combined 3.asset` |
-| 60 | 3,533,448 | 3.37 | UnityEngine.AudioClip | `Assets/Game/Audio/Music/music_menu_loop_01.wav` |
-| 61 | 3,457,940 | 3.30 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Frames/dialogue_frame_body.png` |
-| 62 | 3,392,364 | 3.24 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_selected_frame.png` |
-| 63 | 3,360,216 | 3.20 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_settings_gear_icon.png` |
-| 64 | 3,293,096 | 3.14 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_operations_star_icon.png` |
-| 65 | 3,275,800 | 3.12 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_campaign_target_icon.png` |
-| 66 | 3,263,132 | 3.11 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Female_01_Alt_01_CombinedSkinned_19_lod0.asset` |
-| 67 | 3,261,992 | 3.11 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Male_01_Alt_01_CombinedSkinned_25_lod0.asset` |
-| 68 | 3,258,160 | 3.11 | UnityEngine.AudioClip | `Assets/Game/Audio/Music/music_match_combat_loop_01.wav` |
-| 69 | 3,245,852 | 3.10 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_command_shield_icon.png` |
-| 70 | 3,201,756 | 3.05 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_square_button_frame.png` |
-| 71 | 3,201,264 | 3.05 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_square_button_selected_frame.png` |
-| 72 | 3,073,976 | 2.93 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Male_01_Alt_02_CombinedSkinned_26_lod0.asset` |
-| 73 | 3,071,860 | 2.93 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Female_01_CombinedSkinned_21_lod0.asset` |
-| 74 | 2,963,504 | 2.83 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_frame.png` |
-| 75 | 2,948,332 | 2.81 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_wide_rail_frame.png` |
-| 76 | 2,903,164 | 2.77 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_supply_crate_icon.png` |
-| 77 | 2,903,164 | 2.77 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_resource_crate_icon.png` |
-| 78 | 2,815,140 | 2.68 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Male_02_CombinedSkinned_32_lod0.asset` |
-| 79 | 2,744,340 | 2.62 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_resource_diamond_icon.png` |
-| 80 | 2,697,856 | 2.57 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Female_02_Alt_02_CombinedSkinned_23_lod0.asset` |
-| 81 | 2,532,284 | 2.41 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Male_01_CombinedSkinned_27_lod0.asset` |
-| 82 | 2,518,736 | 2.40 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Ghillie_Male_01_CombinedSkinned_8_lod0.asset` |
-| 83 | 2,512,476 | 2.40 | UnityEngine.MonoBehaviour | `Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset` |
-| 84 | 2,497,864 | 2.38 | UnityEngine.Texture2D | `Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Vehicles_01_Damaged.png` |
-| 85 | 2,497,864 | 2.38 | UnityEngine.Texture2D | `Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Vehicles_01_Emmision.png` |
-| 86 | 2,497,860 | 2.38 | UnityEngine.Texture2D | `Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Plane_01_Damaged.png` |
-| 87 | 2,497,856 | 2.38 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/PolygonMilitary_Camo_Netting_01.tga` |
-| 88 | 2,497,856 | 2.38 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_01.png` |
-| 89 | 2,497,856 | 2.38 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_02.png` |
-| 90 | 2,497,856 | 2.38 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_03.png` |
-| 91 | 2,497,856 | 2.38 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_04.png` |
-| 92 | 2,497,856 | 2.38 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_05.png` |
-| 93 | 2,497,856 | 2.38 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_08.png` |
-| 94 | 2,497,856 | 2.38 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_09.png` |
-| 95 | 2,497,856 | 2.38 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_10.png` |
-| 96 | 2,497,856 | 2.38 | UnityEngine.Texture2D | `Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Texture_01_A.png` |
-| 97 | 2,497,856 | 2.38 | UnityEngine.Texture2D | `Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Texture_02_A.png` |
-| 98 | 2,497,856 | 2.38 | UnityEngine.Texture2D | `Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Texture_03_A.png` |
-| 99 | 2,497,856 | 2.38 | UnityEngine.Texture2D | `Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Texture_04_A.png` |
-| 100 | 2,497,856 | 2.38 | UnityEngine.Texture2D | `Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Vehicles_01.png` |
+| 18 | 6,817,900 | 6.50 | UnityEngine.MonoBehaviour | `Assets/Game/GeneratedStaticMapPresentation/StaticMapPresentationManifest.asset` |
+| 19 | 5,592,564 | 5.33 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/Air_Vehicle_Burnt.png` |
+| 20 | 5,592,560 | 5.33 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/Vehicles/Veh_Heli_01_B.png` |
+| 21 | 5,592,552 | 5.33 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/Signs 1.png` |
+| 22 | 5,592,544 | 5.33 | UnityEngine.Texture2D | `Assets/Game/Rendering/Textures/Stylized/T_GroundStylized_Soft_Normal.png` |
+| 23 | 4,716,792 | 4.50 | UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_operations_thumbnail_art.png` |
+| 24 | 4,716,788 | 4.50 | UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_campaign_thumbnail_art.png` |
+| 25 | 4,716,788 | 4.50 | UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_skirmish_thumbnail_art.png` |
+| 26 | 4,580,084 | 4.37 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_squad_card_frame.png` |
+| 27 | 4,579,892 | 4.37 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_squad_card_selected_frame.png` |
+| 28 | 4,574,844 | 4.36 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_selected_panel_frame.png` |
+| 29 | 4,507,444 | 4.30 | UnityEngine.Mesh | `Assets/Game/GeneratedCombinedMeshes/Model_PolygonMilitary_Mat_01_A_Combined 10.asset` |
+| 30 | 4,356,512 | 4.15 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_square_panel_frame.png` |
+| 31 | 4,245,052 | 4.05 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_objectives_panel_frame.png` |
+| 32 | 4,194,448 | 4.00 | UnityEngine.Texture2D | `Assets/Game/Rendering/Textures/Stylized/T_GroundStylized_Desert_Albedo.png` |
+| 33 | 4,194,448 | 4.00 | UnityEngine.Texture2D | `Assets/Game/Rendering/Textures/Stylized/T_GroundStylized_Green_Albedo.png` |
+| 34 | 3,870,252 | 3.69 | UnityEngine.AudioClip | `Assets/Game/Audio/Music/music_match_calm_loop_01.wav` |
+| 35 | 3,563,224 | 3.40 | UnityEngine.Mesh | `Assets/Game/GeneratedCombinedMeshes/Model_PolygonMilitary_Mat_Gold_A_Combined 3.asset` |
+| 36 | 3,533,448 | 3.37 | UnityEngine.AudioClip | `Assets/Game/Audio/Music/music_menu_loop_01.wav` |
+| 37 | 3,457,940 | 3.30 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Frames/dialogue_frame_body.png` |
+| 38 | 3,392,364 | 3.24 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_selected_frame.png` |
+| 39 | 3,263,132 | 3.11 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Female_01_Alt_01_CombinedSkinned_19_lod0.asset` |
+| 40 | 3,261,992 | 3.11 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Male_01_Alt_01_CombinedSkinned_25_lod0.asset` |
+| 41 | 3,258,160 | 3.11 | UnityEngine.AudioClip | `Assets/Game/Audio/Music/music_match_combat_loop_01.wav` |
+| 42 | 3,201,756 | 3.05 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_square_button_frame.png` |
+| 43 | 3,201,264 | 3.05 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_square_button_selected_frame.png` |
+| 44 | 3,073,976 | 2.93 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Male_01_Alt_02_CombinedSkinned_26_lod0.asset` |
+| 45 | 3,071,860 | 2.93 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Female_01_CombinedSkinned_21_lod0.asset` |
+| 46 | 2,963,504 | 2.83 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_frame.png` |
+| 47 | 2,948,332 | 2.81 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_wide_rail_frame.png` |
+| 48 | 2,815,140 | 2.68 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Male_02_CombinedSkinned_32_lod0.asset` |
+| 49 | 2,697,856 | 2.57 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Female_02_Alt_02_CombinedSkinned_23_lod0.asset` |
+| 50 | 2,532,284 | 2.41 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Male_01_CombinedSkinned_27_lod0.asset` |
+| 51 | 2,518,736 | 2.40 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Ghillie_Male_01_CombinedSkinned_8_lod0.asset` |
+| 52 | 2,512,476 | 2.40 | UnityEngine.MonoBehaviour | `Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset` |
+| 53 | 2,497,864 | 2.38 | UnityEngine.Texture2D | `Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Vehicles_01_Damaged.png` |
+| 54 | 2,497,864 | 2.38 | UnityEngine.Texture2D | `Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Vehicles_01_Emmision.png` |
+| 55 | 2,497,860 | 2.38 | UnityEngine.Texture2D | `Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Plane_01_Damaged.png` |
+| 56 | 2,497,856 | 2.38 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/PolygonMilitary_Camo_Netting_01.tga` |
+| 57 | 2,497,856 | 2.38 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_01.png` |
+| 58 | 2,497,856 | 2.38 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_02.png` |
+| 59 | 2,497,856 | 2.38 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_03.png` |
+| 60 | 2,497,856 | 2.38 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_04.png` |
+| 61 | 2,497,856 | 2.38 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_05.png` |
+| 62 | 2,497,856 | 2.38 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_08.png` |
+| 63 | 2,497,856 | 2.38 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_09.png` |
+| 64 | 2,497,856 | 2.38 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_10.png` |
+| 65 | 2,497,856 | 2.38 | UnityEngine.Texture2D | `Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Texture_01_A.png` |
+| 66 | 2,497,856 | 2.38 | UnityEngine.Texture2D | `Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Texture_02_A.png` |
+| 67 | 2,497,856 | 2.38 | UnityEngine.Texture2D | `Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Texture_03_A.png` |
+| 68 | 2,497,856 | 2.38 | UnityEngine.Texture2D | `Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Texture_04_A.png` |
+| 69 | 2,497,856 | 2.38 | UnityEngine.Texture2D | `Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Vehicles_01.png` |
+| 70 | 2,497,856 | 2.38 | UnityEngine.Texture2D | `Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Vehicles_02.png` |
+| 71 | 2,497,856 | 2.38 | UnityEngine.Texture2D | `Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Vehicles_06.png` |
+| 72 | 2,497,852 | 2.38 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/Land_Vehicle_Master_Burnt_01.png` |
+| 73 | 2,497,848 | 2.38 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/Land_Vehicle_Master_01.png` |
+| 74 | 2,497,840 | 2.38 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/Vehicles/Air_Veh_Large_01.png` |
+| 75 | 2,497,840 | 2.38 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/Vehicles/Veh_Heli_01_A.png` |
+| 76 | 2,497,836 | 2.38 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/Road_Texture.png` |
+| 77 | 2,497,836 | 2.38 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/Vehicles/Veh_Jet_01_A.png` |
+| 78 | 2,497,836 | 2.38 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/Vehicles/Veh_Jet_02_A.png` |
+| 79 | 2,461,636 | 2.35 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Contractor_Male_02_CombinedSkinned_7_lod0.asset` |
+| 80 | 2,398,900 | 2.29 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/MidLOD/LowLOD_Unit_Chr_Soldier_Male_02_Alt_04.asset` |
+| 81 | 2,295,460 | 2.19 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Insurgent_Male_02_CombinedSkinned_12_lod0.asset` |
+| 82 | 2,290,848 | 2.18 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Male_02_Alt_04_CombinedSkinned_31_lod0.asset` |
+| 83 | 2,276,388 | 2.17 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Male_02_Alt_02_CombinedSkinned_29_lod0.asset` |
+| 84 | 2,272,780 | 2.17 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Female_01_Alt_02_CombinedSkinned_20_lod0.asset` |
+| 85 | 2,266,532 | 2.16 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Contractor_Female_01_CombinedSkinned_5_lod0.asset` |
+| 86 | 2,218,996 | 2.12 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Female_02_CombinedSkinned_24_lod0.asset` |
+| 87 | 2,181,604 | 2.08 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Insurgent_Female_01_CombinedSkinned_9_lod0.asset` |
+| 88 | 2,143,396 | 2.04 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Female_02_Alt_01_CombinedSkinned_22_lod0.asset` |
+| 89 | 2,136,972 | 2.04 | UnityEngine.Mesh | `Assets/Game/GeneratedCombinedMeshes/Model_PolygonMilitary_Mat_Land_Vehicles_5_Combined.asset` |
+| 90 | 2,025,228 | 1.93 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Male_02_Alt_03_CombinedSkinned_30_lod0.asset` |
+| 91 | 2,011,172 | 1.92 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Insurgent_Male_05_CombinedSkinned_15_lod0.asset` |
+| 92 | 1,907,012 | 1.82 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_resource_chip_frame.png` |
+| 93 | 1,883,944 | 1.80 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Contractor_Male_01_CombinedSkinned_6_lod0.asset` |
+| 94 | 1,829,928 | 1.75 | UnityEngine.Mesh | `Assets/PolygonMilitary/Models/SM_Bld_Hall_01.fbx` |
+| 95 | 1,786,372 | 1.70 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Final/scn19_roster_card_default_frame.png` |
+| 96 | 1,786,372 | 1.70 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Final/scn19_roster_card_locked_frame.png` |
+| 97 | 1,786,372 | 1.70 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Final/scn19_roster_card_selected_frame.png` |
+| 98 | 1,747,420 | 1.67 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/MidLOD/MidLOD_Unit_Veh_Light_Armored_Car.asset` |
+| 99 | 1,689,476 | 1.61 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Insurgent_Male_01_CombinedSkinned_11_lod0.asset` |
+| 100 | 1,597,004 | 1.52 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Male_02_Alt_01_CombinedSkinned_28_lod0.asset` |

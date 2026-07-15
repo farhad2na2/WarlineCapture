@@ -10,11 +10,23 @@ namespace Game.Configs
         [SerializeField, Min(1)] private int schemaVersion = 1;
         [SerializeField, Min(1)] private int contentVersion = 1;
         [SerializeField] private string contentHash;
+        [SerializeField] private OperationMapBoundsConfig bounds;
+        [SerializeField] private OperationMapCameraConfig[] cameras = Array.Empty<OperationMapCameraConfig>();
+        [SerializeField] private string planningCameraId;
+        [SerializeField] private string battleCameraId;
+        [SerializeField] private OperationMapMinimapConfig minimap;
+        [SerializeField] private OperationMapAnchorConfig[] anchors = Array.Empty<OperationMapAnchorConfig>();
 
         public string OperationMapId => operationMapId;
         public int SchemaVersion => schemaVersion;
         public int ContentVersion => contentVersion;
         public string ContentHash => contentHash;
+        public OperationMapBoundsConfig Bounds => bounds;
+        public ReadOnlySpan<OperationMapCameraConfig> Cameras => cameras;
+        public string PlanningCameraId => planningCameraId;
+        public string BattleCameraId => battleCameraId;
+        public OperationMapMinimapConfig Minimap => minimap;
+        public ReadOnlySpan<OperationMapAnchorConfig> Anchors => anchors;
 
         public bool TryValidateIdentity(out string error)
         {
@@ -32,6 +44,98 @@ namespace Game.Configs
 
             error = null;
             return true;
+        }
+
+        public bool TryValidateMetadata(out string error)
+        {
+            if (!TryValidateIdentity(out error) || !bounds.TryValidate(out error))
+                return false;
+
+            if (cameras == null || cameras.Length == 0)
+            {
+                error = "At least one operation-map camera record is required.";
+                return false;
+            }
+
+            for (int index = 0; index < cameras.Length; index++)
+            {
+                if (!cameras[index].TryValidate(out error))
+                    return false;
+
+                if (!OperationMapConfigValidation.Contains(bounds.CameraMin, bounds.CameraMax, cameras[index].Position))
+                {
+                    error = $"Camera '{cameras[index].CameraId}' position must remain inside camera bounds.";
+                    return false;
+                }
+
+                for (int previous = 0; previous < index; previous++)
+                {
+                    if (string.Equals(cameras[index].CameraId, cameras[previous].CameraId, StringComparison.Ordinal))
+                    {
+                        error = $"Duplicate operation-map camera id: '{cameras[index].CameraId}'.";
+                        return false;
+                    }
+                }
+            }
+
+            if (!ContainsCamera(planningCameraId))
+            {
+                error = $"Planning camera id '{planningCameraId ?? "<null>"}' does not resolve to a camera record.";
+                return false;
+            }
+
+            if (!ContainsCamera(battleCameraId))
+            {
+                error = $"Battle camera id '{battleCameraId ?? "<null>"}' does not resolve to a camera record.";
+                return false;
+            }
+
+            if (!minimap.TryValidate(out error))
+                return false;
+
+            if (anchors == null || anchors.Length == 0)
+            {
+                error = "At least one typed operation-map anchor record is required.";
+                return false;
+            }
+
+            for (int index = 0; index < anchors.Length; index++)
+            {
+                if (!anchors[index].TryValidate(out error))
+                    return false;
+
+                if (!OperationMapConfigValidation.Contains(bounds.WorldMin, bounds.WorldMax, anchors[index].Position))
+                {
+                    error = $"Anchor '{anchors[index].AnchorId}' position must remain inside world bounds.";
+                    return false;
+                }
+
+                for (int previous = 0; previous < index; previous++)
+                {
+                    if (string.Equals(anchors[index].AnchorId, anchors[previous].AnchorId, StringComparison.Ordinal))
+                    {
+                        error = $"Duplicate operation-map anchor id: '{anchors[index].AnchorId}'.";
+                        return false;
+                    }
+                }
+            }
+
+            error = null;
+            return true;
+        }
+
+        private bool ContainsCamera(string cameraId)
+        {
+            if (!OperationMapIdentityRules.IsValidCameraId(cameraId))
+                return false;
+
+            for (int index = 0; index < cameras.Length; index++)
+            {
+                if (string.Equals(cameraId, cameras[index].CameraId, StringComparison.Ordinal))
+                    return true;
+            }
+
+            return false;
         }
     }
 
@@ -64,6 +168,20 @@ namespace Game.Configs
             return count == 4 &&
                 IsNumbered(value, segments[1], 'c', 'h') &&
                 IsNumbered(value, segments[2], 'm');
+        }
+
+        public static bool IsValidCameraId(string value) => IsValidScopedId(value, "camera", 3, 6);
+
+        public static bool IsValidMinimapId(string value) => IsValidScopedId(value, "minimap", 3, 6);
+
+        public static bool IsValidAnchorId(string value) => IsValidScopedId(value, "anchor", 3, 7);
+
+        private static bool IsValidScopedId(string value, string requiredNamespace, int minimumSegments, int maximumSegments)
+        {
+            Span<IdSegment> segments = stackalloc IdSegment[7];
+            return TryParse(value, segments.Slice(0, maximumSegments), out int count) &&
+                count >= minimumSegments &&
+                IsEqual(value, segments[0], requiredNamespace);
         }
 
         private static bool TryParse(string value, Span<IdSegment> segments, out int count)

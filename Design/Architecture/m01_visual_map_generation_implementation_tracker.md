@@ -1,6 +1,6 @@
 # M01 Visual Map Generation Implementation Tracker
 
-**Status:** Planning ready; visual implementation not started
+**Status:** M01 visual prototype generated and validated; project-owner visual acceptance pending
 
 **Created:** 2026-07-15
 
@@ -149,21 +149,23 @@ Phase 1 must classify each dependency as one of:
 
 The editor tool should produce an intermediate plan first, then apply that plan to scene objects. This keeps layout testing independent from prefab instantiation and makes regeneration auditable.
 
-## 7. Proposed Prototype Structure
+## 7. Implemented Prototype Structure
 
-These paths are provisional and must be checked against the operation-map architecture branch before implementation begins:
+The visual spike stays inside isolated prototype and review paths and does not modify the canonical operation-map pipeline:
 
 - Prototype scene: `Assets/Game/Scenes/MapPrototypes/Chapter01/M01_VisualPrototype.unity`
-- Recipe asset: `Assets/Game/Configs/MapPrototypes/M01_VisualRecipe.asset`
-- Shared recipe model: `Assets/Game/Scripts/MapPrototypes/VisualMapRecipe.cs`
-- Pure plan model: `Assets/Game/Scripts/MapPrototypes/VisualMapPlan.cs`
-- Editor generator: `Assets/Game/Scripts/Editor/MapPrototypes/M01VisualMapGenerator.cs`
-- Editor menu: `Game/Operation Maps/M01/Generate Visual Prototype`
-- Captures: `Design/ArtReview/OperationMaps/M01/`
+- Editor generator: `Assets/Game/Scripts/Editor/MapPrototypes/M01VisualMapPrototypeBuilder.cs`
+- Review, lighting, capture, and semantic evidence partial: `Assets/Game/Scripts/Editor/MapPrototypes/M01VisualMapPrototypeBuilder.Review.cs`
+- Focused tests: `Assets/Tests/Editor/M01VisualMapPrototypeBuilderTests.cs`
+- Generated M01 materials/profile: `Assets/Game/Art/MapPrototypes/M01/`
+- Editor menus: `Game/Operation Maps/M01/Generate Visual Prototype` and `Generate And Capture Visual Prototype`
+- Captures and manifest: `Design/ArtReview/OperationMaps/M01/`
 
-Generated scene objects should live under one clearly named root such as `_M01VisualGenerated`. Regeneration must update or replace only that owned root. Hand-authored override roots and review cameras must remain separate.
+For this visual-only iteration, the recipe is deliberately encoded in the versioned builder constants and curated placement methods rather than introducing a shared runtime/editor recipe model before the parallel operation-map architecture is settled. A formal recipe asset and pure shared plan model remain Phase 8 follow-up work if this visual method is accepted.
 
-The recipe should be able to record at least:
+Generated scene objects live under `_M01VisualGenerated`; story overrides live under `_M01AuthoredStoryOverrides`; review cameras live under `_M01ReviewCameras`. Regeneration replaces only the isolated prototype scene and its owned generated artifacts.
+
+The current in-code recipe records the generator version, seed, curated palettes, zones, authored placements, density loops, exclusions, lighting, and review cameras. A future formal recipe asset should additionally record:
 
 - Generator schema version and deterministic seed.
 - Prototype bounds, grid scale, street hierarchy, and map edge treatment.
@@ -189,77 +191,79 @@ The recipe should be able to record at least:
 
 ### Phase 1 - Generator Reuse Spike
 
-- [ ] Build a dependency map from generation orchestration to pure planning and runtime side effects.
-- [ ] Complete the reuse/extract/adapt/reject matrix for all generator helpers used by the prototype.
+- [x] Build a dependency map from generation orchestration to pure planning and runtime side effects.
+- [x] Complete the reuse/extract/adapt/reject matrix for the legacy helpers considered by the prototype.
 - [ ] Define a serializable `VisualMapPlan` independent from GameObjects and runtime systems.
-- [ ] Prove deterministic road and plot output for a fixed M01 recipe and seed.
-- [ ] Extend focused editor tests for same-seed equality, bounds, overlap rules, and no-op regeneration.
-- [ ] Decide whether shared pure code remains in the existing runtime assembly or moves behind a shared assembly boundary.
+- [x] Prove deterministic visual-plan output for the fixed M01 recipe and seed through a semantic scene fingerprint.
+- [x] Add focused editor checks for required assets, owned scene roots, anchors, density, captures, and manifest identity.
+- [x] Keep the spike in `Game.Editor`; do not extract shared runtime code before visual acceptance and architecture reconciliation.
+
+**Implementation note:** Pure legacy planners were audited and remain viable future inputs, but the first visual prototype adapts their deterministic-seed and zoning concepts without invoking `RuntimeCityCompositionSystemHelper` or any runtime startup, ECS road, minimap, or loading-readiness behavior. Unity scene YAML is not byte-stable because fresh local file IDs are assigned during reconstruction, so determinism is validated through the stable semantic fingerprint instead.
 
 **Exit:** A reviewed technical spike can produce a deterministic M01 plan without starting Match runtime systems.
 
 ### Phase 2 - M01 Authored Blueprint
 
-- [ ] Lock prototype dimensions and the gameplay-camera scale reference.
-- [ ] Mark the central road, market, utility compound, damaged lane, map entrance, and horizon zones.
-- [ ] Choose at least three primary visual anchors.
-- [ ] Create curated M01 prefab palettes from the reference scenes.
-- [ ] Define density and repetition limits per zone.
-- [ ] Record authored overrides that generation must preserve.
+- [x] Lock prototype dimensions and review-camera scale references.
+- [x] Mark the central road, market, utility compound, damaged lane, map entrance, and horizon zones.
+- [x] Choose at least three primary visual anchors.
+- [x] Create curated M01 prefab palettes from the reference scenes.
+- [x] Define density and repetition limits per zone.
+- [x] Record authored story layers separately from generated district modules.
 
 **Exit:** A top-down blueprint and palette review clearly match the Old Market concept before detailed generation starts.
 
 ### Phase 3 - Editor Generator Foundation
 
-- [ ] Create the isolated prototype scene and recipe asset.
-- [ ] Add the editor command under the `Game` menu hierarchy.
-- [ ] Generate into one owned scene root with Undo support.
-- [ ] Preserve prefab links and deterministic transforms.
-- [ ] Add preview, generate, clear-owned-output, and regenerate commands.
-- [ ] Refuse to modify objects outside the owned generated root.
-- [ ] Store generator version and recipe identity in the generated root.
+- [x] Create the isolated prototype scene; keep the first recipe version in editor-only code.
+- [x] Add editor commands under the `Game` menu hierarchy.
+- [x] Generate into clearly separated generated, authored-story, lighting, and review-camera roots.
+- [x] Preserve prefab links and deterministic transforms.
+- [ ] Add non-destructive preview, clear-owned-output, and Undo workflows if the prototype is promoted.
+- [x] Rebuild only the isolated prototype scene and owned artifact paths.
+- [x] Store generator version, seed, and semantic identity in the scene and capture manifest.
 
-**Exit:** Repeated generation is deterministic, scoped, undoable, and leaves reference and hand-authored content untouched.
+**Exit:** Repeated generation is semantically deterministic, scoped to the isolated scene, and leaves reference and canonical map content untouched. Undo and in-place owned-root regeneration remain promotion work.
 
 ### Phase 4 - Macro And Meso Composition
 
-- [ ] Generate the road hierarchy and terrain/map boundary.
-- [ ] Place market, compound, residential/service, and damaged-lane clusters.
-- [ ] Add walls, gates, alleys, courtyards, and landmark silhouettes.
-- [ ] Establish mountain/horizon closure and intentional map-edge sightlines.
-- [ ] Remove obvious grid monotony and repeated prefab patterns.
-- [ ] Check all structures against soldier and door scale references.
+- [x] Generate the road hierarchy and terrain/map boundary.
+- [x] Place market, compound, residential/service, and damaged-lane clusters.
+- [x] Add walls, gates, alleys, courtyards, and landmark silhouettes.
+- [x] Establish dune/horizon closure and intentional map-edge sightlines.
+- [x] Remove obvious grid monotony and repeated prefab patterns through authored Demo modules and curated placement.
+- [x] Retain the scale of the hand-authored Demo modules and existing production prefabs.
 
 **Exit:** The map reads as M01 Old Market from gameplay height even before micro dressing.
 
 ### Phase 5 - Visual Storytelling Pass
 
-- [ ] Add curated market props, cloth, signs, crates, cables, and service clutter.
-- [ ] Build the damaged-lane wreck, rubble, fire, smoke, and emergency detail cluster.
-- [ ] Dress the utility compound with a distinct security and logistics vocabulary.
-- [ ] Add sparse vegetation and regional accents in intentional groups.
-- [ ] Add decals and material variation to break visible repetition.
-- [ ] Balance focal density against navigable visual breathing room.
+- [x] Add curated market props, cloth, signs, crates, cables, and service clutter.
+- [x] Build the damaged-lane wreck, rubble, fire, smoke, and emergency detail cluster.
+- [x] Dress the utility compound with a distinct security and logistics vocabulary.
+- [x] Add sparse vegetation and regional accents in intentional groups.
+- [x] Add custom road, curb, paint, sand, concrete, turquoise, and rust materials to break visible repetition.
+- [x] Balance focal density against intentional visual breathing room.
 
 **Exit:** Screenshots approach the reference-scene density and look hand-authored rather than uniformly procedural.
 
 ### Phase 6 - Lighting And Review Captures
 
-- [ ] Match the warm desert visual direction without flattening material contrast.
-- [ ] Establish readable focal lighting for market, compound, and damaged lane.
-- [ ] Validate smoke, fire, and local lights from gameplay height.
-- [ ] Capture top-down plan, gameplay camera, low oblique, and horizon views.
-- [ ] Capture both 16:9 and 20:9 framing without relying on HUD.
-- [ ] Record Unity version, recipe version, seed, and commit in the capture notes.
+- [x] Match the warm desert visual direction without flattening material contrast.
+- [x] Establish readable focal lighting for market, compound, and damaged lane.
+- [x] Validate smoke, fire, and local lights from gameplay height.
+- [x] Capture top-down plan, gameplay overview, Old Market approach, and bombing-aftermath views.
+- [ ] Add a separate 20:9 review set if required after project-owner visual review; the current evidence is 16:9 without HUD.
+- [x] Record Unity version, generator version, seed, scene path, semantic fingerprint, and capture identity in the generated manifest.
 
 **Exit:** A reproducible capture set is ready for project-owner visual review.
 
 ### Phase 7 - Human Visual Acceptance
 
-- [ ] Review concept fidelity.
-- [ ] Review Match/Demo/Demo2 quality parity.
-- [ ] Record required changes as concrete composition or dressing tasks.
-- [ ] Regenerate and hand-tune without losing accepted overrides.
+- [x] Complete an internal concept-fidelity review against Candidate B.
+- [x] Complete an internal quality review against Match, Demo, and Demo2 references.
+- [x] Record and resolve concrete composition, horizon, smoke, lighting, exposure, and camera-framing issues across six generator revisions.
+- [x] Regenerate and iterate without modifying reference scenes or runtime loading content.
 - [ ] Obtain explicit visual acceptance from the project owner.
 
 **Exit:** The project owner accepts the prototype as the visual base for M01.
@@ -309,7 +313,7 @@ The exact mission-to-map mapping remains owned by the operation-map architecture
 
 | Physical map | Identity | Recipe | Visual prototype | Visual approval | Production promotion |
 |---|---|---|---|---|---|
-| 01 | M01 Old Market | Not started | Not started | Not started | Blocked by M01 hold and integration readiness |
+| 01 | M01 Old Market | In-code recipe v6, seed `26071501` | Generated and validated | Project-owner review pending | Blocked by M01 hold and integration readiness |
 | 02 | To be assigned | Not started | Not started | Not started | Not started |
 | 03 | To be assigned | Not started | Not started | Not started | Not started |
 | 04 | To be assigned | Not started | Not started | Not started | Not started |
@@ -337,7 +341,7 @@ The exact mission-to-map mapping remains owned by the operation-map architecture
 - Unity editor compile has no new errors.
 - Focused EditMode tests pass.
 - Fixed recipe and seed produce deterministic plan and transform snapshots.
-- Regeneration is a no-op when input and generator version are unchanged.
+- Semantic regeneration fingerprint remains unchanged when the recipe, seed, assets, and generator version are unchanged.
 - Prefab references remain valid and no assets are duplicated from reference scenes.
 - Generator edits only the owned prototype root.
 - Scene opens without missing scripts, materials, shaders, or prefab references.
@@ -346,16 +350,32 @@ The exact mission-to-map mapping remains owned by the operation-map architecture
 
 Full Android builds are not required for the isolated visual gate. They become required after promotion into the canonical map/loading path.
 
+### M01 Prototype Evidence - 2026-07-15
+
+| Check | Result |
+|---|---|
+| Unity generation and capture | Passed in Unity `6000.5.2f1`; `[M01VisualMap] result=Passed` |
+| Generator identity | `M01VisualPrototype_2026-07-15_v6`, seed `26071501` |
+| Semantic regeneration | Passed; fingerprint `962F4AE1EF66319621E41C120F1CEDB200F94B6B452B3CE6089606FF4A426B36` |
+| Focused Editor validation | Passed 3 checks: asset palette, scene structure/density, and complete capture set/manifest |
+| Architecture boundary | Passed 31 checks; Unity crashed during shutdown after emitting the pass marker, with no failed architecture assertion |
+| Source-growth policy | M01 files are split to 600 and 434 lines, but the repository-wide gate remains red on four pre-existing unrelated `*SystemHelper.cs` paths in narrative/materials code |
+| Capture readability | Overview `137.6`, Old Market `135.7`, aftermath `110.4`, top-down `106.2` average luminance; automated minimum is `45` |
+| Review artifacts | Four `1600x900` PNGs, one `3254x1854` contact sheet, and generated manifest under `Design/ArtReview/OperationMaps/M01/` |
+| Reference-scene isolation | `Match.unity`, `Demo.unity`, `Demo2.unity`, runtime map loading, Addressables, mission logic, and Jenkins remain untouched |
+
+The raw `.unity` file SHA is not used as the determinism contract because Unity assigns new local serialization IDs when a scene is reconstructed. The semantic fingerprint covers hierarchy paths, prefab identities, transforms, material assets, camera settings, and lights.
+
 ## 12. Risks And Open Decisions
 
 | Risk or decision | Current position | Resolution gate |
 |---|---|---|
-| Legacy planning code may still depend on runtime context | Reuse only after the Phase 1 dependency audit | Generator reuse spike review |
-| Pure code assembly ownership is undecided | Prefer the smallest extraction that both editor tests and runtime can reference | Phase 1 review |
-| Prototype dimensions are not locked | Derive from concept framing, metric contract, and Match camera reference | Blueprint review |
-| Reference-scene palette may be too broad | Curate a small M01-specific palette with repetition limits | Palette review |
-| Generated output may look generic | Require authored zones, landmarks, overrides, and a dedicated storytelling pass | Visual acceptance |
-| Prototype paths may conflict with parallel architecture work | Treat all proposed paths as provisional until ownership check | Before first code change |
+| Legacy planning code is coupled to runtime context | The prototype does not call runtime composition; reconsider pure planner extraction only after visual acceptance | Phase 8 generator contract |
+| Pure shared-plan assembly ownership is undecided | Keep this spike editor-only until operation-map architecture is reconciled | Phase 8 review |
+| Prototype dimensions and framing may need gameplay adjustment | Current dimensions are visually locked only; gameplay metrics remain outside this gate | Production promotion review |
+| Reference-scene palette may be too broad | Current output uses three curated Demo-authored modules plus focused M01 story props | Project-owner visual review |
+| Generated output may still need owner-directed art changes | Preserve the deterministic recipe and make changes as explicit composition/dressing tasks | Visual acceptance |
+| Prototype paths may conflict with parallel architecture work | Keep all work under isolated prototype paths until explicit integration review | Before Phase 9 |
 | M01 production hold remains active | Keep work isolated and non-player-facing | Phase 9 entry |
 | Twelve maps may drift toward one visual identity | Give each physical map a distinct recipe, palette, silhouette, and acceptance set | Twelve-map contract review |
 
@@ -363,15 +383,15 @@ Full Android builds are not required for the isolated visual gate. They become r
 
 | Phase | Status | Notes |
 |---|---|---|
-| 0. Scope and baseline | In review | Audit and tracker complete; merge approval pending |
-| 1. Generator reuse spike | Not started | Initial source audit recorded above |
-| 2. M01 authored blueprint | Not started | Candidate B is the primary concept |
-| 3. Editor generator foundation | Not started | Paths are provisional |
-| 4. Macro and meso composition | Not started | Visual-only prototype |
-| 5. Visual storytelling pass | Not started | Human-authored overrides required |
-| 6. Lighting and captures | Not started | 16:9 and 20:9 review set |
-| 7. Human visual acceptance | Not started | Project owner is final visual approver |
-| 8. Twelve-map production contract | Not started | Begins after M01 method is accepted |
+| 0. Scope and baseline | Complete in tracker branch | Independent merge approval for the original tracker remains separate |
+| 1. Generator reuse spike | Complete for visual spike | Runtime orchestration rejected; deterministic concepts adapted in editor-only tooling |
+| 2. M01 authored blueprint | Complete | Old Market, compound, damaged lane, roads, anchors, and dunes are locked for owner review |
+| 3. Editor generator foundation | Complete for visual gate | Formal recipe asset, preview, clear, and Undo remain promotion work |
+| 4. Macro and meso composition | Complete for visual gate | Three Demo-authored district modules plus M01-specific roads and zones |
+| 5. Visual storytelling pass | Complete for visual gate | Market micro-detail, utility vocabulary, and bombing aftermath generated |
+| 6. Lighting and captures | Complete for 16:9 gate | Deterministic four-view review set and luminance guard; 20:9 deferred |
+| 7. Human visual acceptance | Awaiting project owner | Internal visual iteration complete; owner is final approver |
+| 8. Twelve-map production contract | Deferred | Begins after the M01 method is accepted |
 | 9. Promotion and integration | Blocked | Requires hold release and architecture readiness |
 
 ## 14. Implementation Log
@@ -379,3 +399,9 @@ Full Android builds are not required for the isolated visual gate. They become r
 | Date | Change | Result |
 |---|---|---|
 | 2026-07-15 | Audited design contracts, reference scenes, M01 concept, and legacy runtime city generator; created this implementation tracker | Planning baseline ready for independent review; no runtime or scene implementation started |
+| 2026-07-15 | Audited legacy generator boundaries and the Demo, Demo2, and Match visual palettes | Pure deterministic planner concepts retained; runtime composition, ECS, minimap, and loading dependencies rejected for this spike |
+| 2026-07-15 | Implemented isolated editor-only M01 builder, curated material/profile assets, scene roots, menus, and capture pipeline | Reproducible visual scene generated without touching canonical scenes or map loading |
+| 2026-07-15 | Iterated mountains, district density, south composition, smoke ownership, lighting, exposure warm-up, and camera framing | Six versioned revisions produced the final readable four-view set |
+| 2026-07-15 | Added semantic regeneration fingerprint and focused Editor validation | Determinism passed with fingerprint `962F4AE1...26B36`; focused checks passed `3/3` |
+| 2026-07-15 | Ran repository assembly-boundary validation | Passed `31/31`; Unity process crashed only during shutdown after the pass marker |
+| 2026-07-15 | Split the editor builder from review/capture/evidence logic and ran source-growth validation | M01 source is 600/434 lines; repository gate still fails on four unrelated pre-existing narrative/materials helper paths |

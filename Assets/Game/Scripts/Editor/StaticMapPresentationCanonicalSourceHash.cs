@@ -11,6 +11,15 @@ namespace Game.Editor
 {
     internal static class StaticMapPresentationCanonicalSourceHash
     {
+        private static readonly HashSet<string> KnownBinaryExtensions = new(StringComparer.OrdinalIgnoreCase)
+        {
+            ".3ds", ".7z", ".aac", ".aif", ".aiff", ".apk", ".avi", ".blend", ".bmp",
+            ".bundle", ".bytes", ".dll", ".dylib", ".exr", ".fbx", ".flac", ".gif", ".gz",
+            ".ico", ".jar", ".jpeg", ".jpg", ".m4a", ".mdb", ".mov", ".mp3", ".mp4",
+            ".ogg", ".otf", ".pdf", ".pdb", ".png", ".psd", ".so", ".tga", ".tif",
+            ".tiff", ".ttf", ".unitypackage", ".wav", ".webm", ".webp", ".zip"
+        };
+
         internal static string Compute(string scenePath)
         {
             if (string.IsNullOrWhiteSpace(scenePath))
@@ -123,10 +132,130 @@ namespace Game.Editor
         private static void AppendFileHash(StringBuilder builder, string path)
         {
             using SHA256 algorithm = SHA256.Create();
-            using FileStream stream = File.OpenRead(path);
-            byte[] hash = algorithm.ComputeHash(stream);
+            byte[] hash;
+            if (IsTextFile(path))
+            {
+                using FileStream stream = File.OpenRead(path);
+                byte[] input = new byte[8192];
+                byte[] normalized = new byte[input.Length + 1];
+                bool pendingCarriageReturn = false;
+                int read;
+                while ((read = stream.Read(input, 0, input.Length)) > 0)
+                {
+                    int normalizedLength = 0;
+                    for (int index = 0; index < read; index++)
+                    {
+                        byte value = input[index];
+                        if (value == '\r')
+                        {
+                            if (pendingCarriageReturn)
+                                normalized[normalizedLength++] = (byte)'\n';
+                            pendingCarriageReturn = true;
+                            continue;
+                        }
+
+                        if (pendingCarriageReturn)
+                        {
+                            normalized[normalizedLength++] = (byte)'\n';
+                            pendingCarriageReturn = false;
+                            if (value == '\n')
+                                continue;
+                        }
+
+                        normalized[normalizedLength++] = value;
+                    }
+
+                    if (normalizedLength > 0)
+                    {
+                        algorithm.TransformBlock(
+                            normalized,
+                            0,
+                            normalizedLength,
+                            normalized,
+                            0);
+                    }
+                }
+
+                if (pendingCarriageReturn)
+                {
+                    normalized[0] = (byte)'\n';
+                    algorithm.TransformBlock(normalized, 0, 1, normalized, 0);
+                }
+                algorithm.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
+                hash = algorithm.Hash;
+            }
+            else
+            {
+                using FileStream stream = File.OpenRead(path);
+                hash = algorithm.ComputeHash(stream);
+            }
+
             for (int i = 0; i < hash.Length; i++)
                 builder.Append(hash[i].ToString("x2"));
+        }
+
+        private static bool IsTextFile(string path)
+        {
+            if (KnownBinaryExtensions.Contains(Path.GetExtension(path)))
+                return false;
+
+            using FileStream stream = File.OpenRead(path);
+            Decoder decoder = new UTF8Encoding(false, true).GetDecoder();
+            byte[] bytes = new byte[8192];
+            char[] characters = new char[bytes.Length];
+            try
+            {
+                int read;
+                while ((read = stream.Read(bytes, 0, bytes.Length)) > 0)
+                {
+                    int byteIndex = 0;
+                    while (byteIndex < read)
+                    {
+                        decoder.Convert(
+                            bytes,
+                            byteIndex,
+                            read - byteIndex,
+                            characters,
+                            0,
+                            characters.Length,
+                            false,
+                            out int bytesUsed,
+                            out int charactersUsed,
+                            out _);
+                        if (!ContainsOnlyTextCharacters(characters, charactersUsed))
+                            return false;
+                        byteIndex += bytesUsed;
+                    }
+                }
+
+                decoder.Convert(
+                    Array.Empty<byte>(),
+                    0,
+                    0,
+                    characters,
+                    0,
+                    characters.Length,
+                    true,
+                    out _,
+                    out int finalCharacters,
+                    out _);
+                return ContainsOnlyTextCharacters(characters, finalCharacters);
+            }
+            catch (DecoderFallbackException)
+            {
+                return false;
+            }
+        }
+
+        private static bool ContainsOnlyTextCharacters(char[] characters, int length)
+        {
+            for (int index = 0; index < length; index++)
+            {
+                char value = characters[index];
+                if (char.IsControl(value) && value != '\t' && value != '\n' && value != '\r')
+                    return false;
+            }
+            return true;
         }
 
         private static string ResolvePhysicalAssetPath(string projectRoot, string assetPath)

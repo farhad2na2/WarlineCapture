@@ -699,7 +699,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 10% (18/177 checklist items complete).
+Overall implementation progress: 11% (19/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
@@ -711,7 +711,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 | 2A. Local Addressables packaging foundation | Later / direction-specific | 0 | 20 | 0% | Do not implement before the map-delivery direction is selected. |
 | 3. Current-map compatibility registration | Not started / shared | 0 | 10 | 0% | Registers the current map without choosing a loader. |
 | 4. Non-destructive scene ownership split | Not started / shared priority | 0 | 14 | 0% | Primary objective: separate current map ownership from `Match.unity`. |
-| 5. Runtime selection, loading, and teardown | Contract-only / shared subset | 0 | 14 | 0% | Readiness/failure/teardown contracts only; concrete loading is later. |
+| 5. Runtime selection, loading, and teardown | In progress / shared contracts | 1 | 14 | 7% | Pure readiness/failure/teardown data contracts only; concrete loading is later. |
 | 6. Metadata, camera, minimap, and movement binding | Not started / shared | 0 | 12 | 0% | Shared bounds, surface, grid, blockers, camera, minimap, runway, and helipad metadata. |
 | 7. M01 operation-map slice | Later / shared contracts only | 0 | 10 | 0% | Map-neutral ids/anchors may proceed; physical rollout remains gated. |
 | 8. Editor-time texture/mask generator | Later / editor direction only | 0 | 12 | 0% | Implement only if the editor-authored map direction is selected. |
@@ -872,7 +872,7 @@ Exit criteria:
 
 **Execution: `Shared contract now` only.** Define readiness, ownership, failure-unwind, and teardown contracts. Every concrete Addressables or runtime-scene loading/unloading implementation is `Later - delivery`.
 
-- [ ] Add the planned operation-map root/queue/state/active/bounds/metadata/readiness ECS components and request/result buffers, carrying mission, scenario, and operation-map ids as bounded fixed strings.
+- [x] Add the planned operation-map root/queue/state/active/bounds/metadata/readiness ECS components and request/result buffers, carrying mission, scenario, and operation-map ids as bounded fixed strings. See `../AgentReports/2026-07-16_operation_map_ecs_lifecycle_contract.md`.
 - [ ] Resolve the operation-map catalog entry before beginning the match load transition.
 - [ ] Load the selected canonical operation-map scene additively through `OperationMapSceneLoadingSceneSystemHelper`, called by the existing composition lifecycle with no new update-loop `MonoBehaviour`.
 - [ ] Load and await the selected map's optional ECS subscene through the accepted Entities scene path.
@@ -1071,6 +1071,7 @@ Exit criteria:
 | 2026-07-16 | Shared operation-map/scenario identity configs | `../AgentReports/2026-07-16_operation_map_identity_configs.md`; focused EditMode `23 / 23`; non-ECS `9 / 9`; SystemBase migration `19 / 19`; source growth `15 / 15`; compile and `git diff --check` | Passed | Added sealed metadata-only config assets and allocation-free canonical id validation. No loader, scene path, hierarchy name, Unity object/Addressables/rendering reference, ECS system, or update callback was introduced. Seven unrelated existing broad diagnostic failures remain recorded but do not name this slice. |
 | 2026-07-16 | Shared operation-map spatial metadata configs | `../AgentReports/2026-07-16_operation_map_spatial_metadata_configs.md`; focused spatial EditMode `17 / 17`; identity regression `23 / 23`; combined architecture/naming/source-growth `43 / 43`; affected compile and `git diff --check` | Passed | Added bounded world/playable/camera metadata, camera and minimap records, scoped planning/battle/minimap ids, and a closed typed anchor taxonomy. No heavy asset, scene, loader, Addressables, rendering, runtime-system, or per-frame dependency was introduced. |
 | 2026-07-16 | Shared source/content hash contract | `../AgentReports/2026-07-16_operation_map_source_content_hash_contract.md`; focused EditMode `24 / 24`; affected compile; source-growth; `git diff --check` | Passed | Added strict lowercase SHA-256 source-identity, content, and generated-metadata evidence without encoding a source path, scene GUID, loader address, generator policy, or heavyweight reference. |
+| 2026-07-16 | Shared operation-map ECS lifecycle contract | `../AgentReports/2026-07-16_operation_map_ecs_lifecycle_contract.md`; focused EditMode `7 / 7`; affected compile; source-growth `15 / 15`; `git diff --check` | Passed | Added unmanaged generation-scoped root/queue/state/active/bounds/metadata/readiness components, bounded request/result buffers, typed failure-unwind codes, and a small immutable camera/minimap/anchor blob. No loader, system, update loop, managed handle, or heavyweight map payload was introduced. |
 
 ## Open Decisions
 

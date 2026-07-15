@@ -28,6 +28,12 @@ namespace Game.Editor
         private const int ExpectedFieldCount = 28;
         private const int ExpectedMatchRootCount = 16;
         private const int ExpectedSubSceneRootCount = 3;
+        private const int ExpectedGeneratedChunkCount = 514;
+        private const int ExpectedManifestSourceCount = 16542;
+        private const int ExpectedBuildingPlacementCount = 451;
+        private const int ExpectedVehiclePlacementCount = 29;
+        private const string ExpectedGeneratedCombinedAggregateSha256 =
+            "574afec991fbc1a684531c9f727c20eb296271260e7a4e1c4a8c300a2b642e79";
         private const string MatchScenePath = "Assets/Game/Scenes/Match.unity";
         private const string MatchSubScenePath = "Assets/Game/Scenes/Match/MatchSubScene.unity";
         private const string MatchSceneViewSourcePath =
@@ -52,9 +58,9 @@ namespace Game.Editor
         public static void Run()
         {
             string projectRoot = RequireProjectRoot();
-            string outputPath = OperationMapPhase0BaselineProbe.ResolveReportOutputPath(
+            string outputPath = ResolveReportOutputPath(
                 projectRoot,
-                Environment.GetEnvironmentVariable(ReportPathEnvironmentVariable) ?? DefaultReportPath);
+                Environment.GetEnvironmentVariable(ReportPathEnvironmentVariable));
             InvalidateOutput(outputPath);
             List<InputHashReport> beforeHashes = HashDirectInputs(projectRoot, null);
             SceneSetup[] previousSetup = EditorSceneManager.GetSceneManagerSetup();
@@ -95,6 +101,14 @@ namespace Game.Editor
                 $"matchRoots={report.counts.matchRoots} " +
                 $"subSceneRoots={report.counts.matchSubSceneRoots} " +
                 $"needsDecision={report.counts.needsDecision} report={outputPath}");
+        }
+
+        internal static string ResolveReportOutputPath(string projectRoot, string configuredPath)
+        {
+            string ownershipPath = string.IsNullOrWhiteSpace(configuredPath)
+                ? DefaultReportPath
+                : configuredPath;
+            return OperationMapPhase0BaselineProbe.ResolveReportOutputPath(projectRoot, ownershipPath);
         }
 
         internal static OwnershipReport BuildReport(
@@ -300,12 +314,21 @@ namespace Game.Editor
                 if (!HasExpectedRows(
                         report.matchSceneViewFields,
                         FieldSpecs(),
-                        "Game.Composition.MatchSceneView::") ||
-                    !HasExpectedRows(report.matchRoots, MatchRootSpecs(), MatchScenePath + "::") ||
+                        "Game.Composition.MatchSceneView::",
+                        ExpectedFieldTargetIdentities(),
+                        new[] { MatchSceneViewSourcePath, TrackerPath }) ||
+                    !HasExpectedRows(
+                        report.matchRoots,
+                        MatchRootSpecs(),
+                        MatchScenePath + "::",
+                        null,
+                        new[] { MatchScenePath, TrackerPath }) ||
                     !HasExpectedRows(
                         report.matchSubSceneRoots,
                         SubSceneRootSpecs(),
-                        MatchSubScenePath + "::"))
+                        MatchSubScenePath + "::",
+                        null,
+                        new[] { MatchSubScenePath, TrackerPath }))
                     return false;
 
                 List<OwnershipRow> rows = report.matchSceneViewFields
@@ -345,22 +368,62 @@ namespace Game.Editor
         private static bool HasExpectedRows(
             IReadOnlyList<OwnershipRow> rows,
             IReadOnlyDictionary<string, OwnershipSpec> specs,
-            string identityPrefix)
+            string identityPrefix,
+            IReadOnlyDictionary<string, string[]> expectedFieldTargets,
+            IEnumerable<string> baseEvidencePaths)
         {
             if (rows == null || rows.Count != specs.Count)
                 return false;
             foreach (KeyValuePair<string, OwnershipSpec> pair in specs)
             {
+                string stableIdentity = identityPrefix + pair.Key;
                 OwnershipRow row = rows.SingleOrDefault(candidate =>
-                    string.Equals(candidate.stableIdentity, identityPrefix + pair.Key, StringComparison.Ordinal));
+                    string.Equals(candidate.stableIdentity, stableIdentity, StringComparison.Ordinal));
+                bool isField = expectedFieldTargets != null;
+                string[] expectedTargets = isField
+                    ? expectedFieldTargets[pair.Key]
+                    : new[] { stableIdentity };
+                string expectedName = isField
+                    ? pair.Key
+                    : pair.Key.Substring(0, pair.Key.LastIndexOf('['));
+                string[] expectedEvidence = baseEvidencePaths
+                    .Concat(expectedTargets.Select(TargetEvidencePath))
+                    .Distinct(StringComparer.Ordinal)
+                    .OrderBy(path => path, StringComparer.Ordinal)
+                    .ToArray();
                 if (row == null ||
+                    !string.Equals(row.name, expectedName, StringComparison.Ordinal) ||
+                    !string.Equals(row.declaredType, pair.Value.declaredType, StringComparison.Ordinal) ||
+                    !string.Equals(row.currentType, pair.Value.currentType, StringComparison.Ordinal) ||
+                    row.currentElementCount != expectedTargets.Length ||
+                    row.currentTargetIdentities == null ||
+                    !row.currentTargetIdentities.SequenceEqual(expectedTargets, StringComparer.Ordinal) ||
                     !string.Equals(
                         row.classification,
                         pair.Value.classification.ToString(),
-                        StringComparison.Ordinal))
+                        StringComparison.Ordinal) ||
+                    row.evidencePaths == null ||
+                    !row.evidencePaths.SequenceEqual(expectedEvidence, StringComparer.Ordinal) ||
+                    !string.Equals(row.rationale, pair.Value.rationale, StringComparison.Ordinal) ||
+                    !string.Equals(
+                        row.migrationDisposition,
+                        pair.Value.migrationDisposition,
+                        StringComparison.Ordinal) ||
+                    !string.Equals(row.decisionOwner, pair.Value.decisionOwner, StringComparison.Ordinal))
                     return false;
             }
             return true;
+        }
+
+        private static string TargetEvidencePath(string targetIdentity)
+        {
+            int sceneSeparator = targetIdentity.IndexOf("::", StringComparison.Ordinal);
+            if (sceneSeparator >= 0)
+                return targetIdentity.Substring(0, sceneSeparator);
+            int assetSeparator = targetIdentity.IndexOf("|guid:", StringComparison.Ordinal);
+            return assetSeparator >= 0
+                ? targetIdentity.Substring(0, assetSeparator)
+                : targetIdentity;
         }
 
         private static List<OwnershipRow> BuildFieldRows(
@@ -531,10 +594,18 @@ namespace Game.Editor
                 baseline.reportSchemaVersion != OperationMapPhase0BaselineProbe.ReportSchemaVersion ||
                 !string.Equals(baseline.result, "Passed", StringComparison.Ordinal) ||
                 !string.Equals(baseline.evidencePath, BaselineEvidencePath, StringComparison.Ordinal) ||
-                !IsSha256(baseline.evidenceSha256) ||
-                baseline.generatedChunkCount <= 0 || baseline.manifestSourceCount <= 0 ||
-                baseline.buildingPlacementCount <= 0 || baseline.vehiclePlacementCount <= 0 ||
-                !IsSha256(baseline.generatedCombinedAggregateSha256))
+                !string.Equals(
+                    baseline.evidenceSha256,
+                    ExpectedDirectInputHashes()[BaselineEvidencePath],
+                    StringComparison.Ordinal) ||
+                baseline.generatedChunkCount != ExpectedGeneratedChunkCount ||
+                baseline.manifestSourceCount != ExpectedManifestSourceCount ||
+                baseline.buildingPlacementCount != ExpectedBuildingPlacementCount ||
+                baseline.vehiclePlacementCount != ExpectedVehiclePlacementCount ||
+                !string.Equals(
+                    baseline.generatedCombinedAggregateSha256,
+                    ExpectedGeneratedCombinedAggregateSha256,
+                    StringComparison.Ordinal))
                 throw new InvalidOperationException("Unsupported opmap-002 cross-reference evidence.");
         }
 
@@ -819,7 +890,7 @@ namespace Game.Editor
             AddField(specs, "dayNightConfig", "Game.Configs.DayNightSystemConfig", "Game.Configs.DayNightSystemSceneConfigAsset", OwnershipClassification.Mixed, "DecisionRequired", "The shell owns the lighting boundary while map metadata may own environment intent.", "Architecture owner and lighting owner");
             AddField(specs, "decorationCombinedMeshBaker", "Game.Runtime.CombinedMeshBaker", "Game.Runtime.CombinedMeshBaker", OwnershipClassification.MapOwned, "MoveToOperationMap", "The baker reference targets current canonical map decoration geometry.");
             AddField(specs, "decorationRoot", "UnityEngine.Transform", "UnityEngine.Transform", OwnershipClassification.MapOwned, "MoveToOperationMap", "The referenced Decorations root is canonical map geometry.");
-            AddField(specs, "directionalLight", "UnityEngine.Light", "UnityEngine.Light", OwnershipClassification.Mixed, "DecisionRequired", "The tracker assigns the shell lighting boundary but permits intentionally map-specific lights.", "Architecture owner and lighting owner");
+            AddField(specs, "directionalLight", "UnityEngine.Light", "UnityEngine.Light", OwnershipClassification.ShellOwned, "KeepInMatchShell", "The normative target contract assigns the directional-light reference to the shell-owned lighting boundary.");
             AddField(specs, "factionVisualConfig", "Game.Configs.FactionVisualSettingsConfig", "Game.Configs.FactionVisualSettingsSceneConfigAsset", OwnershipClassification.SharedConfig, "KeepSharedReference", "Faction visuals are shared across operation maps.");
             AddField(specs, "gameStringsConfig", "Game.Configs.GameStringsConfig", "Game.Configs.GameStringsSceneConfigAsset", OwnershipClassification.SharedConfig, "KeepSharedReference", "Localized game strings are not map content.");
             AddField(specs, "globalVolume", "UnityEngine.Rendering.Volume", "UnityEngine.Rendering.Volume", OwnershipClassification.ShellOwned, "KeepInMatchShell", "The target contract assigns match post-processing to the runtime shell.");
@@ -844,6 +915,45 @@ namespace Game.Editor
             return specs;
         }
 
+        private static Dictionary<string, string[]> ExpectedFieldTargetIdentities()
+        {
+            return new Dictionary<string, string[]>(StringComparer.Ordinal)
+            {
+                ["aiControllerConfigs"] = new[]
+                {
+                    "Assets/Game/Configs/Scene/Game_AI_Enemy_Config.asset|guid:fb8b5c545d7f641d3b153c2f18c57aad|localId:11400000|type:Game.Configs.AIControllerSceneConfigAsset",
+                    "Assets/Game/Configs/Scene/Game_AI_PlayerAuto_Config.asset|guid:34d062317806444e2a70cd1ed240fc5a|localId:11400000|type:Game.Configs.AIControllerSceneConfigAsset"
+                },
+                ["aiPlanEntryConfig"] = new[] { "Assets/Game/Configs/Scene/Game_AI_PlanEntry_Startup_Config.asset|guid:8ac55f91a18b4e56b3ef2ed875c904d7|localId:11400000|type:Game.Configs.AIPlanEntryStartupConfig" },
+                ["buildingPlacementConfig"] = new[] { "Assets/Game/Configs/Scene/Game_BuildingPlacement_Config.asset|guid:b2010000000000000000000000000004|localId:11400000|type:Game.Configs.BuildingPlacementSystemSceneConfigAsset" },
+                ["dayNightConfig"] = new[] { "Assets/Game/Configs/Scene/Game_DayNight_Config.asset|guid:b2010000000000000000000000000009|localId:11400000|type:Game.Configs.DayNightSystemSceneConfigAsset" },
+                ["decorationCombinedMeshBaker"] = new[] { "Assets/Game/Scenes/Match.unity::Decorations[4]|type:Game.Runtime.CombinedMeshBaker" },
+                ["decorationRoot"] = new[] { "Assets/Game/Scenes/Match.unity::Decorations[4]|type:UnityEngine.Transform" },
+                ["directionalLight"] = new[] { "Assets/Game/Scenes/Match.unity::Directional Light[8]|type:UnityEngine.Light" },
+                ["factionVisualConfig"] = new[] { "Assets/Game/Configs/Scene/Game_FactionVisualSettings_Config.asset|guid:b201000000000000000000000000000a|localId:11400000|type:Game.Configs.FactionVisualSettingsSceneConfigAsset" },
+                ["gameStringsConfig"] = new[] { "Assets/Game/Configs/Scene/Game_GameStrings_Config.asset|guid:6bdf401b93264f908f8a9d6c0bfb6b93|localId:11400000|type:Game.Configs.GameStringsSceneConfigAsset" },
+                ["globalVolume"] = new[] { "Assets/Game/Scenes/Match.unity::Global Volume[7]|type:UnityEngine.Rendering.Volume" },
+                ["mapBuildingAuthoringRoot"] = new[] { "Assets/Game/Scenes/Match.unity::Map[10]/Buildings[18]|type:UnityEngine.Transform" },
+                ["mapBuildingPlacementConfig"] = new[] { "Assets/Game/Configs/Scene/Match_MapBuildingPlacement_Config.asset|guid:e859aa1a53b0942609e537713fd55fb7|localId:11400000|type:Game.Configs.MapBuildingPlacementConfig" },
+                ["mapSurfaceAuthoring"] = new[] { "Assets/Game/Scenes/Match.unity::Map[10]|type:Game.Authoring.MapSurfaceAuthoring" },
+                ["mapVehicleAuthoringRoot"] = new[] { "Assets/Game/Scenes/Match.unity::Map[10]/Vehicles[20]|type:UnityEngine.Transform" },
+                ["mapVehiclePlacementConfig"] = new[] { "Assets/Game/Configs/Scene/Match_MapVehiclePlacement_Config.asset|guid:03d5c67074cde47488712cef0e5f494a|localId:11400000|type:Game.Configs.MapVehiclePlacementConfig" },
+                ["prefabPreviewCameraConfig"] = new[] { "Assets/Game/Configs/Scene/Game_PrefabPreviewCamera_Config.asset|guid:22b4ed6a358014f0fa1ff5472f267b0c|localId:11400000|type:Game.Configs.PrefabPreviewCameraSceneConfigAsset" },
+                ["resourceExchangeConfig"] = new[] { "Assets/Game/Configs/Scene/Game_ResourceExchange_Config.asset|guid:58803fa3f1c245a6822e896daeb5cc8a|localId:11400000|type:Game.Configs.ResourceExchangeRecipeConfigSet" },
+                ["roadBuildConfig"] = new[] { "Assets/Game/Configs/Scene/Game_RoadBuild_Config.asset|guid:b2010000000000000000000000000003|localId:11400000|type:Game.Configs.RoadBuildSystemSceneConfigAsset" },
+                ["rtsSelectionConfig"] = new[] { "Assets/Game/Configs/Scene/Game_RTSSelection_Config.asset|guid:b2010000000000000000000000000002|localId:11400000|type:Game.Configs.RTSSelectionSystemSceneConfigAsset" },
+                ["runtimeCitySpawnerConfig"] = new[] { "Assets/Game/Configs/Scene/Game_RuntimeCitySpawner_Config.asset|guid:b2010000000000000000000000000006|localId:11400000|type:Game.Configs.RuntimeCitySpawnerSystemSceneConfigAsset" },
+                ["runtimeDecorationSpawnerConfig"] = new[] { "Assets/Game/Configs/Scene/Game_RuntimeDecorationSpawner_Config.asset|guid:b2010000000000000000000000000007|localId:11400000|type:Game.Configs.RuntimeDecorationSpawnerSystemSceneConfigAsset" },
+                ["runtimeGridBlockerConfig"] = new[] { "Assets/Game/Configs/Scene/Game_RuntimeGridBlocker_Config.asset|guid:b2010000000000000000000000000008|localId:11400000|type:Game.Configs.RuntimeGridBlockerSystemSceneConfigAsset" },
+                ["runtimeGridConfig"] = new[] { "Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset|guid:b201000000000000000000000000000b|localId:11400000|type:Game.Configs.GridAuthoringSceneConfigAsset" },
+                ["runtimeGridDebugViews"] = Array.Empty<string>(),
+                ["staticMapPresentationManifest"] = new[] { "Assets/Game/GeneratedStaticMapPresentation/StaticMapPresentationManifest.asset|guid:2d7b3d165106141ba81b98138bb8fa7f|localId:11400000|type:Game.Rendering.StaticMapPresentationManifest" },
+                ["unitAttackTraceConfig"] = new[] { "Assets/Game/Configs/Scene/Game_UnitAttackTrace_Config.asset|guid:b2010000000000000000000000000005|localId:11400000|type:Game.Configs.UnitAttackTraceSystemSceneConfigAsset" },
+                ["visualQualityProfile"] = new[] { "Assets/Game/Rendering/VisualQualityConfig.asset|guid:d9e06dd77d8b4533a0efb56ed3e14cbb|localId:11400000|type:Game.Configs.VisualQualityProfileAsset" },
+                ["worldCamera"] = new[] { "Assets/Game/Scenes/Match.unity::Main Camera[5]|type:UnityEngine.Camera" }
+            };
+        }
+
         private static Dictionary<string, OwnershipSpec> MatchRootSpecs()
         {
             var specs = new Dictionary<string, OwnershipSpec>(StringComparer.Ordinal);
@@ -855,8 +965,8 @@ namespace Game.Editor
             AddRoot(specs, "Main Camera[5]", "UnityEngine.AudioListener|UnityEngine.Camera|UnityEngine.FlareLayer|UnityEngine.Rendering.Universal.UniversalAdditionalCameraData|UnityEngine.Transform", OwnershipClassification.ShellOwned, "KeepInMatchShell", "The target contract assigns the world camera and listener boundary to the shell.");
             AddRoot(specs, "Reflection Probe[6]", "UnityEngine.ReflectionProbe|UnityEngine.Transform", OwnershipClassification.MapOwned, "MoveToOperationMap", "The tracker requires probes to migrate with explicit map parity.");
             AddRoot(specs, "Global Volume[7]", "UnityEngine.Rendering.Volume|UnityEngine.Transform", OwnershipClassification.ShellOwned, "KeepInMatchShell", "The match post-processing boundary remains shell-owned.");
-            AddRoot(specs, "Directional Light[8]", "UnityEngine.Light|UnityEngine.Rendering.Universal.UniversalAdditionalLightData|UnityEngine.Transform", OwnershipClassification.Mixed, "DecisionRequired", "Current evidence does not establish whether this light is shell boundary or map-specific lighting.", "Architecture owner and lighting owner");
-            AddRoot(specs, "Directional Light (1)[9]", "UnityEngine.Light|UnityEngine.Rendering.Universal.UniversalAdditionalLightData|UnityEngine.Transform", OwnershipClassification.Mixed, "DecisionRequired", "Current evidence does not establish whether this light is shell boundary or map-specific lighting.", "Architecture owner and lighting owner");
+            AddRoot(specs, "Directional Light[8]", "UnityEngine.Light|UnityEngine.Rendering.Universal.UniversalAdditionalLightData|UnityEngine.Transform", OwnershipClassification.ShellOwned, "KeepInMatchShell", "The normative target contract assigns match lighting roots to the shell-owned lighting boundary.");
+            AddRoot(specs, "Directional Light (1)[9]", "UnityEngine.Light|UnityEngine.Rendering.Universal.UniversalAdditionalLightData|UnityEngine.Transform", OwnershipClassification.ShellOwned, "KeepInMatchShell", "The normative target contract assigns match lighting roots to the shell-owned lighting boundary.");
             AddRoot(specs, "Map[10]", "Game.Authoring.MapSurfaceAuthoring|UnityEngine.Transform", OwnershipClassification.MapOwned, "MoveToOperationMap", "The canonical map hierarchy and map-surface authoring belong to the operation map.");
             AddRoot(specs, "Faction2[11]", "UnityEngine.MeshFilter|UnityEngine.MeshRenderer|UnityEngine.Transform", OwnershipClassification.MapOwned, "MoveToOperationMap", "This exact root is serialized map presentation geometry.");
             AddRoot(specs, "Faction3[12]", "UnityEngine.MeshFilter|UnityEngine.MeshRenderer|UnityEngine.Transform", OwnershipClassification.MapOwned, "MoveToOperationMap", "This exact root is serialized map presentation geometry.");

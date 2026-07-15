@@ -7,13 +7,13 @@
         "matchSceneViewFields": 28,
         "matchRoots": 16,
         "matchSubSceneRoots": 3,
-        "shellOwned": 5,
+        "shellOwned": 8,
         "mapOwned": 18,
         "sharedConfig": 15,
         "temporaryCompatibility": 2,
-        "mixed": 5,
+        "mixed": 2,
         "unresolved": 2,
-        "needsDecision": 7
+        "needsDecision": 4
     },
     "opmap002Baseline": {
         "reportSchema": "warline.operation-map.phase0-baseline",
@@ -175,15 +175,15 @@
             "currentTargetIdentities": [
                 "Assets/Game/Scenes/Match.unity::Directional Light[8]|type:UnityEngine.Light"
             ],
-            "classification": "Mixed",
+            "classification": "ShellOwned",
             "evidencePaths": [
                 "Assets/Game/Scenes/Match.unity",
                 "Assets/Game/Scripts/Composition/MatchSceneView.cs",
                 "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
             ],
-            "rationale": "The tracker assigns the shell lighting boundary but permits intentionally map-specific lights.",
-            "migrationDisposition": "DecisionRequired",
-            "decisionOwner": "Architecture owner and lighting owner"
+            "rationale": "The normative target contract assigns the directional-light reference to the shell-owned lighting boundary.",
+            "migrationDisposition": "KeepInMatchShell",
+            "decisionOwner": ""
         },
         {
             "stableIdentity": "Game.Composition.MatchSceneView::factionVisualConfig",
@@ -736,14 +736,14 @@
             "currentTargetIdentities": [
                 "Assets/Game/Scenes/Match.unity::Directional Light[8]"
             ],
-            "classification": "Mixed",
+            "classification": "ShellOwned",
             "evidencePaths": [
                 "Assets/Game/Scenes/Match.unity",
                 "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
             ],
-            "rationale": "Current evidence does not establish whether this light is shell boundary or map-specific lighting.",
-            "migrationDisposition": "DecisionRequired",
-            "decisionOwner": "Architecture owner and lighting owner"
+            "rationale": "The normative target contract assigns match lighting roots to the shell-owned lighting boundary.",
+            "migrationDisposition": "KeepInMatchShell",
+            "decisionOwner": ""
         },
         {
             "stableIdentity": "Assets/Game/Scenes/Match.unity::Directional Light (1)[9]",
@@ -754,14 +754,14 @@
             "currentTargetIdentities": [
                 "Assets/Game/Scenes/Match.unity::Directional Light (1)[9]"
             ],
-            "classification": "Mixed",
+            "classification": "ShellOwned",
             "evidencePaths": [
                 "Assets/Game/Scenes/Match.unity",
                 "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
             ],
-            "rationale": "Current evidence does not establish whether this light is shell boundary or map-specific lighting.",
-            "migrationDisposition": "DecisionRequired",
-            "decisionOwner": "Architecture owner and lighting owner"
+            "rationale": "The normative target contract assigns match lighting roots to the shell-owned lighting boundary.",
+            "migrationDisposition": "KeepInMatchShell",
+            "decisionOwner": ""
         },
         {
             "stableIdentity": "Assets/Game/Scenes/Match.unity::Map[10]",

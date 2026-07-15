@@ -15,6 +15,16 @@ namespace Game.Tests.Editor
             "Design/AgentReports/2026-07-15_opmap-004_phase0_ownership_baseline.json";
 
         [Test]
+        public void ResolveReportOutputPath_EmptyConfiguredPathUsesOwnershipDefault()
+        {
+            string projectRoot = Directory.GetParent(Application.dataPath).FullName;
+
+            Assert.That(
+                OperationMapPhase0OwnershipProbe.ResolveReportOutputPath(projectRoot, string.Empty),
+                Is.EqualTo(OperationMapPhase0OwnershipProbe.DefaultReportPath));
+        }
+
+        [Test]
         public void CommittedReport_HasRequiredNeedsDecisionShape()
         {
             string json = File.ReadAllText(ReportPath);
@@ -58,12 +68,12 @@ namespace Game.Tests.Editor
         }
 
         [Test]
-        public void RequiredShape_RejectsDecisionWithoutOwner()
+        public void RequiredShape_RejectsDecisionOwnerDrift()
         {
             OperationMapPhase0OwnershipProbe.OwnershipReport report = LoadCommittedReport();
             OperationMapPhase0OwnershipProbe.OwnershipRow decision = report.matchRoots.First(
                 row => row.classification == "Mixed" || row.classification == "Unresolved");
-            decision.decisionOwner = string.Empty;
+            decision.decisionOwner = "Different owner";
             AssertInvalid(report);
         }
 
@@ -75,11 +85,36 @@ namespace Game.Tests.Editor
             AssertInvalid(report);
         }
 
-        [Test]
-        public void RequiredShape_RejectsEmptyBaselineEvidenceCounts()
+        [TestCase(0)]
+        [TestCase(1)]
+        [TestCase(2)]
+        [TestCase(3)]
+        public void RequiredShape_RejectsBaselineTotalDrift(int totalIndex)
         {
             OperationMapPhase0OwnershipProbe.OwnershipReport report = LoadCommittedReport();
-            report.opmap002Baseline.generatedChunkCount = 0;
+            switch (totalIndex)
+            {
+                case 0:
+                    report.opmap002Baseline.generatedChunkCount++;
+                    break;
+                case 1:
+                    report.opmap002Baseline.manifestSourceCount++;
+                    break;
+                case 2:
+                    report.opmap002Baseline.buildingPlacementCount++;
+                    break;
+                default:
+                    report.opmap002Baseline.vehiclePlacementCount++;
+                    break;
+            }
+            AssertInvalid(report);
+        }
+
+        [Test]
+        public void RequiredShape_RejectsBaselineAggregateDrift()
+        {
+            OperationMapPhase0OwnershipProbe.OwnershipReport report = LoadCommittedReport();
+            report.opmap002Baseline.generatedCombinedAggregateSha256 = new string('0', 64);
             AssertInvalid(report);
         }
 
@@ -132,6 +167,53 @@ namespace Game.Tests.Editor
             OperationMapPhase0OwnershipProbe.OwnershipRow row = report.matchSceneViewFields.First(
                 candidate => candidate.currentElementCount > 0);
             row.currentElementCount++;
+            AssertInvalid(report);
+        }
+
+        [Test]
+        public void RequiredShape_RejectsTargetIdentityDrift()
+        {
+            OperationMapPhase0OwnershipProbe.OwnershipReport report = LoadCommittedReport();
+            OperationMapPhase0OwnershipProbe.OwnershipRow row = report.matchSceneViewFields.First(
+                candidate => candidate.currentElementCount > 0);
+            row.currentTargetIdentities[0] += ".drift";
+            AssertInvalid(report);
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void RequiredShape_RejectsTypeDrift(bool declaredType)
+        {
+            OperationMapPhase0OwnershipProbe.OwnershipReport report = LoadCommittedReport();
+            OperationMapPhase0OwnershipProbe.OwnershipRow row = report.matchSceneViewFields[0];
+            if (declaredType)
+                row.declaredType = "UnityEngine.Object";
+            else
+                row.currentType = "UnityEngine.Object";
+            AssertInvalid(report);
+        }
+
+        [Test]
+        public void RequiredShape_RejectsEvidenceDrift()
+        {
+            OperationMapPhase0OwnershipProbe.OwnershipReport report = LoadCommittedReport();
+            report.matchSceneViewFields[0].evidencePaths[0] = "Assets/drift.asset";
+            AssertInvalid(report);
+        }
+
+        [Test]
+        public void RequiredShape_RejectsRationaleDrift()
+        {
+            OperationMapPhase0OwnershipProbe.OwnershipReport report = LoadCommittedReport();
+            report.matchSceneViewFields[0].rationale = "Different rationale.";
+            AssertInvalid(report);
+        }
+
+        [Test]
+        public void RequiredShape_RejectsDispositionDrift()
+        {
+            OperationMapPhase0OwnershipProbe.OwnershipReport report = LoadCommittedReport();
+            report.matchSceneViewFields[0].migrationDisposition = "DifferentDisposition";
             AssertInvalid(report);
         }
 

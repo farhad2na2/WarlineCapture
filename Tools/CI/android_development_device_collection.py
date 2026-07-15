@@ -44,6 +44,7 @@ try:
         parse_thermal_snapshot,
         require_exact_target,
         require_idle_thermal,
+        require_install_completion,
         sha256_file,
     )
 except ModuleNotFoundError:  # Direct execution adds Tools/CI, not the repository root.
@@ -71,6 +72,7 @@ except ModuleNotFoundError:  # Direct execution adds Tools/CI, not the repositor
         parse_thermal_snapshot,
         require_exact_target,
         require_idle_thermal,
+        require_install_completion,
         sha256_file,
     )
 
@@ -278,7 +280,7 @@ def install_and_verify(
     if rows:
         _require_success_word(adb.run(("uninstall", package), timeout=120.0), "package uninstall")
 
-    _require_success_word(
+    require_install_completion(
         adb.run(("install", "--no-streaming", "-t", str(apk_path)), timeout=600.0),
         "exact development APK install",
     )

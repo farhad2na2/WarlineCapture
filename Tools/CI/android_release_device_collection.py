@@ -583,6 +583,13 @@ def _require_success_word(result: CommandResult, label: str) -> None:
         raise CollectionError(f"{label} did not return exact Success")
 
 
+def require_install_completion(result: CommandResult, label: str) -> None:
+    _checked(result, label)
+    response = _text(result.stdout).strip()
+    if response not in ("", "Success"):
+        raise CollectionError(f"{label} returned an unexpected response: {response!r}")
+
+
 def install_and_verify(
     adb: AdbBoundary,
     apk_path: Path,
@@ -594,7 +601,7 @@ def install_and_verify(
     uninstall = adb.run(("uninstall", package), timeout=120.0)
     _require_success_word(uninstall, "package uninstall")
     install = adb.run(("install", "--no-streaming", str(apk_path)), timeout=600.0)
-    _require_success_word(install, "exact APK install")
+    require_install_completion(install, "exact APK install")
 
     expected_component = f"{package}/{activity}"
     resolved_rows = [

@@ -699,13 +699,13 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 3% (5/177 checklist items complete).
+Overall implementation progress: 3% (6/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
 | Phase | Status | Complete | Total | Progress | Notes |
 |---|---|---:|---:|---:|---|
-| 0. Reproducible baseline and rollback | In progress / shared | 5 | 12 | 42% | Required by both directions before scene edits. |
+| 0. Reproducible baseline and rollback | In progress / shared | 6 | 12 | 50% | Required by both directions before scene edits. |
 | 1. Operation-map and scenario data contracts | Not started / shared subset | 0 | 12 | 0% | Typed identity and metadata only; delivery-specific references remain later. |
 | 2. Per-map static presentation ownership | Not started / compatibility subset | 0 | 14 | 0% | Preserve the current baked map safely; future-map generation remains undecided. |
 | 2A. Local Addressables packaging foundation | Later / direction-specific | 0 | 20 | 0% | Do not implement before the map-delivery direction is selected. |
@@ -732,7 +732,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 - [ ] Inventory `Match_MapBuildingPlacement_Config` and `Match_MapVehiclePlacement_Config`, including hierarchy-path and source-hiding assumptions.
 - [ ] Inventory minimap projection, camera clamp, initial camera, full-map bounds, and objective-focus sources.
 - [ ] Inventory ground-height, map-surface, grid, blockers, terrain, runway, and helipad metadata sources.
-- [ ] Inventory static presentation streamer, canonical-renderer suppression, teardown, and Android build-scene ownership.
+- [x] Inventory static presentation streamer, canonical-renderer suppression, teardown, and Android build-scene ownership. See `../AgentReports/2026-07-15_operation_map_static_presentation_ownership.md`.
 - [ ] Capture current Editor launch, Android launch, load time, loaded memory, APK/installed size, sustained FPS, draw, and GC evidence accepted for comparison.
 - [x] Write an exact rollback recipe that restores scene setup, manifest/integrity files, generated scenes, scene references, configs, and build settings. See `operation_map_scene_split_rollback_recipe.md`.
 
@@ -1062,6 +1062,7 @@ Exit criteria:
 | 2026-07-15 | Shared navigation metadata ownership evidence | Direct-main shared-foundation slice; schema `2`; focused EditMode `36 / 36`; two byte-identical probe runs; committed report SHA-256 `7eedc224...300f1`; architecture gates `9 / 9`, `31 / 31`, `1 / 1` | Passed; four decisions remain | Deterministic read-only evidence covers `15` authorities and `15` exact compiled consumer type/member identities, including fixed-wing runway initialization and grid movement. Authority results are `7 MapOwned`, `4 SharedConfig`, `3 Mixed`, and `1 Unresolved`; only Mixed/Unresolved rows use `DecisionRequired`, so the Phase 0 navigation checkbox remains open. A broader diagnostic architecture run retained seven unrelated pre-existing failures and is not acceptance evidence for this slice. |
 | 2026-07-15 | Shared-only scope clarification and Phase 0 evidence accounting | `2026-07-14_opmap-002_phase0_baseline_probe.md`; `2026-07-15_opmap-005_static_map_presentation_refresh.md`; `git diff --check` | Passed | Marked the four accepted reproducibility/evidence items complete: exact scene setup, authoritative manifest/count reproduction, full manifest/integrity/generated-file hashing, and recorded bake/wiring/structural/Android resolver commands and logs. Added normative execution labels so Addressables, concrete loading, future physical maps, editor/runtime generators, packaging, and remote delivery cannot start while map-direction R&D remains open. No scene, config, manifest, generated output, or runtime source changed. |
 | 2026-07-15 | Shared scene-split rollback recipe | `operation_map_scene_split_rollback_recipe.md`; ownership-path audit; `git diff --check` | Passed | Added a loader/generator-neutral rollback contract based on an immutable pre-cutover SHA, an exact cutover path ledger, an atomic revert range, byte/GUID restoration, authoritative probe parity, no-op rebakes, focused tests, Editor gameplay parity, and risk-triggered Android validation. No project asset or runtime source changed. |
+| 2026-07-15 | Shared static-presentation ownership decision | `../AgentReports/2026-07-15_operation_map_static_presentation_ownership.md`; exact type/member audit; source SHA-256 inventory; `git diff --check` | Passed | Classified map products and canonical renderers as `MapOwned`; reusable indexing, streaming, suppression transaction, and teardown as `ShellOwned`/`SharedConfig`; and current direct Match wiring, hardcoded baker binding, and Android resolver as `TemporaryCompatibility`. No unresolved ownership remains in this row and no loader/generator direction was selected. |
 
 ## Open Decisions
 

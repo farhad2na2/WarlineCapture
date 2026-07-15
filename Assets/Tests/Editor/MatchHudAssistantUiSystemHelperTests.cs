@@ -392,6 +392,9 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         objectives.pivot = new Vector2(0f, 1f);
         objectives.anchoredPosition = new Vector2(16f, -16f);
         objectives.sizeDelta = new Vector2(670f, 520f);
+        RectTransform objectivesContent = CreateRect("ObjectivesContent", objectives);
+        RectTransform elapsed = CreateRect("Elapsed", objectivesContent);
+        elapsed.gameObject.AddComponent<MatchHudObjectivesElapsedView>();
 
         if (includeAssistantButton)
             CreateAssistantButton(header);
@@ -399,7 +402,13 @@ public sealed class MatchHudAssistantUiSystemHelperTests
 
     private static void CreateAssistantButton(RectTransform parent)
     {
-        var root = new GameObject("AriaAssistantButton", typeof(RectTransform), typeof(Image), typeof(Button));
+        var root = new GameObject(
+            "AriaAssistantButton",
+            typeof(RectTransform),
+            typeof(Image),
+            typeof(Button),
+            typeof(Canvas),
+            typeof(GraphicRaycaster));
         root.transform.SetParent(parent, false);
         RectTransform rect = root.GetComponent<RectTransform>();
         rect.anchorMin = new Vector2(0f, 1f);

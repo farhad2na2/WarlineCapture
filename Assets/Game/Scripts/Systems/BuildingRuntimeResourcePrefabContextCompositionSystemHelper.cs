@@ -7,7 +7,7 @@ namespace Game.Runtime
     {
         public readonly struct Source
         {
-            public readonly RuntimeResourceUtilitySystemHelper RuntimeResourceUtilitySystemHelper;
+            public readonly RuntimeFactionResourceSystemHelper RuntimeFactionResourceSystemHelper;
             public readonly RuntimeUnitPrefabSystem RuntimeUnitPrefabSystem;
             public readonly BuildingDefinitionPrefabSystemHelper DefinitionSystem;
             public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
@@ -20,7 +20,7 @@ namespace Game.Runtime
             public readonly Func<Source> CreateCurrentSource;
 
             public Source(
-                RuntimeResourceUtilitySystemHelper runtimeResourceSystem,
+                RuntimeFactionResourceSystemHelper factionResourceSystem,
                 RuntimeUnitPrefabSystem runtimeUnitPrefabSystem,
                 BuildingDefinitionPrefabSystemHelper definitionSystem,
                 RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
@@ -32,7 +32,7 @@ namespace Game.Runtime
                 EntityQuery livePlayerUnitsQuery,
                 Func<Source> createCurrentSource = null)
             {
-                RuntimeResourceUtilitySystemHelper = runtimeResourceSystem;
+                RuntimeFactionResourceSystemHelper = factionResourceSystem;
                 RuntimeUnitPrefabSystem = runtimeUnitPrefabSystem;
                 DefinitionSystem = definitionSystem;
                 RuntimeBuildingSystem = runtimeBuildingSystem;
@@ -48,7 +48,7 @@ namespace Game.Runtime
 
         public static Source CreateSource(
             BuildingRuntimeResourcePrefabContextCompositionSystemHelper system,
-            RuntimeResourceUtilitySystemHelper runtimeResourceSystem,
+            RuntimeFactionResourceSystemHelper factionResourceSystem,
             RuntimeUnitPrefabSystem runtimeUnitPrefabSystem,
             BuildingDefinitionPrefabSystemHelper definitionSystem,
             RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
@@ -62,7 +62,7 @@ namespace Game.Runtime
         {
             return system != null
                 ? system.CreateSource(
-                    runtimeResourceSystem,
+                    factionResourceSystem,
                     runtimeUnitPrefabSystem,
                     definitionSystem,
                     runtimeBuildingSystem,
@@ -74,7 +74,7 @@ namespace Game.Runtime
                     livePlayerUnitsQuery,
                     createCurrentSource)
                 : CreateSourceState(
-                    runtimeResourceSystem,
+                    factionResourceSystem,
                     runtimeUnitPrefabSystem,
                     definitionSystem,
                     runtimeBuildingSystem,
@@ -88,7 +88,7 @@ namespace Game.Runtime
         }
 
         public Source CreateSource(
-            RuntimeResourceUtilitySystemHelper runtimeResourceSystem,
+            RuntimeFactionResourceSystemHelper factionResourceSystem,
             RuntimeUnitPrefabSystem runtimeUnitPrefabSystem,
             BuildingDefinitionPrefabSystemHelper definitionSystem,
             RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
@@ -101,7 +101,7 @@ namespace Game.Runtime
             Func<Source> createCurrentSource = null)
         {
             return CreateSourceState(
-                runtimeResourceSystem,
+                factionResourceSystem,
                 runtimeUnitPrefabSystem,
                 definitionSystem,
                 runtimeBuildingSystem,
@@ -115,7 +115,7 @@ namespace Game.Runtime
         }
 
         private static Source CreateSourceState(
-            RuntimeResourceUtilitySystemHelper runtimeResourceSystem,
+            RuntimeFactionResourceSystemHelper factionResourceSystem,
             RuntimeUnitPrefabSystem runtimeUnitPrefabSystem,
             BuildingDefinitionPrefabSystemHelper definitionSystem,
             RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
@@ -128,7 +128,7 @@ namespace Game.Runtime
             Func<Source> createCurrentSource = null)
         {
             return new Source(
-                runtimeResourceSystem,
+                factionResourceSystem,
                 runtimeUnitPrefabSystem,
                 definitionSystem,
                 runtimeBuildingSystem,
@@ -157,7 +157,7 @@ namespace Game.Runtime
 
         private static CitizenResourceCompositionSystemHelper.Context CreateCitizenResourceContextState(Source source)
         {
-            return source.RuntimeResourceUtilitySystemHelper.CreateCitizenResourceContext();
+            return source.RuntimeFactionResourceSystemHelper.CreateCitizenResourceContext();
         }
 
         public static RuntimeUnitPrefabSystem.Context CreateRuntimeUnitPrefabContext(

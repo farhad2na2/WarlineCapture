@@ -9,7 +9,6 @@ namespace Game.UI.Runtime
 {
     internal sealed class MatchHudAssistantUiSystemHelper
     {
-        private const string ButtonRootName = "AriaAssistantButton";
         private static bool s_loggedMissingButton;
         private static bool s_loggedInvalidButton;
 
@@ -54,18 +53,20 @@ namespace Game.UI.Runtime
             if (headerRect == null || _popupLayer == null || _popupPrefab == null)
                 return;
 
-            RectTransform objectiveRect = ResolveObjectivesPanel(headerContent.transform);
-            if (objectiveRect != null)
-            {
-                _objectivePanel = objectiveRect.gameObject;
-                _objectivePanelOriginalActive = _objectivePanel.activeSelf;
-            }
-
-            _buttonRoot = ResolveAssistantButton(headerContent.transform);
+            _buttonRoot = MatchHudAssistantReferenceUiSystemHelper.ResolveButton(headerContent, out _button);
             if (_buttonRoot == null)
             {
                 LogMissingButton();
                 return;
+            }
+
+            RectTransform objectiveRect = MatchHudAssistantReferenceUiSystemHelper.ResolveObjectivesPanel(
+                headerContent,
+                _buttonRoot);
+            if (objectiveRect != null)
+            {
+                _objectivePanel = objectiveRect.gameObject;
+                _objectivePanelOriginalActive = _objectivePanel.activeSelf;
             }
 
             if (!EnsurePopupView())
@@ -202,10 +203,11 @@ namespace Game.UI.Runtime
             if (_buttonRoot == null)
                 return false;
 
-            _button = _buttonRoot.GetComponent<Button>();
-            _accessStateText = ResolveButtonText(_buttonRoot, "State");
-            _accessCueText = ResolveButtonText(_buttonRoot, "AlertCue");
-            if (_button == null || _accessStateText == null || _accessCueText == null)
+            if (_button == null ||
+                !MatchHudAssistantReferenceUiSystemHelper.TryResolveButtonText(
+                    _buttonRoot,
+                    out _accessStateText,
+                    out _accessCueText))
                 return false;
 
             MatchHudCanvasBatchingUtility.EnsureLocalCanvas(_buttonRoot.gameObject, needsRaycaster: true);
@@ -285,32 +287,6 @@ namespace Game.UI.Runtime
         {
             _captureGameplayUiClick?.Invoke();
             ClearSelectedButton();
-        }
-
-        private static RectTransform ResolveObjectivesPanel(Transform headerContent)
-        {
-            if (headerContent == null)
-                return null;
-
-            Transform objective = headerContent.Find("ObjectivesPanel");
-            objective ??= headerContent.Find("HeaderContent/ObjectivesPanel");
-            return objective as RectTransform;
-        }
-
-        private static RectTransform ResolveAssistantButton(Transform headerContent)
-        {
-            if (headerContent == null)
-                return null;
-
-            Transform button = headerContent.Find(ButtonRootName);
-            button ??= headerContent.Find($"HeaderContent/{ButtonRootName}");
-            return button as RectTransform;
-        }
-
-        private static TMP_Text ResolveButtonText(Transform buttonRoot, string childName)
-        {
-            Transform child = buttonRoot != null ? buttonRoot.Find(childName) : null;
-            return child != null ? child.GetComponent<TMP_Text>() : null;
         }
 
         private static void LogMissingButton()

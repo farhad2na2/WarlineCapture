@@ -6,104 +6,7 @@ using Unity.Entities;
 
 namespace Game.Runtime
 {
-    [Flags]
-    internal enum MaterialsScenarioRecoveryPathCode : byte
-    {
-        None = 0,
-        StartingMaterials = 1 << 0,
-        SeededFabricationChain = 1 << 1,
-        RebuildableFabricationChain = 1 << 2,
-        ExchangeImport = 1 << 3,
-        MaterialsNotRequired = 1 << 4
-    }
-
-    internal enum MaterialsScenarioRecoveryValidationCode : byte
-    {
-        Valid = 0,
-        MissingStartupState = 1,
-        MissingFactionControls = 2,
-        DuplicateFaction = 3,
-        MissingMaterialsCapacity = 4,
-        NoRecoveryPath = 5,
-        InvalidConstructionPlan = 6,
-        MissingConstructionDefinition = 7,
-        CatalogNotReady = 8
-    }
-
-    internal readonly struct MaterialsScenarioRecoveryValidationInput
-    {
-        public readonly byte FactionId;
-        public readonly bool MaterialsRequired;
-        public readonly int MinimumRequiredMaterials;
-        public readonly int StartingMaterialsRequirement;
-        public readonly int StartingMaterials;
-        public readonly int MaterialsCapacity;
-        public readonly bool HasSeededDepot;
-        public readonly bool HasSeededOilSource;
-        public readonly bool HasSeededOilHauler;
-        public readonly bool CanRebuildDepot;
-        public readonly bool CanRebuildOilSource;
-        public readonly bool CanAcquireOilHauler;
-        public readonly bool CanAffordRebuildChain;
-        public readonly bool ExchangeImportEnabled;
-
-        public MaterialsScenarioRecoveryValidationInput(
-            byte factionId,
-            bool materialsRequired,
-            int minimumRequiredMaterials,
-            int startingMaterialsRequirement,
-            int startingMaterials,
-            int materialsCapacity,
-            bool hasSeededDepot,
-            bool hasSeededOilSource,
-            bool hasSeededOilHauler,
-            bool canRebuildDepot,
-            bool canRebuildOilSource,
-            bool canAcquireOilHauler,
-            bool canAffordRebuildChain,
-            bool exchangeImportEnabled)
-        {
-            FactionId = factionId;
-            MaterialsRequired = materialsRequired;
-            MinimumRequiredMaterials = minimumRequiredMaterials;
-            StartingMaterialsRequirement = startingMaterialsRequirement;
-            StartingMaterials = startingMaterials;
-            MaterialsCapacity = materialsCapacity;
-            HasSeededDepot = hasSeededDepot;
-            HasSeededOilSource = hasSeededOilSource;
-            HasSeededOilHauler = hasSeededOilHauler;
-            CanRebuildDepot = canRebuildDepot;
-            CanRebuildOilSource = canRebuildOilSource;
-            CanAcquireOilHauler = canAcquireOilHauler;
-            CanAffordRebuildChain = canAffordRebuildChain;
-            ExchangeImportEnabled = exchangeImportEnabled;
-        }
-    }
-
-    internal readonly struct MaterialsScenarioRecoveryValidationResult
-    {
-        public readonly bool IsValid;
-        public readonly MaterialsScenarioRecoveryValidationCode Code;
-        public readonly MaterialsScenarioRecoveryPathCode Paths;
-        public readonly byte FactionId;
-        public readonly int ValidatedFactionCount;
-
-        public MaterialsScenarioRecoveryValidationResult(
-            bool isValid,
-            MaterialsScenarioRecoveryValidationCode code,
-            MaterialsScenarioRecoveryPathCode paths,
-            byte factionId,
-            int validatedFactionCount)
-        {
-            IsValid = isValid;
-            Code = code;
-            Paths = paths;
-            FactionId = factionId;
-            ValidatedFactionCount = validatedFactionCount;
-        }
-    }
-
-    internal sealed class MaterialsScenarioRecoveryValidationSystemHelper
+    internal sealed class MaterialsScenarioRecoveryStartupSystemHelper
     {
         private const string DepotId = "Building_Ammunition_Depot";
         private const string OilSourceId = "Building_OilPump";
@@ -114,7 +17,7 @@ namespace Game.Runtime
 
         public FixedString64Bytes LastInvalidConstructionId => lastInvalidConstructionId;
 
-        public MaterialsScenarioRecoveryValidationSystemHelper(EntityManager entityManager)
+        public MaterialsScenarioRecoveryStartupSystemHelper(EntityManager entityManager)
         {
             this.entityManager = entityManager;
         }
@@ -125,18 +28,21 @@ namespace Game.Runtime
             if (!TryResolveStartup(out Entity startupEntity, out CustomGameStartupStateComponent startupState,
                     out InitialUnitsSpawnConfig initialConfig))
             {
-                return Invalid(MaterialsScenarioRecoveryValidationCode.MissingStartupState);
+                return MaterialsScenarioRecoveryPolicyUtilitySystemHelper.Invalid(
+                    MaterialsScenarioRecoveryValidationCode.MissingStartupState);
             }
 
             if (!TryResolveControls(out DynamicBuffer<FactionControlEntry> controls))
-                return Invalid(MaterialsScenarioRecoveryValidationCode.MissingFactionControls);
+                return MaterialsScenarioRecoveryPolicyUtilitySystemHelper.Invalid(
+                    MaterialsScenarioRecoveryValidationCode.MissingFactionControls);
 
             TryResolveBuildingCatalog(
                 out DynamicBuffer<BuildingConfiguredSpawnableReadModel> spawnables,
                 out DynamicBuffer<BuildingConfiguredUnitReadModel> units,
                 out bool hasBuildingCatalog);
             if (!hasBuildingCatalog)
-                return Invalid(MaterialsScenarioRecoveryValidationCode.CatalogNotReady);
+                return MaterialsScenarioRecoveryPolicyUtilitySystemHelper.Invalid(
+                    MaterialsScenarioRecoveryValidationCode.CatalogNotReady);
 
             DynamicBuffer<InitialUnitsFactionBuildingSpawnEntry> initialBuildings =
                 entityManager.HasBuffer<InitialUnitsFactionBuildingSpawnEntry>(startupEntity)
@@ -155,12 +61,11 @@ namespace Game.Runtime
                 {
                     if (controls[duplicateIndex].FactionId == control.FactionId)
                     {
-                        return new MaterialsScenarioRecoveryValidationResult(
-                            false,
+                        return MaterialsScenarioRecoveryPolicyUtilitySystemHelper.Invalid(
                             MaterialsScenarioRecoveryValidationCode.DuplicateFaction,
-                            aggregatePaths,
                             control.FactionId,
-                            controlIndex);
+                            controlIndex,
+                            aggregatePaths);
                     }
                 }
 
@@ -179,12 +84,11 @@ namespace Game.Runtime
                             out startingMaterialsRequirement,
                             out MaterialsScenarioRecoveryValidationCode planValidationCode))
                     {
-                        return new MaterialsScenarioRecoveryValidationResult(
-                            false,
+                        return MaterialsScenarioRecoveryPolicyUtilitySystemHelper.Invalid(
                             planValidationCode,
-                            aggregatePaths,
                             control.FactionId,
-                            controlIndex + 1);
+                            controlIndex + 1,
+                            aggregatePaths);
                     }
                 }
                 else
@@ -207,86 +111,44 @@ namespace Game.Runtime
                 int rebuildCredits = SaturatingAdd(SaturatingAdd(depot.Price, oilSource.Price), oilHauler.Price);
                 int startingCredits = ResolveStartingCredits(control.FactionId, isPlayer, initialConfig.InitialDollars);
 
-                MaterialsScenarioRecoveryValidationResult factionResult = Evaluate(
-                    new MaterialsScenarioRecoveryValidationInput(
-                        control.FactionId,
-                        materialsRequired,
-                        minimumRequiredMaterials,
-                        startingMaterialsRequirement,
-                        startingMaterials,
-                        materialsCapacity,
-                        hasSeededDepot,
-                        hasSeededOilSource,
-                        hasSeededOilHauler,
-                        canRebuildDepot,
-                        canRebuildOilSource,
-                        canAcquireOilHauler,
-                        startingMaterials >= rebuildMaterials && startingCredits >= rebuildCredits,
-                        HasExchangeImport(
-                            exchangeConfig,
-                            startupState.GameModeId,
-                            control.AIControlled != 0,
+                MaterialsScenarioRecoveryValidationResult factionResult =
+                    MaterialsScenarioRecoveryPolicyUtilitySystemHelper.Evaluate(
+                        new MaterialsScenarioRecoveryValidationInput(
+                            control.FactionId,
+                            materialsRequired,
+                            minimumRequiredMaterials,
+                            startingMaterialsRequirement,
+                            startingMaterials,
                             materialsCapacity,
-                            startingCredits)));
+                            hasSeededDepot,
+                            hasSeededOilSource,
+                            hasSeededOilHauler,
+                            canRebuildDepot,
+                            canRebuildOilSource,
+                            canAcquireOilHauler,
+                            startingMaterials >= rebuildMaterials && startingCredits >= rebuildCredits,
+                            HasExchangeImport(
+                                exchangeConfig,
+                                startupState.GameModeId,
+                                control.AIControlled != 0,
+                                materialsCapacity,
+                                startingCredits)));
                 if (!factionResult.IsValid)
                 {
-                    return new MaterialsScenarioRecoveryValidationResult(
-                        false,
+                    return MaterialsScenarioRecoveryPolicyUtilitySystemHelper.Invalid(
                         factionResult.Code,
-                        factionResult.Paths,
                         control.FactionId,
-                        controlIndex + 1);
+                        controlIndex + 1,
+                        factionResult.Paths);
                 }
 
                 aggregatePaths |= factionResult.Paths;
             }
 
-            return new MaterialsScenarioRecoveryValidationResult(
-                true,
-                MaterialsScenarioRecoveryValidationCode.Valid,
-                aggregatePaths,
+            return MaterialsScenarioRecoveryPolicyUtilitySystemHelper.Valid(
                 0,
+                aggregatePaths,
                 controls.Length);
-        }
-
-        internal static MaterialsScenarioRecoveryValidationResult Evaluate(
-            in MaterialsScenarioRecoveryValidationInput input)
-        {
-            if (!input.MaterialsRequired)
-            {
-                return Valid(input.FactionId, MaterialsScenarioRecoveryPathCode.MaterialsNotRequired);
-            }
-
-            int minimumRequiredMaterials = Math.Max(1, input.MinimumRequiredMaterials);
-            if (input.MaterialsCapacity < minimumRequiredMaterials)
-            {
-                return new MaterialsScenarioRecoveryValidationResult(
-                    false,
-                    MaterialsScenarioRecoveryValidationCode.MissingMaterialsCapacity,
-                    MaterialsScenarioRecoveryPathCode.None,
-                    input.FactionId,
-                    1);
-            }
-
-            MaterialsScenarioRecoveryPathCode paths = MaterialsScenarioRecoveryPathCode.None;
-            int startingMaterialsRequirement = Math.Max(minimumRequiredMaterials, input.StartingMaterialsRequirement);
-            if (input.StartingMaterials >= startingMaterialsRequirement)
-                paths |= MaterialsScenarioRecoveryPathCode.StartingMaterials;
-            if (input.HasSeededDepot && input.HasSeededOilSource && input.HasSeededOilHauler)
-                paths |= MaterialsScenarioRecoveryPathCode.SeededFabricationChain;
-            if (input.CanRebuildDepot && input.CanRebuildOilSource && input.CanAcquireOilHauler && input.CanAffordRebuildChain)
-                paths |= MaterialsScenarioRecoveryPathCode.RebuildableFabricationChain;
-            if (input.ExchangeImportEnabled)
-                paths |= MaterialsScenarioRecoveryPathCode.ExchangeImport;
-
-            return paths != MaterialsScenarioRecoveryPathCode.None
-                ? Valid(input.FactionId, paths)
-                : new MaterialsScenarioRecoveryValidationResult(
-                    false,
-                    MaterialsScenarioRecoveryValidationCode.NoRecoveryPath,
-                    MaterialsScenarioRecoveryPathCode.None,
-                    input.FactionId,
-                    1);
         }
 
         private bool TryResolveStartup(
@@ -618,27 +480,5 @@ namespace Game.Runtime
             return sum >= int.MaxValue ? int.MaxValue : (int)sum;
         }
 
-        private static MaterialsScenarioRecoveryValidationResult Valid(
-            byte factionId,
-            MaterialsScenarioRecoveryPathCode paths)
-        {
-            return new MaterialsScenarioRecoveryValidationResult(
-                true,
-                MaterialsScenarioRecoveryValidationCode.Valid,
-                paths,
-                factionId,
-                1);
-        }
-
-        private static MaterialsScenarioRecoveryValidationResult Invalid(
-            MaterialsScenarioRecoveryValidationCode code)
-        {
-            return new MaterialsScenarioRecoveryValidationResult(
-                false,
-                code,
-                MaterialsScenarioRecoveryPathCode.None,
-                0,
-                0);
-        }
     }
 }

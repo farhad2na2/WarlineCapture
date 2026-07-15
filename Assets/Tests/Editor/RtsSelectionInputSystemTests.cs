@@ -2763,7 +2763,9 @@ public sealed class RtsSelectionInputSystemTests
         StringAssert.Contains("if (!input.BoardPassengerDragArmed)", boardRectCommand);
         StringAssert.Contains("context.TryIssueBoardSelectedTransportOrderToPassengerRect.Invoke(transport, screenRect)", boardRectCommand);
         StringAssert.Contains("input.HasActiveWorldTargetCommandMode(out TacticalCommandMode activeMode)", pointerReleased);
-        StringAssert.Contains("input.IsMoveTargetDoubleClick(pointerPosition, Time.unscaledTime)", pointerReleased);
+        StringAssert.Contains(
+            "input.IsMoveTargetDoubleClick(pointerPosition, UnityEngine.Time.unscaledTime)",
+            pointerReleased);
         StringAssert.Contains("HandlePersistentMoveTargetDoubleClick", pointerReleased);
         StringAssert.Contains("action=NoCommand", pointerReleased);
         Assert.IsFalse(pointerReleased.Contains("QueueMoveOrder(", StringComparison.Ordinal));

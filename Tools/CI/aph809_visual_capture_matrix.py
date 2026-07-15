@@ -7,8 +7,10 @@ import argparse
 import hashlib
 import json
 import math
+import os
 import re
 import struct
+import tempfile
 import zlib
 from datetime import datetime
 from pathlib import Path, PurePosixPath
@@ -30,6 +32,28 @@ SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 REVISION_PATTERN = re.compile(r"^[0-9a-f]{40}$")
 UTC_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$")
 ASPECT_DIMENSIONS = {"16:9": (1920, 1080), "20:9": (2400, 1080)}
+SESSION_PROFILES = ("current", "candidate")
+SESSION_IDENTITIES = tuple(
+    (aspect, profile)
+    for aspect in ASPECT_DIMENSIONS
+    for profile in SESSION_PROFILES
+)
+ARTIFACT_FIELDS = (
+    "role",
+    "path",
+    "sha256",
+    "width",
+    "height",
+    "capturedAtUtc",
+    "revision",
+    "deviceProfile",
+    "frameRateMode",
+    "qualityTier",
+    "cameraPosition",
+    "cameraRotation",
+    "state",
+)
+ARTIFACT_KEYS = set(ARTIFACT_FIELDS)
 
 
 class MatrixValidationError(RuntimeError):
@@ -178,6 +202,16 @@ def empty_matrix() -> dict[str, Any]:
     }
 
 
+def expected_session_paths(artifact_root: Path) -> list[Path]:
+    return [
+        artifact_root.joinpath(
+            *CAPTURE_ROOT.parts,
+            f"aph809_{aspect.replace(':', 'x')}_{profile}_capture_session.json",
+        )
+        for aspect, profile in SESSION_IDENTITIES
+    ]
+
+
 def _object(value: Any, path: str) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise MatrixValidationError(f"{path} must be an object")
@@ -279,6 +313,10 @@ def _resolve_artifact_path(path_text: str, artifact_root: Path) -> Path:
     return artifact_root.joinpath(*posix.parts)
 
 
+def _expected_artifact_path(row_id: str, role: str) -> str:
+    return (CAPTURE_ROOT / f"{row_id}_{role}.png").as_posix()
+
+
 def _parse_png(path: Path) -> tuple[int, int]:
     try:
         payload = path.read_bytes()
@@ -358,25 +396,13 @@ def _validate_artifact(
     artifact_root: Path,
 ) -> tuple[str, str, tuple[float, float, float], tuple[float, float, float]]:
     artifact = _object(value, path)
-    keys = {
-        "role",
-        "path",
-        "sha256",
-        "width",
-        "height",
-        "capturedAtUtc",
-        "revision",
-        "deviceProfile",
-        "frameRateMode",
-        "qualityTier",
-        "cameraPosition",
-        "cameraRotation",
-        "state",
-    }
-    _only_keys(artifact, keys, path)
+    _only_keys(artifact, ARTIFACT_KEYS, path)
     if artifact["role"] != role:
         raise MatrixValidationError(f"{path}.role must be {role!r}")
     path_text = _non_empty(artifact["path"], f"{path}.path")
+    expected_path = _expected_artifact_path(row["id"], role)
+    if path_text != expected_path:
+        raise MatrixValidationError(f"{path}.path must be {expected_path!r}")
     resolved = _resolve_artifact_path(path_text, artifact_root)
     digest = _non_empty(artifact["sha256"], f"{path}.sha256")
     if not SHA256_PATTERN.fullmatch(digest):
@@ -422,7 +448,12 @@ def _validate_artifact(
     return path_text, digest, position, rotation
 
 
-def validate_acceptance(data: Any, *, artifact_root: Path) -> dict[str, Any]:
+def _validate_submitted_evidence(
+    data: Any,
+    *,
+    artifact_root: Path,
+    require_reviewer_pass: bool,
+) -> tuple[dict[str, Any], str]:
     matrix = validate_inventory(data)
     revision = _non_empty(matrix["revision"], "matrix.revision")
     if not REVISION_PATTERN.fullmatch(revision):
@@ -435,9 +466,10 @@ def validate_acceptance(data: Any, *, artifact_root: Path) -> dict[str, Any]:
     seen_hashes: set[str] = set()
     for index, row in enumerate(matrix["rows"]):
         path = f"rows[{index}]"
-        if row["reviewerDecision"] != "passed":
-            raise MatrixValidationError(f"{path}.reviewerDecision must be passed")
-        _non_empty(row["reviewerNotes"], f"{path}.reviewerNotes")
+        if require_reviewer_pass:
+            if row["reviewerDecision"] != "passed":
+                raise MatrixValidationError(f"{path}.reviewerDecision must be passed")
+            _non_empty(row["reviewerNotes"], f"{path}.reviewerNotes")
         roles = row["artifactRoles"]
         artifacts = row["artifacts"]
         if len(artifacts) != len(roles):
@@ -470,6 +502,15 @@ def validate_acceptance(data: Any, *, artifact_root: Path) -> dict[str, Any]:
         raise MatrixValidationError(
             f"matrix must provide exactly {EXPECTED_ARTIFACT_COUNT} unique PNG artifacts"
         )
+    return matrix, revision
+
+
+def validate_acceptance(data: Any, *, artifact_root: Path) -> dict[str, Any]:
+    _, revision = _validate_submitted_evidence(
+        data,
+        artifact_root=artifact_root,
+        require_reviewer_pass=True,
+    )
     return {
         "result": "Passed",
         "taskId": TASK_ID,
@@ -479,6 +520,313 @@ def validate_acceptance(data: Any, *, artifact_root: Path) -> dict[str, Any]:
         "artifactsRequired": EXPECTED_ARTIFACT_COUNT,
         "revision": revision,
     }
+
+
+def _expected_session_artifacts(aspect: str, profile: str) -> set[tuple[str, str]]:
+    expected: set[tuple[str, str]] = set()
+    for row in expected_rows():
+        if row["aspect"] != aspect:
+            continue
+        for role in row["artifactRoles"]:
+            source_profile = "candidate" if role == "candidate" else "current"
+            if source_profile == profile:
+                expected.add((row["id"], role))
+    expected_count = 13 if profile == "current" else 3
+    if len(expected) != expected_count:
+        raise AssertionError(
+            f"expected {expected_count} artifacts for {aspect}/{profile}, built {len(expected)}"
+        )
+    return expected
+
+
+def _validate_aph505_fragment(
+    value: Any,
+    path: str,
+    *,
+    revision: str,
+    profile: str,
+) -> None:
+    fragment = _object(value, path)
+    keys = {
+        "schemaVersion",
+        "taskId",
+        "status",
+        "exactCommit",
+        "dirty",
+        "candidatePaths",
+        "capturedViews",
+        "beforeAfterRole",
+        "beforeAfterPairsComplete",
+        "accepted",
+    }
+    _only_keys(fragment, keys, path)
+    if type(fragment["schemaVersion"]) is not int or fragment["schemaVersion"] != 1:
+        raise MatrixValidationError(f"{path}.schemaVersion must be 1")
+    if fragment["taskId"] != "APH-505":
+        raise MatrixValidationError(f"{path}.taskId must be APH-505")
+    if fragment["status"] != "capture-session":
+        raise MatrixValidationError(f"{path}.status must be capture-session")
+    if fragment["exactCommit"] != revision:
+        raise MatrixValidationError(f"{path}.exactCommit must match session.revision")
+    if fragment["dirty"] is not False:
+        raise MatrixValidationError(f"{path}.dirty must be false")
+    candidate_paths = fragment["candidatePaths"]
+    if not isinstance(candidate_paths, list):
+        raise MatrixValidationError(f"{path}.candidatePaths must be an array")
+    for index, candidate_path in enumerate(candidate_paths):
+        _non_empty(candidate_path, f"{path}.candidatePaths[{index}]")
+    if fragment["capturedViews"] != ["near", "medium", "far"]:
+        raise MatrixValidationError(f"{path}.capturedViews must be near, medium, far")
+    if fragment["beforeAfterRole"] != profile:
+        raise MatrixValidationError(f"{path}.beforeAfterRole must match session.profile")
+    if fragment["beforeAfterPairsComplete"] is not False:
+        raise MatrixValidationError(f"{path}.beforeAfterPairsComplete must be false")
+    if fragment["accepted"] is not False:
+        raise MatrixValidationError(f"{path}.accepted must be false")
+
+
+def _validate_session(
+    value: Any,
+    path: str,
+    *,
+    expected_aspect: str,
+    expected_profile: str,
+) -> dict[str, Any]:
+    session = _object(value, path)
+    keys = {
+        "schemaVersion",
+        "taskId",
+        "revision",
+        "dirty",
+        "deviceProfile",
+        "frameRateMode",
+        "aspect",
+        "profile",
+        "cameraContractPath",
+        "artifactCount",
+        "artifacts",
+        "aph505EvidenceFragment",
+    }
+    _only_keys(session, keys, path)
+    if type(session["schemaVersion"]) is not int or session["schemaVersion"] != SCHEMA_VERSION:
+        raise MatrixValidationError(f"{path}.schemaVersion must be {SCHEMA_VERSION}")
+    if session["taskId"] != TASK_ID:
+        raise MatrixValidationError(f"{path}.taskId must be {TASK_ID}")
+    revision = _non_empty(session["revision"], f"{path}.revision")
+    if not REVISION_PATTERN.fullmatch(revision):
+        raise MatrixValidationError(
+            f"{path}.revision must be an exact 40-character lowercase commit"
+        )
+    if session["dirty"] is not False:
+        raise MatrixValidationError(f"{path}.dirty must be false")
+    device_profile = _non_empty(session["deviceProfile"], f"{path}.deviceProfile")
+    frame_rate_mode = session["frameRateMode"]
+    if frame_rate_mode not in {"30fps", "60fps"}:
+        raise MatrixValidationError(f"{path}.frameRateMode must be 30fps or 60fps")
+    if session["aspect"] != expected_aspect:
+        raise MatrixValidationError(f"{path}.aspect must be {expected_aspect!r}")
+    if session["profile"] != expected_profile:
+        raise MatrixValidationError(f"{path}.profile must be {expected_profile!r}")
+
+    aspect_token = expected_aspect.replace(":", "x")
+    expected_contract = (
+        CAPTURE_ROOT / f"aph809_camera_contract_{aspect_token}.json"
+    ).as_posix()
+    if session["cameraContractPath"] != expected_contract:
+        raise MatrixValidationError(
+            f"{path}.cameraContractPath must be {expected_contract!r}"
+        )
+
+    expected_pairs = _expected_session_artifacts(expected_aspect, expected_profile)
+    expected_count = len(expected_pairs)
+    if type(session["artifactCount"]) is not int or session["artifactCount"] != expected_count:
+        raise MatrixValidationError(f"{path}.artifactCount must be {expected_count}")
+    artifacts = session["artifacts"]
+    if not isinstance(artifacts, list) or len(artifacts) != expected_count:
+        raise MatrixValidationError(
+            f"{path}.artifacts must contain exactly {expected_count} entries"
+        )
+
+    rows_by_id = {row["id"]: row for row in expected_rows()}
+    validated_artifacts: dict[tuple[str, str], dict[str, Any]] = {}
+    for index, artifact_value in enumerate(artifacts):
+        artifact_path = f"{path}.artifacts[{index}]"
+        artifact = _object(artifact_value, artifact_path)
+        _only_keys(artifact, ARTIFACT_KEYS | {"rowId"}, artifact_path)
+        row_id = _non_empty(artifact["rowId"], f"{artifact_path}.rowId")
+        role = _non_empty(artifact["role"], f"{artifact_path}.role")
+        pair = (row_id, role)
+        if pair not in expected_pairs:
+            raise MatrixValidationError(
+                f"{artifact_path} is not expected for {expected_aspect}/{expected_profile}: "
+                f"rowId={row_id!r} role={role!r}"
+            )
+        if pair in validated_artifacts:
+            raise MatrixValidationError(
+                f"{path}.artifacts contains duplicate rowId/role: {row_id}/{role}"
+            )
+        row = rows_by_id[row_id]
+        if artifact["revision"] != revision:
+            raise MatrixValidationError(f"{artifact_path}.revision must match session.revision")
+        if artifact["deviceProfile"] != device_profile:
+            raise MatrixValidationError(
+                f"{artifact_path}.deviceProfile must match session.deviceProfile"
+            )
+        if artifact["frameRateMode"] != frame_rate_mode:
+            raise MatrixValidationError(
+                f"{artifact_path}.frameRateMode must match session.frameRateMode"
+            )
+        if artifact["qualityTier"] != expected_profile:
+            raise MatrixValidationError(
+                f"{artifact_path}.qualityTier must be {expected_profile!r}"
+            )
+        if artifact["state"] != row["state"]:
+            raise MatrixValidationError(f"{artifact_path}.state must match row state")
+        expected_artifact_path = _expected_artifact_path(row_id, role)
+        if artifact["path"] != expected_artifact_path:
+            raise MatrixValidationError(
+                f"{artifact_path}.path must be {expected_artifact_path!r}"
+            )
+        validated_artifacts[pair] = {
+            key: artifact[key]
+            for key in ARTIFACT_FIELDS
+        }
+
+    missing = sorted(expected_pairs - set(validated_artifacts))
+    if missing:
+        formatted = ", ".join(f"{row_id}/{role}" for row_id, role in missing)
+        raise MatrixValidationError(f"{path}.artifacts is missing expected entries: {formatted}")
+    _validate_aph505_fragment(
+        session["aph505EvidenceFragment"],
+        f"{path}.aph505EvidenceFragment",
+        revision=revision,
+        profile=expected_profile,
+    )
+    return {
+        "revision": revision,
+        "deviceProfile": device_profile,
+        "frameRateMode": frame_rate_mode,
+        "artifacts": validated_artifacts,
+    }
+
+
+def ingest_session_files(
+    data: Any,
+    *,
+    session_paths: list[Path],
+    artifact_root: Path,
+) -> dict[str, Any]:
+    matrix = validate_inventory(data)
+    if len(session_paths) != 4:
+        raise MatrixValidationError(
+            f"session ingestion requires exactly four metadata files; found {len(session_paths)}"
+        )
+
+    root = artifact_root.resolve()
+    expected_files = expected_session_paths(root)
+    provided_files = [path.resolve() for path in session_paths]
+    if len(set(provided_files)) != 4:
+        raise MatrixValidationError("session metadata paths must be unique")
+    if set(provided_files) != set(expected_files):
+        raise MatrixValidationError(
+            f"session metadata files must be the four canonical files under {CAPTURE_ROOT.as_posix()}"
+        )
+
+    sessions: list[dict[str, Any]] = []
+    artifacts_by_pair: dict[tuple[str, str], dict[str, Any]] = {}
+    for (aspect, profile), session_path in zip(SESSION_IDENTITIES, expected_files):
+        try:
+            payload = json.loads(session_path.read_text(encoding="utf-8-sig"))
+        except OSError as exc:
+            raise MatrixValidationError(
+                f"session metadata does not exist or is unreadable: {session_path}"
+            ) from exc
+        except json.JSONDecodeError as exc:
+            raise MatrixValidationError(
+                f"session metadata is not valid JSON: {session_path}: {exc}"
+            ) from exc
+        session = _validate_session(
+            payload,
+            f"session[{aspect}/{profile}]",
+            expected_aspect=aspect,
+            expected_profile=profile,
+        )
+        sessions.append(session)
+        overlap = set(artifacts_by_pair) & set(session["artifacts"])
+        if overlap:
+            row_id, role = sorted(overlap)[0]
+            raise MatrixValidationError(
+                f"session metadata reuses rowId/role across sessions: {row_id}/{role}"
+            )
+        artifacts_by_pair.update(session["artifacts"])
+
+    revisions = {session["revision"] for session in sessions}
+    device_profiles = {session["deviceProfile"] for session in sessions}
+    frame_rate_modes = {session["frameRateMode"] for session in sessions}
+    if len(revisions) != 1:
+        raise MatrixValidationError("all four sessions must use the same revision")
+    if len(device_profiles) != 1:
+        raise MatrixValidationError("all four sessions must use the same deviceProfile")
+    if len(frame_rate_modes) != 1:
+        raise MatrixValidationError("all four sessions must use the same frameRateMode")
+    if len(artifacts_by_pair) != EXPECTED_ARTIFACT_COUNT:
+        raise MatrixValidationError(
+            f"sessions must provide exactly {EXPECTED_ARTIFACT_COUNT} artifacts"
+        )
+
+    ingested_rows: list[dict[str, Any]] = []
+    for expected_row, existing_row in zip(expected_rows(), matrix["rows"]):
+        artifacts = [
+            artifacts_by_pair[(expected_row["id"], role)]
+            for role in expected_row["artifactRoles"]
+        ]
+        ingested_rows.append(
+            {
+                **expected_row,
+                "artifacts": artifacts,
+                "reviewerDecision": existing_row["reviewerDecision"],
+                "reviewerNotes": existing_row["reviewerNotes"],
+            }
+        )
+
+    ingested = {
+        "schemaVersion": SCHEMA_VERSION,
+        "taskId": TASK_ID,
+        "revision": next(iter(revisions)),
+        "deviceProfile": next(iter(device_profiles)),
+        "frameRateMode": next(iter(frame_rate_modes)),
+        "rows": ingested_rows,
+    }
+    _validate_submitted_evidence(
+        ingested,
+        artifact_root=root,
+        require_reviewer_pass=False,
+    )
+    return ingested
+
+
+def _atomic_write_json(path: Path, value: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    output_mode = path.stat().st_mode & 0o777 if path.exists() else 0o644
+    temporary_path: Path | None = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="w",
+            encoding="utf-8",
+            dir=path.parent,
+            prefix=f".{path.name}.",
+            suffix=".tmp",
+            delete=False,
+        ) as temporary:
+            temporary_path = Path(temporary.name)
+            temporary.write(json.dumps(value, indent=2) + "\n")
+            temporary.flush()
+            os.fsync(temporary.fileno())
+        temporary_path.chmod(output_mode)
+        temporary_path.replace(path)
+    finally:
+        if temporary_path is not None and temporary_path.exists():
+            temporary_path.unlink()
 
 
 def render_report(matrix: dict[str, Any]) -> str:
@@ -533,6 +881,11 @@ def main() -> int:
         action="store_true",
         help="Validate only the deterministic row inventory; never implies acceptance.",
     )
+    mode.add_argument(
+        "--ingest-sessions",
+        action="store_true",
+        help="Ingest the four canonical Unity capture-session metadata files.",
+    )
     parser.add_argument("--matrix", type=Path, default=DEFAULT_MATRIX_PATH)
     parser.add_argument("--artifact-root", type=Path, default=Path("."))
     parser.add_argument("--report", type=Path)
@@ -541,6 +894,13 @@ def main() -> int:
     try:
         payload = json.loads(args.matrix.read_text(encoding="utf-8-sig"))
         matrix = validate_inventory(payload)
+        if args.ingest_sessions:
+            matrix = ingest_session_files(
+                matrix,
+                session_paths=expected_session_paths(args.artifact_root.resolve()),
+                artifact_root=args.artifact_root,
+            )
+            _atomic_write_json(args.matrix, matrix)
         if args.report is not None:
             args.report.parent.mkdir(parents=True, exist_ok=True)
             args.report.write_text(render_report(matrix), encoding="utf-8")
@@ -551,6 +911,12 @@ def main() -> int:
                 f"slots={result['slotsSatisfied']}/{result['slotsRequired']} "
                 f"artifacts={result['artifactsValidated']}/{result['artifactsRequired']} "
                 f"revision={result['revision']}"
+            )
+        elif args.ingest_sessions:
+            print(
+                "[APH-809 VisualCaptureMatrix] result=Passed mode=ingest-sessions "
+                f"sessions=4 slots={EXPECTED_SLOT_COUNT} artifacts={EXPECTED_ARTIFACT_COUNT} "
+                f"revision={matrix['revision']} reviewerDecisions=preserved"
             )
         else:
             print(

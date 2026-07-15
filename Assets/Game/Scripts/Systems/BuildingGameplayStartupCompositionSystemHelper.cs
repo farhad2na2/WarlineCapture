@@ -14,10 +14,11 @@ namespace Game.Runtime
             FactionVisualSettings factionVisuals,
             DayNightSystem dayNight)
         {
-            childSystems.RuntimeResourceUtilitySystemHelper.SetInitialDollars(
+            childSystems.RuntimeFactionResourceSystemHelper.SetInitialDollars(
                 BuildingStartupConfigProjectionSystem.ResolveInitialDollars(buildingPlacementConfig));
             if (childSystems.BuildingEntityManagerAccessSystem.TryGetEntityManager(out Unity.Entities.EntityManager entityManager))
-                childSystems.RuntimeResourceUtilitySystemHelper.Configure(entityManager);
+                childSystems.RuntimeFactionResourceSystemHelper.Configure(entityManager);
+            childSystems.BuildingConstructionResourceTransactionSystemHelper.Reset();
             childSystems.BuildingGameplayDependencyCompositionSystemHelper.SetStartupDependencies(
                 null,
                 factionVisuals,

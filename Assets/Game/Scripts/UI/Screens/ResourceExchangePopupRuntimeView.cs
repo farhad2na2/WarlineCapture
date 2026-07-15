@@ -10,9 +10,12 @@ namespace Game.UI.Runtime
     [RequireComponent(typeof(ResourceExchangePopupView))]
     public sealed class ResourceExchangePopupRuntimeView : MonoBehaviour
     {
+        private static ResourceExchangePopupRuntimeView activeView;
+
         [SerializeField] private ResourceExchangePopupView view;
 
         private readonly List<ButtonBinding> _bindings = new();
+        private ResourceExchangePopupRuntimeView _previousActiveView;
         private uint _lastAppliedVersion;
         private bool _hasAppliedVersion;
 
@@ -26,20 +29,39 @@ namespace Game.UI.Runtime
 
         private void OnEnable()
         {
+            RemoveActiveView(this);
+            _previousActiveView = activeView;
+            activeView = this;
             WireButtons();
             RefreshNow(force: true);
         }
 
-        private void Update()
-        {
-            RefreshNow(force: false);
-        }
-
         private void OnDisable()
         {
+            RemoveActiveView(this);
+
             ClearBindings();
             _hasAppliedVersion = false;
             _lastAppliedVersion = 0;
+        }
+
+        internal static void RefreshActiveView()
+        {
+            while (!ReferenceEquals(activeView, null) &&
+                   (activeView == null || !activeView.isActiveAndEnabled))
+            {
+                ResourceExchangePopupRuntimeView stale = activeView;
+                activeView = stale._previousActiveView;
+                stale._previousActiveView = null;
+            }
+
+            if (!ReferenceEquals(activeView, null))
+                activeView.RefreshNow(force: false);
+        }
+
+        internal static bool IsActiveViewForTests(ResourceExchangePopupRuntimeView candidate)
+        {
+            return ReferenceEquals(activeView, candidate);
         }
 
         public void ConfigureForTests(ResourceExchangePopupView popupView)
@@ -126,6 +148,29 @@ namespace Game.UI.Runtime
             }
 
             _bindings.Clear();
+        }
+
+        private static void RemoveActiveView(ResourceExchangePopupRuntimeView target)
+        {
+            if (ReferenceEquals(activeView, target))
+            {
+                activeView = target._previousActiveView;
+                target._previousActiveView = null;
+                return;
+            }
+
+            ResourceExchangePopupRuntimeView current = activeView;
+            while (!ReferenceEquals(current, null))
+            {
+                if (ReferenceEquals(current._previousActiveView, target))
+                {
+                    current._previousActiveView = target._previousActiveView;
+                    target._previousActiveView = null;
+                    return;
+                }
+
+                current = current._previousActiveView;
+            }
         }
 
         private static void Enqueue(UiActionKind kind, int payloadId)

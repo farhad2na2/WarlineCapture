@@ -19,15 +19,13 @@ namespace Game.Composition
         private NarrativeSequenceView view;
         private NarrativeDialoguePresentationSystemHelper presentation;
         private NarrativePanelMotionPresentationSystemHelper panelMotion;
-        private FirstLaunchNarrativeInteractivePresentationSystemHelper interactivePresentation;
-        private readonly FirstLaunchNarrativePanelPresentationSystemHelper panelPresentation = new();
+        private FirstLaunchNarrativeInteractivePresentationSystemHelper interactive;
+        private readonly FirstLaunchNarrativePanelPresentationSystemHelper panels = new();
+        private readonly FirstLaunchNarrativePortraitVoiceSelectionPresentationSystemHelper portraitVoice = new();
         private IGameTextResolver textResolver = FallbackGameTextResolver.Instance;
         private UISettingsModel settings;
-        private NarrativeCompletionPayload routeCompletionOverride;
-        private bool hasRouteCompletionOverride;
-        private int commanderPortraitIndex = NeutralCommanderPortraitIndex;
-        private Sprite commanderPortrait;
-        private const int NeutralCommanderPortraitIndex = 6;
+        private NarrativeCompletionPayload completionOverride;
+        private bool hasCompletionOverride;
         public event Action<NarrativeStateRecord> InteractiveStateRequested;
         public event Action<NarrativeCommanderIdentityData, int> CommanderIdentityCommitted;
         public event Action<NarrativeGuidanceMode> GuidanceCommitted;
@@ -41,9 +39,9 @@ namespace Game.Composition
         public int CurrentStateIndex => sequenceRuntime.CurrentStateIndex;
         public bool ReducedMotionEnabled => settings.Accessibility.ReducedMotion;
         public bool SubtitlesEnabled => settings.Narrative.SubtitlesEnabled;
-        internal int ResidentPanelAssetCount => panelPresentation.ResidentAssetCount;
-        internal string CurrentPanelAssetKey => panelPresentation.CurrentKey;
-        internal string NextPanelAssetKey => panelPresentation.NextKey;
+        internal int ResidentPanelAssetCount => panels.ResidentAssetCount;
+        internal string CurrentPanelAssetKey => panels.CurrentKey;
+        internal string NextPanelAssetKey => panels.NextKey;
         public bool Initialize(
             NarrativeSequenceConfig sequenceConfig,
             NarrativeSpeakerCatalog speakerCatalog,
@@ -58,8 +56,7 @@ namespace Game.Composition
             view = sequenceView;
             textResolver = resolver ?? FallbackGameTextResolver.Instance;
             settings = runtimeSettings;
-            commanderPortraitIndex = NeutralCommanderPortraitIndex;
-            commanderPortrait = null;
+            portraitVoice.Reset(view?.CommanderIdentityView);
             states.Clear();
             speakers.Clear();
             sequenceRuntime.Output -= HandleSequenceOutput;
@@ -95,17 +92,17 @@ namespace Game.Composition
 
             presentation = new NarrativeDialoguePresentationSystemHelper(view);
             panelMotion = new NarrativePanelMotionPresentationSystemHelper(view.PanelMotionRoot);
-            interactivePresentation = new FirstLaunchNarrativeInteractivePresentationSystemHelper(
+            interactive = new FirstLaunchNarrativeInteractivePresentationSystemHelper(
                 view.CommanderIdentityView,
                 view.GuidanceChoiceView);
-            panelPresentation.Initialize(view, states);
+            panels.Initialize(view, states);
             sequenceRuntime.Output += HandleSequenceOutput;
             return true;
         }
 
         public bool Start()
         {
-            hasRouteCompletionOverride = false;
+            hasCompletionOverride = false;
             BindViewIntents();
             return sequenceRuntime.Apply(new FirstLaunchNarrativeSequenceIntent(
                 FirstLaunchNarrativeSequenceIntentKind.Start));
@@ -113,14 +110,14 @@ namespace Game.Composition
 
         public bool StartAt(string stateId)
         {
-            hasRouteCompletionOverride = false;
+            hasCompletionOverride = false;
             return StartAtInternal(stateId);
         }
 
         public bool StartAt(string stateId, in NarrativeCompletionPayload completionOverride)
         {
-            routeCompletionOverride = completionOverride;
-            hasRouteCompletionOverride = true;
+            this.completionOverride = completionOverride;
+            hasCompletionOverride = true;
             return StartAtInternal(stateId);
         }
 
@@ -132,7 +129,7 @@ namespace Game.Composition
                 stateId));
             if (!started)
             {
-                hasRouteCompletionOverride = false;
+                hasCompletionOverride = false;
                 return false;
             }
             return true;
@@ -182,28 +179,28 @@ namespace Game.Composition
 
         public bool Restart()
         {
-            hasRouteCompletionOverride = false;
+            hasCompletionOverride = false;
             return sequenceRuntime.Apply(new FirstLaunchNarrativeSequenceIntent(
                 FirstLaunchNarrativeSequenceIntentKind.Restart));
         }
 
         public bool PreviousState()
         {
-            hasRouteCompletionOverride = false;
+            hasCompletionOverride = false;
             return sequenceRuntime.Apply(new FirstLaunchNarrativeSequenceIntent(
                 FirstLaunchNarrativeSequenceIntentKind.PreviousState));
         }
 
         public bool NextState()
         {
-            hasRouteCompletionOverride = false;
+            hasCompletionOverride = false;
             return sequenceRuntime.Apply(new FirstLaunchNarrativeSequenceIntent(
                 FirstLaunchNarrativeSequenceIntentKind.NextState));
         }
 
         public bool SeekNormalized(float normalizedPosition)
         {
-            hasRouteCompletionOverride = false;
+            hasCompletionOverride = false;
             return sequenceRuntime.Apply(new FirstLaunchNarrativeSequenceIntent(
                 FirstLaunchNarrativeSequenceIntentKind.Seek,
                 value: normalizedPosition));
@@ -234,7 +231,7 @@ namespace Game.Composition
             sequenceRuntime.Apply(new FirstLaunchNarrativeSequenceIntent(
                 FirstLaunchNarrativeSequenceIntentKind.Cancel));
             ClearPresentation();
-            hasRouteCompletionOverride = false;
+            hasCompletionOverride = false;
         }
 
         private void ClearPresentation()
@@ -250,8 +247,8 @@ namespace Game.Composition
             }
             presentation?.Cancel();
             panelMotion?.Cancel();
-            interactivePresentation?.Unbind();
-            panelPresentation.Clear();
+            interactive?.Unbind();
+            panels.Clear();
         }
 
         private void PresentState(NarrativeStateRecord state, ulong transitionToken)
@@ -262,7 +259,7 @@ namespace Game.Composition
             view.SetInteractiveState(NarrativeInteractiveStateKind.None);
             view.ApplyLocation(FirstLaunchNarrativeModelUtilitySystemHelper.CreateLocation(state, textResolver));
             FirstLaunchNarrativeAudioPresentationSystemHelper.EnterState(view, settings, state);
-            panelPresentation.Present(state, transitionToken);
+            panels.Present(state, transitionToken);
 
             if (state.Kind == NarrativeStateKind.PanelDialogue)
             {
@@ -277,7 +274,7 @@ namespace Game.Composition
                 view.SetInteractiveState(state.Kind == NarrativeStateKind.InteractiveIdentity
                     ? NarrativeInteractiveStateKind.CommanderIdentity
                     : NarrativeInteractiveStateKind.GuidanceChoice);
-                interactivePresentation?.Enter(config.SequenceId, state.StateId, transitionToken);
+                interactive?.Enter(config.SequenceId, state.StateId, transitionToken);
                 InteractiveStateRequested?.Invoke(state);
             }
         }
@@ -299,16 +296,14 @@ namespace Game.Composition
                 DisplayName = textResolver.Get(speaker.NameKey, speaker.NameFallback),
                 Role = textResolver.Get(speaker.RoleKey, speaker.RoleFallback),
                 AccessibleLabel = textResolver.Get(speaker.AccessibleLabelKey, speaker.AccessibleLabelFallback),
-                IdentitySprite = line.Speaker == NarrativeSpeakerId.Commander && commanderPortrait != null
-                    ? commanderPortrait
-                    : speaker.IdentitySprite,
+                IdentitySprite = portraitVoice.ResolvePortrait(line, speaker),
                 AccentColor = speaker.AccentColor,
                 Treatment = speaker.Treatment
             };
             presentation.StartDialogue(
                 resolvedText,
                 speakerModel,
-                ResolveVoiceClip(line),
+                portraitVoice.ResolveVoiceClip(line),
                 Mathf.Max(0.1f, line.DeadlineSeconds - line.StartSeconds),
                 NarrativePunctuationUtilitySystemHelper.From(punctuation),
                 settings);
@@ -332,56 +327,32 @@ namespace Game.Composition
                 return;
             if (action.Kind == NarrativeUiActionKind.CommitCommanderIdentity && view.CommanderIdentityView != null)
             {
-                CaptureCommanderSelection(interactivePresentation.SelectedPortraitIndex);
+                portraitVoice.Capture(interactive.SelectedPortraitIndex);
                 CommanderIdentityCommitted?.Invoke(
-                    interactivePresentation.SelectedIdentity,
-                    interactivePresentation.SelectedPortraitIndex);
+                    interactive.SelectedIdentity,
+                    interactive.SelectedPortraitIndex);
                 sequenceRuntime.Apply(CurrentIntent(
                     FirstLaunchNarrativeSequenceIntentKind.CommitInteractive));
             }
             else if (action.Kind == NarrativeUiActionKind.CommitGuidance && view.GuidanceChoiceView != null)
             {
-                GuidanceCommitted?.Invoke(interactivePresentation.SelectedGuidance);
+                GuidanceCommitted?.Invoke(interactive.SelectedGuidance);
                 sequenceRuntime.Apply(CurrentIntent(
                     FirstLaunchNarrativeSequenceIntentKind.CommitInteractive));
             }
         }
 
-        public void ApplyCommanderIdentity(in NarrativeCommanderIdentityData identity, int portraitIndex)
-        {
-            interactivePresentation?.ApplyCommanderIdentity(identity, portraitIndex);
-            CaptureCommanderSelection(portraitIndex);
-        }
+        public void ApplyCommanderIdentity(in NarrativeCommanderIdentityData identity, int portraitIndex) =>
+            portraitVoice.Apply(interactive, identity, portraitIndex);
 
-        private void CaptureCommanderSelection(int portraitIndex)
-        {
-            commanderPortraitIndex = portraitIndex;
-            commanderPortrait = view?.CommanderIdentityView?.SelectedPortrait;
-        }
-
-        private AudioClip ResolveVoiceClip(NarrativeDialogueLineRecord line)
-        {
-            if (line.Speaker != NarrativeSpeakerId.Commander)
-                return line.VoiceClip;
-
-            return commanderPortraitIndex switch
-            {
-                0 or 2 or 5 => line.FemaleVoiceClip != null ? line.FemaleVoiceClip : line.VoiceClip,
-                NeutralCommanderPortraitIndex => line.NeutralVoiceClip != null ? line.NeutralVoiceClip : line.VoiceClip,
-                _ => line.VoiceClip
-            };
-        }
-
-        public void ApplyGuidance(NarrativeGuidanceMode guidance)
-        {
-            interactivePresentation?.ApplyGuidance(guidance);
-        }
+        public void ApplyGuidance(NarrativeGuidanceMode guidance) =>
+            interactive?.ApplyGuidance(guidance);
 
         private void BindViewIntents()
         {
             view?.DialogueView?.BindInput(HandleDialogueInput);
             view?.PlaybackControlsView?.BindSkip(HandleSkip);
-            interactivePresentation?.Bind(HandleInteractiveUiAction);
+            interactive?.Bind(HandleInteractiveUiAction);
         }
 
         private void HandleSequenceOutput(FirstLaunchNarrativeSequenceOutput output)
@@ -399,7 +370,7 @@ namespace Game.Composition
                     if (state.Kind != NarrativeStateKind.RouteHandoff &&
                         state.Kind != NarrativeStateKind.RouteArrival)
                     {
-                        hasRouteCompletionOverride = false;
+                        hasCompletionOverride = false;
                     }
                     PresentState(state, output.TransitionToken);
                     view.SetVisible(true);
@@ -424,10 +395,10 @@ namespace Game.Composition
 
         private void EmitHandoff(NarrativeStateRecord state, ulong transitionToken)
         {
-            NarrativeCompletionPayload completion = hasRouteCompletionOverride
-                ? routeCompletionOverride
+            NarrativeCompletionPayload completion = hasCompletionOverride
+                ? completionOverride
                 : CreateRouteCompletion(state, false);
-            hasRouteCompletionOverride = false;
+            hasCompletionOverride = false;
             HandoffRequested?.Invoke(new NarrativeHandoffResult
             {
                 DestinationId = state.StateId,

@@ -8,7 +8,7 @@ public static class FieldFabricationCloseoutValidationRunner
     {
         try
         {
-            RunSuite(MaterialsScenarioRecoveryValidationSystemHelperTests.RunFocusedValidation);
+            RunSuite(MaterialsScenarioRecoveryStartupSystemHelperTests.RunFocusedValidation);
             RunSuite(MaterialFabricationSystemTests.RunFocusedValidation);
             RunSuite(BuildingResourceProductionEcsSystemTests.RunFocusedValidation);
             RunSuite(BuildingMaterialsCostConfigProjectionTests.RunFocusedValidation);

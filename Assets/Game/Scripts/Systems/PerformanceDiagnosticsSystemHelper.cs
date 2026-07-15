@@ -233,7 +233,7 @@ namespace Game.Runtime
             int impostorCount,
             bool gameplayInitialized,
             bool playRequested,
-            bool simulationActive)
+            bool simulationActive, Camera camera)
         {
             double now = UnityEngine.Time.realtimeSinceStartupAsDouble;
             double totalSeconds = now - _frameStartTimestamp;
@@ -255,7 +255,7 @@ namespace Game.Runtime
             }
 
             LogSlowUpdateDiagnosticsIfNeeded(gameplayActive, totalSeconds, now, gameplayInitialized, playRequested, simulationActive);
-            UpdateFrameRateDiagnostics(gameplayActive, now, impostorCount, playRequested, simulationActive);
+            UpdateFrameRateDiagnostics(gameplayActive, now, impostorCount, playRequested, simulationActive, camera);
             CaptureGcCounts();
         }
 
@@ -572,7 +572,7 @@ namespace Game.Runtime
             _markerRecorders.Clear();
         }
 
-        private void UpdateFrameRateDiagnostics(bool gameplayActive, double now, int impostorCount, bool playRequested, bool simulationActive)
+        private void UpdateFrameRateDiagnostics(bool gameplayActive, double now, int impostorCount, bool playRequested, bool simulationActive, Camera camera)
         {
             if (!_enableFrameRateDiagnostics)
                 return;
@@ -620,7 +620,7 @@ namespace Game.Runtime
                     $"drawCalls={ReadProfilerRecorder(_drawCallsRecorder)} batches={ReadProfilerRecorder(_batchesRecorder)} " +
                     $"setPass={ReadProfilerRecorder(_setPassCallsRecorder)} tris={ReadProfilerRecorder(_trianglesRecorder)} verts={ReadProfilerRecorder(_verticesRecorder)} " +
                     $"units={units} models={modelInstances} sourceKeys={sourceKeys} sourceKeyFallbackVisuals={sourceKeyFallbackVisuals} initialSpawnConfigs={initialSpawnConfigs} impostors={impostorCount} " +
-                    $"render={BuildRenderQualityDiagString()} " +
+                    $"render={BuildRenderQualityDiagString(camera)} " +
                     $"memory={BuildMemoryDiagString()} focused={(Application.isFocused ? 1 : 0)} playRequested={(playRequested ? 1 : 0)} simulationActive={(simulationActive ? 1 : 0)}{preGameDetails} " +
                     $"stepStats={BuildStepStatsString()} topSystems={BuildTopSystemProfilerMarkerString()} markers={BuildProfilerMarkerDiagString()}");
                 LogRenderSceneBreakdownIfNeeded(now, averageFps);
@@ -652,7 +652,7 @@ namespace Game.Runtime
             return recorder.Valid ? recorder.LastValue : -1L;
         }
 
-        private static string BuildRenderQualityDiagString()
+        private static string BuildRenderQualityDiagString(Camera camera)
         {
             string pipelineName = QualitySettings.renderPipeline != null
                 ? QualitySettings.renderPipeline.name
@@ -660,12 +660,11 @@ namespace Game.Runtime
             float renderScale = QualitySettings.renderPipeline is UniversalRenderPipelineAsset urpAsset
                 ? urpAsset.renderScale
                 : -1f;
-            Camera camera = Camera.main;
-            string cameraName = camera != null ? camera.name : "null";
-            string cameraData = "none";
+            string name = camera != null ? camera.name : "null";
+            string data = "none";
             if (camera != null && camera.TryGetComponent(out UniversalAdditionalCameraData additionalCameraData))
             {
-                cameraData =
+                data =
                     $"post:{(additionalCameraData.renderPostProcessing ? 1 : 0)},aa:{additionalCameraData.antialiasing},stack:{additionalCameraData.cameraStack.Count}";
             }
 
@@ -675,7 +674,7 @@ namespace Game.Runtime
                 : "unknown";
 
             return
-                $"screen={Screen.width}x{Screen.height},batch={(Application.isBatchMode ? 1 : 0)},quality={qualityIndex}:{qualityName},vSync={QualitySettings.vSyncCount},targetFps={Application.targetFrameRate},pipeline={pipelineName},scale={renderScale:F2},msaa={QualitySettings.antiAliasing},camera={cameraName},cameraData={cameraData}";
+                $"screen={Screen.width}x{Screen.height},batch={(Application.isBatchMode ? 1 : 0)},quality={qualityIndex}:{qualityName},vSync={QualitySettings.vSyncCount},targetFps={Application.targetFrameRate},pipeline={pipelineName},scale={renderScale:F2},msaa={QualitySettings.antiAliasing},camera={name},cameraData={data}";
         }
 
         private void GetRuntimeVisualCounts(

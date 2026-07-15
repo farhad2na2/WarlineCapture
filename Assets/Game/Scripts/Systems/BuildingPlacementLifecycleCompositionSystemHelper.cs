@@ -155,11 +155,10 @@ namespace Game.Runtime
         public int ActivePlacementCost => Mathf.Max(0, ActivePlacement?.Definition?.CreditsCost ?? 0);
         public bool HasPendingBuildingPlacement => ActivePlacement != null;
         public bool CanConfirmBuildingPlacement => ActivePlacement != null && ActivePlacement.IsValid;
-        private int _nextLocalTransactionId;
+        private readonly BuildingPlacementConstructionTransaction _transaction = new();
 
         public void SetActivePlacementCost(int cost)
         {
-            // Compatibility entry point for legacy UI callers. Authored definition costs are authoritative.
         }
 
         public void NotifyPlacementUiPointerDown(BuildingPlacementInputUiSystemHelper inputSystem)
@@ -208,87 +207,17 @@ namespace Game.Runtime
                 context.FocusPlacement?.Invoke(ActivePlacement);
         }
 
-        public bool Confirm(ConfirmContext context)
-        {
-            return Confirm(NextLocalTransactionId(), context, out _);
-        }
+        public bool Confirm(ConfirmContext context) =>
+            _transaction.Confirm(ActivePlacement, context, out _);
 
-        public bool Confirm(ConfirmContext context, out ConfirmFailureReason failureReason)
-        {
-            return Confirm(NextLocalTransactionId(), context, out failureReason);
-        }
+        public bool Confirm(ConfirmContext context, out ConfirmFailureReason failureReason) =>
+            _transaction.Confirm(ActivePlacement, context, out failureReason);
 
         public bool Confirm(
             int transactionId,
             ConfirmContext context,
             out ConfirmFailureReason failureReason)
-        {
-            PlacementState placement = ActivePlacement;
-            if (placement == null)
-            {
-                failureReason = ConfirmFailureReason.MissingActivePlacement;
-                return false;
-            }
-
-            if (!placement.IsValid)
-            {
-                failureReason = ConfirmFailureReason.BlockedPlacement;
-                return false;
-            }
-
-            if (context.ValidateConfirm != null && !context.ValidateConfirm(placement))
-            {
-                failureReason = ConfirmFailureReason.InvalidPlacement;
-                return false;
-            }
-
-            int creditsCost = Mathf.Max(0, placement.Definition?.CreditsCost ?? 0);
-            int materialsCost = Mathf.Max(0, placement.Definition?.MaterialsCost ?? 0);
-            if (context.TryReserveCost == null)
-            {
-                failureReason = ConfirmFailureReason.TransactionRejected;
-                return false;
-            }
-
-            FactionConstructionResourceMutationResult reserveResult =
-                context.TryReserveCost(transactionId, creditsCost, materialsCost);
-            if (reserveResult != FactionConstructionResourceMutationResult.Applied)
-            {
-                failureReason = ToConfirmFailureReason(reserveResult);
-                return false;
-            }
-
-            placement.OriginCell = placement.CommittedOriginCell;
-            BuildingPlacementCommitCompositionSystemHelper.CommitOutcome commitOutcome =
-                context.CommitPlacement != null ? context.CommitPlacement(placement) : default;
-            if (!commitOutcome.FullyCommitted)
-            {
-                if (commitOutcome.PlacementCommitted)
-                {
-                    failureReason = context.FinalizeCost != null &&
-                                    context.FinalizeCost(transactionId) == FactionConstructionResourceMutationResult.Applied
-                        ? ConfirmFailureReason.RegistrationFailed
-                        : ConfirmFailureReason.TransactionRejected;
-                    return false;
-                }
-
-                failureReason = context.RollbackCost != null &&
-                                context.RollbackCost(transactionId) == FactionConstructionResourceMutationResult.Applied
-                    ? ConfirmFailureReason.RegistrationFailed
-                    : ConfirmFailureReason.TransactionRejected;
-                return false;
-            }
-
-            if (context.FinalizeCost == null ||
-                context.FinalizeCost(transactionId) != FactionConstructionResourceMutationResult.Applied)
-            {
-                failureReason = ConfirmFailureReason.TransactionRejected;
-                return false;
-            }
-
-            failureReason = ConfirmFailureReason.None;
-            return true;
-        }
+            => _transaction.Confirm(ActivePlacement, transactionId, context, out failureReason);
 
         public bool Rotate(RotateContext context)
         {
@@ -317,24 +246,5 @@ namespace Game.Runtime
             context.PreviewSystem?.HideOutline();
         }
 
-        private int NextLocalTransactionId()
-        {
-            if (_nextLocalTransactionId == int.MaxValue)
-                _nextLocalTransactionId = 0;
-            return ++_nextLocalTransactionId;
-        }
-
-        private static ConfirmFailureReason ToConfirmFailureReason(
-            FactionConstructionResourceMutationResult result)
-        {
-            return result switch
-            {
-                FactionConstructionResourceMutationResult.InsufficientCredits => ConfirmFailureReason.InsufficientCredits,
-                FactionConstructionResourceMutationResult.InsufficientMaterials => ConfirmFailureReason.InsufficientMaterials,
-                FactionConstructionResourceMutationResult.InsufficientCreditsAndMaterials => ConfirmFailureReason.InsufficientCreditsAndMaterials,
-                FactionConstructionResourceMutationResult.DuplicateTransaction => ConfirmFailureReason.DuplicateTransaction,
-                _ => ConfirmFailureReason.TransactionRejected
-            };
-        }
     }
 }

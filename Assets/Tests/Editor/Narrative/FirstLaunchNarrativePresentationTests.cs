@@ -241,7 +241,10 @@ public sealed class FirstLaunchNarrativePresentationTests
         Assert.AreNotSame(prefab.GetComponent<NarrativeSequenceView>().VoiceSource, audio.AmbienceSource);
         Assert.AreNotSame(prefab.GetComponent<NarrativeSequenceView>().VoiceSource, audio.VehicleSource);
         Assert.AreNotSame(prefab.GetComponent<NarrativeSequenceView>().VoiceSource, audio.EventSource);
-        Assert.IsNull(audio.RadioCue, "Background/event layers must not contain generated dispatch speech beside narration.");
+        Assert.AreEqual(
+            "first_launch_radio_emergency_event_01",
+            audio.RadioCue.name,
+            "The authored emergency dispatch cue must remain separate from narration voice playback.");
 
         audio.ApplyVolumes(0.2f, 0.3f, 0.1f, 0.4f);
         audio.ApplyClips(audio.BriefingMusic, audio.CityDayAmbience, null, null);

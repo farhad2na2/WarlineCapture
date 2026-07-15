@@ -3,15 +3,15 @@
   "taskId": "APH-700",
   "scope": "Direct dependencies and source-level cross-domain type references for first-party asmdefs under Assets/Game, Assets/Tests, and Assets/Editor.",
   "determinismContract": "No timestamp or mutable VCS state; ordinal path ordering, normalized LF output, and a content-derived source fingerprint.",
-  "sourceFingerprintSha256": "fd3f129de6b278bca4ebdee1d8404dcd11a23f8d4b7ea8a6d9504ac19784d306",
+  "sourceFingerprintSha256": "e2ccb0d2f8d4f39eb57649f9074c5bca109800613e6a958ef0c6bb5c2f3d304d",
   "summary": {
     "assemblyCount": 21,
     "firstPartyEdgeCount": 92,
     "externalReferenceCount": 100,
-    "sourceFileCount": 1332,
-    "declaredTypeCount": 2722,
-    "resolvedCrossDomainTypeOccurrenceCount": 33426,
-    "distinctCrossDomainTypeReferenceCount": 2922,
+    "sourceFileCount": 1340,
+    "declaredTypeCount": 2731,
+    "resolvedCrossDomainTypeOccurrenceCount": 33509,
+    "distinctCrossDomainTypeReferenceCount": 2925,
     "ambiguousTypeTokenOccurrenceCount": 66,
     "unownedScopedSourceFileCount": 0
   },
@@ -47,8 +47,8 @@
       "name": "Game.Composition",
       "asmdefPath": "Assets/Game/Scripts/Composition/Game.Composition.asmdef",
       "asmdefGuid": "b737596b8d3047aba94b5d61f3fce5cb",
-      "sourceFileCount": 44,
-      "declaredTypeCount": 54,
+      "sourceFileCount": 45,
+      "declaredTypeCount": 55,
       "firstPartyDependencyCount": 14,
       "externalDependencyCount": 10
     },
@@ -65,8 +65,8 @@
       "name": "Game.Editor",
       "asmdefPath": "Assets/Game/Scripts/Editor/Game.Editor.asmdef",
       "asmdefGuid": "f904b4f32c8634430b43f82380f2405f",
-      "sourceFileCount": 100,
-      "declaredTypeCount": 137,
+      "sourceFileCount": 102,
+      "declaredTypeCount": 139,
       "firstPartyDependencyCount": 15,
       "externalDependencyCount": 13
     },
@@ -110,8 +110,8 @@
       "name": "Game.Runtime",
       "asmdefPath": "Assets/Game/Scripts/Game.Runtime.asmdef",
       "asmdefGuid": "361d0433287ed4a42bf3fd161956446a",
-      "sourceFileCount": 515,
-      "declaredTypeCount": 1102,
+      "sourceFileCount": 518,
+      "declaredTypeCount": 1105,
       "firstPartyDependencyCount": 7,
       "externalDependencyCount": 11
     },
@@ -165,7 +165,7 @@
       "asmdefPath": "Assets/Game/Scripts/UI/Contracts/Game.UI.Contracts.asmdef",
       "asmdefGuid": "3a7cc43f5e5f4cb3ad4e8c07ec142741",
       "sourceFileCount": 21,
-      "declaredTypeCount": 116,
+      "declaredTypeCount": 117,
       "firstPartyDependencyCount": 1,
       "externalDependencyCount": 0
     },
@@ -191,8 +191,8 @@
       "name": "Game.UI.Shell.Ecs",
       "asmdefPath": "Assets/Game/Scripts/UI/Shell/Ecs/Game.UI.Shell.Ecs.asmdef",
       "asmdefGuid": "7fd1b0c6978e4c088f6be3617b2cb9f4",
-      "sourceFileCount": 41,
-      "declaredTypeCount": 33,
+      "sourceFileCount": 43,
+      "declaredTypeCount": 35,
       "firstPartyDependencyCount": 8,
       "externalDependencyCount": 5
     },
@@ -698,9 +698,9 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Composition/Game.Composition.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Configs/Game.Configs.asmdef",
       "declaredReference": "Game.Configs",
-      "resolvedTypeOccurrenceCount": 154,
+      "resolvedTypeOccurrenceCount": 156,
       "distinctResolvedTypeCount": 46,
-      "referencingSourceFileCount": 14,
+      "referencingSourceFileCount": 15,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Composition",
@@ -843,9 +843,9 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Composition/Game.Composition.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Narrative/Contracts/Game.Narrative.Contracts.asmdef",
       "declaredReference": "Game.Narrative.Contracts",
-      "resolvedTypeOccurrenceCount": 38,
+      "resolvedTypeOccurrenceCount": 39,
       "distinctResolvedTypeCount": 6,
-      "referencingSourceFileCount": 6,
+      "referencingSourceFileCount": 7,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Composition",
@@ -880,11 +880,12 @@
           "targetAssembly": "Game.Narrative.Contracts",
           "fullTypeName": "Game.Narrative.Contracts.NarrativeCommanderIdentityData",
           "typeName": "NarrativeCommanderIdentityData",
-          "occurrenceCount": 7,
-          "sourceFileCount": 4,
+          "occurrenceCount": 8,
+          "sourceFileCount": 5,
           "sourceFiles": [
             "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs",
             "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeInteractivePresentationSystemHelper.cs",
+            "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativePortraitVoiceSelectionPresentationSystemHelper.cs",
             "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeProfileCompositionSystemHelper.cs",
             "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeSequencePresentationSystemHelper.cs"
           ]
@@ -936,7 +937,7 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Composition/Game.Composition.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Narrative/Runtime/Game.Narrative.Runtime.asmdef",
       "declaredReference": "Game.Narrative.Runtime",
-      "resolvedTypeOccurrenceCount": 22,
+      "resolvedTypeOccurrenceCount": 21,
       "distinctResolvedTypeCount": 6,
       "referencingSourceFileCount": 2,
       "topTypeReferences": [
@@ -945,7 +946,7 @@
           "targetAssembly": "Game.Narrative.Runtime",
           "fullTypeName": "Game.Narrative.Runtime.FirstLaunchNarrativeSequenceIntent",
           "typeName": "FirstLaunchNarrativeSequenceIntent",
-          "occurrenceCount": 14,
+          "occurrenceCount": 12,
           "sourceFileCount": 1,
           "sourceFiles": [
             "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeSequencePresentationSystemHelper.cs"
@@ -965,8 +966,8 @@
         {
           "sourceAssembly": "Game.Composition",
           "targetAssembly": "Game.Narrative.Runtime",
-          "fullTypeName": "Game.Narrative.Runtime.FirstLaunchNarrativeSequenceStateDefinition",
-          "typeName": "FirstLaunchNarrativeSequenceStateDefinition",
+          "fullTypeName": "Game.Narrative.Runtime.FirstLaunchNarrativeSequenceIntentKind",
+          "typeName": "FirstLaunchNarrativeSequenceIntentKind",
           "occurrenceCount": 2,
           "sourceFileCount": 1,
           "sourceFiles": [
@@ -976,9 +977,9 @@
         {
           "sourceAssembly": "Game.Composition",
           "targetAssembly": "Game.Narrative.Runtime",
-          "fullTypeName": "Game.Narrative.Runtime.FirstLaunchNarrativeSequenceIntentKind",
-          "typeName": "FirstLaunchNarrativeSequenceIntentKind",
-          "occurrenceCount": 1,
+          "fullTypeName": "Game.Narrative.Runtime.FirstLaunchNarrativeSequenceStateDefinition",
+          "typeName": "FirstLaunchNarrativeSequenceStateDefinition",
+          "occurrenceCount": 2,
           "sourceFileCount": 1,
           "sourceFiles": [
             "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeSequencePresentationSystemHelper.cs"
@@ -1439,9 +1440,9 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Composition/Game.Composition.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/UI/Game.UI.Runtime.asmdef",
       "declaredReference": "Game.UI.Runtime",
-      "resolvedTypeOccurrenceCount": 71,
+      "resolvedTypeOccurrenceCount": 73,
       "distinctResolvedTypeCount": 22,
-      "referencingSourceFileCount": 13,
+      "referencingSourceFileCount": 14,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Composition",
@@ -1500,6 +1501,18 @@
         {
           "sourceAssembly": "Game.Composition",
           "targetAssembly": "Game.UI.Runtime",
+          "fullTypeName": "Game.UI.Runtime.NarrativeCommanderIdentityView",
+          "typeName": "NarrativeCommanderIdentityView",
+          "occurrenceCount": 4,
+          "sourceFileCount": 2,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeInteractivePresentationSystemHelper.cs",
+            "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativePortraitVoiceSelectionPresentationSystemHelper.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Composition",
+          "targetAssembly": "Game.UI.Runtime",
           "fullTypeName": "Game.UI.Runtime.NarrativeSequenceAudioView",
           "typeName": "NarrativeSequenceAudioView",
           "occurrenceCount": 4,
@@ -1551,17 +1564,6 @@
           "sourceFiles": [
             "Assets/Game/Scripts/Composition/MenuBootstrapView.cs"
           ]
-        },
-        {
-          "sourceAssembly": "Game.Composition",
-          "targetAssembly": "Game.UI.Runtime",
-          "fullTypeName": "Game.UI.Runtime.NarrativeCommanderIdentityView",
-          "typeName": "NarrativeCommanderIdentityView",
-          "occurrenceCount": 2,
-          "sourceFileCount": 1,
-          "sourceFiles": [
-            "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeInteractivePresentationSystemHelper.cs"
-          ]
         }
       ]
     },
@@ -1571,7 +1573,7 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Composition/Game.Composition.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/UI/Shell/Ecs/Contracts/Game.UI.Shell.Contracts.Ecs.asmdef",
       "declaredReference": "Game.UI.Shell.Contracts.Ecs",
-      "resolvedTypeOccurrenceCount": 53,
+      "resolvedTypeOccurrenceCount": 50,
       "distinctResolvedTypeCount": 12,
       "referencingSourceFileCount": 4,
       "topTypeReferences": [
@@ -1585,18 +1587,6 @@
           "sourceFiles": [
             "Assets/Game/Scripts/Composition/MatchIntroEcsStateQuery.cs",
             "Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Composition",
-          "targetAssembly": "Game.UI.Shell.Contracts.Ecs",
-          "fullTypeName": "Game.UI.Shell.Contracts.Ecs.UiShellRouteRequestComponent",
-          "typeName": "UiShellRouteRequestComponent",
-          "occurrenceCount": 8,
-          "sourceFileCount": 2,
-          "sourceFiles": [
-            "Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs",
-            "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeShellCompositionSystemHelper.cs"
           ]
         },
         {
@@ -1621,6 +1611,17 @@
           "sourceFiles": [
             "Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs",
             "Assets/Game/Scripts/Composition/MenuBootstrapLoadingUtilities.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Composition",
+          "targetAssembly": "Game.UI.Shell.Contracts.Ecs",
+          "fullTypeName": "Game.UI.Shell.Contracts.Ecs.UiShellRouteRequestComponent",
+          "typeName": "UiShellRouteRequestComponent",
+          "occurrenceCount": 5,
+          "sourceFileCount": 1,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs"
           ]
         },
         {
@@ -3479,9 +3480,9 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Game.Runtime.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Components/Game.Components.asmdef",
       "declaredReference": "Game.Components",
-      "resolvedTypeOccurrenceCount": 10413,
+      "resolvedTypeOccurrenceCount": 10417,
       "distinctResolvedTypeCount": 417,
-      "referencingSourceFileCount": 353,
+      "referencingSourceFileCount": 355,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Runtime",
@@ -3511,7 +3512,7 @@
           "occurrenceCount": 382,
           "sourceFileCount": 87,
           "sourceFiles": [
-            "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs",
+            "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs",
             "Assets/Game/Scripts/Environment/RuntimeGridBlockerPresentationSystemHelper.cs",
             "Assets/Game/Scripts/ScenarioLab/BattleScenarioDr001Runner.cs",
             "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
@@ -3531,7 +3532,7 @@
           "occurrenceCount": 321,
           "sourceFileCount": 74,
           "sourceFiles": [
-            "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs",
+            "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs",
             "Assets/Game/Scripts/ScenarioLab/BattleScenarioDr001Runner.cs",
             "Assets/Game/Scripts/ScenarioLab/BattleScenarioEcsSpawnHelpers.cs",
             "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
@@ -3551,7 +3552,7 @@
           "occurrenceCount": 277,
           "sourceFileCount": 64,
           "sourceFiles": [
-            "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs",
+            "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs",
             "Assets/Game/Scripts/ScenarioLab/BattleScenarioAd002Runner.cs",
             "Assets/Game/Scripts/ScenarioLab/BattleScenarioAd003Runner.cs",
             "Assets/Game/Scripts/ScenarioLab/BattleScenarioAd008Runner.cs",
@@ -3691,9 +3692,9 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Game.Runtime.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Configs/Game.Configs.asmdef",
       "declaredReference": "Game.Configs",
-      "resolvedTypeOccurrenceCount": 241,
+      "resolvedTypeOccurrenceCount": 243,
       "distinctResolvedTypeCount": 54,
-      "referencingSourceFileCount": 42,
+      "referencingSourceFileCount": 44,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Runtime",
@@ -3726,11 +3727,13 @@
           "targetAssembly": "Game.Configs",
           "fullTypeName": "Game.Configs.AudioEventCatalogEntry",
           "typeName": "AudioEventCatalogEntry",
-          "occurrenceCount": 16,
-          "sourceFileCount": 2,
+          "occurrenceCount": 17,
+          "sourceFileCount": 4,
           "sourceFiles": [
             "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs",
-            "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationSystemHelper.cs"
+            "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs",
+            "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationSystemHelper.cs",
+            "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackSourceConfiguration.cs"
           ]
         },
         {
@@ -3749,24 +3752,25 @@
         {
           "sourceAssembly": "Game.Runtime",
           "targetAssembly": "Game.Configs",
+          "fullTypeName": "Game.Configs.AudioMixerBusEntry",
+          "typeName": "AudioMixerBusEntry",
+          "occurrenceCount": 11,
+          "sourceFileCount": 3,
+          "sourceFiles": [
+            "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs",
+            "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationSystemHelper.cs",
+            "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackSourceConfiguration.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Runtime",
+          "targetAssembly": "Game.Configs",
           "fullTypeName": "Game.Configs.UnitAnimationKind",
           "typeName": "UnitAnimationKind",
           "occurrenceCount": 11,
           "sourceFileCount": 1,
           "sourceFiles": [
             "Assets/Game/Scripts/Systems/UnitAnimationIndexSystem.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Runtime",
-          "targetAssembly": "Game.Configs",
-          "fullTypeName": "Game.Configs.AudioMixerBusEntry",
-          "typeName": "AudioMixerBusEntry",
-          "occurrenceCount": 10,
-          "sourceFileCount": 2,
-          "sourceFiles": [
-            "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs",
-            "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationSystemHelper.cs"
           ]
         },
         {
@@ -4430,7 +4434,7 @@
       "sourceAsmdefPath": "Assets/Tests/Editor/Game.Tests.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Components/Game.Components.asmdef",
       "declaredReference": "Game.Components",
-      "resolvedTypeOccurrenceCount": 10292,
+      "resolvedTypeOccurrenceCount": 10333,
       "distinctResolvedTypeCount": 383,
       "referencingSourceFileCount": 162,
       "topTypeReferences": [
@@ -4613,21 +4617,21 @@
         {
           "sourceAssembly": "Game.Tests.Editor",
           "targetAssembly": "Game.Components",
-          "fullTypeName": "Game.Components.RtsSelectionCommandResultElement",
-          "typeName": "RtsSelectionCommandResultElement",
-          "occurrenceCount": 185,
-          "sourceFileCount": 15,
+          "fullTypeName": "Game.Components.ResourceExchangeQueueComponent",
+          "typeName": "ResourceExchangeQueueComponent",
+          "occurrenceCount": 192,
+          "sourceFileCount": 17,
           "sourceFiles": [
-            "Assets/Tests/Editor/GroundMissileLauncherRuntimeTests.cs",
-            "Assets/Tests/Editor/MatchCommandAudioFeedbackTests.cs",
-            "Assets/Tests/Editor/MatchHudCommandControlsCurrentPrefabTests.cs",
-            "Assets/Tests/Editor/ResourceExchangeHeaderRoutingTests.cs",
-            "Assets/Tests/Editor/ResourceExchangeUiActionRequestSystemTests.cs",
-            "Assets/Tests/Editor/RtsSelectionInputSystemTests.cs",
-            "Assets/Tests/Editor/ScenarioLab/TransportBoardingScenarioLabTests.cs",
-            "Assets/Tests/Editor/SelectionCommandRequestResultContractTests.cs",
-            "Assets/Tests/Editor/SelectionOrderMarkerPresentationSystemHelperTests.cs",
-            "Assets/Tests/Editor/SettingsPopupValidationTests.cs"
+            "Assets/Tests/Editor/Balance/BalanceHarnessContractTests.cs",
+            "Assets/Tests/Editor/ResourceExchangeAIRecoverySystemTests.cs",
+            "Assets/Tests/Editor/ResourceExchangeAriaAnnouncementSystemTests.cs",
+            "Assets/Tests/Editor/ResourceExchangeDeltaFlyoutSystemTests.cs",
+            "Assets/Tests/Editor/ResourceExchangeEconomyEventSystemTests.cs",
+            "Assets/Tests/Editor/ResourceExchangeGcAllocationValidationTests.cs",
+            "Assets/Tests/Editor/ResourceExchangePhysicalStorageTestHelper.cs",
+            "Assets/Tests/Editor/ResourceExchangePhysicalStorageUtilitySystemHelperTests.cs",
+            "Assets/Tests/Editor/ResourceExchangeQueueTickSystemTests.cs",
+            "Assets/Tests/Editor/ResourceExchangeRequestValidationSystemTests.cs"
           ]
         }
       ]
@@ -4893,7 +4897,7 @@
           "occurrenceCount": 18,
           "sourceFileCount": 2,
           "sourceFiles": [
-            "Assets/Tests/Editor/MaterialsScenarioRecoveryValidationSystemHelperTests.cs",
+            "Assets/Tests/Editor/MaterialsScenarioRecoveryStartupSystemHelperTests.cs",
             "Assets/Tests/Editor/ResourceExchangeStartupProjectionSystemHelperTests.cs"
           ]
         },
@@ -5351,8 +5355,8 @@
       "sourceAsmdefPath": "Assets/Tests/Editor/Game.Tests.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Game.Runtime.asmdef",
       "declaredReference": "Game.Runtime",
-      "resolvedTypeOccurrenceCount": 2784,
-      "distinctResolvedTypeCount": 371,
+      "resolvedTypeOccurrenceCount": 2790,
+      "distinctResolvedTypeCount": 372,
       "referencingSourceFileCount": 149,
       "topTypeReferences": [
         {
@@ -5980,7 +5984,7 @@
       "sourceAsmdefPath": "Assets/Tests/Editor/Game.Tests.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/UI/Shell/Ecs/Contracts/Game.UI.Shell.Contracts.Ecs.asmdef",
       "declaredReference": "Game.UI.Shell.Contracts.Ecs",
-      "resolvedTypeOccurrenceCount": 449,
+      "resolvedTypeOccurrenceCount": 455,
       "distinctResolvedTypeCount": 31,
       "referencingSourceFileCount": 29,
       "topTypeReferences": [
@@ -6029,7 +6033,7 @@
           "targetAssembly": "Game.UI.Shell.Contracts.Ecs",
           "fullTypeName": "Game.UI.Shell.Contracts.Ecs.UiShellRootComponent",
           "typeName": "UiShellRootComponent",
-          "occurrenceCount": 35,
+          "occurrenceCount": 36,
           "sourceFileCount": 21,
           "sourceFiles": [
             "Assets/Tests/Editor/AssistantCommandIntentGatewayTests.cs",
@@ -6115,6 +6119,19 @@
         {
           "sourceAssembly": "Game.Tests.Editor",
           "targetAssembly": "Game.UI.Shell.Contracts.Ecs",
+          "fullTypeName": "Game.UI.Shell.Contracts.Ecs.UiResourceExchangeStateComponent",
+          "typeName": "UiResourceExchangeStateComponent",
+          "occurrenceCount": 21,
+          "sourceFileCount": 3,
+          "sourceFiles": [
+            "Assets/Tests/Editor/ResourceExchangeUiActionRequestSystemTests.cs",
+            "Assets/Tests/Editor/UiResourceExchangeReadModelSystemTests.cs",
+            "Assets/Tests/Editor/UiShellEcsGatewayResourceHeaderTests.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Tests.Editor",
+          "targetAssembly": "Game.UI.Shell.Contracts.Ecs",
           "fullTypeName": "Game.UI.Shell.Contracts.Ecs.UiMatchHudHeaderComponent",
           "typeName": "UiMatchHudHeaderComponent",
           "occurrenceCount": 18,
@@ -6144,18 +6161,6 @@
             "Assets/Tests/Editor/SettingsAudioRuntimeSmokeValidation.cs",
             "Assets/Tests/Editor/UIShellCurrentContentLoadTests.cs",
             "Assets/Tests/Editor/UiShellAudioRoutePopupTests.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Tests.Editor",
-          "targetAssembly": "Game.UI.Shell.Contracts.Ecs",
-          "fullTypeName": "Game.UI.Shell.Contracts.Ecs.UiResourceExchangeStateComponent",
-          "typeName": "UiResourceExchangeStateComponent",
-          "occurrenceCount": 16,
-          "sourceFileCount": 2,
-          "sourceFiles": [
-            "Assets/Tests/Editor/ResourceExchangeUiActionRequestSystemTests.cs",
-            "Assets/Tests/Editor/UiResourceExchangeReadModelSystemTests.cs"
           ]
         }
       ]
@@ -7089,8 +7094,8 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/UI/Game.UI.Runtime.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/UI/Contracts/Game.UI.Contracts.asmdef",
       "declaredReference": "Game.UI.Contracts",
-      "resolvedTypeOccurrenceCount": 521,
-      "distinctResolvedTypeCount": 90,
+      "resolvedTypeOccurrenceCount": 522,
+      "distinctResolvedTypeCount": 91,
       "referencingSourceFileCount": 56,
       "topTypeReferences": [
         {
@@ -7394,9 +7399,9 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/UI/Shell/Ecs/Game.UI.Shell.Ecs.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Components/Game.Components.asmdef",
       "declaredReference": "Game.Components",
-      "resolvedTypeOccurrenceCount": 853,
+      "resolvedTypeOccurrenceCount": 870,
       "distinctResolvedTypeCount": 103,
-      "referencingSourceFileCount": 28,
+      "referencingSourceFileCount": 30,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.UI.Shell.Ecs",
@@ -7434,6 +7439,22 @@
         {
           "sourceAssembly": "Game.UI.Shell.Ecs",
           "targetAssembly": "Game.Components",
+          "fullTypeName": "Game.Components.ResourceExchangeRecipeComponent",
+          "typeName": "ResourceExchangeRecipeComponent",
+          "occurrenceCount": 37,
+          "sourceFileCount": 6,
+          "sourceFiles": [
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiActionResourceExchangeRequestSystemHelper.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeProjectionFingerprintUtilitySystemHelper.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeProjectionSystemHelper.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeReadModelSystem.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeTextProjectionUtilitySystemHelper.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.UI.Shell.Ecs",
+          "targetAssembly": "Game.Components",
           "fullTypeName": "Game.Components.AssistantStateComponent",
           "typeName": "AssistantStateComponent",
           "occurrenceCount": 35,
@@ -7449,20 +7470,6 @@
             "Assets/Game/Scripts/UI/Shell/Ecs/AssistantThreatReadModelSystem.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Assistant.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Settings.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.UI.Shell.Ecs",
-          "targetAssembly": "Game.Components",
-          "fullTypeName": "Game.Components.ResourceExchangeRecipeComponent",
-          "typeName": "ResourceExchangeRecipeComponent",
-          "occurrenceCount": 33,
-          "sourceFileCount": 4,
-          "sourceFiles": [
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs",
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiActionResourceExchangeRequestSystemHelper.cs",
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeProjectionSystemHelper.cs",
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeReadModelSystem.cs"
           ]
         },
         {
@@ -7621,8 +7628,8 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/UI/Shell/Ecs/Game.UI.Shell.Ecs.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/UI/Contracts/Game.UI.Contracts.asmdef",
       "declaredReference": "Game.UI.Contracts",
-      "resolvedTypeOccurrenceCount": 262,
-      "distinctResolvedTypeCount": 58,
+      "resolvedTypeOccurrenceCount": 263,
+      "distinctResolvedTypeCount": 59,
       "referencingSourceFileCount": 19,
       "topTypeReferences": [
         {
@@ -7850,9 +7857,9 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/UI/Shell/Ecs/Game.UI.Shell.Ecs.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/UI/Shell/Ecs/Contracts/Game.UI.Shell.Contracts.Ecs.asmdef",
       "declaredReference": "Game.UI.Shell.Contracts.Ecs",
-      "resolvedTypeOccurrenceCount": 528,
+      "resolvedTypeOccurrenceCount": 532,
       "distinctResolvedTypeCount": 39,
-      "referencingSourceFileCount": 34,
+      "referencingSourceFileCount": 36,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.UI.Shell.Ecs",
@@ -7886,6 +7893,24 @@
             "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.DefaultState.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.MinimapBuild.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Presentation.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellStateSystem.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.UI.Shell.Ecs",
+          "targetAssembly": "Game.UI.Shell.Contracts.Ecs",
+          "fullTypeName": "Game.UI.Shell.Contracts.Ecs.UiResourceExchangeStateComponent",
+          "typeName": "UiResourceExchangeStateComponent",
+          "occurrenceCount": 23,
+          "sourceFileCount": 8,
+          "sourceFiles": [
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestDispatchSystemHelper.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiActionResourceExchangeRequestSystemHelper.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeProjectionFingerprintUtilitySystemHelper.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeReadModelSystem.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.DefaultState.cs",
+            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.MinimapBuild.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/UiShellStateSystem.cs"
           ]
         },
@@ -7937,23 +7962,6 @@
             "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.CommandHeader.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.DefaultState.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellStateSystem.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.UI.Shell.Ecs",
-          "targetAssembly": "Game.UI.Shell.Contracts.Ecs",
-          "fullTypeName": "Game.UI.Shell.Contracts.Ecs.UiResourceExchangeStateComponent",
-          "typeName": "UiResourceExchangeStateComponent",
-          "occurrenceCount": 20,
-          "sourceFileCount": 7,
-          "sourceFiles": [
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestDispatchSystemHelper.cs",
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestSystem.cs",
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiActionResourceExchangeRequestSystemHelper.cs",
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeReadModelSystem.cs",
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.DefaultState.cs",
-            "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.MinimapBuild.cs",
             "Assets/Game/Scripts/UI/Shell/Ecs/UiShellStateSystem.cs"
           ]
         },
@@ -8652,7 +8660,7 @@
       "occurrenceCount": 382,
       "sourceFileCount": 87,
       "sourceFiles": [
-        "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs",
+        "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs",
         "Assets/Game/Scripts/Environment/RuntimeGridBlockerPresentationSystemHelper.cs",
         "Assets/Game/Scripts/ScenarioLab/BattleScenarioDr001Runner.cs",
         "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
@@ -8732,7 +8740,7 @@
       "occurrenceCount": 321,
       "sourceFileCount": 74,
       "sourceFiles": [
-        "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs",
+        "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs",
         "Assets/Game/Scripts/ScenarioLab/BattleScenarioDr001Runner.cs",
         "Assets/Game/Scripts/ScenarioLab/BattleScenarioEcsSpawnHelpers.cs",
         "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
@@ -8792,7 +8800,7 @@
       "occurrenceCount": 277,
       "sourceFileCount": 64,
       "sourceFiles": [
-        "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs",
+        "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs",
         "Assets/Game/Scripts/ScenarioLab/BattleScenarioAd002Runner.cs",
         "Assets/Game/Scripts/ScenarioLab/BattleScenarioAd003Runner.cs",
         "Assets/Game/Scripts/ScenarioLab/BattleScenarioAd008Runner.cs",
@@ -8923,6 +8931,26 @@
     {
       "sourceAssembly": "Game.Tests.Editor",
       "targetAssembly": "Game.Components",
+      "fullTypeName": "Game.Components.ResourceExchangeQueueComponent",
+      "typeName": "ResourceExchangeQueueComponent",
+      "occurrenceCount": 192,
+      "sourceFileCount": 17,
+      "sourceFiles": [
+        "Assets/Tests/Editor/Balance/BalanceHarnessContractTests.cs",
+        "Assets/Tests/Editor/ResourceExchangeAIRecoverySystemTests.cs",
+        "Assets/Tests/Editor/ResourceExchangeAriaAnnouncementSystemTests.cs",
+        "Assets/Tests/Editor/ResourceExchangeDeltaFlyoutSystemTests.cs",
+        "Assets/Tests/Editor/ResourceExchangeEconomyEventSystemTests.cs",
+        "Assets/Tests/Editor/ResourceExchangeGcAllocationValidationTests.cs",
+        "Assets/Tests/Editor/ResourceExchangePhysicalStorageTestHelper.cs",
+        "Assets/Tests/Editor/ResourceExchangePhysicalStorageUtilitySystemHelperTests.cs",
+        "Assets/Tests/Editor/ResourceExchangeQueueTickSystemTests.cs",
+        "Assets/Tests/Editor/ResourceExchangeRequestValidationSystemTests.cs"
+      ]
+    },
+    {
+      "sourceAssembly": "Game.Tests.Editor",
+      "targetAssembly": "Game.Components",
       "fullTypeName": "Game.Components.RtsSelectionCommandResultElement",
       "typeName": "RtsSelectionCommandResultElement",
       "occurrenceCount": 185,
@@ -8938,26 +8966,6 @@
         "Assets/Tests/Editor/SelectionCommandRequestResultContractTests.cs",
         "Assets/Tests/Editor/SelectionOrderMarkerPresentationSystemHelperTests.cs",
         "Assets/Tests/Editor/SettingsPopupValidationTests.cs"
-      ]
-    },
-    {
-      "sourceAssembly": "Game.Tests.Editor",
-      "targetAssembly": "Game.Components",
-      "fullTypeName": "Game.Components.ResourceExchangeQueueComponent",
-      "typeName": "ResourceExchangeQueueComponent",
-      "occurrenceCount": 183,
-      "sourceFileCount": 17,
-      "sourceFiles": [
-        "Assets/Tests/Editor/Balance/BalanceHarnessContractTests.cs",
-        "Assets/Tests/Editor/ResourceExchangeAIRecoverySystemTests.cs",
-        "Assets/Tests/Editor/ResourceExchangeAriaAnnouncementSystemTests.cs",
-        "Assets/Tests/Editor/ResourceExchangeDeltaFlyoutSystemTests.cs",
-        "Assets/Tests/Editor/ResourceExchangeEconomyEventSystemTests.cs",
-        "Assets/Tests/Editor/ResourceExchangeGcAllocationValidationTests.cs",
-        "Assets/Tests/Editor/ResourceExchangePhysicalStorageTestHelper.cs",
-        "Assets/Tests/Editor/ResourceExchangePhysicalStorageUtilitySystemHelperTests.cs",
-        "Assets/Tests/Editor/ResourceExchangeQueueTickSystemTests.cs",
-        "Assets/Tests/Editor/ResourceExchangeRequestValidationSystemTests.cs"
       ]
     },
     {
@@ -9085,7 +9093,7 @@
       "targetAssembly": "Game.Components",
       "fullTypeName": "Game.Components.FactionEconomy",
       "typeName": "FactionEconomy",
-      "occurrenceCount": 157,
+      "occurrenceCount": 161,
       "sourceFileCount": 32,
       "sourceFiles": [
         "Assets/Tests/Editor/AIBuildPlannerAllocationTests.cs",
@@ -9138,6 +9146,26 @@
       ]
     },
     {
+      "sourceAssembly": "Game.Tests.Editor",
+      "targetAssembly": "Game.Components",
+      "fullTypeName": "Game.Components.FactionTacticalMaterialsComponent",
+      "typeName": "FactionTacticalMaterialsComponent",
+      "occurrenceCount": 144,
+      "sourceFileCount": 29,
+      "sourceFiles": [
+        "Assets/Tests/Editor/AIBuildPlannerAllocationTests.cs",
+        "Assets/Tests/Editor/AIBuildPlannerValidationTests.cs",
+        "Assets/Tests/Editor/AIEndToEndValidationTests.cs",
+        "Assets/Tests/Editor/Balance/BalanceHarnessContractTests.cs",
+        "Assets/Tests/Editor/BuildingPlacementConstructionTransactionTests.cs",
+        "Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs",
+        "Assets/Tests/Editor/BuildingUiQuerySystemTests.cs",
+        "Assets/Tests/Editor/FactionConstructionResourceUtilitySystemHelperTests.cs",
+        "Assets/Tests/Editor/FactionEconomyStartupSystemValidationTests.cs",
+        "Assets/Tests/Editor/FactionTacticalMaterialsUtilitySystemHelperTests.cs"
+      ]
+    },
+    {
       "sourceAssembly": "Game.Runtime",
       "targetAssembly": "Game.Components",
       "fullTypeName": "Game.Components.UnitPathRequest",
@@ -9155,26 +9183,6 @@
         "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
         "Assets/Game/Scripts/Systems/BuildingSpawnCompositionSystemHelper.cs",
         "Assets/Game/Scripts/Systems/BuildingTargetMoveOrderSystem.cs"
-      ]
-    },
-    {
-      "sourceAssembly": "Game.Tests.Editor",
-      "targetAssembly": "Game.Components",
-      "fullTypeName": "Game.Components.FactionTacticalMaterialsComponent",
-      "typeName": "FactionTacticalMaterialsComponent",
-      "occurrenceCount": 140,
-      "sourceFileCount": 29,
-      "sourceFiles": [
-        "Assets/Tests/Editor/AIBuildPlannerAllocationTests.cs",
-        "Assets/Tests/Editor/AIBuildPlannerValidationTests.cs",
-        "Assets/Tests/Editor/AIEndToEndValidationTests.cs",
-        "Assets/Tests/Editor/Balance/BalanceHarnessContractTests.cs",
-        "Assets/Tests/Editor/BuildingPlacementConstructionTransactionTests.cs",
-        "Assets/Tests/Editor/BuildingResourceProductionEcsSystemTests.cs",
-        "Assets/Tests/Editor/BuildingUiQuerySystemTests.cs",
-        "Assets/Tests/Editor/FactionConstructionResourceUtilitySystemHelperTests.cs",
-        "Assets/Tests/Editor/FactionEconomyStartupSystemValidationTests.cs",
-        "Assets/Tests/Editor/FactionTacticalMaterialsUtilitySystemHelperTests.cs"
       ]
     },
     {
@@ -9445,7 +9453,7 @@
       "occurrenceCount": 108,
       "sourceFileCount": 38,
       "sourceFiles": [
-        "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs",
+        "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs",
         "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
         "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
         "Assets/Game/Scripts/Systems/BuildingRuntimeEntityCompositionSystemHelper.cs",

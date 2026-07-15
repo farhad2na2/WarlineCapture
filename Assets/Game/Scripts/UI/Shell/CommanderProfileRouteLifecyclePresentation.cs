@@ -7,6 +7,9 @@ namespace Game.UI.Runtime
     internal static class CommanderProfileRouteLifecyclePresentation
     {
         internal const string BackgroundScrimName = "CommanderBackgroundScrim";
+        private static UIShellContentView s_backgroundScrimOwner;
+        private static RectTransform s_backgroundScrimContentRoot;
+        private static GameObject s_backgroundScrim;
 
         internal static void InstallMainMenu(UIShellContentView contentView)
         {
@@ -88,28 +91,41 @@ namespace Game.UI.Runtime
             if (!contentView.TryGetRegionContentRoot(UIShellRegionId.MenuBackgroundRegion, out RectTransform contentRoot))
                 return;
 
-            Transform existing = contentRoot.Find(BackgroundScrimName);
+            if (s_backgroundScrimOwner != contentView ||
+                s_backgroundScrimContentRoot != contentRoot ||
+                (s_backgroundScrim != null && s_backgroundScrim.transform.parent != contentRoot))
+            {
+                s_backgroundScrimOwner = contentView;
+                s_backgroundScrimContentRoot = contentRoot;
+                s_backgroundScrim = null;
+            }
+
             if (!visible)
             {
-                if (existing != null)
+                if (s_backgroundScrim != null)
                 {
-                    UIShellContentView.DestroyRegionObject(existing.gameObject);
+                    UIShellContentView.DestroyRegionObject(s_backgroundScrim);
+                    s_backgroundScrim = null;
                     contentView.MarkContentChanged();
                 }
                 return;
             }
 
-            GameObject scrim = existing != null
-                ? existing.gameObject
-                : new GameObject(BackgroundScrimName, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
-            if (existing == null)
-                scrim.transform.SetParent(contentRoot, false);
+            if (s_backgroundScrim == null)
+            {
+                s_backgroundScrim = new GameObject(
+                    BackgroundScrimName,
+                    typeof(RectTransform),
+                    typeof(CanvasRenderer),
+                    typeof(Image));
+                s_backgroundScrim.transform.SetParent(contentRoot, false);
+            }
 
-            UIShellContentView.Stretch(scrim.GetComponent<RectTransform>());
-            Image image = scrim.GetComponent<Image>();
+            UIShellContentView.Stretch(s_backgroundScrim.GetComponent<RectTransform>());
+            Image image = s_backgroundScrim.GetComponent<Image>();
             image.color = new Color(0.015f, 0.018f, 0.014f, 0.34f);
             image.raycastTarget = false;
-            scrim.transform.SetAsLastSibling();
+            s_backgroundScrim.transform.SetAsLastSibling();
             contentView.MarkContentChanged();
         }
 

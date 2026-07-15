@@ -274,6 +274,7 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
         Button cameraButton = GetSerializedCameraButton(selectionPanel);
         Image targetImage = cameraButton.targetGraphic as Image;
         Assert.NotNull(targetImage, "CameraButton must use an Image target graphic for state application.");
+        Sprite normalSprite = targetImage.sprite;
 
         selectionPanel.SetSelectionVisible(true);
         selectionPanel.SetCameraActionEnabled(false);
@@ -291,8 +292,8 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
         Assert.AreSame(cameraButton.spriteState.selectedSprite, targetImage.overrideSprite, "CameraButton selected state must be reasserted after normal UI transitions clear the override.");
 
         selectionPanel.SetCameraActionSelected(false);
-        Assert.IsNull(targetImage.sprite, "CameraButton must restore its transparent normal sprite when follow mode exits.");
-        Assert.IsNull(targetImage.overrideSprite, "CameraButton must release its selected SpriteSwap override when follow mode exits.");
+        Assert.AreSame(normalSprite, targetImage.sprite, "CameraButton must restore its configured normal sprite when follow mode exits.");
+        Assert.IsNull(GetStoredOverrideSprite(targetImage), "CameraButton must release its selected SpriteSwap override when follow mode exits.");
     }
 
     [Test]
@@ -303,13 +304,14 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
         Button cameraButton = GetSerializedCameraButton(selectionPanel);
         Image targetImage = cameraButton.targetGraphic as Image;
         Assert.NotNull(targetImage, "CameraButton must use an Image target graphic for live sprite transitions.");
+        Sprite normalSprite = targetImage.sprite;
 
         ActivateHierarchy(cameraButton.transform);
         selectionPanel.SetSelectionVisible(true);
         selectionPanel.SetCameraActionEnabled(true);
         selectionPanel.SetCameraActionSelected(false);
-        Assert.IsNull(targetImage.sprite, "CameraButton starts from the transparent normal sprite.");
-        Assert.IsNull(targetImage.overrideSprite, "CameraButton starts with no live transition override sprite.");
+        Assert.AreSame(normalSprite, targetImage.sprite, "CameraButton starts from its configured normal sprite.");
+        Assert.IsNull(GetStoredOverrideSprite(targetImage), "CameraButton starts with no live transition override sprite.");
 
         var pointerEvent = new PointerEventData(EventSystem.current)
         {
@@ -326,7 +328,8 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
         Assert.AreSame(cameraButton.spriteState.highlightedSprite, targetImage.overrideSprite, "CameraButton release while hovered must return to highlighted sprite.");
 
         cameraButton.OnPointerExit(pointerEvent);
-        Assert.IsNull(targetImage.overrideSprite, "CameraButton exit must restore the transparent normal sprite.");
+        Assert.AreSame(normalSprite, targetImage.sprite, "CameraButton exit must preserve the configured normal sprite.");
+        Assert.IsNull(GetStoredOverrideSprite(targetImage), "CameraButton exit must release the live transition override sprite.");
     }
 
     [Test]
@@ -611,6 +614,15 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
         Assert.IsTrue(IsChildOfNamedTransform(cameraButton.transform, "CommandButtons"), "CameraButton should remain in the selected-squad CommandButtons cluster.");
         Assert.IsTrue(cameraButton.interactable, "CameraButton prefab state should be interactable; runtime read model can disable it later.");
         return cameraButton;
+    }
+
+    private static Sprite GetStoredOverrideSprite(Image image)
+    {
+        System.Reflection.FieldInfo overrideField = typeof(Image).GetField(
+            "m_OverrideSprite",
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        Assert.NotNull(overrideField, "Image must expose its private SpriteSwap override field.");
+        return overrideField.GetValue(image) as Sprite;
     }
 
     private static void AssertZoomButtonUsesSpriteSwap(Button button, string label)

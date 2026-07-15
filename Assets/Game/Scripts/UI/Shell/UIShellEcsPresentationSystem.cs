@@ -64,6 +64,8 @@ namespace Game.UI.Runtime
                 FlushPendingCompletion();
             }
 
+            ResourceExchangePopupRuntimeView.RefreshActiveView();
+
             if (isExecuting || shellView == null)
                 return;
 

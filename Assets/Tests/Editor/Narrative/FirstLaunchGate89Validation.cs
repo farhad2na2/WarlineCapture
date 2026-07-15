@@ -90,7 +90,7 @@ public static class FirstLaunchGate89Validation
 
             FirstLaunchNarrativeMenuSceneInstaller.Install();
             FirstLaunchNarrativeMenuIntegrationTests integration = new();
-            integration.MenuScene_HasHiddenTopLevelNarrativeLayerAndExactConfigs();
+            integration.MenuScene_HasTopLevelNarrativeLayerAndExactConfigs();
             integration.FreshProfile_SkipRequiresLiveConfirmationAndPublishesOneHandoff();
             integration.CompletedAndPendingProfiles_SelectCorrectStartupDisposition();
             integration.ReviewerMode_ProvidesNavigationWithoutMutatingCompletedProfile();

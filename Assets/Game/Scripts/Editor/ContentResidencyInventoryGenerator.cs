@@ -669,11 +669,13 @@ namespace Game.Editor
             }
         }
 
-        private static ContentResidencySummary BuildSummary(
+        internal static ContentResidencySummary BuildSummary(
             IReadOnlyCollection<DependencyRootRecord> roots,
             IReadOnlyCollection<ContentResidencyAssetRecord> assets,
             IReadOnlyCollection<CatalogAudioResidencyRecord> catalogAudioClips)
         {
+            IReadOnlyList<ContentResidencyAssetRecord> textureRows =
+                BuildDeterministicTexture2DRows(assets);
             return new ContentResidencySummary
             {
                 DependencyRootCount = roots.Count,
@@ -685,8 +687,8 @@ namespace Game.Editor
                 ImportedSizeBytes = assets.Where(asset => asset.ImportedSizeBytes.HasValue)
                     .Sum(asset => asset.ImportedSizeBytes.GetValueOrDefault()),
                 AudioAssetCount = assets.Count(asset => asset.AudioLoadType != null),
-                TextureAssetCount = assets.Count(asset => asset.TextureWidth.HasValue),
-                TextureStreamingEnabledCount = assets.Count(asset => asset.TextureStreamingEnabled == true),
+                TextureAssetCount = textureRows.Count,
+                TextureStreamingEnabledCount = textureRows.Count(asset => asset.TextureStreamingEnabled == true),
                 MeshAssetCount = assets.Count(asset => asset.MeshReadWriteState != null),
                 MeshReadWriteEnabledCount = assets.Count(asset => asset.MeshReadWriteEnabled == true),
                 AnimationTextureCount = assets.Count(asset => asset.AnimationTexturePayloadBytes.HasValue),
@@ -702,6 +704,22 @@ namespace Game.Editor
                 CatalogAudioEstimatedDecodedSizeBytes = catalogAudioClips
                     .Sum(clip => clip.EstimatedDecodedSizeBytes)
             };
+        }
+
+        internal static IReadOnlyList<ContentResidencyAssetRecord> BuildDeterministicTexture2DRows(
+            IEnumerable<ContentResidencyAssetRecord> assets)
+        {
+            if (assets == null)
+                throw new ArgumentNullException(nameof(assets));
+
+            return assets
+                .Where(asset => asset != null &&
+                                string.Equals(asset.AssetType, nameof(Texture2D), StringComparison.Ordinal) &&
+                                !string.IsNullOrWhiteSpace(asset.AssetPath))
+                .GroupBy(asset => asset.AssetPath, StringComparer.Ordinal)
+                .Select(group => group.First())
+                .OrderBy(asset => asset.AssetPath, StringComparer.Ordinal)
+                .ToArray();
         }
 
         private static void AppendSummary(StringBuilder builder, ContentResidencySummary summary)
@@ -725,8 +743,8 @@ namespace Game.Editor
             builder.AppendLine($"| Known catalog compressed bytes | {FormatBytes(summary.CatalogAudioCompressedSizeBytes)} |");
             builder.AppendLine(
                 $"| Estimated catalog decoded bytes | {FormatBytes(summary.CatalogAudioEstimatedDecodedSizeBytes)} |");
-            builder.AppendLine($"| Texture assets | {summary.TextureAssetCount:N0} |");
-            builder.AppendLine($"| Streaming-enabled textures | {summary.TextureStreamingEnabledCount:N0} |");
+            builder.AppendLine($"| Texture2D inventory rows | {summary.TextureAssetCount:N0} |");
+            builder.AppendLine($"| Streaming-enabled Texture2D rows | {summary.TextureStreamingEnabledCount:N0} |");
             builder.AppendLine($"| Mesh assets | {summary.MeshAssetCount:N0} |");
             builder.AppendLine($"| Read/write-enabled mesh assets | {summary.MeshReadWriteEnabledCount:N0} |");
             builder.AppendLine($"| Animation texture assets | {summary.AnimationTextureCount:N0} |");

@@ -185,82 +185,9 @@ namespace Game.Runtime
                 return default;
 
             if (request.IsWall && context.HasGrid)
-                return CommitWallPlacement(request, context);
+                return BuildingWallPlacementCommitTransaction.Commit(request, context);
 
             return CommitSinglePlacement(request, context);
-        }
-
-        private CommitOutcome CommitWallPlacement(CommitRequest request, CommitContext context)
-        {
-            if (context.CreateVisual == null || context.PositionVisual == null || context.GetWallSegmentFootprint == null ||
-                context.RollbackRuntimeBuilding == null || context.DestroyRuntimeObject == null)
-                return default;
-
-            RuntimeBuildingEntity autoSelectBuilding = null;
-            int expectedInstanceCount = 0;
-            var wallRuns = new List<WallRun>();
-            BuildFinalWallRuns(request, wallRuns);
-            for (int runIndex = 0; runIndex < wallRuns.Count; runIndex++)
-                expectedInstanceCount += wallRuns[runIndex].Origins?.Count ?? 0;
-
-            if (expectedInstanceCount == 0)
-                return default;
-
-            var committedBuildings = new List<RuntimeBuildingEntity>(expectedInstanceCount);
-            for (int runIndex = 0; runIndex < wallRuns.Count; runIndex++)
-            {
-                WallRun run = wallRuns[runIndex];
-                if (run.Origins == null || run.Origins.Count == 0)
-                    continue;
-
-                Vector2Int wallFootprint = context.GetWallSegmentFootprint(request.Definition, run.Vertical);
-                for (int i = 0; i < run.Origins.Count; i++)
-                {
-                    GameObject instance = context.CreateVisual(request.Definition, context.BuildingRoot);
-                    if (instance == null)
-                        return RollbackWallPlacement(context, committedBuildings, expectedInstanceCount);
-
-                    context.PositionVisual(instance, run.Origins[i], request.Definition, context.Grid, run.Vertical);
-                    BuildingDefinition segmentDefinition = context.CloneDefinitionWithFootprint(request.Definition, wallFootprint);
-                    RuntimeBuildingEntity building = context.RegisterRuntimeBuilding(segmentDefinition, instance, run.Origins[i], true);
-                    if (building == null)
-                    {
-                        context.DestroyRuntimeObject(instance);
-                        return RollbackWallPlacement(context, committedBuildings, expectedInstanceCount);
-                    }
-
-                    committedBuildings.Add(building);
-                    if (ShouldAutoSelectAfterPlacement(building.Definition))
-                        autoSelectBuilding = building;
-                }
-            }
-
-            if (request.PreviewInstance != null)
-                context.DestroyRuntimeObject(request.PreviewInstance);
-
-            return new CommitOutcome(autoSelectBuilding, committedBuildings.Count, expectedInstanceCount);
-        }
-
-        private static CommitOutcome RollbackWallPlacement(
-            CommitContext context,
-            List<RuntimeBuildingEntity> committedBuildings,
-            int expectedInstanceCount)
-        {
-            int rollbackFailureCount = 0;
-            for (int i = committedBuildings.Count - 1; i >= 0; i--)
-            {
-                RuntimeBuildingEntity building = committedBuildings[i];
-                if (building == null || !context.RollbackRuntimeBuilding(building))
-                {
-                    rollbackFailureCount++;
-                    continue;
-                }
-
-                if (building.Instance != null)
-                    context.DestroyRuntimeObject(building.Instance);
-            }
-
-            return new CommitOutcome(null, rollbackFailureCount, expectedInstanceCount);
         }
 
         private CommitOutcome CommitSinglePlacement(CommitRequest request, CommitContext context)
@@ -281,25 +208,7 @@ namespace Game.Runtime
             return new CommitOutcome(autoSelectBuilding, 1, 1);
         }
 
-        private static void BuildFinalWallRuns(CommitRequest request, List<WallRun> runs)
-        {
-            if (request.CommittedWallRuns != null)
-            {
-                for (int i = 0; i < request.CommittedWallRuns.Count; i++)
-                {
-                    WallRun run = request.CommittedWallRuns[i];
-                    if (run.Origins == null || run.Origins.Count == 0)
-                        continue;
-
-                    runs.Add(run);
-                }
-            }
-
-            if (!request.HideCurrentWallPreview && request.CurrentWallOrigins != null && request.CurrentWallOrigins.Count > 0)
-                runs.Add(new WallRun(request.CurrentWallOrigins, request.CurrentWallVertical));
-        }
-
-        private static bool ShouldAutoSelectAfterPlacement(BuildingDefinition definition)
+        internal static bool ShouldAutoSelectAfterPlacement(BuildingDefinition definition)
         {
             if (definition == null)
                 return false;

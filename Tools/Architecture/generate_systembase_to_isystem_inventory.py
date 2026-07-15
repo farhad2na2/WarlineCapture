@@ -4,9 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
-import subprocess
 from dataclasses import asdict, dataclass, replace
-from datetime import datetime, timezone
 from pathlib import Path
 
 
@@ -58,9 +56,19 @@ PUBLIC_MEMBER_RE = re.compile(
 )
 ATTRIBUTE_RE = re.compile(r"\[(?P<name>UpdateInGroup|UpdateBefore|UpdateAfter|DisableAutoCreation)[^\]]*\]")
 
+UNMANAGED_ECS_OBJECT_REFERENCE_RE = re.compile(r"\bUnityObjectRef\s*<\s*GameObject\s*>")
+MANAGED_TRANSFORM_RE = re.compile(
+    r"\bUnityEngine\.Transform\b|"
+    r"(?<![A-Za-z0-9_.])Transform\s*(?:\[\s*\])?\s+[A-Za-z_]\w*|"
+    r"(?:<|,)\s*Transform\s*(?=[>,])|"
+    r"\b(?:typeof|nameof)\s*\(\s*Transform\s*\)|"
+    r"\(\s*Transform\s*\)|"
+    r"\b(?:is|as)\s+Transform\b"
+)
+
 MANAGED_BLOCKER_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("GameObject", re.compile(r"\bGameObject\b")),
-    ("Transform", re.compile(r"\bTransform\b")),
+    ("Transform", MANAGED_TRANSFORM_RE),
     ("Camera", re.compile(r"\bCamera\b")),
     ("UnityEngine.Object", re.compile(r"\bUnityEngine\.Object\b")),
     ("ScriptableObject", re.compile(r"\bScriptableObject\b")),
@@ -602,6 +610,25 @@ def current_base_from_bases(bases: str) -> str | None:
     return None
 
 
+def declaration_body_for(clean_text: str, match: re.Match[str]) -> str:
+    declaration_end = match.end()
+    open_brace = clean_text.find("{", declaration_end)
+    if open_brace < 0:
+        return clean_text[match.start():declaration_end]
+
+    depth = 0
+    for index in range(open_brace, len(clean_text)):
+        char = clean_text[index]
+        if char == "{":
+            depth += 1
+        elif char == "}":
+            depth -= 1
+            if depth == 0:
+                return clean_text[match.start():index + 1]
+
+    return clean_text[match.start():]
+
+
 def scope_for(path: str) -> str:
     if "/Editor/" in path or path.startswith("Assets/Game/Scripts/Editor/"):
         return "Editor"
@@ -631,7 +658,8 @@ def owner_lane_for(path: str, type_name: str) -> str:
 
 
 def managed_blockers_for(text: str) -> list[str]:
-    return [name for name, pattern in MANAGED_BLOCKER_PATTERNS if pattern.search(text)]
+    blocker_text = UNMANAGED_ECS_OBJECT_REFERENCE_RE.sub("UnityObjectRef", text)
+    return [name for name, pattern in MANAGED_BLOCKER_PATTERNS if pattern.search(blocker_text)]
 
 
 def ecs_access_for(text: str) -> list[str]:
@@ -659,10 +687,10 @@ def public_members_for(clean_text: str) -> list[str]:
     return sorted(set(members), key=str.casefold)
 
 
-def attributes_for(clean_text: str, declaration_index: int) -> list[str]:
-    start = max(0, declaration_index - 900)
-    snippet = clean_text[start:declaration_index]
-    return [match.group(0).replace("\n", " ") for match in ATTRIBUTE_RE.finditer(snippet)]
+def attributes_for(declaration_text: str) -> list[str]:
+    open_brace = declaration_text.find("{")
+    declaration_header = declaration_text if open_brace < 0 else declaration_text[:open_brace]
+    return [match.group(0).replace("\n", " ") for match in ATTRIBUTE_RE.finditer(declaration_header)]
 
 
 def managed_field_categories(blockers: list[str], text: str) -> str:
@@ -780,14 +808,15 @@ def enumerate_declarations(root: Path, existing_ids: dict[str, str]) -> list[Dec
             type_name = match.group("name")
             kind = match.group("kind")
             key = declaration_key(rel_path, type_name, kind, current_base)
+            declaration_body = declaration_body_for(clean_text, match)
 
             line = clean_text.count("\n", 0, match.start()) + 1
             scope = scope_for(rel_path)
             owner = owner_lane_for(rel_path, type_name)
-            blockers = managed_blockers_for(clean_text)
-            lifecycles = lifecycle_methods_for(clean_text)
-            public_members = public_members_for(clean_text)
-            risk = gameplay_policy_risk(type_name, clean_text, blockers)
+            blockers = managed_blockers_for(declaration_body)
+            lifecycles = lifecycle_methods_for(declaration_body)
+            public_members = public_members_for(declaration_body)
+            risk = gameplay_policy_risk(type_name, declaration_body, blockers)
             manual_risk_override = MANUAL_RISK_OVERRIDES.get((rel_path, type_name, current_base))
             if manual_risk_override is not None:
                 risk = manual_risk_override
@@ -817,11 +846,11 @@ def enumerate_declarations(root: Path, existing_ids: dict[str, str]) -> list[Dec
                     status=status_for(disposition),
                     accessibility=access_from_modifiers(match.group("modifiers") or ""),
                     namespace=find_namespace(clean_text, match.start()) or "None",
-                    attributes=", ".join(attributes_for(clean_text, match.start())) or "None",
+                    attributes=", ".join(attributes_for(declaration_body)) or "None",
                     lifecycle_methods=", ".join(lifecycles) if lifecycles else "None",
                     public_members=", ".join(public_members) if public_members else "None",
-                    ecs_access=", ".join(ecs_access_for(clean_text)) or "None",
-                    managed_field_categories=managed_field_categories(blockers, clean_text),
+                    ecs_access=", ".join(ecs_access_for(declaration_body)) or "None",
+                    managed_field_categories=managed_field_categories(blockers, declaration_body),
                     key=key,
                 )
             )
@@ -876,26 +905,6 @@ def normalize_or_abs(path: Path) -> str:
         return path.relative_to(ROOT).as_posix()
     except ValueError:
         return path.as_posix()
-
-
-def git_value(args: list[str], fallback: str) -> str:
-    try:
-        result = subprocess.run(
-            ["git", *args],
-            cwd=ROOT,
-            check=True,
-            capture_output=True,
-            text=True,
-        )
-    except (OSError, subprocess.CalledProcessError):
-        return fallback
-    value = result.stdout.strip()
-    return value if value else fallback
-
-
-def git_dirty_note() -> str:
-    status = git_value(["status", "--short"], "")
-    return "dirty" if status else "clean"
 
 
 def markdown_escape(value: object) -> str:
@@ -1192,9 +1201,7 @@ def format_converted_public_helper_review(rows: list[Declaration]) -> str:
     return "\n".join(sections)
 
 
-def write_markdown(rows: list[Declaration], output_path: Path, command: str, source_root: Path) -> None:
-    timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    commit = git_value(["rev-parse", "--short", "HEAD"], "unknown")
+def render_markdown(rows: list[Declaration], command: str, source_root: Path) -> str:
     production_rows = [row for row in rows if row.scope in ("ProductionNonUI", "ProductionUI")]
     production_non_ui = [row for row in rows if row.scope == "ProductionNonUI"]
     production_systembase = sum(1 for row in production_rows if row.current_base in SYSTEM_BASE_TOKENS)
@@ -1204,11 +1211,9 @@ def write_markdown(rows: list[Declaration], output_path: Path, command: str, sou
     sections = [
         "# SystemBase To ISystem Inventory",
         "",
-        f"Generated: `{timestamp}`.",
+        "Generated deterministically from the current source; wall-clock timestamp omitted.",
         f"Command: `{command}`.",
         f"Source root: `{normalize_or_abs(source_root)}`.",
-        f"Source commit: `{commit}`.",
-        f"Worktree state during generation: `{git_dirty_note()}`.",
         "",
         "## Summary",
         "",
@@ -1239,13 +1244,20 @@ def write_markdown(rows: list[Declaration], output_path: Path, command: str, sou
         format_details(rows),
         "",
     ]
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text("\n".join(sections), encoding="utf-8")
+    return "\n".join(sections)
 
 
-def write_json(rows: list[Declaration], json_output: Path) -> None:
-    json_output.parent.mkdir(parents=True, exist_ok=True)
-    json_output.write_text(json.dumps([asdict(row) for row in rows], indent=2, sort_keys=True), encoding="utf-8")
+def render_json(rows: list[Declaration]) -> str:
+    return json.dumps([asdict(row) for row in rows], indent=2, sort_keys=True)
+
+
+def write_output(path: Path, content: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(content, encoding="utf-8")
+
+
+def check_output(path: Path, expected: str) -> bool:
+    return path.exists() and path.read_text(encoding="utf-8") == expected
 
 
 def main() -> None:
@@ -1253,6 +1265,7 @@ def main() -> None:
     parser.add_argument("--root", default=DEFAULT_ROOT.as_posix(), help="Source root to scan.")
     parser.add_argument("--output", default=DEFAULT_OUTPUT.as_posix(), help="Markdown inventory output path.")
     parser.add_argument("--json-output", default=None, help="Optional machine-readable JSON sidecar.")
+    parser.add_argument("--check", action="store_true", help="Verify outputs are current without writing them.")
     args = parser.parse_args()
 
     source_root = (ROOT / args.root).resolve() if not Path(args.root).is_absolute() else Path(args.root)
@@ -1264,9 +1277,25 @@ def main() -> None:
     existing_ids = parse_existing_ids(output_path)
     rows = enumerate_declarations(source_root, existing_ids)
     command = shell_quote_command(source_root, output_path, json_output)
-    write_markdown(rows, output_path, command, source_root)
-    if json_output is not None:
-        write_json(rows, json_output)
+    markdown = render_markdown(rows, command, source_root)
+    json_content = render_json(rows) if json_output is not None else None
+
+    if args.check:
+        stale_outputs = []
+        if not check_output(output_path, markdown):
+            stale_outputs.append(output_path)
+        if json_output is not None and json_content is not None and not check_output(json_output, json_content):
+            stale_outputs.append(json_output)
+        if stale_outputs:
+            for stale_output in stale_outputs:
+                print(f"stale generated output: {normalize_or_abs(stale_output)}")
+            raise SystemExit(1)
+        print(f"inventory is current: {normalize_or_abs(output_path)}")
+        return
+
+    write_output(output_path, markdown)
+    if json_output is not None and json_content is not None:
+        write_output(json_output, json_content)
 
 
 if __name__ == "__main__":

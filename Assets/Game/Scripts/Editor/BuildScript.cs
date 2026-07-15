@@ -10,6 +10,10 @@ namespace Game.Editor
 {
     public class BuildScript
     {
+        internal const BuildOptions ReleaseAndroidBuildOptions =
+            BuildOptions.DetailedBuildReport |
+            BuildOptions.CleanBuildCache;
+
         public static void BuildWindows()
         {
             SwitchBuildTarget(BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64);
@@ -89,7 +93,7 @@ namespace Game.Editor
             {
                 scenes = StaticMapAndroidBuildSceneResolver.ResolveForCurrentProject(GetEnabledScenes()),
                 target = BuildTarget.Android,
-                options = BuildOptions.DetailedBuildReport,
+                options = ReleaseAndroidBuildOptions,
                 locationPathName = outputPath
             };
 

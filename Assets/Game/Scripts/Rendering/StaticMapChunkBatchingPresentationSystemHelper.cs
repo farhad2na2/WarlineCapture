@@ -80,7 +80,7 @@ namespace Game.Rendering
                 long initializeStartTicks = Stopwatch.GetTimestamp();
                 Dispose();
                 _initialized = true;
-                _combinedRoot = EnsureCombinedRoot(mapRoot);
+                _combinedRoot = CreateCombinedRoot(mapRoot);
 
                 long rendererScanStartTicks = Stopwatch.GetTimestamp();
                 MeshRenderer[] renderers;
@@ -444,12 +444,8 @@ namespace Game.Rendering
             stats.Batches++;
         }
 
-        private static Transform EnsureCombinedRoot(Transform mapRoot)
+        private static Transform CreateCombinedRoot(Transform mapRoot)
         {
-            Transform existing = mapRoot.Find(StaticMapChunkBatchingPolicy.CombinedRootName);
-            if (existing != null)
-                DestroyObject(existing.gameObject);
-
             GameObject root = new GameObject(StaticMapChunkBatchingPolicy.CombinedRootName)
             {
                 hideFlags = HideFlags.DontSave,

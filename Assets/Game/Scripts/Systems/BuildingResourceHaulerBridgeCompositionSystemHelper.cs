@@ -4,6 +4,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 using Game.Components;
+using RoutePolicy = Game.Runtime.ResourceHaulerAutomaticRoutePolicySystemHelper;
 
 namespace Game.Runtime
 {
@@ -15,9 +16,8 @@ namespace Game.Runtime
         private const float AutomaticAssignmentStableRefreshSeconds = 2f;
         private readonly List<Entity> _haulerEntities = new();
         private readonly HashSet<Entity> _invalidCapacityWarningEntities = new();
-        private FixedList512Bytes<FactionAIOilAllocationCacheEntry> _aiOilAllocationInputCache;
-        private World _fuelLogisticsTelemetryQueryWorld;
-        private EntityQuery _fuelLogisticsTelemetryQuery;
+        private readonly ResourceHaulerAIOilAllocationPolicySystemHelper _aiOilAllocationPolicy = new();
+        private readonly FactionFuelLogisticsTelemetryBridgeCompositionSystemHelper _fuelLogisticsTelemetry = new();
         private uint _lastAutomaticAssignmentSignature;
         private uint _nextReservationId = 1u;
         private float _nextAutomaticAssignmentRefreshAt;
@@ -56,13 +56,6 @@ namespace Game.Runtime
                 StoredFuelBarrels = math.max(0f, storedFuelBarrels);
                 FuelStorageCapacity = math.max(0, fuelStorageCapacity);
             }
-        }
-
-        private struct FactionAIOilAllocationCacheEntry
-        {
-            public byte FactionId;
-            public byte HasInput;
-            public FactionAIOilAllocationInput Input;
         }
 
         public readonly struct Context
@@ -148,7 +141,7 @@ namespace Game.Runtime
 
             bool runAutomaticAssignment = ShouldRunAutomaticAssignmentScan(context, em, grid, _haulerEntities, now);
             if (runAutomaticAssignment)
-                _aiOilAllocationInputCache.Clear();
+                _aiOilAllocationPolicy.ClearInputCache();
             for (int i = 0; i < _haulerEntities.Count; i++)
             {
                 Entity hauler = _haulerEntities[i];
@@ -192,7 +185,8 @@ namespace Game.Runtime
 
             bool clickedIsOilSource = context.ResourceHaulerUtilitySystemHelper.IsOilSourceBuilding(clickedBuilding);
             bool clickedIsFuelBuilding = context.ResourceHaulerUtilitySystemHelper.IsFuelBuilding(clickedBuilding);
-            bool clickedIsFabricationInput = IsEnabledMaterialFabricationInput(em, clickedBuilding);
+            bool clickedIsFabricationInput =
+                ResourceHaulerAutomaticRoutePolicySystemHelper.IsEnabledMaterialFabricationInput(em, clickedBuilding);
             bool clickedIsStorage = context.FactionResourceCompositionSystemHelper.IsResourceStorageBuilding(clickedBuilding);
             if (!clickedIsOilSource && !clickedIsFuelBuilding && !clickedIsFabricationInput && !clickedIsStorage)
                 return false;
@@ -205,7 +199,10 @@ namespace Game.Runtime
                 if (!TryFindNearestBuilding(
                         context,
                         clickedBuilding,
-                        candidate => IsAutomaticOilDestination(context, em, candidate),
+                        candidate => ResourceHaulerAutomaticRoutePolicySystemHelper.IsAutomaticOilDestination(
+                            context,
+                            em,
+                            candidate),
                         out destination))
                     return false;
                 resourceKind = ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil;
@@ -330,8 +327,12 @@ namespace Game.Runtime
             int2 unitCell = em.GetComponentData<UnitGrid>(unit).Cell;
             FactionAIOilAllocationInput aiInput = default;
             bool hasAIInput = resourceKind == ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil &&
-                              TryResolveCachedFactionAIOilAllocationInput(context, em, factionId, out aiInput);
-            if (!TryFindAutomaticHaulerRoute(
+                              _aiOilAllocationPolicy.TryResolveCachedInput(
+                                  context.TryResolveFactionAIOilAllocationInput,
+                                  em,
+                                  factionId,
+                                  out aiInput);
+            if (!ResourceHaulerAutomaticRoutePolicySystemHelper.TryFindAutomaticHaulerRoute(
                     context,
                     em,
                     grid,
@@ -348,7 +349,7 @@ namespace Game.Runtime
                     em,
                     unit,
                     FuelLogisticsTaskStatusCode.Blocked,
-                    ResolveAutomaticAssignmentBlockReason(
+                    ResourceHaulerAutomaticRoutePolicySystemHelper.ResolveAutomaticAssignmentBlockReason(
                         context,
                         em,
                         grid,
@@ -460,42 +461,10 @@ namespace Game.Runtime
             return true;
         }
 
-        private bool TryResolveCachedFactionAIOilAllocationInput(
-            Context context,
-            EntityManager em,
-            byte factionId,
-            out FactionAIOilAllocationInput input)
-        {
-            input = default;
-            for (int i = 0; i < _aiOilAllocationInputCache.Length; i++)
-            {
-                FactionAIOilAllocationCacheEntry entry = _aiOilAllocationInputCache[i];
-                if (entry.FactionId != factionId)
-                    continue;
-
-                input = entry.Input;
-                return entry.HasInput != 0;
-            }
-
-            bool hasInput = context.TryResolveFactionAIOilAllocationInput != null &&
-                            context.TryResolveFactionAIOilAllocationInput(em, factionId, out input);
-            if (_aiOilAllocationInputCache.Length < _aiOilAllocationInputCache.Capacity)
-            {
-                _aiOilAllocationInputCache.Add(new FactionAIOilAllocationCacheEntry
-                {
-                    FactionId = factionId,
-                    HasInput = hasInput ? (byte)1 : (byte)0,
-                    Input = input
-                });
-            }
-
-            return hasInput;
-        }
-
 #if UNITY_INCLUDE_TESTS
         internal void ResetAIOilAllocationInputCacheForTests()
         {
-            _aiOilAllocationInputCache.Clear();
+            _aiOilAllocationPolicy.ClearInputCache();
         }
 
         internal bool TryResolveCachedFactionAIOilAllocationInputForTests(
@@ -504,7 +473,11 @@ namespace Game.Runtime
             byte factionId,
             out FactionAIOilAllocationInput input)
         {
-            return TryResolveCachedFactionAIOilAllocationInput(context, em, factionId, out input);
+            return _aiOilAllocationPolicy.TryResolveCachedInput(
+                context.TryResolveFactionAIOilAllocationInput,
+                em,
+                factionId,
+                out input);
         }
 #endif
 
@@ -607,7 +580,10 @@ namespace Game.Runtime
                     hash = AppendHash(hash, QuantizeResource(storage.ReservedFuelInboundBarrels));
                     hash = AppendHash(hash, QuantizeResource(storage.ReservedFuelOutboundBarrels));
                 }
-                if (TryGetMaterialFabrication(em, building, out MaterialFabricationComponent fabrication))
+                if (ResourceHaulerAutomaticRoutePolicySystemHelper.TryGetMaterialFabrication(
+                        em,
+                        building,
+                        out MaterialFabricationComponent fabrication))
                 {
                     hash = AppendHash(hash, fabrication.ProductionEnabled);
                     hash = AppendHash(hash, (int)fabrication.Version);
@@ -702,93 +678,6 @@ namespace Game.Runtime
             return Mathf.RoundToInt(Mathf.Max(0f, value) * 100f);
         }
 
-        private static bool TryFindAutomaticHaulerRoute(
-            Context context,
-            EntityManager em,
-            GridConfig grid,
-            byte factionId,
-            int2 unitCell,
-            ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind,
-            float loadAmount,
-            bool hasAIInput,
-            in FactionAIOilAllocationInput aiInput,
-            out RuntimeBuildingEntity source,
-            out RuntimeBuildingEntity destination)
-        {
-            source = null;
-            destination = null;
-            if (context.RuntimeBuildings == null)
-                return false;
-
-            if (!TryFindNearestAutomaticSourceToCell(
-                    context,
-                    em,
-                    grid,
-                    factionId,
-                    unitCell,
-                    resourceKind,
-                    loadAmount,
-                    out source))
-            {
-                return false;
-            }
-
-            return TryFindNearestAutomaticDestination(
-                context,
-                em,
-                source,
-                factionId,
-                resourceKind,
-                loadAmount,
-                hasAIInput,
-                aiInput,
-                out destination);
-        }
-
-        private static FuelLogisticsBlockReasonCode ResolveAutomaticAssignmentBlockReason(
-            Context context,
-            EntityManager em,
-            GridConfig grid,
-            byte factionId,
-            int2 unitCell,
-            ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind,
-            float loadAmount,
-            bool hasAIInput,
-            in FactionAIOilAllocationInput aiInput)
-        {
-            if (!TryFindNearestAutomaticSourceToCell(
-                    context,
-                    em,
-                    grid,
-                    factionId,
-                    unitCell,
-                    resourceKind,
-                    loadAmount,
-                    out RuntimeBuildingEntity source))
-            {
-                return FuelLogisticsBlockReasonCode.SourceUnavailable;
-            }
-
-            if (!HasAutomaticDestinationCandidate(context, em, source, factionId, resourceKind))
-                return FuelLogisticsBlockReasonCode.DestinationUnavailable;
-
-            if (!TryFindNearestAutomaticDestination(
-                    context,
-                    em,
-                    source,
-                    factionId,
-                    resourceKind,
-                    loadAmount,
-                    hasAIInput,
-                    aiInput,
-                    out _))
-            {
-                return FuelLogisticsBlockReasonCode.DestinationFull;
-            }
-
-            return FuelLogisticsBlockReasonCode.RouteUnavailable;
-        }
-
 #if UNITY_INCLUDE_TESTS
         internal static bool TryFindAutomaticHaulerRouteForTests(
             Context context,
@@ -805,7 +694,7 @@ namespace Game.Runtime
             bool hasAIInput = resourceKind == ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil &&
                               context.TryResolveFactionAIOilAllocationInput != null &&
                               context.TryResolveFactionAIOilAllocationInput(em, factionId, out aiInput);
-            return TryFindAutomaticHaulerRoute(
+            return ResourceHaulerAutomaticRoutePolicySystemHelper.TryFindAutomaticHaulerRoute(
                 context,
                 em,
                 grid,
@@ -819,362 +708,6 @@ namespace Game.Runtime
                 out destination);
         }
 #endif
-
-        private static bool TryFindNearestAutomaticSourceToCell(
-            Context context,
-            EntityManager em,
-            GridConfig grid,
-            byte factionId,
-            int2 originCell,
-            ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind,
-            float loadAmount,
-            out RuntimeBuildingEntity result)
-        {
-            result = null;
-            if (context.RuntimeBuildings == null || context.ResolveBuildingFocusWorldPosition == null)
-                return false;
-
-            Vector3 origin = grid.Origin + new float3(
-                (originCell.x + 0.5f) * grid.CellSize,
-                0f,
-                (originCell.y + 0.5f) * grid.CellSize);
-            float bestDistanceSq = float.MaxValue;
-
-            foreach (var pair in context.RuntimeBuildings)
-            {
-                RuntimeBuildingEntity candidate = pair.Value;
-                if (candidate == null ||
-                    candidate.IsDestroyed ||
-                    !IsAutomaticSource(context, em, candidate, factionId, resourceKind, loadAmount))
-                {
-                    continue;
-                }
-
-                Vector3 candidatePosition = context.ResolveBuildingFocusWorldPosition(candidate);
-                float distanceSq = (candidatePosition - origin).sqrMagnitude;
-                if (!IsBetterDistanceCandidate(candidate, result, distanceSq, bestDistanceSq))
-                    continue;
-
-                bestDistanceSq = distanceSq;
-                result = candidate;
-            }
-
-            return result != null;
-        }
-
-        private static bool TryFindNearestAutomaticDestination(
-            Context context,
-            EntityManager em,
-            RuntimeBuildingEntity source,
-            byte factionId,
-            ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind,
-            float loadAmount,
-            bool hasAIInput,
-            in FactionAIOilAllocationInput aiInput,
-            out RuntimeBuildingEntity result)
-        {
-            result = null;
-            if (source == null || context.RuntimeBuildings == null || context.ResolveBuildingFocusWorldPosition == null)
-                return false;
-
-            Vector3 origin = context.ResolveBuildingFocusWorldPosition(source);
-            float bestDistanceSq = float.MaxValue;
-            int bestStrategicPriority = -1;
-            int bestStarvationPriority = -1;
-            float bestFreeCapacityRatio = -1f;
-            foreach (var pair in context.RuntimeBuildings)
-            {
-                RuntimeBuildingEntity candidate = pair.Value;
-                if (candidate == null ||
-                    candidate == source ||
-                    candidate.IsDestroyed ||
-                    !IsAutomaticDestination(context, em, candidate, factionId, resourceKind, loadAmount))
-                {
-                    continue;
-                }
-
-                Vector3 candidatePosition = context.ResolveBuildingFocusWorldPosition(candidate);
-                float distanceSq = (candidatePosition - origin).sqrMagnitude;
-                int strategicPriority = 0;
-                int starvationPriority = 0;
-                float freeCapacityRatio = 0f;
-                if (resourceKind == ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil)
-                {
-                    ResolveOilDestinationDemand(
-                        context,
-                        em,
-                        candidate,
-                        loadAmount,
-                        hasAIInput,
-                        aiInput,
-                        out strategicPriority,
-                        out starvationPriority,
-                        out freeCapacityRatio);
-                    if (!IsBetterOilDestinationCandidate(
-                            candidate,
-                            result,
-                            strategicPriority,
-                            bestStrategicPriority,
-                            starvationPriority,
-                            bestStarvationPriority,
-                            freeCapacityRatio,
-                            bestFreeCapacityRatio,
-                            distanceSq,
-                            bestDistanceSq))
-                        continue;
-                }
-                else if (!IsBetterDistanceCandidate(candidate, result, distanceSq, bestDistanceSq))
-                {
-                    continue;
-                }
-
-                bestDistanceSq = distanceSq;
-                bestStrategicPriority = strategicPriority;
-                bestStarvationPriority = starvationPriority;
-                bestFreeCapacityRatio = freeCapacityRatio;
-                result = candidate;
-            }
-
-            return result != null;
-        }
-
-        private static bool IsAutomaticSource(
-            Context context,
-            EntityManager em,
-            RuntimeBuildingEntity candidate,
-            byte factionId,
-            ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind,
-            float loadAmount)
-        {
-            if (!IsSameFactionResourceBuilding(candidate, factionId))
-                return false;
-
-            if (resourceKind == ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil)
-            {
-                return context.ResourceHaulerUtilitySystemHelper.IsOilSourceBuilding(candidate);
-            }
-
-            return context.ResourceHaulerUtilitySystemHelper.IsFuelStorageSourceBuilding(candidate) &&
-                   context.ResourceHaulerUtilitySystemHelper.HasEnoughSourceResource(
-                       em,
-                       candidate,
-                       resourceKind,
-                       loadAmount);
-        }
-
-        private static bool IsAutomaticDestination(
-            Context context,
-            EntityManager em,
-            RuntimeBuildingEntity candidate,
-            byte factionId,
-            ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind,
-            float loadAmount)
-        {
-            if (!IsSameFactionResourceBuilding(candidate, factionId))
-                return false;
-
-            if (resourceKind == ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil)
-            {
-                return IsAutomaticOilDestination(context, em, candidate) &&
-                       context.ResourceHaulerUtilitySystemHelper.HasReceivingCapacity(
-                           em,
-                           candidate,
-                           resourceKind,
-                           loadAmount);
-            }
-
-            return context.FactionResourceCompositionSystemHelper.IsResourceStorageBuilding(candidate) &&
-                   candidate.FuelStorageCapacity > 0 &&
-                   context.ResourceHaulerUtilitySystemHelper.HasReceivingCapacity(
-                       em,
-                       candidate,
-                       resourceKind,
-                       loadAmount);
-        }
-
-        private static bool HasAutomaticDestinationCandidate(
-            Context context,
-            EntityManager em,
-            RuntimeBuildingEntity source,
-            byte factionId,
-            ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind)
-        {
-            if (source == null || context.RuntimeBuildings == null)
-                return false;
-
-            foreach (var pair in context.RuntimeBuildings)
-            {
-                RuntimeBuildingEntity candidate = pair.Value;
-                if (candidate == null ||
-                    candidate == source ||
-                    candidate.IsDestroyed ||
-                    !IsSameFactionResourceBuilding(candidate, factionId))
-                {
-                    continue;
-                }
-
-                if (resourceKind == ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil)
-                {
-                    if (IsAutomaticOilDestination(context, em, candidate))
-                        return true;
-                    continue;
-                }
-
-                if (context.FactionResourceCompositionSystemHelper.IsResourceStorageBuilding(candidate) &&
-                    candidate.FuelStorageCapacity > 0)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        private static bool IsAutomaticOilDestination(
-            Context context,
-            EntityManager em,
-            RuntimeBuildingEntity candidate)
-        {
-            return context.ResourceHaulerUtilitySystemHelper.IsFuelBuilding(candidate) ||
-                   IsEnabledMaterialFabricationInput(em, candidate);
-        }
-
-        private static bool IsEnabledMaterialFabricationInput(
-            EntityManager em,
-            RuntimeBuildingEntity candidate)
-        {
-            return TryGetMaterialFabrication(em, candidate, out MaterialFabricationComponent fabrication) &&
-                   fabrication.ProductionEnabled != 0;
-        }
-
-        private static bool TryGetMaterialFabrication(
-            EntityManager em,
-            RuntimeBuildingEntity candidate,
-            out MaterialFabricationComponent fabrication)
-        {
-            fabrication = default;
-            if (candidate == null ||
-                candidate.CombatEntity == Entity.Null ||
-                !em.Exists(candidate.CombatEntity) ||
-                !em.HasComponent<MaterialFabricationInputTag>(candidate.CombatEntity) ||
-                !em.HasComponent<MaterialFabricationComponent>(candidate.CombatEntity))
-                return false;
-
-            fabrication = em.GetComponentData<MaterialFabricationComponent>(candidate.CombatEntity);
-            return fabrication.OwnerFactionId == candidate.OwnerFactionId;
-        }
-
-        private static void ResolveOilDestinationDemand(
-            Context context,
-            EntityManager em,
-            RuntimeBuildingEntity candidate,
-            float loadAmount,
-            bool hasAIInput,
-            in FactionAIOilAllocationInput aiInput,
-            out int strategicPriority,
-            out int starvationPriority,
-            out float freeCapacityRatio)
-        {
-            float storedOil = context.ResourceHaulerUtilitySystemHelper.GetStoredResource(
-                em,
-                candidate,
-                ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil);
-            float requiredOil = loadAmount;
-            if (TryGetMaterialFabrication(em, candidate, out MaterialFabricationComponent fabrication))
-                requiredOil = math.max(requiredOil, fabrication.OilConsumedPerCycle);
-
-            strategicPriority = hasAIInput
-                ? ResolveAIOilDestinationStrategicPriority(context, em, candidate, aiInput)
-                : 0;
-            starvationPriority = storedOil + 0.0001f < requiredOil ? 1 : 0;
-            float freeCapacity = context.ResourceHaulerUtilitySystemHelper.GetReceivingFreeCapacity(
-                em,
-                candidate,
-                ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil);
-            freeCapacityRatio = freeCapacity / math.max(1f, candidate.OilStorageCapacity);
-        }
-
-        private static bool IsBetterOilDestinationCandidate(
-            RuntimeBuildingEntity candidate,
-            RuntimeBuildingEntity current,
-            int strategicPriority,
-            int currentStrategicPriority,
-            int starvationPriority,
-            int currentStarvationPriority,
-            float freeCapacityRatio,
-            float currentFreeCapacityRatio,
-            float distanceSq,
-            float currentDistanceSq)
-        {
-            if (current == null || strategicPriority != currentStrategicPriority)
-                return current == null || strategicPriority > currentStrategicPriority;
-            if (current == null || starvationPriority != currentStarvationPriority)
-                return current == null || starvationPriority > currentStarvationPriority;
-            if (math.abs(freeCapacityRatio - currentFreeCapacityRatio) > 0.0001f)
-                return freeCapacityRatio > currentFreeCapacityRatio;
-
-            return IsBetterDistanceCandidate(candidate, current, distanceSq, currentDistanceSq);
-        }
-
-        private static int ResolveAIOilDestinationStrategicPriority(
-            Context context,
-            EntityManager em,
-            RuntimeBuildingEntity candidate,
-            in FactionAIOilAllocationInput input)
-        {
-            if (TryGetMaterialFabrication(em, candidate, out _))
-                return ResolveConstructionPressureBand(
-                    input.PlannedMaterialsCost,
-                    input.AvailableMaterials,
-                    input.MaterialsCapacity);
-
-            return context.ResourceHaulerUtilitySystemHelper.IsFuelBuilding(candidate)
-                ? ResolveFuelPressureBand(input.StoredFuelBarrels, input.FuelStorageCapacity)
-                : 0;
-        }
-
-        internal static int ResolveConstructionPressureBand(
-            int plannedMaterialsCost,
-            int availableMaterials,
-            int materialsCapacity)
-        {
-            int cost = math.max(0, plannedMaterialsCost);
-            if (cost == 0 || cost > math.max(0, materialsCapacity) || availableMaterials >= cost)
-                return 0;
-
-            return availableMaterials <= 0 || availableMaterials * 2 < cost ? 2 : 1;
-        }
-
-        internal static int ResolveFuelPressureBand(float storedFuelBarrels, int fuelStorageCapacity)
-        {
-            int capacity = math.max(0, fuelStorageCapacity);
-            if (capacity == 0)
-                return 0;
-
-            float ratio = math.saturate(math.max(0f, storedFuelBarrels) / capacity);
-            if (ratio <= 0.1f)
-                return 3;
-            return ratio <= 0.25f ? 1 : 0;
-        }
-
-        private static bool IsBetterDistanceCandidate(
-            RuntimeBuildingEntity candidate,
-            RuntimeBuildingEntity current,
-            float distanceSq,
-            float currentDistanceSq)
-        {
-            if (current == null || distanceSq + 0.0001f < currentDistanceSq)
-                return true;
-            return math.abs(distanceSq - currentDistanceSq) <= 0.0001f && candidate.Id < current.Id;
-        }
-
-        private static bool IsSameFactionResourceBuilding(RuntimeBuildingEntity building, byte factionId)
-        {
-            return building != null &&
-                   !building.IsDestroyed &&
-                   building.HasOwnerFaction &&
-                   building.OwnerFactionId == factionId;
-        }
 
         public bool TryGetRuntimeBuildingApproachCell(
             Context context,
@@ -1276,8 +809,8 @@ namespace Game.Runtime
             byte haulerFactionId = em.HasComponent<Faction>(entity)
                 ? em.GetComponentData<Faction>(entity).Id
                 : byte.MaxValue;
-            if (!IsSameFactionResourceBuilding(source, haulerFactionId) ||
-                !IsSameFactionResourceBuilding(destination, haulerFactionId))
+            if (!RoutePolicy.IsSameFactionResourceBuilding(source, haulerFactionId) ||
+                !RoutePolicy.IsSameFactionResourceBuilding(destination, haulerFactionId))
             {
                 ReleaseOrderReservations(context, em, entity);
                 em.RemoveComponent<UnitResourceHaulOrder>(entity);
@@ -1285,7 +818,7 @@ namespace Game.Runtime
                     em,
                     entity,
                     FuelLogisticsTaskStatusCode.Blocked,
-                    !IsSameFactionResourceBuilding(source, haulerFactionId)
+                    !RoutePolicy.IsSameFactionResourceBuilding(source, haulerFactionId)
                         ? FuelLogisticsBlockReasonCode.SourceUnavailable
                         : FuelLogisticsBlockReasonCode.DestinationUnavailable,
                     resourceKind);
@@ -1724,43 +1257,12 @@ namespace Game.Runtime
             FuelLogisticsBlockReasonCode reasonCode,
             ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind)
         {
-            bool enteredBlockedEpisode = statusCode == FuelLogisticsTaskStatusCode.Blocked &&
-                                         (!em.HasComponent<UnitResourceHaulStatus>(entity) ||
-                                          em.GetComponentData<UnitResourceHaulStatus>(entity).StatusCode !=
-                                          (byte)FuelLogisticsTaskStatusCode.Blocked);
-            UnitResourceHaulStatus status = new()
-            {
-                StatusCode = (byte)statusCode,
-                ReasonCode = (byte)reasonCode,
-                ResourceKind = (byte)resourceKind
-            };
-            if (em.HasComponent<UnitResourceHaulStatus>(entity))
-                em.SetComponentData(entity, status);
-            else
-                em.AddComponentData(entity, status);
-
-            if (enteredBlockedEpisode)
-                RecordRouteFailureTelemetry(em, entity, resourceKind);
-        }
-
-        private static bool IsTrayOilTelemetryEligible(
-            EntityManager em,
-            Entity entity,
-            ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind,
-            out byte factionId)
-        {
-            factionId = default;
-            if (resourceKind != ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil ||
-                !em.Exists(entity) ||
-                !em.HasComponent<UnitSourcePrefabKey>(entity) ||
-                !em.HasComponent<Faction>(entity) ||
-                !em.GetComponentData<UnitSourcePrefabKey>(entity).Value.Equals(TrayTruckSourceKey))
-            {
-                return false;
-            }
-
-            factionId = em.GetComponentData<Faction>(entity).Id;
-            return true;
+            _fuelLogisticsTelemetry.SetResourceHaulStatus(
+                em,
+                entity,
+                statusCode,
+                reasonCode,
+                resourceKind);
         }
 
         private void RecordRouteAssignmentTelemetry(
@@ -1769,33 +1271,7 @@ namespace Game.Runtime
             ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind,
             bool isReassignment)
         {
-            if (!IsTrayOilTelemetryEligible(em, entity, resourceKind, out byte factionId) ||
-                !TryResolveFuelLogisticsTelemetryEntity(em, factionId, out Entity telemetryEntity))
-            {
-                return;
-            }
-
-            FactionFuelLogisticsTelemetryComponent telemetry =
-                em.GetComponentData<FactionFuelLogisticsTelemetryComponent>(telemetryEntity);
-            FactionFuelLogisticsTelemetryUtilitySystemHelper.RecordRouteAssignment(ref telemetry, isReassignment);
-            em.SetComponentData(telemetryEntity, telemetry);
-        }
-
-        private void RecordRouteFailureTelemetry(
-            EntityManager em,
-            Entity entity,
-            ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind)
-        {
-            if (!IsTrayOilTelemetryEligible(em, entity, resourceKind, out byte factionId) ||
-                !TryResolveFuelLogisticsTelemetryEntity(em, factionId, out Entity telemetryEntity))
-            {
-                return;
-            }
-
-            FactionFuelLogisticsTelemetryComponent telemetry =
-                em.GetComponentData<FactionFuelLogisticsTelemetryComponent>(telemetryEntity);
-            FactionFuelLogisticsTelemetryUtilitySystemHelper.RecordRouteFailure(ref telemetry);
-            em.SetComponentData(telemetryEntity, telemetry);
+            _fuelLogisticsTelemetry.RecordRouteAssignment(em, entity, resourceKind, isReassignment);
         }
 
         private void RecordOilDeliveryTelemetry(
@@ -1805,84 +1281,12 @@ namespace Game.Runtime
             ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind,
             float deliveredBarrels)
         {
-            if (!IsTrayOilTelemetryEligible(em, entity, resourceKind, out byte factionId) ||
-                destination == null ||
-                destination.OwnerFactionId != factionId ||
-                !TryResolveFuelLogisticsTelemetryEntity(em, factionId, out Entity telemetryEntity))
-            {
-                return;
-            }
-
-            bool isFabricationDepot = TryGetMaterialFabrication(
+            _fuelLogisticsTelemetry.RecordOilDelivery(
                 em,
+                entity,
                 destination,
-                out MaterialFabricationComponent fabrication) &&
-                fabrication.OwnerFactionId == factionId;
-            bool isRefinery = !isFabricationDepot && destination.FuelBarrelsPerDay > 0f;
-            FactionFuelLogisticsTelemetryComponent telemetry =
-                em.GetComponentData<FactionFuelLogisticsTelemetryComponent>(telemetryEntity);
-            if (FactionFuelLogisticsTelemetryUtilitySystemHelper.RecordOilDelivery(
-                    ref telemetry,
-                    deliveredBarrels,
-                    isFabricationDepot,
-                    isRefinery))
-            {
-                em.SetComponentData(telemetryEntity, telemetry);
-            }
-        }
-
-        private bool TryResolveFuelLogisticsTelemetryEntity(
-            EntityManager em,
-            byte factionId,
-            out Entity telemetryEntity)
-        {
-            telemetryEntity = Entity.Null;
-            EnsureFuelLogisticsTelemetryQuery(em);
-            EntityTypeHandle entityType = em.GetEntityTypeHandle();
-            ComponentTypeHandle<FactionEconomy> economyType =
-                em.GetComponentTypeHandle<FactionEconomy>(true);
-            ComponentTypeHandle<FactionFuelLogisticsTelemetryComponent> telemetryType =
-                em.GetComponentTypeHandle<FactionFuelLogisticsTelemetryComponent>(true);
-            using NativeArray<ArchetypeChunk> chunks =
-                _fuelLogisticsTelemetryQuery.ToArchetypeChunkArray(Allocator.Temp);
-            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
-            {
-                ArchetypeChunk chunk = chunks[chunkIndex];
-                NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
-                NativeArray<FactionEconomy> economies = chunk.GetNativeArray(ref economyType);
-                NativeArray<FactionFuelLogisticsTelemetryComponent> telemetry =
-                    chunk.GetNativeArray(ref telemetryType);
-                for (int entityIndex = 0; entityIndex < entities.Length; entityIndex++)
-                {
-                    if (economies[entityIndex].FactionId != factionId ||
-                        telemetry[entityIndex].FactionId != factionId)
-                    {
-                        continue;
-                    }
-
-                    if (telemetryEntity != Entity.Null)
-                    {
-                        telemetryEntity = Entity.Null;
-                        return false;
-                    }
-
-                    telemetryEntity = entities[entityIndex];
-                }
-            }
-
-            return telemetryEntity != Entity.Null;
-        }
-
-        private void EnsureFuelLogisticsTelemetryQuery(EntityManager em)
-        {
-            World world = em.World;
-            if (_fuelLogisticsTelemetryQueryWorld == world && world != null && world.IsCreated)
-                return;
-
-            _fuelLogisticsTelemetryQueryWorld = world;
-            _fuelLogisticsTelemetryQuery = em.CreateEntityQuery(
-                ComponentType.ReadOnly<FactionEconomy>(),
-                ComponentType.ReadOnly<FactionFuelLogisticsTelemetryComponent>());
+                resourceKind,
+                deliveredBarrels);
         }
 
         private static bool IsHaulerDeadOrUnavailable(EntityManager em, Entity entity)

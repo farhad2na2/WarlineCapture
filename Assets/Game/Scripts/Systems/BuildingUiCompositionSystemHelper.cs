@@ -18,7 +18,7 @@ namespace Game.Runtime
             Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionRuntimeCompositionSystemHelper.Context> createBuildingSelectionContext)
         {
             return source.BuildingUiContextCompositionSystemHelper.CreateSource(
-                source.RuntimeResourceUtilitySystemHelper,
+                source.RuntimeFactionResourceSystemHelper,
                 source.BuildingDefinitionPrefabSystemHelper,
                 source.RuntimeBuildingSystem,
                 source.BuildingProductionQueueCompositionSystemHelper,

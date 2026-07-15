@@ -364,7 +364,7 @@ namespace Game.UI.Runtime
             else if (_cameraActionNormalSprite != null)
             {
                 SetImageSprite(image, _cameraActionNormalSprite);
-                if (image.overrideSprite == selectedSprite)
+                if (image.overrideSprite != null)
                     image.overrideSprite = null;
                 if (_cameraActionNormalColorCached)
                     SetImageColor(image, _cameraActionNormalColor);
@@ -372,7 +372,7 @@ namespace Game.UI.Runtime
             else
             {
                 SetImageSprite(image, null);
-                if (image.overrideSprite == selectedSprite)
+                if (image.overrideSprite != null)
                     image.overrideSprite = null;
                 if (selected)
                     SetImageColor(image, cameraAction.colors.selectedColor);

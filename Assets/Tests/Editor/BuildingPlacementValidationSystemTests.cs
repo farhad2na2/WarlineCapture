@@ -29,13 +29,15 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
             tests.BuildingUiPlacementCommandRequest_ExitBuildModeHonorsClearSelectionFlag();
             tests.BuildingUiPlacementCommandRequest_BeginConfiguredPlacementWritesAcceptedResult();
             tests.BuildingUiPlacementCommandRequest_BeginConfiguredPlacementRejectsMissingConfig();
+            tests.BuildingPlacementCommandResultMapper_MapsConfirmFailureResultCodes();
+            tests.BuildingPlacementCommandResultMapper_MapsTacticalReasonCodes();
             tests.BuildingUiPlacementCommandEntityCache_ReusesWarmPositiveAndNegativeLookupsWithoutManagedAllocation();
             tests.BuildingUiPlacementCommandEntityCache_RebindsWhenWorldChanges();
             tests.BuildingUiPlacementCommandEntityCache_RecoversDestroyedEntityAndRepairsBuffers();
             tests.BuildingUiPlacementEconomyTransactionId_SurvivesQueueEntityRecreation();
             tests.BuildingPlacementInputRuntimeTick_ProcessesQueuedPlacementCommandBeforeCameraGate();
             tests.BuildingPlacementInputScratchLists_ReuseImmediatePreviewStorageWithoutSharingOwnedResults();
-            Debug.Log("[BuildingPlacementCommandRequestValidation] result=Passed tests=17");
+            Debug.Log("[BuildingPlacementCommandRequestValidation] result=Passed tests=19");
             ValidationExit.Passed();
         }
         catch (Exception ex)
@@ -44,6 +46,103 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
             Debug.LogError("[BuildingPlacementCommandRequestValidation] result=Failed");
             ValidationExit.Failed();
         }
+    }
+
+    [Test]
+    public void BuildingPlacementCommandResultMapper_MapsConfirmFailureResultCodes()
+    {
+        Assert.AreEqual(
+            BuildingUiPlacementCommandResultElement.Rejected,
+            BuildingPlacementCommandResultMapper.ToConfirmFailureResultCode(
+                BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.None));
+        Assert.AreEqual(
+            BuildingUiPlacementCommandResultElement.MissingActivePlacement,
+            BuildingPlacementCommandResultMapper.ToConfirmFailureResultCode(
+                BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.MissingActivePlacement));
+        Assert.AreEqual(
+            BuildingUiPlacementCommandResultElement.BlockedPlacement,
+            BuildingPlacementCommandResultMapper.ToConfirmFailureResultCode(
+                BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.BlockedPlacement));
+        Assert.AreEqual(
+            BuildingUiPlacementCommandResultElement.InvalidPlacement,
+            BuildingPlacementCommandResultMapper.ToConfirmFailureResultCode(
+                BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.InvalidPlacement));
+        Assert.AreEqual(
+            BuildingUiPlacementCommandResultElement.NotEnoughMoney,
+            BuildingPlacementCommandResultMapper.ToConfirmFailureResultCode(
+                BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.InsufficientCredits));
+        Assert.AreEqual(
+            BuildingUiPlacementCommandResultElement.InsufficientMaterials,
+            BuildingPlacementCommandResultMapper.ToConfirmFailureResultCode(
+                BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.InsufficientMaterials));
+        Assert.AreEqual(
+            BuildingUiPlacementCommandResultElement.InsufficientCreditsAndMaterials,
+            BuildingPlacementCommandResultMapper.ToConfirmFailureResultCode(
+                BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.InsufficientCreditsAndMaterials));
+        Assert.AreEqual(
+            BuildingUiPlacementCommandResultElement.DuplicateTransaction,
+            BuildingPlacementCommandResultMapper.ToConfirmFailureResultCode(
+                BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.DuplicateTransaction));
+        Assert.AreEqual(
+            BuildingUiPlacementCommandResultElement.TransactionRejected,
+            BuildingPlacementCommandResultMapper.ToConfirmFailureResultCode(
+                BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.TransactionRejected));
+        Assert.AreEqual(
+            BuildingUiPlacementCommandResultElement.RegistrationFailed,
+            BuildingPlacementCommandResultMapper.ToConfirmFailureResultCode(
+                BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.RegistrationFailed));
+        Assert.AreEqual(
+            BuildingUiPlacementCommandResultElement.Rejected,
+            BuildingPlacementCommandResultMapper.ToConfirmFailureResultCode(
+                (BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason)int.MaxValue));
+    }
+
+    [Test]
+    public void BuildingPlacementCommandResultMapper_MapsTacticalReasonCodes()
+    {
+        Assert.AreEqual(
+            TacticalCommandReasonCode.None,
+            BuildingPlacementCommandResultMapper.ToReasonCode(BuildingUiPlacementCommandResultElement.Completed));
+        Assert.AreEqual(
+            TacticalCommandReasonCode.TargetBlocked,
+            BuildingPlacementCommandResultMapper.ToReasonCode(BuildingUiPlacementCommandResultElement.BlockedPlacement));
+        Assert.AreEqual(
+            TacticalCommandReasonCode.TargetUnreachable,
+            BuildingPlacementCommandResultMapper.ToReasonCode(BuildingUiPlacementCommandResultElement.InvalidPlacement));
+        Assert.AreEqual(
+            TacticalCommandReasonCode.InsufficientResources,
+            BuildingPlacementCommandResultMapper.ToReasonCode(BuildingUiPlacementCommandResultElement.NotEnoughMoney));
+        Assert.AreEqual(
+            TacticalCommandReasonCode.InsufficientResources,
+            BuildingPlacementCommandResultMapper.ToReasonCode(BuildingUiPlacementCommandResultElement.InsufficientMaterials));
+        Assert.AreEqual(
+            TacticalCommandReasonCode.InsufficientResources,
+            BuildingPlacementCommandResultMapper.ToReasonCode(
+                BuildingUiPlacementCommandResultElement.InsufficientCreditsAndMaterials));
+        Assert.AreEqual(
+            TacticalCommandReasonCode.BuildUnavailable,
+            BuildingPlacementCommandResultMapper.ToReasonCode(BuildingUiPlacementCommandResultElement.MissingActivePlacement));
+        Assert.AreEqual(
+            TacticalCommandReasonCode.BuildUnavailable,
+            BuildingPlacementCommandResultMapper.ToReasonCode(BuildingUiPlacementCommandResultElement.MissingConfig));
+        Assert.AreEqual(
+            TacticalCommandReasonCode.CommandUnavailable,
+            BuildingPlacementCommandResultMapper.ToReasonCode(BuildingUiPlacementCommandResultElement.MissingSession));
+        Assert.AreEqual(
+            TacticalCommandReasonCode.CommandUnavailable,
+            BuildingPlacementCommandResultMapper.ToReasonCode(BuildingUiPlacementCommandResultElement.Rejected));
+        Assert.AreEqual(
+            TacticalCommandReasonCode.CommandUnavailable,
+            BuildingPlacementCommandResultMapper.ToReasonCode(BuildingUiPlacementCommandResultElement.DuplicateTransaction));
+        Assert.AreEqual(
+            TacticalCommandReasonCode.CommandUnavailable,
+            BuildingPlacementCommandResultMapper.ToReasonCode(BuildingUiPlacementCommandResultElement.RegistrationFailed));
+        Assert.AreEqual(
+            TacticalCommandReasonCode.CommandUnavailable,
+            BuildingPlacementCommandResultMapper.ToReasonCode(BuildingUiPlacementCommandResultElement.TransactionRejected));
+        Assert.AreEqual(
+            TacticalCommandReasonCode.CommandUnavailable,
+            BuildingPlacementCommandResultMapper.ToReasonCode(byte.MaxValue));
     }
 
     [Test]

@@ -163,6 +163,10 @@ public sealed class ResourceExchangeArchitectureGuardrailTests
                 nameof(ResourceExchangeWalletDoesNotMirrorPhysicalOilOrFuel),
                 test => test.ResourceExchangeWalletDoesNotMirrorPhysicalOilOrFuel(),
                 ref passed);
+            RunValidationStep(
+                nameof(ResourceExchangePopupUsesExistingShellPresentationLoop),
+                test => test.ResourceExchangePopupUsesExistingShellPresentationLoop(),
+                ref passed);
 
             Debug.Log($"[ResourceExchangeArchitectureGuardrail] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -319,6 +323,19 @@ public sealed class ResourceExchangeArchitectureGuardrailTests
         StringAssert.DoesNotContain(" OilCapacity;", body);
         StringAssert.DoesNotContain(" FuelCapacity;", body);
         StringAssert.Contains(" RushTickets;", body);
+    }
+
+    [Test]
+    public void ResourceExchangePopupUsesExistingShellPresentationLoop()
+    {
+        const string popupPath = "Assets/Game/Scripts/UI/Screens/ResourceExchangePopupRuntimeView.cs";
+        const string shellPresentationPath = "Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs";
+        string popup = File.ReadAllText(popupPath);
+        string shellPresentation = File.ReadAllText(shellPresentationPath);
+
+        StringAssert.DoesNotContain("private void Update()", popup);
+        StringAssert.Contains("internal static void RefreshActiveView()", popup);
+        StringAssert.Contains("ResourceExchangePopupRuntimeView.RefreshActiveView();", shellPresentation);
     }
 
     private static List<string> FindProductionResourceExchangeFiles()

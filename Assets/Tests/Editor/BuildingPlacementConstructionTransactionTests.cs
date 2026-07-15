@@ -133,7 +133,8 @@ public sealed class BuildingPlacementConstructionTransactionTests
         private readonly BuildingPlacementLifecycleCompositionSystemHelper.CancelContext _cancelContext;
         private readonly bool _placementValid;
 
-        public readonly RuntimeResourceUtilitySystemHelper Resources;
+        public readonly RuntimeFactionResourceSystemHelper Resources;
+        public readonly BuildingConstructionResourceTransactionSystemHelper Transactions;
         public int CommitCount { get; private set; }
 
         public Fixture(
@@ -145,9 +146,10 @@ public sealed class BuildingPlacementConstructionTransactionTests
         {
             _placementValid = placementValid;
             _world = new World(nameof(BuildingPlacementConstructionTransactionTests));
-            Resources = new RuntimeResourceUtilitySystemHelper();
+            Resources = new RuntimeFactionResourceSystemHelper();
             Resources.SetInitialDollars(credits);
             Resources.Configure(_world.EntityManager);
+            Transactions = new BuildingConstructionResourceTransactionSystemHelper(Resources);
             Entity player = GetPlayerEconomyEntity(_world.EntityManager);
             _world.EntityManager.SetComponentData(player, new FactionTacticalMaterialsComponent
             {
@@ -203,9 +205,9 @@ public sealed class BuildingPlacementConstructionTransactionTests
         {
             var context = new BuildingPlacementLifecycleCompositionSystemHelper.ConfirmContext(
                 placement => placement.IsValid,
-                Resources.TryReserveConstructionResources,
-                Resources.TryFinalizeConstructionResources,
-                Resources.TryRollbackConstructionResources,
+                Transactions.TryReserve,
+                Transactions.TryFinalize,
+                Transactions.TryRollback,
                 _ =>
                 {
                     CommitCount++;

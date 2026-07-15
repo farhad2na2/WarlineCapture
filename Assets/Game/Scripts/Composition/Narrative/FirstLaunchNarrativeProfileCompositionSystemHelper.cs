@@ -8,7 +8,7 @@ namespace Game.Composition
     {
         private string commanderIdentityStateId = string.Empty;
         private string guidanceChoiceStateId = string.Empty;
-        private SaveService saveService;
+        private SaveService store;
         private PlayerProfileSaveData profile;
         public bool IsInitialized => profile != null;
         public NarrativeCommanderIdentityData CommanderIdentity => new()
@@ -28,8 +28,8 @@ namespace Game.Composition
             string commanderStateId,
             string guidanceStateId)
         {
-            saveService = persistence ?? SaveService.CreateDefault();
-            profile = saveService.LoadProfile();
+            store = persistence ?? SaveService.CreateDefault();
+            profile = store.LoadProfile();
             commanderIdentityStateId = commanderStateId ?? string.Empty;
             guidanceChoiceStateId = guidanceStateId ?? string.Empty;
         }
@@ -112,7 +112,7 @@ namespace Game.Composition
         public void Reset()
         {
             profile = null;
-            saveService = null;
+            store = null;
             commanderIdentityStateId = string.Empty;
             guidanceChoiceStateId = string.Empty;
         }
@@ -129,7 +129,7 @@ namespace Game.Composition
 
         private void Save()
         {
-            saveService.SaveProfile(profile);
+            store.SaveProfile(profile);
         }
     }
 }

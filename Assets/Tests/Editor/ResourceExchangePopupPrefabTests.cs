@@ -42,6 +42,10 @@ public sealed class ResourceExchangePopupPrefabTests
                 nameof(ResourceExchangePopupRuntimeView_ButtonsEnqueueTypedResourceExchangeActions),
                 test => test.ResourceExchangePopupRuntimeView_ButtonsEnqueueTypedResourceExchangeActions(),
                 ref passed);
+            RunValidationStep(
+                nameof(ResourceExchangePopupRuntimeView_DisablingNewestOverlappingInstanceRefreshesPrevious),
+                test => test.ResourceExchangePopupRuntimeView_DisablingNewestOverlappingInstanceRefreshesPrevious(),
+                ref passed);
 
             Debug.Log($"[ResourceExchangePopupPrefabValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -245,6 +249,63 @@ public sealed class ResourceExchangePopupPrefabTests
         }
     }
 
+    [Test]
+    public void ResourceExchangePopupRuntimeView_DisablingNewestOverlappingInstanceRefreshesPrevious()
+    {
+        var gateway = new RecordingGateway(CreateRuntimeButtonModel());
+        UiShellRuntimeGateway.Register(gateway);
+
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
+        Assert.NotNull(prefab);
+        GameObject firstObject = UnityEngine.Object.Instantiate(prefab);
+        GameObject secondObject = UnityEngine.Object.Instantiate(prefab);
+        firstObject.name = "ResourceExchangePopup_First";
+        secondObject.name = "ResourceExchangePopup_Second";
+        firstObject.SetActive(false);
+        secondObject.SetActive(false);
+        ResourceExchangePopupRuntimeView firstRuntimeView = firstObject.GetComponent<ResourceExchangePopupRuntimeView>();
+        ResourceExchangePopupRuntimeView secondRuntimeView = secondObject.GetComponent<ResourceExchangePopupRuntimeView>();
+        firstRuntimeView.ConfigureForTests(firstObject.GetComponent<ResourceExchangePopupView>());
+        secondRuntimeView.ConfigureForTests(secondObject.GetComponent<ResourceExchangePopupView>());
+
+        try
+        {
+            firstObject.SetActive(true);
+            firstRuntimeView.SendMessage("OnEnable");
+            secondObject.SetActive(true);
+            secondRuntimeView.SendMessage("OnEnable");
+            firstRuntimeView.View.Show();
+            secondRuntimeView.View.Show();
+            secondObject.SetActive(false);
+            secondRuntimeView.SendMessage("OnDisable");
+            Assert.IsTrue(firstRuntimeView.View.IsOpen, "The fallback popup fixture must be open.");
+            int readsBeforeDirectRefresh = gateway.ResourceExchangeReadCount;
+            firstRuntimeView.RefreshNow(force: true);
+            Assert.AreEqual(
+                readsBeforeDirectRefresh + 1,
+                gateway.ResourceExchangeReadCount,
+                "The fallback popup fixture must be directly refreshable before routing is tested.");
+            int readsBeforeRefresh = gateway.ResourceExchangeReadCount;
+
+            ResourceExchangePopupRuntimeView.RefreshActiveView();
+
+            Assert.IsTrue(
+                ResourceExchangePopupRuntimeView.IsActiveViewForTests(firstRuntimeView),
+                "Presentation refresh must restore the previous enabled popup as its active target.");
+            Assert.IsTrue(firstRuntimeView.isActiveAndEnabled);
+            Assert.AreEqual(
+                readsBeforeRefresh + 1,
+                gateway.ResourceExchangeReadCount,
+                "Disabling the newest overlapping popup must restore presentation refreshes to the previous enabled popup.");
+        }
+        finally
+        {
+            firstRuntimeView.SendMessage("OnDisable");
+            UnityEngine.Object.DestroyImmediate(secondObject);
+            UnityEngine.Object.DestroyImmediate(firstObject);
+        }
+    }
+
     private static void RunValidationStep(string name, Action<ResourceExchangePopupPrefabTests> action, ref int passed)
     {
         var test = new ResourceExchangePopupPrefabTests();
@@ -348,6 +409,7 @@ public sealed class ResourceExchangePopupPrefabTests
 
         public UiActionKind LastActionKind { get; private set; }
         public int LastActionPayloadId { get; private set; }
+        public int ResourceExchangeReadCount { get; private set; }
 
         public RecordingGateway(UiResourceExchangeModel exchangeModel)
         {
@@ -381,7 +443,12 @@ public sealed class ResourceExchangePopupPrefabTests
         public bool TryReadMatchHudPassengerDrawer(out UiMatchHudPassengerDrawerModel passengerDrawer) { passengerDrawer = UiMatchHudPassengerDrawerModel.Hidden; return false; }
         public bool TryReadMatchHudSquadTray(out UiMatchHudSquadTrayModel squadTray) { squadTray = UiMatchHudSquadTrayModel.Default; return false; }
         public bool TryReadBuildDrawer(out UiBuildDrawerModel drawer) { drawer = UiBuildDrawerModel.Empty; return false; }
-        public bool TryReadResourceExchange(out UiResourceExchangeModel exchange) { exchange = exchangeModel; return true; }
+        public bool TryReadResourceExchange(out UiResourceExchangeModel exchange)
+        {
+            ResourceExchangeReadCount++;
+            exchange = exchangeModel;
+            return true;
+        }
         public bool TryReadBuildPlacementConfirmationBar(out UiBuildPlacementConfirmationBarModel placementBar) { placementBar = UiBuildPlacementConfirmationBarModel.Hidden; return false; }
         public bool TryReadArmoryCategory(out ArmoryCatalogCategory category) { category = ArmoryCatalogCategory.Characters; return false; }
         public bool TryEnqueueArmoryCategory(ArmoryCatalogCategory category) => false;

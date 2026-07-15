@@ -25,6 +25,26 @@ public sealed class UiResourceExchangeReadModelSystemTests
                 test => test.Update_DuplicatePlayerExchanges_FailsClosed(),
                 ref passed);
             RunValidationStep(
+                nameof(Update_UnchangedProjectionDoesNotRewriteReadModel),
+                test => test.Update_UnchangedProjectionDoesNotRewriteReadModel(),
+                ref passed);
+            RunValidationStep(
+                nameof(Update_VisibleCountdownBucketChangeRewritesReadModel),
+                test => test.Update_VisibleCountdownBucketChangeRewritesReadModel(),
+                ref passed);
+            RunValidationStep(
+                nameof(ProjectionFingerprint_ChangesOnlyWhenVisibleCountdownChanges),
+                test => test.ProjectionFingerprint_ChangesOnlyWhenVisibleCountdownChanges(),
+                ref passed);
+            RunValidationStep(
+                nameof(ProjectionFingerprint_TracksProjectedResourceInputs),
+                test => test.ProjectionFingerprint_TracksProjectedResourceInputs(),
+                ref passed);
+            RunValidationStep(
+                nameof(ProjectionFingerprint_WarmedCallsAllocateNoManagedBytes),
+                test => test.ProjectionFingerprint_WarmedCallsAllocateNoManagedBytes(),
+                ref passed);
+            RunValidationStep(
                 nameof(WriteReadModel_ProjectsExportCardsDetailWalletAndQueue),
                 test => test.WriteReadModel_ProjectsExportCardsDetailWalletAndQueue(),
                 ref passed);
@@ -86,6 +106,213 @@ public sealed class UiResourceExchangeReadModelSystemTests
         Assert.AreEqual("Exchange unavailable.", detail.RequirementsText.ToString());
         Assert.AreEqual(0, em.GetBuffer<UiResourceExchangeRecipeCardComponent>(boundary).Length);
         Assert.AreEqual(0, em.GetBuffer<UiResourceExchangeQueueRowComponent>(boundary).Length);
+    }
+
+    [Test]
+    public void Update_UnchangedProjectionDoesNotRewriteReadModel()
+    {
+        using World world = new(nameof(Update_UnchangedProjectionDoesNotRewriteReadModel));
+        EntityManager em = world.EntityManager;
+        Entity boundary = CreatePopupBoundary(em);
+        Entity exchange = CreateCompleteExchange(em, FactionIdentity.PlayerFactionId, 1000);
+        SystemHandle system = world.CreateSystem<UiResourceExchangeReadModelSystem>();
+
+        UpdateSystem(world, system);
+        uint firstVersion = em.GetComponentData<UiResourceExchangeStateComponent>(boundary).Version;
+        UpdateSystem(world, system);
+
+        Assert.AreEqual(
+            firstVersion,
+            em.GetComponentData<UiResourceExchangeStateComponent>(boundary).Version,
+            "An unchanged visible projection must not rewrite UI state.");
+
+        FactionEconomy economy = em.GetComponentData<FactionEconomy>(exchange);
+        economy.Money++;
+        em.SetComponentData(exchange, economy);
+        UpdateSystem(world, system);
+
+        Assert.AreEqual(
+            firstVersion + 1u,
+            em.GetComponentData<UiResourceExchangeStateComponent>(boundary).Version,
+            "A projected resource change must publish a new UI version.");
+    }
+
+    [Test]
+    public void Update_VisibleCountdownBucketChangeRewritesReadModel()
+    {
+        using World world = new(nameof(Update_VisibleCountdownBucketChangeRewritesReadModel));
+        EntityManager em = world.EntityManager;
+        Entity boundary = CreatePopupBoundary(em);
+        Entity exchange = CreateCompleteExchange(em, FactionIdentity.PlayerFactionId, 1000);
+        DynamicBuffer<ResourceExchangeQueueComponent> queue =
+            em.GetBuffer<ResourceExchangeQueueComponent>(exchange);
+        queue.Add(new ResourceExchangeQueueComponent
+        {
+            QueueItemId = 7,
+            FactionId = FactionIdentity.PlayerFactionId,
+            RecipeId = new FixedString128Bytes("exchange.export_oil_credits.standard"),
+            State = ResourceExchangeQueueState.InProgress,
+            DurationSeconds = 60f,
+            RemainingSeconds = 30.6f
+        });
+        ResourceExchangeSummaryComponent summary =
+            em.GetComponentData<ResourceExchangeSummaryComponent>(exchange);
+        summary.ActiveCount = 1;
+        em.SetComponentData(exchange, summary);
+        SystemHandle system = world.CreateSystem<UiResourceExchangeReadModelSystem>();
+
+        UpdateSystem(world, system);
+        uint firstVersion = em.GetComponentData<UiResourceExchangeStateComponent>(boundary).Version;
+        Assert.AreEqual(
+            "00:31",
+            em.GetBuffer<UiResourceExchangeQueueRowComponent>(boundary)[0].TimeText.ToString());
+
+        ResourceExchangeQueueComponent item = queue[0];
+        item.RemainingSeconds = 30.5f;
+        queue[0] = item;
+        UpdateSystem(world, system);
+        Assert.AreEqual(
+            firstVersion,
+            em.GetComponentData<UiResourceExchangeStateComponent>(boundary).Version);
+
+        item.RemainingSeconds = 29.9f;
+        queue[0] = item;
+        UpdateSystem(world, system);
+        Assert.AreEqual(
+            firstVersion + 1u,
+            em.GetComponentData<UiResourceExchangeStateComponent>(boundary).Version);
+        Assert.AreEqual(
+            "00:30",
+            em.GetBuffer<UiResourceExchangeQueueRowComponent>(boundary)[0].TimeText.ToString());
+    }
+
+    [Test]
+    public void ProjectionFingerprint_ChangesOnlyWhenVisibleCountdownChanges()
+    {
+        using World world = new(nameof(ProjectionFingerprint_ChangesOnlyWhenVisibleCountdownChanges));
+        EntityManager em = world.EntityManager;
+        Entity exchange = CreateExchangeData(em);
+        DynamicBuffer<ResourceExchangeRecipeComponent> recipes = em.GetBuffer<ResourceExchangeRecipeComponent>(exchange);
+        DynamicBuffer<ResourceExchangeQueueComponent> queue = em.GetBuffer<ResourceExchangeQueueComponent>(exchange);
+        recipes.Add(ExportOilRecipe());
+        queue.Add(new ResourceExchangeQueueComponent
+        {
+            QueueItemId = 7,
+            RecipeId = new FixedString128Bytes("exchange.export_oil_credits.standard"),
+            State = ResourceExchangeQueueState.InProgress,
+            DurationSeconds = 60f,
+            RemainingSeconds = 30.6f
+        });
+        UiResourceExchangeStateComponent state = new()
+        {
+            ActiveTab = UiResourceExchangeTab.Export,
+            SelectedRecipeSlot = 0
+        };
+        ResourceExchangeEnabledComponent enabled = Enabled(maxQueueItems: 3);
+        FactionEconomy economy = Economy();
+        FactionTacticalMaterialsComponent materials = Materials();
+        ResourceExchangeWalletComponent wallet = Wallet();
+        BuildingRuntimeFactionUsableFuelSummary physicalResources = PhysicalResources();
+        ResourceExchangeSummaryComponent summary = new() { ActiveCount = 1, Version = 4 };
+
+        ulong initial = UiResourceExchangeProjectionFingerprintUtilitySystemHelper.Calculate(
+            enabled, economy, materials, wallet, physicalResources, summary, state, recipes, queue);
+        ResourceExchangeQueueComponent item = queue[0];
+        item.RemainingSeconds = 30.5f;
+        queue[0] = item;
+        ulong sameVisibleBucket = UiResourceExchangeProjectionFingerprintUtilitySystemHelper.Calculate(
+            enabled, economy, materials, wallet, physicalResources, summary, state, recipes, queue);
+        item.RemainingSeconds = 29.9f;
+        queue[0] = item;
+        ulong nextVisibleBucket = UiResourceExchangeProjectionFingerprintUtilitySystemHelper.Calculate(
+            enabled, economy, materials, wallet, physicalResources, summary, state, recipes, queue);
+
+        Assert.AreEqual(initial, sameVisibleBucket);
+        Assert.AreNotEqual(initial, nextVisibleBucket);
+    }
+
+    [Test]
+    public void ProjectionFingerprint_TracksProjectedResourceInputs()
+    {
+        using World world = new(nameof(ProjectionFingerprint_TracksProjectedResourceInputs));
+        EntityManager em = world.EntityManager;
+        Entity exchange = CreateExchangeData(em);
+        DynamicBuffer<ResourceExchangeRecipeComponent> recipes = em.GetBuffer<ResourceExchangeRecipeComponent>(exchange);
+        DynamicBuffer<ResourceExchangeQueueComponent> queue = em.GetBuffer<ResourceExchangeQueueComponent>(exchange);
+        ResourceExchangeEnabledComponent enabled = Enabled(maxQueueItems: 3);
+        FactionEconomy economy = Economy();
+        FactionTacticalMaterialsComponent materials = Materials();
+        ResourceExchangeWalletComponent wallet = Wallet();
+        BuildingRuntimeFactionUsableFuelSummary physicalResources = PhysicalResources();
+        ResourceExchangeSummaryComponent summary = default;
+        UiResourceExchangeStateComponent state = default;
+
+        ulong initial = UiResourceExchangeProjectionFingerprintUtilitySystemHelper.Calculate(
+            enabled, economy, materials, wallet, physicalResources, summary, state, recipes, queue);
+        BuildingRuntimeFactionUsableFuelSummary sameVisibleResources = physicalResources;
+        sameVisibleResources.StoredOilBarrels = 400.9f;
+        ulong sameVisibleOil = UiResourceExchangeProjectionFingerprintUtilitySystemHelper.Calculate(
+            enabled, economy, materials, wallet, sameVisibleResources, summary, state, recipes, queue);
+        FactionEconomy changedEconomy = economy;
+        changedEconomy.Money++;
+        ulong changedCredits = UiResourceExchangeProjectionFingerprintUtilitySystemHelper.Calculate(
+            enabled, changedEconomy, materials, wallet, physicalResources, summary, state, recipes, queue);
+        FactionTacticalMaterialsComponent changedMaterials = materials;
+        changedMaterials.Current++;
+        ulong changedMaterialAmount = UiResourceExchangeProjectionFingerprintUtilitySystemHelper.Calculate(
+            enabled, economy, changedMaterials, wallet, physicalResources, summary, state, recipes, queue);
+        BuildingRuntimeFactionUsableFuelSummary changedPhysicalResources = physicalResources;
+        changedPhysicalResources.StoredOilBarrels = 401f;
+        ulong changedOil = UiResourceExchangeProjectionFingerprintUtilitySystemHelper.Calculate(
+            enabled, economy, materials, wallet, changedPhysicalResources, summary, state, recipes, queue);
+
+        Assert.AreEqual(initial, sameVisibleOil);
+        Assert.AreNotEqual(initial, changedCredits);
+        Assert.AreNotEqual(initial, changedMaterialAmount);
+        Assert.AreNotEqual(initial, changedOil);
+    }
+
+    [Test]
+    public void ProjectionFingerprint_WarmedCallsAllocateNoManagedBytes()
+    {
+        using World world = new(nameof(ProjectionFingerprint_WarmedCallsAllocateNoManagedBytes));
+        EntityManager em = world.EntityManager;
+        Entity exchange = CreateExchangeData(em);
+        DynamicBuffer<ResourceExchangeRecipeComponent> recipes = em.GetBuffer<ResourceExchangeRecipeComponent>(exchange);
+        DynamicBuffer<ResourceExchangeQueueComponent> queue = em.GetBuffer<ResourceExchangeQueueComponent>(exchange);
+        recipes.Add(ExportOilRecipe());
+        queue.Add(new ResourceExchangeQueueComponent
+        {
+            QueueItemId = 7,
+            RecipeId = new FixedString128Bytes("exchange.export_oil_credits.standard"),
+            State = ResourceExchangeQueueState.InProgress,
+            DurationSeconds = 60f,
+            RemainingSeconds = 30f
+        });
+        UiResourceExchangeStateComponent state = new() { ActiveTab = UiResourceExchangeTab.Export };
+        ResourceExchangeEnabledComponent enabled = Enabled(maxQueueItems: 3);
+        FactionEconomy economy = Economy();
+        FactionTacticalMaterialsComponent materials = Materials();
+        ResourceExchangeWalletComponent wallet = Wallet();
+        BuildingRuntimeFactionUsableFuelSummary physicalResources = PhysicalResources();
+        ResourceExchangeSummaryComponent summary = new() { ActiveCount = 1, Version = 4 };
+
+        ulong sink = 0;
+        for (int i = 0; i < 64; i++)
+            sink ^= UiResourceExchangeProjectionFingerprintUtilitySystemHelper.Calculate(
+                enabled, economy, materials, wallet, physicalResources, summary, state, recipes, queue);
+
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+        GC.Collect();
+        long before = GC.GetAllocatedBytesForCurrentThread();
+        for (int i = 0; i < 512; i++)
+            sink ^= UiResourceExchangeProjectionFingerprintUtilitySystemHelper.Calculate(
+                enabled, economy, materials, wallet, physicalResources, summary, state, recipes, queue);
+        long allocatedBytes = GC.GetAllocatedBytesForCurrentThread() - before;
+
+        Assert.AreEqual(0, allocatedBytes);
+        Assert.AreEqual(0UL, sink);
     }
 
     [Test]

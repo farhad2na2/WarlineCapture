@@ -19,7 +19,7 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
         try
         {
             FirstLaunchNarrativeMenuIntegrationTests tests = new();
-            tests.MenuScene_HasHiddenTopLevelNarrativeLayerAndExactConfigs();
+            tests.MenuScene_HasTopLevelNarrativeLayerAndExactConfigs();
             tests.FreshProfile_SkipRequiresLiveConfirmationAndPublishesOneHandoff();
             tests.CompletedAndPendingProfiles_SelectCorrectStartupDisposition();
             tests.ReviewerMode_ProvidesNavigationWithoutMutatingCompletedProfile();
@@ -36,7 +36,7 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
     }
 
     [Test]
-    public void MenuScene_HasHiddenTopLevelNarrativeLayerAndExactConfigs()
+    public void MenuScene_HasTopLevelNarrativeLayerAndExactConfigs()
     {
         Scene scene = EditorSceneManager.OpenScene(FirstLaunchNarrativeMenuSceneInstaller.MenuScenePath, OpenSceneMode.Single);
         MenuBootstrapView bootstrap = UnityEngine.Object.FindAnyObjectByType<MenuBootstrapView>(FindObjectsInactive.Include);
@@ -51,7 +51,7 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
         Assert.AreEqual("NarrativeLayer", bootstrap.FirstLaunchNarrativeView.name);
         CanvasGroup group = bootstrap.FirstLaunchNarrativeView.GetComponent<CanvasGroup>();
         Assert.NotNull(group);
-        Assert.AreEqual(0f, group.alpha);
+        Assert.AreEqual(1f, group.alpha);
         Assert.IsFalse(group.interactable);
         Assert.IsFalse(group.blocksRaycasts);
         Assert.NotNull(bootstrap.FirstLaunchNarrativeView.CommanderIdentityView);

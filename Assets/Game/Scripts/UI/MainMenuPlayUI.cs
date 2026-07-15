@@ -42,6 +42,7 @@ namespace Game.UI.Runtime
         private MatchHudSelectionPanelView _matchHudSelectionPanelView;
         private BattleHudRuntimeFeedbackView _matchHudRuntimeFeedbackView;
         private MatchHudSquadTrayView _matchHudSquadTrayView;
+        private MatchHudHeaderReferenceUiSystemHelper _matchHudHeaderReferences;
         private GameObject _matchHudThreatJumpPanel;
         private TMP_Text _matchHudThreatTitle;
         private float _matchHudThreatVisibleUntil = float.NegativeInfinity;
@@ -120,6 +121,7 @@ namespace Game.UI.Runtime
             _matchHudRuntimeFeedbackView = null;
             _matchHudSquadTrayView?.Unbind();
             _matchHudSquadTrayView = null;
+            _matchHudHeaderReferences = null;
             UnbindMatchHudResourceExchangeButtons();
             BindMatchHudThreatJumpPanel(null);
             _buildDrawerView = null;
@@ -316,22 +318,19 @@ namespace Game.UI.Runtime
             _matchHudResourceLabelsApplied = false;
             _nextHeaderResourceRefreshTime = 0f;
             UnbindMatchHudResourceExchangeButtons();
+            _matchHudHeaderReferences = null;
 
             if (headerContent == null)
                 return;
 
-            BindMatchHudResourceSlots(headerContent);
+            _matchHudHeaderReferences = MatchHudHeaderReferenceUiSystemHelper.Create(headerContent.transform);
+            BindMatchHudResourceSlots(_matchHudHeaderReferences);
 
-            Transform panelTransform = headerContent.transform.Find("ThreatJumpPanel");
-            panelTransform ??= headerContent.transform.Find("HeaderContent/ThreatJumpPanel");
-            if (panelTransform == null)
+            if (_matchHudHeaderReferences.ThreatJumpPanel == null)
                 return;
 
-            _matchHudThreatJumpPanel = panelTransform.gameObject;
-            Transform titleTransform = panelTransform.Find("Title");
-            _matchHudThreatTitle = titleTransform != null
-                ? titleTransform.GetComponent<TMP_Text>()
-                : panelTransform.GetComponentInChildren<TMP_Text>(true);
+            _matchHudThreatJumpPanel = _matchHudHeaderReferences.ThreatJumpPanel.gameObject;
+            _matchHudThreatTitle = _matchHudHeaderReferences.ThreatTitle;
             SetMatchHudThreatWarningVisible(false);
         }
 
@@ -405,27 +404,25 @@ namespace Game.UI.Runtime
             MatchHudAssistantPanelOpenChanged?.Invoke(open);
         }
 
-        private void BindMatchHudResourceSlots(GameObject headerContent)
+        private void BindMatchHudResourceSlots(MatchHudHeaderReferenceUiSystemHelper references)
         {
-            Transform resourceStrip = headerContent.transform.Find("ResourceStrip");
-            resourceStrip ??= headerContent.transform.Find("HeaderContent/ResourceStrip");
-            if (resourceStrip == null)
+            if (references.ResourceStrip == null || references.FuelSlot == null)
                 return;
 
-            Transform fuelSlot = resourceStrip.Find("FuelSlot");
-            if (fuelSlot == null)
-                return;
+            if (references.OilSlot == null)
+            {
+                Transform oilSlot = CreateOilResourceSlot(references.ResourceStrip, references.FuelSlot.Root);
+                references.CacheOilSlot(oilSlot);
+            }
 
-            Transform oilSlot = resourceStrip.Find("OilSlot");
-            if (oilSlot == null)
-                oilSlot = CreateOilResourceSlot(resourceStrip, fuelSlot);
-
-            ArrangeMatchHudResourceSlots(resourceStrip);
-            BindMatchHudResourceExchangeButtons(resourceStrip);
-            _matchHudOilSlotRoot = oilSlot.gameObject;
-            BindMatchHudResourceSlot(oilSlot, out _matchHudOilSlotLabel, out _matchHudOilSlotValue);
-            BindMatchHudResourceSlot(fuelSlot, out _matchHudFuelSlotLabel, out _matchHudFuelSlotValue);
-            BindMatchHudResourceSlot(resourceStrip.Find("SupplySlot"), out TMP_Text materialsLabel, out _);
+            ArrangeMatchHudResourceSlots(references);
+            BindMatchHudResourceExchangeButtons(references);
+            _matchHudOilSlotRoot = references.OilSlot.Root.gameObject;
+            _matchHudOilSlotLabel = references.OilSlot.Label;
+            _matchHudOilSlotValue = references.OilSlot.Value;
+            _matchHudFuelSlotLabel = references.FuelSlot.Label;
+            _matchHudFuelSlotValue = references.FuelSlot.Value;
+            TMP_Text materialsLabel = references.SupplySlot?.Label;
             if (materialsLabel != null)
             {
                 materialsLabel.enableAutoSizing = true;
@@ -446,13 +443,13 @@ namespace Game.UI.Runtime
             return oilSlot.transform;
         }
 
-        private static void ArrangeMatchHudResourceSlots(Transform resourceStrip)
+        private static void ArrangeMatchHudResourceSlots(MatchHudHeaderReferenceUiSystemHelper references)
         {
-            SetResourceSlotLayout(resourceStrip.Find("CreditsSlot"), -640f);
-            SetResourceSlotLayout(resourceStrip.Find("OilSlot"), -320f);
-            SetResourceSlotLayout(resourceStrip.Find("FuelSlot"), 0f);
-            SetResourceSlotLayout(resourceStrip.Find("SupplySlot"), 320f);
-            SetResourceSlotLayout(resourceStrip.Find("CivilianRiskSlot"), 640f);
+            SetResourceSlotLayout(references.CreditsSlot?.Root, -640f);
+            SetResourceSlotLayout(references.OilSlot?.Root, -320f);
+            SetResourceSlotLayout(references.FuelSlot?.Root, 0f);
+            SetResourceSlotLayout(references.SupplySlot?.Root, 320f);
+            SetResourceSlotLayout(references.CivilianRiskSlot?.Root, 640f);
         }
 
         private static void SetResourceSlotLayout(Transform slot, float x)
@@ -475,26 +472,13 @@ namespace Game.UI.Runtime
             }
         }
 
-        private static void BindMatchHudResourceSlot(Transform slot, out TMP_Text labelText, out TMP_Text valueText)
-        {
-            labelText = null;
-            valueText = null;
-            if (slot == null)
-                return;
-
-            Transform label = slot.Find("Label");
-            Transform value = slot.Find("Value");
-            labelText = label != null ? label.GetComponent<TMP_Text>() : null;
-            valueText = value != null ? value.GetComponent<TMP_Text>() : null;
-        }
-
-        private void BindMatchHudResourceExchangeButtons(Transform resourceStrip)
+        private void BindMatchHudResourceExchangeButtons(MatchHudHeaderReferenceUiSystemHelper references)
         {
             UnbindMatchHudResourceExchangeButtons();
-            BindMatchHudResourceExchangeButton(resourceStrip.Find("CreditsSlot"));
-            BindMatchHudResourceExchangeButton(resourceStrip.Find("OilSlot"));
-            BindMatchHudResourceExchangeButton(resourceStrip.Find("FuelSlot"));
-            BindMatchHudResourceExchangeButton(resourceStrip.Find("SupplySlot"));
+            BindMatchHudResourceExchangeButton(references.CreditsSlot?.Root);
+            BindMatchHudResourceExchangeButton(references.OilSlot?.Root);
+            BindMatchHudResourceExchangeButton(references.FuelSlot?.Root);
+            BindMatchHudResourceExchangeButton(references.SupplySlot?.Root);
         }
 
         private void BindMatchHudResourceExchangeButton(Transform slot)

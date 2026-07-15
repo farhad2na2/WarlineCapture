@@ -25,8 +25,8 @@
 | Catalog clips with compressed size | 234 / 234 |
 | Known catalog compressed bytes | `51,809,082` (49.41 MiB) |
 | Estimated catalog decoded bytes | `102,514,844` (97.77 MiB) |
-| Texture assets | 639 |
-| Streaming-enabled textures | 0 |
+| Texture2D inventory rows | 637 |
+| Streaming-enabled Texture2D rows | 0 |
 | Mesh assets | 1,817 |
 | Read/write-enabled mesh assets | 901 |
 | Animation texture assets | 3 |

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Game.Editor;
 using NUnit.Framework;
 using UnityEngine;
@@ -18,7 +19,8 @@ public sealed class ContentResidencyInventoryGeneratorTests
             tests.CatalogAudioFieldsSerializeWithMeasurements();
             tests.CatalogAudioMarkdownExcludesUnreferencedAudioAssets();
             tests.PendingMarkdownDoesNotClaimMeasurements();
-            Debug.Log("[ContentResidencyInventoryValidation] result=Passed tests=8");
+            tests.TextureSummaryMatchesUniqueTexture2DRowsWithoutDiscardingCubemaps();
+            Debug.Log("[ContentResidencyInventoryValidation] result=Passed tests=9");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -162,6 +164,60 @@ public sealed class ContentResidencyInventoryGeneratorTests
         StringAssert.Contains("Status: `pending-unity-generation`", markdown);
         StringAssert.Contains("No asset row or imported-size measurement", markdown);
         StringAssert.Contains("Unavailable until Unity generation", markdown);
+    }
+
+    [Test]
+    public void TextureSummaryMatchesUniqueTexture2DRowsWithoutDiscardingCubemaps()
+    {
+        List<ContentResidencyAssetRecord> assets = new()
+        {
+            new ContentResidencyAssetRecord
+            {
+                AssetPath = "Assets/Game/Textures/World.png",
+                AssetType = nameof(Texture2D),
+                TextureWidth = 1024,
+                TextureHeight = 1024,
+                TextureStreamingEnabled = true
+            },
+            new ContentResidencyAssetRecord
+            {
+                AssetPath = "Assets/Game/Textures/World.png",
+                AssetType = nameof(Texture2D),
+                TextureWidth = 1024,
+                TextureHeight = 1024,
+                TextureStreamingEnabled = true
+            },
+            new ContentResidencyAssetRecord
+            {
+                AssetPath = "Assets/Game/Scenes/Match/ReflectionProbe-0.exr",
+                AssetType = nameof(Cubemap),
+                TextureWidth = 512,
+                TextureHeight = 512,
+                TextureStreamingEnabled = false,
+                ImportedSizeBytes = 1048576
+            }
+        };
+
+        IReadOnlyList<ContentResidencyAssetRecord> textureRows =
+            ContentResidencyInventoryGenerator.BuildDeterministicTexture2DRows(assets);
+        ContentResidencySummary summary = ContentResidencyInventoryGenerator.BuildSummary(
+            Array.Empty<DependencyRootRecord>(),
+            assets,
+            Array.Empty<CatalogAudioResidencyRecord>());
+        ContentResidencyReport report = CreatePendingReport();
+        report.Assets.AddRange(assets);
+        report.Summary = summary;
+
+        Assert.AreEqual(1, textureRows.Count);
+        Assert.AreEqual("Assets/Game/Textures/World.png", textureRows[0].AssetPath);
+        Assert.AreEqual(1, summary.TextureAssetCount);
+        Assert.AreEqual(1, summary.TextureStreamingEnabledCount);
+        Assert.AreEqual(1048576, summary.ImportedSizeBytes);
+
+        string json = ContentResidencyInventoryGenerator.SerializeReport(report);
+        StringAssert.Contains("\"textureAssetCount\": 1", json);
+        StringAssert.Contains("Assets/Game/Scenes/Match/ReflectionProbe-0.exr", json);
+        StringAssert.Contains("\"assetType\": \"Cubemap\"", json);
     }
 
     private static ContentResidencyReport CreatePendingReport()

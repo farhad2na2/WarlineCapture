@@ -504,7 +504,7 @@ namespace Game.Runtime
                 if (context.EvaluateConstructionResources == null)
                     return context.ResourceDollars < creditsCost ? CampRequestFailure.InsufficientCredits : CampRequestFailure.None;
 
-                return MapConstructionResourceFailure(
+                return BuildingCampItemCommandPolicySystemHelper.MapConstructionResourceFailure(
                     context.EvaluateConstructionResources(creditsCost, materialsCost));
             }
 
@@ -526,19 +526,6 @@ namespace Game.Runtime
 
             requiredBuildingDisplayName = producerDisplayName;
             return CampRequestFailure.ProductionQueueFull;
-        }
-
-        private static CampRequestFailure MapConstructionResourceFailure(
-            FactionConstructionResourceMutationResult result)
-        {
-            return result switch
-            {
-                FactionConstructionResourceMutationResult.Applied => CampRequestFailure.None,
-                FactionConstructionResourceMutationResult.InsufficientCredits => CampRequestFailure.InsufficientCredits,
-                FactionConstructionResourceMutationResult.InsufficientMaterials => CampRequestFailure.InsufficientMaterials,
-                FactionConstructionResourceMutationResult.InsufficientCreditsAndMaterials => CampRequestFailure.InsufficientCreditsAndMaterials,
-                _ => CampRequestFailure.InvalidSelection
-            };
         }
 
         public CampRequestFailure TryRequestCampItem(
@@ -613,7 +600,7 @@ namespace Game.Runtime
         {
             return EnqueueCampItemRequest(
                 em,
-                ResolveCampItemRequestId(prefab),
+                BuildingCampItemCommandPolicySystemHelper.ResolveRequestId(prefab),
                 price,
                 focusProducerOnSuccess);
         }
@@ -653,7 +640,7 @@ namespace Game.Runtime
             if (TryGetUiCampItemCommandResult(em, requestId, out BuildingUiCampItemCommandResultElement result))
             {
                 requiredBuildingDisplayName = result.RequiredBuildingDisplayName.ToString();
-                return ToCampRequestFailure(result.ResultCode);
+                return BuildingCampItemCommandPolicySystemHelper.ToRequestFailure(result.ResultCode);
             }
 
             requiredBuildingDisplayName = string.Empty;
@@ -731,10 +718,10 @@ namespace Game.Runtime
                     RequestId = request.RequestId,
                     ItemId = request.ItemId,
                     RequiredBuildingDisplayName = requiredBuildingDisplayName,
-                    Price = ResolveCampItemResultPrice(context, request),
+                    Price = BuildingCampItemCommandPolicySystemHelper.ResolveResultPrice(context, request),
                     Accepted = accepted ? (byte)1 : (byte)0,
                     ResultCode = resultCode,
-                    ReasonCode = (int)ToCampItemReasonCode(resultCode)
+                    ReasonCode = (int)BuildingCampItemCommandPolicySystemHelper.ToReasonCode(resultCode)
                 });
 
                 TryEmitCampItemAudio(em, accepted, resultCode);
@@ -1236,7 +1223,7 @@ namespace Game.Runtime
                 frameCount,
                 out string requiredBuilding);
             requiredBuildingDisplayName = ToFixedString128(requiredBuilding);
-            resultCode = ToCampItemResultCode(failure, isConfiguredBuilding);
+            resultCode = BuildingCampItemCommandPolicySystemHelper.ToResultCode(failure, isConfiguredBuilding);
             return failure == CampRequestFailure.None;
         }
 
@@ -1246,21 +1233,7 @@ namespace Game.Runtime
                    TryResolveConfiguredUnitPrefab(context, normalizedItemId, out prefab);
         }
 
-        private static int ResolveCampItemResultPrice(
-            Context context,
-            BuildingUiCampItemCommandRequestElement request)
-        {
-            if (TryResolveConfiguredBuildingPrefab(context, request.ItemId.ToString(), out GameObject prefab) &&
-                context.ConfiguredDefinitionsByPrefab != null &&
-                context.ConfiguredDefinitionsByPrefab.TryGetValue(prefab, out BuildingDefinition definition))
-            {
-                return Mathf.Max(0, definition?.CreditsCost ?? 0);
-            }
-
-            return Mathf.Max(0, request.Price);
-        }
-
-        private static bool TryResolveConfiguredBuildingPrefab(Context context, string normalizedItemId, out GameObject prefab)
+        internal static bool TryResolveConfiguredBuildingPrefab(Context context, string normalizedItemId, out GameObject prefab)
         {
             prefab = null;
             if (string.IsNullOrEmpty(normalizedItemId))
@@ -1337,42 +1310,6 @@ namespace Game.Runtime
             return false;
         }
 
-        private static string ResolveCampItemRequestId(GameObject prefab)
-        {
-            return prefab != null
-                ? BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(prefab.name)
-                : string.Empty;
-        }
-
-        private static byte ToCampItemResultCode(CampRequestFailure failure, bool isConfiguredBuilding)
-        {
-            return failure switch
-            {
-                CampRequestFailure.None => isConfiguredBuilding
-                    ? BuildingUiCampItemCommandResultElement.PlacementStarted
-                    : BuildingUiCampItemCommandResultElement.ProductionQueued,
-                CampRequestFailure.NotEnoughMoney => BuildingUiCampItemCommandResultElement.NotEnoughMoney,
-                CampRequestFailure.MissingProducerBuilding => BuildingUiCampItemCommandResultElement.MissingProducerBuilding,
-                CampRequestFailure.ProductionQueueFull => BuildingUiCampItemCommandResultElement.ProductionQueueFull,
-                CampRequestFailure.GlobalProductionQueueFull => BuildingUiCampItemCommandResultElement.GlobalProductionQueueFull,
-                _ => BuildingUiCampItemCommandResultElement.InvalidSelection
-            };
-        }
-
-        private static CampRequestFailure ToCampRequestFailure(byte resultCode)
-        {
-            return resultCode switch
-            {
-                BuildingUiCampItemCommandResultElement.PlacementStarted => CampRequestFailure.None,
-                BuildingUiCampItemCommandResultElement.ProductionQueued => CampRequestFailure.None,
-                BuildingUiCampItemCommandResultElement.NotEnoughMoney => CampRequestFailure.NotEnoughMoney,
-                BuildingUiCampItemCommandResultElement.MissingProducerBuilding => CampRequestFailure.MissingProducerBuilding,
-                BuildingUiCampItemCommandResultElement.ProductionQueueFull => CampRequestFailure.ProductionQueueFull,
-                BuildingUiCampItemCommandResultElement.GlobalProductionQueueFull => CampRequestFailure.GlobalProductionQueueFull,
-                _ => CampRequestFailure.InvalidSelection
-            };
-        }
-
         private static TacticalCommandReasonCode ToProductionReasonCode(byte resultCode)
         {
             return resultCode switch
@@ -1385,20 +1322,6 @@ namespace Game.Runtime
                 BuildingUiProductionCommandResultElement.UnavailablePrefab => TacticalCommandReasonCode.BuildUnavailable,
                 BuildingUiProductionCommandResultElement.QueueFull => TacticalCommandReasonCode.CommandUnavailable,
                 BuildingUiProductionCommandResultElement.GlobalQueueFull => TacticalCommandReasonCode.CommandUnavailable,
-                _ => TacticalCommandReasonCode.CommandUnavailable
-            };
-        }
-
-        private static TacticalCommandReasonCode ToCampItemReasonCode(byte resultCode)
-        {
-            return resultCode switch
-            {
-                BuildingUiCampItemCommandResultElement.PlacementStarted => TacticalCommandReasonCode.None,
-                BuildingUiCampItemCommandResultElement.ProductionQueued => TacticalCommandReasonCode.None,
-                BuildingUiCampItemCommandResultElement.NotEnoughMoney => TacticalCommandReasonCode.InsufficientResources,
-                BuildingUiCampItemCommandResultElement.MissingProducerBuilding => TacticalCommandReasonCode.BuildUnavailable,
-                BuildingUiCampItemCommandResultElement.ProductionQueueFull => TacticalCommandReasonCode.CommandUnavailable,
-                BuildingUiCampItemCommandResultElement.GlobalProductionQueueFull => TacticalCommandReasonCode.CommandUnavailable,
                 _ => TacticalCommandReasonCode.CommandUnavailable
             };
         }

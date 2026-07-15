@@ -10,24 +10,26 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
-public sealed class MaterialsScenarioRecoveryValidationSystemHelperTests
+public sealed class MaterialsScenarioRecoveryStartupSystemHelperTests
 {
     public static void RunFocusedValidation()
     {
         try
         {
-            var tests = new MaterialsScenarioRecoveryValidationSystemHelperTests();
+            var tests = new MaterialsScenarioRecoveryStartupSystemHelperTests();
             tests.MaterialsFreeScenarioDoesNotRequireRecovery();
             tests.MaterialsCapacityMustFitOneAuthoredConstruction();
+            tests.PolicyNormalizesNonPositiveMinimumToOneMaterial();
             tests.StartingReserveMustCoverOneAuthoredConstruction();
             tests.SeededChainRequiresDepotOilSourceAndHauler();
             tests.RebuildPathRequiresEveryComponentAndAffordability();
             tests.ExchangePathRecoversOtherwiseDeadlockedFaction();
+            tests.PolicyAccumulatesEveryAvailableRecoveryPath();
             tests.AIExchangeRecoveryRequiresExplicitScenarioPermission();
             tests.ShippingStartingReservesValidateForPlayerAndAI();
             tests.DuplicateFactionFailsClosed();
             tests.AIDeadlockDecisionIsDeterministicAndAllocationFreeAfterWarmup();
-            Debug.Log("[MaterialsScenarioRecoveryFocusedValidation] result=Passed tests=10");
+            Debug.Log("[MaterialsScenarioRecoveryFocusedValidation] result=Passed tests=12");
         }
         catch (Exception exception)
         {
@@ -59,6 +61,26 @@ public sealed class MaterialsScenarioRecoveryValidationSystemHelperTests
 
         Assert.IsFalse(result.IsValid);
         Assert.AreEqual(MaterialsScenarioRecoveryValidationCode.MissingMaterialsCapacity, result.Code);
+    }
+
+    [Test]
+    public void PolicyNormalizesNonPositiveMinimumToOneMaterial()
+    {
+        MaterialsScenarioRecoveryValidationResult noCapacity = Evaluate(
+            minimumRequiredMaterials: 0,
+            startingMaterialsRequirement: 0,
+            materialsCapacity: 0,
+            exchangeImportEnabled: true);
+        MaterialsScenarioRecoveryValidationResult oneMaterial = Evaluate(
+            minimumRequiredMaterials: 0,
+            startingMaterialsRequirement: 0,
+            startingMaterials: 1,
+            materialsCapacity: 1);
+
+        Assert.IsFalse(noCapacity.IsValid);
+        Assert.AreEqual(MaterialsScenarioRecoveryValidationCode.MissingMaterialsCapacity, noCapacity.Code);
+        Assert.IsTrue(oneMaterial.IsValid);
+        Assert.AreEqual(MaterialsScenarioRecoveryPathCode.StartingMaterials, oneMaterial.Paths);
     }
 
     [Test]
@@ -129,6 +151,31 @@ public sealed class MaterialsScenarioRecoveryValidationSystemHelperTests
     }
 
     [Test]
+    public void PolicyAccumulatesEveryAvailableRecoveryPath()
+    {
+        MaterialsScenarioRecoveryValidationResult result = Evaluate(
+            startingMaterials: 10,
+            hasSeededDepot: true,
+            hasSeededOilSource: true,
+            hasSeededOilHauler: true,
+            canRebuildDepot: true,
+            canRebuildOilSource: true,
+            canAcquireOilHauler: true,
+            canAffordRebuildChain: true,
+            exchangeImportEnabled: true);
+        MaterialsScenarioRecoveryPathCode expected =
+            MaterialsScenarioRecoveryPathCode.StartingMaterials |
+            MaterialsScenarioRecoveryPathCode.SeededFabricationChain |
+            MaterialsScenarioRecoveryPathCode.RebuildableFabricationChain |
+            MaterialsScenarioRecoveryPathCode.ExchangeImport;
+
+        Assert.IsTrue(result.IsValid);
+        Assert.AreEqual(expected, result.Paths);
+        Assert.AreEqual(FactionIdentity.EnemyFactionId, result.FactionId);
+        Assert.AreEqual(1, result.ValidatedFactionCount);
+    }
+
+    [Test]
     public void AIExchangeRecoveryRequiresExplicitScenarioPermission()
     {
         using World world = CreateScenarioWorld(
@@ -151,7 +198,7 @@ public sealed class MaterialsScenarioRecoveryValidationSystemHelperTests
         ResourceExchangeRecipeConfigSet aiEnabled = CreateExchangeConfig(allowAIExchange: true);
         try
         {
-            var validation = new MaterialsScenarioRecoveryValidationSystemHelper(world.EntityManager);
+            var validation = new MaterialsScenarioRecoveryStartupSystemHelper(world.EntityManager);
             MaterialsScenarioRecoveryValidationResult denied = validation.Validate(playerOnly);
             MaterialsScenarioRecoveryValidationResult allowed = validation.Validate(aiEnabled);
 
@@ -189,7 +236,7 @@ public sealed class MaterialsScenarioRecoveryValidationSystemHelperTests
             });
 
         MaterialsScenarioRecoveryValidationResult result =
-            new MaterialsScenarioRecoveryValidationSystemHelper(world.EntityManager).Validate(null);
+            new MaterialsScenarioRecoveryStartupSystemHelper(world.EntityManager).Validate(null);
 
         Assert.IsTrue(result.IsValid);
         Assert.AreEqual(2, result.ValidatedFactionCount);
@@ -217,7 +264,7 @@ public sealed class MaterialsScenarioRecoveryValidationSystemHelperTests
             });
 
         MaterialsScenarioRecoveryValidationResult result =
-            new MaterialsScenarioRecoveryValidationSystemHelper(world.EntityManager).Validate(null);
+            new MaterialsScenarioRecoveryStartupSystemHelper(world.EntityManager).Validate(null);
 
         Assert.IsFalse(result.IsValid);
         Assert.AreEqual(MaterialsScenarioRecoveryValidationCode.DuplicateFaction, result.Code);
@@ -233,7 +280,7 @@ public sealed class MaterialsScenarioRecoveryValidationSystemHelperTests
             startingMaterials: 99,
             materialsCapacity: 655);
         for (int i = 0; i < 64; i++)
-            _ = MaterialsScenarioRecoveryValidationSystemHelper.Evaluate(input);
+            _ = MaterialsScenarioRecoveryPolicyUtilitySystemHelper.Evaluate(input);
 
         long before = GC.GetAllocatedBytesForCurrentThread();
         MaterialsScenarioRecoveryValidationResult first = default;
@@ -241,7 +288,7 @@ public sealed class MaterialsScenarioRecoveryValidationSystemHelperTests
         for (int i = 0; i < 512; i++)
         {
             MaterialsScenarioRecoveryValidationResult result =
-                MaterialsScenarioRecoveryValidationSystemHelper.Evaluate(input);
+                MaterialsScenarioRecoveryPolicyUtilitySystemHelper.Evaluate(input);
             if (i == 0)
                 first = result;
             else
@@ -276,7 +323,7 @@ public sealed class MaterialsScenarioRecoveryValidationSystemHelperTests
         bool canAffordRebuildChain = false,
         bool exchangeImportEnabled = false)
     {
-        return MaterialsScenarioRecoveryValidationSystemHelper.Evaluate(
+        return MaterialsScenarioRecoveryPolicyUtilitySystemHelper.Evaluate(
             CreateInput(
                 factionId,
                 materialsRequired,
@@ -332,7 +379,7 @@ public sealed class MaterialsScenarioRecoveryValidationSystemHelperTests
         int initialAiMaterials,
         params FactionControlEntry[] controls)
     {
-        World world = new(nameof(MaterialsScenarioRecoveryValidationSystemHelperTests));
+        World world = new(nameof(MaterialsScenarioRecoveryStartupSystemHelperTests));
         EntityManager entityManager = world.EntityManager;
 
         Entity startupEntity = entityManager.CreateEntity(

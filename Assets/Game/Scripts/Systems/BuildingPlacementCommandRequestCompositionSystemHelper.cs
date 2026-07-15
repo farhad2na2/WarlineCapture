@@ -4,7 +4,6 @@ using Unity.Entities;
 using UnityEngine;
 using Game.Components;
 using Game.Configs;
-using Game.Tactical.Contracts;
 
 namespace Game.Runtime
 {
@@ -205,7 +204,7 @@ namespace Game.Runtime
                     RequestKind = request.RequestKind,
                     Accepted = accepted ? (byte)1 : (byte)0,
                     ResultCode = resultCode,
-                    ReasonCode = (int)ToReasonCode(resultCode)
+                    ReasonCode = (int)BuildingPlacementCommandResultMapper.ToReasonCode(resultCode)
                 });
 
                 TryEmitPlacementAudio(em, request.RequestKind, accepted, resultCode);
@@ -300,7 +299,7 @@ namespace Game.Runtime
                         return true;
                     }
 
-                    resultCode = ToConfirmFailureResultCode(confirmFailureReason);
+                    resultCode = BuildingPlacementCommandResultMapper.ToConfirmFailureResultCode(confirmFailureReason);
                     return false;
 
                 case BuildingUiPlacementCommandRequestElement.KindCancelPlacement:
@@ -361,48 +360,6 @@ namespace Game.Runtime
             return context.DefinitionSystem.TryGetConfiguredDefinition(spawnable.Prefab, out definition) &&
                    definition != null &&
                    definition.Prefab != null;
-        }
-
-        private static byte ToConfirmFailureResultCode(BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason reason)
-        {
-            return reason switch
-            {
-                BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.MissingActivePlacement =>
-                    BuildingUiPlacementCommandResultElement.MissingActivePlacement,
-                BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.BlockedPlacement =>
-                    BuildingUiPlacementCommandResultElement.BlockedPlacement,
-                BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.InvalidPlacement =>
-                    BuildingUiPlacementCommandResultElement.InvalidPlacement,
-                BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.InsufficientCredits =>
-                    BuildingUiPlacementCommandResultElement.NotEnoughMoney,
-                BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.InsufficientMaterials =>
-                    BuildingUiPlacementCommandResultElement.InsufficientMaterials,
-                BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.InsufficientCreditsAndMaterials =>
-                    BuildingUiPlacementCommandResultElement.InsufficientCreditsAndMaterials,
-                BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.DuplicateTransaction =>
-                    BuildingUiPlacementCommandResultElement.DuplicateTransaction,
-                BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.RegistrationFailed =>
-                    BuildingUiPlacementCommandResultElement.RegistrationFailed,
-                BuildingPlacementLifecycleCompositionSystemHelper.ConfirmFailureReason.TransactionRejected =>
-                    BuildingUiPlacementCommandResultElement.TransactionRejected,
-                _ => BuildingUiPlacementCommandResultElement.Rejected
-            };
-        }
-
-        private static TacticalCommandReasonCode ToReasonCode(byte resultCode)
-        {
-            return resultCode switch
-            {
-                BuildingUiPlacementCommandResultElement.Completed => TacticalCommandReasonCode.None,
-                BuildingUiPlacementCommandResultElement.BlockedPlacement => TacticalCommandReasonCode.TargetBlocked,
-                BuildingUiPlacementCommandResultElement.InvalidPlacement => TacticalCommandReasonCode.TargetUnreachable,
-                BuildingUiPlacementCommandResultElement.NotEnoughMoney => TacticalCommandReasonCode.InsufficientResources,
-                BuildingUiPlacementCommandResultElement.InsufficientMaterials => TacticalCommandReasonCode.InsufficientResources,
-                BuildingUiPlacementCommandResultElement.InsufficientCreditsAndMaterials => TacticalCommandReasonCode.InsufficientResources,
-                BuildingUiPlacementCommandResultElement.MissingActivePlacement => TacticalCommandReasonCode.BuildUnavailable,
-                BuildingUiPlacementCommandResultElement.MissingConfig => TacticalCommandReasonCode.BuildUnavailable,
-                _ => TacticalCommandReasonCode.CommandUnavailable
-            };
         }
 
         private int EnqueueUiPlacementCommand(

@@ -71,7 +71,8 @@ namespace Game.Runtime
         internal readonly MapVehiclePlacementSpawnPrefabSystemHelper MapVehiclePlacementSpawnPrefabSystemHelper = new();
         internal readonly BuildingPlacementRuntimeTickCompositionSystemHelper BuildingPlacementRuntimeTickCompositionSystemHelper = new();
         internal readonly BuildingPlacementInputRuntimeTickUiSystemHelper BuildingPlacementInputRuntimeTickUiSystemHelper = new();
-        internal readonly RuntimeResourceUtilitySystemHelper RuntimeResourceUtilitySystemHelper = new();
+        internal readonly RuntimeFactionResourceSystemHelper RuntimeFactionResourceSystemHelper = new();
+        internal readonly BuildingConstructionResourceTransactionSystemHelper BuildingConstructionResourceTransactionSystemHelper;
         internal readonly RuntimeUnitPrefabSystem RuntimeUnitPrefabSystem = new();
         internal readonly BuildingRuntimeResourcePrefabContextCompositionSystemHelper BuildingRuntimeResourcePrefabContextCompositionSystemHelper;
         internal readonly BuildingRuntimeResourcePrefabCompositionSystemHelper BuildingRuntimeResourcePrefabCompositionHelper;
@@ -90,6 +91,8 @@ namespace Game.Runtime
 
         public BuildingGameplaySourceCompositionSystemHelper()
         {
+            BuildingConstructionResourceTransactionSystemHelper =
+                new BuildingConstructionResourceTransactionSystemHelper(RuntimeFactionResourceSystemHelper);
             BuildingVisualSystem = ResolveBuildingVisualSystem();
             BuildingRuntimeVisualPresentationSystemHelper = ResolveBuildingRuntimeVisualPresentationSystemHelper();
             BuildingSelectionMarkerPresentationSystemHelper = ResolveBuildingSelectionMarkerPresentationSystemHelper();

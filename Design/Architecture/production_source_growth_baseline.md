@@ -2052,9 +2052,9 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
     {
       "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeReviewUtilitySystemHelper.cs",
       "trackerTaskId": "APH-712",
-      "decisionId": "D-027",
-      "maxLines": 28,
-      "maxBytes": 653,
+      "decisionId": "D-094",
+      "maxLines": 36,
+      "maxBytes": 819,
       "scope": "system-helper"
     },
     {
@@ -2391,6 +2391,470 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
       "decisionId": "D-090",
       "maxLines": 147,
       "maxBytes": 5711,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/MaterialsScenarioRecoveryStartupSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-091",
+      "maxLines": 484,
+      "maxBytes": 21672,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/MaterialsScenarioRecoveryPolicyUtilitySystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-092",
+      "maxLines": 167,
+      "maxBytes": 6607,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativePortraitVoiceSelectionPresentationSystemHelper.cs",
+      "trackerTaskId": "APH-712",
+      "decisionId": "D-093",
+      "maxLines": 60,
+      "maxBytes": 2102,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeProjectionFingerprintUtilitySystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-056",
+      "maxLines": 151,
+      "maxBytes": 5674,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeTextProjectionUtilitySystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-057",
+      "maxLines": 158,
+      "maxBytes": 6107,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-097",
+      "maxLines": 390,
+      "maxBytes": 18337,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingCampItemCommandPolicySystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-098",
+      "maxLines": 98,
+      "maxBytes": 4940,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/FactionFuelLogisticsTelemetryBridgeCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-099",
+      "maxLines": 172,
+      "maxBytes": 7473,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/FactionTacticalMaterialsStartupSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-100",
+      "maxLines": 130,
+      "maxBytes": 5849,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ResourceExchangeRequestQueueSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-101",
+      "maxLines": 94,
+      "maxBytes": 3662,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ResourceExchangeRushPolicySystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-102",
+      "maxLines": 163,
+      "maxBytes": 6473,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ResourceHaulerAIOilAllocationPolicySystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-103",
+      "maxLines": 96,
+      "maxBytes": 3222,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ResourceHaulerAutomaticRoutePolicySystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-104",
+      "maxLines": 417,
+      "maxBytes": 16889,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/GameplayConfigModels.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-105",
+      "maxLines": 802,
+      "maxBytes": 60498,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingDefinitionPrefabSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-106",
+      "maxLines": 1002,
+      "maxBytes": 48335,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-107",
+      "maxLines": 773,
+      "maxBytes": 48379,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-108",
+      "maxLines": 1678,
+      "maxBytes": 74548,
+      "scope": "production-over-1000-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/CustomGameStartupSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-109",
+      "maxLines": 968,
+      "maxBytes": 45255,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/PerformanceDiagnosticsSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-110",
+      "maxLines": 909,
+      "maxBytes": 39630,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-111",
+      "maxLines": 1673,
+      "maxBytes": 88186,
+      "scope": "production-over-1000-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-112",
+      "maxLines": 2175,
+      "maxBytes": 95202,
+      "scope": "production-over-1000-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Components/MatchHudSelectionPanelView.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-113",
+      "maxLines": 752,
+      "maxBytes": 31771,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Contracts/UiShellComponents.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-114",
+      "maxLines": 1925,
+      "maxBytes": 63944,
+      "scope": "production-over-1000-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeReadModelSystem.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-116",
+      "maxLines": 513,
+      "maxBytes": 24004,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-117",
+      "maxLines": 951,
+      "maxBytes": 41317,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingDefinitionPrefabSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-118",
+      "maxLines": 1002,
+      "maxBytes": 48335,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-119",
+      "maxLines": 773,
+      "maxBytes": 48379,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-120",
+      "maxLines": 1678,
+      "maxBytes": 74548,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/CustomGameStartupSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-121",
+      "maxLines": 968,
+      "maxBytes": 45255,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/PerformanceDiagnosticsSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-122",
+      "maxLines": 909,
+      "maxBytes": 39630,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-123",
+      "maxLines": 1673,
+      "maxBytes": 88186,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-124",
+      "maxLines": 2175,
+      "maxBytes": 95202,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/BuildingDefinitionAuthoringMetadataPrefabSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-125",
+      "maxLines": 89,
+      "maxBytes": 5056,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/MatchStartSceneSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-126",
+      "maxLines": 298,
+      "maxBytes": 11869,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/UiCatalogAuthoringMetadataUiSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-127",
+      "maxLines": 69,
+      "maxBytes": 2895,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingGameplayStartupCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-128",
+      "maxLines": 37,
+      "maxBytes": 1806,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ManagedGameplayStartupSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-129",
+      "maxLines": 353,
+      "maxBytes": 19452,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingPlacementCommandCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-806",
+      "decisionId": "D-130",
+      "maxLines": 183,
+      "maxBytes": 12274,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingPlacementContextCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-806",
+      "decisionId": "D-131",
+      "maxLines": 279,
+      "maxBytes": 16498,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingPlacementSessionCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-806",
+      "decisionId": "D-132",
+      "maxLines": 142,
+      "maxBytes": 6496,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingPlacementVisualCompositionPresentationSystemHelper.cs",
+      "trackerTaskId": "APH-806",
+      "decisionId": "D-133",
+      "maxLines": 248,
+      "maxBytes": 14207,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingPlacementVisualUpdateCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-806",
+      "decisionId": "D-134",
+      "maxLines": 284,
+      "maxBytes": 16135,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingProductionCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-135",
+      "maxLines": 103,
+      "maxBytes": 6999,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingProductionContextCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-136",
+      "maxLines": 374,
+      "maxBytes": 24312,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeContextCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-137",
+      "maxLines": 266,
+      "maxBytes": 17375,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeCreationCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-138",
+      "maxLines": 243,
+      "maxBytes": 12934,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeEntityCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-139",
+      "maxLines": 340,
+      "maxBytes": 16636,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeOwnershipCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-140",
+      "maxLines": 130,
+      "maxBytes": 5897,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingUiCommandSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-141",
+      "maxLines": 240,
+      "maxBytes": 10267,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingUiContextCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-142",
+      "maxLines": 303,
+      "maxBytes": 16560,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogQueryUiSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-143",
+      "maxLines": 474,
+      "maxBytes": 18013,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingResourceStorageReservationSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-144",
+      "maxLines": 187,
+      "maxBytes": 6749,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/RuntimeFactionResourceSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-145",
+      "maxLines": 274,
+      "maxBytes": 11062,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingConstructionResourceTransactionSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-146",
+      "maxLines": 87,
+      "maxBytes": 3265,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingFactionAIOilAllocationInputSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-147",
+      "maxLines": 185,
+      "maxBytes": 8158,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingGameplaySourceCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-148",
+      "maxLines": 164,
+      "maxBytes": 14396,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudHeaderReferenceUiSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-149",
+      "maxLines": 148,
+      "maxBytes": 5702,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantReferenceUiSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-150",
+      "maxLines": 89,
+      "maxBytes": 3232,
       "scope": "system-helper"
     }
   ]

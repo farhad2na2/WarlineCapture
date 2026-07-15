@@ -13,10 +13,14 @@ public sealed class NonUiSystemBaseMigrationArchitectureTests
     private const string InventoryPath = "Design/Architecture/systembase_to_isystem_inventory.md";
     private const string MonoBehaviourLoopBaselinePath = "Design/Architecture/phase7_monobehaviour_loop_baseline.md";
     private const int ManagedExceptionPlanningCap = 30;
+    private const int FinalProductionDeclarationCount = 200;
+    private const int FinalProductionNonUiCount = 177;
+    private const int FinalProductionUiCount = 23;
     private const int FinalProductionSystemBaseCount = 24;
-    private const int FinalProductionISystemCount = 138;
+    private const int FinalProductionISystemCount = 176;
+    private const int FinalConvertedCount = 153;
     private const int FinalManagedExceptionCount = 24;
-    private const int FinalUiOutOfScopeCount = 7;
+    private const int FinalUiOutOfScopeCount = 23;
 
     private static readonly Regex TypeDeclarationRegex = new(
         @"^[ \t]*(?:(?:\[[^\]\r\n]*(?:\r?\n[ \t]*\[[^\]\r\n]*)*\][ \t]*)\r?\n[ \t]*)*" +
@@ -32,11 +36,24 @@ public sealed class NonUiSystemBaseMigrationArchitectureTests
         RegexOptions.CultureInvariant);
 
     private static readonly Regex ManagedBlockerRegex = new(
-        @"\b(GameObject|Transform|Camera|UnityEngine\.Object|ScriptableObject|Material|Renderer|Light|ParticleSystem|LineRenderer|VisualEffect|MonoBehaviour|Coroutine)\b|" +
+        @"\b(GameObject|Camera|UnityEngine\.Object|ScriptableObject|Material|Renderer|Light|ParticleSystem|LineRenderer|VisualEffect|MonoBehaviour|Coroutine)\b|" +
         @"\bResources\s*\.|\b(?:Object|UnityEngine\.Object)\.(?:Instantiate|Destroy)\s*\(|" +
         @"\b(?:GameObject|Object|UnityEngine\.Object)\.Find[A-Za-z0-9_]*\s*\(|\bFindObject[A-Za-z0-9_]*\s*\(|" +
         @"\bCamera\.main\b|\bStartCoroutine\s*\(|\bStopCoroutine\s*\(|" +
         @"\bList\s*<\s*GameObject\s*>|\bDictionary\s*<[^>\r\n]*GameObject",
+        RegexOptions.CultureInvariant);
+
+    private static readonly Regex ManagedTransformTypeRegex = new(
+        @"\bUnityEngine\.Transform\b|" +
+        @"(?<![A-Za-z0-9_.])Transform\s*(?:\[\s*\])?\s+[A-Za-z_]\w*|" +
+        @"(?:<|,)\s*Transform\s*(?=[>,])|" +
+        @"\b(?:typeof|nameof)\s*\(\s*Transform\s*\)|" +
+        @"\(\s*Transform\s*\)|" +
+        @"\b(?:is|as)\s+Transform\b",
+        RegexOptions.CultureInvariant);
+
+    private static readonly Regex UnmanagedEcsObjectReferenceRegex = new(
+        @"\bUnityObjectRef\s*<\s*GameObject\s*>",
         RegexOptions.CultureInvariant);
 
     private static readonly Regex GameplayPolicyRegex = new(
@@ -100,7 +117,8 @@ public sealed class NonUiSystemBaseMigrationArchitectureTests
             tests.DeliberateSystemBaseViolationIsDetectedByInventoryKeyGuard();
             tests.DeliberateMonoBehaviourLoopViolationIsDetected();
             tests.DeliberateManagedExceptionPolicyViolationIsDetected();
-            Debug.Log("[NonUiSystemBaseMigrationArchitectureValidation] result=Passed tests=18");
+            tests.UnmanagedEcsReferenceShapesAreNotManagedBlockers();
+            Debug.Log("[NonUiSystemBaseMigrationArchitectureValidation] result=Passed tests=19");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -220,7 +238,7 @@ public sealed class NonUiSystemBaseMigrationArchitectureTests
     {
         string[] violations = LoadInventoryRows()
             .Where(row => row.Status == "Converted")
-            .Where(row => row.ManagedBlockers != "None" || HasManagedBlocker(File.ReadAllText(row.Path)))
+            .Where(row => row.ManagedBlockers != "None" || HasManagedBlocker(ReadDeclarationBody(row)))
             .Select(row => $"{row.Id} {row.Path} {row.Type} blockers={row.ManagedBlockers}")
             .OrderBy(value => value, StringComparer.Ordinal)
             .ToArray();
@@ -238,7 +256,7 @@ public sealed class NonUiSystemBaseMigrationArchitectureTests
             .Where(row => row.Disposition == "ManagedPresentationSystemBaseException")
             .Where(row => row.ManagedBlockers == "None" ||
                           (row.GameplayPolicyRisk.StartsWith("High", StringComparison.Ordinal) && !ReviewedManagedPresentationPolicyMixRows.Contains(row.Id)) ||
-                          (HasHighRiskPolicyMix(File.ReadAllText(row.Path)) && !ReviewedManagedPresentationPolicyMixRows.Contains(row.Id)))
+                          (HasHighRiskPolicyMix(ReadDeclarationBody(row)) && !ReviewedManagedPresentationPolicyMixRows.Contains(row.Id)))
             .Select(row => $"{row.Id} {row.Path} {row.Type} blockers={row.ManagedBlockers} risk={row.GameplayPolicyRisk}")
             .OrderBy(value => value, StringComparer.Ordinal)
             .ToArray();
@@ -381,15 +399,24 @@ public sealed class NonUiSystemBaseMigrationArchitectureTests
             .ToList();
         int systemBase = rows.Count(row => IsSystemBaseLike(row.CurrentBase));
         int iSystem = rows.Count(row => row.CurrentBase == "ISystem");
+        int productionNonUi = rows.Count(row => row.Scope == "ProductionNonUI");
+        int productionUi = rows.Count(row => row.Scope == "ProductionUI");
+        int converted = rows.Count(row => row.Disposition == "Converted");
+        int managedExceptions = rows.Count(row => row.Disposition == "ManagedPresentationSystemBaseException");
         int reviewRequired = rows.Count(row => row.Disposition == "ReviewRequired" || row.Status == "ReviewRequired");
         int uiOutOfScope = rows.Count(row => row.Disposition == "UIOutOfScope");
         float share = iSystem / (float)Math.Max(1, iSystem + systemBase);
 
+        Assert.AreEqual(FinalProductionDeclarationCount, rows.Count, "Final Phase 7 production declaration count drifted.");
+        Assert.AreEqual(FinalProductionNonUiCount, productionNonUi, "Final Phase 7 production non-UI count drifted.");
+        Assert.AreEqual(FinalProductionUiCount, productionUi, "Final Phase 7 production UI count drifted.");
         Assert.AreEqual(FinalProductionSystemBaseCount, systemBase, "Final Phase 7 production SystemBase/legacy count drifted.");
         Assert.AreEqual(FinalProductionISystemCount, iSystem, "Final Phase 7 production ISystem count drifted.");
+        Assert.AreEqual(FinalConvertedCount, converted, "Final Phase 7 converted count drifted.");
+        Assert.AreEqual(FinalManagedExceptionCount, managedExceptions, "Final Phase 7 managed exception count drifted.");
         Assert.AreEqual(FinalUiOutOfScopeCount, uiOutOfScope, "Final Phase 7 UI out-of-scope count drifted.");
         Assert.AreEqual(0, reviewRequired, "Final Phase 7 inventory must not retain ReviewRequired rows.");
-        Assert.AreEqual(0.852f, share, 0.001f, "Final Phase 7 production ISystem share drifted.");
+        Assert.AreEqual(0.880f, share, 0.001f, "Final Phase 7 production ISystem share drifted.");
     }
 
     [Test]
@@ -426,6 +453,21 @@ public sealed class NonUiSystemBaseMigrationArchitectureTests
         Assert.IsTrue(
             HasHighRiskPolicyMix(source),
             "The managed exception policy guard must catch gameplay command/validation policy in a managed exception.");
+    }
+
+    [Test]
+    public void UnmanagedEcsReferenceShapesAreNotManagedBlockers()
+    {
+        const string unmanagedEcsData =
+            "public LocalTransform Transform; UnityObjectRef<GameObject> Prefab; float3 Position => target.Transform.Position;";
+        const string genuineManagedReferences = "private Transform _view; private GameObject _instance;";
+
+        Assert.IsFalse(
+            HasManagedBlocker(unmanagedEcsData),
+            "LocalTransform member names and UnityObjectRef<GameObject> ECS data must not be classified as managed Unity-object blockers.");
+        Assert.IsTrue(
+            HasManagedBlocker(genuineManagedReferences),
+            "Concrete UnityEngine Transform and GameObject references must remain managed blockers.");
     }
 
     private static List<InventoryRow> LoadInventoryRows()
@@ -543,6 +585,29 @@ public sealed class NonUiSystemBaseMigrationArchitectureTests
                     ScopeFor(normalizedPath));
             }
         }
+    }
+
+    private static string ReadDeclarationBody(InventoryRow row)
+    {
+        string stripped = StripCommentsAndStrings(File.ReadAllText(row.Path));
+        foreach (Match match in TypeDeclarationRegex.Matches(stripped))
+        {
+            string bases = (match.Groups["bases"].Success ? match.Groups["bases"].Value : string.Empty).TrimStart(':').Trim();
+            Match baseMatch = CurrentBaseRegex.Match(bases);
+            if (!baseMatch.Success ||
+                !string.Equals(match.Groups["name"].Value, row.Type, StringComparison.Ordinal) ||
+                !string.Equals(match.Groups["kind"].Value, row.Kind, StringComparison.Ordinal) ||
+                !string.Equals(baseMatch.Value, row.CurrentBase, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            int bodyEnd = FindBodyEnd(stripped, match);
+            return stripped.Substring(match.Index, Math.Max(0, bodyEnd - match.Index));
+        }
+
+        Assert.Fail($"Inventory declaration was not found in source: {row.Id} {row.Path} {row.Type}");
+        return string.Empty;
     }
 
     private static HashSet<string> LoadMonoBehaviourLoopBaselineKeys()
@@ -677,13 +742,15 @@ public sealed class NonUiSystemBaseMigrationArchitectureTests
 
     private static bool ContainsManagedUnityObjectToken(string stripped)
     {
-        return ManagedBlockerRegex.IsMatch(stripped) ||
-               HasExactIdentifier(stripped, "GameObject") ||
-               HasExactIdentifier(stripped, "ScriptableObject") ||
-               HasExactIdentifier(stripped, "MonoBehaviour") ||
-               HasExactIdentifier(stripped, "ParticleSystem") ||
-               HasExactIdentifier(stripped, "LineRenderer") ||
-               HasExactIdentifier(stripped, "VisualEffect");
+        string blockerText = UnmanagedEcsObjectReferenceRegex.Replace(stripped, "UnityObjectRef");
+        return ManagedBlockerRegex.IsMatch(blockerText) ||
+               ManagedTransformTypeRegex.IsMatch(blockerText) ||
+               HasExactIdentifier(blockerText, "GameObject") ||
+               HasExactIdentifier(blockerText, "ScriptableObject") ||
+               HasExactIdentifier(blockerText, "MonoBehaviour") ||
+               HasExactIdentifier(blockerText, "ParticleSystem") ||
+               HasExactIdentifier(blockerText, "LineRenderer") ||
+               HasExactIdentifier(blockerText, "VisualEffect");
     }
 
     private static bool HasExactIdentifier(string text, string identifier)

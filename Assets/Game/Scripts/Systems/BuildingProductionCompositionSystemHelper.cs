@@ -31,14 +31,14 @@ namespace Game.Runtime
                 source.BuildingVisualSystem,
                 source.BuildingSpawnCompositionSystemHelper,
                 spawnContext,
-                source.RuntimeResourceUtilitySystemHelper.CurrentDollars,
+                source.RuntimeFactionResourceSystemHelper.CurrentDollars,
                 source.BuildingPlacementStartupSystemHelper.MaxQueuedUnitProductions,
                 prefab => EnqueueAndProcessBeginPlacementForConfiguredSpawnable(
                     source,
                     createPlacementCommandContext(source, interactionContext, markerPropertyBlock),
                     prefab),
-                source.RuntimeResourceUtilitySystemHelper.TrySpendDollars,
-                source.RuntimeResourceUtilitySystemHelper.AddDollars,
+                source.RuntimeFactionResourceSystemHelper.TrySpendDollars,
+                source.RuntimeFactionResourceSystemHelper.AddDollars,
                 cost => source.BuildingPlacementCommandRequestCompositionSystemHelper.SetActivePlacementCost(
                     createPlacementCommandContext(source, interactionContext, markerPropertyBlock),
                     cost),
@@ -71,8 +71,8 @@ namespace Game.Runtime
                 runtimeSource.TryGetRuntimeBuilding,
                 runtimeSource.GetEffectivePlacementRect,
                 source.PrepareTransportDropVisual,
-                source.RuntimeResourceUtilitySystemHelper.EvaluateConstructionResources,
-                source.BuildingGameplayEcsQueryCompositionSystemHelper.TryResolveFactionAIOilAllocationInput);
+                source.RuntimeFactionResourceSystemHelper.EvaluateConstructionResources,
+                source.BuildingGameplayEcsQueryCompositionSystemHelper.AIOilInputSystemHelper.TryResolveFactionAIOilAllocationInput);
             return productionSource;
         }
 

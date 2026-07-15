@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
 using Unity.Entities;
 using Game.Components;
 using Game.Configs;
@@ -17,6 +18,8 @@ namespace Game.Composition
     {
         private readonly MatchBootstrapCompositionSystemHelper matchBootstrapSystem = new();
         private readonly List<AudioListener> audioListenersDisabledForMatch = new();
+        private readonly List<GameObject> compositionSceneRoots = new(4);
+        private AudioListener menuAudioListener;
         private bool matchRuntimeBound;
 
         [Header("Scene Refs")]
@@ -189,13 +192,9 @@ namespace Game.Composition
             if (listener == null)
                 return;
 
-            AudioListener[] listeners = FindObjectsByType<AudioListener>(FindObjectsInactive.Exclude);
-            for (int i = 0; i < listeners.Length; i++)
+            AudioListener otherListener = ResolveMenuAudioListener();
+            if (otherListener != null && otherListener != listener && otherListener.enabled)
             {
-                AudioListener otherListener = listeners[i];
-                if (otherListener == null || otherListener == listener || !otherListener.enabled)
-                    continue;
-
                 if (!audioListenersDisabledForMatch.Contains(otherListener))
                     audioListenersDisabledForMatch.Add(otherListener);
                 otherListener.enabled = false;
@@ -218,6 +217,32 @@ namespace Game.Composition
             }
 
             audioListenersDisabledForMatch.Clear();
+        }
+
+        private AudioListener ResolveMenuAudioListener()
+        {
+            if (menuAudioListener != null)
+                return menuAudioListener;
+
+            Scene menuScene = SceneManager.GetSceneByName(SceneLifecycleSceneSystemHelper.MenuSceneName);
+            if (!menuScene.IsValid() || !menuScene.isLoaded)
+                return null;
+
+            compositionSceneRoots.Clear();
+            menuScene.GetRootGameObjects(compositionSceneRoots);
+            for (int i = 0; i < compositionSceneRoots.Count; i++)
+            {
+                GameObject root = compositionSceneRoots[i];
+                if (root == null || !root.TryGetComponent(out MenuBootstrapView menuBootstrap))
+                    continue;
+
+                Camera uiCamera = menuBootstrap.UiCamera;
+                menuAudioListener = uiCamera != null ? uiCamera.GetComponent<AudioListener>() : null;
+                break;
+            }
+
+            compositionSceneRoots.Clear();
+            return menuAudioListener;
         }
     }
 }

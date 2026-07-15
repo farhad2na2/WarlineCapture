@@ -4,54 +4,51 @@ using UnityEngine;
 
 namespace Game.Runtime
 {
-    internal sealed class RuntimeResourceUtilitySystemHelper
+    internal sealed class RuntimeFactionResourceSystemHelper
     {
         private EntityManager _entityManager;
-        private Entity _playerEconomyEntity;
+        private Entity _controlledFactionResourceEntity;
         private int _pendingInitialDollars;
-        private int _activeConstructionTransactionId;
-        private int _activeConstructionCreditsCost;
-        private int _activeConstructionMaterialsCost;
-        private int _highestSettledConstructionTransactionId;
         private bool _isConfigured;
 
-        public int CurrentDollars => TryGetPlayerEconomy(out FactionEconomy economy) ? economy.Money : 0;
-        public int CurrentMaterials => TryGetPlayerResources(out _, out FactionTacticalMaterialsComponent materials)
-            ? materials.Current
+        public int CurrentDollars => TryGetControlledFactionEconomy(out FactionEconomy economy)
+            ? economy.Money
             : 0;
+
+        public int CurrentMaterials => TryGetControlledFactionResources(
+            out _,
+            out FactionTacticalMaterialsComponent materials)
+                ? materials.Current
+                : 0;
 
         public void SetInitialDollars(int dollars)
         {
             _pendingInitialDollars = Mathf.Max(0, dollars);
-            if (!TryGetPlayerEconomy(out FactionEconomy economy))
+            if (!TryGetControlledFactionEconomy(out FactionEconomy economy))
                 return;
 
             economy.Money = _pendingInitialDollars;
-            _entityManager.SetComponentData(_playerEconomyEntity, economy);
+            _entityManager.SetComponentData(_controlledFactionResourceEntity, economy);
         }
 
         public void Configure(EntityManager entityManager)
         {
             _entityManager = entityManager;
-            _playerEconomyEntity = Entity.Null;
-            _activeConstructionTransactionId = 0;
-            _activeConstructionCreditsCost = 0;
-            _activeConstructionMaterialsCost = 0;
-            _highestSettledConstructionTransactionId = 0;
+            _controlledFactionResourceEntity = Entity.Null;
             _isConfigured = true;
-            EnsurePlayerEconomy();
+            EnsureControlledFactionResources();
         }
 
         public void AddDollars(int amount)
         {
             amount = Mathf.Max(0, amount);
-            if (amount == 0 || !TryGetPlayerEconomy(out FactionEconomy economy))
+            if (amount == 0 || !TryGetControlledFactionEconomy(out FactionEconomy economy))
                 return;
 
             economy.Money = economy.Money >= int.MaxValue - amount
                 ? int.MaxValue
                 : economy.Money + amount;
-            _entityManager.SetComponentData(_playerEconomyEntity, economy);
+            _entityManager.SetComponentData(_controlledFactionResourceEntity, economy);
         }
 
         public bool TrySpendDollars(int amount)
@@ -68,7 +65,7 @@ namespace Game.Runtime
             int creditsCost,
             int materialsCost)
         {
-            if (!TryGetPlayerResources(
+            if (!TryGetControlledFactionResources(
                     out FactionEconomy economy,
                     out FactionTacticalMaterialsComponent materials))
                 return FactionConstructionResourceMutationResult.InvalidState;
@@ -82,9 +79,9 @@ namespace Game.Runtime
             if (result != FactionConstructionResourceMutationResult.Applied)
                 return result;
 
-            _entityManager.SetComponentData(_playerEconomyEntity, economy);
+            _entityManager.SetComponentData(_controlledFactionResourceEntity, economy);
             if (materialsCost > 0)
-                _entityManager.SetComponentData(_playerEconomyEntity, materials);
+                _entityManager.SetComponentData(_controlledFactionResourceEntity, materials);
             return result;
         }
 
@@ -92,7 +89,7 @@ namespace Game.Runtime
             int creditsCost,
             int materialsCost)
         {
-            return TryGetPlayerResources(
+            return TryGetControlledFactionResources(
                 out FactionEconomy economy,
                 out FactionTacticalMaterialsComponent materials)
                 ? FactionConstructionResourceUtilitySystemHelper.Evaluate(
@@ -103,69 +100,11 @@ namespace Game.Runtime
                 : FactionConstructionResourceMutationResult.InvalidState;
         }
 
-        public bool TryGetFactionResourceEntity(byte factionId, out Entity entity)
-        {
-            entity = Entity.Null;
-            if (!TryGetPlayerEconomy(out FactionEconomy economy) || economy.FactionId != factionId)
-                return false;
-
-            entity = _playerEconomyEntity;
-            return _entityManager.HasComponent<FactionTacticalMaterialsComponent>(entity);
-        }
-
-        public FactionConstructionResourceMutationResult TryReserveConstructionResources(
-            int transactionId,
+        public FactionConstructionResourceMutationResult TryRestoreConstructionResources(
             int creditsCost,
             int materialsCost)
         {
-            if (transactionId <= 0)
-                return FactionConstructionResourceMutationResult.InvalidState;
-            if (transactionId <= _highestSettledConstructionTransactionId ||
-                transactionId == _activeConstructionTransactionId)
-                return FactionConstructionResourceMutationResult.DuplicateTransaction;
-            if (_activeConstructionTransactionId != 0)
-                return FactionConstructionResourceMutationResult.InvalidState;
-
-            FactionConstructionResourceMutationResult result =
-                TrySpendConstructionResources(creditsCost, materialsCost);
-            if (result != FactionConstructionResourceMutationResult.Applied)
-                return result;
-
-            _activeConstructionTransactionId = transactionId;
-            _activeConstructionCreditsCost = Mathf.Max(0, creditsCost);
-            _activeConstructionMaterialsCost = Mathf.Max(0, materialsCost);
-            return result;
-        }
-
-        public FactionConstructionResourceMutationResult TryFinalizeConstructionResources(int transactionId)
-        {
-            if (transactionId <= 0 || transactionId != _activeConstructionTransactionId)
-                return FactionConstructionResourceMutationResult.InvalidState;
-
-            SettleConstructionTransaction(transactionId);
-            return FactionConstructionResourceMutationResult.Applied;
-        }
-
-        public FactionConstructionResourceMutationResult TryRollbackConstructionResources(int transactionId)
-        {
-            if (transactionId <= 0 || transactionId != _activeConstructionTransactionId)
-                return FactionConstructionResourceMutationResult.InvalidState;
-
-            FactionConstructionResourceMutationResult result = TryRollbackConstructionResources(
-                _activeConstructionCreditsCost,
-                _activeConstructionMaterialsCost);
-            if (result != FactionConstructionResourceMutationResult.Applied)
-                return result;
-
-            SettleConstructionTransaction(transactionId);
-            return result;
-        }
-
-        public FactionConstructionResourceMutationResult TryRollbackConstructionResources(
-            int creditsCost,
-            int materialsCost)
-        {
-            if (!TryGetPlayerResources(
+            if (!TryGetControlledFactionResources(
                     out FactionEconomy economy,
                     out FactionTacticalMaterialsComponent materials))
                 return FactionConstructionResourceMutationResult.InvalidState;
@@ -179,10 +118,21 @@ namespace Game.Runtime
             if (result != FactionConstructionResourceMutationResult.Applied)
                 return result;
 
-            _entityManager.SetComponentData(_playerEconomyEntity, economy);
+            _entityManager.SetComponentData(_controlledFactionResourceEntity, economy);
             if (materialsCost > 0)
-                _entityManager.SetComponentData(_playerEconomyEntity, materials);
+                _entityManager.SetComponentData(_controlledFactionResourceEntity, materials);
             return result;
+        }
+
+        public bool TryGetFactionResourceEntity(byte factionId, out Entity entity)
+        {
+            entity = Entity.Null;
+            if (!TryGetControlledFactionEconomy(out FactionEconomy economy) ||
+                economy.FactionId != factionId)
+                return false;
+
+            entity = _controlledFactionResourceEntity;
+            return _entityManager.HasComponent<FactionTacticalMaterialsComponent>(entity);
         }
 
         public CitizenResourceCompositionSystemHelper.Context CreateCitizenResourceContext()
@@ -194,22 +144,14 @@ namespace Game.Runtime
 
         private void SetDollars(int value)
         {
-            if (!TryGetPlayerEconomy(out FactionEconomy economy))
+            if (!TryGetControlledFactionEconomy(out FactionEconomy economy))
                 return;
 
             economy.Money = Mathf.Max(0, value);
-            _entityManager.SetComponentData(_playerEconomyEntity, economy);
+            _entityManager.SetComponentData(_controlledFactionResourceEntity, economy);
         }
 
-        private void SettleConstructionTransaction(int transactionId)
-        {
-            _highestSettledConstructionTransactionId = transactionId;
-            _activeConstructionTransactionId = 0;
-            _activeConstructionCreditsCost = 0;
-            _activeConstructionMaterialsCost = 0;
-        }
-
-        private void EnsurePlayerEconomy()
+        private void EnsureControlledFactionResources()
         {
             if (!IsEntityManagerAvailable())
                 return;
@@ -242,28 +184,28 @@ namespace Game.Runtime
 
             if (resolvedEntity != Entity.Null)
             {
-                _playerEconomyEntity = resolvedEntity;
+                _controlledFactionResourceEntity = resolvedEntity;
                 resolvedEconomy.Money = _pendingInitialDollars;
                 _entityManager.SetComponentData(resolvedEntity, resolvedEconomy);
                 EnsureCompanionComponents(resolvedEntity);
                 return;
             }
 
-            _playerEconomyEntity = _entityManager.CreateEntity(
+            _controlledFactionResourceEntity = _entityManager.CreateEntity(
                 typeof(FactionEconomy),
                 typeof(FactionEconomyPolicy),
                 typeof(FactionTacticalMaterialsComponent));
-            _entityManager.SetComponentData(_playerEconomyEntity, new FactionEconomy
+            _entityManager.SetComponentData(_controlledFactionResourceEntity, new FactionEconomy
             {
                 FactionId = FactionIdentity.PlayerFactionId,
                 Money = _pendingInitialDollars
             });
-            _entityManager.SetComponentData(_playerEconomyEntity, new FactionEconomyPolicy
+            _entityManager.SetComponentData(_controlledFactionResourceEntity, new FactionEconomyPolicy
             {
                 Enabled = 0,
                 IncomeMultiplier = 1f
             });
-            _entityManager.SetComponentData(_playerEconomyEntity, new FactionTacticalMaterialsComponent
+            _entityManager.SetComponentData(_controlledFactionResourceEntity, new FactionTacticalMaterialsComponent
             {
                 FactionId = FactionIdentity.PlayerFactionId
             });
@@ -289,37 +231,38 @@ namespace Game.Runtime
             }
         }
 
-        private bool TryGetPlayerEconomy(out FactionEconomy economy)
+        private bool TryGetControlledFactionEconomy(out FactionEconomy economy)
         {
             economy = default;
             if (!IsEntityManagerAvailable())
                 return false;
-            if (_playerEconomyEntity == Entity.Null ||
-                !_entityManager.Exists(_playerEconomyEntity) ||
-                !_entityManager.HasComponent<FactionEconomy>(_playerEconomyEntity))
+            if (_controlledFactionResourceEntity == Entity.Null ||
+                !_entityManager.Exists(_controlledFactionResourceEntity) ||
+                !_entityManager.HasComponent<FactionEconomy>(_controlledFactionResourceEntity))
             {
-                EnsurePlayerEconomy();
+                EnsureControlledFactionResources();
             }
 
-            if (_playerEconomyEntity == Entity.Null ||
-                !_entityManager.Exists(_playerEconomyEntity) ||
-                !_entityManager.HasComponent<FactionEconomy>(_playerEconomyEntity))
+            if (_controlledFactionResourceEntity == Entity.Null ||
+                !_entityManager.Exists(_controlledFactionResourceEntity) ||
+                !_entityManager.HasComponent<FactionEconomy>(_controlledFactionResourceEntity))
                 return false;
 
-            economy = _entityManager.GetComponentData<FactionEconomy>(_playerEconomyEntity);
+            economy = _entityManager.GetComponentData<FactionEconomy>(_controlledFactionResourceEntity);
             return FactionIdentity.IsPlayerControlled(economy.FactionId);
         }
 
-        private bool TryGetPlayerResources(
+        private bool TryGetControlledFactionResources(
             out FactionEconomy economy,
             out FactionTacticalMaterialsComponent materials)
         {
             materials = default;
-            if (!TryGetPlayerEconomy(out economy) ||
-                !_entityManager.HasComponent<FactionTacticalMaterialsComponent>(_playerEconomyEntity))
+            if (!TryGetControlledFactionEconomy(out economy) ||
+                !_entityManager.HasComponent<FactionTacticalMaterialsComponent>(_controlledFactionResourceEntity))
                 return false;
 
-            materials = _entityManager.GetComponentData<FactionTacticalMaterialsComponent>(_playerEconomyEntity);
+            materials = _entityManager.GetComponentData<FactionTacticalMaterialsComponent>(
+                _controlledFactionResourceEntity);
             return materials.FactionId == economy.FactionId;
         }
 

@@ -21,9 +21,10 @@ public sealed class AndroidBuildReportGeneratorTests
             tests.AggregationRetainsDistinctObjectTypesInOrdinalOrder();
             tests.AccountingSeparatesAttributedUnattributedOverheadAndSummaryRemainder();
             tests.ReportCarriesRequiredEvidenceAndExplicitSizeSemantics();
-            tests.ReleaseBuildOptionsRequireDetailedReport();
+            tests.ReleaseBuildOptionsRequireDetailedReportAndCleanBuildCache();
+            tests.ReleaseBuildScriptOptionsIncludeCleanCacheWithoutDebugOrProfilerFlags();
             tests.ReleaseBuildOptionsRejectDebugAndProfilerFlags();
-            Debug.Log("[AndroidBuildReportGeneratorValidation] result=Passed tests=10");
+            Debug.Log("[AndroidBuildReportGeneratorValidation] result=Passed tests=11");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -230,12 +231,36 @@ public sealed class AndroidBuildReportGeneratorTests
     }
 
     [Test]
-    public void ReleaseBuildOptionsRequireDetailedReport()
+    public void ReleaseBuildOptionsRequireDetailedReportAndCleanBuildCache()
     {
         Assert.Throws<InvalidOperationException>(
             () => AndroidBuildReportGenerator.ValidateReleaseBuildOptions(BuildOptions.None));
-        Assert.DoesNotThrow(
+        Assert.Throws<InvalidOperationException>(
             () => AndroidBuildReportGenerator.ValidateReleaseBuildOptions(BuildOptions.DetailedBuildReport));
+        Assert.Throws<InvalidOperationException>(
+            () => AndroidBuildReportGenerator.ValidateReleaseBuildOptions(BuildOptions.CleanBuildCache));
+        Assert.DoesNotThrow(
+            () => AndroidBuildReportGenerator.ValidateReleaseBuildOptions(
+                BuildOptions.DetailedBuildReport | BuildOptions.CleanBuildCache));
+    }
+
+    [Test]
+    public void ReleaseBuildScriptOptionsIncludeCleanCacheWithoutDebugOrProfilerFlags()
+    {
+        const BuildOptions required =
+            BuildOptions.DetailedBuildReport |
+            BuildOptions.CleanBuildCache;
+        const BuildOptions forbidden =
+            BuildOptions.Development |
+            BuildOptions.AllowDebugging |
+            BuildOptions.ConnectWithProfiler |
+            BuildOptions.EnableDeepProfilingSupport;
+
+        Assert.AreEqual(required, BuildScript.ReleaseAndroidBuildOptions & required);
+        Assert.AreEqual(BuildOptions.None, BuildScript.ReleaseAndroidBuildOptions & forbidden);
+        Assert.DoesNotThrow(
+            () => AndroidBuildReportGenerator.ValidateReleaseBuildOptions(
+                BuildScript.ReleaseAndroidBuildOptions));
     }
 
     [Test]
@@ -251,7 +276,10 @@ public sealed class AndroidBuildReportGeneratorTests
 
         for (int index = 0; index < forbiddenOptions.Length; index++)
         {
-            BuildOptions options = BuildOptions.DetailedBuildReport | forbiddenOptions[index];
+            BuildOptions options =
+                BuildOptions.DetailedBuildReport |
+                BuildOptions.CleanBuildCache |
+                forbiddenOptions[index];
             InvalidOperationException exception = Assert.Throws<InvalidOperationException>(
                 () => AndroidBuildReportGenerator.ValidateReleaseBuildOptions(options));
             StringAssert.Contains("clean release", exception.Message);

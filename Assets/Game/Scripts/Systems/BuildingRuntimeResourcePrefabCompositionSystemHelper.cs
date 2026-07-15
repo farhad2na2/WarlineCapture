@@ -20,7 +20,7 @@ namespace Game.Runtime
         {
             return BuildingRuntimeResourcePrefabContextCompositionSystemHelper.CreateSource(
                 source.BuildingRuntimeResourcePrefabContextCompositionSystemHelper,
-                source.RuntimeResourceUtilitySystemHelper,
+                source.RuntimeFactionResourceSystemHelper,
                 source.RuntimeUnitPrefabSystem,
                 source.BuildingDefinitionPrefabSystemHelper,
                 source.RuntimeBuildingSystem,

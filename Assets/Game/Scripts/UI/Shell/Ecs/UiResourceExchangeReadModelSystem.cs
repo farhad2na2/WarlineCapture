@@ -6,6 +6,8 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using static Game.UI.Shell.Ecs.UiResourceExchangeProjectionSystemHelper;
+using Hash = Game.UI.Shell.Ecs.UiResourceExchangeProjectionFingerprintUtilitySystemHelper;
+using Text = Game.UI.Shell.Ecs.UiResourceExchangeTextProjectionUtilitySystemHelper;
 
 namespace Game.UI.Shell.Ecs
 {
@@ -17,6 +19,9 @@ namespace Game.UI.Shell.Ecs
 
         private EntityQuery boundaryQuery;
         private EntityQuery physicalResourceQuery;
+        private Entity lastBoundary;
+        private ulong lastHash;
+        private byte hasHash;
 
         public void OnCreate(ref SystemState state)
         {
@@ -36,6 +41,11 @@ namespace Game.UI.Shell.Ecs
         public void OnUpdate(ref SystemState state)
         {
             Entity boundary = boundaryQuery.GetSingletonEntity();
+            if (boundary != lastBoundary)
+            {
+                lastBoundary = boundary;
+                hasHash = 0;
+            }
             UiShellActivePopupComponent activePopup =
                 state.EntityManager.GetComponentData<UiShellActivePopupComponent>(boundary);
             if (activePopup.Visible == 0 || activePopup.PopupKind != Game.UI.Contracts.UiShellPopupKind.ResourceExchange)
@@ -61,6 +71,8 @@ namespace Game.UI.Shell.Ecs
             }
 
             int playerExchangeCount = 0;
+            ulong projectionFingerprint = 0;
+            bool projectionChanged = false;
             foreach (var (
                          enabled,
                          economy,
@@ -91,23 +103,45 @@ namespace Game.UI.Shell.Ecs
                 if (playerExchangeCount > 1)
                     break;
 
-                WriteReadModel(
-                    enabled.ValueRO,
-                    economy.ValueRO,
-                    materials.ValueRO,
-                    wallet.ValueRO,
-                    physicalResources,
-                    summary.ValueRO,
-                    recipes,
-                    queue,
-                    ref uiState,
-                    ref detail,
-                    cards,
-                    queueRows);
+                projectionFingerprint = Hash.Calculate(
+                    enabled.ValueRO, economy.ValueRO, materials.ValueRO, wallet.ValueRO,
+                    physicalResources, summary.ValueRO, uiState, recipes, queue);
+                if (hasHash == 0 || projectionFingerprint != lastHash)
+                {
+                    WriteReadModel(
+                        enabled.ValueRO,
+                        economy.ValueRO,
+                        materials.ValueRO,
+                        wallet.ValueRO,
+                        physicalResources,
+                        summary.ValueRO,
+                        recipes,
+                        queue,
+                        ref uiState,
+                        ref detail,
+                        cards,
+                        queueRows);
+                    projectionFingerprint = Hash.Calculate(
+                        enabled.ValueRO, economy.ValueRO, materials.ValueRO, wallet.ValueRO,
+                        physicalResources, summary.ValueRO, uiState, recipes, queue);
+                    projectionChanged = true;
+                }
             }
 
             if (playerExchangeCount != 1)
-                WriteUnavailable(ref uiState, ref detail, cards, queueRows);
+            {
+                projectionFingerprint = Hash.CalculateUnavailable(uiState);
+                if (hasHash == 0 || projectionFingerprint != lastHash)
+                {
+                    WriteUnavailable(ref uiState, ref detail, cards, queueRows);
+                    projectionChanged = true;
+                }
+            }
+
+            lastHash = projectionFingerprint;
+            hasHash = 1;
+            if (!projectionChanged)
+                return;
 
             state.EntityManager.SetComponentData(boundary, uiState);
             state.EntityManager.SetComponentData(boundary, detail);
@@ -134,36 +168,24 @@ namespace Game.UI.Shell.Ecs
             uiState.ActiveCount = summary.ActiveCount;
             uiState.CompletedCount = summary.CompletedCount;
             uiState.MaxQueueItems = enabled.MaxQueueItems;
-            uiState.QueueCapacityText = ToFixed32($"{summary.ActiveCount}/{math.max(0, enabled.MaxQueueItems)}");
-            uiState.CreditsText = ToFixed32(economy.Money.ToString(CultureInfo.InvariantCulture));
-            uiState.MaterialsText = ToFixed32(materials.Current.ToString(CultureInfo.InvariantCulture));
-            uiState.OilText = ToFixed32(ResourceExchangeResourceUtilitySystemHelper.GetAmount(
-                economy,
-                materials,
-                wallet,
-                physicalResources,
+            uiState.QueueCapacityText = Text.ToFixed32(
+                $"{summary.ActiveCount}/{math.max(0, enabled.MaxQueueItems)}");
+            uiState.CreditsText = Text.ToFixed32(economy.Money.ToString(CultureInfo.InvariantCulture));
+            uiState.MaterialsText = Text.ToFixed32(materials.Current.ToString(CultureInfo.InvariantCulture));
+            uiState.OilText = Text.ToFixed32(ResourceExchangeResourceUtilitySystemHelper.GetAmount(
+                economy, materials, wallet, physicalResources,
                 ResourceExchangeResourceKind.Oil).ToString(CultureInfo.InvariantCulture));
-            uiState.FuelText = ToFixed32(ResourceExchangeResourceUtilitySystemHelper.GetAmount(
-                economy,
-                materials,
-                wallet,
-                physicalResources,
+            uiState.FuelText = Text.ToFixed32(ResourceExchangeResourceUtilitySystemHelper.GetAmount(
+                economy, materials, wallet, physicalResources,
                 ResourceExchangeResourceKind.Fuel).ToString(CultureInfo.InvariantCulture));
-            uiState.RushTicketsText = ToFixed32(wallet.RushTickets.ToString(CultureInfo.InvariantCulture));
+            uiState.RushTicketsText = Text.ToFixed32(wallet.RushTickets.ToString(CultureInfo.InvariantCulture));
             uiState.RushAllEnabled = HasRushableQueueItem(wallet, recipes, queue) ? (byte)1 : (byte)0;
             uiState.ClearCompletedEnabled = HasCompletedQueueItem(queue) ? (byte)1 : (byte)0;
             uiState.Version = math.max(uiState.Version + 1u, summary.Version);
 
             WriteRecipeCards(
-                enabled,
-                economy,
-                materials,
-                wallet,
-                physicalResources,
-                recipes,
-                queue,
-                ref uiState,
-                ref detail,
+                enabled, economy, materials, wallet, physicalResources,
+                recipes, queue, ref uiState, ref detail,
                 cards);
             WriteQueueRows(wallet, recipes, queue, queueRows);
         }
@@ -188,7 +210,7 @@ namespace Game.UI.Shell.Ecs
             detail = new UiResourceExchangeDetailComponent
             {
                 Name = new FixedString64Bytes("RESOURCE EXCHANGE"),
-                RouteText = ToFixed32(FormatTab(uiState.ActiveTab)),
+                RouteText = Text.ToFixed32(Text.FormatTab(uiState.ActiveTab)),
                 RequirementsText = new FixedString64Bytes("Exchange unavailable."),
                 InstructionText = new FixedString128Bytes("Resource Exchange is not enabled for this scenario.")
             };
@@ -233,11 +255,14 @@ namespace Game.UI.Shell.Ecs
                     WarningVisible = availability == ResourceExchangeReason.None ? (byte)0 : (byte)1,
                     Tab = uiState.ActiveTab,
                     RecipeId = recipe.RecipeId,
-                    Title = ToFixed64(recipe.DisplayName),
-                    InputText = ToFixed32(FormatResourceAmount(recipe.InputResource, amount)),
-                    OutputText = ToFixed32(FormatResourceAmount(recipe.OutputResource, outputAmount)),
-                    DurationText = ToFixed32(FormatDuration(CalculateDuration(recipe, amount))),
-                    ReasonText = ToFixed64(FormatReason(availability))
+                    Title = Text.ToFixed64(recipe.DisplayName),
+                    InputText = Text.ToFixed32(
+                        Text.FormatResourceAmount(recipe.InputResource, amount)),
+                    OutputText = Text.ToFixed32(
+                        Text.FormatResourceAmount(recipe.OutputResource, outputAmount)),
+                    DurationText = Text.ToFixed32(
+                        Text.FormatDuration(CalculateDuration(recipe, amount))),
+                    ReasonText = Text.ToFixed64(Text.FormatReason(availability))
                 });
                 visibleIndex++;
             }
@@ -300,17 +325,20 @@ namespace Game.UI.Shell.Ecs
             return new UiResourceExchangeDetailComponent
             {
                 RecipeId = recipe.RecipeId,
-                Name = ToFixed64(recipe.DisplayName),
-                RouteText = ToFixed32(recipe.RouteType == ResourceExchangeRouteType.Export ? "EXPORT" : "IMPORT"),
-                RateText = ToFixed64(FormatRate(recipe)),
-                AmountText = ToFixed32(amount.ToString(CultureInfo.InvariantCulture)),
-                InputCostText = ToFixed32(FormatResourceAmount(recipe.InputResource, amount)),
-                OutputPreviewText = ToFixed32(FormatResourceAmount(recipe.OutputResource, outputAmount)),
-                DurationText = ToFixed32(FormatDuration(duration)),
-                RequirementsText = ToFixed64(FormatRequirements(recipe)),
-                InstructionText = ToFixed128(reason == ResourceExchangeReason.None
+                Name = Text.ToFixed64(recipe.DisplayName),
+                RouteText = Text.ToFixed32(
+                    recipe.RouteType == ResourceExchangeRouteType.Export ? "EXPORT" : "IMPORT"),
+                RateText = Text.ToFixed64(Text.FormatRate(recipe)),
+                AmountText = Text.ToFixed32(amount.ToString(CultureInfo.InvariantCulture)),
+                InputCostText = Text.ToFixed32(
+                    Text.FormatResourceAmount(recipe.InputResource, amount)),
+                OutputPreviewText = Text.ToFixed32(
+                    Text.FormatResourceAmount(recipe.OutputResource, outputAmount)),
+                DurationText = Text.ToFixed32(Text.FormatDuration(duration)),
+                RequirementsText = Text.ToFixed64(Text.FormatRequirements(recipe)),
+                InstructionText = Text.ToFixed128(reason == ResourceExchangeReason.None
                     ? "Confirm to start a timed logistics exchange."
-                    : FormatReason(reason)),
+                    : Text.FormatReason(reason)),
                 ConfirmEnabled = reason == ResourceExchangeReason.None ? (byte)1 : (byte)0,
                 WarningVisible = reason == ResourceExchangeReason.None ? (byte)0 : (byte)1
             };
@@ -347,13 +375,18 @@ namespace Game.UI.Shell.Ecs
                     CompletedVisible = item.State == ResourceExchangeQueueState.Completed ? (byte)1 : (byte)0,
                     QueueItemId = item.QueueItemId,
                     State = ToUiQueueState(item.State),
-                    NumberText = ToFixed32((i + 1).ToString(CultureInfo.InvariantCulture)),
-                    Name = recipe.DisplayName.Length > 0 ? ToFixed64(recipe.DisplayName) : ToFixed64(item.RecipeId),
-                    InputText = ToFixed32(FormatResourceAmount(item.InputResource, item.InputAmount)),
-                    OutputText = ToFixed32(FormatResourceAmount(item.OutputResource, item.OutputAmount)),
-                    TimeText = ToFixed32(FormatDuration(item.RemainingSeconds)),
-                    PercentText = ToFixed32(FormatPercent(progress)),
-                    StateText = ToFixed64(FormatState(item.State, item.StateReason)),
+                    NumberText = Text.ToFixed32((i + 1).ToString(CultureInfo.InvariantCulture)),
+                    Name = recipe.DisplayName.Length > 0
+                        ? Text.ToFixed64(recipe.DisplayName)
+                        : Text.ToFixed64(item.RecipeId),
+                    InputText = Text.ToFixed32(
+                        Text.FormatResourceAmount(item.InputResource, item.InputAmount)),
+                    OutputText = Text.ToFixed32(
+                        Text.FormatResourceAmount(item.OutputResource, item.OutputAmount)),
+                    TimeText = Text.ToFixed32(Text.FormatDuration(item.RemainingSeconds)),
+                    PercentText = Text.ToFixed32(Text.FormatPercent(progress)),
+                    StateText = Text.ToFixed64(
+                        Text.FormatState(item.State, item.StateReason)),
                     Progress01 = progress
                 });
             }

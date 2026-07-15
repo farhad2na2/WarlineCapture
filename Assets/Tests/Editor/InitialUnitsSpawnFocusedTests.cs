@@ -172,6 +172,12 @@ public sealed class InitialUnitsSpawnFocusedTests
             Assert.AreEqual(economy.FactionId, logisticsTelemetry.FactionId);
             Assert.AreEqual(0, logisticsTelemetry.TrayRouteAssignmentCount);
             Assert.AreEqual(0u, logisticsTelemetry.Version);
+            Assert.IsTrue(em.HasComponent<MaterialFabricationEconomyEventQueueComponent>(economies[i]));
+            Assert.IsTrue(em.HasBuffer<MaterialFabricationEconomyEventElement>(economies[i]));
+            DynamicBuffer<MaterialFabricationEconomyEventElement> events =
+                em.GetBuffer<MaterialFabricationEconomyEventElement>(economies[i]);
+            Assert.Zero(events.Length);
+            Assert.GreaterOrEqual(events.Capacity, MaterialFabricationEconomyEventQueueComponent.Capacity);
         }
     }
 

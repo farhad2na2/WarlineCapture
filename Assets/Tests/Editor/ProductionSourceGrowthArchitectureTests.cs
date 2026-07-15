@@ -572,7 +572,7 @@ public sealed class ProductionSourceGrowthArchitectureTests
         string jenkins = File.ReadAllText(jenkinsPath);
         string editModeStage = ExtractTextBetween(
             jenkins,
-            "stage('Run Unity EditMode Tests')",
+            "stage('Run Unity EditMode Smoke Tests')",
             "stage('Build Windows')");
 
         Require(
@@ -618,13 +618,14 @@ public sealed class ProductionSourceGrowthArchitectureTests
             checkout.Contains($"git cat-file -e {BaselineCommit}", StringComparison.Ordinal) &&
             checkout.Contains($"git merge-base --is-ancestor {BaselineCommit} HEAD", StringComparison.Ordinal),
             "Jenkins must verify the immutable baseline commit and ancestry.");
+        string normalizedCheckout = checkout.Replace("\\\\", "\\");
         Require(
-            checkout.Contains(BaselinePath.Replace('/', '\\'), StringComparison.Ordinal) &&
-            checkout.Contains(TrackerPath.Replace('/', '\\'), StringComparison.Ordinal),
+            normalizedCheckout.Contains(BaselinePath.Replace('/', '\\'), StringComparison.Ordinal) &&
+            normalizedCheckout.Contains(TrackerPath.Replace('/', '\\'), StringComparison.Ordinal),
             "Jenkins must verify both APH-701/702 Design inputs exist.");
 
-        RequireStageRunsUnconditionally(jenkins, "stage('Resolve Unity Editor')", "stage('Run Unity EditMode Tests')");
-        RequireStageRunsUnconditionally(jenkins, "stage('Run Unity EditMode Tests')", "stage('Build Windows')");
+        RequireStageRunsUnconditionally(jenkins, "stage('Resolve Unity Editor')", "stage('Run Unity EditMode Smoke Tests')");
+        RequireStageRunsUnconditionally(jenkins, "stage('Run Unity EditMode Smoke Tests')", "stage('Build Windows')");
     }
 
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR

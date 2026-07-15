@@ -33,7 +33,7 @@ namespace Game.Runtime
         private static readonly ProfilerMarker UnitImpostorLateUpdateMarker = new("GameplayRuntimeLateUpdate.UnitImpostors");
         private int _nextLoadingGateDiagnosticFrame;
         private int _loadingGateStartedFrame = -1;
-        private Unity.Entities.World _initialSpawnQueryWorld;
+        private World _initialSpawnQueryWorld;
         private EntityQuery _initialSpawnConfigQuery;
         private EntityQuery _initialSpawnInitializedQuery;
         private EntityQuery _initialSpawnProgressQuery;
@@ -248,7 +248,7 @@ namespace Game.Runtime
                     unitImpostors?.LastDrawnCount ?? 0,
                     gameplayInitialized,
                     runtimeGameplayStateSystem.PlayRequested,
-                    runtimeGameplayStateSystem.SimulationActive);
+                    runtimeGameplayStateSystem.SimulationActive, worldCamera);
             }
         }
 

@@ -69,6 +69,7 @@ namespace Game.Editor
         private static bool profileApplied;
         private static bool completed;
         private static double startedAt;
+        private static MobileVisualQualityCaptureMatrix matrixCapture;
 
         [MenuItem("Game/Rendering/Capture Mobile Visual Quality/Current")]
         public static void CaptureCurrent()
@@ -104,12 +105,28 @@ namespace Game.Editor
 
                 captureProfile = profile;
                 selectedProfile = LoadProfile(profile);
+                bool matrixRequested = string.Equals(
+                    Environment.GetEnvironmentVariable(MobileVisualQualityCaptureMatrix.ModeEnvironmentVariable),
+                    MobileVisualQualityCaptureMatrix.MatrixMode,
+                    StringComparison.OrdinalIgnoreCase);
                 artifactDirectory = Environment.GetEnvironmentVariable("WARLINE_MOBILE_VISUAL_CAPTURE_DIR");
                 if (string.IsNullOrWhiteSpace(artifactDirectory))
-                    artifactDirectory = DefaultArtifactDirectory;
-                Directory.CreateDirectory(artifactDirectory);
+                {
+                    artifactDirectory = matrixRequested
+                        ? MobileVisualQualityCaptureMatrix.ArtifactDirectory
+                        : DefaultArtifactDirectory;
+                }
                 manifestPath = Path.Combine(artifactDirectory, $"{GetProfileLabel()}_manifest.md");
-                DeleteProfileArtifacts();
+                matrixCapture = MobileVisualQualityCaptureMatrix.TryCreateFromEnvironment(
+                    GetProfileLabel(),
+                    artifactDirectory,
+                    ApplyTimeProofState,
+                    TryRenderCamera);
+                if (matrixCapture == null)
+                {
+                    Directory.CreateDirectory(artifactDirectory);
+                    DeleteProfileArtifacts();
+                }
 
                 EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
                 frameCount = 0;
@@ -153,7 +170,8 @@ namespace Game.Editor
 
                 if (EditorApplication.timeSinceStartup - startedAt > 240d)
                 {
-                    Complete(false, $"Timed out profile={GetProfileLabel()} phase={SessionPhase()} frame={frameCount} deploy={deploySubmitted} profileApplied={profileApplied}");
+                    string timeoutPhase = matrixCapture != null ? matrixCapture.PhaseLabel : SessionPhase().ToString();
+                    Complete(false, $"Timed out profile={GetProfileLabel()} phase={timeoutPhase} frame={frameCount} deploy={deploySubmitted} profileApplied={profileApplied}");
                     return;
                 }
 
@@ -173,6 +191,9 @@ namespace Game.Editor
 
                 if (!deploySubmitted)
                 {
+                    if (matrixCapture != null && !matrixCapture.TryCaptureMenu(bootstrap))
+                        return;
+
                     Button deployButton = FindDeployButton();
                     if (deployButton == null)
                         return;
@@ -196,6 +217,15 @@ namespace Game.Editor
                 {
                     matchReadyFrame = frameCount;
                     SetPhase(CapturePhase.WarmupGameplay);
+                    return;
+                }
+
+                if (matrixCapture != null)
+                {
+                    if (frameCount - matchReadyFrame < WarmupFrames)
+                        return;
+                    if (matrixCapture.Tick(matchScene, frameCount))
+                        Complete(true, $"profile={GetProfileLabel()} metadata={matrixCapture.MetadataPath}");
                     return;
                 }
 
@@ -341,6 +371,23 @@ namespace Game.Editor
 
         private static bool TryRenderCamera(Camera camera, string path, out string error)
         {
+            return TryRenderCamera(
+                camera,
+                path,
+                ResolvePositiveInt("WARLINE_MOBILE_VISUAL_CAPTURE_WIDTH", DefaultCaptureWidth),
+                ResolvePositiveInt("WARLINE_MOBILE_VISUAL_CAPTURE_HEIGHT", DefaultCaptureHeight),
+                false,
+                out error);
+        }
+
+        private static bool TryRenderCamera(
+            Camera camera,
+            string path,
+            int width,
+            int height,
+            bool requireGraphicsDevice,
+            out string error)
+        {
             error = string.Empty;
             if (camera == null)
             {
@@ -350,6 +397,11 @@ namespace Game.Editor
 
             if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null)
             {
+                if (requireGraphicsDevice)
+                {
+                    error = "Matrix visual capture requires windowed Unity with a non-Null graphics device.";
+                    return false;
+                }
                 File.WriteAllText(
                     path,
                     $"Camera render skipped because Unity is running with a Null graphics device.\n" +
@@ -362,8 +414,6 @@ namespace Game.Editor
                 return true;
             }
 
-            int width = ResolvePositiveInt("WARLINE_MOBILE_VISUAL_CAPTURE_WIDTH", DefaultCaptureWidth);
-            int height = ResolvePositiveInt("WARLINE_MOBILE_VISUAL_CAPTURE_HEIGHT", DefaultCaptureHeight);
             RenderTexture previousTarget = camera.targetTexture;
             RenderTexture previousActive = RenderTexture.active;
             RenderTexture renderTexture = null;
@@ -513,6 +563,7 @@ namespace Game.Editor
                 return;
 
             completed = true;
+            matrixCapture = null;
             SceneManager.sceneLoaded -= OnSceneLoaded;
             EditorApplication.update -= Continue;
             EditorApplication.playModeStateChanged -= ExitBatchAfterPlayMode;

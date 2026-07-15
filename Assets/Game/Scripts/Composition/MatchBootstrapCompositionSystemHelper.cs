@@ -3,7 +3,6 @@ using UnityEngine.Rendering;
 using System;
 using System.Collections.Generic;
 using Unity.Entities;
-using Unity.Mathematics;
 using Game.Rendering.Contracts;
 using Game.UI.Contracts;
 using Game.Components;
@@ -17,40 +16,17 @@ namespace Game.Composition
 {
     internal sealed class MatchBootstrapCompositionSystemHelper
     {
-        private enum GameplayStartStep : byte
-        {
-            Idle = 0,
-            InitializeManagedRuntime,
-            ResetStats,
-            ProjectStartupConfig,
-            CustomGameStartup,
-            AiStartup,
-            ResourceExchangeStartup,
-            BindMainMenu,
-            InitializeGameplayFeatures,
-            ValidateScenarioRecovery,
-            FinalizeRuntimeState,
-            Complete
-        }
-
         private RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
         private RuntimeCameraReferenceSystem _runtimeCameraReferenceSystem;
         private VisualQualitySettingsSystem _visualQualitySettingsSystem;
-        private AIStartupSystem _aiStartupSystem;
-        private readonly InitialFactionSpawnCellSystem _initialFactionSpawnCellSystem = new();
-        private readonly List<InitialFactionSpawnCellFallbackEntry> _initialFactionSpawnCellFallbackEntries = new();
         private readonly GameplaySceneBindingSceneSystemHelper _gameplaySceneBindingSystem = new();
         private RuntimeRootSceneSystemHelper _runtimeRootSceneSystemHelper;
         private readonly GameplayFeatureStartupCompositionSystemHelper _gameplayFeatureStartupSystem = new();
-        private RuntimeGridBootstrapStartupSystemHelper _runtimeGridBootstrapSystem;
-        private MapSurfaceRuntimeBootstrapSceneSystemHelper _mapSurfaceRuntimeBootstrapSystem;
-        private CustomGameStartupSystemHelper _customGameStartupSystem;
-        private MaterialsScenarioRecoveryValidationSystemHelper _materialsScenarioRecoveryValidationSystem;
-        private ResourceExchangeStartupProjectionSystemHelper _resourceExchangeStartupProjectionSystem;
         private readonly PerformanceDiagnosticsReferenceDiagnosticsSystemHelper _performanceDiagnosticsReferenceSystem = new();
         private readonly MatchIntroEcsStateQuery matchIntroStateQuery = new();
 
         private readonly ManagedGameplayStartupSystemHelper managedGameplayStartupSystem = new();
+        private readonly MatchGameplayStartupCompositionSystemHelper gameplayStartupSystem = new();
         private readonly GameplayRuntimeUpdateCompositionSystemHelper gameplayRuntimeUpdateSystem = new();
         private readonly PerformanceDiagnosticsSystemHelper fallbackPerformanceDiagnosticsSystemHelper = new();
         private readonly StaticMapPresentationOwnership mapVisuals = new();
@@ -158,37 +134,22 @@ namespace Game.Composition
         private IMatchHudSelectionPanelView _pendingMatchHudSelectionPanelView;
         private IMatchHudSelectionPanelView _boundMatchHudSelectionPanelView;
         private IMatchHudSelectionPanelView _deferredMatchHudSelectionPanelView;
-        private bool _gameplayStartPending;
-        private bool _gameplayStartRequested;
-        private bool _gameplayStartComplete;
-        private bool _gameplayStartFailed;
-        private string _gameplayStartFailureMessage = string.Empty;
-        private double _materialsScenarioValidationStartedAt = -1d;
         private bool _managedRuntimeInitialized;
         private bool _visualQualitySettingsInitialized;
         private bool _runtimeSettingsChangeSubscribed;
         private bool _hasLatestRuntimeSettings;
         private UISettingsModel _latestRuntimeSettings;
-        private GameplayStartStep _gameplayStartStep;
-        private AISettingsSnapshot _pendingAiSettingsSnapshot;
-        private AIStartupSystem.Result _pendingAiStartupResult;
-        private float _gameplayStartProgress01;
-        private string _gameplayStartStatus = "Waiting for match scene";
         private Transform _runtimeBlockerRoot;
         private Transform _runtimeCityRoot;
         private Transform _runtimeTransportsRoot;
         private Transform _runtimeUiRoot;
 
-        public bool GameplayStartRequested => _gameplayStartRequested;
-        public bool GameplayStartComplete => _gameplayStartComplete && !_gameplayStartPending;
-        public bool GameplayStartFailed => _gameplayStartFailed;
-        public string GameplayStartFailureMessage => _gameplayStartFailureMessage;
-        public float GameplayStartProgress01 => _gameplayStartComplete && _gameplayStartPending
-            ? 0.98f
-            : _gameplayStartProgress01;
-        public string GameplayStartStatus => _gameplayStartComplete && _gameplayStartPending
-            ? "Spawning world"
-            : _gameplayStartStatus;
+        public bool GameplayStartRequested => gameplayStartupSystem.GameplayStartRequested;
+        public bool GameplayStartComplete => gameplayStartupSystem.GameplayStartComplete;
+        public bool GameplayStartFailed => gameplayStartupSystem.GameplayStartFailed;
+        public string GameplayStartFailureMessage => gameplayStartupSystem.GameplayStartFailureMessage;
+        public float GameplayStartProgress01 => gameplayStartupSystem.GameplayStartProgress01;
+        public string GameplayStartStatus => gameplayStartupSystem.GameplayStartStatus;
 
         public void Awake(MatchSceneView view, Transform ownerTransform, int ownerLayer)
         {
@@ -207,35 +168,12 @@ namespace Game.Composition
 
         public void BeginGameplay()
         {
-            if (_gameplayStartComplete)
-                return;
-            if (_gameplayStartRequested)
-                return;
-
-            _gameplayStartRequested = true;
-            _gameplayStartComplete = false;
-            _gameplayStartStep = GameplayStartStep.InitializeManagedRuntime;
-            _gameplayStartProgress01 = 0f;
-            _gameplayStartStatus = "Preparing match";
+            gameplayStartupSystem.BeginGameplay();
         }
 
         public void Update()
         {
-            if (!_gameplayStartFailed)
-            {
-                try
-                {
-                    AdvanceGameplayStartPipeline();
-                }
-                catch (Exception exception)
-                {
-                    _gameplayStartFailed = true;
-                    _gameplayStartPending = false;
-                    _gameplayStartFailureMessage = exception.Message;
-                    _gameplayStartStatus = exception.Message;
-                    Debug.LogException(exception);
-                }
-            }
+            gameplayStartupSystem.Advance(BuildingRuntimeUpdate, _buildingRuntimeUpdateContext);
 
             UpdateRuntime(
                 GameplayInitialized,
@@ -253,7 +191,7 @@ namespace Game.Composition
                 _citizenPopulationRuntimeUpdate,
                 MainMenu,
                 UnitImpostors,
-                ref _gameplayStartPending);
+                ref gameplayStartupSystem.PendingState);
         }
 
         public void OnApplicationFocus(bool hasFocus)
@@ -312,7 +250,7 @@ namespace Game.Composition
                 RuntimeDecorations,
                 RuntimeGridBlockers,
                 RuntimeCity,
-                _mapSurfaceRuntimeBootstrapSystem,
+                gameplayStartupSystem.MapSurfaceRuntimeBootstrapSystem,
                 _runtimeCameraReferenceSystem,
                 _performanceDiagnosticsSystem);
             gameplayRuntimeUpdateSystem.Dispose();
@@ -379,25 +317,23 @@ namespace Game.Composition
             RuntimeDecorations = null;
             RuntimeGridBlockers = null;
             RuntimeCity = null;
-            _runtimeGridBootstrapSystem = null;
-            _mapSurfaceRuntimeBootstrapSystem = null;
-            _initialFactionSpawnCellFallbackEntries.Clear();
-            _customGameStartupSystem = null;
-            _aiStartupSystem = default;
-            _gameplayStartRequested = false;
-            _gameplayStartComplete = false;
+            gameplayStartupSystem.ResetForShutdown();
             _managedRuntimeInitialized = false;
             _visualQualitySettingsInitialized = false;
             _staticMapBatchingInitialized = false;
-            _gameplayStartStep = GameplayStartStep.Idle;
-            _gameplayStartProgress01 = 0f;
-            _gameplayStartStatus = "Waiting for match scene";
         }
 
 
         public void Initialize(MatchSceneView view)
         {
             sceneView = view;
+            gameplayStartupSystem.Bind(
+                sceneView,
+                _runtimeGameplayStateSystem,
+                InitializeManagedRuntimeIfNeeded,
+                () => EnsureMainMenuRuntimeDependencies(resetRuntimeState: true),
+                InitializeGameplaySystemsIfNeeded,
+                ResolveRuntimeCameraReferenceSystem);
             EnsureRuntimeSettingsChangeSubscription();
             if (!_hasLatestRuntimeSettings)
             {
@@ -705,244 +641,6 @@ namespace Game.Composition
             fallbackPerformanceDiagnosticsInitialized = false;
         }
 
-        private void AdvanceGameplayStartPipeline()
-        {
-            if (!_gameplayStartRequested || _gameplayStartComplete)
-                return;
-
-            switch (_gameplayStartStep)
-            {
-                case GameplayStartStep.InitializeManagedRuntime:
-                    SetGameplayStartProgress(0.02f, "Preparing gameplay runtime");
-                    InitializeManagedRuntimeIfNeeded();
-                    _gameplayStartStep = GameplayStartStep.ResetStats;
-                    break;
-
-                case GameplayStartStep.ResetStats:
-                    SetGameplayStartProgress(0.10f, "Resetting match state");
-                    GameRuntimeStats.ConfigureUnitPrefabClassifier(GameRuntimeStatsUnitPrefabClassifierPrefabSystemHelper.ClassifyUnitPrefab);
-                    GameRuntimeStats.Reset();
-                    _pendingAiSettingsSnapshot = AISettingsRuntimeState.CurrentSnapshot;
-                    FactionVisualSystem.ProjectConfig(World.DefaultGameObjectInjectionWorld, FactionVisualConfig);
-                    _gameplayStartStep = GameplayStartStep.ProjectStartupConfig;
-                    break;
-
-                case GameplayStartStep.ProjectStartupConfig:
-                    SetGameplayStartProgress(0.24f, "Preparing map data");
-                    MatchBootstrapStartupConfigProjection.ProjectRuntimeStartupConfig(
-                        World.DefaultGameObjectInjectionWorld,
-                        ResolveRuntimeGridBootstrapStartupSystemHelper(World.DefaultGameObjectInjectionWorld),
-                        ResolveMapSurfaceRuntimeBootstrapSystem(World.DefaultGameObjectInjectionWorld),
-                        RuntimeGridConfig,
-                        MapSurfaceAuthoring,
-                        BuildingPlacementConfig,
-                        ResolveAIStartupSystem(World.DefaultGameObjectInjectionWorld),
-                        AIControllerConfigs,
-                        _pendingAiSettingsSnapshot,
-                        _initialFactionSpawnCellFallbackEntries);
-                    _gameplayStartStep = GameplayStartStep.CustomGameStartup;
-                    break;
-
-                case GameplayStartStep.CustomGameStartup:
-                    SetGameplayStartProgress(0.38f, "Preparing unit prefabs");
-                    CustomGameStartupSystemHelper customGameStartupSystemHelper = ResolveCustomGameStartupSystemHelper(World.DefaultGameObjectInjectionWorld);
-                    if (customGameStartupSystemHelper != null)
-                    {
-                        customGameStartupSystemHelper.InitializeFromLegacyConfigs(
-                            BuildingPlacementConfig != null ? BuildingPlacementConfig.InitialUnitsConfig : null,
-                            BuildingPlacementConfig != null ? BuildingPlacementConfig.UnitPrefabRegistryConfig : null);
-                    }
-                    else
-                    {
-                        Debug.LogWarning("[MatchBootstrap] missingCustomGameStartupSystemHelper");
-                    }
-
-                    _gameplayStartStep = GameplayStartStep.AiStartup;
-                    break;
-
-                case GameplayStartStep.AiStartup:
-                    SetGameplayStartProgress(0.52f, "Preparing AI factions");
-                    _pendingAiStartupResult = MatchBootstrapStartupConfigProjection.InitializeAiStartupConfig(
-                        ResolveAIStartupSystem(World.DefaultGameObjectInjectionWorld),
-                        AIControllerConfigs,
-                        AIPlanEntryConfig,
-                        _pendingAiSettingsSnapshot,
-                        ResolveInitialFactionSpawnCell);
-                    if (_pendingAiStartupResult.HasPlayerAutoMode)
-                        _runtimeGameplayStateSystem.PlayerAutoModeEnabled = _pendingAiStartupResult.PlayerAutoModeEnabled;
-                    _gameplayStartStep = GameplayStartStep.ResourceExchangeStartup;
-                    break;
-
-                case GameplayStartStep.ResourceExchangeStartup:
-                    SetGameplayStartProgress(0.60f, "Preparing resource exchange");
-                    ResourceExchangeStartupProjectionSystemHelper exchangeStartup =
-                        ResolveResourceExchangeStartupProjectionSystemHelper(
-                            World.DefaultGameObjectInjectionWorld);
-                    ResourceExchangeStartupProjectionSystemHelper.Result exchangeResult =
-                        exchangeStartup != null
-                            ? exchangeStartup.Initialize(ResourceExchangeConfig)
-                            : default;
-                    if (!exchangeResult.Projected)
-                    {
-                        Debug.LogWarning(
-                            $"[MatchBootstrap] resourceExchangeProjectionSkipped reason={exchangeResult.Reason}");
-                    }
-
-                    if (exchangeStartup != null)
-                    {
-                        ResourceExchangeStartupProjectionSystemHelper.AIProjectionResult aiExchangeResult =
-                            exchangeStartup.InitializeEligibleAIFactions(ResourceExchangeConfig);
-                        if (aiExchangeResult.ScenarioAllowsAIExchange &&
-                            aiExchangeResult.ProjectedFactionCount != aiExchangeResult.EligibleFactionCount)
-                        {
-                            Debug.LogWarning(
-                                $"[MatchBootstrap] aiResourceExchangeProjectionIncomplete " +
-                                $"eligible={aiExchangeResult.EligibleFactionCount} " +
-                                $"projected={aiExchangeResult.ProjectedFactionCount} " +
-                                $"reason={aiExchangeResult.Reason}");
-                        }
-                    }
-
-                    _gameplayStartStep = GameplayStartStep.BindMainMenu;
-                    break;
-
-                case GameplayStartStep.BindMainMenu:
-                    SetGameplayStartProgress(0.66f, "Binding match HUD");
-                    EnsureMainMenuRuntimeDependencies(resetRuntimeState: true);
-                    _gameplayStartStep = GameplayStartStep.InitializeGameplayFeatures;
-                    break;
-
-                case GameplayStartStep.InitializeGameplayFeatures:
-                    SetGameplayStartProgress(0.80f, "Starting gameplay systems");
-                    InitializeGameplaySystemsIfNeeded();
-                    _gameplayStartStep = GameplayStartStep.ValidateScenarioRecovery;
-                    break;
-
-                case GameplayStartStep.ValidateScenarioRecovery:
-                    SetGameplayStartProgress(0.86f, "Validating scenario recovery");
-                    if (_materialsScenarioValidationStartedAt < 0d)
-                        _materialsScenarioValidationStartedAt = Time.realtimeSinceStartupAsDouble;
-                    BuildingRuntimeUpdate?.UpdateStartup(_buildingRuntimeUpdateContext);
-                    MaterialsScenarioRecoveryValidationSystemHelper materialsRecoveryValidation =
-                        ResolveMaterialsScenarioRecoveryValidationSystemHelper(
-                            World.DefaultGameObjectInjectionWorld);
-                    MaterialsScenarioRecoveryValidationResult materialsRecoveryResult =
-                        materialsRecoveryValidation != null
-                            ? materialsRecoveryValidation.Validate(ResourceExchangeConfig)
-                            : default;
-                    if (materialsRecoveryResult.Code == MaterialsScenarioRecoveryValidationCode.CatalogNotReady &&
-                        Time.realtimeSinceStartupAsDouble - _materialsScenarioValidationStartedAt < 15d)
-                    {
-                        SetGameplayStartProgress(0.84f, "Waiting for scenario catalog");
-                        break;
-                    }
-
-                    if (!materialsRecoveryResult.IsValid)
-                    {
-                        throw new InvalidOperationException(
-                            $"Match scenario Materials recovery validation failed: " +
-                            $"code={materialsRecoveryResult.Code} " +
-                            $"faction={materialsRecoveryResult.FactionId} " +
-                            $"detail={materialsRecoveryValidation.LastInvalidConstructionId} " +
-                            $"validatedFactions={materialsRecoveryResult.ValidatedFactionCount}.");
-                    }
-
-                    _materialsScenarioValidationStartedAt = -1d;
-                    _gameplayStartStep = GameplayStartStep.FinalizeRuntimeState;
-                    break;
-
-                case GameplayStartStep.FinalizeRuntimeState:
-                    SetGameplayStartProgress(0.92f, "Focusing camera");
-                    _gameplayStartPending = true;
-                    ResolveRuntimeCameraReferenceSystem(World.DefaultGameObjectInjectionWorld)?.SetWorldCamera(WorldCamera);
-                    _runtimeGameplayStateSystem.ResetForGameplayStart();
-                    _gameplayStartStep = GameplayStartStep.Complete;
-                    break;
-
-                case GameplayStartStep.Complete:
-                    SetGameplayStartProgress(0.98f, "Spawning world");
-                    _gameplayStartComplete = true;
-                    break;
-            }
-        }
-
-        private void SetGameplayStartProgress(float progress01, string status)
-        {
-            _gameplayStartProgress01 = Mathf.Clamp01(progress01);
-            _gameplayStartStatus = string.IsNullOrEmpty(status) ? "Starting match" : status;
-        }
-
-        private RuntimeGridBootstrapStartupSystemHelper ResolveRuntimeGridBootstrapStartupSystemHelper(World world)
-        {
-            if (world == null || !world.IsCreated)
-                return null;
-
-            _runtimeGridBootstrapSystem ??= new RuntimeGridBootstrapStartupSystemHelper();
-            return _runtimeGridBootstrapSystem;
-        }
-
-        private MapSurfaceRuntimeBootstrapSceneSystemHelper ResolveMapSurfaceRuntimeBootstrapSystem(World world)
-        {
-            if (world == null || !world.IsCreated)
-                return null;
-
-            if (_mapSurfaceRuntimeBootstrapSystem == null)
-                _mapSurfaceRuntimeBootstrapSystem = new MapSurfaceRuntimeBootstrapSceneSystemHelper(world);
-            return _mapSurfaceRuntimeBootstrapSystem;
-        }
-
-        private bool ResolveInitialFactionSpawnCell(byte factionId, out int2 spawnCell)
-        {
-            World world = World.DefaultGameObjectInjectionWorld;
-            if (world == null || !world.IsCreated)
-            {
-                spawnCell = default;
-                return false;
-            }
-
-            return _initialFactionSpawnCellSystem.TryGetConfiguredFactionSpawnCell(
-                world.EntityManager,
-                _initialFactionSpawnCellFallbackEntries,
-                factionId,
-                out spawnCell);
-        }
-
-        private CustomGameStartupSystemHelper ResolveCustomGameStartupSystemHelper(World world)
-        {
-            if (world == null || !world.IsCreated)
-                return null;
-
-            _customGameStartupSystem ??= new CustomGameStartupSystemHelper(world.EntityManager);
-            return _customGameStartupSystem;
-        }
-
-        private ResourceExchangeStartupProjectionSystemHelper ResolveResourceExchangeStartupProjectionSystemHelper(
-            World world)
-        {
-            if (world == null || !world.IsCreated)
-                return null;
-
-            _resourceExchangeStartupProjectionSystem ??=
-                new ResourceExchangeStartupProjectionSystemHelper(world.EntityManager);
-            return _resourceExchangeStartupProjectionSystem;
-        }
-
-        private MaterialsScenarioRecoveryValidationSystemHelper ResolveMaterialsScenarioRecoveryValidationSystemHelper(
-            World world)
-        {
-            if (world == null || !world.IsCreated)
-                return null;
-
-            _materialsScenarioRecoveryValidationSystem ??=
-                new MaterialsScenarioRecoveryValidationSystemHelper(world.EntityManager);
-            return _materialsScenarioRecoveryValidationSystem;
-        }
-
-        private AIStartupSystem ResolveAIStartupSystem(World world)
-        {
-            _aiStartupSystem = new AIStartupSystem();
-            return _aiStartupSystem;
-        }
 
         private RuntimeCameraReferenceSystem ResolveRuntimeCameraReferenceSystem(World world)
         {
@@ -1232,10 +930,7 @@ namespace Game.Composition
                 current = current.parent;
             }
 
-            GameObject mapObject = GameObject.Find("Map");
-            if (mapObject == null || MatchScene == null)
-                return null;
-            return mapObject.scene == MatchScene.gameObject.scene ? mapObject.transform : null;
+            return null;
         }
 
         private void InitializeGameplaySystemsIfNeeded()

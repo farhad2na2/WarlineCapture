@@ -2,6 +2,8 @@ using Game.Components;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using RequestQueue = Game.Runtime.ResourceExchangeRequestQueueSystemHelper;
+using RushPolicy = Game.Runtime.ResourceExchangeRushPolicySystemHelper;
 
 namespace Game.Runtime
 {
@@ -86,21 +88,14 @@ namespace Game.Runtime
             byte factionId,
             int frameCount)
         {
-            ResourceExchangeRequestQueueComponent requestQueue =
-                em.GetComponentData<ResourceExchangeRequestQueueComponent>(exchangeEntity);
-            requestQueue.LastRequestId++;
-            em.SetComponentData(exchangeEntity, requestQueue);
-            em.GetBuffer<ResourceExchangeRequestComponent>(exchangeEntity).Add(new ResourceExchangeRequestComponent
-            {
-                RequestId = requestQueue.LastRequestId,
-                RequestKind = ResourceExchangeRequestKind.Start,
-                FactionId = factionId,
-                RecipeId = recipeId,
-                InputAmount = inputAmount,
-                FrameCount = frameCount
-            });
-
-            return requestQueue.LastRequestId;
+            return RequestQueue.Enqueue(
+                em,
+                exchangeEntity,
+                ResourceExchangeRequestKind.Start,
+                factionId,
+                frameCount,
+                recipeId,
+                inputAmount);
         }
 
         public static int EnqueueCancelRequest(
@@ -110,20 +105,13 @@ namespace Game.Runtime
             byte factionId,
             int frameCount)
         {
-            ResourceExchangeRequestQueueComponent requestQueue =
-                em.GetComponentData<ResourceExchangeRequestQueueComponent>(exchangeEntity);
-            requestQueue.LastRequestId++;
-            em.SetComponentData(exchangeEntity, requestQueue);
-            em.GetBuffer<ResourceExchangeRequestComponent>(exchangeEntity).Add(new ResourceExchangeRequestComponent
-            {
-                RequestId = requestQueue.LastRequestId,
-                RequestKind = ResourceExchangeRequestKind.Cancel,
-                FactionId = factionId,
-                QueueItemId = queueItemId,
-                FrameCount = frameCount
-            });
-
-            return requestQueue.LastRequestId;
+            return RequestQueue.Enqueue(
+                em,
+                exchangeEntity,
+                ResourceExchangeRequestKind.Cancel,
+                factionId,
+                frameCount,
+                queueItemId: queueItemId);
         }
 
         public static int EnqueueRushRequest(
@@ -134,21 +122,14 @@ namespace Game.Runtime
             byte factionId,
             int frameCount)
         {
-            ResourceExchangeRequestQueueComponent requestQueue =
-                em.GetComponentData<ResourceExchangeRequestQueueComponent>(exchangeEntity);
-            requestQueue.LastRequestId++;
-            em.SetComponentData(exchangeEntity, requestQueue);
-            em.GetBuffer<ResourceExchangeRequestComponent>(exchangeEntity).Add(new ResourceExchangeRequestComponent
-            {
-                RequestId = requestQueue.LastRequestId,
-                RequestKind = ResourceExchangeRequestKind.Rush,
-                FactionId = factionId,
-                QueueItemId = queueItemId,
-                RushTickets = rushTickets,
-                FrameCount = frameCount
-            });
-
-            return requestQueue.LastRequestId;
+            return RequestQueue.Enqueue(
+                em,
+                exchangeEntity,
+                ResourceExchangeRequestKind.Rush,
+                factionId,
+                frameCount,
+                queueItemId: queueItemId,
+                rushTickets: rushTickets);
         }
 
         public static int EnqueueRushAllRequest(
@@ -158,20 +139,13 @@ namespace Game.Runtime
             byte factionId,
             int frameCount)
         {
-            ResourceExchangeRequestQueueComponent requestQueue =
-                em.GetComponentData<ResourceExchangeRequestQueueComponent>(exchangeEntity);
-            requestQueue.LastRequestId++;
-            em.SetComponentData(exchangeEntity, requestQueue);
-            em.GetBuffer<ResourceExchangeRequestComponent>(exchangeEntity).Add(new ResourceExchangeRequestComponent
-            {
-                RequestId = requestQueue.LastRequestId,
-                RequestKind = ResourceExchangeRequestKind.RushAll,
-                FactionId = factionId,
-                RushTickets = rushTicketBudget,
-                FrameCount = frameCount
-            });
-
-            return requestQueue.LastRequestId;
+            return RequestQueue.Enqueue(
+                em,
+                exchangeEntity,
+                ResourceExchangeRequestKind.RushAll,
+                factionId,
+                frameCount,
+                rushTickets: rushTicketBudget);
         }
 
         public static int EnqueueClearCompletedRequest(
@@ -180,19 +154,12 @@ namespace Game.Runtime
             byte factionId,
             int frameCount)
         {
-            ResourceExchangeRequestQueueComponent requestQueue =
-                em.GetComponentData<ResourceExchangeRequestQueueComponent>(exchangeEntity);
-            requestQueue.LastRequestId++;
-            em.SetComponentData(exchangeEntity, requestQueue);
-            em.GetBuffer<ResourceExchangeRequestComponent>(exchangeEntity).Add(new ResourceExchangeRequestComponent
-            {
-                RequestId = requestQueue.LastRequestId,
-                RequestKind = ResourceExchangeRequestKind.ClearCompleted,
-                FactionId = factionId,
-                FrameCount = frameCount
-            });
-
-            return requestQueue.LastRequestId;
+            return RequestQueue.Enqueue(
+                em,
+                exchangeEntity,
+                ResourceExchangeRequestKind.ClearCompleted,
+                factionId,
+                frameCount);
         }
 
         public static int EnqueueMissionEndRequest(
@@ -201,19 +168,12 @@ namespace Game.Runtime
             byte factionId,
             int frameCount)
         {
-            ResourceExchangeRequestQueueComponent requestQueue =
-                em.GetComponentData<ResourceExchangeRequestQueueComponent>(exchangeEntity);
-            requestQueue.LastRequestId++;
-            em.SetComponentData(exchangeEntity, requestQueue);
-            em.GetBuffer<ResourceExchangeRequestComponent>(exchangeEntity).Add(new ResourceExchangeRequestComponent
-            {
-                RequestId = requestQueue.LastRequestId,
-                RequestKind = ResourceExchangeRequestKind.MissionEnd,
-                FactionId = factionId,
-                FrameCount = frameCount
-            });
-
-            return requestQueue.LastRequestId;
+            return RequestQueue.Enqueue(
+                em,
+                exchangeEntity,
+                ResourceExchangeRequestKind.MissionEnd,
+                factionId,
+                frameCount);
         }
 
         public static bool TryGetResult(
@@ -222,19 +182,11 @@ namespace Game.Runtime
             int requestId,
             out ResourceExchangeResultComponent result)
         {
-            result = default;
-            DynamicBuffer<ResourceExchangeResultComponent> results =
-                em.GetBuffer<ResourceExchangeResultComponent>(exchangeEntity, true);
-            for (int i = 0; i < results.Length; i++)
-            {
-                if (results[i].RequestId == requestId)
-                {
-                    result = results[i];
-                    return true;
-                }
-            }
-
-            return false;
+            return RequestQueue.TryGetResult(
+                em,
+                exchangeEntity,
+                requestId,
+                out result);
         }
 
         public static void ProcessRequests(
@@ -542,10 +494,10 @@ namespace Game.Runtime
                 if (item.QueueItemId != request.QueueItemId || item.FactionId != factionId)
                     continue;
 
-                if (!CanCancel(item))
+                if (!RequestQueue.CanCancel(item))
                     return Rejected(request, default, ResourceExchangeReason.CancelUnavailable);
 
-                int refundAmount = CalculateRefundAmount(item);
+                int refundAmount = RequestQueue.CalculateRefundAmount(item);
                 bool physicalInput = usePhysicalStorage &&
                                      ResourceExchangePhysicalStorageUtilitySystemHelper.IsPhysicalResource(
                                          item.InputResource);
@@ -621,32 +573,49 @@ namespace Game.Runtime
             DynamicBuffer<ResourceExchangePhysicalReservationComponent> physicalReservations,
             bool usePhysicalStorage)
         {
-            ResourceExchangeReason gateReason = ValidateRushGate(enabled, request, out byte factionId);
+            ResourceExchangeReason gateReason =
+                RushPolicy.ValidateGate(enabled, request, out byte factionId);
             if (gateReason != ResourceExchangeReason.None)
-                return RushRejected(request, default, gateReason);
+                return RushPolicy.Rejected(request, default, gateReason);
 
             if (request.RushTickets <= 0)
-                return RushRejected(request, default, ResourceExchangeReason.RushUnavailable);
+                return RushPolicy.Rejected(
+                    request,
+                    default,
+                    ResourceExchangeReason.RushUnavailable);
 
-            int queueIndex = FindQueueItemIndex(queue, request.QueueItemId, factionId);
+            int queueIndex =
+                RushPolicy.FindQueueItemIndex(
+                    queue,
+                    request.QueueItemId,
+                    factionId);
             if (queueIndex < 0)
-                return RushRejected(request, default, ResourceExchangeReason.RushUnavailable);
+                return RushPolicy.Rejected(
+                    request,
+                    default,
+                    ResourceExchangeReason.RushUnavailable);
 
             ResourceExchangeQueueComponent item = queue[queueIndex];
-            ResourceExchangeReason itemReason = ValidateRushItem(item);
+            ResourceExchangeReason itemReason = RushPolicy.ValidateItem(item);
             if (itemReason != ResourceExchangeReason.None)
-                return RushRejected(request, item, itemReason);
+                return RushPolicy.Rejected(request, item, itemReason);
 
             if (!TryFindRecipe(recipes, item.RecipeId, out ResourceExchangeRecipeComponent recipe))
-                return RushRejected(request, item, ResourceExchangeReason.RushUnavailable);
+                return RushPolicy.Rejected(
+                    request,
+                    item,
+                    ResourceExchangeReason.RushUnavailable);
 
-            ResourceExchangeReason recipeReason = ValidateRushRecipe(recipe);
+            ResourceExchangeReason recipeReason = RushPolicy.ValidateRecipe(recipe);
             if (recipeReason != ResourceExchangeReason.None)
-                return RushRejected(request, item, recipeReason);
+                return RushPolicy.Rejected(request, item, recipeReason);
 
-            int maxSpend = CalculateRushTicketCapacity(item, recipe);
+            int maxSpend = RushPolicy.CalculateTicketCapacity(item, recipe);
             if (request.RushTickets > maxSpend)
-                return RushRejected(request, item, ResourceExchangeReason.RushUnavailable);
+                return RushPolicy.Rejected(
+                    request,
+                    item,
+                    ResourceExchangeReason.RushUnavailable);
 
             if (!TrySpendInput(
                     ref wallet,
@@ -654,10 +623,10 @@ namespace Game.Runtime
                     request.RushTickets,
                     out ResourceExchangeReason spendReason))
             {
-                return RushRejected(request, item, spendReason);
+                return RushPolicy.Rejected(request, item, spendReason);
             }
 
-            ApplyRushTickets(
+            RushPolicy.ApplyTickets(
                 ref economy,
                 ref materials,
                 ref wallet,
@@ -673,7 +642,7 @@ namespace Game.Runtime
                 usePhysicalStorage);
 
             item = queue[queueIndex];
-            return RushAccepted(request, item, request.RushTickets, 1);
+            return RushPolicy.Accepted(request, item, request.RushTickets, 1);
         }
 
         private static ResourceExchangeResultComponent ProcessRushAllRequest(
@@ -690,16 +659,23 @@ namespace Game.Runtime
             DynamicBuffer<ResourceExchangePhysicalReservationComponent> physicalReservations,
             bool usePhysicalStorage)
         {
-            ResourceExchangeReason gateReason = ValidateRushGate(enabled, request, out byte factionId);
+            ResourceExchangeReason gateReason =
+                RushPolicy.ValidateGate(enabled, request, out byte factionId);
             if (gateReason != ResourceExchangeReason.None)
-                return RushRejected(request, default, gateReason);
+                return RushPolicy.Rejected(request, default, gateReason);
 
             int requestedBudget = request.RushTickets > 0 ? request.RushTickets : wallet.RushTickets;
             if (requestedBudget <= 0)
-                return RushRejected(request, default, ResourceExchangeReason.InsufficientRushTickets);
+                return RushPolicy.Rejected(
+                    request,
+                    default,
+                    ResourceExchangeReason.InsufficientRushTickets);
 
             if (wallet.RushTickets < requestedBudget)
-                return RushRejected(request, default, ResourceExchangeReason.InsufficientRushTickets);
+                return RushPolicy.Rejected(
+                    request,
+                    default,
+                    ResourceExchangeReason.InsufficientRushTickets);
 
             int remainingBudget = requestedBudget;
             int totalSpent = 0;
@@ -708,17 +684,20 @@ namespace Game.Runtime
             for (int i = 0; i < queue.Length && remainingBudget > 0; i++)
             {
                 ResourceExchangeQueueComponent item = queue[i];
-                if (item.FactionId != factionId || ValidateRushItem(item) != ResourceExchangeReason.None)
+                if (item.FactionId != factionId ||
+                    RushPolicy.ValidateItem(item) != ResourceExchangeReason.None)
                     continue;
 
                 if (!TryFindRecipe(recipes, item.RecipeId, out ResourceExchangeRecipeComponent recipe) ||
-                    ValidateRushRecipe(recipe) != ResourceExchangeReason.None)
+                    RushPolicy.ValidateRecipe(recipe) != ResourceExchangeReason.None)
                 {
                     continue;
                 }
 
-                int ticketCapacity = CalculateRushTicketCapacity(item, recipe);
-                int ticketsNeeded = CalculateRushTicketsNeeded(item, recipe);
+                int ticketCapacity =
+                    RushPolicy.CalculateTicketCapacity(item, recipe);
+                int ticketsNeeded =
+                    RushPolicy.CalculateTicketsNeeded(item, recipe);
                 int ticketsToSpend = math.min(remainingBudget, math.min(ticketCapacity, ticketsNeeded));
                 if (ticketsToSpend <= 0)
                     continue;
@@ -732,7 +711,7 @@ namespace Game.Runtime
                     break;
                 }
 
-                ApplyRushTickets(
+                RushPolicy.ApplyTickets(
                     ref economy,
                     ref materials,
                     ref wallet,
@@ -753,8 +732,15 @@ namespace Game.Runtime
             }
 
             return totalSpent > 0
-                ? RushAccepted(request, lastAffectedItem, totalSpent, affectedCount)
-                : RushRejected(request, default, ResourceExchangeReason.RushUnavailable);
+                ? RushPolicy.Accepted(
+                    request,
+                    lastAffectedItem,
+                    totalSpent,
+                    affectedCount)
+                : RushPolicy.Rejected(
+                    request,
+                    default,
+                    ResourceExchangeReason.RushUnavailable);
         }
 
         private static ResourceExchangeResultComponent ProcessClearCompletedRequest(
@@ -812,10 +798,11 @@ namespace Game.Runtime
             for (int i = 0; i < queue.Length; i++)
             {
                 ResourceExchangeQueueComponent item = queue[i];
-                if (item.FactionId != factionId || !CanCancel(item))
+                if (item.FactionId != factionId ||
+                    !RequestQueue.CanCancel(item))
                     continue;
 
-                int refundAmount = CalculateRefundAmount(item);
+                int refundAmount = RequestQueue.CalculateRefundAmount(item);
                 bool physicalInput = usePhysicalStorage &&
                                      ResourceExchangePhysicalStorageUtilitySystemHelper.IsPhysicalResource(
                                          item.InputResource);
@@ -1019,7 +1006,7 @@ namespace Game.Runtime
                 resourceKind);
             if (current < amount)
             {
-                reason = InsufficientReason(resourceKind);
+                reason = RequestQueue.InsufficientReason(resourceKind);
                 return false;
             }
 
@@ -1030,7 +1017,7 @@ namespace Game.Runtime
                     resourceKind,
                     amount))
             {
-                reason = InsufficientReason(resourceKind);
+                reason = RequestQueue.InsufficientReason(resourceKind);
                 return false;
             }
 
@@ -1048,7 +1035,7 @@ namespace Game.Runtime
                 amount <= 0 ||
                 wallet.RushTickets < amount)
             {
-                reason = InsufficientReason(resourceKind);
+                reason = RequestQueue.InsufficientReason(resourceKind);
                 return false;
             }
 
@@ -1139,201 +1126,6 @@ namespace Game.Runtime
             summary.MaxQueueItems = enabled.MaxQueueItems;
             summary.LastReason = result.Reason;
             summary.Version++;
-        }
-
-        private static ResourceExchangeReason InsufficientReason(ResourceExchangeResourceKind resourceKind)
-        {
-            switch (resourceKind)
-            {
-                case ResourceExchangeResourceKind.Credits:
-                    return ResourceExchangeReason.InsufficientCredits;
-                case ResourceExchangeResourceKind.Materials:
-                    return ResourceExchangeReason.InsufficientMaterials;
-                case ResourceExchangeResourceKind.Oil:
-                    return ResourceExchangeReason.InsufficientOil;
-                case ResourceExchangeResourceKind.Fuel:
-                    return ResourceExchangeReason.InsufficientFuel;
-                case ResourceExchangeResourceKind.RushTickets:
-                    return ResourceExchangeReason.InsufficientRushTickets;
-                default:
-                    return ResourceExchangeReason.InvalidResource;
-            }
-        }
-
-        private static ResourceExchangeReason ValidateRushGate(
-            in ResourceExchangeEnabledComponent enabled,
-            in ResourceExchangeRequestComponent request,
-            out byte factionId)
-        {
-            factionId = request.FactionId != 0 ? request.FactionId : enabled.FactionId;
-            if (enabled.Enabled == 0 || enabled.AllowRush == 0)
-                return ResourceExchangeReason.RushUnavailable;
-
-            return enabled.FactionId != 0 && factionId != enabled.FactionId
-                ? ResourceExchangeReason.ExchangeUnavailable
-                : ResourceExchangeReason.None;
-        }
-
-        private static ResourceExchangeReason ValidateRushItem(in ResourceExchangeQueueComponent item)
-        {
-            if (item.OutputApplied != 0)
-                return ResourceExchangeReason.RushUnavailable;
-
-            if (item.State != ResourceExchangeQueueState.InProgress)
-                return ResourceExchangeReason.RushUnavailable;
-
-            return item.RemainingSeconds > 0f
-                ? ResourceExchangeReason.None
-                : ResourceExchangeReason.RushUnavailable;
-        }
-
-        private static ResourceExchangeReason ValidateRushRecipe(in ResourceExchangeRecipeComponent recipe)
-        {
-            return recipe.RushTicketSecondsPerTicket > 0 && recipe.MaxRushTickets > 0
-                ? ResourceExchangeReason.None
-                : ResourceExchangeReason.RushUnavailable;
-        }
-
-        private static int FindQueueItemIndex(
-            DynamicBuffer<ResourceExchangeQueueComponent> queue,
-            int queueItemId,
-            byte factionId)
-        {
-            for (int i = 0; i < queue.Length; i++)
-            {
-                ResourceExchangeQueueComponent item = queue[i];
-                if (item.QueueItemId == queueItemId && item.FactionId == factionId)
-                    return i;
-            }
-
-            return -1;
-        }
-
-        private static int CalculateRushTicketCapacity(
-            in ResourceExchangeQueueComponent item,
-            in ResourceExchangeRecipeComponent recipe)
-        {
-            return math.max(0, recipe.MaxRushTickets - item.RushTicketsSpent);
-        }
-
-        private static int CalculateRushTicketsNeeded(
-            in ResourceExchangeQueueComponent item,
-            in ResourceExchangeRecipeComponent recipe)
-        {
-            int secondsPerTicket = math.max(1, recipe.RushTicketSecondsPerTicket);
-            return item.RemainingSeconds <= 0f
-                ? 0
-                : math.max(1, (int)math.ceil(item.RemainingSeconds / secondsPerTicket));
-        }
-
-        private static void ApplyRushTickets(
-            ref FactionEconomy economy,
-            ref FactionTacticalMaterialsComponent materials,
-            ref ResourceExchangeWalletComponent wallet,
-            DynamicBuffer<ResourceExchangeQueueComponent> queue,
-            DynamicBuffer<ResourceExchangeResultComponent> results,
-            DynamicBuffer<ResourceExchangeEconomyEventComponent> economyEvents,
-            int queueIndex,
-            in ResourceExchangeQueueComponent source,
-            in ResourceExchangeRecipeComponent recipe,
-            int rushTickets,
-            EntityManager entityManager,
-            DynamicBuffer<ResourceExchangePhysicalReservationComponent> physicalReservations,
-            bool usePhysicalStorage)
-        {
-            ResourceExchangeQueueComponent item = source;
-            item.RushTicketsSpent += rushTickets;
-            item.RemainingSeconds = math.max(
-                0f,
-                item.RemainingSeconds - rushTickets * math.max(1, recipe.RushTicketSecondsPerTicket));
-            item.Version++;
-
-            economyEvents.Add(new ResourceExchangeEconomyEventComponent
-            {
-                QueueItemId = item.QueueItemId,
-                FactionId = item.FactionId,
-                ResultKind = ResourceExchangeResultKind.RushAccepted,
-                ResourceKind = ResourceExchangeResourceKind.RushTickets,
-                Amount = -rushTickets,
-                RecipeId = item.RecipeId
-            });
-
-            if (item.RemainingSeconds <= 0f)
-            {
-                ResourceExchangeQueueTickSystem.TryCompleteQueueItem(
-                    ref economy,
-                    ref materials,
-                    ref wallet,
-                    item,
-                    results,
-                    economyEvents,
-                    entityManager,
-                    physicalReservations,
-                    usePhysicalStorage,
-                    out item);
-            }
-
-            queue[queueIndex] = item;
-        }
-
-        private static ResourceExchangeResultComponent RushAccepted(
-            in ResourceExchangeRequestComponent request,
-            in ResourceExchangeQueueComponent item,
-            int rushTicketsSpent,
-            int affectedCount)
-        {
-            return new ResourceExchangeResultComponent
-            {
-                RequestId = request.RequestId,
-                QueueItemId = item.QueueItemId,
-                FactionId = item.FactionId,
-                ResultKind = ResourceExchangeResultKind.RushAccepted,
-                Accepted = 1,
-                Reason = ResourceExchangeReason.None,
-                RecipeId = item.RecipeId,
-                InputResource = ResourceExchangeResourceKind.RushTickets,
-                OutputResource = item.OutputResource,
-                InputAmount = affectedCount,
-                OutputAmount = item.OutputAmount,
-                RushTicketsSpent = rushTicketsSpent
-            };
-        }
-
-        private static ResourceExchangeResultComponent RushRejected(
-            in ResourceExchangeRequestComponent request,
-            in ResourceExchangeQueueComponent item,
-            ResourceExchangeReason reason)
-        {
-            return new ResourceExchangeResultComponent
-            {
-                RequestId = request.RequestId,
-                QueueItemId = request.QueueItemId,
-                FactionId = request.FactionId,
-                ResultKind = ResourceExchangeResultKind.RushRejected,
-                Accepted = 0,
-                Reason = reason,
-                RecipeId = item.RecipeId,
-                InputResource = ResourceExchangeResourceKind.RushTickets,
-                OutputResource = item.OutputResource,
-                RushTicketsSpent = request.RushTickets
-            };
-        }
-
-        private static bool CanCancel(in ResourceExchangeQueueComponent item)
-        {
-            if (item.OutputApplied != 0)
-                return false;
-
-            return item.State == ResourceExchangeQueueState.Pending ||
-                   item.State == ResourceExchangeQueueState.InProgress ||
-                   item.State == ResourceExchangeQueueState.Blocked;
-        }
-
-        private static int CalculateRefundAmount(in ResourceExchangeQueueComponent item)
-        {
-            return item.PresentationStarted == 0
-                ? math.max(0, item.ReservedInputAmount)
-                : 0;
         }
 
     }

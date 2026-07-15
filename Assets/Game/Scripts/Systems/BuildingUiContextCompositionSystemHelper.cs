@@ -9,7 +9,7 @@ namespace Game.Runtime
     {
         public readonly struct Source
         {
-            public readonly RuntimeResourceUtilitySystemHelper RuntimeResourceUtilitySystemHelper;
+            public readonly RuntimeFactionResourceSystemHelper RuntimeFactionResourceSystemHelper;
             public readonly BuildingDefinitionPrefabSystemHelper DefinitionSystem;
             public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
             public readonly BuildingProductionQueueCompositionSystemHelper ProductionSystem;
@@ -41,7 +41,7 @@ namespace Game.Runtime
             public readonly Func<bool> RotateBuildingPlacement;
 
             public Source(
-                RuntimeResourceUtilitySystemHelper runtimeResourceSystem,
+                RuntimeFactionResourceSystemHelper factionResourceSystem,
                 BuildingDefinitionPrefabSystemHelper definitionSystem,
                 RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
                 BuildingProductionQueueCompositionSystemHelper productionSystem,
@@ -72,7 +72,7 @@ namespace Game.Runtime
                 Action cancelBuildingPlacement,
                 Func<bool> rotateBuildingPlacement = null)
             {
-                RuntimeResourceUtilitySystemHelper = runtimeResourceSystem;
+                RuntimeFactionResourceSystemHelper = factionResourceSystem;
                 DefinitionSystem = definitionSystem;
                 RuntimeBuildingSystem = runtimeBuildingSystem;
                 ProductionSystem = productionSystem;
@@ -106,7 +106,7 @@ namespace Game.Runtime
         }
 
         public Source CreateSource(
-            RuntimeResourceUtilitySystemHelper runtimeResourceSystem,
+            RuntimeFactionResourceSystemHelper factionResourceSystem,
             BuildingDefinitionPrefabSystemHelper definitionSystem,
             RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
             BuildingProductionQueueCompositionSystemHelper productionSystem,
@@ -138,7 +138,7 @@ namespace Game.Runtime
             Func<bool> rotateBuildingPlacement = null)
         {
             return new Source(
-                runtimeResourceSystem,
+                factionResourceSystem,
                 definitionSystem,
                 runtimeBuildingSystem,
                 productionSystem,
@@ -173,7 +173,7 @@ namespace Game.Runtime
         public BuildingUiCommandSystemHelper.Context CreateCommandContext(Source source)
         {
             return new BuildingUiCommandSystemHelper.Context(
-                () => source.RuntimeResourceUtilitySystemHelper.CurrentDollars,
+                () => source.RuntimeFactionResourceSystemHelper.CurrentDollars,
                 () => source.CreateProductionRequestContext != null
                     ? source.CreateProductionRequestContext().MaxQueuedUnitProductions
                     : 25,
@@ -291,7 +291,7 @@ namespace Game.Runtime
                 source.HasVisibleSelectableBuilding,
                 source.TryResolveLiveUnitPreviewPrefab,
                 factionResourceEntities: null,
-                tryGetFactionResourceEntity: source.RuntimeResourceUtilitySystemHelper.TryGetFactionResourceEntity);
+                tryGetFactionResourceEntity: source.RuntimeFactionResourceSystemHelper.TryGetFactionResourceEntity);
         }
 
         private static BuildingUiCommandSystemHelper.CampRequestFailure InvalidCampRequest(out string requiredBuildingDisplayName)

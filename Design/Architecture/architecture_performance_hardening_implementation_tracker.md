@@ -249,17 +249,17 @@ The program is complete only when all of the following are true:
 
 | Field | Status |
 |---|---|
-| Checklist complete | `87 / 107` |
-| Checklist percent complete | `81.3%` |
-| Checklist in progress | `11 / 107`: `APH-311`, `APH-501`, `APH-502`, `APH-504`, `APH-507`, `APH-508`, `APH-509`, `APH-601`, `APH-609`, `APH-803`, `APH-804` |
-| Complete plus active coverage | `98 / 107` (`91.6%`); this is visibility only, not accepted completion |
+| Checklist complete | `89 / 107` |
+| Checklist percent complete | `83.2%` |
+| Checklist in progress | `12 / 107`: `APH-311`, `APH-501`, `APH-502`, `APH-504`, `APH-506`, `APH-508`, `APH-509`, `APH-510`, `APH-601`, `APH-609`, `APH-803`, `APH-804` |
+| Complete plus active coverage | `101 / 107` (`94.4%`); this is visibility only, not accepted completion |
 | Current phase | Phase 3 Android device evidence, Phase 5 product budgets, Phase 6 map closeout, and bounded Phase 8 automation |
-| Current task | Close remaining FPS, memory, startup, package, architecture, and device gates; select the next bounded decomposition only when dependency-ready |
-| Red architecture gates | `2`: exact source authorization accepts the new Resource Exchange physical-storage, material-fabrication command, resource-hauler storage, queue-completion, map-vehicle clearance, building path-interaction context, building-definition footprint-clone, building material-fabrication read-model, building production-entry UI, Build Drawer projection, Build Drawer catalog-presentation, Build Drawer production-queue UI, Resource Exchange read-model projection, UI action dispatch, UI Resource Exchange command, AI build-planning policy, AI materials-recovery mutation, and AI build-planning read boundaries; material fabrication, resource hauling, Resource Exchange queue ticking, map-vehicle placement, the building runtime context factory, the building runtime spawn facade, the building UI query facade, the Build Drawer read-model owner, the Build Drawer catalog runtime view, the Resource Exchange read-model owner, the UI action request owner, the general UI runtime adapter owner, and the AI build planner owner are now below 500 lines. The global gate proceeds to 19 oversized production files; separately owned audio, material-scenario, and building-defense growth remain. These are decomposition/review work rather than authorization for more growth. The complete Phase 7 gate reports only the audio runtime view `Update`. The Resource Exchange popup no longer owns an `Update`; change-driven projection, a cheap version read, and the existing shell presentation loop replace its per-frame full model/string/UI rebuild. All 24 Scenario Lab coroutines are explicitly registered as lab-only after confirming enabled production scenes contain only `Menu` and `Match`. |
+| Current task | Collect clean same-artifact Android memory, streaming, thermal, and visual evidence; then run the remaining final closeout gates |
+| Red architecture gates | `0`: the rebased 23-suite closeout, bootstrap guard, source-growth ratchet, naming/static-registry rules, and `ISystem` inventory all pass |
 | Red performance gates | `0`: the unchanged steady-state Match GC gate passes at `930 / 1,024` player-relevant bytes over 300 measured frames after 180 warmup frames, with every production runtime probe at zero. The latest canonical Match baseline passes over 766 frames at `5.23 ms` average, `8.16 ms` p95, `10.33 ms` p99, and zero measured allocation. |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
-| Last verified commit | `ee52f90a6` on the integration branch, ready for `main`; the compact APH-704 candidate remains disabled after exact `9/9` equivalence, `74.88%` benchmark improvement, zero warmed allocation, and affected architecture/build gates. |
-| Last update | 2026-07-14 - AI build-planning policy, materials-recovery mutation, and read-only projections moved into three bounded stateless helpers while the original `ISystem` retained its single schedule, query lifecycle, request transaction, settlement, mutable request ID, diagnostics, and Burst decision entry point. The owner dropped from 863 to 496 lines, architecture and integrated behavior gates pass, Runtime and Editor-test builds have zero compiler errors, and Menu-to-Match reaches the input-ready HUD. The global oversized inventory dropped from 20 to 19. |
+| Last verified commit | `ebdba0b4bb4c59963ee07ae84a96b2071eab9f8f` rebased on current `origin/main` |
+| Last update | 2026-07-15 - rebased validation passes `23/23` Unity closeout suites, `12/12` first-party projects with zero errors, Menu-to-Match readiness, `218/218` Python contracts, and current `ISystem` inventory; APH-507 completes with a clean fail-closed no-change audit and Android evidence collection remains active |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -528,10 +528,12 @@ Goal: make residency and package size intentional while preserving visible quali
 - [~] `APH-504` Enable mip streaming for a representative world-texture subset with mipmaps; set a mobile memory budget and preserve full-resolution nearby textures.
   - Active result: a deterministic read-only pilot selector identifies `PolygonMilitary_Texture_01_A.png` and `PolygonMilitary_Texture_02_A.png` as the bounded representative pair and rejects unsafe expansion. Readiness remains fail-closed because the available build evidence is stale/incomplete, both source textures retain CPU-readable copies, normal-map importer evidence is incomplete, the global mip limit is `1`, and the required visual/memory evidence from `APH-505` and `APH-506` does not yet exist. Validation passes `11/11`; report generation is byte-deterministic; `--check` confirms `pilot_ready=false`, `mutation_authorized=false`, and `expansion_authorized=false`. Evidence: `Design/AgentReports/2026-07-14_aph-504_texture_streaming_pilot_plan.md`.
 - [ ] `APH-505` Capture identical near, medium, and far camera screenshots before and after streaming. Reject blur, late pop, terrain seams, or missing vegetation detail.
-- [ ] `APH-506` Measure memory and I/O during a 10-minute camera-pan/zoom session. Expand streaming only after the pilot passes.
-- [~] `APH-507` Audit Android texture overrides for ASTC size/quality and remove oversized 4K/8K limits only where the BuildReport proves inclusion and visual evidence proves no loss.
-  - Active result: historical clean-build evidence identifies 13 included Polygon Military 4K textures totaling `135.34 MiB` packed and no confirmed 8K texture. Explicit override/max-size settings and current-revision inclusion remain unproven, so no importer was changed. Evidence: `Design/AgentReports/2026-07-11_aph-507_android_texture_override_audit.md`.
-  - Remaining: export complete current-revision Android importer settings and run the bounded single-texture 4K-to-2K device/visual pilot before accepting any override.
+- [~] `APH-506` Measure memory and I/O during a 10-minute camera-pan/zoom session. Expand streaming only after the pilot passes.
+  - Active result: `Tools/CI/aph506_texture_streaming_device_collection.py` now enforces clean revision/APK/device provenance, 60-second warmup, 600-second alternating pan/zoom session, bounded foreground/PID/thermal/memory/I/O sampling, before/after screenshots and hashes, raw-log integrity, and fail-closed evidence output. Focused contracts pass `15/15`.
+  - Remaining: run the collector on the pinned Android device with a clean candidate artifact and accept memory, I/O, thermal, and visual evidence before expanding streaming.
+- [x] `APH-507` Audit Android texture overrides for ASTC size/quality and remove oversized 4K/8K limits only where the BuildReport proves inclusion and visual evidence proves no loss.
+  - Accepted result: the clean deterministic audit covers all 60 current 4K/8K-limit candidates, records zero explicit Android overrides, preserves historical ASTC/build context, and blocks every limit reduction because no same-revision complete BuildReport plus hash-verified visual proof authorizes a candidate. No importer or asset was changed. Evidence: `Design/AgentReports/2026-07-15_aph-507_android_texture_override_audit.md` and `.json`.
+  - Validation: focused contracts pass `14/14`, report `--check` passes on clean revision `ebdba0b4bb4c59963ee07ae84a96b2071eab9f8f`, and `limitReductionAuthorized=false` remains fail-closed.
 - [~] `APH-508` Audit the six generated animation textures for actual runtime residency, duplication, clip coverage, precision requirements, and unload behavior. Do not change format based only on source file size.
   - Active result: deterministic audit evidence covers six distinct `RGBAHalf` textures totaling `100,663,296` payload bytes, finds no exact pixel duplicates, identifies only the three `CharactersBaked` textures in the truncated top-100 Android build evidence at approximately `48 MiB` packed, and records 430 animation entries across 33 character animators (`67.95%` current coverage). All six importers retain `m_IsReadable=1`, and the generator uses parameterless `Apply()`, so CPU-copy retention remains a concrete risk. Linear point-filtered `RGBAHalf` remains unchanged because lower precision is not proven safe.
   - Validation: deterministic audit coverage passes `13/13`. Build inclusion for the legacy three textures, runtime unload behavior, and device residency remain unproven.
@@ -539,7 +541,9 @@ Goal: make residency and package size intentional while preserving visible quali
 - [~] `APH-509` Remove unused packages only after a package-usage report proves no source, serialized asset, build script, or editor workflow dependency.
   - Active result: a deterministic read-only inventory classifies 46 manifest packages, one embedded depth-zero manifest discrepancy, 20 ordinary lock-only transitives, 14 static candidate-unused packages, and five unresolved static blind spots across source, serialized assets, build scripts, and editor workflows. No package removal is accepted until isolated import/compile/test/build/device validation proves it safe.
   - Validation: six dedicated inventory tests plus syntax and deterministic-report checks pass; evidence commit `e9dcf183e` is pushed to `main`.
-- [ ] `APH-510` Rebuild Android, compare BuildReport/memory/frame metrics, and record per-category deltas.
+- [~] `APH-510` Rebuild Android, compare BuildReport/memory/frame metrics, and record per-category deltas.
+  - Active result: `Tools/CI/aph510_android_category_comparison.py` binds baseline/candidate evidence to exact revision, APK/AAB hashes, build profile, and device identity; compares package, installed, allocated/PSS, texture, mesh, audio, graphics-driver, frame, startup, and I/O metrics; and emits deterministic JSON/Markdown while null measurement-required limits remain explicit blockers. Focused contracts pass `9/9`.
+  - Remaining: produce clean same-artifact APK/AAB, device-performance, category-residency, and I/O evidence, then run and accept the comparison.
 
 ## Phase 6 - Editor-Baked Static Map Chunks
 
@@ -683,7 +687,8 @@ Goal: prevent recurrence and cover behavior that source-scanning tests cannot pr
 
 Goal: prove the complete program improved production readiness without gameplay or visual regression.
 
-- [ ] `APH-900` Run the complete first-party build matrix with 0 errors.
+- [x] `APH-900` Run the complete first-party build matrix with 0 errors.
+  - Accepted on rebased revision `ebdba0b4bb4c59963ee07ae84a96b2071eab9f8f`: Components, Configs, Runtime.Pathfinding, Runtime, Rendering, UI Shell Contracts ECS, UI Runtime, UI Shell ECS, Composition, Editor, Editor tests, and PlayMode tests all build with `0 Error(s)`.
 - [ ] `APH-901` Run architecture, ECS/Burst, focused EditMode, critical PlayMode, Match smoke, performance, GC, audio, graphics, and static-map validation gates.
 - [ ] `APH-902` Produce final same-device Android development and release reports, including 10-minute thermal sessions.
 - [ ] `APH-903` Compare final architecture/performance metrics against this baseline and write `Design/AgentReports/architecture_performance_hardening_final_report.md`.

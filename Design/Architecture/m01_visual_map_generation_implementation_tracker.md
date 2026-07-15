@@ -326,11 +326,11 @@ The candidate may tighten an active parent budget but cannot loosen it. A `null`
 
 ## 11. Exact Twelve-Map Portfolio
 
-This register counts physical maps, not missions or scenarios. It contains exactly 12 rows: one current existing map, one dedicated M01 map, and ten additional maps. The current map and M01 are both inside the total; neither creates a thirteenth map.
+This register counts physical maps, not missions or scenarios. It contains exactly 12 rows: one current existing map, one dedicated M01 map, and ten additional maps. The current map and M01 are both inside the total; neither creates a thirteenth map. The current-map slot is settled, but its candidate id remains provisional pending parent-tracker Phase 3 approval.
 
 | # | Physical map | Portfolio role | Generation/config state | Promotion state |
 |---:|---|---|---|---|
-| 01 | `opmap.skirmish.desert_base_01` | Current existing large map | Existing authored source; compatibility/extraction owned by parent tracker | Parent tracker gates |
+| 01 | `opmap.skirmish.desert_base_01` (provisional) | Current existing large map | Existing authored source; candidate id pending parent-tracker Phase 3 approval | Pending parent Phase 3 id approval and parent gates |
 | 02 | `opmap.ch01.district_edge_01` | Dedicated M01 Old Market | Blocked by Gate 9R | Blocked by Gate 9R and Phases 1-8 |
 | 03 | To be assigned | Additional map 1 of 10 | Not started | Not started |
 | 04 | To be assigned | Additional map 2 of 10 | Not started | Not started |
@@ -352,7 +352,7 @@ Shared scenarios, variants, or mission assignments do not add physical maps to t
 - Confirm every repository link/path referenced as existing resolves in `HEAD`.
 - Confirm the tracker blocks all M01 prototype/implementation work before Gate 9R.
 - Confirm canonical type mapping contains no parallel recipe, plan, result, builder, or generator abstraction.
-- Confirm the physical-map register has exactly 12 entries: current + M01 + ten additional.
+- Confirm the physical-map register has exactly 12 entries: one provisional-id current-map slot + M01 + ten additional.
 - Confirm performance acceptance covers Editor and Android render, memory, package/install, frame/GC, and thermal/device evidence.
 - Confirm no code, asset, config, scene, generated output, Addressables, runtime, build, or CI file changed.
 - Run `git diff --check` and focused terminology/count searches.

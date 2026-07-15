@@ -425,6 +425,16 @@ class AndroidDevelopmentDeviceCollectionTests(unittest.TestCase):
             root = Path(directory)
             profile = copy.deepcopy(self.profile)
             profile["capture"]["minimumFrameSamples"] = 5
+            profile["limits"]["p99FrameMs"] = {
+                "comparison": "lessThanOrEqual",
+                "value": None,
+                "status": "measurement-required",
+            }
+            profile["limits"]["startupP95Ms"] = {
+                "comparison": "lessThanOrEqual",
+                "value": None,
+                "status": "measurement-required",
+            }
             apk = root / profile["build"]["apkPath"]
             apk.parent.mkdir(parents=True)
             apk.write_bytes(b"development-apk")

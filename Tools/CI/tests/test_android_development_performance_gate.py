@@ -192,13 +192,15 @@ class AndroidDevelopmentPerformanceGateTests(unittest.TestCase):
             "sustainedRun": evidence["sustainedRun"],
         }
 
-    def test_reference_profile_pins_device_and_keeps_unapproved_limits_unset(self) -> None:
+    def test_reference_profile_pins_device_and_approved_limits(self) -> None:
         profile = load_profile(DEFAULT_PROFILE)
         self.assertEqual("R4M7PZEQZ58T59ZH", profile["device"]["serial"])
         self.assertEqual(5, profile["capture"]["coldStartSampleCount"])
         self.assertEqual(5, profile["capture"]["warmStartSampleCount"])
-        self.assertIsNone(profile["limits"]["p99FrameMs"]["value"])
-        self.assertIsNone(profile["limits"]["startupP95Ms"]["value"])
+        self.assertEqual(50.0, profile["limits"]["p99FrameMs"]["value"])
+        self.assertEqual("tracked-budget", profile["limits"]["p99FrameMs"]["status"])
+        self.assertEqual(30000.0, profile["limits"]["startupP95Ms"]["value"])
+        self.assertEqual("tracked-budget", profile["limits"]["startupP95Ms"]["status"])
 
     def test_schema_is_valid_json_and_fail_closed(self) -> None:
         schema_path = DEFAULT_PROFILE.parent / "android_development_performance_evidence.schema.json"
@@ -218,6 +220,16 @@ class AndroidDevelopmentPerformanceGateTests(unittest.TestCase):
         self.assertTrue(first["acceptanceReady"])
 
         unset_profile = load_profile(DEFAULT_PROFILE)
+        unset_profile["limits"]["p99FrameMs"] = {
+            "comparison": "lessThanOrEqual",
+            "value": None,
+            "status": "measurement-required",
+        }
+        unset_profile["limits"]["startupP95Ms"] = {
+            "comparison": "lessThanOrEqual",
+            "value": None,
+            "status": "measurement-required",
+        }
         unset_contract = build_orchestration_contract(unset_profile, REVISION, self.apk_sha)
         self.assertFalse(unset_contract["acceptanceReady"])
         self.assertEqual(["p99FrameMs", "startupP95Ms"], unset_contract["unsetLimits"])

@@ -39,7 +39,26 @@ if (-not (Test-Path -LiteralPath $LogFile -PathType Leaf)) {
     throw "[ArchitectureValidation] '$ExecuteMethod' did not create log '$LogFile'."
 }
 
-$logText = [System.IO.File]::ReadAllText($LogFile)
+$logText = $null
+$readDeadline = [DateTime]::UtcNow.AddSeconds(15)
+do {
+    try {
+        $logText = [System.IO.File]::ReadAllText($LogFile)
+    } catch [System.IO.IOException] {
+        if ([DateTime]::UtcNow -ge $readDeadline) {
+            throw
+        }
+
+        Start-Sleep -Milliseconds 250
+    }
+} while ($null -eq $logText)
+
+if ($logText.Contains("result=Failed") -or
+    $logText.Contains("executeMethod method $ExecuteMethod threw exception.") -or
+    $logText.Contains("StackOverflowException:")) {
+    throw "[ArchitectureValidation] '$ExecuteMethod' log contains a failure marker."
+}
+
 if (-not $logText.Contains($RequiredPassMarker)) {
     throw "[ArchitectureValidation] '$ExecuteMethod' log is missing required pass marker: $RequiredPassMarker"
 }

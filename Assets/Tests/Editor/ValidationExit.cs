@@ -30,9 +30,11 @@ internal static class ValidationExit
         // Unity's command-line test runner owns process lifetime and writes the
         // requested NUnit XML only after the full run completes.  A focused
         // validation may still use this helper to terminate a batch-mode editor,
-        // but never terminate an editor launched with -runTests.
+        // but never compete with the test runner or Unity's -quit shutdown path.
+        string[] commandLineArgs = Environment.GetCommandLineArgs();
         if (Application.isBatchMode &&
-            Array.IndexOf(Environment.GetCommandLineArgs(), "-runTests") < 0)
+            Array.IndexOf(commandLineArgs, "-runTests") < 0 &&
+            Array.IndexOf(commandLineArgs, "-quit") < 0)
         {
             EditorApplication.Exit(code);
         }

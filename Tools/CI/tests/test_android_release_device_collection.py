@@ -24,6 +24,7 @@ from Tools.CI.android_release_device_collection import (
     monitor_sustained_run,
     parse_battery,
     parse_du_bytes,
+    parse_resolved_launcher,
     parse_thermal_snapshot,
     require_unplugged_battery,
     require_install_completion,
@@ -248,6 +249,22 @@ class AndroidReleaseDeviceCollectionTests(unittest.TestCase):
                 result(("install",), stdout="Performing Push Install"),
                 "exact APK install",
             )
+
+    def test_resolved_launcher_accepts_only_canonical_adb_formats(self) -> None:
+        component = "com.warlinecapture.game/com.unity3d.player.UnityPlayerGameActivity"
+        summary = "priority=0 preferredOrder=0 match=0x108000 specificIndex=-1 isDefault=false"
+
+        self.assertEqual(component, parse_resolved_launcher(f"{component}\n"))
+        self.assertEqual(component, parse_resolved_launcher(f"{summary}\n{component}\n"))
+
+        for malformed in (
+            "",
+            f"unexpected summary\n{component}\n",
+            f"{summary}\n{component}\nextra\n",
+        ):
+            with self.subTest(malformed=malformed):
+                with self.assertRaisesRegex(CollectionError, "not canonical"):
+                    parse_resolved_launcher(malformed)
 
     def test_exact_launch_argv_has_one_unity_extra_with_all_tokens(self) -> None:
         argv = launch_argv(self.profile)

@@ -40,6 +40,7 @@ try:
         parse_foreground_component,
         parse_package_dump,
         parse_pid,
+        parse_resolved_launcher,
         parse_sha256sum,
         parse_thermal_snapshot,
         require_exact_target,
@@ -68,6 +69,7 @@ except ModuleNotFoundError:  # Direct execution adds Tools/CI, not the repositor
         parse_foreground_component,
         parse_package_dump,
         parse_pid,
+        parse_resolved_launcher,
         parse_sha256sum,
         parse_thermal_snapshot,
         require_exact_target,
@@ -286,20 +288,25 @@ def install_and_verify(
     )
 
     component = f"{package}/{activity}"
-    resolved = _text(
-        _run(
-            adb,
-            (
-                "shell", "cmd", "package", "resolve-activity", "--brief",
-                "-a", "android.intent.action.MAIN",
-                "-c", "android.intent.category.LAUNCHER",
-                package,
-            ),
-            "resolve launcher activity",
-        ).stdout
+    resolved_component = parse_resolved_launcher(
+        _text(
+            _run(
+                adb,
+                (
+                    "shell", "cmd", "package", "resolve-activity", "--brief",
+                    "-a", "android.intent.action.MAIN",
+                    "-c", "android.intent.category.LAUNCHER",
+                    package,
+                ),
+                "resolve launcher activity",
+            ).stdout
+        )
     )
-    if [line.strip() for line in resolved.splitlines() if line.strip()] != [component]:
-        raise CollectionError(f"resolved launcher must be exact GameActivity {component!r}")
+    if resolved_component != component:
+        raise CollectionError(
+            f"resolved launcher must be exact GameActivity {component!r}, "
+            f"found {resolved_component!r}"
+        )
 
     package_dump = _text(
         _run(adb, ("shell", "dumpsys", "package", package), "package dump").stdout

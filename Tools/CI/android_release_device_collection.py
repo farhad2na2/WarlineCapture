@@ -58,6 +58,10 @@ COMPONENT_PATTERN = re.compile(
     r"(?:mResumedActivity:\s+|topResumedActivity=)ActivityRecord\{[^}]*\s"
     r"(?P<component>[A-Za-z0-9_.]+/[A-Za-z0-9_.$]+)(?:\s|\})"
 )
+RESOLVED_ACTIVITY_SUMMARY_PATTERN = re.compile(
+    r"priority=-?\d+ preferredOrder=-?\d+ match=0x[0-9a-fA-F]+ "
+    r"specificIndex=-?\d+ isDefault=(?:true|false)"
+)
 
 
 class CollectionError(RuntimeError):
@@ -231,6 +235,15 @@ def sha256_file(path: Path) -> str:
 
 def normalize_property(value: str) -> str:
     return " ".join(value.strip().split())
+
+
+def parse_resolved_launcher(output: str) -> str:
+    rows = [line.strip() for line in output.splitlines() if line.strip()]
+    if len(rows) == 1:
+        return rows[0]
+    if len(rows) == 2 and RESOLVED_ACTIVITY_SUMMARY_PATTERN.fullmatch(rows[0]):
+        return rows[1]
+    raise CollectionError(f"resolved launcher output was not canonical: {rows!r}")
 
 
 def _device_identity_values_match(key: str, expected: Any, actual: Any) -> bool:
@@ -605,9 +618,8 @@ def install_and_verify(
     require_install_completion(install, "exact APK install")
 
     expected_component = f"{package}/{activity}"
-    resolved_rows = [
-        line.strip()
-        for line in _text(
+    resolved_component = parse_resolved_launcher(
+        _text(
             _run(
                 adb,
                 (
@@ -618,12 +630,12 @@ def install_and_verify(
                 ),
                 "resolve launcher activity",
             ).stdout
-        ).splitlines()
-        if line.strip()
-    ]
-    if resolved_rows != [expected_component]:
+        )
+    )
+    if resolved_component != expected_component:
         raise CollectionError(
-            f"resolved launcher must be exact GameActivity {expected_component!r}, found {resolved_rows!r}"
+            f"resolved launcher must be exact GameActivity {expected_component!r}, "
+            f"found {resolved_component!r}"
         )
 
     package_dump = _text(

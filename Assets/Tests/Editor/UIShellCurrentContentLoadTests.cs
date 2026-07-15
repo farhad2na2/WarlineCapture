@@ -166,6 +166,12 @@ public sealed class UIShellCurrentContentLoadTests
 
         content.PrepareForCommandSequence(new[]
         {
+            new UiShellPresentationCommandModel(UiShellCommandKind.ShowLoading, default, default, default, 0)
+        });
+        AssertRegionHasChild(content.ShellView, UIShellRegionId.LoadingLayer);
+
+        content.PrepareForCommandSequence(new[]
+        {
             new UiShellPresentationCommandModel(UiShellCommandKind.EnterMatchHud, default, default, default, 0)
         });
 
@@ -185,6 +191,7 @@ public sealed class UIShellCurrentContentLoadTests
         Assert.IsFalse(placementBarCanvasGroup.blocksRaycasts, "Build placement confirmation bar must start hidden and non-blocking.");
 
         AssertRegionIsEmpty(content.ShellView, UIShellRegionId.MiddleRegion);
+        AssertRegionIsEmpty(content.ShellView, UIShellRegionId.LoadingLayer);
     }
 
     [Test]

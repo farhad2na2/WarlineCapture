@@ -36,6 +36,7 @@ public sealed class RtsCameraSystemTests
             RunCase(nameof(RuntimeCameraTick_DoesNotApplyNormalCameraMotionWhileTacticalFollowRestorePoseValid), test => test.RuntimeCameraTick_DoesNotApplyNormalCameraMotionWhileTacticalFollowRestorePoseValid());
             RunCase(nameof(RuntimeCameraTick_RemovesQueuedNormalCameraMotionWhileTacticalFollowPoseValid), test => test.RuntimeCameraTick_RemovesQueuedNormalCameraMotionWhileTacticalFollowPoseValid());
             RunCase(nameof(ApplyPerspectiveCameraModeInstant_ConfiguresPerspectiveCamera), test => test.ApplyPerspectiveCameraModeInstant_ConfiguresPerspectiveCamera());
+            RunCase(nameof(MatchHudZoomControlState_ReusesTacticalFollowPoseQueryWithoutManagedAllocation), test => test.MatchHudZoomControlState_ReusesTacticalFollowPoseQueryWithoutManagedAllocation());
             RunCase(nameof(MatchHudZoomButtonsStepBetweenMinDefaultAndMaxHeights), test => test.MatchHudZoomButtonsStepBetweenMinDefaultAndMaxHeights());
             RunCase(nameof(MoveCameraGroundCenterTo_PreservesHeightAndMovesGroundCenter), test => test.MoveCameraGroundCenterTo_PreservesHeightAndMovesGroundCenter());
             RunCase(nameof(UpdateFullscreenIsoZoom_ClampsTargets), test => test.UpdateFullscreenIsoZoom_ClampsTargets());
@@ -49,7 +50,7 @@ public sealed class RtsCameraSystemTests
             RunCase(nameof(RuntimeCameraTick_DoesNotAutoSettleManualZoomOutAfterIntroComplete), test => test.RuntimeCameraTick_DoesNotAutoSettleManualZoomOutAfterIntroComplete());
             RunCase(nameof(MatchIntroFirstPlay_StartsZoomedOutAndTransitionsToNormalThroughRequests), test => test.MatchIntroFirstPlay_StartsZoomedOutAndTransitionsToNormalThroughRequests());
             RunCase(nameof(MatchIntroFirstPlay_HoldsZoomedOutUntilIntroCompletes), test => test.MatchIntroFirstPlay_HoldsZoomedOutUntilIntroCompletes());
-            Debug.Log("[RtsCameraFocusedValidation] result=Passed tests=31");
+            Debug.Log("[RtsCameraFocusedValidation] result=Passed tests=32");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -662,6 +663,45 @@ public sealed class RtsCameraSystemTests
         Assert.That(camera.transform.rotation.eulerAngles.x, Is.EqualTo(58f).Within(0.0001f));
         Assert.That(camera.transform.rotation.eulerAngles.y, Is.EqualTo(10f).Within(0.0001f));
         Assert.That(camera.fieldOfView, Is.EqualTo(36f).Within(0.0001f));
+    }
+
+    [Test]
+    public void MatchHudZoomControlState_ReusesTacticalFollowPoseQueryWithoutManagedAllocation()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        RtsCameraSystem cameraSystem = CreateCameraSystem();
+        RtsCameraRequestSystem cameraRequestSystem = _cameraSystemWorld.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
+        World.DefaultGameObjectInjectionWorld = _cameraSystemWorld;
+        Camera camera = CreateCamera(new Vector3(0f, 24f, -20f), Quaternion.Euler(58f, 10f, 0f));
+        var helper = new SelectionUiCameraSystemHelper(cameraSystem, cameraRequestSystem);
+        Entity poseEntity = _cameraSystemWorld.EntityManager.CreateEntity(typeof(TacticalFollowCameraPoseComponent));
+        _cameraSystemWorld.EntityManager.SetComponentData(
+            poseEntity,
+            new TacticalFollowCameraPoseComponent { Valid = 0 });
+
+        try
+        {
+            helper.Init(null, camera);
+            MatchHudZoomControlState state = helper.ReadZoomControlState();
+            for (int i = 0; i < 8; i++)
+                state = helper.ReadZoomControlState();
+
+            long allocationStart = GC.GetAllocatedBytesForCurrentThread();
+            for (int i = 0; i < 300; i++)
+                state = helper.ReadZoomControlState();
+            long allocatedBytes = GC.GetAllocatedBytesForCurrentThread() - allocationStart;
+
+            Assert.IsTrue(state.ZoomInEnabled);
+            Assert.IsTrue(state.ZoomOutEnabled);
+            Assert.AreEqual(
+                0L,
+                allocatedBytes,
+                "Warm match HUD zoom-state reads must reuse the world-bound tactical-follow pose query.");
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
     }
 
     [Test]

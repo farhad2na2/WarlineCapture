@@ -19,7 +19,7 @@ This tracker follows the completed historical program in `Design/Architecture/ar
 | Canonical project root | `/Users/farhad/Projects/WarlineCapture` |
 | Architecture rating | `6.5 / 10` |
 | Performance rating | `6.0 / 10` |
-| Current program status | Active - Phases 0 through 2 complete; Phase 3 settings ownership active |
+| Current program status | Active - local integrated closeout is green; final device, visual, product-budget, and integration evidence remains |
 
 ### Protected Integrated Work
 
@@ -147,19 +147,17 @@ Interpretation:
 
 ### Current Red Gates
 
-| Gate | Current failure | Required end state |
+| Gate | Current result | Required end state |
 |---|---|---|
-| `ProductionSourceGrowthArchitectureTests.RunFocusedValidation` | `13/15` checks pass; the remaining growth is in separately owned Campaign shell content plus the audio bridge and playback helpers | reconcile those owners without weakening the source-growth contract |
-| `NonUiSystemBaseMigrationArchitectureTests.RunFocusedValidation` | the complete Phase 7 runtime-loop inventory reports only `AudioPlaybackPresentationRuntimeView.Update` | remove or govern the audio runtime loop without adding a second update owner |
+| Architecture and ECS/Burst closeout | Green: integrated closeout passes `23/23`; source growth passes `15/15`; the unmanaged-system inventory and naming/assembly gates pass | keep green through final integration |
+| Editor Match performance and GC | Green: 733 units and 628 buildings; `7.20 ms` average, `11.48 ms` p95, `13.16 ms` p99, zero measured allocation; steady-state player-relevant GC is `292 / 1,024` bytes | keep green through final integration |
+| Critical PlayMode behavior | Green: Menu -> Match -> Menu plus selection/move/attack, placement/production, boarding/disembark, and resource-exchange fixtures pass `5/5` | keep green through final integration |
+| Static-map structural parity | Green: full Match-scene structural validation passes `2/2` | keep green without modifying operation-map ownership |
+| Product/device/visual acceptance | Red: clean same-artifact Android development/release thermal evidence and all required visual comparison slots remain incomplete | complete APH-311, APH-505, APH-803, APH-804, APH-809, and APH-902 |
 
-Current violating files:
+There are no current architecture, ECS/Burst, Editor Match performance, GC, critical PlayMode, or static-map structural violations in the local integration candidate. The remaining red state is evidence completeness for device, visual, streaming, package, and product budgets.
 
-- `Assets/Game/Scripts/UI/Shell/UIShellContentView.cs`: exceeds its frozen reviewed-source ceiling in separately owned Campaign UI work.
-- `Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs`: exceeds its frozen helper ceiling.
-- `Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationSystemHelper.cs`: exceeds the frozen production-source ceiling.
-- `Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs`: owns the only unregistered production runtime `Update` remaining in the complete Phase 7 inventory.
-
-Latest accepted steady-state GC evidence is `930 / 1,024` player-relevant bytes over 300 measured frames after 180 warmup frames, so the unchanged GC budget passes. All production runtime probes are zero; the residual rows total 404 bytes of bounded building JIT/configuration work, 242 bytes of Menu diagnostics, 208 bytes of unresolved/framework thread attribution, 48 bytes from one UI shell sample, and 28 bytes from one audio diagnostic sample. The original baseline owner table and call stacks remain in `Design/AgentReports/2026-07-09_aph-007_match-gc-steady-state_raw-metadata-final_failed.md`, and the accepted result is in `Design/AgentReports/2026-06-11_perf_match-gc-callstack-capture.md`.
+Latest local steady-state GC evidence is `292 / 1,024` player-relevant bytes over 300 measured frames after 180 warmup frames, so the unchanged GC budget passes with `732` bytes of headroom. The previous recurring production-ID cache, resource-storage EntityQuery, and three-query hauler move-order allocation rows are absent. The six retained player-relevant samples total two 56-byte resource-hauler policy enumerations, one 56-byte assignment-signature enumeration, one 48-byte UI shell sample, one 48-byte path-result JIT sample, and one 28-byte audio diagnostic sample. The original baseline owner table remains in `Design/AgentReports/2026-07-09_aph-007_match-gc-steady-state_raw-metadata-final_failed.md`; the current result is in `Design/AgentReports/2026-06-11_perf_match-gc-callstack-capture.md`.
 
 ## Program Outcomes
 
@@ -251,15 +249,15 @@ The program is complete only when all of the following are true:
 |---|---|
 | Checklist complete | `89 / 107` |
 | Checklist percent complete | `83.2%` |
-| Checklist in progress | `12 / 107`: `APH-311`, `APH-501`, `APH-502`, `APH-504`, `APH-506`, `APH-508`, `APH-509`, `APH-510`, `APH-601`, `APH-609`, `APH-803`, `APH-804` |
-| Complete plus active coverage | `101 / 107` (`94.4%`); this is visibility only, not accepted completion |
-| Current phase | Phase 3 Android device evidence, Phase 5 product budgets, Phase 6 map closeout, and bounded Phase 8 automation |
-| Current task | Collect clean same-artifact Android memory, streaming, thermal, and visual evidence; then run the remaining final closeout gates |
+| Checklist in progress | `13 / 107`: `APH-311`, `APH-501`, `APH-502`, `APH-504`, `APH-506`, `APH-508`, `APH-509`, `APH-510`, `APH-601`, `APH-609`, `APH-803`, `APH-804`, `APH-901` |
+| Complete plus active coverage | `102 / 107` (`95.3%`); this is visibility only, not accepted completion |
+| Current phase | Final device/visual/product-budget evidence and validated feature-branch integration |
+| Current task | Integrate the locally green APH-901 closeout candidate, then collect clean same-artifact Android and visual evidence |
 | Red architecture gates | `0`: the rebased 23-suite closeout, bootstrap guard, source-growth ratchet, naming/static-registry rules, and `ISystem` inventory all pass |
-| Red performance gates | `0`: the unchanged steady-state Match GC gate passes at `930 / 1,024` player-relevant bytes over 300 measured frames after 180 warmup frames, with every production runtime probe at zero. The latest canonical Match baseline passes over 766 frames at `5.23 ms` average, `8.16 ms` p95, `10.33 ms` p99, and zero measured allocation. |
+| Red performance gates | `0`: the unchanged steady-state Match GC gate passes at `292 / 1,024` player-relevant bytes over 300 measured frames after 180 warmup frames. The latest canonical Match baseline passes over 557 frames at `7.20 ms` average, `11.48 ms` p95, `13.16 ms` p99, and zero measured allocation with 733 units and 628 buildings. |
 | Red visual gates | `1`: 23:00 Match capture is nonblank but battlefield readability remains too dark for final visual acceptance |
 | Last verified commit | `ebdba0b4bb4c59963ee07ae84a96b2071eab9f8f` rebased on current `origin/main` |
-| Last update | 2026-07-15 - rebased validation passes `23/23` Unity closeout suites, `12/12` first-party projects with zero errors, Menu-to-Match readiness, `218/218` Python contracts, and current `ISystem` inventory; APH-507 completes with a clean fail-closed no-change audit and Android evidence collection remains active |
+| Last update | 2026-07-15 - local APH-901 candidate passes `23/23` Unity closeout suites, five critical PlayMode flows, `2/2` full static-map structural checks, the 733/628 Match frame-time gate, and the unchanged GC budget at `292/1,024`; integration and final device/visual evidence remain |
 
 ## Phase 0 - Baseline and Safety Freeze
 
@@ -689,7 +687,12 @@ Goal: prove the complete program improved production readiness without gameplay 
 
 - [x] `APH-900` Run the complete first-party build matrix with 0 errors.
   - Accepted on rebased revision `ebdba0b4bb4c59963ee07ae84a96b2071eab9f8f`: Components, Configs, Runtime.Pathfinding, Runtime, Rendering, UI Shell Contracts ECS, UI Runtime, UI Shell ECS, Composition, Editor, Editor tests, and PlayMode tests all build with `0 Error(s)`.
-- [ ] `APH-901` Run architecture, ECS/Burst, focused EditMode, critical PlayMode, Match smoke, performance, GC, audio, graphics, and static-map validation gates.
+- [~] `APH-901` Run architecture, ECS/Burst, focused EditMode, critical PlayMode, Match smoke, performance, GC, audio, graphics, and static-map validation gates.
+  - Local candidate result: integrated architecture closeout `23/23`, source growth `15/15`, focused move-order `18/18`, focused lifecycle/allocation/resource fixtures, five critical PlayMode flows, Menu-to-Match performance/GC routes, full static-map structural parity `2/2`, all 12 first-party builds, and `218/218` CI Python contracts pass with zero compiler errors.
+  - Performance: 733 units, 628 buildings, 557 measured frames, `7.20 ms` average, `11.48 ms` p95, `13.16 ms` p99, `34.98 ms` maximum, and zero measured allocation.
+  - GC: 300 measured frames after 180 warmup frames pass at `292 / 1,024` player-relevant bytes. The recurring production-cache, storage-query, and hauler move-order query rows are removed.
+  - Integration state: validation is complete in `codex/architecture-performance-hardening-handoff`; authoritative `[x]` acceptance waits for the stable task-owned commit to reach `main`.
+  - Evidence: `/private/tmp/warline-aph901-closeout-after-gc.log`, `/private/tmp/warline-aph901-performance-after-query-cache.log`, `/private/tmp/warline-aph901-gc-steady-after-query-cache-r2.log`, `/private/tmp/warline-aph901-static-map-structural-final.xml`, `/private/tmp/warline-aph8*-final.xml`, `Design/AgentReports/performance_regression_match_baseline.md`, and `Design/AgentReports/2026-06-11_perf_match-gc-callstack-capture.md`.
 - [ ] `APH-902` Produce final same-device Android development and release reports, including 10-minute thermal sessions.
 - [ ] `APH-903` Compare final architecture/performance metrics against this baseline and write `Design/AgentReports/architecture_performance_hardening_final_report.md`.
 - [ ] `APH-904` Re-rate architecture and performance, list residual risks, update the root architecture index, and mark this tracker complete only when no required task remains.
@@ -2146,6 +2149,19 @@ Append one entry per completed or blocked task. Keep entries concise but include
 - Evidence: `/private/tmp/warline-fps-graphics-focused.log` and `/private/tmp/warline-fps-audio-focused.log`
 - Residual risk: final Editor FPS comparison requires a full Editor restart after importing `c47c4e47b`, identical Game-view resolution, and idle indexing/security processes; the previously captured compact-minimap refresh remains the next measured CPU target only if the regression persists
 
+### 2026-07-15 - APH-901 - Local integrated closeout candidate
+
+- Status: implementation and local validation complete on `codex/architecture-performance-hardening-handoff`; authoritative acceptance waits for integration to `main`
+- Allocation repair: lifecycle-owned placement delegates and tactical queries, extracted Match HUD resource formatting/read models, cached FPS strings, pre-sized production ID lookup, allocation-free canonical spawnable-key normalization, and world-aware faction-storage and resource-hauler move-order EntityQuery ownership
+- Architecture: `UnitMoveOrderRequestSystem` remains an unmanaged `ISystem` and is held at exactly 500 lines; no `SystemBase`, `*Controller`, `*Player`, second player-loop owner, mutable static gameplay registry, or map-content mutation was added
+- Validation: source growth `15/15`; integrated architecture closeout `23/23`; move order `18/18`; affected allocation/resource/UI fixtures pass; five critical PlayMode flows pass `5/5`; full static-map structural validation passes `2/2`; all 12 first-party projects build no-incremental with `0` errors; CI Python contracts pass `218/218`
+- Performance: 733 units, 628 buildings, 557 frames, `7.20 ms` average, `11.48 ms` p95, `13.16 ms` p99, `34.98 ms` maximum, and zero measured allocation
+- GC: authoritative Menu-to-Match capture passes at `292 / 1,024` player-relevant bytes over 300 measured frames after 180 warmup frames; recurring production-ID dictionary initialization, resource-storage query creation, and hauler move-order queue query creation are absent
+- Non-owned test debt: three full-fixture assertions outside the changed paths remain reproducible when run individually: two Building gameplay initialization assumptions and one managed production-tick exact-float assumption. Their production owners and tests were not changed by this slice; the tracker-required closeout and affected paths are green
+- Preserved exclusions: all four unrelated FirstLaunch files remain unstaged and unmodified by this slice; no operation-map asset, scene, generator, manifest, or design document was edited
+- Evidence: `/private/tmp/warline-aph-query-cache-source-growth-final.log`, `/private/tmp/warline-aph-query-cache-build-final.log`, `/private/tmp/warline-aph-unit-move-focused.xml`, `/private/tmp/warline-aph901-closeout-after-gc.log`, `/private/tmp/warline-aph901-performance-after-query-cache.log`, `/private/tmp/warline-aph901-gc-steady-after-query-cache-r2.log`, `/private/tmp/warline-aph901-static-map-structural-final.xml`, `/private/tmp/warline-aph8*-final.xml`, `/private/tmp/warline-aph901-build-*.log`, `/private/tmp/warline-aph901-python-contracts-final.log`, `Design/AgentReports/performance_regression_match_baseline.md`, and `Design/AgentReports/2026-06-11_perf_match-gc-callstack-capture.md`
+- Next action: run the complete first-party build/Python contract matrix, inspect/stage only task-owned files, commit and push the feature branch, then integrate before changing APH-901 to `[x]`
+
 ## Decision Log
 
 Append approved deviations here. Do not silently alter Fixed Architecture Decisions.
@@ -2289,3 +2305,10 @@ Append approved deviations here. Do not silently alter Fixed Architecture Decisi
 | 2026-07-15 | `D-148` | Bound building gameplay source composition wiring | The extracted AI-oil input helper remains owned by the existing query-source composition boundary; the forwarding lines add no policy or recurring update owner | `source-growth-exception(path=Assets/Game/Scripts/Systems/BuildingGameplaySourceCompositionSystemHelper.cs;scope=system-helper-growth;maxLines=164;maxBytes=14396;task=APH-710)` |
 | 2026-07-15 | `D-149` | Register the Match HUD header reference cache boundary | One-time direct-child resource-slot and threat-panel discovery leaves the oversized menu owner, removes hierarchy lookup APIs, and adds no recurring update owner | `source-growth-exception(path=Assets/Game/Scripts/UI/Screens/MatchHudHeaderReferenceUiSystemHelper.cs;scope=system-helper;maxLines=148;maxBytes=5702;task=APH-710)` |
 | 2026-07-15 | `D-150` | Register the assistant HUD reference boundary | Setup-only objective, button, and text-reference discovery leaves the established assistant helper below its ratcheted ceiling; the extracted helper adds no scheduling owner or mutable gameplay state | `source-growth-exception(path=Assets/Game/Scripts/UI/Screens/MatchHudAssistantReferenceUiSystemHelper.cs;scope=system-helper;maxLines=89;maxBytes=3232;task=APH-710)` |
+| 2026-07-15 | `D-151` | Supersede the UI shell content-view ceiling from `D-117` | Match HUD installation now clears the completed loading layer before revealing gameplay; the single lifecycle line prevents an obsolete overlay from remaining active and the exact ceiling authorizes no further growth | `source-growth-exception(path=Assets/Game/Scripts/UI/Shell/UIShellContentView.cs;scope=production-over-500-review;maxLines=952;maxBytes=41372;task=APH-710)` |
+| 2026-07-15 | `D-152` | Supersede the gameplay source-composition ceiling from `D-148` | The retained placement-footprint delegate is now lifecycle-owned alongside the existing source adapters, eliminating recurring delegate allocation without adding policy or scheduling ownership; the exact ceiling authorizes no further growth | `source-growth-exception(path=Assets/Game/Scripts/Systems/BuildingGameplaySourceCompositionSystemHelper.cs;scope=system-helper-growth;maxLines=167;maxBytes=14595;task=APH-710)` |
+| 2026-07-15 | `D-153` | Bound runtime placement-query delegate ownership | The runtime query composition keeps one lifecycle-owned placement-footprint delegate instead of constructing it during recurring context composition; this removes steady-state allocation and adds no query or update owner | `source-growth-exception(path=Assets/Game/Scripts/Systems/BuildingRuntimeQueryCompositionSystemHelper.cs;scope=system-helper-growth;maxLines=141;maxBytes=5433;task=APH-710)` |
+| 2026-07-15 | `D-154` | Bound resource-hauler queue-cache growth | The existing hauler composition owns one world-aware move-order query cache so recurring route issuance does not construct three EntityQuery instances per order; the exact strict ceiling authorizes no other growth | `source-growth-exception(path=Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs;scope=production-over-1000-growth;maxLines=1574;maxBytes=73319;task=APH-710)` |
+| 2026-07-15 | `D-155` | Review resource-hauler queue-cache ownership | Cached move-order query ownership remains in the existing hauler lifecycle boundary and delegates queue processing to the existing ISystem request contract | `source-growth-exception(path=Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs;scope=system-helper-growth;maxLines=1574;maxBytes=73319;task=APH-710)` |
+| 2026-07-15 | `D-156` | Review faction resource storage-query caching | The existing resource composition owns one world-aware storage query rather than constructing it on every production tick; the exact review ceiling authorizes no other growth | `source-growth-exception(path=Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs;scope=production-over-500-review;maxLines=865;maxBytes=34228;task=APH-710)` |
+| 2026-07-15 | `D-157` | Bound faction resource query-cache ownership | Resource storage query lifetime remains inside the existing faction resource composition boundary with no additional update owner or SystemBase | `source-growth-exception(path=Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs;scope=system-helper-growth;maxLines=865;maxBytes=34228;task=APH-710)` |

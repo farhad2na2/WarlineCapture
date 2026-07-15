@@ -50,6 +50,31 @@ public sealed class BuildingRuntimeContextAllocationTests
     }
 
     [Test]
+    public void RuntimeQuery_WarmedEffectivePlacementRectDoesNotAllocate()
+    {
+        BuildingGameplaySourceCompositionSystemHelper source = new BuildingGameplayChildSystem().Create();
+        var definition = new BuildingDefinition { FootprintCells = new Vector2Int(2, 3) };
+        var originCell = new Vector2Int(7, 11);
+
+        RectInt rect = source.BuildingRuntimeQueryCompositionSystemHelper.GetEffectivePlacementRect(
+            source,
+            definition,
+            originCell,
+            default,
+            false);
+
+        Assert.AreEqual(new RectInt(originCell, definition.FootprintCells), rect);
+        AssertZeroAllocation(
+            () => source.BuildingRuntimeQueryCompositionSystemHelper.GetEffectivePlacementRect(
+                source,
+                definition,
+                originCell,
+                default,
+                false),
+            "effective placement rectangle query");
+    }
+
+    [Test]
     public void CreationContext_WarmedRedirectDoesNotRebuildRedirectContext()
     {
         BuildingRuntimeCreationCompositionSystemHelper.Context context =

@@ -2588,9 +2588,9 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
     {
       "path": "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs",
       "trackerTaskId": "APH-710",
-      "decisionId": "D-117",
-      "maxLines": 951,
-      "maxBytes": 41317,
+      "decisionId": "D-151",
+      "maxLines": 952,
+      "maxBytes": 41372,
       "scope": "production-over-500-review"
     },
     {
@@ -2836,9 +2836,9 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
     {
       "path": "Assets/Game/Scripts/Systems/BuildingGameplaySourceCompositionSystemHelper.cs",
       "trackerTaskId": "APH-710",
-      "decisionId": "D-148",
-      "maxLines": 164,
-      "maxBytes": 14396,
+      "decisionId": "D-152",
+      "maxLines": 167,
+      "maxBytes": 14595,
       "scope": "system-helper-growth"
     },
     {
@@ -2856,6 +2856,46 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
       "maxLines": 89,
       "maxBytes": 3232,
       "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeQueryCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-153",
+      "maxLines": 141,
+      "maxBytes": 5433,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-154",
+      "maxLines": 1574,
+      "maxBytes": 73319,
+      "scope": "production-over-1000-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-155",
+      "maxLines": 1574,
+      "maxBytes": 73319,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-156",
+      "maxLines": 865,
+      "maxBytes": 34228,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-710",
+      "decisionId": "D-157",
+      "maxLines": 865,
+      "maxBytes": 34228,
+      "scope": "system-helper-growth"
     }
   ]
 }

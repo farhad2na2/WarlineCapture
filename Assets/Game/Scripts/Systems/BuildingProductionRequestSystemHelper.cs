@@ -170,7 +170,7 @@ namespace Game.Runtime
             }
         }
 
-        private readonly Dictionary<FixedString128Bytes, string> _unitIdStringCache = new();
+        private readonly Dictionary<FixedString128Bytes, string> _unitIdStringCache = new(64);
         private readonly BuildingProductionCommandEntityCache _commandEntityCache = new();
 
         public int EnqueueCreateUnitFromSelectedBuilding(EntityManager em, int? activeBuildingId, int productionIndex, int frameCount)
@@ -1482,7 +1482,7 @@ namespace Game.Runtime
 
         private static bool TryBuildConfiguredUnit(Context context, GameObject prefab, out string displayName, out int price, out bool canRequest)
         {
-            displayName = prefab != null ? prefab.name : string.Empty;
+            displayName = string.Empty;
             price = 0;
             canRequest = false;
             if (prefab == null)

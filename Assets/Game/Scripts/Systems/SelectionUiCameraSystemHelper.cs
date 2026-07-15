@@ -22,6 +22,7 @@ namespace Game.Runtime
 
         private readonly RtsCameraSystem _cameraSystem;
         private readonly RtsCameraRequestSystem _cameraRequestSystem;
+        private readonly TacticalFollowCameraStateQueryCache _tacticalFollowCameraStateQueryCache = new();
         private Camera _worldCamera;
         private float _minZoomHeight = DefaultMinZoomHeight;
         private float _maxZoomHeight = DefaultMaxZoomHeight;
@@ -352,15 +353,9 @@ namespace Game.Runtime
             return true;
         }
 
-        private static bool HasValidTacticalFollowPose(EntityManager em)
+        private bool HasValidTacticalFollowPose(EntityManager em)
         {
-            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<TacticalFollowCameraPoseComponent>());
-            if (query.IsEmptyIgnoreFilter)
-                return false;
-
-            TacticalFollowCameraPoseComponent pose =
-                em.GetComponentData<TacticalFollowCameraPoseComponent>(query.GetSingletonEntity());
-            return pose.Valid != 0;
+            return _tacticalFollowCameraStateQueryCache.HasValidPose(em);
         }
     }
 }

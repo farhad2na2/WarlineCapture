@@ -319,6 +319,7 @@ namespace Game.UI.Runtime
 
         private void InstallMatchHud()
         {
+            ClearRegion(UIShellRegionId.LoadingLayer);
             ClearRegion(UIShellRegionId.MenuBackgroundRegion);
             _matchHudHeaderContent = InstallSection(matchHudContentPrefab, UIShellContentSectionId.Header, UIShellRegionId.HeaderRegion);
             _matchHudCurrentOrderBannerView = _matchHudHeaderContent != null

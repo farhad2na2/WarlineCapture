@@ -79,6 +79,14 @@ namespace Game.UI.Runtime
             return current.TryReadMatchHudHeader(out header);
         }
 
+        public static bool TryReadMatchHudResourceValues(out UiMatchHudResourceValuesModel values)
+        {
+            values = UiMatchHudResourceValuesModel.Invalid;
+            return current is IUiMatchHudResourceValuesGateway resourceValuesGateway &&
+                   resourceValuesGateway.TryReadMatchHudResourceValues(out values) &&
+                   values.IsValid;
+        }
+
         public static bool TryReadMatchHudStatusSurfaces(out UiMatchHudStatusSurfacesModel statusSurfaces)
         {
             return current.TryReadMatchHudStatusSurfaces(out statusSurfaces);

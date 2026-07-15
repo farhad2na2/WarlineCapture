@@ -1,12 +1,141 @@
 using Game.Components;
 using Game.UI.Contracts;
+using Game.UI.Runtime;
 using Game.UI.Shell.Contracts.Ecs;
 using Game.UI.Shell.Ecs;
 using NUnit.Framework;
+using Unity.Collections;
 using Unity.Entities;
 
 public sealed class UiShellEcsGatewayResourceHeaderTests
 {
+    [Test]
+    public void MatchHudResourceValues_UsesVersionedUsableFuelSummaryWithoutTextFallback()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        using World world = new(nameof(MatchHudResourceValues_UsesVersionedUsableFuelSummaryWithoutTextFallback));
+        try
+        {
+            World.DefaultGameObjectInjectionWorld = world;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+            EntityManager em = world.EntityManager;
+            Entity boundary = em.CreateEntity(typeof(UiShellRootComponent));
+            DynamicBuffer<BuildingRuntimeFactionUsableFuelSummary> summaries =
+                em.AddBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundary);
+            summaries.Add(new BuildingRuntimeFactionUsableFuelSummary
+            {
+                FactionId = FactionIdentity.PlayerFactionId,
+                StoredOilBarrels = 12.4f,
+                StoredFuelBarrels = 3.6f,
+                OilStorageCapacity = 200,
+                FuelStorageCapacity = 100,
+                Version = 7u
+            });
+
+            Assert.IsTrue(UiShellRuntimeGateway.TryReadMatchHudResourceValues(
+                out UiMatchHudResourceValuesModel values));
+            Assert.IsTrue(values.IsValid);
+            Assert.IsFalse(values.RequiresTextFallback);
+            Assert.AreEqual(12, values.Oil);
+            Assert.AreEqual(4, values.Fuel);
+            Assert.IsTrue(values.ShowOil);
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+        }
+    }
+
+    [Test]
+    public void MatchHudResourceValues_SignalsLegacyTextFallbackWhenNumericSourceIsUnavailable()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        using World world = new(nameof(MatchHudResourceValues_SignalsLegacyTextFallbackWhenNumericSourceIsUnavailable));
+        try
+        {
+            World.DefaultGameObjectInjectionWorld = world;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+            EntityManager em = world.EntityManager;
+            Entity boundary = em.CreateEntity(
+                typeof(UiShellRootComponent),
+                typeof(UiMatchHudHeaderComponent));
+            em.SetComponentData(boundary, CreatePopulatedHeader(resourceVersion: 5u));
+
+            Assert.IsTrue(UiShellRuntimeGateway.TryReadMatchHudResourceValues(
+                out UiMatchHudResourceValuesModel values));
+            Assert.IsTrue(values.IsValid);
+            Assert.IsTrue(values.RequiresTextFallback);
+            Assert.IsFalse(values.ShowOil);
+
+            Assert.IsTrue(UiShellRuntimeGateway.TryReadMatchHudHeader(out UiMatchHudHeaderModel header));
+            Assert.AreEqual("FALLBACK FUEL", header.FuelText);
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+        }
+    }
+
+    [Test]
+    public void MatchHudResourceValues_WarmedVersionChangesDoNotAllocate()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        using World world = new(nameof(MatchHudResourceValues_WarmedVersionChangesDoNotAllocate));
+        try
+        {
+            World.DefaultGameObjectInjectionWorld = world;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+            EntityManager em = world.EntityManager;
+            Entity boundary = em.CreateEntity(
+                typeof(UiShellRootComponent),
+                typeof(UiMatchHudHeaderComponent));
+            DynamicBuffer<BuildingRuntimeFactionUsableFuelSummary> summaries =
+                em.AddBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundary);
+            BuildingRuntimeFactionUsableFuelSummary summary = new()
+            {
+                FactionId = FactionIdentity.PlayerFactionId,
+                StoredOilBarrels = 2f,
+                StoredFuelBarrels = 15f,
+                OilStorageCapacity = 200,
+                FuelStorageCapacity = 100,
+                Version = 7u
+            };
+            summaries.Add(summary);
+
+            UiMatchHudResourceValuesModel last = default;
+            for (int i = 0; i < 32; i++)
+            {
+                summary.Version++;
+                summaries[0] = summary;
+                Assert.IsTrue(UiShellRuntimeGateway.TryReadMatchHudResourceValues(out last));
+            }
+
+            long before = System.GC.GetAllocatedBytesForCurrentThread();
+            bool allReadsSucceeded = true;
+            for (int i = 0; i < 128; i++)
+            {
+                summary.Version++;
+                summaries[0] = summary;
+                allReadsSucceeded &= UiShellRuntimeGateway.TryReadMatchHudResourceValues(out last);
+            }
+
+            long allocated = System.GC.GetAllocatedBytesForCurrentThread() - before;
+            Assert.IsTrue(allReadsSucceeded);
+            Assert.AreEqual(0L, allocated);
+            Assert.IsTrue(last.IsValid);
+            Assert.IsFalse(last.RequiresTextFallback);
+            Assert.AreEqual(2, last.Oil);
+            Assert.AreEqual(15, last.Fuel);
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+        }
+    }
+
     [Test]
     public void MatchHudHeader_UsesLivePlayerResourceStorage()
     {
@@ -139,16 +268,19 @@ public sealed class UiShellEcsGatewayResourceHeaderTests
     }
 
     [Test]
-    public void MatchHudHeader_ReusesVersionedUsableFuelSummaryStringsUntilVersionChanges()
+    public void MatchHudHeader_VersionOnlyMutationPreservesNonemptyProjectedStringsAndReferences()
     {
         World previousWorld = World.DefaultGameObjectInjectionWorld;
-        using World world = new(nameof(MatchHudHeader_ReusesVersionedUsableFuelSummaryStringsUntilVersionChanges));
+        using World world = new(nameof(MatchHudHeader_VersionOnlyMutationPreservesNonemptyProjectedStringsAndReferences));
         try
         {
             World.DefaultGameObjectInjectionWorld = world;
             UiShellEcsGateway.RegisterAsRuntimeGateway();
             EntityManager em = world.EntityManager;
-            Entity boundary = em.CreateEntity(typeof(UiShellRootComponent));
+            Entity boundary = em.CreateEntity(
+                typeof(UiShellRootComponent),
+                typeof(UiMatchHudHeaderComponent));
+            em.SetComponentData(boundary, CreatePopulatedHeader(resourceVersion: 5u));
             DynamicBuffer<BuildingRuntimeFactionUsableFuelSummary> summaries =
                 em.AddBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundary);
             summaries.Add(new BuildingRuntimeFactionUsableFuelSummary
@@ -162,21 +294,38 @@ public sealed class UiShellEcsGatewayResourceHeaderTests
             });
 
             Assert.IsTrue(UiShellEcsGateway.TryReadMatchHudHeader(out UiMatchHudHeaderModel first));
-            Assert.IsTrue(UiShellEcsGateway.TryReadMatchHudHeader(out UiMatchHudHeaderModel steady));
-            Assert.AreSame(first.OilText, steady.OilText);
-            Assert.AreSame(first.FuelText, steady.FuelText);
+            Assert.AreEqual("ATTACK ORDER", first.OrderText);
+            Assert.AreEqual("ALPHA SQUAD", first.SquadText);
+            Assert.AreEqual("12,450", first.CreditsText);
+            Assert.AreEqual("2", first.OilText);
+            Assert.AreEqual("15", first.FuelText);
+            Assert.AreEqual("78/100", first.SupplyText);
+            Assert.AreEqual("LOW", first.CivilianRiskText);
 
             summaries = em.GetBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundary);
             BuildingRuntimeFactionUsableFuelSummary updated = summaries[0];
-            updated.StoredOilBarrels = 3f;
-            updated.StoredFuelBarrels = 16f;
             updated.Version = 8u;
+            summaries[0] = updated;
+            UiMatchHudHeaderComponent component = em.GetComponentData<UiMatchHudHeaderComponent>(boundary);
+            component.ResourceVersion = 6u;
+            em.SetComponentData(boundary, component);
+
+            Assert.IsTrue(UiShellEcsGateway.TryReadMatchHudHeader(out UiMatchHudHeaderModel versionOnly));
+            AssertHeaderStringReferencesSame(first, versionOnly);
+
+            updated.StoredFuelBarrels = 16f;
+            updated.Version = 9u;
             summaries[0] = updated;
 
             Assert.IsTrue(UiShellEcsGateway.TryReadMatchHudHeader(out UiMatchHudHeaderModel changed));
-            Assert.AreEqual("3", changed.OilText);
+            Assert.AreEqual("2", changed.OilText);
             Assert.AreEqual("16", changed.FuelText);
-            Assert.AreNotSame(first.OilText, changed.OilText);
+            Assert.AreSame(first.OrderText, changed.OrderText);
+            Assert.AreSame(first.SquadText, changed.SquadText);
+            Assert.AreSame(first.CreditsText, changed.CreditsText);
+            Assert.AreSame(first.OilText, changed.OilText);
+            Assert.AreSame(first.SupplyText, changed.SupplyText);
+            Assert.AreSame(first.CivilianRiskText, changed.CivilianRiskText);
             Assert.AreNotSame(first.FuelText, changed.FuelText);
         }
         finally
@@ -187,16 +336,20 @@ public sealed class UiShellEcsGatewayResourceHeaderTests
     }
 
     [Test]
-    public void MatchHudHeader_CachedVersionedUsableFuelSummaryReadDoesNotAllocate()
+    public void MatchHudHeader_WarmedVersionOnlyMutationDoesNotAllocate()
     {
         World previousWorld = World.DefaultGameObjectInjectionWorld;
-        using World world = new(nameof(MatchHudHeader_CachedVersionedUsableFuelSummaryReadDoesNotAllocate));
+        using World world = new(nameof(MatchHudHeader_WarmedVersionOnlyMutationDoesNotAllocate));
         try
         {
             World.DefaultGameObjectInjectionWorld = world;
             UiShellEcsGateway.RegisterAsRuntimeGateway();
             EntityManager em = world.EntityManager;
-            Entity boundary = em.CreateEntity(typeof(UiShellRootComponent));
+            Entity boundary = em.CreateEntity(
+                typeof(UiShellRootComponent),
+                typeof(UiMatchHudHeaderComponent));
+            UiMatchHudHeaderComponent component = CreatePopulatedHeader(resourceVersion: 5u);
+            em.SetComponentData(boundary, component);
             DynamicBuffer<BuildingRuntimeFactionUsableFuelSummary> summaries =
                 em.AddBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundary);
             summaries.Add(new BuildingRuntimeFactionUsableFuelSummary
@@ -209,14 +362,33 @@ public sealed class UiShellEcsGatewayResourceHeaderTests
                 Version = 7u
             });
 
-            Assert.IsTrue(UiShellEcsGateway.TryReadMatchHudHeader(out _));
+            Assert.IsTrue(UiShellEcsGateway.TryReadMatchHudHeader(out UiMatchHudHeaderModel first));
+            BuildingRuntimeFactionUsableFuelSummary summary = summaries[0];
+            UiMatchHudHeaderModel last = first;
+            for (int i = 0; i < 32; i++)
+            {
+                summary.Version++;
+                summaries[0] = summary;
+                component.ResourceVersion++;
+                em.SetComponentData(boundary, component);
+                Assert.IsTrue(UiShellEcsGateway.TryReadMatchHudHeader(out last));
+            }
 
             long before = System.GC.GetAllocatedBytesForCurrentThread();
+            bool allReadsSucceeded = true;
             for (int i = 0; i < 128; i++)
-                Assert.IsTrue(UiShellEcsGateway.TryReadMatchHudHeader(out _));
+            {
+                summary.Version++;
+                summaries[0] = summary;
+                component.ResourceVersion++;
+                em.SetComponentData(boundary, component);
+                allReadsSucceeded &= UiShellEcsGateway.TryReadMatchHudHeader(out last);
+            }
 
             long allocated = System.GC.GetAllocatedBytesForCurrentThread() - before;
+            Assert.IsTrue(allReadsSucceeded);
             Assert.AreEqual(0L, allocated);
+            AssertHeaderStringReferencesSame(first, last);
         }
         finally
         {
@@ -326,5 +498,32 @@ public sealed class UiShellEcsGatewayResourceHeaderTests
             World.DefaultGameObjectInjectionWorld = previousWorld;
             UiShellEcsGateway.RegisterAsRuntimeGateway();
         }
+    }
+
+    private static UiMatchHudHeaderComponent CreatePopulatedHeader(uint resourceVersion)
+    {
+        return new UiMatchHudHeaderComponent
+        {
+            ResourceVersion = resourceVersion,
+            OrderText = new FixedString32Bytes("ATTACK ORDER"),
+            SquadText = new FixedString32Bytes("ALPHA SQUAD"),
+            CreditsText = new FixedString32Bytes("12,450"),
+            FuelText = new FixedString32Bytes("FALLBACK FUEL"),
+            SupplyText = new FixedString32Bytes("78/100"),
+            CivilianRiskText = new FixedString32Bytes("LOW")
+        };
+    }
+
+    private static void AssertHeaderStringReferencesSame(
+        in UiMatchHudHeaderModel expected,
+        in UiMatchHudHeaderModel actual)
+    {
+        Assert.AreSame(expected.OrderText, actual.OrderText);
+        Assert.AreSame(expected.SquadText, actual.SquadText);
+        Assert.AreSame(expected.CreditsText, actual.CreditsText);
+        Assert.AreSame(expected.OilText, actual.OilText);
+        Assert.AreSame(expected.FuelText, actual.FuelText);
+        Assert.AreSame(expected.SupplyText, actual.SupplyText);
+        Assert.AreSame(expected.CivilianRiskText, actual.CivilianRiskText);
     }
 }

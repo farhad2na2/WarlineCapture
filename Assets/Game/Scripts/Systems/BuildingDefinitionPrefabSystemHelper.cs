@@ -629,10 +629,7 @@ namespace Game.Runtime
 
         public static string NormalizeSpawnableKey(string value)
         {
-            if (string.IsNullOrWhiteSpace(value))
-                return string.Empty;
-
-            return value.Trim().ToLowerInvariant();
+            return SpawnableKeyText.Normalize(value);
         }
 
         public static bool RuntimeBuildingMatchesId(RuntimeBuildingEntity building, string normalizedBuildingId)

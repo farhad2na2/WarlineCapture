@@ -52,6 +52,7 @@ namespace Game.Runtime
         private EntityQuery _requestQueueQuery;
         private EntityQuery _modeQuery;
         private EntityQuery _uiReadModelQuery;
+        private readonly TacticalFollowCameraStateQueryCache _stateQueryCache = new();
 
         public delegate bool TryResolveSelectedBuildingTargetDelegate(out Vector3 worldPosition, out float boundsRadius);
 
@@ -600,32 +601,22 @@ namespace Game.Runtime
             return em.GetBuffer<TacticalFollowCameraBaseTargetElement>(modeEntity);
         }
 
-        private static bool HasFollowableBaseTarget(EntityManager em, Context context)
+        private bool HasFollowableBaseTarget(EntityManager em, Context context)
         {
             if (HasFollowableFocusedTarget(em))
                 return true;
 
-            using EntityQuery selectedQuery = em.CreateEntityQuery(
-                ComponentType.ReadOnly<SelectedUnitTag>(),
-                ComponentType.ReadOnly<LocalTransform>(),
-                ComponentType.Exclude<Disabled>(),
-                ComponentType.Exclude<UnitTransportPassenger>(),
-                ComponentType.Exclude<UnitTransportCargoPassenger>());
-            if (!selectedQuery.IsEmptyIgnoreFilter)
+            if (_stateQueryCache.HasFollowableSelectedUnit(em))
                 return true;
 
             return context.TryResolveSelectedBuildingTarget != null &&
                    context.TryResolveSelectedBuildingTarget(out _, out _);
         }
 
-        private static bool HasFollowableFocusedTarget(EntityManager em)
+        private bool HasFollowableFocusedTarget(EntityManager em)
         {
-            using EntityQuery focusedQuery = em.CreateEntityQuery(ComponentType.ReadOnly<FocusedUnitUiReadModelComponent>());
-            if (focusedQuery.IsEmptyIgnoreFilter)
+            if (!_stateQueryCache.TryReadFocusedUnit(em, out FocusedUnitUiReadModelComponent model))
                 return false;
-
-            FocusedUnitUiReadModelComponent model =
-                em.GetComponentData<FocusedUnitUiReadModelComponent>(focusedQuery.GetSingletonEntity());
             return model.HasFocusedUnit != 0 &&
                    model.OwnedByPlayer != 0 &&
                    model.FocusedUnit != Entity.Null &&

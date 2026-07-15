@@ -13,7 +13,7 @@ using Game.Runtime;
 
 namespace Game.UI.Shell.Ecs
 {
-    public sealed partial class UiShellEcsGateway
+    public sealed partial class UiShellEcsGateway : IUiMatchHudResourceValuesGateway
     {
         bool IUiShellRuntimeGateway.TryEnqueueRouteRequest(UiShellRouteIntent intent, UIRoute route, bool pushHistory)
         {
@@ -95,6 +95,12 @@ namespace Game.UI.Shell.Ecs
         bool IUiShellRuntimeGateway.TryReadMatchHudHeader(out UiMatchHudHeaderModel header)
         {
             return TryReadMatchHudHeader(out header);
+        }
+
+        bool IUiMatchHudResourceValuesGateway.TryReadMatchHudResourceValues(
+            out UiMatchHudResourceValuesModel values)
+        {
+            return TryReadMatchHudResourceValues(out values);
         }
 
         bool IUiShellRuntimeGateway.TryReadMatchHudStatusSurfaces(out UiMatchHudStatusSurfacesModel statusSurfaces)

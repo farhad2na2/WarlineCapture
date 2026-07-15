@@ -27,6 +27,8 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
             passed++;
             RunCase(test => test.SelectedUnitWithoutPendingRequestPublishesEnabledReadModel());
             passed++;
+            RunCase(test => test.SelectedUnitReadModelPublicationReusesFollowabilityQueriesWithoutManagedAllocation());
+            passed++;
             RunCase(test => test.SelectedUnitReadModelDoesNotReadLocalTransformWhileSelectionMarkerJobWrites());
             passed++;
             RunCase(test => test.ToggleWithSelectedUnitEntersFollowModeAndLocksPanData());
@@ -183,6 +185,26 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
         Assert.AreEqual(1, readModel.Enabled);
         Assert.AreEqual(0, readModel.Selected);
         Assert.AreEqual((int)TacticalCommandReasonCode.None, readModel.ReasonCode);
+    }
+
+    [Test]
+    public void SelectedUnitReadModelPublicationReusesFollowabilityQueriesWithoutManagedAllocation()
+    {
+        CreateSelectedUnit(new float3(4f, 0f, 6f), quaternion.identity);
+        Assert.IsFalse(_system.ProcessPendingRequests(_em));
+
+        for (int i = 0; i < 8; i++)
+            _system.ProcessPendingRequests(_em);
+
+        long allocationStart = GC.GetAllocatedBytesForCurrentThread();
+        for (int i = 0; i < 300; i++)
+            _system.ProcessPendingRequests(_em);
+        long allocatedBytes = GC.GetAllocatedBytesForCurrentThread() - allocationStart;
+
+        Assert.AreEqual(
+            0L,
+            allocatedBytes,
+            "Warm tactical-follow UI publication must reuse world-bound followability queries.");
     }
 
     [Test]

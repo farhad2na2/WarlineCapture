@@ -59,7 +59,7 @@ namespace Game.Runtime
         internal readonly BuildingRuntimeSpawnCommandSystemHelper BuildingRuntimeSpawnCommandSystemHelper = new();
         internal readonly BuildingRuntimeContextFactoryCompositionSystemHelper BuildingRuntimeContextFactoryCompositionSystemHelper = new();
         internal readonly BuildingRuntimeContextCompositionSystemHelper BuildingRuntimeContextCompositionSystemHelper = new();
-        internal readonly BuildingRuntimeQueryCompositionSystemHelper BuildingRuntimeQueryCompositionSystemHelper = new();
+        internal readonly BuildingRuntimeQueryCompositionSystemHelper BuildingRuntimeQueryCompositionSystemHelper;
         internal readonly BuildingRuntimeSideEffectCompositionSystemHelper BuildingRuntimeSideEffectCompositionSystemHelper = new();
         internal readonly BuildingRuntimeCitySpawnBridgeCompositionSystemHelper BuildingRuntimeCitySpawnBridgeCompositionSystemHelper = new();
         internal readonly BuildingRuntimeOwnershipCompositionSystemHelper BuildingRuntimeOwnershipCompositionSystemHelper = new();
@@ -101,6 +101,9 @@ namespace Game.Runtime
             BuildingPlacementVisualUpdateCompositionSystemHelper = ResolveBuildingPlacementVisualUpdateCompositionSystemHelper();
             BuildingPlacementVisualCompositionPresentationSystemHelper = ResolveBuildingPlacementVisualCompositionPresentationSystemHelper();
             BuildingPlacementVisualPresentationSystemHelper = ResolveBuildingPlacementVisualPresentationSystemHelper();
+            BuildingRuntimeQueryCompositionSystemHelper =
+                new BuildingRuntimeQueryCompositionSystemHelper(
+                    BuildingPlacementGridCameraSystemHelper.GetPlacementFootprint);
             BuildingRuntimeResourcePrefabContextCompositionSystemHelper = ResolveBuildingRuntimeResourcePrefabContextCompositionSystemHelper();
             BuildingRuntimeResourcePrefabCompositionHelper = ResolveBuildingRuntimeResourcePrefabCompositionHelper();
         }

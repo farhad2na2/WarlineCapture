@@ -7,6 +7,8 @@ namespace Game.Runtime
 {
     public sealed class FactionResourceCompositionSystemHelper
     {
+        private readonly BuildingResourceStorageQueryCache _storageQueryCache = new();
+
         public readonly struct ResourceEconomySnapshot
         {
             public readonly float StoredOilBarrels;
@@ -449,8 +451,7 @@ namespace Game.Runtime
             deltaTime = Mathf.Max(0f, deltaTime);
             oilBarrelsPerFuelBarrel = Mathf.Max(0.001f, oilBarrelsPerFuelBarrel);
 
-            using EntityQuery storageQuery = entityManager.CreateEntityQuery(
-                ComponentType.ReadWrite<BuildingResourceStorageComponent>());
+            EntityQuery storageQuery = _storageQueryCache.Get(entityManager);
             if (!storageQuery.IsEmptyIgnoreFilter)
             {
                 BuildingResourceProductionEcsSystem.TickResult queryResult =

@@ -191,7 +191,7 @@ namespace Game.UI.Runtime
         private void SetFpsText(MenuDiagnosticsView view, int fps)
         {
             if (view.FpsText != null)
-                view.FpsText.text = Mathf.Max(0, fps).ToString();
+                view.FpsText.text = DiagnosticsFpsText.Get(fps);
         }
 
         private void RefreshRuntimeLogLabel(MenuDiagnosticsView view, bool scrollToBottom)

@@ -8,6 +8,8 @@ namespace Game.Runtime
 {
     internal sealed class BuildingRuntimeQueryCompositionSystemHelper
     {
+        private readonly BuildingRunwaySystem.GetPlacementFootprintDelegate _getPlacementFootprint;
+
         internal delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
 
         internal delegate bool TryGetGridDataDelegate(
@@ -23,6 +25,12 @@ namespace Game.Runtime
             Vector2Int originCell,
             GridConfig grid,
             bool rotateVertical);
+
+        public BuildingRuntimeQueryCompositionSystemHelper(
+            BuildingRunwaySystem.GetPlacementFootprintDelegate getPlacementFootprint)
+        {
+            _getPlacementFootprint = getPlacementFootprint;
+        }
 
         public bool IsHouseBuilding(BuildingGameplaySourceCompositionSystemHelper source, RuntimeBuildingEntity building)
         {
@@ -102,7 +110,7 @@ namespace Game.Runtime
                 grid,
                 rotateVertical,
                 source.BuildingPlacementStartupSystemHelper.BuildPlaneY,
-                source.BuildingPlacementGridCameraSystemHelper.GetPlacementFootprint);
+                _getPlacementFootprint);
         }
 
         public bool OverlapsAnyRuntimeBuilding(

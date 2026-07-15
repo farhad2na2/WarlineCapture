@@ -168,8 +168,9 @@ namespace Game.UI.Shell.Ecs
             EnsureMatchHudHeaderState(entityManager, boundary);
             UiMatchHudHeaderComponent component = entityManager.GetComponentData<UiMatchHudHeaderComponent>(boundary);
             string oilText = "0";
-            string fuelText = component.FuelText.ToString();
+            string fuelText = null;
             bool showOil = false;
+            bool oilVisibilityResolved = false;
             bool cacheHeader = false;
             byte resourceSource = 0;
             uint resourceVersion = 0u;
@@ -185,6 +186,11 @@ namespace Game.UI.Shell.Ecs
                     out bool usableOilVisible,
                     out uint usableFuelVersion))
             {
+                showOil = usableOilVisible;
+                if (!showOil)
+                    showOil = TryHasPlayerOilResourceSummary(entityManager, boundary);
+
+                oilVisibilityResolved = true;
                 if (TryReadCachedMatchHudHeader(
                         entityManager.World,
                         boundary,
@@ -193,7 +199,7 @@ namespace Game.UI.Shell.Ecs
                         usableFuelVersion,
                         usableOil,
                         usableFuel,
-                        usableOilVisible,
+                        showOil,
                         out header))
                 {
                     return true;
@@ -204,9 +210,6 @@ namespace Game.UI.Shell.Ecs
                 resourceVersion = usableFuelVersion;
                 resourceOil = usableOil;
                 resourceFuel = usableFuel;
-                oilText = FormatCompact(usableOil);
-                fuelText = FormatCompact(usableFuel);
-                showOil = usableOilVisible;
             }
             else if (TryFormatLivePlayerResourceStorage(
                          entityManager,
@@ -234,20 +237,52 @@ namespace Game.UI.Shell.Ecs
                 showOil = resourceOilVisible;
             }
 
-            if (!showOil)
+            if (!oilVisibilityResolved && !showOil)
                 showOil = TryHasPlayerOilResourceSummary(entityManager, boundary);
 
-            header = new UiMatchHudHeaderModel(
-                component.OrderText.ToString(),
-                component.SquadText.ToString(),
-                component.CreditsText.ToString(),
-                fuelText,
-                component.SupplyText.ToString(),
-                component.CivilianRiskText.ToString(),
-                oilText,
-                showOil);
             if (cacheHeader)
             {
+                bool canReuseCachedProjection = CanReuseCachedMatchHudHeaderProjection(
+                    entityManager.World,
+                    boundary,
+                    resourceSource);
+                header = new UiMatchHudHeaderModel(
+                    ResolveMatchHudHeaderText(
+                        component.OrderText,
+                        cachedMatchHudHeaderComponent.OrderText,
+                        cachedMatchHudHeader.OrderText,
+                        canReuseCachedProjection),
+                    ResolveMatchHudHeaderText(
+                        component.SquadText,
+                        cachedMatchHudHeaderComponent.SquadText,
+                        cachedMatchHudHeader.SquadText,
+                        canReuseCachedProjection),
+                    ResolveMatchHudHeaderText(
+                        component.CreditsText,
+                        cachedMatchHudHeaderComponent.CreditsText,
+                        cachedMatchHudHeader.CreditsText,
+                        canReuseCachedProjection),
+                    ResolveCompactResourceText(
+                        resourceFuel,
+                        cachedMatchHudHeaderFuel,
+                        cachedMatchHudHeader.FuelText,
+                        canReuseCachedProjection),
+                    ResolveMatchHudHeaderText(
+                        component.SupplyText,
+                        cachedMatchHudHeaderComponent.SupplyText,
+                        cachedMatchHudHeader.SupplyText,
+                        canReuseCachedProjection),
+                    ResolveMatchHudHeaderText(
+                        component.CivilianRiskText,
+                        cachedMatchHudHeaderComponent.CivilianRiskText,
+                        cachedMatchHudHeader.CivilianRiskText,
+                        canReuseCachedProjection),
+                    ResolveCompactResourceText(
+                        resourceOil,
+                        cachedMatchHudHeaderOil,
+                        cachedMatchHudHeader.OilText,
+                        canReuseCachedProjection),
+                    showOil);
                 CacheMatchHudHeader(
                     entityManager.World,
                     boundary,
@@ -258,6 +293,21 @@ namespace Game.UI.Shell.Ecs
                     resourceFuel,
                     showOil,
                     header);
+            }
+            else
+            {
+                if (fuelText == null)
+                    fuelText = component.FuelText.ToString();
+
+                header = new UiMatchHudHeaderModel(
+                    component.OrderText.ToString(),
+                    component.SquadText.ToString(),
+                    component.CreditsText.ToString(),
+                    fuelText,
+                    component.SupplyText.ToString(),
+                    component.CivilianRiskText.ToString(),
+                    oilText,
+                    showOil);
             }
 
             return true;
@@ -278,12 +328,13 @@ namespace Game.UI.Shell.Ecs
                 cachedMatchHudHeaderWorld == world &&
                 cachedMatchHudHeaderBoundary == boundary &&
                 cachedMatchHudHeaderResourceSource == resourceSource &&
-                cachedMatchHudHeaderResourceVersion == resourceVersion &&
                 cachedMatchHudHeaderOil == oil &&
                 cachedMatchHudHeaderFuel == fuel &&
                 cachedMatchHudHeaderShowOil == showOil &&
-                MatchHudHeaderComponentEquals(cachedMatchHudHeaderComponent, component))
+                MatchHudHeaderComponentProjectionEquals(cachedMatchHudHeaderComponent, component))
             {
+                cachedMatchHudHeaderResourceVersion = resourceVersion;
+                cachedMatchHudHeaderComponent = component;
                 header = cachedMatchHudHeader;
                 return true;
             }
@@ -315,174 +366,53 @@ namespace Game.UI.Shell.Ecs
             cachedMatchHudHeader = header;
         }
 
-        private static bool MatchHudHeaderComponentEquals(
+        private static bool CanReuseCachedMatchHudHeaderProjection(
+            World world,
+            Entity boundary,
+            byte resourceSource)
+        {
+            return hasCachedMatchHudHeader &&
+                   cachedMatchHudHeaderWorld == world &&
+                   cachedMatchHudHeaderBoundary == boundary &&
+                   cachedMatchHudHeaderResourceSource == resourceSource;
+        }
+
+        private static string ResolveMatchHudHeaderText(
+            FixedString32Bytes value,
+            FixedString32Bytes cachedValue,
+            string cachedText,
+            bool canReuseCachedProjection)
+        {
+            return canReuseCachedProjection &&
+                   cachedText != null &&
+                   value.Equals(cachedValue)
+                ? cachedText
+                : value.ToString();
+        }
+
+        private static string ResolveCompactResourceText(
+            int value,
+            int cachedValue,
+            string cachedText,
+            bool canReuseCachedProjection)
+        {
+            return canReuseCachedProjection &&
+                   cachedText != null &&
+                   value == cachedValue
+                ? cachedText
+                : FormatCompact(value);
+        }
+
+        private static bool MatchHudHeaderComponentProjectionEquals(
             in UiMatchHudHeaderComponent left,
             in UiMatchHudHeaderComponent right)
         {
-            return left.ResourceVersion == right.ResourceVersion &&
-                   left.OrderText.Equals(right.OrderText) &&
+            return left.OrderText.Equals(right.OrderText) &&
                    left.SquadText.Equals(right.SquadText) &&
                    left.CreditsText.Equals(right.CreditsText) &&
-                   left.FuelText.Equals(right.FuelText) &&
                    left.SupplyText.Equals(right.SupplyText) &&
                    left.CivilianRiskText.Equals(right.CivilianRiskText);
         }
-
-        private static bool TryReadPlayerUsableFuelSummary(
-            EntityManager entityManager,
-            Entity boundary,
-            out int oil,
-            out int fuel,
-            out bool showOil,
-            out uint version)
-        {
-            oil = 0;
-            fuel = 0;
-            showOil = false;
-            version = 0u;
-            if (!entityManager.HasBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundary))
-                return false;
-
-            DynamicBuffer<BuildingRuntimeFactionUsableFuelSummary> summaries =
-                entityManager.GetBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundary, true);
-            for (int i = 0; i < summaries.Length; i++)
-            {
-                BuildingRuntimeFactionUsableFuelSummary summary = summaries[i];
-                if (!FactionIdentity.IsPlayerControlled(summary.FactionId))
-                    continue;
-
-                oil = Mathf.Max(0, Mathf.RoundToInt(summary.StoredOilBarrels));
-                fuel = Mathf.Max(0, Mathf.RoundToInt(summary.StoredFuelBarrels));
-                showOil = summary.OilStorageCapacity > 0 || summary.StoredOilBarrels > 0.001f;
-                version = summary.Version;
-                return true;
-            }
-
-            return false;
-        }
-
-        private static bool TryFormatLivePlayerResourceStorage(
-            EntityManager entityManager,
-            out string oilText,
-            out string fuelText,
-            out bool showOil)
-        {
-            oilText = string.Empty;
-            fuelText = string.Empty;
-            showOil = false;
-            EnsureResourceStorageQuery(entityManager);
-            if (resourceStorageQuery.IsEmptyIgnoreFilter)
-                return false;
-
-            float oil = 0f;
-            float fuel = 0f;
-            bool foundPlayerStorage = false;
-            using NativeArray<BuildingResourceStorageComponent> storages =
-                resourceStorageQuery.ToComponentDataArray<BuildingResourceStorageComponent>(Allocator.Temp);
-            using NativeArray<Faction> factions =
-                resourceStorageQuery.ToComponentDataArray<Faction>(Allocator.Temp);
-            int count = math.min(storages.Length, factions.Length);
-            for (int i = 0; i < count; i++)
-            {
-                if (!FactionIdentity.IsPlayerControlled(factions[i].Id))
-                    continue;
-
-                BuildingResourceStorageComponent storage = storages[i];
-                if (!IsUsableHeaderResourceStorage(storage))
-                    continue;
-
-                foundPlayerStorage = true;
-                oil += Mathf.Max(0f, storage.StoredOilBarrels);
-                fuel += Mathf.Max(0f, storage.StoredFuelBarrels);
-                showOil |= storage.OilStorageCapacity > 0 || storage.StoredOilBarrels > 0.001f;
-            }
-
-            if (!foundPlayerStorage)
-                return false;
-
-            oilText = FormatCompact(Mathf.Max(0, Mathf.RoundToInt(oil)));
-            fuelText = FormatCompact(Mathf.Max(0, Mathf.RoundToInt(fuel)));
-            return true;
-        }
-
-        private static bool IsUsableHeaderResourceStorage(in BuildingResourceStorageComponent storage)
-        {
-            bool hasStorage = storage.OilStorageCapacity > 0 || storage.FuelStorageCapacity > 0;
-            bool producesResource = storage.OilBarrelsPerDay > 0f || storage.FuelBarrelsPerDay > 0f;
-            return hasStorage && !producesResource;
-        }
-
-        private static bool TryFormatPlayerResourceSummary(
-            EntityManager entityManager,
-            Entity boundary,
-            out string oilText,
-            out string fuelText,
-            out bool showOil)
-        {
-            oilText = string.Empty;
-            fuelText = string.Empty;
-            showOil = false;
-            if (!entityManager.HasBuffer<BuildingRuntimeFactionSummary>(boundary))
-                return false;
-
-            DynamicBuffer<BuildingRuntimeFactionSummary> summaries =
-                entityManager.GetBuffer<BuildingRuntimeFactionSummary>(boundary, true);
-            for (int i = 0; i < summaries.Length; i++)
-            {
-                BuildingRuntimeFactionSummary summary = summaries[i];
-                if (!FactionIdentity.IsPlayerControlled(summary.FactionId))
-                    continue;
-
-                int oil = Mathf.Max(0, Mathf.RoundToInt(summary.StoredOilBarrels));
-                int fuel = Mathf.Max(0, Mathf.RoundToInt(summary.StoredFuelBarrels));
-                oilText = FormatCompact(oil);
-                fuelText = FormatCompact(fuel);
-                showOil = oil > 0 || summary.OilBarrelsPerDay > 0f;
-                return true;
-            }
-
-            return false;
-        }
-
-        private static bool TryHasPlayerOilResourceSummary(EntityManager entityManager, Entity boundary)
-        {
-            if (!entityManager.HasBuffer<BuildingRuntimeFactionSummary>(boundary))
-                return false;
-
-            DynamicBuffer<BuildingRuntimeFactionSummary> summaries =
-                entityManager.GetBuffer<BuildingRuntimeFactionSummary>(boundary, true);
-            for (int i = 0; i < summaries.Length; i++)
-            {
-                BuildingRuntimeFactionSummary summary = summaries[i];
-                if (!FactionIdentity.IsPlayerControlled(summary.FactionId))
-                    continue;
-
-                return summary.StoredOilBarrels > 0.001f || summary.OilBarrelsPerDay > 0f;
-            }
-
-            return false;
-        }
-
-        private static void EnsureResourceStorageQuery(EntityManager entityManager)
-        {
-            if (hasResourceStorageQuery && cachedWorld == entityManager.World)
-                return;
-
-            resourceStorageQuery = entityManager.CreateEntityQuery(
-                ComponentType.ReadOnly<BuildingResourceStorageComponent>(),
-                ComponentType.ReadOnly<Faction>());
-            hasResourceStorageQuery = true;
-        }
-
-        private static string FormatCompact(int value)
-        {
-            if (value >= 1000000)
-                return $"{value / 1000000f:0.#}M";
-            if (value >= 10000)
-                return $"{value / 1000f:0.#}K";
-            return value.ToString();
-        }
-
 
         }
     }

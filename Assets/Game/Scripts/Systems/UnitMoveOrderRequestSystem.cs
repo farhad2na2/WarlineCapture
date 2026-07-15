@@ -112,10 +112,9 @@ namespace Game.Runtime
 
         public static bool EnqueueAndProcessTargetPathMoveOrder(EntityManager em, Entity entity, int2 goal)
         {
-            int requestId = EnqueueTargetPathMoveOrder(em, entity, goal);
-            ProcessPendingRequests(em);
-            return TryGetResult(em, requestId, out UnitMoveOrderResultElement result) &&
-                   result.Issued != 0;
+            using EntityQuery queueQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<UnitMoveOrderQueueComponent>());
+            return UnitMoveOrderQueueRequest.EnqueueAndProcessTargetPathMoveOrder(em, entity, goal, queueQuery);
         }
 
         public static int EnqueueClearMovementOrder(EntityManager em, Entity entity)
@@ -153,8 +152,18 @@ namespace Game.Runtime
 
         public static bool TryGetResult(EntityManager em, int requestId, out UnitMoveOrderResultElement result)
         {
+            using EntityQuery query = em.CreateEntityQuery(
+                ComponentType.ReadOnly<UnitMoveOrderQueueComponent>());
+            return TryGetResult(em, requestId, query, out result);
+        }
+
+        internal static bool TryGetResult(
+            EntityManager em, int requestId,
+            EntityQuery query,
+            out UnitMoveOrderResultElement result)
+        {
             result = default;
-            Entity queueEntity = EnsureCommandEntity(em);
+            Entity queueEntity = EnsureCommandEntity(em, query);
             DynamicBuffer<UnitMoveOrderResultElement> results = em.GetBuffer<UnitMoveOrderResultElement>(queueEntity);
             for (int i = 0; i < results.Length; i++)
             {
@@ -183,7 +192,32 @@ namespace Game.Runtime
             int resumeFrame,
             int currentFrame)
         {
-            Entity queueEntity = EnsureCommandEntity(em);
+            using EntityQuery query = em.CreateEntityQuery(
+                ComponentType.ReadOnly<UnitMoveOrderQueueComponent>());
+            return EnqueueMoveOrder(
+                em,
+                entity,
+                goal,
+                kind,
+                issueGroundPathNow,
+                useGroundPathRetryCooldown,
+                resumeFrame,
+                currentFrame,
+                query);
+        }
+
+        internal static int EnqueueMoveOrder(
+            EntityManager em,
+            Entity entity,
+            int2 goal,
+            UnitMoveOrderRequestKind kind,
+            bool issueGroundPathNow,
+            bool useGroundPathRetryCooldown,
+            int resumeFrame,
+            int currentFrame,
+            EntityQuery query)
+        {
+            Entity queueEntity = EnsureCommandEntity(em, query);
             UnitMoveOrderQueueComponent queue = em.GetComponentData<UnitMoveOrderQueueComponent>(queueEntity);
             queue.LastRequestId++;
             em.SetComponentData(queueEntity, queue);
@@ -201,7 +235,7 @@ namespace Game.Runtime
             return queue.LastRequestId;
         }
 
-        private static void ProcessPendingRequests(EntityManager em, EntityQuery queueQuery)
+        internal static void ProcessPendingRequests(EntityManager em, EntityQuery queueQuery)
         {
             Entity queueEntity = EnsureCommandEntity(em, queueQuery);
             DynamicBuffer<UnitMoveOrderRequestElement> requests = em.GetBuffer<UnitMoveOrderRequestElement>(queueEntity);

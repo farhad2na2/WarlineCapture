@@ -1,4 +1,5 @@
 using Unity.Entities;
+using Unity.Transforms;
 using Game.Components;
 
 namespace Game.Runtime
@@ -8,6 +9,8 @@ namespace Game.Runtime
         private World _world;
         private EntityQuery _modeQuery;
         private EntityQuery _poseQuery;
+        private EntityQuery _followableSelectedUnitQuery;
+        private EntityQuery _focusedUnitReadModelQuery;
 
         public bool IsPanInputLocked(EntityManager entityManager)
         {
@@ -31,6 +34,28 @@ namespace Game.Runtime
             return pose.Valid != 0;
         }
 
+        public bool HasFollowableSelectedUnit(EntityManager entityManager)
+        {
+            EnsureQueries(entityManager);
+            return !_followableSelectedUnitQuery.IsEmptyIgnoreFilter;
+        }
+
+        public bool TryReadFocusedUnit(
+            EntityManager entityManager,
+            out FocusedUnitUiReadModelComponent model)
+        {
+            EnsureQueries(entityManager);
+            if (_focusedUnitReadModelQuery.IsEmptyIgnoreFilter)
+            {
+                model = default;
+                return false;
+            }
+
+            model = entityManager.GetComponentData<FocusedUnitUiReadModelComponent>(
+                _focusedUnitReadModelQuery.GetSingletonEntity());
+            return true;
+        }
+
         private void EnsureQueries(EntityManager entityManager)
         {
             World world = entityManager.World;
@@ -42,6 +67,14 @@ namespace Game.Runtime
                 ComponentType.ReadOnly<TacticalFollowCameraModeComponent>());
             _poseQuery = entityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<TacticalFollowCameraPoseComponent>());
+            _followableSelectedUnitQuery = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<SelectedUnitTag>(),
+                ComponentType.ReadOnly<LocalTransform>(),
+                ComponentType.Exclude<Disabled>(),
+                ComponentType.Exclude<UnitTransportPassenger>(),
+                ComponentType.Exclude<UnitTransportCargoPassenger>());
+            _focusedUnitReadModelQuery = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<FocusedUnitUiReadModelComponent>());
         }
     }
 }

@@ -93,6 +93,10 @@ namespace Game.Editor
         private static double _baselineMetricsStartedAt;
         private static long _baselineMetricsAllocatedBytesAtStart;
         private static int _baselineMetricsLastFrame = -1;
+        private static bool _performanceFixtureSeeded;
+        private static bool _performanceFixtureReady;
+        private static int _performanceFixtureWarmupUntilFrame = -1;
+        private static string _performanceFixtureStatus = string.Empty;
 
         [InitializeOnLoadMethod]
         private static void ResumeActiveValidation()
@@ -207,6 +211,7 @@ namespace Game.Editor
             {
                 ResetAirMissileSmokeState();
                 ResetBaselineMetricsState();
+                ResetPerformanceFixtureState();
                 ResetResourceHaulerMovementState();
                 _resourceHaulerScenarioSeeded = false;
                 SessionState.SetBool(ActiveKey, true);
@@ -1502,6 +1507,15 @@ namespace Game.Editor
                 return false;
             }
 
+            if (SessionState.GetBool(RequirePerformanceRegressionReportKey, false) &&
+                !_performanceFixtureReady &&
+                !PreparePerformanceFixture(out string fixtureStatus))
+            {
+                ResetBaselineMetricsState();
+                status = fixtureStatus;
+                return false;
+            }
+
             if (_baselineMetricsStartedAt <= 0d)
             {
                 _baselineMetricsStartedAt = EditorApplication.timeSinceStartup;
@@ -1527,7 +1541,10 @@ namespace Game.Editor
             long allocatedBytes = Math.Max(
                 0,
                 GC.GetAllocatedBytesForCurrentThread() - _baselineMetricsAllocatedBytesAtStart);
-            if (!TryWriteBaselineMetricsReport(readyStatus, stableStatus, elapsedSeconds, allocatedBytes, out string reportStatus))
+            string reportStableStatus = string.IsNullOrEmpty(_performanceFixtureStatus)
+                ? stableStatus
+                : $"{stableStatus} {_performanceFixtureStatus}";
+            if (!TryWriteBaselineMetricsReport(readyStatus, reportStableStatus, elapsedSeconds, allocatedBytes, out string reportStatus))
             {
                 status = reportStatus;
                 return true;
@@ -2330,6 +2347,61 @@ namespace Game.Editor
             _baselineMetricsLastFrame = -1;
         }
 
+        private static bool PreparePerformanceFixture(out string status)
+        {
+            if (!_performanceFixtureSeeded)
+            {
+                World world = World.DefaultGameObjectInjectionWorld;
+                if (world == null || !world.IsCreated)
+                {
+                    status = "performanceFixture=waiting world=missing";
+                    return false;
+                }
+
+                MatchPerformanceFixtureSeed.Result result =
+                    MatchPerformanceFixtureSeed.Ensure(world.EntityManager);
+                _performanceFixtureSeeded = true;
+                _performanceFixtureStatus = result.ToString();
+                if (!result.AddedEntities)
+                {
+                    _performanceFixtureReady = true;
+                    status = _performanceFixtureStatus;
+                    Debug.Log($"[MatchPerformanceFixture] {_performanceFixtureStatus} warmupFrames=0");
+                    return true;
+                }
+
+                _performanceFixtureWarmupUntilFrame = Time.frameCount + MatchPerformanceFixtureSeed.WarmupFrames;
+                status =
+                    $"performanceFixture=warming frame={Time.frameCount}/{_performanceFixtureWarmupUntilFrame} " +
+                    _performanceFixtureStatus;
+                Debug.Log(
+                    $"[MatchPerformanceFixture] {_performanceFixtureStatus} " +
+                    $"warmupFrames={MatchPerformanceFixtureSeed.WarmupFrames}");
+                return false;
+            }
+
+            if (Time.frameCount < _performanceFixtureWarmupUntilFrame)
+            {
+                status =
+                    $"performanceFixture=warming frame={Time.frameCount}/{_performanceFixtureWarmupUntilFrame} " +
+                    _performanceFixtureStatus;
+                return false;
+            }
+
+            _performanceFixtureReady = true;
+            status = _performanceFixtureStatus;
+            Debug.Log($"[MatchPerformanceFixture] {_performanceFixtureStatus} warmup=complete");
+            return true;
+        }
+
+        private static void ResetPerformanceFixtureState()
+        {
+            _performanceFixtureSeeded = false;
+            _performanceFixtureReady = false;
+            _performanceFixtureWarmupUntilFrame = -1;
+            _performanceFixtureStatus = string.Empty;
+        }
+
         [Serializable]
         private struct PerformanceRegressionAcceptedBaseline
         {
@@ -2554,6 +2626,7 @@ namespace Game.Editor
             SessionState.EraseFloat(ReadyAtKey);
             SessionState.EraseFloat(LastProgressLogAtKey);
             ResetBaselineMetricsState();
+            ResetPerformanceFixtureState();
             ResetResourceHaulerMovementState();
             _resourceHaulerScenarioSeeded = false;
         }

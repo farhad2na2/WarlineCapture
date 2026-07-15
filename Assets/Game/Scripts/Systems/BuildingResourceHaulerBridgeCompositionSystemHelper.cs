@@ -18,6 +18,7 @@ namespace Game.Runtime
         private readonly HashSet<Entity> _invalidCapacityWarningEntities = new();
         private readonly ResourceHaulerAIOilAllocationPolicySystemHelper _aiOilAllocationPolicy = new();
         private readonly FactionFuelLogisticsTelemetryBridgeCompositionSystemHelper _fuelLogisticsTelemetry = new();
+        private readonly UnitMoveOrderQueueQueryCache _moveOrderQueueQueryCache = new();
         private uint _lastAutomaticAssignmentSignature;
         private uint _nextReservationId = 1u;
         private float _nextAutomaticAssignmentRefreshAt;
@@ -1175,7 +1176,7 @@ namespace Game.Runtime
             return result != null;
         }
 
-        private static bool TryIssueHaulerMoveToBuilding(Context context, EntityManager em, Entity unit, RuntimeBuildingEntity building, out int2 goal)
+        private bool TryIssueHaulerMoveToBuilding(Context context, EntityManager em, Entity unit, RuntimeBuildingEntity building, out int2 goal)
         {
             goal = default;
             if (building == null || building.IsDestroyed || !em.Exists(unit) || context.TryGetGridData == null ||
@@ -1206,7 +1207,11 @@ namespace Game.Runtime
             if (em.HasComponent<AutoWanderMoveTag>(unit))
                 em.RemoveComponent<AutoWanderMoveTag>(unit);
 
-            UnitMoveOrderRequestSystem.EnqueueAndProcessTargetPathMoveOrder(em, unit, goal);
+            UnitMoveOrderQueueRequest.EnqueueAndProcessTargetPathMoveOrder(
+                em,
+                unit,
+                goal,
+                _moveOrderQueueQueryCache.Get(em));
 
             if (em.HasComponent<ManualMoveOrderTag>(unit))
                 em.RemoveComponent<ManualMoveOrderTag>(unit);

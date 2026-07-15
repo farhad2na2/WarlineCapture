@@ -3,7 +3,7 @@
 Date: 2026-07-15
 Task: `opmap-007`
 Branch: `codex/opmap-007-phase0-camera-minimap-ownership`
-Validated source revision (`origin/main`): `2a8940fa5b646a242460a965e3a91945e9a3fb34`
+Validated source revision (`origin/main`): `d9e2f1ba0e9f7df2d35abe60488fb1d44d5c91bf`
 Workflow: pull request; implementation context does not merge or claim tracker acceptance.
 
 ## Result
@@ -35,13 +35,13 @@ The candidate audit scans every runtime C# source under `Assets/Game/Scripts` be
 ## Determinism And Safety
 
 - Output schema: `warline.operation-map.phase0-camera-minimap-ownership`, version `2`.
-- Committed JSON SHA-256: `3bb230eb79bc73cc58bc744074e1e6331423826c13d25659362d1124e733e2d2`.
+- Committed JSON SHA-256: `f9b2ef9b54d66a1ac1a4dfdc925bbf5bffe1eec6182bda7d69dff048219d9c66`.
 - Two real Unity runs and the committed JSON are byte-identical at that hash.
 - The probe pins exact SHA-256 values and required semantic tokens for all direct inputs, including accepted `opmap-002` and `opmap-004` evidence.
 - The branch was rebased onto `origin/main` at the exact JSON source revision; every pinned source hash and required semantic token was revalidated there.
 - Inputs are hashed before and after report construction. Any missing, changed, unordered, unsupported, volatile, local-path, or stale evidence fails closed.
 - JSON validation rejects unknown fields at every object level before typed validation.
-- Output parents are canonically resolved before project-containment checks, including symlinked parents. Publication is serialized per output, invalidates prior success, uses a per-run GUID-named same-directory temporary file, atomically moves validated bytes, and deletes output on failure.
+- Output parents are canonically resolved before project-containment checks, including symlinked parents. Publication carries that validated destination forward and performs every delete, temporary write, move, and read through the canonical parent and destination. It revalidates the requested and canonical parent identities immediately before replacement and fails closed if either changed; a deterministic Unix negative retargets the parent symlink at that exact point and proves neither target receives output.
 
 ## Validation
 
@@ -50,9 +50,9 @@ Unity: `6000.5.2f1`. All logs and generated test evidence are under `/private/tm
 Authoritative probe, run twice with independent outputs:
 
 ```text
-WARLINE_OPERATION_MAP_PHASE0_CAMERA_MINIMAP_OWNERSHIP_REPORT_PATH=/private/tmp/opmap007-final-runN.json \
+WARLINE_OPERATION_MAP_PHASE0_CAMERA_MINIMAP_OWNERSHIP_REPORT_PATH=/private/tmp/opmap007-final-latest-runN.json \
 Tools/CI/invoke_unity_macos.sh --project <worktree> --timeout 1800 \
-  --log /private/tmp/opmap007-final-probe-runN.log -- \
+  --log /private/tmp/opmap007-final-latest-runN.log -- \
   -nographics -quit \
   -executeMethod Game.Editor.OperationMapPhase0CameraMinimapOwnershipProbe.Run
 ```
@@ -63,19 +63,19 @@ Focused negative and report-shape tests:
 
 ```text
 Tools/CI/invoke_unity_macos.sh --project <worktree> --timeout 1800 \
-  --log /private/tmp/opmap007-review-focused-final.log -- \
+  --log /private/tmp/opmap007-final-latest-focused.log -- \
   -nographics -runTests -testPlatform EditMode \
   -testFilter OperationMapPhase0CameraMinimapOwnershipProbeTests \
-  -testResults /private/tmp/opmap007-review-focused-final-results.xml
+  -testResults /private/tmp/opmap007-final-latest-focused-results.xml
 ```
 
-Result: `31 / 31` passed, zero failures, skips, or inconclusive tests. Coverage includes exact committed shape and hashes, candidate discovery, fully-qualified overload identities, strict unknown-field rejection, symlink containment, valid/invalid publication races, concurrent atomic publication, missing sections, stale evidence, ordering drift, decision owners, external-only output, and unchanged inputs.
+Result: `32 / 32` passed, zero failures, skips, or inconclusive tests. Coverage includes exact committed shape and hashes, candidate discovery, compiled declaration/signature validation, fully-qualified overload identities, strict unknown-field rejection, symlink containment and deterministic immediate pre-replace retargeting, valid/invalid publication races, concurrent atomic publication, missing sections, stale evidence, ordering drift, decision owners, external-only output, and unchanged inputs.
 
 Architecture and naming gates:
 
-- `NonEcsSystemConversionArchitectureTests.RunFocusedValidation`: passed `9 / 9`; `/private/tmp/opmap007-review-gate-non-ecs.log`.
-- `ScriptArchitectureAlignmentContractTests.RunAssemblyBoundaryValidation`: passed `31 / 31`; `/private/tmp/opmap007-review-gate-assembly.log`.
-- `ScriptArchitectureAlignmentContractTests.RunBroadShellValidation`: passed `1 / 1`; `/private/tmp/opmap007-review-gate-broad-shell.log`.
+- `NonEcsSystemConversionArchitectureTests.RunFocusedValidation`: passed `9 / 9`; `/private/tmp/opmap007-final-latest-gate-non-ecs.log`.
+- `ScriptArchitectureAlignmentContractTests.RunAssemblyBoundaryValidation`: passed `31 / 31`; `/private/tmp/opmap007-final-latest-gate-assembly.log`.
+- `ScriptArchitectureAlignmentContractTests.RunBroadShellValidation`: passed `1 / 1`; `/private/tmp/opmap007-final-latest-gate-broad-shell.log`.
 
 Final scoped git validation requires `git diff --check`, complete `origin/main...HEAD` inspection, exact six-file allowlist equality, and a clean worktree after commit.
 

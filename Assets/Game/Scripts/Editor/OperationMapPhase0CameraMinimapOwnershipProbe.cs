@@ -6,6 +6,7 @@ namespace Game.Editor
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Reflection;
     using System.Runtime.InteropServices;
     using System.Text;
     using System.Threading;
@@ -16,7 +17,7 @@ namespace Game.Editor
     {
         internal const string ReportSchema = "warline.operation-map.phase0-camera-minimap-ownership";
         internal const int ReportSchemaVersion = 2;
-        internal const string BaselineCommit = "2a8940fa5b646a242460a965e3a91945e9a3fb34";
+        internal const string BaselineCommit = "d9e2f1ba0e9f7df2d35abe60488fb1d44d5c91bf";
         internal const string ReportPathEnvironmentVariable =
             "WARLINE_OPERATION_MAP_PHASE0_CAMERA_MINIMAP_OWNERSHIP_REPORT_PATH";
         internal const string DefaultReportPath =
@@ -29,6 +30,11 @@ namespace Game.Editor
         private const string TrackerPath =
             "Design/Architecture/operation_map_scene_split_and_generator_tracker.md";
         private static readonly UTF8Encoding Utf8WithoutBom = new(false);
+        private static readonly string AssistantCommandIntentMappingIdentity =
+            typeof(Game.UI.Shell.Ecs.UiShellEcsGateway).FullName +
+            "::ToAssistantCommandIntentKind(" +
+            typeof(Game.UI.Contracts.UiAssistantCommandIntentKind).FullName + "," +
+            typeof(Game.Components.AssistantRecommendationKind).FullName + ")";
 
         public enum OwnershipClassification
         {
@@ -43,10 +49,11 @@ namespace Game.Editor
         public static void Run()
         {
             string projectRoot = RequireProjectRoot();
-            string outputPath = ResolveReportOutputPath(
+            ValidatedReportDestination destination = ResolveReportDestination(
                 projectRoot,
                 Environment.GetEnvironmentVariable(ReportPathEnvironmentVariable));
 
+            ValidateDeclaredMethodSignatures();
             ValidateNoUnexpectedProducerCandidates(projectRoot);
             List<InputHashReport> beforeHashes = CaptureAndValidateInputs(projectRoot);
             List<OwnershipRow> rows = BuildRows();
@@ -57,17 +64,25 @@ namespace Game.Editor
             ValidateNoUnexpectedProducerCandidates(projectRoot);
 
             OwnershipReport report = BuildReport(beforeHashes, references, findings, rows);
-            PublishReportAtomically(outputPath, JsonUtility.ToJson(report, true) + "\n");
+            PublishReportAtomically(destination, JsonUtility.ToJson(report, true) + "\n");
             Debug.Log(
                 $"[OperationMapPhase0CameraMinimapOwnershipProbe] result={report.result} " +
                 $"rows={report.counts.evidenceRows} needsDecision={report.counts.needsDecision} " +
-                $"runtimeObjectiveWriter={report.presenceFindings[2].status} report={outputPath}");
+                $"runtimeObjectiveWriter={report.presenceFindings[2].status} report={destination.canonicalPath}");
         }
 
         internal static string ResolveReportOutputPath(string projectRoot, string configuredPath)
         {
+            return ResolveReportDestination(projectRoot, configuredPath).canonicalPath;
+        }
+
+        internal static ValidatedReportDestination ResolveReportDestination(
+            string projectRoot,
+            string configuredPath)
+        {
             string path = string.IsNullOrWhiteSpace(configuredPath) ? DefaultReportPath : configuredPath;
-            string resolved = OperationMapPhase0BaselineProbe.ResolveReportOutputPath(projectRoot, path);
+            string resolved = Path.GetFullPath(
+                OperationMapPhase0BaselineProbe.ResolveReportOutputPath(projectRoot, path));
             string outputParent = Path.GetDirectoryName(resolved);
             if (string.IsNullOrWhiteSpace(outputParent) || !Directory.Exists(outputParent))
                 throw new InvalidOperationException("Camera/minimap report output parent must already exist.");
@@ -76,7 +91,12 @@ namespace Game.Editor
             string canonicalOutputParent = ResolveExistingDirectory(outputParent);
             if (IsSameOrDescendant(canonicalOutputParent, canonicalProjectRoot))
                 throw new InvalidOperationException("Camera/minimap report output resolves inside the Unity project.");
-            return resolved;
+
+            return new ValidatedReportDestination(
+                outputParent,
+                canonicalOutputParent,
+                canonicalProjectRoot,
+                Path.Combine(canonicalOutputParent, Path.GetFileName(resolved)));
         }
 
         internal static OwnershipReport BuildReport(
@@ -85,6 +105,7 @@ namespace Game.Editor
             List<PresenceFinding> presenceFindings,
             List<OwnershipRow> rows)
         {
+            ValidateDeclaredMethodSignatures();
             ValidateInputHashes(directInputHashes);
             ValidateCrossReferences(crossReferences);
             ValidatePresenceFindings(presenceFindings);
@@ -118,6 +139,7 @@ namespace Game.Editor
 
             try
             {
+                ValidateDeclaredMethodSignatures();
                 JObject root = JObject.Parse(json);
                 if (!HasExactJsonSchema(root))
                     return false;
@@ -200,10 +222,18 @@ namespace Game.Editor
             return hashes;
         }
 
-        internal static void PublishReportAtomically(string outputPath, string json)
+        internal static void PublishReportAtomically(
+            ValidatedReportDestination destination,
+            string json,
+            Action beforeReplace = null)
         {
+            if (destination == null)
+                throw new InvalidOperationException("A validated camera/minimap report destination is required.");
+
+            ValidateDestinationIdentity(destination);
+            string outputPath = destination.canonicalPath;
             string mutexName = "WarlineOpmap007-" +
-                               OperationMapPhase0BaselineProbe.ComputeSha256(Utf8WithoutBom.GetBytes(Path.GetFullPath(outputPath)));
+                               OperationMapPhase0BaselineProbe.ComputeSha256(Utf8WithoutBom.GetBytes(outputPath));
             using var publicationMutex = new Mutex(false, mutexName);
             bool lockTaken = false;
             try
@@ -219,26 +249,28 @@ namespace Game.Editor
                 if (!lockTaken)
                     throw new InvalidOperationException("Timed out waiting for exclusive camera/minimap report publication.");
 
-                InvalidateOutput(outputPath);
+                ValidateDestinationIdentity(destination);
+                InvalidateOutput(destination);
                 if (!HasRequiredReportShape(json))
                     throw new InvalidOperationException("Refusing to publish an invalid camera/minimap ownership report.");
 
-                string directory = Path.GetDirectoryName(outputPath);
                 string temporaryPath = Path.Combine(
-                    directory,
+                    destination.canonicalParent,
                     Path.GetFileName(outputPath) + "." + Guid.NewGuid().ToString("N") + ".tmp");
                 File.WriteAllText(temporaryPath, json, Utf8WithoutBom);
                 try
                 {
                     if (!HasRequiredReportShape(File.ReadAllText(temporaryPath, Utf8WithoutBom)))
                         throw new InvalidOperationException("Persisted camera/minimap ownership report is invalid.");
+                    beforeReplace?.Invoke();
+                    ValidateDestinationIdentity(destination);
                     File.Move(temporaryPath, outputPath);
                     if (!string.Equals(File.ReadAllText(outputPath, Utf8WithoutBom), json, StringComparison.Ordinal))
                         throw new InvalidOperationException("Published camera/minimap ownership report bytes drifted.");
                 }
                 catch
                 {
-                    DeleteIfPresent(outputPath);
+                    DeleteIfPresent(destination.canonicalPath);
                     throw;
                 }
                 finally
@@ -253,10 +285,11 @@ namespace Game.Editor
             }
         }
 
-        internal static void InvalidateOutput(string outputPath)
+        internal static void InvalidateOutput(ValidatedReportDestination destination)
         {
-            DeleteIfPresent(outputPath);
-            DeleteIfPresent(outputPath + ".tmp");
+            ValidateDestinationIdentity(destination);
+            DeleteIfPresent(destination.canonicalPath);
+            DeleteIfPresent(destination.canonicalPath + ".tmp");
         }
 
         internal static void ValidateNoUnexpectedProducerCandidates(string projectRoot)
@@ -606,6 +639,74 @@ namespace Game.Editor
             return candidate.StartsWith(rootWithSeparator, comparison);
         }
 
+        private static void ValidateDestinationIdentity(ValidatedReportDestination destination)
+        {
+            string currentRequestedParent = ResolveExistingDirectory(destination.requestedParent);
+            if (IsSameOrDescendant(currentRequestedParent, destination.canonicalProjectRoot))
+                throw new InvalidOperationException("Camera/minimap report output now resolves inside the Unity project.");
+            if (!PathsEqual(currentRequestedParent, destination.canonicalParent))
+                throw new InvalidOperationException("Camera/minimap report output parent identity changed after validation.");
+
+            string currentCanonicalParent = ResolveExistingDirectory(destination.canonicalParent);
+            if (!PathsEqual(currentCanonicalParent, destination.canonicalParent) ||
+                !PathsEqual(
+                    destination.canonicalPath,
+                    Path.Combine(destination.canonicalParent, Path.GetFileName(destination.canonicalPath))))
+            {
+                throw new InvalidOperationException("Camera/minimap canonical publication destination changed after validation.");
+            }
+        }
+
+        private static bool PathsEqual(string left, string right)
+        {
+            return string.Equals(
+                left,
+                right,
+                RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                    ? StringComparison.OrdinalIgnoreCase
+                    : StringComparison.Ordinal);
+        }
+
+        internal static void ValidateDeclaredMethodSignatures()
+        {
+            Type gatewayType = typeof(Game.UI.Shell.Ecs.UiShellEcsGateway);
+            Type adapterType = gatewayType.GetNestedType("UiShellActionAdapter", BindingFlags.NonPublic);
+            MethodInfo[] declarations = adapterType?
+                .GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
+                .Where(method => string.Equals(
+                    method.Name,
+                    "ToAssistantCommandIntentKind",
+                    StringComparison.Ordinal))
+                .ToArray();
+            if (declarations == null || declarations.Length != 1)
+                throw new InvalidOperationException("Expected exactly one ToAssistantCommandIntentKind declaration.");
+
+            MethodInfo declaration = declarations[0];
+            Type[] parameterTypes = declaration.GetParameters()
+                .Select(parameter => parameter.ParameterType)
+                .ToArray();
+            Type[] expectedParameterTypes =
+            {
+                typeof(Game.UI.Contracts.UiAssistantCommandIntentKind),
+                typeof(Game.Components.AssistantRecommendationKind)
+            };
+            if (declaration.ReturnType != typeof(Game.Components.AssistantCommandIntentKind) ||
+                !parameterTypes.SequenceEqual(expectedParameterTypes))
+            {
+                throw new InvalidOperationException("ToAssistantCommandIntentKind declaration no longer matches the pinned signature.");
+            }
+
+            string declaredIdentity = gatewayType.FullName + "::" + declaration.Name + "(" +
+                                      string.Join(",", parameterTypes.Select(type => type.FullName)) + ")";
+            if (!string.Equals(
+                    declaredIdentity,
+                    AssistantCommandIntentMappingIdentity,
+                    StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException("ToAssistantCommandIntentKind stable identity drifted from its declaration.");
+            }
+        }
+
         [DllImport("libc", EntryPoint = "realpath", SetLastError = true)]
         private static extern IntPtr RealPath(string path, IntPtr buffer);
 
@@ -707,7 +808,7 @@ namespace Game.Editor
             AddRow(rows, "Game.UI.Shell.Ecs.AssistantCommandIntentSystem::TryResolvePreviewTarget(ref Unity.Entities.SystemState,Game.Components.AssistantCommandIntentRequestElement,out Unity.Mathematics.float3)", "Assistant focus target resolution", "ECS assistant command intent system", "WorldPosition or LocalTransform position resolver", OwnershipClassification.ShellOwned, new[] { "Assets/Game/Scripts/UI/Shell/Ecs/AssistantCommandIntentSystem.cs" }, "The generic focus path resolves world/entity positions but has no objective-id or operation-map-anchor resolver.", "AddTypedObjectiveAnchorResolverWhenObjectivesExist", "");
             AddRow(rows, "Game.UI.Shell.Ecs.AssistantGoalReadModelSystem::ToGoal(Game.Components.MatchObjectiveRuntimeElement,uint)", "Objective-to-assistant projection", "ECS assistant goal read-model system", "MatchObjectiveRuntimeElement -> AssistantGoalReadModelElement", OwnershipClassification.Unresolved, new[] { "Assets/Game/Scripts/Components/MatchObjectiveComponents.cs", "Assets/Game/Scripts/UI/Shell/Ecs/AssistantReadModelSystems.cs" }, "No writer found in audited sources for runtime objective rows or active objective state; the projection remains decision-owned.", "DecisionRequired", "Mission runtime owner and assistant architecture owner");
             AddRow(rows, "Game.UI.Shell.Ecs.AssistantRecommendationSystem::BuildRecommendation(Unity.Entities.DynamicBuffer<Game.Components.AssistantGoalReadModelElement>,Unity.Entities.DynamicBuffer<Game.Components.AssistantThreatReadModelElement>,Game.Components.FocusedUnitUiReadModelComponent,Game.Components.BuildingRuntimeFactionUsableFuelSummary,uint)", "Objective recommendation projection", "ECS assistant recommendation system", "Objective goal -> Attack or Move recommendation", OwnershipClassification.Unresolved, new[] { "Assets/Game/Scripts/UI/Shell/Ecs/AssistantReadModelSystems.cs", "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Actions.cs" }, "No objective CameraFocus writer was found in audited sources; objective goals currently produce Attack or Move.", "DecisionRequired", "Mission UX owner and assistant architecture owner");
-            AddRow(rows, "Game.UI.Shell.Ecs.UiShellEcsGateway::ToAssistantCommandIntentKind(Game.Components.AssistantRecommendationKind)", "Assistant camera-focus UI mapping", "UI shell ECS gateway", "AssistantRecommendationKind.CameraFocus -> AssistantCommandIntentKind.FocusCamera", OwnershipClassification.ShellOwned, new[] { "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Actions.cs" }, "The UI-to-ECS mapping exists, but remains dormant without a CameraFocus recommendation producer.", "KeepMappingAwaitTypedProducer", "");
+            AddRow(rows, AssistantCommandIntentMappingIdentity, "Assistant camera-focus UI mapping", "UI shell ECS gateway", "AssistantRecommendationKind.CameraFocus -> AssistantCommandIntentKind.FocusCamera", OwnershipClassification.ShellOwned, new[] { "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Actions.cs" }, "The UI-to-ECS mapping exists, but remains dormant without a CameraFocus recommendation producer.", "KeepMappingAwaitTypedProducer", "");
             return rows;
         }
 
@@ -737,10 +838,10 @@ namespace Game.Editor
             AddSource(sources, "Assets/Game/Scripts/UI/Screens/MatchHudMinimapProjectionUiSystemHelper.cs", "96791301184e377a441405e7a0ddfe73fdd7c9ab4f7f666fcf8cacd008182bc3", "public static MatchHudMinimapProjectionGrid CreateFullGridIncludingCamera(", "public static MatchHudMinimapProjectionGrid CreateCameraCenteredGrid(");
             AddSource(sources, "Assets/Game/Scripts/UI/Shell/Ecs/AssistantCommandIntentSystem.cs", "77f396716d63b2a772076031928b2aee85c1d13e29d66bc74e8fe86371841700", "private void QueueCameraPreview(ref SystemState state, float3 focusWorldPosition)", "request.Kind == AssistantCommandIntentKind.FocusCamera");
             AddSource(sources, "Assets/Game/Scripts/UI/Shell/Ecs/AssistantReadModelSystems.cs", "6426e8c5b20b5588fa295a08768de880603910ec88a8c3abc6a2679f1af71d79", "private static AssistantGoalReadModelElement ToGoal(", "Kind = AssistantRecommendationKind.Move");
-            AddSource(sources, "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Actions.cs", "34f02bcf312053ad02ef69790b9c9c80d0f28409459142daa8648cd5b1764c5f", "AssistantRecommendationKind.CameraFocus => AssistantCommandIntentKind.FocusCamera");
+            AddSource(sources, "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Actions.cs", "34f02bcf312053ad02ef69790b9c9c80d0f28409459142daa8648cd5b1764c5f", "private static AssistantCommandIntentKind ToAssistantCommandIntentKind(", "UiAssistantCommandIntentKind kind,", "AssistantRecommendationKind recommendationKind)", "AssistantRecommendationKind.CameraFocus => AssistantCommandIntentKind.FocusCamera");
             AddSource(sources, Opmap002Path, "d4d4674850766c5cd95e1bb5fbb6f26893e0bb019dbaf266a0c9897a3befc807", "result=Passed chunks=514 sources=16542");
             AddSource(sources, Opmap004Path, "e1080bd90e88140d8151755b7ef6086c02d8683b7d277708004797893fc3c49b", "\"reportSchema\": \"warline.operation-map.phase0-ownership\"", "\"result\": \"NeedsDecision\"");
-            AddSource(sources, TrackerPath, "157eb5ea9fb38e808538e30f134a153cb0663c98f0608b03ab4f622cf852a268", "Inventory minimap projection, camera clamp, initial camera, full-map bounds, and objective-focus sources.");
+            AddSource(sources, TrackerPath, "b052d5399183383756f6cf8cb6302aa9e71b130bce26312ba1967224c788afbe", "Inventory minimap projection, camera clamp, initial camera, full-map bounds, and objective-focus sources.");
             return sources;
         }
 
@@ -847,6 +948,26 @@ namespace Game.Editor
                 this.rationale = rationale;
                 this.migrationDisposition = migrationDisposition;
                 this.decisionOwner = decisionOwner;
+            }
+        }
+
+        internal sealed class ValidatedReportDestination
+        {
+            public readonly string requestedParent;
+            public readonly string canonicalParent;
+            public readonly string canonicalProjectRoot;
+            public readonly string canonicalPath;
+
+            public ValidatedReportDestination(
+                string requestedParent,
+                string canonicalParent,
+                string canonicalProjectRoot,
+                string canonicalPath)
+            {
+                this.requestedParent = requestedParent;
+                this.canonicalParent = canonicalParent;
+                this.canonicalProjectRoot = canonicalProjectRoot;
+                this.canonicalPath = canonicalPath;
             }
         }
 

@@ -37,7 +37,7 @@ namespace Game.Tests.Editor
             Assert.That(OperationMapPhase0CameraMinimapOwnershipProbe.HasRequiredReportShape(json), Is.True);
 
             OperationMapPhase0CameraMinimapOwnershipProbe.OwnershipReport report = LoadReport(json);
-            Assert.That(report.baselineCommit, Is.EqualTo("2a8940fa5b646a242460a965e3a91945e9a3fb34"));
+            Assert.That(report.baselineCommit, Is.EqualTo("d9e2f1ba0e9f7df2d35abe60488fb1d44d5c91bf"));
             Assert.That(report.result, Is.EqualTo("NeedsDecision"));
             Assert.That(report.counts.mixed, Is.GreaterThan(0));
             Assert.That(report.counts.unresolved, Is.GreaterThan(0));
@@ -215,6 +215,10 @@ namespace Game.Tests.Editor
             Assert.That(methodIdentities, Has.None.Contains("(...)"));
             Assert.That(methodIdentities, Does.Contain(
                 "Game.Runtime.RtsCameraRequestSystem::ProcessPendingRequests(Unity.Entities.EntityManager,Game.Runtime.RtsCameraSystem,UnityEngine.Camera,System.Action)"));
+            Assert.That(methodIdentities, Does.Contain(
+                "Game.UI.Shell.Ecs.UiShellEcsGateway::ToAssistantCommandIntentKind(Game.UI.Contracts.UiAssistantCommandIntentKind,Game.Components.AssistantRecommendationKind)"));
+            Assert.DoesNotThrow(
+                OperationMapPhase0CameraMinimapOwnershipProbe.ValidateDeclaredMethodSignatures);
 
             OperationMapPhase0CameraMinimapOwnershipProbe.OwnershipRow overload = report.evidenceRows.Single(row =>
                 row.stableIdentity.Contains("::ProcessPendingRequests(", StringComparison.Ordinal));
@@ -248,11 +252,13 @@ namespace Game.Tests.Editor
             string outputPath = Path.Combine(
                 Path.GetTempPath(),
                 "opmap007-publication-" + Guid.NewGuid().ToString("N") + ".json");
+            OperationMapPhase0CameraMinimapOwnershipProbe.ValidatedReportDestination destination =
+                Destination(outputPath);
             try
             {
                 File.WriteAllText(outputPath, File.ReadAllText(ReportPath));
                 Assert.Throws<InvalidOperationException>(() =>
-                    OperationMapPhase0CameraMinimapOwnershipProbe.PublishReportAtomically(outputPath, "{}"));
+                    OperationMapPhase0CameraMinimapOwnershipProbe.PublishReportAtomically(destination, "{}"));
                 Assert.That(File.Exists(outputPath), Is.False);
                 Assert.That(File.Exists(outputPath + ".tmp"), Is.False);
                 Assert.That(TemporaryOutputs(outputPath), Is.Empty);
@@ -271,10 +277,12 @@ namespace Game.Tests.Editor
                 Path.GetTempPath(),
                 "opmap007-race-" + Guid.NewGuid().ToString("N") + ".json");
             string json = File.ReadAllText(ReportPath);
+            OperationMapPhase0CameraMinimapOwnershipProbe.ValidatedReportDestination destination =
+                Destination(outputPath);
             try
             {
                 Parallel.For(0, 8, _ =>
-                    OperationMapPhase0CameraMinimapOwnershipProbe.PublishReportAtomically(outputPath, json));
+                    OperationMapPhase0CameraMinimapOwnershipProbe.PublishReportAtomically(destination, json));
                 Assert.That(File.ReadAllText(outputPath), Is.EqualTo(json));
                 Assert.That(TemporaryOutputs(outputPath), Is.Empty);
             }
@@ -293,13 +301,15 @@ namespace Game.Tests.Editor
                 Path.GetTempPath(),
                 "opmap007-negative-race-" + Guid.NewGuid().ToString("N") + ".json");
             string json = File.ReadAllText(ReportPath);
+            OperationMapPhase0CameraMinimapOwnershipProbe.ValidatedReportDestination destination =
+                Destination(outputPath);
             try
             {
                 Parallel.Invoke(
-                    () => OperationMapPhase0CameraMinimapOwnershipProbe.PublishReportAtomically(outputPath, json),
+                    () => OperationMapPhase0CameraMinimapOwnershipProbe.PublishReportAtomically(destination, json),
                     () => Assert.Throws<InvalidOperationException>(() =>
                         OperationMapPhase0CameraMinimapOwnershipProbe.PublishReportAtomically(
-                            outputPath,
+                            destination,
                             "{\"foreignSuccess\":true}")));
 
                 if (File.Exists(outputPath))
@@ -331,6 +341,46 @@ namespace Game.Tests.Editor
                     OperationMapPhase0CameraMinimapOwnershipProbe.ResolveReportOutputPath(
                         projectRoot,
                         Path.Combine(link, "foreign-success.json")));
+            }
+            finally
+            {
+                Unlink(link);
+                Directory.Delete(container, true);
+            }
+        }
+
+        [Test]
+        public void Publication_RejectsSymlinkParentRetargetImmediatelyBeforeReplace()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                Assert.Ignore("Unix symlink-retarget negative.");
+
+            string container = Path.Combine(Path.GetTempPath(), "opmap007-retarget-" + Guid.NewGuid().ToString("N"));
+            string originalParent = Path.Combine(container, "original");
+            string retargetedParent = Path.Combine(container, "retargeted");
+            string link = Path.Combine(container, "output-link");
+            Directory.CreateDirectory(originalParent);
+            Directory.CreateDirectory(retargetedParent);
+            try
+            {
+                Assert.That(Symlink(originalParent, link), Is.EqualTo(0));
+                OperationMapPhase0CameraMinimapOwnershipProbe.ValidatedReportDestination destination =
+                    Destination(Path.Combine(link, "report.json"));
+
+                Assert.Throws<InvalidOperationException>(() =>
+                    OperationMapPhase0CameraMinimapOwnershipProbe.PublishReportAtomically(
+                        destination,
+                        File.ReadAllText(ReportPath),
+                        () =>
+                        {
+                            Assert.That(Unlink(link), Is.EqualTo(0));
+                            Assert.That(Symlink(retargetedParent, link), Is.EqualTo(0));
+                        }));
+
+                Assert.That(File.Exists(Path.Combine(originalParent, "report.json")), Is.False);
+                Assert.That(File.Exists(Path.Combine(retargetedParent, "report.json")), Is.False);
+                Assert.That(Directory.GetFiles(originalParent), Is.Empty);
+                Assert.That(Directory.GetFiles(retargetedParent), Is.Empty);
             }
             finally
             {
@@ -421,6 +471,14 @@ namespace Game.Tests.Editor
         {
             if (File.Exists(path))
                 File.Delete(path);
+        }
+
+        private static OperationMapPhase0CameraMinimapOwnershipProbe.ValidatedReportDestination Destination(
+            string outputPath)
+        {
+            return OperationMapPhase0CameraMinimapOwnershipProbe.ResolveReportDestination(
+                Directory.GetParent(Application.dataPath).FullName,
+                outputPath);
         }
 
         private static string[] TemporaryOutputs(string outputPath)

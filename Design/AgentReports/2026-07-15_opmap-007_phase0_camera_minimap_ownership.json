@@ -1,7 +1,7 @@
 {
     "reportSchema": "warline.operation-map.phase0-camera-minimap-ownership",
     "reportSchemaVersion": 2,
-    "baselineCommit": "2a8940fa5b646a242460a965e3a91945e9a3fb34",
+    "baselineCommit": "d9e2f1ba0e9f7df2d35abe60488fb1d44d5c91bf",
     "result": "NeedsDecision",
     "counts": {
         "evidenceRows": 23,
@@ -138,7 +138,7 @@
         },
         {
             "path": "Design/Architecture/operation_map_scene_split_and_generator_tracker.md",
-            "sha256": "157eb5ea9fb38e808538e30f134a153cb0663c98f0608b03ab4f622cf852a268"
+            "sha256": "b052d5399183383756f6cf8cb6302aa9e71b130bce26312ba1967224c788afbe"
         }
     ],
     "presenceFindings": [
@@ -489,7 +489,7 @@
             "decisionOwner": "Mission UX owner and assistant architecture owner"
         },
         {
-            "stableIdentity": "Game.UI.Shell.Ecs.UiShellEcsGateway::ToAssistantCommandIntentKind(Game.Components.AssistantRecommendationKind)",
+            "stableIdentity": "Game.UI.Shell.Ecs.UiShellEcsGateway::ToAssistantCommandIntentKind(Game.UI.Contracts.UiAssistantCommandIntentKind,Game.Components.AssistantRecommendationKind)",
             "subject": "Assistant camera-focus UI mapping",
             "currentAuthority": "UI shell ECS gateway",
             "currentType": "AssistantRecommendationKind.CameraFocus -> AssistantCommandIntentKind.FocusCamera",

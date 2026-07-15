@@ -11,7 +11,10 @@ namespace Game.Editor
     public class BuildScript
     {
         internal const BuildOptions ReleaseAndroidBuildOptions =
-            BuildOptions.DetailedBuildReport |
+            BuildOptions.DetailedBuildReport;
+
+        internal const BuildOptions CleanReleaseAndroidBuildOptions =
+            ReleaseAndroidBuildOptions |
             BuildOptions.CleanBuildCache;
 
         public static void BuildWindows()
@@ -68,6 +71,8 @@ namespace Game.Editor
             var buildType = GetArgument(arg, "-buildType");
             AndroidBuildReportProvenance buildProvenance =
                 AndroidBuildReportGenerator.CaptureGitProvenance();
+            bool cleanBuildCache = arg.Any(value =>
+                string.Equals(value, "-cleanBuild", StringComparison.OrdinalIgnoreCase));
             SwitchBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
             ConfigureGradleUserHome();
 
@@ -95,11 +100,15 @@ namespace Game.Editor
             {
                 scenes = StaticMapAndroidBuildSceneResolver.ResolveForCurrentProject(GetEnabledScenes()),
                 target = BuildTarget.Android,
-                options = ReleaseAndroidBuildOptions,
+                options = cleanBuildCache
+                    ? CleanReleaseAndroidBuildOptions
+                    : ReleaseAndroidBuildOptions,
                 locationPathName = outputPath
             };
 
             ConfigureAndroidBuild(buildType == "AAB");
+            UnityEngine.Debug.Log(
+                $"[BuildScript] Android cache mode: {(cleanBuildCache ? "clean" : "incremental")}");
 
             BuildReport report = ExecuteBuild(buildPlayerOptions);
             AndroidBuildReportGenerator.GenerateAndWriteReports(

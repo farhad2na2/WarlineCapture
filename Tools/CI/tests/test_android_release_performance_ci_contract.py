@@ -6,6 +6,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 JENKINSFILE = ROOT / "Jenkinsfile.groovy"
 WRAPPER = ROOT / "Tools/CI/InvokeAndroidReleasePerformanceContract.ps1"
+BUILD_SCRIPT = ROOT / "Assets/Game/Scripts/Editor/BuildScript.cs"
+ARCHITECTURE_RUNNER = ROOT / "Assets/Tests/Editor/ArchitectureHardeningCloseoutValidationRunner.cs"
 BUILD_STAGE = "Build Android APK"
 CONTRACT_STAGE = "APH-804 Android Release Artifact Contract"
 DEPLOY_STAGE = "Deploy Android APK"
@@ -20,6 +22,17 @@ class AndroidReleasePerformanceCiContractTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.jenkins = JENKINSFILE.read_text(encoding="utf-8")
         cls.wrapper = WRAPPER.read_text(encoding="utf-8")
+        cls.build_script = BUILD_SCRIPT.read_text(encoding="utf-8")
+        cls.architecture_runner = ARCHITECTURE_RUNNER.read_text(encoding="utf-8")
+        checkout_start = cls.jenkins.index("stage('Checkout Unity Project')")
+        checkout_end = cls.jenkins.index("stage('APH-803 Android Development Performance Preflight')", checkout_start)
+        cls.checkout_stage = cls.jenkins[checkout_start:checkout_end]
+        smoke_start = cls.jenkins.index("stage('Run Unity EditMode Smoke Tests')")
+        smoke_end = cls.jenkins.index("stage('Run Architecture Validations')", smoke_start)
+        cls.smoke_stage = cls.jenkins[smoke_start:smoke_end]
+        architecture_start = smoke_end
+        architecture_end = cls.jenkins.index("stage('Run Editor Match Performance Lane')", architecture_start)
+        cls.architecture_stage = cls.jenkins[architecture_start:architecture_end]
         contract_start = cls.jenkins.index(f"stage('{CONTRACT_STAGE}')")
         contract_end = cls.jenkins.index(f"stage('{DEPLOY_STAGE}')", contract_start)
         cls.contract_stage = cls.jenkins[contract_start:contract_end]
@@ -34,6 +47,27 @@ class AndroidReleasePerformanceCiContractTests(unittest.TestCase):
         contract_start = self.jenkins.index(f"stage('{CONTRACT_STAGE}')", build_start)
         build_stage = self.jenkins[build_start:contract_start]
         self.assertEqual(1, build_stage.count(BUILD_CONDITION))
+
+    def test_checkout_preserves_versioned_unity_library_for_incremental_runs(self) -> None:
+        self.assertNotIn("deleteDir()", self.checkout_stage)
+        self.assertIn('if not exist "%PROJECT_PATH%\\\\.git"', self.checkout_stage)
+        self.assertIn("git reset --hard FETCH_HEAD", self.checkout_stage)
+        self.assertIn("git clean -ffdx -e Library/", self.checkout_stage)
+        self.assertIn('Join-Path $libraryPath ".jenkins-unity-version"', self.checkout_stage)
+        self.assertIn("CLEAN_ANDROID_BUILD_RESOLVED", self.checkout_stage)
+        self.assertIn("TimerTrigger$TimerTriggerCause", self.checkout_stage)
+
+    def test_android_lane_stays_on_target_and_defaults_to_incremental_player_builds(self) -> None:
+        self.assertIn('"-buildTarget", "Android", "-runTests"', self.smoke_stage)
+        self.assertEqual(1, self.architecture_stage.count("InvokeUnityExecuteMethodValidation.ps1"))
+        self.assertIn('-BuildTarget "Android"', self.architecture_stage)
+        self.assertIn("RunJenkinsArchitectureValidation", self.architecture_stage)
+        self.assertIn("[JenkinsArchitectureValidation] result=Passed tests=41", self.architecture_runner)
+        self.assertIn("ReleaseAndroidBuildOptions =\n            BuildOptions.DetailedBuildReport;", self.build_script)
+        self.assertIn("CleanReleaseAndroidBuildOptions", self.build_script)
+        self.assertIn('string.Equals(value, "-cleanBuild"', self.build_script)
+        self.assertIn('$unityArguments += "-cleanBuild"', self.jenkins)
+        self.assertGreaterEqual(self.jenkins.count('"-buildTarget", "Android"'), 3)
 
     def test_stage_passes_revision_output_apk_and_build_report(self) -> None:
         expected_arguments = (

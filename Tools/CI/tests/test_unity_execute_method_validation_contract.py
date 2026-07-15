@@ -15,13 +15,22 @@ class UnityExecuteMethodValidationContractTests(unittest.TestCase):
 
     def test_unity_quit_flag_owns_editor_shutdown(self) -> None:
         self.assertIn(
-            '-UnityArguments @("-quit", "-executeMethod", $ExecuteMethod)',
+            '$unityArguments = @("-quit")',
             self.wrapper,
         )
+        self.assertIn('$unityArguments += @("-executeMethod", $ExecuteMethod)', self.wrapper)
         self.assertIn(
             'Array.IndexOf(commandLineArgs, "-quit") < 0',
             self.validation_exit,
         )
+
+    def test_optional_build_target_precedes_execute_method(self) -> None:
+        target_condition = 'if (-not [string]::IsNullOrWhiteSpace($BuildTarget))'
+        target_arguments = '$unityArguments += @("-buildTarget", $BuildTarget)'
+        execute_arguments = '$unityArguments += @("-executeMethod", $ExecuteMethod)'
+        self.assertIn('[string] $BuildTarget = ""', self.wrapper)
+        self.assertLess(self.wrapper.index(target_condition), self.wrapper.index(target_arguments))
+        self.assertLess(self.wrapper.index(target_arguments), self.wrapper.index(execute_arguments))
 
     def test_log_read_retries_transient_file_locks(self) -> None:
         self.assertIn("[System.IO.IOException]", self.wrapper)

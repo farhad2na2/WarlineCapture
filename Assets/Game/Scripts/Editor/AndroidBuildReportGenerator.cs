@@ -377,8 +377,6 @@ namespace Game.Editor
         {
             if ((options & BuildOptions.DetailedBuildReport) == 0)
                 throw new InvalidOperationException("APH-500 requires BuildOptions.DetailedBuildReport.");
-            if ((options & BuildOptions.CleanBuildCache) == 0)
-                throw new InvalidOperationException("D-096 requires BuildOptions.CleanBuildCache for release APK/AAB builds.");
 
             const BuildOptions forbidden =
                 BuildOptions.Development |
@@ -389,7 +387,7 @@ namespace Game.Editor
             if (enabledForbiddenOptions != BuildOptions.None)
             {
                 throw new InvalidOperationException(
-                    $"APH-500 reports clean release APK/AAB builds only; forbidden options: {enabledForbiddenOptions}.");
+                    $"APH-500 reports release APK/AAB builds only; forbidden options: {enabledForbiddenOptions}.");
             }
         }
 

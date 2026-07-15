@@ -4,6 +4,23 @@ using UnityEngine;
 
 public static class ArchitectureHardeningCloseoutValidationRunner
 {
+    public static void RunJenkinsArchitectureValidation()
+    {
+        try
+        {
+            RunSuite(ScriptArchitectureAlignmentContractTests.RunAssemblyBoundaryValidation);
+            RunSuite(EcsBurstHotPathArchitectureTests.RunFocusedValidation);
+            Debug.Log("[JenkinsArchitectureValidation] result=Passed tests=41");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError("[JenkinsArchitectureValidation] result=Failed");
+            Debug.LogException(exception);
+            ValidationExit.Exit(1);
+        }
+    }
+
     public static void RunFocusedValidation()
     {
         try

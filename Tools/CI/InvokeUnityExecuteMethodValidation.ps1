@@ -15,6 +15,9 @@ param(
     [string] $RequiredPassMarker,
 
     [Parameter(Mandatory = $false)]
+    [string] $BuildTarget = "",
+
+    [Parameter(Mandatory = $false)]
     [int] $TimeoutSeconds = 900
 )
 
@@ -22,13 +25,19 @@ $ErrorActionPreference = "Stop"
 
 Remove-Item -LiteralPath $LogFile -Force -ErrorAction Ignore
 
+$unityArguments = @("-quit")
+if (-not [string]::IsNullOrWhiteSpace($BuildTarget)) {
+    $unityArguments += @("-buildTarget", $BuildTarget)
+}
+$unityArguments += @("-executeMethod", $ExecuteMethod)
+
 & "$PSScriptRoot\InvokeUnity.ps1" `
     -UnityExe $UnityExe `
     -ProjectPath $ProjectPath `
     -LogFile $LogFile `
     -NoProcessExit `
     -TimeoutSeconds $TimeoutSeconds `
-    -UnityArguments @("-quit", "-executeMethod", $ExecuteMethod)
+    -UnityArguments $unityArguments
 $unityExit = $LASTEXITCODE
 
 if ($unityExit -ne 0) {

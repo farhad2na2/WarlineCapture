@@ -30,12 +30,37 @@ pipeline {
     stages {
         stage('Checkout Unity Project') {
             steps {
-                deleteDir()
+                script {
+                    def explicitClean = env.CLEAN_ANDROID_BUILD?.toString()?.equalsIgnoreCase('true')
+                    def scheduledClean = !currentBuild.getBuildCauses(
+                        'hudson.triggers.TimerTrigger$TimerTriggerCause'
+                    ).isEmpty()
+                    env.CLEAN_ANDROID_BUILD_RESOLVED = (explicitClean || scheduledClean).toString()
+                    echo "Android cache mode: ${env.CLEAN_ANDROID_BUILD_RESOLVED == 'true' ? 'clean' : 'incremental'}"
+                }
+                powershell '''
+                $libraryPath = "$env:PROJECT_PATH\\Library"
+                $versionMarker = Join-Path $libraryPath ".jenkins-unity-version"
+                $clearLibrary = $env:CLEAN_ANDROID_BUILD_RESOLVED -ieq "true"
+
+                if (-not $clearLibrary -and (Test-Path -LiteralPath $versionMarker -PathType Leaf)) {
+                    $cachedVersion = (Get-Content -LiteralPath $versionMarker -Raw).Trim()
+                    $clearLibrary = $cachedVersion -cne $env:UNITY_VERSION
+                }
+
+                if ($clearLibrary -and (Test-Path -LiteralPath $libraryPath -PathType Container)) {
+                    Write-Host "Clearing Unity Library cache for a clean or version-changed build."
+                    Remove-Item -LiteralPath $libraryPath -Recurse -Force
+                }
+                '''
                 withCredentials([usernamePassword(credentialsId: 'github-pat-2', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')]) {
                     bat '''
                     @echo off
                     git --version
-                    git clone --no-checkout --branch main "https://%GIT_USER%:%GIT_TOKEN%@github.com/farhad2na2/WarlineCapture.git" "%PROJECT_PATH%"
+                    if not exist "%PROJECT_PATH%\\.git" (
+                        git clone --no-checkout --branch main "https://%GIT_USER%:%GIT_TOKEN%@github.com/farhad2na2/WarlineCapture.git" "%PROJECT_PATH%"
+                        if errorlevel 1 exit /b 1
+                    )
                     cd /d "%PROJECT_PATH%"
                     git remote set-url origin https://github.com/farhad2na2/WarlineCapture.git
                     rem Pin checkout conversion before sparse paths are materialized.
@@ -45,7 +70,13 @@ pipeline {
                     git config --global core.longpaths true
                     git sparse-checkout init --cone
                     git sparse-checkout set Assets Packages ProjectSettings Tools Design
-                    git checkout main
+                    git fetch --prune "https://%GIT_USER%:%GIT_TOKEN%@github.com/farhad2na2/WarlineCapture.git" main
+                    if errorlevel 1 exit /b 1
+                    git reset --hard FETCH_HEAD
+                    if errorlevel 1 exit /b 1
+                    rem Remove stale generated outputs while retaining Unity's import, Bee, IL2CPP, and Gradle caches.
+                    git clean -ffdx -e Library/
+                    if errorlevel 1 exit /b 1
                     if not exist "Design\\Architecture\\production_source_growth_baseline.md" (
                         echo Production source growth baseline is missing from the sparse checkout.
                         exit /b 1
@@ -68,6 +99,11 @@ pipeline {
                     git status --short
                     '''
                 }
+                powershell '''
+                $libraryPath = "$env:PROJECT_PATH\\Library"
+                New-Item -ItemType Directory -Path $libraryPath -Force | Out-Null
+                $env:UNITY_VERSION | Set-Content -LiteralPath (Join-Path $libraryPath ".jenkins-unity-version") -Encoding ASCII
+                '''
                 script {
                     env.GIT_COMMIT = bat(
                         returnStdout: true,
@@ -173,7 +209,7 @@ pipeline {
                     -LogFile "$env:PROJECT_PATH\\TestResults\\EditMode.log" `
                     -NoProcessExit `
                     -TimeoutSeconds 1800 `
-                    -UnityArguments @("-nographics", "-runTests", "-testPlatform", "EditMode", "-testFilter", "AssistantRolloutValidationTests.AssistantRolloutFocusedValidation_PassesAllSlices", "-testResults", "$env:PROJECT_PATH\\TestResults\\EditMode.xml")
+                    -UnityArguments @("-nographics", "-buildTarget", "Android", "-runTests", "-testPlatform", "EditMode", "-testFilter", "AssistantRolloutValidationTests.AssistantRolloutFocusedValidation_PassesAllSlices", "-testResults", "$env:PROJECT_PATH\\TestResults\\EditMode.xml")
                 $editModeExit = $LASTEXITCODE
 
                 powershell -NoProfile -ExecutionPolicy Bypass -File "$env:PROJECT_PATH\\Tools\\CI\\PrintUnityTestFailures.ps1" -ResultsPath "$env:PROJECT_PATH\\TestResults\\EditMode.xml" -PlatformName "EditMode"
@@ -267,28 +303,14 @@ pipeline {
                     throw "Unity editor path file is empty or invalid: $unityPathFile"
                 }
 
-                $validations = @(
-                    @{
-                        Method = "ScriptArchitectureAlignmentContractTests.RunAssemblyBoundaryValidation"
-                        Marker = "[ScriptArchitectureBoundaryValidation] result=Passed tests=31"
-                        Log = "$env:PROJECT_PATH\\TestResults\\ArchitectureAssemblyBoundaries.log"
-                    },
-                    @{
-                        Method = "EcsBurstHotPathArchitectureTests.RunFocusedValidation"
-                        Marker = "[EcsBurstHotPathArchitectureValidation] result=Passed tests=10"
-                        Log = "$env:PROJECT_PATH\\TestResults\\ArchitectureEcsHotPaths.log"
-                    }
-                )
-
-                foreach ($validation in $validations) {
-                    & "$env:PROJECT_PATH\\Tools\\CI\\InvokeUnityExecuteMethodValidation.ps1" `
-                        -UnityExe $unityExe `
-                        -ProjectPath "$env:PROJECT_PATH" `
-                        -ExecuteMethod $validation.Method `
-                        -LogFile $validation.Log `
-                        -RequiredPassMarker $validation.Marker `
-                        -TimeoutSeconds 900
-                }
+                & "$env:PROJECT_PATH\\Tools\\CI\\InvokeUnityExecuteMethodValidation.ps1" `
+                    -UnityExe $unityExe `
+                    -ProjectPath "$env:PROJECT_PATH" `
+                    -ExecuteMethod "ArchitectureHardeningCloseoutValidationRunner.RunJenkinsArchitectureValidation" `
+                    -LogFile "$env:PROJECT_PATH\\TestResults\\ArchitectureFocused.log" `
+                    -RequiredPassMarker "[JenkinsArchitectureValidation] result=Passed tests=41" `
+                    -BuildTarget "Android" `
+                    -TimeoutSeconds 900
                 '''
             }
             post {
@@ -516,12 +538,21 @@ pipeline {
                     throw "Unity editor path file is empty or invalid: $unityPathFile"
                 }
 
+                $unityArguments = @(
+                    "-quit", "-buildTarget", "Android",
+                    "-executeMethod", "Game.Editor.BuildScript.BuildAndroid",
+                    "-buildType", "APK"
+                )
+                if ($env:CLEAN_ANDROID_BUILD_RESOLVED -ieq "true") {
+                    $unityArguments += "-cleanBuild"
+                }
+
                 & "$env:PROJECT_PATH\\Tools\\CI\\InvokeUnity.ps1" `
                     -UnityExe $unityExe `
                     -ProjectPath "$env:PROJECT_PATH" `
                     -LogFile "$env:BUILD_LOG" `
                     -NoProcessExit `
-                    -UnityArguments @("-quit", "-executeMethod", "Game.Editor.BuildScript.BuildAndroid", "-buildType", "APK")
+                    -UnityArguments $unityArguments
                 exit $LASTEXITCODE
                 '''
             }
@@ -586,12 +617,21 @@ pipeline {
                     throw "Unity editor path file is empty or invalid: $unityPathFile"
                 }
 
+                $unityArguments = @(
+                    "-quit", "-buildTarget", "Android",
+                    "-executeMethod", "Game.Editor.BuildScript.BuildAndroid",
+                    "-buildType", "AAB"
+                )
+                if ($env:CLEAN_ANDROID_BUILD_RESOLVED -ieq "true") {
+                    $unityArguments += "-cleanBuild"
+                }
+
                 & "$env:PROJECT_PATH\\Tools\\CI\\InvokeUnity.ps1" `
                     -UnityExe $unityExe `
                     -ProjectPath "$env:PROJECT_PATH" `
                     -LogFile "$env:BUILD_LOG" `
                     -NoProcessExit `
-                    -UnityArguments @("-quit", "-executeMethod", "Game.Editor.BuildScript.BuildAndroid", "-buildType", "AAB")
+                    -UnityArguments $unityArguments
                 exit $LASTEXITCODE
                 '''
             }

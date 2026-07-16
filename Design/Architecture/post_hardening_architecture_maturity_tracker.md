@@ -109,12 +109,12 @@ Release-only categories are reported separately and never averaged into a premat
 
 | Field | Status |
 |---|---|
-| Checklist complete | `10 / 86` (`11.6%`) |
-| Core Architecture Lane | `10 / 68` (`14.7%`); active |
+| Checklist complete | `11 / 86` (`12.8%`) |
+| Core Architecture Lane | `11 / 68` (`16.2%`); active |
 | Release Certification Lane | `0 / 18` (`0.0%`); deferred |
 | Program state | Core Architecture Lane active; release work inactive |
 | Current phase | Phase 1 - Responsibility And Decomposition Hardening |
-| Current task | `AM-011` ready, not yet claimed |
+| Current task | `AM-012` ready, not yet claimed |
 | Core entry baseline | Phase 0 accepted by `AM-001` through `AM-008`; exact-identity assembly and bounded Editor Match evidence are current at `9a0aa14252e6559680328e520d26c16bfc7b444e`; the dashboard required gate is accepted; the entry rating and owned deltas are published in `entry_baseline_report.md` |
 | Release entry review | Deferred until `pre_release_performance_certification_backlog.md` activates |
 | Architecture rating | Evidence-backed Phase 0 entry rating `8.5 / 10`; planning baseline only, not a `9.5` claim |
@@ -211,7 +211,7 @@ Reduce change risk in oversized systems without replacing the architecture or ch
 
 - [x] `AM-009` Rank the largest and most coupled production files by lines, dependencies, state ownership, update-time cost, and change frequency; do not rank by lines alone.
 - [x] `AM-010` Write a responsibility map for each selected owner, including inputs, outputs, state authority, update order, side effects, tests, and allowed dependencies.
-- [ ] `AM-011` Add missing characterization tests before extracting behavior from any selected owner.
+- [x] `AM-011` Add missing characterization tests before extracting behavior from any selected owner.
 - [ ] `AM-012` Extract one capability or ECS phase at a time behind existing contracts, preserving system order and avoiding a new coordinator-shaped helper.
 - [ ] `AM-013` Consolidate duplicated query-cache, command-queue, fixed-capacity scratch, and projection-cache mechanics only where one narrow shared contract removes real duplication.
 - [ ] `AM-014` Add update-order and behavior-equivalence tests for every decomposition that crosses a system or assembly boundary.
@@ -576,3 +576,18 @@ The implementing agent works directly on `main`, owns the bounded substantive an
 - Independent review: initial reviews rejected missing cross-file freshness, an incomplete trail consumer/cleanup boundary, unsupported authority language, an omitted managed dependency, inaccurate evidence ranges, overbroad stale-decision wording, pairing/overlap validator loopholes, and independent Markdown drift. All findings were resolved; final rereview returned `PASS`.
 - Exclusions preserved: operation-map, FirstLaunch, audio, UI visual-lock, production behavior, scenes, prefabs, packages, and `ProjectSettings` were read only where cited and were not edited by AM-010.
 - Next task: `AM-011` adds missing characterization tests for the recorded ground-missile phase/cleanup/trail boundary and transport capacity/occupancy/configuration invariants before any AM-012 production extraction.
+
+### 2026-07-16 - AM-011 - Selected owner characterization coverage
+
+- Workflow path: direct commits to `main`; no branch, worktree, or PR workflow.
+- Accepted implementation and evidence commit: `d2690f6cc14334c9179fa0550db8a16d753ff22a`, tree `562145cea01d6a75146fa616b2af00aa061e4139`.
+- Result: nine focused characterizations now freeze the selected ground-missile and transport-boarding behaviors before production extraction. No production C# source changed.
+- Ground-missile coverage: recovering-phase countdown without transition or cleanup and missing-projectile in-flight launcher cleanup are recorded as known limitations; trail reuse, missing-frame tolerance, release, and return-to-pool behavior are preserved contracts.
+- Transport coverage: duplicate live passenger entries consuming capacity and multiple-grid singleton rejection are recorded as known limitations. Missing passenger entries, vehicle cargo-capacity requirements, cargo soldier-capacity override, and boarding-target passenger-kind fallback are preserved contracts.
+- Unity validation: ground characterization `3 / 3`; transport characterization `6 / 6`; complete transport regression `88 / 88`; ground attack regression `5 / 5`; ground visual regression `1 / 1`; zero compiler errors in all accepted runs.
+- Performance evidence: both selected production owners were measured for 16 warmup and 64 measured scenarios with zero current-thread allocation. Ground missile averaged `1.314 ms` total and `1.195 ms` simulation with `1.376 ms` total P95; transport boarding averaged `2.259 ms` total and `0.386 ms` boarding update with `2.541 ms` total P95.
+- Evidence: `Design/AgentReports/ArchitectureMaturity/selected_owner_characterization_evidence.json`, the two tracked `am011_*_performance.json` reports, and their fail-closed Python validator. AM-010 responsibility-map freshness continues to protect all production sources while permitting later characterization tasks to evolve cited test files.
+- Validation: 11 focused AM-010/AM-011 evidence tests and 47 integrated ownership/lifecycle/ranking/dashboard/responsibility/characterization tests passed; Python compilation, JSON parsing, exact hashes, deterministic responsibility-map regeneration, `git diff --check`, direct Unity execution, and post-rebase identity checks passed.
+- Independent review: the first review rejected a multiple-grid test that bypassed the production system, an incorrect full-runner count, and an unasserted stale-entry claim. The final implementation invokes the unmanaged system directly, enforces the exact `88` count in code and evidence, and asserts retained null/destroyed entries; final rereview returned `PASS`.
+- Exclusions preserved: operation-map, FirstLaunch, audio, UI visual-lock, gameplay production behavior, scenes, prefabs, packages, and `ProjectSettings` were not edited by AM-011.
+- Next task: `AM-012` extracts one bounded capability at a time behind existing contracts, starting with the stateless transport passenger-kind/capacity/occupancy rules unless fresh evidence invalidates that lower-risk extraction candidate.

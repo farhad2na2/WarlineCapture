@@ -66,7 +66,7 @@ namespace Game.Editor
         private const string DecisionRequired = "DecisionRequired";
 
         private const string ExpectedPayloadSha256 =
-            "3a4ac48efcd1c8b46e958656ffed1dbcf70b4c11fa402cc1ed890b474a3b7acc";
+            "2e140756fe2ab0cf76a25e732d55caa7f4d0393e38300ebdbc84f5c86fb8caa4";
 
         private static readonly UTF8Encoding Utf8WithoutBom = new(false);
 
@@ -536,7 +536,7 @@ namespace Game.Editor
         {
             return new[]
             {
-                new ConsumerSpec("Game.Composition.MapSurfaceRuntimeBootstrapSceneSystemHelper", "PublishSceneOverlays", "Assets/Game/Scripts/Composition/MapSurfaceRuntimeBootstrapSceneSystemHelper.cs", "MapSurfaceDataAsset|MapSurfaceAuthoring|MapSurfaceComponent", "Publishes the selected baked map surface and scene overlays into the runtime world."),
+                new ConsumerSpec("Game.Composition.MapSurfaceRuntimeBootstrapSceneSystemHelper", "EnsureActiveSurface", "Assets/Game/Scripts/Composition/MapSurfaceRuntimeBootstrapSceneSystemHelper.cs", "MapSurfaceDataAsset|MapSurfaceAuthoring|MapSurfaceComponent", "Validates and publishes the selected baked map surface into the runtime world."),
                 new ConsumerSpec("Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper", "PublishFactionProductionSpawnPointsReadModel", "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs", "BuildingFactionProductionSpawnPointReadModel", "Publishes exact building production spawn slots for downstream consumers."),
                 new ConsumerSpec("Game.Runtime.BuildingRunwaySystem", "TryGetNearestAirportRunway", "Assets/Game/Scripts/Systems/BuildingRunwaySystem.cs", "BuildingFactionRunwayReadModel|Runway|Runway_Start|Runway_End", "Resolves runway geometry and effective placement occupancy."),
                 new ConsumerSpec("Game.Runtime.BuildingSpawnCompositionSystemHelper", "TryResolveAvailableFactionHelipadSpawn", "Assets/Game/Scripts/Systems/BuildingSpawnCompositionSystemHelper.cs", "Building_Helipad|BuildingFactionProductionSpawnPointReadModel", "Resolves available faction helipad spawn slots from the runtime read model."),
@@ -596,7 +596,7 @@ namespace Game.Editor
             return new[]
             {
                 new CrossReferenceSpec("opmap-002", "Design/AgentReports/2026-07-14_opmap-002_phase0_baseline_probe.md", "warline.operation-map.phase0-baseline", "996e460029730a69832bc8df81255a1892f1bca9", "d4d4674850766c5cd95e1bb5fbb6f26893e0bb019dbaf266a0c9897a3befc807"),
-                new CrossReferenceSpec("opmap-004", "Design/AgentReports/2026-07-15_opmap-004_phase0_ownership_baseline.json", "warline.operation-map.phase0-ownership", "2069aa01f66040f34fa0fb48ea1d8fec41691bab", "e1080bd90e88140d8151755b7ef6086c02d8683b7d277708004797893fc3c49b"),
+                new CrossReferenceSpec("opmap-004", "Design/AgentReports/2026-07-15_opmap-004_phase0_ownership_baseline.json", "warline.operation-map.phase0-ownership", "2069aa01f66040f34fa0fb48ea1d8fec41691bab", "29961188be1577dc9e232f9815fa7e27ef0a2b0a73b0acd26e338b22a782f4e3"),
                 new CrossReferenceSpec("opmap-006", "Design/AgentReports/2026-07-15_opmap-006_phase0_placement_ownership.json", "warline.operation-map.phase0-placement-ownership", "47c84afc5f873dbf2ea665ab4875d0825b51efd8", "115270bdb5844b5df504f33b5796caa4c85c49e82f02d23ea05e5ce732d0f759")
             };
         }
@@ -619,13 +619,14 @@ namespace Game.Editor
                 [SurfaceAssetPath] = "aa08cb9115e8727bfdbc671a4a2cfd9334ef48134c00d58d7d29e350c45b752c",
                 [AirportPrefabPath] = "1e2456eafce50f155b020b996c7a4be28646284344a3159dccecfe54bb4751cf",
                 [HelipadPrefabPath] = "0a182d98bc33d6a4ce4b55c83252f4b974dadfb3286eccdf21fdd8d7d107da43",
-                [MatchScenePath] = "dca7c83b765ce40099ce4fd62a53cbee5bc306107f8a026abcb941a59bf53a46",
+                [MatchScenePath] = "182f3b4cb50f48e1a573e1e90ee0c13baf9d62fce46e35b1850ef72097db5d75",
                 [MatchSubScenePath] = "bcc255f3fb140a0d91687b45b679b47fb60f01f5cfa8690bac3032ec642dadd8",
                 ["Assets/Game/Scripts/Authorings/GridAuthoring.cs"] = "5ac5169f0351d57ed44c89716614f177ac829d597f34780225da06eb0f4da348",
                 ["Assets/Game/Scripts/Authorings/MapSurfaceAuthoring.cs"] = "0b2f878ee56e78702d9c1f7e648a5f568caccc6c425795c6f05b665297a08789",
                 ["Assets/Game/Scripts/Components/GridComponents.cs"] = "632d66e1479fa0b0773ea1635c29a26c5efadfcc998caf5151980d4d5e20cd39",
                 ["Assets/Game/Scripts/Components/MapSurfaceComponents.cs"] = "f11cb3fa488153f20de6bf7ea4b5f1399266d38fa34dc737dc60ec6173d90036",
-                ["Assets/Game/Scripts/Composition/MapSurfaceRuntimeBootstrapSceneSystemHelper.cs"] = "3b070dee815412915960d9b4ef84bd51cb5d89603850f09401fdd31f958b84db",
+                ["Assets/Game/Scripts/Composition/MapSurfaceRuntimeBootstrapSceneSystemHelper.cs"] = "4461ca141df0189dc9554d5ff5168fdb468b15164fcfcae684278036c74e8005",
+                ["Assets/Game/Scripts/Composition/MapSurfaceSceneOverlayPresentation.cs"] = "d3be1f2f62147af50973556181a7159b59573da0a0df22c4f1e3bcf2a548c9eb",
                 ["Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs"] = "e0af3018b60ce198ad51f8a497123bcdb92c530cef04a1bb14f813da5a49e5dd",
                 ["Assets/Game/Scripts/Systems/BuildingRuntimeSurfaceOverlaySystem.cs"] = "35ecb50d19a3291336e4c10032a37ffd1fc31957e87d6beaaf1e54bf2f3ad9d0",
                 ["Assets/Game/Scripts/Systems/BuildingRunwaySystem.cs"] = "8f81e5a883e478d8ace1aa96301340526289fd6b193f0db250663e00c2f31896",
@@ -641,7 +642,7 @@ namespace Game.Editor
                 ["Assets/Game/Scripts/Systems/UnitGridMovementSystem.cs"] = "03b565d486efff924ed008750d10acf84e230d5d0c4233a0078bedbddd05d7bc",
                 ["Assets/Game/Scripts/Systems/UnitPathGridSnapshot.cs"] = "53d06bc98e48817079dd31ba1b341209e9509ce31d23b72dea972519b56ac9cb",
                 ["Design/AgentReports/2026-07-14_opmap-002_phase0_baseline_probe.md"] = "d4d4674850766c5cd95e1bb5fbb6f26893e0bb019dbaf266a0c9897a3befc807",
-                ["Design/AgentReports/2026-07-15_opmap-004_phase0_ownership_baseline.json"] = "e1080bd90e88140d8151755b7ef6086c02d8683b7d277708004797893fc3c49b",
+                ["Design/AgentReports/2026-07-15_opmap-004_phase0_ownership_baseline.json"] = "29961188be1577dc9e232f9815fa7e27ef0a2b0a73b0acd26e338b22a782f4e3",
                 ["Design/AgentReports/2026-07-15_opmap-006_phase0_placement_ownership.json"] = "115270bdb5844b5df504f33b5796caa4c85c49e82f02d23ea05e5ce732d0f759"
             };
         }

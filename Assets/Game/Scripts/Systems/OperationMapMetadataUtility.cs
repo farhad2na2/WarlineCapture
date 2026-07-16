@@ -16,50 +16,10 @@ namespace Game.Runtime
             out string error)
         {
             grid = default;
-            hasActiveMap = false;
-
-            using EntityQuery rootQuery = entityManager.CreateEntityQuery(
-                ComponentType.ReadOnly<OperationMapRootComponent>());
-            int rootCount = rootQuery.CalculateEntityCount();
-            if (rootCount == 0)
-            {
-                error = null;
+            if (!TryResolveActiveMetadata(entityManager, out BlobAssetReference<OperationMapBlob> metadata, out hasActiveMap, out error))
                 return false;
-            }
 
-            hasActiveMap = true;
-            if (rootCount != 1)
-            {
-                error = $"Expected exactly one operation-map root, found {rootCount}.";
-                return false;
-            }
-
-            Entity rootEntity = rootQuery.GetSingletonEntity();
-            if (!entityManager.HasComponent<ActiveOperationMapComponent>(rootEntity) ||
-                !entityManager.HasComponent<OperationMapMetadataComponent>(rootEntity))
-            {
-                error = "The operation-map root is missing active identity or metadata.";
-                return false;
-            }
-
-            ActiveOperationMapComponent active =
-                entityManager.GetComponentData<ActiveOperationMapComponent>(rootEntity);
-            OperationMapMetadataComponent metadata =
-                entityManager.GetComponentData<OperationMapMetadataComponent>(rootEntity);
-            if (!metadata.Blob.IsCreated || metadata.Generation != active.Generation)
-            {
-                error = "Active operation-map metadata is missing or belongs to a different generation.";
-                return false;
-            }
-
-            ref OperationMapBlob blob = ref metadata.Blob.Value;
-            if (!blob.OperationMapId.Equals(active.OperationMapId))
-            {
-                error = "Active operation-map identity does not match its metadata blob.";
-                return false;
-            }
-
-            OperationMapGridBlob source = blob.Grid;
+            OperationMapGridBlob source = metadata.Value.Grid;
             if (source.Dimensions.x <= 0 || source.Dimensions.y <= 0 ||
                 !math.isfinite(source.CellSize) || source.CellSize <= 0f ||
                 !math.all(math.isfinite(source.Origin)))
@@ -75,6 +35,43 @@ namespace Game.Runtime
                 CellSize = source.CellSize,
                 Origin = source.Origin
             };
+            error = null;
+            return true;
+        }
+
+        public static bool TryResolveActiveSurfaceMetadata(
+            EntityManager entityManager,
+            out OperationMapSurfaceMetadataBlob surface,
+            out OperationMapGridBlob grid,
+            out bool hasActiveMap,
+            out string error)
+        {
+            surface = default;
+            grid = default;
+            if (!TryResolveActiveMetadata(entityManager, out BlobAssetReference<OperationMapBlob> metadata, out hasActiveMap, out error))
+                return false;
+
+            surface = metadata.Value.Surface;
+            grid = metadata.Value.Grid;
+            if (surface.RuntimeBlobHash.IsEmpty ||
+                surface.SurfaceCount <= 0 ||
+                surface.PayloadVersion <= 0 ||
+                !math.isfinite(surface.MinimumHeight) ||
+                !math.isfinite(surface.MaximumHeight) ||
+                surface.MinimumHeight > surface.MaximumHeight)
+            {
+                error = "Active operation-map surface metadata is invalid.";
+                return false;
+            }
+
+            if (grid.Dimensions.x <= 0 || grid.Dimensions.y <= 0 ||
+                !math.isfinite(grid.CellSize) || grid.CellSize <= 0f ||
+                !math.all(math.isfinite(grid.Origin)))
+            {
+                error = "Active operation-map surface grid metadata is invalid.";
+                return false;
+            }
+
             error = null;
             return true;
         }
@@ -185,6 +182,60 @@ namespace Game.Runtime
 
         public static bool IsInsideNormalizedProjection(float2 normalized) =>
             math.all(normalized >= float2.zero) && math.all(normalized <= new float2(1f));
+
+        private static bool TryResolveActiveMetadata(
+            EntityManager entityManager,
+            out BlobAssetReference<OperationMapBlob> metadataBlob,
+            out bool hasActiveMap,
+            out string error)
+        {
+            metadataBlob = default;
+            hasActiveMap = false;
+
+            using EntityQuery rootQuery = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<OperationMapRootComponent>());
+            int rootCount = rootQuery.CalculateEntityCount();
+            if (rootCount == 0)
+            {
+                error = null;
+                return false;
+            }
+
+            hasActiveMap = true;
+            if (rootCount != 1)
+            {
+                error = $"Expected exactly one operation-map root, found {rootCount}.";
+                return false;
+            }
+
+            Entity rootEntity = rootQuery.GetSingletonEntity();
+            if (!entityManager.HasComponent<ActiveOperationMapComponent>(rootEntity) ||
+                !entityManager.HasComponent<OperationMapMetadataComponent>(rootEntity))
+            {
+                error = "The operation-map root is missing active identity or metadata.";
+                return false;
+            }
+
+            ActiveOperationMapComponent active =
+                entityManager.GetComponentData<ActiveOperationMapComponent>(rootEntity);
+            OperationMapMetadataComponent metadata =
+                entityManager.GetComponentData<OperationMapMetadataComponent>(rootEntity);
+            if (!metadata.Blob.IsCreated || metadata.Generation != active.Generation)
+            {
+                error = "Active operation-map metadata is missing or belongs to a different generation.";
+                return false;
+            }
+
+            if (!metadata.Blob.Value.OperationMapId.Equals(active.OperationMapId))
+            {
+                error = "Active operation-map identity does not match its metadata blob.";
+                return false;
+            }
+
+            metadataBlob = metadata.Blob;
+            error = null;
+            return true;
+        }
 
         private static bool IsInside(float3 min, float3 max, float3 position) =>
             math.all(position >= min) && math.all(position <= max);

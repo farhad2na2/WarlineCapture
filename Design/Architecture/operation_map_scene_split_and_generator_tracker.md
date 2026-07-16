@@ -699,7 +699,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 29% (51/177 checklist items complete).
+Overall implementation progress: 29% (52/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
@@ -712,7 +712,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 | 3. Current-map compatibility registration | Complete / shared | 10 | 10 | 100% | Current identities/definition, authored behavior, schema-v1 read compatibility, runtime activation/teardown, deterministic presentation, and Android chunk resolution are accepted. |
 | 4. Non-destructive scene ownership split | In progress / shared priority | 10 | 14 | 71% | The staged scene has fail-closed spatial/content validation; the original Match route remains validated and revision `d5784dcfa` plus the rollback recipe freeze the pre-cutover recovery boundary. |
 | 5. Runtime selection, loading, and teardown | In progress / shared contracts | 2 | 14 | 14% | Catalog preflight plus pure readiness/failure/teardown data contracts are bound; concrete loading is later. |
-| 6. Metadata, camera, minimap, and movement binding | In progress / shared | 7 | 12 | 58% | Scenario-required anchors validate against map metadata; camera bounds/poses, ARIA Show Me, minimap projection, and the startup grid domain resolve from active-map metadata with compatibility fallbacks. Authored blocked-cell parity and teardown remain open. |
+| 6. Metadata, camera, minimap, and movement binding | In progress / shared | 8 | 12 | 67% | Scenario-required anchors validate against map metadata; camera bounds/poses, ARIA Show Me, minimap projection, startup grid domain, and the authoritative surface payload resolve from active-map metadata with compatibility fallbacks. Authored blocked-cell parity and teardown remain open. |
 | 7. M01 operation-map slice | Later / shared contracts only | 0 | 10 | 0% | Map-neutral ids/anchors may proceed; physical rollout remains gated. |
 | 8. Editor-time texture/mask generator | Later / editor direction only | 0 | 12 | 0% | Implement only if the editor-authored map direction is selected. |
 | 9. Mission and Skirmish scenario rollout | Later / shared contracts only | 0 | 10 | 0% | Scenario-to-map identity may proceed; physical rollout remains later. |
@@ -904,7 +904,7 @@ Exit criteria:
 - [ ] Bind friendly/hostile deployment and spawn anchors.
 - [ ] Bind runway and helipad anchors for taxi, takeoff, return, and landing behavior.
 - [ ] Bind blocker/path/build metadata to movement and placement validation.
-- [ ] Bind ground-height/surface metadata for soldiers, vehicles, and aircraft clearance.
+- [x] Bind ground-height/surface metadata for soldiers, vehicles, and aircraft clearance. See `../AgentReports/2026-07-16_operation_map_surface_binding.md`.
 - [x] Add validation for every anchor required by each active scenario. See `../AgentReports/2026-07-16_operation_map_scenario_anchor_validation.md`.
 - [x] Add editor/debug overlays for bounds, cameras, anchors, blockers, lanes, surface samples, and minimap extents. See `../AgentReports/2026-07-16_operation_map_editor_debug_overlays.md`.
 - [x] Add mobile-safe caching and allocation tests for minimap, camera, surface, and anchor lookups. See `../AgentReports/2026-07-16_operation_map_mobile_safe_lookup_validation.md`.
@@ -1106,6 +1106,7 @@ Exit criteria:
 | 2026-07-16 | ARIA operation-map objective anchor binding | `../AgentReports/2026-07-16_operation_map_aria_objective_anchor_binding.md`; assistant `28 / 28`; camera/minimap ownership `33 / 33`; Phase 0 ownership `26 / 26`; source-growth/naming `24 / 24`; two byte-identical evidence runs | Passed | Carries a stable objective anchor id through unmanaged read models and resolves it from the active immutable map blob only when a Show Me request is consumed. The separate objective-list focus/jump row remains open. |
 | 2026-07-16 | Operation-map catalog preflight binding | `../AgentReports/2026-07-16_operation_map_catalog_preflight_binding.md`; focused bootstrap `10 / 10`; affected composition architecture `4 / 4`; source-growth/naming `24 / 24`; Unity compile; `git diff --check` | Passed | Missing or unresolved catalog entries now stop match runtime binding before bootstrap and leave no operation-map root. This is loader-neutral preflight only; no scene loading, Addressables, or generator behavior was added. |
 | 2026-07-16 | Active operation-map grid-domain binding | `../AgentReports/2026-07-16_operation_map_grid_domain_binding.md`; metadata/bootstrap `14 / 14`; movement `26 / 26`; placement `23 / 23`; Menu-Match-Menu `1 / 1`; naming/source-growth `24 / 24`; Unity compile; scoped `git diff --check` | Passed; Phase 6 row remains open | Match startup now prefers the active map blob's grid dimensions/origin/cell size and fails closed on ambiguous or stale active metadata. The serialized grid config remains only a no-active-map compatibility fallback; authored blocked-cell parity and teardown are not yet claimed. |
+| 2026-07-16 | Active operation-map surface binding | `../AgentReports/2026-07-16_operation_map_surface_binding.md`; metadata/bootstrap `21 / 21`; surface consumers/startup `55 / 55`; Unity compile; deterministic ownership evidence; `git diff --check` | Passed | Active-map metadata now validates the exact surface payload hash, format, count, and grid before the existing sole `MapSurfaceBlob` owner publishes it. Binding failures preserve the previous surface and stop startup; no-active-map compatibility remains. |
 
 ## Open Decisions
 

@@ -20,16 +20,87 @@ public sealed class MapSurfaceRuntimeBootstrapSceneSystemHelperTests
         {
             var tests = new MapSurfaceRuntimeBootstrapSceneSystemHelperTests();
             tests.EnsureReplacesStaleSubsceneSurfaceWithAuthoredRuntimeAsset();
+            tests.EnsureMatchingActiveMapPublishesSurface();
+            tests.EnsureMismatchedActiveMapPreservesExistingSurface();
             tests.DisposeRuntimeSurfaceAfterWorldDisposeDoesNotThrow();
             tests.RuntimeBlobHashChangesWhenSurfacePayloadChanges();
             tests.MapSurfaceAuthoringBakerUsesContentHashDeduplication();
-            Debug.Log("[MapSurfaceRuntimeBootstrapValidation] result=Passed tests=4");
+            Debug.Log("[MapSurfaceRuntimeBootstrapValidation] result=Passed tests=6");
         }
         catch (Exception exception)
         {
             Debug.LogError("[MapSurfaceRuntimeBootstrapValidation] result=Failed");
             Debug.LogException(exception);
             throw;
+        }
+    }
+
+    [Test]
+    public void EnsureMatchingActiveMapPublishesSurface()
+    {
+        using World world = new("MapSurfaceRuntimeBootstrapSceneSystemHelperTests.ActiveMap");
+        BlobAssetReference<MapSurfaceBlob> sourceBlob = default;
+        BlobAssetReference<OperationMapBlob> operationMapBlob = default;
+        MapSurfaceDataAsset asset = ScriptableObject.CreateInstance<MapSurfaceDataAsset>();
+        MapSurfaceRuntimeBootstrapSceneSystemHelper bootstrap = new(world);
+        try
+        {
+            sourceBlob = CreateSingleCellSurface(2.5f);
+            asset.ConfigureBakedSurface(Vector3.zero, 1f, Vector2Int.one, sourceBlob, false);
+            operationMapBlob = CreateActiveOperationMap(world.EntityManager, asset);
+
+            Assert.That(bootstrap.Ensure(asset, out string error), Is.True, error);
+            using EntityQuery query = world.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
+            Assert.That(query.CalculateEntityCount(), Is.EqualTo(1));
+        }
+        finally
+        {
+            bootstrap.DisposeRuntimeSurface();
+            if (operationMapBlob.IsCreated)
+                operationMapBlob.Dispose();
+            if (sourceBlob.IsCreated)
+                sourceBlob.Dispose();
+            UnityEngine.Object.DestroyImmediate(asset);
+        }
+    }
+
+    [Test]
+    public void EnsureMismatchedActiveMapPreservesExistingSurface()
+    {
+        using World world = new("MapSurfaceRuntimeBootstrapSceneSystemHelperTests.Mismatch");
+        BlobAssetReference<MapSurfaceBlob> existingBlob = default;
+        BlobAssetReference<MapSurfaceBlob> sourceBlob = default;
+        BlobAssetReference<OperationMapBlob> operationMapBlob = default;
+        MapSurfaceDataAsset asset = ScriptableObject.CreateInstance<MapSurfaceDataAsset>();
+        try
+        {
+            existingBlob = CreateSingleCellSurface(7f);
+            sourceBlob = CreateSingleCellSurface(2.5f);
+            asset.ConfigureBakedSurface(Vector3.zero, 1f, Vector2Int.one, sourceBlob, false);
+            operationMapBlob = CreateActiveOperationMap(
+                world.EntityManager,
+                asset,
+                new FixedString64Bytes("00000000000000000000000000000000"));
+
+            Entity existing = world.EntityManager.CreateEntity(typeof(MapSurfaceComponent));
+            world.EntityManager.SetComponentData(existing, CreateSurfaceComponent(existingBlob));
+            MapSurfaceRuntimeBootstrapSceneSystemHelper bootstrap = new(world);
+
+            Assert.That(bootstrap.Ensure(asset, out string error), Is.False);
+            Assert.That(error, Does.Contain("does not match"));
+            Assert.That(world.EntityManager.Exists(existing), Is.True);
+            MapSurfaceComponent retained = world.EntityManager.GetComponentData<MapSurfaceComponent>(existing);
+            Assert.That(retained.SurfaceBlob, Is.EqualTo(existingBlob));
+        }
+        finally
+        {
+            if (operationMapBlob.IsCreated)
+                operationMapBlob.Dispose();
+            if (existingBlob.IsCreated)
+                existingBlob.Dispose();
+            if (sourceBlob.IsCreated)
+                sourceBlob.Dispose();
+            UnityEngine.Object.DestroyImmediate(asset);
         }
     }
 
@@ -203,6 +274,55 @@ public sealed class MapSurfaceRuntimeBootstrapSceneSystemHelperTests
         BlobAssetReference<MapSurfaceBlob> blob = builder.CreateBlobAssetReference<MapSurfaceBlob>(Allocator.Persistent);
         builder.Dispose();
         return blob;
+    }
+
+    private static BlobAssetReference<OperationMapBlob> CreateActiveOperationMap(
+        EntityManager entityManager,
+        MapSurfaceDataAsset surface,
+        FixedString64Bytes runtimeHash = default)
+    {
+        if (runtimeHash.IsEmpty)
+            runtimeHash = new FixedString64Bytes(surface.ComputeRuntimeBlobHash().ToString());
+
+        using BlobBuilder builder = new(Allocator.Temp);
+        ref OperationMapBlob root = ref builder.ConstructRoot<OperationMapBlob>();
+        FixedString64Bytes operationMapId = new("opmap.skirmish.desert_base_01");
+        root.OperationMapId = operationMapId;
+        root.Grid = new OperationMapGridBlob
+        {
+            Origin = surface.GridOrigin,
+            Dimensions = new int2(surface.Dimensions.x, surface.Dimensions.y),
+            CellSize = surface.CellSize
+        };
+        root.Surface = new OperationMapSurfaceMetadataBlob
+        {
+            RuntimeBlobHash = runtimeHash,
+            SurfaceCount = surface.SurfaceCount,
+            PayloadVersion = surface.PayloadVersion,
+            PayloadEncoding = surface.PayloadEncoding,
+            MinimumHeight = 0f,
+            MaximumHeight = 10f
+        };
+        builder.Allocate(ref root.Anchors, 0);
+        builder.Allocate(ref root.Cameras, 0);
+        BlobAssetReference<OperationMapBlob> metadata =
+            builder.CreateBlobAssetReference<OperationMapBlob>(Allocator.Persistent);
+
+        Entity mapRoot = entityManager.CreateEntity(
+            typeof(OperationMapRootComponent),
+            typeof(ActiveOperationMapComponent),
+            typeof(OperationMapMetadataComponent));
+        entityManager.SetComponentData(mapRoot, new ActiveOperationMapComponent
+        {
+            OperationMapId = operationMapId,
+            Generation = 1
+        });
+        entityManager.SetComponentData(mapRoot, new OperationMapMetadataComponent
+        {
+            Blob = metadata,
+            Generation = 1
+        });
+        return metadata;
     }
 }
 #endif

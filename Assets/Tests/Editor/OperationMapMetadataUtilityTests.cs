@@ -153,6 +153,40 @@ public sealed class OperationMapMetadataUtilityTests
     }
 
     [Test]
+    public void ActiveSurfaceMetadata_ResolvesTypedSurfaceAndGrid()
+    {
+        using World world = new("OperationMapMetadataUtilityTests.ActiveSurface");
+        EntityManager entityManager = world.EntityManager;
+        BlobAssetReference<OperationMapBlob> blob = CreateMetadataBlob();
+        Entity root = entityManager.CreateEntity(
+            typeof(OperationMapRootComponent),
+            typeof(ActiveOperationMapComponent),
+            typeof(OperationMapMetadataComponent));
+        entityManager.SetComponentData(root, new ActiveOperationMapComponent
+        {
+            OperationMapId = new FixedString64Bytes("opmap.skirmish.desert_base_01"),
+            Generation = 2
+        });
+        entityManager.SetComponentData(root, new OperationMapMetadataComponent
+        {
+            Blob = blob,
+            Generation = 2
+        });
+
+        Assert.That(OperationMapMetadataUtility.TryResolveActiveSurfaceMetadata(
+            entityManager,
+            out OperationMapSurfaceMetadataBlob surface,
+            out OperationMapGridBlob grid,
+            out bool hasActiveMap,
+            out string error), Is.True, error);
+        Assert.That(hasActiveMap, Is.True);
+        Assert.That(surface.SurfaceCount, Is.EqualTo(57_600));
+        Assert.That(surface.RuntimeBlobHash.ToString(), Is.EqualTo("0123456789abcdef0123456789abcdef"));
+        Assert.That(grid.Dimensions, Is.EqualTo(new int2(320, 180)));
+        blob.Dispose();
+    }
+
+    [Test]
     public void MinimapProjection_ZeroRotationMatchesCurrentLowerLeftXZContract()
     {
         OperationMapMinimapBlob projection = new()
@@ -278,6 +312,15 @@ public sealed class OperationMapMetadataUtilityTests
             Dimensions = new int2(width, height),
             CellSize = cellSize,
             AuthoredBlockedCellCount = 0
+        };
+        root.Surface = new OperationMapSurfaceMetadataBlob
+        {
+            RuntimeBlobHash = new FixedString64Bytes("0123456789abcdef0123456789abcdef"),
+            SurfaceCount = math.max(1, width * height),
+            PayloadVersion = 3,
+            PayloadEncoding = 1,
+            MinimumHeight = -5f,
+            MaximumHeight = 35f
         };
         BlobBuilderArray<OperationMapAnchorBlob> anchors = builder.Allocate(ref root.Anchors, 1);
         anchors[0] = new OperationMapAnchorBlob

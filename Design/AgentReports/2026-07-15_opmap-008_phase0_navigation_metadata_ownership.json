@@ -7,10 +7,10 @@
         "authorities": 15,
         "runtimeConsumers": 15,
         "acceptedCrossReferences": 3,
-        "directInputs": 30,
+        "directInputs": 31,
         "needsDecision": 4
     },
-    "identityPayloadSha256": "3a4ac48efcd1c8b46e958656ffed1dbcf70b4c11fa402cc1ed890b474a3b7acc",
+    "identityPayloadSha256": "2e140756fe2ab0cf76a25e732d55caa7f4d0393e38300ebdbc84f5c86fb8caa4",
     "acceptedEvidence": [
         {
             "task": "opmap-002",
@@ -24,7 +24,7 @@
             "path": "Design/AgentReports/2026-07-15_opmap-004_phase0_ownership_baseline.json",
             "reportSchema": "warline.operation-map.phase0-ownership",
             "sourceRevision": "2069aa01f66040f34fa0fb48ea1d8fec41691bab",
-            "evidenceSha256": "e1080bd90e88140d8151755b7ef6086c02d8683b7d277708004797893fc3c49b"
+            "evidenceSha256": "29961188be1577dc9e232f9815fa7e27ef0a2b0a73b0acd26e338b22a782f4e3"
         },
         {
             "task": "opmap-006",
@@ -61,7 +61,7 @@
         },
         {
             "path": "Assets/Game/Scenes/Match.unity",
-            "sha256": "dca7c83b765ce40099ce4fd62a53cbee5bc306107f8a026abcb941a59bf53a46"
+            "sha256": "182f3b4cb50f48e1a573e1e90ee0c13baf9d62fce46e35b1850ef72097db5d75"
         },
         {
             "path": "Assets/Game/Scenes/Match/MatchSubScene.unity",
@@ -85,7 +85,11 @@
         },
         {
             "path": "Assets/Game/Scripts/Composition/MapSurfaceRuntimeBootstrapSceneSystemHelper.cs",
-            "sha256": "3b070dee815412915960d9b4ef84bd51cb5d89603850f09401fdd31f958b84db"
+            "sha256": "4461ca141df0189dc9554d5ff5168fdb468b15164fcfcae684278036c74e8005"
+        },
+        {
+            "path": "Assets/Game/Scripts/Composition/MapSurfaceSceneOverlayPresentation.cs",
+            "sha256": "d3be1f2f62147af50973556181a7159b59573da0a0df22c4f1e3bcf2a548c9eb"
         },
         {
             "path": "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",
@@ -149,7 +153,7 @@
         },
         {
             "path": "Design/AgentReports/2026-07-15_opmap-004_phase0_ownership_baseline.json",
-            "sha256": "e1080bd90e88140d8151755b7ef6086c02d8683b7d277708004797893fc3c49b"
+            "sha256": "29961188be1577dc9e232f9815fa7e27ef0a2b0a73b0acd26e338b22a782f4e3"
         },
         {
             "path": "Design/AgentReports/2026-07-15_opmap-006_phase0_placement_ownership.json",
@@ -445,13 +449,13 @@
     ],
     "runtimeConsumers": [
         {
-            "stableIdentity": "Game.Composition.MapSurfaceRuntimeBootstrapSceneSystemHelper::PublishSceneOverlays@Assets/Game/Scripts/Composition/MapSurfaceRuntimeBootstrapSceneSystemHelper.cs",
+            "stableIdentity": "Game.Composition.MapSurfaceRuntimeBootstrapSceneSystemHelper::EnsureActiveSurface@Assets/Game/Scripts/Composition/MapSurfaceRuntimeBootstrapSceneSystemHelper.cs",
             "sourceRevision": "75ed0c9d6922020d264a5ad77662c955c07fc30e",
             "sourcePath": "Assets/Game/Scripts/Composition/MapSurfaceRuntimeBootstrapSceneSystemHelper.cs",
             "exactType": "Game.Composition.MapSurfaceRuntimeBootstrapSceneSystemHelper",
-            "memberIdentity": "Game.Composition.MapSurfaceRuntimeBootstrapSceneSystemHelper::PublishSceneOverlays",
+            "memberIdentity": "Game.Composition.MapSurfaceRuntimeBootstrapSceneSystemHelper::EnsureActiveSurface",
             "consumes": "MapSurfaceDataAsset|MapSurfaceAuthoring|MapSurfaceComponent",
-            "responsibility": "Publishes the selected baked map surface and scene overlays into the runtime world."
+            "responsibility": "Validates and publishes the selected baked map surface into the runtime world."
         },
         {
             "stableIdentity": "Game.Runtime.BuildingRuntimeProcessingCompositionSystemHelper::PublishFactionProductionSpawnPointsReadModel@Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",

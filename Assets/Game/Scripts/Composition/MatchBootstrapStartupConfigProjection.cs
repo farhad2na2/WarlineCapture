@@ -75,7 +75,11 @@ namespace Game.Composition
                 return;
             }
 
-            mapSurfaceRuntimeBootstrapSystem.Ensure(mapSurfaceAuthoring);
+            if (!mapSurfaceRuntimeBootstrapSystem.Ensure(mapSurfaceAuthoring, out string mapSurfaceError))
+            {
+                throw new System.InvalidOperationException(
+                    $"Operation-map surface binding failed: {mapSurfaceError}");
+            }
             ProjectInitialFactionSpawnCellFallbackEntries(
                 buildingPlacementConfig != null ? buildingPlacementConfig.InitialUnitsConfig : null,
                 initialFactionSpawnCellFallbackEntries);

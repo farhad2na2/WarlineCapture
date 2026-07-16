@@ -456,6 +456,7 @@ def build_inventory(root: Path, revision: str, tree: str) -> dict[str, Any]:
     summary = {
         "nativeContainerCount": len(categories["nativeContainers"]),
         "nativeWithoutObservedCleanupCount": sum(not item["cleanupObserved"] for item in categories["nativeContainers"]),
+        "persistentNativeContainerCount": sum(item["persistentAllocatorObserved"] for item in categories["nativeContainers"]),
         "presentationPoolCount": len(categories["presentationPools"]),
         "presentationPoolWithoutObservedCleanupCount": sum(not item["cleanupObserved"] for item in categories["presentationPools"]),
         "queryCacheCount": len(categories["queryCaches"]),
@@ -504,7 +505,8 @@ def render_markdown(data: dict[str, Any]) -> str:
         f"- Baseline commit: `{data['baseline']['commit']}`",
         f"- Baseline tree: `{data['baseline']['tree']}`",
         f"- World owners / default-world accesses: {summary['worldOwnerCount']} / {summary['worldDefaultAccessCount']}",
-        f"- Persistent-native candidates: {summary['nativeContainerCount']}",
+        f"- Native-container candidates: {summary['nativeContainerCount']}",
+        f"- Persistent allocator observed: {summary['persistentNativeContainerCount']}",
         f"- Query-cache candidates: {summary['queryCacheCount']}",
         f"- Presentation-pool candidates: {summary['presentationPoolCount']}",
         f"- Scene-root candidates: {summary['sceneRootCount']}",

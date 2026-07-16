@@ -118,6 +118,7 @@ class ArchitectureLifecycleInventoryTests(unittest.TestCase):
             "NestedOwner",
         ])
         self.assertEqual(len(categories["nativeContainers"]), 1)
+        self.assertEqual(data["summary"]["persistentNativeContainerCount"], 1)
         self.assertTrue(categories["nativeContainers"][0]["persistentAllocatorObserved"])
         self.assertEqual(categories["nativeContainers"][0]["cleanupMethodsObserved"], ["OnDestroy"])
         self.assertEqual(len(categories["queryCaches"]), 2)

@@ -34,11 +34,24 @@ Checkpoint revision: `5c86a3ea2ed45f29d8f8c4bcbf4b7e056cf0b850`
   `/private/tmp/opmap-current-authored-android-resolver-final.xml`.
 - Refreshed Phase 0 ownership report remains `NeedsDecision` with its same four
   historical decisions; report SHA-256 is
-  `fcfe791ff39085ee05d4a6b54eb6716b0770c1619a4972fc4be1f64fd0a098df`
+  `18e2876ce420363be12672c79cbfdfde857b0b4c3a9cc75e7162bc6905291374`
   and shape/hash tests passed `26 / 26` in
-  `/private/tmp/opmap-compat-checkpoint-ownership-tests.xml`.
+  `/private/tmp/opmap-rollback-checkpoint-ownership-tests.xml`.
 
 This checkpoint closes only the requirement to keep the original route
 functional before cutover. It does not approve a staged-map presentation bake,
 scene loading/unloading, Addressables, removal of Match map roots, or the atomic
 shell cutover.
+
+## Rollback Boundary
+
+Revision `d5784dcfa` is the accepted pre-cutover checkpoint. The exact recovery
+procedure is `Design/Architecture/operation_map_scene_split_rollback_recipe.md`.
+Any later atomic cutover must preserve or be able to restore from this revision:
+
+- canonical `Match.unity` and `MatchSubScene.unity` references;
+- canonical building/vehicle placement configs and compatibility definition;
+- static presentation manifest, integrity ledger, and 514 owned chunk scenes;
+- current build settings and compatibility catalog binding.
+
+The unrelated M01 runtime-generation prototype is outside this checkpoint.

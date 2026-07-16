@@ -901,7 +901,7 @@ Exit criteria:
 - [x] Bind minimap projection and cached raster data from the active map. See `../AgentReports/2026-07-16_operation_map_minimap_projection_binding.md`.
 - [ ] Bind objective focus/jump to typed operation-map anchor ids.
 - [x] Bind ARIA `Show Me` and camera intents to typed operation-map anchors. See `../AgentReports/2026-07-16_operation_map_aria_objective_anchor_binding.md`.
-- [ ] Bind friendly/hostile deployment and spawn anchors.
+- [ ] Bind friendly/hostile deployment and spawn anchors. Loader-neutral typed lookup and active-map precedence are implemented; current-map anchor identities/transforms remain pending. See `../AgentReports/2026-07-17_operation_map_faction_spawn_anchor_foundation.md`.
 - [ ] Bind runway and helipad anchors for taxi, takeoff, return, and landing behavior.
 - [x] Bind blocker/path/build metadata to movement and placement validation. See `../AgentReports/2026-07-16_operation_map_blocker_path_build_binding.md`.
 - [x] Bind ground-height/surface metadata for soldiers, vehicles, and aircraft clearance. See `../AgentReports/2026-07-16_operation_map_surface_binding.md`.
@@ -1108,6 +1108,7 @@ Exit criteria:
 | 2026-07-16 | Active operation-map grid-domain binding | `../AgentReports/2026-07-16_operation_map_grid_domain_binding.md`; metadata/bootstrap `14 / 14`; movement `26 / 26`; placement `23 / 23`; Menu-Match-Menu `1 / 1`; naming/source-growth `24 / 24`; Unity compile; scoped `git diff --check` | Passed; Phase 6 row remains open | Match startup now prefers the active map blob's grid dimensions/origin/cell size and fails closed on ambiguous or stale active metadata. The serialized grid config remains only a no-active-map compatibility fallback; authored blocked-cell parity and teardown are not yet claimed. |
 | 2026-07-16 | Active operation-map surface binding | `../AgentReports/2026-07-16_operation_map_surface_binding.md`; metadata/bootstrap `21 / 21`; surface consumers/startup `55 / 55`; Unity compile; deterministic ownership evidence; `git diff --check` | Passed | Active-map metadata now validates the exact surface payload hash, format, count, and grid before the existing sole `MapSurfaceBlob` owner publishes it. Binding failures preserve the previous surface and stop startup; no-active-map compatibility remains. |
 | 2026-07-16 | Active operation-map blocker/path/build binding | `../AgentReports/2026-07-16_operation_map_blocker_path_build_binding.md`; startup binding `5 / 5`; runtime grid `5 / 5`; movement/blocker passed; placement `19 / 19`; Unity compile; `git diff --check` | Passed | Active navigation metadata now fail-closes on grid/count/capability drift, while authored blocked cells initialize the existing shared walkability authority used by movement, pathfinding, and placement. No loading, generator, or delivery behavior was added. |
+| 2026-07-17 | Operation-map faction spawn anchor foundation | `../AgentReports/2026-07-17_operation_map_faction_spawn_anchor_foundation.md`; faction spawn `5 / 5`; AI startup `1 / 1`; Unity compile; `git diff --check` | Passed; Phase 6 row remains open | Runtime startup now prefers exact typed faction deployment/spawn anchors and rejects ambiguity or out-of-grid records. Current compatibility map positions remain unapproved and were not guessed. |
 
 ## Open Decisions
 

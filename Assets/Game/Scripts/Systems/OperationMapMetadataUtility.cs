@@ -145,6 +145,82 @@ namespace Game.Runtime
             return false;
         }
 
+        public static bool TryResolveActiveFactionAnchorCell(
+            EntityManager entityManager,
+            OperationMapAnchorKind kind,
+            int factionId,
+            int laneIndex,
+            out int2 cell,
+            out bool hasActiveMap,
+            out bool hasMatchingAnchor,
+            out string error)
+        {
+            cell = default;
+            hasMatchingAnchor = false;
+            if (kind != OperationMapAnchorKind.Spawn && kind != OperationMapAnchorKind.Deployment)
+            {
+                hasActiveMap = false;
+                error = "Faction anchor lookup requires Spawn or Deployment kind.";
+                return false;
+            }
+
+            if (!TryResolveActiveMetadata(entityManager, out BlobAssetReference<OperationMapBlob> metadata, out hasActiveMap, out error))
+                return false;
+
+            OperationMapGridBlob grid = metadata.Value.Grid;
+            if (!IsValidGrid(in grid))
+            {
+                error = "Active operation-map faction anchor grid metadata is invalid.";
+                return false;
+            }
+
+            int matchCount = 0;
+            OperationMapAnchorBlob match = default;
+            for (int index = 0; index < metadata.Value.Anchors.Length; index++)
+            {
+                OperationMapAnchorBlob candidate = metadata.Value.Anchors[index];
+                if (candidate.Kind != kind ||
+                    candidate.FactionId != factionId ||
+                    candidate.LaneIndex != laneIndex)
+                {
+                    continue;
+                }
+
+                match = candidate;
+                matchCount++;
+            }
+
+            if (matchCount == 0)
+            {
+                error = null;
+                return false;
+            }
+
+            hasMatchingAnchor = true;
+            if (matchCount != 1 || !math.all(math.isfinite(match.Position)))
+            {
+                error = $"Active operation map has invalid or ambiguous {kind} anchors for faction {factionId}, lane {laneIndex}.";
+                return false;
+            }
+
+            GridConfig config = new()
+            {
+                Width = grid.Dimensions.x,
+                Height = grid.Dimensions.y,
+                CellSize = grid.CellSize,
+                Origin = grid.Origin
+            };
+            cell = GridUtils.WorldToCell(in config, match.Position);
+            if (!GridUtils.InBounds(cell, config.Width, config.Height))
+            {
+                error = $"Active operation-map {kind} anchor resolves outside the grid for faction {factionId}, lane {laneIndex}.";
+                return false;
+            }
+
+            error = null;
+            return true;
+        }
+
         public static bool IsInsideWorldBounds(in OperationMapBoundsComponent bounds, float3 position) =>
             IsInside(bounds.WorldMin, bounds.WorldMax, position);
 

@@ -90,7 +90,7 @@
         },
         {
             "path": "Assets/Game/Scripts/Systems/OperationMapMetadataUtility.cs",
-            "sha256": "ab2c54f4f566616ffa4ab7f6c8fae84fc8f6babebd5d4a442900e01ecd0d420d"
+            "sha256": "6e9ff72a67af68e91f4c29c926ee378537f5d479f6afaf160b56519eac06e228"
         },
         {
             "path": "Assets/Game/Scripts/Systems/RtsCameraRequestSystem.cs",
@@ -154,7 +154,7 @@
         },
         {
             "path": "Design/Architecture/operation_map_scene_split_and_generator_tracker.md",
-            "sha256": "8f293f7ce5b3c9c9eef777bcee9201bb82cb1b8d269e092a9b4eb4f565fc3122"
+            "sha256": "6140f5906f1928bf71fac4dd6ba6df36eb5ec671917712e6864b44331b65b13c"
         }
     ],
     "presenceFindings": [

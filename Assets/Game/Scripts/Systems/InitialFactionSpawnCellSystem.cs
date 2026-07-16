@@ -37,10 +37,53 @@ namespace Game.Runtime
             byte factionId,
             out int2 spawnCell)
         {
+            if (TryGetActiveMapFactionSpawnCell(em, factionId, out spawnCell))
+                return true;
+
             if (TryGetBakedFactionSpawnCell(em, factionId, out spawnCell))
                 return true;
 
             return TryGetFallbackFactionSpawnCell(fallbackFactionSpawns, factionId, out spawnCell);
+        }
+
+        private static bool TryGetActiveMapFactionSpawnCell(
+            EntityManager em,
+            byte factionId,
+            out int2 spawnCell)
+        {
+            if (TryGetActiveMapFactionAnchorCell(
+                em, OperationMapAnchorKind.Deployment, factionId, out spawnCell))
+            {
+                return true;
+            }
+
+            if (TryGetActiveMapFactionAnchorCell(
+                em, OperationMapAnchorKind.Spawn, factionId, out spawnCell))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool TryGetActiveMapFactionAnchorCell(
+            EntityManager em,
+            OperationMapAnchorKind kind,
+            byte factionId,
+            out int2 spawnCell)
+        {
+            bool resolved = OperationMapMetadataUtility.TryResolveActiveFactionAnchorCell(
+                em,
+                kind,
+                factionId,
+                laneIndex: -1,
+                out spawnCell,
+                out bool hasActiveMap,
+                out bool hasMatchingAnchor,
+                out string error);
+            if (!resolved && hasActiveMap && (hasMatchingAnchor || error != null))
+                throw new System.InvalidOperationException(error);
+            return resolved;
         }
 
         private static bool TryGetBakedFactionSpawnCell(EntityManager em, byte factionId, out int2 spawnCell)

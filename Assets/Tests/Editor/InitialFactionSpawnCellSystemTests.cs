@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using NUnit.Framework;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -17,9 +18,12 @@ public sealed class InitialFactionSpawnCellSystemTests
         try
         {
             var tests = new InitialFactionSpawnCellSystemTests();
+            tests.TryGetConfiguredFactionSpawnCellPrefersActiveMapDeploymentAnchor();
+            tests.TryGetConfiguredFactionSpawnCellUsesActiveMapSpawnAnchorWhenDeploymentIsAbsent();
+            tests.TryGetConfiguredFactionSpawnCellRejectsAmbiguousActiveMapAnchors();
             tests.TryGetConfiguredFactionSpawnCellPrefersBakedEcsSpawnBuffer();
             tests.TryGetConfiguredFactionSpawnCellFallsBackToSerializedConfig();
-            Debug.Log("[InitialFactionSpawnCellFocusedValidation] result=Passed tests=2");
+            Debug.Log("[InitialFactionSpawnCellFocusedValidation] result=Passed tests=5");
         }
         catch (Exception exception)
         {
@@ -30,10 +34,100 @@ public sealed class InitialFactionSpawnCellSystemTests
     }
 
     [Test]
+    public void TryGetConfiguredFactionSpawnCellPrefersActiveMapDeploymentAnchor()
+    {
+        using var world = new World("InitialFactionSpawnCellSystemTests_ActiveDeployment");
+        BlobAssetReference<OperationMapBlob> blob = AddActiveMap(
+            world.EntityManager,
+            new OperationMapAnchorBlob
+            {
+                Id = new FixedString64Bytes("anchor.test.deployment.faction3"),
+                Kind = OperationMapAnchorKind.Deployment,
+                Position = new float3(11f, 0f, 15f),
+                FactionId = 3,
+                LaneIndex = -1
+            });
+        try
+        {
+            AddBakedSpawn(world.EntityManager, 3, new int2(31, 47));
+            InitialFactionSpawnCellSystem system = new();
+            Assert.IsTrue(system.TryGetConfiguredFactionSpawnCell(
+                world.EntityManager, null, 3, out int2 spawnCell));
+            Assert.AreEqual(new int2(5, 7), spawnCell);
+        }
+        finally
+        {
+            blob.Dispose();
+        }
+    }
+
+    [Test]
+    public void TryGetConfiguredFactionSpawnCellUsesActiveMapSpawnAnchorWhenDeploymentIsAbsent()
+    {
+        using var world = new World("InitialFactionSpawnCellSystemTests_ActiveSpawn");
+        BlobAssetReference<OperationMapBlob> blob = AddActiveMap(
+            world.EntityManager,
+            new OperationMapAnchorBlob
+            {
+                Id = new FixedString64Bytes("anchor.test.spawn.faction4"),
+                Kind = OperationMapAnchorKind.Spawn,
+                Position = new float3(17f, 0f, 9f),
+                FactionId = 4,
+                LaneIndex = -1
+            });
+        try
+        {
+            InitialFactionSpawnCellSystem system = new();
+            Assert.IsTrue(system.TryGetConfiguredFactionSpawnCell(
+                world.EntityManager, null, 4, out int2 spawnCell));
+            Assert.AreEqual(new int2(8, 4), spawnCell);
+        }
+        finally
+        {
+            blob.Dispose();
+        }
+    }
+
+    [Test]
+    public void TryGetConfiguredFactionSpawnCellRejectsAmbiguousActiveMapAnchors()
+    {
+        using var world = new World("InitialFactionSpawnCellSystemTests_Ambiguous");
+        BlobAssetReference<OperationMapBlob> blob = AddActiveMap(
+            world.EntityManager,
+            new OperationMapAnchorBlob
+            {
+                Id = new FixedString64Bytes("anchor.test.deployment.a"),
+                Kind = OperationMapAnchorKind.Deployment,
+                Position = new float3(11f, 0f, 15f),
+                FactionId = 2,
+                LaneIndex = -1
+            },
+            new OperationMapAnchorBlob
+            {
+                Id = new FixedString64Bytes("anchor.test.deployment.b"),
+                Kind = OperationMapAnchorKind.Deployment,
+                Position = new float3(21f, 0f, 25f),
+                FactionId = 2,
+                LaneIndex = -1
+            });
+        try
+        {
+            InitialFactionSpawnCellSystem system = new();
+            Assert.Throws<InvalidOperationException>(() =>
+                system.TryGetConfiguredFactionSpawnCell(world.EntityManager, null, 2, out _));
+        }
+        finally
+        {
+            blob.Dispose();
+        }
+    }
+
+    [Test]
     public void TryGetConfiguredFactionSpawnCellPrefersBakedEcsSpawnBuffer()
     {
         using var world = new World("InitialFactionSpawnCellSystemTests_Baked");
         EntityManager em = world.EntityManager;
+        BlobAssetReference<OperationMapBlob> blob = AddActiveMap(em);
         Entity configEntity = em.CreateEntity(typeof(InitialUnitsSpawnConfig));
         DynamicBuffer<InitialUnitsFactionSpawnEntry> factionSpawns = em.AddBuffer<InitialUnitsFactionSpawnEntry>(configEntity);
         factionSpawns.Add(new InitialUnitsFactionSpawnEntry
@@ -55,6 +149,7 @@ public sealed class InitialFactionSpawnCellSystemTests
         }
         finally
         {
+            blob.Dispose();
             UnityEngine.Object.DestroyImmediate(fallbackConfig);
         }
     }
@@ -89,6 +184,47 @@ public sealed class InitialFactionSpawnCellSystemTests
         SetPrivateField(factionEntry, "spawnCell", spawnCell);
         SetPrivateField(config, "factions", new List<InitialUnitsSpawnerAuthoringConfig.FactionEntry> { factionEntry });
         return config;
+    }
+
+    private static void AddBakedSpawn(EntityManager entityManager, byte factionId, int2 spawnCell)
+    {
+        Entity configEntity = entityManager.CreateEntity(typeof(InitialUnitsSpawnConfig));
+        DynamicBuffer<InitialUnitsFactionSpawnEntry> spawns =
+            entityManager.AddBuffer<InitialUnitsFactionSpawnEntry>(configEntity);
+        spawns.Add(new InitialUnitsFactionSpawnEntry { FactionId = factionId, SpawnCell = spawnCell });
+    }
+
+    private static BlobAssetReference<OperationMapBlob> AddActiveMap(
+        EntityManager entityManager,
+        params OperationMapAnchorBlob[] sourceAnchors)
+    {
+        using BlobBuilder builder = new(Allocator.Temp);
+        ref OperationMapBlob metadata = ref builder.ConstructRoot<OperationMapBlob>();
+        metadata.OperationMapId = new FixedString64Bytes("opmap.test.spawn");
+        metadata.Grid = new OperationMapGridBlob
+        {
+            Origin = float3.zero,
+            Dimensions = new int2(32, 32),
+            CellSize = 2f
+        };
+        BlobBuilderArray<OperationMapAnchorBlob> anchors =
+            builder.Allocate(ref metadata.Anchors, sourceAnchors.Length);
+        for (int index = 0; index < sourceAnchors.Length; index++)
+            anchors[index] = sourceAnchors[index];
+
+        BlobAssetReference<OperationMapBlob> blob =
+            builder.CreateBlobAssetReference<OperationMapBlob>(Allocator.Persistent);
+        Entity root = entityManager.CreateEntity(
+            typeof(OperationMapRootComponent),
+            typeof(ActiveOperationMapComponent),
+            typeof(OperationMapMetadataComponent));
+        entityManager.SetComponentData(root, new ActiveOperationMapComponent
+        {
+            OperationMapId = metadata.OperationMapId,
+            Generation = 1
+        });
+        entityManager.SetComponentData(root, new OperationMapMetadataComponent { Blob = blob, Generation = 1 });
+        return blob;
     }
 
     private static InitialFactionSpawnCellFallbackEntry[] CreateFallbackEntries(InitialUnitsSpawnerAuthoringConfig config)

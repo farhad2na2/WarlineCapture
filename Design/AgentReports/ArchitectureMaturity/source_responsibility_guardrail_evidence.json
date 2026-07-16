@@ -1,0 +1,55 @@
+{
+  "artifactId": "am016-source-responsibility-guardrail-v1",
+  "schemaVersion": 1,
+  "acceptanceRequired": false,
+  "sourceBaseline": {
+    "branch": "main",
+    "commit": "5f24549a18199db04921bb0ad6adf075872b03ff",
+    "tree": "ad633be5b7bdfcffd90ed5ab2fa7aba25e129aee"
+  },
+  "acceptedEvidence": null,
+  "implementationChangePaths": [
+    "Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs",
+    "Design/AgentReports/ArchitectureMaturity/source_responsibility_guardrail_evidence.json",
+    "Design/Architecture/post_hardening_source_responsibility_guardrails.json",
+    "Tools/CI/tests/test_architecture_source_responsibility_guardrail_evidence.py"
+  ],
+  "contract": {
+    "path": "Design/Architecture/post_hardening_source_responsibility_guardrails.json",
+    "sha256": "e3611de634030a88b4e0e65395510a7f2dbc9cc7a2d6e294564e13c22c5c83ed",
+    "guardedSourceCount": 2,
+    "growthAuthorizationCount": 4
+  },
+  "guardedSources": [
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/ResourceExchangeShellBinding.cs",
+      "sha256": "640758d7b1562455285ee8da14b8da38fd9c31102397e1267eafa90328d7ee07",
+      "maxLines": 94,
+      "maxBytes": 3160
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs",
+      "sha256": "a729b621b4ae140807469c336e6277c6cfaaa81aac5dfe2fcd3c9b3e97d8d7a9",
+      "maxLines": 898,
+      "maxBytes": 38807
+    }
+  ],
+  "canonicalValidator": {
+    "path": "Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs",
+    "sha256": "9823f4e225bbffa322d321a26b8843325f94dc9d2104c6d7b446448f3ddde269",
+    "result": "Passed",
+    "passedTests": 17,
+    "compilerErrors": 0,
+    "log": "/private/tmp/warline-am016-source-growth-pass3.log"
+  },
+  "authorityDecision": {
+    "validatorOwnerId": "architecture-source-growth",
+    "runtimeBehaviorChanged": false,
+    "legacyShellAuthorizationDisposition": "Retained as historical evidence but capped by the stricter 898-line/38807-byte AM-016 ratchet.",
+    "ecsDecision": "Architecture validation only; no runtime ECS system or managed presentation boundary changed."
+  },
+  "validatorAuthority": {
+    "path": "Tools/CI/tests/test_architecture_source_responsibility_guardrail_evidence.py",
+    "sha256": "d5762d72968dc9c2aa7ca68910087dcd0c935b0d7d72083ac244b8c2097347cb"
+  }
+}

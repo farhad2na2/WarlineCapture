@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "contractId": "post-hardening-source-responsibility-v1",
+  "growthAuthorizations": [
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
+      "trackerTaskId": "AM-013",
+      "acceptedCommit": "664ae7fa4544699faad7da01b11db60434e39088",
+      "maxLines": 1574,
+      "maxBytes": 73364,
+      "scope": "production-over-1000-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
+      "trackerTaskId": "AM-013",
+      "acceptedCommit": "664ae7fa4544699faad7da01b11db60434e39088",
+      "maxLines": 1574,
+      "maxBytes": 73364,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs",
+      "trackerTaskId": "AM-013",
+      "acceptedCommit": "664ae7fa4544699faad7da01b11db60434e39088",
+      "maxLines": 865,
+      "maxBytes": 34274,
+      "scope": "production-over-500-review"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs",
+      "trackerTaskId": "AM-013",
+      "acceptedCommit": "664ae7fa4544699faad7da01b11db60434e39088",
+      "maxLines": 865,
+      "maxBytes": 34274,
+      "scope": "system-helper-growth"
+    }
+  ],
+  "entries": [
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/ResourceExchangeShellBinding.cs",
+      "maxLines": 94,
+      "maxBytes": 3160,
+      "responsibilities": [
+        "resource-exchange-popup-instance",
+        "resource-exchange-popup-view-binding",
+        "resource-exchange-close-listener-lifecycle",
+        "resource-exchange-region-reset"
+      ],
+      "requiredSymbols": [
+        "internal sealed class ResourceExchangeShellBinding",
+        "private GameObject _instance;",
+        "private ResourceExchangePopupView _view;",
+        "private Button _closeButton;",
+        "private UnityAction _closeListener;",
+        "public GameObject Install(",
+        "public void Close(",
+        "public void ResetForRegionClear(",
+        "public void RebindMainMenuPlayUi("
+      ],
+      "forbiddenSymbols": [
+        "UiShellRuntimeGateway",
+        "UiActionKind",
+        "SetPopupRegion",
+        "InstallFullMap",
+        "InstallSettings",
+        "BuildDrawer",
+        "SystemBase",
+        "ISystem",
+        "World.DefaultGameObjectInjectionWorld",
+        "ServiceLocator"
+      ],
+      "responsibilitySignatureSymbols": [
+        "ResourceExchangePopupView",
+        "BindResourceExchangePopup",
+        "UIPopupMotionView",
+        "UIShellRegionId.PopupLayer",
+        "DestroyRegionObject"
+      ],
+      "responsibilitySignatureMatchThreshold": 4
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs",
+      "maxLines": 898,
+      "maxBytes": 38807,
+      "responsibilities": [
+        "ui-route-interpretation",
+        "typed-ui-action-enqueue",
+        "main-menu-play-ui-authority",
+        "popup-region-mutation",
+        "content-versioning"
+      ],
+      "requiredSymbols": [
+        "private readonly ResourceExchangeShellBinding _resourceExchangeShellBinding = new();",
+        "_resourceExchangeShellBinding.Install(",
+        "_resourceExchangeShellBinding.Close(",
+        "_resourceExchangeShellBinding.ResetForRegionClear(",
+        "_resourceExchangeShellBinding.RebindMainMenuPlayUi(",
+        "UiShellRuntimeGateway.TryEnqueueUiAction(UiActionKind.CloseResourceExchange, 0);"
+      ],
+      "forbiddenSymbols": [
+        "_resourceExchangePopupInstance",
+        "_resourceExchangePopupView",
+        "_resourceExchangePopupCloseButton",
+        "_resourceExchangePopupCloseButtonListener"
+      ],
+      "responsibilitySignatureSymbols": [],
+      "responsibilitySignatureMatchThreshold": 0
+    }
+  ]
+}

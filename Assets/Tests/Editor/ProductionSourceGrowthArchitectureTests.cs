@@ -18,8 +18,14 @@ using UnityEngine;
 public sealed class ProductionSourceGrowthArchitectureTests
 {
     private const string BaselinePath = "Design/Architecture/production_source_growth_baseline.md";
+    private const string PostHardeningGuardrailPath =
+        "Design/Architecture/post_hardening_source_responsibility_guardrails.json";
+    private const string PostHardeningGuardrailContractId = "post-hardening-source-responsibility-v1";
+    private const int PostHardeningGuardrailEntryCount = 2;
     private const string TrackerPath =
         "Design/Architecture/architecture_performance_hardening_implementation_tracker.md";
+    private const string PostHardeningTrackerPath =
+        "Design/Architecture/post_hardening_architecture_maturity_tracker.md";
     private const string ProductionRoot = "Assets/Game/Scripts";
     private const string EditorPathSegment = "Editor";
     private const string SystemHelperSuffix = "SystemHelper.cs";
@@ -43,7 +49,7 @@ public sealed class ProductionSourceGrowthArchitectureTests
     private const string ManifestEndMarker = "<!-- production-source-growth-manifest:end -->";
 
     public static readonly string FocusedRunnerMarker =
-        "[ProductionSourceGrowthArchitectureValidation] result=Passed tests=15";
+        "[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17";
 
     private static readonly StringComparer PathIdentityComparer = StringComparer.OrdinalIgnoreCase;
 
@@ -80,6 +86,8 @@ public sealed class ProductionSourceGrowthArchitectureTests
             tests.DuplicateJsonPropertiesFailClosedAtEveryLevel();
             tests.WindowsPathIdentityIsCaseInsensitiveButSpellingStable();
             tests.ByteCeilingRejectsPhysicalLineMinificationBypass();
+            tests.PostHardeningGuardrailContractHasExpectedRatchets();
+            tests.PostHardeningGuardedSourcesStayBoundedAndNarrow();
             Debug.Log(FocusedRunnerMarker);
             ValidationExit.Exit(0);
         }
@@ -394,8 +402,18 @@ public sealed class ProductionSourceGrowthArchitectureTests
             Require(exception.MaxBytes > 0, $"Exception for `{exception.Path}` requires a positive maxBytes ceiling.");
             Require(currentSources.TryGetValue(exception.Path, out SourceFile current), $"Exception path does not exist: `{exception.Path}`.");
             RequireRepositorySpelling(exception.Path, current.Path, "approved exception");
+            bool supersededByPostHardeningAuthorization =
+                TryGetPostHardeningGrowthAuthorization(
+                    exception.Path,
+                    exception.Scope,
+                    out PostHardeningGrowthAuthorization replacement) &&
+                current.LineCount <= replacement.MaxLines &&
+                current.ByteCount <= replacement.MaxBytes &&
+                replacement.MaxLines >= exception.MaxLines &&
+                replacement.MaxBytes >= exception.MaxBytes;
             Require(
-                current.LineCount <= exception.MaxLines && current.ByteCount <= exception.MaxBytes,
+                (current.LineCount <= exception.MaxLines && current.ByteCount <= exception.MaxBytes) ||
+                supersededByPostHardeningAuthorization,
                 $"Exception for `{exception.Path}` caps {exception.MaxLines} lines/{exception.MaxBytes} bytes but " +
                 $"the source has {current.LineCount} lines/{current.ByteCount} bytes.");
             string decisionMarker = BuildExceptionDecisionMarker(exception);
@@ -441,8 +459,14 @@ public sealed class ProductionSourceGrowthArchitectureTests
                         !reviewedEntry.StrictNoGrowth,
                         $"`{exception.Path}` requires `{StrictNoGrowthScope}`, not `{ProductionReviewScope}`.");
                     SourceHistoryState state = history[exception.Path];
+                    bool supersededByPostHardeningRatchet =
+                        TryGetPostHardeningGuardrail(exception.Path, out PostHardeningSourceGuardrail guardrail) &&
+                        guardrail.MaxLines <= state.MinimumPositiveLines &&
+                        guardrail.MaxBytes <= state.MinimumPositiveBytes;
                     Require(
-                        current.LineCount > state.MinimumPositiveLines || current.ByteCount > state.MinimumPositiveBytes,
+                        current.LineCount > state.MinimumPositiveLines ||
+                        current.ByteCount > state.MinimumPositiveBytes ||
+                        supersededByPostHardeningRatchet,
                         $"Review exception for `{exception.Path}` is unused at " +
                         $"{current.LineCount}/{state.MinimumPositiveLines} lines and " +
                         $"{current.ByteCount}/{state.MinimumPositiveBytes} bytes.");
@@ -693,6 +717,129 @@ public sealed class ProductionSourceGrowthArchitectureTests
             "Fewer physical lines must not bypass a ratcheted byte ceiling.");
     }
 
+#if UNITY_INCLUDE_TESTS && UNITY_EDITOR
+    [Test]
+#endif
+    public void PostHardeningGuardrailContractHasExpectedRatchets()
+    {
+        PostHardeningGuardrailContract contract = LoadPostHardeningGuardrails();
+        Require(contract.SchemaVersion == 1, "The post-hardening guardrail schemaVersion must remain 1.");
+        Require(
+            contract.ContractId == PostHardeningGuardrailContractId,
+            $"The post-hardening guardrail contractId must remain `{PostHardeningGuardrailContractId}`.");
+        Require(contract.Entries != null, "The post-hardening guardrail entries are required.");
+        Require(contract.GrowthAuthorizations != null, "Post-hardening growth authorizations are required.");
+        Require(contract.GrowthAuthorizations.Count == 4, "Exactly four accepted AM-013 growth authorizations are required.");
+        Require(
+            contract.Entries.Count == PostHardeningGuardrailEntryCount,
+            $"The post-hardening guardrail must contain exactly {PostHardeningGuardrailEntryCount} entries.");
+
+        List<PostHardeningSourceGuardrail> expected = CreateExpectedPostHardeningGuardrails();
+        for (int index = 0; index < expected.Count; index++)
+        {
+            PostHardeningSourceGuardrail actual = contract.Entries[index];
+            PostHardeningSourceGuardrail frozen = expected[index];
+            Require(actual != null, "Post-hardening guardrail entries cannot be null.");
+            RequireExactProjectSourcePath(actual.Path, "post-hardening guardrail path");
+            Require(actual.Path == frozen.Path, $"Unexpected post-hardening guardrail path `{actual.Path}`.");
+            Require(actual.MaxLines == frozen.MaxLines, $"`{actual.Path}` maxLines must remain {frozen.MaxLines}.");
+            Require(actual.MaxBytes == frozen.MaxBytes, $"`{actual.Path}` maxBytes must remain {frozen.MaxBytes}.");
+            RequireExactSequence(actual.Responsibilities, frozen.Responsibilities, actual.Path, "responsibilities");
+            RequireExactSequence(actual.RequiredSymbols, frozen.RequiredSymbols, actual.Path, "requiredSymbols");
+            RequireExactSequence(actual.ForbiddenSymbols, frozen.ForbiddenSymbols, actual.Path, "forbiddenSymbols");
+            RequireExactSequence(
+                actual.ResponsibilitySignatureSymbols,
+                frozen.ResponsibilitySignatureSymbols,
+                actual.Path,
+                "responsibilitySignatureSymbols");
+            Require(
+                actual.ResponsibilitySignatureMatchThreshold == frozen.ResponsibilitySignatureMatchThreshold,
+                $"`{actual.Path}` responsibilitySignatureMatchThreshold must remain " +
+                $"{frozen.ResponsibilitySignatureMatchThreshold}.");
+        }
+
+        ValidateExpectedPostHardeningGrowthAuthorizations(contract.GrowthAuthorizations);
+
+        BaselineManifest legacy = LoadManifest();
+        ApprovedException superseded = legacy.ApprovedExceptions.Single(exception =>
+            exception.Path == "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs" &&
+            exception.Scope == ProductionReviewScope);
+        PostHardeningSourceGuardrail shellGuardrail = contract.Entries.Single(entry => entry.Path == superseded.Path);
+        Require(
+            shellGuardrail.MaxLines < superseded.MaxLines && shellGuardrail.MaxBytes < superseded.MaxBytes,
+            "The AM-016 shell ratchet must remain stricter than the retained historical authorization.");
+    }
+
+#if UNITY_INCLUDE_TESTS && UNITY_EDITOR
+    [Test]
+#endif
+    public void PostHardeningGuardedSourcesStayBoundedAndNarrow()
+    {
+        PostHardeningGuardrailContract contract = LoadPostHardeningGuardrails();
+        List<SourceFile> productionSources = EnumerateFiles(ProductionRoot, "*.cs", includeEditorPaths: false);
+        var violations = new List<string>();
+
+        foreach (PostHardeningSourceGuardrail guardrail in contract.Entries)
+        {
+            if (!File.Exists(guardrail.Path))
+            {
+                violations.Add($"missing guarded source {guardrail.Path}");
+                continue;
+            }
+
+            SourceFile source = MeasureFile(guardrail.Path);
+            if (source.LineCount > guardrail.MaxLines || source.ByteCount > guardrail.MaxBytes)
+            {
+                violations.Add(
+                    $"regrew {guardrail.Path} (lines {source.LineCount}/{guardrail.MaxLines}, " +
+                    $"bytes {source.ByteCount}/{guardrail.MaxBytes})");
+            }
+
+            string content = File.ReadAllText(guardrail.Path);
+            foreach (string required in guardrail.RequiredSymbols)
+            {
+                if (!content.Contains(required, StringComparison.Ordinal))
+                    violations.Add($"{guardrail.Path} lost required responsibility symbol `{required}`");
+            }
+
+            foreach (string forbidden in guardrail.ForbiddenSymbols)
+            {
+                if (content.Contains(forbidden, StringComparison.Ordinal))
+                    violations.Add($"{guardrail.Path} regained forbidden responsibility symbol `{forbidden}`");
+            }
+
+            if (guardrail.ResponsibilitySignatureMatchThreshold <= 0)
+                continue;
+
+            int ownerMatches = CountContainedSymbols(content, guardrail.ResponsibilitySignatureSymbols);
+            if (ownerMatches < guardrail.ResponsibilitySignatureMatchThreshold)
+            {
+                violations.Add(
+                    $"{guardrail.Path} no longer owns its declared responsibility signature " +
+                    $"({ownerMatches}/{guardrail.ResponsibilitySignatureMatchThreshold})");
+            }
+
+            foreach (SourceFile candidate in productionSources)
+            {
+                if (PathIdentityComparer.Equals(candidate.Path, guardrail.Path))
+                    continue;
+
+                string candidateContent = File.ReadAllText(candidate.Path);
+                int matches = CountContainedSymbols(candidateContent, guardrail.ResponsibilitySignatureSymbols);
+                if (matches >= guardrail.ResponsibilitySignatureMatchThreshold)
+                {
+                    violations.Add(
+                        $"equivalent responsibility owner {candidate.Path} matches {matches}/" +
+                        $"{guardrail.ResponsibilitySignatureSymbols.Count} symbols governed by {guardrail.Path}");
+                }
+            }
+        }
+
+        Require(
+            violations.Count == 0,
+            "Post-hardening source and responsibility ratchets failed:\n" + string.Join("\n", violations));
+    }
+
 #if PRODUCTION_SOURCE_GROWTH_STANDALONE
     public static int Main(string[] args)
     {
@@ -719,6 +866,8 @@ public sealed class ProductionSourceGrowthArchitectureTests
             tests.DuplicateJsonPropertiesFailClosedAtEveryLevel();
             tests.WindowsPathIdentityIsCaseInsensitiveButSpellingStable();
             tests.ByteCeilingRejectsPhysicalLineMinificationBypass();
+            tests.PostHardeningGuardrailContractHasExpectedRatchets();
+            tests.PostHardeningGuardedSourcesStayBoundedAndNarrow();
             Console.WriteLine(FocusedRunnerMarker);
             return 0;
         }
@@ -747,6 +896,244 @@ public sealed class ProductionSourceGrowthArchitectureTests
 
         Require(manifest != null, $"`{BaselinePath}` deserialized to null.");
         return manifest;
+    }
+
+    private static PostHardeningGuardrailContract LoadPostHardeningGuardrails()
+    {
+        Require(
+            File.Exists(PostHardeningGuardrailPath),
+            $"Post-hardening source responsibility guardrails are missing at `{PostHardeningGuardrailPath}`.");
+        string json = File.ReadAllText(PostHardeningGuardrailPath);
+        RejectDuplicateJsonProperties(json);
+        ValidatePostHardeningGuardrailJsonShape(json);
+        try
+        {
+            PostHardeningGuardrailContract contract = JsonSerializer.Deserialize<PostHardeningGuardrailContract>(json);
+            Require(contract != null, $"`{PostHardeningGuardrailPath}` deserialized to null.");
+            return contract;
+        }
+        catch (JsonException exception)
+        {
+            throw new InvalidDataException($"Invalid JSON in `{PostHardeningGuardrailPath}`.", exception);
+        }
+    }
+
+    private static void ValidatePostHardeningGuardrailJsonShape(string json)
+    {
+        using JsonDocument document = JsonDocument.Parse(json);
+        JsonElement root = document.RootElement;
+        Require(root.ValueKind == JsonValueKind.Object, "The post-hardening guardrail root must be an object.");
+        RequireExactProperties(root, "schemaVersion", "contractId", "growthAuthorizations", "entries");
+        JsonElement growthAuthorizations = root.GetProperty("growthAuthorizations");
+        Require(
+            growthAuthorizations.ValueKind == JsonValueKind.Array,
+            "Post-hardening growthAuthorizations must be an array.");
+        foreach (JsonElement authorization in growthAuthorizations.EnumerateArray())
+        {
+            Require(
+                authorization.ValueKind == JsonValueKind.Object,
+                "Every post-hardening growth authorization must be an object.");
+            RequireExactProperties(
+                authorization,
+                "path",
+                "trackerTaskId",
+                "acceptedCommit",
+                "maxLines",
+                "maxBytes",
+                "scope");
+        }
+        JsonElement entries = root.GetProperty("entries");
+        Require(entries.ValueKind == JsonValueKind.Array, "Post-hardening guardrail entries must be an array.");
+        foreach (JsonElement entry in entries.EnumerateArray())
+        {
+            Require(entry.ValueKind == JsonValueKind.Object, "Every post-hardening guardrail entry must be an object.");
+            RequireExactProperties(
+                entry,
+                "path",
+                "maxLines",
+                "maxBytes",
+                "responsibilities",
+                "requiredSymbols",
+                "forbiddenSymbols",
+                "responsibilitySignatureSymbols",
+                "responsibilitySignatureMatchThreshold");
+        }
+    }
+
+    private static List<PostHardeningSourceGuardrail> CreateExpectedPostHardeningGuardrails()
+    {
+        return new List<PostHardeningSourceGuardrail>
+        {
+            new()
+            {
+                Path = "Assets/Game/Scripts/UI/Shell/ResourceExchangeShellBinding.cs",
+                MaxLines = 94,
+                MaxBytes = 3160,
+                Responsibilities = new List<string>
+                {
+                    "resource-exchange-popup-instance",
+                    "resource-exchange-popup-view-binding",
+                    "resource-exchange-close-listener-lifecycle",
+                    "resource-exchange-region-reset"
+                },
+                RequiredSymbols = new List<string>
+                {
+                    "internal sealed class ResourceExchangeShellBinding",
+                    "private GameObject _instance;",
+                    "private ResourceExchangePopupView _view;",
+                    "private Button _closeButton;",
+                    "private UnityAction _closeListener;",
+                    "public GameObject Install(",
+                    "public void Close(",
+                    "public void ResetForRegionClear(",
+                    "public void RebindMainMenuPlayUi("
+                },
+                ForbiddenSymbols = new List<string>
+                {
+                    "UiShellRuntimeGateway",
+                    "UiActionKind",
+                    "SetPopupRegion",
+                    "InstallFullMap",
+                    "InstallSettings",
+                    "BuildDrawer",
+                    "SystemBase",
+                    "ISystem",
+                    "World.DefaultGameObjectInjectionWorld",
+                    "ServiceLocator"
+                },
+                ResponsibilitySignatureSymbols = new List<string>
+                {
+                    "ResourceExchangePopupView",
+                    "BindResourceExchangePopup",
+                    "UIPopupMotionView",
+                    "UIShellRegionId.PopupLayer",
+                    "DestroyRegionObject"
+                },
+                ResponsibilitySignatureMatchThreshold = 4
+            },
+            new()
+            {
+                Path = "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs",
+                MaxLines = 898,
+                MaxBytes = 38807,
+                Responsibilities = new List<string>
+                {
+                    "ui-route-interpretation",
+                    "typed-ui-action-enqueue",
+                    "main-menu-play-ui-authority",
+                    "popup-region-mutation",
+                    "content-versioning"
+                },
+                RequiredSymbols = new List<string>
+                {
+                    "private readonly ResourceExchangeShellBinding _resourceExchangeShellBinding = new();",
+                    "_resourceExchangeShellBinding.Install(",
+                    "_resourceExchangeShellBinding.Close(",
+                    "_resourceExchangeShellBinding.ResetForRegionClear(",
+                    "_resourceExchangeShellBinding.RebindMainMenuPlayUi(",
+                    "UiShellRuntimeGateway.TryEnqueueUiAction(UiActionKind.CloseResourceExchange, 0);"
+                },
+                ForbiddenSymbols = new List<string>
+                {
+                    "_resourceExchangePopupInstance",
+                    "_resourceExchangePopupView",
+                    "_resourceExchangePopupCloseButton",
+                    "_resourceExchangePopupCloseButtonListener"
+                },
+                ResponsibilitySignatureSymbols = new List<string>(),
+                ResponsibilitySignatureMatchThreshold = 0
+            }
+        };
+    }
+
+    private static void RequireExactSequence(
+        IReadOnlyList<string> actual,
+        IReadOnlyList<string> expected,
+        string path,
+        string fieldName)
+    {
+        Require(actual != null, $"`{path}` {fieldName} is required.");
+        Require(
+            actual.SequenceEqual(expected, StringComparer.Ordinal),
+            $"`{path}` {fieldName} must remain the frozen ordered contract.");
+    }
+
+    private static void ValidateExpectedPostHardeningGrowthAuthorizations(
+        IReadOnlyList<PostHardeningGrowthAuthorization> authorizations)
+    {
+        Require(File.Exists(PostHardeningTrackerPath), $"Missing `{PostHardeningTrackerPath}`.");
+        string tracker = File.ReadAllText(PostHardeningTrackerPath);
+        var expected = new[]
+        {
+            new PostHardeningGrowthAuthorization
+            {
+                Path = "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
+                TrackerTaskId = "AM-013",
+                AcceptedCommit = "664ae7fa4544699faad7da01b11db60434e39088",
+                MaxLines = 1574,
+                MaxBytes = 73364,
+                Scope = StrictNoGrowthScope
+            },
+            new PostHardeningGrowthAuthorization
+            {
+                Path = "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
+                TrackerTaskId = "AM-013",
+                AcceptedCommit = "664ae7fa4544699faad7da01b11db60434e39088",
+                MaxLines = 1574,
+                MaxBytes = 73364,
+                Scope = SystemHelperGrowthScope
+            },
+            new PostHardeningGrowthAuthorization
+            {
+                Path = "Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs",
+                TrackerTaskId = "AM-013",
+                AcceptedCommit = "664ae7fa4544699faad7da01b11db60434e39088",
+                MaxLines = 865,
+                MaxBytes = 34274,
+                Scope = ProductionReviewScope
+            },
+            new PostHardeningGrowthAuthorization
+            {
+                Path = "Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs",
+                TrackerTaskId = "AM-013",
+                AcceptedCommit = "664ae7fa4544699faad7da01b11db60434e39088",
+                MaxLines = 865,
+                MaxBytes = 34274,
+                Scope = SystemHelperGrowthScope
+            }
+        };
+
+        for (int index = 0; index < expected.Length; index++)
+        {
+            PostHardeningGrowthAuthorization actual = authorizations[index];
+            PostHardeningGrowthAuthorization frozen = expected[index];
+            Require(actual != null, "Post-hardening growth authorizations cannot contain null entries.");
+            RequireExactProjectSourcePath(actual.Path, "post-hardening growth authorization path");
+            Require(actual.Path == frozen.Path, $"Unexpected post-hardening growth path `{actual.Path}`.");
+            Require(actual.TrackerTaskId == frozen.TrackerTaskId, $"`{actual.Path}` must remain bound to AM-013.");
+            Require(actual.AcceptedCommit == frozen.AcceptedCommit, $"`{actual.Path}` acceptedCommit changed.");
+            Require(actual.MaxLines == frozen.MaxLines, $"`{actual.Path}` maxLines must remain {frozen.MaxLines}.");
+            Require(actual.MaxBytes == frozen.MaxBytes, $"`{actual.Path}` maxBytes must remain {frozen.MaxBytes}.");
+            Require(actual.Scope == frozen.Scope, $"`{actual.Path}` scope must remain `{frozen.Scope}`.");
+            Require(
+                tracker.Contains($"- [x] `{actual.TrackerTaskId}`", StringComparison.Ordinal),
+                $"`{actual.TrackerTaskId}` is not complete in the post-hardening tracker.");
+            Require(
+                tracker.Contains(actual.AcceptedCommit, StringComparison.Ordinal),
+                $"The tracker does not bind `{actual.TrackerTaskId}` to `{actual.AcceptedCommit}`.");
+
+            SourceFile accepted = MeasureContent(
+                actual.Path,
+                RunGitBytes($"show {actual.AcceptedCommit}:{actual.Path}"));
+            Require(
+                accepted.LineCount == actual.MaxLines && accepted.ByteCount == actual.MaxBytes,
+                $"`{actual.Path}` authorization must exactly match its accepted commit blob.");
+        }
+    }
+
+    private static int CountContainedSymbols(string content, IReadOnlyList<string> symbols)
+    {
+        return symbols.Count(symbol => content.Contains(symbol, StringComparison.Ordinal));
     }
 
     private static string ReadManifestJson()
@@ -848,12 +1235,50 @@ public sealed class ProductionSourceGrowthArchitectureTests
 
     private static bool HasBoundException(BaselineManifest manifest, SourceFile current, string requiredScope)
     {
-        return manifest.ApprovedExceptions.Any(exception =>
+        if (TryGetPostHardeningGuardrail(current.Path, out PostHardeningSourceGuardrail guardrail) &&
+            (current.LineCount > guardrail.MaxLines || current.ByteCount > guardrail.MaxBytes))
+        {
+            return false;
+        }
+
+        if (manifest.ApprovedExceptions.Any(exception =>
             exception != null &&
             PathIdentityComparer.Equals(exception.Path, current.Path) &&
             string.Equals(exception.Scope, requiredScope, StringComparison.Ordinal) &&
             current.LineCount <= exception.MaxLines &&
-            current.ByteCount <= exception.MaxBytes);
+            current.ByteCount <= exception.MaxBytes))
+        {
+            return true;
+        }
+
+        PostHardeningGuardrailContract contract = LoadPostHardeningGuardrails();
+        return contract.GrowthAuthorizations.Any(authorization =>
+            authorization != null &&
+            PathIdentityComparer.Equals(authorization.Path, current.Path) &&
+            string.Equals(authorization.Scope, requiredScope, StringComparison.Ordinal) &&
+            current.LineCount <= authorization.MaxLines &&
+            current.ByteCount <= authorization.MaxBytes);
+    }
+
+    private static bool TryGetPostHardeningGuardrail(
+        string path,
+        out PostHardeningSourceGuardrail guardrail)
+    {
+        guardrail = LoadPostHardeningGuardrails().Entries.FirstOrDefault(entry =>
+            entry != null && PathIdentityComparer.Equals(entry.Path, path));
+        return guardrail != null;
+    }
+
+    private static bool TryGetPostHardeningGrowthAuthorization(
+        string path,
+        string scope,
+        out PostHardeningGrowthAuthorization authorization)
+    {
+        authorization = LoadPostHardeningGuardrails().GrowthAuthorizations.FirstOrDefault(entry =>
+            entry != null &&
+            PathIdentityComparer.Equals(entry.Path, path) &&
+            string.Equals(entry.Scope, scope, StringComparison.Ordinal));
+        return authorization != null;
     }
 
     private static Dictionary<string, SourceHistoryState> BuildSourceHistory(BaselineManifest manifest)
@@ -1403,6 +1828,69 @@ public sealed class ProductionSourceGrowthArchitectureTests
 
         [JsonPropertyName("scope")]
         public string Scope { get; set; }
+    }
+
+    public sealed class PostHardeningGuardrailContract
+    {
+        [JsonPropertyName("schemaVersion")]
+        public int SchemaVersion { get; set; }
+
+        [JsonPropertyName("contractId")]
+        public string ContractId { get; set; }
+
+        [JsonPropertyName("growthAuthorizations")]
+        public List<PostHardeningGrowthAuthorization> GrowthAuthorizations { get; set; }
+
+        [JsonPropertyName("entries")]
+        public List<PostHardeningSourceGuardrail> Entries { get; set; }
+    }
+
+    public sealed class PostHardeningGrowthAuthorization
+    {
+        [JsonPropertyName("path")]
+        public string Path { get; set; }
+
+        [JsonPropertyName("trackerTaskId")]
+        public string TrackerTaskId { get; set; }
+
+        [JsonPropertyName("acceptedCommit")]
+        public string AcceptedCommit { get; set; }
+
+        [JsonPropertyName("maxLines")]
+        public int MaxLines { get; set; }
+
+        [JsonPropertyName("maxBytes")]
+        public int MaxBytes { get; set; }
+
+        [JsonPropertyName("scope")]
+        public string Scope { get; set; }
+    }
+
+    public sealed class PostHardeningSourceGuardrail
+    {
+        [JsonPropertyName("path")]
+        public string Path { get; set; }
+
+        [JsonPropertyName("maxLines")]
+        public int MaxLines { get; set; }
+
+        [JsonPropertyName("maxBytes")]
+        public int MaxBytes { get; set; }
+
+        [JsonPropertyName("responsibilities")]
+        public List<string> Responsibilities { get; set; }
+
+        [JsonPropertyName("requiredSymbols")]
+        public List<string> RequiredSymbols { get; set; }
+
+        [JsonPropertyName("forbiddenSymbols")]
+        public List<string> ForbiddenSymbols { get; set; }
+
+        [JsonPropertyName("responsibilitySignatureSymbols")]
+        public List<string> ResponsibilitySignatureSymbols { get; set; }
+
+        [JsonPropertyName("responsibilitySignatureMatchThreshold")]
+        public int ResponsibilitySignatureMatchThreshold { get; set; }
     }
 
     private sealed class SourceHistoryState

@@ -213,11 +213,6 @@ namespace Game.Composition
             }
 
             ApplyStartupRuntimeSettings();
-#if UNITY_EDITOR
-            // Unity's desktop software limiter adds pacing overhead in Play Mode; keep Editor profiling uncapped.
-            QualitySettings.vSyncCount = 0;
-            Application.targetFrameRate = -1;
-#endif
             startupRuntimeSettingsWorld = world;
             return true;
         }

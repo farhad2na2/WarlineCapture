@@ -221,18 +221,28 @@ namespace Game.UI.Runtime
 
         public static void ApplyRuntime(UISettingsModel model)
         {
-            ApplyRuntimeForPlatform(model, IsAndroidRuntime);
+            ApplyRuntimeForEnvironment(model, IsAndroidRuntime, Application.isEditor);
         }
 
         internal static void ApplyRuntimeForPlatform(UISettingsModel model, bool isAndroid)
         {
+            ApplyRuntimeForEnvironment(model, isAndroid, isEditor: false);
+        }
+
+        internal static void ApplyRuntimeForEnvironment(UISettingsModel model, bool isAndroid, bool isEditor)
+        {
             model.Graphics.FrameRateMode = NormalizeFrameRateMode(model.Graphics.FrameRateMode, isAndroid);
             AudioListener.volume = Mathf.Clamp01(model.Audio.MasterVolume / 100f);
-            Application.targetFrameRate = ResolveTargetFrameRate(model.Graphics.FrameRateMode, isAndroid);
 
             int qualityIndex = ResolveUnityQualityIndex(model.Graphics.Quality);
             if (QualitySettings.names.Length > 0)
                 QualitySettings.SetQualityLevel(qualityIndex, true);
+
+            // Quality tiers can restore VSync, so frame pacing must be applied after the quality switch.
+            QualitySettings.vSyncCount = 0;
+            Application.targetFrameRate = isEditor
+                ? -1
+                : ResolveTargetFrameRate(model.Graphics.FrameRateMode, isAndroid);
 
             PublishRuntimeSettings(model);
         }

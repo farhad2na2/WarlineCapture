@@ -292,6 +292,7 @@ public sealed class AndroidVisualQualityValidationTests
             SettingsService.ResolveTargetFrameRate(UIFrameRateMode.OneTwenty, isAndroid: true));
 
         int previousTargetFrameRate = Application.targetFrameRate;
+        int previousVSyncCount = QualitySettings.vSyncCount;
         int previousQualityLevel = QualitySettings.GetQualityLevel();
         float previousListenerVolume = AudioListener.volume;
         UISettingsModel applied = default;
@@ -304,6 +305,7 @@ public sealed class AndroidVisualQualityValidationTests
             SettingsService.ApplyRuntimeForPlatform(requested, isAndroid: true);
 
             Assert.AreEqual(60, Application.targetFrameRate);
+            Assert.AreEqual(0, QualitySettings.vSyncCount);
             Assert.AreEqual(UIFrameRateMode.Sixty, applied.Graphics.FrameRateMode);
         }
         finally
@@ -312,6 +314,36 @@ public sealed class AndroidVisualQualityValidationTests
             Application.targetFrameRate = previousTargetFrameRate;
             if (QualitySettings.names.Length > 0)
                 QualitySettings.SetQualityLevel(previousQualityLevel, true);
+            QualitySettings.vSyncCount = previousVSyncCount;
+            AudioListener.volume = previousListenerVolume;
+        }
+    }
+
+    [Test]
+    public static void EditorFrameRatePolicyRemainsUncappedAfterQualityApplication()
+    {
+        int previousTargetFrameRate = Application.targetFrameRate;
+        int previousVSyncCount = QualitySettings.vSyncCount;
+        int previousQualityLevel = QualitySettings.GetQualityLevel();
+        float previousListenerVolume = AudioListener.volume;
+        try
+        {
+            UISettingsModel requested = SettingsService.DefaultsForPlatform(isAndroid: false);
+            requested.Graphics.FrameRateMode = UIFrameRateMode.Thirty;
+            Application.targetFrameRate = 30;
+            QualitySettings.vSyncCount = 2;
+
+            SettingsService.ApplyRuntimeForEnvironment(requested, isAndroid: false, isEditor: true);
+
+            Assert.AreEqual(-1, Application.targetFrameRate);
+            Assert.AreEqual(0, QualitySettings.vSyncCount);
+        }
+        finally
+        {
+            Application.targetFrameRate = previousTargetFrameRate;
+            if (QualitySettings.names.Length > 0)
+                QualitySettings.SetQualityLevel(previousQualityLevel, true);
+            QualitySettings.vSyncCount = previousVSyncCount;
             AudioListener.volume = previousListenerVolume;
         }
     }

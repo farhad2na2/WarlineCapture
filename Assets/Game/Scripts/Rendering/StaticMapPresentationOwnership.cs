@@ -83,7 +83,7 @@ namespace Game.Rendering
             out string error)
         {
             _resolved.Clear();
-            if (manifest == null || manifest.SchemaVersion != StaticMapPresentationManifest.CurrentSchemaVersion)
+            if (manifest == null || !StaticMapPresentationManifest.IsSchemaReadable(manifest.SchemaVersion))
                 return Fail("presentation manifest is missing or unsupported", out error);
             if (mapRoot == null)
                 return Fail("map root or presentation sources are missing", out error);

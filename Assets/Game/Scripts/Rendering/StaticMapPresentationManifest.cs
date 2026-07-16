@@ -109,6 +109,7 @@ namespace Game.Rendering
 
     public sealed class StaticMapPresentationManifest : ScriptableObject
     {
+        public const int MinimumReadableSchemaVersion = 1;
         public const int CurrentSchemaVersion = 1;
 
         [SerializeField] private int schemaVersion = CurrentSchemaVersion;
@@ -126,6 +127,9 @@ namespace Game.Rendering
         public string ContentHash => contentHash;
         public IReadOnlyList<StaticMapPresentationChunkEntry> Chunks => chunks;
         public IReadOnlyList<StaticMapPresentationSourceEntry> Sources => sources;
+
+        public static bool IsSchemaReadable(int value) =>
+            value >= MinimumReadableSchemaVersion && value <= CurrentSchemaVersion;
 
 #if UNITY_EDITOR
         public void EditorSetData(

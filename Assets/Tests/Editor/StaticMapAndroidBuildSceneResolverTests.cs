@@ -24,6 +24,18 @@ public sealed class StaticMapAndroidBuildSceneResolverTests
         CollectionAssert.AreEqual(new[] { Menu, Match, ChunkA, ChunkB }, result);
     }
 
+    [Test]
+    public void Resolve_AcceptsSchemaOneCompatibilitySnapshot()
+    {
+        StaticMapAndroidBuildManifestSnapshot snapshot = SnapshotWith(
+            schemaVersion: StaticMapPresentationManifest.MinimumReadableSchemaVersion);
+
+        Assert.That(StaticMapPresentationManifest.MinimumReadableSchemaVersion, Is.EqualTo(1));
+        CollectionAssert.AreEqual(
+            new[] { Menu, Match, ChunkA, ChunkB },
+            Resolve(new[] { Menu, Match }, snapshot));
+    }
+
     [TestCase("missing")]
     [TestCase("schema")]
     [TestCase("empty")]

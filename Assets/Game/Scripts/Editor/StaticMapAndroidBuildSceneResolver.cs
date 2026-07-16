@@ -84,7 +84,7 @@ namespace Game.Editor
             if (sceneExists == null || isOwnedChunkScene == null ||
                 computeCanonicalDependencyHash == null || integrityMatches == null)
                 throw new ArgumentNullException("Android scene resolver delegates are required.");
-            if (manifest.SchemaVersion != StaticMapPresentationManifest.CurrentSchemaVersion)
+            if (!StaticMapPresentationManifest.IsSchemaReadable(manifest.SchemaVersion))
                 throw new InvalidOperationException($"Static map presentation manifest schema is unsupported: {manifest.SchemaVersion}.");
             if (!string.Equals(
                     manifest.CanonicalScenePath,

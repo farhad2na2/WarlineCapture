@@ -699,7 +699,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 16% (28/177 checklist items complete).
+Overall implementation progress: 16% (29/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
@@ -709,7 +709,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 | 1. Operation-map and scenario data contracts | In progress / shared subset | 11 | 12 | 92% | Typed identity, catalog resolution, complete loader-neutral spatial/navigation metadata, hashes, validation, and ownership chain are approved; delivery-specific references remain later. |
 | 2. Per-map static presentation ownership | Not started / compatibility subset | 0 | 14 | 0% | Preserve the current baked map safely; future-map generation remains undecided. |
 | 2A. Local Addressables packaging foundation | Later / direction-specific | 0 | 20 | 0% | Do not implement before the map-delivery direction is selected. |
-| 3. Current-map compatibility registration | In progress / shared | 4 | 10 | 40% | Current content identities and the validated loader-neutral compatibility definition are registered; runtime launch remains. |
+| 3. Current-map compatibility registration | In progress / shared | 5 | 10 | 50% | Current identities/definition are registered and schema-v1 read compatibility is explicit; runtime launch remains. |
 | 4. Non-destructive scene ownership split | In progress / shared priority | 1 | 14 | 7% | Final ownership inventory accepted; no scene object has moved yet. |
 | 5. Runtime selection, loading, and teardown | In progress / shared contracts | 1 | 14 | 7% | Pure readiness/failure/teardown data contracts only; concrete loading is later. |
 | 6. Metadata, camera, minimap, and movement binding | Not started / shared | 0 | 12 | 0% | Shared bounds, surface, grid, blockers, camera, minimap, runway, and helipad metadata. |
@@ -831,7 +831,7 @@ Exit criteria:
 - [x] Register that id against the current `Match.unity`, `MatchSubScene.unity`, current manifest, and current map-specific configs without moving files. See `../AgentReports/2026-07-16_current_operation_map_compatibility_registration.md`.
 - [x] Create the compatibility `OperationMapDefinition` with exact current bounds, grid/surface references, camera ids, minimap id, and map anchors. See `../AgentReports/2026-07-16_current_operation_map_compatibility_definition.md`.
 - [x] Record current building/vehicle placement counts and source paths as map-owned compatibility data. See `../AgentReports/2026-07-16_current_operation_map_placement_registration.md`.
-- [ ] Keep the current schema-v1 manifest readable during the map-specific schema transition.
+- [x] Keep the current schema-v1 manifest readable during the map-specific schema transition. See `../AgentReports/2026-07-16_static_map_schema_v1_read_compatibility.md`.
 - [ ] Launch the existing match through the compatibility operation-map id with no visual or gameplay behavior change.
 - [ ] Run the current map bake twice and prove accepted parity followed by zero writes/deletes.
 - [ ] Validate map-authored building, vehicle, aircraft, runway, helipad, blocker, and source-hiding behavior.
@@ -1083,6 +1083,7 @@ Exit criteria:
 | 2026-07-16 | Current-map compatibility definition | `../AgentReports/2026-07-16_current_operation_map_compatibility_definition.md`; focused EditMode `42 / 42`; source-growth/naming `24 / 24`; current deterministic asset SHA-256 `a54e2937...974c`; Unity compile; `git diff --check` | Passed | Added one validated loader-neutral definition with measured bounds, bounded grid/surface/navigation identities, current camera/minimap metadata, and exact compatibility anchors. No scene, map payload, presentation output, loader, or Addressables behavior changed. |
 | 2026-07-16 | Operation-map catalog contract | `../AgentReports/2026-07-16_operation_map_catalog_contract.md`; focused EditMode `10 / 10`; source-growth/naming `24 / 24`; Unity compile; zero-allocation catalog resolution; `git diff --check` | Passed | Added the explicit compatibility catalog and one-shot resolution through the existing bootstrap boundary without asset search, loading policy, Addressables, or recurring work. |
 | 2026-07-16 | Operation-map navigation metadata contract | `../AgentReports/2026-07-16_operation_map_navigation_metadata_contract.md`; focused EditMode `46 / 46`; source-growth/naming `24 / 24`; deterministic definition SHA-256 `a54e2937...974c`; Unity compile; `git diff --check` | Passed | Added bounded authored-navigation identity and runtime blocker/occupancy capability metadata without copying map payloads or binding gameplay behavior. Phase 6 movement/placement binding remains open. |
+| 2026-07-16 | Static-map schema-v1 read compatibility | `../AgentReports/2026-07-16_static_map_schema_v1_read_compatibility.md`; focused EditMode `37 / 37`; source-growth/naming `24 / 24`; canonical manifest SHA-256 `3940dcac...d93746`; runtime index `514` chunks; Unity compile; `git diff --check` | Passed | Established schema `1` as the explicit readable floor across runtime index, renderer ownership, scene wiring, and Android build resolution without advancing the schema or rewriting generated content. |
 
 ## Open Decisions
 

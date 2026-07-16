@@ -84,7 +84,7 @@ namespace Game.Editor
                 throw new InvalidOperationException(
                     $"Missing static map presentation manifest at {StaticMapPresentationBaker.ManifestPath}.");
             }
-            if (manifest.SchemaVersion != StaticMapPresentationManifest.CurrentSchemaVersion)
+            if (!StaticMapPresentationManifest.IsSchemaReadable(manifest.SchemaVersion))
             {
                 throw new InvalidOperationException(
                     $"Static map presentation manifest schema is {manifest.SchemaVersion}; " +

@@ -61,7 +61,7 @@ namespace Game.Composition
                 return false;
             }
 
-            if (manifest.SchemaVersion != StaticMapPresentationManifest.CurrentSchemaVersion)
+            if (!StaticMapPresentationManifest.IsSchemaReadable(manifest.SchemaVersion))
             {
                 error = "Static map presentation manifest schema is unsupported.";
                 return false;

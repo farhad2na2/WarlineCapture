@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abf0edb1c282479f89b39a264e80a795, type: 3}
   m_Name: M01_RuntimeVisualRecipe
   m_EditorClassIdentifier: Game.Configs::Game.Configs.RuntimeOperationMapVisualRecipe
-  recipeVersion: M01RuntimeVisualRecipe_2026-07-16_v18_single_route_cohesion
+  recipeVersion: M01RuntimeVisualRecipe_2026-07-17_v19_roadside_incident
   seed: 26071501
   foundation:
     material: {fileID: 2100000, guid: 629d23cca1fcab142b732f0acea319ea, type: 2}
@@ -48,9 +48,9 @@ MonoBehaviour:
     fieldOfView: 50
     transitionSeconds: 0.5
   - stage: 4
-    position: {x: -75, y: 42, z: -82}
-    target: {x: 12, y: 1, z: -40}
-    fieldOfView: 48
+    position: {x: -52, y: 38, z: -54}
+    target: {x: 2, y: 1, z: -3}
+    fieldOfView: 44
     transitionSeconds: 0.45
   - stage: 5
     position: {x: -105, y: 58, z: -72}
@@ -41334,14 +41334,14 @@ MonoBehaviour:
       clipDressingToWorldBounds: 0
       worldCenter: {x: 0, y: 0}
       worldSize: {x: 0, y: 0}
-  - name: OldMarketAftermathGroundLink
+  - name: CivilianFrontageTransition
     stage: 0
     kind: 4
     prefab: {fileID: 0}
     material: {fileID: 2100000, guid: 668dd4cca36861740ad2849180ac2053, type: 2}
-    position: {x: 13, y: -0.034, z: -10}
+    position: {x: 1, y: -0.034, z: -3}
     rotation: {x: -0, y: -0, z: -0, w: 1}
-    scale: {x: 44, y: 1, z: 56}
+    scale: {x: 60, y: 1, z: 38}
     active: 1
     allowParticles: 0
     lightColor: {r: 0, g: 0, b: 0, a: 0}
@@ -41396,6 +41396,24 @@ MonoBehaviour:
     position: {x: -4, y: -0.015, z: -70}
     rotation: {x: -0, y: -0, z: -0, w: 1}
     scale: {x: 130, y: 1, z: 94}
+    active: 1
+    allowParticles: 0
+    lightColor: {r: 0, g: 0, b: 0, a: 0}
+    lightIntensity: 0
+    lightRange: 0
+    lightShadows: 0
+    cleanup:
+      clipDressingToWorldBounds: 0
+      worldCenter: {x: 0, y: 0}
+      worldSize: {x: 0, y: 0}
+  - name: CivilianFrontageApron
+    stage: 0
+    kind: 4
+    prefab: {fileID: 0}
+    material: {fileID: 2100000, guid: 9d0262cab19cbb4448d7c9cda4f5ba5a, type: 2}
+    position: {x: 1, y: -0.005, z: -3}
+    rotation: {x: -0, y: -0, z: -0, w: 1}
+    scale: {x: 50, y: 1, z: 30}
     active: 1
     allowParticles: 0
     lightColor: {r: 0, g: 0, b: 0, a: 0}
@@ -41517,7 +41535,7 @@ MonoBehaviour:
   - name: OldMarketClockTower
     stage: 2
     kind: 0
-    prefab: {fileID: 5275222977485961466, guid: ed229b219b04cf546ac1079d041fa819, type: 3}
+    prefab: {fileID: 3486072431419493421, guid: f850cdfa167eee84dba424faa78c914b, type: 3}
     material: {fileID: 0}
     position: {x: -42, y: 0, z: 42}
     rotation: {x: -0, y: 0.15643448, z: -0, w: 0.98768836}
@@ -41535,7 +41553,7 @@ MonoBehaviour:
   - name: OldMarketArchway
     stage: 2
     kind: 0
-    prefab: {fileID: 3486072431419493421, guid: f850cdfa167eee84dba424faa78c914b, type: 3}
+    prefab: {fileID: 6019557278228330589, guid: 9162964a4dd27434392f4557a50b1dca, type: 3}
     material: {fileID: 0}
     position: {x: -19, y: 0, z: 24}
     rotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
@@ -41661,7 +41679,7 @@ MonoBehaviour:
   - name: MarketMicroProp_01
     stage: 2
     kind: 0
-    prefab: {fileID: 4095832526658985247, guid: dcbfd9720ee7e2942aa9017df20e3131, type: 3}
+    prefab: {fileID: 4992774928965479364, guid: bd45bea5053603f42be11161404c69ed, type: 3}
     material: {fileID: 0}
     position: {x: -30.587774, y: 0, z: 12.973513}
     rotation: {x: -0, y: 0.43051112, z: -0, w: -0.90258527}
@@ -41679,7 +41697,7 @@ MonoBehaviour:
   - name: MarketMicroProp_02
     stage: 2
     kind: 0
-    prefab: {fileID: 4992774928965479364, guid: bd45bea5053603f42be11161404c69ed, type: 3}
+    prefab: {fileID: 176471107199917208, guid: 9cb2c142138808340b70e13bfeebe256, type: 3}
     material: {fileID: 0}
     position: {x: -61.640194, y: 0, z: -4.5102415}
     rotation: {x: -0, y: 0.9902681, z: -0, w: -0.13917309}
@@ -41697,7 +41715,7 @@ MonoBehaviour:
   - name: MarketMicroProp_03
     stage: 2
     kind: 0
-    prefab: {fileID: 176471107199917208, guid: 9cb2c142138808340b70e13bfeebe256, type: 3}
+    prefab: {fileID: 3623820824451599088, guid: 0c5bb12c4dd1f1e4f82ad9b9e7c960cf, type: 3}
     material: {fileID: 0}
     position: {x: -64.53108, y: 0, z: 22.962229}
     rotation: {x: -0, y: 0.04361953, z: -0, w: -0.99904823}
@@ -41715,7 +41733,7 @@ MonoBehaviour:
   - name: MarketMicroProp_04
     stage: 2
     kind: 0
-    prefab: {fileID: 3623820824451599088, guid: 0c5bb12c4dd1f1e4f82ad9b9e7c960cf, type: 3}
+    prefab: {fileID: 3539270989825055710, guid: deed1bb12ff3b2d40acf5767cff9ee2e, type: 3}
     material: {fileID: 0}
     position: {x: -40.555984, y: 0, z: 0.479165}
     rotation: {x: -0, y: 0.52991927, z: -0, w: 0.8480481}
@@ -41733,7 +41751,7 @@ MonoBehaviour:
   - name: MarketMicroProp_05
     stage: 2
     kind: 0
-    prefab: {fileID: 3539270989825055710, guid: deed1bb12ff3b2d40acf5767cff9ee2e, type: 3}
+    prefab: {fileID: 1856915573255736515, guid: f8d96e70d1a424942891cbf1dead98dd, type: 3}
     material: {fileID: 0}
     position: {x: -32.68177, y: 0, z: -5.527558}
     rotation: {x: -0, y: 0.77162457, z: -0, w: 0.63607824}
@@ -41751,7 +41769,7 @@ MonoBehaviour:
   - name: MarketMicroProp_06
     stage: 2
     kind: 0
-    prefab: {fileID: 1856915573255736515, guid: f8d96e70d1a424942891cbf1dead98dd, type: 3}
+    prefab: {fileID: 5132708320586431746, guid: 03f9906fdbdb75b48a0f6cd54f52b872, type: 3}
     material: {fileID: 0}
     position: {x: -58.770447, y: 0, z: 20.12573}
     rotation: {x: -0, y: 0.78260815, z: -0, w: 0.62251467}
@@ -41769,7 +41787,7 @@ MonoBehaviour:
   - name: MarketMicroProp_07
     stage: 2
     kind: 0
-    prefab: {fileID: 5132708320586431746, guid: 03f9906fdbdb75b48a0f6cd54f52b872, type: 3}
+    prefab: {fileID: 1264462974963617523, guid: 3c1141a278c891c49b98c90a267664b2, type: 3}
     material: {fileID: 0}
     position: {x: -33.70038, y: 0, z: -7.062583}
     rotation: {x: -0, y: 0.13917312, z: -0, w: 0.9902681}
@@ -41787,7 +41805,7 @@ MonoBehaviour:
   - name: MarketMicroProp_08
     stage: 2
     kind: 0
-    prefab: {fileID: 1264462974963617523, guid: 3c1141a278c891c49b98c90a267664b2, type: 3}
+    prefab: {fileID: 8507311912440868045, guid: 629261dfac19f024b95719995bab0532, type: 3}
     material: {fileID: 0}
     position: {x: -25.276733, y: 0, z: 7.946442}
     rotation: {x: -0, y: 0.1478094, z: -0, w: 0.9890159}
@@ -41805,7 +41823,7 @@ MonoBehaviour:
   - name: MarketMicroProp_09
     stage: 2
     kind: 0
-    prefab: {fileID: 8507311912440868045, guid: 629261dfac19f024b95719995bab0532, type: 3}
+    prefab: {fileID: 5312485823873958080, guid: b447ecceb057d5d4fbe5f8e2fb2f9a85, type: 3}
     material: {fileID: 0}
     position: {x: -36.62343, y: 0, z: 19.102615}
     rotation: {x: -0, y: 0.99691737, z: -0, w: 0.07845909}
@@ -41823,7 +41841,7 @@ MonoBehaviour:
   - name: MarketMicroProp_10
     stage: 2
     kind: 0
-    prefab: {fileID: 5312485823873958080, guid: b447ecceb057d5d4fbe5f8e2fb2f9a85, type: 3}
+    prefab: {fileID: 3878376763358145224, guid: 899067b83d7c978499cef81426cf0eb5, type: 3}
     material: {fileID: 0}
     position: {x: -32.04166, y: 0, z: 9.315118}
     rotation: {x: -0, y: 0.87881714, z: -0, w: -0.47715873}
@@ -41841,7 +41859,7 @@ MonoBehaviour:
   - name: MarketMicroProp_11
     stage: 2
     kind: 0
-    prefab: {fileID: 3878376763358145224, guid: 899067b83d7c978499cef81426cf0eb5, type: 3}
+    prefab: {fileID: 1593687516964754695, guid: b83b29a1286f5e746a95c745f8409f13, type: 3}
     material: {fileID: 0}
     position: {x: -61.80805, y: 0, z: -1.8444675}
     rotation: {x: -0, y: 0.88294756, z: -0, w: 0.4694716}
@@ -41859,7 +41877,7 @@ MonoBehaviour:
   - name: MarketMicroProp_12
     stage: 2
     kind: 0
-    prefab: {fileID: 1593687516964754695, guid: b83b29a1286f5e746a95c745f8409f13, type: 3}
+    prefab: {fileID: 7014610478493694236, guid: d8dc770d0ab97374c89debf5ce1f1016, type: 3}
     material: {fileID: 0}
     position: {x: -57.132614, y: 0, z: 19.070559}
     rotation: {x: -0, y: 0.58070296, z: -0, w: 0.8141155}
@@ -41877,7 +41895,7 @@ MonoBehaviour:
   - name: MarketMicroProp_13
     stage: 2
     kind: 0
-    prefab: {fileID: 7014610478493694236, guid: d8dc770d0ab97374c89debf5ce1f1016, type: 3}
+    prefab: {fileID: 6303804782820024400, guid: 6e5edaad97237824c866da7d42526eba, type: 3}
     material: {fileID: 0}
     position: {x: -32.465443, y: 0, z: -4.1062703}
     rotation: {x: -0, y: 0.35836792, z: -0, w: -0.93358046}
@@ -41895,7 +41913,7 @@ MonoBehaviour:
   - name: MarketMicroProp_14
     stage: 2
     kind: 0
-    prefab: {fileID: 6303804782820024400, guid: 6e5edaad97237824c866da7d42526eba, type: 3}
+    prefab: {fileID: 8218045803136677696, guid: f1a6e5d421d67a84a93441691529ac5c, type: 3}
     material: {fileID: 0}
     position: {x: -55.848167, y: 0, z: 22.737734}
     rotation: {x: -0, y: 0.1650476, z: -0, w: 0.9862856}
@@ -41913,7 +41931,7 @@ MonoBehaviour:
   - name: MarketMicroProp_15
     stage: 2
     kind: 0
-    prefab: {fileID: 8218045803136677696, guid: f1a6e5d421d67a84a93441691529ac5c, type: 3}
+    prefab: {fileID: 7361413454571008708, guid: 5c7d86d939e8f73429a272c78a36027d, type: 3}
     material: {fileID: 0}
     position: {x: -53.32275, y: 0, z: 5.507237}
     rotation: {x: -0, y: 0.92718387, z: -0, w: 0.37460664}
@@ -41931,7 +41949,7 @@ MonoBehaviour:
   - name: MarketMicroProp_16
     stage: 2
     kind: 0
-    prefab: {fileID: 7361413454571008708, guid: 5c7d86d939e8f73429a272c78a36027d, type: 3}
+    prefab: {fileID: 2194686976328047919, guid: 75aeae03c2807b0459d42af9544a3e35, type: 3}
     material: {fileID: 0}
     position: {x: -64.68983, y: 0, z: 3.0878727}
     rotation: {x: -0, y: 0.30070588, z: -0, w: -0.95371693}
@@ -41949,7 +41967,7 @@ MonoBehaviour:
   - name: MarketMicroProp_17
     stage: 2
     kind: 0
-    prefab: {fileID: 2194686976328047919, guid: 75aeae03c2807b0459d42af9544a3e35, type: 3}
+    prefab: {fileID: 9195927410016816689, guid: 3fcff15a5e84b0744967de98283d39dc, type: 3}
     material: {fileID: 0}
     position: {x: -30.16029, y: 0, z: 2.7926087}
     rotation: {x: -0, y: 0.62251467, z: -0, w: 0.78260815}
@@ -41967,7 +41985,7 @@ MonoBehaviour:
   - name: MarketMicroProp_18
     stage: 2
     kind: 0
-    prefab: {fileID: 9195927410016816689, guid: 3fcff15a5e84b0744967de98283d39dc, type: 3}
+    prefab: {fileID: 5946115453579006007, guid: 1094d36cda61c554297823bd6f62a3c0, type: 3}
     material: {fileID: 0}
     position: {x: -33.297634, y: 0, z: 1.5383369}
     rotation: {x: -0, y: 0.9563047, z: -0, w: 0.29237178}
@@ -41985,7 +42003,7 @@ MonoBehaviour:
   - name: MarketMicroProp_19
     stage: 2
     kind: 0
-    prefab: {fileID: 5946115453579006007, guid: 1094d36cda61c554297823bd6f62a3c0, type: 3}
+    prefab: {fileID: 5161310009335670853, guid: e0541c23666d7244eab8e61a80c555e5, type: 3}
     material: {fileID: 0}
     position: {x: -48.87606, y: 0, z: 19.757103}
     rotation: {x: -0, y: 0.8526402, z: -0, w: -0.5224985}
@@ -42003,7 +42021,7 @@ MonoBehaviour:
   - name: MarketMicroProp_20
     stage: 2
     kind: 0
-    prefab: {fileID: 5161310009335670853, guid: e0541c23666d7244eab8e61a80c555e5, type: 3}
+    prefab: {fileID: 466013563477496543, guid: 66063ed8d9355fb4d87a3199a3acde3e, type: 3}
     material: {fileID: 0}
     position: {x: -46.800903, y: 0, z: 14.984842}
     rotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
@@ -42021,7 +42039,7 @@ MonoBehaviour:
   - name: MarketMicroProp_21
     stage: 2
     kind: 0
-    prefab: {fileID: 466013563477496543, guid: 66063ed8d9355fb4d87a3199a3acde3e, type: 3}
+    prefab: {fileID: 1951845044254731412, guid: 05497497d9625d342a1ea36c310dea89, type: 3}
     material: {fileID: 0}
     position: {x: -30.506218, y: 0, z: -1.1113098}
     rotation: {x: -0, y: 0.9832549, z: -0, w: 0.18223552}
@@ -42039,7 +42057,7 @@ MonoBehaviour:
   - name: MarketMicroProp_22
     stage: 2
     kind: 0
-    prefab: {fileID: 1951845044254731412, guid: 05497497d9625d342a1ea36c310dea89, type: 3}
+    prefab: {fileID: 5992067995681334501, guid: 6cf72367bf3d12c43a83d1d0c73d9de7, type: 3}
     material: {fileID: 0}
     position: {x: -41.843403, y: 0, z: 26.557552}
     rotation: {x: -0, y: 0.9723699, z: -0, w: 0.23344542}
@@ -42057,7 +42075,7 @@ MonoBehaviour:
   - name: MarketMicroProp_23
     stage: 2
     kind: 0
-    prefab: {fileID: 5992067995681334501, guid: 6cf72367bf3d12c43a83d1d0c73d9de7, type: 3}
+    prefab: {fileID: 4392439554003161878, guid: c98ccad607c62bc45bb1ac9334e2c4d4, type: 3}
     material: {fileID: 0}
     position: {x: -35.33998, y: 0, z: 7.8319273}
     rotation: {x: -0, y: 0.9563048, z: -0, w: -0.29237178}
@@ -42075,7 +42093,7 @@ MonoBehaviour:
   - name: MarketMicroProp_24
     stage: 2
     kind: 0
-    prefab: {fileID: 4392439554003161878, guid: c98ccad607c62bc45bb1ac9334e2c4d4, type: 3}
+    prefab: {fileID: 2713841207469637158, guid: bbc08b0e2d0536145b6913f3b2b3b6d3, type: 3}
     material: {fileID: 0}
     position: {x: -61.932755, y: 0, z: 11.729607}
     rotation: {x: -0, y: 0.9799247, z: -0, w: 0.19936794}
@@ -42093,7 +42111,7 @@ MonoBehaviour:
   - name: MarketMicroProp_25
     stage: 2
     kind: 0
-    prefab: {fileID: 2713841207469637158, guid: bbc08b0e2d0536145b6913f3b2b3b6d3, type: 3}
+    prefab: {fileID: 5194938784737810968, guid: cd51804a87a1f694cadd467f2ffe9132, type: 3}
     material: {fileID: 0}
     position: {x: -55.019814, y: 0, z: 18.0408}
     rotation: {x: -0, y: 0.6087614, z: -0, w: -0.7933533}
@@ -42111,7 +42129,7 @@ MonoBehaviour:
   - name: MarketMicroProp_26
     stage: 2
     kind: 0
-    prefab: {fileID: 5194938784737810968, guid: cd51804a87a1f694cadd467f2ffe9132, type: 3}
+    prefab: {fileID: 1770844191511450789, guid: e1ed5c8f754a118408727991463498f1, type: 3}
     material: {fileID: 0}
     position: {x: -42.435215, y: 0, z: 4.975876}
     rotation: {x: -0, y: 0.25881907, z: -0, w: 0.9659259}
@@ -42129,7 +42147,7 @@ MonoBehaviour:
   - name: MarketMicroProp_27
     stage: 2
     kind: 0
-    prefab: {fileID: 1770844191511450789, guid: e1ed5c8f754a118408727991463498f1, type: 3}
+    prefab: {fileID: 5377893109872537259, guid: d91c668204f56594da2d38955cd2e5d0, type: 3}
     material: {fileID: 0}
     position: {x: -36.061214, y: 0, z: 12.95204}
     rotation: {x: -0, y: 0.8949344, z: -0, w: -0.44619775}
@@ -42147,7 +42165,7 @@ MonoBehaviour:
   - name: MarketMicroProp_28
     stage: 2
     kind: 0
-    prefab: {fileID: 5377893109872537259, guid: d91c668204f56594da2d38955cd2e5d0, type: 3}
+    prefab: {fileID: 1154586042490000963, guid: edc27f069570cba40abc040927665af6, type: 3}
     material: {fileID: 0}
     position: {x: -58.074986, y: 0, z: -6.472193}
     rotation: {x: -0, y: 0.97992474, z: -0, w: -0.19936791}
@@ -42165,7 +42183,7 @@ MonoBehaviour:
   - name: MarketMicroProp_29
     stage: 2
     kind: 0
-    prefab: {fileID: 1154586042490000963, guid: edc27f069570cba40abc040927665af6, type: 3}
+    prefab: {fileID: 6810849814719909187, guid: 67386f3a029f63c4596eea1a1963650f, type: 3}
     material: {fileID: 0}
     position: {x: -61.04443, y: 0, z: 5.8665786}
     rotation: {x: -0, y: 0.7372773, z: -0, w: 0.6755902}
@@ -42183,7 +42201,7 @@ MonoBehaviour:
   - name: MarketMicroProp_30
     stage: 2
     kind: 0
-    prefab: {fileID: 6810849814719909187, guid: 67386f3a029f63c4596eea1a1963650f, type: 3}
+    prefab: {fileID: 3861445598859480508, guid: edba44f12e14ca04e8034308c1dc8525, type: 3}
     material: {fileID: 0}
     position: {x: -28.578838, y: 0, z: -5.6693945}
     rotation: {x: -0, y: 0.08715574, z: -0, w: 0.9961947}
@@ -42201,7 +42219,7 @@ MonoBehaviour:
   - name: MarketMicroProp_31
     stage: 2
     kind: 0
-    prefab: {fileID: 3861445598859480508, guid: edba44f12e14ca04e8034308c1dc8525, type: 3}
+    prefab: {fileID: 5980746014698340120, guid: 8ab6f217cbf7e39419c07fdde788f129, type: 3}
     material: {fileID: 0}
     position: {x: -28.17844, y: 0, z: 6.1049423}
     rotation: {x: -0, y: 0.32556814, z: -0, w: 0.94551855}
@@ -42219,7 +42237,7 @@ MonoBehaviour:
   - name: MarketMicroProp_32
     stage: 2
     kind: 0
-    prefab: {fileID: 5980746014698340120, guid: 8ab6f217cbf7e39419c07fdde788f129, type: 3}
+    prefab: {fileID: 4994237009755626766, guid: de35019e691ae254ca124f695c0654b3, type: 3}
     material: {fileID: 0}
     position: {x: -37.23062, y: 0, z: 26.982798}
     rotation: {x: -0, y: 0.5075384, z: -0, w: 0.8616291}
@@ -42237,7 +42255,7 @@ MonoBehaviour:
   - name: MarketMicroProp_33
     stage: 2
     kind: 0
-    prefab: {fileID: 4994237009755626766, guid: de35019e691ae254ca124f695c0654b3, type: 3}
+    prefab: {fileID: 7958814924436333203, guid: 66b7a03e6843da54b9f6672e91c4201d, type: 3}
     material: {fileID: 0}
     position: {x: -51.305008, y: 0, z: 22.5962}
     rotation: {x: -0, y: 0.7372773, z: -0, w: -0.6755902}
@@ -42255,7 +42273,7 @@ MonoBehaviour:
   - name: MarketMicroProp_34
     stage: 2
     kind: 0
-    prefab: {fileID: 7958814924436333203, guid: 66b7a03e6843da54b9f6672e91c4201d, type: 3}
+    prefab: {fileID: 8435633009534418858, guid: f8a7408c25ca9ba4086412350cff272f, type: 3}
     material: {fileID: 0}
     position: {x: -29.05928, y: 0, z: 3.7134023}
     rotation: {x: -0, y: 0.9723699, z: -0, w: 0.23344542}
@@ -42363,7 +42381,7 @@ MonoBehaviour:
   - name: MarketWireLights_A
     stage: 2
     kind: 0
-    prefab: {fileID: 401247467325680200, guid: 010e3fa1d21ba1d4da2cc6e93a72b8db, type: 3}
+    prefab: {fileID: 2257825572255698688, guid: 6fe134a1e2df0f847af43c8f5dda1520, type: 3}
     material: {fileID: 0}
     position: {x: -42, y: 5.8, z: 5}
     rotation: {x: -0, y: -0, z: -0, w: 1}
@@ -42381,7 +42399,7 @@ MonoBehaviour:
   - name: MarketWireLights_B
     stage: 2
     kind: 0
-    prefab: {fileID: 2257825572255698688, guid: 6fe134a1e2df0f847af43c8f5dda1520, type: 3}
+    prefab: {fileID: 1979842735132224095, guid: 26c7f598521bd7845af57fb7c7df0c2f, type: 3}
     material: {fileID: 0}
     position: {x: -52, y: 5.5, z: 17}
     rotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
@@ -42471,7 +42489,7 @@ MonoBehaviour:
   - name: CompoundGuardTower
     stage: 3
     kind: 0
-    prefab: {fileID: 5914765792073767805, guid: dd2a8d02b39b11b458d7a6f9c915dccb, type: 3}
+    prefab: {fileID: 7588836230640702288, guid: 8e5c6a68784ae6c4bbc408849d4a7b6d, type: 3}
     material: {fileID: 0}
     position: {x: 31, y: 0, z: 46}
     rotation: {x: -0, y: 1, z: -0, w: -0.00000004371139}
@@ -42489,7 +42507,7 @@ MonoBehaviour:
   - name: CompoundWaterTank
     stage: 3
     kind: 0
-    prefab: {fileID: 7588836230640702288, guid: 8e5c6a68784ae6c4bbc408849d4a7b6d, type: 3}
+    prefab: {fileID: 8680268161983444916, guid: b1b40d9b32b9d8242acec1acb1dd6b04, type: 3}
     material: {fileID: 0}
     position: {x: 55, y: 0, z: 51}
     rotation: {x: -0, y: 0.1736482, z: -0, w: 0.9848078}
@@ -42561,7 +42579,7 @@ MonoBehaviour:
   - name: CompoundWarningSign
     stage: 3
     kind: 0
-    prefab: {fileID: 441984347685114405, guid: 87b9a6ca795e8c247849ceec1176e0cf, type: 3}
+    prefab: {fileID: 8182734931443424459, guid: 3ebc7b50cb1d72440b0c8f7eb3ad2281, type: 3}
     material: {fileID: 0}
     position: {x: 20.5, y: 2.2, z: 31}
     rotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
@@ -42633,11 +42651,11 @@ MonoBehaviour:
   - name: ImpactCrater
     stage: 4
     kind: 0
-    prefab: {fileID: 3159902024746639592, guid: 266a1f7f69cafd340a4e475bbbc70b3f, type: 3}
+    prefab: {fileID: 1519449378870868170, guid: 62359cd6db0b4ff45ba439f5716f8bd8, type: 3}
     material: {fileID: 0}
-    position: {x: 13, y: 0.2, z: -22}
-    rotation: {x: -0, y: 0.034899496, z: -0, w: 0.99939084}
-    scale: {x: 1.4500002, y: 1.45, z: 1.4500002}
+    position: {x: 5, y: 0.2, z: -5}
+    rotation: {x: -0, y: 0.08715574, z: -0, w: 0.9961947}
+    scale: {x: 1.25, y: 1.25, z: 1.25}
     active: 1
     allowParticles: 1
     lightColor: {r: 0, g: 0, b: 0, a: 0}
@@ -42651,11 +42669,11 @@ MonoBehaviour:
   - name: DestroyedAidTruck
     stage: 4
     kind: 0
-    prefab: {fileID: 1519449378870868170, guid: 62359cd6db0b4ff45ba439f5716f8bd8, type: 3}
+    prefab: {fileID: 1452261247902579919, guid: 1d4e9823b78916f4c976d7c6190bbf74, type: 3}
     material: {fileID: 0}
-    position: {x: 12.7, y: 0, z: -18}
-    rotation: {x: -0, y: 0.034899496, z: -0, w: 0.99939084}
-    scale: {x: 1.0500001, y: 1.05, z: 1.0500001}
+    position: {x: 4, y: 0, z: -1.5}
+    rotation: {x: -0, y: 0.104528464, z: -0, w: 0.9945219}
+    scale: {x: 1.05, y: 1.05, z: 1.05}
     active: 1
     allowParticles: 1
     lightColor: {r: 0, g: 0, b: 0, a: 0}
@@ -42669,11 +42687,11 @@ MonoBehaviour:
   - name: BombedCornerRuin
     stage: 4
     kind: 0
-    prefab: {fileID: 1452261247902579919, guid: 1d4e9823b78916f4c976d7c6190bbf74, type: 3}
+    prefab: {fileID: 6200495776174236539, guid: 24dea4f597347444e808870c98cf7807, type: 3}
     material: {fileID: 0}
-    position: {x: 26, y: 0, z: -24}
-    rotation: {x: -0, y: 0.9998477, z: -0, w: -0.017452352}
-    scale: {x: 1.0500001, y: 1.05, z: 1.0500001}
+    position: {x: 16, y: 0, z: -4}
+    rotation: {x: -0, y: 0.9975641, z: -0, w: -0.06975648}
+    scale: {x: 1.0500002, y: 1.05, z: 1.0500002}
     active: 1
     allowParticles: 1
     lightColor: {r: 0, g: 0, b: 0, a: 0}
@@ -42687,11 +42705,11 @@ MonoBehaviour:
   - name: AftermathFire
     stage: 4
     kind: 0
-    prefab: {fileID: 6200495776174236539, guid: 24dea4f597347444e808870c98cf7807, type: 3}
+    prefab: {fileID: 1867165268730881086, guid: 90ea496a976ab7b4b8d89d5ae7846052, type: 3}
     material: {fileID: 0}
-    position: {x: 11.5, y: 0.7, z: -18.5}
+    position: {x: 4.5, y: 0.7, z: -2}
     rotation: {x: -0, y: -0, z: -0, w: 1}
-    scale: {x: 0.8, y: 0.8, z: 0.8}
+    scale: {x: 0.72, y: 0.72, z: 0.72}
     active: 1
     allowParticles: 1
     lightColor: {r: 0, g: 0, b: 0, a: 0}
@@ -42705,11 +42723,11 @@ MonoBehaviour:
   - name: AftermathSmoke
     stage: 4
     kind: 0
-    prefab: {fileID: 1867165268730881086, guid: 90ea496a976ab7b4b8d89d5ae7846052, type: 3}
+    prefab: {fileID: 9015210833023941159, guid: 1c49e0ba941e8d046a2a261622eac67f, type: 3}
     material: {fileID: 0}
-    position: {x: 13.5, y: 0, z: -20}
+    position: {x: 5.5, y: 0, z: -3}
     rotation: {x: -0, y: -0, z: -0, w: 1}
-    scale: {x: 0.38, y: 0.38, z: 0.38}
+    scale: {x: 0.32, y: 0.32, z: 0.32}
     active: 1
     allowParticles: 1
     lightColor: {r: 0, g: 0, b: 0, a: 0}
@@ -42723,9 +42741,9 @@ MonoBehaviour:
   - name: AftermathDebris_01
     stage: 4
     kind: 0
-    prefab: {fileID: 9015210833023941159, guid: 1c49e0ba941e8d046a2a261622eac67f, type: 3}
+    prefab: {fileID: 234656263978998274, guid: b21327e232a5c1740b7e607e5b55f4e4, type: 3}
     material: {fileID: 0}
-    position: {x: 19.946041, y: 0, z: -19.62772}
+    position: {x: 10.0967655, y: 0, z: -3.1999714}
     rotation: {x: -0, y: 0.8433914, z: -0, w: -0.53729963}
     scale: {x: 1.2000278, y: 1.2000278, z: 1.2000278}
     active: 1
@@ -42741,9 +42759,9 @@ MonoBehaviour:
   - name: AftermathDebris_02
     stage: 4
     kind: 0
-    prefab: {fileID: 234656263978998274, guid: b21327e232a5c1740b7e607e5b55f4e4, type: 3}
+    prefab: {fileID: 5337219723339663413, guid: 2cdc8e13e4ddf1a4e8ab0eda891bcf92, type: 3}
     material: {fileID: 0}
-    position: {x: 20.55316, y: 0, z: -24.697859}
+    position: {x: 10.326103, y: 0, z: -6.0655985}
     rotation: {x: -0, y: 0.13917312, z: -0, w: 0.9902681}
     scale: {x: 1.1370853, y: 1.1370853, z: 1.1370853}
     active: 1
@@ -42759,9 +42777,9 @@ MonoBehaviour:
   - name: AftermathDebris_03
     stage: 4
     kind: 0
-    prefab: {fileID: 5337219723339663413, guid: 2cdc8e13e4ddf1a4e8ab0eda891bcf92, type: 3}
+    prefab: {fileID: 6373292394125506718, guid: b7b361d7d317209469564651cd1f4208, type: 3}
     material: {fileID: 0}
-    position: {x: 7.6182046, y: 0, z: -23.359087}
+    position: {x: 1.6977792, y: 0, z: -5.3456845}
     rotation: {x: -0, y: 0.7826082, z: -0, w: -0.6225146}
     scale: {x: 0.81438017, y: 0.8143801, z: 0.81438017}
     active: 1
@@ -42777,9 +42795,9 @@ MonoBehaviour:
   - name: AftermathDebris_04
     stage: 4
     kind: 0
-    prefab: {fileID: 6373292394125506718, guid: b7b361d7d317209469564651cd1f4208, type: 3}
+    prefab: {fileID: 760828392740416725, guid: 2eefc623787948946bd1914478975ce9, type: 3}
     material: {fileID: 0}
-    position: {x: 6.5577846, y: 0, z: -22.072742}
+    position: {x: 1.0078527, y: 0, z: -4.608877}
     rotation: {x: -0, y: 0.23344536, z: -0, w: 0.9723699}
     scale: {x: 1.0034984, y: 1.0034984, z: 1.0034984}
     active: 1
@@ -42795,9 +42813,9 @@ MonoBehaviour:
   - name: AftermathDebris_05
     stage: 4
     kind: 0
-    prefab: {fileID: 760828392740416725, guid: 2eefc623787948946bd1914478975ce9, type: 3}
+    prefab: {fileID: 2339348742905509463, guid: a5eecb8043678fe47b5e427cb3aca381, type: 3}
     material: {fileID: 0}
-    position: {x: 22.234549, y: 0, z: -13.861095}
+    position: {x: 11.203403, y: 0, z: -0.18294267}
     rotation: {x: -0, y: 0.9099613, z: -0, w: 0.41469327}
     scale: {x: 1.2257084, y: 1.2257082, z: 1.2257084}
     active: 1
@@ -42813,9 +42831,9 @@ MonoBehaviour:
   - name: AftermathDebris_06
     stage: 4
     kind: 0
-    prefab: {fileID: 2339348742905509463, guid: a5eecb8043678fe47b5e427cb3aca381, type: 3}
+    prefab: {fileID: 4440171857984619977, guid: 29dc6ee7d0021a947abf5b67995e3980, type: 3}
     material: {fileID: 0}
-    position: {x: 3.264415, y: 0, z: -17.052616}
+    position: {x: -0.842685, y: 0, z: -1.8710786}
     rotation: {x: -0, y: 0.809017, z: -0, w: 0.5877853}
     scale: {x: 1.0621213, y: 1.062121, z: 1.0621213}
     active: 1
@@ -42831,9 +42849,9 @@ MonoBehaviour:
   - name: AftermathDebris_07
     stage: 4
     kind: 0
-    prefab: {fileID: 4440171857984619977, guid: 29dc6ee7d0021a947abf5b67995e3980, type: 3}
+    prefab: {fileID: 6024359897205291416, guid: 5fb6fb0ad23b38f4faa25346dccd03a7, type: 3}
     material: {fileID: 0}
-    position: {x: 10.511898, y: 0, z: -14.47824}
+    position: {x: 3.7463608, y: 0, z: -0.43459103}
     rotation: {x: -0, y: 0.70090926, z: -0, w: 0.71325046}
     scale: {x: 1.4567941, y: 1.4567941, z: 1.4567941}
     active: 1
@@ -42849,9 +42867,9 @@ MonoBehaviour:
   - name: AftermathDebris_08
     stage: 4
     kind: 0
-    prefab: {fileID: 6024359897205291416, guid: 5fb6fb0ad23b38f4faa25346dccd03a7, type: 3}
+    prefab: {fileID: 3235381349543706800, guid: 0c85e06b200e70b48b1742850131f2e2, type: 3}
     material: {fileID: 0}
-    position: {x: 16.000616, y: 0, z: -14.883969}
+    position: {x: 7.305674, y: 0, z: -0.6225407}
     rotation: {x: -0, y: 0.9961947, z: -0, w: 0.087155804}
     scale: {x: 1.4732801, y: 1.4732797, z: 1.4732801}
     active: 1
@@ -42867,9 +42885,9 @@ MonoBehaviour:
   - name: AftermathDebris_09
     stage: 4
     kind: 0
-    prefab: {fileID: 3235381349543706800, guid: 0c85e06b200e70b48b1742850131f2e2, type: 3}
+    prefab: {fileID: 5802801774648454370, guid: 4f9625fd16db8a842b1e9eaeda7998d8, type: 3}
     material: {fileID: 0}
-    position: {x: 6.928179, y: 0, z: -27.666246}
+    position: {x: 1.4963231, y: 0, z: -7.592251}
     rotation: {x: -0, y: 0.9063078, z: -0, w: 0.42261824}
     scale: {x: 0.97067475, y: 0.9706747, z: 0.97067475}
     active: 1
@@ -42885,9 +42903,9 @@ MonoBehaviour:
   - name: AftermathDebris_10
     stage: 4
     kind: 0
-    prefab: {fileID: 5802801774648454370, guid: 4f9625fd16db8a842b1e9eaeda7998d8, type: 3}
+    prefab: {fileID: 8138892414868178040, guid: 00ac824c8b547da49a67ef6b992eef2c, type: 3}
     material: {fileID: 0}
-    position: {x: 0.17216668, y: 0, z: -25.752035}
+    position: {x: -2.6556, y: 0, z: -6.5169353}
     rotation: {x: -0, y: 0.4694716, z: -0, w: -0.8829476}
     scale: {x: 0.9467877, y: 0.9467877, z: 0.9467877}
     active: 1
@@ -42903,9 +42921,9 @@ MonoBehaviour:
   - name: AftermathDebris_11
     stage: 4
     kind: 0
-    prefab: {fileID: 8138892414868178040, guid: 00ac824c8b547da49a67ef6b992eef2c, type: 3}
+    prefab: {fileID: 7043316454820411332, guid: 6794e52886141d042b1794b470fa379a, type: 3}
     material: {fileID: 0}
-    position: {x: 15.316484, y: 0, z: -14.019452}
+    position: {x: 6.849066, y: 0, z: -0.19053066}
     rotation: {x: -0, y: 0.94832367, z: -0, w: 0.3173047}
     scale: {x: 1.0417207, y: 1.0417205, z: 1.0417207}
     active: 1
@@ -42921,9 +42939,9 @@ MonoBehaviour:
   - name: AftermathDebris_12
     stage: 4
     kind: 0
-    prefab: {fileID: 7043316454820411332, guid: 6794e52886141d042b1794b470fa379a, type: 3}
+    prefab: {fileID: 1956694158207482888, guid: 542f9c428139ecc48bc4f66f1a34105d, type: 3}
     material: {fileID: 0}
-    position: {x: 18.76956, y: 0, z: -27.437603}
+    position: {x: 9.071502, y: 0, z: -7.5078897}
     rotation: {x: -0, y: 0.9426415, z: -0, w: 0.3338069}
     scale: {x: 0.8396604, y: 0.8396603, z: 0.8396604}
     active: 1
@@ -42939,9 +42957,9 @@ MonoBehaviour:
   - name: AftermathDebris_13
     stage: 4
     kind: 0
-    prefab: {fileID: 1956694158207482888, guid: 542f9c428139ecc48bc4f66f1a34105d, type: 3}
+    prefab: {fileID: 1148151505255161420, guid: 63b709ee1f4f5ba4d82bb5c736d50f34, type: 3}
     material: {fileID: 0}
-    position: {x: 11.372384, y: 0, z: -16.462103}
+    position: {x: 4.23239, y: 0, z: -1.4169755}
     rotation: {x: -0, y: 0.5150381, z: -0, w: -0.85716736}
     scale: {x: 1.3347619, y: 1.3347616, z: 1.3347619}
     active: 1
@@ -42957,9 +42975,9 @@ MonoBehaviour:
   - name: AftermathDebris_14
     stage: 4
     kind: 0
-    prefab: {fileID: 1148151505255161420, guid: 63b709ee1f4f5ba4d82bb5c736d50f34, type: 3}
+    prefab: {fileID: 4249285003105572442, guid: 2aee7024d65ba8c4091118e0f67ac288, type: 3}
     material: {fileID: 0}
-    position: {x: 16.432652, y: 0, z: -14.172196}
+    position: {x: 7.569457, y: 0, z: -0.2726534}
     rotation: {x: -0, y: 0.9961947, z: -0, w: 0.087155804}
     scale: {x: 1.0518475, y: 1.0518472, z: 1.0518475}
     active: 1
@@ -42975,9 +42993,9 @@ MonoBehaviour:
   - name: AftermathDebris_15
     stage: 4
     kind: 0
-    prefab: {fileID: 4249285003105572442, guid: 2aee7024d65ba8c4091118e0f67ac288, type: 3}
+    prefab: {fileID: 9108726697458556623, guid: 0d9800a3840c14345bb16df6c4e0a35f, type: 3}
     material: {fileID: 0}
-    position: {x: 19.954588, y: 0, z: -24.173603}
+    position: {x: 9.989035, y: 0, z: -5.7989454}
     rotation: {x: -0, y: 0.74314487, z: -0, w: 0.66913056}
     scale: {x: 1.0340385, y: 1.0340384, z: 1.0340385}
     active: 1
@@ -42993,9 +43011,9 @@ MonoBehaviour:
   - name: AftermathDebris_16
     stage: 4
     kind: 0
-    prefab: {fileID: 9108726697458556623, guid: 0d9800a3840c14345bb16df6c4e0a35f, type: 3}
+    prefab: {fileID: 5251967572813165842, guid: 4e050568c4e7c004fbcfe23b5a3a22a2, type: 3}
     material: {fileID: 0}
-    position: {x: 17.35202, y: 0, z: -18.341434}
+    position: {x: 8.377924, y: 0, z: -2.4041648}
     rotation: {x: -0, y: 0.7372773, z: -0, w: 0.6755902}
     scale: {x: 0.87979764, y: 0.8797976, z: 0.87979764}
     active: 1
@@ -43011,9 +43029,9 @@ MonoBehaviour:
   - name: AftermathDebris_17
     stage: 4
     kind: 0
-    prefab: {fileID: 5251967572813165842, guid: 4e050568c4e7c004fbcfe23b5a3a22a2, type: 3}
+    prefab: {fileID: 6380129185046196306, guid: fbc16ae2bd6673a4a997621daa435717, type: 3}
     material: {fileID: 0}
-    position: {x: 18.375816, y: 0, z: -28.992409}
+    position: {x: 8.776075, y: 0, z: -8.290416}
     rotation: {x: -0, y: 0.9099613, z: -0, w: 0.41469327}
     scale: {x: 1.3809536, y: 1.3809534, z: 1.3809536}
     active: 1
@@ -43029,83 +43047,11 @@ MonoBehaviour:
   - name: AftermathDebris_18
     stage: 4
     kind: 0
-    prefab: {fileID: 6380129185046196306, guid: fbc16ae2bd6673a4a997621daa435717, type: 3}
-    material: {fileID: 0}
-    position: {x: 26.979736, y: 0, z: -24.410202}
-    rotation: {x: -0, y: 0.7880108, z: -0, w: -0.61566144}
-    scale: {x: 0.92423725, y: 0.92423713, z: 0.92423725}
-    active: 1
-    allowParticles: 1
-    lightColor: {r: 0, g: 0, b: 0, a: 0}
-    lightIntensity: 0
-    lightRange: 0
-    lightShadows: 0
-    cleanup:
-      clipDressingToWorldBounds: 0
-      worldCenter: {x: 0, y: 0}
-      worldSize: {x: 0, y: 0}
-  - name: AftermathDebris_19
-    stage: 4
-    kind: 0
     prefab: {fileID: 545579113144816987, guid: a3b5feb213deacd4395e04f318d4c6a0, type: 3}
     material: {fileID: 0}
-    position: {x: 19.741785, y: 0, z: -21.822945}
-    rotation: {x: -0, y: 0.92387956, z: -0, w: 0.38268346}
-    scale: {x: 1.3948318, y: 1.3948313, z: 1.3948318}
-    active: 1
-    allowParticles: 1
-    lightColor: {r: 0, g: 0, b: 0, a: 0}
-    lightIntensity: 0
-    lightRange: 0
-    lightShadows: 0
-    cleanup:
-      clipDressingToWorldBounds: 0
-      worldCenter: {x: 0, y: 0}
-      worldSize: {x: 0, y: 0}
-  - name: AftermathDebris_20
-    stage: 4
-    kind: 0
-    prefab: {fileID: 6133099744798524933, guid: 05379d49829c8104daeae41f6a99e121, type: 3}
-    material: {fileID: 0}
-    position: {x: 9.709878, y: 0, z: -11.33375}
-    rotation: {x: -0, y: 0.9862856, z: -0, w: -0.16504754}
-    scale: {x: 1.3043712, y: 1.3043709, z: 1.3043712}
-    active: 1
-    allowParticles: 1
-    lightColor: {r: 0, g: 0, b: 0, a: 0}
-    lightIntensity: 0
-    lightRange: 0
-    lightShadows: 0
-    cleanup:
-      clipDressingToWorldBounds: 0
-      worldCenter: {x: 0, y: 0}
-      worldSize: {x: 0, y: 0}
-  - name: AftermathDebris_21
-    stage: 4
-    kind: 0
-    prefab: {fileID: 6589510340026725189, guid: 124399ad2051cac45932fc1b2f9b492f, type: 3}
-    material: {fileID: 0}
-    position: {x: 17.465544, y: 0, z: -17.572937}
-    rotation: {x: -0, y: 0.9170601, z: -0, w: -0.39874905}
-    scale: {x: 1.449856, y: 1.449856, z: 1.449856}
-    active: 1
-    allowParticles: 1
-    lightColor: {r: 0, g: 0, b: 0, a: 0}
-    lightIntensity: 0
-    lightRange: 0
-    lightShadows: 0
-    cleanup:
-      clipDressingToWorldBounds: 0
-      worldCenter: {x: 0, y: 0}
-      worldSize: {x: 0, y: 0}
-  - name: AftermathDebris_22
-    stage: 4
-    kind: 0
-    prefab: {fileID: 7899585257667327841, guid: 41444e9114596a14289f4a71b6539047, type: 3}
-    material: {fileID: 0}
-    position: {x: 5.9351416, y: 0, z: -27.225815}
-    rotation: {x: -0, y: 0.7132504, z: -0, w: -0.7009093}
-    scale: {x: 0.86211026, y: 0.86211026, z: 0.86211026}
+    position: {x: 14.189597, y: 0, z: -5.820649}
+    rotation: {x: -0, y: 0.7880108, z: -0, w: -0.61566144}
+    scale: {x: 0.92423725, y: 0.92423713, z: 0.92423725}
     active: 1
     allowParticles: 1
     lightColor: {r: 0, g: 0, b: 0, a: 0}
@@ -43121,9 +43067,9 @@ MonoBehaviour:
     kind: 0
     prefab: {fileID: 1808040751746190, guid: 91ab2170d6e1a11459e0d15290ddc34b, type: 3}
     material: {fileID: 0}
-    position: {x: 8.5, y: 0, z: -10.5}
-    rotation: {x: -0, y: 0.034899496, z: -0, w: 0.99939084}
-    scale: {x: 1.0000001, y: 1, z: 1.0000001}
+    position: {x: -2, y: 0, z: 5.1}
+    rotation: {x: -0, y: -0, z: -0, w: 1}
+    scale: {x: 1, y: 1, z: 1}
     active: 1
     allowParticles: 1
     lightColor: {r: 0, g: 0, b: 0, a: 0}
@@ -43139,9 +43085,9 @@ MonoBehaviour:
     kind: 0
     prefab: {fileID: 1808040751746190, guid: 91ab2170d6e1a11459e0d15290ddc34b, type: 3}
     material: {fileID: 0}
-    position: {x: 10.9, y: 0, z: -10}
-    rotation: {x: -0, y: 0.034899496, z: -0, w: 0.99939084}
-    scale: {x: 1.0000001, y: 1, z: 1.0000001}
+    position: {x: 0.4000001, y: 0, z: 5.45}
+    rotation: {x: -0, y: -0, z: -0, w: 1}
+    scale: {x: 1, y: 1, z: 1}
     active: 1
     allowParticles: 1
     lightColor: {r: 0, g: 0, b: 0, a: 0}
@@ -43157,9 +43103,9 @@ MonoBehaviour:
     kind: 0
     prefab: {fileID: 1808040751746190, guid: 91ab2170d6e1a11459e0d15290ddc34b, type: 3}
     material: {fileID: 0}
-    position: {x: 13.3, y: 0, z: -10.5}
-    rotation: {x: -0, y: 0.034899496, z: -0, w: 0.99939084}
-    scale: {x: 1.0000001, y: 1, z: 1.0000001}
+    position: {x: 2.8000002, y: 0, z: 5.1}
+    rotation: {x: -0, y: -0, z: -0, w: 1}
+    scale: {x: 1, y: 1, z: 1}
     active: 1
     allowParticles: 1
     lightColor: {r: 0, g: 0, b: 0, a: 0}
@@ -43175,9 +43121,9 @@ MonoBehaviour:
     kind: 0
     prefab: {fileID: 1808040751746190, guid: 91ab2170d6e1a11459e0d15290ddc34b, type: 3}
     material: {fileID: 0}
-    position: {x: 15.700001, y: 0, z: -10}
-    rotation: {x: -0, y: 0.034899496, z: -0, w: 0.99939084}
-    scale: {x: 1.0000001, y: 1, z: 1.0000001}
+    position: {x: 5.2000003, y: 0, z: 5.45}
+    rotation: {x: -0, y: -0, z: -0, w: 1}
+    scale: {x: 1, y: 1, z: 1}
     active: 1
     allowParticles: 1
     lightColor: {r: 0, g: 0, b: 0, a: 0}
@@ -43193,14 +43139,14 @@ MonoBehaviour:
     kind: 3
     prefab: {fileID: 0}
     material: {fileID: 0}
-    position: {x: 12, y: 4, z: -19}
+    position: {x: 5, y: 4, z: -2}
     rotation: {x: -0, y: -0, z: -0, w: 1}
     scale: {x: 1, y: 1, z: 1}
     active: 1
     allowParticles: 0
     lightColor: {r: 1, g: 0.21, b: 0.045, a: 1}
     lightIntensity: 5.5
-    lightRange: 27
+    lightRange: 24
     lightShadows: 2
     cleanup:
       clipDressingToWorldBounds: 0
@@ -43209,10 +43155,10 @@ MonoBehaviour:
   - name: CivilianAidTent
     stage: 4
     kind: 0
-    prefab: {fileID: 7668266082351126167, guid: ff684eebd730cf94b85a7b3ecca205ea, type: 3}
+    prefab: {fileID: 2596367768910122427, guid: 4a8f87303004fcb46babc69d2cfe9940, type: 3}
     material: {fileID: 0}
-    position: {x: -7, y: 0, z: -19}
-    rotation: {x: -0, y: 0.6946584, z: -0, w: 0.7193398}
+    position: {x: -8, y: 0, z: -1}
+    rotation: {x: -0, y: 0.7193398, z: -0, w: 0.6946584}
     scale: {x: 0.92, y: 0.92, z: 0.92}
     active: 1
     allowParticles: 1
@@ -43227,11 +43173,11 @@ MonoBehaviour:
   - name: DamagedCivilianTent
     stage: 4
     kind: 0
-    prefab: {fileID: 4340837624936600800, guid: 09efcad4a10c8794794afd412a64da50, type: 3}
+    prefab: {fileID: 5446665746316483346, guid: 7cf5c798a28fdea4bb01e3f5d8a54532, type: 3}
     material: {fileID: 0}
-    position: {x: -14, y: 0, z: -24}
-    rotation: {x: -0, y: 0.8290376, z: -0, w: 0.55919296}
-    scale: {x: 0.8200003, y: 0.82, z: 0.8200003}
+    position: {x: -16, y: 0, z: -6}
+    rotation: {x: -0, y: 0.809017, z: -0, w: 0.5877853}
+    scale: {x: 0.8200001, y: 0.82, z: 0.8200001}
     active: 1
     allowParticles: 1
     lightColor: {r: 0, g: 0, b: 0, a: 0}
@@ -43245,10 +43191,10 @@ MonoBehaviour:
   - name: CivilianAidMedicalSign
     stage: 4
     kind: 0
-    prefab: {fileID: 2158785615916631152, guid: 6b977cb8ea9cb9e499c5d9417c787f94, type: 3}
+    prefab: {fileID: 3464579519418369185, guid: deadaabf4962b2441b4d8de621e65ad0, type: 3}
     material: {fileID: 0}
-    position: {x: -4, y: 0, z: -21}
-    rotation: {x: -0, y: 0.104528464, z: -0, w: 0.9945219}
+    position: {x: -4, y: 0, z: -5}
+    rotation: {x: -0, y: 0.06975647, z: -0, w: 0.9975641}
     scale: {x: 1.08, y: 1.08, z: 1.08}
     active: 1
     allowParticles: 1
@@ -43265,8 +43211,8 @@ MonoBehaviour:
     kind: 0
     prefab: {fileID: 1058073543738724, guid: 2bc4b9d3a8dba6b498397498e7d73e3f, type: 3}
     material: {fileID: 0}
-    position: {x: -8, y: 0, z: -23}
-    rotation: {x: -0, y: 0.2923717, z: -0, w: 0.9563048}
+    position: {x: -9, y: 0, z: -5}
+    rotation: {x: -0, y: 0.25881907, z: -0, w: 0.9659259}
     scale: {x: 1, y: 1, z: 1}
     active: 1
     allowParticles: 1
@@ -43281,11 +43227,11 @@ MonoBehaviour:
   - name: CivilianAidBed
     stage: 4
     kind: 0
-    prefab: {fileID: 1905681705641190570, guid: 7d5cedd41e7cad34ab73e173fe273bb5, type: 3}
+    prefab: {fileID: 4340837624936600800, guid: 09efcad4a10c8794794afd412a64da50, type: 3}
     material: {fileID: 0}
-    position: {x: -10, y: 0, z: -19}
-    rotation: {x: -0, y: 0.656059, z: -0, w: 0.7547096}
-    scale: {x: 0.95000005, y: 0.95, z: 0.95000005}
+    position: {x: -11, y: 0, z: -1}
+    rotation: {x: -0, y: 0.6819984, z: -0, w: 0.7313537}
+    scale: {x: 0.95, y: 0.95, z: 0.95}
     active: 1
     allowParticles: 1
     lightColor: {r: 0, g: 0, b: 0, a: 0}
@@ -43299,10 +43245,10 @@ MonoBehaviour:
   - name: CivilianAidSupplies
     stage: 4
     kind: 0
-    prefab: {fileID: 7981517696010052264, guid: ff98d86957320f7459f18d3f4c7d6577, type: 3}
+    prefab: {fileID: 2158785615916631152, guid: 6b977cb8ea9cb9e499c5d9417c787f94, type: 3}
     material: {fileID: 0}
-    position: {x: -14, y: 0, z: -19}
-    rotation: {x: -0, y: 0.22495104, z: -0, w: 0.97437006}
+    position: {x: -15, y: 0, z: -1}
+    rotation: {x: -0, y: 0.19080901, z: -0, w: 0.9816272}
     scale: {x: 0.82, y: 0.82, z: 0.82}
     active: 1
     allowParticles: 1
@@ -43317,9 +43263,9 @@ MonoBehaviour:
   - name: CivilianAidLightPole
     stage: 4
     kind: 0
-    prefab: {fileID: 4339931407340265182, guid: 69eaa44f11f6de54981a705de3f22aa9, type: 3}
+    prefab: {fileID: 6102704934806243533, guid: 894611a5b2388794daa30aa9d174ccbb, type: 3}
     material: {fileID: 0}
-    position: {x: -5, y: 0, z: -25}
+    position: {x: -6, y: 0, z: -7}
     rotation: {x: -0, y: -0, z: -0, w: 1}
     scale: {x: 0.9, y: 0.9, z: 0.9}
     active: 1
@@ -43337,7 +43283,7 @@ MonoBehaviour:
     kind: 3
     prefab: {fileID: 0}
     material: {fileID: 0}
-    position: {x: -9, y: 6, z: -21}
+    position: {x: -10, y: 6, z: -1}
     rotation: {x: -0, y: -0, z: -0, w: 1}
     scale: {x: 1, y: 1, z: 1}
     active: 1
@@ -43353,7 +43299,7 @@ MonoBehaviour:
   - name: HorizonDunes_West
     stage: 5
     kind: 0
-    prefab: {fileID: 7539980899439288243, guid: aeacb48717f14894c90856effc09bd13, type: 3}
+    prefab: {fileID: 5809145719906209399, guid: a3cf8ce674185a64995f1900780b7b5d, type: 3}
     material: {fileID: 0}
     position: {x: -150, y: -2.4, z: 148}
     rotation: {x: -0, y: 0.15643448, z: -0, w: 0.98768836}
@@ -43371,7 +43317,7 @@ MonoBehaviour:
   - name: HorizonDunes_Center
     stage: 5
     kind: 0
-    prefab: {fileID: 460716482619462828, guid: f7eed904aff2dad4a884ba133a040bbe, type: 3}
+    prefab: {fileID: 4008802273280324904, guid: 551df491dd9d4024fbeb16f52af831c3, type: 3}
     material: {fileID: 0}
     position: {x: 0, y: -2.6, z: 164}
     rotation: {x: -0, y: -0, z: -0, w: 1}
@@ -43389,7 +43335,7 @@ MonoBehaviour:
   - name: HorizonDunes_East
     stage: 5
     kind: 0
-    prefab: {fileID: 1459677827588260455, guid: 0fca812aac7468c4298b83149f18dcbc, type: 3}
+    prefab: {fileID: 2653570150654474367, guid: eed58463eebb93d4cbd8c25524f291eb, type: 3}
     material: {fileID: 0}
     position: {x: 150, y: -2.4, z: 146}
     rotation: {x: -0, y: -0.2079117, z: -0, w: 0.9781476}
@@ -43407,7 +43353,7 @@ MonoBehaviour:
   - name: EdgeAccent_01
     stage: 5
     kind: 0
-    prefab: {fileID: 1574032893010185357, guid: 970570765076c324ba7f28d85a07130b, type: 3}
+    prefab: {fileID: 7539980899439288243, guid: aeacb48717f14894c90856effc09bd13, type: 3}
     material: {fileID: 0}
     position: {x: -116.905685, y: 0, z: -101}
     rotation: {x: -0, y: 0.8660254, z: -0, w: -0.50000006}
@@ -43425,7 +43371,7 @@ MonoBehaviour:
   - name: EdgeAccent_02
     stage: 5
     kind: 0
-    prefab: {fileID: 5441353610635272517, guid: 841bcc7a3cea35b4cb63f232c66722df, type: 3}
+    prefab: {fileID: 460716482619462828, guid: f7eed904aff2dad4a884ba133a040bbe, type: 3}
     material: {fileID: 0}
     position: {x: 143, y: 0, z: -69.06419}
     rotation: {x: -0, y: 0.8526402, z: -0, w: -0.5224985}
@@ -43443,7 +43389,7 @@ MonoBehaviour:
   - name: EdgeAccent_03
     stage: 5
     kind: 0
-    prefab: {fileID: 2974201208979759269, guid: 8398da4cac5d3f041b358e017710e34d, type: 3}
+    prefab: {fileID: 1459677827588260455, guid: 0fca812aac7468c4298b83149f18dcbc, type: 3}
     material: {fileID: 0}
     position: {x: 17.688873, y: 0, z: 101}
     rotation: {x: -0, y: 0.1132032, z: -0, w: -0.9935719}
@@ -43461,7 +43407,7 @@ MonoBehaviour:
   - name: EdgeAccent_04
     stage: 5
     kind: 0
-    prefab: {fileID: 34727736328428088, guid: f26e6f6d76cfefa438e7b3e070b936f8, type: 3}
+    prefab: {fileID: 1574032893010185357, guid: 970570765076c324ba7f28d85a07130b, type: 3}
     material: {fileID: 0}
     position: {x: -143, y: 0, z: -78.5735}
     rotation: {x: -0, y: 0.5150381, z: -0, w: 0.8571673}
@@ -43479,7 +43425,7 @@ MonoBehaviour:
   - name: EdgeAccent_05
     stage: 5
     kind: 0
-    prefab: {fileID: 8631881843604433340, guid: 81a8e260373fc78498e60a91b4a10a81, type: 3}
+    prefab: {fileID: 5441353610635272517, guid: 841bcc7a3cea35b4cb63f232c66722df, type: 3}
     material: {fileID: 0}
     position: {x: 42.084003, y: 0, z: 101}
     rotation: {x: -0, y: 0.9723699, z: -0, w: 0.23344542}
@@ -43497,7 +43443,7 @@ MonoBehaviour:
   - name: EdgeAccent_06
     stage: 5
     kind: 0
-    prefab: {fileID: 6093530668224923532, guid: a6deb50f6fe4b9249a1ed0586830a2dd, type: 3}
+    prefab: {fileID: 2974201208979759269, guid: 8398da4cac5d3f041b358e017710e34d, type: 3}
     material: {fileID: 0}
     position: {x: -143, y: 0, z: -15.827545}
     rotation: {x: -0, y: 0.94832367, z: -0, w: 0.3173047}
@@ -43515,7 +43461,7 @@ MonoBehaviour:
   - name: EdgeAccent_07
     stage: 5
     kind: 0
-    prefab: {fileID: 2353456618926258252, guid: 30b7c630663dfaf40ad38bdc59c3de0b, type: 3}
+    prefab: {fileID: 34727736328428088, guid: f26e6f6d76cfefa438e7b3e070b936f8, type: 3}
     material: {fileID: 0}
     position: {x: -34.67778, y: 0, z: -101}
     rotation: {x: -0, y: 0.95105654, z: -0, w: 0.30901697}
@@ -43533,7 +43479,7 @@ MonoBehaviour:
   - name: EdgeAccent_08
     stage: 5
     kind: 0
-    prefab: {fileID: 5401642038979309998, guid: 6e38d94660e3f3c4b8ab25f56310ebcf, type: 3}
+    prefab: {fileID: 8631881843604433340, guid: 81a8e260373fc78498e60a91b4a10a81, type: 3}
     material: {fileID: 0}
     position: {x: -143, y: 0, z: -5.004507}
     rotation: {x: -0, y: 0.5591929, z: -0, w: 0.8290376}
@@ -43551,7 +43497,7 @@ MonoBehaviour:
   - name: EdgeAccent_09
     stage: 5
     kind: 0
-    prefab: {fileID: 4407748680981932899, guid: 2a7a42b91110b0c44aa41f47597b415a, type: 3}
+    prefab: {fileID: 6093530668224923532, guid: a6deb50f6fe4b9249a1ed0586830a2dd, type: 3}
     material: {fileID: 0}
     position: {x: -115.32381, y: 0, z: 101}
     rotation: {x: -0, y: 0.53729963, z: -0, w: -0.8433914}
@@ -43569,7 +43515,7 @@ MonoBehaviour:
   - name: EdgeAccent_10
     stage: 5
     kind: 0
-    prefab: {fileID: 5135239252251993824, guid: 25508f96939ac9f4b817db2f2066e59d, type: 3}
+    prefab: {fileID: 2353456618926258252, guid: 30b7c630663dfaf40ad38bdc59c3de0b, type: 3}
     material: {fileID: 0}
     position: {x: -143, y: 0, z: 92.06267}
     rotation: {x: -0, y: 0.57357645, z: -0, w: 0.81915206}
@@ -43587,7 +43533,7 @@ MonoBehaviour:
   - name: EdgeAccent_11
     stage: 5
     kind: 0
-    prefab: {fileID: 7635110393303422562, guid: 702b03db46afe8e4c8624a98bafa35a8, type: 3}
+    prefab: {fileID: 5401642038979309998, guid: 6e38d94660e3f3c4b8ab25f56310ebcf, type: 3}
     material: {fileID: 0}
     position: {x: 136.38492, y: 0, z: 101}
     rotation: {x: -0, y: 0.15643448, z: -0, w: 0.98768836}
@@ -43605,7 +43551,7 @@ MonoBehaviour:
   - name: EdgeAccent_12
     stage: 5
     kind: 0
-    prefab: {fileID: 7023048827314948706, guid: d2770e54f74a1a54f9350fb8491ffac5, type: 3}
+    prefab: {fileID: 4407748680981932899, guid: 2a7a42b91110b0c44aa41f47597b415a, type: 3}
     material: {fileID: 0}
     position: {x: -143, y: 0, z: -77.75377}
     rotation: {x: -0, y: 0.48480955, z: -0, w: -0.8746198}
@@ -43623,7 +43569,7 @@ MonoBehaviour:
   - name: EdgeAccent_13
     stage: 5
     kind: 0
-    prefab: {fileID: 3915695923311984156, guid: 00ba533d67a7aeb468683ed7757b2ab3, type: 3}
+    prefab: {fileID: 5135239252251993824, guid: 25508f96939ac9f4b817db2f2066e59d, type: 3}
     material: {fileID: 0}
     position: {x: -43.542595, y: 0, z: -101}
     rotation: {x: -0, y: 0.13917318, z: -0, w: -0.99026805}
@@ -43641,7 +43587,7 @@ MonoBehaviour:
   - name: EdgeAccent_14
     stage: 5
     kind: 0
-    prefab: {fileID: 3717754676103413170, guid: ded375eb447c41c4793b6f9e3235c57e, type: 3}
+    prefab: {fileID: 7635110393303422562, guid: 702b03db46afe8e4c8624a98bafa35a8, type: 3}
     material: {fileID: 0}
     position: {x: -143, y: 0, z: 16.576172}
     rotation: {x: -0, y: 0.3007058, z: -0, w: 0.95371693}
@@ -43659,7 +43605,7 @@ MonoBehaviour:
   - name: EdgeAccent_15
     stage: 5
     kind: 0
-    prefab: {fileID: 3756530291649413927, guid: 2e42afcb4fc14ed4ca25030960fe3105, type: 3}
+    prefab: {fileID: 7023048827314948706, guid: d2770e54f74a1a54f9350fb8491ffac5, type: 3}
     material: {fileID: 0}
     position: {x: 127.63867, y: 0, z: 101}
     rotation: {x: -0, y: 0.8290376, z: -0, w: 0.55919296}
@@ -43677,7 +43623,7 @@ MonoBehaviour:
   - name: EdgeAccent_16
     stage: 5
     kind: 0
-    prefab: {fileID: 5519194469175823296, guid: 69d006a205089c54ea27bac08dd9ef54, type: 3}
+    prefab: {fileID: 3915695923311984156, guid: 00ba533d67a7aeb468683ed7757b2ab3, type: 3}
     material: {fileID: 0}
     position: {x: 143, y: 0, z: 42.63486}
     rotation: {x: -0, y: 0.72537446, z: -0, w: -0.68835455}
@@ -43695,7 +43641,7 @@ MonoBehaviour:
   - name: EdgeAccent_17
     stage: 5
     kind: 0
-    prefab: {fileID: 28243796328489048, guid: 5212bedb71ec3e243bdfca0eab5db891, type: 3}
+    prefab: {fileID: 3717754676103413170, guid: ded375eb447c41c4793b6f9e3235c57e, type: 3}
     material: {fileID: 0}
     position: {x: 72.76189, y: 0, z: -101}
     rotation: {x: -0, y: 0.4461978, z: -0, w: 0.89493436}
@@ -43713,7 +43659,7 @@ MonoBehaviour:
   - name: EdgeAccent_18
     stage: 5
     kind: 0
-    prefab: {fileID: 5996407058936283312, guid: c1a38e18415d58641b348d15a4b87df1, type: 3}
+    prefab: {fileID: 3756530291649413927, guid: 2e42afcb4fc14ed4ca25030960fe3105, type: 3}
     material: {fileID: 0}
     position: {x: -143, y: 0, z: -89.67259}
     rotation: {x: -0, y: 0.8433914, z: -0, w: -0.53729963}
@@ -43731,7 +43677,7 @@ MonoBehaviour:
   - name: EdgeAccent_19
     stage: 5
     kind: 0
-    prefab: {fileID: 8842973304077522375, guid: 6dad64cc6aaf15c4ba07e15f05d78896, type: 3}
+    prefab: {fileID: 5519194469175823296, guid: 69d006a205089c54ea27bac08dd9ef54, type: 3}
     material: {fileID: 0}
     position: {x: 49.39246, y: 0, z: -101}
     rotation: {x: -0, y: 0.9304176, z: -0, w: 0.3665012}
@@ -43749,7 +43695,7 @@ MonoBehaviour:
   - name: EdgeAccent_20
     stage: 5
     kind: 0
-    prefab: {fileID: 1077804313169945960, guid: b91656603356aef4bae017ad7b675b87, type: 3}
+    prefab: {fileID: 28243796328489048, guid: 5212bedb71ec3e243bdfca0eab5db891, type: 3}
     material: {fileID: 0}
     position: {x: -143, y: 0, z: -44.83169}
     rotation: {x: -0, y: 0.98768836, z: -0, w: 0.15643449}
@@ -43767,7 +43713,7 @@ MonoBehaviour:
   - name: EdgeAccent_21
     stage: 5
     kind: 0
-    prefab: {fileID: 7838996349550580565, guid: 111cf3687efdb2b4885bf3ff960194d6, type: 3}
+    prefab: {fileID: 5996407058936283312, guid: c1a38e18415d58641b348d15a4b87df1, type: 3}
     material: {fileID: 0}
     position: {x: -30.637192, y: 0, z: 101}
     rotation: {x: -0, y: 0.9455186, z: -0, w: -0.3255681}
@@ -43785,7 +43731,7 @@ MonoBehaviour:
   - name: EdgeAccent_22
     stage: 5
     kind: 0
-    prefab: {fileID: 6550766361255216975, guid: fd8b5a986f1083d4f91b2b5ac9ae850a, type: 3}
+    prefab: {fileID: 8842973304077522375, guid: 6dad64cc6aaf15c4ba07e15f05d78896, type: 3}
     material: {fileID: 0}
     position: {x: 143, y: 0, z: -0.37569237}
     rotation: {x: -0, y: 0.9396926, z: -0, w: 0.34202015}
@@ -43803,7 +43749,7 @@ MonoBehaviour:
   - name: EdgeAccent_23
     stage: 5
     kind: 0
-    prefab: {fileID: 6605377668266950760, guid: 6d133bb1ccd6b6b4dba25782d4fea620, type: 3}
+    prefab: {fileID: 1077804313169945960, guid: b91656603356aef4bae017ad7b675b87, type: 3}
     material: {fileID: 0}
     position: {x: -17.230759, y: 0, z: -101}
     rotation: {x: -0, y: 0.5591929, z: -0, w: 0.8290376}
@@ -43821,7 +43767,7 @@ MonoBehaviour:
   - name: EdgeAccent_24
     stage: 5
     kind: 0
-    prefab: {fileID: 5942543979366984562, guid: 58ee0361afb4c21439396639a2f09494, type: 3}
+    prefab: {fileID: 7838996349550580565, guid: 111cf3687efdb2b4885bf3ff960194d6, type: 3}
     material: {fileID: 0}
     position: {x: 143, y: 0, z: 4.6170616}
     rotation: {x: -0, y: 0.9135455, z: -0, w: -0.40673658}
@@ -43839,7 +43785,7 @@ MonoBehaviour:
   - name: EdgeAccent_25
     stage: 5
     kind: 0
-    prefab: {fileID: 2287801813630912498, guid: 28c1cc2b64f267e46a719e7e9104ba36, type: 3}
+    prefab: {fileID: 6550766361255216975, guid: fd8b5a986f1083d4f91b2b5ac9ae850a, type: 3}
     material: {fileID: 0}
     position: {x: -79.73617, y: 0, z: 101}
     rotation: {x: -0, y: 0.92387956, z: -0, w: 0.38268346}
@@ -43857,7 +43803,7 @@ MonoBehaviour:
   - name: EdgeAccent_26
     stage: 5
     kind: 0
-    prefab: {fileID: 8446470808153580825, guid: b03a6e9ff4204d142a849e002929eab8, type: 3}
+    prefab: {fileID: 6605377668266950760, guid: 6d133bb1ccd6b6b4dba25782d4fea620, type: 3}
     material: {fileID: 0}
     position: {x: 143, y: 0, z: -65.18205}
     rotation: {x: -0, y: 0.9848078, z: -0, w: -0.17364821}
@@ -43875,7 +43821,7 @@ MonoBehaviour:
   - name: EdgeAccent_27
     stage: 5
     kind: 0
-    prefab: {fileID: 7581269606020442248, guid: 67507304ada0ebf469f208e58a681173, type: 3}
+    prefab: {fileID: 5942543979366984562, guid: 58ee0361afb4c21439396639a2f09494, type: 3}
     material: {fileID: 0}
     position: {x: 12.136057, y: 0, z: -101}
     rotation: {x: -0, y: 0.05233596, z: -0, w: 0.9986295}
@@ -43893,7 +43839,7 @@ MonoBehaviour:
   - name: EdgeAccent_28
     stage: 5
     kind: 0
-    prefab: {fileID: 6550533330119310792, guid: 4dc4bcc657ecf0449bb8303c712210e4, type: 3}
+    prefab: {fileID: 2287801813630912498, guid: 28c1cc2b64f267e46a719e7e9104ba36, type: 3}
     material: {fileID: 0}
     position: {x: -143, y: 0, z: 24.655586}
     rotation: {x: -0, y: 0.81915206, z: -0, w: 0.57357645}
@@ -43911,7 +43857,7 @@ MonoBehaviour:
   - name: EdgeAccent_29
     stage: 5
     kind: 0
-    prefab: {fileID: 7139102560982155628, guid: 51614aa8cdc5ee048860d4472cb29769, type: 3}
+    prefab: {fileID: 8446470808153580825, guid: b03a6e9ff4204d142a849e002929eab8, type: 3}
     material: {fileID: 0}
     position: {x: -37.921467, y: 0, z: -101}
     rotation: {x: -0, y: 0.76604444, z: -0, w: 0.64278764}
@@ -43929,7 +43875,7 @@ MonoBehaviour:
   - name: EdgeAccent_30
     stage: 5
     kind: 0
-    prefab: {fileID: 3154622575015674409, guid: c12fb524f6891ab4ca4ba4b0f6555306, type: 3}
+    prefab: {fileID: 7581269606020442248, guid: 67507304ada0ebf469f208e58a681173, type: 3}
     material: {fileID: 0}
     position: {x: -143, y: 0, z: 7.270523}
     rotation: {x: -0, y: 0.97437006, z: -0, w: -0.224951}
@@ -43947,7 +43893,7 @@ MonoBehaviour:
   - name: EdgeAccent_31
     stage: 5
     kind: 0
-    prefab: {fileID: 4763070756296037942, guid: 0ac9283ba2e653e439c9f52558986ef3, type: 3}
+    prefab: {fileID: 6550533330119310792, guid: 4dc4bcc657ecf0449bb8303c712210e4, type: 3}
     material: {fileID: 0}
     position: {x: 99.52681, y: 0, z: 101}
     rotation: {x: -0, y: 0.6819984, z: -0, w: 0.7313537}
@@ -43965,7 +43911,7 @@ MonoBehaviour:
   - name: EdgeAccent_32
     stage: 5
     kind: 0
-    prefab: {fileID: 2133008692362438278, guid: 24eceadbaead562489ea22679b748a52, type: 3}
+    prefab: {fileID: 7139102560982155628, guid: 51614aa8cdc5ee048860d4472cb29769, type: 3}
     material: {fileID: 0}
     position: {x: 143, y: 0, z: -34.993233}
     rotation: {x: -0, y: -0, z: -0, w: 1}
@@ -43983,7 +43929,7 @@ MonoBehaviour:
   - name: EdgeAccent_33
     stage: 5
     kind: 0
-    prefab: {fileID: 8198931301289167689, guid: edd10d093433f8a4bb7bffdb07d42f56, type: 3}
+    prefab: {fileID: 3154622575015674409, guid: c12fb524f6891ab4ca4ba4b0f6555306, type: 3}
     material: {fileID: 0}
     position: {x: -22.677956, y: 0, z: -101}
     rotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
@@ -44001,7 +43947,7 @@ MonoBehaviour:
   - name: EdgeAccent_34
     stage: 5
     kind: 0
-    prefab: {fileID: 490117488606172547, guid: c56ca80bc553bd94eabecb22efbf82ba, type: 3}
+    prefab: {fileID: 4763070756296037942, guid: 0ac9283ba2e653e439c9f52558986ef3, type: 3}
     material: {fileID: 0}
     position: {x: 143, y: 0, z: -39.89408}
     rotation: {x: -0, y: 0.86602545, z: -0, w: 0.49999997}
@@ -44019,7 +43965,7 @@ MonoBehaviour:
   - name: EdgeAccent_35
     stage: 5
     kind: 0
-    prefab: {fileID: 9114878664377870963, guid: b93dbafd6ce1ee646bade9f483d94ec1, type: 3}
+    prefab: {fileID: 2133008692362438278, guid: 24eceadbaead562489ea22679b748a52, type: 3}
     material: {fileID: 0}
     position: {x: -136.52884, y: 0, z: -101}
     rotation: {x: -0, y: 0.8746198, z: -0, w: -0.48480958}
@@ -44037,7 +43983,7 @@ MonoBehaviour:
   - name: EdgeAccent_36
     stage: 5
     kind: 0
-    prefab: {fileID: 6040977023187191138, guid: e13197a465a0d034faf133c590435398, type: 3}
+    prefab: {fileID: 8198931301289167689, guid: edd10d093433f8a4bb7bffdb07d42f56, type: 3}
     material: {fileID: 0}
     position: {x: -143, y: 0, z: -75.670044}
     rotation: {x: -0, y: 0.8141155, z: -0, w: 0.58070296}
@@ -44055,7 +44001,7 @@ MonoBehaviour:
   - name: EdgeAccent_37
     stage: 5
     kind: 0
-    prefab: {fileID: 1879066506090105471, guid: 93e14043bec1d3b46a9248b4ffe1bd06, type: 3}
+    prefab: {fileID: 490117488606172547, guid: c56ca80bc553bd94eabecb22efbf82ba, type: 3}
     material: {fileID: 0}
     position: {x: 97.64401, y: 0, z: 101}
     rotation: {x: -0, y: 0.017452458, z: -0, w: -0.9998477}
@@ -44073,7 +44019,7 @@ MonoBehaviour:
   - name: EdgeAccent_38
     stage: 5
     kind: 0
-    prefab: {fileID: 7700997306248979484, guid: 73a929fcf032fed49be7017172e50792, type: 3}
+    prefab: {fileID: 9114878664377870963, guid: b93dbafd6ce1ee646bade9f483d94ec1, type: 3}
     material: {fileID: 0}
     position: {x: -143, y: 0, z: -5.4529667}
     rotation: {x: -0, y: 0.4305111, z: -0, w: 0.90258527}
@@ -44091,7 +44037,7 @@ MonoBehaviour:
   - name: EdgeAccent_39
     stage: 5
     kind: 0
-    prefab: {fileID: 3713107638764016991, guid: 0650554ed1f10e6428e8eabb87353879, type: 3}
+    prefab: {fileID: 6040977023187191138, guid: e13197a465a0d034faf133c590435398, type: 3}
     material: {fileID: 0}
     position: {x: -30.763405, y: 0, z: -101}
     rotation: {x: -0, y: 0.8241262, z: -0, w: 0.56640625}
@@ -44109,7 +44055,7 @@ MonoBehaviour:
   - name: EdgeAccent_40
     stage: 5
     kind: 0
-    prefab: {fileID: 5655157736269660028, guid: ee424a01fca26bf4b93355711d7f6953, type: 3}
+    prefab: {fileID: 1879066506090105471, guid: 93e14043bec1d3b46a9248b4ffe1bd06, type: 3}
     material: {fileID: 0}
     position: {x: 143, y: 0, z: -12.423403}
     rotation: {x: -0, y: 0.9961947, z: -0, w: 0.087155804}
@@ -44127,7 +44073,7 @@ MonoBehaviour:
   - name: EdgeAccent_41
     stage: 5
     kind: 0
-    prefab: {fileID: 284624130493815687, guid: c259c54e31945c34a8530216086130d8, type: 3}
+    prefab: {fileID: 7700997306248979484, guid: 73a929fcf032fed49be7017172e50792, type: 3}
     material: {fileID: 0}
     position: {x: -60.36698, y: 0, z: 101}
     rotation: {x: -0, y: 0.42261833, z: -0, w: -0.90630776}
@@ -44145,7 +44091,7 @@ MonoBehaviour:
   - name: EdgeAccent_42
     stage: 5
     kind: 0
-    prefab: {fileID: 756060044080128092, guid: 6ad1bcefadc8c2d41b387e0d7934389a, type: 3}
+    prefab: {fileID: 3713107638764016991, guid: 0650554ed1f10e6428e8eabb87353879, type: 3}
     material: {fileID: 0}
     position: {x: -143, y: 0, z: 77.66394}
     rotation: {x: -0, y: 0.6087614, z: -0, w: -0.7933533}
@@ -44163,7 +44109,7 @@ MonoBehaviour:
   - name: EdgeAccent_43
     stage: 5
     kind: 0
-    prefab: {fileID: 5860163624619672196, guid: 670ec984e3c01d5478cef065037ad973, type: 3}
+    prefab: {fileID: 5655157736269660028, guid: ee424a01fca26bf4b93355711d7f6953, type: 3}
     material: {fileID: 0}
     position: {x: 55.262505, y: 0, z: -101}
     rotation: {x: -0, y: 0.4305111, z: -0, w: 0.90258527}
@@ -44181,7 +44127,7 @@ MonoBehaviour:
   - name: EdgeAccent_44
     stage: 5
     kind: 0
-    prefab: {fileID: 6126670213944021401, guid: c496baf57e54e1a4d892e5caa163344f, type: 3}
+    prefab: {fileID: 284624130493815687, guid: c259c54e31945c34a8530216086130d8, type: 3}
     material: {fileID: 0}
     position: {x: 143, y: 0, z: -29.63622}
     rotation: {x: -0, y: 0.64278764, z: -0, w: -0.76604444}
@@ -44199,7 +44145,7 @@ MonoBehaviour:
   - name: EdgeAccent_45
     stage: 5
     kind: 0
-    prefab: {fileID: 7481323505230884057, guid: c35f3b97124883747a036d6db0fd772a, type: 3}
+    prefab: {fileID: 756060044080128092, guid: 6ad1bcefadc8c2d41b387e0d7934389a, type: 3}
     material: {fileID: 0}
     position: {x: -46.45971, y: 0, z: -101}
     rotation: {x: -0, y: 0.76040596, z: -0, w: 0.64944804}
@@ -44217,7 +44163,7 @@ MonoBehaviour:
   - name: EdgeAccent_46
     stage: 5
     kind: 0
-    prefab: {fileID: 1346942701568557821, guid: 72c636f881cc058429a650258510dbf4, type: 3}
+    prefab: {fileID: 5860163624619672196, guid: 670ec984e3c01d5478cef065037ad973, type: 3}
     material: {fileID: 0}
     position: {x: -143, y: 0, z: -25.974924}
     rotation: {x: -0, y: 0.29237184, z: -0, w: -0.9563047}
@@ -44235,7 +44181,7 @@ MonoBehaviour:
   - name: EdgeAccent_47
     stage: 5
     kind: 0
-    prefab: {fileID: 5486792852992534871, guid: 756a99c75fb226d4696e9af4bbd8ac64, type: 3}
+    prefab: {fileID: 6126670213944021401, guid: c496baf57e54e1a4d892e5caa163344f, type: 3}
     material: {fileID: 0}
     position: {x: 136.46042, y: 0, z: 101}
     rotation: {x: -0, y: 0.02617695, z: -0, w: 0.99965733}
@@ -44253,7 +44199,7 @@ MonoBehaviour:
   - name: EdgeAccent_48
     stage: 5
     kind: 0
-    prefab: {fileID: 1279993064222416319, guid: 4acef86f68fb6984082b3d7924614b95, type: 3}
+    prefab: {fileID: 7481323505230884057, guid: c35f3b97124883747a036d6db0fd772a, type: 3}
     material: {fileID: 0}
     position: {x: 143, y: 0, z: -90.77054}
     rotation: {x: -0, y: 0.8241262, z: -0, w: 0.56640625}
@@ -44271,7 +44217,7 @@ MonoBehaviour:
   - name: EdgeAccent_49
     stage: 5
     kind: 0
-    prefab: {fileID: 3786724522357823643, guid: 0191f00e09a7b20478cc1c68bb898686, type: 3}
+    prefab: {fileID: 1346942701568557821, guid: 72c636f881cc058429a650258510dbf4, type: 3}
     material: {fileID: 0}
     position: {x: 91.22494, y: 0, z: -101}
     rotation: {x: -0, y: 0.19080903, z: -0, w: -0.9816272}
@@ -44289,7 +44235,7 @@ MonoBehaviour:
   - name: EdgeAccent_50
     stage: 5
     kind: 0
-    prefab: {fileID: 5658224942505159126, guid: a9b02bd754928ac4b92f89610e6835da, type: 3}
+    prefab: {fileID: 5486792852992534871, guid: 756a99c75fb226d4696e9af4bbd8ac64, type: 3}
     material: {fileID: 0}
     position: {x: -143, y: 0, z: -53.186184}
     rotation: {x: -0, y: 0.976296, z: -0, w: 0.21643965}
@@ -44307,7 +44253,7 @@ MonoBehaviour:
   - name: EdgeAccent_51
     stage: 5
     kind: 0
-    prefab: {fileID: 6493358705276557450, guid: 3e28a8028edf68243a6de42fed134f23, type: 3}
+    prefab: {fileID: 1279993064222416319, guid: 4acef86f68fb6984082b3d7924614b95, type: 3}
     material: {fileID: 0}
     position: {x: 61.22546, y: 0, z: 101}
     rotation: {x: -0, y: 0.18223558, z: -0, w: -0.9832549}
@@ -44325,7 +44271,7 @@ MonoBehaviour:
   - name: EdgeAccent_52
     stage: 5
     kind: 0
-    prefab: {fileID: 6798484481990043524, guid: 4d21b9e496b142d41a1e7265104b7dad, type: 3}
+    prefab: {fileID: 3786724522357823643, guid: 0191f00e09a7b20478cc1c68bb898686, type: 3}
     material: {fileID: 0}
     position: {x: -143, y: 0, z: -34.133686}
     rotation: {x: -0, y: 0.57357645, z: -0, w: -0.81915206}
@@ -44343,7 +44289,7 @@ MonoBehaviour:
   - name: EdgeAccent_53
     stage: 5
     kind: 0
-    prefab: {fileID: 194025171752368602, guid: 7bf9b741257beef4991586c86e538cde, type: 3}
+    prefab: {fileID: 5658224942505159126, guid: a9b02bd754928ac4b92f89610e6835da, type: 3}
     material: {fileID: 0}
     position: {x: -45.67119, y: 0, z: 101}
     rotation: {x: -0, y: 0.09584583, z: -0, w: -0.9953962}
@@ -44361,7 +44307,7 @@ MonoBehaviour:
   - name: EdgeAccent_54
     stage: 5
     kind: 0
-    prefab: {fileID: 6994660158712660292, guid: 8b2792b422753694f804ceaa8c6a2545, type: 3}
+    prefab: {fileID: 6493358705276557450, guid: 3e28a8028edf68243a6de42fed134f23, type: 3}
     material: {fileID: 0}
     position: {x: -143, y: 0, z: -69.18919}
     rotation: {x: -0, y: 0.30070588, z: -0, w: -0.95371693}
@@ -44379,7 +44325,7 @@ MonoBehaviour:
   - name: EdgeAccent_55
     stage: 5
     kind: 0
-    prefab: {fileID: 2902905567587709780, guid: c20adcd55195be14886803786f3056cf, type: 3}
+    prefab: {fileID: 6798484481990043524, guid: 4d21b9e496b142d41a1e7265104b7dad, type: 3}
     material: {fileID: 0}
     position: {x: 131.50911, y: 0, z: 101}
     rotation: {x: -0, y: 0.3007058, z: -0, w: 0.95371693}
@@ -44397,7 +44343,7 @@ MonoBehaviour:
   - name: EdgeAccent_56
     stage: 5
     kind: 0
-    prefab: {fileID: 3259178483997959964, guid: 627459f2bfd745b43bee3977c13f4892, type: 3}
+    prefab: {fileID: 194025171752368602, guid: 7bf9b741257beef4991586c86e538cde, type: 3}
     material: {fileID: 0}
     position: {x: 143, y: 0, z: -91.83432}
     rotation: {x: -0, y: 0.27563736, z: -0, w: 0.9612617}
@@ -44415,7 +44361,7 @@ MonoBehaviour:
   - name: EdgeAccent_57
     stage: 5
     kind: 0
-    prefab: {fileID: 3650236002955682865, guid: f1e788c39f168e54e8d3df5a81489929, type: 3}
+    prefab: {fileID: 6994660158712660292, guid: 8b2792b422753694f804ceaa8c6a2545, type: 3}
     material: {fileID: 0}
     position: {x: 67.62536, y: 0, z: 101}
     rotation: {x: -0, y: 0.008726637, z: -0, w: -0.9999619}
@@ -44433,7 +44379,7 @@ MonoBehaviour:
   - name: EdgeAccent_58
     stage: 5
     kind: 0
-    prefab: {fileID: 6225886393543999315, guid: 9d2b0d6ef4898a4479aa4e57517c07dd, type: 3}
+    prefab: {fileID: 2902905567587709780, guid: c20adcd55195be14886803786f3056cf, type: 3}
     material: {fileID: 0}
     position: {x: -143, y: 0, z: -63.409462}
     rotation: {x: -0, y: 1, z: -0, w: -0.00000004371139}

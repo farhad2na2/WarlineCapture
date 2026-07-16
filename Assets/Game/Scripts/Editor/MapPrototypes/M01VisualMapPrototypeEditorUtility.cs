@@ -16,7 +16,7 @@ namespace Game.Editor
         public const string ScenePath = "Assets/Game/Scenes/MapPrototypes/Chapter01/M01_VisualPrototype.unity";
         public const string CaptureDirectory = "Design/ArtReview/OperationMaps/M01";
         public const int GenerationSeed = 26071501;
-        public const string GeneratorVersion = "M01VisualPrototype_2026-07-16_v18_single_route_cohesion";
+        public const string GeneratorVersion = "M01VisualPrototype_2026-07-17_v19_roadside_incident";
 
         private const int CaptureWidth = 1600;
         private const int CaptureHeight = 900;
@@ -146,6 +146,14 @@ namespace Game.Editor
             new("MarketExit", new Vector3(-14f, 0f, 9f), new Vector3(10.5f, 0f, 9.3f), false),
             new("MarketToCompound_A", new Vector3(10.5f, 0f, 9.3f), new Vector3(22f, 0f, 18f), false),
             new("MarketToCompound_B", new Vector3(22f, 0f, 18f), new Vector3(36f, 0f, 35f), false)
+        };
+
+        private static readonly string[] AuthoredRoadClearanceObstacleNames =
+        {
+            "DestroyedAidTruck",
+            "BombedCornerRuin",
+            "CivilianAidTent",
+            "DamagedCivilianTent"
         };
 
         private static readonly DistrictCurationDefinition[] DistrictCurationDefinitions =
@@ -514,8 +522,11 @@ namespace Game.Editor
         {
             Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
             GameObject sceneRoot = FindSceneRoot(scene);
-            int intersectionCount = CountLocalRoadClearanceIntersections(sceneRoot, true);
-            Debug.Log($"[M01LocalRoadClearance] result=Passed intersections={intersectionCount}");
+            int importedIntersectionCount = CountLocalRoadClearanceIntersections(sceneRoot, true);
+            int authoredIntersectionCount = CountAuthoredRoadClearanceIntersections(sceneRoot, true);
+            Debug.Log(
+                $"[M01LocalRoadClearance] result=Passed intersections={importedIntersectionCount + authoredIntersectionCount} " +
+                $"imported={importedIntersectionCount} authored={authoredIntersectionCount}");
         }
 
         private static int CountLocalRoadClearanceIntersections(GameObject sceneRoot, bool logDetails)
@@ -551,6 +562,43 @@ namespace Game.Editor
             }
 
             return intersectionCount;
+        }
+
+        private static int CountAuthoredRoadClearanceIntersections(GameObject sceneRoot, bool logDetails)
+        {
+            Transform[] transforms = sceneRoot.GetComponentsInChildren<Transform>(true);
+            int intersectionCount = 0;
+            for (int transformIndex = 0; transformIndex < transforms.Length; transformIndex++)
+            {
+                Transform candidate = transforms[transformIndex];
+                if (!candidate.gameObject.activeInHierarchy || !IsAuthoredRoadClearanceObstacle(candidate.name))
+                    continue;
+
+                Renderer[] renderers = candidate.GetComponentsInChildren<Renderer>(true);
+                if (!TryGetCombinedBounds(renderers, out Bounds bounds) || !IntersectsAnyLocalRoad(bounds, 3.2f))
+                    continue;
+
+                intersectionCount++;
+                if (logDetails)
+                {
+                    Debug.Log(
+                        $"[M01AuthoredRoadClearance] obstacle={GetTransformPath(candidate, sceneRoot.transform)} " +
+                        $"center={bounds.center} size={bounds.size}");
+                }
+            }
+
+            return intersectionCount;
+        }
+
+        private static bool IsAuthoredRoadClearanceObstacle(string objectName)
+        {
+            for (int index = 0; index < AuthoredRoadClearanceObstacleNames.Length; index++)
+            {
+                if (string.Equals(objectName, AuthoredRoadClearanceObstacleNames[index], StringComparison.Ordinal))
+                    return true;
+            }
+
+            return false;
         }
 
         private static Transform FindRoadClearanceOwner(Transform candidate, Transform sceneRoot)
@@ -896,10 +944,11 @@ namespace Game.Editor
             CreateIrregularSurface("UtilityCompoundOuterTransition", new Vector3(62f, -0.045f, 19f), new Vector2(142f, 132f), palette.TransitionGround, terrainRoot);
             CreateIrregularSurface("ResidentialOuterTransition", new Vector3(-4f, -0.045f, -70f), new Vector2(156f, 118f), palette.TransitionGround, terrainRoot);
             CreateIrregularSurface("OldMarketUtilityGroundLink", new Vector3(15f, -0.035f, 14f), new Vector2(62f, 62f), palette.TransitionGround, terrainRoot);
-            CreateIrregularSurface("OldMarketAftermathGroundLink", new Vector3(13f, -0.034f, -10f), new Vector2(44f, 56f), palette.TransitionGround, terrainRoot);
+            CreateIrregularSurface("CivilianFrontageTransition", new Vector3(1f, -0.034f, -3f), new Vector2(60f, 38f), palette.TransitionGround, terrainRoot);
             CreateIrregularSurface("OldMarketDistrictApron", new Vector3(-62f, -0.015f, 17f), new Vector2(118f, 102f), palette.DistrictGround, terrainRoot);
             CreateIrregularSurface("UtilityCompoundApron", new Vector3(62f, -0.015f, 19f), new Vector2(112f, 108f), palette.DistrictGround, terrainRoot);
             CreateIrregularSurface("ResidentialDistrictApron", new Vector3(-4f, -0.015f, -70f), new Vector2(130f, 94f), palette.DistrictGround, terrainRoot);
+            CreateIrregularSurface("CivilianFrontageApron", new Vector3(1f, -0.005f, -3f), new Vector2(50f, 30f), palette.DistrictGround, terrainRoot);
 
             CreateLocalRoadNetwork(terrainRoot, palette);
         }
@@ -1275,11 +1324,11 @@ namespace Game.Editor
         {
             Transform root = CreateRoot("05_BombingAftermath_StoryLayer", parent).transform;
 
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/Environment/SM_Env_Ground_Crater_02.prefab", "ImpactCrater", new Vector3(13f, 0.2f, -22f), 4f, 1.45f, root);
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/Vehicles/Destroyed/SM_Veh_Truck_01_Destroyed.prefab", "DestroyedAidTruck", new Vector3(12.7f, 0f, -18f), 4f, 1.05f, root);
-            PlacePrefab("Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Ruins_03.prefab", "BombedCornerRuin", new Vector3(26f, 0f, -24f), 182f, 1.05f, root);
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/FX/FX_Fire_01.prefab", "AftermathFire", new Vector3(11.5f, 0.7f, -18.5f), 0f, 0.8f, root);
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/FX/FX_Smoke_Large_01.prefab", "AftermathSmoke", new Vector3(13.5f, 0f, -20f), 0f, 0.38f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Environment/SM_Env_Ground_Crater_02.prefab", "ImpactCrater", new Vector3(5f, 0.2f, -5f), 10f, 1.25f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Vehicles/Destroyed/SM_Veh_Truck_01_Destroyed.prefab", "DestroyedAidTruck", new Vector3(4f, 0f, -1.5f), 12f, 1.05f, root);
+            PlacePrefab("Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Ruins_03.prefab", "BombedCornerRuin", new Vector3(16f, 0f, -4f), 188f, 1.05f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/FX/FX_Fire_01.prefab", "AftermathFire", new Vector3(4.5f, 0.7f, -2f), 0f, 0.72f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/FX/FX_Smoke_Large_01.prefab", "AftermathSmoke", new Vector3(5.5f, 0f, -3f), 0f, 0.32f, root);
 
             string[] debris =
             {
@@ -1290,34 +1339,34 @@ namespace Game.Editor
                 "Assets/PolygonMilitary/Prefabs/Props/Debris/SM_Prop_Block_02.prefab"
             };
             var random = new System.Random(GenerationSeed + 77);
-            for (int i = 0; i < 22; i++)
+            for (int i = 0; i < 18; i++)
             {
                 float angle = (float)random.NextDouble() * Mathf.PI * 2f;
-                float radius = 4f + (float)random.NextDouble() * 12f;
-                Vector3 position = new(14f + Mathf.Cos(angle) * radius, 0f, -21f + Mathf.Sin(angle) * radius * 0.65f);
+                float radius = 3f + (float)random.NextDouble() * 7f;
+                Vector3 position = new(6f + Mathf.Cos(angle) * radius, 0f, -4f + Mathf.Sin(angle) * radius * 0.55f);
                 PlacePrefab(debris[i % debris.Length], $"AftermathDebris_{i + 1:00}", position, random.Next(0, 360), 0.8f + (float)random.NextDouble() * 0.7f, root);
             }
 
             for (int i = 0; i < 4; i++)
             {
-                PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Barrier_Tall_02.prefab", $"EmergencyBarrier_{i + 1:00}", new Vector3(8.5f + i * 2.4f, 0f, -10.5f + (i % 2) * 0.5f), 4f, 1f, root);
+                PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Barrier_Tall_02.prefab", $"EmergencyBarrier_{i + 1:00}", new Vector3(-2f + i * 2.4f, 0f, 5.1f + (i % 2) * 0.35f), 0f, 1f, root);
             }
 
-            CreatePointLight("AftermathFireLight", new Vector3(12f, 4f, -19f), new Color(1f, 0.21f, 0.045f), 5.5f, 27f, root);
+            CreatePointLight("AftermathFireLight", new Vector3(5f, 4f, -2f), new Color(1f, 0.21f, 0.045f), 5.5f, 24f, root);
         }
 
         private static void CreateCivilianEdgeStoryLayer(Transform parent)
         {
             Transform root = CreateRoot("06_CivilianEdge_StoryLayer", parent).transform;
 
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Tent_Refugee_01.prefab", "CivilianAidTent", new Vector3(-7f, 0f, -19f), 88f, 0.92f, root);
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Tent_Refugee_Damaged_01.prefab", "DamagedCivilianTent", new Vector3(-14f, 0f, -24f), 112f, 0.82f, root);
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Signs/SM_Prop_Sign_Medical_01.prefab", "CivilianAidMedicalSign", new Vector3(-4f, 0f, -21f), 12f, 1.08f, root);
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_MedicalBox_01.prefab", "CivilianAidMedicalBox", new Vector3(-8f, 0f, -23f), 34f, 1f, root);
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Bed_Medical_01.prefab", "CivilianAidBed", new Vector3(-10f, 0f, -19f), 82f, 0.95f, root);
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Crate_Stack_Cover_02.prefab", "CivilianAidSupplies", new Vector3(-14f, 0f, -19f), 26f, 0.82f, root);
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/SM_Prop_LightPole_01.prefab", "CivilianAidLightPole", new Vector3(-5f, 0f, -25f), 0f, 0.9f, root);
-            CreatePointLight("CivilianAidWarmLight", new Vector3(-9f, 6f, -21f), new Color(1f, 0.62f, 0.34f), 2.2f, 18f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Tent_Refugee_01.prefab", "CivilianAidTent", new Vector3(-8f, 0f, -1f), 92f, 0.92f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Tent_Refugee_Damaged_01.prefab", "DamagedCivilianTent", new Vector3(-16f, 0f, -6f), 108f, 0.82f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Signs/SM_Prop_Sign_Medical_01.prefab", "CivilianAidMedicalSign", new Vector3(-4f, 0f, -5f), 8f, 1.08f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_MedicalBox_01.prefab", "CivilianAidMedicalBox", new Vector3(-9f, 0f, -5f), 30f, 1f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Bed_Medical_01.prefab", "CivilianAidBed", new Vector3(-11f, 0f, -1f), 86f, 0.95f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Crate_Stack_Cover_02.prefab", "CivilianAidSupplies", new Vector3(-15f, 0f, -1f), 22f, 0.82f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/SM_Prop_LightPole_01.prefab", "CivilianAidLightPole", new Vector3(-6f, 0f, -7f), 0f, 0.9f, root);
+            CreatePointLight("CivilianAidWarmLight", new Vector3(-10f, 6f, -1f), new Color(1f, 0.62f, 0.34f), 2.2f, 18f, root);
         }
 
         private static void CreateHorizonAndEdgeDressing(Transform parent, Palette palette)
@@ -1364,6 +1413,10 @@ namespace Game.Editor
             int roadClearanceIntersections = CountLocalRoadClearanceIntersections(root, true);
             if (roadClearanceIntersections != 0)
                 throw new InvalidOperationException($"M01 local roads intersect {roadClearanceIntersections} building or large-terrain bounds.");
+
+            int authoredRoadClearanceIntersections = CountAuthoredRoadClearanceIntersections(root, true);
+            if (authoredRoadClearanceIntersections != 0)
+                throw new InvalidOperationException($"M01 local roads intersect {authoredRoadClearanceIntersections} authored story structures.");
 
             int districtCurationViolations = CountDistrictCurationViolations(root, true);
             if (districtCurationViolations != 0)

@@ -6,6 +6,8 @@ Preserve the release-only evidence obligations deferred from the Architecture an
 
 The completed early-development tracker remains `architecture_performance_hardening_implementation_tracker.md`. This backlog becomes the source of truth only after activation.
 
+`post_hardening_architecture_maturity_tracker.md` may proceed through its Core Architecture Lane while this backlog is inactive. Its Phases 6 and 9 sequence and accept these obligations after activation; they must reuse this backlog's existing collectors, schemas, evidence identities, and visual matrix rather than redefine them.
+
 ## Activation Criteria
 
 Activate this backlog when all of the following are true:
@@ -59,4 +61,4 @@ Do not reactivate this backlog merely because an engineering task needs a quick 
 
 ## Current Status
 
-`Inactive - deferred during early development by explicit user approval on 2026-07-16.`
+`Inactive - deferred during early development by explicit user approval on 2026-07-16. Core architecture maturity work may proceed independently.`

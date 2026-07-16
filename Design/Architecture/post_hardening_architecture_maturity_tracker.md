@@ -2,9 +2,11 @@
 
 ## Purpose
 
-Move WarlineCapture from the approximately `8.8 / 10` architecture expected after the current Architecture and Performance Hardening tracker reaches `107 / 107` to a practical, evidence-backed `9.5+ / 10` production architecture.
+Move WarlineCapture from the `8.8 / 10` early-development architecture closeout to a practical, evidence-backed `9.5+ / 10` production architecture without making release-cycle device qualification a prerequisite for current code-quality work.
 
-This is a post-hardening program, not a replacement for `architecture_performance_hardening_implementation_tracker.md`. The prerequisite tracker closed its early-development scope with `107 / 107` explicit dispositions, including 15 unpassed release-only certifications transferred to `pre_release_performance_certification_backlog.md`. This maturity program must not begin until that backlog is activated and accepted, in addition to every compiler, architecture, performance, GC, memory, visual, and device gate required by the original entry contract being genuinely green.
+This is a post-hardening program, not a replacement for `architecture_performance_hardening_implementation_tracker.md`. The prerequisite tracker closed its early-development scope with `107 / 107` explicit dispositions, including 15 unpassed release-only certifications transferred to `pre_release_performance_certification_backlog.md`.
+
+The program has two activation lanes. The **Core Architecture Lane** covers Phases 0-5, 7, and 8 and may begin now from the accepted early-development closeout. The **Release Certification Lane** covers Phases 6 and 9 and remains inactive until the pre-release backlog activation criteria are met. Core architecture tasks must preserve fail-closed release contracts but do not wait for long thermal, repeated cold/warm, or sustained release evidence.
 
 When this program activates, every task must follow `Design/Architecture/agent_pull_request_review_merge_workflow.md` for shared-object worktrees, `codex/<task-id>-<slug>` branches, implementation ownership, independent findings-first review, risk-based integration, tracker administration, PR merge, and cleanup. This tracker remains authoritative for maturity scope, dependencies, acceptance, and evidence; the PR workflow is authoritative for git integration and role separation.
 
@@ -14,37 +16,59 @@ A literal `10 / 10` is treated as a sustained operating standard, not a one-time
 
 | Field | Value |
 |---|---|
-| Document date | 2026-07-13 |
+| Document date | 2026-07-16 |
 | Prerequisite tracker | `Design/Architecture/architecture_performance_hardening_implementation_tracker.md` |
 | Git integration authority | `Design/Architecture/agent_pull_request_review_merge_workflow.md` |
-| Required prerequisite state | Early-development tracker complete plus `pre_release_performance_certification_backlog.md` accepted, with no waived or stale required gate |
+| Core Architecture Lane prerequisite | Early-development tracker complete; compiler, architecture, critical behavior, Editor performance, and GC closeout gates green |
+| Release Certification Lane prerequisite | Core Architecture Lane complete plus `pre_release_performance_certification_backlog.md` activated; Phase 9 additionally requires that backlog accepted |
 | Assumed entry rating | approximately `8.8 / 10` |
 | Practical target | evidence-backed `9.5+ / 10` |
 | Aspirational target | sustained `10 / 10` operating standard |
-| Program status | Planned; inactive because release certification is explicitly deferred |
+| Program status | Ready to start Phase 0 in the Core Architecture Lane; Release Certification Lane deferred |
 
-The entry review must reject a nominal `107 / 107` disposition when any required evidence is deferred, missing, malformed, stale, tied to an unknown commit, or passed by weakening a budget or allowlist. The current `92` accepted plus `15` deferred hardening closeout is intentionally not sufficient to activate this program.
+The core entry review verifies the accepted architecture/code-quality evidence and records release-only gaps as `measurement-required`; it does not convert them into passes. The release-lane entry review must reject missing, malformed, stale, commit-unknown, thermally invalid, visually incomplete, or deferred evidence and must never pass by weakening a budget or allowlist.
 
 ## Rating Model
 
-The final rating is an engineering assessment supported by the gates below. It is not calculated by averaging arbitrary percentages or by reducing file sizes without improving ownership.
+The final rating is evidence-backed and cannot be derived from checklist percentage or file-count reduction. Phase 0 publishes `Design/AgentReports/ArchitectureMaturity/entry_scorecard.json` and its Markdown rendering using the weights and rubric below.
 
-| Area | Entry expectation | Target expectation |
+| Core area | Closeout evidence | Weight | Target |
+|---|---:|---:|---:|
+| ECS and runtime ownership | `9.2` | `20%` | `9.6+` |
+| Modularity and dependency boundaries | `8.5` | `15%` | `9.4+` |
+| UI and presentation architecture | provisional `8.2` | `10%` | `9.4+` |
+| Lifecycle and resource safety | `8.6` | `15%` | `9.6+` |
+| Maintainability and testability | `8.7` | `15%` | `9.5+` |
+| Performance and GC discipline | `8.2` | `15%` | `9.7+` |
+| Diagnostics and continuous governance | measurement-required | `10%` | `9.5+` |
+
+The Core Architecture score is the weighted mean rounded to one decimal after every category has current evidence. A `9.5+` claim additionally requires every core category to be at least `9.0`; a strong category cannot hide a weak ownership or lifecycle category. The historical `8.8` remains the closeout assessment until Phase 0 recomputes this model.
+
+| Release-only area | Current evidence | Activation target |
 |---|---:|---:|
-| ECS and runtime ownership | `9.2` | `9.6+` |
-| Performance and GC discipline | `9.3` | `9.7+` |
-| Modularity and dependency boundaries | `8.5` | `9.4+` |
-| UI and presentation architecture | `8.2` | `9.4+` |
-| Lifecycle and resource safety | `8.6` | `9.6+` |
-| Maintainability and testability | `8.7` | `9.5+` |
-| Android production evidence | `9.0` | `9.6+` |
+| Android production evidence | `7.0` | `9.6+` |
 | Sustained release governance | unproven | `9.5+` |
+
+Release-only categories are reported separately and never averaged into a premature production rating. A production-maturity claim requires the Core Architecture score and both release-only areas to reach at least `9.5`, with the pre-release backlog accepted.
+
+### Score Anchors
+
+| Score | Evidence meaning |
+|---:|---|
+| `<5` | unsafe or undefined ownership; recurring regressions are expected |
+| `5-6` | documented intent with substantial legacy/manual enforcement |
+| `7` | correct in major flows with incomplete automation or lifecycle proof |
+| `8` | broadly automated, measured, and behavior-covered with known bounded gaps |
+| `9` | fail-closed controls, explicit ownership, current measurements, and no material uncovered path in the category |
+| `9.5` | independent review plus broad failure/lifecycle/performance evidence and no high-severity residual risk |
+| `10` | the `9.5` standard sustained across multiple production releases without recurring architectural regression |
 
 ## Status Rules
 
 - `[ ]` pending
 - `[~]` in progress; only one task may be claimed by one agent at a time
 - `[x]` complete with required evidence recorded in this document
+- `[>]` release-deferred; inactive and not complete until its lane activation gate passes
 - `[!]` blocked with the exact blocker, owner, and next unblocking action recorded
 - A task is not complete because code compiles or a file became smaller.
 - Every implementation task requires behavior-preservation evidence, focused tests, architecture checks, and relevant performance/GC checks.
@@ -59,59 +83,94 @@ The final rating is an engineering assessment supported by the gates below. It i
 
 ## Global Architecture Guardrails
 
+- `gameplay_solid_ecs_contract.md`, `file_naming_architecture_contract.md`, and `performance_regression_contract.md` are mandatory inherited contracts; this tracker may tighten but not weaken them.
 - Keep simulation state and gameplay authority in ECS systems and components.
 - Keep MonoBehaviours limited to serialized binding, platform integration, camera ownership, input/event forwarding, and presentation application.
 - Do not introduce parallel gameplay truth in managed views, static services, or presentation pools.
 - Do not introduce new service locators, implicit `World.DefaultGameObjectInjectionWorld` dependencies, or mutable static state that survives a World lifecycle.
 - One state transition has one owner. A decomposition may delegate work but must not duplicate authority.
-- Prefer Burst-capable `ISystem` and native data for runtime hot paths where the ownership boundary permits it.
+- Use unmanaged `ISystem` by default for new ECS behavior. `SystemBase` is permitted only when a concrete managed Unity API/object boundary prevents `ISystem`; the task must record the reason, owner, update frequency, allocation evidence, and removal/review condition in the Decision Log.
+- Bare `*System` names are reserved for ECS systems. Non-ECS helpers must use an approved reason suffix. Do not introduce broad `*Controller`, `*Manager`, `*Provider`, `*Player`, `*Service`, `*Facade`, `*Installer`, or `*Orchestrator` ownership types.
 - Managed ECS gateways may project data, but managed string/object construction must occur only when source versions change.
 - No new production `Update`, `LateUpdate`, or polling loop without an explicit owner, measured need, and architecture registration.
 - Persistent native memory must have an explicit creator, capacity policy, disposer, and lifecycle test.
 - Pool growth and exhaustion behavior must be bounded and testable.
 - Maintain or improve the accepted frame-time, GC, memory, package-size, and visual-quality budgets.
+- Extend the existing validator, cache, recorder, or lifecycle owner whenever its responsibility matches. Do not create a parallel gate or second runtime authority merely to satisfy a tracker row.
+
+### Active-Work Ownership Safety
+
+- Phase 0 publishes an active-owner registry before implementation dispatch. Every work package lists exact allowed and excluded paths and checks current trackers/worktrees before editing.
+- Operation-map, FirstLaunch, audio, UI visual-lock, and other independently owned feature files remain excluded unless their owner explicitly hands off the exact path and the maturity task genuinely requires it.
+- A source file cannot be edited concurrently by two agents. Cross-domain work is split at an existing contract boundary or serialized under one owner.
+- Generated files, scenes, prefabs, importer metadata, and configuration assets require their own explicit allowlist; a production-code claim does not implicitly authorize them.
 
 ## Progress Snapshot
 
 | Field | Status |
 |---|---|
 | Checklist complete | `0 / 86` |
-| Program state | Planned and gated by the prerequisite tracker |
-| Current phase | None |
-| Current task | None |
-| Entry review | Pending |
+| Core Architecture Lane | `0 / 68`; ready to start |
+| Release Certification Lane | `0 / 18`; deferred |
+| Program state | Core Architecture Lane ready; release work inactive |
+| Current phase | Phase 0 - Entry Baseline And Scorecard |
+| Current task | `AM-001` ready, not yet claimed |
+| Core entry review | Ready |
+| Release entry review | Deferred until `pre_release_performance_certification_backlog.md` activates |
 | Architecture rating | Not re-audited for this program |
 | Performance evidence | Must be recaptured at the exact entry commit |
-| Android evidence | Must be recaptured at the exact entry commit |
-| Sustained release evidence | `0 / 3` qualifying release candidates |
+| Android evidence | Deferred; retain historical diagnostics and recapture only when the release lane activates |
+| Sustained release evidence | Deferred; `0 / 3` qualifying release candidates |
 
 ## Phase Dependencies
 
 | Phase | Depends on | May overlap with |
 |---|---|---|
-| Phase 0 - Entry Baseline And Scorecard | prerequisite tracker closed and pre-release certification backlog accepted | none |
+| Phase 0 - Entry Baseline And Scorecard | accepted early-development architecture closeout | none |
 | Phase 1 - Responsibility And Decomposition Hardening | Phase 0 | Phase 2 after inventories are complete |
 | Phase 2 - World Lifecycle And Dependency Hardening | Phase 0 | Phase 1 |
 | Phase 3 - Allocation-Free UI Projection | Phases 0 and 2 cache/lifecycle contract | Phase 4 |
 | Phase 4 - Presentation Pool And Creation Hardening | Phases 0 and 2 | Phase 3 |
 | Phase 5 - Determinism And Failure-Path Proof | Phases 1 and 2 | late Phase 3 or 4 |
-| Phase 6 - Android Production Proof | Phases 3, 4, and 5 | Phase 7 |
+| Phase 6 - Android Production Proof | Phases 3, 4, and 5 plus pre-release backlog activation | none; device access is serialized |
 | Phase 7 - Production-Safe Diagnostics | Phase 0 | Phases 1 through 6 with file claims |
-| Phase 8 - Continuous Architecture Enforcement | starts after Phase 0; closes after Phases 1 through 7 | all phases |
-| Phase 9 - Sustained Release Evidence | Phases 0 through 8 | none |
+| Phase 8 - Continuous Architecture Enforcement | starts after Phase 0; core lane closes after Phases 1-5 and 7 | all active core phases |
+| Phase 9 - Sustained Release Evidence | Core Architecture Lane complete, Phase 6 complete, and pre-release backlog accepted | none |
 
 ## Phase 0 - Entry Baseline And Scorecard
 
 No production behavior changes. Establish a reproducible baseline and prevent an architecture score from substituting for evidence.
 
-- [ ] `AM-001` Verify the prerequisite tracker is closed, the pre-release certification backlog is accepted, and every required gate is green without a waiver that weakens its original acceptance criteria.
+- [ ] `AM-001` Verify the prerequisite tracker is closed and its compiler, architecture, critical behavior, Editor performance, and GC gates are green. Record every release-only gap as deferred/measurement-required without blocking the Core Architecture Lane.
 - [ ] `AM-002` Record the exact entry commit, branch, Unity editor version, package lock hash, build target, scripting backend, and active quality configuration.
 - [ ] `AM-003` Define canonical scenarios for idle Match, maximum combat, construction, transport, aircraft, projectiles, every major popup, Menu-to-Match transitions, and long-duration soak.
-- [ ] `AM-004` Freeze the architecture scorecard, metric definitions, device tiers, performance budgets, GC classification policy, memory-growth threshold, and evidence freshness rules.
-- [ ] `AM-005` Regenerate the architecture dashboard and reject every required input reported as stale, unknown, malformed, or tied to a different commit.
-- [ ] `AM-006` Produce a current source-size, dependency, assembly-cycle, runtime-loop, static-state, and managed-helper inventory.
+- [ ] `AM-004` Freeze the core architecture scorecard, metric definitions, performance budgets, GC classification policy, memory-growth threshold, and evidence freshness rules. Keep release-only device-tier fields explicitly `measurement-required` until `AM-053`.
+- [ ] `AM-005` Regenerate the architecture dashboard, produce the validator registry, and reject every required input reported as stale, unknown, malformed, duplicate-owned, or tied to a different commit.
+- [ ] `AM-006` Produce a current source-size, dependency, assembly-cycle, runtime-loop, static-state, managed-helper, and active-work ownership inventory.
 - [ ] `AM-007` Produce a lifecycle inventory for Worlds, persistent native containers, query caches, presentation pools, scene roots, event subscriptions, and static caches.
 - [ ] `AM-008` Publish the entry baseline report with ratings by area, accepted evidence links, known residual risks, and the exact deltas this program owns.
+
+Phase 0 must produce these commit-bound artifacts before any implementation extraction begins:
+
+- `Design/AgentReports/ArchitectureMaturity/entry_scorecard.json` and `.md`.
+- `canonical_scenarios.json` with scenario IDs, fixtures, seeds, warmup/measurement windows, and required UI/world states.
+- `ownership_inventory.json` and `.md` with selected owners, responsibilities, assemblies, dependencies, current tests, and active-lane exclusions.
+- `lifecycle_inventory.json` and `.md` covering Worlds, native containers, queries, pools, subscriptions, scene roots, and static caches.
+- `validator_registry.json` and `.md` mapping every existing architecture/performance gate to its owning tool and preventing duplicate validators.
+- `exception_registry.json` with owner, rationale, measured effect, approval, expiry, and removal task for every temporary exception.
+
+| Phase 0 task | Required primary output |
+|---|---|
+| `AM-001` | `entry_prerequisite_review.json` and `.md`, including accepted core gates and explicitly deferred release gaps |
+| `AM-002` | `entry_environment.json`, including commit, Unity/package/config hashes, target, backend, and quality identity |
+| `AM-003` | `canonical_scenarios.json` and rendered scenario catalog |
+| `AM-004` | `entry_scorecard.json`, score rubric application, budget IDs, freshness rules, and `exception_registry.json` |
+| `AM-005` | refreshed architecture dashboard plus `validator_registry.json` and `.md` |
+| `AM-006` | `ownership_inventory.json` and `.md`, including active-owner/path exclusions |
+| `AM-007` | `lifecycle_inventory.json` and `.md` |
+| `AM-008` | `entry_baseline_report.md` tying all Phase 0 artifacts to one exact commit |
+
+All Phase 0 JSON must parse, use an explicit schema version, sort path/id collections deterministically, and regenerate byte-identically from unchanged inputs. Phase 0 changes no production behavior.
 
 ### Phase 0 Exit Gate
 
@@ -119,9 +178,36 @@ No production behavior changes. Establish a reproducible baseline and prevent an
 - The dashboard contains no required stale or unknown evidence.
 - Each later phase has a bounded owner list and measurable acceptance criteria.
 
+### Bounded Work Package Gate
+
+Umbrella rows such as `AM-012`, `AM-015`, `AM-029` through `AM-033`, and `AM-038` through `AM-042` cannot be dispatched directly. Phase 0 or the owning phase first creates a numbered `AM-WP-###` package containing:
+
+1. One concrete responsibility and its current/future owner.
+2. Exact production, test, config, scene/prefab, and generated-file allowlists plus explicit exclusions.
+3. Owning and dependent assemblies, update order, data authority, lifecycle, and thread/Burst constraints.
+4. Existing characterization tests and the missing behavior/failure cases that must be added before extraction.
+5. Baseline source responsibility, dependency, frame, GC, memory, and creation/pool metrics relevant to the change.
+6. Exact acceptance commands, pass markers, budgets, visual checks, and rollback condition.
+7. A maximum slice boundary: one responsibility extraction or one UI/pool domain, not a broad multi-domain rewrite.
+
+The coordinator may run several disjoint packages in parallel, but an umbrella row becomes complete only after every package named by its Phase 0 owner list is accepted. New findings become separately approved packages; they do not silently expand an active package.
+
+### Core Evidence Contract
+
+- `performance_regression_accepted_baseline.json` remains the budget authority. A maturity task may ratchet a limit only from accepted evidence; loosening requires explicit user approval and a documented product tradeoff.
+- Canonical Match GC uses the existing 180-frame warmup and 300-frame measurement window. The global player-relevant budget remains at most `1,024` bytes, while a changed owner must contribute exactly zero recurring bytes in its focused unchanged-state scenario.
+- Focused UI unchanged-state allocation uses at least 180 warmup and 300 measured frames with the surface open and fully bound. Opening/closing transition allocation is reported separately and must stay within a Phase 0 scorecard limit.
+- Frame evidence records average, p95, p99, maximum, sample count, warmup, fixture counts, quality configuration, resolution, and instrumentation state. Existing scenario-specific p95/p99 limits remain authoritative.
+- Lifecycle evidence runs at least 100 Menu -> Match -> Menu cycles. Phase 0 freezes the warmup-cycle count, sampled entity/native/pool/subscription fields, plateau tolerance, and permitted one-time caches before `AM-023` starts; no threshold may be invented after a failure.
+- Memory evidence is not accepted from a single before/after sample. The scorecard defines sampling cadence, warmup, plateau window, slope limit, return-to-baseline tolerance, and metric source for managed, native, graphics, and pool memory.
+- Evidence freshness is content-based: exact commit and environment are mandatory, and any change to a governed source/config/scenario/tool hash invalidates that row. Unrelated documentation changes do not require an expensive recapture when all governed hashes remain identical.
+- Every measured artifact records instrumentation overhead or a paired instrumentation-off control when the recorder can materially affect the result.
+
 ## Phase 1 - Responsibility And Decomposition Hardening
 
 Reduce change risk in oversized systems without replacing the architecture or changing gameplay authority.
+
+`AM-009` scores candidates from `0-4` for responsibility count, dependency fan-in/fan-out, mutable/lifecycle state, measured runtime cost, and recent change frequency. Lines/bytes are recorded but used only as a tie-breaker. The first wave selects at most three non-overlapping owners and publishes the exact reason each was selected or rejected; no extraction begins from a raw largest-file list.
 
 - [ ] `AM-009` Rank the largest and most coupled production files by lines, dependencies, state ownership, update-time cost, and change frequency; do not rank by lines alone.
 - [ ] `AM-010` Write a responsibility map for each selected owner, including inputs, outputs, state authority, update order, side effects, tests, and allowed dependencies.
@@ -203,6 +289,16 @@ Remove recurring runtime creation from combat and presentation while defining bo
 
 Prove that the architecture remains correct under different frame timing, invalid state, and recovery paths.
 
+### Determinism Contract
+
+- A replay header records schema version, exact source/config/content hashes, scenario ID, deterministic seed set, fixed-step configuration, quality-independent simulation settings, and ordered command/input stream.
+- Hash authoritative gameplay state by stable gameplay/config identifiers, never transient Entity indices, chunk order, managed object identity, presentation state, profiler counters, timestamps, or rendering order.
+- Integer, enum, resource, ownership, queue, occupancy, and deterministic RNG state is exact. Floating authoritative fields use field-specific normalization/quantization frozen in `canonical_scenarios.json` before the first comparison; tolerances cannot be loosened after divergence.
+- Gameplay randomness uses explicit deterministic state owned by the relevant ECS domain. Direct `UnityEngine.Random`, wall-clock time, frame count, or presentation callbacks cannot influence authoritative outcomes.
+- Same-platform/same-build replay requires exact normalized hashes at every checkpoint. Cross-device comparison uses the same normalized schema and reports the first divergent tick, entity stable ID, component/field, expected value, and actual value.
+- Presentation-only variance is excluded from the simulation hash but must still pass behavior/visual checks when a task touches presentation.
+- Replay files are bounded, versioned, and rejected on unknown schema/config/content hashes. A compatibility migration must be explicit; silent best-effort replay is prohibited.
+
 - [ ] `AM-045` Define deterministic scenario seeds and canonical input streams for combat, AI, pathfinding, economy, construction, transport, and aircraft.
 - [ ] `AM-046` Add stable simulation-state hashes at agreed checkpoints without including presentation-only or nondeterministic diagnostic state.
 - [ ] `AM-047` Add record/replay validation for commands and relevant scenario inputs.
@@ -220,18 +316,18 @@ Prove that the architecture remains correct under different frame timing, invali
 
 ## Phase 6 - Android Production Proof
 
-Replace editor confidence and stale device captures with current, commit-bound production evidence.
+Replace editor confidence and stale device captures with current, commit-bound production evidence. This phase is inactive until `pre_release_performance_certification_backlog.md` activates. That backlog owns the certification obligations; this phase sequences and accepts them without creating duplicate recorders, collectors, schemas, or visual matrices.
 
-- [ ] `AM-053` Freeze supported low, recommended, and high-end Android device tiers and record OS, chipset, memory, resolution, refresh rate, and thermal environment.
-- [ ] `AM-054` Embed commit, build configuration, content version, scripting backend, and quality tier into every build and profiler artifact.
-- [ ] `AM-055` Automate device scenarios for idle Match, maximum combat, construction bursts, transport/aircraft, every major popup, transitions, and soak.
-- [ ] `AM-056` Capture CPU, GPU, frame pacing, GC, native memory, draw/batch, thermal, and battery evidence on the low tier.
-- [ ] `AM-057` Capture the same evidence on the recommended tier.
-- [ ] `AM-058` Capture the same evidence on the high-end tier.
-- [ ] `AM-059` Run at least one 30-minute foreground Match soak per tier after warmup.
-- [ ] `AM-060` Run repeated cold-start and Menu-to-Match transition cycles per tier and inspect retained memory, loading spikes, and lifecycle counts.
-- [ ] `AM-061` Reconcile device memory, package size, installed size, audio residency, texture residency, and native pool budgets against the frozen scorecard.
-- [ ] `AM-062` Publish a cross-device report and fail the phase on any unexplained recurring allocation, upward retained-memory trend, thermal instability, or weakened existing frame budget.
+- [>] `AM-053` Activate the pre-release backlog and freeze supported low, recommended, and high-end Android device tiers with OS, chipset, memory, resolution, refresh rate, and thermal environment.
+- [>] `AM-054` Reuse and extend the existing build-report/artifact contract so commit, build configuration, content version, scripting backend, quality tier, package hash, and clean provenance are embedded in every certification artifact.
+- [>] `AM-055` Map canonical scenario IDs to the existing development/release collectors for idle Match, maximum combat, construction bursts, transport/aircraft, every major popup, transitions, and soak; add no parallel device runner.
+- [>] `AM-056` Capture CPU, GPU, frame pacing, GC, native memory, draw/batch, thermal, battery, package, and visual evidence on the low tier.
+- [>] `AM-057` Capture the same evidence on the recommended tier.
+- [>] `AM-058` Capture the same evidence on the high-end tier.
+- [>] `AM-059` Run at least one 30-minute foreground Match soak per tier after the scorecard-defined warmup.
+- [>] `AM-060` Run the scorecard-defined cold-start and Menu-to-Match transition cycles per tier and inspect retained memory, loading spikes, lifecycle counts, foreground continuity, and crash/ANR logs.
+- [>] `AM-061` Reconcile device memory, package size, installed size, audio residency, texture residency, mesh residency, graphics-driver memory, and native pool budgets against the frozen scorecard.
+- [>] `AM-062` Publish one cross-device report, close the corresponding pre-release backlog rows, and fail the phase on unexplained recurring allocation, upward retained-memory trend, thermal instability, visual failure, stale provenance, or weakened frame/package/memory budgets.
 
 ### Phase 6 Exit Gate
 
@@ -267,7 +363,7 @@ Move architecture quality from periodic audit work into automated change control
 - [ ] `AM-072` Add lifecycle validation for persistent native resources, query caches, event subscriptions, and presentation roots.
 - [ ] `AM-073` Maintain source-growth and responsibility contracts with measured ceilings and reviewed exceptions rather than raw line-count suppression.
 - [ ] `AM-074` Run focused zero-allocation and frame-time validations for changed domains, including open-popup UI tests.
-- [ ] `AM-075` Run canonical Editor and Android performance/device lanes on the agreed pre-merge, scheduled, and release cadence.
+- [ ] `AM-075` Run focused architecture/compiler/GC gates per PR, canonical Editor lanes on the scorecard-defined scheduled cadence, and Android device lanes only after release-lane activation or an explicitly approved regression investigation.
 - [ ] `AM-076` Fail closed on missing, malformed, stale, commit-unknown, or scenario-incomplete evidence.
 - [ ] `AM-077` Require every architecture exception to record owner, rationale, measured effect, approval, expiry, and removal task.
 - [ ] `AM-078` Add architecture-impact and evidence fields to implementation handoffs and release-candidate review.
@@ -280,16 +376,16 @@ Move architecture quality from periodic audit work into automated change control
 
 ## Phase 9 - Sustained Release Evidence
 
-Demonstrate that the architecture remains healthy through real integration cycles rather than one controlled benchmark.
+Demonstrate that the architecture remains healthy through real integration cycles rather than one controlled benchmark. This phase remains release-deferred until the Core Architecture Lane and Phase 6 are complete and the pre-release certification backlog is accepted.
 
-- [ ] `AM-079` Produce three consecutive release candidates from distinct integration points with every required architecture, compiler, test, GC, memory, visual, and device gate green.
-- [ ] `AM-080` Keep the architecture dashboard fully fresh and commit-bound for all three candidates.
-- [ ] `AM-081` Demonstrate zero recurring production-owned managed allocation in all covered warmed scenarios across all three candidates.
-- [ ] `AM-082` Demonstrate stable native and managed memory plateaus in soak and repeated-transition tests across all three candidates.
-- [ ] `AM-083` Close or renew every temporary exception through explicit review; no expired, unowned, or unexplained exception may remain.
-- [ ] `AM-084` Pass the complete supported Android device matrix without weakening frame-time, quality, package, or memory budgets.
-- [ ] `AM-085` Perform an independent final architecture re-audit, record category ratings and residual risks, and compare them with the Phase 0 scorecard.
-- [ ] `AM-086` Publish the final maturity report and convert its monitoring gates into permanent project governance rather than declaring architecture work permanently finished.
+- [>] `AM-079` Produce three consecutive release candidates from distinct integration points with every required architecture, compiler, test, GC, memory, visual, and device gate green.
+- [>] `AM-080` Keep the architecture dashboard fully fresh and commit-bound for all three candidates.
+- [>] `AM-081` Demonstrate zero recurring production-owned managed allocation in all covered warmed scenarios across all three candidates.
+- [>] `AM-082` Demonstrate stable native and managed memory plateaus in soak and repeated-transition tests across all three candidates.
+- [>] `AM-083` Close or renew every temporary exception through explicit review; no expired, unowned, or unexplained exception may remain.
+- [>] `AM-084` Pass the complete supported Android device matrix without weakening frame-time, quality, package, or memory budgets.
+- [>] `AM-085` Perform an independent final architecture re-audit, record category ratings and residual risks, and compare them with the Phase 0 scorecard.
+- [>] `AM-086` Publish the final maturity report and convert its monitoring gates into permanent project governance rather than declaring architecture work permanently finished.
 
 ### Phase 9 Exit Gate
 
@@ -308,25 +404,28 @@ Every implementation slice runs the rows relevant to its ownership. Every phase 
 | Compiler | affected runtime, editor, and test assemblies compile with zero errors |
 | Focused behavior | tests for the touched capability pass |
 | Architecture | assembly, dependency, runtime-loop, source-growth, ECS/Burst, and lifecycle gates pass |
+| Naming/system ownership | bare `*System`, prohibited broad-name, non-ECS helper, `ISystem` inventory, and approved `SystemBase` exception gates pass |
 | Managed allocation | warmed focused measurement is exactly zero production-owned bytes unless the task explicitly owns a one-time transition |
 | Canonical GC | unchanged global Match budget passes; unresolved samples fail closed |
 | Performance | focused and canonical p95/p99 remain within approved budgets |
 | Native memory | persistent allocations and pools return to stable lifecycle counts |
 | Visual behavior | fixed-view captures or PlayMode checks prove unchanged presentation where applicable |
-| Device behavior | Android evidence is tied to the exact commit and configuration |
+| Evidence identity | source/config/scenario/tool hashes and exact commit/environment satisfy the Core Evidence Contract |
+| Device behavior | required only after release-lane activation or for a specifically approved platform-runtime regression; Android evidence is tied to the exact commit and configuration |
 
 ## Work Package And Handoff Contract
 
 Each implementation package must record:
 
-- Role/context, task ID, prerequisite state, and workflow path.
+- Role/context, task ID, `AM-WP-###` ID, lane, prerequisite state, and workflow path.
 - Branch, isolated shared-object worktree, PR URL, baseline commit, tested head, and dirty-worktree exclusions.
-- Exact files changed and files intentionally not touched.
+- Exact allowed files, generated/config/scene authority, files intentionally not touched, active owners checked, and overlap resolution.
 - Ownership change and behavior-preservation statement.
+- Current/future owner, assembly boundary, update order, lifecycle, Burst/thread constraints, and explicit `ISystem`/`SystemBase` decision.
 - Before/after source responsibility, dependency, performance, allocation, and memory metrics as applicable.
-- Exact commands, pass markers, logs, profiler captures, screenshots, and device artifacts.
+- Exact scorecard scenario/budget IDs, commands, pass markers, logs, profiler captures, screenshots, and device artifacts.
 - Residual risks and unexercised paths.
-- Recommended next task and focused commit message.
+- Rollback condition, recommended next task, and focused commit message.
 
 The implementation agent owns substantive commits, pushes, PR creation, and review revisions but never merges. The independent coordinator reports findings first, returns substantive fixes to the implementer, runs integrated validation on the final head, and may then add only administrative snapshot, checklist, Decision Log, Implementation Log, or evidence commits. Proposed completion becomes authoritative only when the coordinator merges the PR to `main` and records cleanup.
 
@@ -334,9 +433,11 @@ The implementation agent owns substantive commits, pushes, PR creation, and revi
 
 | Date | Decision | Reason | Evidence |
 |---|---|---|---|
-| 2026-07-13 | Treat complete accepted hardening and release certification as the entry condition, not the final architecture target | Completing known hardening debt should produce approximately `8.8 / 10`; production maturity also requires simpler ownership, lifecycle proof, complete UI/device coverage, and sustained evidence | Architecture rating discussion, existing hardening tracker, and pre-release certification backlog |
+| 2026-07-13 | Treat complete accepted hardening and release certification as the production-maturity/release-lane entry condition, not the Core Architecture Lane entry condition | Completing known hardening debt produces approximately `8.8 / 10`; production maturity still requires complete UI/device coverage and sustained evidence, while code-quality work can proceed earlier | Architecture rating discussion, existing hardening tracker, pre-release backlog, and the 2026-07-16 lane split |
 | 2026-07-13 | Target practical `9.5+`, with `10 / 10` as a sustained standard | No finite checklist proves permanent architectural perfection; permanent regression controls and multiple green releases provide stronger evidence | This tracker, Phases 8 and 9 |
+| 2026-07-16 | Activate the Core Architecture Lane independently from release certification | Current development benefits from ownership, lifecycle, UI allocation, pool, determinism, diagnostics, and CI hardening; repeated long release qualification remains intentionally deferred until content stabilizes | User approval; completed early-development hardening tracker; pre-release backlog |
+| 2026-07-16 | Make the pre-release backlog the sole release-certification obligation source | Phase 6 and Phase 9 must sequence existing backlog contracts rather than creating duplicate collectors, schemas, or evidence definitions | `pre_release_performance_certification_backlog.md` |
 
 ## Implementation Log
 
-No implementation work has started. The program remains inactive until the prerequisite entry contract passes.
+No implementation work has started. The Core Architecture Lane is ready for `AM-001`; the Release Certification Lane remains inactive.

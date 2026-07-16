@@ -286,6 +286,8 @@ public sealed class OperationMapRuntimeBootstrapSceneSystemHelperTests
             Hash.Substring(0, 32), Hash, new Vector3(-100f, 0f, -100f), new Vector2Int(200, 200), 1f, 0));
         Set(definition, "surfaceMetadata", new OperationMapSurfaceMetadataConfig(
             Hash.Substring(0, 32), Hash, Hash.Substring(0, 32), 40000, 3, 1, -10f, 50f));
+        Set(definition, "navigationMetadata", new OperationMapNavigationMetadataConfig(
+            Hash.Substring(0, 32), 123, 1, true, true, true));
         Set(definition, "cameras", new[]
         {
             new OperationMapCameraConfig(

@@ -41,6 +41,13 @@ MonoBehaviour:
     payloadEncoding: 1
     minimumHeight: -6.9545445
     maximumHeight: 40.375454
+  navigationMetadata:
+    authoredSubSceneGuid: 8d5e3c3f2ef84b61a4d61472c40c9a11
+    gridAuthoringLocalId: 146043441
+    staticGridBlockerCount: 0
+    usesSurfaceMovementMetadata: 1
+    supportsDynamicBlockers: 1
+    supportsDynamicOccupancy: 1
   cameras:
   - cameraId: camera.skirmish.desert_base_01.active
     position: {x: 870.0283, y: 42.030247, z: 325.60086}

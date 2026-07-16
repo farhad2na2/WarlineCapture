@@ -699,14 +699,14 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 15% (27/177 checklist items complete).
+Overall implementation progress: 16% (28/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
 | Phase | Status | Complete | Total | Progress | Notes |
 |---|---|---:|---:|---:|---|
 | 0. Reproducible baseline and rollback | In progress / shared | 11 | 12 | 92% | Required by both directions before scene edits. |
-| 1. Operation-map and scenario data contracts | In progress / shared subset | 10 | 12 | 83% | Typed identity, catalog resolution, spatial metadata, hashes, cross-config validation, and the ownership chain are approved; delivery-specific references remain later. |
+| 1. Operation-map and scenario data contracts | In progress / shared subset | 11 | 12 | 92% | Typed identity, catalog resolution, complete loader-neutral spatial/navigation metadata, hashes, validation, and ownership chain are approved; delivery-specific references remain later. |
 | 2. Per-map static presentation ownership | Not started / compatibility subset | 0 | 14 | 0% | Preserve the current baked map safely; future-map generation remains undecided. |
 | 2A. Local Addressables packaging foundation | Later / direction-specific | 0 | 20 | 0% | Do not implement before the map-delivery direction is selected. |
 | 3. Current-map compatibility registration | In progress / shared | 4 | 10 | 40% | Current content identities and the validated loader-neutral compatibility definition are registered; runtime launch remains. |
@@ -753,7 +753,7 @@ Exit criteria:
 - [ ] Add lazy source-scene, optional subscene/heavy metadata, static presentation manifest, map-surface, and map-content version references without introducing a `Game.Configs -> Game.Rendering` dependency.
 - [x] Add `OperationMapBoundsConfig`, `OperationMapCameraConfig`, `OperationMapMinimapConfig`, and planning/battle/minimap ids. See `../AgentReports/2026-07-16_operation_map_spatial_metadata_configs.md`.
 - [x] Add typed ids for spawn, objective, deployment, build, civilian, hostile, base, resource, runway, helipad, lane, and debug anchors. See the same report.
-- [ ] Add map bounds, camera bounds, grid, surface/height, and blocker/path metadata references.
+- [x] Add map bounds, camera bounds, grid, surface/height, and blocker/path metadata references. See `../AgentReports/2026-07-16_operation_map_navigation_metadata_contract.md`.
 - [x] Add source identity, schema version, content hash, and generated-metadata hash fields. See `../AgentReports/2026-07-16_operation_map_source_content_hash_contract.md`.
 - [x] Add `Game.Configs.OperationMapCatalogConfig`, resolved once by composition at launch or match transition with no hot-path asset search. See `../AgentReports/2026-07-16_operation_map_catalog_contract.md`.
 - [x] Add validation for unique ids, missing assets, invalid bounds, duplicate anchors, stale hashes, and unresolved scenario-to-map references. See `../AgentReports/2026-07-16_operation_map_contract_validation.md`.
@@ -1080,8 +1080,9 @@ Exit criteria:
 | 2026-07-16 | Shared operation-map contract validation | `../AgentReports/2026-07-16_operation_map_contract_validation.md`; focused EditMode `7 / 7`; zero-allocation regression; source-growth `15 / 15`; non-ECS naming `9 / 9`; Unity compile; checklist recount; `git diff --check` | Passed | Added exact uniqueness, null/missing asset, metadata, stale evidence, and scenario-to-map resolution validation over caller-supplied small configs. No asset search, loader, Addressables, scene, or update-loop behavior was introduced. |
 | 2026-07-16 | Current-map placement compatibility registration | `../AgentReports/2026-07-16_current_operation_map_placement_registration.md`; accepted placement evidence/decision cross-check; asset GUID/path/count/root/hash verification; checklist recount; `git diff --check` | Passed | Bound all 451 building and 29 vehicle placement identities to `opmap.skirmish.desert_base_01` without moving assets or changing current spawn/source-hiding behavior. |
 | 2026-07-16 | Current-map compatibility content registration | `../AgentReports/2026-07-16_current_operation_map_compatibility_registration.md`; accepted Phase 0 baseline probe on current `main`; external report SHA-256 `a18761d6...e80fda3`; Unity exit `0`; compiler errors `0`; exact generated file-set parity; checklist recount; `git diff --check` | Passed | Bound the approved current-map id to exact current scene, subscene, schema-v1 manifest/chunks, grid, surface, and placement identities without moving or rewriting content and without selecting a loader. |
-| 2026-07-16 | Current-map compatibility definition | `../AgentReports/2026-07-16_current_operation_map_compatibility_definition.md`; focused EditMode `42 / 42`; source-growth/naming `24 / 24`; deterministic asset SHA-256 `f1a16621...39bc4f0`; Unity compile; `git diff --check` | Passed | Added one validated loader-neutral definition with measured bounds, bounded grid/surface identities, current camera/minimap metadata, and exact compatibility anchors. No scene, map payload, presentation output, loader, or Addressables behavior changed. |
+| 2026-07-16 | Current-map compatibility definition | `../AgentReports/2026-07-16_current_operation_map_compatibility_definition.md`; focused EditMode `42 / 42`; source-growth/naming `24 / 24`; current deterministic asset SHA-256 `a54e2937...974c`; Unity compile; `git diff --check` | Passed | Added one validated loader-neutral definition with measured bounds, bounded grid/surface/navigation identities, current camera/minimap metadata, and exact compatibility anchors. No scene, map payload, presentation output, loader, or Addressables behavior changed. |
 | 2026-07-16 | Operation-map catalog contract | `../AgentReports/2026-07-16_operation_map_catalog_contract.md`; focused EditMode `10 / 10`; source-growth/naming `24 / 24`; Unity compile; zero-allocation catalog resolution; `git diff --check` | Passed | Added the explicit compatibility catalog and one-shot resolution through the existing bootstrap boundary without asset search, loading policy, Addressables, or recurring work. |
+| 2026-07-16 | Operation-map navigation metadata contract | `../AgentReports/2026-07-16_operation_map_navigation_metadata_contract.md`; focused EditMode `46 / 46`; source-growth/naming `24 / 24`; deterministic definition SHA-256 `a54e2937...974c`; Unity compile; `git diff --check` | Passed | Added bounded authored-navigation identity and runtime blocker/occupancy capability metadata without copying map payloads or binding gameplay behavior. Phase 6 movement/placement binding remains open. |
 
 ## Open Decisions
 

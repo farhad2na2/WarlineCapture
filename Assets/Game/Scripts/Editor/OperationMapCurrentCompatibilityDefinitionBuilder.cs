@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Security.Cryptography;
+using Game.Authoring;
 using Game.Components;
 using Game.Configs;
 using Unity.Collections;
@@ -28,6 +29,7 @@ namespace Game.Editor
         private const long WorldCameraLocalId = 1220593093;
         private const long StartTransformLocalId = 229045073;
         private const long EndTransformLocalId = 29742182;
+        private const long GridAuthoringLocalId = 146043441;
         private const string OperationMapId = "opmap.skirmish.desert_base_01";
         private const string CameraId = "camera.skirmish.desert_base_01.active";
         private const string MinimapId = "minimap.skirmish.desert_base_01.full";
@@ -73,12 +75,17 @@ namespace Game.Editor
             Scene scene = SceneManager.GetSceneByPath(MatchScenePath);
             if (!scene.IsValid() || !scene.isLoaded)
                 scene = EditorSceneManager.OpenScene(MatchScenePath, OpenSceneMode.Additive);
+            Scene subScene = SceneManager.GetSceneByPath(SubScenePath);
+            if (!subScene.IsValid() || !subScene.isLoaded)
+                subScene = EditorSceneManager.OpenScene(SubScenePath, OpenSceneMode.Additive);
 
             Camera camera = FindByLocalId<Camera>(scene, WorldCameraLocalId);
             Transform start = FindByLocalId<Transform>(scene, StartTransformLocalId);
             Transform end = FindByLocalId<Transform>(scene, EndTransformLocalId);
-            if (camera == null || start == null || end == null)
-                throw new InvalidOperationException("Current camera or compatibility boundary anchors are missing.");
+            GridAuthoring gridAuthoring = FindByLocalId<GridAuthoring>(subScene, GridAuthoringLocalId);
+            if (camera == null || start == null || end == null || gridAuthoring == null)
+                throw new InvalidOperationException("Current camera, grid authoring, or compatibility boundary anchors are missing.");
+            int staticGridBlockerCount = CountComponents<StaticGridBlockerAuthoring>(subScene);
 
             GetSurfaceHeightRange(surface, out float minimumHeight, out float maximumHeight);
             Vector3 gridMin = grid.Origin;
@@ -123,6 +130,13 @@ namespace Game.Editor
                 surface.PayloadEncoding,
                 minimumHeight,
                 maximumHeight));
+            Set(definition, "navigationMetadata", new OperationMapNavigationMetadataConfig(
+                AssetDatabase.AssetPathToGUID(SubScenePath),
+                GridAuthoringLocalId,
+                staticGridBlockerCount,
+                true,
+                true,
+                true));
             Set(definition, "cameras", new[]
             {
                 new OperationMapCameraConfig(
@@ -219,6 +233,14 @@ namespace Game.Editor
             }
 
             return null;
+        }
+
+        private static int CountComponents<T>(Scene scene) where T : Component
+        {
+            int count = 0;
+            foreach (GameObject root in scene.GetRootGameObjects())
+                count += root.GetComponentsInChildren<T>(true).Length;
+            return count;
         }
 
         private static void EnsureFolder()

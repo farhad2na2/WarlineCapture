@@ -30,7 +30,10 @@ Status: Accepted load-strategy-neutral compatibility metadata
 - Minimap projection: origin `(0,0,0)`, size `(2048,1024)`
 - Compatibility boundary anchors preserve exact scene-local `Start` and `End`
   transform identities.
-- Definition asset SHA-256: `f1a1662143b05463aacb60333d72861812d44b9d3ffad72fb7857590139bc4f0`
+- Navigation metadata: MatchSubScene GUID
+  `8d5e3c3f2ef84b61a4d61472c40c9a11`, grid-authoring local id `146043441`,
+  direct static blocker authorings `0`, dynamic blocker/occupancy supported
+- Definition asset SHA-256: `a54e293733537cb8fc7ebedc4b4dab8656eee21f64a1ff0b9225a080bcda974c`
 
 ## Validation
 
@@ -40,7 +43,8 @@ Status: Accepted load-strategy-neutral compatibility metadata
   `/private/tmp/opmap-definition-final-tests.xml`
 - Source-growth and non-ECS naming gates: `24 / 24` passed,
   `/private/tmp/opmap-definition-architecture.xml`
-- Second Unity generation produced the identical asset SHA-256.
+- Current byte-identical regeneration evidence is recorded in
+  `2026-07-16_operation_map_navigation_metadata_contract.md`.
 - `git diff --check`: passed.
 - No Match scene, subscene, static-presentation manifest, generated chunk, map
   surface, grid, placement config, prefab, or build-setting file changed.

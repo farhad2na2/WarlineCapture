@@ -192,6 +192,59 @@ namespace Game.Configs
     }
 
     [Serializable]
+    public struct OperationMapNavigationMetadataConfig
+    {
+        [SerializeField] private string authoredSubSceneGuid;
+        [SerializeField] private long gridAuthoringLocalId;
+        [SerializeField] private int staticGridBlockerCount;
+        [SerializeField] private bool usesSurfaceMovementMetadata;
+        [SerializeField] private bool supportsDynamicBlockers;
+        [SerializeField] private bool supportsDynamicOccupancy;
+
+        public string AuthoredSubSceneGuid => authoredSubSceneGuid;
+        public long GridAuthoringLocalId => gridAuthoringLocalId;
+        public int StaticGridBlockerCount => staticGridBlockerCount;
+        public bool UsesSurfaceMovementMetadata => usesSurfaceMovementMetadata;
+        public bool SupportsDynamicBlockers => supportsDynamicBlockers;
+        public bool SupportsDynamicOccupancy => supportsDynamicOccupancy;
+
+        public OperationMapNavigationMetadataConfig(
+            string authoredSubSceneGuid,
+            long gridAuthoringLocalId,
+            int staticGridBlockerCount,
+            bool usesSurfaceMovementMetadata,
+            bool supportsDynamicBlockers,
+            bool supportsDynamicOccupancy)
+        {
+            this.authoredSubSceneGuid = authoredSubSceneGuid;
+            this.gridAuthoringLocalId = gridAuthoringLocalId;
+            this.staticGridBlockerCount = staticGridBlockerCount;
+            this.usesSurfaceMovementMetadata = usesSurfaceMovementMetadata;
+            this.supportsDynamicBlockers = supportsDynamicBlockers;
+            this.supportsDynamicOccupancy = supportsDynamicOccupancy;
+        }
+
+        public bool TryValidate(out string error)
+        {
+            if (!OperationMapHashRules.IsValidHash128(authoredSubSceneGuid) ||
+                gridAuthoringLocalId <= 0 || staticGridBlockerCount < 0)
+            {
+                error = "Navigation metadata requires a lowercase subscene GUID, positive grid-authoring local id, and non-negative static-blocker count.";
+                return false;
+            }
+
+            if (!usesSurfaceMovementMetadata)
+            {
+                error = "Navigation metadata must resolve path movement through the operation-map surface payload.";
+                return false;
+            }
+
+            error = null;
+            return true;
+        }
+    }
+
+    [Serializable]
     public struct OperationMapCameraConfig
     {
         [SerializeField] private string cameraId;

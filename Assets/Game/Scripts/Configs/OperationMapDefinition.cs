@@ -19,6 +19,7 @@ namespace Game.Configs
         [SerializeField] private OperationMapBoundsConfig bounds;
         [SerializeField] private OperationMapGridMetadataConfig gridMetadata;
         [SerializeField] private OperationMapSurfaceMetadataConfig surfaceMetadata;
+        [SerializeField] private OperationMapNavigationMetadataConfig navigationMetadata;
         [SerializeField] private OperationMapCameraConfig[] cameras = Array.Empty<OperationMapCameraConfig>();
         [SerializeField] private string planningCameraId;
         [SerializeField] private string battleCameraId;
@@ -34,6 +35,7 @@ namespace Game.Configs
         public OperationMapBoundsConfig Bounds => bounds;
         public OperationMapGridMetadataConfig GridMetadata => gridMetadata;
         public OperationMapSurfaceMetadataConfig SurfaceMetadata => surfaceMetadata;
+        public OperationMapNavigationMetadataConfig NavigationMetadata => navigationMetadata;
         public ReadOnlySpan<OperationMapCameraConfig> Cameras => cameras;
         public string PlanningCameraId => planningCameraId;
         public string BattleCameraId => battleCameraId;
@@ -64,7 +66,8 @@ namespace Game.Configs
                 !TryValidateHashes(out error) ||
                 !bounds.TryValidate(out error) ||
                 !gridMetadata.TryValidate(out error) ||
-                !surfaceMetadata.TryValidate(out error))
+                !surfaceMetadata.TryValidate(out error) ||
+                !navigationMetadata.TryValidate(out error))
                 return false;
 
             Vector3 expectedGridMax = gridMetadata.Origin + new Vector3(
@@ -214,6 +217,15 @@ namespace Game.Configs
                 PayloadEncoding = surfaceMetadata.PayloadEncoding,
                 MinimumHeight = surfaceMetadata.MinimumHeight,
                 MaximumHeight = surfaceMetadata.MaximumHeight
+            };
+            root.Navigation = new OperationMapNavigationMetadataBlob
+            {
+                AuthoredSubSceneGuid = new FixedString64Bytes(navigationMetadata.AuthoredSubSceneGuid),
+                GridAuthoringLocalId = navigationMetadata.GridAuthoringLocalId,
+                StaticGridBlockerCount = navigationMetadata.StaticGridBlockerCount,
+                UsesSurfaceMovementMetadata = navigationMetadata.UsesSurfaceMovementMetadata ? (byte)1 : (byte)0,
+                SupportsDynamicBlockers = navigationMetadata.SupportsDynamicBlockers ? (byte)1 : (byte)0,
+                SupportsDynamicOccupancy = navigationMetadata.SupportsDynamicOccupancy ? (byte)1 : (byte)0
             };
 
             BlobBuilderArray<OperationMapAnchorBlob> blobAnchors = builder.Allocate(ref root.Anchors, anchors.Length);

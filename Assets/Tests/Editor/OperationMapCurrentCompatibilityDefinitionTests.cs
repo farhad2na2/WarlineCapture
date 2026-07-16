@@ -40,6 +40,14 @@ public sealed class OperationMapCurrentCompatibilityDefinitionTests
         Assert.That(definition.Minimap.ProjectionOrigin, Is.EqualTo(Vector3.zero));
         Assert.That(definition.Minimap.ProjectionSize, Is.EqualTo(new Vector2(2048f, 1024f)));
         Assert.That(definition.Anchors.Length, Is.EqualTo(2));
+        Assert.That(definition.NavigationMetadata.AuthoredSubSceneGuid,
+            Is.EqualTo(AssetDatabase.AssetPathToGUID(
+                "Assets/Game/Scenes/Match/MatchSubScene.unity")));
+        Assert.That(definition.NavigationMetadata.GridAuthoringLocalId, Is.EqualTo(146043441));
+        Assert.That(definition.NavigationMetadata.StaticGridBlockerCount, Is.EqualTo(0));
+        Assert.That(definition.NavigationMetadata.UsesSurfaceMovementMetadata, Is.True);
+        Assert.That(definition.NavigationMetadata.SupportsDynamicBlockers, Is.True);
+        Assert.That(definition.NavigationMetadata.SupportsDynamicOccupancy, Is.True);
         Assert.That(definition.GridMetadata.ContentHash, Is.EqualTo(ComputeFileHash(
             "Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset")));
         Assert.That(definition.SurfaceMetadata.ContentHash, Is.EqualTo(ComputeFileHash(

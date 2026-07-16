@@ -170,6 +170,7 @@ namespace Game.Components
         public int ContentVersion;
         public OperationMapGridBlob Grid;
         public OperationMapSurfaceMetadataBlob Surface;
+        public OperationMapNavigationMetadataBlob Navigation;
         public BlobArray<OperationMapAnchorBlob> Anchors;
         public BlobArray<OperationMapCameraBlob> Cameras;
         public OperationMapMinimapBlob Minimap;
@@ -195,6 +196,16 @@ namespace Game.Components
         public byte PayloadEncoding;
         public float MinimumHeight;
         public float MaximumHeight;
+    }
+
+    public struct OperationMapNavigationMetadataBlob
+    {
+        public FixedString64Bytes AuthoredSubSceneGuid;
+        public long GridAuthoringLocalId;
+        public int StaticGridBlockerCount;
+        public byte UsesSurfaceMovementMetadata;
+        public byte SupportsDynamicBlockers;
+        public byte SupportsDynamicOccupancy;
     }
 
     public struct OperationMapAnchorBlob

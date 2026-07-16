@@ -103,22 +103,29 @@ public sealed class OperationMapSpatialConfigTests
         Assert.That(OperationMapHashRules.IsValidSha256(value), Is.False);
 
     [Test]
-    public void GridAndSurfaceMetadata_RequireStableIdentitiesAndValidExtents()
+    public void GridSurfaceAndNavigationMetadata_RequireStableIdentitiesAndValidExtents()
     {
         string hash128 = ValidSha256.Substring(0, 32);
         OperationMapGridMetadataConfig grid = new(
             hash128, ValidSha256, Vector3.zero, new Vector2Int(2048, 1024), 1f, 0);
         OperationMapSurfaceMetadataConfig surface = new(
             hash128, ValidSha256, hash128, 2097152, 3, 1, -2f, 84f);
+        OperationMapNavigationMetadataConfig navigation = new(
+            hash128, 146043441, 24, true, true, true);
 
         Assert.That(grid.TryValidate(out string gridError), Is.True, gridError);
         Assert.That(surface.TryValidate(out string surfaceError), Is.True, surfaceError);
+        Assert.That(navigation.TryValidate(out string navigationError), Is.True, navigationError);
         Assert.That(new OperationMapGridMetadataConfig(
             hash128, ValidSha256, Vector3.zero, Vector2Int.zero, 1f, 0).TryValidate(out _), Is.False);
         Assert.That(new OperationMapSurfaceMetadataConfig(
             hash128, ValidSha256, hash128, 0, 3, 1, -2f, 84f).TryValidate(out _), Is.False);
         Assert.That(new OperationMapSurfaceMetadataConfig(
             hash128, ValidSha256, hash128, 1, 3, 1, 10f, 9f).TryValidate(out _), Is.False);
+        Assert.That(new OperationMapNavigationMetadataConfig(
+            hash128, 0, 24, true, true, true).TryValidate(out _), Is.False);
+        Assert.That(new OperationMapNavigationMetadataConfig(
+            hash128, 146043441, 24, false, true, true).TryValidate(out _), Is.False);
     }
 
     [Test]
@@ -146,6 +153,7 @@ public sealed class OperationMapSpatialConfigTests
             typeof(OperationMapBoundsConfig),
             typeof(OperationMapGridMetadataConfig),
             typeof(OperationMapSurfaceMetadataConfig),
+            typeof(OperationMapNavigationMetadataConfig),
             typeof(OperationMapCameraConfig),
             typeof(OperationMapMinimapConfig),
             typeof(OperationMapAnchorConfig)
@@ -216,6 +224,8 @@ public sealed class OperationMapSpatialConfigTests
             ValidSha256.Substring(0, 32), ValidSha256, new Vector3(-100f, 0f, -100f), new Vector2Int(200, 200), 1f, 0));
         Set(map, "surfaceMetadata", new OperationMapSurfaceMetadataConfig(
             ValidSha256.Substring(0, 32), ValidSha256, ValidSha256.Substring(0, 32), 40000, 3, 1, -10f, 50f));
+        Set(map, "navigationMetadata", new OperationMapNavigationMetadataConfig(
+            ValidSha256.Substring(0, 32), 123, 1, true, true, true));
         Set(map, "cameras", new[]
         {
             CreateCamera("camera.ch01.m01.planning"),

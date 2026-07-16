@@ -34,6 +34,11 @@ public sealed class OperationMapMetadataBlobCreationTests
             Assert.That(metadata.Surface.SurfaceCount, Is.EqualTo(40000));
             Assert.That(metadata.Surface.MinimumHeight, Is.EqualTo(-10f));
             Assert.That(metadata.Surface.MaximumHeight, Is.EqualTo(50f));
+            Assert.That(metadata.Navigation.GridAuthoringLocalId, Is.EqualTo(123));
+            Assert.That(metadata.Navigation.StaticGridBlockerCount, Is.EqualTo(1));
+            Assert.That(metadata.Navigation.UsesSurfaceMovementMetadata, Is.EqualTo(1));
+            Assert.That(metadata.Navigation.SupportsDynamicBlockers, Is.EqualTo(1));
+            Assert.That(metadata.Navigation.SupportsDynamicOccupancy, Is.EqualTo(1));
             Assert.That(metadata.PlanningCameraId.ToString(), Is.EqualTo("camera.skirmish.planning"));
             Assert.That(metadata.BattleCameraId.ToString(), Is.EqualTo("camera.skirmish.battle"));
             Assert.That(metadata.Cameras.Length, Is.EqualTo(2));
@@ -162,6 +167,8 @@ public sealed class OperationMapMetadataBlobCreationTests
             HashA.Substring(0, 32), HashA, new Vector3(-100f, 0f, -100f), new Vector2Int(200, 200), 1f, 0));
         Set(definition, "surfaceMetadata", new OperationMapSurfaceMetadataConfig(
             HashB.Substring(0, 32), HashB, HashC.Substring(0, 32), 40000, 3, 1, -10f, 50f));
+        Set(definition, "navigationMetadata", new OperationMapNavigationMetadataConfig(
+            HashA.Substring(0, 32), 123, 1, true, true, true));
         Set(definition, "cameras", new[]
         {
             new OperationMapCameraConfig(

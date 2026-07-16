@@ -50,6 +50,10 @@ Assets/**/.DS_Store
 
 # Addressables / generated caches
 Assets/AddressableAssetsData/*/*.bin*
+Assets/AddressableAssetsData/Android.meta
+Assets/AddressableAssetsData/ProfileDataSourceSettings.asset*
+Assets/AddressableAssetsData/link.xml*
+Assets/SceneDependencyCache/*.sceneWithBuildSettings*
 
 # Narrative review render intermediates (retain final review/evidence outputs only)
 Design/NarrativeVision/**/.build/

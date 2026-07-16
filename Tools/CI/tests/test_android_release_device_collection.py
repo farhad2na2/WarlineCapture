@@ -22,6 +22,7 @@ from Tools.CI.android_release_device_collection import (
     collect_sustained,
     ensure_package_uninstalled,
     launch_argv,
+    measure_installed_artifact_bytes,
     monitor_sustained_run,
     parse_battery,
     parse_du_bytes,
@@ -215,6 +216,25 @@ class PackageStateAdb:
                 raise AssertionError("unexpected uninstall")
             return self.uninstall
         raise AssertionError(f"unexpected ADB call: {args!r}")
+
+    def start_logcat(self, output_path):
+        raise AssertionError
+
+
+class InstalledArtifactSizeAdb:
+    def __init__(self, base_apk_path: str, code_path: str) -> None:
+        self.base_apk_path = base_apk_path
+        self.native_library_path = f"{code_path}/lib"
+        self.calls: list[tuple[str, ...]] = []
+
+    def run(self, args, *, timeout=60.0, use_serial=True):
+        args = tuple(args)
+        self.calls.append(args)
+        if args == ("shell", "du", "-sb", self.base_apk_path):
+            return result(args, f"449902496\t{self.base_apk_path}\n")
+        if args == ("shell", "du", "-sb", self.native_library_path):
+            return result(args, f"171485776\t{self.native_library_path}\n")
+        raise AssertionError(f"unexpected installed-size command: {args!r}")
 
     def start_logcat(self, output_path):
         raise AssertionError
@@ -431,6 +451,41 @@ class AndroidReleaseDeviceCollectionTests(unittest.TestCase):
         self.assertEqual(987654321, parse_du_bytes(f"987654321  {path}\n", path))
         with self.assertRaises(CollectionError):
             parse_du_bytes("987654321  /wrong/path\n", path)
+
+    def test_installed_size_sums_accessible_apk_and_native_library_artifacts(self) -> None:
+        code_path = "/data/app/~~token/com.warlinecapture.game-token"
+        base_apk_path = f"{code_path}/base.apk"
+        adb = InstalledArtifactSizeAdb(base_apk_path, code_path)
+
+        self.assertEqual(
+            621388272,
+            measure_installed_artifact_bytes(adb, base_apk_path, code_path),
+        )
+        self.assertEqual(
+            [
+                ("shell", "du", "-sb", base_apk_path),
+                ("shell", "du", "-sb", f"{code_path}/lib"),
+            ],
+            adb.calls,
+        )
+
+        with self.assertRaisesRegex(CollectionError, "direct child"):
+            measure_installed_artifact_bytes(adb, "/wrong/base.apk", code_path)
+
+    def test_failed_install_diagnostic_includes_both_streams_and_is_bounded(self) -> None:
+        command = result(
+            ("adb", "install"),
+            stdout="Performing Push Install\nFailure [INSTALL_FAILED_USER_RESTRICTED]",
+            stderr="APK pushed\n" + ("x" * 4096),
+            returncode=1,
+        )
+        with self.assertRaises(CollectionError) as raised:
+            require_install_completion(command, "exact APK install")
+        message = str(raised.exception)
+        self.assertIn("INSTALL_FAILED_USER_RESTRICTED", message)
+        self.assertIn("stderr=APK pushed", message)
+        self.assertIn("...[truncated]", message)
+        self.assertLess(len(message), 2200)
 
     def test_preinstall_dirty_report_fails_before_adb(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

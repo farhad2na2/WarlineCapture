@@ -63,6 +63,7 @@ RESOLVED_ACTIVITY_SUMMARY_PATTERN = re.compile(
     r"priority=-?\d+ preferredOrder=-?\d+ match=0x[0-9a-fA-F]+ "
     r"specificIndex=-?\d+ isDefault=(?:true|false)"
 )
+MAX_COMMAND_ERROR_DETAIL_CHARS = 2048
 
 
 class CollectionError(RuntimeError):
@@ -210,7 +211,16 @@ def _text(data: bytes | str) -> str:
 
 def _checked(result: CommandResult, label: str) -> CommandResult:
     if result.returncode != 0:
-        detail = (_text(result.stderr) or _text(result.stdout)).strip()
+        streams = []
+        stdout = _text(result.stdout).strip()
+        stderr = _text(result.stderr).strip()
+        if stdout:
+            streams.append(f"stdout={stdout}")
+        if stderr:
+            streams.append(f"stderr={stderr}")
+        detail = "; ".join(streams) or "no command output"
+        if len(detail) > MAX_COMMAND_ERROR_DETAIL_CHARS:
+            detail = detail[:MAX_COMMAND_ERROR_DETAIL_CHARS] + "...[truncated]"
         raise CollectionError(f"{label} failed with exit code {result.returncode}: {detail}")
     return result
 
@@ -455,6 +465,39 @@ def parse_du_bytes(output: str, expected_path: str) -> int:
     return size
 
 
+def measure_installed_artifact_bytes(
+    adb: AdbBoundary,
+    base_apk_path: str,
+    code_path: str,
+) -> int:
+    normalized_code_path = code_path.rstrip("/")
+    if base_apk_path != f"{normalized_code_path}/base.apk":
+        raise CollectionError("installed base APK must be the direct child of codePath")
+
+    native_library_path = f"{normalized_code_path}/lib"
+    base_apk_bytes = parse_du_bytes(
+        _text(
+            _run(
+                adb,
+                ("shell", "du", "-sb", base_apk_path),
+                "installed base APK size",
+            ).stdout
+        ),
+        base_apk_path,
+    )
+    native_library_bytes = parse_du_bytes(
+        _text(
+            _run(
+                adb,
+                ("shell", "du", "-sb", native_library_path),
+                "installed native-library size",
+            ).stdout
+        ),
+        native_library_path,
+    )
+    return base_apk_bytes + native_library_bytes
+
+
 def parse_pid(output: str) -> int:
     tokens = output.split()
     if len(tokens) != 1 or not tokens[0].isdigit() or int(tokens[0]) <= 0:
@@ -682,10 +725,7 @@ def install_and_verify(
     )
     if device_sha != apk_sha256:
         raise CollectionError("device-side base APK hash does not match the host APK")
-    installed_size = parse_du_bytes(
-        _text(_run(adb, ("shell", "du", "-sb", code_path), "installed package size").stdout),
-        code_path,
-    )
+    installed_size = measure_installed_artifact_bytes(adb, base_apk_path, code_path)
     return InstalledPackage(base_apk_path, code_path, installed_size)
 
 

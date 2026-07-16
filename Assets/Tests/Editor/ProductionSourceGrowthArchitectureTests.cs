@@ -728,11 +728,13 @@ public sealed class ProductionSourceGrowthArchitectureTests
             contract.ContractId == PostHardeningGuardrailContractId,
             $"The post-hardening guardrail contractId must remain `{PostHardeningGuardrailContractId}`.");
         Require(contract.Entries != null, "The post-hardening guardrail entries are required.");
+        Require(contract.ReplacementOwnerBoundary != null, "The replacement-owner boundary is required.");
         Require(contract.GrowthAuthorizations != null, "Post-hardening growth authorizations are required.");
         Require(contract.GrowthAuthorizations.Count == 4, "Exactly four accepted AM-013 growth authorizations are required.");
         Require(
             contract.Entries.Count == PostHardeningGuardrailEntryCount,
             $"The post-hardening guardrail must contain exactly {PostHardeningGuardrailEntryCount} entries.");
+        ValidateExpectedReplacementOwnerBoundary(contract.ReplacementOwnerBoundary);
 
         List<PostHardeningSourceGuardrail> expected = CreateExpectedPostHardeningGuardrails();
         for (int index = 0; index < expected.Count; index++)
@@ -744,6 +746,10 @@ public sealed class ProductionSourceGrowthArchitectureTests
             Require(actual.Path == frozen.Path, $"Unexpected post-hardening guardrail path `{actual.Path}`.");
             Require(actual.MaxLines == frozen.MaxLines, $"`{actual.Path}` maxLines must remain {frozen.MaxLines}.");
             Require(actual.MaxBytes == frozen.MaxBytes, $"`{actual.Path}` maxBytes must remain {frozen.MaxBytes}.");
+            Require(
+                actual.MaxResponsibilityDomainSymbolOccurrences == frozen.MaxResponsibilityDomainSymbolOccurrences,
+                $"`{actual.Path}` maxResponsibilityDomainSymbolOccurrences must remain " +
+                $"{frozen.MaxResponsibilityDomainSymbolOccurrences}.");
             RequireExactSequence(actual.Responsibilities, frozen.Responsibilities, actual.Path, "responsibilities");
             RequireExactSequence(actual.RequiredSymbols, frozen.RequiredSymbols, actual.Path, "requiredSymbols");
             RequireExactSequence(actual.ForbiddenSymbols, frozen.ForbiddenSymbols, actual.Path, "forbiddenSymbols");
@@ -796,6 +802,15 @@ public sealed class ProductionSourceGrowthArchitectureTests
             }
 
             string content = File.ReadAllText(guardrail.Path);
+            int domainSymbolOccurrences = CountOccurrences(
+                content,
+                contract.ReplacementOwnerBoundary.DomainSymbol);
+            if (domainSymbolOccurrences > guardrail.MaxResponsibilityDomainSymbolOccurrences)
+            {
+                violations.Add(
+                    $"{guardrail.Path} grew its `{contract.ReplacementOwnerBoundary.DomainSymbol}` responsibility " +
+                    $"surface ({domainSymbolOccurrences}/{guardrail.MaxResponsibilityDomainSymbolOccurrences})");
+            }
             foreach (string required in guardrail.RequiredSymbols)
             {
                 if (!content.Contains(required, StringComparison.Ordinal))
@@ -832,6 +847,29 @@ public sealed class ProductionSourceGrowthArchitectureTests
                         $"equivalent responsibility owner {candidate.Path} matches {matches}/" +
                         $"{guardrail.ResponsibilitySignatureSymbols.Count} symbols governed by {guardrail.Path}");
                 }
+            }
+        }
+
+        HashSet<string> allowedReplacementOwners = new(
+            contract.ReplacementOwnerBoundary.AllowedOwnerPaths,
+            PathIdentityComparer);
+        foreach (SourceFile candidate in productionSources.Where(source =>
+            source.Path.StartsWith(contract.ReplacementOwnerBoundary.Root + "/", StringComparison.Ordinal)))
+        {
+            string candidateContent = File.ReadAllText(candidate.Path);
+            if (!candidateContent.Contains(contract.ReplacementOwnerBoundary.DomainSymbol, StringComparison.Ordinal))
+                continue;
+
+            int lifecycleMatches = CountContainedSymbols(
+                candidateContent,
+                contract.ReplacementOwnerBoundary.ManagedLifecycleSymbols);
+            if (lifecycleMatches >= contract.ReplacementOwnerBoundary.ManagedLifecycleMatchThreshold &&
+                !allowedReplacementOwners.Contains(candidate.Path))
+            {
+                violations.Add(
+                    $"replacement owner {candidate.Path} combines `{contract.ReplacementOwnerBoundary.DomainSymbol}` " +
+                    $"with {lifecycleMatches}/{contract.ReplacementOwnerBoundary.ManagedLifecycleSymbols.Count} " +
+                    "managed lifecycle symbols");
             }
         }
 
@@ -923,7 +961,22 @@ public sealed class ProductionSourceGrowthArchitectureTests
         using JsonDocument document = JsonDocument.Parse(json);
         JsonElement root = document.RootElement;
         Require(root.ValueKind == JsonValueKind.Object, "The post-hardening guardrail root must be an object.");
-        RequireExactProperties(root, "schemaVersion", "contractId", "growthAuthorizations", "entries");
+        RequireExactProperties(
+            root,
+            "schemaVersion",
+            "contractId",
+            "replacementOwnerBoundary",
+            "growthAuthorizations",
+            "entries");
+        JsonElement boundary = root.GetProperty("replacementOwnerBoundary");
+        Require(boundary.ValueKind == JsonValueKind.Object, "replacementOwnerBoundary must be an object.");
+        RequireExactProperties(
+            boundary,
+            "root",
+            "domainSymbol",
+            "managedLifecycleSymbols",
+            "managedLifecycleMatchThreshold",
+            "allowedOwnerPaths");
         JsonElement growthAuthorizations = root.GetProperty("growthAuthorizations");
         Require(
             growthAuthorizations.ValueKind == JsonValueKind.Array,
@@ -952,6 +1005,7 @@ public sealed class ProductionSourceGrowthArchitectureTests
                 "path",
                 "maxLines",
                 "maxBytes",
+                "maxResponsibilityDomainSymbolOccurrences",
                 "responsibilities",
                 "requiredSymbols",
                 "forbiddenSymbols",
@@ -969,6 +1023,7 @@ public sealed class ProductionSourceGrowthArchitectureTests
                 Path = "Assets/Game/Scripts/UI/Shell/ResourceExchangeShellBinding.cs",
                 MaxLines = 94,
                 MaxBytes = 3160,
+                MaxResponsibilityDomainSymbolOccurrences = 10,
                 Responsibilities = new List<string>
                 {
                     "resource-exchange-popup-instance",
@@ -1016,6 +1071,7 @@ public sealed class ProductionSourceGrowthArchitectureTests
                 Path = "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs",
                 MaxLines = 898,
                 MaxBytes = 38807,
+                MaxResponsibilityDomainSymbolOccurrences = 11,
                 Responsibilities = new List<string>
                 {
                     "ui-route-interpretation",
@@ -1038,7 +1094,10 @@ public sealed class ProductionSourceGrowthArchitectureTests
                     "_resourceExchangePopupInstance",
                     "_resourceExchangePopupView",
                     "_resourceExchangePopupCloseButton",
-                    "_resourceExchangePopupCloseButtonListener"
+                    "_resourceExchangePopupCloseButtonListener",
+                    "ResourceExchangePopupView",
+                    "BindResourceExchangePopup",
+                    "MatchHudLargeTacticalPopup.ResourceExchange"
                 },
                 ResponsibilitySignatureSymbols = new List<string>(),
                 ResponsibilitySignatureMatchThreshold = 0
@@ -1056,6 +1115,42 @@ public sealed class ProductionSourceGrowthArchitectureTests
         Require(
             actual.SequenceEqual(expected, StringComparer.Ordinal),
             $"`{path}` {fieldName} must remain the frozen ordered contract.");
+    }
+
+    private static void ValidateExpectedReplacementOwnerBoundary(
+        PostHardeningReplacementOwnerBoundary boundary)
+    {
+        Require(boundary.Root == "Assets/Game/Scripts/UI/Shell", "Replacement-owner root changed.");
+        Require(boundary.DomainSymbol == "ResourceExchange", "Replacement-owner domain symbol changed.");
+        Require(
+            boundary.ManagedLifecycleMatchThreshold == 3,
+            "Replacement-owner managed lifecycle threshold must remain 3.");
+        RequireExactSequence(
+            boundary.ManagedLifecycleSymbols,
+            new[]
+            {
+                "using UnityEngine;",
+                "GameObject",
+                "UnityEngine.UI",
+                "Button",
+                "UnityAction",
+                "UIPopupMotionView",
+                "UIShellRegionId.PopupLayer",
+                "DestroyRegionObject",
+                "InstallRoot(",
+                "BindResourceExchangePopup"
+            },
+            boundary.Root,
+            "managedLifecycleSymbols");
+        RequireExactSequence(
+            boundary.AllowedOwnerPaths,
+            new[]
+            {
+                "Assets/Game/Scripts/UI/Shell/ResourceExchangeShellBinding.cs",
+                "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs"
+            },
+            boundary.Root,
+            "allowedOwnerPaths");
     }
 
     private static void ValidateExpectedPostHardeningGrowthAuthorizations(
@@ -1838,11 +1933,32 @@ public sealed class ProductionSourceGrowthArchitectureTests
         [JsonPropertyName("contractId")]
         public string ContractId { get; set; }
 
+        [JsonPropertyName("replacementOwnerBoundary")]
+        public PostHardeningReplacementOwnerBoundary ReplacementOwnerBoundary { get; set; }
+
         [JsonPropertyName("growthAuthorizations")]
         public List<PostHardeningGrowthAuthorization> GrowthAuthorizations { get; set; }
 
         [JsonPropertyName("entries")]
         public List<PostHardeningSourceGuardrail> Entries { get; set; }
+    }
+
+    public sealed class PostHardeningReplacementOwnerBoundary
+    {
+        [JsonPropertyName("root")]
+        public string Root { get; set; }
+
+        [JsonPropertyName("domainSymbol")]
+        public string DomainSymbol { get; set; }
+
+        [JsonPropertyName("managedLifecycleSymbols")]
+        public List<string> ManagedLifecycleSymbols { get; set; }
+
+        [JsonPropertyName("managedLifecycleMatchThreshold")]
+        public int ManagedLifecycleMatchThreshold { get; set; }
+
+        [JsonPropertyName("allowedOwnerPaths")]
+        public List<string> AllowedOwnerPaths { get; set; }
     }
 
     public sealed class PostHardeningGrowthAuthorization
@@ -1876,6 +1992,9 @@ public sealed class ProductionSourceGrowthArchitectureTests
 
         [JsonPropertyName("maxBytes")]
         public int MaxBytes { get; set; }
+
+        [JsonPropertyName("maxResponsibilityDomainSymbolOccurrences")]
+        public int MaxResponsibilityDomainSymbolOccurrences { get; set; }
 
         [JsonPropertyName("responsibilities")]
         public List<string> Responsibilities { get; set; }

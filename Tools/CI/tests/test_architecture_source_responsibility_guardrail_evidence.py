@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import subprocess
 import unittest
 from pathlib import Path
@@ -38,13 +39,22 @@ class ArchitectureSourceResponsibilityGuardrailEvidenceTests(unittest.TestCase):
 
     def test_identity_and_exact_task_scope(self) -> None:
         baseline = self.data["sourceBaseline"]
+        self.assertEqual(baseline["branch"], "main")
+        self.assertEqual(git("branch", "--show-current").strip(), "main")
+        self.assertRegex(baseline["commit"], r"^[0-9a-f]{40}$")
         self.assertEqual(git("rev-parse", f"{baseline['commit']}^{{tree}}").strip(), baseline["tree"])
         accepted = self.data.get("acceptedEvidence")
         if self.data["acceptanceRequired"]:
             self.assertIsNotNone(accepted, "Accepted AM-016 evidence must bind an immutable commit and tree.")
         end = accepted["commit"] if accepted else None
         if accepted:
+            self.assertRegex(accepted["commit"], r"^[0-9a-f]{40}$")
             self.assertEqual(git("rev-parse", f"{end}^{{tree}}").strip(), accepted["tree"])
+            git("merge-base", "--is-ancestor", baseline["commit"], end)
+            git("merge-base", "--is-ancestor", end, "HEAD")
+            tracker = TRACKER_PATH.read_text(encoding="utf-8")
+            self.assertIn("- [x] `AM-016`", tracker)
+            self.assertIn(end, tracker)
             changed = git("diff", "--name-only", baseline["commit"], end).splitlines()
         else:
             changed = git("diff", "--name-only", baseline["commit"]).splitlines()
@@ -65,6 +75,8 @@ class ArchitectureSourceResponsibilityGuardrailEvidenceTests(unittest.TestCase):
         self.assertEqual(set(evidence_sources), {entry["path"] for entry in self.contract["entries"]})
         production = sorted((ROOT / "Assets/Game/Scripts").rglob("*.cs"))
         production = [path for path in production if "Editor" not in path.relative_to(ROOT).parts]
+        boundary = self.contract["replacementOwnerBoundary"]
+        allowed_owners = set(boundary["allowedOwnerPaths"])
         for entry in self.contract["entries"]:
             path = ROOT / entry["path"]
             content = path.read_text(encoding="utf-8")
@@ -74,6 +86,7 @@ class ArchitectureSourceResponsibilityGuardrailEvidenceTests(unittest.TestCase):
             self.assertEqual(evidence_sources[entry["path"]]["sha256"], sha256(path))
             self.assertEqual(evidence_sources[entry["path"]]["maxLines"], entry["maxLines"])
             self.assertEqual(evidence_sources[entry["path"]]["maxBytes"], entry["maxBytes"])
+            self.assertLessEqual(content.count(boundary["domainSymbol"]), entry["maxResponsibilityDomainSymbolOccurrences"])
             for required in entry["requiredSymbols"]:
                 self.assertIn(required, content, f"{entry['path']} missing {required}")
             for forbidden in entry["forbiddenSymbols"]:
@@ -88,6 +101,17 @@ class ArchitectureSourceResponsibilityGuardrailEvidenceTests(unittest.TestCase):
                 candidate_text = candidate.read_text(encoding="utf-8")
                 matches = sum(symbol in candidate_text for symbol in entry["responsibilitySignatureSymbols"])
                 self.assertLess(matches, threshold, str(candidate.relative_to(ROOT)))
+
+        for candidate in production:
+            relative = str(candidate.relative_to(ROOT))
+            if not relative.startswith(boundary["root"] + "/"):
+                continue
+            candidate_text = candidate.read_text(encoding="utf-8")
+            if boundary["domainSymbol"] not in candidate_text:
+                continue
+            matches = sum(symbol in candidate_text for symbol in boundary["managedLifecycleSymbols"])
+            if matches >= boundary["managedLifecycleMatchThreshold"]:
+                self.assertIn(relative, allowed_owners, relative)
 
     def test_growth_authorizations_are_exact_accepted_am013_blobs(self) -> None:
         authorizations = self.contract["growthAuthorizations"]
@@ -124,6 +148,13 @@ class ArchitectureSourceResponsibilityGuardrailEvidenceTests(unittest.TestCase):
         self.assertIn("PostHardeningGuardedSourcesStayBoundedAndNarrow", source)
         self.assertIn("result=Passed tests=17", source)
         self.assertIn(self.data["contract"]["path"], source)
+        log_path = ROOT / validator["log"]
+        log_text = log_path.read_text(encoding="utf-8")
+        self.assertEqual(validator["logSha256"], sha256(log_path))
+        self.assertEqual(validator["logBytes"], log_path.stat().st_size)
+        self.assertEqual(log_text.count("[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17"), 1)
+        self.assertNotIn("[ProductionSourceGrowthArchitectureValidation] result=Failed", log_text)
+        self.assertIsNone(re.search(r"\berror CS\d+", log_text))
 
     def test_validator_authority_and_accepted_hashes_are_immutable(self) -> None:
         authority = self.data["validatorAuthority"]

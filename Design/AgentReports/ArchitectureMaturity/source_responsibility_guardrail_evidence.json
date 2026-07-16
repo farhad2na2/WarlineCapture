@@ -10,13 +10,14 @@
   "acceptedEvidence": null,
   "implementationChangePaths": [
     "Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs",
+    "Design/AgentReports/ArchitectureMaturity/am016_source_growth_validation.log",
     "Design/AgentReports/ArchitectureMaturity/source_responsibility_guardrail_evidence.json",
     "Design/Architecture/post_hardening_source_responsibility_guardrails.json",
     "Tools/CI/tests/test_architecture_source_responsibility_guardrail_evidence.py"
   ],
   "contract": {
     "path": "Design/Architecture/post_hardening_source_responsibility_guardrails.json",
-    "sha256": "e3611de634030a88b4e0e65395510a7f2dbc9cc7a2d6e294564e13c22c5c83ed",
+    "sha256": "f23ea30f9c6638f8d5c43bf2a16a709a5a902f6d3393c2ec6ced534edb960a07",
     "guardedSourceCount": 2,
     "growthAuthorizationCount": 4
   },
@@ -36,11 +37,13 @@
   ],
   "canonicalValidator": {
     "path": "Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs",
-    "sha256": "9823f4e225bbffa322d321a26b8843325f94dc9d2104c6d7b446448f3ddde269",
+    "sha256": "d4345a02cf425bddff1152c5d2e65b89bd627964781be47d10f95c7442ed84f9",
     "result": "Passed",
     "passedTests": 17,
     "compilerErrors": 0,
-    "log": "/private/tmp/warline-am016-source-growth-pass3.log"
+    "log": "Design/AgentReports/ArchitectureMaturity/am016_source_growth_validation.log",
+    "logSha256": "22661eaeb41f2844b75e3329ed9f61118723a5ff375e316859b64b34cc870c59",
+    "logBytes": 62774
   },
   "authorityDecision": {
     "validatorOwnerId": "architecture-source-growth",
@@ -50,6 +53,6 @@
   },
   "validatorAuthority": {
     "path": "Tools/CI/tests/test_architecture_source_responsibility_guardrail_evidence.py",
-    "sha256": "d5762d72968dc9c2aa7ca68910087dcd0c935b0d7d72083ac244b8c2097347cb"
+    "sha256": "5df42853d95cb597b43b19e06cb32ea51e63712b3e1cbce60016c14a984ff4b4"
   }
 }

@@ -1,6 +1,27 @@
 {
   "schemaVersion": 1,
   "contractId": "post-hardening-source-responsibility-v1",
+  "replacementOwnerBoundary": {
+    "root": "Assets/Game/Scripts/UI/Shell",
+    "domainSymbol": "ResourceExchange",
+    "managedLifecycleSymbols": [
+      "using UnityEngine;",
+      "GameObject",
+      "UnityEngine.UI",
+      "Button",
+      "UnityAction",
+      "UIPopupMotionView",
+      "UIShellRegionId.PopupLayer",
+      "DestroyRegionObject",
+      "InstallRoot(",
+      "BindResourceExchangePopup"
+    ],
+    "managedLifecycleMatchThreshold": 3,
+    "allowedOwnerPaths": [
+      "Assets/Game/Scripts/UI/Shell/ResourceExchangeShellBinding.cs",
+      "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs"
+    ]
+  },
   "growthAuthorizations": [
     {
       "path": "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
@@ -40,6 +61,7 @@
       "path": "Assets/Game/Scripts/UI/Shell/ResourceExchangeShellBinding.cs",
       "maxLines": 94,
       "maxBytes": 3160,
+      "maxResponsibilityDomainSymbolOccurrences": 10,
       "responsibilities": [
         "resource-exchange-popup-instance",
         "resource-exchange-popup-view-binding",
@@ -82,6 +104,7 @@
       "path": "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs",
       "maxLines": 898,
       "maxBytes": 38807,
+      "maxResponsibilityDomainSymbolOccurrences": 11,
       "responsibilities": [
         "ui-route-interpretation",
         "typed-ui-action-enqueue",
@@ -101,7 +124,10 @@
         "_resourceExchangePopupInstance",
         "_resourceExchangePopupView",
         "_resourceExchangePopupCloseButton",
-        "_resourceExchangePopupCloseButtonListener"
+        "_resourceExchangePopupCloseButtonListener",
+        "ResourceExchangePopupView",
+        "BindResourceExchangePopup",
+        "MatchHudLargeTacticalPopup.ResourceExchange"
       ],
       "responsibilitySignatureSymbols": [],
       "responsibilitySignatureMatchThreshold": 0

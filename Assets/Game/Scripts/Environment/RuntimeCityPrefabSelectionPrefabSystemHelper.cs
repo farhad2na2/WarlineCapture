@@ -8,6 +8,7 @@ namespace Game.Runtime
         private readonly RuntimeCityPrefabSelectionState _state = new();
 
         public RuntimeCityPrefabSelectionState State => _state;
+        public int MaxObservedConsecutiveSelections => _state.MaxObservedConsecutiveSelections;
 
         public bool IsConfiguredPrefab(GameObject prefab, List<GameObject> configuredPrefabs)
         {
@@ -17,6 +18,11 @@ namespace Game.Runtime
         public GameObject GetRandomPrefab(List<GameObject> prefabs, ref Unity.Mathematics.Random rng)
         {
             return _state.GetRandomPrefab(prefabs, ref rng);
+        }
+
+        public void ConfigureConsecutiveSelectionLimit(int maxConsecutiveSelections)
+        {
+            _state.ConfigureConsecutiveSelectionLimit(maxConsecutiveSelections);
         }
 
         public void Shuffle<T>(List<T> list, ref Unity.Mathematics.Random rng)
@@ -42,7 +48,24 @@ namespace Game.Runtime
 
     internal sealed class RuntimeCityPrefabSelectionState
     {
+        private struct SelectionHistory
+        {
+            public GameObject LastPrefab;
+            public int ConsecutiveCount;
+        }
+
         private readonly Dictionary<GameObject, Vector2Int> _prefabFootprintCache = new();
+        private readonly Dictionary<List<GameObject>, SelectionHistory> _selectionHistory = new();
+        private int _maxConsecutiveSelections;
+
+        public int MaxObservedConsecutiveSelections { get; private set; }
+
+        public void ConfigureConsecutiveSelectionLimit(int maxConsecutiveSelections)
+        {
+            _maxConsecutiveSelections = Mathf.Max(0, maxConsecutiveSelections);
+            _selectionHistory.Clear();
+            MaxObservedConsecutiveSelections = 0;
+        }
 
         public bool IsConfiguredPrefab(GameObject prefab, List<GameObject> configuredPrefabs)
         {
@@ -63,7 +86,61 @@ namespace Game.Runtime
             if (prefabs == null || prefabs.Count == 0)
                 return null;
 
-            return prefabs[rng.NextInt(0, prefabs.Count)];
+            int selectedIndex = rng.NextInt(0, prefabs.Count);
+            GameObject selectedPrefab = prefabs[selectedIndex];
+            bool hasAlternativePrefab = HasAlternativePrefab(prefabs, selectedPrefab);
+            if (_maxConsecutiveSelections > 0 &&
+                hasAlternativePrefab &&
+                _selectionHistory.TryGetValue(prefabs, out SelectionHistory history) &&
+                history.LastPrefab == selectedPrefab &&
+                history.ConsecutiveCount >= _maxConsecutiveSelections)
+            {
+                for (int offset = 1; offset < prefabs.Count; offset++)
+                {
+                    GameObject candidate = prefabs[(selectedIndex + offset) % prefabs.Count];
+                    if (candidate == null || candidate == history.LastPrefab)
+                        continue;
+
+                    selectedPrefab = candidate;
+                    break;
+                }
+            }
+
+            if (!_selectionHistory.TryGetValue(prefabs, out SelectionHistory updatedHistory) ||
+                updatedHistory.LastPrefab != selectedPrefab)
+            {
+                updatedHistory = new SelectionHistory
+                {
+                    LastPrefab = selectedPrefab,
+                    ConsecutiveCount = 1
+                };
+            }
+            else
+            {
+                updatedHistory.ConsecutiveCount++;
+            }
+
+            _selectionHistory[prefabs] = updatedHistory;
+            if (selectedPrefab != null && hasAlternativePrefab)
+                MaxObservedConsecutiveSelections = Mathf.Max(
+                    MaxObservedConsecutiveSelections,
+                    updatedHistory.ConsecutiveCount);
+            return selectedPrefab;
+        }
+
+        private static bool HasAlternativePrefab(List<GameObject> prefabs, GameObject selectedPrefab)
+        {
+            if (selectedPrefab == null || prefabs == null)
+                return false;
+
+            for (int i = 0; i < prefabs.Count; i++)
+            {
+                GameObject candidate = prefabs[i];
+                if (candidate != null && candidate != selectedPrefab)
+                    return true;
+            }
+
+            return false;
         }
 
         public void Shuffle<T>(List<T> list, ref Unity.Mathematics.Random rng)

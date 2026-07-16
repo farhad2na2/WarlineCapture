@@ -11,15 +11,21 @@ namespace Game.Runtime
 
         public RuntimeCityRuralBuildingSpawnState State => _state;
 
+        public void ConfigureMaximumAxisDistanceInset(int inset)
+        {
+            _state.ConfigureMaximumAxisDistanceInset(inset);
+        }
+
         public void PlaceRuralBuildings(
             RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
             RuntimeCityBuildingPlacementState placementSystem,
             List<GameObject> prefabs,
             int count,
             Vector2Int centerRoadCell,
-            int townRadius,
+            int maximumDistanceFromCenter,
             int roadCellSizeInGridCells,
             HashSet<Vector2Int> roadCells,
+            Vector2Int scatterBiasDirection,
             ref Unity.Mathematics.Random rng,
             List<Vector2Int> usedPlotCells,
             List<ReservedFootprint> reservedFootprints,
@@ -32,9 +38,10 @@ namespace Game.Runtime
                 prefabs,
                 count,
                 centerRoadCell,
-                townRadius,
+                maximumDistanceFromCenter,
                 roadCellSizeInGridCells,
                 roadCells,
+                scatterBiasDirection,
                 ref rng,
                 usedPlotCells,
                 reservedFootprints,
@@ -45,15 +52,23 @@ namespace Game.Runtime
 
     internal sealed class RuntimeCityRuralBuildingSpawnState
     {
+        private int _maximumAxisDistanceInset;
+
+        public void ConfigureMaximumAxisDistanceInset(int inset)
+        {
+            _maximumAxisDistanceInset = Mathf.Max(0, inset);
+        }
+
         public void PlaceRuralBuildings(
             RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
             RuntimeCityBuildingPlacementState placementSystem,
             List<GameObject> prefabs,
             int count,
             Vector2Int centerRoadCell,
-            int townRadius,
+            int maximumDistanceFromCenter,
             int roadCellSizeInGridCells,
             HashSet<Vector2Int> roadCells,
+            Vector2Int scatterBiasDirection,
             ref Unity.Mathematics.Random rng,
             List<Vector2Int> usedPlotCells,
             List<ReservedFootprint> reservedFootprints,
@@ -63,6 +78,9 @@ namespace Game.Runtime
             if (prefabs == null || prefabs.Count == 0 || count <= 0)
                 return;
 
+            maximumDistanceFromCenter = Mathf.Max(
+                context.Config.HallPlazaRadiusRoadCells + 5,
+                maximumDistanceFromCenter);
             int attempts = 0;
             int placed = 0;
             int maxAttempts = Mathf.Max(120, count * 20);
@@ -70,11 +88,21 @@ namespace Game.Runtime
             {
                 attempts++;
                 Vector2Int plotCell = new(
-                    centerRoadCell.x + rng.NextInt(-(townRadius + 3), townRadius + 4),
-                    centerRoadCell.y + rng.NextInt(-(townRadius + 3), townRadius + 4));
+                    centerRoadCell.x + rng.NextInt(-maximumDistanceFromCenter, maximumDistanceFromCenter + 1),
+                    centerRoadCell.y + rng.NextInt(-maximumDistanceFromCenter, maximumDistanceFromCenter + 1));
+                if (scatterBiasDirection != Vector2Int.zero)
+                {
+                    plotCell = RuntimeCityBuildingPlotState.ApplyDirectionalBias(
+                        plotCell,
+                        centerRoadCell,
+                        scatterBiasDirection);
+                }
 
-                int distance = Mathf.Abs(plotCell.x - centerRoadCell.x) + Mathf.Abs(plotCell.y - centerRoadCell.y);
-                if (distance < context.Config.HallPlazaRadiusRoadCells + 5 || distance > townRadius + 3)
+                if (!IsWithinMaximumDistance(
+                        plotCell,
+                        centerRoadCell,
+                        maximumDistanceFromCenter,
+                        out int distance) || distance < context.Config.HallPlazaRadiusRoadCells + 5)
                     continue;
                 if (roadCells.Contains(plotCell))
                     continue;
@@ -108,6 +136,23 @@ namespace Game.Runtime
                 usedPlotCells.Add(plotCell);
                 placed++;
             }
+        }
+
+        internal bool IsWithinMaximumDistance(
+            Vector2Int plotCell,
+            Vector2Int centerRoadCell,
+            int maximumDistanceFromCenter,
+            out int distance)
+        {
+            int deltaX = Mathf.Abs(plotCell.x - centerRoadCell.x);
+            int deltaY = Mathf.Abs(plotCell.y - centerRoadCell.y);
+            distance = deltaX + deltaY;
+            int maximumAxisDistance = Mathf.Max(
+                0,
+                maximumDistanceFromCenter - _maximumAxisDistanceInset);
+            return distance <= maximumDistanceFromCenter &&
+                   deltaX <= maximumAxisDistance &&
+                   deltaY <= maximumAxisDistance;
         }
     }
 }

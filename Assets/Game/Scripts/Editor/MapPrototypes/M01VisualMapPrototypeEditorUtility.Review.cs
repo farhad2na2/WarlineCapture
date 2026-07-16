@@ -14,7 +14,7 @@ namespace Game.Editor
     using UnityEngine.SceneManagement;
     using Object = UnityEngine.Object;
 
-    public static partial class M01VisualMapPrototypeBuilder
+    public static partial class M01VisualMapPrototypeEditorUtility
     {
         private readonly struct CaptureDefinition
         {
@@ -214,7 +214,7 @@ namespace Game.Editor
                 capturePaths.Add(path);
             }
 
-            string contactSheetPath = Path.Combine(outputDirectory, "m01_visual_prototype_contact_sheet.png");
+            string contactSheetPath = Path.Combine(outputDirectory, "m01_visual_prototype_contact_sheet_v13.png");
             CreateContactSheet(contactSheetPath, capturePaths);
             WriteCaptureManifest(outputDirectory, capturePaths, contactSheetPath);
             AssetDatabase.Refresh();

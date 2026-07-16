@@ -11,6 +11,21 @@ namespace Game.Runtime
 
         public RuntimeCityFreeScatterDecorationState State => _state;
 
+        public void ConfigureDirectionalBias(bool enabled, Vector2Int direction)
+        {
+            _state.ConfigureDirectionalBias(enabled, direction);
+        }
+
+        public void ConfigureMaximumDistanceOffset(int offset)
+        {
+            _state.ConfigureMaximumDistanceOffset(offset);
+        }
+
+        public void ConfigureMaximumAxisDistanceInset(int inset)
+        {
+            _state.ConfigureMaximumAxisDistanceInset(inset);
+        }
+
         public void PlaceFreeScatterDecorations(
             RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
             RuntimeCityBuildingPlacementState placementSystem,
@@ -41,6 +56,39 @@ namespace Game.Runtime
 
     internal sealed class RuntimeCityFreeScatterDecorationState
     {
+        private const int DefaultMaximumDistanceOffset = 3;
+
+        private bool _directionalBiasEnabled;
+        private Vector2Int _directionalBias;
+        private int _maximumDistanceOffset = DefaultMaximumDistanceOffset;
+        private int _maximumAxisDistanceInset;
+
+        public int MaximumDistanceOffset => _maximumDistanceOffset;
+
+        public void ConfigureDirectionalBias(bool enabled, Vector2Int direction)
+        {
+            Vector2Int normalizedDirection = new(
+                Mathf.Clamp(direction.x, -1, 1),
+                Mathf.Clamp(direction.y, -1, 1));
+            _directionalBiasEnabled = enabled && normalizedDirection != Vector2Int.zero;
+            _directionalBias = _directionalBiasEnabled ? normalizedDirection : Vector2Int.zero;
+        }
+
+        public void ConfigureMaximumDistanceOffset(int offset)
+        {
+            _maximumDistanceOffset = Mathf.Max(0, offset);
+        }
+
+        public void ConfigureMaximumAxisDistanceInset(int inset)
+        {
+            _maximumAxisDistanceInset = Mathf.Max(0, inset);
+        }
+
+        internal int CalculateMaximumDistance(int townRadius)
+        {
+            return Mathf.Max(0, townRadius) + _maximumDistanceOffset;
+        }
+
         public void PlaceFreeScatterDecorations(
             RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
             RuntimeCityBuildingPlacementState placementSystem,
@@ -60,15 +108,20 @@ namespace Game.Runtime
             int attempts = 0;
             int placed = 0;
             int maxAttempts = Mathf.Max(160, remainingCount * 24);
-            int maxDistance = townRadius + 3;
+            int maxDistance = CalculateMaximumDistance(townRadius);
 
             while (placed < remainingCount && attempts < maxAttempts)
             {
                 attempts++;
                 Vector2Int plotCell = context.BuildingPlotSystem.GetRandomScatterPlotCell(centerRoadCell, maxDistance, ref rng);
+                if (_directionalBiasEnabled)
+                    plotCell = ApplyDirectionalBias(plotCell, centerRoadCell, _directionalBias);
 
-                int distance = Mathf.Abs(plotCell.x - centerRoadCell.x) + Mathf.Abs(plotCell.y - centerRoadCell.y);
-                if (distance > maxDistance)
+                if (!IsWithinMaximumDistance(
+                        plotCell,
+                        centerRoadCell,
+                        maxDistance,
+                        out _))
                     continue;
                 if (roadCells.Contains(plotCell))
                     continue;
@@ -100,6 +153,34 @@ namespace Game.Runtime
                 usedPlotCells.Add(plotCell);
                 placed++;
             }
+        }
+
+        internal static Vector2Int ApplyDirectionalBias(
+            Vector2Int plotCell,
+            Vector2Int centerRoadCell,
+            Vector2Int priorityDirection)
+        {
+            return RuntimeCityBuildingPlotState.ApplyDirectionalBias(
+                plotCell,
+                centerRoadCell,
+                priorityDirection);
+        }
+
+        internal bool IsWithinMaximumDistance(
+            Vector2Int plotCell,
+            Vector2Int centerRoadCell,
+            int maximumDistanceFromCenter,
+            out int distance)
+        {
+            int deltaX = Mathf.Abs(plotCell.x - centerRoadCell.x);
+            int deltaY = Mathf.Abs(plotCell.y - centerRoadCell.y);
+            distance = deltaX + deltaY;
+            int maximumAxisDistance = Mathf.Max(
+                0,
+                maximumDistanceFromCenter - _maximumAxisDistanceInset);
+            return distance <= maximumDistanceFromCenter &&
+                   deltaX <= maximumAxisDistance &&
+                   deltaY <= maximumAxisDistance;
         }
     }
 }

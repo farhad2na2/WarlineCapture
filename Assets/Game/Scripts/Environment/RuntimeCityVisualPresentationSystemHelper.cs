@@ -74,7 +74,7 @@ namespace Game.Runtime
             visual.transform.localRotation = Quaternion.identity;
             visual.transform.localScale = Vector3.one;
             if (TryGetLocalBounds(visual, out Bounds bounds))
-                visual.transform.localPosition = new Vector3(-bounds.center.x, 0f, -bounds.center.z);
+                visual.transform.localPosition = new Vector3(-bounds.center.x, -bounds.min.y, -bounds.center.z);
             else
                 visual.transform.localPosition = Vector3.zero;
 

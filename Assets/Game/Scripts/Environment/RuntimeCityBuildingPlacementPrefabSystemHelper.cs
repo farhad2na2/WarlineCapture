@@ -27,6 +27,7 @@ namespace Game.Runtime
             public readonly int RoadCellSizeInGridCells;
             public readonly HashSet<Vector2Int> RoadCells;
             public readonly RectInt? RequiredTouchRect;
+            public readonly Vector2Int VisualFacingDirection;
 
             public Request(
                 GameObject prefab,
@@ -39,7 +40,8 @@ namespace Game.Runtime
                 int reservationPadding,
                 int roadCellSizeInGridCells = 0,
                 HashSet<Vector2Int> roadCells = null,
-                RectInt? requiredTouchRect = null)
+                RectInt? requiredTouchRect = null,
+                Vector2Int visualFacingDirection = default)
             {
                 Prefab = prefab;
                 PreferredOrigin = preferredOrigin;
@@ -52,6 +54,7 @@ namespace Game.Runtime
                 RoadCellSizeInGridCells = roadCellSizeInGridCells;
                 RoadCells = roadCells;
                 RequiredTouchRect = requiredTouchRect;
+                VisualFacingDirection = visualFacingDirection;
             }
         }
 
@@ -151,7 +154,8 @@ namespace Game.Runtime
                     request.FallbackDisplayName,
                     request.FallbackDescription,
                     request.Footprint,
-                    request.MaxHealth))
+                    request.MaxHealth,
+                    GetVisualRotation(request.VisualFacingDirection)))
                 return false;
 
             var actualRect = new RectInt(actualOrigin, actualFootprint);
@@ -217,7 +221,8 @@ namespace Game.Runtime
                             fallbackDescription,
                             maxHealth,
                             reservedFootprints,
-                            0),
+                            0,
+                            visualFacingDirection: candidate.RoadFacingDirection),
                         out _,
                         placementAnchors,
                         secondaryPlacementAnchors))
@@ -237,6 +242,15 @@ namespace Game.Runtime
         private static bool TouchesRequiredRect(RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context, RectInt actualRect, RectInt? requiredTouchRect)
         {
             return !requiredTouchRect.HasValue || context.WalkabilitySystem.TouchesRect(actualRect, requiredTouchRect.Value);
+        }
+
+        internal static Quaternion GetVisualRotation(Vector2Int facingDirection)
+        {
+            if (facingDirection == Vector2Int.zero)
+                return Quaternion.identity;
+
+            Vector3 forward = new(facingDirection.x, 0f, facingDirection.y);
+            return Quaternion.LookRotation(forward.normalized, Vector3.up);
         }
     }
 }

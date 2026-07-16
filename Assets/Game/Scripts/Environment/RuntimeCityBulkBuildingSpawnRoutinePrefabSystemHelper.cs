@@ -98,6 +98,9 @@ namespace Game.Runtime
             List<PlotCandidate> centralPlots = plotPlan.CentralPlots;
             List<PlotCandidate> outerPlots = plotPlan.OuterPlots;
             List<PlotCandidate> entryPlots = plotPlan.EntryPlots;
+            List<PlotCandidate> marketPlots = plotPlan.MarketPlots;
+            List<PlotCandidate> residentialPlots = plotPlan.ResidentialPlots;
+            List<PlotCandidate> utilityPlots = plotPlan.UtilityPlots;
 
             context.VisualSystem?.EnsureCityVisualRoot();
 
@@ -110,26 +113,55 @@ namespace Game.Runtime
             yield return null;
 
             RuntimeCityRoadsideBuildingSpawnPrefabSystemHelper.Plan roadsidePlan = roadsideBuildingSpawnSystem.CreatePlan(context);
-            roadsideBuildingSpawnSystem.PlaceCentralShops(context, placementSystem, centralPlots, roadsidePlan, roadCellSizeInGridCells, ref rng.Value, usedPlotCells, reservedFootprints, shopAndHouseFootprints);
+            roadsideBuildingSpawnSystem.PlaceCentralShops(context, placementSystem, marketPlots, roadsidePlan, roadCellSizeInGridCells, ref rng.Value, usedPlotCells, reservedFootprints, shopAndHouseFootprints);
             yield return null;
-            roadsideBuildingSpawnSystem.PlaceGasStations(context, placementSystem, outerPlots, roadCellSizeInGridCells, ref rng.Value, usedPlotCells, reservedFootprints);
+            roadsideBuildingSpawnSystem.PlaceGasStations(context, placementSystem, utilityPlots, roadCellSizeInGridCells, ref rng.Value, usedPlotCells, reservedFootprints);
             yield return null;
-            roadsideBuildingSpawnSystem.PlaceOuterShops(context, placementSystem, outerPlots, roadsidePlan, roadCellSizeInGridCells, ref rng.Value, usedPlotCells, reservedFootprints, shopAndHouseFootprints);
+            roadsideBuildingSpawnSystem.PlaceOuterShops(context, placementSystem, marketPlots, roadsidePlan, roadCellSizeInGridCells, ref rng.Value, usedPlotCells, reservedFootprints, shopAndHouseFootprints);
             yield return null;
 
             int ruralHouseTarget = roadsidePlan.RuralHouseTarget;
-            roadsideBuildingSpawnSystem.PlaceRoadsideHouses(context, placementSystem, outerPlots, roadsidePlan, roadCellSizeInGridCells, ref rng.Value, usedPlotCells, reservedFootprints, shopAndHouseFootprints, houseFootprints);
+            int maximumRuralDistance = Mathf.Max(
+                config.HallPlazaRadiusRoadCells + 5,
+                townRadius + plotPlanSystem.RuralScatterRadiusOffset);
+            roadsideBuildingSpawnSystem.PlaceRoadsideHouses(context, placementSystem, residentialPlots, roadsidePlan, roadCellSizeInGridCells, ref rng.Value, usedPlotCells, reservedFootprints, shopAndHouseFootprints, houseFootprints);
             yield return null;
-            ruralBuildingSpawnSystem.PlaceRuralBuildings(context, placementSystem, config.HousePrefabs, ruralHouseTarget, centerRoadCell, townRadius, roadCellSizeInGridCells, roadCells, ref rng.Value, usedPlotCells, reservedFootprints, shopAndHouseFootprints, houseFootprints);
+            ruralBuildingSpawnSystem.PlaceRuralBuildings(
+                context,
+                placementSystem,
+                config.HousePrefabs,
+                ruralHouseTarget,
+                centerRoadCell,
+                maximumRuralDistance,
+                roadCellSizeInGridCells,
+                roadCells,
+                plotPlanSystem.ResidentialScatterDirection,
+                ref rng.Value,
+                usedPlotCells,
+                reservedFootprints,
+                shopAndHouseFootprints,
+                houseFootprints);
             yield return null;
             placeHouseYardWalls(houseFootprints, centerRoadCell, roadCellSizeInGridCells, roadCells, grid, ref rng.Value, reservedFootprints);
             yield return null;
 
             int ruralOtherTarget = Mathf.RoundToInt(Mathf.Max(0, config.OtherBuildingCount) * Mathf.Clamp01(config.RuralHouseRatio));
             int roadsideOtherTarget = Mathf.Max(0, config.OtherBuildingCount - ruralOtherTarget);
-            placementSystem.PlaceFromPlots(context, config.OtherBuildingPrefabs, outerPlots, roadsideOtherTarget, 1, roadCellSizeInGridCells, "Village Building", "Old town side building.", config.DefaultBuildingMaxHealth, ref rng.Value, usedPlotCells, reservedFootprints);
+            placementSystem.PlaceFromPlots(context, config.OtherBuildingPrefabs, utilityPlots, roadsideOtherTarget, 1, roadCellSizeInGridCells, "Village Building", "Old town side building.", config.DefaultBuildingMaxHealth, ref rng.Value, usedPlotCells, reservedFootprints);
             yield return null;
-            ruralBuildingSpawnSystem.PlaceRuralBuildings(context, placementSystem, config.OtherBuildingPrefabs, ruralOtherTarget, centerRoadCell, townRadius, roadCellSizeInGridCells, roadCells, ref rng.Value, usedPlotCells, reservedFootprints);
+            ruralBuildingSpawnSystem.PlaceRuralBuildings(
+                context,
+                placementSystem,
+                config.OtherBuildingPrefabs,
+                ruralOtherTarget,
+                centerRoadCell,
+                maximumRuralDistance,
+                roadCellSizeInGridCells,
+                roadCells,
+                plotPlanSystem.UtilityScatterDirection,
+                ref rng.Value,
+                usedPlotCells,
+                reservedFootprints);
             yield return null;
             placeCityDecorationBuildings(context, config.CityDecorationPrefabs, config.CityDecorationBuildingCount, centerRoadCell, townRadius, roadCellSizeInGridCells, roadCells, ref rng.Value, usedPlotCells, reservedFootprints, shopAndHouseFootprints);
             yield return null;

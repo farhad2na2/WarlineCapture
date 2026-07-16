@@ -102,6 +102,10 @@ namespace Game.Runtime
 
     internal sealed class RuntimeCityGenerationState
     {
+        private readonly RuntimeCityGenerationProgressState _progress = new();
+
+        public RuntimeCityGenerationProgress Progress => _progress.Current;
+
         public bool TryBegin(RuntimeCityGenerationCompositionSystemHelper.Context context)
         {
             if (context.LifecycleState == null)
@@ -111,7 +115,18 @@ namespace Game.Runtime
             if (context.CityConfig.CityCount <= 0)
                 return false;
 
-            return context.LifecycleState.TryBeginGeneration(GenerateCityRoutine(context), context.LifecycleContext);
+            uint generationSeed = context.CityConfig.RandomSeed == 0 ? 1 : context.CityConfig.RandomSeed;
+            _progress.Begin(generationSeed, context.CityConfig.CityCount);
+            if (context.LifecycleState.TryBeginGeneration(GenerateCityRoutine(context), context.LifecycleContext))
+                return true;
+
+            _progress.Cancel();
+            return false;
+        }
+
+        public void Cancel()
+        {
+            _progress.Cancel();
         }
 
         private IEnumerator GenerateCityRoutine(RuntimeCityGenerationCompositionSystemHelper.Context context)
@@ -125,6 +140,7 @@ namespace Game.Runtime
 
             uint generationSeed = cityConfig.RandomSeed == 0 ? 1 : cityConfig.RandomSeed;
             var rng = new Unity.Mathematics.Random(generationSeed);
+            _progress.Report(RuntimeCityGenerationStage.Planning, 0, 0, 1);
             int townRadius = context.LayoutSystem.CalculateTownRadius(cityConfig);
             List<RectInt> baseExclusionRoadRects = context.CollectInitialBaseExclusionRoadRects?.Invoke(context.RoadCellSizeInGridCells) ?? new List<RectInt>();
             var cities = new List<CityLayoutData>(Mathf.Max(0, cityConfig.CityCount));
@@ -149,6 +165,7 @@ namespace Game.Runtime
                     townRadius,
                     cityConfig.HallPlazaRadiusRoadCells);
                 CityLayoutData currentCity = context.IngressSystem.CreateCityLayout(context.IngressContext, firstCenter, townRadius, null, default, ref rng);
+                _progress.Report(RuntimeCityGenerationStage.Roads, 0, 0, cityConfig.CityCount);
                 context.RoadCommitSystem.CommitCityRoadNetwork(context.RoadCommitContext, currentCity, occupiedRoadCells);
                 if (cityConfig.GenerateBuildings)
                 {
@@ -156,6 +173,7 @@ namespace Game.Runtime
                     SpawnCityImportantBuildings(context, currentCity, ref rng);
                 }
                 cities.Add(currentCity);
+                _progress.Report(RuntimeCityGenerationStage.Roads, cities.Count, cities.Count, cityConfig.CityCount);
                 if (context.ShouldYield(1))
                     yield return null;
 
@@ -246,6 +264,7 @@ namespace Game.Runtime
                             ref rng);
                     }
                     cities.Add(anchoredNextCity);
+                    _progress.Report(RuntimeCityGenerationStage.Roads, cities.Count, cities.Count, cityConfig.CityCount);
                     currentCity = anchoredNextCity;
                     previousTravelDirection = travelDirection;
 
@@ -254,15 +273,30 @@ namespace Game.Runtime
                 }
 
                 context.RoadBuildBridgeSystem.EndDeferredRoadEcsSync();
+                _progress.Report(RuntimeCityGenerationStage.Landmarks, cities.Count, cities.Count, cities.Count);
+                if (cityConfig.GenerateBuildings)
+                    yield return null;
 
+                int completedBuildingBatches = 0;
+                int totalBuildingBatches = Mathf.Max(1, cities.Count * 11);
                 for (int i = 0; i < cities.Count; i++)
                 {
                     if (cityConfig.GenerateBuildings)
                     {
+                        _progress.Report(RuntimeCityGenerationStage.Buildings, cities.Count, completedBuildingBatches, totalBuildingBatches);
                         var bulkRng = new RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper.GenerationRandomState { Value = rng };
                         IEnumerator bulkRoutine = SpawnCityBulkBuildingsRoutine(context, cities[i], bulkRng);
+                        int cityBuildingBatch = 0;
                         while (bulkRoutine.MoveNext())
+                        {
+                            cityBuildingBatch++;
+                            completedBuildingBatches++;
+                            RuntimeCityGenerationStage stage = cityBuildingBatch >= 10
+                                ? RuntimeCityGenerationStage.Decorations
+                                : RuntimeCityGenerationStage.Buildings;
+                            _progress.Report(stage, cities.Count, completedBuildingBatches, totalBuildingBatches);
                             yield return null;
+                        }
                         rng = bulkRng.Value;
                     }
 
@@ -273,8 +307,11 @@ namespace Game.Runtime
                 if (cityConfig.GenerateBuildings)
                     context.SpawnBridgeSystem.EndDeferredSideEffects();
 
+                _progress.Report(RuntimeCityGenerationStage.Finalizing, cities.Count, 0, 1);
+                yield return null;
                 context.MinimapEvents?.PublishStaticMinimapChanged();
                 context.LifecycleState.CompleteGeneration(cities.Count, context.LifecycleContext);
+                _progress.Complete(cities.Count);
             }
             finally
             {

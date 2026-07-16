@@ -11,12 +11,12 @@ namespace Game.Editor
     using UnityEngine.SceneManagement;
     using Object = UnityEngine.Object;
 
-    public static partial class M01VisualMapPrototypeBuilder
+    public static partial class M01VisualMapPrototypeEditorUtility
     {
         public const string ScenePath = "Assets/Game/Scenes/MapPrototypes/Chapter01/M01_VisualPrototype.unity";
         public const string CaptureDirectory = "Design/ArtReview/OperationMaps/M01";
         public const int GenerationSeed = 26071501;
-        public const string GeneratorVersion = "M01VisualPrototype_2026-07-15_v6";
+        public const string GeneratorVersion = "M01VisualPrototype_2026-07-16_v13";
 
         private const int CaptureWidth = 1600;
         private const int CaptureHeight = 900;
@@ -24,6 +24,7 @@ namespace Game.Editor
         private const string PremiumLightingRigPath = "Assets/Game/Rendering/Prefabs/PremiumLightingRig.prefab";
         private const string PremiumVolumeProfilePath = "Assets/Game/Rendering/Profiles/PremiumGlobalVolumeProfile.asset";
         private const string PrototypeVolumeProfilePath = "Assets/Game/Art/MapPrototypes/M01/M01_VisualVolumeProfile.asset";
+        private const string DesertSkyboxMaterialPath = "Assets/Game/Art/MapPrototypes/M01/M01_DesertSkybox.mat";
         private const string TownMarketModulePath = "Assets/Game/Prefabs/Generated/GC04Modules/TownMarket_DemoAuthored.prefab";
         private const string BaseCommandModulePath = "Assets/Game/Prefabs/Generated/GC04Modules/BaseCommand_DemoAuthored.prefab";
         private const string SouthTownModulePath = "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_SouthCenter_DemoAuthored.prefab";
@@ -36,6 +37,7 @@ namespace Game.Editor
         private const string AmberPaintMaterialPath = MaterialDirectory + "/M01_RoadPaint_Amber.mat";
         private const string TurquoiseMaterialPath = MaterialDirectory + "/M01_Market_Turquoise.mat";
         private const string RustMaterialPath = MaterialDirectory + "/M01_Rust.mat";
+        private const string DistrictGroundMaterialPath = MaterialDirectory + "/M01_DistrictGround.mat";
 
         private static readonly string[] RequiredPrefabPaths =
         {
@@ -65,6 +67,7 @@ namespace Game.Editor
             public Material AmberPaint;
             public Material Turquoise;
             public Material Rust;
+            public Material DistrictGround;
         }
 
         [MenuItem("Game/Operation Maps/M01/Generate Visual Prototype")]
@@ -127,6 +130,144 @@ namespace Game.Editor
                     EditorApplication.Exit(1);
                 throw;
             }
+        }
+
+        public static void AnalyzeDistrictModuleEdgesBatch()
+        {
+            Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            GameObject sceneRoot = FindSceneRoot(scene);
+            Transform modulesRoot = sceneRoot.transform.Find("_M01VisualGenerated/02_DemoAuthored_DistrictModules");
+            if (modulesRoot == null)
+                throw new InvalidOperationException("M01 district module root is missing.");
+
+            int candidateCount = 0;
+            for (int moduleIndex = 0; moduleIndex < modulesRoot.childCount; moduleIndex++)
+            {
+                Transform module = modulesRoot.GetChild(moduleIndex);
+                Renderer[] renderers = module.GetComponentsInChildren<Renderer>(true);
+                for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
+                {
+                    Renderer renderer = renderers[rendererIndex];
+                    if (!IsDistrictEdgeCandidateName(renderer.name))
+                        continue;
+
+                    Bounds bounds = renderer.bounds;
+                    Vector2 offset = new(bounds.center.x - module.position.x, bounds.center.z - module.position.z);
+                    float distance = offset.magnitude;
+                    if (distance < 42f)
+                        continue;
+
+                    candidateCount++;
+                    Debug.Log(
+                        $"[M01DistrictEdgeCandidate] module={module.name} name={renderer.name} " +
+                        $"distance={distance:0.00} center={bounds.center} size={bounds.size}");
+                }
+            }
+
+            Debug.Log($"[M01DistrictEdgeAnalysis] result=Passed candidates={candidateCount}");
+        }
+
+        public static void AnalyzeDistrictBuildingOrientationBatch()
+        {
+            Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            GameObject sceneRoot = FindSceneRoot(scene);
+            Transform modulesRoot = sceneRoot.transform.Find("_M01VisualGenerated/02_DemoAuthored_DistrictModules");
+            if (modulesRoot == null)
+                throw new InvalidOperationException("M01 district module root is missing.");
+
+            int candidateCount = 0;
+            for (int moduleIndex = 0; moduleIndex < modulesRoot.childCount; moduleIndex++)
+            {
+                Transform module = modulesRoot.GetChild(moduleIndex);
+                Transform[] transforms = module.GetComponentsInChildren<Transform>(true);
+                for (int transformIndex = 0; transformIndex < transforms.Length; transformIndex++)
+                {
+                    Transform candidate = transforms[transformIndex];
+                    if (!IsDistrictBuildingAssemblyCandidate(candidate, module))
+                        continue;
+
+                    Renderer[] renderers = candidate.GetComponentsInChildren<Renderer>(true);
+                    if (!TryGetCombinedBounds(renderers, out Bounds bounds))
+                        continue;
+
+                    candidateCount++;
+                    Debug.Log(
+                        $"[M01DistrictBuildingCandidate] module={module.name} name={candidate.name} " +
+                        $"parent={candidate.parent.name} children={candidate.childCount} renderers={renderers.Length} " +
+                        $"position={candidate.position} yaw={candidate.eulerAngles.y:0.0} " +
+                        $"boundsCenter={bounds.center} boundsSize={bounds.size}");
+                }
+            }
+
+            Debug.Log($"[M01DistrictBuildingAnalysis] result=Passed candidates={candidateCount}");
+        }
+
+        private static bool IsDistrictBuildingAssemblyCandidate(Transform candidate, Transform module)
+        {
+            if (candidate == null || candidate == module || candidate.childCount == 0)
+                return false;
+
+            string candidateName = candidate.name;
+            bool buildingShell = ContainsName(candidateName, "_Bld_Shop_") ||
+                                 ContainsName(candidateName, "_Bld_Village_House_") ||
+                                 ContainsName(candidateName, "_Bld_GasStation_") ||
+                                 ContainsName(candidateName, "_Bld_Ruins_") ||
+                                 ContainsName(candidateName, "_Bld_Mosque_");
+            if (!buildingShell)
+                return false;
+
+            Transform parent = candidate.parent;
+            while (parent != null && parent != module)
+            {
+                if (ContainsName(parent.name, "_Bld_") && parent.childCount > 0)
+                    return false;
+                parent = parent.parent;
+            }
+
+            return parent == module;
+        }
+
+        private static bool TryGetCombinedBounds(Renderer[] renderers, out Bounds bounds)
+        {
+            bounds = default;
+            if (renderers == null || renderers.Length == 0)
+                return false;
+
+            bool assigned = false;
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                Renderer renderer = renderers[i];
+                if (renderer == null || !renderer.enabled)
+                    continue;
+
+                if (!assigned)
+                {
+                    bounds = renderer.bounds;
+                    assigned = true;
+                }
+                else
+                {
+                    bounds.Encapsulate(renderer.bounds);
+                }
+            }
+
+            return assigned;
+        }
+
+        private static bool IsDistrictEdgeCandidateName(string objectName)
+        {
+            return ContainsName(objectName, "_Env_Road_") ||
+                   ContainsName(objectName, "_Env_Sidewalk_") ||
+                   ContainsName(objectName, "_Prop_Powerpole_") ||
+                   ContainsName(objectName, "_Prop_Street_Light_") ||
+                   ContainsName(objectName, "_Prop_Washingline_") ||
+                   ContainsName(objectName, "_Prop_Wire_Lights_") ||
+                   ContainsName(objectName, "_Prop_Fence_");
+        }
+
+        private static bool ContainsName(string value, string fragment)
+        {
+            return value?.IndexOf(fragment, StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         public static IReadOnlyList<string> ValidateRequiredAssets()
@@ -196,7 +337,8 @@ namespace Game.Editor
                 WhitePaint = CreateOrUpdateMaterial(WhitePaintMaterialPath, new Color(0.88f, 0.84f, 0.70f), 0f, 0.25f),
                 AmberPaint = CreateOrUpdateMaterial(AmberPaintMaterialPath, new Color(0.95f, 0.52f, 0.08f), 0f, 0.27f),
                 Turquoise = CreateOrUpdateMaterial(TurquoiseMaterialPath, new Color(0.035f, 0.36f, 0.36f), 0f, 0.25f),
-                Rust = CreateOrUpdateMaterial(RustMaterialPath, new Color(0.38f, 0.11f, 0.045f), 0.05f, 0.16f)
+                Rust = CreateOrUpdateMaterial(RustMaterialPath, new Color(0.38f, 0.11f, 0.045f), 0.05f, 0.16f),
+                DistrictGround = CreateOrUpdateMaterial(DistrictGroundMaterialPath, new Color(0.48f, 0.36f, 0.24f), 0f, 0.1f)
             };
         }
 
@@ -228,7 +370,7 @@ namespace Game.Editor
 
         private static void ConfigureRenderSettings()
         {
-            RenderSettings.skybox = AssetDatabase.GetBuiltinExtraResource<Material>("Default-Skybox.mat");
+            RenderSettings.skybox = CreateOrUpdateSkyboxMaterial();
             RenderSettings.fog = true;
             RenderSettings.fogMode = FogMode.Exponential;
             RenderSettings.fogDensity = 0.0022f;
@@ -241,10 +383,38 @@ namespace Game.Editor
             RenderSettings.reflectionIntensity = 0.85f;
         }
 
+        private static Material CreateOrUpdateSkyboxMaterial()
+        {
+            Material material = AssetDatabase.LoadAssetAtPath<Material>(DesertSkyboxMaterialPath);
+            if (material == null)
+            {
+                Shader shader = Shader.Find("Skybox/Procedural");
+                if (shader == null)
+                    throw new InvalidOperationException("The procedural skybox shader is unavailable for M01.");
+                material = new Material(shader) { name = "M01_DesertSkybox" };
+                AssetDatabase.CreateAsset(material, DesertSkyboxMaterialPath);
+            }
+
+            material.SetColor("_SkyTint", new Color(0.43f, 0.57f, 0.68f, 1f));
+            material.SetColor("_GroundColor", new Color(0.56f, 0.43f, 0.30f, 1f));
+            material.SetFloat("_Exposure", 1.24f);
+            material.SetFloat("_AtmosphereThickness", 0.72f);
+            material.SetFloat("_SunSize", 0.035f);
+            material.SetFloat("_SunSizeConvergence", 5f);
+            EditorUtility.SetDirty(material);
+            return material;
+        }
+
         private static void CreateTerrainAndRoadPlan(Transform parent, Palette palette)
         {
             Transform terrainRoot = CreateRoot("01_Terrain_And_RoadPlan", parent).transform;
-            CreateBox("DesertGround", new Vector3(0f, -1.15f, 0f), new Vector3(310f, 2.2f, 238f), palette.Sand, terrainRoot);
+            CreateBox("DesertGround", new Vector3(0f, -1.05f, 16f), new Vector3(1200f, 2f, 900f), palette.Sand, terrainRoot);
+
+            CreateBox("MainRoadShoulder_NS", new Vector3(0f, -0.05f, 0f), new Vector3(27f, 0.1f, 236f), palette.DistrictGround, terrainRoot);
+            CreateBox("MainRoadShoulder_EW", new Vector3(0f, -0.05f, -18f), new Vector3(306f, 0.1f, 25f), palette.DistrictGround, terrainRoot);
+            CreateIrregularSurface("OldMarketDistrictApron", new Vector3(-62f, -0.015f, 17f), new Vector2(118f, 102f), palette.DistrictGround, terrainRoot);
+            CreateIrregularSurface("UtilityCompoundApron", new Vector3(69f, -0.015f, 17f), new Vector2(126f, 116f), palette.DistrictGround, terrainRoot);
+            CreateIrregularSurface("ResidentialDistrictApron", new Vector3(-5f, -0.015f, -70f), new Vector2(138f, 98f), palette.DistrictGround, terrainRoot);
 
             CreateBox("MainRoad_NS", new Vector3(0f, 0.03f, 0f), new Vector3(21f, 0.18f, 230f), palette.Asphalt, terrainRoot);
             CreateBox("MainRoad_EW", new Vector3(0f, 0.04f, -18f), new Vector3(300f, 0.2f, 19f), palette.Asphalt, terrainRoot);
@@ -257,6 +427,65 @@ namespace Game.Editor
             CreateHorizontalCurbs(terrainRoot, palette.Curb, -7.7f);
             CreateRoadMarkings(terrainRoot, palette);
             CreateIntersectionDetails(terrainRoot, palette);
+            CreateSouthernReliefConnector(terrainRoot, palette);
+            CreateRoadExitClosures(terrainRoot, palette);
+        }
+
+        private static void CreateSouthernReliefConnector(Transform parent, Palette palette)
+        {
+            Vector3 center = new(-43f, 0f, -41f);
+            Quaternion rotation = Quaternion.Euler(0f, -14f, 0f);
+            CreateBox(
+                "SouthReliefRoadShoulder",
+                center + Vector3.down * 0.025f,
+                new Vector3(10f, 0.07f, 52f),
+                palette.DistrictGround,
+                parent,
+                rotation);
+            CreateBox(
+                "SouthReliefRoad",
+                center + Vector3.up * 0.035f,
+                new Vector3(6.5f, 0.12f, 49f),
+                palette.Concrete,
+                parent,
+                rotation);
+
+            for (int i = -2; i <= 2; i++)
+            {
+                Vector3 offset = rotation * new Vector3(0f, 0f, i * 10f);
+                CreateBox(
+                    $"SouthReliefDash_{i + 3:00}",
+                    center + offset + Vector3.up * 0.14f,
+                    new Vector3(0.28f, 0.04f, 4.5f),
+                    palette.AmberPaint,
+                    parent,
+                    rotation);
+            }
+        }
+
+        private static void CreateRoadExitClosures(Transform parent, Palette palette)
+        {
+            CreateRoadExitClosure("West", new Vector3(-145f, 0f, -18f), true, parent, palette);
+            CreateRoadExitClosure("East", new Vector3(145f, 0f, -18f), true, parent, palette);
+            CreateRoadExitClosure("North", new Vector3(0f, 0f, 110f), false, parent, palette);
+            CreateRoadExitClosure("South", new Vector3(0f, 0f, -110f), false, parent, palette);
+        }
+
+        private static void CreateRoadExitClosure(
+            string name,
+            Vector3 position,
+            bool roadRunsEastWest,
+            Transform parent,
+            Palette palette)
+        {
+            Vector3 segmentOffset = roadRunsEastWest ? new Vector3(0f, 0f, 5.3f) : new Vector3(5.3f, 0f, 0f);
+            Vector3 segmentScale = roadRunsEastWest ? new Vector3(1.2f, 1.05f, 5.6f) : new Vector3(5.6f, 1.05f, 1.2f);
+            CreateBox($"{name}ExitBarrier_A", position + segmentOffset + Vector3.up * 0.52f, segmentScale, palette.Curb, parent);
+            CreateBox($"{name}ExitBarrier_B", position - segmentOffset + Vector3.up * 0.52f, segmentScale, palette.Curb, parent);
+
+            Vector3 bollardOffset = roadRunsEastWest ? new Vector3(0f, 0f, 1.9f) : new Vector3(1.9f, 0f, 0f);
+            CreateCylinder($"{name}ExitMarker_A", position + bollardOffset + Vector3.up * 0.7f, new Vector3(0.38f, 0.7f, 0.38f), palette.AmberPaint, parent);
+            CreateCylinder($"{name}ExitMarker_B", position - bollardOffset + Vector3.up * 0.7f, new Vector3(0.38f, 0.7f, 0.38f), palette.Rust, parent);
         }
 
         private static void CreateVerticalCurbs(Transform parent, Material material, float x)
@@ -573,6 +802,26 @@ namespace Game.Editor
             cylinder.GetComponent<Renderer>().sharedMaterial = material;
             Object.DestroyImmediate(cylinder.GetComponent<Collider>());
             return cylinder;
+        }
+
+        private static GameObject CreateIrregularSurface(
+            string name,
+            Vector3 position,
+            Vector2 size,
+            Material material,
+            Transform parent)
+        {
+            GameObject surface = Game.Runtime.RuntimeOperationMapSurfaceGeometrySystemHelper.CreateIrregularSurface(
+                name,
+                unchecked((uint)GenerationSeed),
+                parent);
+            surface.transform.position = position;
+            surface.transform.localScale = new Vector3(size.x, 1f, size.y);
+            MeshRenderer renderer = surface.GetComponent<MeshRenderer>();
+            if (renderer != null)
+                renderer.sharedMaterial = material;
+            GameObjectUtility.SetStaticEditorFlags(surface, StaticEditorFlags.BatchingStatic | StaticEditorFlags.OccludeeStatic);
+            return surface;
         }
 
         private static Light CreatePointLight(string name, Vector3 position, Color color, float intensity, float range, Transform parent)

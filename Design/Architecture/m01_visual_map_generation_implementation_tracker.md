@@ -68,8 +68,8 @@ Another task owns operation-map scene separation, catalogs, Addressables, loadin
 ### Owned By The Approved R&D Slice
 
 - `Assets/Game/Scenes/MapPrototypes/Chapter01/M01_VisualPrototype.unity`
-- `Assets/Game/Scripts/Editor/MapPrototypes/M01VisualMapPrototypeBuilder*.cs`
-- `Assets/Tests/Editor/M01VisualMapPrototypeBuilderTests.cs`
+- `Assets/Game/Scripts/Editor/MapPrototypes/M01VisualMapPrototypeEditorUtility*.cs`
+- `Assets/Tests/Editor/M01VisualMapPrototypeEditorUtilityTests.cs`
 - `Assets/Game/Art/MapPrototypes/M01/`
 - `Design/ArtReview/OperationMaps/M01/`
 

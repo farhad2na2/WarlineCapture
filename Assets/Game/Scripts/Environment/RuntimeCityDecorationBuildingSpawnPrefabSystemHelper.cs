@@ -11,6 +11,11 @@ namespace Game.Runtime
 
         public RuntimeCityDecorationBuildingSpawnState State => _state;
 
+        public void ConfigureMinimumFreeScatterCount(int count)
+        {
+            _state.ConfigureMinimumFreeScatterCount(count);
+        }
+
         public void PlaceCityDecorationBuildings(
             RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
             RuntimeCityBuildingPlacementState placementSystem,
@@ -51,6 +56,20 @@ namespace Game.Runtime
 
     internal sealed class RuntimeCityDecorationBuildingSpawnState
     {
+        private int _minimumFreeScatterCount;
+
+        public void ConfigureMinimumFreeScatterCount(int count)
+        {
+            _minimumFreeScatterCount = Mathf.Max(0, count);
+        }
+
+        internal int CalculateArchwayBudget(int totalCount, int clothPlaced)
+        {
+            int remainingCount = Mathf.Max(0, totalCount - clothPlaced);
+            int reservedFreeScatterCount = Mathf.Min(_minimumFreeScatterCount, remainingCount);
+            return remainingCount - reservedFreeScatterCount;
+        }
+
         public void PlaceCityDecorationBuildings(
             RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context context,
             RuntimeCityBuildingPlacementState placementSystem,
@@ -85,7 +104,7 @@ namespace Game.Runtime
                 context,
                 placementSystem,
                 decorationGroups.ArchwayPrefabs,
-                count - clothPlaced,
+                CalculateArchwayBudget(count, clothPlaced),
                 centerRoadCell,
                 roadCellSizeInGridCells,
                 roadCells,

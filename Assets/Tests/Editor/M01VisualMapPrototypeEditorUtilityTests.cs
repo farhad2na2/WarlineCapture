@@ -9,7 +9,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public sealed class M01VisualMapPrototypeBuilderTests
+public sealed class M01VisualMapPrototypeEditorUtilityTests
 {
     private static readonly string[] CaptureFileNames =
     {
@@ -25,7 +25,7 @@ public sealed class M01VisualMapPrototypeBuilderTests
         int passed = 0;
         try
         {
-            var tests = new M01VisualMapPrototypeBuilderTests();
+            var tests = new M01VisualMapPrototypeEditorUtilityTests();
             tests.RequiredPaletteAssets_AreAvailable();
             passed++;
             tests.GeneratedScene_HasOwnedRootsAnchorsAndReferenceDensity();
@@ -47,17 +47,17 @@ public sealed class M01VisualMapPrototypeBuilderTests
     [Test]
     public void RequiredPaletteAssets_AreAvailable()
     {
-        CollectionAssert.IsEmpty(M01VisualMapPrototypeBuilder.ValidateRequiredAssets());
+        CollectionAssert.IsEmpty(M01VisualMapPrototypeEditorUtility.ValidateRequiredAssets());
     }
 
     [Test]
     public void GeneratedScene_HasOwnedRootsAnchorsAndReferenceDensity()
     {
         Assert.NotNull(
-            AssetDatabase.LoadAssetAtPath<SceneAsset>(M01VisualMapPrototypeBuilder.ScenePath),
+            AssetDatabase.LoadAssetAtPath<SceneAsset>(M01VisualMapPrototypeEditorUtility.ScenePath),
             "The generated M01 visual prototype scene must be tracked.");
 
-        Scene scene = EditorSceneManager.OpenScene(M01VisualMapPrototypeBuilder.ScenePath, OpenSceneMode.Single);
+        Scene scene = EditorSceneManager.OpenScene(M01VisualMapPrototypeEditorUtility.ScenePath, OpenSceneMode.Single);
         GameObject root = FindSceneObject(scene, "M01_VisualPrototype_Root");
         Assert.NotNull(root);
         Assert.NotNull(FindDescendant(root.transform, "_M01VisualGenerated"));
@@ -68,7 +68,7 @@ public sealed class M01VisualMapPrototypeBuilderTests
         Assert.NotNull(FindDescendant(root.transform, "M01_Review_GameplayOverview"));
         Assert.NotNull(FindDescendant(
             root.transform,
-            $"GENERATOR_{M01VisualMapPrototypeBuilder.GeneratorVersion}_SEED_{M01VisualMapPrototypeBuilder.GenerationSeed}"));
+            $"GENERATOR_{M01VisualMapPrototypeEditorUtility.GeneratorVersion}_SEED_{M01VisualMapPrototypeEditorUtility.GenerationSeed}"));
         Assert.GreaterOrEqual(root.GetComponentsInChildren<Renderer>(true).Length, 900);
     }
 
@@ -76,7 +76,7 @@ public sealed class M01VisualMapPrototypeBuilderTests
     public void ReviewCaptureSet_IsCompleteAndReadable()
     {
         string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
-        string captureRoot = Path.Combine(projectRoot, M01VisualMapPrototypeBuilder.CaptureDirectory);
+        string captureRoot = Path.Combine(projectRoot, M01VisualMapPrototypeEditorUtility.CaptureDirectory);
         for (int i = 0; i < CaptureFileNames.Length; i++)
         {
             string path = Path.Combine(captureRoot, CaptureFileNames[i]);
@@ -100,8 +100,8 @@ public sealed class M01VisualMapPrototypeBuilderTests
         string manifestPath = Path.Combine(captureRoot, "m01_visual_prototype_capture_manifest.md");
         Assert.IsTrue(File.Exists(manifestPath), "The M01 capture manifest must accompany the review images.");
         string manifest = File.ReadAllText(manifestPath);
-        StringAssert.Contains(M01VisualMapPrototypeBuilder.GeneratorVersion, manifest);
-        StringAssert.Contains(M01VisualMapPrototypeBuilder.GenerationSeed.ToString(), manifest);
+        StringAssert.Contains(M01VisualMapPrototypeEditorUtility.GeneratorVersion, manifest);
+        StringAssert.Contains(M01VisualMapPrototypeEditorUtility.GenerationSeed.ToString(), manifest);
         StringAssert.Contains("Semantic fingerprint:", manifest);
     }
 

@@ -8,11 +8,45 @@ namespace Game.Runtime
     using CityChainAxis = RuntimeCityLayoutUtilitySystemHelper.CityChainAxis;
     using CityLayoutData = RuntimeCityLayoutUtilitySystemHelper.CityLayoutData;
 
+    internal readonly struct RuntimeCityRoadTerminalPolicy
+    {
+        public RuntimeCityRoadTerminalPolicy(
+            int northRadialTrim,
+            int eastRadialTrim,
+            int southRadialTrim,
+            int westRadialTrim,
+            int maximumOuterStreetLength)
+        {
+            NorthRadialTrim = Mathf.Max(0, northRadialTrim);
+            EastRadialTrim = Mathf.Max(0, eastRadialTrim);
+            SouthRadialTrim = Mathf.Max(0, southRadialTrim);
+            WestRadialTrim = Mathf.Max(0, westRadialTrim);
+            MaximumOuterStreetLength = Mathf.Max(0, maximumOuterStreetLength);
+        }
+
+        public int NorthRadialTrim { get; }
+        public int EastRadialTrim { get; }
+        public int SouthRadialTrim { get; }
+        public int WestRadialTrim { get; }
+        public int MaximumOuterStreetLength { get; }
+        public bool IsEnabled =>
+            NorthRadialTrim > 0 ||
+            EastRadialTrim > 0 ||
+            SouthRadialTrim > 0 ||
+            WestRadialTrim > 0 ||
+            MaximumOuterStreetLength > 0;
+    }
+
     internal sealed class RuntimeCityRoadLayoutUtilitySystemHelper
     {
         private readonly RuntimeCityRoadLayoutState _state = new();
 
         public RuntimeCityRoadLayoutState State => _state;
+
+        public void ConfigureTerminalPolicy(RuntimeCityRoadTerminalPolicy policy)
+        {
+            _state.ConfigureTerminalPolicy(policy);
+        }
 
         public List<List<Vector2Int>> BuildTownRoadStrokes(
             Vector2Int center,
@@ -73,6 +107,12 @@ namespace Game.Runtime
         private static readonly Vector2Int South = new(0, -1);
         private static readonly Vector2Int West = new(-1, 0);
         private static readonly Vector2Int[] CardinalDirections = { North, East, South, West };
+        private RuntimeCityRoadTerminalPolicy _terminalPolicy;
+
+        public void ConfigureTerminalPolicy(RuntimeCityRoadTerminalPolicy policy)
+        {
+            _terminalPolicy = policy;
+        }
 
         public List<List<Vector2Int>> BuildTownRoadStrokes(
             Vector2Int center,
@@ -88,10 +128,19 @@ namespace Game.Runtime
             AddStroke(strokes, new Vector2Int(center.x + ringRadius, center.y + ringRadius), new Vector2Int(center.x - ringRadius, center.y + ringRadius));
             AddStroke(strokes, new Vector2Int(center.x - ringRadius, center.y + ringRadius), new Vector2Int(center.x - ringRadius, center.y - ringRadius));
 
-            int northLength = townRadius + rng.NextInt(0, 2);
-            int southLength = townRadius - 1 + rng.NextInt(0, 3);
-            int eastLength = townRadius + rng.NextInt(1, 3);
-            int westLength = townRadius - 1 + rng.NextInt(0, 2);
+            int minimumRadialLength = ringRadius + 2;
+            int northLength = Mathf.Max(
+                minimumRadialLength,
+                townRadius + rng.NextInt(0, 2) - _terminalPolicy.NorthRadialTrim);
+            int southLength = Mathf.Max(
+                minimumRadialLength,
+                townRadius - 1 + rng.NextInt(0, 3) - _terminalPolicy.SouthRadialTrim);
+            int eastLength = Mathf.Max(
+                minimumRadialLength,
+                townRadius + rng.NextInt(1, 3) - _terminalPolicy.EastRadialTrim);
+            int westLength = Mathf.Max(
+                minimumRadialLength,
+                townRadius - 1 + rng.NextInt(0, 2) - _terminalPolicy.WestRadialTrim);
 
             AddStroke(strokes, new Vector2Int(center.x, center.y + ringRadius), new Vector2Int(center.x, center.y + northLength));
             AddStroke(strokes, new Vector2Int(center.x, center.y - ringRadius), new Vector2Int(center.x, center.y - southLength));
@@ -104,12 +153,24 @@ namespace Game.Runtime
             AddStroke(strokes, new Vector2Int(center.x - ringRadius - 2, center.y - ringRadius), new Vector2Int(center.x - ringRadius - 2, center.y + ringRadius + 1));
             AddStroke(strokes, new Vector2Int(center.x + ringRadius + 2, center.y - ringRadius - 1), new Vector2Int(center.x + ringRadius + 2, center.y + ringRadius + 2));
 
-            AddStroke(strokes, new Vector2Int(center.x, center.y + northLength - 1), new Vector2Int(center.x + 2 + rng.NextInt(2, 5), center.y + northLength - 1));
-            AddStroke(strokes, new Vector2Int(center.x, center.y - southLength + 1), new Vector2Int(center.x - 1 - rng.NextInt(2, 5), center.y - southLength + 1));
-            AddStroke(strokes, new Vector2Int(center.x + eastLength - 1, center.y), new Vector2Int(center.x + eastLength - 1, center.y + 1 + rng.NextInt(2, 5)));
-            AddStroke(strokes, new Vector2Int(center.x - westLength + 1, center.y), new Vector2Int(center.x - westLength + 1, center.y - 2 - rng.NextInt(2, 5)));
+            int northOuterLength = LimitOuterStreetLength(2 + rng.NextInt(2, 5));
+            int southOuterLength = LimitOuterStreetLength(1 + rng.NextInt(2, 5));
+            int eastOuterLength = LimitOuterStreetLength(1 + rng.NextInt(2, 5));
+            int westOuterLength = LimitOuterStreetLength(2 + rng.NextInt(2, 5));
+            AddStroke(strokes, new Vector2Int(center.x, center.y + northLength - 1), new Vector2Int(center.x + northOuterLength, center.y + northLength - 1));
+            AddStroke(strokes, new Vector2Int(center.x, center.y - southLength + 1), new Vector2Int(center.x - southOuterLength, center.y - southLength + 1));
+            AddStroke(strokes, new Vector2Int(center.x + eastLength - 1, center.y), new Vector2Int(center.x + eastLength - 1, center.y + eastOuterLength));
+            AddStroke(strokes, new Vector2Int(center.x - westLength + 1, center.y), new Vector2Int(center.x - westLength + 1, center.y - westOuterLength));
 
             return strokes;
+        }
+
+        private int LimitOuterStreetLength(int requestedLength)
+        {
+            if (!_terminalPolicy.IsEnabled || _terminalPolicy.MaximumOuterStreetLength <= 0)
+                return requestedLength;
+
+            return Mathf.Min(requestedLength, _terminalPolicy.MaximumOuterStreetLength);
         }
 
         public List<Vector2Int> BuildStraightRoadPath(Vector2Int start, Vector2Int end)

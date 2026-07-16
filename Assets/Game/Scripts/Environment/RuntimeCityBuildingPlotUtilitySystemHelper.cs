@@ -16,6 +16,7 @@ namespace Game.Runtime
         {
             public Vector2Int PlotCell;
             public int DistanceFromCenter;
+            public Vector2Int RoadFacingDirection;
         }
 
         public List<PlotCandidate> CollectRoadsidePlots(
@@ -53,6 +54,7 @@ namespace Game.Runtime
         {
             return _state.GetRandomScatterPlotCell(centerRoadCell, maxDistance, ref rng);
         }
+
 
         public bool HasPlotSpacing(Vector2Int candidate, List<Vector2Int> usedPlots, int minSpacing)
         {
@@ -103,7 +105,8 @@ namespace Game.Runtime
                     results.Add(new PlotCandidate
                     {
                         PlotCell = plotCell,
-                        DistanceFromCenter = distance
+                        DistanceFromCenter = distance,
+                        RoadFacingDirection = -CardinalDirections[i]
                     });
                 }
             }
@@ -163,7 +166,8 @@ namespace Game.Runtime
                     corridorPlots.Add(new PlotCandidate
                     {
                         PlotCell = leftPlot,
-                        DistanceFromCenter = corridorLength - step
+                        DistanceFromCenter = corridorLength - step,
+                        RoadFacingDirection = -left
                     });
                 }
 
@@ -172,7 +176,8 @@ namespace Game.Runtime
                     corridorPlots.Add(new PlotCandidate
                     {
                         PlotCell = rightPlot,
-                        DistanceFromCenter = corridorLength - step
+                        DistanceFromCenter = corridorLength - step,
+                        RoadFacingDirection = -right
                     });
                 }
             }
@@ -213,6 +218,43 @@ namespace Game.Runtime
             return new Vector2Int(
                 centerRoadCell.x + Mathf.RoundToInt(Mathf.Cos(angle) * radius),
                 centerRoadCell.y + Mathf.RoundToInt(Mathf.Sin(angle) * radius));
+        }
+
+        internal static Vector2Int ApplyDirectionalBias(
+            Vector2Int plotCell,
+            Vector2Int centerRoadCell,
+            Vector2Int priorityDirection)
+        {
+            Vector2Int result = plotCell;
+            if (priorityDirection.x != 0)
+            {
+                result = ReflectIntoHalfPlane(
+                    result,
+                    centerRoadCell,
+                    new Vector2Int(Mathf.Clamp(priorityDirection.x, -1, 1), 0));
+            }
+
+            if (priorityDirection.y != 0)
+            {
+                result = ReflectIntoHalfPlane(
+                    result,
+                    centerRoadCell,
+                    new Vector2Int(0, Mathf.Clamp(priorityDirection.y, -1, 1)));
+            }
+
+            return result;
+        }
+
+        private static Vector2Int ReflectIntoHalfPlane(
+            Vector2Int plotCell,
+            Vector2Int centerRoadCell,
+            Vector2Int priorityDirection)
+        {
+            Vector2Int offset = plotCell - centerRoadCell;
+            int projection = offset.x * priorityDirection.x + offset.y * priorityDirection.y;
+            return projection >= 0
+                ? plotCell
+                : centerRoadCell + offset - priorityDirection * (projection * 2);
         }
 
         public bool HasPlotSpacing(Vector2Int candidate, List<Vector2Int> usedPlots, int minSpacing)

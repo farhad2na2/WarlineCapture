@@ -89,6 +89,7 @@ namespace Game.Runtime
         private readonly RuntimeCityStartupSystemHelper.TryGetGridDataDelegate _tryGetGridData;
         private RuntimeCityBuildingSpawnContextCompositionSystemHelper.Context _runtimeCityBuildingSpawnContext;
         private bool _configured;
+        private bool _visualPrototypeMode;
 
         private RuntimeCityConfigCompositionSystemHelper.Snapshot cityConfig => RuntimeCityConfigCompositionSystemHelper?.Current ?? _fallbackCityConfig;
         private bool spawnOnStart => cityConfig.SpawnOnStart;
@@ -102,6 +103,11 @@ namespace Game.Runtime
         public bool SpawnOnStartEnabled => spawnOnStart;
         public bool HasSpawned => RuntimeCityLifecycleState.HasSpawned(cityCount);
         public bool IsGenerating => RuntimeCityLifecycleState.IsGenerating;
+        public RuntimeCityGenerationProgress GenerationProgress => RuntimeCityGenerationState.Progress;
+        public int VisualBuildingCount => RuntimeCitySpawnBridgeState.VisualSpawnCount;
+        public int PlannedBuildingCount => RuntimeCitySpawnBridgeState.PlannedBuildingCount;
+        public int MaxObservedConsecutivePrefabSelections =>
+            RuntimeCityPrefabSelectionState.MaxObservedConsecutiveSelections;
         public bool RequiresUpdate => _configured &&
                                       (!HasSpawned ||
                                        IsGenerating ||
@@ -138,12 +144,62 @@ namespace Game.Runtime
         {
             _configured = true;
             _config = configAsset;
+            RuntimeCityPrefabSelectionState.ConfigureConsecutiveSelectionLimit(0);
+            RuntimeCityBulkPlotPlanState.ConfigureDistrictIntent(false);
+            RuntimeCityRuralBuildingSpawnState.ConfigureMaximumAxisDistanceInset(0);
+            RuntimeCityDecorationBuildingSpawnState.ConfigureMinimumFreeScatterCount(0);
+            RuntimeCityFreeScatterDecorationState.ConfigureDirectionalBias(false, Vector2Int.zero);
+            RuntimeCityFreeScatterDecorationState.ConfigureMaximumDistanceOffset(3);
+            RuntimeCityFreeScatterDecorationState.ConfigureMaximumAxisDistanceInset(0);
+            RuntimeCityRoadLayoutState.ConfigureTerminalPolicy(default);
             RuntimeCityRoadBuildBridgeState.Configure(roadRuntimeGenerationHelper, roadRuntimeGenerationContext);
             RuntimeCitySpawnBridgeState.Configure(buildingRuntimeCitySpawnSystem, buildingRuntimeCitySpawnContext);
             RuntimeCityVisualPresentationSystemHelper?.SetRuntimeRoot(runtimeRoot);
             RuntimeCityMinimapEventUiSystemHelper?.Configure(mainMenuPlayUi);
             ApplyConfigIfAvailable();
             PublishReadModel();
+        }
+
+        internal bool ConfigureVisualPrototype(
+            RuntimeCitySpawnerSystemConfig configAsset,
+            RoadRuntimeGenerationCompositionSystemHelper roadRuntimeGenerationHelper,
+            RoadRuntimeGenerationCompositionSystemHelper.Context roadRuntimeGenerationContext,
+            Transform runtimeRoot,
+            GridConfig grid,
+            int roadCellSizeInGridCells,
+            int frameCount,
+            bool createBuildingVisuals = true,
+            RuntimeCityRoadTerminalPolicy roadTerminalPolicy = default)
+        {
+            Configure(
+                configAsset,
+                roadRuntimeGenerationHelper,
+                roadRuntimeGenerationContext,
+                null,
+                default,
+                runtimeRoot,
+                null);
+            _visualPrototypeMode = true;
+            RuntimeCityRoadLayoutState.ConfigureTerminalPolicy(
+                createBuildingVisuals ? roadTerminalPolicy : default);
+            RuntimeCityPrefabSelectionState.ConfigureConsecutiveSelectionLimit(createBuildingVisuals ? 2 : 0);
+            RuntimeCityBulkPlotPlanState.ConfigureDistrictIntent(createBuildingVisuals);
+            RuntimeCityRuralBuildingSpawnState.ConfigureMaximumAxisDistanceInset(createBuildingVisuals ? 1 : 0);
+            RuntimeCityDecorationBuildingSpawnState.ConfigureMinimumFreeScatterCount(
+                createBuildingVisuals ? 4 : 0);
+            RuntimeCityFreeScatterDecorationState.ConfigureDirectionalBias(
+                createBuildingVisuals,
+                new Vector2Int(-1, -1));
+            RuntimeCityFreeScatterDecorationState.ConfigureMaximumDistanceOffset(createBuildingVisuals ? 2 : 3);
+            RuntimeCityFreeScatterDecorationState.ConfigureMaximumAxisDistanceInset(createBuildingVisuals ? 2 : 0);
+            if (createBuildingVisuals)
+                RuntimeCitySpawnBridgeState.ConfigureVisualOnly(RuntimeCityVisualPresentationSystemHelper, grid);
+            else
+                RuntimeCitySpawnBridgeState.ConfigurePlanOnly();
+            ApplyConfigIfAvailable();
+            GenerateCity(grid, roadCellSizeInGridCells, frameCount);
+            PublishReadModel();
+            return IsGenerating;
         }
 
         public void ConfigureForValidation(RuntimeCitySpawnerSystemConfig configAsset)
@@ -156,7 +212,8 @@ namespace Game.Runtime
             ApplyConfigIfAvailable();
             RuntimeCityLifecycleState.Tick(CreateLifecycleContext(frameCount));
             RuntimeCityMinimapEventUiSystemHelper?.Flush();
-            TryAutoSpawn(frameCount);
+            if (!_visualPrototypeMode)
+                TryAutoSpawn(frameCount);
             PublishReadModel();
         }
 
@@ -165,12 +222,21 @@ namespace Game.Runtime
             if (!_configured)
                 return;
 
+            RuntimeCityGenerationState.Cancel();
             (_runtimeCityLifecycleHelper?.State ?? _fallbackRuntimeCityLifecycle).CancelGeneration();
             _runtimeCityVisualPresentationSystemHelper?.Dispose();
             (_runtimeCitySpawnBridgeHelper?.State ?? _fallbackRuntimeCitySpawnBridge).Clear();
             (_runtimeCityRoadBuildBridgeHelper?.State ?? _fallbackRuntimeCityRoadBuildBridge).Clear();
             _runtimeCityReadinessQueryHelper?.Clear();
             _runtimeCityMinimapEventHelper?.Clear();
+            _visualPrototypeMode = false;
+            RuntimeCityRoadLayoutState.ConfigureTerminalPolicy(default);
+            RuntimeCityBulkPlotPlanState.ConfigureDistrictIntent(false);
+            RuntimeCityRuralBuildingSpawnState.ConfigureMaximumAxisDistanceInset(0);
+            RuntimeCityDecorationBuildingSpawnState.ConfigureMinimumFreeScatterCount(0);
+            RuntimeCityFreeScatterDecorationState.ConfigureDirectionalBias(false, Vector2Int.zero);
+            RuntimeCityFreeScatterDecorationState.ConfigureMaximumDistanceOffset(3);
+            RuntimeCityFreeScatterDecorationState.ConfigureMaximumAxisDistanceInset(0);
             _configured = false;
         }
 
@@ -242,7 +308,11 @@ namespace Game.Runtime
 
         private void PublishReadModel()
         {
-            RuntimeCityReadModelCompositionSystemHelper?.Publish(SpawnOnStartEnabled, HasSpawned, IsGenerating);
+            RuntimeCityReadModelCompositionSystemHelper?.Publish(
+                SpawnOnStartEnabled,
+                HasSpawned,
+                IsGenerating,
+                RuntimeCityGenerationState.Progress);
         }
 
         private void GenerateCity(GridConfig grid, int roadCellSizeInGridCells, int frameCount)

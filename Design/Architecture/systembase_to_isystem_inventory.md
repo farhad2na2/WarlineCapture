@@ -6,18 +6,18 @@ Source root: `Assets/Game/Scripts`.
 
 ## Summary
 
-- Total ECS system declarations: `200`.
-- Production `SystemBase`/legacy declarations: `24`.
+- Total ECS system declarations: `201`.
+- Production `SystemBase`/legacy declarations: `25`.
 - Production `ISystem` declarations: `176`.
-- Current production `ISystem` share: `88.0%`.
-- Production non-UI rows: `177`.
+- Current production `ISystem` share: `87.6%`.
+- Production non-UI rows: `178`.
 - Production UI rows: `23`.
 - Editor rows: `0`.
 - Test rows: `0`.
-- Scopes: `ProductionNonUI` 177, `ProductionUI` 23.
-- Owner lanes: `AgentB` 17, `AgentC` 12, `AgentD` 12, `AgentE` 10, `AgentF` 37, `Integration` 112.
-- Dispositions: `Converted` 153, `ManagedPresentationSystemBaseException` 24, `UIOutOfScope` 23.
-- Statuses: `Converted` 153, `Deferred` 23, `ManagedException` 24.
+- Scopes: `ProductionNonUI` 178, `ProductionUI` 23.
+- Owner lanes: `AgentB` 17, `AgentC` 12, `AgentD` 12, `AgentE` 11, `AgentF` 37, `Integration` 112.
+- Dispositions: `Converted` 153, `ManagedPresentationSystemBaseException` 25, `UIOutOfScope` 23.
+- Statuses: `Converted` 153, `Deferred` 23, `ManagedException` 25.
 
 ## Inventory
 
@@ -65,6 +65,7 @@ Source root: `Assets/Game/Scripts`.
 | `P7-0136` | `BuildingStartupConfigProjectionSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/BuildingStartupConfigProjectionSystem.cs` | 6 | `ProductionNonUI` | `AgentD` | `Converted` | None | Medium: BuildingPlacement | OnCreate (method), OnUpdate (method), ResolveInitialDollars (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `BuildingStartupConfigProjectionSystem : ISystem` | Architecture guard + compile + building focused validation | `Converted` |
 | `P7-0138` | `BuildingTargetMoveOrderSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/BuildingTargetMoveOrderSystem.cs` | 8 | `ProductionNonUI` | `AgentD` | `Converted` | None | Medium: Command, MoveOrder, Path | EnqueueMoveOrderToBuilding (method), OnCreate (method), OnUpdate (method), ProcessPendingRequests (method), TryRequestMoveOrderToBuilding (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `BuildingTargetMoveOrderSystem : ISystem` | Architecture guard + compile + building focused validation | `Converted` |
 | `P7-0143` | `DayNightSystem` | `class` | `SystemBase` | `Assets/Game/Scripts/Environment/DayNightSystem.cs` | 9 | `ProductionNonUI` | `AgentE` | `ManagedPresentationSystemBaseException` | ScriptableObject, Object.Instantiate, Object.Destroy, Material, Light | Low: managed boundary only | Dispose (method), Init (method), ReapplyVisualStateAfterQualityChange (method), SetQualityShadowStrengthCap (method), SetRuntimeVisualsEnabled (method), Update (method) | Document concrete Unity-object ticking blocker and ensure no gameplay policy remains here. | Counted managed presentation/config/camera `SystemBase` exception. | Architecture guard + compile + road/city/citizen focused validation | `ManagedException` |
+| `P7-0424` | `RuntimeCityRAndDMapSystem` | `class` | `SystemBase` | `Assets/Game/Scripts/Environment/RuntimeCityRAndDMapSystem.cs` | 6 | `ProductionNonUI` | `AgentE` | `ManagedPresentationSystemBaseException` | Material | Low: managed boundary only | Bind (method), RequestClear (method), RequestGeneration (method), RequestRestart (method), Unbind (method) | Document concrete Unity-object ticking blocker and ensure no gameplay policy remains here. | Counted managed presentation/config/camera `SystemBase` exception. | Architecture guard + compile + road/city/citizen focused validation | `ManagedException` |
 | `P7-0188` | `CitizenMovementCommandSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/CitizenMovementCommandSystem.cs` | 8 | `ProductionNonUI` | `AgentE` | `Converted` | None | Medium: Command, MoveOrder | OnCreate (method), OnUpdate (method), ProcessPendingRequests (method), TryEnqueueMoveCommand (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `CitizenMovementCommandSystem : ISystem` | Architecture guard + compile + road/city/citizen focused validation | `Converted` |
 | `P7-0199` | `CitizenPrefabSelectionSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/CitizenPrefabSelectionSystem.cs` | 7 | `ProductionNonUI` | `AgentE` | `Converted` | None | Medium: Selection, Spawn | Init (method), OnCreate (method), OnUpdate (method), Reset (method), State (property), TryGetCitizenPrefabSourceKey (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `CitizenPrefabSelectionSystem : ISystem` | Architecture guard + compile + road/city/citizen focused validation | `Converted` |
 | `P7-0200` | `CitizenPrefabSystem` | `struct` | `ISystem` | `Assets/Game/Scripts/Systems/CitizenPrefabSystem.cs` | 7 | `ProductionNonUI` | `AgentE` | `Converted` | None | Medium: Spawn | Context (property), OnCreate (method), OnUpdate (method), TryGetEntityManagerDelegate (method), TryResolveConfiguredUnitPrefabEntity (method) | Keep as `ISystem`; verify no managed blockers are introduced. | `CitizenPrefabSystem : ISystem` | Architecture guard + compile + road/city/citizen focused validation | `Converted` |
@@ -290,11 +291,12 @@ Rows: `12`.
 
 ### AgentE
 
-Rows: `10`.
+Rows: `11`.
 
 | Id | Type | Base | Disposition | Status | Path | First safe slice | Validation gate |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | `P7-0143` | `DayNightSystem` | `SystemBase` | `ManagedPresentationSystemBaseException` | `ManagedException` | `Assets/Game/Scripts/Environment/DayNightSystem.cs` | Document concrete Unity-object ticking blocker and ensure no gameplay policy remains here. | Architecture guard + compile + road/city/citizen focused validation |
+| `P7-0424` | `RuntimeCityRAndDMapSystem` | `SystemBase` | `ManagedPresentationSystemBaseException` | `ManagedException` | `Assets/Game/Scripts/Environment/RuntimeCityRAndDMapSystem.cs` | Document concrete Unity-object ticking blocker and ensure no gameplay policy remains here. | Architecture guard + compile + road/city/citizen focused validation |
 | `P7-0188` | `CitizenMovementCommandSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/CitizenMovementCommandSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile + road/city/citizen focused validation |
 | `P7-0199` | `CitizenPrefabSelectionSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/CitizenPrefabSelectionSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile + road/city/citizen focused validation |
 | `P7-0200` | `CitizenPrefabSystem` | `ISystem` | `Converted` | `Converted` | `Assets/Game/Scripts/Systems/CitizenPrefabSystem.cs` | Keep as `ISystem`; verify no managed blockers are introduced. | Architecture guard + compile + road/city/citizen focused validation |
@@ -633,6 +635,7 @@ Rows: `65`.
 | `P7-0136` | `internal` | `Game.Runtime` | [UpdateInGroup(typeof(SimulationSystemGroup))] | OnCreate, OnUpdate | OnCreate (method), OnUpdate (method), ResolveInitialDollars (method) | None | None | `Assets/Game/Scripts/Systems/BuildingStartupConfigProjectionSystem.cs\|BuildingStartupConfigProjectionSystem` |
 | `P7-0138` | `public` | `Game.Runtime` | [UpdateInGroup(typeof(SimulationSystemGroup))] | OnCreate, OnUpdate, Update | EnqueueMoveOrderToBuilding (method), OnCreate (method), OnUpdate (method), ProcessPendingRequests (method), TryRequestMoveOrderToBuilding (method) | EntityQuery, EntityManager | native container, query/lookup/cache | `Assets/Game/Scripts/Systems/BuildingTargetMoveOrderSystem.cs\|BuildingTargetMoveOrderSystem` |
 | `P7-0143` | `public` | `Game.Runtime` | None | OnCreate, OnUpdate, OnDestroy, Update | Dispose (method), Init (method), ReapplyVisualStateAfterQualityChange (method), SetQualityShadowStrengthCap (method), SetRuntimeVisualsEnabled (method), Update (method) | None | prefab/reference, presentation view, config asset | `Assets/Game/Scripts/Environment/DayNightSystem.cs\|DayNightSystem` |
+| `P7-0424` | `public` | `Game.Runtime` | [UpdateInGroup(typeof(PresentationSystemGroup))] | OnCreate, OnUpdate, OnDestroy | Bind (method), RequestClear (method), RequestGeneration (method), RequestRestart (method), Unbind (method) | None | presentation view | `Assets/Game/Scripts/Environment/RuntimeCityRAndDMapSystem.cs\|RuntimeCityRAndDMapSystem` |
 | `P7-0188` | `internal` | `Game.Runtime` | [UpdateInGroup(typeof(SimulationSystemGroup))] | OnCreate, OnUpdate | OnCreate (method), OnUpdate (method), ProcessPendingRequests (method), TryEnqueueMoveCommand (method) | EntityQuery, EntityManager | native container, query/lookup/cache | `Assets/Game/Scripts/Systems/CitizenMovementCommandSystem.cs\|CitizenMovementCommandSystem` |
 | `P7-0199` | `internal` | `Game.Runtime` | [UpdateInGroup(typeof(SimulationSystemGroup))] | OnCreate, OnUpdate | Init (method), OnCreate (method), OnUpdate (method), Reset (method), State (property), TryGetCitizenPrefabSourceKey (method) | None | None | `Assets/Game/Scripts/Systems/CitizenPrefabSelectionSystem.cs\|CitizenPrefabSelectionSystem` |
 | `P7-0200` | `internal` | `Game.Runtime` | [UpdateInGroup(typeof(SimulationSystemGroup))] | OnCreate, OnUpdate | Context (property), OnCreate (method), OnUpdate (method), TryGetEntityManagerDelegate (method), TryResolveConfiguredUnitPrefabEntity (method) | EntityManager | None | `Assets/Game/Scripts/Systems/CitizenPrefabSystem.cs\|CitizenPrefabSystem` |

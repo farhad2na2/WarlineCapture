@@ -6,7 +6,7 @@ Artifact: `am010-selected-owner-responsibility-maps-v1`
 
 ## Evidence Binding
 
-- Authoritative JSON SHA-256: `5e40a2565cc1c65192c12196f78738fd919a6865413c11236e21b3d9e9816a48`
+- Authoritative JSON SHA-256: `6fbcd47268df386f479703a9f95a06cf7437128e6e075fbc56216d9f8971e59c`
 - Source baseline: `ab955a7721fd0616b627daab508632d023e047d8` / tree `a40d19b327a33bc2aca8e126dcdc61616ccee458` on `main`
 - AM-009 ranking: `Design/AgentReports/ArchitectureMaturity/owner_risk_ranking.json` / SHA-256 `ec381d90aa68ca4adc4387de344085f9ba0c0aabe7a1afb190155e381c803847`
 - Freshness-bound evidence files: `15`
@@ -173,7 +173,7 @@ Artifact: `am010-selected-owner-responsibility-maps-v1`
   - Authority boundary: The utility owns no state and returns only normalized kind, capacity, or occupancy values from explicit unmanaged inputs.
   - Proposed update order: Existing job and main-thread revalidation call sites retain their current order and invoke the same stateless rules.
   - Cleanup authority: The utility owns no containers, entities, requests, or lifecycle cleanup.
-  - Completion evidence: `Design/AgentReports/ArchitectureMaturity/transport_capacity_rules_extraction_evidence.json` (`55c1d3e65be57f22cab031c955a8874257c53c68edc0ccf807577eb7496ee2ad`)
+  - Completion evidence: `Design/AgentReports/ArchitectureMaturity/transport_capacity_rules_extraction_evidence.json` (`01202829bcfdae4bcd9f56e70c2f989430842b95965491222836daf1b960b0d2`)
 
 ## Extraction Gate Status
 

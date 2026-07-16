@@ -21,12 +21,12 @@
     {
       "path": "Assets/Game/Scripts/Systems/UnitTransportBoardingCapacityRules.cs",
       "evidencePath": "Design/AgentReports/ArchitectureMaturity/transport_capacity_rules_extraction_evidence.json",
-      "evidenceSha256": "55c1d3e65be57f22cab031c955a8874257c53c68edc0ccf807577eb7496ee2ad"
+      "evidenceSha256": "01202829bcfdae4bcd9f56e70c2f989430842b95965491222836daf1b960b0d2"
     },
     {
       "path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs",
       "evidencePath": "Design/AgentReports/ArchitectureMaturity/transport_capacity_rules_extraction_evidence.json",
-      "evidenceSha256": "55c1d3e65be57f22cab031c955a8874257c53c68edc0ccf807577eb7496ee2ad"
+      "evidenceSha256": "01202829bcfdae4bcd9f56e70c2f989430842b95965491222836daf1b960b0d2"
     }
   ],
   "evidenceFiles": [
@@ -394,7 +394,7 @@
           "statement": "AM-012 extracted only duplicated passenger-kind, capacity, and occupancy-classification rules into a stateless Burst-compatible utility with explicit inputs; query ownership, ordering, revalidation, ECB playback, diagnostics, and passenger mutation remain in the boarding system.",
           "status": "completed",
           "evidencePath": "Design/AgentReports/ArchitectureMaturity/transport_capacity_rules_extraction_evidence.json",
-          "evidenceSha256": "55c1d3e65be57f22cab031c955a8874257c53c68edc0ccf807577eb7496ee2ad",
+          "evidenceSha256": "01202829bcfdae4bcd9f56e70c2f989430842b95965491222836daf1b960b0d2",
           "proposedOutputPaths": ["Assets/Game/Scripts/Systems/UnitTransportBoardingCapacityRules.cs"],
           "requiredExpandedAllowedPaths": ["Assets/Game/Scripts/Systems/UnitTransportBoardingCapacityRules.cs"],
           "authorityBoundary": "The utility owns no state and returns only normalized kind, capacity, or occupancy values from explicit unmanaged inputs.",

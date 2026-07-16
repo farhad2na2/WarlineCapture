@@ -109,12 +109,12 @@ Release-only categories are reported separately and never averaged into a premat
 
 | Field | Status |
 |---|---|
-| Checklist complete | `11 / 86` (`12.8%`) |
-| Core Architecture Lane | `11 / 68` (`16.2%`); active |
+| Checklist complete | `12 / 86` (`14.0%`) |
+| Core Architecture Lane | `12 / 68` (`17.6%`); active |
 | Release Certification Lane | `0 / 18` (`0.0%`); deferred |
 | Program state | Core Architecture Lane active; release work inactive |
 | Current phase | Phase 1 - Responsibility And Decomposition Hardening |
-| Current task | `AM-012` ready, not yet claimed |
+| Current task | `AM-013` ready, not yet claimed |
 | Core entry baseline | Phase 0 accepted by `AM-001` through `AM-008`; exact-identity assembly and bounded Editor Match evidence are current at `9a0aa14252e6559680328e520d26c16bfc7b444e`; the dashboard required gate is accepted; the entry rating and owned deltas are published in `entry_baseline_report.md` |
 | Release entry review | Deferred until `pre_release_performance_certification_backlog.md` activates |
 | Architecture rating | Evidence-backed Phase 0 entry rating `8.5 / 10`; planning baseline only, not a `9.5` claim |
@@ -212,7 +212,7 @@ Reduce change risk in oversized systems without replacing the architecture or ch
 - [x] `AM-009` Rank the largest and most coupled production files by lines, dependencies, state ownership, update-time cost, and change frequency; do not rank by lines alone.
 - [x] `AM-010` Write a responsibility map for each selected owner, including inputs, outputs, state authority, update order, side effects, tests, and allowed dependencies.
 - [x] `AM-011` Add missing characterization tests before extracting behavior from any selected owner.
-- [ ] `AM-012` Extract one capability or ECS phase at a time behind existing contracts, preserving system order and avoiding a new coordinator-shaped helper.
+- [x] `AM-012` Extract one capability or ECS phase at a time behind existing contracts, preserving system order and avoiding a new coordinator-shaped helper.
 - [ ] `AM-013` Consolidate duplicated query-cache, command-queue, fixed-capacity scratch, and projection-cache mechanics only where one narrow shared contract removes real duplication.
 - [ ] `AM-014` Add update-order and behavior-equivalence tests for every decomposition that crosses a system or assembly boundary.
 - [ ] `AM-015` Complete measured decomposition of the highest-risk remaining UI/presentation helper after its characterization coverage is green.
@@ -591,3 +591,17 @@ The implementing agent works directly on `main`, owns the bounded substantive an
 - Independent review: the first review rejected a multiple-grid test that bypassed the production system, an incorrect full-runner count, and an unasserted stale-entry claim. The final implementation invokes the unmanaged system directly, enforces the exact `88` count in code and evidence, and asserts retained null/destroyed entries; final rereview returned `PASS`.
 - Exclusions preserved: operation-map, FirstLaunch, audio, UI visual-lock, gameplay production behavior, scenes, prefabs, packages, and `ProjectSettings` were not edited by AM-011.
 - Next task: `AM-012` extracts one bounded capability at a time behind existing contracts, starting with the stateless transport passenger-kind/capacity/occupancy rules unless fresh evidence invalidates that lower-risk extraction candidate.
+
+### 2026-07-16 - AM-012 - Transport boarding capacity rules extraction
+
+- Workflow path: direct commits to `main`; no branch, worktree, or PR workflow.
+- Accepted implementation and evidence commit: `1b549d0811cd081a0a586bc3cf9b33344d1b921d`, tree `bca11356c657e877cdd5e19f7eff54d57607d1b6`; source baseline after the disjoint operation-map integration: `50e574c87f09730148982d5dacb9269005e7d626`, tree `48c755aec9847fe762a25975c64fc69a5b3c2c48`.
+- Result: duplicated passenger-kind normalization, capacity resolution, and occupancy classification moved from the selected boarding owner into `UnitTransportBoardingCapacityRules`. The selected owner dropped the duplicate rule bodies while retaining all ECS and gameplay authority.
+- Boundary: the rules type is stateless, accepts explicit unmanaged values, and owns no World, query, lookup, buffer iteration, container, request, diagnostics, scheduling, command playback, mutation, or cleanup. `UnitTransportBoardingSystem` remains an unmanaged `ISystem`; its Burst job and main-thread stale-decision revalidation call the same rules at their original update positions.
+- Behavior proof: six direct rules tests, six AM-011 transport characterizations, the complete `88 / 88` transport regression batch, and the broad architecture/naming contract passed with zero compiler errors. Known duplicate-entry and multiple-grid limitations remain characterized and unchanged.
+- Performance: fresh focused transport evidence used 16 warmup and 64 measured scenarios, boarded and disembarked 512 passengers, averaged `1.400 ms` total with `1.504 ms` P95, and allocated zero current-thread bytes. This is below the AM-011 `2.259 ms` average / `2.541 ms` P95 baseline and its accepted 25% non-regression margin.
+- Evidence: `Design/AgentReports/ArchitectureMaturity/transport_capacity_rules_extraction_evidence.json`, `am012_transport_boarding_performance.json`, direct rule tests, and the fail-closed Python validator bind exact production/test hashes, exact two-file production scope, historical AM-011 identity, current responsibility-map authorization, Unity pass counts, naming constraints, and performance comparison.
+- Validation: 18 focused responsibility/characterization/extraction checks and 54 integrated ownership/lifecycle/ranking/dashboard/responsibility/characterization/extraction checks passed; Python compilation, JSON parsing, deterministic Markdown regeneration, exact diff scope, post-rebase Unity compilation, and `git diff --check` passed.
+- Independent review: the initial review found a production-scope proof gap and one stale landed-state reference. Exact pre/post-acceptance production-diff enforcement and the corrected reference resolved both; final rereview returned `PASS`.
+- Exclusions preserved: operation-map, FirstLaunch, audio, UI visual-lock, scenes, prefabs, packages, and `ProjectSettings` were not edited by AM-012. The disjoint operation-map commit was rebased intact and became the extraction baseline.
+- Next task: `AM-013` audits duplicated query-cache, command-queue, fixed-capacity scratch, and projection-cache mechanics and consolidates only a narrow contract with measured duplication and no new broad owner.

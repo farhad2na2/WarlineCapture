@@ -6,6 +6,10 @@
     "commit": "50e574c87f09730148982d5dacb9269005e7d626",
     "tree": "48c755aec9847fe762a25975c64fc69a5b3c2c48"
   },
+  "acceptedEvidence": {
+    "commit": "1b549d0811cd081a0a586bc3cf9b33344d1b921d",
+    "tree": "bca11356c657e877cdd5e19f7eff54d57607d1b6"
+  },
   "productionChangePaths": [
     "Assets/Game/Scripts/Systems/UnitTransportBoardingCapacityRules.cs",
     "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs"

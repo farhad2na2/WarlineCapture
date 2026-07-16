@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Security.Cryptography;
 using Game.Authoring;
 using Game.Components;
+using Game.Composition;
 using Game.Configs;
 using Unity.Collections;
 using Unity.Entities;
@@ -38,9 +39,9 @@ namespace Game.Editor
         private const string GeneratedMetadataHash = "574afec991fbc1a684531c9f727c20eb296271260e7a4e1c4a8c300a2b642e79";
         private const string GridContentHash = "8ef1b3f17074774040111a48ea82901b3355da8b8b86c8dc5c6e2a0bcccc2cfb";
         private const string SurfaceContentHash = "aa08cb9115e8727bfdbc671a4a2cfd9334ef48134c00d58d7d29e350c45b752c";
-        private const string MatchSceneFileHash = "dca7c83b765ce40099ce4fd62a53cbee5bc306107f8a026abcb941a59bf53a46";
+        private const string MatchSceneFileHash = "a99e575cb8bc1f8a7c101025eca8ed84c22a89f5a6549b27b246a9efc021b89c";
         private const string SubSceneFileHash = "bcc255f3fb140a0d91687b45b679b47fb60f01f5cfa8690bac3032ec642dadd8";
-        private const string ManifestFileHash = "3940dcac3d42c703f47cf11f134b183c4554f9944629925f7b38957e08d93746";
+        private const string ManifestFileHash = "b389013b4753e73e65424e1ca06737507aa6fc6a6be429903b2da683b052ec01";
 
         [MenuItem("Tools/Warline Capture/Operation Maps/Rebuild Current Compatibility Definition")]
         public static void Run()
@@ -279,6 +280,87 @@ namespace Game.Editor
             if (field == null)
                 throw new MissingFieldException(typeof(OperationMapDefinition).FullName, fieldName);
             field.SetValue(definition, value);
+        }
+    }
+
+    public static class OperationMapCompatibilityRuntimeBindingBuilder
+    {
+        public const string MatchScenePath = "Assets/Game/Scenes/Match.unity";
+        public const string CatalogPath =
+            "Assets/Game/Configs/OperationMaps/OperationMapCatalog_Compatibility.asset";
+        public const string OperationMapId = "opmap.skirmish.desert_base_01";
+        public const string ScenarioId = "scenario.skirmish.desert_base_standard";
+        public const string MissionId = "skirmish";
+
+        [MenuItem("Tools/Warline Capture/Operation Maps/Bind Current Compatibility Runtime")]
+        public static void Run()
+        {
+            SceneSetup[] setup = EditorSceneManager.GetSceneManagerSetup();
+            try
+            {
+                Scene scene = EditorSceneManager.OpenScene(MatchScenePath, OpenSceneMode.Single);
+                MatchSceneView view = FindSingleView(scene);
+                OperationMapCatalogConfig catalog =
+                    AssetDatabase.LoadAssetAtPath<OperationMapCatalogConfig>(CatalogPath);
+                if (catalog == null)
+                    throw new InvalidOperationException("Compatibility operation-map catalog is missing.");
+                if (!catalog.TryValidate(out string catalogError))
+                    throw new InvalidOperationException(
+                        $"Compatibility operation-map catalog is invalid: {catalogError}");
+
+                var serializedView = new SerializedObject(view);
+                SetObject(serializedView, "operationMapCatalog", catalog);
+                SetString(serializedView, "operationMapId", OperationMapId);
+                SetString(serializedView, "scenarioId", ScenarioId);
+                SetString(serializedView, "missionId", MissionId);
+                if (serializedView.ApplyModifiedPropertiesWithoutUndo())
+                {
+                    EditorSceneManager.MarkSceneDirty(scene);
+                    if (!EditorSceneManager.SaveScene(scene))
+                        throw new InvalidOperationException("Failed to save compatibility runtime binding.");
+                }
+
+                Debug.Log($"[OperationMapCompatibilityBinding] Passed scene={MatchScenePath}");
+            }
+            finally
+            {
+                if (setup.Length > 0)
+                    EditorSceneManager.RestoreSceneManagerSetup(setup);
+            }
+        }
+
+        private static MatchSceneView FindSingleView(Scene scene)
+        {
+            MatchSceneView result = null;
+            foreach (GameObject root in scene.GetRootGameObjects())
+            {
+                foreach (MatchSceneView candidate in root.GetComponentsInChildren<MatchSceneView>(true))
+                {
+                    if (result != null)
+                        throw new InvalidOperationException("Match scene contains multiple MatchSceneView components.");
+                    result = candidate;
+                }
+            }
+
+            return result != null
+                ? result
+                : throw new InvalidOperationException("Match scene is missing MatchSceneView.");
+        }
+
+        private static void SetObject(SerializedObject target, string propertyName, UnityEngine.Object value)
+        {
+            SerializedProperty property = target.FindProperty(propertyName);
+            if (property == null)
+                throw new InvalidOperationException($"Missing serialized property '{propertyName}'.");
+            property.objectReferenceValue = value;
+        }
+
+        private static void SetString(SerializedObject target, string propertyName, string value)
+        {
+            SerializedProperty property = target.FindProperty(propertyName);
+            if (property == null)
+                throw new InvalidOperationException($"Missing serialized property '{propertyName}'.");
+            property.stringValue = value;
         }
     }
 }

@@ -21,6 +21,7 @@ namespace Game.Composition
         private readonly List<GameObject> compositionSceneRoots = new(4);
         private AudioListener menuAudioListener;
         private bool matchRuntimeBound;
+        private OperationMapRuntimeBootstrapSceneSystemHelper operationMapRuntimeBootstrapSystem;
 
         [Header("Scene Refs")]
         [SerializeField] private Camera worldCamera;
@@ -54,6 +55,12 @@ namespace Game.Composition
         [SerializeField] private ResourceExchangeRecipeConfigSet resourceExchangeConfig;
         [SerializeField] private List<AIControllerConfig> aiControllerConfigs = new();
 
+        [Header("Operation Map Compatibility")]
+        [SerializeField] private OperationMapCatalogConfig operationMapCatalog;
+        [SerializeField] private string operationMapId = "opmap.skirmish.desert_base_01";
+        [SerializeField] private string scenarioId = "scenario.skirmish.desert_base_standard";
+        [SerializeField] private string missionId = "skirmish";
+
         public Camera WorldCamera => worldCamera;
         public Light DirectionalLight => directionalLight;
         public Volume GlobalVolume => globalVolume;
@@ -82,6 +89,10 @@ namespace Game.Composition
         public AIPlanEntryStartupConfig AIPlanEntryConfig => aiPlanEntryConfig;
         public ResourceExchangeRecipeConfigSet ResourceExchangeConfig => resourceExchangeConfig;
         public IReadOnlyList<AIControllerConfig> AIControllerConfigs => aiControllerConfigs;
+        public OperationMapCatalogConfig OperationMapCatalog => operationMapCatalog;
+        public string OperationMapId => operationMapId;
+        public string ScenarioId => scenarioId;
+        public string MissionId => missionId;
 
         internal MatchBootstrapCompositionSystemHelper MatchBootstrap => matchBootstrapSystem;
         public bool GameplayStartRequested => matchBootstrapSystem.GameplayStartRequested;
@@ -172,8 +183,20 @@ namespace Game.Composition
             if (matchRuntimeBound)
                 return;
 
-            matchBootstrapSystem.Awake(this, transform, gameObject.layer);
-            matchRuntimeBound = true;
+            if (!TryPublishCompatibilityOperationMapMetadata(
+                    World.DefaultGameObjectInjectionWorld,
+                    out string operationMapError))
+                Debug.LogError($"[OperationMapCompatibility] {operationMapError}");
+            try
+            {
+                matchBootstrapSystem.Awake(this, transform, gameObject.layer);
+                matchRuntimeBound = true;
+            }
+            catch
+            {
+                DisposeOperationMapMetadataBootstrap();
+                throw;
+            }
         }
 
         private void ShutdownMatchRuntimeBound()
@@ -182,8 +205,68 @@ namespace Game.Composition
                 return;
 
             GpuAnimationTeardownFence.TryFlushPendingStructuralChanges(World.DefaultGameObjectInjectionWorld);
-            matchBootstrapSystem.OnDestroy();
-            matchRuntimeBound = false;
+            try
+            {
+                matchBootstrapSystem.OnDestroy();
+            }
+            finally
+            {
+                DisposeOperationMapMetadataBootstrap();
+                matchRuntimeBound = false;
+            }
+        }
+
+        internal bool TryPublishCompatibilityOperationMapMetadata(World world, out string error)
+        {
+            DisposeOperationMapMetadataBootstrap();
+            if (world == null || !world.IsCreated)
+            {
+                error = "A live default ECS World is required for operation-map metadata publication.";
+                return false;
+            }
+
+            if (!OperationMapIdentityRules.IsValidOperationMapId(operationMapId))
+            {
+                error = $"Invalid compatibility operation-map id '{operationMapId ?? "<null>"}'.";
+                return false;
+            }
+
+            if (!OperationMapIdentityRules.IsValidScenarioId(scenarioId))
+            {
+                error = $"Invalid compatibility scenario id '{scenarioId ?? "<null>"}'.";
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(missionId) ||
+                missionId.Length > OperationMapIdentityRules.MaximumIdLength)
+            {
+                error = "Compatibility mission id is required and must fit the operation-map identity budget.";
+                return false;
+            }
+
+            operationMapRuntimeBootstrapSystem = new OperationMapRuntimeBootstrapSceneSystemHelper(world);
+            var fixedScenarioId = new Unity.Collections.FixedString64Bytes(scenarioId);
+            var fixedMissionId = new Unity.Collections.FixedString64Bytes(missionId);
+            if (operationMapRuntimeBootstrapSystem.TryPublish(
+                    operationMapCatalog,
+                    operationMapId,
+                    in fixedScenarioId,
+                    in fixedMissionId,
+                    1,
+                    OperationMapReadinessFlags.Metadata,
+                    OperationMapReadinessFlags.Metadata,
+                    out _,
+                    out error))
+                return true;
+
+            DisposeOperationMapMetadataBootstrap();
+            return false;
+        }
+
+        internal void DisposeOperationMapMetadataBootstrap()
+        {
+            operationMapRuntimeBootstrapSystem?.Dispose();
+            operationMapRuntimeBootstrapSystem = null;
         }
 
         private void ApplyAudioListenerAuthority()

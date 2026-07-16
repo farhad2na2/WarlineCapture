@@ -248,6 +248,71 @@ public sealed class OperationMapRuntimeBootstrapSceneSystemHelperTests
             BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic), Is.Null);
     }
 
+    [Test]
+    public void MatchBootstrapCompatibilityPublish_PublishesConfiguredIdentityAndDisposesRoot()
+    {
+        using World world = new("OperationMapCompatibilityComposition");
+        OperationMapDefinition definition = CreateValidDefinition();
+        OperationMapCatalogConfig catalog = ScriptableObject.CreateInstance<OperationMapCatalogConfig>();
+        SetCatalogDefinitions(catalog, new[] { definition });
+        GameObject owner = new("OperationMapCompatibilityMatchView");
+        MatchSceneView view = owner.AddComponent<MatchSceneView>();
+        Set(view, "operationMapCatalog", catalog);
+        try
+        {
+            Assert.That(view.TryPublishCompatibilityOperationMapMetadata(
+                world,
+                out string error), Is.True, error);
+
+            using EntityQuery query = world.EntityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<OperationMapRootComponent>());
+            Entity root = query.GetSingletonEntity();
+            ActiveOperationMapComponent active =
+                world.EntityManager.GetComponentData<ActiveOperationMapComponent>(root);
+            Assert.That(active.OperationMapId.ToString(), Is.EqualTo(definition.OperationMapId));
+            Assert.That(active.ScenarioId.ToString(), Is.EqualTo("scenario.skirmish.desert_base_standard"));
+            Assert.That(active.MissionId.ToString(), Is.EqualTo("skirmish"));
+
+            view.DisposeOperationMapMetadataBootstrap();
+            Assert.That(CountRoots(world.EntityManager), Is.Zero);
+        }
+        finally
+        {
+            view.DisposeOperationMapMetadataBootstrap();
+            Object.DestroyImmediate(owner);
+            Object.DestroyImmediate(catalog);
+            Object.DestroyImmediate(definition);
+        }
+    }
+
+    [Test]
+    public void MatchBootstrapCompatibilityPublish_InvalidIdentityFailsWithoutRoot()
+    {
+        using World world = new("OperationMapCompatibilityInvalidIdentity");
+        OperationMapDefinition definition = CreateValidDefinition();
+        OperationMapCatalogConfig catalog = ScriptableObject.CreateInstance<OperationMapCatalogConfig>();
+        SetCatalogDefinitions(catalog, new[] { definition });
+        GameObject owner = new("OperationMapCompatibilityInvalidMatchView");
+        MatchSceneView view = owner.AddComponent<MatchSceneView>();
+        Set(view, "operationMapCatalog", catalog);
+        Set(view, "operationMapId", "invalid");
+        try
+        {
+            Assert.That(view.TryPublishCompatibilityOperationMapMetadata(
+                world,
+                out string error), Is.False);
+            StringAssert.Contains("Invalid compatibility operation-map id", error);
+            Assert.That(CountRoots(world.EntityManager), Is.Zero);
+        }
+        finally
+        {
+            view.DisposeOperationMapMetadataBootstrap();
+            Object.DestroyImmediate(owner);
+            Object.DestroyImmediate(catalog);
+            Object.DestroyImmediate(definition);
+        }
+    }
+
     private static int CountRoots(EntityManager entityManager)
     {
         using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<OperationMapRootComponent>());
@@ -342,5 +407,14 @@ public sealed class OperationMapRuntimeBootstrapSceneSystemHelperTests
             BindingFlags.Instance | BindingFlags.NonPublic);
         Assert.That(field, Is.Not.Null);
         field.SetValue(catalog, definitions);
+    }
+
+    private static void Set<T>(MatchSceneView view, string fieldName, T value)
+    {
+        FieldInfo field = typeof(MatchSceneView).GetField(
+            fieldName,
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.That(field, Is.Not.Null, fieldName);
+        field.SetValue(view, value);
     }
 }

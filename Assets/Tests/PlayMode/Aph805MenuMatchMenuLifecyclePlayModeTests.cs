@@ -58,6 +58,10 @@ public sealed class Aph805MenuMatchMenuLifecyclePlayModeTests
         Assert.That(World.DefaultGameObjectInjectionWorld, Is.SameAs(lifecycleWorld));
         Assert.That(lifecycleWorld.IsCreated, Is.True);
         AssertLifecycleRootCount(lifecycleWorld, 1, "Match loading must not duplicate the scene-lifecycle root.");
+        yield return WaitUntil(
+            () => CountOperationMapRoots(lifecycleWorld) == 1,
+            "Match composition did not publish exactly one active compatibility operation map.");
+        AssertActiveCompatibilityMap(lifecycleWorld);
 
         yield return WaitUntil(
             () => match.MatchBootstrap.SelectionUiCommand != null &&
@@ -87,6 +91,8 @@ public sealed class Aph805MenuMatchMenuLifecyclePlayModeTests
         Assert.That(World.DefaultGameObjectInjectionWorld, Is.SameAs(lifecycleWorld));
         Assert.That(lifecycleWorld.IsCreated, Is.True);
         AssertLifecycleRootCount(lifecycleWorld, 1, "Returning to Menu must preserve one lifecycle root.");
+        Assert.That(CountOperationMapRoots(lifecycleWorld), Is.Zero,
+            "Returning to Menu must dispose the compatibility operation-map root.");
         Assert.That(matchBootstrap.HasSceneView, Is.False, "Match composition retained its destroyed scene view.");
         Assert.That(matchBootstrap.SelectionUiCommand, Is.Null, "Match selection UI command survived teardown.");
         Assert.That(matchBootstrap.SelectionUiReadModel, Is.Null, "Match selection read model survived teardown.");
@@ -128,6 +134,32 @@ public sealed class Aph805MenuMatchMenuLifecyclePlayModeTests
         Assert.That(match.BuildingPlacementConfig, Is.Not.Null);
         Assert.That(match.RuntimeGridConfig, Is.Not.Null);
         Assert.That(match.GameStringsConfig, Is.Not.Null);
+        Assert.That(match.OperationMapCatalog, Is.Not.Null);
+        Assert.That(match.OperationMapId, Is.EqualTo("opmap.skirmish.desert_base_01"));
+        Assert.That(match.ScenarioId, Is.EqualTo("scenario.skirmish.desert_base_standard"));
+        Assert.That(match.MissionId, Is.EqualTo("skirmish"));
+    }
+
+    private static void AssertActiveCompatibilityMap(World world)
+    {
+        using EntityQuery query = world.EntityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<OperationMapRootComponent>(),
+            ComponentType.ReadOnly<ActiveOperationMapComponent>());
+        Entity root = query.GetSingletonEntity();
+        ActiveOperationMapComponent active =
+            world.EntityManager.GetComponentData<ActiveOperationMapComponent>(root);
+        Assert.That(active.OperationMapId.ToString(), Is.EqualTo("opmap.skirmish.desert_base_01"));
+        Assert.That(active.ScenarioId.ToString(), Is.EqualTo("scenario.skirmish.desert_base_standard"));
+        Assert.That(active.MissionId.ToString(), Is.EqualTo("skirmish"));
+    }
+
+    private static int CountOperationMapRoots(World world)
+    {
+        if (world is not { IsCreated: true })
+            return 0;
+        using EntityQuery query = world.EntityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<OperationMapRootComponent>());
+        return query.CalculateEntityCount();
     }
 
     private static bool IsMatchUiBound(

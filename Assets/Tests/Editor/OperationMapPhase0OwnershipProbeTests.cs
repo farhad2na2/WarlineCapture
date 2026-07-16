@@ -32,7 +32,7 @@ namespace Game.Tests.Editor
 
             OperationMapPhase0OwnershipProbe.OwnershipReport report = LoadReport(json);
             Assert.That(report.result, Is.EqualTo("NeedsDecision"));
-            Assert.That(report.counts.matchSceneViewFields, Is.EqualTo(28));
+            Assert.That(report.counts.matchSceneViewFields, Is.EqualTo(29));
             Assert.That(report.counts.matchRoots, Is.EqualTo(16));
             Assert.That(report.counts.matchSubSceneRoots, Is.EqualTo(3));
             Assert.That(report.counts.needsDecision, Is.GreaterThan(0));

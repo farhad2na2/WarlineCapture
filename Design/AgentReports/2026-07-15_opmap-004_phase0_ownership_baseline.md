@@ -8,7 +8,7 @@ Baseline revision: `3b7228292db7159c3c70025cf5d1676573721cd4`
 
 `Game.Editor.OperationMapPhase0OwnershipProbe` performs a read-only ownership inspection of exactly:
 
-- 28 serialized `MatchSceneView` Unity-object references;
+- 29 serialized `MatchSceneView` Unity-object references, including the loader-neutral compatibility operation-map catalog added on 2026-07-16;
 - 16 ordered roots in `Assets/Game/Scenes/Match.unity`;
 - 3 ordered roots in `Assets/Game/Scenes/Match/MatchSubScene.unity`.
 

@@ -2,9 +2,12 @@ using System.IO;
 using System.Security.Cryptography;
 using Game.Configs;
 using Game.Editor;
+using Game.Composition;
 using NUnit.Framework;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public sealed class OperationMapCurrentCompatibilityDefinitionTests
 {
@@ -52,6 +55,35 @@ public sealed class OperationMapCurrentCompatibilityDefinitionTests
             "Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset")));
         Assert.That(definition.SurfaceMetadata.ContentHash, Is.EqualTo(ComputeFileHash(
             "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset")));
+    }
+
+    [Test]
+    public void MatchScene_BindsCurrentCompatibilityCatalogAndIdentity()
+    {
+        SceneSetup[] setup = EditorSceneManager.GetSceneManagerSetup();
+        try
+        {
+            Scene scene = EditorSceneManager.OpenScene(
+                OperationMapCompatibilityRuntimeBindingBuilder.MatchScenePath,
+                OpenSceneMode.Single);
+            MatchSceneView view = Object.FindFirstObjectByType<MatchSceneView>(
+                FindObjectsInactive.Include);
+            Assert.That(view, Is.Not.Null);
+            Assert.That(view.gameObject.scene, Is.EqualTo(scene));
+            Assert.That(AssetDatabase.GetAssetPath(view.OperationMapCatalog),
+                Is.EqualTo(OperationMapCompatibilityRuntimeBindingBuilder.CatalogPath));
+            Assert.That(view.OperationMapId,
+                Is.EqualTo(OperationMapCompatibilityRuntimeBindingBuilder.OperationMapId));
+            Assert.That(view.ScenarioId,
+                Is.EqualTo(OperationMapCompatibilityRuntimeBindingBuilder.ScenarioId));
+            Assert.That(view.MissionId,
+                Is.EqualTo(OperationMapCompatibilityRuntimeBindingBuilder.MissionId));
+        }
+        finally
+        {
+            if (setup.Length > 0)
+                EditorSceneManager.RestoreSceneManagerSetup(setup);
+        }
     }
 
     private static string ComputeFileHash(string assetPath)

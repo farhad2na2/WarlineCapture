@@ -25,7 +25,7 @@ namespace Game.Editor
         internal const string DefaultReportPath =
             "/private/tmp/warline-operation-map-phase0-ownership.json";
 
-        private const int ExpectedFieldCount = 28;
+        private const int ExpectedFieldCount = 29;
         private const int ExpectedMatchRootCount = 16;
         private const int ExpectedSubSceneRootCount = 3;
         private const int ExpectedGeneratedChunkCount = 514;
@@ -731,15 +731,15 @@ namespace Game.Editor
             return new Dictionary<string, string>(StringComparer.Ordinal)
             {
                 [MatchScenePath] =
-                    "dca7c83b765ce40099ce4fd62a53cbee5bc306107f8a026abcb941a59bf53a46",
+                    "a99e575cb8bc1f8a7c101025eca8ed84c22a89f5a6549b27b246a9efc021b89c",
                 [MatchSubScenePath] =
                     "bcc255f3fb140a0d91687b45b679b47fb60f01f5cfa8690bac3032ec642dadd8",
                 [MatchSceneViewSourcePath] =
-                    "74704998d2a0daff6c9cdc4dd370c8a7d00d0a828b08741a7cd5a03ca562d1a6",
+                    "ca0520236aee08ea31e64ef092090d9c51c1feab89f0aeb76e27f341675e8ce2",
                 [BaselineEvidencePath] =
                     "d4d4674850766c5cd95e1bb5fbb6f26893e0bb019dbaf266a0c9897a3befc807",
                 [TrackerPath] =
-                    "7621e3f1c17ac7a0d7a8945cf80c8fe1ee9c1c5b0caa180d72312d9735a414e0"
+                    "61d9a147b3b9af0831418626a0cbad271a11177f1f5100cb69afa0d1888e90fc"
             };
         }
 
@@ -899,6 +899,7 @@ namespace Game.Editor
             AddField(specs, "mapSurfaceAuthoring", "Game.Authoring.MapSurfaceAuthoring", "Game.Authoring.MapSurfaceAuthoring", OwnershipClassification.MapOwned, "MoveToOperationMap", "Map surface and height metadata belong to the operation map.");
             AddField(specs, "mapVehicleAuthoringRoot", "UnityEngine.Transform", "UnityEngine.Transform", OwnershipClassification.MapOwned, "MoveToOperationMap", "The exact target is the map's Vehicles authoring root.");
             AddField(specs, "mapVehiclePlacementConfig", "Game.Configs.MapVehiclePlacementConfig", "Game.Configs.MapVehiclePlacementConfig", OwnershipClassification.MapOwned, "ReferenceFromOperationMapDefinition", "The target contract explicitly assigns map-owned vehicle placements to the operation map.");
+            AddField(specs, "operationMapCatalog", "Game.Configs.OperationMapCatalogConfig", "Game.Configs.OperationMapCatalogConfig", OwnershipClassification.SharedConfig, "KeepSharedReference", "The compatibility catalog is shell-selected shared configuration and does not own map geometry or delivery.");
             AddField(specs, "prefabPreviewCameraConfig", "Game.Configs.PrefabPreviewCameraConfig", "Game.Configs.PrefabPreviewCameraSceneConfigAsset", OwnershipClassification.SharedConfig, "KeepSharedReference", "Prefab preview camera policy is shared UI/composition configuration.");
             AddField(specs, "resourceExchangeConfig", "Game.Configs.ResourceExchangeRecipeConfigSet", "Game.Configs.ResourceExchangeRecipeConfigSet", OwnershipClassification.SharedConfig, "KeepSharedReference", "Resource exchange recipes are shared gameplay data.");
             AddField(specs, "roadBuildConfig", "Game.Configs.RoadBuildSystemConfig", "Game.Configs.RoadBuildSystemSceneConfigAsset", OwnershipClassification.SharedConfig, "KeepSharedReference", "Road-build system policy is shared; active map metadata supplies map constraints.");
@@ -923,6 +924,10 @@ namespace Game.Editor
                 {
                     "Assets/Game/Configs/Scene/Game_AI_Enemy_Config.asset|guid:fb8b5c545d7f641d3b153c2f18c57aad|localId:11400000|type:Game.Configs.AIControllerSceneConfigAsset",
                     "Assets/Game/Configs/Scene/Game_AI_PlayerAuto_Config.asset|guid:34d062317806444e2a70cd1ed240fc5a|localId:11400000|type:Game.Configs.AIControllerSceneConfigAsset"
+                },
+                ["operationMapCatalog"] = new[]
+                {
+                    "Assets/Game/Configs/OperationMaps/OperationMapCatalog_Compatibility.asset|guid:5f8cd53e9416439f9974a805ef924db2|localId:11400000|type:Game.Configs.OperationMapCatalogConfig"
                 },
                 ["aiPlanEntryConfig"] = new[] { "Assets/Game/Configs/Scene/Game_AI_PlanEntry_Startup_Config.asset|guid:8ac55f91a18b4e56b3ef2ed875c904d7|localId:11400000|type:Game.Configs.AIPlanEntryStartupConfig" },
                 ["buildingPlacementConfig"] = new[] { "Assets/Game/Configs/Scene/Game_BuildingPlacement_Config.asset|guid:b2010000000000000000000000000004|localId:11400000|type:Game.Configs.BuildingPlacementSystemSceneConfigAsset" },

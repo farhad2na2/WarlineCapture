@@ -4,12 +4,12 @@
     "baselineCommit": "3b7228292db7159c3c70025cf5d1676573721cd4",
     "result": "NeedsDecision",
     "counts": {
-        "matchSceneViewFields": 28,
+        "matchSceneViewFields": 29,
         "matchRoots": 16,
         "matchSubSceneRoots": 3,
         "shellOwned": 8,
         "mapOwned": 18,
-        "sharedConfig": 15,
+        "sharedConfig": 16,
         "temporaryCompatibility": 2,
         "mixed": 2,
         "unresolved": 2,
@@ -30,7 +30,7 @@
     "directInputHashes": [
         {
             "path": "Assets/Game/Scenes/Match.unity",
-            "sha256": "dca7c83b765ce40099ce4fd62a53cbee5bc306107f8a026abcb941a59bf53a46"
+            "sha256": "a99e575cb8bc1f8a7c101025eca8ed84c22a89f5a6549b27b246a9efc021b89c"
         },
         {
             "path": "Assets/Game/Scenes/Match/MatchSubScene.unity",
@@ -38,7 +38,7 @@
         },
         {
             "path": "Assets/Game/Scripts/Composition/MatchSceneView.cs",
-            "sha256": "74704998d2a0daff6c9cdc4dd370c8a7d00d0a828b08741a7cd5a03ca562d1a6"
+            "sha256": "ca0520236aee08ea31e64ef092090d9c51c1feab89f0aeb76e27f341675e8ce2"
         },
         {
             "path": "Design/AgentReports/2026-07-14_opmap-002_phase0_baseline_probe.md",
@@ -46,7 +46,7 @@
         },
         {
             "path": "Design/Architecture/operation_map_scene_split_and_generator_tracker.md",
-            "sha256": "7621e3f1c17ac7a0d7a8945cf80c8fe1ee9c1c5b0caa180d72312d9735a414e0"
+            "sha256": "61d9a147b3b9af0831418626a0cbad271a11177f1f5100cb69afa0d1888e90fc"
         }
     ],
     "matchSceneViewFields": [
@@ -335,6 +335,25 @@
             ],
             "rationale": "The target contract explicitly assigns map-owned vehicle placements to the operation map.",
             "migrationDisposition": "ReferenceFromOperationMapDefinition",
+            "decisionOwner": ""
+        },
+        {
+            "stableIdentity": "Game.Composition.MatchSceneView::operationMapCatalog",
+            "name": "operationMapCatalog",
+            "declaredType": "Game.Configs.OperationMapCatalogConfig",
+            "currentType": "Game.Configs.OperationMapCatalogConfig",
+            "currentElementCount": 1,
+            "currentTargetIdentities": [
+                "Assets/Game/Configs/OperationMaps/OperationMapCatalog_Compatibility.asset|guid:5f8cd53e9416439f9974a805ef924db2|localId:11400000|type:Game.Configs.OperationMapCatalogConfig"
+            ],
+            "classification": "SharedConfig",
+            "evidencePaths": [
+                "Assets/Game/Configs/OperationMaps/OperationMapCatalog_Compatibility.asset",
+                "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+                "Design/Architecture/operation_map_scene_split_and_generator_tracker.md"
+            ],
+            "rationale": "The compatibility catalog is shell-selected shared configuration and does not own map geometry or delivery.",
+            "migrationDisposition": "KeepSharedReference",
             "decisionOwner": ""
         },
         {

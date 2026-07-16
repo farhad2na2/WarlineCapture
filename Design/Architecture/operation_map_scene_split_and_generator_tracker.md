@@ -699,7 +699,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 19% (34/177 checklist items complete).
+Overall implementation progress: 20% (35/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
@@ -710,7 +710,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 | 2. Per-map static presentation ownership | Not started / compatibility subset | 0 | 14 | 0% | Preserve the current baked map safely; future-map generation remains undecided. |
 | 2A. Local Addressables packaging foundation | Later / direction-specific | 0 | 20 | 0% | Do not implement before the map-delivery direction is selected. |
 | 3. Current-map compatibility registration | In progress / shared | 5 | 10 | 50% | Current identities/definition are registered and schema-v1 read compatibility is explicit; runtime launch remains. |
-| 4. Non-destructive scene ownership split | In progress / shared priority | 4 | 14 | 29% | Canonical folders and a distinct-GUID staged scene exist; only the eleven accepted map/compatibility roots remain in the staged scene while the source Match scene is unchanged. |
+| 4. Non-destructive scene ownership split | In progress / shared priority | 5 | 14 | 36% | The staged scene contains only accepted map/compatibility roots and references a distinct map-owned subscene; the source Match scene and subscene remain unchanged. |
 | 5. Runtime selection, loading, and teardown | In progress / shared contracts | 1 | 14 | 7% | Pure readiness/failure/teardown data contracts only; concrete loading is later. |
 | 6. Metadata, camera, minimap, and movement binding | In progress / shared | 2 | 12 | 17% | Scenario-required anchors validate against map metadata, and the existing RTS camera bridge prefers active-map camera bounds with grid fallback. |
 | 7. M01 operation-map slice | Later / shared contracts only | 0 | 10 | 0% | Map-neutral ids/anchors may proceed; physical rollout remains gated. |
@@ -853,7 +853,7 @@ Exit criteria:
 - [ ] Add `Game.Composition.OperationMapSceneView` as a non-updating serialized-reference view only if direct scene references require it.
 - [ ] Keep the original `Match.unity` fully functional until the extracted map passes all parity gates.
 - [x] Move/copy only classified map roots into the staged operation-map scene while shared binary assets remain referenced, not duplicated. See `../AgentReports/2026-07-16_current_operation_map_root_extraction.md`.
-- [ ] Assign or create the map-owned subscene without breaking the original `MatchSubScene` compatibility path.
+- [x] Assign or create the map-owned subscene without breaking the original `MatchSubScene` compatibility path. See `../AgentReports/2026-07-16_current_operation_map_subscene_staging.md`.
 - [ ] Generate map-specific building and vehicle placement configs from the staged scene rather than reusing stale hierarchy assumptions blindly.
 - [ ] Bind map surface, grid, blockers, lightmaps/probes, runways, helipads, bounds, and metadata from the staged scene.
 - [ ] Bake a map-specific presentation manifest/chunk set from the staged operation-map scene.
@@ -1088,6 +1088,7 @@ Exit criteria:
 | 2026-07-16 | Active operation-map camera bounds binding | `../AgentReports/2026-07-16_operation_map_camera_bounds_binding.md`; focused EditMode `33 / 33`; source-growth/naming `24 / 24`; decision `D-164`; Unity compile; `git diff --check` | Passed | Existing RTS camera bridge now prefers the single active map's immutable camera extent and retains `GridConfig` as compatibility fallback. No loader, scene, map asset, or new update loop changed. |
 | 2026-07-16 | Current operation-map scene staging | `../AgentReports/2026-07-16_current_operation_map_scene_staging.md`; focused EditMode `10 / 10`; source-growth/naming `24 / 24`; source/staged SHA-256 `dca7c83b...3a46`; distinct GUIDs; Unity compile; `git diff --check` | Passed | Created canonical folders and a byte-identical distinct-GUID staged scene through AssetDatabase-safe tooling. Original Match scene and all runtime/generated ownership remain unchanged. |
 | 2026-07-16 | Current operation-map root extraction | `../AgentReports/2026-07-16_current_operation_map_root_extraction.md`; focused EditMode `28 / 28`; source-growth/naming `24 / 24`; original SHA-256 `dca7c83b...3a46`; staged SHA-256 `6de82627...8b32`; Unity compile | Passed | Removed exactly five accepted shell roots from only the staged scene and retained the exact eleven-root map/compatibility set. Original Match runtime route remains unchanged. |
+| 2026-07-16 | Current operation-map subscene staging | `../AgentReports/2026-07-16_current_operation_map_subscene_staging.md`; focused EditMode `3 / 3`; source-growth/naming `24 / 24`; canonical scene/subscene SHA-256 checks; distinct GUID/reference checks; Unity compile | Passed | Created a distinct map-owned subscene retaining Grid and temporary initial-unit authoring, excluded the shared prefab registry, and rebound only the staged map scene. The original Match compatibility route remains unchanged. |
 
 ## Open Decisions
 
@@ -1095,7 +1096,7 @@ Exit criteria:
 |---|---|---|
 | Current large map id | Approved: `opmap.skirmish.desert_base_01` | Use for loader-neutral compatibility registration; do not derive it from scene or delivery identity. |
 | Extracted source path | `Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01.unity` | Confirm after Phase 0 dependency classification. |
-| Current map subscene | Make it map-owned if its authored ECS content is map-specific; keep only truly shared runtime ECS setup in shell composition. | Decide from Phase 0 inventory, not filename alone. |
+| Current map subscene | Approved: stage a distinct map-owned subscene with `Grid` and temporary `InitialUnitsSpawnerAuthoring`; keep `UnitPrefabRegistryAuthoring` on the original shared compatibility path until shell cutover ownership is implemented. | Revisit only at atomic cutover; do not duplicate the shared registry into map content. |
 | Manifest schema migration | Keep schema-v1 compatibility while introducing map id/source GUID and map-scoped outputs in a new schema. | Approve with multi-map ownership and no-op tests in Phase 2. |
 | Runtime loading | Direction unresolved. Keep `Match.unity` shell separation, one-active-map, readiness, failure-unwind, and teardown contracts loader-independent while runtime scene-based R&D is evaluated. | Select and document the concrete loader before implementing Phase 2A or Phase 5 loading/unloading. |
 | Remote migration trigger | Bundle every catalog-approved map locally for the initial milestone. Move selected stable per-map groups to HTTPS/CDN only after all-local stability and measured package/install evidence justify it. | Explicit Phase 11 product gate; no remote implementation during Phase 2A/10. |

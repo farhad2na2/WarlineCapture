@@ -27,4 +27,18 @@ public sealed class OperationMapCurrentCompatibilitySceneStagerTests
             Is.True,
             error);
     }
+
+    [Test]
+    public void StagedSubSceneRetainsMapRootsAndUsesDistinctGuid()
+    {
+        Assert.That(
+            AssetDatabase.AssetPathToGUID(OperationMapCurrentCompatibilitySubSceneStager.SourceSubScenePath),
+            Is.Not.EqualTo(
+                AssetDatabase.AssetPathToGUID(
+                    OperationMapCurrentCompatibilitySubSceneStager.DestinationSubScenePath)));
+        Assert.That(
+            OperationMapCurrentCompatibilitySubSceneStager.TryValidate(out string error),
+            Is.True,
+            error);
+    }
 }

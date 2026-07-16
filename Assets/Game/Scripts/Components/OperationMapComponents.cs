@@ -168,9 +168,33 @@ namespace Game.Components
         public FixedString128Bytes GeneratedMetadataHash;
         public int SchemaVersion;
         public int ContentVersion;
+        public OperationMapGridBlob Grid;
+        public OperationMapSurfaceMetadataBlob Surface;
         public BlobArray<OperationMapAnchorBlob> Anchors;
         public BlobArray<OperationMapCameraBlob> Cameras;
         public OperationMapMinimapBlob Minimap;
+    }
+
+    public struct OperationMapGridBlob
+    {
+        public FixedString64Bytes AssetGuid;
+        public FixedString128Bytes ContentHash;
+        public float3 Origin;
+        public int2 Dimensions;
+        public float CellSize;
+        public int AuthoredBlockedCellCount;
+    }
+
+    public struct OperationMapSurfaceMetadataBlob
+    {
+        public FixedString64Bytes AssetGuid;
+        public FixedString128Bytes ContentHash;
+        public FixedString64Bytes RuntimeBlobHash;
+        public int SurfaceCount;
+        public int PayloadVersion;
+        public byte PayloadEncoding;
+        public float MinimumHeight;
+        public float MaximumHeight;
     }
 
     public struct OperationMapAnchorBlob

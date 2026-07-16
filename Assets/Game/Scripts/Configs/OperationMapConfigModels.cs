@@ -71,6 +71,127 @@ namespace Game.Configs
     }
 
     [Serializable]
+    public struct OperationMapGridMetadataConfig
+    {
+        [SerializeField] private string assetGuid;
+        [SerializeField] private string contentHash;
+        [SerializeField] private Vector3 origin;
+        [SerializeField] private Vector2Int dimensions;
+        [SerializeField] private float cellSize;
+        [SerializeField] private int authoredBlockedCellCount;
+
+        public string AssetGuid => assetGuid;
+        public string ContentHash => contentHash;
+        public Vector3 Origin => origin;
+        public Vector2Int Dimensions => dimensions;
+        public float CellSize => cellSize;
+        public int AuthoredBlockedCellCount => authoredBlockedCellCount;
+
+        public OperationMapGridMetadataConfig(
+            string assetGuid,
+            string contentHash,
+            Vector3 origin,
+            Vector2Int dimensions,
+            float cellSize,
+            int authoredBlockedCellCount)
+        {
+            this.assetGuid = assetGuid;
+            this.contentHash = contentHash;
+            this.origin = origin;
+            this.dimensions = dimensions;
+            this.cellSize = cellSize;
+            this.authoredBlockedCellCount = authoredBlockedCellCount;
+        }
+
+        public bool TryValidate(out string error)
+        {
+            if (!OperationMapHashRules.IsValidHash128(assetGuid) ||
+                !OperationMapHashRules.IsValidSha256(contentHash))
+            {
+                error = "Grid metadata requires a lowercase asset GUID and SHA-256 content hash.";
+                return false;
+            }
+
+            if (!OperationMapConfigValidation.IsFinite(origin) ||
+                dimensions.x <= 0 || dimensions.y <= 0 ||
+                !OperationMapConfigValidation.IsFinitePositive(cellSize) ||
+                authoredBlockedCellCount < 0)
+            {
+                error = "Grid metadata requires a finite origin, positive dimensions/cell size, and a non-negative blocked-cell count.";
+                return false;
+            }
+
+            error = null;
+            return true;
+        }
+    }
+
+    [Serializable]
+    public struct OperationMapSurfaceMetadataConfig
+    {
+        [SerializeField] private string assetGuid;
+        [SerializeField] private string contentHash;
+        [SerializeField] private string runtimeBlobHash;
+        [SerializeField] private int surfaceCount;
+        [SerializeField] private int payloadVersion;
+        [SerializeField] private byte payloadEncoding;
+        [SerializeField] private float minimumHeight;
+        [SerializeField] private float maximumHeight;
+
+        public string AssetGuid => assetGuid;
+        public string ContentHash => contentHash;
+        public string RuntimeBlobHash => runtimeBlobHash;
+        public int SurfaceCount => surfaceCount;
+        public int PayloadVersion => payloadVersion;
+        public byte PayloadEncoding => payloadEncoding;
+        public float MinimumHeight => minimumHeight;
+        public float MaximumHeight => maximumHeight;
+
+        public OperationMapSurfaceMetadataConfig(
+            string assetGuid,
+            string contentHash,
+            string runtimeBlobHash,
+            int surfaceCount,
+            int payloadVersion,
+            byte payloadEncoding,
+            float minimumHeight,
+            float maximumHeight)
+        {
+            this.assetGuid = assetGuid;
+            this.contentHash = contentHash;
+            this.runtimeBlobHash = runtimeBlobHash;
+            this.surfaceCount = surfaceCount;
+            this.payloadVersion = payloadVersion;
+            this.payloadEncoding = payloadEncoding;
+            this.minimumHeight = minimumHeight;
+            this.maximumHeight = maximumHeight;
+        }
+
+        public bool TryValidate(out string error)
+        {
+            if (!OperationMapHashRules.IsValidHash128(assetGuid) ||
+                !OperationMapHashRules.IsValidSha256(contentHash) ||
+                !OperationMapHashRules.IsValidHash128(runtimeBlobHash))
+            {
+                error = "Surface metadata requires lowercase asset/runtime identities and a SHA-256 content hash.";
+                return false;
+            }
+
+            if (surfaceCount <= 0 || payloadVersion <= 0 ||
+                !OperationMapConfigValidation.IsFinite(minimumHeight) ||
+                !OperationMapConfigValidation.IsFinite(maximumHeight) ||
+                maximumHeight < minimumHeight)
+            {
+                error = "Surface metadata requires positive counts/version and an ordered finite height range.";
+                return false;
+            }
+
+            error = null;
+            return true;
+        }
+    }
+
+    [Serializable]
     public struct OperationMapCameraConfig
     {
         [SerializeField] private string cameraId;

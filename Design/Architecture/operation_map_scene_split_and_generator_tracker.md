@@ -699,7 +699,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 14% (25/177 checklist items complete).
+Overall implementation progress: 15% (26/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
@@ -709,7 +709,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 | 1. Operation-map and scenario data contracts | In progress / shared subset | 9 | 12 | 75% | Typed identity, spatial metadata, hashes, cross-config validation, and the ownership chain are approved; delivery-specific references remain later. |
 | 2. Per-map static presentation ownership | Not started / compatibility subset | 0 | 14 | 0% | Preserve the current baked map safely; future-map generation remains undecided. |
 | 2A. Local Addressables packaging foundation | Later / direction-specific | 0 | 20 | 0% | Do not implement before the map-delivery direction is selected. |
-| 3. Current-map compatibility registration | In progress / shared | 3 | 10 | 30% | Current scene/subscene/manifest/grid/surface/placement identities are registered; the compatibility definition and runtime launch remain. |
+| 3. Current-map compatibility registration | In progress / shared | 4 | 10 | 40% | Current content identities and the validated loader-neutral compatibility definition are registered; runtime launch remains. |
 | 4. Non-destructive scene ownership split | In progress / shared priority | 1 | 14 | 7% | Final ownership inventory accepted; no scene object has moved yet. |
 | 5. Runtime selection, loading, and teardown | In progress / shared contracts | 1 | 14 | 7% | Pure readiness/failure/teardown data contracts only; concrete loading is later. |
 | 6. Metadata, camera, minimap, and movement binding | Not started / shared | 0 | 12 | 0% | Shared bounds, surface, grid, blockers, camera, minimap, runway, and helipad metadata. |
@@ -829,7 +829,7 @@ Exit criteria:
 
 - [x] Confirm the logical id `opmap.skirmish.desert_base_01` or record the approved replacement. Approved in `operation_map_runtime_ownership_chain.md` without selecting a loader or changing current content.
 - [x] Register that id against the current `Match.unity`, `MatchSubScene.unity`, current manifest, and current map-specific configs without moving files. See `../AgentReports/2026-07-16_current_operation_map_compatibility_registration.md`.
-- [ ] Create the compatibility `OperationMapDefinition` with exact current bounds, grid/surface references, camera ids, minimap id, and map anchors.
+- [x] Create the compatibility `OperationMapDefinition` with exact current bounds, grid/surface references, camera ids, minimap id, and map anchors. See `../AgentReports/2026-07-16_current_operation_map_compatibility_definition.md`.
 - [x] Record current building/vehicle placement counts and source paths as map-owned compatibility data. See `../AgentReports/2026-07-16_current_operation_map_placement_registration.md`.
 - [ ] Keep the current schema-v1 manifest readable during the map-specific schema transition.
 - [ ] Launch the existing match through the compatibility operation-map id with no visual or gameplay behavior change.
@@ -1080,6 +1080,7 @@ Exit criteria:
 | 2026-07-16 | Shared operation-map contract validation | `../AgentReports/2026-07-16_operation_map_contract_validation.md`; focused EditMode `7 / 7`; zero-allocation regression; source-growth `15 / 15`; non-ECS naming `9 / 9`; Unity compile; checklist recount; `git diff --check` | Passed | Added exact uniqueness, null/missing asset, metadata, stale evidence, and scenario-to-map resolution validation over caller-supplied small configs. No asset search, loader, Addressables, scene, or update-loop behavior was introduced. |
 | 2026-07-16 | Current-map placement compatibility registration | `../AgentReports/2026-07-16_current_operation_map_placement_registration.md`; accepted placement evidence/decision cross-check; asset GUID/path/count/root/hash verification; checklist recount; `git diff --check` | Passed | Bound all 451 building and 29 vehicle placement identities to `opmap.skirmish.desert_base_01` without moving assets or changing current spawn/source-hiding behavior. |
 | 2026-07-16 | Current-map compatibility content registration | `../AgentReports/2026-07-16_current_operation_map_compatibility_registration.md`; accepted Phase 0 baseline probe on current `main`; external report SHA-256 `a18761d6...e80fda3`; Unity exit `0`; compiler errors `0`; exact generated file-set parity; checklist recount; `git diff --check` | Passed | Bound the approved current-map id to exact current scene, subscene, schema-v1 manifest/chunks, grid, surface, and placement identities without moving or rewriting content and without selecting a loader. |
+| 2026-07-16 | Current-map compatibility definition | `../AgentReports/2026-07-16_current_operation_map_compatibility_definition.md`; focused EditMode `42 / 42`; source-growth/naming `24 / 24`; deterministic asset SHA-256 `f1a16621...39bc4f0`; Unity compile; `git diff --check` | Passed | Added one validated loader-neutral definition with measured bounds, bounded grid/surface identities, current camera/minimap metadata, and exact compatibility anchors. No scene, map payload, presentation output, loader, or Addressables behavior changed. |
 
 ## Open Decisions
 

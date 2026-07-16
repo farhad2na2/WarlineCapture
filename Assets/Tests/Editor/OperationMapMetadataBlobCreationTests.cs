@@ -29,6 +29,11 @@ public sealed class OperationMapMetadataBlobCreationTests
             Assert.That(metadata.GeneratedMetadataHash.ToString(), Is.EqualTo(HashC));
             Assert.That(metadata.SchemaVersion, Is.EqualTo(2));
             Assert.That(metadata.ContentVersion, Is.EqualTo(7));
+            Assert.That(metadata.Grid.Dimensions, Is.EqualTo(new int2(200, 200)));
+            Assert.That(metadata.Grid.CellSize, Is.EqualTo(1f));
+            Assert.That(metadata.Surface.SurfaceCount, Is.EqualTo(40000));
+            Assert.That(metadata.Surface.MinimumHeight, Is.EqualTo(-10f));
+            Assert.That(metadata.Surface.MaximumHeight, Is.EqualTo(50f));
             Assert.That(metadata.PlanningCameraId.ToString(), Is.EqualTo("camera.skirmish.planning"));
             Assert.That(metadata.BattleCameraId.ToString(), Is.EqualTo("camera.skirmish.battle"));
             Assert.That(metadata.Cameras.Length, Is.EqualTo(2));
@@ -121,7 +126,6 @@ public sealed class OperationMapMetadataBlobCreationTests
     {
         string[] forbiddenTokens =
         {
-            "Surface",
             "Blocker",
             "Occupancy",
             "Mesh",
@@ -154,6 +158,10 @@ public sealed class OperationMapMetadataBlobCreationTests
             new Vector3(90f, 40f, 90f),
             new Vector3(-80f, 10f, -80f),
             new Vector3(80f, 40f, 80f)));
+        Set(definition, "gridMetadata", new OperationMapGridMetadataConfig(
+            HashA.Substring(0, 32), HashA, new Vector3(-100f, 0f, -100f), new Vector2Int(200, 200), 1f, 0));
+        Set(definition, "surfaceMetadata", new OperationMapSurfaceMetadataConfig(
+            HashB.Substring(0, 32), HashB, HashC.Substring(0, 32), 40000, 3, 1, -10f, 50f));
         Set(definition, "cameras", new[]
         {
             new OperationMapCameraConfig(

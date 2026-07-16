@@ -17,6 +17,8 @@ namespace Game.Configs
         [SerializeField] private string contentHash;
         [SerializeField] private string generatedMetadataHash;
         [SerializeField] private OperationMapBoundsConfig bounds;
+        [SerializeField] private OperationMapGridMetadataConfig gridMetadata;
+        [SerializeField] private OperationMapSurfaceMetadataConfig surfaceMetadata;
         [SerializeField] private OperationMapCameraConfig[] cameras = Array.Empty<OperationMapCameraConfig>();
         [SerializeField] private string planningCameraId;
         [SerializeField] private string battleCameraId;
@@ -30,6 +32,8 @@ namespace Game.Configs
         public string ContentHash => contentHash;
         public string GeneratedMetadataHash => generatedMetadataHash;
         public OperationMapBoundsConfig Bounds => bounds;
+        public OperationMapGridMetadataConfig GridMetadata => gridMetadata;
+        public OperationMapSurfaceMetadataConfig SurfaceMetadata => surfaceMetadata;
         public ReadOnlySpan<OperationMapCameraConfig> Cameras => cameras;
         public string PlanningCameraId => planningCameraId;
         public string BattleCameraId => battleCameraId;
@@ -58,8 +62,23 @@ namespace Game.Configs
         {
             if (!TryValidateIdentity(out error) ||
                 !TryValidateHashes(out error) ||
-                !bounds.TryValidate(out error))
+                !bounds.TryValidate(out error) ||
+                !gridMetadata.TryValidate(out error) ||
+                !surfaceMetadata.TryValidate(out error))
                 return false;
+
+            Vector3 expectedGridMax = gridMetadata.Origin + new Vector3(
+                gridMetadata.Dimensions.x * gridMetadata.CellSize,
+                0f,
+                gridMetadata.Dimensions.y * gridMetadata.CellSize);
+            if (bounds.WorldMin.x != gridMetadata.Origin.x ||
+                bounds.WorldMin.z != gridMetadata.Origin.z ||
+                bounds.WorldMax.x != expectedGridMax.x ||
+                bounds.WorldMax.z != expectedGridMax.z)
+            {
+                error = "World X/Z bounds must exactly match the canonical grid extent.";
+                return false;
+            }
 
             if (cameras == null || cameras.Length == 0)
             {
@@ -176,6 +195,26 @@ namespace Game.Configs
             root.GeneratedMetadataHash = new FixedString128Bytes(generatedMetadataHash);
             root.SchemaVersion = schemaVersion;
             root.ContentVersion = contentVersion;
+            root.Grid = new OperationMapGridBlob
+            {
+                AssetGuid = new FixedString64Bytes(gridMetadata.AssetGuid),
+                ContentHash = new FixedString128Bytes(gridMetadata.ContentHash),
+                Origin = ToFloat3(gridMetadata.Origin),
+                Dimensions = new int2(gridMetadata.Dimensions.x, gridMetadata.Dimensions.y),
+                CellSize = gridMetadata.CellSize,
+                AuthoredBlockedCellCount = gridMetadata.AuthoredBlockedCellCount
+            };
+            root.Surface = new OperationMapSurfaceMetadataBlob
+            {
+                AssetGuid = new FixedString64Bytes(surfaceMetadata.AssetGuid),
+                ContentHash = new FixedString128Bytes(surfaceMetadata.ContentHash),
+                RuntimeBlobHash = new FixedString64Bytes(surfaceMetadata.RuntimeBlobHash),
+                SurfaceCount = surfaceMetadata.SurfaceCount,
+                PayloadVersion = surfaceMetadata.PayloadVersion,
+                PayloadEncoding = surfaceMetadata.PayloadEncoding,
+                MinimumHeight = surfaceMetadata.MinimumHeight,
+                MaximumHeight = surfaceMetadata.MaximumHeight
+            };
 
             BlobBuilderArray<OperationMapAnchorBlob> blobAnchors = builder.Allocate(ref root.Anchors, anchors.Length);
             for (int index = 0; index < anchors.Length; index++)
@@ -376,11 +415,16 @@ namespace Game.Configs
 
     public static class OperationMapHashRules
     {
+        public const int Hash128HexLength = 32;
         public const int Sha256HexLength = 64;
 
-        public static bool IsValidSha256(string value)
+        public static bool IsValidHash128(string value) => IsValidLowerHex(value, Hash128HexLength);
+
+        public static bool IsValidSha256(string value) => IsValidLowerHex(value, Sha256HexLength);
+
+        private static bool IsValidLowerHex(string value, int expectedLength)
         {
-            if (value == null || value.Length != Sha256HexLength)
+            if (value == null || value.Length != expectedLength)
                 return false;
 
             for (int index = 0; index < value.Length; index++)

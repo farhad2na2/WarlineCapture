@@ -171,6 +171,7 @@ public sealed class OperationMapContractValidationTests
             new Vector3(90f, 40f, 90f),
             new Vector3(-80f, 10f, -80f),
             new Vector3(80f, 40f, 80f)));
+        SetSpatialMetadata(definition);
         Set(definition, "cameras", new[]
         {
             new OperationMapCameraConfig(
@@ -207,6 +208,14 @@ public sealed class OperationMapContractValidationTests
                 4f)
         });
         return definition;
+    }
+
+    private static void SetSpatialMetadata(OperationMapDefinition definition)
+    {
+        Set(definition, "gridMetadata", new OperationMapGridMetadataConfig(
+            Hash.Substring(0, 32), Hash, new Vector3(-100f, 0f, -100f), new Vector2Int(200, 200), 1f, 0));
+        Set(definition, "surfaceMetadata", new OperationMapSurfaceMetadataConfig(
+            Hash.Substring(0, 32), Hash, Hash.Substring(0, 32), 40000, 3, 1, -10f, 50f));
     }
 
     private static ScenarioSetupConfig CreateScenario(string scenarioId, string operationMapId)

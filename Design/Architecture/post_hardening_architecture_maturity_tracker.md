@@ -109,13 +109,13 @@ Release-only categories are reported separately and never averaged into a premat
 
 | Field | Status |
 |---|---|
-| Checklist complete | `0 / 86` |
-| Core Architecture Lane | `0 / 68`; ready to start |
-| Release Certification Lane | `0 / 18`; deferred |
-| Program state | Core Architecture Lane ready; release work inactive |
+| Checklist complete | `1 / 86` (`1.2%`) |
+| Core Architecture Lane | `1 / 68` (`1.5%`); active |
+| Release Certification Lane | `0 / 18` (`0.0%`); deferred |
+| Program state | Core Architecture Lane active; release work inactive |
 | Current phase | Phase 0 - Entry Baseline And Scorecard |
-| Current task | `AM-001` ready, not yet claimed |
-| Core entry review | Ready |
+| Current task | `AM-002` ready, not yet claimed |
+| Core entry review | Accepted by `AM-001`; exact-commit environment and refreshed gate evidence remain Phase 0 work |
 | Release entry review | Deferred until `pre_release_performance_certification_backlog.md` activates |
 | Architecture rating | Not re-audited for this program |
 | Performance evidence | Must be recaptured at the exact entry commit |
@@ -141,7 +141,7 @@ Release-only categories are reported separately and never averaged into a premat
 
 No production behavior changes. Establish a reproducible baseline and prevent an architecture score from substituting for evidence.
 
-- [ ] `AM-001` Verify the prerequisite tracker is closed and its compiler, architecture, critical behavior, Editor performance, and GC gates are green. Record every release-only gap as deferred/measurement-required without blocking the Core Architecture Lane.
+- [x] `AM-001` Verify the prerequisite tracker is closed and its compiler, architecture, critical behavior, Editor performance, and GC gates are green. Record every release-only gap as deferred/measurement-required without blocking the Core Architecture Lane.
 - [ ] `AM-002` Record the exact entry commit, branch, Unity editor version, package lock hash, build target, scripting backend, and active quality configuration.
 - [ ] `AM-003` Define canonical scenarios for idle Match, maximum combat, construction, transport, aircraft, projectiles, every major popup, Menu-to-Match transitions, and long-duration soak.
 - [ ] `AM-004` Freeze the core architecture scorecard, metric definitions, performance budgets, GC classification policy, memory-growth threshold, and evidence freshness rules. Keep release-only device-tier fields explicitly `measurement-required` until `AM-053`.
@@ -440,4 +440,15 @@ The implementation agent owns substantive commits, pushes, PR creation, and revi
 
 ## Implementation Log
 
-No implementation work has started. The Core Architecture Lane is ready for `AM-001`; the Release Certification Lane remains inactive.
+### 2026-07-16 - AM-001 - Entry prerequisite review
+
+- Workflow path: pull request.
+- Implementation branch and PR: `codex/am-001-prerequisite-review`; [PR #14](https://github.com/farhad2na2/WarlineCapture/pull/14).
+- Baseline: `1a0f1eceb2d6c04359e2f868ddd9f99d26a0e713`; reviewed implementation head `8d9e5388c792fb2de407e5808bfb6fcbc5dc530c`.
+- Result: Core Architecture Lane entry accepted from the bounded prerequisite closeout record; Release Certification Lane remains deferred and no release-certification claim is made.
+- Evidence: `Design/AgentReports/ArchitectureMaturity/entry_prerequisite_review.json` and matching Markdown rendering.
+- Validation: JSON parse and invariants passed; deterministic ID/path ordering passed; every cited repository path exists; Markdown/JSON gate, deferral, and risk IDs match; `git diff --check` passed; substantive scope is exactly the two AM-001 artifacts.
+- Independent review: no material finding in the two-file substantive diff. The artifacts distinguish the review baseline from historical measurement revisions and preserve all 15 release-only obligations as unaccepted.
+- Residual risks: direct Editor and GC artifacts declare no measurement commit; the GC filename date differs from its internal capture date; the architecture dashboard has zero healthy/current inputs and an older Editor snapshot. Later Phase 0 tasks must refresh exact-commit environment, dashboard, performance, and GC evidence before Phase 0 exit.
+- Exclusions preserved: operation-map, FirstLaunch, audio, UI visual-lock, production code, scenes, prefabs, packages, and `ProjectSettings`.
+- Next task: `AM-002` records the exact entry environment identity.

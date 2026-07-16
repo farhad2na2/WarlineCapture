@@ -699,7 +699,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 29% (52/177 checklist items complete).
+Overall implementation progress: 30% (53/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
@@ -903,7 +903,7 @@ Exit criteria:
 - [x] Bind ARIA `Show Me` and camera intents to typed operation-map anchors. See `../AgentReports/2026-07-16_operation_map_aria_objective_anchor_binding.md`.
 - [ ] Bind friendly/hostile deployment and spawn anchors.
 - [ ] Bind runway and helipad anchors for taxi, takeoff, return, and landing behavior.
-- [ ] Bind blocker/path/build metadata to movement and placement validation.
+- [x] Bind blocker/path/build metadata to movement and placement validation. See `../AgentReports/2026-07-16_operation_map_blocker_path_build_binding.md`.
 - [x] Bind ground-height/surface metadata for soldiers, vehicles, and aircraft clearance. See `../AgentReports/2026-07-16_operation_map_surface_binding.md`.
 - [x] Add validation for every anchor required by each active scenario. See `../AgentReports/2026-07-16_operation_map_scenario_anchor_validation.md`.
 - [x] Add editor/debug overlays for bounds, cameras, anchors, blockers, lanes, surface samples, and minimap extents. See `../AgentReports/2026-07-16_operation_map_editor_debug_overlays.md`.
@@ -1107,6 +1107,7 @@ Exit criteria:
 | 2026-07-16 | Operation-map catalog preflight binding | `../AgentReports/2026-07-16_operation_map_catalog_preflight_binding.md`; focused bootstrap `10 / 10`; affected composition architecture `4 / 4`; source-growth/naming `24 / 24`; Unity compile; `git diff --check` | Passed | Missing or unresolved catalog entries now stop match runtime binding before bootstrap and leave no operation-map root. This is loader-neutral preflight only; no scene loading, Addressables, or generator behavior was added. |
 | 2026-07-16 | Active operation-map grid-domain binding | `../AgentReports/2026-07-16_operation_map_grid_domain_binding.md`; metadata/bootstrap `14 / 14`; movement `26 / 26`; placement `23 / 23`; Menu-Match-Menu `1 / 1`; naming/source-growth `24 / 24`; Unity compile; scoped `git diff --check` | Passed; Phase 6 row remains open | Match startup now prefers the active map blob's grid dimensions/origin/cell size and fails closed on ambiguous or stale active metadata. The serialized grid config remains only a no-active-map compatibility fallback; authored blocked-cell parity and teardown are not yet claimed. |
 | 2026-07-16 | Active operation-map surface binding | `../AgentReports/2026-07-16_operation_map_surface_binding.md`; metadata/bootstrap `21 / 21`; surface consumers/startup `55 / 55`; Unity compile; deterministic ownership evidence; `git diff --check` | Passed | Active-map metadata now validates the exact surface payload hash, format, count, and grid before the existing sole `MapSurfaceBlob` owner publishes it. Binding failures preserve the previous surface and stop startup; no-active-map compatibility remains. |
+| 2026-07-16 | Active operation-map blocker/path/build binding | `../AgentReports/2026-07-16_operation_map_blocker_path_build_binding.md`; startup binding `5 / 5`; runtime grid `5 / 5`; movement/blocker passed; placement `19 / 19`; Unity compile; `git diff --check` | Passed | Active navigation metadata now fail-closes on grid/count/capability drift, while authored blocked cells initialize the existing shared walkability authority used by movement, pathfinding, and placement. No loading, generator, or delivery behavior was added. |
 
 ## Open Decisions
 

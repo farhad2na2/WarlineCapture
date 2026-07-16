@@ -28,33 +28,16 @@ namespace Game.Composition
                 world,
                 sceneView != null ? sceneView.WorldCamera : null);
 
-            GridConfig startupGrid;
-            bool resolvedActiveGrid = OperationMapMetadataUtility.TryResolveActiveGridConfig(
+            if (!OperationMapGridStartupBinding.TryResolve(
                 world.EntityManager,
-                out startupGrid,
-                out bool hasActiveMap,
-                out string operationMapGridError);
-            if (!resolvedActiveGrid && hasActiveMap)
+                runtimeGridConfig,
+                out GridConfig startupGrid,
+                out Vector2Int[] authoredBlockedCells,
+                out _,
+                out string operationMapGridError))
             {
                 throw new System.InvalidOperationException(
                     $"Operation-map grid binding failed: {operationMapGridError}");
-            }
-
-            if (!resolvedActiveGrid && runtimeGridConfig == null)
-            {
-                throw new System.InvalidOperationException(
-                    "Match startup requires active operation-map grid metadata or a compatibility grid config.");
-            }
-
-            if (!resolvedActiveGrid)
-            {
-                startupGrid = new GridConfig
-                {
-                    Width = runtimeGridConfig.Width,
-                    Height = runtimeGridConfig.Height,
-                    CellSize = runtimeGridConfig.CellSize,
-                    Origin = runtimeGridConfig.Origin
-                };
             }
 
             if (runtimeGridBootstrapSystem == null)
@@ -68,7 +51,8 @@ namespace Game.Composition
                 startupGrid.Width,
                 startupGrid.Height,
                 startupGrid.CellSize,
-                (Vector3)startupGrid.Origin);
+                (Vector3)startupGrid.Origin,
+                authoredBlockedCells);
             if (mapSurfaceRuntimeBootstrapSystem == null)
             {
                 Debug.LogWarning("[MatchBootstrap] missingMapSurfaceRuntimeBootstrapSystem");

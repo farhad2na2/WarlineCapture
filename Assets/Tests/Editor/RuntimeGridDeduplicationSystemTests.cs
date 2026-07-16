@@ -22,8 +22,9 @@ public sealed class RuntimeGridDeduplicationSystemTests
             tests.RunWithFixture(tests.Deduplication_RemovesRuntimeGridWhenAuthoredGridExists);
             tests.RunWithFixture(tests.Deduplication_KeepsRuntimeGridWhenNoAuthoredGridExists);
             tests.RunWithFixture(tests.RuntimeGridBootstrapStartupSystemHelperCreatesRuntimeGridFromPlainHelper);
+            tests.RunWithFixture(tests.RuntimeGridBootstrapStartupSystemHelperAppliesAuthoredBlockedCells);
             tests.RunWithFixture(tests.ActiveOperationMapMetadataDrivesRuntimeGridBootstrap);
-            Debug.Log("[RuntimeGridDeduplicationFocusedValidation] result=Passed tests=4");
+            Debug.Log("[RuntimeGridDeduplicationFocusedValidation] result=Passed tests=5");
             ValidationExit.Exit(0);
         }
         catch (Exception ex)
@@ -147,6 +148,29 @@ public sealed class RuntimeGridDeduplicationSystemTests
         Assert.AreEqual(24 * 18, _entityManager.GetBuffer<GridWalkable>(gridEntity).Length);
         Assert.AreEqual(new float3(7f, 0f, 11f), _entityManager.GetComponentData<GridConfig>(gridEntity).Origin);
         blob.Dispose();
+    }
+
+    [Test]
+    public void RuntimeGridBootstrapStartupSystemHelperAppliesAuthoredBlockedCells()
+    {
+        var system = new RuntimeGridBootstrapStartupSystemHelper();
+        var blockedCells = new[]
+        {
+            new Vector2Int(1, 2),
+            new Vector2Int(3, 0),
+            new Vector2Int(-1, 2),
+            new Vector2Int(8, 8)
+        };
+
+        Assert.IsTrue(system.Ensure(_entityManager, 4, 3, 1f, Vector3.zero, blockedCells));
+
+        using EntityQuery query = _entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<GridConfig>(),
+            ComponentType.ReadOnly<RuntimeGridBootstrapGridTag>());
+        DynamicBuffer<GridWalkable> walkable = _entityManager.GetBuffer<GridWalkable>(query.GetSingletonEntity());
+        Assert.AreEqual(0, walkable[2 * 4 + 1].Value);
+        Assert.AreEqual(0, walkable[3].Value);
+        Assert.AreEqual(1, walkable[0].Value);
     }
 
     private void RunWithFixture(Action test)

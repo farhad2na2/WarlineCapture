@@ -12,6 +12,17 @@ namespace Game.Runtime
 
         public bool Ensure(EntityManager entityManager, int width, int height, float cellSize, Vector3 origin)
         {
+            return Ensure(entityManager, width, height, cellSize, origin, null);
+        }
+
+        public bool Ensure(
+            EntityManager entityManager,
+            int width,
+            int height,
+            float cellSize,
+            Vector3 origin,
+            Vector2Int[] authoredBlockedCells)
+        {
             width = Mathf.Max(1, width);
             height = Mathf.Max(1, height);
             cellSize = Mathf.Max(0.01f, cellSize);
@@ -41,15 +52,9 @@ namespace Game.Runtime
             DynamicBuffer<GridRoad> roads = ResizeBuffer<GridRoad>(entityManager, gridEntity, gridSize);
             DynamicBuffer<GridRoadSidewalk> sidewalks = ResizeBuffer<GridRoadSidewalk>(entityManager, gridEntity, gridSize);
             DynamicBuffer<GridRoadDirt> dirtRoads = ResizeBuffer<GridRoadDirt>(entityManager, gridEntity, gridSize);
-            EnsureDynamicGridStorage(entityManager, gridEntity, gridSize);
-
-            for (int i = 0; i < gridSize; i++)
-            {
-                walkable[i] = new GridWalkable { Value = 1 };
-                roads[i] = new GridRoad { Value = 0 };
-                sidewalks[i] = new GridRoadSidewalk { Value = 0 };
-                dirtRoads[i] = new GridRoadDirt { Value = 0 };
-            }
+            RuntimeGridStorageInitialization.EnsureDynamicStorage(entityManager, gridEntity, gridSize);
+            RuntimeGridStorageInitialization.InitializeCells(
+                walkable, roads, sidewalks, dirtRoads, width, height, authoredBlockedCells);
 
             Debug.Log($"[RuntimeGridBootstrap] {FixMarker} ready entity={gridEntity.Index} size={width}x{height} cellSize={cellSize:0.###}");
             return true;
@@ -97,41 +102,5 @@ namespace Game.Runtime
             return buffer;
         }
 
-        private static void EnsureDynamicGridStorage(EntityManager entityManager, Entity entity, int gridSize)
-        {
-            DynamicBlockerComponent blockerData = entityManager.GetComponentData<DynamicBlockerComponent>(entity);
-            if (blockerData.GridSize != gridSize ||
-                !blockerData.Counts.IsCreated ||
-                !blockerData.Blocked.IsCreated ||
-                !blockerData.FriendlyPassFactionIds.IsCreated)
-            {
-                if (blockerData.Counts.IsCreated)
-                    blockerData.Counts.Dispose();
-                if (blockerData.Blocked.IsCreated)
-                    blockerData.Blocked.Dispose();
-                if (blockerData.FriendlyPassFactionIds.IsCreated)
-                    blockerData.FriendlyPassFactionIds.Dispose();
-
-                blockerData.GridSize = gridSize;
-                blockerData.Counts = new NativeArray<int>(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
-                blockerData.Blocked = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
-                blockerData.FriendlyPassFactionIds = new NativeArray<byte>(gridSize, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
-                for (int i = 0; i < blockerData.FriendlyPassFactionIds.Length; i++)
-                    blockerData.FriendlyPassFactionIds[i] = byte.MaxValue;
-
-                entityManager.SetComponentData(entity, blockerData);
-            }
-
-            DynamicOccupancyComponent occupancyData = entityManager.GetComponentData<DynamicOccupancyComponent>(entity);
-            if (occupancyData.GridSize == gridSize && occupancyData.Occupied.IsCreated)
-                return;
-
-            if (occupancyData.Occupied.IsCreated)
-                occupancyData.Occupied.Dispose();
-
-            occupancyData.GridSize = gridSize;
-            occupancyData.Occupied = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
-            entityManager.SetComponentData(entity, occupancyData);
-        }
     }
 }

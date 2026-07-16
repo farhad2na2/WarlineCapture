@@ -20,9 +20,7 @@ namespace Game.Runtime
                 return false;
 
             OperationMapGridBlob source = metadata.Value.Grid;
-            if (source.Dimensions.x <= 0 || source.Dimensions.y <= 0 ||
-                !math.isfinite(source.CellSize) || source.CellSize <= 0f ||
-                !math.all(math.isfinite(source.Origin)))
+            if (!IsValidGrid(in source))
             {
                 error = "Active operation-map grid metadata is invalid.";
                 return false;
@@ -35,6 +33,39 @@ namespace Game.Runtime
                 CellSize = source.CellSize,
                 Origin = source.Origin
             };
+            error = null;
+            return true;
+        }
+
+        public static bool TryResolveActiveNavigationMetadata(
+            EntityManager entityManager,
+            out OperationMapGridBlob grid,
+            out OperationMapNavigationMetadataBlob navigation,
+            out bool hasActiveMap,
+            out string error)
+        {
+            grid = default;
+            navigation = default;
+            if (!TryResolveActiveMetadata(entityManager, out BlobAssetReference<OperationMapBlob> metadata, out hasActiveMap, out error))
+                return false;
+
+            grid = metadata.Value.Grid;
+            navigation = metadata.Value.Navigation;
+            if (!IsValidGrid(in grid) || grid.AuthoredBlockedCellCount < 0)
+            {
+                error = "Active operation-map navigation grid metadata is invalid.";
+                return false;
+            }
+
+            if (navigation.StaticGridBlockerCount < 0 ||
+                navigation.UsesSurfaceMovementMetadata > 1 ||
+                navigation.SupportsDynamicBlockers > 1 ||
+                navigation.SupportsDynamicOccupancy > 1)
+            {
+                error = "Active operation-map navigation capability metadata is invalid.";
+                return false;
+            }
+
             error = null;
             return true;
         }
@@ -245,5 +276,12 @@ namespace Game.Runtime
             math.all(math.isfinite(projection.ProjectionSize)) &&
             math.isfinite(projection.OrientationDegrees) &&
             math.all(projection.ProjectionSize >= new float2(MinimumProjectionExtent));
+
+        private static bool IsValidGrid(in OperationMapGridBlob grid) =>
+            grid.Dimensions.x > 0 &&
+            grid.Dimensions.y > 0 &&
+            math.isfinite(grid.CellSize) &&
+            grid.CellSize > 0f &&
+            math.all(math.isfinite(grid.Origin));
     }
 }

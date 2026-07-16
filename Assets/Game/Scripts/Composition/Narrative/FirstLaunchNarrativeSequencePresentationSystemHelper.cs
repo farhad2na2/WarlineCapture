@@ -26,6 +26,8 @@ namespace Game.Composition
         private UISettingsModel settings;
         private NarrativeCompletionPayload completionOverride;
         private bool hasCompletionOverride;
+        private NarrativeStateRecord panelPendingState;
+        private ulong panelPendingToken;
         public event Action<NarrativeStateRecord> InteractiveStateRequested;
         public event Action<NarrativeCommanderIdentityData, int> CommanderIdentityCommitted;
         public event Action<NarrativeGuidanceMode> GuidanceCommitted;
@@ -96,6 +98,10 @@ namespace Game.Composition
                 view.CommanderIdentityView,
                 view.GuidanceChoiceView);
             panels.Initialize(view, states);
+            panels.CurrentReady -= HandlePanelReady;
+            panels.CurrentFailed -= HandlePanelFailed;
+            panels.CurrentReady += HandlePanelReady;
+            panels.CurrentFailed += HandlePanelFailed;
             sequenceRuntime.Output += HandleSequenceOutput;
             return true;
         }
@@ -138,6 +144,8 @@ namespace Game.Composition
         public void Tick(float unscaledDeltaTime)
         {
             if (!sequenceRuntime.IsRunning || sequenceRuntime.IsPaused)
+                return;
+            if (panelPendingState != null)
                 return;
 
             FirstLaunchNarrativeAudioPresentationSystemHelper.ApplyVolumes(view, settings);
@@ -249,17 +257,35 @@ namespace Game.Composition
             panelMotion?.Cancel();
             interactive?.Unbind();
             panels.Clear();
+            panelPendingState = null;
+            panelPendingToken = 0;
         }
 
         private void PresentState(NarrativeStateRecord state, ulong transitionToken)
         {
             presentation?.Cancel();
+            panelPendingState = null;
+            panelPendingToken = 0;
+            if (!panels.Present(state, transitionToken))
+            {
+                panelPendingState = state;
+                panelPendingToken = transitionToken;
+                if (view.CurrentPanelSprite == null)
+                    view.SetVisible(false);
+                return;
+            }
+
+            ActivateStatePresentation(state, transitionToken);
+        }
+
+        private void ActivateStatePresentation(NarrativeStateRecord state, ulong transitionToken)
+        {
             panelMotion?.Start(state.MotionPreset, state.DurationSeconds, settings.Accessibility.ReducedMotion);
             view.SetSkipState(!string.IsNullOrEmpty(state.SkipStateId), true, "SKIP");
             view.SetInteractiveState(NarrativeInteractiveStateKind.None);
             view.ApplyLocation(FirstLaunchNarrativeModelUtilitySystemHelper.CreateLocation(state, textResolver));
             FirstLaunchNarrativeAudioPresentationSystemHelper.EnterState(view, settings, state);
-            panels.Present(state, transitionToken);
+            view.SetVisible(true);
 
             if (state.Kind == NarrativeStateKind.PanelDialogue)
             {
@@ -277,6 +303,28 @@ namespace Game.Composition
                 interactive?.Enter(config.SequenceId, state.StateId, transitionToken);
                 InteractiveStateRequested?.Invoke(state);
             }
+        }
+
+        private void HandlePanelReady(ulong transitionToken)
+        {
+            if (panelPendingState == null || transitionToken != panelPendingToken)
+                return;
+
+            NarrativeStateRecord state = panelPendingState;
+            panelPendingState = null;
+            panelPendingToken = 0;
+            ActivateStatePresentation(state, transitionToken);
+        }
+
+        private void HandlePanelFailed(ulong transitionToken)
+        {
+            if (panelPendingState == null || transitionToken != panelPendingToken)
+                return;
+
+            NarrativeStateRecord state = panelPendingState;
+            panelPendingState = null;
+            panelPendingToken = 0;
+            ActivateStatePresentation(state, transitionToken);
         }
 
         private void PresentLine(NarrativeStateRecord state, int index, ulong transitionToken)
@@ -373,7 +421,6 @@ namespace Game.Composition
                         hasCompletionOverride = false;
                     }
                     PresentState(state, output.TransitionToken);
-                    view.SetVisible(true);
                     break;
                 case FirstLaunchNarrativeSequenceOutputKind.LineStarted:
                     PresentLine(state, output.LineIndex, output.TransitionToken);

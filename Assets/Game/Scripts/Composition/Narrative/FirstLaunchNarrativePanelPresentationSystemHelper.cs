@@ -16,6 +16,9 @@ namespace Game.Composition
         private NarrativeStateRecord activeState;
         private ulong activeToken;
 
+        public event Action<ulong> CurrentReady;
+        public event Action<ulong> CurrentFailed;
+
         public int ResidentAssetCount => residency.ResidentAssetCount;
         public string CurrentKey => residency.CurrentKey;
         public string NextKey => residency.NextKey;
@@ -32,7 +35,7 @@ namespace Game.Composition
             residency.CurrentFailed += HandleCurrentFailed;
         }
 
-        public void Present(NarrativeStateRecord state, ulong transitionToken)
+        public bool Present(NarrativeStateRecord state, ulong transitionToken)
         {
             activeState = state;
             activeToken = transitionToken;
@@ -47,11 +50,15 @@ namespace Game.Composition
                     transitionToken,
                     direct);
             if (panel != null)
+            {
                 ApplyPanel(state, panel);
+                return true;
+            }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             else if (!IsReferenceValid(currentReference) && direct == null && RequiresPanel(state))
                 Debug.LogError($"[FirstLaunchPanelPresentation] Missing panel for state '{state.StateId}'.");
 #endif
+            return !RequiresPanel(state);
         }
 
         public void Clear()
@@ -66,6 +73,7 @@ namespace Game.Composition
             if (transitionToken != activeToken || activeState == null || panel == null)
                 return;
             ApplyPanel(activeState, panel);
+            CurrentReady?.Invoke(transitionToken);
         }
 
         private void HandleCurrentFailed(ulong transitionToken)
@@ -74,6 +82,8 @@ namespace Game.Composition
             if (transitionToken == activeToken && RequiresPanel(activeState) && ResolveDirectPanel(activeState) == null)
                 Debug.LogError($"[FirstLaunchPanelPresentation] Panel load failed for state '{activeState.StateId}'.");
 #endif
+            if (transitionToken == activeToken)
+                CurrentFailed?.Invoke(transitionToken);
         }
 
         private void ApplyPanel(NarrativeStateRecord state, Sprite panel)

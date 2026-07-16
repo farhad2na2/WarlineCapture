@@ -365,8 +365,11 @@ public sealed class FirstLaunchArchitectureAlignmentTests
             "FirstLaunchNarrativeCompositionSystemHelper.cs",
             "FirstLaunchNarrativeSequencePresentationSystemHelper.cs"));
         StringAssert.Contains("FirstLaunchNarrativePanelPresentationSystemHelper", sequenceSource);
+        StringAssert.Contains("panels.CurrentReady += HandlePanelReady", sequenceSource);
+        StringAssert.Contains("panelPendingState", sequenceSource);
         StringAssert.DoesNotContain("Addressables.LoadAssetAsync", sequenceSource);
         StringAssert.DoesNotContain("AssetReferenceSprite", sequenceSource);
+        StringAssert.DoesNotContain("Application.isPlaying", sequenceSource);
     }
 
     [Test]

@@ -1,10 +1,13 @@
 using Game.UI.Shell.Contracts.Ecs;
+using Unity.Collections;
 using Unity.Entities;
 
 namespace Game.Composition
 {
     internal sealed class FirstLaunchNarrativeShellCompositionSystemHelper
     {
+        private static readonly FixedString64Bytes PreparingBriefingStatus = "Preparing opening briefing";
+
         private UiShellStartupDisposition startupDisposition = UiShellStartupDisposition.Pending;
         private bool handoffPending;
         private bool handoffPublished;
@@ -47,6 +50,20 @@ namespace Game.Composition
                 {
                     current.Value = startupDisposition;
                     entityManager.SetComponentData(boundary, current);
+                }
+            }
+
+            if (startupDisposition == UiShellStartupDisposition.FirstLaunch &&
+                entityManager.HasComponent<UiShellLoadingProgressComponent>(boundary))
+            {
+                UiShellLoadingProgressComponent loading =
+                    entityManager.GetComponentData<UiShellLoadingProgressComponent>(boundary);
+                if (loading.Status != PreparingBriefingStatus || loading.IsComplete != 0)
+                {
+                    loading.Progress01 = 0f;
+                    loading.Status = PreparingBriefingStatus;
+                    loading.IsComplete = 0;
+                    entityManager.SetComponentData(boundary, loading);
                 }
             }
         }

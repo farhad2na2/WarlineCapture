@@ -201,8 +201,9 @@ public sealed class FirstLaunchNarrativeSequencePresentationSystemHelperTests
         GameObject instance = UnityEngine.Object.Instantiate(prefab);
         NarrativeSequenceView view = instance.GetComponent<NarrativeSequenceView>();
         FirstLaunchNarrativeSequencePresentationSystemHelper sequencePresentation = new();
-        NarrativeSequenceConfig sequence = AssetDatabase.LoadAssetAtPath<NarrativeSequenceConfig>(FirstLaunchNarrativeConfigBuilder.SequencePath);
-        Assert.NotNull(sequence, "Build the FirstLaunch sequence config before running sequencePresentation tests.");
+        NarrativeSequenceConfig sourceSequence = AssetDatabase.LoadAssetAtPath<NarrativeSequenceConfig>(FirstLaunchNarrativeConfigBuilder.SequencePath);
+        Assert.NotNull(sourceSequence, "Build the FirstLaunch sequence config before running sequencePresentation tests.");
+        NarrativeSequenceConfig sequence = CreateSequenceWithPanelFallback(sourceSequence);
         Assert.Greater(sequence.States.Count, 0, "FirstLaunch sequence config must be serialized before sequencePresentation tests.");
         Assert.IsTrue(sequencePresentation.Initialize(
             sequence,
@@ -211,15 +212,36 @@ public sealed class FirstLaunchNarrativeSequencePresentationSystemHelperTests
             view,
             FallbackGameTextResolver.Instance,
             Game.UI.Runtime.SettingsService.Defaults));
-        return new TestContext(instance, view, sequencePresentation);
+        return new TestContext(instance, view, sequence, sequencePresentation);
+    }
+
+    private static NarrativeSequenceConfig CreateSequenceWithPanelFallback(NarrativeSequenceConfig source)
+    {
+        const string FallbackPanelPath = "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P01.png";
+        Sprite fallback = AssetDatabase.LoadAssetAtPath<Sprite>(FallbackPanelPath);
+        Assert.NotNull(fallback, $"Missing FirstLaunch test panel fallback at {FallbackPanelPath}.");
+
+        NarrativeSequenceConfig sequence = UnityEngine.Object.Instantiate(source);
+        sequence.hideFlags = HideFlags.HideAndDontSave;
+        SerializedObject serialized = new(sequence);
+        SerializedProperty states = serialized.FindProperty("states");
+        for (int i = 0; i < states.arraySize; i++)
+        {
+            SerializedProperty state = states.GetArrayElementAtIndex(i);
+            state.FindPropertyRelative("panel16x9").objectReferenceValue = fallback;
+            state.FindPropertyRelative("panel20x9").objectReferenceValue = fallback;
+        }
+        serialized.ApplyModifiedPropertiesWithoutUndo();
+        return sequence;
     }
 
     private readonly struct TestContext
     {
         public readonly GameObject Instance;
         public readonly NarrativeSequenceView View;
+        public readonly NarrativeSequenceConfig Sequence;
         public readonly FirstLaunchNarrativeSequencePresentationSystemHelper SequencePresentation;
-        public TestContext(GameObject instance, NarrativeSequenceView view, FirstLaunchNarrativeSequencePresentationSystemHelper sequencePresentation) { Instance = instance; View = view; SequencePresentation = sequencePresentation; }
-        public void Dispose() { SequencePresentation.Cancel(); UnityEngine.Object.DestroyImmediate(Instance); }
+        public TestContext(GameObject instance, NarrativeSequenceView view, NarrativeSequenceConfig sequence, FirstLaunchNarrativeSequencePresentationSystemHelper sequencePresentation) { Instance = instance; View = view; Sequence = sequence; SequencePresentation = sequencePresentation; }
+        public void Dispose() { SequencePresentation.Cancel(); UnityEngine.Object.DestroyImmediate(Instance); UnityEngine.Object.DestroyImmediate(Sequence); }
     }
 }

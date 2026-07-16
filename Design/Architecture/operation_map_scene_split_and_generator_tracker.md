@@ -699,17 +699,17 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 11% (19/177 checklist items complete).
+Overall implementation progress: 12% (21/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
 | Phase | Status | Complete | Total | Progress | Notes |
 |---|---|---:|---:|---:|---|
 | 0. Reproducible baseline and rollback | In progress / shared | 11 | 12 | 92% | Required by both directions before scene edits. |
-| 1. Operation-map and scenario data contracts | In progress / shared subset | 7 | 12 | 58% | Typed identity, spatial metadata, and source/content hashes only; delivery-specific references remain later. |
+| 1. Operation-map and scenario data contracts | In progress / shared subset | 8 | 12 | 67% | Typed identity, spatial metadata, hashes, and the ownership chain are approved; delivery-specific references remain later. |
 | 2. Per-map static presentation ownership | Not started / compatibility subset | 0 | 14 | 0% | Preserve the current baked map safely; future-map generation remains undecided. |
 | 2A. Local Addressables packaging foundation | Later / direction-specific | 0 | 20 | 0% | Do not implement before the map-delivery direction is selected. |
-| 3. Current-map compatibility registration | Not started / shared | 0 | 10 | 0% | Registers the current map without choosing a loader. |
+| 3. Current-map compatibility registration | In progress / shared | 1 | 10 | 10% | Current map id approved; content registration awaits exact measured metadata and a loader-neutral reference contract. |
 | 4. Non-destructive scene ownership split | Not started / shared priority | 0 | 14 | 0% | Primary objective: separate current map ownership from `Match.unity`. |
 | 5. Runtime selection, loading, and teardown | In progress / shared contracts | 1 | 14 | 7% | Pure readiness/failure/teardown data contracts only; concrete loading is later. |
 | 6. Metadata, camera, minimap, and movement binding | Not started / shared | 0 | 12 | 0% | Shared bounds, surface, grid, blockers, camera, minimap, runway, and helipad metadata. |
@@ -757,7 +757,7 @@ Exit criteria:
 - [x] Add source identity, schema version, content hash, and generated-metadata hash fields. See `../AgentReports/2026-07-16_operation_map_source_content_hash_contract.md`.
 - [ ] Add `Game.Configs.OperationMapCatalogConfig`, resolved once by composition at launch or match transition with no hot-path asset search.
 - [ ] Add validation for unique ids, missing assets, invalid bounds, duplicate anchors, stale hashes, and unresolved scenario-to-map references.
-- [ ] Update architecture docs with the exact `Mission -> ScenarioSetup -> OperationMapDefinition -> scene/subscene/manifest` ownership chain.
+- [x] Update architecture docs with the exact `Mission -> ScenarioSetup -> OperationMapDefinition -> scene/subscene/manifest` ownership chain. See `operation_map_runtime_ownership_chain.md`.
 
 Exit criteria:
 
@@ -827,7 +827,7 @@ Exit criteria:
 
 **Execution: `Shared now` only when registration remains loader-neutral.**
 
-- [ ] Confirm the logical id `opmap.skirmish.desert_base_01` or record the approved replacement.
+- [x] Confirm the logical id `opmap.skirmish.desert_base_01` or record the approved replacement. Approved in `operation_map_runtime_ownership_chain.md` without selecting a loader or changing current content.
 - [ ] Register that id against the current `Match.unity`, `MatchSubScene.unity`, current manifest, and current map-specific configs without moving files.
 - [ ] Create the compatibility `OperationMapDefinition` with exact current bounds, grid/surface references, camera ids, minimap id, and map anchors.
 - [ ] Record current building/vehicle placement counts and source paths as map-owned compatibility data.
@@ -1072,12 +1072,13 @@ Exit criteria:
 | 2026-07-16 | Shared operation-map spatial metadata configs | `../AgentReports/2026-07-16_operation_map_spatial_metadata_configs.md`; focused spatial EditMode `17 / 17`; identity regression `23 / 23`; combined architecture/naming/source-growth `43 / 43`; affected compile and `git diff --check` | Passed | Added bounded world/playable/camera metadata, camera and minimap records, scoped planning/battle/minimap ids, and a closed typed anchor taxonomy. No heavy asset, scene, loader, Addressables, rendering, runtime-system, or per-frame dependency was introduced. |
 | 2026-07-16 | Shared source/content hash contract | `../AgentReports/2026-07-16_operation_map_source_content_hash_contract.md`; focused EditMode `24 / 24`; affected compile; source-growth; `git diff --check` | Passed | Added strict lowercase SHA-256 source-identity, content, and generated-metadata evidence without encoding a source path, scene GUID, loader address, generator policy, or heavyweight reference. |
 | 2026-07-16 | Shared operation-map ECS lifecycle contract | `../AgentReports/2026-07-16_operation_map_ecs_lifecycle_contract.md`; focused EditMode `7 / 7`; affected compile; source-growth `15 / 15`; `git diff --check` | Passed | Added unmanaged generation-scoped root/queue/state/active/bounds/metadata/readiness components, bounded request/result buffers, typed failure-unwind codes, and a small immutable camera/minimap/anchor blob. No loader, system, update loop, managed handle, or heavyweight map payload was introduced. |
+| 2026-07-16 | Shared runtime ownership chain and current-map id approval | `operation_map_runtime_ownership_chain.md`; identity-contract cross-check; current-map design reference audit; `git diff --check` | Passed | Made the mission/scenario/map/source/heavy-metadata/composition/ECS ownership chain normative and approved `opmap.skirmish.desert_base_01` for the current reusable map. No runtime source, scene, config asset, manifest, generated output, loader, or generator changed. |
 
 ## Open Decisions
 
 | Topic | Current Recommendation | Decision Gate |
 |---|---|---|
-| Current large map id | `opmap.skirmish.desert_base_01` | Approve in Phase 3 before catalog data is committed. |
+| Current large map id | Approved: `opmap.skirmish.desert_base_01` | Use for loader-neutral compatibility registration; do not derive it from scene or delivery identity. |
 | Extracted source path | `Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01.unity` | Confirm after Phase 0 dependency classification. |
 | Current map subscene | Make it map-owned if its authored ECS content is map-specific; keep only truly shared runtime ECS setup in shell composition. | Decide from Phase 0 inventory, not filename alone. |
 | Manifest schema migration | Keep schema-v1 compatibility while introducing map id/source GUID and map-scoped outputs in a new schema. | Approve with multi-map ownership and no-op tests in Phase 2. |

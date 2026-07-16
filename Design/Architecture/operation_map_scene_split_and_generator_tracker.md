@@ -699,14 +699,14 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 12% (22/177 checklist items complete).
+Overall implementation progress: 13% (23/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
 | Phase | Status | Complete | Total | Progress | Notes |
 |---|---|---:|---:|---:|---|
 | 0. Reproducible baseline and rollback | In progress / shared | 11 | 12 | 92% | Required by both directions before scene edits. |
-| 1. Operation-map and scenario data contracts | In progress / shared subset | 8 | 12 | 67% | Typed identity, spatial metadata, hashes, and the ownership chain are approved; delivery-specific references remain later. |
+| 1. Operation-map and scenario data contracts | In progress / shared subset | 9 | 12 | 75% | Typed identity, spatial metadata, hashes, cross-config validation, and the ownership chain are approved; delivery-specific references remain later. |
 | 2. Per-map static presentation ownership | Not started / compatibility subset | 0 | 14 | 0% | Preserve the current baked map safely; future-map generation remains undecided. |
 | 2A. Local Addressables packaging foundation | Later / direction-specific | 0 | 20 | 0% | Do not implement before the map-delivery direction is selected. |
 | 3. Current-map compatibility registration | In progress / shared | 1 | 10 | 10% | Current map id approved; content registration awaits exact measured metadata and a loader-neutral reference contract. |
@@ -756,7 +756,7 @@ Exit criteria:
 - [ ] Add map bounds, camera bounds, grid, surface/height, and blocker/path metadata references.
 - [x] Add source identity, schema version, content hash, and generated-metadata hash fields. See `../AgentReports/2026-07-16_operation_map_source_content_hash_contract.md`.
 - [ ] Add `Game.Configs.OperationMapCatalogConfig`, resolved once by composition at launch or match transition with no hot-path asset search.
-- [ ] Add validation for unique ids, missing assets, invalid bounds, duplicate anchors, stale hashes, and unresolved scenario-to-map references.
+- [x] Add validation for unique ids, missing assets, invalid bounds, duplicate anchors, stale hashes, and unresolved scenario-to-map references. See `../AgentReports/2026-07-16_operation_map_contract_validation.md`.
 - [x] Update architecture docs with the exact `Mission -> ScenarioSetup -> OperationMapDefinition -> scene/subscene/manifest` ownership chain. See `operation_map_runtime_ownership_chain.md`.
 
 Exit criteria:
@@ -1077,6 +1077,7 @@ Exit criteria:
 | 2026-07-16 | Shared operation-map metadata blob creation | `../AgentReports/2026-07-16_operation_map_metadata_blob_creation.md`; focused EditMode `4 / 4`; affected compile; source-growth `15 / 15`; `git diff --check` | Passed; enabling foundation | Added validated deterministic one-shot creation of the small persistent metadata blob with explicit caller disposal ownership. Invalid configs create no blob; heavy map payloads and all loading/publication behavior remain excluded. |
 | 2026-07-16 | Shared operation-map runtime bootstrap contract | `../AgentReports/2026-07-16_operation_map_runtime_bootstrap_contract.md`; focused EditMode `5 / 5`; source-growth `15 / 15`; non-ECS naming `9 / 9`; SystemBase migration `19 / 19`; Unity compile; `git diff --check` | Passed; enabling foundation | Added an explicit-World, no-update-loop composition boundary that publishes validated metadata into the ECS lifecycle contract and owns only its immutable blob. Selection, scene loading/unloading, Addressables, generators, and production composition integration remain excluded; no checklist item closes yet. |
 | 2026-07-16 | Final shared scene ownership inventory | `operation_map_scene_ownership_inventory.md`; accepted Phase 0 evidence/decision cross-check; checklist recount; `git diff --check` | Passed | Consolidated every accepted shell/map/shared/compatibility/mixed disposition into the atomic split contract. This closes inventory only; no scene, asset, prefab, bake, or runtime binding changed. |
+| 2026-07-16 | Shared operation-map contract validation | `../AgentReports/2026-07-16_operation_map_contract_validation.md`; focused EditMode `7 / 7`; zero-allocation regression; source-growth `15 / 15`; non-ECS naming `9 / 9`; Unity compile; checklist recount; `git diff --check` | Passed | Added exact uniqueness, null/missing asset, metadata, stale evidence, and scenario-to-map resolution validation over caller-supplied small configs. No asset search, loader, Addressables, scene, or update-loop behavior was introduced. |
 
 ## Open Decisions
 

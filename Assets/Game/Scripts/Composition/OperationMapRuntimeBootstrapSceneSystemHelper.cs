@@ -19,6 +19,44 @@ namespace Game.Composition
         }
 
         public bool TryPublish(
+            OperationMapCatalogConfig catalog,
+            string operationMapId,
+            in FixedString64Bytes scenarioId,
+            in FixedString64Bytes missionId,
+            int generation,
+            OperationMapReadinessFlags readyFlags,
+            OperationMapReadinessFlags requiredFlags,
+            out Entity rootEntity,
+            out string error)
+        {
+            rootEntity = Entity.Null;
+            if (catalog == null)
+            {
+                error = "Operation-map catalog is required.";
+                return false;
+            }
+
+            if (!catalog.TryValidate(out error))
+                return false;
+
+            if (!catalog.TryResolve(operationMapId, out OperationMapDefinition definition))
+            {
+                error = $"Operation-map id '{operationMapId ?? "<null>"}' is not present in the catalog.";
+                return false;
+            }
+
+            return TryPublish(
+                definition,
+                scenarioId,
+                missionId,
+                generation,
+                readyFlags,
+                requiredFlags,
+                out rootEntity,
+                out error);
+        }
+
+        public bool TryPublish(
             OperationMapDefinition definition,
             in FixedString64Bytes scenarioId,
             in FixedString64Bytes missionId,

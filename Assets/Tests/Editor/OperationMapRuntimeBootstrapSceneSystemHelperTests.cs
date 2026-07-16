@@ -12,6 +12,50 @@ public sealed class OperationMapRuntimeBootstrapSceneSystemHelperTests
     private const string Hash = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 
     [Test]
+    public void CatalogPublish_ResolvesOnceAndPublishesSelectedDefinition()
+    {
+        using World world = new("OperationMapRuntimeBootstrapCatalog");
+        OperationMapDefinition definition = CreateValidDefinition();
+        OperationMapCatalogConfig catalog = ScriptableObject.CreateInstance<OperationMapCatalogConfig>();
+        SetCatalogDefinitions(catalog, new[] { definition });
+        using OperationMapRuntimeBootstrapSceneSystemHelper bootstrap = new(world);
+        try
+        {
+            FixedString64Bytes scenarioId = new("scenario.skirmish.desert_base_standard");
+            FixedString64Bytes missionId = new("skirmish");
+            Assert.That(bootstrap.TryPublish(
+                catalog,
+                definition.OperationMapId,
+                in scenarioId,
+                in missionId,
+                1,
+                OperationMapReadinessFlags.Metadata,
+                OperationMapReadinessFlags.Metadata,
+                out Entity root,
+                out string error), Is.True, error);
+
+            Assert.That(world.EntityManager.GetComponentData<ActiveOperationMapComponent>(root)
+                .OperationMapId.ToString(), Is.EqualTo(definition.OperationMapId));
+            Assert.That(bootstrap.TryPublish(
+                catalog,
+                "opmap.skirmish.missing",
+                in scenarioId,
+                in missionId,
+                2,
+                OperationMapReadinessFlags.Metadata,
+                OperationMapReadinessFlags.Metadata,
+                out _,
+                out string missingError), Is.False);
+            StringAssert.Contains("not present", missingError);
+        }
+        finally
+        {
+            Object.DestroyImmediate(catalog);
+            Object.DestroyImmediate(definition);
+        }
+    }
+
+    [Test]
     public void Publish_CreatesOneCompleteGenerationWithoutSurfaceOwnership()
     {
         using World world = new("OperationMapRuntimeBootstrapPublish");
@@ -285,5 +329,16 @@ public sealed class OperationMapRuntimeBootstrapSceneSystemHelperTests
         FieldInfo field = typeof(OperationMapDefinition).GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
         Assert.That(field, Is.Not.Null, fieldName);
         field.SetValue(definition, value);
+    }
+
+    private static void SetCatalogDefinitions(
+        OperationMapCatalogConfig catalog,
+        OperationMapDefinition[] definitions)
+    {
+        FieldInfo field = typeof(OperationMapCatalogConfig).GetField(
+            "definitions",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.That(field, Is.Not.Null);
+        field.SetValue(catalog, definitions);
     }
 }

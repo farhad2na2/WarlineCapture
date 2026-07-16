@@ -699,14 +699,14 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 15% (26/177 checklist items complete).
+Overall implementation progress: 15% (27/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
 | Phase | Status | Complete | Total | Progress | Notes |
 |---|---|---:|---:|---:|---|
 | 0. Reproducible baseline and rollback | In progress / shared | 11 | 12 | 92% | Required by both directions before scene edits. |
-| 1. Operation-map and scenario data contracts | In progress / shared subset | 9 | 12 | 75% | Typed identity, spatial metadata, hashes, cross-config validation, and the ownership chain are approved; delivery-specific references remain later. |
+| 1. Operation-map and scenario data contracts | In progress / shared subset | 10 | 12 | 83% | Typed identity, catalog resolution, spatial metadata, hashes, cross-config validation, and the ownership chain are approved; delivery-specific references remain later. |
 | 2. Per-map static presentation ownership | Not started / compatibility subset | 0 | 14 | 0% | Preserve the current baked map safely; future-map generation remains undecided. |
 | 2A. Local Addressables packaging foundation | Later / direction-specific | 0 | 20 | 0% | Do not implement before the map-delivery direction is selected. |
 | 3. Current-map compatibility registration | In progress / shared | 4 | 10 | 40% | Current content identities and the validated loader-neutral compatibility definition are registered; runtime launch remains. |
@@ -755,7 +755,7 @@ Exit criteria:
 - [x] Add typed ids for spawn, objective, deployment, build, civilian, hostile, base, resource, runway, helipad, lane, and debug anchors. See the same report.
 - [ ] Add map bounds, camera bounds, grid, surface/height, and blocker/path metadata references.
 - [x] Add source identity, schema version, content hash, and generated-metadata hash fields. See `../AgentReports/2026-07-16_operation_map_source_content_hash_contract.md`.
-- [ ] Add `Game.Configs.OperationMapCatalogConfig`, resolved once by composition at launch or match transition with no hot-path asset search.
+- [x] Add `Game.Configs.OperationMapCatalogConfig`, resolved once by composition at launch or match transition with no hot-path asset search. See `../AgentReports/2026-07-16_operation_map_catalog_contract.md`.
 - [x] Add validation for unique ids, missing assets, invalid bounds, duplicate anchors, stale hashes, and unresolved scenario-to-map references. See `../AgentReports/2026-07-16_operation_map_contract_validation.md`.
 - [x] Update architecture docs with the exact `Mission -> ScenarioSetup -> OperationMapDefinition -> scene/subscene/manifest` ownership chain. See `operation_map_runtime_ownership_chain.md`.
 
@@ -1081,6 +1081,7 @@ Exit criteria:
 | 2026-07-16 | Current-map placement compatibility registration | `../AgentReports/2026-07-16_current_operation_map_placement_registration.md`; accepted placement evidence/decision cross-check; asset GUID/path/count/root/hash verification; checklist recount; `git diff --check` | Passed | Bound all 451 building and 29 vehicle placement identities to `opmap.skirmish.desert_base_01` without moving assets or changing current spawn/source-hiding behavior. |
 | 2026-07-16 | Current-map compatibility content registration | `../AgentReports/2026-07-16_current_operation_map_compatibility_registration.md`; accepted Phase 0 baseline probe on current `main`; external report SHA-256 `a18761d6...e80fda3`; Unity exit `0`; compiler errors `0`; exact generated file-set parity; checklist recount; `git diff --check` | Passed | Bound the approved current-map id to exact current scene, subscene, schema-v1 manifest/chunks, grid, surface, and placement identities without moving or rewriting content and without selecting a loader. |
 | 2026-07-16 | Current-map compatibility definition | `../AgentReports/2026-07-16_current_operation_map_compatibility_definition.md`; focused EditMode `42 / 42`; source-growth/naming `24 / 24`; deterministic asset SHA-256 `f1a16621...39bc4f0`; Unity compile; `git diff --check` | Passed | Added one validated loader-neutral definition with measured bounds, bounded grid/surface identities, current camera/minimap metadata, and exact compatibility anchors. No scene, map payload, presentation output, loader, or Addressables behavior changed. |
+| 2026-07-16 | Operation-map catalog contract | `../AgentReports/2026-07-16_operation_map_catalog_contract.md`; focused EditMode `10 / 10`; source-growth/naming `24 / 24`; Unity compile; zero-allocation catalog resolution; `git diff --check` | Passed | Added the explicit compatibility catalog and one-shot resolution through the existing bootstrap boundary without asset search, loading policy, Addressables, or recurring work. |
 
 ## Open Decisions
 

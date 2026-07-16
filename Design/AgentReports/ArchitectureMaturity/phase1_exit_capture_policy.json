@@ -1,0 +1,92 @@
+{
+  "artifactId": "AM017-PHASE1-EXIT-CAPTURE-POLICY",
+  "schemaVersion": 1,
+  "taskId": "AM-017",
+  "state": "frozen-before-acceptance-capture",
+  "authorityFiles": [
+    {
+      "path": "Design/Architecture/performance_regression_accepted_baseline.json",
+      "sha256": "6bdf3579d76b22dedf967388fd6e5adf61d8542f807b22607bd4c5a30cb82eed"
+    },
+    {
+      "path": "Design/AgentReports/ArchitectureMaturity/entry_scorecard.json",
+      "sha256": "367af663e03f86f1adcd6cdcf168f5631f61787cc6cd23bcb5f6d39360274d21"
+    }
+  ],
+  "identity": {
+    "exactCommitRequired": true,
+    "cleanWorktreeRequired": true,
+    "environmentIdentityRequired": true,
+    "qualityRequired": true,
+    "resolutionRequired": true,
+    "instrumentationStateRequired": true,
+    "governedSourceAndRunnerHashesRequired": true
+  },
+  "comparison": {
+    "relativeMarginPercent": 25,
+    "repeatedBatchCount": 3,
+    "batchSelection": "median-by-average-total-ms-then-p95-total-ms",
+    "canonicalMatchFrame": {
+      "historicalReportPath": "Design/AgentReports/performance_regression_match_baseline.json",
+      "historicalReportSha256": "4ccb462315740f5a5990f398c0ecc4c8e73a3de0b17bbf46777c1aac5a9446cd",
+      "historicalExactCommit": "9a0aa14252e6559680328e520d26c16bfc7b444e",
+      "historicalP95Ms": 4.112,
+      "relativeP95CeilingMs": 5.14,
+      "absoluteP95CeilingMs": 20.0,
+      "acceptance": "both-relative-and-absolute",
+      "minimumMeasuredFrames": 180,
+      "minimumUnitCount": 700,
+      "minimumRuntimeBuildingCount": 600,
+      "minimumVisibleModelEstimate": 40,
+      "currentThreadAllocatedBytesCeiling": 0
+    },
+    "canonicalMatchGc": {
+      "warmupFrames": 180,
+      "measuredFrames": 300,
+      "playerRelevantAllocatedBytesCeiling": 1024
+    },
+    "groundMissile": {
+      "baselineReportPath": "Design/AgentReports/ArchitectureMaturity/am011_ground_missile_performance.json",
+      "baselineReportSha256": "0a3743d0be7f95516a49886ae7dec48b5e2cc8afccbe420748aac4a92f3cdfac",
+      "baselineAverageTotalMs": 1.314,
+      "baselineP95TotalMs": 1.376,
+      "averageTotalMsCeiling": 1.6425,
+      "p95TotalMsCeiling": 1.72,
+      "allocatedBytesCeiling": 0
+    },
+    "transportBoarding": {
+      "baselineReportPath": "Design/AgentReports/ArchitectureMaturity/am012_transport_boarding_performance.json",
+      "baselineReportSha256": "96f6efdf35b061016ac96bdd5f7bce952757a03fc6ea1f7c8c0f711e78995515",
+      "baselineAverageTotalMs": 1.4,
+      "baselineP95TotalMs": 1.504,
+      "averageTotalMsCeiling": 1.75,
+      "p95TotalMsCeiling": 1.88,
+      "allocatedBytesCeiling": 0
+    },
+    "resourceExchangeBackend": {
+      "warmupFrames": 64,
+      "measuredFrames": 240,
+      "p95TotalMsCeiling": 10.0,
+      "p99TotalMsCeiling": 20.0,
+      "allocatedBytesCeiling": 0
+    },
+    "changedOwnerFocusedGc": {
+      "warmupFrames": 180,
+      "measuredFrames": 300,
+      "allocatedBytesCeiling": 0
+    },
+    "resourceExchangeShell": {
+      "requiredState": "surface-open-fully-bound-unchanged",
+      "warmupFrames": 180,
+      "measuredFrames": 300,
+      "unchangedStateP95MsCeiling": 20.0,
+      "unchangedStateAllocatedBytesCeiling": 0,
+      "warmupOpenCloseTransitions": 1,
+      "measuredOpenCloseTransitions": 100,
+      "openP95MsCeiling": 20.0,
+      "closeP95MsCeiling": 20.0,
+      "recurringTransitionAllocatedBytesCeiling": 0
+    }
+  },
+  "decision": "The existing 25 percent focused non-regression precedent is frozen before AM-017 acceptance capture. Canonical Match must also remain within 25 percent of the entry P95 and within the accepted 20 ms product ceiling. Missing identity, missing fields, dirty capture state, behavior failure, or allocation failure rejects the evidence; no limit may be loosened after capture."
+}

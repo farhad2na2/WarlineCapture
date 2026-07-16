@@ -62,6 +62,9 @@ namespace Game.Editor
         private const string EditorLiveConversionDisabledCountKey = "MatchGcAllocationCallstackCapture.EditorLiveConversionDisabledCount";
         private const string EditorMcpBridgeWasRunningKey = "MatchGcAllocationCallstackCapture.EditorMcpBridgeWasRunning";
         private const string SteadyStateMutationRetryCountKey = "MatchGcAllocationCallstackCapture.SteadyStateMutationRetryCount";
+        private const string EvidenceCommitKey = "MatchGcAllocationCallstackCapture.EvidenceCommit";
+        private const string EvidenceEnvironmentKey = "MatchGcAllocationCallstackCapture.EvidenceEnvironment";
+        private const string EvidenceDirtyKey = "MatchGcAllocationCallstackCapture.EvidenceDirty";
 
         private static bool hasPendingBatchExit;
         private static int pendingBatchExitCode;
@@ -204,6 +207,15 @@ namespace Game.Editor
             try
             {
                 ResetState();
+                ArchitectureEvidenceIdentity evidence = ArchitectureEvidenceIdentityUtility.ResolveIfAvailable(
+                    Directory.GetCurrentDirectory(),
+                    Array.Empty<string>());
+                if (evidence == null)
+                    throw new InvalidOperationException("Match GC evidence requires a Git-bound project checkout.");
+
+                SessionState.SetString(EvidenceCommitKey, evidence.ExactCommit);
+                SessionState.SetString(EvidenceEnvironmentKey, evidence.EnvironmentIdentitySha256);
+                SessionState.SetBool(EvidenceDirtyKey, evidence.Dirty);
                 SessionState.SetBool(ActiveKey, true);
                 SessionState.SetInt(PhaseKey, (int)Phase.WaitingForPlayMode);
                 SessionState.SetInt(CaptureModeKey, (int)mode);
@@ -586,6 +598,12 @@ namespace Game.Editor
             builder.AppendLine($"Date: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC");
             builder.AppendLine("Lane: Gameplay/Performance");
             builder.AppendLine($"Capture type: automated Match {DescribeCaptureMode(mode)} after Menu -> Match route");
+            builder.AppendLine($"Exact commit: `{SessionState.GetString(EvidenceCommitKey, "not-bound")}`");
+            builder.AppendLine($"Environment identity SHA-256: `{SessionState.GetString(EvidenceEnvironmentKey, "not-bound")}`");
+            builder.AppendLine($"Dirty at capture start: `{SessionState.GetBool(EvidenceDirtyKey, true).ToString().ToLowerInvariant()}`");
+            builder.AppendLine($"Quality: `{ResolveQualityName()}` (index `{QualitySettings.GetQualityLevel()}`)");
+            builder.AppendLine($"Resolution: `{Screen.width}x{Screen.height}`");
+            builder.AppendLine("Instrumentation: `Unity Profiler binary log; allocation callstacks enabled; Scripts and Memory categories enabled; deep profiling disabled; capture logging suppressed`");
             builder.AppendLine();
             builder.AppendLine("## Capture Summary");
             builder.AppendLine();
@@ -1743,6 +1761,15 @@ namespace Game.Editor
                 : value.Replace("|", "\\|", StringComparison.Ordinal).Replace("\n", "<br>", StringComparison.Ordinal);
         }
 
+        private static string ResolveQualityName()
+        {
+            int qualityLevel = QualitySettings.GetQualityLevel();
+            string[] names = QualitySettings.names;
+            return qualityLevel >= 0 && qualityLevel < names.Length
+                ? names[qualityLevel]
+                : $"index-{qualityLevel}";
+        }
+
         private static void WriteReport(string report)
         {
             Directory.CreateDirectory(Path.GetDirectoryName(ReportPath) ?? ".");
@@ -2275,6 +2302,9 @@ namespace Game.Editor
             SessionState.EraseInt(EditorLiveConversionDisabledCountKey);
             SessionState.EraseBool(EditorMcpBridgeWasRunningKey);
             SessionState.EraseInt(SteadyStateMutationRetryCountKey);
+            SessionState.EraseString(EvidenceCommitKey);
+            SessionState.EraseString(EvidenceEnvironmentKey);
+            SessionState.EraseBool(EvidenceDirtyKey);
         }
     }
     #endif

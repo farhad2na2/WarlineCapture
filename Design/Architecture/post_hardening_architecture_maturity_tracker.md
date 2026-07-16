@@ -661,3 +661,11 @@ The implementing agent works directly on `main`, owns the bounded substantive an
 - Review: independent review found and drove fixes for weak generic-owner detection, shell-state substitution, missing immutable ancestry/log binding, same-symbol-count lifecycle growth, and retroactive FirstLaunch decision edits. The final immutable rereview of `3950afd2288e8c7d326a33dca60124b02292bbda` returned `PASS`.
 - Exclusions preserved: operation-map, FirstLaunch source, audio, UI visual-lock, scenes, prefabs, packages, and `ProjectSettings` were not edited by AM-016. No runtime `ISystem`, `SystemBase`, scheduling, gameplay, or presentation behavior changed.
 - Next task: `AM-017` recaptures focused and canonical Match performance/GC evidence after all Phase 1 integrations and rejects any behavior, frame-time, or allocation regression.
+
+### 2026-07-16 - AM-017 - Capture policy frozen before measurement
+
+- State: implementation and acceptance capture in progress; `AM-017` remains incomplete.
+- Policy: `Design/AgentReports/ArchitectureMaturity/phase1_exit_capture_policy.json` freezes identity, environment, quality, resolution, instrumentation, measurement windows, exact GC ceilings, and the existing 25% non-regression precedent before any acceptance capture is evaluated.
+- Frame gates: canonical Match P95 must pass both the accepted `20 ms` product ceiling and the entry-baseline relative ceiling of `5.14 ms`. Ground-missile and transport focused comparisons use the median of three complete measured batches and retain their exact baseline-plus-25% ceilings.
+- GC gates: canonical Match remains `180` warmup plus `300` measured frames at no more than `1,024` player-relevant bytes. Every changed owner remains exactly zero recurring bytes; the fully bound Resource Exchange shell uses `180 + 300` unchanged-state frames and 100 measured open/close transitions after one warmup transition.
+- Fail-closed rule: missing identity or capture fields, dirty state, behavior failure, source/runner drift, allocation failure, or either frame ceiling failure rejects the evidence. No threshold may be loosened after capture.

@@ -19,9 +19,16 @@ public sealed class TransportBoardingPerformanceValidation
     private const string ReportPath = "/private/tmp/warlinecapture-transport-boarding-performance.json";
     private const int WarmupScenarios = 16;
     private const int MeasuredScenarios = 64;
+    private const int MeasuredBatches = 3;
     private const int PassengerCount = 8;
     private const int GridWidth = 64;
     private const int GridHeight = 64;
+    private const int NonRegressionMarginPercent = 25;
+    private const double Am012AverageTotalMsBaseline = 1.400d;
+    private const double Am012P95TotalMsBaseline = 1.504d;
+    private const double AverageTotalMsCeiling = 1.750d;
+    private const double P95TotalMsCeiling = 1.880d;
+    private const long AllocatedBytesCeiling = 0L;
 
     public static void RunBatchValidation()
     {
@@ -42,6 +49,35 @@ public sealed class TransportBoardingPerformanceValidation
 
     [Test]
     public void TransportBoardAllAndDisembarkAllReportTiming()
+    {
+        var batches = new BatchMetrics[MeasuredBatches];
+        long allocatedBytes = 0;
+        for (int i = 0; i < batches.Length; i++)
+        {
+            batches[i] = RunMeasuredBatch(i);
+            allocatedBytes += batches[i].AllocatedBytes;
+        }
+
+        int selectedBatchIndex = SelectMedianBatchIndex(batches);
+        BatchMetrics selectedBatch = batches[selectedBatchIndex];
+
+        WriteReport(batches, selectedBatchIndex, allocatedBytes);
+
+        Assert.AreEqual(
+            AllocatedBytesCeiling,
+            allocatedBytes,
+            $"All {MeasuredBatches} measured batches must allocate exactly 0 bytes; the explicit allocation ceiling is {AllocatedBytesCeiling} bytes, observed {allocatedBytes} bytes. See {ReportPath}.");
+        Assert.LessOrEqual(
+            selectedBatch.AverageTotalMs,
+            AverageTotalMsCeiling,
+            $"Median-of-three selected batch {selectedBatchIndex} average total time must be <= 1.750 ms (AM-012 baseline {Am012AverageTotalMsBaseline.ToString("0.000", CultureInfo.InvariantCulture)} ms plus the {NonRegressionMarginPercent}% non-regression margin); the explicit ceiling is {AverageTotalMsCeiling.ToString("0.000", CultureInfo.InvariantCulture)} ms, observed {selectedBatch.AverageTotalMs.ToString("0.000", CultureInfo.InvariantCulture)} ms. See {ReportPath}.");
+        Assert.LessOrEqual(
+            selectedBatch.P95TotalMs,
+            P95TotalMsCeiling,
+            $"Median-of-three selected batch {selectedBatchIndex} P95 total time must be <= 1.880 ms (AM-012 baseline {Am012P95TotalMsBaseline.ToString("0.000", CultureInfo.InvariantCulture)} ms plus the {NonRegressionMarginPercent}% non-regression margin); the explicit ceiling is {P95TotalMsCeiling.ToString("0.000", CultureInfo.InvariantCulture)} ms, observed {selectedBatch.P95TotalMs.ToString("0.000", CultureInfo.InvariantCulture)} ms. See {ReportPath}.");
+    }
+
+    private static BatchMetrics RunMeasuredBatch(int batchIndex)
     {
         for (int i = 0; i < WarmupScenarios; i++)
             RunScenario();
@@ -71,14 +107,23 @@ public sealed class TransportBoardingPerformanceValidation
         Array.Sort(boardingUpdateSamples);
         Array.Sort(disembarkCommandSamples);
 
-        WriteReport(
-            totalSamples,
-            boardCommandSamples,
-            boardingUpdateSamples,
-            disembarkCommandSamples,
-            allocatedBytes,
-            boardedCount,
-            disembarkedCount);
+        return new BatchMetrics
+        {
+            BatchIndex = batchIndex,
+            BoardedCount = boardedCount,
+            DisembarkedCount = disembarkedCount,
+            AverageTotalMs = Average(totalSamples),
+            P95TotalMs = PercentileSorted(totalSamples, 0.95d),
+            P99TotalMs = PercentileSorted(totalSamples, 0.99d),
+            MaxTotalMs = totalSamples[totalSamples.Length - 1],
+            AverageBoardCommandMs = Average(boardCommandSamples),
+            P95BoardCommandMs = PercentileSorted(boardCommandSamples, 0.95d),
+            AverageBoardingUpdateMs = Average(boardingUpdateSamples),
+            P95BoardingUpdateMs = PercentileSorted(boardingUpdateSamples, 0.95d),
+            AverageDisembarkCommandMs = Average(disembarkCommandSamples),
+            P95DisembarkCommandMs = PercentileSorted(disembarkCommandSamples, 0.95d),
+            AllocatedBytes = allocatedBytes
+        };
     }
 
     private static ScenarioMetrics RunScenario()
@@ -361,58 +406,137 @@ public sealed class TransportBoardingPerformanceValidation
         return ticks * 1000d / Stopwatch.Frequency;
     }
 
+    private static int SelectMedianBatchIndex(BatchMetrics[] batches)
+    {
+        if (batches == null || batches.Length != MeasuredBatches)
+            throw new InvalidOperationException($"Median selection requires exactly {MeasuredBatches} measured batches.");
+
+        if (CompareBatchPerformance(batches[0], batches[1]) <= 0)
+        {
+            if (CompareBatchPerformance(batches[2], batches[0]) < 0)
+                return 0;
+            return CompareBatchPerformance(batches[2], batches[1]) > 0 ? 1 : 2;
+        }
+
+        if (CompareBatchPerformance(batches[2], batches[1]) < 0)
+            return 1;
+        return CompareBatchPerformance(batches[2], batches[0]) > 0 ? 0 : 2;
+    }
+
+    private static int CompareBatchPerformance(BatchMetrics left, BatchMetrics right)
+    {
+        int comparison = left.AverageTotalMs.CompareTo(right.AverageTotalMs);
+        if (comparison != 0)
+            return comparison;
+
+        comparison = left.P95TotalMs.CompareTo(right.P95TotalMs);
+        return comparison != 0 ? comparison : left.BatchIndex.CompareTo(right.BatchIndex);
+    }
+
     private static void WriteReport(
-        double[] totalSamples,
-        double[] boardCommandSamples,
-        double[] boardingUpdateSamples,
-        double[] disembarkCommandSamples,
-        long allocatedBytes,
-        int boardedCount,
-        int disembarkedCount)
+        BatchMetrics[] batches,
+        int selectedBatchIndex,
+        long allocatedBytes)
     {
         string directory = Path.GetDirectoryName(ReportPath);
         if (!string.IsNullOrEmpty(directory))
             Directory.CreateDirectory(directory);
 
-        var builder = new StringBuilder(1024);
+        BatchMetrics selectedBatch = batches[selectedBatchIndex];
+        var builder = new StringBuilder(4096);
         builder.AppendLine("{");
         AppendJson(builder, "warmupScenarios", WarmupScenarios, trailingComma: true);
         AppendJson(builder, "measuredScenarios", MeasuredScenarios, trailingComma: true);
+        AppendJson(builder, "measuredBatches", MeasuredBatches, trailingComma: true);
         AppendJson(builder, "passengerCount", PassengerCount, trailingComma: true);
-        AppendJson(builder, "boardedCount", boardedCount, trailingComma: true);
-        AppendJson(builder, "disembarkedCount", disembarkedCount, trailingComma: true);
-        AppendJson(builder, "averageTotalMs", Average(totalSamples), trailingComma: true);
-        AppendJson(builder, "p95TotalMs", PercentileSorted(totalSamples, 0.95d), trailingComma: true);
-        AppendJson(builder, "p99TotalMs", PercentileSorted(totalSamples, 0.99d), trailingComma: true);
-        AppendJson(builder, "maxTotalMs", totalSamples[totalSamples.Length - 1], trailingComma: true);
-        AppendJson(builder, "averageBoardCommandMs", Average(boardCommandSamples), trailingComma: true);
-        AppendJson(builder, "p95BoardCommandMs", PercentileSorted(boardCommandSamples, 0.95d), trailingComma: true);
-        AppendJson(builder, "averageBoardingUpdateMs", Average(boardingUpdateSamples), trailingComma: true);
-        AppendJson(builder, "p95BoardingUpdateMs", PercentileSorted(boardingUpdateSamples, 0.95d), trailingComma: true);
-        AppendJson(builder, "averageDisembarkCommandMs", Average(disembarkCommandSamples), trailingComma: true);
-        AppendJson(builder, "p95DisembarkCommandMs", PercentileSorted(disembarkCommandSamples, 0.95d), trailingComma: true);
-        AppendJson(builder, "allocatedBytesCurrentThread", allocatedBytes, trailingComma: false);
+        AppendJson(builder, "selectedBatchIndex", selectedBatchIndex, trailingComma: true);
+        AppendJson(builder, "nonRegressionMarginPercent", NonRegressionMarginPercent, trailingComma: true);
+        AppendJson(builder, "am012AverageTotalMsBaseline", Am012AverageTotalMsBaseline, trailingComma: true);
+        AppendJson(builder, "am012P95TotalMsBaseline", Am012P95TotalMsBaseline, trailingComma: true);
+        AppendJson(builder, "averageTotalMsCeiling", AverageTotalMsCeiling, trailingComma: true);
+        AppendJson(builder, "p95TotalMsCeiling", P95TotalMsCeiling, trailingComma: true);
+        AppendJson(builder, "allocatedBytesCeiling", AllocatedBytesCeiling, trailingComma: true);
+        AppendJson(builder, "boardedCount", selectedBatch.BoardedCount, trailingComma: true);
+        AppendJson(builder, "disembarkedCount", selectedBatch.DisembarkedCount, trailingComma: true);
+        AppendJson(builder, "averageTotalMs", selectedBatch.AverageTotalMs, trailingComma: true);
+        AppendJson(builder, "p95TotalMs", selectedBatch.P95TotalMs, trailingComma: true);
+        AppendJson(builder, "p99TotalMs", selectedBatch.P99TotalMs, trailingComma: true);
+        AppendJson(builder, "maxTotalMs", selectedBatch.MaxTotalMs, trailingComma: true);
+        AppendJson(builder, "averageBoardCommandMs", selectedBatch.AverageBoardCommandMs, trailingComma: true);
+        AppendJson(builder, "p95BoardCommandMs", selectedBatch.P95BoardCommandMs, trailingComma: true);
+        AppendJson(builder, "averageBoardingUpdateMs", selectedBatch.AverageBoardingUpdateMs, trailingComma: true);
+        AppendJson(builder, "p95BoardingUpdateMs", selectedBatch.P95BoardingUpdateMs, trailingComma: true);
+        AppendJson(builder, "averageDisembarkCommandMs", selectedBatch.AverageDisembarkCommandMs, trailingComma: true);
+        AppendJson(builder, "p95DisembarkCommandMs", selectedBatch.P95DisembarkCommandMs, trailingComma: true);
+        AppendJson(builder, "allocatedBytesCurrentThread", allocatedBytes, trailingComma: true);
+        builder.AppendLine("  \"batches\": [");
+        for (int i = 0; i < batches.Length; i++)
+        {
+            builder.AppendLine("    {");
+            AppendBatchMetrics(builder, batches[i], indent: 6);
+            builder.Append("    }").AppendLine(i < batches.Length - 1 ? "," : string.Empty);
+        }
+        builder.AppendLine("  ],");
+        builder.AppendLine("  \"selectedBatch\": {");
+        AppendBatchMetrics(builder, selectedBatch, indent: 4);
+        builder.AppendLine("  }");
         builder.AppendLine("}");
         File.WriteAllText(ReportPath, builder.ToString());
     }
 
-    private static void AppendJson(StringBuilder builder, string name, int value, bool trailingComma)
+    private static void AppendBatchMetrics(StringBuilder builder, BatchMetrics batch, int indent)
     {
-        builder.Append("  \"").Append(name).Append("\": ").Append(value);
+        AppendJson(builder, "batchIndex", batch.BatchIndex, trailingComma: true, indent: indent);
+        AppendJson(builder, "boardedCount", batch.BoardedCount, trailingComma: true, indent: indent);
+        AppendJson(builder, "disembarkedCount", batch.DisembarkedCount, trailingComma: true, indent: indent);
+        AppendJson(builder, "averageTotalMs", batch.AverageTotalMs, trailingComma: true, indent: indent);
+        AppendJson(builder, "p95TotalMs", batch.P95TotalMs, trailingComma: true, indent: indent);
+        AppendJson(builder, "p99TotalMs", batch.P99TotalMs, trailingComma: true, indent: indent);
+        AppendJson(builder, "maxTotalMs", batch.MaxTotalMs, trailingComma: true, indent: indent);
+        AppendJson(builder, "averageBoardCommandMs", batch.AverageBoardCommandMs, trailingComma: true, indent: indent);
+        AppendJson(builder, "p95BoardCommandMs", batch.P95BoardCommandMs, trailingComma: true, indent: indent);
+        AppendJson(builder, "averageBoardingUpdateMs", batch.AverageBoardingUpdateMs, trailingComma: true, indent: indent);
+        AppendJson(builder, "p95BoardingUpdateMs", batch.P95BoardingUpdateMs, trailingComma: true, indent: indent);
+        AppendJson(builder, "averageDisembarkCommandMs", batch.AverageDisembarkCommandMs, trailingComma: true, indent: indent);
+        AppendJson(builder, "p95DisembarkCommandMs", batch.P95DisembarkCommandMs, trailingComma: true, indent: indent);
+        AppendJson(builder, "allocatedBytesCurrentThread", batch.AllocatedBytes, trailingComma: false, indent: indent);
+    }
+
+    private static void AppendJson(StringBuilder builder, string name, int value, bool trailingComma, int indent = 2)
+    {
+        builder.Append(' ', indent).Append('"').Append(name).Append("\": ").Append(value);
         builder.AppendLine(trailingComma ? "," : string.Empty);
     }
 
-    private static void AppendJson(StringBuilder builder, string name, long value, bool trailingComma)
+    private static void AppendJson(StringBuilder builder, string name, long value, bool trailingComma, int indent = 2)
     {
-        builder.Append("  \"").Append(name).Append("\": ").Append(value);
+        builder.Append(' ', indent).Append('"').Append(name).Append("\": ").Append(value);
         builder.AppendLine(trailingComma ? "," : string.Empty);
     }
 
-    private static void AppendJson(StringBuilder builder, string name, double value, bool trailingComma)
+    private static void AppendJson(StringBuilder builder, string name, double value, bool trailingComma, int indent = 2)
     {
-        builder.Append("  \"").Append(name).Append("\": ");
+        builder.Append(' ', indent).Append('"').Append(name).Append("\": ");
         builder.Append(value.ToString("0.###", CultureInfo.InvariantCulture));
         builder.AppendLine(trailingComma ? "," : string.Empty);
+    }
+
+    private struct BatchMetrics
+    {
+        public int BatchIndex;
+        public int BoardedCount;
+        public int DisembarkedCount;
+        public double AverageTotalMs;
+        public double P95TotalMs;
+        public double P99TotalMs;
+        public double MaxTotalMs;
+        public double AverageBoardCommandMs;
+        public double P95BoardCommandMs;
+        public double AverageBoardingUpdateMs;
+        public double P95BoardingUpdateMs;
+        public double AverageDisembarkCommandMs;
+        public double P95DisembarkCommandMs;
+        public long AllocatedBytes;
     }
 
     private struct ScenarioMetrics

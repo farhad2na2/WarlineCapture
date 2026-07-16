@@ -1738,6 +1738,10 @@ namespace Game.Editor
             builder.AppendLine($"- Exact commit: `{evidenceCommit}`");
             builder.AppendLine($"- Environment identity SHA-256: `{evidenceEnvironment}`");
             builder.AppendLine($"- Dirty at capture start: `{evidenceDirty}`");
+            builder.AppendLine($"- Quality: `{ResolveQualityName()}` (index `{QualitySettings.GetQualityLevel()}`)");
+            builder.AppendLine($"- Resolution: `{Screen.width}x{Screen.height}`");
+            builder.AppendLine($"- Instrumentation: `{ResolveFrameInstrumentationState()}`");
+            builder.AppendLine($"- Target frame rate: `{Application.targetFrameRate}`; vSync count: `{QualitySettings.vSyncCount}`");
             builder.AppendLine();
             builder.AppendLine("| Metric | Value |");
             builder.AppendLine("|---|---:|");
@@ -1783,6 +1787,29 @@ namespace Game.Editor
             AppendJson(builder, "exactCommit", exactCommit, trailingComma: true);
             AppendJson(builder, "environmentIdentitySha256", environmentIdentity, trailingComma: true);
             AppendJson(builder, "dirty", SessionState.GetBool(EvidenceDirtyKey, true), trailingComma: true);
+            AppendJson(builder, "qualityLevel", QualitySettings.GetQualityLevel(), trailingComma: true);
+            AppendJson(builder, "qualityName", ResolveQualityName(), trailingComma: true);
+            AppendJson(builder, "resolutionWidth", Screen.width, trailingComma: true);
+            AppendJson(builder, "resolutionHeight", Screen.height, trailingComma: true);
+            AppendJson(builder, "instrumentationState", ResolveFrameInstrumentationState(), trailingComma: true);
+            AppendJson(builder, "targetFrameRate", Application.targetFrameRate, trailingComma: true);
+            AppendJson(builder, "vSyncCount", QualitySettings.vSyncCount, trailingComma: true);
+        }
+
+        private static string ResolveQualityName()
+        {
+            int qualityLevel = QualitySettings.GetQualityLevel();
+            string[] names = QualitySettings.names;
+            return qualityLevel >= 0 && qualityLevel < names.Length
+                ? names[qualityLevel]
+                : $"index-{qualityLevel}";
+        }
+
+        private static string ResolveFrameInstrumentationState()
+        {
+            return
+                $"frameSampler=stopwatch profilerEnabled={UnityEngine.Profiling.Profiler.enabled.ToString().ToLowerInvariant()} " +
+                "deepProfiling=false instrumentationOffControl=not-required-stopwatch-only";
         }
 
         private static bool TryLoadPerformanceRegressionAcceptedBaseline(

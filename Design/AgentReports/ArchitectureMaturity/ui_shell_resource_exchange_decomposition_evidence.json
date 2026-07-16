@@ -1,11 +1,15 @@
 {
   "artifactId": "am015-ui-shell-resource-exchange-decomposition-v1",
   "schemaVersion": 1,
-  "acceptanceRequired": false,
+  "acceptanceRequired": true,
   "sourceBaseline": {
     "branch": "main",
     "commit": "e18d3d650374a04b59a34f5a01c8bbafd6a15a4f",
     "tree": "e9d5308e3eb9046c7e9062d5c3a2692e757fb621"
+  },
+  "acceptedEvidence": {
+    "commit": "09fb62a4ae7303894cace678442ae311988bb956",
+    "tree": "f951386a2fd70f55da53969bac3137b768a4d2b2"
   },
   "selection": {
     "rankingPath": "Design/AgentReports/ArchitectureMaturity/owner_risk_ranking.json",

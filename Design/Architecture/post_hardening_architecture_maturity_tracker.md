@@ -109,15 +109,15 @@ Release-only categories are reported separately and never averaged into a premat
 
 | Field | Status |
 |---|---|
-| Checklist complete | `14 / 86` (`16.3%`) |
-| Core Architecture Lane | `14 / 68` (`20.6%`); active |
+| Checklist complete | `15 / 86` (`17.4%`) |
+| Core Architecture Lane | `15 / 68` (`22.1%`); active |
 | Release Certification Lane | `0 / 18` (`0.0%`); deferred |
 | Program state | Core Architecture Lane active; release work inactive |
 | Current phase | Phase 1 - Responsibility And Decomposition Hardening |
-| Current task | `AM-015` ready, not yet claimed |
-| Blockers | None for `AM-015`; release-only device, thermal, cold/warm, and sustained certification remain intentionally deferred |
-| Latest validation | AM-014: Python `5 / 5` focused and `64 / 64` integrated; Python compilation and `git diff --check` passed; Unity rerun not required because the accepted slice changed evidence and CI only |
-| Latest evidence | `boundary_equivalence_audit_evidence.json`, accepted audit commit `c2b30a3fd892d42f7f7cc880dfcf47ccb68deadb` |
+| Current task | `AM-016` ready, not yet claimed |
+| Blockers | None for `AM-016`; release-only device, thermal, cold/warm, and sustained certification remain intentionally deferred |
+| Latest validation | AM-015: Unity Resource Exchange `10 / 10`, shell `14 / 14`, Settings `8 / 8`, architecture `1 / 1`, zero compiler errors; Python `5 / 5` focused and `69 / 69` integrated; independent rereview `PASS` |
+| Latest evidence | `ui_shell_resource_exchange_decomposition_evidence.json`, accepted implementation commit `09fb62a4ae7303894cace678442ae311988bb956` |
 | Core entry baseline | Phase 0 accepted by `AM-001` through `AM-008`; exact-identity assembly and bounded Editor Match evidence are current at `9a0aa14252e6559680328e520d26c16bfc7b444e`; the dashboard required gate is accepted; the entry rating and owned deltas are published in `entry_baseline_report.md` |
 | Release entry review | Deferred until `pre_release_performance_certification_backlog.md` activates |
 | Architecture rating | Evidence-backed Phase 0 entry rating `8.5 / 10`; planning baseline only, not a `9.5` claim |
@@ -218,7 +218,7 @@ Reduce change risk in oversized systems without replacing the architecture or ch
 - [x] `AM-012` Extract one capability or ECS phase at a time behind existing contracts, preserving system order and avoiding a new coordinator-shaped helper.
 - [x] `AM-013` Consolidate duplicated query-cache, command-queue, fixed-capacity scratch, and projection-cache mechanics only where one narrow shared contract removes real duplication.
 - [x] `AM-014` Add update-order and behavior-equivalence tests for every decomposition that crosses a system or assembly boundary.
-- [ ] `AM-015` Complete measured decomposition of the highest-risk remaining UI/presentation helper after its characterization coverage is green.
+- [x] `AM-015` Complete measured decomposition of the highest-risk remaining UI/presentation helper after its characterization coverage is green.
 - [ ] `AM-016` Update source-growth and responsibility guardrails so extracted files cannot regrow into equivalent god owners elsewhere.
 - [ ] `AM-017` Recapture focused and canonical Match performance/GC evidence after all Phase 1 integrations and reject any behavior or frame-time regression.
 
@@ -634,3 +634,16 @@ The implementing agent works directly on `main`, owns the bounded substantive an
 - Focused review: local review strengthened system discovery to cover both unmanaged and managed ECS systems. The delegated reviewer remained running without a handoff and was closed; no acceptance claim depends on that missing review.
 - Exclusions preserved: operation-map, FirstLaunch, audio, UI visual-lock, production C#, tests, scenes, prefabs, packages, and `ProjectSettings` were not edited by AM-014.
 - Next task: `AM-015` selects the highest-risk remaining UI/presentation helper from current ownership evidence, confirms characterization coverage, and performs one measured decomposition without creating another broad owner.
+
+### 2026-07-16 - AM-015 - Resource Exchange shell lifecycle decomposition
+
+- Workflow path: direct commits to `main`; no branch, worktree, or PR workflow.
+- Characterization commit: `b1c463f66d51f7a7d8e1fec5100af42c87fff9da`. Accepted implementation commit: `09fb62a4ae7303894cace678442ae311988bb956`, tree `f951386a2fd70f55da53969bac3137b768a4d2b2`; post-operation-map source baseline `e18d3d650374a04b59a34f5a01c8bbafd6a15a4f`, tree `e9d5308e3eb9046c7e9062d5c3a2692e757fb621`.
+- Selection: `UIShellContentView` is the current highest-ranked eligible recurring UI/presentation owner: screening rank `5`, score `12`, 952 lines, 52 state slots, fan-out 38, and 22 recent commits. Contracts-only rows own no recurring presentation behavior; the largest eligible `PresentationSystemHelper` ranked lower and lacked safe characterization coverage.
+- Result: `ResourceExchangeShellBinding` now owns only the popup instance, view, close button/listener, and visual install/close/region-reset lifecycle. The shell retains route interpretation, typed action enqueue, current `MainMenuPlayUI` dependency, popup-region mutation, content versioning, and public compatibility methods. No `ISystem`, `SystemBase`, generic popup coordinator, service locator, or gameplay authority was introduced.
+- Measured decomposition: the selected owner dropped from 952 lines / 41,372 bytes to 898 lines / 38,807 bytes and moved four mutable state slots. The new feature-specific binding is bounded at 94 lines / 3,160 bytes. AM-017 retains ownership of the post-Phase-1 focused and canonical frame-time/GC recapture.
+- Characterization: Resource Exchange coverage expanded from 7 to 10 cases, adding direct close idempotence, popup-layer cleanup removing stale listeners, and runtime UI dependency transfer while open. Existing shell `14 / 14` and Settings `8 / 8` regressions remain green.
+- Validation: Resource Exchange `10 / 10`, shell `14 / 14`, Settings `8 / 8`, and broad architecture/naming `1 / 1` passed with zero compiler errors. Five focused and 69 integrated evidence tests, Python compilation, and `git diff --check` passed.
+- Review: initial review found stale popup ownership when `MainMenuPlayUI` changed, optional commit binding, and weak validation-source proof. The binding now transfers ownership explicitly, a direct test freezes that behavior, acceptance requires an immutable commit/tree, and exact runner source hashes/counts are enforced. Independent rereview returned `PASS`.
+- Exclusions preserved: operation-map commits were rebased intact. Operation-map, FirstLaunch, audio, UI visual-lock assets, scenes, prefabs, packages, and `ProjectSettings` were not edited or staged by AM-015.
+- Next task: `AM-016` updates source-growth and responsibility guardrails so the extracted lifecycle cannot regrow inside `UIShellContentView` or reappear as an oversized replacement owner.

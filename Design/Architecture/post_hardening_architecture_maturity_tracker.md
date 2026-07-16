@@ -109,12 +109,12 @@ Release-only categories are reported separately and never averaged into a premat
 
 | Field | Status |
 |---|---|
-| Checklist complete | `8 / 86` (`9.3%`) |
-| Core Architecture Lane | `8 / 68` (`11.8%`); active |
+| Checklist complete | `9 / 86` (`10.5%`) |
+| Core Architecture Lane | `9 / 68` (`13.2%`); active |
 | Release Certification Lane | `0 / 18` (`0.0%`); deferred |
 | Program state | Core Architecture Lane active; release work inactive |
 | Current phase | Phase 1 - Responsibility And Decomposition Hardening |
-| Current task | `AM-009` ready, not yet claimed |
+| Current task | `AM-010` ready, not yet claimed |
 | Core entry baseline | Phase 0 accepted by `AM-001` through `AM-008`; exact-identity assembly and bounded Editor Match evidence are current at `9a0aa14252e6559680328e520d26c16bfc7b444e`; the dashboard required gate is accepted; the entry rating and owned deltas are published in `entry_baseline_report.md` |
 | Release entry review | Deferred until `pre_release_performance_certification_backlog.md` activates |
 | Architecture rating | Evidence-backed Phase 0 entry rating `8.5 / 10`; planning baseline only, not a `9.5` claim |
@@ -209,7 +209,7 @@ Reduce change risk in oversized systems without replacing the architecture or ch
 
 `AM-009` scores candidates from `0-4` for responsibility count, dependency fan-in/fan-out, mutable/lifecycle state, measured runtime cost, and recent change frequency. Lines/bytes are recorded but used only as a tie-breaker. The first wave selects at most three non-overlapping owners and publishes the exact reason each was selected or rejected; no extraction begins from a raw largest-file list.
 
-- [ ] `AM-009` Rank the largest and most coupled production files by lines, dependencies, state ownership, update-time cost, and change frequency; do not rank by lines alone.
+- [x] `AM-009` Rank the largest and most coupled production files by lines, dependencies, state ownership, update-time cost, and change frequency; do not rank by lines alone.
 - [ ] `AM-010` Write a responsibility map for each selected owner, including inputs, outputs, state authority, update order, side effects, tests, and allowed dependencies.
 - [ ] `AM-011` Add missing characterization tests before extracting behavior from any selected owner.
 - [ ] `AM-012` Extract one capability or ECS phase at a time behind existing contracts, preserving system order and avoiding a new coordinator-shaped helper.
@@ -547,3 +547,17 @@ The implementing agent works directly on `main`, owns the bounded substantive an
 - Residual risks: category-specific ownership/lifecycle/UI/pool/determinism/diagnostics/enforcement gaps remain explicitly assigned to `AM-009` through `AM-052` and `AM-063` through `AM-078`. Release-only Android and sustained-candidate rows remain deferred.
 - Exclusions preserved: operation-map, FirstLaunch, audio, UI visual-lock, gameplay/runtime behavior, scenes, prefabs, packages, and `ProjectSettings` were not edited by AM-008.
 - Next task: `AM-009` ranks the largest and most coupled production owners using size, dependency, state, update-cost, and change-frequency evidence rather than line count alone.
+
+### 2026-07-16 - AM-009 - Production owner risk ranking
+
+- Workflow path: direct commits to `main`; no branch, worktree, or PR workflow.
+- Measurement baseline: `91aaf6db3f44dc6f6ed44ecdaa8b7a702f0e29e9`, tree `65cfc22224729c10c3a149af4869ba79075dae6c`; current focused timing evidence committed at `6e16f8001b6aecc58edaed9db28b26693cf96ac1` after rebasing the disjoint operation-map lane intact.
+- Ranking baseline: generator/test commit `1b9e866acbf560650b2a2869582913ef31fa4901`, tree `6a6954ebf7fc213878caaed5138e13a483e095e5`; generated ranking committed at `eeec1abb5d8b66bf7d1eea094b0899327c8dd25e`.
+- Result: all 992 non-Editor production C# owners have a deterministic screening rank and an exact selection/rejection reason. The report retains 49 protected owners as visible and ineligible. Missing responsibility or runtime evidence remains `null`, never an invented zero.
+- First wave: `GroundMissileLauncherSystems.cs` and `UnitTransportBoardingSystem.cs` are selected with disjoint one-file initial allowlists. The post-fix `PathfindBatchJob.cs` row remains ranked but selection-ineligible until current characterization exists. No third owner is forced into the wave.
+- Current timing: ground-missile simulation passed at 0.924 ms average / 0.963 ms P95; transport boarding update passed at 0.253 ms average / 0.271 ms P95. Both focused fixtures measured 64 scenarios after 16 warmups with zero current-thread allocated bytes and zero compiler errors.
+- Evidence: `Design/AgentReports/ArchitectureMaturity/owner_runtime_measurements.json`, matching Markdown summary, `Design/AgentReports/ArchitectureMaturity/owner_risk_ranking.json`, and matching generated Markdown ranking.
+- Validation: 12 focused ranking tests and 36 integrated ownership/lifecycle/ranking/dashboard Python tests passed. Exact commit/tree and generator/test/authority hashes, production/harness/environment hashes, tracked and untracked governed-path rejection, field/property state attribution, local exclusion, conservative unique type-use coupling, recursive protected globs, nonempty/disjoint allowlists, all-row decisions, byte-identical regeneration, and `git diff --check` passed.
+- Independent review: initial reviews rejected ambiguous type coupling, local/state undercounting, stale or unattributed runtime scores, truncated decisions, incomplete Git binding, recursive-glob gaps, and heuristic-only overlap. Every finding was resolved; final rereview returned `PASS` with no blocker.
+- Exclusions preserved: operation-map, FirstLaunch, audio, UI visual-lock, gameplay behavior, scenes, prefabs, packages, and `ProjectSettings` were read only for hashes/ownership evidence and were not edited by AM-009.
+- Next task: `AM-010` writes responsibility maps for the two selected owners, including inputs, outputs, state authority, update order, side effects, tests, and allowed dependencies.

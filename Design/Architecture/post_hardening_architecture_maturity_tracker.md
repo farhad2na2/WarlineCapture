@@ -109,13 +109,13 @@ Release-only categories are reported separately and never averaged into a premat
 
 | Field | Status |
 |---|---|
-| Checklist complete | `5 / 86` (`5.8%`) |
-| Core Architecture Lane | `5 / 68` (`7.4%`); active |
+| Checklist complete | `6 / 86` (`7.0%`) |
+| Core Architecture Lane | `6 / 68` (`8.8%`); active |
 | Release Certification Lane | `0 / 18` (`0.0%`); deferred |
 | Program state | Core Architecture Lane active; release work inactive |
 | Current phase | Phase 0 - Entry Baseline And Scorecard |
-| Current task | `AM-006` ready, not yet claimed |
-| Core entry baseline | Prerequisite accepted by `AM-001`; environment identity accepted by `AM-002`; canonical scenarios accepted by `AM-003`; scorecard, budgets, freshness, and exception policy accepted by `AM-004`; validator ownership and fail-closed dashboard enforcement accepted by `AM-005` against `5c7ed147c4f49c1a5bc6ea0b697922cd74845277`; exact-identity evidence recapture remains Phase 0 exit work |
+| Current task | `AM-007` ready, not yet claimed |
+| Core entry baseline | Prerequisite accepted by `AM-001`; environment identity accepted by `AM-002`; canonical scenarios accepted by `AM-003`; scorecard, budgets, freshness, and exception policy accepted by `AM-004`; validator ownership and fail-closed dashboard enforcement accepted by `AM-005`; current source/dependency/runtime ownership inventory accepted by `AM-006` against `202b53025d793d6bfe3f0379782b7e185e92be07`; exact-identity performance evidence recapture remains Phase 0 exit work |
 | Release entry review | Deferred until `pre_release_performance_certification_backlog.md` activates |
 | Architecture rating | Not re-audited for this program |
 | Performance evidence | Core budgets are frozen by `AM-004`; the AM-005 dashboard rejects both required legacy rows because their exact commit and AM-002 environment identity are unknown; measurements remain unclaimed |
@@ -146,7 +146,7 @@ No production behavior changes. Establish a reproducible baseline and prevent an
 - [x] `AM-003` Define canonical scenarios for idle Match, maximum combat, construction, transport, aircraft, projectiles, every major popup, Menu-to-Match transitions, and long-duration soak.
 - [x] `AM-004` Freeze the core architecture scorecard, metric definitions, performance budgets, GC classification policy, memory-growth threshold, and evidence freshness rules. Keep release-only device-tier fields explicitly `measurement-required` until `AM-053`.
 - [x] `AM-005` Regenerate the architecture dashboard, produce the validator registry, and reject every required input reported as stale, unknown, malformed, duplicate-owned, or tied to a different commit.
-- [ ] `AM-006` Produce a current source-size, dependency, assembly-cycle, runtime-loop, static-state, managed-helper, and active-work ownership inventory.
+- [x] `AM-006` Produce a current source-size, dependency, assembly-cycle, runtime-loop, static-state, managed-helper, and active-work ownership inventory.
 - [ ] `AM-007` Produce a lifecycle inventory for Worlds, persistent native containers, query caches, presentation pools, scene roots, event subscriptions, and static caches.
 - [ ] `AM-008` Publish the entry baseline report with ratings by area, accepted evidence links, known residual risks, and the exact deltas this program owns.
 
@@ -507,3 +507,17 @@ The implementing agent works directly on `main`, owns the bounded substantive an
 - Residual risks: Phase 0 exit remains blocked on exact-identity regeneration of the two required evidence rows and on later ownership/lifecycle inventories. No architecture rating, performance pass, GC pass, Android pass, or release-certification claim is made by AM-005.
 - Exclusions preserved: operation-map, FirstLaunch, audio, UI visual-lock, production code, scenes, prefabs, packages, and `ProjectSettings` were not edited.
 - Next task: `AM-006` produces the source-size, dependency, assembly-cycle, runtime-loop, static-state, managed-helper, and active-work ownership inventory.
+
+### 2026-07-16 - AM-006 - Current architecture ownership inventory
+
+- Workflow path: direct commits to `main`.
+- Baseline: `cc6748b86601e0e6461e754aa00ac35258a4636b`; implementation and inventory baseline: `202b53025d793d6bfe3f0379782b7e185e92be07`, tree `181bc23148883cf3b67f86f5a9b52324dc150a97`.
+- Result: the live production tree contains 992 non-Editor C# files, 95 files over 500 lines, 23 over 1,000 lines, 338 managed `*SystemHelper.cs` files, 37 helpers over 500 lines, 63 MonoBehaviour update/coroutine loop rows, and 166 lexical mutable-static candidates requiring later owner classification.
+- Dependency result: 21 first-party asmdefs declare 92 first-party edges and 100 external references with zero strongly connected dependency cycles.
+- Ownership result: five bounded owner domains map to existing AM-005 validator owners. Operation-map and audio are active protected lanes; completed FirstLaunch and held UI visual-lock paths remain protected from maturity edits without exact owner handoff.
+- Evidence: `Design/AgentReports/ArchitectureMaturity/ownership_inventory.json` and matching Markdown rendering, generated by `Tools/CI/architecture_ownership_inventory.py`.
+- Validation: five focused Python tests passed; live source/helper counts matched direct filesystem counts; all 63 loop rows matched the independent existing Phase 7 loop generator exactly; asmdef counts and edges reconciled with the APH-700 report while cycles were recomputed from current asmdefs; validator owner IDs resolved through the AM-005 registry; authority hashes and ID/path ordering passed; byte-identical regeneration and `git diff --check` passed.
+- Review: mutable-static rows are explicitly candidates, not automatic violations; expression-bodied static properties, comments, strings, Editor source, readonly fields, and methods are excluded. Current scans are derived from source and asmdef files rather than promoted from stale historical report commit claims.
+- Residual risks: candidate rows still require responsibility classification in later bounded work packages; the inventory measures current structure but does not claim performance, GC, memory plateau, lifecycle cleanup, or release readiness. Phase 0 still needs the lifecycle inventory and entry baseline report.
+- Exclusions preserved: operation-map, FirstLaunch, audio, UI visual-lock, production code, scenes, prefabs, packages, and `ProjectSettings` were read for ownership/hash evidence but not edited.
+- Next task: `AM-007` produces the World, native-container, query-cache, presentation-pool, scene-root, subscription, and static-cache lifecycle inventory.

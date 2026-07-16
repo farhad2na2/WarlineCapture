@@ -1,0 +1,4165 @@
+{
+  "activeWorkOwnership": {
+    "activeOwnerCount": 2,
+    "owners": [
+      {
+        "authorityPath": "Design/Audio_Config_Driven_Implementation_Spec.md",
+        "authoritySha256": "73a0d50aa9d474abd340509db21cb635d36c362efb39e170f9eb1122cc786fe0",
+        "id": "audio",
+        "protectedPaths": [
+          "Assets/Game/Scripts/Audio/**",
+          "Assets/Game/Scripts/Components/AudioComponents.cs",
+          "Assets/Game/Scripts/Configs/Audio/**",
+          "Assets/Game/Scripts/UI/**/*Audio*.cs",
+          "Design/Audio_Config_Driven_Implementation_Spec.md"
+        ],
+        "status": "active"
+      },
+      {
+        "authorityPath": "Design/Architecture/first_launch_architecture_alignment_refactor_tracker.md",
+        "authoritySha256": "f207379d67c6345695f40fbb585e8f5540ebb31957ee32ad9ea34becaf3c4101",
+        "id": "first-launch",
+        "protectedPaths": [
+          "Assets/Game/Scripts/**/FirstLaunch*.cs",
+          "Design/Architecture/first_launch_architecture_alignment_refactor_tracker.md",
+          "Design/NarrativeVision/FirstLaunch/**"
+        ],
+        "status": "complete-protected"
+      },
+      {
+        "authorityPath": "Design/Architecture/operation_map_scene_split_and_generator_tracker.md",
+        "authoritySha256": "18b5277fb6d85e9efa801b12ed91779a0a0d20b584965b5c761992dc6a2d934f",
+        "id": "operation-map",
+        "protectedPaths": [
+          "Assets/Game/Scenes/Game/OperationMaps/**",
+          "Assets/Game/Scripts/**/*OperationMap*.cs",
+          "Design/AgentReports/**/*operation_map*",
+          "Design/Architecture/operation_map_*.md"
+        ],
+        "status": "active"
+      },
+      {
+        "authorityPath": "Design/AgentTasks/ui_current.md",
+        "authoritySha256": "a71aa8f914192150b0dd690ff5c9b17b27f480e472c56c00648f250b4bb6c870",
+        "id": "ui-visual-lock",
+        "protectedPaths": [
+          "Assets/Game/Art/UI/Generated/**",
+          "Assets/Game/Prefabs/UI/**",
+          "Design/AgentTasks/ui_current.md",
+          "Design/VisualLockLayered/**"
+        ],
+        "status": "held-protected"
+      }
+    ],
+    "policy": "Paths remain excluded from maturity edits unless the exact authority owner hands them off."
+  },
+  "artifactId": "AM-006",
+  "assemblies": {
+    "assemblies": [
+      {
+        "externalReferences": [
+          "Unity.Collections",
+          "Unity.Entities",
+          "Unity.Entities.Hybrid",
+          "Unity.Mathematics",
+          "Unity.Transforms"
+        ],
+        "firstPartyReferences": [
+          "Game.Components",
+          "Game.Configs"
+        ],
+        "name": "Game.Authoring",
+        "path": "Assets/Game/Scripts/Authorings/Game.Authoring.asmdef"
+      },
+      {
+        "externalReferences": [],
+        "firstPartyReferences": [],
+        "name": "Game.Catalog.Contracts",
+        "path": "Assets/Game/Scripts/Catalog/Contracts/Game.Catalog.Contracts.asmdef"
+      },
+      {
+        "externalReferences": [
+          "Unity.Collections",
+          "Unity.Entities",
+          "Unity.Entities.Graphics",
+          "Unity.Mathematics",
+          "Unity.Transforms"
+        ],
+        "firstPartyReferences": [],
+        "name": "Game.Components",
+        "path": "Assets/Game/Scripts/Components/Game.Components.asmdef"
+      },
+      {
+        "externalReferences": [
+          "Unity.Addressables",
+          "Unity.Collections",
+          "Unity.Entities",
+          "Unity.InputSystem",
+          "Unity.Mathematics",
+          "Unity.RenderPipelines.Core.Runtime",
+          "Unity.RenderPipelines.Universal.Runtime",
+          "Unity.Scenes",
+          "Unity.TextMeshPro",
+          "Unity.Transforms",
+          "UnityEngine.UI"
+        ],
+        "firstPartyReferences": [
+          "Game.Authoring",
+          "Game.Catalog.Contracts",
+          "Game.Components",
+          "Game.Configs",
+          "Game.Narrative.Contracts",
+          "Game.Narrative.Runtime",
+          "Game.Rendering",
+          "Game.Rendering.Contracts",
+          "Game.Runtime",
+          "Game.Tactical.Contracts",
+          "Game.UI.Contracts",
+          "Game.UI.Runtime",
+          "Game.UI.Shell.Contracts.Ecs",
+          "Game.UI.Shell.Ecs"
+        ],
+        "name": "Game.Composition",
+        "path": "Assets/Game/Scripts/Composition/Game.Composition.asmdef"
+      },
+      {
+        "externalReferences": [
+          "Unity.Addressables",
+          "Unity.Collections",
+          "Unity.Entities",
+          "Unity.Mathematics",
+          "Unity.RenderPipelines.Core.Runtime",
+          "Unity.RenderPipelines.Universal.Runtime"
+        ],
+        "firstPartyReferences": [
+          "Game.Catalog.Contracts",
+          "Game.Components",
+          "Game.Narrative.Contracts"
+        ],
+        "name": "Game.Configs",
+        "path": "Assets/Game/Scripts/Configs/Game.Configs.asmdef"
+      },
+      {
+        "externalReferences": [
+          "Unity.Addressables",
+          "Unity.Addressables.Editor",
+          "Unity.Collections",
+          "Unity.Entities",
+          "Unity.Entities.Graphics",
+          "Unity.Mathematics",
+          "Unity.Mathematics.Extensions",
+          "Unity.ResourceManager",
+          "Unity.Scenes",
+          "Unity.TextMeshPro",
+          "Unity.Transforms",
+          "UnityEngine.UI",
+          "sniveler-code.gpu-animation",
+          "sniveler-code.gpu-animation.Editor"
+        ],
+        "firstPartyReferences": [
+          "Game.Authoring",
+          "Game.Catalog.Contracts",
+          "Game.Components",
+          "Game.Composition",
+          "Game.Configs",
+          "Game.Narrative.Contracts",
+          "Game.Rendering",
+          "Game.Rendering.Contracts",
+          "Game.Runtime",
+          "Game.Runtime.Pathfinding",
+          "Game.Tactical.Contracts",
+          "Game.UI.Contracts",
+          "Game.UI.Runtime",
+          "Game.UI.Shell.Contracts.Ecs",
+          "Game.UI.Shell.Ecs"
+        ],
+        "name": "Game.Editor",
+        "path": "Assets/Game/Scripts/Editor/Game.Editor.asmdef"
+      },
+      {
+        "externalReferences": [],
+        "firstPartyReferences": [],
+        "name": "Game.Narrative.Contracts",
+        "path": "Assets/Game/Scripts/Narrative/Contracts/Game.Narrative.Contracts.asmdef"
+      },
+      {
+        "externalReferences": [],
+        "firstPartyReferences": [
+          "Game.Catalog.Contracts",
+          "Game.Narrative.Contracts"
+        ],
+        "name": "Game.Narrative.Runtime",
+        "path": "Assets/Game/Scripts/Narrative/Runtime/Game.Narrative.Runtime.asmdef"
+      },
+      {
+        "externalReferences": [
+          "Unity.Burst",
+          "Unity.Collections",
+          "Unity.Entities",
+          "Unity.Entities.Graphics",
+          "Unity.Mathematics",
+          "Unity.Mathematics.Extensions",
+          "Unity.Transforms",
+          "sniveler-code.gpu-animation"
+        ],
+        "firstPartyReferences": [
+          "Game.Components",
+          "Game.Configs",
+          "Game.Rendering.Contracts"
+        ],
+        "name": "Game.Rendering",
+        "path": "Assets/Game/Scripts/Rendering/Game.Rendering.asmdef"
+      },
+      {
+        "externalReferences": [
+          "Unity.Collections"
+        ],
+        "firstPartyReferences": [],
+        "name": "Game.Rendering.Contracts",
+        "path": "Assets/Game/Scripts/Rendering/Contracts/Game.Rendering.Contracts.asmdef"
+      },
+      {
+        "externalReferences": [
+          "Unity.Burst",
+          "Unity.Collections",
+          "Unity.Entities",
+          "Unity.Entities.Graphics",
+          "Unity.InputSystem",
+          "Unity.Mathematics",
+          "Unity.Mathematics.Extensions",
+          "Unity.RenderPipelines.Core.Runtime",
+          "Unity.RenderPipelines.Universal.Runtime",
+          "Unity.Transforms",
+          "sniveler-code.gpu-animation"
+        ],
+        "firstPartyReferences": [
+          "Game.Components",
+          "Game.Configs",
+          "Game.Rendering.Contracts",
+          "Game.Runtime.Combat",
+          "Game.Runtime.Pathfinding",
+          "Game.Tactical.Contracts",
+          "Game.UI.Contracts"
+        ],
+        "name": "Game.Runtime",
+        "path": "Assets/Game/Scripts/Game.Runtime.asmdef"
+      },
+      {
+        "externalReferences": [
+          "Unity.Collections",
+          "Unity.Entities",
+          "Unity.Mathematics"
+        ],
+        "firstPartyReferences": [
+          "Game.Components"
+        ],
+        "name": "Game.Runtime.Combat",
+        "path": "Assets/Game/Scripts/Systems/Combat/Game.Runtime.Combat.asmdef"
+      },
+      {
+        "externalReferences": [
+          "Unity.Collections",
+          "Unity.Entities",
+          "Unity.Mathematics"
+        ],
+        "firstPartyReferences": [
+          "Game.Components"
+        ],
+        "name": "Game.Runtime.Pathfinding",
+        "path": "Assets/Game/Scripts/Systems/Pathfinding/Surface/Game.Runtime.Pathfinding.asmdef"
+      },
+      {
+        "externalReferences": [],
+        "firstPartyReferences": [],
+        "name": "Game.Tactical.Contracts",
+        "path": "Assets/Game/Scripts/Contracts/Game.Tactical.Contracts.asmdef"
+      },
+      {
+        "externalReferences": [
+          "Unity.Addressables",
+          "Unity.Addressables.Editor",
+          "Unity.Collections",
+          "Unity.Entities",
+          "Unity.Entities.Graphics",
+          "Unity.Mathematics",
+          "Unity.Mathematics.Extensions",
+          "Unity.ResourceManager",
+          "Unity.TextMeshPro",
+          "Unity.Transforms",
+          "UnityEngine.UI",
+          "sniveler-code.gpu-animation"
+        ],
+        "firstPartyReferences": [
+          "Game.Authoring",
+          "Game.Catalog.Contracts",
+          "Game.Components",
+          "Game.Composition",
+          "Game.Configs",
+          "Game.Editor",
+          "Game.Narrative.Contracts",
+          "Game.Narrative.Runtime",
+          "Game.Rendering",
+          "Game.Rendering.Contracts",
+          "Game.Runtime",
+          "Game.Runtime.Combat",
+          "Game.Runtime.Pathfinding",
+          "Game.Tactical.Contracts",
+          "Game.UI.Contracts",
+          "Game.UI.Runtime",
+          "Game.UI.Shell.Contracts.Ecs",
+          "Game.UI.Shell.Ecs"
+        ],
+        "name": "Game.Tests.Editor",
+        "path": "Assets/Tests/Editor/Game.Tests.Editor.asmdef"
+      },
+      {
+        "externalReferences": [
+          "Unity.Addressables",
+          "Unity.Collections",
+          "Unity.Entities",
+          "Unity.Mathematics",
+          "Unity.ResourceManager",
+          "Unity.TextMeshPro",
+          "Unity.Transforms",
+          "UnityEngine.UI"
+        ],
+        "firstPartyReferences": [
+          "Game.Authoring",
+          "Game.Catalog.Contracts",
+          "Game.Components",
+          "Game.Composition",
+          "Game.Configs",
+          "Game.Narrative.Contracts",
+          "Game.Rendering.Contracts",
+          "Game.Runtime",
+          "Game.Tactical.Contracts",
+          "Game.UI.Contracts",
+          "Game.UI.Runtime",
+          "Game.UI.Shell.Ecs"
+        ],
+        "name": "Game.Tests.PlayMode",
+        "path": "Assets/Tests/PlayMode/Game.Tests.PlayMode.asmdef"
+      },
+      {
+        "externalReferences": [],
+        "firstPartyReferences": [
+          "Game.Tactical.Contracts"
+        ],
+        "name": "Game.UI.Contracts",
+        "path": "Assets/Game/Scripts/UI/Contracts/Game.UI.Contracts.asmdef"
+      },
+      {
+        "externalReferences": [
+          "Unity.Addressables",
+          "Unity.InputSystem",
+          "Unity.RenderPipelines.Universal.Runtime",
+          "Unity.ResourceManager",
+          "Unity.TextMeshPro",
+          "UnityEngine.UI"
+        ],
+        "firstPartyReferences": [
+          "Game.Catalog.Contracts",
+          "Game.Narrative.Contracts",
+          "Game.Tactical.Contracts",
+          "Game.UI.Contracts"
+        ],
+        "name": "Game.UI.Runtime",
+        "path": "Assets/Game/Scripts/UI/Game.UI.Runtime.asmdef"
+      },
+      {
+        "externalReferences": [
+          "Unity.Collections",
+          "Unity.Entities"
+        ],
+        "firstPartyReferences": [
+          "Game.UI.Contracts"
+        ],
+        "name": "Game.UI.Shell.Contracts.Ecs",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/Contracts/Game.UI.Shell.Contracts.Ecs.asmdef"
+      },
+      {
+        "externalReferences": [
+          "Unity.Burst",
+          "Unity.Collections",
+          "Unity.Entities",
+          "Unity.Mathematics",
+          "Unity.Transforms"
+        ],
+        "firstPartyReferences": [
+          "Game.Catalog.Contracts",
+          "Game.Components",
+          "Game.Configs",
+          "Game.Runtime",
+          "Game.Tactical.Contracts",
+          "Game.UI.Contracts",
+          "Game.UI.Runtime",
+          "Game.UI.Shell.Contracts.Ecs"
+        ],
+        "name": "Game.UI.Shell.Ecs",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/Game.UI.Shell.Ecs.asmdef"
+      },
+      {
+        "externalReferences": [
+          "Unity.ProBuilder",
+          "Unity.ProBuilder.Editor"
+        ],
+        "firstPartyReferences": [],
+        "name": "ProjectTools.Editor",
+        "path": "Assets/Editor/ProjectTools.Editor.asmdef"
+      }
+    ],
+    "assemblyCount": 21,
+    "cycleCount": 0,
+    "cycles": [],
+    "externalReferenceCount": 102,
+    "firstPartyEdgeCount": 92
+  },
+  "baseline": {
+    "branch": "main",
+    "commit": "202b53025d793d6bfe3f0379782b7e185e92be07",
+    "tree": "181bc23148883cf3b67f86f5a9b52324dc150a97"
+  },
+  "determinism": {
+    "arrays": "All path/id collections sort ascending by Unicode code point; source locations break ties.",
+    "serialization": "UTF-8, LF, two-space indentation, lexicographic object keys, one trailing LF.",
+    "timestamps": "Excluded."
+  },
+  "managedHelpers": {
+    "count": 338,
+    "entries": [
+      {
+        "bytes": 9571,
+        "lines": 243,
+        "path": "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs"
+      },
+      {
+        "bytes": 15958,
+        "lines": 434,
+        "path": "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 5056,
+        "lines": 89,
+        "path": "Assets/Game/Scripts/Composition/BuildingDefinitionAuthoringMetadataPrefabSystemHelper.cs"
+      },
+      {
+        "bytes": 1442,
+        "lines": 36,
+        "path": "Assets/Game/Scripts/Composition/BuildingProductionUnitMetadataPrefabSystemHelper.cs"
+      },
+      {
+        "bytes": 633,
+        "lines": 21,
+        "path": "Assets/Game/Scripts/Composition/BuildingSpawnPrefabLookupKeyPrefabSystemHelper.cs"
+      },
+      {
+        "bytes": 1581,
+        "lines": 41,
+        "path": "Assets/Game/Scripts/Composition/GameRuntimeStatsUnitPrefabClassifierPrefabSystemHelper.cs"
+      },
+      {
+        "bytes": 5479,
+        "lines": 109,
+        "path": "Assets/Game/Scripts/Composition/GameplayFeatureStartupCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 693,
+        "lines": 26,
+        "path": "Assets/Game/Scripts/Composition/GameplaySceneBindingSceneSystemHelper.cs"
+      },
+      {
+        "bytes": 14345,
+        "lines": 355,
+        "path": "Assets/Game/Scripts/Composition/MapSurfaceRuntimeBootstrapSceneSystemHelper.cs"
+      },
+      {
+        "bytes": 46433,
+        "lines": 972,
+        "path": "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 2859,
+        "lines": 65,
+        "path": "Assets/Game/Scripts/Composition/MatchBuildingRuntimeBootstrapStartupSystemHelper.cs"
+      },
+      {
+        "bytes": 18210,
+        "lines": 389,
+        "path": "Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 1614,
+        "lines": 52,
+        "path": "Assets/Game/Scripts/Composition/MatchSceneReferenceSceneSystemHelper.cs"
+      },
+      {
+        "bytes": 11869,
+        "lines": 298,
+        "path": "Assets/Game/Scripts/Composition/MatchStartSceneSystemHelper.cs"
+      },
+      {
+        "bytes": 37502,
+        "lines": 910,
+        "path": "Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 2620,
+        "lines": 69,
+        "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeAudioPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 12473,
+        "lines": 293,
+        "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 6036,
+        "lines": 159,
+        "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeInteractivePresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 3132,
+        "lines": 71,
+        "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeModelUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 5310,
+        "lines": 130,
+        "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativePanelPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 2102,
+        "lines": 60,
+        "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativePortraitVoiceSelectionPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 5144,
+        "lines": 135,
+        "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeProfileCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 6194,
+        "lines": 154,
+        "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeReviewPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 819,
+        "lines": 36,
+        "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeReviewUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 19338,
+        "lines": 440,
+        "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeSequencePresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 2557,
+        "lines": 70,
+        "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeShellCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 847,
+        "lines": 23,
+        "path": "Assets/Game/Scripts/Composition/Narrative/NarrativePunctuationUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 11398,
+        "lines": 295,
+        "path": "Assets/Game/Scripts/Composition/OperationMapRuntimeBootstrapSceneSystemHelper.cs"
+      },
+      {
+        "bytes": 1409,
+        "lines": 45,
+        "path": "Assets/Game/Scripts/Composition/PerformanceDiagnosticsReferenceDiagnosticsSystemHelper.cs"
+      },
+      {
+        "bytes": 1678,
+        "lines": 45,
+        "path": "Assets/Game/Scripts/Composition/SelectionPortraitSpriteResolverUiSystemHelper.cs"
+      },
+      {
+        "bytes": 2895,
+        "lines": 69,
+        "path": "Assets/Game/Scripts/Composition/UiCatalogAuthoringMetadataUiSystemHelper.cs"
+      },
+      {
+        "bytes": 16141,
+        "lines": 425,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityAlgorithmicAftermathPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 5393,
+        "lines": 142,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityAlgorithmicDistrictPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 4096,
+        "lines": 104,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityArchwaySpawnPrefabSystemHelper.cs"
+      },
+      {
+        "bytes": 10862,
+        "lines": 256,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityBuildingPlacementPrefabSystemHelper.cs"
+      },
+      {
+        "bytes": 10679,
+        "lines": 282,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityBuildingPlotUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 7521,
+        "lines": 137,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityBuildingSpawnContextCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 8947,
+        "lines": 170,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityBulkBuildingSpawnRoutinePrefabSystemHelper.cs"
+      },
+      {
+        "bytes": 9324,
+        "lines": 227,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityBulkPlotPlanUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 12014,
+        "lines": 308,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityChainUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 4337,
+        "lines": 110,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityClothCoverSpawnPrefabSystemHelper.cs"
+      },
+      {
+        "bytes": 47077,
+        "lines": 858,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 10305,
+        "lines": 235,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityConfigCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 2923,
+        "lines": 66,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityCorridorBuildingSpawnPrefabSystemHelper.cs"
+      },
+      {
+        "bytes": 5234,
+        "lines": 133,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityDecorationBuildingSpawnPrefabSystemHelper.cs"
+      },
+      {
+        "bytes": 2338,
+        "lines": 62,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityDecorationGroupPrefabSystemHelper.cs"
+      },
+      {
+        "bytes": 3293,
+        "lines": 75,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityDiagnosticsSystemHelper.cs"
+      },
+      {
+        "bytes": 4473,
+        "lines": 118,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityEntryBuildingSpawnPrefabSystemHelper.cs"
+      },
+      {
+        "bytes": 6929,
+        "lines": 186,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityFreeScatterDecorationPrefabSystemHelper.cs"
+      },
+      {
+        "bytes": 21933,
+        "lines": 412,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityGenerationCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 6447,
+        "lines": 193,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityGenerationProgressSystemHelper.cs"
+      },
+      {
+        "bytes": 3944,
+        "lines": 94,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityHallSpawnPrefabSystemHelper.cs"
+      },
+      {
+        "bytes": 7679,
+        "lines": 180,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityHouseYardWallPrefabSystemHelper.cs"
+      },
+      {
+        "bytes": 5418,
+        "lines": 147,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityIngressUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 3818,
+        "lines": 126,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityLandmarkOffsetUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 8383,
+        "lines": 206,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityLandmarkSpawnPrefabSystemHelper.cs"
+      },
+      {
+        "bytes": 14616,
+        "lines": 360,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityLayoutUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 5534,
+        "lines": 173,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityLifecycleCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 886,
+        "lines": 37,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityMinimapEventUiSystemHelper.cs"
+      },
+      {
+        "bytes": 8432,
+        "lines": 238,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityPrefabSelectionPrefabSystemHelper.cs"
+      },
+      {
+        "bytes": 39593,
+        "lines": 938,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityRAndDMapCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 797,
+        "lines": 22,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityReadModelCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 5542,
+        "lines": 145,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityReadinessQueryCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 7237,
+        "lines": 192,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityRoadBuildBridgeCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 6988,
+        "lines": 188,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityRoadCommitCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 17084,
+        "lines": 390,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityRoadLayoutUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 10568,
+        "lines": 280,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityRoadVisualPrototypeSystemHelper.cs"
+      },
+      {
+        "bytes": 9647,
+        "lines": 248,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityRoadsideBuildingSpawnPrefabSystemHelper.cs"
+      },
+      {
+        "bytes": 6229,
+        "lines": 158,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityRuralBuildingSpawnPrefabSystemHelper.cs"
+      },
+      {
+        "bytes": 9456,
+        "lines": 261,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCitySpawnBridgePrefabSystemHelper.cs"
+      },
+      {
+        "bytes": 10368,
+        "lines": 237,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityStartupSystemHelper.cs"
+      },
+      {
+        "bytes": 3311,
+        "lines": 94,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCitySurfaceIntegrationUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 6374,
+        "lines": 166,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityVisualPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 7947,
+        "lines": 224,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityWalkabilityUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 1879,
+        "lines": 52,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityYardGateUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 4129,
+        "lines": 110,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityYardWallPlanUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 9859,
+        "lines": 206,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityYardWallVisualPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 23784,
+        "lines": 570,
+        "path": "Assets/Game/Scripts/Environment/RuntimeDecorationSpawnerPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 37139,
+        "lines": 896,
+        "path": "Assets/Game/Scripts/Environment/RuntimeGridBlockerPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 2716,
+        "lines": 79,
+        "path": "Assets/Game/Scripts/Environment/RuntimeOperationMapGenerationRecoverySystemHelper.cs"
+      },
+      {
+        "bytes": 2658,
+        "lines": 79,
+        "path": "Assets/Game/Scripts/Environment/RuntimeOperationMapSurfaceGeometrySystemHelper.cs"
+      },
+      {
+        "bytes": 7705,
+        "lines": 185,
+        "path": "Assets/Game/Scripts/Environment/RuntimeOperationMapVisualQualitySystemHelper.cs"
+      },
+      {
+        "bytes": 17442,
+        "lines": 385,
+        "path": "Assets/Game/Scripts/Environment/RuntimeOperationMapVisualRecipePresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 3321,
+        "lines": 93,
+        "path": "Assets/Game/Scripts/Narrative/Runtime/FirstLaunchNarrativeRouteUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 12366,
+        "lines": 321,
+        "path": "Assets/Game/Scripts/Narrative/Runtime/FirstLaunchNarrativeSequenceUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 19429,
+        "lines": 487,
+        "path": "Assets/Game/Scripts/Rendering/StaticMapChunkBatchingPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 12580,
+        "lines": 328,
+        "path": "Assets/Game/Scripts/Rendering/UnitAttackTracePresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 37326,
+        "lines": 928,
+        "path": "Assets/Game/Scripts/Rendering/UnitImpostorPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 9792,
+        "lines": 257,
+        "path": "Assets/Game/Scripts/Systems/AIBuildPlanningPolicySystemHelper.cs"
+      },
+      {
+        "bytes": 5711,
+        "lines": 147,
+        "path": "Assets/Game/Scripts/Systems/AIBuildPlanningReadSystemHelper.cs"
+      },
+      {
+        "bytes": 2988,
+        "lines": 79,
+        "path": "Assets/Game/Scripts/Systems/AIMaterialsRecoveryNeedMutationSystemHelper.cs"
+      },
+      {
+        "bytes": 38524,
+        "lines": 895,
+        "path": "Assets/Game/Scripts/Systems/BuildingBarrierUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 4940,
+        "lines": 98,
+        "path": "Assets/Game/Scripts/Systems/BuildingCampItemCommandPolicySystemHelper.cs"
+      },
+      {
+        "bytes": 11781,
+        "lines": 267,
+        "path": "Assets/Game/Scripts/Systems/BuildingCitizenPopulationCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 22279,
+        "lines": 531,
+        "path": "Assets/Game/Scripts/Systems/BuildingCombatUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 3265,
+        "lines": 87,
+        "path": "Assets/Game/Scripts/Systems/BuildingConstructionResourceTransactionSystemHelper.cs"
+      },
+      {
+        "bytes": 4084,
+        "lines": 70,
+        "path": "Assets/Game/Scripts/Systems/BuildingDefinitionFootprintCloneSystemHelper.cs"
+      },
+      {
+        "bytes": 48249,
+        "lines": 999,
+        "path": "Assets/Game/Scripts/Systems/BuildingDefinitionPrefabSystemHelper.cs"
+      },
+      {
+        "bytes": 2953,
+        "lines": 78,
+        "path": "Assets/Game/Scripts/Systems/BuildingDestroyedVisualPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 8158,
+        "lines": 185,
+        "path": "Assets/Game/Scripts/Systems/BuildingFactionAIOilAllocationInputSystemHelper.cs"
+      },
+      {
+        "bytes": 1603,
+        "lines": 43,
+        "path": "Assets/Game/Scripts/Systems/BuildingFoundationVisualPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 1440,
+        "lines": 30,
+        "path": "Assets/Game/Scripts/Systems/BuildingGameplayBindingCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 48379,
+        "lines": 773,
+        "path": "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 6101,
+        "lines": 144,
+        "path": "Assets/Game/Scripts/Systems/BuildingGameplayDependencyCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 1647,
+        "lines": 34,
+        "path": "Assets/Game/Scripts/Systems/BuildingGameplayDisposalCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 4051,
+        "lines": 85,
+        "path": "Assets/Game/Scripts/Systems/BuildingGameplayDisposalExecutionCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 4070,
+        "lines": 72,
+        "path": "Assets/Game/Scripts/Systems/BuildingGameplayEcsQueryCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 2453,
+        "lines": 65,
+        "path": "Assets/Game/Scripts/Systems/BuildingGameplayGridDataCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 15529,
+        "lines": 250,
+        "path": "Assets/Game/Scripts/Systems/BuildingGameplayResultCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 14595,
+        "lines": 167,
+        "path": "Assets/Game/Scripts/Systems/BuildingGameplaySourceCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 1806,
+        "lines": 37,
+        "path": "Assets/Game/Scripts/Systems/BuildingGameplayStartupCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 652,
+        "lines": 22,
+        "path": "Assets/Game/Scripts/Systems/BuildingMarkerVisualPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 10323,
+        "lines": 230,
+        "path": "Assets/Game/Scripts/Systems/BuildingMaterialFabricationReadModelUiSystemHelper.cs"
+      },
+      {
+        "bytes": 6814,
+        "lines": 144,
+        "path": "Assets/Game/Scripts/Systems/BuildingPlacementAdapterCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 12262,
+        "lines": 183,
+        "path": "Assets/Game/Scripts/Systems/BuildingPlacementCommandCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 17494,
+        "lines": 420,
+        "path": "Assets/Game/Scripts/Systems/BuildingPlacementCommandRequestCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 11216,
+        "lines": 239,
+        "path": "Assets/Game/Scripts/Systems/BuildingPlacementCommitCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 16498,
+        "lines": 279,
+        "path": "Assets/Game/Scripts/Systems/BuildingPlacementContextCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 4010,
+        "lines": 105,
+        "path": "Assets/Game/Scripts/Systems/BuildingPlacementGridCameraSystemHelper.cs"
+      },
+      {
+        "bytes": 12048,
+        "lines": 254,
+        "path": "Assets/Game/Scripts/Systems/BuildingPlacementInputRuntimeTickUiSystemHelper.cs"
+      },
+      {
+        "bytes": 3764,
+        "lines": 60,
+        "path": "Assets/Game/Scripts/Systems/BuildingPlacementInputTickCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 18519,
+        "lines": 456,
+        "path": "Assets/Game/Scripts/Systems/BuildingPlacementInputUiSystemHelper.cs"
+      },
+      {
+        "bytes": 11921,
+        "lines": 292,
+        "path": "Assets/Game/Scripts/Systems/BuildingPlacementInteractionCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 8260,
+        "lines": 142,
+        "path": "Assets/Game/Scripts/Systems/BuildingPlacementInteractionContextCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 4698,
+        "lines": 114,
+        "path": "Assets/Game/Scripts/Systems/BuildingPlacementInvalidCellCacheCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 11458,
+        "lines": 250,
+        "path": "Assets/Game/Scripts/Systems/BuildingPlacementLifecycleCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 13243,
+        "lines": 341,
+        "path": "Assets/Game/Scripts/Systems/BuildingPlacementPreviewPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 13013,
+        "lines": 308,
+        "path": "Assets/Game/Scripts/Systems/BuildingPlacementQueryUiSystemHelper.cs"
+      },
+      {
+        "bytes": 17012,
+        "lines": 394,
+        "path": "Assets/Game/Scripts/Systems/BuildingPlacementRedirectCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 18191,
+        "lines": 358,
+        "path": "Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 4287,
+        "lines": 74,
+        "path": "Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickContextCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 7300,
+        "lines": 141,
+        "path": "Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickDiagnosticsSystemHelper.cs"
+      },
+      {
+        "bytes": 6496,
+        "lines": 142,
+        "path": "Assets/Game/Scripts/Systems/BuildingPlacementSessionCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 6617,
+        "lines": 142,
+        "path": "Assets/Game/Scripts/Systems/BuildingPlacementStartupSystemHelper.cs"
+      },
+      {
+        "bytes": 16786,
+        "lines": 410,
+        "path": "Assets/Game/Scripts/Systems/BuildingPlacementValidationUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 14207,
+        "lines": 248,
+        "path": "Assets/Game/Scripts/Systems/BuildingPlacementVisualCompositionPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 12249,
+        "lines": 328,
+        "path": "Assets/Game/Scripts/Systems/BuildingPlacementVisualPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 16135,
+        "lines": 284,
+        "path": "Assets/Game/Scripts/Systems/BuildingPlacementVisualUpdateCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 6999,
+        "lines": 103,
+        "path": "Assets/Game/Scripts/Systems/BuildingProductionCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 24312,
+        "lines": 374,
+        "path": "Assets/Game/Scripts/Systems/BuildingProductionContextCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 13949,
+        "lines": 351,
+        "path": "Assets/Game/Scripts/Systems/BuildingProductionEntriesUiSystemHelper.cs"
+      },
+      {
+        "bytes": 37741,
+        "lines": 895,
+        "path": "Assets/Game/Scripts/Systems/BuildingProductionQueueCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 70172,
+        "lines": 1616,
+        "path": "Assets/Game/Scripts/Systems/BuildingProductionRequestSystemHelper.cs"
+      },
+      {
+        "bytes": 12126,
+        "lines": 249,
+        "path": "Assets/Game/Scripts/Systems/BuildingProductionRuntimeTickCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 3837,
+        "lines": 104,
+        "path": "Assets/Game/Scripts/Systems/BuildingProductionSlotUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 3864,
+        "lines": 76,
+        "path": "Assets/Game/Scripts/Systems/BuildingProductionTickCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 11580,
+        "lines": 289,
+        "path": "Assets/Game/Scripts/Systems/BuildingProductionTransportBridgeCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 87282,
+        "lines": 1914,
+        "path": "Assets/Game/Scripts/Systems/BuildingProductionTransportPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 9623,
+        "lines": 217,
+        "path": "Assets/Game/Scripts/Systems/BuildingProductionUpdateCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 73319,
+        "lines": 1574,
+        "path": "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 4268,
+        "lines": 109,
+        "path": "Assets/Game/Scripts/Systems/BuildingResourceProductionSystemHelper.cs"
+      },
+      {
+        "bytes": 6749,
+        "lines": 187,
+        "path": "Assets/Game/Scripts/Systems/BuildingResourceStorageReservationSystemHelper.cs"
+      },
+      {
+        "bytes": 8025,
+        "lines": 217,
+        "path": "Assets/Game/Scripts/Systems/BuildingResourceStorageTransferSystemHelper.cs"
+      },
+      {
+        "bytes": 7296,
+        "lines": 172,
+        "path": "Assets/Game/Scripts/Systems/BuildingRuntimeCitySpawnBridgeCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 2290,
+        "lines": 32,
+        "path": "Assets/Game/Scripts/Systems/BuildingRuntimeCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 17375,
+        "lines": 266,
+        "path": "Assets/Game/Scripts/Systems/BuildingRuntimeContextCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 32545,
+        "lines": 499,
+        "path": "Assets/Game/Scripts/Systems/BuildingRuntimeContextFactoryCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 12934,
+        "lines": 243,
+        "path": "Assets/Game/Scripts/Systems/BuildingRuntimeCreationCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 16636,
+        "lines": 340,
+        "path": "Assets/Game/Scripts/Systems/BuildingRuntimeEntityCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 709,
+        "lines": 20,
+        "path": "Assets/Game/Scripts/Systems/BuildingRuntimeFocusPositionPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 430,
+        "lines": 19,
+        "path": "Assets/Game/Scripts/Systems/BuildingRuntimeObjectPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 5897,
+        "lines": 130,
+        "path": "Assets/Game/Scripts/Systems/BuildingRuntimeOwnershipCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 5222,
+        "lines": 99,
+        "path": "Assets/Game/Scripts/Systems/BuildingRuntimePathInteractionContextFactoryCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 74548,
+        "lines": 1678,
+        "path": "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 4326,
+        "lines": 82,
+        "path": "Assets/Game/Scripts/Systems/BuildingRuntimePublishCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 5433,
+        "lines": 141,
+        "path": "Assets/Game/Scripts/Systems/BuildingRuntimeQueryCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 25874,
+        "lines": 619,
+        "path": "Assets/Game/Scripts/Systems/BuildingRuntimeReadModelCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 1879,
+        "lines": 36,
+        "path": "Assets/Game/Scripts/Systems/BuildingRuntimeResourcePrefabCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 10394,
+        "lines": 229,
+        "path": "Assets/Game/Scripts/Systems/BuildingRuntimeResourcePrefabContextCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 4208,
+        "lines": 63,
+        "path": "Assets/Game/Scripts/Systems/BuildingRuntimeSideEffectCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 7346,
+        "lines": 204,
+        "path": "Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCommandSystemHelper.cs"
+      },
+      {
+        "bytes": 22716,
+        "lines": 473,
+        "path": "Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 4789,
+        "lines": 53,
+        "path": "Assets/Game/Scripts/Systems/BuildingRuntimeTickCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 1547,
+        "lines": 45,
+        "path": "Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 9329,
+        "lines": 202,
+        "path": "Assets/Game/Scripts/Systems/BuildingRuntimeVisualPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 1661,
+        "lines": 34,
+        "path": "Assets/Game/Scripts/Systems/BuildingSelectionClickCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 3398,
+        "lines": 91,
+        "path": "Assets/Game/Scripts/Systems/BuildingSelectionClickUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 2979,
+        "lines": 44,
+        "path": "Assets/Game/Scripts/Systems/BuildingSelectionCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 15900,
+        "lines": 398,
+        "path": "Assets/Game/Scripts/Systems/BuildingSelectionMarkerPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 637,
+        "lines": 21,
+        "path": "Assets/Game/Scripts/Systems/BuildingSelectionPortraitUiSystemHelper.cs"
+      },
+      {
+        "bytes": 28385,
+        "lines": 639,
+        "path": "Assets/Game/Scripts/Systems/BuildingSelectionRuntimeCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 4510,
+        "lines": 124,
+        "path": "Assets/Game/Scripts/Systems/BuildingSpawnCellUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 78233,
+        "lines": 1824,
+        "path": "Assets/Game/Scripts/Systems/BuildingSpawnCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 5804,
+        "lines": 149,
+        "path": "Assets/Game/Scripts/Systems/BuildingSurfacePlacementUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 10267,
+        "lines": 240,
+        "path": "Assets/Game/Scripts/Systems/BuildingUiCommandSystemHelper.cs"
+      },
+      {
+        "bytes": 15127,
+        "lines": 246,
+        "path": "Assets/Game/Scripts/Systems/BuildingUiCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 16560,
+        "lines": 303,
+        "path": "Assets/Game/Scripts/Systems/BuildingUiContextCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 18997,
+        "lines": 411,
+        "path": "Assets/Game/Scripts/Systems/BuildingUiQueryUiSystemHelper.cs"
+      },
+      {
+        "bytes": 8419,
+        "lines": 186,
+        "path": "Assets/Game/Scripts/Systems/CitizenBuildingReadCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 7334,
+        "lines": 194,
+        "path": "Assets/Game/Scripts/Systems/CitizenDangerCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 19841,
+        "lines": 427,
+        "path": "Assets/Game/Scripts/Systems/CitizenHouseholdRegistrationCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 11959,
+        "lines": 247,
+        "path": "Assets/Game/Scripts/Systems/CitizenPopulationCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 4557,
+        "lines": 82,
+        "path": "Assets/Game/Scripts/Systems/CitizenPopulationDebugDiagnosticsSystemHelper.cs"
+      },
+      {
+        "bytes": 7612,
+        "lines": 170,
+        "path": "Assets/Game/Scripts/Systems/CitizenPopulationDiagnosticsSystemHelper.cs"
+      },
+      {
+        "bytes": 10048,
+        "lines": 231,
+        "path": "Assets/Game/Scripts/Systems/CitizenPopulationEcsProjectionCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 4742,
+        "lines": 106,
+        "path": "Assets/Game/Scripts/Systems/CitizenPopulationEventCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 7374,
+        "lines": 190,
+        "path": "Assets/Game/Scripts/Systems/CitizenPopulationLifecycleCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 4674,
+        "lines": 138,
+        "path": "Assets/Game/Scripts/Systems/CitizenPopulationReadModelCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 15835,
+        "lines": 353,
+        "path": "Assets/Game/Scripts/Systems/CitizenPopulationRuntimeUpdateCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 4078,
+        "lines": 104,
+        "path": "Assets/Game/Scripts/Systems/CitizenPopulationStateCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 3597,
+        "lines": 91,
+        "path": "Assets/Game/Scripts/Systems/CitizenPopulationTotalsCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 28948,
+        "lines": 654,
+        "path": "Assets/Game/Scripts/Systems/CitizenRefugeeCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 1925,
+        "lines": 65,
+        "path": "Assets/Game/Scripts/Systems/CitizenResourceCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 10758,
+        "lines": 251,
+        "path": "Assets/Game/Scripts/Systems/CitizenScheduleCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 11411,
+        "lines": 285,
+        "path": "Assets/Game/Scripts/Systems/CitizenStatusTransitionCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 18059,
+        "lines": 365,
+        "path": "Assets/Game/Scripts/Systems/CitizenVisibleUnitPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 45255,
+        "lines": 968,
+        "path": "Assets/Game/Scripts/Systems/CustomGameStartupSystemHelper.cs"
+      },
+      {
+        "bytes": 3813,
+        "lines": 85,
+        "path": "Assets/Game/Scripts/Systems/FactionConstructionResourceUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 7473,
+        "lines": 172,
+        "path": "Assets/Game/Scripts/Systems/FactionFuelLogisticsTelemetryBridgeCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 2445,
+        "lines": 71,
+        "path": "Assets/Game/Scripts/Systems/FactionFuelLogisticsTelemetryUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 34228,
+        "lines": 865,
+        "path": "Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 5849,
+        "lines": 130,
+        "path": "Assets/Game/Scripts/Systems/FactionTacticalMaterialsStartupSystemHelper.cs"
+      },
+      {
+        "bytes": 7392,
+        "lines": 159,
+        "path": "Assets/Game/Scripts/Systems/FactionTacticalMaterialsUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 22766,
+        "lines": 530,
+        "path": "Assets/Game/Scripts/Systems/FocusableUnitLookupCameraSystemHelper.cs"
+      },
+      {
+        "bytes": 14733,
+        "lines": 311,
+        "path": "Assets/Game/Scripts/Systems/FocusedUnitLifecycleCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 14834,
+        "lines": 308,
+        "path": "Assets/Game/Scripts/Systems/FocusedUnitUiReadModelUiSystemHelper.cs"
+      },
+      {
+        "bytes": 5461,
+        "lines": 174,
+        "path": "Assets/Game/Scripts/Systems/GameplayAudioFeedbackSystemHelper.cs"
+      },
+      {
+        "bytes": 22221,
+        "lines": 469,
+        "path": "Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 19452,
+        "lines": 353,
+        "path": "Assets/Game/Scripts/Systems/ManagedGameplayStartupSystemHelper.cs"
+      },
+      {
+        "bytes": 29464,
+        "lines": 744,
+        "path": "Assets/Game/Scripts/Systems/MapBuildingPlacementSpawnPrefabSystemHelper.cs"
+      },
+      {
+        "bytes": 9254,
+        "lines": 244,
+        "path": "Assets/Game/Scripts/Systems/MapVehiclePlacementClearanceSystemHelper.cs"
+      },
+      {
+        "bytes": 20090,
+        "lines": 499,
+        "path": "Assets/Game/Scripts/Systems/MapVehiclePlacementSpawnPrefabSystemHelper.cs"
+      },
+      {
+        "bytes": 17630,
+        "lines": 417,
+        "path": "Assets/Game/Scripts/Systems/MatchHudSquadTraySelectionUiSystemHelper.cs"
+      },
+      {
+        "bytes": 2644,
+        "lines": 69,
+        "path": "Assets/Game/Scripts/Systems/MatchStartRequestStartupSystemHelper.cs"
+      },
+      {
+        "bytes": 5318,
+        "lines": 133,
+        "path": "Assets/Game/Scripts/Systems/MaterialFabricationCommandUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 4027,
+        "lines": 96,
+        "path": "Assets/Game/Scripts/Systems/MaterialFabricationTelemetrySystemHelper.cs"
+      },
+      {
+        "bytes": 6607,
+        "lines": 167,
+        "path": "Assets/Game/Scripts/Systems/MaterialsScenarioRecoveryPolicyUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 21672,
+        "lines": 484,
+        "path": "Assets/Game/Scripts/Systems/MaterialsScenarioRecoveryStartupSystemHelper.cs"
+      },
+      {
+        "bytes": 39616,
+        "lines": 908,
+        "path": "Assets/Game/Scripts/Systems/PerformanceDiagnosticsSystemHelper.cs"
+      },
+      {
+        "bytes": 11012,
+        "lines": 239,
+        "path": "Assets/Game/Scripts/Systems/ResourceExchangeAIStartupProjectionSystemHelper.cs"
+      },
+      {
+        "bytes": 3275,
+        "lines": 76,
+        "path": "Assets/Game/Scripts/Systems/ResourceExchangePhysicalStorageCandidateQuerySystemHelper.cs"
+      },
+      {
+        "bytes": 4588,
+        "lines": 104,
+        "path": "Assets/Game/Scripts/Systems/ResourceExchangePhysicalStorageReservationMutationSystemHelper.cs"
+      },
+      {
+        "bytes": 13630,
+        "lines": 306,
+        "path": "Assets/Game/Scripts/Systems/ResourceExchangePhysicalStorageUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 16853,
+        "lines": 415,
+        "path": "Assets/Game/Scripts/Systems/ResourceExchangeQueueCompletionSystemHelper.cs"
+      },
+      {
+        "bytes": 3662,
+        "lines": 94,
+        "path": "Assets/Game/Scripts/Systems/ResourceExchangeRequestQueueSystemHelper.cs"
+      },
+      {
+        "bytes": 6360,
+        "lines": 162,
+        "path": "Assets/Game/Scripts/Systems/ResourceExchangeResourceUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 6473,
+        "lines": 163,
+        "path": "Assets/Game/Scripts/Systems/ResourceExchangeRushPolicySystemHelper.cs"
+      },
+      {
+        "bytes": 14551,
+        "lines": 294,
+        "path": "Assets/Game/Scripts/Systems/ResourceExchangeStartupProjectionSystemHelper.cs"
+      },
+      {
+        "bytes": 17177,
+        "lines": 494,
+        "path": "Assets/Game/Scripts/Systems/ResourceExchangeVisualPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 3222,
+        "lines": 96,
+        "path": "Assets/Game/Scripts/Systems/ResourceHaulerAIOilAllocationPolicySystemHelper.cs"
+      },
+      {
+        "bytes": 16889,
+        "lines": 417,
+        "path": "Assets/Game/Scripts/Systems/ResourceHaulerAutomaticRoutePolicySystemHelper.cs"
+      },
+      {
+        "bytes": 3680,
+        "lines": 88,
+        "path": "Assets/Game/Scripts/Systems/ResourceHaulerStorageAccessSystemHelper.cs"
+      },
+      {
+        "bytes": 18528,
+        "lines": 490,
+        "path": "Assets/Game/Scripts/Systems/ResourceHaulerUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 10534,
+        "lines": 245,
+        "path": "Assets/Game/Scripts/Systems/RoadBuildBuildingPlacementCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 8982,
+        "lines": 217,
+        "path": "Assets/Game/Scripts/Systems/RoadBuildCommandCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 21748,
+        "lines": 393,
+        "path": "Assets/Game/Scripts/Systems/RoadBuildCompositionContextCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 5051,
+        "lines": 93,
+        "path": "Assets/Game/Scripts/Systems/RoadBuildCompositionLifecycleCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 10315,
+        "lines": 162,
+        "path": "Assets/Game/Scripts/Systems/RoadBuildCompositionSourceCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 5572,
+        "lines": 118,
+        "path": "Assets/Game/Scripts/Systems/RoadBuildCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 2644,
+        "lines": 46,
+        "path": "Assets/Game/Scripts/Systems/RoadBuildContextCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 2639,
+        "lines": 63,
+        "path": "Assets/Game/Scripts/Systems/RoadBuildDependencyCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 3945,
+        "lines": 75,
+        "path": "Assets/Game/Scripts/Systems/RoadBuildDisposalCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 12770,
+        "lines": 265,
+        "path": "Assets/Game/Scripts/Systems/RoadBuildEcsCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 9583,
+        "lines": 229,
+        "path": "Assets/Game/Scripts/Systems/RoadBuildInputCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 6191,
+        "lines": 143,
+        "path": "Assets/Game/Scripts/Systems/RoadBuildInteractionCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 8055,
+        "lines": 157,
+        "path": "Assets/Game/Scripts/Systems/RoadBuildInteractionContextCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 2551,
+        "lines": 70,
+        "path": "Assets/Game/Scripts/Systems/RoadBuildMutationCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 3598,
+        "lines": 102,
+        "path": "Assets/Game/Scripts/Systems/RoadBuildPlacementStorageCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 7785,
+        "lines": 170,
+        "path": "Assets/Game/Scripts/Systems/RoadBuildReadModelCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 3336,
+        "lines": 94,
+        "path": "Assets/Game/Scripts/Systems/RoadBuildRuntimeActionCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 7505,
+        "lines": 193,
+        "path": "Assets/Game/Scripts/Systems/RoadBuildSessionCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 5911,
+        "lines": 112,
+        "path": "Assets/Game/Scripts/Systems/RoadBuildVisualContextPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 2735,
+        "lines": 76,
+        "path": "Assets/Game/Scripts/Systems/RoadDeletePromptUiSystemHelper.cs"
+      },
+      {
+        "bytes": 820,
+        "lines": 36,
+        "path": "Assets/Game/Scripts/Systems/RoadMinimapEventUiSystemHelper.cs"
+      },
+      {
+        "bytes": 12261,
+        "lines": 374,
+        "path": "Assets/Game/Scripts/Systems/RoadNetworkCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 6204,
+        "lines": 167,
+        "path": "Assets/Game/Scripts/Systems/RoadPathPlanningUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 10439,
+        "lines": 280,
+        "path": "Assets/Game/Scripts/Systems/RoadPreviewPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 6616,
+        "lines": 172,
+        "path": "Assets/Game/Scripts/Systems/RoadRuntimeGenerationCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 2547,
+        "lines": 52,
+        "path": "Assets/Game/Scripts/Systems/RoadRuntimeGenerationContextCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 2365,
+        "lines": 66,
+        "path": "Assets/Game/Scripts/Systems/RoadRuntimeRootSceneSystemHelper.cs"
+      },
+      {
+        "bytes": 4994,
+        "lines": 140,
+        "path": "Assets/Game/Scripts/Systems/RoadSurfacePlacementUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 5537,
+        "lines": 118,
+        "path": "Assets/Game/Scripts/Systems/RoadVisualRefreshPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 81709,
+        "lines": 1634,
+        "path": "Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 19287,
+        "lines": 360,
+        "path": "Assets/Game/Scripts/Systems/RtsSelectionFocusCommandCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 38098,
+        "lines": 929,
+        "path": "Assets/Game/Scripts/Systems/RtsSelectionInputCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 5363,
+        "lines": 138,
+        "path": "Assets/Game/Scripts/Systems/RtsSelectionInputStateCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 75786,
+        "lines": 1568,
+        "path": "Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 34902,
+        "lines": 813,
+        "path": "Assets/Game/Scripts/Systems/RtsSelectionRuntimeCameraSystemHelper.cs"
+      },
+      {
+        "bytes": 43697,
+        "lines": 816,
+        "path": "Assets/Game/Scripts/Systems/RtsSelectionRuntimeInputCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 11062,
+        "lines": 274,
+        "path": "Assets/Game/Scripts/Systems/RuntimeFactionResourceSystemHelper.cs"
+      },
+      {
+        "bytes": 6843,
+        "lines": 137,
+        "path": "Assets/Game/Scripts/Systems/RuntimeGridBootstrapStartupSystemHelper.cs"
+      },
+      {
+        "bytes": 1362,
+        "lines": 35,
+        "path": "Assets/Game/Scripts/Systems/RuntimeRootSceneSystemHelper.cs"
+      },
+      {
+        "bytes": 17718,
+        "lines": 396,
+        "path": "Assets/Game/Scripts/Systems/SceneLifecycleSceneSystemHelper.cs"
+      },
+      {
+        "bytes": 5089,
+        "lines": 127,
+        "path": "Assets/Game/Scripts/Systems/SelectedUnitOrderSnapshotCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 7339,
+        "lines": 187,
+        "path": "Assets/Game/Scripts/Systems/SelectionBuildingInteractionCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 88186,
+        "lines": 1673,
+        "path": "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs"
+      },
+      {
+        "bytes": 95202,
+        "lines": 2175,
+        "path": "Assets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs"
+      },
+      {
+        "bytes": 59925,
+        "lines": 1347,
+        "path": "Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 6502,
+        "lines": 145,
+        "path": "Assets/Game/Scripts/Systems/SelectionRectangleRequestCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 7934,
+        "lines": 173,
+        "path": "Assets/Game/Scripts/Systems/SelectionRuntimeConfigStartupSystemHelper.cs"
+      },
+      {
+        "bytes": 13295,
+        "lines": 305,
+        "path": "Assets/Game/Scripts/Systems/SelectionRuntimeDiagnosticsSystemHelper.cs"
+      },
+      {
+        "bytes": 772,
+        "lines": 27,
+        "path": "Assets/Game/Scripts/Systems/SelectionScreenMarkerUiSystemHelper.cs"
+      },
+      {
+        "bytes": 3977,
+        "lines": 123,
+        "path": "Assets/Game/Scripts/Systems/SelectionStateCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 15435,
+        "lines": 361,
+        "path": "Assets/Game/Scripts/Systems/SelectionUiCameraSystemHelper.cs"
+      },
+      {
+        "bytes": 10041,
+        "lines": 278,
+        "path": "Assets/Game/Scripts/Systems/SelectionUiCommandUiSystemHelper.cs"
+      },
+      {
+        "bytes": 10490,
+        "lines": 269,
+        "path": "Assets/Game/Scripts/Systems/SelectionUiReadModelUiSystemHelper.cs"
+      },
+      {
+        "bytes": 2707,
+        "lines": 69,
+        "path": "Assets/Game/Scripts/Systems/TacticalFollowAttackCinematicCameraSystemHelper.cs"
+      },
+      {
+        "bytes": 1360,
+        "lines": 49,
+        "path": "Assets/Game/Scripts/Systems/TacticalFollowAttackCinematicPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 1735,
+        "lines": 52,
+        "path": "Assets/Game/Scripts/Systems/TacticalFollowAttackCinematicVfxSystemHelper.cs"
+      },
+      {
+        "bytes": 67105,
+        "lines": 1564,
+        "path": "Assets/Game/Scripts/Systems/TacticalFollowCameraModeSystemHelper.cs"
+      },
+      {
+        "bytes": 26106,
+        "lines": 671,
+        "path": "Assets/Game/Scripts/Systems/TransportBoardingApproachSystemHelper.cs"
+      },
+      {
+        "bytes": 12913,
+        "lines": 301,
+        "path": "Assets/Game/Scripts/Systems/TransportBoardingCapacitySystemHelper.cs"
+      },
+      {
+        "bytes": 5520,
+        "lines": 114,
+        "path": "Assets/Game/Scripts/Systems/TransportBoardingCommandRoutingSystemHelper.cs"
+      },
+      {
+        "bytes": 4582,
+        "lines": 97,
+        "path": "Assets/Game/Scripts/Systems/TransportBoardingDiagnosticSystemHelper.cs"
+      },
+      {
+        "bytes": 15450,
+        "lines": 429,
+        "path": "Assets/Game/Scripts/Systems/TransportBoardingOrderPlanningSystemHelper.cs"
+      },
+      {
+        "bytes": 3852,
+        "lines": 123,
+        "path": "Assets/Game/Scripts/Systems/VisibleUnitSelectionCameraSystemHelper.cs"
+      },
+      {
+        "bytes": 9447,
+        "lines": 271,
+        "path": "Assets/Game/Scripts/UI/MenuDiagnosticsUiSystemHelper.cs"
+      },
+      {
+        "bytes": 4693,
+        "lines": 140,
+        "path": "Assets/Game/Scripts/UI/Narrative/NarrativeDialoguePresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 4335,
+        "lines": 132,
+        "path": "Assets/Game/Scripts/UI/Narrative/NarrativeDialogueRevealPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 6456,
+        "lines": 170,
+        "path": "Assets/Game/Scripts/UI/Narrative/NarrativePanelAssetResidencyPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 4542,
+        "lines": 135,
+        "path": "Assets/Game/Scripts/UI/Narrative/NarrativePanelMotionPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 1633,
+        "lines": 59,
+        "path": "Assets/Game/Scripts/UI/Narrative/NarrativeVoicePlaybackPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 18116,
+        "lines": 479,
+        "path": "Assets/Game/Scripts/UI/Screens/ArmoryCatalogQueryUiSystemHelper.cs"
+      },
+      {
+        "bytes": 6268,
+        "lines": 163,
+        "path": "Assets/Game/Scripts/UI/Screens/AssistantHighlightPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 1159,
+        "lines": 39,
+        "path": "Assets/Game/Scripts/UI/Screens/AssistantNarrationPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 4397,
+        "lines": 126,
+        "path": "Assets/Game/Scripts/UI/Screens/AssistantPanelUiSystemHelper.cs"
+      },
+      {
+        "bytes": 12610,
+        "lines": 301,
+        "path": "Assets/Game/Scripts/UI/Screens/BattleHudRuntimeFeedbackUiSystemHelper.cs"
+      },
+      {
+        "bytes": 22451,
+        "lines": 463,
+        "path": "Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 18013,
+        "lines": 474,
+        "path": "Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogQueryUiSystemHelper.cs"
+      },
+      {
+        "bytes": 15735,
+        "lines": 399,
+        "path": "Assets/Game/Scripts/UI/Screens/BuildDrawerProductionQueueUiSystemHelper.cs"
+      },
+      {
+        "bytes": 3232,
+        "lines": 89,
+        "path": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantReferenceUiSystemHelper.cs"
+      },
+      {
+        "bytes": 11855,
+        "lines": 344,
+        "path": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.cs"
+      },
+      {
+        "bytes": 8312,
+        "lines": 134,
+        "path": "Assets/Game/Scripts/UI/Screens/MatchHudCurrentOrderBannerUiSystemHelper.cs"
+      },
+      {
+        "bytes": 5702,
+        "lines": 148,
+        "path": "Assets/Game/Scripts/UI/Screens/MatchHudHeaderReferenceUiSystemHelper.cs"
+      },
+      {
+        "bytes": 51844,
+        "lines": 1246,
+        "path": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs"
+      },
+      {
+        "bytes": 15173,
+        "lines": 340,
+        "path": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapProjectionUiSystemHelper.cs"
+      },
+      {
+        "bytes": 24832,
+        "lines": 559,
+        "path": "Assets/Game/Scripts/UI/Screens/MatchOverlayCommandInputUiSystemHelper.cs"
+      },
+      {
+        "bytes": 4652,
+        "lines": 141,
+        "path": "Assets/Game/Scripts/UI/Screens/MatchOverlayCommandTabFeedbackUiSystemHelper.cs"
+      },
+      {
+        "bytes": 1869,
+        "lines": 60,
+        "path": "Assets/Game/Scripts/UI/Screens/MatchOverlayCommandTabVisualUiSystemHelper.cs"
+      },
+      {
+        "bytes": 1196,
+        "lines": 37,
+        "path": "Assets/Game/Scripts/UI/Screens/QuickCustomScreenFlowUiSystemHelper.cs"
+      },
+      {
+        "bytes": 1238,
+        "lines": 42,
+        "path": "Assets/Game/Scripts/UI/Settings/SettingsScreenFlowUiSystemHelper.cs"
+      },
+      {
+        "bytes": 24721,
+        "lines": 487,
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestDispatchSystemHelper.cs"
+      },
+      {
+        "bytes": 4101,
+        "lines": 113,
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiActionResourceExchangeRequestSystemHelper.cs"
+      },
+      {
+        "bytes": 10563,
+        "lines": 188,
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerProjectionSystemHelper.cs"
+      },
+      {
+        "bytes": 5660,
+        "lines": 142,
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeProjectionFingerprintUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 13094,
+        "lines": 312,
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeProjectionSystemHelper.cs"
+      },
+      {
+        "bytes": 6107,
+        "lines": 158,
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeTextProjectionUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 3802,
+        "lines": 125,
+        "path": "Assets/Game/Scripts/UI/Shell/UIScreenRouteFlowUiSystemHelper.cs"
+      }
+    ],
+    "over500Count": 37,
+    "totalBytes": 4265245,
+    "totalLines": 96789
+  },
+  "ownerDomains": [
+    {
+      "currentOwnerValidatorIds": [
+        "architecture-dashboard-freshness"
+      ],
+      "id": "active-work-exclusions",
+      "responsibility": "Cross-agent ownership exclusions and conflict prevention."
+    },
+    {
+      "currentOwnerValidatorIds": [
+        "architecture-assembly-boundary",
+        "architecture-assembly-report"
+      ],
+      "id": "assembly-dependencies",
+      "responsibility": "First-party asmdef dependency direction, parity, and cycle prevention."
+    },
+    {
+      "currentOwnerValidatorIds": [
+        "architecture-managed-ecs-loops",
+        "architecture-source-growth"
+      ],
+      "id": "managed-helpers",
+      "responsibility": "SystemHelper inventory, managed-boundary justification, and growth control."
+    },
+    {
+      "currentOwnerValidatorIds": [
+        "architecture-composition-static",
+        "architecture-managed-ecs-loops"
+      ],
+      "id": "runtime-loops-static-state",
+      "responsibility": "Managed runtime loops, mutable static candidates, and composition ownership."
+    },
+    {
+      "currentOwnerValidatorIds": [
+        "architecture-source-growth"
+      ],
+      "id": "source-size",
+      "responsibility": "Production source line/byte ceilings and oversized-file ratchets."
+    }
+  ],
+  "runtimeLoops": {
+    "byScope": {
+      "production-non-ui": 31,
+      "production-ui": 32
+    },
+    "count": 63,
+    "entries": [
+      {
+        "line": 26,
+        "method": "Update",
+        "path": "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs",
+        "scope": "production-non-ui",
+        "type": "AudioPlaybackPresentationRuntimeView"
+      },
+      {
+        "line": 151,
+        "method": "LateUpdate",
+        "path": "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+        "scope": "production-non-ui",
+        "type": "MatchSceneView"
+      },
+      {
+        "line": 124,
+        "method": "Update",
+        "path": "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+        "scope": "production-non-ui",
+        "type": "MatchSceneView"
+      },
+      {
+        "line": 126,
+        "method": "Update",
+        "path": "Assets/Game/Scripts/Composition/MenuBootstrapView.cs",
+        "scope": "production-non-ui",
+        "type": "MenuBootstrapView"
+      },
+      {
+        "line": 84,
+        "method": "Update",
+        "path": "Assets/Game/Scripts/Effects/MissileTrailVfxView.cs",
+        "scope": "production-non-ui",
+        "type": "MissileTrailVfxView"
+      },
+      {
+        "line": 84,
+        "method": "Update",
+        "path": "Assets/Game/Scripts/Effects/UnitAttackImpactVfxView.cs",
+        "scope": "production-non-ui",
+        "type": "UnitAttackImpactVfxView"
+      },
+      {
+        "line": 60,
+        "method": "Update",
+        "path": "Assets/Game/Scripts/Rendering/TerrainLodHeightSwitch.cs",
+        "scope": "production-non-ui",
+        "type": "TerrainLodHeightSwitch"
+      },
+      {
+        "line": 1914,
+        "method": "Coroutine:CameraAirTargetRoutine",
+        "path": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
+        "scope": "production-non-ui",
+        "type": "BattleScenarioLabVisualPlayback"
+      },
+      {
+        "line": 1980,
+        "method": "Coroutine:CameraOpeningRoutine",
+        "path": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
+        "scope": "production-non-ui",
+        "type": "BattleScenarioLabVisualPlayback"
+      },
+      {
+        "line": 2516,
+        "method": "Coroutine:CameraTransportAirPickupBoardAndRopeExitRoutine",
+        "path": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
+        "scope": "production-non-ui",
+        "type": "BattleScenarioLabVisualPlayback"
+      },
+      {
+        "line": 2040,
+        "method": "Coroutine:CameraTransportBoardAndGroundExitRoutine",
+        "path": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
+        "scope": "production-non-ui",
+        "type": "BattleScenarioLabVisualPlayback"
+      },
+      {
+        "line": 2098,
+        "method": "Coroutine:CameraTransportBoardAndRopeExitRoutine",
+        "path": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
+        "scope": "production-non-ui",
+        "type": "BattleScenarioLabVisualPlayback"
+      },
+      {
+        "line": 2440,
+        "method": "Coroutine:CameraTransportPlaneMixedLoadAirdropRoutine",
+        "path": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
+        "scope": "production-non-ui",
+        "type": "BattleScenarioLabVisualPlayback"
+      },
+      {
+        "line": 2170,
+        "method": "Coroutine:CameraTransportPlaneRampBoardAndGroundExitRoutine",
+        "path": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
+        "scope": "production-non-ui",
+        "type": "BattleScenarioLabVisualPlayback"
+      },
+      {
+        "line": 2239,
+        "method": "Coroutine:CameraTransportPlaneSoldierAirdropRoutine",
+        "path": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
+        "scope": "production-non-ui",
+        "type": "BattleScenarioLabVisualPlayback"
+      },
+      {
+        "line": 2374,
+        "method": "Coroutine:CameraTransportPlaneVehicleCargoAirdropRoutine",
+        "path": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
+        "scope": "production-non-ui",
+        "type": "BattleScenarioLabVisualPlayback"
+      },
+      {
+        "line": 2303,
+        "method": "Coroutine:CameraTransportPlaneVehicleCargoGroundExitRoutine",
+        "path": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
+        "scope": "production-non-ui",
+        "type": "BattleScenarioLabVisualPlayback"
+      },
+      {
+        "line": 177,
+        "method": "Coroutine:PlayAirTargetLiveEcsRoutine",
+        "path": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
+        "scope": "production-non-ui",
+        "type": "BattleScenarioLabVisualPlayback"
+      },
+      {
+        "line": 134,
+        "method": "Coroutine:PlayGroundMissileLiveEcsRoutine",
+        "path": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
+        "scope": "production-non-ui",
+        "type": "BattleScenarioLabVisualPlayback"
+      },
+      {
+        "line": 278,
+        "method": "Coroutine:PlayGroundVehicleTransportBoardingLiveEcsRoutine",
+        "path": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
+        "scope": "production-non-ui",
+        "type": "BattleScenarioLabVisualPlayback"
+      },
+      {
+        "line": 362,
+        "method": "Coroutine:PlayHelicopterAirPickupLiveEcsRoutine",
+        "path": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
+        "scope": "production-non-ui",
+        "type": "BattleScenarioLabVisualPlayback"
+      },
+      {
+        "line": 320,
+        "method": "Coroutine:PlayHelicopterTransportBoardingLiveEcsRoutine",
+        "path": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
+        "scope": "production-non-ui",
+        "type": "BattleScenarioLabVisualPlayback"
+      },
+      {
+        "line": 115,
+        "method": "Coroutine:PlayLiveEcsRoutine",
+        "path": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
+        "scope": "production-non-ui",
+        "type": "BattleScenarioLabVisualPlayback"
+      },
+      {
+        "line": 617,
+        "method": "Coroutine:PlayTransportBoardingCameraProofPathRoutine",
+        "path": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
+        "scope": "production-non-ui",
+        "type": "BattleScenarioLabVisualPlayback"
+      },
+      {
+        "line": 221,
+        "method": "Coroutine:PlayTransportBoardingLiveEcsRoutine",
+        "path": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
+        "scope": "production-non-ui",
+        "type": "BattleScenarioLabVisualPlayback"
+      },
+      {
+        "line": 632,
+        "method": "Coroutine:PlayTransportBoardingNextCleanupProofRoutine",
+        "path": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
+        "scope": "production-non-ui",
+        "type": "BattleScenarioLabVisualPlayback"
+      },
+      {
+        "line": 572,
+        "method": "Coroutine:PlayTransportPlaneMixedLoadAirdropLiveEcsRoutine",
+        "path": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
+        "scope": "production-non-ui",
+        "type": "BattleScenarioLabVisualPlayback"
+      },
+      {
+        "line": 404,
+        "method": "Coroutine:PlayTransportPlaneRampBoardingLiveEcsRoutine",
+        "path": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
+        "scope": "production-non-ui",
+        "type": "BattleScenarioLabVisualPlayback"
+      },
+      {
+        "line": 446,
+        "method": "Coroutine:PlayTransportPlaneSoldierAirdropLiveEcsRoutine",
+        "path": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
+        "scope": "production-non-ui",
+        "type": "BattleScenarioLabVisualPlayback"
+      },
+      {
+        "line": 530,
+        "method": "Coroutine:PlayTransportPlaneVehicleCargoAirdropLiveEcsRoutine",
+        "path": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
+        "scope": "production-non-ui",
+        "type": "BattleScenarioLabVisualPlayback"
+      },
+      {
+        "line": 488,
+        "method": "Coroutine:PlayTransportPlaneVehicleCargoGroundExitLiveEcsRoutine",
+        "path": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs",
+        "scope": "production-non-ui",
+        "type": "BattleScenarioLabVisualPlayback"
+      },
+      {
+        "line": 89,
+        "method": "Coroutine:Animate",
+        "path": "Assets/Game/Scripts/UI/Components/FeedbackToastView.cs",
+        "scope": "production-ui",
+        "type": "FeedbackToastView"
+      },
+      {
+        "line": 78,
+        "method": "Coroutine:ShowRoutine",
+        "path": "Assets/Game/Scripts/UI/Components/FeedbackToastView.cs",
+        "scope": "production-ui",
+        "type": "FeedbackToastView"
+      },
+      {
+        "line": 21,
+        "method": "Update",
+        "path": "Assets/Game/Scripts/UI/Components/MatchHudObjectivesElapsedView.cs",
+        "scope": "production-ui",
+        "type": "MatchHudObjectivesElapsedView"
+      },
+      {
+        "line": 110,
+        "method": "Update",
+        "path": "Assets/Game/Scripts/UI/Components/MatchHudSquadTrayView.cs",
+        "scope": "production-ui",
+        "type": "MatchHudSquadTrayView"
+      },
+      {
+        "line": 61,
+        "method": "Coroutine:FlightRoutine",
+        "path": "Assets/Game/Scripts/UI/Components/ResourceFlyoutView.cs",
+        "scope": "production-ui",
+        "type": "ResourceFlyoutView"
+      },
+      {
+        "line": 258,
+        "method": "Coroutine:AnimateScale",
+        "path": "Assets/Game/Scripts/UI/Components/UIMotionFeedbackView.cs",
+        "scope": "production-ui",
+        "type": "UIMotionFeedbackView"
+      },
+      {
+        "line": 343,
+        "method": "Coroutine:FlashOnly",
+        "path": "Assets/Game/Scripts/UI/Components/UIMotionFeedbackView.cs",
+        "scope": "production-ui",
+        "type": "UIMotionFeedbackView"
+      },
+      {
+        "line": 246,
+        "method": "Coroutine:PulseScale",
+        "path": "Assets/Game/Scripts/UI/Components/UIMotionFeedbackView.cs",
+        "scope": "production-ui",
+        "type": "UIMotionFeedbackView"
+      },
+      {
+        "line": 296,
+        "method": "Coroutine:ScaleAndFade",
+        "path": "Assets/Game/Scripts/UI/Components/UIMotionFeedbackView.cs",
+        "scope": "production-ui",
+        "type": "UIMotionFeedbackView"
+      },
+      {
+        "line": 317,
+        "method": "Coroutine:SlideAndFade",
+        "path": "Assets/Game/Scripts/UI/Components/UIMotionFeedbackView.cs",
+        "scope": "production-ui",
+        "type": "UIMotionFeedbackView"
+      },
+      {
+        "line": 274,
+        "method": "Coroutine:Wiggle",
+        "path": "Assets/Game/Scripts/UI/Components/UIMotionFeedbackView.cs",
+        "scope": "production-ui",
+        "type": "UIMotionFeedbackView"
+      },
+      {
+        "line": 67,
+        "method": "Coroutine:ShowRoutine",
+        "path": "Assets/Game/Scripts/UI/Components/WorldFeedbackMarkerView.cs",
+        "scope": "production-ui",
+        "type": "WorldFeedbackMarkerView"
+      },
+      {
+        "line": 52,
+        "method": "Update",
+        "path": "Assets/Game/Scripts/UI/MenuDiagnosticsView.cs",
+        "scope": "production-ui",
+        "type": "MenuDiagnosticsView"
+      },
+      {
+        "line": 53,
+        "method": "Update",
+        "path": "Assets/Game/Scripts/UI/Screens/ArmoryCategoryNavigationView.cs",
+        "scope": "production-ui",
+        "type": "ArmoryCategoryNavigationView"
+      },
+      {
+        "line": 36,
+        "method": "Update",
+        "path": "Assets/Game/Scripts/UI/Screens/ArmoryContentListView.cs",
+        "scope": "production-ui",
+        "type": "ArmoryContentListView"
+      },
+      {
+        "line": 70,
+        "method": "Update",
+        "path": "Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogRuntimeView.cs",
+        "scope": "production-ui",
+        "type": "BuildDrawerCatalogRuntimeView"
+      },
+      {
+        "line": 126,
+        "method": "Update",
+        "path": "Assets/Game/Scripts/UI/Screens/BuildPlacementConfirmationBarView.cs",
+        "scope": "production-ui",
+        "type": "BuildPlacementConfirmationBarView"
+      },
+      {
+        "line": 20,
+        "method": "Update",
+        "path": "Assets/Game/Scripts/UI/Shell/UIAspectVariantView.cs",
+        "scope": "production-ui",
+        "type": "UIAspectVariantView"
+      },
+      {
+        "line": 63,
+        "method": "Coroutine:AnimateLoadingToComplete",
+        "path": "Assets/Game/Scripts/UI/Shell/UIGameUiSmokeDriverView.cs",
+        "scope": "production-ui",
+        "type": "UIGameUiSmokeDriverView"
+      },
+      {
+        "line": 43,
+        "method": "Coroutine:RunLoadingGate",
+        "path": "Assets/Game/Scripts/UI/Shell/UIGameUiSmokeDriverView.cs",
+        "scope": "production-ui",
+        "type": "UIGameUiSmokeDriverView"
+      },
+      {
+        "line": 79,
+        "method": "Coroutine:WaitForBoundary",
+        "path": "Assets/Game/Scripts/UI/Shell/UIGameUiSmokeDriverView.cs",
+        "scope": "production-ui",
+        "type": "UIGameUiSmokeDriverView"
+      },
+      {
+        "line": 271,
+        "method": "Coroutine:ParallelChildRoutine",
+        "path": "Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs",
+        "scope": "production-ui",
+        "type": "UIMotionHostView"
+      },
+      {
+        "line": 239,
+        "method": "Coroutine:SequenceRoutine",
+        "path": "Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs",
+        "scope": "production-ui",
+        "type": "UIMotionHostView"
+      },
+      {
+        "line": 234,
+        "method": "Coroutine:TrackedRoutine",
+        "path": "Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs",
+        "scope": "production-ui",
+        "type": "UIMotionHostView"
+      },
+      {
+        "line": 357,
+        "method": "Coroutine:TweenAlpha",
+        "path": "Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs",
+        "scope": "production-ui",
+        "type": "UIMotionHostView"
+      },
+      {
+        "line": 277,
+        "method": "Coroutine:TweenAnchoredPosition",
+        "path": "Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs",
+        "scope": "production-ui",
+        "type": "UIMotionHostView"
+      },
+      {
+        "line": 317,
+        "method": "Coroutine:TweenScale",
+        "path": "Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs",
+        "scope": "production-ui",
+        "type": "UIMotionHostView"
+      },
+      {
+        "line": 119,
+        "method": "Coroutine:TweenRoutine",
+        "path": "Assets/Game/Scripts/UI/Shell/UIPopupMotionView.cs",
+        "scope": "production-ui",
+        "type": "UIPopupMotionView"
+      },
+      {
+        "line": 20,
+        "method": "Update",
+        "path": "Assets/Game/Scripts/UI/Shell/UISafeAreaView.cs",
+        "scope": "production-ui",
+        "type": "UISafeAreaView"
+      },
+      {
+        "line": 193,
+        "method": "Update",
+        "path": "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs",
+        "scope": "production-ui",
+        "type": "UIShellContentView"
+      },
+      {
+        "line": 49,
+        "method": "Update",
+        "path": "Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs",
+        "scope": "production-ui",
+        "type": "UIShellEcsPresentationSystem"
+      },
+      {
+        "line": 43,
+        "method": "Update",
+        "path": "Assets/Game/Scripts/UI/Shell/UIShellLoadingProgressView.cs",
+        "scope": "production-ui",
+        "type": "UIShellLoadingProgressView"
+      }
+    ]
+  },
+  "schemaVersion": 1,
+  "scope": {
+    "excludedOwnershipIds": [
+      "audio",
+      "first-launch",
+      "operation-map",
+      "ui-visual-lock"
+    ],
+    "productionEditorPathSegment": "Editor",
+    "sourceRoot": "Assets/Game/Scripts"
+  },
+  "sourceAuthorities": [
+    {
+      "path": "Design/AgentReports/2026-07-10_aph-700_first_party_assembly_dependencies.json",
+      "sha256": "edd477f605b455eb795fb1801467f10c4c360756cc8f7bbe488478f92112c201"
+    },
+    {
+      "path": "Design/AgentReports/ArchitectureMaturity/validator_registry.json",
+      "sha256": "cacda7796dcd1796cefeb7fa5f5fb312eedfa5ac7621223711ad1f21658edc3c"
+    },
+    {
+      "path": "Design/AgentTasks/ui_current.md",
+      "sha256": "a71aa8f914192150b0dd690ff5c9b17b27f480e472c56c00648f250b4bb6c870"
+    },
+    {
+      "path": "Design/Architecture/first_launch_architecture_alignment_refactor_tracker.md",
+      "sha256": "f207379d67c6345695f40fbb585e8f5540ebb31957ee32ad9ea34becaf3c4101"
+    },
+    {
+      "path": "Design/Architecture/non_ecs_to_ecs_system_inventory.md",
+      "sha256": "a8dd4a8b575a32c75c35d84b1893fefd3748c04f99f04edcabda385945c52b82"
+    },
+    {
+      "path": "Design/Architecture/operation_map_scene_split_and_generator_tracker.md",
+      "sha256": "18b5277fb6d85e9efa801b12ed91779a0a0d20b584965b5c761992dc6a2d934f"
+    },
+    {
+      "path": "Design/Architecture/phase7_monobehaviour_loop_baseline.md",
+      "sha256": "26a0ccf6ddf6374949a091fd3d06ff763b6210b9e9299d46593b4079751b2fb0"
+    },
+    {
+      "path": "Design/Architecture/production_source_growth_baseline.md",
+      "sha256": "51dea48a2bc976d20cd576b3a854a20c517f8054ebdbf96a2db4a3d1e71fd5b7"
+    },
+    {
+      "path": "Design/Architecture/systembase_to_isystem_inventory.md",
+      "sha256": "377c81c031b0cbdde92e691eef94b284ab0b4c406ce3ee72dbadf321b0bb81df"
+    },
+    {
+      "path": "Design/Audio_Config_Driven_Implementation_Spec.md",
+      "sha256": "73a0d50aa9d474abd340509db21cb635d36c362efb39e170f9eb1122cc786fe0"
+    }
+  ],
+  "sourceSize": {
+    "fileCount": 992,
+    "filesOver500": [
+      {
+        "bytes": 68356,
+        "lines": 1229,
+        "path": "Assets/Game/Scripts/Authorings/UnitGridAuthoring.cs"
+      },
+      {
+        "bytes": 46433,
+        "lines": 972,
+        "path": "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 37502,
+        "lines": 910,
+        "path": "Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 73170,
+        "lines": 1203,
+        "path": "Assets/Game/Scripts/Configs/Audio/AudioEventIds.cs"
+      },
+      {
+        "bytes": 60498,
+        "lines": 802,
+        "path": "Assets/Game/Scripts/Configs/GameplayConfigModels.cs"
+      },
+      {
+        "bytes": 22545,
+        "lines": 551,
+        "path": "Assets/Game/Scripts/Configs/MapSurfaceDataAsset.cs"
+      },
+      {
+        "bytes": 21835,
+        "lines": 532,
+        "path": "Assets/Game/Scripts/Environment/DayNightSystem.cs"
+      },
+      {
+        "bytes": 47077,
+        "lines": 858,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 39593,
+        "lines": 938,
+        "path": "Assets/Game/Scripts/Environment/RuntimeCityRAndDMapCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 23784,
+        "lines": 570,
+        "path": "Assets/Game/Scripts/Environment/RuntimeDecorationSpawnerPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 37139,
+        "lines": 896,
+        "path": "Assets/Game/Scripts/Environment/RuntimeGridBlockerPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 33765,
+        "lines": 721,
+        "path": "Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs"
+      },
+      {
+        "bytes": 23541,
+        "lines": 525,
+        "path": "Assets/Game/Scripts/Rendering/Systems/UnitHelicopterBladeSpinSystem.cs"
+      },
+      {
+        "bytes": 34565,
+        "lines": 736,
+        "path": "Assets/Game/Scripts/Rendering/Systems/UnitModelSpawnSystem.cs"
+      },
+      {
+        "bytes": 39469,
+        "lines": 920,
+        "path": "Assets/Game/Scripts/Rendering/Systems/UnitSelectionMarkerSystem.cs"
+      },
+      {
+        "bytes": 37567,
+        "lines": 857,
+        "path": "Assets/Game/Scripts/Rendering/Systems/UnitSelectionObjectOutlinePresentationSystem.cs"
+      },
+      {
+        "bytes": 37326,
+        "lines": 928,
+        "path": "Assets/Game/Scripts/Rendering/UnitImpostorPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 23697,
+        "lines": 548,
+        "path": "Assets/Game/Scripts/ScenarioLab/BattleScenarioAd011Runner.cs"
+      },
+      {
+        "bytes": 22568,
+        "lines": 598,
+        "path": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabModels.cs"
+      },
+      {
+        "bytes": 137970,
+        "lines": 2848,
+        "path": "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabVisualPlayback.cs"
+      },
+      {
+        "bytes": 37282,
+        "lines": 916,
+        "path": "Assets/Game/Scripts/Systems/AICombatOrderSystem.cs"
+      },
+      {
+        "bytes": 25122,
+        "lines": 594,
+        "path": "Assets/Game/Scripts/Systems/AIProductionSystem.cs"
+      },
+      {
+        "bytes": 25422,
+        "lines": 554,
+        "path": "Assets/Game/Scripts/Systems/AIStartupSystem.cs"
+      },
+      {
+        "bytes": 25398,
+        "lines": 556,
+        "path": "Assets/Game/Scripts/Systems/AITargetingSystem.cs"
+      },
+      {
+        "bytes": 54735,
+        "lines": 1153,
+        "path": "Assets/Game/Scripts/Systems/AirMissileLauncherSystems.cs"
+      },
+      {
+        "bytes": 24606,
+        "lines": 545,
+        "path": "Assets/Game/Scripts/Systems/AttackOrderCommandSystem.cs"
+      },
+      {
+        "bytes": 38524,
+        "lines": 895,
+        "path": "Assets/Game/Scripts/Systems/BuildingBarrierUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 22279,
+        "lines": 531,
+        "path": "Assets/Game/Scripts/Systems/BuildingCombatUtilitySystemHelper.cs"
+      },
+      {
+        "bytes": 21451,
+        "lines": 529,
+        "path": "Assets/Game/Scripts/Systems/BuildingDefenseAttackSystem.cs"
+      },
+      {
+        "bytes": 48249,
+        "lines": 999,
+        "path": "Assets/Game/Scripts/Systems/BuildingDefinitionPrefabSystemHelper.cs"
+      },
+      {
+        "bytes": 48379,
+        "lines": 773,
+        "path": "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 37741,
+        "lines": 895,
+        "path": "Assets/Game/Scripts/Systems/BuildingProductionQueueCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 70172,
+        "lines": 1616,
+        "path": "Assets/Game/Scripts/Systems/BuildingProductionRequestSystemHelper.cs"
+      },
+      {
+        "bytes": 87282,
+        "lines": 1914,
+        "path": "Assets/Game/Scripts/Systems/BuildingProductionTransportPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 73319,
+        "lines": 1574,
+        "path": "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 74548,
+        "lines": 1678,
+        "path": "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 25874,
+        "lines": 619,
+        "path": "Assets/Game/Scripts/Systems/BuildingRuntimeReadModelCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 21240,
+        "lines": 508,
+        "path": "Assets/Game/Scripts/Systems/BuildingRunwaySystem.cs"
+      },
+      {
+        "bytes": 28385,
+        "lines": 639,
+        "path": "Assets/Game/Scripts/Systems/BuildingSelectionRuntimeCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 78233,
+        "lines": 1824,
+        "path": "Assets/Game/Scripts/Systems/BuildingSpawnCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 28948,
+        "lines": 654,
+        "path": "Assets/Game/Scripts/Systems/CitizenRefugeeCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 27926,
+        "lines": 595,
+        "path": "Assets/Game/Scripts/Systems/CitizenTravelSystem.cs"
+      },
+      {
+        "bytes": 45255,
+        "lines": 968,
+        "path": "Assets/Game/Scripts/Systems/CustomGameStartupSystemHelper.cs"
+      },
+      {
+        "bytes": 34228,
+        "lines": 865,
+        "path": "Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 22766,
+        "lines": 530,
+        "path": "Assets/Game/Scripts/Systems/FocusableUnitLookupCameraSystemHelper.cs"
+      },
+      {
+        "bytes": 38224,
+        "lines": 852,
+        "path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs"
+      },
+      {
+        "bytes": 84201,
+        "lines": 1857,
+        "path": "Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs"
+      },
+      {
+        "bytes": 29464,
+        "lines": 744,
+        "path": "Assets/Game/Scripts/Systems/MapBuildingPlacementSpawnPrefabSystemHelper.cs"
+      },
+      {
+        "bytes": 32548,
+        "lines": 756,
+        "path": "Assets/Game/Scripts/Systems/Pathfinding/PathfindBatchJob.cs"
+      },
+      {
+        "bytes": 39616,
+        "lines": 908,
+        "path": "Assets/Game/Scripts/Systems/PerformanceDiagnosticsSystemHelper.cs"
+      },
+      {
+        "bytes": 46913,
+        "lines": 1132,
+        "path": "Assets/Game/Scripts/Systems/ResourceExchangeRequestValidationSystem.cs"
+      },
+      {
+        "bytes": 27070,
+        "lines": 682,
+        "path": "Assets/Game/Scripts/Systems/RoadGridProjectionSystem.cs"
+      },
+      {
+        "bytes": 38144,
+        "lines": 799,
+        "path": "Assets/Game/Scripts/Systems/RoadSpecialVisualSystem.cs"
+      },
+      {
+        "bytes": 26940,
+        "lines": 578,
+        "path": "Assets/Game/Scripts/Systems/RtsCameraRequestSystem.cs"
+      },
+      {
+        "bytes": 28732,
+        "lines": 749,
+        "path": "Assets/Game/Scripts/Systems/RtsCameraSystem.cs"
+      },
+      {
+        "bytes": 81709,
+        "lines": 1634,
+        "path": "Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 29338,
+        "lines": 741,
+        "path": "Assets/Game/Scripts/Systems/RtsSelectionImmediateSelectedUnitCommandSystem.cs"
+      },
+      {
+        "bytes": 38098,
+        "lines": 929,
+        "path": "Assets/Game/Scripts/Systems/RtsSelectionInputCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 75786,
+        "lines": 1568,
+        "path": "Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 34902,
+        "lines": 813,
+        "path": "Assets/Game/Scripts/Systems/RtsSelectionRuntimeCameraSystemHelper.cs"
+      },
+      {
+        "bytes": 43697,
+        "lines": 816,
+        "path": "Assets/Game/Scripts/Systems/RtsSelectionRuntimeInputCompositionSystemHelper.cs"
+      },
+      {
+        "bytes": 31360,
+        "lines": 717,
+        "path": "Assets/Game/Scripts/Systems/RuntimeDiagnosticsSystem.cs"
+      },
+      {
+        "bytes": 46101,
+        "lines": 1043,
+        "path": "Assets/Game/Scripts/Systems/ScanIntelCommandSystem.cs"
+      },
+      {
+        "bytes": 36346,
+        "lines": 746,
+        "path": "Assets/Game/Scripts/Systems/SelectedMoveOrderCommandSystem.cs"
+      },
+      {
+        "bytes": 32095,
+        "lines": 707,
+        "path": "Assets/Game/Scripts/Systems/SelectedUnitDebugFireSystem.cs"
+      },
+      {
+        "bytes": 88186,
+        "lines": 1673,
+        "path": "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs"
+      },
+      {
+        "bytes": 95202,
+        "lines": 2175,
+        "path": "Assets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs"
+      },
+      {
+        "bytes": 59925,
+        "lines": 1347,
+        "path": "Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs"
+      },
+      {
+        "bytes": 33960,
+        "lines": 826,
+        "path": "Assets/Game/Scripts/Systems/SelectionUiReadModelLookup.cs"
+      },
+      {
+        "bytes": 24291,
+        "lines": 534,
+        "path": "Assets/Game/Scripts/Systems/TacticalFollowAttackCinematicHelper.cs"
+      },
+      {
+        "bytes": 67105,
+        "lines": 1564,
+        "path": "Assets/Game/Scripts/Systems/TacticalFollowCameraModeSystemHelper.cs"
+      },
+      {
+        "bytes": 28165,
+        "lines": 614,
+        "path": "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs"
+      },
+      {
+        "bytes": 26106,
+        "lines": 671,
+        "path": "Assets/Game/Scripts/Systems/TransportBoardingApproachSystemHelper.cs"
+      },
+      {
+        "bytes": 91402,
+        "lines": 1859,
+        "path": "Assets/Game/Scripts/Systems/UnitAirMovementSystem.cs"
+      },
+      {
+        "bytes": 24271,
+        "lines": 557,
+        "path": "Assets/Game/Scripts/Systems/UnitAttackOrderRequestSystem.cs"
+      },
+      {
+        "bytes": 55223,
+        "lines": 1239,
+        "path": "Assets/Game/Scripts/Systems/UnitAttackSystem.cs"
+      },
+      {
+        "bytes": 37358,
+        "lines": 824,
+        "path": "Assets/Game/Scripts/Systems/UnitGridMovementSystem.cs"
+      },
+      {
+        "bytes": 27276,
+        "lines": 583,
+        "path": "Assets/Game/Scripts/Systems/UnitMoveOrderSystem.cs"
+      },
+      {
+        "bytes": 28218,
+        "lines": 614,
+        "path": "Assets/Game/Scripts/Systems/UnitSurfaceTrackingSystem.cs"
+      },
+      {
+        "bytes": 27467,
+        "lines": 603,
+        "path": "Assets/Game/Scripts/Systems/UnitTargetOrderSystem.cs"
+      },
+      {
+        "bytes": 46268,
+        "lines": 1141,
+        "path": "Assets/Game/Scripts/Systems/UnitTransportAirdropSystem.cs"
+      },
+      {
+        "bytes": 30802,
+        "lines": 603,
+        "path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs"
+      },
+      {
+        "bytes": 41059,
+        "lines": 977,
+        "path": "Assets/Game/Scripts/Systems/UnitTransportRopeDisembarkSystem.cs"
+      },
+      {
+        "bytes": 31751,
+        "lines": 752,
+        "path": "Assets/Game/Scripts/UI/Components/MatchHudSelectionPanelView.cs"
+      },
+      {
+        "bytes": 63944,
+        "lines": 1925,
+        "path": "Assets/Game/Scripts/UI/Contracts/UiShellComponents.cs"
+      },
+      {
+        "bytes": 33412,
+        "lines": 844,
+        "path": "Assets/Game/Scripts/UI/MainMenuPlayUI.cs"
+      },
+      {
+        "bytes": 25081,
+        "lines": 649,
+        "path": "Assets/Game/Scripts/UI/Screens/AriaCommandAssistantPopupView.cs"
+      },
+      {
+        "bytes": 51844,
+        "lines": 1246,
+        "path": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs"
+      },
+      {
+        "bytes": 21934,
+        "lines": 580,
+        "path": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapView.cs"
+      },
+      {
+        "bytes": 24832,
+        "lines": 559,
+        "path": "Assets/Game/Scripts/UI/Screens/MatchOverlayCommandInputUiSystemHelper.cs"
+      },
+      {
+        "bytes": 38264,
+        "lines": 862,
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/AssistantCommandIntentSystem.cs"
+      },
+      {
+        "bytes": 31421,
+        "lines": 635,
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/AssistantReadModelSystems.cs"
+      },
+      {
+        "bytes": 23814,
+        "lines": 513,
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeReadModelSystem.cs"
+      },
+      {
+        "bytes": 33170,
+        "lines": 743,
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellStateSystem.cs"
+      },
+      {
+        "bytes": 41372,
+        "lines": 952,
+        "path": "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs"
+      }
+    ],
+    "over1000Count": 23,
+    "over500Count": 95,
+    "totalBytes": 9849262,
+    "totalLines": 230772
+  },
+  "staticState": {
+    "candidateCount": 166,
+    "entries": [
+      {
+        "line": 13,
+        "name": "s_LogCount",
+        "path": "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs",
+        "type": "int"
+      },
+      {
+        "line": 60,
+        "name": "_oilExtracted",
+        "path": "Assets/Game/Scripts/Balance/GameRuntimeStats.cs",
+        "type": "float"
+      },
+      {
+        "line": 61,
+        "name": "_fuelProduced",
+        "path": "Assets/Game/Scripts/Balance/GameRuntimeStats.cs",
+        "type": "float"
+      },
+      {
+        "line": 62,
+        "name": "_vehiclesOrdered",
+        "path": "Assets/Game/Scripts/Balance/GameRuntimeStats.cs",
+        "type": "int"
+      },
+      {
+        "line": 63,
+        "name": "_soldiersOrdered",
+        "path": "Assets/Game/Scripts/Balance/GameRuntimeStats.cs",
+        "type": "int"
+      },
+      {
+        "line": 64,
+        "name": "_ammoOrdered",
+        "path": "Assets/Game/Scripts/Balance/GameRuntimeStats.cs",
+        "type": "int"
+      },
+      {
+        "line": 65,
+        "name": "_buildingsBuilt",
+        "path": "Assets/Game/Scripts/Balance/GameRuntimeStats.cs",
+        "type": "int"
+      },
+      {
+        "line": 66,
+        "name": "_matchElapsedSeconds",
+        "path": "Assets/Game/Scripts/Balance/GameRuntimeStats.cs",
+        "type": "float"
+      },
+      {
+        "line": 67,
+        "name": "_civiliansProtected",
+        "path": "Assets/Game/Scripts/Balance/GameRuntimeStats.cs",
+        "type": "int"
+      },
+      {
+        "line": 68,
+        "name": "_capturedOrDestroyedBuildings",
+        "path": "Assets/Game/Scripts/Balance/GameRuntimeStats.cs",
+        "type": "int"
+      },
+      {
+        "line": 69,
+        "name": "_ownSoldiersDead",
+        "path": "Assets/Game/Scripts/Balance/GameRuntimeStats.cs",
+        "type": "int"
+      },
+      {
+        "line": 70,
+        "name": "_enemySoldiersDead",
+        "path": "Assets/Game/Scripts/Balance/GameRuntimeStats.cs",
+        "type": "int"
+      },
+      {
+        "line": 71,
+        "name": "_classifyUnitPrefab",
+        "path": "Assets/Game/Scripts/Balance/GameRuntimeStats.cs",
+        "type": "ClassifyUnitPrefabDelegate"
+      },
+      {
+        "line": 22,
+        "name": "startupRuntimeSettingsWorld",
+        "path": "Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs",
+        "type": "World"
+      },
+      {
+        "line": 45,
+        "name": "editorAllocationBytes",
+        "path": "Assets/Game/Scripts/Composition/MenuBootstrapView.cs",
+        "type": "long"
+      },
+      {
+        "line": 46,
+        "name": "editorAllocationSamples",
+        "path": "Assets/Game/Scripts/Composition/MenuBootstrapView.cs",
+        "type": "int"
+      },
+      {
+        "line": 47,
+        "name": "editorUpdateSamples",
+        "path": "Assets/Game/Scripts/Composition/MenuBootstrapView.cs",
+        "type": "int"
+      },
+      {
+        "line": 11,
+        "name": "initialized",
+        "path": "Assets/Game/Scripts/Configs/GameText.cs",
+        "type": "bool"
+      },
+      {
+        "line": 25,
+        "name": "_instance",
+        "path": "Assets/Game/Scripts/Effects/MissileTrailVfxView.cs",
+        "type": "MissileTrailVfxView"
+      },
+      {
+        "line": 26,
+        "name": "_smokeMaterial",
+        "path": "Assets/Game/Scripts/Effects/MissileTrailVfxView.cs",
+        "type": "Material"
+      },
+      {
+        "line": 27,
+        "name": "_coreMaterial",
+        "path": "Assets/Game/Scripts/Effects/MissileTrailVfxView.cs",
+        "type": "Material"
+      },
+      {
+        "line": 22,
+        "name": "_instance",
+        "path": "Assets/Game/Scripts/Effects/UnitAttackImpactVfxView.cs",
+        "type": "UnitAttackImpactVfxView"
+      },
+      {
+        "line": 68,
+        "name": "_previewRoot",
+        "path": "Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs",
+        "type": "GameObject"
+      },
+      {
+        "line": 69,
+        "name": "_previewCamera",
+        "path": "Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs",
+        "type": "Camera"
+      },
+      {
+        "line": 70,
+        "name": "_previewCameraObject",
+        "path": "Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs",
+        "type": "GameObject"
+      },
+      {
+        "line": 71,
+        "name": "_previewConfig",
+        "path": "Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs",
+        "type": "PrefabPreviewCameraConfig"
+      },
+      {
+        "line": 72,
+        "name": "_revision",
+        "path": "Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs",
+        "type": "int"
+      },
+      {
+        "line": 73,
+        "name": "_characterPreviewModelPosition",
+        "path": "Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs",
+        "type": "Vector3"
+      },
+      {
+        "line": 74,
+        "name": "_characterPreviewModelRotation",
+        "path": "Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs",
+        "type": "Quaternion"
+      },
+      {
+        "line": 75,
+        "name": "_characterPreviewCameraPosition",
+        "path": "Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs",
+        "type": "Vector3"
+      },
+      {
+        "line": 76,
+        "name": "_characterPreviewCameraRotation",
+        "path": "Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs",
+        "type": "Quaternion"
+      },
+      {
+        "line": 77,
+        "name": "_vehiclePreviewModelPosition",
+        "path": "Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs",
+        "type": "Vector3"
+      },
+      {
+        "line": 78,
+        "name": "_vehiclePreviewModelRotation",
+        "path": "Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs",
+        "type": "Quaternion"
+      },
+      {
+        "line": 79,
+        "name": "_vehiclePreviewCameraPosition",
+        "path": "Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs",
+        "type": "Vector3"
+      },
+      {
+        "line": 80,
+        "name": "_vehiclePreviewCameraRotation",
+        "path": "Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs",
+        "type": "Quaternion"
+      },
+      {
+        "line": 81,
+        "name": "_buildingPreviewModelPosition",
+        "path": "Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs",
+        "type": "Vector3"
+      },
+      {
+        "line": 82,
+        "name": "_buildingPreviewModelRotation",
+        "path": "Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs",
+        "type": "Quaternion"
+      },
+      {
+        "line": 83,
+        "name": "_buildingPreviewCameraPosition",
+        "path": "Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs",
+        "type": "Vector3"
+      },
+      {
+        "line": 84,
+        "name": "_buildingPreviewCameraRotation",
+        "path": "Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs",
+        "type": "Quaternion"
+      },
+      {
+        "line": 85,
+        "name": "_tryGetUnitRenderingMetadata",
+        "path": "Assets/Game/Scripts/Rendering/SharedPrefabPreviewCache.cs",
+        "type": "TryGetUnitRenderingMetadataDelegate"
+      },
+      {
+        "line": 18,
+        "name": "s_DiagnosticLogged",
+        "path": "Assets/Game/Scripts/Rendering/Systems/UnitHelicopterBladeSpinSystem.cs",
+        "type": "bool"
+      },
+      {
+        "line": 42,
+        "name": "_characterSelectionObjectOutlineMaterial",
+        "path": "Assets/Game/Scripts/Rendering/Systems/UnitSelectionObjectOutlinePresentationSystem.cs",
+        "type": "Material"
+      },
+      {
+        "line": 43,
+        "name": "_vehicleSelectionObjectOutlineMaterial",
+        "path": "Assets/Game/Scripts/Rendering/Systems/UnitSelectionObjectOutlinePresentationSystem.cs",
+        "type": "Material"
+      },
+      {
+        "line": 44,
+        "name": "_characterSelectionVolumeMaterial",
+        "path": "Assets/Game/Scripts/Rendering/Systems/UnitSelectionObjectOutlinePresentationSystem.cs",
+        "type": "Material"
+      },
+      {
+        "line": 45,
+        "name": "_characterSelectionVolumeMesh",
+        "path": "Assets/Game/Scripts/Rendering/Systems/UnitSelectionObjectOutlinePresentationSystem.cs",
+        "type": "Mesh"
+      },
+      {
+        "line": 7,
+        "name": "s_cameraScratch",
+        "path": "Assets/Game/Scripts/Rendering/TerrainLodHeightSwitch.cs",
+        "type": "Camera[]"
+      },
+      {
+        "line": 10,
+        "name": "current",
+        "path": "Assets/Game/Scripts/RuntimeState/AISettingsRuntimeState.cs",
+        "type": "AISettingsSnapshot"
+      },
+      {
+        "line": 5,
+        "name": "PlayRequested",
+        "path": "Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs",
+        "type": "bool"
+      },
+      {
+        "line": 6,
+        "name": "SimulationActive",
+        "path": "Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs",
+        "type": "bool"
+      },
+      {
+        "line": 8,
+        "name": "InitialCameraFocusRequested",
+        "path": "Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs",
+        "type": "bool"
+      },
+      {
+        "line": 10,
+        "name": "SelectionModeActive",
+        "path": "Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs",
+        "type": "bool"
+      },
+      {
+        "line": 11,
+        "name": "BuildModeActive",
+        "path": "Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs",
+        "type": "bool"
+      },
+      {
+        "line": 12,
+        "name": "FullscreenMapOpen",
+        "path": "Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs",
+        "type": "bool"
+      },
+      {
+        "line": 13,
+        "name": "FullscreenMapIsoMode",
+        "path": "Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs",
+        "type": "bool"
+      },
+      {
+        "line": 14,
+        "name": "ZoomInHeld",
+        "path": "Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs",
+        "type": "bool"
+      },
+      {
+        "line": 15,
+        "name": "ZoomOutHeld",
+        "path": "Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs",
+        "type": "bool"
+      },
+      {
+        "line": 16,
+        "name": "SuppressNextWorldClick",
+        "path": "Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs",
+        "type": "bool"
+      },
+      {
+        "line": 17,
+        "name": "PlayerAutoModeEnabled",
+        "path": "Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs",
+        "type": "bool"
+      },
+      {
+        "line": 18,
+        "name": "VerboseAILogs",
+        "path": "Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs",
+        "type": "bool"
+      },
+      {
+        "line": 19,
+        "name": "TransportBoardingDiagnostics",
+        "path": "Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs",
+        "type": "bool"
+      },
+      {
+        "line": 20,
+        "name": "BuildingRuntimeSliceDiagnostics",
+        "path": "Assets/Game/Scripts/RuntimeState/InitialUnitsRuntimeState.cs",
+        "type": "bool"
+      },
+      {
+        "line": 25,
+        "name": "s_LaunchRealtimeSeconds",
+        "path": "Assets/Game/Scripts/Systems/AndroidPerformanceRecorder.cs",
+        "type": "double"
+      },
+      {
+        "line": 14,
+        "name": "s_CachedAudioWorld",
+        "path": "Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs",
+        "type": "World"
+      },
+      {
+        "line": 15,
+        "name": "s_CachedAudioEntity",
+        "path": "Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs",
+        "type": "Entity"
+      },
+      {
+        "line": 403,
+        "name": "editorBuildingVisualAllocationProbe",
+        "path": "Assets/Game/Scripts/Systems/RuntimeDiagnosticsSystem.cs",
+        "type": "EditorBuildingVisualAllocationProbeCounter"
+      },
+      {
+        "line": 404,
+        "name": "editorProductionTransportAllocationProbe",
+        "path": "Assets/Game/Scripts/Systems/RuntimeDiagnosticsSystem.cs",
+        "type": "EditorProductionTransportAllocationProbeCounter"
+      },
+      {
+        "line": 405,
+        "name": "editorTransportBoardingAllocationProbe",
+        "path": "Assets/Game/Scripts/Systems/RuntimeDiagnosticsSystem.cs",
+        "type": "EditorTransportBoardingAllocationProbeCounter"
+      },
+      {
+        "line": 406,
+        "name": "editorGameplayRuntimeCityAllocationProbe",
+        "path": "Assets/Game/Scripts/Systems/RuntimeDiagnosticsSystem.cs",
+        "type": "EditorGameplayRuntimeAllocationProbeCounter"
+      },
+      {
+        "line": 407,
+        "name": "editorGameplayRuntimeGridBlockersAllocationProbe",
+        "path": "Assets/Game/Scripts/Systems/RuntimeDiagnosticsSystem.cs",
+        "type": "EditorGameplayRuntimeAllocationProbeCounter"
+      },
+      {
+        "line": 408,
+        "name": "editorGameplayRuntimeDecorationsAllocationProbe",
+        "path": "Assets/Game/Scripts/Systems/RuntimeDiagnosticsSystem.cs",
+        "type": "EditorGameplayRuntimeAllocationProbeCounter"
+      },
+      {
+        "line": 409,
+        "name": "editorGameplayRoadBuildAllocationProbe",
+        "path": "Assets/Game/Scripts/Systems/RuntimeDiagnosticsSystem.cs",
+        "type": "EditorGameplayRuntimeAllocationProbeCounter"
+      },
+      {
+        "line": 410,
+        "name": "editorGameplayBuildingPlacementAllocationProbe",
+        "path": "Assets/Game/Scripts/Systems/RuntimeDiagnosticsSystem.cs",
+        "type": "EditorGameplayRuntimeAllocationProbeCounter"
+      },
+      {
+        "line": 411,
+        "name": "editorGameplaySelectionAllocationProbe",
+        "path": "Assets/Game/Scripts/Systems/RuntimeDiagnosticsSystem.cs",
+        "type": "EditorGameplayRuntimeAllocationProbeCounter"
+      },
+      {
+        "line": 412,
+        "name": "editorGameplayDayNightAllocationProbe",
+        "path": "Assets/Game/Scripts/Systems/RuntimeDiagnosticsSystem.cs",
+        "type": "EditorGameplayRuntimeAllocationProbeCounter"
+      },
+      {
+        "line": 413,
+        "name": "editorGameplayCitizenPopulationAllocationProbe",
+        "path": "Assets/Game/Scripts/Systems/RuntimeDiagnosticsSystem.cs",
+        "type": "EditorGameplayRuntimeAllocationProbeCounter"
+      },
+      {
+        "line": 414,
+        "name": "editorGameplayMainMenuAllocationProbe",
+        "path": "Assets/Game/Scripts/Systems/RuntimeDiagnosticsSystem.cs",
+        "type": "EditorGameplayRuntimeAllocationProbeCounter"
+      },
+      {
+        "line": 415,
+        "name": "editorGameplayLoadingGateAllocationProbe",
+        "path": "Assets/Game/Scripts/Systems/RuntimeDiagnosticsSystem.cs",
+        "type": "EditorGameplayRuntimeAllocationProbeCounter"
+      },
+      {
+        "line": 416,
+        "name": "editorGameplayEndUpdateAllocationProbe",
+        "path": "Assets/Game/Scripts/Systems/RuntimeDiagnosticsSystem.cs",
+        "type": "EditorGameplayRuntimeAllocationProbeCounter"
+      },
+      {
+        "line": 12,
+        "name": "s_CachedStateEntity",
+        "path": "Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs",
+        "type": "Entity"
+      },
+      {
+        "line": 152,
+        "name": "editorSelectionTotalProbe",
+        "path": "Assets/Game/Scripts/Systems/SelectionRuntimeDiagnosticsSystemHelper.cs",
+        "type": "EditorSelectionAllocationProbeCounter"
+      },
+      {
+        "line": 153,
+        "name": "editorSelectionCommandFlushProbe",
+        "path": "Assets/Game/Scripts/Systems/SelectionRuntimeDiagnosticsSystemHelper.cs",
+        "type": "EditorSelectionAllocationProbeCounter"
+      },
+      {
+        "line": 154,
+        "name": "editorSelectionInputProbe",
+        "path": "Assets/Game/Scripts/Systems/SelectionRuntimeDiagnosticsSystemHelper.cs",
+        "type": "EditorSelectionAllocationProbeCounter"
+      },
+      {
+        "line": 155,
+        "name": "editorSelectionFocusedReadModelProbe",
+        "path": "Assets/Game/Scripts/Systems/SelectionRuntimeDiagnosticsSystemHelper.cs",
+        "type": "EditorSelectionAllocationProbeCounter"
+      },
+      {
+        "line": 156,
+        "name": "editorSelectionPanelProbe",
+        "path": "Assets/Game/Scripts/Systems/SelectionRuntimeDiagnosticsSystemHelper.cs",
+        "type": "EditorSelectionAllocationProbeCounter"
+      },
+      {
+        "line": 157,
+        "name": "editorSelectionTacticalCameraProbe",
+        "path": "Assets/Game/Scripts/Systems/SelectionRuntimeDiagnosticsSystemHelper.cs",
+        "type": "EditorSelectionAllocationProbeCounter"
+      },
+      {
+        "line": 158,
+        "name": "editorSelectionMarkerPreviewProbe",
+        "path": "Assets/Game/Scripts/Systems/SelectionRuntimeDiagnosticsSystemHelper.cs",
+        "type": "EditorSelectionAllocationProbeCounter"
+      },
+      {
+        "line": 159,
+        "name": "editorSelectionCameraProbe",
+        "path": "Assets/Game/Scripts/Systems/SelectionRuntimeDiagnosticsSystemHelper.cs",
+        "type": "EditorSelectionAllocationProbeCounter"
+      },
+      {
+        "line": 497,
+        "name": "s_SuppressedUnderAttackAudioLogCount",
+        "path": "Assets/Game/Scripts/Systems/UnitAttackSystem.cs",
+        "type": "int"
+      },
+      {
+        "line": 55,
+        "name": "operator",
+        "path": "Assets/Game/Scripts/UI/Contracts/MatchHudSelectionPanelModels.cs",
+        "type": "bool"
+      },
+      {
+        "line": 24,
+        "name": "_initialized",
+        "path": "Assets/Game/Scripts/UI/RuntimeLogBuffer.cs",
+        "type": "bool"
+      },
+      {
+        "line": 15,
+        "name": "activeTab",
+        "path": "Assets/Game/Scripts/UI/Screens/MainMenuNavigationView.cs",
+        "type": "MainMenuNavigationTabId"
+      },
+      {
+        "line": 12,
+        "name": "s_loggedMissingButton",
+        "path": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.cs",
+        "type": "bool"
+      },
+      {
+        "line": 13,
+        "name": "s_loggedInvalidButton",
+        "path": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.cs",
+        "type": "bool"
+      },
+      {
+        "line": 38,
+        "name": "s_rasterBasePixels",
+        "path": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs",
+        "type": "Color32[]"
+      },
+      {
+        "line": 13,
+        "name": "activeView",
+        "path": "Assets/Game/Scripts/UI/Screens/ResourceExchangePopupRuntimeView.cs",
+        "type": "ResourceExchangePopupRuntimeView"
+      },
+      {
+        "line": 10,
+        "name": "s_backgroundScrimOwner",
+        "path": "Assets/Game/Scripts/UI/Shell/CommanderProfileRouteLifecyclePresentation.cs",
+        "type": "UIShellContentView"
+      },
+      {
+        "line": 11,
+        "name": "s_backgroundScrimContentRoot",
+        "path": "Assets/Game/Scripts/UI/Shell/CommanderProfileRouteLifecyclePresentation.cs",
+        "type": "RectTransform"
+      },
+      {
+        "line": 12,
+        "name": "s_backgroundScrim",
+        "path": "Assets/Game/Scripts/UI/Shell/CommanderProfileRouteLifecyclePresentation.cs",
+        "type": "GameObject"
+      },
+      {
+        "line": 12,
+        "name": "s_SubscriptionCount",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/AssistantSettingsPersistenceSystem.cs",
+        "type": "int"
+      },
+      {
+        "line": 12,
+        "name": "s_SubscriptionCount",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiAudioEventBridgeSystem.cs",
+        "type": "int"
+      },
+      {
+        "line": 12,
+        "name": "s_SubscriptionCount",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiAudioSettingsProjectionSystem.cs",
+        "type": "int"
+      },
+      {
+        "line": 24,
+        "name": "unitPrefabSource",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs",
+        "type": "ICatalogPrefabSource"
+      },
+      {
+        "line": 25,
+        "name": "buildingPrefabSource",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs",
+        "type": "ICatalogPrefabSource"
+      },
+      {
+        "line": 26,
+        "name": "buildingUiCommand",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs",
+        "type": "IBuildingUiCommand"
+      },
+      {
+        "line": 27,
+        "name": "buildingUiQuery",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildDrawerReadModelSystem.cs",
+        "type": "IBuildingUiQuery"
+      },
+      {
+        "line": 13,
+        "name": "buildingUiCommand",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiBuildPlacementReadModelSystem.cs",
+        "type": "IBuildingUiCommand"
+      },
+      {
+        "line": 94,
+        "name": "subscribed",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiDiagnosticsReadModelSystem.cs",
+        "type": "bool"
+      },
+      {
+        "line": 95,
+        "name": "version",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiDiagnosticsReadModelSystem.cs",
+        "type": "int"
+      },
+      {
+        "line": 19,
+        "name": "cachedWorld",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "World"
+      },
+      {
+        "line": 20,
+        "name": "boundaryQuery",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "EntityQuery"
+      },
+      {
+        "line": 21,
+        "name": "focusedSelectionQuery",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "EntityQuery"
+      },
+      {
+        "line": 22,
+        "name": "selectionInputQuery",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "EntityQuery"
+      },
+      {
+        "line": 23,
+        "name": "selectedUnitsQuery",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "EntityQuery"
+      },
+      {
+        "line": 24,
+        "name": "minimapMarkerQuery",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "EntityQuery"
+      },
+      {
+        "line": 25,
+        "name": "gridConfigQuery",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "EntityQuery"
+      },
+      {
+        "line": 26,
+        "name": "resourceStorageQuery",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "EntityQuery"
+      },
+      {
+        "line": 27,
+        "name": "assistantMatchStartQuery",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "EntityQuery"
+      },
+      {
+        "line": 28,
+        "name": "cachedDiagnosticsLogFixedText",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "FixedString4096Bytes"
+      },
+      {
+        "line": 29,
+        "name": "cachedDiagnosticsLogText",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "string"
+      },
+      {
+        "line": 30,
+        "name": "hasBoundaryQuery",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "bool"
+      },
+      {
+        "line": 31,
+        "name": "hasFocusedSelectionQuery",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "bool"
+      },
+      {
+        "line": 32,
+        "name": "hasSelectionInputQuery",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "bool"
+      },
+      {
+        "line": 33,
+        "name": "hasSelectedUnitsQuery",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "bool"
+      },
+      {
+        "line": 34,
+        "name": "hasMinimapMarkerQuery",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "bool"
+      },
+      {
+        "line": 35,
+        "name": "hasGridConfigQuery",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "bool"
+      },
+      {
+        "line": 36,
+        "name": "hasResourceStorageQuery",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "bool"
+      },
+      {
+        "line": 37,
+        "name": "hasAssistantMatchStartQuery",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "bool"
+      },
+      {
+        "line": 38,
+        "name": "hasCachedDiagnosticsLogText",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "bool"
+      },
+      {
+        "line": 39,
+        "name": "hasCachedMatchHudHeader",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "bool"
+      },
+      {
+        "line": 40,
+        "name": "cachedMatchHudHeaderWorld",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "World"
+      },
+      {
+        "line": 41,
+        "name": "cachedMatchHudHeaderBoundary",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "Entity"
+      },
+      {
+        "line": 42,
+        "name": "cachedMatchHudHeaderComponent",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "UiMatchHudHeaderComponent"
+      },
+      {
+        "line": 43,
+        "name": "cachedMatchHudHeaderResourceSource",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "byte"
+      },
+      {
+        "line": 44,
+        "name": "cachedMatchHudHeaderResourceVersion",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "uint"
+      },
+      {
+        "line": 45,
+        "name": "cachedMatchHudHeaderOil",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "int"
+      },
+      {
+        "line": 46,
+        "name": "cachedMatchHudHeaderFuel",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "int"
+      },
+      {
+        "line": 47,
+        "name": "cachedMatchHudHeaderShowOil",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "bool"
+      },
+      {
+        "line": 48,
+        "name": "cachedMatchHudHeader",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "UiMatchHudHeaderModel"
+      },
+      {
+        "line": 49,
+        "name": "hasCachedAssistantPanel",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "bool"
+      },
+      {
+        "line": 50,
+        "name": "cachedAssistantPanelWorld",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "World"
+      },
+      {
+        "line": 51,
+        "name": "cachedAssistantPanelBoundary",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "Entity"
+      },
+      {
+        "line": 52,
+        "name": "cachedAssistantPanelSourceVersion",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "uint"
+      },
+      {
+        "line": 53,
+        "name": "cachedAssistantPanelRecommendationVersion",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "uint"
+      },
+      {
+        "line": 54,
+        "name": "cachedAssistantPanelObjectiveVersion",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "uint"
+      },
+      {
+        "line": 55,
+        "name": "cachedAssistantPanelMessageReadModelVersion",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "uint"
+      },
+      {
+        "line": 56,
+        "name": "cachedAssistantPanelThreatVersion",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "uint"
+      },
+      {
+        "line": 57,
+        "name": "cachedAssistantPanelTargetLockVersion",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "uint"
+      },
+      {
+        "line": 58,
+        "name": "cachedAssistantPanelNarrationStateVersion",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "uint"
+      },
+      {
+        "line": 59,
+        "name": "cachedAssistantPanelNarrationPulse",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "bool"
+      },
+      {
+        "line": 60,
+        "name": "cachedAssistantPanelSettingsVersion",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "uint"
+      },
+      {
+        "line": 61,
+        "name": "cachedAssistantPanelVersion",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "uint"
+      },
+      {
+        "line": 62,
+        "name": "cachedAssistantPanelGoalCount",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "int"
+      },
+      {
+        "line": 63,
+        "name": "cachedAssistantPanelMessageCount",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "int"
+      },
+      {
+        "line": 64,
+        "name": "cachedAssistantPanelRecommendationCount",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "int"
+      },
+      {
+        "line": 65,
+        "name": "cachedAssistantPanelControlState",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "AssistantControlState"
+      },
+      {
+        "line": 66,
+        "name": "cachedAssistantPanel",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "UiAssistantPanelModel"
+      },
+      {
+        "line": 67,
+        "name": "hasCachedAssistantHighlight",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "bool"
+      },
+      {
+        "line": 68,
+        "name": "cachedAssistantHighlightWorld",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "World"
+      },
+      {
+        "line": 69,
+        "name": "cachedAssistantHighlightBoundary",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "Entity"
+      },
+      {
+        "line": 70,
+        "name": "cachedAssistantHighlightVersion",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "uint"
+      },
+      {
+        "line": 71,
+        "name": "cachedAssistantHighlightRequestId",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "int"
+      },
+      {
+        "line": 72,
+        "name": "cachedAssistantHighlight",
+        "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs",
+        "type": "UiAssistantHighlightModel"
+      },
+      {
+        "line": 24,
+        "name": "editorAllocationBytes",
+        "path": "Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs",
+        "type": "long"
+      },
+      {
+        "line": 25,
+        "name": "editorAllocationSamples",
+        "path": "Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs",
+        "type": "int"
+      },
+      {
+        "line": 26,
+        "name": "editorUpdateSamples",
+        "path": "Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs",
+        "type": "int"
+      },
+      {
+        "line": 8,
+        "name": "current",
+        "path": "Assets/Game/Scripts/UI/Shell/UiShellRuntimeGateway.cs",
+        "type": "IUiShellRuntimeGateway"
+      }
+    ],
+    "policy": "Candidates require owner classification; this lexical inventory does not assert a violation."
+  },
+  "summary": {
+    "activeOwnerCount": 2,
+    "assemblyCount": 21,
+    "assemblyCycleCount": 0,
+    "managedHelperCount": 338,
+    "mutableStaticCandidateCount": 166,
+    "productionSourceFileCount": 992,
+    "productionSourceOver1000Count": 23,
+    "productionSourceOver500Count": 95,
+    "runtimeLoopCount": 63
+  }
+}

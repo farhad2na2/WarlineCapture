@@ -22,7 +22,7 @@ namespace Game.Editor
         public const string ConfigPath = "Assets/Game/Configs/MapPrototypes/M01_RuntimeCity_Config.asset";
         public const string VisualRecipePath = "Assets/Game/Configs/MapPrototypes/M01_RuntimeVisualRecipe.asset";
         private const string SourceConfigPath = "Assets/Game/Configs/Scene/Game_RuntimeCitySpawner_Config.asset";
-        private const string VisualRecipeVersion = "M01RuntimeVisualRecipe_2026-07-16_v17_local_streets_only";
+        private const string VisualRecipeVersion = "M01RuntimeVisualRecipe_2026-07-16_v18_single_route_cohesion";
         private const string DistrictSnapshotFolder = "Assets/Game/Prefabs/MapPrototypes/M01/RuntimeParity";
         private const int MaxDistrictSliceRenderers = 64;
         private const string PremiumLightingRigPath = "Assets/Game/Rendering/Prefabs/PremiumLightingRig.prefab";
@@ -479,6 +479,7 @@ namespace Game.Editor
             CaptureGroup(sourceRoot.transform.Find("_M01AuthoredStoryOverrides/03_OldMarket_StoryLayer"), RuntimeOperationMapVisualStage.Market, entries);
             CaptureGroup(sourceRoot.transform.Find("_M01AuthoredStoryOverrides/04_UtilityCompound_StoryLayer"), RuntimeOperationMapVisualStage.Compound, entries);
             CaptureGroup(sourceRoot.transform.Find("_M01AuthoredStoryOverrides/05_BombingAftermath_StoryLayer"), RuntimeOperationMapVisualStage.Aftermath, entries);
+            CaptureGroup(sourceRoot.transform.Find("_M01AuthoredStoryOverrides/06_CivilianEdge_StoryLayer"), RuntimeOperationMapVisualStage.Aftermath, entries);
             CaptureGroup(sourceRoot.transform.Find("_M01VisualGenerated/07_Horizon_And_EdgeDressing"), RuntimeOperationMapVisualStage.Horizon, entries);
             RemoveStaleParitySnapshots(districtModules, entries);
 
@@ -1672,6 +1673,7 @@ namespace Game.Editor
             AddManifestRoot(roots, sourceRoot.transform.Find("_M01AuthoredStoryOverrides/03_OldMarket_StoryLayer"));
             AddManifestRoot(roots, sourceRoot.transform.Find("_M01AuthoredStoryOverrides/04_UtilityCompound_StoryLayer"));
             AddManifestRoot(roots, sourceRoot.transform.Find("_M01AuthoredStoryOverrides/05_BombingAftermath_StoryLayer"));
+            AddManifestRoot(roots, sourceRoot.transform.Find("_M01AuthoredStoryOverrides/06_CivilianEdge_StoryLayer"));
             AddManifestRoot(roots, sourceRoot.transform.Find("_M01VisualGenerated/07_Horizon_And_EdgeDressing"));
             return BuildVisualParityManifest(roots);
         }

@@ -16,7 +16,7 @@ namespace Game.Editor
         public const string ScenePath = "Assets/Game/Scenes/MapPrototypes/Chapter01/M01_VisualPrototype.unity";
         public const string CaptureDirectory = "Design/ArtReview/OperationMaps/M01";
         public const int GenerationSeed = 26071501;
-        public const string GeneratorVersion = "M01VisualPrototype_2026-07-16_v17_local_streets_only";
+        public const string GeneratorVersion = "M01VisualPrototype_2026-07-16_v18_single_route_cohesion";
 
         private const int CaptureWidth = 1600;
         private const int CaptureHeight = 900;
@@ -51,9 +51,14 @@ namespace Game.Editor
             "Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Ruins_03.prefab",
             "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Cart_Stall_01.prefab",
             "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_ClothCover_Large_01.prefab",
+            "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Tent_Refugee_01.prefab",
+            "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Tent_Refugee_Damaged_01.prefab",
             "Assets/PolygonMilitary/Prefabs/Vehicles/Destroyed/SM_Veh_Truck_01_Destroyed.prefab",
             "Assets/PolygonMilitary/Prefabs/FX/FX_Fire_01.prefab",
             "Assets/PolygonMilitary/Prefabs/FX/FX_Smoke_Large_01.prefab",
+            "Assets/PolygonMilitary/Prefabs/Props/Signs/SM_Prop_Sign_Medical_01.prefab",
+            "Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_MedicalBox_01.prefab",
+            "Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Bed_Medical_01.prefab",
             "Assets/PolygonMilitary/Prefabs/Environment/SM_Env_SandDunes_01.prefab",
             "Assets/PolygonMilitary/Prefabs/Environment/SM_Env_SandDunes_02.prefab",
             "Assets/PolygonMilitary/Prefabs/Environment/SM_Env_SandDunes_03.prefab"
@@ -140,8 +145,7 @@ namespace Game.Editor
         {
             new("MarketExit", new Vector3(-14f, 0f, 9f), new Vector3(10.5f, 0f, 9.3f), false),
             new("MarketToCompound_A", new Vector3(10.5f, 0f, 9.3f), new Vector3(22f, 0f, 18f), false),
-            new("MarketToCompound_B", new Vector3(22f, 0f, 18f), new Vector3(36f, 0f, 35f), false),
-            new("CivilianRoute", new Vector3(10.5f, 0f, 9.3f), new Vector3(13f, 0f, -24f), true)
+            new("MarketToCompound_B", new Vector3(22f, 0f, 18f), new Vector3(36f, 0f, 35f), false)
         };
 
         private static readonly DistrictCurationDefinition[] DistrictCurationDefinitions =
@@ -600,6 +604,74 @@ namespace Game.Editor
                    Mathf.Abs(centerAlong) <= length * 0.5f + extentAlong;
         }
 
+        private static bool IntersectsAnyLocalRoad(Bounds bounds, float halfWidth)
+        {
+            for (int segmentIndex = 0; segmentIndex < LocalRoadSegments.Length; segmentIndex++)
+            {
+                if (IntersectsRoadCorridor(bounds, LocalRoadSegments[segmentIndex], halfWidth))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static bool ContainsRoadTerrainObstacleName(Transform owner)
+        {
+            Transform[] transforms = owner.GetComponentsInChildren<Transform>(true);
+            for (int index = 0; index < transforms.Length; index++)
+            {
+                if (IsRoadTerrainObstacleName(transforms[index].name))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static bool ContainsImportedGroundSurfaceName(Transform owner)
+        {
+            Transform[] transforms = owner.GetComponentsInChildren<Transform>(true);
+            for (int index = 0; index < transforms.Length; index++)
+            {
+                string objectName = transforms[index].name;
+                if (ContainsName(objectName, "_Env_Ground_Hill_") ||
+                    ContainsName(objectName, "_Env_SandDunes_"))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static int OverrideRendererMaterials(Transform owner, Material material)
+        {
+            Renderer[] renderers = owner.GetComponentsInChildren<Renderer>(true);
+            int overrideCount = 0;
+            for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
+            {
+                Renderer renderer = renderers[rendererIndex];
+                Material[] materials = renderer.sharedMaterials;
+                bool changed = false;
+                for (int materialIndex = 0; materialIndex < materials.Length; materialIndex++)
+                {
+                    if (materials[materialIndex] == material)
+                        continue;
+
+                    materials[materialIndex] = material;
+                    changed = true;
+                }
+
+                if (!changed)
+                    continue;
+
+                renderer.sharedMaterials = materials;
+                PrefabUtility.RecordPrefabInstancePropertyModifications(renderer);
+                overrideCount++;
+            }
+
+            return overrideCount;
+        }
+
         private static string GetTransformPath(Transform transform, Transform stop)
         {
             string path = transform.name;
@@ -710,11 +782,12 @@ namespace Game.Editor
             CreateRoot($"GENERATOR_{GeneratorVersion}_SEED_{GenerationSeed}", sceneRoot.transform);
 
             CreateTerrainAndRoadPlan(generatedRoot.transform, palette);
-            CreateAuthoredDistrictModules(generatedRoot.transform);
+            CreateAuthoredDistrictModules(generatedRoot.transform, palette);
             CreateOldMarketStoryLayer(authoredRoot.transform, palette);
             CreateCompoundStoryLayer(authoredRoot.transform, palette);
             CreateBombingAftermath(authoredRoot.transform);
-            CreateHorizonAndEdgeDressing(generatedRoot.transform);
+            CreateCivilianEdgeStoryLayer(authoredRoot.transform);
+            CreateHorizonAndEdgeDressing(generatedRoot.transform, palette);
             CreateLighting(sceneRoot.transform);
             CreateReviewCameras(cameraRoot.transform);
 
@@ -736,7 +809,7 @@ namespace Game.Editor
         {
             return new Palette
             {
-                Sand = CreateOrUpdateMaterial(SandMaterialPath, new Color(0.36f, 0.27f, 0.18f), 0f, 0.12f),
+                Sand = CreateOrUpdateMaterial(SandMaterialPath, new Color(0.38f, 0.285f, 0.19f), 0f, 0.12f),
                 Asphalt = CreateOrUpdateMaterial(AsphaltMaterialPath, new Color(0.09f, 0.085f, 0.08f), 0f, 0.18f),
                 Concrete = CreateOrUpdateMaterial(ConcreteMaterialPath, new Color(0.35f, 0.33f, 0.29f), 0f, 0.18f),
                 Curb = CreateOrUpdateMaterial(CurbMaterialPath, new Color(0.69f, 0.62f, 0.50f), 0f, 0.22f),
@@ -744,8 +817,8 @@ namespace Game.Editor
                 AmberPaint = CreateOrUpdateMaterial(AmberPaintMaterialPath, new Color(0.95f, 0.52f, 0.08f), 0f, 0.27f),
                 Turquoise = CreateOrUpdateMaterial(TurquoiseMaterialPath, new Color(0.035f, 0.36f, 0.36f), 0f, 0.25f),
                 Rust = CreateOrUpdateMaterial(RustMaterialPath, new Color(0.38f, 0.11f, 0.045f), 0.05f, 0.16f),
-                DistrictGround = CreateOrUpdateMaterial(DistrictGroundMaterialPath, new Color(0.43f, 0.33f, 0.22f), 0f, 0.1f),
-                TransitionGround = CreateOrUpdateMaterial(TransitionGroundMaterialPath, new Color(0.39f, 0.295f, 0.195f), 0f, 0.1f),
+                DistrictGround = CreateOrUpdateMaterial(DistrictGroundMaterialPath, new Color(0.405f, 0.31f, 0.21f), 0f, 0.1f),
+                TransitionGround = CreateOrUpdateMaterial(TransitionGroundMaterialPath, new Color(0.39f, 0.295f, 0.20f), 0f, 0.1f),
                 DirtRoad = CreateOrUpdateMaterial(DirtRoadMaterialPath, new Color(0.32f, 0.235f, 0.145f), 0f, 0.08f)
             };
         }
@@ -846,12 +919,12 @@ namespace Game.Editor
             float length = delta.magnitude + 1.2f;
             Vector3 center = (segment.Start + segment.End) * 0.5f;
             Quaternion rotation = Quaternion.Euler(0f, Mathf.Atan2(delta.x, delta.z) * Mathf.Rad2Deg, 0f);
-            float roadWidth = segment.Dusty ? 4.8f : 5.4f;
+            float roadWidth = segment.Dusty ? 3.2f : 4.2f;
 
             CreateBox(
                 $"{segment.Name}_Shoulder",
                 center + Vector3.down * 0.025f,
-                new Vector3(roadWidth + 2.4f, 0.07f, length),
+                new Vector3(roadWidth + 1.6f, 0.07f, length),
                 palette.TransitionGround,
                 parent,
                 rotation);
@@ -864,15 +937,15 @@ namespace Game.Editor
                 rotation);
         }
 
-        private static void CreateAuthoredDistrictModules(Transform parent)
+        private static void CreateAuthoredDistrictModules(Transform parent, Palette palette)
         {
             Transform modulesRoot = CreateRoot("02_DemoAuthored_DistrictModules", parent).transform;
-            ApplyDistrictCuration(PlaceModule(TownMarketModulePath, "OldMarket_West_DemoAuthored", new Vector3(-68f, 0f, 12f), 0f, 0.82f, modulesRoot));
-            ApplyDistrictCuration(PlaceModule(BaseCommandModulePath, "UtilityCompound_East_DemoAuthored", new Vector3(69f, 0f, 13f), 180f, 0.76f, modulesRoot));
-            ApplyDistrictCuration(PlaceModule(SouthTownModulePath, "Residential_South_DemoAuthored", new Vector3(-5f, 0f, -68f), 0f, 0.58f, modulesRoot));
+            ApplyDistrictCuration(PlaceModule(TownMarketModulePath, "OldMarket_West_DemoAuthored", new Vector3(-68f, 0f, 12f), 0f, 0.82f, modulesRoot), palette);
+            ApplyDistrictCuration(PlaceModule(BaseCommandModulePath, "UtilityCompound_East_DemoAuthored", new Vector3(69f, 0f, 13f), 180f, 0.76f, modulesRoot), palette);
+            ApplyDistrictCuration(PlaceModule(SouthTownModulePath, "Residential_South_DemoAuthored", new Vector3(-5f, 0f, -68f), 0f, 0.58f, modulesRoot), palette);
         }
 
-        private static void ApplyDistrictCuration(GameObject moduleObject)
+        private static void ApplyDistrictCuration(GameObject moduleObject, Palette palette)
         {
             if (!TryGetDistrictCurationDefinition(moduleObject.name, out DistrictCurationDefinition definition))
                 throw new InvalidOperationException($"M01 district curation is missing for {moduleObject.name}.");
@@ -882,6 +955,8 @@ namespace Game.Editor
             int airfieldExclusions = 0;
             int majorRoadExclusions = 0;
             int remoteRoadExclusions = 0;
+            int roadTerrainExclusions = 0;
+            int terrainMaterialOverrides = 0;
             int disabledRenderers = 0;
             for (int ownerIndex = 0; ownerIndex < compositionRoot.childCount; ownerIndex++)
             {
@@ -899,8 +974,13 @@ namespace Game.Editor
                                        string.Equals(category, "airfield", StringComparison.Ordinal);
                 bool majorRoadContent = string.Equals(category, "major-road", StringComparison.Ordinal);
                 bool remoteRoadContent = IsRemoteLongRoad(moduleObject.transform, bounds, category, definition);
-                if (!outsideEnvelope && !airfieldContent && !majorRoadContent && !remoteRoadContent)
+                bool roadTerrainContent = ContainsRoadTerrainObstacleName(owner) && IntersectsAnyLocalRoad(bounds, 3.2f);
+                if (!outsideEnvelope && !airfieldContent && !majorRoadContent && !remoteRoadContent && !roadTerrainContent)
+                {
+                    if (ContainsImportedGroundSurfaceName(owner))
+                        terrainMaterialOverrides += OverrideRendererMaterials(owner, palette.DistrictGround);
                     continue;
+                }
 
                 owner.gameObject.SetActive(false);
                 PrefabUtility.RecordPrefabInstancePropertyModifications(owner.gameObject);
@@ -913,6 +993,8 @@ namespace Game.Editor
                     majorRoadExclusions++;
                 if (remoteRoadContent)
                     remoteRoadExclusions++;
+                if (roadTerrainContent)
+                    roadTerrainExclusions++;
             }
 
             int terrainClearanceAdjustments = ApplyTerrainStructureClearance(moduleObject.transform);
@@ -920,7 +1002,8 @@ namespace Game.Editor
             Debug.Log(
                 $"[M01DistrictCuration] module={moduleObject.name} envelopeExclusions={envelopeExclusions} " +
                 $"airfieldExclusions={airfieldExclusions} majorRoadExclusions={majorRoadExclusions} " +
-                $"remoteRoadExclusions={remoteRoadExclusions} terrainClearanceAdjustments={terrainClearanceAdjustments} " +
+                $"remoteRoadExclusions={remoteRoadExclusions} roadTerrainExclusions={roadTerrainExclusions} " +
+                $"terrainMaterialOverrides={terrainMaterialOverrides} terrainClearanceAdjustments={terrainClearanceAdjustments} " +
                 $"disabledRenderers={disabledRenderers} " +
                 $"bounds={definition.Minimum}->{definition.Maximum}");
         }
@@ -1223,12 +1306,29 @@ namespace Game.Editor
             CreatePointLight("AftermathFireLight", new Vector3(12f, 4f, -19f), new Color(1f, 0.21f, 0.045f), 5.5f, 27f, root);
         }
 
-        private static void CreateHorizonAndEdgeDressing(Transform parent)
+        private static void CreateCivilianEdgeStoryLayer(Transform parent)
+        {
+            Transform root = CreateRoot("06_CivilianEdge_StoryLayer", parent).transform;
+
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Tent_Refugee_01.prefab", "CivilianAidTent", new Vector3(-7f, 0f, -19f), 88f, 0.92f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Tent_Refugee_Damaged_01.prefab", "DamagedCivilianTent", new Vector3(-14f, 0f, -24f), 112f, 0.82f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Signs/SM_Prop_Sign_Medical_01.prefab", "CivilianAidMedicalSign", new Vector3(-4f, 0f, -21f), 12f, 1.08f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_MedicalBox_01.prefab", "CivilianAidMedicalBox", new Vector3(-8f, 0f, -23f), 34f, 1f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Bed_Medical_01.prefab", "CivilianAidBed", new Vector3(-10f, 0f, -19f), 82f, 0.95f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Crate_Stack_Cover_02.prefab", "CivilianAidSupplies", new Vector3(-14f, 0f, -19f), 26f, 0.82f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/Props/SM_Prop_LightPole_01.prefab", "CivilianAidLightPole", new Vector3(-5f, 0f, -25f), 0f, 0.9f, root);
+            CreatePointLight("CivilianAidWarmLight", new Vector3(-9f, 6f, -21f), new Color(1f, 0.62f, 0.34f), 2.2f, 18f, root);
+        }
+
+        private static void CreateHorizonAndEdgeDressing(Transform parent, Palette palette)
         {
             Transform root = CreateRoot("07_Horizon_And_EdgeDressing", parent).transform;
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/Environment/SM_Env_SandDunes_03.prefab", "HorizonDunes_West", new Vector3(-177f, -1f, 128f), 18f, 1.8f, root);
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/Environment/SM_Env_SandDunes_01.prefab", "HorizonDunes_Center", new Vector3(0f, -1f, 142f), 0f, 2.1f, root);
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/Environment/SM_Env_SandDunes_02.prefab", "HorizonDunes_East", new Vector3(178f, -1f, 126f), -24f, 1.8f, root);
+            GameObject westDunes = PlacePrefab("Assets/PolygonMilitary/Prefabs/Environment/SM_Env_SandDunes_03.prefab", "HorizonDunes_West", new Vector3(-150f, -2.4f, 148f), 18f, 0.82f, root);
+            GameObject centerDunes = PlacePrefab("Assets/PolygonMilitary/Prefabs/Environment/SM_Env_SandDunes_01.prefab", "HorizonDunes_Center", new Vector3(0f, -2.6f, 164f), 0f, 0.92f, root);
+            GameObject eastDunes = PlacePrefab("Assets/PolygonMilitary/Prefabs/Environment/SM_Env_SandDunes_02.prefab", "HorizonDunes_East", new Vector3(150f, -2.4f, 146f), -24f, 0.82f, root);
+            OverrideRendererMaterials(westDunes.transform, palette.TransitionGround);
+            OverrideRendererMaterials(centerDunes.transform, palette.TransitionGround);
+            OverrideRendererMaterials(eastDunes.transform, palette.TransitionGround);
 
             string[] edgeProps =
             {

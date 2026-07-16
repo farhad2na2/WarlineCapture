@@ -230,9 +230,19 @@ namespace Game.Editor
             };
             RenderTexture previousTarget = camera.targetTexture;
             RenderTexture previousActive = RenderTexture.active;
+            ParticleSystemRenderer[] particleRenderers =
+                Object.FindObjectsByType<ParticleSystemRenderer>(FindObjectsInactive.Include);
+            var particleRendererStates = new bool[particleRenderers.Length];
             Texture2D texture = null;
             try
             {
+                for (int i = 0; i < particleRenderers.Length; i++)
+                {
+                    ParticleSystemRenderer particleRenderer = particleRenderers[i];
+                    particleRendererStates[i] = particleRenderer.enabled;
+                    particleRenderer.enabled = false;
+                }
+
                 camera.targetTexture = target;
                 RenderTexture.active = target;
                 // Prime URP state so the first review camera renders like subsequent cameras.
@@ -248,6 +258,12 @@ namespace Game.Editor
             }
             finally
             {
+                for (int i = 0; i < particleRenderers.Length; i++)
+                {
+                    if (particleRenderers[i] != null)
+                        particleRenderers[i].enabled = particleRendererStates[i];
+                }
+
                 camera.targetTexture = previousTarget;
                 RenderTexture.active = previousActive;
                 if (texture != null)

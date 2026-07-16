@@ -1,0 +1,457 @@
+{
+  "artifactId": "AM-005",
+  "baseline": {
+    "branch": "codex/am-005-validator-registry",
+    "commit": "acf21c7c900a55aa19fdb8a19a5693be38d2c036",
+    "gitObjectFormat": "sha1",
+    "tree": "bcaa69b9a83cc5cbee201469eba0d07859212ef9"
+  },
+  "determinism": {
+    "arrayOrdering": {
+      "evidenceInputs": "id ascending by Unicode code point",
+      "nonCanonicalAliases": "id ascending by Unicode code point",
+      "validators": "id ascending by Unicode code point",
+      "validators.responsibilities": "value ascending by Unicode code point"
+    },
+    "serialization": {
+      "characterEncoding": "UTF-8",
+      "indentSpaces": 2,
+      "lineEnding": "LF",
+      "objectKeyOrdering": "lexicographic Unicode code point order",
+      "trailingLineFeedCount": 1
+    }
+  },
+  "environmentIdentity": {
+    "path": "Design/AgentReports/ArchitectureMaturity/entry_environment.json",
+    "sha256": "1750156ad389d4f28a392531d19339a96140da898d5c2dfd1920c38d6486239e"
+  },
+  "evidenceInputs": [
+    {
+      "category": "architecture",
+      "environmentPolicy": "exact-environment",
+      "id": "assembly-dependency-report",
+      "laneState": "active",
+      "metricReader": "summary",
+      "ownerValidatorId": "architecture-assembly-report",
+      "path": "Design/AgentReports/2026-07-10_aph-700_first_party_assembly_dependencies.json",
+      "requiredFields": [
+        "summary"
+      ],
+      "requirement": "required",
+      "revisionPolicy": "exact-commit"
+    },
+    {
+      "category": "audio",
+      "environmentPolicy": "not-required",
+      "id": "audio-match-capture",
+      "laneState": "deferred",
+      "metricReader": "audio",
+      "ownerValidatorId": "audio-memory-capture",
+      "path": "Design/AgentReports/aph-401_audio-memory-playback-match.json",
+      "requiredFields": [
+        "snapshots"
+      ],
+      "requirement": "advisory",
+      "revisionPolicy": "exact-commit"
+    },
+    {
+      "category": "audio",
+      "environmentPolicy": "not-required",
+      "id": "audio-menu-capture",
+      "laneState": "deferred",
+      "metricReader": "audio",
+      "ownerValidatorId": "audio-memory-capture",
+      "path": "Design/AgentReports/aph-401_audio-memory-playback-menu.json",
+      "requiredFields": [
+        "snapshots"
+      ],
+      "requirement": "advisory",
+      "revisionPolicy": "exact-commit"
+    },
+    {
+      "category": "build",
+      "environmentPolicy": "not-required",
+      "id": "build-android-aab",
+      "laneState": "deferred",
+      "metricReader": "build",
+      "ownerValidatorId": "android-build-report",
+      "path": "Design/AgentReports/architecture_performance_android_aab_build_report.json",
+      "requiredFields": [
+        "artifactBytes",
+        "status"
+      ],
+      "requirement": "advisory",
+      "revisionPolicy": "exact-commit"
+    },
+    {
+      "category": "build",
+      "environmentPolicy": "not-required",
+      "id": "build-android-apk",
+      "laneState": "deferred",
+      "metricReader": "build",
+      "ownerValidatorId": "android-build-report",
+      "path": "Design/AgentReports/architecture_performance_android_apk_build_report.json",
+      "requiredFields": [
+        "artifactBytes",
+        "status"
+      ],
+      "requirement": "advisory",
+      "revisionPolicy": "exact-commit"
+    },
+    {
+      "category": "content-residency",
+      "environmentPolicy": "not-required",
+      "id": "content-residency-inventory",
+      "laneState": "deferred",
+      "metricReader": "summary",
+      "ownerValidatorId": "content-residency-inventory",
+      "path": "Design/AgentReports/architecture_performance_content_residency_baseline.json",
+      "requiredFields": [
+        "status",
+        "summary"
+      ],
+      "requirement": "advisory",
+      "revisionPolicy": "exact-commit"
+    },
+    {
+      "category": "runtime-performance",
+      "environmentPolicy": "exact-environment",
+      "id": "editor-match-performance",
+      "laneState": "active",
+      "metricReader": "performance",
+      "ownerValidatorId": "performance-editor-match-p95",
+      "path": "Design/AgentReports/performance_regression_match_baseline.json",
+      "requiredFields": [
+        "editorP95FrameBudgetMs",
+        "editorP95FrameBudgetPassed",
+        "frameCount",
+        "p95FrameMs"
+      ],
+      "requirement": "required",
+      "revisionPolicy": "exact-commit"
+    }
+  ],
+  "nonCanonicalAliases": [
+    {
+      "canonicalOwnerIds": [
+        "architecture-assembly-boundary",
+        "architecture-ecs-hotpath"
+      ],
+      "id": "alias-architecture-ci-composite",
+      "path": "Assets/Tests/Editor/ArchitectureHardeningCloseoutValidationRunner.cs",
+      "reason": "CI aggregate only; it does not own the two responsibilities it invokes.",
+      "selector": "ArchitectureHardeningCloseoutValidationRunner.RunJenkinsArchitectureValidation"
+    },
+    {
+      "canonicalOwnerIds": [
+        "architecture-composition-static"
+      ],
+      "id": "alias-architecture-script-subset-entrypoints",
+      "path": "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs",
+      "reason": "Broad-shell and helper-ledger entrypoints are subsets of the canonical composition/static guard.",
+      "selector": "RunBroadShellValidation; RunRuntimeCompositionHelperLedgerValidation"
+    },
+    {
+      "canonicalOwnerIds": [
+        "architecture-assembly-boundary",
+        "architecture-composition-static",
+        "architecture-ecs-hotpath",
+        "architecture-managed-ecs-loops",
+        "architecture-non-ecs-ownership",
+        "architecture-source-growth"
+      ],
+      "id": "alias-closeout-composite",
+      "path": "Assets/Tests/Editor/ArchitectureHardeningCloseoutValidationRunner.cs",
+      "reason": "Legacy aggregate invokes canonical owners and feature-owned suites; it is not a second owner.",
+      "selector": "ArchitectureHardeningCloseoutValidationRunner.RunFocusedValidation"
+    },
+    {
+      "canonicalOwnerIds": [
+        "performance-editor-match-p95",
+        "performance-match-gc-steady"
+      ],
+      "id": "alias-editor-match-performance-lane-wrapper",
+      "path": "Tools/CI/InvokeUnityMatchPerformanceLane.ps1",
+      "reason": "Orchestration and evidence checking only; metric authority remains with the two producers.",
+      "selector": "InvokeUnityMatchPerformanceLane.ps1"
+    }
+  ],
+  "schemaVersion": 1,
+  "validators": [
+    {
+      "id": "android-build-report",
+      "laneState": "deferred",
+      "owner": {
+        "path": "Assets/Game/Scripts/Editor/AndroidBuildReportGenerator.cs",
+        "selector": "AndroidBuildReportGenerator.GenerateAndWriteReports"
+      },
+      "responsibilities": [
+        "android-build-provenance-report"
+      ]
+    },
+    {
+      "id": "architecture-assembly-boundary",
+      "laneState": "active",
+      "owner": {
+        "path": "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs",
+        "selector": "ScriptArchitectureAlignmentContractTests.RunAssemblyBoundaryValidation"
+      },
+      "responsibilities": [
+        "assembly-boundary-validation"
+      ]
+    },
+    {
+      "id": "architecture-assembly-report",
+      "laneState": "active",
+      "owner": {
+        "path": "Assets/Tests/Editor/Aph700AssemblyDependencyReportGeneratorTests.cs",
+        "selector": "Aph700AssemblyDependencyReportGeneratorTests.CurrentRepositoryReportMatchesAsmdefsAndTrackedArtifacts"
+      },
+      "responsibilities": [
+        "assembly-dependency-report-parity"
+      ]
+    },
+    {
+      "id": "architecture-composition-static",
+      "laneState": "active",
+      "owner": {
+        "path": "Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs",
+        "selector": "ScriptArchitectureAlignmentContractTests.RunBootstrapCompositionGuardrailValidation"
+      },
+      "responsibilities": [
+        "bootstrap-composition-policy",
+        "hierarchy-search-policy",
+        "mutable-static-state-policy",
+        "runtime-helper-ledger"
+      ]
+    },
+    {
+      "id": "architecture-dashboard-freshness",
+      "laneState": "active",
+      "owner": {
+        "path": "Tools/CI/architecture_performance_dashboard.py",
+        "selector": "main --check"
+      },
+      "responsibilities": [
+        "dashboard-evidence-freshness",
+        "validator-owner-uniqueness"
+      ]
+    },
+    {
+      "id": "architecture-ecs-hotpath",
+      "laneState": "active",
+      "owner": {
+        "path": "Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs",
+        "selector": "EcsBurstHotPathArchitectureTests.RunFocusedValidation"
+      },
+      "responsibilities": [
+        "ecs-burst-hotpath-policy",
+        "ecs-managed-boundary-classification",
+        "ecs-type-handle-lifecycle"
+      ]
+    },
+    {
+      "id": "architecture-managed-ecs-loops",
+      "laneState": "active",
+      "owner": {
+        "path": "Assets/Tests/Editor/NonUiSystemBaseMigrationArchitectureTests.cs",
+        "selector": "NonUiSystemBaseMigrationArchitectureTests.RunFocusedValidation"
+      },
+      "responsibilities": [
+        "managed-ecs-exception-inventory",
+        "runtime-loop-inventory",
+        "systembase-managed-boundary-policy"
+      ]
+    },
+    {
+      "id": "architecture-non-ecs-ownership",
+      "laneState": "active",
+      "owner": {
+        "path": "Assets/Tests/Editor/NonEcsSystemConversionArchitectureTests.cs",
+        "selector": "NonEcsSystemConversionArchitectureTests.RunFocusedValidation"
+      },
+      "responsibilities": [
+        "direct-mutation-boundaries",
+        "non-ecs-system-naming",
+        "state-transition-ownership"
+      ]
+    },
+    {
+      "id": "architecture-source-growth",
+      "laneState": "active",
+      "owner": {
+        "path": "Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs",
+        "selector": "ProductionSourceGrowthArchitectureTests.RunFocusedValidation"
+      },
+      "responsibilities": [
+        "production-source-growth-ratchet"
+      ]
+    },
+    {
+      "id": "audio-memory-capture",
+      "laneState": "deferred",
+      "owner": {
+        "path": "Assets/Game/Scripts/Editor/AudioMemoryPlaybackCapture.cs",
+        "selector": "AudioMemoryPlaybackCapture.RunMenu; AudioMemoryPlaybackCapture.RunMatch"
+      },
+      "responsibilities": [
+        "audio-memory-playback-evidence"
+      ]
+    },
+    {
+      "id": "audio-performance",
+      "laneState": "deferred",
+      "owner": {
+        "path": "Assets/Tests/Editor/AudioPerformanceValidationTests.cs",
+        "selector": "AudioPerformanceValidationTests.RunFocusedValidation"
+      },
+      "responsibilities": [
+        "audio-performance-contract"
+      ]
+    },
+    {
+      "id": "behavior-menu-match-menu",
+      "laneState": "active",
+      "owner": {
+        "path": "Assets/Tests/PlayMode/Aph805MenuMatchMenuLifecyclePlayModeTests.cs",
+        "selector": "Aph805MenuMatchMenuLifecyclePlayModeTests"
+      },
+      "responsibilities": [
+        "menu-match-menu-world-lifecycle"
+      ]
+    },
+    {
+      "id": "behavior-placement-production",
+      "laneState": "active",
+      "owner": {
+        "path": "Assets/Tests/PlayMode/Aph806BuildingPlacementProductionPlayModeTests.cs",
+        "selector": "Aph806BuildingPlacementProductionPlayModeTests"
+      },
+      "responsibilities": [
+        "building-placement-production-flow"
+      ]
+    },
+    {
+      "id": "behavior-resource-exchange",
+      "laneState": "active",
+      "owner": {
+        "path": "Assets/Tests/PlayMode/Aph807ResourceExchangeFlowPlayModeTests.cs",
+        "selector": "Aph807ResourceExchangeFlowPlayModeTests"
+      },
+      "responsibilities": [
+        "resource-exchange-flow"
+      ]
+    },
+    {
+      "id": "behavior-selection-move-attack",
+      "laneState": "active",
+      "owner": {
+        "path": "Assets/Tests/PlayMode/Aph806SelectionMoveAttackPlayModeTests.cs",
+        "selector": "Aph806SelectionMoveAttackPlayModeTests"
+      },
+      "responsibilities": [
+        "selection-move-attack-flow"
+      ]
+    },
+    {
+      "id": "behavior-transport",
+      "laneState": "active",
+      "owner": {
+        "path": "Assets/Tests/PlayMode/Aph807TransportBoardingFlowPlayModeTests.cs",
+        "selector": "Aph807TransportBoardingFlowPlayModeTests"
+      },
+      "responsibilities": [
+        "transport-boarding-disembark-flow"
+      ]
+    },
+    {
+      "id": "content-residency-inventory",
+      "laneState": "deferred",
+      "owner": {
+        "path": "Assets/Game/Scripts/Editor/ContentResidencyInventoryGenerator.cs",
+        "selector": "ContentResidencyInventoryGenerator.GenerateAndWriteReports"
+      },
+      "responsibilities": [
+        "content-residency-inventory"
+      ]
+    },
+    {
+      "id": "performance-budget-authority",
+      "laneState": "active",
+      "owner": {
+        "path": "Assets/Tests/Editor/PerformanceProductBudgetValidatorTests.cs",
+        "selector": "PerformanceProductBudgetValidatorTests.RunFocusedValidation"
+      },
+      "responsibilities": [
+        "performance-budget-schema-ratchet"
+      ]
+    },
+    {
+      "id": "performance-editor-match-p95",
+      "laneState": "active",
+      "owner": {
+        "path": "Assets/Game/Scripts/Editor/MatchRuntimeShellSmokeValidation.cs",
+        "selector": "Game.Editor.MatchRuntimeShellSmokeValidation.RunPerformanceRegressionBaseline"
+      },
+      "responsibilities": [
+        "editor-match-frame-p95",
+        "editor-match-thread-allocation"
+      ]
+    },
+    {
+      "id": "performance-match-gc-steady",
+      "laneState": "active",
+      "owner": {
+        "path": "Assets/Game/Scripts/Editor/MatchGcAllocationCallstackCapture.cs",
+        "selector": "Game.Editor.MatchGcAllocationCallstackCapture.RunSteadyState"
+      },
+      "responsibilities": [
+        "match-global-gc-steady-state"
+      ]
+    },
+    {
+      "id": "release-android-development",
+      "laneState": "deferred",
+      "owner": {
+        "path": "Tools/CI/android_development_performance_gate.py",
+        "selector": "main validate"
+      },
+      "responsibilities": [
+        "android-development-performance-contract"
+      ]
+    },
+    {
+      "id": "release-android-performance",
+      "laneState": "deferred",
+      "owner": {
+        "path": "Tools/CI/android_release_performance_gate.py",
+        "selector": "main validate"
+      },
+      "responsibilities": [
+        "android-release-performance-contract"
+      ]
+    },
+    {
+      "id": "static-map-presentation-parity",
+      "laneState": "active",
+      "owner": {
+        "path": "Assets/Tests/Editor/StaticMapPresentationStructuralValidationTests.cs",
+        "selector": "StaticMapPresentationStructuralValidationTests"
+      },
+      "responsibilities": [
+        "static-map-generated-structural-parity"
+      ]
+    },
+    {
+      "id": "visual-quality-matrix",
+      "laneState": "deferred",
+      "owner": {
+        "path": "Assets/Tests/Editor/MobileVisualQualityCaptureMatrixTests.cs",
+        "selector": "MobileVisualQualityCaptureMatrixTests.RunFocusedValidation"
+      },
+      "responsibilities": [
+        "mobile-visual-quality-matrix"
+      ]
+    }
+  ]
+}

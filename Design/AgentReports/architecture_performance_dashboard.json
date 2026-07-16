@@ -1,37 +1,55 @@
 {
-  "dashboardRevision": "e9dcf183eb95637bb1975c97b11f5c43a1cb9e79",
+  "dashboardRevision": "acf21c7c900a55aa19fdb8a19a5693be38d2c036",
+  "gateState": "rejected",
   "inputCount": 7,
   "inputs": [
     {
       "category": "architecture",
+      "claimedEnvironmentIdentitySha256": null,
       "claimedRevision": null,
       "claimedRevisionField": null,
       "dirty": null,
+      "disposition": "rejected",
       "freshness": "unknown",
+      "id": "assembly-dependency-report",
+      "laneState": "active",
       "metrics": {
-        "ambiguousTypeTokenOccurrenceCount": 39,
-        "assemblyCount": 18,
-        "declaredTypeCount": 2482,
-        "distinctCrossDomainTypeReferenceCount": 2616,
-        "externalReferenceCount": 82,
-        "firstPartyEdgeCount": 79,
-        "resolvedCrossDomainTypeOccurrenceCount": 29793,
-        "sourceFileCount": 1145,
+        "ambiguousTypeTokenOccurrenceCount": 66,
+        "assemblyCount": 21,
+        "declaredTypeCount": 2731,
+        "distinctCrossDomainTypeReferenceCount": 2925,
+        "externalReferenceCount": 100,
+        "firstPartyEdgeCount": 92,
+        "resolvedCrossDomainTypeOccurrenceCount": 33509,
+        "sourceFileCount": 1340,
         "unownedScopedSourceFileCount": 0
       },
+      "ownerValidatorId": "architecture-assembly-report",
       "path": "Design/AgentReports/2026-07-10_aph-700_first_party_assembly_dependencies.json",
       "reasons": [
-        "input does not declare exactCommit or baselineCommit"
+        {
+          "code": "UNKNOWN_REVISION",
+          "message": "input does not declare exactCommit or baselineCommit"
+        },
+        {
+          "code": "UNKNOWN_ENVIRONMENT",
+          "message": "input does not declare environmentIdentitySha256"
+        }
       ],
+      "requirement": "required",
       "sourceStatus": null,
       "taskId": "APH-700"
     },
     {
       "category": "audio",
+      "claimedEnvironmentIdentitySha256": null,
       "claimedRevision": "8e1f21c2a4326ff08371d621e808f38f79b2b197",
       "claimedRevisionField": "exactCommit",
       "dirty": true,
+      "disposition": "attention",
       "freshness": "stale",
+      "id": "audio-match-capture",
+      "laneState": "deferred",
       "metrics": {
         "match-after-aria-settings-voice.activeSourceCount": 3,
         "match-after-aria-settings-voice.catalogClipCount": 234,
@@ -85,20 +103,32 @@
         "match-before-controlled-playback.totalReservedMemoryBytes": 3110743816,
         "snapshotCount": 5
       },
+      "ownerValidatorId": "audio-memory-capture",
       "path": "Design/AgentReports/aph-401_audio-memory-playback-match.json",
       "reasons": [
-        "exactCommit 8e1f21c2a4326ff08371d621e808f38f79b2b197 does not match dashboard revision e9dcf183eb95637bb1975c97b11f5c43a1cb9e79",
-        "input declares dirty=true"
+        {
+          "code": "REVISION_MISMATCH",
+          "message": "exactCommit 8e1f21c2a4326ff08371d621e808f38f79b2b197 does not match dashboard revision acf21c7c900a55aa19fdb8a19a5693be38d2c036"
+        },
+        {
+          "code": "DIRTY_INPUT",
+          "message": "input declares dirty=true"
+        }
       ],
+      "requirement": "advisory",
       "sourceStatus": "Succeeded",
       "taskId": "APH-401"
     },
     {
       "category": "audio",
+      "claimedEnvironmentIdentitySha256": null,
       "claimedRevision": "8e1f21c2a4326ff08371d621e808f38f79b2b197",
       "claimedRevisionField": "exactCommit",
       "dirty": true,
+      "disposition": "attention",
       "freshness": "stale",
+      "id": "audio-menu-capture",
+      "laneState": "deferred",
       "metrics": {
         "menu-after-music-loop.activeSourceCount": 1,
         "menu-after-music-loop.catalogClipCount": 234,
@@ -132,20 +162,32 @@
         "menu-before-controlled-playback.totalReservedMemoryBytes": 1935401704,
         "snapshotCount": 3
       },
+      "ownerValidatorId": "audio-memory-capture",
       "path": "Design/AgentReports/aph-401_audio-memory-playback-menu.json",
       "reasons": [
-        "exactCommit 8e1f21c2a4326ff08371d621e808f38f79b2b197 does not match dashboard revision e9dcf183eb95637bb1975c97b11f5c43a1cb9e79",
-        "input declares dirty=true"
+        {
+          "code": "REVISION_MISMATCH",
+          "message": "exactCommit 8e1f21c2a4326ff08371d621e808f38f79b2b197 does not match dashboard revision acf21c7c900a55aa19fdb8a19a5693be38d2c036"
+        },
+        {
+          "code": "DIRTY_INPUT",
+          "message": "input declares dirty=true"
+        }
       ],
+      "requirement": "advisory",
       "sourceStatus": "Succeeded",
       "taskId": "APH-401"
     },
     {
       "category": "build",
+      "claimedEnvironmentIdentitySha256": null,
       "claimedRevision": "a527e151e9e43a491ba30f4c19a0320dc54faf5c",
       "claimedRevisionField": "exactCommit",
       "dirty": false,
+      "disposition": "attention",
       "freshness": "stale",
+      "id": "build-android-aab",
+      "laneState": "deferred",
       "metrics": {
         "accountedPackedFileBytes": 1186032656,
         "artifactBytes": 426399778,
@@ -153,7 +195,6 @@
         "buildReportSummaryTotalSizeBytes": 3519946381,
         "buildReportSummaryUnaccountedBytes": 2333913725,
         "detailedBuildReport": true,
-        "dirty": false,
         "packedAssetEntryCount": 18618,
         "packedContentBytes": 1185460991,
         "packedFileCount": 40,
@@ -163,50 +204,68 @@
         "unattributedPackedAssetBytes": 78351,
         "unattributedPackedEntryCount": 3
       },
+      "ownerValidatorId": "android-build-report",
       "path": "Design/AgentReports/architecture_performance_android_aab_build_report.json",
       "reasons": [
-        "exactCommit a527e151e9e43a491ba30f4c19a0320dc54faf5c does not match dashboard revision e9dcf183eb95637bb1975c97b11f5c43a1cb9e79"
+        {
+          "code": "REVISION_MISMATCH",
+          "message": "exactCommit a527e151e9e43a491ba30f4c19a0320dc54faf5c does not match dashboard revision acf21c7c900a55aa19fdb8a19a5693be38d2c036"
+        }
       ],
+      "requirement": "advisory",
       "sourceStatus": "complete",
       "taskId": "APH-500"
     },
     {
       "category": "build",
-      "claimedRevision": "4c05a2da10bf5117ca592cf8daac05459ab3b74c",
+      "claimedEnvironmentIdentitySha256": null,
+      "claimedRevision": "2b19449570ccf1b78c43ea0154e83785ecb3031e",
       "claimedRevisionField": "exactCommit",
-      "dirty": true,
+      "dirty": false,
+      "disposition": "attention",
       "freshness": "stale",
+      "id": "build-android-apk",
+      "laneState": "deferred",
       "metrics": {
-        "accountedPackedFileBytes": 910317488,
-        "artifactBytes": 552481264,
-        "attributedPackedAssetBytes": 909690920,
-        "buildReportSummaryTotalSizeBytes": 3631333720,
-        "buildReportSummaryUnaccountedBytes": 2721016232,
+        "accountedPackedFileBytes": 651619366,
+        "allIncludedTexturePathsExported": true,
+        "artifactBytes": 380801943,
+        "attributedPackedAssetBytes": 650446703,
+        "buildReportSummaryTotalSizeBytes": 3049162850,
+        "buildReportSummaryUnaccountedBytes": 2397543484,
         "detailedBuildReport": true,
-        "dirty": true,
-        "packedAssetEntryCount": 17848,
-        "packedContentBytes": 909769271,
-        "packedFileCount": 40,
-        "packedFileOverheadBytes": 548217,
+        "frameTimingStatsEnabled": true,
+        "packedAssetEntryCount": 23416,
+        "packedContentBytes": 650758776,
+        "packedFileCount": 554,
+        "packedFileOverheadBytes": 860590,
         "reportedIncludedAssetCount": 100,
-        "totalIncludedAssetCount": 5601,
-        "unattributedPackedAssetBytes": 78351,
-        "unattributedPackedEntryCount": 3
+        "totalIncludedAssetCount": 6440,
+        "unattributedPackedAssetBytes": 312073,
+        "unattributedPackedEntryCount": 517
       },
+      "ownerValidatorId": "android-build-report",
       "path": "Design/AgentReports/architecture_performance_android_apk_build_report.json",
       "reasons": [
-        "exactCommit 4c05a2da10bf5117ca592cf8daac05459ab3b74c does not match dashboard revision e9dcf183eb95637bb1975c97b11f5c43a1cb9e79",
-        "input declares dirty=true"
+        {
+          "code": "REVISION_MISMATCH",
+          "message": "exactCommit 2b19449570ccf1b78c43ea0154e83785ecb3031e does not match dashboard revision acf21c7c900a55aa19fdb8a19a5693be38d2c036"
+        }
       ],
+      "requirement": "advisory",
       "sourceStatus": "complete",
       "taskId": "APH-500"
     },
     {
       "category": "content-residency",
+      "claimedEnvironmentIdentitySha256": null,
       "claimedRevision": "7084805d771142706f340e9f2e52a68570bcb72b",
       "claimedRevisionField": "baselineCommit",
       "dirty": null,
+      "disposition": "attention",
       "freshness": "stale",
+      "id": "content-residency-inventory",
+      "laneState": "deferred",
       "metrics": {
         "animationTextureCount": 3,
         "animationTexturePayloadBytes": 50331648,
@@ -224,37 +283,46 @@
         "meshReadWriteEnabledCount": 901,
         "sourceSizeAvailableAssetCount": 4110,
         "sourceSizeBytes": 816567651,
-        "textureAssetCount": 639,
+        "textureAssetCount": 637,
         "textureStreamingEnabledCount": 0
       },
+      "ownerValidatorId": "content-residency-inventory",
       "path": "Design/AgentReports/architecture_performance_content_residency_baseline.json",
       "reasons": [
-        "baselineCommit 7084805d771142706f340e9f2e52a68570bcb72b does not match dashboard revision e9dcf183eb95637bb1975c97b11f5c43a1cb9e79"
+        {
+          "code": "REVISION_MISMATCH",
+          "message": "baselineCommit 7084805d771142706f340e9f2e52a68570bcb72b does not match dashboard revision acf21c7c900a55aa19fdb8a19a5693be38d2c036"
+        }
       ],
+      "requirement": "advisory",
       "sourceStatus": "complete",
       "taskId": "APH-008"
     },
     {
       "category": "runtime-performance",
+      "claimedEnvironmentIdentitySha256": null,
       "claimedRevision": null,
       "claimedRevisionField": null,
       "dirty": null,
+      "disposition": "rejected",
       "freshness": "unknown",
+      "id": "editor-match-performance",
+      "laneState": "active",
       "metrics": {
         "airMissileProjectileCount": 0,
         "allocatedBytesCurrentThread": 0,
-        "averageFrameMs": 2.486,
+        "averageFrameMs": 7.203,
         "culledUnitCount": 59,
-        "editorP95FrameBudgetMs": 50,
+        "editorP95FrameBudgetMs": 20,
         "editorP95FrameBudgetPassed": true,
-        "frameCount": 1613,
+        "frameCount": 557,
         "groundMissileProjectileCount": 0,
-        "markerCount": 98,
-        "maxFrameMs": 14.523,
-        "minimapMarkerCount": 98,
-        "observationSeconds": 4.002,
-        "p95FrameMs": 3.824,
-        "p99FrameMs": 5.826,
+        "markerCount": 22,
+        "maxFrameMs": 34.985,
+        "minimapMarkerCount": 22,
+        "observationSeconds": 4.005,
+        "p95FrameMs": 11.477,
+        "p99FrameMs": 13.16,
         "projectileCount": 0,
         "renderVisualStateCount": 105,
         "runtimeBuildingCount": 628,
@@ -264,24 +332,45 @@
         "visibleModelEstimate": 46,
         "visibleRenderStateCount": 46
       },
+      "ownerValidatorId": "performance-editor-match-p95",
       "path": "Design/AgentReports/performance_regression_match_baseline.json",
       "reasons": [
-        "input does not declare exactCommit or baselineCommit"
+        {
+          "code": "UNKNOWN_REVISION",
+          "message": "input does not declare exactCommit or baselineCommit"
+        },
+        {
+          "code": "UNKNOWN_ENVIRONMENT",
+          "message": "input does not declare environmentIdentitySha256"
+        }
       ],
+      "requirement": "required",
       "sourceStatus": null,
       "taskId": null
     }
   ],
-  "schemaVersion": 1,
+  "registry": {
+    "errors": [],
+    "path": "Design/AgentReports/ArchitectureMaturity/validator_registry.json",
+    "schemaVersion": 1,
+    "sha256": "1cc6ffcde3ab67d37bafef1e17a1379c332deb51b6fc12dc45c36394895a51a2",
+    "state": "current"
+  },
+  "schemaVersion": 2,
   "summary": {
+    "advisoryAttentionCount": 5,
+    "advisoryInputCount": 5,
     "freshnessCounts": {
       "current": 0,
-      "invalid": 0,
+      "malformed": 0,
       "missing": 0,
       "stale": 5,
       "unknown": 2
     },
     "healthyInputCount": 0,
+    "registryErrorCount": 0,
+    "requiredInputCount": 2,
+    "requiredRejectedCount": 2,
     "requiresAttentionCount": 7
   }
 }

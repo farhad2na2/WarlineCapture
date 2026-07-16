@@ -19,8 +19,7 @@ namespace Game.Editor
         [MenuItem("Tools/Warline Capture/Operation Maps/Bind Current Scene View")]
         public static void Stage()
         {
-            OperationMapCurrentCompatibilityPlacementStager.Stage();
-            OperationMapCurrentCompatibilitySubSceneStager.Stage();
+            OperationMapCurrentStagedDefinitionBuilder.Stage();
 
             Scene scene = OpenStagedScene();
             try
@@ -81,13 +80,18 @@ namespace Game.Editor
                 if (!string.Equals(view.gameObject.name, ViewRootName, StringComparison.Ordinal) ||
                     !string.Equals(view.OperationMapId, OperationMapId, StringComparison.Ordinal) ||
                     AssetDatabase.GetAssetPath(view.Definition) !=
-                    OperationMapCurrentCompatibilityDefinitionBuilder.DefinitionPath ||
+                    OperationMapCurrentStagedDefinitionBuilder.DefinitionPath ||
                     AssetDatabase.GetAssetPath(view.BuildingPlacements) !=
                     OperationMapCurrentCompatibilityPlacementStager.DestinationBuildingConfigPath ||
                     AssetDatabase.GetAssetPath(view.VehiclePlacements) !=
                     OperationMapCurrentCompatibilityPlacementStager.DestinationVehicleConfigPath ||
                     AssetDatabase.GetAssetPath(view.MapSubScene.SceneAsset) !=
-                    OperationMapCurrentCompatibilitySubSceneStager.DestinationSubScenePath)
+                    OperationMapCurrentCompatibilitySubSceneStager.DestinationSubScenePath ||
+                    !string.Equals(
+                        view.Definition.NavigationMetadata.AuthoredSubSceneGuid,
+                        AssetDatabase.AssetPathToGUID(
+                            OperationMapCurrentCompatibilitySubSceneStager.DestinationSubScenePath),
+                        StringComparison.Ordinal))
                 {
                     error = "Staged operation-map scene view reference identity drifted.";
                     return false;
@@ -108,7 +112,7 @@ namespace Game.Editor
             MapSurfaceAuthoring surface = FindSingleComponent<MapSurfaceAuthoring>(scene);
             SubScene subScene = FindSingleComponent<SubScene>(scene);
             OperationMapDefinition definition = LoadRequired<OperationMapDefinition>(
-                OperationMapCurrentCompatibilityDefinitionBuilder.DefinitionPath);
+                OperationMapCurrentStagedDefinitionBuilder.DefinitionPath);
             MapBuildingPlacementConfig buildings = LoadRequired<MapBuildingPlacementConfig>(
                 OperationMapCurrentCompatibilityPlacementStager.DestinationBuildingConfigPath);
             MapVehiclePlacementConfig vehicles = LoadRequired<MapVehiclePlacementConfig>(

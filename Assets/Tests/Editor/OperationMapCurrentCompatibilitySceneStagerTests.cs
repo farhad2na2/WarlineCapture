@@ -74,6 +74,20 @@ public sealed class OperationMapCurrentCompatibilitySceneStagerTests
             error);
     }
 
+    [Test]
+    public void StagedDefinitionPreservesLogicalIdentityAndBindsMapSubScene()
+    {
+        Assert.That(
+            OperationMapCurrentStagedDefinitionBuilder.TryValidate(out string error),
+            Is.True,
+            error);
+        Assert.That(
+            AssetDatabase.AssetPathToGUID(OperationMapCurrentStagedDefinitionBuilder.DefinitionPath),
+            Is.Not.EqualTo(
+                AssetDatabase.AssetPathToGUID(
+                    OperationMapCurrentCompatibilityDefinitionBuilder.DefinitionPath)));
+    }
+
     [TestCase("Update")]
     [TestCase("LateUpdate")]
     [TestCase("FixedUpdate")]

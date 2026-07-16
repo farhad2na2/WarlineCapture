@@ -55,6 +55,15 @@ namespace Game.Composition
                 return false;
             }
 
+            if (!string.Equals(
+                    definition.NavigationMetadata.AuthoredSubSceneGuid,
+                    mapSubScene.SceneGUID.ToString(),
+                    StringComparison.Ordinal))
+            {
+                error = "Operation-map definition does not identify the bound map subscene.";
+                return false;
+            }
+
             error = null;
             return true;
         }

@@ -22,7 +22,7 @@ namespace Game.Editor
         public const string ConfigPath = "Assets/Game/Configs/MapPrototypes/M01_RuntimeCity_Config.asset";
         public const string VisualRecipePath = "Assets/Game/Configs/MapPrototypes/M01_RuntimeVisualRecipe.asset";
         private const string SourceConfigPath = "Assets/Game/Configs/Scene/Game_RuntimeCitySpawner_Config.asset";
-        private const string VisualRecipeVersion = "M01RuntimeVisualRecipe_2026-07-16_v16_blocked_market_route";
+        private const string VisualRecipeVersion = "M01RuntimeVisualRecipe_2026-07-16_v17_local_streets_only";
         private const string DistrictSnapshotFolder = "Assets/Game/Prefabs/MapPrototypes/M01/RuntimeParity";
         private const int MaxDistrictSliceRenderers = 64;
         private const string PremiumLightingRigPath = "Assets/Game/Rendering/Prefabs/PremiumLightingRig.prefab";
@@ -591,9 +591,9 @@ namespace Game.Editor
                     0.45f),
                 new(
                     RuntimeOperationMapVisualStage.Horizon,
-                    new Vector3(-103f, 31f, -58f),
-                    new Vector3(-45f, 6f, 2f),
-                    58f,
+                    new Vector3(-105f, 58f, -72f),
+                    new Vector3(-28f, 1f, -5f),
+                    50f,
                     0.5f)
             };
         }
@@ -2717,12 +2717,12 @@ namespace Game.Editor
             GameObject cameraObject = new("RuntimeGenerationCamera");
             cameraObject.tag = "MainCamera";
             cameraObject.transform.SetParent(parent, false);
-            cameraObject.transform.position = new Vector3(-103f, 31f, -58f);
-            Vector3 target = new(-45f, 6f, 2f);
+            cameraObject.transform.position = new Vector3(-105f, 58f, -72f);
+            Vector3 target = new(-28f, 1f, -5f);
             cameraObject.transform.rotation = Quaternion.LookRotation((target - cameraObject.transform.position).normalized, Vector3.up);
             Camera camera = cameraObject.AddComponent<Camera>();
             camera.clearFlags = CameraClearFlags.Skybox;
-            camera.fieldOfView = 58f;
+            camera.fieldOfView = 50f;
             camera.nearClipPlane = 0.3f;
             camera.farClipPlane = 1200f;
             camera.allowHDR = true;

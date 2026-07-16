@@ -1,10 +1,10 @@
 # M01 Visual Prototype Capture Manifest
 
-- Generator: `M01VisualPrototype_2026-07-16_v15_blocked_market_route`
+- Generator: `M01VisualPrototype_2026-07-16_v17_local_streets_only`
 - Seed: `26071501`
 - Unity: `6000.5.2f1`
 - Scene: `Assets/Game/Scenes/MapPrototypes/Chapter01/M01_VisualPrototype.unity`
-- Semantic fingerprint: `48BD3EE0AD0C563C1696C92E7D6A67B8AD9691DE012297A4A12090AC72A45410`
+- Semantic fingerprint: `F5E1A47D6F6611D7812C45018BFE194BE3B712C44CD56EAD4B393FEF63377E60`
 - Resolution: `1600x900`
 - Gameplay overview: `m01_gameplay_overview.png`
 - Old Market approach: `m01_old_market_approach.png`

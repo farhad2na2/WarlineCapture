@@ -51,7 +51,7 @@ namespace Game.Editor
 
         private static readonly CaptureDefinition[] CaptureDefinitions =
         {
-            new("GameplayOverview", "m01_gameplay_overview.png", new Vector3(-103f, 31f, -58f), new Vector3(-45f, 6f, 2f), 58f),
+            new("GameplayOverview", "m01_gameplay_overview.png", new Vector3(-105f, 58f, -72f), new Vector3(-28f, 1f, -5f), 50f),
             new("OldMarketApproach", "m01_old_market_approach.png", new Vector3(-103f, 31f, -58f), new Vector3(-45f, 6f, 2f), 40f),
             new("BombingAftermath", "m01_bombing_aftermath.png", new Vector3(36f, 11f, -43f), new Vector3(13f, 2f, -19f), 31f),
             new("TopDownPlan", "m01_top_down_plan.png", new Vector3(0f, 260f, -4f), Vector3.zero, 116f, true)

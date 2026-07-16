@@ -16,7 +16,7 @@ namespace Game.Editor
         public const string ScenePath = "Assets/Game/Scenes/MapPrototypes/Chapter01/M01_VisualPrototype.unity";
         public const string CaptureDirectory = "Design/ArtReview/OperationMaps/M01";
         public const int GenerationSeed = 26071501;
-        public const string GeneratorVersion = "M01VisualPrototype_2026-07-16_v15_blocked_market_route";
+        public const string GeneratorVersion = "M01VisualPrototype_2026-07-16_v17_local_streets_only";
 
         private const int CaptureWidth = 1600;
         private const int CaptureHeight = 900;
@@ -38,6 +38,8 @@ namespace Game.Editor
         private const string TurquoiseMaterialPath = MaterialDirectory + "/M01_Market_Turquoise.mat";
         private const string RustMaterialPath = MaterialDirectory + "/M01_Rust.mat";
         private const string DistrictGroundMaterialPath = MaterialDirectory + "/M01_DistrictGround.mat";
+        private const string TransitionGroundMaterialPath = MaterialDirectory + "/M01_TransitionGround.mat";
+        private const string DirtRoadMaterialPath = MaterialDirectory + "/M01_DirtRoad.mat";
 
         private static readonly string[] RequiredPrefabPaths =
         {
@@ -68,6 +70,8 @@ namespace Game.Editor
             public Material Turquoise;
             public Material Rust;
             public Material DistrictGround;
+            public Material TransitionGround;
+            public Material DirtRoad;
         }
 
         private readonly struct LocalRoadSegmentDefinition
@@ -86,11 +90,79 @@ namespace Game.Editor
             public bool Dusty { get; }
         }
 
+        private readonly struct DistrictCurationDefinition
+        {
+            public DistrictCurationDefinition(
+                string moduleName,
+                Vector2 minimum,
+                Vector2 maximum,
+                bool excludeAirfield,
+                float remoteRoadDistance = 0f,
+                float remoteRoadSize = 0f)
+            {
+                ModuleName = moduleName;
+                Minimum = minimum;
+                Maximum = maximum;
+                ExcludeAirfield = excludeAirfield;
+                RemoteRoadDistance = remoteRoadDistance;
+                RemoteRoadSize = remoteRoadSize;
+            }
+
+            public string ModuleName { get; }
+            public Vector2 Minimum { get; }
+            public Vector2 Maximum { get; }
+            public bool ExcludeAirfield { get; }
+            public float RemoteRoadDistance { get; }
+            public float RemoteRoadSize { get; }
+
+            public bool Contains(Vector3 worldPosition)
+            {
+                return worldPosition.x >= Minimum.x &&
+                       worldPosition.x <= Maximum.x &&
+                       worldPosition.z >= Minimum.y &&
+                       worldPosition.z <= Maximum.y;
+            }
+        }
+
+        private readonly struct CompositionBoundsRecord
+        {
+            public CompositionBoundsRecord(Transform owner, Bounds bounds)
+            {
+                Owner = owner;
+                Bounds = bounds;
+            }
+
+            public Transform Owner { get; }
+            public Bounds Bounds { get; }
+        }
+
         private static readonly LocalRoadSegmentDefinition[] LocalRoadSegments =
         {
+            new("MarketExit", new Vector3(-14f, 0f, 9f), new Vector3(10.5f, 0f, 9.3f), false),
             new("MarketToCompound_A", new Vector3(10.5f, 0f, 9.3f), new Vector3(22f, 0f, 18f), false),
             new("MarketToCompound_B", new Vector3(22f, 0f, 18f), new Vector3(36f, 0f, 35f), false),
             new("CivilianRoute", new Vector3(10.5f, 0f, 9.3f), new Vector3(13f, 0f, -24f), true)
+        };
+
+        private static readonly DistrictCurationDefinition[] DistrictCurationDefinitions =
+        {
+            new(
+                "OldMarket_West_DemoAuthored",
+                new Vector2(-113f, -33f),
+                new Vector2(-14f, 69f),
+                false),
+            new(
+                "UtilityCompound_East_DemoAuthored",
+                new Vector2(22f, -29f),
+                new Vector2(101f, 72f),
+                true,
+                40f,
+                18f),
+            new(
+                "Residential_South_DemoAuthored",
+                new Vector2(-43f, -107f),
+                new Vector2(35f, -31f),
+                false)
         };
 
         [MenuItem("Game/Operation Maps/M01/Generate Visual Prototype")]
@@ -223,6 +295,215 @@ namespace Game.Editor
             }
 
             Debug.Log($"[M01DistrictBuildingAnalysis] result=Passed candidates={candidateCount}");
+        }
+
+        public static void AnalyzeDistrictCompositionOwnersBatch()
+        {
+            Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            GameObject sceneRoot = FindSceneRoot(scene);
+            Transform modulesRoot = sceneRoot.transform.Find("_M01VisualGenerated/02_DemoAuthored_DistrictModules");
+            if (modulesRoot == null)
+                throw new InvalidOperationException("M01 district module root is missing.");
+
+            int candidateCount = 0;
+            for (int moduleIndex = 0; moduleIndex < modulesRoot.childCount; moduleIndex++)
+            {
+                Transform module = modulesRoot.GetChild(moduleIndex);
+                Transform compositionRoot = FindDistrictCompositionRoot(module);
+                for (int ownerIndex = 0; ownerIndex < compositionRoot.childCount; ownerIndex++)
+                {
+                    Transform owner = compositionRoot.GetChild(ownerIndex);
+                    Renderer[] renderers = owner.GetComponentsInChildren<Renderer>(true);
+                    if (!TryGetCombinedBounds(renderers, out Bounds bounds))
+                        continue;
+
+                    Vector2 offset = new(bounds.center.x - module.position.x, bounds.center.z - module.position.z);
+                    float distance = offset.magnitude;
+                    float horizontalSize = Mathf.Max(bounds.size.x, bounds.size.z);
+                    string category = ClassifyDistrictCompositionOwner(owner);
+                    if (bounds.size.sqrMagnitude < 0.01f ||
+                        (distance < 45f && horizontalSize < 18f && string.Equals(category, "other", StringComparison.Ordinal)))
+                        continue;
+
+                    candidateCount++;
+                    Debug.Log(
+                        $"[M01DistrictCompositionOwner] module={module.name} owner={owner.name} " +
+                        $"category={category} distance={distance:0.00} " +
+                        $"center={bounds.center} size={bounds.size} renderers={renderers.Length}");
+                }
+            }
+
+            Debug.Log($"[M01DistrictCompositionAnalysis] result=Passed candidates={candidateCount}");
+        }
+
+        public static void AnalyzeTerrainStructurePenetrationsBatch()
+        {
+            Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            GameObject sceneRoot = FindSceneRoot(scene);
+            Transform modulesRoot = sceneRoot.transform.Find("_M01VisualGenerated/02_DemoAuthored_DistrictModules");
+            if (modulesRoot == null)
+                throw new InvalidOperationException("M01 district module root is missing.");
+
+            int totalCandidates = 0;
+            for (int moduleIndex = 0; moduleIndex < modulesRoot.childCount; moduleIndex++)
+            {
+                Transform module = modulesRoot.GetChild(moduleIndex);
+                Transform compositionRoot = FindDistrictCompositionRoot(module);
+                var structures = new List<CompositionBoundsRecord>();
+                var terrain = new List<CompositionBoundsRecord>();
+
+                for (int ownerIndex = 0; ownerIndex < compositionRoot.childCount; ownerIndex++)
+                {
+                    Transform owner = compositionRoot.GetChild(ownerIndex);
+                    if (!owner.gameObject.activeInHierarchy)
+                        continue;
+
+                    Renderer[] renderers = owner.GetComponentsInChildren<Renderer>(true);
+                    if (!TryGetCombinedBounds(renderers, out Bounds bounds))
+                        continue;
+
+                    if (ContainsDescendantName(owner, "_Bld_"))
+                    {
+                        structures.Add(new CompositionBoundsRecord(owner, bounds));
+                    }
+                    else if (ContainsPenetratingTerrainName(owner) && Mathf.Max(bounds.size.x, bounds.size.z) >= 3f)
+                    {
+                        terrain.Add(new CompositionBoundsRecord(owner, bounds));
+                    }
+                }
+
+                int moduleCandidates = 0;
+                for (int structureIndex = 0; structureIndex < structures.Count; structureIndex++)
+                {
+                    CompositionBoundsRecord structure = structures[structureIndex];
+                    for (int terrainIndex = 0; terrainIndex < terrain.Count; terrainIndex++)
+                    {
+                        CompositionBoundsRecord terrainRecord = terrain[terrainIndex];
+                        if (!HasMeaningfulTerrainStructureOverlap(structure.Bounds, terrainRecord.Bounds))
+                            continue;
+
+                        moduleCandidates++;
+                        Debug.Log(
+                            $"[M01TerrainStructurePenetration] module={module.name} " +
+                            $"structure={structure.Owner.name} terrain={terrainRecord.Owner.name} " +
+                            $"structureCenter={structure.Bounds.center} structureSize={structure.Bounds.size} " +
+                            $"terrainCenter={terrainRecord.Bounds.center} terrainSize={terrainRecord.Bounds.size}");
+                    }
+                }
+
+                totalCandidates += moduleCandidates;
+                Debug.Log(
+                    $"[M01TerrainStructurePenetrationModule] module={module.name} structures={structures.Count} " +
+                    $"terrain={terrain.Count} candidates={moduleCandidates}");
+            }
+
+            Debug.Log($"[M01TerrainStructurePenetrationAnalysis] result=Recorded candidates={totalCandidates}");
+        }
+
+        private static bool ContainsDescendantName(Transform owner, string fragment)
+        {
+            Transform[] transforms = owner.GetComponentsInChildren<Transform>(true);
+            for (int index = 0; index < transforms.Length; index++)
+            {
+                if (ContainsName(transforms[index].name, fragment))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static bool ContainsPenetratingTerrainName(Transform owner)
+        {
+            Transform[] transforms = owner.GetComponentsInChildren<Transform>(true);
+            for (int index = 0; index < transforms.Length; index++)
+            {
+                string objectName = transforms[index].name;
+                if (ContainsName(objectName, "_Env_Rock_") ||
+                    ContainsName(objectName, "_Env_Boulder_") ||
+                    ContainsName(objectName, "_Env_Cliff_"))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool HasMeaningfulTerrainStructureOverlap(Bounds structure, Bounds terrain)
+        {
+            float overlapX = Mathf.Min(structure.max.x, terrain.max.x) - Mathf.Max(structure.min.x, terrain.min.x);
+            float overlapZ = Mathf.Min(structure.max.z, terrain.max.z) - Mathf.Max(structure.min.z, terrain.min.z);
+            if (overlapX < 0.65f || overlapZ < 0.65f || overlapX * overlapZ < 1.5f)
+                return false;
+
+            float overlapY = Mathf.Min(structure.max.y, terrain.max.y) - Mathf.Max(structure.min.y, terrain.min.y);
+            return overlapY >= 0.35f && terrain.max.y >= structure.min.y + 0.35f;
+        }
+
+        private static bool IsPrimaryStructureOwner(Transform owner)
+        {
+            string objectName = owner.name;
+            return ContainsName(objectName, "_Bld_Hall_") ||
+                   ContainsName(objectName, "_Bld_Shop_") ||
+                   ContainsName(objectName, "_Bld_Village_House_") ||
+                   ContainsName(objectName, "_Bld_GasStation_") ||
+                   ContainsName(objectName, "_Bld_Ruins_") ||
+                   ContainsName(objectName, "_Bld_Mosque_") ||
+                   ContainsName(objectName, "_Bld_Barracks_") ||
+                   ContainsName(objectName, "_Bld_Office_") ||
+                   ContainsName(objectName, "_Bld_Tower_");
+        }
+
+        private static bool HasHighConfidenceTerrainStructurePenetration(Bounds structure, Bounds terrain)
+        {
+            bool terrainCenterInsideStructure =
+                Mathf.Abs(terrain.center.x - structure.center.x) <= structure.size.x * 0.38f &&
+                Mathf.Abs(terrain.center.z - structure.center.z) <= structure.size.z * 0.38f;
+            return terrainCenterInsideStructure &&
+                   terrain.max.y - structure.min.y >= 0.8f &&
+                   HasMeaningfulTerrainStructureOverlap(structure, terrain);
+        }
+
+        private static Transform FindDistrictCompositionRoot(Transform module)
+        {
+            Transform[] transforms = module.GetComponentsInChildren<Transform>(true);
+            for (int index = 0; index < transforms.Length; index++)
+            {
+                if (string.Equals(transforms[index].name, "Art", StringComparison.Ordinal))
+                    return transforms[index];
+            }
+
+            return module.childCount > 0 ? module.GetChild(0) : module;
+        }
+
+        private static string ClassifyDistrictCompositionOwner(Transform owner)
+        {
+            Transform[] transforms = owner.GetComponentsInChildren<Transform>(true);
+            for (int index = 0; index < transforms.Length; index++)
+            {
+                string objectName = transforms[index].name;
+                if (ContainsName(objectName, "Runway") ||
+                    ContainsName(objectName, "_Veh_Jet_") ||
+                    ContainsName(objectName, "_Veh_TransportPlane_") ||
+                    ContainsName(objectName, "_Bld_Hangar_"))
+                {
+                    return "airfield";
+                }
+            }
+
+            for (int index = 0; index < transforms.Length; index++)
+            {
+                string objectName = transforms[index].name;
+                if (ContainsName(objectName, "_Env_Road_"))
+                    return "major-road";
+                if (ContainsName(objectName, "_Env_DirtRoad_") ||
+                    ContainsName(objectName, "_Env_Sidewalk_"))
+                {
+                    return "road";
+                }
+            }
+
+            return "other";
         }
 
         public static void AnalyzeLocalRoadClearanceBatch()
@@ -362,7 +643,7 @@ namespace Game.Editor
             for (int i = 0; i < renderers.Length; i++)
             {
                 Renderer renderer = renderers[i];
-                if (renderer == null || !renderer.enabled)
+                if (renderer == null || !renderer.enabled || !renderer.gameObject.activeInHierarchy)
                     continue;
 
                 if (!assigned)
@@ -455,7 +736,7 @@ namespace Game.Editor
         {
             return new Palette
             {
-                Sand = CreateOrUpdateMaterial(SandMaterialPath, new Color(0.30f, 0.22f, 0.14f), 0f, 0.12f),
+                Sand = CreateOrUpdateMaterial(SandMaterialPath, new Color(0.36f, 0.27f, 0.18f), 0f, 0.12f),
                 Asphalt = CreateOrUpdateMaterial(AsphaltMaterialPath, new Color(0.09f, 0.085f, 0.08f), 0f, 0.18f),
                 Concrete = CreateOrUpdateMaterial(ConcreteMaterialPath, new Color(0.35f, 0.33f, 0.29f), 0f, 0.18f),
                 Curb = CreateOrUpdateMaterial(CurbMaterialPath, new Color(0.69f, 0.62f, 0.50f), 0f, 0.22f),
@@ -463,7 +744,9 @@ namespace Game.Editor
                 AmberPaint = CreateOrUpdateMaterial(AmberPaintMaterialPath, new Color(0.95f, 0.52f, 0.08f), 0f, 0.27f),
                 Turquoise = CreateOrUpdateMaterial(TurquoiseMaterialPath, new Color(0.035f, 0.36f, 0.36f), 0f, 0.25f),
                 Rust = CreateOrUpdateMaterial(RustMaterialPath, new Color(0.38f, 0.11f, 0.045f), 0.05f, 0.16f),
-                DistrictGround = CreateOrUpdateMaterial(DistrictGroundMaterialPath, new Color(0.48f, 0.36f, 0.24f), 0f, 0.1f)
+                DistrictGround = CreateOrUpdateMaterial(DistrictGroundMaterialPath, new Color(0.43f, 0.33f, 0.22f), 0f, 0.1f),
+                TransitionGround = CreateOrUpdateMaterial(TransitionGroundMaterialPath, new Color(0.39f, 0.295f, 0.195f), 0f, 0.1f),
+                DirtRoad = CreateOrUpdateMaterial(DirtRoadMaterialPath, new Color(0.32f, 0.235f, 0.145f), 0f, 0.08f)
             };
         }
 
@@ -535,11 +818,15 @@ namespace Game.Editor
             Transform terrainRoot = CreateRoot("01_Terrain_And_RoadPlan", parent).transform;
             CreateBox("DesertGround", new Vector3(0f, -1.05f, 16f), new Vector3(1200f, 2f, 900f), palette.Sand, terrainRoot);
 
-            CreateIrregularSurface("OldMarketUtilityGroundLink", new Vector3(15f, -0.035f, 14f), new Vector2(62f, 62f), palette.DistrictGround, terrainRoot);
-            CreateIrregularSurface("OldMarketAftermathGroundLink", new Vector3(13f, -0.034f, -10f), new Vector2(44f, 56f), palette.DistrictGround, terrainRoot);
+            CreateIrregularSurface("CentralOperationGround", new Vector3(-8f, -0.065f, -18f), new Vector2(250f, 205f), palette.TransitionGround, terrainRoot);
+            CreateIrregularSurface("OldMarketOuterTransition", new Vector3(-62f, -0.045f, 17f), new Vector2(142f, 124f), palette.TransitionGround, terrainRoot);
+            CreateIrregularSurface("UtilityCompoundOuterTransition", new Vector3(62f, -0.045f, 19f), new Vector2(142f, 132f), palette.TransitionGround, terrainRoot);
+            CreateIrregularSurface("ResidentialOuterTransition", new Vector3(-4f, -0.045f, -70f), new Vector2(156f, 118f), palette.TransitionGround, terrainRoot);
+            CreateIrregularSurface("OldMarketUtilityGroundLink", new Vector3(15f, -0.035f, 14f), new Vector2(62f, 62f), palette.TransitionGround, terrainRoot);
+            CreateIrregularSurface("OldMarketAftermathGroundLink", new Vector3(13f, -0.034f, -10f), new Vector2(44f, 56f), palette.TransitionGround, terrainRoot);
             CreateIrregularSurface("OldMarketDistrictApron", new Vector3(-62f, -0.015f, 17f), new Vector2(118f, 102f), palette.DistrictGround, terrainRoot);
-            CreateIrregularSurface("UtilityCompoundApron", new Vector3(69f, -0.015f, 17f), new Vector2(126f, 116f), palette.DistrictGround, terrainRoot);
-            CreateIrregularSurface("ResidentialDistrictApron", new Vector3(-5f, -0.015f, -70f), new Vector2(138f, 98f), palette.DistrictGround, terrainRoot);
+            CreateIrregularSurface("UtilityCompoundApron", new Vector3(62f, -0.015f, 19f), new Vector2(112f, 108f), palette.DistrictGround, terrainRoot);
+            CreateIrregularSurface("ResidentialDistrictApron", new Vector3(-4f, -0.015f, -70f), new Vector2(130f, 94f), palette.DistrictGround, terrainRoot);
 
             CreateLocalRoadNetwork(terrainRoot, palette);
         }
@@ -556,22 +843,23 @@ namespace Game.Editor
             Palette palette)
         {
             Vector3 delta = segment.End - segment.Start;
-            float length = delta.magnitude + 1.5f;
+            float length = delta.magnitude + 1.2f;
             Vector3 center = (segment.Start + segment.End) * 0.5f;
             Quaternion rotation = Quaternion.Euler(0f, Mathf.Atan2(delta.x, delta.z) * Mathf.Rad2Deg, 0f);
+            float roadWidth = segment.Dusty ? 4.8f : 5.4f;
 
             CreateBox(
                 $"{segment.Name}_Shoulder",
                 center + Vector3.down * 0.025f,
-                new Vector3(9.4f, 0.07f, length),
-                palette.DistrictGround,
+                new Vector3(roadWidth + 2.4f, 0.07f, length),
+                palette.TransitionGround,
                 parent,
                 rotation);
             CreateBox(
                 segment.Name,
                 center + Vector3.up * 0.035f,
-                new Vector3(6.4f, 0.12f, length),
-                segment.Dusty ? palette.Concrete : palette.Asphalt,
+                new Vector3(roadWidth, 0.12f, length),
+                segment.Dusty ? palette.DirtRoad : palette.Asphalt,
                 parent,
                 rotation);
         }
@@ -579,9 +867,253 @@ namespace Game.Editor
         private static void CreateAuthoredDistrictModules(Transform parent)
         {
             Transform modulesRoot = CreateRoot("02_DemoAuthored_DistrictModules", parent).transform;
-            PlaceModule(TownMarketModulePath, "OldMarket_West_DemoAuthored", new Vector3(-68f, 0f, 12f), 0f, 0.82f, modulesRoot);
-            PlaceModule(BaseCommandModulePath, "UtilityCompound_East_DemoAuthored", new Vector3(69f, 0f, 13f), 180f, 0.76f, modulesRoot);
-            PlaceModule(SouthTownModulePath, "Residential_South_DemoAuthored", new Vector3(-5f, 0f, -68f), 0f, 0.58f, modulesRoot);
+            ApplyDistrictCuration(PlaceModule(TownMarketModulePath, "OldMarket_West_DemoAuthored", new Vector3(-68f, 0f, 12f), 0f, 0.82f, modulesRoot));
+            ApplyDistrictCuration(PlaceModule(BaseCommandModulePath, "UtilityCompound_East_DemoAuthored", new Vector3(69f, 0f, 13f), 180f, 0.76f, modulesRoot));
+            ApplyDistrictCuration(PlaceModule(SouthTownModulePath, "Residential_South_DemoAuthored", new Vector3(-5f, 0f, -68f), 0f, 0.58f, modulesRoot));
+        }
+
+        private static void ApplyDistrictCuration(GameObject moduleObject)
+        {
+            if (!TryGetDistrictCurationDefinition(moduleObject.name, out DistrictCurationDefinition definition))
+                throw new InvalidOperationException($"M01 district curation is missing for {moduleObject.name}.");
+
+            Transform compositionRoot = FindDistrictCompositionRoot(moduleObject.transform);
+            int envelopeExclusions = 0;
+            int airfieldExclusions = 0;
+            int majorRoadExclusions = 0;
+            int remoteRoadExclusions = 0;
+            int disabledRenderers = 0;
+            for (int ownerIndex = 0; ownerIndex < compositionRoot.childCount; ownerIndex++)
+            {
+                Transform owner = compositionRoot.GetChild(ownerIndex);
+                if (!owner.gameObject.activeSelf)
+                    continue;
+
+                Renderer[] renderers = owner.GetComponentsInChildren<Renderer>(true);
+                if (!TryGetCombinedBounds(renderers, out Bounds bounds))
+                    continue;
+
+                string category = ClassifyDistrictCompositionOwner(owner);
+                bool outsideEnvelope = !definition.Contains(bounds.center);
+                bool airfieldContent = definition.ExcludeAirfield &&
+                                       string.Equals(category, "airfield", StringComparison.Ordinal);
+                bool majorRoadContent = string.Equals(category, "major-road", StringComparison.Ordinal);
+                bool remoteRoadContent = IsRemoteLongRoad(moduleObject.transform, bounds, category, definition);
+                if (!outsideEnvelope && !airfieldContent && !majorRoadContent && !remoteRoadContent)
+                    continue;
+
+                owner.gameObject.SetActive(false);
+                PrefabUtility.RecordPrefabInstancePropertyModifications(owner.gameObject);
+                disabledRenderers += renderers.Length;
+                if (outsideEnvelope)
+                    envelopeExclusions++;
+                if (airfieldContent)
+                    airfieldExclusions++;
+                if (majorRoadContent)
+                    majorRoadExclusions++;
+                if (remoteRoadContent)
+                    remoteRoadExclusions++;
+            }
+
+            int terrainClearanceAdjustments = ApplyTerrainStructureClearance(moduleObject.transform);
+
+            Debug.Log(
+                $"[M01DistrictCuration] module={moduleObject.name} envelopeExclusions={envelopeExclusions} " +
+                $"airfieldExclusions={airfieldExclusions} majorRoadExclusions={majorRoadExclusions} " +
+                $"remoteRoadExclusions={remoteRoadExclusions} terrainClearanceAdjustments={terrainClearanceAdjustments} " +
+                $"disabledRenderers={disabledRenderers} " +
+                $"bounds={definition.Minimum}->{definition.Maximum}");
+        }
+
+        private static int ApplyTerrainStructureClearance(Transform module)
+        {
+            Transform compositionRoot = FindDistrictCompositionRoot(module);
+            var structures = new List<CompositionBoundsRecord>();
+            var terrain = new List<CompositionBoundsRecord>();
+            for (int ownerIndex = 0; ownerIndex < compositionRoot.childCount; ownerIndex++)
+            {
+                Transform owner = compositionRoot.GetChild(ownerIndex);
+                if (!owner.gameObject.activeInHierarchy)
+                    continue;
+
+                Renderer[] renderers = owner.GetComponentsInChildren<Renderer>(true);
+                if (!TryGetCombinedBounds(renderers, out Bounds bounds))
+                    continue;
+
+                if (IsPrimaryStructureOwner(owner))
+                    structures.Add(new CompositionBoundsRecord(owner, bounds));
+                else if (ContainsPenetratingTerrainName(owner) && Mathf.Max(bounds.size.x, bounds.size.z) >= 3f)
+                    terrain.Add(new CompositionBoundsRecord(owner, bounds));
+            }
+
+            int adjustmentCount = 0;
+            for (int terrainIndex = 0; terrainIndex < terrain.Count; terrainIndex++)
+            {
+                CompositionBoundsRecord terrainRecord = terrain[terrainIndex];
+                float requiredLowering = 0f;
+                for (int structureIndex = 0; structureIndex < structures.Count; structureIndex++)
+                {
+                    Bounds structureBounds = structures[structureIndex].Bounds;
+                    if (!HasHighConfidenceTerrainStructurePenetration(structureBounds, terrainRecord.Bounds))
+                        continue;
+
+                    requiredLowering = Mathf.Max(
+                        requiredLowering,
+                        terrainRecord.Bounds.max.y - structureBounds.min.y + 0.08f);
+                }
+
+                if (requiredLowering <= 0f)
+                    continue;
+
+                terrainRecord.Owner.position += Vector3.down * requiredLowering;
+                PrefabUtility.RecordPrefabInstancePropertyModifications(terrainRecord.Owner);
+                adjustmentCount++;
+                Debug.Log(
+                    $"[M01TerrainStructureClearance] module={module.name} terrain={terrainRecord.Owner.name} " +
+                    $"lowered={requiredLowering:0.00}");
+            }
+
+            return adjustmentCount;
+        }
+
+        private static int CountHighConfidenceTerrainStructurePenetrations(GameObject sceneRoot, bool logDetails)
+        {
+            Transform modulesRoot = sceneRoot.transform.Find("_M01VisualGenerated/02_DemoAuthored_DistrictModules");
+            if (modulesRoot == null)
+                return 1;
+
+            int penetrationCount = 0;
+            for (int moduleIndex = 0; moduleIndex < modulesRoot.childCount; moduleIndex++)
+            {
+                Transform module = modulesRoot.GetChild(moduleIndex);
+                Transform compositionRoot = FindDistrictCompositionRoot(module);
+                var structures = new List<CompositionBoundsRecord>();
+                var terrain = new List<CompositionBoundsRecord>();
+                for (int ownerIndex = 0; ownerIndex < compositionRoot.childCount; ownerIndex++)
+                {
+                    Transform owner = compositionRoot.GetChild(ownerIndex);
+                    if (!owner.gameObject.activeInHierarchy)
+                        continue;
+
+                    Renderer[] renderers = owner.GetComponentsInChildren<Renderer>(true);
+                    if (!TryGetCombinedBounds(renderers, out Bounds bounds))
+                        continue;
+
+                    if (IsPrimaryStructureOwner(owner))
+                        structures.Add(new CompositionBoundsRecord(owner, bounds));
+                    else if (ContainsPenetratingTerrainName(owner) && Mathf.Max(bounds.size.x, bounds.size.z) >= 3f)
+                        terrain.Add(new CompositionBoundsRecord(owner, bounds));
+                }
+
+                for (int structureIndex = 0; structureIndex < structures.Count; structureIndex++)
+                {
+                    for (int terrainIndex = 0; terrainIndex < terrain.Count; terrainIndex++)
+                    {
+                        if (!HasHighConfidenceTerrainStructurePenetration(
+                                structures[structureIndex].Bounds,
+                                terrain[terrainIndex].Bounds))
+                        {
+                            continue;
+                        }
+
+                        penetrationCount++;
+                        if (logDetails)
+                        {
+                            Debug.Log(
+                                $"[M01TerrainStructureClearanceViolation] module={module.name} " +
+                                $"structure={structures[structureIndex].Owner.name} terrain={terrain[terrainIndex].Owner.name}");
+                        }
+                    }
+                }
+            }
+
+            return penetrationCount;
+        }
+
+        private static bool IsRemoteLongRoad(
+            Transform module,
+            Bounds bounds,
+            string category,
+            DistrictCurationDefinition definition)
+        {
+            if (definition.RemoteRoadDistance <= 0f ||
+                definition.RemoteRoadSize <= 0f ||
+                !string.Equals(category, "road", StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            Vector2 offset = new(bounds.center.x - module.position.x, bounds.center.z - module.position.z);
+            float horizontalSize = Mathf.Max(bounds.size.x, bounds.size.z);
+            return offset.magnitude >= definition.RemoteRoadDistance &&
+                   horizontalSize >= definition.RemoteRoadSize;
+        }
+
+        private static bool TryGetDistrictCurationDefinition(
+            string moduleName,
+            out DistrictCurationDefinition definition)
+        {
+            for (int index = 0; index < DistrictCurationDefinitions.Length; index++)
+            {
+                if (!string.Equals(DistrictCurationDefinitions[index].ModuleName, moduleName, StringComparison.Ordinal))
+                    continue;
+
+                definition = DistrictCurationDefinitions[index];
+                return true;
+            }
+
+            definition = default;
+            return false;
+        }
+
+        private static int CountDistrictCurationViolations(GameObject sceneRoot, bool logDetails)
+        {
+            Transform modulesRoot = sceneRoot.transform.Find("_M01VisualGenerated/02_DemoAuthored_DistrictModules");
+            if (modulesRoot == null)
+                return 1;
+
+            int violationCount = 0;
+            for (int moduleIndex = 0; moduleIndex < modulesRoot.childCount; moduleIndex++)
+            {
+                Transform module = modulesRoot.GetChild(moduleIndex);
+                if (!TryGetDistrictCurationDefinition(module.name, out DistrictCurationDefinition definition))
+                {
+                    violationCount++;
+                    continue;
+                }
+
+                Transform compositionRoot = FindDistrictCompositionRoot(module);
+                for (int ownerIndex = 0; ownerIndex < compositionRoot.childCount; ownerIndex++)
+                {
+                    Transform owner = compositionRoot.GetChild(ownerIndex);
+                    if (!owner.gameObject.activeInHierarchy)
+                        continue;
+
+                    Renderer[] renderers = owner.GetComponentsInChildren<Renderer>(true);
+                    if (!TryGetCombinedBounds(renderers, out Bounds bounds))
+                        continue;
+
+                    string category = ClassifyDistrictCompositionOwner(owner);
+                    bool outsideEnvelope = !definition.Contains(bounds.center);
+                    bool airfieldContent = definition.ExcludeAirfield &&
+                                           string.Equals(category, "airfield", StringComparison.Ordinal);
+                    bool majorRoadContent = string.Equals(category, "major-road", StringComparison.Ordinal);
+                    bool remoteRoadContent = IsRemoteLongRoad(module, bounds, category, definition);
+                    if (!outsideEnvelope && !airfieldContent && !majorRoadContent && !remoteRoadContent)
+                        continue;
+
+                    violationCount++;
+                    if (logDetails)
+                    {
+                        Debug.Log(
+                            $"[M01DistrictCurationViolation] module={module.name} owner={owner.name} " +
+                            $"center={bounds.center} outsideEnvelope={outsideEnvelope} airfield={airfieldContent} " +
+                            $"majorRoad={majorRoadContent} remoteRoad={remoteRoadContent}");
+                    }
+                }
+            }
+
+            return violationCount;
         }
 
         private static void CreateOldMarketStoryLayer(Transform parent, Palette palette)
@@ -664,7 +1196,7 @@ namespace Game.Editor
             PlacePrefab("Assets/PolygonMilitary/Prefabs/Vehicles/Destroyed/SM_Veh_Truck_01_Destroyed.prefab", "DestroyedAidTruck", new Vector3(12.7f, 0f, -18f), 4f, 1.05f, root);
             PlacePrefab("Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Ruins_03.prefab", "BombedCornerRuin", new Vector3(26f, 0f, -24f), 182f, 1.05f, root);
             PlacePrefab("Assets/PolygonMilitary/Prefabs/FX/FX_Fire_01.prefab", "AftermathFire", new Vector3(11.5f, 0.7f, -18.5f), 0f, 0.8f, root);
-            PlacePrefab("Assets/PolygonMilitary/Prefabs/FX/FX_Smoke_Large_01.prefab", "AftermathSmoke", new Vector3(13.5f, 0f, -20f), 0f, 0.58f, root);
+            PlacePrefab("Assets/PolygonMilitary/Prefabs/FX/FX_Smoke_Large_01.prefab", "AftermathSmoke", new Vector3(13.5f, 0f, -20f), 0f, 0.38f, root);
 
             string[] debris =
             {
@@ -732,6 +1264,14 @@ namespace Game.Editor
             int roadClearanceIntersections = CountLocalRoadClearanceIntersections(root, true);
             if (roadClearanceIntersections != 0)
                 throw new InvalidOperationException($"M01 local roads intersect {roadClearanceIntersections} building or large-terrain bounds.");
+
+            int districtCurationViolations = CountDistrictCurationViolations(root, true);
+            if (districtCurationViolations != 0)
+                throw new InvalidOperationException($"M01 district curation left {districtCurationViolations} active edge, airfield, or major-road objects.");
+
+            int terrainStructurePenetrations = CountHighConfidenceTerrainStructurePenetrations(root, true);
+            if (terrainStructurePenetrations != 0)
+                throw new InvalidOperationException($"M01 district curation left {terrainStructurePenetrations} high-confidence terrain/structure penetrations.");
         }
 
         private static void SimulateParticles()

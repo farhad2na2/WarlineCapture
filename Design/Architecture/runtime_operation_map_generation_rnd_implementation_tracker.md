@@ -1,6 +1,6 @@
 # Runtime Operation Map Generation R&D Implementation Tracker
 
-**Status:** Active. R60 is the stable pre-Android owner-validation candidate. It preserves exact editor-to-runtime replay after removing the oversized plus-shaped road, replacing it with a narrow compound link and blocked Old Market civilian route, relocating the bombing story layer, adding transition ground, and enforcing zero primary-road/building/large-terrain clearance intersections. Structural, matched-camera, lifecycle, focused architecture, and source-growth gates pass. Project-owner visual confirmation, broader parity-source polish, desktop generation-time improvement, Android profiling, gameplay integration, and production adoption remain open.
+**Status:** Active. R64 is the stable pre-Android owner-validation candidate. It removes both the original plus-shaped highway and the remaining imported major-road/runway content, narrows the authored local route, unifies the operation ground, and lowers 11 high-confidence rock/building penetrations without changing shared Demo prefabs. Exact editor/runtime manifests and same-camera renders match, lifecycle recovery passes, and all 28 focused runtime-city tests pass. The broad source-growth suite is currently red only for unrelated committed growth in two production resource helpers that this slice does not modify. Project-owner visual confirmation, remaining composition polish, desktop generation-time improvement, Android profiling, gameplay integration, and production adoption remain open.
 
 **Created:** 2026-07-15
 
@@ -213,8 +213,8 @@ The earlier checkmarks in this phase described changes to the rejected algorithm
 - [ ] Record every visual issue still present in the editor/runtime parity pair.
 - [ ] Classify each issue as a reusable replay rule, M01 authored constraint, palette problem, or presentation problem.
 - [x] Guarantee a continuous, visibly readable ground surface beneath the full playable composition and camera footprint.
-- [ ] Reject or relocate large rocks, dunes, hills, and other terrain dressing that intersects structures or primary roads.
-- [ ] Add coherent district aprons, road shoulders, and terrain transitions so modules do not read as disconnected islands.
+- [~] Reject or relocate large rocks, dunes, hills, and other terrain dressing that intersects structures or primary roads. R64 clears every local-road intersection and lowers 11 high-confidence rock/building penetrations; the broader intentional rock-foundation contact set remains a visual-review item.
+- [~] Add coherent district aprons, road shoulders, and terrain transitions so modules do not read as disconnected islands. R64 provides one continuous operation ground, three district aprons, three outer transition bands, two local links, and local-scale shoulders; owner composition review remains open.
 - [ ] Rebalance dense clusters and dead zones while retaining clear landmark silhouettes and tactical breathing room.
 - [ ] Orient buildings toward their road circulation intent where the source prefab allows it.
 - [ ] Improve horizon closure and framing without placing large silhouettes behind or through foreground structures.
@@ -232,7 +232,7 @@ The earlier checkmarks in this phase described changes to the rejected algorithm
 | A first local-route attempt crossed the residential module's dense authored rock field | Reusable source validation plus M01 authored constraint | South connector withdrawn; bombing moved to a bounded Old Market route. The generator now fails on any building or large-terrain overlap with a local-road corridor; R60 reports `0`. |
 | Dark gaps between district aprons made connected areas read as uncovered ground | Presentation problem | Added lower transition aprons beneath the Old Market-to-compound and Old Market-aftermath links while retaining one horizon-scale foundation. |
 | Destroyed truck, crater, barriers, smoke, and ruin did not communicate the bounded M01 civilian-route incident | M01 story composition | Regrouped at the blocked route endpoint and retargeted the aftermath review camera. |
-| Remaining district-edge repetition, building orientation, dead-zone balance, horizon polish, and non-road terrain/structure clearance | Shared-source visual quality backlog | Still open in Phase 4B; no acceptance checkbox is claimed. |
+| Remaining district-edge repetition, building orientation, dead-zone balance, horizon polish, and non-road terrain/structure clearance | Shared-source visual quality backlog | R64 removes imported major roads and the highest-confidence rock penetrations. Broader composition review remains open; no owner-acceptance checkbox is claimed. |
 
 **Exit:** Runtime M01 is visibly stronger than the original editor prototype and the improvements generalize to future runtime maps where appropriate.
 
@@ -646,7 +646,7 @@ The implementation now proceeds in this order:
 6. [x] Generate comparable editor/runtime manifests and require equal visible-content counts and semantic hashes.
 7. [x] Generate same-camera perspective/top-down captures and inspect measured image deltas before any owner review.
 8. [x] Prove restart/clear, lifecycle recovery, architecture, focused tests, and performance/GC source contracts remain intact; require the indexed worst batch to return below the desktop budget.
-9. [~] After Gate 1 passes, replace the inappropriate plus-shaped autobahn, remove its building intersections, fix penetrating rocks and uncovered ground in the shared editor/runtime source, and prove parity again. R60 removes the highway, passes local-road clearance at `0`, restores ground transitions, and proves parity; broader non-road terrain/structure inspection remains open.
+9. [~] After Gate 1 passes, replace the inappropriate plus-shaped autobahn, remove its building intersections, fix penetrating rocks and uncovered ground in the shared editor/runtime source, and prove parity again. R64 removes all imported major-road/runway content, passes local-road clearance at `0`, lowers 11 high-confidence rock/building penetrations to `0`, guarantees continuous ground, and proves parity again. Owner review and broader composition polish remain open.
 10. [ ] Only then reconsider procedural variation, loading-shell integration, Android profiling, gameplay integration, and production adoption.
 
 ### 2026-07-16 Roadmap Correction
@@ -689,3 +689,19 @@ The implementation now proceeds in this order:
 - Validation passed: runtime prototype build/scene validation, 28 runtime-city focused tests, and 15 production source-growth architecture tests.
 - Evidence: `Logs/M01_R60_BlockedRouteBuildValidate_CleanSnapshots.log`, `Logs/M01_R60_BlockedRoutePlayMode_Graphics.log`, `Logs/M01_R60_FocusedTests.log`, `Logs/M01_R60_SourceGrowthTests_Retry.log`, `Logs/M01_EditorCurrentReference.png`, `Logs/M01_EditorCurrentTopDown.png`, `Logs/M01_RuntimeGenerationBaseline.png`, and `Logs/M01_RuntimeGenerationTopDown.png`.
 - This is the first internally accepted owner-review candidate after the algorithmic rejection. No Android optimization or production adoption is implied.
+
+### 2026-07-16 R64 Local Streets And Terrain Clearance Candidate
+
+- Removed `27` active imported major-road objects across the three reused modules, including the remaining approximately `14 m`-wide compound road strip. The airfield/runway exclusion also removed `23` utility-module owners. Small authored dirt lanes remain inside the districts.
+- Narrowed the authored asphalt route from `6.4 m` to `5.4 m`, narrowed the blocked civilian dirt route to `4.8 m`, added a dedicated dirt material, and retained source-generation road clearance as a hard zero-intersection gate.
+- Added one continuous operation ground, three outer transition bands, three district aprons, and lower road/link shoulders so removed demo terrain cannot expose holes.
+- Added editor-only terrain/structure diagnostics. A broad AABB scan recorded `238` contacts, most of which are intentional rock foundations or small architectural dressing; a stricter primary-structure rule identified and lowered `11` high-confidence penetrations. Generation now fails if any high-confidence penetration remains.
+- Reduced the aftermath smoke scale and tightened the gameplay-overview framing. The editor source fingerprint is `F5E1A47D6F6611D7812C45018BFE194BE3B712C44CD56EAD4B393FEF63377E60`.
+- Regenerated the exact recipe as `M01RuntimeVisualRecipe_2026-07-16_v17_local_streets_only` under runtime marker `RuntimeCityM01LocalStreets_R64_2026-07-16`.
+- Editor and runtime manifests match at `10253` renderers, `11` lights, `71` particle renderers, and SHA-256 `56D8A3AAB7DF945A159281E768361C8BA09C84008464532BA0667EBE3DAE51C6`.
+- Same-camera comparison measures perspective RGB MAE `0.026` and top-down RGB MAE `0.000`; direct inspection confirms the runtime captures reconstruct the corrected editor source.
+- Runtime smoke passed with `7023` recipe entries, one foundation, `11.108 ms` worst visual batch, `27` budget yields, and `18.960s` total smoke time. The frame ceiling passes; total desktop generation time remains above the `5s` target and is intentionally deferred until owner visual review.
+- Lifecycle recovery passed with one cancellation, one deterministic missing-config fallback, one attempt, `7023` recipe entries, and one foundation.
+- All `28` focused runtime-city tests pass, including the passive-view/`SystemBase` architecture check. The `15`-test broad production source-growth run is red because clean, unrelated `BuildingResourceHaulerBridgeCompositionSystemHelper.cs` and `FactionResourceCompositionSystemHelper.cs` exceed their historical baselines; R64 does not modify either file.
+- Evidence: `Logs/M01_R64_TerrainClearanceGenerateCapture.log`, `Logs/M01_R64_LocalStreetsBuildValidate.log`, `Logs/M01_R64_LocalStreetsPlayModeSmoke.log`, `Logs/M01_R64_LifecycleRecovery.log`, `Logs/M01_R64_FocusedTests.log`, `Logs/M01_R64_SourceGrowthTests.log`, `Logs/M01_EditorCurrentReference.png`, `Logs/M01_EditorCurrentTopDown.png`, `Logs/M01_RuntimeGenerationBaseline.png`, and `Logs/M01_RuntimeGenerationTopDown.png`.
+- No Android optimization, gameplay integration, production adoption, or owner visual acceptance is claimed.

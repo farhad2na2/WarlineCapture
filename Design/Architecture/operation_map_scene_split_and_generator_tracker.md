@@ -699,7 +699,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 25% (44/177 checklist items complete).
+Overall implementation progress: 25% (45/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
@@ -709,7 +709,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 | 1. Operation-map and scenario data contracts | In progress / shared subset | 11 | 12 | 92% | Typed identity, catalog resolution, complete loader-neutral spatial/navigation metadata, hashes, validation, and ownership chain are approved; delivery-specific references remain later. |
 | 2. Per-map static presentation ownership | Not started / compatibility subset | 0 | 14 | 0% | Preserve the current baked map safely; future-map generation remains undecided. |
 | 2A. Local Addressables packaging foundation | Later / direction-specific | 0 | 20 | 0% | Do not implement before the map-delivery direction is selected. |
-| 3. Current-map compatibility registration | In progress / shared | 7 | 10 | 70% | Current identities/definition are registered, schema-v1 read compatibility is explicit, and the current Match route publishes/disposes one active compatibility-map metadata root without loading another scene. |
+| 3. Current-map compatibility registration | In progress / shared | 8 | 10 | 80% | Current identities/definition are registered, schema-v1 read compatibility is explicit, the Match route publishes/disposes one active metadata root, and Android resolution includes exactly the compatibility manifest's accepted chunks. |
 | 4. Non-destructive scene ownership split | In progress / shared priority | 8 | 14 | 57% | The staged scene now has one non-updating serialized-reference view and fail-closed validation over its definition, spatial metadata, lighting/probes, runway/helipad content, placements, and map-owned subscene; source Match assets remain unchanged. |
 | 5. Runtime selection, loading, and teardown | In progress / shared contracts | 1 | 14 | 7% | Pure readiness/failure/teardown data contracts only; concrete loading is later. |
 | 6. Metadata, camera, minimap, and movement binding | In progress / shared | 6 | 12 | 50% | Scenario-required anchors validate against map metadata; camera bounds/poses and the current axis-aligned minimap projection resolve from active-map metadata with compatibility fallbacks; editor overlays and warmed allocation-free lookup coverage are approved. |
@@ -835,7 +835,7 @@ Exit criteria:
 - [x] Launch the existing match through the compatibility operation-map id with no visual or gameplay behavior change. See `../AgentReports/2026-07-16_current_operation_map_compatibility_runtime_activation.md`.
 - [x] Run the current map bake twice and prove accepted parity followed by zero writes/deletes. See `../AgentReports/2026-07-16_current_map_double_bake_noop_parity.md`.
 - [ ] Validate map-authored building, vehicle, aircraft, runway, helipad, blocker, and source-hiding behavior.
-- [ ] Validate Android build-scene resolution includes only the compatibility map's accepted chunks.
+- [x] Validate Android build-scene resolution includes only the compatibility map's accepted chunks. See `../AgentReports/2026-07-16_current_operation_map_android_build_scene_resolution.md`.
 - [ ] Update this tracker with exact paths, hashes, counts, commands, logs, and screenshots.
 
 Exit criteria:
@@ -1099,6 +1099,7 @@ Exit criteria:
 | 2026-07-16 | Operation-map editor/debug overlays | `../AgentReports/2026-07-16_operation_map_editor_debug_overlays.md`; focused EditMode `4 / 4`; source-growth/naming `24 / 24`; exact bounds/oriented-minimap geometry; typed anchor colors; Unity compile; `git diff --check` | Passed | Added a selection-scoped editor overlay for operation-map spatial metadata and composed the existing bounded surface-height/blocked-cell preview. No runtime code, loop, scene, payload, loader, or Addressables behavior changed. |
 | 2026-07-16 | Current-map double-bake no-op parity | `../AgentReports/2026-07-16_current_map_double_bake_noop_parity.md`; two authoritative Android-target bakes; `16,542` sources; `514` chunks; `0` writes; `0` deletes; `1,033` tracked generated files byte-identical; `git diff --check` | Passed | Proved the current compatibility map bake is deterministic and no-op on current main. No generated presentation asset, scene, manifest, integrity file, or `.meta` file changed. |
 | 2026-07-16 | Current operation-map compatibility runtime activation | `../AgentReports/2026-07-16_current_operation_map_compatibility_runtime_activation.md`; pre-rebase focused suite `86 / 86`; combined latest-main compatibility/wiring/Android-resolution `36 / 36`; Menu-Match-Menu PlayMode `1 / 1`; canonical bake `16,542` sources / `514` chunks; second bake `0` writes / `0` deletes; `1,033` generated files checked | Passed; unrelated latest-main gate debt recorded | `MatchSceneView` now owns explicit compatibility catalog/map/scenario/mission data, publishes one metadata-ready ECS root before startup consumers, and disposes it on Match teardown. No scene loading/unloading implementation was added; only the canonical manifest dependency hash changed and all chunk bytes remained stable. Three source-growth failures introduced by separate `RuntimeCity*` R&D changes on latest main remain outside this slice. |
+| 2026-07-16 | Current operation-map Android build-scene resolution | `../AgentReports/2026-07-16_current_operation_map_android_build_scene_resolution.md`; documented macOS licensing workaround; focused EditMode `23 / 23`; canonical manifest SHA-256 `b389013b...2ec01`; `514` accepted chunks | Passed | The real-project resolver includes enabled base scenes followed by exactly the current compatibility manifest's unique owned chunks and fails closed on stale, missing, duplicate, foreign, or integrity-invalid inputs. No map, manifest, generated output, build setting, loader, or Addressables asset changed. |
 
 ## Open Decisions
 

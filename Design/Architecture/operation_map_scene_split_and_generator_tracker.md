@@ -699,7 +699,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 24% (42/177 checklist items complete).
+Overall implementation progress: 24% (43/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
@@ -709,7 +709,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 | 1. Operation-map and scenario data contracts | In progress / shared subset | 11 | 12 | 92% | Typed identity, catalog resolution, complete loader-neutral spatial/navigation metadata, hashes, validation, and ownership chain are approved; delivery-specific references remain later. |
 | 2. Per-map static presentation ownership | Not started / compatibility subset | 0 | 14 | 0% | Preserve the current baked map safely; future-map generation remains undecided. |
 | 2A. Local Addressables packaging foundation | Later / direction-specific | 0 | 20 | 0% | Do not implement before the map-delivery direction is selected. |
-| 3. Current-map compatibility registration | In progress / shared | 5 | 10 | 50% | Current identities/definition are registered and schema-v1 read compatibility is explicit; runtime launch remains. |
+| 3. Current-map compatibility registration | In progress / shared | 6 | 10 | 60% | Current identities/definition are registered, schema-v1 read compatibility is explicit, and two authoritative current-map bakes are byte-stable no-ops; runtime launch remains. |
 | 4. Non-destructive scene ownership split | In progress / shared priority | 8 | 14 | 57% | The staged scene now has one non-updating serialized-reference view and fail-closed validation over its definition, spatial metadata, lighting/probes, runway/helipad content, placements, and map-owned subscene; source Match assets remain unchanged. |
 | 5. Runtime selection, loading, and teardown | In progress / shared contracts | 1 | 14 | 7% | Pure readiness/failure/teardown data contracts only; concrete loading is later. |
 | 6. Metadata, camera, minimap, and movement binding | In progress / shared | 6 | 12 | 50% | Scenario-required anchors validate against map metadata; camera bounds/poses and the current axis-aligned minimap projection resolve from active-map metadata with compatibility fallbacks; editor overlays and warmed allocation-free lookup coverage are approved. |
@@ -833,7 +833,7 @@ Exit criteria:
 - [x] Record current building/vehicle placement counts and source paths as map-owned compatibility data. See `../AgentReports/2026-07-16_current_operation_map_placement_registration.md`.
 - [x] Keep the current schema-v1 manifest readable during the map-specific schema transition. See `../AgentReports/2026-07-16_static_map_schema_v1_read_compatibility.md`.
 - [ ] Launch the existing match through the compatibility operation-map id with no visual or gameplay behavior change.
-- [ ] Run the current map bake twice and prove accepted parity followed by zero writes/deletes.
+- [x] Run the current map bake twice and prove accepted parity followed by zero writes/deletes. See `../AgentReports/2026-07-16_current_map_double_bake_noop_parity.md`.
 - [ ] Validate map-authored building, vehicle, aircraft, runway, helipad, blocker, and source-hiding behavior.
 - [ ] Validate Android build-scene resolution includes only the compatibility map's accepted chunks.
 - [ ] Update this tracker with exact paths, hashes, counts, commands, logs, and screenshots.
@@ -1097,6 +1097,7 @@ Exit criteria:
 | 2026-07-16 | Active operation-map minimap projection binding | `../AgentReports/2026-07-16_operation_map_minimap_projection_binding.md`; focused EditMode `22 / 22`; final adapter `5 / 5`; source-growth/naming `24 / 24`; exact fractional extents; unique-root/stale/missing compatibility fallbacks; Unity compile; `git diff --check` | Passed | The existing minimap adapter and raster cache now use the current active map's axis-aligned minimap origin/extents. Rotated metadata deliberately retains the legacy grid path until rotated raster filtering is implemented end to end. |
 | 2026-07-16 | Operation-map mobile-safe lookup validation | `../AgentReports/2026-07-16_operation_map_mobile_safe_lookup_validation.md`; focused EditMode `3 / 3`; source-growth/naming `24 / 24`; zero managed allocation after warmup for active-map minimap/camera and immutable surface/anchor lookups; Unity compile; `git diff --check` | Passed | Added test-only allocation and query-cache regression coverage. No runtime source, scene, map payload, generated output, loader, or Addressables behavior changed. |
 | 2026-07-16 | Operation-map editor/debug overlays | `../AgentReports/2026-07-16_operation_map_editor_debug_overlays.md`; focused EditMode `4 / 4`; source-growth/naming `24 / 24`; exact bounds/oriented-minimap geometry; typed anchor colors; Unity compile; `git diff --check` | Passed | Added a selection-scoped editor overlay for operation-map spatial metadata and composed the existing bounded surface-height/blocked-cell preview. No runtime code, loop, scene, payload, loader, or Addressables behavior changed. |
+| 2026-07-16 | Current-map double-bake no-op parity | `../AgentReports/2026-07-16_current_map_double_bake_noop_parity.md`; two authoritative Android-target bakes; `16,542` sources; `514` chunks; `0` writes; `0` deletes; `1,033` tracked generated files byte-identical; `git diff --check` | Passed | Proved the current compatibility map bake is deterministic and no-op on current main. No generated presentation asset, scene, manifest, integrity file, or `.meta` file changed. |
 
 ## Open Decisions
 

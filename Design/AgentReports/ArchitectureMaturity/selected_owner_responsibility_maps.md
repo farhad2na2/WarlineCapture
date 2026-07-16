@@ -6,7 +6,7 @@ Artifact: `am010-selected-owner-responsibility-maps-v1`
 
 ## Evidence Binding
 
-- Authoritative JSON SHA-256: `3523bb9360ff5c35680cf3eac0591193a911530038201734a57058ea40cc94d5`
+- Authoritative JSON SHA-256: `a2465d59c76ddca78eb91e8717674ac410f32d4096a103b09fc69be88edcecf0`
 - Source baseline: `ab955a7721fd0616b627daab508632d023e047d8` / tree `a40d19b327a33bc2aca8e126dcdc61616ccee458` on `main`
 - AM-009 ranking: `Design/AgentReports/ArchitectureMaturity/owner_risk_ranking.json` / SHA-256 `ec381d90aa68ca4adc4387de344085f9ba0c0aabe7a1afb190155e381c803847`
 - Freshness-bound evidence files: `14`
@@ -69,7 +69,7 @@ Artifact: `am010-selected-owner-responsibility-maps-v1`
 
 ### Tests And Validation Commands
 
-- GroundMissileLauncherRuntimeTests provides focused EditMode behavior coverage; run it through the Unity Test Framework EditMode filter. Evidence: `Assets/Tests/Editor/GroundMissileLauncherRuntimeTests.cs:14`.
+- GroundMissileLauncherRuntimeTests provides focused EditMode behavior coverage; run it through the Unity Test Framework EditMode filter. Evidence: `Assets/Tests/Editor/GroundMissileLauncherRuntimeTests.cs:16`.
 - GroundMissileLauncherPlayModeTests covers the runtime scene flow; run it through the Unity Test Framework PlayMode filter. Evidence: `Assets/Tests/PlayMode/GroundMissileLauncherPlayModeTests.cs:10-12`.
 - Run Tools/CI/invoke_unity_macos.sh --timeout 600 --log /private/tmp/am010-ground-missile-performance.log -- -quit -executeMethod GroundMissileAttackPerformanceValidation.RunBatchValidation for the current 16-warmup/64-measurement timing fixture. Evidence: `Assets/Tests/Editor/GroundMissileAttackPerformanceValidation.cs:18-43`.
 
@@ -146,7 +146,7 @@ Artifact: `am010-selected-owner-responsibility-maps-v1`
 
 ### Tests And Validation Commands
 
-- Run Tools/CI/invoke_unity_macos.sh --timeout 600 --log /private/tmp/am010-unit-transport.log -- -quit -executeMethod UnitTransportValidationTests.RunBatchValidation for focused ground, cargo, landed-state, reach, ramp, and architecture coverage. Evidence: `Assets/Tests/Editor/UnitTransportValidationTests.cs:27-113`.
+- Run Tools/CI/invoke_unity_macos.sh --timeout 600 --log /private/tmp/am010-unit-transport.log -- -quit -executeMethod UnitTransportValidationTests.RunBatchValidation for focused ground, cargo, landed-state, reach, ramp, and architecture coverage. Evidence: `Assets/Tests/Editor/UnitTransportValidationTests.cs:27-128`.
 - Run Tools/CI/invoke_unity_macos.sh --timeout 600 --log /private/tmp/am010-boarding-performance.log -- -quit -executeMethod TransportBoardingPerformanceValidation.RunBatchValidation for the current 16-warmup/64-measurement fixture. Evidence: `Assets/Tests/Editor/TransportBoardingPerformanceValidation.cs:43-67`.
 - Run Tools/CI/invoke_unity_macos.sh --timeout 600 --log /private/tmp/am010-boarding-playmode.log -- -quit -runTests -testPlatform PlayMode -testFilter GameSceneTransportBoardingPlayModeTests -testResults /private/tmp/am010-boarding-playmode.xml for scene-flow boarding coverage. Evidence: `Assets/Tests/PlayMode/GameSceneTransportBoardingPlayModeTests.cs:231-307`.
 - UnitTransportBoardingSystemExtractionTests characterizes passenger-kind and capacity/occupancy rules relevant to the proposed extraction. Evidence: `Assets/Tests/Editor/UnitTransportBoardingSystemExtractionTests.cs:66-183`.

@@ -93,6 +93,12 @@ public sealed class UnitTransportValidationTests
             RunTest(test => test.BoardAllSelectedTransportCommand_IgnoresDistantPassengers());
             RunTest(test => test.AirTransport_DoesNotBoardSoldierUntilLanded());
             RunTest(test => test.AirTransport_BoardsWhenLandedOnRaisedHelipad());
+            RunTest(test => test.TransportBoardingSystem_DuplicatePassengerEntriesConsumeCapacityPerEntry());
+            RunTest(test => test.TransportBoardingSystem_IgnoresMissingPassengerEntitiesWhenCountingOccupancy());
+            RunTest(test => test.TransportBoardingSystem_VehicleRequiresCargoCapacity());
+            RunTest(test => test.TransportBoardingSystem_CargoSoldierCapacityOverridesLegacyCapacity());
+            RunTest(test => test.TransportBoardingSystem_BoardingTargetMetadataClassifiesVehicleOccupancy());
+            RunTest(test => test.TransportBoardingSystem_MultipleGridConfigsRejectAmbiguousSingleton());
             RunTest(test => test.AirTransport_DoesNotBoardAtOldWideClearanceDistance());
             RunTest(test => test.AirTransport_DoesNotBoardWhenStoppedOneCellShortOfCloseGoal());
             RunTest(test => test.AirTransport_DoesNotBoardAtFarEdgeOfLargeHelicopterFootprint());
@@ -110,7 +116,7 @@ public sealed class UnitTransportValidationTests
             RunTest(test => test.SelectionFallback_FindsNearbyTransportHelicopterWhenHelipadCellWasClicked());
             RunTest(test => test.FocusedTransportReadModel_PublishesPassengerCapacityAndRows());
             RunTest(test => test.FocusedTransportReadModel_PublishesPlaneCargoCapacityBreakdown());
-            Debug.Log("[UnitTransportValidation] result=Passed tests=79");
+            Debug.Log("[UnitTransportValidation] result=Passed tests=88");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -135,6 +141,27 @@ public sealed class UnitTransportValidationTests
         {
             Debug.LogException(exception);
             Debug.LogError("[UnitTransportBoardMoveValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
+    public static void RunBoardingArchitectureCharacterizationValidation()
+    {
+        try
+        {
+            RunTest(test => test.TransportBoardingSystem_DuplicatePassengerEntriesConsumeCapacityPerEntry());
+            RunTest(test => test.TransportBoardingSystem_IgnoresMissingPassengerEntitiesWhenCountingOccupancy());
+            RunTest(test => test.TransportBoardingSystem_VehicleRequiresCargoCapacity());
+            RunTest(test => test.TransportBoardingSystem_CargoSoldierCapacityOverridesLegacyCapacity());
+            RunTest(test => test.TransportBoardingSystem_BoardingTargetMetadataClassifiesVehicleOccupancy());
+            RunTest(test => test.TransportBoardingSystem_MultipleGridConfigsRejectAmbiguousSingleton());
+            Debug.Log("[TransportBoardingArchitectureCharacterization] result=Passed tests=6");
+            ValidationExit.Passed();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[TransportBoardingArchitectureCharacterization] result=Failed");
             ValidationExit.Failed();
         }
     }
@@ -2734,6 +2761,176 @@ public sealed class UnitTransportValidationTests
         Assert.AreEqual(1, em.GetBuffer<UnitTransportPassengerElement>(transport).Length, "A helicopter visibly landed on a raised helipad should accept nearby soldiers.");
         Assert.IsTrue(em.HasComponent<UnitTransportPassenger>(passenger));
         Assert.IsTrue(em.HasComponent<Disabled>(passenger));
+    }
+
+    [Test]
+    public void TransportBoardingSystem_DuplicatePassengerEntriesConsumeCapacityPerEntry()
+    {
+        using var world = new World("TransportBoardingSystem_DuplicatePassengerEntries");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em, 12, 12);
+
+        Entity transport = CreateTransport(em, new int2(5, 5), air: false, airborne: false);
+        em.SetComponentData(transport, new UnitTransportCapacity { SoldierCapacity = 2 });
+        Entity loadedPassenger = CreateLoadedPassenger(em, transport);
+        DynamicBuffer<UnitTransportPassengerElement> passengers = em.GetBuffer<UnitTransportPassengerElement>(transport);
+        passengers.Add(new UnitTransportPassengerElement { Passenger = loadedPassenger });
+        passengers.Add(new UnitTransportPassengerElement { Passenger = loadedPassenger });
+        Entity candidate = CreatePassenger(em, new int2(6, 5), transport, new int2(6, 5));
+
+        SystemHandle boardingSystem = world.CreateSystem<UnitTransportBoardingSystem>();
+        world.SetTime(new TimeData(1d, 0.1f));
+        boardingSystem.Update(world.Unmanaged);
+
+        DynamicBuffer<UnitTransportPassengerElement> currentPassengers = em.GetBuffer<UnitTransportPassengerElement>(transport);
+        Assert.AreEqual(2, currentPassengers.Length, "Current occupancy counts each live buffer entry, including duplicate entity entries.");
+        Assert.IsFalse(em.HasComponent<UnitTransportPassenger>(candidate));
+        Assert.IsFalse(em.HasComponent<UnitTransportBoardingTarget>(candidate),
+            "A duplicate entry can consume the final seat and causes the pending boarding target to be cancelled.");
+    }
+
+    [Test]
+    public void TransportBoardingSystem_IgnoresMissingPassengerEntitiesWhenCountingOccupancy()
+    {
+        using var world = new World("TransportBoardingSystem_MissingPassengerEntries");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em, 12, 12);
+
+        Entity transport = CreateTransport(em, new int2(5, 5), air: false, airborne: false);
+        em.SetComponentData(transport, new UnitTransportCapacity { SoldierCapacity = 1 });
+        Entity destroyedPassenger = em.CreateEntity();
+        em.DestroyEntity(destroyedPassenger);
+        DynamicBuffer<UnitTransportPassengerElement> passengers = em.GetBuffer<UnitTransportPassengerElement>(transport);
+        passengers.Add(new UnitTransportPassengerElement { Passenger = Entity.Null });
+        passengers.Add(new UnitTransportPassengerElement { Passenger = destroyedPassenger });
+        Entity candidate = CreatePassenger(em, new int2(6, 5), transport, new int2(6, 5));
+
+        SystemHandle boardingSystem = world.CreateSystem<UnitTransportBoardingSystem>();
+        world.SetTime(new TimeData(1d, 0.1f));
+        boardingSystem.Update(world.Unmanaged);
+
+        DynamicBuffer<UnitTransportPassengerElement> currentPassengers = em.GetBuffer<UnitTransportPassengerElement>(transport);
+        Assert.IsTrue(em.HasComponent<UnitTransportPassenger>(candidate));
+        Assert.IsTrue(em.HasComponent<Disabled>(candidate));
+        Assert.AreEqual(3, currentPassengers.Length);
+        Assert.AreEqual(Entity.Null, currentPassengers[0].Passenger);
+        Assert.AreEqual(destroyedPassenger, currentPassengers[1].Passenger);
+        Assert.IsTrue(TransportPassengerBufferContains(currentPassengers, candidate),
+            "Null and destroyed passenger entries are retained but ignored by occupancy counting.");
+    }
+
+    [Test]
+    public void TransportBoardingSystem_VehicleRequiresCargoCapacity()
+    {
+        using var world = new World("TransportBoardingSystem_VehicleRequiresCargoCapacity");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em, 12, 12);
+
+        Entity transport = CreateTransport(em, new int2(5, 5), air: false, airborne: false);
+        Entity vehicle = CreateVehiclePassenger(em, new int2(6, 5), transport, new int2(6, 5));
+
+        SystemHandle boardingSystem = world.CreateSystem<UnitTransportBoardingSystem>();
+        world.SetTime(new TimeData(1d, 0.1f));
+        boardingSystem.Update(world.Unmanaged);
+
+        Assert.AreEqual(0, em.GetBuffer<UnitTransportPassengerElement>(transport).Length);
+        Assert.IsFalse(em.HasComponent<UnitTransportPassenger>(vehicle));
+        Assert.IsFalse(em.HasComponent<UnitTransportBoardingTarget>(vehicle),
+            "Vehicle capacity is zero when UnitTransportCargoCapacity is absent, regardless of legacy soldier capacity.");
+    }
+
+    [Test]
+    public void TransportBoardingSystem_CargoSoldierCapacityOverridesLegacyCapacity()
+    {
+        using var world = new World("TransportBoardingSystem_CargoSoldierCapacityOverride");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em, 12, 12);
+
+        Entity transport = CreateTransport(em, new int2(5, 5), air: false, airborne: false);
+        em.SetComponentData(transport, new UnitTransportCapacity { SoldierCapacity = 4 });
+        em.AddComponentData(transport, new UnitTransportCargoCapacity
+        {
+            SoldierCapacity = 1,
+            VehicleCapacity = 0,
+            CargoWeightCapacity = 0
+        });
+        Entity loadedPassenger = CreateLoadedPassenger(em, transport);
+        DynamicBuffer<UnitTransportPassengerElement> passengers = em.GetBuffer<UnitTransportPassengerElement>(transport);
+        passengers.Add(new UnitTransportPassengerElement { Passenger = loadedPassenger });
+        Entity candidate = CreatePassenger(em, new int2(6, 5), transport, new int2(6, 5));
+
+        SystemHandle boardingSystem = world.CreateSystem<UnitTransportBoardingSystem>();
+        world.SetTime(new TimeData(1d, 0.1f));
+        boardingSystem.Update(world.Unmanaged);
+
+        Assert.AreEqual(1, em.GetBuffer<UnitTransportPassengerElement>(transport).Length);
+        Assert.IsFalse(em.HasComponent<UnitTransportPassenger>(candidate));
+        Assert.IsFalse(em.HasComponent<UnitTransportBoardingTarget>(candidate),
+            "A positive cargo soldier capacity overrides the legacy UnitTransportCapacity value.");
+    }
+
+    [Test]
+    public void TransportBoardingSystem_BoardingTargetMetadataClassifiesVehicleOccupancy()
+    {
+        using var world = new World("TransportBoardingSystem_BoardingTargetKindFallback");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em, 12, 12);
+
+        Entity transport = CreateTransport(em, new int2(5, 5), air: false, airborne: false);
+        em.AddComponentData(transport, new UnitTransportCargoCapacity
+        {
+            SoldierCapacity = 0,
+            VehicleCapacity = 1,
+            CargoWeightCapacity = 0
+        });
+        Entity reservedVehicle = em.CreateEntity(typeof(UnitTransportBoardingTarget));
+        em.SetComponentData(reservedVehicle, new UnitTransportBoardingTarget
+        {
+            Transport = transport,
+            Goal = new int2(6, 5),
+            PassengerKind = UnitTransportPassengerKind.Vehicle,
+            CargoWeight = 9
+        });
+        DynamicBuffer<UnitTransportPassengerElement> passengers = em.GetBuffer<UnitTransportPassengerElement>(transport);
+        passengers.Add(new UnitTransportPassengerElement { Passenger = reservedVehicle });
+        Entity candidate = CreateVehiclePassenger(em, new int2(6, 5), transport, new int2(6, 5));
+
+        SystemHandle boardingSystem = world.CreateSystem<UnitTransportBoardingSystem>();
+        world.SetTime(new TimeData(1d, 0.1f));
+        boardingSystem.Update(world.Unmanaged);
+
+        Assert.AreEqual(1, em.GetBuffer<UnitTransportPassengerElement>(transport).Length);
+        Assert.IsFalse(em.HasComponent<UnitTransportPassenger>(candidate));
+        Assert.IsFalse(em.HasComponent<UnitTransportBoardingTarget>(candidate),
+            "When cargo metadata is absent, matching boarding-target metadata classifies a live buffered entity as vehicle occupancy.");
+    }
+
+    [Test]
+    public void TransportBoardingSystem_MultipleGridConfigsRejectAmbiguousSingleton()
+    {
+        using var world = new World("TransportBoardingSystem_MultipleGridConfigs");
+        EntityManager em = world.EntityManager;
+        CreateGrid(em, 12, 12);
+        Entity duplicateGrid = em.CreateEntity(typeof(GridConfig));
+        em.SetComponentData(duplicateGrid, new GridConfig { Width = 12, Height = 12, CellSize = 1f, Origin = float3.zero });
+        Entity transport = CreateTransport(em, new int2(5, 5), air: false, airborne: false);
+        Entity passenger = CreatePassenger(em, new int2(6, 5), transport, new int2(6, 5));
+
+        SystemHandle boardingSystem = world.CreateSystem<UnitTransportBoardingSystem>();
+        world.SetTime(new TimeData(1d, 0.1f));
+
+        void UpdateBoardingSystemDirectly()
+        {
+            world.Unmanaged.GetUnsafeSystemRef<UnitTransportBoardingSystem>(boardingSystem)
+                .OnUpdate(ref world.Unmanaged.ResolveSystemStateRef(boardingSystem));
+        }
+
+        Assert.Throws<InvalidOperationException>(UpdateBoardingSystemDirectly,
+            "UnitTransportBoardingSystem requires exactly one GridConfig before processing passengers.");
+
+        Assert.AreEqual(0, em.GetBuffer<UnitTransportPassengerElement>(transport).Length);
+        Assert.IsTrue(em.HasComponent<UnitTransportBoardingTarget>(passenger),
+            "Ambiguous GridConfig state aborts the update before the current boarding target is consumed.");
     }
 
     [Test]

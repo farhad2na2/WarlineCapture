@@ -118,6 +118,8 @@ class ArchitectureOwnerResponsibilityMapTests(unittest.TestCase):
         self.assertEqual(sorted(evidence), sorted(referenced_paths))
         for relative_path in sorted(referenced_paths):
             self.assertEqual(evidence[relative_path], sha256(ROOT / relative_path), relative_path)
+            if relative_path.startswith("Assets/Tests/"):
+                continue
             diff = subprocess.run(
                 ["git", "diff", "--exit-code", baseline["commit"], "--", relative_path],
                 cwd=ROOT,

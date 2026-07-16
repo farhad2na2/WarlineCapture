@@ -1,0 +1,18 @@
+{
+  "warmupScenarios": 16,
+  "measuredScenarios": 64,
+  "passengerCount": 8,
+  "boardedCount": 512,
+  "disembarkedCount": 512,
+  "averageTotalMs": 2.259,
+  "p95TotalMs": 2.541,
+  "p99TotalMs": 3.514,
+  "maxTotalMs": 5.126,
+  "averageBoardCommandMs": 1.679,
+  "p95BoardCommandMs": 1.851,
+  "averageBoardingUpdateMs": 0.386,
+  "p95BoardingUpdateMs": 0.443,
+  "averageDisembarkCommandMs": 0.195,
+  "p95DisembarkCommandMs": 0.219,
+  "allocatedBytesCurrentThread": 0
+}

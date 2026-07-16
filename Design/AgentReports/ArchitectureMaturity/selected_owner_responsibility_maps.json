@@ -14,7 +14,7 @@
     "rendererPath": "Tools/CI/architecture_owner_responsibility_maps.py",
     "rendererSha256": "94b25cbcd25b1c38c8f1dc2a1275297a3da31f560667437b96e20eca567371cf",
     "validatorPath": "Tools/CI/tests/test_architecture_owner_responsibility_maps.py",
-    "validatorSha256": "a026af752ce5b2336aa112abebebd1561f29e963aceaa20143d97df48d2f4faf"
+    "validatorSha256": "bd3ba2b492594464634253bbec1456b25849d2b15797359324f5fbead4673d02"
   },
   "summaryPath": "Design/AgentReports/ArchitectureMaturity/selected_owner_responsibility_maps.md",
   "evidenceFiles": [
@@ -25,10 +25,10 @@
     {"path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs", "sha256": "4bf4aa8c443121efb03585d08102ba79c1959d6094833b8c5816fe857044cd36"},
     {"path": "Assets/Game/Scripts/Systems/UnitTransportPassengerStateSystem.cs", "sha256": "8c30249ffbb65993369b04e06c4018ca1d18508df1e1c98381ca6ebd9d856863"},
     {"path": "Assets/Tests/Editor/GroundMissileAttackPerformanceValidation.cs", "sha256": "e8a1a011f7c8c2a46ec1ca0dd4db76f88eae9a5df42acb1e801be0d778c8cd7b"},
-    {"path": "Assets/Tests/Editor/GroundMissileLauncherRuntimeTests.cs", "sha256": "864204139495ba808b6183e5b224a5370d459dfd5e55fdb204ccaff1bd4567ce"},
+    {"path": "Assets/Tests/Editor/GroundMissileLauncherRuntimeTests.cs", "sha256": "84a84c8cf4a274c08e75e5a9eb69fcc22cd143da4d115e8e59ad532755853471"},
     {"path": "Assets/Tests/Editor/TransportBoardingPerformanceValidation.cs", "sha256": "9abcf7a12ae984b714d1bbab92c0bda98d181edcd75457ea21b8aef3cb8e2418"},
     {"path": "Assets/Tests/Editor/UnitTransportBoardingSystemExtractionTests.cs", "sha256": "824694305995cce4dab783b8fe815976a91e3080a3357875f85bde1a9ad1ba42"},
-    {"path": "Assets/Tests/Editor/UnitTransportValidationTests.cs", "sha256": "8c945f3b8a75448df5bb2f24104b0c7f85fc8b18e3685e103dc905b7d505c523"},
+    {"path": "Assets/Tests/Editor/UnitTransportValidationTests.cs", "sha256": "fb857bbc6a6c191f2ec459b0cdcee0ce6bd4a853c2b02585dbc1c61c22b05f67"},
     {"path": "Assets/Tests/PlayMode/GameSceneTransportBoardingPlayModeTests.cs", "sha256": "92309e14bcc3f7bd1c189d0c35732dbbf58c122b31ea639ef91dd3490c0ee086"},
     {"path": "Assets/Tests/PlayMode/GroundMissileLauncherPlayModeTests.cs", "sha256": "00759de4bd833d54e9d261a2a27967c1a6397151cb2a88422bd13c5f4b0b27f1"},
     {"path": "Design/AgentReports/ArchitectureMaturity/owner_risk_ranking.json", "sha256": "ec381d90aa68ca4adc4387de344085f9ba0c0aabe7a1afb190155e381c803847"}
@@ -166,7 +166,7 @@
       "tests": [
         {
           "statement": "GroundMissileLauncherRuntimeTests provides focused EditMode behavior coverage; run it through the Unity Test Framework EditMode filter.",
-          "references": [{"path": "Assets/Tests/Editor/GroundMissileLauncherRuntimeTests.cs", "lineStart": 14, "lineEnd": 14}]
+          "references": [{"path": "Assets/Tests/Editor/GroundMissileLauncherRuntimeTests.cs", "lineStart": 16, "lineEnd": 16}]
         },
         {
           "statement": "GroundMissileLauncherPlayModeTests covers the runtime scene flow; run it through the Unity Test Framework PlayMode filter.",
@@ -333,7 +333,7 @@
       "tests": [
         {
           "statement": "Run Tools/CI/invoke_unity_macos.sh --timeout 600 --log /private/tmp/am010-unit-transport.log -- -quit -executeMethod UnitTransportValidationTests.RunBatchValidation for focused ground, cargo, landed-state, reach, ramp, and architecture coverage.",
-          "references": [{"path": "Assets/Tests/Editor/UnitTransportValidationTests.cs", "lineStart": 27, "lineEnd": 113}]
+          "references": [{"path": "Assets/Tests/Editor/UnitTransportValidationTests.cs", "lineStart": 27, "lineEnd": 128}]
         },
         {
           "statement": "Run Tools/CI/invoke_unity_macos.sh --timeout 600 --log /private/tmp/am010-boarding-performance.log -- -quit -executeMethod TransportBoardingPerformanceValidation.RunBatchValidation for the current 16-warmup/64-measurement fixture.",

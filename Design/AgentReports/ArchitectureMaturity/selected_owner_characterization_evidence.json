@@ -1,0 +1,171 @@
+{
+  "artifactId": "am011-selected-owner-characterization-evidence-v1",
+  "schemaVersion": 1,
+  "sourceBaseline": {
+    "branch": "main",
+    "commit": "0108927d29b85c332bba3d5ea74264f7c60d8a4d",
+    "tree": "abb8b8343263edb4042d76ccba588bb067930163"
+  },
+  "productionOwners": [
+    {
+      "path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs",
+      "sha256": "96efa78461a89825021528bf706cb1e61f0caae968f2a034f4db5d5467f9ac6c"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs",
+      "sha256": "4bf4aa8c443121efb03585d08102ba79c1959d6094833b8c5816fe857044cd36"
+    }
+  ],
+  "productionChangePaths": [],
+  "allowedTestWritePaths": [
+    "Assets/Tests/Editor/GroundMissileLauncherRuntimeTests.cs",
+    "Assets/Tests/Editor/UnitTransportValidationTests.cs"
+  ],
+  "testFiles": [
+    {
+      "path": "Assets/Tests/Editor/GroundMissileLauncherRuntimeTests.cs",
+      "sha256": "84a84c8cf4a274c08e75e5a9eb69fcc22cd143da4d115e8e59ad532755853471"
+    },
+    {
+      "path": "Assets/Tests/Editor/UnitTransportValidationTests.cs",
+      "sha256": "fb857bbc6a6c191f2ec459b0cdcee0ce6bd4a853c2b02585dbc1c61c22b05f67"
+    }
+  ],
+  "validatorAuthority": {
+    "path": "Tools/CI/tests/test_architecture_owner_characterization_evidence.py",
+    "sha256": "5c0590730fefd5041dc3c09b459fd3fa2ab21253a6d13a7d3fcd67a742af81b4"
+  },
+  "characterizationCases": [
+    {
+      "id": "ground-recovering-phase",
+      "ownerId": "ground-missile-runtime",
+      "testPath": "Assets/Tests/Editor/GroundMissileLauncherRuntimeTests.cs",
+      "testMethod": "FireSystem_RecoveringPhaseCountsDownWithoutTransitionOrCleanup",
+      "disposition": "known-limitation",
+      "expectedContract": "Recovering clamps its timer to zero but preserves phase, target, and selected slot and creates no projectile until an explicit future owner decision changes the behavior."
+    },
+    {
+      "id": "ground-projectile-removed-before-impact",
+      "ownerId": "ground-missile-runtime",
+      "testPath": "Assets/Tests/Editor/GroundMissileLauncherRuntimeTests.cs",
+      "testMethod": "ProjectileRemovedBeforeImpact_LeavesLauncherInFlightStateForExplicitCleanupOwner",
+      "disposition": "known-limitation",
+      "expectedContract": "Removing a projectile without an impact request leaves GroundMissileInFlightComponent on the launcher and produces no impact request."
+    },
+    {
+      "id": "ground-trail-missing-frame-release",
+      "ownerId": "ground-missile-runtime",
+      "testPath": "Assets/Tests/Editor/GroundMissileLauncherRuntimeTests.cs",
+      "testMethod": "MissileTrailVfxView_MissingProjectileReleasesPooledTrailAfterTolerance",
+      "disposition": "preserved-behavior",
+      "expectedContract": "Repeated sync reuses one trail, more than two missing frames starts release, and elapsed release time returns the instance to the existing pool."
+    },
+    {
+      "id": "transport-duplicate-buffer-entry",
+      "ownerId": "transport-boarding-runtime",
+      "testPath": "Assets/Tests/Editor/UnitTransportValidationTests.cs",
+      "testMethod": "TransportBoardingSystem_DuplicatePassengerEntriesConsumeCapacityPerEntry",
+      "disposition": "known-limitation",
+      "expectedContract": "Each live duplicate passenger-buffer entry consumes capacity and can cancel an otherwise valid boarding target."
+    },
+    {
+      "id": "transport-missing-buffer-entry",
+      "ownerId": "transport-boarding-runtime",
+      "testPath": "Assets/Tests/Editor/UnitTransportValidationTests.cs",
+      "testMethod": "TransportBoardingSystem_IgnoresMissingPassengerEntitiesWhenCountingOccupancy",
+      "disposition": "preserved-behavior",
+      "expectedContract": "Null and destroyed passenger-buffer entries remain stored but do not consume capacity or prevent a valid passenger from boarding."
+    },
+    {
+      "id": "transport-vehicle-missing-cargo-capacity",
+      "ownerId": "transport-boarding-runtime",
+      "testPath": "Assets/Tests/Editor/UnitTransportValidationTests.cs",
+      "testMethod": "TransportBoardingSystem_VehicleRequiresCargoCapacity",
+      "disposition": "preserved-behavior",
+      "expectedContract": "Vehicle capacity is zero without UnitTransportCargoCapacity even when legacy soldier capacity is available."
+    },
+    {
+      "id": "transport-cargo-soldier-override",
+      "ownerId": "transport-boarding-runtime",
+      "testPath": "Assets/Tests/Editor/UnitTransportValidationTests.cs",
+      "testMethod": "TransportBoardingSystem_CargoSoldierCapacityOverridesLegacyCapacity",
+      "disposition": "preserved-behavior",
+      "expectedContract": "A positive cargo soldier capacity overrides UnitTransportCapacity.SoldierCapacity during job and main-thread revalidation."
+    },
+    {
+      "id": "transport-boarding-target-kind-fallback",
+      "ownerId": "transport-boarding-runtime",
+      "testPath": "Assets/Tests/Editor/UnitTransportValidationTests.cs",
+      "testMethod": "TransportBoardingSystem_BoardingTargetMetadataClassifiesVehicleOccupancy",
+      "disposition": "preserved-behavior",
+      "expectedContract": "Matching UnitTransportBoardingTarget metadata classifies a live buffered entity as vehicle occupancy when cargo-passenger metadata is absent."
+    },
+    {
+      "id": "transport-multiple-grid-singleton",
+      "ownerId": "transport-boarding-runtime",
+      "testPath": "Assets/Tests/Editor/UnitTransportValidationTests.cs",
+      "testMethod": "TransportBoardingSystem_MultipleGridConfigsRejectAmbiguousSingleton",
+      "disposition": "known-limitation",
+      "expectedContract": "The exact GridConfig singleton precondition rejects two matching entities before boarding state is consumed."
+    }
+  ],
+  "unityValidations": [
+    {
+      "id": "ground-characterization",
+      "command": "Tools/CI/invoke_unity_macos.sh --timeout 600 --log /private/tmp/am011-ground-characterization.log -- -quit -executeMethod GroundMissileLauncherRuntimeTests.RunArchitectureCharacterizationValidation",
+      "result": "Passed",
+      "passedTests": 3,
+      "compilerErrors": 0
+    },
+    {
+      "id": "transport-characterization",
+      "command": "Tools/CI/invoke_unity_macos.sh --timeout 600 --log /private/tmp/am011-transport-characterization-reviewfix.log -- -quit -executeMethod UnitTransportValidationTests.RunBoardingArchitectureCharacterizationValidation",
+      "result": "Passed",
+      "passedTests": 6,
+      "compilerErrors": 0
+    },
+    {
+      "id": "transport-full-regression",
+      "command": "Tools/CI/invoke_unity_macos.sh --timeout 900 --log /private/tmp/am011-transport-full-reviewfix.log -- -quit -executeMethod UnitTransportValidationTests.RunBatchValidation",
+      "result": "Passed",
+      "passedTests": 88,
+      "compilerErrors": 0
+    },
+    {
+      "id": "ground-attack-regression",
+      "command": "Tools/CI/invoke_unity_macos.sh --timeout 600 --log /private/tmp/am011-ground-attack.log -- -quit -executeMethod GroundMissileLauncherRuntimeTests.RunAttackFocusedValidation",
+      "result": "Passed",
+      "passedTests": 5,
+      "compilerErrors": 0
+    },
+    {
+      "id": "ground-visual-regression",
+      "command": "Tools/CI/invoke_unity_macos.sh --timeout 600 --log /private/tmp/am011-ground-visual.log -- -quit -executeMethod GroundMissileLauncherRuntimeTests.RunMissileVisualValidation",
+      "result": "Passed",
+      "passedTests": 1,
+      "compilerErrors": 0
+    }
+  ],
+  "performanceEvidence": [
+    {
+      "id": "ground-missile-focused",
+      "command": "Tools/CI/invoke_unity_macos.sh --timeout 600 --log /private/tmp/am011-ground-performance.log -- -quit -executeMethod GroundMissileAttackPerformanceValidation.RunBatchValidation",
+      "result": "Passed",
+      "compilerErrors": 0,
+      "reportPath": "Design/AgentReports/ArchitectureMaturity/am011_ground_missile_performance.json",
+      "reportSha256": "0a3743d0be7f95516a49886ae7dec48b5e2cc8afccbe420748aac4a92f3cdfac",
+      "averageMetric": "averageSimulationMs",
+      "acceptedAverageCeilingMs": 20.0
+    },
+    {
+      "id": "transport-boarding-focused",
+      "command": "Tools/CI/invoke_unity_macos.sh --timeout 600 --log /private/tmp/am011-transport-performance.log -- -quit -executeMethod TransportBoardingPerformanceValidation.RunBatchValidation",
+      "result": "Passed",
+      "compilerErrors": 0,
+      "reportPath": "Design/AgentReports/ArchitectureMaturity/am011_transport_boarding_performance.json",
+      "reportSha256": "a4d0ecb3cdb1b584a87f7b33f873c4bb0c4253a7a4857da4cec6041f222a84a8",
+      "averageMetric": "averageBoardingUpdateMs",
+      "acceptedAverageCeilingMs": 20.0
+    }
+  ]
+}

@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Reflection;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Core;
@@ -64,6 +66,25 @@ public sealed class GroundMissileLauncherRuntimeTests
         {
             Debug.LogException(ex);
             Debug.LogError("[GroundMissileAttackFocusedValidation] result=Failed");
+            ValidationExit.Exit(1);
+        }
+    }
+
+    public static void RunArchitectureCharacterizationValidation()
+    {
+        try
+        {
+            var tests = new GroundMissileLauncherRuntimeTests();
+            tests.FireSystem_RecoveringPhaseCountsDownWithoutTransitionOrCleanup();
+            tests.ProjectileRemovedBeforeImpact_LeavesLauncherInFlightStateForExplicitCleanupOwner();
+            tests.MissileTrailVfxView_MissingProjectileReleasesPooledTrailAfterTolerance();
+            Debug.Log("[GroundMissileArchitectureCharacterization] result=Passed tests=3");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[GroundMissileArchitectureCharacterization] result=Failed");
             ValidationExit.Exit(1);
         }
     }
@@ -400,6 +421,143 @@ public sealed class GroundMissileLauncherRuntimeTests
         endSimulation.Update();
 
         Assert.IsFalse(em.HasComponent<EngageTarget>(launcher), "Ground missile launchers should fire only from explicit attack/debug orders, not automatic target acquisition.");
+    }
+
+    [Test]
+    public void FireSystem_RecoveringPhaseCountsDownWithoutTransitionOrCleanup()
+    {
+        using var world = new World("GroundMissileLauncherRuntimeTests_RecoveringCharacterization");
+        EntityManager em = world.EntityManager;
+
+        Entity target = CreateTarget(em, new float3(20f, 0f, 0f), health: 100);
+        Entity launcher = CreateLauncher(em, float3.zero, prepareSeconds: 0.5f, reloadSeconds: 3f);
+        em.SetComponentData(launcher, new GroundMissileLauncherStateComponent
+        {
+            Phase = (byte)GroundMissileLauncherPhase.Recovering,
+            TargetEntity = target,
+            TargetCell = new int2(20, 0),
+            TargetWorldPosition = new float3(20f, 0f, 0f),
+            Timer = 0.1f,
+            SelectedRocketSlot = 2
+        });
+
+        SystemHandle fireSystem = world.CreateSystem<GroundMissileLauncherFireSystem>();
+        world.SetTime(new TimeData(0.25d, 0.25f));
+        fireSystem.Update(world.Unmanaged);
+
+        GroundMissileLauncherStateComponent state = em.GetComponentData<GroundMissileLauncherStateComponent>(launcher);
+        Assert.AreEqual((byte)GroundMissileLauncherPhase.Recovering, state.Phase,
+            "Current behavior leaves the reserved Recovering phase unchanged; a future behavior change requires an explicit owner decision.");
+        Assert.AreEqual(0f, state.Timer, 0.0001f);
+        Assert.AreEqual(target, state.TargetEntity);
+        Assert.AreEqual(new int2(20, 0), state.TargetCell);
+        Assert.AreEqual(2, state.SelectedRocketSlot);
+        using EntityQuery projectileQuery = em.CreateEntityQuery(typeof(GroundMissileProjectileComponent));
+        Assert.AreEqual(0, projectileQuery.CalculateEntityCount());
+    }
+
+    [Test]
+    public void ProjectileRemovedBeforeImpact_LeavesLauncherInFlightStateForExplicitCleanupOwner()
+    {
+        using var world = new World("GroundMissileLauncherRuntimeTests_RemovedProjectileCharacterization");
+        EntityManager em = world.EntityManager;
+
+        Entity target = CreateTarget(em, new float3(20f, 0f, 0f), health: 100);
+        Entity launcher = CreateLauncher(em, float3.zero, prepareSeconds: 0.5f, reloadSeconds: 3f);
+        em.AddComponentData(launcher, new GroundMissileInFlightComponent
+        {
+            TargetEntity = target,
+            TargetCell = new int2(20, 0),
+            TargetWorldPosition = new float3(20f, 0f, 0f)
+        });
+        Entity projectile = em.CreateEntity(
+            typeof(LocalTransform),
+            typeof(GroundMissileProjectileComponent),
+            typeof(MissileInterceptionTargetComponent));
+        em.SetComponentData(projectile, LocalTransform.Identity);
+        em.SetComponentData(projectile, new GroundMissileProjectileComponent
+        {
+            Source = launcher,
+            TargetEntity = target,
+            TargetCell = new int2(20, 0),
+            StartPosition = float3.zero,
+            TargetPosition = new float3(20f, 0f, 0f),
+            DurationSeconds = 1f,
+            Damage = 100,
+            FactionId = FactionIdentity.PlayerFactionId,
+            Interceptable = 1
+        });
+        em.SetComponentData(projectile, new MissileInterceptionTargetComponent
+        {
+            Source = launcher,
+            FactionId = FactionIdentity.PlayerFactionId
+        });
+
+        em.DestroyEntity(projectile);
+        SystemHandle fireSystem = world.CreateSystem<GroundMissileLauncherFireSystem>();
+        SystemHandle flightSystem = world.CreateSystem<GroundMissileProjectileFlightSystem>();
+        SystemHandle impactSystem = world.CreateSystem<GroundMissileImpactSystem>();
+        world.SetTime(new TimeData(0.25d, 0.25f));
+        fireSystem.Update(world.Unmanaged);
+        flightSystem.Update(world.Unmanaged);
+        impactSystem.Update(world.Unmanaged);
+
+        Assert.IsTrue(em.HasComponent<GroundMissileInFlightComponent>(launcher),
+            "Current behavior clears launcher in-flight state only through impact consumption; interception cleanup needs an explicit future owner.");
+        using EntityQuery impactQuery = em.CreateEntityQuery(typeof(GroundMissileImpactRequestComponent));
+        Assert.AreEqual(0, impactQuery.CalculateEntityCount());
+    }
+
+    [Test]
+    public void MissileTrailVfxView_MissingProjectileReleasesPooledTrailAfterTolerance()
+    {
+        DestroyMissileTrailVfxView();
+        try
+        {
+            Entity projectile = new Entity { Index = 101, Version = 1 };
+            MissileTrailVfxView.Sync(projectile, new float3(1f, 2f, 3f), new float3(0f, 0f, 1f));
+            MissileTrailVfxView.Sync(projectile, new float3(4f, 5f, 6f), new float3(1f, 0f, 0f));
+
+            GameObject root = GameObject.Find("MissileTrailVfxView");
+            Assert.IsNotNull(root);
+            MissileTrailVfxView view = root.GetComponent<MissileTrailVfxView>();
+            FieldInfo activeField = typeof(MissileTrailVfxView).GetField("_active", BindingFlags.Instance | BindingFlags.NonPublic);
+            FieldInfo poolField = typeof(MissileTrailVfxView).GetField("_pool", BindingFlags.Instance | BindingFlags.NonPublic);
+            MethodInfo updateMethod = typeof(MissileTrailVfxView).GetMethod("Update", BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.IsNotNull(activeField);
+            Assert.IsNotNull(poolField);
+            Assert.IsNotNull(updateMethod);
+
+            var active = (IDictionary)activeField.GetValue(view);
+            Assert.AreEqual(1, active.Count, "Repeated sync must update one pooled trail rather than allocate a duplicate.");
+            object trail = active[projectile];
+            Assert.IsNotNull(trail);
+            Type trailType = trail.GetType();
+            FieldInfo rootField = trailType.GetField("Root", BindingFlags.Instance | BindingFlags.Public);
+            FieldInfo lastSeenField = trailType.GetField("LastSeenFrame", BindingFlags.Instance | BindingFlags.Public);
+            FieldInfo releaseTimeField = trailType.GetField("ReleaseTime", BindingFlags.Instance | BindingFlags.Public);
+            FieldInfo releasingField = trailType.GetField("Releasing", BindingFlags.Instance | BindingFlags.Public);
+            Assert.IsNotNull(rootField);
+            Assert.IsNotNull(lastSeenField);
+            Assert.IsNotNull(releaseTimeField);
+            Assert.IsNotNull(releasingField);
+            Assert.AreEqual(new Vector3(4f, 5f, 6f), ((GameObject)rootField.GetValue(trail)).transform.position);
+
+            lastSeenField.SetValue(trail, Time.frameCount - 3);
+            updateMethod.Invoke(view, null);
+            Assert.IsTrue((bool)releasingField.GetValue(trail),
+                "A trail not synchronized for more than two frames must enter release instead of remaining active forever.");
+
+            releaseTimeField.SetValue(trail, Time.time - 0.01f);
+            updateMethod.Invoke(view, null);
+            Assert.AreEqual(0, active.Count);
+            Assert.AreEqual(1, ReadCollectionCount(poolField.GetValue(view)),
+                "Completed trails should return to the existing pool for reuse.");
+        }
+        finally
+        {
+            DestroyMissileTrailVfxView();
+        }
     }
 
     [Test]
@@ -809,6 +967,13 @@ public sealed class GroundMissileLauncherRuntimeTests
         GameObject trailRoot = GameObject.Find("MissileTrailVfxView");
         if (trailRoot != null)
             UnityEngine.Object.DestroyImmediate(trailRoot);
+    }
+
+    private static int ReadCollectionCount(object collection)
+    {
+        PropertyInfo countProperty = collection?.GetType().GetProperty("Count", BindingFlags.Instance | BindingFlags.Public);
+        Assert.IsNotNull(countProperty);
+        return (int)countProperty.GetValue(collection);
     }
 
     private static Entity CreateTarget(EntityManager em, float3 position, int health)

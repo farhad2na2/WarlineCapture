@@ -744,6 +744,7 @@ public sealed class ProductionSourceGrowthArchitectureTests
             Require(actual != null, "Post-hardening guardrail entries cannot be null.");
             RequireExactProjectSourcePath(actual.Path, "post-hardening guardrail path");
             Require(actual.Path == frozen.Path, $"Unexpected post-hardening guardrail path `{actual.Path}`.");
+            Require(actual.SourceSha256 == frozen.SourceSha256, $"`{actual.Path}` sourceSha256 changed.");
             Require(actual.MaxLines == frozen.MaxLines, $"`{actual.Path}` maxLines must remain {frozen.MaxLines}.");
             Require(actual.MaxBytes == frozen.MaxBytes, $"`{actual.Path}` maxBytes must remain {frozen.MaxBytes}.");
             Require(
@@ -795,6 +796,13 @@ public sealed class ProductionSourceGrowthArchitectureTests
             }
 
             SourceFile source = MeasureFile(guardrail.Path);
+            string sourceSha256 = ComputeFileSha256(guardrail.Path);
+            if (!string.Equals(sourceSha256, guardrail.SourceSha256, StringComparison.Ordinal))
+            {
+                violations.Add(
+                    $"guarded source identity changed {guardrail.Path} " +
+                    $"({sourceSha256} != {guardrail.SourceSha256})");
+            }
             if (source.LineCount > guardrail.MaxLines || source.ByteCount > guardrail.MaxBytes)
             {
                 violations.Add(
@@ -861,9 +869,20 @@ public sealed class ProductionSourceGrowthArchitectureTests
         HashSet<string> baselinePaths = SplitRawLines(baselineTree)
             .Select(NormalizePath)
             .ToHashSet(PathIdentityComparer);
+        string changedProduction = RunGit(
+            $"-c core.quotepath=false diff --name-only {contract.ReplacementOwnerBoundary.BaselineCommit} -- " +
+            contract.ReplacementOwnerBoundary.Root,
+            allowEmptyOutput: true);
+        HashSet<string> changedProductionPaths = SplitRawLines(changedProduction)
+            .Select(NormalizePath)
+            .ToHashSet(PathIdentityComparer);
         foreach (SourceFile candidate in productionSources.Where(source =>
             source.Path.StartsWith(contract.ReplacementOwnerBoundary.Root + "/", StringComparison.Ordinal)))
         {
+            bool existedAtBaseline = baselinePaths.Contains(candidate.Path);
+            if (existedAtBaseline && !changedProductionPaths.Contains(candidate.Path))
+                continue;
+
             string candidateContent = File.ReadAllText(candidate.Path);
             int currentLifecycleMatches = CountContainedSymbols(
                 candidateContent,
@@ -878,7 +897,7 @@ public sealed class ProductionSourceGrowthArchitectureTests
 
             int baselineLifecycleMatches = 0;
             bool baselineDomainOwner = false;
-            if (baselinePaths.Contains(candidate.Path))
+            if (existedAtBaseline)
             {
                 string baselineContent = Encoding.UTF8.GetString(RunGitBytes(
                     $"show {contract.ReplacementOwnerBoundary.BaselineCommit}:{candidate.Path}"));
@@ -1036,6 +1055,7 @@ public sealed class ProductionSourceGrowthArchitectureTests
             RequireExactProperties(
                 entry,
                 "path",
+                "sourceSha256",
                 "maxLines",
                 "maxBytes",
                 "maxResponsibilityDomainSymbolOccurrences",
@@ -1055,6 +1075,7 @@ public sealed class ProductionSourceGrowthArchitectureTests
             new()
             {
                 Path = "Assets/Game/Scripts/UI/Shell/ResourceExchangeShellBinding.cs",
+                SourceSha256 = "640758d7b1562455285ee8da14b8da38fd9c31102397e1267eafa90328d7ee07",
                 MaxLines = 94,
                 MaxBytes = 3160,
                 MaxResponsibilityDomainSymbolOccurrences = 10,
@@ -1104,6 +1125,7 @@ public sealed class ProductionSourceGrowthArchitectureTests
             new()
             {
                 Path = "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs",
+                SourceSha256 = "a729b621b4ae140807469c336e6277c6cfaaa81aac5dfe2fcd3c9b3e97d8d7a9",
                 MaxLines = 898,
                 MaxBytes = 38807,
                 MaxResponsibilityDomainSymbolOccurrences = 11,
@@ -1165,8 +1187,8 @@ public sealed class ProductionSourceGrowthArchitectureTests
             boundary.ManagedLifecycleMatchThreshold == 3,
             "Replacement-owner managed lifecycle threshold must remain 3.");
         Require(
-            boundary.GenericLifecycleMatchThreshold == 6,
-            "Replacement-owner generic lifecycle threshold must remain 6.");
+            boundary.GenericLifecycleMatchThreshold == 3,
+            "Replacement-owner generic lifecycle threshold must remain 3.");
         RequireExactSequence(
             boundary.ManagedLifecycleSymbols,
             new[]
@@ -1267,6 +1289,14 @@ public sealed class ProductionSourceGrowthArchitectureTests
     private static int CountContainedSymbols(string content, IReadOnlyList<string> symbols)
     {
         return symbols.Count(symbol => content.Contains(symbol, StringComparison.Ordinal));
+    }
+
+    private static string ComputeFileSha256(string path)
+    {
+        using SHA256 sha256 = SHA256.Create();
+        return BitConverter.ToString(sha256.ComputeHash(File.ReadAllBytes(path)))
+            .Replace("-", string.Empty)
+            .ToLowerInvariant();
     }
 
     private static string ReadManifestJson()
@@ -2030,6 +2060,9 @@ public sealed class ProductionSourceGrowthArchitectureTests
     {
         [JsonPropertyName("path")]
         public string Path { get; set; }
+
+        [JsonPropertyName("sourceSha256")]
+        public string SourceSha256 { get; set; }
 
         [JsonPropertyName("maxLines")]
         public int MaxLines { get; set; }

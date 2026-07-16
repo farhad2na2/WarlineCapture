@@ -86,6 +86,7 @@ class ArchitectureSourceResponsibilityGuardrailEvidenceTests(unittest.TestCase):
             content = path.read_text(encoding="utf-8")
             clean_content = strip_comments_and_strings(content)
             lines, byte_count = measure_bytes(path.read_bytes())
+            self.assertEqual(entry["sourceSha256"], sha256(path))
             self.assertLessEqual(lines, entry["maxLines"], entry["path"])
             self.assertLessEqual(byte_count, entry["maxBytes"], entry["path"])
             self.assertEqual(evidence_sources[entry["path"]]["sha256"], sha256(path))
@@ -110,9 +111,14 @@ class ArchitectureSourceResponsibilityGuardrailEvidenceTests(unittest.TestCase):
 
         baseline_commit = boundary["baselineCommit"]
         self.assertRegex(baseline_commit, r"^[0-9a-f]{40}$")
+        baseline_paths = set(git("ls-tree", "-r", "--name-only", baseline_commit, "--", boundary["root"]).splitlines())
+        changed_production = set(git("diff", "--name-only", baseline_commit, "--", boundary["root"]).splitlines())
         for candidate in production:
             relative = str(candidate.relative_to(ROOT))
             if not relative.startswith(boundary["root"] + "/"):
+                continue
+            existed_at_baseline = relative in baseline_paths
+            if existed_at_baseline and relative not in changed_production:
                 continue
             candidate_text = candidate.read_text(encoding="utf-8")
             current_matches = sum(symbol in candidate_text for symbol in boundary["managedLifecycleSymbols"])
@@ -124,13 +130,8 @@ class ArchitectureSourceResponsibilityGuardrailEvidenceTests(unittest.TestCase):
             if (not current_domain_owner and not current_generic_owner) or relative in allowed_owners:
                 continue
 
-            baseline_probe = subprocess.run(
-                ["git", "cat-file", "-e", f"{baseline_commit}:{relative}"],
-                cwd=ROOT,
-                capture_output=True,
-            )
             baseline_text = ""
-            if baseline_probe.returncode == 0:
+            if existed_at_baseline:
                 baseline_text = git("show", f"{baseline_commit}:{relative}")
             baseline_matches = sum(symbol in baseline_text for symbol in boundary["managedLifecycleSymbols"])
             baseline_domain_owner = (

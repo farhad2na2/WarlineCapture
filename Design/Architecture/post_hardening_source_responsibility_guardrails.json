@@ -18,7 +18,7 @@
       "BindResourceExchangePopup"
     ],
     "managedLifecycleMatchThreshold": 3,
-    "genericLifecycleMatchThreshold": 6,
+    "genericLifecycleMatchThreshold": 3,
     "allowedOwnerPaths": []
   },
   "growthAuthorizations": [
@@ -58,6 +58,7 @@
   "entries": [
     {
       "path": "Assets/Game/Scripts/UI/Shell/ResourceExchangeShellBinding.cs",
+      "sourceSha256": "640758d7b1562455285ee8da14b8da38fd9c31102397e1267eafa90328d7ee07",
       "maxLines": 94,
       "maxBytes": 3160,
       "maxResponsibilityDomainSymbolOccurrences": 10,
@@ -102,6 +103,7 @@
     },
     {
       "path": "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs",
+      "sourceSha256": "a729b621b4ae140807469c336e6277c6cfaaa81aac5dfe2fcd3c9b3e97d8d7a9",
       "maxLines": 898,
       "maxBytes": 38807,
       "maxResponsibilityDomainSymbolOccurrences": 11,

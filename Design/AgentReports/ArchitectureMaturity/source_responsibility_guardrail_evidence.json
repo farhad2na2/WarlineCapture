@@ -17,7 +17,7 @@
   ],
   "contract": {
     "path": "Design/Architecture/post_hardening_source_responsibility_guardrails.json",
-    "sha256": "65a0077996258a08dfd170176a65984ee2a1f7e5171ac358b25dfed9935f4708",
+    "sha256": "62cb60373d2c229853db02d94139aa153a28ed85bc5d95216caefd0f9a4dcbe0",
     "guardedSourceCount": 2,
     "growthAuthorizationCount": 4
   },
@@ -37,13 +37,13 @@
   ],
   "canonicalValidator": {
     "path": "Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs",
-    "sha256": "75dece69d0cd14815f83558ace65e174e82b223005a3a8811646a58a5c11dd31",
+    "sha256": "131812f87e99c67c45e224d677f10a8744f83ccd0a09f22cb1e960d2c81d0bbc",
     "result": "Passed",
     "passedTests": 17,
     "compilerErrors": 0,
     "log": "Design/AgentReports/ArchitectureMaturity/am016_source_growth_validation.log",
-    "logSha256": "b5a2643f3a4fed4a5adf3444e8e72c4af168719649954c1ca5f0b553b4467ddb",
-    "logBytes": 60544
+    "logSha256": "c0cc5a6eb5a86871eb388fe7cb22109194fbd35f93a5fb145b8ad22e1f54e238",
+    "logBytes": 61498
   },
   "authorityDecision": {
     "validatorOwnerId": "architecture-source-growth",
@@ -53,6 +53,6 @@
   },
   "validatorAuthority": {
     "path": "Tools/CI/tests/test_architecture_source_responsibility_guardrail_evidence.py",
-    "sha256": "c547eda2d12727d065b55836af5d7599e6b143d9444b0af333ad3022c54509c9"
+    "sha256": "0731deb2b6a9ebfa269f37114deaf8fc883bcaba41bc41cf25c3189c04d463c2"
   }
 }

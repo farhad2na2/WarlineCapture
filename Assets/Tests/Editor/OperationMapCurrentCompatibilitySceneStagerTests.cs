@@ -1,6 +1,8 @@
 using Game.Editor;
 using NUnit.Framework;
+using System.Reflection;
 using UnityEditor;
+using Game.Composition;
 
 public sealed class OperationMapCurrentCompatibilitySceneStagerTests
 {
@@ -61,5 +63,26 @@ public sealed class OperationMapCurrentCompatibilitySceneStagerTests
             Is.Not.EqualTo(
                 AssetDatabase.AssetPathToGUID(
                     OperationMapCurrentCompatibilityPlacementStager.DestinationVehicleConfigPath)));
+    }
+
+    [Test]
+    public void StagedSceneViewBindsOnlyAcceptedMapReferences()
+    {
+        Assert.That(
+            OperationMapCurrentCompatibilitySceneViewStager.TryValidate(out string error),
+            Is.True,
+            error);
+    }
+
+    [TestCase("Update")]
+    [TestCase("LateUpdate")]
+    [TestCase("FixedUpdate")]
+    public void OperationMapSceneViewHasNoUpdateLoop(string methodName)
+    {
+        Assert.That(
+            typeof(OperationMapSceneView).GetMethod(
+                methodName,
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly),
+            Is.Null);
     }
 }

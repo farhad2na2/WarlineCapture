@@ -19,6 +19,7 @@
         "Unity.Collections",
         "Unity.Addressables",
         "Unity.Entities",
+        "Unity.Scenes",
         "Unity.InputSystem",
         "Unity.Mathematics",
         "Unity.RenderPipelines.Core.Runtime",

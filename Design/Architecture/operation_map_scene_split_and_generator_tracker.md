@@ -699,7 +699,7 @@ At the end of every stable implementation slice, run at minimum `git diff --chec
 
 ## Progress Summary
 
-Overall implementation progress: 13% (23/177 checklist items complete).
+Overall implementation progress: 14% (24/177 checklist items complete).
 
 Progress is checklist-based. Each checkbox below counts as one item. Update this summary and the validation log in the same stable implementation commit.
 
@@ -709,7 +709,7 @@ Progress is checklist-based. Each checkbox below counts as one item. Update this
 | 1. Operation-map and scenario data contracts | In progress / shared subset | 9 | 12 | 75% | Typed identity, spatial metadata, hashes, cross-config validation, and the ownership chain are approved; delivery-specific references remain later. |
 | 2. Per-map static presentation ownership | Not started / compatibility subset | 0 | 14 | 0% | Preserve the current baked map safely; future-map generation remains undecided. |
 | 2A. Local Addressables packaging foundation | Later / direction-specific | 0 | 20 | 0% | Do not implement before the map-delivery direction is selected. |
-| 3. Current-map compatibility registration | In progress / shared | 1 | 10 | 10% | Current map id approved; content registration awaits exact measured metadata and a loader-neutral reference contract. |
+| 3. Current-map compatibility registration | In progress / shared | 2 | 10 | 20% | Current map id and exact placement products are registered; remaining content awaits measured metadata and a loader-neutral reference contract. |
 | 4. Non-destructive scene ownership split | In progress / shared priority | 1 | 14 | 7% | Final ownership inventory accepted; no scene object has moved yet. |
 | 5. Runtime selection, loading, and teardown | In progress / shared contracts | 1 | 14 | 7% | Pure readiness/failure/teardown data contracts only; concrete loading is later. |
 | 6. Metadata, camera, minimap, and movement binding | Not started / shared | 0 | 12 | 0% | Shared bounds, surface, grid, blockers, camera, minimap, runway, and helipad metadata. |
@@ -830,7 +830,7 @@ Exit criteria:
 - [x] Confirm the logical id `opmap.skirmish.desert_base_01` or record the approved replacement. Approved in `operation_map_runtime_ownership_chain.md` without selecting a loader or changing current content.
 - [ ] Register that id against the current `Match.unity`, `MatchSubScene.unity`, current manifest, and current map-specific configs without moving files.
 - [ ] Create the compatibility `OperationMapDefinition` with exact current bounds, grid/surface references, camera ids, minimap id, and map anchors.
-- [ ] Record current building/vehicle placement counts and source paths as map-owned compatibility data.
+- [x] Record current building/vehicle placement counts and source paths as map-owned compatibility data. See `../AgentReports/2026-07-16_current_operation_map_placement_registration.md`.
 - [ ] Keep the current schema-v1 manifest readable during the map-specific schema transition.
 - [ ] Launch the existing match through the compatibility operation-map id with no visual or gameplay behavior change.
 - [ ] Run the current map bake twice and prove accepted parity followed by zero writes/deletes.
@@ -1078,6 +1078,7 @@ Exit criteria:
 | 2026-07-16 | Shared operation-map runtime bootstrap contract | `../AgentReports/2026-07-16_operation_map_runtime_bootstrap_contract.md`; focused EditMode `5 / 5`; source-growth `15 / 15`; non-ECS naming `9 / 9`; SystemBase migration `19 / 19`; Unity compile; `git diff --check` | Passed; enabling foundation | Added an explicit-World, no-update-loop composition boundary that publishes validated metadata into the ECS lifecycle contract and owns only its immutable blob. Selection, scene loading/unloading, Addressables, generators, and production composition integration remain excluded; no checklist item closes yet. |
 | 2026-07-16 | Final shared scene ownership inventory | `operation_map_scene_ownership_inventory.md`; accepted Phase 0 evidence/decision cross-check; checklist recount; `git diff --check` | Passed | Consolidated every accepted shell/map/shared/compatibility/mixed disposition into the atomic split contract. This closes inventory only; no scene, asset, prefab, bake, or runtime binding changed. |
 | 2026-07-16 | Shared operation-map contract validation | `../AgentReports/2026-07-16_operation_map_contract_validation.md`; focused EditMode `7 / 7`; zero-allocation regression; source-growth `15 / 15`; non-ECS naming `9 / 9`; Unity compile; checklist recount; `git diff --check` | Passed | Added exact uniqueness, null/missing asset, metadata, stale evidence, and scenario-to-map resolution validation over caller-supplied small configs. No asset search, loader, Addressables, scene, or update-loop behavior was introduced. |
+| 2026-07-16 | Current-map placement compatibility registration | `../AgentReports/2026-07-16_current_operation_map_placement_registration.md`; accepted placement evidence/decision cross-check; asset GUID/path/count/root/hash verification; checklist recount; `git diff --check` | Passed | Bound all 451 building and 29 vehicle placement identities to `opmap.skirmish.desert_base_01` without moving assets or changing current spawn/source-hiding behavior. |
 
 ## Open Decisions
 
